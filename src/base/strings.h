@@ -1,0 +1,20 @@
+/**
+ * \file   strings.h
+ * \brief  A dynamic array of C strings.
+ * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ */
+#if !defined(PREMAKE_STRINGS_H)
+#define PREMAKE_STRINGS_H
+
+DECLARE_CLASS(Strings);
+
+Strings     strings_create(void);
+void        strings_destroy(Strings strs);
+
+void        strings_add(Strings strs, const char* item);
+void        strings_append(Strings dest, Strings src);
+const char* strings_item(Strings strs, int index);
+void        strings_set(Strings strs, int index, const char* item);
+int         strings_size(Strings strs);
+
+#endif
