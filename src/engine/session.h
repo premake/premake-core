@@ -60,10 +60,12 @@ Session     session_create(void);
 void        session_destroy(Session sess);
 void        session_add_solution(Session sess, Solution sln);
 int         session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs);
+const char* session_get_action(Session sess);
 Solution    session_get_solution(Session sess, int index);
 int         session_num_solutions(Session sess);
 const char* session_run_file(Session sess, const char* filename);
 const char* session_run_string(Session sess, const char* script);
+void        session_set_action(Session sess, const char* action);
 void        session_set_active_stream(Session sess, Stream strm);
 int         session_unload(Session sess);
 

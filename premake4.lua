@@ -5,7 +5,6 @@
 
 solution "Premake4"
 
-include "src"
 
 
 

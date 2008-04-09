@@ -98,6 +98,31 @@ SUITE(session)
 
 
 	/**********************************************************************
+	 * Action handling tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSession, SetAction_SetScriptVar)
+	{
+		session_set_action(sess, "MyAction");
+		const char* result = session_run_string(sess, "return _ACTION");
+		CHECK_EQUAL("MyAction", result);
+	}
+
+	TEST_FIXTURE(FxSession, GetAction_ReturnsNull_OnNoAction)
+	{
+		const char* result = session_get_action(sess);
+		CHECK(result == NULL);
+	}
+
+	TEST_FIXTURE(FxSession, GetAction_GetsFromScriptVar)
+	{
+		session_run_string(sess, "_ACTION = 'SomeAction'");
+		const char* result = session_get_action(sess);
+		CHECK_EQUAL("SomeAction", result);
+	}
+
+
+	/**********************************************************************
 	 * Solution containment tests
 	 **********************************************************************/
 

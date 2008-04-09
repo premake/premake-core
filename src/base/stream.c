@@ -171,6 +171,16 @@ int stream_write(Stream strm, const char* value, ...)
 
 
 /**
+ * Writes the Unicode encoding marker sequence into the stream.
+ * \param   strm      The stream to which to write.
+ */
+int stream_write_unicode_marker(Stream strm)
+{
+	return stream_write(strm, "\357\273\277");
+}
+
+
+/**
  * Write a string value, followed by a newline, to a stream.
  * \param   strm   The stream.
  * \param   value  The value to append to the stream.

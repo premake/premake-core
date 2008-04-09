@@ -1,6 +1,6 @@
 /**
  * \file   host_args_tests.cpp
- * \brief  Automated test for application command line argument processing.
+ * \brief  Automated tests for application command line argument processing.
  * \author Copyright (c) 2008 Jason Perkins and the Premake project
  */
 
@@ -34,5 +34,11 @@ struct FxHostArgs
 
 SUITE(host)
 {
-	/* coming soon */
+	TEST_FIXTURE(FxHostArgs, ParseArgv_SetsAction_OnAction)
+	{
+		const char* argv[] = { "premake", "action", NULL };
+		host_set_argv(argv);
+		host_parse_argv(sess);
+		CHECK_EQUAL("action", session_get_action(sess));
+	}
 }

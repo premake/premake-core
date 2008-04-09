@@ -15,6 +15,7 @@
 
 
 /* string constants for script variables and functions */
+#define ACTION_KEY         "_ACTION"
 #define CONFIGURATION_KEY  "configuration"
 #define FILE_KEY           "_FILE"
 #define PROJECT_KEY        "project"

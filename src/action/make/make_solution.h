@@ -9,5 +9,6 @@
 #include "engine/session.h"
 
 int make_solution_create(Session sess, Solution sln, Stream strm);
+int make_solution_signature(Session sess, Solution sln, Stream strm);
 
 #endif

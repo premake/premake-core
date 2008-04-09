@@ -14,6 +14,7 @@
 static SessionSolutionCallback GmakeSolutionCallbacks[] = 
 {
 	make_solution_create,
+	make_solution_signature,
 	NULL
 };
 

@@ -20,6 +20,7 @@ extern "C" {
 int host_tests()
 {
 	int status = engine_tests();
+	if (status == OKAY) status = tests_run_suite("action");
 	if (status == OKAY) status = tests_run_suite("host");
 	return status;
 }

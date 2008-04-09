@@ -140,7 +140,7 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 		Solution sln = session_get_solution(sess, si);
 		for (sfi = 0; result == OKAY && sln_funcs[sfi] != NULL; ++sfi)
 		{
-			result = sln_funcs[sfi](sess, sln, NULL);
+			result = sln_funcs[sfi](sess, sln, sess->active_stream);
 		}
 	}
 
@@ -151,6 +151,23 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 	}
 
 	return result;
+}
+
+
+/**
+ * Get the action name to be performed by this execution run.
+ * \param   sess    The session object.
+ * \returns The action name if set, or NULL.
+ */
+const char* session_get_action(Session sess)
+{
+	const char* action;
+	
+	assert(sess);
+	lua_getglobal(sess->L, ACTION_KEY);
+	action = lua_tostring(sess->L, -1);
+	lua_pop(sess->L, 1);
+	return action;
 }
 
 
@@ -283,6 +300,20 @@ const char* session_run_string(Session sess, const char* script)
 	assert(sess);
 	assert(script);
 	return session_run(sess->L, script, 0);
+}
+
+
+/**
+ * Set the action name to be performed on this execution pass. The action name will
+ * be placed in the _ACTION script environment global.
+ * \param   sess   The current execution session context.
+ * \param   action The name of the action to be performed.
+ */
+void session_set_action(Session sess, const char* action)
+{
+	assert(sess);
+	lua_pushstring(sess->L, action);
+	lua_setglobal(sess->L, ACTION_KEY);
 }
 
 

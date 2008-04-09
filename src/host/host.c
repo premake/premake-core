@@ -18,6 +18,18 @@ static const char** Args = NULL;
 
 
 /**
+ * Initial processing and validation of the command line arguments.
+ * \param   sess   The current execution session.
+ * \returns OKAY on success.
+ */
+int host_parse_argv(Session sess)
+{
+	session_set_action(sess, Args[0]);
+	return OKAY;
+}
+
+
+/**
  * Display the results of the application run.
  * Any errors returned during the run will be written to stderr; otherwise, a
  * success message is written to stdout.
@@ -49,9 +61,8 @@ int host_run_action(Session sess)
 
 	assert(sess);
 
-	/* identify the action */
+	/* find the action in the master list and execute the associated callback */
 	action = Args[0];
-
 	for (i = 0; Actions[i].name != NULL; ++i)
 	{
 		if (cstr_eq(Actions[i].name, action))
@@ -141,6 +152,25 @@ int host_show_help(Session sess)
 	if (Args[0] == NULL)
 	{
 		stream_writeline(Console, HOST_SHORT_HELP);
+		return !OKAY;
+	}
+
+	return OKAY;
+}
+
+
+/**
+ * Make sure that the session contains a valid set of project objects: at least
+ * one solution, each solution contains at least one project, etc.
+ * \param   sess    The current execution session context.
+ * \returns OKAY if the session is valid.
+ */
+int host_validate_session(Session sess)
+{
+	assert(sess);
+	if (session_num_solutions(sess) == 0)
+	{
+		error_set("no solutions defined");
 		return !OKAY;
 	}
 
