@@ -27,47 +27,56 @@ project.name = "Premake4"
 
 -- Release code
 
-	REPOS = "file://.psf/.Mac/Users/jason/Svn/Premake"
+	REPOS    = "https://premake.svn.sourceforge.net/svnroot/premake"
 	TRUNK    = "/trunk"
 	BRANCHES = "/branches/4.0-alpha/"
-	
-	function userinput(prompt)
-		if (prompt) then print(prompt) end
-		io.stdout:write("> ")
-		local value = io.stdin:read("*l")
-		print("")
-		return value
-	end
-	
-	function dobuildrelease(cmd, arg)
-		os.mkdir("releases")
-		os.chdir("releases")
 
-		-------------------------------------------------------------------
-		-- TODO: get the version from the command line instead
-		-------------------------------------------------------------------
-		local version = userinput("What is the version number for this release?")
+	function dorelease(cmd, arg)
 		
-		local folder  = "premake-"..version
-		local trunk   = REPOS..TRUNK
-		local branch  = REPOS..BRANCHES..version
-		
+		if (not arg) then
+			error "You must specify a version"
+		end
+
 		-------------------------------------------------------------------
 		-- Make sure everything is good before I start
 		-------------------------------------------------------------------
 		print("")
 		print("PRE-FLIGHT CHECKLIST")
-		print("  * is README up-to-date?")
-		print("  * is CHANGELOG up-to-date?")
-		print("  * did you test build with GCC?")
-		print("  * did you test run Doxygen?")
-		print("  * TODO: automate test for 'svn' (all), '7z', MinGW (Windows)")
-		userinput()
+		print(" * is README up-to-date?")
+		print(" * is CHANGELOG up-to-date?")
+		print(" * did you test build with GCC?")
+		print(" * did you test build with Doxygen?")
+		print(" * are 'svn' (all) and '7z' (Windows) available?")
+		print("")
+		print("Press [Enter] to continue or [^C] to quit.")
+		io.stdin:read("*l")
+
+		-------------------------------------------------------------------
+		-- Set up environment
+		-------------------------------------------------------------------
+		local version = arg
+		
+		os.mkdir("releases")
+
+		local folder  = "premake-"..version
+		local trunk   = REPOS..TRUNK
+		local branch  = REPOS..BRANCHES..version
+		
+		-------------------------------------------------------------------
+		-- Build and run all automated tests
+		-------------------------------------------------------------------
+		print("Building tests on working copy...")
+		os.execute("premake --target gnu > ../releases/release.log")
+		result = os.execute("make CONFIG=Release >../releases/release.log")
+		if (result ~= 0) then
+			error("Test build failed; see release.log for details")
+		end
 
 		-------------------------------------------------------------------
 		-- Look for a release branch in SVN, and create one from trunk if necessary		
 		-------------------------------------------------------------------
 		print("Checking for release branch...")
+		os.chdir("releases")
 		result = os.execute(string.format("svn ls %s >release.log 2>&1", branch))
 		if (result ~= 0) then
 			print("Creating release branch...")
@@ -87,17 +96,6 @@ project.name = "Premake4"
 		end
 
 		-------------------------------------------------------------------
-		-- Build and run all automated tests
-		-------------------------------------------------------------------
-		print("Building test version...")
-		os.chdir(folder)
-		os.execute("premake --target gnu > ../release.log")
-		result = os.execute("make CONFIG=Release >../release.log")
-		if (result ~= 0) then
-			error("Test build failed; see release.log for details")
-		end
-
-		-------------------------------------------------------------------
 		-- Embed version numbers into the files
 		-------------------------------------------------------------------
 		print("TODO - set version number in premake")
@@ -112,19 +110,21 @@ project.name = "Premake4"
 		if (windows) then
 			result = os.execute(string.format("7z a -tzip ..\\premake-win32-%s.zip bin\\release\\premake4.exe >../release.log", version))
 		elseif (macosx) then
-			error("OSX not done yet")
+			error("OSX binary not implemented yet")
 		else
-			error("Linux not done yet")
+			error("Linux binary not implemented yet")
 		end
 		
 		if (result ~= 0) then
 			error("Failed to build binary package; see release.log for details")
 		end
 
+		-------------------------------------------------------------------
+		-- Clean up
+		-------------------------------------------------------------------
 		print("Cleaning up...")
 		os.chdir("..")
 		os.rmdir(folder)
 		os.remove("release.log")
-				
 	end
 	
