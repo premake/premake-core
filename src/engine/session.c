@@ -18,7 +18,9 @@
 /** Functions to add to the global namespace */
 static const luaL_Reg funcs[] = {
 	{ "dofile",         fn_dofile },
+	{ "guid",           fn_guid },
 	{ "include",        fn_include },
+	{ "project",        fn_project },
 	{ "solution",       fn_solution },
 	{ NULL, NULL }
 };
@@ -350,6 +352,7 @@ int session_unload(Session sess)
 	assert(sess);
 
 	funcs.unload_solution = unload_solution;
+	funcs.unload_project  = unload_project;
 	result = unload_all(sess, sess->L, &funcs);
 	return result;
 }

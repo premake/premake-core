@@ -25,6 +25,15 @@ int platform_create_dir(const char* path)
 }
 
 
+void platform_create_guid(char* buffer)
+{
+	/* not sure how to get a UUID here, so I fake it */
+	FILE* rnd = fopen("/dev/random", "rb");
+	fread(buffer, 16, 1, rnd);
+	fclose(rnd);
+}
+
+
 int platform_dir_get_current(char* buffer, int size)
 {
 	char* result = getcwd(buffer, size);

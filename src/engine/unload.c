@@ -37,10 +37,34 @@ int unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs)
 
 		lua_rawgeti(L, -1, si);
 		status = funcs->unload_solution(sess, L, sln);
+		if (status == OKAY)
+		{
+			/* iterate over list of projects */
+			int pi, pn;
+			lua_getfield(L, -1, PROJECTS_KEY);
+			pn = luaL_getn(L, -1);
+			for (pi = 1; status == OKAY && pi <= pn; ++pi)
+			{
+				Project prj = project_create();
+				solution_add_project(sln, prj);
 
+				lua_rawgeti(L, -1, pi);
+				status = funcs->unload_project(sess, L, prj);
+				
+				/* remove project object from stack */
+				lua_pop(L, 1);
+			}
+
+			/* remove list of projects from stack */
+			lua_pop(L, 1);
+		}
+
+		/* remove solution object from stack */
 		lua_pop(L, 1);
 	}
 
+	/* remove list of solutions from stack */
+	lua_pop(L, 1);
 	return status;
 }
 
@@ -60,7 +84,7 @@ int unload_solution(Session sess, lua_State* L, Solution sln)
 	assert(L);
 	assert(sln);
 
-	sess = 0;
+	sess = 0;  /* unused */
 
 	lua_getfield(L, -1, "name");
 	value = lua_tostring(L, -1);
@@ -70,6 +94,42 @@ int unload_solution(Session sess, lua_State* L, Solution sln)
 	lua_getfield(L, -1, "basedir");
 	value = lua_tostring(L, -1);
 	solution_set_base_dir(sln, value);
+	lua_pop(L, 1);
+
+	return OKAY;
+}
+
+
+/**
+ * Unload information from the scripting environment for a particular project.
+ * \param sess   The session object which contains the scripted project objects.
+ * \param L      The Lua scripting engine state.
+ * \param prj    The project object to be populated.
+ * \returns OKAY if successful.
+ */
+int unload_project(Session sess, lua_State* L, Project prj)
+{
+	const char* value;
+
+	assert(sess);
+	assert(L);
+	assert(prj);
+
+	sess = 0;  /* unused */
+
+	lua_getfield(L, -1, "name");
+	value = lua_tostring(L, -1);
+	project_set_name(prj, value);
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "basedir");
+	value = lua_tostring(L, -1);
+	project_set_base_dir(prj, value);
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "guid");
+	value = lua_tostring(L, -1);
+	project_set_guid(prj, value);
 	lua_pop(L, 1);
 
 	return OKAY;

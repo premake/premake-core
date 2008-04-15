@@ -15,6 +15,7 @@ static SessionSolutionCallback Vs2005SolutionCallbacks[] =
 {
 	vs200x_solution_create,
 	vs200x_solution_signature,
+	vs200x_solution_projects,
 	NULL
 };
 

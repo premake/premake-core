@@ -1,6 +1,6 @@
 /**
  * \file   unload_solution_tests.cpp
- * \brief  Automated test for solution object unloading from the script environment.
+ * \brief  Automated tests for solution object unloading from the script environment.
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
  */
 

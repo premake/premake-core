@@ -1,7 +1,7 @@
 /**
  * \file   path_tests.cpp
  * \brief  Path handling automated tests.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
@@ -112,6 +112,38 @@ SUITE(base)
 	{
 		char* result = path_join("leading", "C:/trailing");
 		CHECK_EQUAL("C:/trailing", result);
+	}
+
+
+	/**************************************************************************
+	 * path_relative() tests
+	 **************************************************************************/
+
+	TEST(PathRelative_ReturnsDot_OnMatchingPaths)
+	{
+		char* result = path_relative("/a/b/c", "/a/b/c");
+		CHECK_EQUAL(".", result);
+	}
+
+
+	TEST(PathRelative_ReturnsDoubleDot_OnChildToParent)
+	{
+		char* result = path_relative("/a/b/c", "/a/b");
+		CHECK_EQUAL("..", result);
+	}
+
+
+	TEST(PathRelative_ReturnsDoubleDotPath_OnSiblingToSibling)
+	{
+		char* result = path_relative("/a/b/c", "/a/b/d");
+		CHECK_EQUAL("../d", result);
+	}
+
+
+	TEST(PathRelative_ReturnsChildPath_OnParentToChild)
+	{
+		char* result = path_relative("/a/b/c", "/a/b/c/d");
+		CHECK_EQUAL("d", result);
 	}
 
 

@@ -145,6 +145,10 @@ char* path_join(const char* leading, const char* trailing)
 {
 	char* buffer = buffers_next();
 	
+	/* treat nulls like empty paths */
+	leading = (leading != NULL) ? leading : "";
+	trailing = (trailing != NULL) ? trailing : "";
+
 	if (!trailing)
 	{
 		strcpy(buffer, leading);
@@ -169,6 +173,61 @@ char* path_join(const char* leading, const char* trailing)
 		
 	strcat(buffer, trailing);
 	return buffer;
+}
+
+
+/**
+ * \brief   Compute the relative path between two locations.
+ * \param   base    The base path.
+ * \param   target  The target path.
+ * \returns A relative path from the base to the target.
+ */
+char* path_relative(const char* base, const char* target)
+{
+	int start, i;
+	char* result;
+
+	/* normalize the two paths */
+	char* full_base = path_absolute(base);
+	char* full_targ = path_absolute(target);
+
+	strcat(full_base, "/");
+	strcat(full_targ, "/");
+
+	/* trim off the common directories from the start */
+	for (start = 0, i = 0; full_base[i] && full_targ[i] && full_base[i] == full_targ[i]; ++i)
+	{
+		if (full_base[i] == '/')
+			start = i + 1;
+	}
+
+	/* same directory? */
+	if (full_base[i] == 0 && full_targ[i] == 0)
+		return ".";
+
+	/* build a connecting path */
+	result = buffers_next();
+	if (strlen(full_base) - start > 0)
+	{
+		strcpy(result, "../");
+		for (i = start; full_base[i]; ++i)
+		{
+			if (full_base[i] == '/' && full_base[i + 1])
+				strcat(result, "../");
+		}
+	}
+
+	if (strlen(full_targ) - start > 0)
+	{
+		strcat(result, full_targ + start);
+	}
+
+	/* remove the trailing slash */
+	result[strlen(result) - 1] = 0;
+
+	if (strlen(result) == 0)
+		strcpy(result, ".");
+	return result;
 }
 
 

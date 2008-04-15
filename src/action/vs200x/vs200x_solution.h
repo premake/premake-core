@@ -8,7 +8,9 @@
 
 #include "engine/session.h"
 
-int vs200x_solution_create(Session sess, Solution sln, Stream strm);
-int vs200x_solution_signature(Session sess, Solution sln, Stream strm);
+int         vs200x_solution_create(Session sess, Solution sln, Stream strm);
+int         vs200x_solution_projects(Session sess, Solution sln, Stream strm);
+int         vs200x_solution_signature(Session sess, Solution sln, Stream strm);
+const char* vs200x_solution_tool_guid(const char* language);
 
 #endif

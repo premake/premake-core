@@ -6,8 +6,41 @@
 #if !defined(PREMAKE_PROJECT_H)
 #define PREMAKE_PROJECT_H
 
+#include "fields.h"
+
+
+/**
+ * Project field index.
+ * \note If you modify this list, you must also update SolutionFieldInfo[].
+ */
+enum ProjectField
+{
+	ProjectBaseDirectory,
+	ProjectGuid,
+	ProjectLocation,
+	ProjectName,
+	NumProjectFields
+};
+
+extern struct FieldInfo ProjectFieldInfo[];
+
+
 DECLARE_CLASS(Project)
 
-int project_tests(void);
+Project     project_create(void);
+void        project_destroy(Project prj);
+
+const char* project_get_base_dir(Project prj);
+const char* project_get_filename(Project prj, const char* basename, const char* ext);
+const char* project_get_guid(Project prj);
+const char* project_get_location(Project prj);
+const char* project_get_name(Project prj);
+const char* project_get_value(Project prj, enum ProjectField field);
+void        project_set_base_dir(Project prj, const char* base_dir);
+void        project_set_location(Project prj, const char* location);
+void        project_set_guid(Project prj, const char* guid);
+void        project_set_name(Project prj, const char* name);
+void        project_set_value(Project prj, enum ProjectField field, const char* value);
+int         project_tests(void);
 
 #endif

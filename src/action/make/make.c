@@ -52,5 +52,3 @@ const char* make_get_solution_makefile(Session sess, Solution sln)
 	/* all good */
 	return my_path;
 }
-
- 

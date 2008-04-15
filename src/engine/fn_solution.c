@@ -9,7 +9,7 @@
 
 
 /**
- * Creates a new solution object, or selects an existing one.
+ * Create a new solution object, or select an existing one.
  */
 int fn_solution(lua_State* L)
 {
@@ -34,11 +34,18 @@ int fn_solution(lua_State* L)
 
 		/* set the name */
 		lua_pushstring(L, name);
-		lua_setfield(L, -2, "name");
+		lua_setfield(L, -2, SolutionFieldInfo[SolutionName].name);
 
 		/* set the base directory */
 		lua_pushstring(L, engine_get_script_dir(L));
-		lua_setfield(L, -2, "basedir");
+		lua_setfield(L, -2, SolutionFieldInfo[SolutionBaseDirectory].name);
+
+		/* create an empty list of projects */
+		lua_newtable(L);
+		lua_setfield(L, -2, PROJECTS_KEY);
+
+		/* finish the configuration */
+		engine_configure_project_object(L, SolutionFieldInfo);
 
 		/* add it to the master list of solutions, keyed by name */
 		lua_pushvalue(L, -1);

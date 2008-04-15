@@ -1,6 +1,6 @@
 /**
  * \file   fn_solution_tests.cpp
- * \brief  Automated test for the solution() function.
+ * \brief  Automated tests for the solution() function.
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
  */
 
@@ -117,6 +117,7 @@ SUITE(engine)
 	/**************************************************************************
 	 * Initial object state tests
 	 **************************************************************************/
+
 	TEST_FIXTURE(FnSolution2, Solution_SetsName)
 	{
 		const char* result = session_run_string(sess, 
@@ -129,5 +130,12 @@ SUITE(engine)
 		const char* result = session_run_string(sess,
 			"return sln.basedir");
 		CHECK_EQUAL("(string)", result);
+	}
+
+	TEST_FIXTURE(FnSolution2, Solution_HasEmptyProjectsList)
+	{
+		const char* result = session_run_string(sess,
+			"return #sln.projects");
+		CHECK_EQUAL("0", result);
 	}
 }

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "project/solution.h"
+#include "base/array.h"
 #include "base/path.h"
 #include "base/strings.h"
 
@@ -26,6 +27,7 @@ struct FieldInfo SolutionFieldInfo[] =
 DEFINE_CLASS(Solution)
 {
 	Fields fields;
+	Array projects;
 };
 
 
@@ -37,6 +39,7 @@ Solution solution_create()
 {
 	Solution sln = ALLOC_CLASS(Solution);
 	sln->fields = fields_create(SolutionFieldInfo);
+	sln->projects = array_create();
 	return sln;
 }
 
@@ -47,9 +50,33 @@ Solution solution_create()
  */
 void solution_destroy(Solution sln)
 {
+	int i, n;
+
 	assert(sln);
 	fields_destroy(sln->fields);
+
+	n = solution_num_projects(sln);
+	for (i = 0; i < n; ++i)
+	{
+		Project prj = solution_get_project(sln, i);
+		project_destroy(prj);
+	}
+	array_destroy(sln->projects);
+
 	free(sln);
+}
+
+
+/**
+ * Add a project to a solution.
+ * \param   sln     The solution to contain the project.
+ * \param   prj     The project to add.
+ */
+void solution_add_project(Solution sln, Project prj)
+{	
+	assert(sln);
+	assert(prj);
+	array_add(sln->projects, prj);
 }
 
 
@@ -123,6 +150,23 @@ const char* solution_get_name(Solution sln)
 
 
 /**
+ * Retrieve a project from the solution.
+ * \param   sln      The solution to query.
+ * \param   index    The index of the project to retreive.
+ * \returns The project at the given index within the solution.
+ */
+Project solution_get_project(Solution sln, int index)
+{
+	Project prj;
+
+	assert(sln);
+
+	prj = (Project)array_item(sln->projects, index);
+	return prj;
+}
+
+
+/**
  * Retrieve a string (single value) fields from a solution, using the field indices.
  * \param   sln      The solution object to query.
  * \param   field    The index of the field to query.
@@ -132,6 +176,18 @@ const char* solution_get_value(Solution sln, enum SolutionField field)
 {
 	assert(sln);
 	return fields_get_value(sln->fields, field);
+}
+
+
+/**
+ * Return the number of projects contained by this solution.
+ * \param   sln      The solution to query.
+ * \returns The number of projects contained by the solution.
+ */
+int solution_num_projects(Solution sln)
+{
+	assert(sln);
+	return array_size(sln->projects);
 }
 
 

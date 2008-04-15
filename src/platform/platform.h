@@ -28,6 +28,13 @@ int platform_create_dir(const char* path);
 
 
 /**
+ * Create a GUID and copy it into the supplied buffer.
+ * \param buffer  The buffer to hold the new GUID; must hold at least 36 characters.
+ */
+void platform_create_guid(char* buffer);
+
+
+/**
  * Get the current working directory.
  * \param   buffer    A buffer to hold the directory.
  * \param   size      The size of the buffer.

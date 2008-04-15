@@ -12,6 +12,28 @@
 
 
 /**
+ * Configure a new project object (solution, project). Initializes all list
+ * fields and creates an initial configuration list.
+ * \param   L       The Lua state.
+ * \param   fields  The list of object fields.
+ */
+void engine_configure_project_object(lua_State* L, struct FieldInfo* fields)
+{
+	struct FieldInfo* field;
+
+	/* set all list-type configuration values to empty tables */
+	for (field = fields; field->name != NULL; ++field)
+	{
+		if (field->kind == ListField)
+		{
+			lua_newtable(L);
+			lua_setfield(L, -2, field->name);
+		}
+	}
+}
+
+
+/**
  * Pushes the active value for the given object type to the top of the stack.
  * This function is used to retrieve the current solution, project, etc.
  * \param   L            The Lua state.
@@ -102,6 +124,25 @@ int engine_get_active_object(lua_State* L, enum ObjectType type, int is_required
 
 
 /**
+ * Get the directory which contains the currently executing script. This is 
+ * used to locate resources specified in the script using relative paths.
+ * \param   L    The Lua state.
+ * \returns The directory containing the current script, as an absolute path.
+ */
+const char* engine_get_script_dir(lua_State* L)
+{
+	const char* path;
+
+	lua_getglobal(L, FILE_KEY);
+	path = lua_tostring(L, -1);
+	lua_pop(L, 1);
+
+	path = path_directory(path);
+	return path;
+}
+
+
+/**
  * Remembers the object at the top of the stack as active for the given object type. 
  * This function is used to indicate the current solution, project, etc.
  * \param   L     The Lua state.
@@ -143,20 +184,3 @@ void engine_set_script_file(lua_State* L, const char* filename)
 }
 
 
-/**
- * Get the directory which contains the currently executing script. This is 
- * used to locate resources specified in the script using relative paths.
- * \param   L    The Lua state.
- * \returns The directory containing the current script, as an absolute path.
- */
-const char* engine_get_script_dir(lua_State* L)
-{
-	const char* path;
-
-	lua_getglobal(L, FILE_KEY);
-	path = lua_tostring(L, -1);
-	lua_pop(L, 1);
-
-	path = path_directory(path);
-	return path;
-}

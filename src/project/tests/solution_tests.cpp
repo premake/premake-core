@@ -8,6 +8,7 @@
 #include "testing/testing.h"
 extern "C" {
 #include "project/solution.h"
+#include "project/project.h"
 }
 
 struct FxSolution
@@ -108,5 +109,32 @@ SUITE(project)
 		solution_set_location(sln, "Location");
 		const char* filename = solution_get_filename(sln, NULL, ".xyz");
 		CHECK_EQUAL("/BaseDir/Location/MySolution.xyz", filename);
+	}
+
+
+	/**********************************************************************
+	 * Project containment tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSolution, NumProjects_IsZero_OnStartup)
+	{
+		int result = solution_num_projects(sln);
+		CHECK(result == 0);
+	}
+
+	TEST_FIXTURE(FxSolution, AddProject_IncrementsNumProjects)
+	{
+		Project prj = project_create();
+		solution_add_project(sln, prj);
+		int result = solution_num_projects(sln);
+		CHECK(result == 1);
+	}
+
+	TEST_FIXTURE(FxSolution, AddProject_CanRoundtrip)
+	{
+		Project prj = project_create();
+		solution_add_project(sln, prj);
+		Project result = solution_get_project(sln, 0);
+		CHECK(prj == result);
 	}
 }

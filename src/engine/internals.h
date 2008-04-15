@@ -19,6 +19,7 @@
 #define CONFIGURATION_KEY  "configuration"
 #define FILE_KEY           "_FILE"
 #define PROJECT_KEY        "project"
+#define PROJECTS_KEY       "projects"
 #define SESSION_KEY        "_SESSION"
 #define SOLUTION_KEY       "solution"
 #define SOLUTIONS_KEY      "_SOLUTIONS"
@@ -41,6 +42,7 @@ int         engine_get_active_object(lua_State* L, enum ObjectType type, int is_
 void        engine_set_active_object(lua_State* L, enum ObjectType type);
 void        engine_set_script_file(lua_State* L, const char* filename);
 const char* engine_get_script_dir(lua_State* L);
+void        engine_configure_project_object(lua_State* L, struct FieldInfo* fields);
 
 /* Internal session API */
 lua_State*  session_get_lua_state(Session sess);
@@ -51,17 +53,21 @@ lua_State*  session_get_lua_state(Session sess);
 struct UnloadFuncs
 {
 	int (*unload_solution)(Session sess, lua_State* L, Solution sln);
+	int (*unload_project)(Session sess, lua_State* L, Project prj);
 };
 
 int  unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs);
 int  unload_solution(Session sess, lua_State* L, Solution sln);
+int  unload_project(Session sess, lua_State* L, Project prj);
 
 
 /* Script function handlers */
 int  fn_dofile(lua_State* L);
 int  fn_error(lua_State* L);
 int  fn_getcwd(lua_State* L);
+int  fn_guid(lua_State* L);
 int  fn_include(lua_State* L);
+int  fn_project(lua_State* L);
 int  fn_solution(lua_State* L);
 
 

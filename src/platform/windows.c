@@ -18,6 +18,18 @@ int platform_create_dir(const char* path)
 }
 
 
+void platform_create_guid(char* buffer)
+{
+	static int (__stdcall *CoCreateGuid)(char*) = NULL;
+	if (CoCreateGuid == NULL)
+	{
+		HMODULE hOleDll = LoadLibrary("OLE32.DLL");
+		CoCreateGuid = (int(__stdcall*)(char*))GetProcAddress(hOleDll, "CoCreateGuid");
+	}
+	CoCreateGuid(buffer);
+}
+
+
 int platform_dir_get_current(char* buffer, int size)
 {
 	DWORD result = GetCurrentDirectory(size, buffer);

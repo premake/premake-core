@@ -12,7 +12,7 @@ BUILDING PREMAKE
 
  Until an official release is made you will need to use an existing
  Premake 3.x executable to generate the project files. Grab a binary
- or executable package from the project site at:
+ or source package from the project site at:
 
    http://premake.sourceforge.net/
 
@@ -20,9 +20,9 @@ BUILDING PREMAKE
 
    $ cd premake-4.0
    $ premake --target vs2005   # For Visual Studio 2005 files
+   $ premake --target gnu      # For GNU makefile
 
  Run `premake --help` for a complete list of supported toolsets.
-
 
 
 SUPPORT 
