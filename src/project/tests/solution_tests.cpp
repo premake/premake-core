@@ -73,6 +73,31 @@ SUITE(project)
 
 
 	/**********************************************************************
+	 * Configuration containment tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSolution, NumConfigs_IsZero_OnStartup)
+	{
+		int result = solution_num_configs(sln);
+		CHECK(result == 0);
+	}
+
+	TEST_FIXTURE(FxSolution, AddConfig_IncrementsNumConfigs)
+	{
+		solution_add_config_name(sln, "Debug");
+		int result = solution_num_configs(sln);
+		CHECK(result == 1);
+	}
+
+	TEST_FIXTURE(FxSolution, AddConfig_CanRoundtrip)
+	{
+		solution_add_config_name(sln, "Debug");
+		const char* result = solution_get_config_name(sln, 0);
+		CHECK_EQUAL("Debug", result);
+	}
+
+
+	/**********************************************************************
 	 * Location tests
 	 **********************************************************************/
 

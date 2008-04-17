@@ -13,7 +13,13 @@
 /** The VS2002 solution writing process, for session_enumerate_objects() */
 static SessionSolutionCallback Vs2002SolutionCallbacks[] = 
 {
-	vs200x_solution_create,
+	vs2002_solution_create,
+	vs2002_solution_signature,
+	vs2002_solution_projects,
+	vs2002_solution_configuration,
+	vs2002_solution_dependencies,
+	vs2002_solution_project_configuration,
+	vs2002_solution_extensibility,
 	NULL
 };
 

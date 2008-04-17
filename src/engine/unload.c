@@ -8,6 +8,8 @@
 #include "premake.h"
 #include "internals.h"
 
+static int unload_solution_projects(Session sess, lua_State* L, struct UnloadFuncs* funcs, Solution sln);
+
 
 /**
  * Copy project information out of the scripting environment and into C objects that
@@ -34,29 +36,17 @@ int unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs)
 	{
 		Solution sln = solution_create();
 		session_add_solution(sess, sln);
-
 		lua_rawgeti(L, -1, si);
+
+		/* hardcoded a standard set of configurations for now */
+		solution_add_config_name(sln, "Debug");
+		solution_add_config_name(sln, "Release");
+
+		/* extract the project fields */
 		status = funcs->unload_solution(sess, L, sln);
 		if (status == OKAY)
 		{
-			/* iterate over list of projects */
-			int pi, pn;
-			lua_getfield(L, -1, PROJECTS_KEY);
-			pn = luaL_getn(L, -1);
-			for (pi = 1; status == OKAY && pi <= pn; ++pi)
-			{
-				Project prj = project_create();
-				solution_add_project(sln, prj);
-
-				lua_rawgeti(L, -1, pi);
-				status = funcs->unload_project(sess, L, prj);
-				
-				/* remove project object from stack */
-				lua_pop(L, 1);
-			}
-
-			/* remove list of projects from stack */
-			lua_pop(L, 1);
+			status = unload_solution_projects(sess, L, funcs, sln);
 		}
 
 		/* remove solution object from stack */
@@ -64,6 +54,33 @@ int unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs)
 	}
 
 	/* remove list of solutions from stack */
+	lua_pop(L, 1);
+	return status;
+}
+
+
+static int unload_solution_projects(Session sess, lua_State* L, struct UnloadFuncs* funcs, Solution sln)
+{
+	int pi, pn;
+	int status = OKAY;
+
+	/* iterate over list of projects from the solution */
+	lua_getfield(L, -1, PROJECTS_KEY);
+	pn = luaL_getn(L, -1);
+	for (pi = 1; status == OKAY && pi <= pn; ++pi)
+	{
+		Project prj = project_create();
+		solution_add_project(sln, prj);
+
+		/* unload the project fields */
+		lua_rawgeti(L, -1, pi);
+		status = funcs->unload_project(sess, L, prj);
+		
+		/* remove project object from stack */
+		lua_pop(L, 1);
+	}
+
+	/* remove list of projects from stack */
 	lua_pop(L, 1);
 	return status;
 }

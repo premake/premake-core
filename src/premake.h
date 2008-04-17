@@ -35,3 +35,9 @@
  */
 #define ALLOC_CLASS(n)     (n)malloc(sizeof(struct n##_impl))
 
+
+/**
+ * Mark a variable as unused, so the compiler won't complain about it. I suspect
+ * there is a better way to do this.
+ */
+#define UNUSED(var)        var = 0

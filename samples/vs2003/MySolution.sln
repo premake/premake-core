@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppExe", "CppExe/CppExe.vcproj", "{2606321E-67AA-8244-A5C1-67F2E3F8CA0C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{2606321E-67AA-8244-A5C1-67F2E3F8CA0C}.Debug.ActiveCfg = Debug|Win32
+		{2606321E-67AA-8244-A5C1-67F2E3F8CA0C}.Debug.Build.0 = Debug|Win32
+		{2606321E-67AA-8244-A5C1-67F2E3F8CA0C}.Release.ActiveCfg = Release|Win32
+		{2606321E-67AA-8244-A5C1-67F2E3F8CA0C}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

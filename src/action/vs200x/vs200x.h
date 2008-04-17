@@ -8,7 +8,9 @@
 
 #include "engine/session.h"
 
-int vs200x_get_target_version(Session sess);
+int         vs200x_get_target_version(Session sess);
+const char* vs200x_tool_guid(const char* language);
+
 
 #endif
 

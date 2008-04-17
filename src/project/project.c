@@ -112,6 +112,18 @@ const char* project_get_guid(Project prj)
 
 
 /**
+ * Retrieve the programming language specified for a project.
+ * \param   prj    The project to query.
+ * \returns The programming language specified for the project.
+ */
+const char* project_get_language(Project prj)
+{
+	prj = 0;
+	return "c++";
+}
+
+
+/**
  * Retrieve the output location (the relative path from the base directory to the
  * target output directory) for this project.
  * \param   prj    The project object to modify.

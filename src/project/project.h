@@ -33,6 +33,7 @@ void        project_destroy(Project prj);
 const char* project_get_base_dir(Project prj);
 const char* project_get_filename(Project prj, const char* basename, const char* ext);
 const char* project_get_guid(Project prj);
+const char* project_get_language(Project prj);
 const char* project_get_location(Project prj);
 const char* project_get_name(Project prj);
 const char* project_get_value(Project prj, enum ProjectField field);

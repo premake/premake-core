@@ -8,9 +8,20 @@
 
 #include "engine/session.h"
 
-int         vs200x_solution_create(Session sess, Solution sln, Stream strm);
-int         vs200x_solution_projects(Session sess, Solution sln, Stream strm);
-int         vs200x_solution_signature(Session sess, Solution sln, Stream strm);
-const char* vs200x_solution_tool_guid(const char* language);
+int vs2002_solution_configuration(Session sess, Solution sln, Stream strm);
+int vs2002_solution_create(Session sess, Solution sln, Stream strm);
+int vs2002_solution_dependencies(Session sess, Solution sln, Stream strm);
+int vs2002_solution_extensibility(Session sess, Solution sln, Stream strm);
+int vs2002_solution_project_configuration(Session sess, Solution sln, Stream strm);
+int vs2002_solution_projects(Session sess, Solution sln, Stream strm);
+int vs2002_solution_signature(Session sess, Solution sln, Stream strm);
+
+int vs2003_solution_configuration(Session sess, Solution sln, Stream strm);
+int vs2003_solution_signature(Session sess, Solution sln, Stream strm);
+
+int vs2005_solution_platforms(Session sess, Solution sln, Stream strm);
+int vs2005_solution_project_platforms(Session sess, Solution sln, Stream strm);
+int vs2005_solution_properties(Session sess, Solution sln, Stream strm);
+int vs2005_solution_signature(Session sess, Solution sln, Stream strm);
 
 #endif

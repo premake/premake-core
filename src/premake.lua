@@ -83,7 +83,7 @@ local subsystems =
 		table.insert(package.files, matchfiles("testing/*.h", "testing/*.cpp", unittest.."/*"))
 	
 		for k,m in subsystems do
-			table.insert(package.files, matchfiles(m.."/tests/*.cpp"))
+			table.insert(package.files, matchfiles(m.."/tests/*.h", m.."/tests/*.cpp"))
 		end
 		
 		if (windows) then 

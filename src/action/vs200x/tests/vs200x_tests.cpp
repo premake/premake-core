@@ -10,20 +10,8 @@ extern "C" {
 #include "action/vs200x/vs200x.h"
 }
 
-struct FxVs200x
-{
-	Session sess;
+#include "vs200x_tests.h"
 
-	FxVs200x()
-	{
-		sess = session_create();
-	}
-
-	~FxVs200x()
-	{
-		session_destroy(sess);
-	}
-};
 
 SUITE(action)
 {

@@ -27,6 +27,7 @@ struct FieldInfo SolutionFieldInfo[] =
 DEFINE_CLASS(Solution)
 {
 	Fields fields;
+	Array configs;
 	Array projects;
 };
 
@@ -39,6 +40,7 @@ Solution solution_create()
 {
 	Solution sln = ALLOC_CLASS(Solution);
 	sln->fields = fields_create(SolutionFieldInfo);
+	sln->configs  = array_create();
 	sln->projects = array_create();
 	return sln;
 }
@@ -54,6 +56,7 @@ void solution_destroy(Solution sln)
 
 	assert(sln);
 	fields_destroy(sln->fields);
+	array_destroy(sln->configs);
 
 	n = solution_num_projects(sln);
 	for (i = 0; i < n; ++i)
@@ -64,6 +67,19 @@ void solution_destroy(Solution sln)
 	array_destroy(sln->projects);
 
 	free(sln);
+}
+
+
+/**
+ * Add a configuration name to a solution.
+ * \param   sln          The solution to contain the project.
+ * \param   config_name  The name of the configuration add.
+ */
+void solution_add_config_name(Solution sln, const char* config_name)
+{
+	assert(sln);
+	assert(config_name);
+	array_add(sln->configs, (void*)config_name);
 }
 
 
@@ -89,6 +105,21 @@ void solution_add_project(Solution sln, Project prj)
 const char* solution_get_base_dir(Solution sln)
 {
 	return solution_get_value(sln, SolutionBaseDirectory);
+}
+
+
+/**
+ * Get the configuration name at a given index.
+ * \param   sln      The solution to query.
+ * \param   index    The configuration index to query.
+ * \returns The configuration name at the given index.
+ */
+const char* solution_get_config_name(Solution sln, int index)
+{
+	const char* name;
+	assert(sln);
+	name = (const char*)array_item(sln->configs, index);
+	return name;
 }
 
 
@@ -176,6 +207,18 @@ const char* solution_get_value(Solution sln, enum SolutionField field)
 {
 	assert(sln);
 	return fields_get_value(sln->fields, field);
+}
+
+
+/**
+ * Return the number of configurations contained by this solution.
+ * \param   sln      The solution to query.
+ * \returns The number of configurations contained by the solution.
+ */
+int solution_num_configs(Solution sln)
+{
+	assert(sln);
+	return array_size(sln->configs);
 }
 
 
