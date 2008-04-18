@@ -63,11 +63,11 @@ project.name = "Premake4"
 		local branch  = REPOS..BRANCHES..version
 		
 		-------------------------------------------------------------------
-		-- Build and run all automated tests
+		-- Build and run all automated tests on working copy
 		-------------------------------------------------------------------
 		print("Building tests on working copy...")
-		os.execute("premake --target gnu > ../releases/release.log")
-		result = os.execute("make CONFIG=Release >../releases/release.log")
+		os.execute("premake --target gnu >releases/release.log")
+		result = os.execute("make CONFIG=Release >releases/release.log")
 		if (result ~= 0) then
 			error("Test build failed; see release.log for details")
 		end
@@ -104,6 +104,7 @@ project.name = "Premake4"
 		-- Build the release binary for this platform
 		-------------------------------------------------------------------
 		print("Building release version...")
+		os.chdir(folder)
 		os.execute("premake --clean --no-tests --target gnu >../release.log")
 		os.execute("make CONFIG=Release >../release.log")
 		
