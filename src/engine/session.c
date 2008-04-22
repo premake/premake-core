@@ -122,7 +122,6 @@ void session_add_solution(Session sess, Solution sln)
  * \param   sess      The session object.
  * \param   sln_funcs A per-solution object callback.
  * \param   prj_funcs A per-project object callback.
- * \param   param     A behavior modifying value which is passed through to the callbacks.
  * \returns OKAY if successful.
  */
 int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs)

@@ -21,7 +21,6 @@ SUITE(action)
 
 	TEST_FIXTURE(FxVs200x, Vs2003_Signature_IsCorrect)
 	{
-		session_set_action(sess, "vs2003");
 		vs2003_solution_signature(sess, sln, strm);
 		CHECK_EQUAL(
 			"Microsoft Visual Studio Solution File, Format Version 8.00\r\n",

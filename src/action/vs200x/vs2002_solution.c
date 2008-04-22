@@ -144,7 +144,7 @@ int vs2002_solution_project_configuration(Session sess, Solution sln, Stream str
 int vs2002_solution_projects(Session sess, Solution sln, Stream strm)
 {
 	const char* sln_path;
-	int i, n;
+	int i, n, z = OKAY;
 
 	UNUSED(sess);
 
@@ -166,11 +166,11 @@ int vs2002_solution_projects(Session sess, Solution sln, Stream strm)
 		prj_file = path_relative(sln_path, prj_file);
 		prj_file = path_translate(prj_file, "\\");
 
-		stream_writeline(strm, "Project(\"{%s}\") = \"%s\", \"%s\", \"{%s}\"", tool_id, prj_name, prj_file, prj_id);
-		stream_writeline(strm, "EndProject");
+		z |= stream_writeline(strm, "Project(\"{%s}\") = \"%s\", \"%s\", \"{%s}\"", tool_id, prj_name, prj_file, prj_id);
+		z |= stream_writeline(strm, "EndProject");
 	}
 
-	return OKAY;
+	return z;
 }
 
 

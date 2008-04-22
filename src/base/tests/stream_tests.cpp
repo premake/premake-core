@@ -27,6 +27,22 @@ struct FxStream
 	}
 };
 
+struct FxStreamStrings : FxStream
+{
+	Strings strs;
+
+	FxStreamStrings()
+	{
+		strs = strings_create();
+	}
+
+	~FxStreamStrings()
+	{
+		strings_destroy(strs);
+	}
+};
+
+
 
 SUITE(base)
 {
@@ -59,6 +75,33 @@ SUITE(base)
 		stream_set_newline(strm, "\r\n");
 		stream_writeline(strm, "Hi there!");
 		CHECK_EQUAL("Hi there!\r\n", buffer);
+	}
+
+
+	/**********************************************************************
+	 * stream_write_strings() tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxStreamStrings, WriteStrings_WritesStartEnd_OnEmptyList)
+	{
+		stream_write_strings(strm, strs, "^", "<", ">", ",", "$");
+		CHECK_EQUAL("^$", buffer);
+	}
+
+	TEST_FIXTURE(FxStreamStrings, WriteStrings_WriteSingleItem_OnSingleItem)
+	{
+		strings_add(strs, "AAA");
+		stream_write_strings(strm, strs, "^", "<", ">", ",", "$");
+		CHECK_EQUAL("^<AAA>$", buffer);
+	}
+
+	TEST_FIXTURE(FxStreamStrings, WriteStrings_WriteMultipleItems_OnMultipleItems)
+	{
+		strings_add(strs, "AAA");
+		strings_add(strs, "BBB");
+		strings_add(strs, "CCC");
+		stream_write_strings(strm, strs, "^", "<", ">", ",", "$");
+		CHECK_EQUAL("^<AAA>,<BBB>,<CCC>$", buffer);
 	}
 
 }

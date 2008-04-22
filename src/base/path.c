@@ -117,6 +117,33 @@ char* path_directory(const char* path)
 
 
 /**
+ * Retrieve the fileame (filename.ext) portion of a path.
+ * \param   path      The path to split.
+ * \returns The filename portion of the path. Returns an empty string ("") if
+ *          the path is empty.
+ */
+char* path_filename(const char* path)
+{
+	char* ptr;
+	char* buffer = buffers_next();
+
+	assert(path);
+
+	ptr = strrchr(path, '/');
+	if (ptr)
+	{
+		strcpy(buffer, ptr + 1);
+	}
+	else
+	{
+		strcpy(buffer, path);
+	}
+
+	return buffer;
+}
+
+
+/**
  * Determine is a path is absolute (rooted at base of filesystem).
  * \param   path      The path to check.
  * \returns True if the path is absolute.

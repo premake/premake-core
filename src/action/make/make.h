@@ -8,6 +8,7 @@
 
 #include "engine/session.h"
 
+const char* make_get_project_makefile(Session sess, Project prj);
 const char* make_get_solution_makefile(Session sess, Solution sln);
 
 #endif

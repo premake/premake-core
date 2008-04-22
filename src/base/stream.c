@@ -131,6 +131,71 @@ void stream_set_newline(Stream strm, const char* newline)
 }
 
 
+/**
+ * Write a formatted list of strings.
+ * \param   strm    The stream to which to write.
+ * \param   strs    The list of strings to write.
+ * \param   start   The start string, always written first, even if there are no items in the list.
+ * \param   prefix  A prefix string, to be written before each item.
+ * \param   postfix A postfix string, to be written after each item.
+ * \param   infix   An infix strings, to write between items, after the
+ *                  previous postfix string and before the next prefix.
+ * \param   end     The end string, always written last, even if there are no items in the list.
+ * \returns OKAY if successful.
+ */
+int stream_write_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix, const char* end)
+{
+	int i, n, z;
+	
+	z = stream_write(strm, start);
+
+	n = strings_size(strs);
+	for (i = 0; i < n; ++i)
+	{
+		const char* value = strings_item(strs, i);
+		if (i > 0) z |= stream_write(strm, infix);
+		z |= stream_write(strm, prefix);
+		z |= stream_write(strm, value);
+		z |= stream_write(strm, postfix);
+	}
+
+	z |= stream_write(strm, end);
+	return z;
+}
+
+
+/**
+ * Write a formatted list of strings, followed by a newline.
+ * \param   strm    The stream to which to write.
+ * \param   strs    The list of strings to write.
+ * \param   start   The start string, always written first, even if there are no items in the list.
+ * \param   prefix  A prefix string, to be written before each item.
+ * \param   postfix A postfix string, to be written after each item.
+ * \param   infix   An infix strings, to write between items, after the
+ *                  previous postfix string and before the next prefix.
+ * \returns OKAY if successful.
+ */
+int stream_writeline_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix)
+{
+	int i, n, z;
+	
+	z = stream_write(strm, start);
+
+	n = strings_size(strs);
+	for (i = 0; i < n; ++i)
+	{
+		const char* value = strings_item(strs, i);
+		if (i > 0) z |= stream_write(strm, infix);
+		z |= stream_write(strm, prefix);
+		z |= stream_write(strm, value);
+		z |= stream_write(strm, postfix);
+	}
+
+	z |= stream_writeline(strm, "");
+	return z;
+}
+
+
 static int stream_vprintf(Stream strm, const char* value, va_list args)
 {
 	if (strm->buffer)

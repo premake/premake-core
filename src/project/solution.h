@@ -8,6 +8,7 @@
 
 #include "fields.h"
 #include "project.h"
+#include "base/strings.h"
 
 
 /**
@@ -34,10 +35,12 @@ void        solution_add_config_name(Solution sln, const char* config_name);
 void        solution_add_project(Solution sln, Project prj);
 const char* solution_get_base_dir(Solution sln);
 const char* solution_get_config_name(Solution sln, int index);
+Strings     solution_get_config_names(Solution sln);
 const char* solution_get_filename(Solution sln, const char* basename, const char* ext);
 const char* solution_get_location(Solution sln);
 const char* solution_get_name(Solution sln);
 Project     solution_get_project(Solution sln, int index);
+Strings     solution_get_project_names(Solution sln);
 const char* solution_get_value(Solution sln, enum SolutionField field);
 int         solution_num_configs(Solution sln);
 int         solution_num_projects(Solution sln);

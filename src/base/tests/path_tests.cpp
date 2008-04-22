@@ -71,6 +71,29 @@ SUITE(base)
 
 
 	/**************************************************************************
+	 * path_filename() tests
+	 **************************************************************************/
+
+	TEST(PathFileName_ReturnsAll_OnNoDirectory)
+	{
+		char* result = path_filename("filename.ext");
+		CHECK_EQUAL("filename.ext", result);
+	}
+
+	TEST(PathFileName_ReturnsEmptyString_OnNoName)
+	{
+		char* result = path_filename("dir0/dir1/");
+		CHECK_EQUAL("", result);
+	}
+
+	TEST(PathFileName_ReturnsOnlyName_OnFullPath)
+	{
+		char* result = path_filename("dir0/dir1/filename.ext");
+		CHECK_EQUAL("filename.ext", result);
+	}
+
+
+	/**************************************************************************
 	 * path_is_absolute() tests
 	 **************************************************************************/
 

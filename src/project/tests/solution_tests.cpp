@@ -9,7 +9,9 @@
 extern "C" {
 #include "project/solution.h"
 #include "project/project.h"
+#include "base/strings.h"
 }
+
 
 struct FxSolution
 {
@@ -96,6 +98,19 @@ SUITE(project)
 		CHECK_EQUAL("Debug", result);
 	}
 
+	TEST_FIXTURE(FxSolution, GetConfigs_ReturnsEmptyList_OnStartup)
+	{
+		Strings result = solution_get_config_names(sln);
+		CHECK(strings_size(result) == 0);
+	}
+
+	TEST_FIXTURE(FxSolution, GetConfigs_ReturnsList_OnItemsAdded)
+	{
+		solution_add_config_name(sln, "Debug");
+		Strings result = solution_get_config_names(sln);
+		CHECK_EQUAL("Debug", strings_item(result, 0));
+	}
+
 
 	/**********************************************************************
 	 * Location tests
@@ -161,5 +176,15 @@ SUITE(project)
 		solution_add_project(sln, prj);
 		Project result = solution_get_project(sln, 0);
 		CHECK(prj == result);
+	}
+
+	TEST_FIXTURE(FxSolution, GetProjectNames_ReturnsNames)
+	{
+		Project prj = project_create();
+		project_set_name(prj, "MyProject");
+		solution_add_project(sln, prj);
+
+		Strings result = solution_get_project_names(sln);
+		CHECK_EQUAL("MyProject", strings_item(result, 0));
 	}
 }

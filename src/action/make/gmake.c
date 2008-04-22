@@ -14,7 +14,12 @@
 static SessionSolutionCallback GmakeSolutionCallbacks[] = 
 {
 	make_solution_create,
-	make_solution_signature,
+	gmake_solution_signature,
+	gmake_solution_default_config,
+	gmake_solution_phony_rule,
+	gmake_solution_all_rule,
+	gmake_solution_projects,
+	gmake_solution_clean_rule,
 	NULL
 };
 

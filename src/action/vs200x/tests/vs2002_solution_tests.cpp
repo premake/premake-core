@@ -21,7 +21,6 @@ SUITE(action)
 
 	TEST_FIXTURE(FxVs200x, Vs2002_Signature_IsCorrect)
 	{
-		session_set_action(sess, "vs2002");
 		vs2002_solution_signature(sess, sln, strm);
 		CHECK_EQUAL(
 			"Microsoft Visual Studio Solution File, Format Version 7.00\r\n",

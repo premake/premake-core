@@ -26,9 +26,10 @@ struct FieldInfo SolutionFieldInfo[] =
 
 DEFINE_CLASS(Solution)
 {
-	Fields fields;
-	Array configs;
-	Array projects;
+	Fields  fields;
+	Strings configs;
+	Array   projects;
+	Strings project_names;
 };
 
 
@@ -40,8 +41,9 @@ Solution solution_create()
 {
 	Solution sln = ALLOC_CLASS(Solution);
 	sln->fields = fields_create(SolutionFieldInfo);
-	sln->configs  = array_create();
+	sln->configs  = strings_create();
 	sln->projects = array_create();
+	sln->project_names = NULL;
 	return sln;
 }
 
@@ -56,7 +58,7 @@ void solution_destroy(Solution sln)
 
 	assert(sln);
 	fields_destroy(sln->fields);
-	array_destroy(sln->configs);
+	strings_destroy(sln->configs);
 
 	n = solution_num_projects(sln);
 	for (i = 0; i < n; ++i)
@@ -65,6 +67,11 @@ void solution_destroy(Solution sln)
 		project_destroy(prj);
 	}
 	array_destroy(sln->projects);
+
+	if (sln->project_names != NULL)
+	{
+		strings_destroy(sln->project_names);
+	}
 
 	free(sln);
 }
@@ -79,7 +86,7 @@ void solution_add_config_name(Solution sln, const char* config_name)
 {
 	assert(sln);
 	assert(config_name);
-	array_add(sln->configs, (void*)config_name);
+	strings_add(sln->configs, config_name);
 }
 
 
@@ -118,8 +125,20 @@ const char* solution_get_config_name(Solution sln, int index)
 {
 	const char* name;
 	assert(sln);
-	name = (const char*)array_item(sln->configs, index);
+	name = strings_item(sln->configs, index);
 	return name;
+}
+
+
+/**
+ * Get the list of configuration names.
+ * \param   sln      The solution to query.
+ * \returns The configuration name at the given index.
+ */
+Strings solution_get_config_names(Solution sln)
+{
+	assert(sln);
+	return sln->configs;
 }
 
 
@@ -198,6 +217,30 @@ Project solution_get_project(Solution sln, int index)
 
 
 /**
+ * Retrieve the names of all projects contained by the solution.
+ * \param   sln      The solution to query.
+ * \returns A list of project names.
+ */
+Strings solution_get_project_names(Solution sln)
+{
+	assert(sln);
+	if (sln->project_names == NULL)
+	{
+		int i, n;
+		sln->project_names = strings_create();
+		n = solution_num_projects(sln);
+		for (i = 0; i < n; ++i)
+		{
+			Project prj = solution_get_project(sln, i);
+			const char* name = project_get_name(prj);
+			strings_add(sln->project_names, name);
+		}
+	}
+	return sln->project_names;
+}
+
+
+/**
  * Retrieve a string (single value) fields from a solution, using the field indices.
  * \param   sln      The solution object to query.
  * \param   field    The index of the field to query.
@@ -218,7 +261,7 @@ const char* solution_get_value(Solution sln, enum SolutionField field)
 int solution_num_configs(Solution sln)
 {
 	assert(sln);
-	return array_size(sln->configs);
+	return strings_size(sln->configs);
 }
 
 

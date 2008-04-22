@@ -21,7 +21,6 @@ SUITE(action)
 
 	TEST_FIXTURE(FxVs200x, Vs2005_Signature_IsCorrect)
 	{
-		session_set_action(sess, "vs2005");
 		vs2005_solution_signature(sess, sln, strm);
 		CHECK_EQUAL(
 			"\357\273\277\r\n"
