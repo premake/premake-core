@@ -11,7 +11,7 @@
 
 
 /** The VS2003 solution writing process, for session_enumerate_objects() */
-static SessionSolutionCallback Vs2003SolutionCallbacks[] = 
+static SessionSolutionCallback SolutionCallbacks[] = 
 {
 	vs2002_solution_create,
 	vs2003_solution_signature,
@@ -23,7 +23,7 @@ static SessionSolutionCallback Vs2003SolutionCallbacks[] =
 };
 
 /** The VS2003 project writing process, for session_enumerate_objects() */
-static SessionProjectCallback Vs2003ProjectCallbacks[] =
+static SessionProjectCallback ProjectCallbacks[] =
 {
 	NULL
 };
@@ -37,5 +37,5 @@ static SessionProjectCallback Vs2003ProjectCallbacks[] =
 int vs2003_action(Session sess)
 {
 	stream_writeline(Console, "Generating project files for Visual Studio 2003...");
-	return session_enumerate_objects(sess, Vs2003SolutionCallbacks, Vs2003ProjectCallbacks);
+	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks);
 }

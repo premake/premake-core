@@ -11,7 +11,7 @@
 
 
 /** The GNU make solution writing process, for session_enumerate_objects() */
-static SessionSolutionCallback GmakeSolutionCallbacks[] = 
+static SessionSolutionCallback SolutionCallbacks[] = 
 {
 	make_solution_create,
 	gmake_solution_signature,
@@ -24,7 +24,7 @@ static SessionSolutionCallback GmakeSolutionCallbacks[] =
 };
 
 /** The GNU make project writing process, for session_enumerate_objects() */
-static SessionProjectCallback GmakeProjectCallbacks[] =
+static SessionProjectCallback ProjectCallbacks[] =
 {
 	NULL
 };
@@ -38,6 +38,6 @@ static SessionProjectCallback GmakeProjectCallbacks[] =
 int gmake_action(Session sess)
 {
 	stream_writeline(Console, "Generating project files for GNU make...");
-	return session_enumerate_objects(sess, GmakeSolutionCallbacks, GmakeProjectCallbacks);
+	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks);
 }
 

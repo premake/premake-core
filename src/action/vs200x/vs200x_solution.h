@@ -24,4 +24,6 @@ int vs2005_solution_project_platforms(Session sess, Solution sln, Stream strm);
 int vs2005_solution_properties(Session sess, Solution sln, Stream strm);
 int vs2005_solution_signature(Session sess, Solution sln, Stream strm);
 
+int vs2008_solution_signature(Session sess, Solution sln, Stream strm);
+
 #endif

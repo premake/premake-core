@@ -5,12 +5,10 @@
  */
 
 #include "premake.h"
-#include "testing/testing.h"
+#include "action/tests/action_tests.h"
 extern "C" {
 #include "action/vs200x/vs200x_solution.h"
 }
-
-#include "vs200x_tests.h"
 
 
 SUITE(action)
@@ -19,7 +17,7 @@ SUITE(action)
 	 * Signature tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxVs200x, Vs2005_Signature_IsCorrect)
+	TEST_FIXTURE(FxAction, Vs2005_Signature_IsCorrect)
 	{
 		vs2005_solution_signature(sess, sln, strm);
 		CHECK_EQUAL(
@@ -34,7 +32,7 @@ SUITE(action)
 	 * Solution Configuration Platforms tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxVs200x, Platforms_IsCorrect)
+	TEST_FIXTURE(FxAction, Platforms_IsCorrect)
 	{
 		vs2005_solution_platforms(sess, sln, strm);
 		CHECK_EQUAL(
@@ -51,7 +49,7 @@ SUITE(action)
 	 * Project Configuration Platforms tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxVs200x, ProjectPlatforms_IsCorrect)
+	TEST_FIXTURE(FxAction, ProjectPlatforms_IsCorrect)
 	{
 		vs2005_solution_project_platforms(sess, sln, strm);
 		CHECK_EQUAL(
@@ -69,7 +67,7 @@ SUITE(action)
 	 * Solution Project tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxVs200x, Properties_IsCorrect)
+	TEST_FIXTURE(FxAction, Properties_IsCorrect)
 	{
 		vs2005_solution_properties(sess, sln, strm);
 		CHECK_EQUAL(
