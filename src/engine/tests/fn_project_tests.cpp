@@ -74,7 +74,7 @@ SUITE(engine)
 	TEST_FIXTURE(FnProject, Project_Fails_OnNoActiveSolution)
 	{
 		const char* result = session_run_string(sess, "project('MyProject')");
-		CHECK_EQUAL("[string \"project('MyProject')\"]:1: no active solution", result);
+		CHECK_EQUAL("no active solution", result);
 	}
 
 	TEST_FIXTURE(FnProject2, Project_ReturnsNewObject_OnNewName)

@@ -18,12 +18,21 @@ enum FieldKind
 
 
 /**
+ * Field validation function signature.
+ * \param   value   The value to validate.
+ * \returns True if the value is considered valid.
+ */
+typedef int (*FieldValidator)(const char* value);
+
+
+/**
  * Metadata about a project object field.
  */
 struct FieldInfo
 {
-	const char* name;      /**< The name of the field. */
-	enum FieldKind kind;   /**< StringField or ListField */
+	const char*    name;         /**< The name of the field. */
+	enum FieldKind kind;         /**< StringField or ListField */
+	FieldValidator validator;    /**< The field validation function */
 };
 
 

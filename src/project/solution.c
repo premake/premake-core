@@ -17,10 +17,10 @@
 
 struct FieldInfo SolutionFieldInfo[] =
 {
-	{ "basedir",    StringField },
-	{ "location",   StringField },
-	{ "name",       StringField },
-	{  0,           0           }
+	{ "basedir",    StringField,  NULL },
+	{ "location",   StringField,  NULL },
+	{ "name",       StringField,  NULL },
+	{  0,           0,            NULL }
 };
 
 

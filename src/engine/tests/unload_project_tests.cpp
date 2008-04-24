@@ -27,6 +27,7 @@ struct FxUnloadProject
 			"solution('MySolution');"
 			"prj = project('MyProject');"
 			"  guid '0C202E43-B9AF-4972-822B-5A42F0BF008C';"
+			"  language 'c++';"
 			"return prj");
 	}
 
@@ -59,6 +60,13 @@ SUITE(unload)
 		unload_project(sess, L, prj);
 		const char* result = project_get_guid(prj);
 		CHECK_EQUAL("0C202E43-B9AF-4972-822B-5A42F0BF008C", result);
+	}
+
+	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsLanguage)
+	{
+		unload_project(sess, L, prj);
+		const char* result = project_get_language(prj);
+		CHECK_EQUAL("c++", result);
 	}
 }
 

@@ -48,6 +48,10 @@ void        engine_configure_project_object(lua_State* L, struct FieldInfo* fiel
 lua_State*  session_get_lua_state(Session sess);
 
 
+/* Generic project object field getter/setter API */
+int accessor_register_all(lua_State* L);
+
+
 /* Project object unloading API. The unload functions "interface" provides an
  * opportunity to mock the actual implementation for automated testing */
 struct UnloadFuncs
@@ -65,11 +69,9 @@ int  unload_project(Session sess, lua_State* L, Project prj);
 int  fn_dofile(lua_State* L);
 int  fn_error(lua_State* L);
 int  fn_getcwd(lua_State* L);
-int  fn_guid(lua_State* L);
 int  fn_include(lua_State* L);
 int  fn_project(lua_State* L);
 int  fn_solution(lua_State* L);
-
 
 #endif
 

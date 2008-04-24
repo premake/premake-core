@@ -18,8 +18,8 @@ static HostExecutionStep Steps[] =
 	host_parse_argv,        /* process the command line arguments */
 	host_run_script,        /* run the main script (i.e. premake4.lua) */
 	session_unload,         /* unload the objects built by the script into more accessible C data structures */
+	session_validate,       /* make sure that all required objects and values have been defined by the script */
 	host_show_help,         /* show help and version messages as appropriate; may end processing here */
-	host_validate_session,  /* make sure script defined required project objects */
 	host_run_action,        /* run the action specified on the command line */
 	NULL                    /* all done! */
 };

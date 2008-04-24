@@ -85,7 +85,7 @@ SUITE(project)
 
 
 	/**********************************************************************
-	 * GUID testrs
+	 * GUID tests
 	 **********************************************************************/
 
 	TEST_FIXTURE(FxProject, GetGuid_ReturnsNull_OnStartup)
@@ -99,6 +99,24 @@ SUITE(project)
 		project_set_guid(prj, "AE2461B7-236F-4278-81D3-F0D476F9A4C0");
 		const char* result = project_get_guid(prj);
 		CHECK_EQUAL("AE2461B7-236F-4278-81D3-F0D476F9A4C0", result);
+	}
+
+
+	/**********************************************************************
+	 * Language tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxProject, GetLanguage_ReturnsNull_OnStartup)
+	{
+		const char* result = project_get_language(prj);
+		CHECK(result == NULL);
+	}
+
+	TEST_FIXTURE(FxProject, SetLanguage_CanRoundtrip)
+	{
+		project_set_language(prj, "c++");
+		const char* result = project_get_language(prj);
+		CHECK_EQUAL("c++", result);
 	}
 
 

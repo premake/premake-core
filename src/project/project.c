@@ -8,17 +8,20 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "project/project.h"
+#include "base/cstr.h"
+#include "base/guid.h"
 #include "base/path.h"
 #include "base/strings.h"
 
 
 struct FieldInfo ProjectFieldInfo[] =
 {
-	{ "basedir",    StringField },
-	{ "guid",       StringField },
-	{ "location",   StringField },
-	{ "name",       StringField },
-	{  0,           0           }
+	{ "basedir",    StringField,  NULL                      },
+	{ "guid",       StringField,  guid_is_valid             },
+	{ "language",   StringField,  project_is_valid_language },
+	{ "location",   StringField,  NULL                      },
+	{ "name",       StringField,  NULL                      },
+	{  0,           0,            NULL                      }
 };
 
 
@@ -112,14 +115,13 @@ const char* project_get_guid(Project prj)
 
 
 /**
- * Retrieve the programming language specified for a project.
- * \param   prj    The project to query.
- * \returns The programming language specified for the project.
+ * Get the programming language used by the project.
+ * \param   prj     The project object to query.
+ * \returns The language used by the project, or NULL if no language has been set.
  */
 const char* project_get_language(Project prj)
 {
-	prj = 0;
-	return "c++";
+	return project_get_value(prj, ProjectLanguage);
 }
 
 
@@ -159,6 +161,20 @@ const char* project_get_value(Project prj, enum ProjectField field)
 
 
 /**
+ * Returns true if the specified language is recognized. Current valid language strings
+ * are 'c', 'c++', and 'c#'.
+ * \param   language   The language string.
+ * \returns True if the language string is recognized.
+ */
+int project_is_valid_language(const char* language)
+{
+	return (cstr_eq(language, "c") ||
+	        cstr_eq(language, "c++") ||
+			cstr_eq(language, "c#"));
+}
+
+
+/**
  * Set the base directory of the project.
  * \param   prj      The project object to modify.
  * \param   base_dir The new base directory.
@@ -178,6 +194,17 @@ void project_set_base_dir(Project prj, const char* base_dir)
 void project_set_guid(Project prj, const char* guid)
 {
 	project_set_value(prj, ProjectGuid, guid);
+}
+
+
+/**
+ * Set the programming language used by a project.
+ * \param   prj        The project to modify.
+ * \param   language   The programming language used by the project.
+ */
+void project_set_language(Project prj, const char* language)
+{
+	project_set_value(prj, ProjectLanguage, language);
 }
 
 

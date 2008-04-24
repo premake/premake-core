@@ -11,6 +11,7 @@
 #include <string.h>
 #include "premake.h"
 #include "base/array.h"
+#include "base/cstr.h"
 #include "base/error.h"
 #include "internals.h"
 
@@ -18,7 +19,6 @@
 /** Functions to add to the global namespace */
 static const luaL_Reg funcs[] = {
 	{ "dofile",         fn_dofile },
-	{ "guid",           fn_guid },
 	{ "include",        fn_include },
 	{ "project",        fn_project },
 	{ "solution",       fn_solution },
@@ -58,6 +58,9 @@ Session session_create()
 
 	/* install all the standard libraries */
 	luaL_openlibs(L);
+
+	/* register the project object accessor functions */
+	accessor_register_all(L);
 
 	/* register the Premake non-configuration related functions */
 	luaL_register(L, "_G", funcs);
@@ -298,9 +301,17 @@ const char* session_run_file(Session sess, const char* filename)
  */
 const char* session_run_string(Session sess, const char* script)
 {
+	const char* result;
+
 	assert(sess);
 	assert(script);
-	return session_run(sess->L, script, 0);
+	
+	result = session_run(sess->L, script, 0);
+	if (cstr_starts_with(result, "[string "))
+	{
+		result = strstr(result, ":1:") + 4;
+	}
+	return result;
 }
 
 
@@ -340,7 +351,7 @@ void session_set_active_stream(Session sess, Stream strm)
 /**
  * Copy project information out of the scripting environment and into C objects that
  * can be more easily manipulated by the action code.
- * \param sess   The session object which contains the scripted project objects.
+ * \param   sess   The session object which contains the scripted project objects.
  * \returns OKAY if successful.
  */
 int session_unload(Session sess)
@@ -354,4 +365,49 @@ int session_unload(Session sess)
 	funcs.unload_project  = unload_project;
 	result = unload_all(sess, sess->L, &funcs);
 	return result;
+}
+
+
+/**
+ * Make sure that all required objects and values have been defined by the
+ * project script.
+ * \param   sess    The session to validate.
+ * \returns OKAY if the session is valid.
+ */
+int session_validate(Session sess)
+{
+	int si, sn;
+	
+	assert(sess);
+
+	sn = session_num_solutions(sess);
+	for (si = 0; si < sn; ++si)
+	{
+		int pi, pn;
+		Solution sln = session_get_solution(sess, si);
+
+		/* every solution must have at least one project */
+		pn = solution_num_projects(sln);
+		if (pn == 0)
+		{
+			error_set("no projects defined for solution '%s'", solution_get_name(sln));
+			return !OKAY;
+		}
+
+		for (pi = 0; pi < pn; ++pi)
+		{
+			const char* value;
+			Project prj = solution_get_project(sln, pi);
+
+			/* every project must have a language defined */
+			value = project_get_language(prj);
+			if (value == NULL)
+			{
+				error_set("no language defined for project '%s'", project_get_name(prj));
+				return !OKAY;
+			}
+		}
+	}
+
+	return OKAY;
 }

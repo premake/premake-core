@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "action/action.h"
+#include "vs200x.h"
 #include "vs200x_solution.h"
 
 
@@ -36,6 +37,12 @@ static SessionProjectCallback ProjectCallbacks[] =
  */
 int vs2005_action(Session sess)
 {
+	/* make sure I can support all of the features used in the session */
+	if (vs200x_validate_session(sess) != OKAY)
+	{
+		return !OKAY;
+	}
+
 	stream_writeline(Console, "Generating project files for Visual Studio 2005...");
 	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks);
 }

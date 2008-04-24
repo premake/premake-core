@@ -7,7 +7,9 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "action/action.h"
+#include "vs200x.h"
 #include "vs200x_solution.h"
+#include "vs200x_project.h"
 
 
 /** The VS2002 solution writing process, for session_enumerate_objects() */
@@ -26,6 +28,7 @@ static SessionSolutionCallback SolutionCallbacks[] =
 /** The VS2002 project writing process, for session_enumerate_objects() */
 static SessionProjectCallback ProjectCallbacks[] =
 {
+	vs2002_project_create,
 	NULL
 };
 
@@ -37,6 +40,12 @@ static SessionProjectCallback ProjectCallbacks[] =
  */
 int vs2002_action(Session sess)
 {
+	/* make sure I can support all of the features used in the session */
+	if (vs200x_validate_session(sess) != OKAY)
+	{
+		return !OKAY;
+	}
+
 	stream_writeline(Console, "Generating project files for Visual Studio 2002...");
 	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks);
 }

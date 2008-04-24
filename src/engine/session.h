@@ -68,5 +68,6 @@ const char* session_run_string(Session sess, const char* script);
 void        session_set_action(Session sess, const char* action);
 void        session_set_active_stream(Session sess, Stream strm);
 int         session_unload(Session sess);
+int         session_validate(Session sess);
 
 #endif

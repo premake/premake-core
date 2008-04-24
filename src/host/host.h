@@ -31,6 +31,5 @@ int  host_run_steps(Session sess, HostExecutionStep* steps);
 void host_set_argv(const char** argv);
 int  host_show_help(Session sess);
 int  host_tests(void);
-int  host_validate_session(Session sess);
 
 #endif

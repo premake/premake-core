@@ -41,6 +41,29 @@ int vs2002_solution_configuration(Session sess, Solution sln, Stream strm)
 
 
 /**
+ * Create a new output stream for a solution, and make it active for subsequent writes.
+ * \param   sess    The execution session context.
+ * \param   sln     The current solution.
+ * \param   strm    The currently active stream; set with session_set_active_stream().
+ * \returns OKAY if successful.
+ */
+int vs2002_solution_create(Session sess, Solution sln, Stream strm)
+{
+	/* create the solution file */
+	const char* filename = solution_get_filename(sln, NULL, ".sln");
+	strm = stream_create_file(filename);
+	if (!strm)
+	{
+		return !OKAY;
+	}
+
+	/* make the stream active for the functions that come after */
+	session_set_active_stream(sess, strm);
+	return OKAY;
+}
+
+
+/**
  * Create the Visual Studio 2002 project dependencies block.
  * \param   sess    The execution session context.
  * \param   sln     The current solution.
@@ -76,29 +99,6 @@ int vs2002_solution_extensibility(Session sess, Solution sln, Stream strm)
 	z |= stream_writeline(strm, "\tEndGlobalSection");
 	z |= stream_writeline(strm, "EndGlobal");
 	return z;
-}
-
-
-/**
- * Create a new output stream for a solution, and make it active for subsequent writes.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
- */
-int vs2002_solution_create(Session sess, Solution sln, Stream strm)
-{
-	/* create the solution file */
-	const char* filename = solution_get_filename(sln, NULL, ".sln");
-	strm = stream_create_file(filename);
-	if (!strm)
-	{
-		return !OKAY;
-	}
-
-	/* make the stream active for the functions that come after */
-	session_set_active_stream(sess, strm);
-	return OKAY;
 }
 
 
@@ -158,7 +158,7 @@ int vs2002_solution_projects(Session sess, Solution sln, Stream strm)
 		const char* prj_name  = project_get_name(prj);
 		const char* prj_id    = project_get_guid(prj);
 		const char* prj_lang  = project_get_language(prj);
-		const char* prj_ext   = vs200x_project_extension(prj);
+		const char* prj_ext   = vs200x_project_file_extension(prj);
 		const char* prj_file  = project_get_filename(prj, prj_name, prj_ext);
 		const char* tool_id   = vs200x_tool_guid(prj_lang);
 

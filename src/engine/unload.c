@@ -127,27 +127,22 @@ int unload_solution(Session sess, lua_State* L, Solution sln)
 int unload_project(Session sess, lua_State* L, Project prj)
 {
 	const char* value;
+	int i;
 
-	assert(sess);
+	UNUSED(sess);
 	assert(L);
 	assert(prj);
 
-	sess = 0;  /* unused */
-
-	lua_getfield(L, -1, "name");
-	value = lua_tostring(L, -1);
-	project_set_name(prj, value);
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "basedir");
-	value = lua_tostring(L, -1);
-	project_set_base_dir(prj, value);
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "guid");
-	value = lua_tostring(L, -1);
-	project_set_guid(prj, value);
-	lua_pop(L, 1);
+	for (i = 0; i < NumProjectFields; ++i)
+	{
+		lua_getfield(L, -1, ProjectFieldInfo[i].name);
+		value = lua_tostring(L, -1);
+		if (value != NULL)
+		{
+			project_set_value(prj, i, value);
+		}
+		lua_pop(L, 1);
+	}
 
 	return OKAY;
 }

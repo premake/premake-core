@@ -56,6 +56,10 @@ struct FxMake
 
 SUITE(action)
 {
+	/**********************************************************************
+	 * Makefile naming tests
+	 **********************************************************************/
+
 	TEST_FIXTURE(FxMake, GetSolutionMakefile_ReturnsMakefile_OnUniqueLocation)
 	{
 		solution_set_location(sln1, "MySolution");
@@ -89,5 +93,17 @@ SUITE(action)
 		project_set_location(prj2, "MyProject");
 		const char* result = make_get_project_makefile(sess, prj1);
 		CHECK_EQUAL("./MyProject/MyProject1.make", result);
+	}
+
+
+	/**********************************************************************
+	 * Session validation tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxMake, MakeValidation_ReturnsNotOkay_OnUnknownLanguage)
+	{
+		project_set_language(prj1, "nonesuch");
+		int result = make_validate_session(sess);
+		CHECK(result != OKAY);
 	}
 }

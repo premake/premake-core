@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "action/action.h"
+#include "make.h"
 #include "make_solution.h"
 
 
@@ -37,6 +38,12 @@ static SessionProjectCallback ProjectCallbacks[] =
  */
 int gmake_action(Session sess)
 {
+	/* make sure I can support all of the features used in the session */
+	if (make_validate_session(sess) != OKAY)
+	{
+		return !OKAY;
+	}
+
 	stream_writeline(Console, "Generating project files for GNU make...");
 	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks);
 }

@@ -8,6 +8,6 @@
 
 #include "engine/session.h"
 
-const char* vs200x_project_extension(Project prj);
+int vs2002_project_create(Session sess, Project prj, Stream strm);
 
 #endif

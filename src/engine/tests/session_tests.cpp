@@ -8,6 +8,7 @@
 #include "testing/testing.h"
 extern "C" {
 #include "engine/session.h"
+#include "base/error.h"
 }
 
 
@@ -34,6 +35,8 @@ static int test_solution_fail(Session sess, Solution sln, Stream strm)
 struct FxSession
 {
 	Session sess;
+	Solution sln;
+	Project prj;
 
 	FxSession()
 	{
@@ -45,13 +48,23 @@ struct FxSession
 	~FxSession()
 	{
 		session_destroy(sess);
+		error_clear();
 	}
 
 	Solution AddSolution()
 	{
-		Solution sln = solution_create();
+		sln = solution_create();
 		session_add_solution(sess, sln);
+		solution_set_name(sln, "MySolution");
 		return sln;
+	}
+
+	Project AddProject()
+	{
+		prj = project_create();
+		solution_add_project(sln, prj);
+		project_set_name(prj, "MyProject");
+		return prj;
 	}
 };
 
@@ -205,6 +218,43 @@ SUITE(session)
 	{
 		int result = session_unload(sess);
 		CHECK(result == OKAY);
+	}
+
+
+	/**********************************************************************
+	 * Session validation tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSession, Validate_ReturnsOkay_OnNoSolutions)
+	{
+		int result = session_validate(sess);
+		CHECK(result == OKAY);
+	}
+
+	TEST_FIXTURE(FxSession, Validate_ReturnsOkay_OnAllsWell)
+	{
+		AddSolution();
+		AddProject();
+		project_set_language(prj, "c++");
+		int result = session_validate(sess);
+		CHECK(result == OKAY);
+	}
+
+	TEST_FIXTURE(FxSession, Validate_NotOkay_OnEmptySolution)
+	{
+		AddSolution();
+		int result = session_validate(sess);
+		CHECK(result != OKAY);
+		CHECK_EQUAL("no projects defined for solution 'MySolution'", error_get());
+	}
+
+	TEST_FIXTURE(FxSession, Validate_NotOkay_OnNullLanguage)
+	{
+		AddSolution();
+		AddProject();
+		int result = session_validate(sess);
+		CHECK(result != OKAY);
+		CHECK_EQUAL("no language defined for project 'MyProject'", error_get());
 	}
 }
 

@@ -65,4 +65,34 @@ SUITE(cstr)
 	{
 		CHECK(!cstr_eq("something", NULL));
 	}
+
+
+	/**************************************************************************
+	 * cstr_starts_with() tests
+	 **************************************************************************/
+
+	TEST(CStrStartsWith_ReturnsTrue_OnMatch)
+	{
+		CHECK(cstr_starts_with("Abcdef", "Abc"));
+	}
+
+	TEST(CStrStartsWith_ReturnsFalse_OnMismatch)
+	{
+		CHECK(!cstr_starts_with("Abcdef", "ghi"));
+	}
+
+	TEST(CStrStartsWith_ReturnsFalse_OnLongerNeedle)
+	{
+		CHECK(!cstr_starts_with("Abc", "Abcdef"));
+	}
+
+	TEST(CStrStartsWith_ReturnsFalse_OnNullHaystack)
+	{
+		CHECK(!cstr_starts_with(NULL, "ghi"));
+	}
+
+	TEST(CStrStartsWith_ReturnsFalse_OnNullNeedle)
+	{
+		CHECK(!cstr_starts_with("Abc", NULL));
+	}
 }

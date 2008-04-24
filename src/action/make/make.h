@@ -10,5 +10,6 @@
 
 const char* make_get_project_makefile(Session sess, Project prj);
 const char* make_get_solution_makefile(Session sess, Solution sln);
+int         make_validate_session(Session sess);
 
 #endif

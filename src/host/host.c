@@ -157,22 +157,3 @@ int host_show_help(Session sess)
 
 	return OKAY;
 }
-
-
-/**
- * Make sure that the session contains a valid set of project objects: at least
- * one solution, each solution contains at least one project, etc.
- * \param   sess    The current execution session context.
- * \returns OKAY if the session is valid.
- */
-int host_validate_session(Session sess)
-{
-	assert(sess);
-	if (session_num_solutions(sess) == 0)
-	{
-		error_set("no solutions defined");
-		return !OKAY;
-	}
-
-	return OKAY;
-}

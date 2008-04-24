@@ -45,3 +45,19 @@ int cstr_eq(const char* str, const char* expected)
 	}
 	return 0;
 }
+
+
+/**
+ * Determines if the given C string starts with a particular sequence.
+ * \param   str        The string to test.
+ * \param   expected   The sequence for which to look.
+ * \returns True if the string starts with the sequence, false otherwise.
+ */
+int cstr_starts_with(const char* str, const char* expected)
+{
+	if (str != NULL && expected != NULL)
+	{
+		return (strncmp(str, expected, strlen(expected)) == 0);
+	}
+	return 0;
+}

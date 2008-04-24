@@ -41,6 +41,26 @@ int vs200x_get_target_version(Session sess)
 
 
 /**
+ * Return the appropriate file extension for a particular project.
+ * \param   prj    The project object.
+ * \returns The appropriate project file extension, based on the project settings.
+ */
+const char* vs200x_project_file_extension(Project prj)
+{
+	const char* language = project_get_language(prj);
+	if (cstr_eq(language, "c") || cstr_eq(language, "c++"))
+	{
+		return ".vcproj";
+	}
+	else
+	{
+		error_set("unsupported language '%s'", language); 
+		return NULL;
+	}
+}
+
+
+/**
  * Returns the Visual Studio GUID for a particular project type.
  * \param   language   The programming language used in the project.
  * \returns The GUID corresponding the programming language.
@@ -60,4 +80,41 @@ const char* vs200x_tool_guid(const char* language)
 		error_set("unsupported language '%s'", language); 
 		return NULL;
 	}
+}
+
+
+/**
+ * Make sure all of the features described in the sesson are supported
+ * by the Visual Studio actions.
+ * \param   sess    The session to validate.
+ * \returns OKAY if the session can be supported.
+ */
+int vs200x_validate_session(Session sess)
+{
+	int si, sn;
+	assert(sess);
+
+	sn = session_num_solutions(sess);
+	for (si = 0; si < sn; ++si)
+	{
+		int pi, pn;
+		Solution sln = session_get_solution(sess, si);
+
+		pn = solution_num_projects(sln);
+		for (pi = 0; pi < pn; ++pi)
+		{
+			const char* value;
+			Project prj = solution_get_project(sln, pi);
+
+			/* check for a recognized language */
+			value = project_get_language(prj);
+			if (!cstr_eq(value, "c") && !cstr_eq(value, "c++"))
+			{
+				error_set("%s is not currently supported for Visual Studio", value);
+				return !OKAY;
+			}
+		}
+	}
+
+	return OKAY;
 }
