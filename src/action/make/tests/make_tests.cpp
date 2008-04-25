@@ -9,6 +9,7 @@
 extern "C" {
 #include "engine/engine.h"
 #include "action/make/make.h"
+#include "base/error.h"
 }
 
 
@@ -32,6 +33,7 @@ struct FxMake
 	~FxMake()
 	{
 		session_destroy(sess);
+		error_clear();
 	}
 
 	Solution AddSolution(const char* name)
