@@ -28,6 +28,7 @@ struct FieldInfo ProjectFieldInfo[] =
 DEFINE_CLASS(Project)
 {
 	Fields fields;
+	const char* config_filter;
 };
 
 
@@ -39,6 +40,7 @@ Project project_create()
 {
 	Project prj = ALLOC_CLASS(Project);
 	prj->fields = fields_create(ProjectFieldInfo);
+	prj->config_filter = NULL;
 	return prj;
 }
 
@@ -64,6 +66,19 @@ void project_destroy(Project prj)
 const char* project_get_base_dir(Project prj)
 {
 	return project_get_value(prj, ProjectBaseDirectory);
+}
+
+
+/**
+ * Retrieve the current configuration filter. All subsequent requests for configuration
+ * values will return settings from this configuration only.
+ * \param   prj      The project object to query.
+ * \returns The current configuration filter, or NULL if no filter has been set.
+ */
+const char* project_get_configuration_filter(Project prj)
+{
+	assert(prj);
+	return prj->config_filter;
 }
 
 
@@ -182,6 +197,19 @@ int project_is_valid_language(const char* language)
 void project_set_base_dir(Project prj, const char* base_dir)
 {
 	project_set_value(prj, ProjectBaseDirectory, base_dir);
+}
+
+
+/**
+ * Set the current configuration filter. All subsequent requests for configuration
+ * values will return settings from this configuration only.
+ * \param   prj      The project object to query.
+ * \param   cfg_name The name of the configuration on which to filter.
+ */
+void project_set_configuration_filter(Project prj, const char* cfg_name)
+{
+	assert(prj);
+	prj->config_filter = cfg_name;
 }
 
 

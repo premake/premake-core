@@ -14,32 +14,6 @@ extern "C" {
 SUITE(action)
 {
 	/**********************************************************************
-	 * Version identification tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxAction, GetTargetVersion_Returns2002_OnVs2002)
-	{
-		session_set_action(sess, "vs2002");
-		int result = vs200x_get_target_version(sess);
-		CHECK(result == 2002);
-	}
-
-	TEST_FIXTURE(FxAction, GetTargetVersion_Returns2003_OnVs2003)
-	{
-		session_set_action(sess, "vs2003");
-		int result = vs200x_get_target_version(sess);
-		CHECK(result == 2003);
-	}
-
-	TEST_FIXTURE(FxAction, GetTargetVersion_Returns2005_OnVs2005)
-	{
-		session_set_action(sess, "vs2005");
-		int result = vs200x_get_target_version(sess);
-		CHECK(result == 2005);
-	}
-
-
-	/**********************************************************************
 	 * Language GUID tests
 	 **********************************************************************/
 

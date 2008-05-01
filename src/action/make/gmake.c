@@ -31,6 +31,13 @@ static SessionProjectCallback ProjectCallbacks[] =
 };
 
 
+/** The GNU make configuration writing process, for session_enumerate_configurations() */
+static SessionProjectCallback ConfigCallbacks[] =
+{
+	NULL
+};
+
+
 /**
  * The GNU make action handler.
  * \param   sess   The active session object.
@@ -45,6 +52,6 @@ int gmake_action(Session sess)
 	}
 
 	stream_writeline(Console, "Generating project files for GNU make...");
-	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks);
+	return session_enumerate_objects(sess, SolutionCallbacks, ProjectCallbacks, ConfigCallbacks);
 }
 

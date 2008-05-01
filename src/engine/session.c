@@ -121,30 +121,85 @@ void session_add_solution(Session sess, Solution sln)
 
 
 /**
- * Iterate the project objects contained by the session and hand them off to handler callbacks.
+ * A bit of black magic: this function acts as a special token for the project handler
+ * function list to indicate where configurations should appear. For more details, see
+ * the implementation of session_enumerate_objects().
  * \param   sess      The session object.
- * \param   sln_funcs A per-solution object callback.
- * \param   prj_funcs A per-project object callback.
+ * \param   prj       The target project.
+ * \param   strm      The currently active output stream.
+ * \returns OKAY.
+ */
+int session_enumerate_configurations(Session sess, Project prj, Stream strm)
+{
+	UNUSED(sess);
+	UNUSED(prj);
+	UNUSED(strm);
+	return OKAY;
+}
+
+
+/**
+ * Iterate the project objects contained by the session and hand them off to handler callbacks.
+ * \param   sess       The session object.
+ * \param   sln_funcs  A list of per-solution object callbacks.
+ * \param   prj_funcs  A list of per-project object callbacks.
+ * \param   cfg_funcs  A list of per-configuration callbacks.
  * \returns OKAY if successful.
  */
-int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs)
+int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs, SessionProjectCallback* cfg_funcs)
 {
-	int si;
+	int si, sn;
 	int result = OKAY;
 
 	assert(sess);
 	assert(sln_funcs);
 	assert(prj_funcs);
+	assert(cfg_funcs);
 
-	prj_funcs = 0;
-
-	for (si = 0; si < session_num_solutions(sess); ++si)
+	/* enumerate solutions */
+	sn = session_num_solutions(sess);
+	for (si = 0; si < sn; ++si)
 	{
-		int sfi;
+		/* call all solution functions */
+		int fi, pi, pn;
 		Solution sln = session_get_solution(sess, si);
-		for (sfi = 0; result == OKAY && sln_funcs[sfi] != NULL; ++sfi)
+		for (fi = 0; result == OKAY && sln_funcs[fi] != NULL; ++fi)
 		{
-			result = sln_funcs[sfi](sess, sln, sess->active_stream);
+			result = sln_funcs[fi](sess, sln, sess->active_stream);
+		}
+
+		/* enumerate projects */
+		pn = solution_num_projects(sln);
+		for (pi = 0; pi < pn; ++pi)
+		{
+			Project prj = solution_get_project(sln, pi);
+			for (fi = 0; result == OKAY && prj_funcs[fi]; ++fi)
+			{
+				/* A bit of black magic here - I use the "session_enumerate_configurations" 
+				 * token to indicate where the list of configurations should appear in the
+				 * project file. */
+				if (prj_funcs[fi] == session_enumerate_configurations)
+				{
+					int ci, cn;
+					cn = solution_num_configs(sln);
+					for (ci = 0; result == OKAY && ci < cn; ++ci)
+					{
+						int cfi;
+						const char* cfg_name = solution_get_config_name(sln, ci);
+						project_set_configuration_filter(prj, cfg_name);
+
+						/* enumerate configurations */
+						for (cfi = 0; result == OKAY && cfg_funcs[cfi]; ++cfi)
+						{
+							result = cfg_funcs[cfi](sess, prj, sess->active_stream);
+						}
+					}
+				}
+				else
+				{
+					result = prj_funcs[fi](sess, prj, sess->active_stream);
+				}
+			}
 		}
 	}
 
@@ -172,6 +227,18 @@ const char* session_get_action(Session sess)
 	action = lua_tostring(sess->L, -1);
 	lua_pop(sess->L, 1);
 	return action;
+}
+
+
+/**
+ * Retrieve the currently active output stream.
+ * \param   sess    The session object.
+ * \return The currently active stream, or NULL if no stream is active.
+ */
+Stream session_get_active_stream(Session sess)
+{
+	assert(sess);
+	return sess->active_stream;
 }
 
 

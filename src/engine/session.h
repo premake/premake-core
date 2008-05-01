@@ -59,8 +59,10 @@ typedef struct struct_SessionAction
 Session     session_create(void);
 void        session_destroy(Session sess);
 void        session_add_solution(Session sess, Solution sln);
-int         session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs);
+int         session_enumerate_configurations(Session sess, Project prj, Stream strm);
+int         session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs, SessionProjectCallback* cfg_funcs);
 const char* session_get_action(Session sess);
+Stream      session_get_active_stream(Session sess);
 Solution    session_get_solution(Session sess, int index);
 int         session_num_solutions(Session sess);
 const char* session_run_file(Session sess, const char* filename);

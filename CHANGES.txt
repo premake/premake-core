@@ -1,4 +1,3 @@
--------------------- 
  4.0 (in progress)
 -------------------- 
 This version is a complete rewrite of Premake.
@@ -8,10 +7,8 @@ This version is a complete rewrite of Premake.
 - Standardized path handling across all project settings
 - Upgraded to Lua 5.1.2
 
--------------------- 
  3.5
 -------------------- 
-
 - Prevent creation of import libraries on OS X
 - Improved handling of dylibs on OS X
 - Patch 1771977: Ability to compile C source as C++ in Code::Blocks (Ryan Pusztai)
@@ -21,10 +18,8 @@ This version is a complete rewrite of Premake.
 - Bug 1806960: Make clean does not remove .mdb files
 - Bug 1831389: Makefiles stored in subdirs contain no targets on first run
 
--------------------- 
  3.4
 -------------------- 
-
 - Added `no-pch` flag to suppress precompiled headers
 - Added App.config support to GNU makefiles
 - Add os.mkdir() to script environment
@@ -42,10 +37,8 @@ This version is a complete rewrite of Premake.
 - Patch 1746563: Ability to specify GUID for VS targets (Ryan Pusztai)
 - Patch 1754867: Creating import lib of different name (Ryan Pusztai)
 
--------------------- 
  3.3
 -------------------- 
-
 - Added support for prebuild, prelink, and postbuild commands
 - Added `target` global variable to script environment
 - Added build flag `no-edit-and-continue`
@@ -67,10 +60,8 @@ This version is a complete rewrite of Premake.
 - Updated Code::Blocks support to latest project version (major="1" minor="6")
 - Patch 1681666: GNU targets always show the console if kind = 'winexe'
 
--------------------- 
  3.2
 -------------------- 
-
 - Added support for Code::Blocks
 - Updated MonoDevelop support
 - Upgraded Lua to 5.0.3
@@ -79,10 +70,8 @@ This version is a complete rewrite of Premake.
 - Turn off edit-and-continue in release builds with symbols
 - Bug 1559873: libpaths inserts extra space after -L
 
--------------------- 
  3.1
 -------------------- 
-
 - Added support for Visual Studio 2005
 - Added support for Windows resources to GNU make target
 - Added path handling functions to Lua environment
@@ -97,10 +86,8 @@ This version is a complete rewrite of Premake.
 - Bug 1422068: package.path="." causes bad makefiles
 - Bug 1431530: makefile target fails when project path specified
 
--------------------- 
  3.0
 -------------------- 
-
 - Upgraded Lua interpreter to version 5.0.1
 - The options table now stores simple values, rather than tables
 - Completed MonoDevelop support
@@ -114,46 +101,36 @@ This version is a complete rewrite of Premake.
 - Fixed bug 1268588: Use gcc to link C packages
 - Fixed bug 1363306: GNU C# should copy referenced DLLs
 
--------------------- 
  2.4
 -------------------- 
-
 - Added chdir() to Lua script environment
 - Merged Thomas Harning's patch for .NET resources on GNU
 - Fixed bug 1194702: Can't put multiple packages in same directory
 - Fixed bug in GNU shared library builds (doh!)
 - Added target 'vs2002' to replace 'vs7'
 
--------------------- 
  2.3
 -------------------- 
-
 - Added 'project.config[]' with 'bindir' and 'libdir'
 - Merged Scott Graham's "warninglevel" patch.
 - Fixed bug 1153484: Import lib in wrong directory.
 - Fixed bug 1013352: Stack overflow with large projects.
 - Fixed bug 945406: package.files, bad value = crash
 
--------------------- 
  2.2
 -------------------- 
-
 - Worked around VS.NET bug for .NET assemblies > 64K.
 - Added --very-verbose flag to GNU generator.
 - GNU generator now supports assembly sources.
  
--------------------- 
  2.1
 -------------------- 
-
 - File extension of generated binaries can now be set
   with config.targetextension.
 - Windows targets now handle .def files for DLLs.
 
--------------------- 
  2.0
 -------------------- 
-
 - Can now specify build actions per file
 - Include paths are now passed to VC7 resource compiler
 - Removed _WIN32 define from Cygwin makefiles
@@ -161,10 +138,8 @@ This version is a complete rewrite of Premake.
 - Added rmdir() to Lua script environment
 - A big bag of bug fixes
 
--------------------- 
  1.9
 -------------------- 
-
 - Made verbose mode even more verbose.
 - posix.c now builds properly as C.
 - Fixed package dependency generation for GNU and VS2003.
@@ -176,20 +151,16 @@ This version is a complete rewrite of Premake.
 - Bin and Lib paths can now be arbitrarily long.
 - linkoptions are now applied in VC6 and VC7 projects.
 
--------------------- 
  1.8
 -------------------- 
-
 - Added support for ASP.NET projects.
 - Fixed a bug in VC6 support for static libraries.
 - matchfiles() now uses package path instead of script path.
 - Added --verbose option.
 - No longer apply no-rtti and no-exceptions to *.c files.
 
--------------------- 
  1.7
 -------------------- 
-
 - Location of generated project files can now be specified with
   the project.path variable.
 - Inter-package dependencies are fixed for GNU makefiles.
@@ -202,19 +173,15 @@ This version is a complete rewrite of Premake.
 - Started support for OS X.
 - Added support for Digital Mars compiler.
 
--------------------- 
  1.6
 -------------------- 
-
 - VS7 generator crashed if a package was built before one of its
   dependencies. Now immediately assigns UUID before processing.
 - Added support for Visual Studio 2003 and SharpDevelop.
 - Added binaries directory as a reference path for VS7.
 	
--------------------- 
  1.5
 -------------------- 
-
 - Added initial support for building static libraries.
 - Added "no-main" flag, prevents overriding WinMain() on 
   Windows builds.
@@ -223,27 +190,21 @@ This version is a complete rewrite of Premake.
 - Display error message when project has no packages.
 - Moved VC7 *.pdb files into intermediates directory.
   
--------------------- 
  1.4
 -------------------- 
-
 - Bug fixes to the path manipulation routines.
 - GNU makefiles are regenerated when premake scripts change.
     
--------------------- 
  1.3
 -------------------- 
-
 - Added support for the Cygwin environment.
 - Added "static-runtime" build flag to statically link against C/C++
   standard runtime libraries.
 - Bug fixes to Visual Studio 6 and 7 generators and path reversing
   algorithm.
 
--------------------- 
  1.2
 -------------------- 
-
 - Standardized format of command-line options.
 - Can now handle custom command-line options in script.
 - Added new function findlib().
@@ -251,10 +212,8 @@ This version is a complete rewrite of Premake.
 - Can now use open-source C# compilers in VS6 generator.
 - Several bug fixes to the VS7 generator.
 
--------------------- 
  1.1
 -------------------- 
-
 - Added support for custom build configurations. Added "optimize",
   "optimize-size", "optimize-speed", and "no-symbols" flags to control
   build settings.
@@ -267,10 +226,8 @@ This version is a complete rewrite of Premake.
   eventually.
 - Major cleanup of the source code.
 
--------------------- 
  1.0
 -------------------- 
-
 - Fixed a bug related to the reference paths in VS7 C# projects.
 - Display a warning message if a reference path can't be found.
 - Automatically create bin and lib directories if they do not exist.
@@ -283,8 +240,6 @@ This version is a complete rewrite of Premake.
 - Changed 'conexe' to 'exe' because I liked it better.
 - Changed 'library' to 'dll' for C# projects to keep things consistent.
 
--------------------- 
  0.9
 -------------------- 
-
 - Initial public release.

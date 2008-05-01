@@ -17,18 +17,42 @@ extern "C" {
 
 static int num_solution_calls;
 static int num_project_calls;
+static int num_config_calls;
+static const char* last_config_filter;
+
 
 static int test_solution_okay(Session sess, Solution sln, Stream strm)
 {
-	sess = NULL; sln = NULL; strm = NULL;
+	UNUSED(sess);  UNUSED(sln);  UNUSED(strm);
 	num_solution_calls++;
 	return OKAY;
 }
 
 static int test_solution_fail(Session sess, Solution sln, Stream strm)
 {
-	sess = NULL; sln = NULL; strm = NULL;
+	UNUSED(sess);  UNUSED(sln);  UNUSED(strm);
 	return !OKAY;
+}
+
+static int test_project_okay(Session sess, Project prj, Stream strm)
+{
+	UNUSED(sess);  UNUSED(prj);  UNUSED(strm);
+	num_project_calls++;
+	return OKAY;
+}
+
+static int test_project_fail(Session sess, Project prj, Stream strm)
+{
+	UNUSED(sess);  UNUSED(prj);  UNUSED(strm);
+	return !OKAY;
+}
+
+static int test_config_okay(Session sess, Project prj, Stream strm)
+{
+	UNUSED(sess);  UNUSED(strm);
+	num_config_calls++;
+	last_config_filter = project_get_configuration_filter(prj);
+	return OKAY;
 }
 
 
@@ -43,6 +67,8 @@ struct FxSession
 		sess = session_create();
 		num_solution_calls = 0;
 		num_project_calls = 0;
+		num_config_calls = 0;
+		last_config_filter = NULL;
 	}
 
 	~FxSession()
@@ -167,7 +193,8 @@ SUITE(session)
 	{
 		SessionSolutionCallback sln_funcs[] = { NULL };
 		SessionProjectCallback  prj_funcs[] = { NULL };
-		int result = session_enumerate_objects(sess, sln_funcs, prj_funcs);
+		SessionProjectCallback  cfg_funcs[] = { NULL };
+		int result = session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK(result == OKAY);
 	}
 
@@ -175,8 +202,9 @@ SUITE(session)
 	{
 		SessionSolutionCallback sln_funcs[] = { test_solution_okay, test_solution_okay, NULL };
 		SessionProjectCallback  prj_funcs[] = { NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
 		AddSolution();
-		session_enumerate_objects(sess, sln_funcs, prj_funcs);
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK(num_solution_calls == 2);
 	}
 
@@ -184,9 +212,10 @@ SUITE(session)
 	{
 		SessionSolutionCallback sln_funcs[] = { test_solution_okay, NULL };
 		SessionProjectCallback  prj_funcs[] = { NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
 		AddSolution();
 		AddSolution();
-		session_enumerate_objects(sess, sln_funcs, prj_funcs);
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK(num_solution_calls == 2);
 	}
 
@@ -194,8 +223,9 @@ SUITE(session)
 	{
 		SessionSolutionCallback sln_funcs[] = { test_solution_fail, NULL };
 		SessionProjectCallback  prj_funcs[] = { NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
 		AddSolution();
-		int result = session_enumerate_objects(sess, sln_funcs, prj_funcs);
+		int result = session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK(result != OKAY);
 	}
 
@@ -203,10 +233,81 @@ SUITE(session)
 	{
 		SessionSolutionCallback sln_funcs[] = { test_solution_fail, test_solution_okay, NULL };
 		SessionProjectCallback  prj_funcs[] = { NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
 		AddSolution();
 		AddSolution();
-		session_enumerate_objects(sess, sln_funcs, prj_funcs);
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK(num_solution_calls == 0);
+	}
+
+	TEST_FIXTURE(FxSession, Enumerate_CallsAllProjectFuncs_OnProject)
+	{
+		SessionSolutionCallback sln_funcs[] = { NULL };
+		SessionProjectCallback  prj_funcs[] = { test_project_okay, test_project_okay, NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
+		AddSolution();
+		AddProject();
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
+		CHECK(num_project_calls == 2);
+	}
+
+	TEST_FIXTURE(FxSession, Enumerate_CallsProjectFunc_OnEachProject)
+	{
+		SessionSolutionCallback sln_funcs[] = { NULL };
+		SessionProjectCallback  prj_funcs[] = { test_project_okay, NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
+		AddSolution();
+		AddProject();
+		AddProject();
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
+		CHECK(num_project_calls == 2);
+	}
+
+	TEST_FIXTURE(FxSession, Enumerate_ReturnsNotOkay_OnProjectError)
+	{
+		SessionSolutionCallback sln_funcs[] = { NULL };
+		SessionProjectCallback  prj_funcs[] = { test_project_fail, NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
+		AddSolution();
+		AddProject();
+		int result = session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
+		CHECK(result != OKAY);
+	}
+
+	TEST_FIXTURE(FxSession, Enumerate_StopsProcessing_OnProjectError)
+	{
+		SessionSolutionCallback sln_funcs[] = { NULL };
+		SessionProjectCallback  prj_funcs[] = { test_project_fail, test_project_okay, NULL };
+		SessionProjectCallback  cfg_funcs[] = { NULL };
+		AddSolution();
+		AddProject();
+		AddProject();
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
+		CHECK(num_project_calls == 0);
+	}
+
+	TEST_FIXTURE(FxSession, Enumerate_CallsAllConfigFuncs_OnConfig)
+	{
+		SessionSolutionCallback sln_funcs[] = { NULL };
+		SessionProjectCallback  prj_funcs[] = { session_enumerate_configurations, NULL };
+		SessionProjectCallback  cfg_funcs[] = { test_config_okay, test_config_okay, NULL };
+		AddSolution();
+		AddProject();
+		solution_add_config_name(sln, "Debug");
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
+		CHECK(num_config_calls == 2);
+	}
+
+	TEST_FIXTURE(FxSession, Enumerate_SetsConfigFilter_OnConfig)
+	{
+		SessionSolutionCallback sln_funcs[] = { NULL };
+		SessionProjectCallback  prj_funcs[] = { session_enumerate_configurations, NULL };
+		SessionProjectCallback  cfg_funcs[] = { test_config_okay, test_config_okay, NULL };
+		AddSolution();
+		AddProject();
+		solution_add_config_name(sln, "Debug");
+		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
+		CHECK_EQUAL("Debug", last_config_filter);
 	}
 
 

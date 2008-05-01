@@ -85,6 +85,24 @@ SUITE(project)
 
 
 	/**********************************************************************
+	 * Configuration filter tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxProject, ConfigurationFilter_ReturnsNull_OnStartup)
+	{
+		const char* result = project_get_configuration_filter(prj);
+		CHECK(result == NULL);
+	}
+
+	TEST_FIXTURE(FxProject, ConfigurationFilter_CanRoundtrip)
+	{
+		project_set_configuration_filter(prj, "Debug");
+		const char* result = project_get_configuration_filter(prj);
+		CHECK_EQUAL("Debug", result);
+	}
+
+
+	/**********************************************************************
 	 * GUID tests
 	 **********************************************************************/
 

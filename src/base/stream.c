@@ -5,7 +5,6 @@
  */
 
 #include <assert.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -196,7 +195,14 @@ int stream_writeline_strings(Stream strm, Strings strs, const char* start, const
 }
 
 
-static int stream_vprintf(Stream strm, const char* value, va_list args)
+/**
+ * Format and print a string using printf-style codes and a variable argument list.
+ * \param   strm    The stream to which to write.
+ * \param   value   The value to print; may contain printf-style formatting codes.
+ * \param   args    A variable argument list to populate the printf-style codes in `value`.
+ * \returns OKAY if successful.
+ */
+int stream_vprintf(Stream strm, const char* value, va_list args)
 {
 	if (strm->buffer)
 	{
@@ -232,6 +238,24 @@ int stream_write(Stream strm, const char* value, ...)
 	va_end(args);
 	
 	return status;
+}
+
+
+/**
+ * Write N copies of a string to a stream.
+ * \param   strm      The stream to which to write.
+ * \param   value     The string to write.
+ * \param   n         The number of copies to write.
+ * \returns OKAY if successful.
+ */
+int stream_write_n(Stream strm, const char* value, int n)
+{
+	int i, z = OKAY;
+	for (i = 0; i < n; ++i)
+	{
+		z |= stream_write(strm, value);
+	}
+	return z;
 }
 
 

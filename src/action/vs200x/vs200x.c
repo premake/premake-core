@@ -13,6 +13,107 @@
 
 
 /**
+ * Write an XML attribute, adjusting for the differing Visual Studio formats.
+ * \param   sess    The current execution session.
+ * \param   level   The XML element nesting level.
+ * \param   name    The attribute name.
+ * \param   value   The attribute value.
+ * \returns OKAY if successful.
+ */
+int vs200x_attribute(Session sess, int level, const char* name, const char* value, ...)
+{
+	int z;
+	va_list args;
+	Stream strm = session_get_active_stream(sess);
+
+	if (vs200x_get_target_version(sess) < 2005)
+	{
+		if (cstr_eq(value, "true"))
+		{
+			value = "TRUE";
+		}
+		else if (cstr_eq(value, "false"))
+		{
+			value = "FALSE";
+		}
+	}
+
+	va_start(args, value);
+	z  = stream_writeline(strm, "");
+	z |= stream_write_n(strm, "\t", level + 1);
+	z |= stream_write(strm, "%s=\"", name);
+	z |= stream_vprintf(strm, value, args);
+	z |= stream_write(strm, "\"");
+	va_end(args);
+	return z;
+}
+
+
+/**
+ * Write out an element tag.
+ * \param   sess    The current execution session.
+ * \param   level   The XML element nesting level.
+ * \param   name    The element name.
+ * \returns OKAY if successful.
+ */
+int vs200x_element(Session sess, int level, const char* name)
+{
+	int z;
+	Stream strm = session_get_active_stream(sess);
+	z  = stream_write_n(strm, "\t", level);
+	z |= stream_writeline(strm, "<%s>", name);
+	return z;
+}
+
+
+/**
+ * Write the ending part of an XML tag, adjust for the differing Visual Studio formats.
+ * \param   sess    The current execution session.
+ * \param   level   The XML element nesting level.
+ * \param   markup  The end tag markup.
+ * \returns OKAY if successful.
+ */
+int vs200x_element_end(Session sess, int level, const char* markup)
+{
+	int z;
+	Stream strm = session_get_active_stream(sess);
+	int version = vs200x_get_target_version(sess);
+	if (version >= 2005)
+	{
+		z = stream_writeline(strm, "");
+		if (markup[0] == '>')
+		{
+			level++;
+		}
+		z |= stream_write_n(strm, "\t", level);
+		z |= stream_writeline(strm, "%s", markup);
+	}
+	else
+	{
+		z = stream_writeline(strm, markup);
+	}
+	return z;
+}
+
+
+/**
+ * Write out the starting part of an XML element tag: "<MyElement".
+ * \param   sess    The current execution session.
+ * \param   level   The XML element nesting level.
+ * \param   name    The element name.
+ * \returns OKAY if successful.
+ */
+int vs200x_element_start(Session sess, int level, const char* name)
+{
+	int z;
+	Stream strm = session_get_active_stream(sess);
+	z  = stream_write_n(strm, "\t", level);
+	z |= stream_write(strm, "<%s", name);
+	return z;
+}
+
+
+/**
  * Converts the session action string to a Visual Studio version number.
  * \param   sess   The current execution session.
  * \returns The Visual Studio version number corresponding to the current action.
@@ -31,6 +132,10 @@ int vs200x_get_target_version(Session sess)
 	else if (cstr_eq(action, "vs2005"))
 	{
 		return 2005;
+	}
+	else if (cstr_eq(action, "vs2008"))
+	{
+		return 2008;
 	}
 	else
 	{

@@ -24,6 +24,7 @@ struct FxAction
 
 		strm = stream_create_null();
 		stream_set_buffer(strm, buffer);
+		session_set_active_stream(sess, strm);
 
 		sln = solution_create();
 		session_add_solution(sess, sln);
