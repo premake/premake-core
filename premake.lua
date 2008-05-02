@@ -108,19 +108,22 @@ project.name = "Premake4"
 		os.chdir(folder)
 		os.execute("premake --clean --no-tests --target gnu >../release.log")
 		os.execute("make CONFIG=Release >../release.log")
+		os.chdir("bin/release")
 		
 		if (windows) then
-			result = os.execute(string.format("7z a -tzip ..\\premake-win32-%s.zip bin\\release\\premake4.exe >../release.log", version))
+			result = os.execute(string.format("7z a -tzip ..\\..\\..\\premake-win32-%s.zip premake4.exe >../release.log", version))
 		elseif (macosx) then
-			result = os.execute(string.format("tar czvf ../premake-macosx-%s.tar.gz bin/release/premake4 >../release.log", version))
+			result = os.execute(string.format("tar czvf ../../../premake-macosx-%s.tar.gz premake4 >../release.log", version))
 		else
-			result = os.execute(string.format("tar czvf ../premake-linux-%s.tar.gz bin/release/premake4 >../release.log", version))
+			result = os.execute(string.format("tar czvf ../../../premake-linux-%s.tar.gz bin/release/premake4 >../release.log", version))
 		end
 		
 		if (result ~= 0) then
 			error("Failed to build binary package; see release.log for details")
 		end
 
+		os.chdir("../..")
+		
 		-------------------------------------------------------------------
 		-- Clean up
 		-------------------------------------------------------------------
