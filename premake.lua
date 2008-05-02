@@ -98,7 +98,8 @@ project.name = "Premake4"
 		-------------------------------------------------------------------
 		-- Embed version numbers into the files
 		-------------------------------------------------------------------
-		print("TODO - set version number in premake")
+		-- (embed version #s)
+		-- (check into branch)
 
 		-------------------------------------------------------------------
 		-- Build the release binary for this platform
@@ -111,9 +112,9 @@ project.name = "Premake4"
 		if (windows) then
 			result = os.execute(string.format("7z a -tzip ..\\premake-win32-%s.zip bin\\release\\premake4.exe >../release.log", version))
 		elseif (macosx) then
-			error("OSX binary not implemented yet")
+			result = os.execute(string.format("tar czvf ../premake-macosx-%s.tar.gz bin/release/premake4 >../release.log", version))
 		else
-			error("Linux binary not implemented yet")
+			result = os.execute(string.format("tar czvf ../premake-linux-%s.tar.gz bin/release/premake4 >../release.log", version))
 		end
 		
 		if (result ~= 0) then
@@ -127,5 +128,18 @@ project.name = "Premake4"
 		os.chdir("..")
 		os.rmdir(folder)
 		os.remove("release.log")
+
+
+		-------------------------------------------------------------------
+		-- Next steps
+		-------------------------------------------------------------------
+		if (windows) then
+			print("DONE - now run release script under Linux")
+		elseif (linux) then
+			print("DONE - now run release script under Mac OS X")
+		else
+			print("DONE - really this time")
+		end
+		
 	end
 	

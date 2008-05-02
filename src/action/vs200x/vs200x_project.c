@@ -12,7 +12,7 @@
 
 
 /**
- * Write the opening <Configuration> element and attributes.
+ * Write the opening [Configuration] element and attributes.
  */
 int vs200x_project_config_element(Session sess, Project prj, Stream strm)
 {
@@ -31,7 +31,7 @@ int vs200x_project_config_element(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the closing <Configuration> element.
+ * Write the closing [Configuration] element.
  */
 int vs200x_project_config_end(Session sess, Project prj, Stream strm)
 {
@@ -62,7 +62,7 @@ int vs200x_project_create(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the root <VisualStudioProject> element and attributes.
+ * Write the root [VisualStudioProject] element and attributes.
  */
 int vs200x_project_element(Session sess, Project prj, Stream strm)
 {
@@ -118,7 +118,7 @@ int vs200x_project_encoding(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write out the <Files> element.
+ * Write out the [Files] element.
  */
 int vs200x_project_files(Session sess, Project prj, Stream strm)
 {
@@ -132,7 +132,7 @@ int vs200x_project_files(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write out the <Globals> element.
+ * Write out the [Globals] element.
  */
 int vs200x_project_globals(Session sess, Project prj, Stream strm)
 {
@@ -164,7 +164,7 @@ int vs200x_project_platforms(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write out the <References> element and attributes.
+ * Write out the [References] element and attributes.
  */
 int vs200x_project_references(Session sess, Project prj, Stream strm)
 {
@@ -182,7 +182,7 @@ int vs200x_project_references(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write out the <ToolFiles> section of a Visual Studio project.
+ * Write out the [ToolFiles] section of a Visual Studio project.
  */
 int vs200x_project_tool_files(Session sess, Project prj, Stream strm)
 {
@@ -202,7 +202,7 @@ int vs200x_project_tool_files(Session sess, Project prj, Stream strm)
 
 
 /**
- * Common function to write an empty <Tool> element.
+ * Common function to write an empty [Tool] element.
  */
 static int vs200x_project_vc_empty_tool(Session sess, Project prj, Stream strm, const char* name)
 {
@@ -217,7 +217,7 @@ static int vs200x_project_vc_empty_tool(Session sess, Project prj, Stream strm, 
 
 
 /**
- * Write the VCALinkTool <Tool> element and attributes.
+ * Write the VCALinkTool [Tool] element and attributes.
  */
 int vs200x_project_vc_alink_tool(Session sess, Project prj, Stream strm)
 {
@@ -226,7 +226,7 @@ int vs200x_project_vc_alink_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCAppVerifierTool <Tool> element and attributes.
+ * Write the VCAppVerifierTool [Tool] element and attributes.
  */
 int vs200x_project_vc_app_verifier_tool(Session sess, Project prj, Stream strm)
 {
@@ -235,7 +235,7 @@ int vs200x_project_vc_app_verifier_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCBscMakeTool <Tool> element and attributes.
+ * Write the VCBscMakeTool [Tool] element and attributes.
  */
 int vs200x_project_vc_bsc_make_tool(Session sess, Project prj, Stream strm)
 {
@@ -244,7 +244,7 @@ int vs200x_project_vc_bsc_make_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCCLCompilerTool <Tool> element and attributes.
+ * Write the VCCLCompilerTool [Tool] element and attributes.
  */
 int vs200x_project_vc_cl_compiler_tool(Session sess, Project prj, Stream strm)
 {
@@ -269,7 +269,7 @@ int vs200x_project_vc_cl_compiler_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCCustomBuildTool <Tool> element and attributes.
+ * Write the VCCustomBuildTool [Tool] element and attributes.
  */
 int vs200x_project_vc_custom_build_tool(Session sess, Project prj, Stream strm)
 {
@@ -278,7 +278,7 @@ int vs200x_project_vc_custom_build_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCFxCopTool <Tool> element and attributes.
+ * Write the VCFxCopTool [Tool] element and attributes.
  */
 int vs200x_project_vc_fx_cop_tool(Session sess, Project prj, Stream strm)
 {
@@ -287,7 +287,7 @@ int vs200x_project_vc_fx_cop_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCLinkerTool <Tool> element and attributes.
+ * Write the VCLinkerTool [Tool] element and attributes.
  */
 int vs200x_project_vc_linker_tool(Session sess, Project prj, Stream strm)
 {
@@ -307,7 +307,7 @@ int vs200x_project_vc_linker_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCManagedResourceCompilerTool <Tool> element and attributes.
+ * Write the VCManagedResourceCompilerTool [Tool] element and attributes.
  */
 int vs200x_project_vc_managed_resource_compiler_tool(Session sess, Project prj, Stream strm)
 {
@@ -316,7 +316,7 @@ int vs200x_project_vc_managed_resource_compiler_tool(Session sess, Project prj, 
 
 
 /**
- * Write the VCManifestTool <Tool> element and attributes.
+ * Write the VCManifestTool [Tool] element and attributes.
  */
 int vs200x_project_vc_manifest_tool(Session sess, Project prj, Stream strm)
 {
@@ -325,7 +325,7 @@ int vs200x_project_vc_manifest_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCMIDLTool <Tool> element and attributes.
+ * Write the VCMIDLTool [Tool] element and attributes.
  */
 int vs200x_project_vc_midl_tool(Session sess, Project prj, Stream strm)
 {
@@ -334,7 +334,7 @@ int vs200x_project_vc_midl_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCPreBuildEventTool <Tool> element and attributes.
+ * Write the VCPreBuildEventTool [Tool] element and attributes.
  */
 int vs200x_project_vc_pre_build_event_tool(Session sess, Project prj, Stream strm)
 {
@@ -343,7 +343,7 @@ int vs200x_project_vc_pre_build_event_tool(Session sess, Project prj, Stream str
 
 
 /**
- * Write the VCPreLinkEventTool <Tool> element and attributes.
+ * Write the VCPreLinkEventTool [Tool] element and attributes.
  */
 int vs200x_project_vc_pre_link_event_tool(Session sess, Project prj, Stream strm)
 {
@@ -352,7 +352,7 @@ int vs200x_project_vc_pre_link_event_tool(Session sess, Project prj, Stream strm
 
 
 /**
- * Write the VCPostBuildEventTool <Tool> element and attributes.
+ * Write the VCPostBuildEventTool [Tool] element and attributes.
  */
 int vs200x_project_vc_post_build_event_tool(Session sess, Project prj, Stream strm)
 {
@@ -361,7 +361,7 @@ int vs200x_project_vc_post_build_event_tool(Session sess, Project prj, Stream st
 
 
 /**
- * Write the VCResourceCompiler <Tool> element and attributes.
+ * Write the VCResourceCompiler [Tool] element and attributes.
  */
 int vs200x_project_vc_resource_compiler_tool(Session sess, Project prj, Stream strm)
 {
@@ -370,7 +370,7 @@ int vs200x_project_vc_resource_compiler_tool(Session sess, Project prj, Stream s
 
 
 /**
- * Write the VCWebDeploymentTool <Tool> element and attributes.
+ * Write the VCWebDeploymentTool [Tool] element and attributes.
  */
 int vs200x_project_vc_web_deployment_tool(Session sess, Project prj, Stream strm)
 {
@@ -379,7 +379,7 @@ int vs200x_project_vc_web_deployment_tool(Session sess, Project prj, Stream strm
 
 
 /**
- * Write the VCWebServiceProxyGeneratorTool <Tool> element and attributes.
+ * Write the VCWebServiceProxyGeneratorTool [Tool] element and attributes.
  */
 int vs200x_project_vc_web_service_proxy_generator_tool(Session sess, Project prj, Stream strm)
 {
@@ -388,7 +388,7 @@ int vs200x_project_vc_web_service_proxy_generator_tool(Session sess, Project prj
 
 
 /**
- * Write the VCXDCMakeTool <Tool> element and attributes.
+ * Write the VCXDCMakeTool [Tool] element and attributes.
  */
 int vs200x_project_vc_xdc_make_tool(Session sess, Project prj, Stream strm)
 {
@@ -397,7 +397,7 @@ int vs200x_project_vc_xdc_make_tool(Session sess, Project prj, Stream strm)
 
 
 /**
- * Write the VCXMLDataGeneratorTool <Tool> element and attributes.
+ * Write the VCXMLDataGeneratorTool [Tool] element and attributes.
  */
 int vs200x_project_vc_xml_data_generator_tool(Session sess, Project prj, Stream strm)
 {
