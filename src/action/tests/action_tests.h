@@ -40,6 +40,7 @@ struct FxAction
 		project_set_location(prj, "ProjectFolder");
 		project_set_guid(prj, "AE2461B7-236F-4278-81D3-F0D476F9A4C0");
 		project_set_language(prj, "c++");
+		project_set_configuration_filter(prj, "Debug");
 	}
 
 	~FxAction()

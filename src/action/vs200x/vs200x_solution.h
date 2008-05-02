@@ -9,7 +9,6 @@
 #include "engine/session.h"
 
 int vs2002_solution_configuration(Session sess, Solution sln, Stream strm);
-int vs2002_solution_create(Session sess, Solution sln, Stream strm);
 int vs2002_solution_dependencies(Session sess, Solution sln, Stream strm);
 int vs2002_solution_extensibility(Session sess, Solution sln, Stream strm);
 int vs2002_solution_project_configuration(Session sess, Solution sln, Stream strm);
@@ -25,5 +24,7 @@ int vs2005_solution_properties(Session sess, Solution sln, Stream strm);
 int vs2005_solution_signature(Session sess, Solution sln, Stream strm);
 
 int vs2008_solution_signature(Session sess, Solution sln, Stream strm);
+
+int vs200x_solution_create(Session sess, Solution sln, Stream strm);
 
 #endif

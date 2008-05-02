@@ -41,6 +41,8 @@ OBJECTS := \
 
 RESOURCES := \
 
+# Can I have premake check the OS type instead of doing this here?
+
 MKDIR_TYPE := msdos
 CMD := $(subst \,\\,$(ComSpec)$(COMSPEC))
 ifeq (,$(CMD))
@@ -63,6 +65,8 @@ endif
 
 .PHONY: clean
 
+# I really only need to create OUTDIR; that's the only one that matters!
+
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
 	@echo Linking CppExe
 	-@$(CMD_MKBINDIR)
@@ -80,6 +84,9 @@ else
 	-@if exist $(subst /,\,$(OBJDIR)) del /q $(subst /,\,$(OBJDIR))
 	-@if exist $(subst /,\,$(OBJDIR)) rmdir /s /q $(subst /,\,$(OBJDIR))
 endif
+
+# add an "objdir" as first dependency to target and create directories there (or maybe
+# call it outdirs and do all required output directories
 
 $(OBJDIR)/Hello.o: Hello.cpp
 	-@$(CMD_MKOBJDIR)

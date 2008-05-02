@@ -15,7 +15,7 @@
 /** The VS2003 solution writing process, for session_enumerate_objects() */
 static SessionSolutionCallback SolutionCallbacks[] = 
 {
-	vs2002_solution_create,
+	vs200x_solution_create,
 	vs2003_solution_signature,
 	vs2002_solution_projects,
 	vs2003_solution_configuration,

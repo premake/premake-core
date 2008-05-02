@@ -18,10 +18,7 @@ int vs200x_project_config_element(Session sess, Project prj, Stream strm)
 {
 	int z;
 	const char* cfg_name = project_get_configuration_filter(prj);
-
-	UNUSED(prj);
 	UNUSED(strm);
-
 	z  = vs200x_element_start(sess, 2, "Configuration");
 	z |= vs200x_attribute(sess, 2, "Name", "%s|Win32", cfg_name);
 	z |= vs200x_attribute(sess, 2, "OutputDirectory", "$(SolutionDir)$(ConfigurationName)");

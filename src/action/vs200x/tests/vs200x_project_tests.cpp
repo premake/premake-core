@@ -16,7 +16,6 @@ struct FxVsProject : FxAction
 	FxVsProject()
 	{
 		session_set_action(sess, "vs2002");
-		project_set_configuration_filter(prj, "Debug");
 	}
 };
 
