@@ -5,7 +5,7 @@
  */
 
 #include "premake.h"
-#include "internals.h"
+#include "script_internal.h"
 #include "base/guid.h"
 
 
@@ -19,12 +19,12 @@ int fn_project(lua_State* L)
 	/* if there are no parameters, return the active project */
 	if (lua_gettop(L) == 0)
 	{
-		engine_get_active_object(L, ProjectObject, OPTIONAL);
+		script_internal_get_active_object(L, ProjectObject, OPTIONAL);
 		return 1;
 	}
 
 	/* get the active solution, which will contain this project */
-	if (!engine_get_active_object(L, SolutionObject, REQUIRED))
+	if (!script_internal_get_active_object(L, SolutionObject, REQUIRED))
 	{
 		return 0;
 	}
@@ -46,15 +46,15 @@ int fn_project(lua_State* L)
 		lua_setfield(L, -2, ProjectFieldInfo[ProjectName].name);
 
 		/* set the base directory */
-		lua_pushstring(L, engine_get_script_dir(L));
+		lua_pushstring(L, script_internal_script_dir(L));
 		lua_setfield(L, -2, ProjectFieldInfo[ProjectBaseDirectory].name);
 
 		/* set a default GUID */
 		lua_pushstring(L, guid_create());
 		lua_setfield(L, -2, ProjectFieldInfo[ProjectGuid].name);
 
-		/* finish the configuration */
-		engine_configure_project_object(L, ProjectFieldInfo);
+		/* use the list of fields to populate the object properties and accessor functions */
+		script_internal_populate_object(L, ProjectFieldInfo);
 
 		/* add it to solution's list of projects, keyed by name */
 		lua_pushvalue(L, -1);
@@ -66,7 +66,7 @@ int fn_project(lua_State* L)
 	}
 
 	/* activate and return the solution object */
-	engine_set_active_object(L, ProjectObject);
+	script_internal_set_active_object(L, ProjectObject);
 	return 1;
 }
 

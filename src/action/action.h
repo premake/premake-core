@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_ACTION_H)
 #define PREMAKE_ACTION_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 extern SessionAction Actions[];
 

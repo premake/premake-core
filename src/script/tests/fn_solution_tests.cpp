@@ -5,62 +5,41 @@
  */
 
 #include "premake.h"
-#include "testing/testing.h"
-extern "C" {
-#include "engine/session.h"
-}
+#include "script_tests.h"
 
-struct FnSolution1
+
+struct FnSolution : FxScript
 {
-	Session sess;
-
-	FnSolution1()
+	FnSolution()
 	{
-		sess = session_create();
-	}
-
-	~FnSolution1()
-	{
-		session_destroy(sess);
-	}
-};
-
-struct FnSolution2 : FnSolution1
-{
-	FnSolution2()
-	{
-		session_run_string(sess, "sln = solution('MySolution');");
-	}
-
-	~FnSolution2()
-	{
+		script_run_string(script, "sln = solution('MySolution');");
 	}
 };
 
 
-SUITE(engine)
+SUITE(script)
 {
 	/**************************************************************************
 	 * Initial state tests
 	 **************************************************************************/
 
-	TEST_FIXTURE(FnSolution1, Solution_Exists_OnStartup)
+	TEST_FIXTURE(FxScript, Solution_Exists_OnStartup)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return (solution ~= nil)");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnSolution1, Solution_ReturnsNil_OnNoActiveSolution)
+	TEST_FIXTURE(FxScript, Solution_ReturnsNil_OnNoActiveSolution)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return (solution() == nil)");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnSolution1, Solutions_Exists_OnStartup)
+	TEST_FIXTURE(FxScript, Solutions_Exists_OnStartup)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return #_SOLUTIONS");
 		CHECK_EQUAL("0", result);
 	}
@@ -70,44 +49,44 @@ SUITE(engine)
 	 * Object creation tests
 	 **************************************************************************/
 
-	TEST_FIXTURE(FnSolution2, Solution_ReturnsNewObject_OnNewName)
+	TEST_FIXTURE(FnSolution, Solution_ReturnsNewObject_OnNewName)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return (sln ~= nil)");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_ReturnsObject_OnActiveSolution)
+	TEST_FIXTURE(FnSolution, Solution_ReturnsObject_OnActiveSolution)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return (sln == solution())");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_AddsToKeyList_OnNewName)
+	TEST_FIXTURE(FnSolution, Solution_AddsToKeyList_OnNewName)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return (sln == _SOLUTIONS['MySolution']);");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_AddsToIndexList_OnNewName)
+	TEST_FIXTURE(FnSolution, Solution_AddsToIndexList_OnNewName)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return (sln == _SOLUTIONS[1]);");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_IncrementsTableSize_OnNewName)
+	TEST_FIXTURE(FnSolution, Solution_IncrementsTableSize_OnNewName)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return #_SOLUTIONS;");
 		CHECK_EQUAL("1", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_ReturnsSameObject_OnExistingName)
+	TEST_FIXTURE(FnSolution, Solution_ReturnsSameObject_OnExistingName)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"sln1 = solution('SecondSolution');"
 			"return (sln == solution('MySolution'))");
 		CHECK_EQUAL("true", result);
@@ -118,23 +97,23 @@ SUITE(engine)
 	 * Initial object state tests
 	 **************************************************************************/
 
-	TEST_FIXTURE(FnSolution2, Solution_SetsName)
+	TEST_FIXTURE(FnSolution, Solution_SetsName)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return sln.name");
 		CHECK_EQUAL("MySolution", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_SetsBaseDir)
+	TEST_FIXTURE(FnSolution, Solution_SetsBaseDir)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return sln.basedir");
 		CHECK_EQUAL("(string)", result);
 	}
 
-	TEST_FIXTURE(FnSolution2, Solution_HasEmptyProjectsList)
+	TEST_FIXTURE(FnSolution, Solution_HasEmptyProjectsList)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return #sln.projects");
 		CHECK_EQUAL("0", result);
 	}

@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_MAKE_H)
 #define PREMAKE_MAKE_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 const char* make_get_project_makefile(Session sess, Project prj);
 const char* make_get_solution_makefile(Session sess, Solution sln);

@@ -6,7 +6,7 @@
 
 #include "testing/testing.h"
 extern "C" {
-#include "engine/session.h"
+#include "session/session.h"
 #include "project/project.h"
 }
 

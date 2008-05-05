@@ -6,36 +6,36 @@
 
 #include <assert.h>
 #include "premake.h"
-#include "internals.h"
+#include "script/script_internal.h"
 
-static int unload_solution_projects(Session sess, lua_State* L, struct UnloadFuncs* funcs, Solution sln);
+
+static int unload_solution_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln);
 
 
 /**
  * Copy project information out of the scripting environment and into C objects that
  * can be more easily manipulated by the action code.
- * \param sess   The session object which contains the scripted project objects.
  * \param L      The Lua scripting engine state.
+ * \param slns   An array to contain the list of unloaded solutions.
  * \param funcs  The unloading "interface", providing an opportunity to mock for automated testing.
  * \returns OKAY if successful.
  */
-int unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs)
+int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
 {
-	int si, sn;
-	int status = OKAY;
+	int si, sn, z = OKAY;
 
-	assert(sess);
 	assert(L);
+	assert(slns);
 	assert(funcs);
 	assert(funcs->unload_solution);
 
 	/* iterate over the list of solutions */
 	lua_getglobal(L, SOLUTIONS_KEY);
 	sn = luaL_getn(L, -1);
-	for (si = 1; status == OKAY && si <= sn; ++si)
+	for (si = 1; z == OKAY && si <= sn; ++si)
 	{
 		Solution sln = solution_create();
-		session_add_solution(sess, sln);
+		array_add(slns, sln);
 		lua_rawgeti(L, -1, si);
 
 		/* hardcoded a standard set of configurations for now */
@@ -43,10 +43,10 @@ int unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs)
 		solution_add_config_name(sln, "Release");
 
 		/* extract the project fields */
-		status = funcs->unload_solution(sess, L, sln);
-		if (status == OKAY)
+		z = funcs->unload_solution(L, sln);
+		if (z == OKAY)
 		{
-			status = unload_solution_projects(sess, L, funcs, sln);
+			z = unload_solution_projects(L, funcs, sln);
 		}
 
 		/* remove solution object from stack */
@@ -55,26 +55,25 @@ int unload_all(Session sess, lua_State* L, struct UnloadFuncs* funcs)
 
 	/* remove list of solutions from stack */
 	lua_pop(L, 1);
-	return status;
+	return z;
 }
 
 
-static int unload_solution_projects(Session sess, lua_State* L, struct UnloadFuncs* funcs, Solution sln)
+static int unload_solution_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln)
 {
-	int pi, pn;
-	int status = OKAY;
+	int pi, pn, z = OKAY;
 
 	/* iterate over list of projects from the solution */
 	lua_getfield(L, -1, PROJECTS_KEY);
 	pn = luaL_getn(L, -1);
-	for (pi = 1; status == OKAY && pi <= pn; ++pi)
+	for (pi = 1; z == OKAY && pi <= pn; ++pi)
 	{
 		Project prj = project_create();
 		solution_add_project(sln, prj);
 
 		/* unload the project fields */
 		lua_rawgeti(L, -1, pi);
-		status = funcs->unload_project(sess, L, prj);
+		z = funcs->unload_project(L, prj);
 		
 		/* remove project object from stack */
 		lua_pop(L, 1);
@@ -82,26 +81,22 @@ static int unload_solution_projects(Session sess, lua_State* L, struct UnloadFun
 
 	/* remove list of projects from stack */
 	lua_pop(L, 1);
-	return status;
+	return z;
 }
 
 
 /**
  * Unload information from the scripting environment for a particular solution.
- * \param sess   The session object which contains the scripted project objects.
  * \param L      The Lua scripting engine state.
  * \param sln    The solution object to be populated.
  * \returns OKAY if successful.
  */
-int unload_solution(Session sess, lua_State* L, Solution sln)
+int unload_solution(lua_State* L, Solution sln)
 {
 	const char* value;
 
-	assert(sess);
 	assert(L);
 	assert(sln);
-
-	sess = 0;  /* unused */
 
 	lua_getfield(L, -1, "name");
 	value = lua_tostring(L, -1);
@@ -119,17 +114,15 @@ int unload_solution(Session sess, lua_State* L, Solution sln)
 
 /**
  * Unload information from the scripting environment for a particular project.
- * \param sess   The session object which contains the scripted project objects.
  * \param L      The Lua scripting engine state.
  * \param prj    The project object to be populated.
  * \returns OKAY if successful.
  */
-int unload_project(Session sess, lua_State* L, Project prj)
+int unload_project(lua_State* L, Project prj)
 {
 	const char* value;
 	int i;
 
-	UNUSED(sess);
 	assert(L);
 	assert(prj);
 

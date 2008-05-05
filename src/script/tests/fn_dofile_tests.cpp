@@ -5,86 +5,68 @@
  */
 
 #include "premake.h"
-#include "testing/testing.h"
+#include "script_tests.h"
 extern "C" {
-#include "engine/session.h"
 #include "base/cstr.h"
 #include "base/dir.h"
-#include "base/error.h"
 }
 
-struct FnDoFile
+
+SUITE(script)
 {
-	Session sess;
-
-	FnDoFile()
+	TEST_FIXTURE(FxScript, DoFile_Exists_OnStartup)
 	{
-		sess = session_create();
-	}
-
-	~FnDoFile()
-	{
-		session_destroy(sess);
-		error_clear();
-	}
-};
-
-
-SUITE(engine)
-{
-	TEST_FIXTURE(FnDoFile, DoFile_Exists_OnStartup)
-	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return (dofile ~= nil)");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_ReturnsValue_OnValidFile)
+	TEST_FIXTURE(FxScript, DoFile_ReturnsValue_OnValidFile)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return dofile('testing/test_files/true.lua')");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_SetsError_OnFileNotFound)
+	TEST_FIXTURE(FxScript, DoFile_SetsError_OnFileNotFound)
 	{
-		session_run_string(sess,
+		script_run_string(script,
 			"dofile('nosuchfile.lua')");
 		CHECK(cstr_ends_with(error_get(), "No such file or directory"));
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_SetsCwd_BeforeScript)
+	TEST_FIXTURE(FxScript, DoFile_SetsCwd_BeforeScript)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return dofile('testing/test_files/getcwd.lua')");
 		CHECK(cstr_ends_with(result, "testing/test_files"));
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_SetsCwd_BeforeNestedScript)
+	TEST_FIXTURE(FxScript, DoFile_SetsCwd_BeforeNestedScript)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return dofile('testing/test_files/dofile.lua')");
 		CHECK(cstr_ends_with(result, "testing/test_files/nested"));
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_RestoresCwd_AfterNestedScript)
+	TEST_FIXTURE(FxScript, DoFile_RestoresCwd_AfterNestedScript)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return dofile('testing/test_files/dofile_getcwd.lua')");
 		CHECK(cstr_ends_with(result, "testing/test_files"));
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_RestoresCwd_OnFileNotFound)
+	TEST_FIXTURE(FxScript, DoFile_RestoresCwd_OnFileNotFound)
 	{
-		session_run_string(sess,
+		script_run_string(script,
 			"dofile('testing/test_files/nosuchfile.lua')");
 		const char* cwd = dir_get_current();
 		CHECK(cstr_ends_with(cwd, "/src"));
 	}
 
-	TEST_FIXTURE(FnDoFile, DoFile_SetsFileGlobal)
+	TEST_FIXTURE(FxScript, DoFile_SetsFileGlobal)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"return dofile('testing/test_files/_FILE.lua')");
 		CHECK(cstr_ends_with(result, "testing/test_files/_FILE.lua"));
 	}

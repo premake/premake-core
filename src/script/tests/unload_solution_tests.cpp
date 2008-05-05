@@ -7,23 +7,24 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "engine/internals.h"
+#include "script/script_internal.h"
 }
 
 
 struct FxUnloadSolution
 {
-	Session    sess;
+	Script     script;
 	lua_State* L;
 	Solution   sln;
 
 	FxUnloadSolution()
 	{
-		sess = session_create();
-		L = session_get_lua_state(sess);
+		script = script_create();
+		L = script_get_lua(script);
+
 		sln = solution_create();
 
-		session_run_string(sess, 
+		script_run_string(script,
 			"sln = solution('MySolution');"
 			"return sln");
 	}
@@ -31,7 +32,7 @@ struct FxUnloadSolution
 	~FxUnloadSolution()
 	{
 		solution_destroy(sln);
-		session_destroy(sess);
+		script_destroy(script);
 	}
 };
 
@@ -40,14 +41,14 @@ SUITE(unload)
 {
 	TEST_FIXTURE(FxUnloadSolution, UnloadSolution_SetsName)
 	{
-		unload_solution(sess, L, sln);
+		unload_solution(L, sln);
 		const char* result = solution_get_name(sln);
 		CHECK_EQUAL("MySolution", result);
 	}
 
 	TEST_FIXTURE(FxUnloadSolution, UnloadSolution_SetsBaseDir)
 	{
-		unload_solution(sess, L, sln);
+		unload_solution(L, sln);
 		const char* result = solution_get_base_dir(sln);
 		CHECK_EQUAL("(string)", result);
 	}

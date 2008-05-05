@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_MAKE_PROJECT_H)
 #define PREMAKE_MAKE_PROJECT_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 int make_project_config_conditional(Session sess, Project prj, Stream strm);
 int make_project_config_cflags(Session sess, Project prj, Stream strm);

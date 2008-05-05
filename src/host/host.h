@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_HOST_H)
 #define PREMAKE_HOST_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 /**
  * The short help message, displayed if Premake is run with no arguments.

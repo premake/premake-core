@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_VS200X_SOLUTION_H)
 #define PREMAKE_VS200X_SOLUTION_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 int vs2002_solution_configuration(Session sess, Solution sln, Stream strm);
 int vs2002_solution_dependencies(Session sess, Solution sln, Stream strm);

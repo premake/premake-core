@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_VS200X_H)
 #define PREMAKE_VS200X_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 int         vs200x_attribute(Session sess, int level, const char* name, const char* value, ...);
 int         vs200x_element(Session sess, int level, const char* name);

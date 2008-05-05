@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_VS200X_PROJECT_H)
 #define PREMAKE_VS200X_PROJECT_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 int vs200x_project_config_element(Session sess, Project prj, Stream strm);
 int vs200x_project_config_end(Session sess, Project prj, Stream strm);

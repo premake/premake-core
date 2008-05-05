@@ -5,9 +5,8 @@
  */
 
 #include "premake.h"
+#include "script_internal.h"
 #include "base/error.h"
-#include "engine/session.h"
-#include "internals.h"
 
 
 int fn_error(lua_State* L)

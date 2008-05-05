@@ -7,7 +7,6 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "engine/engine.h"
 #include "host/host.h"
 }
 
@@ -19,8 +18,9 @@ extern "C" {
  */
 int host_tests()
 {
-	int status = engine_tests();
-	if (status == OKAY) status = tests_run_suite("action");
-	if (status == OKAY) status = tests_run_suite("host");
-	return status;
+	int z = OKAY;
+	if (z == OKAY)  z = session_tests();
+	if (z == OKAY)  z = tests_run_suite("action");
+	if (z == OKAY)  z = tests_run_suite("host");
+	return z;
 }

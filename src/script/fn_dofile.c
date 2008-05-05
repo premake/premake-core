@@ -5,7 +5,7 @@
  */
 
 #include "premake.h"
-#include "internals.h"
+#include "script_internal.h"
 #include "base/dir.h"
 #include "base/path.h"
 #include "base/string.h"
@@ -32,7 +32,8 @@ int fn_dofile(lua_State* L)
 
 	/* set the _FILE global to the full path of the script being run */
 	full_path = path_absolute(filename);
-	engine_set_script_file(L, full_path);
+	lua_pushstring(L, full_path);
+	lua_setglobal(L, FILE_KEY);
 
 	/* make the script directory the current directory */
 	script_dir = path_directory(full_path);

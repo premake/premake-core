@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_MAKE_SOLUTION_H)
 #define PREMAKE_MAKE_SOLUTION_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 int make_solution_create(Session sess, Solution sln, Stream strm);
 

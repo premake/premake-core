@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_VS200X_CONFIG_H)
 #define PREMAKE_VS200X_CONFIG_H
 
-#include "engine/session.h"
+#include "session/session.h"
 
 int vs200x_config_character_set(Session sess);
 int vs200x_config_detect_64bit_portability(Session sess, Project prj);

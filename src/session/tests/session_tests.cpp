@@ -7,10 +7,31 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "engine/session.h"
+#include "session/session.h"
+#include "script/script.h"
+#include "base/base.h"
 #include "base/error.h"
 }
 
+
+/**
+ * \brief   Run the engine automated tests.
+ * \returns OKAY if all tests completed successfully.
+ * \note    Also runs the tests for all dependencies (everything but the host executable).
+ */
+int session_tests()
+{
+	int z = base_tests();
+	if (z == OKAY) z = project_tests();
+	if (z == OKAY) z = script_tests();
+	if (z == OKAY) z = tests_run_suite("session");
+	return z;
+}
+
+
+/**************************************************************************
+ * Support functions for Session object testing
+ **************************************************************************/
 
 #define FAIL_SLN_PARAM  (1)
 #define FAIL_PRJ_PARAM  (2)

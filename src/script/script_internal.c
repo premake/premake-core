@@ -1,36 +1,14 @@
 /**
- * \file   engine.c
- * \brief  Project scripting internal implementation.
+ * \file   script_internal.h
+ * \brief  Project scripting engine internal API.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  */
 
 #include <string.h>
 #include "premake.h"
-#include "internals.h"
+#include "script_internal.h"
 #include "base/buffers.h"
 #include "base/path.h"
-
-
-/**
- * Configure a new project object (solution, project). Initializes all list
- * fields and creates an initial configuration list.
- * \param   L       The Lua state.
- * \param   fields  The list of object fields.
- */
-void engine_configure_project_object(lua_State* L, struct FieldInfo* fields)
-{
-	struct FieldInfo* field;
-
-	/* set all list-type configuration values to empty tables */
-	for (field = fields; field->name != NULL; ++field)
-	{
-		if (field->kind == ListField)
-		{
-			lua_newtable(L);
-			lua_setfield(L, -2, field->name);
-		}
-	}
-}
 
 
 /**
@@ -46,7 +24,7 @@ void engine_configure_project_object(lua_State* L, struct FieldInfo* fields)
  *          no currently active object. If is_required is true, returns true
  *          if an active object was found, false otherwise.
  */
-int engine_get_active_object(lua_State* L, enum ObjectType type, int is_required)
+int script_internal_get_active_object(lua_State* L, enum ObjectType type, int is_required)
 {
 	int top;
 
@@ -124,31 +102,12 @@ int engine_get_active_object(lua_State* L, enum ObjectType type, int is_required
 
 
 /**
- * Get the directory which contains the currently executing script. This is 
- * used to locate resources specified in the script using relative paths.
- * \param   L    The Lua state.
- * \returns The directory containing the current script, as an absolute path.
- */
-const char* engine_get_script_dir(lua_State* L)
-{
-	const char* path;
-
-	lua_getglobal(L, FILE_KEY);
-	path = lua_tostring(L, -1);
-	lua_pop(L, 1);
-
-	path = path_directory(path);
-	return path;
-}
-
-
-/**
  * Remembers the object at the top of the stack as active for the given object type. 
  * This function is used to indicate the current solution, project, etc.
  * \param   L     The Lua state.
  * \param   type  One of the script object type enumerations.
  */
-void engine_set_active_object(lua_State* L, enum ObjectType type)
+void script_internal_set_active_object(lua_State* L, enum ObjectType type)
 {
 	lua_getregistry(L);
 	lua_pushvalue(L, -2);
@@ -171,16 +130,39 @@ void engine_set_active_object(lua_State* L, enum ObjectType type)
 
 
 /**
- * Remembers the name of the currently executing script file, exposing it
- * to the script via the _FILE global. The script file path is used to
- * locate any resources specified in the script using relative paths.
- * \param   L         The Lua state.
- * \param   filename  The script filename; should be absolute.
+ * Returns the directory containing the currently executing script file. Used to
+ * locate external resources (files, etc.) specified relative to the current script.
+ * \param   L    The Lua script environment.
+ * \returns The directory containing the currently executing script file.
  */
-void engine_set_script_file(lua_State* L, const char* filename)
+const char* script_internal_script_dir(lua_State* L)
 {
-	lua_pushstring(L, filename);
-	lua_setglobal(L, FILE_KEY);
+	const char* result;
+	lua_getglobal(L, FILE_KEY);
+	result = lua_tostring(L, -1);
+	result = path_directory(result);
+	lua_pop(L, 1);
+	return result;
 }
 
 
+/**
+ * Uses a list of fields to populate a project object (solution, project, or
+ * configuration) with a matching set of properties and accessor functions.
+ * \param   L       The Lua state.
+ * \param   fields  The list of object fields.
+ */
+void script_internal_populate_object(lua_State* L, struct FieldInfo* fields)
+{
+	struct FieldInfo* field;
+
+	/* set all list-type configuration values to empty tables */
+	for (field = fields; field->name != NULL; ++field)
+	{
+		if (field->kind == ListField)
+		{
+			lua_newtable(L);
+			lua_setfield(L, -2, field->name);
+		}
+	}
+}

@@ -5,7 +5,7 @@
  */
 
 #include "premake.h"
-#include "internals.h"
+#include "script_internal.h"
 #include "base/dir.h"
 
 int fn_getcwd(lua_State* L)

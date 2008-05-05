@@ -5,24 +5,24 @@
  */
 
 #include "premake.h"
-#include "accessor_tests.h"
+#include "script_tests.h"
 extern "C" {
 #include "base/guid.h"
 }
 
 
-SUITE(engine)
+SUITE(script)
 {
 	TEST_FIXTURE(FxAccessor, Guid_Exists_OnStartup)
 	{
-		const char* result = session_run_string(sess, 
+		const char* result = script_run_string(script, 
 			"return (guid ~= nil)");
 		CHECK_EQUAL("true", result);
 	}
 
 	TEST_FIXTURE(FxAccessor, Guid_CanRoundtrip)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"guid '0C202E43-B9AF-4972-822B-5A42F0BF008C';"
 			"return guid()");
 		CHECK_EQUAL("0C202E43-B9AF-4972-822B-5A42F0BF008C", result);
@@ -30,7 +30,7 @@ SUITE(engine)
 
 	TEST_FIXTURE(FxAccessor, Guid_RaisesError_OnInvalidGuid)
 	{
-		const char* result = session_run_string(sess,
+		const char* result = script_run_string(script,
 			"guid '0C202E43-XXXX-4972-822B-5A42F0BF008C'");
 		CHECK_EQUAL("invalid value '0C202E43-XXXX-4972-822B-5A42F0BF008C'", result);
 	}

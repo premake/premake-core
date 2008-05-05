@@ -11,7 +11,8 @@ local subsystems =
 	"action",
 	"action/make",
 	"action/vs200x",
-	"engine",
+	"script",
+	"session",
 	"host"
 }
 
@@ -63,7 +64,7 @@ local subsystems =
 
 -- Lua scripting engine
 
-	local lua = "engine/lua-5.1.2/src"
+	local lua = "script/lua-5.1.2/src"
 	table.insert(package.includepaths, lua)
 	table.insert(package.files, matchfiles(lua.."/*.h", lua.."/*.c"))
 	table.insert(package.excludes, {lua.."/lua.c", lua.."/luac.c"})

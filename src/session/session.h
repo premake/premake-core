@@ -66,9 +66,10 @@ Stream      session_get_active_stream(Session sess);
 Solution    session_get_solution(Session sess, int index);
 int         session_num_solutions(Session sess);
 const char* session_run_file(Session sess, const char* filename);
-const char* session_run_string(Session sess, const char* script);
+const char* session_run_string(Session sess, const char* code);
 void        session_set_action(Session sess, const char* action);
 void        session_set_active_stream(Session sess, Stream strm);
+int         session_tests(void);
 int         session_unload(Session sess);
 int         session_validate(Session sess);
 
