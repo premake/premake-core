@@ -1,0 +1,65 @@
+.\" premake man page. 
+.\" Contact rjmyst3@gmail.com to correct errors or omissions. 
+.TH "PREMAKE" "1" "17 April 2008" "Ryan Mulder" ""
+.SH "NAME"
+Premake \- A build script generator.
+.SH "SYNOPSIS"
+.\" Syntax goes here. 
+.B premake \-\-target <str>
+.SH "DESCRIPTION"
+.B premake
+allows you to manage your project configuration in one place and still support those pesky IDE\-addicted Windows coders and/or cranky Linux command\-line junkies. It allows you to generate project files for tools that you do not own. It saves the time that would otherwise be spent manually keeping several different toolsets in sync. And it provides an easy upgrade path as new versions of your favorite tools are released.
+.SH "OPTIONS"
+.TP 8
+.B "\-\-file name"
+Process the specified premake script file. If not specified, "premake.lua" is assumed.
+.TP 8
+.B "\-\-clean"
+Remove all binaries and build scripts.
+.TP 8
+.B "\-\-cc name"
+Choose a C/C++ compiler, if supported by target; one of:
+      gcc       GNU gcc compiler
+      dmc       Digital Mars C/C+ compiler (experimental)
+.TP 8
+.B "\-\-dotnet name"
+Choose a .NET compiler set, if supported by target; one of:
+      ms        Microsoft (csc)
+      mono      Mono (mcs)
+      mono2     Mono .NET 2.0 (gmcs)
+      pnet      Portable.NET (cscc)
+.TP 8
+.B "\-\-os name"
+Generate files for different operating system; one of:
+      bsd       OpenBSD, NetBSD, or FreeBSD
+      linux     Linux
+      macosx    MacOS X
+      windows   Microsoft Windows
+.TP 8
+.B "\-\-target name"
+Generate input files for the specified toolset; one of:
+      cb\-gcc    Code::Blocks Studio with GCC
+      gnu       GNU Makefile for POSIX, MinGW, and Cygwin
+      monodev   MonoDevelop
+      sharpdev  ICSharpCode SharpDevelop
+      vs6       Microsoft Visual Studio 6
+      vs2002    Microsoft Visual Studio 2002
+      vs2003    Microsoft Visual Studio 2003
+      vs2005    Microsoft Visual Studio 2005 (includes Express editions)
+.TP 8
+.B "\-\-version"
+Display version information.
+.TP 8
+.B "\-\-help"
+Display this information.
+.SH "EXAMPLES"
+Generate Makefiles for gcc.
+.nf 
+premake \-\-target gnu
+.SH "AUTHORS"
+.nf 
+Jason Perkins and the Premake Project
+.fi 
+.SH "HISTORY"
+2008 \- Initial version
+
