@@ -17,6 +17,7 @@
 struct FieldInfo ProjectFieldInfo[] =
 {
 	{ "basedir",    StringField,  NULL                      },
+	{ "files",      ListField,    NULL                      },
 	{ "guid",       StringField,  guid_is_valid             },
 	{ "language",   StringField,  project_is_valid_language },
 	{ "location",   StringField,  NULL                      },
@@ -119,12 +120,21 @@ const char* project_get_filename(Project prj, const char* basename, const char* 
 
 
 /**
+ * Retrieve the list of source files associated with a project.
+ */
+Strings project_get_files(Project prj)
+{
+	assert(prj);
+	return fields_get_values(prj->fields, ProjectFiles);
+}
+
+
+/**
  * Retrieve the GUID associated with a project.
- * \param   prj    The project to query.
- * \returns The GUID associated with the project, or NULL if the GUID has not been set.
  */
 const char* project_get_guid(Project prj)
 {
+	assert(prj);
 	return project_get_value(prj, ProjectGuid);
 }
 
@@ -269,4 +279,18 @@ void project_set_value(Project prj, enum ProjectField field, const char* value)
 {
 	assert(prj);
 	fields_set_value(prj->fields, field, value);
+}
+
+
+/**
+ * Sets the list of values associated with a field. The field will subsequently
+ * "own" the list, and take responsibility to destroying it with the field set.
+ * \param   prj      The project object.
+ * \param   index    The index of the field to set.
+ * \param   values   The list of new values for the field.
+ */
+void project_set_values(Project prj, enum ProjectField field, Strings values)
+{
+	assert(prj);
+	fields_set_values(prj->fields, field, values);
 }

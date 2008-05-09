@@ -14,33 +14,20 @@
 
 /**
  * Write an XML attribute, adjusting for the differing Visual Studio formats.
- * \param   sess    The current execution session.
- * \param   level   The XML element nesting level.
+ * \param   strm         The output stream, the attribute will be written here.
+ * \param   indent_size  How far to indent (with tabs) the attribute.
  * \param   name    The attribute name.
- * \param   value   The attribute value.
+ * \param   value   The attribute value; may contain printf-style formatting codes.
  * \returns OKAY if successful.
  */
-int vs200x_attribute(Session sess, int level, const char* name, const char* value, ...)
+int vs200x_attribute(Stream strm, int indent_size, const char* name, const char* value, ...)
 {
-	int z;
 	va_list args;
-	Stream strm = session_get_active_stream(sess);
-
-	if (vs200x_get_target_version(sess) < 2005)
-	{
-		if (cstr_eq(value, "true"))
-		{
-			value = "TRUE";
-		}
-		else if (cstr_eq(value, "false"))
-		{
-			value = "FALSE";
-		}
-	}
+	int z = OKAY;
 
 	va_start(args, value);
-	z  = stream_writeline(strm, "");
-	z |= stream_write_n(strm, "\t", level + 1);
+	z |= stream_writeline(strm, "");
+	z |= stream_write_n(strm, "\t", indent_size);
 	z |= stream_write(strm, "%s=\"", name);
 	z |= stream_vprintf(strm, value, args);
 	z |= stream_write(strm, "\"");
@@ -50,33 +37,16 @@ int vs200x_attribute(Session sess, int level, const char* name, const char* valu
 
 
 /**
- * Write out an element tag.
- * \param   sess    The current execution session.
- * \param   level   The XML element nesting level.
- * \param   name    The element name.
- * \returns OKAY if successful.
- */
-int vs200x_element(Session sess, int level, const char* name)
-{
-	int z;
-	Stream strm = session_get_active_stream(sess);
-	z  = stream_write_n(strm, "\t", level);
-	z |= stream_writeline(strm, "<%s>", name);
-	return z;
-}
-
-
-/**
  * Write the ending part of an XML tag, adjust for the differing Visual Studio formats.
  * \param   sess    The current execution session.
+ * \param   strm    The output stream.
  * \param   level   The XML element nesting level.
  * \param   markup  The end tag markup.
  * \returns OKAY if successful.
  */
-int vs200x_element_end(Session sess, int level, const char* markup)
+int vs200x_element_end(Session sess, Stream strm, int level, const char* markup)
 {
 	int z;
-	Stream strm = session_get_active_stream(sess);
 	int version = vs200x_get_target_version(sess);
 	if (version >= 2005)
 	{
@@ -97,19 +67,13 @@ int vs200x_element_end(Session sess, int level, const char* markup)
 
 
 /**
- * Write out the starting part of an XML element tag: "<MyElement".
- * \param   sess    The current execution session.
- * \param   level   The XML element nesting level.
- * \param   name    The element name.
- * \returns OKAY if successful.
+ * Return the Visual Studio version appropriate version of the string for a false
+ * value. Before 2005 this was "FALSE", after it is "false".
  */
-int vs200x_element_start(Session sess, int level, const char* name)
+const char* vs200x_false(Session sess)
 {
-	int z;
-	Stream strm = session_get_active_stream(sess);
-	z  = stream_write_n(strm, "\t", level);
-	z |= stream_write(strm, "<%s", name);
-	return z;
+	int version = vs200x_get_target_version(sess);
+	return (version < 2005) ? "FALSE" : "false";
 }
 
 
@@ -185,6 +149,17 @@ const char* vs200x_tool_guid(const char* language)
 		error_set("unsupported language '%s'", language); 
 		return NULL;
 	}
+}
+
+
+/**
+ * Return the Visual Studio version appropriate version of the string for a true
+ * value. Before 2005 this was "TRUE", after it is "true".
+ */
+const char* vs200x_true(Session sess)
+{
+	int version = vs200x_get_target_version(sess);
+	return (version < 2005) ? "TRUE" : "true";
 }
 
 

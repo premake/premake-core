@@ -16,6 +16,7 @@
 enum ProjectField
 {
 	ProjectBaseDirectory,
+	ProjectFiles,
 	ProjectGuid,
 	ProjectLanguage,
 	ProjectLocation,
@@ -34,6 +35,7 @@ void        project_destroy(Project prj);
 const char* project_get_base_dir(Project prj);
 const char* project_get_configuration_filter(Project prj);
 const char* project_get_filename(Project prj, const char* basename, const char* ext);
+Strings     project_get_files(Project prj);
 const char* project_get_guid(Project prj);
 const char* project_get_language(Project prj);
 const char* project_get_location(Project prj);
@@ -47,6 +49,7 @@ void        project_set_language(Project prj, const char* language);
 void        project_set_location(Project prj, const char* location);
 void        project_set_name(Project prj, const char* name);
 void        project_set_value(Project prj, enum ProjectField field, const char* value);
+void        project_set_values(Project prj, enum ProjectField field, Strings values);
 int         project_tests(void);
 
 #endif

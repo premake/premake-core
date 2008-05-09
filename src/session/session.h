@@ -2,6 +2,14 @@
  * \file   session.h
  * \brief  Context for a program execution session.
  * \author Copyright (c) 2008 Jason Perkins and the Premake project
+ *
+ * \defgroup session Session
+ *
+ * Premake is essentially a long chain of sequential actions; the Session object
+ * tracks the application state through this chain, and provides the context
+ * necessary for actions to do their work. It's a glorified global, essentially.
+ *
+ * @{
  */
 #if !defined(PREMAKE_SESSION_H)
 #define PREMAKE_SESSION_H
@@ -74,3 +82,5 @@ int         session_unload(Session sess);
 int         session_validate(Session sess);
 
 #endif
+/** @} */
+

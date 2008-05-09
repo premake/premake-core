@@ -54,4 +54,11 @@ SUITE(fields)
 		const char* result = fields_get_value(fields, TestStringValue);
 		CHECK_EQUAL("String Value", result);
 	}
+
+	TEST_FIXTURE(FxFields, SetValues_CanRoundtrip)
+	{
+		Strings values = strings_create();
+		fields_set_values(fields, TestListValue, values);
+		CHECK(values == fields_get_values(fields, TestListValue));
+	}
 }

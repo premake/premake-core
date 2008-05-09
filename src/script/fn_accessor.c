@@ -10,11 +10,13 @@
 #include "base/error.h"
 
 
+static int fn_accessor(lua_State* L);
 static int fn_accessor_object_has_field(struct FieldInfo* fields, const char* field_name);
 static int fn_accessor_register(lua_State* L, struct FieldInfo* fields);
 static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field);
 static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field);
-static int fn_accessor(lua_State* L);
+static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field);
+static void fn_accessor_append_values(lua_State* L, int destIndex, int srcIndex);
 
 
 /**
@@ -119,7 +121,14 @@ static int fn_accessor(lua_State* L)
 	/* if a value is provided, set the field */
 	if (lua_gettop(L) > 1)
 	{
-		fn_accessor_set_string_value(L, field);
+		if (field->kind == StringField)
+		{
+			fn_accessor_set_string_value(L, field);
+		}
+		else
+		{
+			fn_accessor_set_list_value(L, field);
+		}
 	}
 
 	/* return the current value of the field */
@@ -129,7 +138,7 @@ static int fn_accessor(lua_State* L)
 
 
 /**
- * Sets a string field to the value on the top of the Lua stack.
+ * Sets a string field to the value on the bottom of the Lua stack.
  * \returns OKAY if successful.
  */
 static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
@@ -156,4 +165,57 @@ static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
 	lua_pushvalue(L, 1);
 	lua_setfield(L, -2, field->name);
 	return OKAY;
+}
+
+
+/**
+ * Appends the value or list at the bottom of the Lua stack to the specified list field.
+ * \returns OKAY if successful.
+ */
+static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
+{
+	/* get the current value of the field */
+	lua_getfield(L, -1, field->name);
+	
+	/* if the value passed in is a table, append all of its contents to the current
+	 * field value. If the value passed in is a single string, add it at the end */
+	if (lua_istable(L, 1))
+	{
+		fn_accessor_append_values(L, lua_gettop(L), 1);
+	}
+	else
+	{
+		lua_pushvalue(L, 1);
+		lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
+	}
+
+	/* remove the field value from the stack */
+	lua_pop(L, 1);
+	return OKAY;
+}
+
+
+/**
+ * Copy values from one table to the end of another table.
+ * \param   destIndex  The absolute stack index of the destination table.
+ * \param   srcIndex   The absolute stack index of the source table.
+ */
+static void fn_accessor_append_values(lua_State* L, int destIndex, int srcIndex)
+{
+	int i;
+	int src_n = luaL_getn(L, srcIndex);
+	int dst_n = luaL_getn(L, destIndex);
+	for (i = 1; i <= src_n; ++i)
+	{
+		lua_rawgeti(L, srcIndex, i);
+		if (lua_istable(L, -1))
+		{
+			fn_accessor_append_values(L, destIndex, lua_gettop(L));
+			dst_n = luaL_getn(L, destIndex);
+		}
+		else
+		{
+			lua_rawseti(L, destIndex, ++dst_n);
+		}
+	}
 }

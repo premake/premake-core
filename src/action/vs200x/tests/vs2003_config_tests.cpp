@@ -23,7 +23,7 @@ SUITE(action)
 {
 	TEST_FIXTURE(Fx2003Config, CharacterSet_Default)
 	{
-		vs200x_config_character_set(sess);
+		vs200x_config_character_set(sess, strm);
 		CHECK_EQUAL("\n\t\t\tCharacterSet=\"2\"", buffer);
 	}
 }

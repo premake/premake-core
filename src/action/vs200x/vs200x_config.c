@@ -9,40 +9,40 @@
 #include "vs200x_config.h"
 
 
-int vs200x_config_character_set(Session sess)
+int vs200x_config_character_set(Session sess, Stream strm)
 {
 	int version = vs200x_get_target_version(sess);
-	return vs200x_attribute(sess, 2, "CharacterSet", version > 2003 ? "1" : "2");
+	return vs200x_attribute(strm, 3, "CharacterSet", version > 2003 ? "1" : "2");
 }
 
 
-int vs200x_config_detect_64bit_portability(Session sess, Project prj)
+int vs200x_config_detect_64bit_portability(Session sess, Stream strm, Project prj)
 {
 	int version = vs200x_get_target_version(sess);
 	UNUSED(prj);
 	if (version < 2008)
 	{
-		return vs200x_attribute(sess, 3, "Detect64BitPortabilityProblems", "true");
+		return vs200x_attribute(strm, 4, "Detect64BitPortabilityProblems", vs200x_true(sess));
 	}
 	return OKAY;
 }
 
 
-int vs200x_config_runtime_type_info(Session sess, Project prj)
+int vs200x_config_runtime_type_info(Session sess, Stream strm, Project prj)
 {
 	int version = vs200x_get_target_version(sess);
 	UNUSED(prj);
 	if (version < 2005)
 	{
-		return vs200x_attribute(sess, 3, "RuntimeTypeInfo", "true");
+		return vs200x_attribute(strm, 4, "RuntimeTypeInfo", vs200x_true(sess));
 	}
 	return OKAY;
 }
 
 
-int vs200x_config_use_precompiled_header(Session sess, Project prj)
+int vs200x_config_use_precompiled_header(Session sess, Stream strm, Project prj)
 {
 	int version = vs200x_get_target_version(sess);
 	UNUSED(prj);
-	return vs200x_attribute(sess, 3, "UsePrecompiledHeader", (version > 2003) ? "0" : "2");
+	return vs200x_attribute(strm, 4, "UsePrecompiledHeader", (version > 2003) ? "0" : "2");
 }

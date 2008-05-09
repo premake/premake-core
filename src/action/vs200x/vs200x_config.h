@@ -8,9 +8,9 @@
 
 #include "session/session.h"
 
-int vs200x_config_character_set(Session sess);
-int vs200x_config_detect_64bit_portability(Session sess, Project prj);
-int vs200x_config_runtime_type_info(Session sess, Project prj);
-int vs200x_config_use_precompiled_header(Session sess, Project prj);
+int vs200x_config_character_set(Session sess, Stream strm);
+int vs200x_config_detect_64bit_portability(Session sess, Stream strm, Project prj);
+int vs200x_config_runtime_type_info(Session sess, Stream strm, Project prj);
+int vs200x_config_use_precompiled_header(Session sess, Stream strm, Project prj);
 
 #endif

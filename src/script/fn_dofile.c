@@ -11,6 +11,11 @@
 #include "base/string.h"
 
 
+/**
+ * Replacement implementation for Lua's dofile() function; manages Premake specific
+ * features like the _FILE variable, and makes sure the directory containing the
+ * running script is kept current.
+ */
 int fn_dofile(lua_State* L)
 {
 	const char *filename;

@@ -242,7 +242,8 @@ void script_set_action(Script script, const char* action)
 /**
  * Copy project information out of the scripting environment and into C objects that
  * can be more easily manipulated by the action code.
- * \param   slns   An array to hold the list of unloaded solutions.
+ * \param   script  The project scripting engine instance.
+ * \param   slns    An array to hold the list of unloaded solutions.
  * \returns OKAY if successful.
  */
 int script_unload(Script script, Array slns)

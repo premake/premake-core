@@ -48,4 +48,16 @@ struct FxAction
 		stream_destroy(strm);
 		session_destroy(sess);
 	}
+
+
+	void SetField(Project prj, enum ProjectField index, char** values)
+	{
+		Strings strs = strings_create();
+		for (char** value = values; (*value) != NULL; ++value)
+		{
+			strings_add(strs, *value);
+		}
+
+		project_set_values(prj, index, strs);
+	}
 };

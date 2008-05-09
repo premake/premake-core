@@ -75,7 +75,6 @@ void fields_destroy(Fields fields)
 const char* fields_get_value(Fields fields, int index)
 {
 	Strings values;
-
 	assert(fields);
 	assert(index >= 0 && index < fields->count);
 
@@ -88,6 +87,20 @@ const char* fields_get_value(Fields fields, int index)
 	{
 		return NULL;
 	}
+}
+
+
+/**
+ * Retrieve the list of values for a field.
+ * \param   fields    The collection of fields.
+ * \index   index     The index of fields to query.
+ * \returns The list of values stored in the field.
+ */
+Strings fields_get_values(Fields fields, int index)
+{
+	assert(fields);
+	assert(index >= 0 && index < fields->count);
+	return fields->values[index];
 }
 
 
@@ -114,4 +127,26 @@ void fields_set_value(Fields fields, int index, const char* value)
 	{
 		strings_set(values, 0, value);
 	}
+}
+
+
+/**
+ * Sets the list of values associated with a field. The field will subsequently
+ * "own" the list, and take responsibility to destroying it with the field set.
+ * \param   fields   The collection of fields.
+ * \param   index    The index of the field to set.
+ * \param   values   The list of new values for the field.
+ */
+void fields_set_values(Fields fields, int index, Strings values)
+{
+	assert(fields);
+	assert(index >= 0 && index < fields->count);
+	assert(values);
+
+	if (fields->values[index] != NULL)
+	{
+		strings_destroy(fields->values[index]);
+	}
+
+	fields->values[index] = values;
 }

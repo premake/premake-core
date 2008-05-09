@@ -9,6 +9,10 @@
 #include "base/error.h"
 
 
+/**
+ * Handler for errors reported out the script; copies the error message to
+ * Premake's global error state.
+ */
 int fn_error(lua_State* L)
 {
 	const char* message = lua_tostring(L, 1);

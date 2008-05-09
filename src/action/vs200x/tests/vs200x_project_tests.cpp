@@ -222,11 +222,57 @@ SUITE(action)
 	 * Files section tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxVsProject, Vs200x_Files)
+	TEST_FIXTURE(FxVsProject, Vs200x_Files_OnNoFiles)
 	{
 		vs200x_project_files(sess, prj, strm);
 		CHECK_EQUAL(
 			"\t<Files>\n"
+			"\t</Files>\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxVsProject, Vs200x_Files_OnSingleCppFile)
+	{
+		char* values[] = { "Hello.cpp", 0 };
+		SetField(prj, ProjectFiles, values);
+		vs200x_project_files(sess, prj, strm);
+		CHECK_EQUAL(
+			"\t<Files>\n"
+			"\t\t<File\n"
+			"\t\t\tRelativePath=\".\\Hello.cpp\">\n"
+			"\t\t</File>\n"
+			"\t</Files>\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxVsProject, Vs200x_Files_OnUpperDirectory)
+	{
+		char* values[] = { "../../Hello.cpp", 0 };
+		SetField(prj, ProjectFiles, values);
+		vs200x_project_files(sess, prj, strm);
+		CHECK_EQUAL(
+			"\t<Files>\n"
+			"\t\t<File\n"
+			"\t\t\tRelativePath=\"..\\..\\Hello.cpp\">\n"
+			"\t\t</File>\n"
+			"\t</Files>\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxVsProject, Vs200x_Files_OnGroupedCppFile)
+	{
+		char* values[] = { "Src/Hello.cpp", 0 };
+		SetField(prj, ProjectFiles, values);
+		vs200x_project_files(sess, prj, strm);
+		CHECK_EQUAL(
+			"\t<Files>\n"
+			"\t\t<Filter\n"
+			"\t\t\tName=\"Src\"\n"
+			"\t\t\tFilter=\"\">\n"
+			"\t\t\t<File\n"
+			"\t\t\t\tRelativePath=\".\\Src\\Hello.cpp\">\n"
+			"\t\t\t</File>\n"
+			"\t\t</Filter>\n"
 			"\t</Files>\n",
 			buffer);
 	}
@@ -245,5 +291,4 @@ SUITE(action)
 			"</VisualStudioProject>\n",
 			buffer);
 	}
-
 }

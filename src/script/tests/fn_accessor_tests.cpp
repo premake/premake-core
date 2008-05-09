@@ -64,4 +64,57 @@ SUITE(script)
 		CHECK_EQUAL("MyLocation", result);
 	}
 
+
+	/**************************************************************************
+	 * List field tests
+	 **************************************************************************/
+
+	TEST_FIXTURE(FxAccessor, Accessor_ReturnsEmptyTable_OnEmptyListValue)
+	{
+		const char* result = script_run_string(script,
+			"return (#files() == 0)");
+		CHECK_EQUAL("true", result);
+	}
+
+	TEST_FIXTURE(FxAccessor, Accessor_Appends_OnStringValue)
+	{
+		const char* result = script_run_string(script,
+			"files { 'Hello.c' };"
+			"return (prj.files[1] == 'Hello.c')"  );
+		CHECK_EQUAL("true", result);
+	}
+	
+	TEST_FIXTURE(FxAccessor, Accessor_Appends_OnListValue)
+	{
+		const char* result = script_run_string(script,
+			"files { 'Hello.c', 'Goodbye.c' };"
+			"return (prj.files[1] == 'Hello.c' and prj.files[2] == 'Goodbye.c')"  );
+		CHECK_EQUAL("true", result);
+	}
+	
+	TEST_FIXTURE(FxAccessor, Accessor_Appends_OnTwoCalls)
+	{
+		const char* result = script_run_string(script,
+			"files { 'Hello.c' };"
+			"files { 'Goodbye.c' };"
+			"return (prj.files[1] == 'Hello.c' and prj.files[2] == 'Goodbye.c')"  );
+		CHECK_EQUAL("true", result);
+	}
+	
+	TEST_FIXTURE(FxAccessor, Accessor_ReturnsList_OnNoArgs)
+	{
+		const char* result = script_run_string(script,
+			"files { 'Hello.c', 'Goodbye.c' };"
+			"lst = files();"
+			"return (lst[1] == 'Hello.c' and lst[2] == 'Goodbye.c')"  );
+		CHECK_EQUAL("true", result);
+	}
+	
+	TEST_FIXTURE(FxAccessor, Accessor_FlattensTables_OnNestedLists)
+	{
+		const char* result = script_run_string(script,
+			"files { {'Hello.c'}, {'Goodbye.c'} };"
+			"return (prj.files[1] == 'Hello.c' and prj.files[2] == 'Goodbye.c')"  );
+		CHECK_EQUAL("true", result);
+	}
 }

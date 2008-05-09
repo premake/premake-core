@@ -8,6 +8,10 @@
 #include "script_internal.h"
 #include "base/dir.h"
 
+
+/**
+ * Implementation of os.getcwd(): returns the current working directory.
+ */
 int fn_getcwd(lua_State* L)
 {
 	const char* cwd = dir_get_current();

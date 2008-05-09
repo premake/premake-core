@@ -6,6 +6,8 @@
 #if !defined(PREMAKE_FIELDS_H)
 #define PREMAKE_FIELDS_H
 
+#include "base/strings.h"
+
 
 /**
  * Field types.
@@ -43,6 +45,8 @@ Fields      fields_create(struct FieldInfo* info);
 void        fields_destroy(Fields fields);
 
 const char* fields_get_value(Fields fields, int index);
+Strings     fields_get_values(Fields fields, int index);
 void        fields_set_value(Fields fields, int index, const char* value);
+void        fields_set_values(Fields fields, int index, Strings values);
 
 #endif

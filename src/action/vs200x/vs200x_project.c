@@ -5,10 +5,14 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "premake.h"
+#include "action/action.h"
 #include "vs200x.h"
 #include "vs200x_project.h"
 #include "vs200x_config.h"
+#include "base/cstr.h"
+#include "base/path.h"
 
 
 /**
@@ -16,16 +20,15 @@
  */
 int vs200x_project_config_element(Session sess, Project prj, Stream strm)
 {
-	int z;
+	int z = OKAY;
 	const char* cfg_name = project_get_configuration_filter(prj);
-	UNUSED(strm);
-	z  = vs200x_element_start(sess, 2, "Configuration");
-	z |= vs200x_attribute(sess, 2, "Name", "%s|Win32", cfg_name);
-	z |= vs200x_attribute(sess, 2, "OutputDirectory", "$(SolutionDir)$(ConfigurationName)");
-	z |= vs200x_attribute(sess, 2, "IntermediateDirectory", "$(ConfigurationName)");
-	z |= vs200x_attribute(sess, 2, "ConfigurationType", "1");
-	z |= vs200x_config_character_set(sess);
-	z |= vs200x_element_end(sess, 2, ">");
+	z |= stream_write(strm, "\t\t<Configuration");
+	z |= vs200x_attribute(strm, 3, "Name", "%s|Win32", cfg_name);
+	z |= vs200x_attribute(strm, 3, "OutputDirectory", "$(SolutionDir)$(ConfigurationName)");
+	z |= vs200x_attribute(strm, 3, "IntermediateDirectory", "$(ConfigurationName)");
+	z |= vs200x_attribute(strm, 3, "ConfigurationType", "1");
+	z |= vs200x_config_character_set(sess, strm);
+	z |= vs200x_element_end(sess, strm, 2, ">");
 	return z;
 }
 
@@ -35,9 +38,9 @@ int vs200x_project_config_element(Session sess, Project prj, Stream strm)
  */
 int vs200x_project_config_end(Session sess, Project prj, Stream strm)
 {
+	UNUSED(sess);
 	UNUSED(prj);
-	UNUSED(strm);
-	return vs200x_element(sess, 2, "/Configuration");
+	return stream_writeline(strm, "\t\t</Configuration>");
 }
 
 
@@ -71,8 +74,6 @@ int vs200x_project_element(Session sess, Project prj, Stream strm)
 	const char* prj_name = project_get_name(prj);
 	const char* prj_guid = project_get_guid(prj);
 
-	UNUSED(strm);
-
 	version = vs200x_get_target_version(sess);
 	switch (version)
 	{
@@ -86,21 +87,21 @@ int vs200x_project_element(Session sess, Project prj, Stream strm)
 		prj_ver = "9.00";  break;
 	}
 
-	z  = vs200x_element_start(sess, 0, "VisualStudioProject");
-	z |= vs200x_attribute(sess, 0, "ProjectType", "Visual C++");
-	z |= vs200x_attribute(sess, 0, "Version", prj_ver);
-	z |= vs200x_attribute(sess, 0, "Name", prj_name);
-	z |= vs200x_attribute(sess, 0, "ProjectGUID", "{%s}", prj_guid);
+	z  = stream_write(strm, "<VisualStudioProject");
+	z |= vs200x_attribute(strm, 1, "ProjectType", "Visual C++");
+	z |= vs200x_attribute(strm, 1, "Version", prj_ver);
+	z |= vs200x_attribute(strm, 1, "Name", prj_name);
+	z |= vs200x_attribute(strm, 1, "ProjectGUID", "{%s}", prj_guid);
 	if (version > 2003)
 	{
-		z |= vs200x_attribute(sess, 0, "RootNamespace", prj_name);
+		z |= vs200x_attribute(strm, 1, "RootNamespace", prj_name);
 	}
-	z |= vs200x_attribute(sess, 0, "Keyword", "Win32Proj");
+	z |= vs200x_attribute(strm, 1, "Keyword", "Win32Proj");
 	if (version > 2005)
 	{
-		z |= vs200x_attribute(sess, 0, "TargetFrameworkVersion", "196613");
+		z |= vs200x_attribute(strm, 1, "TargetFrameworkVersion", "196613");
 	}
-	z |= vs200x_element_end(sess, 0, ">");
+	z |= vs200x_element_end(sess, strm, 0, ">");
 	return z;
 }
 
@@ -118,15 +119,88 @@ int vs200x_project_encoding(Session sess, Project prj, Stream strm)
 
 
 /**
+ * Write an individual file entry to the project file; callback for action_source_tree().
+ * \param   sess      The current execution session context.
+ * \param   prj       The current project; contains the file being enumerated.
+ * \param   strm      The active output stream; for writing the file markup.
+ * \param   filename  The name of the file to process.
+ * \param   state     One of the ActionSourceStates, enabling file grouping.
+ * \returns OKAY if successful.
+ */
+int vs200x_project_file(Session sess, Project prj, Stream strm, const char* filename, int state)
+{
+	const char* name;
+	const char* ptr;
+	int depth, z = OKAY;
+
+	/* figure out the grouping depth, skipping over any leading dot directories */
+	depth = 2;
+
+	ptr = filename;
+	while (cstr_starts_with(ptr, "../"))
+	{
+		ptr += 3;
+	}
+
+	ptr = strchr(ptr, '/');
+	while (ptr != NULL)
+	{
+		depth++;
+		ptr = strchr(ptr + 1, '/');
+	}
+
+	/* group name is just the last bit of the path */
+	name = path_filename(filename);
+
+	/* use the Windows path separator */
+	filename = path_translate(filename, "\\");
+
+	switch (state)
+	{
+	case GroupStart:
+		if (strlen(filename) > 0 && !cstr_eq(name, ".."))
+		{
+			z |= stream_write_n(strm, "\t", depth);
+			z |= stream_write(strm, "<Filter");
+			z |= vs200x_attribute(strm, depth + 1, "Name", name);
+			z |= vs200x_attribute(strm, depth + 1, "Filter", "");
+			z |= vs200x_element_end(sess, strm, depth, ">");
+		}
+		break;
+
+	case GroupEnd:
+		if (strlen(filename) > 0 && !cstr_eq(name, ".."))
+		{
+			z |= stream_write_n(strm, "\t", depth);
+			z |= stream_writeline(strm, "</Filter>");
+		}
+		break;
+
+	case SourceFile:
+		z |= stream_write_n(strm, "\t", depth);
+		z |= stream_write(strm, "<File");
+		ptr = (filename[0] == '.') ? "" : ".\\";
+		z |= vs200x_attribute(strm, depth + 1, "RelativePath", "%s%s", ptr, filename);
+		z |= vs200x_element_end(sess, strm, depth, ">");
+		z |= stream_write_n(strm, "\t", depth);
+		z |= stream_writeline(strm, "</File>");
+		break;
+	}
+
+	UNUSED(prj);
+	return z;
+}
+
+
+/**
  * Write out the [Files] element.
  */
 int vs200x_project_files(Session sess, Project prj, Stream strm)
 {
-	int z;
-	UNUSED(prj);
-	UNUSED(strm);
-	z  = vs200x_element(sess, 1, "Files");
-	z |= vs200x_element(sess, 1, "/Files");
+	int z = OKAY;
+	z |= stream_writeline(strm, "\t<Files>");
+	z |= action_source_tree(sess, prj, strm, vs200x_project_file);
+	z |= stream_writeline(strm, "\t</Files>");
 	return z;
 }
 
@@ -136,12 +210,12 @@ int vs200x_project_files(Session sess, Project prj, Stream strm)
  */
 int vs200x_project_globals(Session sess, Project prj, Stream strm)
 {
-	int z;
+	int z = OKAY;
+	UNUSED(sess);
 	UNUSED(prj);
-	UNUSED(strm);
-	z  = vs200x_element(sess, 1, "Globals");
-	z |= vs200x_element(sess, 1, "/Globals");
-	z |= vs200x_element(sess, 0, "/VisualStudioProject");
+	z |= stream_writeline(strm, "\t<Globals>");
+	z |= stream_writeline(strm, "\t</Globals>");
+	z |= stream_writeline(strm, "</VisualStudioProject>");
 	return z;
 }
 
@@ -151,14 +225,13 @@ int vs200x_project_globals(Session sess, Project prj, Stream strm)
  */
 int vs200x_project_platforms(Session sess, Project prj, Stream strm)
 {
-	int z;
+	int z = OKAY;
 	UNUSED(prj);
-	UNUSED(strm);
-	z  = vs200x_element(sess, 1, "Platforms");	
-	z |= vs200x_element_start(sess, 2, "Platform");
-	z |= vs200x_attribute(sess, 2, "Name", "Win32");
-	z |= vs200x_element_end(sess, 2, "/>");
-	z |= vs200x_element(sess, 1, "/Platforms");
+	z |= stream_writeline(strm, "\t<Platforms>");
+	z |= stream_write(strm, "\t\t<Platform");
+	z |= vs200x_attribute(strm, 3, "Name", "Win32");
+	z |= vs200x_element_end(sess, strm, 2, "/>");
+	z |= stream_writeline(strm, "\t</Platforms>");
 	return OKAY;
 }
 
@@ -170,12 +243,11 @@ int vs200x_project_references(Session sess, Project prj, Stream strm)
 {
 	int z;
 	UNUSED(prj);
-	UNUSED(strm);
-	z  = vs200x_element(sess, 1, "/Configurations");
+	z  = stream_writeline(strm, "\t</Configurations>");
 	if (vs200x_get_target_version(sess) > 2002)
 	{
-		z |= vs200x_element(sess, 1, "References");
-		z |= vs200x_element(sess, 1, "/References");
+		z |= stream_writeline(strm, "\t<References>");
+		z |= stream_writeline(strm, "\t</References>");
 	}
 	return z;
 }
@@ -188,15 +260,14 @@ int vs200x_project_tool_files(Session sess, Project prj, Stream strm)
 {
 	int version, z = OKAY;
 	UNUSED(prj);
-	UNUSED(strm);
 
 	version = vs200x_get_target_version(sess);
 	if (version > 2003)
 	{
-		z |= vs200x_element(sess, 1, "ToolFiles");
-		z |= vs200x_element(sess, 1, "/ToolFiles");
+		z |= stream_writeline(strm, "\t<ToolFiles>");
+		z |= stream_writeline(strm, "\t</ToolFiles>");
 	}
-	z |= vs200x_element(sess, 1, "Configurations");
+	z |= stream_writeline(strm, "\t<Configurations>");
 	return z;
 }
 
@@ -208,10 +279,9 @@ static int vs200x_project_vc_empty_tool(Session sess, Project prj, Stream strm, 
 {
 	int z;
 	UNUSED(prj);
-	UNUSED(strm);
-	z  = vs200x_element_start(sess, 3, "Tool");
-	z |= vs200x_attribute(sess, 3, "Name", name);
-	z |= vs200x_element_end(sess, 3, "/>");
+	z  = stream_write(strm, "\t\t\t<Tool");
+	z |= vs200x_attribute(strm, 4, "Name", name);
+	z |= vs200x_element_end(sess, strm, 3, "/>");
 	return z;
 }
 
@@ -250,20 +320,19 @@ int vs200x_project_vc_cl_compiler_tool(Session sess, Project prj, Stream strm)
 {
 	int version, z;
 	UNUSED(prj);
-	UNUSED(strm);
 	version = vs200x_get_target_version(sess);
-	z  = vs200x_element_start(sess, 3, "Tool");
-	z |= vs200x_attribute(sess, 3, "Name", "VCCLCompilerTool");
-	z |= vs200x_attribute(sess, 3, "Optimization", "0");
-	z |= vs200x_attribute(sess, 3, "MinimalRebuild", "true");
-	z |= vs200x_attribute(sess, 3, "BasicRuntimeChecks", "3");
-	z |= vs200x_attribute(sess, 3, "RuntimeLibrary", "3");
-	z |= vs200x_config_runtime_type_info(sess, prj);
-	z |= vs200x_config_use_precompiled_header(sess, prj);
-	z |= vs200x_attribute(sess, 3, "WarningLevel", "3");
-	z |= vs200x_config_detect_64bit_portability(sess, prj);
-	z |= vs200x_attribute(sess, 3, "DebugInformationFormat", "4");
-	z |= vs200x_element_end(sess, 3, "/>");
+	z  = stream_write(strm, "\t\t\t<Tool");
+	z |= vs200x_attribute(strm, 4, "Name", "VCCLCompilerTool");
+	z |= vs200x_attribute(strm, 4, "Optimization", "0");
+	z |= vs200x_attribute(strm, 4, "MinimalRebuild", vs200x_true(sess));
+	z |= vs200x_attribute(strm, 4, "BasicRuntimeChecks", "3");
+	z |= vs200x_attribute(strm, 4, "RuntimeLibrary", "3");
+	z |= vs200x_config_runtime_type_info(sess, strm, prj);
+	z |= vs200x_config_use_precompiled_header(sess, strm, prj);
+	z |= vs200x_attribute(strm, 4, "WarningLevel", "3");
+	z |= vs200x_config_detect_64bit_portability(sess, strm, prj);
+	z |= vs200x_attribute(strm, 4, "DebugInformationFormat", "4");
+	z |= vs200x_element_end(sess, strm, 3, "/>");
 	return z;
 }
 
@@ -293,15 +362,14 @@ int vs200x_project_vc_linker_tool(Session sess, Project prj, Stream strm)
 {
 	int z;
 	UNUSED(prj);
-	UNUSED(strm);
-	z  = vs200x_element_start(sess, 3, "Tool");
-	z |= vs200x_attribute(sess, 3, "Name", "VCLinkerTool");
-	z |= vs200x_attribute(sess, 3, "LinkIncremental", "2");
-	z |= vs200x_attribute(sess, 3, "GenerateDebugInformation", "true");
-	z |= vs200x_attribute(sess, 3, "SubSystem", "1");
-	z |= vs200x_attribute(sess, 3, "EntryPointSymbol", "mainCRTStartup");
-	z |= vs200x_attribute(sess, 3, "TargetMachine", "1");
-	z |= vs200x_element_end(sess, 3, "/>");
+	z  = stream_write(strm, "\t\t\t<Tool");
+	z |= vs200x_attribute(strm, 4, "Name", "VCLinkerTool");
+	z |= vs200x_attribute(strm, 4, "LinkIncremental", "2");
+	z |= vs200x_attribute(strm, 4, "GenerateDebugInformation", vs200x_true(sess));
+	z |= vs200x_attribute(strm, 4, "SubSystem", "1");
+	z |= vs200x_attribute(strm, 4, "EntryPointSymbol", "mainCRTStartup");
+	z |= vs200x_attribute(strm, 4, "TargetMachine", "1");
+	z |= vs200x_element_end(sess, strm, 3, "/>");
 	return z;
 }
 

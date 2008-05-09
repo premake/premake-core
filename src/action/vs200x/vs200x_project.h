@@ -13,6 +13,7 @@ int vs200x_project_config_end(Session sess, Project prj, Stream strm);
 int vs200x_project_create(Session sess, Project prj, Stream strm);
 int vs200x_project_element(Session sess, Project prj, Stream strm);
 int vs200x_project_encoding(Session sess, Project prj, Stream strm);
+int vs200x_project_file(Session sess, Project prj, Stream strm, const char* filename, int state);
 int vs200x_project_files(Session sess, Project prj, Stream strm);
 int vs200x_project_globals(Session sess, Project prj, Stream strm);
 int vs200x_project_platforms(Session sess, Project prj, Stream strm);
