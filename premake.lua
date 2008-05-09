@@ -122,13 +122,22 @@ project.name = "Premake4"
 			error("Failed to build binary package; see release.log for details")
 		end
 
-		os.chdir("../..")
+		os.chdir("../../..")
+		
+		-------------------------------------------------------------------
+		-- Build the source code package (MacOSX only)
+		-------------------------------------------------------------------
+		if (macosx) then
+			result = os.execute(string.format("zip -r9 premake-src-%s.zip %s/* >release.log", version, folder)
+			if (result ~= 0) then
+				error("Failed to build source code package; see release.log for details")
+			end
+		end
 		
 		-------------------------------------------------------------------
 		-- Clean up
 		-------------------------------------------------------------------
 		print("Cleaning up...")
-		os.chdir("..")
 		os.rmdir(folder)
 		os.remove("release.log")
 
