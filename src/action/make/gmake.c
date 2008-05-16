@@ -35,6 +35,7 @@ static SessionProjectCallback ProjectCallbacks[] =
 	make_project_resources,
 	make_project_phony_rule,
 	make_project_target,
+	make_project_source_rules,
 	make_project_include_dependencies,
 	NULL
 };

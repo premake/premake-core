@@ -14,6 +14,8 @@
 #include "base/cstr.h"
 #include "base/dir.h"
 
+static char* CppFileExtensions[] = { ".cc", ".cpp", ".cxx", ".c", ".s", NULL };
+
 
 /**
  * Create an absolute path from a relative one.
@@ -90,6 +92,24 @@ char* path_assemble(const char* dir, const char* filename, const char* ext)
 
 
 /**
+ * Returns the base name in a path: the filename, without the directory or
+ * file extension.
+ * \param   path     The path to split.
+ * \returns The base name part of the path.
+ */
+char* path_basename(const char* path)
+{
+	char* buffer = path_filename(path);
+	char* ptr = strrchr(buffer, '.');
+	if (ptr)
+	{
+		*ptr = '\0';
+	}
+	return buffer;
+}
+
+
+/**
  * Retrieve the directory portion of a path.
  * \param   path  The path to split.
  * \returns The directory portion of the path. Returns an empty string ("") if
@@ -98,14 +118,11 @@ char* path_assemble(const char* dir, const char* filename, const char* ext)
 char* path_directory(const char* path)
 {
 	char* ptr;
-	char* buffer;
+	char* buffer = buffers_next();
 	
 	assert(path);
-
-	buffer = buffers_next();
 	strcpy(buffer, path);
 	
-	/* look for the last path separator */
 	ptr = strrchr(buffer, '/');
 	if (ptr)
 		*ptr = '\0';
@@ -113,6 +130,25 @@ char* path_directory(const char* path)
 		*buffer = '\0';
 
 	return buffer;
+}
+
+
+/**
+ * Retrieve the file extension portion of a path. If the path has multiple
+ * dots in the filename (ie. filename.my.ext) only the last bit (.ext) will
+ * be returned. The dot is included in the extension.
+ * \param   path    The path to split.
+ * \returns The extension portion of the path, or an empty string if no extension is present.
+ */
+char* path_extension(const char* path)
+{
+	char* ptr;
+	char* buffer = buffers_next();
+
+	assert(path);
+	strcpy(buffer, path);
+	ptr = strrchr(buffer, '.');
+	return (ptr) ? ptr : "";
 }
 
 
@@ -156,6 +192,33 @@ int path_is_absolute(const char* path)
 		return 1;
 	if (path[1] == ':')
 		return 1;
+	return 0;
+}
+
+
+/**
+ * Returns true if the path represents a C++ source code file; by checking
+ * the file extension.
+ * \param   path      The path to check.
+ * \returns True if the path uses a known C++ file extension.
+ */
+int path_is_cpp_source(const char* path)
+{
+	int i;
+
+	char* ext = path_extension(path);
+	if (cstr_eq(ext, ""))
+	{
+		return 0;
+	}
+
+	_strlwr(ext);
+	for (i = 0; CppFileExtensions[i] != NULL; ++i)
+	{
+		if (cstr_eq(CppFileExtensions[i], ext))
+			return 1;
+	}
+
 	return 0;
 }
 

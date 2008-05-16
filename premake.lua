@@ -128,7 +128,7 @@ project.name = "Premake4"
 		-- Build the source code package (MacOSX only)
 		-------------------------------------------------------------------
 		if (macosx) then
-			result = os.execute(string.format("zip -r9 premake-src-%s.zip %s/* >release.log", version, folder)
+			result = os.execute(string.format("zip -r9 premake-src-%s.zip %s/* >release.log", version, folder))
 			if (result ~= 0) then
 				error("Failed to build source code package; see release.log for details")
 			end

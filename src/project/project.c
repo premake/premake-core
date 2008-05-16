@@ -286,7 +286,7 @@ void project_set_value(Project prj, enum ProjectField field, const char* value)
  * Sets the list of values associated with a field. The field will subsequently
  * "own" the list, and take responsibility to destroying it with the field set.
  * \param   prj      The project object.
- * \param   index    The index of the field to set.
+ * \param   field    The index of the field to set.
  * \param   values   The list of new values for the field.
  */
 void project_set_values(Project prj, enum ProjectField field, Strings values)

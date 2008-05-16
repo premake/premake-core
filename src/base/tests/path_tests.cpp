@@ -46,6 +46,17 @@ SUITE(base)
 
 
 	/**************************************************************************
+	 * path_basename() tests
+	 **************************************************************************/
+
+	TEST(PathBaseName_ReturnsBase_OnDirAndExt)
+	{
+		char* result = path_basename("folder/filename.ext");
+		CHECK_EQUAL("filename", result);
+	}
+
+
+	/**************************************************************************
 	 * path_directory() tests
 	 **************************************************************************/
 
@@ -67,6 +78,29 @@ SUITE(base)
 	{
 		char* result = path_directory("dir0/dir1/dir2/filename.ext");
 		CHECK_EQUAL("dir0/dir1/dir2", result);
+	}
+
+
+	/**************************************************************************
+	 * path_extension() tests
+	 **************************************************************************/
+
+	TEST(PathExt_ReturnsEmptyString_OnNoExtension)
+	{
+		char* result = path_extension("filename");
+		CHECK_EQUAL("", result);
+	}
+
+	TEST(PathExt_ReturnsExtension)
+	{
+		char* result = path_extension("filename.txt");
+		CHECK_EQUAL(".txt", result);
+	}
+
+	TEST(PathExt_ReturnsLastExtension_OnMultipleDots)
+	{
+		char* result = path_extension("filename.mod.txt");
+		CHECK_EQUAL(".txt", result);
 	}
 
 
@@ -112,6 +146,46 @@ SUITE(base)
 	TEST(PathIsAbsolute_ReturnsFalse_OnRelativePath)
 	{
 		CHECK(!path_is_absolute("a/b/c"));
+	}
+
+
+	/**************************************************************************
+	 * path_is_absolute() tests
+	 **************************************************************************/
+		
+	TEST(PathIsCpp_ReturnsFalse_OnNotCpp)
+	{
+		CHECK(!path_is_cpp_source("filename.XXX"));
+	}
+
+	TEST(PathIsCpp_ReturnsTrue_OnC)
+	{
+		CHECK(path_is_cpp_source("filename.c"));
+	}
+	
+	TEST(PathIsCpp_ReturnsTrue_OnCC)
+	{
+		CHECK(path_is_cpp_source("filename.cc"));
+	}
+
+	TEST(PathIsCpp_ReturnsTrue_OnCpp)
+	{
+		CHECK(path_is_cpp_source("filename.cpp"));
+	}
+	
+	TEST(PathIsCpp_ReturnsTrue_OnCxx)
+	{
+		CHECK(path_is_cpp_source("filename.cxx"));
+	}
+	
+	TEST(PathIsCpp_ReturnsTrue_OnS)
+	{
+		CHECK(path_is_cpp_source("filename.s"));
+	}
+	
+	TEST(PathIsCpp_ReturnsTrue_OnUpperCase)
+	{
+		CHECK(path_is_cpp_source("filename.C"));
 	}
 
 

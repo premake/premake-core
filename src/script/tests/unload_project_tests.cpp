@@ -29,6 +29,7 @@ struct FxUnloadProject
 			"prj = project('MyProject');"
 			"  guid '0C202E43-B9AF-4972-822B-5A42F0BF008C';"
 			"  language 'c++';"
+			"  files { 'Hello.cpp', 'Goodbye.cpp' };"
 			"return prj");
 	}
 
@@ -54,6 +55,17 @@ SUITE(unload)
 		unload_project(L, prj);
 		const char* result = project_get_base_dir(prj);
 		CHECK_EQUAL("(string)", result);
+	}
+
+	TEST_FIXTURE(FxUnloadProject, UnloadProject_UnloadsFiles)
+	{
+		unload_project(L, prj);
+		Strings files = project_get_files(prj);
+		CHECK(strings_size(files) == 2);
+		if (strings_size(files) == 2) {
+			CHECK_EQUAL("Hello.cpp", strings_item(files, 0));
+			CHECK_EQUAL("Goodbye.cpp", strings_item(files, 1));
+		}
 	}
 
 	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsGuid)

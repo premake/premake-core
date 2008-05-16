@@ -121,21 +121,48 @@ int unload_solution(lua_State* L, Solution sln)
 int unload_project(lua_State* L, Project prj)
 {
 	const char* value;
-	int i;
+	int fi;
 
 	assert(L);
 	assert(prj);
 
-	for (i = 0; i < NumProjectFields; ++i)
+	for (fi = 0; fi < NumProjectFields; ++fi)
 	{
-		lua_getfield(L, -1, ProjectFieldInfo[i].name);
-		value = lua_tostring(L, -1);
-		if (value != NULL)
+		Strings values = strings_create();
+
+		lua_getfield(L, -1, ProjectFieldInfo[fi].name);
+		if (lua_istable(L, -1))
 		{
-			project_set_value(prj, i, value);
+			int i, n;
+			n = luaL_getn(L, -1);
+			for (i = 1; i <= n; ++i)
+			{
+				lua_rawgeti(L, -1, i);
+				value = lua_tostring(L, -1);
+				if (value != NULL)
+				{
+					strings_add(values, value);
+				}
+				lua_pop(L, 1);
+			}
 		}
+		else
+		{
+			value = lua_tostring(L, -1);
+			if (value != NULL)
+			{
+				strings_add(values, value);
+			}
+		}
+
+		/* remove the field value from the top of the stack */
 		lua_pop(L, 1);
+
+		/* store the field values */
+		project_set_values(prj, fi, values);
 	}
 
 	return OKAY;
 }
+
+

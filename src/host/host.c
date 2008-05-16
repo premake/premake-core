@@ -84,14 +84,11 @@ int host_run_action(Session sess)
  */
 int host_run_script(Session sess)
 {
-	int status;
-
 	assert(sess);
 
 	/* run the default file for now */
 	session_run_file(sess, DEFAULT_SCRIPT_NAME);
-	status = (error_get() == NULL) ? OKAY : !OKAY;
-	return status;
+	return (error_get() == NULL) ? OKAY : !OKAY;
 }
 
 

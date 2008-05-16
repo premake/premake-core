@@ -82,7 +82,7 @@ SUITE(action)
 	{
 		make_project_config_objdir(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OBJDIR := obj/Debug\n",
+			"   OBJDIR := .\n",
 			buffer);
 	}
 
@@ -110,14 +110,28 @@ SUITE(action)
 			buffer);
 	}
 
-	TEST_FIXTURE(FxAction, MakeProject_Objects)
+
+	/**********************************************************************
+	 * Object file list tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxAction, MakeProject_Objects_ConvertsFileExtension)
 	{
+		char* files[] = { "Hello.cpp", "Goodbye.cpp", NULL };
+		SetField(prj, ProjectFiles, files);
 		make_project_objects(sess, prj, strm);
 		CHECK_EQUAL(
 			"OBJECTS := \\\n"
+			"\t$(OBJDIR)/Hello.o \\\n"
+			"\t$(OBJDIR)/Goodbye.o \\\n"
 			"\n",
 			buffer);
 	}
+
+
+	/**********************************************************************
+	 * Resource file list tests
+	 **********************************************************************/
 
 	TEST_FIXTURE(FxAction, MakeProject_Resources)
 	{
@@ -128,6 +142,11 @@ SUITE(action)
 			buffer);
 	}
 
+
+	/**********************************************************************
+	 * .PHONY rule tests
+	 **********************************************************************/
+
 	TEST_FIXTURE(FxAction, MakeProject_PhonyRule)
 	{
 		make_project_phony_rule(sess, prj, strm);
@@ -136,6 +155,11 @@ SUITE(action)
 			"\n",
 			buffer);
 	}
+
+
+	/**********************************************************************
+	 * Output target tests
+	 **********************************************************************/
 
 	TEST_FIXTURE(FxAction, MakeProject_OutputTarget)
 	{
@@ -147,6 +171,30 @@ SUITE(action)
 			"\n",
 			buffer);
 	}
+
+
+	/**********************************************************************
+	 * Source rule tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxAction, MakeProject_SourceRules)
+	{
+		char* files[] = { "Hello.cpp", NULL };
+		SetField(prj, ProjectFiles, files);
+		make_project_source_rules(sess, prj, strm);
+		CHECK_EQUAL(
+			"$(OBJDIR)/Hello.o: Hello.cpp\n"
+			"\t-@$(CMD_MKOBJDIR)\n"
+			"\t@echo $(notdir $<)\n"
+			"\t@$(CXX) $(CXXFLAGS) -o $@ -c $<\n"
+			"\n",
+			buffer);
+	}
+
+
+	/**********************************************************************
+	 * File dependency generation tests
+	 **********************************************************************/
 
 	TEST_FIXTURE(FxAction, MakeProject_IncludeDependencies)
 	{

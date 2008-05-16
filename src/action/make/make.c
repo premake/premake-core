@@ -10,6 +10,20 @@
 #include "make.h"
 #include "base/cstr.h"
 #include "base/error.h"
+#include "base/path.h"
+
+
+/**
+ * Given a source file filename, returns the name of the corresponding .o file.
+ * \param   filename   The source code filename.
+ * \returns The filename of the .o file.
+ */
+const char* make_get_obj_filename(const char* filename)
+{
+	const char* basename = path_basename(filename);
+	const char* obj_name = cstr_format("$(OBJDIR)/%s.o", basename);
+	return obj_name;
+}
 
 
 /**

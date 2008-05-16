@@ -25,6 +25,7 @@ int make_project_objects(Session sess, Project prj, Stream strm);
 int make_project_phony_rule(Session sess, Project prj, Stream strm);
 int make_project_resources(Session sess, Project prj, Stream strm);
 int make_project_signature(Session sess, Project prj, Stream strm);
+int make_project_source_rules(Session sess, Project prj, Stream strm);
 int make_project_target(Session sess, Project prj, Stream strm);
 
 #endif

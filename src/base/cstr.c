@@ -4,8 +4,11 @@
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  */
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 #include "premake.h"
+#include "base/buffers.h"
 #include "base/cstr.h"
 
 
@@ -44,6 +47,24 @@ int cstr_eq(const char* str, const char* expected)
 		return (strcmp(str, expected) == 0);
 	}
 	return 0;
+}
+
+
+/**
+ * Builds a string using printf-style formatting codes.
+ * \param   format   The format string, which may contain printf-style formatting codes.
+ * \returns The formatted string.
+ */
+char* cstr_format(const char* format, ...)
+{
+	va_list args;
+	char* buffer = buffers_next();
+
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
+
+	return buffer;
 }
 
 

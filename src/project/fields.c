@@ -93,7 +93,7 @@ const char* fields_get_value(Fields fields, int index)
 /**
  * Retrieve the list of values for a field.
  * \param   fields    The collection of fields.
- * \index   index     The index of fields to query.
+ * \param   index     The index of fields to query.
  * \returns The list of values stored in the field.
  */
 Strings fields_get_values(Fields fields, int index)
