@@ -8,6 +8,9 @@
 
 #include "session/session.h"
 
+int gmake_project_shell_detect(Session sess, Project prj, Stream strm);
+
+int make_project_clean_rules(Session sess, Project prj, Stream strm);
 int make_project_config_conditional(Session sess, Project prj, Stream strm);
 int make_project_config_cflags(Session sess, Project prj, Stream strm);
 int make_project_config_cppflags(Session sess, Project prj, Stream strm);
@@ -21,6 +24,7 @@ int make_project_config_outfile(Session sess, Project prj, Stream strm);
 int make_project_config_resflags(Session sess, Project prj, Stream strm);
 int make_project_create(Session sess, Project prj, Stream strm);
 int make_project_include_dependencies(Session sess, Project prj, Stream strm);
+int make_project_mkdir_rules(Session sess, Project prj, Stream strm);
 int make_project_objects(Session sess, Project prj, Stream strm);
 int make_project_phony_rule(Session sess, Project prj, Stream strm);
 int make_project_resources(Session sess, Project prj, Stream strm);

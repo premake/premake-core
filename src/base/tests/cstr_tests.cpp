@@ -68,6 +68,31 @@ SUITE(cstr)
 
 
 	/**************************************************************************
+	 * cstr_eqi() tests
+	 **************************************************************************/
+
+	TEST(CStrEqi_ReturnsTrue_OnMatch)
+	{
+		CHECK(cstr_eqi("A string", "a String"));
+	}
+
+	TEST(CStrEqi_ReturnsFalse_OnMismatch)
+	{
+		CHECK(!cstr_eqi("A string", "a different string"));
+	}
+
+	TEST(CStrEqi_ReturnsFalse_OnNullTarget)
+	{
+		CHECK(!cstr_eqi(NULL, "something"));
+	}
+
+	TEST(CStrEqi_ReturnsFalse_OnNullPattern)
+	{
+		CHECK(!cstr_eqi("something", NULL));
+	}
+
+
+	/**************************************************************************
 	 * cstr_format() tests
 	 **************************************************************************/
 

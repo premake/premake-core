@@ -4,6 +4,7 @@
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  */
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,13 +39,40 @@ int cstr_ends_with(const char* str, const char* expected)
  * Compares two C strings for equality.
  * \param   str        The string to compare.
  * \param   expected   The value to compare against.
- * \returns Nonzero if the strings match, zero otherwise.
+ * \returns True if the strings match, zero otherwise.
  */
 int cstr_eq(const char* str, const char* expected)
 {
 	if (str != NULL && expected != NULL)
 	{
 		return (strcmp(str, expected) == 0);
+	}
+	return 0;
+}
+
+
+/**
+ * Performs a case-insensitive comparasion on two C strings for equality.
+ * \param   str      The string to compare.
+ * \param   expected The value to compare against.
+ * \returns True if the strings match, zero otherwise.
+ */
+int cstr_eqi(const char* str, const char* expected)
+{
+	if (str != NULL && expected != NULL)
+	{
+		while (*str && *expected)
+		{
+			if (tolower(*str) != tolower(*expected))
+			{
+				return 0;
+			}
+
+			str++;
+			expected++;
+		}
+
+		return (*str == *expected);
 	}
 	return 0;
 }

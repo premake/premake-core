@@ -13,6 +13,27 @@
 
 
 /**
+ * Write the rules to clean up output files on a `make clean`.
+ */
+int make_project_clean_rules(Session sess, Project prj, Stream strm)
+{
+	int z = OKAY;
+	UNUSED(sess);
+	z |= stream_writeline(strm, "clean:");
+	z |= stream_writeline(strm, "\t@echo Cleaning %s", project_get_name(prj));
+	z |= stream_writeline(strm, "ifeq (posix, $(SHELLTYPE))");
+	z |= stream_writeline(strm, "\t@rm -f  $(SYS_OUTFILE)");
+	z |= stream_writeline(strm, "\t@rm -rf $(SYS_OBJDIR)");
+	z |= stream_writeline(strm, "else");
+	z |= stream_writeline(strm, "\t@if exist $(SYS_OUTFILE) del $(SYS_OUTFILE)");
+	z |= stream_writeline(strm, "\t@if exist $(SYS_OBJDIR) rmdir /s /q $(SYS_OBJDIR)");
+	z |= stream_writeline(strm, "endif");
+	z |= stream_writeline(strm, "");
+	return OKAY;
+}
+
+
+/**
  * Write the opening conditional for a configuration block.
  */
 int make_project_config_conditional(Session sess, Project prj, Stream strm)
@@ -30,7 +51,7 @@ int make_project_config_cflags(Session sess, Project prj, Stream strm)
 {
 	UNUSED(sess);
 	UNUSED(prj);
-	return stream_writeline(strm, "   CFLAGS += $(CPPFLAGS) $(ARCHFLAGS)");
+	return stream_writeline(strm, "   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS)");
 }
 
 
@@ -77,7 +98,7 @@ int make_project_config_lddeps(Session sess, Project prj, Stream strm)
 {
 	UNUSED(sess);
 	UNUSED(prj);
-	return stream_writeline(strm, "   LDDEPS :=");
+	return stream_writeline(strm, "   LDDEPS   :=");
 }
 
 
@@ -88,7 +109,7 @@ int make_project_config_ldflags(Session sess, Project prj, Stream strm)
 {
 	UNUSED(sess);
 	UNUSED(prj);
-	return stream_writeline(strm, "   LDFLAGS +=");
+	return stream_writeline(strm, "   LDFLAGS  +=");
 }
 
 
@@ -99,7 +120,7 @@ int make_project_config_objdir(Session sess, Project prj, Stream strm)
 {
 	const char* cfg_name = project_get_configuration_filter(prj);
 	UNUSED(sess);
-	return stream_writeline(strm, "   OBJDIR := .", cfg_name);
+	return stream_writeline(strm, "   OBJDIR   := obj/%s", cfg_name);
 }
 
 
@@ -110,7 +131,7 @@ int make_project_config_outdir(Session sess, Project prj, Stream strm)
 {
 	UNUSED(sess);
 	UNUSED(prj);
-	return stream_writeline(strm, "   OUTDIR := .");
+	return stream_writeline(strm, "   OUTDIR   := .");
 }
 
 
@@ -121,7 +142,7 @@ int make_project_config_outfile(Session sess, Project prj, Stream strm)
 {
 	UNUSED(sess);
 	UNUSED(prj);
-	return stream_writeline(strm, "   OUTFILE := MyApp");
+	return stream_writeline(strm, "   OUTFILE  := $(OUTDIR)/MyApp");
 }
 
 
@@ -163,6 +184,26 @@ int make_project_include_dependencies(Session sess, Project prj, Stream strm)
 	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "-include $(OBJECTS:%%.o=%%.d)");
+}
+
+
+/**
+ * Write the rules to create the output and object directories.
+ */
+int make_project_mkdir_rules(Session sess, Project prj, Stream strm)
+{
+	int z = OKAY;
+	UNUSED(sess);
+	UNUSED(prj);
+	z |= stream_writeline(strm, "$(OUTDIR):");
+	z |= stream_writeline(strm, "\t@echo Creating $(OUTDIR)");
+	z |= stream_writeline(strm, "\t@$(MKDIR) $(SYS_OUTDIR)");
+	z |= stream_writeline(strm, "");
+	z |= stream_writeline(strm, "$(OBJDIR):");
+	z |= stream_writeline(strm, "\t@echo Creating $(OBJDIR)");
+	z |= stream_writeline(strm, "\t@$(MKDIR) $(SYS_OBJDIR)");
+	z |= stream_writeline(strm, "");
+	return z;
 }
 
 
@@ -249,7 +290,6 @@ int make_project_source_rules(Session sess, Project prj, Stream strm)
 		const char* filename = strings_item(files, i);
 		const char* obj_name = make_get_obj_filename(filename);
 		z |= stream_writeline(strm, "%s: %s", obj_name, filename);
-		z |= stream_writeline(strm, "\t-@$(CMD_MKOBJDIR)");
 		z |= stream_writeline(strm, "\t@echo $(notdir $<)");
 		z |= stream_writeline(strm, "\t@$(CXX) $(CXXFLAGS) -o $@ -c $<");
 		z |= stream_writeline(strm, "");
@@ -264,9 +304,9 @@ int make_project_source_rules(Session sess, Project prj, Stream strm)
  */
 int make_project_target(Session sess, Project prj, Stream strm)
 {
-	int z;
+	int z = OKAY;
 	UNUSED(sess);
-	z  = stream_writeline(strm, "$(OUTDIR)/$(OUTFILE): $(OBJECTS) $(LDDEPS) $(RESOURCES)");
+	z |= stream_writeline(strm, "$(OUTFILE): $(OUTDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)");
 	z |= stream_writeline(strm, "\t@echo Linking %s", project_get_name(prj));
 	z |= stream_writeline(strm, "\t$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)");
 	z |= stream_writeline(strm, "");

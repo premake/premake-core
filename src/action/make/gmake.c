@@ -33,8 +33,11 @@ static SessionProjectCallback ProjectCallbacks[] =
 	session_enumerate_configurations,
 	make_project_objects,
 	make_project_resources,
+	gmake_project_shell_detect,
 	make_project_phony_rule,
 	make_project_target,
+	make_project_mkdir_rules,
+	make_project_clean_rules,
 	make_project_source_rules,
 	make_project_include_dependencies,
 	NULL

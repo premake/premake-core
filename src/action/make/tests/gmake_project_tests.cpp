@@ -42,7 +42,7 @@ SUITE(action)
 	{
 		make_project_config_cflags(sess, prj, strm);
 		CHECK_EQUAL(
-			"   CFLAGS += $(CPPFLAGS) $(ARCHFLAGS)\n",
+			"   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS)\n",
 			buffer);
 	}
 
@@ -66,7 +66,7 @@ SUITE(action)
 	{
 		make_project_config_lddeps(sess, prj, strm);
 		CHECK_EQUAL(
-			"   LDDEPS :=\n",
+			"   LDDEPS   :=\n",
 			buffer);
 	}
 
@@ -74,7 +74,7 @@ SUITE(action)
 	{
 		make_project_config_ldflags(sess, prj, strm);
 		CHECK_EQUAL(
-			"   LDFLAGS +=\n",
+			"   LDFLAGS  +=\n",
 			buffer);
 	}
 
@@ -82,7 +82,7 @@ SUITE(action)
 	{
 		make_project_config_objdir(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OBJDIR := .\n",
+			"   OBJDIR   := obj/Debug\n",
 			buffer);
 	}
 
@@ -90,7 +90,7 @@ SUITE(action)
 	{
 		make_project_config_outfile(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OUTFILE := MyApp\n",
+			"   OUTFILE  := $(OUTDIR)/MyApp\n",
 			buffer);
 	}
 
@@ -98,7 +98,7 @@ SUITE(action)
 	{
 		make_project_config_outdir(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OUTDIR := .\n",
+			"   OUTDIR   := .\n",
 			buffer);
 	}
 
@@ -165,9 +165,51 @@ SUITE(action)
 	{
 		make_project_target(sess, prj, strm);
 		CHECK_EQUAL(
-			"$(OUTDIR)/$(OUTFILE): $(OBJECTS) $(LDDEPS) $(RESOURCES)\n"
+			"$(OUTFILE): $(OUTDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)\n"
 			"\t@echo Linking MyProject\n"
 			"\t$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)\n"
+			"\n",
+			buffer);
+	}
+
+
+	/**********************************************************************
+	 * Directory creation rules
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxAction, MakeProject_MkdirRules)
+	{
+		make_project_mkdir_rules(sess, prj, strm);
+		CHECK_EQUAL(
+			"$(OUTDIR):\n"
+			"\t@echo Creating $(OUTDIR)\n"
+			"\t@$(MKDIR) $(SYS_OUTDIR)\n"
+			"\n"
+			"$(OBJDIR):\n"
+			"\t@echo Creating $(OBJDIR)\n"
+			"\t@$(MKDIR) $(SYS_OBJDIR)\n"
+			"\n",
+			buffer);
+	}
+
+
+	/**********************************************************************
+	 * Clean rules
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxAction, MakeProject_CleanRules)
+	{
+		make_project_clean_rules(sess, prj, strm);
+		CHECK_EQUAL(
+			"clean:\n"
+			"\t@echo Cleaning MyProject\n"
+			"ifeq (posix, $(SHELLTYPE))\n"
+			"\t@rm -f  $(SYS_OUTFILE)\n"
+			"\t@rm -rf $(SYS_OBJDIR)\n"
+			"else\n"
+			"\t@if exist $(SYS_OUTFILE) del $(SYS_OUTFILE)\n"
+			"\t@if exist $(SYS_OBJDIR) rmdir /s /q $(SYS_OBJDIR)\n"
+			"endif\n"
 			"\n",
 			buffer);
 	}
@@ -184,7 +226,6 @@ SUITE(action)
 		make_project_source_rules(sess, prj, strm);
 		CHECK_EQUAL(
 			"$(OBJDIR)/Hello.o: Hello.cpp\n"
-			"\t-@$(CMD_MKOBJDIR)\n"
 			"\t@echo $(notdir $<)\n"
 			"\t@$(CXX) $(CXXFLAGS) -o $@ -c $<\n"
 			"\n",

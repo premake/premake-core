@@ -212,10 +212,9 @@ int path_is_cpp_source(const char* path)
 		return 0;
 	}
 
-	_strlwr(ext);
 	for (i = 0; CppFileExtensions[i] != NULL; ++i)
 	{
-		if (cstr_eq(CppFileExtensions[i], ext))
+		if (cstr_eqi(CppFileExtensions[i], ext))
 			return 1;
 	}
 
