@@ -12,6 +12,13 @@
 #include "make_project.h"
 
 
+/** The project features supported by this action */
+static SessionFeatures Features =
+{
+	{ "c", "c++", NULL },
+};
+
+
 /** The GNU make solution writing process, for session_enumerate_objects() */
 static SessionSolutionCallback SolutionCallbacks[] = 
 {
@@ -70,7 +77,7 @@ static SessionProjectCallback ConfigCallbacks[] =
 int gmake_action(Session sess)
 {
 	/* make sure I can support all of the features used in the session */
-	if (make_validate_session(sess) != OKAY)
+	if (session_validate(sess, &Features) != OKAY)
 	{
 		return !OKAY;
 	}

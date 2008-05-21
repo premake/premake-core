@@ -8,6 +8,7 @@
 #include "testing/testing.h"
 extern "C" {
 #include "project/project.h"
+#include "platform/platform.h"
 }
 
 
@@ -175,6 +176,28 @@ SUITE(project)
 		project_set_location(prj, "Location");
 		const char* filename = project_get_filename(prj, NULL, ".xyz");
 		CHECK_EQUAL("/BaseDir/Location/MyProject.xyz", filename);
+	}
+
+
+
+	/**********************************************************************
+	 * Output file tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxProject, GetOutFile_ReturnsProjectName_OnNoTargetAndNotWindows)
+	{
+		platform_set(MacOSX);
+		project_set_name(prj, "MyProject");
+		const char* result = project_get_outfile(prj);
+		CHECK_EQUAL("MyProject", result);
+	}
+
+	TEST_FIXTURE(FxProject, GetOutFile_AddsExe_OnNoTargetAndWindows)
+	{
+		platform_set(Windows);
+		project_set_name(prj, "MyProject");
+		const char* result = project_get_outfile(prj);
+		CHECK_EQUAL("MyProject.exe", result);
 	}
 }
 

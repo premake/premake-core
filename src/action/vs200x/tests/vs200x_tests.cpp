@@ -46,16 +46,4 @@ SUITE(action)
 		const char* result = vs200x_project_file_extension(prj);
 		CHECK_EQUAL(".vcproj", result);
 	}
-
-
-	/**********************************************************************
-	 * Session validation
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxAction, Vs200xValidation_ReturnsNotOkay_OnUnknownLanguage)
-	{
-		project_set_language(prj, "nonesuch");
-		int result = vs200x_validate_session(sess);
-		CHECK(result != OKAY);
-	}
 }

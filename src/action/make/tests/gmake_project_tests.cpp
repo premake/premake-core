@@ -8,6 +8,7 @@
 #include "action/tests/action_tests.h"
 extern "C" {
 #include "action/make/make_project.h"
+#include "platform/platform.h"
 }
 
 SUITE(action)
@@ -88,9 +89,10 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, MakeProject_Config_OutFile)
 	{
+		platform_set(MacOSX);
 		make_project_config_outfile(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OUTFILE  := $(OUTDIR)/MyApp\n",
+			"   OUTFILE  := $(OUTDIR)/MyProject\n",
 			buffer);
 	}
 

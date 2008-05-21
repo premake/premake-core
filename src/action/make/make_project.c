@@ -140,9 +140,9 @@ int make_project_config_outdir(Session sess, Project prj, Stream strm)
  */
 int make_project_config_outfile(Session sess, Project prj, Stream strm)
 {
+	const char* outfile = project_get_outfile(prj);
 	UNUSED(sess);
-	UNUSED(prj);
-	return stream_writeline(strm, "   OUTFILE  := $(OUTDIR)/MyApp");
+	return stream_writeline(strm, "   OUTFILE  := $(OUTDIR)/%s", outfile);
 }
 
 

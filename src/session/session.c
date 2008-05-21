@@ -305,14 +305,16 @@ int session_unload(Session sess)
 /**
  * Make sure that all required objects and values have been defined by the
  * project script.
- * \param   sess    The session to validate.
+ * \param   sess      The session to validate.
+ * \param   features  The features (language, kind, etc.) supported by the current action.
  * \returns OKAY if the session is valid.
  */
-int session_validate(Session sess)
+int session_validate(Session sess, SessionFeatures* features)
 {
 	int si, sn;
 	
 	assert(sess);
+	assert(features);
 
 	sn = session_num_solutions(sess);
 	for (si = 0; si < sn; ++si)
@@ -330,14 +332,29 @@ int session_validate(Session sess)
 
 		for (pi = 0; pi < pn; ++pi)
 		{
-			const char* value;
+			int i;
+
 			Project prj = solution_get_project(sln, pi);
+			const char* prj_name = project_get_name(prj);
+			const char* prj_lang = project_get_language(prj);
 
 			/* every project must have a language defined */
-			value = project_get_language(prj);
-			if (value == NULL)
+			if (prj_lang == NULL)
 			{
-				error_set("no language defined for project '%s'", project_get_name(prj));
+				error_set("no language defined for project '%s'", prj_name);
+				return !OKAY;
+			}
+
+			/* action must support the language */
+			for (i = 0; features->languages[i] != NULL; ++i)
+			{
+				if (cstr_eq(prj_lang, features->languages[i]))
+					break;
+			}
+
+			if (features->languages[i] == NULL)
+			{
+				error_set("%s language projects are not supported by this action", prj_lang);
 				return !OKAY;
 			}
 		}

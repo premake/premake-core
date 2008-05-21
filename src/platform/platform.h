@@ -7,16 +7,29 @@
 #define PREMAKE_PLATFORM_H
 
 
-/* Determine the current OS. I'm not sure how to reliably detect Windows
- * but since it is the most common I use it as the default */
+/**
+ * The currently support platforms. If you add to this list be sure to
+ * also update the platform detection logic below, and the platform
+ * identifier initialization in platform.c.
+ */
+enum Platform
+{
+	Unknown,
+	BSD,
+	Linux,
+	MacOSX,
+	Windows
+};
+
+
 #if defined(__linux__)
-#define PLATFORM_LINUX 1
+#define PLATFORM_LINUX   (1)
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
-#define PLATFORM_BSD 1
+#define PLATFORM_BSD     (1)
 #elif defined(__APPLE__) && defined(__MACH__)
-#define PLATFORM_MACOSX 1
+#define PLATFORM_MACOSX  (1)
 #else
-#define PLATFORM_WINDOWS 1
+#define PLATFORM_WINDOWS (1)
 #endif
 
 
@@ -49,6 +62,20 @@ int platform_dir_get_current(char* buffer, int size);
  * \returns OKAY if successful.
  */
 int platform_dir_set_current(const char* path);
+
+
+/**
+ * Retrieve the current platform identifier.
+ */
+enum Platform platform_get(void);
+
+
+/**
+ * Set the platform identification string, forcing a platform-specific
+ * behavior regardless of the actual current platform.
+ * \param   id    One of the platform identifiers.
+ */
+void platform_set(enum Platform id);
 
 
 #endif

@@ -15,7 +15,6 @@ int         vs200x_get_target_version(Session sess);
 const char* vs200x_project_file_extension(Project prj);
 const char* vs200x_tool_guid(const char* language);
 const char* vs200x_true(Session sess);
-int         vs200x_validate_session(Session sess);
 
 #endif
 

@@ -36,6 +36,11 @@ int session_tests()
 #define FAIL_SLN_PARAM  (1)
 #define FAIL_PRJ_PARAM  (2)
 
+static SessionFeatures features = {
+	{ "c", "c++", NULL },
+};
+
+
 static int num_solution_calls;
 static int num_project_calls;
 static int num_config_calls;
@@ -349,7 +354,7 @@ SUITE(session)
 
 	TEST_FIXTURE(FxSession, Validate_ReturnsOkay_OnNoSolutions)
 	{
-		int result = session_validate(sess);
+		int result = session_validate(sess, &features);
 		CHECK(result == OKAY);
 	}
 
@@ -358,14 +363,14 @@ SUITE(session)
 		AddSolution();
 		AddProject();
 		project_set_language(prj, "c++");
-		int result = session_validate(sess);
+		int result = session_validate(sess, &features);
 		CHECK(result == OKAY);
 	}
 
 	TEST_FIXTURE(FxSession, Validate_NotOkay_OnEmptySolution)
 	{
 		AddSolution();
-		int result = session_validate(sess);
+		int result = session_validate(sess, &features);
 		CHECK(result != OKAY);
 		CHECK_EQUAL("no projects defined for solution 'MySolution'", error_get());
 	}
@@ -374,9 +379,19 @@ SUITE(session)
 	{
 		AddSolution();
 		AddProject();
-		int result = session_validate(sess);
+		int result = session_validate(sess, &features);
 		CHECK(result != OKAY);
 		CHECK_EQUAL("no language defined for project 'MyProject'", error_get());
+	}
+
+	TEST_FIXTURE(FxSession, Validate_NotOkay_OnUnsupportedLanguage)
+	{
+		AddSolution();
+		AddProject();
+		project_set_language(prj, "nonesuch");
+		int result = session_validate(sess, &features);
+		CHECK(result != OKAY);
+		CHECK_EQUAL("nonesuch language projects are not supported by this action", error_get());
 	}
 }
 

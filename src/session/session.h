@@ -64,6 +64,17 @@ typedef struct struct_SessionAction
 } SessionAction;
 
 
+/**
+ * Describe the features (languages, project kinds, etc.) supported by an action. Used by
+ * session_validate() to ensure that action handler functions only get called with data
+ * that they can handle.
+ */
+typedef struct struct_SessionFeatures
+{
+	const char* languages[64];
+} SessionFeatures;
+
+
 Session     session_create(void);
 void        session_destroy(Session sess);
 void        session_add_solution(Session sess, Solution sln);
@@ -79,7 +90,7 @@ void        session_set_action(Session sess, const char* action);
 void        session_set_active_stream(Session sess, Stream strm);
 int         session_tests(void);
 int         session_unload(Session sess);
-int         session_validate(Session sess);
+int         session_validate(Session sess, SessionFeatures* features);
 
 #endif
 /** @} */

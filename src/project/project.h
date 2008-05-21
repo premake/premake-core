@@ -40,6 +40,7 @@ const char* project_get_guid(Project prj);
 const char* project_get_language(Project prj);
 const char* project_get_location(Project prj);
 const char* project_get_name(Project prj);
+const char* project_get_outfile(Project prj);
 const char* project_get_value(Project prj, enum ProjectField field);
 int         project_is_valid_language(const char* language);
 void        project_set_base_dir(Project prj, const char* base_dir);

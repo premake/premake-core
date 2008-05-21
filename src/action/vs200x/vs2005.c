@@ -12,6 +12,13 @@
 #include "vs200x_project.h"
 
 
+/** The project features supported by this action */
+static SessionFeatures Features =
+{
+	{ "c", "c++", NULL },
+};
+
+
 /** The VS2005 solution writing process, for session_enumerate_objects() */
 static SessionSolutionCallback SolutionCallbacks[] = 
 {
@@ -74,7 +81,7 @@ static SessionProjectCallback ConfigCallbacks[] =
 int vs2005_action(Session sess)
 {
 	/* make sure I can support all of the features used in the session */
-	if (vs200x_validate_session(sess) != OKAY)
+	if (session_validate(sess, &Features) != OKAY)
 	{
 		return !OKAY;
 	}

@@ -6,12 +6,15 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include "premake.h"
 #include "project/project.h"
+#include "base/buffers.h"
 #include "base/cstr.h"
 #include "base/guid.h"
 #include "base/path.h"
 #include "base/strings.h"
+#include "platform/platform.h"
 
 
 struct FieldInfo ProjectFieldInfo[] =
@@ -169,6 +172,24 @@ const char* project_get_location(Project prj)
 const char* project_get_name(Project prj)
 {
 	return project_get_value(prj, ProjectName);
+}
+
+
+/**
+ * Retrieve the output filename for this project, taking into account platform-specific
+ * naming conventions. For instance, for a project named "MyProject" this function would
+ * return "MyProject.exe" on Windows. No path information is included, use the function
+ * project_get_outdir() for that.
+ */
+const char* project_get_outfile(Project prj)
+{
+	char* buffer = buffers_next();
+	strcpy(buffer, project_get_name(prj));
+	if (platform_get() == Windows)
+	{
+		strcat(buffer, ".exe");
+	}
+	return buffer;
 }
 
 
