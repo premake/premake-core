@@ -13,7 +13,7 @@ extern "C" {
 
 
 /**
- * \brief   Run the suite of project scripting engine automated tests.
+ * Run the suite of project scripting engine automated tests.
  * \returns OKAY if all tests completed successfully.
  */
 int script_tests()

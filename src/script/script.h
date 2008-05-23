@@ -2,6 +2,12 @@
  * \file   script.h
  * \brief  The project scripting engine.
  * \author Copyright (c) 2008 Jason Perkins and the Premake project
+ *
+ * \defgroup script Scripting Engine
+ *
+ * The project scripting engine.
+ *
+ * @{
  */
 #if !defined(PREMAKE_SCRIPT_H)
 #define PREMAKE_SCRIPT_H
@@ -20,3 +26,4 @@ int         script_tests(void);
 int         script_unload(Script script, Array slns);
 
 #endif
+/** @} */

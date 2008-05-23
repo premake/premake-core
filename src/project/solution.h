@@ -2,6 +2,9 @@
  * \file   solution.h
  * \brief  The Solution class, representing the top-level container for projects.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \addtogroup project
+ * @{
  */
 #if !defined(PREMAKE_SOLUTION_H)
 #define PREMAKE_SOLUTION_H
@@ -51,3 +54,4 @@ void        solution_set_value(Solution sln, enum SolutionField field, const cha
 
 
 #endif
+/** @} */

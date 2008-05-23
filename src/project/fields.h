@@ -2,6 +2,9 @@
  * \file   fields.h
  * \brief  Project object fields enumeration and handling.
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
+ *
+ * \addtogroup project
+ * @{
  */
 #if !defined(PREMAKE_FIELDS_H)
 #define PREMAKE_FIELDS_H
@@ -50,3 +53,4 @@ void        fields_set_value(Fields fields, int index, const char* value);
 void        fields_set_values(Fields fields, int index, Strings values);
 
 #endif
+/* @} */

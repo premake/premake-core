@@ -2,6 +2,13 @@
  * \file   stream.h
  * \brief  Output stream handling.
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup stream Streams
+ * \ingroup  base
+ *
+ * An output stream class.
+ *
+ * @{
  */
 #if !defined(PREMAKE_STREAM_H)
 #define PREMAKE_STREAM_H
@@ -27,3 +34,4 @@ int    stream_writeline(Stream strm, const char* value, ...);
 int    stream_writeline_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix);
 
 #endif
+/** @} */

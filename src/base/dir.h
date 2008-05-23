@@ -2,6 +2,13 @@
  * \file   dir.h
  * \brief  Directory handling.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup dir Directory Management
+ * \ingroup  base
+ *
+ * Directory management functions.
+ *
+ * @{
  */
 #if !defined(PREMAKE_DIR_H)
 #define PREMAKE_DIR_H
@@ -12,3 +19,4 @@ char* dir_get_current(void);
 int   dir_set_current(const char* path);
 
 #endif
+/** @} */

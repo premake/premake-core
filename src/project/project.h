@@ -2,6 +2,12 @@
  * \file   project.h
  * \brief  Project objects API.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup project Project Objects
+ *
+ * Project objects: solutions, projects, and configurations.
+ *
+ * @{
  */
 #if !defined(PREMAKE_PROJECT_H)
 #define PREMAKE_PROJECT_H
@@ -54,3 +60,4 @@ void        project_set_values(Project prj, enum ProjectField field, Strings val
 int         project_tests(void);
 
 #endif
+/** @} */

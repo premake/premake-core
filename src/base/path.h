@@ -2,6 +2,13 @@
  * \file   path.h
  * \brief  Path handling.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup path Path
+ * \ingroup  base
+ *
+ * Path manipulation functions.
+ *
+ * @{
  */
 #if !defined(PREMAKE_PATH_H)
 #define PREMAKE_PATH_H
@@ -19,3 +26,4 @@ char* path_relative(const char* base, const char* target);
 char* path_translate(const char* path, const char* sep);
 
 #endif
+/** @} */

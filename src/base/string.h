@@ -2,6 +2,13 @@
  * \file   string.h
  * \brief  Dynamic string handling.
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup string Strings
+ * \ingroup  base
+ *
+ * A dynamic string class.
+ *
+ * @{
  */
 #if !defined(PREMAKE_STRING_H)
 #define PREMAKE_STRING_H
@@ -13,3 +20,4 @@ void        string_destroy(string str);
 const char* string_cstr(string str);
 
 #endif
+/** @} */

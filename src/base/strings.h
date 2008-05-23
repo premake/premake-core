@@ -2,6 +2,13 @@
  * \file   strings.h
  * \brief  A dynamic array of C strings.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup strings String Collection
+ * \ingroup  base
+ *
+ * A dynamic array of C strings.
+ *
+ * @{
  */
 #if !defined(PREMAKE_STRINGS_H)
 #define PREMAKE_STRINGS_H
@@ -18,3 +25,4 @@ void        strings_set(Strings strs, int index, const char* item);
 int         strings_size(Strings strs);
 
 #endif
+/** @} */

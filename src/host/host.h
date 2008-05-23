@@ -2,6 +2,13 @@
  * \file   host.h
  * \brief  Main executable API.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup host Host
+ *
+ * The "host" part of the application, which is responsible for parsing the command
+ * line arguments, and the overall flow of the application. 
+ *
+ * @{
  */
 #if !defined(PREMAKE_HOST_H)
 #define PREMAKE_HOST_H
@@ -33,3 +40,4 @@ int  host_show_help(Session sess);
 int  host_tests(void);
 
 #endif
+/** @} */

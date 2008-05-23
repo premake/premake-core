@@ -2,6 +2,12 @@
  * \file   platform.h
  * \brief  Platform abstraction API.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup platform Platform
+ *
+ * Platform abstraction; primarily file system and directory management. 
+ *
+ * @{
  */
 #if !defined(PREMAKE_PLATFORM_H)
 #define PREMAKE_PLATFORM_H
@@ -79,3 +85,4 @@ void platform_set(enum Platform id);
 
 
 #endif
+/** @} */

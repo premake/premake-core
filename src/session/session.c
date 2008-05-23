@@ -303,8 +303,7 @@ int session_unload(Session sess)
 
 
 /**
- * Make sure that all required objects and values have been defined by the
- * project script.
+ * Make sure that all required objects and values have been defined by the project script.
  * \param   sess      The session to validate.
  * \param   features  The features (language, kind, etc.) supported by the current action.
  * \returns OKAY if the session is valid.

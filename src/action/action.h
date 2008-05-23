@@ -2,6 +2,13 @@
  * \file   action.h
  * \brief  Built-in engine actions.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ *
+ * \defgroup action Actions
+ *
+ * The actions component contains the implementation of all of the built-in
+ * Premake actions, along with a few common support functions.
+ *
+ * @{
  */
 #if !defined(PREMAKE_ACTION_H)
 #define PREMAKE_ACTION_H
@@ -47,3 +54,4 @@ int  action_source_tree(Session sess, Project prj, Stream strm, ActionSourceCall
 
 
 #endif
+/** @} */
