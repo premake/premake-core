@@ -13,6 +13,21 @@ extern "C" {
 SUITE(cstr)
 {
 	/**************************************************************************
+	 * cstr_contains() tests
+	 **************************************************************************/
+
+	TEST(CStrContains_ReturnsTrue_OnMatch)
+	{
+		CHECK(cstr_contains("Abcdef", "cd"));
+	}
+
+	TEST(CStrContains_ReturnsFalse_OnMismatch)
+	{
+		CHECK(!cstr_contains("Abcdef", "xy"));
+	}
+
+
+	/**************************************************************************
 	 * cstr_ends_with() tests
 	 **************************************************************************/
 

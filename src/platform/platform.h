@@ -38,6 +38,8 @@ enum Platform
 #define PLATFORM_WINDOWS (1)
 #endif
 
+DECLARE_CLASS(PlatformSearch)
+
 
 /**
  * Create a directory, if it doesn't exist already.
@@ -74,6 +76,37 @@ int platform_dir_set_current(const char* path);
  * Retrieve the current platform identifier.
  */
 enum Platform platform_get(void);
+
+
+/**
+ * Create a new platform file search context.
+ */
+PlatformSearch platform_search_create(const char* mask);
+
+
+/**
+ * Destroy a platform search context.
+ */
+void platform_search_destroy(PlatformSearch search);
+
+
+/**
+ * Retrieve the name of the current match in the search.
+ */
+const char* platform_search_get_name(PlatformSearch search);
+
+
+/**
+ * Determine if the current match is a file or a directory.
+ */
+int platform_search_is_file(PlatformSearch search);
+
+
+/**
+ * Retrieve the next match in a file system search.
+ * \returns True if another match is available.
+ */
+int platform_search_next(PlatformSearch search);
 
 
 /**

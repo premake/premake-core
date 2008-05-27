@@ -28,7 +28,7 @@ int gmake_project_shell_detect(Session sess, Project prj, Stream strm)
 	z |= stream_writeline(strm, "ifeq (,$(ComSpec)$(COMSPEC))");
 	z |= stream_writeline(strm, "   SHELLTYPE := posix");
 	z |= stream_writeline(strm, "endif");
-	z |= stream_writeline(strm, "ifeq (/bin/sh.exe,$(SHELL))");
+	z |= stream_writeline(strm, "ifeq (/bin,$(findstring /bin,$(SHELL)))");
 	z |= stream_writeline(strm, "   SHELLTYPE := posix");
 	z |= stream_writeline(strm, "endif");
 	z |= stream_writeline(strm, "");

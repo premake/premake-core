@@ -13,6 +13,7 @@
 #if !defined(PREMAKE_CSTR_H)
 #define PREMAKE_CSTR_H
 
+int   cstr_contains(const char* str, const char* expected);
 int   cstr_ends_with(const char* str, const char* expected);
 int   cstr_eq(const char* str, const char* expected);
 int   cstr_eqi(const char* str, const char* expected);

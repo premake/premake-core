@@ -13,11 +13,11 @@
 #if !defined(PREMAKE_STRING_H)
 #define PREMAKE_STRING_H
 
-DECLARE_CLASS(string);
+DECLARE_CLASS(String);
 
-string      string_create(const char* value);
-void        string_destroy(string str);
-const char* string_cstr(string str);
+String      string_create(const char* value);
+void        string_destroy(String str);
+const char* string_cstr(String str);
 
 #endif
 /** @} */

@@ -15,9 +15,10 @@
 
 /** Functions to add to the global namespace */
 static const luaL_Reg global_funcs[] = {
-	{ "dofile",         fn_dofile },
-	{ "include",        fn_include },
-	{ "project",        fn_project },
+	{ "dofile",         fn_dofile   },
+	{ "include",        fn_include  },
+	{ "match",          fn_match    },
+	{ "project",        fn_project  },
 	{ "solution",       fn_solution },
 	{ NULL, NULL }
 };

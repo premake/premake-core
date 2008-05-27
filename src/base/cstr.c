@@ -14,6 +14,18 @@
 
 
 /**
+ * Determines if the sequence appears anywhere in the target string.
+ * \param   str      The string to test.
+ * \param   expected The sequence to search for.
+ * \returns True if the sequence is contained in the string.
+ */
+int cstr_contains(const char* str, const char* expected)
+{
+	return (strstr(str, expected) != NULL);
+}
+
+
+/**
  * Determines if the string ends with a particular sequence.
  * \param str        The string to test.
  * \param expected   The sequence for which to look.

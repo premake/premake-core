@@ -169,7 +169,7 @@ SUITE(action)
 		CHECK_EQUAL(
 			"$(OUTFILE): $(OUTDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)\n"
 			"\t@echo Linking MyProject\n"
-			"\t$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)\n"
+			"\t@$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)\n"
 			"\n",
 			buffer);
 	}

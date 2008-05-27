@@ -20,7 +20,7 @@
 struct FieldInfo ProjectFieldInfo[] =
 {
 	{ "basedir",    StringField,  NULL                      },
-	{ "files",      ListField,    NULL                      },
+	{ "files",      FilesField,   NULL                      },
 	{ "guid",       StringField,  guid_is_valid             },
 	{ "language",   StringField,  project_is_valid_language },
 	{ "location",   StringField,  NULL                      },

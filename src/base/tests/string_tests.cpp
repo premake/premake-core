@@ -18,7 +18,7 @@ SUITE(base)
 
 	TEST(StringCreate_ReturnsNull_OnNull)
 	{
-		string str = string_create(NULL);
+		String str = string_create(NULL);
 		CHECK(str == NULL);
 	}
 

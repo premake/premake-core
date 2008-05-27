@@ -10,7 +10,7 @@
 #include "base/string.h"
 
 
-DEFINE_CLASS(string)
+DEFINE_CLASS(String)
 {
 	char* contents;
 	int capacity;
@@ -22,11 +22,11 @@ DEFINE_CLASS(string)
  * \param   value   The C string value.
  * \returns A new dynamic string object containing a copy of the string.
  */
-string string_create(const char* value)
+String string_create(const char* value)
 {
 	if (value != NULL)
 	{
-		string str = ALLOC_CLASS(string);
+		String str = ALLOC_CLASS(String);
 		str->capacity = strlen(value) + 1;
 		str->contents = (char*)malloc(str->capacity);
 		strcpy(str->contents, value);
@@ -43,7 +43,7 @@ string string_create(const char* value)
  * Destroy a dynamic string object and free the associated memory.
  * \param   str   The string to destroy.
  */
-void string_destroy(string str)
+void string_destroy(String str)
 {
 	if (str != NULL)
 	{
@@ -58,7 +58,7 @@ void string_destroy(string str)
  * \param   str   The string to query.
  * \returns The C string value.
  */
-const char* string_cstr(string str)
+const char* string_cstr(String str)
 {
 	if (str != NULL)
 		return str->contents;

@@ -21,8 +21,8 @@ int fn_dofile(lua_State* L)
 	const char *filename;
 	const char* full_path;
 	const char* script_dir;
-	string old_file;
-	string old_working_dir;
+	String old_file;
+	String old_working_dir;
 	int top, result;
 
 	filename = luaL_checkstring(L, 1);

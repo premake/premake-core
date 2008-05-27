@@ -16,7 +16,7 @@ static int fn_accessor_register(lua_State* L, struct FieldInfo* fields);
 static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field);
 static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field);
 static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field);
-static void fn_accessor_append_values(lua_State* L, int destIndex, int srcIndex);
+static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx);
 
 
 /**
@@ -177,17 +177,8 @@ static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
 	/* get the current value of the field */
 	lua_getfield(L, -1, field->name);
 	
-	/* if the value passed in is a table, append all of its contents to the current
-	 * field value. If the value passed in is a single string, add it at the end */
-	if (lua_istable(L, 1))
-	{
-		fn_accessor_append_values(L, lua_gettop(L), 1);
-	}
-	else
-	{
-		lua_pushvalue(L, 1);
-		lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
-	}
+	/* move the values into the field */
+	fn_accessor_append_value(L, field, lua_gettop(L), 1);
 
 	/* remove the field value from the stack */
 	lua_pop(L, 1);
@@ -196,26 +187,43 @@ static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
 
 
 /**
- * Copy values from one table to the end of another table.
- * \param   destIndex  The absolute stack index of the destination table.
- * \param   srcIndex   The absolute stack index of the source table.
+ * Append a value to table. If the value is itself a table, it is "flattened" into the
+ * destination table by iterating over each of its items and adding each in turn to the
+ * target table.
+ * \param   L      The current Lua state.
+ * \param   field  A description of the field being populated.
+ * \param   tbl    The table to contain the values.
+ * \param   idx    The value to add to the table.
  */
-static void fn_accessor_append_values(lua_State* L, int destIndex, int srcIndex)
+static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx)
 {
-	int i;
-	int src_n = luaL_getn(L, srcIndex);
-	int dst_n = luaL_getn(L, destIndex);
-	for (i = 1; i <= src_n; ++i)
+	int i, n;
+	if (lua_istable(L, idx))
 	{
-		lua_rawgeti(L, srcIndex, i);
-		if (lua_istable(L, -1))
+		n = luaL_getn(L, idx);
+		for (i = 1; i <= n; ++i)
 		{
-			fn_accessor_append_values(L, destIndex, lua_gettop(L));
-			dst_n = luaL_getn(L, destIndex);
+			lua_rawgeti(L, idx, i);
+			fn_accessor_append_value(L, field, tbl, lua_gettop(L));
+		}
+		lua_pop(L, 1);
+	}
+	else
+	{
+		/* if this field contains files, check for and expand wildcards by calling match() */
+		const char* value = lua_tostring(L, -1);
+		if (field->kind == FilesField && cstr_contains(value, "*"))
+		{
+			lua_getglobal(L, "match");
+			lua_pushvalue(L, -2);
+			lua_call(L, 1, 1);
+			fn_accessor_append_value(L, field, tbl, lua_gettop(L));
+			lua_pop(L, 1);
 		}
 		else
 		{
-			lua_rawseti(L, destIndex, ++dst_n);
+			n = luaL_getn(L, tbl);
+			lua_rawseti(L, tbl, n + 1);
 		}
 	}
 }

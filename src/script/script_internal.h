@@ -52,6 +52,7 @@ int  fn_dofile(lua_State* L);
 int  fn_error(lua_State* L);
 int  fn_getcwd(lua_State* L);
 int  fn_include(lua_State* L);
+int  fn_match(lua_State* L);
 int  fn_project(lua_State* L);
 int  fn_solution(lua_State* L);
 

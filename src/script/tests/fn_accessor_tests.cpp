@@ -117,4 +117,17 @@ SUITE(script)
 			"return (prj.files[1] == 'Hello.c' and prj.files[2] == 'Goodbye.c')"  );
 		CHECK_EQUAL("true", result);
 	}
+
+
+	/**************************************************************************
+	 * List field tests
+	 **************************************************************************/
+
+	TEST_FIXTURE(FxAccessor, Accessor_ExpandsWildcards)
+	{
+		const char* result = script_run_string(script,
+			"files { 'testing/test_files/*.lua' };"
+			"return (#prj.files > 0)");
+		CHECK_EQUAL("true", result);
+	}
 }

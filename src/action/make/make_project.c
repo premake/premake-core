@@ -223,8 +223,11 @@ int make_project_objects(Session sess, Project prj, Stream strm)
 	for (i = 0; i < n; ++i)
 	{
 		const char* filename = strings_item(files, i);
-		const char* obj_name = make_get_obj_filename(filename);
-		z |= stream_writeline(strm, "\t%s \\", obj_name);
+		if (path_is_cpp_source(filename))
+		{
+			const char* obj_name = make_get_obj_filename(filename);
+			z |= stream_writeline(strm, "\t%s \\", obj_name);
+		}
 	}
 
 	z |= stream_writeline(strm, "");
@@ -288,11 +291,14 @@ int make_project_source_rules(Session sess, Project prj, Stream strm)
 	for (i = 0; i < n; ++i)
 	{
 		const char* filename = strings_item(files, i);
-		const char* obj_name = make_get_obj_filename(filename);
-		z |= stream_writeline(strm, "%s: %s", obj_name, filename);
-		z |= stream_writeline(strm, "\t@echo $(notdir $<)");
-		z |= stream_writeline(strm, "\t@$(CXX) $(CXXFLAGS) -o $@ -c $<");
-		z |= stream_writeline(strm, "");
+		if (path_is_cpp_source(filename))
+		{
+			const char* obj_name = make_get_obj_filename(filename);
+			z |= stream_writeline(strm, "%s: %s", obj_name, filename);
+			z |= stream_writeline(strm, "\t@echo $(notdir $<)");
+			z |= stream_writeline(strm, "\t@$(CXX) $(CXXFLAGS) -o $@ -c $<");
+			z |= stream_writeline(strm, "");
+		}
 	}
 
 	return z;
@@ -308,7 +314,7 @@ int make_project_target(Session sess, Project prj, Stream strm)
 	UNUSED(sess);
 	z |= stream_writeline(strm, "$(OUTFILE): $(OUTDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)");
 	z |= stream_writeline(strm, "\t@echo Linking %s", project_get_name(prj));
-	z |= stream_writeline(strm, "\t$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)");
+	z |= stream_writeline(strm, "\t@$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)");
 	z |= stream_writeline(strm, "");
 	return z;
 }

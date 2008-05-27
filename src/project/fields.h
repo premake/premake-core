@@ -18,7 +18,8 @@
 enum FieldKind
 {
 	StringField,
-	ListField
+	ListField,
+	FilesField
 };
 
 
@@ -36,7 +37,7 @@ typedef int (*FieldValidator)(const char* value);
 struct FieldInfo
 {
 	const char*    name;         /**< The name of the field. */
-	enum FieldKind kind;         /**< StringField or ListField */
+	enum FieldKind kind;         /**< StringField, ListField, etc. */
 	FieldValidator validator;    /**< The field validation function */
 };
 

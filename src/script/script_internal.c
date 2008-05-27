@@ -159,7 +159,7 @@ void script_internal_populate_object(lua_State* L, struct FieldInfo* fields)
 	/* set all list-type configuration values to empty tables */
 	for (field = fields; field->name != NULL; ++field)
 	{
-		if (field->kind == ListField)
+		if (field->kind != StringField)
 		{
 			lua_newtable(L);
 			lua_setfield(L, -2, field->name);
