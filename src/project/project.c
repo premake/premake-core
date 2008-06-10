@@ -9,6 +9,7 @@
 #include <string.h>
 #include "premake.h"
 #include "project/project.h"
+#include "project/solution.h"
 #include "base/buffers.h"
 #include "base/cstr.h"
 #include "base/guid.h"
@@ -19,18 +20,19 @@
 
 struct FieldInfo ProjectFieldInfo[] =
 {
-	{ "basedir",    StringField,  NULL                      },
-	{ "files",      FilesField,   NULL                      },
-	{ "guid",       StringField,  guid_is_valid             },
-	{ "language",   StringField,  project_is_valid_language },
-	{ "location",   StringField,  NULL                      },
-	{ "name",       StringField,  NULL                      },
-	{  0,           0,            NULL                      }
+	{ "basedir",    StringField,  NULL            },
+	{ "files",      FilesField,   NULL            },
+	{ "guid",       StringField,  guid_is_valid   },
+	{ "language",   StringField,  NULL            },
+	{ "location",   StringField,  NULL            },
+	{ "name",       StringField,  NULL            },
+	{  0,           0,            NULL            }
 };
 
 
 DEFINE_CLASS(Project)
 {
+	Solution solution;
 	Fields fields;
 	const char* config_filter;
 };
@@ -43,6 +45,7 @@ DEFINE_CLASS(Project)
 Project project_create()
 {
 	Project prj = ALLOC_CLASS(Project);
+	prj->solution = NULL;
 	prj->fields = fields_create(ProjectFieldInfo);
 	prj->config_filter = NULL;
 	return prj;
@@ -83,6 +86,16 @@ const char* project_get_configuration_filter(Project prj)
 {
 	assert(prj);
 	return prj->config_filter;
+}
+
+
+/**
+ * Retrieve the fields object for this solution; used to unload values from the script.
+ */
+Fields project_get_fields(Project prj)
+{
+	assert(prj);
+	return prj->fields;
 }
 
 
@@ -149,7 +162,12 @@ const char* project_get_guid(Project prj)
  */
 const char* project_get_language(Project prj)
 {
-	return project_get_value(prj, ProjectLanguage);
+	const char* result = project_get_value(prj, ProjectLanguage);
+	if (result == NULL && prj->solution != NULL)
+	{
+		result = solution_get_language(prj->solution);
+	}
+	return result;
 }
 
 
@@ -190,6 +208,17 @@ const char* project_get_outfile(Project prj)
 		strcat(buffer, ".exe");
 	}
 	return buffer;
+}
+
+
+/**
+ * Retrieve the solution associated with this project (internal).
+ * \param   prj      The project to query.
+ * \returns The associated solution, or NULL if no association has been made.
+ */
+Solution project_get_solution(Project prj)
+{
+	return prj->solution;
 }
 
 
@@ -287,6 +316,18 @@ void project_set_location(Project prj, const char* location)
 void project_set_name(Project prj, const char* name)
 {
 	project_set_value(prj, ProjectName, name);
+}
+
+
+/**
+ * Associate a solution with this project (internal).
+ * \param   prj      The project to modify.
+ * \param   sln      The solution to associate with this project.
+ */
+void project_set_solution(Project prj, Solution sln)
+{
+	assert(prj);
+	prj->solution = sln;
 }
 
 

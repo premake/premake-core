@@ -48,6 +48,7 @@ DECLARE_CLASS(Fields)
 Fields      fields_create(struct FieldInfo* info);
 void        fields_destroy(Fields fields);
 
+void        fields_add_value(Fields fields, int index, const char* value);
 const char* fields_get_value(Fields fields, int index);
 Strings     fields_get_values(Fields fields, int index);
 void        fields_set_value(Fields fields, int index, const char* value);

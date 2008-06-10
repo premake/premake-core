@@ -17,6 +17,14 @@ SUITE(script)
 		CHECK_EQUAL("true", result);
 	}
 
+	TEST_FIXTURE(FxAccessor, Guid_Error_OnNoActiveObject)
+	{
+		Script script = script_create();
+		const char* result = script_run_string(script, "language()");
+		CHECK_EQUAL("no active solution or project", result);
+		script_destroy(script);
+	}
+
 	TEST_FIXTURE(FxAccessor, Language_CanRoundtrip)
 	{
 		const char* result = script_run_string(script,

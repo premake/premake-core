@@ -16,4 +16,20 @@ SUITE(script)
 			"return (files ~= nil)");
 		CHECK_EQUAL("true", result);
 	}
+
+	TEST_FIXTURE(FxAccessor, Files_Error_OnNoActiveProject)
+	{
+		Script script = script_create();
+		const char* result = script_run_string(script, "files {'hello.c'}");
+		CHECK_EQUAL("no active project", result);
+		script_destroy(script);
+	}
+
+	TEST_FIXTURE(FxAccessor, Files_CanRoundtrip)
+	{
+		const char* result = script_run_string(script,
+			"files {'hello.c'};"
+			"return files()[1]");
+		CHECK_EQUAL("hello.c", result);
+	}
 }

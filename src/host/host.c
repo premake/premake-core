@@ -11,6 +11,7 @@
 #include "action/action.h"
 #include "base/cstr.h"
 #include "base/error.h"
+#include "base/file.h"
 
 
 /** argv, as passed into main(), stored here to be accessible to all host functions. */
@@ -61,6 +62,13 @@ int host_run_action(Session sess)
 
 	assert(sess);
 
+	/* there must be a project file defined or I can go no further */
+	if (!file_exists(DEFAULT_SCRIPT_NAME))
+	{
+		error_set("script file '%s' not found", DEFAULT_SCRIPT_NAME);
+		return !OKAY;
+	}
+
 	/* find the action in the master list and execute the associated callback */
 	action = Args[0];
 	for (i = 0; Actions[i].name != NULL; ++i)
@@ -86,9 +94,17 @@ int host_run_script(Session sess)
 {
 	assert(sess);
 
-	/* run the default file for now */
-	session_run_file(sess, DEFAULT_SCRIPT_NAME);
-	return (error_get() == NULL) ? OKAY : !OKAY;
+	/* run the default file for now. If the script file doesn't exist let execution
+	 * continue so I can display help, etc. */
+	if (file_exists(DEFAULT_SCRIPT_NAME))
+	{
+		session_run_file(sess, DEFAULT_SCRIPT_NAME);
+		return (error_get() == NULL) ? OKAY : !OKAY;
+	}
+	else
+	{
+	    return OKAY;
+	}
 }
 
 

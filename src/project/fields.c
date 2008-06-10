@@ -67,6 +67,20 @@ void fields_destroy(Fields fields)
 
 
 /**
+ * Add a new value to the end of an existing list.
+ * \param   fields   The collection of fields.
+ * \param   index    The index of the list to contain the new value.
+ * \param   value    The value to add.
+ */
+void fields_add_value(Fields fields, int index, const char* value)
+{
+	assert(fields);
+	assert(index >= 0 && index < fields->count);
+	strings_add(fields->values[index], value);
+}
+
+
+/**
  * Retrieve the value of a string (single value) field.
  * \param   fields   The collection of fields.
  * \param   index    The index of the field to query.

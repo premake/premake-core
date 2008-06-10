@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "project/solution.h"
+#include "project/project_internal.h"
 #include "base/array.h"
 #include "base/path.h"
 #include "base/strings.h"
@@ -17,17 +18,18 @@
 
 struct FieldInfo SolutionFieldInfo[] =
 {
-	{ "basedir",    StringField,  NULL },
-	{ "location",   StringField,  NULL },
-	{ "name",       StringField,  NULL },
-	{  0,           0,            NULL }
+	{ "basedir",        StringField,  NULL                       },
+	{ "configurations", ListField,    NULL                       },
+	{ "language",       StringField,  project_is_valid_language  },
+	{ "location",       StringField,  NULL                       },
+	{ "name",           StringField,  NULL                       },
+	{  0,               0,            NULL                        }
 };
 
 
 DEFINE_CLASS(Solution)
 {
 	Fields  fields;
-	Strings configs;
 	Array   projects;
 	Strings project_names;
 };
@@ -41,7 +43,6 @@ Solution solution_create()
 {
 	Solution sln = ALLOC_CLASS(Solution);
 	sln->fields = fields_create(SolutionFieldInfo);
-	sln->configs  = strings_create();
 	sln->projects = array_create();
 	sln->project_names = NULL;
 	return sln;
@@ -58,7 +59,6 @@ void solution_destroy(Solution sln)
 
 	assert(sln);
 	fields_destroy(sln->fields);
-	strings_destroy(sln->configs);
 
 	n = solution_num_projects(sln);
 	for (i = 0; i < n; ++i)
@@ -86,7 +86,7 @@ void solution_add_config_name(Solution sln, const char* config_name)
 {
 	assert(sln);
 	assert(config_name);
-	strings_add(sln->configs, config_name);
+	fields_add_value(sln->fields, SolutionConfigurations, config_name);
 }
 
 
@@ -100,6 +100,7 @@ void solution_add_project(Solution sln, Project prj)
 	assert(sln);
 	assert(prj);
 	array_add(sln->projects, prj);
+	project_set_solution(prj, sln);
 }
 
 
@@ -123,9 +124,11 @@ const char* solution_get_base_dir(Solution sln)
  */
 const char* solution_get_config_name(Solution sln, int index)
 {
+	Strings names;
 	const char* name;
 	assert(sln);
-	name = strings_item(sln->configs, index);
+	names = fields_get_values(sln->fields, SolutionConfigurations);
+	name = strings_item(names, index);
 	return name;
 }
 
@@ -138,7 +141,17 @@ const char* solution_get_config_name(Solution sln, int index)
 Strings solution_get_config_names(Solution sln)
 {
 	assert(sln);
-	return sln->configs;
+	return fields_get_values(sln->fields, SolutionConfigurations);
+}
+
+
+/**
+ * Retrieve the fields object for this solution; used to unload values from the script.
+ */
+Fields solution_get_fields(Solution sln)
+{
+	assert(sln);
+	return sln->fields;
 }
 
 
@@ -174,6 +187,17 @@ const char* solution_get_filename(Solution sln, const char* basename, const char
 
 	result = path_assemble(directory, basename, ext);
 	return result;
+}
+
+
+/**
+ * Get the programming language set globally for the solution.
+ * \param   sln        The solution object to modify.
+ * \returns The language set for the solution, or NULL if no language has been set.
+ */
+const char* solution_get_language(Solution sln)
+{
+	return solution_get_value(sln, SolutionLanguage);
 }
 
 
@@ -260,8 +284,10 @@ const char* solution_get_value(Solution sln, enum SolutionField field)
  */
 int solution_num_configs(Solution sln)
 {
+	Strings names;
 	assert(sln);
-	return strings_size(sln->configs);
+	names = fields_get_values(sln->fields, SolutionConfigurations);
+	return strings_size(names);
 }
 
 
@@ -285,6 +311,17 @@ int solution_num_projects(Solution sln)
 void solution_set_base_dir(Solution sln, const char* base_dir)
 {
 	solution_set_value(sln, SolutionBaseDirectory, base_dir);
+}
+
+
+/**
+ * Set the global programming language for the solution.
+ * \param   sln        The solution to modify.
+ * \param   language   The programming language to set globally for the solution.
+ */
+void solution_set_language(Solution sln, const char* language)
+{
+	solution_set_value(sln, SolutionLanguage, language);
 }
 
 

@@ -40,6 +40,7 @@ void        project_destroy(Project prj);
 
 const char* project_get_base_dir(Project prj);
 const char* project_get_configuration_filter(Project prj);
+Fields      project_get_fields(Project prj);
 const char* project_get_filename(Project prj, const char* basename, const char* ext);
 Strings     project_get_files(Project prj);
 const char* project_get_guid(Project prj);

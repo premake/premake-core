@@ -7,7 +7,9 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
+#include "project/solution.h"
 #include "project/project.h"
+#include "project/project_internal.h"
 #include "platform/platform.h"
 }
 
@@ -26,17 +28,19 @@ int project_tests()
 
 struct FxProject
 {
+	Solution sln;
 	Project prj;
 
 	FxProject()
 	{
+		sln = solution_create();
 		prj = project_create();
 	}
 
 	~FxProject()
 	{
-		if (prj)
-			project_destroy(prj);
+		project_destroy(prj);
+		solution_destroy(sln);
 	}
 };
 
@@ -138,6 +142,14 @@ SUITE(project)
 		CHECK_EQUAL("c++", result);
 	}
 
+	TEST_FIXTURE(FxProject, GetLanguage_ReturnsSolutionLanguage_OnNoProjectLanguage)
+	{
+		project_set_solution(prj, sln);
+		solution_set_language(sln, "c#");
+		const char* result = project_get_language(prj);
+		CHECK_EQUAL("c#", result);
+	}
+
 
 	/**********************************************************************
 	 * Location tests
@@ -199,6 +211,24 @@ SUITE(project)
 		const char* result = project_get_outfile(prj);
 		CHECK_EQUAL("MyProject.exe", result);
 	}
+
+
+	/**********************************************************************
+	 * Solution tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxProject, GetSolution_ReturnsNull_OnStartup)
+	{
+		Solution result = project_get_solution(prj);
+		CHECK(result == NULL);
+	}
+
+	TEST_FIXTURE(FxProject, SetSolution_CanRoundtrip)
+	{
+		project_set_solution(prj, sln);
+		CHECK(sln == project_get_solution(prj));
+	}
+
 }
 
 

@@ -26,6 +26,7 @@ struct FxUnloadSolution
 
 		script_run_string(script,
 			"sln = solution('MySolution');"
+			"  configurations { 'Debug', 'Release' };"
 			"return sln");
 	}
 
@@ -51,6 +52,14 @@ SUITE(unload)
 		unload_solution(L, sln);
 		const char* result = solution_get_base_dir(sln);
 		CHECK_EQUAL("(string)", result);
+	}
+
+	TEST_FIXTURE(FxUnloadSolution, UnloadSolution_SetsConfigurations)
+	{
+		unload_solution(L, sln);
+		CHECK(solution_num_configs(sln) == 2);
+		CHECK_EQUAL("Debug", solution_get_config_name(sln, 0));
+		CHECK_EQUAL("Release", solution_get_config_name(sln, 1));
 	}
 }
 

@@ -9,8 +9,8 @@
 #include <sys/stat.h>
 #include "premake.h"
 #include "base/buffers.h"
-#include "base/error.h"
 #include "base/dir.h"
+#include "base/error.h"
 #include "base/path.h"
 #include "platform/platform.h"
 

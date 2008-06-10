@@ -85,52 +85,16 @@ static int unload_solution_projects(lua_State* L, struct UnloadFuncs* funcs, Sol
 }
 
 
-/**
- * Unload information from the scripting environment for a particular solution.
- * \param L      The Lua scripting engine state.
- * \param sln    The solution object to be populated.
- * \returns OKAY if successful.
- */
-int unload_solution(lua_State* L, Solution sln)
-{
-	const char* value;
-
-	assert(L);
-	assert(sln);
-
-	lua_getfield(L, -1, "name");
-	value = lua_tostring(L, -1);
-	solution_set_name(sln, value);
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "basedir");
-	value = lua_tostring(L, -1);
-	solution_set_base_dir(sln, value);
-	lua_pop(L, 1);
-
-	return OKAY;
-}
-
-
-/**
- * Unload information from the scripting environment for a particular project.
- * \param L      The Lua scripting engine state.
- * \param prj    The project object to be populated.
- * \returns OKAY if successful.
- */
-int unload_project(lua_State* L, Project prj)
+int unload_fields(lua_State* L, Fields fields, struct FieldInfo* info)
 {
 	const char* value;
 	int fi;
 
-	assert(L);
-	assert(prj);
-
-	for (fi = 0; fi < NumProjectFields; ++fi)
+	for (fi = 0; info[fi].name != NULL; ++fi)
 	{
 		Strings values = strings_create();
 
-		lua_getfield(L, -1, ProjectFieldInfo[fi].name);
+		lua_getfield(L, -1, info[fi].name);
 		if (lua_istable(L, -1))
 		{
 			int i, n;
@@ -159,10 +123,34 @@ int unload_project(lua_State* L, Project prj)
 		lua_pop(L, 1);
 
 		/* store the field values */
-		project_set_values(prj, fi, values);
+		fields_set_values(fields, fi, values);
 	}
 
 	return OKAY;
+}
+
+
+/**
+ * Unload information from the scripting environment for a particular solution.
+ * \param L      The Lua scripting engine state.
+ * \param sln    The solution object to be populated.
+ * \returns OKAY if successful.
+ */
+int unload_solution(lua_State* L, Solution sln)
+{
+	return unload_fields(L, solution_get_fields(sln), SolutionFieldInfo);
+}
+
+
+/**
+ * Unload information from the scripting environment for a particular project.
+ * \param L      The Lua scripting engine state.
+ * \param prj    The project object to be populated.
+ * \returns OKAY if successful.
+ */
+int unload_project(lua_State* L, Project prj)
+{
+	return unload_fields(L, project_get_fields(prj), ProjectFieldInfo);
 }
 
 

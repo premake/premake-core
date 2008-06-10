@@ -9,6 +9,7 @@
 extern "C" {
 #include "project/solution.h"
 #include "project/project.h"
+#include "project/project_internal.h"
 #include "base/strings.h"
 }
 
@@ -113,6 +114,24 @@ SUITE(project)
 
 
 	/**********************************************************************
+	 * Language tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSolution, GetLanguage_ReturnsNull_OnStartup)
+	{
+		const char* result = solution_get_language(sln);
+		CHECK(result == NULL);
+	}
+
+	TEST_FIXTURE(FxSolution, SetLanguage_CanRoundtrip)
+	{
+		solution_set_language(sln, "c++");
+		const char* result = solution_get_language(sln);
+		CHECK_EQUAL("c++", result);
+	}
+
+
+	/**********************************************************************
 	 * Location tests
 	 **********************************************************************/
 
@@ -176,6 +195,13 @@ SUITE(project)
 		solution_add_project(sln, prj);
 		Project result = solution_get_project(sln, 0);
 		CHECK(prj == result);
+	}
+
+	TEST_FIXTURE(FxSolution, AddProject_SetsProjectSolution)
+	{
+		Project prj = project_create();
+		solution_add_project(sln, prj);
+		CHECK(sln == project_get_solution(prj));
 	}
 
 	TEST_FIXTURE(FxSolution, GetProjectNames_ReturnsNames)

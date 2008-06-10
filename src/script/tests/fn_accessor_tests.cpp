@@ -11,26 +11,6 @@
 SUITE(script)
 {
 	/**************************************************************************
-	 * Initial state tests
-	 **************************************************************************/
-
-	TEST_FIXTURE(FxAccessor, Accessor_FunctionExists_OnStartup)
-	{
-		const char* result = script_run_string(script, 
-			"return (location ~= nil)");
-		CHECK_EQUAL("true", result);
-	}
-
-	TEST_FIXTURE(FxAccessor, Accessor_RaisesError_OnNoActiveObject)
-	{
-		Script script = script_create();
-		const char* result = script_run_string(script, "location()");
-		CHECK_EQUAL("no active solution or project", result);
-		script_destroy(script);
-	}
-
-
-	/**************************************************************************
 	 * String field tests
 	 **************************************************************************/
 
@@ -120,7 +100,7 @@ SUITE(script)
 
 
 	/**************************************************************************
-	 * List field tests
+	 * Files field tests
 	 **************************************************************************/
 
 	TEST_FIXTURE(FxAccessor, Accessor_ExpandsWildcards)

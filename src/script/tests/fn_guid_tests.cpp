@@ -20,6 +20,14 @@ SUITE(script)
 		CHECK_EQUAL("true", result);
 	}
 
+	TEST_FIXTURE(FxAccessor, Guid_Error_OnNoActiveProject)
+	{
+		Script script = script_create();
+		const char* result = script_run_string(script, "guid()");
+		CHECK_EQUAL("no active project", result);
+		script_destroy(script);
+	}
+
 	TEST_FIXTURE(FxAccessor, Guid_CanRoundtrip)
 	{
 		const char* result = script_run_string(script,

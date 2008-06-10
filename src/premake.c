@@ -39,6 +39,8 @@ int main(int argc, const char** argv)
 	{
 		return host_tests();
 	}
+#else
+    UNUSED(argc);
 #endif
 
 	/* initialize */
