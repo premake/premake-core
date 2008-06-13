@@ -10,6 +10,7 @@
 
 const char* make_get_obj_filename(const char* filename);
 const char* make_get_project_makefile(Session sess, Project prj);
+Strings     make_get_project_names(Solution sln);
 const char* make_get_solution_makefile(Session sess, Solution sln);
 
 #endif

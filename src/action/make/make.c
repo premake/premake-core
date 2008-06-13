@@ -87,6 +87,29 @@ const char* make_get_project_makefile(Session sess, Project prj)
 
 
 /**
+ * Build a list of project names contained by the solution.
+ * \param   sln    The solution to query.
+ * \returns A list of project names. The caller owns this list and must destroy it when done.
+ */
+Strings make_get_project_names(Solution sln)
+{
+	Strings result;
+	int i, n;
+
+	result = strings_create();
+	n = solution_num_projects(sln);
+	for (i = 0; i < n; ++i)
+	{
+		Project prj = solution_get_project(sln, i);
+		const char* name = project_get_name(prj);
+		strings_add(result, name);
+	}
+
+	return result;
+}
+
+
+/**
  * Get the name of the solution makefile for a particular solution. 
  * \param   sess   The current execution session context.
  * \param   sln    The solution being requested.

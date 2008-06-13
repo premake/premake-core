@@ -47,7 +47,6 @@ const char* solution_get_language(Solution sln);
 const char* solution_get_location(Solution sln);
 const char* solution_get_name(Solution sln);
 Project     solution_get_project(Solution sln, int index);
-Strings     solution_get_project_names(Solution sln);
 const char* solution_get_value(Solution sln, enum SolutionField field);
 int         solution_num_configs(Solution sln);
 int         solution_num_projects(Solution sln);

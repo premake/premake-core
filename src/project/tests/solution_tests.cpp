@@ -203,14 +203,4 @@ SUITE(project)
 		solution_add_project(sln, prj);
 		CHECK(sln == project_get_solution(prj));
 	}
-
-	TEST_FIXTURE(FxSolution, GetProjectNames_ReturnsNames)
-	{
-		Project prj = project_create();
-		project_set_name(prj, "MyProject");
-		solution_add_project(sln, prj);
-
-		Strings result = solution_get_project_names(sln);
-		CHECK_EQUAL("MyProject", strings_item(result, 0));
-	}
 }

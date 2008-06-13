@@ -31,7 +31,6 @@ DEFINE_CLASS(Solution)
 {
 	Fields  fields;
 	Array   projects;
-	Strings project_names;
 };
 
 
@@ -44,7 +43,6 @@ Solution solution_create()
 	Solution sln = ALLOC_CLASS(Solution);
 	sln->fields = fields_create(SolutionFieldInfo);
 	sln->projects = array_create();
-	sln->project_names = NULL;
 	return sln;
 }
 
@@ -67,11 +65,6 @@ void solution_destroy(Solution sln)
 		project_destroy(prj);
 	}
 	array_destroy(sln->projects);
-
-	if (sln->project_names != NULL)
-	{
-		strings_destroy(sln->project_names);
-	}
 
 	free(sln);
 }
@@ -237,30 +230,6 @@ Project solution_get_project(Solution sln, int index)
 
 	prj = (Project)array_item(sln->projects, index);
 	return prj;
-}
-
-
-/**
- * Retrieve the names of all projects contained by the solution.
- * \param   sln      The solution to query.
- * \returns A list of project names.
- */
-Strings solution_get_project_names(Solution sln)
-{
-	assert(sln);
-	if (sln->project_names == NULL)
-	{
-		int i, n;
-		sln->project_names = strings_create();
-		n = solution_num_projects(sln);
-		for (i = 0; i < n; ++i)
-		{
-			Project prj = solution_get_project(sln, i);
-			const char* name = project_get_name(prj);
-			strings_add(sln->project_names, name);
-		}
-	}
-	return sln->project_names;
 }
 
 

@@ -34,9 +34,10 @@ int gmake_solution_all_rule(Session sess, Solution sln, Stream strm)
 	assert(sln);
 	assert(strm);
 
-	prj_names = solution_get_project_names(sln);
+	prj_names = make_get_project_names(sln);
 	z  = stream_writeline_strings(strm, prj_names, "all:", " ", "", "");
 	z |= stream_writeline(strm, "");
+	strings_destroy(prj_names);
 	return z;
 }
 
@@ -111,9 +112,10 @@ int gmake_solution_phony_rule(Session sess, Solution sln, Stream strm)
 	assert(sln);
 	assert(strm);
 
-	prj_names = solution_get_project_names(sln);
+	prj_names = make_get_project_names(sln);
 	z  = stream_writeline_strings(strm, prj_names, ".PHONY: all clean", " ", "", "");
 	z |= stream_writeline(strm, "");
+	strings_destroy(prj_names);
 	return z;
 }
 

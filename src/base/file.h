@@ -3,7 +3,7 @@
  * \brief  File handling.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  *
- * \defgroup dir File Management
+ * \defgroup file File Management
  * \ingroup  base
  *
  * File management functions.
