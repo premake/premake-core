@@ -113,7 +113,7 @@ project.name = "Premake4"
 			os.execute("make CONFIG=Release >../release.log")
 			result = os.execute(string.format("7z a -tzip ..\\..\\..\\premake-win32-%s.zip premake4.exe >../release.log", version))
 		elseif (macosx) then
-			os.execute("TARGET_ARCH="-arch i386 -arch ppc" make CONFIG=Release >../release.log")
+			os.execute('TARGET_ARCH="-arch i386 -arch ppc" make CONFIG=Release >../release.log')
 			result = os.execute(string.format("tar czvf ../../../premake-macosx-%s.tar.gz premake4 >../release.log", version))
 		else
 			os.execute("make CONFIG=Release >../release.log")
