@@ -34,6 +34,7 @@ struct FxAccessor : FxScript
 	{
 		script_run_string(script,
 			"sln = solution 'MySolution';"
+			"        configurations {'Debug','Release'};"
 			"prj = project 'MyProject';");
 	}
 };

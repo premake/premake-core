@@ -10,12 +10,9 @@
 #include "base/error.h"
 
 
-static int fn_accessor(lua_State* L);
 static int fn_accessor_object_has_field(struct FieldInfo* fields, const char* field_name);
 static int fn_accessor_register(lua_State* L, struct FieldInfo* fields);
 static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field);
-static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field);
-static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field);
 static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx);
 
 
@@ -103,7 +100,7 @@ static int fn_accessor_object_has_field(struct FieldInfo* fields, const char* fi
  * work gets done to get or set an object property or list.
  * \returns The current value of the field.
  */
-static int fn_accessor(lua_State* L)
+int fn_accessor(lua_State* L)
 {
 	struct FieldInfo* field;
 	int container_type;
@@ -141,7 +138,7 @@ static int fn_accessor(lua_State* L)
  * Sets a string field to the value on the bottom of the Lua stack.
  * \returns OKAY if successful.
  */
-static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
+int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
 {
 	/* can't set lists to simple fields */
 	if (lua_istable(L, 1))
@@ -172,7 +169,7 @@ static int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
  * Appends the value or list at the bottom of the Lua stack to the specified list field.
  * \returns OKAY if successful.
  */
-static int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
+int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
 {
 	/* get the current value of the field */
 	lua_getfield(L, -1, field->name);

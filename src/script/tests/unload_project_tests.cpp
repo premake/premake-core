@@ -26,6 +26,7 @@ struct FxUnloadProject
 
 		script_run_string(script,
 			"solution('MySolution');"
+			"  configurations {'Debug','Release'};"
 			"prj = project('MyProject');"
 			"  guid '0C202E43-B9AF-4972-822B-5A42F0BF008C';"
 			"  language 'c++';"

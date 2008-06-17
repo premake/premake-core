@@ -46,8 +46,12 @@ void        script_internal_populate_object(lua_State* L, struct FieldInfo* fiel
 
 /* Generic project object field getter/setter API */
 int  fn_accessor_register_all(lua_State* L);
+int  fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field);
+int  fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field);
 
 /* script function handlers */
+int  fn_accessor(lua_State* L);
+int  fn_configurations(lua_State* L);
 int  fn_dofile(lua_State* L);
 int  fn_error(lua_State* L);
 int  fn_getcwd(lua_State* L);

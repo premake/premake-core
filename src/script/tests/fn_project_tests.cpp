@@ -14,6 +14,7 @@ struct FnProject : FxScript
 	{
 		script_run_string(script,
 			"sln = solution('MySolution');"
+			"  configurations {'Debug','Release'};"
 			"prj = project('MyProject')");
 	}
 };
@@ -91,7 +92,15 @@ SUITE(script)
 			"return (prj == project('MyProject'))");
 		CHECK_EQUAL("true", result);
 	}
-
+/*
+	TEST_FIXTURE(FxScript, Project_RaisesError_OnNoConfigurations)
+	{
+		const char* result = script_run_string(script,
+			"sln = solution('MySolution');"
+			"prj = project('MyProject')");
+		CHECK_EQUAL("no configurations defined", result);
+	}
+*/
 
 	/**************************************************************************
 	 * Initial object state tests

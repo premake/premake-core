@@ -15,6 +15,7 @@
 
 /** Functions to add to the global namespace */
 static const luaL_Reg global_funcs[] = {
+	{ "configurations", fn_configurations },
 	{ "dofile",         fn_dofile   },
 	{ "include",        fn_include  },
 	{ "match",          fn_match    },
@@ -55,16 +56,16 @@ Script script_create(void)
 	/* register all the standard Lua libraries */
 	luaL_openlibs(L);
 
-	/* register the Premake non-configuration related functions */
-	luaL_register(L, "_G", global_funcs);
-	luaL_register(L, "os", os_funcs);
-
 	/* create an empty list of solutions in the script environment */
 	lua_newtable(L);
 	lua_setglobal(L, SOLUTIONS_KEY);
 
 	/* register the project object accessor functions */
 	fn_accessor_register_all(L);
+
+	/* register the Premake non-configuration related functions */
+	luaL_register(L, "_G", global_funcs);
+	luaL_register(L, "os", os_funcs);
 
 	script = ALLOC_CLASS(Script);
 	script->L = L;

@@ -9,14 +9,14 @@
 
 SUITE(script)
 {
-	TEST_FIXTURE(FxAccessor, Configurations_Exists_OnStartup)
+	TEST_FIXTURE(FxScript, Configurations_Exists_OnStartup)
 	{
 		const char* result = script_run_string(script, 
 			"return (configurations ~= nil)");
 		CHECK_EQUAL("true", result);
 	}
 
-	TEST_FIXTURE(FxAccessor, Configurations_Error_OnNoActiveSolution)
+	TEST_FIXTURE(FxScript, Configurations_Error_OnNoActiveSolution)
 	{
 		Script script = script_create();
 		const char* result = script_run_string(script, "configurations {'Debug'}");
@@ -24,11 +24,23 @@ SUITE(script)
 		script_destroy(script);
 	}
 
-	TEST_FIXTURE(FxAccessor, Configurations_CanRoundtrip)
+	TEST_FIXTURE(FxScript, Configurations_CanRoundtrip)
 	{
 		const char* result = script_run_string(script,
-			"configurations {'Debug'};"
+			"solution 'MySolution';"
+			" configurations {'Debug','Release'};"
 			"return configurations()[1]");
 		CHECK_EQUAL("Debug", result);
 	}
+
+	TEST_FIXTURE(FxScript, Configurations_RaisesError_OnProjectDefined)
+	{
+		const char* result = script_run_string(script,
+			"solution 'MySolution';"
+			" configurations {'Debug','Release'};"
+			"project 'MyProject';"
+			" configurations {'DebugDLL','ReleaseDLL'}");
+		CHECK_EQUAL("configurations may not be modified after projects are defined", result);
+	}
+
 }

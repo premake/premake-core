@@ -78,6 +78,7 @@ struct FxUnload2 : FxUnload
 	{
 		script_run_string(script,
 			"solution 'MySolution';"
+			"  configurations{'Debug','Release'};"
 			"  project 'MyProject';"
 			"  project 'MyProject2';"
 			"solution 'MySolution2';");

@@ -38,6 +38,15 @@ int fn_project(lua_State* L)
 	lua_getfield(L, -1, name);
 	if (lua_isnil(L, -1))
 	{
+		/* this is a new project; check to be sure the configurations have been set */
+		lua_getfield(L, -3, SolutionFieldInfo[SolutionConfigurations].name);
+		if (luaL_getn(L, -1) == 0)
+		{
+			luaL_error(L, "no configurations defined");
+			return 0;
+		}
+		lua_pop(L, 1);
+
 		/* project does not exists, create it */
 		lua_newtable(L);
 
