@@ -29,7 +29,7 @@ project.name = "Premake4"
 
 	REPOS    = "https://premake.svn.sourceforge.net/svnroot/premake"
 	TRUNK    = "/trunk"
-	BRANCHES = "/branches/4.0-alpha/"
+	TAGS = "/tags/4.0-alpha/"
 
 	function dorelease(cmd, arg)
 		
@@ -60,7 +60,7 @@ project.name = "Premake4"
 
 		local folder  = "premake-"..version
 		local trunk   = REPOS..TRUNK
-		local branch  = REPOS..BRANCHES..version
+		local branch  = REPOS..TAGS..version
 		
 		-------------------------------------------------------------------
 		-- Build and run all automated tests on working copy

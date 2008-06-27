@@ -62,6 +62,11 @@ int fn_project(lua_State* L)
 		lua_pushstring(L, guid_create());
 		lua_setfield(L, -2, ProjectFieldInfo[ProjectGuid].name);
 
+		/* configure the initial configuration block list */
+		lua_newtable(L);
+		lua_setfield(L, -2, BLOCKS_KEY);
+		script_internal_create_block(L);
+
 		/* use the list of fields to populate the object properties and accessor functions */
 		script_internal_populate_object(L, ProjectFieldInfo);
 

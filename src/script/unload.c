@@ -9,7 +9,8 @@
 #include "script/script_internal.h"
 
 
-static int unload_solution_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln);
+static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Array blocks);
+static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln);
 
 
 /**
@@ -34,19 +35,27 @@ int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
 	sn = luaL_getn(L, -1);
 	for (si = 1; z == OKAY && si <= sn; ++si)
 	{
+		/* add a new solution to the master list */
 		Solution sln = solution_create();
 		array_add(slns, sln);
+
+		/* get the scripted solution object from the solutions list */
 		lua_rawgeti(L, -1, si);
 
 		/* hardcoded a standard set of configurations for now */
-		solution_add_config_name(sln, "Debug");
-		solution_add_config_name(sln, "Release");
+		solution_add_config(sln, "Debug");
+		solution_add_config(sln, "Release");
 
-		/* extract the project fields */
+		/* unload the solution fields, then configuration blocks, then projects */
 		z = funcs->unload_solution(L, sln);
 		if (z == OKAY)
 		{
-			z = unload_solution_projects(L, funcs, sln);
+			Array blocks = solution_get_blocks(sln);
+			z = unload_blocks(L, funcs, blocks);
+		}
+		if (z == OKAY)
+		{
+			z = unload_projects(L, funcs, sln);
 		}
 
 		/* remove solution object from stack */
@@ -59,7 +68,7 @@ int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
 }
 
 
-static int unload_solution_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln)
+static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln)
 {
 	int pi, pn, z = OKAY;
 
@@ -68,18 +77,52 @@ static int unload_solution_projects(lua_State* L, struct UnloadFuncs* funcs, Sol
 	pn = luaL_getn(L, -1);
 	for (pi = 1; z == OKAY && pi <= pn; ++pi)
 	{
+		/* add a new project to the master list */
 		Project prj = project_create();
 		solution_add_project(sln, prj);
 
-		/* unload the project fields */
+		/* get the scripted project object from the solutions list */
 		lua_rawgeti(L, -1, pi);
+	
+		/* unload the project fields, then configuration blocks */
 		z = funcs->unload_project(L, prj);
+		if (z == OKAY)
+		{
+			Array blocks = project_get_blocks(prj);
+			z = unload_blocks(L, funcs, blocks);
+		}
 		
 		/* remove project object from stack */
 		lua_pop(L, 1);
 	}
 
 	/* remove list of projects from stack */
+	lua_pop(L, 1);
+	return z;
+}
+
+
+static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Array blocks)
+{
+	int ci, cn, z = OKAY;
+	
+	/* iterate over the list configuration blocks from the solution */
+	lua_getfield(L, -1, BLOCKS_KEY);
+	cn = luaL_getn(L, -1);
+	for (ci = 1; z == OKAY && ci <= cn; ++ci)
+	{
+		Block blk = block_create();
+		array_add(blocks, blk);
+
+		/* unload the configuration block fields */
+		lua_rawgeti(L, -1, ci);
+		z = funcs->unload_block(L, blk);
+
+		/* remove the configuration block object from the stack */
+		lua_pop(L, 1);
+	}
+
+	/* remove the list of blocks from the stack */
 	lua_pop(L, 1);
 	return z;
 }
@@ -144,8 +187,8 @@ int unload_solution(lua_State* L, Solution sln)
 
 /**
  * Unload information from the scripting environment for a particular project.
- * \param L      The Lua scripting engine state.
- * \param prj    The project object to be populated.
+ * \param   L      The Lua scripting engine state.
+ * \param   prj    The project object to be populated.
  * \returns OKAY if successful.
  */
 int unload_project(lua_State* L, Project prj)
@@ -154,3 +197,13 @@ int unload_project(lua_State* L, Project prj)
 }
 
 
+/**
+ * Unload information from the scripting environment for a particular configuration.
+ * \param   L      The Lua scripting engine state.
+ * \param   blk    The configuration block to be populated.
+ * \returns OKAY if successful.
+ */
+int unload_block(lua_State* L, Block blk)
+{
+	return unload_fields(L, block_get_fields(blk), BlockFieldInfo);
+}

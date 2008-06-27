@@ -14,6 +14,7 @@ extern "C" {
 
 static int num_solution_calls;
 static int num_project_calls;
+static int num_block_calls;
 
 static int stub_solution_func(lua_State* L, Solution sln)
 {
@@ -43,6 +44,20 @@ static int stub_project_fail_func(lua_State* L, Project prj)
 	return !OKAY;
 }
 
+static int stub_block_func(lua_State* L, Block blk)
+{
+	UNUSED(L);  UNUSED(blk);
+	num_block_calls++;
+	return OKAY;
+}
+
+static int stub_block_fail_func(lua_State* L, Block blk)
+{
+	UNUSED(L);  UNUSED(blk);
+	num_block_calls++;
+	return !OKAY;
+}
+
 
 struct FxUnload
 {
@@ -60,8 +75,10 @@ struct FxUnload
 
 		funcs.unload_solution = stub_solution_func;
 		funcs.unload_project  = stub_project_func;
+		funcs.unload_block    = stub_block_func;
 		num_solution_calls = 0;
 		num_project_calls = 0;
+		num_block_calls = 0;
 	}
 
 	~FxUnload()
@@ -81,6 +98,7 @@ struct FxUnload2 : FxUnload
 			"  configurations{'Debug','Release'};"
 			"  project 'MyProject';"
 			"  project 'MyProject2';"
+			"    configuration 'Debug';"
 			"solution 'MySolution2';");
 	}
 };
@@ -170,6 +188,39 @@ SUITE(unload)
 		funcs.unload_project = stub_project_fail_func;
 		unload_all(L, slns, &funcs);
 		CHECK(num_project_calls == 1);
+	}
+
+
+	/**********************************************************************
+	 * Configuration block enumeration tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxUnload2, Unload_AddsBlocks_OnNonEmptySession)
+	{
+		unload_all(L, slns, &funcs);
+		Solution sln = (Solution)array_item(slns, 0);
+		int n = solution_num_blocks(sln);
+		CHECK(n == 1);
+	}
+
+	TEST_FIXTURE(FxUnload2, Unload_CallsBlockFunc_OnEachConfig)
+	{
+		unload_all(L, slns, &funcs);
+		CHECK(num_block_calls == 5);
+	}
+
+	TEST_FIXTURE(FxUnload2, Unload_ReturnsNotOkay_OnBlockFailure)
+	{
+		funcs.unload_block = stub_block_fail_func;
+		int result = unload_all(L, slns, &funcs);
+		CHECK(result != OKAY);
+	}
+
+	TEST_FIXTURE(FxUnload2, Unload_AbortsBlockLoop_OnNotOkay)
+	{
+		funcs.unload_block = stub_block_fail_func;
+		unload_all(L, slns, &funcs);
+		CHECK(num_block_calls == 1);
 	}
 
 }

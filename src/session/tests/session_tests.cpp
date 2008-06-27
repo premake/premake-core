@@ -319,7 +319,7 @@ SUITE(session)
 		SessionProjectCallback  cfg_funcs[] = { test_config_okay, test_config_okay, NULL };
 		AddSolution();
 		AddProject();
-		solution_add_config_name(sln, "Debug");
+		solution_add_config(sln, "Debug");
 		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK(num_config_calls == 2);
 	}
@@ -331,7 +331,7 @@ SUITE(session)
 		SessionProjectCallback  cfg_funcs[] = { test_config_okay, test_config_okay, NULL };
 		AddSolution();
 		AddProject();
-		solution_add_config_name(sln, "Debug");
+		solution_add_config(sln, "Debug");
 		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK_EQUAL("Debug", last_config_filter);
 	}

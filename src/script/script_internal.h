@@ -17,6 +17,7 @@
 
 /* string constants for script variables and functions */
 #define ACTION_KEY         "_ACTION"
+#define BLOCKS_KEY         "blocks"
 #define CONFIGURATION_KEY  "configuration"
 #define FILE_KEY           "_FILE"
 #define PROJECT_KEY        "project"
@@ -30,7 +31,7 @@ enum ObjectType
 {
 	SolutionObject = 0x01,
 	ProjectObject  = 0x02,
-	ConfigObject   = 0x04
+	BlockObject    = 0x04
 };
 
 #define OPTIONAL     (0)
@@ -39,6 +40,7 @@ enum ObjectType
 lua_State*  script_get_lua(Script script);
 
 /* internal state management */
+int         script_internal_create_block(lua_State* L);
 int         script_internal_get_active_object(lua_State* L, enum ObjectType type, int is_required);
 void        script_internal_set_active_object(lua_State* L, enum ObjectType type);
 const char* script_internal_script_dir(lua_State* L);
@@ -51,6 +53,7 @@ int  fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field);
 
 /* script function handlers */
 int  fn_accessor(lua_State* L);
+int  fn_configuration(lua_State* L);
 int  fn_configurations(lua_State* L);
 int  fn_dofile(lua_State* L);
 int  fn_error(lua_State* L);
@@ -66,11 +69,12 @@ struct UnloadFuncs
 {
 	int (*unload_solution)(lua_State* L, Solution sln);
 	int (*unload_project)(lua_State* L, Project prj);
+	int (*unload_block)(lua_State* L, Block blk);
 };
 
 int  unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs);
 int  unload_solution(lua_State* L, Solution sln);
 int  unload_project(lua_State* L, Project prj);
-
+int  unload_block(lua_State* L, Block blk);
 
 #endif

@@ -17,6 +17,7 @@
 #include "base/stream.h"
 #include "project/solution.h"
 #include "project/project.h"
+#include "project/block.h"
 
 DECLARE_CLASS(Session)
 

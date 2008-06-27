@@ -31,7 +31,7 @@ int vs2002_solution_configuration(Session sess, Solution sln, Stream strm)
 	n = solution_num_configs(sln);
 	for (i = 0; i < n; ++i)
 	{
-		const char* config_name = solution_get_config_name(sln, i);
+		const char* config_name = solution_get_config(sln, i);
 		z |= stream_writeline(strm, "\t\tConfigName.%d = %s", i, config_name);
 	}
 
@@ -101,7 +101,7 @@ int vs2002_solution_project_configuration(Session sess, Solution sln, Stream str
 		cn = solution_num_configs(sln);
 		for (ci = 0; ci < cn; ++ci)
 		{
-			const char* config_name = solution_get_config_name(sln, ci);
+			const char* config_name = solution_get_config(sln, ci);
 			z |= stream_writeline(strm, "\t\t{%s}.%s.ActiveCfg = %s|Win32", prj_id, config_name, config_name);
 			z |= stream_writeline(strm, "\t\t{%s}.%s.Build.0 = %s|Win32", prj_id, config_name, config_name);
 		}

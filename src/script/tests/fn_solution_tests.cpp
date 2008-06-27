@@ -104,6 +104,12 @@ SUITE(script)
 		CHECK_EQUAL("MySolution", result);
 	}
 
+	TEST_FIXTURE(FnSolution, Solution_CreatesEmptyConfigList)
+	{
+		const char* result = script_run_string(script, "return (#sln.blocks[1])");
+		CHECK_EQUAL("0", result);
+	}
+
 	TEST_FIXTURE(FnSolution, Solution_SetsBaseDir)
 	{
 		const char* result = script_run_string(script,

@@ -28,7 +28,7 @@ int vs2003_solution_configuration(Session sess, Solution sln, Stream strm)
 	n = solution_num_configs(sln);
 	for (i = 0; i < n; ++i)
 	{
-		const char* config_name = solution_get_config_name(sln, i);
+		const char* config_name = solution_get_config(sln, i);
 		z |= stream_writeline(strm, "\t\t%s = %s", config_name, config_name);
 	}
 

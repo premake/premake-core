@@ -58,8 +58,8 @@ SUITE(unload)
 	{
 		unload_solution(L, sln);
 		CHECK(solution_num_configs(sln) == 2);
-		CHECK_EQUAL("Debug", solution_get_config_name(sln, 0));
-		CHECK_EQUAL("Release", solution_get_config_name(sln, 1));
+		CHECK_EQUAL("Debug", solution_get_config(sln, 0));
+		CHECK_EQUAL("Release", solution_get_config(sln, 1));
 	}
 }
 

@@ -33,6 +33,7 @@ struct FieldInfo ProjectFieldInfo[] =
 DEFINE_CLASS(Project)
 {
 	Solution solution;
+	Array blocks;
 	Fields fields;
 	const char* config_filter;
 };
@@ -46,6 +47,7 @@ Project project_create()
 {
 	Project prj = ALLOC_CLASS(Project);
 	prj->solution = NULL;
+	prj->blocks = array_create();
 	prj->fields = fields_create(ProjectFieldInfo);
 	prj->config_filter = NULL;
 	return prj;
@@ -58,9 +60,33 @@ Project project_create()
  */
 void project_destroy(Project prj)
 {
+	int i, n;
+
 	assert(prj);
+
+	n = project_num_blocks(prj);
+	for (i = 0; i < n; ++i)
+	{
+		Block blk = project_get_block(prj, i);
+		block_destroy(blk);
+	}
+	array_destroy(prj->blocks);
+
 	fields_destroy(prj->fields);
 	free(prj);
+}
+
+
+/**
+ * Add a configuration block to a project.
+ * \param   prj    The project to contain the project.
+ * \param   blk    The configuration block to add.
+ */
+void project_add_block(Project prj, Block blk)
+{
+	assert(prj);
+	assert(blk);
+	array_add(prj->blocks, blk);
 }
 
 
@@ -73,6 +99,33 @@ void project_destroy(Project prj)
 const char* project_get_base_dir(Project prj)
 {
 	return project_get_value(prj, ProjectBaseDirectory);
+}
+
+
+/**
+ * Retrieve a configuration block from a project.
+ * \param   prj      The project to query.
+ * \param   index    The index of the block to retreive.
+ * \returns The block at the given index within the project.
+ */
+Block project_get_block(Project prj, int index)
+{
+	Block blk;
+	assert(prj);
+	blk = (Block)array_item(prj->blocks, index);
+	return blk;
+}
+
+
+/**
+ * Retrieve the list of configuration blocks associated with a project.
+ * \param   prj      The project to query.
+ * \returns A list of configuration blocks.
+ */
+Array project_get_blocks(Project prj)
+{
+	assert(prj);
+	return prj->blocks;
 }
 
 
@@ -90,7 +143,7 @@ const char* project_get_configuration_filter(Project prj)
 
 
 /**
- * Retrieve the fields object for this solution; used to unload values from the script.
+ * Retrieve the fields object for this project; used to unload values from the script.
  */
 Fields project_get_fields(Project prj)
 {
@@ -246,6 +299,18 @@ int project_is_valid_language(const char* language)
 	return (cstr_eq(language, "c") ||
 	        cstr_eq(language, "c++") ||
 			cstr_eq(language, "c#"));
+}
+
+
+/**
+ * Return the number of configuration blocks contained by this project.
+ * \param   prj      The project to query.
+ * \returns The number of blocks contained by the project.
+ */
+int project_num_blocks(Project prj)
+{
+	assert(prj);
+	return array_size(prj->blocks);
 }
 
 

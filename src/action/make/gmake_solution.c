@@ -86,7 +86,7 @@ int gmake_solution_default_config(Session sess, Solution sln, Stream strm)
 	assert(sln);
 	assert(strm);
 
-	default_config_name = solution_get_config_name(sln, 0);
+	default_config_name = solution_get_config(sln, 0);
 	z  = stream_writeline(strm, "ifndef CONFIG");
 	z |= stream_writeline(strm, "  CONFIG=%s", default_config_name);
 	z |= stream_writeline(strm, "endif");
@@ -208,7 +208,7 @@ int gmake_solution_signature(Session sess, Solution sln, Stream strm)
 	z |= stream_writeline(strm, "# Usage: make [ CONFIG=config_name ]");
 	z |= stream_writeline(strm, "# Where {config_name} is one of:");
 
-	config_names = solution_get_config_names(sln);
+	config_names = solution_get_configs(sln);
 	z |= stream_writeline_strings(strm, config_names, "#  ", " ", "", ",");
 	z |= stream_writeline(strm, "");
 

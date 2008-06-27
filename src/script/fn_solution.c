@@ -44,6 +44,11 @@ int fn_solution(lua_State* L)
 		lua_newtable(L);
 		lua_setfield(L, -2, PROJECTS_KEY);
 
+		/* configure the initial configuration block list */
+		lua_newtable(L);
+		lua_setfield(L, -2, BLOCKS_KEY);
+		script_internal_create_block(L);
+
 		/* use the list of fields to populate the object properties and accessor functions */
 		script_internal_populate_object(L, SolutionFieldInfo);
 

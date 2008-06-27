@@ -10,9 +10,9 @@
 #include "base/error.h"
 
 
-static int fn_accessor_object_has_field(struct FieldInfo* fields, const char* field_name);
-static int fn_accessor_register(lua_State* L, struct FieldInfo* fields);
-static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field);
+static int  fn_accessor_object_has_field(struct FieldInfo* fields, const char* field_name);
+static int  fn_accessor_register(lua_State* L, struct FieldInfo* fields);
+static int  fn_accessor_register_field(lua_State* L, struct FieldInfo* field);
 static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx);
 
 
@@ -28,6 +28,7 @@ int fn_accessor_register_all(lua_State* L)
 	int z = OKAY;
 	if (z == OKAY) z = fn_accessor_register(L, SolutionFieldInfo);
 	if (z == OKAY) z = fn_accessor_register(L, ProjectFieldInfo);
+	if (z == OKAY) z = fn_accessor_register(L, BlockFieldInfo);
 	return z;
 }
 
@@ -68,6 +69,7 @@ static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field)
 	container_type = 0;
 	if (fn_accessor_object_has_field(SolutionFieldInfo, field->name))  container_type |= SolutionObject;
 	if (fn_accessor_object_has_field(ProjectFieldInfo,  field->name))  container_type |= ProjectObject;
+	if (fn_accessor_object_has_field(BlockFieldInfo,    field->name))  container_type |= BlockObject;
 
 	/* register the accessor function	*/
 	lua_pushnumber(L, container_type);

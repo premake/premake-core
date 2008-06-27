@@ -150,7 +150,7 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 					for (ci = 0; result == OKAY && ci < cn; ++ci)
 					{
 						int cfi;
-						const char* cfg_name = solution_get_config_name(sln, ci);
+						const char* cfg_name = solution_get_config(sln, ci);
 						project_set_configuration_filter(prj, cfg_name);
 
 						/* enumerate configurations */

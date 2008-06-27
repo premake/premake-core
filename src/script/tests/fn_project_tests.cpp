@@ -40,6 +40,7 @@ SUITE(script)
 		CHECK_EQUAL("true", result);
 	}
 
+
 	/**************************************************************************
 	 * Object creation tests
 	 **************************************************************************/
@@ -92,7 +93,7 @@ SUITE(script)
 			"return (prj == project('MyProject'))");
 		CHECK_EQUAL("true", result);
 	}
-/*
+
 	TEST_FIXTURE(FxScript, Project_RaisesError_OnNoConfigurations)
 	{
 		const char* result = script_run_string(script,
@@ -100,7 +101,6 @@ SUITE(script)
 			"prj = project('MyProject')");
 		CHECK_EQUAL("no configurations defined", result);
 	}
-*/
 
 	/**************************************************************************
 	 * Initial object state tests
@@ -110,6 +110,12 @@ SUITE(script)
 	{
 		const char* result = script_run_string(script, "return prj.name");
 		CHECK_EQUAL("MyProject", result);
+	}
+
+	TEST_FIXTURE(FnProject, Project_CreatesEmptyConfigList)
+	{
+		const char* result = script_run_string(script, "return (#prj.blocks[1])");
+		CHECK_EQUAL("0", result);
 	}
 
 	TEST_FIXTURE(FnProject, Project_SetsBaseDir)

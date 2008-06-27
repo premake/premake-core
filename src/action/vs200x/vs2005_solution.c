@@ -28,7 +28,7 @@ int vs2005_solution_platforms(Session sess, Solution sln, Stream strm)
 	n = solution_num_configs(sln);
 	for (i = 0; i < n; ++i)
 	{
-		const char* config_name = solution_get_config_name(sln, i);
+		const char* config_name = solution_get_config(sln, i);
 		z |= stream_writeline(strm, "\t\t%s|Win32 = %s|Win32", config_name, config_name);
 	}
 
@@ -59,7 +59,7 @@ int vs2005_solution_project_platforms(Session sess, Solution sln, Stream strm)
 		cn = solution_num_configs(sln);
 		for (ci = 0; ci < cn; ++ci)
 		{
-			const char* config_name = solution_get_config_name(sln, ci);
+			const char* config_name = solution_get_config(sln, ci);
 			z |= stream_writeline(strm, "\t\t{%s}.%s|Win32.ActiveCfg = %s|Win32", prj_id, config_name, config_name);
 			z |= stream_writeline(strm, "\t\t{%s}.%s|Win32.Build.0 = %s|Win32", prj_id, config_name, config_name);
 		}

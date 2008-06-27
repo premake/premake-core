@@ -30,8 +30,8 @@ struct FxAction
 		session_add_solution(sess, sln);
 		solution_set_name(sln, "MySolution");
 		solution_set_base_dir(sln, "/Root");
-		solution_add_config_name(sln, "Debug");
-		solution_add_config_name(sln, "Release");
+		solution_add_config(sln, "Debug");
+		solution_add_config(sln, "Release");
 
 		prj = project_create();
 		solution_add_project(sln, prj);

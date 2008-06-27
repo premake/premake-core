@@ -18,10 +18,8 @@ SUITE(script)
 
 	TEST_FIXTURE(FxScript, Configurations_Error_OnNoActiveSolution)
 	{
-		Script script = script_create();
 		const char* result = script_run_string(script, "configurations {'Debug'}");
 		CHECK_EQUAL("no active solution", result);
-		script_destroy(script);
 	}
 
 	TEST_FIXTURE(FxScript, Configurations_CanRoundtrip)

@@ -12,6 +12,38 @@
 
 
 /**
+ * Create a new configuration block in the object at the top of the stack.
+ * \param   L            The Lua state.
+ */
+int script_internal_create_block(lua_State* L)
+{
+	int i;
+
+	/* get the current list of configuration blocks */
+	lua_getfield(L, -1, BLOCKS_KEY);
+
+	/* create a new block and make it active */
+	lua_newtable(L);
+	script_internal_set_active_object(L, BlockObject);
+
+	/* set all list-type configuration block values to empty tables */
+	for (i = 0; i < NumBlockFields; ++i)
+	{
+		if (BlockFieldInfo[i].kind != StringField)
+		{
+			lua_newtable(L);
+			lua_setfield(L, -2, BlockFieldInfo[i].name);
+		}
+	}
+
+	/* add it to the list of blocks */
+	lua_rawseti(L, -2, luaL_getn(L,-2) + 1);
+	lua_pop(L, 1);
+	return OKAY;
+}
+
+
+/**
  * Pushes the active value for the given object type to the top of the stack.
  * This function is used to retrieve the current solution, project, etc.
  * \param   L            The Lua state.
@@ -31,7 +63,7 @@ int script_internal_get_active_object(lua_State* L, enum ObjectType type, int is
 	lua_getregistry(L);
 	top = lua_gettop(L);
 
-	if (lua_gettop(L) == top && (type & ConfigObject))
+	if (lua_gettop(L) == top && (type & BlockObject))
 	{
 		lua_getfield(L, -1, CONFIGURATION_KEY);
 		if (lua_isnil(L, -1))
@@ -83,14 +115,14 @@ int script_internal_get_active_object(lua_State* L, enum ObjectType type, int is
 		case ProjectObject:
 			strcat(buffer, "project");
 			break;
-		case ConfigObject:
-			strcat(buffer, "configuration");
+		case BlockObject:
+			strcat(buffer, "configuration block");
 			break;
 		case SolutionObject | ProjectObject:
 			strcat(buffer, "solution or project");
 			break;
-		case SolutionObject | ProjectObject | ConfigObject:
-			strcat(buffer, "solution, project, or configuration");
+		case SolutionObject | ProjectObject | BlockObject:
+			strcat(buffer, "solution, project, or configuration block");
 			break;
 		default:
 			strcat(buffer, "object");

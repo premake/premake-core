@@ -87,29 +87,56 @@ SUITE(project)
 
 	TEST_FIXTURE(FxSolution, AddConfig_IncrementsNumConfigs)
 	{
-		solution_add_config_name(sln, "Debug");
+		solution_add_config(sln, "Debug");
 		int result = solution_num_configs(sln);
 		CHECK(result == 1);
 	}
 
 	TEST_FIXTURE(FxSolution, AddConfig_CanRoundtrip)
 	{
-		solution_add_config_name(sln, "Debug");
-		const char* result = solution_get_config_name(sln, 0);
+		solution_add_config(sln, "Debug");
+		const char* result = solution_get_config(sln, 0);
 		CHECK_EQUAL("Debug", result);
 	}
 
 	TEST_FIXTURE(FxSolution, GetConfigs_ReturnsEmptyList_OnStartup)
 	{
-		Strings result = solution_get_config_names(sln);
+		Strings result = solution_get_configs(sln);
 		CHECK(strings_size(result) == 0);
 	}
 
 	TEST_FIXTURE(FxSolution, GetConfigs_ReturnsList_OnItemsAdded)
 	{
-		solution_add_config_name(sln, "Debug");
-		Strings result = solution_get_config_names(sln);
+		solution_add_config(sln, "Debug");
+		Strings result = solution_get_configs(sln);
 		CHECK_EQUAL("Debug", strings_item(result, 0));
+	}
+
+
+	/**********************************************************************
+	 * Block containment tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSolution, NumBlocks_IsZero_OnStartup)
+	{
+		int result = solution_num_blocks(sln);
+		CHECK(result == 0);
+	}
+
+	TEST_FIXTURE(FxSolution, AddBlock_IncrementsNumBlocks)
+	{
+		Block blk = block_create();
+		solution_add_block(sln, blk);
+		int result = solution_num_blocks(sln);
+		CHECK(result == 1);
+	}
+
+	TEST_FIXTURE(FxSolution, AddBlock_CanRoundtrip)
+	{
+		Block blk = block_create();
+		solution_add_block(sln, blk);
+		Block result = solution_get_block(sln, 0);
+		CHECK(result == blk);
 	}
 
 
