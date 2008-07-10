@@ -23,7 +23,7 @@
 const int BUFFER_SIZE = 0x4000;
 
 /** The number of buffers stored in the pool */
-static const int NUM_BUFFERS = 64;
+static const int NUM_BUFFERS = 128;
 
 /** The pool of buffers */
 static char** buffers = NULL;

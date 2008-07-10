@@ -140,9 +140,10 @@ void stream_set_newline(Stream strm, const char* newline)
  * \param   infix   An infix strings, to write between items, after the
  *                  previous postfix string and before the next prefix.
  * \param   end     The end string, always written last, even if there are no items in the list.
+ * \param   writer  A callback function to handle output of each list item.
  * \returns OKAY if successful.
  */
-int stream_write_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix, const char* end)
+int stream_write_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix, const char* end, StreamWriterFunc writer)
 {
 	int i, n, z;
 	
@@ -154,7 +155,14 @@ int stream_write_strings(Stream strm, Strings strs, const char* start, const cha
 		const char* value = strings_item(strs, i);
 		if (i > 0) z |= stream_write(strm, infix);
 		z |= stream_write(strm, prefix);
-		z |= stream_write(strm, value);
+		if (writer != NULL)
+		{
+			z |= writer(strm, value);
+		}
+		else
+		{
+			z |= stream_write(strm, value);
+		}
 		z |= stream_write(strm, postfix);
 	}
 
@@ -238,6 +246,49 @@ int stream_write(Stream strm, const char* value, ...)
 	va_end(args);
 	
 	return status;
+}
+
+
+/**
+ * Write a string value to a stream, applying XML escape codes in the process.
+ * \param   strm      The stream to which to write.
+ * \param   value     The string to write.
+ * \returns OKAY if successful.
+ */
+int stream_write_escaped(Stream strm, const char* value)
+{
+	const char* ptr;
+	char buffer[2];
+	int z = OKAY;
+
+	buffer[1] = '\0';
+
+	for (ptr = value; *ptr != '\0'; ++ptr)
+	{
+		switch (*ptr)
+		{
+		case '\"':
+			z |= stream_write(strm, "&quot;");
+			break;
+		case '&':
+			z |= stream_write(strm, "&amp;");
+			break;
+		case '\'':
+			z |= stream_write(strm, "&apos;");
+			break;
+		case '<':
+			z |= stream_write(strm, "&lt;");
+			break;
+		case '>':
+			z |= stream_write(strm, "&gt;");
+			break;
+		default:
+			z |= stream_write(strm, "%c", *ptr);
+			break;
+		}
+	}
+
+	return z;
 }
 
 

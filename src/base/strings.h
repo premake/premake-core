@@ -16,6 +16,7 @@
 DECLARE_CLASS(Strings);
 
 Strings     strings_create(void);
+Strings     strings_create_from_array(const char** items);
 void        strings_destroy(Strings strs);
 
 void        strings_add(Strings strs, const char* item);

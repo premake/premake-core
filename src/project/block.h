@@ -31,8 +31,9 @@ DECLARE_CLASS(Block)
 Block      block_create(void);
 void       block_destroy(Block blk);
 
-Strings    block_get_defines(Block blk);
 Fields     block_get_fields(Block blk);
+Strings    block_get_values(Block blk, enum BlockField which);
+void       block_set_values(Block blk, enum BlockField which, Strings strs);
 
 
 #endif

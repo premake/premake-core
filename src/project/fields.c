@@ -146,7 +146,7 @@ void fields_set_value(Fields fields, int index, const char* value)
 
 /**
  * Sets the list of values associated with a field. The field will subsequently
- * "own" the list, and take responsibility to destroying it with the field set.
+ * "own" the list, and take responsibility for destroying it with the field set.
  * \param   fields   The collection of fields.
  * \param   index    The index of the field to set.
  * \param   values   The list of new values for the field.

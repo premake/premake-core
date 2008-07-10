@@ -259,6 +259,7 @@ int script_unload(Script script, Array slns)
 
 	funcs.unload_solution = unload_solution;
 	funcs.unload_project  = unload_project;
+	funcs.unload_block    = unload_block;
 	result = unload_all(script->L, slns, &funcs);
 	return result;
 }

@@ -3,18 +3,8 @@ package.target = "premake4"
 package.language = "c"
 package.kind = "exe"
 
-local subsystems = 
-{
-	"platform",
-	"base",
-	"project",
-	"action",
-	"action/make",
-	"action/vs200x",
-	"script",
-	"session",
-	"host"
-}
+	local lua      = "script/lua-5.1.2"
+	local unittest = "testing/UnitTest++/src"
 
 
 -- Build settings
@@ -50,30 +40,26 @@ local subsystems =
 	
 	package.includepaths = 
 	{
-		"."
+		".",
+		lua .. "/src",
 	}
-	
-	
--- Files
 
-	package.files = matchfiles("*.h", "*.c")
-	for k,m in subsystems do
-		table.insert(package.files, matchfiles(m.."/*.h", m.."/*.c"))
-	end
-
-
--- Lua scripting engine
-
-	local lua = "script/lua-5.1.2/src"
-	table.insert(package.includepaths, lua)
-	table.insert(package.files, matchfiles(lua.."/*.h", lua.."/*.c"))
-	table.insert(package.excludes, {lua.."/lua.c", lua.."/luac.c"})
+	package.files =
+	{
+		matchrecursive("*.h", "*.c"),
+	}
+		
+	package.excludes =
+	{
+		lua .. "/src/lua.c",
+		lua .. "/src/luac.c",
+		matchfiles(lua .. "/etc/*.c")
+	}	
 
 
 -- Automated tests
 
 	if (not options["no-tests"]) then
-		local unittest = "testing/UnitTest++/src"
 		
 		-- UnitTest++ is a C++ system
 		package.language = "c++"  
@@ -81,18 +67,15 @@ local subsystems =
 		-- Define a symbol so I can compile in the testing calls
 		table.insert(package.defines, "TESTING_ENABLED")
 		
-		table.insert(package.files, matchfiles("testing/*.h", "testing/*.cpp", unittest.."/*"))
-	
-		for k,m in subsystems do
-			table.insert(package.files, matchfiles(m.."/tests/*.h", m.."/tests/*.cpp"))
-		end
+		table.insert(package.files, matchrecursive("*.cpp"))
+		table.insert(package.excludes, matchfiles(unittest .. "/tests/*"))
 		
-		if (windows) then 
-			table.insert(package.files, matchfiles(unittest.."/Win32/*"))
+		if (windows) then
+			table.insert(package.excludes, matchfiles(unittest .. "/Posix/*"))
 			package.config["Debug"].postbuildcommands = { "..\\bin\\debug\\premake4.exe" }
 			package.config["Release"].postbuildcommands = { "..\\bin\\release\\premake4.exe" }
 		else
-			table.insert(package.files, matchfiles(unittest.."/Posix/*"))
+			table.insert(package.excludes, matchfiles(unittest .. "/Win32/*"))
 			package.config["Debug"].postbuildcommands = { "../bin/debug/premake4" }
 			package.config["Release"].postbuildcommands = { "../bin/release/premake4" }
 		end

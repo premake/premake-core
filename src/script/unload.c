@@ -9,7 +9,7 @@
 #include "script/script_internal.h"
 
 
-static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Array blocks);
+static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Blocks blocks);
 static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln);
 
 
@@ -29,6 +29,8 @@ int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
 	assert(slns);
 	assert(funcs);
 	assert(funcs->unload_solution);
+	assert(funcs->unload_project);
+	assert(funcs->unload_block);
 
 	/* iterate over the list of solutions */
 	lua_getglobal(L, SOLUTIONS_KEY);
@@ -42,15 +44,11 @@ int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
 		/* get the scripted solution object from the solutions list */
 		lua_rawgeti(L, -1, si);
 
-		/* hardcoded a standard set of configurations for now */
-		solution_add_config(sln, "Debug");
-		solution_add_config(sln, "Release");
-
 		/* unload the solution fields, then configuration blocks, then projects */
 		z = funcs->unload_solution(L, sln);
 		if (z == OKAY)
 		{
-			Array blocks = solution_get_blocks(sln);
+			Blocks blocks = solution_get_blocks(sln);
 			z = unload_blocks(L, funcs, blocks);
 		}
 		if (z == OKAY)
@@ -88,7 +86,7 @@ static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln
 		z = funcs->unload_project(L, prj);
 		if (z == OKAY)
 		{
-			Array blocks = project_get_blocks(prj);
+			Blocks blocks = project_get_blocks(prj);
 			z = unload_blocks(L, funcs, blocks);
 		}
 		
@@ -102,7 +100,7 @@ static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln
 }
 
 
-static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Array blocks)
+static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Blocks blocks)
 {
 	int ci, cn, z = OKAY;
 	
@@ -112,7 +110,7 @@ static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Array blocks)
 	for (ci = 1; z == OKAY && ci <= cn; ++ci)
 	{
 		Block blk = block_create();
-		array_add(blocks, blk);
+		blocks_add(blocks, blk);
 
 		/* unload the configuration block fields */
 		lua_rawgeti(L, -1, ci);

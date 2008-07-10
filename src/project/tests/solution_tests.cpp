@@ -114,33 +114,6 @@ SUITE(project)
 
 
 	/**********************************************************************
-	 * Block containment tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSolution, NumBlocks_IsZero_OnStartup)
-	{
-		int result = solution_num_blocks(sln);
-		CHECK(result == 0);
-	}
-
-	TEST_FIXTURE(FxSolution, AddBlock_IncrementsNumBlocks)
-	{
-		Block blk = block_create();
-		solution_add_block(sln, blk);
-		int result = solution_num_blocks(sln);
-		CHECK(result == 1);
-	}
-
-	TEST_FIXTURE(FxSolution, AddBlock_CanRoundtrip)
-	{
-		Block blk = block_create();
-		solution_add_block(sln, blk);
-		Block result = solution_get_block(sln, 0);
-		CHECK(result == blk);
-	}
-
-
-	/**********************************************************************
 	 * Language tests
 	 **********************************************************************/
 

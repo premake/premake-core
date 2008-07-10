@@ -18,6 +18,7 @@
 #include "project/solution.h"
 #include "project/project.h"
 #include "project/block.h"
+#include "project/filter.h"
 
 DECLARE_CLASS(Session)
 

@@ -29,6 +29,22 @@ Strings strings_create()
 
 
 /**
+ * Create a dynamic array of C strings, initialized from an existing array.
+ * \param   items  The initial list of items for the strings collection.
+ * \returns A new string array.
+ */
+Strings strings_create_from_array(const char* items[])
+{
+	Strings strs = strings_create();
+	for ( ; *items != NULL; ++items)
+	{
+		strings_add(strs, *items);
+	}
+	return strs;
+}
+
+
+/**
  * Destroy a strings array and free the associated memory.
  * \param   strs  The string array to destroy.
  */

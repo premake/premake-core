@@ -4,11 +4,12 @@
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
  */
 
+#include <assert.h>
 #include <stdlib.h>
 #include "premake.h"
 #include "base/array.h"
 
-#define INITIAL_SIZE  16
+#define ALLOCATION_SIZE  (16)
 
 DEFINE_CLASS(Array)
 {
@@ -25,9 +26,9 @@ DEFINE_CLASS(Array)
 Array array_create()
 {
 	Array arr = ALLOC_CLASS(Array);
-	arr->contents = (void**)malloc(sizeof(void*) * INITIAL_SIZE);
+	arr->contents = NULL;
 	arr->size = 0;
-	arr->capacity = INITIAL_SIZE;
+	arr->capacity = 0;
 	return arr;
 }
 
@@ -38,7 +39,11 @@ Array array_create()
  */
 void array_destroy(Array arr)
 {
-	free(arr->contents);
+	assert(arr);
+	if (arr->contents != NULL)
+	{
+		free(arr->contents);
+	}
 	free(arr);
 }
 
@@ -50,6 +55,7 @@ void array_destroy(Array arr)
  */
 int array_size(Array arr)
 {
+	assert(arr);
 	return arr->size;
 }
 
@@ -61,10 +67,12 @@ int array_size(Array arr)
  */
 void array_add(Array arr, void* item)
 {
+	assert(arr);
+	assert(item);
 	if (arr->size == arr->capacity)
 	{
-		arr->capacity *= 2;
-		arr->contents = (void**)realloc(arr->contents, arr->capacity);
+		arr->capacity += ALLOCATION_SIZE;
+		arr->contents = (void**)realloc(arr->contents, sizeof(void*) * arr->capacity);
 	}
 
 	arr->contents[arr->size] = item;
@@ -80,6 +88,8 @@ void array_add(Array arr, void* item)
  */
 void* array_item(Array arr, int index)
 {
+	assert(arr);
+	assert((index >= 0 && index < arr->size) || (index == 0 && arr->size == 0));
 	return arr->contents[index];
 }
 
@@ -92,6 +102,9 @@ void* array_item(Array arr, int index)
  */
 void array_set(Array arr, int index, void* item)
 {
+	assert(arr);
+	assert(item);
+	assert(index >= 0 && index < arr->size);
 	arr->contents[index] = item;
 }
 
@@ -104,6 +117,10 @@ void array_set(Array arr, int index, void* item)
 void array_append(Array dest, Array src)
 {
 	int i;
+
+	assert(dest);
+	assert(src);
+
 	for (i = 0; i < src->size; ++i)
 	{
 		array_add(dest, src->contents[i]);

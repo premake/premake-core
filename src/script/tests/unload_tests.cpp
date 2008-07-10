@@ -199,7 +199,7 @@ SUITE(unload)
 	{
 		unload_all(L, slns, &funcs);
 		Solution sln = (Solution)array_item(slns, 0);
-		int n = solution_num_blocks(sln);
+		int n = blocks_size(solution_get_blocks(sln));
 		CHECK(n == 1);
 	}
 

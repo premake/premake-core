@@ -33,9 +33,10 @@ struct FieldInfo ProjectFieldInfo[] =
 DEFINE_CLASS(Project)
 {
 	Solution solution;
-	Array blocks;
+	Blocks blocks;
 	Fields fields;
-	const char* config_filter;
+	Filter filter;
+	Strings config_cache[NumBlockFields];
 };
 
 
@@ -45,11 +46,19 @@ DEFINE_CLASS(Project)
  */
 Project project_create()
 {
+	int i;
+
 	Project prj = ALLOC_CLASS(Project);
 	prj->solution = NULL;
-	prj->blocks = array_create();
+	prj->blocks = blocks_create();
 	prj->fields = fields_create(ProjectFieldInfo);
-	prj->config_filter = NULL;
+	prj->filter = NULL;
+
+	for (i = 0; i < NumBlockFields; ++i)
+	{
+		prj->config_cache[i] = NULL;
+	}
+
 	return prj;
 }
 
@@ -60,33 +69,17 @@ Project project_create()
  */
 void project_destroy(Project prj)
 {
-	int i, n;
+	int i;
 
-	assert(prj);
-
-	n = project_num_blocks(prj);
-	for (i = 0; i < n; ++i)
-	{
-		Block blk = project_get_block(prj, i);
-		block_destroy(blk);
-	}
-	array_destroy(prj->blocks);
-
+	assert(prj);	
+	blocks_destroy(prj->blocks);
 	fields_destroy(prj->fields);
+	for (i = 0; i < NumBlockFields; ++i)
+	{
+		if (prj->config_cache[i] != NULL)
+			strings_destroy(prj->config_cache[i]);
+	}
 	free(prj);
-}
-
-
-/**
- * Add a configuration block to a project.
- * \param   prj    The project to contain the project.
- * \param   blk    The configuration block to add.
- */
-void project_add_block(Project prj, Block blk)
-{
-	assert(prj);
-	assert(blk);
-	array_add(prj->blocks, blk);
 }
 
 
@@ -103,29 +96,64 @@ const char* project_get_base_dir(Project prj)
 
 
 /**
- * Retrieve a configuration block from a project.
- * \param   prj      The project to query.
- * \param   index    The index of the block to retreive.
- * \returns The block at the given index within the project.
- */
-Block project_get_block(Project prj, int index)
-{
-	Block blk;
-	assert(prj);
-	blk = (Block)array_item(prj->blocks, index);
-	return blk;
-}
-
-
-/**
  * Retrieve the list of configuration blocks associated with a project.
  * \param   prj      The project to query.
  * \returns A list of configuration blocks.
  */
-Array project_get_blocks(Project prj)
+Blocks project_get_blocks(Project prj)
 {
 	assert(prj);
 	return prj->blocks;
+}
+
+
+
+/**
+ * Scans a list of blocks and appends any values found to the provided list.
+ * \param   values    The resulting list of values.
+ * \param   blks      The list of blocks to scan.
+ * \param   field     The field to query.
+ */
+static void project_get_values_from_blocks(Strings values, Blocks blks, enum BlockField field)
+{
+	int i, n = blocks_size(blks);
+	for (i = 0; i < n; ++i)
+	{
+		Block blk = blocks_item(blks, i);
+		Strings block_values = block_get_values(blk, field);
+		strings_append(values, block_values);
+	}
+}
+
+
+/**
+ * Retrieve a list value from the project configuration, respecting the current filter set.
+ * \param   prj      The project to query.
+ * \param   field    Which field to retrieve.
+ * \returns The list of values stored in that field.
+ */
+Strings project_get_config_values(Project prj, enum BlockField field)
+{
+	Strings values;
+
+	assert(prj);
+	assert(field >= 0 && field < NumBlockFields);
+
+	values = strings_create();
+
+	/* The "cache" just keeps track of all lists that I return to callers; I will
+	 * take responsibility for destroying the lists, so the callers don't have to
+	 * do it themselves. A bit of complexity here to simplify the action handers. */
+	if (prj->config_cache[field] != NULL)
+	{
+		strings_destroy(prj->config_cache[field]);
+	}
+	prj->config_cache[field] = values;
+
+	project_get_values_from_blocks(values, solution_get_blocks(prj->solution), field);
+	project_get_values_from_blocks(values, project_get_blocks(prj), field);
+
+	return values;
 }
 
 
@@ -138,7 +166,24 @@ Array project_get_blocks(Project prj)
 const char* project_get_configuration_filter(Project prj)
 {
 	assert(prj);
-	return prj->config_filter;
+	if (prj->filter)
+	{
+		return filter_get_value(prj->filter, FilterConfig);
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+
+/**
+ * Retrieve the list of preprocessor defines, using the current configuration filter.
+ */
+Strings project_get_defines(Project prj)
+{
+	Strings values = project_get_config_values(prj, BlockDefines);
+	return values;
 }
 
 
@@ -303,18 +348,6 @@ int project_is_valid_language(const char* language)
 
 
 /**
- * Return the number of configuration blocks contained by this project.
- * \param   prj      The project to query.
- * \returns The number of blocks contained by the project.
- */
-int project_num_blocks(Project prj)
-{
-	assert(prj);
-	return array_size(prj->blocks);
-}
-
-
-/**
  * Set the base directory of the project.
  * \param   prj      The project object to modify.
  * \param   base_dir The new base directory.
@@ -329,12 +362,13 @@ void project_set_base_dir(Project prj, const char* base_dir)
  * Set the current configuration filter. All subsequent requests for configuration
  * values will return settings from this configuration only.
  * \param   prj      The project object to query.
- * \param   cfg_name The name of the configuration on which to filter.
+ * \param   filter   The current filter.
  */
-void project_set_configuration_filter(Project prj, const char* cfg_name)
+void project_set_filter(Project prj, Filter flt)
 {
 	assert(prj);
-	prj->config_filter = cfg_name;
+	assert(flt);
+	prj->filter = flt;
 }
 
 

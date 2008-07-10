@@ -146,4 +146,25 @@ SUITE(cstr)
 	{
 		CHECK(!cstr_starts_with("Abc", NULL));
 	}
+
+
+	/**********************************************************************
+	 * cstr_trim() tests
+	 **********************************************************************/
+
+	TEST(CStrTrim_DoesNothing_OnNoMatch)
+	{
+		char buffer[32];
+		strcpy(buffer, "Msg");
+		cstr_trim(buffer, '/');
+		CHECK_EQUAL("Msg", buffer);
+	}
+
+	TEST(CStrTrim_DoesTrim_OnMatch)
+	{
+		char buffer[32];
+		strcpy(buffer, "Msg///");
+		cstr_trim(buffer, '/');
+		CHECK_EQUAL("Msg", buffer);
+	}
 }

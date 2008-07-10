@@ -13,8 +13,6 @@
 #include "base/path.h"
 #include "base/strings.h"
 
-#include "base/string.h"   /* <-- remove this? */
-
 
 struct FieldInfo SolutionFieldInfo[] =
 {
@@ -31,7 +29,7 @@ DEFINE_CLASS(Solution)
 {
 	Fields  fields;
 	Array   projects;
-	Array   blocks;
+	Blocks  blocks;
 };
 
 
@@ -44,7 +42,7 @@ Solution solution_create()
 	Solution sln = ALLOC_CLASS(Solution);
 	sln->fields = fields_create(SolutionFieldInfo);
 	sln->projects = array_create();
-	sln->blocks   = array_create();
+	sln->blocks   = blocks_create();
 	return sln;
 }
 
@@ -59,14 +57,7 @@ void solution_destroy(Solution sln)
 
 	assert(sln);
 	fields_destroy(sln->fields);
-
-	n = solution_num_blocks(sln);
-	for (i = 0; i < n; ++i)
-	{
-		Block blk = solution_get_block(sln, i);
-		block_destroy(blk);
-	}
-	array_destroy(sln->blocks);
+	blocks_destroy(sln->blocks);
 
 	n = solution_num_projects(sln);
 	for (i = 0; i < n; ++i)
@@ -77,19 +68,6 @@ void solution_destroy(Solution sln)
 	array_destroy(sln->projects);
 
 	free(sln);
-}
-
-
-/**
- * Add a configuration block to a solution.
- * \param   sln    The solution to contain the project.
- * \param   blk    The configuration block to add.
- */
-void solution_add_block(Solution sln, Block blk)
-{
-	assert(sln);
-	assert(blk);
-	array_add(sln->blocks, blk);
 }
 
 
@@ -133,26 +111,11 @@ const char* solution_get_base_dir(Solution sln)
 
 
 /**
- * Retrieve a configuration block from the solution.
- * \param   sln      The solution to query.
- * \param   index    The index of the block to retreive.
- * \returns The block at the given index within the solution.
- */
-Block solution_get_block(Solution sln, int index)
-{
-	Block blk;
-	assert(sln);
-	blk = (Block)array_item(sln->blocks, index);
-	return blk;
-}
-
-
-/**
  * Retrieve the list of configuration blocks associated with a solution.
  * \param   sln      The solution to query.
  * \returns A list of configuration blocks.
  */
-Array solution_get_blocks(Solution sln)
+Blocks solution_get_blocks(Solution sln)
 {
 	assert(sln);
 	return sln->blocks;
@@ -293,18 +256,6 @@ const char* solution_get_value(Solution sln, enum SolutionField field)
 {
 	assert(sln);
 	return fields_get_value(sln->fields, field);
-}
-
-
-/**
- * Return the number of configuration blocks contained by this solution.
- * \param   sln      The solution to query.
- * \returns The number of blocks contained by the solution.
- */
-int solution_num_blocks(Solution sln)
-{
-	assert(sln);
-	return array_size(sln->blocks);
 }
 
 

@@ -84,14 +84,14 @@ SUITE(base)
 
 	TEST_FIXTURE(FxStreamStrings, WriteStrings_WritesStartEnd_OnEmptyList)
 	{
-		stream_write_strings(strm, strs, "^", "<", ">", ",", "$");
+		stream_write_strings(strm, strs, "^", "<", ">", ",", "$", NULL);
 		CHECK_EQUAL("^$", buffer);
 	}
 
 	TEST_FIXTURE(FxStreamStrings, WriteStrings_WriteSingleItem_OnSingleItem)
 	{
 		strings_add(strs, "AAA");
-		stream_write_strings(strm, strs, "^", "<", ">", ",", "$");
+		stream_write_strings(strm, strs, "^", "<", ">", ",", "$", NULL);
 		CHECK_EQUAL("^<AAA>$", buffer);
 	}
 
@@ -100,8 +100,18 @@ SUITE(base)
 		strings_add(strs, "AAA");
 		strings_add(strs, "BBB");
 		strings_add(strs, "CCC");
-		stream_write_strings(strm, strs, "^", "<", ">", ",", "$");
+		stream_write_strings(strm, strs, "^", "<", ">", ",", "$", NULL);
 		CHECK_EQUAL("^<AAA>,<BBB>,<CCC>$", buffer);
 	}
 
+
+	/**********************************************************************
+	 * stream_write_escaped() tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxStream, WriteEscaped_EscapesSpecialCharacters)
+	{
+		stream_write_escaped(strm, "Specials: \" & \' < >");
+		CHECK_EQUAL("Specials: &quot; &amp; &apos; &lt; &gt;", buffer);
+	}
 }

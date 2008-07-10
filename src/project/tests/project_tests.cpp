@@ -22,6 +22,7 @@ int project_tests()
 {
 	int status = tests_run_suite("fields");
 	if (status == OKAY)  status = tests_run_suite("project");
+	if (status == OKAY)  status = tests_run_suite("project_config");
 	return status;
 }
 
@@ -54,24 +55,6 @@ SUITE(project)
 
 
 	/**********************************************************************
-	 * Name tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxProject, GetName_ReturnsNull_OnStartup)
-	{
-		const char* name = project_get_name(prj);
-		CHECK(name == NULL);
-	}
-
-	TEST_FIXTURE(FxProject, SetName_CanRoundtrip)
-	{
-		project_set_name(prj, "MyProject");
-		const char* name = project_get_name(prj);
-		CHECK_EQUAL("MyProject", name);
-	}
-
-
-	/**********************************************************************
 	 * Base directory tests
 	 **********************************************************************/
 
@@ -90,21 +73,26 @@ SUITE(project)
 
 
 	/**********************************************************************
-	 * Configuration filter tests
+	 * Filename tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxProject, ConfigurationFilter_ReturnsNull_OnStartup)
+	TEST_FIXTURE(FxProject, GetFilename_ReturnsFullPath_OnNoLocation)
 	{
-		const char* result = project_get_configuration_filter(prj);
-		CHECK(result == NULL);
+		project_set_name(prj, "MyProject");
+		project_set_base_dir(prj, "/BaseDir");
+		const char* filename = project_get_filename(prj, NULL, ".xyz");
+		CHECK_EQUAL("/BaseDir/MyProject.xyz", filename);
 	}
 
-	TEST_FIXTURE(FxProject, ConfigurationFilter_CanRoundtrip)
+	TEST_FIXTURE(FxProject, GetFilename_ReturnsFullPath_OnLocation)
 	{
-		project_set_configuration_filter(prj, "Debug");
-		const char* result = project_get_configuration_filter(prj);
-		CHECK_EQUAL("Debug", result);
+		project_set_name(prj, "MyProject");
+		project_set_base_dir(prj, "/BaseDir");
+		project_set_location(prj, "Location");
+		const char* filename = project_get_filename(prj, NULL, ".xyz");
+		CHECK_EQUAL("/BaseDir/Location/MyProject.xyz", filename);
 	}
+
 
 
 	/**********************************************************************
@@ -170,26 +158,21 @@ SUITE(project)
 
 
 	/**********************************************************************
-	 * Filename tests
+	 * Name tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxProject, GetFilename_ReturnsFullPath_OnNoLocation)
+	TEST_FIXTURE(FxProject, GetName_ReturnsNull_OnStartup)
 	{
-		project_set_name(prj, "MyProject");
-		project_set_base_dir(prj, "/BaseDir");
-		const char* filename = project_get_filename(prj, NULL, ".xyz");
-		CHECK_EQUAL("/BaseDir/MyProject.xyz", filename);
+		const char* name = project_get_name(prj);
+		CHECK(name == NULL);
 	}
 
-	TEST_FIXTURE(FxProject, GetFilename_ReturnsFullPath_OnLocation)
+	TEST_FIXTURE(FxProject, SetName_CanRoundtrip)
 	{
 		project_set_name(prj, "MyProject");
-		project_set_base_dir(prj, "/BaseDir");
-		project_set_location(prj, "Location");
-		const char* filename = project_get_filename(prj, NULL, ".xyz");
-		CHECK_EQUAL("/BaseDir/Location/MyProject.xyz", filename);
+		const char* name = project_get_name(prj);
+		CHECK_EQUAL("MyProject", name);
 	}
-
 
 
 	/**********************************************************************

@@ -4,6 +4,7 @@
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  */
 
+#include <assert.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -21,6 +22,8 @@
  */
 int cstr_contains(const char* str, const char* expected)
 {
+	assert(str);
+	assert(expected);
 	return (strstr(str, expected) != NULL);
 }
 
@@ -121,4 +124,22 @@ int cstr_starts_with(const char* str, const char* expected)
 		return (strncmp(str, expected, strlen(expected)) == 0);
 	}
 	return 0;
+}
+
+
+/**
+ * Remove a character from the end of a string, if present.
+ * \param   str       The string to trim.
+ * \param   ch        The character to trim.
+ */
+void cstr_trim(char* str, char ch)
+{
+	int i;
+	assert(str);
+	i = strlen(str) - 1;
+	while (i >= 0 && str[i] == ch)
+	{
+		str[i] = '\0';
+		i--;
+	}
 }

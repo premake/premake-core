@@ -49,20 +49,30 @@ void block_destroy(Block blk)
 
 
 /**
- * Retrieve the list of defines associated with a block.
- */
-Strings block_get_defines(Block blk)
-{
-	assert(blk);
-	return fields_get_values(blk->fields, BlockDefines);
-}
-
-
-/**
  * Retrieve the fields object for this block; used to unload values from the script.
  */
 Fields block_get_fields(Block blk)
 {
 	assert(blk);
 	return blk->fields;
+}
+
+
+/**
+ * Retrieve a list of values associated with a block.
+ */
+Strings block_get_values(Block blk, enum BlockField which)
+{
+	assert(blk);
+	return fields_get_values(blk->fields, which);
+}
+
+
+/**
+ * Set a value list field on the block.
+ */
+void block_set_values(Block blk, enum BlockField which, Strings strs)
+{
+	assert(blk);
+	fields_set_values(blk->fields, which, strs);
 }

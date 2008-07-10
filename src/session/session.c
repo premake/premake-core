@@ -21,6 +21,7 @@ DEFINE_CLASS(Session)
 {
 	Script     script;
 	Array      solutions;
+	Filter     filter;
 	Stream     active_stream;
 };
 
@@ -44,6 +45,7 @@ Session session_create(void)
 	sess = ALLOC_CLASS(Session);
 	sess->script = script;
 	sess->solutions = array_create();
+	sess->filter = filter_create();
 	sess->active_stream = NULL;
 	return sess;
 }
@@ -68,6 +70,7 @@ void session_destroy(Session sess)
 
 	script_destroy(sess->script);
 	array_destroy(sess->solutions);
+	filter_destroy(sess->filter);
 	free(sess);
 }
 
@@ -138,6 +141,8 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 		for (pi = 0; pi < pn; ++pi)
 		{
 			Project prj = solution_get_project(sln, pi);
+			project_set_filter(prj, sess->filter);
+
 			for (fi = 0; result == OKAY && prj_funcs[fi]; ++fi)
 			{
 				/* A bit of black magic here - I use the "session_enumerate_configurations" 
@@ -150,8 +155,10 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 					for (ci = 0; result == OKAY && ci < cn; ++ci)
 					{
 						int cfi;
+
+						/* Make this the active configuration in the value filter */
 						const char* cfg_name = solution_get_config(sln, ci);
-						project_set_configuration_filter(prj, cfg_name);
+						filter_set_value(sess->filter, FilterConfig, cfg_name);
 
 						/* enumerate configurations */
 						for (cfi = 0; result == OKAY && cfg_funcs[cfi]; ++cfi)

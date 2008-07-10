@@ -19,6 +19,7 @@ int   cstr_eq(const char* str, const char* expected);
 int   cstr_eqi(const char* str, const char* expected);
 char* cstr_format(const char* format, ...);
 int   cstr_starts_with(const char* str, const char* expected);
+void  cstr_trim(char* str, char ch);
 
 #endif
 /** @} */
