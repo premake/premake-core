@@ -24,6 +24,10 @@ int fn_configuration(lua_State* L)
 
 		/* create a new configuration block in the container */
 		script_internal_create_block(L);
+
+		/* populate the list of terms from the arguments */
+		script_internal_get_active_object(L, BlockObject, REQUIRED);
+		fn_accessor_set_list_value(L, &BlockFieldInfo[BlockTerms]);
 	}
 
 	script_internal_get_active_object(L, BlockObject, OPTIONAL);

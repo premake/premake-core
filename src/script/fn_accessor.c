@@ -197,6 +197,8 @@ int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
 static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx)
 {
 	int i, n;
+
+	/* if the value to be appended is a table, expand it and insert each item individually */
 	if (lua_istable(L, idx))
 	{
 		n = luaL_getn(L, idx);
@@ -204,23 +206,24 @@ static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int 
 		{
 			lua_rawgeti(L, idx, i);
 			fn_accessor_append_value(L, field, tbl, lua_gettop(L));
+			lua_pop(L, 1);
 		}
-		lua_pop(L, 1);
 	}
 	else
 	{
 		/* if this field contains files, check for and expand wildcards by calling match() */
-		const char* value = lua_tostring(L, -1);
+		const char* value = lua_tostring(L, idx);
 		if (field->kind == FilesField && cstr_contains(value, "*"))
 		{
 			lua_getglobal(L, "match");
-			lua_pushvalue(L, -2);
+			lua_pushvalue(L, idx);
 			lua_call(L, 1, 1);
 			fn_accessor_append_value(L, field, tbl, lua_gettop(L));
 			lua_pop(L, 1);
 		}
 		else
 		{
+			lua_pushvalue(L, idx);
 			n = luaL_getn(L, tbl);
 			lua_rawseti(L, tbl, n + 1);
 		}

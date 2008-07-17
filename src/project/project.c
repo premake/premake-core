@@ -114,14 +114,21 @@ Blocks project_get_blocks(Project prj)
  * \param   blks      The list of blocks to scan.
  * \param   field     The field to query.
  */
-static void project_get_values_from_blocks(Strings values, Blocks blks, enum BlockField field)
+static void project_get_values_from_blocks(Project prj, Strings values, Blocks blks, enum BlockField field)
 {
 	int i, n = blocks_size(blks);
 	for (i = 0; i < n; ++i)
 	{
 		Block blk = blocks_item(blks, i);
-		Strings block_values = block_get_values(blk, field);
-		strings_append(values, block_values);
+
+		/* make sure this block fits through the current filter */
+		Strings terms = block_get_values(blk, BlockTerms);
+		if ((prj->filter == NULL && strings_size(terms) == 0) || (filter_is_match(prj->filter, terms)))
+		{
+			/* block matches filter; add values to results */
+			Strings block_values = block_get_values(blk, field);
+			strings_append(values, block_values);
+		}
 	}
 }
 
@@ -150,8 +157,8 @@ Strings project_get_config_values(Project prj, enum BlockField field)
 	}
 	prj->config_cache[field] = values;
 
-	project_get_values_from_blocks(values, solution_get_blocks(prj->solution), field);
-	project_get_values_from_blocks(values, project_get_blocks(prj), field);
+	project_get_values_from_blocks(prj, values, solution_get_blocks(prj->solution), field);
+	project_get_values_from_blocks(prj, values, project_get_blocks(prj), field);
 
 	return values;
 }
@@ -361,8 +368,8 @@ void project_set_base_dir(Project prj, const char* base_dir)
 /**
  * Set the current configuration filter. All subsequent requests for configuration
  * values will return settings from this configuration only.
- * \param   prj      The project object to query.
- * \param   filter   The current filter.
+ * \param   prj    The project object to query.
+ * \param   flt    The current filter.
  */
 void project_set_filter(Project prj, Filter flt)
 {

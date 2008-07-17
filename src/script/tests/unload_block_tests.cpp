@@ -26,7 +26,9 @@ struct FxUnloadBlock
 
 		script_run_string(script,
 			"solution('MySolution');"
-			"  defines { 'DEBUG', 'DEBUG2' };"
+			"  configurations { 'Debug', 'Release' };"
+			"  configuration 'Debug';"
+			"    defines { 'DEBUG', 'DEBUG2' };"
 			"  return configuration()");
 	}
 
@@ -48,6 +50,16 @@ SUITE(unload)
 		if (strings_size(defines) == 2) {
 			CHECK_EQUAL("DEBUG",  strings_item(defines, 0));
 			CHECK_EQUAL("DEBUG2", strings_item(defines, 1));
+		}
+	}
+
+	TEST_FIXTURE(FxUnloadBlock, UnloadBlock_UnloadsTerms)
+	{
+		unload_block(L, blk);
+		Strings terms = block_get_values(blk, BlockTerms);
+		CHECK(strings_size(terms) == 1);
+		if (strings_size(terms) == 1) {
+			CHECK_EQUAL("Debug", strings_item(terms, 0));
 		}
 	}
 }

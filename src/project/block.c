@@ -14,6 +14,7 @@ struct FieldInfo BlockFieldInfo[] =
 {
 	{ "defines",    ListField,    NULL  },
 	{ "objdir",     StringField,  NULL  },
+	{ "terms",      ListField,    NULL  },
 	{  0,           0,            NULL  }
 };
 

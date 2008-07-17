@@ -80,4 +80,20 @@ SUITE(script)
 		const char* result = script_run_string(script, "return (#cfg.defines == 0)");
 		CHECK_EQUAL("true", result);
 	}
+
+	TEST_FIXTURE(FnConfiguration, Configuration_SetsTerms_OnSingleValue)
+	{
+		const char* result = script_run_string(script, 
+			"cfg = configuration 'Debug';"
+			"return (#cfg.terms == 1 and cfg.terms[1] == 'Debug')");
+		CHECK_EQUAL("true", result);
+	}
+
+	TEST_FIXTURE(FnConfiguration, Configuration_SetsTerms_OnMultipleValues)
+	{
+		const char* result = script_run_string(script, 
+			"cfg = configuration { 'Debug', 'windows' };"
+			"return (#cfg.terms == 2 and cfg.terms[1] == 'Debug' and cfg.terms[2] == 'windows')");
+		CHECK_EQUAL("true", result);
+	}
 }

@@ -20,6 +20,7 @@ enum BlockField
 {
 	BlockDefines,
 	BlockObjDir,
+	BlockTerms,
 	NumBlockFields
 };
 
