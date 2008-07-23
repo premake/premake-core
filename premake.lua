@@ -27,9 +27,9 @@ project.name = "Premake4"
 
 -- Release code
 
-	REPOS    = "https://premake.svn.sourceforge.net/svnroot/premake"
-	TRUNK    = "/trunk"
-	TAGS = "/tags/4.0-alpha/"
+	REPOS  = "https://premake.svn.sourceforge.net/svnroot/premake"
+	TRUNK  = "/trunk"
+	TAGS   = "/tags/4.0-dev/"
 
 	function dorelease(cmd, arg)
 		
@@ -56,9 +56,9 @@ project.name = "Premake4"
 		-------------------------------------------------------------------
 		local version = arg
 		
-		os.mkdir("releases")
+		os.mkdir("release")
 
-		local folder  = "premake-"..version
+		local folder  = "premake4-"..version
 		local trunk   = REPOS..TRUNK
 		local branch  = REPOS..TAGS..version
 		
@@ -66,8 +66,8 @@ project.name = "Premake4"
 		-- Build and run all automated tests on working copy
 		-------------------------------------------------------------------
 		print("Building tests on working copy...")
-		os.execute("premake --target gnu >releases/release.log")
-		result = os.execute("make CONFIG=Release >releases/release.log")
+		os.execute("premake --target gnu >release/release.log")
+		result = os.execute("make CONFIG=Release >release/release.log")
 		if (result ~= 0) then
 			error("Test build failed; see release.log for details")
 		end
@@ -76,7 +76,7 @@ project.name = "Premake4"
 		-- Look for a release branch in SVN, and create one from trunk if necessary		
 		-------------------------------------------------------------------
 		print("Checking for release branch...")
-		os.chdir("releases")
+		os.chdir("release")
 		result = os.execute(string.format("svn ls %s >release.log 2>&1", branch))
 		if (result ~= 0) then
 			print("Creating release branch...")
@@ -111,15 +111,15 @@ project.name = "Premake4"
 		if (windows) then
 			os.execute("make CONFIG=Release >../release.log")
 			os.chdir("bin/release")
-			result = os.execute(string.format("7z a -tzip ..\\..\\..\\premake-win32-%s.zip premake4.exe >../release.log", version))
+			result = os.execute(string.format("7z a -tzip ..\\..\\..\\premake4-win32-%s.zip premake4.exe >../release.log", version))
 		elseif (macosx) then
 			os.execute('TARGET_ARCH="-arch i386 -arch ppc" make CONFIG=Release >../release.log')
 			os.chdir("bin/release")
-			result = os.execute(string.format("tar czvf ../../../premake-macosx-%s.tar.gz premake4 >../release.log", version))
+			result = os.execute(string.format("tar czvf ../../../premake4-macosx-%s.tar.gz premake4 >../release.log", version))
 		else
 			os.execute("make CONFIG=Release >../release.log")
 			os.chdir("bin/release")
-			result = os.execute(string.format("tar czvf ../../../premake-linux-%s.tar.gz bin/release/premake4 >../release.log", version))
+			result = os.execute(string.format("tar czvf ../../../premake4-linux-%s.tar.gz premake4 >../release.log", version))
 		end
 		
 		if (result ~= 0) then
@@ -129,10 +129,10 @@ project.name = "Premake4"
 		os.chdir("../../..")
 		
 		-------------------------------------------------------------------
-		-- Build the source code package (MacOSX only)
+		-- Build the source code package
 		-------------------------------------------------------------------
 		if (macosx) then
-			result = os.execute(string.format("zip -r9 premake-src-%s.zip %s/* >release.log", version, folder))
+			result = os.execute(string.format("zip -r9 premake4-src-%s.zip %s/* >release.log", version, folder))
 			if (result ~= 0) then
 				error("Failed to build source code package; see release.log for details")
 			end
@@ -158,4 +158,3 @@ project.name = "Premake4"
 		end
 		
 	end
-	
