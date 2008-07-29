@@ -84,6 +84,7 @@ int         session_enumerate_configurations(Session sess, Project prj, Stream s
 int         session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, SessionProjectCallback* prj_funcs, SessionProjectCallback* cfg_funcs);
 const char* session_get_action(Session sess);
 Stream      session_get_active_stream(Session sess);
+Filter      session_get_filter(Session sess);
 Solution    session_get_solution(Session sess, int index);
 int         session_num_solutions(Session sess);
 const char* session_run_file(Session sess, const char* filename);

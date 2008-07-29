@@ -14,14 +14,16 @@
 DEFINE_CLASS(Filter)
 {
 	const char* values[NumFilters];
+	Script script;
 };
 
 
 /**
  * Create and initialize a new configuration filter.
+ * \param   script  A scripting object; used for script_is_match().
  * \returns A new configuration filter.
  */
-Filter filter_create(void)
+Filter filter_create(Script script)
 {
 	int i;
 
@@ -30,6 +32,7 @@ Filter filter_create(void)
 	{
 		flt->values[i] = NULL;
 	}
+	flt->script = script;
 	return flt;
 }
 
@@ -81,7 +84,8 @@ int filter_is_match(Filter flt, Strings terms)
 		const char* term = strings_item(terms, ti);
 		for (ki = 0; ki < NumFilters; ++ki)
 		{
-			if (cstr_eq(flt->values[ki], term))
+			const char* key = flt->values[ki];
+			if (key != NULL && script_is_match(flt->script, key, term))
 			{
 				is_match = 1;
 				break;

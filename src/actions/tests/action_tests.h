@@ -42,7 +42,7 @@ struct FxAction
 		project_set_guid(prj, "AE2461B7-236F-4278-81D3-F0D476F9A4C0");
 		project_set_language(prj, "c++");
 
-		flt = filter_create();
+		flt = session_get_filter(sess);
 		filter_set_value(flt, FilterConfig, "Debug");
 		project_set_filter(prj, flt);
 	}
@@ -51,7 +51,6 @@ struct FxAction
 	{
 		stream_destroy(strm);
 		session_destroy(sess);
-		filter_destroy(flt);
 	}
 
 

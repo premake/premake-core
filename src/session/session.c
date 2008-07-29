@@ -15,6 +15,7 @@
 #include "base/array.h"
 #include "base/cstr.h"
 #include "base/error.h"
+#include "platform/platform.h"
 
 
 DEFINE_CLASS(Session)
@@ -41,12 +42,16 @@ Session session_create(void)
 		return NULL;
 	}
 
-	/* create and return the session object */
+	/* create the session object */
 	sess = ALLOC_CLASS(Session);
 	sess->script = script;
 	sess->solutions = array_create();
-	sess->filter = filter_create();
+	sess->filter = filter_create(script);
 	sess->active_stream = NULL;
+
+	/* initialize the filter */
+	filter_set_value(sess->filter, FilterOS, platform_get_name());
+
 	return sess;
 }
 
@@ -210,6 +215,18 @@ Stream session_get_active_stream(Session sess)
 
 
 /**
+ * Retrieve the active configuration filter.
+ * \param   sess    The session object.
+ * \returns The active configuration filter.
+ */
+Filter session_get_filter(Session sess)
+{
+	assert(sess);
+	return sess->filter;
+}
+
+
+/**
  * Retrieve the contained solution at the given index in the solution list.
  * \param   sess    The session object.
  * \param   index   The index of the solution to return.
@@ -274,6 +291,7 @@ void session_set_action(Session sess, const char* action)
 {
 	assert(sess);
 	script_set_action(sess->script, action);
+	filter_set_value(sess->filter, FilterAction, action);
 }
 
 

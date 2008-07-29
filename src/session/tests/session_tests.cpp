@@ -11,6 +11,7 @@ extern "C" {
 #include "script/script.h"
 #include "base/base.h"
 #include "base/error.h"
+#include "platform/platform.h"
 }
 
 
@@ -186,6 +187,24 @@ SUITE(session)
 		CHECK_EQUAL("SomeAction", result);
 	}
 
+
+	/**********************************************************************
+	 * Configuration filtering tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxSession, SetAction_UpdatesFilter)
+	{
+		session_set_action(sess, "MyAction");
+		Filter filter = session_get_filter(sess);
+		CHECK_EQUAL("MyAction", filter_get_value(filter, FilterAction));
+	}
+
+	TEST_FIXTURE(FxSession, Ctor_SetsOSFilter)
+	{
+		Filter filter = session_get_filter(sess);
+		CHECK_EQUAL(platform_get_name(), filter_get_value(filter, FilterOS));
+	}
+	
 
 	/**********************************************************************
 	 * Solution containment tests

@@ -115,6 +115,38 @@ lua_State* script_get_lua(Script script)
 }
 
 
+/** 
+ * Uses Lua's pattern matching functions to test match a value. This is used by
+ * the configuration filter functions (see filter.c).
+ * \param  script  The script engine instance.
+ * \param  str     The string to test match.
+ * \param  pattern The Lua pattern to match against.
+ * \returns True if the string value matches the pattern.
+ */
+int script_is_match(Script script, const char* str, const char* pattern)
+{
+	const char* match;
+	int top, z;
+	assert(script);
+	assert(str);
+	assert(pattern);
+
+	top = lua_gettop(script->L);
+
+	lua_getglobal(script->L, "string");
+	lua_getfield(script->L, -1, "match");
+	lua_pushstring(script->L, str);
+	lua_pushstring(script->L, pattern);
+	lua_call(script->L, 2, 1);
+
+	match = lua_tostring(script->L, -1);
+	z = cstr_eq(str, match);
+
+	lua_settop(script->L, top);
+	return z;
+}
+
+
 /**
  * Internal shared implementation for script_run_file() and script_run_string().
  * \param L        The Lua scripting environment.

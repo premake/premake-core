@@ -79,6 +79,12 @@ enum Platform platform_get(void);
 
 
 /**
+ * Retrieve the current platform identifier as a string value.
+ */
+const char* platform_get_name(void);
+
+
+/**
  * Create a new platform file search context.
  */
 PlatformSearch platform_search_create(const char* mask);

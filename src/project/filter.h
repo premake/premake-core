@@ -10,6 +10,7 @@
 #define PREMAKE_FILTER_H
 
 #include "base/strings.h"
+#include "script/script.h"
 
 
 /**
@@ -17,14 +18,16 @@
  */
 enum FilterKey
 {
+	FilterAction,
 	FilterConfig,
+	FilterOS,
 	NumFilters
 };
 
 
 DECLARE_CLASS(Filter)
 
-Filter       filter_create(void);
+Filter       filter_create(Script script);
 void         filter_destroy(Filter flt);
 
 const char*  filter_get_value(Filter flt, enum FilterKey key);

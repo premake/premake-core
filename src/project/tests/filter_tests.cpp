@@ -7,26 +7,26 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "project/solution.h"
-#include "project/filter.h"
+#include "session/session.h"
 }
 
 
 struct FxFilter
 {
+	Session sess;
 	Filter flt;
 	Strings terms;
 
 	FxFilter()
 	{
-		flt = filter_create();
+		sess = session_create();
+		flt = session_get_filter(sess);
 		terms = strings_create();
-		strings_add(terms, "Debug");
 	}
 
 	~FxFilter()
 	{
-		filter_destroy(flt);
+		session_destroy(sess);
 		strings_destroy(terms);
 	}
 };
@@ -49,18 +49,35 @@ SUITE(project)
 	TEST_FIXTURE(FxFilter, IsMatch_ReturnsTrue_OnValueMatch)
 	{
 		filter_set_value(flt, FilterConfig, "Debug");
+		strings_add(terms, "Debug");
 		CHECK(filter_is_match(flt, terms));
 	}
 
 	TEST_FIXTURE(FxFilter, IsMatch_ReturnsFalse_OnNullKey)
 	{
+		strings_add(terms, "Debug");
 		CHECK(!filter_is_match(flt, terms));
 	}
 
 	TEST_FIXTURE(FxFilter, IsMatch_ReturnsFalse_OnValueMismatch)
 	{
 		filter_set_value(flt, FilterConfig, "Release");
+		strings_add(terms, "Debug");
 		CHECK(!filter_is_match(flt, terms));
+	}
+
+	TEST_FIXTURE(FxFilter, IsMatch_ReturnsTrue_OnWildcardMatch)
+	{
+		filter_set_value(flt, FilterConfig, "DebugDLL");
+		strings_add(terms, "Debug.*");
+		CHECK(filter_is_match(flt, terms));
+	}
+
+	TEST_FIXTURE(FxFilter, IsMatch_ReturnsTrue_OnSetMatch)
+	{
+		filter_set_value(flt, FilterAction, "vs2008");
+		strings_add(terms, "vs200[58]");
+		CHECK(filter_is_match(flt, terms));
 	}
 }
 

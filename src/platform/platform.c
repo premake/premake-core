@@ -4,6 +4,7 @@
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  */
 
+#include <assert.h>
 #include "premake.h"
 #include "platform.h"
 
@@ -25,6 +26,26 @@ enum Platform platform_get()
 #endif
 	}
 	return CurrentPlatform;
+}
+
+
+const char* platform_get_name(void)
+{
+	enum Platform id = platform_get();
+	switch (id)
+	{
+	case BSD:
+		return "BSD";
+	case Linux:
+		return "Linux";
+	case MacOSX:
+		return "MacOSX";
+	case Windows:
+		return "Windows";
+	default:
+		assert(0);
+		return 0;
+	}
 }
 
 
