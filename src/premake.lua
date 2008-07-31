@@ -53,6 +53,7 @@ package.kind = "exe"
 	{
 		lua .. "/src/lua.c",
 		lua .. "/src/luac.c",
+		lua .. "/src/print.c",
 		matchfiles(lua .. "/etc/*.c")
 	}	
 

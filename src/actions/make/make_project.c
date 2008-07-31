@@ -129,7 +129,7 @@ int make_project_config_objdir(Session sess, Project prj, Stream strm)
 {
 	const char* cfg_name = project_get_configuration_filter(prj);
 	UNUSED(sess);
-	return stream_writeline(strm, "   OBJDIR   := obj/%s", cfg_name);
+	return stream_writeline(strm, "   OBJDIR   := obj/%s", make_escape(cfg_name));
 }
 
 
@@ -151,7 +151,7 @@ int make_project_config_outfile(Session sess, Project prj, Stream strm)
 {
 	const char* outfile = project_get_outfile(prj);
 	UNUSED(sess);
-	return stream_writeline(strm, "   OUTFILE  := $(OUTDIR)/%s", outfile);
+	return stream_writeline(strm, "   OUTFILE  := $(OUTDIR)/%s", make_escape(outfile));
 }
 
 
@@ -235,7 +235,7 @@ int make_project_objects(Session sess, Project prj, Stream strm)
 		if (path_is_cpp_source(filename))
 		{
 			const char* obj_name = make_get_obj_filename(filename);
-			z |= stream_writeline(strm, "\t%s \\", obj_name);
+			z |= stream_writeline(strm, "\t%s \\", make_escape(obj_name));
 		}
 	}
 
@@ -299,7 +299,7 @@ int make_project_source_rules(Session sess, Project prj, Stream strm)
 	n = strings_size(files);
 	for (i = 0; i < n; ++i)
 	{
-		const char* filename = strings_item(files, i);
+		const char* filename = make_escape(strings_item(files, i));
 		if (path_is_cpp_source(filename))
 		{
 			const char* obj_name = make_get_obj_filename(filename);

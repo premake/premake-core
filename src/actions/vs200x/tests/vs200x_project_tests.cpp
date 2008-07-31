@@ -38,7 +38,7 @@ SUITE(action)
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
 			"\tVersion=\"7.00\"\n"
-			"\tName=\"MyProject\"\n"
+			"\tName=\"My Project\"\n"
 			"\tProjectGUID=\"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"\tKeyword=\"Win32Proj\">\n",
 			buffer);
@@ -52,7 +52,7 @@ SUITE(action)
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
 			"\tVersion=\"7.10\"\n"
-			"\tName=\"MyProject\"\n"
+			"\tName=\"My Project\"\n"
 			"\tProjectGUID=\"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"\tKeyword=\"Win32Proj\">\n",
 			buffer);
@@ -66,7 +66,7 @@ SUITE(action)
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
 			"\tVersion=\"8.00\"\n"
-			"\tName=\"MyProject\"\n"
+			"\tName=\"My Project\"\n"
 			"\tProjectGUID=\"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"\tRootNamespace=\"MyProject\"\n"
 			"\tKeyword=\"Win32Proj\"\n"
@@ -82,7 +82,7 @@ SUITE(action)
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
 			"\tVersion=\"9.00\"\n"
-			"\tName=\"MyProject\"\n"
+			"\tName=\"My Project\"\n"
 			"\tProjectGUID=\"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"\tRootNamespace=\"MyProject\"\n"
 			"\tKeyword=\"Win32Proj\"\n"
@@ -165,7 +165,7 @@ SUITE(action)
 		vs200x_project_config_element(sess, prj, strm);
 		CHECK_EQUAL(
 			"\t\t<Configuration\n"
-			"\t\t\tName=\"Debug|Win32\"\n"
+			"\t\t\tName=\"Debug DLL|Win32\"\n"
 			"\t\t\tOutputDirectory=\"$(SolutionDir)$(ConfigurationName)\"\n"
 			"\t\t\tIntermediateDirectory=\"$(ConfigurationName)\"\n"
 			"\t\t\tConfigurationType=\"1\"\n"

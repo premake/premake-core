@@ -96,7 +96,7 @@ SUITE(action)
 	{
 		make_project_config_objdir(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OBJDIR   := obj/Debug\n",
+			"   OBJDIR   := obj/Debug\\ DLL\n",
 			buffer);
 	}
 
@@ -110,7 +110,7 @@ SUITE(action)
 		platform_set(MacOSX);
 		make_project_config_outfile(sess, prj, strm);
 		CHECK_EQUAL(
-			"   OUTFILE  := $(OUTDIR)/MyProject\n",
+			"   OUTFILE  := $(OUTDIR)/My\\ Project\n",
 			buffer);
 	}
 

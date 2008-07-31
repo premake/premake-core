@@ -29,21 +29,21 @@ struct FxAction
 
 		sln = solution_create();
 		session_add_solution(sess, sln);
-		solution_set_name(sln, "MySolution");
-		solution_set_base_dir(sln, "/Root");
-		solution_add_config(sln, "Debug");
-		solution_add_config(sln, "Release");
+		solution_set_name(sln, "My Solution");
+		solution_set_base_dir(sln, "Root Folder");
+		solution_add_config(sln, "Debug DLL");
+		solution_add_config(sln, "Release DLL");
 
 		prj = project_create();
 		solution_add_project(sln, prj);
-		project_set_name(prj, "MyProject");
-		project_set_base_dir(prj, "/Root");
-		project_set_location(prj, "ProjectFolder");
+		project_set_name(prj, "My Project");
+		project_set_base_dir(prj, "Root Folder");
+		project_set_location(prj, "Project Folder");
 		project_set_guid(prj, "AE2461B7-236F-4278-81D3-F0D476F9A4C0");
 		project_set_language(prj, "c++");
 
 		flt = session_get_filter(sess);
-		filter_set_value(flt, FilterConfig, "Debug");
+		filter_set_value(flt, FilterConfig, "Debug DLL");
 		project_set_filter(prj, flt);
 	}
 

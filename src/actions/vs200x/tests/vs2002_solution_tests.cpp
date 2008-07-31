@@ -34,7 +34,7 @@ SUITE(action)
 	{
 		vs2002_solution_projects(sess, sln, strm);			
 		CHECK_EQUAL(
-			"Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"MyProject\", \"ProjectFolder\\MyProject.vcproj\", \"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
+			"Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"My Project\", \"Project Folder\\My Project.vcproj\", \"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"EndProject\n",
 			buffer);
 	}
@@ -50,8 +50,8 @@ SUITE(action)
 		CHECK_EQUAL(
 			"Global\n"
 			"\tGlobalSection(SolutionConfiguration) = preSolution\n"
-			"\t\tConfigName.0 = Debug\n"
-			"\t\tConfigName.1 = Release\n"
+			"\t\tConfigName.0 = Debug DLL\n"
+			"\t\tConfigName.1 = Release DLL\n"
 			"\tEndGlobalSection\n",
 			buffer);
 	}
@@ -80,10 +80,10 @@ SUITE(action)
 		vs2002_solution_project_configuration(sess, sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(ProjectConfiguration) = postSolution\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug.ActiveCfg = Debug|Win32\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug.Build.0 = Debug|Win32\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release.ActiveCfg = Release|Win32\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release.Build.0 = Release|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug DLL.ActiveCfg = Debug DLL|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug DLL.Build.0 = Debug DLL|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release DLL.ActiveCfg = Release DLL|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release DLL.Build.0 = Release DLL|Win32\n"
 			"\tEndGlobalSection\n",
 			buffer);
 	}

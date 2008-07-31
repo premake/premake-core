@@ -128,6 +128,31 @@ int cstr_starts_with(const char* str, const char* expected)
 
 
 /**
+ * Removes spaces any other special characters from a string, converting it
+ * into a C/C++/C# safe identifier.
+ * \param   str       The string to process.
+ * \returns An identifier-safe string.
+ */
+char* cstr_to_identifier(const char* str)
+{
+	char* buffer = buffers_next();
+	char* dst = buffer;
+
+	while (*str != '\0')
+	{
+		if (isalnum(*str) || *str == '_')
+		{
+			*(dst++) = *str;
+		}
+		str++;
+	}
+
+	*dst = '\0';
+	return buffer;
+}
+
+
+/**
  * Remove a character from the end of a string, if present.
  * \param   str       The string to trim.
  * \param   ch        The character to trim.

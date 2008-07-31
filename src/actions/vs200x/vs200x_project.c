@@ -94,7 +94,7 @@ int vs200x_project_element(Session sess, Project prj, Stream strm)
 	z |= vs200x_attribute(strm, 1, "ProjectGUID", "{%s}", prj_guid);
 	if (version > 2003)
 	{
-		z |= vs200x_attribute(strm, 1, "RootNamespace", prj_name);
+		z |= vs200x_attribute(strm, 1, "RootNamespace", cstr_to_identifier(prj_name));
 	}
 	z |= vs200x_attribute(strm, 1, "Keyword", "Win32Proj");
 	if (version > 2005)

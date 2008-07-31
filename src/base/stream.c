@@ -180,24 +180,14 @@ int stream_write_strings(Stream strm, Strings strs, const char* start, const cha
  * \param   postfix A postfix string, to be written after each item.
  * \param   infix   An infix strings, to write between items, after the
  *                  previous postfix string and before the next prefix.
+ * \param   end     The end string, always written last, even if there are no items in the list.
+ * \param   writer  A callback function to handle output of each list item.
  * \returns OKAY if successful.
  */
-int stream_writeline_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix)
+int stream_writeline_strings(Stream strm, Strings strs, const char* start, const char* prefix, const char* postfix, const char* infix, const char* end, StreamWriterFunc writer)
 {
-	int i, n, z;
-	
-	z = stream_write(strm, start);
-
-	n = strings_size(strs);
-	for (i = 0; i < n; ++i)
-	{
-		const char* value = strings_item(strs, i);
-		if (i > 0) z |= stream_write(strm, infix);
-		z |= stream_write(strm, prefix);
-		z |= stream_write(strm, value);
-		z |= stream_write(strm, postfix);
-	}
-
+	int z = OKAY;
+	z |= stream_write_strings(strm, strs, start, prefix, postfix, infix, end, writer);
 	z |= stream_writeline(strm, "");
 	return z;
 }

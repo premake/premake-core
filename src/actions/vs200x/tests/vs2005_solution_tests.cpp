@@ -38,8 +38,8 @@ SUITE(action)
 		CHECK_EQUAL(
 			"Global\n"
 			"\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n"
-			"\t\tDebug|Win32 = Debug|Win32\n"
-			"\t\tRelease|Win32 = Release|Win32\n"
+			"\t\tDebug DLL|Win32 = Debug DLL|Win32\n"
+			"\t\tRelease DLL|Win32 = Release DLL|Win32\n"
 			"\tEndGlobalSection\n",
 			buffer);
 	}
@@ -54,10 +54,10 @@ SUITE(action)
 		vs2005_solution_project_platforms(sess, sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug|Win32.ActiveCfg = Debug|Win32\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug|Win32.Build.0 = Debug|Win32\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release|Win32.ActiveCfg = Release|Win32\n"
-			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release|Win32.Build.0 = Release|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug DLL|Win32.ActiveCfg = Debug DLL|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug DLL|Win32.Build.0 = Debug DLL|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release DLL|Win32.ActiveCfg = Release DLL|Win32\n"
+			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Release DLL|Win32.Build.0 = Release DLL|Win32\n"
 			"\tEndGlobalSection\n",
 			buffer);
 	}

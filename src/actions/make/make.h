@@ -8,9 +8,11 @@
 
 #include "session/session.h"
 
+const char* make_escape(const char* value);
 const char* make_get_obj_filename(const char* filename);
 const char* make_get_project_makefile(Session sess, Project prj);
 Strings     make_get_project_names(Solution sln);
 const char* make_get_solution_makefile(Session sess, Solution sln);
+int         make_write_escaped(Stream strm, const char* value);
 
 #endif

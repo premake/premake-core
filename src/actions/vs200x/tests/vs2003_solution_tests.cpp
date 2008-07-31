@@ -36,8 +36,8 @@ SUITE(action)
 		CHECK_EQUAL(
 			"Global\n"
 			"\tGlobalSection(SolutionConfiguration) = preSolution\n"
-			"\t\tDebug = Debug\n"
-			"\t\tRelease = Release\n"
+			"\t\tDebug DLL = Debug DLL\n"
+			"\t\tRelease DLL = Release DLL\n"
 			"\tEndGlobalSection\n",
 			buffer);
 	}

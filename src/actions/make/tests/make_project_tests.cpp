@@ -36,7 +36,7 @@ SUITE(action)
 	{
 		make_project_config_conditional(sess, prj, strm);
 		CHECK_EQUAL(
-			"ifeq ($(CONFIG),Debug)\n",
+			"ifeq ($(CONFIG),Debug DLL)\n",
 			buffer);
 	}
 
@@ -56,13 +56,13 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, MakeProject_Objects_ConvertsFileExtension)
 	{
-		char* files[] = { "Hello.cpp", "Goodbye.cpp", NULL };
+		char* files[] = { "Hello.cpp", "Good Bye.cpp", NULL };
 		SetField(prj, ProjectFiles, files);
 		make_project_objects(sess, prj, strm);
 		CHECK_EQUAL(
 			"OBJECTS := \\\n"
 			"\t$(OBJDIR)/Hello.o \\\n"
-			"\t$(OBJDIR)/Goodbye.o \\\n"
+			"\t$(OBJDIR)/Good\\ Bye.o \\\n"
 			"\n",
 			buffer);
 	}
@@ -105,7 +105,7 @@ SUITE(action)
 		make_project_target(sess, prj, strm);
 		CHECK_EQUAL(
 			"$(OUTFILE): $(OUTDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)\n"
-			"\t@echo Linking MyProject\n"
+			"\t@echo Linking My Project\n"
 			"\t@$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)\n"
 			"\n",
 			buffer);
@@ -141,7 +141,7 @@ SUITE(action)
 		make_project_clean_rules(sess, prj, strm);
 		CHECK_EQUAL(
 			"clean:\n"
-			"\t@echo Cleaning MyProject\n"
+			"\t@echo Cleaning My Project\n"
 			"ifeq (posix, $(SHELLTYPE))\n"
 			"\t@rm -f  $(SYS_OUTFILE)\n"
 			"\t@rm -rf $(SYS_OBJDIR)\n"
@@ -160,11 +160,11 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, MakeProject_SourceRules)
 	{
-		char* files[] = { "Hello.cpp", NULL };
+		char* files[] = { "Good Bye.cpp", NULL };
 		SetField(prj, ProjectFiles, files);
 		make_project_source_rules(sess, prj, strm);
 		CHECK_EQUAL(
-			"$(OBJDIR)/Hello.o: Hello.cpp\n"
+			"$(OBJDIR)/Good\\ Bye.o: Good\\ Bye.cpp\n"
 			"\t@echo $(notdir $<)\n"
 			"\t@$(CXX) $(CXXFLAGS) -o $@ -c $<\n"
 			"\n",

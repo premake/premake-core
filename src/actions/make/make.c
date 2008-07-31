@@ -8,9 +8,35 @@
 #include <stdlib.h>
 #include "premake.h"
 #include "make.h"
+#include "base/buffers.h"
 #include "base/cstr.h"
 #include "base/error.h"
 #include "base/path.h"
+
+
+/**
+ * Escapes spaces in a string value, so it can be safely written to the makefile.
+ * \param   value      The string value to escape.
+ * \returns The same string value, with spaces escaped.
+ */
+const char* make_escape(const char* value)
+{
+	char* buffer = buffers_next();
+
+	const char* src = value;
+	char* dst = buffer;
+	while (*src != '\0')
+	{
+		if (*src == ' ')
+		{
+			*(dst++) = '\\';
+		}
+		*(dst++) = *(src++);
+	}
+	
+	*dst = '\0';
+	return buffer;
+}
 
 
 /**
@@ -150,4 +176,17 @@ const char* make_get_solution_makefile(Session sess, Solution sln)
 
 	/* all good */
 	return my_path;
+}
+
+
+/**
+ * Write a string value to a stream, escape any space characters it contains.
+ * \param   strm       The output stream.
+ * \param   value      The string value to escape.
+ * \returns OKAY if successful.
+ */
+int make_write_escaped(Stream strm, const char* value)
+{
+	const char* escaped = make_escape(value);
+	return stream_write(strm, escaped);
 }
