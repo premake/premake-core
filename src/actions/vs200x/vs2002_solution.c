@@ -15,15 +15,10 @@
 
 /**
  * Create the Visual Studio 2002 solution configuration block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2002_solution_configuration(Session sess, Solution sln, Stream strm)
+int vs2002_solution_configuration(Solution sln, Stream strm)
 {
 	int i, n, z;
-	UNUSED(sess);
 
 	z  = stream_writeline(strm, "Global");
 	z |= stream_writeline(strm, "\tGlobalSection(SolutionConfiguration) = preSolution");
@@ -42,15 +37,10 @@ int vs2002_solution_configuration(Session sess, Solution sln, Stream strm)
 
 /**
  * Create the Visual Studio 2002 project dependencies block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2002_solution_dependencies(Session sess, Solution sln, Stream strm)
+int vs2002_solution_dependencies(Solution sln, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(sln);
 	z  = stream_writeline(strm, "\tGlobalSection(ProjectDependencies) = postSolution");
 	z |= stream_writeline(strm, "\tEndGlobalSection");
@@ -60,15 +50,10 @@ int vs2002_solution_dependencies(Session sess, Solution sln, Stream strm)
 
 /**
  * Write out the Visual Studio 2002 solution extensibility block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2002_solution_extensibility(Session sess, Solution sln, Stream strm)
+int vs2002_solution_extensibility(Solution sln, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(sln);
 	z  = stream_writeline(strm, "\tGlobalSection(ExtensibilityGlobals) = postSolution");
 	z |= stream_writeline(strm, "\tEndGlobalSection");
@@ -81,15 +66,10 @@ int vs2002_solution_extensibility(Session sess, Solution sln, Stream strm)
 
 /**
  * Write out the Visual Studio 2002 project configurations block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2002_solution_project_configuration(Session sess, Solution sln, Stream strm)
+int vs2002_solution_project_configuration(Solution sln, Stream strm)
 {
 	int pi, pn, z;
-	UNUSED(sess);
 	z  = stream_writeline(strm, "\tGlobalSection(ProjectConfiguration) = postSolution");
 	pn = solution_num_projects(sln);
 	for (pi = 0; pi < pn; ++pi)
@@ -113,17 +93,11 @@ int vs2002_solution_project_configuration(Session sess, Solution sln, Stream str
 
 /**
  * Write out the list of projects contained by the solution.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2002_solution_projects(Session sess, Solution sln, Stream strm)
+int vs2002_solution_projects(Solution sln, Stream strm)
 {
 	const char* sln_path;
 	int i, n, z = OKAY;
-
-	UNUSED(sess);
 
 	/* project file paths are specified relative to the solution */
 	sln_path = path_directory(solution_get_filename(sln, NULL, NULL));
@@ -153,15 +127,10 @@ int vs2002_solution_projects(Session sess, Solution sln, Stream strm)
 
 /**
  * Write the Visual Studio 2002 solution file signature.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2002_solution_signature(Session sess, Solution sln, Stream strm)
+int vs2002_solution_signature(Solution sln, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(sln);
 	stream_set_newline(strm, "\r\n");
 	z = stream_writeline(strm, "Microsoft Visual Studio Solution File, Format Version 7.00");

@@ -35,14 +35,14 @@ SUITE(host)
 {
 	TEST_FIXTURE(FxResults, ReportResults_NoMessage_OnNoError)
 	{
-		host_report_results(sess);
+		host_report_results();
 		CHECK_EQUAL("", buffer);
 	}
 
 	TEST_FIXTURE(FxResults, ReportResults_ErrorMessage_OnError)
 	{
 		error_set("an error occurred");
-		host_report_results(sess);
+		host_report_results();
 		CHECK_EQUAL("Error: an error occurred\n", buffer);
 	}
 }

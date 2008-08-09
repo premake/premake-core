@@ -3,7 +3,7 @@
  * \brief  A list of configuration blocks.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  *
- * \addtogroup project
+ * \addtogroup block
  * @{
  */
 #if !defined(PREMAKE_BLOCKS_H)

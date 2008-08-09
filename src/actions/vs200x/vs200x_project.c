@@ -18,17 +18,18 @@
 /**
  * Write the opening [Configuration] element and attributes.
  */
-int vs200x_project_config_element(Session sess, Project prj, Stream strm)
+int vs200x_project_config_element(Project prj, Stream strm)
 {
 	int z = OKAY;
-	const char* cfg_name = project_get_configuration_filter(prj);
+	const char* cfg_name = project_get_config(prj);
+
 	z |= stream_write(strm, "\t\t<Configuration");
 	z |= vs200x_attribute(strm, 3, "Name", "%s|Win32", cfg_name);
 	z |= vs200x_attribute(strm, 3, "OutputDirectory", "$(SolutionDir)$(ConfigurationName)");
 	z |= vs200x_attribute(strm, 3, "IntermediateDirectory", "$(ConfigurationName)");
 	z |= vs200x_attribute(strm, 3, "ConfigurationType", "1");
-	z |= vs200x_config_character_set(sess, strm);
-	z |= vs200x_element_end(sess, strm, 2, ">");
+	z |= vs200x_config_character_set(strm);
+	z |= vs200x_element_end(strm, 2, ">");
 	return z;
 }
 
@@ -36,9 +37,8 @@ int vs200x_project_config_element(Session sess, Project prj, Stream strm)
 /**
  * Write the closing [Configuration] element.
  */
-int vs200x_project_config_end(Session sess, Project prj, Stream strm)
+int vs200x_project_config_end(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "\t\t</Configuration>");
 }
@@ -47,7 +47,7 @@ int vs200x_project_config_end(Session sess, Project prj, Stream strm)
 /**
  * Create a new output stream for a project, and make it active for subsequent writes.
  */
-int vs200x_project_create(Session sess, Project prj, Stream strm)
+int vs200x_project_create(Project prj, Stream strm)
 {
 	/* create the project file */
 	const char* extension = vs200x_project_file_extension(prj);
@@ -59,7 +59,7 @@ int vs200x_project_create(Session sess, Project prj, Stream strm)
 	}
 
 	/* make the stream active for the functions that come after */
-	session_set_active_stream(sess, strm);
+	session_set_active_stream(project_get_session(prj), strm);
 	return OKAY;
 }
 
@@ -67,14 +67,14 @@ int vs200x_project_create(Session sess, Project prj, Stream strm)
 /**
  * Write the root [VisualStudioProject] element and attributes.
  */
-int vs200x_project_element(Session sess, Project prj, Stream strm)
+int vs200x_project_element(Project prj, Stream strm)
 {
 	int version, z;
 	const char* prj_ver;
 	const char* prj_name = project_get_name(prj);
 	const char* prj_guid = project_get_guid(prj);
 
-	version = vs200x_get_target_version(sess);
+	version = vs200x_get_target_version();
 	switch (version)
 	{
 	default:
@@ -101,7 +101,8 @@ int vs200x_project_element(Session sess, Project prj, Stream strm)
 	{
 		z |= vs200x_attribute(strm, 1, "TargetFrameworkVersion", "196613");
 	}
-	z |= vs200x_element_end(sess, strm, 0, ">");
+	z |= vs200x_element_end(strm, 0, ">");
+
 	return z;
 }
 
@@ -109,10 +110,9 @@ int vs200x_project_element(Session sess, Project prj, Stream strm)
 /**
  * Write the file encoding at the start of the project file.
  */
-int vs200x_project_encoding(Session sess, Project prj, Stream strm)
+int vs200x_project_encoding(Project prj, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(prj);
 
 	stream_set_newline(strm, "\r\n");
@@ -123,14 +123,13 @@ int vs200x_project_encoding(Session sess, Project prj, Stream strm)
 
 /**
  * Write an individual file entry to the project file; callback for sourcetree_walk().
- * \param   sess      The current execution session context.
  * \param   prj       The current project; contains the file being enumerated.
  * \param   strm      The active output stream; for writing the file markup.
  * \param   filename  The name of the file to process.
  * \param   state     One of the ActionSourceStates, enabling file grouping.
  * \returns OKAY if successful.
  */
-int vs200x_project_file(Session sess, Project prj, Stream strm, const char* filename, int state)
+int vs200x_project_file(Project prj, Stream strm, const char* filename, int state)
 {
 	const char* name;
 	const char* ptr;
@@ -167,7 +166,7 @@ int vs200x_project_file(Session sess, Project prj, Stream strm, const char* file
 			z |= stream_write(strm, "<Filter");
 			z |= vs200x_attribute(strm, depth + 1, "Name", name);
 			z |= vs200x_attribute(strm, depth + 1, "Filter", "");
-			z |= vs200x_element_end(sess, strm, depth, ">");
+			z |= vs200x_element_end(strm, depth, ">");
 		}
 		break;
 
@@ -184,7 +183,7 @@ int vs200x_project_file(Session sess, Project prj, Stream strm, const char* file
 		z |= stream_write(strm, "<File");
 		ptr = (filename[0] == '.') ? "" : ".\\";
 		z |= vs200x_attribute(strm, depth + 1, "RelativePath", "%s%s", ptr, filename);
-		z |= vs200x_element_end(sess, strm, depth, ">");
+		z |= vs200x_element_end(strm, depth, ">");
 		z |= stream_write_n(strm, "\t", depth);
 		z |= stream_writeline(strm, "</File>");
 		break;
@@ -198,11 +197,11 @@ int vs200x_project_file(Session sess, Project prj, Stream strm, const char* file
 /**
  * Write out the [Files] element.
  */
-int vs200x_project_files(Session sess, Project prj, Stream strm)
+int vs200x_project_files(Project prj, Stream strm)
 {
 	int z = OKAY;
 	z |= stream_writeline(strm, "\t<Files>");
-	z |= sourcetree_walk(sess, prj, strm, vs200x_project_file);
+	z |= sourcetree_walk(prj, strm, vs200x_project_file);
 	z |= stream_writeline(strm, "\t</Files>");
 	return z;
 }
@@ -211,10 +210,9 @@ int vs200x_project_files(Session sess, Project prj, Stream strm)
 /**
  * Write out the [Globals] element.
  */
-int vs200x_project_globals(Session sess, Project prj, Stream strm)
+int vs200x_project_globals(Project prj, Stream strm)
 {
 	int z = OKAY;
-	UNUSED(sess);
 	UNUSED(prj);
 	z |= stream_writeline(strm, "\t<Globals>");
 	z |= stream_writeline(strm, "\t</Globals>");
@@ -226,14 +224,14 @@ int vs200x_project_globals(Session sess, Project prj, Stream strm)
 /**
  * Write out the platforms section of a project file.
  */
-int vs200x_project_platforms(Session sess, Project prj, Stream strm)
+int vs200x_project_platforms(Project prj, Stream strm)
 {
 	int z = OKAY;
 	UNUSED(prj);
 	z |= stream_writeline(strm, "\t<Platforms>");
 	z |= stream_write(strm, "\t\t<Platform");
 	z |= vs200x_attribute(strm, 3, "Name", "Win32");
-	z |= vs200x_element_end(sess, strm, 2, "/>");
+	z |= vs200x_element_end(strm, 2, "/>");
 	z |= stream_writeline(strm, "\t</Platforms>");
 	return OKAY;
 }
@@ -242,12 +240,13 @@ int vs200x_project_platforms(Session sess, Project prj, Stream strm)
 /**
  * Write out the [References] element and attributes.
  */
-int vs200x_project_references(Session sess, Project prj, Stream strm)
+int vs200x_project_references(Project prj, Stream strm)
 {
 	int z;
 	UNUSED(prj);
+
 	z  = stream_writeline(strm, "\t</Configurations>");
-	if (vs200x_get_target_version(sess) > 2002)
+	if (vs200x_get_target_version() > 2002)
 	{
 		z |= stream_writeline(strm, "\t<References>");
 		z |= stream_writeline(strm, "\t</References>");
@@ -259,13 +258,12 @@ int vs200x_project_references(Session sess, Project prj, Stream strm)
 /**
  * Write out the [ToolFiles] section of a Visual Studio project.
  */
-int vs200x_project_tool_files(Session sess, Project prj, Stream strm)
+int vs200x_project_tool_files(Project prj, Stream strm)
 {
-	int version, z = OKAY;
+	int z = OKAY;
 	UNUSED(prj);
 
-	version = vs200x_get_target_version(sess);
-	if (version > 2003)
+	if (vs200x_get_target_version() > 2003)
 	{
 		z |= stream_writeline(strm, "\t<ToolFiles>");
 		z |= stream_writeline(strm, "\t</ToolFiles>");
@@ -278,13 +276,13 @@ int vs200x_project_tool_files(Session sess, Project prj, Stream strm)
 /**
  * Common function to write an empty [Tool] element.
  */
-static int vs200x_project_vc_empty_tool(Session sess, Project prj, Stream strm, const char* name)
+static int vs200x_project_vc_empty_tool(Project prj, Stream strm, const char* name)
 {
-	int z;
+	int z = OKAY;
 	UNUSED(prj);
-	z  = stream_write(strm, "\t\t\t<Tool");
+	z |= stream_write(strm, "\t\t\t<Tool");
 	z |= vs200x_attribute(strm, 4, "Name", name);
-	z |= vs200x_element_end(sess, strm, 3, "/>");
+	z |= vs200x_element_end(strm, 3, "/>");
 	return z;
 }
 
@@ -292,49 +290,49 @@ static int vs200x_project_vc_empty_tool(Session sess, Project prj, Stream strm, 
 /**
  * Write the VCALinkTool [Tool] element and attributes.
  */
-int vs200x_project_vc_alink_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_alink_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCALinkTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCALinkTool");
 }
 
 
 /**
  * Write the VCAppVerifierTool [Tool] element and attributes.
  */
-int vs200x_project_vc_app_verifier_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_app_verifier_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCAppVerifierTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCAppVerifierTool");
 }
 
 
 /**
  * Write the VCBscMakeTool [Tool] element and attributes.
  */
-int vs200x_project_vc_bsc_make_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_bsc_make_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCBscMakeTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCBscMakeTool");
 }
 
 
 /**
  * Write the VCCLCompilerTool [Tool] element and attributes.
  */
-int vs200x_project_vc_cl_compiler_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_cl_compiler_tool(Project prj, Stream strm)
 {
 	int z = OKAY;
 	z |= stream_write(strm, "\t\t\t<Tool");
 	z |= vs200x_attribute(strm, 4, "Name", "VCCLCompilerTool");
 	z |= vs200x_attribute(strm, 4, "Optimization", "0");
-	z |= vs200x_config_defines(sess, strm, prj);
-	z |= vs200x_attribute(strm, 4, "MinimalRebuild", vs200x_true(sess));
+	z |= vs200x_config_defines(strm, prj);
+	z |= vs200x_attribute(strm, 4, "MinimalRebuild", vs200x_true());
 	z |= vs200x_attribute(strm, 4, "BasicRuntimeChecks", "3");
 	z |= vs200x_attribute(strm, 4, "RuntimeLibrary", "3");
-	z |= vs200x_config_runtime_type_info(sess, strm, prj);
-	z |= vs200x_config_use_precompiled_header(sess, strm, prj);
+	z |= vs200x_config_runtime_type_info(strm);
+	z |= vs200x_config_use_precompiled_header(strm);
 	z |= vs200x_attribute(strm, 4, "WarningLevel", "3");
-	z |= vs200x_config_detect_64bit_portability(sess, strm, prj);
+	z |= vs200x_config_detect_64bit_portability(strm);
 	z |= vs200x_attribute(strm, 4, "DebugInformationFormat", "4");
-	z |= vs200x_element_end(sess, strm, 3, "/>");
+	z |= vs200x_element_end(strm, 3, "/>");
 	return z;
 }
 
@@ -342,36 +340,36 @@ int vs200x_project_vc_cl_compiler_tool(Session sess, Project prj, Stream strm)
 /**
  * Write the VCCustomBuildTool [Tool] element and attributes.
  */
-int vs200x_project_vc_custom_build_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_custom_build_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCCustomBuildTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCCustomBuildTool");
 }
 
 
 /**
  * Write the VCFxCopTool [Tool] element and attributes.
  */
-int vs200x_project_vc_fx_cop_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_fx_cop_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCFxCopTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCFxCopTool");
 }
 
 
 /**
  * Write the VCLinkerTool [Tool] element and attributes.
  */
-int vs200x_project_vc_linker_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_linker_tool(Project prj, Stream strm)
 {
-	int z;
+	int z = OKAY;
 	UNUSED(prj);
-	z  = stream_write(strm, "\t\t\t<Tool");
+	z |= stream_write(strm, "\t\t\t<Tool");
 	z |= vs200x_attribute(strm, 4, "Name", "VCLinkerTool");
 	z |= vs200x_attribute(strm, 4, "LinkIncremental", "2");
-	z |= vs200x_attribute(strm, 4, "GenerateDebugInformation", vs200x_true(sess));
+	z |= vs200x_attribute(strm, 4, "GenerateDebugInformation", vs200x_true());
 	z |= vs200x_attribute(strm, 4, "SubSystem", "1");
 	z |= vs200x_attribute(strm, 4, "EntryPointSymbol", "mainCRTStartup");
 	z |= vs200x_attribute(strm, 4, "TargetMachine", "1");
-	z |= vs200x_element_end(sess, strm, 3, "/>");
+	z |= vs200x_element_end(strm, 3, "/>");
 	return z;
 }
 
@@ -379,97 +377,97 @@ int vs200x_project_vc_linker_tool(Session sess, Project prj, Stream strm)
 /**
  * Write the VCManagedResourceCompilerTool [Tool] element and attributes.
  */
-int vs200x_project_vc_managed_resource_compiler_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_managed_resource_compiler_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCManagedResourceCompilerTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCManagedResourceCompilerTool");
 }
 
 
 /**
  * Write the VCManifestTool [Tool] element and attributes.
  */
-int vs200x_project_vc_manifest_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_manifest_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCManifestTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCManifestTool");
 }
 
 
 /**
  * Write the VCMIDLTool [Tool] element and attributes.
  */
-int vs200x_project_vc_midl_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_midl_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCMIDLTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCMIDLTool");
 }
 
 
 /**
  * Write the VCPreBuildEventTool [Tool] element and attributes.
  */
-int vs200x_project_vc_pre_build_event_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_pre_build_event_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCPreBuildEventTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCPreBuildEventTool");
 }
 
 
 /**
  * Write the VCPreLinkEventTool [Tool] element and attributes.
  */
-int vs200x_project_vc_pre_link_event_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_pre_link_event_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCPreLinkEventTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCPreLinkEventTool");
 }
 
 
 /**
  * Write the VCPostBuildEventTool [Tool] element and attributes.
  */
-int vs200x_project_vc_post_build_event_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_post_build_event_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCPostBuildEventTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCPostBuildEventTool");
 }
 
 
 /**
  * Write the VCResourceCompiler [Tool] element and attributes.
  */
-int vs200x_project_vc_resource_compiler_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_resource_compiler_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCResourceCompilerTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCResourceCompilerTool");
 }
 
 
 /**
  * Write the VCWebDeploymentTool [Tool] element and attributes.
  */
-int vs200x_project_vc_web_deployment_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_web_deployment_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCWebDeploymentTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCWebDeploymentTool");
 }
 
 
 /**
  * Write the VCWebServiceProxyGeneratorTool [Tool] element and attributes.
  */
-int vs200x_project_vc_web_service_proxy_generator_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_web_service_proxy_generator_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCWebServiceProxyGeneratorTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCWebServiceProxyGeneratorTool");
 }
 
 
 /**
  * Write the VCXDCMakeTool [Tool] element and attributes.
  */
-int vs200x_project_vc_xdc_make_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_xdc_make_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCXDCMakeTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCXDCMakeTool");
 }
 
 
 /**
  * Write the VCXMLDataGeneratorTool [Tool] element and attributes.
  */
-int vs200x_project_vc_xml_data_generator_tool(Session sess, Project prj, Stream strm)
+int vs200x_project_vc_xml_data_generator_tool(Project prj, Stream strm)
 {
-	return vs200x_project_vc_empty_tool(sess, prj, strm, "VCXMLDataGeneratorTool");
+	return vs200x_project_vc_empty_tool(prj, strm, "VCXMLDataGeneratorTool");
 }

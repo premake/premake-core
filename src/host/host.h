@@ -13,7 +13,10 @@
 #if !defined(PREMAKE_HOST_H)
 #define PREMAKE_HOST_H
 
-#include "session/session.h"
+#include "objects/session.h"
+
+DECLARE_CLASS(Host)
+
 
 /**
  * The short help message, displayed if Premake is run with no arguments.
@@ -21,22 +24,15 @@
 #define HOST_SHORT_HELP  "Type 'premake --help' for help."
 
 
-/**
- * Abstract out one step in the process, so I can treat them all identically.
- * This lets me unit test the higher-level logic.
- * \param   sess  The current session state.
- * \returns OKAY if successful.
- */
-typedef int (*HostExecutionStep)(Session sess);
+Host host_create();
+void host_destroy(Host host);
 
-
-int  host_parse_argv(Session sess);
-int  host_report_results(Session sess);
-int  host_run_action(Session sess);
-int  host_run_script(Session sess);
-int  host_run_steps(Session sess, HostExecutionStep* steps);
-void host_set_argv(const char** argv);
-int  host_show_help(Session sess);
+int  host_parse_argv(Host host);
+int  host_report_results(void);
+int  host_run_action(Host host);
+int  host_run_script(Host host);
+void host_set_argv(Host host, const char** argv);
+int  host_show_help(Host host);
 int  host_tests(void);
 
 #endif

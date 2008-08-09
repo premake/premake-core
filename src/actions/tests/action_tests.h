@@ -6,8 +6,7 @@
 
 #include "testing/testing.h"
 extern "C" {
-#include "session/session.h"
-#include "project/project.h"
+#include "objects/session.h"
 }
 
 struct FxAction
@@ -15,7 +14,6 @@ struct FxAction
 	Session  sess;
 	Stream   strm;
 	Solution sln;
-	Filter   flt;
 	Project  prj;
 	char     buffer[8192];
 
@@ -41,10 +39,7 @@ struct FxAction
 		project_set_location(prj, "Project Folder");
 		project_set_guid(prj, "AE2461B7-236F-4278-81D3-F0D476F9A4C0");
 		project_set_language(prj, "c++");
-
-		flt = session_get_filter(sess);
-		filter_set_value(flt, FilterConfig, "Debug DLL");
-		project_set_filter(prj, flt);
+		project_set_config(prj, "Debug DLL");
 	}
 
 	~FxAction()

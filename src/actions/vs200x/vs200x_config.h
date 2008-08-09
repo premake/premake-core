@@ -6,12 +6,10 @@
 #if !defined(PREMAKE_VS200X_CONFIG_H)
 #define PREMAKE_VS200X_CONFIG_H
 
-#include "session/session.h"
-
-int vs200x_config_character_set(Session sess, Stream strm);
-int vs200x_config_defines(Session sess, Stream strm, Project prj);
-int vs200x_config_detect_64bit_portability(Session sess, Stream strm, Project prj);
-int vs200x_config_runtime_type_info(Session sess, Stream strm, Project prj);
-int vs200x_config_use_precompiled_header(Session sess, Stream strm, Project prj);
+int vs200x_config_character_set(Stream strm);
+int vs200x_config_defines(Stream strm, Project prj);
+int vs200x_config_detect_64bit_portability(Stream strm);
+int vs200x_config_runtime_type_info(Stream strm);
+int vs200x_config_use_precompiled_header(Stream strm);
 
 #endif

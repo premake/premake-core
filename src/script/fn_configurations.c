@@ -15,7 +15,7 @@ int fn_configurations(lua_State* L)
 {
 	struct FieldInfo* field;
 
-	if (!script_internal_get_active_object(L, SolutionObject, REQUIRED))
+	if (!script_internal_get_active_object(L, SolutionObject, IS_REQUIRED))
 	{
 		return 0;
 	}

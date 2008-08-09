@@ -6,7 +6,7 @@
 #if !defined(PREMAKE_SOURCETREE_H)
 #define PREMAKE_SOURCETREE_H
 
-#include "session/session.h"
+#include "objects/project.h"
 
 
 /**
@@ -22,17 +22,16 @@ enum SourceTreeState
 
 /**
  * Per-file callback signature for action_source_tree.
- * \param   sess      The current execution state context.
  * \param   prj       The current project; contains the file being enumerated.
  * \param   strm      The active output stream; for writing the file markup.
  * \param   filename  The name of the file to process.
  * \param   state     One of the ActionSourceStates, enabling file grouping.
  * \returns OKAY if successful.
  */
-typedef int (*SourceTreeCallback)(Session sess, Project prj, Stream strm, const char* filename, int state);
+typedef int (*SourceTreeCallback)(Project prj, Stream strm, const char* filename, int state);
 
 
-int  sourcetree_walk(Session sess, Project prj, Stream strm, SourceTreeCallback handler);
+int  sourcetree_walk(Project prj, Stream strm, SourceTreeCallback handler);
 
 
 #endif

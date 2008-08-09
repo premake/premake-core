@@ -8,6 +8,9 @@
 #include "testing/testing.h"
 extern "C" {
 #include "host/host.h"
+#include "base/base.h"
+#include "script/script.h"
+#include "objects/objects.h"
 }
 
 	
@@ -19,7 +22,9 @@ extern "C" {
 int host_tests()
 {
 	int z = OKAY;
-	if (z == OKAY)  z = session_tests();
+	if (z == OKAY)  z = base_tests();
+	if (z == OKAY)  z = script_tests();
+	if (z == OKAY)  z = objects_tests();
 	if (z == OKAY)  z = tests_run_suite("action");
 	if (z == OKAY)  z = tests_run_suite("host");
 	return z;

@@ -119,6 +119,26 @@ SUITE(cstr)
 
 
 	/**************************************************************************
+	 * cstr_matches_pattern() tests
+	 **************************************************************************/
+
+	TEST(CStrMatchesPattern_ReturnsTrue_OnMatch)
+	{
+		CHECK(cstr_matches_pattern("01234", "%d*"));
+	}
+
+	TEST(CStrMatchesPattern_ReturnsFalse_OnNonMatch)
+	{
+		CHECK(!cstr_matches_pattern("01234", "%a*"));
+	}
+
+	TEST(CStrMatchesPattern_ReturnsTrue_OnCaseMismatch)
+	{
+		CHECK(cstr_matches_pattern("Debug", "debug"));
+	}
+
+
+	/**************************************************************************
 	 * cstr_starts_with() tests
 	 **************************************************************************/
 

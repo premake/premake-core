@@ -7,9 +7,8 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "project/solution.h"
-#include "project/project.h"
-#include "project/project_internal.h"
+#include "objects/solution.h"
+#include "objects/objects_internal.h"
 #include "base/strings.h"
 }
 
@@ -37,43 +36,6 @@ SUITE(project)
 	{
 		CHECK(sln != NULL);
 	}
-
-
-	/**********************************************************************
-	 * Name tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSolution, GetName_ReturnsNull_OnStartup)
-	{
-		const char* name = solution_get_name(sln);
-		CHECK(name == NULL);
-	}
-
-	TEST_FIXTURE(FxSolution, SetName_CanRoundtrip)
-	{
-		solution_set_name(sln, "MySolution");
-		const char* name = solution_get_name(sln);
-		CHECK_EQUAL("MySolution", name);
-	}
-
-
-	/**********************************************************************
-	 * Base directory tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSolution, GetBaseDir_ReturnsNull_OnStartup)
-	{
-		const char* result = solution_get_base_dir(sln);
-		CHECK(result == NULL);
-	}
-
-	TEST_FIXTURE(FxSolution, SetBaseDir_CanRoundtrip)
-	{
-		solution_set_base_dir(sln, "BaseDir");
-		const char* result = solution_get_base_dir(sln);
-		CHECK_EQUAL("BaseDir", result);
-	}
-
 
 	/**********************************************************************
 	 * Configuration containment tests
@@ -110,42 +72,6 @@ SUITE(project)
 		solution_add_config(sln, "Debug");
 		Strings result = solution_get_configs(sln);
 		CHECK_EQUAL("Debug", strings_item(result, 0));
-	}
-
-
-	/**********************************************************************
-	 * Language tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSolution, GetLanguage_ReturnsNull_OnStartup)
-	{
-		const char* result = solution_get_language(sln);
-		CHECK(result == NULL);
-	}
-
-	TEST_FIXTURE(FxSolution, SetLanguage_CanRoundtrip)
-	{
-		solution_set_language(sln, "c++");
-		const char* result = solution_get_language(sln);
-		CHECK_EQUAL("c++", result);
-	}
-
-
-	/**********************************************************************
-	 * Location tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSolution, GetLocation_ReturnsNull_OnStartup)
-	{
-		const char* result = solution_get_location(sln);
-		CHECK(result == NULL);
-	}
-
-	TEST_FIXTURE(FxSolution, SetLocation_CanRoundtrip)
-	{
-		solution_set_location(sln, "Location");
-		const char* result = solution_get_location(sln);
-		CHECK_EQUAL("Location", result);
 	}
 
 

@@ -8,6 +8,7 @@
 #include "actions/tests/action_tests.h"
 extern "C" {
 #include "actions/vs200x/vs200x_project.h"
+#include "base/env.h"
 }
 
 SUITE(action)
@@ -18,8 +19,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCLinkerTool_Defaults_OnVs2002)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_linker_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_linker_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCLinkerTool\"\n"
@@ -33,8 +34,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCLinkerTool_Defaults_OnVs2003)
 	{
-		session_set_action(sess, "vs2003");
-		vs200x_project_vc_linker_tool(sess, prj, strm);
+		env_set_action("vs2003");
+		vs200x_project_vc_linker_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCLinkerTool\"\n"
@@ -48,8 +49,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCLinkerTool_Defaults_OnVs2005)
 	{
-		session_set_action(sess, "vs2005");
-		vs200x_project_vc_linker_tool(sess, prj, strm);
+		env_set_action("vs2005");
+		vs200x_project_vc_linker_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCLinkerTool\"\n"
@@ -64,8 +65,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCLinkerTool_Defaults_OnVs2008)
 	{
-		session_set_action(sess, "vs2008");
-		vs200x_project_vc_linker_tool(sess, prj, strm);
+		env_set_action("vs2008");
+		vs200x_project_vc_linker_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCLinkerTool\"\n"

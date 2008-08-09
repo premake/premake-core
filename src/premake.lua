@@ -3,7 +3,7 @@ package.target = "premake4"
 package.language = "c"
 package.kind = "exe"
 
-	local lua      = "script/lua-5.1.2"
+	local lua      = "base/lua-5.1.2"
 	local unittest = "testing/UnitTest++/src"
 
 

@@ -8,6 +8,7 @@
 #include "actions/tests/action_tests.h"
 extern "C" {
 #include "actions/vs200x/vs200x_project.h"
+#include "base/env.h"
 }
 
 SUITE(action)
@@ -18,8 +19,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCCLCompilerTool_Defaults_OnVs2002)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_cl_compiler_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_cl_compiler_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCCLCompilerTool\"\n"
@@ -37,8 +38,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCCLCompilerTool_Defaults_OnVs2005)
 	{
-		session_set_action(sess, "vs2005");
-		vs200x_project_vc_cl_compiler_tool(sess, prj, strm);
+		env_set_action("vs2005");
+		vs200x_project_vc_cl_compiler_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCCLCompilerTool\"\n"
@@ -56,8 +57,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCCLCompilerTool_Defaults_OnVs2008)
 	{
-		session_set_action(sess, "vs2008");
-		vs200x_project_vc_cl_compiler_tool(sess, prj, strm);
+		env_set_action("vs2008");
+		vs200x_project_vc_cl_compiler_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCCLCompilerTool\"\n"
@@ -80,10 +81,10 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VCCLCompilerTool_WithDefines)
 	{
-		session_set_action(sess, "vs2002");
+		env_set_action("vs2002");
 		char* defines[] = { "DEFINE0", "DEFINE1", NULL };
 		SetConfigField(prj, BlockDefines, defines);
-		vs200x_project_vc_cl_compiler_tool(sess, prj, strm);
+		vs200x_project_vc_cl_compiler_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCCLCompilerTool\"\n"

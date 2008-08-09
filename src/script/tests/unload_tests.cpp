@@ -62,8 +62,8 @@ static int stub_block_fail_func(lua_State* L, Block blk)
 struct FxUnload
 {
 	Script      script;
+	Session     sess;
 	lua_State*  L;
-	Array       slns;
 	UnloadFuncs funcs;
 
 	FxUnload()
@@ -71,7 +71,7 @@ struct FxUnload
 		script = script_create();
 		L = script_get_lua(script);
 	
-		slns = array_create();
+		sess = session_create();
 
 		funcs.unload_solution = stub_solution_func;
 		funcs.unload_project  = stub_project_func;
@@ -83,7 +83,7 @@ struct FxUnload
 
 	~FxUnload()
 	{
-		array_destroy(slns);
+		session_destroy(sess);
 		script_destroy(script);
 	}
 };
@@ -108,20 +108,20 @@ SUITE(unload)
 {
 	TEST_FIXTURE(FxUnload, Unload_ReturnsOkay_OnEmptySession)
 	{
-		int result = unload_all(L, slns, &funcs);
+		int result = unload_all(L, sess, &funcs);
 		CHECK(result == OKAY);
 	}
 
 	TEST_FIXTURE(FxUnload, Unload_ReturnsEmptySession_OnEmptySession)
 	{
-		unload_all(L, slns, &funcs);
-		int n = array_size(slns);
+		unload_all(L, sess, &funcs);
+		int n = session_num_solutions(sess);
 		CHECK(n == 0);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_ReturnsOkay_OnNonEmptySession)
 	{
-		int result = unload_all(L, slns, &funcs);
+		int result = unload_all(L, sess, &funcs);
 		CHECK(result == OKAY);
 	}
 
@@ -132,28 +132,28 @@ SUITE(unload)
 
 	TEST_FIXTURE(FxUnload2, Unload_AddsSolutions_OnNonEmptySession)
 	{
-		unload_all(L, slns, &funcs);
-		int n = array_size(slns);
+		unload_all(L, sess, &funcs);
+		int n = session_num_solutions(sess);
 		CHECK(n == 2);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_CallsSolutionFunc_OnEachSolution)
 	{
-		unload_all(L, slns, &funcs);
+		unload_all(L, sess, &funcs);
 		CHECK(num_solution_calls == 2);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_ReturnsNotOkay_OnSolutionFailure)
 	{
 		funcs.unload_solution = stub_solution_fail_func;
-		int result = unload_all(L, slns, &funcs);
+		int result = unload_all(L, sess, &funcs);
 		CHECK(result != OKAY);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_AbortsSolutionLoop_OnNotOkay)
 	{
 		funcs.unload_solution = stub_solution_fail_func;
-		unload_all(L, slns, &funcs);
+		unload_all(L, sess, &funcs);
 		CHECK(num_solution_calls == 1);
 	}
 
@@ -164,29 +164,29 @@ SUITE(unload)
 
 	TEST_FIXTURE(FxUnload2, Unload_AddsProjects_OnNonEmptySession)
 	{
-		unload_all(L, slns, &funcs);
-		Solution sln = (Solution)array_item(slns, 0);
+		unload_all(L, sess, &funcs);
+		Solution sln = session_get_solution(sess, 0);
 		int n = solution_num_projects(sln);
 		CHECK(n == 2);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_CallsProjectFunc_OnEachProject)
 	{
-		unload_all(L, slns, &funcs);
+		unload_all(L, sess, &funcs);
 		CHECK(num_project_calls == 2);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_ReturnsNotOkay_OnProjectFailure)
 	{
 		funcs.unload_project = stub_project_fail_func;
-		int result = unload_all(L, slns, &funcs);
+		int result = unload_all(L, sess, &funcs);
 		CHECK(result != OKAY);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_AbortsProjectLoop_OnNotOkay)
 	{
 		funcs.unload_project = stub_project_fail_func;
-		unload_all(L, slns, &funcs);
+		unload_all(L, sess, &funcs);
 		CHECK(num_project_calls == 1);
 	}
 
@@ -197,29 +197,29 @@ SUITE(unload)
 
 	TEST_FIXTURE(FxUnload2, Unload_AddsBlocks_OnNonEmptySession)
 	{
-		unload_all(L, slns, &funcs);
-		Solution sln = (Solution)array_item(slns, 0);
+		unload_all(L, sess, &funcs);
+		Solution sln = session_get_solution(sess, 0);
 		int n = blocks_size(solution_get_blocks(sln));
 		CHECK(n == 1);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_CallsBlockFunc_OnEachConfig)
 	{
-		unload_all(L, slns, &funcs);
+		unload_all(L, sess, &funcs);
 		CHECK(num_block_calls == 5);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_ReturnsNotOkay_OnBlockFailure)
 	{
 		funcs.unload_block = stub_block_fail_func;
-		int result = unload_all(L, slns, &funcs);
+		int result = unload_all(L, sess, &funcs);
 		CHECK(result != OKAY);
 	}
 
 	TEST_FIXTURE(FxUnload2, Unload_AbortsBlockLoop_OnNotOkay)
 	{
 		funcs.unload_block = stub_block_fail_func;
-		unload_all(L, slns, &funcs);
+		unload_all(L, sess, &funcs);
 		CHECK(num_block_calls == 1);
 	}
 

@@ -19,7 +19,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2002_Signature_IsCorrect)
 	{
-		vs2002_solution_signature(sess, sln, strm);
+		vs2002_solution_signature(sln, strm);
 		CHECK_EQUAL(
 			"Microsoft Visual Studio Solution File, Format Version 7.00\r\n",
 			buffer);
@@ -32,7 +32,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2002_ProjectEntry_UsesRelativePath)
 	{
-		vs2002_solution_projects(sess, sln, strm);			
+		vs2002_solution_projects(sln, strm);			
 		CHECK_EQUAL(
 			"Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"My Project\", \"Project Folder\\My Project.vcproj\", \"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"EndProject\n",
@@ -46,7 +46,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2002_SolutionConfiguration_IsCorrect)
 	{
-		vs2002_solution_configuration(sess, sln, strm);
+		vs2002_solution_configuration(sln, strm);
 		CHECK_EQUAL(
 			"Global\n"
 			"\tGlobalSection(SolutionConfiguration) = preSolution\n"
@@ -63,7 +63,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2002_ProjectDependencies_IsCorrect)
 	{
-		vs2002_solution_dependencies(sess, sln, strm);
+		vs2002_solution_dependencies(sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(ProjectDependencies) = postSolution\n"
 			"\tEndGlobalSection\n",
@@ -77,7 +77,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2002_ProjectConfiguration_IsCorrect)
 	{
-		vs2002_solution_project_configuration(sess, sln, strm);
+		vs2002_solution_project_configuration(sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(ProjectConfiguration) = postSolution\n"
 			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug DLL.ActiveCfg = Debug DLL|Win32\n"
@@ -95,7 +95,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2002_Extensibility_IsCorrect)
 	{
-		vs2002_solution_extensibility(sess, sln, strm);
+		vs2002_solution_extensibility(sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(ExtensibilityGlobals) = postSolution\n"
 			"\tEndGlobalSection\n"

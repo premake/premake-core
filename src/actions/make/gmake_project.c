@@ -17,13 +17,10 @@
  * This simplifies the code generation, and makes portable makefiles possible 
  * (even though most will have platform-specific bits in them).
  */
-int gmake_project_shell_detect(Session sess, Project prj, Stream strm)
+int gmake_project_shell_detect(Project prj, Stream strm)
 {
 	int z = OKAY;
-
-	UNUSED(sess);
 	UNUSED(prj);
-
 	z |= stream_writeline(strm, "SHELLTYPE := msdos");
 	z |= stream_writeline(strm, "ifeq (,$(ComSpec)$(COMSPEC))");
 	z |= stream_writeline(strm, "   SHELLTYPE := posix");

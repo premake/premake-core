@@ -7,7 +7,7 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "project/fields.h"
+#include "objects/fields.h"
 }
 
 enum TestFields

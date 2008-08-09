@@ -13,21 +13,6 @@
 #define PREMAKE_PLATFORM_H
 
 
-/**
- * The currently support platforms. If you add to this list be sure to
- * also update the platform detection logic below, and the platform
- * identifier initialization in platform.c.
- */
-enum Platform
-{
-	Unknown,
-	BSD,
-	Linux,
-	MacOSX,
-	Windows
-};
-
-
 #if defined(__linux__)
 #define PLATFORM_LINUX   (1)
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
@@ -37,6 +22,7 @@ enum Platform
 #else
 #define PLATFORM_WINDOWS (1)
 #endif
+
 
 DECLARE_CLASS(PlatformSearch)
 
@@ -73,18 +59,6 @@ int platform_dir_set_current(const char* path);
 
 
 /**
- * Retrieve the current platform identifier.
- */
-enum Platform platform_get(void);
-
-
-/**
- * Retrieve the current platform identifier as a string value.
- */
-const char* platform_get_name(void);
-
-
-/**
  * Create a new platform file search context.
  */
 PlatformSearch platform_search_create(const char* mask);
@@ -113,14 +87,6 @@ int platform_search_is_file(PlatformSearch search);
  * \returns True if another match is available.
  */
 int platform_search_next(PlatformSearch search);
-
-
-/**
- * Set the platform identification string, forcing a platform-specific
- * behavior regardless of the actual current platform.
- * \param   id    One of the platform identifiers.
- */
-void platform_set(enum Platform id);
 
 
 #endif

@@ -3,7 +3,12 @@
  * \brief  Project object fields enumeration and handling.
  * \author Copyright (c) 2007-2008 Jason Perkins and the Premake project
  *
- * \addtogroup project
+ * \defgroup fields Object Fields
+ * \ingroup  objects
+ *
+ * The fields class implements a generic collection of string, list, and
+ * files fields which are reused by the other project objects.
+ *
  * @{
  */
 #if !defined(PREMAKE_FIELDS_H)

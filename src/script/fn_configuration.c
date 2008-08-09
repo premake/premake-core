@@ -17,7 +17,7 @@ int fn_configuration(lua_State* L)
 	if (lua_gettop(L) > 0)
 	{
 		/* get the active object, which will contain this new configuration */
-		if (!script_internal_get_active_object(L, SolutionObject | ProjectObject, REQUIRED))
+		if (!script_internal_get_active_object(L, SolutionObject | ProjectObject, IS_REQUIRED))
 		{
 			return 0;
 		}
@@ -26,11 +26,11 @@ int fn_configuration(lua_State* L)
 		script_internal_create_block(L);
 
 		/* populate the list of terms from the arguments */
-		script_internal_get_active_object(L, BlockObject, REQUIRED);
+		script_internal_get_active_object(L, BlockObject, IS_REQUIRED);
 		fn_accessor_set_list_value(L, &BlockFieldInfo[BlockTerms]);
 	}
 
-	script_internal_get_active_object(L, BlockObject, OPTIONAL);
+	script_internal_get_active_object(L, BlockObject, IS_OPTIONAL);
 	return 1;
 }
 

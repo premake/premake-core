@@ -11,25 +11,12 @@
 
 
 /**
- * These are the steps in the process; each function runs one part of the whole.
- */
-static HostExecutionStep Steps[] =
-{
-	host_parse_argv,        /* process the command line arguments */
-	host_run_script,        /* run the main script (i.e. premake4.lua) */
-	session_unload,         /* unload the objects built by the script into more accessible C data structures */
-	host_show_help,         /* show help and version messages as appropriate; may end processing here */
-	host_run_action,        /* run the action specified on the command line */
-	NULL                    /* all done! */
-};
-
-
-/**
  * \brief   Program entry point.
  */
 int main(int argc, const char** argv)
 {
-	Session sess;
+	Host host;
+	int z = OKAY;
 
 	/* If testing is enabled, calling premake.exe with no arguments will
 	 * trigger a call to the automated tests. This is used by a post-build
@@ -44,15 +31,18 @@ int main(int argc, const char** argv)
 #endif
 
 	/* initialize */
-	host_set_argv(argv);
-	sess = session_create();
+	host = host_create();
+	host_set_argv(host, argv);
 
 	/* run */
-	host_run_steps(sess, Steps);
+	if (z == OKAY)  z = host_parse_argv(host);
+	if (z == OKAY)  z = host_run_script(host);
+	if (z == OKAY)  z = host_show_help(host);
+	if (z == OKAY)  z = host_run_action(host);
 
 	/* report back to the user and clean up */
-	host_report_results(sess);
-	session_destroy(sess);
-	return OKAY;
+	host_report_results();
+	host_destroy(host);
+	return z;
 }
 

@@ -17,16 +17,16 @@ static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln
  * Copy project information out of the scripting environment and into C objects that
  * can be more easily manipulated by the action code.
  * \param L      The Lua scripting engine state.
- * \param slns   An array to contain the list of unloaded solutions.
+ * \param sess   The session will contain the unloaded objects.
  * \param funcs  The unloading "interface", providing an opportunity to mock for automated testing.
  * \returns OKAY if successful.
  */
-int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
+int unload_all(lua_State* L, Session sess, struct UnloadFuncs* funcs)
 {
 	int si, sn, z = OKAY;
 
 	assert(L);
-	assert(slns);
+	assert(sess);
 	assert(funcs);
 	assert(funcs->unload_solution);
 	assert(funcs->unload_project);
@@ -39,7 +39,7 @@ int unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs)
 	{
 		/* add a new solution to the master list */
 		Solution sln = solution_create();
-		array_add(slns, sln);
+		session_add_solution(sess, sln);
 
 		/* get the scripted solution object from the solutions list */
 		lua_rawgeti(L, -1, si);

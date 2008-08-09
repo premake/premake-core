@@ -7,26 +7,10 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "session/session.h"
-#include "script/script.h"
+#include "objects/session.h"
 #include "base/base.h"
 #include "base/error.h"
-#include "platform/platform.h"
-}
-
-
-/**
- * \brief   Run the engine automated tests.
- * \returns OKAY if all tests completed successfully.
- * \note    Also runs the tests for all dependencies (everything but the host executable).
- */
-int session_tests()
-{
-	int z = base_tests();
-	if (z == OKAY) z = project_tests();
-	if (z == OKAY) z = script_tests();
-	if (z == OKAY) z = tests_run_suite("session");
-	return z;
+#include "base/env.h"
 }
 
 
@@ -48,37 +32,37 @@ static int num_config_calls;
 static const char* last_config_filter;
 
 
-static int test_solution_okay(Session sess, Solution sln, Stream strm)
+static int test_solution_okay(Solution sln, Stream strm)
 {
-	UNUSED(sess);  UNUSED(sln);  UNUSED(strm);
+	UNUSED(sln);  UNUSED(strm);
 	num_solution_calls++;
 	return OKAY;
 }
 
-static int test_solution_fail(Session sess, Solution sln, Stream strm)
+static int test_solution_fail(Solution sln, Stream strm)
 {
-	UNUSED(sess);  UNUSED(sln);  UNUSED(strm);
+	UNUSED(sln);  UNUSED(strm);
 	return !OKAY;
 }
 
-static int test_project_okay(Session sess, Project prj, Stream strm)
+static int test_project_okay(Project prj, Stream strm)
 {
-	UNUSED(sess);  UNUSED(prj);  UNUSED(strm);
+	UNUSED(prj);  UNUSED(strm);
 	num_project_calls++;
 	return OKAY;
 }
 
-static int test_project_fail(Session sess, Project prj, Stream strm)
+static int test_project_fail(Project prj, Stream strm)
 {
-	UNUSED(sess);  UNUSED(prj);  UNUSED(strm);
+	UNUSED(prj);  UNUSED(strm);
 	return !OKAY;
 }
 
-static int test_config_okay(Session sess, Project prj, Stream strm)
+static int test_config_okay(Project prj, Stream strm)
 {
-	UNUSED(sess);  UNUSED(strm);
+	UNUSED(strm);
 	num_config_calls++;
-	last_config_filter = project_get_configuration_filter(prj);
+	last_config_filter = project_get_config(prj);
 	return OKAY;
 }
 
@@ -133,78 +117,6 @@ SUITE(session)
 		CHECK(sess != NULL);
 	}
 
-
-	/**********************************************************************
-	 * Script execution tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSession, RunString_ReturnsValue_OnString)
-	{
-		const char* result = session_run_string(sess, "return 'string value'");
-		CHECK_EQUAL("string value", result);
-	}
-
-	TEST_FIXTURE(FxSession, RunString_ReturnsValue_OnInteger)
-	{
-		const char* result = session_run_string(sess, "return 18");
-		CHECK_EQUAL("18", result);
-	}
-
-	TEST_FIXTURE(FxSession, RunString_ReturnsValue_OnBoolean)
-	{
-		const char* result = session_run_string(sess, "return true");
-		CHECK_EQUAL("true", result);
-	}
-
-	TEST_FIXTURE(FxSession, RunFile_ReturnsValue_OnValidFile)
-	{
-		const char* result = session_run_file(sess, "testing/test_files/true.lua");
-		CHECK_EQUAL("true", result);
-	}
-
-
-	/**********************************************************************
-	 * Action handling tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSession, SetAction_SetScriptVar)
-	{
-		session_set_action(sess, "MyAction");
-		const char* result = session_run_string(sess, "return _ACTION");
-		CHECK_EQUAL("MyAction", result);
-	}
-
-	TEST_FIXTURE(FxSession, GetAction_ReturnsNull_OnNoAction)
-	{
-		const char* result = session_get_action(sess);
-		CHECK(result == NULL);
-	}
-
-	TEST_FIXTURE(FxSession, GetAction_GetsFromScriptVar)
-	{
-		session_run_string(sess, "_ACTION = 'SomeAction'");
-		const char* result = session_get_action(sess);
-		CHECK_EQUAL("SomeAction", result);
-	}
-
-
-	/**********************************************************************
-	 * Configuration filtering tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSession, SetAction_UpdatesFilter)
-	{
-		session_set_action(sess, "MyAction");
-		Filter filter = session_get_filter(sess);
-		CHECK_EQUAL("MyAction", filter_get_value(filter, FilterAction));
-	}
-
-	TEST_FIXTURE(FxSession, Ctor_SetsOSFilter)
-	{
-		Filter filter = session_get_filter(sess);
-		CHECK_EQUAL(platform_get_name(), filter_get_value(filter, FilterOS));
-	}
-	
 
 	/**********************************************************************
 	 * Solution containment tests
@@ -353,17 +265,6 @@ SUITE(session)
 		solution_add_config(sln, "Debug");
 		session_enumerate_objects(sess, sln_funcs, prj_funcs, cfg_funcs);
 		CHECK_EQUAL("Debug", last_config_filter);
-	}
-
-
-	/**********************************************************************
-	 * Unload tests - most unload testing is done elsewhere
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSession, Unload_ReturnsOkay_OnNoProjectInfo)
-	{
-		int result = session_unload(sess);
-		CHECK(result == OKAY);
 	}
 
 

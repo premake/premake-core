@@ -11,18 +11,16 @@
 #include <string.h>
 #include "premake.h"
 #include "session.h"
-#include "script/script.h"
+#include "objects_internal.h"
 #include "base/array.h"
 #include "base/cstr.h"
+#include "base/env.h"
 #include "base/error.h"
-#include "platform/platform.h"
 
 
 DEFINE_CLASS(Session)
 {
-	Script     script;
 	Array      solutions;
-	Filter     filter;
 	Stream     active_stream;
 };
 
@@ -33,25 +31,9 @@ DEFINE_CLASS(Session)
  */
 Session session_create(void)
 {
-	Session sess;
-
-	/* create an instance of the project scripting engine */
-	Script script = script_create();
-	if (script == NULL)
-	{
-		return NULL;
-	}
-
-	/* create the session object */
-	sess = ALLOC_CLASS(Session);
-	sess->script = script;
+	Session sess = ALLOC_CLASS(Session);
 	sess->solutions = array_create();
-	sess->filter = filter_create(script);
 	sess->active_stream = NULL;
-
-	/* initialize the filter */
-	filter_set_value(sess->filter, FilterOS, platform_get_name());
-
 	return sess;
 }
 
@@ -73,9 +55,7 @@ void session_destroy(Session sess)
 		solution_destroy(sln);
 	}
 
-	script_destroy(sess->script);
 	array_destroy(sess->solutions);
-	filter_destroy(sess->filter);
 	free(sess);
 }
 
@@ -90,6 +70,7 @@ void session_add_solution(Session sess, Solution sln)
 	assert(sess);
 	assert(sln);
 	array_add(sess->solutions, sln);
+	solution_set_session(sln, sess);
 }
 
 
@@ -97,14 +78,9 @@ void session_add_solution(Session sess, Solution sln)
  * A bit of black magic: this function acts as a special token for the project handler
  * function list to indicate where configurations should appear. For more details, see
  * the implementation of session_enumerate_objects().
- * \param   sess      The session object.
- * \param   prj       The target project.
- * \param   strm      The currently active output stream.
- * \returns OKAY.
  */
-int session_enumerate_configurations(Session sess, Project prj, Stream strm)
+int session_enumerate_configurations(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	UNUSED(strm);
 	return OKAY;
@@ -138,7 +114,7 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 		Solution sln = session_get_solution(sess, si);
 		for (fi = 0; result == OKAY && sln_funcs[fi] != NULL; ++fi)
 		{
-			result = sln_funcs[fi](sess, sln, sess->active_stream);
+			result = sln_funcs[fi](sln, sess->active_stream);
 		}
 
 		/* enumerate projects */
@@ -146,7 +122,6 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 		for (pi = 0; pi < pn; ++pi)
 		{
 			Project prj = solution_get_project(sln, pi);
-			project_set_filter(prj, sess->filter);
 
 			for (fi = 0; result == OKAY && prj_funcs[fi]; ++fi)
 			{
@@ -160,21 +135,21 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 					for (ci = 0; result == OKAY && ci < cn; ++ci)
 					{
 						int cfi;
-
-						/* Make this the active configuration in the value filter */
 						const char* cfg_name = solution_get_config(sln, ci);
-						filter_set_value(sess->filter, FilterConfig, cfg_name);
+						project_set_config(prj, cfg_name);
 
 						/* enumerate configurations */
 						for (cfi = 0; result == OKAY && cfg_funcs[cfi]; ++cfi)
 						{
-							result = cfg_funcs[cfi](sess, prj, sess->active_stream);
+							result = cfg_funcs[cfi](prj, sess->active_stream);
 						}
+
+						project_set_config(prj, NULL);
 					}
 				}
 				else
 				{
-					result = prj_funcs[fi](sess, prj, sess->active_stream);
+					result = prj_funcs[fi](prj, sess->active_stream);
 				}
 			}
 		}
@@ -191,18 +166,6 @@ int session_enumerate_objects(Session sess, SessionSolutionCallback* sln_funcs, 
 
 
 /**
- * Get the action name to be performed by this execution run.
- * \param   sess    The session object.
- * \returns The action name if set, or NULL.
- */
-const char* session_get_action(Session sess)
-{
-	assert(sess);
-	return script_get_action(sess->script);
-}
-
-
-/**
  * Retrieve the currently active output stream.
  * \param   sess    The session object.
  * \return The currently active stream, or NULL if no stream is active.
@@ -211,18 +174,6 @@ Stream session_get_active_stream(Session sess)
 {
 	assert(sess);
 	return sess->active_stream;
-}
-
-
-/**
- * Retrieve the active configuration filter.
- * \param   sess    The session object.
- * \returns The active configuration filter.
- */
-Filter session_get_filter(Session sess)
-{
-	assert(sess);
-	return sess->filter;
 }
 
 
@@ -252,50 +203,6 @@ int session_num_solutions(Session sess)
 
 
 /**
- * Execute a script stored in a file.
- * \param   sess      The session object.
- * \param   filename  The name of the file containing the script code to be executed.
- * \returns If the script returns a value, it is converted to a string and returned.
- *          If the script does not return a value, NULL is returned. If an error
- *          occurs in the script, the error message is returned.
- */
-const char* session_run_file(Session sess, const char* filename)
-{
-	assert(sess);
-	return script_run_file(sess->script, filename);
-}
-
-
-/**
- * Execute a bit of script stored in a string.
- * \param   sess    The session object.
- * \param   code    The string containing the script code to be executed.
- * \returns If the script returns a value, it is converted to a string and returned.
- *          If the script does not return a value, NULL is returned. If an error
- *          occurs in the script, the error message is returned.
- */
-const char* session_run_string(Session sess, const char* code)
-{
-	assert(sess);
-	return script_run_string(sess->script, code);
-}
-
-
-/**
- * Set the action name to be performed on this execution pass. The action name will
- * be placed in the _ACTION script environment global.
- * \param   sess   The current execution session context.
- * \param   action The name of the action to be performed.
- */
-void session_set_action(Session sess, const char* action)
-{
-	assert(sess);
-	script_set_action(sess->script, action);
-	filter_set_value(sess->filter, FilterAction, action);
-}
-
-
-/**
  * Set the active output stream, which will be passed to subsequent callbacks during
  * object processing by session_enumerate_objects(). If there is an existing active
  * stream it will be released before setting the new stream.
@@ -311,19 +218,6 @@ void session_set_active_stream(Session sess, Stream strm)
 		stream_destroy(sess->active_stream);
 	}
 	sess->active_stream = strm;
-}
-
-
-/**
- * Copy project information out of the scripting environment and into C objects that
- * can be more easily manipulated by the action code.
- * \param   sess   The session object which contains the scripted project objects.
- * \returns OKAY if successful.
- */
-int session_unload(Session sess)
-{
-	assert(sess);
-	return script_unload(sess->script, sess->solutions);
 }
 
 

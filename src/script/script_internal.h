@@ -7,12 +7,8 @@
 #define PREMAKE_SCRIPT_INTERNAL_H
 
 #include "script.h"
-#include "session/session.h"
-
-#define lua_c
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
+#include "objects/session.h"
+#include "base/luastate.h"
 
 
 /* string constants for script variables and functions */
@@ -34,8 +30,8 @@ enum ObjectType
 	BlockObject    = 0x04
 };
 
-#define OPTIONAL     (0)
-#define REQUIRED     (1)
+#define IS_OPTIONAL     (0)
+#define IS_REQUIRED     (1)
 
 lua_State*  script_get_lua(Script script);
 
@@ -72,7 +68,7 @@ struct UnloadFuncs
 	int (*unload_block)(lua_State* L, Block blk);
 };
 
-int  unload_all(lua_State* L, Array slns, struct UnloadFuncs* funcs);
+int  unload_all(lua_State* L, Session sess, struct UnloadFuncs* funcs);
 int  unload_solution(lua_State* L, Solution sln);
 int  unload_project(lua_State* L, Project prj);
 int  unload_block(lua_State* L, Block blk);

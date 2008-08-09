@@ -6,13 +6,13 @@
 #if !defined(PREMAKE_MAKE_H)
 #define PREMAKE_MAKE_H
 
-#include "session/session.h"
+#include "objects/project.h"
 
 const char* make_escape(const char* value);
 const char* make_get_obj_filename(const char* filename);
-const char* make_get_project_makefile(Session sess, Project prj);
+const char* make_get_project_makefile(Project prj);
 Strings     make_get_project_names(Solution sln);
-const char* make_get_solution_makefile(Session sess, Solution sln);
+const char* make_get_solution_makefile(Solution sln);
 int         make_write_escaped(Stream strm, const char* value);
 
 #endif

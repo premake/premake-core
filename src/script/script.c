@@ -47,7 +47,7 @@ Script script_create(void)
 	Script script;
 
 	/* create a new Lua scripting environment */
-	lua_State* L = lua_open();
+	lua_State* L = luastate_create();
 	if (L == NULL)
 	{
 		error_set("failed to start Lua scripting engine");
@@ -82,7 +82,7 @@ Script script_create(void)
 void script_destroy(Script script)
 {
 	assert(script);
-	lua_close(script->L);
+	luastate_destroy(script->L);
 	free(script);
 }
 
@@ -112,38 +112,6 @@ lua_State* script_get_lua(Script script)
 {
 	assert(script);
 	return script->L;
-}
-
-
-/** 
- * Uses Lua's pattern matching functions to test match a value. This is used by
- * the configuration filter functions (see filter.c).
- * \param  script  The script engine instance.
- * \param  str     The string to test match.
- * \param  pattern The Lua pattern to match against.
- * \returns True if the string value matches the pattern.
- */
-int script_is_match(Script script, const char* str, const char* pattern)
-{
-	const char* match;
-	int top, z;
-	assert(script);
-	assert(str);
-	assert(pattern);
-
-	top = lua_gettop(script->L);
-
-	lua_getglobal(script->L, "string");
-	lua_getfield(script->L, -1, "match");
-	lua_pushstring(script->L, str);
-	lua_pushstring(script->L, pattern);
-	lua_call(script->L, 2, 1);
-
-	match = lua_tostring(script->L, -1);
-	z = cstr_eq(str, match);
-
-	lua_settop(script->L, top);
-	return z;
 }
 
 
@@ -277,23 +245,31 @@ void script_set_action(Script script, const char* action)
 /**
  * Copy project information out of the scripting environment and into C objects that
  * can be more easily manipulated by the action code.
- * \param   script  The project scripting engine instance.
- * \param   slns    An array to hold the list of unloaded solutions.
- * \returns OKAY if successful.
+ * \returns A new session object if successful (which must be destroyed by the caller), or NULL.
  */
-int script_unload(Script script, Array slns)
+Session script_unload(Script script)
 {
 	struct UnloadFuncs funcs;
+	Session sess;
 	int result;
 
 	assert(script);
-	assert(slns);
 
 	funcs.unload_solution = unload_solution;
 	funcs.unload_project  = unload_project;
 	funcs.unload_block    = unload_block;
-	result = unload_all(script->L, slns, &funcs);
-	return result;
+
+	sess = session_create();
+	result = unload_all(script->L, sess, &funcs);
+	if (result != OKAY)
+	{
+		session_destroy(sess);
+		return NULL;
+	}
+	else
+	{
+		return sess;
+	}
 }
 
 

@@ -54,22 +54,18 @@ const char* make_get_obj_filename(const char* filename)
 
 /**
  * Get the name of the project makefile for a particular project.
- * \param   sess   The current execution session context.
- * \param   prj    The project being requested.
- * \returns If this project is the only object which will generate output to
- *          its target location, then this function will return "Makefile" as
- *          the filename. If any other object shares this output location, it
- *          will return "ProjectName.make" instead, so that both objects may
- *          coexist in the same directory.
+ * If this project is the only object which will generate output to
+ * its target location, then this function will return "Makefile" as
+ * the filename. If any other object shares this output location, it
+ * will return "ProjectName.make" instead, so that both objects may
+ * coexist in the same directory.
  */
-const char* make_get_project_makefile(Session sess, Project prj)
+const char* make_get_project_makefile(Project prj)
 {
 	const char* my_path;
 	const char* their_path;
 	int si, sn;
-
-	assert(sess);
-	assert(prj);
+	Session sess = project_get_session(prj);
 
 	/* get the full makefile path for this project */
 	my_path = project_get_filename(prj, "Makefile", NULL);
@@ -137,22 +133,18 @@ Strings make_get_project_names(Solution sln)
 
 /**
  * Get the name of the solution makefile for a particular solution. 
- * \param   sess   The current execution session context.
- * \param   sln    The solution being requested.
- * \returns If this solution is the only object which will generate output to
- *          its target location, then this function will return "Makefile" as
- *          the filename. If any other solution shares this output location, it
- *          will return "SolutionName.make" instead, so that both objects may
- *          coexist in the same directory.
+ * If this solution is the only object which will generate output to
+ * its target location, then this function will return "Makefile" as
+ * the filename. If any other solution shares this output location, it
+ * will return "SolutionName.make" instead, so that both objects may
+ * coexist in the same directory.
  */
-const char* make_get_solution_makefile(Session sess, Solution sln)
+const char* make_get_solution_makefile(Solution sln)
 {
 	const char* my_path;
 	const char* their_path;
 	int i, n;
-
-	assert(sess);
-	assert(sln);
+	Session sess = solution_get_session(sln);
 
 	/* get the full makefile path for this solution */
 	my_path = solution_get_filename(sln, "Makefile", NULL);

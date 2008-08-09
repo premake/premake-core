@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "premake.h"
-#include "project/blocks.h"
+#include "blocks.h"
 #include "base/array.h"
 
 

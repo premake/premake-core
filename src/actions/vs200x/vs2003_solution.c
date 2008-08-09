@@ -12,15 +12,10 @@
 
 /**
  * Create the Visual Studio 2003 solution configuration block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2003_solution_configuration(Session sess, Solution sln, Stream strm)
+int vs2003_solution_configuration(Solution sln, Stream strm)
 {
 	int i, n, z;
-	UNUSED(sess);
 
 	z  = stream_writeline(strm, "Global");
 	z |= stream_writeline(strm, "\tGlobalSection(SolutionConfiguration) = preSolution");
@@ -39,15 +34,10 @@ int vs2003_solution_configuration(Session sess, Solution sln, Stream strm)
 
 /**
  * Write the Visual Studio 2003 solution file signature.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2003_solution_signature(Session sess, Solution sln, Stream strm)
+int vs2003_solution_signature(Solution sln, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(sln);
 	stream_set_newline(strm, "\r\n");
 	z = stream_writeline(strm, "Microsoft Visual Studio Solution File, Format Version 8.00");

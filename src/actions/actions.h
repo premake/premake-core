@@ -13,18 +13,33 @@
 #if !defined(PREMAKE_ACTIONS_H)
 #define PREMAKE_ACTIONS_H
 
-#include "session/session.h"
+#include "objects/session.h"
 
 
-int  gmake_action (Session sess);
-int  vs2002_action(Session sess);
-int  vs2003_action(Session sess);
-int  vs2005_action(Session sess);
-int  vs2008_action(Session sess);
+/**
+ * Callback signature for Premake action handlers, which will get triggered
+ * if user specifies that action on the command line for processing.
+ * \param   sess   The current execution session context.
+ * \returns OKAY   If successful.
+ */
+typedef int (*ActionCallback)(Session sess);
+
+
+/**
+ * Describe a Premake action, including the handler function and the metadata
+ * required to list it in the user help.
+ */
+typedef struct struct_ActionInfo
+{
+	const char* name;
+	const char* description;
+	ActionCallback callback;
+} ActionInfo;
 
 
 /* the list of built-in Premake actions */
-extern SessionAction Actions[];
+extern ActionInfo Actions[];
+
 
 
 #endif

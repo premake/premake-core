@@ -64,27 +64,27 @@ SUITE(action)
 	TEST_FIXTURE(FxMake, GetSolutionMakefile_ReturnsMakefile_OnUniqueLocation)
 	{
 		solution_set_location(sln1, "MySolution");
-		const char* result = make_get_solution_makefile(sess, sln1);
+		const char* result = make_get_solution_makefile(sln1);
 		CHECK_EQUAL("./MySolution/Makefile", result);
 	}
 
 	TEST_FIXTURE(FxMake, GetSolutionMakefile_ReturnsDotMake_OnSharedLocation)
 	{
-		const char* result = make_get_solution_makefile(sess, sln1);
+		const char* result = make_get_solution_makefile(sln1);
 		CHECK_EQUAL("./MySolution1.make", result);
 	}
 
 	TEST_FIXTURE(FxMake, GetProjectMakefile_ReturnsMakefile_OnUniqueLocation)
 	{
 		project_set_location(prj1, "MyProject");
-		const char* result = make_get_project_makefile(sess, prj1);
+		const char* result = make_get_project_makefile(prj1);
 		CHECK_EQUAL("./MyProject/Makefile", result);
 	}
 
 	TEST_FIXTURE(FxMake, GetProjectMakefile_ReturnsDotMake_OnSharedWithSolution)
 	{
 		project_set_location(prj2, "MyProject");
-		const char* result = make_get_project_makefile(sess, prj1);
+		const char* result = make_get_project_makefile(prj1);
 		CHECK_EQUAL("./MyProject1.make", result);
 	}
 
@@ -92,7 +92,7 @@ SUITE(action)
 	{
 		project_set_location(prj1, "MyProject");
 		project_set_location(prj2, "MyProject");
-		const char* result = make_get_project_makefile(sess, prj1);
+		const char* result = make_get_project_makefile(prj1);
 		CHECK_EQUAL("./MyProject/MyProject1.make", result);
 	}
 }

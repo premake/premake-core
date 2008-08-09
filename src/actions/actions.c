@@ -9,7 +9,14 @@
 #include "actions/actions.h"
 
 
-SessionAction Actions[] = 
+int  gmake_action (Session sess);
+int  vs2002_action(Session sess);
+int  vs2003_action(Session sess);
+int  vs2005_action(Session sess);
+int  vs2008_action(Session sess);
+
+
+ActionInfo Actions[] = 
 {
 	{ "gmake",   "GNU Makefiles for POSIX, MinGW, and Cygwin",                gmake_action  },
 	{ "vs2002",  "Microsoft Visual Studio 2002",                              vs2002_action },

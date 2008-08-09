@@ -20,7 +20,7 @@ DEFINE_CLASS(Fields)
 
 /**
  * Create a new, empty collection of fields.
- * \param   info    Metadata about the field collection.
+ * \param   info   Metadata about the field collection.
  * \returns A new collection of fields.
  */
 Fields fields_create(struct FieldInfo* info)
@@ -49,7 +49,6 @@ Fields fields_create(struct FieldInfo* info)
 
 /**
  * Destroy a collection of fields and release the associated memory.
- * \param   fields   The collection of fields to destroy.
  */
 void fields_destroy(Fields fields)
 {
@@ -68,9 +67,6 @@ void fields_destroy(Fields fields)
 
 /**
  * Add a new value to the end of an existing list.
- * \param   fields   The collection of fields.
- * \param   index    The index of the list to contain the new value.
- * \param   value    The value to add.
  */
 void fields_add_value(Fields fields, int index, const char* value)
 {
@@ -82,8 +78,6 @@ void fields_add_value(Fields fields, int index, const char* value)
 
 /**
  * Retrieve the value of a string (single value) field.
- * \param   fields   The collection of fields.
- * \param   index    The index of the field to query.
  * \returns The field value if set, or NULL.
  */
 const char* fields_get_value(Fields fields, int index)
@@ -106,9 +100,6 @@ const char* fields_get_value(Fields fields, int index)
 
 /**
  * Retrieve the list of values for a field.
- * \param   fields    The collection of fields.
- * \param   index     The index of fields to query.
- * \returns The list of values stored in the field.
  */
 Strings fields_get_values(Fields fields, int index)
 {
@@ -120,9 +111,6 @@ Strings fields_get_values(Fields fields, int index)
 
 /**
  * Sets the value of a string (single value) field.
- * \param   fields   The collection of fields.
- * \param   index    The index of the field to set.
- * \param   value    The new value of the field.
  */
 void fields_set_value(Fields fields, int index, const char* value)
 {
@@ -147,9 +135,6 @@ void fields_set_value(Fields fields, int index, const char* value)
 /**
  * Sets the list of values associated with a field. The field will subsequently
  * "own" the list, and take responsibility for destroying it with the field set.
- * \param   fields   The collection of fields.
- * \param   index    The index of the field to set.
- * \param   values   The list of new values for the field.
  */
 void fields_set_values(Fields fields, int index, Strings values)
 {

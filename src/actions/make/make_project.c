@@ -16,10 +16,9 @@
 /**
  * Write the rules to clean up output files on a `make clean`.
  */
-int make_project_clean_rules(Session sess, Project prj, Stream strm)
+int make_project_clean_rules(Project prj, Stream strm)
 {
 	int z = OKAY;
-	UNUSED(sess);
 	z |= stream_writeline(strm, "clean:");
 	z |= stream_writeline(strm, "\t@echo Cleaning %s", project_get_name(prj));
 	z |= stream_writeline(strm, "ifeq (posix, $(SHELLTYPE))");
@@ -37,10 +36,9 @@ int make_project_clean_rules(Session sess, Project prj, Stream strm)
 /**
  * Write the opening conditional for a configuration block.
  */
-int make_project_config_conditional(Session sess, Project prj, Stream strm)
+int make_project_config_conditional(Project prj, Stream strm)
 {
-	const char* cfg_name = project_get_configuration_filter(prj);
-	UNUSED(sess);
+	const char* cfg_name = project_get_config(prj);
 	return stream_writeline(strm, "ifeq ($(CONFIG),%s)", cfg_name);
 }
 
@@ -48,9 +46,8 @@ int make_project_config_conditional(Session sess, Project prj, Stream strm)
 /**
  * Write the CFLAGS configuration variable.
  */
-int make_project_config_cflags(Session sess, Project prj, Stream strm)
+int make_project_config_cflags(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS)");
 }
@@ -59,17 +56,12 @@ int make_project_config_cflags(Session sess, Project prj, Stream strm)
 /**
  * Write the CPPFLAGS configuration variable.
  */
-int make_project_config_cppflags(Session sess, Project prj, Stream strm)
+int make_project_config_cppflags(Project prj, Stream strm)
 {
-	Strings values;
 	int z = OKAY;
-	UNUSED(sess);
-	
+	Strings values = project_get_config_values(prj, BlockDefines);	
 	z |= stream_write(strm, "   CPPFLAGS += -MMD");
-
-	values = project_get_config_values(prj, BlockDefines);
 	z |= stream_write_strings(strm, values, "", " -D \"", "\"", "", "", NULL);
-
 	z |= stream_writeline(strm, "");
 	return z;
 }
@@ -78,9 +70,8 @@ int make_project_config_cppflags(Session sess, Project prj, Stream strm)
 /**
  * Write the CXXFLAGS configuration variable.
  */
-int make_project_config_cxxflags(Session sess, Project prj, Stream strm)
+int make_project_config_cxxflags(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "   CXXFLAGS += $(CFLAGS)");
 }
@@ -89,12 +80,11 @@ int make_project_config_cxxflags(Session sess, Project prj, Stream strm)
 /**
  * Write the opening conditional for a configuration block.
  */
-int make_project_config_end(Session sess, Project prj, Stream strm)
+int make_project_config_end(Project prj, Stream strm)
 {
-	int z;
-	UNUSED(sess);
+	int z = OKAY;
 	UNUSED(prj);
-	z  = stream_writeline(strm, "endif");
+	z |= stream_writeline(strm, "endif");
 	z |= stream_writeline(strm, "");
 	return z;
 }
@@ -103,9 +93,8 @@ int make_project_config_end(Session sess, Project prj, Stream strm)
 /**
  * Write the LDDEPS configuration variable.
  */
-int make_project_config_lddeps(Session sess, Project prj, Stream strm)
+int make_project_config_lddeps(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "   LDDEPS   :=");
 }
@@ -114,9 +103,8 @@ int make_project_config_lddeps(Session sess, Project prj, Stream strm)
 /**
  * Write the LDFLAGS configuration variable.
  */
-int make_project_config_ldflags(Session sess, Project prj, Stream strm)
+int make_project_config_ldflags(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "   LDFLAGS  +=");
 }
@@ -125,10 +113,9 @@ int make_project_config_ldflags(Session sess, Project prj, Stream strm)
 /**
  * Write the OBJDIR configuration variable.
  */
-int make_project_config_objdir(Session sess, Project prj, Stream strm)
+int make_project_config_objdir(Project prj, Stream strm)
 {
-	const char* cfg_name = project_get_configuration_filter(prj);
-	UNUSED(sess);
+	const char* cfg_name = project_get_config(prj);
 	return stream_writeline(strm, "   OBJDIR   := obj/%s", make_escape(cfg_name));
 }
 
@@ -136,9 +123,8 @@ int make_project_config_objdir(Session sess, Project prj, Stream strm)
 /**
  * Write the OUTDIR configuration variable.
  */
-int make_project_config_outdir(Session sess, Project prj, Stream strm)
+int make_project_config_outdir(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "   OUTDIR   := .");
 }
@@ -147,10 +133,9 @@ int make_project_config_outdir(Session sess, Project prj, Stream strm)
 /**
  * Write the OUTFILE configuration variable.
  */
-int make_project_config_outfile(Session sess, Project prj, Stream strm)
+int make_project_config_outfile(Project prj, Stream strm)
 {
 	const char* outfile = project_get_outfile(prj);
-	UNUSED(sess);
 	return stream_writeline(strm, "   OUTFILE  := $(OUTDIR)/%s", make_escape(outfile));
 }
 
@@ -158,9 +143,8 @@ int make_project_config_outfile(Session sess, Project prj, Stream strm)
 /**
  * Write the RESFLAGS configuration variable.
  */
-int make_project_config_resflags(Session sess, Project prj, Stream strm)
+int make_project_config_resflags(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "   RESFLAGS +=");
 }
@@ -169,10 +153,10 @@ int make_project_config_resflags(Session sess, Project prj, Stream strm)
 /**
  * Create a new output stream for a project , and make it active for subsequent writes.
  */
-int make_project_create(Session sess, Project prj, Stream strm)
+int make_project_create(Project prj, Stream strm)
 {
 	/* create the makefile */
-	const char* filename = make_get_project_makefile(sess, prj);
+	const char* filename = make_get_project_makefile(prj);
 	strm = stream_create_file(filename);
 	if (!strm)
 	{
@@ -180,7 +164,7 @@ int make_project_create(Session sess, Project prj, Stream strm)
 	}
 
 	/* make the stream active for the functions that come after */
-	session_set_active_stream(sess, strm);
+	session_set_active_stream(project_get_session(prj), strm);
 	return OKAY;
 }
 
@@ -188,9 +172,8 @@ int make_project_create(Session sess, Project prj, Stream strm)
 /**
  * Include the auto-generated dependencies into the project makefile.
  */
-int make_project_include_dependencies(Session sess, Project prj, Stream strm)
+int make_project_include_dependencies(Project prj, Stream strm)
 {
-	UNUSED(sess);
 	UNUSED(prj);
 	return stream_writeline(strm, "-include $(OBJECTS:%%.o=%%.d)");
 }
@@ -199,10 +182,9 @@ int make_project_include_dependencies(Session sess, Project prj, Stream strm)
 /**
  * Write the rules to create the output and object directories.
  */
-int make_project_mkdir_rules(Session sess, Project prj, Stream strm)
+int make_project_mkdir_rules(Project prj, Stream strm)
 {
 	int z = OKAY;
-	UNUSED(sess);
 	UNUSED(prj);
 	z |= stream_writeline(strm, "$(OUTDIR):");
 	z |= stream_writeline(strm, "\t@echo Creating $(OUTDIR)");
@@ -219,11 +201,10 @@ int make_project_mkdir_rules(Session sess, Project prj, Stream strm)
 /**
  * Write the OBJECTS project variable.
  */
-int make_project_objects(Session sess, Project prj, Stream strm)
+int make_project_objects(Project prj, Stream strm)
 {
 	Strings files;
 	int i, n, z;
-	UNUSED(sess);
 
 	z  = stream_writeline(strm, "OBJECTS := \\");
 
@@ -247,12 +228,11 @@ int make_project_objects(Session sess, Project prj, Stream strm)
 /**
  * Write the .PHONY rule for a project.
  */
-int make_project_phony_rule(Session sess, Project prj, Stream strm)
+int make_project_phony_rule(Project prj, Stream strm)
 {
-	int z;
-	UNUSED(sess);
+	int z = OKAY;
 	UNUSED(prj);
-	z  = stream_writeline(strm, ".PHONY: clean");
+	z |= stream_writeline(strm, ".PHONY: clean");
 	z |= stream_writeline(strm, "");
 	return z;
 }
@@ -261,12 +241,11 @@ int make_project_phony_rule(Session sess, Project prj, Stream strm)
 /**
  * Write the RESOURCES project variable.
  */
-int make_project_resources(Session sess, Project prj, Stream strm)
+int make_project_resources(Project prj, Stream strm)
 {
-	int z;
-	UNUSED(sess);
+	int z = OKAY;
 	UNUSED(prj);
-	z  = stream_writeline(strm, "RESOURCES := \\");
+	z |= stream_writeline(strm, "RESOURCES := \\");
 	z |= stream_writeline(strm, "");
 	return z;
 }
@@ -275,12 +254,11 @@ int make_project_resources(Session sess, Project prj, Stream strm)
 /**
  * Write the project makefile signature.
  */
-int make_project_signature(Session sess, Project prj, Stream strm)
+int make_project_signature(Project prj, Stream strm)
 {
-	int z;
-	UNUSED(sess);
+	int z = OKAY;
 	UNUSED(prj);
-	z  = stream_writeline(strm, "# GNU Makefile autogenerated by Premake");
+	z |= stream_writeline(strm, "# GNU Makefile autogenerated by Premake");
 	z |= stream_writeline(strm, "");
 	return z;
 }
@@ -289,11 +267,10 @@ int make_project_signature(Session sess, Project prj, Stream strm)
 /**
  * Write makefile rules for each source code file.
  */
-int make_project_source_rules(Session sess, Project prj, Stream strm)
+int make_project_source_rules(Project prj, Stream strm)
 {
 	Strings files;
 	int i, n, z = OKAY;
-	UNUSED(sess);
 
 	files = project_get_files(prj);
 	n = strings_size(files);
@@ -317,10 +294,9 @@ int make_project_source_rules(Session sess, Project prj, Stream strm)
 /**
  * Write the project output target rule.
  */
-int make_project_target(Session sess, Project prj, Stream strm)
+int make_project_target(Project prj, Stream strm)
 {
 	int z = OKAY;
-	UNUSED(sess);
 	z |= stream_writeline(strm, "$(OUTFILE): $(OUTDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)");
 	z |= stream_writeline(strm, "\t@echo Linking %s", project_get_name(prj));
 	z |= stream_writeline(strm, "\t@$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJECTS) $(RESOURCES)");

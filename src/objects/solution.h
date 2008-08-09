@@ -3,14 +3,19 @@
  * \brief  The Solution class, representing the top-level container for projects.
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  *
- * \addtogroup project
+ * \defgroup solution Solution
+ * \ingroup  objects
+ *
  * @{
  */
 #if !defined(PREMAKE_SOLUTION_H)
 #define PREMAKE_SOLUTION_H
 
+DECLARE_CLASS(Solution)
+
 #include "fields.h"
 #include "project.h"
+#include "blocks.h"
 #include "base/strings.h"
 
 
@@ -31,8 +36,6 @@ enum SolutionField
 extern struct FieldInfo SolutionFieldInfo[];
 
 
-DECLARE_CLASS(Solution)
-
 Solution    solution_create(void);
 void        solution_destroy(Solution sln);
 
@@ -48,6 +51,7 @@ const char* solution_get_language(Solution sln);
 const char* solution_get_location(Solution sln);
 const char* solution_get_name(Solution sln);
 Project     solution_get_project(Solution sln, int index);
+Session     solution_get_session(Solution sln);
 const char* solution_get_value(Solution sln, enum SolutionField field);
 int         solution_num_configs(Solution sln);
 int         solution_num_projects(Solution sln);

@@ -11,6 +11,7 @@
 #include "vs200x.h"
 #include "base/buffers.h"
 #include "base/cstr.h"
+#include "base/env.h"
 #include "base/error.h"
 
 
@@ -65,16 +66,16 @@ int vs200x_list_attribute(Stream strm, int indent_size, const char* name, String
 
 /**
  * Write the ending part of an XML tag, adjust for the differing Visual Studio formats.
- * \param   sess    The current execution session.
  * \param   strm    The output stream.
  * \param   level   The XML element nesting level.
  * \param   markup  The end tag markup.
  * \returns OKAY if successful.
  */
-int vs200x_element_end(Session sess, Stream strm, int level, const char* markup)
+int vs200x_element_end(Stream strm, int level, const char* markup)
 {
-	int z;
-	int version = vs200x_get_target_version(sess);
+	int z, version;
+	
+	version = vs200x_get_target_version();
 	if (version >= 2005)
 	{
 		z = stream_writeline(strm, "");
@@ -97,21 +98,20 @@ int vs200x_element_end(Session sess, Stream strm, int level, const char* markup)
  * Return the Visual Studio version appropriate version of the string for a false
  * value. Before 2005 this was "FALSE", after it is "false".
  */
-const char* vs200x_false(Session sess)
+const char* vs200x_false(void)
 {
-	int version = vs200x_get_target_version(sess);
+	int version = vs200x_get_target_version();
 	return (version < 2005) ? "FALSE" : "false";
 }
 
 
 /**
  * Converts the session action string to a Visual Studio version number.
- * \param   sess   The current execution session.
  * \returns The Visual Studio version number corresponding to the current action.
  */
-int vs200x_get_target_version(Session sess)
+int vs200x_get_target_version(void)
 {
-	const char* action = session_get_action(sess);
+	const char* action = env_get_action();
 	if (cstr_eq(action, "vs2002"))
 	{
 		return 2002;
@@ -183,8 +183,8 @@ const char* vs200x_tool_guid(const char* language)
  * Return the Visual Studio version appropriate version of the string for a true
  * value. Before 2005 this was "TRUE", after it is "true".
  */
-const char* vs200x_true(Session sess)
+const char* vs200x_true(void)
 {
-	int version = vs200x_get_target_version(sess);
+	int version = vs200x_get_target_version();
 	return (version < 2005) ? "TRUE" : "true";
 }

@@ -14,11 +14,13 @@ extern "C" {
 
 struct FxHostHelp
 {
+	Host host;
 	Session sess;
 	char buffer[8192];
 
 	FxHostHelp()
 	{
+		host = host_create();
 		sess = session_create();
 		stream_set_buffer(Console, buffer);
 	}
@@ -26,8 +28,8 @@ struct FxHostHelp
 	~FxHostHelp()
 	{
 		session_destroy(sess);
+		host_destroy(host);
 		error_clear();
-		host_set_argv(NULL);
 	}
 };
 
@@ -41,16 +43,16 @@ SUITE(host)
 	TEST_FIXTURE(FxHostHelp, Help_ReturnsOkay_OnAction)
 	{
 		const char* argv[] = { "premake", "vs2005", NULL };
-		host_set_argv(argv);
-		int result = host_show_help(sess);
+		host_set_argv(host, argv);
+		int result = host_show_help(host);
 		CHECK(result == OKAY);
 	}
 
 	TEST_FIXTURE(FxHostHelp, Help_PrintsNothing_OnAction)
 	{
 		const char* argv[] = { "premake", "vs2005", NULL };
-		host_set_argv(argv);
-		host_show_help(sess);
+		host_set_argv(host, argv);
+		host_show_help(host);
 		CHECK_EQUAL("", buffer);
 	}
 
@@ -62,16 +64,16 @@ SUITE(host)
 	TEST_FIXTURE(FxHostHelp, Help_ReturnsNotOkay_OnNoAction)
 	{
 		const char* argv[] = { "premake", NULL };
-		host_set_argv(argv);
-		int result = host_show_help(sess);
+		host_set_argv(host, argv);
+		int result = host_show_help(host);
 		CHECK(result != OKAY);
 	}
 
 	TEST_FIXTURE(FxHostHelp, Help_ShowsShortHelp_OnNoAction)
 	{
 		const char* argv[] = { "premake", NULL };
-		host_set_argv(argv);
-		host_show_help(sess);
+		host_set_argv(host, argv);
+		host_show_help(host);
 		CHECK_EQUAL(HOST_SHORT_HELP "\n", buffer);
 	}
 }

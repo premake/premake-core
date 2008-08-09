@@ -8,14 +8,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "premake.h"
-#include "project/project.h"
-#include "project/solution.h"
+#include "solution.h"
 #include "base/buffers.h"
 #include "base/cstr.h"
+#include "base/env.h"
 #include "base/guid.h"
 #include "base/path.h"
 #include "base/strings.h"
-#include "platform/platform.h"
 
 
 struct FieldInfo ProjectFieldInfo[] =
@@ -35,14 +34,13 @@ DEFINE_CLASS(Project)
 	Solution solution;
 	Blocks blocks;
 	Fields fields;
-	Filter filter;
 	Strings config_cache[NumBlockFields];
+	const char* active_config;
 };
 
 
 /**
  * Create and initialize a new project object.
- * \returns A new project object.
  */
 Project project_create()
 {
@@ -52,7 +50,7 @@ Project project_create()
 	prj->solution = NULL;
 	prj->blocks = blocks_create();
 	prj->fields = fields_create(ProjectFieldInfo);
-	prj->filter = NULL;
+	prj->active_config = NULL;
 
 	for (i = 0; i < NumBlockFields; ++i)
 	{
@@ -65,7 +63,6 @@ Project project_create()
 
 /**
  * Destroy a project object and release the associated memory.
- * \param   prj   The project object to destroy.
  */
 void project_destroy(Project prj)
 {
@@ -83,11 +80,10 @@ void project_destroy(Project prj)
 }
 
 
+
 /**
  * Get the base directory for the project; any properties containing relative
  * paths are relative to this location.
- * \param   prj     The project object to query.
- * \returns The base directory, or NULL if no directory has been set.
  */
 const char* project_get_base_dir(Project prj)
 {
@@ -97,8 +93,6 @@ const char* project_get_base_dir(Project prj)
 
 /**
  * Retrieve the list of configuration blocks associated with a project.
- * \param   prj      The project to query.
- * \returns A list of configuration blocks.
  */
 Blocks project_get_blocks(Project prj)
 {
@@ -110,9 +104,6 @@ Blocks project_get_blocks(Project prj)
 
 /**
  * Scans a list of blocks and appends any values found to the provided list.
- * \param   values    The resulting list of values.
- * \param   blks      The list of blocks to scan.
- * \param   field     The field to query.
  */
 static void project_get_values_from_blocks(Project prj, Strings values, Blocks blks, enum BlockField field)
 {
@@ -121,11 +112,8 @@ static void project_get_values_from_blocks(Project prj, Strings values, Blocks b
 	{
 		Block blk = blocks_item(blks, i);
 
-		/* make sure this block fits through the current filter */
-		Strings terms = block_get_values(blk, BlockTerms);
-		if ((prj->filter == NULL && strings_size(terms) == 0) || (filter_is_match(prj->filter, terms)))
+		if (block_applies_to(blk, prj->active_config))
 		{
-			/* block matches filter; add values to results */
 			Strings block_values = block_get_values(blk, field);
 			strings_append(values, block_values);
 		}
@@ -134,10 +122,20 @@ static void project_get_values_from_blocks(Project prj, Strings values, Blocks b
 
 
 /**
+ * Retrieve the currently active configuration name; only settings contained by
+ * blocks targeted to this configuration will be accessible. Returns NULL if no
+ * configuration has been selected, in which case only global settings will 
+ * be available.
+ */
+const char* project_get_config(Project prj)
+{
+	assert(prj);
+	return prj->active_config;
+}
+
+
+/**
  * Retrieve a list value from the project configuration, respecting the current filter set.
- * \param   prj      The project to query.
- * \param   field    Which field to retrieve.
- * \returns The list of values stored in that field.
  */
 Strings project_get_config_values(Project prj, enum BlockField field)
 {
@@ -161,26 +159,6 @@ Strings project_get_config_values(Project prj, enum BlockField field)
 	project_get_values_from_blocks(prj, values, project_get_blocks(prj), field);
 
 	return values;
-}
-
-
-/**
- * Retrieve the current configuration filter. All subsequent requests for configuration
- * values will return settings from this configuration only.
- * \param   prj      The project object to query.
- * \returns The current configuration filter, or NULL if no filter has been set.
- */
-const char* project_get_configuration_filter(Project prj)
-{
-	assert(prj);
-	if (prj->filter)
-	{
-		return filter_get_value(prj->filter, FilterConfig);
-	}
-	else
-	{
-		return NULL;
-	}
 }
 
 
@@ -255,15 +233,12 @@ Strings project_get_files(Project prj)
  */
 const char* project_get_guid(Project prj)
 {
-	assert(prj);
 	return project_get_value(prj, ProjectGuid);
 }
 
 
 /**
  * Get the programming language used by the project.
- * \param   prj     The project object to query.
- * \returns The language used by the project, or NULL if no language has been set.
  */
 const char* project_get_language(Project prj)
 {
@@ -279,8 +254,6 @@ const char* project_get_language(Project prj)
 /**
  * Retrieve the output location (the relative path from the base directory to the
  * target output directory) for this project.
- * \param   prj    The project object to modify.
- * \returns The project output location, or NULL if no location has been set.
  */
 const char* project_get_location(Project prj)
 {
@@ -290,7 +263,6 @@ const char* project_get_location(Project prj)
 
 /**
  * Get the name of the project.
- * \returns The name, if set, NULL otherwise.
  */
 const char* project_get_name(Project prj)
 {
@@ -308,7 +280,7 @@ const char* project_get_outfile(Project prj)
 {
 	char* buffer = buffers_next();
 	strcpy(buffer, project_get_name(prj));
-	if (platform_get() == Windows)
+	if (env_is_os(Windows))
 	{
 		strcat(buffer, ".exe");
 	}
@@ -317,9 +289,17 @@ const char* project_get_outfile(Project prj)
 
 
 /**
+ * Retrieve the session which contains this project.
+ */
+Session project_get_session(Project prj)
+{
+	assert(prj);
+	return solution_get_session(prj->solution);
+}
+
+
+/**
  * Retrieve the solution associated with this project (internal).
- * \param   prj      The project to query.
- * \returns The associated solution, or NULL if no association has been made.
  */
 Solution project_get_solution(Project prj)
 {
@@ -329,9 +309,6 @@ Solution project_get_solution(Project prj)
 
 /**
  * Retrieve a string (single value) fields from a project, using the field indices.
- * \param   prj      The project object to query.
- * \param   field    The index of the field to query.
- * \returns The value of the field if set, of NULL.
  */
 const char* project_get_value(Project prj, enum ProjectField field)
 {
@@ -343,8 +320,6 @@ const char* project_get_value(Project prj, enum ProjectField field)
 /**
  * Returns true if the specified language is recognized. Current valid language strings
  * are 'c', 'c++', and 'c#'.
- * \param   language   The language string.
- * \returns True if the language string is recognized.
  */
 int project_is_valid_language(const char* language)
 {
@@ -356,8 +331,6 @@ int project_is_valid_language(const char* language)
 
 /**
  * Set the base directory of the project.
- * \param   prj      The project object to modify.
- * \param   base_dir The new base directory.
  */
 void project_set_base_dir(Project prj, const char* base_dir)
 {
@@ -366,24 +339,20 @@ void project_set_base_dir(Project prj, const char* base_dir)
 
 
 /**
- * Set the current configuration filter. All subsequent requests for configuration
- * values will return settings from this configuration only.
- * \param   prj    The project object to query.
- * \param   flt    The current filter.
+ * Selects a particular configuration; any subsequent calls to retrieve settings will
+ * only return values which are part of this configuration. A value of NULL will clear
+ * the configuration, and only return global settings.
  */
-void project_set_filter(Project prj, Filter flt)
+void project_set_config(Project prj, const char* cfg_name)
 {
 	assert(prj);
-	assert(flt);
-	prj->filter = flt;
+	prj->active_config = cfg_name;
 }
 
 
 /**
  * Set the GUID associated with a project. The GUID is required by the Visual
  * Studio generators, and must be unique per project.
- * \param   prj        The project to modify.
- * \param   guid       The new project GUID.
  */
 void project_set_guid(Project prj, const char* guid)
 {
@@ -393,8 +362,6 @@ void project_set_guid(Project prj, const char* guid)
 
 /**
  * Set the programming language used by a project.
- * \param   prj        The project to modify.
- * \param   language   The programming language used by the project.
  */
 void project_set_language(Project prj, const char* language)
 {
@@ -405,8 +372,6 @@ void project_set_language(Project prj, const char* language)
 /**
  * Set the output location (the relative path from the base directory to the
  * target output directory) for this project.
- * \param   prj        The project object to modify.
- * \param   location   The new output location.
  */
 void project_set_location(Project prj, const char* location)
 {
@@ -416,8 +381,6 @@ void project_set_location(Project prj, const char* location)
 
 /**
  * Set the name of the project.
- * \param prj    The project object.
- * \param name   The new for the project.
  */
 void project_set_name(Project prj, const char* name)
 {
@@ -427,8 +390,6 @@ void project_set_name(Project prj, const char* name)
 
 /**
  * Associate a solution with this project (internal).
- * \param   prj      The project to modify.
- * \param   sln      The solution to associate with this project.
  */
 void project_set_solution(Project prj, Solution sln)
 {
@@ -439,9 +400,6 @@ void project_set_solution(Project prj, Solution sln)
 
 /**
  * Set a string (single value) field on a project, using the field indices.
- * \param   prj      The project object.
- * \param   field    The field to set.
- * \param   value    The new value for the field.
  */
 void project_set_value(Project prj, enum ProjectField field, const char* value)
 {
@@ -453,9 +411,6 @@ void project_set_value(Project prj, enum ProjectField field, const char* value)
 /**
  * Sets the list of values associated with a field. The field will subsequently
  * "own" the list, and take responsibility to destroying it with the field set.
- * \param   prj      The project object.
- * \param   field    The index of the field to set.
- * \param   values   The list of new values for the field.
  */
 void project_set_values(Project prj, enum ProjectField field, Strings values)
 {

@@ -12,15 +12,10 @@
 
 /**
  * Write out the Visual Studio solution-level platform configuration block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2005_solution_platforms(Session sess, Solution sln, Stream strm)
+int vs2005_solution_platforms(Solution sln, Stream strm)
 {
 	int i, n, z;
-	UNUSED(sess);
 
 	z  = stream_writeline(strm, "Global");
 	z |= stream_writeline(strm, "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
@@ -39,15 +34,10 @@ int vs2005_solution_platforms(Session sess, Solution sln, Stream strm)
 
 /**
  * Write out the Visual Studio 2005 project-level platform configurations block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2005_solution_project_platforms(Session sess, Solution sln, Stream strm)
+int vs2005_solution_project_platforms(Solution sln, Stream strm)
 {
 	int pi, pn, z;
-	UNUSED(sess);
 	z = stream_writeline(strm, "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 	pn = solution_num_projects(sln);
 	for (pi = 0; pi < pn; ++pi)
@@ -71,15 +61,10 @@ int vs2005_solution_project_platforms(Session sess, Solution sln, Stream strm)
 
 /**
  * Write out the Visual Studio 2005 solution properties block.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2005_solution_properties(Session sess, Solution sln, Stream strm)
+int vs2005_solution_properties(Solution sln, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(sln);
 	z  = stream_writeline(strm, "\tGlobalSection(SolutionProperties) = preSolution");
 	z |= stream_writeline(strm, "\t\tHideSolutionNode = FALSE");
@@ -91,15 +76,10 @@ int vs2005_solution_properties(Session sess, Solution sln, Stream strm)
 
 /**
  * Write the Visual Studio 2005 solution file signature.
- * \param   sess    The execution session context.
- * \param   sln     The current solution.
- * \param   strm    The currently active stream; set with session_set_active_stream().
- * \returns OKAY if successful.
  */
-int vs2005_solution_signature(Session sess, Solution sln, Stream strm)
+int vs2005_solution_signature(Solution sln, Stream strm)
 {
 	int z;
-	UNUSED(sess);
 	UNUSED(sln);
 	stream_set_newline(strm, "\r\n");
 	z  = stream_write_unicode_marker(strm);

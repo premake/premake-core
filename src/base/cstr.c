@@ -12,6 +12,7 @@
 #include "premake.h"
 #include "base/buffers.h"
 #include "base/cstr.h"
+#include "base/luastate.h"
 
 
 /**
@@ -108,6 +109,70 @@ char* cstr_format(const char* format, ...)
 	va_end(args);
 
 	return buffer;
+}
+
+
+/**
+ * Compares a string value with a pattern, using the Lua pattern syntax, and
+ * returns true if there is a match.
+ */
+int cstr_matches_pattern(const char* str, const char* pattern)
+{
+	lua_State* L;
+	char* buffer;
+	int i, escaped, top, result, is_my_state = 0;
+
+	assert(str);
+	assert(pattern);
+
+	/* convert pattern to match any case, each non-escaped letter A becomes [Aa] */
+	buffer = buffers_next();
+	i = 0;
+	escaped = 0;
+	while (*pattern != '\0')
+	{
+		if (isalpha(*pattern) && !escaped)
+		{
+			buffer[i++] = '[';
+			buffer[i++] = (char)toupper(*pattern);
+			buffer[i++] = (char)tolower(*pattern);
+			buffer[i++] = ']';
+		}
+		else
+		{
+			escaped = (*pattern == '%');
+			buffer[i++] = *pattern;
+		}
+
+		pattern++;
+	}
+	buffer[i] = '\0';
+
+	/* connect to Lua so I can call the match() function */
+	L = luastate_get_current();
+	is_my_state = (L == NULL);
+	if (is_my_state)
+	{
+		L = luastate_create();
+	}
+	top = lua_gettop(L);
+
+	/* retrieve the match() function and call it */
+	lua_getglobal(L, "string");
+	lua_getfield(L, -1, "match");	
+	lua_pushstring(L, str);
+	lua_pushstring(L, buffer);
+	lua_call(L, 2, 1);
+	result = cstr_eq(str, lua_tostring(L,-1));
+
+	/* clean up and return the result */
+	lua_settop(L, top);
+	if (is_my_state)
+	{
+		luastate_destroy(L);
+	}
+
+	return result;
 }
 
 

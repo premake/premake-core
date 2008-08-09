@@ -19,7 +19,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2008_Signature_IsCorrect)
 	{
-		vs2008_solution_signature(sess, sln, strm);
+		vs2008_solution_signature(sln, strm);
 		CHECK_EQUAL(
 			"\357\273\277\r\n"
 			"Microsoft Visual Studio Solution File, Format Version 10.00\r\n"

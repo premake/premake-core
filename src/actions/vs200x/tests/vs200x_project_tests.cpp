@@ -8,6 +8,7 @@
 #include "actions/tests/action_tests.h"
 extern "C" {
 #include "actions/vs200x/vs200x_project.h"
+#include "base/env.h"
 }
 
 
@@ -19,7 +20,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Encoding)
 	{
-		vs200x_project_encoding(sess, prj, strm);
+		vs200x_project_encoding(prj, strm);
 		CHECK_EQUAL(
 			"<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\r\n",
 			buffer);
@@ -32,8 +33,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsProject_OnVs2002)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_element(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_element(prj, strm);
 		CHECK_EQUAL(
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
@@ -46,8 +47,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsProject_OnVs2003)
 	{
-		session_set_action(sess, "vs2003");
-		vs200x_project_element(sess, prj, strm);
+		env_set_action("vs2003");
+		vs200x_project_element(prj, strm);
 		CHECK_EQUAL(
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
@@ -60,8 +61,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsProject_OnVs2005)
 	{
-		session_set_action(sess, "vs2005");
-		vs200x_project_element(sess, prj, strm);
+		env_set_action("vs2005");
+		vs200x_project_element(prj, strm);
 		CHECK_EQUAL(
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
@@ -76,8 +77,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsProject_OnVs2008)
 	{
-		session_set_action(sess, "vs2008");
-		vs200x_project_element(sess, prj, strm);
+		env_set_action("vs2008");
+		vs200x_project_element(prj, strm);
 		CHECK_EQUAL(
 			"<VisualStudioProject\n"
 			"\tProjectType=\"Visual C++\"\n"
@@ -98,8 +99,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Platforms)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_platforms(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_platforms(prj, strm);
 		CHECK_EQUAL(
 			"\t<Platforms>\n"
 			"\t\t<Platform\n"
@@ -115,8 +116,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsToolFiles_Defaults_OnVs2002)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_tool_files(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_tool_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<Configurations>\n",
 			buffer);
@@ -124,8 +125,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsToolFiles_Defaults_OnVs2003)
 	{
-		session_set_action(sess, "vs2003");
-		vs200x_project_tool_files(sess, prj, strm);
+		env_set_action("vs2003");
+		vs200x_project_tool_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<Configurations>\n",
 			buffer);
@@ -133,8 +134,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsToolFiles_Defaults_OnVs2005)
 	{
-		session_set_action(sess, "vs2005");
-		vs200x_project_tool_files(sess, prj, strm);
+		env_set_action("vs2005");
+		vs200x_project_tool_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<ToolFiles>\n"
 			"\t</ToolFiles>\n"
@@ -144,8 +145,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsToolFiles_Defaults_OnVs2008)
 	{
-		session_set_action(sess, "vs2008");
-		vs200x_project_tool_files(sess, prj, strm);
+		env_set_action("vs2008");
+		vs200x_project_tool_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<ToolFiles>\n"
 			"\t</ToolFiles>\n"
@@ -161,8 +162,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Configuration)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_config_element(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_config_element(prj, strm);
 		CHECK_EQUAL(
 			"\t\t<Configuration\n"
 			"\t\t\tName=\"Debug DLL|Win32\"\n"
@@ -180,8 +181,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCALinkTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_alink_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_alink_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCALinkTool\"/>\n",
@@ -190,8 +191,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCAppVerifierTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_app_verifier_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_app_verifier_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCAppVerifierTool\"/>\n",
@@ -200,8 +201,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCBscMakeTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_bsc_make_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_bsc_make_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCBscMakeTool\"/>\n",
@@ -210,8 +211,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCCustomBuildTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_custom_build_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_custom_build_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCCustomBuildTool\"/>\n",
@@ -220,8 +221,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCFxCopTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_fx_cop_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_fx_cop_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCFxCopTool\"/>\n",
@@ -230,8 +231,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCManagedResourceCompilerTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_managed_resource_compiler_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_managed_resource_compiler_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCManagedResourceCompilerTool\"/>\n",
@@ -240,8 +241,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCManifestTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_manifest_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_manifest_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCManifestTool\"/>\n",
@@ -250,8 +251,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCMIDLTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_midl_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_midl_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCMIDLTool\"/>\n",
@@ -260,8 +261,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCPreBuildEventTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_pre_build_event_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_pre_build_event_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCPreBuildEventTool\"/>\n",
@@ -270,8 +271,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCPreLinkEventTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_pre_link_event_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_pre_link_event_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCPreLinkEventTool\"/>\n",
@@ -280,8 +281,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCPostBuildEventTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_post_build_event_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_post_build_event_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCPostBuildEventTool\"/>\n",
@@ -290,8 +291,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCResourceCompilerTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_resource_compiler_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_resource_compiler_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCResourceCompilerTool\"/>\n",
@@ -300,8 +301,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCWebDeploymentTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_web_deployment_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_web_deployment_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCWebDeploymentTool\"/>\n",
@@ -310,8 +311,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCWebServiceProxyGeneratorTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_web_service_proxy_generator_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_web_service_proxy_generator_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCWebServiceProxyGeneratorTool\"/>\n",
@@ -320,8 +321,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCXDCMakeTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_xdc_make_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_xdc_make_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCXDCMakeTool\"/>\n",
@@ -330,8 +331,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_VCXMLDataGeneratorTool)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_vc_xml_data_generator_tool(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_vc_xml_data_generator_tool(prj, strm);
 		CHECK_EQUAL(
 			"\t\t\t<Tool\n"
 			"\t\t\t\tName=\"VCXMLDataGeneratorTool\"/>\n",
@@ -345,8 +346,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsReferences_Defaults_OnVs2002)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_references(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_references(prj, strm);
 		CHECK_EQUAL(
 			"\t</Configurations>\n",
 			buffer);
@@ -354,8 +355,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsReferences_Defaults_OnVs2003)
 	{
-		session_set_action(sess, "vs2003");
-		vs200x_project_references(sess, prj, strm);
+		env_set_action("vs2003");
+		vs200x_project_references(prj, strm);
 		CHECK_EQUAL(
 			"\t</Configurations>\n"
 			"\t<References>\n"
@@ -365,8 +366,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsReferences_Defaults_OnVs2005)
 	{
-		session_set_action(sess, "vs2005");
-		vs200x_project_references(sess, prj, strm);
+		env_set_action("vs2005");
+		vs200x_project_references(prj, strm);
 		CHECK_EQUAL(
 			"\t</Configurations>\n"
 			"\t<References>\n"
@@ -376,8 +377,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, VsReferences_Defaults_OnVs2008)
 	{
-		session_set_action(sess, "vs2008");
-		vs200x_project_references(sess, prj, strm);
+		env_set_action("vs2008");
+		vs200x_project_references(prj, strm);
 		CHECK_EQUAL(
 			"\t</Configurations>\n"
 			"\t<References>\n"
@@ -392,8 +393,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnNoFiles)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_files(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<Files>\n"
 			"\t</Files>\n",
@@ -402,10 +403,10 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnSingleCppFile)
 	{
-		session_set_action(sess, "vs2002");
+		env_set_action("vs2002");
 		char* values[] = { "Hello.cpp", 0 };
 		SetField(prj, ProjectFiles, values);
-		vs200x_project_files(sess, prj, strm);
+		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<Files>\n"
 			"\t\t<File\n"
@@ -417,10 +418,10 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnUpperDirectory)
 	{
-		session_set_action(sess, "vs2002");
+		env_set_action("vs2002");
 		char* values[] = { "../../Hello.cpp", 0 };
 		SetField(prj, ProjectFiles, values);
-		vs200x_project_files(sess, prj, strm);
+		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<Files>\n"
 			"\t\t<File\n"
@@ -432,10 +433,10 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnGroupedCppFile)
 	{
-		session_set_action(sess, "vs2002");
+		env_set_action("vs2002");
 		char* values[] = { "Src/Hello.cpp", 0 };
 		SetField(prj, ProjectFiles, values);
-		vs200x_project_files(sess, prj, strm);
+		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(
 			"\t<Files>\n"
 			"\t\t<Filter\n"
@@ -456,8 +457,8 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs200x_Globals)
 	{
-		session_set_action(sess, "vs2002");
-		vs200x_project_globals(sess, prj, strm);
+		env_set_action("vs2002");
+		vs200x_project_globals(prj, strm);
 		CHECK_EQUAL(
 			"\t<Globals>\n"
 			"\t</Globals>\n"

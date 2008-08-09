@@ -12,26 +12,25 @@
 #include "base/string.h"
 
 
-static int sourcetree_do(Session sess, Project prj, Stream strm, SourceTreeCallback handler, const char* group);
+static int sourcetree_do(Project prj, Stream strm, SourceTreeCallback handler, const char* group);
 
 
 /**
  * Walk a list of source files and pass them off, in nesting order, to
  * the specified callback. Handles the grouping of related files info
  * groups (by directory currently).
- * \param   sess     The current execution session context.
  * \param   prj      The project containing the files to enumerate.
  * \param   strm     The active output stream.
  * \param   handler  The per-file handler function.
  * \returns OKAY on success.
  */
-int sourcetree_walk(Session sess, Project prj, Stream strm, SourceTreeCallback handler)
+int sourcetree_walk(Project prj, Stream strm, SourceTreeCallback handler)
 {
-	return sourcetree_do(sess, prj, strm, handler, "");
+	return sourcetree_do(prj, strm, handler, "");
 }
 
 
-static int sourcetree_do(Session sess, Project prj, Stream strm, SourceTreeCallback handler, const char* group)
+static int sourcetree_do(Project prj, Stream strm, SourceTreeCallback handler, const char* group)
 {
 	int i, n;
 	unsigned group_len;
@@ -44,7 +43,7 @@ static int sourcetree_do(Session sess, Project prj, Stream strm, SourceTreeCallb
 	buffer = buffers_next();
 	strcpy(buffer, group);
 	cstr_trim(buffer, '/');
-	handler(sess, prj, strm, buffer, GroupStart);
+	handler(prj, strm, buffer, GroupStart);
 
 	/* scan all files in this group and process any subdirectories (subgroups) */
 	files = project_get_files(prj);
@@ -79,7 +78,7 @@ static int sourcetree_do(Session sess, Project prj, Stream strm, SourceTreeCallb
 				{
 					/* a new group, process it now */
 					String new_group = string_create(buffer);
-					int z = sourcetree_do(sess, prj, strm, handler, string_cstr(new_group));
+					int z = sourcetree_do(prj, strm, handler, string_cstr(new_group));
 					string_destroy(new_group);
 					if (z != OKAY) return !OKAY;
 				}
@@ -93,7 +92,7 @@ static int sourcetree_do(Session sess, Project prj, Stream strm, SourceTreeCallb
 		const char* filename = strings_item(files, i);
 		if (cstr_starts_with(filename, group) && strchr(filename + group_len, '/') == NULL)
 		{
-			if (handler(sess, prj, strm, filename, SourceFile) != OKAY)
+			if (handler(prj, strm, filename, SourceFile) != OKAY)
 				return !OKAY;
 		}
 	}
@@ -102,7 +101,7 @@ static int sourcetree_do(Session sess, Project prj, Stream strm, SourceTreeCallb
 	buffer = buffers_next();
 	strcpy(buffer, group);
 	cstr_trim(buffer, '/');
-	handler(sess, prj, strm, buffer, GroupEnd);
+	handler(prj, strm, buffer, GroupEnd);
 	return OKAY;
 }
 

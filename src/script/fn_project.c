@@ -19,12 +19,12 @@ int fn_project(lua_State* L)
 	/* if there are no parameters, return the active project */
 	if (lua_gettop(L) == 0)
 	{
-		script_internal_get_active_object(L, ProjectObject, OPTIONAL);
+		script_internal_get_active_object(L, ProjectObject, IS_OPTIONAL);
 		return 1;
 	}
 
 	/* get the active solution, which will contain this project */
-	if (!script_internal_get_active_object(L, SolutionObject, REQUIRED))
+	if (!script_internal_get_active_object(L, SolutionObject, IS_REQUIRED))
 	{
 		return 0;
 	}

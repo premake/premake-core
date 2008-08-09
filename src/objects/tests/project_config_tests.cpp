@@ -7,9 +7,8 @@
 #include "premake.h"
 #include "testing/testing.h"
 extern "C" {
-#include "project/solution.h"
-#include "project/project.h"
-#include "project/project_internal.h"
+#include "objects/solution.h"
+#include "objects/objects_internal.h"
 }
 
 

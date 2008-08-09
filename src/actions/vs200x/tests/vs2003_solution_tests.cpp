@@ -19,7 +19,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2003_Signature_IsCorrect)
 	{
-		vs2003_solution_signature(sess, sln, strm);
+		vs2003_solution_signature(sln, strm);
 		CHECK_EQUAL(
 			"Microsoft Visual Studio Solution File, Format Version 8.00\r\n",
 			buffer);
@@ -32,7 +32,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2003_SolutionConfiguration_IsCorrect)
 	{
-		vs2003_solution_configuration(sess, sln, strm);
+		vs2003_solution_configuration(sln, strm);
 		CHECK_EQUAL(
 			"Global\n"
 			"\tGlobalSection(SolutionConfiguration) = preSolution\n"

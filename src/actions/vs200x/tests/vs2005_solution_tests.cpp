@@ -19,7 +19,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Vs2005_Signature_IsCorrect)
 	{
-		vs2005_solution_signature(sess, sln, strm);
+		vs2005_solution_signature(sln, strm);
 		CHECK_EQUAL(
 			"\357\273\277\r\n"
 			"Microsoft Visual Studio Solution File, Format Version 9.00\r\n"
@@ -34,7 +34,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Platforms_IsCorrect)
 	{
-		vs2005_solution_platforms(sess, sln, strm);
+		vs2005_solution_platforms(sln, strm);
 		CHECK_EQUAL(
 			"Global\n"
 			"\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n"
@@ -51,7 +51,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, ProjectPlatforms_IsCorrect)
 	{
-		vs2005_solution_project_platforms(sess, sln, strm);
+		vs2005_solution_project_platforms(sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n"
 			"\t\t{AE2461B7-236F-4278-81D3-F0D476F9A4C0}.Debug DLL|Win32.ActiveCfg = Debug DLL|Win32\n"
@@ -69,7 +69,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Properties_IsCorrect)
 	{
-		vs2005_solution_properties(sess, sln, strm);
+		vs2005_solution_properties(sln, strm);
 		CHECK_EQUAL(
 			"\tGlobalSection(SolutionProperties) = preSolution\n"
 			"\t\tHideSolutionNode = FALSE\n"

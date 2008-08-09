@@ -18,7 +18,7 @@ int fn_solution(lua_State* L)
 	/* if there are no parameters, return the active solution */
 	if (lua_gettop(L) == 0)
 	{
-		script_internal_get_active_object(L, SolutionObject, OPTIONAL);
+		script_internal_get_active_object(L, SolutionObject, IS_OPTIONAL);
 		return 1;
 	}
 

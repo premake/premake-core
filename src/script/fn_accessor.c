@@ -109,7 +109,7 @@ int fn_accessor(lua_State* L)
 
 	/* get the required container object */
 	container_type = lua_tointeger(L, lua_upvalueindex(1));
-	if (!script_internal_get_active_object(L, container_type, REQUIRED))
+	if (!script_internal_get_active_object(L, container_type, IS_REQUIRED))
 	{
 		return 0;
 	}
