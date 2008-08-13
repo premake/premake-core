@@ -111,13 +111,15 @@ const char* make_solution_project_rule(Solution sln, Project prj)
 	char* buffer = buffers_next();
 
 	/* project file paths are specified relative to the solution */
-	const char* sln_path = path_directory(solution_get_filename(sln, NULL, NULL));
-
+	const char* sln_file_dir  = solution_get_location(sln);
+	
 	const char* prj_file      = make_get_project_makefile(prj);
 	const char* prj_file_dir  = path_directory(prj_file);
 	const char* prj_file_name = path_filename(prj_file);
-	prj_file_dir = path_relative(sln_path, prj_file_dir);
+	
+	prj_file_dir = path_relative(sln_file_dir, prj_file_dir);
 
+	/* build the rule */
 	strcpy(buffer, "\t@$(MAKE)");
 	if (!cstr_eq(".", prj_file_dir))
 	{

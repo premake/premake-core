@@ -96,12 +96,7 @@ int vs2002_solution_project_configuration(Solution sln, Stream strm)
  */
 int vs2002_solution_projects(Solution sln, Stream strm)
 {
-	const char* sln_path;
 	int i, n, z = OKAY;
-
-	/* project file paths are specified relative to the solution */
-	sln_path = path_directory(solution_get_filename(sln, NULL, NULL));
-
 	n = solution_num_projects(sln);
 	for (i = 0; i < n; ++i)
 	{
@@ -110,13 +105,10 @@ int vs2002_solution_projects(Solution sln, Stream strm)
 		const char* prj_id    = project_get_guid(prj);
 		const char* prj_lang  = project_get_language(prj);
 		const char* prj_ext   = vs200x_project_file_extension(prj);
-		const char* prj_file  = project_get_filename(prj, prj_name, prj_ext);
+		const char* prj_file  = project_get_filename_relative(prj, prj_name, prj_ext);
 		const char* tool_id   = vs200x_tool_guid(prj_lang);
 
-		/* convert absolute project file name to be relative to solution */
-		prj_file = path_relative(sln_path, prj_file);
 		prj_file = path_translate(prj_file, "\\");
-
 		z |= stream_writeline(strm, "Project(\"{%s}\") = \"%s\", \"%s\", \"{%s}\"", tool_id, prj_name, prj_file, prj_id);
 		z |= stream_writeline(strm, "EndProject");
 	}

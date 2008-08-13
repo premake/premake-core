@@ -63,44 +63,47 @@ const char* make_get_obj_filename(const char* filename)
 const char* make_get_project_makefile(Project prj)
 {
 	const char* my_path;
-	const char* their_path;
-	int si, sn;
+	int si, sn, in_conflict = 0;
+
 	Session sess = project_get_session(prj);
 
-	/* get the full makefile path for this project */
-	my_path = project_get_filename(prj, "Makefile", NULL);
+	/* get the default filename for this project */
+	my_path = project_get_filename(prj, "Makefile", "");
 
 	/* see if any other solution wants to use this same path */
 	sn = session_num_solutions(sess);
-	for (si = 0; si < sn; ++si)
+	for (si = 0; si < sn && !in_conflict; ++si)
 	{
+		const char* their_path;
 		int pi, pn;
 
-		Solution sln2 = session_get_solution(sess, si);
-		their_path = solution_get_filename(sln2, "Makefile", NULL);
+		Solution sln = session_get_solution(sess, si);
+		their_path = solution_get_filename(sln, "Makefile", "");
 		if (cstr_eq(my_path, their_path))
 		{
-			/* conflict; use the alternate name */
-			my_path = project_get_filename(prj, NULL, ".make");
-			return my_path;
+			in_conflict = 1;
 		}
 
 		/* check any projects contained by this solution */
-		pn = solution_num_projects(sln2);
-		for (pi = 0; pi < pn; ++pi)
+		pn = solution_num_projects(sln);
+		for (pi = 0; pi < pn && !in_conflict; ++pi)
 		{
-			Project prj2 = solution_get_project(sln2, pi);
+			Project prj2 = solution_get_project(sln, pi);
 			if (prj != prj2)
 			{
-				their_path = project_get_filename(prj2, "Makefile", NULL);
+				their_path = project_get_filename(prj2, "Makefile", "");
 				if (cstr_eq(my_path, their_path))
 				{
-					/* conflict; use the alternate name */
-					my_path = project_get_filename(prj, NULL, ".make");
-					return my_path;
+					in_conflict = 1;
 				}
 			}
 		}
+	}
+
+	/* if a conflict was detected use an alternate name */
+	if (in_conflict)
+	{
+		my_path = project_get_filename(prj, NULL, ".make");
 	}
 
 	/* all good */
@@ -142,12 +145,12 @@ Strings make_get_project_names(Solution sln)
 const char* make_get_solution_makefile(Solution sln)
 {
 	const char* my_path;
-	const char* their_path;
 	int i, n;
+	
 	Session sess = solution_get_session(sln);
 
-	/* get the full makefile path for this solution */
-	my_path = solution_get_filename(sln, "Makefile", NULL);
+	/* get the default file name for this solution */
+	my_path = solution_get_filename(sln, "Makefile", "");
 
 	/* see if any other solution wants to use this same path */
 	n = session_num_solutions(sess);
@@ -156,7 +159,7 @@ const char* make_get_solution_makefile(Solution sln)
 		Solution them = session_get_solution(sess, i);
 		if (them != sln)
 		{
-			their_path = solution_get_filename(them, "Makefile", NULL);
+			const char* their_path = solution_get_filename(them, "Makefile", "");
 			if (cstr_eq(my_path, their_path))
 			{
 				/* conflict; use the alternate name */

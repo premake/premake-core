@@ -25,7 +25,7 @@ enum BlockField
 	NumBlockFields
 };
 
-extern struct FieldInfo BlockFieldInfo[];
+extern FieldInfo BlockFieldInfo[];
 
 
 DECLARE_CLASS(Block)

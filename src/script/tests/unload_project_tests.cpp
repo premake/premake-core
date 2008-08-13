@@ -28,6 +28,7 @@ struct FxUnloadProject
 			"solution('MySolution');"
 			"  configurations {'Debug','Release'};"
 			"prj = project('MyProject');"
+			"  prj.basedir = '/basedir';"
 			"  guid '0C202E43-B9AF-4972-822B-5A42F0BF008C';"
 			"  language 'c++';"
 			"  files { 'Hello.cpp', 'Goodbye.cpp' };"
@@ -55,7 +56,7 @@ SUITE(unload)
 	{
 		unload_project(L, prj);
 		const char* result = project_get_base_dir(prj);
-		CHECK_EQUAL("(string)", result);
+		CHECK_EQUAL("/basedir", result);
 	}
 
 	TEST_FIXTURE(FxUnloadProject, UnloadProject_UnloadsFiles)
@@ -66,6 +67,18 @@ SUITE(unload)
 		if (strings_size(files) == 2) {
 			CHECK_EQUAL("Hello.cpp", strings_item(files, 0));
 			CHECK_EQUAL("Goodbye.cpp", strings_item(files, 1));
+		}
+	}
+
+	TEST_FIXTURE(FxUnloadProject, UnloadProject_RepointsFiles_OnLocation)
+	{
+		script_run_string(script, "location 'build'; return prj");
+		unload_project(L, prj);
+		Strings files = project_get_files(prj);
+		CHECK(strings_size(files) == 2);
+		if (strings_size(files) == 2) {
+			CHECK_EQUAL("../Hello.cpp", strings_item(files, 0));
+			CHECK_EQUAL("../Goodbye.cpp", strings_item(files, 1));
 		}
 	}
 
@@ -81,6 +94,21 @@ SUITE(unload)
 		unload_project(L, prj);
 		const char* result = project_get_language(prj);
 		CHECK_EQUAL("c++", result);
+	}
+
+	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsLocation_OnUnsetLocation)
+	{
+		unload_project(L, prj);
+		const char* result = project_get_location(prj);
+		CHECK_EQUAL("/basedir", result);
+	}
+
+	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsLocation_OnSetLocation)
+	{
+		script_run_string(script, "location 'location'; return prj");
+		unload_project(L, prj);
+		const char* result = project_get_location(prj);
+		CHECK_EQUAL("/basedir/location", result);
 	}
 }
 

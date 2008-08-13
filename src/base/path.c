@@ -236,7 +236,6 @@ char* path_join(const char* leading, const char* trailing)
 	
 	/* treat nulls like empty paths */
 	leading = (leading != NULL) ? leading : "";
-	trailing = (trailing != NULL) ? trailing : "";
 
 	if (!trailing)
 	{

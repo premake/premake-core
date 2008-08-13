@@ -29,7 +29,8 @@ int script_internal_create_block(lua_State* L)
 	/* set all list-type configuration block values to empty tables */
 	for (i = 0; i < NumBlockFields; ++i)
 	{
-		if (BlockFieldInfo[i].kind != StringField)
+		int kind = BlockFieldInfo[i].kind;
+		if (kind != StringField && kind != PathField)
 		{
 			lua_newtable(L);
 			lua_setfield(L, -2, BlockFieldInfo[i].name);
@@ -184,14 +185,14 @@ const char* script_internal_script_dir(lua_State* L)
  * \param   L       The Lua state.
  * \param   fields  The list of object fields.
  */
-void script_internal_populate_object(lua_State* L, struct FieldInfo* fields)
+void script_internal_populate_object(lua_State* L, FieldInfo* fields)
 {
-	struct FieldInfo* field;
+	FieldInfo* field;
 
 	/* set all list-type configuration values to empty tables */
 	for (field = fields; field->name != NULL; ++field)
 	{
-		if (field->kind != StringField)
+		if (field->kind != StringField && field->kind != PathField)
 		{
 			lua_newtable(L);
 			lua_setfield(L, -2, field->name);

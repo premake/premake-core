@@ -21,12 +21,16 @@ struct FxProject
 	FxProject()
 	{
 		sln = solution_create();
+		solution_set_name(sln, "MySolution");
+		solution_set_location(sln, "/BaseDir/MySolution");
+
 		prj = project_create();
+		solution_add_project(sln, prj);
+		project_set_name(prj, "MyProject");
 	}
 
 	~FxProject()
 	{
-		project_destroy(prj);
 		solution_destroy(sln);
 	}
 };
@@ -44,21 +48,18 @@ SUITE(project)
 	 * Filename tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxProject, GetFilename_ReturnsFullPath_OnNoLocation)
+	TEST_FIXTURE(FxProject, GetFilenameRel_ReturnsCorrectPath_OnSameDir)
 	{
-		project_set_name(prj, "MyProject");
-		project_set_base_dir(prj, "/BaseDir");
-		const char* filename = project_get_filename(prj, NULL, ".xyz");
-		CHECK_EQUAL("/BaseDir/MyProject.xyz", filename);
+		project_set_location(prj, "/BaseDir/MySolution");
+		const char* filename = project_get_filename_relative(prj, NULL, ".xyz");
+		CHECK_EQUAL("MyProject.xyz", filename);
 	}
 
-	TEST_FIXTURE(FxProject, GetFilename_ReturnsFullPath_OnLocation)
+	TEST_FIXTURE(FxProject, GetFilenameRel_ReturnsCorrectPath_OnDifferentDir)
 	{
-		project_set_name(prj, "MyProject");
-		project_set_base_dir(prj, "/BaseDir");
-		project_set_location(prj, "Location");
-		const char* filename = project_get_filename(prj, NULL, ".xyz");
-		CHECK_EQUAL("/BaseDir/Location/MyProject.xyz", filename);
+		project_set_location(prj, "/BaseDir/MyProject");
+		const char* filename = project_get_filename_relative(prj, NULL, ".xyz");
+		CHECK_EQUAL("../MyProject/MyProject.xyz", filename);
 	}
 
 
@@ -101,15 +102,8 @@ SUITE(project)
 	 * Solution tests
 	 **********************************************************************/
 
-	TEST_FIXTURE(FxProject, GetSolution_ReturnsNull_OnStartup)
-	{
-		Solution result = project_get_solution(prj);
-		CHECK(result == NULL);
-	}
-
 	TEST_FIXTURE(FxProject, SetSolution_CanRoundtrip)
 	{
-		project_set_solution(prj, sln);
 		CHECK(sln == project_get_solution(prj));
 	}
 

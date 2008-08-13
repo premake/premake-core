@@ -17,7 +17,7 @@
 #include "base/strings.h"
 
 
-struct FieldInfo ProjectFieldInfo[] =
+FieldInfo ProjectFieldInfo[] =
 {
 	{ "basedir",    StringField,  NULL            },
 	{ "files",      FilesField,   NULL            },
@@ -87,7 +87,7 @@ void project_destroy(Project prj)
  */
 const char* project_get_base_dir(Project prj)
 {
-	return project_get_value(prj, ProjectBaseDirectory);
+	return project_get_value(prj, ProjectBaseDir);
 }
 
 
@@ -157,7 +157,6 @@ Strings project_get_config_values(Project prj, enum BlockField field)
 
 	project_get_values_from_blocks(prj, values, solution_get_blocks(prj->solution), field);
 	project_get_values_from_blocks(prj, values, project_get_blocks(prj), field);
-
 	return values;
 }
 
@@ -183,7 +182,7 @@ Fields project_get_fields(Project prj)
 
 
 /**
- * Get the path to the project output file, using the provided file extension.
+ * Get the path to the project output file, using the provided file name and extension.
  * \param   prj      The project object to query.
  * \param   basename The base filename; if NULL the project name will be used.
  * \param   ext      The file extension to be used on the filename; may be NULL.
@@ -191,31 +190,36 @@ Fields project_get_fields(Project prj)
  */
 const char* project_get_filename(Project prj, const char* basename, const char* ext)
 {
-	const char* base_dir;
-	const char* location;
-	const char* directory;
-	const char* result;
-
-	assert(prj);
-
+	const char* location = project_get_location(prj);
 	if (!basename)
 	{
 		basename = project_get_name(prj);
 	}
-
-
-	if (!ext)
-	{
-		ext = "";
-	}
-
-	base_dir = project_get_base_dir(prj);
-	location = project_get_location(prj);
-	directory = path_join(base_dir, location);
-
-	result = path_assemble(directory, basename, ext);
-	return result;
+	return path_assemble(location, basename, ext);
 }
+
+
+/**
+ * Get the relative path from the solution to the project file, using the 
+ * provided file name and extension.
+ * \param   prj      The project object to query.
+ * \param   basename The base filename; if NULL the project name will be used.
+ * \param   ext      The file extension to be used on the filename; may be NULL.
+ * \returns The path to the project file.
+ */
+const char* project_get_filename_relative(Project prj, const char* basename, const char* ext)
+{
+	const char* sln_location;
+	const char* abs_filename;
+	assert(prj);
+	assert(prj->solution);
+
+	sln_location = solution_get_location(prj->solution);
+	abs_filename = project_get_filename(prj, basename, ext);
+
+	return path_relative(sln_location, abs_filename);
+}
+
 
 
 /**
@@ -334,7 +338,7 @@ int project_is_valid_language(const char* language)
  */
 void project_set_base_dir(Project prj, const char* base_dir)
 {
-	project_set_value(prj, ProjectBaseDirectory, base_dir);
+	project_set_value(prj, ProjectBaseDir, base_dir);
 }
 
 

@@ -40,7 +40,7 @@ struct FxMake
 		Solution sln = solution_create();
 		session_add_solution(sess, sln);
 		solution_set_name(sln, name);
-		solution_set_base_dir(sln, ".");
+		solution_set_location(sln, ".");
 		return sln;
 	}
 
@@ -49,7 +49,7 @@ struct FxMake
 		Project prj = project_create();
 		solution_add_project(sln1, prj);
 		project_set_name(prj, name);
-		project_set_base_dir(prj, ".");
+		project_set_location(prj, ".");
 		return prj;
 	}
 };
@@ -63,7 +63,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxMake, GetSolutionMakefile_ReturnsMakefile_OnUniqueLocation)
 	{
-		solution_set_location(sln1, "MySolution");
+		solution_set_location(sln1, "./MySolution");
 		const char* result = make_get_solution_makefile(sln1);
 		CHECK_EQUAL("./MySolution/Makefile", result);
 	}
@@ -76,22 +76,22 @@ SUITE(action)
 
 	TEST_FIXTURE(FxMake, GetProjectMakefile_ReturnsMakefile_OnUniqueLocation)
 	{
-		project_set_location(prj1, "MyProject");
+		project_set_location(prj1, "./MyProject");
 		const char* result = make_get_project_makefile(prj1);
 		CHECK_EQUAL("./MyProject/Makefile", result);
 	}
 
 	TEST_FIXTURE(FxMake, GetProjectMakefile_ReturnsDotMake_OnSharedWithSolution)
 	{
-		project_set_location(prj2, "MyProject");
+		project_set_location(prj2, "./MyProject");
 		const char* result = make_get_project_makefile(prj1);
 		CHECK_EQUAL("./MyProject1.make", result);
 	}
 
 	TEST_FIXTURE(FxMake, GetProjectMakefile_ReturnsDotMake_OnSharedWithProject)
 	{
-		project_set_location(prj1, "MyProject");
-		project_set_location(prj2, "MyProject");
+		project_set_location(prj1, "./MyProject");
+		project_set_location(prj2, "./MyProject");
 		const char* result = make_get_project_makefile(prj1);
 		CHECK_EQUAL("./MyProject/MyProject1.make", result);
 	}

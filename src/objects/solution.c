@@ -15,7 +15,7 @@
 #include "base/strings.h"
 
 
-struct FieldInfo SolutionFieldInfo[] =
+FieldInfo SolutionFieldInfo[] =
 {
 	{ "basedir",        StringField,  NULL                       },
 	{ "configurations", ListField,    NULL                       },
@@ -101,7 +101,7 @@ void solution_add_project(Solution sln, Project prj)
  */
 const char* solution_get_base_dir(Solution sln)
 {
-	return solution_get_value(sln, SolutionBaseDirectory);
+	return solution_get_value(sln, SolutionBaseDir);
 }
 
 
@@ -158,29 +158,12 @@ Fields solution_get_fields(Solution sln)
  */
 const char* solution_get_filename(Solution sln, const char* basename, const char* ext)
 {
-	const char* base_dir;
-	const char* location;
-	const char* directory;
-	const char* result;
-
-	assert(sln);
-
+	const char* location = solution_get_location(sln);
 	if (!basename)
 	{
 		basename = solution_get_name(sln);
 	}
-
-	if (!ext)
-	{
-		ext = "";
-	}
-
-	base_dir = solution_get_base_dir(sln);
-	location = solution_get_location(sln);
-	directory = path_join(base_dir, location);
-
-	result = path_assemble(directory, basename, ext);
-	return result;
+	return path_assemble(location, basename, ext);
 }
 
 
@@ -273,7 +256,7 @@ int solution_num_projects(Solution sln)
  */
 void solution_set_base_dir(Solution sln, const char* base_dir)
 {
-	solution_set_value(sln, SolutionBaseDirectory, base_dir);
+	solution_set_value(sln, SolutionBaseDir, base_dir);
 }
 
 

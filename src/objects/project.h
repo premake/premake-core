@@ -24,7 +24,7 @@ DECLARE_CLASS(Project)
  */
 enum ProjectField
 {
-	ProjectBaseDirectory,
+	ProjectBaseDir,
 	ProjectFiles,
 	ProjectGuid,
 	ProjectLanguage,
@@ -33,7 +33,7 @@ enum ProjectField
 	NumProjectFields
 };
 
-extern struct FieldInfo ProjectFieldInfo[];
+extern FieldInfo ProjectFieldInfo[];
 
 
 Project     project_create(void);
@@ -45,6 +45,7 @@ const char* project_get_config(Project prj);
 Strings     project_get_config_values(Project prj, enum BlockField field);
 Fields      project_get_fields(Project prj);
 const char* project_get_filename(Project prj, const char* basename, const char* ext);
+const char* project_get_filename_relative(Project prj, const char* basename, const char* ext);
 Strings     project_get_files(Project prj);
 const char* project_get_guid(Project prj);
 const char* project_get_language(Project prj);

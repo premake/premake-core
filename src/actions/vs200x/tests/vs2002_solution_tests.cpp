@@ -34,7 +34,7 @@ SUITE(action)
 	{
 		vs2002_solution_projects(sln, strm);			
 		CHECK_EQUAL(
-			"Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"My Project\", \"Project Folder\\My Project.vcproj\", \"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
+			"Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"My Project\", \"..\\Project Folder\\My Project.vcproj\", \"{AE2461B7-236F-4278-81D3-F0D476F9A4C0}\"\n"
 			"EndProject\n",
 			buffer);
 	}

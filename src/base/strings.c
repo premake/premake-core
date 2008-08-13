@@ -8,6 +8,8 @@
 #include "premake.h"
 #include "strings.h"
 #include "base/array.h"
+#include "base/string.h"
+
 
 DEFINE_CLASS(Strings)
 {
@@ -50,6 +52,13 @@ Strings strings_create_from_array(const char* items[])
  */
 void strings_destroy(Strings strs)
 {
+	int i, n;
+	n = strings_size(strs);
+	for (i = 0; i < n; ++i)
+	{
+		String item = (String)array_item(strs->contents, i);
+		string_destroy(item);
+	}
 	array_destroy(strs->contents);
 	free(strs);
 }
@@ -62,7 +71,8 @@ void strings_destroy(Strings strs)
  */
 void strings_add(Strings strs, const char* item)
 {
-	array_add(strs->contents, (void*)item);
+	String str = string_create(item);
+	array_add(strs->contents, (void*)str);
 }
 
 
@@ -73,7 +83,13 @@ void strings_add(Strings strs, const char* item)
  */
 void strings_append(Strings dest, Strings src)
 {
-	array_append(dest->contents, src->contents);
+	int i, n;
+	n = strings_size(src);
+	for (i = 0; i < n; ++i)
+	{
+		const char* item = strings_item(src, i);
+		strings_add(dest, item);
+	}
 }
 
 
@@ -85,7 +101,8 @@ void strings_append(Strings dest, Strings src)
  */
 const char* strings_item(Strings strs, int index)
 {
-	return (const char*)array_item(strs->contents, index);
+	String item = (String)array_item(strs->contents, index);
+	return string_cstr(item);
 }
 
 
@@ -97,7 +114,11 @@ const char* strings_item(Strings strs, int index)
  */
 void strings_set(Strings strs, int index, const char* item)
 {
-	array_set(strs->contents, index, (void*)item);
+	String str = (String)array_item(strs->contents, index);
+	string_destroy(str);
+
+	str = string_create(item);
+	array_set(strs->contents, index, (void*)str);
 }
 
 

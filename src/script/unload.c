@@ -7,10 +7,12 @@
 #include <assert.h>
 #include "premake.h"
 #include "script/script_internal.h"
+#include "base/path.h"
 
 
 static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Blocks blocks);
 static int unload_projects(lua_State* L, struct UnloadFuncs* funcs, Solution sln);
+static int unload_repoint_paths(Fields fields, int base_dir_idx, int location_idx);
 
 
 /**
@@ -126,7 +128,7 @@ static int unload_blocks(lua_State* L, struct UnloadFuncs* funcs, Blocks blocks)
 }
 
 
-int unload_fields(lua_State* L, Fields fields, struct FieldInfo* info)
+int unload_fields(lua_State* L, Fields fields, FieldInfo* info)
 {
 	const char* value;
 	int fi;
@@ -179,7 +181,10 @@ int unload_fields(lua_State* L, Fields fields, struct FieldInfo* info)
  */
 int unload_solution(lua_State* L, Solution sln)
 {
-	return unload_fields(L, solution_get_fields(sln), SolutionFieldInfo);
+	Fields fields = solution_get_fields(sln);
+	int z = unload_fields(L, fields, SolutionFieldInfo);
+	unload_repoint_paths(fields, SolutionBaseDir, SolutionLocation);
+	return z;
 }
 
 
@@ -191,7 +196,10 @@ int unload_solution(lua_State* L, Solution sln)
  */
 int unload_project(lua_State* L, Project prj)
 {
-	return unload_fields(L, project_get_fields(prj), ProjectFieldInfo);
+	Fields fields = project_get_fields(prj);
+	int z = unload_fields(L, fields, ProjectFieldInfo);
+	unload_repoint_paths(fields, ProjectBaseDir, ProjectLocation);
+	return z;
 }
 
 
@@ -204,4 +212,53 @@ int unload_project(lua_State* L, Project prj)
 int unload_block(lua_State* L, Block blk)
 {
 	return unload_fields(L, block_get_fields(blk), BlockFieldInfo);
+}
+
+
+
+/**
+ * Walks a list of fields and repoints all paths to be relative to
+ * base_directory/location. Once this is done, all paths will end up
+ * relative to the generated project or solution file.
+ * \param   fields        The list of fields to repoint.
+ * \param   base_dir_idx  The index of the BaseDir field in the field list.
+ * \param   location_idx  The index of the Location field in the field list.
+ */
+int unload_repoint_paths(Fields fields, int base_dir_idx, int location_idx)
+{
+	const char* base_dir;
+	const char* location;
+	int fi, fn;
+
+	/* first I have to update the Location field; this is the absolute path that
+	 * I will base all the other relative paths upon */
+	base_dir = fields_get_value(fields, base_dir_idx);
+	location = path_join(base_dir, fields_get_value(fields, location_idx));
+	fields_set_value(fields, location_idx, location);
+
+	/* now I can can for other pathed fields and repoint them */
+	fn = fields_size(fields);
+	for (fi = 0; fi < fn; ++fi)
+	{
+		/* only repoint pathed fields */
+		int kind = fields_get_kind(fields, fi);
+		if (kind == FilesField || kind == PathField)
+		{
+			/* enumerate all values of the field */
+			int vi, vn;
+			Strings values = fields_get_values(fields, fi);
+			vn = strings_size(values);
+			for (vi = 0; vi < vn; ++vi)
+			{
+				const char* value = strings_item(values, vi);
+
+				const char* abs_path = path_join(base_dir, value);
+				const char* rel_path = path_relative(location, abs_path);
+
+				strings_set(values, vi, rel_path);
+			}
+		}
+	}
+
+	return OKAY;
 }

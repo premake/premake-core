@@ -27,6 +27,8 @@ struct FxUnloadSolution
 		script_run_string(script,
 			"sln = solution('MySolution');"
 			"  configurations { 'Debug', 'Release' };"
+			"  sln.basedir = '/basedir';"
+			"  location 'location';"
 			"return sln");
 	}
 
@@ -51,7 +53,7 @@ SUITE(unload)
 	{
 		unload_solution(L, sln);
 		const char* result = solution_get_base_dir(sln);
-		CHECK_EQUAL("(string)", result);
+		CHECK_EQUAL("/basedir", result);
 	}
 
 	TEST_FIXTURE(FxUnloadSolution, UnloadSolution_SetsConfigurations)
@@ -60,6 +62,13 @@ SUITE(unload)
 		CHECK(solution_num_configs(sln) == 2);
 		CHECK_EQUAL("Debug", solution_get_config(sln, 0));
 		CHECK_EQUAL("Release", solution_get_config(sln, 1));
+	}
+
+	TEST_FIXTURE(FxUnloadSolution, UnloadSolution_SetsLocation)
+	{
+		unload_solution(L, sln);
+		const char* result = solution_get_location(sln);
+		CHECK_EQUAL("/basedir/location", result);
 	}
 }
 

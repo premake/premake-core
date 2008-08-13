@@ -10,10 +10,10 @@
 #include "base/error.h"
 
 
-static int  fn_accessor_object_has_field(struct FieldInfo* fields, const char* field_name);
-static int  fn_accessor_register(lua_State* L, struct FieldInfo* fields);
-static int  fn_accessor_register_field(lua_State* L, struct FieldInfo* field);
-static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx);
+static int  fn_accessor_object_has_field(FieldInfo* fields, const char* field_name);
+static int  fn_accessor_register(lua_State* L, FieldInfo* fields);
+static int  fn_accessor_register_field(lua_State* L, FieldInfo* field);
+static void fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, int idx);
 
 
 /**
@@ -37,7 +37,7 @@ int fn_accessor_register_all(lua_State* L)
  * Register the accessor functions for a particular set of fields.
  * \returns OKAY if successful.
  */
-static int fn_accessor_register(lua_State* L, struct FieldInfo* fields)
+static int fn_accessor_register(lua_State* L, FieldInfo* fields)
 {
 	int i, z = OKAY;
 
@@ -54,7 +54,7 @@ static int fn_accessor_register(lua_State* L, struct FieldInfo* fields)
  * Register a single accessor function.
  * \returns OKAY if successful.
  */
-static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field)
+static int fn_accessor_register_field(lua_State* L, FieldInfo* field)
 {
 	int container_type, z;
 
@@ -84,7 +84,7 @@ static int fn_accessor_register_field(lua_State* L, struct FieldInfo* field)
  * Determine if a field list contains a field with a particular name.
  * \returns True if the field is contained by the list.
  */
-static int fn_accessor_object_has_field(struct FieldInfo* fields, const char* field_name)
+static int fn_accessor_object_has_field(FieldInfo* fields, const char* field_name)
 {
 	int i;
 	for (i = 0; fields[i].name != NULL; ++i)
@@ -104,7 +104,7 @@ static int fn_accessor_object_has_field(struct FieldInfo* fields, const char* fi
  */
 int fn_accessor(lua_State* L)
 {
-	struct FieldInfo* field;
+	FieldInfo* field;
 	int container_type;
 
 	/* get the required container object */
@@ -115,12 +115,12 @@ int fn_accessor(lua_State* L)
 	}
 
 	/* get information about the field being accessed */
-	field = (struct FieldInfo*)lua_touserdata(L, lua_upvalueindex(2));
+	field = (FieldInfo*)lua_touserdata(L, lua_upvalueindex(2));
 
 	/* if a value is provided, set the field */
 	if (lua_gettop(L) > 1)
 	{
-		if (field->kind == StringField)
+		if (field->kind == StringField || field->kind == PathField)
 		{
 			fn_accessor_set_string_value(L, field);
 		}
@@ -140,7 +140,7 @@ int fn_accessor(lua_State* L)
  * Sets a string field to the value on the bottom of the Lua stack.
  * \returns OKAY if successful.
  */
-int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
+int fn_accessor_set_string_value(lua_State* L, FieldInfo* field)
 {
 	/* can't set lists to simple fields */
 	if (lua_istable(L, 1))
@@ -171,7 +171,7 @@ int fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field)
  * Appends the value or list at the bottom of the Lua stack to the specified list field.
  * \returns OKAY if successful.
  */
-int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
+int fn_accessor_set_list_value(lua_State* L, FieldInfo* field)
 {
 	/* get the current value of the field */
 	lua_getfield(L, -1, field->name);
@@ -194,7 +194,7 @@ int fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field)
  * \param   tbl    The table to contain the values.
  * \param   idx    The value to add to the table.
  */
-static void fn_accessor_append_value(lua_State* L, struct FieldInfo* field, int tbl, int idx)
+static void fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, int idx)
 {
 	int i, n;
 

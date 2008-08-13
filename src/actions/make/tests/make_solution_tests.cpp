@@ -83,7 +83,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Make_ProjectEntry_InSameDirectory)
 	{
-		project_set_location(prj, "");
+		project_set_location(prj, solution_get_location(sln));
 		make_solution_projects(sln, strm);
 		CHECK_EQUAL(
 			"My\\ Project:\n"
@@ -95,7 +95,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Make_ProjectEntry_InDifferentDirectory)
 	{
-		project_set_location(prj, "My Project");
+		project_set_location(prj, "Root Folder/Solution Folder/My Project");
 		make_solution_projects(sln, strm);
 		CHECK_EQUAL(
 			"My\\ Project:\n"
@@ -112,7 +112,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, Gmake_CleanRule_IsCorrect)
 	{
-		project_set_location(prj, "");
+		project_set_location(prj, solution_get_location(sln));
 		make_solution_clean_rule(sln, strm);
 		CHECK_EQUAL(
 			"clean:\n"

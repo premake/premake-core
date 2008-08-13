@@ -12,10 +12,10 @@
 #include "base/env.h"
 
 
-struct FieldInfo BlockFieldInfo[] =
+FieldInfo BlockFieldInfo[] =
 {
 	{ "defines",    ListField,    NULL  },
-	{ "objdir",     StringField,  NULL  },
+	{ "objdir",     PathField,    NULL  },
 	{ "terms",      ListField,    NULL  },
 	{  0,           0,            NULL  }
 };

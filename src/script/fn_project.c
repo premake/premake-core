@@ -56,7 +56,7 @@ int fn_project(lua_State* L)
 
 		/* set the base directory */
 		lua_pushstring(L, script_internal_script_dir(L));
-		lua_setfield(L, -2, ProjectFieldInfo[ProjectBaseDirectory].name);
+		lua_setfield(L, -2, ProjectFieldInfo[ProjectBaseDir].name);
 
 		/* set a default GUID */
 		lua_pushstring(L, guid_create());

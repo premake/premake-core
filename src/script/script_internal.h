@@ -40,12 +40,12 @@ int         script_internal_create_block(lua_State* L);
 int         script_internal_get_active_object(lua_State* L, enum ObjectType type, int is_required);
 void        script_internal_set_active_object(lua_State* L, enum ObjectType type);
 const char* script_internal_script_dir(lua_State* L);
-void        script_internal_populate_object(lua_State* L, struct FieldInfo* fields);
+void        script_internal_populate_object(lua_State* L, FieldInfo* fields);
 
 /* Generic project object field getter/setter API */
 int  fn_accessor_register_all(lua_State* L);
-int  fn_accessor_set_string_value(lua_State* L, struct FieldInfo* field);
-int  fn_accessor_set_list_value(lua_State* L, struct FieldInfo* field);
+int  fn_accessor_set_string_value(lua_State* L, FieldInfo* field);
+int  fn_accessor_set_list_value(lua_State* L, FieldInfo* field);
 
 /* script function handlers */
 int  fn_accessor(lua_State* L);

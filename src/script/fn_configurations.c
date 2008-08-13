@@ -13,7 +13,7 @@
  */
 int fn_configurations(lua_State* L)
 {
-	struct FieldInfo* field;
+	FieldInfo* field;
 
 	if (!script_internal_get_active_object(L, SolutionObject, IS_REQUIRED))
 	{
@@ -29,7 +29,7 @@ int fn_configurations(lua_State* L)
 	lua_pop(L, 1);
 
 	/* get information about the field being accessed */
-	field = (struct FieldInfo*)lua_touserdata(L, lua_upvalueindex(2));
+	field = (FieldInfo*)lua_touserdata(L, lua_upvalueindex(2));
 
 	/* if a value is provided, set the field */
 	if (lua_gettop(L) > 1)

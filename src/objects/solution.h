@@ -25,7 +25,7 @@ DECLARE_CLASS(Solution)
  */
 enum SolutionField
 {
-	SolutionBaseDirectory,
+	SolutionBaseDir,
 	SolutionConfigurations,
 	SolutionLanguage,
 	SolutionLocation,
@@ -33,7 +33,7 @@ enum SolutionField
 	NumSolutionFields
 };
 
-extern struct FieldInfo SolutionFieldInfo[];
+extern FieldInfo SolutionFieldInfo[];
 
 
 Solution    solution_create(void);

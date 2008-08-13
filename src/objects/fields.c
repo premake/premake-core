@@ -13,8 +13,9 @@
 
 DEFINE_CLASS(Fields)
 {
-	Strings* values;
-	int      count;
+	FieldInfo* info;
+	Strings*   values;
+	int        count;
 };
 
 
@@ -23,7 +24,7 @@ DEFINE_CLASS(Fields)
  * \param   info   Metadata about the field collection.
  * \returns A new collection of fields.
  */
-Fields fields_create(struct FieldInfo* info)
+Fields fields_create(FieldInfo* info)
 {
 	int i;
 	Fields fields;
@@ -31,6 +32,7 @@ Fields fields_create(struct FieldInfo* info)
 	assert(info);
 
 	fields = ALLOC_CLASS(Fields);
+	fields->info = info;
 	
 	/* figure out how many fields are in the collection */
 	for (i = 0; info[i].name != NULL; ++i);
@@ -73,6 +75,17 @@ void fields_add_value(Fields fields, int index, const char* value)
 	assert(fields);
 	assert(index >= 0 && index < fields->count);
 	strings_add(fields->values[index], value);
+}
+
+
+/**
+ * Identify the type of field at the given index.
+ */
+FieldKind fields_get_kind(Fields fields, int index)
+{
+	assert(fields);
+	assert(index >= 0 && index < fields->count);
+	return fields->info[index].kind;
 }
 
 
@@ -148,4 +161,14 @@ void fields_set_values(Fields fields, int index, Strings values)
 	}
 
 	fields->values[index] = values;
+}
+
+
+/**
+ * Return the number of fields in the collection.
+ */
+int fields_size(Fields fields)
+{
+	assert(fields);
+	return fields->count;
 }

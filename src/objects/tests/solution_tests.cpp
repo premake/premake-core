@@ -76,28 +76,6 @@ SUITE(project)
 
 
 	/**********************************************************************
-	 * Filename tests
-	 **********************************************************************/
-
-	TEST_FIXTURE(FxSolution, GetFilename_ReturnsFullPath_OnNoLocation)
-	{
-		solution_set_name(sln, "MySolution");
-		solution_set_base_dir(sln, "/BaseDir");
-		const char* filename = solution_get_filename(sln, NULL, ".xyz");
-		CHECK_EQUAL("/BaseDir/MySolution.xyz", filename);
-	}
-
-	TEST_FIXTURE(FxSolution, GetFilename_ReturnsFullPath_OnLocation)
-	{
-		solution_set_name(sln, "MySolution");
-		solution_set_base_dir(sln, "/BaseDir");
-		solution_set_location(sln, "Location");
-		const char* filename = solution_get_filename(sln, NULL, ".xyz");
-		CHECK_EQUAL("/BaseDir/Location/MySolution.xyz", filename);
-	}
-
-
-	/**********************************************************************
 	 * Project containment tests
 	 **********************************************************************/
 

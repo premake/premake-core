@@ -38,7 +38,7 @@ int fn_solution(lua_State* L)
 
 		/* set the base directory */
 		lua_pushstring(L, script_internal_script_dir(L));
-		lua_setfield(L, -2, SolutionFieldInfo[SolutionBaseDirectory].name);
+		lua_setfield(L, -2, SolutionFieldInfo[SolutionBaseDir].name);
 
 		/* create an empty list of projects */
 		lua_newtable(L);
