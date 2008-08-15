@@ -22,10 +22,21 @@ FieldInfo ProjectFieldInfo[] =
 	{ "basedir",    StringField,  NULL            },
 	{ "files",      FilesField,   NULL            },
 	{ "guid",       StringField,  guid_is_valid   },
-	{ "language",   StringField,  NULL            },
+	{ "kind",       StringField,  project_is_valid_kind     },
+	{ "language",   StringField,  project_is_valid_language },
 	{ "location",   StringField,  NULL            },
 	{ "name",       StringField,  NULL            },
 	{  0,           0,            NULL            }
+};
+
+static const char* ValidKinds[] = 
+{
+	"Console", NULL
+};
+
+static const char* ValidLanguages[] =
+{
+	"C++", NULL
 };
 
 
@@ -242,16 +253,30 @@ const char* project_get_guid(Project prj)
 
 
 /**
+ * Get the project kind: console, windowed, etc.
+ */
+const char* project_get_kind(Project prj)
+{
+	const char* kind = project_get_value(prj, ProjectKind);
+	if (kind == NULL && prj->solution != NULL)
+	{
+		kind = solution_get_kind(prj->solution);
+	}
+	return kind;
+}
+
+
+/**
  * Get the programming language used by the project.
  */
 const char* project_get_language(Project prj)
 {
-	const char* result = project_get_value(prj, ProjectLanguage);
-	if (result == NULL && prj->solution != NULL)
+	const char* lang = project_get_value(prj, ProjectLanguage);
+	if (lang == NULL && prj->solution != NULL)
 	{
-		result = solution_get_language(prj->solution);
+		lang = solution_get_language(prj->solution);
 	}
-	return result;
+	return lang;
 }
 
 
@@ -322,14 +347,54 @@ const char* project_get_value(Project prj, enum ProjectField field)
 
 
 /**
- * Returns true if the specified language is recognized. Current valid language strings
- * are 'c', 'c++', and 'c#'.
+ * Returns true if the project kind matches the parameter.
+ */
+int project_is_kind(Project prj, const char* kind)
+{
+	assert(prj);
+	return cstr_eqi(project_get_kind(prj), kind);
+}
+
+
+/**
+ * Returns true if the project language matches the parameter.
+ */
+int project_is_language(Project prj, const char* language)
+{
+	assert(prj);
+	return cstr_eqi(project_get_language(prj), language);
+}
+
+
+/**
+ * Returns true if the specified language is recognized. See the ValidLanguages at
+ * the top of this file for a list of valid values.
+ */
+int project_is_valid_kind(const char* kind)
+{
+	const char** i;
+	for (i = ValidKinds; (*i) != NULL; ++i)
+	{
+		if (cstr_eqi((*i), kind))
+			return 1;
+	}
+	return 0;
+}
+
+
+/**
+ * Returns true if the specified language is recognized. See the ValidLanguages at
+ * the top of this file for a list of valid values.
  */
 int project_is_valid_language(const char* language)
 {
-	return (cstr_eq(language, "c") ||
-	        cstr_eq(language, "c++") ||
-			cstr_eq(language, "c#"));
+	const char** i;
+	for (i = ValidLanguages; (*i) != NULL; ++i)
+	{
+		if (cstr_eqi((*i), language))
+			return 1;
+	}
+	return 0;
 }
 
 
@@ -361,6 +426,15 @@ void project_set_config(Project prj, const char* cfg_name)
 void project_set_guid(Project prj, const char* guid)
 {
 	project_set_value(prj, ProjectGuid, guid);
+}
+
+
+/**
+ * Set the project kind: console, windowed, etc.
+ */
+void project_set_kind(Project prj, const char* kind)
+{
+	project_set_value(prj, ProjectKind, kind);
 }
 
 

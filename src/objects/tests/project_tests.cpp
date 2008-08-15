@@ -65,6 +65,19 @@ SUITE(project)
 
 
 	/**********************************************************************
+	 * Kind tests
+	 **********************************************************************/
+
+	TEST_FIXTURE(FxProject, GetKind_ReturnsSolutionKind_OnNoProjectKind)
+	{
+		project_set_solution(prj, sln);
+		solution_set_kind(sln, "console");
+		const char* result = project_get_kind(prj);
+		CHECK_EQUAL("console", result);
+	}
+
+
+	/**********************************************************************
 	 * Language tests
 	 **********************************************************************/
 

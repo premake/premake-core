@@ -254,25 +254,44 @@ int session_validate(Session sess, SessionFeatures* features)
 
 			Project prj = solution_get_project(sln, pi);
 			const char* prj_name = project_get_name(prj);
+			const char* prj_kind = project_get_kind(prj);
 			const char* prj_lang = project_get_language(prj);
 
-			/* every project must have a language defined */
-			if (prj_lang == NULL)
+			/* every project must have these fields defined */
+			if (prj_kind == NULL)
 			{
-				error_set("no language defined for project '%s'", prj_name);
+				error_set("project '%s' needs a kind", prj_name);
 				return !OKAY;
 			}
 
-			/* action must support the language */
+			if (prj_lang == NULL)
+			{
+				error_set("project '%s' needs a language", prj_name);
+				return !OKAY;
+			}
+
+			/* check actual project values against the list of supported values */
+			for (i = 0; features->kinds[i] != NULL; ++i)
+			{
+				if (cstr_eqi(prj_kind, features->kinds[i]))
+					break;
+			}
+
+			if (features->kinds[i] == NULL)
+			{
+				error_set("%s projects are not supported by this action", prj_kind);
+				return !OKAY;
+			}
+
 			for (i = 0; features->languages[i] != NULL; ++i)
 			{
-				if (cstr_eq(prj_lang, features->languages[i]))
+				if (cstr_eqi(prj_lang, features->languages[i]))
 					break;
 			}
 
 			if (features->languages[i] == NULL)
 			{
-				error_set("%s language projects are not supported by this action", prj_lang);
+				error_set("%s projects are not supported by this action", prj_lang);
 				return !OKAY;
 			}
 		}

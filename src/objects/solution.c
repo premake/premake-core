@@ -19,6 +19,7 @@ FieldInfo SolutionFieldInfo[] =
 {
 	{ "basedir",        StringField,  NULL                       },
 	{ "configurations", ListField,    NULL                       },
+	{ "kind",           StringField,  project_is_valid_kind      },
 	{ "language",       StringField,  project_is_valid_language  },
 	{ "location",       StringField,  NULL                       },
 	{ "name",           StringField,  NULL                       },
@@ -168,6 +169,15 @@ const char* solution_get_filename(Solution sln, const char* basename, const char
 
 
 /**
+ * Get the solution-wide project kind.
+ */
+const char* solution_get_kind(Solution sln)
+{
+	return solution_get_value(sln, SolutionKind);
+}
+
+
+/**
  * Get the programming language set globally for the solution.
  */
 const char* solution_get_language(Solution sln)
@@ -257,6 +267,15 @@ int solution_num_projects(Solution sln)
 void solution_set_base_dir(Solution sln, const char* base_dir)
 {
 	solution_set_value(sln, SolutionBaseDir, base_dir);
+}
+
+
+/**
+ * Set the solution-wide project kind.
+ */
+void solution_set_kind(Solution sln, const char* kind)
+{
+	solution_set_value(sln, SolutionKind, kind);
 }
 
 

@@ -100,6 +100,29 @@ SUITE(script)
 
 
 	/**************************************************************************
+	 * Data validation tests
+	 **************************************************************************/
+
+	TEST_FIXTURE(FxAccessor, Accessor_Succeeds_OnGoodData)
+	{
+		const char* result = script_run_string(script, "language 'c++'");
+		CHECK(result == NULL);
+	}
+
+	TEST_FIXTURE(FxAccessor, Accessor_RaisesError_OnBadData)
+	{
+		const char* result = script_run_string(script, "language 'none'");
+		CHECK_EQUAL("invalid value 'none'", result);
+	}
+
+	TEST_FIXTURE(FxAccessor, Accessor_Succeeds_OnDifferingCase)
+	{
+		const char* result = script_run_string(script, "language 'C++'");
+		CHECK(result == NULL);
+	}
+
+
+	/**************************************************************************
 	 * Files field tests
 	 **************************************************************************/
 

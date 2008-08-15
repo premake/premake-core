@@ -57,7 +57,10 @@ void strings_destroy(Strings strs)
 	for (i = 0; i < n; ++i)
 	{
 		String item = (String)array_item(strs->contents, i);
-		string_destroy(item);
+		if (item != NULL)
+		{
+			string_destroy(item);
+		}
 	}
 	array_destroy(strs->contents);
 	free(strs);
@@ -71,7 +74,7 @@ void strings_destroy(Strings strs)
  */
 void strings_add(Strings strs, const char* item)
 {
-	String str = string_create(item);
+	String str = (item != NULL) ? string_create(item) : NULL;
 	array_add(strs->contents, (void*)str);
 }
 
@@ -102,7 +105,7 @@ void strings_append(Strings dest, Strings src)
 const char* strings_item(Strings strs, int index)
 {
 	String item = (String)array_item(strs->contents, index);
-	return string_cstr(item);
+	return (item != NULL) ? string_cstr(item) : NULL;
 }
 
 
@@ -115,9 +118,12 @@ const char* strings_item(Strings strs, int index)
 void strings_set(Strings strs, int index, const char* item)
 {
 	String str = (String)array_item(strs->contents, index);
-	string_destroy(str);
+	if (str != NULL)
+	{
+		string_destroy(str);
+	}
 
-	str = string_create(item);
+	str = (item != NULL) ? string_create(item) : NULL;
 	array_set(strs->contents, index, (void*)str);
 }
 

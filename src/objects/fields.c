@@ -131,10 +131,9 @@ void fields_set_value(Fields fields, int index, const char* value)
 
 	assert(fields);
 	assert(index >= 0 && index < fields->count);
-	assert(value);
 
 	values = fields->values[index];
-	if (strings_size(values) == 0)
+	if (strings_size(values) == 0 && value != NULL)
 	{
 		strings_add(values, value);
 	}

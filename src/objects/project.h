@@ -27,6 +27,7 @@ enum ProjectField
 	ProjectBaseDir,
 	ProjectFiles,
 	ProjectGuid,
+	ProjectKind,
 	ProjectLanguage,
 	ProjectLocation,
 	ProjectName,
@@ -48,16 +49,21 @@ const char* project_get_filename(Project prj, const char* basename, const char* 
 const char* project_get_filename_relative(Project prj, const char* basename, const char* ext);
 Strings     project_get_files(Project prj);
 const char* project_get_guid(Project prj);
+const char* project_get_kind(Project prj);
 const char* project_get_language(Project prj);
 const char* project_get_location(Project prj);
 const char* project_get_name(Project prj);
 const char* project_get_outfile(Project prj);
 Session     project_get_session(Project prj);
 const char* project_get_value(Project prj, enum ProjectField field);
+int         project_is_kind(Project prj, const char* kind);
+int         project_is_language(Project prj, const char* language);
+int         project_is_valid_kind(const char* kind);
 int         project_is_valid_language(const char* language);
 void        project_set_base_dir(Project prj, const char* base_dir);
 void        project_set_config(Project prj, const char* cfg_name);
 void        project_set_guid(Project prj, const char* guid);
+void        project_set_kind(Project prj, const char* kind);
 void        project_set_language(Project prj, const char* language);
 void        project_set_location(Project prj, const char* location);
 void        project_set_name(Project prj, const char* name);

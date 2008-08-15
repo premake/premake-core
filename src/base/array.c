@@ -103,7 +103,6 @@ void* array_item(Array arr, int index)
 void array_set(Array arr, int index, void* item)
 {
 	assert(arr);
-	assert(item);
 	assert(index >= 0 && index < arr->size);
 	arr->contents[index] = item;
 }

@@ -51,6 +51,7 @@ typedef int (*SessionProjectCallback)(Project prj, Stream strm);
  */
 typedef struct struct_SessionFeatures
 {
+	const char* kinds[32];
 	const char* languages[64];
 } SessionFeatures;
 

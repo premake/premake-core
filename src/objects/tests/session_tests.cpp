@@ -22,6 +22,7 @@ extern "C" {
 #define FAIL_PRJ_PARAM  (2)
 
 static SessionFeatures features = {
+	{ "console", NULL },
 	{ "c", "c++", NULL },
 };
 
@@ -101,6 +102,8 @@ struct FxSession
 		prj = project_create();
 		solution_add_project(sln, prj);
 		project_set_name(prj, "MyProject");
+		project_set_kind(prj, "Console");
+		project_set_language(prj, "C++");
 		return prj;
 	}
 };
@@ -295,13 +298,34 @@ SUITE(session)
 		CHECK_EQUAL("no projects defined for solution 'MySolution'", error_get());
 	}
 
+	TEST_FIXTURE(FxSession, Validate_NotOkay_OnNullKind)
+	{
+		AddSolution();
+		AddProject();
+		project_set_kind(prj, NULL);
+		int result = session_validate(sess, &features);
+		CHECK(result != OKAY);
+		CHECK_EQUAL("project 'MyProject' needs a kind", error_get());
+	}
+
+	TEST_FIXTURE(FxSession, Validate_NotOkay_OnUnsupportedKind)
+	{
+		AddSolution();
+		AddProject();
+		project_set_kind(prj, "nonesuch");
+		int result = session_validate(sess, &features);
+		CHECK(result != OKAY);
+		CHECK_EQUAL("nonesuch projects are not supported by this action", error_get());
+	}
+
 	TEST_FIXTURE(FxSession, Validate_NotOkay_OnNullLanguage)
 	{
 		AddSolution();
 		AddProject();
+		project_set_language(prj, NULL);
 		int result = session_validate(sess, &features);
 		CHECK(result != OKAY);
-		CHECK_EQUAL("no language defined for project 'MyProject'", error_get());
+		CHECK_EQUAL("project 'MyProject' needs a language", error_get());
 	}
 
 	TEST_FIXTURE(FxSession, Validate_NotOkay_OnUnsupportedLanguage)
@@ -311,7 +335,7 @@ SUITE(session)
 		project_set_language(prj, "nonesuch");
 		int result = session_validate(sess, &features);
 		CHECK(result != OKAY);
-		CHECK_EQUAL("nonesuch language projects are not supported by this action", error_get());
+		CHECK_EQUAL("nonesuch projects are not supported by this action", error_get());
 	}
 }
 

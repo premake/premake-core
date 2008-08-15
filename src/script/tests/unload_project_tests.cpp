@@ -30,7 +30,8 @@ struct FxUnloadProject
 			"prj = project('MyProject');"
 			"  prj.basedir = '/basedir';"
 			"  guid '0C202E43-B9AF-4972-822B-5A42F0BF008C';"
-			"  language 'c++';"
+			"  language 'C++';"
+			"  kind 'Console';"
 			"  files { 'Hello.cpp', 'Goodbye.cpp' };"
 			"return prj");
 	}
@@ -89,11 +90,18 @@ SUITE(unload)
 		CHECK_EQUAL("0C202E43-B9AF-4972-822B-5A42F0BF008C", result);
 	}
 
+	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsKind)
+	{
+		unload_project(L, prj);
+		const char* result = project_get_kind(prj);
+		CHECK_EQUAL("Console", result);
+	}
+
 	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsLanguage)
 	{
 		unload_project(L, prj);
 		const char* result = project_get_language(prj);
-		CHECK_EQUAL("c++", result);
+		CHECK_EQUAL("C++", result);
 	}
 
 	TEST_FIXTURE(FxUnloadProject, UnloadProject_SetsLocation_OnUnsetLocation)
