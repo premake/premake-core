@@ -32,7 +32,7 @@ SUITE(action)
 			"\t\t\t\tUsePrecompiledHeader=\"2\"\n"
 			"\t\t\t\tWarningLevel=\"3\"\n"
 			"\t\t\t\tDetect64BitPortabilityProblems=\"TRUE\"\n"
-			"\t\t\t\tDebugInformationFormat=\"4\"/>\n",
+			"\t\t\t\tDebugInformationFormat=\"0\"/>\n",
 			buffer);
 	}
 
@@ -50,7 +50,7 @@ SUITE(action)
 			"\t\t\t\tUsePrecompiledHeader=\"0\"\n"
 			"\t\t\t\tWarningLevel=\"3\"\n"
 			"\t\t\t\tDetect64BitPortabilityProblems=\"true\"\n"
-			"\t\t\t\tDebugInformationFormat=\"4\"\n"
+			"\t\t\t\tDebugInformationFormat=\"0\"\n"
 			"\t\t\t/>\n",
 			buffer);
 	}
@@ -68,11 +68,10 @@ SUITE(action)
 			"\t\t\t\tRuntimeLibrary=\"3\"\n"
 			"\t\t\t\tUsePrecompiledHeader=\"0\"\n"
 			"\t\t\t\tWarningLevel=\"3\"\n"
-			"\t\t\t\tDebugInformationFormat=\"4\"\n"
+			"\t\t\t\tDebugInformationFormat=\"0\"\n"
 			"\t\t\t/>\n",
 			buffer);
 	}
-
 
 
 	/**********************************************************************
@@ -82,7 +81,7 @@ SUITE(action)
 	TEST_FIXTURE(FxAction, VCCLCompilerTool_WithDefines)
 	{
 		env_set_action("vs2002");
-		char* defines[] = { "DEFINE0", "DEFINE1", NULL };
+		const char* defines[] = { "DEFINE0", "DEFINE1", NULL };
 		SetConfigField(prj, BlockDefines, defines);
 		vs200x_project_vc_cl_compiler_tool(prj, strm);
 		CHECK_EQUAL(
@@ -97,7 +96,7 @@ SUITE(action)
 			"\t\t\t\tUsePrecompiledHeader=\"2\"\n"
 			"\t\t\t\tWarningLevel=\"3\"\n"
 			"\t\t\t\tDetect64BitPortabilityProblems=\"TRUE\"\n"
-			"\t\t\t\tDebugInformationFormat=\"4\"/>\n",
+			"\t\t\t\tDebugInformationFormat=\"0\"/>\n",
 			buffer);
 	}
 }

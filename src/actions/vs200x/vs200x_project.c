@@ -322,8 +322,8 @@ int vs200x_project_vc_cl_compiler_tool(Project prj, Stream strm)
 	int z = OKAY;
 	z |= stream_write(strm, "\t\t\t<Tool");
 	z |= vs200x_attribute(strm, 4, "Name", "VCCLCompilerTool");
-	z |= vs200x_attribute(strm, 4, "Optimization", "0");
-	z |= vs200x_config_defines(strm, prj);
+	z |= vs200x_config_optimization(prj, strm);
+	z |= vs200x_config_defines(prj, strm);
 	z |= vs200x_attribute(strm, 4, "MinimalRebuild", vs200x_true());
 	z |= vs200x_attribute(strm, 4, "BasicRuntimeChecks", "3");
 	z |= vs200x_attribute(strm, 4, "RuntimeLibrary", "3");
@@ -331,7 +331,7 @@ int vs200x_project_vc_cl_compiler_tool(Project prj, Stream strm)
 	z |= vs200x_config_use_precompiled_header(strm);
 	z |= vs200x_attribute(strm, 4, "WarningLevel", "3");
 	z |= vs200x_config_detect_64bit_portability(strm);
-	z |= vs200x_attribute(strm, 4, "DebugInformationFormat", "4");
+	z |= vs200x_config_debug_information_format(prj, strm);
 	z |= vs200x_element_end(strm, 3, "/>");
 	return z;
 }
@@ -361,11 +361,10 @@ int vs200x_project_vc_fx_cop_tool(Project prj, Stream strm)
 int vs200x_project_vc_linker_tool(Project prj, Stream strm)
 {
 	int z = OKAY;
-	UNUSED(prj);
 	z |= stream_write(strm, "\t\t\t<Tool");
 	z |= vs200x_attribute(strm, 4, "Name", "VCLinkerTool");
 	z |= vs200x_attribute(strm, 4, "LinkIncremental", "2");
-	z |= vs200x_attribute(strm, 4, "GenerateDebugInformation", vs200x_true());
+	z |= vs200x_config_generate_debug_information(prj, strm);
 	z |= vs200x_attribute(strm, 4, "SubSystem", "1");
 	z |= vs200x_attribute(strm, 4, "EntryPointSymbol", "mainCRTStartup");
 	z |= vs200x_attribute(strm, 4, "TargetMachine", "1");

@@ -56,7 +56,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, MakeProject_Objects_ConvertsFileExtension)
 	{
-		char* files[] = { "Hello.cpp", "Good Bye.cpp", NULL };
+		const char* files[] = { "Hello.cpp", "Good Bye.cpp", NULL };
 		SetField(prj, ProjectFiles, files);
 		make_project_objects(prj, strm);
 		CHECK_EQUAL(
@@ -160,7 +160,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, MakeProject_SourceRules)
 	{
-		char* files[] = { "Good Bye.cpp", NULL };
+		const char* files[] = { "Good Bye.cpp", NULL };
 		SetField(prj, ProjectFiles, files);
 		make_project_source_rules(prj, strm);
 		CHECK_EQUAL(

@@ -27,7 +27,7 @@ SUITE(action)
 
 	TEST_FIXTURE(FxAction, MakeCppFlags_WithDefines)
 	{
-		char* defines[] = { "DEFINE0", "DEFINE1", NULL};
+		const char* defines[] = { "DEFINE0", "DEFINE1", NULL};
 		SetConfigField(prj, BlockDefines, defines);
 		make_project_config_cppflags(prj, strm);
 		CHECK_EQUAL(
@@ -45,6 +45,46 @@ SUITE(action)
 		make_project_config_cflags(prj, strm);
 		CHECK_EQUAL(
 			"   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS)\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxAction, MakeProject_Config_WithSymbols)
+	{
+		const char* flags[] = { "Symbols", NULL };
+		SetConfigField(prj, BlockFlags, flags);
+		make_project_config_cflags(prj, strm);
+		CHECK_EQUAL(
+			"   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS) -g\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxAction, MakeProject_Config_WithOptimize)
+	{
+		const char* flags[] = { "Optimize", NULL };
+		SetConfigField(prj, BlockFlags, flags);
+		make_project_config_cflags(prj, strm);
+		CHECK_EQUAL(
+			"   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS) -O2\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxAction, MakeProject_Config_WithOptimizeSize)
+	{
+		const char* flags[] = { "OptimizeSize", NULL };
+		SetConfigField(prj, BlockFlags, flags);
+		make_project_config_cflags(prj, strm);
+		CHECK_EQUAL(
+			"   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS) -Os\n",
+			buffer);
+	}
+
+	TEST_FIXTURE(FxAction, MakeProject_Config_WithOptimizeSpeed)
+	{
+		const char* flags[] = { "OptimizeSpeed", NULL };
+		SetConfigField(prj, BlockFlags, flags);
+		make_project_config_cflags(prj, strm);
+		CHECK_EQUAL(
+			"   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS) -O3\n",
 			buffer);
 	}
 

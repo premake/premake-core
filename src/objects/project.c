@@ -116,7 +116,7 @@ Blocks project_get_blocks(Project prj)
 /**
  * Scans a list of blocks and appends any values found to the provided list.
  */
-static void project_get_values_from_blocks(Project prj, Strings values, Blocks blks, enum BlockField field)
+static void project_get_values_from_blocks(Project prj, Strings values, Blocks blks, BlockField field)
 {
 	int i, n = blocks_size(blks);
 	for (i = 0; i < n; ++i)
@@ -148,7 +148,7 @@ const char* project_get_config(Project prj)
 /**
  * Retrieve a list value from the project configuration, respecting the current filter set.
  */
-Strings project_get_config_values(Project prj, enum BlockField field)
+Strings project_get_config_values(Project prj, BlockField field)
 {
 	Strings values;
 
@@ -339,10 +339,20 @@ Solution project_get_solution(Project prj)
 /**
  * Retrieve a string (single value) fields from a project, using the field indices.
  */
-const char* project_get_value(Project prj, enum ProjectField field)
+const char* project_get_value(Project prj, ProjectField field)
 {
 	assert(prj);
 	return fields_get_value(prj->fields, field);
+}
+
+
+/**
+ * Returns true if the project flags contain the specified flag.
+ */
+int project_has_flag(Project prj, const char* flag)
+{
+	Strings flags = project_get_config_values(prj, BlockFlags);
+	return strings_contains(flags, flag);
 }
 
 
@@ -479,7 +489,7 @@ void project_set_solution(Project prj, Solution sln)
 /**
  * Set a string (single value) field on a project, using the field indices.
  */
-void project_set_value(Project prj, enum ProjectField field, const char* value)
+void project_set_value(Project prj, ProjectField field, const char* value)
 {
 	assert(prj);
 	fields_set_value(prj->fields, field, value);
@@ -490,7 +500,7 @@ void project_set_value(Project prj, enum ProjectField field, const char* value)
  * Sets the list of values associated with a field. The field will subsequently
  * "own" the list, and take responsibility to destroying it with the field set.
  */
-void project_set_values(Project prj, enum ProjectField field, Strings values)
+void project_set_values(Project prj, ProjectField field, Strings values)
 {
 	assert(prj);
 	fields_set_values(prj->fields, field, values);

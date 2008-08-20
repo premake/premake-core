@@ -13,7 +13,7 @@
 static int  fn_accessor_object_has_field(FieldInfo* fields, const char* field_name);
 static int  fn_accessor_register(lua_State* L, FieldInfo* fields);
 static int  fn_accessor_register_field(lua_State* L, FieldInfo* field);
-static void fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, int idx);
+static int  fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, int idx);
 
 
 /**
@@ -173,15 +173,17 @@ int fn_accessor_set_string_value(lua_State* L, FieldInfo* field)
  */
 int fn_accessor_set_list_value(lua_State* L, FieldInfo* field)
 {
+	int z;
+
 	/* get the current value of the field */
 	lua_getfield(L, -1, field->name);
 	
 	/* move the values into the field */
-	fn_accessor_append_value(L, field, lua_gettop(L), 1);
+	z = fn_accessor_append_value(L, field, lua_gettop(L), 1);
 
 	/* remove the field value from the stack */
 	lua_pop(L, 1);
-	return OKAY;
+	return z;
 }
 
 
@@ -194,7 +196,7 @@ int fn_accessor_set_list_value(lua_State* L, FieldInfo* field)
  * \param   tbl    The table to contain the values.
  * \param   idx    The value to add to the table.
  */
-static void fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, int idx)
+static int fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, int idx)
 {
 	int i, n;
 
@@ -223,9 +225,22 @@ static void fn_accessor_append_value(lua_State* L, FieldInfo* field, int tbl, in
 		}
 		else
 		{
+			/* if a validator function is present, call it */
+			if (field->validator != NULL)
+			{
+				const char* value = lua_tostring(L, idx);
+				if (!field->validator(value))
+				{
+					luaL_error(L, "invalid value '%s'", value);
+					return !OKAY;
+				}
+			}
+
 			lua_pushvalue(L, idx);
 			n = luaL_getn(L, tbl);
 			lua_rawseti(L, tbl, n + 1);
 		}
 	}
+
+	return OKAY;
 }

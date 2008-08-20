@@ -50,10 +50,10 @@ struct FxAction
 	}
 
 
-	void SetField(Project prj, enum ProjectField index, char** values)
+	void SetField(Project prj, ProjectField index, const char** values)
 	{
 		Strings strs = strings_create();
-		for (char** value = values; (*value) != NULL; ++value)
+		for (const char** value = values; (*value) != NULL; ++value)
 		{
 			strings_add(strs, *value);
 		}
@@ -61,10 +61,10 @@ struct FxAction
 		project_set_values(prj, index, strs);
 	}
 
-	void SetConfigField(Project prj, enum BlockField index, char** values)
+	void SetConfigField(Project prj, BlockField index, const char** values)
 	{
 		Strings strs = strings_create();
-		for (char** value = values; (*value) != NULL; ++value)
+		for (const char** value = values; (*value) != NULL; ++value)
 		{
 			strings_add(strs, *value);
 		}

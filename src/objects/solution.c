@@ -232,7 +232,7 @@ Session solution_get_session(Solution sln)
 /**
  * Retrieve a string (single value) fields from a solution, using the field indices.
  */
-const char* solution_get_value(Solution sln, enum SolutionField field)
+const char* solution_get_value(Solution sln, SolutionField field)
 {
 	assert(sln);
 	return fields_get_value(sln->fields, field);
@@ -320,7 +320,7 @@ void solution_set_session(Solution sln, Session sess)
 /**
  * Set a string (single value) field on a solution, using the field indices.
  */
-void solution_set_value(Solution sln, enum SolutionField field, const char* value)
+void solution_set_value(Solution sln, SolutionField field, const char* value)
 {
 	assert(sln);
 	fields_set_value(sln->fields, field, value);

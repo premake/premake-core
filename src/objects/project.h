@@ -22,7 +22,7 @@ DECLARE_CLASS(Project)
  * Project field index.
  * \note If you modify this list, you must also update ProjectFieldInfo[].
  */
-enum ProjectField
+typedef enum enum_ProjectField
 {
 	ProjectBaseDir,
 	ProjectFiles,
@@ -32,7 +32,7 @@ enum ProjectField
 	ProjectLocation,
 	ProjectName,
 	NumProjectFields
-};
+} ProjectField;
 
 extern FieldInfo ProjectFieldInfo[];
 
@@ -43,7 +43,7 @@ void        project_destroy(Project prj);
 const char* project_get_base_dir(Project prj);
 Blocks      project_get_blocks(Project prj);
 const char* project_get_config(Project prj);
-Strings     project_get_config_values(Project prj, enum BlockField field);
+Strings     project_get_config_values(Project prj, BlockField field);
 Fields      project_get_fields(Project prj);
 const char* project_get_filename(Project prj, const char* basename, const char* ext);
 const char* project_get_filename_relative(Project prj, const char* basename, const char* ext);
@@ -55,7 +55,8 @@ const char* project_get_location(Project prj);
 const char* project_get_name(Project prj);
 const char* project_get_outfile(Project prj);
 Session     project_get_session(Project prj);
-const char* project_get_value(Project prj, enum ProjectField field);
+const char* project_get_value(Project prj, ProjectField field);
+int         project_has_flag(Project prj, const char* flag);
 int         project_is_kind(Project prj, const char* kind);
 int         project_is_language(Project prj, const char* language);
 int         project_is_valid_kind(const char* kind);
@@ -67,8 +68,8 @@ void        project_set_kind(Project prj, const char* kind);
 void        project_set_language(Project prj, const char* language);
 void        project_set_location(Project prj, const char* location);
 void        project_set_name(Project prj, const char* name);
-void        project_set_value(Project prj, enum ProjectField field, const char* value);
-void        project_set_values(Project prj, enum ProjectField field, Strings values);
+void        project_set_value(Project prj, ProjectField field, const char* value);
+void        project_set_values(Project prj, ProjectField field, Strings values);
 
 
 #endif

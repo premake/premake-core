@@ -404,7 +404,7 @@ SUITE(action)
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnSingleCppFile)
 	{
 		env_set_action("vs2002");
-		char* values[] = { "Hello.cpp", 0 };
+		const char* values[] = { "Hello.cpp", 0 };
 		SetField(prj, ProjectFiles, values);
 		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(
@@ -419,7 +419,7 @@ SUITE(action)
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnUpperDirectory)
 	{
 		env_set_action("vs2002");
-		char* values[] = { "../../Hello.cpp", 0 };
+		const char* values[] = { "../../Hello.cpp", 0 };
 		SetField(prj, ProjectFiles, values);
 		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(
@@ -434,7 +434,7 @@ SUITE(action)
 	TEST_FIXTURE(FxAction, Vs200x_Files_OnGroupedCppFile)
 	{
 		env_set_action("vs2002");
-		char* values[] = { "Src/Hello.cpp", 0 };
+		const char* values[] = { "Src/Hello.cpp", 0 };
 		SetField(prj, ProjectFiles, values);
 		vs200x_project_files(prj, strm);
 		CHECK_EQUAL(

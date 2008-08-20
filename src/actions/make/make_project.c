@@ -48,8 +48,32 @@ int make_project_config_conditional(Project prj, Stream strm)
  */
 int make_project_config_cflags(Project prj, Stream strm)
 {
-	UNUSED(prj);
-	return stream_writeline(strm, "   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS)");
+	int z = OKAY;
+
+	z |= stream_write(strm, "   CFLAGS   += $(CPPFLAGS) $(ARCHFLAGS)");
+
+	/* debugging symbols */
+	if (project_has_flag(prj, "Symbols"))
+	{
+		z |= stream_write(strm, " -g");
+	}
+
+	/* optimizations */
+	if (project_has_flag(prj, "Optimize"))
+	{
+		z |= stream_write(strm, " -O2");
+	}
+	else if (project_has_flag(prj, "OptimizeSize"))
+	{
+		z |= stream_write(strm, " -Os");
+	}
+	else if (project_has_flag(prj, "OptimizeSpeed"))
+	{
+		z |= stream_write(strm, " -O3");
+	}
+
+	z |= stream_writeline(strm, "");
+	return z;
 }
 
 

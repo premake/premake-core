@@ -21,6 +21,7 @@ void        strings_destroy(Strings strs);
 
 void        strings_add(Strings strs, const char* item);
 void        strings_append(Strings dest, Strings src);
+int         strings_contains(Strings strs, const char* item);
 const char* strings_item(Strings strs, int index);
 void        strings_set(Strings strs, int index, const char* item);
 int         strings_size(Strings strs);

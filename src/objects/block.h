@@ -17,13 +17,14 @@
  * Configuration block field index.
  * \note If you modify this list, you must also update BlockFieldInfo[].
  */
-enum BlockField
+typedef enum enum_BlockField
 {
 	BlockDefines,
+	BlockFlags,
 	BlockObjDir,
 	BlockTerms,
 	NumBlockFields
-};
+} BlockField;
 
 extern FieldInfo BlockFieldInfo[];
 
@@ -35,8 +36,9 @@ void       block_destroy(Block blk);
 
 int        block_applies_to(Block blk, const char* cfg_name);
 Fields     block_get_fields(Block blk);
-Strings    block_get_values(Block blk, enum BlockField which);
-void       block_set_values(Block blk, enum BlockField which, Strings strs);
+Strings    block_get_values(Block blk, BlockField which);
+int        block_is_valid_flag(const char* flag);
+void       block_set_values(Block blk, BlockField which, Strings strs);
 
 
 #endif

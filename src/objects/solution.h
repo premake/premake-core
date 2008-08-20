@@ -23,7 +23,7 @@ DECLARE_CLASS(Solution)
  * Solution field index.
  * \note If you modify this list, you must also update SolutionFieldInfo[].
  */
-enum SolutionField
+typedef enum enum_SolutionField
 {
 	SolutionBaseDir,
 	SolutionConfigurations,
@@ -32,7 +32,7 @@ enum SolutionField
 	SolutionLocation,
 	SolutionName,
 	NumSolutionFields
-};
+} SolutionField;
 
 extern FieldInfo SolutionFieldInfo[];
 
@@ -54,7 +54,7 @@ const char* solution_get_location(Solution sln);
 const char* solution_get_name(Solution sln);
 Project     solution_get_project(Solution sln, int index);
 Session     solution_get_session(Solution sln);
-const char* solution_get_value(Solution sln, enum SolutionField field);
+const char* solution_get_value(Solution sln, SolutionField field);
 int         solution_num_configs(Solution sln);
 int         solution_num_projects(Solution sln);
 void        solution_set_base_dir(Solution sln, const char* base_dir);
@@ -62,7 +62,7 @@ void        solution_set_kind(Solution sln, const char* kind);
 void        solution_set_language(Solution sln, const char* language);
 void        solution_set_location(Solution sln, const char* location);
 void        solution_set_name(Solution sln, const char* name);
-void        solution_set_value(Solution sln, enum SolutionField field, const char* value);
+void        solution_set_value(Solution sln, SolutionField field, const char* value);
 
 
 #endif

@@ -121,6 +121,12 @@ SUITE(script)
 		CHECK(result == NULL);
 	}
 
+	TEST_FIXTURE(FxAccessor, Accessor_RaisesError_OnBadListData)
+	{
+		const char* result = script_run_string(script, "flags { 'none' }");
+		CHECK_EQUAL("invalid value 'none'", result);
+	}
+
 
 	/**************************************************************************
 	 * Files field tests

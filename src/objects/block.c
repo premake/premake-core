@@ -15,9 +15,22 @@
 FieldInfo BlockFieldInfo[] =
 {
 	{ "defines",    ListField,    NULL  },
+	{ "flags",      ListField,    block_is_valid_flag  },
 	{ "objdir",     PathField,    NULL  },
 	{ "terms",      ListField,    NULL  },
 	{  0,           0,            NULL  }
+};
+
+
+static const char* ValidFlags[] = 
+{
+	"Managed",
+	"NoEditAndContinue",
+	"Optimize", 
+	"OptimizeSize", 
+	"OptimizeSpeed", 
+	"Symbols", 
+	NULL
 };
 
 
@@ -94,7 +107,7 @@ Fields block_get_fields(Block blk)
 /**
  * Retrieve a list of values associated with a block.
  */
-Strings block_get_values(Block blk, enum BlockField which)
+Strings block_get_values(Block blk, BlockField which)
 {
 	assert(blk);
 	return fields_get_values(blk->fields, which);
@@ -102,9 +115,25 @@ Strings block_get_values(Block blk, enum BlockField which)
 
 
 /**
+ * Returns true if the specified language is recognized. See the ValidLanguages at
+ * the top of this file for a list of valid values.
+ */
+int block_is_valid_flag(const char* flag)
+{
+	const char** i;
+	for (i = ValidFlags; (*i) != NULL; ++i)
+	{
+		if (cstr_eqi((*i), flag))
+			return 1;
+	}
+	return 0;
+}
+
+
+/**
  * Set a value list field on the block.
  */
-void block_set_values(Block blk, enum BlockField which, Strings strs)
+void block_set_values(Block blk, BlockField which, Strings strs)
 {
 	assert(blk);
 	fields_set_values(blk->fields, which, strs);

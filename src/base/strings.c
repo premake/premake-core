@@ -8,6 +8,7 @@
 #include "premake.h"
 #include "strings.h"
 #include "base/array.h"
+#include "base/cstr.h"
 #include "base/string.h"
 
 
@@ -93,6 +94,23 @@ void strings_append(Strings dest, Strings src)
 		const char* item = strings_item(src, i);
 		strings_add(dest, item);
 	}
+}
+
+
+/**
+ * Returns true if the collection contains the specified value.
+ */
+int strings_contains(Strings strs, const char* item)
+{
+	int i, n;
+	n = strings_size(strs);
+	for (i = 0; i < n; ++i)
+	{
+		const char* str = strings_item(strs, i);
+		if (cstr_eqi(str, item))
+			return 1;
+	}
+	return 0;
 }
 
 
