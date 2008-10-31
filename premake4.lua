@@ -1,21 +1,139 @@
----------------------------------------------------------------------------
--- Premake4 solution script for Premake4
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
----------------------------------------------------------------------------
+--
+-- Premake 4.x build configuration script
+-- 
+
 
 solution "Premake4"
-	
-	configurations { "Debug", "Release" }
+	configurations { "Release", "Debug" }
 
 
 project "Premake4"
+	targetname  "premake4"
+	language    "C"
+	kind        "ConsoleExe"
+	flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
+	includedirs { "src/host/lua-5.1.2/src" }
 
-	language "c"	
-	defines { "_CRT_SECURE_NO_WARNINGS" }
-	files { "**.h", "**.c" }
+	files 
+	{
+		"src/**.h", "src/**.c", "src/**.lua", "src/**.tmpl",
+		"tests/**.lua"
+	}
 
+	excludes
+	{
+		"src/premake.lua",
+		"src/host/lua-5.1.2/src/lua.c",
+		"src/host/lua-5.1.2/src/luac.c",
+		"src/host/lua-5.1.2/src/print.c",
+		"src/host/lua-5.1.2/**.lua",
+		"src/host/lua-5.1.2/etc/*.c"
+	}
+		
 	configuration "Debug"
-		defines { "_DEBUG" }
+		targetdir   "bin/debug"
+		defines     "_DEBUG"
+		flags       { "Symbols" }
 		
 	configuration "Release"
-		defines { "NDEBUG" }
+		targetdir   "bin/release"
+		defines     "NDEBUG"
+		flags       { "OptimizeSize", "NoFramePointer" }
+
+	configuration "vs.*"
+		defines     { "_CRT_SECURE_NO_WARNINGS" }
+
+
+
+
+--
+-- A more thorough cleanup
+--
+	
+	function onclean()
+		os.rmdir("bin")
+		os.rmdir("obj")  -- get rid of this once "clean" is working properly
+	end
+
+
+
+--
+-- "Compile" action compiles scripts to bytecode and embeds into a static
+-- data buffer in src/host/bytecode.c.
+--
+
+	local function dumpfile(out, fname)
+		local func = loadfile(fname)			
+		local dump = string.dump(func)
+		local len = string.len(dump)
+		out:write("\t\"")
+		for i=1,len do
+			out:write(string.format("\\%03o", string.byte(dump, i)))
+		end
+		out:write("\",\n")
+		return len
+	end
+
+	local function dumptmpl(out, fname)
+		local f = io.open(fname)
+		local tmpl = f:read("*a")
+		f:close()
+
+		local name = path.getbasename(fname)
+		local dump = "_TEMPLATES."..name.."=premake.template.loadstring('"..name.."',[["..tmpl.."]])"
+		local len = string.len(dump)
+		out:write("\t\"")
+		for i=1,len do
+			out:write(string.format("\\%03o", string.byte(dump, i)))
+		end
+		out:write("\",\n")
+		return len
+	end				
+	
+	local function docompile()
+		local sizes = { }
+
+		scripts, templates, actions = dofile("src/_manifest.lua")
+		
+		local out = io.open("src/host/bytecode.c", "w+b")
+		out:write("/* Precompiled bytecodes for built-in Premake scripts */\n")
+		out:write("/* To regenerate this file, run `premake --compile` (Premake 3.x) */\n\n")
+
+		out:write("const char* builtin_bytecode[] = {\n")
+		
+		for i,fn in ipairs(scripts) do
+			print(fn)
+			s = dumpfile(out, "src/"..fn)
+			table.insert(sizes, s)
+		end
+
+		for i,fn in ipairs(templates) do
+			print(fn)
+			s = dumptmpl(out, "src/"..fn)
+			table.insert(sizes, s)
+		end
+		
+		for i,fn in ipairs(actions) do
+			print(fn)
+			s = dumpfile(out, "src/"..fn)
+			table.insert(sizes, s)
+		end
+		
+		out:write("};\n\n");
+		out:write("int builtin_sizes[] = {\n")
+
+		for i,v in ipairs(sizes) do
+			out:write("\t"..v..",\n")
+		end
+
+		out:write("\t0\n};\n");		
+		out:close()
+		
+		print("Done.")	
+	end
+
+
+	premake.actions["compile"] = {
+		description = "Compile scripts to bytecode and embed in bytecode.c",
+		execute     = docompile,
+	}

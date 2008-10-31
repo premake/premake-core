@@ -3,10 +3,6 @@ package.target = "premake4"
 package.language = "c"
 package.kind = "exe"
 
-	local lua      = "base/lua-5.1.2"
-	local unittest = "testing/UnitTest++/src"
-
-
 -- Build settings
 
 	package.buildflags = 
@@ -37,49 +33,30 @@ package.kind = "exe"
 	{
 		"_CRT_SECURE_NO_WARNINGS"
 	}
-	
+
 	package.includepaths = 
 	{
-		".",
-		lua .. "/src",
+		"host/lua-5.1.2/src"
 	}
-
+	
 	package.files =
 	{
-		matchrecursive("*.h", "*.c"),
+		matchrecursive("host/*.h", "host/*.c"),
+		matchrecursive("*.lua", "*.tmpl"),
+		matchrecursive("../tests/*.lua")
 	}
-		
+
 	package.excludes =
 	{
-		lua .. "/src/lua.c",
-		lua .. "/src/luac.c",
-		lua .. "/src/print.c",
-		matchfiles(lua .. "/etc/*.c")
-	}	
+		"premake.lua", "premake4.lua",
+		"host/lua-5.1.2/src/lua.c",
+		"host/lua-5.1.2/src/luac.c",
+		"host/lua-5.1.2/src/print.c",
+		matchrecursive("host/lua-5.1.2/*.lua"),
+		matchfiles("host/lua-5.1.2/etc/*.c")
+	}
 
-
--- Automated tests
-
-	if (not options["no-tests"]) then
-		
-		-- UnitTest++ is a C++ system
-		package.language = "c++"  
-
-		-- Define a symbol so I can compile in the testing calls
-		table.insert(package.defines, "TESTING_ENABLED")
-		
-		table.insert(package.files, matchrecursive("*.cpp"))
-		table.insert(package.excludes, matchfiles(unittest .. "/tests/*"))
-		
-		if (windows) then
-			table.insert(package.excludes, matchfiles(unittest .. "/Posix/*"))
-			package.config["Debug"].postbuildcommands = { "..\\bin\\debug\\premake4.exe" }
-			package.config["Release"].postbuildcommands = { "..\\bin\\release\\premake4.exe" }
-		else
-			table.insert(package.excludes, matchfiles(unittest .. "/Win32/*"))
-			package.config["Debug"].postbuildcommands = { "../bin/debug/premake4" }
-			package.config["Release"].postbuildcommands = { "../bin/release/premake4" }
-		end
-		
+	if (linux) then
+		table.insert(package.links, "m")
 	end
 

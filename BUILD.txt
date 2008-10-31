@@ -1,0 +1,88 @@
+PREMAKE BUILD INSTRUCTIONS
+
+ As of version 4.0, Premake is written in a mix of C and Lua. This mix
+ makes it smaller, enables the templating features, and easier the 
+ whole thing easier to maintain. The trade-off is a couple of wrinkles
+ in the build process.
+ 
+ If you downloaded a source code package from SourceForge, you can just
+ build using the default "Release" configuration and go. The information
+ in this file is primarily for people who got the code from Subversion,
+ or developers who want to make changes to the Premake code.
+ 
+
+GENERATING THE PROJECT FILES
+
+ If you downloaded a source code package from SourceForge, the project
+ files are already included and you can skip ahead to the next section.
+ If you downloaded the sources from Subversion, you'll need to generate 
+ new projects files before you can build. 
+ 
+ In order to generate the project files, you need a working version of 
+ Premake, either 3.x or 4.x versions, installed on your system. You can
+ get it as source code or a prebuilt binary from the SourceForge 
+ download page.
+ 
+ Once you have a working Premake installed, generate the project files
+ in the normal way. For Premake 4.x, type a command like:
+ 
+   premake4 gmake    -- for GNU makefiles using GCC
+   premake4 vs2005   -- for a Visual Studio 2005 solution
+   
+ For Premake 3.x, use the old command line format:
+ 
+   premake --target gnu
+   premake --target vs2005
+   
+ Use the "--help" option to see all available targets.
+ 
+
+RELEASE AND DEBUG BUILDS
+
+ Premake can be built in either "release" or "debug" modes. You can 
+ choose which configuration to build with the CONFIG argument:
+ 
+   make CONFIG=Debug    -- build in debug mode
+   make CONFIG=Release  -- build in release mode
+ 
+ (IDEs like Visual Studio provide their own mechanism for switching 
+ build configurations).
+ 
+ In release mode (the default) you can build and run Premake like any
+ other C application. In debug mode, Premake reads the Lua scripts from
+ the disk at runtime, enabling compile-less code/test iterations. But
+ it needs some help to find the scripts. 
+ 
+ You can specify the location of the scripts in one of two ways. You 
+ can use the /scripts command line argument, like so:
+ 
+   premake4 /scripts=~/Code/premake4/src gmake
+   
+ Or by setting a PREMAKE_PATH environment variable.
+ 
+   PREMAKE_PATH=~/Code/premake4/src
+   
+ As you can see, you need to specify the location of the Premake "src"
+ directory, the one containing "_premake_main.lua".
+ 
+ 
+COMPILING SCRIPTS
+
+ If you make changes to the core Lua scripts, you can integrate them 
+ into the release build using the "compile" command:
+ 
+   premake4 compile    -- for Premake 4.x
+   premake --compile   -- for Premake 3.x
+   
+ This command compiles all of the scripts listed in _manifest.lua into
+ bytecode and embeds them into src/host/bytecode.c. The next release 
+ build will include the updated scripts.
+ 
+ 
+CONFUSED?
+
+ I'll be glad to help you out. Stop by the main project website where
+ you leave a note in the forums (the preferred approach), join the 
+ mailing list, or contact me directly.
+ 
+   http://industriousone.com/premake

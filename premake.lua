@@ -1,10 +1,7 @@
 project.name = "Premake4"
 
--- Project options
-
-	addoption("no-tests", "Build without automated tests")
-
-
+	project.configs = { "Release", "Debug" }
+	
 -- Output directories
 
 	project.config["Debug"].bindir = "bin/debug"
@@ -21,140 +18,114 @@ project.name = "Premake4"
 	function doclean(cmd, arg)
 		docommand(cmd, arg)
 		os.rmdir("bin")
-		os.rmdir("doc")
 	end
 
 
--- Release code
 
-	REPOS  = "https://premake.svn.sourceforge.net/svnroot/premake"
-	TRUNK  = "/trunk"
-	TAGS   = "/tags/4.0-dev/"
+-- Functions copied from Premake4; can drop them once I'm self-hosting
 
-	function dorelease(cmd, arg)
-		
-		if (not arg) then
-			error "You must specify a version"
-		end
+	path = { }
 
-		-------------------------------------------------------------------
-		-- Make sure everything is good before I start
-		-------------------------------------------------------------------
-		print("")
-		print("PRE-FLIGHT CHECKLIST")
-		print(" * is README up-to-date?")
-		print(" * is CHANGELOG up-to-date?")
-		print(" * did you test build with GCC?")
-		print(" * did you test build with Doxygen?")
-		print(" * are 'svn' (all) and '7z' (Windows) available?")
-		print("")
-		print("Press [Enter] to continue or [^C] to quit.")
-		io.stdin:read("*l")
+	function string.findlast(s, pattern, plain)
+		local curr = 0
+		repeat
+			local next = s:find(pattern, curr + 1, plain)
+			if (next) then curr = next end
+		until (not next)
+		if (curr > 0) then
+			return curr
+		end	
+	end
 
-		-------------------------------------------------------------------
-		-- Set up environment
-		-------------------------------------------------------------------
-		local version = arg
-		
-		os.mkdir("release")
-
-		local folder  = "premake4-"..version
-		local trunk   = REPOS..TRUNK
-		local branch  = REPOS..TAGS..version
-		
-		-------------------------------------------------------------------
-		-- Build and run all automated tests on working copy
-		-------------------------------------------------------------------
-		print("Building tests on working copy...")
-		os.execute("premake --target gnu >release/release.log")
-		result = os.execute("make CONFIG=Release >release/release.log")
-		if (result ~= 0) then
-			error("Test build failed; see release.log for details")
-		end
-
-		-------------------------------------------------------------------
-		-- Look for a release branch in SVN, and create one from trunk if necessary		
-		-------------------------------------------------------------------
-		print("Checking for release branch...")
-		os.chdir("release")
-		result = os.execute(string.format("svn ls %s >release.log 2>&1", branch))
-		if (result ~= 0) then
-			print("Creating release branch...")
-			result = os.execute(string.format('svn copy %s %s -m "Creating release branch for %s" >release.log', trunk, branch, version))
-			if (result ~= 0) then
-				error("Failed to create release branch at "..branch)
-			end
-		end
-
-		-------------------------------------------------------------------
-		-- Checkout a local copy of the release branch
-		-------------------------------------------------------------------
-		print("Getting source code from release branch...")
-		os.execute(string.format("svn co %s %s >release.log", branch, folder))
-		if (not os.fileexists(folder.."/README.txt")) then
-			error("Unable to checkout from repository at "..branch)
-		end
-
-		-------------------------------------------------------------------
-		-- Embed version numbers into the files
-		-------------------------------------------------------------------
-		-- (embed version #s)
-		-- (check into branch)
-
-		-------------------------------------------------------------------
-		-- Build the release binary for this platform
-		-------------------------------------------------------------------
-		print("Building release version...")
-		os.chdir(folder)
-		os.execute("premake --clean --no-tests --target gnu >../release.log")
-		
-		if (windows) then
-			os.execute("make CONFIG=Release >../release.log")
-			os.chdir("bin/release")
-			result = os.execute(string.format("7z a -tzip ..\\..\\..\\premake4-win32-%s.zip premake4.exe >../release.log", version))
-		elseif (macosx) then
-			os.execute('TARGET_ARCH="-arch i386 -arch ppc" make CONFIG=Release >../release.log')
-			os.chdir("bin/release")
-			result = os.execute(string.format("tar czvf ../../../premake4-macosx-%s.tar.gz premake4 >../release.log", version))
+	function path.getbasename(p)
+		local fn = path.getname(p)
+		local i = fn:findlast(".", true)
+		if (i) then
+			return fn:sub(1, i - 1)
 		else
-			os.execute("make CONFIG=Release >../release.log")
-			os.chdir("bin/release")
-			result = os.execute(string.format("tar czvf ../../../premake4-linux-%s.tar.gz premake4 >../release.log", version))
+			return fn
 		end
-		
-		if (result ~= 0) then
-			error("Failed to build binary package; see release.log for details")
-		end
-
-		os.chdir("../../..")
-		
-		-------------------------------------------------------------------
-		-- Build the source code package
-		-------------------------------------------------------------------
-		if (macosx) then
-			result = os.execute(string.format("zip -r9 premake4-src-%s.zip %s/* >release.log", version, folder))
-			if (result ~= 0) then
-				error("Failed to build source code package; see release.log for details")
-			end
-		end
-		
-		-------------------------------------------------------------------
-		-- Clean up
-		-------------------------------------------------------------------
-		print("Cleaning up...")
-		os.rmdir(folder)
-		os.remove("release.log")
-
-
-		-------------------------------------------------------------------
-		-- Next steps
-		-------------------------------------------------------------------
-		if (windows) then
-			print("DONE - now run release script under Linux")
-		elseif (linux) then
-			print("DONE - now run release script under Mac OS X")
+	end
+	
+	function path.getname(p)
+		local i = p:findlast("/", true)
+		if (i) then
+			return p:sub(i + 1)
 		else
-			print("DONE - really this time")
+			return p
+		end
+	end
+
+
+
+-- Compile scripts to bytecodes
+
+	function dumpfile(out, filename)
+		local func = loadfile(filename)			
+		local dump = string.dump(func)
+		local len = string.len(dump)
+		out:write("\t\"")
+		for i=1,len do
+			out:write(string.format("\\%03o", string.byte(dump, i)))
+		end
+		out:write("\",\n")
+		return len
+	end
+
+	function dumptmpl(out, filename)
+		local f = io.open(filename)
+		local tmpl = f:read("*a")
+		f:close()
+
+		local name = path.getbasename(filename)
+		local dump = "_TEMPLATES."..name.."=premake.template.loadstring('"..name.."',[["..tmpl.."]])"
+		local len = string.len(dump)
+		out:write("\t\"")
+		for i=1,len do
+			out:write(string.format("\\%03o", string.byte(dump, i)))
+		end
+		out:write("\",\n")
+		return len
+	end				
+	
+	function docompile(cmd, arg)
+		local sizes = { }
+
+		scripts, templates, actions = dofile("src/_manifest.lua")
+
+		local out = io.open("src/host/bytecode.c", "w+b")
+		out:write("/* Precompiled bytecodes for built-in Premake scripts */\n")
+		out:write("/* To regenerate this file, run `premake --compile` (Premake 3.x) */\n\n")
+
+		out:write("const char* builtin_bytecode[] = {\n")
+		
+		for i,fn in ipairs(scripts) do
+			print(fn)
+			s = dumpfile(out, "src/"..fn)
+			table.insert(sizes, s)
+		end
+
+		for i,fn in ipairs(templates) do
+			print(fn)
+			s = dumptmpl(out, "src/"..fn)
+			table.insert(sizes, s)
 		end
 		
+		for i,fn in ipairs(actions) do
+			print(fn)
+			s = dumpfile(out, "src/"..fn)
+			table.insert(sizes, s)
+		end
+		
+		out:write("};\n\n");
+		out:write("int builtin_sizes[] = {\n")
+
+		for i,v in ipairs(sizes) do
+			out:write("\t"..v..",\n")
+		end
+
+		out:write("\t0\n};\n");		
+		out:close()
+		
+		print("Done.")	
 	end
