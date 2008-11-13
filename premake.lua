@@ -1,3 +1,10 @@
+if (target == "vs2002" or target == "vs2003") then
+	error(
+		"\nBecause of compiler limitations, Visual Studio 2002 and 2003 aren't able to\n" ..
+		"build this version of Premake. Use the free Visual Studio Express instead.", 0)
+end
+
+
 project.name = "Premake4"
 
 	project.configs = { "Release", "Debug" }
@@ -78,7 +85,7 @@ project.name = "Premake4"
 		f:close()
 
 		local name = path.getbasename(filename)
-		local dump = "_TEMPLATES."..name.."=premake.template.loadstring('"..name.."',[["..tmpl.."]])"
+		local dump = "_TEMPLATES."..name.."=premake.loadtemplatestring('"..name.."',[["..tmpl.."]])"
 		local len = string.len(dump)
 		out:write("\t\"")
 		for i=1,len do

@@ -2,6 +2,12 @@
 -- Premake 4.x build configuration script
 -- 
 
+if (_ACTION == "vs2002" or _ACTION == "vs2003") then
+	error(
+		"\nBecause of compiler limitations, Visual Studio 2002 and 2003 aren't able to\n" ..
+		"build this version of Premake. Use the free Visual Studio Express instead.", 0)
+end
+
 
 solution "Premake4"
 	configurations { "Release", "Debug" }
@@ -10,7 +16,7 @@ solution "Premake4"
 project "Premake4"
 	targetname  "premake4"
 	language    "C"
-	kind        "ConsoleExe"
+	kind        "ConsoleApp"
 	flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
 	includedirs { "src/host/lua-5.1.2/src" }
 
@@ -52,7 +58,6 @@ project "Premake4"
 	
 	function onclean()
 		os.rmdir("bin")
-		os.rmdir("obj")  -- get rid of this once "clean" is working properly
 	end
 
 
@@ -80,7 +85,7 @@ project "Premake4"
 		f:close()
 
 		local name = path.getbasename(fname)
-		local dump = "_TEMPLATES."..name.."=premake.template.loadstring('"..name.."',[["..tmpl.."]])"
+		local dump = "_TEMPLATES."..name.."=premake.loadtemplatestring('"..name.."',[["..tmpl.."]])"
 		local len = string.len(dump)
 		out:write("\t\"")
 		for i=1,len do

@@ -13,6 +13,11 @@
 	
 	premake.tools.gcc = { }
 	
+	
+--
+-- CFLAGS
+--
+
 	premake.tools.gcc.cflags =
 	{
 		ExtraWarnings  = "-Wall",
@@ -24,30 +29,6 @@
 		Symbols        = "-g",
 	}
 
-	premake.tools.gcc.cxxflags =
-	{
-		NoExceptions   = "--no-exceptions",
-		NoRTTI         = "--no-rtti",
-	}
-	
-	
-	function premake.tools.gcc.make_defines(cfg)
-		return table.implode(cfg.defines, '-D "', '"', ' ')
-	end
-
-	
-	function premake.tools.gcc.make_includes(cfg)
-		return table.implode(cfg.incdirs, '-I "', '"', ' ')
-	end
-
-
-	function premake.tools.gcc.make_cppflags(cfg)
-		-- if $(ARCH) contains multiple targets, then disable the incompatible automatic
-		-- dependency generation. This allows building universal binaries on MacOSX, sorta.
-		return "$(if $(word 2, $(ARCH)), , -MMD)"
-	end
-	
-	
 	function premake.tools.gcc.make_cflags(cfg)
 		local flags = table.translate(cfg.flags, premake.tools.gcc.cflags)
 		
@@ -57,13 +38,52 @@
 
 		return table.concat(flags, " ")
 	end
+
+
+--
+-- CPPFLAGS
+--
+
+	function premake.tools.gcc.make_cppflags(cfg)
+		-- if $(ARCH) contains multiple targets, then disable the incompatible automatic
+		-- dependency generation. This allows building universal binaries on MacOSX, sorta.
+		return "$(if $(word 2, $(ARCH)), , -MMD)"
+	end
 	
+	
+--
+-- CXXFLAGS
+--
+
+	premake.tools.gcc.cxxflags =
+	{
+		NoExceptions   = "--no-exceptions",
+		NoRTTI         = "--no-rtti",
+	}
 	
 	function premake.tools.gcc.make_cxxflags(cfg)
 		local flags = table.translate(cfg.flags, premake.tools.gcc.cxxflags)
 		return table.concat(flags, " ")
 	end
 	
+
+--
+-- DEFINES and INCLUDES
+--
+	
+	function premake.tools.gcc.make_defines(cfg)
+		return table.implode(cfg.defines, '-D "', '"', ' ')
+	end
+
+	
+	function premake.tools.gcc.make_includes(cfg)
+		return table.implode(cfg.incdirs, '-I "', '"', ' ')
+	end
+	
+
+--
+-- LDFLAGS
+--
 	
 	function premake.tools.gcc.make_ldflags(cfg)
 		local flags = { }
@@ -74,17 +94,17 @@
 			end
 			
 			-- create import library for DLLs under Windows
-			if (os.is("windows") and not table.contains(cfg.flags, "NoImportLib")) then
-				table.insert(flags, '-Wl,--out-implib="' .. premake.project.gettargetfile(cfg, "implib", "StaticLib", "linux") .. '"')
+			if (os.is("windows") and not cfg.flags.NoImportLib) then
+				table.insert(flags, '-Wl,--out-implib="' .. premake.gettargetfile(cfg, "implib", "StaticLib", "linux") .. '"')
 			end
 		end
 
-		if (os.is("windows") and cfg.kind == "WindowedExe") then
+		if (os.is("windows") and cfg.kind == "WindowedApp") then
 			table.insert(flags, "-mwindows")
 		end
 
 		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
-		if (not table.contains(cfg.flags, "Symbols")) then
+		if (not cfg.flags.Symbols) then
 			if (os.is("macosx")) then
 				table.insert(flags, "-Wl,-x")
 			else
@@ -99,7 +119,7 @@
 		-- need to split path from libraries to avoid runtime errors (see bug #1729227)
 		local dirs  = { }
 		local names = { }
-		for _, link in ipairs(premake.project.getlibraries(cfg, cfg.links)) do
+		for _, link in ipairs(premake.getlibraries(cfg)) do
 			local dir  = path.getdirectory(link)
 			local name = path.getbasename(link)
 			
@@ -113,6 +133,10 @@
 		return table.concat(flags, " ") .. table.implode(cfg.libdirs, ' -L "', '"').. table.implode(dirs, ' -L "', '"') .. table.implode(names, ' -l "', '"')
 	end
 	
+
+--
+-- SOURCE FILE RULES
+--
 
 	function premake.tools.gcc.make_file_rule(file)	
 		if (path.iscfile(file)) then

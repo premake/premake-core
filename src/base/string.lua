@@ -40,6 +40,7 @@
 	end
 	
 
+
 --
 -- Find the last instance of a pattern in a string.
 --
@@ -53,4 +54,14 @@
 		if (curr > 0) then
 			return curr
 		end	
+	end
+
+
+
+--
+-- Returns true if `haystack` starts with the sequence `needle`.
+--
+
+	function string.startswith(haystack, needle)
+		return (haystack:find(needle, 1, true) == 1)
 	end

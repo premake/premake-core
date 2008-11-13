@@ -6,13 +6,19 @@
 
 
 --
--- Adds the values from one array to the end of another.
+-- Adds the values from one array to the end of another and
+-- returns the result.
 --
 
-	function table.append(dst, src)
-		for _,v in ipairs(src) do
-			table.insert(dst, v)
+	function table.join(first, second)
+		local result = { }
+		for _,v in ipairs(first) do
+			table.insert(result, v)
 		end
+		for _,v in ipairs(second) do
+			table.insert(result, v)
+		end
+		return result
 	end
 	
 

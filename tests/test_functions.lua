@@ -132,3 +132,9 @@
 		test.istrue(prj == project("MyProject"))
 	end
 
+	function T.functions.project_SetsUUID()
+		local prj = project "MyProject"
+		test.istrue(prj.uuid)
+	end
+	
+		

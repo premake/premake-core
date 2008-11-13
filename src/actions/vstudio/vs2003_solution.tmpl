@@ -1,21 +1,17 @@
 <% eol = "\r\n" %>
-Microsoft Visual Studio Solution File, Format Version 7.00
+Microsoft Visual Studio Solution File, Format Version 8.00
 <% for prj in premake.eachproject(this) do %>
 Project("{<%=vstudio.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, vstudio.projectfile(prj)))%>", "{<%=prj.uuid%>}"
+ <% for _,dep in ipairs(premake.getdependencies(prj)) do %>
+	{<%= dep.uuid %>} = {<%= dep.uuid %>}
+ <% end %>
 EndProject
 <% end %>
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 	<% for i,cfgname in ipairs(this.configurations) do %>
-		ConfigName.<%= i-1 %> = <%= cfgname %>
+		<%= cfgname %> = <%= cfgname %>
 	<% end %>		
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-	<% for prj in premake.eachproject(this) do %>
-	 <% for i,dep in ipairs(premake.getdependencies(prj)) do %>
-		{<%= prj.uuid %>}.<%= i - 1 %> = {<%= dep.uuid %>}
-	 <% end %>
-	<% end %>
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection

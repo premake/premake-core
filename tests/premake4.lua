@@ -6,12 +6,13 @@
 
 	dofile("testfx.lua")
 	dofile("test_dofile.lua")
-	dofile("test_file.lua")
+	dofile("test_os.lua")
 	dofile("test_path.lua")
 	dofile("test_string.lua")
 	dofile("test_table.lua")
 	dofile("test_template.lua")
 	dofile("test_premake.lua")
+	dofile("test_config.lua")
 	dofile("test_project.lua")
 	dofile("test_functions.lua")
 

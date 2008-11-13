@@ -66,7 +66,7 @@
 			-- then the templates
 			for _,v in ipairs(t) do
 				local n = path.getbasename(v)
-				_TEMPLATES[n] = premake.template.loadfile(scriptpath.."/"..v)
+				_TEMPLATES[n] = premake.loadtemplatefile(scriptpath.."/"..v)
 			end
 			
 			-- finally the actions
@@ -122,7 +122,7 @@
 		ok, err = premake.checktools()
 		if (not ok) then error("Error: " .. err, 0) end
 		
-		ok, err = premake.project.checkall()
+		ok, err = premake.checkprojects()
 		if (not ok) then error("Error: " .. err, 0) end
 		
 		premake.doaction(_ACTION)		

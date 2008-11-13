@@ -219,11 +219,12 @@
 
 	function path.translate(p, sep)
 		if (not sep) then
-			if (os.windows) then
+			if (os.is("windows")) then
 				sep = "\\"
 			else
 				sep = "/"
 			end
 		end		
-		return p:gsub("[/\\]", sep)
+		local result = p:gsub("[/\\]", sep)
+		return result
 	end

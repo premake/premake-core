@@ -16,9 +16,7 @@ int os_rmdir(lua_State* L)
 #if PLATFORM_WINDOWS
 	z = RemoveDirectory(path);
 #else
-	lua_pushfstring(L, "rm -rf %s", path);
-	z = (system(lua_tostring(L, -1)) == 0);
-	lua_pop(L, 1);
+	z = rmdir(path);
 #endif
 
 	if (!z)

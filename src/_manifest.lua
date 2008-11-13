@@ -18,6 +18,7 @@
 		"base/premake.lua",
 		"base/template.lua",
 		"base/project.lua",
+		"base/config.lua",
 		"base/functions.lua",
 		"base/gcc.lua",
 		
@@ -31,8 +32,11 @@
 	local templates = 
 	{
 		"actions/make/make_solution.tmpl",
-		"actions/make/make_cpp_project.tmpl",
+		"actions/make/make_cpp.tmpl",
 		"actions/vstudio/vs2002_solution.tmpl",
+		"actions/vstudio/vs2003_solution.tmpl",
+		"actions/vstudio/vs2005_solution.tmpl",
+		"actions/vstudio/vs200x_vcproj.tmpl",
 	}
 	
 	

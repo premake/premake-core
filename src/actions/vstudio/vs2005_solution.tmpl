@@ -1,0 +1,55 @@
+<% eol = "\r\n" %>
+<%= "\239\187\191" %>
+<% local hascpp, hasdotnet %>
+<% if _ACTION == "vs2005" then %>
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+<% elseif _ACTION == "vs2008" then %>
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+<% end %>
+<% for prj in premake.eachproject(this) do %>
+ <% if (prj.language == "C" or prj.language == "C++") then hascpp = true end %>
+ <% if (prj.language == "C#") then hasdotnet = true end %>
+Project("{<%=vstudio.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, vstudio.projectfile(prj)),"\\")%>", "{<%=prj.uuid%>}"
+ <% for _,dep in ipairs(premake.getdependencies(prj)) do %>
+	{<%= dep.uuid %>} = {<%= dep.uuid %>}
+ <% end %>
+EndProject
+<% end %>
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+    <% for _, cfgname in ipairs(this.configurations) do %>
+     <% if hasdotnet then %>
+		<%= cfgname %>|Any CPU = <%= cfgname %>|Any CPU
+     <% end; if hasdotnet and hascpp then %>
+		<%= cfgname %>|Mixed Platforms = <%= cfgname %>|Mixed Platforms
+     <% end; if hascpp then %>
+		<%= cfgname %>|Win32 = <%= cfgname %>|Win32
+     <% end %>
+    <% end %>
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	<% for prj in premake.eachproject(this) do %>
+	 <% for _, cfgname in ipairs(this.configurations) do %>
+	  <% if hasdotnet then %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Any CPU.ActiveCfg = <%= cfgname %>|<%= vstudio.arch(prj) %>
+	   <% if (prj.language ~= "C" and prj.language ~= "C++") then %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Any CPU.Build.0 = <%= cfgname %>|<%= vstudio.arch(prj) %>
+	   <% end %>
+	  <% end; if (hasdotnet and hascpp) then %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Mixed Platforms.ActiveCfg = <%= cfgname %>|<%= vstudio.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Mixed Platforms.Build.0 = <%= cfgname %>|<%= vstudio.arch(prj) %>
+	  <% end; if (hascpp) then %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Win32.ActiveCfg = <%= cfgname %>|<%= vstudio.arch(prj) %>
+	   <% if (prj.language == "C" or prj.language == "C++") then %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Win32.Build.0 = <%= cfgname %>|<%= vstudio.arch(prj) %>
+	   <% end %>
+	  <% end %>
+	 <% end %>
+	<% end %>
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

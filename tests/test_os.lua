@@ -7,18 +7,19 @@
 
 	T.os = { }
 
-
+	
 --
 -- os.isfile() tests
 --
 
 	function T.os.isfile_ReturnsTrue_OnExistingFile()
-		test.istrue(os.isfile("test_file.lua"))
+		test.istrue(os.isfile("test_os.lua"))
 	end
 
 	function T.os.isfile_ReturnsFalse_OnNonexistantFile()
 		test.isfalse(os.isfile("no_such_file.lua"))
 	end
+
 
 
 --
@@ -30,14 +31,32 @@
 	end
 	
 	function T.os.pathsearch_ReturnsPath_OnFound()
-		test.isequal(os.getcwd(), os.pathsearch("test_file.lua", os.getcwd()))
+		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", os.getcwd()))
 	end
 	
 	function T.os.pathsearch_FindsFile_OnComplexPath()
-		test.isequal(os.getcwd(), os.pathsearch("test_file.lua", "aaa;"..os.getcwd()..";bbb"))
+		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", "aaa;"..os.getcwd()..";bbb"))
 	end
 	
 	function T.os.pathsearch_NilPathsAllowed()
-		test.isequal(os.getcwd(), os.pathsearch("test_file.lua", nil, os.getcwd(), nil))
+		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", nil, os.getcwd(), nil))
+	end
+	
+	
+--
+-- os.uuid() tests
+--
+
+	function T.os.guid_ReturnsValidUUID()
+		local g = os.uuid()
+		test.istrue(#g == 36)
+		for i=1,36 do
+			local ch = g:sub(i,i)
+			test.istrue(ch:find("[ABCDEF0123456789-]"))
+		end
+		test.isequal("-", g:sub(9,9))
+		test.isequal("-", g:sub(14,14))
+		test.isequal("-", g:sub(19,19))
+		test.isequal("-", g:sub(24,24))
 	end
 	

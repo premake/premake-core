@@ -72,7 +72,7 @@
 		shortname       = "GNU Make",
 		description     = "GNU makefiles for POSIX, MinGW, and Cygwin",
 	
-		valid_kinds     = { "ConsoleExe", "WindowedExe", "StaticLib", "SharedLib" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++" },
 		
@@ -81,13 +81,11 @@
 			csc  = { "mcs" },
 		},
 		
-		solutiontemplates = 
-		{
+		solutiontemplates = {
 			{ function(this) return make.getmakefilename(this, false) end,  _TEMPLATES.make_solution },
 		},
 		
-		projecttemplates = 
-		{
-			{ function(this) return make.getmakefilename(this, true) end,   _TEMPLATES.make_cpp_project },
+		projecttemplates = {
+			{ function(this) return make.getmakefilename(this, true) end,   _TEMPLATES.make_cpp },
 		},
 	}

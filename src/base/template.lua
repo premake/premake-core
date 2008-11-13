@@ -5,9 +5,6 @@
 --
 	
 
-	premake.template = { }
-
-
 --
 -- Process a literal string, splitting up newlines so that the generated
 -- code will match the original template line for line, so error messages
@@ -30,11 +27,12 @@
 	end
 
 
+
 --
 -- Convert a template to Lua script code.
 --
 
-	function premake.template.encode(tmpl)
+	function premake.encodetemplate(tmpl)
 		code = ""
 		
 		-- normalize line endings
@@ -60,14 +58,22 @@
 			-- if a statement block, strip out everything else on that line
 			if (not isexpr) then
 				finish = before:findlast("\n", true)
-				if (finish) then before = before:sub(1, finish) end
+				if (finish) then 
+					before = before:sub(1, finish)
+				else
+					before = nil
+				end
 				
 				start = after:find("\n", 1, true)
-				if (start) then after = after:sub(start + 1) end
+				if (start) then 
+					after = after:sub(start + 1) 
+				end
 			end
 						
 			-- output everything before the block
-			code = code .. literal(before)
+			if (before) then
+				code = code .. literal(before)
+			end
 			
 			-- output the block itself
 			if (isexpr) then
@@ -85,31 +91,14 @@
 		return code
 	end
 	
-
---
--- Generate output from a template, provided a filename and an object.
---
-
-	function premake.template.generate(tmpl, fname, this)
-		premake.template.newline = "\\n"
-		
-		local f, err = io.open(fname, "wb")
-		if (not f) then
-			error(err, 0)
-		end
-		
-		io.output(f)
-		tmpl(this)
-		io.output():close()
-	end
 	
-	
+
 --
 -- Load a template from a string and convert to a template function.
 --
 
-	function premake.template.loadstring(name, str)
-		local code = premake.template.encode(str)
+	function premake.loadtemplatestring(name, str)
+		local code = premake.encodetemplate(str)
 		local fn, msg = loadstring("return function (this) eol='\\n';" .. code .. " end", name)
 		if (not fn) then
 			error(msg, 0)
@@ -118,14 +107,15 @@
 	end
 
 
+
 --
 -- Load a template from a file and convert it to a template function.
 --
 
-	function premake.template.loadfile(fname)
+	function premake.loadtemplatefile(fname)
 		local f = io.open(fname, "rb")
 		local tmpl = f:read("*a")
 		f:close()
-		return premake.template.loadstring(path.getname(fname), tmpl)
+		return premake.loadtemplatestring(path.getname(fname), tmpl)
 	end
 	

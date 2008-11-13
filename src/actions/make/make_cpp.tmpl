@@ -4,11 +4,11 @@ ifndef CONFIG
   CONFIG=<%= make.esc(this.configurations[1]) %>
 endif
 
-<% for cfg in premake.project.configs(this) do %>
+<% for cfg in premake.eachconfig(this) do %>
 ifeq ($(CONFIG),<%= make.esc(cfg.name)%>)
   TARGETDIR  = <%= make.esc(path.getdirectory(cfg.target)) %>
   TARGET     = $(TARGETDIR)/<%= make.esc(path.getname(cfg.target)) %>
-  OBJDIR     = <%= make.esc(premake.project.getobjdir(cfg)) %>
+  OBJDIR     = <%= make.esc(premake.getobjdir(cfg)) %>
   DEFINES   += <%= premake.tools[_OPTIONS.cc].make_defines(cfg)  %>
   INCLUDES  += <%= premake.tools[_OPTIONS.cc].make_includes(cfg) %>
   CPPFLAGS  += <%= premake.tools[_OPTIONS.cc].make_cppflags(cfg) %> $(DEFINES) $(INCLUDES)
@@ -16,23 +16,28 @@ ifeq ($(CONFIG),<%= make.esc(cfg.name)%>)
   CXXFLAGS  += $(CFLAGS) <%= premake.tools[_OPTIONS.cc].make_cxxflags(cfg) %>
   LDFLAGS   += <%= premake.tools[_OPTIONS.cc].make_ldflags(cfg) %> <%= table.concat(cfg.linkoptions, " ") %>
   RESFLAGS  += $(DEFINES) $(INCLUDES) <%= table.concat(cfg.resoptions, " ") %>
-  LDDEPS    += <%= table.concat(premake.project.getlibraries(cfg, premake.project.getdependencies(cfg))) %>
+  LDDEPS    += <%= table.concat(premake.getlibraries(cfg, "siblings")) %>
+  <% if cfg.kind == "StaticLib" then %>
+  LINKCMD    = ar -rcs $(TARGET) $(OBJECTS) $(ARCH)
+  <% else %>
+  LINKCMD    = $(<%= iif(cfg.language == "C", "CC", "CXX") %>) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH)
+  <% end %>
 endif
 
 <% end %>
 
 OBJECTS := \
 <% for _, file in ipairs(this.files) do %>
-<%  if path.iscppfile(file) then %>
+ <% if path.iscppfile(file) then %>
 	$(OBJDIR)/<%= make.esc(path.getbasename(file)) %>.o \
-<%  end %>
+ <% end %>
 <% end %>
 
 RESOURCES := \
 <% for _, file in ipairs(this.files) do %>
-<%  if path.isresourcefile(file) then %>
+ <% if path.isresourcefile(file) then %>
 	$(OBJDIR)/<%= make.esc(path.getbasename(file)) %>.res \
-<%  end %>
+ <% end %>
 <% end %>
 
 SHELLTYPE := msdos
@@ -57,7 +62,7 @@ SYS_OBJDIR    := $(subst /,$(PATHSEP),$(OBJDIR))
 
 .PHONY: clean
 
-<% if os.is("MacOSX") and this.kind == "WindowedExe" then %>
+<% if os.is("MacOSX") and this.kind == "WindowedApp" then %>
 all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
 
 $(dir $(TARGETDIR))PkgInfo:
@@ -67,8 +72,9 @@ $(dir $(TARGETDIR))Info.plist:
 
 $(TARGET): $(TARGETDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)
 	@echo Linking <%= this.name %>
-	@$(CXX) -o $@ $(LDFLAGS) $(ARCH) $(OBJECTS) $(RESOURCES)
-	
+	@$(LINKCMD)
+
+
 $(TARGETDIR):
 	@echo Creating $@
 	@$(MKDIR) $(SYS_TARGETDIR)
@@ -88,12 +94,12 @@ else
 endif
 
 <% for _, file in ipairs(this.files) do %>
-<%  if path.iscppfile(file) then %>
+ <% if path.iscppfile(file) then %>
 $(OBJDIR)/<%= make.esc(path.getbasename(file)) %>.o: <%= make.esc(file) %>
 	@echo $(notdir $<)
 	@<%= premake.tools[_OPTIONS.cc].make_file_rule(file) %>
 	
-<%  end %>
+ <% end %>
 <% end %>
 
 -include $(OBJECTS:%.o=%.d)

@@ -14,6 +14,7 @@
 		return (current:lower() == id:lower())
 	end
 	
+	
 
 --
 -- The os.matchdirs() and os.matchfiles() functions
@@ -63,6 +64,7 @@
 	end
 	
 	
+	
 --
 -- An overload of the os.mkdir() function, which will create any missing
 -- subdirectories along the path.
@@ -86,6 +88,27 @@
 		
 		return true
 	end
-	
 
-		
+
+--
+-- Remove a directory, along with any contained files or subdirectories.
+--
+
+	local builtin_rmdir = os.rmdir
+	function os.rmdir(p)
+		-- recursively remove subdirectories
+		local dirs = os.matchdirs(p .. "/*")
+		for _, dname in ipairs(dirs) do
+			os.rmdir(dname)
+		end
+
+		-- remove any files
+		local files = os.matchfiles(p .. "/*")
+		for _, fname in ipairs(files) do
+			os.remove(fname)
+		end
+				
+		-- remove this directory
+		builtin_rmdir(p)
+	end
+	

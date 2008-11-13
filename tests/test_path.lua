@@ -134,7 +134,7 @@
 
 	function T.path.translate_ReturnsCorrectSeparator_OnMixedPath()
 		local actual = path.translate("dir\\dir/file")
-		if (os.windows) then
+		if (os.is("windows")) then
 			test.isequal("dir\\dir\\file", actual)
 		else
 			test.isequal("dir/dir/file", actual)

@@ -14,21 +14,31 @@
 		"Dylib",
 		"ExtraWarnings",
 		"FatalWarnings",
+		"Managed",
+		"NativeWChar",
 		"No64BitChecks",
+		"NoEditAndContinue",
 		"NoExceptions",
 		"NoFramePointer",
 		"NoImportLib",
+		"NoManifest",
+		"NoNativeWChar",
+		"NoPCH",
 		"NoRTTI",
 		"Optimize",
 		"OptimizeSize",
 		"OptimizeSpeed",
-		"Symbols"
+		"SEH",
+		"StaticRuntime",
+		"Symbols",
+		"Unicode",
+		"WinMain"
 	}
 	
 	local valid_kinds = 
 	{
-		"ConsoleExe",
-		"WindowedExe",
+		"ConsoleApp",
+		"WindowedApp",
 		"StaticLib",
 		"SharedLib"
 	}
@@ -44,7 +54,7 @@
 -- These list fields should be initialized to an empty table.
 --
 
-	premake.project.listfields = 
+	premake.listfields = 
 	{
 		"buildoptions",
 		"defines",
@@ -55,6 +65,8 @@
 		"libdirs",
 		"linkoptions",
 		"links",
+		"resdefines",
+		"resincdirs",
 		"resoptions",
 	}
 	
@@ -63,7 +75,7 @@
 -- These fields should *not* be copied into configurations.
 --
 
-	premake.project.nocopy = 
+	premake.nocopy = 
 	{
 		"blocks",
 		"keywords",
@@ -76,7 +88,7 @@
 -- location relative before being returned in a configuration.
 --
 
-	premake.project.locationrelative = 
+	premake.locationrelative = 
 	{
 		"basedir",
 		"excludes",
@@ -84,10 +96,25 @@
 		"incdirs",
 		"libdirs",
 		"objdir",
+		"pchheader",
+		"pchsource",
+		"resincdirs",
 		"targetdir",
 	}
 	
 
+--
+-- Flag fields are converted from arrays like:
+--   { "Optimize", "NoExceptions" }
+-- to mixed tables like:
+--   { "Optimize", "NoExceptions", Optimize=true, NoExceptions=true }
+--
+
+	premake.flagfields =
+	{
+		"flags",
+	}
+	
 
 
 --
@@ -95,12 +122,12 @@
 --
 
 	function buildoptions(value)
-		return premake.project.setarray("config", "buildoptions", value)
+		return premake.setarray("config", "buildoptions", value)
 	end
 	
 		
 	function configuration(keywords)
-		local container, err = premake.project.getobject("container")
+		local container, err = premake.getobject("container")
 		if (not container) then
 			error(err, 2)
 		end
@@ -115,7 +142,7 @@
 			cfg.keywords = { keywords }
 		end
 		
-		for _, name in ipairs(premake.project.listfields) do
+		for _, name in ipairs(premake.listfields) do
 			cfg[name] = { }
 		end
 		
@@ -124,88 +151,98 @@
 	
 	
 	function configurations(value)
-		return premake.project.setarray("solution", "configurations", value)
+		return premake.setarray("solution", "configurations", value)
 	end
 
 	
 	function defines(value)
-		return premake.project.setarray("config", "defines", value)
+		return premake.setarray("config", "defines", value)
 	end
 
 
 	function excludes(value)
-		return premake.project.setfilearray("container", "excludes", value)
+		return premake.setfilearray("container", "excludes", value)
 	end
 	
 	
 	function files(value)
-		return premake.project.setfilearray("container", "files", value)
+		return premake.setfilearray("container", "files", value)
 	end
 		
 	
 	function flags(value)
-		return premake.project.setarray("config", "flags", value, valid_flags)
+		return premake.setarray("config", "flags", value, valid_flags)
 	end
 
 
 	function implibname(value)
-		return premake.project.setstring("config", "implibname", value)
+		return premake.setstring("config", "implibname", value)
 	end
 	
 	
 	function implibdir(value)
-		return premake.project.setstring("config", "implibdir", path.getabsolute(value))
+		return premake.setstring("config", "implibdir", path.getabsolute(value))
 	end
 
 	
 	function implibextension(value)
-		return premake.project.setstring("config", "implibextension", value)
+		return premake.setstring("config", "implibextension", value)
 	end
 
 	
 	function implibprefix(value)
-		return premake.project.setstring("config", "implibprefix", value)
+		return premake.setstring("config", "implibprefix", value)
 	end
 
 		
 	function includedirs(value)
-		return premake.project.setdirarray("config", "incdirs", value)
+		return premake.setdirarray("config", "incdirs", value)
 	end
 
 	
 	function kind(value)
-		return premake.project.setstring("config", "kind", value, valid_kinds)
+		return premake.setstring("config", "kind", value, valid_kinds)
 	end
 
 	
 	function language(value)
-		return premake.project.setstring("container", "language", value, valid_languages)
+		return premake.setstring("container", "language", value, valid_languages)
 	end
 
 		
 	function libdirs(value)
-		return premake.project.setdirarray("config", "libdirs", value)
+		return premake.setdirarray("config", "libdirs", value)
 	end
 
 
 	function linkoptions(value)
-		return premake.project.setarray("config", "linkoptions", value)
+		return premake.setarray("config", "linkoptions", value)
 	end
 
 	
 	function links(value)
-		return premake.project.setarray("config", "links", value)
+		return premake.setarray("config", "links", value)
 	end
 	
 	
 	function location(value)
-		return premake.project.setstring("container", "location", path.getabsolute(value))
+		return premake.setstring("container", "location", path.getabsolute(value))
 	end
 
 
 	function objdir(value)
-		return premake.project.setstring("config", "objdir", path.getabsolute(value))
+		return premake.setstring("config", "objdir", path.getabsolute(value))
 	end	
+	
+	
+	function pchheader(value)
+		return premake.setstring("config", "pchheader", path.getabsolute(value))
+	end
+	
+	
+	function pchsource(value)
+		return premake.setstring("config", "pchsource", path.getabsolute(value))
+	end
 	
 		
 	function project(name)
@@ -241,6 +278,7 @@
 				prj.name           = name
 				prj.basedir        = os.getcwd()
 				prj.location       = prj.basedir
+				prj.uuid           = os.uuid()
 				prj.filter         = { }
 				prj.blocks         = { }
 			end
@@ -256,8 +294,18 @@
 	end
 
 
+	function resdefines(value)
+		return premake.setarray("config", "resdefines", value)
+	end
+	
+	
+	function resincludedirs(value)
+		return premake.setdirarray("config", "resincdirs", value)
+	end
+
+
 	function resoptions(value)
-		return premake.project.setarray("config", "resoptions", value)
+		return premake.setarray("config", "resoptions", value)
 	end
 			
 
@@ -300,20 +348,40 @@
 
 
 	function targetname(value)
-		return premake.project.setstring("config", "targetname", value)
+		return premake.setstring("config", "targetname", value)
 	end
 	
 	
 	function targetdir(value)
-		return premake.project.setstring("config", "targetdir", path.getabsolute(value))
+		return premake.setstring("config", "targetdir", path.getabsolute(value))
 	end
 
 	
 	function targetextension(value)
-		return premake.project.setstring("config", "targetextension", value)
+		return premake.setstring("config", "targetextension", value)
 	end
 
 	
 	function targetprefix(value)
-		return premake.project.setstring("config", "targetprefix", value)
+		return premake.setstring("config", "targetprefix", value)
+	end
+	
+	
+	function uuid(value)
+		if (value) then
+			local ok = true
+			if (#value ~= 36) then ok = false end
+			for i=1,36 do
+				local ch = g:sub(i,i)
+				if (not ch:find("[ABCDEFabcdef0123456789-]")) then ok = false end
+			end
+			if (g:sub(9,9) ~= "-") then ok = false end
+			if (g:sub(14,14) ~= "-") then ok = false end
+			if (g:sub(19,19) ~= "-") then ok = false end
+			if (g:sub(24,24) ~= "-") then ok = false end
+			if (not ok) then
+				error("invalid UUID", 2)
+			end
+		end
+		return premake.setstring("container", "uuid", value)
 	end

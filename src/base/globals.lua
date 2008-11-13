@@ -68,6 +68,20 @@
 
 
 --
+-- "Immediate If" - returns one of the two values depending on the value of expr.
+--
+
+	function iif(expr, trueval, falseval)
+		if (expr) then
+			return trueval
+		else
+			return falseval
+		end
+	end
+	
+	
+	
+--
 -- A shortcut for including another "premake4.lua" file, often used for projects.
 --
 

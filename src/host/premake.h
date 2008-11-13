@@ -57,4 +57,5 @@ int os_matchstart(lua_State* L);
 int os_mkdir(lua_State* L);
 int os_pathsearch(lua_State* L);
 int os_rmdir(lua_State* L);
+int os_uuid(lua_State* L);
 

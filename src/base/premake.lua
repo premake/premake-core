@@ -30,9 +30,10 @@
 		return true
 	end
 	
+
 	
 --
--- Check to see if the value exists in a list of values, using a 
+-- Check to see if a value exists in a list of values, using a 
 -- case-insensitive match. If the value does exist, the canonical
 -- version contained in the list is returned, so future tests can
 -- use case-sensitive comparisions.
@@ -65,14 +66,22 @@
 			if (templates) then
 				for _,tmpl in ipairs(templates) do
 					local fname = premake.getoutputname(this, tmpl[1])
-					premake.template.generate(tmpl[2], fname, this)
+					local f, err = io.open(fname, "wb")
+					if (not f) then
+						error(err, 0)
+					end
+					io.output(f)
+					
+					tmpl[2](this)
+
+					io.output():close()
 				end
 			end
 		end
 
 		for _,sln in ipairs(_SOLUTIONS) do
 			generatefiles(sln, action.solutiontemplates)			
-			for prj in premake.project.projects(sln) do
+			for prj in premake.eachproject(sln) do
 				generatefiles(prj, action.projecttemplates)
 			end
 		end
@@ -82,6 +91,30 @@
 		end
 	end
 
+
+
+--
+-- Apply XML escaping to a value.
+--
+
+	function premake.esc(value)
+		if (type(value) == "table") then
+			local result = { }
+			for _,v in ipairs(value) do
+				table.insert(result, premake.esc(v))
+			end
+			return result
+		else
+			value = value:gsub('&', "&amp;")
+			value = value:gsub('"', "&quot;")
+			value = value:gsub("'", "&apos;")
+			value = value:gsub('<', "&lt;")
+			value = value:gsub('>', "&gt;")
+			return value
+		end
+	end
+	
+	
 
 --
 -- Returns a list of all of the active terms from the current environment.
@@ -99,6 +132,7 @@
 		end
 		return _terms
 	end
+	
 	
 	
 --

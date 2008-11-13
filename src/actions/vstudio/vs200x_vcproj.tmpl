@@ -1,0 +1,236 @@
+<% eol = "\r\n" %>
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+<% if _ACTION == "vs2002" then %>
+	Version="7.00"
+<% elseif _ACTION == "vs2003" then %>
+	Version="7.10"
+<% elseif _ACTION == "vs2005" then %>
+	Version="8.00"
+<% elseif _ACTION == "vs2008" then %>
+	Version="9.00"
+<% end %>
+	Name="<%= premake.esc(this.name) %>"
+	ProjectGUID="{<%= this.uuid %>}"
+<% if _ACTION > "vs2003" then %>
+	RootNamespace="<%= this.name %>"
+<% end %>
+	Keyword="<%= iif(this.flags.Managed, "ManagedCProj", "Win32Proj") %>"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+<% if _ACTION > "vs2003" then %>
+	<ToolFiles>
+	</ToolFiles>
+<% end %>
+	<Configurations>
+<% for cfg in premake.eachconfig(this) do %>
+		<Configuration
+			Name="<%= premake.esc(cfg.name) %>|Win32"
+			OutputDirectory="<%= premake.esc(path.translate(path.getdirectory(cfg.target), "\\")) %>"
+			IntermediateDirectory="<%= premake.esc(path.translate(premake.getobjdir(cfg)), "\\") %>"
+			ConfigurationType="<%= vstudio.cfgtype(cfg) %>"
+			CharacterSet="<%= iif(cfg.flags.Unicode, 1, 2) %>"
+		<% if cfg.flags.Managed then %>
+			ManagedExtensions="true"
+		<% end %>
+			>
+<% for _,block in ipairs(vstudio[_ACTION]) do %>
+	<% if (block == "VCALinkTool") then %>
+			<Tool
+				Name="VCALinkTool"
+			/>
+	<% elseif (block == "VCAppVerifierTool") then %>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+	<% elseif (block == "VCAuxiliaryManagedWrapperGeneratorTool") then %>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"
+			/>
+	<% elseif (block == "VCBscMakeTool") then %>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+	<% elseif (block == "VCCLCompilerTool") then %>
+			<Tool
+				Name="VCCLCompilerTool"
+			<% if #cfg.buildoptions > 0 then %>
+				AdditionalOptions="<%= table.concat(premake.esc(cfg.buildoptions), " ") %>"
+			<% end %>
+				Optimization="<%= vstudio.optimization(cfg) %>"	
+			<% if cfg.flags.NoFramePointer then %>
+				OmitFramePointers="<%= vstudio.bool(true) %>"
+			<% end %>
+			<% if #cfg.incdirs > 0 then %>
+				AdditionalIncludeDirectories="<%= table.concat(premake.esc(cfg.incdirs), ";") %>"
+			<% end %>
+			<% if #cfg.defines > 0 then %>
+				PreprocessorDefinitions="<%= table.concat(premake.esc(cfg.defines), ";") %>"
+			<% end %>
+			<% if vstudio.optimization(cfg) == 0 and not cfg.flags.Managed then %>
+				MinimalRebuild="<%= vstudio.bool(true) %>"
+			<% end %>
+			<% if cfg.flags.NoExceptions then %>
+				ExceptionHandling="<%= iif(_ACTION < "vs2005", "FALSE", 0) %>"
+			<% elseif cfg.flags.SEH and _ACTION > "vs2003" then %>
+				ExceptionHandling="2"
+			<% end %>
+			<% if vstudio.optimization(cfg) == 0 and not cfg.flags.Managed then %>
+				BasicRuntimeChecks="3"
+			<% end %>
+			<% if vstudio.optimization(cfg) ~= 0 then %>
+				StringPooling="<%= vstudio.bool(true) %>"
+			<% end %>
+				RuntimeLibrary="<%= vstudio.runtime(cfg) %>"
+				EnableFunctionLevelLinking="<%= vstudio.bool(true) %>"
+			<% if _ACTION < "vs2005" and not cfg.flags.NoRTTI then %>
+				RuntimeTypeInfo="<%= vstudio.bool(true) %>"
+			<% elseif _ACTION > "vs2003" and cfg.flags.NoRTTI then %>
+				RuntimeTypeInfo="<%= vstudio.bool(false) %>"
+			<% end %>
+			<% if cfg.flags.NativeWChar then %>
+				TreatWChar_tAsBuiltInType="<%= vstudio.bool(true) %>"
+			<% elseif cfg.flags.NoNativeWChar then %>
+				TreatWChar_tAsBuiltInType="<%= vstudio.bool(false) %>"
+			<% end %>
+			<% if not cfg.flags.NoPCH and cfg.pchheader then %>
+				UsePrecompiledHeader="<%= iif(_ACTION < "vs2005", 3, 2) %>"
+				PrecompiledHeaderThrough="<%= cfg.pchheader %>"
+			<% else %>
+				UsePrecompiledHeader="<%= iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2) %>"
+			<% end %>
+				WarningLevel="<%= iif(cfg.flags.ExtraWarnings, 4, 3) %>"
+			<% if cfg.flags.FatalWarnings then %>
+				WarnAsError="<%= vstudio.bool(true) %>"
+			<% end %>
+			<% if _ACTION < "vs2008" and not cfg.flags.Managed then %>
+				Detect64BitPortabilityProblems="<%= vstudio.bool(not cfg.flags.No64BitChecks) %>"
+			<% end %>
+				ProgramDataBaseFileName="$(OutDir)\$(ProjectName).pdb"
+				DebugInformationFormat="<%= vstudio.symbols(cfg) %>"
+			/>
+	<% elseif (block == "VCCustomBuildTool") then %>
+			<Tool
+				Name="VCCustomBuildTool"/>
+	<% elseif (block == "VCFxCopTool") then %>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+	<% elseif (block == "VCLinkerTool") then %>
+			<Tool
+		<% if cfg.kind ~= "StaticLib" then %>
+				Name="VCLinkerTool"
+			<% if cfg.flags.NoImportLib then %>
+				IgnoreImportLibrary="<%= vstudio.bool(true) %>"
+			<% end %>
+			<% if #cfg.linkoptions > 0 then %>
+				AdditionalOptions="<%= table.concat(premake.esc(cfg.linkoptions), " ") %>"
+			<% end %>
+			<% if #cfg.links > 0 then %>
+				AdditionalDependencies="<%= table.concat(premake.getlibraries(this), " ") %>"
+			<% end %>
+				OutputFile="$(OutDir)\<%= path.getname(cfg.target) %>"
+				LinkIncremental="<%= iif(vstudio.optimization(this) == 0, 2, 1) %>"
+				AdditionalLibraryDirectories="<%= table.concat(premake.esc(cfg.libdirs) , ";") %>"
+			<% local deffile = premake.findfile(this, ".def"); if deffile then %>
+				ModuleDefinitionFile="<%= deffile %>"
+			<% end %>
+			<% if cfg.flags.NoManifest then %>
+				GenerateManifest="<%= vstudio.bool(false) %>"
+			<% end %>
+				GenerateDebugInformation="<%= vstudio.bool(vstudio.symbols(this) ~= 0) %>"
+			<% if vstudio.symbols(this) ~= 0 then %>
+				ProgramDatabaseFile="$(OutDir)\$(ProjectName).pdb"
+			<% end %>
+				SubSystem="<%= iif(cfg.kind == "ConsoleApp", 1, 2) %>"
+			<% if vstudio.optimization(this) ~= 0 then %>
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+			<% end %>
+			<% if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then %>
+				EntryPointSymbol="mainCRTStartup"
+			<% end %>
+			<% if cfg.kind == "SharedLib" then %>
+				ImportLibrary="<%= path.translate(vstudio.importlibfile(this), "\\") %>"
+			<% end %>
+				TargetMachine="1"
+		<% else %>
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\\<%= path.getname(cfg.target) %>"
+		<% end %>
+			/>
+	<% elseif (block == "VCManagedResourceCompilerTool") then %>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+	<% elseif (block == "VCManagedWrapperGeneratorTool") then %>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"
+			/>
+	<% elseif (block == "VCManifestTool") then %>
+			<Tool
+				Name="VCManifestTool"
+			/>
+	<% elseif (block == "VCMIDLTool") then %>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+	<% elseif (block == "VCPreBuildEventTool") then %>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+	<% elseif (block == "VCPreLinkEventTool") then %>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+	<% elseif (block == "VCPostBuildEventTool") then %>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+	<% elseif (block == "VCResourceCompilerTool") then %>
+			<Tool
+				Name="VCResourceCompilerTool"
+			<% if #cfg.resoptions > 0 then %>
+				AdditionalOptions="<%= table.concat(premake.esc(cfg.resoptions), " ") %>"
+			<% end %>
+			<% if #cfg.defines > 0 or #cfg.resdefines > 0 then %>
+				PreprocessorDefinitions="<%= table.concat(premake.esc(table.join(cfg.defines, cfg.resdefines)), ";") %>"
+			<% end %>
+			<% if #cfg.incdirs > 0 or #cfg.resincdirs > 0 then %>
+				AdditionalIncludeDirectories="<%= table.concat(premake.esc(table.join(cfg.incdirs, cfg.resincdirs)), ";") %>"
+			<% end %>
+			/>
+	<% elseif (block == "VCWebDeploymentTool") then %>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+	<% elseif (block == "VCWebServiceProxyGeneratorTool") then %>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+	<% elseif (block == "VCXDCMakeTool") then %>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+	<% elseif (block == "VCXMLDataGeneratorTool") then %>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+	<% end %>
+<% end %>
+		</Configuration>
+	<% end %>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<% premake.walksources(this, this.files, vstudio.files) %>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

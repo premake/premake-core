@@ -14,11 +14,11 @@ PROJECTS := <%= table.concat(make.esc(table.extract(this.projects, "name")), " "
 all: $(PROJECTS)
 
 <% for _,prj in ipairs(this.projects) do %>
-<%  for cfg in premake.project.configs(prj) do %>
+ <% for cfg in premake.eachconfig(prj) do %>
 ifeq ($(CONFIG),<%= make.esc(cfg.name)%>)
-  DEPENDENCIES :=  <%= table.concat(make.esc(premake.project.getdependencies(cfg)), " ") %>
+  DEPENDENCIES := <%= table.concat(make.esc(table.extract(premake.getdependencies(cfg), "name")), " ") %>
 endif
-<%  end %>
+ <% end %>
 
 <%= make.esc(prj.name) %>: ${DEPENDENCIES}
 	@echo ==== Building <%= prj.name %> ====
