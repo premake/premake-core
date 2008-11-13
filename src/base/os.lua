@@ -72,7 +72,7 @@
 
 	local builtin_mkdir = os.mkdir
 	function os.mkdir(p)
-		local dir = iif(path.isabsolute(p), "/", "")
+		local dir = iif(p:startswith("/"), "/", "")
 		for part in p:gmatch("[^/]+") do
 			dir = dir .. part
 			
