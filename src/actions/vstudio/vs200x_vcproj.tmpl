@@ -132,23 +132,23 @@
 				AdditionalOptions="<%= table.concat(premake.esc(cfg.linkoptions), " ") %>"
 			<% end %>
 			<% if #cfg.links > 0 then %>
-				AdditionalDependencies="<%= table.concat(premake.getlibraries(this), " ") %>"
+				AdditionalDependencies="<%= table.concat(premake.getlibraries(cfg), " ") %>"
 			<% end %>
 				OutputFile="$(OutDir)\<%= path.getname(cfg.target) %>"
-				LinkIncremental="<%= iif(vstudio.optimization(this) == 0, 2, 1) %>"
+				LinkIncremental="<%= iif(vstudio.optimization(cfg) == 0, 2, 1) %>"
 				AdditionalLibraryDirectories="<%= table.concat(premake.esc(cfg.libdirs) , ";") %>"
-			<% local deffile = premake.findfile(this, ".def"); if deffile then %>
+			<% local deffile = premake.findfile(cfg, ".def"); if deffile then %>
 				ModuleDefinitionFile="<%= deffile %>"
 			<% end %>
 			<% if cfg.flags.NoManifest then %>
 				GenerateManifest="<%= vstudio.bool(false) %>"
 			<% end %>
-				GenerateDebugInformation="<%= vstudio.bool(vstudio.symbols(this) ~= 0) %>"
-			<% if vstudio.symbols(this) ~= 0 then %>
+				GenerateDebugInformation="<%= vstudio.bool(vstudio.symbols(cfg) ~= 0) %>"
+			<% if vstudio.symbols(cfg) ~= 0 then %>
 				ProgramDatabaseFile="$(OutDir)\$(ProjectName).pdb"
 			<% end %>
 				SubSystem="<%= iif(cfg.kind == "ConsoleApp", 1, 2) %>"
-			<% if vstudio.optimization(this) ~= 0 then %>
+			<% if vstudio.optimization(cfg) ~= 0 then %>
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 			<% end %>
@@ -156,7 +156,7 @@
 				EntryPointSymbol="mainCRTStartup"
 			<% end %>
 			<% if cfg.kind == "SharedLib" then %>
-				ImportLibrary="<%= path.translate(vstudio.importlibfile(this), "\\") %>"
+				ImportLibrary="<%= path.translate(vstudio.importlibfile(cfg), "\\") %>"
 			<% end %>
 				TargetMachine="1"
 		<% else %>
