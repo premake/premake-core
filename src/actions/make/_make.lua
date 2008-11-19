@@ -4,18 +4,18 @@
 -- Copyright (c) 2008 Jason Perkins and the Premake project
 --
 
-	make = { }
+	_MAKE = { }
 	
 
 --
 -- Escape a string so it can be written to a makefile.
 --
 
-	function make.esc(value)
+	function _MAKE.esc(value)
 		if (type(value) == "table") then
 			local result = { }
 			for _,v in ipairs(value) do
-				table.insert(result, make.esc(v))
+				table.insert(result, _MAKE.esc(v))
 			end
 			return result
 		else
@@ -31,7 +31,7 @@
 -- writes to the same location I use name + ".make" to keep it unique.
 --
 
-	function make.getmakefilename(this, searchprjs)
+	function _MAKE.getmakefilename(this, searchprjs)
 		-- how many projects/solutions use this location?
 		local count = 0
 		for _,sln in ipairs(_SOLUTIONS) do
@@ -55,10 +55,10 @@
 -- Returns a list of object names, properly escaped to be included in the makefile.
 --
 
-	function make.getnames(tbl)
+	function _MAKE.getnames(tbl)
 		local result = table.extract(tbl, "name")
 		for k,v in pairs(result) do
-			result[k] = make.esc(v)
+			result[k] = _MAKE.esc(v)
 		end
 		return result
 	end
@@ -82,10 +82,10 @@
 		},
 		
 		solutiontemplates = {
-			{ function(this) return make.getmakefilename(this, false) end,  _TEMPLATES.make_solution },
+			{ function(this) return _MAKE.getmakefilename(this, false) end,  _TEMPLATES.make_solution },
 		},
 		
 		projecttemplates = {
-			{ function(this) return make.getmakefilename(this, true) end,   _TEMPLATES.make_cpp },
+			{ function(this) return _MAKE.getmakefilename(this, true) end,   _TEMPLATES.make_cpp },
 		},
 	}

@@ -4,14 +4,14 @@
 -- Copyright (c) 2008 Jason Perkins and the Premake project
 --
 
-	vstudio = { }
+	_VS = { }
 
 
 --
 -- Configuration blocks used by each version.
 --
 
-	vstudio.vs2002 = {
+	_VS.vs2002 = {
 		"VCCLCompilerTool",
 		"VCCustomBuildTool",
 		"VCLinkerTool",
@@ -24,7 +24,7 @@
 		"VCWebDeploymentTool"
 	}
 	
-	vstudio.vs2003 = {
+	_VS.vs2003 = {
 		"VCCLCompilerTool",
 		"VCCustomBuildTool",
 		"VCLinkerTool",
@@ -40,7 +40,7 @@
 		"VCAuxiliaryManagedWrapperGeneratorTool"
 	}
 	
-	vstudio.vs2005 = {
+	_VS.vs2005 = {
 		"VCPreBuildEventTool",
 		"VCCustomBuildTool",
 		"VCXMLDataGeneratorTool",
@@ -61,14 +61,44 @@
 		"VCPostBuildEventTool"
 	}	
 		
-	vstudio.vs2008 = vstudio.vs2005
+	_VS.vs2008 = _VS.vs2005
 
 
+--
+-- Clean Visual Studio files
+--
+
+	function _VS.onclean(solutions, projects, targets)
+		for _,name in ipairs(solutions) do
+			os.remove(name .. ".suo")
+			os.remove(name .. ".ncb")
+		end
+		
+		for _,name in ipairs(projects) do
+			os.remove(name .. ".csproj.user")
+			os.remove(name .. ".csproj.webinfo")
+		
+			local files = os.matchfiles(name .. ".vcproj.*.user", name .. ".csproj.*.user")
+			for _, fname in ipairs(files) do
+				os.remove(fname)
+			end
+		end
+		
+		for _,name in ipairs(targets) do
+			os.remove(name .. ".pdb")
+			os.remove(name .. ".idb")
+			os.remove(name .. ".ilk")
+			os.remove(name .. ".vshost.exe")
+			os.remove(name .. ".exe.manifest")
+		end		
+	end
+	
+	
 --
 -- Returns the architecture identifier for a project.
 --
 
-	function vstudio.arch(prj, version)
+	function _VS.arch(prj, version)
 		if (prj.language == "C#") then
 			if (version < 2005) then
 				return ".NET"
@@ -86,7 +116,7 @@
 -- Return the action specific text for a boolean value.
 --
 
-	function vstudio.bool(value)
+	function _VS.bool(value)
 		if (_ACTION < "vs2005") then
 			return iif(value, "TRUE", "FALSE")
 		else
@@ -100,7 +130,7 @@
 -- Return a configuration type index.
 --
 
-	function vstudio.cfgtype(cfg)
+	function _VS.cfgtype(cfg)
 		if (cfg.kind == "SharedLib") then
 			return 2
 		elseif (cfg.kind == "StaticLib") then
@@ -124,7 +154,7 @@
 		io.write(indent .. "\t" .. name .. '="' .. value .. '"\r\n')
 	end
 	
-	function vstudio.files(prj, fname, state, nestlevel)
+	function _VS.files(prj, fname, state, nestlevel)
 		local indent = string.rep("\t", nestlevel + 2)
 		
 		if (state == "GroupStart") then
@@ -163,7 +193,7 @@
 -- can't disable it if the NoImportLib flag is set, but I can hide it.
 --
 
-	function vstudio.importlibfile(cfg)
+	function _VS.importlibfile(cfg)
 		local fname = premake.gettargetfile(cfg, "implib", "StaticLib", "windows")
 		if (cfg.flags.NoImportLib) then
 			local objdir = premake.getobjdir(cfg)
@@ -179,7 +209,7 @@
 -- Return the optimization code.
 --
 
-	function vstudio.optimization(cfg)
+	function _VS.optimization(cfg)
 		local result = 0
 		for _, value in ipairs(cfg.flags) do
 			if (value == "Optimize") then
@@ -199,7 +229,7 @@
 -- Assemble the project file name.
 --
 
-	function vstudio.projectfile(prj)
+	function _VS.projectfile(prj)
 		local extension
 		if (prj.language == "C#") then
 			extension = ".csproj"
@@ -217,8 +247,8 @@
 -- Returns the runtime code for a configuration.
 --
 
-	function vstudio.runtime(cfg)
-		local debugbuild = (vstudio.optimization(cfg) == 0)
+	function _VS.runtime(cfg)
+		local debugbuild = (_VS.optimization(cfg) == 0)
 		if (cfg.flags.StaticRuntime) then
 			return iif(debugbuild, 1, 0)
 		else
@@ -232,12 +262,12 @@
 -- Return the debugging symbols level for a configuration.
 --
 
-	function vstudio.symbols(cfg)
+	function _VS.symbols(cfg)
 		if (not cfg.flags.Symbols) then
 			return 0
 		else
 			-- Edit-and-continue does't work if optimizing or managed C++
-			if (cfg.flags.NoEditAndContinue or vstudio.optimization(cfg) ~= 0 or cfg.flags.Managed) then
+			if (cfg.flags.NoEditAndContinue or _VS.optimization(cfg) ~= 0 or cfg.flags.Managed) then
 				return 3
 			else
 				return 4
@@ -251,7 +281,7 @@
 -- Returns the Visual Studio tool ID for a given project type.
 --
 
-	function vstudio.tool(prj)
+	function _VS.tool(prj)
 		if (prj.language == "C#") then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
 		else
@@ -281,6 +311,8 @@
 		projecttemplates = {
 			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
 		},
+		
+		onclean = _VS.onclean,
 	}
 
 
@@ -303,6 +335,8 @@
 		projecttemplates = {
 			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
 		},
+		
+		onclean = _VS.onclean,
 	}
 
 
@@ -325,6 +359,8 @@
 		projecttemplates = {
 			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
 		},
+		
+		onclean = _VS.onclean,
 	}
 
 
@@ -347,4 +383,6 @@
 		projecttemplates = {
 			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
 		},
+		
+		onclean = _VS.onclean,
 	}

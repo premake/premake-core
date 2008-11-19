@@ -5,13 +5,11 @@
 --
 
 
-	clean = { }
-	
 --
 -- Remove files created by an object's templates.
 --
 
-	function clean.templatefiles(this, templates)
+	local function cleantemplatefiles(this, templates)
 		if (templates) then
 			for _,tmpl in ipairs(templates) do
 				local fname = premake.getoutputname(this, tmpl[1])
@@ -22,108 +20,64 @@
 	
 
 --
--- Remove solution specific files
---
-
-	function clean.solution(sln)
-		local base = path.join(sln.location, sln.name)
-		
-		-- Visual Studio files
-		os.remove(base .. ".suo")
-		os.remove(base .. ".ncb")
-	end
-	
-
--- 
--- Remove project specific files
---
-
-	function clean.project(prj)
-		local base = path.join(prj.location, prj.name)
-		
-		if (prj.objdir) then
-			os.rmdir(prj.objdir)
-		end
-		
-		-- Visual Studio files
-		os.remove(base .. ".csproj.user")
-		os.remove(base .. ".csproj.webinfo")
-		
-		local files = os.matchfiles(base .. ".vcproj.*.user", base .. ".csproj.*.user")
-		for _, fname in ipairs(files) do
-			os.remove(fname)
-		end		
-	end
-	
-		
---
--- Remove configuration specific files
---
-
-	function clean.config(cfg)
-		-- remove the target binary
-		os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "windows"))
-		os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "linux"))
-		os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "macosx"))
-
-		-- if there is an import library, remove that too
-		os.remove(premake.gettargetfile(cfg, "implib", "StaticLib", "linux"))
-		os.remove(premake.gettargetfile(cfg, "implib", "StaticLib", "windows"))
-		
-		local target = premake.gettargetfile(cfg, "target")
-		local base = path.join(path.getdirectory(target), path.getbasename(target))
-		
-		-- Visual Studio files
-		os.remove(base .. ".pdb")
-		os.remove(base .. ".idb")
-		os.remove(base .. ".ilk")
-		os.remove(base .. ".vshost.exe")
-		os.remove(base .. ".exe.manifest")
-
-		-- Mono files
-		os.remove(base .. ".exe.mdb")
-		os.remove(base .. ".dll.mdb")
-		
-		-- remove object directory
-		-- os.rmdir(cfg.objdir)
-	end
-	
-	
---
--- For each registered action, walk all of the objects in the session and
--- remove the files created by their templates.
---
-
-	function clean.all()
-		-- remove all template-driven files
-		for _,action in pairs(premake.actions) do
-			for _,sln in ipairs(_SOLUTIONS) do
-				clean.templatefiles(sln, action.solutiontemplates)
-				clean.solution(sln)
-
-				for prj in premake.eachproject(sln) do
-					clean.templatefiles(prj, action.projecttemplates)
-					clean.project(prj)
-					
-					for cfg in premake.eachconfig(prj) do
-						clean.config(cfg)
-					end
-				end
-			end
-		end
-		
-		-- project custom clean-up
-		if (type(onclean) == "function") then
-			onclean()
-		end
-	end
-
-
---
 -- Register the "clean" action.
 --
 
 	premake.actions["clean"] = {
 		description = "Remove all binaries and generated files",
-		execute     = clean.all,
+
+		execute = function()
+			local solutions = { }
+			local projects = { }
+			local targets = { }
+			
+			-- Walk the tree. Build a list of object names to pass to the cleaners,
+			-- and delete any toolset agnostic files along the way.
+			for _,sln in ipairs(_SOLUTIONS) do
+				table.insert(solutions, path.join(sln.location, sln.name))
+				
+				for prj in premake.eachproject(sln) do
+					table.insert(projects, path.join(prj.location, prj.name))
+					
+					if (prj.objdir) then
+						os.rmdir(prj.objdir)
+					end
+
+					for cfg in premake.eachconfig(prj) do
+						local target = premake.gettargetfile(cfg, "target")
+						table.insert(targets, path.join(path.getdirectory(target), path.getbasename(target)))
+
+						-- remove the target binary
+						os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "windows"))
+						os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "linux"))
+						os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "macosx"))
+
+						-- if there is an import library, remove that too
+						os.remove(premake.gettargetfile(cfg, "implib", "StaticLib", "linux"))
+						os.remove(premake.gettargetfile(cfg, "implib", "StaticLib", "windows"))
+
+						os.rmdir(cfg.objdir)
+					end
+				end
+			end
+
+			-- Walk the tree again. Delete templated and toolset-specific files
+			for _,action in pairs(premake.actions) do
+				for _,sln in ipairs(_SOLUTIONS) do
+					cleantemplatefiles(sln, action.solutiontemplates)
+					for prj in premake.eachproject(sln) do
+						cleantemplatefiles(prj, action.projecttemplates)
+					end
+				end
+				
+				if (type(action.onclean) == "function") then
+					action.onclean(solutions, projects, targets)
+				end
+			end
+
+			-- global cleaner
+			if (type(onclean) == "function") then
+				onclean()
+			end
+		end,		
 	}

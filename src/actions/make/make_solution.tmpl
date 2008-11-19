@@ -3,11 +3,11 @@
 # Where {config_name} is one of: <%= table.implode(this.configurations, '"', '"', ', ') %>.
 
 ifndef CONFIG
-  CONFIG=<%= make.esc(this.configurations[1]) %>
+  CONFIG=<%= _MAKE.esc(this.configurations[1]) %>
 endif
 export CONFIG
 
-PROJECTS := <%= table.concat(make.esc(table.extract(this.projects, "name")), " ") %>
+PROJECTS := <%= table.concat(_MAKE.esc(table.extract(this.projects, "name")), " ") %>
 
 .PHONY: all clean $(PROJECTS)
 
@@ -15,18 +15,18 @@ all: $(PROJECTS)
 
 <% for _,prj in ipairs(this.projects) do %>
  <% for cfg in premake.eachconfig(prj) do %>
-ifeq ($(CONFIG),<%= make.esc(cfg.name)%>)
-  DEPENDENCIES := <%= table.concat(make.esc(table.extract(premake.getdependencies(cfg), "name")), " ") %>
+ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
+  DEPENDENCIES := <%= table.concat(_MAKE.esc(table.extract(premake.getdependencies(cfg), "name")), " ") %>
 endif
  <% end %>
 
-<%= make.esc(prj.name) %>: ${DEPENDENCIES}
+<%= _MAKE.esc(prj.name) %>: ${DEPENDENCIES}
 	@echo ==== Building <%= prj.name %> ====
-	@${MAKE} --no-print-directory -C <%=make.esc(path.getrelative(this.location, prj.location))%> -f <%=make.esc(make.getmakefilename(prj, true))%>
+	@${MAKE} --no-print-directory -C <%=_MAKE.esc(path.getrelative(this.location, prj.location))%> -f <%=_MAKE.esc(_MAKE.getmakefilename(prj, true))%>
 	
 <% end %>
 
 clean:
 <% for _,prj in ipairs(this.projects) do %>
-	@${MAKE} --no-print-directory -C <%=make.esc(path.getrelative(this.location, prj.location))%> -f <%=make.esc(make.getmakefilename(prj, true))%> clean
+	@${MAKE} --no-print-directory -C <%=_MAKE.esc(path.getrelative(this.location, prj.location))%> -f <%=_MAKE.esc(_MAKE.getmakefilename(prj, true))%> clean
 <% end %>

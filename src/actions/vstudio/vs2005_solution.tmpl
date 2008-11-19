@@ -11,7 +11,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 <% for prj in premake.eachproject(this) do %>
  <% if (prj.language == "C" or prj.language == "C++") then hascpp = true end %>
  <% if (prj.language == "C#") then hasdotnet = true end %>
-Project("{<%=vstudio.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, vstudio.projectfile(prj)),"\\")%>", "{<%=prj.uuid%>}"
+Project("{<%=_VS.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, _VS.projectfile(prj)),"\\")%>", "{<%=prj.uuid%>}"
  <% for _,dep in ipairs(premake.getdependencies(prj)) do %>
 	{<%= dep.uuid %>} = {<%= dep.uuid %>}
  <% end %>
@@ -33,17 +33,17 @@ Global
 	<% for prj in premake.eachproject(this) do %>
 	 <% for _, cfgname in ipairs(this.configurations) do %>
 	  <% if hasdotnet then %>
-		{<%= prj.uuid %>}.<%= cfgname %>|Any CPU.ActiveCfg = <%= cfgname %>|<%= vstudio.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Any CPU.ActiveCfg = <%= cfgname %>|<%= _VS.arch(prj) %>
 	   <% if (prj.language ~= "C" and prj.language ~= "C++") then %>
-		{<%= prj.uuid %>}.<%= cfgname %>|Any CPU.Build.0 = <%= cfgname %>|<%= vstudio.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Any CPU.Build.0 = <%= cfgname %>|<%= _VS.arch(prj) %>
 	   <% end %>
 	  <% end; if (hasdotnet and hascpp) then %>
-		{<%= prj.uuid %>}.<%= cfgname %>|Mixed Platforms.ActiveCfg = <%= cfgname %>|<%= vstudio.arch(prj) %>
-		{<%= prj.uuid %>}.<%= cfgname %>|Mixed Platforms.Build.0 = <%= cfgname %>|<%= vstudio.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Mixed Platforms.ActiveCfg = <%= cfgname %>|<%= _VS.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Mixed Platforms.Build.0 = <%= cfgname %>|<%= _VS.arch(prj) %>
 	  <% end; if (hascpp) then %>
-		{<%= prj.uuid %>}.<%= cfgname %>|Win32.ActiveCfg = <%= cfgname %>|<%= vstudio.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Win32.ActiveCfg = <%= cfgname %>|<%= _VS.arch(prj) %>
 	   <% if (prj.language == "C" or prj.language == "C++") then %>
-		{<%= prj.uuid %>}.<%= cfgname %>|Win32.Build.0 = <%= cfgname %>|<%= vstudio.arch(prj) %>
+		{<%= prj.uuid %>}.<%= cfgname %>|Win32.Build.0 = <%= cfgname %>|<%= _VS.arch(prj) %>
 	   <% end %>
 	  <% end %>
 	 <% end %>

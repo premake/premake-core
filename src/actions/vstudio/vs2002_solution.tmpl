@@ -1,7 +1,7 @@
 <% eol = "\r\n" %>
 Microsoft Visual Studio Solution File, Format Version 7.00
 <% for prj in premake.eachproject(this) do %>
-Project("{<%=vstudio.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, vstudio.projectfile(prj)))%>", "{<%=prj.uuid%>}"
+Project("{<%=_VS.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, _VS.projectfile(prj)))%>", "{<%=prj.uuid%>}"
 EndProject
 <% end %>
 Global
@@ -22,8 +22,8 @@ Global
 	GlobalSection(ProjectConfiguration) = postSolution
 	<% for prj in premake.eachproject(this) do %>
 	 <% for i,cfgname in ipairs(this.configurations) do %>
-		{<%=prj.uuid%>}.<%=cfgname%>.ActiveCfg = <%=cfgname%>|<%=vstudio.arch(prj, 2002)%>
-		{<%=prj.uuid%>}.<%=cfgname%>.Build.0 = <%=cfgname%>|<%=vstudio.arch(prj, 2002)%>
+		{<%=prj.uuid%>}.<%=cfgname%>.ActiveCfg = <%=cfgname%>|<%=_VS.arch(prj, 2002)%>
+		{<%=prj.uuid%>}.<%=cfgname%>.Build.0 = <%=cfgname%>|<%=_VS.arch(prj, 2002)%>
 	 <% end %>
 	<% end %>
 	EndGlobalSection
