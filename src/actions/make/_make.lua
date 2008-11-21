@@ -36,6 +36,7 @@
 		for _, prj in ipairs(deps) do
 			local prjcfg = premake.getconfig(prj, cfg.name)
 			local target = premake.gettargetfile(prjcfg, "target", prjcfg.kind, iif(prjcfg.kind == "StaticLib", "linux", nil))
+			target = path.rebase(target, prjcfg.location, cfg.location)
 			table.insert(result, _MAKE.esc(target))
 		end
 		return result

@@ -170,11 +170,7 @@
 					target = prjcfg.target
 				end
 				
-				-- target is currently relative to its project location, make
-				-- it relative to my location instead
-				target = path.getabsolute(path.join(prjcfg.location, target))
-				target = path.getrelative(cfg.location, target)
-				
+				target = path.rebase(target, prjcfg.location, cfg.location)
 				table.insert(libs, target)
 			else
 				if (range ~= "siblings") then

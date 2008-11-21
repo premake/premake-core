@@ -98,6 +98,18 @@
 	
 
 --
+-- Takes a path which is relative to one location and makes it relative
+-- to another location instead.
+--
+
+	function path.rebase(p, oldbase, newbase)
+		p = path.getabsolute(path.join(oldbase, p))
+		p = path.getrelative(newbase, p)
+		return p
+	end
+	
+	
+--
 -- Returns the relative path from src to dest.
 --
 
