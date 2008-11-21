@@ -119,7 +119,7 @@
 		cfg.project = prj
 		
 		-- precompute common calculated values
-		cfg.target = premake.gettargetfile(cfg, "target", cfg.kind)
+		cfg.target = premake.gettargetfile(cfg, "target")
 		
 		meta.__cfgcache[cachekey] = cfg
 		return cfg
@@ -148,29 +148,33 @@
 
 --
 -- Converts the values in a configuration "links" field into a list
--- library files to be linked.
+-- library files to be linked. If the posix flag is set, will use 
+-- POSIX-like behaviors, even on Windows.
 --
 
-	function premake.getlibraries(cfg)
+	function premake.getlibraries(cfg, posix)
 		local libs = { }
 		
 		for _, link in ipairs(cfg.links) do
 			-- is this a sibling project?
 			local prj = premake.findproject(link)
 			if (prj) then
-				local target
-				
-				-- figure out the target name
 				local prjcfg = premake.getconfig(prj, cfg.name)
-				if (prjcfg.kind == "SharedLib" and os.is("windows")) then
-					target = premake.gettargetfile(prjcfg, "implib", prjcfg.kind)
-				else
-					target = prjcfg.target
-				end
+				if (prjcfg.kind == "SharedLib" or prjcfg.kind == "StaticLib") then
+					local target
+					if (prjcfg.kind == "SharedLib" and os.is("windows") and not posix) then
+						target = premake.gettargetfile(prjcfg, "implib")
+					else
+						target = premake.gettargetfile(prjcfg, "target", nil, posix)
+					end
 				
-				target = path.rebase(target, prjcfg.location, cfg.location)
-				table.insert(libs, target)
+					target = path.rebase(target, prjcfg.location, cfg.location)
+					table.insert(libs, target)
+				end
 			else
+				if (not posix and os.is("windows")) then
+					link = link .. ".lib"
+				end
 				table.insert(libs, link)
 			end
 		end
@@ -203,15 +207,18 @@
 	
 --
 -- Builds a platform specific target (executable, library) file name of a
--- specific type, using the information from a project configuration.
+-- specific type, using the information from a project configuration. The
+-- posix flag is used to trigger GNU-compatible behavior on Windows. OS
+-- can be nil; the current OS setting will be used.
 --
 
-	function premake.gettargetfile(cfg, field, kind, os)
+	function premake.gettargetfile(cfg, field, os, posix)
 		if (not os) then os = _OPTIONS.os or _OS end
 		
 		local name = cfg[field.."name"] or cfg.targetname or cfg.project.name
 		local dir = cfg[field.."dir"] or cfg.targetdir or cfg.basedir
-
+		local kind = iif(field == "implib", "StaticLib", cfg.kind)
+		
 		local prefix = ""
 		local extension = ""
 		
@@ -221,7 +228,12 @@
 			elseif (kind == "SharedLib") then
 				extension = ".dll"
 			elseif (kind == "StaticLib") then
-				extension = ".lib"
+				if (posix) then
+					prefix = "lib"
+					extension = ".a"
+				else
+					extension = ".lib"
+				end
 			end
 		elseif (os == "macosx" and kind == "WindowedApp") then
 			name = name .. ".app/Contents/MacOS/" .. name

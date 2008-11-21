@@ -21,76 +21,104 @@
 --
 	
 	function T.config.gettargetfile_IndexesFieldValues()
+		cfg.kind = "SharedLib"
 		cfg.implibname = "imports"
-		test.isequal("imports.lib", premake.gettargetfile(cfg, "implib", "StaticLib", "windows"))
+		test.isequal("imports.lib", premake.gettargetfile(cfg, "implib", "windows"))
 	end
 	
 	function T.config.gettargetfile_FallsBackToTargetValues()
-		test.isequal("MyPackage", premake.gettargetfile(cfg, "implib", "ConsoleApp", "linux"))
+		cfg.kind = "SharedLib"
+		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "implib", "linux"))
 	end
 
 	function T.config.gettargetfile_OnWindowsConsole()
-		test.isequal("MyPackage.exe", premake.gettargetfile(cfg, "target", "ConsoleApp", "windows"))
+		cfg.kind = "ConsoleApp"
+		test.isequal("MyPackage.exe", premake.gettargetfile(cfg, "target", "windows"))
 	end
 	
 	function T.config.gettargetfile_OnLinuxConsole()
-		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "ConsoleApp", "linux"))
+		cfg.kind = "ConsoleApp"
+		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "linux"))
 	end
 	
 	function T.config.gettargetfile_OnMacOSXConsole()
-		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "ConsoleApp", "macosx"))
+		cfg.kind = "ConsoleApp"
+		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "macosx"))
 	end
 	
 	function T.config.gettargetfile_OnBSDConsole()
-		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "ConsoleApp", "bsd"))
+		cfg.kind = "ConsoleApp"
+		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "bsd"))
 	end
 	
 	function T.config.gettargetfile_OnWindowsWindowed()
-		test.isequal("MyPackage.exe", premake.gettargetfile(cfg, "target", "WindowedApp", "windows"))
+		cfg.kind = "WindowedApp"
+		test.isequal("MyPackage.exe", premake.gettargetfile(cfg, "target", "windows"))
 	end
 	
 	function T.config.gettargetfile_OnLinuxWindowed()
-		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "WindowedApp", "linux"))
+		cfg.kind = "WindowedApp"
+		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "linux"))
 	end
 	
 	function T.config.gettargetfile_OnMacOSXWindowed()
-		test.isequal("MyPackage.app/Contents/MacOS/MyPackage", premake.gettargetfile(cfg, "target", "WindowedApp", "macosx"))
+		cfg.kind = "WindowedApp"
+		test.isequal("MyPackage.app/Contents/MacOS/MyPackage", premake.gettargetfile(cfg, "target", "macosx"))
 	end
 	
 	function T.config.gettargetfile_OnBSDWindowed()
-		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "WindowedApp", "bsd"))
+		cfg.kind = "WindowedApp"
+		test.isequal("MyPackage", premake.gettargetfile(cfg, "target", "bsd"))
 	end
 	
 	function T.config.gettargetfile_OnWindowsShared()
-		test.isequal("MyPackage.dll", premake.gettargetfile(cfg, "target", "SharedLib", "windows"))
+		cfg.kind = "SharedLib"
+		test.isequal("MyPackage.dll", premake.gettargetfile(cfg, "target", "windows"))
 	end
 	
 	function T.config.gettargetfile_OnLinuxShared()
-		test.isequal("libMyPackage.so", premake.gettargetfile(cfg, "target", "SharedLib", "linux"))
+		cfg.kind = "SharedLib"
+		test.isequal("libMyPackage.so", premake.gettargetfile(cfg, "target", "linux"))
 	end
 	
 	function T.config.gettargetfile_OnMacOSXShared()
-		test.isequal("libMyPackage.so", premake.gettargetfile(cfg, "target", "SharedLib", "macosx"))
+		cfg.kind = "SharedLib"
+		test.isequal("libMyPackage.so", premake.gettargetfile(cfg, "target", "macosx"))
 	end
 	
 	function T.config.gettargetfile_OnBSDShared()
-		test.isequal("libMyPackage.so", premake.gettargetfile(cfg, "target", "SharedLib", "bsd"))
+		cfg.kind = "SharedLib"
+		test.isequal("libMyPackage.so", premake.gettargetfile(cfg, "target", "bsd"))
 	end
 	
 	function T.config.gettargetfile_OnWindowsStatic()
-		test.isequal("MyPackage.lib", premake.gettargetfile(cfg, "target", "StaticLib", "windows"))
+		cfg.kind = "StaticLib"
+		test.isequal("MyPackage.lib", premake.gettargetfile(cfg, "target", "windows"))
 	end
 	
 	function T.config.gettargetfile_OnLinuxStatic()
-		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "StaticLib", "linux"))
+		cfg.kind = "StaticLib"
+		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "linux"))
 	end
 	
 	function T.config.gettargetfile_OnMacOSXStatic()
-		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "StaticLib", "macosx"))
+		cfg.kind = "StaticLib"
+		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "macosx"))
 	end
 	
 	function T.config.gettargetfile_OnBSDStatic()
-		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "StaticLib", "bsd"))
+		cfg.kind = "StaticLib"
+		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "bsd"))
+	end
+	
+	function T.config.gettargetfile_OnPosixStaticLib()
+		cfg.kind = "StaticLib"
+		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "target", "windows", true))
+	end
+	
+	function T.config.gettargetfile_OnPosixImpLib()
+		cfg.kind = "SharedLib"
+		test.isequal("libMyPackage.a", premake.gettargetfile(cfg, "implib", "windows", true))
 	end
 	
 

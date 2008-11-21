@@ -95,7 +95,7 @@
 			
 			-- create import library for DLLs under Windows
 			if (os.is("windows") and not cfg.flags.NoImportLib) then
-				table.insert(flags, '-Wl,--out-implib="' .. premake.gettargetfile(cfg, "implib", "StaticLib", "linux") .. '"')
+				table.insert(flags, '-Wl,--out-implib="' .. premake.gettargetfile(cfg, "implib", "linux") .. '"')
 			end
 		end
 

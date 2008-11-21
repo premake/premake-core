@@ -35,7 +35,7 @@
 		local deps = premake.getdependencies(cfg)
 		for _, prj in ipairs(deps) do
 			local prjcfg = premake.getconfig(prj, cfg.name)
-			local target = premake.gettargetfile(prjcfg, "target", prjcfg.kind, iif(prjcfg.kind == "StaticLib", "linux", nil))
+			local target = premake.gettargetfile(prjcfg, "target", nil, true)
 			target = path.rebase(target, prjcfg.location, cfg.location)
 			table.insert(result, _MAKE.esc(target))
 		end

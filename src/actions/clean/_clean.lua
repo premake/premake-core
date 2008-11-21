@@ -47,14 +47,14 @@
 						local target = premake.gettargetfile(cfg, "target")
 						table.insert(targets, path.join(path.getdirectory(target), path.getbasename(target)))
 
-						-- remove the target binary
-						os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "windows"))
-						os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "linux"))
-						os.remove(premake.gettargetfile(cfg, "target", cfg.kind, "macosx"))
+						-- remove all possible permutations of the target binary
+						os.remove(premake.gettargetfile(cfg, "target", "windows"))
+						os.remove(premake.gettargetfile(cfg, "target", "linux"))
+						os.remove(premake.gettargetfile(cfg, "target", "macosx"))
 
 						-- if there is an import library, remove that too
-						os.remove(premake.gettargetfile(cfg, "implib", "StaticLib", "linux"))
-						os.remove(premake.gettargetfile(cfg, "implib", "StaticLib", "windows"))
+						os.remove(premake.gettargetfile(cfg, "implib", "windows"))
+						os.remove(premake.gettargetfile(cfg, "implib", "linux"))
 
 						os.rmdir(cfg.objdir)
 					end

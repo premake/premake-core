@@ -194,7 +194,7 @@
 --
 
 	function _VS.importlibfile(cfg)
-		local fname = premake.gettargetfile(cfg, "implib", "StaticLib", "windows")
+		local fname = premake.gettargetfile(cfg, "implib", "windows")
 		if (cfg.flags.NoImportLib) then
 			local objdir = premake.getobjdir(cfg)
 			return path.join(objdir, path.getname(fname))

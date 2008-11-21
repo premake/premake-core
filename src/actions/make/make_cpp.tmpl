@@ -7,7 +7,7 @@ endif
 <% for cfg in premake.eachconfig(this) do %>
 ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   TARGETDIR  = <%= _MAKE.esc(path.getdirectory(cfg.target)) %>
-  TARGET     = $(TARGETDIR)/<%= _MAKE.esc(path.getname(premake.gettargetfile(cfg, "target", cfg.kind, iif(cfg.kind == "StaticLib", "linux", nil)))) %>
+  TARGET     = $(TARGETDIR)/<%= _MAKE.esc(path.getname(premake.gettargetfile(cfg, "target", nil, true))) %>
   OBJDIR     = <%= _MAKE.esc(premake.getobjdir(cfg)) %>
   DEFINES   += <%= premake.tools[_OPTIONS.cc].make_defines(cfg)  %>
   INCLUDES  += <%= premake.tools[_OPTIONS.cc].make_includes(cfg) %>
