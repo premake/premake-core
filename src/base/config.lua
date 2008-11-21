@@ -148,12 +148,10 @@
 
 --
 -- Converts the values in a configuration "links" field into a list
--- library files to be linked. Converts project names to the correct
--- target for the current configuration. If range is "siblings" only
--- sibling projects will be returned; else all will be included.
+-- library files to be linked.
 --
 
-	function premake.getlibraries(cfg, range)
+	function premake.getlibraries(cfg)
 		local libs = { }
 		
 		for _, link in ipairs(cfg.links) do
@@ -173,9 +171,7 @@
 				target = path.rebase(target, prjcfg.location, cfg.location)
 				table.insert(libs, target)
 			else
-				if (range ~= "siblings") then
-					table.insert(libs, link)
-				end
+				table.insert(libs, link)
 			end
 		end
 		
