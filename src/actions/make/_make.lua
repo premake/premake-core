@@ -24,7 +24,25 @@
 		end
 	end
 	
-		
+
+
+--
+-- Get the target dependencies for a particular project configuration.
+--
+
+	function _MAKE.gettargetdeps(cfg)
+		local result = { }
+		local deps = premake.getdependencies(cfg)
+		for _, prj in ipairs(deps) do
+			local prjcfg = premake.getconfig(prj, cfg.name)
+			local target = premake.gettargetfile(prjcfg, "target", prjcfg.kind, iif(prjcfg.kind == "StaticLib", "linux", nil))
+			table.insert(result, _MAKE.esc(target))
+		end
+		return result
+	end
+	
+	
+			
 --
 -- Get the makefile file name for a solution or a project. If this object is the
 -- only one writing to a location then I can use "Makefile". If more than one object

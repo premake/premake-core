@@ -7,7 +7,7 @@ endif
 <% for cfg in premake.eachconfig(this) do %>
 ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   TARGETDIR  = <%= _MAKE.esc(path.getdirectory(cfg.target)) %>
-  TARGET     = $(TARGETDIR)/<%= _MAKE.esc(path.getname(cfg.target)) %>
+  TARGET     = $(TARGETDIR)/<%= _MAKE.esc(path.getname(premake.gettargetfile(cfg, "target", cfg.kind, iif(cfg.kind == "StaticLib", "linux", nil)))) %>
   OBJDIR     = <%= _MAKE.esc(premake.getobjdir(cfg)) %>
   DEFINES   += <%= premake.tools[_OPTIONS.cc].make_defines(cfg)  %>
   INCLUDES  += <%= premake.tools[_OPTIONS.cc].make_includes(cfg) %>
@@ -16,7 +16,7 @@ ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   CXXFLAGS  += $(CFLAGS) <%= premake.tools[_OPTIONS.cc].make_cxxflags(cfg) %>
   LDFLAGS   += <%= premake.tools[_OPTIONS.cc].make_ldflags(cfg) %> <%= table.concat(cfg.linkoptions, " ") %>
   RESFLAGS  += $(DEFINES) $(INCLUDES) <%= table.concat(cfg.resoptions, " ") %>
-  LDDEPS    += <%= table.concat(premake.getlibraries(cfg, "siblings")) %>
+  LDDEPS    += <%= table.concat(_MAKE.gettargetdeps(cfg), " ") %>
   <% if cfg.kind == "StaticLib" then %>
   LINKCMD    = ar -rcs $(TARGET) $(OBJECTS) $(ARCH)
   <% else %>
