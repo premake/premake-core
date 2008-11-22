@@ -66,8 +66,8 @@
 			<% if cfg.flags.NoFramePointer then %>
 				OmitFramePointers="<%= _VS.bool(true) %>"
 			<% end %>
-			<% if #cfg.incdirs > 0 then %>
-				AdditionalIncludeDirectories="<%= table.concat(premake.esc(cfg.incdirs), ";") %>"
+			<% if #cfg.includedirs > 0 then %>
+				AdditionalIncludeDirectories="<%= table.concat(premake.esc(cfg.includedirs), ";") %>"
 			<% end %>
 			<% if #cfg.defines > 0 then %>
 				PreprocessorDefinitions="<%= table.concat(premake.esc(cfg.defines), ";") %>"
@@ -201,8 +201,8 @@
 			<% if #cfg.defines > 0 or #cfg.resdefines > 0 then %>
 				PreprocessorDefinitions="<%= table.concat(premake.esc(table.join(cfg.defines, cfg.resdefines)), ";") %>"
 			<% end %>
-			<% if #cfg.incdirs > 0 or #cfg.resincdirs > 0 then %>
-				AdditionalIncludeDirectories="<%= table.concat(premake.esc(table.join(cfg.incdirs, cfg.resincdirs)), ";") %>"
+			<% if #cfg.includedirs > 0 or #cfg.resincdirs > 0 then %>
+				AdditionalIncludeDirectories="<%= table.concat(premake.esc(table.join(cfg.includedirs, cfg.resincdirs)), ";") %>"
 			<% end %>
 			/>
 	<% elseif (block == "VCWebDeploymentTool") then %>

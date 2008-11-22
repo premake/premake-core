@@ -200,20 +200,22 @@
 			container[fieldname] = { }
 		end
 
-		local function doinsert(value)
+		local function doinsert(value, depth)
 			if (type(value) == "table") then
 				for _,v in ipairs(value) do
-					doinsert(v)
+					doinsert(v, depth + 1)
 				end
 			else
-				local v = premake.checkvalue(value, allowed)
-				if (not v) then error("invalid value '" .. value .. "'", 3) end
-				table.insert(container[fieldname], v)
+				value, err = premake.checkvalue(value, allowed)
+				if (not value) then
+					error(err, depth)
+				end
+				table.insert(container[fieldname], value)
 			end
 		end
 
 		if (value) then
-			doinsert(value)
+			doinsert(value, 5)
 		end
 		
 		return container[fieldname]
@@ -267,14 +269,17 @@
 		-- find the container for this value
 		local container, err = premake.getobject(ctype)
 		if (not container) then
-			error(err, 3)
+			error(err, 4)
 		end
 	
 		-- if a value was provided, set it
 		if (value) then
-			local v = premake.checkvalue(value, allowed)
-			if (not v) then error("invalid value '" .. value .. "'", 3) end
-			container[fieldname] = v
+			value, err = premake.checkvalue(value, allowed)
+			if (not value) then 
+				error(err, 4)
+			end
+			
+			container[fieldname] = value
 		end
 		
 		return container[fieldname]	

@@ -6,6 +6,18 @@
 
 
 --
+-- These fields should *not* be copied into configurations.
+--
+
+	premake.nocopy = 
+	{
+		"blocks",
+		"keywords",
+		"projects"
+	}
+	
+
+--
 -- Returns an iterator for a project's configurations.
 --
 
@@ -94,24 +106,26 @@
 		end
 		cfg.files = files
 		
-		-- fix up paths, making them relative to project location where needed
-		for _,key in ipairs(premake.locationrelative) do
-			if (type(cfg[key]) == "table") then
-				for i,p in ipairs(cfg[key]) do
-					cfg[key][i] = path.getrelative(prj.location, p)
-				end
-			else
-				if (cfg[key]) then
-					cfg[key] = path.getrelative(prj.location, cfg[key])
+		for name, field in pairs(premake.fields) do
+			-- fix up paths, making them relative to project where needed
+			if (field.kind == "path" or field.kind == "dirlist" or field.kind == "filelist") then
+				if (type(cfg[name]) == "table") then
+					for i,p in ipairs(cfg[name]) do
+						cfg[name][i] = path.getrelative(prj.location, p)
+					end
+				else
+					if (cfg[name]) then
+						cfg[name] = path.getrelative(prj.location, cfg[name])
+					end
 				end
 			end
-		end
 		
-		-- re-key flag fields
-		for _,key in ipairs(premake.flagfields) do
-			local field = cfg[key]
-			for _,flag in ipairs(field) do
-				field[flag] = true
+			-- re-key flag fields
+			if (field.isflags) then
+				local values = cfg[name]
+				for _, flag in ipairs(values) do
+					values[flag] = true
+				end
 			end
 		end
 		

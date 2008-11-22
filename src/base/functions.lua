@@ -6,114 +6,272 @@
 
 
 --
--- Validation lists for fields with constrained value sets.
+-- Here I define all of the getter/setter functions as metadata. The actual
+-- functions are built programmatically below.
 --
-
-	local valid_flags = 
-	{
-		"Dylib",
-		"ExtraWarnings",
-		"FatalWarnings",
-		"Managed",
-		"NativeWChar",
-		"No64BitChecks",
-		"NoEditAndContinue",
-		"NoExceptions",
-		"NoFramePointer",
-		"NoImportLib",
-		"NoManifest",
-		"NoNativeWChar",
-		"NoPCH",
-		"NoRTTI",
-		"Optimize",
-		"OptimizeSize",
-		"OptimizeSpeed",
-		"SEH",
-		"StaticRuntime",
-		"Symbols",
-		"Unicode",
-		"WinMain"
-	}
 	
-	local valid_kinds = 
+	premake.fields = 
 	{
-		"ConsoleApp",
-		"WindowedApp",
-		"StaticLib",
-		"SharedLib"
+		basedir =
+		{
+			kind  = "path",
+			scope = "container",
+		},
+		
+		buildoptions =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+
+		configurations = 
+		{
+			kind  = "list",
+			scope = "solution",
+		},
+		
+		defines =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		excludes =
+		{
+			kind  = "filelist",
+			scope = "container",
+		},
+		
+		files =
+		{
+			kind  = "filelist",
+			scope = "container",
+		},
+		
+		flags =
+		{
+			kind  = "list",
+			scope = "config",
+			isflags = true,
+			allowed = {
+				"Dylib",
+				"ExtraWarnings",
+				"FatalWarnings",
+				"Managed",
+				"NativeWChar",
+				"No64BitChecks",
+				"NoEditAndContinue",
+				"NoExceptions",
+				"NoFramePointer",
+				"NoImportLib",
+				"NoManifest",
+				"NoNativeWChar",
+				"NoPCH",
+				"NoRTTI",
+				"Optimize",
+				"OptimizeSize",
+				"OptimizeSpeed",
+				"SEH",
+				"StaticRuntime",
+				"Symbols",
+				"Unicode",
+				"WinMain"
+			}
+		},
+		
+		implibdir =
+		{
+			kind  = "path",
+			scope = "config",
+		},
+		
+		implibextension =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		implibname =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		implibprefix =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		includedirs =
+		{
+			kind  = "dirlist",
+			scope = "config",
+		},
+		
+		kind =
+		{
+			kind  = "string",
+			scope = "config",
+			allowed = {
+				"ConsoleApp",
+				"WindowedApp",
+				"StaticLib",
+				"SharedLib"
+			}
+		},
+		
+		language =
+		{
+			kind  = "string",
+			scope = "container",
+			allowed = {
+				"C",
+				"C++"
+			}
+		},
+		
+		libdirs =
+		{
+			kind  = "dirlist",
+			scope = "config",
+		},
+		
+		linkoptions =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		links =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		location =
+		{
+			kind  = "path",
+			scope = "config",
+		},
+		
+		objdir =
+		{
+			kind  = "path",
+			scope = "config",
+		},
+		
+		pchheader =
+		{
+			kind  = "path",
+			scope = "config",
+		},
+		
+		pchsource =
+		{
+			kind  = "path",
+			scope = "config",
+		},
+		
+		resdefines =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		resincludedirs =
+		{
+			kind  = "dirlist",
+			scope = "config",
+		},
+		
+		resoptions =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		targetdir =
+		{
+			kind  = "path",
+			scope = "config",
+		},
+		
+		targetextension =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		targetname =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		targetprefix =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		uuid =
+		{
+			kind  = "string",
+			scope = "container",
+			allowed = function(value)
+				local ok = true
+				if (#value ~= 36) then ok = false end
+				for i=1,36 do
+					local ch = value:sub(i,i)
+					if (not ch:find("[ABCDEFabcdef0123456789-]")) then ok = false end
+				end
+				if (value:sub(9,9) ~= "-")   then ok = false end
+				if (value:sub(14,14) ~= "-") then ok = false end
+				if (value:sub(19,19) ~= "-") then ok = false end
+				if (value:sub(24,24) ~= "-") then ok = false end
+				if (not ok) then
+					return nil, "invalid UUID"
+				end
+				return value
+			end
+		},
 	}
+		
+
+--
+-- The is the actual implementation of a getter/setter.
+--
+
+	local function accessor(name, value)
+		local kind  = premake.fields[name].kind
+		local scope = premake.fields[name].scope
+		local allowed = premake.fields[name].allowed
+		
+		if (kind == "string") then
+			return premake.setstring(scope, name, value, allowed)
+		elseif (kind == "path") then
+			return premake.setstring(scope, name, path.getabsolute(value))
+		elseif (kind == "list") then
+			return premake.setarray(scope, name, value, allowed)
+		elseif (kind == "dirlist") then
+			return premake.setdirarray(scope, name, value)
+		elseif (kind == "filelist") then
+			return premake.setfilearray(scope, name, value)
+		end
+	end
+
+
+
+--
+-- Build all of the getter/setter functions from the metadata above.
+--
 	
-	local valid_languages = 
-	{
-		"C",
-		"C++",
-	}
-
-
---
--- These list fields should be initialized to an empty table.
---
-
-	premake.listfields = 
-	{
-		"buildoptions",
-		"defines",
-		"excludes",
-		"files",
-		"flags",
-		"incdirs",
-		"libdirs",
-		"linkoptions",
-		"links",
-		"resdefines",
-		"resincdirs",
-		"resoptions",
-	}
-	
-	
---
--- These fields should *not* be copied into configurations.
---
-
-	premake.nocopy = 
-	{
-		"blocks",
-		"keywords",
-		"projects"
-	}
-	
-
---
--- These fields should be converted from absolute paths into project
--- location relative before being returned in a configuration.
---
-
-	premake.locationrelative = 
-	{
-		"basedir",
-		"excludes",
-		"files",
-		"incdirs",
-		"libdirs",
-		"objdir",
-		"pchheader",
-		"pchsource",
-		"resincdirs",
-		"targetdir",
-	}
-	
-
---
--- Flag fields are converted from arrays like:
---   { "Optimize", "NoExceptions" }
--- to mixed tables like:
---   { "Optimize", "NoExceptions", Optimize=true, NoExceptions=true }
---
-
-	premake.flagfields =
-	{
-		"flags",
-	}
+	for name,_ in pairs(premake.fields) do
+		_G[name] = function(value)
+			return accessor(name, value)
+		end
+	end
 	
 
 
@@ -121,11 +279,6 @@
 -- Project API functions
 --
 
-	function buildoptions(value)
-		return premake.setarray("config", "buildoptions", value)
-	end
-	
-		
 	function configuration(keywords)
 		local container, err = premake.getobject("container")
 		if (not container) then
@@ -141,107 +294,14 @@
 		else
 			cfg.keywords = { keywords }
 		end
-		
-		for _, name in ipairs(premake.listfields) do
-			cfg[name] = { }
+
+		for name, field in pairs(premake.fields) do
+			if (field.kind ~= "string" and field.kind ~= "path") then
+				cfg[name] = { }
+			end
 		end
 		
 		return cfg
-	end
-	
-	
-	function configurations(value)
-		return premake.setarray("solution", "configurations", value)
-	end
-
-	
-	function defines(value)
-		return premake.setarray("config", "defines", value)
-	end
-
-
-	function excludes(value)
-		return premake.setfilearray("container", "excludes", value)
-	end
-	
-	
-	function files(value)
-		return premake.setfilearray("container", "files", value)
-	end
-		
-	
-	function flags(value)
-		return premake.setarray("config", "flags", value, valid_flags)
-	end
-
-
-	function implibname(value)
-		return premake.setstring("config", "implibname", value)
-	end
-	
-	
-	function implibdir(value)
-		return premake.setstring("config", "implibdir", path.getabsolute(value))
-	end
-
-	
-	function implibextension(value)
-		return premake.setstring("config", "implibextension", value)
-	end
-
-	
-	function implibprefix(value)
-		return premake.setstring("config", "implibprefix", value)
-	end
-
-		
-	function includedirs(value)
-		return premake.setdirarray("config", "incdirs", value)
-	end
-
-	
-	function kind(value)
-		return premake.setstring("config", "kind", value, valid_kinds)
-	end
-
-	
-	function language(value)
-		return premake.setstring("container", "language", value, valid_languages)
-	end
-
-		
-	function libdirs(value)
-		return premake.setdirarray("config", "libdirs", value)
-	end
-
-
-	function linkoptions(value)
-		return premake.setarray("config", "linkoptions", value)
-	end
-
-	
-	function links(value)
-		return premake.setarray("config", "links", value)
-	end
-	
-	
-	function location(value)
-		return premake.setstring("container", "location", path.getabsolute(value))
-	end
-
-
-	function objdir(value)
-		return premake.setstring("config", "objdir", path.getabsolute(value))
-	end	
-	
-	
-	function pchheader(value)
-		return premake.setstring("config", "pchheader", path.getabsolute(value))
-	end
-	
-	
-	function pchsource(value)
-		return premake.setstring("config", "pchsource", path.getabsolute(value))
 	end
 	
 		
@@ -294,21 +354,6 @@
 	end
 
 
-	function resdefines(value)
-		return premake.setarray("config", "resdefines", value)
-	end
-	
-	
-	function resincludedirs(value)
-		return premake.setdirarray("config", "resincdirs", value)
-	end
-
-
-	function resoptions(value)
-		return premake.setarray("config", "resoptions", value)
-	end
-			
-
 	function solution(name)
 		if (name) then
 			premake.CurrentContainer = _SOLUTIONS[name]
@@ -346,42 +391,4 @@
 		return premake.CurrentContainer
 	end
 
-
-	function targetname(value)
-		return premake.setstring("config", "targetname", value)
-	end
 	
-	
-	function targetdir(value)
-		return premake.setstring("config", "targetdir", path.getabsolute(value))
-	end
-
-	
-	function targetextension(value)
-		return premake.setstring("config", "targetextension", value)
-	end
-
-	
-	function targetprefix(value)
-		return premake.setstring("config", "targetprefix", value)
-	end
-	
-	
-	function uuid(value)
-		if (value) then
-			local ok = true
-			if (#value ~= 36) then ok = false end
-			for i=1,36 do
-				local ch = g:sub(i,i)
-				if (not ch:find("[ABCDEFabcdef0123456789-]")) then ok = false end
-			end
-			if (g:sub(9,9) ~= "-") then ok = false end
-			if (g:sub(14,14) ~= "-") then ok = false end
-			if (g:sub(19,19) ~= "-") then ok = false end
-			if (g:sub(24,24) ~= "-") then ok = false end
-			if (not ok) then
-				error("invalid UUID", 2)
-			end
-		end
-		return premake.setstring("container", "uuid", value)
-	end

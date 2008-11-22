@@ -77,7 +77,7 @@
 
 	
 	function premake.tools.gcc.make_includes(cfg)
-		return table.implode(cfg.incdirs, '-I "', '"', ' ')
+		return table.implode(cfg.includedirs, '-I "', '"', ' ')
 	end
 	
 

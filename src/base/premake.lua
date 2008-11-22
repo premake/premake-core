@@ -41,10 +41,15 @@
 
 	function premake.checkvalue(value, allowed)
 		if (allowed) then
-			for _,v in ipairs(allowed) do
-				if (value:lower() == v:lower()) then
-					return v
+			if (type(allowed) == "function") then
+				return allowed(value)
+			else
+				for _,v in ipairs(allowed) do
+					if (value:lower() == v:lower()) then
+						return v
+					end
 				end
+				return nil, "invalid value '" .. value .. "'"
 			end
 		else
 			return value
