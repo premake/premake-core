@@ -173,6 +173,24 @@
 			scope = "config",
 		},
 		
+		prebuildcommands =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		prelinkcommands =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
+		postbuildcommands =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
 		resdefines =
 		{
 			kind  = "list",

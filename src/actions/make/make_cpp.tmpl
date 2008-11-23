@@ -22,6 +22,24 @@ ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   <% else %>
   LINKCMD    = $(<%= iif(cfg.language == "C", "CC", "CXX") %>) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH)
   <% end %>
+  define PREBUILDCMDS
+    <% if #cfg.prebuildcommands > 0 then %>
+	@echo Running pre-build commands
+	<%= table.implode(cfg.prebuildcommands, "", "", "\n\t") %>
+    <% end %>
+  endef
+  define PRELINKCMDS
+    <% if #cfg.prelinkcommands > 0 then %>
+	@echo Running pre-link commands
+	<%= table.implode(cfg.prelinkcommands, "", "", "\n\t") %>
+    <% end %>
+  endef
+  define POSTBUILDCMDS
+    <% if #cfg.postbuildcommands > 0 then %>
+	@echo Running post-build commands
+	<%= table.implode(cfg.postbuildcommands, "", "", "\n\t") %>
+    <% end %>
+  endef
 endif
 
 <% end %>
@@ -60,7 +78,7 @@ SYS_TARGET    := $(subst /,$(PATHSEP),$(TARGET))
 SYS_TARGETDIR := $(subst /,$(PATHSEP),$(TARGETDIR))
 SYS_OBJDIR    := $(subst /,$(PATHSEP),$(OBJDIR))
 
-.PHONY: clean
+.PHONY: clean prebuild prelink
 
 <% if os.is("MacOSX") and this.kind == "WindowedApp" then %>
 all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
@@ -70,10 +88,10 @@ $(dir $(TARGETDIR))PkgInfo:
 $(dir $(TARGETDIR))Info.plist:
 <% end %>
 
-$(TARGET): $(TARGETDIR) $(OBJDIR) $(OBJECTS) $(LDDEPS) $(RESOURCES)
+$(TARGET): $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(LDDEPS) $(RESOURCES) prelink
 	@echo Linking <%= this.name %>
 	@$(LINKCMD)
-
+	$(POSTBUILDCMDS)
 
 $(TARGETDIR):
 	@echo Creating $@
@@ -93,6 +111,12 @@ else
 	@if exist $(SYS_OBJDIR) rmdir /s /q $(SYS_OBJDIR)
 endif
 
+prebuild:
+	$(PREBUILDCMDS)
+	
+prelink:
+	$(PRELINKCMDS)
+	
 <% for _, file in ipairs(this.files) do %>
  <% if path.iscppfile(file) then %>
 $(OBJDIR)/<%= _MAKE.esc(path.getbasename(file)) %>.o: <%= _MAKE.esc(file) %>

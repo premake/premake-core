@@ -72,7 +72,7 @@
 			<% if #cfg.defines > 0 then %>
 				PreprocessorDefinitions="<%= table.concat(premake.esc(cfg.defines), ";") %>"
 			<% end %>
-			<% if _VS.optimization(cfg) == 0 and not cfg.flags.Managed then %>
+			<% if cfg.flags.Symbols and not cfg.flags.Managed then %>
 				MinimalRebuild="<%= _VS.bool(true) %>"
 			<% end %>
 			<% if cfg.flags.NoExceptions then %>
@@ -183,14 +183,23 @@
 	<% elseif (block == "VCPreBuildEventTool") then %>
 			<Tool
 				Name="VCPreBuildEventTool"
+				<% if #cfg.prebuildcommands > 0 then %>
+				CommandLine="<%= premake.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")) %>"
+				<% end %>
 			/>
 	<% elseif (block == "VCPreLinkEventTool") then %>
 			<Tool
 				Name="VCPreLinkEventTool"
+				<% if #cfg.prelinkcommands > 0 then %>
+				CommandLine="<%= premake.esc(table.implode(cfg.prelinkcommands, "", "", "\r\n")) %>"
+				<% end %>
 			/>
 	<% elseif (block == "VCPostBuildEventTool") then %>
 			<Tool
 				Name="VCPostBuildEventTool"
+				<% if #cfg.postbuildcommands > 0 then %>
+				CommandLine="<%= premake.esc(table.implode(cfg.postbuildcommands, "", "", "\r\n")) %>"
+				<% end %>
 			/>
 	<% elseif (block == "VCResourceCompilerTool") then %>
 			<Tool
@@ -201,8 +210,8 @@
 			<% if #cfg.defines > 0 or #cfg.resdefines > 0 then %>
 				PreprocessorDefinitions="<%= table.concat(premake.esc(table.join(cfg.defines, cfg.resdefines)), ";") %>"
 			<% end %>
-			<% if #cfg.includedirs > 0 or #cfg.resincdirs > 0 then %>
-				AdditionalIncludeDirectories="<%= table.concat(premake.esc(table.join(cfg.includedirs, cfg.resincdirs)), ";") %>"
+			<% if #cfg.includedirs > 0 or #cfg.resincludedirs > 0 then %>
+				AdditionalIncludeDirectories="<%= table.concat(premake.esc(table.join(cfg.includedirs, cfg.resincludedirs)), ";") %>"
 			<% end %>
 			/>
 	<% elseif (block == "VCWebDeploymentTool") then %>

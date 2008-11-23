@@ -110,11 +110,13 @@
 			end
 			return result
 		else
-			value = value:gsub('&', "&amp;")
-			value = value:gsub('"', "&quot;")
-			value = value:gsub("'", "&apos;")
-			value = value:gsub('<', "&lt;")
-			value = value:gsub('>', "&gt;")
+			value = value:gsub('&',  "&amp;")
+			value = value:gsub('"',  "&quot;")
+			value = value:gsub("'",  "&apos;")
+			value = value:gsub('<',  "&lt;")
+			value = value:gsub('>',  "&gt;")
+			value = value:gsub('\r', "&#x0D;")
+			value = value:gsub('\n', "&#x0A;")
 			return value
 		end
 	end
