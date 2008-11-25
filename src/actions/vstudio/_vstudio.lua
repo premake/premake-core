@@ -293,10 +293,11 @@
 	
 
 --
--- Register the "vs2002" action
+-- Register the Visual Studio command line actions
 --
 
-	premake.actions["vs2002"] = {
+	newaction {
+		trigger     = "vs2002",
 		shortname   = "Visual Studio 2002",
 		description = "Microsoft Visual Studio 2002",
 
@@ -315,12 +316,8 @@
 		onclean = _VS.onclean,
 	}
 
-
---
--- Register the "vs2003" action
---
-
-	premake.actions["vs2003"] = {
+	newaction {
+		trigger     = "vs2003",
 		shortname   = "Visual Studio 2003",
 		description = "Microsoft Visual Studio 2003",
 
@@ -339,12 +336,8 @@
 		onclean = _VS.onclean,
 	}
 
-
---
--- Register the "vs2005" action
---
-
-	premake.actions["vs2005"] = {
+	newaction {
+		trigger     = "vs2005",
 		shortname   = "Visual Studio 2005",
 		description = "Microsoft Visual Studio 2005",
 
@@ -363,12 +356,8 @@
 		onclean = _VS.onclean,
 	}
 
-
---
--- Register the "vs2008" action
---
-
-	premake.actions["vs2008"] = {
+	newaction {
+		trigger     = "vs2008",
 		shortname   = "Visual Studio 2008",
 		description = "Microsoft Visual Studio 2008",
 

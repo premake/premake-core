@@ -21,6 +21,7 @@
 		"base/config.lua",
 		"base/functions.lua",
 		"base/gcc.lua",
+		"base/cmdline.lua",
 		
 		-- this one must be last
 		"_premake_main.lua"
@@ -31,6 +32,8 @@
 
 	local templates = 
 	{
+		"actions/codeblocks/codeblocks_workspace.tmpl",
+		"actions/codeblocks/codeblocks_cbp.tmpl",
 		"actions/make/make_solution.tmpl",
 		"actions/make/make_cpp.tmpl",
 		"actions/vstudio/vs2002_solution.tmpl",
@@ -45,6 +48,7 @@
 	local actions = 
 	{
 		"actions/clean/_clean.lua",
+		"actions/codeblocks/_codeblocks.lua",
 		"actions/make/_make.lua",
 		"actions/vstudio/_vstudio.lua",
 	}

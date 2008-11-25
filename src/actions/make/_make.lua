@@ -1,7 +1,7 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2008 Jason Perkins and the Premake project
 --
 
 	_MAKE = { }
@@ -87,7 +87,8 @@
 -- Register the "gmake" action
 --
 
-	premake.actions["gmake"] = {
+	newaction {
+		trigger         = "gmake",
 		shortname       = "GNU Make",
 		description     = "GNU makefiles for POSIX, MinGW, and Cygwin",
 	

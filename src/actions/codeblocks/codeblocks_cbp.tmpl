@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="<%= premake.esc(this.name) %>" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+		<% for cfg in premake.eachconfig(this) do %>
+			<Target title="<%= premake.esc(cfg.name) %>">
+				<Option output="<%= premake.esc(cfg.target) %>" prefix_auto="0" extension_auto="0" />
+				<Option object_output="<%= premake.esc(premake.getobjdir(cfg)) %>" />
+				<% if (cfg.kind == "WindowedApp") then %>
+				<Option type="0" />
+				<% elseif (cfg.kind == "ConsoleApp") then %>
+				<Option type="1" />
+				<% elseif (cfg.kind == "StaticLib") then %>
+				<Option type="2" />
+				<% elseif (cfg.kind == "SharedApp") then %>
+				<Option type="3" />
+				<% end %>
+				<Option compiler="gcc" />
+				<% if (cfg.kind == "SharedLib") then %>
+				<Option createDefFile="0" />
+				<Option createStaticLib="<%= iif(cfg.flags.NoImportLib, 0, 1) %> />
+				<% end %>
+				<Compiler>
+					<% if cfg.flags.ExtraWarnings then %>
+					<Add option="-Wall" />
+					<% end %>
+					<% if cfg.flags.FatalWarnings then %>
+					<Add option="-Werror" />
+					<% end %>
+					<% if cfg.flags.NoExceptions then %>
+					<Add option="--no-exceptions" />
+					<% end %>
+					<% if cfg.flags.NoFramePointer then %>
+					<Add option="-fomit-frame-pointer" />
+					<% end %>
+					<% if cfg.flags.NoRTTI then %>
+					<Add option="--no-rtti" />
+					<% end %>
+					<% if cfg.flags.Symbols then %>
+					<Add option="-g" />
+					<% end %>
+					<% if cfg.flags.OptimizeSize then %>
+					<Add option="-Os" />
+					<% end %>
+					<% if cfg.flags.OptimizeSpeed then %>
+					<Add option="-O3" />
+					<% end %>
+					<% if cfg.flags.Optimize and not cfg.flags.OptimizeSize and not cfg.flags.OptimizeSpeed then %>
+					<Add option="-O" />
+					<% end %>
+					<% if not cfg.flags.NoPCH and cfg.pchheader then %>
+					<Add option="-Winvalid-pch" />
+					<Add option="-include &quot;<%= premake.esc(cfg.pchheader) %>&quot;" />
+					<% end %>
+					<% for _,v in ipairs(cfg.defines) do %>
+					<Add option="-D<%= premake.esc(v) %>" />
+					<% end %>
+					<% for _,v in ipairs(cfg.buildoptions) do %>
+					<Add option="<%= premake.esc(v) %>" />
+					<% end %>
+					<% for _,v in ipairs(cfg.includedirs) do %>
+					<Add directory="<%= premake.esc(v) %>" />
+					<% end %>
+				</Compiler>
+				<Linker>
+					<% if cfg.flags.NoSymbols then %>
+					<Add options="-s" />
+					<% end %>
+					<% for _,v in ipairs(cfg.linkoptions) do %>
+					<Add option="<%= premake.esc(v) %>" />
+					<% end %>
+					<% for _,v in ipairs(cfg.libdirs) do %>
+					<Add directory="<%= premake.esc(v) %>" />
+					<% end %>
+					<% local dirs, links = premake.tools.gcc.getlinks(cfg) %>
+					<% for _,v in ipairs(dirs) do %>
+					<Add directory="<%= premake.esc(v) %>" />
+					<% end %>
+					<% for _,v in ipairs(links) do %>
+					<Add library="<%= premake.esc(v) %>" />
+					<% end %>
+				</Linker>
+				<% if premake.findfile(cfg, ".rc") then %>
+				<ResourceCompiler>
+					<% for _,v in ipairs(cfg.includedirs) do %>
+					<Add directory="<%= premake.esc(v) %>" />
+					<% end %>
+					<% for _,v in ipairs(cfg.resincludedirs) do %>
+					<Add directory="<%= premake.esc(v) %>" />
+					<% end %>
+				</ResourceCompiler>
+				<% end %>
+				<% if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then %>
+				<ExtraCommands>
+					<% for _,v in ipairs(cfg.prebuildcommands) do %>
+					<Add before="<%= premake.esc(v) %>" />
+					<% end %>
+					<% for _,v in ipairs(cfg.postbuildcommands) do %>
+					<Add before="<%= premake.esc(v) %>" />
+					<% end %>
+				</ExtraCommands>
+				<% end %>
+			</Target>
+		<% end %>
+		</Build>
+		<% for _,fname in ipairs(this.files) do %>
+		<Unit filename="<%= premake.esc(fname) %>">
+		<% if path.getextension(fname) == ".rc" then %>
+			<Option compilerVar="WINDRES" />
+		<% else %>
+			<Option compilerVar="<%= iif(this.language == "C", "CC", "CPP") %>" />
+			<% if (not this.flags.NoPCH and fname == this.pchheader) then %>
+			<Option compile="1" />
+			<Option weight="0" />
+			<% end %>
+		<% end %>
+		<% for _,v in ipairs(this.configurations) do %>
+			<Option target="<%= premake.esc(v) %>" />
+		<% end%>
+		</Unit>
+		<% end %>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

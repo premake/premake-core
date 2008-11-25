@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="<%= this.name %>">
+	<% for prj in premake.eachproject(this) do %>
+		<Project filename="<%= path.join(path.getrelative(this.location, prj.location), prj.name) %>.cbp"<%= iif(prj.project==this.projects[1], ' active="1"', '') %>>
+		<% for _,dep in ipairs(premake.getdependencies(prj)) do %>
+			<Depends filename="<%= path.join(path.getrelative(this.location, dep.location), dep.name) %>.cbp" />
+		<% end %>
+		</Project>
+	<% end %>
+	</Workspace>
+</CodeBlocks_workspace_file>

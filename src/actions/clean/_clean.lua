@@ -23,7 +23,8 @@
 -- Register the "clean" action.
 --
 
-	premake.actions["clean"] = {
+	newaction {
+		trigger     = "clean",
 		description = "Remove all binaries and generated files",
 
 		execute = function()

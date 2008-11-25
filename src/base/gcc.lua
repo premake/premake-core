@@ -41,6 +41,33 @@
 
 
 --
+-- Process the list of libraries for a configuration. Returns a list of linker
+-- search paths, followed by a list of link names. Not all compilers need to
+-- split up links this way; in that case, return an empty list of search paths
+-- and keep the library paths intact.
+-- See bug #1729227 for background on why the path must be split for GCC.
+--
+
+	function premake.tools.gcc.getlinks(cfg)
+		local dirs  = { }
+		local names = { }
+		for _, link in ipairs(premake.getlibraries(cfg)) do
+			local dir  = path.getdirectory(link)
+			local name = path.getbasename(link)
+			
+			if (dir ~= "" and not table.contains(cfg.libdirs, dir) and not table.contains(dirs, dir)) then
+				table.insert(dirs, dir)
+			end
+			
+			table.insert(names, name)
+		end
+		
+		return dirs, names
+	end
+	
+	
+	
+--
 -- CPPFLAGS
 --
 
