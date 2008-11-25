@@ -8,7 +8,7 @@
 		<Build>
 		<% for cfg in premake.eachconfig(this) do %>
 			<Target title="<%= premake.esc(cfg.name) %>">
-				<Option output="<%= premake.esc(cfg.target) %>" prefix_auto="0" extension_auto="0" />
+				<Option output="<%= premake.esc(premake.gettargetfile(cfg, "target", nil, true)) %>" prefix_auto="0" extension_auto="0" />
 				<Option object_output="<%= premake.esc(premake.getobjdir(cfg)) %>" />
 				<% if (cfg.kind == "WindowedApp") then %>
 				<Option type="0" />

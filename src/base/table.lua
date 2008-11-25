@@ -3,23 +3,6 @@
 -- Additions to Lua's built-in table functions.
 -- Copyright (c) 2002-2008 Jason Perkins and the Premake project
 --
-
-
---
--- Adds the values from one array to the end of another and
--- returns the result.
---
-
-	function table.join(first, second)
-		local result = { }
-		for _,v in ipairs(first) do
-			table.insert(result, v)
-		end
-		for _,v in ipairs(second) do
-			table.insert(result, v)
-		end
-		return result
-	end
 	
 
 --
@@ -68,6 +51,22 @@
 
 
 --
+-- Adds the values from one array to the end of another and
+-- returns the result.
+--
+
+	function table.join(...)
+		local result = { }
+		for _,t in ipairs(arg) do
+			for _,v in ipairs(t) do
+				table.insert(result, v)
+			end
+		end
+		return result
+	end
+
+
+--
 -- Translates the values contained in array, using the specified
 -- translation table, and returns the results in a new array.
 --
@@ -75,7 +74,9 @@
 	function table.translate(arr, translation)
 		local result = { }
 		for _, value in ipairs(arr) do
-			table.insert(result, translation[value])
+			if (translation[value]) then
+				table.insert(result, translation[value])
+			end
 		end
 		return result
 	end

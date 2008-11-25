@@ -13,12 +13,11 @@
 	
 	premake.tools.gcc = { }
 	
-	
---
--- CFLAGS
---
 
-	premake.tools.gcc.cflags =
+--
+-- Translation of Premake flags into GCC flags
+
+	local cflags =
 	{
 		ExtraWarnings  = "-Wall",
 		FatalWarning   = "-Werror",
@@ -29,8 +28,21 @@
 		Symbols        = "-g",
 	}
 
+	local cxxflags =
+	{
+		NoExceptions   = "--no-exceptions",
+		NoRTTI         = "--no-rtti",
+	}
+	
+
+
+	
+--
+-- CFLAGS
+--
+
 	function premake.tools.gcc.make_cflags(cfg)
-		local flags = table.translate(cfg.flags, premake.tools.gcc.cflags)
+		local flags = table.translate(cfg.flags, cflags)
 		
 		if (cfg.kind == "SharedLib" and not os.is("windows")) then
 			table.insert(flags, "-fPIC")
@@ -40,6 +52,64 @@
 	end
 
 
+--
+-- Returns a list of compiler flags, based on the supplied configuration.
+--
+
+	function premake.tools.gcc.getcflags(cfg)
+		local result = table.translate(cfg.flags, cflags)
+		if (cfg.kind == "SharedLib" and not os.is("windows")) then
+			table.insert(flags, "-fPIC")
+		end
+		return result		
+	end
+	
+	function premake.tools.gcc.getcxxflags(cfg)
+		local result = table.translate(cfg.flags, cxxflags)
+		return result
+	end
+	
+
+
+--
+-- Returns a list of linker flags, based on the supplied configuration.
+--
+
+	function premake.tools.gcc.getldflags(cfg)
+		local result = { }
+		
+		if (cfg.kind == "SharedLib") then
+			if (not os.is("macosx")) then
+				table.insert(result, "-shared")
+			end
+			
+			-- create import library for DLLs under Windows
+			if (os.is("windows") and not cfg.flags.NoImportLib) then
+				table.insert(result, '-Wl,--out-implib="' .. premake.gettargetfile(cfg, "implib", "linux") .. '"')
+			end
+		end
+
+		if (os.is("windows") and cfg.kind == "WindowedApp") then
+			table.insert(result, "-mwindows")
+		end
+
+		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
+		if (not cfg.flags.Symbols) then
+			if (os.is("macosx")) then
+				table.insert(result, "-Wl,-x")
+			else
+				table.insert(result, "-s")
+			end
+		end
+
+		if (os.is("macosx") and cfg.flags.Dylib) then
+			table.insert(result, "-dynamiclib -flat_namespace")
+		end
+		
+		return result
+	end
+		
+	
 --
 -- Process the list of libraries for a configuration. Returns a list of linker
 -- search paths, followed by a list of link names. Not all compilers need to
@@ -82,14 +152,8 @@
 -- CXXFLAGS
 --
 
-	premake.tools.gcc.cxxflags =
-	{
-		NoExceptions   = "--no-exceptions",
-		NoRTTI         = "--no-rtti",
-	}
-	
 	function premake.tools.gcc.make_cxxflags(cfg)
-		local flags = table.translate(cfg.flags, premake.tools.gcc.cxxflags)
+		local flags = table.translate(cfg.flags, cxxflags)
 		return table.concat(flags, " ")
 	end
 	

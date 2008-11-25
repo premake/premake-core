@@ -34,6 +34,8 @@
 	{
 		"actions/codeblocks/codeblocks_workspace.tmpl",
 		"actions/codeblocks/codeblocks_cbp.tmpl",
+		"actions/codelite/codelite_workspace.tmpl",
+		"actions/codelite/codelite_project.tmpl",
 		"actions/make/make_solution.tmpl",
 		"actions/make/make_cpp.tmpl",
 		"actions/vstudio/vs2002_solution.tmpl",
@@ -49,6 +51,7 @@
 	{
 		"actions/clean/_clean.lua",
 		"actions/codeblocks/_codeblocks.lua",
+		"actions/codelite/_codelite.lua",
 		"actions/make/_make.lua",
 		"actions/vstudio/_vstudio.lua",
 	}
