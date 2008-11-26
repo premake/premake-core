@@ -20,7 +20,7 @@
 		for tool, values in pairs(action.valid_tools) do
 			if (_OPTIONS[tool]) then
 				if (not table.contains(values, _OPTIONS[tool])) then
-					return nil, "the " .. action.shortname .. " action does not support /" .. tool .. "=" .. _OPTIONS[tool]
+					return nil, "the " .. action.shortname .. " action does not support /" .. tool .. "=" .. _OPTIONS[tool] .. " (yet)"
 				end
 			else
 				_OPTIONS[tool] = values[1]
@@ -31,7 +31,36 @@
 	end
 	
 
+
+--
+-- Validate the command-line options.
+--
+
+	function premake.checkoptions()
+		for key, value in pairs(_OPTIONS) do
+			-- is this a valid option?
+			local opt = premake.options[key]
+			if (not opt) then
+				return false, "invalid option '" .. key .. "'"
+			end
+			
+			-- does it need a value?
+			if (opt.value and value == "") then
+				return false, "no value specified for option '" .. key .. "'"
+			end
+			
+			-- is the value allowed?
+			if (opt.allowed) then
+				for _, match in ipairs(opt.allowed) do
+					if (match[1] == value) then return true end
+				end
+				return false, "invalid value '" .. value .. "' for option '" .. key .. "'"
+			end
+		end
+		return true
+	end
 	
+		
 --
 -- Check to see if a value exists in a list of values, using a 
 -- case-insensitive match. If the value does exist, the canonical

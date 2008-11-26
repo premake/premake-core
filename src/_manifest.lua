@@ -20,8 +20,9 @@
 		"base/project.lua",
 		"base/config.lua",
 		"base/functions.lua",
-		"base/gcc.lua",
 		"base/cmdline.lua",
+		"base/gcc.lua",
+		"base/ow.lua",
 		
 		-- this one must be last
 		"_premake_main.lua"

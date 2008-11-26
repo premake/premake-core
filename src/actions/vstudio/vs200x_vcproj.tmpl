@@ -29,10 +29,11 @@
 <% end %>
 	<Configurations>
 <% for cfg in premake.eachconfig(this) do %>
+		<% local target = premake.gettargetfile(cfg, "target", "windows") %>
 		<Configuration
 			Name="<%= premake.esc(cfg.name) %>|Win32"
-			OutputDirectory="<%= premake.esc(path.translate(path.getdirectory(cfg.target), "\\")) %>"
-			IntermediateDirectory="<%= premake.esc(path.translate(premake.getobjdir(cfg)), "\\") %>"
+			OutputDirectory="<%= premake.esc(path.translate(path.getdirectory(target), "\\")) %>"
+			IntermediateDirectory="<%= premake.esc(path.translate(premake.getobjdir(cfg), "\\")) %>"
 			ConfigurationType="<%= _VS.cfgtype(cfg) %>"
 			CharacterSet="<%= iif(cfg.flags.Unicode, 1, 2) %>"
 		<% if cfg.flags.Managed then %>
@@ -134,7 +135,7 @@
 			<% if #cfg.links > 0 then %>
 				AdditionalDependencies="<%= table.concat(premake.getlibraries(cfg), " ") %>"
 			<% end %>
-				OutputFile="$(OutDir)\<%= path.getname(cfg.target) %>"
+				OutputFile="$(OutDir)\<%= path.getname(target) %>"
 				LinkIncremental="<%= iif(_VS.optimization(cfg) == 0, 2, 1) %>"
 				AdditionalLibraryDirectories="<%= table.concat(premake.esc(cfg.libdirs) , ";") %>"
 			<% local deffile = premake.findfile(cfg, ".def"); if deffile then %>
@@ -161,7 +162,7 @@
 				TargetMachine="1"
 		<% else %>
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\\<%= path.getname(cfg.target) %>"
+				OutputFile="$(OutDir)\\<%= path.getname(target) %>"
 		<% end %>
 			/>
 	<% elseif (block == "VCManagedResourceCompilerTool") then %>

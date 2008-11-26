@@ -15,20 +15,16 @@
         <% end %>
       </Compiler>
       <Linker Required="yes" Options="<%= table.concat(table.join(premake.gcc.getldflags(cfg), cfg.linkoptions), ";") %>">
-        <% local dirs, links = premake.gcc.getlinks(cfg) %>
-        <% for _,v in ipairs(dirs) do %>
+        <% for _,v in ipairs(premake.getlibdirs(cfg)) do %>
         <LibraryPath Value="<%= premake.esc(v) %>" />
         <% end %>
-        <% for _,v in ipairs(links) do %>
+        <% for _,v in ipairs(premake.getlibnames(cfg)) do %>
         <Library Value="<%= premake.esc(v) %>" />
         <% end %>
       </Linker>
       <% if premake.findfile(cfg, ".rc") then %>
       <ResourceCompiler Required="yes" Options="<%= table.implode(table.join(cfg.defines,cfg.resdefines), "-D", ";", "") %><%= table.concat(cfg.resoptions, ";") %>">
-        <% for _,v in ipairs(cfg.includedirs) do %>
-        <IncludePath Value="<%= premake.esc(v) %>"/>
-        <% end %>
-        <% for _,v in ipairs(cfg.resincludedirs) do %>
+        <% for _,v in ipairs(table.join(cfg.includedirs, cfg.resincludedirs)) do %>
         <IncludePath Value="<%= premake.esc(v) %>"/>
         <% end %>
       </ResourceCompiler>

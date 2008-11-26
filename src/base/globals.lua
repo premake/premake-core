@@ -20,9 +20,11 @@
 	premake = { }
 	
 
--- The list of registered actions
+-- The list of registered actions and options
 
 	premake.actions = { }
+	premake.options = { }
+
 
 
 --

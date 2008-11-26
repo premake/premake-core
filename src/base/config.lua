@@ -132,9 +132,6 @@
 		cfg.name = cfgname
 		cfg.project = prj
 		
-		-- precompute common calculated values
-		cfg.target = premake.gettargetfile(cfg, "target")
-		
 		meta.__cfgcache[cachekey] = cfg
 		return cfg
 	end
@@ -197,6 +194,33 @@
 	end
 	
 	
+
+--
+-- Split the list of libraries into directories and names. 
+-- See bug #1729227 for background on why the path must be split.
+--
+
+	function premake.getlibdirs(cfg)
+		local result = table.join(cfg.libdirs)
+		for _, link in ipairs(premake.getlibraries(cfg)) do
+			local dir  = path.getdirectory(link)			
+			if (dir ~= "" and not table.contains(result, dir)) then
+				table.insert(result, dir)
+			end
+		end
+		return result
+	end
+	
+	function premake.getlibnames(cfg)
+		local result = { }
+		for _, link in ipairs(premake.getlibraries(cfg)) do
+			local name = path.getbasename(link)
+			table.insert(result, path.getbasename(link))
+		end
+		return result
+	end
+
+
 	
 --
 -- Return an object directory for the specified configuration which

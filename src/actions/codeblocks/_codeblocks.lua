@@ -15,7 +15,7 @@
 		valid_languages = { "C", "C++" },
 		
 		valid_tools     = {
-			cc   = { "gcc" },
+			cc   = { "gcc", "ow" },
 		},
 		
 		solutiontemplates = {
