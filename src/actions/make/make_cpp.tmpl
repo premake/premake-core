@@ -9,12 +9,12 @@ ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   TARGETDIR  = <%= _MAKE.esc(path.getdirectory(cfg.target)) %>
   TARGET     = $(TARGETDIR)/<%= _MAKE.esc(path.getname(premake.gettargetfile(cfg, "target", nil, true))) %>
   OBJDIR     = <%= _MAKE.esc(premake.getobjdir(cfg)) %>
-  DEFINES   += <%= premake.tools[_OPTIONS.cc].make_defines(cfg)  %>
-  INCLUDES  += <%= premake.tools[_OPTIONS.cc].make_includes(cfg) %>
-  CPPFLAGS  += <%= premake.tools[_OPTIONS.cc].make_cppflags(cfg) %> $(DEFINES) $(INCLUDES)
-  CFLAGS    += $(CPPFLAGS) $(ARCH) <%= premake.tools[_OPTIONS.cc].make_cflags(cfg) %> <%= table.concat(cfg.buildoptions, " ") %>
-  CXXFLAGS  += $(CFLAGS) <%= premake.tools[_OPTIONS.cc].make_cxxflags(cfg) %>
-  LDFLAGS   += <%= premake.tools[_OPTIONS.cc].make_ldflags(cfg) %> <%= table.concat(cfg.linkoptions, " ") %>
+  DEFINES   += <%= premake[_OPTIONS.cc].make_defines(cfg)  %>
+  INCLUDES  += <%= premake[_OPTIONS.cc].make_includes(cfg) %>
+  CPPFLAGS  += <%= premake[_OPTIONS.cc].make_cppflags(cfg) %> $(DEFINES) $(INCLUDES)
+  CFLAGS    += $(CPPFLAGS) $(ARCH) <%= premake[_OPTIONS.cc].make_cflags(cfg) %> <%= table.concat(cfg.buildoptions, " ") %>
+  CXXFLAGS  += $(CFLAGS) <%= premake[_OPTIONS.cc].make_cxxflags(cfg) %>
+  LDFLAGS   += <%= premake[_OPTIONS.cc].make_ldflags(cfg) %> <%= table.concat(cfg.linkoptions, " ") %>
   RESFLAGS  += $(DEFINES) $(INCLUDES) <%= table.concat(cfg.resoptions, " ") %>
   LDDEPS    += <%= table.concat(_MAKE.gettargetdeps(cfg), " ") %>
   <% if cfg.kind == "StaticLib" then %>
@@ -121,7 +121,7 @@ prelink:
  <% if path.iscppfile(file) then %>
 $(OBJDIR)/<%= _MAKE.esc(path.getbasename(file)) %>.o: <%= _MAKE.esc(file) %>
 	@echo $(notdir $<)
-	@<%= premake.tools[_OPTIONS.cc].make_file_rule(file) %>
+	@<%= premake[_OPTIONS.cc].make_file_rule(file) %>
 	
  <% end %>
 <% end %>

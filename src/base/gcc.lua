@@ -11,11 +11,12 @@
 --
 	
 	
-	premake.tools.gcc = { }
+	premake.gcc = { }
 	
 
 --
 -- Translation of Premake flags into GCC flags
+--
 
 	local cflags =
 	{
@@ -41,7 +42,7 @@
 -- CFLAGS
 --
 
-	function premake.tools.gcc.make_cflags(cfg)
+	function premake.gcc.make_cflags(cfg)
 		local flags = table.translate(cfg.flags, cflags)
 		
 		if (cfg.kind == "SharedLib" and not os.is("windows")) then
@@ -56,7 +57,7 @@
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
-	function premake.tools.gcc.getcflags(cfg)
+	function premake.gcc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
 		if (cfg.kind == "SharedLib" and not os.is("windows")) then
 			table.insert(flags, "-fPIC")
@@ -64,7 +65,7 @@
 		return result		
 	end
 	
-	function premake.tools.gcc.getcxxflags(cfg)
+	function premake.gcc.getcxxflags(cfg)
 		local result = table.translate(cfg.flags, cxxflags)
 		return result
 	end
@@ -75,7 +76,7 @@
 -- Returns a list of linker flags, based on the supplied configuration.
 --
 
-	function premake.tools.gcc.getldflags(cfg)
+	function premake.gcc.getldflags(cfg)
 		local result = { }
 		
 		if (cfg.kind == "SharedLib") then
@@ -118,7 +119,7 @@
 -- See bug #1729227 for background on why the path must be split for GCC.
 --
 
-	function premake.tools.gcc.getlinks(cfg)
+	function premake.gcc.getlinks(cfg)
 		local dirs  = { }
 		local names = { }
 		for _, link in ipairs(premake.getlibraries(cfg)) do
@@ -141,7 +142,7 @@
 -- CPPFLAGS
 --
 
-	function premake.tools.gcc.make_cppflags(cfg)
+	function premake.gcc.make_cppflags(cfg)
 		-- if $(ARCH) contains multiple targets, then disable the incompatible automatic
 		-- dependency generation. This allows building universal binaries on MacOSX, sorta.
 		return "$(if $(word 2, $(ARCH)), , -MMD)"
@@ -152,7 +153,7 @@
 -- CXXFLAGS
 --
 
-	function premake.tools.gcc.make_cxxflags(cfg)
+	function premake.gcc.make_cxxflags(cfg)
 		local flags = table.translate(cfg.flags, cxxflags)
 		return table.concat(flags, " ")
 	end
@@ -162,12 +163,12 @@
 -- DEFINES and INCLUDES
 --
 	
-	function premake.tools.gcc.make_defines(cfg)
+	function premake.gcc.make_defines(cfg)
 		return table.implode(cfg.defines, '-D "', '"', ' ')
 	end
 
 	
-	function premake.tools.gcc.make_includes(cfg)
+	function premake.gcc.make_includes(cfg)
 		return table.implode(cfg.includedirs, '-I "', '"', ' ')
 	end
 	
@@ -176,7 +177,7 @@
 -- LDFLAGS
 --
 	
-	function premake.tools.gcc.make_ldflags(cfg)
+	function premake.gcc.make_ldflags(cfg)
 		local flags = { }
 		
 		if (cfg.kind == "SharedLib") then
@@ -229,7 +230,7 @@
 -- SOURCE FILE RULES
 --
 
-	function premake.tools.gcc.make_file_rule(file)	
+	function premake.gcc.make_file_rule(file)	
 		if (path.iscfile(file)) then
 			return "$(CC) $(CFLAGS) -o $@ -c $<"
 		else

@@ -6,7 +6,7 @@
   <%  local target = premake.gettargetfile(cfg, "target", nil, true) %>
     <Configuration Name="<%= premake.esc(cfg.name) %>" CompilerType="gnu <%= iif(cfg.language == "C", "gcc", "g++") %>" DebuggerType="GNU gdb debugger" Type="<%= _CODELITE.kind(cfg.kind) %>">
       <General OutputFile="<%= premake.esc(target) %>" IntermediateDirectory="<%= premake.esc(premake.getobjdir(cfg)) %>" Command="./<%= path.getname(target) %>" CommandArguments="" WorkingDirectory="<%= path.getdirectory(target) %>" PauseExecWhenProcTerminates="<%= iif(cfg.kind == "WindowedApp", "no", "yes") %>"/>
-      <Compiler Required="yes" Options="<%= table.concat(table.join(premake.tools.gcc.getcflags(cfg), premake.tools.gcc.getcxxflags(cfg), cfg.buildoptions), ";") %>">
+      <Compiler Required="yes" Options="<%= table.concat(table.join(premake.gcc.getcflags(cfg), premake.gcc.getcxxflags(cfg), cfg.buildoptions), ";") %>">
         <% for _,v in ipairs(cfg.includedirs) do %>
         <IncludePath Value="<%= premake.esc(v) %>"/>
         <% end %>
@@ -14,8 +14,8 @@
         <Preprocessor Value="<%= premake.esc(v) %>"/>
         <% end %>
       </Compiler>
-      <Linker Required="yes" Options="<%= table.concat(table.join(premake.tools.gcc.getldflags(cfg), cfg.linkoptions), ";") %>">
-        <% local dirs, links = premake.tools.gcc.getlinks(cfg) %>
+      <Linker Required="yes" Options="<%= table.concat(table.join(premake.gcc.getldflags(cfg), cfg.linkoptions), ";") %>">
+        <% local dirs, links = premake.gcc.getlinks(cfg) %>
         <% for _,v in ipairs(dirs) do %>
         <LibraryPath Value="<%= premake.esc(v) %>" />
         <% end %>

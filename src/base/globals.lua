@@ -23,11 +23,6 @@
 -- The list of registered actions
 
 	premake.actions = { }
-	
-	
--- The list of tool interfaces
-
-	premake.tools = { }
 
 
 --

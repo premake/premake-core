@@ -76,7 +76,7 @@
 					<% for _,v in ipairs(cfg.libdirs) do %>
 					<Add directory="<%= premake.esc(v) %>" />
 					<% end %>
-					<% local dirs, links = premake.tools.gcc.getlinks(cfg) %>
+					<% local dirs, links = premake.gcc.getlinks(cfg) %>
 					<% for _,v in ipairs(dirs) do %>
 					<Add directory="<%= premake.esc(v) %>" />
 					<% end %>
