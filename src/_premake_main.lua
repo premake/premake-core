@@ -5,62 +5,10 @@
 --
 
 
+	local scriptfile    = "premake4.lua"
 	local shorthelp     = "Type 'premake4 --help' for help"
 	local versionhelp   = "premake4 (Premake Build Script Generator) %s"
-	local scriptfile    = "premake4.lua"
 	
-
-
---
--- Display the help text
---
-
-	local function showhelp()
-		-- sort the lists of actions and options
-		actions = { }
-		for name,_ in pairs(premake.actions) do table.insert(actions, name) end
-		table.sort(actions)
-		
-		options = { }
-		for name,_ in pairs(premake.options) do table.insert(options, name) end
-		table.sort(options)
-		
-		printf("Premake %s, a build script generator", _PREMAKE_VERSION)
-		printf(_PREMAKE_COPYRIGHT)
-		printf("%s %s", _VERSION, _COPYRIGHT)
-		printf("")
-		printf("Usage: premake4 [options] action [arguments]")
-		printf("")
-
-		printf("OPTIONS")
-		printf("")
-		for _,name in ipairs(options) do
-			local opt = premake.options[name]
-			local trigger = opt.trigger
-			local description = opt.description
-			
-			if (opt.value) then trigger = trigger .. "=" .. opt.value end
-			if (opt.allowed) then description = description .. "; one of:" end
-			
-			printf(" --%-15s %s", trigger, description) 
-			if (opt.allowed) then
-				table.sort(opt.allowed, function(a,b) return a[1] < b[1] end)
-				for _, value in ipairs(opt.allowed) do
-					printf("     %-14s %s", value[1], value[2])
-				end
-			end
-			printf("")
-		end
-
-		printf("ACTIONS")
-		printf("")
-		for _,name in ipairs(actions) do
-			printf(" %-17s %s", name, premake.actions[name].description)
-		end
-		printf("")
-
-		printf("For additional information, see http://industriousone.com/premake")
-	end
 
 
 --
@@ -74,21 +22,22 @@
 		-- everything gets initialized in the proper order.
 		
 		if (scriptpath) then
+			local scripts, templates, actions  = dofile(scriptpath .. "/_manifest.lua")
+
 			-- core code first
-			local s, t, a  = dofile(scriptpath .. "/_manifest.lua")
-			for i = 1, #s - 1 do
-				dofile(scriptpath.."/"..s[i])
+			for _,v in ipairs(scripts) do
+				dofile(scriptpath .. "/" .. v)
 			end
 			
 			-- then the templates
-			for _,v in ipairs(t) do
-				local n = path.getbasename(v)
-				_TEMPLATES[n] = premake.loadtemplatefile(scriptpath.."/"..v)
+			for _,v in ipairs(templates) do
+				local name = path.getbasename(v)
+				_TEMPLATES[name] = premake.loadtemplatefile(scriptpath .. "/" .. v)
 			end
 			
 			-- finally the actions
-			for _,v in ipairs(a) do
-				dofile(scriptpath.."/"..v)
+			for _,v in ipairs(actions) do
+				dofile(scriptpath .. "/" .. v)
 			end
 		end
 		
@@ -100,9 +49,9 @@
 		if (os.isfile(fname)) then
 			dofile(fname)
 		end
-		
-		
-		-- Process special options like /version and /help
+
+
+		-- Process special options
 		
 		if (_OPTIONS["version"]) then
 			printf(versionhelp, _PREMAKE_VERSION)
@@ -110,7 +59,7 @@
 		end
 		
 		if (_OPTIONS["help"]) then
-			showhelp()
+			premake.showhelp()
 			return 1
 		end
 		
@@ -133,7 +82,6 @@
 		-- Validate the command-line arguments. This has to happen after the
 		-- script has run to allow for project-specific options
 		
-		local action = premake.actions[name]
 		if (not premake.actions[_ACTION]) then
 			error("Error: no such action '".._ACTION.."'", 0)
 		end

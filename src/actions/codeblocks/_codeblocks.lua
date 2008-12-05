@@ -9,7 +9,7 @@
 		trigger         = "codeblocks",
 		shortname       = "Code::Blocks",
 		description     = "Code::Blocks Studio",
-	
+		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++" },

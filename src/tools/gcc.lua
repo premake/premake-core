@@ -6,6 +6,7 @@
 
 	
 	premake.gcc = { }
+	premake.targetstyle = "linux"
 	
 
 --
@@ -33,16 +34,6 @@
 
 
 --
--- Returns the compiler ID used by Code::Blocks.
---
-
-	function premake.gcc.getcompilervar(cfg)
-		return iif(cfg.language == "C", "CC", "CPP")
-	end
-	
-	
-
---
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
@@ -55,7 +46,7 @@
 	function premake.gcc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
 		if (cfg.kind == "SharedLib" and not os.is("windows")) then
-			table.insert(flags, "-fPIC")
+			table.insert(result, "-fPIC")
 		end
 		return result		
 	end
@@ -75,13 +66,15 @@
 		local result = { }
 		
 		if (cfg.kind == "SharedLib") then
-			if (not os.is("macosx")) then
+			if os.is("macosx") then
+				result = table.join(result, { "-dynamiclib", "-flat_namespace" })
+			else
 				table.insert(result, "-shared")
 			end
 			
 			-- create import library for DLLs under Windows
 			if (os.is("windows") and not cfg.flags.NoImportLib) then
-				table.insert(result, '-Wl,--out-implib="' .. premake.gettargetfile(cfg, "implib", "linux") .. '"')
+				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux").fullpath..'"')
 			end
 		end
 
@@ -97,27 +90,23 @@
 				table.insert(result, "-s")
 			end
 		end
-
-		if (os.is("macosx") and cfg.flags.Dylib) then
-			table.insert(result, "-dynamiclib -flat_namespace")
-		end
 		
 		return result
 	end
 		
 	
 --
--- Returns a list of linker flags for library search directories and 
--- library names.
+-- Returns a list of linker flags for library search directories and library
+-- names. See bug #1729227 for background on why the path must be split.
 --
 
 	function premake.gcc.getlinkflags(cfg)
 		local result = { }
-		for _, value in ipairs(premake.getlibdirs(cfg)) do
-			table.insert(result, '-L "' .. value .. '"')
+		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
+			table.insert(result, '-L' .. _MAKE.esc(value))
 		end
-		for _, value in ipairs(premake.getlibnames(cfg)) do
-			table.insert(result, '-l "' .. value .. '"')
+		for _, value in ipairs(premake.getlinks(cfg, "all", "basename")) do
+			table.insert(result, '-l' .. _MAKE.esc(value))
 		end
 		return result
 	end

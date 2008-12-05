@@ -7,10 +7,9 @@ endif
 
 <% for cfg in premake.eachconfig(this) do %>
 ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
-  <% local target = premake.gettargetfile(cfg, "target", nil, true) %>
-  TARGETDIR  = <%= _MAKE.esc(path.getdirectory(target)) %>
-  TARGET     = $(TARGETDIR)/<%= _MAKE.esc(path.getname(target)) %>
-  OBJDIR     = <%= _MAKE.esc(premake.getobjdir(cfg)) %>
+  TARGETDIR  = <%= _MAKE.esc(cfg.buildtarget.directory) %>
+  TARGET     = $(TARGETDIR)/<%= _MAKE.esc(cfg.buildtarget.name) %>
+  OBJDIR     = <%= _MAKE.esc(cfg.objectsdir) %>
   DEFINES   += <%= table.concat(cc.getdefines(cfg.defines), " ") %>
   INCLUDES  += <%= table.concat(cc.getincludedirs(cfg.includedirs), " ") %>
   CPPFLAGS  += <%= cc.getcppflags(cfg) %> $(DEFINES) $(INCLUDES)
@@ -18,9 +17,9 @@ ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   CXXFLAGS  += $(CFLAGS) <%= table.concat(cc.getcxxflags(cfg), " ") %>
   LDFLAGS   += <%= table.concat(table.join(cc.getldflags(cfg), cc.getlinkflags(cfg), cfg.linkoptions), " ") %>
   RESFLAGS  += $(DEFINES) $(INCLUDES) <%= table.concat(table.join(cc.getdefines(cfg.resdefines), cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " ") %>
-  LDDEPS    += <%= table.concat(_MAKE.gettargetdeps(cfg), " ") %>
+  LDDEPS    += <%= table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath"))) %>
   <% if cfg.kind == "StaticLib" then %>
-  LINKCMD    = ar -rcs $(TARGET) $(OBJECTS) $(ARCH)
+  LINKCMD    = ar -rcs $(TARGET) $(OBJECTS)
   <% else %>
   LINKCMD    = $(<%= iif(cfg.language == "C", "CC", "CXX") %>) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH)
   <% end %>

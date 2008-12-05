@@ -189,23 +189,6 @@
 	
 	
 --
--- Returns the name for the import library generated from a DLL. I
--- can't disable it if the NoImportLib flag is set, but I can hide it.
---
-
-	function _VS.importlibfile(cfg)
-		local fname = premake.gettargetfile(cfg, "implib", "windows")
-		if (cfg.flags.NoImportLib) then
-			local objdir = premake.getobjdir(cfg)
-			return path.join(objdir, path.getname(fname))
-		else
-			return fname
-		end
-	end
-	
-
-	
---
 -- Return the optimization code.
 --
 
@@ -297,10 +280,11 @@
 --
 
 	newaction {
-		trigger     = "vs2002",
-		shortname   = "Visual Studio 2002",
-		description = "Microsoft Visual Studio 2002",
-
+		trigger         = "vs2002",
+		shortname       = "Visual Studio 2002",
+		description     = "Microsoft Visual Studio 2002",
+		targetstyle     = "windows",
+		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++" },
@@ -317,9 +301,10 @@
 	}
 
 	newaction {
-		trigger     = "vs2003",
-		shortname   = "Visual Studio 2003",
-		description = "Microsoft Visual Studio 2003",
+		trigger         = "vs2003",
+		shortname       = "Visual Studio 2003",
+		description     = "Microsoft Visual Studio 2003",
+		targetstyle     = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -337,9 +322,10 @@
 	}
 
 	newaction {
-		trigger     = "vs2005",
-		shortname   = "Visual Studio 2005",
-		description = "Microsoft Visual Studio 2005",
+		trigger         = "vs2005",
+		shortname       = "Visual Studio 2005",
+		description     = "Microsoft Visual Studio 2005",
+		targetstyle     = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -357,9 +343,10 @@
 	}
 
 	newaction {
-		trigger     = "vs2008",
-		shortname   = "Visual Studio 2008",
-		description = "Microsoft Visual Studio 2008",
+		trigger         = "vs2008",
+		shortname       = "Visual Studio 2008",
+		description     = "Microsoft Visual Studio 2008",
+		targetstyle     = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

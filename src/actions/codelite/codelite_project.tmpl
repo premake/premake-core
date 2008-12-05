@@ -3,9 +3,8 @@
   <% premake.walksources(this, this.files, _CODELITE.files) %>
   <Settings Type="<%= _CODELITE.kind(this.kind) %>">
   <% for cfg in premake.eachconfig(this) do %>
-  <%  local target = premake.gettargetfile(cfg, "target", nil, true) %>
     <Configuration Name="<%= premake.esc(cfg.name) %>" CompilerType="gnu <%= iif(cfg.language == "C", "gcc", "g++") %>" DebuggerType="GNU gdb debugger" Type="<%= _CODELITE.kind(cfg.kind) %>">
-      <General OutputFile="<%= premake.esc(target) %>" IntermediateDirectory="<%= premake.esc(premake.getobjdir(cfg)) %>" Command="./<%= path.getname(target) %>" CommandArguments="" WorkingDirectory="<%= path.getdirectory(target) %>" PauseExecWhenProcTerminates="<%= iif(cfg.kind == "WindowedApp", "no", "yes") %>"/>
+      <General OutputFile="<%= premake.esc(cfg.buildtarget.fullpath) %>" IntermediateDirectory="<%= premake.esc(cfg.objectsdir) %>" Command="./<%= cfg.buildtarget.name %>" CommandArguments="" WorkingDirectory="<%= cfg.buildtarget.directory %>" PauseExecWhenProcTerminates="<%= iif(cfg.kind == "WindowedApp", "no", "yes") %>"/>
       <Compiler Required="yes" Options="<%= table.concat(table.join(premake.gcc.getcflags(cfg), premake.gcc.getcxxflags(cfg), cfg.buildoptions), ";") %>">
         <% for _,v in ipairs(cfg.includedirs) do %>
         <IncludePath Value="<%= premake.esc(v) %>"/>
@@ -14,11 +13,11 @@
         <Preprocessor Value="<%= premake.esc(v) %>"/>
         <% end %>
       </Compiler>
-      <Linker Required="yes" Options="<%= table.concat(table.join(premake.gcc.getldflags(cfg), cfg.linkoptions), ";") %>">
-        <% for _,v in ipairs(premake.getlibdirs(cfg)) do %>
+      <Linker Required="yes" Options="<%= table.concat(premake.esc(table.join(premake.gcc.getldflags(cfg), cfg.linkoptions)), ";") %>">
+        <% for _,v in ipairs(premake.getlinks(cfg, "all", "directory")) do %>
         <LibraryPath Value="<%= premake.esc(v) %>" />
         <% end %>
-        <% for _,v in ipairs(premake.getlibnames(cfg)) do %>
+        <% for _,v in ipairs(premake.getlinks(cfg, "all", "basename")) do %>
         <Library Value="<%= premake.esc(v) %>" />
         <% end %>
       </Linker>

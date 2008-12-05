@@ -19,17 +19,16 @@
 		if (p == "") then p = "." end
 		
 		-- if the directory is already absolute I don't need to do anything
-		if (path.isabsolute(p)) then
-			return p
-		end
+		local result = iif (path.isabsolute(p), nil, os.getcwd())
 
 		-- split up the supplied relative path and tackle it bit by bit
-		local result = os.getcwd()
 		for _,part in ipairs(p:explode("/", true)) do
-			if (part == "..") then
+			if (part == "") then
+				result = "/"
+			elseif (part == "..") then
 				result = path.getdirectory(result)
 			elseif (part ~= ".") then
-				result = result .. "/" .. part
+				result = path.join(result, part)
 			end
 		end
 		
@@ -88,24 +87,12 @@
 --
 
 	function path.getname(p)
-		local i = p:findlast("/", true)
+		local i = p:findlast("[/\\]")
 		if (i) then
 			return p:sub(i + 1)
 		else
 			return p
 		end
-	end
-	
-
---
--- Takes a path which is relative to one location and makes it relative
--- to another location instead.
---
-
-	function path.rebase(p, oldbase, newbase)
-		p = path.getabsolute(path.join(oldbase, p))
-		p = path.getrelative(newbase, p)
-		return p
 	end
 	
 	
@@ -223,6 +210,18 @@
 		return leading .. trailing
 	end
 	
+
+--
+-- Takes a path which is relative to one location and makes it relative
+-- to another location instead.
+--
+
+	function path.rebase(p, oldbase, newbase)
+		p = path.getabsolute(path.join(oldbase, p))
+		p = path.getrelative(newbase, p)
+		return p
+	end
+	
 	
 --
 -- Convert the separators in a path from one form to another. If `sep`
@@ -230,13 +229,21 @@
 --
 
 	function path.translate(p, sep)
-		if (not sep) then
-			if (os.is("windows")) then
-				sep = "\\"
-			else
-				sep = "/"
+		if (type(p) == "table") then
+			local result = { }
+			for _, value in ipairs(p) do
+				table.insert(result, path.translate(value))
 			end
-		end		
-		local result = p:gsub("[/\\]", sep)
-		return result
+			return result
+		else
+			if (not sep) then
+				if (os.is("windows")) then
+					sep = "\\"
+				else
+					sep = "/"
+				end
+			end		
+			local result = p:gsub("[/\\]", sep)
+			return result
+		end
 	end

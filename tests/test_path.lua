@@ -17,7 +17,15 @@
 		test.isequal(expected, path.getabsolute("a/b/c"))
 	end
 
+	function T.path.getabsolute_RemovesDotDots_OnWindowsAbsolute()
+		test.isequal("c:/ProjectB/bin", path.getabsolute("c:/ProjectA/../ProjectB/bin"))
+	end
 
+	function T.path.getabsolute_RemovesDotDots_OnPosixAbsolute()
+		test.isequal("/ProjectB/bin", path.getabsolute("/ProjectA/../ProjectB/bin"))
+	end
+	
+	
 --
 -- path.getbasename() tests
 --
@@ -46,7 +54,7 @@
 	function T.path.getdirectory_ReturnsRootPath_OnRootPathOnly()
 		test.isequal("/", path.getdirectory("/filename.ext"))
 	end
-	
+		
 
 --
 -- path.getextension() tests

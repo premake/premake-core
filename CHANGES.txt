@@ -3,6 +3,7 @@
 This version is a complete rewrite of Premake.
 
 - New, more readable syntax for project information
+- More robust syntax validation
 - Better validation of command-line arguments
 - Standardized path handling across all project settings
 - Template system allows script-based custom generators

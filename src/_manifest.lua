@@ -21,11 +21,10 @@
 		"base/config.lua",
 		"base/functions.lua",
 		"base/cmdline.lua",
-		"base/gcc.lua",
-		"base/ow.lua",
-		
-		-- this one must be last
-		"_premake_main.lua"
+		"tools/csc.lua",
+		"tools/gcc.lua",
+		"tools/ow.lua",
+		"base/help.lua",
 	}
 
 
@@ -39,6 +38,7 @@
 		"actions/codelite/codelite_project.tmpl",
 		"actions/make/make_solution.tmpl",
 		"actions/make/make_cpp.tmpl",
+		"actions/make/make_csharp.tmpl",
 		"actions/vstudio/vs2002_solution.tmpl",
 		"actions/vstudio/vs2003_solution.tmpl",
 		"actions/vstudio/vs2005_solution.tmpl",

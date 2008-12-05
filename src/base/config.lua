@@ -9,11 +9,11 @@
 -- These fields should *not* be copied into configurations.
 --
 
-	premake.nocopy = 
+	local nocopy = 
 	{
-		"blocks",
-		"keywords",
-		"projects"
+		blocks   = true,
+		keywords = true,
+		projects = true,
 	}
 	
 
@@ -36,38 +36,42 @@
 	end
 
 
+
 --
 -- Build a configuration object holding all of the settings that 
 -- match the specified filters.
 --
-	
+
+	-- local function merges all fields from a block into the configuration
+	local function copyfields(cfg, this)
+		for field,value in pairs(this) do
+			if (not nocopy[field]) then
+				if (type(value) == "table") then
+					if (not cfg[field]) then cfg[field] = { } end
+					cfg[field] = table.join(cfg[field], value) 
+				else
+					cfg[field] = value
+				end
+			end
+		end
+	end
+						
 	function premake.getconfig(prj, cfgname)
-		-- see if this configuration has already been built and cached
+		-- make sure I've got the actual project object and not the root configuration
+		if (prj.project) then prj = prj.project end
+
+		-- see if this configuration has already been built and cached		
+		local meta     = getmetatable(prj)
 		local cachekey = cfgname or ""
-		
-		local meta = getmetatable(prj)
-		local cfg  = meta.__cfgcache[cachekey]
+		local cfg      = meta.__cfgcache[cachekey]
 		if (cfg) then
 			return cfg
 		end
 		
-		-- prepare the list of active terms
+		-- prepare the list of active terms, which will be used to filter the blocks
 		local terms = premake.getactiveterms()
 		terms.config = cfgname
-		
-		local function copyfields(cfg, this)
-			for field,value in pairs(this) do
-				if (not table.contains(premake.nocopy, field)) then
-					if (type(value) == "table") then
-						if (not cfg[field]) then cfg[field] = { } end
-						cfg[field] = table.join(cfg[field], value) 
-					else
-						cfg[field] = value
-					end
-				end
-			end
-		end
-						
+
 		-- fields are copied first from the solution, then the solution's configs,
 		-- then from the project, then the project's configs. Each can overwrite
 		-- or add to the values set previously. The objdir field gets special
@@ -107,8 +111,9 @@
 		cfg.files = files
 		
 		for name, field in pairs(premake.fields) do
+
 			-- fix up paths, making them relative to project where needed
-			if (field.kind == "path" or field.kind == "dirlist" or field.kind == "filelist") then
+			if (field.kind == "path" or field.kind == "dirlist" or field.kind == "filelist") and (name ~= "location" and name ~= "basedir") then
 				if (type(cfg[name]) == "table") then
 					for i,p in ipairs(cfg[name]) do
 						cfg[name][i] = path.getrelative(prj.location, p)
@@ -127,16 +132,73 @@
 					values[flag] = true
 				end
 			end
+
 		end
 		
-		cfg.name = cfgname
-		cfg.project = prj
-		
+		-- finish initialization
 		meta.__cfgcache[cachekey] = cfg
+		cfg.name    = cfgname
+		cfg.project = prj
+
+		-- store the applicable tool for this configuration
+		if cfg.language == "C" or cfg.language == "C++" then
+			if _OPTIONS.cc then cfg.tool = premake[_OPTIONS.cc] end
+		elseif cfg.language == "C#" then
+			if _OPTIONS.dotnet then cfg.tool = premake[_OPTIONS.dotnet] end
+		end
+			
+		-- precompute the target names and paths
+		local action = premake.actions[_ACTION]
+		local targetstyle = action.targetstyle or "linux"
+		if (cfg.tool) then
+			targetstyle = cfg.tool.targetstyle or targetstyle
+		end
+		
+		cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
+		cfg.linktarget  = premake.gettarget(cfg, "link",  targetstyle)
+		cfg.objectsdir  = premake.getobjdir(cfg)
+
+		local pathstyle = action.pathstyle or targetstyle
+		if (pathstyle == "windows") then
+			cfg.buildtarget.directory = path.translate(cfg.buildtarget.directory, "\\")
+			cfg.buildtarget.fullpath  = path.translate(cfg.buildtarget.fullpath, "\\")
+			cfg.linktarget.directory = path.translate(cfg.linktarget.directory, "\\")
+			cfg.linktarget.fullpath  = path.translate(cfg.linktarget.fullpath, "\\")
+			cfg.objectsdir = path.translate(cfg.objectsdir, "\\")
+		end
+		
 		return cfg
 	end
 	
+	function premake.getfileconfig(prj, filename, cfgname)
+		-- make sure I've got the actual project object and not the root configuration
+		if (prj.project) then prj = prj.project end
+
+		-- prepare the list of active terms, which will be used to filter the blocks
+		local terms = premake.getactiveterms()
+		terms.filename = filename
+		terms.config   = cfgname
+
+		-- fields are copied first from the solution blocks, then the project blocks
+		local cfg = { }
+		for _,blk in ipairs(prj.solution.blocks) do
+			if (premake.iskeywordsmatch(blk.keywords, terms)) then
+				copyfields(cfg, blk)
+			end
+		end
+		for _,blk in ipairs(prj.blocks) do
+			if (premake.iskeywordsmatch(blk.keywords, terms)) then
+				copyfields(cfg, blk)
+			end
+		end
+		
+		cfg.name = cfgname
+		cfg.filename = filename
+		cfg.project = prj
+		return cfg
+	end
 	
+
 	
 --
 -- Returns a list of sibling projects on which the specified 
@@ -158,69 +220,76 @@
 
 
 --
--- Converts the values in a configuration "links" field into a list
--- library files to be linked. If the posix flag is set, will use 
--- POSIX-like behaviors, even on Windows.
+-- Returns a list of link targets. Kind may be one of "siblings" (only
+-- return sibling projects), "system" (only return system libraries, or
+-- non-siblings), or "all". Part is one of "name" (the decorated library
+-- name with no path), "basename" (the undecorated name), "directory"
+-- (just the directory containing the library), and "fullpath" (the
+-- full path and decorated name).
 --
 
-	function premake.getlibraries(cfg, posix)
-		local libs = { }
+	local function canlink(source, target)
+		if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then return false end
+		if (source.language == "C" or source.language == "C++") then
+			if (target.language ~= "C" and target.language ~= "C++") then return false end
+			return true
+		elseif (source.language == "C#") then
+			if (target.language ~= "C#") then return false end
+			return true
+		end
+	end
+	
+	
+	function premake.getlinks(cfg, kind, part)
+		-- if I'm building a list of link directories, include libdirs
+		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
 		
 		for _, link in ipairs(cfg.links) do
+			local item
+			
 			-- is this a sibling project?
 			local prj = premake.findproject(link)
-			if (prj) then
-				local prjcfg = premake.getconfig(prj, cfg.name)
-				if (prjcfg.kind == "SharedLib" or prjcfg.kind == "StaticLib") then
-					local target
-					if (prjcfg.kind == "SharedLib" and os.is("windows") and not posix) then
-						target = premake.gettargetfile(prjcfg, "implib")
-					else
-						target = premake.gettargetfile(prjcfg, "target", nil, posix)
-					end
+			if prj and (kind == "siblings" or kind == "all") then
 				
-					target = path.rebase(target, prjcfg.location, cfg.location)
-					table.insert(libs, target)
+				local prjcfg = premake.getconfig(prj, cfg.name)
+				if canlink(cfg, prjcfg) then
+					if (part == "directory") then
+						item = path.rebase(prjcfg.linktarget.directory, prjcfg.location, cfg.location)
+					elseif (part == "basename") then
+						item = prjcfg.linktarget.basename
+					else
+						item = path.rebase(prjcfg.linktarget.fullpath, prjcfg.location, cfg.location)
+					end
 				end
-			else
-				if (not posix and os.is("windows")) then
-					link = link .. ".lib"
+
+			elseif not prj and (kind == "system" or kind == "all") then
+				
+				if (part == "directory") then
+					local dir = path.getdirectory(link)
+					if (dir ~= ".") then
+						item = dir
+					end
+				elseif (part == "fullpath") then
+					item = iif(premake.actions[_ACTION].targetstyle == "windows", link .. ".lib", link)
+				else
+					item = link
 				end
-				table.insert(libs, link)
+
+			end
+
+			if item then
+				if premake.actions[_ACTION].targetstyle == "windows" then
+					item = path.translate(item, "\\")
+				end
+				if not table.contains(result, item) then
+					table.insert(result, item)
+				end
 			end
 		end
-		
-		return libs
-	end
 	
-	
-
---
--- Split the list of libraries into directories and names. 
--- See bug #1729227 for background on why the path must be split.
---
-
-	function premake.getlibdirs(cfg)
-		local result = table.join(cfg.libdirs)
-		for _, link in ipairs(premake.getlibraries(cfg)) do
-			local dir  = path.getdirectory(link)			
-			if (dir ~= "" and not table.contains(result, dir)) then
-				table.insert(result, dir)
-			end
-		end
 		return result
 	end
 	
-	function premake.getlibnames(cfg)
-		local result = { }
-		for _, link in ipairs(premake.getlibraries(cfg)) do
-			local name = path.getbasename(link)
-			table.insert(result, path.getbasename(link))
-		end
-		return result
-	end
-
-
 	
 --
 -- Return an object directory for the specified configuration which
@@ -242,57 +311,74 @@
 	end
 	
 	
-	
+
 --
--- Builds a platform specific target (executable, library) file name of a
--- specific type, using the information from a project configuration. The
--- posix flag is used to trigger GNU-compatible behavior on Windows. OS
--- can be nil; the current OS setting will be used.
+-- Assembles a target file name for a configuration. Direction is one of
+-- "build" (the build target name) or "link" (the name to use when trying
+-- to link against this target). Style is one of "windows" or "linux".
 --
 
-	function premake.gettargetfile(cfg, field, os, posix)
-		if (not os) then os = _OPTIONS.os or _OS end
+	function premake.gettarget(cfg, direction, style, os)
+		-- normalize the arguments
+		if not os then os = _OPTIONS.os or _OS end
+		if (os == "bsd") then os = "linux" end		
 		
-		local name = cfg[field.."name"] or cfg.targetname or cfg.project.name
-		local dir = cfg[field.."dir"] or cfg.targetdir or cfg.basedir
-		local kind = iif(field == "implib", "StaticLib", cfg.kind)
-		
-		local prefix = ""
-		local extension = ""
-		
-		if (os == "windows") then
-			if (kind == "ConsoleApp" or kind == "WindowedApp") then
-				extension = ".exe"
-			elseif (kind == "SharedLib") then
-				extension = ".dll"
-			elseif (kind == "StaticLib") then
-				if (posix) then
-					prefix = "lib"
-					extension = ".a"
-				else
-					extension = ".lib"
-				end
+		local kind = cfg.kind
+		if (cfg.language == "C" or cfg.language == "C++") then
+			-- On Windows, shared libraries link against a static import library
+			if (style == "windows" or os == "windows") and kind == "SharedLib" and direction == "link" then
+				kind = "StaticLib"
 			end
-		elseif (os == "macosx" and kind == "WindowedApp") then
-			name = name .. ".app/Contents/MacOS/" .. name
-		else
-			if (kind == "SharedLib") then
+			
+			-- Linux name conventions only apply to static libs on windows (by user request)
+			if (style == "linux" and os == "windows" and kind ~= "StaticLib") then
+				style = "windows"
+			end
+		elseif (cfg.language == "C#") then
+			-- .NET always uses Windows naming conventions
+			style = "windows"
+		end
+				
+		-- Initialize the target components
+		local field   = iif(direction == "build", "target", "implib")
+		local name    = cfg[field.."name"] or cfg.targetname or cfg.project.name
+		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
+		local prefix  = ""
+		local suffix  = ""
+		
+		if style == "windows" then
+			if kind == "ConsoleApp" or kind == "WindowedApp" then
+				suffix = ".exe"
+			elseif kind == "SharedLib" then
+				suffix = ".dll"
+			elseif kind == "StaticLib" then
+				suffix = ".lib"
+			end
+		elseif style == "linux" then
+			if (kind == "WindowedApp" and os == "macosx") then
+				dir = path.join(dir, name .. ".app/Contents/MacOS")
+			elseif kind == "SharedLib" then
 				prefix = "lib"
-				extension = ".so"
-			elseif (kind == "StaticLib") then
+				suffix = ".so"
+			elseif kind == "StaticLib" then
 				prefix = "lib"
-				extension = ".a"
+				suffix = ".a"
 			end
 		end
 		
-		prefix = cfg[field.."prefix"] or prefix
-		extension = cfg[field.."extension"] or extension
+		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
+		suffix = cfg[field.."extension"] or cfg.targetextension or suffix
 		
-		return path.join(dir, prefix .. name .. extension)
+		local result = { }
+		result.basename  = name
+		result.name      = prefix .. name .. suffix
+		result.directory = dir
+		result.fullpath  = path.join(result.directory, result.name)
+		return result
 	end
-
-
-
+	
+	
+		
 --
 -- Returns true if all of the keywords are included the set of terms. Keywords
 -- may use Lua's pattern matching syntax. Comparisons are case-insensitive.

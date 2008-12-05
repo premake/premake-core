@@ -16,7 +16,7 @@
 		_ACTION = "gmake"
 		premake.checktools()
 		test.isequal("gcc", _OPTIONS.cc)
-		test.isequal("mcs", _OPTIONS.csc)
+		test.isequal("mono", _OPTIONS.dotnet)
 	end
 	
 	
@@ -25,7 +25,7 @@
 		_OPTIONS["cc"] = "xyz"
 		ok, err = premake.checktools()
 		test.isfalse( ok )
-		test.isequal("the GNU Make action does not support /cc=xyz", err)
+		test.isequal("the GNU Make action does not support /cc=xyz (yet)", err)
 	end
 
 

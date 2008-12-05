@@ -48,6 +48,7 @@
 		trigger         = "codelite",
 		shortname       = "CodeLite",
 		description     = "CodeLite (experimental)",
+		targetstyle     = "linux",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -66,10 +67,12 @@
 		},
 
 		onclean = function(solutions, projects, targets)
-			for _,name in ipairs(projects) do
-				os.remove(name .. ".tags")
-				os.remove(name .. ".mk")
+			for _,name in ipairs(solutions) do
 				os.remove(name .. "_wsp.mk")
+				os.remove(name .. ".tags")
+			end
+			for _,name in ipairs(projects) do
+				os.remove(name .. ".mk")
 				os.remove(name .. ".list")
 				os.remove(name .. ".out")
 			end

@@ -18,6 +18,18 @@
 			scope = "container",
 		},
 		
+		buildaction =
+		{
+			kind  = "string",
+			scope = "config",
+			allowed = {
+				"Compile",
+				"Copy",
+				"Embed",
+				"None"
+			}
+		},
+		
 		buildoptions =
 		{
 			kind  = "list",
@@ -54,7 +66,6 @@
 			scope = "config",
 			isflags = true,
 			allowed = {
-				"Dylib",
 				"ExtraWarnings",
 				"FatalWarnings",
 				"Managed",
@@ -127,7 +138,8 @@
 			scope = "container",
 			allowed = {
 				"C",
-				"C++"
+				"C++",
+				"C#"
 			}
 		},
 		
@@ -152,7 +164,7 @@
 		location =
 		{
 			kind  = "path",
-			scope = "config",
+			scope = "container",
 		},
 		
 		objdir =
@@ -313,6 +325,7 @@
 			cfg.keywords = { keywords }
 		end
 
+		-- initialize list-type fields to empty tables
 		for name, field in pairs(premake.fields) do
 			if (field.kind ~= "string" and field.kind ~= "path") then
 				cfg[name] = { }
@@ -336,7 +349,7 @@
 				error("no active solution", 2)
 			end
 			
-			-- see if this project has already been created
+			-- if this is a new project, create it
 			premake.CurrentContainer = sln.projects[name]
 			if (not premake.CurrentContainer) then
 				local prj = { }

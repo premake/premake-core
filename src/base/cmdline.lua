@@ -48,7 +48,7 @@
 	function newoption(opt)
 		-- some sanity checking
 		local missing
-		for _, field in ipairs(requiredactionfields) do
+		for _, field in ipairs(requiredoptionfields) do
 			if (not opt[field]) then
 				missing = field
 			end

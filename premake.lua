@@ -99,6 +99,7 @@ project.name = "Premake4"
 		local sizes = { }
 
 		scripts, templates, actions = dofile("src/_manifest.lua")
+		table.insert(scripts, "_premake_main.lua")
 
 		local out = io.open("src/host/bytecode.c", "w+b")
 		out:write("/* Precompiled bytecodes for built-in Premake scripts */\n")

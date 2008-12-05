@@ -26,12 +26,18 @@
 	newaction {
 		trigger     = "clean",
 		description = "Remove all binaries and generated files",
+		targetstyle = "windows",
 
 		execute = function()
 			local solutions = { }
 			local projects = { }
 			local targets = { }
 			
+			local cwd = os.getcwd()
+			local function rebase(parent, dir)
+				return path.rebase(dir, parent.location, cwd)
+			end
+				
 			-- Walk the tree. Build a list of object names to pass to the cleaners,
 			-- and delete any toolset agnostic files along the way.
 			for _,sln in ipairs(_SOLUTIONS) do
@@ -41,23 +47,25 @@
 					table.insert(projects, path.join(prj.location, prj.name))
 					
 					if (prj.objdir) then
-						os.rmdir(prj.objdir)
+						os.rmdir(rebase(prj, prj.objdir))
 					end
 
-					for cfg in premake.eachconfig(prj) do
-						local target = premake.gettargetfile(cfg, "target")
-						table.insert(targets, path.join(path.getdirectory(target), path.getbasename(target)))
+					for cfg in premake.eachconfig(prj) do			
+						table.insert(targets, path.join(rebase(cfg, cfg.buildtarget.directory), cfg.buildtarget.basename))
 
 						-- remove all possible permutations of the target binary
-						os.remove(premake.gettargetfile(cfg, "target", "windows"))
-						os.remove(premake.gettargetfile(cfg, "target", "linux"))
-						os.remove(premake.gettargetfile(cfg, "target", "macosx"))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "windows").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "linux", "linux").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "linux", "macosx").fullpath))
+						if (cfg.kind == "WindowedApp") then
+							os.rmdir(rebase(cfg, premake.gettarget(cfg, "build", "linux", "linux").fullpath .. ".app"))
+						end
 
 						-- if there is an import library, remove that too
-						os.remove(premake.gettargetfile(cfg, "implib", "windows"))
-						os.remove(premake.gettargetfile(cfg, "implib", "linux"))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "windows").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "linux").fullpath))
 
-						os.rmdir(cfg.objdir)
+						os.rmdir(rebase(cfg, cfg.objdir))
 					end
 				end
 			end

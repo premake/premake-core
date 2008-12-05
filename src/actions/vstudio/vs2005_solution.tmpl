@@ -9,12 +9,16 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 <% end %>
 <% for prj in premake.eachproject(this) do %>
- <% if (prj.language == "C" or prj.language == "C++") then hascpp = true end %>
- <% if (prj.language == "C#") then hasdotnet = true end %>
+  <% if (prj.language == "C" or prj.language == "C++") then hascpp = true end %>
+  <% if (prj.language == "C#") then hasdotnet = true end %>
 Project("{<%=_VS.tool(prj)%>}") = "<%=prj.name%>", "<%=path.translate(path.getrelative(this.location, _VS.projectfile(prj)),"\\")%>", "{<%=prj.uuid%>}"
- <% for _,dep in ipairs(premake.getdependencies(prj)) do %>
-	{<%= dep.uuid %>} = {<%= dep.uuid %>}
- <% end %>
+  <% local deps = premake.getdependencies(prj); if #deps > 0 then %>
+	ProjectSection(ProjectDependencies) = postProject
+	<% for _,dep in ipairs(deps) do %>
+		{<%= dep.uuid %>} = {<%= dep.uuid %>}
+	<% end %>
+	EndProjectSection
+  <% end %>
 EndProject
 <% end %>
 Global

@@ -6,13 +6,12 @@
 
 
 --
--- Check the specified tools (/cc, /csc, etc.) against the current action
+-- Check the specified tools (/cc, /dotnet, etc.) against the current action
 -- to make sure they are compatible and supported.
 --
 
 	function premake.checktools()
 		local action = premake.actions[_ACTION]
-		
 		if (not action.valid_tools) then 
 			return true 
 		end
@@ -97,8 +96,13 @@
 		
 		-- walk the session objects and generate files from the templates
 		local function generatefiles(this, templates)
-			if (templates) then
-				for _,tmpl in ipairs(templates) do
+			if (not templates) then return end
+			for _,tmpl in ipairs(templates) do
+				local output = true
+				if (tmpl[3]) then
+					output = tmpl[3](this)
+				end
+				if (output) then
 					local fname = premake.getoutputname(this, tmpl[1])
 					local f, err = io.open(fname, "wb")
 					if (not f) then
@@ -106,6 +110,7 @@
 					end
 					io.output(f)
 					
+					-- call the template function to generate the output
 					tmpl[2](this)
 
 					io.output():close()

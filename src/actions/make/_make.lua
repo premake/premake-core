@@ -27,24 +27,6 @@
 
 
 --
--- Get the target dependencies for a particular project configuration.
---
-
-	function _MAKE.gettargetdeps(cfg)
-		local result = { }
-		local deps = premake.getdependencies(cfg)
-		for _, prj in ipairs(deps) do
-			local prjcfg = premake.getconfig(prj, cfg.name)
-			local target = premake.gettargetfile(prjcfg, "target", nil, true)
-			target = path.rebase(target, prjcfg.location, cfg.location)
-			table.insert(result, _MAKE.esc(target))
-		end
-		return result
-	end
-	
-	
-			
---
 -- Get the makefile file name for a solution or a project. If this object is the
 -- only one writing to a location then I can use "Makefile". If more than one object
 -- writes to the same location I use name + ".make" to keep it unique.
@@ -91,21 +73,34 @@
 		trigger         = "gmake",
 		shortname       = "GNU Make",
 		description     = "GNU makefiles for POSIX, MinGW, and Cygwin",
+		targetstyle     = "linux",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C", "C++" },
+		valid_languages = { "C", "C++", "C#" },
 		
 		valid_tools     = {
-			cc   = { "gcc" },
-			csc  = { "mcs" },
+			cc     = { "gcc" },
+			dotnet = { "mono", "ms", "pnet" },
 		},
 		
 		solutiontemplates = {
-			{ function(this) return _MAKE.getmakefilename(this, false) end,  _TEMPLATES.make_solution },
+			{
+				function(this) return _MAKE.getmakefilename(this, false) end,  
+				_TEMPLATES.make_solution 
+			},
 		},
 		
 		projecttemplates = {
-			{ function(this) return _MAKE.getmakefilename(this, true) end,   _TEMPLATES.make_cpp },
+			{ 
+				function(this) return _MAKE.getmakefilename(this, true) end,   
+				_TEMPLATES.make_cpp,
+				function(this) return this.language == "C" or this.language == "C++" end
+			},
+			{
+				function(this) return _MAKE.getmakefilename(this, true) end,
+				_TEMPLATES.make_csharp,
+				function(this) return this.language == "C#" end
+			},
 		},
 	}

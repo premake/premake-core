@@ -9,15 +9,15 @@
 		<Build>
 		<% for cfg in premake.eachconfig(this) do %>
 			<Target title="<%= premake.esc(cfg.name) %>">
-				<Option output="<%= premake.esc(premake.gettargetfile(cfg, "target", nil, true)) %>" prefix_auto="0" extension_auto="0" />
-				<Option object_output="<%= premake.esc(premake.getobjdir(cfg)) %>" />
+				<Option output="<%= premake.esc(cfg.buildtarget.fullpath) %>" prefix_auto="0" extension_auto="0" />
+				<Option object_output="<%= premake.esc(cfg.objectsdir) %>" />
 				<% if (cfg.kind == "WindowedApp") then %>
 				<Option type="0" />
 				<% elseif (cfg.kind == "ConsoleApp") then %>
 				<Option type="1" />
 				<% elseif (cfg.kind == "StaticLib") then %>
 				<Option type="2" />
-				<% elseif (cfg.kind == "SharedApp") then %>
+				<% elseif (cfg.kind == "SharedLib") then %>
 				<Option type="3" />
 				<% end %>
 				<Option compiler="<%= _OPTIONS.cc %>" />
@@ -44,10 +44,10 @@
 					<% for _,v in ipairs(cfg.linkoptions) do %>
 					<Add option="<%= premake.esc(v) %>" />
 					<% end %>
-					<% for _,v in ipairs(premake.getlibdirs(cfg)) do %>
+					<% for _,v in ipairs(premake.getlinks(cfg, "all", "directory")) do %>
 					<Add directory="<%= premake.esc(v) %>" />
 					<% end %>
-					<% for _,v in ipairs(premake.getlibnames(cfg)) do %>
+					<% for _,v in ipairs(premake.getlinks(cfg, "all", "basename")) do %>
 					<Add library="<%= premake.esc(v) %>" />
 					<% end %>
 				</Linker>
@@ -78,16 +78,13 @@
 		<Unit filename="<%= premake.esc(fname) %>">
 		<% if path.getextension(fname) == ".rc" then %>
 			<Option compilerVar="WINDRES" />
-		<% else %>
-			<Option compilerVar="<%= cc.getcompilervar(this) %>" />
+		<% elseif path.iscppfile(fname) then %>
+			<Option compilerVar="<%= iif(this.language == "C", "CC", "CPP") %>" />
 			<% if (not this.flags.NoPCH and fname == this.pchheader) then %>
 			<Option compile="1" />
 			<Option weight="0" />
 			<% end %>
 		<% end %>
-		<% for _,v in ipairs(this.configurations) do %>
-			<Option target="<%= premake.esc(v) %>" />
-		<% end%>
 		</Unit>
 		<% end %>
 		<Extensions />

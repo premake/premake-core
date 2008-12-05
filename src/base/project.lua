@@ -232,16 +232,16 @@
 	local function domatchedarray(ctype, fieldname, value, matchfunc)
 		local result = { }
 		
-		function makeabsolute(arr)
-			for i,value in ipairs(arr) do
-				if (type(value) == "table") then
-					makeabsolute(value)
+		function makeabsolute(value)
+			if (type(value) == "table") then
+				for _,item in ipairs(value) do
+					makeabsolute(item)
+				end
+			else
+				if value:find("*") then
+					makeabsolute(matchfunc(value))
 				else
-					if value:find("*") then
-						makeabsolute(matchfunc(value))
-					else
-						table.insert(result, path.getabsolute(value))
-					end
+					table.insert(result, path.getabsolute(value))
 				end
 			end
 		end
