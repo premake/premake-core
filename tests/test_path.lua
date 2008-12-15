@@ -93,6 +93,10 @@
 		test.isequal("d", path.getrelative("/a/b/c", "/a/b/c/d"))
 	end
 
+	function T.path.getrelative_ReturnsChildPath_OnWindowsAbsolute()
+		test.isequal("obj/debug", path.getrelative("C:/Code/Premake4", "C:/Code/Premake4/obj/debug"))
+	end
+	
 
 --
 -- path.isabsolute() tests

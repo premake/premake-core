@@ -1,6 +1,6 @@
 --
--- functions.lua
--- Implementations of the solution, project, and configuration APIs.
+-- api.lua
+-- Implementation of the solution, project, and configuration APIs.
 -- Copyright (c) 2002-2008 Jason Perkins and the Premake project
 --
 
@@ -267,15 +267,185 @@
 			end
 		},
 	}
-		
+
 
 --
--- The is the actual implementation of a getter/setter.
+-- End of metadata
+--
+	
+	
+		
+--
+-- Check to see if a value exists in a list of values, using a 
+-- case-insensitive match. If the value does exist, the canonical
+-- version contained in the list is returned, so future tests can
+-- use case-sensitive comparisions.
+--
+
+	local function checkvalue(value, allowed)
+		if (allowed) then
+			if (type(allowed) == "function") then
+				return allowed(value)
+			else
+				for _,v in ipairs(allowed) do
+					if (value:lower() == v:lower()) then
+						return v
+					end
+				end
+				return nil, "invalid value '" .. value .. "'"
+			end
+		else
+			return value
+		end
+	end
+
+
+
+--
+-- Retrieve the current object of a particular type from the session. The
+-- type may be "solution", "container" (the last activated solution or
+-- project), or "config" (the last activated configuration). Returns the
+-- requested container, or nil and an error message.
+--
+
+	function premake.getobject(t)
+		local container
+		
+		if (t == "container" or t == "solution") then
+			container = premake.CurrentContainer
+		else
+			container = premake.CurrentConfiguration
+		end
+		
+		if (t == "solution" and type(container) ~= "solution") then
+			container = nil
+		end
+		
+		local msg
+		if (not container) then
+			if (t == "container") then
+				msg = "no active solution or project"
+			elseif (t == "solution") then
+				msg = "no active solution"
+			else
+				msg = "no active solution, project, or configuration"
+			end
+		end
+		
+		return container, msg
+	end
+	
+	
+	
+--
+-- Adds values to an array field of a solution/project/configuration. `ctype`
+-- specifies the container type (see premake.getobject) for the field.
+--
+
+	function premake.setarray(ctype, fieldname, value, allowed)
+		local container, err = premake.getobject(ctype)
+		if (not container) then
+			error(err, 3)
+		end
+
+		if (not container[fieldname]) then
+			container[fieldname] = { }
+		end
+
+		local function doinsert(value, depth)
+			if (type(value) == "table") then
+				for _,v in ipairs(value) do
+					doinsert(v, depth + 1)
+				end
+			else
+				value, err = checkvalue(value, allowed)
+				if (not value) then
+					error(err, depth)
+				end
+				table.insert(container[fieldname], value)
+			end
+		end
+
+		if (value) then
+			doinsert(value, 5)
+		end
+		
+		return container[fieldname]
+	end
+
+	
+
+--
+-- Adds values to an array-of-directories field of a solution/project/configuration. 
+-- `ctype` specifies the container type (see premake.getobject) for the field. All
+-- values are converted to absolute paths before being stored.
+--
+
+	local function domatchedarray(ctype, fieldname, value, matchfunc)
+		local result = { }
+		
+		function makeabsolute(value)
+			if (type(value) == "table") then
+				for _,item in ipairs(value) do
+					makeabsolute(item)
+				end
+			else
+				if value:find("*") then
+					makeabsolute(matchfunc(value))
+				else
+					table.insert(result, path.getabsolute(value))
+				end
+			end
+		end
+		
+		makeabsolute(value)
+		return premake.setarray(ctype, fieldname, result)
+	end
+	
+	function premake.setdirarray(ctype, fieldname, value)
+		return domatchedarray(ctype, fieldname, value, os.matchdirs)
+	end
+	
+	function premake.setfilearray(ctype, fieldname, value)
+		return domatchedarray(ctype, fieldname, value, os.matchfiles)
+	end
+	
+	
+	
+--
+-- Set a new value for a string field of a solution/project/configuration. `ctype`
+-- specifies the container type (see premake.getobject) for the field.
+--
+
+	function premake.setstring(ctype, fieldname, value, allowed)
+		-- find the container for this value
+		local container, err = premake.getobject(ctype)
+		if (not container) then
+			error(err, 4)
+		end
+	
+		-- if a value was provided, set it
+		if (value) then
+			value, err = checkvalue(value, allowed)
+			if (not value) then 
+				error(err, 4)
+			end
+			
+			container[fieldname] = value
+		end
+		
+		return container[fieldname]	
+	end
+	
+	
+	
+--
+-- The getter/setter implemention.
 --
 
 	local function accessor(name, value)
-		local kind  = premake.fields[name].kind
-		local scope = premake.fields[name].scope
+		local kind    = premake.fields[name].kind
+		local scope   = premake.fields[name].scope
 		local allowed = premake.fields[name].allowed
 		
 		if (kind == "string") then
@@ -306,7 +476,7 @@
 
 
 --
--- Project API functions
+-- Project object constructors.
 --
 
 	function configuration(keywords)
@@ -362,7 +532,6 @@
 				-- attach a type
 				setmetatable(prj, {
 					__type = "project",
-					__cfgcache = { }
 				})
 				
 				prj.solution       = sln

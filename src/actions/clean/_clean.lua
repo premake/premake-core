@@ -42,12 +42,12 @@
 			-- and delete any toolset agnostic files along the way.
 			for _,sln in ipairs(_SOLUTIONS) do
 				table.insert(solutions, path.join(sln.location, sln.name))
-				
+
 				for prj in premake.eachproject(sln) do
 					table.insert(projects, path.join(prj.location, prj.name))
 					
-					if (prj.objdir) then
-						os.rmdir(rebase(prj, prj.objdir))
+					if (prj.objectsdir) then
+						os.rmdir(rebase(prj, prj.objectsdir))
 					end
 
 					for cfg in premake.eachconfig(prj) do			
@@ -65,7 +65,7 @@
 						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "windows").fullpath))
 						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "linux").fullpath))
 
-						os.rmdir(rebase(cfg, cfg.objdir))
+						os.rmdir(rebase(cfg, cfg.objectsdir))
 					end
 				end
 			end
@@ -88,5 +88,6 @@
 			if (type(onclean) == "function") then
 				onclean()
 			end
+
 		end,		
 	}

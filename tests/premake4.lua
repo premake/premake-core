@@ -12,8 +12,8 @@
 	dofile("test_table.lua")
 	dofile("test_template.lua")
 	dofile("test_premake.lua")
-	dofile("test_config.lua")
 	dofile("test_project.lua")
+	dofile("test_api.lua")
 	dofile("test_targets.lua")
 	dofile("test_functions.lua")
 

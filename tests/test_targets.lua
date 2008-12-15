@@ -247,7 +247,7 @@
 	function T.targets.TargetDir_OverridesBaseDir()
 		cfg.kind = "ConsoleApp"
 		cfg.targetdir = "MyTarget"
-		test.isequal("MyTarget\\MyProject.exe", premake.gettarget(cfg, "build", "windows").fullpath)
+		test.isequal("MyTarget/MyProject.exe", premake.gettarget(cfg, "build", "windows").fullpath)
 	end
 
 	function T.targets.TargetExtension_OverridesDefault()
@@ -271,7 +271,7 @@
 	function T.targets.ImpLibDir_UsedOnSharedLinks()
 		cfg.kind = "SharedLib"
 		cfg.implibdir = "MyTarget"
-		test.isequal("MyTarget\\MyProject.lib", premake.gettarget(cfg, "link", "windows").fullpath)
+		test.isequal("MyTarget/MyProject.lib", premake.gettarget(cfg, "link", "windows").fullpath)
 	end
 	
 	function T.targets.ImpLibExtension_UsedOnSharedLinks()

@@ -1,8 +1,6 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
 	
-	location "build"
-	
 	configuration "Debug"
 		targetdir "bin/debug"
 		flags   { "Symbols" }
@@ -15,13 +13,16 @@ solution "PremakeTestbox"
 	
 	
 include "CppConsoleApp"
+include "CsConsoleApp"
 include "CppWindowedApp"
 include "CppSharedLib"
+include "CsSharedLib"
 include "CppStaticLib"
 
 function onclean()
 	os.rmdir("bin")
 	os.rmdir("CppSharedLib/lib")
 	os.rmdir("CppStaticLib/lib")
+	os.rmdir("CsSharedLib/lib")
 end
 

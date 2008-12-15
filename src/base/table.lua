@@ -74,8 +74,14 @@
 	function table.translate(arr, translation)
 		local result = { }
 		for _, value in ipairs(arr) do
-			if (translation[value]) then
-				table.insert(result, translation[value])
+			local tvalue
+			if type(translation) == "function" then
+				tvalue = translation(value)
+			else
+				tvalue = translation[value]
+			end
+			if (tvalue) then
+				table.insert(result, tvalue)
 			end
 		end
 		return result

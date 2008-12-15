@@ -1,70 +1,241 @@
 --
 -- project.lua
--- Support functions for working with projects and project data.
+-- Functions for working with the project data.
 -- Copyright (c) 2002-2008 Jason Perkins and the Premake project
 --
 
 
+
 --
--- Performs a sanity check all all of the solutions and projects 
--- in the session to be sure they meet some minimum requirements.
+-- Apply XML escaping to a value.
 --
 
-	function premake.checkprojects()
-		local action = premake.actions[_ACTION]
-		
-		for _,sln in ipairs(_SOLUTIONS) do
-			-- every solution must have at least one project
-			if (#sln.projects == 0) then
-				return nil, "solution '" .. sln.name .. "' needs at least one project"
+	function premake.esc(value)
+		if (type(value) == "table") then
+			local result = { }
+			for _,v in ipairs(value) do
+				table.insert(result, premake.esc(v))
 			end
-			
-			-- every solution must list configurations
-			if (not sln.configurations or #sln.configurations == 0) then
-				return nil, "solution '" .. sln.name .. "' needs configurations"
+			return result
+		else
+			value = value:gsub('&',  "&amp;")
+			value = value:gsub('"',  "&quot;")
+			value = value:gsub("'",  "&apos;")
+			value = value:gsub('<',  "&lt;")
+			value = value:gsub('>',  "&gt;")
+			value = value:gsub('\r', "&#x0D;")
+			value = value:gsub('\n', "&#x0A;")
+			return value
+		end
+	end
+
+
+
+--
+-- Returns a list of sibling projects on which the specified 
+-- configuration depends. This is used to specify project
+-- dependencies, usually within a solution.
+--
+
+	function premake.getdependencies(cfg)
+		local results = { }
+		for _, link in ipairs(cfg.links) do
+			local prj = premake.findproject(link)
+			if (prj) then
+				table.insert(results, prj)
 			end
-			
-			for _,prj in ipairs(sln.projects) do
-				local cfg = premake.getconfig(prj)
+		end
+		return results
+	end
 
-				-- every project must have a language
-				if (not cfg.language) then
-					return nil, "project '" ..prj.name .. "' needs a language"
-				end
-				
-				-- and the action must support it
-				if (action.valid_languages) then
-					if (not table.contains(action.valid_languages, cfg.language)) then
-						return nil, "the " .. action.shortname .. " action does not support " .. cfg.language .. " projects"
-					end
-				end
-								
-				for _,cfgname in ipairs(sln.configurations) do
-					cfg = premake.getconfig(prj, cfgname)
-					
-					-- every config must have a kind
-					if (not cfg.kind) then
-						return nil, "project '" ..prj.name .. "' needs a kind in configuration '" .. cfgname .. "'"
-					end
-				
-					-- and the action must support it
-					if (action.valid_kinds) then
-						if (not table.contains(action.valid_kinds, cfg.kind)) then
-							return nil, "the " .. action.shortname .. " action does not support " .. cfg.kind .. " projects"
-						end
-					end
-				end
 
+
+--
+-- Returns a list of link targets. Kind may be one of:
+--   siblings - linkable sibling projects
+--   system - system (non-subling) libraries
+--   dependencies - all sibling dependencies, including non-linkable
+--   all - return everything
+--
+-- Part may be one of:
+--   name - the decorated library name with no directory
+--   basename - the undecorated library name
+--   directory - just the directory, no name
+--   fullpath - full path with decorated name
+--	
+	
+	function premake.getlinks(cfg, kind, part)
+		-- if I'm building a list of link directories, include libdirs
+		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
+
+		local function canlink(source, target)
+			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then return false end
+			if (source.language == "C" or source.language == "C++") then
+				if (target.language ~= "C" and target.language ~= "C++") then return false end
+				return true
+			elseif (source.language == "C#") then
+				if (target.language ~= "C#") then return false end
+				return true
 			end
 		end
 		
-		return true
+		for _, link in ipairs(cfg.links) do
+			local item
+			
+			-- is this a sibling project?
+			local prj = premake.findproject(link)
+			if prj and kind ~= "system" then
+				
+				local prjcfg = premake.getconfig(prj, cfg.name)
+				if kind == "dependencies" or canlink(cfg, prjcfg) then
+					if (part == "directory") then
+						item = path.rebase(prjcfg.linktarget.directory, prjcfg.location, cfg.location)
+					elseif (part == "basename") then
+						item = prjcfg.linktarget.basename
+					else
+						item = path.rebase(prjcfg.linktarget.fullpath, prjcfg.location, cfg.location)
+					end
+				end
+
+			elseif not prj and (kind == "system" or kind == "all") then
+				
+				if (part == "directory") then
+					local dir = path.getdirectory(link)
+					if (dir ~= ".") then
+						item = dir
+					end
+				elseif (part == "fullpath") then
+					item = iif(premake.actions[_ACTION].targetstyle == "windows", link .. ".lib", link)
+				else
+					item = link
+				end
+
+			end
+
+			if item then
+				if premake.actions[_ACTION].targetstyle == "windows" then
+					item = path.translate(item, "\\")
+				end
+				if not table.contains(result, item) then
+					table.insert(result, item)
+				end
+			end
+		end
+	
+		return result
 	end
 	
-	
+
 	
 --
--- Returns an iterator for a solution's projects.
+-- Assembles a target file name for a configuration. Direction is one of
+-- "build" (the build target name) or "link" (the name to use when trying
+-- to link against this target). Style is one of "windows" or "linux".
+--
+
+	function premake.gettarget(cfg, direction, style, os)
+		-- normalize the arguments
+		if not os then os = _G["os"].get() end
+		if (os == "bsd") then os = "linux" end		
+		
+		local kind = cfg.kind
+		if (cfg.language == "C" or cfg.language == "C++") then
+			-- On Windows, shared libraries link against a static import library
+			if (style == "windows" or os == "windows") and kind == "SharedLib" and direction == "link" then
+				kind = "StaticLib"
+			end
+			
+			-- Linux name conventions only apply to static libs on windows (by user request)
+			if (style == "linux" and os == "windows" and kind ~= "StaticLib") then
+				style = "windows"
+			end
+		elseif (cfg.language == "C#") then
+			-- .NET always uses Windows naming conventions
+			style = "windows"
+		end
+				
+		-- Initialize the target components
+		local field   = iif(direction == "build", "target", "implib")
+		local name    = cfg[field.."name"] or cfg.targetname or cfg.project.name
+		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
+		local prefix  = ""
+		local suffix  = ""
+		
+		if style == "windows" then
+			if kind == "ConsoleApp" or kind == "WindowedApp" then
+				suffix = ".exe"
+			elseif kind == "SharedLib" then
+				suffix = ".dll"
+			elseif kind == "StaticLib" then
+				suffix = ".lib"
+			end
+		elseif style == "linux" then
+			if (kind == "WindowedApp" and os == "macosx") then
+				dir = path.join(dir, name .. ".app/Contents/MacOS")
+			elseif kind == "SharedLib" then
+				prefix = "lib"
+				suffix = ".so"
+			elseif kind == "StaticLib" then
+				prefix = "lib"
+				suffix = ".a"
+			end
+		end
+		
+		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
+		suffix = cfg[field.."extension"] or cfg.targetextension or suffix
+		
+		local result = { }
+		result.basename  = name
+		result.name      = prefix .. name .. suffix
+		result.directory = dir
+		result.fullpath  = path.join(result.directory, result.name)
+		return result
+	end
+
+
+
+--
+-- Iterator for a project's configuration objects.
+--
+
+	function premake.eachconfig(prj)
+		-- I probably have the project root config, rather than the actual project
+		if prj.project then prj = prj.project end
+		local i = 0
+		local t = prj.solution.configurations
+		return function ()
+			i = i + 1
+			if (i <= #t) then
+				return prj.__configs[t[i]]
+			end
+		end
+	end
+	
+
+
+--
+-- Iterator for a project's files; returns a file configuration object.
+--
+
+	function premake.eachfile(prj)
+		-- project root config contains the file config list
+		if not prj.project then prj = premake.getconfig(prj) end
+		local i = 0
+		local t = prj.files
+		return function ()
+			i = i + 1
+			if (i <= #t) then
+				return prj.__fileconfigs[t[i]]
+			end
+		end
+	end
+
+
+
+--
+-- Iterator for a solution's projects, or rather project root configurations.
+-- These configuration objects include all settings related to the project,
+-- regardless of where they were originally specified.
 --
 
 	function premake.eachproject(sln)
@@ -73,13 +244,10 @@
 			i = i + 1
 			if (i <= #sln.projects) then
 				local prj = sln.projects[i]
-				
-				-- merge solution and project values
-				local merged = premake.getconfig(prj)
-				setmetatable(merged, getmetatable(prj))
-				merged.name = prj.name
-				merged.blocks = prj.blocks
-				return merged
+				local cfg = premake.getconfig(prj)
+				cfg.name  = prj.name
+				cfg.blocks = prj.blocks
+				return cfg
 			end
 		end
 	end
@@ -104,7 +272,7 @@
 	
 
 --
--- Locate a file in a project with a given extension; used locate "special"
+-- Locate a file in a project with a given extension; used to locate "special"
 -- items such as Windows .def files.
 --
 
@@ -119,174 +287,18 @@
 
 
 --
--- Retrieve the current object of the a particular type from the session.
--- The type may be "solution", "container" (the last activated solution or
--- project), or "config" (the last activated configuration). Returns the
--- requested container, or nil and an error message.
+-- Retrieve a configuration for a given project/configuration pairing. If
+-- `cfgname` is nil, the project's root configuration will be returned.
 --
 
-	function premake.getobject(t)
-		local container
-		
-		if (t == "container" or t == "solution") then
-			container = premake.CurrentContainer
-		else
-			container = premake.CurrentConfiguration
-		end
-		
-		if (t == "solution" and type(container) ~= "solution") then
-			container = nil
-		end
-		
-		local msg
-		if (not container) then
-			if (t == "container") then
-				msg = "no active solution or project"
-			elseif (t == "solution") then
-				msg = "no active solution"
-			else
-				msg = "no active solution, project, or configuration"
-			end
-		end
-		
-		return container, msg
-	end
-	
-	
-	
---
--- Determines if a field value is unique across all configurations of
--- all projects in the session. Used to create unique output targets.
---
-
-	function premake.isuniquevalue(fieldname, value, fn)
-		local count = 0
-		for _, sln in ipairs(_SOLUTIONS) do
-			for _, prj in ipairs(sln.projects) do
-				for _, cfgname in ipairs(sln.configurations) do
-					local cfg = premake.getconfig(prj, cfgname)
-
-					local tst
-					if (fn) then
-						tst = fn(cfg)
-					else
-						tst = cfg[fieldname]
-					end
-					
-					if (tst == value) then 
-						count = count + 1 
-						if (count > 1) then return false end
-					end
-				end
-			end
-		end
-		return true
+	function premake.getconfig(prj, cfgname)
+		-- might have the root configuration, rather than the actual project
+		if prj.project then prj = prj.project end
+		return prj.__configs[cfgname or ""]
 	end
 
-	
 
---
--- Adds values to an array field of a solution/project/configuration. `ctype`
--- specifies the container type (see premake.getobject) for the field.
---
 
-	function premake.setarray(ctype, fieldname, value, allowed)
-		local container, err = premake.getobject(ctype)
-		if (not container) then
-			error(err, 3)
-		end
-
-		if (not container[fieldname]) then
-			container[fieldname] = { }
-		end
-
-		local function doinsert(value, depth)
-			if (type(value) == "table") then
-				for _,v in ipairs(value) do
-					doinsert(v, depth + 1)
-				end
-			else
-				value, err = premake.checkvalue(value, allowed)
-				if (not value) then
-					error(err, depth)
-				end
-				table.insert(container[fieldname], value)
-			end
-		end
-
-		if (value) then
-			doinsert(value, 5)
-		end
-		
-		return container[fieldname]
-	end
-
-	
-
---
--- Adds values to an array-of-directories field of a solution/project/configuration. 
--- `ctype` specifies the container type (see premake.getobject) for the field. All
--- values are converted to absolute paths before being stored.
---
-
-	local function domatchedarray(ctype, fieldname, value, matchfunc)
-		local result = { }
-		
-		function makeabsolute(value)
-			if (type(value) == "table") then
-				for _,item in ipairs(value) do
-					makeabsolute(item)
-				end
-			else
-				if value:find("*") then
-					makeabsolute(matchfunc(value))
-				else
-					table.insert(result, path.getabsolute(value))
-				end
-			end
-		end
-		
-		makeabsolute(value)
-		return premake.setarray(ctype, fieldname, result)
-	end
-	
-	function premake.setdirarray(ctype, fieldname, value)
-		return domatchedarray(ctype, fieldname, value, os.matchdirs)
-	end
-	
-	function premake.setfilearray(ctype, fieldname, value)
-		return domatchedarray(ctype, fieldname, value, os.matchfiles)
-	end
-	
-	
-	
---
--- Set a new value for a string field of a solution/project/configuration. `ctype`
--- specifies the container type (see premake.getobject) for the field.
---
-
-	function premake.setstring(ctype, fieldname, value, allowed)
-		-- find the container for this value
-		local container, err = premake.getobject(ctype)
-		if (not container) then
-			error(err, 4)
-		end
-	
-		-- if a value was provided, set it
-		if (value) then
-			value, err = premake.checkvalue(value, allowed)
-			if (not value) then 
-				error(err, 4)
-			end
-			
-			container[fieldname] = value
-		end
-		
-		return container[fieldname]	
-	end
-	
-	
-	
 --
 -- Walk the list of source code files, breaking them into "groups" based
 -- on the directory hierarchy.

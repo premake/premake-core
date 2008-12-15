@@ -6,12 +6,21 @@
 
 
 --
+-- Retrieve the current operating system ID string.
+--
+
+	function os.get()
+		return _OPTIONS.os or _OS
+	end
+	
+
+	
+--
 -- Check the current operating system; may be set with the /os command line flag.
 --
 
 	function os.is(id)
-		local current = _OPTIONS["os"] or _OS
-		return (current:lower() == id:lower())
+		return (os.get():lower() == id:lower())
 	end
 	
 	

@@ -12,6 +12,52 @@
 
 
 --
+-- Fire a particular action. Generates the output files from the templates
+-- listed in the action descriptor, and calls any registered handler functions.
+--
+
+	local function doaction(name)
+		local action = premake.actions[name]
+		
+		-- walk the session objects and generate files from the templates
+		local function generatefiles(this, templates)
+			if (not templates) then return end
+			for _,tmpl in ipairs(templates) do
+				local output = true
+				if (tmpl[3]) then
+					output = tmpl[3](this)
+				end
+				if (output) then
+					local fname = premake.getoutputname(this, tmpl[1])
+					local f, err = io.open(fname, "wb")
+					if (not f) then
+						error(err, 0)
+					end
+					io.output(f)
+					
+					-- call the template function to generate the output
+					tmpl[2](this)
+
+					io.output():close()
+				end
+			end
+		end
+
+		for _,sln in ipairs(_SOLUTIONS) do
+			generatefiles(sln, action.solutiontemplates)			
+			for prj in premake.eachproject(sln) do
+				generatefiles(prj, action.projecttemplates)
+			end
+		end
+		
+		if (action.execute) then
+			action.execute()
+		end
+	end
+
+
+
+--
 -- Script-side program entry point.
 --
 
@@ -95,12 +141,19 @@
 		ok, err = premake.checktools()
 		if (not ok) then error("Error: " .. err, 0) end
 		
+		-- work-in-progress: build the configurations
+		print("Building configurations...")
+		premake.buildconfigs()
+		
 		ok, err = premake.checkprojects()
 		if (not ok) then error("Error: " .. err, 0) end
 		
 		
 		-- Hand over control to the action
-		premake.doaction(_ACTION)		
+		printf("Running action '%s'...", _ACTION)
+		doaction(_ACTION)
+
+		print("Done.")
 		return 0
 
 	end

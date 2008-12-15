@@ -68,16 +68,17 @@ ifeq (/bin,$(findstring /bin,$(SHELL)))
 endif
 
 ifeq (posix,$(SHELLTYPE))
-   MKDIR   := mkdir -p
-   PATHSEP := /
+   define MKDIR_RULE
+	@echo Creating $@
+	@mkdir -p $@
+   endef
 else
-   MKDIR   := mkdir
-   PATHSEP := \\
+   define MKDIR_RULE
+	@echo Creating $@
+	@mkdir $(subst /,\\,$@)
+   endef
 endif
 
-SYS_TARGET    := $(subst /,$(PATHSEP),$(TARGET))
-SYS_TARGETDIR := $(subst /,$(PATHSEP),$(TARGETDIR))
-SYS_OBJDIR    := $(subst /,$(PATHSEP),$(OBJDIR))
 
 .PHONY: clean prebuild prelink
 
@@ -95,12 +96,10 @@ $(TARGET): $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(LDDEPS) $(RESOURCES) pre
 	$(POSTBUILDCMDS)
 
 $(TARGETDIR):
-	@echo Creating $@
-	@$(MKDIR) $(SYS_TARGETDIR)
+	$(MKDIR_RULE)
 	
 $(OBJDIR):
-	@echo Creating $@
-	@$(MKDIR) $(SYS_OBJDIR)
+	$(MKDIR_RULE)
 
 clean:
 	@echo Cleaning <%= this.name %>
@@ -108,8 +107,8 @@ ifeq (posix,$(SHELLTYPE))
 	@rm -f  $(TARGET)
 	@rm -rf $(OBJDIR)
 else
-	@if exist $(SYS_TARGET) del $(SYS_TARGET)
-	@if exist $(SYS_OBJDIR) rmdir /s /q $(SYS_OBJDIR)
+	@if exist $(subst /,\\,$(TARGET)) del $(subst /,\\,$(TARGET))
+	@if exist $(subst /,\\,$(OBJDIR)) rmdir /s /q $(subst /,\\,$(OBJDIR))
 endif
 
 prebuild:

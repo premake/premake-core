@@ -10,20 +10,20 @@
 
 	local scripts =
 	{
+		"base/os.lua",
 		"base/path.lua",
 		"base/string.lua",
 		"base/table.lua",
-		"base/os.lua",
 		"base/globals.lua",
-		"base/premake.lua",
 		"base/template.lua",
 		"base/project.lua",
-		"base/config.lua",
-		"base/functions.lua",
+		"base/configs.lua",
+		"base/api.lua",
 		"base/cmdline.lua",
 		"tools/csc.lua",
 		"tools/gcc.lua",
 		"tools/ow.lua",
+		"base/validate.lua",
 		"base/help.lua",
 	}
 

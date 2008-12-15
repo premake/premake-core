@@ -109,6 +109,24 @@
 
 
 --
+-- Converts a project object and a template filespec (the first value in an
+-- action's template reference) into a filename for that template's output.
+-- The filespec may be either a file extension, or a function.
+--
+		
+	function premake.getoutputname(this, namespec)
+		local fname
+		if (type(namespec) == "function") then
+			fname = namespec(this)
+		else
+			fname = this.name .. namespec
+		end		
+		return path.join(this.location, fname)
+	end
+
+
+
+--
 -- Load a template from a file and convert it to a template function.
 --
 
