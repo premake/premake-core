@@ -27,14 +27,16 @@
 -- Return the default build action for a given file, based on the file extension.
 --
 
-	function premake.csc.getbuildaction(fname)
-		local ext = path.getextension(fname):lower()
-		if ext == ".cs" then
+	function premake.csc.getbuildaction(fcfg)
+		local ext = path.getextension(fcfg.name):lower()
+		if fcfg.buildaction == "Compile" or ext == ".cs" then
 			return "Compile"
-		elseif ext == ".resx" then
-			return "Embed"
-		elseif ext == ".asax" or ext == ".aspx" then
-			return "Copy"
+		elseif fcfg.buildaction == "Embed" or ext == ".resx" then
+			return "EmbeddedResource"
+		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" then
+			return "Content"
+		else
+			return "None"
 		end
 	end
 	
@@ -73,10 +75,10 @@
 
 	function premake.csc.getkind(cfg)
 		if (cfg.kind == "ConsoleApp") then
-			return "exe"
+			return "Exe"
 		elseif (cfg.kind == "WindowedApp") then
-			return "winexe"
+			return "WinExe"
 		elseif (cfg.kind == "SharedLib") then
-			return "library"
+			return "Library"
 		end
 	end

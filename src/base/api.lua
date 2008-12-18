@@ -51,13 +51,13 @@
 		excludes =
 		{
 			kind  = "filelist",
-			scope = "container",
+			scope = "config",
 		},
 		
 		files =
 		{
 			kind  = "filelist",
-			scope = "container",
+			scope = "config",
 		},
 		
 		flags =
@@ -86,6 +86,7 @@
 				"StaticRuntime",
 				"Symbols",
 				"Unicode",
+				"Unsafe",
 				"WinMain"
 			}
 		},
@@ -489,11 +490,24 @@
 		table.insert(container.blocks, cfg)
 		premake.CurrentConfiguration = cfg
 		
-		if (type(keywords) == "table") then
-			cfg.keywords = keywords
-		else
-			cfg.keywords = { keywords }
+		-- create a keyword list using just the indexed keyword items
+		cfg.keywords = { }
+		for _, word in ipairs(table.join({}, keywords)) do
+			table.insert(cfg.keywords, premake.escapekeyword(word))
 		end
+		
+		-- if file patterns are specified, convert them to Lua patterns and add them too
+		if keywords.files then
+			for _, pattern in ipairs(table.join({}, keywords.files)) do
+				pattern = pattern:gsub("%.", "%%.")
+				if pattern:find("**", nil, true) then
+					pattern = pattern:gsub("%*%*", ".*")
+				else
+					pattern = pattern:gsub("%*", "[^/]*")
+				end
+				table.insert(cfg.keywords, "^" .. pattern .. "$")
+			end
+		end		
 
 		-- initialize list-type fields to empty tables
 		for name, field in pairs(premake.fields) do

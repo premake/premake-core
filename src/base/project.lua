@@ -6,6 +6,69 @@
 
 
 
+
+
+
+--
+-- Iterator for a project's configuration objects.
+--
+
+	function premake.eachconfig(prj)
+		-- I probably have the project root config, rather than the actual project
+		if prj.project then prj = prj.project end
+		local i = 0
+		local t = prj.solution.configurations
+		return function ()
+			i = i + 1
+			if (i <= #t) then
+				return prj.__configs[t[i]]
+			end
+		end
+	end
+	
+
+
+--
+-- Iterator for a project's files; returns a file configuration object.
+--
+
+	function premake.eachfile(prj)
+		-- project root config contains the file config list
+		if not prj.project then prj = premake.getconfig(prj) end
+		local i = 0
+		local t = prj.files
+		return function ()
+			i = i + 1
+			if (i <= #t) then
+				return prj.__fileconfigs[t[i]]
+			end
+		end
+	end
+
+
+
+--
+-- Iterator for a solution's projects, or rather project root configurations.
+-- These configuration objects include all settings related to the project,
+-- regardless of where they were originally specified.
+--
+
+	function premake.eachproject(sln)
+		local i = 0
+		return function ()
+			i = i + 1
+			if (i <= #sln.projects) then
+				local prj = sln.projects[i]
+				local cfg = premake.getconfig(prj)
+				cfg.name  = prj.name
+				cfg.blocks = prj.blocks
+				return cfg
+			end
+		end
+	end
+
+
+
 --
 -- Apply XML escaping to a value.
 --
@@ -27,6 +90,49 @@
 			value = value:gsub('\n', "&#x0A;")
 			return value
 		end
+	end
+	
+	
+
+-- 
+-- Locate a project by name; case insensitive.
+--
+
+	function premake.findproject(name)
+		name = name:lower()
+		for _, sln in ipairs(_SOLUTIONS) do
+			for _, prj in ipairs(sln.projects) do
+				if (prj.name:lower() == name) then
+					return prj
+				end
+			end
+		end
+	end
+	
+	
+
+--
+-- Locate a file in a project with a given extension; used to locate "special"
+-- items such as Windows .def files.
+--
+
+	function premake.findfile(prj, extension)
+		for _, fname in ipairs(prj.files) do
+			if fname:endswith(extension) then return fname end
+		end
+	end
+
+
+
+--
+-- Retrieve a configuration for a given project/configuration pairing. If
+-- `cfgname` is nil, the project's root configuration will be returned.
+--
+
+	function premake.getconfig(prj, cfgname)
+		-- might have the root configuration, rather than the actual project
+		if prj.project then prj = prj.project end
+		return prj.__configs[cfgname or ""]
 	end
 
 
@@ -52,22 +158,26 @@
 
 --
 -- Returns a list of link targets. Kind may be one of:
---   siblings - linkable sibling projects
---   system - system (non-subling) libraries
+--   siblings     - linkable sibling projects
+--   system       - system (non-subling) libraries
 --   dependencies - all sibling dependencies, including non-linkable
---   all - return everything
+--   all          - return everything
 --
 -- Part may be one of:
---   name - the decorated library name with no directory
---   basename - the undecorated library name
+--   name      - the decorated library name with no directory
+--   basename  - the undecorated library name
 --   directory - just the directory, no name
---   fullpath - full path with decorated name
+--   fullpath  - full path with decorated name
+--   object    - return the project object of the dependency
 --	
 	
 	function premake.getlinks(cfg, kind, part)
 		-- if I'm building a list of link directories, include libdirs
 		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
 
+		-- am I getting links for a configuration or a project?
+		local cfgname = iif(cfg.name == cfg.project.name, "", cfg.name)
+		
 		local function canlink(source, target)
 			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then return false end
 			if (source.language == "C" or source.language == "C++") then
@@ -86,14 +196,16 @@
 			local prj = premake.findproject(link)
 			if prj and kind ~= "system" then
 				
-				local prjcfg = premake.getconfig(prj, cfg.name)
+				local prjcfg = premake.getconfig(prj, cfgname)
 				if kind == "dependencies" or canlink(cfg, prjcfg) then
 					if (part == "directory") then
 						item = path.rebase(prjcfg.linktarget.directory, prjcfg.location, cfg.location)
 					elseif (part == "basename") then
 						item = prjcfg.linktarget.basename
-					else
+					elseif (part == "fullpath") then
 						item = path.rebase(prjcfg.linktarget.fullpath, prjcfg.location, cfg.location)
+					elseif (part == "object") then
+						item = prjcfg
 					end
 				end
 
@@ -105,7 +217,10 @@
 						item = dir
 					end
 				elseif (part == "fullpath") then
-					item = iif(premake.actions[_ACTION].targetstyle == "windows", link .. ".lib", link)
+					item = link
+					if premake.actions[_ACTION].targetstyle == "windows" then
+						item = item .. iif(cfg.language == "C" or cfg.language == "C++", ".lib", ".dll")
+					end
 				else
 					item = link
 				end
@@ -113,7 +228,7 @@
 			end
 
 			if item then
-				if premake.actions[_ACTION].targetstyle == "windows" then
+				if premake.actions[_ACTION].targetstyle == "windows" and part ~= "object" then
 					item = path.translate(item, "\\")
 				end
 				if not table.contains(result, item) then
@@ -191,114 +306,6 @@
 		result.fullpath  = path.join(result.directory, result.name)
 		return result
 	end
-
-
-
---
--- Iterator for a project's configuration objects.
---
-
-	function premake.eachconfig(prj)
-		-- I probably have the project root config, rather than the actual project
-		if prj.project then prj = prj.project end
-		local i = 0
-		local t = prj.solution.configurations
-		return function ()
-			i = i + 1
-			if (i <= #t) then
-				return prj.__configs[t[i]]
-			end
-		end
-	end
-	
-
-
---
--- Iterator for a project's files; returns a file configuration object.
---
-
-	function premake.eachfile(prj)
-		-- project root config contains the file config list
-		if not prj.project then prj = premake.getconfig(prj) end
-		local i = 0
-		local t = prj.files
-		return function ()
-			i = i + 1
-			if (i <= #t) then
-				return prj.__fileconfigs[t[i]]
-			end
-		end
-	end
-
-
-
---
--- Iterator for a solution's projects, or rather project root configurations.
--- These configuration objects include all settings related to the project,
--- regardless of where they were originally specified.
---
-
-	function premake.eachproject(sln)
-		local i = 0
-		return function ()
-			i = i + 1
-			if (i <= #sln.projects) then
-				local prj = sln.projects[i]
-				local cfg = premake.getconfig(prj)
-				cfg.name  = prj.name
-				cfg.blocks = prj.blocks
-				return cfg
-			end
-		end
-	end
-	
-	
-
--- 
--- Locate a project by name; case insensitive.
---
-
-	function premake.findproject(name)
-		name = name:lower()
-		for _, sln in ipairs(_SOLUTIONS) do
-			for _, prj in ipairs(sln.projects) do
-				if (prj.name:lower() == name) then
-					return prj
-				end
-			end
-		end
-	end
-	
-	
-
---
--- Locate a file in a project with a given extension; used to locate "special"
--- items such as Windows .def files.
---
-
-	function premake.findfile(prj, extension)
-		for _, fname in ipairs(prj.files) do
-			if (path.getextension(fname) == extension) then
-				return fname
-			end
-		end
-	end
-
-
-
---
--- Retrieve a configuration for a given project/configuration pairing. If
--- `cfgname` is nil, the project's root configuration will be returned.
---
-
-	function premake.getconfig(prj, cfgname)
-		-- might have the root configuration, rather than the actual project
-		if prj.project then prj = prj.project end
-		return prj.__configs[cfgname or ""]
-	end
-
-
-
 --
 -- Walk the list of source code files, breaking them into "groups" based
 -- on the directory hierarchy.

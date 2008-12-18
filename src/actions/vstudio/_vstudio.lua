@@ -98,9 +98,9 @@
 -- Returns the architecture identifier for a project.
 --
 
-	function _VS.arch(prj, version)
+	function _VS.arch(prj)
 		if (prj.language == "C#") then
-			if (version < 2005) then
+			if (_ACTION < "vs2005") then
 				return ".NET"
 			else
 				return "Any CPU"
@@ -287,14 +287,16 @@
 		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C", "C++" },
+		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
 			{ ".sln",  _TEMPLATES.vs2002_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
+			{ ".vcproj", _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj", _TEMPLATES.vs2002_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", _TEMPLATES.vs2002_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,
@@ -308,14 +310,16 @@
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C", "C++" },
+		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
 			{ ".sln",  _TEMPLATES.vs2003_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
+			{ ".vcproj", _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj", _TEMPLATES.vs2002_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", _TEMPLATES.vs2002_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,
@@ -329,14 +333,16 @@
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C", "C++" },
+		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
 			{ ".sln",  _TEMPLATES.vs2005_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
+			{ ".vcproj",   _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj",   _TEMPLATES.vs2005_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", _TEMPLATES.vs2005_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,
@@ -350,14 +356,16 @@
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C", "C++" },
+		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
 			{ ".sln",  _TEMPLATES.vs2005_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj",   _TEMPLATES.vs200x_vcproj },
+			{ ".vcproj", _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj", _TEMPLATES.vs2005_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", _TEMPLATES.vs2005_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,

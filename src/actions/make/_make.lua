@@ -19,7 +19,9 @@
 			end
 			return result
 		else
-			local result = value:gsub(" ", "\\ ")
+			local result
+			result = value:gsub(" ", "\\ ")
+			result = result:gsub("\\", "\\\\")
 			return result
 		end
 	end

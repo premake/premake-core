@@ -3,10 +3,10 @@ project "CsConsoleApp"
 	kind     "ConsoleApp"
 	language "C#"
 	
-	files   { "*.cs", "*.bmp", "App.config", "Resources.resx" }
+	files   { "**.cs", "**.bmp", "**.resx", "**.config" }
 	
 	libdirs { "../lib" }
 	links { "CsSharedLib", "CppSharedLib", "System" }
 	
-	configuration "Crate.bmp"
+	configuration "*.bmp"
 		buildaction "Embed"

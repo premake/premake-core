@@ -58,8 +58,12 @@
 	function table.join(...)
 		local result = { }
 		for _,t in ipairs(arg) do
-			for _,v in ipairs(t) do
-				table.insert(result, v)
+			if type(t) == "table" then
+				for _,v in ipairs(t) do
+					table.insert(result, v)
+				end
+			else
+				table.insert(result, t)
 			end
 		end
 		return result

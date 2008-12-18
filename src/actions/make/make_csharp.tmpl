@@ -43,12 +43,12 @@
 	local copypairs = { }
 	
 	for fcfg in premake.eachfile(this) do
-		local action = fcfg.buildaction or csc.getbuildaction(fcfg.name)
+		local action = csc.getbuildaction(fcfg)
 		if action == "Compile" then
 			table.insert(sources, fcfg.name)
-		elseif action == "Embed" then			
+		elseif action == "EmbeddedResource" then			
 			table.insert(embedded, fcfg.name)
-		elseif action == "Copy" then
+		elseif action == "Content" then
 			copypairs["$(TARGETDIR)/"..path.getname(fcfg.name)] = fcfg.name
 		elseif path.getname(fcfg.name):lower() == "app.config" then
 			copypairs["$(TARGET).config"] = fcfg.name	
@@ -90,7 +90,7 @@ ifeq ($(CONFIG),<%= _MAKE.esc(cfg.name)%>)
   TARGETDIR  := <%= _MAKE.esc(cfg.buildtarget.directory) %>
   OBJDIR     := <%= _MAKE.esc(cfg.objectsdir) %>
   DEPENDS    := <%= table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " ") %>
-  REFERENCES := <%= table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", "") %>
+  REFERENCES := <%= table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " ") %>
   FLAGS      += <%= table.concat(csc.getflags(cfg), " ") %> <%= table.implode(cfg.defines, "/d:", "", " ") %>
   define PREBUILDCMDS
     <% if #cfg.prebuildcommands > 0 then %>
@@ -115,18 +115,18 @@ endif
 
 # To maintain compatibility with VS.NET, these values must be set at the project level
 TARGET      = $(TARGETDIR)/<%= _MAKE.esc(this.buildtarget.name) %>
-FLAGS      += /t:<%= csc.getkind(this) %> <%= table.implode(_MAKE.esc(this.libdirs), "/lib:", "", " ") %>
+FLAGS      += /t:<%= csc.getkind(this):lower() %> <%= table.implode(_MAKE.esc(this.libdirs), "/lib:", "", " ") %>
 REFERENCES += <%= table.implode(_MAKE.esc(premake.getlinks(this, "system", "basename")), "/r:", ".dll", " ") %>
 
 
 SOURCES := \
 <% for _, fname in ipairs(sources) do %>
-	<%= _MAKE.esc(fname) %> \
+	<%= _MAKE.esc(path.translate(fname)) %> \
 <% end %>
 
 EMBEDFILES := \
 <% for _, fname in ipairs(embedded) do %>
-	<%= _MAKE.esc(getresourcefilename(this, fname)) %> \
+	<%= _MAKE.esc(path.translate(getresourcefilename(this, fname), sep)) %> \
 <% end %>
 
 COPYFILES += \

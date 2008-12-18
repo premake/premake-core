@@ -31,14 +31,14 @@
 --
 
 	function premake.getactiveterms()
-		local terms = { _ACTION, os.get() }
+		local terms = { _ACTION:lower(), os.get() }
 		
 		-- add option keys or values
 		for key, value in pairs(_OPTIONS) do
-			if value then
-				table.insert(terms, value)
+			if value ~= "" then
+				table.insert(terms, value:lower())
 			else
-				table.insert(terms, key)
+				table.insert(terms, key:lower())
 			end
 		end
 		
@@ -46,38 +46,59 @@
 	end
 	
 	
+
+--
+-- Escape a keyword in preparation for testing against a list of terms.
+-- Converts from Premake's simple pattern syntax to Lua's syntax.
+--
+
+	function premake.escapekeyword(keyword)
+		keyword = keyword:gsub("([%.%-%^%$%(%)%%])", "%%%1")
+		if keyword:find("**", nil, true) then
+			keyword = keyword:gsub("%*%*", ".*")
+		else
+			keyword = keyword:gsub("%*", "[^/]*")
+		end
+		return keyword:lower()
+	end
+	
+	
 	
 --
--- Returns true if all of the keywords are included the set of terms. Keywords
--- may use Lua's pattern matching syntax. Comparisons are case-insensitive.
+-- Test a single configuration block keyword against a list of terms.
+--
+
+	function premake.iskeywordmatch(keyword, terms)
+		-- is it negated?
+		if keyword:startswith("not ") then
+			return not premake.iskeywordmatch(keyword:sub(5), terms)
+		end
+		
+		for _, word in ipairs(keyword:explode(" or ")) do
+			local pattern = "^" .. word .. "$"
+			for termkey, term in pairs(terms) do
+				if term:match(pattern) then
+					return termkey
+				end
+			end
+		end
+	end
+	
+	
+		
+--
+-- Checks a set of configuration block keywords against a list of terms.
 --
 
 	function premake.iskeywordsmatch(keywords, terms)
 		local hasrequired = false
-		
-		local function test(kw)
-			for termkey, term in pairs(terms) do
-				if (term:match(kw)) then
-					if termkey == "required" then hasrequired = true end
-					return true 
-				end
-			end
-		end
-		
-		for _, kw in ipairs(keywords) do
-			-- make keyword pattern case insensitive
-			kw = kw:gsub("(%%*)(%a)", 
-					function (p,a)
-						if (p:len() % 2 == 1) then
-							return p..a
-						else
-							return p.."["..a:upper()..a:lower().."]"
-						end
-					end)
-					
-			-- match it to a term
-			if (not test(kw)) then
+		for _, keyword in ipairs(keywords) do
+			local matched = premake.iskeywordmatch(keyword, terms)
+			if not matched then
 				return false
+			end
+			if matched == "required" then
+				hasrequired = true
 			end
 		end
 		
@@ -152,7 +173,7 @@
 		-- create the base configuration, flattening the list of objects and
 		-- filtering out settings which do not match the current environment
 		local terms = premake.getactiveterms()
-		terms.config = cfgname
+		terms.config = (cfgname or ""):lower()
 
 		local cfg   = buildconfig(prj, terms)
 		cfg.name    = cfgname
@@ -194,7 +215,7 @@
 		-- build configuration objects for all files
 		cfg.__fileconfigs = { }
 		for _, fname in ipairs(cfg.files) do
-			terms.required = fname
+			terms.required = fname:lower()
 			local fcfg = buildconfig(prj, terms)
 			fcfg.name = fname
 			-- add indexed by name and integer
