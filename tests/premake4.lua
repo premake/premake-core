@@ -15,7 +15,6 @@
 	dofile("test_project.lua")
 	dofile("test_api.lua")
 	dofile("test_targets.lua")
-	dofile("test_functions.lua")
 	dofile("test_keywords.lua")
 
 

@@ -264,7 +264,7 @@
 				if (not ok) then
 					return nil, "invalid UUID"
 				end
-				return value
+				return value:upper()
 			end
 		},
 	}
