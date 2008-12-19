@@ -46,7 +46,7 @@ project "Premake4"
 		defines     "NDEBUG"
 		flags       { "OptimizeSize", "NoFramePointer" }
 
-	configuration "vs.*"
+	configuration "vs*"
 		defines     { "_CRT_SECURE_NO_WARNINGS" }
 
 

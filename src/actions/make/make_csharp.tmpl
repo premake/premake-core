@@ -126,7 +126,7 @@ SOURCES := \
 
 EMBEDFILES := \
 <% for _, fname in ipairs(embedded) do %>
-	<%= _MAKE.esc(path.translate(getresourcefilename(this, fname), sep)) %> \
+	<%= _MAKE.esc(getresourcefilename(this, fname)) %> \
 <% end %>
 
 COPYFILES += \
