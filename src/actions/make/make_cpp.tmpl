@@ -88,14 +88,12 @@ endif
 .PHONY: clean prebuild prelink
 
 <% if os.is("MacOSX") and this.kind == "WindowedApp" then %>
-all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
-
-$(dir $(TARGETDIR))PkgInfo:
-
-$(dir $(TARGETDIR))Info.plist:
+all: $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(RESOURCES) prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
+<% else %>
+all: $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(RESOURCES) prelink $(TARGET)
 <% end %>
 
-$(TARGET): $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(LDDEPS) $(RESOURCES) prelink
+$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
 	@echo Linking <%= this.name %>
 	@$(LINKCMD)
 	$(POSTBUILDCMDS)
@@ -105,6 +103,12 @@ $(TARGETDIR):
 	
 $(OBJDIR):
 	$(MKDIR_RULE)
+
+<% if os.is("MacOSX") and this.kind == "WindowedApp" then %>
+$(dir $(TARGETDIR))PkgInfo:
+
+$(dir $(TARGETDIR))Info.plist:
+<% end %>
 
 clean:
 	@echo Cleaning <%= this.name %>

@@ -174,9 +174,9 @@ endif
 
 .PHONY: clean prebuild prelink
 
-all: $(TARGET) $(COPYFILES)
+all: $(TARGETDIR) $(OBJDIR) prebuild $(EMBEDFILES) $(COPYFILES) prelink $(TARGET)
 
-$(TARGET): $(TARGETDIR) $(OBJDIR) prebuild $(SOURCES) $(EMBEDFILES) $(DEPENDS) prelink
+$(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS)
 	$(SILENT) $(CSC) /nologo /out:$@ $(FLAGS) $(REFERENCES) $(SOURCES) $(patsubst %,/resource:%,$(EMBEDFILES))
 	$(POSTBUILDCMDS)
 
