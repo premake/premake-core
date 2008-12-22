@@ -23,6 +23,14 @@
 			else
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH")
+		
+				local f = io.open("/etc/ld.so.conf", "r")
+				if f then
+					for line in f:lines() do
+						path = path .. ":" .. line
+					end
+					f:close()
+				end
 			end
 			
 			table.insert(formats, "%s")	
