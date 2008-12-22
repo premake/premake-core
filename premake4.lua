@@ -134,8 +134,6 @@ project "Premake4"
 
 		out:write("\t0\n};\n");		
 		out:close()
-		
-		print("Done.")	
 	end
 
 

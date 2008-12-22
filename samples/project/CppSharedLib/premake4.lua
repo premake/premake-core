@@ -9,4 +9,3 @@ project "CppSharedLib"
 		
 	configuration "Release"
 		targetdir "lib/release"
-		flags { "NoImportLib" }
