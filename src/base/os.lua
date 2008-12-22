@@ -6,6 +6,39 @@
 
 
 --
+-- Scan the well-known system locations for a particular library.
+--
+
+	function os.findlib(libname)
+		local path, formats
+		
+		-- assemble a search path, depending on the platform
+		if os.is("windows") then
+			formats = { "%s.dll", "%s" }
+			path = os.getenv("PATH")
+		else
+			if os.is("macosx") then
+				formats = { "lib%s.dylib", "%s.dylib" }
+				path = os.getenv("DYLD_LIBRARY_PATH")
+			else
+				formats = { "lib%s.so", "%s.so" }
+				path = os.getenv("LD_LIBRARY_PATH")
+			end
+			
+			table.insert(formats, "%s")	
+			path = path .. ":/lib:/usr/lib:/usr/local/lib"
+		end
+		
+		for _, fmt in ipairs(formats) do
+			local name = string.format(fmt, libname)
+			local result = os.pathsearch(name, path)
+			if result then return result end
+		end
+	end
+	
+	
+	
+--
 -- Retrieve the current operating system ID string.
 --
 

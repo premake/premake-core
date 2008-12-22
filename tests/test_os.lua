@@ -9,6 +9,16 @@
 
 	
 --
+-- os.findlib() tests
+--
+
+	function T.os.findlib_FindSystemLib()
+		local libname = iif(os.is("windows"), "user32", "m")
+		test.istrue(os.findlib(libname))
+	end
+	
+		
+--
 -- os.isfile() tests
 --
 
