@@ -83,11 +83,5 @@
 					action.onclean(solutions, projects, targets)
 				end
 			end
-
-			-- global cleaner
-			if (type(onclean) == "function") then
-				onclean()
-			end
-
 		end,		
 	}

@@ -9,3 +9,8 @@ project "CppSharedLib"
 		
 	configuration "Release"
 		targetdir "lib/release"
+
+	
+	if _ACTION == "clean" then
+		os.rmdir("lib")
+	end

@@ -19,10 +19,8 @@ include "CppSharedLib"
 include "CsSharedLib"
 include "CppStaticLib"
 
-function onclean()
+
+if _ACTION == "clean" then
 	os.rmdir("bin")
-	os.rmdir("CppSharedLib/lib")
-	os.rmdir("CppStaticLib/lib")
-	os.rmdir("CsSharedLib/lib")
 end
 
