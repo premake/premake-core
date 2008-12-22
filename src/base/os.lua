@@ -44,7 +44,7 @@
 		os.matchdone(m)
 
 		-- if the mask uses "**", recurse subdirectories
-		if (mask:find("**")) then
+		if (mask:find("**", nil, true)) then
 			mask = path.getname(mask)			
 			m = os.matchstart(path.join(basedir, "*"))
 			while (os.matchnext(m)) do

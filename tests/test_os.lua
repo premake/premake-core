@@ -23,6 +23,22 @@
 
 
 --
+-- os.matchfiles() tests
+--
+
+	function T.os.matchfiles_Recursive()
+		local result = os.matchfiles("**.lua")
+		test.istrue(table.contains(result, "folder/ok.lua"))
+	end
+
+	function T.os.matchfiles_NonRecursive()
+		local result = os.matchfiles("*.lua")
+		test.isfalse(table.contains(result, "folder/ok.lua"))		
+	end
+	
+
+	
+--
 -- os.pathsearch() tests
 --
 
