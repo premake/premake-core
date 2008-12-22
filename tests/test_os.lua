@@ -17,7 +17,12 @@
 		test.istrue(os.findlib(libname))
 	end
 	
-		
+	function T.os.findlib_FailsOnBadLibName()
+		test.isfalse(os.findlib("NoSuchLibraryAsThisOneHere"))
+	end
+	
+	
+	
 --
 -- os.isfile() tests
 --

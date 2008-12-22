@@ -26,7 +26,7 @@
 			end
 			
 			table.insert(formats, "%s")	
-			path = path .. ":/lib:/usr/lib:/usr/local/lib"
+			path = (path or "") .. ":/lib:/usr/lib:/usr/local/lib"
 		end
 		
 		for _, fmt in ipairs(formats) do
