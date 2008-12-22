@@ -328,7 +328,7 @@
 	newaction {
 		trigger         = "vs2005",
 		shortname       = "Visual Studio 2005",
-		description     = "Microsoft Visual Studio 2005",
+		description     = "Microsoft Visual Studio 2005 (SharpDevelop, MonoDevelop)",
 		targetstyle     = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
