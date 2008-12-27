@@ -186,6 +186,12 @@
 			scope = "config",
 		},
 		
+		postbuildcommands =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
 		prebuildcommands =
 		{
 			kind  = "list",
@@ -193,12 +199,6 @@
 		},
 		
 		prelinkcommands =
-		{
-			kind  = "list",
-			scope = "config",
-		},
-		
-		postbuildcommands =
 		{
 			kind  = "list",
 			scope = "config",
@@ -452,7 +452,8 @@
 		if (kind == "string") then
 			return premake.setstring(scope, name, value, allowed)
 		elseif (kind == "path") then
-			return premake.setstring(scope, name, path.getabsolute(value))
+			if value then value = path.getabsolute(value) end
+			return premake.setstring(scope, name, value)
 		elseif (kind == "list") then
 			return premake.setarray(scope, name, value, allowed)
 		elseif (kind == "dirlist") then
@@ -553,7 +554,6 @@
 				prj.basedir        = os.getcwd()
 				prj.location       = prj.basedir
 				prj.uuid           = os.uuid()
-				prj.filter         = { }
 				prj.blocks         = { }
 			end
 		end

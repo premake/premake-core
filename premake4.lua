@@ -9,56 +9,63 @@ if (_ACTION == "vs2002" or _ACTION == "vs2003") then
 end
 
 
-solution "Premake4"
-	configurations { "Release", "Debug" }
-
-
-project "Premake4"
-	targetname  "premake4"
-	language    "C"
-	kind        "ConsoleApp"
-	flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
-	includedirs { "src/host/lua-5.1.2/src" }
-
-	files 
-	{
-		"src/**.h", "src/**.c", "src/**.lua", "src/**.tmpl",
-		"tests/**.lua"
-	}
-
-	excludes
-	{
-		"src/premake.lua",
-		"src/host/lua-5.1.2/src/lua.c",
-		"src/host/lua-5.1.2/src/luac.c",
-		"src/host/lua-5.1.2/src/print.c",
-		"src/host/lua-5.1.2/**.lua",
-		"src/host/lua-5.1.2/etc/*.c"
-	}
-		
-	configuration "Debug"
-		targetdir   "bin/debug"
-		defines     "_DEBUG"
-		flags       { "Symbols" }
-		
-	configuration "Release"
-		targetdir   "bin/release"
-		defines     "NDEBUG"
-		flags       { "OptimizeSize", "NoFramePointer" }
-
-	configuration "vs*"
-		defines     { "_CRT_SECURE_NO_WARNINGS" }
-
-
-
-
 --
--- A more thorough cleanup
+-- Define the project files.
 --
+
+	solution "Premake4"
+		configurations { "Release", "Debug" }
 	
-	function onclean()
-		os.rmdir("bin")
-	end
+	project "Premake4"
+		targetname  "premake4"
+		language    "C"
+		kind        "ConsoleApp"
+		flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
+		includedirs { "src/host/lua-5.1.2/src" }
+
+		files 
+		{
+			"src/**.h", "src/**.c", "src/**.lua", "src/**.tmpl",
+			"tests/**.lua"
+		}
+
+		excludes
+		{
+			"src/premake.lua",
+			"src/host/lua-5.1.2/src/lua.c",
+			"src/host/lua-5.1.2/src/luac.c",
+			"src/host/lua-5.1.2/src/print.c",
+			"src/host/lua-5.1.2/**.lua",
+			"src/host/lua-5.1.2/etc/*.c"
+		}
+			
+		configuration "Debug"
+			targetdir   "bin/debug"
+			defines     "_DEBUG"
+			flags       { "Symbols" }
+			
+		configuration "Release"
+			targetdir   "bin/release"
+			defines     "NDEBUG"
+			flags       { "OptimizeSize" }
+
+		configuration "vs*"
+			defines     { "_CRT_SECURE_NO_WARNINGS" }
+
+
+
+
+--
+-- Define a "to" option to control where the files get generated. It is easiest,
+-- when I develop, to put the project files in the root project directory. But
+-- when deploying I want one directory per supported tool.
+--
+
+	newoption {
+		trigger = "to",
+		value   = "path",
+		description = "Set the output location for the generated files"
+	}
 
 
 

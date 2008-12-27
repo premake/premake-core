@@ -179,6 +179,9 @@
 		cfg.name    = cfgname
 		cfg.project = prj
 		
+		-- set the project location, if not already set
+		cfg.location = cfg.location or cfg.basedir
+		
 		-- remove excluded files from the file list
 		local files = { }
 		for _, fname in ipairs(cfg.files) do
