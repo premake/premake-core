@@ -9,12 +9,30 @@ if (_ACTION == "vs2002" or _ACTION == "vs2003") then
 end
 
 
+
 --
--- Define the project files.
+-- Use the --to=path option to control where the project files get generated. I use
+-- this to create project files for each supported toolset, each in their own folder,
+-- in preparation for deployment.
+--
+
+	newoption {
+		trigger = "to",
+		value   = "path",
+		description = "Set the output location for the generated files"
+	}
+
+
+
+--
+-- Define the project. Put the release configuration first so it will be the
+-- default when folks build using the makefile. That way they don't have to 
+-- worry about the /scripts argument and all that.
 --
 
 	solution "Premake4"
 		configurations { "Release", "Debug" }
+		location ( _OPTIONS["to"] )
 	
 	project "Premake4"
 		targetname  "premake4"
@@ -22,6 +40,7 @@ end
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
 		includedirs { "src/host/lua-5.1.2/src" }
+		location    ( _OPTIONS["to"] )
 
 		files 
 		{
@@ -47,7 +66,7 @@ end
 		configuration "Release"
 			targetdir   "bin/release"
 			defines     "NDEBUG"
-			flags       { "OptimizeSize" }
+			flags       { "OptimizeSize", "NoFramePointer" }
 
 		configuration "vs*"
 			defines     { "_CRT_SECURE_NO_WARNINGS" }
@@ -56,19 +75,16 @@ end
 
 
 --
--- Define a "to" option to control where the files get generated. It is easiest,
--- when I develop, to put the project files in the root project directory. But
--- when deploying I want one directory per supported tool.
+-- A more thorough cleanup.
 --
 
-	newoption {
-		trigger = "to",
-		value   = "path",
-		description = "Set the output location for the generated files"
-	}
-
-
-
+	if _ACTION == "clean" then
+		os.rmdir("bin")
+		os.rmdir("build")
+	end
+	
+	
+	
 --
 -- "Compile" action compiles scripts to bytecode and embeds into a static
 -- data buffer in src/host/bytecode.c.
