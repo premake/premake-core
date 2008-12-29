@@ -1,7 +1,7 @@
 PREMAKE BUILD INSTRUCTIONS
 
  As of version 4.0, Premake is written in a mix of C and Lua. This mix
- makes it smaller, enables the templating features, and easier the 
+ makes it smaller, enables the templating features, and makes the 
  whole thing easier to maintain. The trade-off is a couple of wrinkles
  in the build process.
  
@@ -14,9 +14,9 @@ PREMAKE BUILD INSTRUCTIONS
 GENERATING THE PROJECT FILES
 
  If you downloaded a source code package from SourceForge, the project
- files are already included and you can skip ahead to the next section.
- If you downloaded the sources from Subversion, you'll need to generate 
- new projects files before you can build. 
+ files are already included (in build/) and you can skip ahead to the 
+ next section. If you downloaded the sources from Subversion, you'll 
+ need to generate new projects files before you can build. 
  
  In order to generate the project files, you need a working version of 
  Premake, either 3.x or 4.x versions, installed on your system. You can
@@ -34,16 +34,16 @@ GENERATING THE PROJECT FILES
    premake --target gnu
    premake --target vs2005
    
- Use the "--help" option to see all available targets.
+ Use the "--help" option to see all of the available targets.
  
 
 RELEASE AND DEBUG BUILDS
 
  Premake can be built in either "release" or "debug" modes. You can 
- choose which configuration to build with the CONFIG argument:
+ choose which configuration to build with the "config" argument:
  
-   make CONFIG=Debug    -- build in debug mode
-   make CONFIG=Release  -- build in release mode
+   make config=debug    -- build in debug mode
+   make config=release  -- build in release mode
  
  (IDEs like Visual Studio provide their own mechanism for switching 
  build configurations).
@@ -53,8 +53,8 @@ RELEASE AND DEBUG BUILDS
  the disk at runtime, enabling compile-less code/test iterations. But
  it needs some help to find the scripts. 
  
- You can specify the location of the scripts in one of two ways. You 
- can use the /scripts command line argument, like so:
+ You can specify the location of the scripts in one of two ways: using
+ the /scripts command line argument, like so:
  
    premake4 /scripts=~/Code/premake4/src gmake
    
@@ -82,7 +82,10 @@ COMPILING SCRIPTS
 CONFUSED?
 
  I'll be glad to help you out. Stop by the main project website where
- you leave a note in the forums (the preferred approach), join the 
+ you can leave a note in the forums (the preferred approach), join the 
  mailing list, or contact me directly.
  
    http://industriousone.com/premake
+
+ Enjoy!
+ 

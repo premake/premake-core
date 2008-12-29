@@ -1,10 +1,365 @@
+-----
  4.0 (in progress)
--------------------- 
+-----
+
 This version is a complete rewrite of Premake.
 
-- New, more readable syntax for project information
+- New, more readable and extensible syntax for projects
 - More robust syntax validation
 - Better validation of command-line arguments
-- Standardized path handling across all project settings
-- Template system allows script-based custom generators
+- Improved path handling across all project settings
 - Upgraded to Lua 5.1.2
+
+
+-----
+ 3.7
+-----
+
+- Updated Lua to 5.1.3
+- Added new CodeLite support target (Ryan Pusztai)
+- Added new cb-ow (Code::Blocks Open Watcom) target (Tim Channon)
+- Place OSX winexe's into Content/MacOS folder (William Burnson)
+- Sibling executables may now be listed in package.links
+- Bug 1520012: Improper Makefiles when filenames have spaces 
+  (Diaa Sami)
+- Bug 2045506: "no-exceptions" flag ignored for VS200x (Benoit Miller)
+- Bug 2034470: Error in cmd line error handler
+- Bug 2114152: package or config table isn't generated automatically
+
+
+-----
+ 3.6
+-----
+
+- Patch 1946122: Add support for VS2008 (Ryan Pusztai)
+- Patch 1913448: Win32 crash when using '--clean --usetargetpath' 
+  (David Walters)
+- Patch 1771168: luaL_getn speed optimization (Richard O'Grady)
+- Bug 1939089: Premake segfault on Linux/PPC (Fabio Till)
+- Fixed "bad argument #2 to 'chdir'" error
+- Disable -MMD on multiple -arch flags (poor man's Universal binary 
+  support)
+
+
+-----
+ 3.5
+-----
+
+- Prevent creation of import libraries on OS X
+- Improved handling of dylibs on OS X
+- Patch 1771977: Ability to compile C source as C++ in Code::Blocks 
+  (Ryan Pusztai)
+- Bug 1804810: out-implib not present in linux gnu compler toolchain
+- Bug 1806949: .Net reference paths are broken when bindir is specified
+- Bug 1806960: Make clean does not remove .mdb files
+- Bug 1831389: Makefiles stored in subdirs contain no targets on 
+  first run
+
+
+-----
+ 3.4
+-----
+
+- Added `no-pch` flag to suppress precompiled headers
+- Added App.config support to GNU makefiles
+- Add os.mkdir() to script environment
+- Makefile now creates target directory before copying .NET references
+- Feature 1520182: Enhanced file-handling functions
+- Bug 531878: Problems with relative paths
+- Bug 1723867: Config-specific post-build on GNU target (Benoit Miller)
+- Bug 1596826: XML targets doesn't escape xml entities
+- Bug 1600155: Core dump due to newpackage() and matchfiles()
+- Bug 1608895: resgen command shown
+- Bug 1639730: Output filename is not set
+- Bug 1729227: non-portable executable with relative library path
+- Bug 1559951: default clean rule removes package dir
+- Patch 1733674: PCH support for Code::Block targets (Ryan Pusztai)
+- Patch 1746563: Ability to specify GUID for VS targets (Ryan Pusztai)
+- Patch 1754867: Creating import lib of different name (Ryan Pusztai)
+
+
+-----
+ 3.3
+-----
+
+- Added support for prebuild, prelink, and postbuild commands
+- Added `target` global variable to script environment
+- Added build flag `no-edit-and-continue`
+- Added build flags `native-wchar` and `no-native-wchar`
+- Added build flag `no-manifest`
+- Added build flag `seh-exceptions` (VS2005 only)
+- Added `resdefines`, `respaths`, and `resoptions`
+- Added `prebuildcommands`, `prelinkcommands`, and `postbuildcommands`
+- Added `pchheader` and `pchsource` (Visual Studio only)
+- Feature 1337547: Package-level bindir and libdir
+- Bug 1565755: Generated makefiles do not work with MSYS
+- Bug 1587955: Target path ignored for libs
+- Bug 1574725: Static library extension for "gnu" target
+- Bug 1522861: Fixed by using "ar -rcs" instead of "ar -cr && ranlib"
+- Bug 1656816: Mkdir set wrong directory rights
+- Bug 1655595: Compile/build problem on FreeBSD
+- Bug: "gnu" clean rule doesn't work in cmd.exe
+- Improved behavior of Linux findlib()
+- Updated Code::Blocks support to latest project version 
+  (major="1" minor="6")
+- Patch 1681666: GNU targets always show the console if kind = 'winexe'
+
+
+-----
+ 3.2
+-----
+
+- Added support for Code::Blocks
+- Updated MonoDevelop support
+- Upgraded Lua to 5.0.3
+- Added new matchdirs() to Lua script environment
+- Expose list of packages as _PACKAGES global in Lua
+- Turn off edit-and-continue in release builds with symbols
+- Bug 1559873: libpaths inserts extra space after -L
+
+
+-----
+ 3.1
+-----
+
+- Added support for Visual Studio 2005
+- Added support for Windows resources to GNU make target
+- Added path handling functions to Lua environment
+- Added matchrecursive() for recursive file searches
+- Added os.fileexists() function to Lua environment
+- Added os.appendfile() function to Lua environment
+- Changed `monoresgen` to `resgen` to keep up with Mono project
+- Added `mono2` .NET compiler set for Mono .NET 2.0 support
+- Feature 1096677: exclude files from matchfiles (package.excludes)
+- Bug 1439463: VS2003 RTTI problem
+- Bug 1439446: GNU Makefile problem under Mingw32
+- Bug 1422068: package.path="." causes bad makefiles
+- Bug 1431530: makefile target fails when project path specified
+
+
+-----
+ 3.0
+-----
+
+- Upgraded Lua interpreter to version 5.0.1
+- The options table now stores simple values, rather than tables
+- Completed MonoDevelop support
+- Improved .NET resource handling for GNU generator
+- Added unit test suite
+- Merged Scott Graham unicode build flag patch
+- Removed package.warninglevel in favor of extra-warnings flag
+- Added package.targetprefix 
+- Overhauled structure of generated GNU makefiles
+- Added --os command line option
+- Fixed bug 1268588: Use gcc to link C packages
+- Fixed bug 1363306: GNU C# should copy referenced DLLs
+
+
+-----
+ 2.4
+-----
+
+- Added chdir() to Lua script environment
+- Merged Thomas Harning's patch for .NET resources on GNU
+- Fixed bug 1194702: Can't put multiple packages in same directory
+- Fixed bug in GNU shared library builds (doh!)
+- Added target 'vs2002' to replace 'vs7'
+
+
+-----
+ 2.3
+-----
+
+- Added 'project.config[]' with 'bindir' and 'libdir'
+- Merged Scott Graham's "warninglevel" patch.
+- Fixed bug 1153484: Import lib in wrong directory.
+- Fixed bug 1013352: Stack overflow with large projects.
+- Fixed bug 945406: package.files, bad value = crash
+
+
+-----
+ 2.2
+-----
+
+- Worked around VS.NET bug for .NET assemblies > 64K.
+- Added --very-verbose flag to GNU generator.
+- GNU generator now supports assembly sources.
+ 
+
+-----
+ 2.1
+-----
+
+- File extension of generated binaries can now be set
+  with config.targetextension.
+- Windows targets now handle .def files for DLLs.
+
+
+-----
+ 2.0
+-----
+
+- Can now specify build actions per file
+- Include paths are now passed to VC7 resource compiler
+- Removed _WIN32 define from Cygwin makefiles
+- Added package.objdir to set intermediates directory
+- Added rmdir() to Lua script environment
+- A big bag of bug fixes
+
+
+-----
+ 1.9
+-----
+
+- Made verbose mode even more verbose.
+- posix.c now builds properly as C.
+- Fixed package dependency generation for GNU and VS2003.
+- Display Lua version number in usage text.
+- Fixed VS link between *.aspx and *.aspx.cs files.
+- Fixed VS link between *.resx and *.cs files.
+- Fixed *.d file generation for gcc 2.9x.
+- Unified various help options under '--help'.
+- Bin and Lib paths can now be arbitrarily long.
+- linkoptions are now applied in VC6 and VC7 projects.
+
+
+-----
+ 1.8
+-----
+
+- Added support for ASP.NET projects.
+- Fixed a bug in VC6 support for static libraries.
+- matchfiles() now uses package path instead of script path.
+- Added --verbose option.
+- No longer apply no-rtti and no-exceptions to *.c files.
+
+
+-----
+ 1.7
+-----
+
+- Location of generated project files can now be specified with
+  the project.path variable.
+- Inter-package dependencies are fixed for GNU makefiles.
+- No longer need to execute in same directory as project script.
+- Added "c" language specifier.
+- Added support for .resx and .config files to C# projects.
+- Added support for full assembly names in .NET references.
+- Fixed handling of paths in package.target variable.
+- Improved support for SharpDevelop.
+- Started support for OS X.
+- Added support for Digital Mars compiler.
+
+
+------- 
+ 1.6.1
+-------
+
+- VS7 generator crashed if a package was built before one of its
+  dependencies. Now immediately assigns UUID before processing.
+  
+
+-----
+ 1.6
+-----
+
+- Added support for Visual Studio 2003 and SharpDevelop.
+- Added binaries directory as a reference path for VS7.
+	
+
+-----
+ 1.5
+-----
+
+- Added initial support for building static libraries.
+- Added "no-main" flag, prevents overriding WinMain() on 
+  Windows builds.
+- Added "--no-rtti" and "no-exceptions" build flags to
+  disable those C++ features.
+- Display error message when project has no packages.
+- Moved VC7 *.pdb files into intermediates directory.
+  
+
+-----
+ 1.4
+-----
+
+- Bug fixes to the path manipulation routines.
+- GNU makefiles are regenerated when premake scripts change.
+    
+
+-----
+ 1.3
+-----
+
+- Added support for the Cygwin environment.
+- Added "static-runtime" build flag to statically link against C/C++
+  standard runtime libraries.
+- Bug fixes to Visual Studio 6 and 7 generators and path reversing
+  algorithm.
+
+
+-----
+ 1.2
+-----
+
+- Standardized format of command-line options.
+- Can now handle custom command-line options in script.
+- Added new function findlib().
+- Added new C++ build flag "managed" for writing C++ .NET code.
+- Can now use open-source C# compilers in VS6 generator.
+- Several bug fixes to the VS7 generator.
+
+
+-----
+ 1.1
+-----
+
+- Added support for custom build configurations. Added "optimize",
+  "optimize-size", "optimize-speed", and "no-symbols" flags to control
+  build settings.
+- Added matchfiles() to select files using wildcards.
+- Added "unsafe" flag for C# projects.
+- Added newpackage() function for creating new package objects inline,
+  instead of creating separate scripts.
+- Changed include() to dopackage() and option() to addoption(). The old
+  versions have been kept for compatibility, but will be deprecated
+  eventually.
+- Major cleanup of the source code.
+
+
+-----
+ 1.0
+-----
+
+- Fixed a bug related to the reference paths in VS7 C# projects.
+- Display a warning message if a reference path can't be found.
+- Automatically create bin and lib directories if they do not exist.
+- GNU C# projects will now properly use the configured library paths.
+
+
+-------
+ 0.9.2
+-------
+
+- Added --with-mono and --with-pnet options.
+- VS7 C# projects will now properly use the configured library paths.
+
+
+-------
+ 0.9.1
+-------
+
+- Switched to Lua (http://www.lua.org/) for project script parsing.
+- Add support for custom project options.
+- Changed 'type' to 'kind' to avoid conflict with Lua function of the
+  same name.
+- Changed 'conexe' to 'exe' because I liked it better.
+- Changed 'library' to 'dll' for C# projects to keep things consistent.
+
+
+-------
+ 0.9.0
+-------
+
+- Initial public release.

@@ -10,7 +10,7 @@
 
 
 #define VERSION        "SVN"
-#define COPYRIGHT      "Copyright (C) 2002-2008 Jason Perkins and the Premake Project"
+#define COPYRIGHT      "Copyright (C) 2002-2009 Jason Perkins and the Premake Project"
 #define ERROR_MESSAGE  "%s\n"
 
 
