@@ -36,7 +36,7 @@ package.kind = "exe"
 
 	package.includepaths = 
 	{
-		"host/lua-5.1.2/src"
+		"host/lua-5.1.4/src"
 	}
 	
 	package.files =
@@ -49,11 +49,11 @@ package.kind = "exe"
 	package.excludes =
 	{
 		"premake.lua", "premake4.lua",
-		"host/lua-5.1.2/src/lua.c",
-		"host/lua-5.1.2/src/luac.c",
-		"host/lua-5.1.2/src/print.c",
-		matchrecursive("host/lua-5.1.2/*.lua"),
-		matchfiles("host/lua-5.1.2/etc/*.c")
+		"host/lua-5.1.4/src/lua.c",
+		"host/lua-5.1.4/src/luac.c",
+		"host/lua-5.1.4/src/print.c",
+		matchrecursive("host/lua-5.1.4/*.lua"),
+		matchfiles("host/lua-5.1.4/etc/*.c")
 	}
 
 	if (linux) then

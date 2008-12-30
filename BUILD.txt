@@ -1,14 +1,25 @@
 PREMAKE BUILD INSTRUCTIONS
 
  As of version 4.0, Premake is written in a mix of C and Lua. This mix
- makes it smaller, enables the templating features, and makes the 
- whole thing easier to maintain. The trade-off is a couple of wrinkles
- in the build process.
+ enables many new features, but it makes building Premake a bit more
+ complicated.
  
- If you downloaded a source code package from SourceForge, you can just
- build using the default "Release" configuration and go. The information
- in this file is primarily for people who got the code from Subversion,
- or developers who want to make changes to the Premake code.
+ If you downloaded a source code package from SourceForge, you will 
+ find project files for Visual Studio, Code::Blocks, CodeLite, and
+ GNU make in the build/ directory. Build the release configuration
+ (the default for the makefiles) and you will find the executable in
+ bin/release ready to go.
+ 
+ If you want to use a debug build instead, or if you downloaded the
+ source code from Subversion instead of a SourceForge release, read
+ the next section for more information.
+ 
+ Visual Studio 2002 and 2003 users: these version of Visual Studio 
+ are unable to build Premake due to string size limitations. Use one 
+ the newer, free versions of Visual Studio C++ Express instead.
+
+ If you find all of this very confusing and need some help, see the
+ end of this document for contact information.
  
 
 GENERATING THE PROJECT FILES
@@ -23,8 +34,8 @@ GENERATING THE PROJECT FILES
  get it as source code or a prebuilt binary from the SourceForge 
  download page.
  
- Once you have a working Premake installed, generate the project files
- in the normal way. For Premake 4.x, type a command like:
+ Once you have a working Premake installed, use it to generate the 
+ project files. For Premake 4.x, type a command like:
  
    premake4 gmake    -- for GNU makefiles using GCC
    premake4 vs2005   -- for a Visual Studio 2005 solution
@@ -46,7 +57,7 @@ RELEASE AND DEBUG BUILDS
    make config=release  -- build in release mode
  
  (IDEs like Visual Studio provide their own mechanism for switching 
- build configurations).
+  build configurations).
  
  In release mode (the default) you can build and run Premake like any
  other C application. In debug mode, Premake reads the Lua scripts from
@@ -71,8 +82,7 @@ COMPILING SCRIPTS
  If you make changes to the core Lua scripts, you can integrate them 
  into the release build using the "compile" command:
  
-   premake4 compile    -- for Premake 4.x
-   premake --compile   -- for Premake 3.x
+   premake4 compile
    
  This command compiles all of the scripts listed in _manifest.lua into
  bytecode and embeds them into src/host/bytecode.c. The next release 
