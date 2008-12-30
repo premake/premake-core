@@ -39,7 +39,7 @@ end
 		language    "C"
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
-		includedirs { "src/host/lua-5.1.2/src" }
+		includedirs { "src/host/lua-5.1.4/src" }
 		location    ( _OPTIONS["to"] )
 
 		files 
@@ -51,11 +51,11 @@ end
 		excludes
 		{
 			"src/premake.lua",
-			"src/host/lua-5.1.2/src/lua.c",
-			"src/host/lua-5.1.2/src/luac.c",
-			"src/host/lua-5.1.2/src/print.c",
-			"src/host/lua-5.1.2/**.lua",
-			"src/host/lua-5.1.2/etc/*.c"
+			"src/host/lua-5.1.4/src/lua.c",
+			"src/host/lua-5.1.4/src/luac.c",
+			"src/host/lua-5.1.4/src/print.c",
+			"src/host/lua-5.1.4/**.lua",
+			"src/host/lua-5.1.4/etc/*.c"
 		}
 			
 		configuration "Debug"
