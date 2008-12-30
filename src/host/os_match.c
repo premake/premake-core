@@ -60,7 +60,7 @@ int os_matchnext(lua_State* L)
 	if (m->handle == INVALID_HANDLE_VALUE)
 		return 0;
 	
-	while (1)
+	while (m)  /* loop forever */
 	{
 		if (!m->is_first)
 		{
@@ -75,6 +75,8 @@ int os_matchnext(lua_State* L)
 			return 1;
 		}
 	}
+
+	return 0;
 }
 
 #else
