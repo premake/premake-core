@@ -71,6 +71,8 @@ end
 		configuration "vs*"
 			defines     { "_CRT_SECURE_NO_WARNINGS" }
 
+		configuration "linux"
+			links       { "m" } 
 
 
 
