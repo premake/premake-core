@@ -4,11 +4,12 @@
 
 This version is a complete rewrite of Premake.
 
-- New, more readable and extensible syntax for projects
+- A new, more readable and extensible syntax for projects
 - More robust syntax validation
-- Better validation of command-line arguments
+- A new command-line format, with better argument validation
 - Improved path handling across all project settings
-- Upgraded to Lua 5.1.2
+- Upgraded to Lua 5.1.4
+- Many, many bug fixes
 
 
 -----

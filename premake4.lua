@@ -38,7 +38,7 @@ end
 		targetname  "premake4"
 		language    "C"
 		kind        "ConsoleApp"
-		flags       { "No64BitChecks", "ExtraWarnings", "FatalWarnings" }	
+		flags       { "No64BitChecks", "ExtraWarnings" }	
 		includedirs { "src/host/lua-5.1.4/src" }
 		location    ( _OPTIONS["to"] )
 

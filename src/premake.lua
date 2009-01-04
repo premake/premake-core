@@ -8,8 +8,7 @@ package.kind = "exe"
 	package.buildflags = 
 	{
 		"no-64bit-checks",
-		"extra-warnings",
-		"fatal-warnings"
+		"extra-warnings"
 	}
 
 	package.config["Debug"].defines =

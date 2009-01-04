@@ -10,12 +10,16 @@ int os_getcwd(lua_State* L)
 {
 	char buffer[0x4000];
 	char* ch;
+	int result;
 
 #if PLATFORM_WINDOWS
-	GetCurrentDirectory(0x4000, buffer);
+	result = (GetCurrentDirectory(0x4000, buffer) != 0);
 #else
-	getcwd(buffer, 0x4000);
+	result = (getcwd(buffer, 0x4000) != 0);
 #endif
+
+	if (!result)
+		return 0;
 
 	/* convert to platform-neutral directory separators */
 	for (ch = buffer; *ch != '\0'; ++ch)
