@@ -5,5 +5,7 @@ project "CppConsoleApp"
 	
 	files    "*.cpp"
 	
+	includedirs { "I:/Code" }
+	
 	libdirs { "../lib" }
 	links   { "CppSharedLib" }

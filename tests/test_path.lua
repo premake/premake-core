@@ -56,6 +56,21 @@
 	end
 		
 
+
+--
+-- path.getdrive() tests
+--
+
+	function T.path.getdrive_ReturnsNil_OnNotWindows()
+		test.isnil(path.getdrive("/hello"))
+	end
+	
+	function T.path.getdrive_ReturnsLetter_OnWindowsAbsolute()
+		test.isequal("x", path.getdrive("x:/hello"))
+	end
+	
+	
+	
 --
 -- path.getextension() tests
 --
@@ -96,6 +111,11 @@
 	function T.path.getrelative_ReturnsChildPath_OnWindowsAbsolute()
 		test.isequal("obj/debug", path.getrelative("C:/Code/Premake4", "C:/Code/Premake4/obj/debug"))
 	end
+	
+	function T.path.getrelative_ReturnsAbsPath_OnDifferentDriveLetters()
+		test.isequal("D:/Files", path.getrelative("C:/Code/Premake4", "D:/Files"))
+	end
+	
 	
 
 --

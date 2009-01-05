@@ -134,7 +134,7 @@
 	function premake.gcc.getincludedirs(includedirs)
 		local result = { }
 		for _,dir in ipairs(includedirs) do
-			table.insert(result, '-I "' .. dir .. '"')
+			table.insert(result, "-I" .. _MAKE.esc(dir))
 		end
 		return result
 	end

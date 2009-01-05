@@ -68,6 +68,20 @@
 
 
 --
+-- Retrieve the drive letter, if a Windows path.
+--
+
+	function path.getdrive(p)
+		local ch1 = p:sub(1,1)
+		local ch2 = p:sub(2,2)
+		if ch2 == ":" then
+			return ch1
+		end
+	end
+
+
+
+--
 -- Retrieve the file extension.
 --
 
@@ -101,17 +115,23 @@
 --
 
 	function path.getrelative(src, dst)
-		local result = ""
-		
 		-- normalize the two paths
-		src = path.getabsolute(src) .. "/"
-		dst = path.getabsolute(dst) .. "/"
+		src = path.getabsolute(src)
+		dst = path.getabsolute(dst)
 
 		-- same directory?
 		if (src == dst) then
 			return "."
 		end
 		
+		-- different drives? Must use absolute path
+		if path.getdrive(src) ~= path.getdrive(dst) then
+			return dst
+		end
+
+		src = src .. "/"
+		dst = dst .. "/"
+				
 		-- trim off the common directories from the front 
 		local i = src:find("/")
 		while (i) do
@@ -125,6 +145,7 @@
 		end
 
 		-- back up from dst to get to this common parent
+		local result = ""		
 		i = src:find("/")
 		while (i) do
 			result = result .. "../"
