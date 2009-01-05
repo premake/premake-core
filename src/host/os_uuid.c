@@ -23,12 +23,14 @@ int os_uuid(lua_State* L)
 	CoCreateGuid((char*)bytes);
 
 #else
+	int result;
 
 	/* not sure how to get a UUID here, so I fake it */
 	FILE* rnd = fopen("/dev/random", "rb");
-	fread(bytes, 16, 1, rnd);
+	result = fread(bytes, 16, 1, rnd);
 	fclose(rnd);
-
+	if (!result)
+		return 0;
 #endif
 
 	sprintf(uuid, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
