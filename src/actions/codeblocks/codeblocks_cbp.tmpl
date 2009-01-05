@@ -67,7 +67,7 @@
 					<Add before="<%= premake.esc(v) %>" />
 					<% end %>
 					<% for _,v in ipairs(cfg.postbuildcommands) do %>
-					<Add before="<%= premake.esc(v) %>" />
+					<Add after="<%= premake.esc(v) %>" />
 					<% end %>
 				</ExtraCommands>
 				<% end %>
