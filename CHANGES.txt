@@ -11,6 +11,15 @@ This version is a complete rewrite of Premake.
 - Upgraded to Lua 5.1.4
 - Many, many bug fixes
 
+RC1 -> RC2
+
+- Enabled use of absolute Windows paths to different drive letter
+- Bug: Post-build commands run before build on Code::Blocks
+- Removed FatalWarnings build flag
+- Fixed GCC 4.2 warnings (Ryan Pusztai)
+- Enable Windows linking to shared libraries even with NoImportLib
+  flag set (just in case)
+
 
 -----
  3.7

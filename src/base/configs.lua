@@ -252,10 +252,6 @@
 			targetstyle = cfg.tool.targetstyle or targetstyle
 		end
 
-		-- precompute the target names and paths		
-		cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
-		cfg.linktarget  = premake.gettarget(cfg, "link",  targetstyle)
-
 		-- build a unique objects directory
 		local function getbasedir(cfg)
 			return path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj")
@@ -285,6 +281,10 @@
 		end
 		
 		cfg.objectsdir = path.getrelative(cfg.location, getuniquedir(cfg))
+		
+		-- precompute the target names and paths		
+		cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
+		cfg.linktarget  = premake.gettarget(cfg, "link",  targetstyle)
 		
 		-- translate the paths as appropriate
 		local pathstyle = action.pathstyle or targetstyle

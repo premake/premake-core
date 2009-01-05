@@ -3,7 +3,8 @@ project "CppSharedLib"
 	kind     "SharedLib"
 	language "C++"
 	files    { "*.cpp", "CppSharedLib.def" }
-
+	flags    { "NoImportLib" }
+	
 	configuration "Debug"
 		targetdir "lib/debug"
 		

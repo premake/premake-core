@@ -276,6 +276,11 @@
 		local prefix  = ""
 		local suffix  = ""
 		
+		-- If using an import library and "NoImportLib" flag is set, library will be in objdir
+		if cfg.kind == "SharedLib" and kind == "StaticLib" and cfg.flags.NoImportLib then
+			dir = cfg.objectsdir
+		end
+		
 		if style == "windows" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
 				suffix = ".exe"
@@ -306,6 +311,8 @@
 		result.fullpath  = path.join(result.directory, result.name)
 		return result
 	end
+	
+	
 --
 -- Walk the list of source code files, breaking them into "groups" based
 -- on the directory hierarchy.
