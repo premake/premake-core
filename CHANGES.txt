@@ -19,6 +19,7 @@ RC1 -> RC2
 - Fixed GCC 4.2 warnings (Ryan Pusztai)
 - Enable Windows linking to shared libraries even with NoImportLib
   flag set (just in case)
+- Fixed handling of paths in links
 
 
 -----

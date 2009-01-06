@@ -12,8 +12,8 @@
 	
 	
 	--
-	-- Figure out what elements a particular file need in its item block,
-	-- based on its build action and any related files in the project.
+	-- Figure out what elements a particular source code file need in its item
+	-- block, based on its build action and any related files in the project.
 	-- 
 	
 	function getelements(prj, action, fname)
@@ -109,7 +109,7 @@
       <Name><%= premake.esc(prj.name) %></Name>
     </ProjectReference>
     <% end %>
-    <% for _, linkname in ipairs(premake.getlinks(this, "system", "basename")) do %>
+    <% for _, linkname in ipairs(premake.getlinks(this, "system", "fullpath")) do %>
     <Reference Include="<%= premake.esc(linkname) %>" />
     <% end %>
   </ItemGroup>

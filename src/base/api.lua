@@ -160,6 +160,14 @@
 		{
 			kind  = "list",
 			scope = "config",
+			allowed = function(value)
+				-- if library name contains a '/' then treat it as a path to a local file
+				if value:find('/', nil, true) then
+					value = path.getabsolute(value)
+				end
+				return value
+			end
+
 		},
 		
 		location =

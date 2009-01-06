@@ -6,9 +6,6 @@
 
 
 
-
-
-
 --
 -- Iterator for a project's configuration objects.
 --
@@ -220,6 +217,9 @@
 					item = link
 					if premake.actions[_ACTION].targetstyle == "windows" then
 						item = item .. iif(cfg.language == "C" or cfg.language == "C++", ".lib", ".dll")
+					end
+					if item:find("/", nil, true) then
+						item = path.getrelative(cfg.basedir, item)
 					end
 				else
 					item = link
