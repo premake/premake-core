@@ -6,7 +6,7 @@
 	local vsversion, toolversion
 	if _ACTION == "vs2005" then
 		vsversion   = "8.0.50727"
-		toolversion = "2.0"
+		toolversion = nil
 	elseif _ACTION == "vs2008" then
 		vsversion   = "9.0.50727"
 		toolversion = "3.5"
@@ -70,7 +70,11 @@
 
 	-- end of preprocessing; template starts here --	
 %>
+<% if toolversion then %>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="<%= toolversion %>">
+<% else %>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<% end %>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' "><%= premake.esc(this.solution.configurations[1]) %></Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>

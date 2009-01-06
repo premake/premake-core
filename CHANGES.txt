@@ -20,6 +20,7 @@ RC1 -> RC2
 - Enable Windows linking to shared libraries even with NoImportLib
   flag set (just in case)
 - Fixed handling of paths in links
+- Added "ToolsVersion" attribute to VS2005 and VS2008 C# projects
 
 
 -----
