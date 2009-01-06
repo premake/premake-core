@@ -2,14 +2,15 @@
 	eol = "\r\n" 
 	local csc = premake.csc
 
-	-- translate the action to a Visual Studio version number
-	local vsversion
+	-- translate the action to format and tool versions
+	local vsversion, toolversion
 	if _ACTION == "vs2005" then
-		vsversion = "8.0.50727"
+		vsversion   = "8.0.50727"
+		toolversion = "2.0"
 	elseif _ACTION == "vs2008" then
-		vsversion = "9.0.50727"
+		vsversion   = "9.0.50727"
+		toolversion = "3.5"
 	end
-	
 	
 	--
 	-- Figure out what elements a particular source code file need in its item
@@ -69,7 +70,7 @@
 
 	-- end of preprocessing; template starts here --	
 %>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="<%= toolversion %>">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' "><%= premake.esc(this.solution.configurations[1]) %></Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
