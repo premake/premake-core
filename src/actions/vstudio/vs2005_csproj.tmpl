@@ -114,7 +114,7 @@
       <Name><%= premake.esc(prj.name) %></Name>
     </ProjectReference>
     <% end %>
-    <% for _, linkname in ipairs(premake.getlinks(this, "system", "fullpath")) do %>
+    <% for _, linkname in ipairs(premake.getlinks(this, "system", "basename")) do %>
     <Reference Include="<%= premake.esc(linkname) %>" />
     <% end %>
   </ItemGroup>
