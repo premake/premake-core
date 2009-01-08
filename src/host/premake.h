@@ -46,6 +46,7 @@ int do_isfile(const char* filename);
 
 /* Built-in functions */
 int os_chdir(lua_State* L);
+int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);

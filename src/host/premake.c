@@ -31,6 +31,7 @@ extern int builtin_sizes[];
 /* Built-in functions */
 static const luaL_Reg os_functions[] = {
 	{ "chdir",       os_chdir       },
+	{ "copyfile",    os_copyfile    },
 	{ "isdir",       os_isdir       },
 	{ "getcwd",      os_getcwd      },
 	{ "isfile",      os_isfile      },
