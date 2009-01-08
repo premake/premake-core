@@ -4,8 +4,8 @@
  * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
  */
 
+#include <stdlib.h>
 #include "premake.h"
-
 
 int os_copyfile(lua_State* L)
 {
@@ -16,7 +16,7 @@ int os_copyfile(lua_State* L)
 #if PLATFORM_WINDOWS
 	z = CopyFile(src, dst, FALSE);
 #else
-	luaL_pushfstring(L, "cp %s %s", src, dst);
+	lua_pushfstring(L, "cp %s %s", src, dst);
 	z = (system(lua_tostring(L, -1)) == 0);
 #endif
 
