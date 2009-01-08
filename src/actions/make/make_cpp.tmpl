@@ -22,7 +22,7 @@ ifeq ($(config),<%= _MAKE.esc(cfg.name:lower())%>)
   CXXFLAGS  += $(CFLAGS) <%= table.concat(cc.getcxxflags(cfg), " ") %>
   LDFLAGS   += <%= table.concat(table.join(cc.getldflags(cfg), cc.getlinkflags(cfg), cfg.linkoptions), " ") %>
   RESFLAGS  += $(DEFINES) $(INCLUDES) <%= table.concat(table.join(cc.getdefines(cfg.resdefines), cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " ") %>
-  LDDEPS    += <%= table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath"))) %>
+  LDDEPS    += <%= table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " ") %>
   <% if cfg.kind == "StaticLib" then %>
   LINKCMD    = ar -rcs $(TARGET) $(OBJECTS)
   <% else %>

@@ -21,6 +21,8 @@ RC1 -> RC2
   flag set (just in case)
 - Fixed handling of paths in links
 - Added "ToolsVersion" attribute to VS2005 and VS2008 C# projects
+- Fixed separator between library dependencies in C++ makefiles
+- Added missing os.copyfile() function
 
 
 -----
