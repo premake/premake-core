@@ -22,7 +22,7 @@
 				path = os.getenv("DYLD_LIBRARY_PATH")
 			else
 				formats = { "lib%s.so", "%s.so" }
-				path = os.getenv("LD_LIBRARY_PATH")
+				path = os.getenv("LD_LIBRARY_PATH") or ""
 		
 				local f = io.open("/etc/ld.so.conf", "r")
 				if f then

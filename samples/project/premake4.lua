@@ -41,3 +41,6 @@ solution "PremakeTestbox"
 			os.copyfile("premake4.lua", "../premake4.lua")
 		end
 	} 
+
+print(os.findlib("Xlib"))
+
