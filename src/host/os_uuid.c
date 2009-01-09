@@ -26,7 +26,7 @@ int os_uuid(lua_State* L)
 	int result;
 
 	/* not sure how to get a UUID here, so I fake it */
-	FILE* rnd = fopen("/dev/random", "rb");
+	FILE* rnd = fopen("/dev/urandom", "rb");
 	result = fread(bytes, 16, 1, rnd);
 	fclose(rnd);
 	if (!result)
