@@ -72,7 +72,11 @@ end
 			defines     { "_CRT_SECURE_NO_WARNINGS" }
 
 		configuration "linux"
-			links       { "m" } 
+			defines     { "LUA_USE_LINUX" }
+			links       { "m", "dl" } 
+			
+		configuration "macosx"
+			defines     { "LUA_USE_MACOSX" }
 
 
 

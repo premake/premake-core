@@ -24,6 +24,7 @@ RC1 -> RC2
 - Fixed separator between library dependencies in C++ makefiles
 - Added missing os.copyfile() function
 - Bug: Sometimes takes a long time to complete on Linux
+- Enabled Lua popen support on Linux and Mac OS X
 
 
 -----
