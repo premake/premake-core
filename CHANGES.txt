@@ -11,6 +11,10 @@ This version is a complete rewrite of Premake.
 - Upgraded to Lua 5.1.4
 - Many, many bug fixes
 
+RC2 -> RC3
+
+- Display paths of generated files
+
 RC1 -> RC2
 
 - Enabled use of absolute Windows paths to different drive letter

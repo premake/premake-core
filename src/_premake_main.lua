@@ -28,7 +28,8 @@
 					output = tmpl[3](this)
 				end
 				if (output) then
-					local fname = premake.getoutputname(this, tmpl[1])
+					local fname = path.getrelative(os.getcwd(), premake.getoutputname(this, tmpl[1]))
+					printf("Generating %s...", fname)
 					local f, err = io.open(fname, "wb")
 					if (not f) then
 						error(err, 0)
