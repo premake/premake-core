@@ -13,6 +13,7 @@
 		cfg.location   = "."
 		cfg.language   = "C++"
 		cfg.project    = { name = "MyProject" }
+		cfg.flags      = { }
 	end
 
 
