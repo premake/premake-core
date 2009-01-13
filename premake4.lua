@@ -66,7 +66,7 @@ end
 		configuration "Release"
 			targetdir   "bin/release"
 			defines     "NDEBUG"
-			flags       { "OptimizeSize", "NoFramePointer" }
+			flags       { "OptimizeSize" }
 
 		configuration "vs*"
 			defines     { "_CRT_SECURE_NO_WARNINGS" }

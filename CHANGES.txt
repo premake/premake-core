@@ -13,6 +13,7 @@ This version is a complete rewrite of Premake.
 
 RC2 -> RC3
 
+- Bug: GCC Windows release builds of Premake4 crash on script errors
 - Patched Lua to load precompiled bytecodes on PPC architectures.
 - Display paths of generated files
 
