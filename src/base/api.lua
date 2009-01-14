@@ -326,8 +326,13 @@
 			container = premake.CurrentConfiguration
 		end
 		
-		if (t == "solution" and type(container) ~= "solution") then
-			container = nil
+		if t == "solution" then
+			if type(container) == "project" then
+				container = container.solution
+			end
+			if type(container) ~= "solution" then
+				container = nil
+			end
 		end
 		
 		local msg
