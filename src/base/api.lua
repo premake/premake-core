@@ -354,7 +354,7 @@
 	function premake.setarray(ctype, fieldname, value, allowed)
 		local container, err = premake.getobject(ctype)
 		if (not container) then
-			error(err, 3)
+			error(err, 4)
 		end
 
 		if (not container[fieldname]) then
