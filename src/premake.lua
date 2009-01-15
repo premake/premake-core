@@ -19,8 +19,7 @@ package.kind = "exe"
 	package.config["Release"].buildflags = 
 	{
 		"no-symbols",
-		"optimize-size",
-		"no-frame-pointers"
+		"optimize-size"
 	}
 	
 	package.config["Release"].defines =
