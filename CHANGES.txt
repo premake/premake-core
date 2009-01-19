@@ -11,6 +11,10 @@ This version is a complete rewrite of Premake.
 - Upgraded to Lua 5.1.4
 - Many, many bug fixes
 
+RC3 -> RC4
+
+- Embed scripts instead of bytecodes to avoid portability issues
+
 RC2 -> RC3
 
 - Bug: GCC Windows release builds of Premake4 crash on script errors

@@ -90,83 +90,91 @@ end
 	end
 	
 	
-	
+
 --
--- "Compile" action compiles scripts to bytecode and embeds into a static
--- data buffer in src/host/bytecode.c.
+-- Embed the Lua scripts into src/host/scripts.c as static data buffers.
+-- I embed the actual scripts, rather than Lua bytecodes, because the 
+-- bytecodes are not portable to different architectures.
 --
 
-	local function dumpfile(out, fname)
-		local func = loadfile(fname)			
-		local dump = string.dump(func)
-		local len = string.len(dump)
-		out:write("\t\"")
-		for i=1,len do
-			out:write(string.format("\\%03o", string.byte(dump, i)))
-		end
-		out:write("\",\n")
-		return len
-	end
-
-	local function dumptmpl(out, fname)
+	local function loadscript(fname)
 		local f = io.open(fname)
-		local tmpl = f:read("*a")
+		local s = f:read("*a")
 		f:close()
 
-		local name = path.getbasename(fname)
-		local dump = "_TEMPLATES."..name.."=premake.loadtemplatestring('"..name.."',[["..tmpl.."]])"
-		local len = string.len(dump)
-		out:write("\t\"")
-		for i=1,len do
-			out:write(string.format("\\%03o", string.byte(dump, i)))
-		end
-		out:write("\",\n")
-		return len
-	end				
-	
-	local function docompile()
-		local sizes = { }
-
-		scripts, templates, actions = dofile("src/_manifest.lua")
-		table.insert(scripts, "_premake_main.lua")
+		-- strip out comments
+		s = s:gsub("[\n]%-%-[^\n]*", "")
 		
-		local out = io.open("src/host/bytecode.c", "w+b")
-		out:write("/* Precompiled bytecodes for built-in Premake scripts */\n")
-		out:write("/* To regenerate this file, run `premake --compile` (Premake 3.x) */\n\n")
-
-		out:write("const char* builtin_bytecode[] = {\n")
+		-- strip any CRs
+		s = s:gsub("[\r]", "")
 		
-		for i,fn in ipairs(scripts) do
-			print(fn)
-			s = dumpfile(out, "src/"..fn)
-			table.insert(sizes, s)
-		end
-
-		for i,fn in ipairs(templates) do
-			print(fn)
-			s = dumptmpl(out, "src/"..fn)
-			table.insert(sizes, s)
-		end
+		-- escape backslashes
+		s = s:gsub("\\", "\\\\")
 		
-		for i,fn in ipairs(actions) do
-			print(fn)
-			s = dumpfile(out, "src/"..fn)
-			table.insert(sizes, s)
-		end
+		-- strip duplicate line feeds
+		s = s:gsub("\n+", "\n")
 		
-		out:write("};\n\n");
-		out:write("int builtin_sizes[] = {\n")
+		-- escape line feeds
+		s = s:gsub("\n", "\\n")
+		
+		-- escape double quote marks
+		s = s:gsub("\"", "\\\"")
 
-		for i,v in ipairs(sizes) do
-			out:write("\t"..v..",\n")
-		end
-
-		out:write("\t0\n};\n");		
-		out:close()
+		return s
 	end
 
+	
+	local function embedfile(out, fname)
+		local s = loadscript(fname)
 
-	premake.actions["compile"] = {
-		description = "Compile scripts to bytecode and embed in bytecode.c",
-		execute     = docompile,
+		-- strip tabs
+		s = s:gsub("[\t]", "")
+		
+		out:write("\t\"")
+		out:write(s)
+		out:write("\",\n")
+	end
+
+	
+	local function embedtemplate(out, fname)
+		local s = loadscript(fname)
+		
+		local name = path.getbasename(fname)
+		out:write(string.format("\t\"_TEMPLATES.%s=premake.loadtemplatestring('%s',[[", name, name))
+		out:write(s)
+		out:write("]])\",\n")
+	end
+	
+	
+	premake.actions["embed"] = {
+		description = "Embed scripts in scripts.c; required before release builds",
+		execute     = function ()
+			-- load the manifest of script files
+			scripts, templates, actions = dofile("src/_manifest.lua")
+			table.insert(scripts, "_premake_main.lua")
+			
+			-- open scripts.c and write the file header
+			local out = io.open("src/host/scripts.c", "w+b")
+			out:write("/* Premake's Lua scripts, as static data buffers for release mode builds */\n")
+			out:write("/* To regenerate this file, run: premake4 embed */ \n\n")
+			out:write("const char* builtin_scripts[] = {\n")
+			
+			for i,fn in ipairs(scripts) do
+				print(fn)
+				s = embedfile(out, "src/"..fn)
+			end
+
+			for i,fn in ipairs(templates) do
+				print(fn)
+				s = embedtemplate(out, "src/"..fn)
+			end
+
+			for i,fn in ipairs(actions) do
+				print(fn)
+				s = embedfile(out, "src/"..fn)
+			end
+			
+			out:write("\t0\n};\n");		
+			out:close()
+		end
 	}

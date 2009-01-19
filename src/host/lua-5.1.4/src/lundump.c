@@ -4,9 +4,6 @@
 ** See Copyright Notice in lua.h
 */
 
-/* jperkins: applied endian-independence patch to enable Premake's precompiled scripts
- * to be shipped in a universal binary. See http://lua-users.org/lists/lua-l/2006-02/msg00507.html */
-
 #include <string.h>
 
 #define lundump_c
@@ -28,7 +25,6 @@ typedef struct {
  ZIO* Z;
  Mbuffer* b;
  const char* name;
- int swap;
 } LoadState;
 
 #ifdef LUAC_TRUST_BINARIES
@@ -44,7 +40,7 @@ static void error(LoadState* S, const char* why)
 }
 #endif
 
-/* #define LoadMem(S,b,n,size)	LoadBlock(S,b,(n)*(size)) */
+#define LoadMem(S,b,n,size)	LoadBlock(S,b,(n)*(size))
 #define	LoadByte(S)		(lu_byte)LoadChar(S)
 #define LoadVar(S,x)		LoadMem(S,&x,1,sizeof(x))
 #define LoadVector(S,b,n,size)	LoadMem(S,b,n,size)
@@ -54,50 +50,6 @@ static void LoadBlock(LoadState* S, void* b, size_t size)
  size_t r=luaZ_read(S->Z,b,size);
  IF (r!=0, "unexpected end");
 }
-
-static void LoadMem (LoadState* S, void* b, int n, size_t size)
-{
- LoadBlock(S,b,n*size);
- if (S->swap)
- {
-  char* p=(char*) b;
-  char c;
-  switch (size)
-  {
-   case 1:
-  	break;
-   case 2:
-	while (n--)
-	{
-	 c=p[0]; p[0]=p[1]; p[1]=c;
-	 p+=2;
-	}
-  	break;
-   case 4:
-	while (n--)
-	{
-	 c=p[0]; p[0]=p[3]; p[3]=c;
-	 c=p[1]; p[1]=p[2]; p[2]=c;
-	 p+=4;
-	}
-  	break;
-   case 8:
-	while (n--)
-	{
-	 c=p[0]; p[0]=p[7]; p[7]=c;
-	 c=p[1]; p[1]=p[6]; p[6]=c;
-	 c=p[2]; p[2]=p[5]; p[5]=c;
-	 c=p[3]; p[3]=p[4]; p[4]=c;
-	 p+=8;
-	}
-  	break;
-   default:
-    error(S,"bad size");
-  	break;
-  }
- }
-}
-
 
 static int LoadChar(LoadState* S)
 {
@@ -234,7 +186,6 @@ static void LoadHeader(LoadState* S)
  char s[LUAC_HEADERSIZE];
  luaU_header(h);
  LoadBlock(S,s,LUAC_HEADERSIZE);
- S->swap=(s[6]!=h[6]); s[6]=h[6];
  IF (memcmp(h,s,LUAC_HEADERSIZE)!=0, "bad header");
 }
 

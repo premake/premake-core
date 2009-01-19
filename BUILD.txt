@@ -77,16 +77,16 @@ RELEASE AND DEBUG BUILDS
  directory, the one containing "_premake_main.lua".
  
  
-COMPILING SCRIPTS
+EMBEDDING SCRIPTS
 
  If you make changes to the core Lua scripts, you can integrate them 
- into the release build using the "compile" command:
+ into the release build using the "embed" command:
  
-   premake4 compile
+   premake4 embed
    
- This command compiles all of the scripts listed in _manifest.lua into
- bytecode and embeds them into src/host/bytecode.c. The next release 
- build will include the updated scripts.
+ This command embeds all of the scripts listed in _manifest.lua into
+ src/host/scripts.c as static strings. The next release build will 
+ include the updated scripts.
  
  
 CONFUSED?

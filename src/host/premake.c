@@ -24,8 +24,7 @@ static const char* scripts_path = NULL;
 
 
 /* precompiled bytecode buffer; in bytecode.c */
-extern const char* builtin_bytecode[];
-extern int builtin_sizes[];
+extern const char* builtin_scripts[];
 
 
 /* Built-in functions */
@@ -239,17 +238,11 @@ int load_builtin_scripts(lua_State* L)
 int load_builtin_scripts(lua_State* L)
 {
 	int i;
-	for (i = 0; builtin_sizes[i] > 0; ++i)
+	for (i = 0; builtin_scripts[i]; ++i)
 	{
-		/* use loadstring() to put the bytecodes on the stack */
-		lua_getglobal(L, "loadstring");
-		lua_pushlstring(L, builtin_bytecode[i], builtin_sizes[i]);
-
-		/* evaluate the chunk */
-		lua_pcall(L, 1, 1, 0);
-		if (lua_pcall(L, 0, 0, 0) != OKAY)
+		if (luaL_dostring(L, builtin_scripts[i]) != OKAY)
 		{
-			printf(ERROR_MESSAGE, lua_tostring(L,-1));
+			printf(ERROR_MESSAGE, lua_tostring(L, -1));
 			return !OKAY;
 		}
 	}
