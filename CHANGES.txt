@@ -14,6 +14,8 @@ This version is a complete rewrite of Premake.
 RC3 -> RC4
 
 - Embed scripts instead of bytecodes to avoid portability issues
+- solution() and project() now only set the active object when 
+  called with a name; remains unchanged otherwise
 
 RC2 -> RC3
 

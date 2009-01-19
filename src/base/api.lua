@@ -495,6 +495,10 @@
 --
 
 	function configuration(keywords)
+		if not keywords then
+			return premake.CurrentConfiguration
+		end
+		
 		local container, err = premake.getobject("container")
 		if (not container) then
 			error(err, 2)
@@ -535,85 +539,83 @@
 	
 		
 	function project(name)
-		if (name) then
-			-- identify the parent solution
-			local sln
-			if (type(premake.CurrentContainer) == "project") then
-				sln = premake.CurrentContainer.solution
-			else
-				sln = premake.CurrentContainer
-			end			
-			if (type(sln) ~= "solution") then
-				error("no active solution", 2)
-			end
-			
-			-- if this is a new project, create it
-			premake.CurrentContainer = sln.projects[name]
-			if (not premake.CurrentContainer) then
-				local prj = { }
-				premake.CurrentContainer = prj
-
-				-- add to master list keyed by both name and index
-				table.insert(sln.projects, prj)
-				sln.projects[name] = prj
-				
-				-- attach a type
-				setmetatable(prj, {
-					__type = "project",
-				})
-				
-				prj.solution       = sln
-				prj.name           = name
-				prj.basedir        = os.getcwd()
-				prj.location       = prj.basedir
-				prj.uuid           = os.uuid()
-				prj.blocks         = { }
-			end
+		if not name then
+			return iif(type(premake.CurrentContainer) == "project", premake.CurrentContainer, nil)
 		end
-	
+		
+		-- identify the parent solution
+		local sln
 		if (type(premake.CurrentContainer) == "project") then
-			-- add an empty, global configuration to the project
-			configuration { }
-			return premake.CurrentContainer
+			sln = premake.CurrentContainer.solution
 		else
-			return nil
-		end	
+			sln = premake.CurrentContainer
+		end			
+		if (type(sln) ~= "solution") then
+			error("no active solution", 2)
+		end
+		
+		-- if this is a new project, create it
+		premake.CurrentContainer = sln.projects[name]
+		if (not premake.CurrentContainer) then
+			local prj = { }
+			premake.CurrentContainer = prj
+
+			-- add to master list keyed by both name and index
+			table.insert(sln.projects, prj)
+			sln.projects[name] = prj
+			
+			-- attach a type
+			setmetatable(prj, {
+				__type = "project",
+			})
+			
+			prj.solution       = sln
+			prj.name           = name
+			prj.basedir        = os.getcwd()
+			prj.location       = prj.basedir
+			prj.uuid           = os.uuid()
+			prj.blocks         = { }
+		end
+
+		-- add an empty, global configuration to the project
+		configuration { }
+	
+		return premake.CurrentContainer
 	end
 
 
 	function solution(name)
-		if (name) then
-			premake.CurrentContainer = _SOLUTIONS[name]
-			if (not premake.CurrentContainer) then
-				local sln = { }
-				premake.CurrentContainer = sln
-
-				-- add to master list keyed by both name and index
-				table.insert(_SOLUTIONS, sln)
-				_SOLUTIONS[name] = sln
-				
-				-- attach a type
-				setmetatable(sln, { 
-					__type="solution"
-				})
-
-				sln.name           = name
-				sln.location       = os.getcwd()
-				sln.projects       = { }
-				sln.blocks         = { }
-				sln.configurations = { }
+		if not name then
+			if type(premake.CurrentContainer) == "project" then
+				return premake.CurrentContainer.solution
+			else
+				return premake.CurrentContainer
 			end
 		end
-
-		-- make the solution active and return it
-		if (type(premake.CurrentContainer) == "project") then
-			premake.CurrentContainer = premake.CurrentContainer.solution
-		end
 		
-		if (premake.CurrentContainer) then
-			-- add an empty, global configuration
-			configuration { }
+		premake.CurrentContainer = _SOLUTIONS[name]
+		if (not premake.CurrentContainer) then
+			local sln = { }
+			premake.CurrentContainer = sln
+
+			-- add to master list keyed by both name and index
+			table.insert(_SOLUTIONS, sln)
+			_SOLUTIONS[name] = sln
+			
+			-- attach a type
+			setmetatable(sln, { 
+				__type="solution"
+			})
+
+			sln.name           = name
+			sln.location       = os.getcwd()
+			sln.projects       = { }
+			sln.blocks         = { }
+			sln.configurations = { }
 		end
+
+		-- add an empty, global configuration
+		configuration { }
 		
 		return premake.CurrentContainer
 	end

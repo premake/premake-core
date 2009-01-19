@@ -110,10 +110,7 @@ end
 		
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
-		
-		-- strip duplicate line feeds
-		s = s:gsub("\n+", "\n")
-		
+
 		-- escape line feeds
 		s = s:gsub("\n", "\\n")
 		
@@ -129,6 +126,10 @@ end
 
 		-- strip tabs
 		s = s:gsub("[\t]", "")
+		
+		-- strip duplicate line feeds
+		s = s:gsub("\n+", "\n")
+		
 		
 		out:write("\t\"")
 		out:write(s)
