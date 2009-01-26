@@ -311,6 +311,7 @@
 		result.fullpath  = path.join(result.directory, result.name)
 		return result
 	end
+
 	
 	
 --
@@ -320,7 +321,7 @@
 
 	local function walksources(prj, files, fn, group, nestlevel, finished)
 		local grouplen = group:len()
-		local gname = iif(group:endswith("/"), group:sub(1,-2), group)
+		local gname = iif(group:endswith("/"), group:sub(1, -2), group)
 		
 		-- open this new group
 		if (nestlevel >= 0) then
@@ -346,7 +347,7 @@
 
 		-- process all files that belong in this group
 		for _,fname in ipairs(files) do
-			if (fname:startswith(group) and not fname:find("/", grouplen + 1, true)) then
+			if (fname:startswith(group) and not fname:find("[^\.]/", grouplen + 1)) then
 				fn(prj, fname, "GroupItem", nestlevel + 1)
 			end
 		end

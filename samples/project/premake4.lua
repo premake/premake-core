@@ -42,5 +42,3 @@ solution "PremakeTestbox"
 		end
 	} 
 
-print(os.findlib("hal"))
-

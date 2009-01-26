@@ -11,6 +11,10 @@ This version is a complete rewrite of Premake.
 - Upgraded to Lua 5.1.4
 - Many, many bug fixes
 
+RC4 -> 
+
+- Bug 2533504: Files above project root not added to project
+
 RC3 -> RC4
 
 - Embed scripts instead of bytecodes to avoid portability issues
