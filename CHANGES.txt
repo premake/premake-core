@@ -1,5 +1,5 @@
 -----
- 4.0 (in progress)
+ 4.0
 -----
 
 This version is a complete rewrite of Premake.
