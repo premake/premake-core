@@ -38,11 +38,8 @@
 					<% end %>
 				</Compiler>
 				<Linker>
-					<% if cfg.flags.NoSymbols then %>
-					<Add options="-s" />
-					<% end %>
-					<% for _,v in ipairs(cfg.linkoptions) do %>
-					<Add option="<%= premake.esc(v) %>" />
+					<% for _,flag in ipairs(table.join(cc.getldflags(cfg), cfg.linkoptions)) do %>
+					<Add option="<%= premake.esc(flag) %>" />
 					<% end %>
 					<% for _,v in ipairs(premake.getlinks(cfg, "all", "directory")) do %>
 					<Add directory="<%= premake.esc(v) %>" />

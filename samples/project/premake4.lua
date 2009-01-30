@@ -17,11 +17,15 @@ solution "PremakeTestbox"
 -- include all the projects
 	
 	include "CppConsoleApp"
-	include "CsConsoleApp"
 	include "CppWindowedApp"
 	include "CppSharedLib"
-	include "CsSharedLib"
 	include "CppStaticLib"
+	
+	if _ACTION ~= "codeblocks" then
+		include "CsSharedLib"
+		include "CsConsoleApp"
+	end
+	
 
 
 -- add to the built-in clean action

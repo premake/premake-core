@@ -3,7 +3,7 @@ project "CppConsoleApp"
 	kind     "ConsoleApp"
 	language "C++"
 	
-	files    { "*.cpp", "../fakefile.cpp" }
+	files    { "*.cpp" }
 	
 	includedirs { "I:/Code" }
 
