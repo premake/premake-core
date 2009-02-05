@@ -1,4 +1,11 @@
 -----
+ 4.1 (in progress)
+-----
+
+- Support links and libdirs for Visual Studio static libraries
+
+
+-----
  4.0
 -----
 

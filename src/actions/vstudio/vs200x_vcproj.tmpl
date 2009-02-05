@@ -162,7 +162,11 @@
 				TargetMachine="1"
 		<% else %>
 				Name="VCLibrarianTool"
+			<% if #cfg.links > 0 then %>
+				AdditionalDependencies="<%= table.concat(premake.getlinks(cfg, "all", "fullpath"), " ") %>"
+			<% end %>
 				OutputFile="$(OutDir)\<%= cfg.buildtarget.name %>"
+				AdditionalLibraryDirectories="<%= table.concat(premake.esc(path.translate(cfg.libdirs)) , ";") %>"
 		<% end %>
 			/>
 	<% elseif (block == "VCManagedResourceCompilerTool") then %>
