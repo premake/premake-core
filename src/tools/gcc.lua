@@ -16,7 +16,7 @@
 	local cflags =
 	{
 		ExtraWarnings  = "-Wall",
-		FatalWarning   = "-Werror",
+		FatalWarnings  = "-Werror",
 		NoFramePointer = "-fomit-frame-pointer",
 		Optimize       = "-O2",
 		OptimizeSize   = "-Os",

@@ -2,6 +2,7 @@
  4.1 (in progress)
 -----
 
+- Bug 2564404: FatalWarnings has no effect with gmake target
 - Support links and libdirs for Visual Studio static libraries
 
 
