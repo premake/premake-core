@@ -457,10 +457,16 @@
 -- The getter/setter implemention.
 --
 
-	local function accessor(name, value)
+	local function accessor(name, value)		
 		local kind    = premake.fields[name].kind
 		local scope   = premake.fields[name].scope
 		local allowed = premake.fields[name].allowed
+		
+		if (kind == "string" or kind == "path" and value) then
+			if type(value) ~= "string" then
+				error("string value expected", 3)
+			end
+		end
 		
 		if (kind == "string") then
 			return premake.setstring(scope, name, value, allowed)

@@ -4,6 +4,7 @@
 
 - Bug 2564404: FatalWarnings has no effect with gmake target
 - Support links and libdirs for Visual Studio static libraries
+- Fail gracefully when list is assigned to string field
 
 
 -----
