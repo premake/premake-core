@@ -184,7 +184,7 @@
 		
 		pchheader =
 		{
-			kind  = "path",
+			kind  = "string",
 			scope = "config",
 		},
 		
