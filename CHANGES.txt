@@ -6,6 +6,7 @@
 - Bug 2550759: pchheader option has wrong type
 - Support links and libdirs for Visual Studio static libraries
 - Fail gracefully when list is assigned to string field
+- Changed GCC flags to -fno-exceptions and -fno-rtti
 
 
 -----

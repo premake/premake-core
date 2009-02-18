@@ -26,8 +26,8 @@
 
 	local cxxflags =
 	{
-		NoExceptions   = "--no-exceptions",
-		NoRTTI         = "--no-rtti",
+		NoExceptions   = "-fno-exceptions",
+		NoRTTI         = "-fno-rtti",
 	}
 	
 
