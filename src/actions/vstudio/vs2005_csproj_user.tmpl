@@ -1,6 +1,0 @@
-<% eol = "\r\n" %>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ReferencePath><%= table.concat(table.translate(this.libdirs, function(v) return path.translate(path.getabsolute(this.location.."/"..v),"\\") end), ";") %></ReferencePath>
-  </PropertyGroup>
-</Project>        

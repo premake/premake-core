@@ -19,6 +19,26 @@
 -- Assertion functions
 --
 	
+	function test.capture(expected)
+		local actual = io.endcapture()
+
+		local ait = actual:gfind("(.-)" .. io.eol)
+		local eit = expected:gfind("(.-)\n")
+		
+		local linenum = 1
+		local atxt = ait()
+		local etxt = eit()
+		while etxt do
+			if (etxt ~= atxt) then
+				test.fail("(%d) expected:\n%s\n...but was:\n%s", linenum, etxt, atxt)
+			end
+			linenum = linenum + 1
+			atxt = ait()
+			etxt = eit()
+		end
+	end
+	
+	
 	function test.fail(format, ...)
 		-- convert nils into something more usefuls
 		for i = 1, arg.n do

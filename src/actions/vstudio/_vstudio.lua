@@ -290,13 +290,13 @@
 		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
-			{ ".sln",  _TEMPLATES.vs2002_solution },
+			{ ".sln",         premake.vs2002_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj", _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj", _TEMPLATES.vs2002_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", _TEMPLATES.vs2002_csproj_user, function(this) return this.language == "C#" end },
+			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj",      premake.vs2002_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", premake.vs2002_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,
@@ -313,13 +313,13 @@
 		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
-			{ ".sln",  _TEMPLATES.vs2003_solution },
+			{ ".sln",         premake.vs2003_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj", _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj", _TEMPLATES.vs2002_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", _TEMPLATES.vs2002_csproj_user, function(this) return this.language == "C#" end },
+			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj",      premake.vs2002_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", premake.vs2002_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,
@@ -336,13 +336,13 @@
 		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
-			{ ".sln",  _TEMPLATES.vs2005_solution },
+			{ ".sln",         premake.vs2005_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj",   _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj",   _TEMPLATES.vs2005_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", _TEMPLATES.vs2005_csproj_user, function(this) return this.language == "C#" end },
+			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj",      premake.vs2005_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", premake.vs2005_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,
@@ -359,13 +359,13 @@
 		valid_languages = { "C", "C++", "C#" },
 
 		solutiontemplates = {
-			{ ".sln",  _TEMPLATES.vs2005_solution },
+			{ ".sln",         premake.vs2005_solution },
 		},
 
 		projecttemplates = {
-			{ ".vcproj", _TEMPLATES.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj", _TEMPLATES.vs2005_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", _TEMPLATES.vs2005_csproj_user, function(this) return this.language == "C#" end },
+			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
+			{ ".csproj",      premake.vs2005_csproj, function(this) return this.language == "C#" end },
+			{ ".csproj.user", premake.vs2005_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
 		onclean = _VS.onclean,

@@ -14,6 +14,7 @@
 		"base/path.lua",
 		"base/string.lua",
 		"base/table.lua",
+		"base/io.lua",
 		"base/globals.lua",
 		"base/template.lua",
 		"base/project.lua",
@@ -25,6 +26,14 @@
 		"tools/ow.lua",
 		"base/validate.lua",
 		"base/help.lua",
+		"actions/vstudio/vs2002_solution.lua",
+		"actions/vstudio/vs2002_csproj.lua",
+		"actions/vstudio/vs2002_csproj_user.lua",
+		"actions/vstudio/vs200x_vcproj.lua",
+		"actions/vstudio/vs2003_solution.lua",
+		"actions/vstudio/vs2005_solution.lua",
+		"actions/vstudio/vs2005_csproj.lua",
+		"actions/vstudio/vs2005_csproj_user.lua",
 	}
 
 
@@ -39,14 +48,6 @@
 		"actions/make/make_solution.tmpl",
 		"actions/make/make_cpp.tmpl",
 		"actions/make/make_csharp.tmpl",
-		"actions/vstudio/vs2002_solution.tmpl",
-		"actions/vstudio/vs2002_csproj.tmpl",
-		"actions/vstudio/vs2002_csproj_user.tmpl",
-		"actions/vstudio/vs2003_solution.tmpl",
-		"actions/vstudio/vs2005_solution.tmpl",
-		"actions/vstudio/vs2005_csproj.tmpl",
-		"actions/vstudio/vs2005_csproj_user.tmpl",
-		"actions/vstudio/vs200x_vcproj.tmpl",
 	}
 	
 	

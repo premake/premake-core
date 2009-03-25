@@ -193,6 +193,19 @@
 			kind  = "path",
 			scope = "config",
 		},
+
+		platforms = 
+		{
+			kind  = "list",
+			scope = "solution",
+			allowed = {
+				"x32",
+				"x64",
+				"ppc",
+				"ppc64",
+				"xbox360"
+			}
+		},
 		
 		postbuildcommands =
 		{

@@ -89,36 +89,15 @@
 
 
 --
--- Open an overload of the io.open() function, which will create any missing
--- subdirectories in the filename if "mode" is set to writeable.
---
-
-	local builtin_open = io.open
-	function io.open(fname, mode)
-		if (mode) then
-			if (mode:find("w")) then
-				local dir = path.getdirectory(fname)
-				ok, err = os.mkdir(dir)
-				if (not ok) then
-					error(err, 0)
-				end
-			end
-		end
-		return builtin_open(fname, mode)
-	end
-	
-
-	
---
 -- A shortcut for printing formatted output.
 --
 
 	function printf(msg, ...)
 		print(string.format(msg, unpack(arg)))
 	end
+
 	
-	
-	
+		
 --
 -- An extension to type() to identify project object types by reading the
 -- "__type" field from the metatable.

@@ -2,6 +2,7 @@
  4.1 (in progress)
 -----
 
+- Added support for multiple target platforms
 - Bug 2564404: FatalWarnings has no effect with gmake target
 - Bug 2550759: pchheader option has wrong type
 - Support links and libdirs for Visual Studio static libraries

@@ -313,7 +313,55 @@
 	end
 
 	
+
+-- 
+-- Returns true if the solution contains at least one C/C++ project.
+--
+
+	function premake.hascppproject(sln)
+		for prj in premake.eachproject(sln) do
+			if premake.iscppproject(prj) then
+				return true
+			end
+		end
+	end
+
 	
+
+-- 
+-- Returns true if the solution contains at least one .NET project.
+--
+
+	function premake.hasdotnetproject(sln)
+		for prj in premake.eachproject(sln) do
+			if premake.isdotnetproject(prj) then
+				return true
+			end
+		end
+	end
+
+
+
+--
+-- Returns true if the project uses a C/C++ language.
+--
+
+	function premake.iscppproject(prj)
+		return (prj.language == "C" or prj.language == "C++")
+	end
+
+
+
+--
+-- Returns true if the project uses a .NET language.
+--
+
+	function premake.isdotnetproject(prj)
+		return (prj.language == "C#")
+	end
+	
+	
+			
 --
 -- Walk the list of source code files, breaking them into "groups" based
 -- on the directory hierarchy.

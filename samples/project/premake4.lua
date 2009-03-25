@@ -1,6 +1,7 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
-
+	platforms { "x32", "x64" }
+	
 -- solution level configuration
 	
 	configuration "Debug"
