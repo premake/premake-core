@@ -8,6 +8,24 @@
 	function premake.vs2005_solution(sln)
 		io.eol = '\r\n'
 		
+		-- Build the list of target platforms
+		local hascpp    = premake.hascppproject(sln)
+		local hasdotnet = premake.hasdotnetproject(sln)
+		
+		local platforms = { }
+		if hasdotnet then
+			table.insert(platforms, "Any CPU")
+		end
+		if hasdotnet and hascpp then
+			table.insert(platforms, "Mixed Platforms")
+		end
+		if hascpp then
+			platforms.cppdefault = #platforms + 1
+			for _, p in ipairs(premake.vstudio_get_platforms(sln.platforms, _ACTION)) do
+				table.insert(platforms, p)
+			end
+		end
+
 		-- Mark the file as Unicode
 		io.printf('\239\187\191')
 
@@ -19,7 +37,7 @@
 			io.printf('Microsoft Visual Studio Solution File, Format Version 10.00')
 			io.printf('# Visual Studio 2008')
 		end		
-
+		
 		-- Write out the list of project entries
 		for prj in premake.eachproject(sln) do
 			-- Build a relative path from the solution file to the project file
@@ -38,8 +56,8 @@
 		end
 
 		io.printf('Global')
-		premake.vs2005_solution_configurations(sln)
-		premake.vs2005_solution_project_configurations(sln)
+		premake.vs2005_solution_configurations(sln, platforms)
+		premake.vs2005_solution_project_configurations(sln, platforms)
 		premake.vs2005_solution_properties(sln)
 		io.printf('EndGlobal')
 	end
@@ -51,16 +69,13 @@
 -- lists all of the configuration/platform pairs that exist in the solution.
 --
 
-	function premake.vs2005_solution_configurations(sln)
-		local platforms = premake.vs2005_solution_platforms(sln)
+	function premake.vs2005_solution_configurations(sln, platforms) 
 		io.printf('\tGlobalSection(SolutionConfigurationPlatforms) = preSolution')
-		
 		for _, cfgname in ipairs(sln.configurations) do
 			for _, platname in ipairs(platforms) do
 				io.printf('\t\t%s|%s = %s|%s', cfgname, platname, cfgname, platname)
 			end
 		end
-		
 		io.printf('\tEndGlobalSection')
 	end
 	
@@ -71,10 +86,8 @@
 -- the configuration/platform pairs into each project of the solution.
 --
 
-	function premake.vs2005_solution_project_configurations(sln)
-		local platforms = premake.vs2005_solution_platforms(sln)
+	function premake.vs2005_solution_project_configurations(sln, platforms)
 		io.printf('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
-
 		for prj in premake.eachproject(sln) do
 			for _, cfgname in ipairs(sln.configurations) do
 				for i, platname in ipairs(platforms) do
@@ -86,7 +99,6 @@
 				end
 			end
 		end
-
 		io.printf('\tEndGlobalSection')
 	end
 	
@@ -105,53 +117,6 @@
 
 
 --
--- Translate the generic list of platforms into their Visual Studio equivalents.
---
-
-	function premake.vs2005_solution_platforms(sln)
-		-- see if I've already cached the list
-		if sln.__vs2005_platforms then
-			return sln.__vs2005_platforms
-		end
-		
-		local hascpp    = premake.hascppproject(sln)
-		local hasdotnet = premake.hasdotnetproject(sln)
-		local result = { }
-
-		if hasdotnet then
-			table.insert(result, "Any CPU")
-		end
-
-		if hasdotnet and hascpp then
-			table.insert(result, "Mixed Platforms")
-		end
-
-		if hascpp then
-			result._firstCppPlatform = #result + 1
-			if sln.platforms then
-				for _, pid in ipairs(sln.platforms) do
-					if pid == "x32" then
-						table.insert(result, "Win32")
-					elseif pid == "x64" then
-						table.insert(result, "x64")
-					end
-				end
-			end
-			
-			-- if no VS-compatible platforms were found, add a default
-			if #result < result._firstCppPlatform then
-				table.insert(result, "Win32")
-			end
-		end
-		
-		-- cache the result; I need it pretty often
-		sln.__vs2005_platforms = result
-		return result
-	end
-	
-	
-
---
 -- Map a solution-level platform to one compatible with the provided project.
 -- C++ platforms are mapped to "Any CPU" for .NET projects, and vice versa.
 --
@@ -164,5 +129,5 @@
 		
 		-- C++ projects use the current platform, or the first C++ platform 
 		-- if the current one is for .NET
-		return platforms[math.max(i, platforms._firstCppPlatform)]
+		return platforms[math.max(i, platforms.cppdefault)]
 	end

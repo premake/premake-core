@@ -4,17 +4,8 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
-	--
-	-- Write out an empty tool block; there are quite a few of these.
-	--
-	local function printemptyblock(name)
-		io.printf('\t\t\t<Tool')
-		io.printf('\t\t\t\tName="%s"', name)
-		io.printf('\t\t\t/>')
-	end
 
-	
-	-- Write out a custom build steps block.
+	-- Write out a custom build steps block
 	local function buildstepsblock(name, steps)
 		io.printf('\t\t\t<Tool')
 		io.printf('\t\t\t\tName="%s"', name)
@@ -50,7 +41,15 @@
 		io.printf('\tKeyword="%s"', iif(prj.flags.Managed, "ManagedCProj", "Win32Proj"))
 		io.printf('\t>')
 
-		premake.vs200x_vcproj_platforms(prj)
+		-- list target platforms
+		local platforms = premake.vstudio_get_platforms(prj.solution.platforms, _ACTION)
+		io.printf('\t<Platforms>')
+		for _, platform in ipairs(platforms) do
+			io.printf('\t\t<Platform')
+			io.printf('\t\t\tName="%s"', platform)
+			io.printf('\t\t/>')
+		end
+		io.printf('\t</Platforms>')
 
 		if _ACTION > "vs2003" then
 			io.printf('\t<ToolFiles>')
@@ -59,10 +58,7 @@
 
 		io.printf('\t<Configurations>')
 		
-		local platforms = premake.vs2005_solution_platforms(prj.solution)
-		for i = platforms._firstCppPlatform, #platforms do
-			local platform = platforms[i]
-		
+		for _, platform in ipairs(platforms) do
 			for cfg in premake.eachconfig(prj) do
 				-- Start a configuration
 				io.printf('\t\t<Configuration')
@@ -217,7 +213,9 @@
 					-- End build event blocks --
 						
 					else
-						printemptyblock(block)
+						io.printf('\t\t\t<Tool')
+						io.printf('\t\t\t\tName="%s"', block)
+						io.printf('\t\t\t/>')
 					end
 				end			
 				io.printf('\t\t</Configuration>')

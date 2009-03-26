@@ -143,6 +143,32 @@
 	
 
 --
+-- Map a list of platforms to their Visual Studio equivalents, taking the
+-- Visual Studio version into account. Note that multiple target platforms
+-- is only supported for Visual Studio 2005 or later right now.
+--
+
+	function premake.vstudio_get_platforms(platforms, version)
+		local result = { }
+		if version > "vs2003" and platforms then
+			for _, platform in ipairs(platforms) do
+				if platform == "x32" then
+					table.insert(result, "Win32")
+				elseif platform == "x64" then
+					table.insert(result, "x64")
+				end
+			end
+		end
+
+		-- make sure I've got at least one
+		if #result == 0 then
+			result = { "Win32" }
+		end
+		return result
+	end
+	
+	
+--
 -- Write out entries for the files element; called from premake.walksources().
 --
 

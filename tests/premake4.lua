@@ -16,6 +16,7 @@
 	dofile("test_api.lua")
 	dofile("test_targets.lua")
 	dofile("test_keywords.lua")
+	dofile("test_vstudio.lua")
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
 	dofile("test_vs2005_sln.lua")
