@@ -14,6 +14,7 @@
 	function T.vs2002_sln.setup()
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
+		platforms {}
 		
 		prj = project "MyProject"
 		language "C++"

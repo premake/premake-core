@@ -12,8 +12,9 @@
 		_ACTION = "gmake"
 		result = ""
 	end
-		
-
+	
+	
+	
 --
 -- premake.walksources() tests
 --

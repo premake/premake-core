@@ -39,15 +39,6 @@
 	end
 	
 	
-	function test.capturecontains(expected)
-		local actual = io.endcapture()
-		expected = expected:gsub("\n", io.eol)
-		if (not actual:find(expected)) then
-			test.fail("result did not contain the expected text")
-		end
-	end
-	
-	
 	function test.fail(format, ...)
 		-- convert nils into something more usefuls
 		for i = 1, arg.n do

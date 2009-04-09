@@ -8,24 +8,6 @@
 	function premake.vs2005_solution(sln)
 		io.eol = '\r\n'
 		
-		-- Build the list of target platforms
-		local hascpp    = premake.hascppproject(sln)
-		local hasdotnet = premake.hasdotnetproject(sln)
-		
-		local platforms = { }
-		if hasdotnet then
-			table.insert(platforms, "Any CPU")
-		end
-		if hasdotnet and hascpp then
-			table.insert(platforms, "Mixed Platforms")
-		end
-		if hascpp then
-			platforms.cppdefault = #platforms + 1
-			for _, p in ipairs(premake.vstudio_get_platforms(sln.platforms, _ACTION)) do
-				table.insert(platforms, p)
-			end
-		end
-
 		-- Mark the file as Unicode
 		io.printf('\239\187\191')
 
@@ -37,7 +19,7 @@
 			io.printf('Microsoft Visual Studio Solution File, Format Version 10.00')
 			io.printf('# Visual Studio 2008')
 		end		
-		
+
 		-- Write out the list of project entries
 		for prj in premake.eachproject(sln) do
 			-- Build a relative path from the solution file to the project file
@@ -55,6 +37,8 @@
 			io.printf('EndProject')
 		end
 
+		local platforms = premake.vs2005_solution_platforms(sln)
+		
 		io.printf('Global')
 		premake.vs2005_solution_configurations(sln, platforms)
 		premake.vs2005_solution_project_configurations(sln, platforms)
@@ -69,10 +53,11 @@
 -- lists all of the configuration/platform pairs that exist in the solution.
 --
 
-	function premake.vs2005_solution_configurations(sln, platforms) 
+	function premake.vs2005_solution_configurations(sln, platforms)
 		io.printf('\tGlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		for _, cfgname in ipairs(sln.configurations) do
-			for _, platname in ipairs(platforms) do
+			for _, platform in ipairs(platforms) do
+				local platname = premake.vstudio_platforms[platform]
 				io.printf('\t\t%s|%s = %s|%s', cfgname, platname, cfgname, platname)
 			end
 		end
@@ -90,8 +75,19 @@
 		io.printf('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
 		for prj in premake.eachproject(sln) do
 			for _, cfgname in ipairs(sln.configurations) do
-				for i, platname in ipairs(platforms) do
-					local mappedname = premake.vs2005_map_platform(prj, platforms, i)
+				for i, platform in ipairs(platforms) do
+					local platname = premake.vstudio_platforms[platform]
+					
+					-- .NET projects always use "Any CPU" platform (for now, at least)
+					-- C++ projects use the current platform, or the first C++ platform 
+					-- if the current one is for .NET
+					local mappedname
+					if premake.isdotnetproject(prj) then
+						mappedname = "Any CPU"
+					else
+						mappedname = premake.vstudio_platforms[platforms[math.max(i, platforms._offset)]]
+					end
+
 					io.printf('\t\t{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, cfgname, platname, cfgname, mappedname)
 					if (platname == mappedname or platname == "Mixed Platforms") then
 						io.printf('\t\t{%s}.%s|%s.Build.0 = %s|%s',  prj.uuid, cfgname, platname, cfgname, mappedname)
@@ -99,13 +95,14 @@
 				end
 			end
 		end
+
 		io.printf('\tEndGlobalSection')
 	end
 	
 	
 
 --
--- Write out contents of the SolutionProperties section; current unused.
+-- Write out contents of the SolutionProperties section; currently unused.
 --
 
 	function premake.vs2005_solution_properties(sln)	
@@ -117,17 +114,24 @@
 
 
 --
--- Map a solution-level platform to one compatible with the provided project.
--- C++ platforms are mapped to "Any CPU" for .NET projects, and vice versa.
+-- Create a list of platforms used by this solution. A special member _offset 
+-- points to the first C/C++ platform (skipping over .NET-related platforms).
 --
 
-	function premake.vs2005_map_platform(prj, platforms, i)
-		-- .NET projects always use "Any CPU" platform (for now, at least)
-		if premake.isdotnetproject(prj) then
-			return "Any CPU"
+	function premake.vs2005_solution_platforms(sln)
+		local platforms = premake.filterplatforms(sln, premake.vstudio_platforms, "x32")
+		platforms._offset = 1
+				
+		local hascpp    = premake.hascppproject(sln)
+		local hasdotnet = premake.hasdotnetproject(sln)
+		if hasdotnet then
+			table.insert(platforms, 1, "any")
+			platforms._offset = 2
+		end
+		if hasdotnet and hascpp then
+			table.insert(platforms, 2, "mixed")
+			platforms._offset = 3
 		end
 		
-		-- C++ projects use the current platform, or the first C++ platform 
-		-- if the current one is for .NET
-		return platforms[math.max(i, platforms.cppdefault)]
+		return platforms
 	end

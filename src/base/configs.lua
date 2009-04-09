@@ -5,7 +5,7 @@
 -- data down into simpler objects, keeping only the settings that apply to 
 -- the current runtime environment.
 --
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
 --
 
 
@@ -28,6 +28,7 @@
 
 --
 -- Returns a list of all of the active terms from the current environment.
+-- See the docs for configuration() for more information about the terms.
 --
 
 	function premake.getactiveterms()
@@ -66,6 +67,9 @@
 	
 --
 -- Test a single configuration block keyword against a list of terms.
+-- The terms are a mix of key/value pairs. The keyword is tested against
+-- the values; on a match, the corresponding key is returned. This 
+-- enables testing for required values in iskeywordsmatch(), below.
 --
 
 	function premake.iskeywordmatch(keyword, terms)
@@ -88,6 +92,8 @@
 		
 --
 -- Checks a set of configuration block keywords against a list of terms.
+-- I've already forgotten the purpose of the required terms (d'oh!) but
+-- I'll see if I can figure it out on a future refactoring.
 --
 
 	function premake.iskeywordsmatch(keywords, terms)
@@ -112,8 +118,9 @@
 
 
 --
--- Copies all of the fields from an object into a configuration object. List
--- fields are appended, string fields are overwritten.
+-- Copies all of the fields from one settings object into another. List fields are
+-- appended, string fields are overwritten. In this way, multiple settings blocks
+-- are merged together to create a full configuration set.
 --
 
 	local function copyfields(cfg, this)
@@ -168,16 +175,30 @@
 -- Builds a configuration object for a particular project/configuration pair. Flattens
 -- the object hierarchy, and discards any settings that do not apply to this environment.
 --
+-- @param prj
+--    The project being queried.
+-- @param cfgname
+--    The target build configuration; only settings applicable to this configuration
+--    will be returned. May be nil to query project-wide settings.
+-- @param pltname
+--    The target platform; only settings applicable to this platform will be returned.
+--    Maybe be nil to query platform-independent settings.
+-- @returns 
+--    A configuration object, aggregating all of the blocks whose keywords matched the 
+--    platform and configuration provided, as well as the active environment.
+--
 
-	local function buildprojectconfig(prj, cfgname)
+	local function buildprojectconfig(prj, cfgname, pltname)
 		-- create the base configuration, flattening the list of objects and
 		-- filtering out settings which do not match the current environment
 		local terms = premake.getactiveterms()
-		terms.config = (cfgname or ""):lower()
+		terms.platform = (pltname or ""):lower()
+		terms.config   = (cfgname or ""):lower()
 
-		local cfg   = buildconfig(prj, terms)
-		cfg.name    = cfgname
-		cfg.project = prj
+		local cfg    = buildconfig(prj, terms)
+		cfg.name     = cfgname
+		cfg.platform = pltname
+		cfg.project  = prj
 		
 		-- set the project location, if not already set
 		cfg.location = cfg.location or cfg.basedir
@@ -253,31 +274,39 @@
 		end
 
 		-- build a unique objects directory
-		local function getbasedir(cfg)
-			return path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj")
+		local function buildpath(cfg, variant)
+			local dir = path.getabsolute(path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj"))
+			if variant > 1 then
+				dir = path.join(dir, cfg.platform)
+			end
+			if variant > 2 then
+				dir = path.join(dir, cfg.name)
+			end
+			if variant > 3 then
+				dir = path.join(dir, cfg.project.name)
+			end
+			return dir
 		end
 		
-		local function getuniquedir(cfg)
-			local thisbase  = getbasedir(cfg)
-			local thislocal = path.join(thisbase, cfg.name)
-			local isbasematched = false
+		local function getuniquedir(thiscfg)
+			local variant = 1
+			local thispath = buildpath(thiscfg, variant)
 			for _, sln in ipairs(_SOLUTIONS) do
 				for _, prj in ipairs(sln.projects) do
 					for _, thatcfg in pairs(prj.__configs) do
-						if thatcfg ~= cfg then
-							local thatbase = getbasedir(thatcfg)
-							if thisbase == thatbase then
-								isbasematched = true
-								if thislocal == path.join(thatbase, thatcfg.name) then
-									return path.join(thislocal, cfg.project.name)
-								end
+						if thiscfg ~= thatcfg then
+							local thatpath = buildpath(thatcfg, variant)
+							while thispath == thatpath and variant < 4 do
+								variant = variant + 1
+								thispath = buildpath(thiscfg, variant)
+								thatpath = buildpath(thatcfg, variant)
 							end
 						end
 					end
 				end
 			end
 			
-			return iif(isbasematched, thislocal, thisbase)
+			return thispath
 		end
 		
 		cfg.objectsdir = path.getrelative(cfg.location, getuniquedir(cfg))
@@ -311,9 +340,21 @@
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
 				prj.__configs = { }
+				
+				-- create a "root" config for project-wide settings
 				prj.__configs[""] = buildprojectconfig(prj)
-				for _, name in ipairs(sln.configurations) do
-					prj.__configs[name] = buildprojectconfig(prj, name)
+				
+				-- then one per build configuration
+				for _, cfgname in ipairs(sln.configurations) do
+					prj.__configs[cfgname] = buildprojectconfig(prj, cfgname)
+					
+					-- then one per build configuration/platform pair
+					if sln.platforms then
+						for _, pltname in ipairs(sln.platforms) do
+							prj.__configs[cfgname..":"..pltname] = buildprojectconfig(prj, cfgname, pltname)
+						end
+					end
+					
 				end
 			end
 		end

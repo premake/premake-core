@@ -3,6 +3,7 @@
 -----
 
 - Added support for multiple target platforms
+- Added Xbox 360 support to Visual Studio 2005/2008
 - Bug 2564404: FatalWarnings has no effect with gmake target
 - Bug 2550759: pchheader option has wrong type
 - Support links and libdirs for Visual Studio static libraries

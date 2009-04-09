@@ -1,7 +1,7 @@
 --
 -- tests/premake4.lua
 -- Automated test suite for Premake 4.x
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
 --
 
 	dofile("testfx.lua")
@@ -13,10 +13,11 @@
 	dofile("test_template.lua")
 	dofile("test_premake.lua")
 	dofile("test_project.lua")
+	dofile("test_configs.lua")
+	dofile("test_platforms.lua")
 	dofile("test_api.lua")
 	dofile("test_targets.lua")
 	dofile("test_keywords.lua")
-	dofile("test_vstudio.lua")
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
 	dofile("test_vs2005_sln.lua")

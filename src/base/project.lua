@@ -1,24 +1,27 @@
 --
 -- project.lua
 -- Functions for working with the project data.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 
-
 --
--- Iterator for a project's configuration objects.
+-- Returns an iterator for a set of build configuration settings. If a platform is
+-- specified, settings specific to that platform and build configuration pair are
+-- returned.
 --
 
-	function premake.eachconfig(prj)
+	function premake.eachconfig(prj, platform)
 		-- I probably have the project root config, rather than the actual project
 		if prj.project then prj = prj.project end
+		
+		local cfgs = prj.solution.configurations
 		local i = 0
-		local t = prj.solution.configurations
+		
 		return function ()
 			i = i + 1
-			if (i <= #t) then
-				return prj.__configs[t[i]]
+			if i <= #cfgs then
+				return premake.getconfig(prj, cfgs[i], platform)
 			end
 		end
 	end
@@ -91,6 +94,36 @@
 	
 	
 
+--
+-- Given a map of supported platform identifiers, filters the solution's list
+-- of platforms to match. A map takes the form of a table like:
+--
+--  { x32 = "Win32", x64 = "x64" }
+--
+-- Only platforms that are listed in both the solution and the map will be
+-- included in the results. An option default platform may also be specified;
+-- if the result set would otherwise be empty this platform will be used.
+--
+
+	function premake.filterplatforms(sln, map, default)
+		local result = { }
+		if sln.platforms then
+			for _, p in ipairs(sln.platforms) do
+				if map[p] then
+					table.insert(result, p)
+				end
+			end
+		end
+		
+		if #result == 0 and default then
+			table.insert(result, default)
+		end
+		
+		return result
+	end
+	
+
+
 -- 
 -- Locate a project by name; case insensitive.
 --
@@ -122,14 +155,34 @@
 
 
 --
--- Retrieve a configuration for a given project/configuration pairing. If
--- `cfgname` is nil, the project's root configuration will be returned.
+-- Retrieve a configuration for a given project/configuration pairing.
+-- @param prj
+--   The project to query.
+-- @param cfgname
+--   The target build configuration; only settings applicable to this configuration
+--   will be returned. May be nil to retrieve project-wide settings.
+-- @param pltname
+--   The target platform; only settings applicable to this platform will be returned.
+--   May be nil to retrieve platform-independent settings.
+-- @returns
+--   A configuration object containing all the settings for the given platform/build
+--   configuration pair.
 --
 
-	function premake.getconfig(prj, cfgname)
+	function premake.getconfig(prj, cfgname, pltname)
 		-- might have the root configuration, rather than the actual project
 		if prj.project then prj = prj.project end
-		return prj.__configs[cfgname or ""]
+		
+		-- if platform is not included in the solution, use general settings instead
+		if not table.contains(prj.solution.platforms or {}, pltname) then
+			pltname = nil
+		end
+		
+		-- build a cache key
+		local key = cfgname or ""
+		if pltname then key = key .. ":" .. pltname end
+		
+		return prj.__configs[key]
 	end
 
 

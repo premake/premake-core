@@ -5,7 +5,10 @@
 --
 
 
-	-- Write out a custom build steps block
+--
+-- Write out a custom build steps block.
+--
+
 	local function buildstepsblock(name, steps)
 		io.printf('\t\t\t<Tool')
 		io.printf('\t\t\t\tName="%s"', name)
@@ -16,6 +19,89 @@
 	end
 
 
+--
+-- Return a list of sections for a particular Visual Studio version and target platform.
+--
+
+	local function getsections(version, platform)
+		if version == "vs2002" then
+			return {
+				"VCCLCompilerTool",
+				"VCCustomBuildTool",
+				"VCLinkerTool",
+				"VCMIDLTool",
+				"VCPostBuildEventTool",
+				"VCPreBuildEventTool",
+				"VCPreLinkEventTool",
+				"VCResourceCompilerTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCWebDeploymentTool"
+			}
+		end
+		if version == "vs2003" then
+			return {
+				"VCCLCompilerTool",
+				"VCCustomBuildTool",
+				"VCLinkerTool",
+				"VCMIDLTool",
+				"VCPostBuildEventTool",
+				"VCPreBuildEventTool",
+				"VCPreLinkEventTool",
+				"VCResourceCompilerTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebDeploymentTool",
+				"VCManagedWrapperGeneratorTool",
+				"VCAuxiliaryManagedWrapperGeneratorTool"
+			}
+		end
+		if platform == "xbox360" then
+			return {
+				"VCPreBuildEventTool",
+				"VCCustomBuildTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCMIDLTool",
+				"VCCLX360CompilerTool",
+				"VCManagedResourceCompilerTool",
+				"VCResourceCompilerTool",
+				"VCPreLinkEventTool",
+				"VCX360LinkerTool",
+				"VCALinkTool",
+				"VCX360ImageTool",
+				"VCBscMakeTool",
+				"VCX360DeploymentTool",
+				"VCPostBuildEventTool",
+				"DebuggerTool",
+			}
+		else
+			return {	
+				"VCPreBuildEventTool",
+				"VCCustomBuildTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCMIDLTool",
+				"VCCLCompilerTool",
+				"VCManagedResourceCompilerTool",
+				"VCResourceCompilerTool",
+				"VCPreLinkEventTool",
+				"VCLinkerTool",
+				"VCALinkTool",
+				"VCManifestTool",
+				"VCXDCMakeTool",
+				"VCBscMakeTool",
+				"VCFxCopTool",
+				"VCAppVerifierTool",
+				"VCWebDeploymentTool",
+				"VCPostBuildEventTool"
+			}	
+		end
+	end
+	
+
+--
+-- The main function: write the project file.
+--
 
 	function premake.vs200x_vcproj(prj)
 		io.eol = "\r\n"
@@ -41,12 +127,12 @@
 		io.printf('\tKeyword="%s"', iif(prj.flags.Managed, "ManagedCProj", "Win32Proj"))
 		io.printf('\t>')
 
-		-- list target platforms
-		local platforms = premake.vstudio_get_platforms(prj.solution.platforms, _ACTION)
+		-- list the target platforms
+		local platforms = premake.vstudio_filterplatforms(prj.solution)
 		io.printf('\t<Platforms>')
 		for _, platform in ipairs(platforms) do
 			io.printf('\t\t<Platform')
-			io.printf('\t\t\tName="%s"', platform)
+			io.printf('\t\t\tName="%s"', premake.vstudio_platforms[platform])
 			io.printf('\t\t/>')
 		end
 		io.printf('\t</Platforms>')
@@ -57,12 +143,12 @@
 		end
 
 		io.printf('\t<Configurations>')
-		
 		for _, platform in ipairs(platforms) do
-			for cfg in premake.eachconfig(prj) do
+			for cfg in premake.eachconfig(prj, platform) do
+
 				-- Start a configuration
 				io.printf('\t\t<Configuration')
-				io.printf('\t\t\tName="%s|%s"', premake.esc(cfg.name), platform)
+				io.printf('\t\t\tName="%s|%s"', premake.esc(cfg.name), premake.vstudio_platforms[platform])
 				io.printf('\t\t\tOutputDirectory="%s"', premake.esc(cfg.buildtarget.directory))
 				io.printf('\t\t\tIntermediateDirectory="%s"', premake.esc(cfg.objectsdir))
 				io.printf('\t\t\tConfigurationType="%s"', _VS.cfgtype(cfg))
@@ -72,12 +158,12 @@
 				end
 				io.printf('\t\t\t>')
 				
-				for _, block in ipairs(_VS[_ACTION]) do
+				for _, block in ipairs(getsections(_ACTION, platform)) do
 				
 					-- Compiler block --
-					if block == "VCCLCompilerTool" then
+					if block == "VCCLCompilerTool" or block == "VCCLX360CompilerTool" then
 						io.printf('\t\t\t<Tool')
-						io.printf('\t\t\t\tName="VCCLCompilerTool"')
+						io.printf('\t\t\t\tName="%s"', block)
 						if #cfg.buildoptions > 0 then
 							io.printf('\t\t\t\tAdditionalOptions="%s"', table.concat(premake.esc(cfg.buildoptions), " "))
 						end
@@ -136,10 +222,10 @@
 					-- End compiler block --
 		
 					-- Linker block --
-					elseif block == "VCLinkerTool" then
+					elseif block == "VCLinkerTool" or block == "VCX360LinkerTool" then
 						io.printf('\t\t\t<Tool')
 						if cfg.kind ~= "StaticLib" then
-							io.printf('\t\t\t\tName="VCLinkerTool"')
+							io.printf('\t\t\t\tName="%s"', block)
 							if cfg.flags.NoImportLib then
 								io.printf('\t\t\t\tIgnoreImportLibrary="%s"', _VS.bool(true))
 							end
@@ -211,13 +297,26 @@
 					elseif block == "VCPostBuildEventTool" then
 						buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
 					-- End build event blocks --
+					
+					-- Xbox 360 custom sections --
+					elseif block == "VCX360DeploymentTool" then
+						io.printf('\t\t\t<Tool')
+						io.printf('\t\t\t\tName="VCX360DeploymentTool"')
+						io.printf('\t\t\t\tDeploymentType="0"')
+						io.printf('\t\t\t/>')
+						
+					elseif block == "DebuggerTool" then
+						io.printf('\t\t\t<DebuggerTool')
+						io.printf('\t\t\t/>')
+					-- End Xbox 360 custom sections --
 						
 					else
 						io.printf('\t\t\t<Tool')
 						io.printf('\t\t\t\tName="%s"', block)
 						io.printf('\t\t\t/>')
 					end
-				end			
+					
+				end
 				io.printf('\t\t</Configuration>')
 			end
 		end
@@ -236,29 +335,3 @@
 	end
 
 
---
--- Write out the platforms block, listing all of the platforms targeted in the project.
---
-
-	function premake.vs200x_vcproj_platforms(prj)
-		io.printf('\t<Platforms>')
-
-		-- I haven't implement platforms for VS2002/2003 yet
-		if _ACTION < "vs2005" then
-			io.printf('\t\t<Platform')
-			io.printf('\t\t\tName="Win32"')
-			io.printf('\t\t/>')
-		else
-			-- only list C/C++ platforms; skip the generic .NET ones
-			local platforms = premake.vs2005_solution_platforms(prj.solution)
-			for i = platforms._firstCppPlatform, #platforms do
-				io.printf('\t\t<Platform')
-				io.printf('\t\t\tName="%s"', platforms[i])
-				io.printf('\t\t/>')
-			end
-		end
-		
-		io.printf('\t</Platforms>')
-	end
-
-	

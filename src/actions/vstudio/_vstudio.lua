@@ -8,60 +8,81 @@
 
 
 --
--- Configuration blocks used by each version.
+-- Map Premake platform identifiers to the Visual Studio versions. Adds the Visual
+-- Studio specific "any" and "mixed" to make solution generation easier.
 --
 
-	_VS.vs2002 = {
-		"VCCLCompilerTool",
-		"VCCustomBuildTool",
-		"VCLinkerTool",
-		"VCMIDLTool",
-		"VCPostBuildEventTool",
-		"VCPreBuildEventTool",
-		"VCPreLinkEventTool",
-		"VCResourceCompilerTool",
-		"VCWebServiceProxyGeneratorTool",
-		"VCWebDeploymentTool"
+	premake.vstudio_platforms = { 
+		any     = "Any CPU", 
+		mixed   = "Mixed Platforms", 
+		x32     = "Win32", 
+		x64     = "x64",
+		xbox360 = "Xbox 360",
 	}
+
+
+
+--
+-- Returns the architecture identifier for a project.
+--
+
+	function _VS.arch(prj)
+		if (prj.language == "C#") then
+			if (_ACTION < "vs2005") then
+				return ".NET"
+			else
+				return "Any CPU"
+			end
+		else
+			return "Win32"
+		end
+	end
 	
-	_VS.vs2003 = {
-		"VCCLCompilerTool",
-		"VCCustomBuildTool",
-		"VCLinkerTool",
-		"VCMIDLTool",
-		"VCPostBuildEventTool",
-		"VCPreBuildEventTool",
-		"VCPreLinkEventTool",
-		"VCResourceCompilerTool",
-		"VCWebServiceProxyGeneratorTool",
-		"VCXMLDataGeneratorTool",
-		"VCWebDeploymentTool",
-		"VCManagedWrapperGeneratorTool",
-		"VCAuxiliaryManagedWrapperGeneratorTool"
-	}
 	
-	_VS.vs2005 = {
-		"VCPreBuildEventTool",
-		"VCCustomBuildTool",
-		"VCXMLDataGeneratorTool",
-		"VCWebServiceProxyGeneratorTool",
-		"VCMIDLTool",
-		"VCCLCompilerTool",
-		"VCManagedResourceCompilerTool",
-		"VCResourceCompilerTool",
-		"VCPreLinkEventTool",
-		"VCLinkerTool",
-		"VCALinkTool",
-		"VCManifestTool",
-		"VCXDCMakeTool",
-		"VCBscMakeTool",
-		"VCFxCopTool",
-		"VCAppVerifierTool",
-		"VCWebDeploymentTool",
-		"VCPostBuildEventTool"
-	}	
-		
-	_VS.vs2008 = _VS.vs2005
+
+--
+-- Return the version-specific text for a boolean value.
+-- (this should probably go in vs200x_vcproj.lua)
+--
+
+	function _VS.bool(value)
+		if (_ACTION < "vs2005") then
+			return iif(value, "TRUE", "FALSE")
+		else
+			return iif(value, "true", "false")
+		end
+	end
+
+
+
+--
+-- Return a configuration type index.
+-- (this should probably go in vs200x_vcproj.lua)
+--
+
+	function _VS.cfgtype(cfg)
+		if (cfg.kind == "SharedLib") then
+			return 2
+		elseif (cfg.kind == "StaticLib") then
+			return 4
+		else
+			return 1
+		end
+	end
+	
+	
+
+--
+-- Extend the filterplatforms() function to handle the different sets of
+-- supported platforms for various Visual Studio versions. See filterplatforms()
+-- for more details.
+--
+
+	function premake.vstudio_filterplatforms(sln)
+		local supported = iif(_ACTION < "vs2005", {}, premake.vstudio_platforms)
+		return premake.filterplatforms(sln, supported, "x32")
+	end
+	
 
 
 --
@@ -94,82 +115,10 @@
 	end
 	
 	
---
--- Returns the architecture identifier for a project.
---
 
-	function _VS.arch(prj)
-		if (prj.language == "C#") then
-			if (_ACTION < "vs2005") then
-				return ".NET"
-			else
-				return "Any CPU"
-			end
-		else
-			return "Win32"
-		end
-	end
-	
-	
-
---
--- Return the action specific text for a boolean value.
---
-
-	function _VS.bool(value)
-		if (_ACTION < "vs2005") then
-			return iif(value, "TRUE", "FALSE")
-		else
-			return iif(value, "true", "false")
-		end
-	end
-	
-	
-		
---
--- Return a configuration type index.
---
-
-	function _VS.cfgtype(cfg)
-		if (cfg.kind == "SharedLib") then
-			return 2
-		elseif (cfg.kind == "StaticLib") then
-			return 4
-		else
-			return 1
-		end
-	end
-	
-	
-
---
--- Map a list of platforms to their Visual Studio equivalents, taking the
--- Visual Studio version into account. Note that multiple target platforms
--- is only supported for Visual Studio 2005 or later right now.
---
-
-	function premake.vstudio_get_platforms(platforms, version)
-		local result = { }
-		if version > "vs2003" and platforms then
-			for _, platform in ipairs(platforms) do
-				if platform == "x32" then
-					table.insert(result, "Win32")
-				elseif platform == "x64" then
-					table.insert(result, "x64")
-				end
-			end
-		end
-
-		-- make sure I've got at least one
-		if #result == 0 then
-			result = { "Win32" }
-		end
-		return result
-	end
-	
-	
 --
 -- Write out entries for the files element; called from premake.walksources().
+-- (this should probably go in vs200x_vcproj.lua)
 --
 
 	local function output(indent, value)
@@ -216,6 +165,7 @@
 	
 --
 -- Return the optimization code.
+-- (this should probably go in vs200x_vcproj.lua)
 --
 
 	function _VS.optimization(cfg)
@@ -254,6 +204,7 @@
 
 -- 
 -- Returns the runtime code for a configuration.
+-- (this should probably go in vs200x_vcproj.lua)
 --
 
 	function _VS.runtime(cfg)
@@ -265,10 +216,11 @@
 		end
 	end
 
-	
+
 
 --
 -- Return the debugging symbols level for a configuration.
+-- (this should probably go in vs200x_vcproj.lua)
 --
 
 	function _VS.symbols(cfg)

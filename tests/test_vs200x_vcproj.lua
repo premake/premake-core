@@ -14,6 +14,7 @@
 	function T.vs200x_vcproj.setup()
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
+		platforms {}
 		
 		prj = project "MyProject"
 		language "C++"
@@ -231,59 +232,15 @@
 -- Test multiple platforms
 --
 
-	function T.vs200x_vcproj.PlatformsBlock_OnMultiplePlatforms()
-		platforms { "x32", "x64" }		
-		prepare()
-		premake.vs200x_vcproj(prj)
-		test.capturecontains [[
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-		<Platform
-			Name="x64"
-		/>
-	</Platforms>
-	]]
-	end
-	
-
-	function T.vs200x_vcproj.PlatformConfigs_OnMultiplePlatforms()
+	function T.vs200x_vcproj.Platforms_OnMultiplePlatforms()
 		platforms { "x32", "x64" }
+
 		prepare()
 		premake.vs200x_vcproj(prj)
 		local result = io.endcapture()
+		
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Debug|Win32"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Release|Win32"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Debug|x64"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Release|x64"\r\n')
-	end
-
-
-
-	function T.vs200x_vcproj.PlatformsBlock_Ignored_OnVs2003()
-		platforms { "x32", "x64" }
-		_ACTION = "vs2003"
-		prepare()
-		premake.vs200x_vcproj(prj)
-		test.capturecontains [[
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-	</Platforms>
-	]]
-	end
-	
-
-	function T.vs200x_vcproj.PlatformConfigs_Ignored_OnMultiplePlatforms()
-		platforms { "x32", "x64" }
-		_ACTION = "vs2003"
-		prepare()
-		premake.vs200x_vcproj(prj)
-		local result = io.endcapture()
-		test.istrue(result:find '<Configuration\r\n\t\t\tName="Debug|Win32"\r\n')
-		test.istrue(result:find '<Configuration\r\n\t\t\tName="Release|Win32"\r\n')
-		test.isfalse(result:find '<Configuration\r\n\t\t\tName="Debug|x64"\r\n')
-		test.isfalse(result:find '<Configuration\r\n\t\t\tName="Release|x64"\r\n')
 	end
