@@ -7,12 +7,12 @@
 	function premake.vs2005_csproj_user(prj)
 		io.eol = "\r\n"
 		
-		io.printf('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-		io.printf('  <PropertyGroup>')
+		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p('  <PropertyGroup>')
 		
 		local refpaths = table.translate(prj.libdirs, function(v) return path.getabsolute(prj.location .. "/" .. v) end)
-		io.printf('    <ReferencePath>%s</ReferencePath>', path.translate(table.concat(refpaths, ";"), "\\"))
-		io.printf('  </PropertyGroup>')
-		io.printf('</Project>')
+		_p('    <ReferencePath>%s</ReferencePath>', path.translate(table.concat(refpaths, ";"), "\\"))
+		_p('  </PropertyGroup>')
+		_p('</Project>')
 		
 	end

@@ -9,15 +9,15 @@
 		io.eol = '\r\n'
 		
 		-- Mark the file as Unicode
-		io.printf('\239\187\191')
+		_p('\239\187\191')
 
 		-- Write the solution file version header
 		if _ACTION == "vs2005" then
-			io.printf('Microsoft Visual Studio Solution File, Format Version 9.00')
-			io.printf('# Visual Studio 2005')
+			_p('Microsoft Visual Studio Solution File, Format Version 9.00')
+			_p('# Visual Studio 2005')
 		else
-			io.printf('Microsoft Visual Studio Solution File, Format Version 10.00')
-			io.printf('# Visual Studio 2008')
+			_p('Microsoft Visual Studio Solution File, Format Version 10.00')
+			_p('# Visual Studio 2008')
 		end		
 
 		-- Write out the list of project entries
@@ -25,25 +25,25 @@
 			-- Build a relative path from the solution file to the project file
 			local projpath = path.translate(path.getrelative(sln.location, _VS.projectfile(prj)), "\\")
 			
-			io.printf('Project("{%s}") = "%s", "%s", "{%s}"', _VS.tool(prj), prj.name, projpath, prj.uuid)
+			_p('Project("{%s}") = "%s", "%s", "{%s}"', _VS.tool(prj), prj.name, projpath, prj.uuid)
 			local deps = premake.getdependencies(prj)
 			if #deps > 0 then
-				io.printf('\tProjectSection(ProjectDependencies) = postProject')
+				_p('\tProjectSection(ProjectDependencies) = postProject')
 				for _, dep in ipairs(deps) do
-					io.printf('\t\t{%s} = {%s}', dep.uuid, dep.uuid)
+					_p('\t\t{%s} = {%s}', dep.uuid, dep.uuid)
 				end
-				io.printf('\tEndProjectSection')
+				_p('\tEndProjectSection')
 			end
-			io.printf('EndProject')
+			_p('EndProject')
 		end
 
 		local platforms = premake.vs2005_solution_platforms(sln)
 		
-		io.printf('Global')
+		_p('Global')
 		premake.vs2005_solution_configurations(sln, platforms)
 		premake.vs2005_solution_project_configurations(sln, platforms)
 		premake.vs2005_solution_properties(sln)
-		io.printf('EndGlobal')
+		_p('EndGlobal')
 	end
 	
 
@@ -54,14 +54,14 @@
 --
 
 	function premake.vs2005_solution_configurations(sln, platforms)
-		io.printf('\tGlobalSection(SolutionConfigurationPlatforms) = preSolution')
+		_p('\tGlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		for _, cfgname in ipairs(sln.configurations) do
 			for _, platform in ipairs(platforms) do
 				local platname = premake.vstudio_platforms[platform]
-				io.printf('\t\t%s|%s = %s|%s', cfgname, platname, cfgname, platname)
+				_p('\t\t%s|%s = %s|%s', cfgname, platname, cfgname, platname)
 			end
 		end
-		io.printf('\tEndGlobalSection')
+		_p('\tEndGlobalSection')
 	end
 	
 	
@@ -72,7 +72,7 @@
 --
 
 	function premake.vs2005_solution_project_configurations(sln, platforms)
-		io.printf('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
+		_p('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
 		for prj in premake.eachproject(sln) do
 			for _, cfgname in ipairs(sln.configurations) do
 				for i, platform in ipairs(platforms) do
@@ -88,15 +88,15 @@
 						mappedname = premake.vstudio_platforms[platforms[math.max(i, platforms._offset)]]
 					end
 
-					io.printf('\t\t{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, cfgname, platname, cfgname, mappedname)
+					_p('\t\t{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, cfgname, platname, cfgname, mappedname)
 					if (platname == mappedname or platname == "Mixed Platforms") then
-						io.printf('\t\t{%s}.%s|%s.Build.0 = %s|%s',  prj.uuid, cfgname, platname, cfgname, mappedname)
+						_p('\t\t{%s}.%s|%s.Build.0 = %s|%s',  prj.uuid, cfgname, platname, cfgname, mappedname)
 					end
 				end
 			end
 		end
 
-		io.printf('\tEndGlobalSection')
+		_p('\tEndGlobalSection')
 	end
 	
 	
@@ -106,9 +106,9 @@
 --
 
 	function premake.vs2005_solution_properties(sln)	
-		io.printf('\tGlobalSection(SolutionProperties) = preSolution')
-		io.printf('\t\tHideSolutionNode = FALSE')
-		io.printf('\tEndGlobalSection')
+		_p('\tGlobalSection(SolutionProperties) = preSolution')
+		_p('\t\tHideSolutionNode = FALSE')
+		_p('\tEndGlobalSection')
 	end
 
 

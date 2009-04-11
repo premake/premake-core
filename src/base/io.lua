@@ -65,3 +65,11 @@
 			io.write(io.eol)
 		end
 	end
+
+
+--
+-- Because I use io.printf() so often in the generators, create a terse shortcut
+-- for it. This saves me typing, and also reduces the size of the executable.
+--
+
+	_p = io.printf

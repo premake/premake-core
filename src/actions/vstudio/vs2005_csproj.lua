@@ -74,95 +74,95 @@
 		end
 		
 		if toolversion then
-			io.printf('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="%s">', toolversion)
+			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="%s">', toolversion)
 		else
-			io.printf('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 		end
 
-		io.printf('  <PropertyGroup>')
-		io.printf('    <Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(prj.solution.configurations[1]))
-		io.printf('    <Platform Condition=" \'$(Platform)\' == \'\' ">AnyCPU</Platform>')
-		io.printf('    <ProductVersion>%s</ProductVersion>', vsversion)
-		io.printf('    <SchemaVersion>2.0</SchemaVersion>')
-		io.printf('    <ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-		io.printf('    <OutputType>%s</OutputType>', premake.csc.getkind(prj))
-		io.printf('    <AppDesignerFolder>Properties</AppDesignerFolder>')
-		io.printf('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
-		io.printf('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
-		io.printf('  </PropertyGroup>')
+		_p('  <PropertyGroup>')
+		_p('    <Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(prj.solution.configurations[1]))
+		_p('    <Platform Condition=" \'$(Platform)\' == \'\' ">AnyCPU</Platform>')
+		_p('    <ProductVersion>%s</ProductVersion>', vsversion)
+		_p('    <SchemaVersion>2.0</SchemaVersion>')
+		_p('    <ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
+		_p('    <OutputType>%s</OutputType>', premake.csc.getkind(prj))
+		_p('    <AppDesignerFolder>Properties</AppDesignerFolder>')
+		_p('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
+		_p('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
+		_p('  </PropertyGroup>')
 
 		for cfg in premake.eachconfig(prj) do
-			io.printf('  <PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' ">', premake.esc(cfg.name))
+			_p('  <PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' ">', premake.esc(cfg.name))
 			if cfg.flags.Symbols then
-				io.printf('    <DebugSymbols>true</DebugSymbols>')
-				io.printf('    <DebugType>full</DebugType>')
+				_p('    <DebugSymbols>true</DebugSymbols>')
+				_p('    <DebugType>full</DebugType>')
 			else
-				io.printf('    <DebugType>pdbonly</DebugType>')
+				_p('    <DebugType>pdbonly</DebugType>')
 			end
-			io.printf('    <Optimize>%s</Optimize>', iif(cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed, "true", "false"))
-			io.printf('    <OutputPath>%s</OutputPath>', cfg.buildtarget.directory)
-			io.printf('    <DefineConstants>%s</DefineConstants>', table.concat(premake.esc(cfg.defines), ";"))
-			io.printf('    <ErrorReport>prompt</ErrorReport>')
-			io.printf('    <WarningLevel>4</WarningLevel>')
+			_p('    <Optimize>%s</Optimize>', iif(cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed, "true", "false"))
+			_p('    <OutputPath>%s</OutputPath>', cfg.buildtarget.directory)
+			_p('    <DefineConstants>%s</DefineConstants>', table.concat(premake.esc(cfg.defines), ";"))
+			_p('    <ErrorReport>prompt</ErrorReport>')
+			_p('    <WarningLevel>4</WarningLevel>')
 			if cfg.flags.Unsafe then
-				io.printf('    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
+				_p('    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 			end
 			if cfg.flags.FatalWarnings then
-				io.printf('    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
+				_p('    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 			end
-			io.printf('  </PropertyGroup>')
+			_p('  </PropertyGroup>')
 		end
 
-		io.printf('  <ItemGroup>')
+		_p('  <ItemGroup>')
 		for _, prj in ipairs(premake.getlinks(prj, "siblings", "object")) do
-			io.printf('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, _VS.projectfile(prj)), "\\"))
-			io.printf('      <Project>{%s}</Project>', prj.uuid)
-			io.printf('      <Name>%s</Name>', premake.esc(prj.name))
-			io.printf('    </ProjectReference>')
+			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, _VS.projectfile(prj)), "\\"))
+			_p('      <Project>{%s}</Project>', prj.uuid)
+			_p('      <Name>%s</Name>', premake.esc(prj.name))
+			_p('    </ProjectReference>')
 		end
 		for _, linkname in ipairs(premake.getlinks(prj, "system", "basename")) do
-			io.printf('    <Reference Include="%s" />', premake.esc(linkname))
+			_p('    <Reference Include="%s" />', premake.esc(linkname))
 		end
-		io.printf('  </ItemGroup>')
+		_p('  </ItemGroup>')
 
-		io.printf('  <ItemGroup>')
+		_p('  <ItemGroup>')
 		for fcfg in premake.eachfile(prj) do
 			local action = premake.csc.getbuildaction(fcfg)
 			local fname  = path.translate(premake.esc(fcfg.name), "\\")
 			local elements, dependency = getelements(prj, action, fcfg.name)
 			if elements == "None" then
-				io.printf('    <%s Include="%s" />', action, fname)
+				_p('    <%s Include="%s" />', action, fname)
 			else
-				io.printf('    <%s Include="%s">', action, fname)
+				_p('    <%s Include="%s">', action, fname)
 				if elements == "AutoGen" then
-					io.printf('      <AutoGen>True</AutoGen>')
+					_p('      <AutoGen>True</AutoGen>')
 				elseif elements == "AutoGenerated" then
-					io.printf('      <SubType>Designer</SubType>')
-					io.printf('      <Generator>ResXFileCodeGenerator</Generator>')
-					io.printf('      <LastGenOutput>%s.Designer.cs</LastGenOutput>', premake.esc(path.getbasename(fcfg.name)))
+					_p('      <SubType>Designer</SubType>')
+					_p('      <Generator>ResXFileCodeGenerator</Generator>')
+					_p('      <LastGenOutput>%s.Designer.cs</LastGenOutput>', premake.esc(path.getbasename(fcfg.name)))
 				elseif elements == "SubTypeDesigner" then
-					io.printf('      <SubType>Designer</SubType>')
+					_p('      <SubType>Designer</SubType>')
 				elseif elements == "SubTypeForm" then
-					io.printf('      <SubType>Form</SubType>')
+					_p('      <SubType>Form</SubType>')
 				elseif elements == "PreserveNewest" then
-					io.printf('      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>')
+					_p('      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>')
 				end
 				if dependency then
-					io.printf('      <DependentUpon>%s</DependentUpon>', path.translate(premake.esc(dependency), "\\"))
+					_p('      <DependentUpon>%s</DependentUpon>', path.translate(premake.esc(dependency), "\\"))
 				end
-				io.printf('    </%s>', action)
+				_p('    </%s>', action)
 			end
 		end
-		io.printf('  </ItemGroup>')
+		_p('  </ItemGroup>')
 
-		io.printf('  <Import Project="$(MSBuildBinPath)\\Microsoft.CSharp.targets" />')
-		io.printf('  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.')
-		io.printf('       Other similar extension points exist, see Microsoft.Common.targets.')
-		io.printf('  <Target Name="BeforeBuild">')
-		io.printf('  </Target>')
-		io.printf('  <Target Name="AfterBuild">')
-		io.printf('  </Target>')
-		io.printf('  -->')
-		io.printf('</Project>')
+		_p('  <Import Project="$(MSBuildBinPath)\\Microsoft.CSharp.targets" />')
+		_p('  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.')
+		_p('       Other similar extension points exist, see Microsoft.Common.targets.')
+		_p('  <Target Name="BeforeBuild">')
+		_p('  </Target>')
+		_p('  <Target Name="AfterBuild">')
+		_p('  </Target>')
+		_p('  -->')
+		_p('</Project>')
 	end
 
