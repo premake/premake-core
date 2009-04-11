@@ -89,19 +89,19 @@
 		solutiontemplates = {
 			{
 				function(this) return _MAKE.getmakefilename(this, false) end,  
-				_TEMPLATES.make_solution 
+				premake.make_solution
 			},
 		},
 		
 		projecttemplates = {
 			{ 
 				function(this) return _MAKE.getmakefilename(this, true) end,   
-				_TEMPLATES.make_cpp,
+				premake.make_cpp,
 				function(this) return this.language == "C" or this.language == "C++" end
 			},
 			{
 				function(this) return _MAKE.getmakefilename(this, true) end,
-				_TEMPLATES.make_csharp,
+				premake.make_csharp,
 				function(this) return this.language == "C#" end
 			},
 		},

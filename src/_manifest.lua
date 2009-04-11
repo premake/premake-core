@@ -26,6 +26,9 @@
 		"tools/ow.lua",
 		"base/validate.lua",
 		"base/help.lua",
+		"actions/make/make_solution.lua",
+		"actions/make/make_cpp.lua",
+		"actions/make/make_csharp.lua",
 		"actions/vstudio/vs2002_solution.lua",
 		"actions/vstudio/vs2002_csproj.lua",
 		"actions/vstudio/vs2002_csproj_user.lua",
@@ -45,9 +48,6 @@
 		"actions/codeblocks/codeblocks_cbp.tmpl",
 		"actions/codelite/codelite_workspace.tmpl",
 		"actions/codelite/codelite_project.tmpl",
-		"actions/make/make_solution.tmpl",
-		"actions/make/make_cpp.tmpl",
-		"actions/make/make_csharp.tmpl",
 	}
 	
 	

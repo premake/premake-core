@@ -1,7 +1,7 @@
 --
 -- _clean.lua
 -- The "clean" action: removes all generated files.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 
