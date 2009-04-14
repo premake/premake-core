@@ -105,38 +105,46 @@
 		_p('endif')
 		_p('')
 
+		-- Platforms aren't support for .NET projects, but I need the ability to match
+		-- the buildcfg:platform identifiers with a block of settings. So enumerate the
+		-- pairs the same way I do for C/C++ projects, but always use the generic settings
+		local platforms = premake.filterplatforms(prj.solution, premake[_OPTIONS.cc].platforms)
+		table.insert(platforms, 1, "")
+
 		-- write the configuration blocks
-		for cfg in premake.eachconfig(prj) do
-			_p('ifeq ($(config),%s)', _MAKE.esc(cfg.name:lower()))
-			_p('  TARGETDIR  := %s', _MAKE.esc(cfg.buildtarget.directory))
-			_p('  OBJDIR     := %s', _MAKE.esc(cfg.objectsdir))
-			_p('  DEPENDS    := %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " "))
-			_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
-			_p('  FLAGS      += %s %s', table.concat(csc.getflags(cfg), " "), table.implode(cfg.defines, "/d:", "", " "))
-			
-			_p('  define PREBUILDCMDS')
-			if #cfg.prebuildcommands > 0 then
-				_p('\t@echo Running pre-build commands')
-				_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+		for _, platform in ipairs(platforms) do
+			for cfg in premake.eachconfig(prj) do
+				_p('ifeq ($(config),%s)', table.concat({ _MAKE.esc(cfg.name:lower()), iif(platform ~= "", platform)}, ":"))
+				_p('  TARGETDIR  := %s', _MAKE.esc(cfg.buildtarget.directory))
+				_p('  OBJDIR     := %s', _MAKE.esc(cfg.objectsdir))
+				_p('  DEPENDS    := %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " "))
+				_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
+				_p('  FLAGS      += %s %s', table.concat(csc.getflags(cfg), " "), table.implode(cfg.defines, "/d:", "", " "))
+				
+				_p('  define PREBUILDCMDS')
+				if #cfg.prebuildcommands > 0 then
+					_p('\t@echo Running pre-build commands')
+					_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+				end
+				_p('  endef')
+				
+				_p('  define PRELINKCMDS')
+				if #cfg.prelinkcommands > 0 then
+					_p('\t@echo Running pre-link commands')
+					_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
+				end
+				_p('  endef')
+				
+				_p('  define POSTBUILDCMDS')
+				if #cfg.postbuildcommands > 0 then
+					_p('\t@echo Running post-build commands')
+					_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
+				end
+				_p('  endef')
+				
+				_p('endif')
+				_p('')
 			end
-			_p('  endef')
-			
-			_p('  define PRELINKCMDS')
-			if #cfg.prelinkcommands > 0 then
-				_p('\t@echo Running pre-link commands')
-				_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-			end
-			_p('  endef')
-			
-			_p('  define POSTBUILDCMDS')
-			if #cfg.postbuildcommands > 0 then
-				_p('\t@echo Running post-build commands')
-				_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-			end
-			_p('  endef')
-			
-			_p('endif')
-			_p('')
 		end
 
 		-- set project level values

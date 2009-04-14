@@ -38,8 +38,8 @@
 		
 			-- before each project rule, build a list of dependencies for the project. If any of
 			-- these dependencies change, the project needs to be rebuilt
-			for i = 1, #platforms do
-				for cfg in premake.eachconfig(prj, platforms[i]) do
+			for _, platform in ipairs(platforms) do
+				for cfg in premake.eachconfig(prj, platform) do
 					_p('ifeq ($(config),%s)', table.concat({ _MAKE.esc(cfg.name:lower()), cfg.platform}, ":"))
 					_p('  DEPENDENCIES := %s', table.concat(_MAKE.esc(table.extract(premake.getdependencies(cfg), "name")), " "))
 					_p('endif')

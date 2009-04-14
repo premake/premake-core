@@ -27,8 +27,8 @@
 		table.insert(platforms, 1, "")
 		
 		-- list the configurations
-		for i = 1, #platforms do
-			for cfg in premake.eachconfig(prj, platforms[i]) do
+		for _, platform in ipairs(platforms) do
+			for cfg in premake.eachconfig(prj, platform) do
 				_p('ifeq ($(config),%s)', table.concat({ _MAKE.esc(cfg.name:lower()), cfg.platform}, ":"))
 				_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
 				_p('  TARGET     = $(TARGETDIR)/%s', _MAKE.esc(cfg.buildtarget.name))
