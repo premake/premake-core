@@ -24,13 +24,23 @@
 		_p('.PHONY: all clean $(PROJECTS)')
 		_p('')
 		_p('all: $(PROJECTS)')
+		_p('')
 
+		-- build a list of supported target platforms that also includes a generic build
+		local platforms = premake.filterplatforms(sln, { x32="i386", x64="x86_64" })
+		table.insert(platforms, 1, "")
+		
 		-- write the project build rules
 		for _, prj in ipairs(sln.projects) do
-			for cfg in premake.eachconfig(prj) do
-				_p('ifeq ($(config),%s)', _MAKE.esc(cfg.name:lower()))
-				_p('  DEPENDENCIES := %s', table.concat(_MAKE.esc(table.extract(premake.getdependencies(cfg), "name")), " "))
-				_p('endif')
+		
+			-- before each project rule, build a list of dependencies for the project. If any of
+			-- these dependencies change, the project needs to be rebuilt
+			for i = 1, #platforms do
+				for cfg in premake.eachconfig(prj, platforms[i]) do
+					_p('ifeq ($(config),%s)', table.concat({ cfg.name:lower(), cfg.platform}, ":"))
+					_p('  DEPENDENCIES := %s', table.concat(_MAKE.esc(table.extract(premake.getdependencies(cfg), "name")), " "))
+					_p('endif')
+				end
 			end
 			_p('')
 			
