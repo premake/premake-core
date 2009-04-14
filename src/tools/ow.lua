@@ -30,6 +30,15 @@
 	
 
 
+--
+-- No specific platform support yet
+--
+
+	premake.ow.platforms = 
+	{
+	}
+
+
 	
 --
 -- Returns a list of compiler flags, based on the supplied configuration.

@@ -30,6 +30,18 @@
 		NoRTTI         = "-fno-rtti",
 	}
 	
+	
+--
+-- Support platforms, mapped to GCC architectures
+--
+
+	premake.gcc.platforms = 
+	{
+		x32    = "i386",
+		x64    = "x64_86",
+		ppc    = "ppc",
+		ppc64  = "ppc64",
+	}
 
 
 
