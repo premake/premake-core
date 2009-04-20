@@ -1,6 +1,6 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
-	platforms { "native", "x64", "xbox360" }
+	platforms { "native", "x64", "universal", "xbox360" }
 
 	objdir "obj"
 		

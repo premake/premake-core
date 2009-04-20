@@ -37,12 +37,42 @@
 
 	premake.gcc.platforms = 
 	{
-		Native      = { suffix="",       cflags="" },
-		x32         = { suffix="32",     cflags="-m32" },
-		x64         = { suffix="64",     cflags="-m64" },
-		Universal   = { suffix="univ",   cflags="-arch i386 -arch x64_64 -arch ppc -arch ppc64" },
-		Universal32 = { suffix="univ32", cflags="-arch i386 -arch ppc" },
-		Universal64 = { suffix="univ64", cflags="-arch x64_64 -arch ppc64" },
+		Native = { 
+			suffix   = "",
+			cppflags = "-MMD", 
+			flags    = "" ,
+			ldflags  = "",
+		},
+		x32 = { 
+			suffix   = "32",
+			cppflags = "-MMD", 
+			flags    = "-m32",
+			ldflags  = "-L/usr/lib32", 
+		},
+		x64 = { 
+			suffix   = "64",
+			cppflags = "-MMD",
+			flags    = "-m64",
+			ldflags  = "-L/usr/lib64",
+		},
+		Universal = { 
+			suffix   = "univ",
+			cppflags = "",
+			flags    = "-arch i386 -arch x86_64 -arch ppc -arch ppc64",
+			ldflags  = "",
+		},
+		Universal32 = { 
+			suffix   = "univ32",
+			cppflags = "",
+			flags    = "-arch i386 -arch ppc",
+			ldflags  = "",
+		},
+		Universal64 = { 
+			suffix   = "univ64",
+			cppflags = "",
+			flags    = "-arch x86_64 -arch ppc64",
+			ldflags  = "",
+		},
 	}
 
 
@@ -52,9 +82,12 @@
 --
 
 	function premake.gcc.getcppflags(cfg)
-		-- if $(ARCH) contains multiple targets, then disable the incompatible automatic
-		-- dependency generation. This allows building universal binaries on MacOSX, sorta.
-		return "$(if $(word 2, $(ARCH)), , -MMD)"
+		-- GCC's -MMD flag does not work with multiple architectures
+		if cfg.platform ~= "Universal" and cfg.platform ~= "Universal32" and cfg.platform ~= "Universal64" then
+			return "-MMD"
+		else
+			return ""
+		end
 	end
 
 	function premake.gcc.getcflags(cfg)
@@ -107,6 +140,7 @@
 		end
 
 		table.insert(result, premake.gcc.platforms[cfg.platform].cflags)
+		table.insert(result, premake.gcc.platforms[cfg.platform].ldflags)
 		return result
 	end
 		
