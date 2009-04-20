@@ -199,11 +199,13 @@
 			kind  = "list",
 			scope = "solution",
 			allowed = {
+				"Native",
 				"x32",
 				"x64",
-				"ppc",
-				"ppc64",
-				"xbox360"
+				"Universal",
+				"Universal32",
+				"Universal64",
+				"Xbox360"
 			}
 		},
 		

@@ -1,6 +1,6 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
-	platforms { "x32", "xbox360" }
+	platforms { "native", "x64", "xbox360" }
 
 	objdir "obj"
 		
@@ -27,7 +27,7 @@ solution "PremakeTestbox"
 	include "CppSharedLib"
 	include "CppStaticLib"
 	
-	if _ACTION ~= "codeblocks" then
+	if _ACTION ~= "codeblocks" and _ACTION ~= "codelite" then
 		include "CsSharedLib"
 		include "CsConsoleApp"
 	end

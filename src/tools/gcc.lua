@@ -32,15 +32,17 @@
 	
 	
 --
--- Support platforms, mapped to GCC architectures
+-- Support platforms, mapped to build configuration suffix
 --
 
 	premake.gcc.platforms = 
 	{
-		x32    = "i386",
-		x64    = "x64_86",
-		ppc    = "ppc",
-		ppc64  = "ppc64",
+		Native      = { suffix="",       cflags="" },
+		x32         = { suffix="32",     cflags="-m32" },
+		x64         = { suffix="64",     cflags="-m64" },
+		Universal   = { suffix="univ",   cflags="-arch i386 -arch x64_64 -arch ppc -arch ppc64" },
+		Universal32 = { suffix="univ32", cflags="-arch i386 -arch ppc" },
+		Universal64 = { suffix="univ64", cflags="-arch x64_64 -arch ppc64" },
 	}
 
 
@@ -60,6 +62,7 @@
 		if (cfg.kind == "SharedLib" and not os.is("windows")) then
 			table.insert(result, "-fPIC")
 		end
+		table.insert(result, premake.gcc.platforms[cfg.platform].cflags)
 		return result		
 	end
 	
@@ -93,7 +96,7 @@
 		if (os.is("windows") and cfg.kind == "WindowedApp") then
 			table.insert(result, "-mwindows")
 		end
-
+		
 		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
 		if (not cfg.flags.Symbols) then
 			if (os.is("macosx")) then
@@ -102,7 +105,8 @@
 				table.insert(result, "-s")
 			end
 		end
-		
+
+		table.insert(result, premake.gcc.platforms[cfg.platform].cflags)
 		return result
 	end
 		

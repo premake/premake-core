@@ -34,27 +34,26 @@
 	end
 	
 	
---
--- Make sure that values only get applied to the right configurations.
---
-
 	function T.configs.RootValues()
-		local cfg = premake.getconfig(prj).defines
-		test.istrue(#cfg == 1 and cfg[1] == "GLOBAL")  -- maybe table.compare instead?
+		local r = premake.getconfig(prj).defines
+		test.isequal("GLOBAL", table.concat(r,":"))
 	end
+
 
 	function T.configs.ConfigValues()
-		local cfg = premake.getconfig(prj, "Debug").defines
-		test.istrue(#cfg == 2 and cfg[1] == "GLOBAL" and cfg[2] == "DEBUG")
+		local r = premake.getconfig(prj, "Debug").defines
+		test.isequal("GLOBAL:DEBUG", table.concat(r,":"))
 	end
 
+
 	function T.configs.PlatformValues()
-		local cfg = premake.getconfig(prj, "Debug", "x32").defines
-		test.istrue(#cfg == 3 and cfg[1] == "GLOBAL" and cfg[2] == "DEBUG" and cfg[3] == "X86_32")
+		local r = premake.getconfig(prj, "Debug", "x32").defines
+		test.isequal("GLOBAL:DEBUG:X86_32", table.concat(r,":"))
 	end
 	
-	function T.configs.DefaultPlaformNotInSolution()
-		local cfg = premake.getconfig(prj, "Debug", "xbox360").defines
-		test.isequal("GLOBAL:DEBUG", table.concat(cfg, ":"))
+	
+	function T.configs.PlaformNotInSolution()
+		local r = premake.getconfig(prj, "Debug", "xbox360").defines
+		test.isequal("GLOBAL", table.concat(cfg, ":"))
 	end
 
