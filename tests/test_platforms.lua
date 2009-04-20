@@ -7,7 +7,7 @@
 	T.platforms = { }
 
 
-	local testmap = { x32="Win32", x64="x64" }
+	local testmap = { Native="Win32", x32="Win32", x64="x64" }
 	
 	local sln, r
 	function T.platforms.setup()
@@ -29,22 +29,30 @@
 	end
 	
 	function T.platforms.filter_OnIntersection()
-		platforms { "x32", "x64", "xbox360" }
+		platforms { "x32", "x64", "Xbox360" }
 		premake.buildconfigs()
 		r = premake.filterplatforms(sln, testmap, "x32")
 		test.isequal("x32:x64", table.concat(r, ":"))
 	end
 	
 	function T.platforms.filter_OnNoIntersection()
-		platforms { "ppc", "xbox360" }
+		platforms { "Universal", "Xbox360" }
 		premake.buildconfigs()
 		r = premake.filterplatforms(sln, testmap)
 		test.isequal("", table.concat(r, ":"))
 	end
 	
 	function T.platforms.filter_OnNoIntersectionAndDefault()
-		platforms { "ppc", "xbox360" }
+		platforms { "Universal", "Xbox360" }
 		premake.buildconfigs()
 		r = premake.filterplatforms(sln, testmap, "x32")
 		test.isequal("x32", table.concat(r, ":"))
 	end
+	
+	function T.platforms.filter_OnDuplicateKeys()
+		platforms { "Native", "x32" }
+		premake.buildconfigs()
+		r = premake.filterplatforms(sln, testmap, "x32")
+		test.isequal("Native", table.concat(r, ":"))
+	end
+		

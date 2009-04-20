@@ -107,10 +107,12 @@
 
 	function premake.filterplatforms(sln, map, default)
 		local result = { }
+		local keys = { }
 		if sln.platforms then
 			for _, p in ipairs(sln.platforms) do
-				if map[p] then
+				if map[p] and not table.contains(keys, map[p]) then
 					table.insert(result, p)
+					table.insert(keys, map[p])
 				end
 			end
 		end

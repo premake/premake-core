@@ -53,7 +53,7 @@
 	
 	
 	function T.configs.PlaformNotInSolution()
-		local r = premake.getconfig(prj, "Debug", "xbox360").defines
-		test.isequal("GLOBAL", table.concat(cfg, ":"))
+		local r = premake.getconfig(prj, "Debug", "Xbox360").defines
+		test.isequal("GLOBAL:DEBUG", table.concat(r, ":"))
 	end
 

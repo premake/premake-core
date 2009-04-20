@@ -15,9 +15,10 @@
 	premake.vstudio_platforms = { 
 		any     = "Any CPU", 
 		mixed   = "Mixed Platforms", 
+		Native  = "Win32",
 		x32     = "Win32", 
 		x64     = "x64",
-		xbox360 = "Xbox 360",
+		Xbox360 = "Xbox 360",
 	}
 
 
