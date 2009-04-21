@@ -9,7 +9,7 @@
 		local cc = premake[_OPTIONS.cc]
 
 		-- build a list of supported target platforms that also includes a generic build
-		local platforms = premake.filterplatforms(sln, cc.platforms)
+		local platforms = premake.filterplatforms(sln, cc.platforms, "Native")
 
 		-- write a header showing the build options
 		local cfgpairs = { }
