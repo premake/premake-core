@@ -61,6 +61,8 @@
 		-- clean rules
 		_p('clean:')
 		for _ ,prj in ipairs(sln.projects) do
-			_p('	@${MAKE} --no-print-directory -C %s -f %s clean', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
+			_p('\t@${MAKE} --no-print-directory -C %s -f %s clean', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
 		end
+		_p('')
+		
 	end
