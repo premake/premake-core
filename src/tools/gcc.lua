@@ -82,12 +82,7 @@
 --
 
 	function premake.gcc.getcppflags(cfg)
-		-- GCC's -MMD flag does not work with multiple architectures
-		if cfg.platform ~= "Universal" and cfg.platform ~= "Universal32" and cfg.platform ~= "Universal64" then
-			return "-MMD"
-		else
-			return ""
-		end
+		return premake.gcc.platforms[cfg.platform].cppflags
 	end
 
 	function premake.gcc.getcflags(cfg)
@@ -96,7 +91,7 @@
 			table.insert(result, "-fPIC")
 		end
 		if cfg.platform then
-			table.insert(result, premake.gcc.platforms[cfg.platform].cflags)
+			table.insert(result, premake.gcc.platforms[cfg.platform].flags)
 		end
 		return result		
 	end
@@ -142,7 +137,7 @@
 		end
 	
 		if cfg.platform then
-			table.insert(result, premake.gcc.platforms[cfg.platform].cflags)
+			table.insert(result, premake.gcc.platforms[cfg.platform].flags)
 			table.insert(result, premake.gcc.platforms[cfg.platform].ldflags)
 		end
 		
