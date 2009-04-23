@@ -28,48 +28,7 @@
 		-- list the configurations
 		for _, platform in ipairs(platforms) do
 			for cfg in premake.eachconfig(prj, platform) do
-				_p('ifeq ($(config),%s%s)', _MAKE.esc(cfg.name:lower()), cc.platforms[platform].suffix)
-				_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
-				_p('  TARGET     = $(TARGETDIR)/%s', _MAKE.esc(cfg.buildtarget.name))
-				_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))
-				_p('  DEFINES   += %s', table.concat(cc.getdefines(cfg.defines), " "))
-				_p('  INCLUDES  += %s', table.concat(cc.getincludedirs(cfg.includedirs), " "))
-				_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', cc.getcppflags(cfg))
-				_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
-				_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
-				_p('  LDFLAGS   += %s', table.concat(table.join(cc.getldflags(cfg), cc.getlinkflags(cfg), cfg.linkoptions), " "))
-				_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(table.join(cc.getdefines(cfg.resdefines), cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " "))
-				_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
-				
-				if cfg.kind == "StaticLib" then
-					_p('  LINKCMD    = ar -rcs $(TARGET) $(OBJECTS)')
-				else
-					_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH)', iif(cfg.language == "C", "CC", "CXX"))
-				end
-				
-				_p('  define PREBUILDCMDS')
-				if #cfg.prebuildcommands > 0 then
-					_p('\t@echo Running pre-build commands')
-					_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
-				end
-				_p('  endef')
-
-				_p('  define PRELINKCMDS')
-				if #cfg.prelinkcommands > 0 then
-					_p('\t@echo Running pre-link commands')
-					_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-				end
-				_p('  endef')
-
-				_p('  define POSTBUILDCMDS')
-				if #cfg.postbuildcommands > 0 then
-					_p('\t@echo Running post-build commands')
-					_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-				end
-				_p('  endef')
-				
-				_p('endif')
-				_p('')
+				premake.gmake_cpp_config(cfg)
 			end
 		end
 
