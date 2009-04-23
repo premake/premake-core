@@ -112,44 +112,42 @@
 		table.insert(platforms, 1, "")
 
 		-- write the configuration blocks
-		for _, platform in ipairs(platforms) do
-			for cfg in premake.eachconfig(prj) do
-				_p('ifeq ($(config),%s)', table.concat({ _MAKE.esc(cfg.name:lower()), iif(platform ~= "", platform)}, ":"))
-				_p('  TARGETDIR  := %s', _MAKE.esc(cfg.buildtarget.directory))
-				_p('  OBJDIR     := %s', _MAKE.esc(cfg.objectsdir))
-				_p('  DEPENDS    := %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " "))
-				_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
-				_p('  FLAGS      += %s %s', table.concat(csc.getflags(cfg), " "), table.implode(cfg.defines, "/d:", "", " "))
-				
-				_p('  define PREBUILDCMDS')
-				if #cfg.prebuildcommands > 0 then
-					_p('\t@echo Running pre-build commands')
-					_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
-				end
-				_p('  endef')
-				
-				_p('  define PRELINKCMDS')
-				if #cfg.prelinkcommands > 0 then
-					_p('\t@echo Running pre-link commands')
-					_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-				end
-				_p('  endef')
-				
-				_p('  define POSTBUILDCMDS')
-				if #cfg.postbuildcommands > 0 then
-					_p('\t@echo Running post-build commands')
-					_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-				end
-				_p('  endef')
-				
-				_p('endif')
-				_p('')
+		for cfg in premake.eachconfig(prj) do
+			_p('ifneq (,$(findstring %s,$(config)))', _MAKE.esc(cfg.name:lower()))
+			_p('  TARGETDIR  := %s', _MAKE.esc(cfg.buildtarget.directory))
+			_p('  OBJDIR     := %s', _MAKE.esc(cfg.objectsdir))
+			_p('  DEPENDS    := %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " "))
+			_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
+			_p('  FLAGS      += %s %s', table.concat(csc.getflags(cfg), " "), table.implode(cfg.defines, "/d:", "", " "))
+			
+			_p('  define PREBUILDCMDS')
+			if #cfg.prebuildcommands > 0 then
+				_p('\t@echo Running pre-build commands')
+				_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
 			end
+			_p('  endef')
+			
+			_p('  define PRELINKCMDS')
+			if #cfg.prelinkcommands > 0 then
+				_p('\t@echo Running pre-link commands')
+				_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
+			end
+			_p('  endef')
+			
+			_p('  define POSTBUILDCMDS')
+			if #cfg.postbuildcommands > 0 then
+				_p('\t@echo Running post-build commands')
+				_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
+			end
+			_p('  endef')
+			
+			_p('endif')
+			_p('')
 		end
 
 		-- set project level values
 		_p('# To maintain compatibility with VS.NET, these values must be set at the project level')
-		_p('TARGET      = $(TARGETDIR)/%s', _MAKE.esc(prj.buildtarget.name))
+		_p('TARGET     := $(TARGETDIR)/%s', _MAKE.esc(prj.buildtarget.name))
 		_p('FLAGS      += /t:%s %s', csc.getkind(prj):lower(), table.implode(_MAKE.esc(prj.libdirs), "/lib:", "", " "))
 		_p('REFERENCES += %s', table.implode(_MAKE.esc(premake.getlinks(prj, "system", "basename")), "/r:", ".dll", " "))
 		_p('')
