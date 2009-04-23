@@ -10,7 +10,6 @@
 	dofile("test_path.lua")
 	dofile("test_string.lua")
 	dofile("test_table.lua")
-	dofile("test_template.lua")
 	dofile("test_premake.lua")
 	dofile("test_project.lua")
 	dofile("test_configs.lua")
