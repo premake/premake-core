@@ -46,7 +46,7 @@ ifeq ($(config),debug)
   CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) 
   CXXFLAGS  += $(CFLAGS) 
-  LDFLAGS   += -s  
+  LDFLAGS   += -s
   RESFLAGS  += $(DEFINES) $(INCLUDES) 
   LDDEPS    += 
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH)

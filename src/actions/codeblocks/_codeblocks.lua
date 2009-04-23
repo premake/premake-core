@@ -19,11 +19,11 @@
 		},
 		
 		solutiontemplates = {
-			{ ".workspace",  _TEMPLATES.codeblocks_workspace },
+			{ ".workspace", premake.codeblocks_workspace },
 		},
 		
 		projecttemplates = {
-			{ ".cbp", _TEMPLATES.codeblocks_cbp },
+			{ ".cbp", premake.codeblocks_cbp },
 		},
 
 		onclean = function(solutions, projects, targets)

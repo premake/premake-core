@@ -26,6 +26,10 @@
 		"tools/ow.lua",
 		"base/validate.lua",
 		"base/help.lua",
+		"actions/codeblocks/codeblocks_workspace.lua",
+		"actions/codeblocks/codeblocks_cbp.lua",
+		"actions/codelite/codelite_workspace.lua",
+		"actions/codelite/codelite_project.lua",
 		"actions/make/make_solution.lua",
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
@@ -40,17 +44,6 @@
 	}
 
 
--- The list of templates
-
-	local templates = 
-	{
-		"actions/codeblocks/codeblocks_workspace.tmpl",
-		"actions/codeblocks/codeblocks_cbp.tmpl",
-		"actions/codelite/codelite_workspace.tmpl",
-		"actions/codelite/codelite_project.tmpl",
-	}
-	
-	
 -- The list of built in actions
 
 	local actions = 

@@ -40,8 +40,6 @@
 		Native = { 
 			suffix   = "",
 			cppflags = "-MMD", 
-			flags    = "" ,
-			ldflags  = "",
 		},
 		x32 = { 
 			suffix   = "32",
@@ -59,19 +57,16 @@
 			suffix   = "univ",
 			cppflags = "",
 			flags    = "-arch i386 -arch x86_64 -arch ppc -arch ppc64",
-			ldflags  = "",
 		},
 		Universal32 = { 
 			suffix   = "univ32",
 			cppflags = "",
 			flags    = "-arch i386 -arch ppc",
-			ldflags  = "",
 		},
 		Universal64 = { 
 			suffix   = "univ64",
 			cppflags = "",
 			flags    = "-arch x86_64 -arch ppc64",
-			ldflags  = "",
 		},
 	}
 
