@@ -137,21 +137,11 @@ end
 	end
 
 	
-	local function embedtemplate(out, fname)
-		local s = loadscript(fname)
-		
-		local name = path.getbasename(fname)
-		out:write(string.format("\t\"_TEMPLATES.%s=premake.loadtemplatestring('%s',[[", name, name))
-		out:write(s)
-		out:write("]])\",\n")
-	end
-	
-	
 	premake.actions["embed"] = {
 		description = "Embed scripts in scripts.c; required before release builds",
 		execute     = function ()
 			-- load the manifest of script files
-			scripts, templates, actions = dofile("src/_manifest.lua")
+			scripts = dofile("src/_manifest.lua")
 			table.insert(scripts, "_premake_main.lua")
 			
 			-- open scripts.c and write the file header
@@ -161,16 +151,6 @@ end
 			out:write("const char* builtin_scripts[] = {\n")
 			
 			for i,fn in ipairs(scripts) do
-				print(fn)
-				s = embedfile(out, "src/"..fn)
-			end
-
-			for i,fn in ipairs(templates) do
-				print(fn)
-				s = embedtemplate(out, "src/"..fn)
-			end
-
-			for i,fn in ipairs(actions) do
 				print(fn)
 				s = embedfile(out, "src/"..fn)
 			end

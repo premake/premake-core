@@ -69,21 +69,8 @@
 		-- everything gets initialized in the proper order.
 		
 		if (scriptpath) then
-			local scripts, templates, actions  = dofile(scriptpath .. "/_manifest.lua")
-
-			-- core code first
+			local scripts  = dofile(scriptpath .. "/_manifest.lua")
 			for _,v in ipairs(scripts) do
-				dofile(scriptpath .. "/" .. v)
-			end
-			
-			-- then the templates
-			for _,v in ipairs(templates) do
-				local name = path.getbasename(v)
-				_TEMPLATES[name] = premake.loadtemplatefile(scriptpath .. "/" .. v)
-			end
-			
-			-- finally the actions
-			for _,v in ipairs(actions) do
 				dofile(scriptpath .. "/" .. v)
 			end
 		end

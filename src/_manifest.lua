@@ -1,14 +1,13 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
-
 
 -- The master list of built-in scripts. Order is important! If you want to
 -- build a new script into Premake, add it to this list.
 
-	local scripts =
+	return
 	{
 		"base/os.lua",
 		"base/path.lua",
@@ -41,20 +40,9 @@
 		"actions/vstudio/vs2005_solution.lua",
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
-	}
-
-
--- The list of built in actions
-
-	local actions = 
-	{
 		"actions/clean/_clean.lua",
 		"actions/codeblocks/_codeblocks.lua",
 		"actions/codelite/_codelite.lua",
 		"actions/make/_make.lua",
 		"actions/vstudio/_vstudio.lua",
 	}
-	
-	
-	
-	return scripts, templates, actions
