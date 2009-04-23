@@ -56,4 +56,11 @@
 		local r = premake.getconfig(prj, "Debug", "Xbox360").defines
 		test.isequal("GLOBAL:DEBUG", table.concat(r, ":"))
 	end
+	
+	
+	function T.configs.DefaultToNativePlatform()
+		local r = premake.getconfig(prj, "Debug").platform
+		test.isequal("Native", r)
+	end
+
 

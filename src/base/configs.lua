@@ -189,10 +189,12 @@
 --
 
 	local function buildprojectconfig(prj, cfgname, pltname)
+		pltname = pltname or "Native"
+		
 		-- create the base configuration, flattening the list of objects and
 		-- filtering out settings which do not match the current environment
 		local terms = premake.getactiveterms()
-		terms.platform = (pltname or ""):lower()
+		terms.platform = pltname:lower()
 		terms.config   = (cfgname or ""):lower()
 
 		local cfg    = buildconfig(prj, terms)
@@ -276,7 +278,7 @@
 		-- build a unique objects directory
 		local function buildpath(cfg, variant)
 			local dir = path.getabsolute(path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj"))
-			if variant > 1 then
+			if variant > 1 and cfg.platform ~= "Native" then
 				dir = path.join(dir, cfg.platform)
 			end
 			if variant > 2 then
@@ -341,17 +343,21 @@
 			for _, prj in ipairs(sln.projects) do
 				prj.__configs = { }
 				
-				-- create a "root" config for project-wide settings
+				-- create a project-wide "root" config
 				prj.__configs[""] = buildprojectconfig(prj)
 				
 				-- then one per build configuration
 				for _, cfgname in ipairs(sln.configurations) do
+					-- build a platform independent config
 					prj.__configs[cfgname] = buildprojectconfig(prj, cfgname)
 					
-					-- then one per build configuration/platform pair
+					-- then one per build configuration/platform pair. Skip the native build
+					-- since it is the same as the platform independent config built above
 					if sln.platforms then
 						for _, pltname in ipairs(sln.platforms) do
-							prj.__configs[cfgname..":"..pltname] = buildprojectconfig(prj, cfgname, pltname)
+							if pltname ~= "Native" then
+								prj.__configs[cfgname .. ":" .. pltname] = buildprojectconfig(prj, cfgname, pltname)
+							end
 						end
 					end
 					

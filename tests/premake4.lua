@@ -23,7 +23,7 @@
 	dofile("test_vs2005_sln.lua")
 	dofile("test_vs2008_sln.lua")
 	dofile("test_vs200x_vcproj.lua")
-
+	dofile("test_gmake_cpp.lua")
 
 
 --

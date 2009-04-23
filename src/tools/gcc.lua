@@ -90,9 +90,7 @@
 		if (cfg.kind == "SharedLib" and not os.is("windows")) then
 			table.insert(result, "-fPIC")
 		end
-		if cfg.platform then
-			table.insert(result, premake.gcc.platforms[cfg.platform].flags)
-		end
+		table.insert(result, premake.gcc.platforms[cfg.platform].flags)
 		return result		
 	end
 	
@@ -136,10 +134,8 @@
 			end
 		end
 	
-		if cfg.platform then
-			table.insert(result, premake.gcc.platforms[cfg.platform].flags)
-			table.insert(result, premake.gcc.platforms[cfg.platform].ldflags)
-		end
+		table.insert(result, premake.gcc.platforms[cfg.platform].flags)
+		table.insert(result, premake.gcc.platforms[cfg.platform].ldflags)
 		
 		return result
 	end

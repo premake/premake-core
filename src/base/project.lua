@@ -176,14 +176,12 @@
 		if prj.project then prj = prj.project end
 		
 		-- if platform is not included in the solution, use general settings instead
-		if not table.contains(prj.solution.platforms or {}, pltname) then
+		if pltname == "Native" or not table.contains(prj.solution.platforms or {}, pltname) then
 			pltname = nil
 		end
 		
-		-- build a cache key
-		local key = cfgname or ""
+		local key = (cfgname or "")
 		if pltname then key = key .. ":" .. pltname end
-		
 		return prj.__configs[key]
 	end
 
