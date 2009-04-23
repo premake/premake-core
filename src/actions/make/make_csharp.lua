@@ -253,7 +253,7 @@
 		-- per-file rules
 		_p('# Per-configuration copied file rules')
 		for cfg in premake.eachconfig(prj) do
-			_p('ifeq ($(config),%s)', _MAKE.esc(cfg.name:lower()))
+			_p('ifneq (,$(findstring %s,$(config)))', _MAKE.esc(cfg.name:lower()))
 			for target, source in pairs(cfgpairs[cfg]) do
 				_p('%s: %s', _MAKE.esc(target), _MAKE.esc(source))
 				_p('\t$(COPY_RULE)')
