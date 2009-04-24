@@ -44,7 +44,7 @@ end
 
 		files 
 		{
-			"src/**.h", "src/**.c", "src/**.lua", "src/**.tmpl",
+			"src/**.h", "src/**.c", "src/**.lua",
 			"tests/**.lua"
 		}
 

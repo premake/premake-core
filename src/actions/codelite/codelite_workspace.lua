@@ -15,15 +15,24 @@
 			_p('  <Project Name="%s" Path="%s.project" Active="%s" />', name, fname, active)
 		end
 		
+		-- build a list of supported target platforms that also includes a generic build
+		local platforms = premake.filterplatforms(sln, premake[_OPTIONS.cc].platforms, "Native")
+		
 		_p('  <BuildMatrix>')
-		for _, cfgname in ipairs(sln.configurations) do
-			_p('    <WorkspaceConfiguration Name="%s" Selected="yes">', cfgname)
+		for _, platform in ipairs(platforms) do
+			for _, cfgname in ipairs(sln.configurations) do
+				local name = cfgname
+				if platform ~= "Native" then
+					name = name .. "|" .. platform
+				end			
+				_p('    <WorkspaceConfiguration Name="%s" Selected="yes">', name)
 
-			for _,prj in ipairs(sln.projects) do
-				_p('      <Project Name="%s" ConfigName="%s"/>', prj.name, cfgname)
+				for _,prj in ipairs(sln.projects) do
+					_p('      <Project Name="%s" ConfigName="%s"/>', prj.name, name)
+				end
+
+				_p('    </WorkspaceConfiguration>')
 			end
-
-			_p('    </WorkspaceConfiguration>')
 		end
 		_p('  </BuildMatrix>')
 		_p('</CodeLite_Workspace>')
