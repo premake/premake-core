@@ -188,6 +188,28 @@
 
 
 --
+-- Build a name from a build configuration/platform pair. The short name
+-- is good for makefiles or anywhere a user will have to type it in. The
+-- long name is more readable.
+--
+
+	function premake.getconfigname(cfgname, platform, useshortname)
+		if cfgname then
+			local name = cfgname
+			if platform and platform ~= "Native" then
+				if useshortname then
+					name = name .. premake.fields.platforms.shortnames[platform]
+				else
+					name = name .. "|" .. platform
+				end
+			end
+			return iif(useshortname, name:lower(), name)
+		end
+	end
+	
+	
+	
+--
 -- Returns a list of sibling projects on which the specified 
 -- configuration depends. This is used to specify project
 -- dependencies, usually within a solution.

@@ -206,6 +206,15 @@
 				"Universal32",
 				"Universal64",
 				"Xbox360"
+			},
+			shortnames = {
+				Native      = "",
+				x32         = "32",
+				x64         = "64",
+				Universal   = "univ",
+				Universal32 = "univ32",
+				Universal64 = "univ64",
+				Xbox360     = "360",
 			}
 		},
 		

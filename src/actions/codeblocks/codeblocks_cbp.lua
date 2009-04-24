@@ -25,12 +25,7 @@
 		_p('\t\t<Build>')
 		for _, platform in ipairs(platforms) do		
 			for cfg in premake.eachconfig(prj, platform) do
-				
-				local name = cfg.name
-				if platform ~= "Native" then
-					name = name .. "|" .. platform
-				end
-				_p('\t\t\t<Target title="%s">', premake.esc(name))
+				_p('\t\t\t<Target title="%s">', premake.esc(cfg.longname))
 				
 				_p('\t\t\t\t<Option output="%s" prefix_auto="0" extension_auto="0" />', premake.esc(cfg.buildtarget.fullpath))
 				_p('\t\t\t\t<Option object_output="%s" />', premake.esc(cfg.objectsdir))

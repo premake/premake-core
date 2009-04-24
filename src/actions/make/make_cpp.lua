@@ -16,7 +16,7 @@
 
 		-- set up the environment
 		_p('ifndef config')
-		_p('  config=%s%s', _MAKE.esc(prj.configurations[1]:lower()), cc.platforms[platforms[1]].suffix)
+		_p('  config=%s', _MAKE.esc(premake.getconfigname(prj.configurations[1], platforms[1], true)))
 		_p('endif')
 		_p('')
 		
@@ -28,7 +28,7 @@
 		-- list the configurations
 		for _, platform in ipairs(platforms) do
 			for cfg in premake.eachconfig(prj, platform) do
-				premake.gmake_cpp_config(cfg)
+				premake.gmake_cpp_config(cfg, cc)
 			end
 		end
 
@@ -151,11 +151,9 @@
 -- Write a block of configuration settings.
 --
 
-	function premake.gmake_cpp_config(cfg)
-		local cc = premake[_OPTIONS.cc]
-		local platform = cc.platforms[cfg.platform or "Native"].suffix
+	function premake.gmake_cpp_config(cfg, cc)
 
-		_p('ifeq ($(config),%s%s)', _MAKE.esc(cfg.name:lower()), platform)
+		_p('ifeq ($(config),%s)', _MAKE.esc(cfg.shortname))
 		_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', _MAKE.esc(cfg.buildtarget.name))
 		_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))

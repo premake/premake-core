@@ -21,7 +21,6 @@
 		kind "ConsoleApp"
 		
 		_ACTION = "gmake"
-		_OPTIONS.cc = "gcc"
 		_OPTIONS.os = "linux"
 	end
 
@@ -35,7 +34,7 @@
 	function T.gmake_cpp.BasicCfgBlock()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug")
-		premake.gmake_cpp_config(cfg)
+		premake.gmake_cpp_config(cfg, premake.gcc)
 		test.capture [[
 ifeq ($(config),debug)
   TARGETDIR  = .
@@ -65,7 +64,7 @@ endif
 	function T.gmake_cpp.PlatformSpecificBlock()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x64")
-		premake.gmake_cpp_config(cfg)
+		premake.gmake_cpp_config(cfg, premake.gcc)
 		test.capture [[
 ifeq ($(config),debug64)
   TARGETDIR  = .

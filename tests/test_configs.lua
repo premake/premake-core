@@ -63,4 +63,14 @@
 		test.isequal("Native", r)
 	end
 
+	
+	function T.configs.BuildsShortName()
+		local r = premake.getconfig(prj, "Debug", "x32").shortname
+		test.isequal("debug32", r)
+	end
+	
+	function T.configs.BuildsLongName()
+		local r = premake.getconfig(prj, "Debug", "x32").longname
+		test.isequal("Debug|x32", r)
+	end
 

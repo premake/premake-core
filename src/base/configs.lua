@@ -197,10 +197,12 @@
 		terms.platform = pltname:lower()
 		terms.config   = (cfgname or ""):lower()
 
-		local cfg    = buildconfig(prj, terms)
-		cfg.name     = cfgname
-		cfg.platform = pltname
-		cfg.project  = prj
+		local cfg     = buildconfig(prj, terms)
+		cfg.name      = cfgname
+		cfg.platform  = pltname
+		cfg.shortname = premake.getconfigname(cfgname, pltname, true)
+		cfg.longname  = premake.getconfigname(cfgname, pltname)
+		cfg.project   = prj
 		
 		-- set the project location, if not already set
 		cfg.location = cfg.location or cfg.basedir

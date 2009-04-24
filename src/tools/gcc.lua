@@ -32,39 +32,33 @@
 	
 	
 --
--- Support platforms, mapped to build configuration suffix
+-- Map platforms to flags
 --
 
 	premake.gcc.platforms = 
 	{
 		Native = { 
-			suffix   = "",
 			cppflags = "-MMD", 
 		},
 		x32 = { 
-			suffix   = "32",
 			cppflags = "-MMD", 
 			flags    = "-m32",
 			ldflags  = "-L/usr/lib32", 
 		},
 		x64 = { 
-			suffix   = "64",
 			cppflags = "-MMD",
 			flags    = "-m64",
 			ldflags  = "-L/usr/lib64",
 		},
 		Universal = { 
-			suffix   = "univ",
 			cppflags = "",
 			flags    = "-arch i386 -arch x86_64 -arch ppc -arch ppc64",
 		},
 		Universal32 = { 
-			suffix   = "univ32",
 			cppflags = "",
 			flags    = "-arch i386 -arch ppc",
 		},
 		Universal64 = { 
-			suffix   = "univ64",
 			cppflags = "",
 			flags    = "-arch x86_64 -arch ppc64",
 		},

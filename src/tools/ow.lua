@@ -36,7 +36,9 @@
 
 	premake.ow.platforms = 
 	{
-		Native = { suffix="", cflags="" },
+		Native = { 
+			flags = "" 
+		},
 	}
 
 

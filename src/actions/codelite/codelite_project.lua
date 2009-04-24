@@ -22,11 +22,8 @@
 		local platforms = premake.filterplatforms(prj.solution, premake.gcc.platforms, "Native")
 
 		for _, platform in ipairs(platforms) do
-			for cfg in premake.eachconfig(prj) do
-				local name = premake.esc(cfg.name)
-				if platform ~= "Native" then
-					name = name .. "|" .. platform
-				end
+			for cfg in premake.eachconfig(prj, platform) do
+				local name = premake.esc(cfg.longname)
 				local compiler = iif(cfg.language == "C", "gcc", "g++")
 				_p('    <Configuration Name="%s" CompilerType="gnu %s" DebuggerType="GNU gdb debugger" Type="%s">', name, compiler, types[cfg.kind])
 			
@@ -110,12 +107,8 @@
 		_p('  </Settings>')
 
 		for _, platform in ipairs(platforms) do
-			for _,cfgname in ipairs(prj.configurations) do
-				local name = premake.esc(cfgname)
-				if platform ~= "Native" then
-					name = name .. "|" .. platform
-				end
-				_p('  <Dependencies name="%s">', name)
+			for cfg in premake.eachconfig(prj, platform) do
+				_p('  <Dependencies name="%s">', cfg.longname)
 				for _,dep in ipairs(premake.getdependencies(prj)) do
 					_p('    <Project Name="%s"/>', dep.name)
 				end
