@@ -117,6 +117,31 @@
 	end
 
 
+--
+-- Converts path fields from absolute to location-relative paths.
+--
+-- @param location
+--    The base location, paths will be relative to this directory.
+-- @param obj
+--    The object containing the fields to be adjusted.
+--
+
+	local function adjustpaths(location, obj)
+		for name, value in pairs(obj) do
+			local field = premake.fields[name]
+			if field and value and not nofixup[name] then
+				if field.kind == "path" then
+					obj[name] = path.getrelative(location, value) 
+				elseif field.kind == "dirlist" or field.kind == "filelist" then
+					for i, p in ipairs(value) do 
+						value[i] = path.getrelative(location, p) 
+					end
+				end
+			end
+		end
+	end
+	
+	
 
 --
 -- Merge all of the fields from one object into another. String values are overwritten,
@@ -170,6 +195,7 @@
 		
 		local cfg = {}
 		mergeobject(cfg, basis[key])
+		adjustpaths(obj.location, cfg)
 		mergeobject(cfg, obj)
 
 		local terms = premake.getactiveterms()
@@ -267,15 +293,6 @@
 
 		-- fixup the data		
 		for name, field in pairs(premake.fields) do
-			-- convert absolute paths to project relative
-			if (field.kind == "path" or field.kind == "dirlist" or field.kind == "filelist") and (not nofixup[name]) then
-				if type(cfg[name]) == "table" then
-					for i,p in ipairs(cfg[name]) do cfg[name][i] = path.getrelative(prj.location, p) end
-				else
-					if cfg[name] then cfg[name] = path.getrelative(prj.location, cfg[name]) end
-				end
-			end
-		
 			-- re-key flag fields for faster lookups
 			if field.isflags then
 				local values = cfg[name]
@@ -390,7 +407,7 @@
 -- Takes the configuration information stored in solution->project->block
 -- hierarchy and flattens it all down into one object per configuration.
 -- These objects are cached with the project, and can be retrieved by
--- calling the eachconfig() iterator function.
+-- calling the getconfig() or the eachconfig() iterator function.
 --
 		
 	function premake.buildconfigs()
@@ -399,11 +416,21 @@
 			profiler:start()
 		end
 		
+		-- convert project path fields to be relative to project location
 		for _, sln in ipairs(_SOLUTIONS) do
-			-- build the solution-level settings, which will be reused per-project
+			for _, prj in ipairs(sln.projects) do
+				adjustpaths(prj.location, prj)
+				for _, blk in ipairs(prj.blocks) do
+					adjustpaths(prj.location, blk)
+				end
+			end
+		end
+		
+		
+		-- collapse configuration blocks, so that there is only one block per build
+		-- configuration/platform pair, filtered to the current operating environment		
+		for _, sln in ipairs(_SOLUTIONS) do
 			local basis = collapse(sln)
-			
-			-- build the project level settings
 			for _, prj in ipairs(sln.projects) do
 				prj.__configs = collapse(prj, basis)
 				for _, cfg in pairs(prj.__configs) do

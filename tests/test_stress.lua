@@ -4,7 +4,7 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
-local numprojects = 20
+local numprojects = 100
 local numfiles    = 100
 
 dofile("pepperfish_profiler.lua")
