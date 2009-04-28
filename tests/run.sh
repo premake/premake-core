@@ -1,4 +1,2 @@
 #!/bin/sh
-MYCFG=$1
-if [ ! $MYCFG ]; then MYCFG="debug"; fi
-../bin/$MYCFG/premake4 /scripts=../src test
+../bin/debug/premake4 /scripts=../src $1 $2 $3 $4 $5

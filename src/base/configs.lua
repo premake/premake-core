@@ -12,9 +12,10 @@
 	-- do not copy these fields into the configurations
 	local nocopy = 
 	{
-		blocks   = true,
-		keywords = true,
-		projects = true,
+		blocks    = true,
+		keywords  = true,
+		projects  = true,
+		__configs = true,
 	}
 	
 	-- leave these paths as absolute, rather than converting to project relative
@@ -118,91 +119,126 @@
 
 
 --
--- Copies all of the fields from one settings object into another. List fields are
--- appended, string fields are overwritten. In this way, multiple settings blocks
--- are merged together to create a full configuration set.
+-- Merge all of the fields from one object into another. String values are overwritten,
+-- while list values are merged. Fields listed in premake.nocopy are skipped.
+--
+-- @param dest
+--    The destination object, to contain the merged settings.
+-- @param src
+--    The source object, containing the settings to added to the destination.
 --
 
-	local function copyfields(cfg, this)
-		for field,value in pairs(this) do
-			if (not nocopy[field]) then
-				if (type(value) == "table") then
-					if (not cfg[field]) then cfg[field] = { } end
-					cfg[field] = table.join(cfg[field], value) 
+	local function mergeobject(dest, src)
+		if not src then return end
+		for field, value in pairs(src) do
+			if not nocopy[field] then
+				if type(value) == "table" then
+					dest[field] = table.join(dest[field] or {}, value)
 				else
-					cfg[field] = value
+					dest[field] = value
 				end
 			end
 		end
 	end
-		
 	
 	
+
 --
--- Build a configuration object, given a project and a set of configuration terms. 
--- Used to build the base objects for both project and file configurations.
+-- Merges the settings from a solution's or project's list of configuration blocks,
+-- for all blocks that match the provided set of environment terms.
+--
+-- @param dest
+--    The destination object, to contain the merged settings.
+-- @param obj
+--    The solution or project object being collapsed.
+-- @param basis
+--    "Root" level settings, from the solution, which act as a starting point for
+--    all of the collapsed settings built during this call.
+-- @param cfgname
+--    The name of the configuration being collapsed. May be nil.
+-- @param pltname
+--    The name of the platform being collapsed. May be nil.
 --
 
-	local function buildconfig(prj, terms)
-		-- fields are copied first from the solution, then the solution's configs,
-		-- then from the project, then the project's configs. Each can overwrite
-		-- or add to the values set previously. The objdir field gets special
-		-- treatment, in order to provide a project-level default and still enable
-		-- solution-level overrides
-
-		local cfg = { }
+	local function merge(dest, obj, basis, cfgname, pltname)
+		pltname = pltname or "Native"
 		
-		copyfields(cfg, prj.solution)
-		for _,blk in ipairs(prj.solution.blocks) do
+		local key = cfgname or ""
+		if pltname ~= "Native" then
+			key = key .. pltname
+		end
+		
+		local cfg = {}
+		mergeobject(cfg, basis[key])
+		mergeobject(cfg, obj)
+
+		local terms = premake.getactiveterms()
+		terms.config = (cfgname or ""):lower()
+		terms.platform = pltname:lower()
+		
+		for _, blk in ipairs(obj.blocks) do
 			if (premake.iskeywordsmatch(blk.keywords, terms)) then
-				copyfields(cfg, blk)
+				mergeobject(cfg, blk)
 			end
 		end
-
-		copyfields(cfg, prj)
-		for _,blk in ipairs(prj.blocks) do
-			if (premake.iskeywordsmatch(blk.keywords, terms)) then
-				copyfields(cfg, blk)
-			end
-		end
-
-		return cfg				
+		
+		cfg.name      = cfgname
+		cfg.platform  = pltname
+		cfg.terms     = terms
+		dest[key] = cfg
 	end
 	
 	
-	
+		
 --
--- Builds a configuration object for a particular project/configuration pair. Flattens
--- the object hierarchy, and discards any settings that do not apply to this environment.
+-- Collapse a solution or project object down to a canonical set of configuration settings,
+-- keyed by configuration block/platform pairs, and taking into account the current
+-- environment settings.
+--
+-- @param obj
+--    The solution or project to be collapsed.
+-- @param basis
+--    "Root" level settings, from the solution, which act as a starting point for
+--    all of the collapsed settings built during this call.
+-- @returns
+--    The collapsed list of settings, keyed by configuration block/platform pair.
+--
+
+	local function collapse(obj, basis)
+		local result = {}
+		basis = basis or {}
+		
+		-- find the solution, which contains the configuration and platform lists
+		local sln = obj.solution or obj
+
+		merge(result, obj, basis)
+		for _, cfgname in ipairs(sln.configurations) do
+			merge(result, obj, basis, cfgname, "Native")
+			for _, pltname in ipairs(sln.platforms or {}) do
+				if pltname ~= "Native" then
+					merge(result, obj, basis, cfgname, pltname)
+				end
+			end
+		end
+		
+		return result
+	end
+	
+
+--
+-- Post-process a project configuration, applying path fix-ups and other adjustments
+-- to the "raw" setting data pulled from the project script.
 --
 -- @param prj
---    The project being queried.
--- @param cfgname
---    The target build configuration; only settings applicable to this configuration
---    will be returned. May be nil to query project-wide settings.
--- @param pltname
---    The target platform; only settings applicable to this platform will be returned.
---    Maybe be nil to query platform-independent settings.
--- @returns 
---    A configuration object, aggregating all of the blocks whose keywords matched the 
---    platform and configuration provided, as well as the active environment.
+--    The project object which contains the configuration.
+-- @param cfg
+--    The configuration object to be fixed up.
 --
 
-	local function buildprojectconfig(prj, cfgname, pltname)
-		pltname = pltname or "Native"
-		
-		-- create the base configuration, flattening the list of objects and
-		-- filtering out settings which do not match the current environment
-		local terms = premake.getactiveterms()
-		terms.platform = pltname:lower()
-		terms.config   = (cfgname or ""):lower()
-
-		local cfg     = buildconfig(prj, terms)
-		cfg.name      = cfgname
-		cfg.platform  = pltname
-		cfg.shortname = premake.getconfigname(cfgname, pltname, true)
-		cfg.longname  = premake.getconfigname(cfgname, pltname)
+	local function postprocess(prj, cfg)
 		cfg.project   = prj
+		cfg.shortname = premake.getconfigname(cfg.name, cfg.platform, true)
+		cfg.longname  = premake.getconfigname(cfg.name, cfg.platform)
 		
 		-- set the project location, if not already set
 		cfg.location = cfg.location or cfg.basedir
@@ -243,15 +279,19 @@
 		-- build configuration objects for all files
 		cfg.__fileconfigs = { }
 		for _, fname in ipairs(cfg.files) do
-			terms.required = fname:lower()
-			local fcfg = buildconfig(prj, terms)
-			fcfg.name = fname
+			cfg.terms.required = fname:lower()
+			local fcfg = {}
+			for _, blk in ipairs(cfg.project.blocks) do
+				if (premake.iskeywordsmatch(blk.keywords, cfg.terms)) then
+					mergeobject(fcfg, blk)
+				end
+			end
+
 			-- add indexed by name and integer
+			fcfg.name = fname
 			cfg.__fileconfigs[fname] = fcfg
 			table.insert(cfg.__fileconfigs, fcfg)
 		end
-		
-		return cfg
 	end
 
 
@@ -329,9 +369,9 @@
 			cfg.objectsdir = path.translate(cfg.objectsdir, "\\")
 		end
 	end
+		
 	
-	
-	
+		
 --
 -- Takes the configuration information stored in solution->project->block
 -- hierarchy and flattens it all down into one object per configuration.
@@ -340,32 +380,23 @@
 --
 		
 	function premake.buildconfigs()
-		-- walk the object tree once and flatten the configurations
+	
+		if profiler then
+			profiler:start()
+		end
+		
 		for _, sln in ipairs(_SOLUTIONS) do
+			-- build the solution-level settings, which will be reused per-project
+			local basis = collapse(sln)
+			
+			-- build the project level settings
 			for _, prj in ipairs(sln.projects) do
-				prj.__configs = { }
-				
-				-- create a project-wide "root" config
-				prj.__configs[""] = buildprojectconfig(prj)
-				
-				-- then one per build configuration
-				for _, cfgname in ipairs(sln.configurations) do
-					-- build a platform independent config
-					prj.__configs[cfgname] = buildprojectconfig(prj, cfgname)
-					
-					-- then one per build configuration/platform pair. Skip the native build
-					-- since it is the same as the platform independent config built above
-					if sln.platforms then
-						for _, pltname in ipairs(sln.platforms) do
-							if pltname ~= "Native" then
-								prj.__configs[cfgname .. ":" .. pltname] = buildprojectconfig(prj, cfgname, pltname)
-							end
-						end
-					end
-					
+				prj.__configs = collapse(prj, basis)
+				for _, cfg in pairs(prj.__configs) do
+					postprocess(prj, cfg)
 				end
 			end
-		end
+		end	
 		
 		-- walk it again and build the targets and unique directories
 		for _, sln in ipairs(_SOLUTIONS) do
@@ -375,4 +406,9 @@
 				end
 			end
 		end		
+	
+		if profiler then
+			profiler:stop()
+			dumpresults(true)
+		end
 	end

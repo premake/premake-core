@@ -173,15 +173,17 @@
 
 	function premake.getconfig(prj, cfgname, pltname)
 		-- might have the root configuration, rather than the actual project
-		if prj.project then prj = prj.project end
-		
+		if prj.project then 
+			prj = prj.project 
+		end
+
 		-- if platform is not included in the solution, use general settings instead
 		if pltname == "Native" or not table.contains(prj.solution.platforms or {}, pltname) then
 			pltname = nil
 		end
-		
+
 		local key = (cfgname or "")
-		if pltname then key = key .. ":" .. pltname end
+		if pltname then key = key .. pltname end
 		return prj.__configs[key]
 	end
 
