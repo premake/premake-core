@@ -17,7 +17,7 @@
 		
 		-- if the directory is already absolute I don't need to do anything
 		local result = iif (path.isabsolute(p), nil, os.getcwd())
-
+		
 		-- split up the supplied relative path and tackle it bit by bit
 		for _,part in ipairs(p:explode("/", true)) do
 			if (part == "") then

@@ -31,6 +31,10 @@
 	function T.string.endswith_ReturnsFalse_OnNilNeedle()
 		test.isfalse(string.endswith("Abc", nil))
 	end
+	
+	function T.string.endswith_ReturnsTrue_OnExactMatch()
+		test.istrue(string.endswith("/", "/"))
+	end
 
 
 

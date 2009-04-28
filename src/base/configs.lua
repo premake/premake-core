@@ -242,6 +242,13 @@
 		
 		-- set the project location, if not already set
 		cfg.location = cfg.location or cfg.basedir
+
+		-- deduce and store the applicable tool for this configuration
+		if cfg.language == "C" or cfg.language == "C++" then
+			if _OPTIONS.cc then cfg.tool = premake[_OPTIONS.cc] end
+		elseif cfg.language == "C#" then
+			if _OPTIONS.dotnet then cfg.tool = premake[_OPTIONS.dotnet] end
+		end
 		
 		-- remove excluded files from the file list
 		local files = { }
@@ -302,13 +309,6 @@
 --
 
 	local function buildtargets(cfg)
-
-		-- deduce and store the applicable tool for this configuration
-		if cfg.language == "C" or cfg.language == "C++" then
-			if _OPTIONS.cc then cfg.tool = premake[_OPTIONS.cc] end
-		elseif cfg.language == "C#" then
-			if _OPTIONS.dotnet then cfg.tool = premake[_OPTIONS.dotnet] end
-		end
 					
 		-- deduce the target and path style from the current action/tool pairing	
 		local action = premake.actions[_ACTION]
@@ -409,6 +409,6 @@
 	
 		if profiler then
 			profiler:stop()
-			dumpresults()
+			dumpresults(true)
 		end
 	end

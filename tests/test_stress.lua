@@ -4,7 +4,7 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
-local numprojects = 50
+local numprojects = 20
 local numfiles    = 100
 
 dofile("pepperfish_profiler.lua")
@@ -18,7 +18,7 @@ end
 
 solution "MySolution"
 	configurations { "Debug", "Release", "DebugDLL", "ReleaseDLL" }
-	-- platforms { "Native", "x32", "x64" }
+	platforms { "Native", "x32", "x64" }
 	location "build"
 		
 	configuration "Debug"

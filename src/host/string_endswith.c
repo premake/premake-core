@@ -9,14 +9,14 @@
 
 int string_endswith(lua_State* L)
 {
-	const char* haystack = luaL_checkstring(L, 1);
-	const char* needle   = luaL_checkstring(L, 2);
+	const char* haystack = luaL_optstring(L, 1, NULL);
+	const char* needle   = luaL_optstring(L, 2, NULL);
 
 	if (haystack && needle)
 	{
 		int hlen = strlen(haystack);
 		int nlen = strlen(needle);
-		if (hlen > nlen) 
+		if (hlen >= nlen) 
 		{
 			lua_pushboolean(L, strcmp(haystack + hlen - nlen, needle) == 0);
 			return 1;
