@@ -335,6 +335,7 @@
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
+
 					local dirs = { }
 					dirs[1] = path.getabsolute(path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj"))
 					dirs[2] = path.join(dirs[1], iif(cfg.platform == "Native", "", cfg.platform))
@@ -350,6 +351,7 @@
 							hit_counts[d] = 1
 						end
 					end
+
 				end
 			end
 		end
@@ -359,12 +361,14 @@
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
+
 					local dir
 					for v = 1, num_variations do
 						dir = cfg_dirs[cfg][v]
 						if hit_counts[dir] == 1 then break end
 					end
 					cfg.objectsdir = path.getrelative(cfg.location, dir)
+
 				end
 			end
 		end		
@@ -412,10 +416,6 @@
 		
 	function premake.buildconfigs()
 	
-		if profiler then
-			profiler:start()
-		end
-		
 		-- convert project path fields to be relative to project location
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
@@ -425,7 +425,6 @@
 				end
 			end
 		end
-		
 		
 		-- collapse configuration blocks, so that there is only one block per build
 		-- configuration/platform pair, filtered to the current operating environment		
@@ -450,9 +449,5 @@
 				end
 			end
 		end		
-	
-		if profiler then
-			profiler:stop()
-			dumpresults(true)
-		end
+
 	end

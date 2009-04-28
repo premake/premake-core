@@ -10,6 +10,7 @@
 - Support links and libdirs for Visual Studio static libraries
 - Fail gracefully when list is assigned to string field
 - Changed GCC flags to -fno-exceptions and -fno-rtti
+- Improved performance of configuration building step
 
 
 -----
