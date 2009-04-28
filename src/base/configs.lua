@@ -304,8 +304,60 @@
 
 
 --
--- Pre-computes the build target, link target, and a unique objects directory
--- for a configuration.
+-- Computes a unique objects directory for every configuration.
+--
+
+	local function builduniquedirs()
+		local num_variations = 4
+		
+		-- Start by listing out each possible object directory for each configuration.
+		-- Keep a count of how many times each path gets used across the session.
+		local cfg_dirs = {}
+		local hit_counts = {}
+		
+		for _, sln in ipairs(_SOLUTIONS) do
+			for _, prj in ipairs(sln.projects) do
+				for _, cfg in pairs(prj.__configs) do
+					local dirs = { }
+					dirs[1] = path.getabsolute(path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj"))
+					dirs[2] = path.join(dirs[1], iif(cfg.platform == "Native", "", cfg.platform))
+					dirs[3] = path.join(dirs[2], cfg.name)
+					dirs[4] = path.join(dirs[3], cfg.project.name)
+					cfg_dirs[cfg] = dirs
+					
+					for v = 1, num_variations do
+						local d = dirs[v]
+						if hit_counts[d] then
+							hit_counts[d] = hit_counts[d] + 1
+						else
+							hit_counts[d] = 1
+						end
+					end
+				end
+			end
+		end
+		
+		-- Now assign an object directory to each configuration, skipping those
+		-- that are in use somewhere else in the session
+		for _, sln in ipairs(_SOLUTIONS) do
+			for _, prj in ipairs(sln.projects) do
+				for _, cfg in pairs(prj.__configs) do
+					local dir
+					for v = 1, num_variations do
+						dir = cfg_dirs[cfg][v]
+						if hit_counts[dir] == 1 then break end
+					end
+					cfg.objectsdir = path.getrelative(cfg.location, dir)
+				end
+			end
+		end		
+		
+	end
+	
+
+
+--
+-- Pre-computes the build and link targets for a configuration.
 --
 
 	local function buildtargets(cfg)
@@ -316,44 +368,6 @@
 		if (cfg.tool) then
 			targetstyle = cfg.tool.targetstyle or targetstyle
 		end
-
-		-- build a unique objects directory
-		local function buildpath(cfg, variant)
-			local dir = path.getabsolute(path.join(cfg.location, cfg.objdir or cfg.project.objdir or "obj"))
-			if variant > 1 and cfg.platform ~= "Native" then
-				dir = path.join(dir, cfg.platform)
-			end
-			if variant > 2 then
-				dir = path.join(dir, cfg.name)
-			end
-			if variant > 3 then
-				dir = path.join(dir, cfg.project.name)
-			end
-			return dir
-		end
-		
-		local function getuniquedir(thiscfg)
-			local variant = 1
-			local thispath = buildpath(thiscfg, variant)
-			for _, sln in ipairs(_SOLUTIONS) do
-				for _, prj in ipairs(sln.projects) do
-					for _, thatcfg in pairs(prj.__configs) do
-						if thiscfg ~= thatcfg then
-							local thatpath = buildpath(thatcfg, variant)
-							while thispath == thatpath and variant < 4 do
-								variant = variant + 1
-								thispath = buildpath(thiscfg, variant)
-								thatpath = buildpath(thatcfg, variant)
-							end
-						end
-					end
-				end
-			end
-			
-			return thispath
-		end
-		
-		cfg.objectsdir = path.getrelative(cfg.location, getuniquedir(cfg))
 		
 		-- precompute the target names and paths		
 		cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
@@ -397,6 +411,9 @@
 				end
 			end
 		end	
+		
+		-- assign unique object directories to each configuration
+		builduniquedirs()
 		
 		-- walk it again and build the targets and unique directories
 		for _, sln in ipairs(_SOLUTIONS) do
