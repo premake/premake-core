@@ -5,9 +5,6 @@
 --
 
 
-	path = { }
-	
-
 --
 -- Get the absolute file path from a relative path. The requested
 -- file path doesn't actually need to exist.
@@ -161,17 +158,6 @@
 	
 
 --
--- Returns true if the path is absolute.
---
-
-	function path.isabsolute(p)
-		local ch1 = p:sub(1,1)
-		local ch2 = p:sub(2,2)
-		return (ch1 == "/" or ch1 == "\\" or ch2 == ":")
-	end
-
-
---
 -- Returns true if the filename represents a C/C++ source code file. This check
 -- is used to prevent passing non-code files to the compiler in makefiles. It is
 -- not foolproof, but it has held up well. I'm open to better suggestions.
@@ -208,9 +194,7 @@
 --
 
 	function path.join(leading, trailing)
-		if (not leading) then 
-			leading = "" 
-		end
+		leading = leading or ""
 		
 		if (not trailing) then
 			return leading

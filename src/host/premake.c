@@ -28,6 +28,11 @@ extern const char* builtin_scripts[];
 
 
 /* Built-in functions */
+static const luaL_Reg path_functions[] = {
+	{ "isabsolute",  path_isabsolute },
+	{ NULL, NULL }
+};
+
 static const luaL_Reg os_functions[] = {
 	{ "chdir",       os_chdir       },
 	{ "copyfile",    os_copyfile    },
@@ -46,6 +51,11 @@ static const luaL_Reg os_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg string_functions[] = {
+	{ "endswith",  string_endswith },
+	{ NULL, NULL }
+};
+
 
 
 /**
@@ -59,7 +69,9 @@ int main(int argc, const char** argv)
 	/* prepare Lua for use */
 	L = lua_open();
 	luaL_openlibs(L);
-	luaL_register(L, "os", os_functions);
+	luaL_register(L, "path",   path_functions);
+	luaL_register(L, "os",     os_functions);
+	luaL_register(L, "string", string_functions);
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);

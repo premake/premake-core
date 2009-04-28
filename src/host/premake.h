@@ -45,6 +45,7 @@ int do_isfile(const char* filename);
 
 
 /* Built-in functions */
+int path_isabsolute(lua_State* L);
 int os_chdir(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
@@ -59,4 +60,5 @@ int os_mkdir(lua_State* L);
 int os_pathsearch(lua_State* L);
 int os_rmdir(lua_State* L);
 int os_uuid(lua_State* L);
+int string_endswith(lua_State* L);
 

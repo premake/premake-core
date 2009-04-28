@@ -409,6 +409,6 @@
 	
 		if profiler then
 			profiler:stop()
-			dumpresults(true)
+			dumpresults()
 		end
 	end

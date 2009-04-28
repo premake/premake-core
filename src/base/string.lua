@@ -6,23 +6,6 @@
 
 
 --
--- Returns true if `haystack` ends with the sequence `needle`.
---
-
-	function string.endswith(haystack, needle)
-		if (haystack and needle) then
-			local hlen = haystack:len()
-			local nlen = needle:len()
-			if (hlen >= nlen) then
-				return (haystack:sub(-nlen) == needle)
-			end
-		end
-		
-		return false
-	end
-	
-	
---
 -- Returns an array of strings, each of which is a substring of s
 -- formed by splitting on boundaries formed by `pattern`.
 -- 
