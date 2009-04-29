@@ -1,7 +1,6 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
-	platforms { "native", "x32", "x64", "universal", "xbox360" }
-
+	
 	objdir "obj"
 		
 -- solution level configuration
@@ -15,9 +14,6 @@ solution "PremakeTestbox"
 		targetdir "bin/release"
 		flags   { "Optimize" }
 		defines { "NDEBUG" }
-
-	configuration "x64"
-		defines { "IS_64BIT" }
 			
 
 -- include all the projects

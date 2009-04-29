@@ -71,6 +71,19 @@
 
 
 --
+-- Return a list of all keys used in a table.
+--
+
+	function table.keys(tbl)
+		local keys = {}
+		for k, _ in pairs(tbl) do
+			table.insert(keys, k)
+		end
+		return keys
+	end
+
+
+--
 -- Translates the values contained in array, using the specified
 -- translation table, and returns the results in a new array.
 --

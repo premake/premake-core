@@ -198,24 +198,7 @@
 		{
 			kind  = "list",
 			scope = "solution",
-			allowed = {
-				"Native",
-				"x32",
-				"x64",
-				"Universal",
-				"Universal32",
-				"Universal64",
-				"Xbox360"
-			},
-			shortnames = {
-				Native      = "",
-				x32         = "32",
-				x64         = "64",
-				Universal   = "univ",
-				Universal32 = "univ32",
-				Universal64 = "univ64",
-				Xbox360     = "360",
-			}
+			allowed = table.keys(premake.platforms),
 		},
 		
 		postbuildcommands =
@@ -315,7 +298,7 @@
 -- use case-sensitive comparisions.
 --
 
-	local function checkvalue(value, allowed)
+	function premake.checkvalue(value, allowed)
 		if (allowed) then
 			if (type(allowed) == "function") then
 				return allowed(value)
@@ -396,7 +379,7 @@
 					doinsert(v, depth + 1)
 				end
 			else
-				value, err = checkvalue(value, allowed)
+				value, err = premake.checkvalue(value, allowed)
 				if (not value) then
 					error(err, depth)
 				end
@@ -464,7 +447,7 @@
 	
 		-- if a value was provided, set it
 		if (value) then
-			value, err = checkvalue(value, allowed)
+			value, err = premake.checkvalue(value, allowed)
 			if (not value) then 
 				error(err, 4)
 			end

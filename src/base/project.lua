@@ -200,7 +200,7 @@
 			local name = cfgname
 			if platform and platform ~= "Native" then
 				if useshortname then
-					name = name .. premake.fields.platforms.shortnames[platform]
+					name = name .. premake.platforms[platform][1]
 				else
 					name = name .. "|" .. platform
 				end

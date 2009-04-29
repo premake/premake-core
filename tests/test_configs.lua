@@ -28,6 +28,9 @@
 		configuration "Release"
 		defines "RELEASE"
 
+		configuration "native"
+		defines "NATIVE"
+		
 		configuration "x32"
 		defines "X86_32"
 		
@@ -50,12 +53,12 @@
 	
 	function T.configs.ProjectWideSettings()
 		local cfg = premake.getconfig(prj)
-		test.isequal("SOLUTION:PROJECT", table.concat(cfg.defines,":"))
+		test.isequal("SOLUTION:PROJECT:NATIVE", table.concat(cfg.defines,":"))
 	end
 	
 	function T.configs.BuildCfgSettings()
 		local cfg = premake.getconfig(prj, "Debug")
-		test.isequal("SOLUTION:SOLUTION_DEBUG:PROJECT:DEBUG", table.concat(cfg.defines,":"))
+		test.isequal("SOLUTION:SOLUTION_DEBUG:PROJECT:DEBUG:NATIVE", table.concat(cfg.defines,":"))
 	end
 
 	function T.configs.PlatformSettings()
@@ -73,9 +76,19 @@
 		test.isequal("x32", cfg.platform)
 	end
 	
+	function T.configs.SetsPlatformNativeName()
+		local cfg = premake.getconfig(prj, "Debug")
+		test.isequal("Native", cfg.platform)
+	end
+	
 	function T.configs.SetsShortName()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.isequal("debug32", cfg.shortname)
+	end
+	
+	function T.configs.SetsNativeShortName()
+		local cfg = premake.getconfig(prj, "Debug")
+		test.isequal("debug", cfg.shortname)
 	end
 	
 	function T.configs.SetsLongName()
@@ -83,40 +96,12 @@
 		test.isequal("Debug|x32", cfg.longname)
 	end
 	
+	function T.configs.SetsNativeLongName()
+		local cfg = premake.getconfig(prj, "Debug")
+		test.isequal("Debug", cfg.longname)
+	end
+	
 	function T.configs.SetsProject()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.istrue(prj == cfg.project)
 	end
-	
-
---[[	
-
-	function T.configs.PlatformValues()
-		local r = premake.getconfig(prj, "Debug", "x32").defines
-		test.isequal("GLOBAL:DEBUG:X86_32", table.concat(r,":"))
-	end
-	
-	
-	function T.configs.PlaformNotInSolution()
-		local r = premake.getconfig(prj, "Debug", "Xbox360").defines
-		test.isequal("GLOBAL:DEBUG", table.concat(r, ":"))
-	end
-	
-	
-	function T.configs.DefaultToNativePlatform()
-		local r = premake.getconfig(prj, "Debug").platform
-		test.isequal("Native", r)
-	end
-
-	
-	function T.configs.BuildsShortName()
-		local r = premake.getconfig(prj, "Debug", "x32").shortname
-		test.isequal("debug32", r)
-	end
-	
-	function T.configs.BuildsLongName()
-		local r = premake.getconfig(prj, "Debug", "x32").longname
-		test.isequal("Debug|x32", r)
-	end
-
-]]

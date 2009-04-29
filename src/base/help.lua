@@ -39,7 +39,6 @@
 			
 			printf(" --%-15s %s", trigger, description) 
 			if (opt.allowed) then
-				table.sort(opt.allowed, function(a,b) return a[1] < b[1] end)
 				for _, value in ipairs(opt.allowed) do
 					printf("     %-14s %s", value[1], value[2])
 				end

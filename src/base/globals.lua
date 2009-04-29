@@ -26,6 +26,19 @@
 	premake.options = { }
 
 
+-- The list of supported platforms; also update list in cmdline.lua
+
+	premake.platforms = 
+	{
+		Native       = { ""        },
+		x32          = { "32"      },
+		x64          = { "64"      },
+		Universal    = { "univ"    },
+		Universal32  = { "univ32"  },
+		Universal64  = { "univ64"  },
+		Xbox360      = { "xbox360" },
+	}
+
 
 --
 -- A replacement for Lua's built-in dofile() function, this one sets the

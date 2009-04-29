@@ -74,8 +74,8 @@
 		value       = "compiler",
 		description = "Choose a C/C++ compiler set",
 		allowed = {
-			{ "gcc", "GNU GCC compiler (gcc/g++)" },
-			{ "ow",  "OpenWatcom compiler"        },
+			{ "gcc", "GNU GCC (gcc/g++)" },
+			{ "ow",  "OpenWatcom"        },
 		}
 	}
 
@@ -117,6 +117,21 @@
 		}
 	}
 
+	newoption
+	{
+		trigger     = "platform",
+		value       = "value",
+		description = "Add target architecture (if supported by action)",
+		allowed = {
+			{ "x32",         "32-bit" },
+			{ "x64",         "64-bit" },
+			{ "universal",   "Mac OS X Universal, 32- and 64-bit" },
+			{ "universal32", "Mac OS X Universal, 32-bit only" },
+			{ "universal64", "Mac OS X Universal, 64-bit only" },
+			{ "xbox360",     "Xbox 360" },
+		}
+	}
+	
 	newoption
 	{
 		trigger     = "scripts",

@@ -57,6 +57,39 @@
 	end
 
 
+--
+-- Inject a new target platform into each solution; called if the --platform
+-- argument was specified on the command line.
+--
+
+	local function injectplatform(platform)
+		if not platform then return true end
+		platform = premake.checkvalue(platform, premake.fields.platforms.allowed)
+		
+		for _, sln in ipairs(_SOLUTIONS) do
+			local platforms = sln.platforms or { }
+			
+			-- an empty table is equivalent to a native build
+			if #platforms == 0 then
+				table.insert(platforms, "Native")
+			end
+			
+			-- the solution must provide a native build in order to support this feature
+			if not table.contains(platforms, "Native") then
+				return false, sln.name .. " does not target native platform\nNative platform settings are required for the --platform feature."
+			end
+			
+			-- add it to the end of the list, if it isn't in there already
+			if not table.contains(platforms, platform) then
+				table.insert(platforms, platform)
+			end
+			
+			sln.platforms = platforms
+		end
+		
+		return true
+	end
+	
 
 --
 -- Script-side program entry point.
@@ -128,6 +161,13 @@
 
 		ok, err = premake.checktools()
 		if (not ok) then error("Error: " .. err, 0) end
+		
+		
+		-- If a platform was specified on the command line, inject it now
+
+		ok, err = injectplatform(_OPTIONS["platform"])
+		if (not ok) then error("Error: " .. err, 0) end
+
 		
 		-- work-in-progress: build the configurations
 		print("Building configurations...")
