@@ -18,8 +18,13 @@
 		_p('\t\t<Option pch_mode="2" />')
 		_p('\t\t<Option compiler="%s" />', _OPTIONS.cc)
 
-		-- build a list of supported target platforms that also includes a generic build
+		-- build a list of supported target platforms; I don't support cross-compiling yet
 		local platforms = premake.filterplatforms(prj.solution, cc.platforms, "Native")
+		for i = #platforms, 1, -1 do
+			if premake.platforms[platforms[i]].iscrosscompiler then
+				table.remove(platforms, i)
+			end
+		end 
 		
 		-- write configuration blocks
 		_p('\t\t<Build>')

@@ -10,6 +10,15 @@
 	
 
 --
+-- Set default tools
+--
+
+	premake.gcc.cc     = "gcc"
+	premake.gcc.cxx    = "g++"
+	premake.gcc.ar     = "ar"
+	
+	
+--
 -- Translation of Premake flags into GCC flags
 --
 
@@ -41,7 +50,7 @@
 			cppflags = "-MMD", 
 		},
 		x32 = { 
-			cppflags = "-MMD", 
+			cppflags = "-MMD",	
 			flags    = "-m32",
 			ldflags  = "-L/usr/lib32", 
 		},
@@ -62,26 +71,35 @@
 			cppflags = "",
 			flags    = "-arch x86_64 -arch ppc64",
 		},
+		PS3 = {
+			cc         = "ppu-lv2-g++",
+			cxx        = "ppu-lv2-g++",
+			ar         = "ppu-lv2-ar",
+			cppflags   = "-MMD",
+		}
 	}
 
-
+	local platforms = premake.gcc.platforms
+	
 
 --
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
 	function premake.gcc.getcppflags(cfg)
-		return premake.gcc.platforms[cfg.platform].cppflags
+		return platforms[cfg.platform].cppflags
 	end
+
 
 	function premake.gcc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
-		if (cfg.kind == "SharedLib" and not os.is("windows")) then
+		table.insert(result, platforms[cfg.platform].flags)
+		if cfg.system == "Windows" and cfg.kind == "SharedLib" then
 			table.insert(result, "-fPIC")
 		end
-		table.insert(result, premake.gcc.platforms[cfg.platform].flags)
 		return result		
 	end
+
 	
 	function premake.gcc.getcxxflags(cfg)
 		local result = table.translate(cfg.flags, cxxflags)
@@ -97,35 +115,36 @@
 	function premake.gcc.getldflags(cfg)
 		local result = { }
 		
-		if (cfg.kind == "SharedLib") then
-			if os.is("macosx") then
-				result = table.join(result, { "-dynamiclib", "-flat_namespace" })
-			else
-				table.insert(result, "-shared")
-			end
-			
-			-- create import library for DLLs under Windows
-			if (os.is("windows") and not cfg.flags.NoImportLib) then
-				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux").fullpath..'"')
-			end
-		end
-
-		if (os.is("windows") and cfg.kind == "WindowedApp") then
-			table.insert(result, "-mwindows")
-		end
-		
 		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
-		if (not cfg.flags.Symbols) then
-			if (os.is("macosx")) then
+		if not cfg.flags.Symbols then
+			if cfg.system == "MacOSX" then
 				table.insert(result, "-Wl,-x")
 			else
 				table.insert(result, "-s")
 			end
 		end
 	
-		table.insert(result, premake.gcc.platforms[cfg.platform].flags)
-		table.insert(result, premake.gcc.platforms[cfg.platform].ldflags)
+		if cfg.kind == "SharedLib" then
+			if cfg.system == "MacOSX" then
+				result = table.join(result, { "-dynamiclib", "-flat_namespace" })
+			else
+				table.insert(result, "-shared")
+			end
+				
+			if cfg.system == "Windows" and not cfg.flags.NoImportLib then
+				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux").fullpath..'"')
+			end
+		end
+
+		if cfg.kind == "WindowedApp" then
+			if cfg.system == "Windows" then
+				table.insert(result, "-mwindows")
+			end
+		end
 		
+		local platform = platforms[cfg.platform]
+		table.insert(result, platform.flags)
+		table.insert(result, platform.ldflags)
 		return result
 	end
 		

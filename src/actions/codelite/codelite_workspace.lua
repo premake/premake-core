@@ -15,9 +15,14 @@
 			_p('  <Project Name="%s" Path="%s.project" Active="%s" />', name, fname, active)
 		end
 		
-		-- build a list of supported target platforms that also includes a generic build
+		-- build a list of supported target platforms; I don't support cross-compiling yet
 		local platforms = premake.filterplatforms(sln, premake[_OPTIONS.cc].platforms, "Native")
-		
+		for i = #platforms, 1, -1 do
+			if premake.platforms[platforms[i]].iscrosscompiler then
+				table.remove(platforms, i)
+			end
+		end 
+
 		_p('  <BuildMatrix>')
 		for _, platform in ipairs(platforms) do
 			for _, cfgname in ipairs(sln.configurations) do

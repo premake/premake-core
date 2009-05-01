@@ -18,8 +18,13 @@
 		}
 		_p('  <Settings Type="%s">', types[prj.kind])
 		
-		-- build a list of supported target platforms that also includes a generic build
-		local platforms = premake.filterplatforms(prj.solution, premake.gcc.platforms, "Native")
+		-- build a list of supported target platforms; I don't support cross-compiling yet
+		local platforms = premake.filterplatforms(prj.solution, premake[_OPTIONS.cc].platforms, "Native")
+		for i = #platforms, 1, -1 do
+			if premake.platforms[platforms[i]].iscrosscompiler then
+				table.remove(platforms, i)
+			end
+		end 
 
 		for _, platform in ipairs(platforms) do
 			for cfg in premake.eachconfig(prj, platform) do

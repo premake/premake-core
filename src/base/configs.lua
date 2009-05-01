@@ -276,6 +276,19 @@
 			if _OPTIONS.dotnet then cfg.tool = premake[_OPTIONS.dotnet] end
 		end
 		
+		-- figure out the target system
+		local platform = premake.platforms[cfg.platform]
+		if platform.iscrosscompiler then
+			cfg.system = cfg.platform
+		else
+			cfg.system = os.get()
+		end
+		
+		-- adjust the kind as required by the target system
+		if cfg.kind == "SharedLib" and platform.nosharedlibs then
+			cfg.kind = "StaticLib"
+		end
+		
 		-- remove excluded files from the file list
 		local files = { }
 		for _, fname in ipairs(cfg.files) do

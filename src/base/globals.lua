@@ -30,13 +30,41 @@
 
 	premake.platforms = 
 	{
-		Native       = { ""        },
-		x32          = { "32"      },
-		x64          = { "64"      },
-		Universal    = { "univ"    },
-		Universal32  = { "univ32"  },
-		Universal64  = { "univ64"  },
-		Xbox360      = { "xbox360" },
+		Native = 
+		{ 
+			cfgsuffix       = "",
+		},
+		x32 = 
+		{ 
+			cfgsuffix       = "32",
+		},
+		x64 = 
+		{ 
+			cfgsuffix       = "64",
+		},
+		Universal = 
+		{ 
+			cfgsuffix       = "unix",
+		},
+		Universal32 = 
+		{ 
+			cfgsuffix       = "univ32",
+		},
+		Universal64 = 
+		{ 
+			cfgsuffix       = "univ64",
+		},
+		PS3 = 
+		{ 
+			cfgsuffix       = "ps3",
+			iscrosscompiler = true,
+			nosharedlibs    = true,
+		},
+		Xbox360 = 
+		{ 
+			cfgsuffix       = "xbox360",
+			iscrosscompiler = true,
+		},
 	}
 
 

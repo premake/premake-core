@@ -9,6 +9,15 @@
 	
 	
 --
+-- Set default tools
+--
+
+	premake.ow.cc     = "WCL386"
+	premake.ow.cxx    = "WCL386"
+	premake.ow.ar     = "ar"
+	
+	
+--
 -- Translation of Premake flags into OpenWatcom flags
 --
 

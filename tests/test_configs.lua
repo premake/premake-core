@@ -10,7 +10,7 @@
 	function T.configs.setup()
 		solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
+		platforms { "x32", "ps3" }
 		
 		defines "SOLUTION"
 		
@@ -19,7 +19,7 @@
 		
 		prj = project "MyProject"
 		language "C"
-		kind "ConsoleApp"
+		kind "SharedLib"
 		defines "PROJECT"
 		
 		configuration "Debug"
@@ -104,4 +104,32 @@
 	function T.configs.SetsProject()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.istrue(prj == cfg.project)
+	end
+
+--
+-- Target system testing
+--
+
+	function T.configs.SetsTargetSystem_OnNative()
+		local cfg = premake.getconfig(prj, "Debug")
+		test.isequal(os.get(), cfg.system)
+	end
+
+	function T.configs.SetTargetSystem_OnCrossCompiler()
+		local cfg = premake.getconfig(prj, "Debug", "PS3")
+		test.isequal("PS3", cfg.system)
+	end
+	
+--
+-- Platform kind translation
+--
+
+	function T.configs.SetsTargetKind_OnSupportedKind()
+		local cfg = premake.getconfig(prj, "Debug")
+		test.isequal("SharedLib", cfg.kind)
+	end
+
+	function T.configs.SetsTargetKind_OnUnsupportedKind()
+		local cfg = premake.getconfig(prj, "Debug", "PS3")
+		test.isequal("StaticLib", cfg.kind)
 	end
