@@ -5,6 +5,7 @@
  */
 
 #include "premake.h"
+#include <string.h>
 
 
 int string_endswith(lua_State* L)
