@@ -9,7 +9,7 @@
 		io.eol = '\r\n'
 
 		-- Precompute Visual Studio configurations
-		sln.vstudio_configs = premake.vstudio_buildconfigs2(sln)
+		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
 		
 		-- Mark the file as Unicode
 		_p('\239\187\191')

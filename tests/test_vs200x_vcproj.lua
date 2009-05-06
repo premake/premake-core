@@ -31,7 +31,7 @@
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs2(sln)
+		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
 
 		local cfg = premake.getconfig(sln.projects[1])
 		cfg.name = prj.name

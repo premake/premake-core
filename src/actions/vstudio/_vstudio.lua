@@ -75,7 +75,7 @@
 --    The solution containing the configuration and platform lists.
 --
 
-	function premake.vstudio_buildconfigs2(sln)
+	function premake.vstudio_buildconfigs(sln)
 		local cfgs = { }
 		
 		local platforms = premake.filterplatforms(sln, premake.vstudio_platforms, "Native")
@@ -120,48 +120,6 @@
 	
 
 
-	function premake.vstudio_buildconfigs(sln, with_pseudo)
-		local cfgs = { }
-		
-		local platforms = premake.filterplatforms(sln, premake.vstudio_platforms, "Native")
-		if with_pseudo then		
-			local hascpp    = premake.hascppproject(sln)
-			local hasdotnet = premake.hasdotnetproject(sln)
-
-			if hasdotnet then
-				table.insert(platforms, 1, "any")
-			end
-			if hasdotnet and hascpp then
-				table.insert(platforms, 2, "mixed")
-			end
-		end
-		
-		for _, buildcfg in ipairs(sln.configurations) do
-			for _, platform in ipairs(platforms) do
-				local entry = { }
-			
-				-- PS3 is funky and needs special handling; its really more of a build
-				-- configuration than a platform from Visual Studio's point of view				
-				if platform ~= "PS3" then
-					entry.buildcfg = buildcfg
-					entry.platform = premake.vstudio_platforms[platform]
-				else
-					entry.buildcfg = platform .. " " .. buildcfg
-					entry.platform = "Win32"
-				end
-				
-				-- create a name the way VS likes it
-				entry.name = entry.buildcfg .. "|" .. entry.platform
-				
-				table.insert(cfgs, entry)
-			end
-		end
-		
-		return cfgs
-	end
-	
-
-
 --
 -- Return a configuration type index.
 -- (this should probably go in vs200x_vcproj.lua)
@@ -178,40 +136,6 @@
 	end
 	
 	
-
---
--- Extend the filterplatforms() function to handle the different sets of
--- supported platforms for various Visual Studio versions. See filterplatforms()
--- for more details.
---
-
-	function premake.vstudio_filterplatforms(sln)
-		local supported = iif(_ACTION < "vs2005", {}, premake.vstudio_platforms)
-		return premake.filterplatforms(sln, supported, "x32")
-	end
-
-
-
---
--- Build a Visual Studio configuration ID, which looks like {build config}|{platform}.
---
--- @param buildcfg
---    The build configuration, such as "Debug" or "Release".
--- @param platform
---    The target platform, such as "Native" or "x64".
--- @returns
---    A Visual Studio configuration ID string.
---
-
-	function premake.vstudio_getconfigid(buildcfg, platform)
-		if platform == "PS3" then
-			return platform .. " " .. buildcfg .. "|Win32"
-		else
-			return buildcfg .. "|" .. premake.vstudio_platforms[platform]
-		end
-	end
-	
-
 
 --
 -- Clean Visual Studio files

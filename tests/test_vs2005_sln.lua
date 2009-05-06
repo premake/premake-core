@@ -27,7 +27,7 @@
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs2(sln)
+		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
 	end	
 
 	local function addnetproject()

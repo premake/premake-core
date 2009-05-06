@@ -55,7 +55,7 @@
 				"VCAuxiliaryManagedWrapperGeneratorTool"
 			}
 		end
-		if platform == "xbox360" then
+		if platform == "Xbox360" then
 			return {
 				"VCPreBuildEventTool",
 				"VCCustomBuildTool",
@@ -174,7 +174,7 @@
 				end
 				_p('\t\t\t>')
 				
-				for _, block in ipairs(getsections(_ACTION, platform)) do
+				for _, block in ipairs(getsections(_ACTION, cfginfo.src_platform)) do
 				
 					-- Compiler block --
 					if block == "VCCLCompilerTool" or block == "VCCLX360CompilerTool" then
