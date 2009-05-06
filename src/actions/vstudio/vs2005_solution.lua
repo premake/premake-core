@@ -7,18 +7,16 @@
 
 	function premake.vs2005_solution(sln)
 		io.eol = '\r\n'
+
+		-- Precompute Visual Studio configurations
+		sln.vstudio_configs = premake.vstudio_buildconfigs2(sln)
 		
 		-- Mark the file as Unicode
 		_p('\239\187\191')
 
 		-- Write the solution file version header
-		if _ACTION == "vs2005" then
-			_p('Microsoft Visual Studio Solution File, Format Version 9.00')
-			_p('# Visual Studio 2005')
-		else
-			_p('Microsoft Visual Studio Solution File, Format Version 10.00')
-			_p('# Visual Studio 2008')
-		end		
+		_p('Microsoft Visual Studio Solution File, Format Version %s', iif(_ACTION == 'vs2005', '9.00', '10.00'))
+		_p('# Visual Studio %s', iif(_ACTION == 'vs2005', '2005', '2008'))
 
 		-- Write out the list of project entries
 		for prj in premake.eachproject(sln) do
@@ -37,11 +35,9 @@
 			_p('EndProject')
 		end
 
-		local platforms = premake.vs2005_solution_platforms(sln)
-		
 		_p('Global')
-		premake.vs2005_solution_configurations(sln, platforms)
-		premake.vs2005_solution_project_configurations(sln, platforms)
+		premake.vs2005_solution_platforms(sln)
+		premake.vs2005_solution_project_platforms(sln)
 		premake.vs2005_solution_properties(sln)
 		_p('EndGlobal')
 	end
@@ -53,13 +49,10 @@
 -- lists all of the configuration/platform pairs that exist in the solution.
 --
 
-	function premake.vs2005_solution_configurations(sln, platforms)
+	function premake.vs2005_solution_platforms(sln)
 		_p('\tGlobalSection(SolutionConfigurationPlatforms) = preSolution')
-		for _, cfgname in ipairs(sln.configurations) do
-			for _, platform in ipairs(platforms) do
-				local platname = premake.vstudio_platforms[platform]
-				_p('\t\t%s|%s = %s|%s', cfgname, platname, cfgname, platname)
-			end
+		for _, cfg in ipairs(sln.vstudio_configs) do
+			_p('\t\t%s = %s', cfg.name, cfg.name)
 		end
 		_p('\tEndGlobalSection')
 	end
@@ -71,31 +64,31 @@
 -- the configuration/platform pairs into each project of the solution.
 --
 
-	function premake.vs2005_solution_project_configurations(sln, platforms)
+	function premake.vs2005_solution_project_platforms(sln)
 		_p('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
 		for prj in premake.eachproject(sln) do
-			for _, cfgname in ipairs(sln.configurations) do
-				for i, platform in ipairs(platforms) do
-					local platname = premake.vstudio_platforms[platform]
-					
-					-- .NET projects always use "Any CPU" platform (for now, at least)
-					-- C++ projects use the current platform, or the first C++ platform 
-					-- if the current one is for .NET
-					local mappedname
-					if premake.isdotnetproject(prj) then
-						mappedname = "Any CPU"
+			for _, cfg in ipairs(sln.vstudio_configs) do
+			
+				-- .NET projects always map to the "Any CPU" platform (for now, at 
+				-- least). For C++, "Any CPU" and "Mixed Platforms" map to the first
+				-- C++ compatible target platform in the solution list.
+				local mapped
+				if premake.isdotnetproject(prj) then
+					mapped = "Any CPU"
+				else
+					if cfg.platform == "Any CPU" or cfg.platform == "Mixed Platforms" then
+						mapped = sln.vstudio_configs[3].platform
 					else
-						mappedname = premake.vstudio_platforms[platforms[math.max(i, platforms._offset)]]
+						mapped = cfg.platform
 					end
+				end
 
-					_p('\t\t{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, cfgname, platname, cfgname, mappedname)
-					if (platname == mappedname or platname == "Mixed Platforms") then
-						_p('\t\t{%s}.%s|%s.Build.0 = %s|%s',  prj.uuid, cfgname, platname, cfgname, mappedname)
-					end
+				_p('\t\t{%s}.%s.ActiveCfg = %s|%s', prj.uuid, cfg.name, cfg.buildcfg, mapped)
+				if mapped == cfg.platform or cfg.platform == "Mixed Platforms" then
+					_p('\t\t{%s}.%s.Build.0 = %s|%s',  prj.uuid, cfg.name, cfg.buildcfg, mapped)
 				end
 			end
 		end
-
 		_p('\tEndGlobalSection')
 	end
 	
@@ -109,29 +102,4 @@
 		_p('\tGlobalSection(SolutionProperties) = preSolution')
 		_p('\t\tHideSolutionNode = FALSE')
 		_p('\tEndGlobalSection')
-	end
-
-
-
---
--- Create a list of platforms used by this solution. A special member _offset 
--- points to the first C/C++ platform (skipping over .NET-related platforms).
---
-
-	function premake.vs2005_solution_platforms(sln)
-		local platforms = premake.filterplatforms(sln, premake.vstudio_platforms, "x32")
-		platforms._offset = 1
-				
-		local hascpp    = premake.hascppproject(sln)
-		local hasdotnet = premake.hasdotnetproject(sln)
-		if hasdotnet then
-			table.insert(platforms, 1, "any")
-			platforms._offset = 2
-		end
-		if hasdotnet and hascpp then
-			table.insert(platforms, 2, "mixed")
-			platforms._offset = 3
-		end
-		
-		return platforms
 	end

@@ -97,7 +97,29 @@
 			}	
 		end
 	end
-	
+
+
+
+--
+-- Write out the <Platforms> element; ensures that each target platform
+-- is listed only once. Skips over .NET's pseudo-platforms (like "Any CPU").
+--
+
+	function premake.vs200x_vcproj_platforms(prj)
+		local used = { }
+		_p('\t<Platforms>')
+		for _, cfg in ipairs(prj.solution.vstudio_configs) do
+			if cfg.isreal and not table.contains(used, cfg.platform) then
+				table.insert(used, cfg.platform)
+				_p('\t\t<Platform')
+				_p('\t\t\tName="%s"', cfg.platform)
+				_p('\t\t/>')
+			end
+		end
+		_p('\t</Platforms>')
+	end
+
+
 
 --
 -- The main function: write the project file.
@@ -128,14 +150,7 @@
 		_p('\t>')
 
 		-- list the target platforms
-		local platforms = premake.vstudio_filterplatforms(prj.solution)
-		_p('\t<Platforms>')
-		for _, platform in ipairs(platforms) do
-			_p('\t\t<Platform')
-			_p('\t\t\tName="%s"', premake.vstudio_platforms[platform])
-			_p('\t\t/>')
-		end
-		_p('\t</Platforms>')
+		premake.vs200x_vcproj_platforms(prj)
 
 		if _ACTION > "vs2003" then
 			_p('\t<ToolFiles>')
@@ -143,12 +158,13 @@
 		end
 
 		_p('\t<Configurations>')
-		for _, platform in ipairs(platforms) do
-			for cfg in premake.eachconfig(prj, platform) do
-
+		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
+			if cfginfo.isreal then
+				local cfg = premake.getconfig(prj, cfginfo.buildcfg, cfginfo.src_platform)
+		
 				-- Start a configuration
 				_p('\t\t<Configuration')
-				_p('\t\t\tName="%s|%s"', premake.esc(cfg.name), premake.vstudio_platforms[platform])
+				_p('\t\t\tName="%s"', premake.esc(cfginfo.name))
 				_p('\t\t\tOutputDirectory="%s"', premake.esc(cfg.buildtarget.directory))
 				_p('\t\t\tIntermediateDirectory="%s"', premake.esc(cfg.objectsdir))
 				_p('\t\t\tConfigurationType="%s"', _VS.cfgtype(cfg))
@@ -317,6 +333,7 @@
 					end
 					
 				end
+
 				_p('\t\t</Configuration>')
 			end
 		end

@@ -21,12 +21,17 @@
 		kind "ConsoleApp"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 		
+		project "DotNetProject"   -- to test handling of .NET platform in solution
+		language "C#"
+		kind "ConsoleApp"
+		
 		_ACTION = 'vs2005'
 	end
 
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
+		sln.vstudio_configs = premake.vstudio_buildconfigs2(sln)
 
 		local cfg = premake.getconfig(sln.projects[1])
 		cfg.name = prj.name
@@ -63,7 +68,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
+			IntermediateDirectory="obj\Debug\MyProject"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -141,7 +146,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="."
-			IntermediateDirectory="obj\Release"
+			IntermediateDirectory="obj\Release\MyProject"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -234,13 +239,53 @@
 
 	function T.vs200x_vcproj.Platforms_OnMultiplePlatforms()
 		platforms { "x32", "x64" }
-
 		prepare()
+
 		premake.vs200x_vcproj(prj)
-		local result = io.endcapture()
-		
+		local result = io.endcapture()		
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Debug|Win32"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Release|Win32"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Debug|x64"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Release|x64"\r\n')
+	end
+
+
+
+--
+-- Test x64 handling
+--
+
+	function T.vs200x_vcproj.PlatformsList_OnX64()
+		platforms { "Native", "x64" }
+		prepare()
+		premake.vs200x_vcproj_platforms(prj)
+		test.capture [[
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+		<Platform
+			Name="x64"
+		/>
+	</Platforms>
+		]]		
+	end
+
+
+
+--
+-- Test PS3 handling
+--
+
+	function T.vs200x_vcproj.PlatformsList_OnPS3()
+		platforms { "Native", "PS3" }
+		prepare()
+		premake.vs200x_vcproj_platforms(prj)
+		test.capture [[
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+		]]		
 	end
