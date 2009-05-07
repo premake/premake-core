@@ -93,6 +93,7 @@
 		for _, buildcfg in ipairs(sln.configurations) do
 			for _, platform in ipairs(platforms) do
 				local entry = { }
+				entry.src_buildcfg = buildcfg
 				entry.src_platform = platform
 				
 				-- PS3 is funky and needs special handling; it's more of a build

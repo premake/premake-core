@@ -16,14 +16,14 @@
 		configurations { "Debug", "Release" }
 		platforms {}
 		
+		project "DotNetProject"   -- to test handling of .NET platform in solution
+		language "C#"
+		kind "ConsoleApp"
+		
 		prj = project "MyProject"
 		language "C++"
 		kind "ConsoleApp"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
-		
-		project "DotNetProject"   -- to test handling of .NET platform in solution
-		language "C#"
-		kind "ConsoleApp"
 		
 		_ACTION = 'vs2005'
 	end
@@ -33,7 +33,7 @@
 		premake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
 
-		local cfg = premake.getconfig(sln.projects[1])
+		local cfg = premake.getconfig(sln.projects[2])
 		cfg.name = prj.name
 		cfg.blocks = prj.blocks
 		prj = cfg
@@ -274,6 +274,47 @@
 
 
 --
+-- Test Xbox360 handling
+--
+
+	function T.vs200x_vcproj.PlatformsList_OnXbox360()
+		platforms { "Native", "Xbox360" }
+		prepare()
+		premake.vs200x_vcproj_platforms(prj)
+		test.capture [[
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+		<Platform
+			Name="Xbox 360"
+		/>
+	</Platforms>
+		]]		
+	end
+	
+	function T.vs200x_vcproj.CompilerBlock_OnXbox360()
+		platforms { "Xbox360" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug", "Xbox360"))
+		test.capture [[
+			<Tool
+				Name="VCCLX360CompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\$(ProjectName).pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+
+--
 -- Test PS3 handling
 --
 
@@ -288,4 +329,24 @@
 		/>
 	</Platforms>
 		]]		
+	end
+	
+	function T.vs200x_vcproj.CompilerBlock_OnPS3()
+		platforms { "PS3" }
+		flags { "Symbols" }
+		includedirs { "include/pkg1", "include/pkg2" }
+		defines { "DEFINE1", "DEFINE2" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool_GCC(premake.getconfig(prj, "Debug", "PS3"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="-g"
+				AdditionalIncludeDirectories="include\pkg1;include\pkg2"
+				PreprocessorDefinitions="DEFINE1;DEFINE2"
+				ProgramDataBaseFileName="$(OutDir)\$(ProjectName).pdb"
+				DebugInformationFormat="0"
+				CompileAs="0"
+			/>
+		]]
 	end
