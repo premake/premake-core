@@ -9,7 +9,7 @@
 	-- block, based on its build action and any related files in the project.
 	-- 
 	
-	function getelements(prj, action, fname)
+	local function getelements(prj, action, fname)
 	
 		if action == "Compile" and fname:endswith(".cs") then
 			if fname:endswith(".Designer.cs") then
@@ -69,7 +69,7 @@
 			vsversion   = "8.0.50727"
 			toolversion = nil
 		elseif _ACTION == "vs2008" then
-			vsversion   = "9.0.50727"
+			vsversion   = "9.0.21022"
 			toolversion = "3.5"
 		end
 		
@@ -114,10 +114,10 @@
 		end
 
 		_p('  <ItemGroup>')
-		for _, prj in ipairs(premake.getlinks(prj, "siblings", "object")) do
-			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, _VS.projectfile(prj)), "\\"))
-			_p('      <Project>{%s}</Project>', prj.uuid)
-			_p('      <Name>%s</Name>', premake.esc(prj.name))
+		for _, ref in ipairs(premake.getlinks(prj, "siblings", "object")) do
+			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, _VS.projectfile(ref)), "\\"))
+			_p('      <Project>{%s}</Project>', ref.uuid)
+			_p('      <Name>%s</Name>', premake.esc(ref.name))
 			_p('    </ProjectReference>')
 		end
 		for _, linkname in ipairs(premake.getlinks(prj, "system", "basename")) do
@@ -164,5 +164,6 @@
 		_p('  </Target>')
 		_p('  -->')
 		_p('</Project>')
+		
 	end
 
