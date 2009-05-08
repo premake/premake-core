@@ -85,7 +85,7 @@
 		value       = "value",
 		description = "Choose a .NET compiler set",
 		allowed = {
-			{ "ms",      "Microsoft .NET (csc)" },
+			{ "msnet",   "Microsoft .NET (csc)" },
 			{ "mono",    "Novell Mono (mcs)"    },
 			{ "pnet",    "Portable.NET (cscc)"  },
 		}

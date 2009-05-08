@@ -11,278 +11,382 @@
 		cfg = { }
 		cfg.basedir    = "."
 		cfg.location   = "."
+		cfg.targetdir  = "../bin"
 		cfg.language   = "C++"
 		cfg.project    = { name = "MyProject" }
 		cfg.flags      = { }
+		cfg.objectsdir = "obj"
+		cfg.platform   = "Native"
 	end
-
 
 
 --
--- C++ ConsoleApp naming conventions
+-- Windows/C++/ConsoleApp tests
 --
 
-	function T.targets.On_Console_Build_Windows_Windows()
+	function T.targets.ConsoleApp_Windows_Build_Windows()
 		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 
-	function T.targets.On_Console_Build_Windows_Linux()
+	function T.targets.ConsoleApp_Windows_Build_Linux()
 		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "windows", "linux").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "linux")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 
-	function T.targets.On_Console_Build_Windows_MacOSX()
+	function T.targets.ConsoleApp_Windows_Build_MacOSX()
 		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "windows", "macosx").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 
-	function T.targets.On_Console_Build_Linux_Windows()
+	function T.targets.ConsoleApp_Windows_Build_PS3()
 		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "linux", "windows").fullpath)
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.elf]], result.fullpath)
 	end
 
-	function T.targets.On_Console_Build_Linux_Linux()
+	function T.targets.ConsoleApp_Windows_Build_Xbox360()
 		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 
-	function T.targets.On_Console_Build_Linux_MacOSX()
-		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject", premake.gettarget(cfg, "build", "linux", "macosx").fullpath)
-	end
 
-	
-	
 --
--- C++ WindowedApp naming conventions
+-- Windows/C++/WindowedApp tests
 --
 
-	function T.targets.On_Windowed_Build_Windows_Windows()
+	function T.targets.WindowedApp_Windows_Build_Windows()
 		cfg.kind = "WindowedApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 
-	function T.targets.On_Windowed_Build_Windows_Linux()
+	function T.targets.WindowedApp_Windows_Build_Linux()
 		cfg.kind = "WindowedApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "linux")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 
-	function T.targets.On_Windowed_Build_Windows_MacOSX()
+	function T.targets.WindowedApp_Windows_Build_MacOSX()
 		cfg.kind = "WindowedApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "windows", "macosx").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
-	
-	function T.targets.On_Windowed_Build_Linux_Windows()
+
+	function T.targets.WindowedApp_Windows_Build_PS3()
 		cfg.kind = "WindowedApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "linux", "windows").fullpath)
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.elf]], result.fullpath)
 	end
-	
-	function T.targets.On_Windowed_Build_Linux_Linux()
+
+	function T.targets.WindowedApp_Windows_Build_Xbox360()
 		cfg.kind = "WindowedApp"
-		test.isequal("MyProject", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.exe]], result.fullpath)
 	end
 	
-	function T.targets.On_Windowed_Build_Linux_MacOSX()
-		cfg.kind = "WindowedApp"
-		test.isequal("MyProject.app/Contents/MacOS/MyProject", premake.gettarget(cfg, "build", "linux", "macosx").fullpath)
-	end
-	
-
 
 --
--- C++ SharedLib naming conventions
+-- Windows/C++/SharedLib tests
 --
 
-	function T.targets.On_Shared_Build_Windows_Windows()
+	function T.targets.SharedLib_Windows_Build_Windows()
 		cfg.kind = "SharedLib"
-		test.isequal("MyProject.dll", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.dll]], result.fullpath)
 	end
 
-	function T.targets.On_Shared_Build_Windows_Linux()
+	function T.targets.SharedLib_Windows_Build_Linux()
 		cfg.kind = "SharedLib"
-		test.isequal("MyProject.dll", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "linux")
+		test.isequal([[..\bin\MyProject.dll]], result.fullpath)
 	end
 
-	function T.targets.On_Shared_Build_Windows_MacOSX()
+	function T.targets.SharedLib_Windows_Build_MacOSX()
 		cfg.kind = "SharedLib"
-		test.isequal("MyProject.dll", premake.gettarget(cfg, "build", "windows", "macosx").fullpath)
+		result = premake.gettarget(cfg, "build", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.dll]], result.fullpath)
 	end
-	
-	function T.targets.On_Shared_Build_Linux_Windows()
+
+	function T.targets.SharedLib_Windows_Build_Xbox360()
 		cfg.kind = "SharedLib"
-		test.isequal("MyProject.dll", premake.gettarget(cfg, "build", "linux", "windows").fullpath)
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "build", "windows", "linux")
+		test.isequal([[..\bin\MyProject.dll]], result.fullpath)
 	end
-	
-	function T.targets.On_Shared_Build_Linux_Linux()
+
+	function T.targets.SharedLib_Windows_Link_Windows()
 		cfg.kind = "SharedLib"
-		test.isequal("libMyProject.so", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
+		result = premake.gettarget(cfg, "link", "windows", "windows")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
 	end
-	
-	function T.targets.On_Shared_Build_Linux_MacOSX()
+
+	function T.targets.SharedLib_Windows_Link_Linux()
 		cfg.kind = "SharedLib"
-		test.isequal("libMyProject.so", premake.gettarget(cfg, "build", "linux", "macosx").fullpath)
+		result = premake.gettarget(cfg, "link", "windows", "linux")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
 	end
 
-	function T.targets.On_Shared_Link_Windows_Windows()
+	function T.targets.SharedLib_Windows_Link_MacOSX()
 		cfg.kind = "SharedLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "link", "windows", "windows").fullpath)
+		result = premake.gettarget(cfg, "link", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
 	end
 
-	function T.targets.On_Shared_Link_Windows_Linux()
+	function T.targets.SharedLib_Windows_Link_Xbox360()
 		cfg.kind = "SharedLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "link", "windows", "linux").fullpath)
-	end
-
-	function T.targets.On_Shared_Link_Windows_MacOSX()
-		cfg.kind = "SharedLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "link", "windows", "macosx").fullpath)
-	end
-	
-	function T.targets.On_Shared_Link_Linux_Windows()
-		cfg.kind = "SharedLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "link", "linux", "windows").fullpath)
-	end
-
-
---
--- C++ StaticLib naming conventions
---
-
-	function T.targets.On_Static_Build_Windows_Windows()
-		cfg.kind = "StaticLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
-	end
-
-	function T.targets.On_Static_Build_Windows_Linux()
-		cfg.kind = "StaticLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "build", "windows", "windows").fullpath)
-	end
-
-	function T.targets.On_Static_Build_Windows_MacOSX()
-		cfg.kind = "StaticLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "build", "windows", "macosx").fullpath)
-	end
-	
-	function T.targets.On_Static_Build_Linux_Windows()
-		cfg.kind = "StaticLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "build", "linux", "windows").fullpath)
-	end
-	
-	function T.targets.On_Static_Build_Linux_Linux()
-		cfg.kind = "StaticLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
-	end
-	
-	function T.targets.On_Static_Build_Linux_MacOSX()
-		cfg.kind = "StaticLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "build", "linux", "macosx").fullpath)
-	end
-
-	function T.targets.On_Static_Link_Windows_Windows()
-		cfg.kind = "StaticLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "link", "windows", "windows").fullpath)
-	end
-
-	function T.targets.On_Static_Link_Windows_Linux()
-		cfg.kind = "StaticLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "link", "windows", "windows").fullpath)
-	end
-
-	function T.targets.On_Static_Link_Windows_MacOSX()
-		cfg.kind = "StaticLib"
-		test.isequal("MyProject.lib", premake.gettarget(cfg, "link", "windows", "macosx").fullpath)
-	end
-	
-	function T.targets.On_Static_Link_Linux_Windows()
-		cfg.kind = "StaticLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "link", "linux", "windows").fullpath)
-	end
-	
-	function T.targets.On_Static_Link_Linux_Linux()
-		cfg.kind = "StaticLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "link", "linux", "linux").fullpath)
-	end
-	
-	function T.targets.On_Static_Link_Linux_MacOSX()
-		cfg.kind = "StaticLib"
-		test.isequal("libMyProject.a", premake.gettarget(cfg, "link", "linux", "macosx").fullpath)
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "link", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
 	end
 
 
 
 --
--- C# naming conventions
+-- Windows/C++/StaticLib tests
 --
 
-	function T.targets.On_Cs_Console_Build_Linux_Linux()
-		cfg.language = "C#"
+	function T.targets.StaticLib_Windows_Build_Windows()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "build", "windows", "windows")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Build_Linux()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "build", "windows", "linux")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Build_MacOSX()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "build", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Build_PS3()
+		cfg.kind = "StaticLib"
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "build", "windows", "macosx")
+		test.isequal([[..\bin\libMyProject.a]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Build_Xbox360()
+		cfg.kind = "StaticLib"
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "build", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Link_Windows()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "link", "windows", "windows")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Link_Linux()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "link", "windows", "linux")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Link_MacOSX()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "link", "windows", "macosx")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Link_PS3()
+		cfg.kind = "StaticLib"
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "link", "windows", "windows")
+		test.isequal([[..\bin\libMyProject.a]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Windows_Link_Xbox360()
+		cfg.kind = "StaticLib"
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "link", "windows", "windows")
+		test.isequal([[..\bin\MyProject.lib]], result.fullpath)
+	end
+
+
+
+--
+-- Linux/C++/ConsoleApp tests
+--
+
+	function T.targets.ConsoleApp_Linux_Build_Windows()
+		cfg.kind   = "ConsoleApp"
+		result = premake.gettarget(cfg, "build", "linux", "windows")
+		test.isequal([[../bin/MyProject.exe]], result.fullpath)
+	end
+
+	function T.targets.ConsoleApp_Linux_Build_Linux()
+		cfg.kind   = "ConsoleApp"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/MyProject]], result.fullpath)
+	end
+
+	function T.targets.ConsoleApp_Linux_Build_MacOSX()
+		cfg.kind   = "ConsoleApp"
+		result = premake.gettarget(cfg, "build", "linux", "macosx")
+		test.isequal([[../bin/MyProject]], result.fullpath)
+	end
+
+	function T.targets.ConsoleApp_Linux_Build_PS3()
 		cfg.kind = "ConsoleApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/MyProject.elf]], result.fullpath)
 	end
 
-	function T.targets.On_Cs_Windowed_Build_Linux_Linux()
-		cfg.language = "C#"
+	function T.targets.ConsoleApp_Linux_Build_Xbox360()
+		cfg.kind = "ConsoleApp"
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/MyProject.exe]], result.fullpath)
+	end
+
+
+
+--
+-- Linux/C++/WindowedApp tests
+--
+
+	function T.targets.WindowedApp_Linux_Build_Windows()
+		cfg.kind   = "WindowedApp"
+		result = premake.gettarget(cfg, "build", "linux", "windows")
+		test.isequal([[../bin/MyProject.exe]], result.fullpath)
+	end
+
+	function T.targets.WindowedApp_Linux_Build_Linux()
+		cfg.kind   = "WindowedApp"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/MyProject]], result.fullpath)
+	end
+
+	function T.targets.WindowedApp_Linux_Build_MacOSX()
+		cfg.kind   = "WindowedApp"
+		result = premake.gettarget(cfg, "build", "linux", "macosx")
+		test.isequal([[../bin/MyProject.app/Contents/MacOS/MyProject]], result.fullpath)
+	end
+
+	function T.targets.WindowedApp_Linux_Build_PS3()
 		cfg.kind = "WindowedApp"
-		test.isequal("MyProject.exe", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/MyProject.elf]], result.fullpath)
 	end
 
-	function T.targets.On_Cs_Shared_Build_Linux_Linux()
-		cfg.language = "C#"
-		cfg.kind = "SharedLib"
-		test.isequal("MyProject.dll", premake.gettarget(cfg, "build", "linux", "linux").fullpath)
+	function T.targets.WindowedApp_Linux_Build_Xbox360()
+		cfg.kind = "WindowedApp"
+		cfg.platform = "Xbox360"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/MyProject.exe]], result.fullpath)
 	end
-
-		
 	
+
 --
--- Field handling tests
+-- Linux/C++/SharedLib tests
 --
 
-	function T.targets.TargetName_OverridesProjectName()
-		cfg.kind = "ConsoleApp"
-		cfg.targetname = "MyTarget"
-		test.isequal("MyTarget.exe", premake.gettarget(cfg, "build", "windows").fullpath)
+	function T.targets.SharedLib_Linux_Build_Windows()
+		cfg.kind = "SharedLib"
+		result = premake.gettarget(cfg, "build", "linux", "windows")
+		test.isequal([[../bin/MyProject.dll]], result.fullpath)
 	end
 
-	function T.targets.TargetDir_OverridesBaseDir()
-		cfg.kind = "ConsoleApp"
-		cfg.targetdir = "MyTarget"
-		test.isequal("MyTarget/MyProject.exe", premake.gettarget(cfg, "build", "windows").fullpath)
+	function T.targets.SharedLib_Linux_Build_Linux()
+		cfg.kind = "SharedLib"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/libMyProject.so]], result.fullpath)
 	end
 
-	function T.targets.TargetExtension_OverridesDefault()
-		cfg.kind = "ConsoleApp"
-		cfg.targetextension = ".zmf"
-		test.isequal("MyProject.zmf", premake.gettarget(cfg, "build", "windows").fullpath)
+	function T.targets.SharedLib_Linux_Build_MacOSX()
+		cfg.kind = "SharedLib"
+		result = premake.gettarget(cfg, "build", "linux", "macosx")
+		test.isequal([[../bin/libMyProject.so]], result.fullpath)
 	end
 
-	function T.targets.TargetPrefix_OverridesDefault()
-		cfg.kind = "ConsoleApp"
-		cfg.targetprefix = "zoo"
-		test.isequal("zooMyProject.exe", premake.gettarget(cfg, "build", "windows").fullpath)
+	function T.targets.SharedLib_Linux_Link_Windows()
+		cfg.kind = "SharedLib"
+		result = premake.gettarget(cfg, "link", "linux", "windows")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
+	end
+
+	function T.targets.SharedLib_Linux_Link_Linux()
+		cfg.kind = "SharedLib"
+		result = premake.gettarget(cfg, "link", "linux", "linux")
+		test.isequal([[../bin/libMyProject.so]], result.fullpath)
+	end
+
+	function T.targets.SharedLib_Linux_Link_MacOSX()
+		cfg.kind = "SharedLib"
+		result = premake.gettarget(cfg, "link", "linux", "macosx")
+		test.isequal([[../bin/libMyProject.so]], result.fullpath)
 	end
 	
-	function T.targets.ImpLibName_UsedOnSharedLinks()
-		cfg.kind = "SharedLib"
-		cfg.implibname = "MyImports"
-		test.isequal("MyImports.lib", premake.gettarget(cfg, "link", "windows").fullpath)
+
+--
+-- Linux/C++/StaticLib tests
+--
+
+	function T.targets.StaticLib_Linux_Build_Windows()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "build", "linux", "windows")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
 	end
 
-	function T.targets.ImpLibDir_UsedOnSharedLinks()
-		cfg.kind = "SharedLib"
-		cfg.implibdir = "MyTarget"
-		test.isequal("MyTarget/MyProject.lib", premake.gettarget(cfg, "link", "windows").fullpath)
+	function T.targets.StaticLib_Linux_Build_Linux()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "build", "linux", "linux")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
 	end
-	
-	function T.targets.ImpLibExtension_UsedOnSharedLinks()
-		cfg.kind = "SharedLib"
-		cfg.implibextension = ".zmf"
-		test.isequal("MyProject.zmf", premake.gettarget(cfg, "link", "windows").fullpath)
+
+	function T.targets.StaticLib_Linux_Build_MacOSX()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "build", "linux", "macosx")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
 	end
-	
-	function T.targets.ImpLibPrefix_UsedOnSharedLinks()
-		cfg.kind = "SharedLib"
-		cfg.implibprefix = "zoo"
-		test.isequal("zooMyProject.lib", premake.gettarget(cfg, "link", "windows").fullpath)
+
+	function T.targets.StaticLib_Linux_Build_PS3()
+		cfg.kind = "StaticLib"
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "build", "linux", "macosx")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
 	end
+
+	function T.targets.StaticLib_Linux_Link_Windows()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "link", "linux", "windows")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Linux_Link_Linux()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "link", "linux", "linux")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Linux_Link_MacOSX()
+		cfg.kind = "StaticLib"
+		result = premake.gettarget(cfg, "link", "linux", "macosx")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
+	end
+
+	function T.targets.StaticLib_Linux_Link_PS3()
+		cfg.kind = "StaticLib"
+		cfg.platform = "PS3"
+		result = premake.gettarget(cfg, "link", "linux", "macosx")
+		test.isequal([[../bin/libMyProject.a]], result.fullpath)
+	end
+

@@ -54,7 +54,7 @@
 		if _ACTION == "vs2002" then
 			_p('\t\t\t\tNoStandardLibraries = "false"')
 		end
-		_p('\t\t\t\tOutputType = "%s"', premake.csc.getkind(prj))
+		_p('\t\t\t\tOutputType = "%s"', premake.dotnet.getkind(prj))
 		if _ACTION == "vs2003" then
 			_p('\t\t\t\tPreBuildEvent = ""')
 			_p('\t\t\t\tPostBuildEvent = ""')
@@ -119,7 +119,7 @@
 		_p('\t\t<Files>')
 		_p('\t\t\t<Include>')
 		for fcfg in premake.eachfile(prj) do
-			local action = premake.csc.getbuildaction(fcfg)
+			local action = premake.dotnet.getbuildaction(fcfg)
 			local fname  = path.translate(premake.esc(fcfg.name), "\\")
 			local elements, dependency = getelements(prj, action, fcfg.name)
 			

@@ -319,6 +319,11 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++", "C#" },
+		
+		valid_tools     = {
+			cc     = { "msc"   },
+			dotnet = { "msnet" },
+		},
 
 		solutiontemplates = {
 			{ ".sln",         premake.vs2002_solution },
@@ -342,6 +347,11 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++", "C#" },
+		
+		valid_tools     = {
+			cc     = { "msc"   },
+			dotnet = { "msnet" },
+		},
 
 		solutiontemplates = {
 			{ ".sln",         premake.vs2003_solution },
@@ -365,6 +375,11 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++", "C#" },
+		
+		valid_tools     = {
+			cc     = { "msc"   },
+			dotnet = { "msnet" },
+		},
 
 		solutiontemplates = {
 			{ ".sln",         premake.vs2005_solution },
@@ -388,6 +403,11 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
 		valid_languages = { "C", "C++", "C#" },
+		
+		valid_tools     = {
+			cc     = { "msc"   },
+			dotnet = { "msnet" },
+		},
 
 		solutiontemplates = {
 			{ ".sln",         premake.vs2005_solution },

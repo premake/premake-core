@@ -247,7 +247,7 @@
 				else
 					sep = "/"
 				end
-			end		
+			end
 			local result = p:gsub("[/\\]", sep)
 			return result
 		end

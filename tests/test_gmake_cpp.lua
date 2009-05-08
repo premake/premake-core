@@ -12,16 +12,16 @@
 
 	local sln, prj
 	function T.gmake_cpp.setup()
+		_ACTION = "gmake"
+		_OPTIONS.os = "linux"
+
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms { "native" }
 		
 		prj = project "MyProject"
 		language "C++"
-		kind "ConsoleApp"
-		
-		_ACTION = "gmake"
-		_OPTIONS.os = "linux"
+		kind "ConsoleApp"		
 	end
 
 	local function prepare()
@@ -108,7 +108,7 @@ ifeq ($(config),debugps3)
   CXX        = ppu-lv2-g++
   AR         = ppu-lv2-ar
   TARGETDIR  = .
-  TARGET     = $(TARGETDIR)/MyProject
+  TARGET     = $(TARGETDIR)/MyProject.elf
   OBJDIR     = obj/PS3/Debug
   DEFINES   += 
   INCLUDES  += 

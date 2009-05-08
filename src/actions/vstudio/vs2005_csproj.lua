@@ -85,7 +85,7 @@
 		_p('    <ProductVersion>%s</ProductVersion>', vsversion)
 		_p('    <SchemaVersion>2.0</SchemaVersion>')
 		_p('    <ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-		_p('    <OutputType>%s</OutputType>', premake.csc.getkind(prj))
+		_p('    <OutputType>%s</OutputType>', premake.dotnet.getkind(prj))
 		_p('    <AppDesignerFolder>Properties</AppDesignerFolder>')
 		_p('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
 		_p('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
@@ -127,7 +127,7 @@
 
 		_p('  <ItemGroup>')
 		for fcfg in premake.eachfile(prj) do
-			local action = premake.csc.getbuildaction(fcfg)
+			local action = premake.dotnet.getbuildaction(fcfg)
 			local fname  = path.translate(premake.esc(fcfg.name), "\\")
 			local elements, dependency = getelements(prj, action, fcfg.name)
 			if elements == "None" then

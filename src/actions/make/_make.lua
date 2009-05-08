@@ -75,7 +75,6 @@
 		trigger         = "gmake",
 		shortname       = "GNU Make",
 		description     = "GNU makefiles for POSIX, MinGW, and Cygwin",
-		targetstyle     = "linux",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -83,7 +82,7 @@
 		
 		valid_tools     = {
 			cc     = { "gcc" },
-			dotnet = { "mono", "ms", "pnet" },
+			dotnet = { "mono", "msnet", "pnet" },
 		},
 		
 		solutiontemplates = {

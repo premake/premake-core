@@ -12,6 +12,8 @@
 
 	local sln, prj
 	function T.vs200x_vcproj.setup()
+		_ACTION = "vs2005"
+
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms {}
@@ -23,9 +25,7 @@
 		prj = project "MyProject"
 		language "C++"
 		kind "ConsoleApp"
-		uuid "AE61726D-187C-E440-BD07-2556188A6565"
-		
-		_ACTION = 'vs2005'
+		uuid "AE61726D-187C-E440-BD07-2556188A6565"		
 	end
 
 	local function prepare()
@@ -350,3 +350,17 @@
 			/>
 		]]
 	end
+	
+--	function T.vs200x_vcproj.LinkerBlock_OnPS3StaticLib()
+--		platforms { "PS3" }
+--		kind "StaticLib"
+--		prepare()
+--		premake.vs200x_vcproj_VCLinkerTool_GCC(premake.getconfig(prj, "Debug", "PS3"))
+--		test.capture [[
+--			<Tool
+--				Name="VCLibrarianTool"
+--				AdditionalOptions="-s"
+--				OutputFile="$(OutDir)\libMyProject.a"
+--			/>
+--		]]
+--	end

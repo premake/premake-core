@@ -6,8 +6,10 @@
 
 	T.configs = { }
 
-	local prj
+	local prj, cfg
 	function T.configs.setup()
+		_ACTION = "gmake"
+		
 		solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms { "x32", "ps3" }
@@ -20,6 +22,7 @@
 		prj = project "MyProject"
 		language "C"
 		kind "SharedLib"
+		targetdir "../bin"
 		defines "PROJECT"
 		
 		configuration "Debug"
@@ -38,26 +41,24 @@
 		defines "X86_64"
 		
 		premake.buildconfigs()
+		prj = premake.getconfig(prj)
+		cfg = premake.getconfig(prj, "Debug")
 	end
 	
 
 	function T.configs.SolutionFields()
-		local cfg = premake.getconfig(prj)
 		test.isequal("Debug:Release", table.concat(cfg.configurations,":"))
 	end
 	
 	function T.configs.ProjectFields()
-		local cfg = premake.getconfig(prj)
 		test.isequal("C", cfg.language)
 	end
 	
 	function T.configs.ProjectWideSettings()
-		local cfg = premake.getconfig(prj)
-		test.isequal("SOLUTION:PROJECT:NATIVE", table.concat(cfg.defines,":"))
+		test.isequal("SOLUTION:PROJECT:NATIVE", table.concat(prj.defines,":"))
 	end
 	
 	function T.configs.BuildCfgSettings()
-		local cfg = premake.getconfig(prj, "Debug")
 		test.isequal("SOLUTION:SOLUTION_DEBUG:PROJECT:DEBUG:NATIVE", table.concat(cfg.defines,":"))
 	end
 
@@ -77,7 +78,6 @@
 	end
 	
 	function T.configs.SetsPlatformNativeName()
-		local cfg = premake.getconfig(prj, "Debug")
 		test.isequal("Native", cfg.platform)
 	end
 	
@@ -87,7 +87,6 @@
 	end
 	
 	function T.configs.SetsNativeShortName()
-		local cfg = premake.getconfig(prj, "Debug")
 		test.isequal("debug", cfg.shortname)
 	end
 	
@@ -97,21 +96,21 @@
 	end
 	
 	function T.configs.SetsNativeLongName()
-		local cfg = premake.getconfig(prj, "Debug")
 		test.isequal("Debug", cfg.longname)
 	end
 	
 	function T.configs.SetsProject()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
-		test.istrue(prj == cfg.project)
+		test.istrue(prj.project == cfg.project)
 	end
+
+
 
 --
 -- Target system testing
 --
 
 	function T.configs.SetsTargetSystem_OnNative()
-		local cfg = premake.getconfig(prj, "Debug")
 		test.isequal(os.get(), cfg.system)
 	end
 
@@ -119,13 +118,14 @@
 		local cfg = premake.getconfig(prj, "Debug", "PS3")
 		test.isequal("PS3", cfg.system)
 	end
+
+
 	
 --
 -- Platform kind translation
 --
 
 	function T.configs.SetsTargetKind_OnSupportedKind()
-		local cfg = premake.getconfig(prj, "Debug")
 		test.isequal("SharedLib", cfg.kind)
 	end
 

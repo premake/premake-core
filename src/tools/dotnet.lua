@@ -1,11 +1,12 @@
 --
--- csc.lua
+-- dotnet.lua
 -- Interface for the C# compilers, all of which are flag compatible.
 -- Copyright (c) 2002-2008 Jason Perkins and the Premake project
 --
 
 	
-	premake.csc = { }
+	premake.dotnet = { }
+	premake.dotnet.targetstyle = "windows"
 	
 
 --
@@ -27,7 +28,7 @@
 -- Return the default build action for a given file, based on the file extension.
 --
 
-	function premake.csc.getbuildaction(fcfg)
+	function premake.dotnet.getbuildaction(fcfg)
 		local ext = path.getextension(fcfg.name):lower()
 		if fcfg.buildaction == "Compile" or ext == ".cs" then
 			return "Compile"
@@ -46,8 +47,8 @@
 -- Returns the compiler filename (they all use the same arguments)
 --
 
-	function premake.csc.getcompilervar(cfg)
-		if (_OPTIONS.dotnet == "ms") then
+	function premake.dotnet.getcompilervar(cfg)
+		if (_OPTIONS.dotnet == "msnet") then
 			return "csc"
 		elseif (_OPTIONS.dotnet == "mono") then
 			return "gmcs"
@@ -62,7 +63,7 @@
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
-	function premake.csc.getflags(cfg)
+	function premake.dotnet.getflags(cfg)
 		local result = table.translate(cfg.flags, flags)
 		return result		
 	end
@@ -73,7 +74,7 @@
 -- Translates the Premake kind into the CSC kind string.
 --
 
-	function premake.csc.getkind(cfg)
+	function premake.dotnet.getkind(cfg)
 		if (cfg.kind == "ConsoleApp") then
 			return "Exe"
 		elseif (cfg.kind == "WindowedApp") then

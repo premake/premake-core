@@ -12,6 +12,8 @@
 
 	local sln
 	function T.vs2002_sln.setup()
+		_ACTION = 'vs2002'
+
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms {}
@@ -22,7 +24,6 @@
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 		
 		premake.buildconfigs()
-		_ACTION = 'vs2002'
 	end
 	
 

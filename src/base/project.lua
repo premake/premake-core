@@ -338,30 +338,44 @@
 
 
 --
--- Assembles a target file name for a configuration. Direction is one of
--- "build" (the build target name) or "link" (the name to use when trying
--- to link against this target). Style is one of "windows" or "linux".
+-- Assembles a target for a particular tool/system/configuration.
+--
+-- @param cfg
+--    The configuration to be targeted.
+-- @param direction
+--    One of 'build' for the build target, or 'link' for the linking target.
+-- @param tool
+--    The target toolset interface.
+-- @param system
+--    The target operating system; if nil will use current OS settings.
+-- @returns
+--    An object with these fields:
+--      basename  - the target with no directory or file extension
+--      name      - the target name and extension, with no directory
+--      directory - relative path to the target, with no file name
+--      fullpath  - directory, name, and extension
 --
 
-	function premake.gettarget(cfg, direction, style, os)
-		-- normalize the arguments
-		if not os then os = _G["os"].get() end
-		if (os == "bsd") then os = "linux" end		
-		
+	function premake.gettarget(cfg, direction, style, system)
+		if not system then system = os.get() end
+		if system == "bsd" then system = "linux" end		
+
 		local kind = cfg.kind
-		if (cfg.language == "C" or cfg.language == "C++") then
+		local decorations = premake.platforms[cfg.platform].targetstyle or style
+
+		if premake.iscppproject(cfg) then
 			-- On Windows, shared libraries link against a static import library
-			if (style == "windows" or os == "windows") and kind == "SharedLib" and direction == "link" then
+			if (style == "windows" or system == "windows") and kind == "SharedLib" and direction == "link" then
 				kind = "StaticLib"
 			end
 			
 			-- Linux name conventions only apply to static libs on windows (by user request)
-			if (style == "linux" and os == "windows" and kind ~= "StaticLib") then
-				style = "windows"
+			if style == "linux" and system == "windows" and kind ~= "StaticLib" then
+				decorations = "windows"
 			end
-		elseif (cfg.language == "C#") then
+		else
 			-- .NET always uses Windows naming conventions
-			style = "windows"
+			decorations = "windows"
 		end
 				
 		-- Initialize the target components
@@ -370,13 +384,8 @@
 		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
 		local prefix  = ""
 		local suffix  = ""
-		
-		-- If using an import library and "NoImportLib" flag is set, library will be in objdir
-		if cfg.kind == "SharedLib" and kind == "StaticLib" and cfg.flags.NoImportLib then
-			dir = cfg.objectsdir
-		end
-		
-		if style == "windows" then
+				
+		if decorations == "windows" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
 				suffix = ".exe"
 			elseif kind == "SharedLib" then
@@ -384,8 +393,8 @@
 			elseif kind == "StaticLib" then
 				suffix = ".lib"
 			end
-		elseif style == "linux" then
-			if (kind == "WindowedApp" and os == "macosx") then
+		elseif decorations == "linux" then
+			if kind == "WindowedApp" and system == "macosx" then
 				dir = path.join(dir, name .. ".app/Contents/MacOS")
 			elseif kind == "SharedLib" then
 				prefix = "lib"
@@ -394,8 +403,15 @@
 				prefix = "lib"
 				suffix = ".a"
 			end
+		elseif decorations == "ps3" then
+			if kind == "ConsoleApp" or kind == "WindowedApp" then
+				suffix = ".elf"
+			elseif kind == "StaticLib" then
+				prefix = "lib"
+				suffix = ".a"
+			end
 		end
-		
+
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
 		suffix = cfg[field.."extension"] or cfg.targetextension or suffix
 		
@@ -404,11 +420,32 @@
 		result.name      = prefix .. name .. suffix
 		result.directory = dir
 		result.fullpath  = path.join(result.directory, result.name)
+		
+		if style == "windows" then
+			result.directory = path.translate(result.directory, "\\")
+			result.fullpath  = path.translate(result.fullpath,  "\\")
+		end
+
 		return result
 	end
 
-	
 
+--
+-- Return the appropriate tool interface, based on the target language and
+-- any relevant command-line options.
+--
+
+	function premake.gettool(cfg)
+		if premake.iscppproject(cfg) then
+			if not _OPTIONS.cc then _OPTIONS.cc = premake.actions[_ACTION].valid_tools.cc[1] end
+			return premake[_OPTIONS.cc]
+		else
+			return premake.dotnet
+		end
+	end
+	
+	
+	
 -- 
 -- Returns true if the solution contains at least one C/C++ project.
 --
@@ -456,7 +493,7 @@
 	end
 	
 	
-			
+
 --
 -- Walk the list of source code files, breaking them into "groups" based
 -- on the directory hierarchy.

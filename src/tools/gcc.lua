@@ -6,7 +6,7 @@
 
 	
 	premake.gcc = { }
-	premake.targetstyle = "linux"
+	premake.gcc.targetstyle = "linux"
 	
 
 --

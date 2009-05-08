@@ -8,7 +8,6 @@
 		trigger         = "codelite",
 		shortname       = "CodeLite",
 		description     = "CodeLite (experimental)",
-		targetstyle     = "linux",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

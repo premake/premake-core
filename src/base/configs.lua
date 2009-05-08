@@ -268,13 +268,6 @@
 		
 		-- set the project location, if not already set
 		cfg.location = cfg.location or cfg.basedir
-
-		-- deduce and store the applicable tool for this configuration
-		if cfg.language == "C" or cfg.language == "C++" then
-			if _OPTIONS.cc then cfg.tool = premake[_OPTIONS.cc] end
-		elseif cfg.language == "C#" then
-			if _OPTIONS.dotnet then cfg.tool = premake[_OPTIONS.dotnet] end
-		end
 		
 		-- figure out the target system
 		local platform = premake.platforms[cfg.platform]
@@ -394,28 +387,23 @@
 -- Pre-computes the build and link targets for a configuration.
 --
 
-	local function buildtargets(cfg)
+	function premake.configs_buildtargets()
+		for _, sln in ipairs(_SOLUTIONS) do
+			for _, prj in ipairs(sln.projects) do
+				for _, cfg in pairs(prj.__configs) do
+
+					local targetstyle = premake.gettool(cfg).targetstyle
 					
-		-- deduce the target and path style from the current action/tool pairing	
-		local action = premake.actions[_ACTION]
-		local targetstyle = action.targetstyle or "linux"
-		if (cfg.tool) then
-			targetstyle = cfg.tool.targetstyle or targetstyle
-		end
-		
-		-- precompute the target names and paths		
-		cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
-		cfg.linktarget  = premake.gettarget(cfg, "link",  targetstyle)
-		
-		-- translate the paths as appropriate
-		local pathstyle = action.pathstyle or targetstyle
-		if (pathstyle == "windows") then
-			cfg.buildtarget.directory = path.translate(cfg.buildtarget.directory, "\\")
-			cfg.buildtarget.fullpath  = path.translate(cfg.buildtarget.fullpath, "\\")
-			cfg.linktarget.directory = path.translate(cfg.linktarget.directory, "\\")
-			cfg.linktarget.fullpath  = path.translate(cfg.linktarget.fullpath, "\\")
-			cfg.objectsdir = path.translate(cfg.objectsdir, "\\")
-		end
+					cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
+					cfg.linktarget  = premake.gettarget(cfg, "link",  targetstyle)
+					
+					if (targetstyle == "windows") then
+						cfg.objectsdir = path.translate(cfg.objectsdir, "\\")
+					end
+
+				end
+			end
+		end		
 	end
 		
 	
@@ -455,12 +443,6 @@
 		builduniquedirs()
 		
 		-- walk it again and build the targets and unique directories
-		for _, sln in ipairs(_SOLUTIONS) do
-			for _, prj in ipairs(sln.projects) do
-				for _, cfg in pairs(prj.__configs) do
-					buildtargets(cfg)
-				end
-			end
-		end		
+		premake.configs_buildtargets(cfg)
 
 	end
