@@ -174,7 +174,10 @@
 			end
 		
 			_p('\t\t\t\tOutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-			_p('\t\t\t\tAdditionalLibraryDirectories="%s"', table.concat(premake.esc(path.translate(cfg.libdirs)) , ";"))
+
+			if #cfg.libdirs > 0 then
+				_p('\t\t\t\tAdditionalLibraryDirectories="%s"', premake.esc(path.translate(table.concat(cfg.libdirs , ";"))))
+			end
 		end
 		
 		_p('\t\t\t/>')
@@ -211,14 +214,11 @@
 	function premake.vs200x_vcproj_VCLinkerTool_GCC(cfg)
 		_p('\t\t\t<Tool')
 		if cfg.kind ~= "StaticLib" then
-			_p('\t\t\t\tName="%s"', iif(cfg.platform ~= "Xbox360", "VCLinkerTool", "VCX360LinkerTool"))
+			_p('\t\t\t\tName="VCLinkerTool"')
 			
-			if cfg.flags.NoImportLib then
-				_p('\t\t\t\tIgnoreImportLibrary="%s"', _VS.bool(true))
-			end
-			
-			if #cfg.linkoptions > 0 then
-				_p('\t\t\t\tAdditionalOptions="%s"', table.concat(premake.esc(cfg.linkoptions), " "))
+			local buildoptions = table.join(premake.gcc.getldflags(cfg), cfg.linkoptions)
+			if #buildoptions > 0 then
+				_p('\t\t\t\tAdditionalOptions="%s"', premake.esc(table.concat(buildoptions, " ")))
 			end
 			
 			if #cfg.links > 0 then
@@ -226,42 +226,12 @@
 			end
 			
 			_p('\t\t\t\tOutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-			_p('\t\t\t\tLinkIncremental="%s"', iif(_VS.optimization(cfg) == 0, 2, 1))
+			_p('\t\t\t\tLinkIncremental="0"')
 			_p('\t\t\t\tAdditionalLibraryDirectories="%s"', table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"))
-			
-			local deffile = premake.findfile(cfg, ".def")
-			if deffile then
-				_p('\t\t\t\tModuleDefinitionFile="%s"', deffile)
-			end
-			
-			if cfg.flags.NoManifest then
-				_p('\t\t\t\tGenerateManifest="%s"', _VS.bool(false))
-			end
-			
-			_p('\t\t\t\tGenerateDebugInformation="%s"', _VS.bool(_VS.symbols(cfg) ~= 0))
-			
-			if _VS.symbols(cfg) ~= 0 then
-				_p('\t\t\t\tProgramDatabaseFile="$(OutDir)\\$(ProjectName).pdb"')
-			end
-			
-			_p('\t\t\t\tSubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
-			
-			if _VS.optimization(cfg) ~= 0 then
-				_p('\t\t\t\tOptimizeReferences="2"')
-				_p('\t\t\t\tEnableCOMDATFolding="2"')
-			end
-			
-			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
-				_p('\t\t\t\tEntryPointSymbol="mainCRTStartup"')
-			end
-			
-			if cfg.kind == "SharedLib" then
-				local implibname = path.translate(premake.gettarget(cfg, "link", "windows").fullpath, "\\")
-				_p('\t\t\t\tImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
-			end
-			
-			_p('\t\t\t\tTargetMachine="1"')
-		
+			_p('\t\t\t\tGenerateManifest="%s"', _VS.bool(false))
+			_p('\t\t\t\tProgramDatabaseFile=""')
+			_p('\t\t\t\tRandomizedBaseAddress="1"')
+			_p('\t\t\t\tDataExecutionPrevention="0"')			
 		else
 			_p('\t\t\t\tName="VCLibrarianTool"')
 
@@ -275,7 +245,10 @@
 			end
 		
 			_p('\t\t\t\tOutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-			_p('\t\t\t\tAdditionalLibraryDirectories="%s"', premake.esc(path.translate(table.concat(cfg.libdirs, ";"))))
+
+			if #cfg.libdirs > 0 then
+				_p('\t\t\t\tAdditionalLibraryDirectories="%s"', premake.esc(path.translate(table.concat(cfg.libdirs , ";"))))
+			end
 		end
 		
 		_p('\t\t\t/>')
@@ -334,6 +307,7 @@
 		VCCLCompilerTool       = premake.vs200x_vcproj_VCCLCompilerTool,
 		VCCLCompilerTool_GCC   = premake.vs200x_vcproj_VCCLCompilerTool_GCC,
 		VCLinkerTool           = premake.vs200x_vcproj_VCLinkerTool,
+		VCLinkerTool_GCC       = premake.vs200x_vcproj_VCLinkerTool_GCC,
 		VCResourceCompilerTool = premake.vs200x_vcproj_VCResourceCompilerTool,
 	}
 	

@@ -351,16 +351,35 @@
 		]]
 	end
 	
---	function T.vs200x_vcproj.LinkerBlock_OnPS3StaticLib()
---		platforms { "PS3" }
---		kind "StaticLib"
---		prepare()
---		premake.vs200x_vcproj_VCLinkerTool_GCC(premake.getconfig(prj, "Debug", "PS3"))
---		test.capture [[
---			<Tool
---				Name="VCLibrarianTool"
---				AdditionalOptions="-s"
---				OutputFile="$(OutDir)\libMyProject.a"
---			/>
---		]]
---	end
+	function T.vs200x_vcproj.LinkerBlock_OnPS3ConsoleApp()
+		platforms { "PS3" }
+		prepare()
+		premake.vs200x_vcproj_VCLinkerTool_GCC(premake.getconfig(prj, "Debug", "PS3"))
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="-s"
+				OutputFile="$(OutDir)\MyProject.elf"
+				LinkIncremental="0"
+				AdditionalLibraryDirectories=""
+				GenerateManifest="false"
+				ProgramDatabaseFile=""
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+		]]
+	end
+
+	function T.vs200x_vcproj.LinkerBlock_OnPS3StaticLib()
+		platforms { "PS3" }
+		kind "StaticLib"
+		prepare()
+		premake.vs200x_vcproj_VCLinkerTool_GCC(premake.getconfig(prj, "Debug", "PS3"))
+		test.capture [[
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalOptions="-s"
+				OutputFile="$(OutDir)\libMyProject.a"
+			/>
+		]]
+	end
