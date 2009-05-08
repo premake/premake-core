@@ -383,3 +383,31 @@
 			/>
 		]]
 	end
+
+	function T.vs200x_vcproj.LinkerBlock_OnPS3SharedLink()
+		platforms { "PS3" }
+		links { "MyLibrary" }
+		project "MyLibrary"
+		language "C++"
+		kind "SharedLib"
+		prepare()
+		premake.vs200x_vcproj_VCLinkerTool_GCC(premake.getconfig(prj, "Debug", "PS3"))
+
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="-s"
+				AdditionalDependencies="libMyLibrary.a"
+				OutputFile="$(OutDir)\MyProject.elf"
+				LinkIncremental="0"
+				AdditionalLibraryDirectories=""
+				GenerateManifest="false"
+				ProgramDatabaseFile=""
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+		]]
+	end
+
+
+		

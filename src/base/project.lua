@@ -270,7 +270,7 @@
 			local prj = premake.findproject(link)
 			if prj and kind ~= "system" then
 				
-				local prjcfg = premake.getconfig(prj, cfgname)
+				local prjcfg = premake.getconfig(prj, cfgname, cfg.platform)
 				if kind == "dependencies" or canlink(cfg, prjcfg) then
 					if (part == "directory") then
 						item = path.rebase(prjcfg.linktarget.directory, prjcfg.location, cfg.location)
