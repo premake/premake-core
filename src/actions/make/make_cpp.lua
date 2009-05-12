@@ -190,7 +190,7 @@
 			_p('  AR         = %s', platform.ar)
 		end
 		
-		_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))		
+		_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', _MAKE.esc(cfg.buildtarget.name))
 		_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))
 		_p('  DEFINES   += %s', table.concat(cc.getdefines(cfg.defines), " "))

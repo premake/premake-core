@@ -370,7 +370,7 @@
 			end
 			
 			-- Linux name conventions only apply to static libs on windows (by user request)
-			if style == "linux" and system == "windows" and kind ~= "StaticLib" then
+			if decorations == "linux" and system == "windows" and kind ~= "StaticLib" then
 				decorations = "windows"
 			end
 		else
