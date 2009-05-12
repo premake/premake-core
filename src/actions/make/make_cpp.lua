@@ -6,7 +6,7 @@
 
 	function premake.make_cpp(prj)
 		-- create a shortcut to the compiler interface
-		local cc = premake[_OPTIONS.cc]
+		local cc = premake.gettool(prj)
 		
 		-- build a list of supported target platforms that also includes a generic build
 		local platforms = premake.filterplatforms(prj.solution, cc.platforms, "Native")

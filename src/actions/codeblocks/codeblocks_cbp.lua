@@ -6,7 +6,7 @@
 
 	function premake.codeblocks_cbp(prj)
 		-- alias the C/C++ compiler interface
-		local cc = premake[_OPTIONS.cc]
+		local cc = premake.gettool(prj)
 		
 		_p('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>')
 		_p('<CodeBlocks_project_file>')
