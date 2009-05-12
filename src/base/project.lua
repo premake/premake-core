@@ -437,8 +437,14 @@
 
 	function premake.gettool(cfg)
 		if premake.iscppproject(cfg) then
-			if not _OPTIONS.cc then _OPTIONS.cc = premake.actions[_ACTION].valid_tools.cc[1] end
-			return premake[_OPTIONS.cc]
+			if _OPTIONS.cc then
+				return premake[_OPTIONS.cc]
+			end
+			local action = premake.actions[_ACTION]
+			if action.valid_tools then
+				return premake[action.valid_tools.cc[1]]
+			end
+			return premake.gcc
 		else
 			return premake.dotnet
 		end

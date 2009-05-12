@@ -160,7 +160,7 @@
 			end
 			
 			if cfg.kind == "SharedLib" then
-				local implibname = path.translate(premake.gettarget(cfg, "link", "windows").fullpath, "\\")
+				local implibname = cfg.linktarget.fullpath
 				_p('\t\t\t\tImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 			end
 			

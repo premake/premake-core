@@ -94,7 +94,7 @@
 	function premake.gcc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
 		table.insert(result, platforms[cfg.platform].flags)
-		if cfg.system == "Windows" and cfg.kind == "SharedLib" then
+		if cfg.system ~= "windows" and cfg.kind == "SharedLib" then
 			table.insert(result, "-fPIC")
 		end
 		return result		
@@ -117,7 +117,7 @@
 		
 		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
 		if not cfg.flags.Symbols then
-			if cfg.system == "MacOSX" then
+			if cfg.system == "macosx" then
 				table.insert(result, "-Wl,-x")
 			else
 				table.insert(result, "-s")
@@ -125,19 +125,19 @@
 		end
 	
 		if cfg.kind == "SharedLib" then
-			if cfg.system == "MacOSX" then
+			if cfg.system == "macosx" then
 				result = table.join(result, { "-dynamiclib", "-flat_namespace" })
 			else
 				table.insert(result, "-shared")
 			end
 				
-			if cfg.system == "Windows" and not cfg.flags.NoImportLib then
+			if cfg.system == "windows" and not cfg.flags.NoImportLib then
 				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux").fullpath..'"')
 			end
 		end
 
 		if cfg.kind == "WindowedApp" then
-			if cfg.system == "Windows" then
+			if cfg.system == "windows" then
 				table.insert(result, "-mwindows")
 			end
 		end

@@ -387,7 +387,7 @@
 -- Pre-computes the build and link targets for a configuration.
 --
 
-	function premake.configs_buildtargets()
+	local function buildtargets()
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
@@ -443,6 +443,6 @@
 		builduniquedirs()
 		
 		-- walk it again and build the targets and unique directories
-		premake.configs_buildtargets(cfg)
+		buildtargets(cfg)
 
 	end
