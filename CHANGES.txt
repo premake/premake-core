@@ -6,12 +6,13 @@
 - Added Xbox 360 support to Visual Studio 2005/2008
 - Added Mac OS X universal binary support
 - Added Playstation 3 support
-- Bug 2564404: FatalWarnings has no effect with gmake target
-- Bug 2550759: pchheader option has wrong type
 - Support links and libdirs for Visual Studio static libraries
 - Fail gracefully when list is assigned to string field
 - Changed GCC flags to -fno-exceptions and -fno-rtti
 - Improved performance of configuration building step
+- Patch 2031626 Support for additional manifest files (Colin Graf)
+- Bug 2564404: FatalWarnings has no effect with gmake target
+- Bug 2550759: pchheader option has wrong type
 
 
 -----

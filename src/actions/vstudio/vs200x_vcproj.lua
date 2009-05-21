@@ -281,6 +281,28 @@
 	end
 	
 	
+
+--
+-- Manifest block.
+--
+
+	function premake.vs200x_vcproj_VCManifestTool(cfg)
+		-- locate all manifest files
+		local manifests = { }
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, fname)
+			end
+		end
+		
+		_p('\t\t\t<Tool')
+		_p('\t\t\t\tName="VCManifestTool"')
+		if #manifests > 0 then
+			_p('\t\t\t\tAdditionalManifestFiles="%s"', premake.esc(table.concat(manifests, ";")))
+		end
+		_p('\t\t\t/>')
+	end
+		
 	
 --
 -- Write out a custom build steps block.
@@ -308,6 +330,7 @@
 		VCCLCompilerTool_GCC   = premake.vs200x_vcproj_VCCLCompilerTool_GCC,
 		VCLinkerTool           = premake.vs200x_vcproj_VCLinkerTool,
 		VCLinkerTool_GCC       = premake.vs200x_vcproj_VCLinkerTool_GCC,
+		VCManifestTool         = premake.vs200x_vcproj_VCManifestTool,
 		VCResourceCompilerTool = premake.vs200x_vcproj_VCResourceCompilerTool,
 	}
 	
