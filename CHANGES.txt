@@ -10,7 +10,8 @@
 - Fail gracefully when list is assigned to string field
 - Changed GCC flags to -fno-exceptions and -fno-rtti
 - Improved performance of configuration building step
-- Patch 2031626 Support for additional manifest files (Colin Graf)
+- Patch 2031626: Support for additional manifest files (Colin Graf)
+- Patch 2558089: workaround for --as-needed/correct link order (idl0r)
 - Bug 2564404: FatalWarnings has no effect with gmake target
 - Bug 2550759: pchheader option has wrong type
 

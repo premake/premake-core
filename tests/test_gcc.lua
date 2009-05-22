@@ -16,6 +16,8 @@
 		cfg.flags      = { }
 		cfg.objectsdir = "obj"
 		cfg.platform   = "Native"
+		cfg.links      = { }
+		cfg.libdirs    = { }
 	end
 
 

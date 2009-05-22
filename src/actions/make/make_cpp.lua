@@ -198,14 +198,15 @@
 		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', cc.getcppflags(cfg))
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
-		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getldflags(cfg), cc.getlinkflags(cfg), cfg.linkoptions), " "))
+		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getldflags(cfg), cfg.linkoptions, cc.getlibdirflags(cfg)), " "))
+		_p('  LIBS      += %s', _MAKE.esc(table.concat(cc.getlinkflags(cfg), " ")))
 		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(table.join(cc.getdefines(cfg.resdefines), cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " "))
 		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
 		
 		if cfg.kind == "StaticLib" then
 			_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
 		else
-			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH)', iif(cfg.language == "C", "CC", "CXX"))
+			_p('  LINKCMD    = $(%s) -o $(TARGET) $(LDFLAGS) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS)', iif(cfg.language == "C", "CC", "CXX"))
 		end
 		
 		_p('  define PREBUILDCMDS')
