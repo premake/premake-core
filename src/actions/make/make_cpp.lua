@@ -70,7 +70,7 @@
 		
 		_p('$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)')
 		_p('\t@echo Linking %s', prj.name)
-		_p('\t@$(LINKCMD)')
+		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 		
@@ -199,7 +199,7 @@
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
 		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getldflags(cfg), cfg.linkoptions, cc.getlibdirflags(cfg)), " "))
-		_p('  LIBS      += %s', _MAKE.esc(table.concat(cc.getlinkflags(cfg), " ")))
+		_p('  LIBS      += %s', table.concat(cc.getlinkflags(cfg), " "))
 		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(table.join(cc.getdefines(cfg.resdefines), cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " "))
 		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
 		
