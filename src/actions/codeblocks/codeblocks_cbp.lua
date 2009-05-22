@@ -110,14 +110,15 @@
 		-- begin files block --
 		for _,fname in ipairs(prj.files) do
 			_p('\t\t<Unit filename="%s">', premake.esc(fname))
-			if path.getextension(fname) == ".rc" then
+			if path.isresourcefile(fname) then
 				_p('\t\t\t<Option compilerVar="WINDRES" />')
 			elseif path.iscppfile(fname) then
 				_p('\t\t\t<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
-				if (not prj.flags.NoPCH and fname == prj.pchheader) then
-					_p('\t\t\t<Option compile="1" />')
-					_p('\t\t\t<Option weight="0" />')
-				end
+			end
+			if not prj.flags.NoPCH and fname == prj.pchheader then
+				_p('\t\t\t<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
+				_p('\t\t\t<Option compile="1" />')
+				_p('\t\t\t<Option weight="0" />')
 			end
 			_p('\t\t</Unit>')
 		end

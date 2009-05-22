@@ -18,7 +18,7 @@
 				premake.gmake_cpp_config(cfg, cc)
 			end
 		end
-
+		
 		-- list intermediate files
 		_p('OBJECTS := \\')
 		for _, file in ipairs(prj.files) do
@@ -62,13 +62,14 @@
 		_p('')
 
 		if os.is("MacOSX") and prj.kind == "WindowedApp" then
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(RESOURCES) prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 		else
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild $(OBJECTS) $(RESOURCES) prelink $(TARGET)')
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
 		end
 		_p('')
-		
-		_p('$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)')
+
+		-- target build rule
+		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
@@ -110,7 +111,19 @@
 		_p('prelink:')
 		_p('\t$(PRELINKCMDS)')
 		_p('')
-		
+
+		-- precompiler header rule
+		_p('ifneq (,$(PCH))')
+		_p('$(GCH): $(PCH)')
+		_p('\t@echo $(notdir $<)')
+		if prj.language == "C" then
+			_p('\t$(SILENT) $(CC) $(CFLAGS) -o $@ -c $<')
+		else
+			_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o $@ -c $<')
+		end
+		_p('endif')
+		_p('')
+				
 		-- per-file rules
 		for _, file in ipairs(prj.files) do
 			if path.iscppfile(file) then
@@ -189,13 +202,21 @@
 		if platform.ar then
 			_p('  AR         = %s', platform.ar)
 		end
-		
+
+		_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))		
 		_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', _MAKE.esc(cfg.buildtarget.name))
-		_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))
 		_p('  DEFINES   += %s', table.concat(cc.getdefines(cfg.defines), " "))
 		_p('  INCLUDES  += %s', table.concat(cc.getincludedirs(cfg.includedirs), " "))
-		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', cc.getcppflags(cfg))
+		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(cc.getcppflags(cfg), " "))
+
+		-- set up precompiled headers
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p('  PCH        = %s', _MAKE.esc(cfg.pchheader))
+			_p('  GCH        = $(OBJDIR)/$(PCH).gch')
+			_p('  CPPFLAGS  += -I$(OBJDIR) -include $(PCH)')
+		end
+				
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
 		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getldflags(cfg), cfg.linkoptions, cc.getlibdirflags(cfg)), " "))

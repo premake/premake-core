@@ -87,9 +87,10 @@
 --
 
 	function premake.gcc.getcppflags(cfg)
-		return platforms[cfg.platform].cppflags
+		local result = { }
+		table.insert(result, platforms[cfg.platform].cppflags)
+		return result
 	end
-
 
 	function premake.gcc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
@@ -99,7 +100,6 @@
 		end
 		return result		
 	end
-
 	
 	function premake.gcc.getcxxflags(cfg)
 		local result = table.translate(cfg.flags, cxxflags)

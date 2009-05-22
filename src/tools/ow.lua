@@ -57,7 +57,7 @@
 --
 
 	function premake.ow.getcppflags(cfg)
-		return ""
+		return {}
 	end
 
 	function premake.ow.getcflags(cfg)

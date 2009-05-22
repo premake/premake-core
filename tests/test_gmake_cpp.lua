@@ -74,9 +74,9 @@ endif
 		premake.gmake_cpp_config(cfg, premake.gcc)
 		test.capture [[
 ifeq ($(config),debug)
+  OBJDIR     = obj/Debug
   TARGETDIR  = .
   TARGET     = $(TARGETDIR)/MyProject
-  OBJDIR     = obj/Debug
   DEFINES   += 
   INCLUDES  += 
   CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)
@@ -108,9 +108,9 @@ ifeq ($(config),debugps3)
   CC         = ppu-lv2-g++
   CXX        = ppu-lv2-g++
   AR         = ppu-lv2-ar
+  OBJDIR     = obj/PS3/Debug
   TARGETDIR  = .
   TARGET     = $(TARGETDIR)/MyProject.elf
-  OBJDIR     = obj/PS3/Debug
   DEFINES   += 
   INCLUDES  += 
   CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)
@@ -140,9 +140,9 @@ endif
 		premake.gmake_cpp_config(cfg, premake.gcc)
 		test.capture [[
 ifeq ($(config),debug64)
+  OBJDIR     = obj/x64/Debug
   TARGETDIR  = .
   TARGET     = $(TARGETDIR)/MyProject
-  OBJDIR     = obj/x64/Debug
   DEFINES   += 
   INCLUDES  += 
   CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)

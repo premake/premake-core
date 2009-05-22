@@ -6,6 +6,7 @@
 - Added Xbox 360 support to Visual Studio 2005/2008
 - Added Mac OS X universal binary support
 - Added Playstation 3 support
+- Added precompiled header support for GCC
 - Support links and libdirs for Visual Studio static libraries
 - Fail gracefully when list is assigned to string field
 - Changed GCC flags to -fno-exceptions and -fno-rtti

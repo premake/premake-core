@@ -5,9 +5,11 @@ project "CppConsoleApp"
 	
 	flags    { "FatalWarnings", "ExtraWarnings" }
 	
-	files    { "*.cpp" }
+	files    { "*.h", "*.cpp" }
 	
 	includedirs { "I:/Code" }
 
 	libdirs { "../lib" }
 	links   { "CppSharedLib" }
+	
+	pchheader "CppConsoleApp.h"
