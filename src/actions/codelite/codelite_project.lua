@@ -8,7 +8,7 @@
 		_p('<?xml version="1.0" encoding="utf-8"?>')
 		_p('<CodeLite_Project Name="%s">', premake.esc(prj.name))
 		
-		premake.walksources(prj, prj.files, premake.codelite_files)
+		premake.walksources(prj, premake.codelite_files)
 
 		local types = { 
 			ConsoleApp  = "Executable", 

@@ -534,7 +534,7 @@
 		_p('\t</References>')
 		
 		_p('\t<Files>')
-		premake.walksources(prj, prj.files, _VS.files)
+		premake.walksources(prj, _VS.files)
 		_p('\t</Files>')
 		
 		_p('\t<Globals>')

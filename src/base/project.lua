@@ -505,17 +505,17 @@
 -- on the directory hierarchy.
 --
 
-	local function walksources(prj, files, fn, group, nestlevel, finished)
+	local function walksources(cfg, fn, group, nestlevel, finished)
 		local grouplen = group:len()
 		local gname = iif(group:endswith("/"), group:sub(1, -2), group)
 		
 		-- open this new group
 		if (nestlevel >= 0) then
-			fn(prj, gname, "GroupStart", nestlevel)
+			fn(cfg, gname, "GroupStart", nestlevel)
 		end
 		
 		-- scan the list of files for items which belong in this group
-		for _,fname in ipairs(files) do
+		for _,fname in ipairs(cfg.files) do
 			if (fname:startswith(group)) then
 
 				-- is there a subgroup within this item?
@@ -524,7 +524,7 @@
 					local subgroup = fname:sub(1, split)
 					if (not finished[subgroup]) then
 						finished[subgroup] = true
-						walksources(prj, files, fn, subgroup, nestlevel + 1, finished)
+						walksources(cfg, fn, subgroup, nestlevel + 1, finished)
 					end
 				end
 				
@@ -532,19 +532,19 @@
 		end
 
 		-- process all files that belong in this group
-		for _,fname in ipairs(files) do
+		for _,fname in ipairs(cfg.files) do
 			if (fname:startswith(group) and not fname:find("[^\.]/", grouplen + 1)) then
-				fn(prj, fname, "GroupItem", nestlevel + 1)
+				fn(cfg, fname, "GroupItem", nestlevel + 1)
 			end
 		end
 
 		-- close the group
 		if (nestlevel >= 0) then
-			fn(prj, gname, "GroupEnd", nestlevel)
+			fn(cfg, gname, "GroupEnd", nestlevel)
 		end
 	end
 	
 	
-	function premake.walksources(prj, files, fn)
-		walksources(prj, files, fn, "", -1, {})
+	function premake.walksources(cfg, fn)
+		walksources(cfg, fn, "", -1, {})
 	end

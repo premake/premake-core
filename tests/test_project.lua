@@ -1,15 +1,18 @@
 --
 -- tests/test_project.lua
 -- Automated test suite for the project support functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
 --
 
 
 	T.project = { }
 
-	local result
+	local cfg, result
 	function T.project.setup()
 		_ACTION = "gmake"
+		cfg = {}
+		cfg.files = {}
+		cfg.trimpaths = {}
 		result = "\n"
 	end
 	
@@ -31,30 +34,33 @@
 		result = result .. string.rep("-", nestlevel) .. item .. "\n"
 	end
 	
+	
 	function T.project.walksources_OnNoFiles()
-		premake.walksources({}, {}, walktest)
+		premake.walksources(cfg, walktest)
 		test.isequal("\n"
 			.. ""
 		,result)		
 	end
 	
+	
 	function T.project.walksources_OnSingleFile()
-		local files = {
+		cfg.files = {
 			"hello.cpp"
 		}
-		premake.walksources({}, files, walktest)
+		premake.walksources(cfg, walktest)
 		test.isequal("\n"
 			.. "hello.cpp\n"
 		,result)
 	end
 	
+	
 	function T.project.walksources_OnNestedGroups()
-		local files = {
+		cfg.files = {
 			"rootfile.c",
 			"level1/level1.c",
 			"level1/level2/level2.c"
 		}
-		premake.walksources({}, files, walktest)
+		premake.walksources(cfg, walktest)
 		test.isequal("\n"
 			.. "<level1>\n"
 			.. "-<level1/level2>\n"
@@ -66,11 +72,12 @@
 		,result)
 	end
 	
+	
 	function T.project.walksources_OnDottedFolders()
-		local files = {
+		cfg.files = {
 			"src/lua-5.1.2/lapi.c"
 		}
-		premake.walksources({}, files, walktest)
+		premake.walksources(cfg, walktest)
 		test.isequal("\n"
 			.. "<src>\n"
 			.. "-<src/lua-5.1.2>\n"
@@ -80,15 +87,15 @@
 		,result)
 	end
 	
+	
 	function T.project.walksources_OnDotDotLeaders()
-		local files = {
+		cfg.files = {
 			"../src/hello.c",
 		}
-		premake.walksources({}, files, walktest)
+		premake.walksources(cfg, walktest)
 		test.isequal("\n"
 			.. "<../src>\n"
 			.. "-../src/hello.c\n"
 			.. "</../src>\n"
 		,result)
 	end
-	
