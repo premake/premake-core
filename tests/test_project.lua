@@ -10,7 +10,7 @@
 	local result
 	function T.project.setup()
 		_ACTION = "gmake"
-		result = ""
+		result = "\n"
 	end
 	
 	
@@ -28,13 +28,13 @@
 		else
 			item = fname
 		end
-		result = result .. string.rep("-", nestlevel) .. item
+		result = result .. string.rep("-", nestlevel) .. item .. "\n"
 	end
 	
 	function T.project.walksources_OnNoFiles()
 		premake.walksources({}, {}, walktest)
-		test.isequal(
-			""
+		test.isequal("\n"
+			.. ""
 		,result)		
 	end
 	
@@ -43,8 +43,8 @@
 			"hello.cpp"
 		}
 		premake.walksources({}, files, walktest)
-		test.isequal(
-			"hello.cpp"
+		test.isequal("\n"
+			.. "hello.cpp\n"
 		,result)
 	end
 	
@@ -55,14 +55,14 @@
 			"level1/level2/level2.c"
 		}
 		premake.walksources({}, files, walktest)
-		test.isequal(""
-			.. "<level1>"
-			.. "-<level1/level2>"
-			.. "--level1/level2/level2.c"
-			.. "-</level1/level2>"
-			.. "-level1/level1.c"
-			.. "</level1>"
-			.. "rootfile.c"
+		test.isequal("\n"
+			.. "<level1>\n"
+			.. "-<level1/level2>\n"
+			.. "--level1/level2/level2.c\n"
+			.. "-</level1/level2>\n"
+			.. "-level1/level1.c\n"
+			.. "</level1>\n"
+			.. "rootfile.c\n"
 		,result)
 	end
 	
@@ -71,12 +71,12 @@
 			"src/lua-5.1.2/lapi.c"
 		}
 		premake.walksources({}, files, walktest)
-		test.isequal(""
-			.. "<src>"
-			.. "-<src/lua-5.1.2>"
-			.. "--src/lua-5.1.2/lapi.c"
-			.. "-</src/lua-5.1.2>"
-			.. "</src>"
+		test.isequal("\n"
+			.. "<src>\n"
+			.. "-<src/lua-5.1.2>\n"
+			.. "--src/lua-5.1.2/lapi.c\n"
+			.. "-</src/lua-5.1.2>\n"
+			.. "</src>\n"
 		,result)
 	end
 	
@@ -85,10 +85,10 @@
 			"../src/hello.c",
 		}
 		premake.walksources({}, files, walktest)
-		test.isequal(""
-			.. "<../src>"
-			.. "-../src/hello.c"
-			.. "</../src>"
+		test.isequal("\n"
+			.. "<../src>\n"
+			.. "-../src/hello.c\n"
+			.. "</../src>\n"
 		,result)
 	end
 	
