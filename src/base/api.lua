@@ -261,6 +261,12 @@
 			scope = "config",
 		},
 		
+		trimpaths =
+		{
+			kind = "dirlist",
+			scope = "config",
+		},
+		
 		uuid =
 		{
 			kind  = "string",
