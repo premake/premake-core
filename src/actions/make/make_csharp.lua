@@ -16,11 +16,12 @@
 		    if dir ~= "." then 
 				name = name .. path.translate(dir, ".") .. "."
 			end
-			return "$(OBJDIR)/" .. name .. path.getbasename(fname) .. ".resources"
+			return "$(OBJDIR)/" .. _MAKE.esc(name .. path.getbasename(fname)) .. ".resources"
 		else
 			return fname
 		end
 	end
+
 
 
 --
@@ -42,7 +43,7 @@
 			cfgpairs[cfg] = { }
 			for _, fname in ipairs(cfglibs[cfg]) do
 				if path.getdirectory(fname) ~= cfg.buildtarget.directory then
-					cfgpairs[cfg]["$(TARGETDIR)/"..path.getname(fname)] = fname
+					cfgpairs[cfg]["$(TARGETDIR)/" .. _MAKE.esc(path.getname(fname))] = _MAKE.esc(fname)
 				end
 			end
 		end
@@ -59,9 +60,9 @@
 			elseif action == "EmbeddedResource" then			
 				table.insert(embedded, fcfg.name)
 			elseif action == "Content" then
-				copypairs["$(TARGETDIR)/"..path.getname(fcfg.name)] = fcfg.name
+				copypairs["$(TARGETDIR)/" .. _MAKE.esc(path.getname(fcfg.name))] = _MAKE.esc(fcfg.name)
 			elseif path.getname(fcfg.name):lower() == "app.config" then
-				copypairs["$(TARGET).config"] = fcfg.name	
+				copypairs["$(TARGET).config"] = _MAKE.esc(fcfg.name)
 			end
 		end
 
@@ -72,9 +73,9 @@
 		for _, libname in ipairs(premake.getlinks(prj, "system", "fullpath")) do
 			local libdir = os.pathsearch(libname..".dll", unpack(paths))
 			if (libdir) then
-				local target = "$(TARGETDIR)/"..path.getname(libname)
+				local target = "$(TARGETDIR)/" .. _MAKE.esc(path.getname(libname))
 				local source = path.getrelative(prj.basedir, path.join(libdir, libname))..".dll"
-				copypairs[target] = source
+				copypairs[target] = _MAKE.esc(source)
 			end
 		end
 		
@@ -161,20 +162,20 @@
 		
 		_p('EMBEDFILES := \\')
 		for _, fname in ipairs(embedded) do
-			_p('\t%s \\', _MAKE.esc(getresourcefilename(prj, fname)))
+			_p('\t%s \\', getresourcefilename(prj, fname))
 		end
 		_p('')
 
 		_p('COPYFILES += \\')
 		for target, source in pairs(cfgpairs[anycfg]) do
-			_p('\t%s \\', _MAKE.esc(target))
+			_p('\t%s \\', target)
 		end
 		for target, source in pairs(copypairs) do
-			_p('\t%s \\', _MAKE.esc(target))
+			_p('\t%s \\', target)
 		end
 		_p('')
 
-		-- set up support commands like mkdir, rmdir, etc. based on the shell
+		-- identify the shell type
 		_p('SHELLTYPE := msdos')
 		_p('ifeq (,$(ComSpec)$(COMSPEC))')
 		_p('  SHELLTYPE := posix')
@@ -182,25 +183,7 @@
 		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
 		_p('  SHELLTYPE := posix')
 		_p('endif')
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('   define MKDIR_RULE')
-		_p('\t@echo Creating $@')
-		_p('\t$(SILENT) mkdir -p $@')
-		_p('   endef')
-		_p('  define COPY_RULE')
-		_p('\t@echo Copying $(notdir $@)')
-		_p('\t$(SILENT) cp -fR $^ $@')
-		_p('  endef')
-		_p('else')
-		_p('   define MKDIR_RULE')
-		_p('\t@echo Creating $@')
-		_p('\t$(SILENT) mkdir $(subst /,\\\\,$@)')
-		_p('   endef')
-		_p('  define COPY_RULE')
-		_p('\t@echo Copying $(notdir $@)')
-		_p('\t$(SILENT) copy /Y $(subst /,\\\\,$^) $(subst /,\\\\,$@)')
-		_p('  endef')
-		_p('endif')
+		_p('')
 
 		-- main build rule(s)
 		_p('.PHONY: clean prebuild prelink')
@@ -214,14 +197,13 @@
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 
-		-- create destination directories
+		-- Create destination directories. Can't use $@ for this because it loses the
+		-- escaping, causing issues with spaces and parenthesis
 		_p('$(TARGETDIR):')
-		_p('\t$(MKDIR_RULE)')
-		_p('')
+		premake.make_mkdirrule("$(TARGETDIR)")
 		
 		_p('$(OBJDIR):')
-		_p('\t$(MKDIR_RULE)')
-		_p('')
+		premake.make_mkdirrule("$(OBJDIR)")
 
 		-- clean target
 		_p('clean:')
@@ -255,8 +237,7 @@
 		for cfg in premake.eachconfig(prj) do
 			_p('ifneq (,$(findstring %s,$(config)))', _MAKE.esc(cfg.name:lower()))
 			for target, source in pairs(cfgpairs[cfg]) do
-				_p('%s: %s', _MAKE.esc(target), _MAKE.esc(source))
-				_p('\t$(COPY_RULE)')
+				premake.make_copyrule(source, target)
 			end
 			_p('endif')
 		end
@@ -264,15 +245,13 @@
 		
 		_p('# Copied file rules')
 		for target, source in pairs(copypairs) do
-			_p('%s: %s', _MAKE.esc(target), _MAKE.esc(source))
-			_p('\t$(COPY_RULE)')
-			_p('')
+			premake.make_copyrule(source, target)
 		end
 
 		_p('# Embedded file rules')
 		for _, fname in ipairs(embedded) do 
 			if path.getextension(fname) == ".resx" then
-				_p('%s: %s', _MAKE.esc(getresourcefilename(prj, fname)), _MAKE.esc(fname))
+				_p('%s: %s', getresourcefilename(prj, fname), _MAKE.esc(fname))
 				_p('\t$(SILENT) $(RESGEN) $^ $@')
 			end
 			_p('')

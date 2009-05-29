@@ -36,24 +36,13 @@
 		end
 		_p('')
  
-		-- set up support commands like mkdir, rmdir, etc. based on the shell
+		-- identify the shell type
 		_p('SHELLTYPE := msdos')
 		_p('ifeq (,$(ComSpec)$(COMSPEC))')
 		_p('  SHELLTYPE := posix')
 		_p('endif')
 		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
 		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('   define MKDIR_RULE')
-		_p('\t@echo Creating $@')
-		_p('\t$(SILENT) mkdir -p $@')
-		_p('   endef')
-		_p('else')
-		_p('   define MKDIR_RULE')
-		_p('\t@echo Creating $@')
-		_p('\t$(SILENT) mkdir $(subst /,\\\\,$@)')
-		_p('   endef')
 		_p('endif')
 		_p('')
 		
@@ -75,14 +64,13 @@
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 		
-		-- create destination directories
+		-- Create destination directories. Can't use $@ for this because it loses the
+		-- escaping, causing issues with spaces and parenthesis
 		_p('$(TARGETDIR):')
-		_p('\t$(MKDIR_RULE)')
-		_p('')
+		premake.make_mkdirrule("$(TARGETDIR)")
 		
 		_p('$(OBJDIR):')
-		_p('\t$(MKDIR_RULE)')
-		_p('')
+		premake.make_mkdirrule("$(OBJDIR)")
 
 		-- Mac OS X specific targets
 		if os.is("MacOSX") and prj.kind == "WindowedApp" then

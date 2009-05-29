@@ -13,3 +13,9 @@ project "CppConsoleApp"
 	links   { "CppSharedLib" }
 	
 	pchheader "CppConsoleApp.h"
+
+	configuration "Debug"
+		targetdir "../bin/debug (x64)"
+		
+	configuration "Release"
+		targetdir "../bin/release (x64)"

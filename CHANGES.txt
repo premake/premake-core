@@ -17,6 +17,7 @@
 - Patch 2609028: verbose linking in makefile (kaidokert)
 - Bug 2564404: FatalWarnings has no effect with gmake target
 - Bug 2550759: pchheader option has wrong type
+- Bug 1900333: Parentheses in build path
 
 
 -----
