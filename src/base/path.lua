@@ -1,7 +1,7 @@
 --
 -- path.lua
 -- Path manipulation functions.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 
@@ -19,8 +19,8 @@
 		local result = iif (path.isabsolute(p), nil, os.getcwd())
 		
 		-- split up the supplied relative path and tackle it bit by bit
-		for _,part in ipairs(p:explode("/", true)) do
-			if (part == "") then
+		for n, part in ipairs(p:explode("/", true)) do
+			if (part == "" and n == 1) then
 				result = "/"
 			elseif (part == "..") then
 				result = path.getdirectory(result)
@@ -28,6 +28,9 @@
 				result = path.join(result, part)
 			end
 		end
+		
+		-- if I end up with a trailing slash remove it
+		result = iif(result:endswith("/"), result:sub(1, -2), result)
 		
 		return result
 	end
