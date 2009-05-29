@@ -398,7 +398,7 @@
 				dir = path.join(dir, name .. ".app/Contents/MacOS")
 			elseif kind == "SharedLib" then
 				prefix = "lib"
-				suffix = ".so"
+				suffix = iif(system == "macosx", ".dylib", ".so")
 			elseif kind == "StaticLib" then
 				prefix = "lib"
 				suffix = ".a"

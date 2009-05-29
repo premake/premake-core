@@ -18,6 +18,7 @@
 - Bug 2564404: FatalWarnings has no effect with gmake target
 - Bug 2550759: pchheader option has wrong type
 - Bug 1900333: Parentheses in build path
+- Bug 2790865: SharedLib on OSX fixes (Ash Berlin)
 
 
 -----

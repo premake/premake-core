@@ -314,7 +314,7 @@
 	function T.targets.SharedLib_Linux_Build_MacOSX()
 		cfg.kind = "SharedLib"
 		result = premake.gettarget(cfg, "build", "linux", "macosx")
-		test.isequal([[../bin/libMyProject.so]], result.fullpath)
+		test.isequal([[../bin/libMyProject.dylib]], result.fullpath)
 	end
 
 	function T.targets.SharedLib_Linux_Link_Windows()
@@ -332,7 +332,7 @@
 	function T.targets.SharedLib_Linux_Link_MacOSX()
 		cfg.kind = "SharedLib"
 		result = premake.gettarget(cfg, "link", "linux", "macosx")
-		test.isequal([[../bin/libMyProject.so]], result.fullpath)
+		test.isequal([[../bin/libMyProject.dylib]], result.fullpath)
 	end
 	
 
