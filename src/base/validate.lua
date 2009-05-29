@@ -73,7 +73,7 @@
 					
 					-- every config must have a kind
 					if (not cfg.kind) then
-						return nil, "project '" ..prj.name .. "' needs a kind in configuration '" .. cfgname .. "'"
+						return nil, "project '" ..prj.name .. "' needs a kind in configuration '" .. cfg.name .. "'"
 					end
 				
 					-- and the action must support it

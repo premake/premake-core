@@ -11,6 +11,7 @@
 - Fail gracefully when list is assigned to string field
 - Changed GCC flags to -fno-exceptions and -fno-rtti
 - Improved performance of configuration building step
+- Fixed crash when configuration is missing a kind
 - Patch 2031626: Support for additional manifest files (Colin Graf)
 - Patch 2558089: workaround for --as-needed/correct link order (idl0r)
 - Patch 2609028: verbose linking in makefile (kaidokert)

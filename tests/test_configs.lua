@@ -145,6 +145,13 @@
 -- Configuration-specific kinds
 --
 
+	function T.configs.SetsConfigSpecificKind()
+		configuration "Debug"
+		kind "ConsoleApp"
+		prepare()
+		test.isequal("ConsoleApp", cfg.kind)
+	end
+
 
 --
 -- Platform kind translation
