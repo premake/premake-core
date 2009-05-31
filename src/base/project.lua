@@ -357,7 +357,7 @@
 --
 
 	function premake.gettarget(cfg, direction, style, system)
-		if not system then system = os.get() end
+		if not system then system = cfg.system or os.get() end
 		if system == "bsd" then system = "linux" end		
 
 		local kind = cfg.kind

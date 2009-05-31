@@ -132,7 +132,7 @@
 			end
 				
 			if cfg.system == "windows" and not cfg.flags.NoImportLib then
-				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux").fullpath..'"')
+				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux", "windows").fullpath..'"')
 			end
 		end
 
