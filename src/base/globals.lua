@@ -59,13 +59,13 @@
 			cfgsuffix       = "ps3",
 			iscrosscompiler = true,
 			nosharedlibs    = true,
-			targetstyle     = "ps3",
+			namestyle       = "PS3",
 		},
 		Xbox360 = 
 		{ 
 			cfgsuffix       = "xbox360",
 			iscrosscompiler = true,
-			targetstyle     = "windows",
+			namestyle       = "windows",
 		},
 	}
 
