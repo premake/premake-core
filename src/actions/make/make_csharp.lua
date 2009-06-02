@@ -240,8 +240,8 @@
 				premake.make_copyrule(source, target)
 			end
 			_p('endif')
+			_p('')
 		end
-		_p('')
 		
 		_p('# Copied file rules')
 		for target, source in pairs(copypairs) do

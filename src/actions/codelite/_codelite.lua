@@ -1,13 +1,13 @@
 --
 -- _codelite.lua
 -- Define the CodeLite action(s).
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2009 Jason Perkins and the Premake project
 --
 
 	newaction {
 		trigger         = "codelite",
 		shortname       = "CodeLite",
-		description     = "CodeLite (experimental)",
+		description     = "CodeLite",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

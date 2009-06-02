@@ -1,12 +1,12 @@
 --
 -- dotnet.lua
 -- Interface for the C# compilers, all of which are flag compatible.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 	
 	premake.dotnet = { }
-	premake.dotnet.targetstyle = "windows"
+	premake.dotnet.namestyle = "windows"
 	
 
 --

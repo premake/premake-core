@@ -6,7 +6,6 @@
 
 	
 	premake.gcc = { }
-	premake.gcc.targetstyle = "linux"
 	
 
 --
@@ -132,7 +131,7 @@
 			end
 				
 			if cfg.system == "windows" and not cfg.flags.NoImportLib then
-				table.insert(result, '-Wl,--out-implib="'..premake.gettarget(cfg, "link", "linux", "windows").fullpath..'"')
+				table.insert(result, '-Wl,--out-implib="' .. cfg.linktarget.fullpath .. '"')
 			end
 		end
 

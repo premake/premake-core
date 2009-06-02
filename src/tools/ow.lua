@@ -5,7 +5,7 @@
 --
 
 	premake.ow = { }
-	premake.ow.targetstyle = "windows"
+	premake.ow.namestyle = "windows"
 	
 	
 --

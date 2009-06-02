@@ -6,4 +6,4 @@
 
 	
 	premake.msc = { }
-	premake.msc.targetstyle = "windows"
+	premake.msc.namestyle = "windows"

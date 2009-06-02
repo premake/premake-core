@@ -1,7 +1,7 @@
 --
 -- _vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2009 Jason Perkins and the Premake project
 --
 
 	_VS = { }
@@ -314,7 +314,7 @@
 		trigger         = "vs2002",
 		shortname       = "Visual Studio 2002",
 		description     = "Microsoft Visual Studio 2002",
-		targetstyle     = "windows",
+		pathstyle       = "windows",
 		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -342,7 +342,7 @@
 		trigger         = "vs2003",
 		shortname       = "Visual Studio 2003",
 		description     = "Microsoft Visual Studio 2003",
-		targetstyle     = "windows",
+		pathstyle       = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -370,7 +370,7 @@
 		trigger         = "vs2005",
 		shortname       = "Visual Studio 2005",
 		description     = "Microsoft Visual Studio 2005 (SharpDevelop, MonoDevelop)",
-		targetstyle     = "windows",
+		pathstyle       = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -398,7 +398,7 @@
 		trigger         = "vs2008",
 		shortname       = "Visual Studio 2008",
 		description     = "Microsoft Visual Studio 2008",
-		targetstyle     = "windows",
+		pathstyle       = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

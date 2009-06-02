@@ -1,7 +1,7 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 	_MAKE = { }
@@ -43,7 +43,6 @@
 		_p('else')
 		_p('\t$(SILENT) copy /Y $(subst /,\\\\,%s) $(subst /,\\\\,%s)', source, target)
 		_p('endif')
-		_p('')
 	end
 
 	function premake.make_mkdirrule(var)

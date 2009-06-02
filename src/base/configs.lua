@@ -391,13 +391,14 @@
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
+					-- determine which conventions the target should follow for this config
+					local pathstyle = premake.actions[_ACTION].pathstyle or "posix"
+					local namestyle = premake.gettool(cfg).namestyle or "posix"
 
-					local targetstyle = premake.gettool(cfg).targetstyle
-					
-					cfg.buildtarget = premake.gettarget(cfg, "build", targetstyle)
-					cfg.linktarget  = premake.gettarget(cfg, "link",  targetstyle)
-					
-					if (targetstyle == "windows") then
+					-- build the targets
+					cfg.buildtarget = premake.gettarget(cfg, "build", pathstyle, namestyle, cfg.system)
+					cfg.linktarget  = premake.gettarget(cfg, "link",  pathstyle, namestyle, cfg.system)
+					if pathstyle == "windows" then
 						cfg.objectsdir = path.translate(cfg.objectsdir, "\\")
 					end
 

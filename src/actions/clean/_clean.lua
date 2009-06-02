@@ -26,7 +26,6 @@
 	newaction {
 		trigger     = "clean",
 		description = "Remove all binaries and generated files",
-		targetstyle = "windows",
 
 		execute = function()
 			local solutions = { }
@@ -54,16 +53,17 @@
 						table.insert(targets, path.join(rebase(cfg, cfg.buildtarget.directory), cfg.buildtarget.basename))
 
 						-- remove all possible permutations of the target binary
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "windows").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "linux", "linux").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "linux", "macosx").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "windows", "windows").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "linux").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "macosx").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "PS3", "windows").fullpath))
 						if (cfg.kind == "WindowedApp") then
-							os.rmdir(rebase(cfg, premake.gettarget(cfg, "build", "linux", "linux").fullpath .. ".app"))
+							os.rmdir(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "linux").fullpath .. ".app"))
 						end
 
 						-- if there is an import library, remove that too
-						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "windows").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "linux").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "windows", "windows", "windows").fullpath))
+						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "posix", "posix", "linux").fullpath))
 
 						os.rmdir(rebase(cfg, cfg.objectsdir))
 					end

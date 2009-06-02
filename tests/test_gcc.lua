@@ -18,6 +18,7 @@
 		cfg.platform   = "Native"
 		cfg.links      = { }
 		cfg.libdirs    = { }
+		cfg.linktarget = { fullpath="libMyProject.a" }
 	end
 
 

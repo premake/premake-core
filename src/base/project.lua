@@ -344,10 +344,15 @@
 --    The configuration to be targeted.
 -- @param direction
 --    One of 'build' for the build target, or 'link' for the linking target.
--- @param tool
---    The target toolset interface.
+-- @param pathstyle
+--    The path format, one of "windows" or "posix". This comes from the current
+--    action: Visual Studio uses "windows", GMake uses "posix", etc.
+-- @param namestyle
+--    The file naming style, one of "windows" or "posix". This comes from the
+--    current tool: GCC uses "posix", MSC uses "windows", etc.
 -- @param system
---    The target operating system; if nil will use current OS settings.
+--    The target operating system, which can modify the naming style. For example,
+--    shared libraries on Mac OS X use a ".dylib" extension.
 -- @returns
 --    An object with these fields:
 --      basename  - the target with no directory or file extension
@@ -356,36 +361,33 @@
 --      fullpath  - directory, name, and extension
 --
 
-	function premake.gettarget(cfg, direction, style, system)
-		if not system then system = cfg.system or os.get() end
+	function premake.gettarget(cfg, direction, pathstyle, namestyle, system)
 		if system == "bsd" then system = "linux" end		
 
+		-- Fix things up based on the current system
 		local kind = cfg.kind
-		local decorations = premake.platforms[cfg.platform].targetstyle or style
-
-		if premake.iscppproject(cfg) then
+		if system == "PS3" then
+			namestyle = "PS3"
+		elseif premake.iscppproject(cfg) then
 			-- On Windows, shared libraries link against a static import library
-			if (style == "windows" or system == "windows") and kind == "SharedLib" and direction == "link" then
+			if (namestyle == "windows" or system == "windows") and kind == "SharedLib" and direction == "link" then
 				kind = "StaticLib"
 			end
-			
-			-- Linux name conventions only apply to static libs on windows (by user request)
-			if decorations == "linux" and system == "windows" and kind ~= "StaticLib" then
-				decorations = "windows"
+
+			-- Posix name conventions only apply to static libs on windows (by user request)
+			if namestyle == "posix" and system == "windows" and kind ~= "StaticLib" then
+				namestyle = "windows"
 			end
-		else
-			-- .NET always uses Windows naming conventions
-			decorations = "windows"
 		end
-				
+
 		-- Initialize the target components
 		local field   = iif(direction == "build", "target", "implib")
 		local name    = cfg[field.."name"] or cfg.targetname or cfg.project.name
 		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
 		local prefix  = ""
 		local suffix  = ""
-				
-		if decorations == "windows" then
+
+		if namestyle == "windows" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
 				suffix = ".exe"
 			elseif kind == "SharedLib" then
@@ -393,7 +395,7 @@
 			elseif kind == "StaticLib" then
 				suffix = ".lib"
 			end
-		elseif decorations == "linux" then
+		elseif namestyle == "posix" then
 			if kind == "WindowedApp" and system == "macosx" then
 				dir = path.join(dir, name .. ".app/Contents/MacOS")
 			elseif kind == "SharedLib" then
@@ -403,7 +405,7 @@
 				prefix = "lib"
 				suffix = ".a"
 			end
-		elseif decorations == "ps3" then
+		elseif namestyle == "PS3" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
 				suffix = ".elf"
 			elseif kind == "StaticLib" then
@@ -411,21 +413,22 @@
 				suffix = ".a"
 			end
 		end
-
+			
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
 		suffix = cfg[field.."extension"] or cfg.targetextension or suffix
 		
+		-- build the results object
 		local result = { }
 		result.basename  = name
 		result.name      = prefix .. name .. suffix
 		result.directory = dir
 		result.fullpath  = path.join(result.directory, result.name)
 		
-		if style == "windows" then
+		if pathstyle == "windows" then
 			result.directory = path.translate(result.directory, "\\")
 			result.fullpath  = path.translate(result.fullpath,  "\\")
 		end
-
+		
 		return result
 	end
 
