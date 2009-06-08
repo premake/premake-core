@@ -27,6 +27,7 @@ RC1 -> RC2
 - Removed additional MonoDevelop files in clean action
 - Fixed naming of system libraries in Visual Studio link step
 - Set OS to Windows when generating for Visual Studio
+- Bug 2801257: Linker error LNK1112 when cross-compiling for x64
 
 
 -----

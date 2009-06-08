@@ -25,6 +25,31 @@
 	end
 
 
+--
+-- Return the debugging symbols level for a configuration.
+--
+
+	function premake.vs200x_vcproj_symbols(cfg)
+		if (not cfg.flags.Symbols) then
+			return 0
+		else
+			-- Edit-and-continue does't work for some configurations
+			if cfg.flags.NoEditAndContinue or 
+			   _VS.optimization(cfg) ~= 0 or 
+			   cfg.flags.Managed or 
+			   cfg.platform == "x64" then
+				return 3
+			else
+				return 4
+			end
+		end
+	end
+
+	
+	
+
+
+
 
 --
 -- Compiler block for Windows and XBox360 platforms.
@@ -102,7 +127,7 @@
 		end
 		
 		_p('\t\t\t\tProgramDataBaseFileName="$(OutDir)\\$(ProjectName).pdb"')
-		_p('\t\t\t\tDebugInformationFormat="%s"', _VS.symbols(cfg))
+		_p('\t\t\t\tDebugInformationFormat="%s"', premake.vs200x_vcproj_symbols(cfg))
 		_p('\t\t\t/>')
 	end
 	
@@ -142,9 +167,9 @@
 				_p('\t\t\t\tGenerateManifest="%s"', _VS.bool(false))
 			end
 			
-			_p('\t\t\t\tGenerateDebugInformation="%s"', _VS.bool(_VS.symbols(cfg) ~= 0))
+			_p('\t\t\t\tGenerateDebugInformation="%s"', _VS.bool(premake.vs200x_vcproj_symbols(cfg) ~= 0))
 			
-			if _VS.symbols(cfg) ~= 0 then
+			if premake.vs200x_vcproj_symbols(cfg) ~= 0 then
 				_p('\t\t\t\tProgramDatabaseFile="$(OutDir)\\$(ProjectName).pdb"')
 			end
 			
@@ -164,7 +189,7 @@
 				_p('\t\t\t\tImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 			end
 			
-			_p('\t\t\t\tTargetMachine="1"')
+			_p('\t\t\t\tTargetMachine="%d"', iif(cfg.platform == "x64", 17, 1))
 		
 		else
 			_p('\t\t\t\tName="VCLibrarianTool"')
@@ -302,8 +327,24 @@
 		end
 		_p('\t\t\t/>')
 	end
-		
+
+
+
+--
+-- VCMIDLTool block
+--
+
+	function premake.vs200x_vcproj_VCMIDLTool(cfg)
+		_p('\t\t\t<Tool')
+		_p('\t\t\t\tName="VCMIDLTool"')
+		if cfg.platform == "x64" then
+			_p('\t\t\t\tTargetEnvironment="3"')
+		end
+		_p('\t\t\t/>')
+	end
+
 	
+
 --
 -- Write out a custom build steps block.
 --
@@ -331,6 +372,7 @@
 		VCLinkerTool           = premake.vs200x_vcproj_VCLinkerTool,
 		VCLinkerTool_GCC       = premake.vs200x_vcproj_VCLinkerTool_GCC,
 		VCManifestTool         = premake.vs200x_vcproj_VCManifestTool,
+		VCMIDLTool             = premake.vs200x_vcproj_VCMIDLTool,
 		VCResourceCompilerTool = premake.vs200x_vcproj_VCResourceCompilerTool,
 	}
 	

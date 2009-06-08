@@ -274,26 +274,6 @@
 
 
 --
--- Return the debugging symbols level for a configuration.
--- (this should probably go in vs200x_vcproj.lua)
---
-
-	function _VS.symbols(cfg)
-		if (not cfg.flags.Symbols) then
-			return 0
-		else
-			-- Edit-and-continue does't work if optimizing or managed C++
-			if (cfg.flags.NoEditAndContinue or _VS.optimization(cfg) ~= 0 or cfg.flags.Managed) then
-				return 3
-			else
-				return 4
-			end
-		end
-	end
-
-	
-	
---
 -- Returns the Visual Studio tool ID for a given project type.
 --
 
