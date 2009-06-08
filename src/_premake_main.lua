@@ -112,7 +112,9 @@
 		-- Some actions imply a particular operating system. Set it early so
 		-- it can be picked up by the scripts.
 
-		_OS = premake.actions[_ACTION].os or _OS
+		if (_ACTION and premake.actions[_ACTION]) then
+			_OS = premake.actions[_ACTION].os or _OS
+		end
 
 		
 		-- If there is a project script available, run it to get the

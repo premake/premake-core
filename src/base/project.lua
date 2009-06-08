@@ -253,6 +253,7 @@
 		local cfgname = iif(cfg.name == cfg.project.name, "", cfg.name)
 		
 		-- how should files be named?
+		local pathstyle = premake.getpathstyle(cfg)
 		local namestyle = premake.getnamestyle(cfg)
 		
 		local function canlink(source, target)
@@ -312,7 +313,7 @@
 			end
 
 			if item then
-				if namestyle == "windows" and part ~= "object" then
+				if pathstyle == "windows" and part ~= "object" then
 					item = path.translate(item, "\\")
 				end
 				if not table.contains(result, item) then
@@ -371,7 +372,11 @@
 --
 
 	function premake.getpathstyle(cfg)
-		return premake.actions[_ACTION].pathstyle or "posix"
+		if premake.actions[_ACTION].os == "windows" then
+			return "windows"
+		else
+			return "posix"
+		end
 	end
 	
 

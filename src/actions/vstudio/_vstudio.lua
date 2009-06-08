@@ -317,7 +317,6 @@
 		shortname       = "Visual Studio 2002",
 		description     = "Microsoft Visual Studio 2002",
 		os              = "windows",
-		pathstyle       = "windows",
 		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -346,7 +345,6 @@
 		shortname       = "Visual Studio 2003",
 		description     = "Microsoft Visual Studio 2003",
 		os              = "windows",
-		pathstyle       = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -375,7 +373,6 @@
 		shortname       = "Visual Studio 2005",
 		description     = "Microsoft Visual Studio 2005 (SharpDevelop, MonoDevelop)",
 		os              = "windows",
-		pathstyle       = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
@@ -404,7 +401,6 @@
 		shortname       = "Visual Studio 2008",
 		description     = "Microsoft Visual Studio 2008",
 		os              = "windows",
-		pathstyle       = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

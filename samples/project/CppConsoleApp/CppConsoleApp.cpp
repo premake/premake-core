@@ -1,4 +1,4 @@
-#include "CppConsoleApp.h"
+#include "stdafx.h"
 
 int main()
 {

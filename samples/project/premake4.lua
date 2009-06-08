@@ -1,7 +1,5 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
-	
-	objdir "obj"
 		
 -- solution level configuration
 	
