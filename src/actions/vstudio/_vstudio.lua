@@ -142,10 +142,12 @@
 -- Clean Visual Studio files
 --
 
-	function _VS.onclean(solutions, projects, targets)
+	function premake.vstudio_clean(solutions, projects, targets)
 		for _,name in ipairs(solutions) do
 			os.remove(name .. ".suo")
 			os.remove(name .. ".ncb")
+			os.remove(name .. ".userprefs")  -- MonoDevelop files
+			os.remove(name .. ".usertasks")
 		end
 		
 		for _,name in ipairs(projects) do
@@ -335,7 +337,7 @@
 			{ ".csproj.user", premake.vs2002_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
-		onclean = _VS.onclean,
+		onclean = premake.vstudio_clean,
 	}
 
 	newaction {
@@ -363,7 +365,7 @@
 			{ ".csproj.user", premake.vs2002_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
-		onclean = _VS.onclean,
+		onclean = premake.vstudio_clean,
 	}
 
 	newaction {
@@ -391,7 +393,7 @@
 			{ ".csproj.user", premake.vs2005_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
-		onclean = _VS.onclean,
+		onclean = premake.vstudio_clean,
 	}
 
 	newaction {
@@ -419,5 +421,5 @@
 			{ ".csproj.user", premake.vs2005_csproj_user, function(this) return this.language == "C#" end },
 		},
 		
-		onclean = _VS.onclean,
+		onclean = premake.vstudio_clean,
 	}

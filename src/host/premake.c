@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2009 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
