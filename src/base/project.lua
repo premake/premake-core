@@ -252,14 +252,17 @@
 		-- am I getting links for a configuration or a project?
 		local cfgname = iif(cfg.name == cfg.project.name, "", cfg.name)
 		
+		-- how should files be named?
+		local namestyle = premake.getnamestyle(cfg)
+		
 		local function canlink(source, target)
-			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then return false end
-			if (source.language == "C" or source.language == "C++") then
-				if (target.language ~= "C" and target.language ~= "C++") then return false end
-				return true
-			elseif (source.language == "C#") then
-				if (target.language ~= "C#") then return false end
-				return true
+			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then 
+				return false
+			end
+			if premake.iscppproject(source) then
+				return premake.iscppproject(target)
+			elseif premake.isdotnetproject(source) then
+				return premake.isdotnetproject(target)
 			end
 		end
 		
@@ -292,8 +295,12 @@
 					end
 				elseif (part == "fullpath") then
 					item = link
-					if premake.actions[_ACTION].targetstyle == "windows" then
-						item = item .. iif(cfg.language == "C" or cfg.language == "C++", ".lib", ".dll")
+					if namestyle == "windows" then
+						if premake.iscppproject(cfg) then
+							item = item .. ".lib"
+						elseif premake.isdotnetproject(cfg) then
+							item = item .. ".dll"
+						end
 					end
 					if item:find("/", nil, true) then
 						item = path.getrelative(cfg.basedir, item)
@@ -305,7 +312,7 @@
 			end
 
 			if item then
-				if premake.actions[_ACTION].targetstyle == "windows" and part ~= "object" then
+				if namestyle == "windows" and part ~= "object" then
 					item = path.translate(item, "\\")
 				end
 				if not table.contains(result, item) then
@@ -319,6 +326,22 @@
 	
 
 	
+--
+-- Gets the name style for a configuration, indicating what kind of prefix,
+-- extensions, etc. should be used in target file names.
+--
+-- @param cfg
+--    The configuration to check.
+-- @returns
+--    The target naming style, one of "windows", "posix", or "PS3".
+--
+
+	function premake.getnamestyle(cfg)
+		return premake.platforms[cfg.platform].namestyle or premake.gettool(cfg).namestyle or "posix"
+	end
+	
+
+
 --
 -- Converts a project object and a template filespec (the first value in an
 -- action's template reference) into a filename for that template's output.
@@ -336,6 +359,21 @@
 	end
 
 
+
+--
+-- Gets the path style for a configuration, indicating what kind of path separator
+-- should be used in target file names.
+--
+-- @param cfg
+--    The configuration to check.
+-- @returns
+--    The target path style, one of "windows" or "posix".
+--
+
+	function premake.getpathstyle(cfg)
+		return premake.actions[_ACTION].pathstyle or "posix"
+	end
+	
 
 --
 -- Assembles a target for a particular tool/system/configuration.

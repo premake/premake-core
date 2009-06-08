@@ -11,12 +11,29 @@
 	function T.project.setup()
 		_ACTION = "gmake"
 		cfg = {}
+		cfg.project = {}
+		cfg.language = "C++"
 		cfg.files = {}
 		cfg.trimpaths = {}
+		cfg.platform = "Native"
 		result = "\n"
 	end
 	
 	
+
+--
+-- premake.getlinks() tests
+--
+
+	function T.project.getlinks_OnMscSystemLibs()
+		_OPTIONS.cc = "msc"
+		cfg.links = { "user32", "gdi32" }
+		result = premake.getlinks(cfg, "all", "fullpath")
+		test.isequal("user32.lib gdi32.lib", table.concat(result, " "))
+	end
+
+
+
 	
 --
 -- premake.walksources() tests

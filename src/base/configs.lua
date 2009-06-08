@@ -392,8 +392,8 @@
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
 					-- determine which conventions the target should follow for this config
-					local pathstyle = premake.actions[_ACTION].pathstyle or "posix"
-					local namestyle = premake.platforms[cfg.platform].namestyle or premake.gettool(cfg).namestyle or "posix"
+					local pathstyle = premake.getpathstyle(cfg)
+					local namestyle = premake.getnamestyle(cfg)
 
 					-- build the targets
 					cfg.buildtarget = premake.gettarget(cfg, "build", pathstyle, namestyle, cfg.system)

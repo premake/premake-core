@@ -24,7 +24,8 @@
 
 RC1 -> RC2
 
-- Removed additional MonoDevelop files in clean action.
+- Removed additional MonoDevelop files in clean action
+- Fixed naming of system libraries in Visual Studio link step
 
 
 -----
