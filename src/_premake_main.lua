@@ -1,7 +1,7 @@
 --
 -- _premake_main.lua
 -- Script-side entry point for the main program logic.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 
@@ -108,6 +108,12 @@
 			end
 		end
 		
+
+		-- Some actions imply a particular operating system. Set it early so
+		-- it can be picked up by the scripts.
+
+		_OS = premake.actions[_ACTION].os or _OS
+
 		
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
