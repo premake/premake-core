@@ -108,6 +108,11 @@
 		_p('\t\t</Build>')
 		
 		-- begin files block --
+		local pchheader
+		if (prj.pchheader) then
+			pchheader = path.getrelative(prj.location, prj.pchheader)
+		end
+		
 		for _,fname in ipairs(prj.files) do
 			_p('\t\t<Unit filename="%s">', premake.esc(fname))
 			if path.isresourcefile(fname) then
@@ -115,10 +120,11 @@
 			elseif path.iscppfile(fname) then
 				_p('\t\t\t<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
 			end
-			if not prj.flags.NoPCH and fname == prj.pchheader then
+			if not prj.flags.NoPCH and fname == pchheader then
 				_p('\t\t\t<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
 				_p('\t\t\t<Option compile="1" />')
 				_p('\t\t\t<Option weight="0" />')
+				_p('\t\t\t<Add option="-x c++-header" />')
 			end
 			_p('\t\t</Unit>')
 		end

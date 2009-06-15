@@ -27,6 +27,7 @@ RC2 -> RC3
 - Bug 2805763: GCC PCH breaks on path
 - Bug 2709641: Location field does not propagate to projects
 - Bug 2675518: Dependencies wrong on config links
+- Bug 2152526: Code::Blocks doesn't build PCH correctly on GCC
 
 RC1 -> RC2
 
