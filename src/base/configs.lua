@@ -421,11 +421,13 @@
 		-- convert project path fields to be relative to project location
 		for _, sln in ipairs(_SOLUTIONS) do
 			for _, prj in ipairs(sln.projects) do
+				prj.location = prj.location or sln.location or prj.basedir
 				adjustpaths(prj.location, prj)
 				for _, blk in ipairs(prj.blocks) do
 					adjustpaths(prj.location, blk)
 				end
 			end
+			sln.location = sln.location or sln.basedir
 		end
 		
 		-- collapse configuration blocks, so that there is only one block per build

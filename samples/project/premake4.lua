@@ -1,6 +1,8 @@
 solution "PremakeTestbox"
 	configurations { "Debug", "Release" }
-		
+	
+	location "build"
+	
 -- solution level configuration
 	
 	configuration "Debug"

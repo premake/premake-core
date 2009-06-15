@@ -181,10 +181,6 @@
 		test.isequal("MySolution", sln.name)
 	end
 	
-	function T.api.solution_SetsLocation_OnNewName()
-		test.isequal(os.getcwd(), sln.location)
-	end
-	
 	function T.api.solution_AddsNewConfig_OnNewName()
 		test.istrue(#sln.blocks == 1)
 	end
@@ -291,11 +287,6 @@
 	function T.api.project_SetsName_OnNewName()
 		prj = project("MyProject")
 		test.isequal("MyProject", prj.name)
-	end
-	
-	function T.api.project_SetsLocation_OnNewName()
-		prj = project("MyProject")
-		test.isequal(os.getcwd(), prj.location)
 	end
 	
 	function T.api.project_SetsSolution_OnNewName()

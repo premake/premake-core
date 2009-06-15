@@ -24,7 +24,8 @@
 
 RC2 -> RC3
 
-- Bug 2805763: GCC PCH issues
+- Bug 2805763: GCC PCH breaks on path
+- Bug 2709641: Location field does not propagate to projects
 
 
 RC1 -> RC2

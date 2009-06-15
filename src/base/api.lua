@@ -591,7 +591,6 @@
 			prj.solution       = sln
 			prj.name           = name
 			prj.basedir        = os.getcwd()
-			prj.location       = prj.basedir
 			prj.uuid           = os.uuid()
 			prj.blocks         = { }
 		end
@@ -627,7 +626,7 @@
 			})
 
 			sln.name           = name
-			sln.location       = os.getcwd()
+			sln.basedir        = os.getcwd()			
 			sln.projects       = { }
 			sln.blocks         = { }
 			sln.configurations = { }
