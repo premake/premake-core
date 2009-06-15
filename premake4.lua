@@ -97,42 +97,34 @@ end
 -- bytecodes are not portable to different architectures.
 --
 
-	local function loadscript(fname)
+	local function embedfile(out, fname)
 		local f = io.open(fname)
 		local s = f:read("*a")
 		f:close()
 
-		-- strip out comments
-		s = s:gsub("[\n]%-%-[^\n]*", "")
+		-- strip tabs
+		s = s:gsub("[\t]", "")
 		
 		-- strip any CRs
 		s = s:gsub("[\r]", "")
 		
+		-- strip out comments
+		s = s:gsub("\n%-%-[^\n]*", "")
+				
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
+
+		-- strip duplicate line feeds
+		s = s:gsub("\n+", "\n")
+
+		-- strip out leading comments
+		s = s:gsub("^%-%-\n", "")
 
 		-- escape line feeds
 		s = s:gsub("\n", "\\n")
 		
 		-- escape double quote marks
 		s = s:gsub("\"", "\\\"")
-
-		return s
-	end
-
-	
-	local function embedfile(out, fname)
-		local s = loadscript(fname)
-
-		-- strip tabs
-		s = s:gsub("[\t]", "")
-		
-		-- strip duplicate line feeds
-		local t = s
-		repeat
-			s = t
-			t = s:gsub("\\n\\n", "\\n")
-		until s == t
 		
 		out:write("\t\"")
 		out:write(s)
