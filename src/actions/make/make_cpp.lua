@@ -200,8 +200,8 @@
 
 		-- set up precompiled headers
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			_p('  PCH        = %s', _MAKE.esc(cfg.pchheader))
-			_p('  GCH        = $(OBJDIR)/$(PCH).gch')
+			_p('  PCH        = %s', _MAKE.esc(path.getrelative(cfg.location, cfg.pchheader)))
+			_p('  GCH        = $(OBJDIR)/%s.gch', _MAKE.esc(path.getname(cfg.pchheader))) 
 			_p('  CPPFLAGS  += -I$(OBJDIR) -include $(PCH)')
 		end
 				

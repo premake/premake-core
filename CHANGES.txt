@@ -22,6 +22,11 @@
 - Bug 2790882: Trailing slash in path.getabsolute (Ash Berlin)
 
 
+RC2 -> RC3
+
+- Bug 2805763: GCC PCH issues
+
+
 RC1 -> RC2
 
 - Removed additional MonoDevelop files in clean action
