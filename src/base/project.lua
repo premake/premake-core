@@ -173,9 +173,7 @@
 
 	function premake.getconfig(prj, cfgname, pltname)
 		-- might have the root configuration, rather than the actual project
-		if prj.project then 
-			prj = prj.project 
-		end
+		prj = prj.project or prj
 
 		-- if platform is not included in the solution, use general settings instead
 		if pltname == "Native" or not table.contains(prj.solution.platforms or {}, pltname) then
@@ -212,19 +210,31 @@
 	
 	
 --
--- Returns a list of sibling projects on which the specified 
--- configuration depends. This is used to specify project
--- dependencies, usually within a solution.
+-- Returns a list of sibling projects on which the specified project depends. 
+-- This is used to list dependencies within a solution or workspace. Must 
+-- consider all configurations because Visual Studio does not support per-config
+-- project dependencies.
+--
+-- @param prj
+--    The project to query.
+-- @returns
+--    A list of dependent projects, as an array of objects.
 --
 
-	function premake.getdependencies(cfg)
+	function premake.getdependencies(prj)
+		-- make sure I've got the project and not root config
+		prj = prj.project or prj
+		
 		local results = { }
-		for _, link in ipairs(cfg.links) do
-			local prj = premake.findproject(link)
-			if (prj) then
-				table.insert(results, prj)
+		for _, cfg in pairs(prj.__configs) do
+			for _, link in ipairs(cfg.links) do
+				local dep = premake.findproject(link)
+				if dep and not table.contains(results, dep) then
+					table.insert(results, dep)
+				end
 			end
 		end
+
 		return results
 	end
 

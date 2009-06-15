@@ -17,6 +17,7 @@ project "CppConsoleApp"
 	
 	configuration "Debug"
 		targetdir "../bin/debug (x64)"
+		links { "CppStaticLib" }
 		
 	configuration "Release"
 		targetdir "../bin/release (x64)"

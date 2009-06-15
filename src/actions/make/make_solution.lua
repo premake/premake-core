@@ -40,19 +40,7 @@
 
 		-- write the project build rules
 		for _, prj in ipairs(sln.projects) do
-		
-			-- before each project rule, build a list of dependencies for the project. If any of
-			-- these dependencies change, the project needs to be rebuilt
-			for _, platform in ipairs(platforms) do
-				for cfg in premake.eachconfig(prj, platform) do
-					_p('ifeq ($(config),%s)', _MAKE.esc(cfg.shortname))
-					_p('  DEPENDENCIES := %s', table.concat(_MAKE.esc(table.extract(premake.getdependencies(cfg), "name")), " "))
-					_p('endif')
-				end
-			end
-			_p('')
-			
-			_p('%s: ${DEPENDENCIES}', _MAKE.esc(prj.name))
+			_p('%s: %s', _MAKE.esc(prj.name), table.concat(_MAKE.esc(table.extract(premake.getdependencies(prj), "name")), " "))
 			_p('\t@echo ==== Building %s ====', prj.name)
 			_p('\t@${MAKE} --no-print-directory -C %s -f %s', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
 			_p('')
