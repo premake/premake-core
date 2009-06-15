@@ -128,8 +128,11 @@ end
 		s = s:gsub("[\t]", "")
 		
 		-- strip duplicate line feeds
-		s = s:gsub("\n+", "\n")
-		
+		local t = s
+		repeat
+			s = t
+			t = s:gsub("\\n\\n", "\\n")
+		until s == t
 		
 		out:write("\t\"")
 		out:write(s)
