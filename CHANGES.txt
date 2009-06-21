@@ -1,5 +1,5 @@
 -----
- 4.1 (in progress)
+ 4.1
 -----
 
 - Added support for cross-compiling target platforms
