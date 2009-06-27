@@ -44,7 +44,7 @@
 		},
 		Universal = 
 		{ 
-			cfgsuffix       = "unix",
+			cfgsuffix       = "univ",
 		},
 		Universal32 = 
 		{ 
