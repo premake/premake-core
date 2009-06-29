@@ -1,6 +1,6 @@
------
- 4.2 (in progress)
------
+-------
+ 4.1.1 (in progress)
+-------
 
 - Bug 2813297: OS X universal config should be "univ" (William Burnson)
 

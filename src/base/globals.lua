@@ -1,7 +1,7 @@
 --
 -- globals.lua
 -- Global tables and variables, replacements and extensions to Lua's global functions.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 	
 	
