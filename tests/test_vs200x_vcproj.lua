@@ -438,3 +438,69 @@
 			/>
 		]]
 	end
+
+
+--
+-- Test precompiled header handling
+--
+
+	function T.vs200x_vcproj.PCH_OnWindows()
+		files { "afxwin.cpp" }
+		pchsource "afxwin.cpp"
+		prepare()
+		_VS.files(prj, "afxwin.cpp", "Item", 1)
+		test.capture [[
+			<File
+				RelativePath="afxwin.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+		]]
+	end
+
+	function T.vs200x_vcproj.PCH_OnXbox360()
+		files { "afxwin.cpp" }
+		pchsource "afxwin.cpp"
+		platforms { "Xbox360" }
+		prepare()
+		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		_VS.files(prj, "afxwin.cpp", "Item", 1)
+		test.capture [[
+			<File
+				RelativePath="afxwin.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Xbox 360"
+					>
+					<Tool
+						Name="VCCLX360CompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox 360"
+					>
+					<Tool
+						Name="VCCLX360CompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+		]]
+	end
+	

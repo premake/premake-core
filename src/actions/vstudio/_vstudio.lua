@@ -177,11 +177,13 @@
 --
 
 	local function output(indent, value)
-		io.write(indent .. value .. "\r\n")
+		-- io.write(indent .. value .. "\r\n")
+		_p(indent .. value)
 	end
 	
 	local function attrib(indent, name, value)
-		io.write(indent .. "\t" .. name .. '="' .. value .. '"\r\n')
+		-- io.write(indent .. "\t" .. name .. '="' .. value .. '"\r\n')
+		_p(indent .. "\t" .. name .. '="' .. value .. '"')
 	end
 	
 	function _VS.files(prj, fname, state, nestlevel)
@@ -201,15 +203,18 @@
 			attrib(indent, "RelativePath", path.translate(fname, "\\"))
 			output(indent, "\t>")
 			if (not prj.flags.NoPCH and prj.pchsource == fname) then
-				for _, cfgname in ipairs(prj.configurations) do
-					output(indent, "\t<FileConfiguration")
-					attrib(indent, "\tName", cfgname .. "|Win32")
-					output(indent, "\t\t>")
-					output(indent, "\t\t<Tool")
-					attrib(indent, "\t\tName", "VCCLCompilerTool")
-					attrib(indent, "\t\tUsePrecompiledHeader", "1")
-					output(indent, "\t\t/>")
-					output(indent, "\t</FileConfiguration>")
+				for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
+					if cfginfo.isreal then
+						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+						output(indent, "\t<FileConfiguration")
+						attrib(indent, "\tName", cfginfo.name)
+						output(indent, "\t\t>")
+						output(indent, "\t\t<Tool")
+						attrib(indent, "\t\tName", iif(cfg.system == "Xbox360", "VCCLX360CompilerTool", "VCCLCompilerTool"))
+						attrib(indent, "\t\tUsePrecompiledHeader", "1")
+						output(indent, "\t\t/>")
+						output(indent, "\t</FileConfiguration>")
+					end
 				end
 			end
 			output(indent, "</File>")

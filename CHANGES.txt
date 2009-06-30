@@ -10,6 +10,7 @@
 -------
 
 - Bug 2813297: OS X universal config should be "univ" (William Burnson)
+- Bug 2814179: Xbox 360 precompiled headers not working
 
 
 -----
