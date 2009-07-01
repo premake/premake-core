@@ -45,11 +45,6 @@
 		end
 	end
 
-	
-	
-
-
-
 
 --
 -- Compiler block for Windows and XBox360 platforms.
@@ -424,7 +419,7 @@
 				"VCManagedResourceCompilerTool",
 				"VCResourceCompilerTool",
 				"VCPreLinkEventTool",
-				"VCX360LinkerTool",
+				"VCLinkerTool",
 				"VCALinkTool",
 				"VCX360ImageTool",
 				"VCBscMakeTool",
