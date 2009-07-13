@@ -9,6 +9,7 @@
  4.1.1 (in progress)
 -------
 
+- Use libtool instead of ar for Mac OS X Universal static libraries
 - Fixed Xbox 360 linker settings in Visual Studio
 - Bug 2813297: OS X universal config should be "univ" (William Burnson)
 - Bug 2814179: Xbox 360 precompiled headers not working

@@ -213,7 +213,11 @@
 		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
 		
 		if cfg.kind == "StaticLib" then
-			_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
+			if cfg.platform:startswith("Universal") then
+				_p('  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)')
+			else
+				_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
+			end
 		else
 			_p('  LINKCMD    = $(%s) -o $(TARGET) $(LDFLAGS) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS)', iif(cfg.language == "C", "CC", "CXX"))
 		end

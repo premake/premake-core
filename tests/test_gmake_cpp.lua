@@ -132,7 +132,6 @@ endif
 	end
 
 
-
 	function T.gmake_cpp.PlatformSpecificBlock()
 		platforms { "x64" }
 		prepare()
@@ -153,6 +152,38 @@ ifeq ($(config),debug64)
   RESFLAGS  += $(DEFINES) $(INCLUDES) 
   LDDEPS    += 
   LINKCMD    = $(CXX) -o $(TARGET) $(LDFLAGS) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS)
+  define PREBUILDCMDS
+  endef
+  define PRELINKCMDS
+  endef
+  define POSTBUILDCMDS
+  endef
+endif
+		]]
+	end
+
+
+	function T.gmake_cpp.UniversalStaticLibBlock()
+		kind "StaticLib"
+		platforms { "universal32" }
+		prepare()
+		local cfg = premake.getconfig(prj, "Debug", "Universal32")
+		premake.gmake_cpp_config(cfg, premake.gcc)
+		test.capture [[
+ifeq ($(config),debuguniv32)
+  OBJDIR     = obj/Universal32/Debug
+  TARGETDIR  = .
+  TARGET     = $(TARGETDIR)/libMyProject.a
+  DEFINES   += 
+  INCLUDES  += 
+  CPPFLAGS  +=  $(DEFINES) $(INCLUDES)
+  CFLAGS    += $(CPPFLAGS) $(ARCH) -arch i386 -arch ppc
+  CXXFLAGS  += $(CFLAGS) 
+  LDFLAGS   += -s -arch i386 -arch ppc
+  LIBS      += 
+  RESFLAGS  += $(DEFINES) $(INCLUDES) 
+  LDDEPS    += 
+  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)
   define PREBUILDCMDS
   endef
   define PRELINKCMDS
