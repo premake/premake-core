@@ -7,6 +7,8 @@ project "CsConsoleApp"
 	
 	libdirs { "../lib" }
 	links { "CsSharedLib", "CppSharedLib", "System" }
-	
+
+	buildoptions { "/define:TEST" }
+		
 	configuration "*.bmp"
 		buildaction "Embed"

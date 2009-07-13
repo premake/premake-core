@@ -22,8 +22,8 @@ solution "PremakeTestbox"
 	include "CppStaticLib"
 	
 	if _ACTION ~= "codeblocks" and _ACTION ~= "codelite" then
---		include "CsSharedLib"
---		include "CsConsoleApp"
+		include "CsSharedLib"
+		include "CsConsoleApp"
 	end
 	
 

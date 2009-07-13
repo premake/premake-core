@@ -19,6 +19,7 @@
 			end
 			return result
 		else
+			if not value then print(debug.traceback()) end
 			local result
 			result = value:gsub("\\", "\\\\")
 			result = result:gsub(" ", "\\ ")

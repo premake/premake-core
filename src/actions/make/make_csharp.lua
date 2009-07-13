@@ -114,36 +114,7 @@
 
 		-- write the configuration blocks
 		for cfg in premake.eachconfig(prj) do
-			_p('ifneq (,$(findstring %s,$(config)))', _MAKE.esc(cfg.name:lower()))
-			_p('  TARGETDIR  := %s', _MAKE.esc(cfg.buildtarget.directory))
-			_p('  OBJDIR     := %s', _MAKE.esc(cfg.objectsdir))
-			_p('  DEPENDS    := %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " "))
-			_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
-			_p('  FLAGS      += %s %s', table.concat(csc.getflags(cfg), " "), table.implode(cfg.defines, "/d:", "", " "))
-			
-			_p('  define PREBUILDCMDS')
-			if #cfg.prebuildcommands > 0 then
-				_p('\t@echo Running pre-build commands')
-				_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
-			end
-			_p('  endef')
-			
-			_p('  define PRELINKCMDS')
-			if #cfg.prelinkcommands > 0 then
-				_p('\t@echo Running pre-link commands')
-				_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-			end
-			_p('  endef')
-			
-			_p('  define POSTBUILDCMDS')
-			if #cfg.postbuildcommands > 0 then
-				_p('\t@echo Running post-build commands')
-				_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-			end
-			_p('  endef')
-			
-			_p('endif')
-			_p('')
+			premake.gmake_cs_config(cfg, csc, cfglibs)
 		end
 
 		-- set project level values
@@ -257,4 +228,44 @@
 			_p('')
 		end
 		
+	end
+
+
+--
+-- Write a block of configuration settings.
+--
+
+	function premake.gmake_cs_config(cfg, csc, cfglibs)
+			
+		_p('ifneq (,$(findstring %s,$(config)))', _MAKE.esc(cfg.name:lower()))
+		_p('  TARGETDIR  := %s', _MAKE.esc(cfg.buildtarget.directory))
+		_p('  OBJDIR     := %s', _MAKE.esc(cfg.objectsdir))
+		_p('  DEPENDS    := %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "dependencies", "fullpath")), " "))
+		_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
+		_p('  FLAGS      += %s %s', table.implode(cfg.defines, "/d:", "", " "), table.concat(table.join(csc.getflags(cfg), cfg.buildoptions), " "))
+		
+		_p('  define PREBUILDCMDS')
+		if #cfg.prebuildcommands > 0 then
+			_p('\t@echo Running pre-build commands')
+			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+		
+		_p('  define PRELINKCMDS')
+		if #cfg.prelinkcommands > 0 then
+			_p('\t@echo Running pre-link commands')
+			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+		
+		_p('  define POSTBUILDCMDS')
+		if #cfg.postbuildcommands > 0 then
+			_p('\t@echo Running post-build commands')
+			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+		
+		_p('endif')
+		_p('')
+
 	end
