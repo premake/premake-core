@@ -1,0 +1,118 @@
+--
+-- tests/actions/test_clean.lua
+-- Automated test suite for the "clean" action.
+-- Copyright (c) 2009 Jason Perkins and the Premake project
+--
+
+	T.clean = { }
+
+
+--
+-- Replacement functions for remove() and rmdir() for testing
+--
+
+	local os_remove, os_rmdir, cwd
+	local removed
+	
+	local function test_remove(fn)
+		if not cwd then cwd = os.getcwd() end
+		table.insert(removed, path.getrelative(cwd, fn))
+	end
+
+
+--
+-- Setup/teardown
+--
+
+	local sln
+	function T.clean.setup()
+		_ACTION = "clean"
+
+		os_remove = os.remove
+		os_rmdir  = os.rmdir
+		os.remove = test_remove
+		os.rmdir  = test_remove
+		removed = {}
+				
+		sln = solution "MySolution"
+		configurations { "Debug", "Release" }
+	end
+
+	function T.clean.teardown()
+		os.remove = os_remove
+		os.rmdir  = os_rmdir
+	end
+	
+	local function callaction(name)
+		local action = premake.actions[name]
+		if action.execute then
+			action.execute()
+		end
+	end
+	
+	local function prepare()
+		premake.buildconfigs()
+		callaction("clean")		
+	end
+
+
+
+--
+-- Tests
+--
+
+	function T.clean.SolutionFiles()
+		prepare()		
+		test.contains(removed, "MySolution.sln")
+		test.contains(removed, "MySolution.suo")
+		test.contains(removed, "MySolution.ncb")
+		test.contains(removed, "MySolution.userprefs")
+		test.contains(removed, "MySolution.usertasks")
+		test.contains(removed, "MySolution.workspace")
+		test.contains(removed, "MySolution_wsp.mk")
+		test.contains(removed, "MySolution.tags")
+		test.contains(removed, "Makefile")
+	end
+
+
+	function T.clean.CppProjectFiles()
+		prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+		prepare()
+		test.contains(removed, "MyProject.vcproj")
+		test.contains(removed, "MyProject.pdb")
+		test.contains(removed, "MyProject.idb")
+		test.contains(removed, "MyProject.ilk")
+		test.contains(removed, "MyProject.cbp")
+		test.contains(removed, "MyProject.depend")
+		test.contains(removed, "MyProject.layout")
+		test.contains(removed, "MyProject.mk")
+		test.contains(removed, "MyProject.list")
+		test.contains(removed, "MyProject.out")
+		test.contains(removed, "MyProject.make")
+	end
+
+
+	function T.clean.ObjectDirsAndFiles()
+		prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+		prepare()
+		test.contains(removed, "obj/Debug")
+		test.contains(removed, "obj/Release")
+	end
+
+
+	function T.clean.CppConsoleAppFiles()
+		prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+		prepare()
+		test.contains(removed, "MyProject")
+		test.contains(removed, "MyProject.exe")
+		test.contains(removed, "MyProject.elf")
+		test.contains(removed, "MyProject.elf")
+		test.contains(removed, "MyProject.vshost.exe")
+		test.contains(removed, "MyProject.exe.manifest")
+	end

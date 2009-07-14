@@ -38,7 +38,14 @@
 		end
 	end
 	
+
+	function test.contains(value, expected)
+		if not table.contains(value, expected) then
+			test.fail("expected value %s not found", expected)
+		end
+	end
 	
+		
 	function test.fail(format, ...)
 		-- convert nils into something more usefuls
 		for i = 1, arg.n do
@@ -96,7 +103,7 @@
 			test.fail("expected true but was false")
 		end
 	end
-				
+	
 
 --
 -- Define a collection for the test suites

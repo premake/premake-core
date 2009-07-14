@@ -34,7 +34,7 @@
 			
 			local cwd = os.getcwd()
 			local function rebase(parent, dir)
-				return path.rebase(dir, parent.location, cwd)
+				return path.getabsolute(path.rebase(dir, parent.location, cwd))
 			end
 				
 			-- Walk the tree. Build a list of object names to pass to the cleaners,
