@@ -327,7 +327,12 @@
 
 
 --
--- Computes a unique objects directory for every configuration.
+-- Computes a unique objects directory for every configuration, using the
+-- following choices:
+--   [1] -> the objects directory as set in the project of config
+--   [2] -> [1] + the platform name
+--   [3] -> [2] + the configuration name
+--   [4] -> [3] + the project name
 --
 
 	local function builduniquedirs()
@@ -349,13 +354,12 @@
 					dirs[4] = path.join(dirs[3], cfg.project.name)
 					cfg_dirs[cfg] = dirs
 					
-					for v = 1, num_variations do
+					-- configurations other than the root should bias toward a more
+					-- description path, including the platform or config name
+					local start = iif(cfg.name, 2, 1)
+					for v = start, num_variations do
 						local d = dirs[v]
-						if hit_counts[d] then
-							hit_counts[d] = hit_counts[d] + 1
-						else
-							hit_counts[d] = 1
-						end
+						hit_counts[d] = (hit_counts[d] or 0) + 1
 					end
 
 				end
@@ -369,12 +373,12 @@
 				for _, cfg in pairs(prj.__configs) do
 
 					local dir
-					for v = 1, num_variations do
+					local start = iif(cfg.name, 2, 1)
+					for v = start, num_variations do
 						dir = cfg_dirs[cfg][v]
 						if hit_counts[dir] == 1 then break end
 					end
 					cfg.objectsdir = path.getrelative(cfg.location, dir)
-
 				end
 			end
 		end		

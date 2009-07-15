@@ -113,6 +113,7 @@
 		language "C++"
 		kind "ConsoleApp"
 		prepare()
+		test.contains(removed, "obj")
 		test.contains(removed, "obj/Debug")
 		test.contains(removed, "obj/Release")
 	end
@@ -160,7 +161,6 @@
 		language "C++"
 		kind "ConsoleApp"
 		prepare()
-		for _,v in ipairs(removed) do if v:startswith("obj/") then print(v) end end
 		test.contains(removed, "obj/Debug")
 		test.contains(removed, "obj/Release")
 		test.contains(removed, "obj/x32/Debug")
