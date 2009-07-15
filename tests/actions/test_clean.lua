@@ -94,6 +94,20 @@
 	end
 
 
+	function T.clean.CsProjectFiles()
+		prj = project "MyProject"
+		language "C#"
+		kind "ConsoleApp"
+		prepare()
+		test.contains(removed, "MyProject.csproj")
+		test.contains(removed, "MyProject.csproj.user")
+		test.contains(removed, "MyProject.pdb")
+		test.contains(removed, "MyProject.idb")
+		test.contains(removed, "MyProject.ilk")
+		test.contains(removed, "MyProject.make")
+	end
+
+
 	function T.clean.ObjectDirsAndFiles()
 		prj = project "MyProject"
 		language "C++"
@@ -115,4 +129,26 @@
 		test.contains(removed, "MyProject.elf")
 		test.contains(removed, "MyProject.vshost.exe")
 		test.contains(removed, "MyProject.exe.manifest")
+	end
+
+
+	function T.clean.CppSharedLibFiles()
+		prj = project "MyProject"
+		language "C++"
+		kind "SharedLib"
+		prepare()
+		test.contains(removed, "MyProject.dll")
+		test.contains(removed, "libMyProject.so")
+		test.contains(removed, "MyProject.lib")
+		test.contains(removed, "libMyProject.dylib")
+	end
+
+
+	function T.clean.CppStaticLibFiles()
+		prj = project "MyProject"
+		language "C++"
+		kind "StaticLib"
+		prepare()
+		test.contains(removed, "MyProject.lib")
+		test.contains(removed, "libMyProject.a")
 	end

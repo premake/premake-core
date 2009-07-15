@@ -152,7 +152,6 @@
 		
 		for _,name in ipairs(projects) do
 			os.remove(name .. ".csproj.user")
-			os.remove(name .. ".csproj.webinfo")
 		
 			local files = os.matchfiles(name .. ".vcproj.*.user", name .. ".csproj.*.user")
 			for _, fname in ipairs(files) do
