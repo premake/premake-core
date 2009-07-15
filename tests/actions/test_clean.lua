@@ -152,3 +152,17 @@
 		test.contains(removed, "MyProject.lib")
 		test.contains(removed, "libMyProject.a")
 	end
+
+
+	function T.clean.PlatformObjects()
+		platforms { "Native", "x32" }
+		prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+		prepare()
+		for _,v in ipairs(removed) do if v:startswith("obj/") then print(v) end end
+		test.contains(removed, "obj/Debug")
+		test.contains(removed, "obj/Release")
+		test.contains(removed, "obj/x32/Debug")
+		test.contains(removed, "obj/x32/Release")
+	end

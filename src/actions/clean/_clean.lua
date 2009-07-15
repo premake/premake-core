@@ -36,11 +36,17 @@
 			local function rebase(parent, dir)
 				return path.getabsolute(path.rebase(dir, parent.location, cwd))
 			end
-				
+
 			-- Walk the tree. Build a list of object names to pass to the cleaners,
 			-- and delete any toolset agnostic files along the way.
 			for _,sln in ipairs(_SOLUTIONS) do
 				table.insert(solutions, path.join(sln.location, sln.name))
+				
+				-- build a list of supported target platforms that also includes a generic build
+				local platforms = sln.platforms or { }
+				if not table.contains(platforms, "Native") then
+					platforms = table.join(platforms, { "Native" })
+				end
 
 				for prj in premake.eachproject(sln) do
 					table.insert(projects, path.join(prj.location, prj.name))
@@ -49,23 +55,26 @@
 						os.rmdir(rebase(prj, prj.objectsdir))
 					end
 
-					for cfg in premake.eachconfig(prj) do			
-						table.insert(targets, path.join(rebase(cfg, cfg.buildtarget.directory), cfg.buildtarget.basename))
+					for _, platform in ipairs(platforms) do
+						for cfg in premake.eachconfig(prj, platform) do
+							table.insert(targets, path.join(rebase(cfg, cfg.buildtarget.directory), cfg.buildtarget.basename))
 
-						-- remove all possible permutations of the target binary
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "windows", "windows").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "linux").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "macosx").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "PS3", "windows").fullpath))
-						if (cfg.kind == "WindowedApp") then
-							os.rmdir(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "linux").fullpath .. ".app"))
+							-- remove all possible permutations of the target binary
+							os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "windows", "windows").fullpath))
+							os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "linux").fullpath))
+							os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "macosx").fullpath))
+							os.remove(rebase(cfg, premake.gettarget(cfg, "build", "posix", "PS3", "windows").fullpath))
+							if (cfg.kind == "WindowedApp") then
+								os.rmdir(rebase(cfg, premake.gettarget(cfg, "build", "posix", "posix", "linux").fullpath .. ".app"))
+							end
+
+							-- if there is an import library, remove that too
+							os.remove(rebase(cfg, premake.gettarget(cfg, "link", "windows", "windows", "windows").fullpath))
+							os.remove(rebase(cfg, premake.gettarget(cfg, "link", "posix", "posix", "linux").fullpath))
+
+							-- remove the associated objects directory
+							os.rmdir(rebase(cfg, cfg.objectsdir))
 						end
-
-						-- if there is an import library, remove that too
-						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "windows", "windows", "windows").fullpath))
-						os.remove(rebase(cfg, premake.gettarget(cfg, "link", "posix", "posix", "linux").fullpath))
-
-						os.rmdir(rebase(cfg, cfg.objectsdir))
 					end
 				end
 			end
