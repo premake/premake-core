@@ -71,6 +71,14 @@ function dorelease()
 -- Create a source package
 --
 
+	if os.is("macosx") then
+		local fname = "premake-" .. _ARGS[1]
+		os.chdir("..")
+		executef("zip -r9 %s-src.zip %s/*", fname, fname)
+		executef("mv %s-src.zip %s", fname, fname)
+		os.chdir(fname)
+	end
+
 
 --
 -- Create a binary package for this platform. This step requires a working
@@ -87,7 +95,7 @@ function dorelease()
 		executef("7z -tzip a %s.zip premake4.exe", fname)
 		executef("move %s.zip ../..", fname)
 	else
-		executef("tar czvf %s.tar.gz premake", fname)
+		executef("tar czvf %s.tar.gz premake4", fname)
 		executef("mv %s.tar.gz ../..", fname)
 	end
 	
