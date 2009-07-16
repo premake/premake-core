@@ -51,9 +51,7 @@
 			end
 		end
 		
-		if (action.execute) then
-			action.execute()
-		end
+		premake.action.call(name)
 	end
 
 

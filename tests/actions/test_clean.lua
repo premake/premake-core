@@ -43,16 +43,9 @@
 		os.rmdir  = os_rmdir
 	end
 	
-	local function callaction(name)
-		local action = premake.actions[name]
-		if action.execute then
-			action.execute()
-		end
-	end
-	
 	local function prepare()
 		premake.buildconfigs()
-		callaction("clean")		
+		premake.action.call("clean")		
 	end
 
 

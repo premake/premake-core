@@ -25,6 +25,7 @@
 	dofile("test_vs200x_vcproj.lua")
 	dofile("test_gmake_cpp.lua")
 	dofile("test_gmake_cs.lua")
+	dofile("base/test_action.lua")
 	dofile("actions/test_clean.lua")
 
 

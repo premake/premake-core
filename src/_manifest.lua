@@ -15,6 +15,7 @@
 		"base/table.lua",
 		"base/io.lua",
 		"base/globals.lua",
+		"base/action.lua",
 		"base/project.lua",
 		"base/configs.lua",
 		"base/api.lua",

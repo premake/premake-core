@@ -103,6 +103,14 @@
 			test.fail("expected true but was false")
 		end
 	end
+
+
+	function test.success(fn, ...)
+		local ok, err = pcall(fn, unpack(arg))
+		if not ok then
+			test.fail("call failed: " .. err)
+		end
+	end
 	
 
 --
