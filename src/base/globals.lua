@@ -20,11 +20,6 @@
 	premake = { }
 	
 
--- The list of registered actions and options
-
-	premake.options = { }
-
-
 -- The list of supported platforms; also update list in cmdline.lua
 
 	premake.platforms = 

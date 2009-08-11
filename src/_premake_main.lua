@@ -117,7 +117,7 @@
 			error("Error: no such action '" .. _ACTION .. "'", 0)
 		end
 
-		ok, err = premake.checkoptions()
+		ok, err = premake.option.validate(_OPTIONS)
 		if (not ok) then error("Error: " .. err, 0) end
 		
 

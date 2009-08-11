@@ -650,7 +650,14 @@
 		premake.action.add(a)
 	end
 
-	
-	
 
-	
+--
+-- Define a new option.
+--
+-- @param opt
+--    The new option object.
+--
+
+	function newoption(opt)
+		premake.option.add(opt)
+	end

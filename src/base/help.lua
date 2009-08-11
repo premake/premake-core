@@ -7,18 +7,6 @@
 
 	function premake.showhelp()
 	
-		-- sort the lists of actions and options into alphabetical order
---		actions = { }
---		for action in premake.action.each() do
---			table.insert(actions, action.trigger)
---		end
---		table.sort(actions)
-		
-		options = { }
-		for name,_ in pairs(premake.options) do table.insert(options, name) end
-		table.sort(options)
-		
-		
 		-- display the basic usage
 		printf("Premake %s, a build script generator", _PREMAKE_VERSION)
 		printf(_PREMAKE_COPYRIGHT)
@@ -31,17 +19,15 @@
 		-- display all options
 		printf("OPTIONS")
 		printf("")
-		for _,name in ipairs(options) do
-			local opt = premake.options[name]
-			local trigger = opt.trigger
-			local description = opt.description
-			
-			if (opt.value) then trigger = trigger .. "=" .. opt.value end
-			if (opt.allowed) then description = description .. "; one of:" end
+		for option in premake.option.each() do
+			local trigger = option.trigger
+			local description = option.description
+			if (option.value) then trigger = trigger .. "=" .. option.value end
+			if (option.allowed) then description = description .. "; one of:" end
 			
 			printf(" --%-15s %s", trigger, description) 
-			if (opt.allowed) then
-				for _, value in ipairs(opt.allowed) do
+			if (option.allowed) then
+				for _, value in ipairs(option.allowed) do
 					printf("     %-14s %s", value[1], value[2])
 				end
 			end
@@ -51,7 +37,6 @@
 		-- display all actions
 		printf("ACTIONS")
 		printf("")
---		for _, name in ipairs(actions) do
 		for action in premake.action.each() do
 			printf(" %-17s %s", action.trigger, action.description)
 		end

@@ -1,38 +1,8 @@
 --
 -- validate.lua
 -- Tests to validate the run-time environment before starting the action.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
-
-
---
--- Validate the command-line options.
---
-
-	function premake.checkoptions()
-		for key, value in pairs(_OPTIONS) do
-			-- is this a valid option?
-			local opt = premake.options[key]
-			if (not opt) then
-				return false, "invalid option '" .. key .. "'"
-			end
-			
-			-- does it need a value?
-			if (opt.value and value == "") then
-				return false, "no value specified for option '" .. key .. "'"
-			end
-			
-			-- is the value allowed?
-			if (opt.allowed) then
-				for _, match in ipairs(opt.allowed) do
-					if (match[1] == value) then return true end
-				end
-				return false, "invalid value '" .. value .. "' for option '" .. key .. "'"
-			end
-		end
-		return true
-	end
-
 
 
 --
