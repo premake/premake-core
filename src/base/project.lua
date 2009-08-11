@@ -382,7 +382,7 @@
 --
 
 	function premake.getpathstyle(cfg)
-		if premake.actions[_ACTION].os == "windows" then
+		if premake.action.current().os == "windows" then
 			return "windows"
 		else
 			return "posix"
@@ -494,7 +494,7 @@
 			if _OPTIONS.cc then
 				return premake[_OPTIONS.cc]
 			end
-			local action = premake.actions[_ACTION]
+			local action = premake.action.current()
 			if action.valid_tools then
 				return premake[action.valid_tools.cc[1]]
 			end

@@ -41,7 +41,7 @@
 --
 
 	function premake.checkprojects()
-		local action = premake.actions[_ACTION]
+		local action = premake.action.current()
 		
 		for _, sln in ipairs(_SOLUTIONS) do
 		
@@ -96,7 +96,7 @@
 --
 
 	function premake.checktools()
-		local action = premake.actions[_ACTION]
+		local action = premake.action.current()
 		if (not action.valid_tools) then 
 			return true 
 		end

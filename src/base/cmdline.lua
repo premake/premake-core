@@ -5,12 +5,6 @@
 --
 
 
-	local requiredactionfields =
-	{
-		"description",
-		"trigger",
-	}
-	
 	local requiredoptionfields = 
 	{
 		"description",
@@ -18,29 +12,6 @@
 	}
 
 
---
--- Define a new action.
---
-
-	function newaction(a)
-		-- some sanity checking
-		local missing
-		for _, field in ipairs(requiredactionfields) do
-			if (not a[field]) then
-				missing = field
-			end
-		end
-		
-		if (missing) then
-			error("action needs a " .. missing, 2)
-		end
-
-		-- add it to the master list
-		premake.actions[a.trigger] = a		
-	end
-
-	
-	
 --
 -- Define a new option.
 --

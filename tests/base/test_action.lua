@@ -17,11 +17,11 @@
 	}
 	
 	function T.action.setup()
-		premake.actions["fake"] = fake
+		premake.action.list["fake"] = fake
 	end
 
 	function T.action.teardown()
-		premake.actions["fake"] = nil
+		premake.action.list["fake"] = nil
 	end
 
 

@@ -12,50 +12,6 @@
 
 
 --
--- Fire a particular action. Generates the output files from the templates
--- listed in the action descriptor, and calls any registered handler functions.
---
-
-	local function doaction(name)
-		local action = premake.actions[name]
-		
-		-- walk the session objects and generate files from the templates
-		local function generatefiles(this, templates)
-			if (not templates) then return end
-			for _,tmpl in ipairs(templates) do
-				local output = true
-				if (tmpl[3]) then
-					output = tmpl[3](this)
-				end
-				if (output) then
-					local fname = path.getrelative(os.getcwd(), premake.getoutputname(this, tmpl[1]))
-					printf("Generating %s...", fname)
-					local f, err = io.open(fname, "wb")
-					if (not f) then
-						error(err, 0)
-					end
-					io.output(f)
-					
-					-- call the template function to generate the output
-					tmpl[2](this)
-
-					io.output():close()
-				end
-			end
-		end
-
-		for _,sln in ipairs(_SOLUTIONS) do
-			generatefiles(sln, action.solutiontemplates)			
-			for prj in premake.eachproject(sln) do
-				generatefiles(prj, action.projecttemplates)
-			end
-		end
-		
-		premake.action.call(name)
-	end
-
-
---
 -- Inject a new target platform into each solution; called if the --platform
 -- argument was specified on the command line.
 --
@@ -110,8 +66,9 @@
 		-- Some actions imply a particular operating system. Set it early so
 		-- it can be picked up by the scripts.
 
-		if (_ACTION and premake.actions[_ACTION]) then
-			_OS = premake.actions[_ACTION].os or _OS
+		local action = premake.action.current()
+		if action then
+			_OS = action.os or _OS
 		end
 
 		
@@ -155,8 +112,9 @@
 		-- Validate the command-line arguments. This has to happen after the
 		-- script has run to allow for project-specific options
 		
-		if (not premake.actions[_ACTION]) then
-			error("Error: no such action '".._ACTION.."'", 0)
+		action = premake.action.current()
+		if (not action) then
+			error("Error: no such action '" .. _ACTION .. "'", 0)
 		end
 
 		ok, err = premake.checkoptions()
@@ -184,8 +142,8 @@
 		
 		
 		-- Hand over control to the action
-		printf("Running action '%s'...", _ACTION)
-		doaction(_ACTION)
+		printf("Running action '%s'...", action.trigger)
+		premake.action.call(action.trigger)
 
 		print("Done.")
 		return 0

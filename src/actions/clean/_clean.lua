@@ -80,7 +80,7 @@
 			end
 
 			-- Walk the tree again. Delete templated and toolset-specific files
-			for _,action in pairs(premake.actions) do
+			for action in premake.action.each() do
 				for _,sln in ipairs(_SOLUTIONS) do
 					cleantemplatefiles(sln, action.solutiontemplates)
 					for prj in premake.eachproject(sln) do

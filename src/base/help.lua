@@ -8,9 +8,11 @@
 	function premake.showhelp()
 	
 		-- sort the lists of actions and options into alphabetical order
-		actions = { }
-		for name,_ in pairs(premake.actions) do table.insert(actions, name) end
-		table.sort(actions)
+--		actions = { }
+--		for action in premake.action.each() do
+--			table.insert(actions, action.trigger)
+--		end
+--		table.sort(actions)
 		
 		options = { }
 		for name,_ in pairs(premake.options) do table.insert(options, name) end
@@ -49,8 +51,9 @@
 		-- display all actions
 		printf("ACTIONS")
 		printf("")
-		for _,name in ipairs(actions) do
-			printf(" %-17s %s", name, premake.actions[name].description)
+--		for _, name in ipairs(actions) do
+		for action in premake.action.each() do
+			printf(" %-17s %s", action.trigger, action.description)
 		end
 		printf("")
 

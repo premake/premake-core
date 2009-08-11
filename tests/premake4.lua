@@ -33,7 +33,8 @@
 -- Register a test action
 --
 
-	premake.actions["test"] = {
+	newaction {
+		trigger     = "test",
 		description = "Run the automated test suite",
 		
 		execute = function ()

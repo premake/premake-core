@@ -638,4 +638,19 @@
 		return premake.CurrentContainer
 	end
 
+
+--
+-- Define a new action.
+--
+-- @param a
+--    The new action object.
+--
+
+	function newaction(a)
+		premake.action.add(a)
+	end
+
+	
+	
+
 	
