@@ -1,7 +1,7 @@
 --
 -- _codeblocks.lua
 -- Define the Code::Blocks action(s).
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
 

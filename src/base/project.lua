@@ -4,6 +4,8 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
+	premake.project = { }
+	
 
 --
 -- Returns an iterator for a set of build configuration settings. If a platform is
@@ -240,6 +242,27 @@
 
 
 
+--
+-- Uses information from a project (or solution) to format a filename.
+--
+-- @param prj
+--    A project or solution object with the file naming information.
+-- @param pattern
+--    A naming pattern, which may include these placeholders:
+--      {path} - the project's location, set by the location property
+--      {file} - the project's name, set by the name property
+-- @returns
+--    A filename matching the specified pattern.
+--
+
+	function premake.project.getfilename(prj, pattern)
+		pattern = pattern:gsub("{path}", prj.location)
+		pattern = pattern:gsub("{name}", prj.name)
+		return path.getrelative(os.getcwd(), pattern)
+	end
+	
+	
+	
 --
 -- Returns a list of link targets. Kind may be one of:
 --   siblings     - linkable sibling projects

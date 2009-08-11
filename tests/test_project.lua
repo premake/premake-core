@@ -4,7 +4,8 @@
 -- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
 --
 
-
+	local _project = premake.project
+	
 	T.project = { }
 
 	local cfg, result
@@ -18,8 +19,26 @@
 		cfg.platform = "Native"
 		result = "\n"
 	end
+
+
+
+--
+-- getfilename() tests
+--
+
+	function T.project.getfilename_ReturnsRelativePath()
+		local prj = { name = "project", location = "location" }
+		local r = _project.getfilename(prj, path.join(os.getcwd(), "../filename"))
+		test.isequal("../filename", r)
+	end
 	
-	
+	function T.project.getfilename_PerformsSubstitutions()
+		local prj = { name = "project", location = "location" }
+		local r = _project.getfilename(prj, "{path}/{name}.prj")
+		test.isequal("location/project.prj", r)
+	end
+
+
 
 --
 -- premake.getlinks() tests
