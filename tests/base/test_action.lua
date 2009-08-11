@@ -18,6 +18,10 @@
 	
 	function T.action.setup()
 		premake.action.list["fake"] = fake
+		solution "MySolution"
+		configurations "Debug"
+		project "MyProject"
+		premake.buildconfigs()
 	end
 
 	function T.action.teardown()
@@ -27,18 +31,30 @@
 
 
 --
--- Tests
+-- Tests for call()
 --
 
-	function T.action.ExecuteIsCalledIfPresent()
+	function T.action.CallCallsExecuteIfPresent()
 		local called = false
 		fake.execute = function () called = true end
 		premake.action.call("fake")
 		test.istrue(called)
 	end
-	
-	function T.action.ExecuteIsSkippedIfNotPresent()
-		test.success(premake.action.call, "fake")
+
+	function T.action.CallCallsOnSolutionIfPresent()
+		local called = false
+		fake.onsolution = function () called = true end
+		premake.action.call("fake")
+		test.istrue(called)
 	end
 
-
+	function T.action.CallCallsOnProjectIfPresent()
+		local called = false
+		fake.onproject = function () called = true end
+		premake.action.call("fake")
+		test.istrue(called)
+	end
+	
+	function T.action.CallSkipsCallbacksIfNotPresent()
+		test.success(premake.action.call, "fake")
+	end

@@ -77,7 +77,7 @@
 	function premake.action.call(name)
 		local a = premake.action.list[name]
 		
-		-- walk the session objects and generate files from the templates
+		-- walk the session objects and pass to the action for handling
 		local function generatefiles(this, templates)
 			if (not templates) then return end
 			for _,tmpl in ipairs(templates) do
@@ -103,13 +103,19 @@
 		end
 
 		for _,sln in ipairs(_SOLUTIONS) do
+			if type(a.onsolution) == "function" then
+				a.onsolution(sln)
+			end
 			generatefiles(sln, a.solutiontemplates)			
 			for prj in premake.eachproject(sln) do
+				if type(a.onproject) == "function" then
+					a.onproject(prj)
+				end
 				generatefiles(prj, a.projecttemplates)
 			end
 		end
 		
-		-- if the action has an execute() function, call it
+		-- call execute() to perform general processing
 		if type(a.execute) == "function" then
 			a.execute()
 		end
