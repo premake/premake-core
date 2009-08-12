@@ -19,20 +19,20 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, "{name}.workspace", premake.codeblocks_workspace)
+			premake.generate(sln, "%%.workspace", premake.codeblocks_workspace)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "{name}.cbp", premake.codeblocks_cbp)
+			premake.generate(prj, "%%.cbp", premake.codeblocks_cbp)
 		end,
 		
 		oncleansolution = function(sln)
-			premake.clean.file(sln, "{name}.workspace")
+			premake.clean.file(sln, "%%.workspace")
 		end,
 		
 		oncleanproject = function(prj)
-			premake.clean.file(prj, "{name}.cbp")
-			premake.clean.file(prj, "{name}.depend")
-			premake.clean.file(prj, "{name}.layout")
+			premake.clean.file(prj, "%%.cbp")
+			premake.clean.file(prj, "%%.depend")
+			premake.clean.file(prj, "%%.layout")
 		end
 	}

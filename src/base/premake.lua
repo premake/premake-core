@@ -20,17 +20,15 @@
 --
 
 	function premake.generate(obj, filename, callback)
-		-- open the file for output and handle any errors
 		filename = premake.project.getfilename(obj, filename)
+		printf("Generating %s...", filename)
+
 		local f, err = io.open(filename, "wb")
 		if (not f) then
 			error(err, 0)
 		end
-		io.output(f)
 
-		-- generate the file
+		io.output(f)
 		callback(obj)
-		
-		-- clean up
 		f:close()
 	end

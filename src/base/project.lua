@@ -248,15 +248,15 @@
 -- @param prj
 --    A project or solution object with the file naming information.
 -- @param pattern
---    A naming pattern, which may include these placeholders:
---      {path} - the project's location, set by the location property
---      {file} - the project's name, set by the name property
+--    A naming pattern. The sequence "%%" will be replaced by the
+--    project name.
 -- @returns
---    A filename matching the specified pattern.
+--    A filename matching the specified pattern, with a relative path
+--    from the current directory to the project location.
 --
 
 	function premake.project.getfilename(prj, pattern)
-		local fname = pattern:gsub("{name}", prj.name)
+		local fname = pattern:gsub("%%%%", prj.name)
 		fname = path.join(prj.location, fname)
 		return path.getrelative(os.getcwd(), fname)
 	end
@@ -278,7 +278,7 @@
 --   object    - return the project object of the dependency
 --	
 	
-	function premake.getlinks(cfg, kind, part)
+ 	function premake.getlinks(cfg, kind, part)
 		-- if I'm building a list of link directories, include libdirs
 		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
 
@@ -374,24 +374,6 @@
 		return premake.platforms[cfg.platform].namestyle or premake.gettool(cfg).namestyle or "posix"
 	end
 	
-
-
---
--- Converts a project object and a template filespec (the first value in an
--- action's template reference) into a filename for that template's output.
--- The filespec may be either a file extension, or a function.
---
-		
-	function premake.getoutputname(this, namespec)
-		local fname
-		if (type(namespec) == "function") then
-			fname = namespec(this)
-		else
-			fname = this.name .. namespec
-		end		
-		return path.join(this.location, fname)
-	end
-
 
 
 --

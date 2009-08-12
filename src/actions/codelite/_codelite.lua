@@ -18,23 +18,23 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, "{name}.workspace", premake.codelite_workspace)
+			premake.generate(sln, "%%.workspace", premake.codelite_workspace)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "{name}.project", premake.codelite_project)
+			premake.generate(prj, "%%.project", premake.codelite_project)
 		end,
 		
 		oncleansolution = function(sln)
-			premake.clean.file(sln, "{name}.workspace")
-			premake.clean.file(sln, "{name}_wsp.mk")
-			premake.clean.file(sln, "{name}.tags")
+			premake.clean.file(sln, "%%.workspace")
+			premake.clean.file(sln, "%%_wsp.mk")
+			premake.clean.file(sln, "%%.tags")
 		end,
 		
 		oncleanproject = function(prj)
-			premake.clean.file(prj, "{name}.project")
-			premake.clean.file(prj, "{name}.mk")
-			premake.clean.file(prj, "{name}.list")
-			premake.clean.file(prj, "{name}.out")
+			premake.clean.file(prj, "%%.project")
+			premake.clean.file(prj, "%%.mk")
+			premake.clean.file(prj, "%%.list")
+			premake.clean.file(prj, "%%.out")
 		end
 	}

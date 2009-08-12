@@ -76,47 +76,19 @@
 
 	function premake.action.call(name)
 		local a = premake.action.list[name]
-		
-		-- walk the session objects and pass to the action for handling
-		local function generatefiles(this, templates)
-			if (not templates) then return end
-			for _,tmpl in ipairs(templates) do
-				local output = true
-				if (tmpl[3]) then
-					output = tmpl[3](this)
-				end
-				if (output) then
-					local fname = path.getrelative(os.getcwd(), premake.getoutputname(this, tmpl[1]))
-					printf("Generating %s...", fname)
-					local f, err = io.open(fname, "wb")
-					if (not f) then
-						error(err, 0)
-					end
-					io.output(f)
-					
-					-- call the template function to generate the output
-					tmpl[2](this)
-
-					io.output():close()
-				end
-			end
-		end
 
 		for _,sln in ipairs(_SOLUTIONS) do
-			if type(a.onsolution) == "function" then
+			if a.onsolution then
 				a.onsolution(sln)
 			end
-			generatefiles(sln, a.solutiontemplates)			
 			for prj in premake.eachproject(sln) do
-				if type(a.onproject) == "function" then
+				if a.onproject then
 					a.onproject(prj)
 				end
-				generatefiles(prj, a.projecttemplates)
 			end
 		end
 		
-		-- call execute() to perform general processing
-		if type(a.execute) == "function" then
+		if a.execute then
 			a.execute()
 		end
 	end

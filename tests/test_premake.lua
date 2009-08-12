@@ -36,12 +36,12 @@
 
 	function T.premake.generate_OpensCorrectFile()
 		prj = { name = "MyProject", location = "MyLocation" }
-		premake.generate(prj, "{name}.prj", function () end)
+		premake.generate(prj, "%%.prj", function () end)
 		test.openedfile("MyLocation/MyProject.prj")
 	end
 
 	function T.premake.generate_ClosesFile()
 		prj = { name = "MyProject", location = "MyLocation" }
-		premake.generate(prj, "{path}/{name}.prj", function () end)
+		premake.generate(prj, "%%.prj", function () end)
 		test.closedfile(true)
 	end

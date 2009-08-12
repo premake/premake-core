@@ -148,6 +148,8 @@
 	local function stub_io_output(f)
 	end
 	
+	local function stub_print(s)
+	end
 	
 	
 --
@@ -169,6 +171,10 @@
 		_OPTIONS = { }
 		_SOLUTIONS = { }
 
+		-- capture any printed output
+		test.print = print
+		print = stub_print
+		
 		test.value_openedfilename = nil
 		test.value_openedfilemode = nil
 		test.value_closedfile     = false
@@ -187,6 +193,8 @@
 	
 
 	local function test_teardown(suite, fn)
+		print = test.print
+		
 		if suite.teardown then
 			return pcall(suite.teardown)
 		else
