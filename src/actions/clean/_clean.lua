@@ -4,6 +4,43 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
+	premake.clean = { }
+
+
+--
+-- Clean a solution or project specific file. Uses information in the project
+-- object to build the target filename.
+--
+-- @param obj
+--    A solution or project object.
+-- @param pattern
+--    A filename pattern to clean; see premake.project.getfilename() for
+--    a description of the format.
+--
+
+	function premake.clean.file(obj, pattern)
+		local fname = premake.project.getfilename(obj, pattern)
+		os.remove(fname)
+	end
+
+
+--
+-- Clean a solution or project specific file. Uses information in the project
+-- object to build the target filename.
+--
+-- @param obj
+--    A solution or project object.
+-- @param pattern
+--    A filename pattern to clean; see premake.project.getfilename() for
+--    a description of the format.
+--
+
+	function premake.clean.file(obj, pattern)
+		local fname = premake.project.getfilename(obj, pattern)
+		os.remove(fname)
+	end
+
+
 
 --
 -- Remove files created by an object's templates.
@@ -79,11 +116,18 @@
 				end
 			end
 
-			-- Walk the tree again. Delete templated and toolset-specific files
+			-- Walk the tree again and let the actions clean up after themselves
 			for action in premake.action.each() do
-				for _,sln in ipairs(_SOLUTIONS) do
+				for _, sln in ipairs(_SOLUTIONS) do
+					if action.oncleansolution then
+						action.oncleansolution(sln)
+					end
 					cleantemplatefiles(sln, action.solutiontemplates)
+
 					for prj in premake.eachproject(sln) do
+						if action.oncleanproject then
+							action.oncleanproject(prj)
+						end
 						cleantemplatefiles(prj, action.projecttemplates)
 					end
 				end

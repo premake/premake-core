@@ -115,23 +115,24 @@
 			dotnet = { "mono", "msnet", "pnet" },
 		},
 		
-		solutiontemplates = {
-			{
-				function(this) return _MAKE.getmakefilename(this, false) end,  
-				premake.make_solution
-			},
-		},
+		onsolution = function(sln)
+			premake.generate(sln, _MAKE.getmakefilename(sln, false), premake.make_solution)
+		end,
 		
-		projecttemplates = {
-			{ 
-				function(this) return _MAKE.getmakefilename(this, true) end,   
-				premake.make_cpp,
-				function(this) return this.language == "C" or this.language == "C++" end
-			},
-			{
-				function(this) return _MAKE.getmakefilename(this, true) end,
-				premake.make_csharp,
-				function(this) return this.language == "C#" end
-			},
-		},
+		onproject = function(prj)
+			local makefile = _MAKE.getmakefilename(prj, true)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, makefile, premake.make_csharp)
+			else
+				premake.generate(prj, makefile, premake.make_cpp)
+			end
+		end,
+		
+		oncleansolution = function(sln)
+			premake.clean.file(sln, _MAKE.getmakefilename(sln, false))
+		end,
+		
+		oncleanproject = function(prj)
+			premake.clean.file(prj, _MAKE.getmakefilename(prj, true))
+		end
 	}

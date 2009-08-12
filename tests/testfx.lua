@@ -1,7 +1,7 @@
 --
 -- tests/testfx.lua
 -- Automated test framework for Premake.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2009 Jason Perkins and the Premake project
 --
 
 
@@ -12,9 +12,6 @@
 	test = { }
 	
 
---
--- 
-	
 --
 -- Assertion functions
 --
@@ -35,6 +32,15 @@
 			linenum = linenum + 1
 			atxt = ait()
 			etxt = eit()
+		end
+	end
+
+	
+	function test.closedfile(expected)
+		if expected and not test.value_closedfile then
+			test.fail("expected file to be closed")
+		elseif not expected and test.value_closedfile then
+			test.fail("expected file to remain open")
 		end
 	end
 	
@@ -104,15 +110,46 @@
 		end
 	end
 
-
+	
+	function test.openedfile(fname)
+		if fname ~= test.value_openedfilename then
+			local msg = "expected to open file '" .. fname .. "'"
+			if test.value_openedfilename then
+				msg = msg .. ", got '" .. test.value_openedfilename .. "'"
+			end
+			test.fail(msg)
+		end
+	end
+	
+	
 	function test.success(fn, ...)
 		local ok, err = pcall(fn, unpack(arg))
 		if not ok then
 			test.fail("call failed: " .. err)
 		end
 	end
-	
 
+
+
+--
+-- Test stubs
+--
+
+	local function stub_io_open(fname, mode)
+		test.value_openedfilename = fname
+		test.value_openedfilemode = mode
+		return {
+			close = function()
+				test.value_closedfile = true
+			end
+		}
+	end
+	
+	local function stub_io_output(f)
+	end
+	
+	
+	
 --
 -- Define a collection for the test suites
 --
@@ -125,35 +162,58 @@
 -- Test execution function
 --
 
+	local function test_setup(suite, fn)
+		-- clear out some important globals
+		_ACTION = "test"
+		_ARGS = { }
+		_OPTIONS = { }
+		_SOLUTIONS = { }
+
+		test.value_openedfilename = nil
+		test.value_openedfilemode = nil
+		test.value_closedfile     = false
+
+		if suite.setup then
+			return pcall(suite.setup)
+		else
+			return true
+		end
+	end
+	
+
+	local function test_run(suite, fn)
+		return pcall(fn)
+	end
+	
+
+	local function test_teardown(suite, fn)
+		if suite.teardown then
+			return pcall(suite.teardown)
+		else
+			return true
+		end
+	end
+
+
 	function test.runall()		
+		io.open   = stub_io_open
+		io.output = stub_io_output
+		
 		local numpassed = 0
 		local numfailed = 0
-	
-		-- HACK: reset the important global state. I'd love to find a
-		-- way to do this automatically; maybe later.
-		local function resetglobals()
-			_ACTION = "test"
-			_ARGS = { }
-			_OPTIONS = { }
-			_SOLUTIONS = { }
-		end
 		
-		for suitename,suitetests in pairs(T) do
+		for suitename, suitetests in pairs(T) do
 			for testname, testfunc in pairs(suitetests) do
-				local setup = suitetests.setup
-				local teardown = suitetests.teardown
-				local ok = true
-				
-				resetglobals()
-				if (setup) then
-					ok, err = pcall(setup)
+
+				local ok, err = test_setup(suitetests, testfunc)
+
+				if ok then
+					ok, err = test_run(suitetests, testfunc)
 				end
-				if (ok) then
-					ok, err = pcall(testfunc)
-				end
-				if (ok and teardown) then
-					ok, err = pcall(teardown)
-				end
+
+				local tok, terr = test_teardown(suitetests, testfunc)
+				ok = ok and tok
+				err = err or tok
 				
 				if (not ok) then
 					print(string.format("%s.%s: %s", suitename, testname, err))

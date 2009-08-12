@@ -17,23 +17,24 @@
 			cc   = { "gcc" },
 		},
 		
-		solutiontemplates = {
-			{ ".workspace",  premake.codelite_workspace },
-		},
+		onsolution = function(sln)
+			premake.generate(sln, "{name}.workspace", premake.codelite_workspace)
+		end,
 		
-		projecttemplates = {
-			{ ".project",  premake.codelite_project },
-		},
-
-		onclean = function(solutions, projects, targets)
-			for _,name in ipairs(solutions) do
-				os.remove(name .. "_wsp.mk")
-				os.remove(name .. ".tags")
-			end
-			for _,name in ipairs(projects) do
-				os.remove(name .. ".mk")
-				os.remove(name .. ".list")
-				os.remove(name .. ".out")
-			end
+		onproject = function(prj)
+			premake.generate(prj, "{name}.project", premake.codelite_project)
+		end,
+		
+		oncleansolution = function(sln)
+			premake.clean.file(sln, "{name}.workspace")
+			premake.clean.file(sln, "{name}_wsp.mk")
+			premake.clean.file(sln, "{name}.tags")
+		end,
+		
+		oncleanproject = function(prj)
+			premake.clean.file(prj, "{name}.project")
+			premake.clean.file(prj, "{name}.mk")
+			premake.clean.file(prj, "{name}.list")
+			premake.clean.file(prj, "{name}.out")
 		end
 	}

@@ -34,7 +34,7 @@
 	
 	function T.project.getfilename_PerformsSubstitutions()
 		local prj = { name = "project", location = "location" }
-		local r = _project.getfilename(prj, "{path}/{name}.prj")
+		local r = _project.getfilename(prj, "{name}.prj")
 		test.isequal("location/project.prj", r)
 	end
 

@@ -1,7 +1,7 @@
 --
 -- tests/test_premake.lua
 -- Automated test suite for the Premake support functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2009 Jason Perkins and the Premake project
 --
 
 
@@ -30,4 +30,18 @@
 
 
 
-	
+--
+-- generate() tests
+--
+
+	function T.premake.generate_OpensCorrectFile()
+		prj = { name = "MyProject", location = "MyLocation" }
+		premake.generate(prj, "{name}.prj", function () end)
+		test.openedfile("MyLocation/MyProject.prj")
+	end
+
+	function T.premake.generate_ClosesFile()
+		prj = { name = "MyProject", location = "MyLocation" }
+		premake.generate(prj, "{path}/{name}.prj", function () end)
+		test.closedfile(true)
+	end

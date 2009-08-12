@@ -27,6 +27,7 @@
 		"tools/ow.lua",
 		"base/validate.lua",
 		"base/help.lua",
+		"base/premake.lua",
 		"actions/codeblocks/codeblocks_workspace.lua",
 		"actions/codeblocks/codeblocks_cbp.lua",
 		"actions/codeblocks/_codeblocks.lua",
