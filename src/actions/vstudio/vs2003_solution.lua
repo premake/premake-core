@@ -7,6 +7,9 @@
 	function premake.vs2003_solution(sln)
 		io.eol = '\r\n'
 
+		-- Precompute Visual Studio configurations
+		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+
 		_p('Microsoft Visual Studio Solution File, Format Version 8.00')
 
 		-- Write out the list of project entries

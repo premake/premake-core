@@ -19,12 +19,15 @@
 			cc     = { "gcc" },
 		},
 
-		solutiontemplates = {
-		},
-
-		projecttemplates = {
-		},
+		onsolution = function(sln)
+		end,
 		
-		onclean = function (solutions, projects, targets)
+		onproject = function(prj)
+		end,
+		
+		oncleansolution = function(sln)
+		end,
+		
+		oncleanproject = function(prj)
 		end
 	}

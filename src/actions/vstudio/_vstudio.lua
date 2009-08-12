@@ -4,6 +4,7 @@
 -- Copyright (c) 2008-2009 Jason Perkins and the Premake project
 --
 
+	premake.vstudio = { }
 	_VS = { }
 
 
@@ -142,22 +143,35 @@
 -- Clean Visual Studio files
 --
 
+	function premake.vstudio.cleansolution(sln)
+		premake.clean.file(sln, "{name}.sln")
+		premake.clean.file(sln, "{name}.suo")
+		premake.clean.file(sln, "{name}.ncb")
+		-- MonoDevelop files
+		premake.clean.file(sln, "{name}.userprefs")
+		premake.clean.file(sln, "{name}.usertasks")
+	end
+	
+	function premake.vstudio.cleanproject(prj)
+		local fext
+		if premake.isdotnetproject(prj) then
+			fext = ".csproj"
+		else
+			fext = ".vcproj"
+		end
+		
+		local fname = premake.project.getfilename(prj, "{name}" .. fext)
+		os.remove(fname)
+		os.remove(fname .. ".user")
+		
+		local userfiles = os.matchfiles(fname .. ".*.user")
+		for _, fname in ipairs(userfiles) do
+			os.remove(fname)
+		end
+	end
+
+		
 	function premake.vstudio_clean(solutions, projects, targets)
-		for _,name in ipairs(solutions) do
-			os.remove(name .. ".suo")
-			os.remove(name .. ".ncb")
-			os.remove(name .. ".userprefs")  -- MonoDevelop files
-			os.remove(name .. ".usertasks")
-		end
-		
-		for _,name in ipairs(projects) do
-			os.remove(name .. ".csproj.user")
-		
-			local files = os.matchfiles(name .. ".vcproj.*.user", name .. ".csproj.*.user")
-			for _, fname in ipairs(files) do
-				os.remove(fname)
-			end
-		end
 		
 		for _,name in ipairs(targets) do
 			os.remove(name .. ".pdb")
@@ -311,16 +325,21 @@
 			dotnet = { "msnet" },
 		},
 
-		solutiontemplates = {
-			{ ".sln",         premake.vs2002_solution },
-		},
-
-		projecttemplates = {
-			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj",      premake.vs2002_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", premake.vs2002_csproj_user, function(this) return this.language == "C#" end },
-		},
+		onsolution = function(sln)
+			premake.generate(sln, "{name}.sln", premake.vs2002_solution)
+		end,
 		
+		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "{name}.csproj", premake.vs2002_csproj)
+				premake.generate(prj, "{name}.csproj.user", premake.vs2002_csproj_user)
+			else
+				premake.generate(prj, "{name}.vcproj", premake.vs200x_vcproj)
+			end
+		end,
+		
+		oncleansolution = premake.vstudio.cleansolution,
+		oncleanproject  = premake.vstudio.cleanproject,
 		onclean = premake.vstudio_clean,
 	}
 
@@ -339,16 +358,21 @@
 			dotnet = { "msnet" },
 		},
 
-		solutiontemplates = {
-			{ ".sln",         premake.vs2003_solution },
-		},
-
-		projecttemplates = {
-			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj",      premake.vs2002_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", premake.vs2002_csproj_user, function(this) return this.language == "C#" end },
-		},
+		onsolution = function(sln)
+			premake.generate(sln, "{name}.sln", premake.vs2003_solution)
+		end,
 		
+		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "{name}.csproj", premake.vs2002_csproj)
+				premake.generate(prj, "{name}.csproj.user", premake.vs2002_csproj_user)
+			else
+				premake.generate(prj, "{name}.vcproj", premake.vs200x_vcproj)
+			end
+		end,
+		
+		oncleansolution = premake.vstudio.cleansolution,
+		oncleanproject  = premake.vstudio.cleanproject,
 		onclean = premake.vstudio_clean,
 	}
 
@@ -367,16 +391,21 @@
 			dotnet = { "msnet" },
 		},
 
-		solutiontemplates = {
-			{ ".sln",         premake.vs2005_solution },
-		},
-
-		projecttemplates = {
-			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj",      premake.vs2005_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", premake.vs2005_csproj_user, function(this) return this.language == "C#" end },
-		},
+		onsolution = function(sln)
+			premake.generate(sln, "{name}.sln", premake.vs2005_solution)
+		end,
 		
+		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "{name}.csproj", premake.vs2005_csproj)
+				premake.generate(prj, "{name}.csproj.user", premake.vs2005_csproj_user)
+			else
+				premake.generate(prj, "{name}.vcproj", premake.vs200x_vcproj)
+			end
+		end,
+		
+		oncleansolution = premake.vstudio.cleansolution,
+		oncleanproject  = premake.vstudio.cleanproject,
 		onclean = premake.vstudio_clean,
 	}
 
@@ -395,15 +424,20 @@
 			dotnet = { "msnet" },
 		},
 
-		solutiontemplates = {
-			{ ".sln",         premake.vs2005_solution },
-		},
-
-		projecttemplates = {
-			{ ".vcproj",      premake.vs200x_vcproj, function(this) return this.language ~= "C#" end },
-			{ ".csproj",      premake.vs2005_csproj, function(this) return this.language == "C#" end },
-			{ ".csproj.user", premake.vs2005_csproj_user, function(this) return this.language == "C#" end },
-		},
+		onsolution = function(sln)
+			premake.generate(sln, "{name}.sln", premake.vs2005_solution)
+		end,
 		
+		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "{name}.csproj", premake.vs2005_csproj)
+				premake.generate(prj, "{name}.csproj.user", premake.vs2005_csproj_user)
+			else
+				premake.generate(prj, "{name}.vcproj", premake.vs200x_vcproj)
+			end
+		end,
+		
+		oncleansolution = premake.vstudio.cleansolution,
+		oncleanproject  = premake.vstudio.cleanproject,
 		onclean = premake.vstudio_clean,
 	}
