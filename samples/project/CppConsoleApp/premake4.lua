@@ -12,9 +12,6 @@ project "CppConsoleApp"
 	libdirs { "../lib" }
 	links   { "CppSharedLib" }
 	
-	pchheader "stdafx.h"
-	pchsource "stdafx.cpp"
-	
 	configuration "Debug"
 		targetdir "../bin/debug (x64)"
 		links { "CppStaticLib" }

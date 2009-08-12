@@ -28,14 +28,6 @@ solution "PremakeTestbox"
 	
 
 
--- add to the built-in clean action
-
-	if _ACTION == "clean" then
-		os.rmdir("bin")
-	end
-
-
-
 -- add a new install action
 
 	newaction {

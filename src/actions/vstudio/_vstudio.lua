@@ -170,16 +170,12 @@
 		end
 	end
 
-		
-	function premake.vstudio_clean(solutions, projects, targets)
-		
-		for _,name in ipairs(targets) do
-			os.remove(name .. ".pdb")
-			os.remove(name .. ".idb")
-			os.remove(name .. ".ilk")
-			os.remove(name .. ".vshost.exe")
-			os.remove(name .. ".exe.manifest")
-		end		
+	function premake.vstudio.cleantarget(name)
+		os.remove(name .. ".pdb")
+		os.remove(name .. ".idb")
+		os.remove(name .. ".ilk")
+		os.remove(name .. ".vshost.exe")
+		os.remove(name .. ".exe.manifest")
 	end
 	
 	
@@ -340,7 +336,7 @@
 		
 		oncleansolution = premake.vstudio.cleansolution,
 		oncleanproject  = premake.vstudio.cleanproject,
-		onclean = premake.vstudio_clean,
+		oncleantarget   = premake.vstudio.cleantarget
 	}
 
 	newaction {
@@ -373,7 +369,7 @@
 		
 		oncleansolution = premake.vstudio.cleansolution,
 		oncleanproject  = premake.vstudio.cleanproject,
-		onclean = premake.vstudio_clean,
+		oncleantarget   = premake.vstudio.cleantarget
 	}
 
 	newaction {
@@ -406,7 +402,7 @@
 		
 		oncleansolution = premake.vstudio.cleansolution,
 		oncleanproject  = premake.vstudio.cleanproject,
-		onclean = premake.vstudio_clean,
+		oncleantarget   = premake.vstudio.cleantarget
 	}
 
 	newaction {
@@ -439,5 +435,5 @@
 		
 		oncleansolution = premake.vstudio.cleansolution,
 		oncleanproject  = premake.vstudio.cleanproject,
-		onclean = premake.vstudio_clean,
+		oncleantarget   = premake.vstudio.cleantarget
 	}
