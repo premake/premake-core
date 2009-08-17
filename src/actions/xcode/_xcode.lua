@@ -4,11 +4,13 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
+	premake.xcode = { }
+	
 	newaction 
 	{
 		trigger         = "xcode3",
 		shortname       = "Xcode 3",
-		description     = "Apple Xcode 3",
+		description     = "Apple Xcode 3 (experimental)",
 		os              = "macosx",
 
 		valid_kinds     = { "ConsoleApp" },
@@ -20,14 +22,10 @@
 		},
 
 		onsolution = function(sln)
-		end,
-		
-		onproject = function(prj)
+			premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.pbxproj)
 		end,
 		
 		oncleansolution = function(sln)
+			premake.clean.directory(sln, "%%.xcodeproj")
 		end,
-		
-		oncleanproject = function(prj)
-		end
 	}

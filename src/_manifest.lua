@@ -38,7 +38,6 @@
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
 		"actions/make/_make.lua",
-		"actions/xcode/_xcode.lua",
 		"actions/vstudio/vs2002_solution.lua",
 		"actions/vstudio/vs2002_csproj.lua",
 		"actions/vstudio/vs2002_csproj_user.lua",
@@ -48,5 +47,7 @@
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
 		"actions/vstudio/_vstudio.lua",
+		"actions/xcode/_xcode.lua",
+		"actions/xcode/xcode_pbxproj.lua",
 		"actions/clean/_clean.lua",
 	}

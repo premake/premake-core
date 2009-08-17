@@ -72,6 +72,11 @@
 		end
 
 		
+		-- Seed the random number generator so actions don't have to do it themselves
+		
+		math.randomseed(os.time())
+		
+		
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
 		
