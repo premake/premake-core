@@ -5,7 +5,35 @@
 --
 
 	local xcode = premake.xcode
-	
+
+
+--
+-- Retrieve the Xcode file type for a given file, based on the file extension.
+--
+-- @returns
+--    An Xcode file type, string.
+--
+
+	function xcode.getfiletype(fname)
+		local x = path.getextension(fname)
+		if x == ".c" then
+			return "sourcecode.c.c"
+		elseif x == ".css" then
+			return "text.css"
+		elseif x == ".gif" then
+			return "image.gif"
+		elseif x == ".h" then
+			return "sourcecode.c.h"
+		elseif x == ".html" then
+			return "text.html"
+		elseif x == ".lua" then
+			return "sourcecode.lua"
+		else
+			return "text"
+		end
+	end
+
+
 --
 -- Create a unique 12 byte ID.
 --
@@ -16,8 +44,8 @@
 	function xcode.newid()
 		return string.format("%04X%04X%04X%012d", math.random(0, 32767), math.random(0, 32767), math.random(0, 32767), os.time())
 	end
-	
-	
+
+
 --
 -- Generate the project.pbxproj file.
 --
@@ -27,23 +55,37 @@
 
 	function premake.xcode.pbxproj(sln)
 
-		-- Xcode munges all the files from every project together into one tree. Convert all project
-		-- files to absolute paths so I can identify duplicates, and assign a unique ID to each
-		local fileinfo = { }
+		-- Xcode munges all the files from all of the projects together into one tree. 
+		-- Convert the lists of file names from project relative to absolute, merge
+		-- duplicates, and add some additional Xcode specific metadata.
+		local files = { }
+		local names = { }
 		for prj in premake.eachproject(sln) do
 			for i, fname in ipairs(prj.files) do
-				fname = path.join(prj.location, fname)
-				prj.files[i] = fname
-				fileinfo[fname] = {
-					name    = path.getname(fname),
-					buildid = xcode.newid(),
-					fileid  = xcode.newid()
-				}
+				-- convert from project-relative to absolute path to catch duplicates
+				local fullpath = path.join(prj.location, fname)
+				
+				-- build metadata for file
+				local file = names[fullpath]
+				if not file then
+					file = {
+						path = fullpath,
+						name = path.getname(fname),
+						fileid = xcode.newid(),
+						buildid = xcode.newid()
+					}
+					
+					-- add it to the list and lookup table
+					table.insert(files, file)
+					names[fullpath] = file
+				end
+				
+				-- replace project's filename with the metadata object
+				prj.files[i] = file
 			end
 		end
-			
 		
-		-- Begin file generation
+		-- Begin file generation --
 		_p('// !$*UTF8*$!')
 		_p('{')
 		_p('	archiveVersion = 1;')
@@ -54,15 +96,9 @@
 		_p('')
 		
 		_p('/* Begin PBXBuildFile section */')
-		for prj in premake.eachproject(sln) do
-			for _, fname in ipairs(prj.files) do
-				local info = fileinfo[fname]
-				if not info.PBXBuildFile then
-					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */;', 
-						info.buildid, info.name, info.fileid, info.name)
-					info.PBXBuildFile = true
-				end
-			end
+		for _, file in ipairs(files) do
+			_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
+				file.buildid, file.name, file.fileid, file.name)
 		end
 		_p('/* End PBXBuildFile section */')
 		_p('')
@@ -81,12 +117,21 @@
 		_p('		};')
 		_p('/* End PBXCopyFilesBuildPhase section */')
 		_p('')
+		-- END HARDCODED --
+
+		
 		_p('/* Begin PBXFileReference section */')
-		_p('		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };')
+		for _, file in ipairs(files) do
+			_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; path = %s; sourceTree = "<group>"; };',
+				file.fileid, file.name, xcode.getfiletype(file.name), file.name)
+		end
 		_p('		8DD76FB20486AB0100D96B5E /* CConsoleApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = CConsoleApp; path = /Users/jason/Temp/CConsoleApp/build/Debug/CConsoleApp; sourceTree = "<absolute>"; };')
-		_p('		96E5FB021039E681000CC4EE /* premake4.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = premake4.lua; sourceTree = "<group>"; };')
+		-- HARDCODED ^ --
 		_p('/* End PBXFileReference section */')
 		_p('')
+				
+		
+		-- BEGIN HARDCODED --
 		_p('/* Begin PBXFrameworksBuildPhase section */')
 		_p('		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {')
 		_p('			isa = PBXFrameworksBuildPhase;')
@@ -97,18 +142,27 @@
 		_p('		};')
 		_p('/* End PBXFrameworksBuildPhase section */')
 		_p('')
+		-- END HARDCODED --
+		
+
 		_p('/* Begin PBXGroup section */')
-		_p('		08FB7794FE84155DC02AAC07 /* CConsoleApp */ = {')
-		_p('			isa = PBXGroup;')
-		_p('			children = (')
-		_p('				08FB7796FE84155DC02AAC07 /* main.c */,')
-		_p('				96E5FB021039E681000CC4EE /* premake4.lua */,')
-		_p('			);')
-		_p('			name = CConsoleApp;')
-		_p('			sourceTree = "<group>";')
-		_p('		};')
+		for prj in premake.eachproject(sln) do
+			_p('		08FB7794FE84155DC02AAC07 /* CConsoleApp */ = {')  -- < HARDCODED --
+			_p('\t\t\tisa = PBXGroup;')
+			_p('\t\t\tchildren = (')
+			for _, file in ipairs(prj.files) do
+				_p('\t\t\t\t%s /* %s */,', file.fileid, file.name)
+			end
+			_p('\t\t\t);')
+			_p('			name = CConsoleApp;')  -- < HARDCODED --
+			_p('\t\t\tsourceTree = "<group>";')
+			_p('\t\t};')
+		end
 		_p('/* End PBXGroup section */')
 		_p('')
+		
+				
+		-- BEGIN HARDCODED --
 		_p('/* Begin PBXNativeTarget section */')
 		_p('		8DD76FA90486AB0100D96B5E /* CConsoleApp */ = {')
 		_p('			isa = PBXNativeTarget;')
@@ -152,14 +206,8 @@
 		_p('\t\t\tisa = PBXSourcesBuildPhase;')
 		_p('\t\t\tbuildActionMask = 2147483647;')
 		_p('\t\t\tfiles = (')
-		for prj in premake.eachproject(sln) do
-			for _, fname in ipairs(prj.files) do
-				local info = fileinfo[fname]
-				if not info.PBXSourcesBuildPhase then
-					_p('\t\t\t\t%s /* %s in Sources */,', info.buildid, info.name)
-					info.PBXSourcesBuildPhase = true
-				end
-			end
+		for _, file in ipairs(files) do
+			_p('\t\t\t\t%s /* %s in Sources */,', file.buildid, file.name)
 		end
 		_p('\t\t\t);')
 		_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
