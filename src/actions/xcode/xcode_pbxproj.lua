@@ -71,9 +71,12 @@
 					file = {
 						path = fullpath,
 						name = path.getname(fname),
-						fileid = xcode.newid(),
-						buildid = xcode.newid()
+						id = xcode.newid()
 					}
+					
+					if path.iscppfile(fname) then
+						file.buildid = xcode.newid()
+					end
 					
 					-- add it to the list and lookup table
 					table.insert(files, file)
@@ -97,8 +100,10 @@
 		
 		_p('/* Begin PBXBuildFile section */')
 		for _, file in ipairs(files) do
-			_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
-				file.buildid, file.name, file.fileid, file.name)
+			if file.buildid then
+				_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
+					file.buildid, file.name, file.id, file.name)
+			end
 		end
 		_p('/* End PBXBuildFile section */')
 		_p('')
@@ -123,7 +128,7 @@
 		_p('/* Begin PBXFileReference section */')
 		for _, file in ipairs(files) do
 			_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; path = %s; sourceTree = "<group>"; };',
-				file.fileid, file.name, xcode.getfiletype(file.name), file.name)
+				file.id, file.name, xcode.getfiletype(file.name), file.name)
 		end
 		_p('		8DD76FB20486AB0100D96B5E /* CConsoleApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = CConsoleApp; path = /Users/jason/Temp/CConsoleApp/build/Debug/CConsoleApp; sourceTree = "<absolute>"; };')
 		-- HARDCODED ^ --
@@ -151,7 +156,7 @@
 			_p('\t\t\tisa = PBXGroup;')
 			_p('\t\t\tchildren = (')
 			for _, file in ipairs(prj.files) do
-				_p('\t\t\t\t%s /* %s */,', file.fileid, file.name)
+				_p('\t\t\t\t%s /* %s */,', file.id, file.name)
 			end
 			_p('\t\t\t);')
 			_p('			name = CConsoleApp;')  -- < HARDCODED --
@@ -207,7 +212,9 @@
 		_p('\t\t\tbuildActionMask = 2147483647;')
 		_p('\t\t\tfiles = (')
 		for _, file in ipairs(files) do
-			_p('\t\t\t\t%s /* %s in Sources */,', file.buildid, file.name)
+			if file.buildid then
+				_p('\t\t\t\t%s /* %s in Sources */,', file.buildid, file.name)
+			end
 		end
 		_p('\t\t\t);')
 		_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
