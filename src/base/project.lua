@@ -8,6 +8,23 @@
 	
 
 --
+-- Builds and returns a tree from the project file structure.
+--
+
+	function premake.project.buildsourcetree(prj)
+		local tr = premake.tree.new(prj.name)
+		tr.project = prj
+		
+		for _, fname in ipairs(prj.files) do
+			local node = premake.tree.add(tr, fname)
+			node.path = fname
+		end
+		
+		return tr
+	end
+
+
+--
 -- Returns an iterator for a set of build configuration settings. If a platform is
 -- specified, settings specific to that platform and build configuration pair are
 -- returned.

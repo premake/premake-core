@@ -17,6 +17,7 @@
 		"base/globals.lua",
 		"base/action.lua",
 		"base/option.lua",
+		"base/tree.lua",
 		"base/project.lua",
 		"base/configs.lua",
 		"base/api.lua",

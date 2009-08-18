@@ -104,6 +104,13 @@
 	end
 	
 	
+	function test.isnotnil(value)
+		if (value == nil) then
+			test.fail("expected not nil")
+		end
+	end
+	
+	
 	function test.istrue(value)
 		if (not value) then
 			test.fail("expected true but was false")

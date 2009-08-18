@@ -26,6 +26,7 @@
 	dofile("test_gmake_cpp.lua")
 	dofile("test_gmake_cs.lua")
 	dofile("base/test_action.lua")
+	dofile("base/test_tree.lua")
 	dofile("actions/test_clean.lua")
 
 

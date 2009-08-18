@@ -5,6 +5,7 @@
 --
 
 	local xcode = premake.xcode
+	local tree  = premake.tree
 
 
 --
@@ -35,7 +36,7 @@
 
 
 --
--- Create a unique 12 byte ID.
+-- Retrieves a unique 12 byte ID for an object.
 --
 -- @returns
 --    A 24-character string representing the 12 byte ID.
@@ -55,38 +56,29 @@
 
 	function premake.xcode.pbxproj(sln)
 
-		-- Xcode munges all the files from all of the projects together into one tree. 
-		-- Convert the lists of file names from project relative to absolute, merge
-		-- duplicates, and add some additional Xcode specific metadata.
-		local files = { }
-		local names = { }
+		-- Xcode merges all of the projects together into a single, logical tree. Assign IDs to
+		-- all objects and convert paths from project-relative to solution-relative to compensate
+		local root = tree.new()
 		for prj in premake.eachproject(sln) do
-			for i, fname in ipairs(prj.files) do
-				-- convert from project-relative to absolute path to catch duplicates
-				local fullpath = path.join(prj.location, fname)
+			local tr = premake.project.buildsourcetree(prj)
+			tr.id = xcode.newid()
+			tree.insert(root, tr)
+			
+			tree.traverse(tr, {
+				onnode = function(node)
+					node.id = xcode.newid()
+				end,
 				
-				-- build metadata for file
-				local file = names[fullpath]
-				if not file then
-					file = {
-						path = fullpath,
-						name = path.getname(fname),
-						id = xcode.newid()
-					}
-					
-					if path.iscppfile(fname) then
-						file.buildid = xcode.newid()
+				onleafnode = function(node)
+					node.path = path.getrelative(sln.location, path.join(prj.location, node.path))
+					-- is this a buildable file? Probably needs to be smarter
+					if path.iscppfile(node.name) then
+						node.buildid = xcode.newid()
 					end
-					
-					-- add it to the list and lookup table
-					table.insert(files, file)
-					names[fullpath] = file
 				end
-				
-				-- replace project's filename with the metadata object
-				prj.files[i] = file
-			end
+			})
 		end
+		
 		
 		-- Begin file generation --
 		_p('// !$*UTF8*$!')
@@ -99,12 +91,14 @@
 		_p('')
 		
 		_p('/* Begin PBXBuildFile section */')
-		for _, file in ipairs(files) do
-			if file.buildid then
-				_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
-					file.buildid, file.name, file.id, file.name)
+		tree.traverse(root, {
+			onleafnode = function(node)
+				if node.buildid then
+					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
+						node.buildid, node.name, node.id, node.name)
+				end
 			end
-		end
+		})
 		_p('/* End PBXBuildFile section */')
 		_p('')
 
@@ -126,10 +120,12 @@
 
 		
 		_p('/* Begin PBXFileReference section */')
-		for _, file in ipairs(files) do
-			_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; path = %s; sourceTree = "<group>"; };',
-				file.id, file.name, xcode.getfiletype(file.name), file.name)
-		end
+		tree.traverse(root, {
+			onleafnode = function(node)
+				_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; path = %s; sourceTree = "<group>"; };',
+					node.id, node.name, xcode.getfiletype(node.name), node.path)
+			end
+		})
 		_p('		8DD76FB20486AB0100D96B5E /* CConsoleApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = CConsoleApp; path = /Users/jason/Temp/CConsoleApp/build/Debug/CConsoleApp; sourceTree = "<absolute>"; };')
 		-- HARDCODED ^ --
 		_p('/* End PBXFileReference section */')
@@ -151,13 +147,15 @@
 		
 
 		_p('/* Begin PBXGroup section */')
-		for prj in premake.eachproject(sln) do
+		for _, prjnode in ipairs(root.children) do
 			_p('		08FB7794FE84155DC02AAC07 /* CConsoleApp */ = {')  -- < HARDCODED --
 			_p('\t\t\tisa = PBXGroup;')
 			_p('\t\t\tchildren = (')
-			for _, file in ipairs(prj.files) do
-				_p('\t\t\t\t%s /* %s */,', file.id, file.name)
-			end
+			tree.traverse(prjnode, {
+				onleafnode = function(node)
+					_p('\t\t\t\t%s /* %s */,', node.id, node.name)
+				end
+			})
 			_p('\t\t\t);')
 			_p('			name = CConsoleApp;')  -- < HARDCODED --
 			_p('\t\t\tsourceTree = "<group>";')
@@ -207,18 +205,22 @@
 		-- END HARDCODED --
 		
 		_p('/* Begin PBXSourcesBuildPhase section */')
-		_p('\t\t8DD76FAB0486AB0100D96B5E /* Sources */ = {')
-		_p('\t\t\tisa = PBXSourcesBuildPhase;')
-		_p('\t\t\tbuildActionMask = 2147483647;')
-		_p('\t\t\tfiles = (')
-		for _, file in ipairs(files) do
-			if file.buildid then
-				_p('\t\t\t\t%s /* %s in Sources */,', file.buildid, file.name)
-			end
+		for _, prjnode in ipairs(root.children) do
+			_p('\t\t8DD76FAB0486AB0100D96B5E /* Sources */ = {')   -- < HARDCODED --
+			_p('\t\t\tisa = PBXSourcesBuildPhase;')
+			_p('\t\t\tbuildActionMask = 2147483647;')
+			_p('\t\t\tfiles = (')
+			tree.traverse(prjnode, {
+				onleafnode = function(node)
+					if node.buildid then
+						_p('\t\t\t\t%s /* %s in Sources */,', node.buildid, node.name)
+					end
+				end
+			})
+			_p('\t\t\t);')
+			_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
+			_p('\t\t};')
 		end
-		_p('\t\t\t);')
-		_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
-		_p('\t\t};')
 		_p('/* End PBXSourcesBuildPhase section */')
 		_p('')
 
