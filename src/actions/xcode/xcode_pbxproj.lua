@@ -64,7 +64,6 @@
 			tree.insert(root, tr)
 
 			tr.id = xcode.newid()
-			tr.copyphaseid = xcode.newid()
 			
 			tree.traverse(tr, {
 				onnode = function(node)
@@ -104,22 +103,6 @@
 		_p('/* End PBXBuildFile section */')
 		_p('')
 
-
-		_p('/* Begin PBXCopyFilesBuildPhase section */')
-		for _, prjnode in ipairs(root.children) do
-			_p('\t\t%s /* CopyFiles */ = {', prjnode.copyphaseid)
-			_p('\t\t\tisa = PBXCopyFilesBuildPhase;')
-			_p('\t\t\tbuildActionMask = 8;')
-			_p('\t\t\tdstPath = /usr/share/man/man1/;')
-			_p('\t\t\tdstSubfolderSpec = 0;')
-			_p('\t\t\tfiles = (')
-			_p('\t\t\t);')
-			_p('\t\t\trunOnlyForDeploymentPostprocessing = 1;')
-			_p('\t\t};')
-		end
-		_p('/* End PBXCopyFilesBuildPhase section */')
-		_p('')
-		
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(root, {
 			onleafnode = function(node)
@@ -174,7 +157,6 @@
 		_p('			buildPhases = (')
 		_p('				8DD76FAB0486AB0100D96B5E /* Sources */,')
 		_p('				8DD76FAD0486AB0100D96B5E /* Frameworks */,')
-		_p('				8DD76FAF0486AB0100D96B5E /* CopyFiles */,')
 		_p('			);')
 		_p('			buildRules = (')
 		_p('			);')
