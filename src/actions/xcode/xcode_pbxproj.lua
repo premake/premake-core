@@ -11,6 +11,8 @@
 --
 -- Return the Xcode type for a given file, based on the file extension.
 --
+-- @param fname
+--    The file name to identify.
 -- @returns
 --    An Xcode file type, string.
 --
@@ -31,6 +33,22 @@
 			return "sourcecode.lua"
 		else
 			return "text"
+		end
+	end
+
+
+--
+-- Return the Xcode target type, based on the target file extension.
+--
+-- @param kind
+--    The target kind to identify.
+-- @returns
+--    An Xcode target type, string.
+--
+
+	function xcode.gettargettype(kind)
+		if kind == "ConsoleApp" then
+			return "compiled.mach-o.executable"
 		end
 	end
 
@@ -60,12 +78,14 @@
 		-- all objects and convert paths from project-relative to solution-relative to compensate
 		local root = tree.new()
 		for prj in premake.eachproject(sln) do
-			local tr = premake.project.buildsourcetree(prj)
-			tree.insert(root, tr)
+			local prjnode = premake.project.buildsourcetree(prj)
+			tree.insert(root, prjnode)
 
-			tr.id = xcode.newid()
+			-- assign IDs to the project
+			prjnode.id = xcode.newid()
 			
-			tree.traverse(tr, {
+			-- assign IDs to all files in the project
+			tree.traverse(prjnode, {
 				onnode = function(node)
 					node.id = xcode.newid()
 				end,
@@ -78,6 +98,28 @@
 					end
 				end
 			})
+		end
+
+		-- Targets live outside the main source tree. In general there is one target per Premake
+		-- project; projects with multiple kinds create multiple targets
+		local targets = { }
+		for prj in premake.eachproject(sln) do
+			-- keep track of which kinds have already been created
+			local kinds = { }
+			for cfg in premake.eachconfig(prj) do
+				if not table.contains(kinds, cfg.kind) then					
+					-- create a new target
+					table.insert(targets, {
+						project = prj,
+						kind = cfg.kind,
+						name = prj.name .. path.getextension(cfg.buildtarget.name),
+						id = xcode.newid(),
+					})
+
+					-- don't create another target for this same kind
+					table.insert(kinds, cfg.kind)
+				end
+			end
 		end
 		
 		
@@ -110,8 +152,10 @@
 					node.id, node.name, xcode.getfiletype(node.name), node.path)
 			end
 		})
-		_p('		8DD76FB20486AB0100D96B5E /* CConsoleApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = CConsoleApp; path = /Users/jason/Temp/CConsoleApp/build/Debug/CConsoleApp; sourceTree = "<absolute>"; };')
-		-- HARDCODED ^ --
+		for _, target in ipairs(targets) do
+			_p('\t\t%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+				target.id, target.name, xcode.gettargettype(target.kind), target.name)
+		end
 		_p('/* End PBXFileReference section */')
 		_p('')
 				
@@ -148,28 +192,33 @@
 		_p('/* End PBXGroup section */')
 		_p('')
 		
-				
-		-- BEGIN HARDCODED --
 		_p('/* Begin PBXNativeTarget section */')
-		_p('		8DD76FA90486AB0100D96B5E /* CConsoleApp */ = {')
-		_p('			isa = PBXNativeTarget;')
-		_p('			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "CConsoleApp" */;')
-		_p('			buildPhases = (')
-		_p('				8DD76FAB0486AB0100D96B5E /* Sources */,')
-		_p('				8DD76FAD0486AB0100D96B5E /* Frameworks */,')
-		_p('			);')
-		_p('			buildRules = (')
-		_p('			);')
-		_p('			dependencies = (')
-		_p('			);')
-		_p('			name = CConsoleApp;')
-		_p('			productInstallPath = "$(HOME)/bin";')
-		_p('			productName = CConsoleApp;')
-		_p('			productReference = 8DD76FB20486AB0100D96B5E /* CConsoleApp */;')
-		_p('			productType = "com.apple.product-type.tool";')
-		_p('		};')
-		_p('/* End PBXNativeTarget section */')
+		for _, target in ipairs(targets) do
+			-- BEGIN HARDCODED --
+			_p('\t\t8DD76FA90486AB0100D96B5E /* %s */ = {', target.name)
+			_p('\t\t\tisa = PBXNativeTarget;')
+			_p('\t\t\tbuildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "%s" */;', target.name)
+			_p('\t\t\tbuildPhases = (')
+			_p('\t\t\t\t8DD76FAB0486AB0100D96B5E /* Sources */,')
+			_p('\t\t\t\t8DD76FAD0486AB0100D96B5E /* Frameworks */,')
+			_p('\t\t\t);')
+			_p('\t\t\tbuildRules = (')
+			_p('\t\t\t);')
+			_p('\t\t\tdependencies = (')
+			_p('\t\t\t);')
+			_p('\t\t\tname = CConsoleApp;')
+			_p('\t\t\tproductInstallPath = "$(HOME)/bin";')
+			_p('\t\t\tproductName = CConsoleApp;')
+			_p('\t\t\tproductReference = %s /* %s */;', target.id, target.name)
+			_p('\t\t\tproductType = "com.apple.product-type.tool";')
+			_p('\t\t};')
+			-- END HARDCODED --
+		end
+		_p('/* End PBXProject section */')
 		_p('')
+
+
+		-- BEGIN HARDCODED --
 		_p('/* Begin PBXProject section */')
 		_p('		08FB7793FE84155DC02AAC07 /* Project object */ = {')
 		_p('			isa = PBXProject;')
