@@ -9,7 +9,7 @@
 
 
 --
--- Retrieve the Xcode file type for a given file, based on the file extension.
+-- Return the Xcode type for a given file, based on the file extension.
 --
 -- @returns
 --    An Xcode file type, string.
@@ -61,8 +61,10 @@
 		local root = tree.new()
 		for prj in premake.eachproject(sln) do
 			local tr = premake.project.buildsourcetree(prj)
-			tr.id = xcode.newid()
 			tree.insert(root, tr)
+
+			tr.id = xcode.newid()
+			tr.copyphaseid = xcode.newid()
 			
 			tree.traverse(tr, {
 				onnode = function(node)
@@ -103,21 +105,20 @@
 		_p('')
 
 
-		-- BEGIN HARDCODED --
 		_p('/* Begin PBXCopyFilesBuildPhase section */')
-		_p('		8DD76FAF0486AB0100D96B5E /* CopyFiles */ = {')
-		_p('			isa = PBXCopyFilesBuildPhase;')
-		_p('			buildActionMask = 8;')
-		_p('			dstPath = /usr/share/man/man1/;')
-		_p('			dstSubfolderSpec = 0;')
-		_p('			files = (')
-		_p('			);')
-		_p('			runOnlyForDeploymentPostprocessing = 1;')
-		_p('		};')
+		for _, prjnode in ipairs(root.children) do
+			_p('\t\t%s /* CopyFiles */ = {', prjnode.copyphaseid)
+			_p('\t\t\tisa = PBXCopyFilesBuildPhase;')
+			_p('\t\t\tbuildActionMask = 8;')
+			_p('\t\t\tdstPath = /usr/share/man/man1/;')
+			_p('\t\t\tdstSubfolderSpec = 0;')
+			_p('\t\t\tfiles = (')
+			_p('\t\t\t);')
+			_p('\t\t\trunOnlyForDeploymentPostprocessing = 1;')
+			_p('\t\t};')
+		end
 		_p('/* End PBXCopyFilesBuildPhase section */')
 		_p('')
-		-- END HARDCODED --
-
 		
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(root, {
