@@ -113,7 +113,7 @@
 						project = prj,
 						kind = cfg.kind,
 						name = prj.name .. path.getextension(cfg.buildtarget.name),
-						id = xcode.newid(),
+						fileid = xcode.newid(),
 					})
 
 					-- don't create another target for this same kind
@@ -156,13 +156,12 @@
 		})
 		for _, target in ipairs(targets) do
 			_p('\t\t%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-				target.id, target.name, xcode.gettargettype(target.kind), target.name)
+				target.fileid, target.name, xcode.gettargettype(target.kind), target.name)
 		end
 		_p('/* End PBXFileReference section */')
 		_p('')
 
 
-		-- BEGIN HARDCODED --
 		_p('/* Begin PBXFrameworksBuildPhase section */')
 		_p('		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {')
 		_p('			isa = PBXFrameworksBuildPhase;')
@@ -173,12 +172,11 @@
 		_p('		};')
 		_p('/* End PBXFrameworksBuildPhase section */')
 		_p('')
-		-- END HARDCODED --
 		
 
 		_p('/* Begin PBXGroup section */')
 		for _, prjnode in ipairs(root.children) do
-			_p('		08FB7794FE84155DC02AAC07 /* CConsoleApp */ = {')  -- < HARDCODED --
+			_p('\t\t08FB7794FE84155DC02AAC07 /* %s */ = {', sln.name)
 			_p('\t\t\tisa = PBXGroup;')
 			_p('\t\t\tchildren = (')
 			tree.traverse(prjnode, {
@@ -187,12 +185,13 @@
 				end
 			})
 			_p('\t\t\t);')
-			_p('			name = CConsoleApp;')  -- < HARDCODED --
+			_p('\t\t\tname = %s;', sln.name)
 			_p('\t\t\tsourceTree = "<group>";')
 			_p('\t\t};')
 		end
 		_p('/* End PBXGroup section */')
 		_p('')
+
 		
 		_p('/* Begin PBXNativeTarget section */')
 		for _, target in ipairs(targets) do
@@ -211,7 +210,7 @@
 			_p('\t\t\tname = CConsoleApp;')
 			_p('\t\t\tproductInstallPath = "$(HOME)/bin";')
 			_p('\t\t\tproductName = CConsoleApp;')
-			_p('\t\t\tproductReference = %s /* %s */;', target.id, target.name)
+			_p('\t\t\tproductReference = %s /* %s */;', target.fileid, target.name)
 			_p('\t\t\tproductType = "com.apple.product-type.tool";')
 			_p('\t\t};')
 			-- END HARDCODED --
