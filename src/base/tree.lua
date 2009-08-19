@@ -26,25 +26,28 @@
 --
 -- Add a new node to the tree, or returns the current node if it already exists.
 --
--- @param t
+-- @param tr
 --    The tree to contain the new node.
--- @param name
---    The name of the new node, as a file path
+-- @param p
+--    The path of the new node.
 -- @returns
 --    The new tree node.
 --
 
-	function premake.tree.add(t, name)
-		local dir = path.getdirectory(name)
+	function premake.tree.add(tr, p)
+		-- locate the parent node (or keep the root)
+		local dir = path.getdirectory(p)
 		if dir ~= "." then
-			t = premake.tree.add(t, dir)
-			name = path.getname(name)
+			tr = premake.tree.add(tr, dir)
 		end
 		
-		local child = t.children[name]
+		-- add it if it doesn't exist already
+		local name = path.getname(p)
+		local child = tr.children[name]
 		if not child then
 			child = premake.tree.new(name)
-			premake.tree.insert(t, child)
+			child.path = p
+			premake.tree.insert(tr, child)
 		end
 		return child
 	end
@@ -64,6 +67,7 @@
 		if child.name then
 			parent.children[child.name] = child
 		end
+		child.parent = parent
 	end
 
 
@@ -75,21 +79,36 @@
 -- @param fn
 --    A collection of callback functions, which may contain:
 --
---    onnode(node, depth) - called on each node encountered
+--    onnode(node, depth)   - called on each node encountered
+--    onleaf(node, depth)   - called only on leaf nodes
+--    onbranch(node, depth) - called only on branch nodes
 --
---    onleafnode(node, depth) - called only on leaf nodes
+-- @param includeroot
+--    True to include the root node in the traversal, otherwise it will be skipped.
 --
 
-	function premake.tree.traverse(t, fn)
-		local function traversal(t, fn, depth)
-			for _, node in ipairs(t.children) do
-				if fn.onnode then fn.onnode(node, depth) end
-				if #node.children > 0 then
-					traversal(node, fn, depth + 1)
-				else
-					if fn.onleafnode then fn.onleafnode(node, depth) end
-				end
+	function premake.tree.traverse(t, fn, includeroot)
+
+		local donode, dochildren
+		donode = function(node, fn, depth)
+			if fn.onnode then fn.onnode(node, depth) end
+			if #node.children > 0 then
+				if fn.onbranch then fn.onbranch(node, depth) end
+				dochildren(node, fn, depth + 1)
+			else
+				if fn.onleaf then fn.onleaf(node, depth) end
 			end
 		end
-		traversal(t, fn, 0)
+		
+		dochildren = function(parent, fn, depth)
+			for _, node in ipairs(parent.children) do
+				donode(node, fn, depth)
+			end
+		end
+		
+		if includeroot then
+			donode(t, fn, 0)
+		else
+			dochildren(t, fn, 0)
+		end
 	end

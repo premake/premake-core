@@ -76,7 +76,7 @@
 
 		-- Xcode merges all of the projects together into a single, logical tree. Assign IDs to
 		-- all objects and convert paths from project-relative to solution-relative to compensate
-		local root = tree.new()
+		local root = tree.new(sln.name)
 		for prj in premake.eachproject(sln) do
 			local prjnode = premake.project.buildsourcetree(prj)
 			tree.insert(root, prjnode)
@@ -90,7 +90,7 @@
 					node.id = xcode.newid()
 				end,
 				
-				onleafnode = function(node)
+				onleaf = function(node)
 					node.path = path.getrelative(sln.location, path.join(prj.location, node.path))
 					-- is this a buildable file? Probably needs to be smarter
 					if path.iscppfile(node.name) then
@@ -136,7 +136,7 @@
 
 		_p('/* Begin PBXBuildFile section */')
 		tree.traverse(root, {
-			onleafnode = function(node)
+			onleaf = function(node)
 				if node.buildid then
 					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
 						node.buildid, node.name, node.id, node.name)
@@ -149,9 +149,10 @@
 
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(root, {
-			onleafnode = function(node)
-				_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; path = %s; sourceTree = "<group>"; };',
-					node.id, node.name, xcode.getfiletype(node.name), node.path)
+			onleaf = function(node)
+				_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+					node.id, node.name, xcode.getfiletype(node.name), node.name,
+					iif(node.parent.path, node.name, node.path))
 			end
 		})
 		for _, target in ipairs(targets) do
@@ -175,20 +176,25 @@
 		
 
 		_p('/* Begin PBXGroup section */')
-		for _, prjnode in ipairs(root.children) do
-			_p('\t\t08FB7794FE84155DC02AAC07 /* %s */ = {', sln.name)
-			_p('\t\t\tisa = PBXGroup;')
-			_p('\t\t\tchildren = (')
-			tree.traverse(prjnode, {
-				onleafnode = function(node)
-					_p('\t\t\t\t%s /* %s */,', node.id, node.name)
+		-- if there is only one project node, hide it by using it as my root
+		tree.traverse(iif(#root.children == 1, root.children[1], root), {
+			onbranch = function(node, depth)
+				-- Xcode has a hardcoded ID for the root group
+				_p('\t\t%s /* %s */ = {', iif(depth == 0, "08FB7794FE84155DC02AAC07", node.id), node.name)
+				_p('\t\t\tisa = PBXGroup;')
+				_p('\t\t\tchildren = (')
+				for _, child in ipairs(node.children) do
+					_p('\t\t\t\t%s /* %s */,', child.id, child.name)
 				end
-			})
-			_p('\t\t\t);')
-			_p('\t\t\tname = %s;', sln.name)
-			_p('\t\t\tsourceTree = "<group>";')
-			_p('\t\t};')
-		end
+				_p('\t\t\t);')
+				_p('\t\t\tname = %s;', node.name)
+				if node.path then
+					_p('\t\t\tpath = %s;', iif(node.parent.path, node.name, node.path))
+				end
+				_p('\t\t\tsourceTree = "<group>";')
+				_p('\t\t};')
+			end
+		}, true)
 		_p('/* End PBXGroup section */')
 		_p('')
 
@@ -244,7 +250,7 @@
 			_p('\t\t\tbuildActionMask = 2147483647;')
 			_p('\t\t\tfiles = (')
 			tree.traverse(prjnode, {
-				onleafnode = function(node)
+				onleaf = function(node)
 					if node.buildid then
 						_p('\t\t\t\t%s /* %s in Sources */,', node.buildid, node.name)
 					end

@@ -17,7 +17,6 @@
 		
 		for _, fname in ipairs(prj.files) do
 			local node = premake.tree.add(tr, fname)
-			node.path = fname
 		end
 		
 		return tr
