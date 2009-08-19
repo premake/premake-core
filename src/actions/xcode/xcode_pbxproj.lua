@@ -132,7 +132,8 @@
 		_p('	objectVersion = 45;')
 		_p('	objects = {')
 		_p('')
-		
+
+
 		_p('/* Begin PBXBuildFile section */')
 		tree.traverse(root, {
 			onleafnode = function(node)
@@ -144,6 +145,7 @@
 		})
 		_p('/* End PBXBuildFile section */')
 		_p('')
+
 
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(root, {
@@ -158,8 +160,8 @@
 		end
 		_p('/* End PBXFileReference section */')
 		_p('')
-				
-		
+
+
 		-- BEGIN HARDCODED --
 		_p('/* Begin PBXFrameworksBuildPhase section */')
 		_p('		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {')
