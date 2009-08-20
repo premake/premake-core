@@ -49,28 +49,6 @@
 
 
 --
--- Return the root of the project tree. In a solution with multiple projects,
--- this will return the solution node, and each project will have their own
--- group in the file tree. If there is only one project, skip over the 
--- otherwise empty solution node and return the project node instead, to
--- remove an unnecessary level from the source tree.
---
--- @param tr
---    The project tree.
--- @returns
---    The appropriate root node as described above.
---
-
-	function xcode.getprojectroot(tr)
-		if #tr.children == 1 then
-			return tr.children[1]
-		else
-			return tr
-		end
-	end
-
-
---
 -- Return the Xcode target type, based on the target file extension.
 --
 -- @param kind
@@ -108,8 +86,8 @@
 
 	function premake.xcode.pbxproj(sln)
 
-		-- Create a project tree to contain the solution, each project, and all of the
-		-- groups and files within those projects, with Xcode-specific metadata attached
+		-- Create a tree to contain the solution, each project, and all of the groups and
+		-- files within those projects, with Xcode-specific metadata attached
 		local root = tree.new(sln.name)
 		root.id = xcode.newid()
 		for prj in premake.eachproject(sln) do
@@ -159,7 +137,28 @@
 			end
 		end
 		
+		-- Create IDs for configuration section and configuration blocks for each
+		-- target, as well as a root level configuration
+		local function assigncfgs(n)
+			n.cfgsectionid = xcode.newid()
+			n.cfgids = { }
+			for _, cfgname in ipairs(sln.configurations) do
+				n.cfgids[cfgname] = xcode.newid()
+			end
+		end
+		assigncfgs(root)
+		for _, target in ipairs(targets) do
+			assigncfgs(target)
+		end
 		
+
+		-- If this solution has only a single project, use that project as the root
+		-- of the source tree to avoid the otherwise empty solution node. If there are
+		-- multiple projects, keep the solution node as the root so each project can
+		-- have its own top-level group for its files.
+		local prjroot = iif(#root.children == 1, root.children[1], root)
+
+
 		-- Begin file generation --
 		_p('// !$*UTF8*$!')
 		_p('{')
@@ -213,7 +212,7 @@
 		
 
 		_p('/* Begin PBXGroup section */')
-		tree.traverse(xcode.getprojectroot(root), {
+		tree.traverse(prjroot, {
 			onbranch = function(node, depth)
 				_p('\t\t%s /* %s */ = {', node.id, node.name)
 				_p('\t\t\tisa = PBXGroup;')
@@ -262,12 +261,9 @@
 		_p('/* Begin PBXProject section */')
 		_p('\t\t08FB7793FE84155DC02AAC07 /* Project object */ = {')
 		_p('\t\t\tisa = PBXProject;')
-		-- BEGIN HARDCODED --
-		_p('\t\t\tbuildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "CConsoleApp" */;')
-		-- END HARDCODED --
+		_p('\t\t\tbuildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', prjroot.name)
 		_p('\t\t\tcompatibilityVersion = "Xcode 3.1";')
 		_p('\t\t\thasScannedForEncodings = 1;')
-		local prjroot = xcode.getprojectroot(root)
 		_p('\t\t\tmainGroup = %s /* %s */;', prjroot.id, prjroot.name)
 		_p('\t\t\tprojectDirPath = "";')
 		_p('\t\t\tprojectRoot = "";')
@@ -328,35 +324,29 @@
 		_p('			};')
 		_p('			name = Release;')
 		_p('		};')
-		_p('		1DEB928A08733DD80010E9CD /* Debug */ = {')
-		_p('			isa = XCBuildConfiguration;')
-		_p('			buildSettings = {')
-		_p('				ARCHS = "$(ARCHS_STANDARD_32_BIT)";')
-		_p('				GCC_C_LANGUAGE_STANDARD = c99;')
-		_p('				GCC_OPTIMIZATION_LEVEL = 0;')
-		_p('				GCC_WARN_ABOUT_RETURN_TYPE = YES;')
-		_p('				GCC_WARN_UNUSED_VARIABLE = YES;')
-		_p('				ONLY_ACTIVE_ARCH = YES;')
-		_p('				PREBINDING = NO;')
-		_p('				SDKROOT = macosx10.5;')
-		_p('			};')
-		_p('			name = Debug;')
-		_p('		};')
-		_p('		1DEB928B08733DD80010E9CD /* Release */ = {')
-		_p('			isa = XCBuildConfiguration;')
-		_p('			buildSettings = {')
-		_p('				ARCHS = "$(ARCHS_STANDARD_32_BIT)";')
-		_p('				GCC_C_LANGUAGE_STANDARD = c99;')
-		_p('				GCC_WARN_ABOUT_RETURN_TYPE = YES;')
-		_p('				GCC_WARN_UNUSED_VARIABLE = YES;')
-		_p('				PREBINDING = NO;')
-		_p('				SDKROOT = macosx10.5;')
-		_p('			};')
-		_p('			name = Release;')
-		_p('		};')
+		-- END HARDCODED --
+
+		for _, cfgname in ipairs(sln.configurations) do
+			_p('\t\t%s /* %s */ = {', root.cfgids[cfgname], cfgname)
+			_p('\t\t\tisa = XCBuildConfiguration;')
+			_p('\t\t\tbuildSettings = {')
+			_p('\t\t\t\tARCHS = "$(ARCHS_STANDARD_32_BIT)";')
+			_p('\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;')
+			_p('\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;')
+			_p('\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;')
+			_p('\t\t\t\tONLY_ACTIVE_ARCH = YES;')
+			_p('\t\t\t\tPREBINDING = NO;')
+			_p('\t\t\t\tSDKROOT = macosx10.5;')
+			_p('\t\t\t};')
+			_p('\t\t\tname = %s;', cfgname)
+			_p('\t\t};')
+		end
 		_p('/* End XCBuildConfiguration section */')
 		_p('')
+		
+		
 		_p('/* Begin XCConfigurationList section */')
+		-- BEGIN HARDCODED -- 
 		_p('		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "CConsoleApp" */ = {')
 		_p('			isa = XCConfigurationList;')
 		_p('			buildConfigurations = (')
@@ -366,18 +356,23 @@
 		_p('			defaultConfigurationIsVisible = 0;')
 		_p('			defaultConfigurationName = Release;')
 		_p('		};')
-		_p('		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "CConsoleApp" */ = {')
-		_p('			isa = XCConfigurationList;')
-		_p('			buildConfigurations = (')
-		_p('				1DEB928A08733DD80010E9CD /* Debug */,')
-		_p('				1DEB928B08733DD80010E9CD /* Release */,')
-		_p('			);')
-		_p('			defaultConfigurationIsVisible = 0;')
-		_p('			defaultConfigurationName = Release;')
-		_p('		};')
+		-- END HARDCODED --
+		
+		_p('\t\t1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', prjroot.name)
+		_p('\t\t\tisa = XCConfigurationList;')
+		_p('\t\t\tbuildConfigurations = (')
+		for _, cfgname in ipairs(sln.configurations) do
+			_p('\t\t\t\t%s /* %s */,', root.cfgids[cfgname], cfgname)
+		end
+		_p('\t\t\t);')
+		_p('\t\t\tdefaultConfigurationIsVisible = 0;')
+		_p('\t\t\tdefaultConfigurationName = Release;')
+		_p('\t\t};')
 		_p('/* End XCConfigurationList section */')
-		_p('	};')
-		_p('	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
-		_p('}')
 
+
+		_p('\t};')
+		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
+		_p('}')
+		
 	end
