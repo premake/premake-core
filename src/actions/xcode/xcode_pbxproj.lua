@@ -311,7 +311,7 @@
 				_p('\t\t\tbuildSettings = {')
 				_p('\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;')
 				_p('\t\t\t\tCONFIGURATION_BUILD_DIR = %s;', cfg.buildtarget.directory)
-				_p('\t\t\t\tCONFIGURATION_TEMP_DIR = %s;', cfg.objectsdir)
+--				_p('\t\t\t\tCONFIGURATION_TEMP_DIR = %s;', cfg.objectsdir)
 				if cfg.flags.Symbols then
 					_p('\t\t\t\tCOPY_PHASE_STRIP = NO;')
 				end
@@ -326,6 +326,7 @@
 					_p('\t\t\t\t);')
 				end
 				_p('\t\t\t\tPRODUCT_NAME = %s;', cfg.buildtarget.name)
+				_p('\t\t\t\tSYMROOT = %s;', cfg.objectsdir)
 				_p('\t\t\t};')
 				_p('\t\t\tname = %s;', cfg.name)
 				_p('\t\t};')
