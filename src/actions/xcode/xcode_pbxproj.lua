@@ -117,18 +117,19 @@
 		-- Targets live outside the main source tree. In general there is one target per Premake
 		-- project; projects with multiple kinds require multiple targets, one for each kind
 		local targets = { }
-		for prj in premake.eachproject(sln) do
+		for _, prjnode in ipairs(root.children) do
 			-- keep track of which kinds have already been created
 			local kinds = { }
-			for cfg in premake.eachconfig(prj) do
+			for cfg in premake.eachconfig(prjnode.project) do
 				if not table.contains(kinds, cfg.kind) then					
 					-- create a new target
 					table.insert(targets, {
-						project = prj,
+						prjnode = prjnode,
 						kind = cfg.kind,
-						name = prj.name .. path.getextension(cfg.buildtarget.name),
+						name = prjnode.project.name .. path.getextension(cfg.buildtarget.name),
 						id = xcode.newid(),
 						fileid = xcode.newid(),
+						sourcesid = xcode.newid()
 					})
 
 					-- mark this kind as done
@@ -237,13 +238,13 @@
 		for _, target in ipairs(targets) do
 			_p('\t\t%s /* %s */ = {', target.id, target.name)
 			_p('\t\t\tisa = PBXNativeTarget;')
-			-- BEGIN HARDCODED --
 			_p('\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', target.cfgsectionid, target.name)
+			-- BEGIN HARDCODED --
 			_p('\t\t\tbuildPhases = (')
-			_p('\t\t\t\t8DD76FAB0486AB0100D96B5E /* Sources */,')
+			_p('\t\t\t\t%s /* Sources */,', target.sourcesid)
 			_p('\t\t\t\t8DD76FAD0486AB0100D96B5E /* Frameworks */,')
-			-- END HARDCODED --
 			_p('\t\t\t);')
+			-- END HARDCODED --
 			_p('\t\t\tbuildRules = (')
 			_p('\t\t\t);')
 			_p('\t\t\tdependencies = (')
@@ -278,12 +279,12 @@
 
 
 		_p('/* Begin PBXSourcesBuildPhase section */')
-		for _, prjnode in ipairs(root.children) do
-			_p('\t\t8DD76FAB0486AB0100D96B5E /* Sources */ = {')   -- < HARDCODED --
+		for _, target in ipairs(targets) do
+			_p('\t\t%s /* Sources */ = {', target.sourcesid)
 			_p('\t\t\tisa = PBXSourcesBuildPhase;')
 			_p('\t\t\tbuildActionMask = 2147483647;')
 			_p('\t\t\tfiles = (')
-			tree.traverse(prjnode, {
+			tree.traverse(target.prjnode, {
 				onleaf = function(node)
 					if node.buildid then
 						_p('\t\t\t\t%s /* %s in Sources */,', node.buildid, node.name)
@@ -300,7 +301,7 @@
 		
 		_p('/* Begin XCBuildConfiguration section */')
 		for _, target in ipairs(targets) do
-			for cfg in premake.eachconfig(target.project) do
+			for cfg in premake.eachconfig(target.prjnode.project) do
 				_p('\t\t%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
 				_p('\t\t\tisa = XCBuildConfiguration;')
 				_p('\t\t\tbuildSettings = {')
