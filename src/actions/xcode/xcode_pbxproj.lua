@@ -353,7 +353,6 @@
 			_p('\t\t\tdefaultConfigurationName = %s;', sln.configurations[1])
 			_p('\t\t};')
 		end
-		
 		_p('\t\t1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', prjroot.name)
 		_p('\t\t\tisa = XCConfigurationList;')
 		_p('\t\t\tbuildConfigurations = (')
