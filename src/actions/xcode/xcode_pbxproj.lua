@@ -238,7 +238,7 @@
 			_p('\t\t%s /* %s */ = {', target.id, target.name)
 			_p('\t\t\tisa = PBXNativeTarget;')
 			-- BEGIN HARDCODED --
-			_p('\t\t\tbuildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "%s" */;', target.name)
+			_p('\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', target.cfgsectionid, target.name)
 			_p('\t\t\tbuildPhases = (')
 			_p('\t\t\t\t8DD76FAB0486AB0100D96B5E /* Sources */,')
 			_p('\t\t\t\t8DD76FAD0486AB0100D96B5E /* Frameworks */,')
@@ -275,7 +275,8 @@
 		_p('\t\t};')
 		_p('/* End PBXProject section */')
 		_p('')
-		
+
+
 		_p('/* Begin PBXSourcesBuildPhase section */')
 		for _, prjnode in ipairs(root.children) do
 			_p('\t\t8DD76FAB0486AB0100D96B5E /* Sources */ = {')   -- < HARDCODED --
@@ -297,35 +298,27 @@
 		_p('')
 
 		
-		-- BEGIN HARDCODED --
 		_p('/* Begin XCBuildConfiguration section */')
-		_p('		1DEB928608733DD80010E9CD /* Debug */ = {')
-		_p('			isa = XCBuildConfiguration;')
-		_p('			buildSettings = {')
-		_p('				ALWAYS_SEARCH_USER_PATHS = NO;')
-		_p('				COPY_PHASE_STRIP = NO;')
-		_p('				GCC_DYNAMIC_NO_PIC = NO;')
-		_p('				GCC_ENABLE_FIX_AND_CONTINUE = YES;')
-		_p('				GCC_MODEL_TUNING = G5;')
-		_p('				GCC_OPTIMIZATION_LEVEL = 0;')
-		_p('				INSTALL_PATH = /usr/local/bin;')
-		_p('				PRODUCT_NAME = CConsoleApp;')
-		_p('			};')
-		_p('			name = Debug;')
-		_p('		};')
-		_p('		1DEB928708733DD80010E9CD /* Release */ = {')
-		_p('			isa = XCBuildConfiguration;')
-		_p('			buildSettings = {')
-		_p('				ALWAYS_SEARCH_USER_PATHS = NO;')
-		_p('				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";')
-		_p('				GCC_MODEL_TUNING = G5;')
-		_p('				INSTALL_PATH = /usr/local/bin;')
-		_p('				PRODUCT_NAME = CConsoleApp;')
-		_p('			};')
-		_p('			name = Release;')
-		_p('		};')
-		-- END HARDCODED --
-
+		for _, target in ipairs(targets) do
+			for cfg in premake.eachconfig(target.project) do
+				_p('\t\t%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
+				_p('\t\t\tisa = XCBuildConfiguration;')
+				_p('\t\t\tbuildSettings = {')
+				_p('\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;')
+				if cfg.flags.Symbols then
+					_p('\t\t\t\tCOPY_PHASE_STRIP = NO;')
+				end
+				_p('\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;')
+				if cfg.flags.Symbols then
+					_p('\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;')
+				end
+				_p('\t\t\t\tGCC_MODEL_TUNING = G5;')
+				_p('\t\t\t\tPRODUCT_NAME = %s;', cfg.buildtarget.name)
+				_p('\t\t\t};')
+				_p('\t\t\tname = %s;', cfg.name)
+				_p('\t\t};')
+			end
+		end
 		for _, cfgname in ipairs(sln.configurations) do
 			_p('\t\t%s /* %s */ = {', root.cfgids[cfgname], cfgname)
 			_p('\t\t\tisa = XCBuildConfiguration;')
@@ -346,17 +339,18 @@
 		
 		
 		_p('/* Begin XCConfigurationList section */')
-		-- BEGIN HARDCODED -- 
-		_p('		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "CConsoleApp" */ = {')
-		_p('			isa = XCConfigurationList;')
-		_p('			buildConfigurations = (')
-		_p('				1DEB928608733DD80010E9CD /* Debug */,')
-		_p('				1DEB928708733DD80010E9CD /* Release */,')
-		_p('			);')
-		_p('			defaultConfigurationIsVisible = 0;')
-		_p('			defaultConfigurationName = Release;')
-		_p('		};')
-		-- END HARDCODED --
+		for _, target in ipairs(targets) do
+			_p('\t\t%s /* Build configuration list for PBXNativeTarget "%s" */ = {', target.cfgsectionid, target.name)
+			_p('\t\t\tisa = XCConfigurationList;')
+			_p('\t\t\tbuildConfigurations = (')
+			for _, cfgname in ipairs(sln.configurations) do
+				_p('\t\t\t\t%s /* %s */,', target.cfgids[cfgname], cfgname)
+			end
+			_p('\t\t\t);')
+			_p('\t\t\tdefaultConfigurationIsVisible = 0;')
+			_p('\t\t\tdefaultConfigurationName = %s;', sln.configurations[1])
+			_p('\t\t};')
+		end
 		
 		_p('\t\t1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', prjroot.name)
 		_p('\t\t\tisa = XCConfigurationList;')
@@ -366,7 +360,7 @@
 		end
 		_p('\t\t\t);')
 		_p('\t\t\tdefaultConfigurationIsVisible = 0;')
-		_p('\t\t\tdefaultConfigurationName = Release;')
+		_p('\t\t\tdefaultConfigurationName = %s;', sln.configurations[1])
 		_p('\t\t};')
 		_p('/* End XCConfigurationList section */')
 
