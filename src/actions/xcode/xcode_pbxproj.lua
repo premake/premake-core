@@ -18,22 +18,33 @@
 --
 
 	function xcode.getfiletype(fname)
-		local x = path.getextension(fname)
-		if x == ".c" then
-			return "sourcecode.c.c"
-		elseif x == ".css" then
-			return "text.css"
-		elseif x == ".gif" then
-			return "image.gif"
-		elseif x == ".h" then
-			return "sourcecode.c.h"
-		elseif x == ".html" then
-			return "text.html"
-		elseif x == ".lua" then
-			return "sourcecode.lua"
-		else
-			return "text"
-		end
+		local types = {
+			[".c"   ] = "sourcecode.c.c",
+			[".css" ] = "text.css",
+			[".gif" ] = "image.gif",
+			[".h"   ] = "sourcecode.c.h",
+			[".html"] = "text.html",
+			[".lua" ] = "sourcecode.lua",
+		}
+		return types[path.getextension(fname)] or "text"
+
+	end
+
+
+--
+-- Return the Xcode product type, based target kind.
+--
+-- @param kind
+--    The target kind to identify.
+-- @returns
+--    An Xcode product type, string.
+--
+
+	function xcode.getproducttype(kind)
+		local types = {
+			ConsoleApp = "com.apple.product-type.tool",
+		}
+		return types[kind]
 	end
 
 
@@ -47,9 +58,10 @@
 --
 
 	function xcode.gettargettype(kind)
-		if kind == "ConsoleApp" then
-			return "compiled.mach-o.executable"
-		end
+		local types = {
+			ConsoleApp = "compiled.mach-o.executable",
+		}
+		return types[kind]
 	end
 
 
@@ -113,6 +125,7 @@
 						project = prj,
 						kind = cfg.kind,
 						name = prj.name .. path.getextension(cfg.buildtarget.name),
+						id = xcode.newid(),
 						fileid = xcode.newid(),
 					})
 
@@ -179,7 +192,7 @@
 		-- if there is only one project node, hide it by using it as my root
 		tree.traverse(iif(#root.children == 1, root.children[1], root), {
 			onbranch = function(node, depth)
-				-- Xcode has a hardcoded ID for the root group
+				-- Xcode uses a hardcoded ID for the root group
 				_p('\t\t%s /* %s */ = {', iif(depth == 0, "08FB7794FE84155DC02AAC07", node.id), node.name)
 				_p('\t\t\tisa = PBXGroup;')
 				_p('\t\t\tchildren = (')
@@ -201,9 +214,9 @@
 		
 		_p('/* Begin PBXNativeTarget section */')
 		for _, target in ipairs(targets) do
-			-- BEGIN HARDCODED --
-			_p('\t\t8DD76FA90486AB0100D96B5E /* %s */ = {', target.name)
+			_p('\t\t%s /* %s */ = {', target.id, target.name)
 			_p('\t\t\tisa = PBXNativeTarget;')
+			-- BEGIN HARDCODED --
 			_p('\t\t\tbuildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "%s" */;', target.name)
 			_p('\t\t\tbuildPhases = (')
 			_p('\t\t\t\t8DD76FAB0486AB0100D96B5E /* Sources */,')
@@ -213,11 +226,10 @@
 			_p('\t\t\t);')
 			_p('\t\t\tdependencies = (')
 			_p('\t\t\t);')
-			_p('\t\t\tname = CConsoleApp;')
-			_p('\t\t\tproductInstallPath = "$(HOME)/bin";')
-			_p('\t\t\tproductName = CConsoleApp;')
+			_p('\t\t\tname = %s;', target.name)
+			_p('\t\t\tproductName = %s;', target.name)
 			_p('\t\t\tproductReference = %s /* %s */;', target.fileid, target.name)
-			_p('\t\t\tproductType = "com.apple.product-type.tool";')
+			_p('\t\t\tproductType = "%s";', xcode.getproducttype(target.kind))
 			_p('\t\t};')
 			-- END HARDCODED --
 		end
@@ -236,7 +248,9 @@
 		_p('			projectDirPath = "";')
 		_p('			projectRoot = "";')
 		_p('			targets = (')
-		_p('				8DD76FA90486AB0100D96B5E /* CConsoleApp */,')
+		for _, target in ipairs(targets) do
+			_p('\t\t\t\t%s /* %s */,', target.id, target.name)
+		end
 		_p('			);')
 		_p('		};')
 		_p('/* End PBXProject section */')
