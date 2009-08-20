@@ -20,7 +20,10 @@
 	function xcode.getfiletype(fname)
 		local types = {
 			[".c"   ] = "sourcecode.c.c",
+			[".cc"  ] = "sourcecode.cpp.cpp",
+			[".cpp" ] = "sourcecode.cpp.cpp",
 			[".css" ] = "text.css",
+			[".cxx" ] = "sourcecode.cpp.cpp",
 			[".gif" ] = "image.gif",
 			[".h"   ] = "sourcecode.c.h",
 			[".html"] = "text.html",
@@ -307,6 +310,8 @@
 				_p('\t\t\tisa = XCBuildConfiguration;')
 				_p('\t\t\tbuildSettings = {')
 				_p('\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;')
+				_p('\t\t\t\tCONFIGURATION_BUILD_DIR = %s;', cfg.buildtarget.directory)
+				_p('\t\t\t\tCONFIGURATION_TEMP_DIR = %s;', cfg.objectsdir)
 				if cfg.flags.Symbols then
 					_p('\t\t\t\tCOPY_PHASE_STRIP = NO;')
 				end
@@ -315,6 +320,11 @@
 					_p('\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;')
 				end
 				_p('\t\t\t\tGCC_MODEL_TUNING = G5;')
+				if #cfg.defines > 0 then
+					_p('\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (')
+					_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
+					_p('\t\t\t\t);')
+				end
 				_p('\t\t\t\tPRODUCT_NAME = %s;', cfg.buildtarget.name)
 				_p('\t\t\t};')
 				_p('\t\t\tname = %s;', cfg.name)
