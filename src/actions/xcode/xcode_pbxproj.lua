@@ -129,7 +129,8 @@
 						name = prjnode.project.name .. path.getextension(cfg.buildtarget.name),
 						id = xcode.newid(),
 						fileid = xcode.newid(),
-						sourcesid = xcode.newid()
+						sourcesid = xcode.newid(),
+						frameworksid = xcode.newid()
 					})
 
 					-- mark this kind as done
@@ -201,13 +202,15 @@
 
 
 		_p('/* Begin PBXFrameworksBuildPhase section */')
-		_p('		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {')
-		_p('			isa = PBXFrameworksBuildPhase;')
-		_p('			buildActionMask = 2147483647;')
-		_p('			files = (')
-		_p('			);')
-		_p('			runOnlyForDeploymentPostprocessing = 0;')
-		_p('		};')
+		for _, target in ipairs(targets) do
+			_p('\t\t%s /* Frameworks */ = {', target.frameworksid)
+			_p('\t\t\tisa = PBXFrameworksBuildPhase;')
+			_p('\t\t\tbuildActionMask = 2147483647;')
+			_p('\t\t\tfiles = (')
+			_p('\t\t\t);')
+			_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
+			_p('\t\t};')
+		end
 		_p('/* End PBXFrameworksBuildPhase section */')
 		_p('')
 		
@@ -239,12 +242,10 @@
 			_p('\t\t%s /* %s */ = {', target.id, target.name)
 			_p('\t\t\tisa = PBXNativeTarget;')
 			_p('\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', target.cfgsectionid, target.name)
-			-- BEGIN HARDCODED --
 			_p('\t\t\tbuildPhases = (')
 			_p('\t\t\t\t%s /* Sources */,', target.sourcesid)
-			_p('\t\t\t\t8DD76FAD0486AB0100D96B5E /* Frameworks */,')
+			_p('\t\t\t\t%s /* Frameworks */,', target.frameworksid)
 			_p('\t\t\t);')
-			-- END HARDCODED --
 			_p('\t\t\tbuildRules = (')
 			_p('\t\t\t);')
 			_p('\t\t\tdependencies = (')
