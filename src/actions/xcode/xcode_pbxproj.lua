@@ -81,6 +81,30 @@
 
 
 --
+-- Converts a path or list of paths from project-relative to solution-relative.
+--
+-- @param prj
+--    The project containing the path.
+-- @param p
+--    A path or list of paths.
+-- @returns
+--    The rebased path or paths.
+--
+
+	function xcode.rebase(prj, p)
+		if type(p) == "string" then
+			return path.getrelative(prj.solution.location, path.join(prj.location, p))
+		else
+			local result = { }
+			for i, v in ipairs(p) do
+				result[i] = xcode.rebase(p[i])
+			end
+			return result
+		end
+	end
+
+
+--
 -- Generate the project.pbxproj file.
 --
 -- @param sln
@@ -107,9 +131,10 @@
 				-- Premake is setup for the idea of a solution file referencing multiple project files,
 				-- but Xcode uses a single file for everything. Convert the file paths from project
 				-- location relative to solution (the one Xcode file) location relative to compensate.
-				-- Assign a build ID to buildable files (that part might need some work)
-				onleaf = function(node)
-					node.path = path.getrelative(sln.location, path.join(prj.location, node.path))
+				onleaf = function(node)					
+					node.path = xcode.rebase(prj, node.path)
+
+					-- assign a build ID to buildable files; this probably has to get smarter
 					if path.iscppfile(node.name) then
 						node.buildid = xcode.newid()
 					end
@@ -305,13 +330,13 @@
 		
 		_p('/* Begin XCBuildConfiguration section */')
 		for _, target in ipairs(targets) do
+			local prj = target.prjnode.project
 			for cfg in premake.eachconfig(target.prjnode.project) do
 				_p('\t\t%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
 				_p('\t\t\tisa = XCBuildConfiguration;')
 				_p('\t\t\tbuildSettings = {')
 				_p('\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;')
-				_p('\t\t\t\tCONFIGURATION_BUILD_DIR = %s;', cfg.buildtarget.directory)
---				_p('\t\t\t\tCONFIGURATION_TEMP_DIR = %s;', cfg.objectsdir)
+				_p('\t\t\t\tCONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.directory))
 				if cfg.flags.Symbols then
 					_p('\t\t\t\tCOPY_PHASE_STRIP = NO;')
 				end
@@ -326,7 +351,7 @@
 					_p('\t\t\t\t);')
 				end
 				_p('\t\t\t\tPRODUCT_NAME = %s;', cfg.buildtarget.name)
-				_p('\t\t\t\tSYMROOT = %s;', cfg.objectsdir)
+				_p('\t\t\t\tSYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
 				_p('\t\t\t};')
 				_p('\t\t\tname = %s;', cfg.name)
 				_p('\t\t};')
@@ -343,6 +368,10 @@
 			_p('\t\t\t\tONLY_ACTIVE_ARCH = YES;')
 			_p('\t\t\t\tPREBINDING = NO;')
 			_p('\t\t\t\tSDKROOT = macosx10.5;')
+
+			-- I don't have any concept of a solution level objects directory so use the first project
+			local prj1 = premake.getconfig(sln.projects[1])
+			_p('\t\t\t\tSYMROOT = %s;', xcode.rebase(prj1, prj1.objectsdir))
 			_p('\t\t\t};')
 			_p('\t\t\tname = %s;', cfgname)
 			_p('\t\t};')

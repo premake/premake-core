@@ -15,7 +15,7 @@
 
 		valid_kinds     = { "ConsoleApp" },
 		
-		valid_languages = { "C" },
+		valid_languages = { "C", "C++" },
 		
 		valid_tools     = {
 			cc     = { "gcc" },
