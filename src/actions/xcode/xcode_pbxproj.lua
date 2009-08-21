@@ -9,6 +9,46 @@
 
 
 --
+-- Builds a tree containing the solution, all projects, and all files in those projects,
+-- with Xcode specific metadata attached at each node.
+--
+
+	function xcode.buildfiletree(sln)
+		local root = tree.new(sln.name)
+		root.id = xcode.newid()
+
+		for prj in premake.eachproject(sln) do
+			-- build the project tree and add it to the solution
+			local prjnode = premake.project.buildsourcetree(prj)
+			tree.insert(root, prjnode)
+			
+			tree.traverse(prjnode, {
+				-- assign IDs to all nodes in the tree
+				onnode = function(node)
+					node.id = xcode.newid()
+				end,
+				
+				-- Premake is setup for the idea of a solution file referencing multiple project files,
+				-- but Xcode uses a single file for everything. Convert the file paths from project
+				-- location relative to solution (the one Xcode file) location relative to compensate.
+				onleaf = function(node)
+					if node.path then
+						node.path = xcode.rebase(prj, node.path)
+					end
+					
+					-- assign a build ID to buildable files; this probably has to get smarter
+					if path.iscppfile(node.name) then
+						node.buildid = xcode.newid()
+					end
+				end
+			}, true)
+		end
+
+		return root
+	end
+	
+	
+--
 -- Return the Xcode type for a given file, based on the file extension.
 --
 -- @param fname
@@ -92,6 +132,9 @@
 --
 
 	function xcode.rebase(prj, p)
+		if not p then
+			test.print(debug.traceback())
+		end
 		if type(p) == "string" then
 			return path.getrelative(prj.solution.location, path.join(prj.location, p))
 		else
@@ -101,6 +144,42 @@
 			end
 			return result
 		end
+	end
+
+
+--
+-- BEGIN SECTION GENERATORS
+--
+
+	function xcode.header()
+		_p('// !$*UTF8*$!')
+		_p('{')
+		_p('\tarchiveVersion = 1;')
+		_p('\tclasses = {')
+		_p('\t};')
+		_p('\tobjectVersion = 45;')
+		_p('\tobjects = {')
+		_p('')
+	end
+
+	function xcode.PBXBuildFile(root)
+		_p('/* Begin PBXBuildFile section */')
+		tree.traverse(root, {
+			onleaf = function(node)
+				if node.buildid then
+					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
+						node.buildid, node.name, node.id, node.name)
+				end
+			end
+		})
+		_p('/* End PBXBuildFile section */')
+		_p('')
+	end
+	
+	function xcode.footer()
+		_p('\t};')
+		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
+		_p('}')
 	end
 
 
@@ -115,33 +194,8 @@
 
 		-- Create a tree to contain the solution, each project, and all of the groups and
 		-- files within those projects, with Xcode-specific metadata attached
-		local root = tree.new(sln.name)
-		root.id = xcode.newid()
-		for prj in premake.eachproject(sln) do
-			-- build the project tree and add it to the solution
-			local prjnode = premake.project.buildsourcetree(prj)
-			tree.insert(root, prjnode)
-			
-			tree.traverse(prjnode, {
-				-- assign IDs to all nodes in the tree
-				onnode = function(node)
-					node.id = xcode.newid()
-				end,
-				
-				-- Premake is setup for the idea of a solution file referencing multiple project files,
-				-- but Xcode uses a single file for everything. Convert the file paths from project
-				-- location relative to solution (the one Xcode file) location relative to compensate.
-				onleaf = function(node)					
-					node.path = xcode.rebase(prj, node.path)
-
-					-- assign a build ID to buildable files; this probably has to get smarter
-					if path.iscppfile(node.name) then
-						node.buildid = xcode.newid()
-					end
-				end
-			}, true)
-		end
-
+		local root = xcode.buildfiletree(sln)
+		
 		-- Targets live outside the main source tree. In general there is one target per Premake
 		-- project; projects with multiple kinds require multiple targets, one for each kind
 		local targets = { }
@@ -190,28 +244,8 @@
 
 
 		-- Begin file generation --
-		_p('// !$*UTF8*$!')
-		_p('{')
-		_p('	archiveVersion = 1;')
-		_p('	classes = {')
-		_p('	};')
-		_p('	objectVersion = 45;')
-		_p('	objects = {')
-		_p('')
-
-
-		_p('/* Begin PBXBuildFile section */')
-		tree.traverse(root, {
-			onleaf = function(node)
-				if node.buildid then
-					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
-						node.buildid, node.name, node.id, node.name)
-				end
-			end
-		})
-		_p('/* End PBXBuildFile section */')
-		_p('')
-
+		xcode.header()
+		xcode.PBXBuildFile(root)
 
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(root, {
@@ -405,9 +439,5 @@
 		_p('\t\t};')
 		_p('/* End XCConfigurationList section */')
 
-
-		_p('\t};')
-		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
-		_p('}')
-		
+		xcode.footer()
 	end

@@ -28,6 +28,7 @@
 	dofile("base/test_action.lua")
 	dofile("base/test_tree.lua")
 	dofile("actions/test_clean.lua")
+	dofile("actions/test_xcode.lua")
 
 
 --
