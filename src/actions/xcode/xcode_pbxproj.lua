@@ -47,7 +47,7 @@
 					end
 					
 					-- assign a build ID to buildable files
-					if xcode.isbuildable(node.name) then
+					if xcode.getfilecategory(node.name) then
 						node.buildid = xcode.newid()
 					end
 				end
@@ -96,8 +96,32 @@
 
 		return ctx
 	end
-	
-	
+
+
+--
+-- Return the Xcode category (for lack of a better term) for a file, such 
+-- as "Sources" or "Resources".
+--
+-- @param fname
+--    The file name to identify.
+-- @returns
+--    An Xcode file category, string.
+--
+
+	function xcode.getfilecategory(fname)
+		print("Category for ", fname)
+		local categories = {
+			[".c"   ] = "Sources",
+			[".cc"  ] = "Sources",
+			[".cpp" ] = "Sources",
+			[".cxx" ] = "Sources",
+			[".m"   ] = "Sources",
+			[".xib" ] = "Resources",
+		}
+		return categories[path.getextension(fname)]
+	end
+
+
 --
 -- Return the Xcode type for a given file, based on the file extension.
 --
@@ -119,9 +143,9 @@
 			[".html"] = "text.html",
 			[".lua" ] = "sourcecode.lua",
 			[".m"   ] = "sourcecode.c.objc",
+			[".xib" ] = "file.xib",
 		}
 		return types[path.getextension(fname)] or "text"
-
 	end
 
 
@@ -156,25 +180,6 @@
 			ConsoleApp = "compiled.mach-o.executable",
 		}
 		return types[kind]
-	end
-
-
---
--- Returns true if Xcode considers the specified file to be "buildable".
---
--- @param fname
---    The name of the file under consideration.
---
-
-	function xcode.isbuildable(fname)
-		local buildable = {
-			[".c"  ] = true,
-			[".cc" ] = true,
-			[".cpp"] = true,
-			[".cxx"] = true,
-			[".m"  ] = true,
-		}
-		return buildable[path.getextension(fname)]
 	end
 
 
@@ -238,8 +243,8 @@
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
 				if node.buildid then
-					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
-						node.buildid, node.name, node.id, node.name)
+					_p('\t\t%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
+						node.buildid, node.name, xcode.getfilecategory(node.name), node.id, node.name)
 				end
 			end
 		})
@@ -252,9 +257,22 @@
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
-				_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
-					node.id, node.name, xcode.getfiletype(node.name), node.name,
-					iif(node.parent.path, node.name, node.path))
+				if xcode.getfilecategory(node.name) == "Resources" then
+					if path.getextension(node.parent.name) == ".lproj" then
+						-- localized resource
+						local lang = path.getbasename(node.parent.name)
+						_p('\t\t%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+							node.id, lang, xcode.getfiletype(node.name), lang, path.join(tree.getlocalpath(node.parent), node.name))
+					else
+						-- non-localized resource
+						_p('\t\t%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+							node.id, node.name, xcode.getfiletype(node.name), node.name, tree.getlocalpath(node))
+					end
+				else
+					-- non-resource node
+					_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+						node.id, node.name, xcode.getfiletype(node.name), node.name, tree.getlocalpath(node))
+				end
 			end
 		})
 		for _, target in ipairs(ctx.targets) do

@@ -72,6 +72,23 @@
 
 
 --
+-- Gets the node's relative path from it's parent. If the parent does not have
+-- a path set (it is the root or other container node) returns the full node path.
+--
+-- @param node
+--    The node to query.
+--
+
+	function premake.tree.getlocalpath(node)
+		if node.parent.path then
+			return node.name
+		else
+			return node.path
+		end
+	end
+
+
+--
 -- Traverse a tree.
 --
 -- @param t

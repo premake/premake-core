@@ -67,3 +67,20 @@
 			getresult())
 	end
 
+
+--
+-- Tests for tree.getlocalpath()
+--
+
+	function T.tree.GetLocalPath_ReturnsPath_OnNoParentPath()
+		local c = tree.add(tr, "Root/Child")
+		c.parent.path = nil
+		test.isequal("Root/Child", tree.getlocalpath(c))
+	end
+
+	function T.tree.GetLocalPath_ReturnsName_OnParentPathSet()
+		local c = tree.add(tr, "Root/Child")
+		test.isequal("Child", tree.getlocalpath(c))
+	end
+
+		
