@@ -9,18 +9,28 @@
 
 
 --
--- Builds a tree containing the solution, all projects, and all files in those projects,
--- with Xcode specific metadata attached at each node.
+-- Preprocess the project information, building a project tree and associating Xcode
+-- specific metadata with projects, files, and targets.
+--
+-- @param sln
+--    The solution being generated.
+-- @returns
+--    A context object with these properties:
+--    root    - a tree containing the solution, projects, and all files with metadata.
+--    targets - a list of binary targets with metadata
 --
 
-	function xcode.buildfiletree(sln)
-		local root = tree.new(sln.name)
-		root.id = xcode.newid()
+	function xcode.buildcontext(sln)
+		local ctx = { }
+		
+		-- create the project tree
+		ctx.root = tree.new(sln.name)
+		ctx.root.id = xcode.newid()
 
 		for prj in premake.eachproject(sln) do
 			-- build the project tree and add it to the solution
 			local prjnode = premake.project.buildsourcetree(prj)
-			tree.insert(root, prjnode)
+			tree.insert(ctx.root, prjnode)
 			
 			tree.traverse(prjnode, {
 				-- assign IDs to all nodes in the tree
@@ -36,15 +46,55 @@
 						node.path = xcode.rebase(prj, node.path)
 					end
 					
-					-- assign a build ID to buildable files; this probably has to get smarter
-					if path.iscppfile(node.name) then
+					-- assign a build ID to buildable files
+					if xcode.isbuildable(node.name) then
 						node.buildid = xcode.newid()
 					end
 				end
 			}, true)
 		end
 
-		return root
+		
+		-- Targets live outside the main source tree. In general there is one target per Premake
+		-- project; projects with multiple kinds require multiple targets, one for each kind
+		ctx.targets = { }
+		for _, prjnode in ipairs(ctx.root.children) do
+			-- keep track of which kinds have already been created
+			local kinds = { }
+			for cfg in premake.eachconfig(prjnode.project) do
+				if not table.contains(kinds, cfg.kind) then					
+					-- create a new target
+					table.insert(ctx.targets, {
+						prjnode = prjnode,
+						kind = cfg.kind,
+						name = prjnode.project.name .. path.getextension(cfg.buildtarget.name),
+						id = xcode.newid(),
+						fileid = xcode.newid(),
+						sourcesid = xcode.newid(),
+						frameworksid = xcode.newid()
+					})
+
+					-- mark this kind as done
+					table.insert(kinds, cfg.kind)
+				end
+			end
+		end
+		
+		-- Create IDs for configuration section and configuration blocks for each
+		-- target, as well as a root level configuration
+		local function assigncfgs(n)
+			n.cfgsectionid = xcode.newid()
+			n.cfgids = { }
+			for _, cfgname in ipairs(sln.configurations) do
+				n.cfgids[cfgname] = xcode.newid()
+			end
+		end
+		assigncfgs(ctx.root)
+		for _, target in ipairs(ctx.targets) do
+			assigncfgs(target)
+		end
+
+		return ctx
 	end
 	
 	
@@ -68,6 +118,7 @@
 			[".h"   ] = "sourcecode.c.h",
 			[".html"] = "text.html",
 			[".lua" ] = "sourcecode.lua",
+			[".m"   ] = "sourcecode.c.objc",
 		}
 		return types[path.getextension(fname)] or "text"
 
@@ -105,6 +156,25 @@
 			ConsoleApp = "compiled.mach-o.executable",
 		}
 		return types[kind]
+	end
+
+
+--
+-- Returns true if Xcode considers the specified file to be "buildable".
+--
+-- @param fname
+--    The name of the file under consideration.
+--
+
+	function xcode.isbuildable(fname)
+		local buildable = {
+			[".c"  ] = true,
+			[".cc" ] = true,
+			[".cpp"] = true,
+			[".cxx"] = true,
+			[".m"  ] = true,
+		}
+		return buildable[path.getextension(fname)]
 	end
 
 
@@ -162,9 +232,10 @@
 		_p('')
 	end
 
-	function xcode.PBXBuildFile(root)
+
+	function xcode.PBXBuildFile(ctx)
 		_p('/* Begin PBXBuildFile section */')
-		tree.traverse(root, {
+		tree.traverse(ctx.root, {
 			onleaf = function(node)
 				if node.buildid then
 					_p('\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
@@ -175,6 +246,25 @@
 		_p('/* End PBXBuildFile section */')
 		_p('')
 	end
+
+	
+	function xcode.PBXFileReference(ctx)
+		_p('/* Begin PBXFileReference section */')
+		tree.traverse(ctx.root, {
+			onleaf = function(node)
+				_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+					node.id, node.name, xcode.getfiletype(node.name), node.name,
+					iif(node.parent.path, node.name, node.path))
+			end
+		})
+		for _, target in ipairs(ctx.targets) do
+			_p('\t\t%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+				target.fileid, target.name, xcode.gettargettype(target.kind), target.name)
+		end
+		_p('/* End PBXFileReference section */')
+		_p('')
+	end
+	
 	
 	function xcode.footer()
 		_p('\t};')
@@ -192,79 +282,23 @@
 
 	function premake.xcode.pbxproj(sln)
 
-		-- Create a tree to contain the solution, each project, and all of the groups and
-		-- files within those projects, with Xcode-specific metadata attached
-		local root = xcode.buildfiletree(sln)
-		
-		-- Targets live outside the main source tree. In general there is one target per Premake
-		-- project; projects with multiple kinds require multiple targets, one for each kind
-		local targets = { }
-		for _, prjnode in ipairs(root.children) do
-			-- keep track of which kinds have already been created
-			local kinds = { }
-			for cfg in premake.eachconfig(prjnode.project) do
-				if not table.contains(kinds, cfg.kind) then					
-					-- create a new target
-					table.insert(targets, {
-						prjnode = prjnode,
-						kind = cfg.kind,
-						name = prjnode.project.name .. path.getextension(cfg.buildtarget.name),
-						id = xcode.newid(),
-						fileid = xcode.newid(),
-						sourcesid = xcode.newid(),
-						frameworksid = xcode.newid()
-					})
-
-					-- mark this kind as done
-					table.insert(kinds, cfg.kind)
-				end
-			end
-		end
-		
-		-- Create IDs for configuration section and configuration blocks for each
-		-- target, as well as a root level configuration
-		local function assigncfgs(n)
-			n.cfgsectionid = xcode.newid()
-			n.cfgids = { }
-			for _, cfgname in ipairs(sln.configurations) do
-				n.cfgids[cfgname] = xcode.newid()
-			end
-		end
-		assigncfgs(root)
-		for _, target in ipairs(targets) do
-			assigncfgs(target)
-		end
-		
+		-- Build a project tree and target list, with Xcode specific metadata attached
+		local ctx = xcode.buildcontext(sln)
 
 		-- If this solution has only a single project, use that project as the root
 		-- of the source tree to avoid the otherwise empty solution node. If there are
 		-- multiple projects, keep the solution node as the root so each project can
 		-- have its own top-level group for its files.
-		local prjroot = iif(#root.children == 1, root.children[1], root)
+		local prjroot = iif(#ctx.root.children == 1, ctx.root.children[1], ctx.root)
 
 
 		-- Begin file generation --
 		xcode.header()
-		xcode.PBXBuildFile(root)
-
-		_p('/* Begin PBXFileReference section */')
-		tree.traverse(root, {
-			onleaf = function(node)
-				_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
-					node.id, node.name, xcode.getfiletype(node.name), node.name,
-					iif(node.parent.path, node.name, node.path))
-			end
-		})
-		for _, target in ipairs(targets) do
-			_p('\t\t%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-				target.fileid, target.name, xcode.gettargettype(target.kind), target.name)
-		end
-		_p('/* End PBXFileReference section */')
-		_p('')
-
+		xcode.PBXBuildFile(ctx)
+		xcode.PBXFileReference(ctx)
 
 		_p('/* Begin PBXFrameworksBuildPhase section */')
-		for _, target in ipairs(targets) do
+		for _, target in ipairs(ctx.targets) do
 			_p('\t\t%s /* Frameworks */ = {', target.frameworksid)
 			_p('\t\t\tisa = PBXFrameworksBuildPhase;')
 			_p('\t\t\tbuildActionMask = 2147483647;')
@@ -300,7 +334,7 @@
 
 		
 		_p('/* Begin PBXNativeTarget section */')
-		for _, target in ipairs(targets) do
+		for _, target in ipairs(ctx.targets) do
 			_p('\t\t%s /* %s */ = {', target.id, target.name)
 			_p('\t\t\tisa = PBXNativeTarget;')
 			_p('\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', target.cfgsectionid, target.name)
@@ -332,7 +366,7 @@
 		_p('\t\t\tprojectDirPath = "";')
 		_p('\t\t\tprojectRoot = "";')
 		_p('\t\t\ttargets = (')
-		for _, target in ipairs(targets) do
+		for _, target in ipairs(ctx.targets) do
 			_p('\t\t\t\t%s /* %s */,', target.id, target.name)
 		end
 		_p('\t\t\t);')
@@ -342,7 +376,7 @@
 
 
 		_p('/* Begin PBXSourcesBuildPhase section */')
-		for _, target in ipairs(targets) do
+		for _, target in ipairs(ctx.targets) do
 			_p('\t\t%s /* Sources */ = {', target.sourcesid)
 			_p('\t\t\tisa = PBXSourcesBuildPhase;')
 			_p('\t\t\tbuildActionMask = 2147483647;')
@@ -363,7 +397,7 @@
 
 		
 		_p('/* Begin XCBuildConfiguration section */')
-		for _, target in ipairs(targets) do
+		for _, target in ipairs(ctx.targets) do
 			local prj = target.prjnode.project
 			for cfg in premake.eachconfig(target.prjnode.project) do
 				_p('\t\t%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
@@ -392,7 +426,7 @@
 			end
 		end
 		for _, cfgname in ipairs(sln.configurations) do
-			_p('\t\t%s /* %s */ = {', root.cfgids[cfgname], cfgname)
+			_p('\t\t%s /* %s */ = {', ctx.root.cfgids[cfgname], cfgname)
 			_p('\t\t\tisa = XCBuildConfiguration;')
 			_p('\t\t\tbuildSettings = {')
 			_p('\t\t\t\tARCHS = "$(ARCHS_STANDARD_32_BIT)";')
@@ -415,7 +449,7 @@
 		
 		
 		_p('/* Begin XCConfigurationList section */')
-		for _, target in ipairs(targets) do
+		for _, target in ipairs(ctx.targets) do
 			_p('\t\t%s /* Build configuration list for PBXNativeTarget "%s" */ = {', target.cfgsectionid, target.name)
 			_p('\t\t\tisa = XCConfigurationList;')
 			_p('\t\t\tbuildConfigurations = (')
@@ -431,7 +465,7 @@
 		_p('\t\t\tisa = XCConfigurationList;')
 		_p('\t\t\tbuildConfigurations = (')
 		for _, cfgname in ipairs(sln.configurations) do
-			_p('\t\t\t\t%s /* %s */,', root.cfgids[cfgname], cfgname)
+			_p('\t\t\t\t%s /* %s */,', ctx.root.cfgids[cfgname], cfgname)
 		end
 		_p('\t\t\t);')
 		_p('\t\t\tdefaultConfigurationIsVisible = 0;')

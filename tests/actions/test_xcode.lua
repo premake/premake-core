@@ -36,11 +36,11 @@
 		xcode.newid = old_newid
 	end
 	
-	local root
+	local ctx
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
-		root = xcode.buildfiletree(sln)
+		ctx = xcode.buildcontext(sln)
 	end
 
 
@@ -85,11 +85,31 @@
 			"source.cpp",
 		}
 		prepare()
-		xcode.PBXBuildFile(root)
+		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
 		000000000005 /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = 000000000004 /* source.c */; };
 		000000000007 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 000000000006 /* source.cpp */; };
 /* End PBXBuildFile section */
+		]]
+	end
+
+
+--
+-- PBXFileReference section tests
+--
+
+	function T.xcode3.PBXFileReference_ListAllFileTypesCorrectly()
+		files {
+			"source.h", "source.c"
+		}
+		prepare()
+		xcode.PBXFileReference(ctx)
+		test.capture [[
+/* Begin PBXFileReference section */
+		000000000003 /* source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = source.h; path = source.h; sourceTree = "<group>"; };
+		000000000004 /* source.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
+		000000000007 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
 		]]
 	end
