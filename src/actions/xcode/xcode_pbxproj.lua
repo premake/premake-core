@@ -257,22 +257,22 @@
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
+				local nodename, nodepath, encoding
 				if xcode.getfilecategory(node.name) == "Resources" then
 					if path.getextension(node.parent.name) == ".lproj" then
-						-- localized resource
-						local lang = path.getbasename(node.parent.name)
-						_p('\t\t%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
-							node.id, lang, xcode.getfiletype(node.name), lang, path.join(tree.getlocalpath(node.parent), node.name))
-					else
-						-- non-localized resource
-						_p('\t\t%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
-							node.id, node.name, xcode.getfiletype(node.name), node.name, tree.getlocalpath(node))
+						nodename = path.getbasename(node.parent.name)
+						nodepath = path.join(tree.getlocalpath(node.parent), node.name)
 					end
 				else
-					-- non-resource node
-					_p('\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
-						node.id, node.name, xcode.getfiletype(node.name), node.name, tree.getlocalpath(node))
+					encoding = " fileEncoding = 4;"
 				end
+				
+				nodename = nodename or node.name
+				nodepath = nodepath or tree.getlocalpath(node)
+				encoding = encoding or ""
+				
+				_p('\t\t%s /* %s */ = {isa = PBXFileReference;%s lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+					node.id, nodename, encoding, xcode.getfiletype(node.name), nodename, nodepath)
 			end
 		})
 		for _, target in ipairs(ctx.targets) do
