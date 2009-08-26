@@ -80,9 +80,7 @@
 
 	function T.xcode3.PBXBuildFile_ListsBuildableFiles()
 		files {
-			"source.h",
-			"source.c",
-			"source.cpp",
+			"source.h", "source.c", "source.cpp",
 		}
 		prepare()
 		xcode.PBXBuildFile(ctx)
@@ -94,27 +92,40 @@
 		]]
 	end
 
-	function T.xcode3.PBXBuildFile_ListsResourceFiles()
+
+	function T.xcode3.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
 		files {
-			"source.h",
-			"English.lproj/MainMenu.xib",
+			"source.h", "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
 		}
 		prepare()
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000006 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000005 /* MainMenu.xib */; };
+		000000000006 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000007 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
+
+
 
 --
 -- PBXFileReference section tests
 --
 
+	function T.xcode3.PBXFileReference_ListsTarget()
+		prepare()
+		xcode.PBXFileReference(ctx)
+		test.capture [[
+/* Begin PBXFileReference section */
+		000000000004 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+		
 	function T.xcode3.PBXFileReference_ListSourceTypesCorrectly()
 		files {
-			"source.h", "source.c"
+			"source.h", "source.c", "source.cpp"
 		}
 		prepare()
 		xcode.PBXFileReference(ctx)
@@ -122,19 +133,21 @@
 /* Begin PBXFileReference section */
 		000000000003 /* source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = source.h; path = source.h; sourceTree = "<group>"; };
 		000000000004 /* source.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
-		000000000007 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
+		000000000006 /* source.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = source.cpp; path = source.cpp; sourceTree = "<group>"; };
 		]]
 	end
 
+
 	function T.xcode3.PBXFileReference_ListResourcesCorrectly()
 		files {
-			"English.lproj/MainMenu.xib"
+			"English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
 		}
 		prepare()
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
 		000000000004 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000008 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
+

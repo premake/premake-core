@@ -27,6 +27,9 @@
 		ctx.root = tree.new(sln.name)
 		ctx.root.id = xcode.newid()
 
+		-- localized files need an extra ID (see below)
+		ctx.variantgroupids = { }
+		
 		for prj in premake.eachproject(sln) do
 			-- build the project tree and add it to the solution
 			local prjnode = premake.project.buildsourcetree(prj)
@@ -38,17 +41,28 @@
 					node.id = xcode.newid()
 				end,
 				
-				-- Premake is setup for the idea of a solution file referencing multiple project files,
-				-- but Xcode uses a single file for everything. Convert the file paths from project
-				-- location relative to solution (the one Xcode file) location relative to compensate.
 				onleaf = function(node)
+					-- Premake is setup for the idea of a solution file referencing multiple project files,
+					-- but Xcode uses a single file for everything. Convert the file paths from project
+					-- location relative to solution (the one Xcode file) location relative to compensate.
 					if node.path then
 						node.path = xcode.rebase(prj, node.path)
 					end
 					
 					-- assign a build ID to buildable files
-					if xcode.getfilecategory(node.name) then
+					local category = xcode.getfilecategory(node.name)
+					if category then
 						node.buildid = xcode.newid()
+					end
+					
+					-- localized files are stored in "variant groups". The file, such as 'MainMenu.xib',
+					-- only appears once in the project tree with each language listed underneath it.
+					-- (this is the reverse of how it actually appears on the filesystem). This file
+					-- has an extra ID to represent this group, in addition to its file ID.
+					if xcode.islocalized(node) then
+						if not ctx.variantgroupids[node.name] then
+							ctx.variantgroupids[node.name] = xcode.newid()
+						end
 					end
 				end
 			}, true)
@@ -184,6 +198,25 @@
 
 
 --
+-- Returns true if a node represents a localized file.
+--
+--
+
+	function xcode.islocalized(node)
+		if xcode.getfilecategory(node.name) ~= "Resources" then
+			return false
+		end
+		if not node.parent.path then
+			return false
+		end
+		if path.getextension(node.parent.path) ~= ".lproj" then
+			return false
+		end
+		return true
+	end
+
+
+--
 -- Retrieves a unique 12 byte ID for an object.
 --
 -- @returns
@@ -239,12 +272,23 @@
 
 
 	function xcode.PBXBuildFile(ctx)
+		local resources = { }
 		_p('/* Begin PBXBuildFile section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
 				if node.buildid then
+					local id = node.id
+					
+					-- localized resources are only listed once, add use their variant group ID 
+					-- rather than a file ID, so all languages are referenced at once.
+					if xcode.islocalized(node) then
+						if resources[node.name] then return end
+						id = ctx.variantgroupids[node.name]
+						resources[node.name] = true
+					end
+			
 					_p('\t\t%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
-						node.buildid, node.name, xcode.getfilecategory(node.name), node.id, node.name)
+						node.buildid, node.name, xcode.getfilecategory(node.name), id, node.name)
 				end
 			end
 		})
@@ -257,6 +301,9 @@
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
+				-- is this a project with no files?
+				if not node.path then return end
+
 				local nodename, nodepath, encoding
 				if xcode.getfilecategory(node.name) == "Resources" then
 					if path.getextension(node.parent.name) == ".lproj" then
@@ -270,7 +317,7 @@
 				nodename = nodename or node.name
 				nodepath = nodepath or tree.getlocalpath(node)
 				encoding = encoding or ""
-				
+
 				_p('\t\t%s /* %s */ = {isa = PBXFileReference;%s lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
 					node.id, nodename, encoding, xcode.getfiletype(node.name), nodename, nodepath)
 			end
