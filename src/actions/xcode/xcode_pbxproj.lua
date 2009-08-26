@@ -26,14 +26,14 @@
 		-- create the project tree
 		ctx.root = tree.new(sln.name)
 		ctx.root.id = xcode.newid()
-
-		-- localized files need an extra ID (see below)
-		ctx.variantgroups = { }
 		
 		for prj in premake.eachproject(sln) do
 			-- build the project tree and add it to the solution
 			local prjnode = premake.project.buildsourcetree(prj)
 			tree.insert(ctx.root, prjnode)
+
+			-- localized files need an extra ID (see below)
+			prjnode.variantgroups = { }
 			
 			tree.traverse(prjnode, {
 				-- assign IDs to all nodes in the tree
@@ -60,10 +60,10 @@
 					-- (this is the reverse of how it actually appears on the filesystem). This file
 					-- has an extra ID to represent this group, in addition to its file ID.
 					if xcode.islocalized(node) then
-						if not ctx.variantgroups[node.name] then
-							ctx.variantgroups[node.name] = { id = xcode.newid() }
+						if not prjnode.variantgroups[node.name] then
+							prjnode.variantgroups[node.name] = { id = xcode.newid() }
 						end
-						table.insert(ctx.variantgroups[node.name], node)
+						table.insert(prjnode.variantgroups[node.name], node)
 					end
 				end
 			}, true)
@@ -108,6 +108,12 @@
 		for _, target in ipairs(ctx.targets) do
 			assigncfgs(target)
 		end
+
+		-- If this solution has only a single project, use that project as the root
+		-- of the source tree to avoid the otherwise empty solution node. If there are
+		-- multiple projects, keep the solution node as the root so each project can
+		-- have its own top-level group for its files.
+		ctx.prjroot = iif(#ctx.root.children == 1, ctx.root.children[1], ctx.root)
 
 		return ctx
 	end
@@ -273,9 +279,18 @@
 
 
 	function xcode.PBXBuildFile(ctx)
-		local resources = { }
+		local resources
 		_p('/* Begin PBXBuildFile section */')
+		local prjnode
 		tree.traverse(ctx.root, {
+			onnode = function(node)
+				-- remember the project node, for variant groups below
+				if node.project then
+					prjnode = node
+					resources = { }
+				end
+			end,
+			
 			onleaf = function(node)
 				if node.buildid then
 					local id = node.id
@@ -284,7 +299,7 @@
 					-- rather than a file ID, so all languages are referenced at once.
 					if xcode.islocalized(node) then
 						if resources[node.name] then return end
-						id = ctx.variantgroups[node.name].id
+						id = prjnode.variantgroups[node.name].id
 						resources[node.name] = true
 					end
 			
@@ -306,11 +321,9 @@
 				if not node.path then return end
 
 				local nodename, nodepath, encoding
-				if xcode.getfilecategory(node.name) == "Resources" then
-					if path.getextension(node.parent.name) == ".lproj" then
-						nodename = path.getbasename(node.parent.name)
-						nodepath = path.join(tree.getlocalpath(node.parent), node.name)
-					end
+				if xcode.islocalized(node) then
+					nodename = path.getbasename(node.parent.name)
+					nodepath = path.join(tree.getlocalpath(node.parent), node.name)
 				else
 					encoding = " fileEncoding = 4;"
 				end
@@ -330,21 +343,47 @@
 		_p('/* End PBXFileReference section */')
 		_p('')
 	end
-	
-	
+
+
+	function xcode.PBXGroup(ctx)
+		_p('/* Begin PBXGroup section */')
+		tree.traverse(ctx.prjroot, {
+			onbranch = function(node, depth)
+				_p('\t\t%s /* %s */ = {', node.id, node.name)
+				_p('\t\t\tisa = PBXGroup;')
+				_p('\t\t\tchildren = (')
+				for _, child in ipairs(node.children) do
+					_p('\t\t\t\t%s /* %s */,', child.id, child.name)
+				end
+				_p('\t\t\t);')
+				_p('\t\t\tname = %s;', node.name)
+				if node.path then
+					_p('\t\t\tpath = %s;', iif(node.parent.path, node.name, node.path))
+				end
+				_p('\t\t\tsourceTree = "<group>";')
+				_p('\t\t};')
+			end
+		}, true)
+		_p('/* End PBXGroup section */')
+		_p('')
+	end
+
+
 	function xcode.PBXVariantGroup(ctx)
 		_p('/* Begin PBXVariantGroup section */')
-		for name, group in pairs(ctx.variantgroups) do
-			_p('\t\t%s /* %s */ = {', group.id, name)
-			_p('\t\t\tisa = PBXVariantGroup;')
-			_p('\t\t\tchildren = (')
-			for _, node in ipairs(group) do
-				_p('\t\t\t\t%s /* %s */,', node.id, path.getbasename(node.parent.name))
+		for _, prjnode in ipairs(ctx.root.children) do
+			for name, group in pairs(prjnode.variantgroups) do
+				_p('\t\t%s /* %s */ = {', group.id, name)
+				_p('\t\t\tisa = PBXVariantGroup;')
+				_p('\t\t\tchildren = (')
+				for _, node in ipairs(group) do
+					_p('\t\t\t\t%s /* %s */,', node.id, path.getbasename(node.parent.name))
+				end
+				_p('\t\t\t);')
+				_p('\t\t\tname = %s;', name)
+				_p('\t\t\tsourceTree = "<group>";')
+				_p('\t\t};')
 			end
-			_p('\t\t\t);')
-			_p('\t\t\tname = %s;', name)
-			_p('\t\t\tsourceTree = "<group>";')
-			_p('\t\t};')
 		end
 		_p('/* End PBXVariantGroup section */')
 		_p('')
@@ -370,13 +409,6 @@
 		-- Build a project tree and target list, with Xcode specific metadata attached
 		local ctx = xcode.buildcontext(sln)
 
-		-- If this solution has only a single project, use that project as the root
-		-- of the source tree to avoid the otherwise empty solution node. If there are
-		-- multiple projects, keep the solution node as the root so each project can
-		-- have its own top-level group for its files.
-		local prjroot = iif(#ctx.root.children == 1, ctx.root.children[1], ctx.root)
-
-
 		-- Begin file generation --
 		xcode.header()
 		xcode.PBXBuildFile(ctx)
@@ -396,26 +428,7 @@
 		_p('')
 		
 
-		_p('/* Begin PBXGroup section */')
-		tree.traverse(prjroot, {
-			onbranch = function(node, depth)
-				_p('\t\t%s /* %s */ = {', node.id, node.name)
-				_p('\t\t\tisa = PBXGroup;')
-				_p('\t\t\tchildren = (')
-				for _, child in ipairs(node.children) do
-					_p('\t\t\t\t%s /* %s */,', child.id, child.name)
-				end
-				_p('\t\t\t);')
-				_p('\t\t\tname = %s;', node.name)
-				if node.path then
-					_p('\t\t\tpath = %s;', iif(node.parent.path, node.name, node.path))
-				end
-				_p('\t\t\tsourceTree = "<group>";')
-				_p('\t\t};')
-			end
-		}, true)
-		_p('/* End PBXGroup section */')
-		_p('')
+		xcode.PBXGroup(ctx)
 
 		
 		_p('/* Begin PBXNativeTarget section */')
@@ -444,10 +457,10 @@
 		_p('/* Begin PBXProject section */')
 		_p('\t\t08FB7793FE84155DC02AAC07 /* Project object */ = {')
 		_p('\t\t\tisa = PBXProject;')
-		_p('\t\t\tbuildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', prjroot.name)
+		_p('\t\t\tbuildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
 		_p('\t\t\tcompatibilityVersion = "Xcode 3.1";')
 		_p('\t\t\thasScannedForEncodings = 1;')
-		_p('\t\t\tmainGroup = %s /* %s */;', prjroot.id, prjroot.name)
+		_p('\t\t\tmainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
 		_p('\t\t\tprojectDirPath = "";')
 		_p('\t\t\tprojectRoot = "";')
 		_p('\t\t\ttargets = (')
@@ -547,7 +560,7 @@
 			_p('\t\t\tdefaultConfigurationName = %s;', sln.configurations[1])
 			_p('\t\t};')
 		end
-		_p('\t\t1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', prjroot.name)
+		_p('\t\t1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', ctx.prjroot.name)
 		_p('\t\t\tisa = XCConfigurationList;')
 		_p('\t\t\tbuildConfigurations = (')
 		for _, cfgname in ipairs(sln.configurations) do

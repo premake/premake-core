@@ -42,6 +42,13 @@
 		premake.buildconfigs()
 		ctx = xcode.buildcontext(sln)
 	end
+	
+	local function project2()
+		project "MyProject2"
+		language "C++"
+		kind "ConsoleApp"
+	end
+	
 
 
 --
@@ -107,6 +114,34 @@
 	end
 
 
+	function T.xcode3.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
+		files {
+			"English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
+		}
+		prepare()
+		xcode.PBXBuildFile(ctx)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		000000000005 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000006 /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+
+	function T.xcode3.PBXBuildFile_SeparatesResourcesByProject()
+		files { "MyProject/English.lproj/MainMenu.xib", "MyProject/French.lproj/MainMenu.xib" }
+		project2()
+		files { "MyProject2/English.lproj/MainMenu.xib", "MyProject2/French.lproj/MainMenu.xib" }
+		prepare()
+		xcode.PBXBuildFile(ctx)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		000000000006 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000007 /* MainMenu.xib */; };
+		000000000015 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000016 /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 
 --
 -- PBXFileReference section tests
@@ -152,6 +187,83 @@
 	end
 
 
+	function T.xcode3.PBXFileReference_SeparatesResourcesByProject()
+		files { "MyProject/English.lproj/MainMenu.xib", "MyProject/French.lproj/MainMenu.xib" }
+		project2()
+		files { "MyProject2/English.lproj/MainMenu.xib", "MyProject2/French.lproj/MainMenu.xib" }
+		prepare()
+		xcode.PBXFileReference(ctx)
+		test.capture [[
+/* Begin PBXFileReference section */
+		000000000005 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000009 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000014 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000018 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		]]
+	end
+
+
+--
+-- PBXGroup section tests
+--
+
+	function T.xcode3.PBXGroup_OnNoFiles()
+		prepare()
+		xcode.PBXGroup(ctx)
+		test.capture [[
+/* Begin PBXGroup section */
+/* End PBXGroup section */
+		]]
+	end
+
+
+	function T.xcode3.PBXGroup_RootFilesInMainGroup()
+		files { "source.h" }
+		prepare()
+		xcode.PBXGroup(ctx)
+		test.capture [[
+/* Begin PBXGroup section */
+		000000000002 /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				000000000003 /* source.h */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
+	function T.xcode3.PBXGroup_CreateSubGroups()
+		files { "include/source.h" }
+		prepare()
+		xcode.PBXGroup(ctx)
+		test.capture [[
+/* Begin PBXGroup section */
+		000000000002 /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				000000000003 /* include */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		000000000003 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				000000000004 /* source.h */,
+			);
+			name = include;
+			path = include;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
 
 --
 -- PBXVariantGroup section tests
@@ -177,5 +289,4 @@
 /* End PBXVariantGroup section */
 		]]
 	end
-
 
