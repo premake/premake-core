@@ -95,13 +95,13 @@
 
 	function T.xcode3.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
 		files {
-			"source.h", "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
+			"English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
 		}
 		prepare()
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000006 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000007 /* MainMenu.xib */; };
+		000000000005 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000006 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -150,4 +150,32 @@
 		000000000008 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
+
+
+
+--
+-- PBXVariantGroup section tests
+--
+
+	function T.xcode3.PBXVariantGroup_ListsResourceGroups()
+		files {
+			"English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
+		}
+		prepare()
+		xcode.PBXVariantGroup(ctx)
+		test.capture [[
+/* Begin PBXVariantGroup section */
+		000000000006 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				000000000004 /* English */,
+				000000000008 /* French */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+		]]
+	end
+
 

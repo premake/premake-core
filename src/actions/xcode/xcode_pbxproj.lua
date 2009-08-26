@@ -28,7 +28,7 @@
 		ctx.root.id = xcode.newid()
 
 		-- localized files need an extra ID (see below)
-		ctx.variantgroupids = { }
+		ctx.variantgroups = { }
 		
 		for prj in premake.eachproject(sln) do
 			-- build the project tree and add it to the solution
@@ -60,9 +60,10 @@
 					-- (this is the reverse of how it actually appears on the filesystem). This file
 					-- has an extra ID to represent this group, in addition to its file ID.
 					if xcode.islocalized(node) then
-						if not ctx.variantgroupids[node.name] then
-							ctx.variantgroupids[node.name] = xcode.newid()
+						if not ctx.variantgroups[node.name] then
+							ctx.variantgroups[node.name] = { id = xcode.newid() }
 						end
+						table.insert(ctx.variantgroups[node.name], node)
 					end
 				end
 			}, true)
@@ -283,7 +284,7 @@
 					-- rather than a file ID, so all languages are referenced at once.
 					if xcode.islocalized(node) then
 						if resources[node.name] then return end
-						id = ctx.variantgroupids[node.name]
+						id = ctx.variantgroups[node.name].id
 						resources[node.name] = true
 					end
 			
@@ -331,6 +332,25 @@
 	end
 	
 	
+	function xcode.PBXVariantGroup(ctx)
+		_p('/* Begin PBXVariantGroup section */')
+		for name, group in pairs(ctx.variantgroups) do
+			_p('\t\t%s /* %s */ = {', group.id, name)
+			_p('\t\t\tisa = PBXVariantGroup;')
+			_p('\t\t\tchildren = (')
+			for _, node in ipairs(group) do
+				_p('\t\t\t\t%s /* %s */,', node.id, path.getbasename(node.parent.name))
+			end
+			_p('\t\t\t);')
+			_p('\t\t\tname = %s;', name)
+			_p('\t\t\tsourceTree = "<group>";')
+			_p('\t\t};')
+		end
+		_p('/* End PBXVariantGroup section */')
+		_p('')
+	end
+
+
 	function xcode.footer()
 		_p('\t};')
 		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
@@ -460,6 +480,7 @@
 		_p('/* End PBXSourcesBuildPhase section */')
 		_p('')
 
+		xcode.PBXVariantGroup(ctx)
 		
 		_p('/* Begin XCBuildConfiguration section */')
 		for _, target in ipairs(ctx.targets) do
