@@ -57,7 +57,13 @@
 			io.eol = "\n"
 		end
 		
-		local s = string.format(msg, unpack(arg))
+		local s
+		if type(msg) == "number" then
+			s = string.rep("\t", msg) .. string.format(unpack(arg))
+		else
+			s = string.format(msg, unpack(arg))
+		end
+		
 		if io.captured then
 			io.captured = io.captured .. s .. io.eol
 		else

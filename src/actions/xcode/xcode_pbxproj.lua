@@ -303,7 +303,7 @@
 			onleaf = function(node)
 				if node.buildid then
 					if xcode.islocalized(node) then return end			
-					_p('\t\t%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
+					_p(2,'%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
 						node.buildid, node.name, xcode.getfilecategory(node.name), node.id, node.name)
 				end
 			end
@@ -331,12 +331,12 @@
 				nodepath = nodepath or tree.getlocalpath(node)
 				encoding = encoding or ""
 
-				_p('\t\t%s /* %s */ = {isa = PBXFileReference;%s lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
+				_p(2,'%s /* %s */ = {isa = PBXFileReference;%s lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<group>"; };',
 					node.id, nodename, encoding, xcode.getfiletype(node.name), nodename, nodepath)
 			end
 		})
 		for _, target in ipairs(ctx.targets) do
-			_p('\t\t%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+			_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
 				target.fileid, target.name, xcode.gettargettype(target.kind), target.name)
 		end
 		_p('/* End PBXFileReference section */')
@@ -352,21 +352,21 @@
 		tree.traverse(ctx.prjroot, {
 			onbranch = function(node)
 				if xcode.islocalized(node) then return end
-				_p('\t\t%s /* %s */ = {', node.id, node.name)
-				_p('\t\t\tisa = PBXGroup;')
-				_p('\t\t\tchildren = (')
+				_p(2,'%s /* %s */ = {', node.id, node.name)
+				_p(3,'isa = PBXGroup;')
+				_p(3,'children = (')
 				for _, child in ipairs(node.children) do
 					if not xcode.islocalized(child) then
-						_p('\t\t\t\t%s /* %s */,', child.id, child.name)
+						_p(4,'%s /* %s */,', child.id, child.name)
 					end
 				end
-				_p('\t\t\t);')
-				_p('\t\t\tname = %s;', node.name)
+				_p(3,');')
+				_p(3,'name = %s;', node.name)
 				if node.path then
-					_p('\t\t\tpath = %s;', iif(node.parent.path, node.name, node.path))
+					_p(3,'path = %s;', iif(node.parent.path, node.name, node.path))
 				end
-				_p('\t\t\tsourceTree = "<group>";')
-				_p('\t\t};')
+				_p(3,'sourceTree = "<group>";')
+				_p(2,'};')
 			end
 		}, true)
 				
@@ -380,16 +380,16 @@
 		for _, prjnode in ipairs(ctx.root.children) do
 			if prjnode.resources then
 				for _, node in ipairs(prjnode.resources.children) do
-					_p('\t\t%s /* %s */ = {', node.id, node.name)
-					_p('\t\t\tisa = PBXVariantGroup;')
-					_p('\t\t\tchildren = (')
+					_p(2,'%s /* %s */ = {', node.id, node.name)
+					_p(3,'isa = PBXVariantGroup;')
+					_p(3,'children = (')
 					for lang, file in pairs(node.languages) do
-						_p('\t\t\t\t%s /* %s */,', file.id, lang)
+						_p(4,'%s /* %s */,', file.id, lang)
 					end
-					_p('\t\t\t);')
-					_p('\t\t\tname = %s;', node.name)
-					_p('\t\t\tsourceTree = "<group>";')
-					_p('\t\t};')
+					_p(3,');')
+					_p(3,'name = %s;', node.name)
+					_p(3,'sourceTree = "<group>";')
+					_p(2,'};')
 				end
 			end
 		end
@@ -399,7 +399,7 @@
 
 
 	function xcode.footer()
-		_p('\t};')
+		_p(1,'};')
 		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
 		_p('}')
 	end
@@ -424,13 +424,13 @@
 
 		_p('/* Begin PBXFrameworksBuildPhase section */')
 		for _, target in ipairs(ctx.targets) do
-			_p('\t\t%s /* Frameworks */ = {', target.frameworksid)
-			_p('\t\t\tisa = PBXFrameworksBuildPhase;')
-			_p('\t\t\tbuildActionMask = 2147483647;')
-			_p('\t\t\tfiles = (')
-			_p('\t\t\t);')
-			_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
-			_p('\t\t};')
+			_p(2,'%s /* Frameworks */ = {', target.frameworksid)
+			_p(3,'isa = PBXFrameworksBuildPhase;')
+			_p(3,'buildActionMask = 2147483647;')
+			_p(3,'files = (')
+			_p(3,');')
+			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+			_p(2,'};')
 		end
 		_p('/* End PBXFrameworksBuildPhase section */')
 		_p('')
@@ -441,62 +441,62 @@
 		
 		_p('/* Begin PBXNativeTarget section */')
 		for _, target in ipairs(ctx.targets) do
-			_p('\t\t%s /* %s */ = {', target.id, target.name)
-			_p('\t\t\tisa = PBXNativeTarget;')
-			_p('\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', target.cfgsectionid, target.name)
-			_p('\t\t\tbuildPhases = (')
-			_p('\t\t\t\t%s /* Sources */,', target.sourcesid)
-			_p('\t\t\t\t%s /* Frameworks */,', target.frameworksid)
-			_p('\t\t\t);')
-			_p('\t\t\tbuildRules = (')
-			_p('\t\t\t);')
-			_p('\t\t\tdependencies = (')
-			_p('\t\t\t);')
-			_p('\t\t\tname = %s;', target.name)
-			_p('\t\t\tproductName = %s;', target.name)
-			_p('\t\t\tproductReference = %s /* %s */;', target.fileid, target.name)
-			_p('\t\t\tproductType = "%s";', xcode.getproducttype(target.kind))
-			_p('\t\t};')
+			_p(2,'%s /* %s */ = {', target.id, target.name)
+			_p(3,'isa = PBXNativeTarget;')
+			_p(3,'buildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', target.cfgsectionid, target.name)
+			_p(3,'buildPhases = (')
+			_p(4,'%s /* Sources */,', target.sourcesid)
+			_p(4,'%s /* Frameworks */,', target.frameworksid)
+			_p(3,');')
+			_p(3,'buildRules = (')
+			_p(3,');')
+			_p(3,'dependencies = (')
+			_p(3,');')
+			_p(3,'name = %s;', target.name)
+			_p(3,'productName = %s;', target.name)
+			_p(3,'productReference = %s /* %s */;', target.fileid, target.name)
+			_p(3,'productType = "%s";', xcode.getproducttype(target.kind))
+			_p(2,'};')
 		end
 		_p('/* End PBXProject section */')
 		_p('')
 
 
 		_p('/* Begin PBXProject section */')
-		_p('\t\t08FB7793FE84155DC02AAC07 /* Project object */ = {')
-		_p('\t\t\tisa = PBXProject;')
-		_p('\t\t\tbuildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
-		_p('\t\t\tcompatibilityVersion = "Xcode 3.1";')
-		_p('\t\t\thasScannedForEncodings = 1;')
-		_p('\t\t\tmainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
-		_p('\t\t\tprojectDirPath = "";')
-		_p('\t\t\tprojectRoot = "";')
-		_p('\t\t\ttargets = (')
+		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
+		_p(3,'isa = PBXProject;')
+		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
+		_p(3,'compatibilityVersion = "Xcode 3.1";')
+		_p(3,'hasScannedForEncodings = 1;')
+		_p(3,'mainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
+		_p(3,'projectDirPath = "";')
+		_p(3,'projectRoot = "";')
+		_p(3,'targets = (')
 		for _, target in ipairs(ctx.targets) do
-			_p('\t\t\t\t%s /* %s */,', target.id, target.name)
+			_p(4,'%s /* %s */,', target.id, target.name)
 		end
-		_p('\t\t\t);')
-		_p('\t\t};')
+		_p(3,');')
+		_p(2,'};')
 		_p('/* End PBXProject section */')
 		_p('')
 
 
 		_p('/* Begin PBXSourcesBuildPhase section */')
 		for _, target in ipairs(ctx.targets) do
-			_p('\t\t%s /* Sources */ = {', target.sourcesid)
-			_p('\t\t\tisa = PBXSourcesBuildPhase;')
-			_p('\t\t\tbuildActionMask = 2147483647;')
-			_p('\t\t\tfiles = (')
+			_p(2,'%s /* Sources */ = {', target.sourcesid)
+			_p(3,'isa = PBXSourcesBuildPhase;')
+			_p(3,'buildActionMask = 2147483647;')
+			_p(3,'files = (')
 			tree.traverse(target.prjnode, {
 				onleaf = function(node)
 					if node.buildid then
-						_p('\t\t\t\t%s /* %s in Sources */,', node.buildid, node.name)
+						_p(4,'%s /* %s in Sources */,', node.buildid, node.name)
 					end
 				end
 			})
-			_p('\t\t\t);')
-			_p('\t\t\trunOnlyForDeploymentPostprocessing = 0;')
-			_p('\t\t};')
+			_p(3,');')
+			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+			_p(2,'};')
 		end
 		_p('/* End PBXSourcesBuildPhase section */')
 		_p('')
@@ -507,49 +507,49 @@
 		for _, target in ipairs(ctx.targets) do
 			local prj = target.prjnode.project
 			for cfg in premake.eachconfig(target.prjnode.project) do
-				_p('\t\t%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
-				_p('\t\t\tisa = XCBuildConfiguration;')
-				_p('\t\t\tbuildSettings = {')
-				_p('\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;')
-				_p('\t\t\t\tCONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.directory))
+				_p(2,'%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
+				_p(3,'isa = XCBuildConfiguration;')
+				_p(3,'buildSettings = {')
+				_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
+				_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.directory))
 				if cfg.flags.Symbols then
-					_p('\t\t\t\tCOPY_PHASE_STRIP = NO;')
+					_p(4,'COPY_PHASE_STRIP = NO;')
 				end
-				_p('\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;')
+				_p(4,'GCC_DYNAMIC_NO_PIC = NO;')
 				if cfg.flags.Symbols then
-					_p('\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;')
+					_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
 				end
-				_p('\t\t\t\tGCC_MODEL_TUNING = G5;')
+				_p(4,'GCC_MODEL_TUNING = G5;')
 				if #cfg.defines > 0 then
-					_p('\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (')
+					_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
 					_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
-					_p('\t\t\t\t);')
+					_p(4,');')
 				end
-				_p('\t\t\t\tPRODUCT_NAME = %s;', cfg.buildtarget.name)
-				_p('\t\t\t\tSYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
-				_p('\t\t\t};')
-				_p('\t\t\tname = %s;', cfg.name)
-				_p('\t\t};')
+				_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.name)
+				_p(4,'SYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
+				_p(3,'};')
+				_p(3,'name = %s;', cfg.name)
+				_p(2,'};')
 			end
 		end
 		for _, cfgname in ipairs(sln.configurations) do
-			_p('\t\t%s /* %s */ = {', ctx.root.cfgids[cfgname], cfgname)
-			_p('\t\t\tisa = XCBuildConfiguration;')
-			_p('\t\t\tbuildSettings = {')
-			_p('\t\t\t\tARCHS = "$(ARCHS_STANDARD_32_BIT)";')
-			_p('\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;')
-			_p('\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;')
-			_p('\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;')
-			_p('\t\t\t\tONLY_ACTIVE_ARCH = YES;')
-			_p('\t\t\t\tPREBINDING = NO;')
-			_p('\t\t\t\tSDKROOT = macosx10.5;')
+			_p(2,'%s /* %s */ = {', ctx.root.cfgids[cfgname], cfgname)
+			_p(3,'isa = XCBuildConfiguration;')
+			_p(3,'buildSettings = {')
+			_p(4,'ARCHS = "$(ARCHS_STANDARD_32_BIT)";')
+			_p(4,'GCC_C_LANGUAGE_STANDARD = c99;')
+			_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
+			_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
+			_p(4,'ONLY_ACTIVE_ARCH = YES;')
+			_p(4,'PREBINDING = NO;')
+			_p(4,'SDKROOT = macosx10.5;')
 
 			-- I don't have any concept of a solution level objects directory so use the first project
 			local prj1 = premake.getconfig(sln.projects[1])
-			_p('\t\t\t\tSYMROOT = %s;', xcode.rebase(prj1, prj1.objectsdir))
-			_p('\t\t\t};')
-			_p('\t\t\tname = %s;', cfgname)
-			_p('\t\t};')
+			_p(4,'SYMROOT = %s;', xcode.rebase(prj1, prj1.objectsdir))
+			_p(3,'};')
+			_p(3,'name = %s;', cfgname)
+			_p(2,'};')
 		end
 		_p('/* End XCBuildConfiguration section */')
 		_p('')
@@ -557,27 +557,27 @@
 		
 		_p('/* Begin XCConfigurationList section */')
 		for _, target in ipairs(ctx.targets) do
-			_p('\t\t%s /* Build configuration list for PBXNativeTarget "%s" */ = {', target.cfgsectionid, target.name)
-			_p('\t\t\tisa = XCConfigurationList;')
-			_p('\t\t\tbuildConfigurations = (')
+			_p(2,'%s /* Build configuration list for PBXNativeTarget "%s" */ = {', target.cfgsectionid, target.name)
+			_p(3,'isa = XCConfigurationList;')
+			_p(3,'buildConfigurations = (')
 			for _, cfgname in ipairs(sln.configurations) do
-				_p('\t\t\t\t%s /* %s */,', target.cfgids[cfgname], cfgname)
+				_p(4,'%s /* %s */,', target.cfgids[cfgname], cfgname)
 			end
-			_p('\t\t\t);')
-			_p('\t\t\tdefaultConfigurationIsVisible = 0;')
-			_p('\t\t\tdefaultConfigurationName = %s;', sln.configurations[1])
-			_p('\t\t};')
+			_p(3,');')
+			_p(3,'defaultConfigurationIsVisible = 0;')
+			_p(3,'defaultConfigurationName = %s;', sln.configurations[1])
+			_p(2,'};')
 		end
-		_p('\t\t1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', ctx.prjroot.name)
-		_p('\t\t\tisa = XCConfigurationList;')
-		_p('\t\t\tbuildConfigurations = (')
+		_p(2,'1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', ctx.prjroot.name)
+		_p(3,'isa = XCConfigurationList;')
+		_p(3,'buildConfigurations = (')
 		for _, cfgname in ipairs(sln.configurations) do
-			_p('\t\t\t\t%s /* %s */,', ctx.root.cfgids[cfgname], cfgname)
+			_p(4,'%s /* %s */,', ctx.root.cfgids[cfgname], cfgname)
 		end
-		_p('\t\t\t);')
-		_p('\t\t\tdefaultConfigurationIsVisible = 0;')
-		_p('\t\t\tdefaultConfigurationName = %s;', sln.configurations[1])
-		_p('\t\t};')
+		_p(3,');')
+		_p(3,'defaultConfigurationIsVisible = 0;')
+		_p(3,'defaultConfigurationName = %s;', sln.configurations[1])
+		_p(2,'};')
 		_p('/* End XCConfigurationList section */')
 
 		xcode.footer()
