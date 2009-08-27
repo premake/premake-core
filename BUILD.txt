@@ -5,21 +5,21 @@ PREMAKE BUILD INSTRUCTIONS
  complicated.
  
  If you downloaded a source code package from SourceForge, you will 
- find project files for Visual Studio, Code::Blocks, CodeLite, and
- GNU make in the build/ directory. Build the release configuration
- (the default for the makefiles) and you will find the executable in
- bin/release ready to go.
+ find project files for all of the currently supported toolsets in 
+ the build/ directory. Build the release configuration (the default
+ for the makefiles) and you will find the executable in bin/release 
+ ready to go.
  
  If you want to use a debug build instead, or if you downloaded the
  source code from Subversion instead of a SourceForge release, read
- the next section for more information.
+ the next section for more information on working with the scripts.
  
- Visual Studio 2002 and 2003 users: these version of Visual Studio 
+ VISUAL STUDIO 2002 AND 2003 USERS: these versions of Visual Studio 
  are unable to build Premake due to string size limitations. Use one 
  the newer, free versions of Visual Studio C++ Express instead.
 
  If you find all of this very confusing and need some help, see the
- end of this document for contact information.
+ end of this document for contact information. I'll be glad to help.
  
 
 GENERATING THE PROJECT FILES
@@ -29,21 +29,16 @@ GENERATING THE PROJECT FILES
  next section. If you downloaded the sources from Subversion, you'll 
  need to generate new projects files before you can build. 
  
- In order to generate the project files, you need a working version of 
- Premake, either 3.x or 4.x versions, installed on your system. You can
- get it as source code or a prebuilt binary from the SourceForge 
- download page.
+ In order to generate the project files, you need to have a working 
+ version of Premake 4.x installed on your system. You can get it as a
+ source code (with project files ready to build) or a prebuilt binary 
+ from the SourceForge download page.
  
- Once you have a working Premake installed, use it to generate the 
- project files. For Premake 4.x, type a command like:
+ Once you have a working Premake 4.x installed, use it to generate the 
+ project files. Type a command like:
  
    premake4 gmake    -- for GNU makefiles using GCC
    premake4 vs2005   -- for a Visual Studio 2005 solution
-   
- For Premake 3.x, use the old command line format:
- 
-   premake --target gnu
-   premake --target vs2005
    
  Use the "--help" option to see all of the available targets.
  
