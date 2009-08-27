@@ -108,21 +108,7 @@
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000005 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000006 /* MainMenu.xib */; };
-/* End PBXBuildFile section */
-		]]
-	end
-
-
-	function T.xcode3.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
-		files {
-			"English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib"
-		}
-		prepare()
-		xcode.PBXBuildFile(ctx)
-		test.capture [[
-/* Begin PBXBuildFile section */
-		000000000005 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000006 /* MainMenu.xib */; };
+		000000000011 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000010 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -136,8 +122,8 @@
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000006 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000007 /* MainMenu.xib */; };
-		000000000015 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000016 /* MainMenu.xib */; };
+		000000000012 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000011 /* MainMenu.xib */; };
+		000000000023 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000022 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -182,7 +168,7 @@
 		test.capture [[
 /* Begin PBXFileReference section */
 		000000000004 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000008 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000007 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -196,9 +182,9 @@
 		test.capture [[
 /* Begin PBXFileReference section */
 		000000000005 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000009 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000014 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000018 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000008 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000016 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		000000000019 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -264,6 +250,33 @@
 	end
 
 
+	function T.xcode3.PBXGroup_CreatesResourceSubgroup()
+		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
+		prepare()
+		xcode.PBXGroup(ctx)
+		test.capture [[
+/* Begin PBXGroup section */
+		000000000002 /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				000000000009 /* Resources */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		000000000009 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				000000000010 /* MainMenu.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
 
 --
 -- PBXVariantGroup section tests
@@ -277,11 +290,11 @@
 		xcode.PBXVariantGroup(ctx)
 		test.capture [[
 /* Begin PBXVariantGroup section */
-		000000000006 /* MainMenu.xib */ = {
+		000000000010 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
+				000000000007 /* French */,
 				000000000004 /* English */,
-				000000000008 /* French */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";

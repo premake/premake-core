@@ -32,38 +32,53 @@
 			local prjnode = premake.project.buildsourcetree(prj)
 			tree.insert(ctx.root, prjnode)
 
-			-- localized files need an extra ID (see below)
-			prjnode.variantgroups = { }
-			
+			-- first pass over the tree to handle resource files like MainMenu.xib. If present,
+			-- create a new project-level group named "Resources" to contain the files, and
+			-- virtual groups to contain each language variant. I'm converting how these files
+			-- are stored on disk (English.lproj/MainMenu.xib) to how they are shown in Xcode
+			-- (Resources/MainMenu.xib/English).
 			tree.traverse(prjnode, {
-				-- assign IDs to all nodes in the tree
-				onnode = function(node)
-					node.id = xcode.newid()
-				end,
-				
 				onleaf = function(node)
+					if xcode.islocalized(node) then
+						-- create a "Resources" folder if necessary
+						if not prjnode.resources then
+							prjnode.resources = tree.new("Resources")
+							tree.insert(prjnode, prjnode.resources)
+						end
+
+						-- create node to represent the file; will become a virtual group later
+						if not prjnode.resources.children[node.name] then
+							local group = tree.new(node.name)
+							group.languages = { }
+							prjnode.resources.children[node.name] = group
+							tree.insert(prjnode.resources, group)
+						end
+						
+						-- add this language to the group
+						local lang = path.getbasename(node.parent.name)
+						prjnode.resources.children[node.name].languages[lang] = node
+					end
+				end
+			})
+
+			-- second pass: finish configuring things
+			tree.traverse(prjnode, {
+				onnode = function(node)
+					-- assign IDs to all nodes in the tree
+					node.id = xcode.newid()
+
 					-- Premake is setup for the idea of a solution file referencing multiple project files,
 					-- but Xcode uses a single file for everything. Convert the file paths from project
 					-- location relative to solution (the one Xcode file) location relative to compensate.
 					if node.path then
 						node.path = xcode.rebase(prj, node.path)
 					end
-					
+				end,
+				
+				onleaf = function(node)					
 					-- assign a build ID to buildable files
-					local category = xcode.getfilecategory(node.name)
-					if category then
+					if xcode.getfilecategory(node.name) then
 						node.buildid = xcode.newid()
-					end
-					
-					-- localized files are stored in "variant groups". The file, such as 'MainMenu.xib',
-					-- only appears once in the project tree with each language listed underneath it.
-					-- (this is the reverse of how it actually appears on the filesystem). This file
-					-- has an extra ID to represent this group, in addition to its file ID.
-					if xcode.islocalized(node) then
-						if not prjnode.variantgroups[node.name] then
-							prjnode.variantgroups[node.name] = { id = xcode.newid() }
-						end
-						table.insert(prjnode.variantgroups[node.name], node)
 					end
 				end
 			}, true)
@@ -119,6 +134,7 @@
 	end
 
 
+
 --
 -- Return the Xcode category (for lack of a better term) for a file, such 
 -- as "Sources" or "Resources".
@@ -130,7 +146,6 @@
 --
 
 	function xcode.getfilecategory(fname)
-		print("Category for ", fname)
 		local categories = {
 			[".c"   ] = "Sources",
 			[".cc"  ] = "Sources",
@@ -210,6 +225,9 @@
 --
 
 	function xcode.islocalized(node)
+		if path.getextension(node.name) == ".lproj" then
+			return true
+		end
 		if xcode.getfilecategory(node.name) ~= "Resources" then
 			return false
 		end
@@ -281,30 +299,12 @@
 	function xcode.PBXBuildFile(ctx)
 		local resources
 		_p('/* Begin PBXBuildFile section */')
-		local prjnode
 		tree.traverse(ctx.root, {
-			onnode = function(node)
-				-- remember the project node, for variant groups below
-				if node.project then
-					prjnode = node
-					resources = { }
-				end
-			end,
-			
 			onleaf = function(node)
 				if node.buildid then
-					local id = node.id
-					
-					-- localized resources are only listed once, add use their variant group ID 
-					-- rather than a file ID, so all languages are referenced at once.
-					if xcode.islocalized(node) then
-						if resources[node.name] then return end
-						id = prjnode.variantgroups[node.name].id
-						resources[node.name] = true
-					end
-			
+					if xcode.islocalized(node) then return end			
 					_p('\t\t%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
-						node.buildid, node.name, xcode.getfilecategory(node.name), id, node.name)
+						node.buildid, node.name, xcode.getfilecategory(node.name), node.id, node.name)
 				end
 			end
 		})
@@ -317,7 +317,6 @@
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
-				-- is this a project with no files?
 				if not node.path then return end
 
 				local nodename, nodepath, encoding
@@ -347,13 +346,19 @@
 
 	function xcode.PBXGroup(ctx)
 		_p('/* Begin PBXGroup section */')
+		
+		-- create groups for each branch node in the tree, skipping over localization
+		-- groups which get flipped around and put in a special "Resources" group.
 		tree.traverse(ctx.prjroot, {
-			onbranch = function(node, depth)
+			onbranch = function(node)
+				if xcode.islocalized(node) then return end
 				_p('\t\t%s /* %s */ = {', node.id, node.name)
 				_p('\t\t\tisa = PBXGroup;')
 				_p('\t\t\tchildren = (')
 				for _, child in ipairs(node.children) do
-					_p('\t\t\t\t%s /* %s */,', child.id, child.name)
+					if not xcode.islocalized(child) then
+						_p('\t\t\t\t%s /* %s */,', child.id, child.name)
+					end
 				end
 				_p('\t\t\t);')
 				_p('\t\t\tname = %s;', node.name)
@@ -364,6 +369,7 @@
 				_p('\t\t};')
 			end
 		}, true)
+				
 		_p('/* End PBXGroup section */')
 		_p('')
 	end
@@ -372,17 +378,19 @@
 	function xcode.PBXVariantGroup(ctx)
 		_p('/* Begin PBXVariantGroup section */')
 		for _, prjnode in ipairs(ctx.root.children) do
-			for name, group in pairs(prjnode.variantgroups) do
-				_p('\t\t%s /* %s */ = {', group.id, name)
-				_p('\t\t\tisa = PBXVariantGroup;')
-				_p('\t\t\tchildren = (')
-				for _, node in ipairs(group) do
-					_p('\t\t\t\t%s /* %s */,', node.id, path.getbasename(node.parent.name))
+			if prjnode.resources then
+				for _, node in ipairs(prjnode.resources.children) do
+					_p('\t\t%s /* %s */ = {', node.id, node.name)
+					_p('\t\t\tisa = PBXVariantGroup;')
+					_p('\t\t\tchildren = (')
+					for lang, file in pairs(node.languages) do
+						_p('\t\t\t\t%s /* %s */,', file.id, lang)
+					end
+					_p('\t\t\t);')
+					_p('\t\t\tname = %s;', node.name)
+					_p('\t\t\tsourceTree = "<group>";')
+					_p('\t\t};')
 				end
-				_p('\t\t\t);')
-				_p('\t\t\tname = %s;', name)
-				_p('\t\t\tsourceTree = "<group>";')
-				_p('\t\t};')
 			end
 		end
 		_p('/* End PBXVariantGroup section */')

@@ -31,3 +31,16 @@
 		t = { "one", "two", "three", "four" }
 		test.isequal("[one], [two], [three], [four]", table.implode(t, "[", "]", ", "))
 	end
+
+
+--
+-- table.isempty() tests
+--
+
+	function T.table.isempty_ReturnsTrueOnEmpty()
+		test.istrue(table.isempty({}))
+	end
+
+	function T.table.isempty_ReturnsFalseOnNotEmpty()
+		test.isfalse(table.isempty({ 1 }))
+	end

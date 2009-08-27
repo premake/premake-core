@@ -51,6 +51,15 @@
 
 
 --
+-- Returns true if the table is empty, and contains no indexed or keyed values.
+--
+
+	function table.isempty(t)
+		return not next(t)
+	end
+
+
+--
 -- Adds the values from one array to the end of another and
 -- returns the result.
 --
