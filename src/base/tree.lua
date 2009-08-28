@@ -68,6 +68,7 @@
 			parent.children[child.name] = child
 		end
 		child.parent = parent
+		return child
 	end
 
 
