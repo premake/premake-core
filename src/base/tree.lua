@@ -90,6 +90,23 @@
 
 
 --
+-- Remove a node from a tree.
+--
+-- @param node
+--    The node to remove.
+--
+
+	function premake.tree.remove(node)
+		local children = node.parent.children
+		for i = 1, #children do
+			if children[i] == node then
+				table.remove(children, i)
+			end
+		end
+	end
+
+
+--
 -- Traverse a tree.
 --
 -- @param t
@@ -109,6 +126,7 @@
 
 		local donode, dochildren
 		donode = function(node, fn, depth)
+			if node.isremoved then return end
 			if fn.onnode then fn.onnode(node, depth) end
 			if #node.children > 0 then
 				if fn.onbranch then fn.onbranch(node, depth) end
@@ -119,8 +137,14 @@
 		end
 		
 		dochildren = function(parent, fn, depth)
-			for _, node in ipairs(parent.children) do
+			-- this goofy iterator allows nodes to be removed during the traversal
+			local i = 1
+			while i <= #parent.children do
+				local node = parent.children[i]
 				donode(node, fn, depth)
+				if node == parent.children[i] then
+					i = i + 1
+				end
 			end
 		end
 		

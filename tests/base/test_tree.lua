@@ -83,4 +83,34 @@
 		test.isequal("Child", tree.getlocalpath(c))
 	end
 
-		
+
+--
+-- Tests for tree.remove()
+--
+
+	function T.tree.Remove_RemovesNodes()
+		local n1 = tree.add(tr, "1")
+		local n2 = tree.add(tr, "2")
+		local n3 = tree.add(tr, "3")
+		tree.remove(n2)
+		local r = ""
+		for _, n in ipairs(tr.children) do r = r .. n.name end
+		test.isequal("13", r)
+	end
+
+	
+	function T.tree.Remove_WorksInTraversal()
+		tree.add(tr, "Root/1")
+		tree.add(tr, "Root/2")
+		tree.add(tr, "Root/3")
+		local r = ""
+		tree.traverse(tr, {
+			onleaf = function(node)
+				r = r .. node.name
+				tree.remove(node)
+			end
+		})
+		test.isequal("123", r)
+		test.isequal(0, #tr.children[1])
+	end
+

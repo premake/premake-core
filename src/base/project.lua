@@ -432,6 +432,7 @@
 --      basename  - the target with no directory or file extension
 --      name      - the target name and extension, with no directory
 --      directory - relative path to the target, with no file name
+--      root      - the root target, primarily for Mac OS X (MyProject.app, etc.)
 --      fullpath  - directory, name, and extension
 --
 
@@ -456,6 +457,7 @@
 		local field   = iif(direction == "build", "target", "implib")
 		local name    = cfg[field.."name"] or cfg.targetname or cfg.project.name
 		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
+		local root    = name
 		local prefix  = ""
 		local suffix  = ""
 
@@ -469,7 +471,8 @@
 			end
 		elseif namestyle == "posix" then
 			if kind == "WindowedApp" and system == "macosx" then
-				dir = path.join(dir, name .. ".app/Contents/MacOS")
+				root = name .. ".app"
+				dir = path.join(dir, root .. "/Contents/MacOS")
 			elseif kind == "SharedLib" then
 				prefix = "lib"
 				suffix = iif(system == "macosx", ".dylib", ".so")
@@ -494,6 +497,7 @@
 		result.basename  = name
 		result.name      = prefix .. name .. suffix
 		result.directory = dir
+		result.root      = root
 		result.fullpath  = path.join(result.directory, result.name)
 		
 		if pathstyle == "windows" then

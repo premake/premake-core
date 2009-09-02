@@ -85,7 +85,7 @@
 
 	function T.xcode3.PBXBuildFile_ListsBuildableSources()
 		files {
-			"source.h", "source.c", "source.cpp",
+			"source.h", "source.c", "source.cpp", "Info.plist",
 		}
 		prepare()
 		xcode.PBXBuildFile(ctx)
@@ -144,16 +144,28 @@
 -- PBXFileReference section tests
 --
 
-	function T.xcode3.PBXFileReference_ListsTarget()
+	function T.xcode3.PBXFileReference_ListsConsoleTarget()
 		prepare()
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000 /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
 
+
+	function T.xcode3.PBXFileReference_ListsWindowedTarget()
+		kind "WindowedApp"
+		prepare()
+		xcode.PBXFileReference(ctx)
+		test.capture [[
+/* Begin PBXFileReference section */
+		000000000000 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+	
 		
 	function T.xcode3.PBXFileReference_ListSourceTypesCorrectly()
 		files {
@@ -207,6 +219,19 @@
 		test.capture [[
 /* Begin PBXFileReference section */
 		000000000000 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		]]
+	end
+
+		
+	function T.xcode3.PBXFileReference_ListPListCorrectly()
+		files { "Info.plist" }
+		prepare()
+		xcode.PBXFileReference(ctx)
+		test.capture [[
+/* Begin PBXFileReference section */
+		000000000000 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
+		000000000000 /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -327,7 +352,7 @@
 
 
 	function T.xcode3.PBXGroup_CreatesResourceSubgroup()
-		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
+		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib", "Info.plist" }
 		prepare()
 		xcode.PBXGroup(ctx)
 		test.capture [[
@@ -345,6 +370,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000 /* MainMenu.xib */,
+				000000000000 /* Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -379,4 +405,3 @@
 /* End PBXVariantGroup section */
 		]]
 	end
-

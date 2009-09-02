@@ -38,14 +38,18 @@
 			prjnode.frameworks = tree.insert(prjnode, tree.new("Frameworks"))
 			prjnode.frameworks.stageid = xcode.newid()
 			
-			-- first pass over the tree to handle resource files like MainMenu.xib. If present,
-			-- create a new project-level group named "Resources" to contain the files, and
-			-- virtual groups to contain each language variant. I'm converting how these files
-			-- are stored on disk (English.lproj/MainMenu.xib) to how they are shown in Xcode
-			-- (Resources/MainMenu.xib/English).
+			-- first pass over the tree to handle resource files. Localized files create a new
+			-- virtual group under resources, with a list of the languages encountered. Other
+			-- resources are simply moved into the resources group.
 			tree.traverse(prjnode, {
 				onleaf = function(node)
+					-- only look at resources
+					if xcode.getfilecategory(node.name) ~= "Resources" then return end
+					-- don't process the resources group (which I'm building)
+					if node.parent == prjnode.resources then return end
+					
 					if xcode.islocalized(node) then
+						-- create a virtual group for this file and add each language under it
 						if not prjnode.resources.children[node.name] then
 							local group = tree.new(node.name)
 							group.languages = { }
@@ -54,6 +58,11 @@
 						end
 						local lang = path.getbasename(node.parent.name)
 						prjnode.resources.children[node.name].languages[lang] = node
+					else
+						-- remove it from the files area
+						tree.remove(node)
+						-- add it to the resources area
+						tree.insert(prjnode.resources, node)
 					end
 				end
 			})
@@ -100,7 +109,7 @@
 					table.insert(ctx.targets, {
 						prjnode = prjnode,
 						kind = cfg.kind,
-						name = prjnode.project.name .. path.getextension(cfg.buildtarget.name),
+						name = cfg.buildtarget.root,
 						id = xcode.newid(),
 						fileid = xcode.newid(),
 						sourcesid = xcode.newid()
@@ -149,13 +158,15 @@
 
 	function xcode.getfilecategory(fname)
 		local categories = {
-			[".c"   ] = "Sources",
-			[".cc"  ] = "Sources",
-			[".cpp" ] = "Sources",
-			[".cxx" ] = "Sources",
+			[".c"    ] = "Sources",
+			[".cc"   ] = "Sources",
+			[".cpp"  ] = "Sources",
+			[".cxx"  ] = "Sources",
 			[".framework"] = "Frameworks",
-			[".m"   ] = "Sources",
-			[".xib" ] = "Resources",
+			[".lproj"] = "Resources",
+			[".m"    ] = "Sources",
+			[".plist"] = "Resources",
+			[".xib"  ] = "Resources",
 		}
 		return categories[path.getextension(fname)]
 	end
@@ -172,18 +183,19 @@
 
 	function xcode.getfiletype(fname)
 		local types = {
-			[".c"   ] = "sourcecode.c.c",
-			[".cc"  ] = "sourcecode.cpp.cpp",
-			[".cpp" ] = "sourcecode.cpp.cpp",
-			[".css" ] = "text.css",
-			[".cxx" ] = "sourcecode.cpp.cpp",
+			[".c"    ] = "sourcecode.c.c",
+			[".cc"   ] = "sourcecode.cpp.cpp",
+			[".cpp"  ] = "sourcecode.cpp.cpp",
+			[".css"  ] = "text.css",
+			[".cxx"  ] = "sourcecode.cpp.cpp",
 			[".framework"] = "wrapper.framework",
-			[".gif" ] = "image.gif",
-			[".h"   ] = "sourcecode.c.h",
-			[".html"] = "text.html",
-			[".lua" ] = "sourcecode.lua",
-			[".m"   ] = "sourcecode.c.objc",
-			[".xib" ] = "file.xib",
+			[".gif"  ] = "image.gif",
+			[".h"    ] = "sourcecode.c.h",
+			[".html" ] = "text.html",
+			[".lua"  ] = "sourcecode.lua",
+			[".m"    ] = "sourcecode.c.objc",
+			[".plist"] = "text.plist.xml",
+			[".xib"  ] = "file.xib",
 		}
 		return types[path.getextension(fname)] or "text"
 	end
@@ -201,6 +213,7 @@
 	function xcode.getproducttype(kind)
 		local types = {
 			ConsoleApp = "com.apple.product-type.tool",
+			WindowedApp = "com.apple.product-type.application",
 		}
 		return types[kind]
 	end
@@ -218,8 +231,28 @@
 	function xcode.gettargettype(kind)
 		local types = {
 			ConsoleApp = "compiled.mach-o.executable",
+			WindowedApp = "wrapper.application",
 		}
 		return types[kind]
+	end
+
+
+--
+-- Returns true if a file is "buildable" and should go in the build section.
+--
+
+	function xcode.isbuildable(node)
+		if not node.buildid then
+			return false
+		end
+		if xcode.islocalized(node) then
+			return false
+		end
+		local x = path.getextension(node.name)
+		if x == ".plist" then
+			return false
+		end
+		return true
 	end
 
 
@@ -313,8 +346,7 @@
 		_p('/* Begin PBXBuildFile section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
-				if node.buildid then
-					if xcode.islocalized(node) then return end			
+				if xcode.isbuildable(node) then
 					_p(2,'%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };', 
 						node.buildid, node.name, xcode.getfilecategory(node.name), node.id, node.name)
 				end
@@ -352,7 +384,7 @@
 			end
 		})
 		for _, target in ipairs(ctx.targets) do
-			_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = "%s"; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+			_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
 				target.fileid, target.name, xcode.gettargettype(target.kind), target.name)
 		end
 		_p('/* End PBXFileReference section */')
@@ -379,6 +411,27 @@
 	end
 
 
+	function xcode.PBXProject(ctx)
+		_p('/* Begin PBXProject section */')
+		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
+		_p(3,'isa = PBXProject;')
+		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
+		_p(3,'compatibilityVersion = "Xcode 3.1";')
+		_p(3,'hasScannedForEncodings = 1;')
+		_p(3,'mainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
+		_p(3,'projectDirPath = "";')
+		_p(3,'projectRoot = "";')
+		_p(3,'targets = (')
+		for _, target in ipairs(ctx.targets) do
+			_p(4,'%s /* %s */,', target.id, target.name)
+		end
+		_p(3,');')
+		_p(2,'};')
+		_p('/* End PBXProject section */')
+		_p('')
+	end
+
+
 	function xcode.PBXGroup(ctx)
 		_p('/* Begin PBXGroup section */')
 		
@@ -391,7 +444,8 @@
 				_p(3,'isa = PBXGroup;')
 				_p(3,'children = (')
 				for _, child in ipairs(node.children) do
-					if not xcode.islocalized(child) then
+--					if not xcode.islocalized(child) then
+					if xcode.getfilecategory(child.name) ~= "Resources" or node == ctx.prjroot.resources then
 						_p(4,'%s /* %s */,', child.id, child.name)
 					end
 				end
@@ -415,16 +469,18 @@
 		for _, prjnode in ipairs(ctx.root.children) do
 			if prjnode.resources then
 				for _, node in ipairs(prjnode.resources.children) do
-					_p(2,'%s /* %s */ = {', node.id, node.name)
-					_p(3,'isa = PBXVariantGroup;')
-					_p(3,'children = (')
-					for lang, file in pairs(node.languages) do
-						_p(4,'%s /* %s */,', file.id, lang)
+					if node.languages then
+						_p(2,'%s /* %s */ = {', node.id, node.name)
+						_p(3,'isa = PBXVariantGroup;')
+						_p(3,'children = (')
+						for lang, file in pairs(node.languages) do
+							_p(4,'%s /* %s */,', file.id, lang)
+						end
+						_p(3,');')
+						_p(3,'name = %s;', node.name)
+						_p(3,'sourceTree = "<group>";')
+						_p(2,'};')
 					end
-					_p(3,');')
-					_p(3,'name = %s;', node.name)
-					_p(3,'sourceTree = "<group>";')
-					_p(2,'};')
 				end
 			end
 		end
@@ -483,25 +539,8 @@
 		_p('/* End PBXNativeTarget section */')
 		_p('')
 
-
-		_p('/* Begin PBXProject section */')
-		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
-		_p(3,'isa = PBXProject;')
-		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
-		_p(3,'compatibilityVersion = "Xcode 3.1";')
-		_p(3,'hasScannedForEncodings = 1;')
-		_p(3,'mainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
-		_p(3,'projectDirPath = "";')
-		_p(3,'projectRoot = "";')
-		_p(3,'targets = (')
-		for _, target in ipairs(ctx.targets) do
-			_p(4,'%s /* %s */,', target.id, target.name)
-		end
-		_p(3,');')
-		_p(2,'};')
-		_p('/* End PBXProject section */')
-		_p('')
-
+		xcode.PBXProject(ctx)
+		
 		_p('/* Begin PBXResourcesBuildPhase section */')
 		for _, target in ipairs(ctx.targets) do
 			_p(2,'%s /* Resources */ = {', target.prjnode.resources.stageid)
