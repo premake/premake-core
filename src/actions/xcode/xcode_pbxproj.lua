@@ -58,11 +58,16 @@
 						end
 						local lang = path.getbasename(node.parent.name)
 						prjnode.resources.children[node.name].languages[lang] = node
-					else
+					else						
 						-- remove it from the files area
 						tree.remove(node)
 						-- add it to the resources area
 						tree.insert(prjnode.resources, node)
+						
+						-- make a note of key files
+						if node.name == "Info.plist" then
+							prjnode.infoplist = node
+						end						
 					end
 				end
 			})
@@ -444,7 +449,6 @@
 				_p(3,'isa = PBXGroup;')
 				_p(3,'children = (')
 				for _, child in ipairs(node.children) do
---					if not xcode.islocalized(child) then
 					if xcode.getfilecategory(child.name) ~= "Resources" or node == ctx.prjroot.resources then
 						_p(4,'%s /* %s */,', child.id, child.name)
 					end
@@ -600,6 +604,9 @@
 					_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
 					_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
 					_p(4,');')
+				end
+				if target.prjnode.infoplist then
+					_p(4,'INFOPLIST_FILE = %s', target.prjnode.infoplist.path)
 				end
 				_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.name)
 				_p(4,'SYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
