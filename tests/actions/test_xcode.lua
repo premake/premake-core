@@ -9,6 +9,38 @@
 
 
 --
+-- Replacement for xcode.newid(). This one creates a synthetic ID based on the node name,
+-- it's intended usage (file ID, build ID, etc.) and it's place in the tree. This makes
+-- it easier to tell if the right ID is being used in the right places.
+--
+
+	local used_ids = {}
+	local function newtestableid(node, usage)
+		if not usage and #node.children == 0 then
+			if node.languages then
+				usage = "group"
+			elseif not node.stageid then
+				usage = "file"
+			end
+		end
+
+		local name = node.name
+		if usage then
+			name = name .. ":" .. usage
+		end
+		
+		if used_ids[name] then
+			local count = used_ids[name] + 1
+			used_ids[name] = count
+			name = name .. "(" .. count .. ")"
+		else
+			used_ids[name] = 1
+		end
+		return "[" .. name .. "]"
+	end
+
+
+--
 -- Configure a solution for testing
 --
 
@@ -16,6 +48,10 @@
 	function T.xcode3.setup()
 		_ACTION = 'xcode3'
 
+		old_newid = xcode.newid
+		xcode.newid = newtestableid
+		used_ids = { }
+		
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms {}
@@ -23,16 +59,13 @@
 		prj = project "MyProject"
 		language "C++"
 		kind "ConsoleApp"
-		
-		old_newid = xcode.newid
-		xcode.newid = function()
-			return string.format("000000000000")
-		end
 	end
+
 
 	function T.xcode3.teardown()
 		xcode.newid = old_newid
 	end
+
 	
 	local ctx
 	local function prepare()
@@ -40,6 +73,7 @@
 		premake.buildconfigs()
 		ctx = xcode.buildcontext(sln)
 	end
+
 	
 	local function project2()
 		project "MyProject2"
@@ -91,8 +125,8 @@
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000000 /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000 /* source.c */; };
-		000000000000 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000 /* source.cpp */; };
+		[source.c:build] /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = [source.c:file] /* source.c */; };
+		[source.cpp:build] /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = [source.cpp:file] /* source.cpp */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -106,7 +140,7 @@
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000000 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000 /* MainMenu.xib */; };
+		[MainMenu.xib:build] /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = [MainMenu.xib:group] /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -120,8 +154,8 @@
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000000 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000 /* MainMenu.xib */; };
-		000000000000 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000 /* MainMenu.xib */; };
+		[MainMenu.xib:build] /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = [MainMenu.xib:group] /* MainMenu.xib */; };
+		[MainMenu.xib:build(2)] /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = [MainMenu.xib:group(2)] /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -133,7 +167,7 @@
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		000000000000 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 000000000000 /* Cocoa.framework */; };
+		[Cocoa.framework:build] /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = [Cocoa.framework:file] /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -149,7 +183,7 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject:file] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -161,7 +195,7 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject.app:file] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -175,9 +209,9 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = source.h; path = source.h; sourceTree = "<group>"; };
-		000000000000 /* source.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
-		000000000000 /* source.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = source.cpp; path = source.cpp; sourceTree = "<group>"; };
+		[source.h:file] /* source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = source.h; path = source.h; sourceTree = "<group>"; };
+		[source.c:file] /* source.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
+		[source.cpp:file] /* source.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = source.cpp; path = source.cpp; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -190,8 +224,8 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000000 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[MainMenu.xib:file] /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[MainMenu.xib:file(2)] /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -204,10 +238,10 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000000 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000000 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		000000000000 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[MainMenu.xib:file] /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[MainMenu.xib:file(2)] /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[MainMenu.xib:file(3)] /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[MainMenu.xib:file(4)] /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -218,7 +252,7 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		[Cocoa.framework:file] /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		]]
 	end
 
@@ -229,8 +263,8 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		000000000000 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
-		000000000000 /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[Info.plist:file] /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
+		[MyProject:file] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -246,7 +280,7 @@
 		xcode.PBXFrameworksBuildPhase(ctx)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		000000000000 /* Frameworks */ = {
+		[MyProject:frameworks] /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -264,11 +298,11 @@
 		xcode.PBXFrameworksBuildPhase(ctx)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		000000000000 /* Frameworks */ = {
+		[MyProject:frameworks] /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				000000000000 /* Cocoa.framework in Frameworks */,
+				[Cocoa.framework:build] /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,11 +320,11 @@
 		xcode.PBXGroup(ctx)
 		test.capture [[
 /* Begin PBXGroup section */
-		000000000000 /* MyProject */ = {
+		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000 /* Resources */,
-				000000000000 /* Frameworks */,
+				[Resources] /* Resources */,
+				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
@@ -306,12 +340,12 @@
 		xcode.PBXGroup(ctx)
 		test.capture [[
 /* Begin PBXGroup section */
-		000000000000 /* MyProject */ = {
+		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000 /* source.h */,
-				000000000000 /* Resources */,
-				000000000000 /* Frameworks */,
+				[source.h:file] /* source.h */,
+				[Resources] /* Resources */,
+				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
@@ -327,20 +361,20 @@
 		xcode.PBXGroup(ctx)
 		test.capture [[
 /* Begin PBXGroup section */
-		000000000000 /* MyProject */ = {
+		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000 /* include */,
-				000000000000 /* Resources */,
-				000000000000 /* Frameworks */,
+				[include] /* include */,
+				[Resources] /* Resources */,
+				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		000000000000 /* include */ = {
+		[include] /* include */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000 /* source.h */,
+				[source.h:file] /* source.h */,
 			);
 			name = include;
 			path = include;
@@ -357,20 +391,20 @@
 		xcode.PBXGroup(ctx)
 		test.capture [[
 /* Begin PBXGroup section */
-		000000000000 /* MyProject */ = {
+		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000 /* Resources */,
-				000000000000 /* Frameworks */,
+				[Resources] /* Resources */,
+				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		000000000000 /* Resources */ = {
+		[Resources] /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000 /* MainMenu.xib */,
-				000000000000 /* Info.plist */,
+				[MainMenu.xib:group] /* MainMenu.xib */,
+				[Info.plist:file] /* Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -393,11 +427,11 @@
 		xcode.PBXVariantGroup(ctx)
 		test.capture [[
 /* Begin PBXVariantGroup section */
-		000000000000 /* MainMenu.xib */ = {
+		[MainMenu.xib:group] /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				000000000000 /* French */,
-				000000000000 /* English */,
+				[MainMenu.xib:file(2)] /* French */,
+				[MainMenu.xib:file] /* English */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";

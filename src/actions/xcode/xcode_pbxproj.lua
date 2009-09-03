@@ -25,7 +25,7 @@
 		
 		-- create the project tree
 		ctx.root = tree.new(sln.name)
-		ctx.root.id = xcode.newid()
+		ctx.root.id = xcode.newid(ctx.root)
 		
 		for prj in premake.eachproject(sln) do
 			-- build the project tree and add it to the solution
@@ -34,9 +34,9 @@
 
 			-- add virtual groups for resources and frameworks
 			prjnode.resources = tree.insert(prjnode, tree.new("Resources"))
-			prjnode.resources.stageid = xcode.newid()
+			prjnode.resources.stageid = xcode.newid(prjnode, "resources")
 			prjnode.frameworks = tree.insert(prjnode, tree.new("Frameworks"))
-			prjnode.frameworks.stageid = xcode.newid()
+			prjnode.frameworks.stageid = xcode.newid(prjnode, "frameworks")
 			
 			-- first pass over the tree to handle resource files. Localized files create a new
 			-- virtual group under resources, with a list of the languages encountered. Other
@@ -83,7 +83,7 @@
 			tree.traverse(prjnode, {
 				onnode = function(node)
 					-- assign IDs to all nodes in the tree
-					node.id = xcode.newid()
+					node.id = xcode.newid(node)
 
 					-- Premake is setup for the idea of a solution file referencing multiple project files,
 					-- but Xcode uses a single file for everything. Convert the file paths from project
@@ -95,8 +95,8 @@
 				
 				onleaf = function(node)					
 					-- assign a build ID to buildable files
-					if xcode.getfilecategory(node.name) then
-						node.buildid = xcode.newid()
+					if xcode.getfilecategory(node.name) and not xcode.islocalized(node) then
+						node.buildid = xcode.newid(node, "build")
 					end
 				end
 			}, true)
@@ -111,14 +111,14 @@
 			for cfg in premake.eachconfig(prjnode.project) do
 				if not table.contains(kinds, cfg.kind) then					
 					-- create a new target
-					table.insert(ctx.targets, {
-						prjnode = prjnode,
-						kind = cfg.kind,
-						name = cfg.buildtarget.root,
-						id = xcode.newid(),
-						fileid = xcode.newid(),
-						sourcesid = xcode.newid()
-					})
+					local t = tree.new(cfg.buildtarget.root)
+					table.insert(ctx.targets, t)
+					
+					t.prjnode = prjnode
+					t.kind = cfg.kind
+					t.id = xcode.newid(t, "target")
+					t.fileid = xcode.newid(t, "file")
+					t.sourcesid = xcode.newid(t, "sources")
 
 					-- mark this kind as done
 					table.insert(kinds, cfg.kind)
@@ -129,10 +129,10 @@
 		-- Create IDs for configuration section and configuration blocks for each
 		-- target, as well as a root level configuration
 		local function assigncfgs(n)
-			n.cfgsectionid = xcode.newid()
+			n.cfgsectionid = xcode.newid(n, "cfgsec")
 			n.cfgids = { }
 			for _, cfgname in ipairs(sln.configurations) do
-				n.cfgids[cfgname] = xcode.newid()
+				n.cfgids[cfgname] = xcode.newid(n, cfgname)
 			end
 		end
 		assigncfgs(ctx.root)
@@ -586,7 +586,7 @@
 		_p('/* Begin XCBuildConfiguration section */')
 		for _, target in ipairs(ctx.targets) do
 			local prj = target.prjnode.project
-			for cfg in premake.eachconfig(target.prjnode.project) do
+			for cfg in premake.eachconfig(prj) do
 				_p(2,'%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
 				_p(3,'isa = XCBuildConfiguration;')
 				_p(3,'buildSettings = {')
