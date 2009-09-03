@@ -439,3 +439,48 @@
 /* End PBXVariantGroup section */
 		]]
 	end
+
+
+--
+-- XCBuildConfiguration section tests
+--
+
+	function T.xcode3.XCBuildConfiguration_DefaultBlock()
+		prepare()
+		xcode.XCBuildConfiguration(ctx.targets[1], premake.getconfig(ctx.targets[1].prjnode.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = .;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = MyProject;
+				SYMROOT = obj/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function T.xcode3.XCBuildConfiguration_SetsInfoPlist()
+		files { "Info.plist" }
+		prepare()
+		xcode.XCBuildConfiguration(ctx.targets[1], premake.getconfig(ctx.targets[1].prjnode.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = .;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = MyProject;
+				SYMROOT = obj/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end

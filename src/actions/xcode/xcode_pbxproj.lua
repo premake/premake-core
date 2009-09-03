@@ -492,6 +492,46 @@
 		_p('')
 	end
 
+	
+	function xcode.XCBuildConfiguration(target, cfg)
+		local prj = target.prjnode.project
+		
+		_p(2,'%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
+		_p(3,'isa = XCBuildConfiguration;')
+		_p(3,'buildSettings = {')
+		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
+
+		_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.directory))
+
+		if cfg.flags.Symbols then
+			_p(4,'COPY_PHASE_STRIP = NO;')
+		end
+
+		_p(4,'GCC_DYNAMIC_NO_PIC = NO;')
+
+		if cfg.flags.Symbols then
+			_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
+		end
+
+		_p(4,'GCC_MODEL_TUNING = G5;')
+
+		if #cfg.defines > 0 then
+			_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
+			_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
+			_p(4,');')
+		end
+
+		if target.prjnode.infoplist then
+			_p(4,'INFOPLIST_FILE = %s;', target.prjnode.infoplist.path)
+		end
+
+		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.name)
+		_p(4,'SYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
+		_p(3,'};')
+		_p(3,'name = %s;', cfg.name)
+		_p(2,'};')
+	end
+	
 
 	function xcode.footer()
 		_p(1,'};')
@@ -587,32 +627,7 @@
 		for _, target in ipairs(ctx.targets) do
 			local prj = target.prjnode.project
 			for cfg in premake.eachconfig(prj) do
-				_p(2,'%s /* %s */ = {', target.cfgids[cfg.name], cfg.name)
-				_p(3,'isa = XCBuildConfiguration;')
-				_p(3,'buildSettings = {')
-				_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
-				_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.directory))
-				if cfg.flags.Symbols then
-					_p(4,'COPY_PHASE_STRIP = NO;')
-				end
-				_p(4,'GCC_DYNAMIC_NO_PIC = NO;')
-				if cfg.flags.Symbols then
-					_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
-				end
-				_p(4,'GCC_MODEL_TUNING = G5;')
-				if #cfg.defines > 0 then
-					_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
-					_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
-					_p(4,');')
-				end
-				if target.prjnode.infoplist then
-					_p(4,'INFOPLIST_FILE = %s', target.prjnode.infoplist.path)
-				end
-				_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.name)
-				_p(4,'SYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
-				_p(3,'};')
-				_p(3,'name = %s;', cfg.name)
-				_p(2,'};')
+				xcode.XCBuildConfiguration(target, cfg)
 			end
 		end
 		for _, cfgname in ipairs(sln.configurations) do
