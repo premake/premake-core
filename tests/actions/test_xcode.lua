@@ -146,16 +146,25 @@
 	end
 
 
-	function T.xcode3.PBXBuildFile_SeparatesResourcesByProject()
-		files { "MyProject/English.lproj/MainMenu.xib", "MyProject/French.lproj/MainMenu.xib" }
-		project2()
-		files { "MyProject2/English.lproj/MainMenu.xib", "MyProject2/French.lproj/MainMenu.xib" }
+	function T.xcode3.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
+		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
 		prepare()
 		xcode.PBXBuildFile(ctx)
 		test.capture [[
 /* Begin PBXBuildFile section */
 		[MainMenu.xib:build] /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = [MainMenu.xib:group] /* MainMenu.xib */; };
-		[MainMenu.xib:build(2)] /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = [MainMenu.xib:group(2)] /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+
+	function T.xcode3.PBXBuildFile_IncludesStringsFiles()
+		files { "MyProject/English.lproj/InfoPList.strings", "MyProject/French.lproj/InfoPList.strings" }
+		prepare()
+		xcode.PBXBuildFile(ctx)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		[InfoPList.strings:build] /* InfoPList.strings in Resources */ = {isa = PBXBuildFile; fileRef = [InfoPList.strings:group] /* InfoPList.strings */; };
 /* End PBXBuildFile section */
 		]]
 	end

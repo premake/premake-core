@@ -163,15 +163,16 @@
 
 	function xcode.getfilecategory(fname)
 		local categories = {
-			[".c"    ] = "Sources",
-			[".cc"   ] = "Sources",
-			[".cpp"  ] = "Sources",
-			[".cxx"  ] = "Sources",
+			[".c"] = "Sources",
+			[".cc"] = "Sources",
+			[".cpp"] = "Sources",
+			[".cxx"] = "Sources",
 			[".framework"] = "Frameworks",
 			[".lproj"] = "Resources",
-			[".m"    ] = "Sources",
+			[".m"] = "Sources",
 			[".plist"] = "Resources",
-			[".xib"  ] = "Resources",
+			[".strings"] = "Resources",
+			[".xib"] = "Resources",
 		}
 		return categories[path.getextension(fname)]
 	end
