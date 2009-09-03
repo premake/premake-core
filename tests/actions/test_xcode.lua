@@ -484,3 +484,23 @@
 		};
 		]]
 	end
+
+	function T.xcode3.XCBuildConfiguration_SetsWindowedAppOutputDir()
+		kind "WindowedApp"
+		prepare()
+		xcode.XCBuildConfiguration(ctx.targets[1], premake.getconfig(ctx.targets[1].prjnode.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = .;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = MyProject;
+				SYMROOT = obj/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end

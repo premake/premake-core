@@ -641,7 +641,6 @@
 			_p(4,'ONLY_ACTIVE_ARCH = YES;')
 			_p(4,'PREBINDING = NO;')
 			_p(4,'SDKROOT = macosx10.5;')
-
 			-- I don't have any concept of a solution level objects directory so use the first project
 			local prj1 = premake.getconfig(sln.projects[1])
 			_p(4,'SYMROOT = %s;', xcode.rebase(prj1, prj1.objectsdir))
