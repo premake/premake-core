@@ -416,30 +416,9 @@
 	end
 
 
-	function xcode.PBXProject(ctx)
-		_p('/* Begin PBXProject section */')
-		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
-		_p(3,'isa = PBXProject;')
-		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
-		_p(3,'compatibilityVersion = "Xcode 3.1";')
-		_p(3,'hasScannedForEncodings = 1;')
-		_p(3,'mainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
-		_p(3,'projectDirPath = "";')
-		_p(3,'projectRoot = "";')
-		_p(3,'targets = (')
-		for _, target in ipairs(ctx.targets) do
-			_p(4,'%s /* %s */,', target.id, target.name)
-		end
-		_p(3,');')
-		_p(2,'};')
-		_p('/* End PBXProject section */')
-		_p('')
-	end
-
-
 	function xcode.PBXGroup(ctx)
 		_p('/* Begin PBXGroup section */')
-		
+
 		-- create groups for each branch node in the tree, skipping over localization
 		-- groups which get flipped around and put in a special "Resources" group.
 		tree.traverse(ctx.prjroot, {
@@ -464,6 +443,27 @@
 		}, true)
 				
 		_p('/* End PBXGroup section */')
+		_p('')
+	end
+
+
+	function xcode.PBXProject(ctx)
+		_p('/* Begin PBXProject section */')
+		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
+		_p(3,'isa = PBXProject;')
+		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', ctx.prjroot.name)
+		_p(3,'compatibilityVersion = "Xcode 3.1";')
+		_p(3,'hasScannedForEncodings = 1;')
+		_p(3,'mainGroup = %s /* %s */;', ctx.prjroot.id, ctx.prjroot.name)
+		_p(3,'projectDirPath = "";')
+		_p(3,'projectRoot = "";')
+		_p(3,'targets = (')
+		for _, target in ipairs(ctx.targets) do
+			_p(4,'%s /* %s */,', target.id, target.name)
+		end
+		_p(3,');')
+		_p(2,'};')
+		_p('/* End PBXProject section */')
 		_p('')
 	end
 
@@ -501,7 +501,7 @@
 		_p(3,'buildSettings = {')
 		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
 
-		_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.directory))
+		_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.rootdir))
 
 		if cfg.flags.Symbols then
 			_p(4,'COPY_PHASE_STRIP = NO;')

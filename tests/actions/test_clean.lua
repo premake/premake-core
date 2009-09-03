@@ -126,6 +126,17 @@
 	end
 
 
+	function T.clean.CppWindowedAppFiles()
+		prj = project "MyProject"
+		language "C++"
+		kind "WindowedApp"
+		prepare()
+		test.contains(removed, "MyProject")
+		test.contains(removed, "MyProject.exe")
+		test.contains(removed, "MyProject.app")
+	end
+	
+
 	function T.clean.CppSharedLibFiles()
 		prj = project "MyProject"
 		language "C++"

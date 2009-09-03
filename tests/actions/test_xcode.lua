@@ -490,7 +490,7 @@
 		prepare()
 		xcode.XCBuildConfiguration(ctx.targets[1], premake.getconfig(ctx.targets[1].prjnode.project, "Debug"))
 		test.capture [[
-		[MyProject:Debug] /* Debug */ = {
+		[MyProject.app:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
