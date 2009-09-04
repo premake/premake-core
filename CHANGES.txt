@@ -3,6 +3,7 @@
 -----
 
 - Added support for Apple Xcode 3
+- Changed arguments to GCC link step to fix static linking 
 
 
 -------

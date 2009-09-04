@@ -219,7 +219,9 @@
 				_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
 			end
 		else
-			_p('  LINKCMD    = $(%s) -o $(TARGET) $(LDFLAGS) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS)', iif(cfg.language == "C", "CC", "CXX"))
+			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS) ... but was having trouble linking to certain 
+			-- static libraries so $(OBJECTS) was moved up
+			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH) $(LIBS)', iif(cfg.language == "C", "CC", "CXX"))
 		end
 		
 		_p('  define PREBUILDCMDS')
