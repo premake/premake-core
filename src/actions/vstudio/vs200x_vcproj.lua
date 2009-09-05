@@ -524,7 +524,7 @@
 				_p('\t\t\tConfigurationType="%s"', _VS.cfgtype(cfg))
 				_p('\t\t\tCharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
 				if cfg.flags.Managed then
-					_p('\t\t\tManagedExtensions="true"')
+					_p('\t\t\tManagedExtensions="1"')
 				end
 				_p('\t\t\t>')
 				

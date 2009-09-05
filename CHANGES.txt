@@ -3,7 +3,8 @@
 -----
 
 - Added support for Apple Xcode 3
-- Changed arguments to GCC link step to fix static linking 
+- Changed arguments to GCC link step to fix static linking
+- Fixed ManagedExtension setting for Visual Studio
 
 
 -------
