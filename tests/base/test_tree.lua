@@ -67,6 +67,14 @@
 			getresult())
 	end
 
+	function T.tree.SkipsDotDots()
+		tree.add(tr, "../MyProject/hello")
+		test.isequal(""
+			.. "MyProject"
+			.. ".hello",
+			getresult())
+	end
+
 
 --
 -- Tests for tree.getlocalpath()

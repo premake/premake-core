@@ -43,13 +43,17 @@
 		
 		-- add it if it doesn't exist already
 		local name = path.getname(p)
-		local child = tr.children[name]
-		if not child then
-			child = premake.tree.new(name)
-			child.path = p
-			premake.tree.insert(tr, child)
+		if name ~= ".." then
+			local child = tr.children[name]
+			if not child then
+				child = premake.tree.new(name)
+				child.path = p
+				premake.tree.insert(tr, child)
+			end
+			return child
+		else
+			return tr
 		end
-		return child
 	end
 
 
