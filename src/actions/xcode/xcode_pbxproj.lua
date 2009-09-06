@@ -172,6 +172,7 @@
 			[".m"] = "Sources",
 			[".plist"] = "Resources",
 			[".strings"] = "Resources",
+			[".nib"] = "Resources",
 			[".xib"] = "Resources",
 		}
 		return categories[path.getextension(fname)]
@@ -189,19 +190,20 @@
 
 	function xcode.getfiletype(fname)
 		local types = {
-			[".c"    ] = "sourcecode.c.c",
-			[".cc"   ] = "sourcecode.cpp.cpp",
-			[".cpp"  ] = "sourcecode.cpp.cpp",
-			[".css"  ] = "text.css",
-			[".cxx"  ] = "sourcecode.cpp.cpp",
+			[".c"]         = "sourcecode.c.c",
+			[".cc"]        = "sourcecode.cpp.cpp",
+			[".cpp"]       = "sourcecode.cpp.cpp",
+			[".css"]       = "text.css",
+			[".cxx"]       = "sourcecode.cpp.cpp",
 			[".framework"] = "wrapper.framework",
-			[".gif"  ] = "image.gif",
-			[".h"    ] = "sourcecode.c.h",
-			[".html" ] = "text.html",
-			[".lua"  ] = "sourcecode.lua",
-			[".m"    ] = "sourcecode.c.objc",
-			[".plist"] = "text.plist.xml",
-			[".xib"  ] = "file.xib",
+			[".gif"]       = "image.gif",
+			[".h"]         = "sourcecode.c.h",
+			[".html"]      = "text.html",
+			[".lua"]       = "sourcecode.lua",
+			[".m"]         = "sourcecode.c.objc",
+			[".nib"]       = "wrapper.nib",
+			[".plist"]     = "text.plist.xml",
+			[".xib"]       = "file.xib",
 		}
 		return types[path.getextension(fname)] or "text"
 	end
