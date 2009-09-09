@@ -332,24 +332,8 @@
 		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				[Resources] /* Resources */,
-				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
-			sourceTree = "<group>";
-		};
-		[Resources] /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		[Frameworks] /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,12 +351,11 @@
 			isa = PBXGroup;
 			children = (
 				[source.h:file] /* source.h */,
-				[Resources] /* Resources */,
-				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
+/* End PBXGroup section */
 		]]
 	end
 
@@ -387,8 +370,6 @@
 			isa = PBXGroup;
 			children = (
 				[include] /* include */,
-				[Resources] /* Resources */,
-				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
@@ -402,6 +383,7 @@
 			path = include;
 			sourceTree = "<group>";
 		};
+/* End PBXGroup section */
 		]]
 	end
 
@@ -416,7 +398,6 @@
 			isa = PBXGroup;
 			children = (
 				[Resources] /* Resources */,
-				[Frameworks] /* Frameworks */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
@@ -430,6 +411,7 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+/* End PBXGroup section */
 		]]
 	end
 

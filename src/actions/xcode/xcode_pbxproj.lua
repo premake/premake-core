@@ -436,16 +436,25 @@
 	function xcode.PBXGroup(ctx)
 		_p('/* Begin PBXGroup section */')
 
-		-- create groups for each branch node in the tree, skipping over localization
-		-- groups which get flipped around and put in a special "Resources" group.
 		tree.traverse(ctx.prjroot, {
 			onbranch = function(node)
+				-- Skip over localization groups (ie. English.lproj); localized files will
+				-- be written as part of the project's Resources group.
 				if xcode.islocalized(node) then return end
+				
 				_p(2,'%s /* %s */ = {', node.id, node.name)
 				_p(3,'isa = PBXGroup;')
 				_p(3,'children = (')
 				for _, child in ipairs(node.children) do
-					if xcode.getfilecategory(child.name) ~= "Resources" or node == ctx.prjroot.resources then
+					-- Only write files and non-empty groups
+					local show = (#child.children > 0 or child.path ~= nil)
+					
+					-- Only list resources if this is the project's Resources group
+					if xcode.getfilecategory(child.name) == "Resources" then
+						show = (node == ctx.prjroot.resources)
+					end
+					
+					if show then
 						_p(4,'%s /* %s */,', child.id, child.name)
 					end
 				end
@@ -457,6 +466,7 @@
 				_p(3,'sourceTree = "<group>";')
 				_p(2,'};')
 			end
+			
 		}, true)
 				
 		_p('/* End PBXGroup section */')
