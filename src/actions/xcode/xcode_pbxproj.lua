@@ -113,9 +113,8 @@
 					-- create a new target
 					local t = tree.new(cfg.buildtarget.root)
 					table.insert(ctx.targets, t)
-					
 					t.prjnode = prjnode
-					t.kind = cfg.kind
+					t.cfg = cfg
 					t.id = xcode.newid(t, "target")
 					t.fileid = xcode.newid(t, "file")
 					t.sourcesid = xcode.newid(t, "sources")
@@ -318,9 +317,6 @@
 --
 
 	function xcode.rebase(prj, p)
-		if not p then
-			test.print(debug.traceback())
-		end
 		if type(p) == "string" then
 			return path.getrelative(prj.solution.location, path.join(prj.location, p))
 		else
@@ -369,15 +365,24 @@
 		_p('/* Begin PBXFileReference section */')
 		tree.traverse(ctx.root, {
 			onleaf = function(node)
+				-- I'm only listing files here, so ignore any nodes without a path
 				if not node.path then return end
 
+				-- Munge up the file details depending on the type of file. First up: localized resources.
+				-- These appear in the node tree as [English.lproj/MainMenu.xib]. They are represented in
+				-- the Xcode project tree as [MainMenu.xib/English].
 				local nodename, nodepath, encoding, source
 				if xcode.islocalized(node) then
 					nodename = path.getbasename(node.parent.name)
 					nodepath = path.join(tree.getlocalpath(node.parent), node.name)
+					
+				-- Frameworks. I need to figure out how to locate these; I'm hardcoding to the system path
+				-- just to get things working for now but obviously this needs to change
 				elseif xcode.isframework(node.name) then
-					nodepath = "/System/Library/Frameworks/" .. node.name  -- this obviously needs to change
+					nodepath = "/System/Library/Frameworks/" .. node.name
 					source = "<absolute>"
+					
+				-- All other source files
 				else
 					encoding = " fileEncoding = 4;"
 				end
@@ -391,10 +396,19 @@
 					node.id, nodename, encoding, xcode.getfiletype(node.name), nodename, nodepath, source)
 			end
 		})
+		
+		-- Add entries for each generated target. Strangely, targets are specified relative to the
+		-- project.pbxproj file rather than the .xcodeproj directory like the rest of the files.
 		for _, target in ipairs(ctx.targets) do
-			_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-				target.fileid, target.name, xcode.gettargettype(target.kind), target.name)
+			local cfg = target.cfg
+			local basepath = path.join(cfg.project.solution.location, "project.pbxproj")
+			local projpath = path.join(cfg.project.location, cfg.buildtarget.rootdir)
+			local targpath = path.join(path.getrelative(basepath, projpath), cfg.buildtarget.root)
+
+			_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+				target.fileid, target.name, xcode.gettargettype(target.cfg.kind), target.name, targpath)
 		end
+		
 		_p('/* End PBXFileReference section */')
 		_p('')
 	end
@@ -580,7 +594,7 @@
 			_p(3,'name = %s;', target.name)
 			_p(3,'productName = %s;', target.name)
 			_p(3,'productReference = %s /* %s */;', target.fileid, target.name)
-			_p(3,'productType = "%s";', xcode.getproducttype(target.kind))
+			_p(3,'productType = "%s";', xcode.getproducttype(target.cfg.kind))
 			_p(2,'};')
 		end
 		_p('/* End PBXNativeTarget section */')

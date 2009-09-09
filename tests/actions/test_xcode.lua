@@ -10,7 +10,7 @@
 
 --
 -- Replacement for xcode.newid(). This one creates a synthetic ID based on the node name,
--- it's intended usage (file ID, build ID, etc.) and it's place in the tree. This makes
+-- it's intended usage (file ID, build ID, etc.) and its place in the tree. This makes
 -- it easier to tell if the right ID is being used in the right places.
 --
 
@@ -192,7 +192,7 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject:file] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject:file] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; name = MyProject; path = ../MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -204,7 +204,7 @@
 		xcode.PBXFileReference(ctx)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject.app:file] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject.app:file] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = ../MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -273,7 +273,7 @@
 		test.capture [[
 /* Begin PBXFileReference section */
 		[Info.plist:file] /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
-		[MyProject:file] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject:file] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; name = MyProject; path = ../MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -338,6 +338,20 @@
 			name = MyProject;
 			sourceTree = "<group>";
 		};
+		[Resources] /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		[Frameworks] /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 		]]
 	end
@@ -359,7 +373,6 @@
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-/* End PBXGroup section */
 		]]
 	end
 
@@ -389,7 +402,6 @@
 			path = include;
 			sourceTree = "<group>";
 		};
-/* End PBXGroup section */
 		]]
 	end
 
@@ -418,7 +430,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-/* End PBXGroup section */
 		]]
 	end
 

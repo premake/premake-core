@@ -41,7 +41,8 @@
 			tr = premake.tree.add(tr, dir)
 		end
 		
-		-- add it if it doesn't exist already
+		-- add it if it doesn't exist already (but skip over .. directories, which
+		-- are never shown in any of the tools)
 		local name = path.getname(p)
 		if name ~= ".." then
 			local child = tr.children[name]
