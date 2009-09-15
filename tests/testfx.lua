@@ -10,7 +10,7 @@
 --
 
 	test = { }
-	
+
 
 --
 -- Assertion functions
@@ -178,10 +178,7 @@
 		_OPTIONS = { }
 		_SOLUTIONS = { }
 
-		-- capture any printed output
-		test.print = print
-		print = stub_print
-		
+		-- reset captured I/O values
 		test.value_openedfilename = nil
 		test.value_openedfilemode = nil
 		test.value_closedfile     = false
@@ -200,8 +197,6 @@
 	
 
 	local function test_teardown(suite, fn)
-		print = test.print
-		
 		if suite.teardown then
 			return pcall(suite.teardown)
 		else
@@ -211,8 +206,11 @@
 
 
 	function test.runall()		
-		io.open   = stub_io_open
-		io.output = stub_io_output
+		test.print = print
+
+		print      = stub_print
+		io.open    = stub_io_open
+		io.output  = stub_io_output
 		
 		local numpassed = 0
 		local numfailed = 0
@@ -231,7 +229,7 @@
 				err = err or tok
 				
 				if (not ok) then
-					print(string.format("%s.%s: %s", suitename, testname, err))
+					test.print(string.format("%s.%s: %s", suitename, testname, err))
 					numfailed = numfailed + 1
 				else
 					numpassed = numpassed + 1
@@ -240,6 +238,7 @@
 			end
 		end
 
+		print = test.print
 		return numpassed, numfailed 
 	end
 	

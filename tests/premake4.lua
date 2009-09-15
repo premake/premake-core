@@ -5,6 +5,38 @@
 --
 
 	dofile("testfx.lua")
+
+--
+-- Some helper functions
+--
+
+	test.createsolution = function()
+		local sln = solution "MySolution"
+		configurations { "Debug", "Release" }
+		
+		local prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+
+		return sln, prj
+	end
+
+
+	test.createproject = function(sln)
+		local n = #sln.projects + 1
+		if n == 1 then n = "" end
+		
+		local prj = project ("MyProject" .. n)
+		language "C++"
+		kind "ConsoleApp"
+		return prj
+	end
+
+
+--
+-- The test suites
+--
+
 	dofile("test_dofile.lua")
 	dofile("test_os.lua")
 	dofile("test_path.lua")

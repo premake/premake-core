@@ -8,17 +8,21 @@
 	
 
 --
--- Builds and returns a tree from the project file structure.
+-- Create a tree from a project's list of files, representing the filesystem hierarchy.
+--
+-- @param prj
+--    The project containing the files to map.
+-- @returns
+--    A new tree object containing a corresponding filesystem hierarchy. The root node
+--    contains a reference back to the original project: prj = tr.project.
 --
 
 	function premake.project.buildsourcetree(prj)
 		local tr = premake.tree.new(prj.name)
-		tr.project = prj
-		
 		for _, fname in ipairs(prj.files) do
 			local node = premake.tree.add(tr, fname)
 		end
-		
+		tr.project = prj
 		return tr
 	end
 

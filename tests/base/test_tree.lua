@@ -22,7 +22,7 @@
 	local function getresult()
 		tree.traverse(tr, {
 			onnode = function(node, depth)
-				table.insert(nodes, string.rep(".", depth) .. node.name)
+				table.insert(nodes, string.rep(">", depth) .. node.name)
 			end
 		})
 		return table.concat(nodes)
@@ -45,34 +45,27 @@
 
 	function T.tree.CanAddAtRoot()
 		tree.add(tr, "Root")
-		test.isequal(""
-			.. "Root",
-			getresult())
+		test.isequal("Root", getresult())
 	end
 
 	function T.tree.CanAddAtChild()
 		tree.add(tr, "Root/Child")
-		test.isequal(""
-			.. "Root"
-			.. ".Child",
-			getresult())
+		test.isequal("Root>Child", getresult())
 	end
 
 	function T.tree.CanAddAtGrandchild()
 		tree.add(tr, "Root/Child/Grandchild")
-		test.isequal(""
-			.. "Root"
-			.. ".Child"
-			.. "..Grandchild",
-			getresult())
+		test.isequal("Root>Child>>Grandchild", getresult())
+	end
+	
+	function T.tree.SkipsLeadingDotDots()
+		tree.add(tr, "../MyProject/hello")
+		test.isequal("MyProject>hello", getresult())
 	end
 
-	function T.tree.SkipsDotDots()
-		tree.add(tr, "../MyProject/hello")
-		test.isequal(""
-			.. "MyProject"
-			.. ".hello",
-			getresult())
+	function T.tree.SkipsInlineDotDots()
+		tree.add(tr, "MyProject/../hello")
+		test.isequal("MyProject>hello", getresult())
 	end
 
 

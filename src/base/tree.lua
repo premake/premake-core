@@ -5,6 +5,7 @@
 --
 
 	premake.tree = { }
+	local tree = premake.tree
 
 
 --
@@ -35,26 +36,29 @@
 --
 
 	function premake.tree.add(tr, p)
-		-- locate the parent node (or keep the root)
-		local dir = path.getdirectory(p)
-		if dir ~= "." then
-			tr = premake.tree.add(tr, dir)
-		end
-		
-		-- add it if it doesn't exist already (but skip over .. directories, which
-		-- are never shown in any of the tools)
-		local name = path.getname(p)
-		if name ~= ".." then
-			local child = tr.children[name]
-			if not child then
-				child = premake.tree.new(name)
-				child.path = p
-				premake.tree.insert(tr, child)
-			end
-			return child
-		else
+		-- Special case "." refers to the current node
+		if p == "." then
 			return tr
 		end
+		
+		-- Look for the immediate parent for this new node, creating it if necessary.
+		-- Recurses to create as much of the tree as necessary.
+		local parentnode = tree.add(tr, path.getdirectory(p))
+
+		-- Another special case, ".." refers to the parent node and doesn't create anything
+		local childname = path.getname(p)
+		if childname == ".." then
+			return parentnode
+		end
+		
+		-- Create the child if necessary
+		local childnode = parentnode.children[childname]
+		if not childnode then
+			childnode = tree.insert(parentnode, tree.new(childname))
+			childnode.path = p
+		end
+		
+		return childnode
 	end
 
 
@@ -108,6 +112,7 @@
 				table.remove(children, i)
 			end
 		end
+		node.children = {}
 	end
 
 
@@ -131,13 +136,21 @@
 
 		local donode, dochildren
 		donode = function(node, fn, depth)
-			if node.isremoved then return end
-			if fn.onnode then fn.onnode(node, depth) end
+			if node.isremoved then 
+				return 
+			end
+			if fn.onnode then 
+				fn.onnode(node, depth) 
+			end
 			if #node.children > 0 then
-				if fn.onbranch then fn.onbranch(node, depth) end
+				if fn.onbranch then 
+					fn.onbranch(node, depth) 
+				end
 				dochildren(node, fn, depth + 1)
 			else
-				if fn.onleaf then fn.onleaf(node, depth) end
+				if fn.onleaf then 
+					fn.onleaf(node, depth) 
+				end
 			end
 		end
 		
