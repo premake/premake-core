@@ -121,7 +121,7 @@
 		return tr
 	end
 
-
+	
 --
 -- Return the Xcode build category for a given file, based on the file extension.
 --
@@ -243,10 +243,23 @@
 	end
 
 
+
 ---------------------------------------------------------------------------
 -- Section generator functions, in the same order in which they appear
 -- in the .pbxproj file
 ---------------------------------------------------------------------------
+
+	function xcode.Header()
+		_p('// !$*UTF8*$!')
+		_p('{')
+		_p('\tarchiveVersion = 1;')
+		_p('\tclasses = {')
+		_p('\t};')
+		_p('\tobjectVersion = 45;')
+		_p('\tobjects = {')
+		_p('')
+	end
+
 
 	function xcode.PBXBuildFile(tr)
 		_p('/* Begin PBXBuildFile section */')
@@ -304,6 +317,29 @@
 	end
 
 
+	function xcode.PBXFrameworksBuildPhase(tr)
+		_p('/* Begin PBXFrameworksBuildPhase section */')
+		_p('/* End PBXFrameworksBuildPhase section */')
+		_p('')
+
+--		_p('/* Begin PBXFrameworksBuildPhase section */')
+--		for _, target in ipairs(ctx.targets) do
+--			_p(2,'%s /* Frameworks */ = {', target.prjnode.frameworks.stageid)
+--			_p(3,'isa = PBXFrameworksBuildPhase;')
+--			_p(3,'buildActionMask = 2147483647;')
+--			_p(3,'files = (')
+--			for _, framework in ipairs(target.prjnode.frameworks.children) do
+--				_p(4,'%s /* %s in Frameworks */,', framework.buildid, framework.name)
+--			end
+--			_p(3,');')
+--			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+--			_p(2,'};')
+--		end
+--		_p('/* End PBXFrameworksBuildPhase section */')
+--		_p('')
+	end
+
+
 	function xcode.PBXGroup(tr)
 		_p('/* Begin PBXGroup section */')
 
@@ -336,7 +372,27 @@
 	end
 
 
+	function xcode.Footer()
+		_p(1,'};')
+		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
+		_p('}')
+	end
 
+
+
+---------------------------------------------------------------------------
+-- Xcode project generator function
+---------------------------------------------------------------------------
+
+	function premake.xcode.pbxproj(sln)
+		tr = xcode.buildtree(sln)
+		xcode.Header(tr)
+		xcode.PBXBuildFile(tr)
+		xcode.PBXFileReference(tr)
+		xcode.PBXFrameworksBuildPhase(tr)
+		xcode.PBXGroup(tr)
+		xcode.Footer(tr)
+	end
 
 
 
@@ -631,63 +687,8 @@
 
 
 --
--- Converts a path or list of paths from project-relative to solution-relative.
---
--- @param prj
---    The project containing the path.
--- @param p
---    A path or list of paths.
--- @returns
---    The rebased path or paths.
---
-
-	function xcode.rebase(prj, p)
-		if type(p) == "string" then
-			return path.getrelative(prj.solution.location, path.join(prj.location, p))
-		else
-			local result = { }
-			for i, v in ipairs(p) do
-				result[i] = xcode.rebase(p[i])
-			end
-			return result
-		end
-	end
-
-
---
 -- BEGIN SECTION GENERATORS
 --
-
-	function xcode.header()
-		_p('// !$*UTF8*$!')
-		_p('{')
-		_p('\tarchiveVersion = 1;')
-		_p('\tclasses = {')
-		_p('\t};')
-		_p('\tobjectVersion = 45;')
-		_p('\tobjects = {')
-		_p('')
-	end
-
-
-	function xcode.PBXFrameworksBuildPhase(ctx)
-		_p('/* Begin PBXFrameworksBuildPhase section */')
-		for _, target in ipairs(ctx.targets) do
-			_p(2,'%s /* Frameworks */ = {', target.prjnode.frameworks.stageid)
-			_p(3,'isa = PBXFrameworksBuildPhase;')
-			_p(3,'buildActionMask = 2147483647;')
-			_p(3,'files = (')
-			for _, framework in ipairs(target.prjnode.frameworks.children) do
-				_p(4,'%s /* %s in Frameworks */,', framework.buildid, framework.name)
-			end
-			_p(3,');')
-			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
-			_p(2,'};')
-		end
-		_p('/* End PBXFrameworksBuildPhase section */')
-		_p('')
-	end
-
 
 	function xcode.PBXProject(ctx)
 		_p('/* Begin PBXProject section */')
@@ -775,12 +776,6 @@
 	end
 	
 
-	function xcode.footer()
-		_p(1,'};')
-		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
-		_p('}')
-	end
-
 
 --
 -- Generate the project.pbxproj file.
@@ -789,16 +784,16 @@
 --    The target solution.
 --
 
-	function premake.xcode.pbxproj(sln)
+	function premake.xcode.pbxproj2(sln)
 
 		-- Build a project tree and target list, with Xcode specific metadata attached
 		local ctx = xcode.buildcontext(sln)
 
 		-- Begin file generation --
-		xcode.header()
+--		xcode.header()
 --		xcode.PBXBuildFile2(ctx)
 --		xcode.PBXFileReference2(ctx)
-		xcode.PBXFrameworksBuildPhase(ctx)
+--		xcode.PBXFrameworksBuildPhase(ctx)
 --		xcode.PBXGroup2(ctx)
 
 		

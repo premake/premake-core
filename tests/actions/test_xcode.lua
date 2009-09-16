@@ -63,6 +63,36 @@
 	end
 
 
+---------------------------------------------------------------------------
+-- Header/footer tests
+---------------------------------------------------------------------------
+
+	function T.xcode3.Header_IsCorrect()
+		prepare()
+		xcode.Header()
+		test.capture [[
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+		]]
+	end
+
+
+	function T.xcode3.Footer()
+		prepare()
+		xcode.Footer()
+		test.capture [[
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
+		]]
+	end
+
 
 ---------------------------------------------------------------------------
 -- PBXBuildFile tests
@@ -162,6 +192,27 @@
 		]]
 	end
 
+
+
+---------------------------------------------------------------------------
+-- PBXFrameworksBuildPhase tests
+---------------------------------------------------------------------------
+
+	function T.xcode3.PBXFrameworksBuildPhase_OnNoFiles()
+		prepare()
+		xcode.PBXFrameworksBuildPhase(tr)
+		test.capture [[
+/* Begin PBXFrameworksBuildPhase section */
+		[MyProject:fxs] /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+		]]
+	end
 
 
 
