@@ -93,7 +93,7 @@
 			for cfg in premake.eachconfig(prj) do
 				if not kinds[cfg.kind] then
 					kinds[cfg.kind] = true
-					node = tree.insert(tr.products, tree.new(cfg.buildtarget.root))
+					node = tree.insert(tr.products, tree.new(path.getname(cfg.buildtarget.bundlepath)))
 					node.kind = "product"
 					node.prjnode = prjnodes[prj]
 					node.cfg  = cfg
@@ -221,6 +221,8 @@
 		local types = {
 			ConsoleApp  = "com.apple.product-type.tool",
 			WindowedApp = "com.apple.product-type.application",
+			StaticLib   = "com.apple.product-type.library.static",
+			SharedLib   = "com.apple.product-type.library.dynamic",
 		}
 		return types[node.cfg.kind]
 	end
@@ -237,8 +239,10 @@
 
 	function xcode.gettargettype(node)
 		local types = {
-			ConsoleApp = "compiled.mach-o.executable",
+			ConsoleApp  = "\"compiled.mach-o.executable\"",
 			WindowedApp = "wrapper.application",
+			StaticLib   = "archive.ar",
+			SharedLib   = "\"compiled.mach-o.dylib\"",
 		}
 		return types[node.cfg.kind]
 	end
@@ -338,11 +342,12 @@
 				end
 				
 				if node.kind == "product" then
-					-- Strangely, targets are specified relative to the project.pbxproj file 
+					-- Strangely, targets are specified relative to the project.pbxproj file
 					-- rather than the .xcodeproj directory like the rest of the files.
 					local basepath = path.join(node.cfg.project.solution.location, "project.pbxproj")
-					local projpath = path.join(node.cfg.project.location, node.cfg.buildtarget.rootdir)
-					local targpath = path.join(path.getrelative(basepath, projpath), node.cfg.buildtarget.root)
+--					local projpath = path.join(node.cfg.project.location, node.cfg.buildtarget.rootdir)
+--					local targpath = path.join(path.getrelative(basepath, projpath), node.cfg.buildtarget.root)
+					local targpath  = path.getrelative(basepath, node.cfg.buildtarget.bundlepath)
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
 						node.id, node.name, xcode.gettargettype(node), node.name, targpath)
 				else
@@ -544,7 +549,7 @@
 		_p(3,'buildSettings = {')
 		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
 
-		_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, cfg.buildtarget.rootdir))
+		_p(4,'CONFIGURATION_BUILD_DIR = %s;', xcode.rebase(prj, path.getdirectory(cfg.buildtarget.bundlepath)))
 
 		if cfg.flags.Symbols then
 			_p(4,'COPY_PHASE_STRIP = NO;')

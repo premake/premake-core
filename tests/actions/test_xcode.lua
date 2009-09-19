@@ -132,7 +132,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; name = MyProject; path = ../MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = ../MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -149,13 +149,38 @@
 		]]
 	end
 
+
+	function T.xcode3.PBXFileReference_ListsStaticLibTarget()
+		kind "StaticLib"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[libMyProject.a:product] /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = ../libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
+	function T.xcode3.PBXFileReference_ListsSharedLibTarget()
+		kind "SharedLib"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[libMyProject.dylib:product] /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = ../libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 	function T.xcode3.PBXFileReference_ConvertsProjectTargetsToSolutionRelative()
 		targetdir "../bin"
 		prepare()
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; name = MyProject; path = ../../bin/MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = ../../bin/MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end

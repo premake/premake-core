@@ -462,10 +462,9 @@
 		local field   = iif(direction == "build", "target", "implib")
 		local name    = cfg[field.."name"] or cfg.targetname or cfg.project.name
 		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
-		local root    = name
-		local rootdir = dir
 		local prefix  = ""
 		local suffix  = ""
+		local bundlepath
 
 		if namestyle == "windows" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
@@ -477,8 +476,8 @@
 			end
 		elseif namestyle == "posix" then
 			if kind == "WindowedApp" and system == "macosx" then
-				root = name .. ".app"
-				dir = path.join(dir, root .. "/Contents/MacOS")
+				bundlepath = path.join(dir, name .. ".app")
+				dir = path.join(bundlepath, "Contents/MacOS")
 			elseif kind == "SharedLib" then
 				prefix = "lib"
 				suffix = iif(system == "macosx", ".dylib", ".so")
@@ -500,12 +499,11 @@
 		
 		-- build the results object
 		local result = { }
-		result.basename  = name
-		result.name      = prefix .. name .. suffix
-		result.directory = dir
-		result.root      = root
-		result.rootdir   = rootdir
-		result.fullpath  = path.join(result.directory, result.name)
+		result.basename   = name
+		result.name       = prefix .. name .. suffix
+		result.directory  = dir
+		result.fullpath   = path.join(result.directory, result.name)
+		result.bundlepath = bundlepath or result.fullpath
 		
 		if pathstyle == "windows" then
 			result.directory = path.translate(result.directory, "\\")
