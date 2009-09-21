@@ -35,8 +35,8 @@
 		if #tr.children == 1 then
 			tr = tr.children[1]
 			tr.parent = nil
-			tr.solution = sln
 		end
+		tr.solution = sln
 
 		-- convert localized resources from their filesystem layout (English.lproj/MainMenu.xib)
 		-- to Xcode's display layout (MainMenu.xib/English).
@@ -345,8 +345,6 @@
 					-- Strangely, targets are specified relative to the project.pbxproj file
 					-- rather than the .xcodeproj directory like the rest of the files.
 					local basepath = path.join(node.cfg.project.solution.location, "project.pbxproj")
---					local projpath = path.join(node.cfg.project.location, node.cfg.buildtarget.rootdir)
---					local targpath = path.join(path.getrelative(basepath, projpath), node.cfg.buildtarget.root)
 					local targpath  = path.getrelative(basepath, node.cfg.buildtarget.bundlepath)
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
 						node.id, node.name, xcode.gettargettype(node), node.name, targpath)
@@ -573,7 +571,8 @@
 			_p(4,'INFOPLIST_FILE = %s;', target.prjnode.infoplist.path)
 		end
 
-		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.name)
+		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.basename)
+
 		_p(4,'SYMROOT = %s;', xcode.rebase(prj, cfg.objectsdir))
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)

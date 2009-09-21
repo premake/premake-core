@@ -13,7 +13,7 @@
 		description     = "Apple Xcode 3 (experimental)",
 		os              = "macosx",
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib" },
 		
 		valid_languages = { "C", "C++" },
 		

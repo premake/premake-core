@@ -687,10 +687,30 @@
 	end
 
 
-	function T.xcode3.XCBuildConfigurationBlock_OnDefaults()
+	function T.xcode3.XCBuildConfigurationBlock_OnConsoleAppDefaults()
 		Call_XCBuildConfigurationBlock()
 		test.capture [[
 		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = .;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = MyProject;
+				SYMROOT = obj/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function T.xcode3.XCBuildConfigurationBlock_OnStaticLibDefaults()
+		kind "StaticLib"
+		Call_XCBuildConfigurationBlock()
+		test.capture [[
+		[libMyProject.a:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;

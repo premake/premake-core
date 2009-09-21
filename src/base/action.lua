@@ -112,3 +112,29 @@
 			return premake.action.list[keys[i]]
 		end
 	end
+
+
+--
+-- Determines if an action supports a particular language or target type.
+--
+-- @param action
+--    The action to test.
+-- @param feature
+--    The feature to check, either a programming language or a target type.
+-- @returns
+--    True if the feature is supported, false otherwise.
+--
+
+	function premake.action.supports(action, feature)
+		if action.valid_languages then
+			if table.contains(action.valid_languages, feature) then
+				return true
+			end
+		end
+		if action.valid_kinds then
+			if table.contains(action.valid_kinds, feature) then
+				return true
+			end
+		end
+		return false
+	end

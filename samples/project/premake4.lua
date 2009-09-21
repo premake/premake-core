@@ -20,8 +20,8 @@ solution "PremakeTestbox"
 	include "CppWindowedApp"
 	include "CppSharedLib"
 	include "CppStaticLib"
-	
-	if _ACTION ~= "codeblocks" and _ACTION ~= "codelite" then
+
+	if premake.action.supports(premake.action.current(), "C#") then
 		include "CsSharedLib"
 		include "CsConsoleApp"
 	end
