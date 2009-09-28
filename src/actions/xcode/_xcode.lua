@@ -6,26 +6,27 @@
 
 	premake.xcode = { }
 	
-	newaction 
-	{
-		trigger         = "xcode3",
-		shortname       = "Xcode 3",
-		description     = "Apple Xcode 3 (experimental)",
-		os              = "macosx",
-
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib" },
-		
-		valid_languages = { "C", "C++" },
-		
-		valid_tools     = {
-			cc     = { "gcc" },
-		},
-
-		onsolution = function(sln)
-			premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.pbxproj)
-		end,
-		
-		oncleansolution = function(sln)
-			premake.clean.directory(sln, "%%.xcodeproj")
-		end,
-	}
+-- turned off for the 4.1.2 release
+--	newaction 
+--	{
+--		trigger         = "xcode3",
+--		shortname       = "Xcode 3",
+--		description     = "Apple Xcode 3 (experimental)",
+--		os              = "macosx",
+--
+--		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib" },
+--		
+--		valid_languages = { "C", "C++" },
+--		
+--		valid_tools     = {
+--			cc     = { "gcc" },
+--		},
+--
+--		onsolution = function(sln)
+--			premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.pbxproj)
+--		end,
+--		
+--		oncleansolution = function(sln)
+--			premake.clean.directory(sln, "%%.xcodeproj")
+--		end,
+--	}
