@@ -25,6 +25,8 @@
 	{
 		ExtraWarnings  = "-Wall",
 		FatalWarnings  = "-Werror",
+		FloatFast      = "-ffast-math",
+		FloatStrict    = "-ffloat-store",
 		NoFramePointer = "-fomit-frame-pointer",
 		Optimize       = "-O2",
 		OptimizeSize   = "-Os",

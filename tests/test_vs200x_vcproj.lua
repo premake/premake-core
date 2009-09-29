@@ -503,4 +503,49 @@
 			</File>
 		]]
 	end
-	
+
+--
+-- Floating point flag tests
+--
+
+	function T.vs200x_vcproj.CompilerBlock_OnFpFast()
+		flags { "FloatFast" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				FloatingPointModel="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\$(ProjectName).pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+	function T.vs200x_vcproj.CompilerBlock_OnFpStrict()
+		flags { "FloatStrict" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				FloatingPointModel="1"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\$(ProjectName).pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end

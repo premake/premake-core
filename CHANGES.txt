@@ -12,8 +12,10 @@
 - Changed arguments to GCC link step to fix static linking
 - Fixed ManagedExtension setting for Visual Studio
 - Fixed os.match() bug for large result sets (David Raulo)
-- Added .m and .mm extensions for Objective C support (Johannes Spohr)
+- Patch 2802722: Floating Point Model Flags (Suigintou)
+- Patch 2865333: Support for ObjC and ObjC++ sources (Johannes Spohr)
 - Patch 2832852: Fix descriptions in cmd help (Sebastian Schuberth)
+- Patch 2832848: Show default script name in help (Sebastian Schuberth)
 
 
 -------

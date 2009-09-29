@@ -25,6 +25,8 @@
 	{
 		ExtraWarnings  = "-wx",
 		FatalWarning   = "-we",
+		FloatFast      = "-ffast-math",
+		FloatStrict    = "-ffloat-store",
 		Optimize       = "-ox",
 		OptimizeSize   = "-os",
 		OptimizeSpeed  = "-ot",

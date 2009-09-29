@@ -21,7 +21,6 @@
 		cfg.linktarget = { fullpath="libMyProject.a" }
 	end
 
-
 	function T.gcc.cflags_SharedLib_Windows()
 		cfg.kind = "SharedLib"
 		cfg.system = "windows"
@@ -34,4 +33,16 @@
 		cfg.system = "windows"
 		local r = premake.gcc.getldflags(cfg)
 		test.isequal('-s|-shared|-Wl,--out-implib="libMyProject.a"', table.concat(r,"|"))
+	end
+
+	function T.gcc.cflags_OnFpFast()
+		cfg.flags = { "FloatFast" }
+		local r = premake.gcc.getcflags(cfg)
+		test.isequal('-ffast-math', table.concat(r,"|"))
+	end
+
+	function T.gcc.cflags_OnFpStrict()
+		cfg.flags = { "FloatStrict" }
+		local r = premake.gcc.getcflags(cfg)
+		test.isequal('-ffloat-store', table.concat(r,"|"))
 	end

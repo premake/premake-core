@@ -68,6 +68,8 @@
 			allowed = {
 				"ExtraWarnings",
 				"FatalWarnings",
+				"FloatFast",
+				"FloatStrict",
 				"Managed",
 				"NativeWChar",
 				"No64BitChecks",

@@ -12,7 +12,7 @@
 	newoption 
 	{
 		trigger     = "cc",
-		value       = "compiler",
+		value       = "VALUE",
 		description = "Choose a C/C++ compiler set",
 		allowed = {
 			{ "gcc", "GNU GCC (gcc/g++)" },
@@ -23,7 +23,7 @@
 	newoption
 	{
 		trigger     = "dotnet",
-		value       = "value",
+		value       = "VALUE",
 		description = "Choose a .NET compiler set",
 		allowed = {
 			{ "msnet",   "Microsoft .NET (csc)" },
@@ -35,8 +35,8 @@
 	newoption
 	{
 		trigger     = "file",
-		value       = "filename",
-		description = "Process the specified Premake script file"
+		value       = "FILE",
+		description = "Read FILE as a Premake script; default is 'premake4.lua'"
 	}
 	
 	newoption
@@ -48,7 +48,7 @@
 	newoption
 	{
 		trigger     = "os",
-		value       = "value",
+		value       = "VALUE",
 		description = "Generate files for a different operating system",
 		allowed = {
 			{ "bsd",      "OpenBSD, NetBSD, or FreeBSD" },
@@ -61,7 +61,7 @@
 	newoption
 	{
 		trigger     = "platform",
-		value       = "value",
+		value       = "VALUE",
 		description = "Add target architecture (if supported by action)",
 		allowed = {
 			{ "x32",         "32-bit" },

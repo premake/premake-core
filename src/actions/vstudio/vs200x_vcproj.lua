@@ -91,6 +91,20 @@
 		
 		_p('\t\t\t\tRuntimeLibrary="%s"', _VS.runtime(cfg))
 		_p('\t\t\t\tEnableFunctionLevelLinking="%s"', _VS.bool(true))
+
+		if _ACTION < "vs2005" then
+			if cfg.flags.FloatFast then
+				_p('\t\t\t\tImproveFloatingPointConsistency="%s"', _VS.bool(false))
+			elseif cfg.flags.FloatStrict then
+				_p('\t\t\t\tImproveFloatingPointConsistency="%s"', _VS.bool(true))
+			end
+		else
+			if cfg.flags.FloatFast then
+				_p('\t\t\t\tFloatingPointModel="2"')
+			elseif cfg.flags.FloatStrict then
+				_p('\t\t\t\tFloatingPointModel="1"')
+			end
+		end
 		
 		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
 			_p('\t\t\t\tRuntimeTypeInfo="%s"', _VS.bool(true))
