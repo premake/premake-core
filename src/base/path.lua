@@ -167,13 +167,13 @@
 --
 
 	function path.iscfile(fname)
-		local extensions = { ".c", ".s" }
+		local extensions = { ".c", ".s", ".m" }
 		local ext = path.getextension(fname):lower()
 		return table.contains(extensions, ext)
 	end
 	
 	function path.iscppfile(fname)
-		local extensions = { ".cc", ".cpp", ".cxx", ".c", ".s" }
+		local extensions = { ".cc", ".cpp", ".cxx", ".c", ".s", ".m", ".mm" }
 		local ext = path.getextension(fname):lower()
 		return table.contains(extensions, ext)
 	end
