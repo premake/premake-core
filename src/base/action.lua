@@ -143,6 +143,9 @@
 --
 
 	function premake.action.supports(action, feature)
+		if not action then
+			return false
+		end
 		if action.valid_languages then
 			if table.contains(action.valid_languages, feature) then
 				return true

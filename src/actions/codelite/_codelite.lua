@@ -7,7 +7,7 @@
 	newaction {
 		trigger         = "codelite",
 		shortname       = "CodeLite",
-		description     = "CodeLite",
+		description     = "Generate CodeLite project files",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

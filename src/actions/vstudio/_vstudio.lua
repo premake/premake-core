@@ -309,7 +309,7 @@
 	newaction {
 		trigger         = "vs2002",
 		shortname       = "Visual Studio 2002",
-		description     = "Microsoft Visual Studio 2002",
+		description     = "Generate Microsoft Visual Studio 2002 project files",
 		os              = "windows",
 		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
@@ -342,7 +342,7 @@
 	newaction {
 		trigger         = "vs2003",
 		shortname       = "Visual Studio 2003",
-		description     = "Microsoft Visual Studio 2003",
+		description     = "Generate Microsoft Visual Studio 2003 project files",
 		os              = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
@@ -375,7 +375,7 @@
 	newaction {
 		trigger         = "vs2005",
 		shortname       = "Visual Studio 2005",
-		description     = "Microsoft Visual Studio 2005 (SharpDevelop, MonoDevelop)",
+		description     = "Generate Microsoft Visual Studio 2005 project files",
 		os              = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
@@ -408,7 +408,7 @@
 	newaction {
 		trigger         = "vs2008",
 		shortname       = "Visual Studio 2008",
-		description     = "Microsoft Visual Studio 2008",
+		description     = "Generate Microsoft Visual Studio 2008 project files",
 		os              = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },

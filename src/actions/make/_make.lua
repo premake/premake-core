@@ -104,7 +104,7 @@
 	newaction {
 		trigger         = "gmake",
 		shortname       = "GNU Make",
-		description     = "GNU makefiles for POSIX, MinGW, and Cygwin",
+		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 	
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		

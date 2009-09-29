@@ -8,7 +8,7 @@
 	newaction {
 		trigger         = "codeblocks",
 		shortname       = "Code::Blocks",
-		description     = "Code::Blocks Studio",
+		description     = "Generate Code::Blocks project files",
 		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
