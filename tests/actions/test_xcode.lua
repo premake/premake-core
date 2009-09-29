@@ -51,6 +51,7 @@
 
 	local sln, tr
 	function T.xcode3.setup()
+		premake.action.set("xcode3")
 		-- reset the list of generated IDs
 		used_ids = { }
 		sln = test.createsolution()

@@ -58,3 +58,14 @@
 	function T.action.CallSkipsCallbacksIfNotPresent()
 		test.success(premake.action.call, "fake")
 	end
+
+
+--
+-- Tests for set()
+--
+
+	function T.action.set_SetsActionOS()
+		_OS = "linux"
+		premake.action.set("vs2008")
+		test.isequal(_OS, "windows")
+	end

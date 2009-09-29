@@ -115,6 +115,23 @@
 
 
 --
+-- Activates a particular action.
+--
+-- @param name
+--    The name of the action to activate.
+--
+
+	function premake.action.set(name)
+		_ACTION = name
+		-- Some actions imply a particular operating system
+		local action = premake.action.get(name)
+		if action then
+			_OS = action.os or _OS
+		end
+	end
+
+
+--
 -- Determines if an action supports a particular language or target type.
 --
 -- @param action
