@@ -13,6 +13,7 @@
 - Fixed ManagedExtension setting for Visual Studio
 - Fixed os.match() bug for large result sets (David Raulo)
 - Added .m and .mm extensions for Objective C support (Johannes Spohr)
+- Patch 2832852: Fix descriptions in cmd help (Sebastian Schuberth)
 
 
 -------
