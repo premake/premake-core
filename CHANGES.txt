@@ -3,12 +3,18 @@
 -----
 
 - Added support for Apple Xcode 3
+
+
+-------
+ 4.1.2
+-------
+
 - Changed arguments to GCC link step to fix static linking
 - Fixed ManagedExtension setting for Visual Studio
 
 
 -------
- 4.1.1 (in progress)
+ 4.1.1
 -------
 
 - Use libtool instead of ar for Mac OS X Universal static libraries

@@ -40,32 +40,6 @@
 
 
 --
--- Retrieve the current action, as determined by _ACTION.
---
--- @return
---    The current action, or nil if _ACTION is nil or does not match any action.
---
-
-	function premake.action.current()
-		return premake.action.get(_ACTION)
-	end
-	
-	
---
--- Retrieve an action by name.
---
--- @param name
---    The name of the action to retrieve.
--- @returns
---    The requested action, or nil if the action does not exist.
---
-
-	function premake.action.get(name)
-		return premake.action.list[name]
-	end
-
-
---
 -- Trigger an action.
 --
 -- @param name
@@ -91,6 +65,32 @@
 		if a.execute then
 			a.execute()
 		end
+	end
+
+
+--
+-- Retrieve the current action, as determined by _ACTION.
+--
+-- @return
+--    The current action, or nil if _ACTION is nil or does not match any action.
+--
+
+	function premake.action.current()
+		return premake.action.get(_ACTION)
+	end
+	
+	
+--
+-- Retrieve an action by name.
+--
+-- @param name
+--    The name of the action to retrieve.
+-- @returns
+--    The requested action, or nil if the action does not exist.
+--
+
+	function premake.action.get(name)
+		return premake.action.list[name]
 	end
 
 

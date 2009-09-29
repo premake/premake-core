@@ -1,9 +1,8 @@
 --
--- tests/test_path.lua
--- Automated test suite for the path manipulation functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- tests/base/test_path.lua
+-- Automated test suite for the action list.
+-- Copyright (c) 2008,2009 Jason Perkins and the Premake project
 --
-
 
 	T.path = { }
 
@@ -160,7 +159,17 @@
 		test.isequal("trailing", path.join(".", "trailing"))
 	end
 	
-	
+
+--
+-- path.rebase() tests
+--
+
+	function T.path.rebase_WithEndingSlashOnPath()
+		local cwd = os.getcwd()
+		test.isequal("src", path.rebase("../src/", cwd, path.getdirectory(cwd)))
+	end
+
+
 --
 -- path.translate() tests
 --

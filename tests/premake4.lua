@@ -39,7 +39,6 @@
 
 	dofile("test_dofile.lua")
 	dofile("test_os.lua")
-	dofile("test_path.lua")
 	dofile("test_string.lua")
 	dofile("test_table.lua")
 	dofile("test_premake.lua")
@@ -58,6 +57,7 @@
 	dofile("test_gmake_cpp.lua")
 	dofile("test_gmake_cs.lua")
 	dofile("base/test_action.lua")
+	dofile("base/test_path.lua")
 	dofile("base/test_tree.lua")
 	dofile("actions/test_clean.lua")
 	dofile("actions/test_xcode.lua")
