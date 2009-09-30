@@ -9,9 +9,9 @@
  4.1.2
 -------
 
-- Changed arguments to GCC link step to fix static linking
 - Fixed ManagedExtension setting for Visual Studio
 - Fixed os.match() bug for large result sets (David Raulo)
+- Patch 2840052: Order problem of static link
 - Patch 2802722: Floating Point Model Flags (Suigintou)
 - Patch 2865333: Support for ObjC and ObjC++ sources (Johannes Spohr)
 - Patch 2832852: Fix descriptions in cmd help (Sebastian Schuberth)
