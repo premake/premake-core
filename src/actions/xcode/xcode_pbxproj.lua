@@ -202,6 +202,7 @@
 			[".m"]         = "sourcecode.c.objc",
 			[".nib"]       = "wrapper.nib",
 			[".plist"]     = "text.plist.xml",
+			[".strings"]   = "text.plist.strings",
 			[".xib"]       = "file.xib",
 		}
 		return types[path.getextension(node.path)] or "text"

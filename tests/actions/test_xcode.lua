@@ -138,7 +138,6 @@
 		]]
 	end
 
-
 	function T.xcode3.PBXFileReference_ListsWindowedTarget()
 		kind "WindowedApp"
 		prepare()
@@ -149,7 +148,6 @@
 /* End PBXFileReference section */
 		]]
 	end
-
 
 	function T.xcode3.PBXFileReference_ListsStaticLibTarget()
 		kind "StaticLib"
@@ -162,7 +160,6 @@
 		]]
 	end
 
-
 	function T.xcode3.PBXFileReference_ListsSharedLibTarget()
 		kind "SharedLib"
 		prepare()
@@ -173,7 +170,6 @@
 /* End PBXFileReference section */
 		]]
 	end
-
 
 	function T.xcode3.PBXFileReference_ConvertsProjectTargetsToSolutionRelative()
 		targetdir "../bin"
@@ -207,7 +203,7 @@
 		]]
 	end
 	
-	function T.xcode3.PBXFileReference_ListResourcesCorrectly()
+	function T.xcode3.PBXFileReference_ListsXibCorrectly()
 		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
 		prepare()
 		xcode.PBXFileReference(tr)
@@ -218,6 +214,16 @@
 		]]
 	end
 	
+	function T.xcode3.PBXFileReference_ListsStringsCorrectly()
+		files { "English.lproj/InfoPlist.strings", "French.lproj/InfoPlist.strings" }
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[English] /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		[French] /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		]]
+	end
 	
 	function T.xcode3.PBXFileReference_ListFrameworksCorrectly()
 		links { "Cocoa.framework" }
