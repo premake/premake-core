@@ -305,17 +305,6 @@
 -- in the .pbxproj file
 ---------------------------------------------------------------------------
 
-	function xcode.Header()
-		_p('// !$*UTF8*$!')
-		_p('{')
-		_p('\tarchiveVersion = 1;')
-		_p('\tclasses = {')
-		_p('\t};')
-		_p('\tobjectVersion = 45;')
-		_p('\tobjects = {')
-		_p('')
-	end
-
 
 	function xcode.PBXBuildFile(tr)
 		_p('/* Begin PBXBuildFile section */')
@@ -644,13 +633,6 @@
 		_p(2,'};')
 		_p('/* End XCConfigurationList section */')
 		_p('')
-	end
-	
-
-	function xcode.Footer()
-		_p(1,'};')
-		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
-		_p('}')
 	end
 
 

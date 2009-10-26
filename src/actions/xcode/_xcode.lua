@@ -22,7 +22,11 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.pbxproj)
+			premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.solution)
+		end,
+		
+		onproject = function(prj)
+			premake.generate(prj, "%%.xcodeproj/project.pbxproj", premake.xcode.project)
 		end,
 		
 		oncleansolution = function(sln)

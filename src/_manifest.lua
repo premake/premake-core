@@ -9,6 +9,7 @@
 
 	return
 	{
+		-- core files
 		"base/os.lua",
 		"base/path.lua",
 		"base/string.lua",
@@ -29,16 +30,24 @@
 		"base/validate.lua",
 		"base/help.lua",
 		"base/premake.lua",
+		
+		-- CodeBlocks action
 		"actions/codeblocks/codeblocks_workspace.lua",
 		"actions/codeblocks/codeblocks_cbp.lua",
 		"actions/codeblocks/_codeblocks.lua",
+		
+		-- CodeLite action
 		"actions/codelite/codelite_workspace.lua",
 		"actions/codelite/codelite_project.lua",
 		"actions/codelite/_codelite.lua",
+		
+		-- GNU make action
 		"actions/make/make_solution.lua",
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
 		"actions/make/_make.lua",
+		
+		-- Visual Studio action
 		"actions/vstudio/vs2002_solution.lua",
 		"actions/vstudio/vs2002_csproj.lua",
 		"actions/vstudio/vs2002_csproj_user.lua",
@@ -48,7 +57,14 @@
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
 		"actions/vstudio/_vstudio.lua",
+		
+		-- Xcode action
 		"actions/xcode/_xcode.lua",
+		"actions/xcode/xcode_sections.lua",
+		"actions/xcode/xcode_solution.lua",
+		"actions/xcode/xcode_project.lua",
 		"actions/xcode/xcode_pbxproj.lua",
+		
+		-- Clean action
 		"actions/clean/_clean.lua",
 	}
