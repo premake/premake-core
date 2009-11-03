@@ -17,8 +17,22 @@
 --    A tree, loaded with metadata, which mirrors Xcode's view of the project.
 --
 
-	local function buildtree(prj)
-		local tr = tree.new(prj.name)
+	function xcode.buildprjtree(prj)
+		local tr = premake.project.buildsourcetree(prj)
+
+		-- Final setup
+		tree.traverse(tr, {
+			onnode = function(node)
+				-- assign IDs to every node in the tree
+				node.id = xcode.newid(node)
+				
+				-- assign build IDs to buildable files
+				if xcode.getbuildcategory(node) then
+					node.buildid = xcode.newid(node, "build")
+				end
+			end
+		}, true)
+
 		return tr
 	end
 
@@ -31,7 +45,8 @@
 --
 
 	function premake.xcode.project(prj)
-		tr = buildtree(prj)
+		local tr = xcode.buildprjtree(prj)
 		xcode.Header(tr)
+		xcode.PBXBuildFile(tr)
 		xcode.Footer(tr)
 	end

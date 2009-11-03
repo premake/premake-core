@@ -60,7 +60,7 @@
 		
 		-- Xcode action
 		"actions/xcode/_xcode.lua",
-		"actions/xcode/xcode_sections.lua",
+		"actions/xcode/xcode_common.lua",
 		"actions/xcode/xcode_solution.lua",
 		"actions/xcode/xcode_project.lua",
 		"actions/xcode/xcode_pbxproj.lua",

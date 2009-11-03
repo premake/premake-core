@@ -9,43 +9,6 @@
 
 
 --
--- Replacement for xcode.newid(). Creates a synthetic ID based on the node name,
--- it's intended usage (file ID, build ID, etc.) and its place in the tree. This 
--- makes it easier to tell if the right ID is being used in the right places.
---
-
-	local used_ids = {}
-	
-	xcode.newid = function(node, usage)
-		-- assign special usages depending on where this node lives in the tree,
-		-- to help distinguish nodes that are likely to have the same name
-		if not usage and node.parent then
-			local grandparent = node.parent.parent
-			if grandparent then
-				if node.parent == grandparent.products then
-					usage = "product"
-				end
-			end
-		end
-		
-		local name = node.name
-		if usage then
-			name = name .. ":" .. usage
-		end
-		
-		if used_ids[name] then
-			local count = used_ids[name] + 1
-			used_ids[name] = count
-			name = name .. "(" .. count .. ")"
-		else
-			used_ids[name] = 1
-		end
-		
-		return "[" .. name .. "]"
-	end
-
-
---
 -- Setup
 --
 
@@ -53,7 +16,7 @@
 	function T.xcode3.setup()
 		premake.action.set("xcode3")
 		-- reset the list of generated IDs
-		used_ids = { }
+		xcode.used_ids = { }
 		sln = test.createsolution()
 	end
 
@@ -65,51 +28,8 @@
 
 
 ---------------------------------------------------------------------------
--- Header/footer tests
----------------------------------------------------------------------------
-
-	function T.xcode3.Header_IsCorrect()
-		prepare()
-		xcode.Header()
-		test.capture [[
-// !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 45;
-	objects = {
-
-		]]
-	end
-
-
-	function T.xcode3.Footer()
-		prepare()
-		xcode.Footer()
-		test.capture [[
-	};
-	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
-}
-		]]
-	end
-
-
----------------------------------------------------------------------------
 -- PBXBuildFile tests
 ---------------------------------------------------------------------------
-
-	function T.xcode3.PBXBuildFile_ListsBuildableSources()
-		files { "source.h", "source.c", "source.cpp", "Info.plist" }
-		prepare()
-		xcode.PBXBuildFile(tr)
-		test.capture [[
-/* Begin PBXBuildFile section */
-		[source.c:build] /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = [source.c] /* source.c */; };
-		[source.cpp:build] /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = [source.cpp] /* source.cpp */; };
-/* End PBXBuildFile section */
-		]]
-	end
 
 
 	function T.xcode3.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()

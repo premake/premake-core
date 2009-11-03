@@ -60,8 +60,13 @@
 	dofile("base/test_path.lua")
 	dofile("base/test_tree.lua")
 	dofile("actions/test_clean.lua")
-	dofile("actions/test_xcode.lua")
 
+	-- Xcode tests
+	dofile("actions/xcode/test_xcode_common.lua")
+	dofile("actions/xcode/test_xcode_project.lua")
+
+	dofile("actions/test_xcode.lua")
+	
 
 --
 -- Register a test action
