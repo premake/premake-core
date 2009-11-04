@@ -20,7 +20,7 @@
 		if not platform then return true end
 		platform = premake.checkvalue(platform, premake.fields.platforms.allowed)
 		
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			local platforms = sln.platforms or { }
 			
 			-- an empty table is equivalent to a native build

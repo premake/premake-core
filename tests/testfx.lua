@@ -176,7 +176,7 @@
 		_ACTION = "test"
 		_ARGS = { }
 		_OPTIONS = { }
-		_SOLUTIONS = { }
+		premake.solution.list = { }
 
 		-- reset captured I/O values
 		test.value_openedfilename = nil

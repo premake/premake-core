@@ -67,7 +67,7 @@
 	function _MAKE.getmakefilename(this, searchprjs)
 		-- how many projects/solutions use this location?
 		local count = 0
-		for _,sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			if (sln.location == this.location) then count = count + 1 end
 			if (searchprjs) then
 				for _,prj in ipairs(sln.projects) do

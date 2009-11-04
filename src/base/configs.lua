@@ -343,7 +343,7 @@
 		local cfg_dirs = {}
 		local hit_counts = {}
 		
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
 
@@ -368,7 +368,7 @@
 		
 		-- Now assign an object directory to each configuration, skipping those
 		-- that are in use somewhere else in the session
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
 
@@ -392,7 +392,7 @@
 --
 
 	local function buildtargets()
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			for _, prj in ipairs(sln.projects) do
 				for _, cfg in pairs(prj.__configs) do
 					-- determine which conventions the target should follow for this config
@@ -423,7 +423,7 @@
 	function premake.buildconfigs()
 	
 		-- convert project path fields to be relative to project location
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			for _, prj in ipairs(sln.projects) do
 				prj.location = prj.location or sln.location or prj.basedir
 				adjustpaths(prj.location, prj)
@@ -436,7 +436,7 @@
 		
 		-- collapse configuration blocks, so that there is only one block per build
 		-- configuration/platform pair, filtered to the current operating environment		
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			local basis = collapse(sln)
 			for _, prj in ipairs(sln.projects) do
 				prj.__configs = collapse(prj, basis)

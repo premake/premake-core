@@ -613,25 +613,9 @@
 			end
 		end
 		
-		premake.CurrentContainer = _SOLUTIONS[name]
+		premake.CurrentContainer = premake.solution.get(name)
 		if (not premake.CurrentContainer) then
-			local sln = { }
-			premake.CurrentContainer = sln
-
-			-- add to master list keyed by both name and index
-			table.insert(_SOLUTIONS, sln)
-			_SOLUTIONS[name] = sln
-			
-			-- attach a type
-			setmetatable(sln, { 
-				__type="solution"
-			})
-
-			sln.name           = name
-			sln.basedir        = os.getcwd()			
-			sln.projects       = { }
-			sln.blocks         = { }
-			sln.configurations = { }
+			premake.CurrentContainer = premake.solution.new(name)
 		end
 
 		-- add an empty, global configuration

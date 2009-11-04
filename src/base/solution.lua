@@ -7,6 +7,55 @@
 	premake.solution = { }
 
 
+-- The list of defined solutions (which contain projects, etc.)
+
+	premake.solution.list = { }
+
+
+--
+-- Create a new solution and add it to the session.
+--
+-- @param name
+--    The new solution's name.
+--
+
+	function premake.solution.new(name)
+		local sln = { }
+
+		-- add to master list keyed by both name and index
+		table.insert(premake.solution.list, sln)
+		premake.solution.list[name] = sln
+			
+		-- attach a type descriptor
+		setmetatable(sln, { __type="solution" })
+
+		sln.name           = name
+		sln.basedir        = os.getcwd()			
+		sln.projects       = { }
+		sln.blocks         = { }
+		sln.configurations = { }
+		return sln
+	end
+
+
+--
+-- Iterate over the collection of solutions in a session.
+--
+-- @returns
+--    An iterator function.
+--
+
+	function premake.solution.each()
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= #premake.solution.list then
+				return premake.solution.list[i]
+			end
+		end
+	end
+
+
 --
 -- Iterate over the projects of a solution.
 --
@@ -24,6 +73,20 @@
 				return premake.solution.getproject(sln, i)
 			end
 		end
+	end
+
+
+--
+-- Retrieve a solution by name or index.
+--
+-- @param key
+--    The solution key, either a string name or integer index.
+-- @returns
+--    The solution with the provided key.
+--
+
+	function premake.solution.get(key)
+		return premake.solution.list[key]
 	end
 
 

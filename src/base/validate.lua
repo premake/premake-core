@@ -13,7 +13,7 @@
 	function premake.checkprojects()
 		local action = premake.action.current()
 		
-		for _, sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 		
 			-- every solution must have at least one project
 			if (#sln.projects == 0) then

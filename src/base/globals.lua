@@ -5,16 +5,6 @@
 --
 	
 	
--- The list of defined solutions (which contain projects, etc.)
-
-	_SOLUTIONS = { }
-
-
--- The list of built-in output templates
-
-	_TEMPLATES = { }
-	
-		
 -- A top-level namespace for support functions
 
 	premake = { }

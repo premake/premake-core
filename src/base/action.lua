@@ -50,8 +50,7 @@
 
 	function premake.action.call(name)
 		local a = premake.action.list[name]
-
-		for _,sln in ipairs(_SOLUTIONS) do
+		for sln in premake.solution.each() do
 			if a.onsolution then
 				a.onsolution(sln)
 			end
