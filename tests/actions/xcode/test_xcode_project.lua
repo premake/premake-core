@@ -24,13 +24,8 @@
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
-		
-		local prj = sln.projects[1]
-		local cfg = premake.getconfig(prj)
-		cfg.name  = prj.name
-		cfg.blocks = prj.blocks
-		
-		tr = xcode.buildprjtree(cfg)
+		local prj = premake.solution.getproject(sln, 1)
+		tr = xcode.buildprjtree(prj)
 	end
 
 

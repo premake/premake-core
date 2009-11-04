@@ -70,28 +70,6 @@
 
 
 --
--- Iterator for a solution's projects, or rather project root configurations.
--- These configuration objects include all settings related to the project,
--- regardless of where they were originally specified.
---
-
-	function premake.eachproject(sln)
-		local i = 0
-		return function ()
-			i = i + 1
-			if (i <= #sln.projects) then
-				local prj = sln.projects[i]
-				local cfg = premake.getconfig(prj)
-				cfg.name  = prj.name
-				cfg.blocks = prj.blocks
-				return cfg
-			end
-		end
-	end
-
-
-
---
 -- Apply XML escaping to a value.
 --
 
@@ -541,7 +519,7 @@
 --
 
 	function premake.hascppproject(sln)
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			if premake.iscppproject(prj) then
 				return true
 			end
@@ -555,7 +533,7 @@
 --
 
 	function premake.hasdotnetproject(sln)
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			if premake.isdotnetproject(prj) then
 				return true
 			end

@@ -19,7 +19,7 @@
 		_p('# Visual Studio %s', iif(_ACTION == 'vs2005', '2005', '2008'))
 
 		-- Write out the list of project entries
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			-- Build a relative path from the solution file to the project file
 			local projpath = path.translate(path.getrelative(sln.location, _VS.projectfile(prj)), "\\")
 			
@@ -66,7 +66,7 @@
 
 	function premake.vs2005_solution_project_platforms(sln)
 		_p('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			for _, cfg in ipairs(sln.vstudio_configs) do
 			
 				-- .NET projects always map to the "Any CPU" platform (for now, at 

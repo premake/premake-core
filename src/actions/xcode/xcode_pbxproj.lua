@@ -26,7 +26,7 @@
 		-- node goes with which project for later reference
 		local tr = tree.new(sln.name)
 		local prjnodes = {}
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			prjnodes[prj] = tree.insert(tr, premake.project.buildsourcetree(prj))
 		end
 
@@ -68,7 +68,7 @@
 		-- Only add it to the tree if there are frameworks in use.
 		tr.frameworks = tree.new("Frameworks")
 		frameworks = { }  -- remember which frameworks have already been added
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			for cfg in premake.eachconfig(prj) do
 				for _, link in ipairs(cfg.links) do
 					local name = path.getname(link)
@@ -88,7 +88,7 @@
 		-- the special folder "Products" lists all of the generated targets, one target
 		-- for each target kind (ConsoleApp, SharedLibrary, etc.) produced by a project.
 		tr.products = tree.insert(tr, tree.new("Products"))
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			local kinds = {}  -- remember which kinds have already been added
 			for cfg in premake.eachconfig(prj) do
 				if not kinds[cfg.kind] then

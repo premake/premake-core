@@ -13,7 +13,7 @@
 		_p('Microsoft Visual Studio Solution File, Format Version 8.00')
 
 		-- Write out the list of project entries
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			local projpath = path.translate(path.getrelative(sln.location, _VS.projectfile(prj)))
 			_p('Project("{%s}") = "%s", "%s", "{%s}"', _VS.tool(prj), prj.name, projpath, prj.uuid)
 			
@@ -40,7 +40,7 @@
 		_p('\tEndGlobalSection')
 		
 		_p('\tGlobalSection(ProjectConfiguration) = postSolution')
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			for _, cfgname in ipairs(sln.configurations) do
 				_p('\t\t{%s}.%s.ActiveCfg = %s|%s', prj.uuid, cfgname, cfgname, _VS.arch(prj))
 				_p('\t\t{%s}.%s.Build.0 = %s|%s', prj.uuid, cfgname, cfgname, _VS.arch(prj))

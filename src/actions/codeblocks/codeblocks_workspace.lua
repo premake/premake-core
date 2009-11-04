@@ -9,7 +9,7 @@
 		_p('<CodeBlocks_workspace_file>')
 		_p('\t<Workspace title="%s">', sln.name)
 		
-		for prj in premake.eachproject(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			local fname = path.join(path.getrelative(sln.location, prj.location), prj.name)
 			local active = iif(prj.project == sln.projects[1], ' active="1"', '')
 			

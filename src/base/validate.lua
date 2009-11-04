@@ -25,7 +25,7 @@
 				return nil, "solution '" .. sln.name .. "' needs configurations"
 			end
 			
-			for prj in premake.eachproject(sln) do
+			for prj in premake.solution.eachproject(sln) do
 
 				-- every project must have a language
 				if (not prj.language) then

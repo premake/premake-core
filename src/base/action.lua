@@ -55,7 +55,7 @@
 			if a.onsolution then
 				a.onsolution(sln)
 			end
-			for prj in premake.eachproject(sln) do
+			for prj in premake.solution.eachproject(sln) do
 				if a.onproject then
 					a.onproject(prj)
 				end
