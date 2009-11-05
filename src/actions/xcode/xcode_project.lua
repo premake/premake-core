@@ -20,6 +20,32 @@
 	function xcode.buildprjtree(prj)
 		local tr = premake.project.buildsourcetree(prj)
 
+		-- convert localized resources from their filesystem layout (English.lproj/MainMenu.xib)
+		-- to Xcode's display layout (MainMenu.xib/English).
+		tree.traverse(tr, {
+			onbranch = function(node)
+				if path.getextension(node.name) == ".lproj" then
+					local lang = path.getbasename(node.name)  -- "English", "French", etc.
+					
+					-- create a new language group for each file it contains
+					for _, filenode in ipairs(node.children) do
+						local grpnode = node.parent.children[filenode.name]
+						if not grpnode then
+							grpnode = tree.insert(node.parent, tree.new(filenode.name))
+							grpnode.kind = "vgroup"
+						end
+						
+						-- convert the file node to a language node and add to the group
+						filenode.name = path.getbasename(lang)
+						tree.insert(grpnode, filenode)
+					end
+					
+					-- remove this directory from the tree
+					tree.remove(node)
+				end
+			end
+		})
+
 		-- Final setup
 		tree.traverse(tr, {
 			onnode = function(node)

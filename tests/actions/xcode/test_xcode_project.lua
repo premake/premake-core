@@ -44,3 +44,15 @@
 /* End PBXBuildFile section */
 		]]
 	end
+
+
+	function suite.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
+		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		[MainMenu.xib:build] /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = [MainMenu.xib] /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+		]]
+	end

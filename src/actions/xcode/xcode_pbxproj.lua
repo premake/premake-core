@@ -589,8 +589,8 @@
 
 	function premake.xcode.pbxproj(sln)
 		tr = xcode.buildtree(sln)
-		xcode.Header(tr)
-		xcode.PBXBuildFile(tr)
+		xcode.Header(tr)  -- done
+		xcode.PBXBuildFile(tr)  -- done
 		xcode.PBXFileReference(tr)
 		xcode.PBXFrameworksBuildPhase(tr)
 		xcode.PBXGroup(tr)
@@ -601,5 +601,5 @@
 		xcode.PBXVariantGroup(tr)
 		xcode.XCBuildConfiguration(tr)
 		xcode.XCBuildConfigurationList(tr)
-		xcode.Footer(tr)
+		xcode.Footer(tr)  -- done
 	end
