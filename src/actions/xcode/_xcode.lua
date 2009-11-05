@@ -22,7 +22,9 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.solution)
+			-- Must ensure a unique name; project may have same name as solution, and they
+			-- share the same file extension. How to handle?
+			-- premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.solution)
 		end,
 		
 		onproject = function(prj)

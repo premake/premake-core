@@ -56,3 +56,15 @@
 /* End PBXBuildFile section */
 		]]
 	end
+
+
+	function suite.PBXBuildFile_ListsFrameworks()
+		links { "Cocoa.framework" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		[Cocoa.framework:build] /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = [Cocoa.framework] /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+		]]
+	end

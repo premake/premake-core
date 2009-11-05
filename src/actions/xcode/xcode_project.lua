@@ -45,6 +45,23 @@
 				end
 			end
 		})
+		
+		-- the special folder "Frameworks" lists all of frameworks linked to project;
+		tr.frameworks = tree.new("Frameworks")
+		for cfg in premake.eachconfig(prj) do
+			for _, link in ipairs(cfg.links) do
+				local name = path.getname(link)
+				if xcode.isframework(name) and not tr.frameworks.children[name] then
+					node = tree.insert(tr.frameworks, tree.new(name))
+					node.path = link
+				end
+			end
+		end
+		
+		-- only add it to the tree if there are frameworks to link
+		if #tr.frameworks.children > 0 then 
+			tree.insert(tr, tr.frameworks)
+		end
 
 		-- Final setup
 		tree.traverse(tr, {
