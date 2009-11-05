@@ -62,6 +62,32 @@
 		if #tr.frameworks.children > 0 then 
 			tree.insert(tr, tr.frameworks)
 		end
+		
+		-- the special folder "Products" lists all of the generated targets, one target
+		-- for each target kind (ConsoleApp, SharedLibrary, etc.) produced by a project.
+		tr.products = tree.insert(tr, tree.new("Products"))
+		local kinds = {}  -- remember which kinds have already been added
+		for cfg in premake.eachconfig(prj) do
+			if not kinds[cfg.kind] then
+				kinds[cfg.kind] = true
+				
+				node = tree.insert(tr.products, tree.new(path.getname(cfg.buildtarget.bundlepath)))
+				node.kind = "product"
+				node.cfg  = cfg
+				node.path = cfg.buildtarget.fullpath
+				node.targetid   = xcode.newid(node, "target")
+				node.cfgsection = xcode.newid(node, "cfg")
+				node.resstageid = xcode.newid(node, "rez")
+				node.sourcesid  = xcode.newid(node, "src")
+				node.fxstageid  = xcode.newid(node, "fxs")
+				
+				-- assign IDs for each configuration
+				node.configids = {}
+				for _, cfgname in ipairs(prj.solution.configurations) do
+					node.configids[cfgname] = xcode.newid(node, cfgname)
+				end
+			end
+		end
 
 		-- Final setup
 		tree.traverse(tr, {
@@ -91,5 +117,6 @@
 		local tr = xcode.buildprjtree(prj)
 		xcode.Header(tr)
 		xcode.PBXBuildFile(tr)
+		xcode.PBXFileReference(tr)
 		xcode.Footer(tr)
 	end

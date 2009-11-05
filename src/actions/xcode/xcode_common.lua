@@ -32,6 +32,50 @@
 		return categories[path.getextension(node.name)]
 	end
 
+	
+--
+-- Return the Xcode type for a given file, based on the file extension.
+--
+-- @param fname
+--    The file name to identify.
+-- @returns
+--    An Xcode file type, string.
+--
+
+	function xcode.getfiletype(node)
+		local types = {
+			[".c"]         = "sourcecode.c.c",
+			[".cc"]        = "sourcecode.cpp.cpp",
+			[".cpp"]       = "sourcecode.cpp.cpp",
+			[".css"]       = "text.css",
+			[".cxx"]       = "sourcecode.cpp.cpp",
+			[".framework"] = "wrapper.framework",
+			[".gif"]       = "image.gif",
+			[".h"]         = "sourcecode.c.h",
+			[".html"]      = "text.html",
+			[".lua"]       = "sourcecode.lua",
+			[".m"]         = "sourcecode.c.objc",
+			[".nib"]       = "wrapper.nib",
+			[".pch"]       = "sourcecode.c.h",
+			[".plist"]     = "text.plist.xml",
+			[".strings"]   = "text.plist.strings",
+			[".xib"]       = "file.xib",
+		}
+		return types[path.getextension(node.path)] or "text"
+	end
+
+
+--
+-- Returns true if the file name represents a framework.
+--
+-- @param fname
+--    The name of the file to test.
+--
+
+	function xcode.isframework(fname)
+		return (path.getextension(fname) == ".framework")
+	end
+
 
 --
 -- Retrieves a unique 12 byte ID for an object. This function accepts and ignores two
@@ -75,6 +119,46 @@
 			end
 		})
 		_p('/* End PBXBuildFile section */')
+		_p('')
+	end
+
+
+	function xcode.PBXFileReference(tr)
+		_p('/* Begin PBXFileReference section */')
+		
+		tree.traverse(tr, {
+			onleaf = function(node)
+				-- I'm only listing files here, so ignore anything without a path
+				if not node.path then
+					return
+				end
+				
+				if node.kind == "product" then
+					-- Strangely, targets are specified relative to the project.pbxproj file
+					-- rather than the .xcodeproj directory like the rest of the files.
+					local basepath = path.join(node.cfg.project.solution.location, "project.pbxproj")
+					local targpath  = path.getrelative(basepath, node.cfg.buildtarget.bundlepath)
+					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+						node.id, node.name, xcode.gettargettype(node), node.name, targpath)
+				else
+					local pth, src
+					if xcode.isframework(node.path) then
+						-- I need to figure out how to locate frameworks; this is just to get something working
+						pth = "/System/Library/Frameworks/" .. node.path
+						src = "absolute"
+					else
+						-- something else; probably a source code file
+						pth = tree.getlocalpath(node)
+						src = "group"
+					end
+					
+					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<%s>"; };',
+						node.id, node.name, xcode.getfiletype(node), node.name, pth, src)
+				end
+			end
+		})
+		
+		_p('/* End PBXFileReference section */')
 		_p('')
 	end
 	
