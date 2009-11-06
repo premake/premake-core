@@ -134,11 +134,8 @@
 				end
 				
 				if node.kind == "product" then
-					-- Strangely, targets are specified relative to the project.pbxproj file
-					-- rather than the .xcodeproj directory like the rest of the files.
-					local basepath = path.join(node.cfg.project.solution.location, "project.pbxproj")
-					local targpath  = path.getrelative(basepath, node.cfg.buildtarget.bundlepath)
-					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
+					local targpath = path.getrelative(tr.project.location, node.cfg.buildtarget.bundlepath)
+					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = "%s"; path = "%s"; sourceTree = BUILT_PRODUCTS_DIR; };',
 						node.id, node.name, xcode.gettargettype(node), node.name, targpath)
 				else
 					local pth, src
@@ -152,7 +149,7 @@
 						src = "group"
 					end
 					
-					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = "<%s>"; };',
+					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = "%s"; path = "%s"; sourceTree = "<%s>"; };',
 						node.id, node.name, xcode.getfiletype(node), node.name, pth, src)
 				end
 			end
