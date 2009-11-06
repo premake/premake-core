@@ -164,3 +164,43 @@
 		[Cocoa.framework] /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Cocoa.framework"; path = "/System/Library/Frameworks/Cocoa.framework"; sourceTree = "<absolute>"; };
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXFrameworksBuildPhase tests
+---------------------------------------------------------------------------
+
+	function suite.PBXFrameworksBuildPhase_OnNoFiles()
+		prepare()
+		xcode.PBXFrameworksBuildPhase(tr)
+		test.capture [[
+/* Begin PBXFrameworksBuildPhase section */
+		[MyProject:fxs] /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+		]]
+	end
+
+
+	function suite.PBXFrameworksBuild_ListsFrameworksCorrectly()
+		links { "Cocoa.framework" }
+		prepare()
+		xcode.PBXFrameworksBuildPhase(tr)
+		test.capture [[
+/* Begin PBXFrameworksBuildPhase section */
+		[MyProject:fxs] /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				[Cocoa.framework:build] /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+		]]
+	end

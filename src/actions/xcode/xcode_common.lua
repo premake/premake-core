@@ -158,6 +158,26 @@
 		_p('/* End PBXFileReference section */')
 		_p('')
 	end
+
+
+	function xcode.PBXFrameworksBuildPhase(tr)
+		_p('/* Begin PBXFrameworksBuildPhase section */')
+		for _, node in ipairs(tr.products.children) do
+			_p(2,'%s /* Frameworks */ = {', node.fxstageid)
+			_p(3,'isa = PBXFrameworksBuildPhase;')
+			_p(3,'buildActionMask = 2147483647;')
+			_p(3,'files = (')
+			for _, link in ipairs(node.cfg.links) do
+				local fxnode = tr.frameworks.children[path.getname(link)]
+				_p(4,'%s /* %s in Frameworks */,', fxnode.buildid, fxnode.name)
+			end
+			_p(3,');')
+			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+			_p(2,'};')
+		end
+		_p('/* End PBXFrameworksBuildPhase section */')
+		_p('')
+	end
 	
 
 	function xcode.Footer()

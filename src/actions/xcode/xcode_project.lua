@@ -118,5 +118,6 @@
 		xcode.Header(tr)
 		xcode.PBXBuildFile(tr)
 		xcode.PBXFileReference(tr)
+		xcode.PBXFrameworksBuildPhase(tr)
 		xcode.Footer(tr)
 	end
