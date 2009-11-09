@@ -64,7 +64,6 @@
 		"actions/xcode/xcode_common.lua",
 		"actions/xcode/xcode_solution.lua",
 		"actions/xcode/xcode_project.lua",
-		"actions/xcode/xcode_pbxproj.lua",
 		
 		-- Clean action
 		"actions/clean/_clean.lua",

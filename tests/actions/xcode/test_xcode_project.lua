@@ -623,7 +623,7 @@
 
 
 	function suite.XCBuildConfigurationBlock_OnInfoPlist()
-		files { "Info.plist" }
+		files { "MyProject-Info.plist" }
 		prepare()
 		xcode.XCBuildConfigurationBlock(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
 		test.capture [[
@@ -633,7 +633,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "MyProject-Info.plist";
 				PRODUCT_NAME = MyProject;
 				SYMROOT = obj/Debug;
 			};

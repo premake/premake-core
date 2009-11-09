@@ -107,7 +107,7 @@
 				end
 
 				-- remember key files that are needed elsewhere
-				if node.name == "Info.plist" then
+				if string.endswith(node.name, "Info.plist") then
 					tr.infoplist = node
 				end						
 			end

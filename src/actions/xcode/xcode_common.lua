@@ -66,6 +66,23 @@
 
 
 --
+-- Return the default installation path, based target kind.
+--
+-- @param cfg
+--    The configuration to query.
+-- @returns
+--    The install path, string.
+--
+
+	function xcode.getinstallpath(cfg)
+		local paths = {
+			WindowedApp = "$(HOME)/Applications",
+		}
+		return paths[cfg.kind]
+	end
+
+
+--
 -- Return the Xcode product type, based target kind.
 --
 -- @param node
@@ -80,6 +97,26 @@
 			WindowedApp = "com.apple.product-type.application",
 			StaticLib   = "com.apple.product-type.library.static",
 			SharedLib   = "com.apple.product-type.library.dynamic",
+		}
+		return types[node.cfg.kind]
+	end
+
+
+--
+-- Return the Xcode target type, based on the target file extension.
+--
+-- @param node
+--    The product node to identify.
+-- @returns
+--    An Xcode target type, string.
+--
+
+	function xcode.gettargettype(node)
+		local types = {
+			ConsoleApp  = "\"compiled.mach-o.executable\"",
+			WindowedApp = "wrapper.application",
+			StaticLib   = "archive.ar",
+			SharedLib   = "\"compiled.mach-o.dylib\"",
 		}
 		return types[node.cfg.kind]
 	end
@@ -252,7 +289,7 @@
 			_p(3,');')
 			_p(3,'name = %s;', name)
 			if node.cfg.kind == "WindowedApp" then
-				_p(3,'productInstallPath = "$(HOME)/Applications";')
+				_p(3,'productInstallPath = "%s";', xcode.getinstallpath(node.cfg))
 			end
 			_p(3,'productName = %s;', name)
 			_p(3,'productReference = %s /* %s */;', node.id, node.name)
@@ -384,11 +421,15 @@
 		end
 
 		if tr.infoplist then
-			_p(4,'INFOPLIST_FILE = %s;', tr.infoplist.path)
+			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.path)
 		end
 
 		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.basename)
 
+		if cfg.kind == "WindowedApp" then
+			_p(4,'INSTALL_PATH = "%s";', xcode.getinstallpath(cfg))
+		end
+		
 		_p(4,'SYMROOT = %s;', cfg.objectsdir)
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)
