@@ -308,6 +308,29 @@
 	end
 
 
+	function xcode.PBXSourcesBuildPhase(tr)
+		_p('/* Begin PBXSourcesBuildPhase section */')
+		for _, target in ipairs(tr.products.children) do
+			_p(2,'%s /* Sources */ = {', target.sourcesid)
+			_p(3,'isa = PBXSourcesBuildPhase;')
+			_p(3,'buildActionMask = 2147483647;')
+			_p(3,'files = (')
+			tree.traverse(tr, {
+				onleaf = function(node)
+					if xcode.getbuildcategory(node) == "Sources" then
+						_p(4,'%s /* %s in Sources */,', node.buildid, node.name)
+					end
+				end
+			})
+			_p(3,');')
+			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+			_p(2,'};')
+		end
+		_p('/* End PBXSourcesBuildPhase section */')
+		_p('')
+	end
+
+
 	function xcode.Footer()
 		_p(1,'};')
 		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')

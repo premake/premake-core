@@ -474,3 +474,42 @@
 	end
 
 
+---------------------------------------------------------------------------
+-- PBXSourcesBuildPhase tests
+---------------------------------------------------------------------------
+
+	function suite.PBXSourcesBuildPhase_OnNoSources()
+		prepare()
+		xcode.PBXSourcesBuildPhase(tr)
+		test.capture [[
+/* Begin PBXSourcesBuildPhase section */
+		[MyProject:src] /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+		]]
+	end
+
+
+	function suite.PBXSourcesBuildPhase_OnSources()
+		files { "hello.cpp", "goodbye.cpp" }
+		prepare()
+		xcode.PBXSourcesBuildPhase(tr)
+		test.capture [[
+/* Begin PBXSourcesBuildPhase section */
+		[MyProject:src] /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				[hello.cpp:build] /* hello.cpp in Sources */,
+				[goodbye.cpp:build] /* goodbye.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+		]]
+	end
