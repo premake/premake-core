@@ -204,3 +204,145 @@
 /* End PBXFrameworksBuildPhase section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXGroup tests
+---------------------------------------------------------------------------
+
+	function suite.PBXGroup_OnNoFiles()
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[Products] /* Products */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[Products] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[MyProject:product] /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
+	function suite.PBXGroup_OnSourceFiles()
+		files { "source.h" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[source.h] /* source.h */,
+				[Products] /* Products */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[Products] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[MyProject:product] /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
+	function suite.PBXGroup_OnSourceSubdirs()
+		files { "include/source.h" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[include] /* include */,
+				[Products] /* Products */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[include] /* include */ = {
+			isa = PBXGroup;
+			children = (
+				[source.h] /* source.h */,
+			);
+			name = include;
+			path = include;
+			sourceTree = "<group>";
+		};
+		]]
+	end
+
+
+	function suite.PBXGroup_OnResourceFiles()
+		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib", "Info.plist" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[Info.plist] /* Info.plist */,
+				[MainMenu.xib] /* MainMenu.xib */,
+				[Products] /* Products */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[Products] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[MyProject:product] /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
+	function suite.PBXGroup_OnFrameworks()
+		links { "Cocoa.framework" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[Frameworks] /* Frameworks */,
+				[Products] /* Products */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[Frameworks] /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				[Cocoa.framework] /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		]]
+	end

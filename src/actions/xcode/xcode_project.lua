@@ -119,5 +119,6 @@
 		xcode.PBXBuildFile(tr)
 		xcode.PBXFileReference(tr)
 		xcode.PBXFrameworksBuildPhase(tr)
+		xcode.PBXGroup(tr)
 		xcode.Footer(tr)
 	end

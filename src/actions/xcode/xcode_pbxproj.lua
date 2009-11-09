@@ -224,37 +224,6 @@
 ---------------------------------------------------------------------------
 
 
-	function xcode.PBXGroup(tr)
-		_p('/* Begin PBXGroup section */')
-
-		tree.traverse(tr, {
-			onnode = function(node)
-				-- Skip over anything that isn't a proper group
-				if (node.path and #node.children == 0) or node.kind == "vgroup" then
-					return
-				end
-				
-				_p(2,'%s /* %s */ = {', node.id, node.name)
-				_p(3,'isa = PBXGroup;')
-				_p(3,'children = (')
-				for _, childnode in ipairs(node.children) do
-					_p(4,'%s /* %s */,', childnode.id, childnode.name)
-				end
-				_p(3,');')
-				_p(3,'name = %s;', node.name)
-				if node.path then
-					_p(3,'path = %s;', node.path)
-				end
-				_p(3,'sourceTree = "<group>";')
-				_p(2,'};')
-			end
-			
-		}, true)
-				
-		_p('/* End PBXGroup section */')
-		_p('')
-	end
-
 
 	function xcode.PBXNativeTarget(tr)
 		_p('/* Begin PBXNativeTarget section */')
@@ -489,7 +458,7 @@
 		xcode.Header(tr)  -- done
 		xcode.PBXBuildFile(tr)  -- done
 		xcode.PBXFileReference(tr) -- done
-		xcode.PBXFrameworksBuildPhase(tr)
+		xcode.PBXFrameworksBuildPhase(tr) -- done
 		xcode.PBXGroup(tr)
 		xcode.PBXNativeTarget(tr)
 		xcode.PBXProject(tr)
