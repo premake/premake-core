@@ -89,6 +89,12 @@
 			end
 		end
 
+		-- also assign configuration IDs
+		tr.configids = {}
+		for _, cfgname in ipairs(prj.solution.configurations) do
+			tr.configids[cfgname] = xcode.newid(tr, cfgname)
+		end
+
 		-- Final setup
 		tree.traverse(tr, {
 			onnode = function(node)
@@ -99,6 +105,11 @@
 				if xcode.getbuildcategory(node) then
 					node.buildid = xcode.newid(node, "build")
 				end
+
+				-- remember key files that are needed elsewhere
+				if node.name == "Info.plist" then
+					tr.infoplist = node
+				end						
 			end
 		}, true)
 
@@ -124,5 +135,8 @@
 		xcode.PBXProject(tr)
 		xcode.PBXResourcesBuildPhase(tr)
 		xcode.PBXSourcesBuildPhase(tr)
+		xcode.PBXVariantGroup(tr)
+		xcode.XCBuildConfiguration(tr)
+		xcode.XCBuildConfigurationList(tr)
 		xcode.Footer(tr)
 	end

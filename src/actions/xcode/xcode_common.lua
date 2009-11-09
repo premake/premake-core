@@ -331,6 +331,135 @@
 	end
 
 
+	function xcode.PBXVariantGroup(tr)
+		_p('/* Begin PBXVariantGroup section */')
+		tree.traverse(tr, {
+			onbranch = function(node)
+				if node.kind == "vgroup" then
+					_p(2,'%s /* %s */ = {', node.id, node.name)
+					_p(3,'isa = PBXVariantGroup;')
+					_p(3,'children = (')
+					for _, lang in ipairs(node.children) do
+						_p(4,'%s /* %s */,', lang.id, lang.name)
+					end
+					_p(3,');')
+					_p(3,'name = %s;', node.name)
+					_p(3,'sourceTree = "<group>";')
+					_p(2,'};')
+				end
+			end
+		})
+		_p('/* End PBXVariantGroup section */')
+		_p('')
+	end
+
+
+	function xcode.XCBuildConfigurationBlock(tr, target, cfg)
+		_p(2,'%s /* %s */ = {', target.configids[cfg.name], cfg.name)
+		_p(3,'isa = XCBuildConfiguration;')
+		_p(3,'buildSettings = {')
+		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
+
+		local outdir = path.getdirectory(cfg.buildtarget.bundlepath)
+		if outdir ~= "." then
+			_p(4,'CONFIGURATION_BUILD_DIR = %s;', outdir)
+		end
+
+		if cfg.flags.Symbols then
+			_p(4,'COPY_PHASE_STRIP = NO;')
+		end
+
+		_p(4,'GCC_DYNAMIC_NO_PIC = NO;')
+
+		if cfg.flags.Symbols then
+			_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
+		end
+
+		_p(4,'GCC_MODEL_TUNING = G5;')
+
+		if #cfg.defines > 0 then
+			_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
+			_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
+			_p(4,');')
+		end
+
+		if tr.infoplist then
+			_p(4,'INFOPLIST_FILE = %s;', tr.infoplist.path)
+		end
+
+		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.basename)
+
+		_p(4,'SYMROOT = %s;', cfg.objectsdir)
+		_p(3,'};')
+		_p(3,'name = %s;', cfg.name)
+		_p(2,'};')
+	end
+	
+	
+	function xcode.XCBuildConfigurationDefault(tr, cfg)
+		_p(2,'%s /* %s */ = {', tr.configids[cfg.name], cfg.name)
+		_p(3,'isa = XCBuildConfiguration;')
+		_p(3,'buildSettings = {')
+		_p(4,'ARCHS = "$(ARCHS_STANDARD_32_BIT)";')
+		_p(4,'GCC_C_LANGUAGE_STANDARD = c99;')
+		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
+		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
+		_p(4,'ONLY_ACTIVE_ARCH = YES;')
+		_p(4,'PREBINDING = NO;')
+		_p(4,'SDKROOT = macosx10.5;')
+		_p(4,'SYMROOT = %s;', cfg.objectsdir)
+		_p(3,'};')
+		_p(3,'name = %s;', cfg.name)
+		_p(2,'};')
+	end
+
+
+	function xcode.XCBuildConfiguration(tr)
+		_p('/* Begin XCBuildConfiguration section */')
+		for _, target in ipairs(tr.products.children) do
+			for cfg in premake.eachconfig(tr.project) do
+				xcode.XCBuildConfigurationBlock(tr, target, cfg)
+			end
+		end
+		for cfg in premake.eachconfig(tr.project) do
+			xcode.XCBuildConfigurationDefault(tr, cfg)
+		end
+		_p('/* End XCBuildConfiguration section */')
+		_p('')
+	end
+
+
+	function xcode.XCBuildConfigurationList(tr)
+		local sln = tr.project.solution
+		
+		_p('/* Begin XCConfigurationList section */')
+		for _, target in ipairs(tr.products.children) do
+			_p(2,'%s /* Build configuration list for PBXNativeTarget "%s" */ = {', target.cfgsection, target.name)
+			_p(3,'isa = XCConfigurationList;')
+			_p(3,'buildConfigurations = (')
+			for _, cfgname in ipairs(sln.configurations) do
+				_p(4,'%s /* %s */,', target.configids[cfgname], cfgname)
+			end
+			_p(3,');')
+			_p(3,'defaultConfigurationIsVisible = 0;')
+			_p(3,'defaultConfigurationName = %s;', sln.configurations[1])
+			_p(2,'};')
+		end
+		_p(2,'1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', tr.name)
+		_p(3,'isa = XCConfigurationList;')
+		_p(3,'buildConfigurations = (')
+		for _, cfgname in ipairs(sln.configurations) do
+			_p(4,'%s /* %s */,', tr.configids[cfgname], cfgname)
+		end
+		_p(3,');')
+		_p(3,'defaultConfigurationIsVisible = 0;')
+		_p(3,'defaultConfigurationName = %s;', sln.configurations[1])
+		_p(2,'};')
+		_p('/* End XCConfigurationList section */')
+		_p('')
+	end
+
+
 	function xcode.Footer()
 		_p(1,'};')
 		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
