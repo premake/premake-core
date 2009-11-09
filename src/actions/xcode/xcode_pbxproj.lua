@@ -153,25 +153,6 @@
 	end
 
 
---
--- Return the Xcode product type, based target kind.
---
--- @param node
---    The product node to identify.
--- @returns
---    An Xcode product type, string.
---
-
-	function xcode.getproducttype(node)
-		local types = {
-			ConsoleApp  = "com.apple.product-type.tool",
-			WindowedApp = "com.apple.product-type.application",
-			StaticLib   = "com.apple.product-type.library.static",
-			SharedLib   = "com.apple.product-type.library.dynamic",
-		}
-		return types[node.cfg.kind]
-	end
-
 
 --
 -- Return the Xcode target type, based on the target file extension.
@@ -223,32 +204,6 @@
 -- in the .pbxproj file
 ---------------------------------------------------------------------------
 
-
-
-	function xcode.PBXNativeTarget(tr)
-		_p('/* Begin PBXNativeTarget section */')
-		for _, node in ipairs(tr.products.children) do
-			_p(2,'%s /* %s */ = {', node.targetid, node.name)
-			_p(3,'isa = PBXNativeTarget;')
-			_p(3,'buildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', node.cfgsection, node.name)
-			_p(3,'buildPhases = (')
-			_p(4,'%s /* Resources */,', node.resstageid)
-			_p(4,'%s /* Sources */,', node.sourcesid)
-			_p(4,'%s /* Frameworks */,', node.fxstageid)
-			_p(3,');')
-			_p(3,'buildRules = (')
-			_p(3,');')
-			_p(3,'dependencies = (')
-			_p(3,');')
-			_p(3,'name = %s;', node.name)
-			_p(3,'productName = %s;', node.name)
-			_p(3,'productReference = %s /* %s */;', node.id, node.name)
-			_p(3,'productType = "%s";', xcode.getproducttype(node))
-			_p(2,'};')
-		end
-		_p('/* End PBXNativeTarget section */')
-		_p('')
-	end
 
 
 	function xcode.PBXProject(tr)
@@ -459,7 +414,7 @@
 		xcode.PBXBuildFile(tr)  -- done
 		xcode.PBXFileReference(tr) -- done
 		xcode.PBXFrameworksBuildPhase(tr) -- done
-		xcode.PBXGroup(tr)
+		xcode.PBXGroup(tr) -- done
 		xcode.PBXNativeTarget(tr)
 		xcode.PBXProject(tr)
 		xcode.PBXResourcesBuildPhase(tr)

@@ -346,3 +346,63 @@
 		};
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXNativeTarget tests
+---------------------------------------------------------------------------
+
+	function suite.PBXNativeTarget_OnConsoleApp()
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				[MyProject:rez] /* Resources */,
+				[MyProject:src] /* Sources */,
+				[MyProject:fxs] /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productName = MyProject;
+			productReference = [MyProject:product] /* MyProject */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end
+
+
+	function suite.PBXNativeTarget_OnWindowedApp()
+		kind "WindowedApp"
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[MyProject.app:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [MyProject.app:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				[MyProject.app:rez] /* Resources */,
+				[MyProject.app:src] /* Sources */,
+				[MyProject.app:fxs] /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productInstallPath = "$(HOME)/Applications";
+			productName = MyProject;
+			productReference = [MyProject.app:product] /* MyProject.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end
