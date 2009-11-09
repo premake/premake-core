@@ -122,5 +122,6 @@
 		xcode.PBXGroup(tr)
 		xcode.PBXNativeTarget(tr)
 		xcode.PBXProject(tr)
+		xcode.PBXResourcesBuildPhase(tr)
 		xcode.Footer(tr)
 	end

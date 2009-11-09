@@ -206,29 +206,6 @@
 
 
 
-	function xcode.PBXResourcesBuildPhase(tr)
-		_p('/* Begin PBXResourcesBuildPhase section */')
-		for _, target in ipairs(tr.products.children) do
-			_p(2,'%s /* Resources */ = {', target.resstageid)
-			_p(3,'isa = PBXResourcesBuildPhase;')
-			_p(3,'buildActionMask = 2147483647;')
-			_p(3,'files = (')
-			tree.traverse(target.prjnode, {
-				onnode = function(node)
-					if xcode.getbuildcategory(node) == "Resources" then
-						_p(4,'%s /* %s in Resources */,', node.buildid, node.name)
-					end
-				end
-			})
-			_p(3,');')
-			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
-			_p(2,'};')
-		end
-		_p('/* End PBXResourcesBuildPhase section */')
-		_p('')
-	end
-
-
 	function xcode.PBXSourcesBuildPhase(tr)
 		_p('/* Begin PBXSourcesBuildPhase section */')
 		for _, target in ipairs(tr.products.children) do
@@ -395,7 +372,7 @@
 		xcode.PBXFrameworksBuildPhase(tr) -- done
 		xcode.PBXGroup(tr) -- done
 		xcode.PBXNativeTarget(tr) -- done
-		xcode.PBXProject(tr)
+		xcode.PBXProject(tr) -- done
 		xcode.PBXResourcesBuildPhase(tr)
 		xcode.PBXSourcesBuildPhase(tr)
 		xcode.PBXVariantGroup(tr)

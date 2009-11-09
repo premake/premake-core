@@ -432,3 +432,45 @@
 /* End PBXProject section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXResourceBuildPhase tests
+---------------------------------------------------------------------------
+
+	function suite.PBXResourcesBuildPhase_OnNoResources()
+		prepare()
+		xcode.PBXResourcesBuildPhase(tr)
+		test.capture [[
+/* Begin PBXResourcesBuildPhase section */
+		[MyProject:rez] /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+		]]
+	end
+
+
+	function suite.PBXResourcesBuildPhase_OnResources()
+		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib", "Info.plist" }
+		prepare()
+		xcode.PBXResourcesBuildPhase(tr)
+		test.capture [[
+/* Begin PBXResourcesBuildPhase section */
+		[MyProject:rez] /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				[MainMenu.xib:build] /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+		]]
+	end
+
+
