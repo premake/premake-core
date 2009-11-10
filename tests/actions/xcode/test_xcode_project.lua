@@ -370,6 +370,7 @@
 			dependencies = (
 			);
 			name = MyProject;
+			productInstallPath = "$(HOME)/bin";
 			productName = MyProject;
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
@@ -550,50 +551,23 @@
 
 
 ---------------------------------------------------------------------------
--- XCBuildConfiguration tests
+-- XCBuildConfiguration_Target tests
 ---------------------------------------------------------------------------
 
-	local function Call_XCBuildConfigurationBlock()
+
+	function suite.XCBuildConfigurationTarget_OnConsoleApp()
 		prepare()
-		local target = tr.products.children[1]
-		local config = premake.getconfig(target.project, "Debug")
-		xcode.XCBuildConfigurationBlock(target, config)
-	end
-
-
-	function suite.XCBuildConfigurationDefault_OnDefaults()
-		prepare()
-		xcode.XCBuildConfigurationDefault(tr, premake.getconfig(tr.project, "Debug"))
-		test.capture [[
-		[MyProject:Debug(2)] /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SYMROOT = obj/Debug;
-			};
-			name = Debug;
-		};
-		]]
-	end
-
-
-	function suite.XCBuildConfigurationBlock_OnConsoleAppDefaults()
-		prepare()
-		xcode.XCBuildConfigurationBlock(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
 		test.capture [[
 		[MyProject:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				PRODUCT_NAME = MyProject;
-				SYMROOT = obj/Debug;
+				INSTALL_PATH = /usr/local/bin;
 			};
 			name = Debug;
 		};
@@ -601,61 +575,152 @@
 	end
 
 
-	function suite.XCBuildConfigurationBlock_OnStaticLibDefaults()
-		kind "StaticLib"
-		prepare()
-		xcode.XCBuildConfigurationBlock(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
-		test.capture [[
-		[libMyProject.a:Debug] /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = MyProject;
-				SYMROOT = obj/Debug;
-			};
-			name = Debug;
-		};
-		]]
-	end
-
-
-	function suite.XCBuildConfigurationBlock_OnInfoPlist()
-		files { "MyProject-Info.plist" }
-		prepare()
-		xcode.XCBuildConfigurationBlock(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
-		test.capture [[
-		[MyProject:Debug] /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = "MyProject-Info.plist";
-				PRODUCT_NAME = MyProject;
-				SYMROOT = obj/Debug;
-			};
-			name = Debug;
-		};
-		]]
-	end
-
-
-	function suite.XCBuildConfigurationBlock_OnWindowedApp()
+	function suite.XCBuildConfigurationTarget_OnWindowedApp()
 		kind "WindowedApp"
 		prepare()
-		xcode.XCBuildConfigurationBlock(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
 		test.capture [[
 		[MyProject.app:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				PRODUCT_NAME = MyProject;
 				INSTALL_PATH = "$(HOME)/Applications";
-				SYMROOT = obj/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnStaticLib()
+		kind "StaticLib"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[libMyProject.a:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnInfoPlist()
+		files { "MyProject-Info.plist" }
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "MyProject-Info.plist";
+				PRODUCT_NAME = MyProject;
+				INSTALL_PATH = /usr/local/bin;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnSymbols()
+		flags { "Symbols" }
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = MyProject;
+				INSTALL_PATH = /usr/local/bin;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+---------------------------------------------------------------------------
+-- XCBuildConfiguration_Project tests
+---------------------------------------------------------------------------
+
+	function suite.XCBuildConfigurationProject_OnConsoleApp()
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnOptimize()
+		flags { "Optimize" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnOptimizeSpeed()
+		flags { "OptimizeSpeed" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
 			};
 			name = Debug;
 		};
@@ -667,7 +732,7 @@
 -- XCBuildConfigurationList tests
 ---------------------------------------------------------------------------
 
-	function suite.XCBuildConfigurationList_OnSingleProject()
+	function suite.XCBuildConfigurationList_OnProject()
 		prepare()
 		xcode.XCBuildConfigurationList(tr)
 		test.capture [[

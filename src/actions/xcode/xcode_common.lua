@@ -66,23 +66,6 @@
 
 
 --
--- Return the default installation path, based target kind.
---
--- @param cfg
---    The configuration to query.
--- @returns
---    The install path, string.
---
-
-	function xcode.getinstallpath(cfg)
-		local paths = {
-			WindowedApp = "$(HOME)/Applications",
-		}
-		return paths[cfg.kind]
-	end
-
-
---
 -- Return the Xcode product type, based target kind.
 --
 -- @param node
@@ -288,9 +271,17 @@
 			_p(3,'dependencies = (')
 			_p(3,');')
 			_p(3,'name = %s;', name)
-			if node.cfg.kind == "WindowedApp" then
-				_p(3,'productInstallPath = "%s";', xcode.getinstallpath(node.cfg))
+			
+			local p
+			if node.cfg.kind == "ConsoleApp" then
+				p = "$(HOME)/bin"
+			elseif node.cfg.kind == "WindowedApp" then
+				p = "$(HOME)/Applications"
 			end
+			if p then
+				_p(3,'productInstallPath = "%s";', p)
+			end
+			
 			_p(3,'productName = %s;', name)
 			_p(3,'productReference = %s /* %s */;', node.id, node.name)
 			_p(3,'productType = "%s";', xcode.getproducttype(node))
@@ -391,12 +382,16 @@
 	end
 
 
-	function xcode.XCBuildConfigurationBlock(tr, target, cfg)
+	function xcode.XCBuildConfiguration_Target(tr, target, cfg)
 		_p(2,'%s /* %s */ = {', target.configids[cfg.name], cfg.name)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
 
+		if not cfg.flags.Symbols then
+			_p(4,'DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";')
+		end
+		
 		local outdir = path.getdirectory(cfg.buildtarget.bundlepath)
 		if outdir ~= "." then
 			_p(4,'CONFIGURATION_BUILD_DIR = %s;', outdir)
@@ -426,28 +421,43 @@
 
 		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.basename)
 
-		if cfg.kind == "WindowedApp" then
-			_p(4,'INSTALL_PATH = "%s";', xcode.getinstallpath(cfg))
+		local p
+		if cfg.kind == "ConsoleApp" then
+			p = '/usr/local/bin'
+		elseif cfg.kind == "WindowedApp" then
+			p = '"$(HOME)/Applications"'
+		end
+		if p then
+			_p(4,'INSTALL_PATH = %s;', p)
 		end
 		
-		_p(4,'SYMROOT = %s;', cfg.objectsdir)
+--		_p(4,'SYMROOT = %s;', cfg.objectsdir)
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)
 		_p(2,'};')
 	end
 	
 	
-	function xcode.XCBuildConfigurationDefault(tr, cfg)
+	function xcode.XCBuildConfiguration_Project(tr, cfg)
 		_p(2,'%s /* %s */ = {', tr.configids[cfg.name], cfg.name)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
-		_p(4,'ARCHS = "$(ARCHS_STANDARD_32_BIT)";')
-		_p(4,'GCC_C_LANGUAGE_STANDARD = c99;')
+		_p(4,'ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";')
+		_p(4,'GCC_C_LANGUAGE_STANDARD = gnu99;')
+		
+		if cfg.flags.Optimize or cfg.flags.OptimizeSize then
+			_p(4,'GCC_OPTIMIZATION_LEVEL = s;')
+		elseif cfg.flags.OptimizeSpeed then
+			_p(4,'GCC_OPTIMIZATION_LEVEL = 3;')
+		else
+			_p(4,'GCC_OPTIMIZATION_LEVEL = 0;')
+		end
+		
 		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
 		_p(4,'PREBINDING = NO;')
-		_p(4,'SYMROOT = %s;', cfg.objectsdir)
+--		_p(4,'SYMROOT = %s;', cfg.objectsdir)
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)
 		_p(2,'};')
@@ -458,11 +468,11 @@
 		_p('/* Begin XCBuildConfiguration section */')
 		for _, target in ipairs(tr.products.children) do
 			for cfg in premake.eachconfig(tr.project) do
-				xcode.XCBuildConfigurationBlock(tr, target, cfg)
+				xcode.XCBuildConfiguration_Target(tr, target, cfg)
 			end
 		end
 		for cfg in premake.eachconfig(tr.project) do
-			xcode.XCBuildConfigurationDefault(tr, cfg)
+			xcode.XCBuildConfiguration_Project(tr, cfg)
 		end
 		_p('/* End XCBuildConfiguration section */')
 		_p('')
