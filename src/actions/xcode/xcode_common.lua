@@ -447,7 +447,6 @@
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
 		_p(4,'PREBINDING = NO;')
-		_p(4,'SDKROOT = macosx10.5;')
 		_p(4,'SYMROOT = %s;', cfg.objectsdir)
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)

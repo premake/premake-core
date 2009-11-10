@@ -574,7 +574,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
 				SYMROOT = obj/Debug;
 			};
 			name = Debug;
@@ -643,7 +642,7 @@
 	end
 
 
-	function suite.XCBuildConfigurationBlock_SetsWindowedAppOutputDir()
+	function suite.XCBuildConfigurationBlock_OnWindowedApp()
 		kind "WindowedApp"
 		prepare()
 		xcode.XCBuildConfigurationBlock(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
@@ -655,6 +654,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				PRODUCT_NAME = MyProject;
+				INSTALL_PATH = "$(HOME)/Applications";
 				SYMROOT = obj/Debug;
 			};
 			name = Debug;
