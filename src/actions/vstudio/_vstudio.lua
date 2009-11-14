@@ -153,16 +153,12 @@
 	end
 	
 	function premake.vstudio.cleanproject(prj)
-		local fext
-		if premake.isdotnetproject(prj) then
-			fext = ".csproj"
-		else
-			fext = ".vcproj"
-		end
-		
-		local fname = premake.project.getfilename(prj, "%%" .. fext)
-		os.remove(fname)
-		os.remove(fname .. ".user")
+		local fext = iif(premake.isdotnetproject(prj), ".csproj", ".vcproj")
+
+		local fname = premake.project.getfilename(prj, "%%")
+		os.remove(fname .. fext)
+		os.remove(fname .. fext .. ".user")
+		os.remove(fname .. ".pidb")
 		
 		local userfiles = os.matchfiles(fname .. ".*.user")
 		for _, fname in ipairs(userfiles) do

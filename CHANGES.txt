@@ -3,6 +3,7 @@
 -----
 
 - Added support for Apple Xcode 3
+- clean now removes MonoDevelop .pidb files correctly
 
 
 -------
