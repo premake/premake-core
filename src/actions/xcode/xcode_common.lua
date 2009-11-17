@@ -174,9 +174,8 @@
 				end
 				
 				if node.kind == "product" then
-					local targpath = path.getrelative(tr.project.location, node.cfg.buildtarget.bundlepath)
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = "%s"; path = "%s"; sourceTree = BUILT_PRODUCTS_DIR; };',
-						node.id, node.name, xcode.gettargettype(node), node.name, targpath)
+						node.id, node.name, xcode.gettargettype(node), node.name, node.cfg.buildtarget.bundlename)
 				else
 					local pth, src
 					if xcode.isframework(node.path) then
@@ -443,6 +442,13 @@
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		_p(4,'ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";')
+		
+		local targetdir = path.getdirectory(cfg.buildtarget.bundlepath)
+		if targetdir ~= "." then
+			_p(4,'CONFIGURATION_BUILD_DIR = "$(SYMROOT)";');
+		end
+		
+		_p(4,'CONFIGURATION_TEMP_DIR = "$(OBJROOT)";')
 		_p(4,'GCC_C_LANGUAGE_STANDARD = gnu99;')
 		
 		if cfg.flags.Optimize or cfg.flags.OptimizeSize then
@@ -455,9 +461,14 @@
 		
 		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
+		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
 		_p(4,'PREBINDING = NO;')
---		_p(4,'SYMROOT = %s;', cfg.objectsdir)
+		
+		if targetdir ~= "." then
+			_p(4,'SYMROOT = "%s";', targetdir)
+		end
+		
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)
 		_p(2,'};')

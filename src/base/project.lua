@@ -442,7 +442,7 @@
 		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
 		local prefix  = ""
 		local suffix  = ""
-		local bundlepath
+		local bundlepath, bundlename
 
 		if namestyle == "windows" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
@@ -454,7 +454,8 @@
 			end
 		elseif namestyle == "posix" then
 			if kind == "WindowedApp" and system == "macosx" then
-				bundlepath = path.join(dir, name .. ".app")
+				bundlename = name .. ".app"
+				bundlepath = path.join(dir, bundlename)
 				dir = path.join(bundlepath, "Contents/MacOS")
 			elseif kind == "SharedLib" then
 				prefix = "lib"
@@ -481,6 +482,7 @@
 		result.name       = prefix .. name .. suffix
 		result.directory  = dir
 		result.fullpath   = path.join(result.directory, result.name)
+		result.bundlename = bundlename or result.name
 		result.bundlepath = bundlepath or result.fullpath
 		
 		if pathstyle == "windows" then

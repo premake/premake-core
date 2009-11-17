@@ -166,6 +166,19 @@
 	end
 
 
+	function suite.PBXFileReference_IgnoresTargetDir()
+		targetdir "bin"
+		kind "WindowedApp"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.app:product] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "MyProject.app"; path = "MyProject.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXFrameworksBuildPhase tests
 ---------------------------------------------------------------------------
@@ -671,10 +684,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 			};
@@ -693,10 +708,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 			};
@@ -715,12 +732,40 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnTargetDir()
+		targetdir "bin"
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SYMROOT = "bin";
 			};
 			name = Debug;
 		};
