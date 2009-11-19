@@ -179,6 +179,19 @@
 	end
 
 
+	function suite.PBXFileReference_UsesTargetSuffix()
+		targetsuffix "-d"
+		kind "SharedLib"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[libMyProject-d.dylib:product] /* libMyProject-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "libMyProject-d.dylib"; path = "libMyProject-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXFrameworksBuildPhase tests
 ---------------------------------------------------------------------------
@@ -678,7 +691,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
 		test.capture [[
-		[MyProject:Debug] /* Debug */ = {
+		[MyProject-d:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
