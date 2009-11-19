@@ -4,7 +4,7 @@
 
 - Added support for Apple Xcode 3
 - clean now removes MonoDevelop .pidb files correctly
-
+- Feature 2900623: Add targetsuffix and implibsuffix properties
 
 -------
  4.1.2

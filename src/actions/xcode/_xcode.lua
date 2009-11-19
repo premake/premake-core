@@ -32,6 +32,11 @@
 		end,
 		
 		oncleansolution = function(sln)
-			premake.clean.directory(sln, "%%.xcodeproj")
+			-- Use unique name to clean solution (and project)
+			-- premake.clean.directory(sln, "%%.xcodeproj")
+		end,
+		
+		oncleanproject = function(prj)
+			premake.clean.directory(prj, "%%.xcodeproj")
 		end,
 	}

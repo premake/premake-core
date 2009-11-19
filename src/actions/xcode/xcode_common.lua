@@ -175,7 +175,7 @@
 				
 				if node.kind == "product" then
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = "%s"; path = "%s"; sourceTree = BUILT_PRODUCTS_DIR; };',
-						node.id, node.name, xcode.gettargettype(node), node.name, node.cfg.buildtarget.bundlename)
+						node.id, node.name, xcode.gettargettype(node), node.name, path.getname(node.cfg.buildtarget.bundlepath))
 				else
 					local pth, src
 					if xcode.isframework(node.path) then
@@ -418,7 +418,7 @@
 			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.path)
 		end
 
-		_p(4,'PRODUCT_NAME = %s;', cfg.buildtarget.basename)
+		_p(4,'PRODUCT_NAME = "%s";', cfg.buildtarget.basename .. cfg.buildtarget.suffix)
 
 		local p
 		if cfg.kind == "ConsoleApp" then
@@ -430,7 +430,6 @@
 			_p(4,'INSTALL_PATH = %s;', p)
 		end
 		
---		_p(4,'SYMROOT = %s;', cfg.objectsdir)
 		_p(3,'};')
 		_p(3,'name = %s;', cfg.name)
 		_p(2,'};')

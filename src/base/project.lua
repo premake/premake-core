@@ -411,12 +411,13 @@
 --    shared libraries on Mac OS X use a ".dylib" extension.
 -- @returns
 --    An object with these fields:
---      basename  - the target with no directory or file extension
---      name      - the target name and extension, with no directory
---      directory - relative path to the target, with no file name
---      root      - the root target, primarily for Mac OS X (MyProject.app, etc.)
---      rootdir   - the root target directory, for Mac OS X (MyProject.app, etc.)
---      fullpath  - directory, name, and extension
+--      basename   - the target with no directory or file extension
+--      name       - the target name and extension, with no directory
+--      directory  - relative path to the target, with no file name
+--      prefix     - the file name prefix
+--      suffix     - the file name suffix
+--      fullpath   - directory, name, and extension
+--      bundlepath - the relative path and file name of the bundle
 --
 
 	function premake.gettarget(cfg, direction, pathstyle, namestyle, system)
@@ -442,15 +443,16 @@
 		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
 		local prefix  = ""
 		local suffix  = ""
+		local ext     = ""
 		local bundlepath, bundlename
 
 		if namestyle == "windows" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
-				suffix = ".exe"
+				ext = ".exe"
 			elseif kind == "SharedLib" then
-				suffix = ".dll"
+				ext = ".dll"
 			elseif kind == "StaticLib" then
-				suffix = ".lib"
+				ext = ".lib"
 			end
 		elseif namestyle == "posix" then
 			if kind == "WindowedApp" and system == "macosx" then
@@ -459,30 +461,32 @@
 				dir = path.join(bundlepath, "Contents/MacOS")
 			elseif kind == "SharedLib" then
 				prefix = "lib"
-				suffix = iif(system == "macosx", ".dylib", ".so")
+				ext = iif(system == "macosx", ".dylib", ".so")
 			elseif kind == "StaticLib" then
 				prefix = "lib"
-				suffix = ".a"
+				ext = ".a"
 			end
 		elseif namestyle == "PS3" then
 			if kind == "ConsoleApp" or kind == "WindowedApp" then
-				suffix = ".elf"
+				ext = ".elf"
 			elseif kind == "StaticLib" then
 				prefix = "lib"
-				suffix = ".a"
+				ext = ".a"
 			end
 		end
 			
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
-		suffix = cfg[field.."extension"] or cfg.targetextension or suffix
+		suffix = cfg[field.."suffix"] or cfg.targetsuffix or suffix
+		ext    = cfg[field.."extension"] or cfg.targetextension or ext
 		
 		-- build the results object
 		local result = { }
 		result.basename   = name
-		result.name       = prefix .. name .. suffix
+		result.name       = prefix .. name .. suffix .. ext
 		result.directory  = dir
+		result.prefix     = prefix
+		result.suffix     = suffix
 		result.fullpath   = path.join(result.directory, result.name)
-		result.bundlename = bundlename or result.name
 		result.bundlepath = bundlepath or result.fullpath
 		
 		if pathstyle == "windows" then

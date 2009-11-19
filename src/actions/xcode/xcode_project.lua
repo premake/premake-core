@@ -71,7 +71,9 @@
 			if not kinds[cfg.kind] then
 				kinds[cfg.kind] = true
 				
-				node = tree.insert(tr.products, tree.new(path.getname(cfg.buildtarget.bundlepath)))
+				-- try to construct a configuration-independent product name, best I can
+				local name = cfg.buildtarget.prefix .. cfg.buildtarget.basename .. path.getextension(cfg.buildtarget.bundlepath)
+				node = tree.insert(tr.products, tree.new(name))
 				node.kind = "product"
 				node.cfg  = cfg
 				node.path = cfg.buildtarget.fullpath

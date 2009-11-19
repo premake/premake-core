@@ -117,6 +117,12 @@
 			scope = "config",
 		},
 		
+		implibsuffix =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
 		includedirs =
 		{
 			kind  = "dirlist",
@@ -258,6 +264,12 @@
 		},
 		
 		targetprefix =
+		{
+			kind  = "string",
+			scope = "config",
+		},
+		
+		targetsuffix =
 		{
 			kind  = "string",
 			scope = "config",

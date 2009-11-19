@@ -579,7 +579,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = MyProject;
+				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
 			};
 			name = Debug;
@@ -600,7 +600,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = MyProject;
+				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = "$(HOME)/Applications";
 			};
 			name = Debug;
@@ -621,7 +621,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = MyProject;
+				PRODUCT_NAME = "MyProject";
 			};
 			name = Debug;
 		};
@@ -642,7 +642,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "MyProject-Info.plist";
-				PRODUCT_NAME = MyProject;
+				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
 			};
 			name = Debug;
@@ -664,13 +664,35 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = MyProject;
+				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
 			};
 			name = Debug;
 		};
 		]]
 	end
+
+
+	function suite.XCBuildConfigurationTarget_OnTargetSuffix()
+		targetsuffix "-d"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = "MyProject-d";
+				INSTALL_PATH = /usr/local/bin;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
 
 ---------------------------------------------------------------------------
 -- XCBuildConfiguration_Project tests
