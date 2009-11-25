@@ -19,6 +19,7 @@
 
 	function xcode.getbuildcategory(node)
 		local categories = {
+			[".a"] = "Frameworks",
 			[".c"] = "Sources",
 			[".cc"] = "Sources",
 			[".cpp"] = "Sources",
@@ -106,6 +107,25 @@
 
 
 --
+-- Return a unique file name for a project. Since Xcode uses .xcodeproj's to 
+-- represent both solutions and projects there is a likely change of a name
+-- collision. Tack on a number to differentiate them.
+--
+-- @param prj
+--    The project being queried.
+-- @returns
+--    A uniqued file name
+--
+
+	function xcode.getxcodeprojname(prj)
+		-- if there is a solution with matching name, then use "projectname1.xcodeproj"
+		-- just get something working for now
+		local fname = premake.project.getfilename(prj, "%%.xcodeproj")
+		return fname
+	end
+
+
+--
 -- Returns true if the file name represents a framework.
 --
 -- @param fname
@@ -131,6 +151,25 @@
 	end
 
 
+--
+-- Assign required Xcode specific information to each project, which is used
+-- to connect dependent projects together, and to build the solution.
+--
+-- @param sln
+--    The solution to prepare.
+-- @returns
+--    Nothing; information is added to the project objects.
+--
+
+	function xcode.preparesolution(sln)
+		for prj in premake.solution.eachproject(sln) do
+			-- create a tree node to represent the pro
+			-- prj.xcode = tree.new
+			-- prj.xcode.productid = xcode.newid(
+		end
+	end
+
+
 ---------------------------------------------------------------------------
 -- Section generator functions, in the same order in which they appear
 -- in the .pbxproj file
@@ -139,11 +178,11 @@
 	function xcode.Header()
 		_p('// !$*UTF8*$!')
 		_p('{')
-		_p('\tarchiveVersion = 1;')
-		_p('\tclasses = {')
-		_p('\t};')
-		_p('\tobjectVersion = 45;')
-		_p('\tobjects = {')
+		_p(1,'archiveVersion = 1;')
+		_p(1,'classes = {')
+		_p(1,'};')
+		_p(1,'objectVersion = 45;')
+		_p(1,'objects = {')
 		_p('')
 	end
 
@@ -160,6 +199,32 @@
 		})
 		_p('/* End PBXBuildFile section */')
 		_p('')
+	end
+
+
+	function xcode.PBXContainerItemProxy(tr)
+		_p('/* Begin PBXContainerItemProxy section */')
+		for _, node in ipairs(tr.projects.children) do
+			_p(2,'%s /* PBXContainerItemProxy */ = {', node.remoteid)
+			_p(3,'isa = PBXContainerItemProxy;')
+			_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
+			_p(3,'proxyType = 2;')
+			_p(3,'remoteGlobalIDString = 7DF44AF45AB7001258659540;')
+		end
+		_p('/* End PBXContainerItemProxy section */')
+		
+--[[
+			remoteGlobalIDString = 7DF44AF45AB7001258659540;
+			remoteInfo = "libMyLibrary-d.a";
+		};
+		967BE4EA10B5D6F200E9EC24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 967BE4E010B5D6C900E9EC24 /* MyLibrary.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4EE55BCC4CE5001258659540;
+			remoteInfo = "libMyLibrary-d.a";
+		};
+]]
 	end
 
 
@@ -237,9 +302,15 @@
 				end
 				_p(3,');')
 				_p(3,'name = %s;', node.name)
+				
 				if node.path then
-					_p(3,'path = %s;', node.path)
+					local p = node.path
+					if node.parent.path then
+						p = path.getrelative(node.parent.path, node.path)
+					end
+					_p(3,'path = %s;', p)
 				end
+				
 				_p(3,'sourceTree = "<group>";')
 				_p(2,'};')
 			end

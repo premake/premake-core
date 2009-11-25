@@ -137,6 +137,10 @@
 	function T.path.isabsolute_ReturnsFalse_OnRelativePath()
 		test.isfalse(path.isabsolute("a/b/c"))
 	end
+	
+	function T.path.isabsolute_ReturnsTrue_OnDollarSign()
+		test.istrue(path.isabsolute("$(SDK_HOME)/include"))
+	end
 
 
 --

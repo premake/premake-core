@@ -265,7 +265,6 @@
 		return fname..extension
 	end
 	
-	
 
 -- 
 -- Returns the runtime code for a configuration.

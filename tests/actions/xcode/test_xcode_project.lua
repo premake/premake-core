@@ -291,7 +291,7 @@
 
 
 	function suite.PBXGroup_OnSourceSubdirs()
-		files { "include/source.h" }
+		files { "include/premake/source.h" }
 		prepare()
 		xcode.PBXGroup(tr)
 		test.capture [[
@@ -308,10 +308,19 @@
 		[include] /* include */ = {
 			isa = PBXGroup;
 			children = (
-				[source.h] /* source.h */,
+				[premake] /* premake */,
 			);
 			name = include;
 			path = include;
+			sourceTree = "<group>";
+		};
+		[premake] /* premake */ = {
+			isa = PBXGroup;
+			children = (
+				[source.h] /* source.h */,
+			);
+			name = premake;
+			path = premake;
 			sourceTree = "<group>";
 		};
 		]]

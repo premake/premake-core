@@ -46,10 +46,10 @@
 			end
 		})
 		
-		-- the special folder "Frameworks" lists all of frameworks linked to project;
+		-- the special folder "Frameworks" lists all linked frameworks
 		tr.frameworks = tree.new("Frameworks")
 		for cfg in premake.eachconfig(prj) do
-			for _, link in ipairs(cfg.links) do
+			for _, link in ipairs(premake.getlinks(cfg, "system", "fullpath")) do
 				local name = path.getname(link)
 				if xcode.isframework(name) and not tr.frameworks.children[name] then
 					node = tree.insert(tr.frameworks, tree.new(name))
@@ -71,7 +71,6 @@
 			if not kinds[cfg.kind] then
 				kinds[cfg.kind] = true
 				
-				-- try to construct a configuration-independent product name, best I can
 				node = tree.insert(tr.products, tree.new(path.getname(cfg.buildtarget.bundlepath)))
 				node.kind = "product"
 				node.cfg  = cfg
@@ -90,6 +89,26 @@
 			end
 		end
 
+		-- the special folder "Projects" lists sibling project dependencies
+		tr.projects = tree.new("Projects")
+		for _, dep in ipairs(premake.getdependencies(prj, "sibling", "object")) do
+			-- create a child node for the dependency's xcodeproj
+			local xcpath = xcode.getxcodeprojname(dep)
+			local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
+			xcnode.path = xcpath
+			xcnode.project = dep
+			xcnode.remoteid = xcode.newid(xcnode, "remote")
+			
+			-- create a grandchild node for the dependency's link target
+			local cfg = premake.getconfig(dep, prj.solution.configurations[1])
+			node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
+			node.path = cfg.linktarget.fullpath
+		end
+
+		if #tr.projects.children > 0 then
+			tree.insert(tr, tr.projects)
+		end
+		
 		-- also assign configuration IDs
 		tr.configids = {}
 		for _, cfgname in ipairs(prj.solution.configurations) do

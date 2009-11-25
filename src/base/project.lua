@@ -264,7 +264,7 @@
 --
 -- Returns a list of link targets. Kind may be one of:
 --   siblings     - linkable sibling projects
---   system       - system (non-subling) libraries
+--   system       - system (non-sibling) libraries
 --   dependencies - all sibling dependencies, including non-linkable
 --   all          - return everything
 --
