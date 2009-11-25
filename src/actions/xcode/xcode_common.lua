@@ -151,25 +151,6 @@
 	end
 
 
---
--- Assign required Xcode specific information to each project, which is used
--- to connect dependent projects together, and to build the solution.
---
--- @param sln
---    The solution to prepare.
--- @returns
---    Nothing; information is added to the project objects.
---
-
-	function xcode.preparesolution(sln)
-		for prj in premake.solution.eachproject(sln) do
-			-- create a tree node to represent the pro
-			-- prj.xcode = tree.new
-			-- prj.xcode.productid = xcode.newid(
-		end
-	end
-
-
 ---------------------------------------------------------------------------
 -- Section generator functions, in the same order in which they appear
 -- in the .pbxproj file
@@ -479,12 +460,6 @@
 
 		_p(4,'GCC_MODEL_TUNING = G5;')
 
-		if #cfg.defines > 0 then
-			_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
-			_p(table.implode(cfg.defines, "\t\t\t\t", ",\n"))
-			_p(4,');')
-		end
-
 		if tr.infoplist then
 			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.path)
 		end
@@ -529,8 +504,25 @@
 			_p(4,'GCC_OPTIMIZATION_LEVEL = 0;')
 		end
 		
+		if #cfg.defines > 0 then
+			_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
+			for _, def in ipairs(cfg.defines) do
+				_p(5, '"%s",', def)
+			end
+			_p(4,');')
+		end
+
 		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
+		
+		if #cfg.includedirs > 0 then
+			_p(4,'HEADER_SEARCH_PATHS = (')
+			for _, incdir in ipairs(cfg.includedirs) do
+				_p(5, '"%s",', incdir)
+			end
+			_p(4,');')
+		end
+		
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
 		_p(4,'PREBINDING = NO;')

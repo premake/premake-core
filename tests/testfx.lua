@@ -18,7 +18,7 @@
 	
 	function test.capture(expected)
 		local actual = io.endcapture()
-
+		
 		local ait = actual:gfind("(.-)" .. io.eol)
 		local eit = expected:gfind("(.-)\n")
 		
@@ -29,6 +29,7 @@
 			if (etxt ~= atxt) then
 				test.fail("(%d) expected:\n%s\n...but was:\n%s", linenum, etxt, atxt)
 			end
+			
 			linenum = linenum + 1
 			atxt = ait()
 			etxt = eit()
