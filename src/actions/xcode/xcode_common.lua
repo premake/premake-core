@@ -151,6 +151,26 @@
 	end
 
 
+--
+-- Print out a list value in the Xcode format.
+--
+-- @param list
+--    The list of values to be printed.
+-- @param tag
+--    The Xcode specific list tag.
+--
+
+	function xcode.printlist(list, tag)
+		if #list > 0 then
+			_p(4,'%s = (', tag)
+			for _, item in ipairs(list) do
+				_p(5, '"%s",', item)
+			end
+			_p(4,');')
+		end
+	end
+
+
 ---------------------------------------------------------------------------
 -- Section generator functions, in the same order in which they appear
 -- in the .pbxproj file
@@ -504,27 +524,18 @@
 			_p(4,'GCC_OPTIMIZATION_LEVEL = 0;')
 		end
 		
-		if #cfg.defines > 0 then
-			_p(4,'GCC_PREPROCESSOR_DEFINITIONS = (')
-			for _, def in ipairs(cfg.defines) do
-				_p(5, '"%s",', def)
-			end
-			_p(4,');')
-		end
+		xcode.printlist(cfg.defines, 'GCC_PREPROCESSOR_DEFINITIONS')
 
 		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
-		
-		if #cfg.includedirs > 0 then
-			_p(4,'HEADER_SEARCH_PATHS = (')
-			for _, incdir in ipairs(cfg.includedirs) do
-				_p(5, '"%s",', incdir)
-			end
-			_p(4,');')
-		end
+
+		xcode.printlist(cfg.includedirs, 'HEADER_SEARCH_PATHS')
 		
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
+		
+		xcode.printlist(cfg.linkoptions, 'OTHER_LDFLAGS')
+		
 		_p(4,'PREBINDING = NO;')
 		
 		if targetdir ~= "." then
