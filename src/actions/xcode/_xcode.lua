@@ -39,4 +39,15 @@
 		oncleanproject = function(prj)
 			premake.clean.directory(prj, "%%.xcodeproj")
 		end,
+		
+		oncheckproject = function(prj)
+			-- Xcode can't mix target kinds within a project
+			local last
+			for cfg in premake.eachconfig(prj) do
+				if last and last ~= cfg.kind then
+					error("Project '" .. prj.name .. "' uses more than one target kind; not supported by Xcode", 0)
+				end
+				last = cfg.kind
+			end
+		end,
 	}

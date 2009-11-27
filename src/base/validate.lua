@@ -6,7 +6,7 @@
 
 
 --
--- Performs a sanity check all all of the solutions and projects 
+-- Performs a sanity check of all of the solutions and projects 
 -- in the session to be sure they meet some minimum requirements.
 --
 
@@ -54,6 +54,12 @@
 					end
 					
 				end
+				
+				-- some actions have custom validation logic
+				if action.oncheckproject then
+					action.oncheckproject(prj)
+				end
+				
 			end
 		end		
 		return true
