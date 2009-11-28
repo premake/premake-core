@@ -77,3 +77,19 @@
 /* End PBXContainerItemProxy section */
 		]]		
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXFileReference tests
+---------------------------------------------------------------------------
+
+	function suite.PBXFileReference_ListsDependencies()
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "MyProject"; path = "MyProject"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject2.xcodeproj] /* MyProject2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = "MyProject2.xcodeproj"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+		]]
+	end

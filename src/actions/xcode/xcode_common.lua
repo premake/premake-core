@@ -261,9 +261,17 @@
 					return
 				end
 				
+				-- is this the product node, describing the output target?
 				if node.kind == "product" then
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = "%s"; path = "%s"; sourceTree = BUILT_PRODUCTS_DIR; };',
 						node.id, node.name, xcode.gettargettype(node), node.name, path.getname(node.cfg.buildtarget.bundlepath))
+						
+				-- is this a project dependency?
+				elseif node.parent.parent == tr.projects then
+					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "%s"; path = "%s"; sourceTree = SOURCE_ROOT; };',
+						node.parent.id, node.parent.name, node.parent.name, node.parent.path)
+					
+				-- something else
 				else
 					local pth, src
 					if xcode.isframework(node.path) then
