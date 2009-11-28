@@ -152,6 +152,32 @@
 
 
 --
+-- Create a product tree node and all projects in a solution; assigning IDs 
+-- that are needed for inter-project dependencies.
+--
+-- @param sln
+--    The solution to prepare.
+--
+
+	function xcode.preparesolution(sln)
+		for prj in premake.solution.eachproject(sln) do
+			-- need a configuration to get the target information
+			local cfg = premake.getconfig(prj, prj.configurations[1])
+
+			-- build the product tree node
+			local node = premake.tree.new(path.getname(cfg.buildtarget.bundlepath))
+			node.cfg = cfg
+			node.id = premake.xcode.newid(node, "product")
+			node.targetid = premake.xcode.newid(node, "target")
+			
+			-- attach it to the project
+			prj.xcode = {}
+			prj.xcode.projectnode = node
+		end
+	end
+
+
+--
 -- Print out a list value in the Xcode format.
 --
 -- @param list
@@ -210,7 +236,9 @@
 			_p(3,'isa = PBXContainerItemProxy;')
 			_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
 			_p(3,'proxyType = 2;')
-			_p(3,'remoteGlobalIDString = 7DF44AF45AB7001258659540;')
+			_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.id)
+			_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
+			_p(2,'};')
 		end
 		_p('/* End PBXContainerItemProxy section */')
 		
@@ -454,7 +482,7 @@
 
 
 	function xcode.XCBuildConfiguration_Target(tr, target, cfg)
-		_p(2,'%s /* %s */ = {', target.configids[cfg.name], cfg.name)
+		_p(2,'%s /* %s */ = {', tr.configs[cfg.name].targetid, cfg.name)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
@@ -503,7 +531,7 @@
 	
 	
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
-		_p(2,'%s /* %s */ = {', tr.configids[cfg.name], cfg.name)
+		_p(2,'%s /* %s */ = {', tr.configs[cfg.name].projectid, cfg.name)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		_p(4,'ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";')
@@ -572,7 +600,7 @@
 			_p(3,'isa = XCConfigurationList;')
 			_p(3,'buildConfigurations = (')
 			for _, cfgname in ipairs(sln.configurations) do
-				_p(4,'%s /* %s */,', target.configids[cfgname], cfgname)
+				_p(4,'%s /* %s */,', tr.configs[cfgname].targetid, cfgname)
 			end
 			_p(3,');')
 			_p(3,'defaultConfigurationIsVisible = 0;')
@@ -583,7 +611,7 @@
 		_p(3,'isa = XCConfigurationList;')
 		_p(3,'buildConfigurations = (')
 		for _, cfgname in ipairs(sln.configurations) do
-			_p(4,'%s /* %s */,', tr.configids[cfgname], cfgname)
+			_p(4,'%s /* %s */,', tr.configs[cfgname].projectid, cfgname)
 		end
 		_p(3,');')
 		_p(3,'defaultConfigurationIsVisible = 0;')

@@ -30,6 +30,7 @@
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
+		xcode.preparesolution(sln)
 		local prj = premake.solution.getproject(sln, 1)
 		tr = xcode.buildprjtree(prj)
 	end
@@ -63,15 +64,15 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = [MyProject2.xcodeproj] /* MyProject2.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = [Product ID];
+			remoteGlobalIDString = [libMyProject2-d.a:product];
 			remoteInfo = "libMyProject2-d.a";
 		};
 		967BE4EA10B5D6F200E9EC24 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 967BE4E010B5D6C900E9EC24 /* MyLibrary.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = [Native target ID];
-			remoteInfo = "libMyLibrary2-d.a";
+			remoteGlobalIDString = [libMyProject2-d.a:target];
+			remoteInfo = "libMyProject2-d.a";
 		};
 /* End PBXContainerItemProxy section */
 		]]		

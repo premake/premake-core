@@ -19,6 +19,15 @@
 
 	function xcode.buildprjtree(prj)
 		local tr = premake.project.buildsourcetree(prj)
+		
+		-- assign IDs for each build configuration
+		tr.configs = {}
+		for _, cfgname in ipairs(prj.configurations) do
+			local cfg = { }
+			cfg.targetid = xcode.newid(prj.xcode.projectnode, cfgname)
+			cfg.projectid = xcode.newid(tr, cfgname)
+			tr.configs[cfgname] = cfg
+		end
 
 		-- convert localized resources from their filesystem layout (English.lproj/MainMenu.xib)
 		-- to Xcode's display layout (MainMenu.xib/English).
@@ -63,31 +72,9 @@
 			tree.insert(tr, tr.frameworks)
 		end
 		
-		-- the special folder "Products" lists all of the generated targets, one target
-		-- for each target kind (ConsoleApp, SharedLibrary, etc.) produced by a project.
+		-- the special folder "Products" holds the target produced by the project; this
+		-- is populated below
 		tr.products = tree.insert(tr, tree.new("Products"))
-		local kinds = {}  -- remember which kinds have already been added
-		for cfg in premake.eachconfig(prj) do
-			if not kinds[cfg.kind] then
-				kinds[cfg.kind] = true
-				
-				node = tree.insert(tr.products, tree.new(path.getname(cfg.buildtarget.bundlepath)))
-				node.kind = "product"
-				node.cfg  = cfg
-				node.path = cfg.buildtarget.fullpath
-				node.targetid   = xcode.newid(node, "target")
-				node.cfgsection = xcode.newid(node, "cfg")
-				node.resstageid = xcode.newid(node, "rez")
-				node.sourcesid  = xcode.newid(node, "src")
-				node.fxstageid  = xcode.newid(node, "fxs")
-				
-				-- assign IDs for each configuration
-				node.configids = {}
-				for _, cfgname in ipairs(prj.solution.configurations) do
-					node.configids[cfgname] = xcode.newid(node, cfgname)
-				end
-			end
-		end
 
 		-- the special folder "Projects" lists sibling project dependencies
 		tr.projects = tree.new("Projects")
@@ -108,12 +95,6 @@
 		if #tr.projects.children > 0 then
 			tree.insert(tr, tr.projects)
 		end
-		
-		-- also assign configuration IDs
-		tr.configids = {}
-		for _, cfgname in ipairs(prj.solution.configurations) do
-			tr.configids[cfgname] = xcode.newid(tr, cfgname)
-		end
 
 		-- Final setup
 		tree.traverse(tr, {
@@ -132,6 +113,17 @@
 				end						
 			end
 		}, true)
+
+		-- Plug in the product node into the Products folder in the tree. The node
+		-- was built in xcode.preparesolution() in xcode_common.lua; it contains IDs
+		-- that are necessary for inter-project dependencies
+		node = tree.insert(tr.products, prj.xcode.projectnode)
+		node.kind = "product"
+		node.path = node.cfg.buildtarget.fullpath
+		node.cfgsection = xcode.newid(node, "cfg")
+		node.resstageid = xcode.newid(node, "rez")
+		node.sourcesid  = xcode.newid(node, "src")
+		node.fxstageid  = xcode.newid(node, "fxs")
 
 		return tr
 	end

@@ -133,9 +133,9 @@
 	function premake.findproject(name)
 		name = name:lower()
 		for sln in premake.solution.each() do
-			for _, prj in ipairs(sln.projects) do
+			for prj in premake.solution.eachproject(sln) do
 				if (prj.name:lower() == name) then
-					return prj
+					return  prj
 				end
 			end
 		end
