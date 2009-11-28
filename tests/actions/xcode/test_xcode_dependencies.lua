@@ -60,16 +60,16 @@
 		xcode.PBXContainerItemProxy(tr)
 		test.capture [[
 /* Begin PBXContainerItemProxy section */
-		[MyProject2.xcodeproj:remote] /* PBXContainerItemProxy */ = {
+		[MyProject2.xcodeproj:prodprox] /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = [MyProject2.xcodeproj] /* MyProject2.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = [libMyProject2-d.a:product];
 			remoteInfo = "libMyProject2-d.a";
 		};
-		967BE4EA10B5D6F200E9EC24 /* PBXContainerItemProxy */ = {
+		[MyProject2.xcodeproj:targprox] /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 967BE4E010B5D6C900E9EC24 /* MyLibrary.xcodeproj */;
+			containerPortal = [MyProject2.xcodeproj] /* MyProject2.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = [libMyProject2-d.a:target];
 			remoteInfo = "libMyProject2-d.a";

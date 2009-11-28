@@ -84,7 +84,8 @@
 			local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
 			xcnode.path = xcpath
 			xcnode.project = dep
-			xcnode.remoteid = xcode.newid(xcnode, "remote")
+			xcnode.productproxyid = xcode.newid(xcnode, "prodprox")
+			xcnode.targetproxyid  = xcode.newid(xcnode, "targprox")
 			
 			-- create a grandchild node for the dependency's link target
 			local cfg = premake.getconfig(dep, prj.solution.configurations[1])

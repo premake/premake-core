@@ -232,28 +232,22 @@
 	function xcode.PBXContainerItemProxy(tr)
 		_p('/* Begin PBXContainerItemProxy section */')
 		for _, node in ipairs(tr.projects.children) do
-			_p(2,'%s /* PBXContainerItemProxy */ = {', node.remoteid)
+			_p(2,'%s /* PBXContainerItemProxy */ = {', node.productproxyid)
 			_p(3,'isa = PBXContainerItemProxy;')
 			_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
 			_p(3,'proxyType = 2;')
 			_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.id)
 			_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
 			_p(2,'};')
+			_p(2,'%s /* PBXContainerItemProxy */ = {', node.targetproxyid)
+			_p(3,'isa = PBXContainerItemProxy;')
+			_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
+			_p(3,'proxyType = 1;')
+			_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.targetid)
+			_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
+			_p(2,'};')
 		end
 		_p('/* End PBXContainerItemProxy section */')
-		
---[[
-			remoteGlobalIDString = 7DF44AF45AB7001258659540;
-			remoteInfo = "libMyLibrary-d.a";
-		};
-		967BE4EA10B5D6F200E9EC24 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 967BE4E010B5D6C900E9EC24 /* MyLibrary.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4EE55BCC4CE5001258659540;
-			remoteInfo = "libMyLibrary-d.a";
-		};
-]]
 	end
 
 
