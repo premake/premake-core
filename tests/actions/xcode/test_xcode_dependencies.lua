@@ -163,3 +163,36 @@
 /* End PBXGroup section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXNativeTarget tests
+---------------------------------------------------------------------------
+
+	function suite.PBXNativeTarget_ListsDependencies()
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				[MyProject:rez] /* Resources */,
+				[MyProject:src] /* Sources */,
+				[MyProject:fxs] /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				[MyProject2.xcodeproj:targdep] /* PBXTargetDependency */,
+			);
+			name = MyProject;
+			productInstallPath = "$(HOME)/bin";
+			productName = MyProject;
+			productReference = [MyProject:product] /* MyProject */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end

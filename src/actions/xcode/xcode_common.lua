@@ -387,8 +387,13 @@
 			_p(3,');')
 			_p(3,'buildRules = (')
 			_p(3,');')
+			
 			_p(3,'dependencies = (')
+			for _, node in ipairs(tr.projects.children) do
+				_p(4,'%s /* PBXTargetDependency */,', node.targetdependid)
+			end
 			_p(3,');')
+			
 			_p(3,'name = %s;', name)
 			
 			local p

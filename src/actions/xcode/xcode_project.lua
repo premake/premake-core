@@ -87,6 +87,7 @@
 			xcnode.productgroupid = xcode.newid(xcnode, "prodgrp")
 			xcnode.productproxyid = xcode.newid(xcnode, "prodprox")
 			xcnode.targetproxyid  = xcode.newid(xcnode, "targprox")
+			xcnode.targetdependid = xcode.newid(xcnode, "targdep")
 			
 			-- create a grandchild node for the dependency's link target
 			local cfg = premake.getconfig(dep, prj.configurations[1])
