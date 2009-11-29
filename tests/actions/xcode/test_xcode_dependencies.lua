@@ -249,3 +249,22 @@
 /* End PBXReferenceProxy section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXTargetDependency tests
+---------------------------------------------------------------------------
+
+	function suite.PBXTargetDependency_ListsDependencies()
+		prepare()
+		xcode.PBXTargetDependency(tr)
+		test.capture [[
+/* Begin PBXTargetDependency section */
+		[MyProject2.xcodeproj:targdep] /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libMyProject2-d.a";
+			targetProxy = [MyProject2.xcodeproj:targprox] /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+		]]
+	end

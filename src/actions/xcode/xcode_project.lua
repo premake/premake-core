@@ -154,6 +154,7 @@
 		xcode.PBXResourcesBuildPhase(tr)
 		xcode.PBXSourcesBuildPhase(tr)
 		xcode.PBXVariantGroup(tr)
+		xcode.PBXTargetDependency(tr)
 		xcode.XCBuildConfiguration(tr)
 		xcode.XCBuildConfigurationList(tr)
 		xcode.Footer(tr)

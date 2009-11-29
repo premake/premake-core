@@ -249,6 +249,7 @@
 				_p(2,'};')
 			end
 			_p('/* End PBXContainerItemProxy section */')
+			_p('')
 		end
 	end
 
@@ -466,6 +467,7 @@
 				end
 			})
 			_p('/* End PBXReferenceProxy section */')
+			_p('')
 		end
 	end
 	
@@ -536,6 +538,24 @@
 		})
 		_p('/* End PBXVariantGroup section */')
 		_p('')
+	end
+
+
+	function xcode.PBXTargetDependency(tr)
+		if #tr.projects.children > 0 then
+			_p('/* Begin PBXTargetDependency section */')
+			tree.traverse(tr.projects, {
+				onleaf = function(node)
+					_p(2,'%s /* PBXTargetDependency */ = {', node.parent.targetdependid)
+					_p(3,'isa = PBXTargetDependency;')
+					_p(3,'name = "%s";', node.name)
+					_p(3,'targetProxy = %s /* PBXContainerItemProxy */;', node.parent.targetproxyid)
+					_p(2,'};')
+				end
+			})
+			_p('/* End PBXTargetDependency section */')
+			_p('')
+		end
 	end
 
 
