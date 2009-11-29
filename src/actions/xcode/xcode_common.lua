@@ -425,6 +425,18 @@
 		_p(3,'hasScannedForEncodings = 1;')
 		_p(3,'mainGroup = %s /* %s */;', tr.id, tr.name)
 		_p(3,'projectDirPath = "";')
+		
+		if #tr.projects.children > 0 then
+			_p(3,'projectReferences = (')
+			for _, node in ipairs(tr.projects.children) do
+				_p(4,'{')
+				_p(5,'ProductGroup = %s /* Products */;', node.productgroupid)
+				_p(5,'ProjectRef = %s /* %s */;', node.id, path.getname(node.path))
+				_p(4,'},')
+			end
+			_p(3,');')
+		end
+		
 		_p(3,'projectRoot = "";')
 		_p(3,'targets = (')
 		for _, node in ipairs(tr.products.children) do
