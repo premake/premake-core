@@ -14,14 +14,15 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, tr
+	local sln, prj, prj2, tr
 	function suite.setup()
 		premake.action.set("xcode3")
 		xcode.used_ids = { } -- reset the list of generated IDs
 
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		links { "MyProject2" }
-		test.createproject(sln)
+
+		prj2 = test.createproject(sln)
 		kind "StaticLib"
 		configuration "Debug"
 		targetsuffix "-d"
@@ -31,8 +32,7 @@
 		io.capture()
 		premake.buildconfigs()
 		xcode.preparesolution(sln)
-		local prj = premake.solution.getproject(sln, 1)
-		tr = xcode.buildprjtree(prj)
+		tr = xcode.buildprjtree(premake.solution.getproject(sln, 1))
 	end
 
 
@@ -90,6 +90,19 @@
 /* Begin PBXFileReference section */
 		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "MyProject"; path = "MyProject"; sourceTree = BUILT_PRODUCTS_DIR; };
 		[MyProject2.xcodeproj] /* MyProject2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = "MyProject2.xcodeproj"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+		]]
+	end
+
+	function suite.PBXFileReference_UsesRelativePaths()
+		prj.location = "MyProject"
+		prj2.location = "MyProject2"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "MyProject"; path = "MyProject"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject2.xcodeproj] /* MyProject2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = "../MyProject2/MyProject2.xcodeproj"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 		]]
 	end

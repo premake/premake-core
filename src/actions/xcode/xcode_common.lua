@@ -271,8 +271,9 @@
 						
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
+					local relpath = path.getrelative(tr.project.location, node.parent.project.location)
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "%s"; path = "%s"; sourceTree = SOURCE_ROOT; };',
-						node.parent.id, node.parent.name, node.parent.name, node.parent.path)
+						node.parent.id, node.parent.name, node.parent.name, path.join(relpath, node.parent.name))
 					
 				-- something else
 				else
