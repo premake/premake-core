@@ -93,6 +93,7 @@
 			local cfg = premake.getconfig(dep, prj.configurations[1])
 			node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
 			node.path = cfg.linktarget.fullpath
+			node.cfg = cfg
 		end
 
 		if #tr.projects.children > 0 then
@@ -143,11 +144,13 @@
 		local tr = xcode.buildprjtree(prj)
 		xcode.Header(tr)
 		xcode.PBXBuildFile(tr)
+		xcode.PBXContainerItemProxy(tr)
 		xcode.PBXFileReference(tr)
 		xcode.PBXFrameworksBuildPhase(tr)
 		xcode.PBXGroup(tr)
 		xcode.PBXNativeTarget(tr)
 		xcode.PBXProject(tr)
+		xcode.PBXReferenceProxy(tr)
 		xcode.PBXResourcesBuildPhase(tr)
 		xcode.PBXSourcesBuildPhase(tr)
 		xcode.PBXVariantGroup(tr)

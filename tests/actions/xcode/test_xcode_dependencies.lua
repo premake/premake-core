@@ -228,3 +228,24 @@
 /* End PBXProject section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXReferenceProxy tests
+---------------------------------------------------------------------------
+
+	function suite.PBXReferenceProxy_ListsDependencies()
+		prepare()
+		xcode.PBXReferenceProxy(tr)
+		test.capture [[
+/* Begin PBXReferenceProxy section */
+		[libMyProject2-d.a] /* libMyProject2-d.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libMyProject2-d.a";
+			remoteRef = [MyProject2.xcodeproj:prodprox] /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+		]]
+	end

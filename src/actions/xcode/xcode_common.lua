@@ -230,24 +230,26 @@
 
 
 	function xcode.PBXContainerItemProxy(tr)
-		_p('/* Begin PBXContainerItemProxy section */')
-		for _, node in ipairs(tr.projects.children) do
-			_p(2,'%s /* PBXContainerItemProxy */ = {', node.productproxyid)
-			_p(3,'isa = PBXContainerItemProxy;')
-			_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
-			_p(3,'proxyType = 2;')
-			_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.id)
-			_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
-			_p(2,'};')
-			_p(2,'%s /* PBXContainerItemProxy */ = {', node.targetproxyid)
-			_p(3,'isa = PBXContainerItemProxy;')
-			_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
-			_p(3,'proxyType = 1;')
-			_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.targetid)
-			_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
-			_p(2,'};')
+		if #tr.projects.children > 0 then
+			_p('/* Begin PBXContainerItemProxy section */')
+			for _, node in ipairs(tr.projects.children) do
+				_p(2,'%s /* PBXContainerItemProxy */ = {', node.productproxyid)
+				_p(3,'isa = PBXContainerItemProxy;')
+				_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
+				_p(3,'proxyType = 2;')
+				_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.id)
+				_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
+				_p(2,'};')
+				_p(2,'%s /* PBXContainerItemProxy */ = {', node.targetproxyid)
+				_p(3,'isa = PBXContainerItemProxy;')
+				_p(3,'containerPortal = %s /* %s */;', node.id, path.getname(node.path))
+				_p(3,'proxyType = 1;')
+				_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.targetid)
+				_p(3,'remoteInfo = "%s";', node.project.xcode.projectnode.name)
+				_p(2,'};')
+			end
+			_p('/* End PBXContainerItemProxy section */')
 		end
-		_p('/* End PBXContainerItemProxy section */')
 	end
 
 
@@ -448,6 +450,25 @@
 		_p('')
 	end
 
+
+	function xcode.PBXReferenceProxy(tr)
+		if #tr.projects.children > 0 then
+			_p('/* Begin PBXReferenceProxy section */')
+			tree.traverse(tr.projects, {
+				onleaf = function(node)
+					_p(2,'%s /* %s */ = {', node.id, node.name)
+					_p(3,'isa = PBXReferenceProxy;')
+					_p(3,'fileType = %s;', xcode.gettargettype(node))
+					_p(3,'path = "%s";', node.path)
+					_p(3,'remoteRef = %s /* PBXContainerItemProxy */;', node.parent.productproxyid)
+					_p(3,'sourceTree = BUILT_PRODUCTS_DIR;')
+					_p(2,'};')
+				end
+			})
+			_p('/* End PBXReferenceProxy section */')
+		end
+	end
+	
 
 	function xcode.PBXResourcesBuildPhase(tr)
 		_p('/* Begin PBXResourcesBuildPhase section */')
