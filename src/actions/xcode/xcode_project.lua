@@ -84,6 +84,7 @@
 			local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
 			xcnode.path = xcpath
 			xcnode.project = dep
+			xcnode.productgroupid = xcode.newid(xcnode, "prodgrp")
 			xcnode.productproxyid = xcode.newid(xcnode, "prodprox")
 			xcnode.targetproxyid  = xcode.newid(xcnode, "targprox")
 			

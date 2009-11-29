@@ -334,27 +334,36 @@
 					return
 				end
 				
-				_p(2,'%s /* %s */ = {', node.id, node.name)
+				-- project references get special treatment
+				if node.parent == tr.projects then
+					_p(2,'%s /* Products */ = {', node.productgroupid)
+				else
+					_p(2,'%s /* %s */ = {', node.id, node.name)
+				end
+				
 				_p(3,'isa = PBXGroup;')
 				_p(3,'children = (')
 				for _, childnode in ipairs(node.children) do
 					_p(4,'%s /* %s */,', childnode.id, childnode.name)
 				end
 				_p(3,');')
-				_p(3,'name = %s;', node.name)
 				
-				if node.path then
-					local p = node.path
-					if node.parent.path then
-						p = path.getrelative(node.parent.path, node.path)
+				if node.parent == tr.projects then
+					_p(3,'name = Products;')
+				else
+					_p(3,'name = %s;', node.name)
+					if node.path then
+						local p = node.path
+						if node.parent.path then
+							p = path.getrelative(node.parent.path, node.path)
+						end
+						_p(3,'path = %s;', p)
 					end
-					_p(3,'path = %s;', p)
 				end
 				
 				_p(3,'sourceTree = "<group>";')
 				_p(2,'};')
 			end
-			
 		}, true)
 				
 		_p('/* End PBXGroup section */')

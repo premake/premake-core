@@ -115,3 +115,51 @@
 /* End PBXFrameworksBuildPhase section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXGroup tests
+---------------------------------------------------------------------------
+
+	function suite.PBXGroup_ListsDependencies()
+		prepare()
+		xcode.PBXGroup(tr)
+--		test.print(io.endcapture())
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[Products] /* Products */,
+				[Projects] /* Projects */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[Products] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[MyProject:product] /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		[Projects] /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				[MyProject2.xcodeproj] /* MyProject2.xcodeproj */,
+			);
+			name = Projects;
+			sourceTree = "<group>";
+		};
+		[MyProject2.xcodeproj:prodgrp] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[libMyProject2-d.a] /* libMyProject2-d.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
