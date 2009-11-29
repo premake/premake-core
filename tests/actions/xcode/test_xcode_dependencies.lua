@@ -93,3 +93,25 @@
 /* End PBXFileReference section */
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- PBXFrameworksBuildPhase tests
+---------------------------------------------------------------------------
+
+	function suite.PBXFrameworksBuildPhase_ListsDependencies()
+		prepare()
+		xcode.PBXFrameworksBuildPhase(tr)
+		test.capture [[
+/* Begin PBXFrameworksBuildPhase section */
+		[MyProject:fxs] /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				[libMyProject2-d.a:build] /* libMyProject2-d.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+		]]
+	end

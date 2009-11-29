@@ -88,7 +88,7 @@
 			xcnode.targetproxyid  = xcode.newid(xcnode, "targprox")
 			
 			-- create a grandchild node for the dependency's link target
-			local cfg = premake.getconfig(dep, prj.solution.configurations[1])
+			local cfg = premake.getconfig(dep, prj.configurations[1])
 			node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
 			node.path = cfg.linktarget.fullpath
 		end

@@ -297,19 +297,28 @@
 
 	function xcode.PBXFrameworksBuildPhase(tr)
 		_p('/* Begin PBXFrameworksBuildPhase section */')
-		for _, node in ipairs(tr.products.children) do
-			_p(2,'%s /* Frameworks */ = {', node.fxstageid)
-			_p(3,'isa = PBXFrameworksBuildPhase;')
-			_p(3,'buildActionMask = 2147483647;')
-			_p(3,'files = (')
-			for _, link in ipairs(node.cfg.links) do
-				local fxnode = tr.frameworks.children[path.getname(link)]
-				_p(4,'%s /* %s in Frameworks */,', fxnode.buildid, fxnode.name)
+		_p(2,'%s /* Frameworks */ = {', tr.products.children[1].fxstageid)
+		_p(3,'isa = PBXFrameworksBuildPhase;')
+		_p(3,'buildActionMask = 2147483647;')
+		_p(3,'files = (')
+		
+		-- write out library dependencies
+		tree.traverse(tr.frameworks, {
+			onleaf = function(node)
+				_p(4,'%s /* %s in Frameworks */,', node.buildid, node.name)
 			end
-			_p(3,');')
-			_p(3,'runOnlyForDeploymentPostprocessing = 0;')
-			_p(2,'};')
-		end
+		})
+		
+		-- write out project dependencies
+		tree.traverse(tr.projects, {
+			onleaf = function(node)
+				_p(4,'%s /* %s in Frameworks */,', node.buildid, node.name)
+			end
+		})
+		
+		_p(3,');')
+		_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+		_p(2,'};')
 		_p('/* End PBXFrameworksBuildPhase section */')
 		_p('')
 	end
