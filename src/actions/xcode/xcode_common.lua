@@ -575,16 +575,7 @@
 			_p(4,'CONFIGURATION_BUILD_DIR = %s;', outdir)
 		end
 
-		if cfg.flags.Symbols then
-			_p(4,'COPY_PHASE_STRIP = NO;')
-		end
-
 		_p(4,'GCC_DYNAMIC_NO_PIC = NO;')
-
-		if cfg.flags.Symbols then
-			_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
-		end
-
 		_p(4,'GCC_MODEL_TUNING = G5;')
 
 		if tr.infoplist then
@@ -621,7 +612,16 @@
 		end
 		
 		_p(4,'CONFIGURATION_TEMP_DIR = "$(OBJROOT)";')
+		
+		if cfg.flags.Symbols then
+			_p(4,'COPY_PHASE_STRIP = NO;')
+		end
+		
 		_p(4,'GCC_C_LANGUAGE_STANDARD = gnu99;')
+		
+		if cfg.flags.Symbols and not cfg.flags.NoEditAndContinue then
+			_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
+		end
 		
 		if cfg.flags.Optimize or cfg.flags.OptimizeSize then
 			_p(4,'GCC_OPTIMIZATION_LEVEL = s;')
@@ -633,6 +633,10 @@
 		
 		xcode.printlist(cfg.defines, 'GCC_PREPROCESSOR_DEFINITIONS')
 
+		if cfg.flags.FatalWarnings then
+			_p(4,'GCC_TREAT_WARNINGS_AS_ERRORS = YES;')
+		end
+		
 		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
 
@@ -641,12 +645,26 @@
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
 		
+		local flags = { }
+		if cfg.flags.FloatFast then
+			table.insert(flags, "-ffast-math")
+		end
+		if cfg.flags.FloatStrict then
+			table.insert(flags, "-ffloat-store")
+		end
+		flags = table.join(flags, cfg.buildoptions)
+		
+		xcode.printlist(flags, 'OTHER_CFLAGS')
 		xcode.printlist(cfg.linkoptions, 'OTHER_LDFLAGS')
 		
 		_p(4,'PREBINDING = NO;')
 		
 		if targetdir ~= "." then
 			_p(4,'SYMROOT = "%s";', targetdir)
+		end
+		
+		if cfg.flags.ExtraWarnings then
+			_p(4,'WARNING_CFLAGS = "-Wall";')
 		end
 		
 		_p(3,'};')
