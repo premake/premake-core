@@ -619,8 +619,20 @@
 		
 		_p(4,'GCC_C_LANGUAGE_STANDARD = gnu99;')
 		
+		if cfg.flags.NoExceptions then
+			_p(4,'GCC_ENABLE_CPP_EXCEPTIONS = NO;')
+		end
+		
+		if cfg.flags.NoRTTI then
+			_p(4,'GCC_ENABLE_CPP_RTTI = NO;')
+		end
+		
 		if cfg.flags.Symbols and not cfg.flags.NoEditAndContinue then
 			_p(4,'GCC_ENABLE_FIX_AND_CONTINUE = YES;')
+		end
+		
+		if cfg.flags.NoExceptions then
+			_p(4,'GCC_ENABLE_OBJC_EXCEPTIONS = NO;')
 		end
 		
 		if cfg.flags.Optimize or cfg.flags.OptimizeSize then
@@ -629,6 +641,11 @@
 			_p(4,'GCC_OPTIMIZATION_LEVEL = 3;')
 		else
 			_p(4,'GCC_OPTIMIZATION_LEVEL = 0;')
+		end
+		
+		if cfg.pchheader and not cfg.flags.NoPCH then
+			_p(4,'GCC_PRECOMPILE_PREFIX_HEADER = YES;')
+			_p(4,'GCC_PREFIX_HEADER = "%s";', cfg.pchheader)
 		end
 		
 		xcode.printlist(cfg.defines, 'GCC_PREPROCESSOR_DEFINITIONS')
@@ -641,16 +658,21 @@
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
 
 		xcode.printlist(cfg.includedirs, 'HEADER_SEARCH_PATHS')
+		xcode.printlist(cfg.libdirs, 'LIBRARY_SEARCH_PATHS')
 		
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
 		_p(4,'ONLY_ACTIVE_ARCH = YES;')
 		
+		-- build list of "other" C/C++ flags
 		local flags = { }
 		if cfg.flags.FloatFast then
 			table.insert(flags, "-ffast-math")
 		end
 		if cfg.flags.FloatStrict then
 			table.insert(flags, "-ffloat-store")
+		end
+		if cfg.flags.NoFramePointer then
+			table.insert(flags, "-fomit-frame-pointer")
 		end
 		flags = table.join(flags, cfg.buildoptions)
 		

@@ -1058,6 +1058,109 @@
 	end
 
 
+	function suite.XCBuildConfigurationProject_OnNoExceptions()
+		flags { "NoExceptions" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnNoFramePointer()
+		flags { "NoFramePointer" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-fomit-frame-pointer",
+				);
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end	
+
+
+	function suite.XCBuildConfigurationProject_OnNoPCH()
+		pchheader "MyProject_Prefix.pch"
+		flags { "NoPCH" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end	
+
+
+	function suite.XCBuildConfigurationProject_OnNoRTTI()
+		flags { "NoRTTI" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
 	function suite.XCBuildConfigurationProject_OnSymbols()
 		flags { "Symbols" }
 		prepare()
@@ -1082,6 +1185,60 @@
 		};
 		]]
 	end
+
+
+	function suite.XCBuildConfigurationProject_OnLibDirs()
+		libdirs { "mylibs1", "mylibs2" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"mylibs1",
+					"mylibs2",
+				);
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end	
+
+
+	function suite.XCBuildConfigurationProject_OnPCH()
+		pchheader "MyProject_Prefix.pch"
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MyProject_Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end	
 	
 
 ---------------------------------------------------------------------------
