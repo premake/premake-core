@@ -61,7 +61,7 @@
 
 
 	function suite.PBXBuildFile_ListsFrameworks()
-		links { "Cocoa.framework" }
+		links { "Cocoa.framework", "ldap" }
 		prepare()
 		xcode.PBXBuildFile(tr)
 		test.capture [[
@@ -900,6 +900,32 @@
 		]]
 	end
 
+
+	function suite.XCBuildConfigurationProject_OnLinks()
+		links { "Cocoa.framework", "ldap" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lldap",
+				);
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		]]
+	end
 
 	function suite.XCBuildConfigurationProject_OnLinkOptions()
 		linkoptions { "link option 1", "link option 2" }

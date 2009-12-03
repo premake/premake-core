@@ -675,9 +675,19 @@
 			table.insert(flags, "-fomit-frame-pointer")
 		end
 		flags = table.join(flags, cfg.buildoptions)
-		
 		xcode.printlist(flags, 'OTHER_CFLAGS')
-		xcode.printlist(cfg.linkoptions, 'OTHER_LDFLAGS')
+
+		-- build list of "other" linked flags. All libraries that aren't frameworks
+		-- are listed here, so I don't have to try and figure out if they are ".a"
+		-- or ".dylib", which Xcode requires to list in the Frameworks section
+		flags = { }
+		for _, lib in ipairs(premake.getlinks(cfg, "system")) do
+			if not xcode.isframework(lib) then
+				table.insert(flags, "-l" .. lib)
+			end
+		end
+		flags = table.join(flags, cfg.linkoptions)
+		xcode.printlist(flags, 'OTHER_LDFLAGS')
 		
 		_p(4,'PREBINDING = NO;')
 		
