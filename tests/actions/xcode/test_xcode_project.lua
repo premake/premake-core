@@ -446,6 +446,40 @@
 	end
 
 
+	function suite.PBXNativeTarget_OnBuildCommands()
+		prebuildcommands { "prebuildcmd" }
+		prelinkcommands { "prelinkcmd" }
+		postbuildcommands { "postbuildcmd" }
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				9607AE1010C857E500CD1376 /* Prebuild */,
+				[MyProject:rez] /* Resources */,
+				[MyProject:src] /* Sources */,
+				9607AE3510C85E7E00CD1376 /* Prelink */,
+				[MyProject:fxs] /* Frameworks */,
+				9607AE3710C85E8F00CD1376 /* Postbuild */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productInstallPath = "$(HOME)/bin";
+			productName = MyProject;
+			productReference = [MyProject:product] /* MyProject */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXProject tests
 ---------------------------------------------------------------------------
@@ -508,6 +542,43 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+		]]
+	end
+
+
+---------------------------------------------------------------------------
+-- PBXShellScriptBuildPhase tests
+---------------------------------------------------------------------------
+
+	function suite.PBXShellScriptBuildPhase_OnNoScripts()
+		prepare()
+		xcode.PBXShellScriptBuildPhase(tr)
+		test.capture [[
+		]]
+	end
+
+
+	function suite.PBXShellScriptBuildPhase_OnPrebuildScripts()
+		prebuildcommands { 'ls src', 'cp "a" "b"' }
+		prepare()
+		xcode.PBXShellScriptBuildPhase(tr)
+		test.capture [[
+/* Begin PBXShellScriptBuildPhase section */
+		9607AE1010C857E500CD1376 /* Prebuild */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Prebuild;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ls src\ncp \"a\" \"b\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 		]]
 	end
 

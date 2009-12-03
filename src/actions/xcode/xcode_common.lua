@@ -408,9 +408,18 @@
 			_p(3,'isa = PBXNativeTarget;')
 			_p(3,'buildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', node.cfgsection, name)
 			_p(3,'buildPhases = (')
+			if #tr.project.prebuildcommands > 0 then
+				_p(4,'9607AE1010C857E500CD1376 /* Prebuild */,')
+			end
 			_p(4,'%s /* Resources */,', node.resstageid)
 			_p(4,'%s /* Sources */,', node.sourcesid)
+			if #tr.project.prelinkcommands > 0 then
+				_p(4,'9607AE3510C85E7E00CD1376 /* Prelink */,')
+			end
 			_p(4,'%s /* Frameworks */,', node.fxstageid)
+			if #tr.project.postbuildcommands > 0 then
+				_p(4,'9607AE3710C85E8F00CD1376 /* Postbuild */,')
+			end
 			_p(3,');')
 			_p(3,'buildRules = (')
 			_p(3,');')
@@ -518,7 +527,37 @@
 		_p('')
 	end
 
-
+	
+	local function WriteShellScript(id, name, commands)
+		if #commands > 0 then
+			_p(2,'%s /* %s */ = {', id, name)
+			_p(3,'isa = PBXShellScriptBuildPhase;')
+			_p(3,'buildActionMask = 2147483647;')
+			_p(3,'files = (')
+			_p(3,');')
+			_p(3,'inputPaths = (');
+			_p(3,');');
+			_p(3,'name = Prebuild;');
+			_p(3,'outputPaths = (');
+			_p(3,');');
+			_p(3,'runOnlyForDeploymentPostprocessing = 0;');
+			_p(3,'shellPath = /bin/sh;');
+			_p(3,'shellScript = "%s";', table.concat(commands, "\\n"):gsub('"', '\\"'))
+			_p(2,'};')
+		end
+	end
+	
+	function xcode.PBXShellScriptBuildPhase(tr)
+		if #tr.project.prebuildcommands > 0 or #tr.project.prelinkcommands > 0 or #tr.project.postbuildcommands > 0 then
+			_p('/* Begin PBXShellScriptBuildPhase section */')
+			WriteShellScript("9607AE1010C857E500CD1376", "Prebuild", tr.project.prebuildcommands)
+			WriteShellScript("9607AE3510C85E7E00CD1376", "Prelink", tr.project.prelinkcommands)
+			WriteShellScript("9607AE3710C85E8F00CD1376", "Postbuild", tr.project.postbuildcommands)
+			_p('/* End PBXShellScriptBuildPhase section */')
+		end
+	end
+	
+	
 	function xcode.PBXSourcesBuildPhase(tr)
 		_p('/* Begin PBXSourcesBuildPhase section */')
 		for _, target in ipairs(tr.products.children) do
