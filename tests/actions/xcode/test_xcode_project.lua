@@ -591,10 +591,9 @@
 -- XCBuildConfiguration_Target tests
 ---------------------------------------------------------------------------
 
-
 	function suite.XCBuildConfigurationTarget_OnConsoleApp()
 		prepare()
-		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
 		[MyProject:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -606,7 +605,7 @@
 				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -615,7 +614,7 @@
 	function suite.XCBuildConfigurationTarget_OnWindowedApp()
 		kind "WindowedApp"
 		prepare()
-		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
 		[MyProject.app:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -627,7 +626,7 @@
 				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = "$(HOME)/Applications";
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -636,7 +635,7 @@
 	function suite.XCBuildConfigurationTarget_OnStaticLib()
 		kind "StaticLib"
 		prepare()
-		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
 		[libMyProject.a:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -647,7 +646,7 @@
 				GCC_MODEL_TUNING = G5;
 				PRODUCT_NAME = "MyProject";
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -656,7 +655,7 @@
 	function suite.XCBuildConfigurationTarget_OnInfoPlist()
 		files { "MyProject-Info.plist" }
 		prepare()
-		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
 		[MyProject:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -669,7 +668,7 @@
 				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -678,7 +677,7 @@
 	function suite.XCBuildConfigurationTarget_OnSymbols()
 		flags { "Symbols" }
 		prepare()
-		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
 		[MyProject:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -689,7 +688,7 @@
 				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -698,7 +697,7 @@
 	function suite.XCBuildConfigurationTarget_OnTargetSuffix()
 		targetsuffix "-d"
 		prepare()
-		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
 		[MyProject-d:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -710,7 +709,49 @@
 				PRODUCT_NAME = "MyProject-d";
 				INSTALL_PATH = /usr/local/bin;
 			};
-			name = Debug;
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnSinglePlatform()
+		platforms { "Universal32" }
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = "MyProject";
+				INSTALL_PATH = /usr/local/bin;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnMultiplePlatforms()
+		platforms { "Universal32", "Universal64" }
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug 32-bit Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				PRODUCT_NAME = "MyProject";
+				INSTALL_PATH = /usr/local/bin;
+			};
+			name = "Debug 32-bit Universal";
 		};
 		]]
 	end
@@ -722,22 +763,22 @@
 
 	function suite.XCBuildConfigurationProject_OnConsoleApp()
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -746,22 +787,22 @@
 	function suite.XCBuildConfigurationProject_OnOptimize()
 		flags { "Optimize" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -770,22 +811,22 @@
 	function suite.XCBuildConfigurationProject_OnOptimizeSpeed()
 		flags { "OptimizeSpeed" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -794,12 +835,12 @@
 	function suite.XCBuildConfigurationProject_OnTargetDir()
 		targetdir "bin"
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -807,11 +848,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				SYMROOT = "bin";
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -820,12 +861,12 @@
 	function suite.XCBuildConfigurationProject_OnDefines()
 		defines { "_DEBUG", "DEBUG" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -836,10 +877,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -848,12 +889,12 @@
 	function suite.XCBuildConfigurationProject_OnIncludeDirs()
 		includedirs { "../include", "../libs" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -864,10 +905,10 @@
 					"../libs",
 				);
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -876,26 +917,26 @@
 	function suite.XCBuildConfigurationProject_OnBuildOptions()
 		buildoptions { "build option 1", "build option 2" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"build option 1",
 					"build option 2",
 				);
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -904,25 +945,25 @@
 	function suite.XCBuildConfigurationProject_OnLinks()
 		links { "Cocoa.framework", "ldap" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-lldap",
 				);
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -930,26 +971,26 @@
 	function suite.XCBuildConfigurationProject_OnLinkOptions()
 		linkoptions { "link option 1", "link option 2" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"link option 1",
 					"link option 2",
 				);
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -958,23 +999,23 @@
 	function suite.XCBuildConfigurationProject_OnExtraWarnings()
 		flags { "ExtraWarnings" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				WARNING_CFLAGS = "-Wall";
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -983,12 +1024,12 @@
 	function suite.XCBuildConfigurationProject_OnFatalWarnings()
 		flags { "FatalWarnings" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -996,10 +1037,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -1008,25 +1049,25 @@
 	function suite.XCBuildConfigurationProject_OnFloatFast()
 		flags { "FloatFast" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-ffast-math",
 				);
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -1035,25 +1076,25 @@
 	function suite.XCBuildConfigurationProject_OnFloatStrict()
 		flags { "FloatStrict" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-ffloat-store",
 				);
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end	
@@ -1062,12 +1103,12 @@
 	function suite.XCBuildConfigurationProject_OnNoEditAndContinue()
 		flags { "Symbols", "NoEditAndContinue" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1075,10 +1116,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -1087,12 +1128,12 @@
 	function suite.XCBuildConfigurationProject_OnNoExceptions()
 		flags { "NoExceptions" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1101,10 +1142,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -1113,25 +1154,25 @@
 	function suite.XCBuildConfigurationProject_OnNoFramePointer()
 		flags { "NoFramePointer" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 				);
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end	
@@ -1141,22 +1182,22 @@
 		pchheader "MyProject_Prefix.pch"
 		flags { "NoPCH" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end	
@@ -1165,12 +1206,12 @@
 	function suite.XCBuildConfigurationProject_OnNoRTTI()
 		flags { "NoRTTI" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -1178,10 +1219,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -1190,12 +1231,12 @@
 	function suite.XCBuildConfigurationProject_OnSymbols()
 		flags { "Symbols" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1204,10 +1245,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end
@@ -1216,12 +1257,12 @@
 	function suite.XCBuildConfigurationProject_OnLibDirs()
 		libdirs { "mylibs1", "mylibs2" }
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1232,10 +1273,10 @@
 					"mylibs2",
 				);
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end	
@@ -1244,12 +1285,12 @@
 	function suite.XCBuildConfigurationProject_OnPCH()
 		pchheader "MyProject_Prefix.pch"
 		prepare()
-		xcode.XCBuildConfiguration_Project(tr, premake.getconfig(tr.project, "Debug"))
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1258,20 +1299,187 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 			};
-			name = Debug;
+			name = "Debug";
 		};
 		]]
 	end	
-	
+
+
+	function suite.XCBuildConfigurationProject_OnUniversal()
+		platforms { "Universal" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Universal/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnUniversal32()
+		platforms { "Universal32" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Universal32/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnUniversal64()
+		platforms { "Universal64" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Universal64/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnNative()
+		platforms { "Native" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnX32()
+		platforms { "x32" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "i386";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/x32/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnX64()
+		platforms { "x64" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "x86_64";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/x64/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationProject_OnMultiplePlatforms()
+		platforms { "Universal32", "Universal64" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug 32-bit Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Universal32/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+			};
+			name = "Debug 32-bit Universal";
+		};
+		]]
+	end
+
 
 ---------------------------------------------------------------------------
 -- XCBuildConfigurationList tests
 ---------------------------------------------------------------------------
 
-	function suite.XCBuildConfigurationList_OnProject()
+	function suite.XCBuildConfigurationList_OnNoPlatforms()
 		prepare()
 		xcode.XCBuildConfigurationList(tr)
 		test.capture [[
@@ -1283,7 +1491,7 @@
 				[MyProject:Release] /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = "Debug";
 		};
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
@@ -1292,7 +1500,69 @@
 				[MyProject:Release(2)] /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = "Debug";
+		};
+/* End XCConfigurationList section */
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationList_OnSinglePlatforms()
+		platforms { "Universal32" }
+		prepare()
+		xcode.XCBuildConfigurationList(tr)
+		test.capture [[
+/* Begin XCConfigurationList section */
+		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug] /* Debug */,
+				[MyProject:Release] /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug";
+		};
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug(2)] /* Debug */,
+				[MyProject:Release(2)] /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug";
+		};
+/* End XCConfigurationList section */
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationList_OnMultiplePlatforms()
+		platforms { "Universal32", "Universal64" }
+		prepare()
+		xcode.XCBuildConfigurationList(tr)
+		test.capture [[
+/* Begin XCConfigurationList section */
+		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug] /* Debug 32-bit Universal */,
+				[MyProject:Debug(3)] /* Debug 64-bit Universal */,
+				[MyProject:Release] /* Release 32-bit Universal */,
+				[MyProject:Release(3)] /* Release 64-bit Universal */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug 32-bit Universal";
+		};
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug(2)] /* Debug 32-bit Universal */,
+				[MyProject:Debug(4)] /* Debug 64-bit Universal */,
+				[MyProject:Release(2)] /* Release 32-bit Universal */,
+				[MyProject:Release(4)] /* Release 64-bit Universal */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug 32-bit Universal";
 		};
 /* End XCConfigurationList section */
 		]]

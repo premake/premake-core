@@ -20,15 +20,18 @@
 	function xcode.buildprjtree(prj)
 		local tr = premake.project.buildsourcetree(prj)
 		
-		-- assign IDs for each build configuration
+		-- create a list of build configurations and assign IDs
 		tr.configs = {}
-		for _, cfgname in ipairs(prj.configurations) do
-			local cfg = { }
-			cfg.targetid = xcode.newid(prj.xcode.projectnode, cfgname)
-			cfg.projectid = xcode.newid(tr, cfgname)
-			tr.configs[cfgname] = cfg
+		for _, cfgname in ipairs(prj.solution.configurations) do
+			for _, platform in ipairs(prj.solution.xcode.platforms) do
+				local cfg = premake.getconfig(prj, cfgname, platform)
+				cfg.xcode = {}
+				cfg.xcode.targetid = xcode.newid(prj.xcode.projectnode, cfgname)
+				cfg.xcode.projectid = xcode.newid(tr, cfgname)
+				table.insert(tr.configs, cfg)
+			end
 		end
-
+		
 		-- convert localized resources from their filesystem layout (English.lproj/MainMenu.xib)
 		-- to Xcode's display layout (MainMenu.xib/English).
 		tree.traverse(tr, {

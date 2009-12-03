@@ -33,7 +33,26 @@
 		return categories[path.getextension(node.name)]
 	end
 
-	
+
+--
+-- Return the displayed name for a build configuration, taking into account the
+-- configuration and platform, i.e. "Debug 32-bit Universal".
+--
+-- @param cfg
+--    The configuration being identified.
+-- @returns
+--    A build configuration name.
+--
+
+	function xcode.getconfigname(cfg)
+		local name = cfg.name
+		if #cfg.project.solution.xcode.platforms > 1 then
+			name = name .. " " .. premake.action.current().valid_platforms[cfg.platform]
+		end
+		return name
+	end
+
+
 --
 -- Return the Xcode type for a given file, based on the file extension.
 --
@@ -160,9 +179,13 @@
 --
 
 	function xcode.preparesolution(sln)
+		-- create and cache a list of supported platforms
+		sln.xcode = { }
+		sln.xcode.platforms = premake.filterplatforms(sln, premake.action.current().valid_platforms, "Universal")
+		
 		for prj in premake.solution.eachproject(sln) do
 			-- need a configuration to get the target information
-			local cfg = premake.getconfig(prj, prj.configurations[1])
+			local cfg = premake.getconfig(prj, prj.configurations[1], sln.xcode.platforms[1])
 
 			-- build the product tree node
 			local node = premake.tree.new(path.getname(cfg.buildtarget.bundlepath))
@@ -561,7 +584,9 @@
 
 
 	function xcode.XCBuildConfiguration_Target(tr, target, cfg)
-		_p(2,'%s /* %s */ = {', tr.configs[cfg.name].targetid, cfg.name)
+		local cfgname = xcode.getconfigname(cfg)
+		
+		_p(2,'%s /* %s */ = {', cfg.xcode.targetid, cfgname)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		_p(4,'ALWAYS_SEARCH_USER_PATHS = NO;')
@@ -595,16 +620,27 @@
 		end
 		
 		_p(3,'};')
-		_p(3,'name = %s;', cfg.name)
+		_p(3,'name = "%s";', cfgname)
 		_p(2,'};')
 	end
 	
 	
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
-		_p(2,'%s /* %s */ = {', tr.configs[cfg.name].projectid, cfg.name)
+		local cfgname = xcode.getconfigname(cfg)
+
+		_p(2,'%s /* %s */ = {', cfg.xcode.projectid, cfgname)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
-		_p(4,'ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";')
+		
+		local archs = {
+			Native = "$(NATIVE_ARCH_ACTUAL)",
+			x32    = "i386",
+			x64    = "x86_64",
+			Universal32 = "$(ARCHS_STANDARD_32_BIT)",
+			Universal64 = "$(ARCHS_STANDARD_64_BIT)",
+			Universal = "$(ARCHS_STANDARD_32_64_BIT)",
+		}
+		_p(4,'ARCHS = "%s";', archs[cfg.platform])
 		
 		local targetdir = path.getdirectory(cfg.buildtarget.bundlepath)
 		if targetdir ~= "." then
@@ -661,21 +697,22 @@
 		xcode.printlist(cfg.libdirs, 'LIBRARY_SEARCH_PATHS')
 		
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
-		_p(4,'ONLY_ACTIVE_ARCH = YES;')
+		_p(4,'ONLY_ACTIVE_ARCH = NO;')
 		
 		-- build list of "other" C/C++ flags
+		local checks = {
+			["-ffast-math"]          = cfg.flags.FloatFast,
+			["-ffloat-store"]        = cfg.flags.FloatStrict,
+			["-fomit-frame-pointer"] = cfg.flags.NoFramePointer,
+		}
+			
 		local flags = { }
-		if cfg.flags.FloatFast then
-			table.insert(flags, "-ffast-math")
+		for flag, check in pairs(checks) do
+			if check then
+				table.insert(flags, flag)
+			end
 		end
-		if cfg.flags.FloatStrict then
-			table.insert(flags, "-ffloat-store")
-		end
-		if cfg.flags.NoFramePointer then
-			table.insert(flags, "-fomit-frame-pointer")
-		end
-		flags = table.join(flags, cfg.buildoptions)
-		xcode.printlist(flags, 'OTHER_CFLAGS')
+		xcode.printlist(table.join(flags, cfg.buildoptions), 'OTHER_CFLAGS')
 
 		-- build list of "other" linked flags. All libraries that aren't frameworks
 		-- are listed here, so I don't have to try and figure out if they are ".a"
@@ -700,7 +737,7 @@
 		end
 		
 		_p(3,'};')
-		_p(3,'name = %s;', cfg.name)
+		_p(3,'name = "%s";', cfgname)
 		_p(2,'};')
 	end
 
@@ -708,11 +745,11 @@
 	function xcode.XCBuildConfiguration(tr)
 		_p('/* Begin XCBuildConfiguration section */')
 		for _, target in ipairs(tr.products.children) do
-			for cfg in premake.eachconfig(tr.project) do
+			for _, cfg in ipairs(tr.configs) do
 				xcode.XCBuildConfiguration_Target(tr, target, cfg)
 			end
 		end
-		for cfg in premake.eachconfig(tr.project) do
+		for _, cfg in ipairs(tr.configs) do
 			xcode.XCBuildConfiguration_Project(tr, cfg)
 		end
 		_p('/* End XCBuildConfiguration section */')
@@ -728,23 +765,23 @@
 			_p(2,'%s /* Build configuration list for PBXNativeTarget "%s" */ = {', target.cfgsection, target.name)
 			_p(3,'isa = XCConfigurationList;')
 			_p(3,'buildConfigurations = (')
-			for _, cfgname in ipairs(sln.configurations) do
-				_p(4,'%s /* %s */,', tr.configs[cfgname].targetid, cfgname)
+			for _, cfg in ipairs(tr.configs) do
+				_p(4,'%s /* %s */,', cfg.xcode.targetid, xcode.getconfigname(cfg))
 			end
 			_p(3,');')
 			_p(3,'defaultConfigurationIsVisible = 0;')
-			_p(3,'defaultConfigurationName = %s;', sln.configurations[1])
+			_p(3,'defaultConfigurationName = "%s";', xcode.getconfigname(tr.configs[1]))
 			_p(2,'};')
 		end
 		_p(2,'1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */ = {', tr.name)
 		_p(3,'isa = XCConfigurationList;')
 		_p(3,'buildConfigurations = (')
-		for _, cfgname in ipairs(sln.configurations) do
-			_p(4,'%s /* %s */,', tr.configs[cfgname].projectid, cfgname)
+		for _, cfg in ipairs(tr.configs) do
+			_p(4,'%s /* %s */,', cfg.xcode.projectid, xcode.getconfigname(cfg))
 		end
 		_p(3,');')
 		_p(3,'defaultConfigurationIsVisible = 0;')
-		_p(3,'defaultConfigurationName = %s;', sln.configurations[1])
+		_p(3,'defaultConfigurationName = "%s";', xcode.getconfigname(tr.configs[1]))
 		_p(2,'};')
 		_p('/* End XCConfigurationList section */')
 		_p('')

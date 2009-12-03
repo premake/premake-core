@@ -101,7 +101,7 @@
 --  { x32 = "Win32", x64 = "x64" }
 --
 -- Only platforms that are listed in both the solution and the map will be
--- included in the results. An option default platform may also be specified;
+-- included in the results. An optional default platform may also be specified;
 -- if the result set would otherwise be empty this platform will be used.
 --
 

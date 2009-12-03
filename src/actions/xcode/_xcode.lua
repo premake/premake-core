@@ -21,6 +21,17 @@
 			cc     = { "gcc" },
 		},
 
+		valid_platforms = { 
+			Native = "Native", 
+			x32 = "Native 32-bit", 
+			x64 = "Native 64-bit", 
+			Universal32 = "32-bit Universal", 
+			Universal64 = "64-bit Universal", 
+			Universal = "Universal",
+		},
+		
+		default_platform = "Universal",
+		
 		onsolution = function(sln)
 			-- Assign IDs needed for inter-project dependencies
 			premake.xcode.preparesolution(sln)

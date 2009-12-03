@@ -19,17 +19,6 @@
 	xcode.used_ids = {}
 	
 	xcode.newid = function(node, usage)
-		-- assign special usages depending on where this node lives in the tree,
-		-- to help distinguish nodes that are likely to have the same name
---		if not usage and node.parent then
---			local grandparent = node.parent.parent
---			if grandparent then
---				if node.parent == grandparent.products then
---					usage = "product"
---				end
---			end
---		end
-		
 		local name = node.name
 		if usage then
 			name = name .. ":" .. usage
