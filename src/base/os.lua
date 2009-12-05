@@ -1,8 +1,18 @@
 --
 -- os.lua
 -- Additions to the OS namespace.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
+
+
+--
+-- Same as os.execute(), but accepts string formatting arguments.
+--
+
+	function os.executef(cmd, ...)
+		cmd = string.format(cmd, unpack(arg))
+		return os.execute(cmd)
+	end
 
 
 --
