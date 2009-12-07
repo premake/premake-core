@@ -179,35 +179,41 @@
 -- @param basis
 --    "Root" level settings, from the solution, which act as a starting point for
 --    all of the collapsed settings built during this call.
+-- @param terms
+--    A list of keywords to filter the configuration blocks; only those that
+--    match will be included in the destination.
 -- @param cfgname
 --    The name of the configuration being collapsed. May be nil.
 -- @param pltname
 --    The name of the platform being collapsed. May be nil.
 --
 
-	local function merge(dest, obj, basis, cfgname, pltname)
-		pltname = pltname or "Native"
-		
+	local function merge(dest, obj, basis, terms, cfgname, pltname)
+		-- the configuration key is the merged configuration and platform names
 		local key = cfgname or ""
+		pltname = pltname or "Native"
 		if pltname ~= "Native" then
 			key = key .. pltname
 		end
 		
+		-- add the configuration and platform to the block filter terms
+		terms.config = (cfgname or ""):lower()
+		terms.platform = pltname:lower()
+		
+		-- build the configuration base by merging the solution and project level settings
 		local cfg = {}
 		mergeobject(cfg, basis[key])
 		adjustpaths(obj.location, cfg)
 		mergeobject(cfg, obj)
-
-		local terms = premake.getactiveterms()
-		terms.config = (cfgname or ""):lower()
-		terms.platform = pltname:lower()
 		
+		-- now add in any blocks that match the filter terms
 		for _, blk in ipairs(obj.blocks) do
 			if (premake.iskeywordsmatch(blk.keywords, terms)) then
 				mergeobject(cfg, blk)
 			end
 		end
 		
+		-- package it all up and add it to the result set
 		cfg.name      = cfgname
 		cfg.platform  = pltname
 		cfg.terms     = terms
@@ -237,12 +243,23 @@
 		-- find the solution, which contains the configuration and platform lists
 		local sln = obj.solution or obj
 
-		merge(result, obj, basis)
+		-- build a set of configuration filter terms; only those configuration blocks 
+		-- with a matching set of keywords will be included in the merged results
+		local terms = premake.getactiveterms()
+
+		-- build a project-level configuration. If a target kind is set at this level
+		-- then include it into the filter terms
+		merge(result, obj, basis, terms)
+		if result[""].kind then
+			terms.kind = result[""].kind:lower()
+		end
+
+		-- now build configurations for each build config/platform pair
 		for _, cfgname in ipairs(sln.configurations) do
-			merge(result, obj, basis, cfgname, "Native")
+			merge(result, obj, basis, terms, cfgname, "Native")
 			for _, pltname in ipairs(sln.platforms or {}) do
 				if pltname ~= "Native" then
-					merge(result, obj, basis, cfgname, pltname)
+					merge(result, obj, basis, terms, cfgname, pltname)
 				end
 			end
 		end
