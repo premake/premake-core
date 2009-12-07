@@ -7,6 +7,8 @@
 - Added project kind to list of configuration filters
 - Clean action now removes MonoDevelop .pidb files correctly
 - Added os.executef()
+- Bug 2909463: Fix Xcode handling of Obj-C++ .mm files
+
 
 -------
  4.1.2

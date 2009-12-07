@@ -35,7 +35,7 @@
 -- PBXBuildFile tests
 ---------------------------------------------------------------------------
 
-	function suite.PBXBuildFile_ListsBuildableSources()
+	function suite.PBXBuildFile_ListsCppSources()
 		files { "source.h", "source.c", "source.cpp", "Info.plist" }
 		prepare()
 		xcode.PBXBuildFile(tr)
@@ -47,6 +47,17 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ListsObjCSources()
+		files { "source.h", "source.m", "source.mm", "Info.plist" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		[source.m:build] /* source.m in Sources */ = {isa = PBXBuildFile; fileRef = [source.m] /* source.m */; };
+		[source.mm:build] /* source.mm in Sources */ = {isa = PBXBuildFile; fileRef = [source.mm] /* source.mm */; };
+/* End PBXBuildFile section */
+		]]
+	end
 
 	function suite.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
 		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
