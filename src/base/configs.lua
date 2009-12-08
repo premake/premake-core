@@ -158,7 +158,15 @@
 		for field, value in pairs(src) do
 			if not nocopy[field] then
 				if type(value) == "table" then
-					dest[field] = table.join(dest[field] or {}, value)
+					-- merge two lists, removing any duplicates along the way
+					local tbl = dest[field] or { }
+					for _, item in ipairs(value) do
+						if not tbl[item] then
+							table.insert(tbl, item)
+							tbl[item] = item
+						end
+					end
+					dest[field] = tbl
 				else
 					dest[field] = value
 				end
