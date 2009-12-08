@@ -8,6 +8,7 @@
 - Clean action now removes MonoDevelop .pidb files correctly
 - Added os.executef()
 - Bug 2909463: Fix Xcode handling of Obj-C++ .mm files
+- Bug 2903430: Using relative instead of absolute paths with $() macro
 
 
 -------

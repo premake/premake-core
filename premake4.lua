@@ -34,7 +34,7 @@
 
 		files 
 		{
-			"src/**.h", "src/**.c", "**.lua",
+			"*.txt", "**.lua", "src/**.h", "src/**.c",
 		}
 
 		excludes

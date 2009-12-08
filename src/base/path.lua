@@ -129,6 +129,12 @@
 			return dst
 		end
 
+		-- dollar macro? Can't tell what the real path is; use absolute
+		-- This enables paths like $(SDK_ROOT)/include to work correctly.
+		if dst:startswith("$") then
+			return dst
+		end
+		
 		src = src .. "/"
 		dst = dst .. "/"
 				

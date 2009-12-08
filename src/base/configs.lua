@@ -133,7 +133,7 @@
 				if field.kind == "path" then
 					obj[name] = path.getrelative(location, value) 
 				elseif field.kind == "dirlist" or field.kind == "filelist" then
-					for i, p in ipairs(value) do 
+					for i, p in ipairs(value) do
 						value[i] = path.getrelative(location, p) 
 					end
 				end
