@@ -3,28 +3,57 @@
 -- work is needed to get everything packaged up.
 --
 
+
 function dorelease()
 	local z
 	local svnroot = "https://premake.svn.sourceforge.net/svnroot/premake"
+
+-- 
+-- Helper function: runs a command (formatted, with optional arguments) and
+-- suppresses any output. Works on both Windows and POSIX. Might be a good
+-- candidate for a core function.
+--
+
+	local function exec(cmd, ...)
+		cmd = string.format(cmd, unpack(arg))
+		local z = os.execute(cmd .. " > output.log 2> error.log")
+		os.remove("output.log")
+		os.remove("error.log")
+		return z
+	end
+
+
 	
 --
 -- Make sure a version was specified
 --
 
-	if #_ARGS == 0 then
-		error("** You must specify a version number", 0)
+	if #_ARGS ~= 2 then
+		error("** Usage: release [version] [source | binary]", 0)
 	end
 	
+	local version = _ARGS[1]
+	local kind = _ARGS[2]
 
+
+--
+-- Create a directory to hold the release
+--
+
+	local workdir = "premake-" .. version
+	os.mkdir("release/" .. workdir)
+	os.chdir("release/" .. workdir)
+
+	
 --
 -- Look for required utilities
 --
 
 	local required = { "svn", "zip", "tar", "make", "gcc" }
-	for _, cmd in ipairs(required) do
-		z = os.executef("%s --version &> release.log", cmd)
+	for _, value in ipairs(required) do
+		z = exec("%s --version", value)
 		if z ~= 0 then
-			error("** '" .. cmd .. "' not found", 0)
+			error("** '" .. value .. "' not found", 0)
 		end
 	end
 
@@ -45,23 +74,16 @@ function dorelease()
 
 
 --
--- Create a directory to hold releases
---
-
-	os.mkdir("release")
-	os.chdir("release")
-	
-	
---
 -- Look for a release branch in Subversion; create one if necessary
 --
 
 	print("Checking for release branch...")
-	local branch = string.format("%s/branches/%s", svnroot, _ARGS[1])
-	z = os.executef("svn ls %s &> release.log", branch)
+
+	local branch = string.format("%s/branches/%s", svnroot, version)
+	z = exec("svn ls %s", branch)
 	if z ~= 0 then
 		print("Creating release branch...")
-		z = os.executef('svn cp %s/trunk %s -m "Branched for %s release" > release.log', svnroot, branch, _ARGS[1])
+		z = exec('svn cp %s/trunk %s -m "Branched for %s release"', svnroot, branch, version)
 		if z ~= 0 then
 			error("** Failed to create release branch.", 0)
 		end
@@ -73,12 +95,11 @@ function dorelease()
 --
 
 	print("Checking out release branch...")
-	local branchdir = "premake-" .. _ARGS[1]
-	z = os.executef("svn co %s %s &> release.log", branch, branchdir)
+
+	z = exec("svn export --force %s .", branch)
 	if z ~= 0 then
 		error("** Failed to checkout release branch", 0)
 	end
-	os.chdir(branchdir)
 
 
 --
@@ -86,9 +107,10 @@ function dorelease()
 --
 
 	print("Updating version number...")
+
     io.input("src/host/premake.c")
     local text = io.read("*a")
-	text = text:gsub("SVN", _ARGS[1])
+	text = text:gsub("SVN", version)
     io.output("src/host/premake.c")
     io.write(text)
     io.close()
@@ -99,97 +121,81 @@ function dorelease()
 --
 
 	print("Updating embedded scripts...")
-	z = os.executef("premake4 embed &> ../release.log")
+
+	z = exec("premake4 embed")
 	if z ~= 0 then
 		error("** Failed to update the embedded scripts", 0)
 	end
 
 
 --
--- If anything changed in those last two steps, check it in to the branch
+-- Generate source packaging
 --
 
-	print("Committing changes...")
-	z = os.executef('svn commit -m "Updated version and scripts" &> ../release.log')
-	if z ~= 0 then
-		error("** Failed to commit changes", 0)
-	end
-
-
---
--- Right now I only generate the source packaging under Mac OS X
---
-
-	if os.is("macosx") then
+	if kind == "source" then
 
 	--
-	-- Remove .svn, samples, and packages directories
+	-- Remove extra directories
 	--
 
 		print("Cleaning up the source tree...")
-		z = os.executef("rm -rf `find . -name .svn`")
-		if z ~= 0 then
-			error("** Failed to remove .svn directories", 0)
-		end
 
-		z = os.executef("rm -rf samples")
-		if z ~= 0 then
-			error("** Failed to remove samples directories", 0)
-		end	
+		os.rmdir("samples")
+		os.rmdir("packages")
 
-		z = os.executef("rm -rf packages")
-		if z ~= 0 then
-			error("** Failed to remove samples directories", 0)
-		end	
 	
 	--
 	-- Generate project files to the build directory
 	--
 
 		print("Generating project files...")
-		os.executef("premake4 /to=build/vs2005 vs2005 &> ../release.log")
-		os.executef("premake4 /to=build/vs2008 vs2008 &> ../release.log")
-		os.executef("premake4 /to=build/gmake.windows /os=windows gmake &> ../release.log")
-		os.executef("premake4 /to=build/gmake.unix /os=linux gmake &> ../release.log")
-		os.executef("premake4 /to=build/gmake.macosx /os=macosx /platform=universal32 gmake &> ../release.log")
-		os.executef("premake4 /to=build/codeblocks.windows /os=windows codeblocks &> ../release.log")
-		os.executef("premake4 /to=build/codeblocks.unix /os=linux codeblocks &> ../release.log")
-		os.executef("premake4 /to=build/codeblocks.macosx /os=macosx /platform=universal32 codeblocks &> ../release.log")
-		os.executef("premake4 /to=build/codelite.windows /os=windows codelite &> ../release.log")
-		os.executef("premake4 /to=build/codelite.unix /os=linux codelite &> ../release.log")
-		os.executef("premake4 /to=build/codelite.macosx /os=macosx /platform=universal32 codelite &> ../release.log")
-		os.executef("premake4 /to=build/xcode3 /platform=universal32 xcode3 &> ../release.log")
+		exec("premake4 /to=build/vs2005 vs2005")
+		exec("premake4 /to=build/vs2008 vs2008")
+		exec("premake4 /to=build/gmake.windows /os=windows gmake")
+		exec("premake4 /to=build/gmake.unix /os=linux gmake")
+		exec("premake4 /to=build/gmake.macosx /os=macosx /platform=universal32 gmake")
+		exec("premake4 /to=build/codeblocks.windows /os=windows codeblocks")
+		exec("premake4 /to=build/codeblocks.unix /os=linux codeblocks")
+		exec("premake4 /to=build/codeblocks.macosx /os=macosx /platform=universal32 codeblocks")
+		exec("premake4 /to=build/codelite.windows /os=windows codelite")
+		exec("premake4 /to=build/codelite.unix /os=linux codelite")
+		exec("premake4 /to=build/codelite.macosx /os=macosx /platform=universal32 codelite")
+		exec("premake4 /to=build/xcode3 /platform=universal32 xcode3")
+
 
 	--
 	-- Create source package
 	--
 
 		print("Creating source code package...")
+
 		os.chdir("..")
-		os.executef("zip -r9 %s-src.zip %s/* &> ../release.log", branchdir, branchdir)
-		os.chdir(branchdir)
-
-	end
-
+		exec("zip -r9 %s-src.zip %s/*", workdir, workdir)
 
 --
 -- Create a binary package for this platform. This step requires a working
 -- GNU/Make/GCC environment. I use MinGW on Windows.
 --
 
-	print("Building platform binary release...")
-	local fname = string.format("%s-%s", branchdir, os.get())
-
-	os.chdir("build/gmake." .. os.get())
-	os.executef("make config=%s &> ../../../release.log", iif(os.is("macosx"), "releaseuniv32", "release"))
-
-	os.chdir("../../bin/release")
-	if os.is("windows") then
-		os.executef("zip -9 %s.zip premake4.exe &> ../../../release.log", fname)
-		os.executef("move %s.zip ../../.. &> ../../../release.log", fname)
 	else
-		os.executef("tar czvf %s.tar.gz premake4 &> ../../../release.log", fname)
-		os.executef("mv %s.tar.gz ../../.. &> ../../../release.log", fname)
+	
+		print("Building platform binary release...")
+
+		exec("premake4 /platform=universal32 gmake")
+		exec("make config=%s", iif(os.is("macosx"), "releaseuniv32", "release"))
+
+		local fname
+		os.chdir("bin/release")
+		if os.is("windows") then
+			fname = string.format("%s-windows.zip", workdir)
+			exec("zip -9 %s premake4.exe", fname)
+		else
+			fname = string.format("%s-%s.tar.gz", os.get())
+			exec("tar czvf %s premake4", fname)
+		end
+
+		os.copyfile(fname, "../../../" .. fname)
+		os.chdir("../../..")
 	end
 
 
@@ -197,14 +203,11 @@ function dorelease()
 -- Upload files to SourceForge
 --
 
-	os.chdir("../..")
+
 
 --
 -- Clean up
 --
-
-	os.chdir("..")
-	os.remove("release.log")
 	
 	
 --
