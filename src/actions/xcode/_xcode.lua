@@ -35,19 +35,10 @@
 		onsolution = function(sln)
 			-- Assign IDs needed for inter-project dependencies
 			premake.xcode.preparesolution(sln)
-			
-			-- Must ensure a unique name; project may have same name as solution, and they
-			-- share the same file extension. How to handle?
-			-- premake.generate(sln, "%%.xcodeproj/project.pbxproj", premake.xcode.solution)
 		end,
 		
 		onproject = function(prj)
 			premake.generate(prj, "%%.xcodeproj/project.pbxproj", premake.xcode.project)
-		end,
-		
-		oncleansolution = function(sln)
-			-- Use unique name to clean solution (and project)
-			-- premake.clean.directory(sln, "%%.xcodeproj")
 		end,
 		
 		oncleanproject = function(prj)

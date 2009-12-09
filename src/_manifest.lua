@@ -62,7 +62,6 @@
 		-- Xcode action
 		"actions/xcode/_xcode.lua",
 		"actions/xcode/xcode_common.lua",
-		"actions/xcode/xcode_solution.lua",
 		"actions/xcode/xcode_project.lua",
 		
 		-- Clean action
