@@ -11,6 +11,7 @@
 - Bug 2903430: Using relative instead of absolute paths with $() macro
 - Bug 2910691: Duplicate build options
 - Bug 2910639: Nil reference on dylib project dependency
+- Bug 2872066: Two test failures in 4.1.2
 
 
 -------

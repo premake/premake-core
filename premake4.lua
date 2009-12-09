@@ -61,7 +61,7 @@
 			defines     { "_CRT_SECURE_NO_WARNINGS" }
 
 		configuration "linux"
-			defines     { "LUA_USE_LINUX" }
+			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m", "dl" } 
 			
 		configuration "macosx"

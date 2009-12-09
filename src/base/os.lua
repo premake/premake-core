@@ -33,13 +33,13 @@
 			else
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
-		
-				local f = io.open("/etc/ld.so.conf", "r")
-				if f then
-					for line in f:lines() do
+	
+				io.input("/etc/ld.so.conf")
+				if io.input() then
+					for line in io.lines() do
 						path = path .. ":" .. line
 					end
-					f:close()
+					io.input():close()
 				end
 			end
 			
