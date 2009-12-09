@@ -24,6 +24,7 @@
 			[".cc"] = "Sources",
 			[".cpp"] = "Sources",
 			[".cxx"] = "Sources",
+			[".dylib"] = "Frameworks",
 			[".framework"] = "Frameworks",
 			[".m"] = "Sources",
 			[".mm"] = "Sources",

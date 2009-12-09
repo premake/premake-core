@@ -40,12 +40,23 @@
 -- PBXBuildFile tests
 ---------------------------------------------------------------------------
 
-	function suite.PBXBuildFile_ListsDependencyTargets()
+	function suite.PBXBuildFile_ListsDependencyTargets_OnStaticLib()
 		prepare()
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
 		[libMyProject2-d.a:build] /* libMyProject2-d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = [libMyProject2-d.a] /* libMyProject2-d.a */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+	function suite.PBXBuildFile_ListsDependencyTargets_OnSharedLib()
+		kind "SharedLib"
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		[libMyProject2-d.dylib:build] /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = [libMyProject2-d.dylib] /* libMyProject2-d.dylib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -112,7 +123,7 @@
 -- PBXFrameworksBuildPhase tests
 ---------------------------------------------------------------------------
 
-	function suite.PBXFrameworksBuildPhase_ListsDependencies()
+	function suite.PBXFrameworksBuildPhase_ListsDependencies_OnStaticLib()
 		prepare()
 		xcode.PBXFrameworksBuildPhase(tr)
 		test.capture [[
@@ -129,6 +140,23 @@
 		]]
 	end
 
+	function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLib()
+		kind "SharedLib"
+		prepare()
+		xcode.PBXFrameworksBuildPhase(tr)
+		test.capture [[
+/* Begin PBXFrameworksBuildPhase section */
+		[MyProject:fxs] /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				[libMyProject2-d.dylib:build] /* libMyProject2-d.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+		]]
+	end
 
 ---------------------------------------------------------------------------
 -- PBXGroup tests
