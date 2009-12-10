@@ -190,7 +190,7 @@ function dorelease()
 			fname = string.format("%s-windows.zip", workdir)
 			exec("zip -9 %s premake4.exe", fname)
 		else
-			fname = string.format("%s-%s.tar.gz", os.get())
+			fname = string.format("%s-%s.tar.gz", workdir, os.get())
 			exec("tar czvf %s premake4", fname)
 		end
 
