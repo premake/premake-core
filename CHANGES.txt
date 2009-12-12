@@ -12,6 +12,7 @@
 - Bug 2910691: Duplicate build options
 - Bug 2910639: Nil reference on dylib project dependency
 - Bug 2872066: Two test failures in 4.1.2
+- Bug 2912756: dylibs missing lib prefix
 
 
 -------

@@ -404,8 +404,7 @@
 	function xcode.PBXNativeTarget(tr)
 		_p('/* Begin PBXNativeTarget section */')
 		for _, node in ipairs(tr.products.children) do
-			-- trim ".app" from WindowedApps
-			local name = iif(node.cfg.kind == "WindowedApp", string.sub(node.name, 1, -5), node.name)
+			local name = tr.project.name
 			
 			_p(2,'%s /* %s */ = {', node.targetid, name)
 			_p(3,'isa = PBXNativeTarget;')
@@ -637,6 +636,10 @@
 			_p(4,'DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";')
 		end
 		
+		if cfg.kind == "SharedLib" then
+			_p(4,'EXECUTABLE_PREFIX = lib;')
+		end
+		
 		local outdir = path.getdirectory(cfg.buildtarget.bundlepath)
 		if outdir ~= "." then
 			_p(4,'CONFIGURATION_BUILD_DIR = %s;', outdir)
@@ -649,18 +652,15 @@
 			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.path)
 		end
 
-		_p(4,'PRODUCT_NAME = "%s";', cfg.buildtarget.basename .. cfg.buildtarget.suffix)
+		installpaths = {
+			ConsoleApp = '/usr/local/bin',
+			WindowedApp = '"$(HOME)/Applications"',
+			SharedLib = '/usr/local/lib',
+			StaticLib = '/usr/local/lib',
+		}
+		_p(4,'INSTALL_PATH = %s;', installpaths[cfg.kind])
 
-		local p
-		if cfg.kind == "ConsoleApp" then
-			p = '/usr/local/bin'
-		elseif cfg.kind == "WindowedApp" then
-			p = '"$(HOME)/Applications"'
-		end
-		if p then
-			_p(4,'INSTALL_PATH = %s;', p)
-		end
-		
+		_p(4,'PRODUCT_NAME = "%s";', cfg.buildtarget.basename .. cfg.buildtarget.suffix)
 		_p(3,'};')
 		_p(3,'name = "%s";', cfgname)
 		_p(2,'};')

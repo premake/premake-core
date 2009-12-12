@@ -457,6 +457,34 @@
 	end
 
 
+	function suite.PBXNativeTarget_OnSharedLib()
+		kind "SharedLib"
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[libMyProject.dylib:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [libMyProject.dylib:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				[libMyProject.dylib:rez] /* Resources */,
+				[libMyProject.dylib:src] /* Sources */,
+				[libMyProject.dylib:fxs] /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productName = MyProject;
+			productReference = [libMyProject.dylib:product] /* libMyProject.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end
+
+
 	function suite.PBXNativeTarget_OnBuildCommands()
 		prebuildcommands { "prebuildcmd" }
 		prelinkcommands { "prelinkcmd" }
@@ -684,8 +712,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug";
 		};
@@ -705,8 +733,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug";
 		};
@@ -726,6 +754,29 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = "MyProject";
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnSharedLib()
+		kind "SharedLib"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[libMyProject.dylib:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug";
@@ -747,8 +798,8 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "MyProject-Info.plist";
-				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug";
 		};
@@ -767,8 +818,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug";
 		};
@@ -788,8 +839,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = "MyProject-d";
 				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = "MyProject-d";
 			};
 			name = "Debug";
 		};
@@ -809,8 +860,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug";
 		};
@@ -830,8 +881,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				PRODUCT_NAME = "MyProject";
 				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = "MyProject";
 			};
 			name = "Debug 32-bit Universal";
 		};
