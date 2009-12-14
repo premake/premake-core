@@ -528,33 +528,54 @@
 		_p('/* End PBXResourcesBuildPhase section */')
 		_p('')
 	end
-
-	
-	local function WriteShellScript(id, name, commands)
-		if #commands > 0 then
-			_p(2,'%s /* %s */ = {', id, name)
-			_p(3,'isa = PBXShellScriptBuildPhase;')
-			_p(3,'buildActionMask = 2147483647;')
-			_p(3,'files = (')
-			_p(3,');')
-			_p(3,'inputPaths = (');
-			_p(3,');');
-			_p(3,'name = Prebuild;');
-			_p(3,'outputPaths = (');
-			_p(3,');');
-			_p(3,'runOnlyForDeploymentPostprocessing = 0;');
-			_p(3,'shellPath = /bin/sh;');
-			_p(3,'shellScript = "%s";', table.concat(commands, "\\n"):gsub('"', '\\"'))
-			_p(2,'};')
-		end
-	end
 	
 	function xcode.PBXShellScriptBuildPhase(tr)
-		if #tr.project.prebuildcommands > 0 or #tr.project.prelinkcommands > 0 or #tr.project.postbuildcommands > 0 then
-			_p('/* Begin PBXShellScriptBuildPhase section */')
-			WriteShellScript("9607AE1010C857E500CD1376", "Prebuild", tr.project.prebuildcommands)
-			WriteShellScript("9607AE3510C85E7E00CD1376", "Prelink", tr.project.prelinkcommands)
-			WriteShellScript("9607AE3710C85E8F00CD1376", "Postbuild", tr.project.postbuildcommands)
+		local wrapperWritten = false
+
+		local function doblock(id, name, which)
+			-- start with the project-level commands (most common)
+			local prjcmds = tr.project[which]
+			local commands = table.join(prjcmds, {})
+
+			-- see if there are any config-specific commands to add
+			for _, cfg in ipairs(tr.configs) do
+				local cfgcmds = cfg[which]
+				if #cfgcmds > #prjcmds then
+					table.insert(commands, 'if [ "${CONFIGURATION}" = "' .. xcode.getconfigname(cfg) .. '" ]; then')
+					for i = #prjcmds + 1, #cfgcmds do
+						table.insert(commands, cfgcmds[i])
+					end
+					table.insert(commands, 'fi')
+				end
+			end
+			
+			if #commands > 0 then
+				if not wrapperWritten then
+					_p('/* Begin PBXShellScriptBuildPhase section */')
+					wrapperWritten = true
+				end
+				_p(2,'%s /* %s */ = {', id, name)
+				_p(3,'isa = PBXShellScriptBuildPhase;')
+				_p(3,'buildActionMask = 2147483647;')
+				_p(3,'files = (')
+				_p(3,');')
+				_p(3,'inputPaths = (');
+				_p(3,');');
+				_p(3,'name = %s;', name);
+				_p(3,'outputPaths = (');
+				_p(3,');');
+				_p(3,'runOnlyForDeploymentPostprocessing = 0;');
+				_p(3,'shellPath = /bin/sh;');
+				_p(3,'shellScript = "%s";', table.concat(commands, "\\n"):gsub('"', '\\"'))
+				_p(2,'};')
+			end
+		end
+				
+		doblock("9607AE1010C857E500CD1376", "Prebuild", "prebuildcommands")
+		doblock("9607AE3510C85E7E00CD1376", "Prelink", "prelinkcommands")
+		doblock("9607AE3710C85E8F00CD1376", "Postbuild", "postbuildcommands")
+		
+		if wrapperWritten then
 			_p('/* End PBXShellScriptBuildPhase section */')
 		end
 	end

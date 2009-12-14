@@ -622,6 +622,33 @@
 	end
 
 
+	function suite.PBXShellScriptBuildPhase_OnPerConfigCmds()
+		prebuildcommands { 'ls src' }
+		configuration "Debug"
+		prebuildcommands { 'cp a b' }
+		prepare()
+		xcode.PBXShellScriptBuildPhase(tr)
+		test.capture [[
+/* Begin PBXShellScriptBuildPhase section */
+		9607AE1010C857E500CD1376 /* Prebuild */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Prebuild;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ls src\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\ncp a b\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXSourcesBuildPhase tests
 ---------------------------------------------------------------------------
