@@ -79,7 +79,7 @@ ifeq ($(config),debug)
   TARGET     = $(TARGETDIR)/MyProject
   DEFINES   += 
   INCLUDES  += 
-  CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)
+  CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) 
   CXXFLAGS  += $(CFLAGS) 
   LDFLAGS   += -s
@@ -113,7 +113,7 @@ ifeq ($(config),debugps3)
   TARGET     = $(TARGETDIR)/MyProject.elf
   DEFINES   += 
   INCLUDES  += 
-  CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)
+  CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) 
   CXXFLAGS  += $(CFLAGS) 
   LDFLAGS   += -s
@@ -144,7 +144,7 @@ ifeq ($(config),debug64)
   TARGET     = $(TARGETDIR)/MyProject
   DEFINES   += 
   INCLUDES  += 
-  CPPFLAGS  += -MMD $(DEFINES) $(INCLUDES)
+  CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -m64
   CXXFLAGS  += $(CFLAGS) 
   LDFLAGS   += -s -m64 -L/usr/lib64

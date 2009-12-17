@@ -48,15 +48,15 @@
 	premake.gcc.platforms = 
 	{
 		Native = { 
-			cppflags = "-MMD", 
+			cppflags = "-MMD -MP",
 		},
 		x32 = { 
-			cppflags = "-MMD",	
+			cppflags = "-MMD -MP",	
 			flags    = "-m32",
 			ldflags  = "-L/usr/lib32", 
 		},
 		x64 = { 
-			cppflags = "-MMD",
+			cppflags = "-MMD -MP",
 			flags    = "-m64",
 			ldflags  = "-L/usr/lib64",
 		},
@@ -76,7 +76,7 @@
 			cc         = "ppu-lv2-g++",
 			cxx        = "ppu-lv2-g++",
 			ar         = "ppu-lv2-ar",
-			cppflags   = "-MMD",
+			cppflags   = "-MMD -MP",
 		}
 	}
 
