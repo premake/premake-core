@@ -62,8 +62,9 @@
 
 	local builtin_dofile = dofile
 	function dofile(fname)
-		-- remember the current working directory; I'll restore it shortly
+		-- remember the current working directory and file; I'll restore it shortly
 		local oldcwd = os.getcwd()
+		local oldfile = _SCRIPT
 
 		-- if the file doesn't exist, check the search path
 		if (not os.isfile(fname)) then
@@ -75,16 +76,17 @@
 
 		-- use the absolute path to the script file, to avoid any file name
 		-- ambiguity if an error should arise
-		fname = path.getabsolute(fname)
+		_SCRIPT = path.getabsolute(fname)
 		
 		-- switch the working directory to the new script location
-		local newcwd = path.getdirectory(fname)
+		local newcwd = path.getdirectory(_SCRIPT)
 		os.chdir(newcwd)
 		
 		-- run the chunk. How can I catch variable return values?
-		local a, b, c, d, e, f = builtin_dofile(fname)
+		local a, b, c, d, e, f = builtin_dofile(_SCRIPT)
 		
 		-- restore the previous working directory when done
+		_SCRIPT = oldfile
 		os.chdir(oldcwd)
 		return a, b, c, d, e, f
 	end
