@@ -481,7 +481,7 @@
 		
 		-- build the results object
 		local result = { }
-		result.basename   = name
+		result.basename   = name .. suffix
 		result.name       = prefix .. name .. suffix .. ext
 		result.directory  = dir
 		result.prefix     = prefix

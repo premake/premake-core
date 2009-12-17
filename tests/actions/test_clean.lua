@@ -120,7 +120,6 @@
 		test.contains(removed, "MyProject")
 		test.contains(removed, "MyProject.exe")
 		test.contains(removed, "MyProject.elf")
-		test.contains(removed, "MyProject.elf")
 		test.contains(removed, "MyProject.vshost.exe")
 		test.contains(removed, "MyProject.exe.manifest")
 	end
@@ -170,3 +169,18 @@
 		test.contains(removed, "obj/x32/Debug")
 		test.contains(removed, "obj/x32/Release")
 	end
+
+
+	function T.clean.CppConsoleAppFiles_OnSuffix()
+		prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+		targetsuffix "_x"
+		prepare()
+		test.contains(removed, "MyProject_x")
+		test.contains(removed, "MyProject_x.exe")
+		test.contains(removed, "MyProject_x.elf")
+		test.contains(removed, "MyProject_x.vshost.exe")
+		test.contains(removed, "MyProject_x.exe.manifest")
+	end
+

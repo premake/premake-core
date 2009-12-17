@@ -681,7 +681,7 @@
 		}
 		_p(4,'INSTALL_PATH = %s;', installpaths[cfg.kind])
 
-		_p(4,'PRODUCT_NAME = "%s";', cfg.buildtarget.basename .. cfg.buildtarget.suffix)
+		_p(4,'PRODUCT_NAME = "%s";', cfg.buildtarget.basename)
 		_p(3,'};')
 		_p(3,'name = "%s";', cfgname)
 		_p(2,'};')
