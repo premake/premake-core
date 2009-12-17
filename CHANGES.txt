@@ -8,6 +8,7 @@
 - Clean action now removes MonoDevelop .pidb files correctly
 - Added os.executef()
 - Feature 2839002: Add gcc switch to improve header dependency generation (Johannes Spohr)
+- Feature 2832906: Global variable (_SCRIPT) for current script path
 - Bug 2909463: Fix Xcode handling of Obj-C++ .mm files
 - Bug 2903430: Using relative instead of absolute paths with $() macro
 - Bug 2910691: Duplicate build options
