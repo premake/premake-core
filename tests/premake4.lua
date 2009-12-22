@@ -65,7 +65,7 @@
 	dofile("actions/xcode/test_xcode_common.lua")
 	dofile("actions/xcode/test_xcode_project.lua")
 	dofile("actions/xcode/test_xcode_dependencies.lua")
-	
+
 
 --
 -- Register a test action

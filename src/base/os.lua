@@ -79,32 +79,54 @@
 --
 -- The os.matchdirs() and os.matchfiles() functions
 --
-
+	
 	local function domatch(result, mask, wantfiles)
-		local basedir = path.getdirectory(mask)
-		if (basedir == ".") then basedir = "" end
-		
-		local m = os.matchstart(mask)
-		while (os.matchnext(m)) do
-			local fname = os.matchname(m)
-			local isfile = os.matchisfile(m)
-			if ((wantfiles and isfile) or (not wantfiles and not isfile)) then
-				table.insert(result, path.join(basedir, fname))
-			end
+		-- strip off any leading directory information to find out
+		-- where the search should take place
+		local basedir = mask
+		local starpos = mask:find("%*")
+		if starpos then
+			basedir = basedir:sub(1, starpos - 1)
 		end
-		os.matchdone(m)
+		basedir = path.getdirectory(basedir)
+		if (basedir == ".") then basedir = "" end
 
-		-- if the mask uses "**", recurse subdirectories
-		if (mask:find("**", nil, true)) then
-			mask = path.getname(mask)			
-			m = os.matchstart(path.join(basedir, "*"))
+		-- recurse into subdirectories?
+		local recurse = mask:find("**", nil, true)
+		
+		-- convert mask to a Lua pattern
+		mask = path.wildcards(mask)
+
+		local function matchwalker(basedir)
+			local wildcard = path.join(basedir, "*")
+			
+			-- retrieve files from OS and test against mask
+			local m = os.matchstart(wildcard)
 			while (os.matchnext(m)) do
-				local dirname = os.matchname(m)
-				local submask = path.join(path.join(basedir, dirname), mask)
-				domatch(result, submask, wantfiles)
+				local isfile = os.matchisfile(m)
+				if ((wantfiles and isfile) or (not wantfiles and not isfile)) then
+					local fname = path.join(basedir, os.matchname(m))
+					if fname:match(mask) then
+						table.insert(result, fname)
+					end
+				end
 			end
 			os.matchdone(m)
+
+			-- check subdirectories
+			if recurse then
+				m = os.matchstart(wildcard)
+				while (os.matchnext(m)) do
+					if not os.matchisfile(m) then
+						local dirname = os.matchname(m)
+						matchwalker(path.join(basedir, dirname))
+					end
+				end
+				os.matchdone(m)
+			end
 		end
+
+		matchwalker(basedir)
 	end
 	
 	function os.matchdirs(...)

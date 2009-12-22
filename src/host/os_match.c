@@ -169,7 +169,7 @@ int os_matchnext(lua_State* L)
 	while (m->entry != NULL)
 	{
 		const char* name = m->entry->d_name;
-		if (strcmp(name, ".") && strcmp(name,"..") && fnmatch(m->mask, name, 0) == 0)
+		if (name[0] != '.' && fnmatch(m->mask, name, 0) == 0)
 		{
 			lua_pushboolean(L, 1);
 			return 1;

@@ -1,37 +1,37 @@
 --
 -- tests/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
 --
 
 
 	T.os = { }
+	local suite = T.os
 
 	
 --
 -- os.findlib() tests
 --
 
-	function T.os.findlib_FindSystemLib()
+	function suite.findlib_FindSystemLib()
 		local libname = iif(os.is("windows"), "user32", "m")
 		test.istrue(os.findlib(libname))
 	end
 	
-	function T.os.findlib_FailsOnBadLibName()
+	function suite.findlib_FailsOnBadLibName()
 		test.isfalse(os.findlib("NoSuchLibraryAsThisOneHere"))
 	end
-	
 	
 	
 --
 -- os.isfile() tests
 --
 
-	function T.os.isfile_ReturnsTrue_OnExistingFile()
+	function suite.isfile_ReturnsTrue_OnExistingFile()
 		test.istrue(os.isfile("test_os.lua"))
 	end
 
-	function T.os.isfile_ReturnsFalse_OnNonexistantFile()
+	function suite.isfile_ReturnsFalse_OnNonexistantFile()
 		test.isfalse(os.isfile("no_such_file.lua"))
 	end
 
@@ -41,44 +41,55 @@
 -- os.matchfiles() tests
 --
 
-	function T.os.matchfiles_Recursive()
+	function suite.matchfiles_OnNonRecursive()
+		local result = os.matchfiles("*.lua")
+		test.istrue(table.contains(result, "testfx.lua"))
+		test.isfalse(table.contains(result, "folder/ok.lua"))		
+	end
+
+	function suite.matchfiles_Recursive()
 		local result = os.matchfiles("**.lua")
 		test.istrue(table.contains(result, "folder/ok.lua"))
 	end
 
-	function T.os.matchfiles_NonRecursive()
-		local result = os.matchfiles("*.lua")
-		test.isfalse(table.contains(result, "folder/ok.lua"))		
+	function suite.matchfiles_SkipsDotDirs_OnRecursive()
+		local result = os.matchfiles("**.lua")
+		test.isfalse(table.contains(result, ".svn/text-base/testfx.lua.svn-base"))
 	end
 	
+	function suite.matchfiles_OnSubfolderMatch()
+		local result = os.matchfiles("**/xcode/*")
+		test.istrue(table.contains(result, "actions/xcode/test_xcode_project.lua"))
+		test.isfalse(table.contains(result, "premake4.lua"))
+	end
 
 	
 --
 -- os.pathsearch() tests
 --
 
-	function T.os.pathsearch_ReturnsNil_OnNotFound()
+	function suite.pathsearch_ReturnsNil_OnNotFound()
 		test.istrue( os.pathsearch("nosuchfile", "aaa;bbb;ccc") == nil )
 	end
 	
-	function T.os.pathsearch_ReturnsPath_OnFound()
+	function suite.pathsearch_ReturnsPath_OnFound()
 		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", os.getcwd()))
 	end
 	
-	function T.os.pathsearch_FindsFile_OnComplexPath()
+	function suite.pathsearch_FindsFile_OnComplexPath()
 		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", "aaa;"..os.getcwd()..";bbb"))
 	end
 	
-	function T.os.pathsearch_NilPathsAllowed()
+	function suite.pathsearch_NilPathsAllowed()
 		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", nil, os.getcwd(), nil))
 	end
-	
+
 	
 --
 -- os.uuid() tests
 --
 
-	function T.os.guid_ReturnsValidUUID()
+	function suite.guid_ReturnsValidUUID()
 		local g = os.uuid()
 		test.istrue(#g == 36)
 		for i=1,36 do

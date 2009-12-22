@@ -544,7 +544,7 @@
 		-- create a keyword list using just the indexed keyword items
 		cfg.keywords = { }
 		for _, word in ipairs(table.join({}, keywords)) do
-			table.insert(cfg.keywords, premake.escapekeyword(word))
+			table.insert(cfg.keywords, path.wildcards(word):lower())
 		end
 		
 		-- if file patterns are specified, convert them to Lua patterns and add them too

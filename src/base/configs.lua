@@ -48,24 +48,6 @@
 	end
 	
 	
-
---
--- Escape a keyword in preparation for testing against a list of terms.
--- Converts from Premake's simple pattern syntax to Lua's syntax.
---
-
-	function premake.escapekeyword(keyword)
-		keyword = keyword:gsub("([%.%-%^%$%(%)%%])", "%%%1")
-		if keyword:find("**", nil, true) then
-			keyword = keyword:gsub("%*%*", ".*")
-		else
-			keyword = keyword:gsub("%*", "[^/]*")
-		end
-		return keyword:lower()
-	end
-	
-	
-	
 --
 -- Test a single configuration block keyword against a list of terms.
 -- The terms are a mix of key/value pairs. The keyword is tested against

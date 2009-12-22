@@ -261,3 +261,24 @@
 			return result
 		end
 	end
+
+
+--
+-- Converts from a simple wildcard syntax, where * is "match any"
+-- and ** is "match recursive", to the corresponding Lua pattern.
+--
+-- @param pattern
+--    The wildcard pattern to convert.
+-- @returns
+--    The corresponding Lua pattern.
+--
+
+	function path.wildcards(pattern)
+		pattern = pattern:gsub("([%.%-%^%$%(%)%%])", "%%%1")
+		if pattern:find("**", nil, true) then
+			pattern = pattern:gsub("%*%*", ".*")
+		else
+			pattern = pattern:gsub("%*", "[^/]*")
+		end
+		return pattern
+	end

@@ -1,32 +1,28 @@
 --
 -- tests/test_keywords.lua
 -- Automated test suite for configuration block keyword filtering.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
 --
 
 	T.keywords = { }
+	local suite = T.keywords
 
 --
 -- Keyword escaping tests
 --
 
-	function T.keywords.escapes_lowercase()
-		test.isequal("windows", premake.escapekeyword("Windows"))
+	function suite.escapes_special_chars()
+		test.isequal("%.%-", path.wildcards(".-"))
 	end
 	
 
-	function T.keywords.escapes_special_chars()
-		test.isequal("%.%-", premake.escapekeyword(".-"))
+	function suite.escapes_star()
+		test.isequal("vs[^/]*", path.wildcards("vs*"))
 	end
 	
 
-	function T.keywords.escapes_star()
-		test.isequal("vs[^/]*", premake.escapekeyword("vs*"))
-	end
-	
-
-	function T.keywords.escapes_star_star()
-		test.isequal("images/.*%.bmp", premake.escapekeyword("Images/**.bmp"))
+	function suite.escapes_star_star()
+		test.isequal("Images/.*%.bmp", path.wildcards("Images/**.bmp"))
 	end
 
 
