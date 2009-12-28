@@ -32,112 +32,112 @@
 		io.eol = "\r\n"
 		_p('<VisualStudioProject>')
 
-		_p('\t<CSHARP')
-		_p('\t\tProjectType = "Local"')
-		_p('\t\tProductVersion = "%s"', iif(_ACTION == "vs2002", "7.0.9254", "7.10.3077"))
-		_p('\t\tSchemaVersion = "%s"', iif(_ACTION == "vs2002", "1.0", "2.0"))
-		_p('\t\tProjectGuid = "{%s}"', prj.uuid)
-		_p('\t>')
+		_p(1,'<CSHARP')
+		_p(2,'ProjectType = "Local"')
+		_p(2,'ProductVersion = "%s"', iif(_ACTION == "vs2002", "7.0.9254", "7.10.3077"))
+		_p(2,'SchemaVersion = "%s"', iif(_ACTION == "vs2002", "1.0", "2.0"))
+		_p(2,'ProjectGuid = "{%s}"', prj.uuid)
+		_p(1,'>')
 
-		_p('\t\t<Build>')
+		_p(2,'<Build>')
 		
 		-- Write out project-wide settings
-		_p('\t\t\t<Settings')
-		_p('\t\t\t\tApplicationIcon = ""')
-		_p('\t\t\t\tAssemblyKeyContainerName = ""')
-		_p('\t\t\t\tAssemblyName = "%s"', prj.buildtarget.basename)
-		_p('\t\t\t\tAssemblyOriginatorKeyFile = ""')
-		_p('\t\t\t\tDefaultClientScript = "JScript"')
-		_p('\t\t\t\tDefaultHTMLPageLayout = "Grid"')
-		_p('\t\t\t\tDefaultTargetSchema = "IE50"')
-		_p('\t\t\t\tDelaySign = "false"')
+		_p(3,'<Settings')
+		_p(4,'ApplicationIcon = ""')
+		_p(4,'AssemblyKeyContainerName = ""')
+		_p(4,'AssemblyName = "%s"', prj.buildtarget.basename)
+		_p(4,'AssemblyOriginatorKeyFile = ""')
+		_p(4,'DefaultClientScript = "JScript"')
+		_p(4,'DefaultHTMLPageLayout = "Grid"')
+		_p(4,'DefaultTargetSchema = "IE50"')
+		_p(4,'DelaySign = "false"')
 		if _ACTION == "vs2002" then
-			_p('\t\t\t\tNoStandardLibraries = "false"')
+			_p(4,'NoStandardLibraries = "false"')
 		end
-		_p('\t\t\t\tOutputType = "%s"', premake.dotnet.getkind(prj))
+		_p(4,'OutputType = "%s"', premake.dotnet.getkind(prj))
 		if _ACTION == "vs2003" then
-			_p('\t\t\t\tPreBuildEvent = ""')
-			_p('\t\t\t\tPostBuildEvent = ""')
+			_p(4,'PreBuildEvent = ""')
+			_p(4,'PostBuildEvent = ""')
 		end
-		_p('\t\t\t\tRootNamespace = "%s"', prj.buildtarget.basename)
+		_p(4,'RootNamespace = "%s"', prj.buildtarget.basename)
 		if _ACTION == "vs2003" then
-			_p('\t\t\t\tRunPostBuildEvent = "OnBuildSuccess"')
+			_p(4,'RunPostBuildEvent = "OnBuildSuccess"')
 		end
-		_p('\t\t\t\tStartupObject = ""')
-		_p('\t\t\t>')
+		_p(4,'StartupObject = ""')
+		_p(3,'>')
 
 		-- Write out configuration blocks		
 		for cfg in premake.eachconfig(prj) do
-			_p('\t\t\t\t<Config')
-			_p('\t\t\t\t\tName = "%s"', premake.esc(cfg.name))
-			_p('\t\t\t\t\tAllowUnsafeBlocks = "%s"', iif(cfg.flags.Unsafe, "true", "false"))
-			_p('\t\t\t\t\tBaseAddress = "285212672"')
-			_p('\t\t\t\t\tCheckForOverflowUnderflow = "false"')
-			_p('\t\t\t\t\tConfigurationOverrideFile = ""')
-			_p('\t\t\t\t\tDefineConstants = "%s"', premake.esc(table.concat(cfg.defines, ";")))
-			_p('\t\t\t\t\tDocumentationFile = ""')
-			_p('\t\t\t\t\tDebugSymbols = "%s"', iif(cfg.flags.Symbols, "true", "false"))
-			_p('\t\t\t\t\tFileAlignment = "4096"')
-			_p('\t\t\t\t\tIncrementalBuild = "false"')
+			_p(4,'<Config')
+			_p(5,'Name = "%s"', premake.esc(cfg.name))
+			_p(5,'AllowUnsafeBlocks = "%s"', iif(cfg.flags.Unsafe, "true", "false"))
+			_p(5,'BaseAddress = "285212672"')
+			_p(5,'CheckForOverflowUnderflow = "false"')
+			_p(5,'ConfigurationOverrideFile = ""')
+			_p(5,'DefineConstants = "%s"', premake.esc(table.concat(cfg.defines, ";")))
+			_p(5,'DocumentationFile = ""')
+			_p(5,'DebugSymbols = "%s"', iif(cfg.flags.Symbols, "true", "false"))
+			_p(5,'FileAlignment = "4096"')
+			_p(5,'IncrementalBuild = "false"')
 			if _ACTION == "vs2003" then
-				_p('\t\t\t\t\tNoStdLib = "false"')
-				_p('\t\t\t\t\tNoWarn = ""')
+				_p(5,'NoStdLib = "false"')
+				_p(5,'NoWarn = ""')
 			end
-			_p('\t\t\t\t\tOptimize = "%s"', iif(cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed, "true", "false"))
-			_p('\t\t\t\t\tOutputPath = "%s"', premake.esc(cfg.buildtarget.directory))
-			_p('\t\t\t\t\tRegisterForComInterop = "false"')
-			_p('\t\t\t\t\tRemoveIntegerChecks = "false"')
-			_p('\t\t\t\t\tTreatWarningsAsErrors = "%s"', iif(cfg.flags.FatalWarnings, "true", "false"))
-			_p('\t\t\t\t\tWarningLevel = "4"')
-			_p('\t\t\t\t/>')
+			_p(5,'Optimize = "%s"', iif(cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed, "true", "false"))
+			_p(5,'OutputPath = "%s"', premake.esc(cfg.buildtarget.directory))
+			_p(5,'RegisterForComInterop = "false"')
+			_p(5,'RemoveIntegerChecks = "false"')
+			_p(5,'TreatWarningsAsErrors = "%s"', iif(cfg.flags.FatalWarnings, "true", "false"))
+			_p(5,'WarningLevel = "4"')
+			_p(4,'/>')
 		end
-		_p('\t\t\t</Settings>')
+		_p(3,'</Settings>')
 
 		-- List assembly references
-		_p('\t\t\t<References>')
+		_p(3,'<References>')
 		for _, ref in ipairs(premake.getlinks(prj, "siblings", "object")) do
-			_p('\t\t\t\t<Reference')
-			_p('\t\t\t\t\tName = "%s"', ref.buildtarget.basename)
-			_p('\t\t\t\t\tProject = "{%s}"', ref.uuid)
-			_p('\t\t\t\t\tPackage = "{%s}"', _VS.tool(ref))
-			_p('\t\t\t\t/>')
+			_p(4,'<Reference')
+			_p(5,'Name = "%s"', ref.buildtarget.basename)
+			_p(5,'Project = "{%s}"', ref.uuid)
+			_p(5,'Package = "{%s}"', _VS.tool(ref))
+			_p(4,'/>')
 		end
 		for _, linkname in ipairs(premake.getlinks(prj, "system", "fullpath")) do
-			_p('\t\t\t\t<Reference')
-			_p('\t\t\t\t\tName = "%s"', path.getbasename(linkname))
-			_p('\t\t\t\t\tAssemblyName = "%s"', path.getname(linkname))
+			_p(4,'<Reference')
+			_p(5,'Name = "%s"', path.getbasename(linkname))
+			_p(5,'AssemblyName = "%s"', path.getname(linkname))
 			if path.getdirectory(linkname) ~= "." then
-				_p('\t\t\t\t\tHintPath = "%s"', path.translate(linkname, "\\"))
+				_p(5,'HintPath = "%s"', path.translate(linkname, "\\"))
 			end
-			_p('\t\t\t\t/>')
+			_p(4,'/>')
 		end
-		_p('\t\t\t</References>')
+		_p(3,'</References>')
 		
-		_p('\t\t</Build>')
+		_p(2,'</Build>')
 
 		-- List source files
-		_p('\t\t<Files>')
-		_p('\t\t\t<Include>')
+		_p(2,'<Files>')
+		_p(3,'<Include>')
 		for fcfg in premake.eachfile(prj) do
 			local action = premake.dotnet.getbuildaction(fcfg)
 			local fname  = path.translate(premake.esc(fcfg.name), "\\")
 			local elements, dependency = getelements(prj, action, fcfg.name)
 			
-			_p('\t\t\t\t<File')
-			_p('\t\t\t\t\tRelPath = "%s"', premake.esc(fname))
-			_p('\t\t\t\t\tBuildAction = "%s"', action)
+			_p(4,'<File')
+			_p(5,'RelPath = "%s"', premake.esc(fname))
+			_p(5,'BuildAction = "%s"', action)
 			if dependency then
-				_p('\t\t\t\t\tDependentUpon = "%s"', premake.esc(path.translate(dependency, "\\")))
+				_p(5,'DependentUpon = "%s"', premake.esc(path.translate(dependency, "\\")))
 			end
 			if elements == "SubTypeCode" then
-				_p('\t\t\t\t\tSubType = "Code"')
+				_p(5,'SubType = "Code"')
 			end
-			_p('\t\t\t\t/>')
+			_p(4,'/>')
 		end
-		_p('\t\t\t</Include>')
-		_p('\t\t</Files>')
+		_p(3,'</Include>')
+		_p(2,'</Files>')
 		
-		_p('\t</CSHARP>')
+		_p(1,'</CSHARP>')
 		_p('</VisualStudioProject>')
 
 	end

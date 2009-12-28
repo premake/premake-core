@@ -10,13 +10,13 @@
 		
 		_p('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>')
 		_p('<CodeBlocks_project_file>')
-		_p('\t<FileVersion major="1" minor="6" />')
+		_p(1,'<FileVersion major="1" minor="6" />')
 		
 		-- write project block header
-		_p('\t<Project>')
-		_p('\t\t<Option title="%s" />', premake.esc(prj.name))
-		_p('\t\t<Option pch_mode="2" />')
-		_p('\t\t<Option compiler="%s" />', _OPTIONS.cc)
+		_p(1,'<Project>')
+		_p(2,'<Option title="%s" />', premake.esc(prj.name))
+		_p(2,'<Option pch_mode="2" />')
+		_p(2,'<Option compiler="%s" />', _OPTIONS.cc)
 
 		-- build a list of supported target platforms; I don't support cross-compiling yet
 		local platforms = premake.filterplatforms(prj.solution, cc.platforms, "Native")
@@ -27,85 +27,85 @@
 		end 
 		
 		-- write configuration blocks
-		_p('\t\t<Build>')
+		_p(2,'<Build>')
 		for _, platform in ipairs(platforms) do		
 			for cfg in premake.eachconfig(prj, platform) do
-				_p('\t\t\t<Target title="%s">', premake.esc(cfg.longname))
+				_p(3,'<Target title="%s">', premake.esc(cfg.longname))
 				
-				_p('\t\t\t\t<Option output="%s" prefix_auto="0" extension_auto="0" />', premake.esc(cfg.buildtarget.fullpath))
-				_p('\t\t\t\t<Option object_output="%s" />', premake.esc(cfg.objectsdir))
+				_p(4,'<Option output="%s" prefix_auto="0" extension_auto="0" />', premake.esc(cfg.buildtarget.fullpath))
+				_p(4,'<Option object_output="%s" />', premake.esc(cfg.objectsdir))
 
 				-- identify the type of binary
 				local types = { WindowedApp = 0, ConsoleApp = 1, StaticLib = 2, SharedLib = 3 }
-				_p('\t\t\t\t<Option type="%d" />', types[cfg.kind])
+				_p(4,'<Option type="%d" />', types[cfg.kind])
 
-				_p('\t\t\t\t<Option compiler="%s" />', _OPTIONS.cc)
+				_p(4,'<Option compiler="%s" />', _OPTIONS.cc)
 				
 				if (cfg.kind == "SharedLib") then
-					_p('\t\t\t\t<Option createDefFile="0" />')
-					_p('\t\t\t\t<Option createStaticLib="%s" />', iif(cfg.flags.NoImportLib, 0, 1))
+					_p(4,'<Option createDefFile="0" />')
+					_p(4,'<Option createStaticLib="%s" />', iif(cfg.flags.NoImportLib, 0, 1))
 				end
 
 				-- begin compiler block --
-				_p('\t\t\t\t<Compiler>')
+				_p(4,'<Compiler>')
 				for _,flag in ipairs(table.join(cc.getcflags(cfg), cc.getcxxflags(cfg), cc.getdefines(cfg.defines), cfg.buildoptions)) do
-					_p('\t\t\t\t\t<Add option="%s" />', premake.esc(flag))
+					_p(5,'<Add option="%s" />', premake.esc(flag))
 				end
 				if not cfg.flags.NoPCH and cfg.pchheader then
-					_p('\t\t\t\t\t<Add option="-Winvalid-pch" />')
-					_p('\t\t\t\t\t<Add option="-include &quot;%s&quot;" />', premake.esc(cfg.pchheader))
+					_p(5,'<Add option="-Winvalid-pch" />')
+					_p(5,'<Add option="-include &quot;%s&quot;" />', premake.esc(cfg.pchheader))
 				end
 				for _,v in ipairs(cfg.includedirs) do
-					_p('\t\t\t\t\t<Add directory="%s" />', premake.esc(v))
+					_p(5,'<Add directory="%s" />', premake.esc(v))
 				end
-				_p('\t\t\t\t</Compiler>')
+				_p(4,'</Compiler>')
 				-- end compiler block --
 				
 				-- begin linker block --
-				_p('\t\t\t\t<Linker>')
+				_p(4,'<Linker>')
 				for _,flag in ipairs(table.join(cc.getldflags(cfg), cfg.linkoptions)) do
-					_p('\t\t\t\t\t<Add option="%s" />', premake.esc(flag))
+					_p(5,'<Add option="%s" />', premake.esc(flag))
 				end
 				for _,v in ipairs(premake.getlinks(cfg, "all", "directory")) do
-					_p('\t\t\t\t\t<Add directory="%s" />', premake.esc(v))
+					_p(5,'<Add directory="%s" />', premake.esc(v))
 				end
 				for _,v in ipairs(premake.getlinks(cfg, "all", "basename")) do
-					_p('\t\t\t\t\t<Add library="%s" />', premake.esc(v))
+					_p(5,'<Add library="%s" />', premake.esc(v))
 				end
-				_p('\t\t\t\t</Linker>')
+				_p(4,'</Linker>')
 				-- end linker block --
 				
 				-- begin resource compiler block --
 				if premake.findfile(cfg, ".rc") then
-					_p('\t\t\t\t<ResourceCompiler>')
+					_p(4,'<ResourceCompiler>')
 					for _,v in ipairs(cfg.includedirs) do
-						_p('\t\t\t\t\t<Add directory="%s" />', premake.esc(v))
+						_p(5,'<Add directory="%s" />', premake.esc(v))
 					end
 					for _,v in ipairs(cfg.resincludedirs) do
-						_p('\t\t\t\t\t<Add directory="%s" />', premake.esc(v))
+						_p(5,'<Add directory="%s" />', premake.esc(v))
 					end
-					_p('\t\t\t\t</ResourceCompiler>')
+					_p(4,'</ResourceCompiler>')
 				end
 				-- end resource compiler block --
 				
 				-- begin build steps --
 				if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
-					_p('\t\t\t\t<ExtraCommands>')
+					_p(4,'<ExtraCommands>')
 					for _,v in ipairs(cfg.prebuildcommands) do
-						_p('\t\t\t\t\t<Add before="%s" />', premake.esc(v))
+						_p(5,'<Add before="%s" />', premake.esc(v))
 					end
 					for _,v in ipairs(cfg.postbuildcommands) do
-						_p('\t\t\t\t\t<Add after="%s" />', premake.esc(v))
+						_p(5,'<Add after="%s" />', premake.esc(v))
 					end
 
-					_p('\t\t\t\t</ExtraCommands>')
+					_p(4,'</ExtraCommands>')
 				end
 				-- end build steps --
 				
-				_p('\t\t\t</Target>')
+				_p(3,'</Target>')
 			end
 		end
-		_p('\t\t</Build>')
+		_p(2,'</Build>')
 		
 		-- begin files block --
 		local pchheader
@@ -114,24 +114,24 @@
 		end
 		
 		for _,fname in ipairs(prj.files) do
-			_p('\t\t<Unit filename="%s">', premake.esc(fname))
+			_p(2,'<Unit filename="%s">', premake.esc(fname))
 			if path.isresourcefile(fname) then
-				_p('\t\t\t<Option compilerVar="WINDRES" />')
+				_p(3,'<Option compilerVar="WINDRES" />')
 			elseif path.iscppfile(fname) then
-				_p('\t\t\t<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
+				_p(3,'<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
 			end
 			if not prj.flags.NoPCH and fname == pchheader then
-				_p('\t\t\t<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
-				_p('\t\t\t<Option compile="1" />')
-				_p('\t\t\t<Option weight="0" />')
-				_p('\t\t\t<Add option="-x c++-header" />')
+				_p(3,'<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
+				_p(3,'<Option compile="1" />')
+				_p(3,'<Option weight="0" />')
+				_p(3,'<Add option="-x c++-header" />')
 			end
-			_p('\t\t</Unit>')
+			_p(2,'</Unit>')
 		end
 		-- end files block --
 		
-		_p('\t\t<Extensions />')
-		_p('\t</Project>')
+		_p(2,'<Extensions />')
+		_p(1,'</Project>')
 		_p('</CodeBlocks_project_file>')
 		_p('')
 		
