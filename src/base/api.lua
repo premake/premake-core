@@ -48,6 +48,12 @@
 			scope = "config",
 		},
 		
+		deployoptions =
+		{
+			kind  = "list",
+			scope = "config",
+		},
+		
 		excludes =
 		{
 			kind  = "filelist",
@@ -91,6 +97,12 @@
 				"Unsafe",
 				"WinMain"
 			}
+		},
+		
+		imageoptions =
+		{
+			kind  = "list",
+			scope = "config",
 		},
 		
 		implibdir =
