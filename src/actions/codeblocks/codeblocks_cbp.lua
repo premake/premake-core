@@ -117,8 +117,8 @@
 			_p(2,'<Unit filename="%s">', premake.esc(fname))
 			if path.isresourcefile(fname) then
 				_p(3,'<Option compilerVar="WINDRES" />')
-			elseif path.iscppfile(fname) then
-				_p(3,'<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
+			elseif path.iscfile(fname) and prj.language == "C++" then
+				_p(3,'<Option compilerVar="CC" />')
 			end
 			if not prj.flags.NoPCH and fname == pchheader then
 				_p(3,'<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
