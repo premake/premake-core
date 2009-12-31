@@ -137,10 +137,8 @@
 			end
 		end
 
-		if cfg.kind == "WindowedApp" then
-			if cfg.system == "windows" then
-				table.insert(result, "-mwindows")
-			end
+		if cfg.kind == "WindowedApp" and cfg.system == "windows" then
+			table.insert(result, "-mwindows")
 		end
 		
 		local platform = platforms[cfg.platform]
@@ -175,7 +173,11 @@
 	function premake.gcc.getlinkflags(cfg)
 		local result = { }
 		for _, value in ipairs(premake.getlinks(cfg, "all", "basename")) do
-			table.insert(result, '-l' .. _MAKE.esc(value))
+			if path.getextension(value) == ".framework" then
+				table.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value)))
+			else
+				table.insert(result, '-l' .. _MAKE.esc(value))
+			end
 		end
 		return result
 	end

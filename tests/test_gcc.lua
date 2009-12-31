@@ -5,9 +5,10 @@
 --
 
 	T.gcc = { }
+	local suite = T.gcc
 
 	local cfg
-	function T.gcc.setup()
+	function suite.setup()
 		cfg = { }
 		cfg.basedir    = "."
 		cfg.location   = "."
@@ -21,28 +22,39 @@
 		cfg.linktarget = { fullpath="libMyProject.a" }
 	end
 
-	function T.gcc.cflags_SharedLib_Windows()
+
+	function suite.cflags_SharedLib_Windows()
 		cfg.kind = "SharedLib"
 		cfg.system = "windows"
 		local r = premake.gcc.getcflags(cfg)
 		test.isequal('', table.concat(r,"|"))
 	end
 
-	function T.gcc.ldflags_SharedLib_Windows()
+
+	function suite.ldflags_SharedLib_Windows()
 		cfg.kind = "SharedLib"
 		cfg.system = "windows"
 		local r = premake.gcc.getldflags(cfg)
 		test.isequal('-s|-shared|-Wl,--out-implib="libMyProject.a"', table.concat(r,"|"))
 	end
 
-	function T.gcc.cflags_OnFpFast()
+
+	function suite.cflags_OnFpFast()
 		cfg.flags = { "FloatFast" }
 		local r = premake.gcc.getcflags(cfg)
 		test.isequal('-ffast-math', table.concat(r,"|"))
 	end
 
-	function T.gcc.cflags_OnFpStrict()
+
+	function suite.cflags_OnFpStrict()
 		cfg.flags = { "FloatStrict" }
 		local r = premake.gcc.getcflags(cfg)
 		test.isequal('-ffloat-store', table.concat(r,"|"))
+	end
+
+
+	function suite.linkflags_OnFrameworks()
+		cfg.links = { "Cocoa.framework" }
+		local r = premake.gcc.getlinkflags(cfg)
+		test.isequal('-framework Cocoa', table.concat(r,"|"))
 	end
