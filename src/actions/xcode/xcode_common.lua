@@ -657,8 +657,8 @@
 			_p(4,'DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";')
 		end
 		
-		if cfg.kind == "SharedLib" then
-			_p(4,'EXECUTABLE_PREFIX = lib;')
+		if cfg.kind ~= "StaticLib" and cfg.buildtarget.prefix ~= "" then
+			_p(4,'EXECUTABLE_PREFIX = %s;', cfg.buildtarget.prefix)
 		end
 		
 		local outdir = path.getdirectory(cfg.buildtarget.bundlepath)
