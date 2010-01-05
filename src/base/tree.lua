@@ -117,6 +117,24 @@
 
 
 --
+-- Sort the nodes of a tree in-place.
+--
+-- @param tr
+--    The tree to sort.
+--
+
+	function premake.tree.sort(tr)
+		tree.traverse(tr, {
+			onnode = function(node)
+				table.sort(node.children, function(a,b)
+					return a.name < b.name
+				end)
+			end
+		}, true)
+	end
+
+
+--
 -- Traverse a tree.
 --
 -- @param t

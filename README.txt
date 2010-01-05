@@ -1,7 +1,7 @@
 PREMAKE
 A build configuration tool
 
- Copyright (C) 2002-2009 by Jason Perkins
+ Copyright (C) 2002-2010 by Jason Perkins
  Distributed under the GNU General Public License, see LICENSE.txt
 
  The Lua language and runtime library is (C) TeCGraf, PUC-Rio.

@@ -5,6 +5,7 @@
 --
 
 	T.tree = { }
+	local suite = T.tree
 	local tree = premake.tree
 
 
@@ -14,7 +15,7 @@
 
 	local tr, nodes
 			
-	function T.tree.setup()
+	function suite.setup()
 		tr = tree.new()
 		nodes = { }
 	end
@@ -34,7 +35,7 @@
 -- Tests for tree.new()
 --
 
-	function T.tree.NewReturnsObject()
+	function suite.NewReturnsObject()
 		test.isnotnil(tr)
 	end
 
@@ -43,27 +44,27 @@
 -- Tests for tree.add()
 --
 
-	function T.tree.CanAddAtRoot()
+	function suite.CanAddAtRoot()
 		tree.add(tr, "Root")
 		test.isequal("Root", getresult())
 	end
 
-	function T.tree.CanAddAtChild()
+	function suite.CanAddAtChild()
 		tree.add(tr, "Root/Child")
 		test.isequal("Root>Child", getresult())
 	end
 
-	function T.tree.CanAddAtGrandchild()
+	function suite.CanAddAtGrandchild()
 		tree.add(tr, "Root/Child/Grandchild")
 		test.isequal("Root>Child>>Grandchild", getresult())
 	end
 	
-	function T.tree.SkipsLeadingDotDots()
+	function suite.SkipsLeadingDotDots()
 		tree.add(tr, "../MyProject/hello")
 		test.isequal("MyProject>hello", getresult())
 	end
 
-	function T.tree.SkipsInlineDotDots()
+	function suite.SkipsInlineDotDots()
 		tree.add(tr, "MyProject/../hello")
 		test.isequal("MyProject>hello", getresult())
 	end
@@ -73,13 +74,13 @@
 -- Tests for tree.getlocalpath()
 --
 
-	function T.tree.GetLocalPath_ReturnsPath_OnNoParentPath()
+	function suite.GetLocalPath_ReturnsPath_OnNoParentPath()
 		local c = tree.add(tr, "Root/Child")
 		c.parent.path = nil
 		test.isequal("Root/Child", tree.getlocalpath(c))
 	end
 
-	function T.tree.GetLocalPath_ReturnsName_OnParentPathSet()
+	function suite.GetLocalPath_ReturnsName_OnParentPathSet()
 		local c = tree.add(tr, "Root/Child")
 		test.isequal("Child", tree.getlocalpath(c))
 	end
@@ -89,7 +90,7 @@
 -- Tests for tree.remove()
 --
 
-	function T.tree.Remove_RemovesNodes()
+	function suite.Remove_RemovesNodes()
 		local n1 = tree.add(tr, "1")
 		local n2 = tree.add(tr, "2")
 		local n3 = tree.add(tr, "3")
@@ -100,7 +101,7 @@
 	end
 
 	
-	function T.tree.Remove_WorksInTraversal()
+	function suite.Remove_WorksInTraversal()
 		tree.add(tr, "Root/1")
 		tree.add(tr, "Root/2")
 		tree.add(tr, "Root/3")
@@ -113,5 +114,20 @@
 		})
 		test.isequal("123", r)
 		test.isequal(0, #tr.children[1])
+	end
+
+
+--
+-- Tests for tree.sort()
+--
+
+	function suite.Sort_SortsAllLevels()
+		tree.add(tr, "B/3")
+		tree.add(tr, "B/1")
+		tree.add(tr, "A/2")
+		tree.add(tr, "A/1")
+		tree.add(tr, "B/2")
+		tree.sort(tr)
+		test.isequal("A>1>2B>1>2>3", getresult(tr))
 	end
 

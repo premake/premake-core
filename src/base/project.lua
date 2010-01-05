@@ -22,6 +22,7 @@
 		for _, fname in ipairs(prj.files) do
 			local node = premake.tree.add(tr, fname)
 		end
+		premake.tree.sort(tr)
 		tr.project = prj
 		return tr
 	end

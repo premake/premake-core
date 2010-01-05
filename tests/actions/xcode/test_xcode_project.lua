@@ -340,6 +340,36 @@
 	end
 
 
+	function suite.PBXGroup_SortsFiles()
+		files { "test.h", "source.h", "source.cpp" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[source.cpp] /* source.cpp */,
+				[source.h] /* source.h */,
+				[test.h] /* test.h */,
+				[Products] /* Products */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
+		[Products] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[MyProject:product] /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+		]]
+	end
+
+
 	function suite.PBXGroup_OnResourceFiles()
 		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib", "Info.plist" }
 		prepare()
@@ -680,8 +710,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				[hello.cpp:build] /* hello.cpp in Sources */,
 				[goodbye.cpp:build] /* goodbye.cpp in Sources */,
+				[hello.cpp:build] /* hello.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
