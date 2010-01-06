@@ -135,7 +135,7 @@
 			_p(4,'Detect64BitPortabilityProblems="%s"', _VS.bool(not cfg.flags.No64BitChecks))
 		end
 		
-		_p(4,'ProgramDataBaseFileName="$(OutDir)\\$(ProjectName).pdb"')
+		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 		_p(4,'DebugInformationFormat="%s"', premake.vs200x_vcproj_symbols(cfg))
 		_p(3,'/>')
 	end
@@ -179,7 +179,7 @@
 			_p(4,'GenerateDebugInformation="%s"', _VS.bool(premake.vs200x_vcproj_symbols(cfg) ~= 0))
 			
 			if premake.vs200x_vcproj_symbols(cfg) ~= 0 then
-				_p(4,'ProgramDatabaseFile="$(OutDir)\\$(ProjectName).pdb"')
+				_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 			end
 			
 			_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
@@ -239,7 +239,7 @@
 			_p(4,'PreprocessorDefinitions="%s"', table.concat(premake.esc(cfg.defines), ";"))
 		end
 
-		_p(4,'ProgramDataBaseFileName="$(OutDir)\\$(ProjectName).pdb"')
+		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 		_p(4,'DebugInformationFormat="0"')
 		_p(4,'CompileAs="0"')
 		_p(3,'/>')

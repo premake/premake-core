@@ -17,6 +17,7 @@
 - Bug 2872066: Two test failures in 4.1.2
 - Bug 2912756: dylibs missing lib prefix
 - Bug 2910202: Code::Blocks building C files as C++
+- Bug 2926917: Use target name for Visual Studio PDB file
 - Clean action now removes MonoDevelop .pidb files correctly
 - Added os.executef()
 
