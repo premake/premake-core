@@ -18,6 +18,7 @@
 - Bug 2912756: dylibs missing lib prefix
 - Bug 2910202: Code::Blocks building C files as C++
 - Bug 2926917: Use target name for Visual Studio PDB file
+- Bug 2927604: Unable to build Premake with Visual Studio
 - Clean action now removes MonoDevelop .pidb files correctly
 - Added os.executef()
 
