@@ -47,17 +47,23 @@
 	
 	local function writefile(out, fname, contents)
 		-- cut smaller than max, so I don't wind up with tiny strings at end of files
-		local cut = 8192
-		local max = 9216
+		local max = 2048
 
 		-- break up large strings to fit in Visual Studio's string length limit		
 		local start = 1
 		local len = contents:len()
 		while start <= len do
 			local n = len - start
-			if n > max then n = cut end
-			writeline(out, contents:sub(start, start + n))
-			start = start + n + 1
+			if n > max then n = max end
+			local finish = start + n
+
+			-- make sure I don't cut an escape sequence
+			while contents:sub(finish, finish) == "\\" do
+				finish = finish - 1
+			end			
+
+			writeline(out, contents:sub(start, finish))
+			start = finish + 1
 		end		
 
 		writeline(out, "EOF:" .. fname)

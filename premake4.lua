@@ -3,19 +3,6 @@
 -- 
 
 --
--- Earlier versions of Visual Studio limit static strings to 1K (IIRC) and choke on
--- the embedded scripts. I'll work around it if people complain.
---
-
-	if (_ACTION == "vs2002" or _ACTION == "vs2003") then
-		error(
-			"\nBecause of compiler limitations, Visual Studio 2002 and 2003 aren't able to\n" ..
-			"build this version of Premake. Use the free Visual Studio Express instead.", 0)
-	end
-
-
-
---
 -- Define the project. Put the release configuration first so it will be the
 -- default when folks build using the makefile. That way they don't have to 
 -- worry about the /scripts argument and all that.
