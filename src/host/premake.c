@@ -249,31 +249,13 @@ int load_builtin_scripts(lua_State* L)
  */
 int load_builtin_scripts(lua_State* L)
 {
-	int i, chunks, top;
-
-	/* Visual Studio has string length limits, so long scripts are split into
-	 * chunks. Read and append chunks until an special "EOF" token is hit.
-	 */
-	chunks = 0;
-	top = lua_gettop(L);
+	int i;
 	for (i = 0; builtin_scripts[i]; ++i)
 	{
-		if (strncmp(builtin_scripts[i], "EOF", 3) != 0)
+		if (luaL_dostring(L, builtin_scripts[i]) != OKAY)
 		{
-			lua_pushstring(L, builtin_scripts[i]);
-			++chunks;
-		}
-		else
-		{
-			lua_concat(L, chunks);
-			if (luaL_dostring(L, lua_tostring(L, -1)) != OKAY)
-			{
-				printf(ERROR_MESSAGE, lua_tostring(L, -1));
-				return !OKAY;
-			}
-
-			lua_settop(L, top);
-			chunks = 0;
+			printf(ERROR_MESSAGE, lua_tostring(L, -1));
+			return !OKAY;
 		}
 	}
 

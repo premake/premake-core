@@ -38,17 +38,18 @@
 	end
 
 
-	local function writeline(out, s)
+	local function writeline(out, s, continues)
 		out:write("\t\"")
 		out:write(s)
-		out:write("\",\n")
+		out:write(iif(continues, "\"\n", "\",\n"))
 	end
 	
 	
 	local function writefile(out, fname, contents)
-		-- cut smaller than max, so I don't wind up with tiny strings at end of files
-		local max = 2048
+		local max = 1024
 
+		out:write("\t/* " .. fname .. " */\n")
+		
 		-- break up large strings to fit in Visual Studio's string length limit		
 		local start = 1
 		local len = contents:len()
@@ -62,11 +63,11 @@
 				finish = finish - 1
 			end			
 
-			writeline(out, contents:sub(start, finish))
+			writeline(out, contents:sub(start, finish), finish < len)
 			start = finish + 1
 		end		
 
-		writeline(out, "EOF:" .. fname)
+		out:write("\n")
 	end
 
 
