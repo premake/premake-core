@@ -1,5 +1,5 @@
 -----
- 4.2 (in progress)
+ 4.2
 -----
 
 - Feature 1526976: Add support for Apple Xcode 3
