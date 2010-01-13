@@ -1,7 +1,7 @@
 --
--- tests/test_os.lua
+-- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2010 Jason Perkins and the Premake project
 --
 
 
@@ -28,7 +28,7 @@
 --
 
 	function suite.isfile_ReturnsTrue_OnExistingFile()
-		test.istrue(os.isfile("test_os.lua"))
+		test.istrue(os.isfile("premake4.lua"))
 	end
 
 	function suite.isfile_ReturnsFalse_OnNonexistantFile()
@@ -62,6 +62,14 @@
 		test.istrue(table.contains(result, "actions/xcode/test_xcode_project.lua"))
 		test.isfalse(table.contains(result, "premake4.lua"))
 	end
+	
+	function suite.matchfiles_OnDotSlashPrefix()
+		test.print("===============================")
+		local result = os.matchfiles("./**.lua")
+		test.istrue(table.contains(result, "folder/ok.lua"))
+		test.print("===============================")
+	end
+
 
 	
 --
@@ -73,15 +81,15 @@
 	end
 	
 	function suite.pathsearch_ReturnsPath_OnFound()
-		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", os.getcwd()))
+		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", os.getcwd()))
 	end
 	
 	function suite.pathsearch_FindsFile_OnComplexPath()
-		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", "aaa;"..os.getcwd()..";bbb"))
+		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", "aaa;"..os.getcwd()..";bbb"))
 	end
 	
 	function suite.pathsearch_NilPathsAllowed()
-		test.isequal(os.getcwd(), os.pathsearch("test_os.lua", nil, os.getcwd(), nil))
+		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", nil, os.getcwd(), nil))
 	end
 
 	

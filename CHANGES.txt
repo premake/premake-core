@@ -1,4 +1,11 @@
 -----
+ 4.3 (in progress)
+-----
+
+* Bug 2928775: Error loading external Lua module with require()
+
+
+-----
  4.2
 -----
 

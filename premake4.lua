@@ -54,6 +54,9 @@
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
 
+		configuration "not windows"
+			linkoptions { "-rdynamic" }
+
 
 
 --
