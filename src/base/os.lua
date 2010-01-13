@@ -1,7 +1,7 @@
 --
 -- os.lua
 -- Additions to the OS namespace.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2010 Jason Perkins and the Premake project
 --
 
 
@@ -91,6 +91,13 @@
 		basedir = path.getdirectory(basedir)
 		if (basedir == ".") then basedir = "" end
 
+		-- need to remove extraneous path info from the mask to ensure a match
+		-- against the paths returned by the OS. Haven't come up with a good 
+		-- way to do it yet, so will handle cases as they come up
+		if mask:startswith("./") then
+			mask = mask:sub(2)
+		end
+		
 		-- recurse into subdirectories?
 		local recurse = mask:find("**", nil, true)
 		

@@ -64,10 +64,8 @@
 	end
 	
 	function suite.matchfiles_OnDotSlashPrefix()
-		test.print("===============================")
 		local result = os.matchfiles("./**.lua")
 		test.istrue(table.contains(result, "folder/ok.lua"))
-		test.print("===============================")
 	end
 
 
