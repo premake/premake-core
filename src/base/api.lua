@@ -72,6 +72,8 @@
 			scope = "config",
 			isflags = true,
 			allowed = {
+				"EnableSSE",
+				"EnableSSE2",
 				"ExtraWarnings",
 				"FatalWarnings",
 				"FloatFast",

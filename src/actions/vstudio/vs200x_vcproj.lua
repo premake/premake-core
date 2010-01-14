@@ -92,6 +92,14 @@
 		_p(4,'RuntimeLibrary="%s"', _VS.runtime(cfg))
 		_p(4,'EnableFunctionLevelLinking="%s"', _VS.bool(true))
 
+		if _ACTION > "vs2003" and cfg.platform ~= "Xbox360" and cfg.platform ~= "x64" then
+			if cfg.flags.EnableSSE then
+				_p(4,'EnableEnhancedInstructionSet="1"')
+			elseif cfg.flags.EnableSSE2 then
+				_p(4,'EnableEnhancedInstructionSet="2"')
+			end
+		end
+	
 		if _ACTION < "vs2005" then
 			if cfg.flags.FloatFast then
 				_p(4,'ImproveFloatingPointConsistency="%s"', _VS.bool(false))

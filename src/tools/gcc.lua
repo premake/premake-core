@@ -23,6 +23,8 @@
 
 	local cflags =
 	{
+		EnableSSE      = "-msse",
+		EnableSSE2     = "-msse2",
 		ExtraWarnings  = "-Wall",
 		FatalWarnings  = "-Werror",
 		FloatFast      = "-ffast-math",
