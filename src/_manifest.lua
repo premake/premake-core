@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2010 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -48,7 +48,10 @@
 		"actions/make/make_csharp.lua",
 		"actions/make/_make.lua",
 		
-		-- Visual Studio action
+		-- SlickEdit action
+		"actions/slickedit/_slickedit.lua",
+		
+		-- Visual Studio actions
 		"actions/vstudio/vs2002_solution.lua",
 		"actions/vstudio/vs2002_csproj.lua",
 		"actions/vstudio/vs2002_csproj_user.lua",
