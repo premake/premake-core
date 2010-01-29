@@ -4,6 +4,7 @@
 
 * Patch 2928029: Add EnableSSE, EnableSSE2 flags
 * Bug 2928775: Error loading external Lua module with require()
+* Bug 2942438: Wrong runtime library linked
 
 
 -----

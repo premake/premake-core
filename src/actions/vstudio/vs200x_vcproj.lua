@@ -1,8 +1,11 @@
 --
 -- vs200x_vcproj.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009, 2010 Jason Perkins and the Premake project
 --
+
+premake.vstudio.vcproj = { }
+local vcproj = premake.vstudio.vcproj
 
 
 --
@@ -89,7 +92,14 @@
 			_p(4,'StringPooling="%s"', _VS.bool(true))
 		end
 		
-		_p(4,'RuntimeLibrary="%s"', _VS.runtime(cfg))
+		local runtime
+		if cfg.flags.StaticRuntime then
+			runtime = iif(cfg.flags.Symbols, 1, 0)
+		else
+			runtime = iif(cfg.flags.Symbols, 3, 2)
+		end
+		_p(4,'RuntimeLibrary="%s"', runtime)
+
 		_p(4,'EnableFunctionLevelLinking="%s"', _VS.bool(true))
 
 		if _ACTION > "vs2003" and cfg.platform ~= "Xbox360" and cfg.platform ~= "x64" then

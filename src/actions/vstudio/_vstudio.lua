@@ -1,11 +1,13 @@
 --
 -- _vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2008-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2010 Jason Perkins and the Premake project
 --
 
+	_VS = { }  -- deprecated, will remove eventually
+
 	premake.vstudio = { }
-	_VS = { }
+	local vstudio = premake.vstudio
 
 
 --
@@ -265,22 +267,6 @@
 		return fname..extension
 	end
 	
-
--- 
--- Returns the runtime code for a configuration.
--- (this should probably go in vs200x_vcproj.lua)
---
-
-	function _VS.runtime(cfg)
-		local debugbuild = (_VS.optimization(cfg) == 0)
-		if (cfg.flags.StaticRuntime) then
-			return iif(debugbuild, 1, 0)
-		else
-			return iif(debugbuild, 3, 2)
-		end
-	end
-
-
 
 --
 -- Returns the Visual Studio tool ID for a given project type.

@@ -33,25 +33,26 @@
 		"base/premake.lua",
 		
 		-- CodeBlocks action
+		"actions/codeblocks/_codeblocks.lua",
 		"actions/codeblocks/codeblocks_workspace.lua",
 		"actions/codeblocks/codeblocks_cbp.lua",
-		"actions/codeblocks/_codeblocks.lua",
 		
 		-- CodeLite action
+		"actions/codelite/_codelite.lua",
 		"actions/codelite/codelite_workspace.lua",
 		"actions/codelite/codelite_project.lua",
-		"actions/codelite/_codelite.lua",
 		
 		-- GNU make action
+		"actions/make/_make.lua",
 		"actions/make/make_solution.lua",
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
-		"actions/make/_make.lua",
 		
 		-- SlickEdit action
 		"actions/slickedit/_slickedit.lua",
 		
 		-- Visual Studio actions
+		"actions/vstudio/_vstudio.lua",
 		"actions/vstudio/vs2002_solution.lua",
 		"actions/vstudio/vs2002_csproj.lua",
 		"actions/vstudio/vs2002_csproj_user.lua",
@@ -60,7 +61,6 @@
 		"actions/vstudio/vs2005_solution.lua",
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
-		"actions/vstudio/_vstudio.lua",
 		
 		-- Xcode action
 		"actions/xcode/_xcode.lua",
