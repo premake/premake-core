@@ -57,7 +57,7 @@
 			local action = csc.getbuildaction(fcfg)
 			if action == "Compile" then
 				table.insert(sources, fcfg.name)
-			elseif action == "EmbeddedResource" then			
+			elseif action == "EmbeddedResource" then
 				table.insert(embedded, fcfg.name)
 			elseif action == "Content" then
 				copypairs["$(TARGETDIR)/" .. _MAKE.esc(path.getname(fcfg.name))] = _MAKE.esc(fcfg.name)

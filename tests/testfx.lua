@@ -79,7 +79,7 @@
 	function test.isequal(expected, actual)
 		if (type(expected) == "table") then
 			for k,v in pairs(expected) do
-				if (expected[k] ~= actual[k]) then
+				if not (test.isequal(expected[k], actual[k])) then
 					test.fail("expected %s but was %s", expected, actual)
 				end
 			end
@@ -88,6 +88,7 @@
 				test.fail("expected %s but was %s", expected, actual)
 			end
 		end
+		return true
 	end
 	
 		

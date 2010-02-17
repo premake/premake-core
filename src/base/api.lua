@@ -541,8 +541,8 @@
 -- Project object constructors.
 --
 
-	function configuration(keywords)
-		if not keywords then
+	function configuration(terms)
+		if not terms then
 			return premake.CurrentConfiguration
 		end
 		
@@ -552,27 +552,18 @@
 		end
 		
 		local cfg = { }
+		cfg.terms = table.flatten({terms})
+		
 		table.insert(container.blocks, cfg)
 		premake.CurrentConfiguration = cfg
 		
-		-- create a keyword list using just the indexed keyword items
+		-- create a keyword list using just the indexed keyword items. This is a little
+		-- confusing: "terms" are what the user specifies in the script, "keywords" are
+		-- the Lua patterns that result. I'll refactor to better names.
 		cfg.keywords = { }
-		for _, word in ipairs(table.join({}, keywords)) do
+		for _, word in ipairs(cfg.terms) do
 			table.insert(cfg.keywords, path.wildcards(word):lower())
 		end
-		
-		-- if file patterns are specified, convert them to Lua patterns and add them too
-		if keywords.files then
-			for _, pattern in ipairs(table.join({}, keywords.files)) do
-				pattern = pattern:gsub("%.", "%%.")
-				if pattern:find("**", nil, true) then
-					pattern = pattern:gsub("%*%*", ".*")
-				else
-					pattern = pattern:gsub("%*", "[^/]*")
-				end
-				table.insert(cfg.keywords, "^" .. pattern .. "$")
-			end
-		end		
 
 		-- initialize list-type fields to empty tables
 		for name, field in pairs(premake.fields) do

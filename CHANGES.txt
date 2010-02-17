@@ -1,8 +1,9 @@
------
- 4.3 (in progress)
------
+-------
+ 4.2.1 (in progress)
+-------
 
 * Patch 2928029: Add EnableSSE, EnableSSE2 flags
+* Patch 2936443: Expose configuration terms to scripts (Laurent Humbertclaude)
 * Bug 2928775: Error loading external Lua module with require()
 * Bug 2942438: Wrong runtime library linked
 

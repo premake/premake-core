@@ -1,33 +1,44 @@
 --
--- tests/test_table.lua
+-- tests/base/test_table.lua
 -- Automated test suite for the new table functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2010 Jason Perkins and the Premake project
 --
 
 
 	T.table = { }
+	local suite = T.table
 
 
 --
 -- table.contains() tests
 --
 
-	function T.table.contains_OnContained()
+	function suite.contains_OnContained()
 		t = { "one", "two", "three" }
 		test.istrue( table.contains(t, "two") )
 	end
 
-	function T.table.contains_OnNotContained()
+	function suite.contains_OnNotContained()
 		t = { "one", "two", "three" }
 		test.isfalse( table.contains(t, "four") )
 	end
 
-	
+
+--
+-- table.flatten() tests
+--
+
+	function suite.flatten_OnMixedValues()
+		t = { "a", { "b", "c" }, "d" }
+		test.isequal({ "a", "b", "c", "d" }, table.flatten(t))
+	end
+
+
 --
 -- table.implode() tests
 --
 
-	function T.table.implode()
+	function suite.implode()
 		t = { "one", "two", "three", "four" }
 		test.isequal("[one], [two], [three], [four]", table.implode(t, "[", "]", ", "))
 	end
@@ -37,10 +48,10 @@
 -- table.isempty() tests
 --
 
-	function T.table.isempty_ReturnsTrueOnEmpty()
+	function suite.isempty_ReturnsTrueOnEmpty()
 		test.istrue(table.isempty({}))
 	end
 
-	function T.table.isempty_ReturnsFalseOnNotEmpty()
+	function suite.isempty_ReturnsFalseOnNotEmpty()
 		test.isfalse(table.isempty({ 1 }))
 	end
