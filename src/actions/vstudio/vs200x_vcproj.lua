@@ -138,7 +138,7 @@ local vcproj = premake.vstudio.vcproj
 		
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			_p(4,'PrecompiledHeaderThrough="%s"', cfg.pchheader)
+			_p(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end

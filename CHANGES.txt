@@ -6,6 +6,7 @@
 * Patch 2936443: Expose configuration terms to scripts (Laurent Humbertclaude)
 * Bug 2928775: Error loading external Lua module with require()
 * Bug 2942438: Wrong runtime library linked
+* Bug 2931722: pchheader handling not consistent between tools
 
 
 -----

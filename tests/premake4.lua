@@ -46,11 +46,6 @@
 	dofile("test_targets.lua")
 	dofile("test_keywords.lua")
 	dofile("test_gcc.lua")
-	dofile("test_vs2002_sln.lua")
-	dofile("test_vs2003_sln.lua")
-	dofile("test_vs2005_sln.lua")
-	dofile("test_vs2008_sln.lua")
-	dofile("test_vs200x_vcproj.lua")
 	dofile("test_gmake_cpp.lua")
 	dofile("test_gmake_cs.lua")
 	dofile("base/test_api.lua")
@@ -59,7 +54,16 @@
 	dofile("base/test_path.lua")
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
+	
+	-- Clean tests
 	dofile("actions/test_clean.lua")
+	
+	-- Visual Studio tests
+	dofile("test_vs2002_sln.lua")
+	dofile("test_vs2003_sln.lua")
+	dofile("test_vs2005_sln.lua")
+	dofile("test_vs2008_sln.lua")
+	dofile("actions/vstudio/test_vs200x_vcproj.lua")
 
 	-- Xcode tests
 	dofile("actions/xcode/test_xcode_common.lua")

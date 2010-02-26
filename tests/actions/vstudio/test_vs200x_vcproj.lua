@@ -445,7 +445,29 @@
 -- Test precompiled header handling
 --
 
-	function suite.PCH_OnWindows()
+	function suite.CompilerBlock_OnPCH()
+		pchheader "source/common.h"
+		pchsource "source/common.cpp"
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="common.h"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+	function suite.Files_OnPCH_OnWindows()
 		files { "afxwin.cpp" }
 		pchsource "afxwin.cpp"
 		prepare()
@@ -473,8 +495,8 @@
 			</File>
 		]]
 	end
-
-	function suite.PCH_OnXbox360()
+	
+	function suite.Files_OnPCH_OnXbox360()
 		files { "afxwin.cpp" }
 		pchsource "afxwin.cpp"
 		platforms { "Xbox360" }
