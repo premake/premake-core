@@ -61,10 +61,10 @@
 			return not premake.iskeywordmatch(keyword:sub(5), terms)
 		end
 		
-		for _, word in ipairs(keyword:explode(" or ")) do
-			local pattern = "^" .. word .. "$"
+		for _, pattern in ipairs(keyword:explode(" or ")) do
+--			local pattern = "^" .. word .. "$"
 			for termkey, term in pairs(terms) do
-				if term:match(pattern) then
+				if term:match(pattern) == term then
 					return termkey
 				end
 			end

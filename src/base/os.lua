@@ -95,7 +95,7 @@
 		-- against the paths returned by the OS. Haven't come up with a good 
 		-- way to do it yet, so will handle cases as they come up
 		if mask:startswith("./") then
-			mask = mask:sub(2)
+			mask = mask:sub(3)
 		end
 		
 		-- recurse into subdirectories?
@@ -113,7 +113,7 @@
 				local isfile = os.matchisfile(m)
 				if ((wantfiles and isfile) or (not wantfiles and not isfile)) then
 					local fname = path.join(basedir, os.matchname(m))
-					if fname:match(mask) then
+					if fname:match(mask) == fname then
 						table.insert(result, fname)
 					end
 				end

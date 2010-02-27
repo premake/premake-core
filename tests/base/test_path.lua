@@ -1,7 +1,7 @@
 --
 -- tests/base/test_path.lua
 -- Automated test suite for the action list.
--- Copyright (c) 2008,2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2010 Jason Perkins and the Premake project
 --
 
 	T.path = { }
@@ -195,3 +195,14 @@
 			test.isequal("dir/dir/file", actual)
 		end
 	end
+
+
+--
+-- path.wildcards tests
+--
+
+	function suite.wildcards_MatchesTrailingStar()
+		local p = path.wildcards("**/xcode/*")
+		test.isequal(".*/xcode/[^/]*", p)
+	end
+

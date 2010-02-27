@@ -7,6 +7,7 @@
 * Bug 2928775: Error loading external Lua module with require()
 * Bug 2942438: Wrong runtime library linked
 * Bug 2931722: pchheader handling not consistent between tools
+* Bug 2958829: Files pattern matching including too many files
 
 
 -----

@@ -67,6 +67,12 @@
 		local result = os.matchfiles("./**.lua")
 		test.istrue(table.contains(result, "folder/ok.lua"))
 	end
+	
+	function suite.matchfiles_OnImplicitEndOfString()
+		local result = os.matchfiles("folder/*.lua")
+		test.istrue(table.contains(result, "folder/ok.lua"))
+		test.isfalse(table.contains(result, "folder/ok.lua.2"))
+	end
 
 
 	
