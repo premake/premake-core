@@ -125,6 +125,9 @@
 		test.isequal("$(SDK_HOME)/include", path.getrelative("C:/Code/Premake4", "$(SDK_HOME)/include"))
 	end
 	
+	function suite.getrelative_ReturnsAbsPath_OnRootedPath()
+		test.isequal("/opt/include", path.getrelative("/home/me/src/project", "/opt/include"))
+	end
 	
 
 --

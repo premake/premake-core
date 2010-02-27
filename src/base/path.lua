@@ -125,9 +125,9 @@
 		end
 		
 		-- different drives? Must use absolute path
-		if path.getdrive(src) ~= path.getdrive(dst) then
-			return dst
-		end
+--		if path.getdrive(src) ~= path.getdrive(dst) then
+--			return dst
+--		end
 
 		-- dollar macro? Can't tell what the real path is; use absolute
 		-- This enables paths like $(SDK_ROOT)/include to work correctly.
@@ -137,8 +137,33 @@
 		
 		src = src .. "/"
 		dst = dst .. "/"
-				
+
+		-- find the common leading directories
+		local idx = 0
+		while (true) do
+			local tst = src:find("/", idx + 1, true)
+			if tst then
+				if src:sub(1,tst) == dst:sub(1,tst) then
+					idx = tst
+				else
+					break
+				end
+			else
+				break
+			end
+		end
+		
+		-- if they have nothing in common return absolute path
+		local first = src:find("/", 0, true)
+		if idx <= first then
+			return dst:sub(1, -2)
+		end
+		
 		-- trim off the common directories from the front 
+		src = src:sub(idx + 1)
+		dst = dst:sub(idx + 1)
+		
+--[[
 		local i = src:find("/")
 		while (i) do
 			if (src:sub(1,i) == dst:sub(1,i)) then
@@ -149,13 +174,14 @@
 			end
 			i = src:find("/")
 		end
+]]
 
 		-- back up from dst to get to this common parent
 		local result = ""		
-		i = src:find("/")
-		while (i) do
+		idx = src:find("/")
+		while (idx) do
 			result = result .. "../"
-			i = src:find("/", i + 1)
+			idx = src:find("/", idx + 1)
 		end
 
 		-- tack on the path down to the dst from here

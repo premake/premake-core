@@ -441,7 +441,7 @@
 		
 		function makeabsolute(value)
 			if (type(value) == "table") then
-				for _,item in ipairs(value) do
+				for _, item in ipairs(value) do
 					makeabsolute(item)
 				end
 			else
