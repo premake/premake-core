@@ -124,11 +124,6 @@
 			return "."
 		end
 		
-		-- different drives? Must use absolute path
---		if path.getdrive(src) ~= path.getdrive(dst) then
---			return dst
---		end
-
 		-- dollar macro? Can't tell what the real path is; use absolute
 		-- This enables paths like $(SDK_ROOT)/include to work correctly.
 		if dst:startswith("$") then
@@ -163,19 +158,6 @@
 		src = src:sub(idx + 1)
 		dst = dst:sub(idx + 1)
 		
---[[
-		local i = src:find("/")
-		while (i) do
-			if (src:sub(1,i) == dst:sub(1,i)) then
-				src = src:sub(i + 1)
-				dst = dst:sub(i + 1)
-			else
-				break
-			end
-			i = src:find("/")
-		end
-]]
-
 		-- back up from dst to get to this common parent
 		local result = ""		
 		idx = src:find("/")
@@ -311,13 +293,6 @@
 		-- Replace the placeholders with their Lua patterns
 		pattern = pattern:gsub("\001", ".*")
 		pattern = pattern:gsub("\002", "[^/]*")
-	
-		
---		if pattern:find("**", nil, true) then
---			pattern = pattern:gsub("%*%*", ".*")
---		else
---			pattern = pattern:gsub("%*", "[^/]*")
---		end
 		
 		return pattern
 	end
