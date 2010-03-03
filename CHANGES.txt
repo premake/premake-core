@@ -2,6 +2,7 @@
  4.2.1 (in progress)
 -------
 
+* Feature 2944697: Add flag to disable Minimal Rebuild in Visual Studio
 * Patch 2928029: Add EnableSSE, EnableSSE2 flags
 * Patch 2936443: Expose configuration terms to scripts (Laurent Humbertclaude)
 * Bug 2928775: Error loading external Lua module with require()

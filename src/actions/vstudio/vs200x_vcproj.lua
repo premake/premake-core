@@ -75,7 +75,8 @@ local vcproj = premake.vstudio.vcproj
 			_p(4,'PreprocessorDefinitions="%s"', premake.esc(table.concat(cfg.defines, ";")))
 		end
 		
-		if cfg.flags.Symbols and not cfg.flags.Managed then
+		
+		if cfg.flags.Symbols and not cfg.flags.NoMinimalRebuild and not cfg.flags.Managed then
 			_p(4,'MinimalRebuild="%s"', _VS.bool(true))
 		end
 		

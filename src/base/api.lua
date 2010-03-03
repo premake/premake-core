@@ -86,6 +86,7 @@
 				"NoFramePointer",
 				"NoImportLib",
 				"NoManifest",
+				"NoMinimalRebuild",
 				"NoNativeWChar",
 				"NoPCH",
 				"NoRTTI",
