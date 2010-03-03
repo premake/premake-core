@@ -1,5 +1,5 @@
 -------
- 4.2.1 (in progress)
+ 4.2.1
 -------
 
 * Feature 2944697: Add flag to disable Minimal Rebuild in Visual Studio
