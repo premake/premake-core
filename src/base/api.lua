@@ -439,21 +439,23 @@
 	local function domatchedarray(ctype, fieldname, value, matchfunc)
 		local result = { }
 		
-		function makeabsolute(value)
+		function makeabsolute(value, depth)
 			if (type(value) == "table") then
 				for _, item in ipairs(value) do
-					makeabsolute(item)
+					makeabsolute(item, depth + 1)
 				end
-			else
+			elseif type(value) == "string" then
 				if value:find("*") then
-					makeabsolute(matchfunc(value))
+					makeabsolute(matchfunc(value), depth + 1)
 				else
 					table.insert(result, path.getabsolute(value))
 				end
+			else
+				error("Invalid value in list: expected string, got " .. type(value), depth)
 			end
 		end
 		
-		makeabsolute(value)
+		makeabsolute(value, 3)
 		return premake.setarray(ctype, fieldname, result)
 	end
 	
