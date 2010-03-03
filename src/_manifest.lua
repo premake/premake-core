@@ -48,9 +48,6 @@
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
 		
-		-- SlickEdit action
-		"actions/slickedit/_slickedit.lua",
-		
 		-- Visual Studio actions
 		"actions/vstudio/_vstudio.lua",
 		"actions/vstudio/vs2002_solution.lua",
