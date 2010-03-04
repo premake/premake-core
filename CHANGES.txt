@@ -1,4 +1,11 @@
 -------
+ 4.2.2  (in progress)
+-------
+
+* Patch 2963313: Enable setting .NET framework version (Justen Hyde)
+
+
+-------
  4.2.1
 -------
 
