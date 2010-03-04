@@ -63,6 +63,7 @@
 	dofile("test_vs2003_sln.lua")
 	dofile("test_vs2005_sln.lua")
 	dofile("test_vs2008_sln.lua")
+	dofile("actions/vstudio/test_vs2005_csproj.lua")
 	dofile("actions/vstudio/test_vs200x_vcproj.lua")
 
 	-- Xcode tests

@@ -1,13 +1,22 @@
 --
 -- vs2005_csproj.lua
 -- Generate a Visual Studio 2005/2008 C# project.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2010 Jason Perkins and the Premake project
 --
 
-	--
-	-- Figure out what elements a particular source code file need in its item
-	-- block, based on its build action and any related files in the project.
-	-- 
+--
+-- Set up namespaces
+--
+
+	premake.vstudio.cs2005 = { }
+	local vstudio = premake.vstudio
+	local cs2005  = premake.vstudio.cs2005
+
+
+--
+-- Figure out what elements a particular source code file need in its item
+-- block, based on its build action and any related files in the project.
+-- 
 	
 	local function getelements(prj, action, fname)
 	
@@ -60,6 +69,32 @@
 		return "None"
 	end
 
+
+--
+-- Write the opening <Project> element and project level <PropertyGroup> block.
+--
+
+	function cs2005.projectheader(prj)
+		local vsversion, toolversion
+		if _ACTION == "vs2005" then
+			vsversion   = "8.0.50727"
+			toolversion = nil
+		elseif _ACTION == "vs2008" then
+			vsversion   = "9.0.21022"
+			toolversion = "3.5"
+		end
+		
+		if toolversion then
+			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="%s">', toolversion)
+		else
+			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		end
+	end
+
+
+--
+-- The main function: write the project file.
+--
 
 	function premake.vs2005_csproj(prj)
 		io.eol = "\r\n"
