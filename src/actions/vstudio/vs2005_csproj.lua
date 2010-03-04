@@ -74,21 +74,25 @@
 -- Write the opening <Project> element and project level <PropertyGroup> block.
 --
 
-	function cs2005.projectheader(prj)
-		local vsversion, toolversion
-		if _ACTION == "vs2005" then
-			vsversion   = "8.0.50727"
-			toolversion = nil
-		elseif _ACTION == "vs2008" then
-			vsversion   = "9.0.21022"
-			toolversion = "3.5"
+	function cs2005.projectelement(prj)
+		_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"%s>', iif(_ACTION == 'vs2005', '', ' ToolsVersion="3.5"'))
+	end
+
+	function cs2005.projectsettings(prj)
+		_p('  <PropertyGroup>')
+		_p('    <Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(prj.solution.configurations[1]))
+		_p('    <Platform Condition=" \'$(Platform)\' == \'\' ">AnyCPU</Platform>')
+		_p('    <ProductVersion>%s</ProductVersion>', iif(_ACTION == "vs2005", "8.0.50727", "9.0.21022"))
+		_p('    <SchemaVersion>2.0</SchemaVersion>')
+		_p('    <ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
+		_p('    <OutputType>%s</OutputType>', premake.dotnet.getkind(prj))
+		_p('    <AppDesignerFolder>Properties</AppDesignerFolder>')
+		_p('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
+		_p('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
+		if prj.framework then
+			_p('    <TargetFrameworkVersion>v%s</TargetFrameworkVersion>', prj.framework)
 		end
-		
-		if toolversion then
-			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="%s">', toolversion)
-		else
-			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-		end
+		_p('  </PropertyGroup>')
 	end
 
 
