@@ -283,7 +283,7 @@
 
 	function path.wildcards(pattern)
 		-- Escape characters that have special meanings in Lua patterns
-		pattern = pattern:gsub("([%.%-%^%$%(%)%%])", "%%%1")
+		pattern = pattern:gsub("([%+%.%-%^%$%(%)%%])", "%%%1")
 
 		-- Replace wildcard patterns with special placeholders so I don't
 		-- have competing star replacements to worry about

@@ -3,6 +3,7 @@
 -------
 
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
+* Patch 2965229: Fix handling of  '+' symbol in file patterns (Rachel Blum)
 
 
 -------

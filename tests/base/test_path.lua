@@ -209,3 +209,8 @@
 		test.isequal(".*/xcode/[^/]*", p)
 	end
 
+	function suite.wildcards_MatchPlusSign()
+		local patt = path.wildcards("file+name.*")
+		local name = "file+name.c"
+		test.isequal(name, name:match(patt))
+	end
