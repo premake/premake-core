@@ -53,6 +53,9 @@
 			
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
+			
+		configuration { "macosx", "gmake" }
+			buildoptions { "-isysroot /Developer/SDKs/MacOSX10.5.sdk", "-mmacosx-version-min=10.5" }
 
 		configuration "not windows"
 			linkoptions { "-rdynamic" }
