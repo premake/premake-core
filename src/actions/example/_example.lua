@@ -43,6 +43,17 @@
 		},
 
 		
+		-- This function is called during state validation. If your action has some
+		-- special requirements you can check them here and error if necessary.
+		
+		
+		oncheckproject = function(prj)
+			-- if this_project_is_no_good(prj) then
+			--    error("Project " .. prj.name .. " is no good", 0)
+			-- end
+		end,
+		
+
 		-- These functions will get called for each solution and project. The function
 		-- premake.generate() creates a file for you in the correct place, taking into
 		-- account any location information specified in the script. The sequence "%%"
