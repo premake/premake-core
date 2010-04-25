@@ -31,6 +31,7 @@
 			[".strings"] = "Resources",
 			[".nib"] = "Resources",
 			[".xib"] = "Resources",
+			[".icns"] = "Resources",
 		}
 		return categories[path.getextension(node.name)]
 	end
@@ -83,6 +84,7 @@
 			[".plist"]     = "text.plist.xml",
 			[".strings"]   = "text.plist.strings",
 			[".xib"]       = "file.xib",
+			[".icns"]      = "image.icns",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
