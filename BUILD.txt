@@ -14,10 +14,6 @@ PREMAKE BUILD INSTRUCTIONS
  source code from Subversion instead of a SourceForge release, read
  the next section for more information on working with the scripts.
  
- VISUAL STUDIO 2002 AND 2003 USERS: these versions of Visual Studio 
- are unable to build Premake due to string size limitations. Use one 
- the newer, free versions of Visual Studio C++ Express instead.
-
  If you find all of this very confusing and need some help, see the
  end of this document for contact information. I'll be glad to help.
  

@@ -6,6 +6,7 @@
 * Patch 2965229: Fix handling of  '+' symbol in file patterns (Rachel Blum)
 * Patch 2997449: Print configuration with target (ergosys)
 * Patch 2997452: Suppress gmake's "nothing to be done" message (ergosys)
+* Bug 2997728: Project dependencies should be case-sensitive
 
 
 -------
