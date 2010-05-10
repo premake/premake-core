@@ -178,6 +178,15 @@
 		]]
 	end
 
+	function suite.PBXFileReference_ListsIconFiles()
+		files { "Icon.icns" }
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[Icon.icns] /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "Icon.icns"; path = "Icon.icns"; sourceTree = "<group>"; };
+		]]
+	end
 
 	function suite.PBXFileReference_IgnoresTargetDir()
 		targetdir "bin"
