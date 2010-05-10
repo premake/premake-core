@@ -1,7 +1,7 @@
 --
 -- tests/test_project.lua
 -- Automated test suite for the project support functions.
--- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2010 Jason Perkins and the Premake project
 --
 
 	local _project = premake.project
@@ -22,6 +22,18 @@
 
 
 
+--
+-- findproject() tests
+--
+
+	function T.project.findproject_IsCaseSensitive()
+		local sln = test.createsolution()
+		local prj = test.createproject(sln)
+		premake.buildconfigs()
+		test.isnil(premake.findproject("myproject"))
+	end
+	
+	
 --
 -- getfilename() tests
 --
