@@ -418,7 +418,192 @@
 		end		
 	end
 		
-	
+  	local function getCfgKind(cfg)
+  		if(cfg.kind) then
+  			return cfg.kind;
+  		end
+  		
+  		if(cfg.project.__configs[""] and cfg.project.__configs[""].kind) then
+  			return cfg.project.__configs[""].kind;
+  		end
+  		
+  		return nil
+  	end
+  
+  	local function getprojrec(dstArray, foundList, cfg, cfgname, searchField, bLinkage)
+  		if(not cfg) then return end
+  		
+  		local foundUsePrjs = {};
+  		for _, useName in ipairs(cfg[searchField]) do
+  			local testName = useName:lower();
+  			if((not foundList[testName])) then
+  				local theProj = nil;
+  				local theUseProj = nil;
+  				for _, prj in ipairs(cfg.project.solution.projects) do
+  					if (prj.name:lower() == testName) then
+  						if(prj.usage) then
+  							theUseProj = prj;
+  						else
+  							theProj = prj;
+  						end
+  					end
+  				end
+  
+  				--Must connect to a usage project.
+  				if(theUseProj) then
+  					foundList[testName] = true;
+  					local prjEntry = {
+  						name = testName,
+  						proj = theProj,
+  						usageProj = theUseProj,
+  						bLinkageOnly = bLinkage,
+  					};
+  					dstArray[testName] = prjEntry;
+  					table.insert(foundUsePrjs, theUseProj);
+  				end
+  			end
+  		end
+  		
+  		for _, usePrj in ipairs(foundUsePrjs) do
+  			--Links can only recurse through static libraries.
+  			if((searchField ~= "links") or
+  				(getCfgKind(usePrj.__configs[cfgname]) == "StaticLib")) then
+  				getprojrec(dstArray, foundList, usePrj.__configs[cfgname],
+  					cfgname, searchField, bLinkage);
+  			end
+  		end
+  	end
+  
+  --
+  -- This function will recursively get all projects that the given configuration has in its "uses"
+  -- field. The return values are a list of tables. Each table in that list contains the following:
+  --		name = The lowercase name of the project.
+  --		proj = The project. Can be nil if it is usage-only.
+  --		usageProj = The usage project. Can't be nil, as using a project that has no
+  -- 			usage project is not put into the list.
+  --		bLinkageOnly = If this is true, then only the linkage information should be copied.
+  -- The recursion will only look at the "uses" field on *usage* projects.
+  -- This function will also add projects to the list that are mentioned in the "links"
+  -- field of usage projects. These will only copy linker information, but they will recurse.
+  -- through other "links" fields.
+  --
+  	local function getprojectsconnections(cfg, cfgname)
+  		local dstArray = {};
+  		local foundList = {};
+  		foundList[cfg.project.name:lower()] = true;
+  
+  		--First, follow the uses recursively.
+  		getprojrec(dstArray, foundList, cfg, cfgname, "uses", false);
+  		
+  		--Next, go through all of the usage projects and recursively get their links.
+  		--But only if they're not already there. Get the links as linkage-only.
+  		local linkArray = {};
+  		for prjName, prjEntry in pairs(dstArray) do
+  			getprojrec(linkArray, foundList, prjEntry.usageProj.__configs[cfgname], cfgname, 
+  				"links", true);
+  		end
+  		
+  		--Copy from linkArray into dstArray.
+  		for prjName, prjEntry in pairs(linkArray) do
+  			dstArray[prjName] = prjEntry;
+  		end
+  		
+  		return dstArray;
+  	end
+  	
+  	
+  	local function isnameofproj(cfg, strName)
+  		local sln = cfg.project.solution;
+  		local strTest = strName:lower();
+  		for prjIx, prj in ipairs(sln.projects) do
+  			if (prj.name:lower() == strTest) then
+  				return true;
+  			end
+  		end
+  		
+  		return false;
+  	end
+  --
+  -- Copies the field from dstCfg to srcCfg.
+  --
+  	local function copydependentfield(srcCfg, dstCfg, strSrcField)
+  		local srcField = premake.fields[strSrcField];
+  		local strDstField = strSrcField;
+  		
+  		if type(srcCfg[strSrcField]) == "table" then
+  			--handle paths.
+  			if (srcField.kind == "dirlist" or srcField.kind == "filelist") and
+  				(not nofixup[strSrcField]) then
+  				for i,p in ipairs(srcCfg[strSrcField]) do
+  					table.insert(dstCfg[strDstField],
+  						path.rebase(p, srcCfg.project.location, dstCfg.project.location))
+  				end
+  			else
+  				if(strSrcField == "links") then
+  					for i,p in ipairs(srcCfg[strSrcField]) do
+  						if(not isnameofproj(dstCfg, p)) then
+  							table.insert(dstCfg[strDstField], p)
+  						else
+  							printf("Failed to copy '%s' from proj '%s'.",
+  								p, srcCfg.project.name);
+  						end
+  					end
+  				else
+  					for i,p in ipairs(srcCfg[strSrcField]) do
+  						table.insert(dstCfg[strDstField], p)
+  					end
+  				end
+  			end
+  		else
+  			if(srcField.kind == "path" and (not nofixup[strSrcField])) then
+  				dstCfg[strDstField] = path.rebase(srcCfg[strSrcField],
+  					prj.location, dstCfg.project.location);
+  			else
+  				dstCfg[strDstField] = srcCfg[strSrcField];
+  			end
+  		end
+  	end
+  	
+  --
+  -- This function will take the list of project entries and apply their usage project data
+  -- to the given configuration. It will copy compiling information for the projects that are
+  -- not listed as linkage-only. It will copy the linking information for projects only if
+  -- the source project is not a static library. It won't copy linking information
+  -- if the project is in this solution; instead it will add that project to the configuration's
+  -- links field, expecting that Premake will handle the rest.
+  --	
+  	local function copyusagedata(cfg, cfgname, linkToProjs)
+  		local myPrj = cfg.project;
+  		local bIsStaticLib = (getCfgKind(cfg) == "StaticLib");
+  		
+  		for prjName, prjEntry in pairs(linkToProjs) do
+  			local srcPrj = prjEntry.usageProj;
+  			local srcCfg = srcPrj.__configs[cfgname];
+  
+  			for name, field in pairs(premake.fields) do
+  				if(srcCfg[name]) then
+  					if(field.usagecopy) then
+  						if(not prjEntry.bLinkageOnly) then
+  							copydependentfield(srcCfg, cfg, name)
+  						end
+  					elseif(field.linkagecopy) then
+  						--Copy the linkage data if we're building a non-static thing
+  						--and this is a pure usage project. If it's not pure-usage, then
+  						--we will simply put the project's name in the links field later.
+  						if((not bIsStaticLib) and (not prjEntry.proj)) then
+  							copydependentfield(srcCfg, cfg, name)
+  						end
+  					end
+  				end
+  			end
+  
+  			if((not bIsStaticLib) and prjEntry.proj) then
+  				printf("Adding direct link to project '%s' from project '%s'",
+  					prjEntry.proj.name, getCfgKind(cfg));
+  				table.insert(cfg.links, prjEntry.proj.name);
+  			end
+  		end
+  	end
 		
 --
 -- Takes the configuration information stored in solution->project->block
@@ -452,6 +637,44 @@
 				end
 			end
 		end	
+		
+		--This loop finds the projects that a configuration is connected to
+		--via its "uses" field. It will then copy any usage project information from that
+		--usage project to the configuration in question.
+		for sln in premake.solution.each() do
+			for prjIx, prj in ipairs(sln.projects) do
+				if(not prj.usage) then
+					for cfgname, cfg in pairs(prj.__configs) do
+						printf("prj '%s', cfg '%s'", prj.name, cfgname);
+						printf("before:");
+						for _, linkName in ipairs(cfg.links) do
+							printf("\t link to '%s'.", linkName)
+						end
+						
+						local usesPrjs = getprojectsconnections(cfg, cfgname);
+						copyusagedata(cfg, cfgname, usesPrjs)
+						printf("after:");
+						for _, linkName in ipairs(cfg.links) do
+							printf("link to '%s'", linkName)
+						end
+					end
+				end
+			end
+		end		
+
+		-- Remove all usage projects.
+		for sln in premake.solution.each() do
+			local removeList = {};
+			for index, prj in ipairs(sln.projects) do
+				if(prj.usage) then
+					table.insert(removeList, 1, index); --Add in reverse order.
+				end
+			end
+			
+			for _, index in ipairs(removeList) do
+				table.remove(sln.projects, index);
+			end
+		end
 		
 		-- assign unique object directories to each configuration
 		builduniquedirs()
