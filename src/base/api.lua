@@ -79,6 +79,7 @@
 				"FloatFast",
 				"FloatStrict",
 				"Managed",
+				"MFC",
 				"NativeWChar",
 				"No64BitChecks",
 				"NoEditAndContinue",
