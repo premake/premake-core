@@ -15,6 +15,11 @@
 --
 -- Assertion functions
 --
+	function test.string_contains(buffer, expected)
+		if not string.find(buffer,expected) then
+			test.fail("\n==Fail==: Expected to find :\n%s\nyet it was not found in buffer:\n%s\n", expected,buffer)
+		end
+	end
 	
 	function test.capture(expected)
 		local actual = io.endcapture()
