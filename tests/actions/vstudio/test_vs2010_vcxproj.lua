@@ -62,10 +62,41 @@
 	
 	function vs10_vcxproj.configItemGroupPresent()
 		buffer = get_buffer()
-		test.string_contains(buffer,'<ItemGroup Label="ProjectConfigurations2">*.*</ItemGroup>')
+		test.string_contains(buffer,'<ItemGroup Label="ProjectConfigurations">*.*</ItemGroup>')
 	end
 	
 	function vs10_vcxproj.configBlocksArePresent()
 		buffer = get_buffer()
 		test.string_contains(buffer,'<ProjectConfiguration*.*</ProjectConfiguration>')
+	end
+
+	function vs10_vcxproj.configTypeBlockPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'*.*\'" Label="Configuration">*.*</PropertyGroup>')
+	end
+	
+	function vs10_vcxproj.twoConfigTypeBlocksPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Condition*.*</PropertyGroup>*.*<PropertyGroup Condition=*.*</PropertyGroup>')	
+	end
+	
+	function vs10_vcxproj.propsDefaultForCppProjArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<Import Project="$%(VCTargetsPath%)\\Microsoft.Cpp.Default.props" />')
+	end
+	
+	
+	function vs10_vcxproj.propsForCppProjArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<Import Project="%$%(VCTargetsPath%)\\Microsoft.Cpp.props" />')
+	end
+	
+	function vs10_vcxproj.extensionSettingArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ImportGroup Label="ExtensionSettings">*.*</ImportGroup>')
+	end
+	
+	function vs10_vcxproj.userMacrosPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Label="UserMacros" />')
 	end

@@ -4,9 +4,6 @@ premake.vstudio.vcxproj = { }
 	
 	local function vs2010_config(prj)		
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
-			--cfginfo = prj.solution.vstudio_configs[1]
-			--local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-		
 			_p(1,'<ItemGroup Label="ProjectConfigurations">')
 				_p(2,'<ProjectConfiguration Include="%s"', premake.esc(cfginfo.name))
 					_p(3,'<Configuration>%s</Configuration>',cfginfo.buildcfg)
@@ -74,21 +71,21 @@ premake.vstudio.vcxproj = { }
 			vs2010_config(prj)
 			vs2010_globals(prj)
 			
-			_p(1,'<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />')
+			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
 			
 			config_type_block(prj)
 			
-			_p(1,'<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />')
+			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
 			
 			--check what this section is doing
 			_p(1,'<ImportGroup Label="ExtensionSettings">')
 			_p(1,'</ImportGroup>')
 			
+			
 			import_props(prj)
 			
 			--what type of macros are these?
 			_p(1,'<PropertyGroup Label="UserMacros" />')
-
 			
 			
 		_p('</Project>')
