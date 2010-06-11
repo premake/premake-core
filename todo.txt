@@ -1,0 +1,15 @@
+find why MFC in flags causes an error
+
+add support for flags: WinMain, Managed, MFC, NoImportLib, Unsafe
+add Link section to vcxproj
+add ClInclude section
+add LinkIncremental support 
+add ImportGroup section
+support C
+support Managed C++
+support C#
+add X.vcxproj.filters
+add X.vcxproj.user
+find out why a unit test is failing
+
+No64BitChecks is removed after being deprciated in previous releases

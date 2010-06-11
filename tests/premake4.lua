@@ -67,6 +67,8 @@
 	dofile("actions/vstudio/test_vs2005_csproj.lua")
 	dofile("actions/vstudio/test_vs200x_vcproj.lua")
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
+	dofile("actions/vstudio/test_vs2010_flags.lua")
+
 
 	-- Xcode tests
 	dofile("actions/xcode/test_xcode_common.lua")

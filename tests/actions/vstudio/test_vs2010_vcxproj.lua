@@ -1,23 +1,9 @@
 	T.vs2010_vcxproj = { }
 	local vs10_vcxproj = T.vs2010_vcxproj
-
---[[
-
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-</Project>
---]]
-
+	local include_directory = "bar/foo"
+	local include_directory2 = "baz/foo"
+	local debug_define = "I_AM_ALIVE_NUMBER_FIVE"
+	
 	local sln, prj
 	function vs10_vcxproj.setup()
 		_ACTION = "vs2010"
@@ -25,15 +11,25 @@
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms {}
-		
-		--project "DotNetProject"   -- to test handling of .NET platform in solution
-		--language "C#"
-		--kind "ConsoleApp"
-		
+	
 		prj = project "MyProject"
 		language "C++"
 		kind "ConsoleApp"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"		
+		
+		includedirs
+		{
+			include_directory,
+			include_directory2
+		}
+		
+		configuration("Release")
+			flags {"Optimize"}
+			
+		configuration("Debug")
+			defines {debug_define}
+			
+
 	end
 	
 	local function get_buffer()
@@ -99,4 +95,84 @@
 	function vs10_vcxproj.userMacrosPresent()
 		buffer = get_buffer()
 		test.string_contains(buffer,'<PropertyGroup Label="UserMacros" />')
+	end
+	
+	function vs10_vcxproj.intermediateAndOutDirsPropertyGroupWithMagicNumber()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup>*.*<_ProjectFileVersion>10%.0%.30319%.1</_ProjectFileVersion>')
+	end
+	
+	function vs10_vcxproj.outDirPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir>*.*</OutDir>')
+	end
+	function vs10_vcxproj.initDirPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<IntDir>*.*</IntDir>')
+	end
+	
+	function vs10_vcxproj.projectWithDebugAndReleaseConfig_twoOutDirsAndTwoIntDirs()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir>*.*</OutDir>*.*<IntDir>*.*</IntDir>*.*<OutDir>*.*</OutDir>*.*<IntDir>*.*</IntDir>')
+	end
+
+	function vs10_vcxproj.containsItemDefinition()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemDefinitionGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'*.*\'">*.*</ItemDefinitionGroup>')
+	end
+	
+
+	function vs10_vcxproj.containsClCompileBlock()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ClCompile>*.*</ClCompile>')		
+	end
+	--[[	
+	function vs10_vcxproj.containsAdditionalOptions()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<AdditionalOptions>*.*<AdditionalOptions>')		
+	end
+	--]]
+	
+	local function cl_compile_string(version)
+		return '<ItemDefinitionGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\''..version..'|Win32\'">*.*<ClCompile>'
+	end
+	
+	function vs10_vcxproj.debugHasNoOptimisation()
+		buffer = get_buffer()
+		test.string_contains(buffer, cl_compile_string('Debug').. '*.*<Optimization>Disabled</Optimization>*.*</ItemDefinitionGroup>')
+	end
+	
+	function vs10_vcxproj.releaseHasFullOptimisation()
+		buffer = get_buffer()
+		test.string_contains(buffer, cl_compile_string('Release').. '*.*<Optimization>Full</Optimization>*.*</ItemDefinitionGroup>')
+	end
+	
+	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '*.*<AdditionalIncludeDirectories>'.. path.translate(include_directory, '\\') ..'*.*</AdditionalIncludeDirectories>')
+	end
+	
+	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory2PrefixWithSemiColon()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '*.*<AdditionalIncludeDirectories>*.*;'.. path.translate(include_directory2, '\\') ..'*.*</AdditionalIncludeDirectories>')
+	end
+	
+	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory2PostfixWithSemiColon()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '*.*<AdditionalIncludeDirectories>*.*'.. path.translate(include_directory2, '\\') ..';*.*</AdditionalIncludeDirectories>')
+	end
+	
+	function vs10_vcxproj.debugContainsPreprossorBlock()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '*.*<PreprocessorDefinitions>*.*</PreprocessorDefinitions>')
+	end
+	
+	function vs10_vcxproj.debugHasDebugDefine()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug')..'*.*<PreprocessorDefinitions>*.*'..debug_define..'*.*</PreprocessorDefinitions>')
+	end
+	
+	function vs10_vcxproj.releaseHasStringPoolingOn()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Release')..'*.*<StringPooling>true</StringPooling>')
 	end
