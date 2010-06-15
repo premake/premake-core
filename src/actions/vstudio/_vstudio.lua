@@ -421,9 +421,6 @@
 		oncleantarget   = premake.vstudio.cleantarget
 	}
 
-
-		local function ignore()
-		end
 		
 	newaction 
 	{
@@ -447,10 +444,12 @@
 		
 		onproject = function(prj)
 			premake.generate(prj, "%%.vcxproj", premake.vs2010_vcxproj)
+			premake.generate(prj, "%%.vcxproj.user", premake.vs2010_vcxproj_user)
+			premake.generate(prj, "%%.vcxproj.filters", premake.vs2010_vcxproj_filters)
 		end,
 		
 
-		oncleansolution = ignore, --premake.vstudio.cleansolution,
-		oncleanproject  = ignore, --premake.vstudio.cleanproject,
-		oncleantarget   = ignore --premake.vstudio.cleantarget
+		oncleansolution = premake.vs2010_cleansolution,
+		oncleanproject  = premake.vs2010_cleanproject,
+		oncleantarget   = premake.vs2010_cleantarget
 	}

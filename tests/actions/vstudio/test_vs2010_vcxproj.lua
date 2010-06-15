@@ -22,16 +22,25 @@
 			include_directory,
 			include_directory2
 		}
+		files 
+		{ 
+			"foo/dummyHeader.h", 
+			"foo/dummySource.cpp", 
+			"../src/host/*h",
+			"../src/host/*.c"
+		}
 		
 		configuration("Release")
 			flags {"Optimize"}
+			links{"foo","bar"}
 			
 		configuration("Debug")
 			defines {debug_define}
+			links{"foo_d"}
 			
 
 	end
-	
+
 	local function get_buffer()
 		io.capture()
 		premake.buildconfigs()
@@ -126,12 +135,12 @@
 		buffer = get_buffer()
 		test.string_contains(buffer,'<ClCompile>*.*</ClCompile>')		
 	end
-	--[[	
+
 	function vs10_vcxproj.containsAdditionalOptions()
+		buildoptions {"/Gm"}
 		buffer = get_buffer()
-		test.string_contains(buffer,'<AdditionalOptions>*.*<AdditionalOptions>')		
+		test.string_contains(buffer,'<AdditionalOptions>/Gm %%%(AdditionalOptions%)</AdditionalOptions>')		
 	end
-	--]]
 	
 	local function cl_compile_string(version)
 		return '<ItemDefinitionGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\''..version..'|Win32\'">*.*<ClCompile>'
@@ -176,3 +185,74 @@
 		buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Release')..'*.*<StringPooling>true</StringPooling>')
 	end
+		
+	function vs10_vcxproj.hasItemGroupSection()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemGroup>*.*</ItemGroup>')
+	end
+	--[[
+	function vs10_vcxproj.itemGroupSection_hasHeaderListed()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemGroup>*.*<ClCompile Include="foo\\dummyHeader%.h" />*.*</ItemGroup>')
+	end
+		--]]
+	
+
+	function vs10_vcxproj.fileExtension_extEqualH()
+		local ext = get_file_extension('foo.h')
+		test.isequal('h', ext)
+	end
+	
+	function vs10_vcxproj.fileExtension_containsTwoDots_extEqualH()
+		local ext = get_file_extension('foo.bar.h')
+		test.isequal('h', ext)
+	end
+	
+	function vs10_vcxproj.fileExtension_alphaNumeric_extEqualOneH()
+		local ext = get_file_extension('foo.1h')
+		test.isequal('1h', ext)
+	end
+	
+	function vs10_vcxproj.fileExtension_alphaNumericWithUnderscore_extEqualOne_H()
+		local ext = get_file_extension('foo.1_h')
+		test.isequal('1_h', ext)
+	end
+
+	function vs10_vcxproj.fileExtension_containsHyphen_extEqualHHyphenH()
+		local ext = get_file_extension('foo.h-h')
+		test.isequal('h-h', ext)
+	end
+
+	function vs10_vcxproj.fileExtension_containsMoreThanOneDot_extEqualOneH()
+		local ext = get_file_extension('foo.bar.h')
+		test.isequal('h', ext)
+	end
+	
+	local function SortAndReturnSortedInputFiles(input)
+		local sorted = 
+		{
+			ClInclude	={},
+			ClCompile	={},
+			None		={}
+		}
+		sort_input_files(input,sorted)
+		return sorted
+	end
+	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
+		local file = {"bar.h"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ClInclude)
+	end
+		
+	function vs10_vcxproj.sortFile_srcFile_SortedClCompileEqualToFile()
+		local file = {"b.cxx"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ClCompile)
+	end
+	
+	function vs10_vcxproj.sortFile_notRegistered_SortedNoneEqualToFile()
+		local file = {"foo.bar.00h"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.None)
+	end
+	

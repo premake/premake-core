@@ -68,6 +68,8 @@
 	dofile("actions/vstudio/test_vs200x_vcproj.lua")
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
 	dofile("actions/vstudio/test_vs2010_flags.lua")
+	dofile("actions/vstudio/test_vs2010_links.lua")
+	dofile("actions/vstudio/test_vs2010_filters.lua")
 
 
 	-- Xcode tests

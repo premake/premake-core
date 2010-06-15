@@ -1,15 +1,22 @@
 find why MFC in flags causes an error
 
-add support for flags: WinMain, Managed, MFC, NoImportLib, Unsafe
-add Link section to vcxproj
-add ClInclude section
-add LinkIncremental support 
-add ImportGroup section
+add support for flags:  Managed, MFC, NoImportLib, Unsafe
+
+NoImportLib
+Prevent the generation of an import library for a Windows DLL.
+		if cfg.kind == "SharedLib" then
+				local implibname = cfg.linktarget.fullpath
+				_p(4,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
+			end
+			
+add Link section to vcxproj -done	
+add LinkIncremental support if no optimization and and exe?if cfg.kind ~= "StaticLib" then
+add ImportGroup section - which section?????
+add X.vcxproj.filters -done mostly just need to convert to ms irectory slash '\\'
+
 support C
 support Managed C++
 support C#
-add X.vcxproj.filters
-add X.vcxproj.user
-find out why a unit test is failing
 
+find out why a unit test is failing
 No64BitChecks is removed after being deprciated in previous releases
