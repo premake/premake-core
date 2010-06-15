@@ -9,14 +9,18 @@ Prevent the generation of an import library for a Windows DLL.
 				_p(4,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 			end
 			
-add Link section to vcxproj -done	
 add LinkIncremental support if no optimization and and exe?if cfg.kind ~= "StaticLib" then
 add ImportGroup section - which section?????
-add X.vcxproj.filters -done mostly just need to convert to ms irectory slash '\\'
 
 support C
 support Managed C++
 support C#
 
 find out why a unit test is failing
+fails at the following test_os line 16
+	function suite.findlib_FindSystemLib()
+		local libname = iif(os.is("windows"), "user32", "m")
+		test.istrue(os.findlib(libname))
+	end
+	
 No64BitChecks is removed after being deprciated in previous releases

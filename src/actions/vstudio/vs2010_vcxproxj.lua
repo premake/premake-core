@@ -364,6 +364,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
+	--also translates file paths from '/' to '\\'
 	function sort_input_files(files,sorted_container)
 		local types = 
 		{	
@@ -377,13 +378,14 @@ premake.vstudio.vcxproj = { }
 		}
 
 		for _, current_file in ipairs(files) do
-			local ext = get_file_extension(current_file)
+			local translated_path = path.translate(current_file, '\\')
+			local ext = get_file_extension(translated_path)
 			if ext then
 				local type = types[ext]
 				if type then
-					table.insert(sorted_container[type],current_file)
+					table.insert(sorted_container[type],translated_path)
 				else
-					table.insert(sorted_container.None,current_file)
+					table.insert(sorted_container.None,translated_path)
 				end
 			end
 		end
@@ -400,7 +402,7 @@ premake.vstudio.vcxproj = { }
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
-				_p(2,'<%s Include=\"%s\" />', group_type,path.translate(current_file, "\\"))
+				_p(2,'<%s Include=\"%s\" />', group_type,current_file)
 			end
 			_p(1,'</ItemGroup>')
 		end

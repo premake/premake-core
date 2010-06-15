@@ -2,14 +2,14 @@
 	local vs10_filters = T.vs2010_filters
 		
 	function remove_relative_path(file)
-		file = file:gsub("%.%./",'')
-		file = file:gsub("%./",'')
+		file = file:gsub("%.%.\\",'')
+		file = file:gsub("%.\\",'')
 		return file
 	end
 		
 	function file_path(file)
 		file = remove_relative_path(file)
-		local path = string.find(file,'/[%w%.%_%-]+$')
+		local path = string.find(file,'\\[%w%.%_%-]+$')
 		if path then
 			return string.sub(file,1,path-1)
 		else
@@ -20,11 +20,11 @@
 	function list_of_directories_in_path(path)
 		local list={}
 		if path then
-			for dir in string.gmatch(path,"[%w%-%_]+/")do
+			for dir in string.gmatch(path,"[%w%-%_]+\\")do
 				if #list == 0 then
 					list[1] = dir:sub(1,#dir-1)
 				else
-					list[#list +1] = list[#list] .."/" ..dir:sub(1,#dir-1)				
+					list[#list +1] = list[#list] .."\\" ..dir:sub(1,#dir-1)				
 				end
 			end		
 		end
@@ -90,43 +90,43 @@
 		
 	function vs10_filters.path_hasOneDirectoryPath_returnsIsFoo()
 		local path = "foo"
-		local result = file_path(path .."/foo.h")
+		local result = file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasTwoDirectoryPath_returnsIsFooSlashBar()
-		local path = "foo/bar"
-		local result = file_path(path .."/foo.h")
+		local path = "foo\\bar"
+		local result = file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasTwoDirectoryPath_returnsIsFooSlashBar_Baz()
-		local path = "foo/bar_baz"
-		local result = file_path(path .."/foo.h")
+		local path = "foo\\bar_baz"
+		local result = file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_extensionWithHyphen_returnsIsFoo()
 		local path = "foo"
-		local result = file_path(path .."/foo-bar.h")
+		local result = file_path(path .."\\foo-bar.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_extensionWithNumber_returnsIs2Foo()
 		local path = "foo"
-		local result = file_path(path .."/2foo.h")
+		local result = file_path(path .."\\2foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasThreeDirectoryPath_returnsIsFooSlashBarSlashBaz()
-		local path = "foo/bar/baz"
-		local result = file_path(path .."/foo.h")
+		local path = "foo\\bar\\baz"
+		local result = file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasDotDotSlashDirectoryPath_returnsNil()
 		local path = ".."
-		local result = file_path(path .."/foo.h")
+		local result = file_path(path .."\\foo.h")
 		test.isequal(nil,result)
 	end
 	
@@ -137,19 +137,19 @@
 	end
 	
 	function vs10_filters.removeRelativePath_dotDotSlashFoo_returnsFoo()
-		local path = "../foo"
+		local path = "..\\foo"
 		local result = remove_relative_path(path)
 		test.isequal("foo",result)
 	end
 	
 	function vs10_filters.removeRelativePath_dotDotSlashDotDotSlashFoo_returnsFoo()
-		local path = "../../foo"
+		local path = "..\\..\\foo"
 		local result = remove_relative_path(path)
 		test.isequal("foo",result)
 	end
 	
 	function vs10_filters.removeRelativePath_DotSlashFoo_returnsFoo()
-		local path = "./foo"
+		local path = ".\\foo"
 		local result = remove_relative_path(path)
 		test.isequal("foo",result)
 	end
@@ -160,23 +160,23 @@
 	end
 	
 	function vs10_filters.listOfDirectories_oneDirectory_returnsSizeIsOne()
-		local result = list_of_directories_in_path("foo/bar.h")
+		local result = list_of_directories_in_path("foo\\bar.h")
 		test.isequal(1,#result)
 	end
 	
 	function vs10_filters.listOfDirectories_oneDirectory_returnsContainsFoo()
-		local result = list_of_directories_in_path("foo/bar.h")
+		local result = list_of_directories_in_path("foo\\bar.h")
 		test.contains(result,"foo")
 	end
 	
 	function vs10_filters.listOfDirectories_twoDirectories_returnsSizeIsTwo()
-		local result = list_of_directories_in_path("foo/bar/bar.h")
+		local result = list_of_directories_in_path("foo\\bar\\bar.h")
 		test.isequal(2,#result)
 	end
 	
 	function vs10_filters.listOfDirectories_twoDirectories_secondEntryIsFooSlashBar()
-		local result = list_of_directories_in_path("foo/bar/bar.h")
-		test.isequal("foo/bar",result[2])
+		local result = list_of_directories_in_path("foo\\bar\\bar.h")
+		test.isequal("foo\\bar",result[2])
 	end
 	
 	function vs10_filters.tableOfFilters_emptyTable_returnsEmptyTable()
@@ -197,7 +197,7 @@
 	function vs10_filters.tableOfFilters_tableHasOneDirectory_returnSizeIsOne()
 		t =
 		{
-			'bar/foo.h'
+			'bar\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal(1,#result)
@@ -205,8 +205,8 @@
 	function vs10_filters.tableOfFilters_tableHasTwoDirectories_returnSizeIsOne()
 		t =
 		{
-			'bar/foo.h',
-			'baz/foo.h'
+			'bar\\foo.h',
+			'baz\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal(2,#result)
@@ -214,8 +214,8 @@
 	function vs10_filters.tableOfFilters_tableHasTwoDirectories_firstEntryIsBar()
 		t =
 		{
-			'bar/foo.h',
-			'baz/foo.h'
+			'bar\\foo.h',
+			'baz\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal("bar",result[1])
@@ -223,8 +223,8 @@
 	function vs10_filters.tableOfFilters_tableHasTwoDirectories_secondEntryIsBaz()
 		t =
 		{
-			'bar/foo.h',
-			'baz/foo.h'
+			'bar\\foo.h',
+			'baz\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal("baz",result[2])
@@ -233,8 +233,8 @@
 	function vs10_filters.tableOfFilters_tableHasTwoSameDirectories_returnSizeIsOne()
 		t =
 		{
-			'bar/foo.h',
-			'bar/baz.h'
+			'bar\\foo.h',
+			'bar\\baz.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal(1,#result)
@@ -243,7 +243,7 @@
 	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectories_returnSizeIsTwo()
 		t =
 		{
-			'bar/baz/foo.h'
+			'bar\\baz\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal(2,#result)
@@ -252,7 +252,7 @@
 	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectories_firstEntryIsBarSlashBar()
 		t =
 		{
-			'bar/baz/foo.h'
+			'bar\\baz\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal('bar',result[1])
@@ -261,18 +261,18 @@
 	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectories_secondEntryIsBarSlashBaz()
 		t =
 		{
-			'bar/baz/foo.h'
+			'bar\\baz\\foo.h'
 		}
 		local result = table_of_filters(t)
-		test.isequal('bar/baz',result[2])
+		test.isequal('bar\\baz',result[2])
 	end	
 	
 	
 	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectoriesSecondDirisAlsoInNextEntry_returnSizeIsThree()
 		t =
 		{
-			'bar/baz/foo.h',
-			'baz/foo.h'
+			'bar\\baz\\foo.h',
+			'baz\\foo.h'
 		}
 		local result = table_of_filters(t)
 		test.isequal(3,#result)
@@ -281,9 +281,9 @@
 	function vs10_filters.tableOfFileFilters_returnSizeIsTwo()
 		local t =
 		{
-			foo = {'foo/bar.h'},
-			bar = {'foo/bar.h'},
-			baz = {'baz/bar.h'}
+			foo = {'foo\\bar.h'},
+			bar = {'foo\\bar.h'},
+			baz = {'baz\\bar.h'}
 		}
 		local result = table_of_file_filters(t)
 		test.isequal(2,#result)
@@ -292,9 +292,9 @@
 	function vs10_filters.tableOfFileFilters_returnContainsFoo()
 		local t =
 		{
-			foo = {'foo/bar.h'},
-			bar = {'foo/bar.h'},
-			baz = {'baz/bar.h'}
+			foo = {'foo\\bar.h'},
+			bar = {'foo\\bar.h'},
+			baz = {'baz\\bar.h'}
 		}
 		local result = table_of_file_filters(t)
 		--order is not defined
@@ -304,9 +304,9 @@
 	function vs10_filters.tableOfFileFilters_returnContainsBaz()
 		local t =
 		{
-			foo = {'foo/bar.h'},
-			bar = {'foo/bar.h'},
-			baz = {'baz/bar.h'}
+			foo = {'foo\\bar.h'},
+			bar = {'foo\\bar.h'},
+			baz = {'baz\\bar.h'}
 		}
 		local result = table_of_file_filters(t)
 		--order is not defined
@@ -316,10 +316,10 @@
 	function vs10_filters.tableOfFileFilters_returnSizeIsFour()
 		local t =
 		{
-			foo = {'foo/bar.h'},
-			bar = {'foo/bar/bar.h'},
-			baz = {'bar/bar.h'},
-			bazz = {'bar/foo/bar.h'}
+			foo = {'foo\\bar.h'},
+			bar = {'foo\\bar\\bar.h'},
+			baz = {'bar\\bar.h'},
+			bazz = {'bar\\foo\\bar.h'}
 		}
 		local result = table_of_file_filters(t)
 		--order is not defined
@@ -329,7 +329,7 @@
 	function vs10_filters.tableOfFileFilters_tableHasSubTableWithTwoEntries_returnSizeIsTwo()
 		local t =
 		{
-			foo = {'foo/bar.h','foo/bar/bar.h'}
+			foo = {'foo\\bar.h','foo\\bar\\bar.h'}
 		}
 		local result = table_of_file_filters(t)
 		--order is not defined
@@ -359,7 +359,7 @@
 	function vs10_filters.oneInputFileWithDirectory_bufferContainsTagFilter()
 		files 
 		{ 
-			"dontCare/dontCare.h"
+			"dontCare\\dontCare.h"
 		}
 		local buffer = get_buffer()
 		test.string_contains(buffer,"<Filter")
@@ -368,7 +368,7 @@
 	function vs10_filters.oneInputFileWithDirectory_bufferContainsTagFilterInsideItemGroupTag()
 		files 
 		{ 
-			"dontCare/dontCare.h"
+			"dontCare\\dontCare.h"
 		}
 		local buffer = get_buffer()
 		test.string_contains(buffer,"<ItemGroup>*.*<Filter*.*</Filter>*.*</ItemGroup>")
@@ -377,7 +377,7 @@
 	function vs10_filters.oneInputFileWithDirectory_bufferContainsTagFilterWithIncludeSetToFoo()
 		files 
 		{ 
-			"foo/dontCare.h"
+			"foo\\dontCare.h"
 		}
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<Filter Include="foo">')
@@ -418,4 +418,5 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<None')
 	end
+	
 	
