@@ -17,8 +17,16 @@ fix ProgramDataBaseFileName tag currently at line 285 see note which states
 				added for now but it will removed or altered when I find out
 				what is the correct thing to do.
 
-check why  <MinimalRebuild>true</MinimalRebuild> is missing in a debug static lib build
-				
+check why  <MinimalRebuild>true</MinimalRebuild> is missing in a debug static lib and shared lib build
+check OutDir in debug it is showing "."
+shared lib missing <DebugInformationFormat>EditAndContinue</DebugInformationFormat> in ClCompile section
+shared lib incorrectly <GenerateDebugInformation>true</GenerateDebugInformation> to false in link section
+shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noInportLib not used
+shared lib LinkIncremental set to incorrect value of false
+check all configs %(AdditionalIncludeDirectories) missing before AdditionalIncludeDirectories end tag in ClCompile
+
+
+
 support C
 support Managed C++
 support C#

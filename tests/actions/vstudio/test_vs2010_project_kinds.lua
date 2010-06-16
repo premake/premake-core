@@ -38,3 +38,11 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<Lib>*.*<OutputFile>*.*MyProject.lib*.*</OutputFile>*.*</Lib>')
 	end
+	
+	function vs10_project_kinds.sharedLib_fail_asIDoNotKnowWhatItShouldLookLike_printsTheBufferSoICanCompare()
+		kind "SharedLib"
+		local buffer = get_buffer()
+		test.string_contains(buffer,'youWillNotFindThis')
+	end
+		
+				
