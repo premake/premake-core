@@ -84,19 +84,7 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<GenerateDebugInformation>true</GenerateDebugInformation>')
 	end
-	--[[
-	StaticLib does not have this section
-	function vs10_links.subSystem_consoleApp_valueInTagsIsConsole()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<SubSystem>Console</SubSystem>')
-	end
-	
-	function vs10_links.subSystem_StaticLib_valueInTagsIsWindows()
-			kind "StaticLib" 
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<SubSystem>Windows</SubSystem>')
-	end
-	--]]
+
 	
 	function vs10_links.noOptimiseFlag_optimizeReferences_isNotInBuffer()
 		local buffer = get_buffer()

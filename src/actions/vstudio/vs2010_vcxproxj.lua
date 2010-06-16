@@ -50,13 +50,29 @@ premake.vstudio.vcxproj = { }
 			_p(1,'</ImportGroup>')
 		end
 	end
-	function incremental_link(cfg)
-		if optimisation(cfg) ~= "Disabled" then
-			return 'true'
-		else
-			return 'false'
+	--NOTE: check this is correct
+	function incremental_link(cfg,cfginfo)
+		if cfg.kind ~= "StaticLib" then
+			ShoudLinkIncrementally = 'false'
+			if optimisation(cfg) == "Disabled" then
+				ShoudLinkIncrementally = 'true'
+			end
+
+			_p(2,'<LinkIncremental Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</LinkIncremental>'
+					,premake.esc(cfginfo.name),ShoudLinkIncrementally)
+		end		
+	end
+		
+		
+	function ignore_import_lib(cfg,cfginfo)
+		if cfg.kind == "SharedLib" then
+			local shouldIgnore = "false"
+			if cfg.flags.NoImportLib then shouldIgnore = "true" end
+			_p(2,'<IgnoreImportLibrary Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</IgnoreImportLibrary>'
+					,premake.esc(cfginfo.name),shouldIgnore)
 		end
 	end
+		
 --needs revisiting for when there are dependency projects
 	function intermediate_and_out_dirs(prj)
 		_p(1,'<PropertyGroup>')
@@ -66,9 +82,9 @@ premake.vstudio.vcxproj = { }
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 				_p(2,'<OutDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</OutDir>', premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
 				_p(2,'<IntDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</IntDir>', premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
-				
-				_p(2,'<LinkIncremental Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</LinkIncremental>',premake.esc(cfginfo.name),incremental_link(cfg))
-				
+				ignore_import_lib(cfg,cfginfo)
+				--_p(2,'<LinkIncremental Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</LinkIncremental>',premake.esc(cfginfo.name),incremental_link(cfg))
+				incremental_link(cfg,cfginfo)
 				if cfg.flags.NoManifest then
 				_p(2,'<GenerateManifest Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">false</GenerateManifest>',premake.esc(cfginfo.name))
 				end
@@ -138,9 +154,8 @@ premake.vstudio.vcxproj = { }
 	
 	function include_dirs(indent,cfg)
 		if #cfg.includedirs > 0 then
-			_p(indent,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>',premake.esc(path.translate(table.concat(cfg.includedirs, ";"), '\\')))
-		else
-		     _p(indent,'<AdditionalIncludeDirectories></AdditionalIncludeDirectories>')
+			_p(indent,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>'
+					,premake.esc(path.translate(table.concat(cfg.includedirs, ";"), '\\')))
 		end
 	end
 	
@@ -309,6 +324,17 @@ premake.vstudio.vcxproj = { }
 		_p(3,'<TargetMachine>%s</TargetMachine>', target)
 	end
 	
+	function import_lib(cfg)
+		--Prevent the generation of an import library for a Windows DLL.
+		if cfg.kind == "SharedLib" then
+			--local implibname = cfg.linktarget.fullpath
+				--_p(3,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
+			_p(3,'<ImportLibrary> nothing to see here</ImportLibrary>')
+		end
+	end
+	
+
+	
 	function item_link(cfg)
 		if cfg.kind ~= 'StaticLib' then
 		_p(2,'<Link>')
@@ -339,6 +365,8 @@ premake.vstudio.vcxproj = { }
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
 
+			import_lib(cfg)
+			
 			_p(3,'<TargetMachine>%s</TargetMachine>', iif(cfg.platform == "x64", "MachineX64", "MachineX86"))
 
 		_p(2,'</Link>')
@@ -366,6 +394,8 @@ premake.vstudio.vcxproj = { }
 			return  string.sub(file,ext_start+1,ext_end)
 		end
 	end
+	
+
 	
 	--also translates file paths from '/' to '\\'
 	function sort_input_files(files,sorted_container)
@@ -442,6 +472,7 @@ premake.vstudio.vcxproj = { }
 			_p(1,'</ItemGroup>')
 		end
 	end
+	
 	function write_file_filter_block(files,group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
@@ -458,6 +489,7 @@ premake.vstudio.vcxproj = { }
 			_p(1,'</ItemGroup>')
 		end
 	end
+	
 	function vcxproj_filter_files(prj)
 		local sorted =
 		{

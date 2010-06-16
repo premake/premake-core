@@ -1,15 +1,9 @@
 find why MFC in flags causes an error
 
-add support for flags:  Managed, MFC, NoImportLib, Unsafe
+add support for flags:  Managed, MFC, Unsafe
 
-NoImportLib
-Prevent the generation of an import library for a Windows DLL.
-		if cfg.kind == "SharedLib" then
-				local implibname = cfg.linktarget.fullpath
-				_p(4,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
-			end
 			
-add LinkIncremental support if no optimization and and exe?if cfg.kind ~= "StaticLib" then
+
 add ImportGroup section - which section?????
 
 fix ProgramDataBaseFileName tag currently at line 285 see note which states
@@ -18,14 +12,22 @@ fix ProgramDataBaseFileName tag currently at line 285 see note which states
 				what is the correct thing to do.
 
 check why  <MinimalRebuild>true</MinimalRebuild> is missing in a debug static lib and shared lib build
-check OutDir in debug it is showing "."
+--------Requires symbols to be set in flags
 shared lib missing <DebugInformationFormat>EditAndContinue</DebugInformationFormat> in ClCompile section
+--------Requires symbols to be set in flags
 shared lib incorrectly <GenerateDebugInformation>true</GenerateDebugInformation> to false in link section
-shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noInportLib not used
-shared lib LinkIncremental set to incorrect value of false
+--------Requires symbols to be set in flags
+
+
+shared lib LinkIncremental set to incorrect value of false 
+	---Fixed and tests wrote
+
 check all configs %(AdditionalIncludeDirectories) missing before AdditionalIncludeDirectories end tag in ClCompile
+	---Fixed if no include Directories supplied, this tag is not present
 
-
+check OutDir in debug it is showing "." --is this because no obj directory is supplied???
+shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when a static lib
+	---I am confused at what the value should be
 
 support C
 support Managed C++
