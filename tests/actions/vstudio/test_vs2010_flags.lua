@@ -218,7 +218,7 @@ function vs10_flags.mfc_useOfMfc_setToStatic()
     flags{"MFC"}
     
     buffer = get_buffer()
-    --test.string_contains(buffer,'<UseOfMfc>Static</UseOfMfc>')
+    test.string_contains(buffer,'<UseOfMfc>Static</UseOfMfc>')
 end
 --]]
 

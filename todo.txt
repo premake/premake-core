@@ -1,37 +1,17 @@
-find why MFC in flags causes an error
-
-add support for flags:  Managed, MFC, Unsafe
-
-			
-
-add ImportGroup section - which section?????
-
-fix ProgramDataBaseFileName tag currently at line 285 see note which states
-				this can not be converted when using the upgrade tool
-				added for now but it will removed or altered when I find out
-				what is the correct thing to do.
-
-check why  <MinimalRebuild>true</MinimalRebuild> is missing in a debug static lib and shared lib build
---------Requires symbols to be set in flags
-shared lib missing <DebugInformationFormat>EditAndContinue</DebugInformationFormat> in ClCompile section
---------Requires symbols to be set in flags
-shared lib incorrectly <GenerateDebugInformation>true</GenerateDebugInformation> to false in link section
---------Requires symbols to be set in flags
-
-
-shared lib LinkIncremental set to incorrect value of false 
-	---Fixed and tests wrote
-
-check all configs %(AdditionalIncludeDirectories) missing before AdditionalIncludeDirectories end tag in ClCompile
-	---Fixed if no include Directories supplied, this tag is not present
 
 check OutDir in debug it is showing "." --is this because no obj directory is supplied???
 shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when a static lib
 	---I am confused at what the value should be
 
+add support for flags:  Managed, MFC, Unsafe
 support C
 support Managed C++
 support C#
 
 	
 No64BitChecks is removed after being deprciated in previous releases
+find why MFC in flags causes an error
+fix ProgramDataBaseFileName tag currently at line 285 see note which states
+				this can not be converted when using the upgrade tool
+				added for now but it will removed or altered when I find out
+				what is the correct thing to do.

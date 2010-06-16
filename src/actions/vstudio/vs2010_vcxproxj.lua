@@ -2,6 +2,69 @@
 premake.vstudio.vcxproj = { }
 --local vcproj = premake.vstudio.vcxproj
 	
+		
+	function remove_relative_path(file)
+		file = file:gsub("%.%.\\",'')
+		file = file:gsub("%.\\",'')
+		return file
+	end
+		
+	function file_path(file)
+		file = remove_relative_path(file)
+		local path = string.find(file,'\\[%w%.%_%-]+$')
+		if path then
+			return string.sub(file,1,path-1)
+		else
+			return nil
+		end
+	end
+	
+	function list_of_directories_in_path(path)
+		local list={}
+		if path then
+			for dir in string.gmatch(path,"[%w%-%_]+\\")do
+				if #list == 0 then
+					list[1] = dir:sub(1,#dir-1)
+				else
+					list[#list +1] = list[#list] .."\\" ..dir:sub(1,#dir-1)				
+				end
+			end		
+		end
+		return list
+	end
+	
+	function table_of_filters(t)
+		local filters ={}
+
+		for key, value in pairs(t) do
+			local result = list_of_directories_in_path(value)
+			for __,dir in ipairs(result) do
+				if table.contains(filters,dir) ~= true then
+					filters[#filters +1] = dir
+				end
+			end
+		end
+		
+		return filters
+	end
+	
+	function table_of_file_filters(files)
+		local filters ={}
+
+		for key, valueTable in pairs(files) do
+			for _, entry in ipairs(valueTable) do
+				local result = list_of_directories_in_path(entry)
+				for __,dir in ipairs(result) do
+					if table.contains(filters,dir) ~= true then
+					filters[#filters +1] = dir
+					end
+				end
+			end
+		end
+		
+		return filters
+	end
+		
 	local function vs2010_config(prj)		
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			_p(1,'<ItemGroup Label="ProjectConfigurations">')
