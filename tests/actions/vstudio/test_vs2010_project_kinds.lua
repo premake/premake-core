@@ -27,3 +27,14 @@
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,'<Link>*.*</Link>')
 	end
+		
+	function vs10_project_kinds.staticLib_containsLibSection()
+		kind "StaticLib"
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<ItemDefinitionGroup*.*<Lib>*.*</Lib>*.*</ItemDefinitionGroup>')
+	end
+	function vs10_project_kinds.staticLib_libSection_containsProjectNameDotLib()
+		kind "StaticLib"
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Lib>*.*<OutputFile>*.*MyProject.lib*.*</OutputFile>*.*</Lib>')
+	end

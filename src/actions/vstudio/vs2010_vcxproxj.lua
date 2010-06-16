@@ -295,7 +295,7 @@ premake.vstudio.vcxproj = { }
 	function item_def_lib(cfg)
 		if cfg.kind == 'StaticLib' then
 			_p(1,'<Lib>')
-				_p(2,'<OutputFile>$(OutDir)%s.lib</OutputFile>',"some_name")
+				_p(2,'<OutputFile>$(OutDir)%s</OutputFile>',cfg.buildtarget.name)
 			_p(1,'</Lib>')
 		end
 	end

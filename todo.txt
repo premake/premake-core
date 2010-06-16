@@ -16,16 +16,12 @@ fix ProgramDataBaseFileName tag currently at line 285 see note which states
 				this can not be converted when using the upgrade tool
 				added for now but it will removed or altered when I find out
 				what is the correct thing to do.
+
+check why  <MinimalRebuild>true</MinimalRebuild> is missing in a debug static lib build
 				
 support C
 support Managed C++
 support C#
 
-find out why a unit test is failing
-fails at the following test_os line 16
-	function suite.findlib_FindSystemLib()
-		local libname = iif(os.is("windows"), "user32", "m")
-		test.istrue(os.findlib(libname))
-	end
 	
 No64BitChecks is removed after being deprciated in previous releases
