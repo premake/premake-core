@@ -81,6 +81,12 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<Link>*.*<ImportLibrary>*.*</ImportLibrary>*.*</Link>')
 	end
+	
+	function vs10_project_kinds.sharedLib_ImportLibraryTestWillFail_IDoNotKnowWhatShouldBeInsideTheTags()
+		kind "SharedLib"
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Link>*.*<ImportLibrary>You will not see this</ImportLibrary>*.*</Link>')
+	end
 	--should this go in vs2010_flags???
 
 	function vs10_project_kinds.sharedLib_withNoImportLibraryFlag_linkSectionContainsImportLibrary()
