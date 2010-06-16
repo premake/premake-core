@@ -111,6 +111,7 @@ premake.vstudio.vcxproj = { }
 	end
 	
 	--have a look at this and translate 
+	--[[
 	function vs10_vcxproj_symbols(cfg)
 		if (not cfg.flags.Symbols) then
 			return 0
@@ -126,7 +127,7 @@ premake.vstudio.vcxproj = { }
 			end
 		end
 	end
-	
+	--]]
 	function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
 			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>',premake.esc(table.concat(cfg.defines, ";")))
@@ -309,6 +310,7 @@ premake.vstudio.vcxproj = { }
 	end
 	
 	function item_link(cfg)
+		if cfg.kind ~= 'StaticLib' then
 		_p(2,'<Link>')
 			if #cfg.links > 0 then
 				_p(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>',
@@ -340,6 +342,7 @@ premake.vstudio.vcxproj = { }
 			_p(3,'<TargetMachine>%s</TargetMachine>', iif(cfg.platform == "x64", "MachineX64", "MachineX86"))
 
 		_p(2,'</Link>')
+		end
 	end
     
 	function item_definitions(prj)

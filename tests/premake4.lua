@@ -70,7 +70,7 @@
 	dofile("actions/vstudio/test_vs2010_flags.lua")
 	dofile("actions/vstudio/test_vs2010_links.lua")
 	dofile("actions/vstudio/test_vs2010_filters.lua")
-
+	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 
 	-- Xcode tests
 	dofile("actions/xcode/test_xcode_common.lua")

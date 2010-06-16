@@ -12,6 +12,11 @@ Prevent the generation of an import library for a Windows DLL.
 add LinkIncremental support if no optimization and and exe?if cfg.kind ~= "StaticLib" then
 add ImportGroup section - which section?????
 
+fix ProgramDataBaseFileName tag currently at line 285 see note which states
+				this can not be converted when using the upgrade tool
+				added for now but it will removed or altered when I find out
+				what is the correct thing to do.
+				
 support C
 support Managed C++
 support C#
