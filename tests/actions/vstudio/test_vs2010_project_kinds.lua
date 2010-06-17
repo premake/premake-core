@@ -21,12 +21,14 @@
 		buffer = io.endcapture()
 		return buffer
 	end
-	
+	--incorrect assumption
+	--[[
 	function vs10_project_kinds.staticLib_doesNotContainLinkSection()
 		kind "StaticLib"
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,'<Link>*.*</Link>')
 	end
+	--]]
 		
 	function vs10_project_kinds.staticLib_containsLibSection()
 		kind "StaticLib"
@@ -82,10 +84,10 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		test.string_contains(buffer,'<Link>*.*<ImportLibrary>*.*</ImportLibrary>*.*</Link>')
 	end
 	
-	function vs10_project_kinds.sharedLib_ImportLibraryTestWillFail_IDoNotKnowWhatShouldBeInsideTheTags()
+	function vs10_project_kinds.sharedLib_bufferContainsImportLibrary()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Link>*.*<ImportLibrary>You will not see this</ImportLibrary>*.*</Link>')
+		test.string_contains(buffer,'<Link>*.*<ImportLibrary>MyProject.lib</ImportLibrary>*.*</Link>')
 	end
 	--should this go in vs2010_flags???
 

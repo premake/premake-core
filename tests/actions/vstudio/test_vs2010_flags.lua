@@ -246,10 +246,11 @@ end
 --[[
 this causes a problem when a project is updated with the command line tool
 yet it is here until the correct course of action is found
+moving to Link section
 --]]
 function vs10_flags.programDataBaseFile()
 	buffer = get_buffer()
-	test.string_contains(buffer,'<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>')
+	test.string_contains(buffer,'<Link>*.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>*.*</Link>')
 end
 
 

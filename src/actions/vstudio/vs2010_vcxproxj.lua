@@ -390,17 +390,32 @@ premake.vstudio.vcxproj = { }
 	function import_lib(cfg)
 		--Prevent the generation of an import library for a Windows DLL.
 		if cfg.kind == "SharedLib" then
-			--local implibname = cfg.linktarget.fullpath
+			local implibname = cfg.linktarget.fullpath
 				--_p(3,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
-			_p(3,'<ImportLibrary> nothing to see here</ImportLibrary>')
+			_p(3,'<ImportLibrary>%s</ImportLibrary>',iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 		end
 	end
 	
 
+	function common_link_section(cfg)
+		_p(3,'<SubSystem>%s</SubSystem>',iif(cfg.kind == "ConsoleApp","Console", "Windows"))
+		
+		if cfg.flags.Symbols then 
+			_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
+		else
+			_p(3,'<GenerateDebugInformation>false</GenerateDebugInformation>')
+		end
+			
+		if optimisation(cfg) ~= "Disabled" then
+			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
+			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
+		end
+	end
 	
 	function item_link(cfg)
-		if cfg.kind ~= 'StaticLib' then
 		_p(2,'<Link>')
+		if cfg.kind ~= 'StaticLib' then
+		
 			if #cfg.links > 0 then
 				_p(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>',
 							table.concat(premake.getlinks(cfg, "all", "fullpath"), ";"))
@@ -410,7 +425,7 @@ premake.vstudio.vcxproj = { }
 				_p(3,'<AdditionalLibraryDirectories>%s%s%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>',
 							table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"),
 							iif(cfg.libdirs and #cfg.libdirs >0,';',''))
-							
+			--[[				
 			if cfg.flags.Symbols then 
 				_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
 			else
@@ -423,7 +438,8 @@ premake.vstudio.vcxproj = { }
 				_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 				_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 			end
-			
+			--]]
+			common_link_section(cfg)
 			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
@@ -432,8 +448,11 @@ premake.vstudio.vcxproj = { }
 			
 			_p(3,'<TargetMachine>%s</TargetMachine>', iif(cfg.platform == "x64", "MachineX64", "MachineX86"))
 
-		_p(2,'</Link>')
+		else
+			common_link_section(cfg)
 		end
+		
+		_p(2,'</Link>')
 	end
     
 	function item_definitions(prj)
