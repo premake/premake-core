@@ -132,10 +132,9 @@
 --
 
 	function premake.findproject(name)
-		name = name:lower()
 		for sln in premake.solution.each() do
 			for prj in premake.solution.eachproject(sln) do
-				if (prj.name:lower() == name) then
+				if (prj.name == name) then
 					return  prj
 				end
 			end

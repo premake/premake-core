@@ -6,7 +6,8 @@
 
 	T.vs200x_vcproj = { }
 	local suite = T.vs200x_vcproj
-
+	local vcproj = premake.vstudio.vcproj
+	
 
 --
 -- Configure a solution for testing
@@ -231,6 +232,27 @@
 	<Globals>
 	</Globals>
 </VisualStudioProject>
+		]]
+	end
+
+
+--
+-- Test the <Configuration> element
+--
+
+	function suite.Configuration_OnMFCFlag()
+		flags { "MFC" }
+		prepare()
+		vcproj.Configuration("Debug|Win32", premake.getconfig(prj, "Debug"))
+		test.capture [[
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="."
+			IntermediateDirectory="obj\Debug\MyProject"
+			ConfigurationType="1"
+			UseOfMFC="2"
+			CharacterSet="2"
+			>
 		]]
 	end
 

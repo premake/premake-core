@@ -4,6 +4,10 @@
 
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Patch 2965229: Fix handling of  '+' symbol in file patterns (Rachel Blum)
+* Patch 2997449: Print configuration with target (ergosys)
+* Patch 2997452: Suppress gmake's "nothing to be done" message (ergosys)
+* Patch 3011940: Add support for MFC (JTAnderson)
+* Bug 2997728: Project dependencies should be case-sensitive
 
 
 -------

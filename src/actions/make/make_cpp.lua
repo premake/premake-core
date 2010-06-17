@@ -55,6 +55,7 @@
 		else
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
 		end
+		_p('\t@:')
 		_p('')
 
 		-- target build rule

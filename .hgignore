@@ -1,0 +1,11 @@
+syntax: glob
+
+.DS_Store
+build
+bin
+obj
+Makefile
+*.make
+*.xcodeproj
+*.swp
+

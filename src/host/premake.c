@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2009 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2010 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -9,8 +9,8 @@
 #include "premake.h"
 
 
-#define VERSION        "SVN"
-#define COPYRIGHT      "Copyright (C) 2002-2009 Jason Perkins and the Premake Project"
+#define VERSION        "HEAD"
+#define COPYRIGHT      "Copyright (C) 2002-2010 Jason Perkins and the Premake Project"
 #define ERROR_MESSAGE  "%s\n"
 
 

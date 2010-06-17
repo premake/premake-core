@@ -9,6 +9,27 @@ local vcproj = premake.vstudio.vcproj
 
 
 --
+-- Write out the <Configuration> element.
+--
+
+	function vcproj.Configuration(name, cfg)
+		_p(2,'<Configuration')
+		_p(3,'Name="%s"', premake.esc(name))
+		_p(3,'OutputDirectory="%s"', premake.esc(cfg.buildtarget.directory))
+		_p(3,'IntermediateDirectory="%s"', premake.esc(cfg.objectsdir))
+		_p(3,'ConfigurationType="%s"', _VS.cfgtype(cfg))
+		if (cfg.flags.MFC) then
+			_p(3, 'UseOfMFC="2"')			
+		end				  
+		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+		if cfg.flags.Managed then
+			_p(3,'ManagedExtensions="1"')
+		end
+		_p(3,'>')
+	end
+	
+	
+--
 -- Write out the <Platforms> element; ensures that each target platform
 -- is listed only once. Skips over .NET's pseudo-platforms (like "Any CPU").
 --
@@ -550,17 +571,7 @@ local vcproj = premake.vstudio.vcproj
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 		
 				-- Start a configuration
-				_p(2,'<Configuration')
-				_p(3,'Name="%s"', premake.esc(cfginfo.name))
-				_p(3,'OutputDirectory="%s"', premake.esc(cfg.buildtarget.directory))
-				_p(3,'IntermediateDirectory="%s"', premake.esc(cfg.objectsdir))
-				_p(3,'ConfigurationType="%s"', _VS.cfgtype(cfg))
-				_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
-				if cfg.flags.Managed then
-					_p(3,'ManagedExtensions="1"')
-				end
-				_p(3,'>')
-				
+				vcproj.Configuration(cfginfo.name, cfg)				
 				for _, block in ipairs(getsections(_ACTION, cfginfo.src_platform)) do
 				
 					if blockmap[block] then
