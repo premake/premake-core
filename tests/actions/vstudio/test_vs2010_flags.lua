@@ -243,14 +243,10 @@ function vs10_flags.noManifest_GenerateManifest_setToFalse()
 	test.string_contains(buffer,'<GenerateManifest Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">false</GenerateManifest>')
 end
 
---[[
-this causes a problem when a project is updated with the command line tool
-yet it is here until the correct course of action is found
-moving to Link section
---]]
+
 function vs10_flags.programDataBaseFile()
 	buffer = get_buffer()
-	test.string_contains(buffer,'<Link>*.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>*.*</Link>')
+	test.string_contains(buffer,'<Link>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</Link>')
 end
 
 

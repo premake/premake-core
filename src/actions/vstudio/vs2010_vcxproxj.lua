@@ -332,14 +332,7 @@ premake.vstudio.vcxproj = { }
 			floating_point(cfg)
 			debug_info(cfg)
 			
-			--[[
-				NOTE: TODO:		
-				this can not be converted when using the upgrade tool
-				added for now but it will removed or altered when I find out
-				what is the correct thing to do.
-			--]]	
-			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', path.getbasename(cfg.buildtarget.name))
-		
+
 		if cfg.flags.NoFramePointer then
 			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
 		end
@@ -410,6 +403,9 @@ premake.vstudio.vcxproj = { }
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 		end
+					
+		_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', path.getbasename(cfg.buildtarget.name))
+		
 	end
 	
 	function item_link(cfg)
