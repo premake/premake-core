@@ -26,19 +26,19 @@
 	function vs10_project_kinds.staticLib_doesNotContainLinkSection()
 		kind "StaticLib"
 		local buffer = get_buffer()
-		test.string_does_not_contain(buffer,'<Link>*.*</Link>')
+		test.string_does_not_contain(buffer,'<Link>.*</Link>')
 	end
 	--]]
 		
 	function vs10_project_kinds.staticLib_containsLibSection()
 		kind "StaticLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<ItemDefinitionGroup*.*<Lib>*.*</Lib>*.*</ItemDefinitionGroup>')
+		test.string_contains(buffer,'<ItemDefinitionGroup.*<Lib>.*</Lib>.*</ItemDefinitionGroup>')
 	end
 	function vs10_project_kinds.staticLib_libSection_containsProjectNameDotLib()
 		kind "StaticLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Lib>*.*<OutputFile>*.*MyProject.lib*.*</OutputFile>*.*</Lib>')
+		test.string_contains(buffer,'<Lib>.*<OutputFile>.*MyProject.lib.*</OutputFile>.*</Lib>')
 	end
 	--[[
 	function vs10_project_kinds.sharedLib_fail_asIDoNotKnowWhatItShouldLookLike_printsTheBufferSoICanCompare()
@@ -57,37 +57,37 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		kind "StaticLib"
 		flags  {"Symbols"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<ClCompile>*.*<MinimalRebuild>true</MinimalRebuild>*.*</ClCompile>')
+		test.string_contains(buffer,'<ClCompile>.*<MinimalRebuild>true</MinimalRebuild>.*</ClCompile>')
 	end
 	function vs10_project_kinds.sharedLib_valueInMinimalRebuildIsTrue()
 		kind "SharedLib"
 		flags  {"Symbols"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<ClCompile>*.*<MinimalRebuild>true</MinimalRebuild>*.*</ClCompile>')
+		test.string_contains(buffer,'<ClCompile>.*<MinimalRebuild>true</MinimalRebuild>.*</ClCompile>')
 	end
 	--shared lib missing <DebugInformationFormat>EditAndContinue</DebugInformationFormat> in ClCompile section
 	function vs10_project_kinds.sharedLib_valueDebugInformationFormatIsEditAndContinue()
 		kind "SharedLib"
 		flags  {"Symbols"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<ClCompile>*.*<DebugInformationFormat>EditAndContinue</DebugInformationFormat>*.*</ClCompile>')
+		test.string_contains(buffer,'<ClCompile>.*<DebugInformationFormat>EditAndContinue</DebugInformationFormat>.*</ClCompile>')
 	end
 	function vs10_project_kinds.sharedLib_valueGenerateDebugInformationIsTrue()
 		kind "SharedLib"
 		flags  {"Symbols"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Link>*.*<GenerateDebugInformation>true</GenerateDebugInformation>*.*</Link>')
+		test.string_contains(buffer,'<Link>.*<GenerateDebugInformation>true</GenerateDebugInformation>.*</Link>')
 	end
 	function vs10_project_kinds.sharedLib_linkSectionContainsImportLibrary()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Link>*.*<ImportLibrary>*.*</ImportLibrary>*.*</Link>')
+		test.string_contains(buffer,'<Link>.*<ImportLibrary>.*</ImportLibrary>.*</Link>')
 	end
 	
 	function vs10_project_kinds.sharedLib_bufferContainsImportLibrary()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Link>*.*<ImportLibrary>MyProject.lib</ImportLibrary>*.*</Link>')
+		test.string_contains(buffer,'<Link>.*<ImportLibrary>MyProject.lib</ImportLibrary>.*</Link>')
 	end
 	--should this go in vs2010_flags???
 
@@ -95,33 +95,33 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		kind "SharedLib"
 		flags{"NoImportLib"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Link>*.*<ImportLibrary>*.*</ImportLibrary>*.*</Link>')
+		test.string_contains(buffer,'<Link>.*<ImportLibrary>.*</ImportLibrary>.*</Link>')
 	end
 
 	function vs10_project_kinds.sharedLib_withOutNoImportLibraryFlag_propertyGroupSectionContainsIgnoreImportLibrary()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup>*.*<IgnoreImportLibrary*.*</IgnoreImportLibrary>*.*</PropertyGroup>')
+		test.string_contains(buffer,'<PropertyGroup>.*<IgnoreImportLibrary.*</IgnoreImportLibrary>.*</PropertyGroup>')
 	end
 	
 	function vs10_project_kinds.sharedLib_withNoImportLibraryFlag_propertyGroupSectionContainsIgnoreImportLibrary()
 		kind "SharedLib"
 		flags{"NoImportLib"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup>*.*<IgnoreImportLibrary*.*</IgnoreImportLibrary>*.*</PropertyGroup>')
+		test.string_contains(buffer,'<PropertyGroup>.*<IgnoreImportLibrary.*</IgnoreImportLibrary>.*</PropertyGroup>')
 	end
 	
 	function vs10_project_kinds.sharedLib_withOutNoImportLibraryFlag_ignoreImportLibraryValueIsFalse()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup>*.*<IgnoreImportLibrary*.*false</IgnoreImportLibrary>*.*</PropertyGroup>')
+		test.string_contains(buffer,'<PropertyGroup>.*<IgnoreImportLibrary.*false</IgnoreImportLibrary>.*</PropertyGroup>')
 	end
 	
 	function vs10_project_kinds.sharedLib_withNoImportLibraryFlag_ignoreImportLibraryValueIsTrue()
 		kind "SharedLib"
 		flags{"NoImportLib"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup>*.*<IgnoreImportLibrary*.*true</IgnoreImportLibrary>*.*</PropertyGroup>')
+		test.string_contains(buffer,'<PropertyGroup>.*<IgnoreImportLibrary.*true</IgnoreImportLibrary>.*</PropertyGroup>')
 	end
 	
 	--shared lib LinkIncremental set to incorrect value of false
@@ -129,26 +129,26 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		kind "StaticLib"
 		flags  {"Symbols"}
 		local buffer = get_buffer()
-		test.string_does_not_contain(buffer,'<LinkIncremental*.*</LinkIncremental>')
+		test.string_does_not_contain(buffer,'<LinkIncremental.*</LinkIncremental>')
 	end
 	
 	function vs10_project_kinds.sharedLib_withoutOptimisation_linkIncrementalValueIsTrue()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<LinkIncremental*.*true</LinkIncremental>')
+		test.string_contains(buffer,'<LinkIncremental.*true</LinkIncremental>')
 	end
 	
 	function vs10_project_kinds.sharedLib_withOptimisation_linkIncrementalValueIsFalse()
 		kind "SharedLib"
 		flags{"Optimize"}
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<LinkIncremental*.*false</LinkIncremental>')
+		test.string_contains(buffer,'<LinkIncremental.*false</LinkIncremental>')
 	end
 	
 	--check all configs %(AdditionalIncludeDirectories) missing before AdditionalIncludeDirectories end tag in ClCompile
 	function vs10_project_kinds.kindDoesNotMatter_noAdditionalDirectoriesSpecified_bufferDoesNotContainAdditionalIncludeDirectories()
 		kind "SharedLib"
 		local buffer = get_buffer()
-		test.string_does_not_contain(buffer,'<ClCompile>*.*<AdditionalIncludeDirectories>*.*</ClCompile>')
+		test.string_does_not_contain(buffer,'<ClCompile>.*<AdditionalIncludeDirectories>.*</ClCompile>')
 	end
 	

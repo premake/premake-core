@@ -68,7 +68,7 @@ premake.vstudio.vcxproj = { }
 	local function vs2010_config(prj)		
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			_p(1,'<ItemGroup Label="ProjectConfigurations">')
-				_p(2,'<ProjectConfiguration Include="%s"', premake.esc(cfginfo.name))
+				_p(2,'<ProjectConfiguration Include="%s">', premake.esc(cfginfo.name))
 					_p(3,'<Configuration>%s</Configuration>',cfginfo.buildcfg)
 					_p(3,'<Platform>%s</Platform>',cfginfo.platform)
 				_p(2,'</ProjectConfiguration>')
@@ -143,8 +143,9 @@ premake.vstudio.vcxproj = { }
 			
 			for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-				_p(2,'<OutDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</OutDir>', premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
-				_p(2,'<IntDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</IntDir>', premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
+				_p(2,'<OutDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s\\</OutDir>', premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
+				_p(2,'<IntDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s\\</IntDir>', premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
+				_p(2,'<TargetName Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</TargetName>',premake.esc(cfginfo.name),path.getbasename(cfg.buildtarget.name))
 				ignore_import_lib(cfg,cfginfo)
 				--_p(2,'<LinkIncremental Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</LinkIncremental>',premake.esc(cfginfo.name),incremental_link(cfg))
 				incremental_link(cfg,cfginfo)
@@ -190,23 +191,23 @@ premake.vstudio.vcxproj = { }
 	end
 	
 	--have a look at this and translate 
-	--[[
-	function vs10_vcxproj_symbols(cfg)
-		if (not cfg.flags.Symbols) then
-			return 0
-		else
+	--
+	--function vs10_vcxproj_symbols(cfg)
+	--	if (not cfg.flags.Symbols) then
+	--		return 0
+	--	else
 			-- Edit-and-continue does't work for some configurations
-			if cfg.flags.NoEditAndContinue or 
-			   _VS.optimization(cfg) ~= 0 or 
-			   cfg.flags.Managed or 
-			   cfg.platform == "x64" then
-				return 3
-			else
-				return 4
-			end
-		end
-	end
-	--]]
+	--		if cfg.flags.NoEditAndContinue or 
+	--		   _VS.optimization(cfg) ~= 0 or 
+	--		   cfg.flags.Managed or 
+	--		   cfg.platform == "x64" then
+	--			return 3
+	--		else
+	--			return 4
+	--		end
+	--	end
+	--end
+	--
 	function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
 			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>',premake.esc(table.concat(cfg.defines, ";")))
@@ -269,11 +270,11 @@ premake.vstudio.vcxproj = { }
 	end
 	
 	function debug_info(cfg)
-	--[[
-		EditAndContinue /ZI
-		ProgramDatabase /Zi
-		OldStyle C7 Compatable /Z7
-	--]]
+	--
+	--	EditAndContinue /ZI
+	--	ProgramDatabase /Zi
+	--	OldStyle C7 Compatable /Z7
+	--
 		if cfg.flags.Symbols and not cfg.flags.NoEditAndContinue then
 			_p(3,'<DebugInformationFormat>EditAndContinue</DebugInformationFormat>')
 		else
@@ -345,21 +346,21 @@ premake.vstudio.vcxproj = { }
 
 	function event_hooks(cfg)	
 		if #cfg.postbuildcommands> 0 then
-		    _p(1,'<PostBuildEvent>')
-				_p(2,'<Command>"%s"</Command>',premake.esc(table.implode(cfg.postbuildcommands, "", "", "\r\n")))
-			_p(1,'</PostBuildEvent>')
+		    _p(2,'<PostBuildEvent>')
+				_p(3,'<Command>%s</Command>',premake.esc(table.implode(cfg.postbuildcommands, "", "", "\r\n")))
+			_p(2,'</PostBuildEvent>')
 		end
 		
 		if #cfg.prebuildcommands> 0 then
-		    _p(1,'<PreBuildEvent>')
-				_p(2,'<Command>"%s"</Command>',premake.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")))
-			_p(1,'</PreBuildEvent>')
+		    _p(2,'<PreBuildEvent>')
+				_p(3,'<Command>%s</Command>',premake.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")))
+			_p(2,'</PreBuildEvent>')
 		end
 		
 		if #cfg.prelinkcommands> 0 then
-		    _p(1,'<PreLinkEvent>')
-				_p(2,'<Command>"%s"</Command>',premake.esc(table.implode(cfg.prelinkcommands, "", "", "\r\n")))
-			_p(1,'</PreLinkEvent>')
+		    _p(2,'<PreLinkEvent>')
+				_p(3,'<Command>%s</Command>',premake.esc(table.implode(cfg.prelinkcommands, "", "", "\r\n")))
+			_p(2,'</PreLinkEvent>')
 		end	
 	end
 
@@ -421,20 +422,20 @@ premake.vstudio.vcxproj = { }
 				_p(3,'<AdditionalLibraryDirectories>%s%s%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>',
 							table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"),
 							iif(cfg.libdirs and #cfg.libdirs >0,';',''))
-			--[[				
-			if cfg.flags.Symbols then 
-				_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
-			else
-				_p(3,'<GenerateDebugInformation>false</GenerateDebugInformation>')
-			end
+			--				
+			--if cfg.flags.Symbols then 
+			--	_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
+			--else
+			--	_p(3,'<GenerateDebugInformation>false</GenerateDebugInformation>')
+			--end
 			
-				_p(3,'<SubSystem>%s</SubSystem>',iif(cfg.kind == "ConsoleApp","Console", "Windows"))
+			--	_p(3,'<SubSystem>%s</SubSystem>',iif(cfg.kind == "ConsoleApp","Console", "Windows"))
 			
-			if optimisation(cfg) ~= "Disabled" then
-				_p(3,'<OptimizeReferences>true</OptimizeReferences>')
-				_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
-			end
-			--]]
+			--if optimisation(cfg) ~= "Disabled" then
+			--	_p(3,'<OptimizeReferences>true</OptimizeReferences>')
+			--	_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
+			--end
+			--
 			common_link_section(cfg)
 			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
@@ -459,9 +460,10 @@ premake.vstudio.vcxproj = { }
 				resource_compile(cfg)
 				item_def_lib(cfg)
 				item_link(cfg)
+				event_hooks(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 
-			event_hooks(cfg)
+			
 		end
 	end
 	
@@ -501,14 +503,14 @@ premake.vstudio.vcxproj = { }
 			end
 		end
 	end
-	--[[
-	02   <ItemGroup>
-  303     <ProjectReference Include="zlibvc.vcxproj">
-  304       <Project>{8fd826f8-3739-44e6-8cc8-997122e53b8d}</Project>
-  305     </ProjectReference>
-  306   </ItemGroup>
-
-	--]]
+	--
+	--   <ItemGroup>
+  --     <ProjectReference Include="zlibvc.vcxproj">
+  --       <Project>{8fd826f8-3739-44e6-8cc8-997122e53b8d}</Project>
+  --     </ProjectReference>
+  --   </ItemGroup>
+	--
+	
 	function write_file_type_block(files,group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
@@ -589,15 +591,15 @@ premake.vstudio.vcxproj = { }
 		_p('</Project>')
 	end
 
---[[
-  <ItemGroup>
-    <ClCompile Include="SomeProjName.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
---]]		
+--
+ -- <ItemGroup>
+  --  <ClCompile Include="SomeProjName.cpp" />
+   -- <ClCompile Include="stdafx.cpp">
+    --  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+     -- <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    --</ClCompile>
+  --</ItemGroup>
+--		
 	function premake.vs2010_vcxproj(prj)
 		io.eol = "\r\n"
 		_p('<?xml version="1.0" encoding="utf-8"?>')
@@ -648,20 +650,39 @@ premake.vstudio.vcxproj = { }
 	function premake.vs2010_cleansolution(sln)
 		premake.clean.file(sln, "%%.sln")
 		premake.clean.file(sln, "%%.suo")
-		premake.clean.file(sln, "%%.sdf")
+		--premake.clean.file(sln, "%%.sdf")
 	end
 	
 	function premake.vs2010_cleanproject(prj)
+		io.write('vs2010 clean action')
 		local fname = premake.project.getfilename(prj, "%%")
+		local vcxname = fname .. ".vcxproj"
+		io.write(vcxname)
 		os.remove(fname .. '.vcxproj')
 		os.remove(fname .. '.vcxproj.user')
 		os.remove(fname .. '.vcxproj.filters')
-		--[[
-		local userfiles = os.matchfiles(fname .. ".*.user")
+		os.remove(fname .. '.sdf')
+		--
+		local userfiles = os.matchfiles(fname .. ".vcxproj.user")
 		for _, fname in ipairs(userfiles) do
 			os.remove(fname)
 		end
-		--]]
+		
+		local filter_files = os.matchfiles(fname .. ".vcxproj.filter")
+		for _, fname in ipairs(filter_files) do
+			os.remove(fname)
+		end
+		
+		local proj_files = os.matchfiles(fname .. ".vcxproj")
+		for _, fname in ipairs(proj_files) do
+			os.remove(fname)
+		end
+		
+		local sdf_files = os.matchfiles(fname .. ".sdf")
+		for _, fname in ipairs(sdf_files) do
+			os.remove(fname)
+		end
+		--
 	end
 
 	function premake.vs2010_cleantarget(name)

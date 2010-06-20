@@ -312,7 +312,7 @@
 			"dontCare\\dontCare.h"
 		}
 		local buffer = get_buffer()
-		test.string_contains(buffer,"<ItemGroup>*.*<Filter*.*</Filter>*.*</ItemGroup>")
+		test.string_contains(buffer,"<ItemGroup>.*<Filter.*</Filter>.*</ItemGroup>")
 	end
 	
 	function vs10_filters.oneInputFileWithDirectory_bufferContainsTagFilterWithIncludeSetToFoo()

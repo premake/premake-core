@@ -155,6 +155,7 @@
 	end
 	
 	function premake.vstudio.cleanproject(prj)
+		io.write("generic vs clean project")
 		local fext = iif(premake.isdotnetproject(prj), ".csproj", ".vcproj")
 
 		local fname = premake.project.getfilename(prj, "%%")

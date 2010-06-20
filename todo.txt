@@ -1,34 +1,12 @@
 
-check OutDir in debug it is showing "." --is this because no obj directory is supplied???
-shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when a static lib
-	---I am confused at what the value should be
-	--as explain by starkos this is to hide the lib in the obj directory which seems to
-	--still be the valid thing to do with vs2010
 
 add support for flags:  Managed, MFC, Unsafe
 support C
 support Managed C++
 support C#
 
-find why MFC in flags causes an error --pull the latest stable/vs2010 branch for MFC patch
 
-No64BitChecks is removed after being deprciated in previous releases
-
-fix ProgramDataBaseFileName tag currently at line 285 see note which states
-				this can not be converted when using the upgrade tool
-				added for now but it will removed or altered when I find out
-				what is the correct thing to do.
-				
- <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
- ----------Needs moving to link section for vs2010(dll checked- yet probably all)
- =======Done
- 
- 
- Link is ignored for static libs and this is incorrect
- ======Done
- 
- Hmm should the project define DEBUG and NDEBUG depending on if debugging info is on??
- should the project define _WINDOWS when using WinMain?
+Should the project define DEBUG and NDEBUG depending on if debugging info is on??
  
  
   <PropertyGroup Label="UserMacros" />

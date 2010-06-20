@@ -26,7 +26,7 @@
 	
 	function vs10_links.hasLinkBlock()
 		local buffer = get_buffer()
-		test.string_contains(buffer,'<Link>*.*</Link>')
+		test.string_contains(buffer,'<Link>.*</Link>')
 	end
 	
 	function vs10_links.additionalDependancies_isInsideLinkBlock()
@@ -34,7 +34,7 @@
 			links{"link_test"}
 		local buffer = get_buffer()
 		test.string_contains(buffer,
-			'<Link>*.*<AdditionalDependencies>*.*%%%(AdditionalDependencies%)</AdditionalDependencies>*.*</Link>')
+			'<Link>.*<AdditionalDependencies>.*%%%(AdditionalDependencies%)</AdditionalDependencies>.*</Link>')
 	end
 	
 	function vs10_links.additionalDependancies_containsLinkTestDotLib()
