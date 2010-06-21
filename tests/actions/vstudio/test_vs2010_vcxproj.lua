@@ -322,3 +322,22 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<TargetName Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">foo_d</TargetName>')
 	end
+
+	function vs10_vcxproj.noExtraWarnings_bufferDoesNotContainSmallerTypeCheck()
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,'<SmallerTypeCheck>')
+	end
+	
+	function vs10_vcxproj.debugAndExtraWarnings_bufferContainsSmallerTypeCheck()
+		configuration("Debug")
+		flags {"ExtraWarnings"}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+	end
+
+	function vs10_vcxproj.releaseAndExtraWarnings_bufferDoesNotContainSmallerTypeCheck()
+		configuration("Release")
+		flags {"ExtraWarnings"}
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,'<SmallerTypeCheck>')
+	end

@@ -94,12 +94,26 @@ premake.vstudio.vcxproj = { }
 		return t[config.kind]
 	end
 	
+	function if_config_and_platform()
+		return 'Condition="\'$(Configuration)|$(Platform)'
+	end	
+		
 	function config_type_block(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<PropertyGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'" Label="Configuration">', premake.esc(cfginfo.name))
+			_p(1,'<PropertyGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="Configuration">'
+					, premake.esc(cfginfo.name))
 				_p(2,'<ConfigurationType>%s</ConfigurationType>',config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
+				
+			local use_debug = "false"
+			if optimisation(cfg) == "Disabled" then 
+				use_debug = "true" 
+			else
+				_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
+			end
+				_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>',use_debug)
+				
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -108,12 +122,13 @@ premake.vstudio.vcxproj = { }
 	function import_props(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'" Label="PropertySheets">',premake.esc(cfginfo.name))
+			_p(1,'<ImportGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="PropertySheets">'
+					,premake.esc(cfginfo.name))
 				_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
 			_p(1,'</ImportGroup>')
 		end
 	end
-	--NOTE: check this is correct
+
 	function incremental_link(cfg,cfginfo)
 		if cfg.kind ~= "StaticLib" then
 			ShoudLinkIncrementally = 'false'
@@ -121,7 +136,7 @@ premake.vstudio.vcxproj = { }
 				ShoudLinkIncrementally = 'true'
 			end
 
-			_p(2,'<LinkIncremental Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</LinkIncremental>'
+			_p(2,'<LinkIncremental '..if_config_and_platform() ..'\'==\'%s\'">%s</LinkIncremental>'
 					,premake.esc(cfginfo.name),ShoudLinkIncrementally)
 		end		
 	end
@@ -131,26 +146,30 @@ premake.vstudio.vcxproj = { }
 		if cfg.kind == "SharedLib" then
 			local shouldIgnore = "false"
 			if cfg.flags.NoImportLib then shouldIgnore = "true" end
-			_p(2,'<IgnoreImportLibrary Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</IgnoreImportLibrary>'
+			 _p(2,'<IgnoreImportLibrary '..if_config_and_platform() ..'\'==\'%s\'">%s</IgnoreImportLibrary>'
 					,premake.esc(cfginfo.name),shouldIgnore)
 		end
 	end
+	
 		
---needs revisiting for when there are dependency projects
 	function intermediate_and_out_dirs(prj)
 		_p(1,'<PropertyGroup>')
 			_p(2,'<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>')
 			
 			for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-				_p(2,'<OutDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s\\</OutDir>', premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
-				_p(2,'<IntDir Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s\\</IntDir>', premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
-				_p(2,'<TargetName Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</TargetName>',premake.esc(cfginfo.name),path.getbasename(cfg.buildtarget.name))
+				_p(2,'<OutDir '..if_config_and_platform() ..'\'==\'%s\'">%s\\</OutDir>'
+						, premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
+				_p(2,'<IntDir '..if_config_and_platform() ..'\'==\'%s\'">%s\\</IntDir>'
+						, premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
+				_p(2,'<TargetName '..if_config_and_platform() ..'\'==\'%s\'">%s</TargetName>'
+						,premake.esc(cfginfo.name),path.getbasename(cfg.buildtarget.name))
+
 				ignore_import_lib(cfg,cfginfo)
-				--_p(2,'<LinkIncremental Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">%s</LinkIncremental>',premake.esc(cfginfo.name),incremental_link(cfg))
 				incremental_link(cfg,cfginfo)
 				if cfg.flags.NoManifest then
-				_p(2,'<GenerateManifest Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">false</GenerateManifest>',premake.esc(cfginfo.name))
+				_p(2,'<GenerateManifest '..if_config_and_platform() ..'\'==\'%s\'">false</GenerateManifest>'
+						,premake.esc(cfginfo.name))
 				end
 			end
 
@@ -210,7 +229,8 @@ premake.vstudio.vcxproj = { }
 	--
 	function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
-			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>',premake.esc(table.concat(cfg.defines, ";")))
+			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>'
+				,premake.esc(table.concat(cfg.defines, ";")))
 		else
 			_p(indent,'<PreprocessorDefinitions></PreprocessorDefinitions>')
 		end
@@ -304,11 +324,13 @@ premake.vstudio.vcxproj = { }
 			preprocessor(3,cfg)
 			minimal_build(cfg)
 		
-		if optimisation(cfg) == "Disabled" and not cfg.flags.Managed then
+		if optimisation(cfg) == "Disabled" then
 			_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
-		end
-	
-		if optimisation(cfg) ~= "Disabled" then
+			if cfg.flags.ExtraWarnings then
+				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+			end
+		else
+		--if optimisation(cfg) ~= "Disabled" then
 			_p(3,'<StringPooling>true</StringPooling>')
 		end
 		
@@ -318,10 +340,15 @@ premake.vstudio.vcxproj = { }
 			
 			precompiled_header(cfg)
 		
-			_p(3,'<WarningLevel>Level%s</WarningLevel>', iif(cfg.flags.ExtraWarnings, 4, 3))
-	
-	
-
+		if cfg.flags.ExtraWarnings then
+			_p(3,'<WarningLevel>Level4</WarningLevel>')
+			--if optimisation(cfg) == "Disabled" then
+			--	_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+			--end
+		else
+			_p(3,'<WarningLevel>Level3</WarningLevel>')
+		end
+			
 		if cfg.flags.FatalWarnings then
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
 		end
@@ -385,7 +412,6 @@ premake.vstudio.vcxproj = { }
 		--Prevent the generation of an import library for a Windows DLL.
 		if cfg.kind == "SharedLib" then
 			local implibname = cfg.linktarget.fullpath
-				--_p(3,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 			_p(3,'<ImportLibrary>%s</ImportLibrary>',iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 		end
 	end
@@ -405,7 +431,8 @@ premake.vstudio.vcxproj = { }
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 		end
 					
-		_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', path.getbasename(cfg.buildtarget.name))
+		_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
+				, path.getbasename(cfg.buildtarget.name))
 		
 	end
 	
@@ -422,21 +449,9 @@ premake.vstudio.vcxproj = { }
 				_p(3,'<AdditionalLibraryDirectories>%s%s%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>',
 							table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"),
 							iif(cfg.libdirs and #cfg.libdirs >0,';',''))
-			--				
-			--if cfg.flags.Symbols then 
-			--	_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
-			--else
-			--	_p(3,'<GenerateDebugInformation>false</GenerateDebugInformation>')
-			--end
-			
-			--	_p(3,'<SubSystem>%s</SubSystem>',iif(cfg.kind == "ConsoleApp","Console", "Windows"))
-			
-			--if optimisation(cfg) ~= "Disabled" then
-			--	_p(3,'<OptimizeReferences>true</OptimizeReferences>')
-			--	_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
-			--end
-			--
+							
 			common_link_section(cfg)
+			
 			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
@@ -455,7 +470,8 @@ premake.vstudio.vcxproj = { }
 	function item_definitions(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<ItemDefinitionGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">',premake.esc(cfginfo.name))
+			_p(1,'<ItemDefinitionGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">'
+					,premake.esc(cfginfo.name))
 				vs10_clcompile(cfg)
 				resource_compile(cfg)
 				item_def_lib(cfg)

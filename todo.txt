@@ -9,31 +9,15 @@ support C#
 Should the project define DEBUG and NDEBUG depending on if debugging info is on??
  
  
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='???
-   <EmbedManifest>false</EmbedManifest>
-   
-   
-   
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>--missing
-    is this used when there are symbols
-    	hmm profiling uses symbols does it not???
+    UseDebugLibraries --added to config
+    whole program optimisation --added
+		added--- SmallerTypeCheck set to true when flags contain extra warnings and no optimisation
     
+    look at ResourceCompile
+    why are the preprocessor and include dir repeated?
     
-    currently the below format is not generated yet it uses the format from when
-    a vs upgrade is done. change this
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
-    <GenerateManifest>false</GenerateManifest>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
   
-  dll
+  dll add the following when required
    <Link>
   <NoEntryPoint>true</NoEntryPoint>
    </Link>
