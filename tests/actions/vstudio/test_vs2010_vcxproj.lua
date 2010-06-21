@@ -346,3 +346,10 @@
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,'<ItemGroup Label="ProjectConfigurations">.*<ItemGroup Label="ProjectConfigurations">')
 	end			
+	
+	function vs10_vcxproj.languageC_bufferContainsCompileAsC()
+		language "C"		
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<CompileAs>CompileAsC</CompileAs>')
+	end			
+		

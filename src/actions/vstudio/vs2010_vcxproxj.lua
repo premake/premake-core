@@ -22,7 +22,7 @@ premake.vstudio.vcxproj = { }
 	function list_of_directories_in_path(path)
 		local list={}
 		if path then
-			for dir in string.gmatch(path,"[%w%-%_]+\\")do
+			for dir in string.gmatch(path,"[%w%-%_%.]+\\")do
 				if #list == 0 then
 					list[1] = dir:sub(1,#dir-1)
 				else
@@ -313,6 +313,12 @@ premake.vstudio.vcxproj = { }
 			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
 		end
 	end
+	
+	function compile_language(cfg)
+		if cfg.language == "C" then
+			_p(3,'<CompileAs>CompileAsC</CompileAs>')
+		end
+	end	
 		
 	function vs10_clcompile(cfg)
 		_p(2,'<ClCompile>')
@@ -334,7 +340,6 @@ premake.vstudio.vcxproj = { }
 				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
 			end
 		else
-		--if optimisation(cfg) ~= "Disabled" then
 			_p(3,'<StringPooling>true</StringPooling>')
 		end
 		
@@ -346,9 +351,6 @@ premake.vstudio.vcxproj = { }
 		
 		if cfg.flags.ExtraWarnings then
 			_p(3,'<WarningLevel>Level4</WarningLevel>')
-			--if optimisation(cfg) == "Disabled" then
-			--	_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
-			--end
 		else
 			_p(3,'<WarningLevel>Level3</WarningLevel>')
 		end
@@ -369,7 +371,7 @@ premake.vstudio.vcxproj = { }
 			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
 		end
 			
-
+			compile_language(cfg)
 
 		_p(2,'</ClCompile>')
 	end

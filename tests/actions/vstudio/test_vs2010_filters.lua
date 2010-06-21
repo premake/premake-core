@@ -361,3 +361,33 @@
 	end
 	
 	
+	function vs10_filters.tableOfFileFilters_filterContainsDots_bufferContainsTheEntry()
+		t =
+		{
+			'bar\\baz\\foo.bar.h'
+		}
+		local result = table_of_filters(t)
+		test.isequal(2,#result)
+	end	
+	function vs10_filters.tableOfFileFilters_filterContainsDots_resultsLengthIsThree()
+		t =
+		{
+			foo = {'src\\host\\lua-5.1.4\\foo.h'}
+		}
+		local result = table_of_file_filters(t)
+		test.isequal(3,#result)
+	end	
+	
+	function vs10_filters.tableOfFileFilters_filterContainsDots_resultContainsTheEntry()
+		t =
+		{
+			foo = {'src\\host\\lua-5.1.4\\foo.h'}
+		}
+		local result = table_of_file_filters(t)
+		test.contains(result,'src\\host\\lua-5.1.4')
+	end	
+	
+	function vs10_filters.listOfDirectories_filterContainsDots_resultContainsTheEntry()
+		local result = list_of_directories_in_path('src\\host\\lua.4\\foo.h')
+		test.contains(result,'src\\host\\lua.4')
+	end	

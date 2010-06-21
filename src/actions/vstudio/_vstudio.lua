@@ -261,6 +261,8 @@
 			extension = ".csproj"
 		elseif (_ACTION == "vs2010"  and prj.language == "C++" )then
 			extension = ".vcxproj"
+		elseif (_ACTION == "vs2010"  and prj.language == "C" )then
+			extension = ".vcxproj"
 		else
 			extension = ".vcproj"
 		end
@@ -431,7 +433,7 @@
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C++"},
+		valid_languages = { "C++","C"},
 		
 		valid_tools     = {
 			cc     = { "msc"   },
