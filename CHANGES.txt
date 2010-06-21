@@ -1,7 +1,8 @@
 -------
- 4.2.2  (in progress)
+ 4.3  (in progress)
 -------
 
+* CHANGED LICENSE FROM GPL v2 TO BSD
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Patch 2965229: Fix handling of  '+' symbol in file patterns (Rachel Blum)
 * Patch 2997449: Print configuration with target (ergosys)
