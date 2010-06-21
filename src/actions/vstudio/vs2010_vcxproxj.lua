@@ -66,14 +66,14 @@ premake.vstudio.vcxproj = { }
 	end
 		
 	local function vs2010_config(prj)		
+		_p(1,'<ItemGroup Label="ProjectConfigurations">')
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
-			_p(1,'<ItemGroup Label="ProjectConfigurations">')
 				_p(2,'<ProjectConfiguration Include="%s">', premake.esc(cfginfo.name))
 					_p(3,'<Configuration>%s</Configuration>',cfginfo.buildcfg)
 					_p(3,'<Platform>%s</Platform>',cfginfo.platform)
 				_p(2,'</ProjectConfiguration>')
-			_p(1,'</ItemGroup>')
 		end
+		_p(1,'</ItemGroup>')
 	end
 	
 	local function vs2010_globals(prj)
@@ -105,7 +105,11 @@ premake.vstudio.vcxproj = { }
 					, premake.esc(cfginfo.name))
 				_p(2,'<ConfigurationType>%s</ConfigurationType>',config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
-				
+			
+			if cfg.flags.MFC then
+				_p(2,'<UseOfMfc>Dynamic</UseOfMfc>')
+			end
+			
 			local use_debug = "false"
 			if optimisation(cfg) == "Disabled" then 
 				use_debug = "true" 

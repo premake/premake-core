@@ -213,14 +213,14 @@ function vs10_flags.symbolsSetYetNotMinimalRebuild_minimalRebuild_setToTrue()
 end
 
 --this generates an error: invalid value 'MFC'
---[[
+---[[
 function vs10_flags.mfc_useOfMfc_setToStatic()
     flags{"MFC"}
     
     buffer = get_buffer()
-    test.string_contains(buffer,'<UseOfMfc>Static</UseOfMfc>')
+    test.string_contains(buffer,'<UseOfMfc>Dynamic</UseOfMfc>')
 end
---]]
+---]]
 
 function vs10_flags.Symbols_DebugInformationFormat_setToEditAndContinue()
 	flags{"Symbols"}

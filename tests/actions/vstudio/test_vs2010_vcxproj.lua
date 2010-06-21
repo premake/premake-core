@@ -341,3 +341,8 @@
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,'<SmallerTypeCheck>')
 	end
+		
+	function vs10_vcxproj.onlyOneProjectConfigurationBlockWhenMultipleConfigs()
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,'<ItemGroup Label="ProjectConfigurations">.*<ItemGroup Label="ProjectConfigurations">')
+	end			
