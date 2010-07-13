@@ -1,7 +1,7 @@
 --
 -- xcode_common.lua
 -- Functions to generate the different sections of an Xcode project.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2010 Jason Perkins and the Premake project
 --
 
 	local xcode = premake.xcode
@@ -31,6 +31,7 @@
 			[".strings"] = "Resources",
 			[".nib"] = "Resources",
 			[".xib"] = "Resources",
+			[".icns"] = "Resources",
 		}
 		return categories[path.getextension(node.name)]
 	end
@@ -83,6 +84,7 @@
 			[".plist"]     = "text.plist.xml",
 			[".strings"]   = "text.plist.strings",
 			[".xib"]       = "file.xib",
+			[".icns"]      = "image.icns",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
