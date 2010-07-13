@@ -1,0 +1,355 @@
+	T.vs2010_vcxproj = { }
+	local vs10_vcxproj = T.vs2010_vcxproj
+	local include_directory = "bar/foo"
+	local include_directory2 = "baz/foo"
+	local debug_define = "I_AM_ALIVE_NUMBER_FIVE"
+	
+	local sln, prj
+	function vs10_vcxproj.setup()
+		_ACTION = "vs2010"
+
+		sln = solution "MySolution"
+		configurations { "Debug", "Release" }
+		platforms {}
+	
+		prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+		uuid "AE61726D-187C-E440-BD07-2556188A6565"		
+		
+		includedirs
+		{
+			include_directory,
+			include_directory2
+		}
+		files 
+		{ 
+			"foo/dummyHeader.h", 
+			"foo/dummySource.cpp", 
+			"../src/host/*h",
+			"../src/host/*.c"
+		}
+		
+		configuration("Release")
+			flags {"Optimize"}
+			links{"foo","bar"}
+			
+		configuration("Debug")
+			defines {debug_define}
+			links{"foo_d"}
+			
+
+	end
+
+	local function get_buffer()
+		io.capture()
+		premake.buildconfigs()
+		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		premake.vs2010_vcxproj(prj)
+		buffer = io.endcapture()
+		return buffer
+	end
+
+	function vs10_vcxproj.xmlDeclarationPresent()
+		buffer = get_buffer()
+		test.istrue(string.startswith(buffer, '<?xml version=\"1.0\" encoding=\"utf-8\"?>'))
+	end
+
+	function vs10_vcxproj.projectBlocksArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<Project.*</Project>')
+	end
+
+	function vs10_vcxproj.projectOpenTagIsCorrect()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">.*</Project>')
+	end
+	
+	function vs10_vcxproj.configItemGroupPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemGroup Label="ProjectConfigurations">.*</ItemGroup>')
+	end
+	
+	function vs10_vcxproj.configBlocksArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ProjectConfiguration.*</ProjectConfiguration>')
+	end
+
+	function vs10_vcxproj.configTypeBlockPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'" Label="Configuration">.*</PropertyGroup>')
+	end
+	
+	function vs10_vcxproj.twoConfigTypeBlocksPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Condition.*</PropertyGroup>.*<PropertyGroup Condition=.*</PropertyGroup>')	
+	end
+	
+	function vs10_vcxproj.propsDefaultForCppProjArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<Import Project="$%(VCTargetsPath%)\\Microsoft.Cpp.Default.props" />')
+	end
+	
+	
+	function vs10_vcxproj.propsForCppProjArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<Import Project="%$%(VCTargetsPath%)\\Microsoft.Cpp.props" />')
+	end
+	
+	function vs10_vcxproj.extensionSettingArePresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ImportGroup Label="ExtensionSettings">.*</ImportGroup>')
+	end
+	
+	function vs10_vcxproj.userMacrosPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Label="UserMacros" />')
+	end
+	
+	function vs10_vcxproj.intermediateAndOutDirsPropertyGroupWithMagicNumber()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup>.*<_ProjectFileVersion>10%.0%.30319%.1</_ProjectFileVersion>')
+	end
+	
+	function vs10_vcxproj.outDirPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir.*</OutDir>')
+	end
+	function vs10_vcxproj.initDirPresent()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<IntDir.*</IntDir>')
+	end
+	
+	function vs10_vcxproj.projectWithDebugAndReleaseConfig_twoOutDirsAndTwoIntDirs()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir.*</OutDir>.*<IntDir.*</IntDir>.*<OutDir.*</OutDir>.*<IntDir.*</IntDir>')
+	end
+
+	function vs10_vcxproj.containsItemDefinition()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemDefinitionGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'">.*</ItemDefinitionGroup>')
+	end
+	
+
+	function vs10_vcxproj.containsClCompileBlock()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ClCompile>.*</ClCompile>')		
+	end
+
+	function vs10_vcxproj.containsAdditionalOptions()
+		buildoptions {"/Gm"}
+		buffer = get_buffer()
+		test.string_contains(buffer,'<AdditionalOptions>/Gm %%%(AdditionalOptions%)</AdditionalOptions>')		
+	end
+	
+	local function cl_compile_string(version)
+		return '<ItemDefinitionGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\''..version..'|Win32\'">.*<ClCompile>'
+	end
+	
+	function vs10_vcxproj.debugHasNoOptimisation()
+		buffer = get_buffer()
+		test.string_contains(buffer, cl_compile_string('Debug').. '.*<Optimization>Disabled</Optimization>.*</ItemDefinitionGroup>')
+	end
+	
+	function vs10_vcxproj.releaseHasFullOptimisation()
+		buffer = get_buffer()
+		test.string_contains(buffer, cl_compile_string('Release').. '.*<Optimization>Full</Optimization>.*</ItemDefinitionGroup>')
+	end
+	
+	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '.*<AdditionalIncludeDirectories>'.. path.translate(include_directory, '\\') ..'.*</AdditionalIncludeDirectories>')
+	end
+	
+	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory2PrefixWithSemiColon()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '.*<AdditionalIncludeDirectories>.*;'.. path.translate(include_directory2, '\\') ..'.*</AdditionalIncludeDirectories>')
+	end
+	
+	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory2PostfixWithSemiColon()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '.*<AdditionalIncludeDirectories>.*'.. path.translate(include_directory2, '\\') ..';.*</AdditionalIncludeDirectories>')
+	end
+	
+	function vs10_vcxproj.debugContainsPreprossorBlock()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug').. '.*<PreprocessorDefinitions>.*</PreprocessorDefinitions>')
+	end
+	
+	function vs10_vcxproj.debugHasDebugDefine()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Debug')..'.*<PreprocessorDefinitions>.*'..debug_define..'.*</PreprocessorDefinitions>')
+	end
+	
+	function vs10_vcxproj.releaseHasStringPoolingOn()
+		buffer = get_buffer()
+		test.string_contains(buffer,cl_compile_string('Release')..'.*<StringPooling>true</StringPooling>')
+	end
+		
+	function vs10_vcxproj.hasItemGroupSection()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemGroup>.*</ItemGroup>')
+	end
+
+	function vs10_vcxproj.fileExtension_extEqualH()
+		local ext = get_file_extension('foo.h')
+		test.isequal('h', ext)
+	end
+	
+	function vs10_vcxproj.fileExtension_containsTwoDots_extEqualH()
+		local ext = get_file_extension('foo.bar.h')
+		test.isequal('h', ext)
+	end
+	
+	function vs10_vcxproj.fileExtension_alphaNumeric_extEqualOneH()
+		local ext = get_file_extension('foo.1h')
+		test.isequal('1h', ext)
+	end
+	
+	function vs10_vcxproj.fileExtension_alphaNumericWithUnderscore_extEqualOne_H()
+		local ext = get_file_extension('foo.1_h')
+		test.isequal('1_h', ext)
+	end
+
+	function vs10_vcxproj.fileExtension_containsHyphen_extEqualHHyphenH()
+		local ext = get_file_extension('foo.h-h')
+		test.isequal('h-h', ext)
+	end
+
+	function vs10_vcxproj.fileExtension_containsMoreThanOneDot_extEqualOneH()
+		local ext = get_file_extension('foo.bar.h')
+		test.isequal('h', ext)
+	end
+	
+	local function SortAndReturnSortedInputFiles(input)
+		local sorted = 
+		{
+			ClInclude	={},
+			ClCompile	={},
+			None		={}
+		}
+		sort_input_files(input,sorted)
+		return sorted
+	end
+	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
+		local file = {"bar.h"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ClInclude)
+	end
+		
+	function vs10_vcxproj.sortFile_srcFile_SortedClCompileEqualToFile()
+		local file = {"b.cxx"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ClCompile)
+	end
+	
+	function vs10_vcxproj.sortFile_notRegistered_SortedNoneEqualToFile()
+		local file = {"foo.bar.00h"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.None)
+	end
+	
+	function vs10_vcxproj.itemGroupSection_hasHeaderListed()
+		buffer = get_buffer()
+		test.string_contains(buffer,'<ItemGroup>.*<ClInclude Include="foo\\dummyHeader%.h" />.*</ItemGroup>')
+	end
+
+	function vs10_vcxproj.checkProjectConfigurationOpeningTag_hasACloseingAngleBracket()
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<ProjectConfiguration Include="Debug|Win32">')
+	end
+	
+	function vs10_vcxproj.postBuildEvent_isPresent()
+		postbuildcommands { "doSomeThing" }
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<PostBuildEvent>.*<Command>.*</Command>.*</PostBuildEvent>')
+	end
+	
+	function vs10_vcxproj.postBuildEvent_containsCorrectInformationBetweenCommandTag()
+		postbuildcommands { "doSomeThing" }
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<PostBuildEvent>.*<Command>doSomeThing</Command>.*</PostBuildEvent>')
+	end
+	
+	function vs10_vcxproj.postBuildEvent_eventEncloseByQuotes_containsCorrectInformationBetweenCommandTag()
+		postbuildcommands { "\"doSomeThing\"" }
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<PostBuildEvent>.*<Command>&quot;doSomeThing&quot;</Command>.*</PostBuildEvent>')
+	end
+	
+	function vs10_vcxproj.outDir_directorySuppliedIsNotSlashPostFixed_bufferContainsOutDirSlashPostFixed()
+		targetdir("dir")
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\.*\'">dir\\</OutDir>')
+	end
+	--postfixed directory slashes are removed by default
+	--yet these following two tests are to ensure if this behaviour is changed they will fail
+	function vs10_vcxproj.outDir_directorySuppliedWhichIsForwardSlashPostFixed_bufferContainsOutDirSlashPostFixed()
+		targetdir("dir/")
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\.*\'">dir\\</OutDir>')
+	end
+	
+	function vs10_vcxproj.outDir_directorySuppliedWhichIsWindowsSlashPostFixed_bufferContainsOutDirSlashPostFixed()
+		targetdir("dir\\")
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<OutDir Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\.*\'">dir\\</OutDir>')
+	end
+		
+	function vs10_vcxproj.objectDir_directorySuppliedIsNotSlashPostFixed_bufferContainsIntermediateDirSlashPostFixed()	
+		objdir ("dir")
+
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<IntDir Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'">dir\\</IntDir>')
+	end
+	
+	--postfixed directory slashes are removed by default
+	--yet these following two tests are to ensure if this behaviour is changed they will fail	
+	function vs10_vcxproj.objectDir_directorySuppliedWhichIsSlashPostFixed_bufferContainsIntermediateDirSlashPostFixed()
+		objdir ("dir/")
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<IntDir Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'">dir\\</IntDir>')
+	end
+		
+	function vs10_vcxproj.objectDir_directorySuppliedWhichIsWindowsSlashPostFixed_bufferContainsIntermediateDirSlashPostFixed()
+		objdir ("dir\\")
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<IntDir Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'">dir\\</IntDir>')
+	end
+	function vs10_vcxproj.targetName()
+		configuration("Debug")
+		targetname ("foo_d")
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<TargetName Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">foo_d</TargetName>')
+	end
+
+	function vs10_vcxproj.noExtraWarnings_bufferDoesNotContainSmallerTypeCheck()
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,'<SmallerTypeCheck>')
+	end
+	
+	function vs10_vcxproj.debugAndExtraWarnings_bufferContainsSmallerTypeCheck()
+		configuration("Debug")
+		flags {"ExtraWarnings"}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+	end
+
+	function vs10_vcxproj.releaseAndExtraWarnings_bufferDoesNotContainSmallerTypeCheck()
+		configuration("Release")
+		flags {"ExtraWarnings"}
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,'<SmallerTypeCheck>')
+	end
+		
+	function vs10_vcxproj.onlyOneProjectConfigurationBlockWhenMultipleConfigs()
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,'<ItemGroup Label="ProjectConfigurations">.*<ItemGroup Label="ProjectConfigurations">')
+	end			
+	
+	function vs10_vcxproj.languageC_bufferContainsCompileAsC()
+		language "C"		
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<CompileAs>CompileAsC</CompileAs>')
+	end			
+		

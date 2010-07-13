@@ -63,8 +63,14 @@
 	dofile("test_vs2003_sln.lua")
 	dofile("test_vs2005_sln.lua")
 	dofile("test_vs2008_sln.lua")
+	dofile("test_vs2010_sln.lua")
 	dofile("actions/vstudio/test_vs2005_csproj.lua")
 	dofile("actions/vstudio/test_vs200x_vcproj.lua")
+	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
+	dofile("actions/vstudio/test_vs2010_flags.lua")
+	dofile("actions/vstudio/test_vs2010_links.lua")
+	dofile("actions/vstudio/test_vs2010_filters.lua")
+	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 
 	-- Xcode tests
 	dofile("actions/xcode/test_xcode_common.lua")

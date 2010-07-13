@@ -1,0 +1,21 @@
+
+
+add support for flags:  Managed, Unsafe
+support C
+support Managed C++
+support C#
+ 
+ 
+   MFC support added which sets <UseOfMfc>Dynamic</UseOfMfc>
+   
+   
+   Should the project define DEBUG and NDEBUG depending on if debugging info is on??
+   
+    look at ResourceCompile
+    why are the preprocessor and include dir repeated?
+    
+  
+  dll add the following when required
+   <Link>
+  <NoEntryPoint>true</NoEntryPoint>
+   </Link>
