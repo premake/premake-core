@@ -1,7 +1,7 @@
 --
 -- tests/actions/xcode/test_xcode_project.lua
 -- Automated test suite for Xcode project generation.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2010 Jason Perkins and the Premake project
 --
 
 	T.xcode3_project = { }
@@ -178,6 +178,15 @@
 		]]
 	end
 
+	function suite.PBXFileReference_ListsIconFiles()
+		files { "Icon.icns" }
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[Icon.icns] /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "Icon.icns"; path = "Icon.icns"; sourceTree = "<group>"; };
+		]]
+	end
 
 	function suite.PBXFileReference_IgnoresTargetDir()
 		targetdir "bin"
