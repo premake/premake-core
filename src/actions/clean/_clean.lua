@@ -59,26 +59,6 @@
 		
 		onproject = function(prj)
 			for action in premake.action.each() do
-			-- io.write(action.trigger ..'\n')
-				if action.trigger =="vs2010" then
-					if action.oncleanproject then
-						io.write('vs2010 has an on clean and we are going to call it\n')
-					else
-						io.write('vs2010 does not have an on clean\n')
-					end
-					if action.oncleansolution then
-						io.write('vs2010 has an oncleansolution and we are going to call it\n')
-					else
-						io.write('vs2010 does not have an oncleansolution\n')
-					end
-					if action.oncleantarget then
-						io.write('vs2010 has an oncleantarget and we are going to call it\n')
-					else
-						io.write('vs2010 does not have an oncleantarget\n')
-					end
-
-					
-				end
 				if action.oncleanproject then
 					action.oncleanproject(prj)
 				end
