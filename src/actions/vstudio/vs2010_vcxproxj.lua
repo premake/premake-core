@@ -135,6 +135,20 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	local function if_config_and_platform()
 		return 'Condition="\'$(Configuration)|$(Platform)'
 	end	
+	
+	local function optimisation(cfg)
+		local result = "Disabled"
+		for _, value in ipairs(cfg.flags) do
+			if (value == "Optimize") then
+				result = "Full"
+			elseif (value == "OptimizeSize") then
+				result = "MinSpace"
+			elseif (value == "OptimizeSpeed") then
+				result = "MaxSpeed"
+			end
+		end
+		return result
+	end
 		
 	local function config_type_block(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
@@ -218,19 +232,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		_p(1,'</PropertyGroup>')
 	end
 	
-	--[[local--]] function optimisation(cfg)
-		local result = "Disabled"
-		for _, value in ipairs(cfg.flags) do
-			if (value == "Optimize") then
-				result = "Full"
-			elseif (value == "OptimizeSize") then
-				result = "MinSpace"
-			elseif (value == "OptimizeSpeed") then
-				result = "MaxSpeed"
-			end
-		end
-		return result
-	end
+
 	
 	local function runtime(cfg)
 		local runtime
