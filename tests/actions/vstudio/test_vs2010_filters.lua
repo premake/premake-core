@@ -1,6 +1,6 @@
 	T.vs2010_filters = { }
 	local vs10_filters = T.vs2010_filters
-		
+	local vs10_helpers = premake.vstudio.vs10_helpers	
 
 	
 	local sln, prj
@@ -25,104 +25,104 @@
 	end
 
 	function vs10_filters.path_noPath_returnsNil()
-		local result = file_path("foo.h")
+		local result = vs10_helpers.file_path("foo.h")
 		test.isequal(nil,result)
 	end
 		
 	function vs10_filters.path_hasOneDirectoryPath_returnsIsFoo()
 		local path = "foo"
-		local result = file_path(path .."\\foo.h")
+		local result = vs10_helpers.file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasTwoDirectoryPath_returnsIsFooSlashBar()
 		local path = "foo\\bar"
-		local result = file_path(path .."\\foo.h")
+		local result = vs10_helpers.file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasTwoDirectoryPath_returnsIsFooSlashBar_Baz()
 		local path = "foo\\bar_baz"
-		local result = file_path(path .."\\foo.h")
+		local result = vs10_helpers.file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_extensionWithHyphen_returnsIsFoo()
 		local path = "foo"
-		local result = file_path(path .."\\foo-bar.h")
+		local result = vs10_helpers.file_path(path .."\\foo-bar.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_extensionWithNumber_returnsIs2Foo()
 		local path = "foo"
-		local result = file_path(path .."\\2foo.h")
+		local result = vs10_helpers.file_path(path .."\\2foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasThreeDirectoryPath_returnsIsFooSlashBarSlashBaz()
 		local path = "foo\\bar\\baz"
-		local result = file_path(path .."\\foo.h")
+		local result = vs10_helpers.file_path(path .."\\foo.h")
 		test.isequal(path,result)
 	end
 	
 	function vs10_filters.path_hasDotDotSlashDirectoryPath_returnsNil()
 		local path = ".."
-		local result = file_path(path .."\\foo.h")
+		local result = vs10_helpers.file_path(path .."\\foo.h")
 		test.isequal(nil,result)
 	end
 	
 	function vs10_filters.removeRelativePath_noRelativePath_returnsInput()
 		local path = "foo.h"
-		local result = remove_relative_path(path)
+		local result = vs10_helpers.remove_relative_path(path)
 		test.isequal("foo.h",result)
 	end
 	
 	function vs10_filters.removeRelativePath_dotDotSlashFoo_returnsFoo()
 		local path = "..\\foo"
-		local result = remove_relative_path(path)
+		local result = vs10_helpers.remove_relative_path(path)
 		test.isequal("foo",result)
 	end
 	
 	function vs10_filters.removeRelativePath_dotDotSlashDotDotSlashFoo_returnsFoo()
 		local path = "..\\..\\foo"
-		local result = remove_relative_path(path)
+		local result = vs10_helpers.remove_relative_path(path)
 		test.isequal("foo",result)
 	end
 	
 	function vs10_filters.removeRelativePath_DotSlashFoo_returnsFoo()
 		local path = ".\\foo"
-		local result = remove_relative_path(path)
+		local result = vs10_helpers.remove_relative_path(path)
 		test.isequal("foo",result)
 	end
 	
 	function vs10_filters.listOfDirectories_passedNil_returnsIsEmpty()
-		local result = list_of_directories_in_path(nil)
+		local result = vs10_helpers.list_of_directories_in_path(nil)
 		test.isequal(0,#result)
 	end
 	
 	function vs10_filters.listOfDirectories_oneDirectory_returnsSizeIsOne()
-		local result = list_of_directories_in_path("foo\\bar.h")
+		local result = vs10_helpers.list_of_directories_in_path("foo\\bar.h")
 		test.isequal(1,#result)
 	end
 	
 	function vs10_filters.listOfDirectories_oneDirectory_returnsContainsFoo()
-		local result = list_of_directories_in_path("foo\\bar.h")
+		local result = vs10_helpers.list_of_directories_in_path("foo\\bar.h")
 		test.contains(result,"foo")
 	end
 	
 	function vs10_filters.listOfDirectories_twoDirectories_returnsSizeIsTwo()
-		local result = list_of_directories_in_path("foo\\bar\\bar.h")
+		local result = vs10_helpers.list_of_directories_in_path("foo\\bar\\bar.h")
 		test.isequal(2,#result)
 	end
 	
 	function vs10_filters.listOfDirectories_twoDirectories_secondEntryIsFooSlashBar()
-		local result = list_of_directories_in_path("foo\\bar\\bar.h")
+		local result = vs10_helpers.list_of_directories_in_path("foo\\bar\\bar.h")
 		test.isequal("foo\\bar",result[2])
 	end
 	
 	function vs10_filters.tableOfFilters_emptyTable_returnsEmptyTable()
 		t = {}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(0,#result)
 	end
 	
@@ -131,7 +131,7 @@
 		{
 			'foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(0,#result)
 	end
 	
@@ -140,7 +140,7 @@
 		{
 			'bar\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(1,#result)
 	end
 	function vs10_filters.tableOfFilters_tableHasTwoDirectories_returnSizeIsOne()
@@ -149,7 +149,7 @@
 			'bar\\foo.h',
 			'baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(2,#result)
 	end
 	function vs10_filters.tableOfFilters_tableHasTwoDirectories_firstEntryIsBar()
@@ -158,7 +158,7 @@
 			'bar\\foo.h',
 			'baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal("bar",result[1])
 	end
 	function vs10_filters.tableOfFilters_tableHasTwoDirectories_secondEntryIsBaz()
@@ -167,7 +167,7 @@
 			'bar\\foo.h',
 			'baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal("baz",result[2])
 	end
 	
@@ -177,7 +177,7 @@
 			'bar\\foo.h',
 			'bar\\baz.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(1,#result)
 	end
 
@@ -186,7 +186,7 @@
 		{
 			'bar\\baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(2,#result)
 	end		
 
@@ -195,7 +195,7 @@
 		{
 			'bar\\baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal('bar',result[1])
 	end	
 	
@@ -204,7 +204,7 @@
 		{
 			'bar\\baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal('bar\\baz',result[2])
 	end	
 	
@@ -215,7 +215,7 @@
 			'bar\\baz\\foo.h',
 			'baz\\foo.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(3,#result)
 	end		
 		
@@ -226,7 +226,7 @@
 			bar = {'foo\\bar.h'},
 			baz = {'baz\\bar.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		test.isequal(2,#result)
 	end
 	
@@ -237,7 +237,7 @@
 			bar = {'foo\\bar.h'},
 			baz = {'baz\\bar.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		--order is not defined
 		test.contains(result,'foo')
 	end
@@ -249,7 +249,7 @@
 			bar = {'foo\\bar.h'},
 			baz = {'baz\\bar.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		--order is not defined
 		test.contains(result,'baz')
 	end
@@ -262,7 +262,7 @@
 			baz = {'bar\\bar.h'},
 			bazz = {'bar\\foo\\bar.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		--order is not defined
 		test.isequal(4,#result)
 	end
@@ -272,7 +272,7 @@
 		{
 			foo = {'foo\\bar.h','foo\\bar\\bar.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		--order is not defined
 		test.isequal(2,#result)
 	end
@@ -366,7 +366,7 @@
 		{
 			'bar\\baz\\foo.bar.h'
 		}
-		local result = table_of_filters(t)
+		local result = vs10_helpers.table_of_filters(t)
 		test.isequal(2,#result)
 	end	
 	function vs10_filters.tableOfFileFilters_filterContainsDots_resultsLengthIsThree()
@@ -374,7 +374,7 @@
 		{
 			foo = {'src\\host\\lua-5.1.4\\foo.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		test.isequal(3,#result)
 	end	
 	
@@ -383,11 +383,11 @@
 		{
 			foo = {'src\\host\\lua-5.1.4\\foo.h'}
 		}
-		local result = table_of_file_filters(t)
+		local result = vs10_helpers.table_of_file_filters(t)
 		test.contains(result,'src\\host\\lua-5.1.4')
 	end	
 	
 	function vs10_filters.listOfDirectories_filterContainsDots_resultContainsTheEntry()
-		local result = list_of_directories_in_path('src\\host\\lua.4\\foo.h')
+		local result = vs10_helpers.list_of_directories_in_path('src\\host\\lua.4\\foo.h')
 		test.contains(result,'src\\host\\lua.4')
 	end	
