@@ -1,6 +1,6 @@
 
-premake.vstudio.vcxproj = { }
---local vcproj = premake.vstudio.vcxproj
+premake.vstudio.vs10_helpers = { }
+local vs10_helpers = premake.vstudio.vs10_helpers
 	
 		
 	function remove_relative_path(file)
@@ -84,7 +84,7 @@ premake.vstudio.vcxproj = { }
 		_p(1,'</PropertyGroup>')
 	end
 	
-	function config_type(config)
+	local function config_type(config)
 		local t =
 		{	
 			SharedLib = "DynamicLibrary",
@@ -94,11 +94,11 @@ premake.vstudio.vcxproj = { }
 		return t[config.kind]
 	end
 	
-	function if_config_and_platform()
+	local function if_config_and_platform()
 		return 'Condition="\'$(Configuration)|$(Platform)'
 	end	
 		
-	function config_type_block(prj)
+	local function config_type_block(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<PropertyGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="Configuration">'
@@ -123,7 +123,7 @@ premake.vstudio.vcxproj = { }
 	end
 
 	
-	function import_props(prj)
+	local function import_props(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<ImportGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="PropertySheets">'
@@ -133,7 +133,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 
-	function incremental_link(cfg,cfginfo)
+	local function incremental_link(cfg,cfginfo)
 		if cfg.kind ~= "StaticLib" then
 			ShoudLinkIncrementally = 'false'
 			if optimisation(cfg) == "Disabled" then
@@ -146,7 +146,7 @@ premake.vstudio.vcxproj = { }
 	end
 		
 		
-	function ignore_import_lib(cfg,cfginfo)
+	local function ignore_import_lib(cfg,cfginfo)
 		if cfg.kind == "SharedLib" then
 			local shouldIgnore = "false"
 			if cfg.flags.NoImportLib then shouldIgnore = "true" end
@@ -156,7 +156,7 @@ premake.vstudio.vcxproj = { }
 	end
 	
 		
-	function intermediate_and_out_dirs(prj)
+	local function intermediate_and_out_dirs(prj)
 		_p(1,'<PropertyGroup>')
 			_p(2,'<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>')
 			
@@ -180,7 +180,7 @@ premake.vstudio.vcxproj = { }
 		_p(1,'</PropertyGroup>')
 	end
 	
-	function optimisation(cfg)
+	--[[local--]] function optimisation(cfg)
 		local result = "Disabled"
 		for _, value in ipairs(cfg.flags) do
 			if (value == "Optimize") then
@@ -194,7 +194,7 @@ premake.vstudio.vcxproj = { }
 		return result
 	end
 	
-	function runtime(cfg)
+	local function runtime(cfg)
 		local runtime
 		if cfg.flags.StaticRuntime then
 			runtime = iif(cfg.flags.Symbols,"MultiThreadedDebug","MultiThreaded")
@@ -204,7 +204,7 @@ premake.vstudio.vcxproj = { }
 		return runtime
 	end
 	
-	function precompiled_header(cfg)
+	local function precompiled_header(cfg)
       	if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
 			_p(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', path.getname(cfg.pchheader))
@@ -231,7 +231,7 @@ premake.vstudio.vcxproj = { }
 	--	end
 	--end
 	--
-	function preprocessor(indent,cfg)
+	local function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
 			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>'
 				,premake.esc(table.concat(cfg.defines, ";")))
@@ -240,14 +240,14 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function include_dirs(indent,cfg)
+	local function include_dirs(indent,cfg)
 		if #cfg.includedirs > 0 then
 			_p(indent,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>'
 					,premake.esc(path.translate(table.concat(cfg.includedirs, ";"), '\\')))
 		end
 	end
 	
-	function resource_compile(cfg)
+	local function resource_compile(cfg)
 		_p(2,'<ResourceCompile>')
 			preprocessor(3,cfg)
 			include_dirs(3,cfg)
@@ -255,7 +255,7 @@ premake.vstudio.vcxproj = { }
 		
 	end
 	
-	function exceptions(cfg)
+	local function exceptions(cfg)
 		if cfg.flags.NoExceptions then
 			_p(2,'<ExceptionHandling>false</ExceptionHandling>')
 		elseif cfg.flags.SEH then
@@ -263,13 +263,13 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function rtti(cfg)
+	local function rtti(cfg)
 		if cfg.flags.NoRTTI then
 			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
 		end
 	end
 	
-	function wchar_t_buildin(cfg)
+	local function wchar_t_buildin(cfg)
 		if cfg.flags.NativeWChar then
 			_p(3,'<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>')
 		elseif cfg.flags.NoNativeWChar then
@@ -277,7 +277,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function sse(cfg)
+	local function sse(cfg)
 		if cfg.flags.EnableSSE then
 			_p(3,'<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>')
 		elseif cfg.flags.EnableSSE2 then
@@ -285,7 +285,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function floating_point(cfg)
+	local function floating_point(cfg)
 	     if cfg.flags.FloatFast then
 			_p(3,'<FloatingPointModel>Fast</FloatingPointModel>')
 		elseif cfg.flags.FloatStrict then
@@ -293,7 +293,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function debug_info(cfg)
+	local function debug_info(cfg)
 	--
 	--	EditAndContinue /ZI
 	--	ProgramDatabase /Zi
@@ -306,7 +306,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function minimal_build(cfg)
+	local function minimal_build(cfg)
 		if cfg.flags.Symbols and not cfg.flags.NoMinimalRebuild then
 			_p(3,'<MinimalRebuild>true</MinimalRebuild>')
 		elseif cfg.flags.Symbols then
@@ -314,13 +314,13 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function compile_language(cfg)
+	local function compile_language(cfg)
 		if cfg.language == "C" then
 			_p(3,'<CompileAs>CompileAsC</CompileAs>')
 		end
 	end	
 		
-	function vs10_clcompile(cfg)
+	local function vs10_clcompile(cfg)
 		_p(2,'<ClCompile>')
 		
 		if #cfg.buildoptions > 0 then
@@ -377,7 +377,7 @@ premake.vstudio.vcxproj = { }
 	end
 
 
-	function event_hooks(cfg)	
+	local function event_hooks(cfg)	
 		if #cfg.postbuildcommands> 0 then
 		    _p(2,'<PostBuildEvent>')
 				_p(3,'<Command>%s</Command>',premake.esc(table.implode(cfg.postbuildcommands, "", "", "\r\n")))
@@ -397,7 +397,7 @@ premake.vstudio.vcxproj = { }
 		end	
 	end
 
-	function item_def_lib(cfg)
+	local function item_def_lib(cfg)
 		if cfg.kind == 'StaticLib' then
 			_p(1,'<Lib>')
 				_p(2,'<OutputFile>$(OutDir)%s</OutputFile>',cfg.buildtarget.name)
@@ -405,7 +405,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function link_target_machine(cfg)
+	local function link_target_machine(cfg)
 		local target
 		if cfg.platform == nil or cfg.platform == "x32" then target ="MachineX86"
 		elseif cfg.platform == "x64" then target ="MachineX64"
@@ -414,7 +414,7 @@ premake.vstudio.vcxproj = { }
 		_p(3,'<TargetMachine>%s</TargetMachine>', target)
 	end
 	
-	function import_lib(cfg)
+	local function import_lib(cfg)
 		--Prevent the generation of an import library for a Windows DLL.
 		if cfg.kind == "SharedLib" then
 			local implibname = cfg.linktarget.fullpath
@@ -423,7 +423,7 @@ premake.vstudio.vcxproj = { }
 	end
 	
 
-	function common_link_section(cfg)
+	local function common_link_section(cfg)
 		_p(3,'<SubSystem>%s</SubSystem>',iif(cfg.kind == "ConsoleApp","Console", "Windows"))
 		
 		if cfg.flags.Symbols then 
@@ -442,7 +442,7 @@ premake.vstudio.vcxproj = { }
 		
 	end
 	
-	function item_link(cfg)
+	local function item_link(cfg)
 		_p(2,'<Link>')
 		if cfg.kind ~= 'StaticLib' then
 		
@@ -473,7 +473,7 @@ premake.vstudio.vcxproj = { }
 		_p(2,'</Link>')
 	end
     
-	function item_definitions(prj)
+	local function item_definitions(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<ItemDefinitionGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">'
@@ -490,7 +490,7 @@ premake.vstudio.vcxproj = { }
 	end
 	
 	
-	function get_file_extension(file)
+	--[[local--]] function get_file_extension(file)
 		local ext_start,ext_end = string.find(file,"%.[%w_%-]+$")
 		if ext_start then
 			return  string.sub(file,ext_start+1,ext_end)
@@ -500,7 +500,7 @@ premake.vstudio.vcxproj = { }
 
 	
 	--also translates file paths from '/' to '\\'
-	function sort_input_files(files,sorted_container)
+	--[[local--]] function sort_input_files(files,sorted_container)
 		local types = 
 		{	
 			h	= "ClInclude",
@@ -533,7 +533,7 @@ premake.vstudio.vcxproj = { }
   --   </ItemGroup>
 	--
 	
-	function write_file_type_block(files,group_type)
+	local function write_file_type_block(files,group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
@@ -543,7 +543,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function vcxproj_files(prj)
+	local function vcxproj_files(prj)
 		local sorted =
 		{
 			ClCompile	={},
@@ -559,7 +559,7 @@ premake.vstudio.vcxproj = { }
 
 	end
 	
-	function write_filter_includes(sorted_table)
+	local function write_filter_includes(sorted_table)
 		local directories = table_of_file_filters(sorted_table)
 		--I am going to take a punt here that the ItemGroup is missing if no files!!!!
 		--there is a test for this see
@@ -575,7 +575,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function write_file_filter_block(files,group_type)
+	local function write_file_filter_block(files,group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
@@ -592,7 +592,7 @@ premake.vstudio.vcxproj = { }
 		end
 	end
 	
-	function vcxproj_filter_files(prj)
+	local function vcxproj_filter_files(prj)
 		local sorted =
 		{
 			ClCompile	={},
