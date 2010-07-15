@@ -289,47 +289,21 @@
 	function premake.vs2010_cleansolution(sln)
 		premake.clean.file(sln, "%%.sln")
 		premake.clean.file(sln, "%%.suo")
-		--premake.clean.file(sln, "%%.sdf")
 	end
 	
 	function premake.vs2010_cleanproject(prj)
-		--io.write('vs2010 clean action')
 		local fname = premake.project.getfilename(prj, "%%")
 		local vcxname = fname .. ".vcxproj"
-		--io.write(vcxname)
 		os.remove(fname .. '.vcxproj')
 		os.remove(fname .. '.vcxproj.user')
 		os.remove(fname .. '.vcxproj.filters')
 		os.remove(fname .. '.sdf')
-		
-		--local userfiles = os.matchfiles(fname .. ".vcxproj.user")
-		--for _, fname in ipairs(userfiles) do
-		--	os.remove(fname)
-		--end
-		
-		--local filter_files = os.matchfiles(fname .. ".vcxproj.filter")
-		--for _, fname in ipairs(filter_files) do
-		--	os.remove(fname)
-		--end
-		
-		--local proj_files = os.matchfiles(fname .. ".vcxproj")
-		--for _, fname in ipairs(proj_files) do
-		--	os.remove(fname)
-		--end
-		
-		--local sdf_files = os.matchfiles(fname .. ".sdf")
-		--for _, fname in ipairs(sdf_files) do
-		--	os.remove(fname)
-		--end
-		
 	end
 
 	function premake.vs2010_cleantarget(name)
 		os.remove(name .. ".pdb")
 		os.remove(name .. ".idb")
 		os.remove(name .. ".ilk")
-		--os.remove(name .. ".vshost.exe")
-		--os.remove(name .. ".exe.manifest")
 	end
 	
 
