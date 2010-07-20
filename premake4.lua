@@ -57,8 +57,11 @@
 		configuration { "macosx", "gmake" }
 			buildoptions { "-isysroot /Developer/SDKs/MacOSX10.5.sdk", "-mmacosx-version-min=10.5" }
 
-		configuration "not windows"
+		configuration { "not windows", "not solaris" }
 			linkoptions { "-rdynamic" }
+			
+		configuration { "solaris" }
+			linkoptions { "-Wl,--export-dynamic" }
 
 
 
