@@ -155,17 +155,20 @@
 	end
 	
 	function premake.vstudio.cleanproject(prj)
-		local fext = iif(premake.isdotnetproject(prj), ".csproj", ".vcproj")
-
 		local fname = premake.project.getfilename(prj, "%%")
-		os.remove(fname .. fext)
-		os.remove(fname .. fext .. ".user")
+
+		os.remove(fname .. ".vcproj")
+		os.remove(fname .. ".vcproj.user")
+
+		os.remove(fname .. ".vcxproj")
+		os.remove(fname .. ".vcxproj.user")
+		os.remove(fname .. ".vcxproj.filters")
+
+		os.remove(fname .. ".csproj")
+		os.remove(fname .. ".csproj.user")
+
 		os.remove(fname .. ".pidb")
-		
-		local userfiles = os.matchfiles(fname .. ".*.user")
-		for _, fname in ipairs(userfiles) do
-			os.remove(fname)
-		end
+		os.remove(fname .. ".sdf")
 	end
 
 	function premake.vstudio.cleantarget(name)
@@ -283,29 +286,7 @@
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 		end
 	end
-	
-	
-		
-	function premake.vs2010_cleansolution(sln)
-		premake.clean.file(sln, "%%.sln")
-		premake.clean.file(sln, "%%.suo")
-	end
-	
-	function premake.vs2010_cleanproject(prj)
-		local fname = premake.project.getfilename(prj, "%%")
-		local vcxname = fname .. ".vcxproj"
-		os.remove(fname .. '.vcxproj')
-		os.remove(fname .. '.vcxproj.user')
-		os.remove(fname .. '.vcxproj.filters')
-		os.remove(fname .. '.sdf')
-	end
 
-	function premake.vs2010_cleantarget(name)
-		os.remove(name .. ".pdb")
-		os.remove(name .. ".idb")
-		os.remove(name .. ".ilk")
-	end
-	
 
 --
 -- Register the Visual Studio command line actions
@@ -471,7 +452,7 @@
 		end,
 		
 
-		oncleansolution = premake.vs2010_cleansolution,
-		oncleanproject  = premake.vs2010_cleanproject,
-		oncleantarget   = premake.vs2010_cleantarget
+		oncleansolution = premake.vstudio.cleansolution,
+		oncleanproject  = premake.vstudio.cleanproject,
+		oncleantarget   = premake.vstudio.cleantarget
 	}
