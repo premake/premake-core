@@ -285,6 +285,26 @@
 	end
 	
 	
+		
+	function premake.vs2010_cleansolution(sln)
+		premake.clean.file(sln, "%%.sln")
+		premake.clean.file(sln, "%%.suo")
+	end
+	
+	function premake.vs2010_cleanproject(prj)
+		local fname = premake.project.getfilename(prj, "%%")
+		local vcxname = fname .. ".vcxproj"
+		os.remove(fname .. '.vcxproj')
+		os.remove(fname .. '.vcxproj.user')
+		os.remove(fname .. '.vcxproj.filters')
+		os.remove(fname .. '.sdf')
+	end
+
+	function premake.vs2010_cleantarget(name)
+		os.remove(name .. ".pdb")
+		os.remove(name .. ".idb")
+		os.remove(name .. ".ilk")
+	end
 	
 
 --
