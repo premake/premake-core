@@ -4,6 +4,7 @@
 
 * CHANGED LICENSE FROM GPLv2 TO BSD
 * Added Visual Studio 2010 C/C++ support (Liam Devine)
+* Added Solaris support (Dean Ross-Smith)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Patch 2965229: Fix handling of  '+' symbol in file patterns (Rachel Blum)
 * Patch 2997449: Print configuration with target (ergosys)
