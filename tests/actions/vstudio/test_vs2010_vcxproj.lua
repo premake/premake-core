@@ -3,6 +3,7 @@
 	local include_directory = "bar/foo"
 	local include_directory2 = "baz/foo"
 	local debug_define = "I_AM_ALIVE_NUMBER_FIVE"
+	local vs10_helpers = premake.vstudio.vs10_helpers	
 	
 	local sln, prj
 	function vs10_vcxproj.setup()
@@ -192,32 +193,32 @@
 	end
 
 	function vs10_vcxproj.fileExtension_extEqualH()
-		local ext = get_file_extension('foo.h')
+		local ext = vs10_helpers.get_file_extension('foo.h')
 		test.isequal('h', ext)
 	end
 	
 	function vs10_vcxproj.fileExtension_containsTwoDots_extEqualH()
-		local ext = get_file_extension('foo.bar.h')
+		local ext = vs10_helpers.get_file_extension('foo.bar.h')
 		test.isequal('h', ext)
 	end
 	
 	function vs10_vcxproj.fileExtension_alphaNumeric_extEqualOneH()
-		local ext = get_file_extension('foo.1h')
+		local ext = vs10_helpers.get_file_extension('foo.1h')
 		test.isequal('1h', ext)
 	end
 	
 	function vs10_vcxproj.fileExtension_alphaNumericWithUnderscore_extEqualOne_H()
-		local ext = get_file_extension('foo.1_h')
+		local ext = vs10_helpers.get_file_extension('foo.1_h')
 		test.isequal('1_h', ext)
 	end
 
 	function vs10_vcxproj.fileExtension_containsHyphen_extEqualHHyphenH()
-		local ext = get_file_extension('foo.h-h')
+		local ext = vs10_helpers.get_file_extension('foo.h-h')
 		test.isequal('h-h', ext)
 	end
 
 	function vs10_vcxproj.fileExtension_containsMoreThanOneDot_extEqualOneH()
-		local ext = get_file_extension('foo.bar.h')
+		local ext = vs10_helpers.get_file_extension('foo.bar.h')
 		test.isequal('h', ext)
 	end
 	
@@ -228,7 +229,7 @@
 			ClCompile	={},
 			None		={}
 		}
-		sort_input_files(input,sorted)
+		vs10_helpers.sort_input_files(input,sorted)
 		return sorted
 	end
 	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
