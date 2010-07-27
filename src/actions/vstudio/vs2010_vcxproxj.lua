@@ -84,7 +84,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			c	= "ClCompile",
 			cpp	= "ClCompile",
 			cxx	= "ClCompile",
-			cc	= "ClCompile"
+			cc	= "ClCompile",
+			rc  = "ResourceCompile"
 		}
 
 		for _, current_file in ipairs(files) do
@@ -499,7 +500,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 							
 			common_link_section(cfg)
 			
-			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
+			if vs10_helpers.config_type(cfg) == 'Application' and not cfg.flags.WinMain then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
 
@@ -541,6 +542,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	--
 	
 	local function write_file_type_block(files,group_type)
+	_p(4,#files)
+	_p(4,group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
@@ -555,7 +558,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		{
 			ClCompile	={},
 			ClInclude	={},
-			None		={}
+			None		={},
+			ResourceCompile ={}
 		}
 		
 		cfg = premake.getconfig(prj)
@@ -563,6 +567,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		write_file_type_block(sorted.ClInclude,"ClInclude")
 		write_file_type_block(sorted.ClCompile,'ClCompile')
 		write_file_type_block(sorted.None,'None')
+		write_file_type_block(sorted.ResourceCompile,'ResourceCompile')
 
 	end
 	

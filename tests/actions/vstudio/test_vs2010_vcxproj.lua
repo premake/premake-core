@@ -28,7 +28,8 @@
 			"foo/dummyHeader.h", 
 			"foo/dummySource.cpp", 
 			"../src/host/*h",
-			"../src/host/*.c"
+			"../src/host/*.c",
+			"dummyResourceScript.rc"
 		}
 		
 		configuration("Release")
@@ -47,99 +48,99 @@
 		premake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
 		premake.vs2010_vcxproj(prj)
-		buffer = io.endcapture()
+		local buffer = io.endcapture()
 		return buffer
 	end
 
 	function vs10_vcxproj.xmlDeclarationPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.istrue(string.startswith(buffer, '<?xml version=\"1.0\" encoding=\"utf-8\"?>'))
 	end
 
 	function vs10_vcxproj.projectBlocksArePresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<Project.*</Project>')
 	end
 
 	function vs10_vcxproj.projectOpenTagIsCorrect()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">.*</Project>')
 	end
 	
 	function vs10_vcxproj.configItemGroupPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ItemGroup Label="ProjectConfigurations">.*</ItemGroup>')
 	end
 	
 	function vs10_vcxproj.configBlocksArePresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ProjectConfiguration.*</ProjectConfiguration>')
 	end
 
 	function vs10_vcxproj.configTypeBlockPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<PropertyGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'" Label="Configuration">.*</PropertyGroup>')
 	end
 	
 	function vs10_vcxproj.twoConfigTypeBlocksPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<PropertyGroup Condition.*</PropertyGroup>.*<PropertyGroup Condition=.*</PropertyGroup>')	
 	end
 	
 	function vs10_vcxproj.propsDefaultForCppProjArePresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<Import Project="$%(VCTargetsPath%)\\Microsoft.Cpp.Default.props" />')
 	end
 	
 	
 	function vs10_vcxproj.propsForCppProjArePresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<Import Project="%$%(VCTargetsPath%)\\Microsoft.Cpp.props" />')
 	end
 	
 	function vs10_vcxproj.extensionSettingArePresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ImportGroup Label="ExtensionSettings">.*</ImportGroup>')
 	end
 	
 	function vs10_vcxproj.userMacrosPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<PropertyGroup Label="UserMacros" />')
 	end
 	
 	function vs10_vcxproj.intermediateAndOutDirsPropertyGroupWithMagicNumber()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<PropertyGroup>.*<_ProjectFileVersion>10%.0%.30319%.1</_ProjectFileVersion>')
 	end
 	
 	function vs10_vcxproj.outDirPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<OutDir.*</OutDir>')
 	end
 	function vs10_vcxproj.initDirPresent()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<IntDir.*</IntDir>')
 	end
 	
 	function vs10_vcxproj.projectWithDebugAndReleaseConfig_twoOutDirsAndTwoIntDirs()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<OutDir.*</OutDir>.*<IntDir.*</IntDir>.*<OutDir.*</OutDir>.*<IntDir.*</IntDir>')
 	end
 
 	function vs10_vcxproj.containsItemDefinition()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ItemDefinitionGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'">.*</ItemDefinitionGroup>')
 	end
 	
 
 	function vs10_vcxproj.containsClCompileBlock()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ClCompile>.*</ClCompile>')		
 	end
 
 	function vs10_vcxproj.containsAdditionalOptions()
 		buildoptions {"/Gm"}
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<AdditionalOptions>/Gm %%%(AdditionalOptions%)</AdditionalOptions>')		
 	end
 	
@@ -148,47 +149,47 @@
 	end
 	
 	function vs10_vcxproj.debugHasNoOptimisation()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer, cl_compile_string('Debug').. '.*<Optimization>Disabled</Optimization>.*</ItemDefinitionGroup>')
 	end
 	
 	function vs10_vcxproj.releaseHasFullOptimisation()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer, cl_compile_string('Release').. '.*<Optimization>Full</Optimization>.*</ItemDefinitionGroup>')
 	end
 	
 	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Debug').. '.*<AdditionalIncludeDirectories>'.. path.translate(include_directory, '\\') ..'.*</AdditionalIncludeDirectories>')
 	end
 	
 	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory2PrefixWithSemiColon()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Debug').. '.*<AdditionalIncludeDirectories>.*;'.. path.translate(include_directory2, '\\') ..'.*</AdditionalIncludeDirectories>')
 	end
 	
 	function vs10_vcxproj.includeDirectories_debugEntryContains_include_directory2PostfixWithSemiColon()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Debug').. '.*<AdditionalIncludeDirectories>.*'.. path.translate(include_directory2, '\\') ..';.*</AdditionalIncludeDirectories>')
 	end
 	
 	function vs10_vcxproj.debugContainsPreprossorBlock()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Debug').. '.*<PreprocessorDefinitions>.*</PreprocessorDefinitions>')
 	end
 	
 	function vs10_vcxproj.debugHasDebugDefine()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Debug')..'.*<PreprocessorDefinitions>.*'..debug_define..'.*</PreprocessorDefinitions>')
 	end
 	
 	function vs10_vcxproj.releaseHasStringPoolingOn()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,cl_compile_string('Release')..'.*<StringPooling>true</StringPooling>')
 	end
 		
 	function vs10_vcxproj.hasItemGroupSection()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ItemGroup>.*</ItemGroup>')
 	end
 
@@ -227,7 +228,8 @@
 		{
 			ClInclude	={},
 			ClCompile	={},
-			None		={}
+			None		={},
+			ResourceCompile ={}
 		}
 		vs10_helpers.sort_input_files(input,sorted)
 		return sorted
@@ -250,8 +252,22 @@
 		test.isequal(file, sorted.None)
 	end
 	
+	function vs10_vcxproj.sortFile_resourceScript_resourceCompileEqualToFile()
+		local file = {"foo.rc"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ResourceCompile)
+	end
+	
+	function vs10_vcxproj.itemGroupSection_hasResourceCompileSection()
+		--for some reason this does not work here and it needs to be in
+		--the project setting at the top ?
+		--files{"dummyResourceScript.rc"}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<ItemGroup>.*<ResourceCompile.*</ItemGroup>')
+	end
+	
 	function vs10_vcxproj.itemGroupSection_hasHeaderListed()
-		buffer = get_buffer()
+		local buffer = get_buffer()
 		test.string_contains(buffer,'<ItemGroup>.*<ClInclude Include="foo\\dummyHeader%.h" />.*</ItemGroup>')
 	end
 
@@ -352,5 +368,6 @@
 		language "C"		
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<CompileAs>CompileAsC</CompileAs>')
-	end			
+	end		
+		
 		
