@@ -122,12 +122,13 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		_p(1,'</PropertyGroup>')
 	end
 	
-	local function config_type(config)
+	function vs10_helpers.config_type(config)
 		local t =
 		{	
 			SharedLib = "DynamicLibrary",
 			StaticLib = "StaticLibrary",
 			ConsoleApp = "Application",
+			WindowedApp = "Application"
 		}
 		return t[config.kind]
 	end
@@ -155,7 +156,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<PropertyGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="Configuration">'
 					, premake.esc(cfginfo.name))
-				_p(2,'<ConfigurationType>%s</ConfigurationType>',config_type(cfg))
+				_p(2,'<ConfigurationType>%s</ConfigurationType>',vs10_helpers.config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
 			
 			if cfg.flags.MFC then

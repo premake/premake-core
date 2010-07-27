@@ -152,3 +152,9 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		test.string_does_not_contain(buffer,'<ClCompile>.*<AdditionalIncludeDirectories>.*</ClCompile>')
 	end
 	
+	function vs10_project_kinds.configType_configIsWindowedApp_resultComparesEqualToApplication()
+		local t = { kind = "WindowedApp"}
+		local result = premake.vstudio.vs10_helpers.config_type(t)
+		test.isequal('Application',result)
+	end
+	
