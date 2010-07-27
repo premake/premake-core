@@ -351,7 +351,7 @@
 		test.string_contains(buffer,'<ClCompile')
 	end
 	
-	function vs10_filters.noneFilter_oneInputFile_bufferContainsTagClCompile()
+	function vs10_filters.noneFilter_oneInputFile_bufferContainsTagNone()
 		files 
 		{ 
 			"dontCare.ext"
@@ -391,3 +391,12 @@
 		local result = vs10_helpers.list_of_directories_in_path('src\\host\\lua.4\\foo.h')
 		test.contains(result,'src\\host\\lua.4')
 	end	
+	
+	function vs10_filters.resourceCompileFilter_oneInputFile_bufferContainsTagResourceCompile()
+		files 
+		{ 
+			"dontCare.rc"
+		}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<ResourceCompile')
+	end

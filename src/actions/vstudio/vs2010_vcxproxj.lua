@@ -607,7 +607,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		{
 			ClCompile	={},
 			ClInclude	={},
-			None		={}
+			None		={},
+			ResourceCompile ={}
 		}
 		
 		cfg = premake.getconfig(prj)
@@ -620,6 +621,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			write_file_filter_block(sorted.ClInclude,"ClInclude")
 			write_file_filter_block(sorted.ClCompile,"ClCompile")
 			write_file_filter_block(sorted.None,"None")
+			write_file_filter_block(sorted.ResourceCompile,"ResourceCompile")
 		_p('</Project>')
 	end
 
