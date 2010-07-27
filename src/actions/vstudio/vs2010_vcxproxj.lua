@@ -542,8 +542,6 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	--
 	
 	local function write_file_type_block(files,group_type)
-	_p(4,#files)
-	_p(4,group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
