@@ -158,3 +158,49 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		test.isequal('Application',result)
 	end
 	
+	function vs10_project_kinds.linkOptions_staticLib_bufferContainsAdditionalOptionsInSideLibTag()
+		kind "StaticLib"
+		linkoptions{'/dummyOption'}
+
+		test.string_contains(get_buffer(),
+			'<AdditionalOptions>.*%%%(AdditionalOptions%)</AdditionalOptions>.*</Lib>')
+	end
+	
+	function vs10_project_kinds.noLinkOptions_staticLib_bufferDoesNotContainAdditionalOptionsInSideLibTag()
+		kind "StaticLib"
+
+		test.string_does_not_contain(get_buffer(),
+			'<AdditionalOptions>.*%%%(AdditionalOptions%)</AdditionalOptions>.*</Lib>')
+	end		
+	
+	function vs10_project_kinds.linkOptions_staticLib_bufferContainsPassedOption()
+		kind "StaticLib"
+		linkoptions{'/dummyOption'}
+
+		test.string_contains(get_buffer(),
+			'<AdditionalOptions>/dummyOption %%%(AdditionalOptions%)</AdditionalOptions>.*</Lib>')
+	end	
+	
+	function vs10_project_kinds.linkOptions_windowedApp_bufferContainsAdditionalOptionsInSideLinkTag()
+		kind "WindowedApp"
+		linkoptions{'/dummyOption'}
+		
+		test.string_contains(get_buffer(),
+			'<AdditionalOptions>.* %%%(AdditionalOptions%)</AdditionalOptions>.*</Link>')
+	end	
+	function vs10_project_kinds.linkOptions_consoleApp_bufferContainsAdditionalOptionsInSideLinkTag()
+		kind "ConsoleApp"
+		linkoptions{'/dummyOption'}
+		
+		test.string_contains(get_buffer(),
+			'<AdditionalOptions>.* %%%(AdditionalOptions%)</AdditionalOptions>.*</Link>')
+	end
+
+	function vs10_project_kinds.linkOptions_sharedLib_bufferContainsAdditionalOptionsInSideLinkTag()
+		kind "SharedLib"
+		linkoptions{'/dummyOption'}
+		
+		test.string_contains(get_buffer(),
+			'<AdditionalOptions>.* %%%(AdditionalOptions%)</AdditionalOptions>.*</Link>')
+	end			
+				

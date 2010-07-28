@@ -439,10 +439,18 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end	
 	end
 
+	local function additional_options(indent,cfg)
+		if #cfg.linkoptions > 0 then
+				_p(indent,'<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>',
+					table.concat(premake.esc(cfg.linkoptions), " "))
+		end
+	end
+		
 	local function item_def_lib(cfg)
 		if cfg.kind == 'StaticLib' then
 			_p(1,'<Lib>')
 				_p(2,'<OutputFile>$(OutDir)%s</OutputFile>',cfg.buildtarget.name)
+				additional_options(2,cfg)
 			_p(1,'</Lib>')
 		end
 	end
@@ -507,7 +515,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			import_lib(cfg)
 			
 			_p(3,'<TargetMachine>%s</TargetMachine>', iif(cfg.platform == "x64", "MachineX64", "MachineX86"))
-
+			
+			additional_options(3,cfg)
 		else
 			common_link_section(cfg)
 		end
