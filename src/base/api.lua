@@ -48,7 +48,7 @@
 			scope = "config",
 		},
 		
-		deployoptions =
+		deploymentoptions =
 		{
 			kind  = "list",
 			scope = "config",
