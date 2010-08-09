@@ -117,6 +117,12 @@
 			}
 		},
 		
+		imagepath = 
+		{
+			kind = "path",
+			scope = "config",
+		},
+		
 		imageoptions =
 		{
 			kind  = "list",

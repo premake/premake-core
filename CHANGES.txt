@@ -13,6 +13,7 @@
 * Patch 3011940: Add support for MFC (JTAnderson)
 * Bug 2997728: Project dependencies should be case-sensitive
 * Fixed handling of icons in Xcode (bitshifter)
+* Added imagepath to set Xbox360 image file name (Jarod)
 
 
 -------

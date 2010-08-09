@@ -602,6 +602,9 @@ local vcproj = premake.vstudio.vcproj
 						if #cfg.imageoptions > 0 then
 							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.imageoptions), " "))
 						end
+						if cfg.imagepath ~= nil then
+							_p(4,'OutputFileName="%s"', premake.esc(path.translate(cfg.imagepath)))
+						end
 						_p(3,'/>')
 						
 					elseif block == "DebuggerTool" then
