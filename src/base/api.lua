@@ -48,7 +48,7 @@
 			scope = "config",
 		},
 		
-		deployoptions =
+		deploymentoptions =
 		{
 			kind  = "list",
 			scope = "config",
@@ -117,6 +117,12 @@
 				"3.5",
 				"4.0"
 			}
+		},
+		
+		imagepath = 
+		{
+			kind = "path",
+			scope = "config",
 		},
 		
 		imageoptions =

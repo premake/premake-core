@@ -2,11 +2,40 @@
 -- Prepare a new Premake release. This is still incomplete and some manual
 -- work is needed to get everything packaged up.
 --
+-- BEFORE RUNNING THIS SCRIPT:
+--  * Make sure all tests pass on Windows AND Posix systems
+--  * Run `premake4 embed`
+--  * Update CHANGELOG.txt
+--  * Commit all changes to premake-stable
+--  * Prepare release news item
+--  * Tag premake-stable with the version number
+--
+-- RUN THE SCRIPT:
+--  On each platform, run `premake4 release x.x binary`
+--     (and copy binary to /usr/local/bin if desired)
+--  On one platform, run `premake4 release x.x source`
+--  
+-- AFTER RUNNING THIS SCRIPT:
+--  * Upload release files to SourceForge
+--  * On SourceForge, set file platforms and release changelog
+--  * Update the download page on Industrious One
+--  * Post the news item to the forums
+--  * Update the Premake project page on Industrious One
+--  * Post to Twitter
+--  * Send to email list
+--  * Add release to Freshmeat (http://freshmeat.net/projects/premake)
+--  * Increment version number in -stable and -dev, add "-dev" extension
+--  * Push changes to repositories on BitBucket
+--
+-- Info on using Mercurial to manage releases:
+--  http://hgbook.red-bean.com/read/managing-releases-and-branchy-development.html
+--  http://stevelosh.com/blog/2009/08/a-guide-to-branching-in-mercurial/
+--
 
 
 function dorelease()
 	local z
-	local svnroot = "https://premake.svn.sourceforge.net/svnroot/premake"
+	local hgroot = "https://bitbucket.org/premake/premake-stable"
 
 -- 
 -- Helper function: runs a command (formatted, with optional arguments) and
@@ -37,19 +66,10 @@ function dorelease()
 
 
 --
--- Create a directory to hold the release
---
-
-	local workdir = "premake-" .. version
-	os.mkdir("release/" .. workdir)
-	os.chdir("release/" .. workdir)
-
-	
---
 -- Look for required utilities
 --
 
-	local required = { "svn", "zip", "tar", "make", "gcc" }
+	local required = { "hg", "zip", "tar", "make", "gcc" }
 	for _, value in ipairs(required) do
 		z = exec("%s --version", value)
 		if z ~= 0 then
@@ -63,43 +83,37 @@ function dorelease()
 --
 
 	print("")
-	print("Have you...")
-	print("* Updated the CHANGELOG?")
-	print("* Run tests on Windows and POSIX?")
-	print("* Updated the embedded scripts?")
-	print("* Checked in all changes?")
+	print("FOLLOW THE INSTRUCTIONS IN THE SCRIPT COMMENTS!")
 	print("")
 	print("Press [Enter] to begin.")
 	io.read()
 
 
---
--- Look for a release branch in Subversion; create one if necessary
---
 
-	print("Checking for release branch...")
 
-	local branch = string.format("%s/branches/%s", svnroot, version)
-	z = exec("svn ls %s", branch)
-	if z ~= 0 then
-		print("Creating release branch...")
-		z = exec('svn cp %s/trunk %s -m "Branched for %s release"', svnroot, branch, version)
-		if z ~= 0 then
-			error("** Failed to create release branch.", 0)
-		end
-	end
 
-	
+---------------------------------------------------------------------------
 --
--- Check out the release branch
+-- Everything below this needs to be reworked for Mercurial
+--
+---------------------------------------------------------------------------
+
+--
+-- Create a directory to hold the release
 --
 
-	print("Checking out release branch...")
+	local workdir = "premake-" .. version
+	os.mkdir("release/" .. workdir)
+	os.chdir("release/" .. workdir)
 
-	z = exec("svn export --force %s .", branch)
-	if z ~= 0 then
-		error("** Failed to checkout release branch", 0)
-	end
+
+-- 
+-- Check out the release tagged sources to releases/
+--
+
+	print("Downloading release tag...")
+
+	-- hg clone -r {tag} https://bitbucket.org/premake/premake-stable .
 
 
 --
@@ -108,12 +122,12 @@ function dorelease()
 
 	print("Updating version number...")
 
-    io.input("src/host/premake.c")
-    local text = io.read("*a")
-	text = text:gsub("SVN", version)
-    io.output("src/host/premake.c")
-    io.write(text)
-    io.close()
+	io.input("src/host/premake.c")
+	local text = io.read("*a")
+	text = text:gsub("HEAD", version)
+	io.output("src/host/premake.c")
+	io.write(text)
+	io.close()
 
 
 --
@@ -127,7 +141,7 @@ function dorelease()
 		error("** Failed to update the embedded scripts", 0)
 	end
 
-
+	
 --
 -- Generate source packaging
 --
@@ -142,6 +156,9 @@ function dorelease()
 
 		os.rmdir("samples")
 		os.rmdir("packages")
+		os.rmdir(".hg")
+		os.rmdir(".hgignore")
+		os.rmdir(".hgtags")
 
 	
 	--
@@ -149,8 +166,10 @@ function dorelease()
 	--
 
 		print("Generating project files...")
+		
 		exec("premake4 /to=build/vs2005 vs2005")
 		exec("premake4 /to=build/vs2008 vs2008")
+		exec("premake4 /to=build/vs2010 vs2010")
 		exec("premake4 /to=build/gmake.windows /os=windows gmake")
 		exec("premake4 /to=build/gmake.unix /os=linux gmake")
 		exec("premake4 /to=build/gmake.macosx /os=macosx /platform=universal32 gmake")
@@ -181,6 +200,13 @@ function dorelease()
 	
 		print("Building platform binary release...")
 
+		-- IMPORTANT: Mac binary needs to be build in Xcode to ensure 10.5
+		-- compatibility right now. I haven't been able to figure out the
+		-- right flags to make it work from a makefile yet.
+		--
+		-- In Xcode, open the inspector for the target. Set the architecture
+		-- to 32-bit universal, and the base SDK to 10.5.
+		
 		exec("premake4 /platform=universal32 gmake")
 		exec("make config=%s", iif(os.is("macosx"), "releaseuniv32", "release"))
 
@@ -215,13 +241,6 @@ function dorelease()
 --
 
 	print("")
-	print("Finished. Now...")
-	print("* Upload packages to SourceForge and create release")
-	print("* Write news post and publish to front page")
-	print("* Post to Twitter")
-	print("* Post to email list")
-	print("* Update Freshmeat")
-	print("* Post news item on SourceForge")
-	print("* Copy binaries to local path")
+	print("Finished.")
 
 end

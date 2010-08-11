@@ -421,7 +421,9 @@
 --
 
 	function premake.gettarget(cfg, direction, pathstyle, namestyle, system)
-		if system == "bsd" then system = "linux" end		
+		if system == "bsd" or system == "solaris" then 
+			system = "linux" 
+		end
 
 		-- Fix things up based on the current system
 		local kind = cfg.kind

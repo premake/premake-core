@@ -591,8 +591,8 @@ local vcproj = premake.vstudio.vcproj
 						_p(3,'<Tool')
 						_p(4,'Name="VCX360DeploymentTool"')
 						_p(4,'DeploymentType="0"')
-						if #cfg.deployoptions > 0 then
-							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.deployoptions), " "))
+						if #cfg.deploymentoptions > 0 then
+							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.deploymentoptions), " "))
 						end
 						_p(3,'/>')
 
@@ -601,6 +601,9 @@ local vcproj = premake.vstudio.vcproj
 						_p(4,'Name="VCX360ImageTool"')
 						if #cfg.imageoptions > 0 then
 							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.imageoptions), " "))
+						end
+						if cfg.imagepath ~= nil then
+							_p(4,'OutputFileName="%s"', premake.esc(path.translate(cfg.imagepath)))
 						end
 						_p(3,'/>')
 						
