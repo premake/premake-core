@@ -84,7 +84,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			c	= "ClCompile",
 			cpp	= "ClCompile",
 			cxx	= "ClCompile",
-			cc	= "ClCompile"
+			cc	= "ClCompile",
+			rc  = "ResourceCompile"
 		}
 
 		for _, current_file in ipairs(files) do
@@ -122,12 +123,13 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		_p(1,'</PropertyGroup>')
 	end
 	
-	local function config_type(config)
+	function vs10_helpers.config_type(config)
 		local t =
 		{	
 			SharedLib = "DynamicLibrary",
 			StaticLib = "StaticLibrary",
 			ConsoleApp = "Application",
+			WindowedApp = "Application"
 		}
 		return t[config.kind]
 	end
@@ -155,7 +157,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<PropertyGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="Configuration">'
 					, premake.esc(cfginfo.name))
-				_p(2,'<ConfigurationType>%s</ConfigurationType>',config_type(cfg))
+				_p(2,'<ConfigurationType>%s</ConfigurationType>',vs10_helpers.config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
 			
 			if cfg.flags.MFC then
@@ -437,10 +439,18 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end	
 	end
 
+	local function additional_options(indent,cfg)
+		if #cfg.linkoptions > 0 then
+				_p(indent,'<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>',
+					table.concat(premake.esc(cfg.linkoptions), " "))
+		end
+	end
+		
 	local function item_def_lib(cfg)
 		if cfg.kind == 'StaticLib' then
 			_p(1,'<Lib>')
 				_p(2,'<OutputFile>$(OutDir)%s</OutputFile>',cfg.buildtarget.name)
+				additional_options(2,cfg)
 			_p(1,'</Lib>')
 		end
 	end
@@ -498,14 +508,15 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 							
 			common_link_section(cfg)
 			
-			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
+			if vs10_helpers.config_type(cfg) == 'Application' and not cfg.flags.WinMain then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
 
 			import_lib(cfg)
 			
 			_p(3,'<TargetMachine>%s</TargetMachine>', iif(cfg.platform == "x64", "MachineX64", "MachineX86"))
-
+			
+			additional_options(3,cfg)
 		else
 			common_link_section(cfg)
 		end
@@ -554,7 +565,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		{
 			ClCompile	={},
 			ClInclude	={},
-			None		={}
+			None		={},
+			ResourceCompile ={}
 		}
 		
 		cfg = premake.getconfig(prj)
@@ -562,6 +574,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		write_file_type_block(sorted.ClInclude,"ClInclude")
 		write_file_type_block(sorted.ClCompile,'ClCompile')
 		write_file_type_block(sorted.None,'None')
+		write_file_type_block(sorted.ResourceCompile,'ResourceCompile')
 
 	end
 	
@@ -603,7 +616,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		{
 			ClCompile	={},
 			ClInclude	={},
-			None		={}
+			None		={},
+			ResourceCompile ={}
 		}
 		
 		cfg = premake.getconfig(prj)
@@ -616,6 +630,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			write_file_filter_block(sorted.ClInclude,"ClInclude")
 			write_file_filter_block(sorted.ClCompile,"ClCompile")
 			write_file_filter_block(sorted.None,"None")
+			write_file_filter_block(sorted.ResourceCompile,"ResourceCompile")
 		_p('</Project>')
 	end
 
