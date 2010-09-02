@@ -171,7 +171,13 @@
 --
 
 	function xcode.newid()
-		return string.format("%04X%04X%04X%012d", math.random(0, 32767), math.random(0, 32767), math.random(0, 32767), os.time())
+		return string.format("%04X%04X%04X%04X%04X%04X",
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767))
 	end
 
 
