@@ -4,6 +4,7 @@ syntax: glob
 build
 bin
 obj
+release
 Makefile
 *.make
 *.xcodeproj
