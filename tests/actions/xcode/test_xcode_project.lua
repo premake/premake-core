@@ -268,7 +268,7 @@
 			children = (
 				[Products] /* Products */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -276,7 +276,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = Products;
+			name = "Products";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -296,7 +296,7 @@
 				[source.h] /* source.h */,
 				[Products] /* Products */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -304,7 +304,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = Products;
+			name = "Products";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,7 +324,7 @@
 				[include] /* include */,
 				[Products] /* Products */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[include] /* include */ = {
@@ -332,7 +332,7 @@
 			children = (
 				[premake] /* premake */,
 			);
-			name = include;
+			name = "include";
 			path = include;
 			sourceTree = "<group>";
 		};
@@ -341,7 +341,7 @@
 			children = (
 				[source.h] /* source.h */,
 			);
-			name = premake;
+			name = "premake";
 			path = premake;
 			sourceTree = "<group>";
 		};
@@ -363,7 +363,7 @@
 				[test.h] /* test.h */,
 				[Products] /* Products */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -371,7 +371,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = Products;
+			name = "Products";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -392,7 +392,7 @@
 				[MainMenu.xib] /* MainMenu.xib */,
 				[Products] /* Products */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -400,7 +400,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = Products;
+			name = "Products";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -420,7 +420,7 @@
 				[Frameworks] /* Frameworks */,
 				[Products] /* Products */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[Frameworks] /* Frameworks */ = {
@@ -428,7 +428,7 @@
 			children = (
 				[Cocoa.framework] /* Cocoa.framework */,
 			);
-			name = Frameworks;
+			name = "Frameworks";
 			sourceTree = "<group>";
 		};
 		]]
@@ -456,9 +456,9 @@
 			);
 			dependencies = (
 			);
-			name = MyProject;
+			name = "MyProject";
 			productInstallPath = "$(HOME)/bin";
-			productName = MyProject;
+			productName = "MyProject";
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
@@ -485,9 +485,9 @@
 			);
 			dependencies = (
 			);
-			name = MyProject;
+			name = "MyProject";
 			productInstallPath = "$(HOME)/Applications";
-			productName = MyProject;
+			productName = "MyProject";
 			productReference = [MyProject.app:product] /* MyProject.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -514,8 +514,8 @@
 			);
 			dependencies = (
 			);
-			name = MyProject;
-			productName = MyProject;
+			name = "MyProject";
+			productName = "MyProject";
 			productReference = [libMyProject.dylib:product] /* libMyProject.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
@@ -547,9 +547,9 @@
 			);
 			dependencies = (
 			);
-			name = MyProject;
+			name = "MyProject";
 			productInstallPath = "$(HOME)/bin";
-			productName = MyProject;
+			productName = "MyProject";
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};

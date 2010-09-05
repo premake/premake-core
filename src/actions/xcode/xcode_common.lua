@@ -389,7 +389,7 @@
 				if node.parent == tr.projects then
 					_p(3,'name = Products;')
 				else
-					_p(3,'name = %s;', node.name)
+					_p(3,'name = "%s";', node.name)
 					if node.path then
 						local p = node.path
 						if node.parent.path then
@@ -440,7 +440,7 @@
 			end
 			_p(3,');')
 			
-			_p(3,'name = %s;', name)
+			_p(3,'name = "%s";', name)
 			
 			local p
 			if node.cfg.kind == "ConsoleApp" then
@@ -452,7 +452,7 @@
 				_p(3,'productInstallPath = "%s";', p)
 			end
 			
-			_p(3,'productName = %s;', name)
+			_p(3,'productName = "%s";', name)
 			_p(3,'productReference = %s /* %s */;', node.id, node.name)
 			_p(3,'productType = "%s";', xcode.getproducttype(node))
 			_p(2,'};')
