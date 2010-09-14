@@ -182,6 +182,9 @@ local vcproj = premake.vstudio.vcproj
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 		_p(4,'DebugInformationFormat="%s"', premake.vs200x_vcproj_symbols(cfg))
+		if cfg.language == "C" then
+			_p(4, 'CompileAs="1"')
+		end
 		_p(3,'/>')
 	end
 	

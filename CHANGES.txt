@@ -17,6 +17,7 @@
 * Bug 3007101: Generating PDB in Release builds is not supported
 * Fixed handling of icons in Xcode (bitshifter)
 * Added imagepath to set Xbox360 image file name (Jarod)
+* Patch 3063804: Set CompileAs flag for VS200x C projects (rjmyst3)
 
 
 -------
