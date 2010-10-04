@@ -73,6 +73,9 @@
 	dofile("actions/vstudio/test_vs2010_filters.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 
+	-- Makefile tests
+	dofile("actions/make/test_make_escaping.lua")
+	
 	-- Xcode tests
 	dofile("actions/xcode/test_xcode_common.lua")
 	dofile("actions/xcode/test_xcode_project.lua")

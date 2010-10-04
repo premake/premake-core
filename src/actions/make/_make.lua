@@ -12,19 +12,22 @@
 --
 
 	function _MAKE.esc(value)
+		local result
 		if (type(value) == "table") then
-			local result = { }
+			result = { }
 			for _,v in ipairs(value) do
 				table.insert(result, _MAKE.esc(v))
 			end
 			return result
 		else
-			if not value then print(debug.traceback()) end
-			local result
+			-- handle simple replacements
 			result = value:gsub("\\", "\\\\")
 			result = result:gsub(" ", "\\ ")
 			result = result:gsub("%(", "\\%(")
 			result = result:gsub("%)", "\\%)")
+			
+			-- leave $(...) shell replacement sequences alone
+			result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
 			return result
 		end
 	end

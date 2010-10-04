@@ -15,6 +15,7 @@
 * Bug 2997728: Project dependencies should be case-sensitive
 * Bug 3056381: Xcode project breaks on special chars
 * Bug 3007101: Generating PDB in Release builds is not supported
+* Bug 2971841: Gmake escaping of shell variable $(...) is broken
 * Fixed handling of icons in Xcode (bitshifter)
 * Added imagepath to set Xbox360 image file name (Jarod)
 * Patch 3063804: Set CompileAs flag for VS200x C projects (rjmyst3)
