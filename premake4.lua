@@ -16,7 +16,7 @@
 		targetname  "premake4"
 		language    "C"
 		kind        "ConsoleApp"
-		flags       { "No64BitChecks", "ExtraWarnings" }	
+		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }	
 		includedirs { "src/host/lua-5.1.4/src" }
 
 		files 
@@ -55,7 +55,8 @@
 			defines     { "LUA_USE_MACOSX" }
 			
 		configuration { "macosx", "gmake" }
-			buildoptions { "-isysroot /Developer/SDKs/MacOSX10.5.sdk", "-mmacosx-version-min=10.5" }
+			buildoptions { "-mmacosx-version-min=10.1" }
+			linkoptions { "-lstdc++-static", "-mmacosx-version-min=10.1" }
 
 		configuration { "not windows", "not solaris" }
 			linkoptions { "-rdynamic" }

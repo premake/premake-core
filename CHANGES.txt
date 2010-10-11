@@ -19,6 +19,8 @@
 * Fixed handling of icons in Xcode (bitshifter)
 * Added imagepath to set Xbox360 image file name (Jarod)
 * Patch 3063804: Set CompileAs flag for VS200x C projects (rjmyst3)
+* Implemented StaticRuntime flag for Xcode (William Burnson)
+* Improved portability of Mac OS X binaries (William Burnson)
 
 
 -------

@@ -1053,6 +1053,31 @@
 	end
 
 
+	function suite.XCBuildConfigurationProject_OnStaticRuntime()
+		flags { "StaticRuntime" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		[MyProject:Debug(2)] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = "obj/Debug";
+				ONLY_ACTIVE_ARCH = NO;
+				PREBINDING = NO;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
 	function suite.XCBuildConfigurationProject_OnTargetDir()
 		targetdir "bin"
 		prepare()

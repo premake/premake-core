@@ -799,6 +799,10 @@
 		
 		_p(4,'PREBINDING = NO;')
 		
+		if cfg.flags.StaticRuntime then
+			_p(4,'STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;')
+		end
+		
 		if targetdir ~= "." then
 			_p(4,'SYMROOT = "%s";', targetdir)
 		end
