@@ -260,6 +260,10 @@ local vcproj = premake.vstudio.vcproj
 			if #cfg.libdirs > 0 then
 				_p(4,'AdditionalLibraryDirectories="%s"', premake.esc(path.translate(table.concat(cfg.libdirs , ";"))))
 			end
+
+			if #cfg.linkoptions > 0 then
+				_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.linkoptions), " "))
+			end
 		end
 		
 		_p(3,'/>')

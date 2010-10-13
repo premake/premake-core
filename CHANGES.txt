@@ -22,6 +22,7 @@
 * Implemented StaticRuntime flag for Xcode (William Burnson)
 * Improved portability of Mac OS X binaries (William Burnson)
 * Bug 3035545: The pattern { "./folder/*.c" } matches no files
+* Bug 3034222: StaticLib projects ignore linkoptions
 
 
 -------

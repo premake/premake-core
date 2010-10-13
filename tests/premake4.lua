@@ -67,6 +67,7 @@
 	dofile("test_vs2010_sln.lua")
 	dofile("actions/vstudio/test_vs2005_csproj.lua")
 	dofile("actions/vstudio/test_vs200x_vcproj.lua")
+	dofile("actions/vstudio/test_vs200x_vcproj_linker.lua")
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
 	dofile("actions/vstudio/test_vs2010_flags.lua")
 	dofile("actions/vstudio/test_vs2010_links.lua")
