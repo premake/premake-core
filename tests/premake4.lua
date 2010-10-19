@@ -76,6 +76,7 @@
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
+	dofile("actions/make/test_make_pch.lua")
 	
 	-- Xcode tests
 	dofile("actions/xcode/test_xcode_common.lua")

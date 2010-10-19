@@ -1,11 +1,11 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2010 Jason Perkins and the Premake project
 --
 
 	_MAKE = { }
-	
+	premake.make = { }
 
 --
 -- Escape a string so it can be written to a makefile.

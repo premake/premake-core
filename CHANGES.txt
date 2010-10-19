@@ -23,6 +23,7 @@
 * Improved portability of Mac OS X binaries (William Burnson)
 * Bug 3035545: The pattern { "./folder/*.c" } matches no files
 * Bug 3034222: StaticLib projects ignore linkoptions
+* Bug 3020382: GCC PCH not working
 
 
 -------

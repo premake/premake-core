@@ -4,6 +4,10 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
+	premake.make.cpp = { }
+	local _ = premake.make.cpp
+	
+
 	function premake.make_cpp(prj)
 		-- create a shortcut to the compiler interface
 		local cc = premake.gettool(prj)
@@ -102,16 +106,7 @@
 		_p('')
 
 		-- precompiler header rule
-		_p('ifneq (,$(PCH))')
-		_p('$(GCH): $(PCH)')
-		_p('\t@echo $(notdir $<)')
-		if prj.language == "C" then
-			_p('\t$(SILENT) $(CC) $(CFLAGS) -o $@ -c $<')
-		else
-			_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o $@ -c $<')
-		end
-		_p('endif')
-		_p('')
+		_.pchrules(prj)
 				
 		-- per-file rules
 		for _, file in ipairs(prj.files) do
@@ -200,11 +195,7 @@
 		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(cc.getcppflags(cfg), " "))
 
 		-- set up precompiled headers
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			_p('  PCH        = %s', _MAKE.esc(path.getrelative(cfg.location, cfg.pchheader)))
-			_p('  GCH        = $(OBJDIR)/%s.gch', _MAKE.esc(path.getname(cfg.pchheader))) 
-			_p('  CPPFLAGS  += -I$(OBJDIR) -include $(PCH)')
-		end
+		_.pchconfig(cfg)
 				
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
@@ -246,6 +237,33 @@
 		end
 		_p('  endef')
 		
+		_p('endif')
+		_p('')
+	end
+	
+	
+--
+-- Precompiled header support
+--
+
+	function _.pchconfig(cfg)			
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p('  PCH        = %s', _MAKE.esc(path.getrelative(cfg.location, cfg.pchheader)))
+			_p('  GCH        = $(OBJDIR)/%s.gch', _MAKE.esc(path.getname(cfg.pchheader))) 
+			_p('  CPPFLAGS  += -I$(OBJDIR) -include $(OBJDIR)/%s', _MAKE.esc(path.getname(cfg.pchheader)))
+		end
+	end
+
+	function _.pchrules(prj)
+		_p('ifneq (,$(PCH))')
+		_p('$(GCH): $(PCH)')
+		_p('\t@echo $(notdir $<)')
+		_p('\t-$(SILENT) cp $< $(OBJDIR)')
+		if prj.language == "C" then
+			_p('\t$(SILENT) $(CC) $(CFLAGS) -o $@ -c $<')
+		else
+			_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o $@ -c $<')
+		end
 		_p('endif')
 		_p('')
 	end
