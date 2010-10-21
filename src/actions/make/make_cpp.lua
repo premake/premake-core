@@ -114,14 +114,14 @@
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
 				if (path.iscfile(file)) then
-					_p('\t$(SILENT) $(CC) $(CFLAGS) -o $@ -c $<')
+					_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
 				else
-					_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o $@ -c $<')
+					_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"')
 				end
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
-				_p('\t$(SILENT) windres $< -O coff -o $@ $(RESFLAGS)')
+				_p('\t$(SILENT) windres $< -O coff -o "$@" $(RESFLAGS)')
 			end
 		end
 		_p('')
@@ -260,9 +260,9 @@
 		_p('\t@echo $(notdir $<)')
 		_p('\t-$(SILENT) cp $< $(OBJDIR)')
 		if prj.language == "C" then
-			_p('\t$(SILENT) $(CC) $(CFLAGS) -o $@ -c $<')
+			_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
 		else
-			_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o $@ -c $<')
+			_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"')
 		end
 		_p('endif')
 		_p('')

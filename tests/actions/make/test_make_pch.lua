@@ -70,7 +70,7 @@ ifneq (,$(PCH))
 $(GCH): $(PCH)
 	@echo $(notdir $<)
 	-$(SILENT) cp $< $(OBJDIR)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 endif
 		]]
 	end
@@ -85,7 +85,7 @@ ifneq (,$(PCH))
 $(GCH): $(PCH)
 	@echo $(notdir $<)
 	-$(SILENT) cp $< $(OBJDIR)
-	$(SILENT) $(CC) $(CFLAGS) -o $@ -c $<
+	$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"
 endif
 		]]
 	end

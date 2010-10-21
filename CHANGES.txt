@@ -25,6 +25,7 @@
 * Bug 3034222: StaticLib projects ignore linkoptions
 * Bug 3020382: GCC PCH not working
 * Bug 3016050: {"../Dir/file1.c","../../Dir/file2.c"} breaks Xcode (Stephane)
+* Bug 3015312: Makefiles are not quoted correctly
 
 
 -------
