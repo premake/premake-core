@@ -98,22 +98,15 @@ function dorelease()
 --
 ---------------------------------------------------------------------------
 
---
--- Create a directory to hold the release
---
-
-	local workdir = "premake-" .. version
-	os.mkdir("release/" .. workdir)
-	os.chdir("release/" .. workdir)
-
-
 -- 
 -- Check out the release tagged sources to releases/
 --
 
 	print("Downloading release tag...")
-
-	-- hg clone -r {tag} https://bitbucket.org/premake/premake-stable .
+	
+	os.chdir("release")
+	-- hg clone -r {tag} https://bitbucket.org/premake/premake-stable premake-{version}
+	os.chdir("premake-" .. version)
 
 
 --
@@ -200,11 +193,11 @@ function dorelease()
 	
 		print("Building platform binary release...")
 
-		-- IMPORTANT: Mac binary needs to be build in Xcode to ensure 10.5
+		-- IMPORTANT: Mac binary needs to be built in Xcode to ensure 10.5
 		-- compatibility right now. I haven't been able to figure out the
 		-- right flags to make it work from a makefile yet.
 		--
-		-- In Xcode, open the inspector for the target. Set the architecture
+		-- In Xcode, open the inspector for the TARGET Set the architecture
 		-- to 32-bit universal, and the base SDK to 10.5.
 		
 		exec("premake4 /platform=universal32 gmake")

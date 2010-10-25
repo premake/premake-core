@@ -1,13 +1,48 @@
 --
 -- configs.lua
 --
+-- Functions for working with configuration objects (which can include
+-- projects and solutions).
+--
+-- This script also contains the configuration "baking" logic (though I 
+-- would like to eventually move this out to a different file):
 -- Once the project scripts have been run, flatten all of the configuration
 -- data down into simpler objects, keeping only the settings that apply to 
 -- the current runtime environment.
 --
--- Copyright (c) 2008, 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2010 Jason Perkins and the Premake project
 --
 
+	premake.config = { }
+	
+	
+-- 
+-- Determine if a configuration represents a "debug" or "release" build.
+-- This controls the runtime library selected for Visual Studio builds
+-- (and might also be useful elsewhere).
+--
+-- @param cfg
+--    The configuration object to test.
+-- @returns
+--    True if the configuration represents a debug build; false otherwise.
+--
+
+	function premake.config.isdebugbuild(cfg)
+		-- If any of the optimize flags are set, it's a release a build
+		if cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed then
+			return false
+		end
+		-- If symbols are not defined, it's a release build
+		if not cfg.flags.Symbols then
+			return false
+		end
+		return true
+	end
+
+	
+-------------------------------------------------------------------------
+-- Configuration Baking Logic
+-------------------------------------------------------------------------
 
 	-- do not copy these fields into the configurations
 	local nocopy = 

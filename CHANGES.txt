@@ -18,9 +18,21 @@
 * Patch 2997449: Print configuration with target (ergosys)
 * Patch 2997452: Suppress gmake's "nothing to be done" message (ergosys)
 * Patch 3011940: Add support for MFC (JTAnderson)
+* Patch 3053959: kind() crashes when called with no arguments (rjmyst3)
 * Bug 2997728: Project dependencies should be case-sensitive
+* Bug 3056381: Xcode project breaks on special chars
+* Bug 3007101: Generating PDB in Release builds is not supported
+* Bug 2971841: Gmake escaping of shell variable $(...) is broken
 * Fixed handling of icons in Xcode (bitshifter)
 * Added imagepath to set Xbox360 image file name (Jarod)
+* Patch 3063804: Set CompileAs flag for VS200x C projects (rjmyst3)
+* Implemented StaticRuntime flag for Xcode (William Burnson)
+* Improved portability of Mac OS X binaries (William Burnson)
+* Bug 3035545: The pattern { "./folder/*.c" } matches no files
+* Bug 3034222: StaticLib projects ignore linkoptions
+* Bug 3020382: GCC PCH not working
+* Bug 3016050: {"../Dir/file1.c","../../Dir/file2.c"} breaks Xcode (Stephane)
+* Bug 3015312: Makefiles are not quoted correctly
 
 
 -------

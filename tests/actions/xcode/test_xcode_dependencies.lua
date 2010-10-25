@@ -174,7 +174,7 @@
 				[Products] /* Products */,
 				[Projects] /* Projects */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -182,7 +182,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = Products;
+			name = "Products";
 			sourceTree = "<group>";
 		};
 		[Projects] /* Projects */ = {
@@ -190,7 +190,7 @@
 			children = (
 				[MyProject2.xcodeproj] /* MyProject2.xcodeproj */,
 			);
-			name = Projects;
+			name = "Projects";
 			sourceTree = "<group>";
 		};
 		[MyProject2.xcodeproj:prodgrp] /* Products */ = {
@@ -228,9 +228,9 @@
 			dependencies = (
 				[MyProject2.xcodeproj:targdep] /* PBXTargetDependency */,
 			);
-			name = MyProject;
+			name = "MyProject";
 			productInstallPath = "$(HOME)/bin";
-			productName = MyProject;
+			productName = "MyProject";
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};

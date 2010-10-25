@@ -1,17 +1,18 @@
 --
--- tests/test_configs.lua
--- Automated test suite for the configuration building functions.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- tests/test_baking.lua
+-- Automated test suite for the configuration baking functions.
+-- Copyright (c) 2009, 2010 Jason Perkins and the Premake project
 --
 
-	T.configs = { }
+	T.baking = { }
+	local suite = T.baking
 
 --
 -- Setup code
 --
 
 	local prj, cfg
-	function T.configs.setup()
+	function suite.setup()
 		_ACTION = "gmake"
 		
 		solution "MySolution"
@@ -56,83 +57,83 @@
 -- Tests
 --
 
-	function T.configs.SolutionFields()
+	function suite.SolutionFields()
 		prepare()
 		test.isequal("Debug:Release", table.concat(cfg.configurations,":"))
 	end
 
 	
-	function T.configs.ProjectFields()
+	function suite.ProjectFields()
 		prepare()
 		test.isequal("C", cfg.language)
 	end
 
 	
-	function T.configs.ProjectWideSettings()
+	function suite.ProjectWideSettings()
 		prepare()
 		test.isequal("SOLUTION:PROJECT:NATIVE", table.concat(prj.defines,":"))
 	end
 
 	
-	function T.configs.BuildCfgSettings()
+	function suite.BuildCfgSettings()
 		prepare()
 		test.isequal("SOLUTION:SOLUTION_DEBUG:PROJECT:DEBUG:NATIVE", table.concat(cfg.defines,":"))
 	end
 
 
-	function T.configs.PlatformSettings()
+	function suite.PlatformSettings()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.isequal("SOLUTION:SOLUTION_DEBUG:PROJECT:DEBUG:X86_32", table.concat(cfg.defines,":"))
 	end
 
 			
-	function T.configs.SetsConfigName()
+	function suite.SetsConfigName()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.isequal("Debug", cfg.name)
 	end
 
 	
-	function T.configs.SetsPlatformName()
+	function suite.SetsPlatformName()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.isequal("x32", cfg.platform)
 	end
 
 	
-	function T.configs.SetsPlatformNativeName()
+	function suite.SetsPlatformNativeName()
 		test.isequal("Native", cfg.platform)
 	end
 
 	
-	function T.configs.SetsShortName()
+	function suite.SetsShortName()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.isequal("debug32", cfg.shortname)
 	end
 
 	
-	function T.configs.SetsNativeShortName()
+	function suite.SetsNativeShortName()
 		prepare()
 		test.isequal("debug", cfg.shortname)
 	end
 
 	
-	function T.configs.SetsLongName()
+	function suite.SetsLongName()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.isequal("Debug|x32", cfg.longname)
 	end
 
 	
-	function T.configs.SetsNativeLongName()
+	function suite.SetsNativeLongName()
 		prepare()
 		test.isequal("Debug", cfg.longname)
 	end
 
 	
-	function T.configs.SetsProject()
+	function suite.SetsProject()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "x32")
 		test.istrue(prj.project == cfg.project)
@@ -144,12 +145,12 @@
 -- Target system testing
 --
 
-	function T.configs.SetsTargetSystem_OnNative()
+	function suite.SetsTargetSystem_OnNative()
 		prepare()
 		test.isequal(os.get(), cfg.system)
 	end
 
-	function T.configs.SetTargetSystem_OnCrossCompiler()
+	function suite.SetTargetSystem_OnCrossCompiler()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "PS3")
 		test.isequal("PS3", cfg.system)
@@ -161,7 +162,7 @@
 -- Configuration-specific kinds
 --
 
-	function T.configs.SetsConfigSpecificKind()
+	function suite.SetsConfigSpecificKind()
 		configuration "Debug"
 		kind "ConsoleApp"
 		prepare()
@@ -173,12 +174,12 @@
 -- Platform kind translation
 --
 
-	function T.configs.SetsTargetKind_OnSupportedKind()
+	function suite.SetsTargetKind_OnSupportedKind()
 		prepare()
 		test.isequal("SharedLib", cfg.kind)
 	end
 
-	function T.configs.SetsTargetKind_OnUnsupportedKind()
+	function suite.SetsTargetKind_OnUnsupportedKind()
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "PS3")
 		test.isequal("StaticLib", cfg.kind)

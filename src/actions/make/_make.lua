@@ -1,30 +1,33 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2010 Jason Perkins and the Premake project
 --
 
 	_MAKE = { }
-	
+	premake.make = { }
 
 --
 -- Escape a string so it can be written to a makefile.
 --
 
 	function _MAKE.esc(value)
+		local result
 		if (type(value) == "table") then
-			local result = { }
+			result = { }
 			for _,v in ipairs(value) do
 				table.insert(result, _MAKE.esc(v))
 			end
 			return result
 		else
-			if not value then print(debug.traceback()) end
-			local result
+			-- handle simple replacements
 			result = value:gsub("\\", "\\\\")
 			result = result:gsub(" ", "\\ ")
 			result = result:gsub("%(", "\\%(")
 			result = result:gsub("%)", "\\%)")
+			
+			-- leave $(...) shell replacement sequences alone
+			result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
 			return result
 		end
 	end

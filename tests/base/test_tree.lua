@@ -68,6 +68,16 @@
 		tree.add(tr, "MyProject/../hello")
 		test.isequal("MyProject>hello", getresult())
 	end
+	
+	function suite.AddsNodes_OnDifferentParentLevel()
+		tree.add(tr, "../Common")
+		tree.add(tr, "../../Common")
+		test.isequal(2, #tr.children)
+		test.isequal("Common", tr.children[1].name)
+		test.isequal("Common", tr.children[2].name)
+		test.isequal("../Common", tr.children[1].path)
+		test.isequal("../../Common", tr.children[2].path)
+	end
 
 
 --

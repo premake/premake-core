@@ -96,8 +96,7 @@ local vcproj = premake.vstudio.vcproj
 			_p(4,'PreprocessorDefinitions="%s"', premake.esc(table.concat(cfg.defines, ";")))
 		end
 		
-		
-		if cfg.flags.Symbols and not cfg.flags.NoMinimalRebuild and not cfg.flags.Managed then
+		if premake.config.isdebugbuild(cfg) and not cfg.flags.NoMinimalRebuild and not cfg.flags.Managed then
 			_p(4,'MinimalRebuild="%s"', _VS.bool(true))
 		end
 		
@@ -115,11 +114,17 @@ local vcproj = premake.vstudio.vcproj
 		end
 		
 		local runtime
-		if cfg.flags.StaticRuntime then
-			runtime = iif(cfg.flags.Symbols, 1, 0)
+		if premake.config.isdebugbuild(cfg) then
+			runtime = iif(cfg.flags.StaticRuntime, 1, 3)
 		else
-			runtime = iif(cfg.flags.Symbols, 3, 2)
+			runtime = iif(cfg.flags.StaticRuntime, 0, 2)
 		end
+		
+--		if cfg.flags.StaticRuntime then
+--			runtime = iif(cfg.flags.Symbols, 1, 0)
+--		else
+--			runtime = iif(cfg.flags.Symbols, 3, 2)
+--		end
 		_p(4,'RuntimeLibrary="%s"', runtime)
 
 		_p(4,'EnableFunctionLevelLinking="%s"', _VS.bool(true))
@@ -177,6 +182,9 @@ local vcproj = premake.vstudio.vcproj
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 		_p(4,'DebugInformationFormat="%s"', premake.vs200x_vcproj_symbols(cfg))
+		if cfg.language == "C" then
+			_p(4, 'CompileAs="1"')
+		end
 		_p(3,'/>')
 	end
 	
@@ -251,6 +259,10 @@ local vcproj = premake.vstudio.vcproj
 
 			if #cfg.libdirs > 0 then
 				_p(4,'AdditionalLibraryDirectories="%s"', premake.esc(path.translate(table.concat(cfg.libdirs , ";"))))
+			end
+
+			if #cfg.linkoptions > 0 then
+				_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.linkoptions), " "))
 			end
 		end
 		

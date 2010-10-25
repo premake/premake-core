@@ -121,6 +121,16 @@
 
 
 --
+-- accessor tests
+--
+
+	function suite.accessor_CanRetrieveString()
+		sln.blocks[1].kind = "ConsoleApp"
+		test.isequal("ConsoleApp", kind())
+	end
+
+
+--
 -- solution() tests
 --
 

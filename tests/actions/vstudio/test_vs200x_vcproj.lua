@@ -645,3 +645,77 @@
 			/>
 		]]
 	end
+
+
+--
+-- RuntimeLibrary tests
+--
+
+	function suite.CompilerBlock_RuntimeLibrary_IsDebug_OnSymbolsNoOptimize()
+		flags { "Symbols" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="4"
+			/>
+		]]
+	end
+
+	function suite.CompilerBlock_RuntimeLibrary_IsRelease_OnOptimize()
+		flags { "Symbols", "Optimize" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="3"
+			/>
+		]]
+	end
+
+
+--
+-- C language support
+--
+
+	function suite.CompilerBlock_RuntimeLibrary_IsDebug_OnSymbolsNoOptimize()
+		language "C"
+		flags { "Symbols" }
+		prepare()
+		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="4"
+				CompileAs="1"
+			/>
+		]]
+	end

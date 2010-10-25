@@ -81,6 +81,13 @@
 --
 	
 	local function domatch(result, mask, wantfiles)
+		-- need to remove extraneous path info from the mask to ensure a match
+		-- against the paths returned by the OS. Haven't come up with a good 
+		-- way to do it yet, so will handle cases as they come up
+		if mask:startswith("./") then
+			mask = mask:sub(3)
+		end
+
 		-- strip off any leading directory information to find out
 		-- where the search should take place
 		local basedir = mask
@@ -91,13 +98,6 @@
 		basedir = path.getdirectory(basedir)
 		if (basedir == ".") then basedir = "" end
 
-		-- need to remove extraneous path info from the mask to ensure a match
-		-- against the paths returned by the OS. Haven't come up with a good 
-		-- way to do it yet, so will handle cases as they come up
-		if mask:startswith("./") then
-			mask = mask:sub(3)
-		end
-		
 		-- recurse into subdirectories?
 		local recurse = mask:find("**", nil, true)
 		

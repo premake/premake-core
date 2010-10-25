@@ -51,9 +51,12 @@
 			return parentnode
 		end
 		
-		-- Create the child if necessary
+		-- Create the child if necessary. If two children with the same name appear
+		-- at the same level, make sure they have the same path to prevent conflicts
+		-- i.e. ../Common and ../../Common can both appear at the top of the tree
+		-- yet they have different paths (Bug #3016050)
 		local childnode = parentnode.children[childname]
-		if not childnode then
+		if not childnode or childnode.path ~= p then
 			childnode = tree.insert(parentnode, tree.new(childname))
 			childnode.path = p
 		end

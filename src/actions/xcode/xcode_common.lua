@@ -171,7 +171,13 @@
 --
 
 	function xcode.newid()
-		return string.format("%04X%04X%04X%012d", math.random(0, 32767), math.random(0, 32767), math.random(0, 32767), os.time())
+		return string.format("%04X%04X%04X%04X%04X%04X",
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767),
+			math.random(0, 32767))
 	end
 
 
@@ -383,7 +389,7 @@
 				if node.parent == tr.projects then
 					_p(3,'name = Products;')
 				else
-					_p(3,'name = %s;', node.name)
+					_p(3,'name = "%s";', node.name)
 					if node.path then
 						local p = node.path
 						if node.parent.path then
@@ -434,7 +440,7 @@
 			end
 			_p(3,');')
 			
-			_p(3,'name = %s;', name)
+			_p(3,'name = "%s";', name)
 			
 			local p
 			if node.cfg.kind == "ConsoleApp" then
@@ -446,7 +452,7 @@
 				_p(3,'productInstallPath = "%s";', p)
 			end
 			
-			_p(3,'productName = %s;', name)
+			_p(3,'productName = "%s";', name)
 			_p(3,'productReference = %s /* %s */;', node.id, node.name)
 			_p(3,'productType = "%s";', xcode.getproducttype(node))
 			_p(2,'};')
@@ -792,6 +798,10 @@
 		xcode.printlist(flags, 'OTHER_LDFLAGS')
 		
 		_p(4,'PREBINDING = NO;')
+		
+		if cfg.flags.StaticRuntime then
+			_p(4,'STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;')
+		end
 		
 		if targetdir ~= "." then
 			_p(4,'SYMROOT = "%s";', targetdir)
