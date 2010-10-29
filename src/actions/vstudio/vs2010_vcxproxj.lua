@@ -21,6 +21,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	
 	function vs10_helpers.list_of_directories_in_path(path)
 		local list={}
+		path = vs10_helpers.remove_relative_path(path)
 		if path then
 			for dir in string.gmatch(path,"[%w%-%_%.]+\\")do
 				if #list == 0 then
@@ -32,7 +33,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 		return list
 	end
-	
+
+	--function is used in tests yet not longer used in this file
 	function vs10_helpers.table_of_filters(t)
 		local filters ={}
 
@@ -47,7 +49,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		
 		return filters
 	end
-	
+
 	function vs10_helpers.table_of_file_filters(files)
 		local filters ={}
 
