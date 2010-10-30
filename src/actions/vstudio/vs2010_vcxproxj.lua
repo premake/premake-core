@@ -653,15 +653,6 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		_p('</Project>')
 	end
 
---
- -- <ItemGroup>
-  --  <ClCompile Include="SomeProjName.cpp" />
-   -- <ClCompile Include="stdafx.cpp">
-    --  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-     -- <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    --</ClCompile>
-  --</ItemGroup>
---		
 	function premake.vs2010_vcxproj(prj)
 		io.eol = "\r\n"
 		_p('<?xml version="1.0" encoding="utf-8"?>')
