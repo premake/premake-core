@@ -121,7 +121,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	end
 	
 	local function if_config_and_platform()
-		return 'Condition="\'$(Configuration)|$(Platform)'
+		return 'Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"'
 	end	
 	
 	local function optimisation(cfg)
@@ -141,7 +141,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	local function config_type_block(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<PropertyGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="Configuration">'
+			_p(1,'<PropertyGroup '..if_config_and_platform() ..' Label="Configuration">'
 					, premake.esc(cfginfo.name))
 				_p(2,'<ConfigurationType>%s</ConfigurationType>',vs10_helpers.config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
@@ -166,7 +166,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	local function import_props(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<ImportGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="PropertySheets">'
+			_p(1,'<ImportGroup '..if_config_and_platform() ..' Label="PropertySheets">'
 					,premake.esc(cfginfo.name))
 				_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
 			_p(1,'</ImportGroup>')
@@ -180,7 +180,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 				ShoudLinkIncrementally = 'true'
 			end
 
-			_p(2,'<LinkIncremental '..if_config_and_platform() ..'\'==\'%s\'">%s</LinkIncremental>'
+			_p(2,'<LinkIncremental '..if_config_and_platform() ..'>%s</LinkIncremental>'
 					,premake.esc(cfginfo.name),ShoudLinkIncrementally)
 		end		
 	end
@@ -190,7 +190,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		if cfg.kind == "SharedLib" then
 			local shouldIgnore = "false"
 			if cfg.flags.NoImportLib then shouldIgnore = "true" end
-			 _p(2,'<IgnoreImportLibrary '..if_config_and_platform() ..'\'==\'%s\'">%s</IgnoreImportLibrary>'
+			 _p(2,'<IgnoreImportLibrary '..if_config_and_platform() ..'>%s</IgnoreImportLibrary>'
 					,premake.esc(cfginfo.name),shouldIgnore)
 		end
 	end
@@ -202,17 +202,17 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			
 			for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-				_p(2,'<OutDir '..if_config_and_platform() ..'\'==\'%s\'">%s\\</OutDir>'
+				_p(2,'<OutDir '..if_config_and_platform() ..'>%s\\</OutDir>'
 						, premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
-				_p(2,'<IntDir '..if_config_and_platform() ..'\'==\'%s\'">%s\\</IntDir>'
+				_p(2,'<IntDir '..if_config_and_platform() ..'>%s\\</IntDir>'
 						, premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
-				_p(2,'<TargetName '..if_config_and_platform() ..'\'==\'%s\'">%s</TargetName>'
+				_p(2,'<TargetName '..if_config_and_platform() ..'>%s</TargetName>'
 						,premake.esc(cfginfo.name),path.getbasename(cfg.buildtarget.name))
 
 				ignore_import_lib(cfg,cfginfo)
 				incremental_link(cfg,cfginfo)
 				if cfg.flags.NoManifest then
-				_p(2,'<GenerateManifest '..if_config_and_platform() ..'\'==\'%s\'">false</GenerateManifest>'
+				_p(2,'<GenerateManifest '..if_config_and_platform() ..'>false</GenerateManifest>'
 						,premake.esc(cfginfo.name))
 				end
 			end
@@ -509,11 +509,11 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		
 		_p(2,'</Link>')
 	end
-    
+	
 	local function item_definitions(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<ItemDefinitionGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">'
+			_p(1,'<ItemDefinitionGroup ' ..if_config_and_platform() ..'>'
 					,premake.esc(cfginfo.name))
 				vs10_clcompile(cfg)
 				resource_compile(cfg)
@@ -546,6 +546,39 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
+	--not yet used or tested
+	local function write_file_compile_block(files,prj,configs)
+	
+		if #files > 0  then	
+		
+			local config_mappings = {}
+			for _, cfginfo in ipairs(configs) do
+				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+				if cfg.pchheader and cfg.pchsource and not cfg.flags.NoPCH then
+					config_mappings[cfginfo] = path.translate(cfg.pchsource, "\\")
+				end
+			end
+
+			
+			_p(1,'<ItemGroup>')
+			for _, current_file in ipairs(files) do
+				_p(2,'<ClCompile Include=\"%s\">', current_file)
+				for _, cfginfo in ipairs(configs) do
+					if config_mappings[cfginfo] and current_file == config_mappings[cfginfo] then 
+							_p(3,'<PrecompiledHeader '.. if_config_and_platform() .. '>Create</PrecompiledHeader>'
+								,premake.esc(cfginfo.name))
+							--only one source file per pch
+							config_mappings[cfginfo] = nil
+						_p(2,'</ClCompile>')
+					end
+				end	
+				_p(2,'</ClCompile>')
+			end
+			_p(1,'</ItemGroup>')
+		end
+	end
+	
+	
 	local function vcxproj_files(prj)
 		local sorted =
 		{
@@ -558,7 +591,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		cfg = premake.getconfig(prj)
 		vs10_helpers.sort_input_files(cfg.files,sorted)
 		write_file_type_block(sorted.ClInclude,"ClInclude")
-		write_file_type_block(sorted.ClCompile,'ClCompile')
+		write_file_compile_block(sorted.ClCompile,prj,prj.solution.vstudio_configs)
 		write_file_type_block(sorted.None,'None')
 		write_file_type_block(sorted.ResourceCompile,'ResourceCompile')
 

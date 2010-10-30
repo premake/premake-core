@@ -260,16 +260,6 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<None')
 	end
-	
-	--function is no longer used in code
-	function vs10_filters.tableOfFileFilters_filterContainsDots_bufferContainsTheEntry()
-		t =
-		{
-			'bar\\baz\\foo.bar.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(2,#result)
-	end	
 
 	function vs10_filters.tableOfFileFilters_filterContainsDots_resultsLengthIsThree()
 		t =
