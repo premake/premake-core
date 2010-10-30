@@ -34,26 +34,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		return list
 	end
 
-	--function is used in tests yet not longer used in this file
-	function vs10_helpers.table_of_filters(t)
-		local filters ={}
-
-		for key, value in pairs(t) do
-			local result = vs10_helpers.list_of_directories_in_path(value)
-			for __,dir in ipairs(result) do
-				if table.contains(filters,dir) ~= true then
-					filters[#filters +1] = dir
-				end
-			end
-		end
-		
-		return filters
-	end
-
 	function vs10_helpers.table_of_file_filters(files)
 		local filters ={}
 
-		for key, valueTable in pairs(files) do
+		for _, valueTable in pairs(files) do
 			for _, entry in ipairs(valueTable) do
 				local result = vs10_helpers.list_of_directories_in_path(entry)
 				for __,dir in ipairs(result) do
