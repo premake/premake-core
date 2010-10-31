@@ -546,7 +546,6 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
-	--not yet used or tested
 	local function write_file_compile_block(files,prj,configs)
 	
 		if #files > 0  then	
@@ -630,6 +629,9 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
+	local tool_version_and_xmlns = 'ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"'	
+	local xml_version_and_encoding = '<?xml version="1.0" encoding="utf-8"?>'
+	
 	local function vcxproj_filter_files(prj)
 		local sorted =
 		{
@@ -643,8 +645,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		vs10_helpers.sort_input_files(cfg.files,sorted)
 
 		io.eol = "\r\n"
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		--_p('<?xml version="1.0" encoding="utf-8"?>')
+		_p(xml_version_and_encoding)
+		--_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p('<Project ' ..tool_version_and_xmlns ..'>')
 			write_filter_includes(sorted)
 			write_file_filter_block(sorted.ClInclude,"ClInclude")
 			write_file_filter_block(sorted.ClCompile,"ClCompile")
@@ -655,9 +659,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 
 	function premake.vs2010_vcxproj(prj)
 		io.eol = "\r\n"
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-			
+		--_p('<?xml version="1.0" encoding="utf-8"?>')
+		_p(xml_version_and_encoding)
+		--_p('<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p('<Project DefaultTargets="Build" ' ..tool_version_and_xmlns ..'>')
 			vs2010_config(prj)
 			vs2010_globals(prj)
 			
@@ -689,10 +694,13 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 
 		_p('</Project>')
 	end
-		
+	
+
 	function premake.vs2010_vcxproj_user(prj)
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		--_p('<?xml version="1.0" encoding="utf-8"?>')
+		_p(xml_version_and_encoding)
+		--_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p('<Project ' ..tool_version_and_xmlns ..'>')
 		_p('</Project>')
 	end
 	
