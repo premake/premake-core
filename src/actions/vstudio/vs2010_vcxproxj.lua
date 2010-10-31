@@ -241,24 +241,6 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
-	--have a look at this and translate 
-	--
-	--function vs10_vcxproj_symbols(cfg)
-	--	if (not cfg.flags.Symbols) then
-	--		return 0
-	--	else
-			-- Edit-and-continue does't work for some configurations
-	--		if cfg.flags.NoEditAndContinue or 
-	--		   _VS.optimization(cfg) ~= 0 or 
-	--		   cfg.flags.Managed or 
-	--		   cfg.platform == "x64" then
-	--			return 3
-	--		else
-	--			return 4
-	--		end
-	--	end
-	--end
-	--
 	local function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
 			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>'
@@ -321,7 +303,24 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
-	
+		--have a look at this and translate 
+	--
+	--function vs10_vcxproj_symbols(cfg)
+	--	if (not cfg.flags.Symbols) then
+	--		return 0
+	--	else
+			-- Edit-and-continue does't work for some configurations
+	--		if cfg.flags.NoEditAndContinue or 
+	--		   _VS.optimization(cfg) ~= 0 or 
+	--		   cfg.flags.Managed or 
+	--		   cfg.platform == "x64" then
+	--			return 3
+	--		else
+	--			return 4
+	--		end
+	--	end
+	--end
+	--
 	local function debug_info(cfg)
 	--
 	--	EditAndContinue /ZI
@@ -336,9 +335,9 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	end
 	
 	local function minimal_build(cfg)
-		if cfg.flags.Symbols and not cfg.flags.NoMinimalRebuild then
+		if premake.config.isdebugbuild(cfg) and not cfg.flags.NoMinimalRebuild then
 			_p(3,'<MinimalRebuild>true</MinimalRebuild>')
-		elseif cfg.flags.Symbols then
+		else
 			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
 		end
 	end

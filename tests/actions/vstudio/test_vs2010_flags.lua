@@ -177,27 +177,27 @@ function vs10_flags.unicode_characterSet_setToUnicode()
 end
 
 
-function vs10_flags.noMinimalRebuildYetNotSymbols_minimalRebuild_isNotFound()
-	flags {"NoMinimalRebuild"}
-	
-	local buffer = get_buffer()
-	test.string_does_not_contain(buffer,'MinimalRebuild')
-end
 
-function vs10_flags.noMinimalRebuildAndSymbols_minimalRebuild_setToFalse()
-	flags {"NoMinimalRebuild","Symbols"}
+function vs10_flags.debugAndNoMinimalRebuildAndSymbols_minimalRebuild_setToFalse()
+	flags {debug_string,"NoMinimalRebuild"}
 	
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<MinimalRebuild>false</MinimalRebuild>')
 end
 
-function vs10_flags.symbolsSetYetNotMinimalRebuild_minimalRebuild_setToTrue()
-	flags {"Symbols"}
+function vs10_flags.debugYetNotMinimalRebuild_minimalRebuild_setToTrue()
+	flags {debug_string}
 	
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<MinimalRebuild>true</MinimalRebuild>')
 end
 
+function vs10_flags.release_minimalRebuild_setToFalse()
+	flags {release_string}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<MinimalRebuild>false</MinimalRebuild>')
+end
 
 function vs10_flags.mfc_useOfMfc_setToStatic()
     flags{"MFC"}
