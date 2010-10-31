@@ -224,10 +224,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	
 	local function runtime(cfg)
 		local runtime
-		if cfg.flags.StaticRuntime then
-			runtime = iif(cfg.flags.Symbols,"MultiThreadedDebug","MultiThreaded")
+		if premake.config.isdebugbuild(cfg) then
+			runtime = iif(cfg.flags.StaticRuntime,"MultiThreadedDebug", "MultiThreadedDebugDLL")
 		else
-			runtime = iif(cfg.flags.Symbols, "MultiThreadedDebugDLL", "MultiThreadedDLL")
+			runtime = iif(cfg.flags.StaticRuntime, "MultiThreaded", "MultiThreadedDLL")
 		end
 		return runtime
 	end
@@ -320,6 +320,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			_p(3,'<FloatingPointModel>Strict</FloatingPointModel>')
 		end
 	end
+	
 	
 	local function debug_info(cfg)
 	--
@@ -645,9 +646,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		vs10_helpers.sort_input_files(cfg.files,sorted)
 
 		io.eol = "\r\n"
-		--_p('<?xml version="1.0" encoding="utf-8"?>')
 		_p(xml_version_and_encoding)
-		--_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 		_p('<Project ' ..tool_version_and_xmlns ..'>')
 			write_filter_includes(sorted)
 			write_file_filter_block(sorted.ClInclude,"ClInclude")
@@ -659,9 +658,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 
 	function premake.vs2010_vcxproj(prj)
 		io.eol = "\r\n"
-		--_p('<?xml version="1.0" encoding="utf-8"?>')
 		_p(xml_version_and_encoding)
-		--_p('<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 		_p('<Project DefaultTargets="Build" ' ..tool_version_and_xmlns ..'>')
 			vs2010_config(prj)
 			vs2010_globals(prj)
@@ -697,9 +694,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	
 
 	function premake.vs2010_vcxproj_user(prj)
-		--_p('<?xml version="1.0" encoding="utf-8"?>')
 		_p(xml_version_and_encoding)
-		--_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 		_p('<Project ' ..tool_version_and_xmlns ..'>')
 		_p('</Project>')
 	end

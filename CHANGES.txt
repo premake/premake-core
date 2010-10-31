@@ -28,7 +28,7 @@
 * Bug 3015312: Makefiles are not quoted correctly
 * Bug 3097868: Patch 3076517 premake_rev465.patch. Removes relative paths from vs2010 filters (Robert Konrad)
 * Bug 3095274: vs2010 PCH implemented and has the same behaviour as previous VS versions
-
+* Bug 3100062: vs2010 Runtime library selection
 -------
  4.2.1
 -------

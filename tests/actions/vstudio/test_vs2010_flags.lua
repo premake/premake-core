@@ -143,39 +143,31 @@ function vs10_flags.optimizeSpeed_optimization_setToMaxSpeed()
 	test.string_contains(buffer,'<Optimization>Full</Optimization>')
 end
 
-function vs10_flags.noStaticRuntime_runtimeLibrary_setToMultiThreadedDLL()		
-	buffer = get_buffer()
+
+local debug_string = "Symbols"
+local release_string = "Optimize"
+function vs10_flags.debugHasNoStaticRuntime_runtimeLibrary_setToMultiThreadedDebugDLL()
+	flags {debug_string}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
+end
+
+function vs10_flags.debugAndStaticRuntime_runtimeLibrary_setToMultiThreadedDebug()
+	flags {debug_string,"StaticRuntime"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>')
+end
+
+function vs10_flags.releaseHasNoStaticRuntime_runtimeLibrary_setToMultiThreadedDLL()
+	flags {release_string}
+	local buffer = get_buffer()
 	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>')
 end
 
---[[
-function vs10_flags.symbols_runtimeLibrary_setToMultiThreadedDebugDLL()
-	flags  {"Symbols"}
-		
-	buffer = get_buffer()
-	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
-end
---]]
-
-function vs10_flags.noStaticRuntimeYetSymbols_runtimeLibrary_setToMultiThreadedDebugDLL()
-	flags  {"Symbols"}
-		
-	buffer = get_buffer()
-	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
-end
-
-function vs10_flags.staticRuntime_runtimeLibrary_setToMultiThreaded()
-	flags  {"StaticRuntime"}
-		
-	buffer = get_buffer()
+function vs10_flags.releaseAndStaticRuntime_runtimeLibrary_setToMultiThreaded()
+	flags {release_string,"StaticRuntime"}
+	local buffer = get_buffer()
 	test.string_contains(buffer,'<RuntimeLibrary>MultiThreaded</RuntimeLibrary>')
-end
-
-function vs10_flags.staticRuntimeAndSymbols_runtimeLibrary_setToMultiThreadedDebug()
-	flags  {"StaticRuntime","Symbols"}
-		
-	buffer = get_buffer()
-	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>')
 end
 
 function vs10_flags.noCharacterSetDefine_characterSet_setToMultiByte()
