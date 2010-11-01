@@ -238,8 +238,12 @@ function vs10_flags.noManifest_GenerateManifest_setToFalse()
 	test.string_contains(buffer,'<GenerateManifest Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">false</GenerateManifest>')
 end
 
-
-function vs10_flags.programDataBaseFile()
+function vs10_flags.noSymbols_bufferDoesNotContainprogramDataBaseFile()
+	local buffer = get_buffer()
+	test.string_does_not_contain(buffer,'<Link>.*<ProgramDataBaseFileName>.*</Link>')
+end
+function vs10_flags.symbols_bufferContainsprogramDataBaseFile()
+	flags{"Symbols"}
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<Link>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</Link>')
 end

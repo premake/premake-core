@@ -321,6 +321,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	--	end
 	--end
 	--
+	
+	
 	local function debug_info(cfg)
 	--
 	--	EditAndContinue /ZI
@@ -477,10 +479,11 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 		end
-					
-		_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
-				, path.getbasename(cfg.buildtarget.name))
 		
+		if cfg.flags.Symbols then
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
+				, path.getbasename(cfg.buildtarget.name))
+		end
 	end
 	
 	local function item_link(cfg)
