@@ -303,26 +303,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
-		--have a look at this and translate 
-	--
-	--function vs10_vcxproj_symbols(cfg)
-	--	if (not cfg.flags.Symbols) then
-	--		return 0
-	--	else
-			-- Edit-and-continue does't work for some configurations
-	--		if cfg.flags.NoEditAndContinue or 
-	--		   _VS.optimization(cfg) ~= 0 or 
-	--		   cfg.flags.Managed or 
-	--		   cfg.platform == "x64" then
-	--			return 3
-	--		else
-	--			return 4
-	--		end
-	--	end
-	--end
-	--
-	
-	
+
 	local function debug_info(cfg)
 	--
 	--	EditAndContinue /ZI
@@ -333,8 +314,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		if cfg.flags.Symbols then
 			if optimisation(cfg) ~= "Disabled" or cfg.flags.NoEditAndContinue then
 				debug_info = "ProgramDatabase"
-			else
+			elseif cfg.platform ~= "x64" then
 				debug_info = "EditAndContinue"
+			else
+				debug_info = "OldStyle"
 			end
 		end
 		

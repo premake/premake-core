@@ -231,6 +231,13 @@ function vs10_flags.noSymbols_DebugInformationFormat_blockIsEmpty()
 	test.string_contains(buffer,'<DebugInformationFormat></DebugInformationFormat>')
 end
 
+function vs10_flags.symbols_64BitBuild_DebugInformationFormat_setToOldStyle()
+	flags{"Symbols"}
+	platforms{"x64"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>OldStyle</DebugInformationFormat>')
+end
+
 function vs10_flags.noManifest_GenerateManifest_setToFalse()
 	flags{"NoManifest"}
 	
