@@ -174,15 +174,9 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	end
 
 	local function incremental_link(cfg,cfginfo)
-		if cfg.kind ~= "StaticLib" then
-			ShoudLinkIncrementally = 'false'
-			if optimisation(cfg) == "Disabled" then
-				ShoudLinkIncrementally = 'true'
-			end
-
-			_p(2,'<LinkIncremental '..if_config_and_platform() ..'>%s</LinkIncremental>'
-					,premake.esc(cfginfo.name),ShoudLinkIncrementally)
-		end		
+		_p(2,'<LinkIncremental '..if_config_and_platform() ..'>%s</LinkIncremental>'
+					,premake.esc(cfginfo.name)
+					,tostring(premake.config.should_link_incrementally(cfg)))
 	end
 		
 		

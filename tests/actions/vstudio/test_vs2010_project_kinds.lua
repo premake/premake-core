@@ -124,13 +124,15 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		test.string_contains(buffer,'<PropertyGroup>.*<IgnoreImportLibrary.*true</IgnoreImportLibrary>.*</PropertyGroup>')
 	end
 	
-	--shared lib LinkIncremental set to incorrect value of false
+	--behaviour changed so that is is set one way or the other
+	--[[
 	function vs10_project_kinds.staticLib_doesNotContainLinkIncremental()
 		kind "StaticLib"
 		flags  {"Symbols"}
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,'<LinkIncremental.*</LinkIncremental>')
 	end
+	--]]
 	
 	function vs10_project_kinds.sharedLib_withoutOptimisation_linkIncrementalValueIsTrue()
 		kind "SharedLib"
