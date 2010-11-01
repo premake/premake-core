@@ -88,6 +88,7 @@
 				"NoExceptions",
 				"NoFramePointer",
 				"NoImportLib",
+				"NoIncrementalLink",
 				"NoManifest",
 				"NoMinimalRebuild",
 				"NoNativeWChar",

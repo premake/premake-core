@@ -15,7 +15,18 @@
 
 	premake.config = { }
 	
+	function premake.config.isoptimizedbuild(flags)
+		return flags.Optimize or flags.OptimizeSize or flags.OptimizeSpeed
+	end
 	
+	function premake.config.should_link_incrementally(cfg)
+		if cfg.kind == "StaticLib" 
+				or premake.config.isoptimizedbuild(cfg.flags)
+				or cfg.flags.NoIncrementalLink then
+			return false
+		end
+		return true
+	end
 -- 
 -- Determine if a configuration represents a "debug" or "release" build.
 -- This controls the runtime library selected for Visual Studio builds
