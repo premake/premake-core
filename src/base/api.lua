@@ -52,6 +52,7 @@
 		{
 			kind  = "list",
 			scope = "config",
+			usagecopy = true,
 		},
 		
 		excludes =
@@ -71,6 +72,7 @@
 			kind  = "list",
 			scope = "config",
 			isflags = true,
+			usagecopy = true,
 			allowed = {
 				"EnableSSE",
 				"EnableSSE2",
@@ -100,7 +102,7 @@
 				"Unicode",
 				"Unsafe",
 				"WinMain"
-			}
+			},
 		},
 		
 		framework =
@@ -163,6 +165,7 @@
 		{
 			kind  = "dirlist",
 			scope = "config",
+			usagecopy = true,
 		},
 		
 		kind =
@@ -192,6 +195,7 @@
 		{
 			kind  = "dirlist",
 			scope = "config",
+			linkagecopy = true,
 		},
 		
 		linkoptions =
@@ -210,8 +214,8 @@
 					value = path.getabsolute(value)
 				end
 				return value
-			end
-
+			end,
+			linkagecopy = true,
 		},
 		
 		location =
@@ -337,6 +341,12 @@
 				end
 				return value:upper()
 			end
+		},
+		
+		uses =
+		{
+			kind  = "list",
+			scope = "config",
 		},
 	}
 
@@ -599,10 +609,53 @@
 		return cfg
 	end
 	
+	local function createproject(name, sln, isUsage)
+		local prj = {}
 		
-	function project(name)
-		if not name then
-			return iif(type(premake.CurrentContainer) == "project", premake.CurrentContainer, nil)
+		-- attach a type
+		setmetatable(prj, {
+			__type = "project",
+		})
+		
+		-- add to master list keyed by both name and index
+		table.insert(sln.projects, prj)
+		if(isUsage) then
+			--If we're creating a new usage project, and there's already a project
+			--with our name, then set us as the usage project for that project.
+			--Otherwise, set us as the project in that slot.
+			if(sln.projects[name]) then
+				sln.projects[name].usageProj = prj;
+			else
+				sln.projects[name] = prj
+			end
+		else
+			--If we're creating a regular project, and there's already a project
+			--with our name, then it must be a usage project. Set it as our usage project
+			--and set us as the project in that slot.
+			if(sln.projects[name]) then
+				prj.usageProj = sln.projects[name];
+			end
+
+			sln.projects[name] = prj
+		end
+		
+		prj.solution       = sln
+		prj.name           = name
+		prj.basedir        = os.getcwd()
+		prj.location       = prj.basedir
+		prj.uuid           = os.uuid()
+		prj.blocks         = { }
+		prj.usage		   = isUsage;
+		
+		return prj;
+	end
+	
+	function usage(name)
+		if (not name) then
+			--Only return usage projects.
+			if(type(premake.CurrentContainer) ~= "project") then return nil end
+			if(not premake.CurrentContainer.usage) then return nil end
+			return premake.CurrentContainer
 		end
 		
 		-- identify the parent solution
@@ -615,29 +668,48 @@
 		if (type(sln) ~= "solution") then
 			error("no active solution", 2)
 		end
-		
-		-- if this is a new project, create it
-		premake.CurrentContainer = sln.projects[name]
-		if (not premake.CurrentContainer) then
-			local prj = { }
-			premake.CurrentContainer = prj
 
-			-- add to master list keyed by both name and index
-			table.insert(sln.projects, prj)
-			sln.projects[name] = prj
-			
-			-- attach a type
-			setmetatable(prj, {
-				__type = "project",
-			})
-			
-			prj.solution       = sln
-			prj.name           = name
-			prj.basedir        = os.getcwd()
-			prj.uuid           = os.uuid()
-			prj.blocks         = { }
+  		-- if this is a new project, or the project in that slot doesn't have a usage, create it
+  		if((not sln.projects[name]) or
+  			((not sln.projects[name].usage) and (not sln.projects[name].usageProj))) then
+  			premake.CurrentContainer = createproject(name, sln, true)
+  		else
+  			premake.CurrentContainer = iff(sln.projects[name].usage,
+  				sln.projects[name], sln.projects[name].usageProj)
+  		end
+  
+  		-- add an empty, global configuration to the project
+  		configuration { }
+  	
+  		return premake.CurrentContainer
+  	end
+  
+  	function project(name)
+  		if (not name) then
+  			--Only return non-usage projects
+  			if(type(premake.CurrentContainer) ~= "project") then return nil end
+  			if(premake.CurrentContainer.usage) then return nil end
+  			return premake.CurrentContainer
 		end
-
+		
+  		-- identify the parent solution
+  		local sln
+  		if (type(premake.CurrentContainer) == "project") then
+  			sln = premake.CurrentContainer.solution
+  		else
+  			sln = premake.CurrentContainer
+  		end			
+  		if (type(sln) ~= "solution") then
+  			error("no active solution", 2)
+  		end
+  		
+  		-- if this is a new project, or the old project is a usage project, create it
+  		if((not sln.projects[name]) or sln.projects[name].usage) then
+  			premake.CurrentContainer = createproject(name, sln)
+  		else
+  			premake.CurrentContainer = sln.projects[name];
+  		end
+		
 		-- add an empty, global configuration to the project
 		configuration { }
 	
