@@ -213,9 +213,20 @@ function vs10_flags.Symbols_DebugInformationFormat_setToEditAndContinue()
 	test.string_contains(buffer,'<DebugInformationFormat>EditAndContinue</DebugInformationFormat>')
 end
 
-function vs10_flags.symbolsAndNoEditAndContinue_DebugInformationFormat_isAnEmptyBlock()
+function vs10_flags.symbolsAndNoEditAndContinue_DebugInformationFormat_setToProgramDatabase()
 	flags{"Symbols","NoEditAndContinue"}
 	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
+end
+
+function vs10_flags.symbolsAndRelease_DebugInformationFormat_setToProgramDatabase()
+	flags{"Symbols",release_string}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
+end
+function vs10_flags.noSymbols_DebugInformationFormat_blockIsEmpty()
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<DebugInformationFormat></DebugInformationFormat>')
 end

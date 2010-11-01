@@ -327,11 +327,16 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	--	ProgramDatabase /Zi
 	--	OldStyle C7 Compatable /Z7
 	--
-		if cfg.flags.Symbols and not cfg.flags.NoEditAndContinue then
-			_p(3,'<DebugInformationFormat>EditAndContinue</DebugInformationFormat>')
-		else
-			_p(3,'<DebugInformationFormat></DebugInformationFormat>')
+		local debug_info = ''
+		if cfg.flags.Symbols then
+			if optimisation(cfg) ~= "Disabled" or cfg.flags.NoEditAndContinue then
+				debug_info = "ProgramDatabase"
+			else
+				debug_info = "EditAndContinue"
+			end
 		end
+		
+		_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>',debug_info)
 	end
 	
 	local function minimal_build(cfg)
