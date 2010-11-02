@@ -721,7 +721,7 @@
 	end
 	
 	
-	function suite.noLinkIncrementalFlag_valueEqualsTwo()
+	function suite.noLinkIncrementalFlag_valueEqualsOne()
 		flags { "NoIncrementalLink" }
 		prepare()
 		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
