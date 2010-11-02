@@ -151,7 +151,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			end
 			
 			local use_debug = "false"
-			if optimisation(cfg) == "Disabled" then 
+			if  not premake.config.isoptimizedbuild(cfg.flags) then 
 				use_debug = "true" 
 			else
 				_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
@@ -308,8 +308,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	--
 		local debug_info = ''
 		if cfg.flags.Symbols then
-			if optimisation(cfg) ~= "Disabled" or cfg.flags.NoEditAndContinue then
-				debug_info = "ProgramDatabase"
+			if premake.config.isoptimizedbuild(cfg.flags) or cfg.flags.NoEditAndContinue then
+				debug_info = "ProgramDatabase" 
 			elseif cfg.platform ~= "x64" then
 				debug_info = "EditAndContinue"
 			else
@@ -348,7 +348,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			preprocessor(3,cfg)
 			minimal_build(cfg)
 		
-		if optimisation(cfg) == "Disabled" then
+		if  not premake.config.isoptimizedbuild(cfg.flags) then
 			_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
 			if cfg.flags.ExtraWarnings then
 				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
@@ -454,7 +454,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			_p(3,'<GenerateDebugInformation>false</GenerateDebugInformation>')
 		end
 			
-		if optimisation(cfg) ~= "Disabled" then
+		if premake.config.isoptimizedbuild(cfg.flags) then
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 		end
