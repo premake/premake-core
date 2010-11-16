@@ -1,0 +1,23 @@
+PREMAKE RELEASE CHECKLIST
+-------------------------
+
+VERSION NUMBERS
+
+ 4.0
+ 4.0-beta1
+ 4.0-rc1
+ 4.0.1
+
+PREP
+
+ * Make sure all tests pass on Windows and POSIX
+
+ * Update CHANGELOG.txt as needed
+
+ * Prep release announcement for forums
+
+ * Run `premake4 embed`
+
+ * Commit all changes to premake-stable
+
+ * Tag premake-stable with the version number

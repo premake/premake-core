@@ -1,5 +1,5 @@
 -------
- 4.3  (in progress)
+  4.3
 -------
 
 * CHANGED LICENSE FROM GPLv2 TO BSD
