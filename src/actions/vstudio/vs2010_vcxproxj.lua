@@ -559,7 +559,6 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 								,premake.esc(cfginfo.name))
 							--only one source file per pch
 							config_mappings[cfginfo] = nil
-						_p(2,'</ClCompile>')
 					end
 				end	
 				_p(2,'</ClCompile>')

@@ -1,3 +1,5 @@
+* Bug 3119793: Applied patch to correct the matching of ClCompile blocks with vs10 and PCH (Dan Dunham)
+
 -------
   4.3
 -------

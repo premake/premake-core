@@ -374,7 +374,8 @@
 	end		
 	
 	local debug_config_pch_string = '<PrecompiledHeader Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">Create</PrecompiledHeader>'
-
+	local release_config_pch_string = debug_config_pch_string:gsub('Debug','Release')
+	
 	function vs10_vcxproj.noPchFlagSet_bufferDoesNotContainPchCreate()
 		configuration("Debug")
 		flags{"NoPCH"}
@@ -407,3 +408,17 @@
 		test.string_does_not_contain(buffer,debug_config_pch_string)
 	end
 
+	function vs10_vcxproj.pchHeaderAndPchSourceSet_debugAndRelease_matchingClCompileBlocks()
+		configuration("Debug")
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+		configuration("Release")
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+		local buffer = get_buffer()
+		
+		local exspected = '<ClCompile Include="foo\\dummySource.cpp">%s+'
+			..debug_config_pch_string ..'%s+'
+			..release_config_pch_string ..'%s+</ClCompile>'
+		test.string_contains(buffer,exspected)
+	end
