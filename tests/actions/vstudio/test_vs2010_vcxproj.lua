@@ -417,8 +417,8 @@
 			pchsource "foo/dummySource.cpp"
 		local buffer = get_buffer()
 		
-		local exspected = '<ClCompile Include="foo\\dummySource.cpp">%s+'
+		local expected = '<ClCompile Include="foo\\dummySource.cpp">%s+'
 			..debug_config_pch_string ..'%s+'
 			..release_config_pch_string ..'%s+</ClCompile>'
-		test.string_contains(buffer,exspected)
+		test.string_contains(buffer,expected)
 	end
