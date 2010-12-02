@@ -1,12 +1,12 @@
 -------
  4.4  (in progress)
 -------
-
+* Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 
 
 -------
- 4.3  (in progress)
+  4.3
 -------
 
 * CHANGED LICENSE FROM GPLv2 TO BSD
@@ -14,7 +14,7 @@
 * Added Solaris support (Dean Ross-Smith)
 * Added deployment and image options for Xbox360 (dvoid)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
-* Patch 2965229: Fix handling of  '+' symbol in file patterns (Rachel Blum)
+* Patch 2965229: Fix handling of '+' symbol in file patterns (Rachel Blum)
 * Patch 2997449: Print configuration with target (ergosys)
 * Patch 2997452: Suppress gmake's "nothing to be done" message (ergosys)
 * Patch 3011940: Add support for MFC (JTAnderson)
@@ -33,6 +33,9 @@
 * Bug 3020382: GCC PCH not working
 * Bug 3016050: {"../Dir/file1.c","../../Dir/file2.c"} breaks Xcode (Stephane)
 * Bug 3015312: Makefiles are not quoted correctly
+* Bug 3097868: Removes relative paths from vs2010 filters (Robert Konrad)
+* Bug 3095274: Pre-compiled header support missing for VS2010 target
+* Bug 3100062: vs2010 Runtime library selection
 
 
 -------

@@ -4,11 +4,11 @@
 --
 -- BEFORE RUNNING THIS SCRIPT:
 --  * Make sure all tests pass on Windows AND Posix systems
---  * Run `premake4 embed`
 --  * Update CHANGELOG.txt
+--  * Run `premake4 embed`
 --  * Commit all changes to premake-stable
---  * Prepare release news item
 --  * Tag premake-stable with the version number
+--  * Prepare release news item
 --
 -- RUN THE SCRIPT:
 --  On each platform, run `premake4 release x.x binary`
@@ -24,7 +24,6 @@
 --  * Post to Twitter
 --  * Send to email list
 --  * Add release to Freshmeat (http://freshmeat.net/projects/premake)
---  * Increment version number in -stable and -dev, add "-dev" extension
 --  * Push changes to repositories on BitBucket
 --
 -- Info on using Mercurial to manage releases:
@@ -63,6 +62,8 @@ function dorelease()
 	
 	local version = _ARGS[1]
 	local kind = _ARGS[2]
+	
+    local pkgname = "premake-" .. version
 
 
 --
@@ -82,11 +83,18 @@ function dorelease()
 -- Pre-release checklist
 --
 
-	print("")
-	print("FOLLOW THE INSTRUCTIONS IN THE SCRIPT COMMENTS!")
-	print("")
-	print("Press [Enter] to begin.")
-	io.read()
+   print( "")
+   print( "BEFORE RUNNING THIS SCRIPT you should..." )
+   print( "* Pass all tests on Windows AND Posix systems" )
+   print( "* Update CHANGELOG.txt")
+   print( "* Run `premake4 embed`")
+   print( "* Commit all changes to premake-stable" )
+   print( "* Tag premake-stable with the version number" )
+   print( "* Prepare release news item")
+
+   print( "")
+   print( "Press [Enter] to begin.")
+   io .read()
 
 
 
@@ -104,9 +112,16 @@ function dorelease()
 
 	print("Downloading release tag...")
 	
+	os.mkdir("release")
 	os.chdir("release")
-	-- hg clone -r {tag} https://bitbucket.org/premake/premake-stable premake-{version}
-	os.chdir("premake-" .. version)
+	
+	os.rmdir(pkgname)
+	z = exec( "hg clone -r %s %s %s", version, hgroot, pkgname)
+	if z ~= 0 then
+		error("** Failed to download tagged sources", 0)
+	end
+	
+	os.chdir(pkgname)
 
 
 --
@@ -182,7 +197,7 @@ function dorelease()
 		print("Creating source code package...")
 
 		os.chdir("..")
-		exec("zip -r9 %s-src.zip %s/*", workdir, workdir)
+		exec("zip -r9 %s-src.zip %s/*", pkgname, pkgname)
 
 --
 -- Create a binary package for this platform. This step requires a working
@@ -193,23 +208,16 @@ function dorelease()
 	
 		print("Building platform binary release...")
 
-		-- IMPORTANT: Mac binary needs to be built in Xcode to ensure 10.5
-		-- compatibility right now. I haven't been able to figure out the
-		-- right flags to make it work from a makefile yet.
-		--
-		-- In Xcode, open the inspector for the TARGET Set the architecture
-		-- to 32-bit universal, and the base SDK to 10.5.
-		
 		exec("premake4 /platform=universal32 gmake")
 		exec("make config=%s", iif(os.is("macosx"), "releaseuniv32", "release"))
 
 		local fname
 		os.chdir("bin/release")
 		if os.is("windows") then
-			fname = string.format("%s-windows.zip", workdir)
+			fname = string.format("%s-windows.zip", pkgname)
 			exec("zip -9 %s premake4.exe", fname)
 		else
-			fname = string.format("%s-%s.tar.gz", workdir, os.get())
+			fname = string.format("%s-%s.tar.gz", pkgname, os.get())
 			exec("tar czvf %s premake4", fname)
 		end
 
@@ -234,6 +242,6 @@ function dorelease()
 --
 
 	print("")
-	print("Finished.")
+	print( "Finished.")
 
 end

@@ -6,6 +6,10 @@
 	local vs10_helpers = premake.vstudio.vs10_helpers	
 	
 	local sln, prj
+	function vs10_vcxproj.teardown()
+		sln = nil
+		prj = nil
+	end
 	function vs10_vcxproj.setup()
 		_ACTION = "vs2010"
 
@@ -39,7 +43,6 @@
 		configuration("Debug")
 			defines {debug_define}
 			links{"foo_d"}
-			
 
 	end
 
@@ -369,5 +372,53 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<CompileAs>CompileAsC</CompileAs>')
 	end		
+	
+	local debug_config_pch_string = '<PrecompiledHeader Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">Create</PrecompiledHeader>'
+	local release_config_pch_string = debug_config_pch_string:gsub('Debug','Release')
+	
+	function vs10_vcxproj.noPchFlagSet_bufferDoesNotContainPchCreate()
+		configuration("Debug")
+		flags{"NoPCH"}
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,debug_config_pch_string)
+	end
+	
+	function vs10_vcxproj.pchHeaderSetYetPchSourceIsNot_bufferDoesNotContainPchCreate()
+		configuration("Debug")
+		pchheader "foo/dummyHeader.h"
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,debug_config_pch_string)
+	end	
+
+	
+	function vs10_vcxproj.pchHeaderAndPchSourceSet_bufferContainPchCreate()
+		configuration("Debug")
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+		local buffer = get_buffer()
+		test.string_contains(buffer,debug_config_pch_string)
+	end
+	
+	function vs10_vcxproj.pchHeaderAndSourceSet_yetAlsoNoPch_bufferDoesNotContainpchCreate()
+		configuration('Debug')
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+			flags{"NoPCH"}
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,debug_config_pch_string)
+	end
+
+	function vs10_vcxproj.pchHeaderAndPchSourceSet_debugAndRelease_matchingClCompileBlocks()
+		configuration("Debug")
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+		configuration("Release")
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+		local buffer = get_buffer()
 		
-		
+		local expected = '<ClCompile Include="foo\\dummySource.cpp">%s+'
+			..debug_config_pch_string ..'%s+'
+			..release_config_pch_string ..'%s+</ClCompile>'
+		test.string_contains(buffer,expected)
+	end

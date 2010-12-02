@@ -93,12 +93,7 @@
 		local path = ".\\foo"
 		local result = vs10_helpers.remove_relative_path(path)
 		test.isequal("foo",result)
-	end
-	
-	function vs10_filters.listOfDirectories_passedNil_returnsIsEmpty()
-		local result = vs10_helpers.list_of_directories_in_path(nil)
-		test.isequal(0,#result)
-	end
+	end	
 	
 	function vs10_filters.listOfDirectories_oneDirectory_returnsSizeIsOne()
 		local result = vs10_helpers.list_of_directories_in_path("foo\\bar.h")
@@ -120,105 +115,11 @@
 		test.isequal("foo\\bar",result[2])
 	end
 	
-	function vs10_filters.tableOfFilters_emptyTable_returnsEmptyTable()
-		t = {}
-		local result = vs10_helpers.table_of_filters(t)
+	function vs10_filters.listOfDirectories_dotSlash_returnsIsEmpty()
+		local result = vs10_helpers.list_of_directories_in_path(".\\bar.h")
 		test.isequal(0,#result)
 	end
 	
-	function vs10_filters.tableOfFilters_tableHasFilesYetNoDirectories_returnSizeIsZero()
-		t =
-		{
-			'foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(0,#result)
-	end
-	
-	function vs10_filters.tableOfFilters_tableHasOneDirectory_returnSizeIsOne()
-		t =
-		{
-			'bar\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(1,#result)
-	end
-	function vs10_filters.tableOfFilters_tableHasTwoDirectories_returnSizeIsOne()
-		t =
-		{
-			'bar\\foo.h',
-			'baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(2,#result)
-	end
-	function vs10_filters.tableOfFilters_tableHasTwoDirectories_firstEntryIsBar()
-		t =
-		{
-			'bar\\foo.h',
-			'baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal("bar",result[1])
-	end
-	function vs10_filters.tableOfFilters_tableHasTwoDirectories_secondEntryIsBaz()
-		t =
-		{
-			'bar\\foo.h',
-			'baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal("baz",result[2])
-	end
-	
-	function vs10_filters.tableOfFilters_tableHasTwoSameDirectories_returnSizeIsOne()
-		t =
-		{
-			'bar\\foo.h',
-			'bar\\baz.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(1,#result)
-	end
-
-	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectories_returnSizeIsTwo()
-		t =
-		{
-			'bar\\baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(2,#result)
-	end		
-
-	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectories_firstEntryIsBarSlashBar()
-		t =
-		{
-			'bar\\baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal('bar',result[1])
-	end	
-	
-	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectories_secondEntryIsBarSlashBaz()
-		t =
-		{
-			'bar\\baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal('bar\\baz',result[2])
-	end	
-	
-	
-	function vs10_filters.tableOfFilters_tableEntryHasTwoDirectoriesSecondDirisAlsoInNextEntry_returnSizeIsThree()
-		t =
-		{
-			'bar\\baz\\foo.h',
-			'baz\\foo.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(3,#result)
-	end		
-		
 	function vs10_filters.tableOfFileFilters_returnSizeIsTwo()
 		local t =
 		{
@@ -359,16 +260,7 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<None')
 	end
-	
-	
-	function vs10_filters.tableOfFileFilters_filterContainsDots_bufferContainsTheEntry()
-		t =
-		{
-			'bar\\baz\\foo.bar.h'
-		}
-		local result = vs10_helpers.table_of_filters(t)
-		test.isequal(2,#result)
-	end	
+
 	function vs10_filters.tableOfFileFilters_filterContainsDots_resultsLengthIsThree()
 		t =
 		{

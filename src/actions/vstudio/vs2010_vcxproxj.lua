@@ -21,6 +21,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	
 	function vs10_helpers.list_of_directories_in_path(path)
 		local list={}
+		path = vs10_helpers.remove_relative_path(path)
 		if path then
 			for dir in string.gmatch(path,"[%w%-%_%.]+\\")do
 				if #list == 0 then
@@ -32,26 +33,11 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 		return list
 	end
-	
-	function vs10_helpers.table_of_filters(t)
-		local filters ={}
 
-		for key, value in pairs(t) do
-			local result = vs10_helpers.list_of_directories_in_path(value)
-			for __,dir in ipairs(result) do
-				if table.contains(filters,dir) ~= true then
-					filters[#filters +1] = dir
-				end
-			end
-		end
-		
-		return filters
-	end
-	
 	function vs10_helpers.table_of_file_filters(files)
 		local filters ={}
 
-		for key, valueTable in pairs(files) do
+		for _, valueTable in pairs(files) do
 			for _, entry in ipairs(valueTable) do
 				local result = vs10_helpers.list_of_directories_in_path(entry)
 				for __,dir in ipairs(result) do
@@ -135,7 +121,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	end
 	
 	local function if_config_and_platform()
-		return 'Condition="\'$(Configuration)|$(Platform)'
+		return 'Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"'
 	end	
 	
 	local function optimisation(cfg)
@@ -155,7 +141,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	local function config_type_block(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<PropertyGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="Configuration">'
+			_p(1,'<PropertyGroup '..if_config_and_platform() ..' Label="Configuration">'
 					, premake.esc(cfginfo.name))
 				_p(2,'<ConfigurationType>%s</ConfigurationType>',vs10_helpers.config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
@@ -180,7 +166,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	local function import_props(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<ImportGroup '..if_config_and_platform() ..'\'==\'%s\'" Label="PropertySheets">'
+			_p(1,'<ImportGroup '..if_config_and_platform() ..' Label="PropertySheets">'
 					,premake.esc(cfginfo.name))
 				_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
 			_p(1,'</ImportGroup>')
@@ -194,7 +180,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 				ShoudLinkIncrementally = 'true'
 			end
 
-			_p(2,'<LinkIncremental '..if_config_and_platform() ..'\'==\'%s\'">%s</LinkIncremental>'
+			_p(2,'<LinkIncremental '..if_config_and_platform() ..'>%s</LinkIncremental>'
 					,premake.esc(cfginfo.name),ShoudLinkIncrementally)
 		end		
 	end
@@ -204,7 +190,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		if cfg.kind == "SharedLib" then
 			local shouldIgnore = "false"
 			if cfg.flags.NoImportLib then shouldIgnore = "true" end
-			 _p(2,'<IgnoreImportLibrary '..if_config_and_platform() ..'\'==\'%s\'">%s</IgnoreImportLibrary>'
+			 _p(2,'<IgnoreImportLibrary '..if_config_and_platform() ..'>%s</IgnoreImportLibrary>'
 					,premake.esc(cfginfo.name),shouldIgnore)
 		end
 	end
@@ -216,17 +202,17 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			
 			for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-				_p(2,'<OutDir '..if_config_and_platform() ..'\'==\'%s\'">%s\\</OutDir>'
+				_p(2,'<OutDir '..if_config_and_platform() ..'>%s\\</OutDir>'
 						, premake.esc(cfginfo.name),premake.esc(cfg.buildtarget.directory) )
-				_p(2,'<IntDir '..if_config_and_platform() ..'\'==\'%s\'">%s\\</IntDir>'
+				_p(2,'<IntDir '..if_config_and_platform() ..'>%s\\</IntDir>'
 						, premake.esc(cfginfo.name), premake.esc(cfg.objectsdir))
-				_p(2,'<TargetName '..if_config_and_platform() ..'\'==\'%s\'">%s</TargetName>'
+				_p(2,'<TargetName '..if_config_and_platform() ..'>%s</TargetName>'
 						,premake.esc(cfginfo.name),path.getbasename(cfg.buildtarget.name))
 
 				ignore_import_lib(cfg,cfginfo)
 				incremental_link(cfg,cfginfo)
 				if cfg.flags.NoManifest then
-				_p(2,'<GenerateManifest '..if_config_and_platform() ..'\'==\'%s\'">false</GenerateManifest>'
+				_p(2,'<GenerateManifest '..if_config_and_platform() ..'>false</GenerateManifest>'
 						,premake.esc(cfginfo.name))
 				end
 			end
@@ -238,10 +224,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	
 	local function runtime(cfg)
 		local runtime
-		if cfg.flags.StaticRuntime then
-			runtime = iif(cfg.flags.Symbols,"MultiThreadedDebug","MultiThreaded")
+		if premake.config.isdebugbuild(cfg) then
+			runtime = iif(cfg.flags.StaticRuntime,"MultiThreadedDebug", "MultiThreadedDebugDLL")
 		else
-			runtime = iif(cfg.flags.Symbols, "MultiThreadedDebugDLL", "MultiThreadedDLL")
+			runtime = iif(cfg.flags.StaticRuntime, "MultiThreaded", "MultiThreadedDLL")
 		end
 		return runtime
 	end
@@ -255,24 +241,6 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
-	--have a look at this and translate 
-	--
-	--function vs10_vcxproj_symbols(cfg)
-	--	if (not cfg.flags.Symbols) then
-	--		return 0
-	--	else
-			-- Edit-and-continue does't work for some configurations
-	--		if cfg.flags.NoEditAndContinue or 
-	--		   _VS.optimization(cfg) ~= 0 or 
-	--		   cfg.flags.Managed or 
-	--		   cfg.platform == "x64" then
-	--			return 3
-	--		else
-	--			return 4
-	--		end
-	--	end
-	--end
-	--
 	local function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
 			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>'
@@ -335,23 +303,31 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
+
 	local function debug_info(cfg)
 	--
 	--	EditAndContinue /ZI
 	--	ProgramDatabase /Zi
 	--	OldStyle C7 Compatable /Z7
 	--
-		if cfg.flags.Symbols and not cfg.flags.NoEditAndContinue then
-			_p(3,'<DebugInformationFormat>EditAndContinue</DebugInformationFormat>')
-		else
-			_p(3,'<DebugInformationFormat></DebugInformationFormat>')
+		local debug_info = ''
+		if cfg.flags.Symbols then
+			if optimisation(cfg) ~= "Disabled" or cfg.flags.NoEditAndContinue then
+				debug_info = "ProgramDatabase"
+			elseif cfg.platform ~= "x64" then
+				debug_info = "EditAndContinue"
+			else
+				debug_info = "OldStyle"
+			end
 		end
+		
+		_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>',debug_info)
 	end
 	
 	local function minimal_build(cfg)
-		if cfg.flags.Symbols and not cfg.flags.NoMinimalRebuild then
+		if premake.config.isdebugbuild(cfg) and not cfg.flags.NoMinimalRebuild then
 			_p(3,'<MinimalRebuild>true</MinimalRebuild>')
-		elseif cfg.flags.Symbols then
+		else
 			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
 		end
 	end
@@ -486,10 +462,11 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 		end
-					
-		_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
-				, path.getbasename(cfg.buildtarget.name))
 		
+		if cfg.flags.Symbols then
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
+				, path.getbasename(cfg.buildtarget.name))
+		end
 	end
 	
 	local function item_link(cfg)
@@ -523,11 +500,11 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		
 		_p(2,'</Link>')
 	end
-    
+	
 	local function item_definitions(prj)
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			_p(1,'<ItemDefinitionGroup Condition="\'$(Configuration)|$(Platform)\'==\'%s\'">'
+			_p(1,'<ItemDefinitionGroup ' ..if_config_and_platform() ..'>'
 					,premake.esc(cfginfo.name))
 				vs10_clcompile(cfg)
 				resource_compile(cfg)
@@ -560,6 +537,37 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
+	local function write_file_compile_block(files,prj,configs)
+	
+		if #files > 0  then	
+		
+			local config_mappings = {}
+			for _, cfginfo in ipairs(configs) do
+				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+				if cfg.pchheader and cfg.pchsource and not cfg.flags.NoPCH then
+					config_mappings[cfginfo] = path.translate(cfg.pchsource, "\\")
+				end
+			end
+
+			
+			_p(1,'<ItemGroup>')
+			for _, current_file in ipairs(files) do
+				_p(2,'<ClCompile Include=\"%s\">', current_file)
+				for _, cfginfo in ipairs(configs) do
+					if config_mappings[cfginfo] and current_file == config_mappings[cfginfo] then 
+							_p(3,'<PrecompiledHeader '.. if_config_and_platform() .. '>Create</PrecompiledHeader>'
+								,premake.esc(cfginfo.name))
+							--only one source file per pch
+							config_mappings[cfginfo] = nil
+					end
+				end	
+				_p(2,'</ClCompile>')
+			end
+			_p(1,'</ItemGroup>')
+		end
+	end
+	
+	
 	local function vcxproj_files(prj)
 		local sorted =
 		{
@@ -572,7 +580,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		cfg = premake.getconfig(prj)
 		vs10_helpers.sort_input_files(cfg.files,sorted)
 		write_file_type_block(sorted.ClInclude,"ClInclude")
-		write_file_type_block(sorted.ClCompile,'ClCompile')
+		write_file_compile_block(sorted.ClCompile,prj,prj.solution.vstudio_configs)
 		write_file_type_block(sorted.None,'None')
 		write_file_type_block(sorted.ResourceCompile,'ResourceCompile')
 
@@ -611,6 +619,9 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
+	local tool_version_and_xmlns = 'ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"'	
+	local xml_version_and_encoding = '<?xml version="1.0" encoding="utf-8"?>'
+	
 	local function vcxproj_filter_files(prj)
 		local sorted =
 		{
@@ -624,8 +635,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		vs10_helpers.sort_input_files(cfg.files,sorted)
 
 		io.eol = "\r\n"
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p(xml_version_and_encoding)
+		_p('<Project ' ..tool_version_and_xmlns ..'>')
 			write_filter_includes(sorted)
 			write_file_filter_block(sorted.ClInclude,"ClInclude")
 			write_file_filter_block(sorted.ClCompile,"ClCompile")
@@ -634,20 +645,10 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		_p('</Project>')
 	end
 
---
- -- <ItemGroup>
-  --  <ClCompile Include="SomeProjName.cpp" />
-   -- <ClCompile Include="stdafx.cpp">
-    --  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-     -- <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    --</ClCompile>
-  --</ItemGroup>
---		
 	function premake.vs2010_vcxproj(prj)
 		io.eol = "\r\n"
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-			
+		_p(xml_version_and_encoding)
+		_p('<Project DefaultTargets="Build" ' ..tool_version_and_xmlns ..'>')
 			vs2010_config(prj)
 			vs2010_globals(prj)
 			
@@ -679,10 +680,11 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 
 		_p('</Project>')
 	end
-		
+	
+
 	function premake.vs2010_vcxproj_user(prj)
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p(xml_version_and_encoding)
+		_p('<Project ' ..tool_version_and_xmlns ..'>')
 		_p('</Project>')
 	end
 	
