@@ -274,17 +274,22 @@ local vcproj = premake.vstudio.vcproj
 	
 	
 --
--- Compiler and linker blocks for the PS3 platform, which uses GCC.
+-- Compiler and linker blocks for the PS3 platform, which uses Sony's SNC.
 --
 
-	function premake.vs200x_vcproj_VCCLCompilerTool_GCC(cfg)
+	function premake.vs200x_vcproj_VCCLCompilerTool_PS3(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCCLCompilerTool"')
 
-		local buildoptions = table.join(premake.gcc.getcflags(cfg), premake.gcc.getcxxflags(cfg), cfg.buildoptions)
-		if #buildoptions > 0 then
-			_p(4,'AdditionalOptions="%s"', premake.esc(table.concat(buildoptions, " ")))
+		local buildoptions = table.join(premake.snc.getcflags(cfg), premake.snc.getcxxflags(cfg), cfg.buildoptions)
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
+			_p(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+			table.insert(buildoptions, "--use_pch=\"" .. path.getname(cfg.pchheader) .. ".pch" .. "\"")
+		else
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
+		_p(4,'AdditionalOptions="%s"', premake.esc(table.concat(buildoptions, " ")))
 
 		if #cfg.includedirs > 0 then
 			_p(4,'AdditionalIncludeDirectories="%s"', premake.esc(path.translate(table.concat(cfg.includedirs, ";"), '\\')))
@@ -300,12 +305,12 @@ local vcproj = premake.vstudio.vcproj
 		_p(3,'/>')
 	end
 
-	function premake.vs200x_vcproj_VCLinkerTool_GCC(cfg)
+	function premake.vs200x_vcproj_VCLinkerTool_PS3(cfg)
 		_p(3,'<Tool')
 		if cfg.kind ~= "StaticLib" then
 			_p(4,'Name="VCLinkerTool"')
 			
-			local buildoptions = table.join(premake.gcc.getldflags(cfg), cfg.linkoptions)
+			local buildoptions = table.join(premake.snc.getldflags(cfg), cfg.linkoptions)
 			if #buildoptions > 0 then
 				_p(4,'AdditionalOptions="%s"', premake.esc(table.concat(buildoptions, " ")))
 			end
@@ -324,7 +329,7 @@ local vcproj = premake.vstudio.vcproj
 		else
 			_p(4,'Name="VCLibrarianTool"')
 
-			local buildoptions = table.join(premake.gcc.getldflags(cfg), cfg.linkoptions)
+			local buildoptions = table.join(premake.snc.getldflags(cfg), cfg.linkoptions)
 			if #buildoptions > 0 then
 				_p(4,'AdditionalOptions="%s"', premake.esc(table.concat(buildoptions, " ")))
 			end
@@ -432,9 +437,9 @@ local vcproj = premake.vstudio.vcproj
 	local blockmap = 
 	{
 		VCCLCompilerTool       = premake.vs200x_vcproj_VCCLCompilerTool,
-		VCCLCompilerTool_GCC   = premake.vs200x_vcproj_VCCLCompilerTool_GCC,
+		VCCLCompilerTool_PS3   = premake.vs200x_vcproj_VCCLCompilerTool_PS3,
 		VCLinkerTool           = premake.vs200x_vcproj_VCLinkerTool,
-		VCLinkerTool_GCC       = premake.vs200x_vcproj_VCLinkerTool_GCC,
+		VCLinkerTool_PS3       = premake.vs200x_vcproj_VCLinkerTool_PS3,
 		VCManifestTool         = premake.vs200x_vcproj_VCManifestTool,
 		VCMIDLTool             = premake.vs200x_vcproj_VCMIDLTool,
 		VCResourceCompilerTool = premake.vs200x_vcproj_VCResourceCompilerTool,
@@ -504,11 +509,11 @@ local vcproj = premake.vstudio.vcproj
 				"VCXMLDataGeneratorTool",
 				"VCWebServiceProxyGeneratorTool",
 				"VCMIDLTool",
-				"VCCLCompilerTool_GCC",
+				"VCCLCompilerTool_PS3",
 				"VCManagedResourceCompilerTool",
 				"VCResourceCompilerTool",
 				"VCPreLinkEventTool",
-				"VCLinkerTool_GCC",
+				"VCLinkerTool_PS3",
 				"VCALinkTool",
 				"VCManifestTool",
 				"VCXDCMakeTool",

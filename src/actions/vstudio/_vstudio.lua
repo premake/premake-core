@@ -212,16 +212,32 @@
 			output(indent, "<File")
 			attrib(indent, "RelativePath", path.translate(fname, "\\"))
 			output(indent, "\t>")
-			if (not prj.flags.NoPCH and prj.pchsource == fname) then
-				for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
-					if cfginfo.isreal then
-						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+			
+			for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
+				if cfginfo.isreal then
+					local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+					local usePCH = (not prj.flags.NoPCH and prj.pchsource == fname)
+					if (usePCH) then
 						output(indent, "\t<FileConfiguration")
 						attrib(indent, "\tName", cfginfo.name)
 						output(indent, "\t\t>")
 						output(indent, "\t\t<Tool")
 						attrib(indent, "\t\tName", iif(cfg.system == "Xbox360", "VCCLX360CompilerTool", "VCCLCompilerTool"))
-						attrib(indent, "\t\tUsePrecompiledHeader", "1")
+
+						if (usePCH) then
+			                if (cfg.system == "PS3") then
+								-- TODO: do we really need all the build flags here?  Or can we just
+								-- add the additional option --create_pch, and let the rest of the
+								-- flags get picked up from the main compiler config block?
+			                    local buildoptions = table.join(premake.snc.getcflags(cfg), premake.snc.getcxxflags(cfg), cfg.buildoptions)
+		                        local additionalOptions = table.concat(buildoptions, " ");
+			                    additionalOptions = additionalOptions .. " --create_pch=\"" .. path.getname(cfg.pchheader) .. ".pch" .. "\""			                    
+			                    attrib(indent, "\t\tAdditionalOptions", premake.esc(additionalOptions))
+			                else
+			                    attrib(indent, "\t\tUsePrecompiledHeader", "1")
+			                end
+			            end
+
 						output(indent, "\t\t/>")
 						output(indent, "\t</FileConfiguration>")
 					end
