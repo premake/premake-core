@@ -56,3 +56,27 @@
 		prepare()
 		return test.istrue(premake.config.isdebugbuild(cfg))
 	end
+
+	function suite.shouldIncrementallyLink_staticLib_returnsFalse()
+		kind "StaticLib"
+		prepare()
+		return test.isfalse(premake.config.should_link_incrementally(cfg))
+	end
+	
+	function suite.shouldIncrementallyLink_optimizeFlagSet_returnsFalse()
+		flags { "Optimize" }
+		prepare()
+		return test.isfalse(premake.config.should_link_incrementally(cfg))
+	end
+	
+	function suite.shouldIncrementallyLink_NoIncrementalLinkFlag_returnsFalse()
+		flags { "NoIncrementalLink" }
+		prepare()
+		return test.isfalse(premake.config.should_link_incrementally(cfg))
+	end
+	
+	function suite.shouldIncrementallyLink_notStaticLib_NoIncrementalLinkFlag_noOptimiseFlag_returnsTrue()
+		prepare()
+		return test.istrue(premake.config.should_link_incrementally(cfg))
+	end
+	

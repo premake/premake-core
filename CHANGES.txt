@@ -1,6 +1,13 @@
 -------
  4.4  (in progress)
 -------
+
+* Patch 2963313: Enable setting .NET framework version (Justen Hyde)
+
+
+-------
+ 4.4  (in progress)
+-------
 * Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 

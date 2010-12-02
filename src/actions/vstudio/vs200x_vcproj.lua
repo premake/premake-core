@@ -212,7 +212,10 @@ local vcproj = premake.vstudio.vcproj
 			end
 			
 			_p(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-			_p(4,'LinkIncremental="%s"', iif(_VS.optimization(cfg) == 0, 2, 1))
+
+			_p(4,'LinkIncremental="%s"', 
+				iif(premake.config.should_link_incrementally(cfg) , 2, 1))
+			
 			_p(4,'AdditionalLibraryDirectories="%s"', table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"))
 			
 			local deffile = premake.findfile(cfg, ".def")

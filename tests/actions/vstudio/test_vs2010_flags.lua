@@ -255,5 +255,11 @@ function vs10_flags.symbols_bufferContainsprogramDataBaseFile()
 	test.string_contains(buffer,'<Link>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</Link>')
 end
 
+function vs10_flags.noIncrementalLink_linkIncrementSetToFalse()
+	flags{"NoIncrementalLink"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<LinkIncremental.*false</LinkIncremental>')
+end
+		
 
 

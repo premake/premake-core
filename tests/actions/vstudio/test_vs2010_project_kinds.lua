@@ -21,14 +21,7 @@
 		buffer = io.endcapture()
 		return buffer
 	end
-	--incorrect assumption
-	--[[
-	function vs10_project_kinds.staticLib_doesNotContainLinkSection()
-		kind "StaticLib"
-		local buffer = get_buffer()
-		test.string_does_not_contain(buffer,'<Link>.*</Link>')
-	end
-	--]]
+
 		
 	function vs10_project_kinds.staticLib_containsLibSection()
 		kind "StaticLib"
@@ -40,13 +33,7 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<Lib>.*<OutputFile>.*MyProject.lib.*</OutputFile>.*</Lib>')
 	end
-	--[[
-	function vs10_project_kinds.sharedLib_fail_asIDoNotKnowWhatItShouldLookLike_printsTheBufferSoICanCompare()
-		kind "SharedLib"
-		local buffer = get_buffer()
-		test.string_contains(buffer,'youWillNotFindThis')
-	end
-	--]]
+
 		
 	--[[
 check OutDir in debug it is showing "."
@@ -124,10 +111,8 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		test.string_contains(buffer,'<PropertyGroup>.*<IgnoreImportLibrary.*true</IgnoreImportLibrary>.*</PropertyGroup>')
 	end
 	
-	--shared lib LinkIncremental set to incorrect value of false
 	function vs10_project_kinds.staticLib_doesNotContainLinkIncremental()
 		kind "StaticLib"
-		flags  {"Symbols"}
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,'<LinkIncremental.*</LinkIncremental>')
 	end

@@ -719,3 +719,12 @@
 			/>
 		]]
 	end
+	
+	
+	function suite.noLinkIncrementalFlag_valueEqualsOne()
+		flags { "NoIncrementalLink" }
+		prepare()
+		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		local result = io.endcapture()		
+		test.string_contains(result,'LinkIncremental="1"')
+	end
