@@ -153,7 +153,7 @@ local vcproj = premake.vstudio.vcproj
 		
 		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
 			_p(4,'RuntimeTypeInfo="%s"', _VS.bool(true))
-		elseif _ACTION > "vs2003" and cfg.flags.NoRTTI then
+		elseif _ACTION > "vs2003" and cfg.flags.NoRTTI and not cfg.flags.Managed then
 			_p(4,'RuntimeTypeInfo="%s"', _VS.bool(false))
 		end
 		
@@ -285,7 +285,7 @@ local vcproj = premake.vstudio.vcproj
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
 			_p(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
-			table.insert(buildoptions, "--use_pch=\"" .. path.getname(cfg.pchheader) .. ".pch" .. "\"")
+			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end

@@ -26,17 +26,8 @@
 
 	local cflags =
 	{
-		EnableSSE      = "-msse",
-		EnableSSE2     = "-msse2",
-		ExtraWarnings  = "-Wall",
-		FatalWarnings  = "-Werror",
-		FloatFast      = "-ffast-math",
-		FloatStrict    = "-ffloat-store",
-		NoFramePointer = "-fomit-frame-pointer",
-		Optimize       = "-O2",
-		OptimizeSize   = "-Os",
-		OptimizeSpeed  = "-O3",
-		Symbols        = "-g",
+		ExtraWarnings  = "-Xdiag=2",
+		FatalWarnings  = "-Xquit=2",
 	}
 
 	local cxxflags =
@@ -52,19 +43,6 @@
 
 	premake.snc.platforms = 
 	{
-		Native = { 
-			cppflags = "-MMD -MP",
-		},
-		x32 = { 
-			cppflags = "-MMD -MP",	
-			flags    = "-m32",
-			ldflags  = "-L/usr/lib32", 
-		},
-		x64 = { 
-			cppflags = "-MMD -MP",
-			flags    = "-m64",
-			ldflags  = "-L/usr/lib64",
-		},
 		PS3 = {
 			cc         = "ppu-lv2-g++",
 			cxx        = "ppu-lv2-g++",

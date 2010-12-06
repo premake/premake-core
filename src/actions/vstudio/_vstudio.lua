@@ -231,7 +231,7 @@
 								-- flags get picked up from the main compiler config block?
 			                    local buildoptions = table.join(premake.snc.getcflags(cfg), premake.snc.getcxxflags(cfg), cfg.buildoptions)
 		                        local additionalOptions = table.concat(buildoptions, " ");
-			                    additionalOptions = additionalOptions .. " --create_pch=\"" .. path.getname(cfg.pchheader) .. ".pch" .. "\""			                    
+			                    additionalOptions = additionalOptions .. ' --create_pch="$(IntDir)/$(TargetName).pch"'			                    
 			                    attrib(indent, "\t\tAdditionalOptions", premake.esc(additionalOptions))
 			                else
 			                    attrib(indent, "\t\tUsePrecompiledHeader", "1")

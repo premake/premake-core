@@ -4,6 +4,7 @@
 * Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Switched PS3 builds from GCC to SNC
+* Ignore NoRTTI flag for Managed C++ projects (Nick Darnell)
 
 
 -------

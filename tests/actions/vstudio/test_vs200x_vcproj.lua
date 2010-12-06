@@ -366,7 +366,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				UsePrecompiledHeader="0"
-				AdditionalOptions="-g"
+				AdditionalOptions=""
 				AdditionalIncludeDirectories="include\pkg1;include\pkg2"
 				PreprocessorDefinitions="DEFINE1;DEFINE2"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"

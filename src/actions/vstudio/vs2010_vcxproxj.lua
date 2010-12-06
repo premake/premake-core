@@ -270,7 +270,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	end
 	
 	local function rtti(cfg)
-		if cfg.flags.NoRTTI then
+		if cfg.flags.NoRTTI and not cfg.flags.Managed then
 			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
 		end
 	end
