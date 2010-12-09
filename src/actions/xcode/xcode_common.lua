@@ -757,6 +757,8 @@
 		
 		xcode.printlist(cfg.defines, 'GCC_PREPROCESSOR_DEFINITIONS')
 
+		_p(4,'GCC_SYMBOLS_PRIVATE_EXTERN = NO;')
+		
 		if cfg.flags.FatalWarnings then
 			_p(4,'GCC_TREAT_WARNINGS_AS_ERRORS = YES;')
 		end
