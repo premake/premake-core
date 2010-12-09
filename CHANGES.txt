@@ -1,5 +1,6 @@
 * Bug 3119793: Applied patch to correct the matching of ClCompile blocks with vs10 and PCH (Dan Dunham)
 * Feature 3118000 and Bug 2920784 Symbol visibility, yet this only fixes a Release build as Xcode is very much broken in Debug(burnson2)
+* Bug 3133743: Sets ONLY_ACTIVE_ARCH = YES in Xcode debug builds (James Wynn)
 
 -------
   4.3

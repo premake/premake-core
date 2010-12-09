@@ -770,7 +770,8 @@
 		xcode.printlist(cfg.libdirs, 'LIBRARY_SEARCH_PATHS')
 		
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
-		_p(4,'ONLY_ACTIVE_ARCH = NO;')
+
+		_p(4,'ONLY_ACTIVE_ARCH = %s;',iif(premake.config.isdebugbuild(cfg),'YES','NO'))
 		
 		-- build list of "other" C/C++ flags
 		local checks = {

@@ -1377,7 +1377,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 			};
 			name = "Debug";
@@ -1511,7 +1511,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 			};
 			name = "Debug";
@@ -1858,4 +1858,22 @@ function suite.defaultVisibilitySetting_setToNo()
 	local buffer = io.endcapture()
 	
 	test.string_contains(buffer,'GCC_SYMBOLS_PRIVATE_EXTERN = NO;')
+end
+
+function suite.releaseBuild_onlyDefaultArch_equalsNo()
+	flags { "Optimize" }
+	prepare()
+	xcode.XCBuildConfiguration_Project(tr, tr.configs[2])
+	local buffer = io.endcapture()
+	
+	test.string_contains(buffer,'ONLY_ACTIVE_ARCH = NO;')
+end
+
+function suite.debugBuild_onlyDefaultArch_equalsYes()
+	flags { "Symbols" }
+	prepare()
+	xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+	local buffer = io.endcapture()
+	
+	test.string_contains(buffer,'ONLY_ACTIVE_ARCH = YES;')
 end
