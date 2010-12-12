@@ -1,31 +1,8 @@
 --
 -- Prepare a new Premake release. This is still incomplete and some manual
--- work is needed to get everything packaged up.
---
--- BEFORE RUNNING THIS SCRIPT:
---  * Make sure all tests pass on Windows AND Posix systems
---  * Update CHANGELOG.txt
---  * Run `premake4 embed`
---  * Commit all changes to premake-stable
---  * Tag premake-stable with the version number
---  * Prepare release news item
---
--- RUN THE SCRIPT:
---  On each platform, run `premake4 release x.x binary`
---     (and copy binary to /usr/local/bin if desired)
---  On one platform, run `premake4 release x.x source`
+-- work is needed to get everything packaged up. See RELEASE.txt in this
+-- folder for the full checklist.
 --  
--- AFTER RUNNING THIS SCRIPT:
---  * Upload release files to SourceForge
---  * On SourceForge, set file platforms and release changelog
---  * Update the download page on Industrious One
---  * Post the news item to the forums
---  * Update the Premake project page on Industrious One
---  * Post to Twitter
---  * Send to email list
---  * Add release to Freshmeat (http://freshmeat.net/projects/premake)
---  * Push changes to repositories on BitBucket
---
 -- Info on using Mercurial to manage releases:
 --  http://hgbook.red-bean.com/read/managing-releases-and-branchy-development.html
 --  http://stevelosh.com/blog/2009/08/a-guide-to-branching-in-mercurial/
@@ -84,14 +61,7 @@ function dorelease()
 --
 
    print( "")
-   print( "BEFORE RUNNING THIS SCRIPT you should..." )
-   print( "* Pass all tests on Windows AND Posix systems" )
-   print( "* Update CHANGELOG.txt")
-   print( "* Run `premake4 embed`")
-   print( "* Commit all changes to premake-stable" )
-   print( "* Tag premake-stable with the version number" )
-   print( "* Prepare release news item")
-
+   print( "BEFORE RUNNING THIS SCRIPT follow the checklist in RELEASE.txt" )
    print( "")
    print( "Press [Enter] to begin.")
    io .read()
@@ -236,11 +206,8 @@ function dorelease()
 -- Clean up
 --
 	
+	os.rmdir(pkgname)
 	
---
--- Remind me of required next steps
---
-
 	print("")
 	print( "Finished.")
 

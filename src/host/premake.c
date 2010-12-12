@@ -263,10 +263,12 @@ int load_builtin_scripts(lua_State* L)
 	lua_getglobal(L, "_premake_main");
 	if (lua_pcall(L, 0, 1, 0) != OKAY)
 	{
-		printf(ERROR_MESSAGE, lua_tostring(L,-1));
+		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
 	}
-
-	return OKAY;
+	else
+	{
+		return (int)lua_tonumber(L, -1);
+	}
 }
 #endif
