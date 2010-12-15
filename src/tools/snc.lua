@@ -67,7 +67,7 @@
 	function premake.snc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
 		table.insert(result, platforms[cfg.platform].flags)
-		if cfg.system ~= "windows" and cfg.kind == "SharedLib" then
+		if cfg.kind == "SharedLib" then
 			table.insert(result, "-fPIC")
 		end
 		
@@ -94,13 +94,9 @@
 	
 		if cfg.kind == "SharedLib" then
 			table.insert(result, "-shared")				
-			if cfg.system == "windows" and not cfg.flags.NoImportLib then
+			if not cfg.flags.NoImportLib then
 				table.insert(result, '-Wl,--out-implib="' .. cfg.linktarget.fullpath .. '"')
 			end
-		end
-
-		if cfg.kind == "WindowedApp" and cfg.system == "windows" then
-			table.insert(result, "-mwindows")
 		end
 		
 		local platform = platforms[cfg.platform]
@@ -135,11 +131,7 @@
 	function premake.snc.getlinkflags(cfg)
 		local result = { }
 		for _, value in ipairs(premake.getlinks(cfg, "all", "basename")) do
-			if path.getextension(value) == ".framework" then
-				table.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value)))
-			else
-				table.insert(result, '-l' .. _MAKE.esc(value))
-			end
+			table.insert(result, '-l' .. _MAKE.esc(value))
 		end
 		return result
 	end
