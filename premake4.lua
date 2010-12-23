@@ -21,7 +21,9 @@
 
 		files 
 		{
-			"*.txt", "**.lua", "src/**.h", "src/**.c",
+			"*.txt", "**.lua", 
+			"src/**.h", "src/**.c",
+			"src/host/scripts.c"
 		}
 
 		excludes
