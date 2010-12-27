@@ -1,10 +1,20 @@
 -------
- 4.4  (in progress)
+  4.4  (in progress)
 -------
-* Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
+
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Switched PS3 builds from GCC to SNC
 * Ignore NoRTTI flag for Managed C++ projects (Nick Darnell)
+
+
+-------
+ 4.3.1
+-------
+
+* Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
+* Bug 2920784: Symbol visibility in Xcode3 libraries (burnson2)
+* Bug 3133743: Sets ONLY_ACTIVE_ARCH = YES in Xcode debug builds (James Wynn)
+* Properly pass return codes back to shell in release builds
 
 
 -------

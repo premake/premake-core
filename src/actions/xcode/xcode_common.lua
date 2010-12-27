@@ -757,6 +757,8 @@
 		
 		xcode.printlist(cfg.defines, 'GCC_PREPROCESSOR_DEFINITIONS')
 
+		_p(4,'GCC_SYMBOLS_PRIVATE_EXTERN = NO;')
+		
 		if cfg.flags.FatalWarnings then
 			_p(4,'GCC_TREAT_WARNINGS_AS_ERRORS = YES;')
 		end
@@ -768,7 +770,8 @@
 		xcode.printlist(cfg.libdirs, 'LIBRARY_SEARCH_PATHS')
 		
 		_p(4,'OBJROOT = "%s";', cfg.objectsdir)
-		_p(4,'ONLY_ACTIVE_ARCH = NO;')
+
+		_p(4,'ONLY_ACTIVE_ARCH = %s;',iif(premake.config.isdebugbuild(cfg),'YES','NO'))
 		
 		-- build list of "other" C/C++ flags
 		local checks = {

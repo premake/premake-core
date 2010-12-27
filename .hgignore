@@ -1,12 +1,20 @@
 syntax: glob
 
 .DS_Store
+
 build
 bin
 obj
 release
+src/host/scripts.c
+
 Makefile
 *.make
 *.xcodeproj
 *.swp
-
+*.sdf
+*.sln
+*.suo
+*.vcproj*
+*.vcxproj*
+*.opensdf

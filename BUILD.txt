@@ -1,59 +1,83 @@
 PREMAKE BUILD INSTRUCTIONS
 
- As of version 4.0, Premake is written in a mix of C and Lua. This mix
- enables many new features, but it makes building Premake a bit more
- complicated.
+ Premake is written in a mix of C and Lua. This mix enables many new 
+ features, but also makes building Premake a bit more complicated than
+ your typical application.
  
- If you downloaded a source code package from SourceForge, you will 
- find project files for all of the currently supported toolsets in 
- the build/ directory. Build the release configuration (the default
- for the makefiles) and you will find the executable in bin/release 
- ready to go.
+ If you downloaded a source code package from SourceForge (as opposed
+ to pulling the sources from the repository), you will find project 
+ files for all of the currently supported toolsets in the build/ folder. 
+ Build the release configuration (the default for the makefiles) and you 
+ will find the executable in bin/release ready to go.
  
- If you want to use a debug build instead, or if you downloaded the
- source code from Subversion instead of a SourceForge release, read
- the next section for more information on working with the scripts.
+ If you want to use a debug build instead, or if you pulled the sources
+ from BitBucket instead of a SourceForge release, or if you plan on 
+ making changes to Premake, read the next section to learn how to 
+ prepare the project files.
  
- If you find all of this very confusing and need some help, see the
- end of this document for contact information. I'll be glad to help.
+ If you find all of this very confusing and need some help, see the end 
+ of this document for contact information. I'll be glad to help. And if 
+ you have any suggestions for improving this process, we'd be glad to 
+ hear them too.
  
 
 GENERATING THE PROJECT FILES
 
  If you downloaded a source code package from SourceForge, the project
  files are already included (in build/) and you can skip ahead to the 
- next section. If you downloaded the sources from Subversion, you'll 
- need to generate new projects files before you can build. 
+ next section. 
  
- In order to generate the project files, you need to have a working 
- version of Premake 4.x installed on your system. You can get it as a
- source code (with project files ready to build) or a prebuilt binary 
- from the SourceForge download page.
+ If you pulled the sources from BitBucket, you'll need to generate your 
+ own project files before you can build. 
+
+ We use Premake to generate the project files for Premake (bootstrapping,
+ or eating our own dog food). So in order to generate the project files, 
+ you need to have a working version of Premake 4.x installed on your 
+ system. You can get it as source code (with pre-generated project files 
+ ready to build) or a prebuilt binary from the SourceForge download page.
  
- Once you have a working Premake 4.x installed, use it to generate the 
- project files. Type a command like:
+ Once you have a working Premake 4.x installed, the first thing you need 
+ to do is to embed the Lua scripts into the application by running this 
+ command in the top-level Premake directory:
+
+   premake4 embed
+   
+ This creates a C file (at src/host/scripts.c) which contains all of the 
+ Lua scripts as static string buffers. These then get compiled into the
+ executable, which is how we get away with shipping a single file instead
+ of one executable and whole bunch of scripts. See EMBEDDING THE SCRIPTS,
+ below, for more information.
+ 
+ Now you can generate project files for your toolset of choice by running 
+ a command like: 
  
    premake4 gmake    -- for GNU makefiles using GCC
-   premake4 vs2005   -- for a Visual Studio 2005 solution
+   premake4 vs2008   -- for a Visual Studio 2008 solution
    
  Use the "--help" option to see all of the available targets.
  
+ This will create a solution/makefile/workspace in the top-level folder,
+ which you can now go ahead and build.
 
-RELEASE AND DEBUG BUILDS
 
- Premake can be built in either "release" or "debug" modes. You can 
- choose which configuration to build with the "config" argument:
+RELEASE vs. DEBUG BUILDS
+
+ Premake can be built in either "release" or "debug" modes. Makefile users
+ can choose which configuration to build with the "config" argument:
  
    make config=debug    -- build in debug mode
    make config=release  -- build in release mode
  
- (IDEs like Visual Studio provide their own mechanism for switching 
-  build configurations).
+ IDEs like Visual Studio provide their own mechanism for switching build
+ configurations.
  
- In release mode (the default) you can build and run Premake like any
- other C application. In debug mode, Premake reads the Lua scripts from
- the disk at runtime, enabling compile-less code/test iterations. But
- it needs some help to find the scripts. 
+ In release mode you can build and run Premake like any other C application
+ (once you've embedded the scripts, see the next section).
+ 
+ In debug mode, Premake ignores the embedded Lua scripts and instead reads the 
+ latest versions from the disk at runtime. This allows you to change a script,
+ and then immediately test it without having to embed or compile first. Speedy!
+ But Premake needs some help to find the scripts. 
  
  You can specify the location of the scripts in one of two ways: using
  the /scripts command line argument, like so:
@@ -68,16 +92,23 @@ RELEASE AND DEBUG BUILDS
  directory, the one containing "_premake_main.lua".
  
  
-EMBEDDING SCRIPTS
+EMBEDDING THE SCRIPTS
 
- If you make changes to the core Lua scripts, you can integrate them 
- into the release build using the "embed" command:
+ One of the nice things about Premake is that it comes as a single file,
+ easy to install or move around. To manage this, we need to embed all of
+ the Lua scripts into the executable, so we can deliver just the one file,
+ rather than an executable and a whole bunch of scripts.
+
+ Scripts are embedded by running the command
  
    premake4 embed
    
- This command embeds all of the scripts listed in _manifest.lua into
- src/host/scripts.c as static strings. The next release build will 
- include the updated scripts.
+ This copies all of the scripts listed in _manifest.lua into the file
+ src/host/scripts.c, where they are represented as a set of static C
+ string buffers. This file is then compiled as part of Premake's release
+ builds.
+ 
+ So: very important to embed the scripts before each release build!
  
  
 CONFUSED?

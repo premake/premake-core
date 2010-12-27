@@ -20,4 +20,38 @@ PREP
 
  * Commit all changes to premake-stable
 
- * Tag premake-stable with the version number
+ * Tag premake-stable with the version number and push
+
+ * Pull changes to premake-dev
+
+
+BUILD
+
+ * On each platform, run `premake4 release {version} binary`
+
+ * On one platform, run `premake4 release {version} source`
+
+ * If desired, copy binary to local path
+
+ * Upload packages (in release/) to SourceForge
+
+
+RELEASE
+
+ * On SourceForge, set package properties (platform, etc.)
+
+ * Update the download page
+   http://industriousone.com/premake/download
+
+ * Post release announcement to the forums
+
+ * Update the Latest News on the project home page
+
+ * Post annoucement to @industrious on Twitter
+
+ * Post announcement to email list
+
+ * Post announcement to Industrious Facebook group
+
+ * Add release to Freshmeat
+   http://freshmeat.net/projects/premake
