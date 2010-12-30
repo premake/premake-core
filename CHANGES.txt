@@ -6,7 +6,7 @@
 * Bug 2920784: Symbol visibility in Xcode3 libraries (burnson2)
 * Bug 3133743: Sets ONLY_ACTIVE_ARCH = YES in Xcode debug builds (James Wynn)
 * Properly pass return codes back to shell in release builds
-
+* Bug 3135734: Removes WholeProgramOptimization setting in vs10 (doug)
 
 -------
   4.3

@@ -422,3 +422,8 @@
 			..release_config_pch_string ..'%s+</ClCompile>'
 		test.string_contains(buffer,expected)
 	end
+
+	function vs10_vcxproj.wholeProgramOptimizationIsNotSetByDefault_bufferDoesNotContainWholeProgramOptimization()
+		local buffer = get_buffer()
+		test.string_does_not_contain(buffer,"WholeProgramOptimization")
+	end

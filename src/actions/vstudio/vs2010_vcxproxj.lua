@@ -149,15 +149,8 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			if cfg.flags.MFC then
 				_p(2,'<UseOfMfc>Dynamic</UseOfMfc>')
 			end
-			
-			local use_debug = "false"
-			if optimisation(cfg) == "Disabled" then 
-				use_debug = "true" 
-			else
-				_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
-			end
-				_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>',use_debug)
-				
+				_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>'
+						,iif(optimisation(cfg) == "Disabled","true","false"))				
 			_p(1,'</PropertyGroup>')
 		end
 	end
