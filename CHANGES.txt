@@ -1,12 +1,12 @@
 -------
- 4.3.1
+ 4.3.1 (in progress)
 -------
 
-* Bug 3119793: Applied patch to correct the matching of ClCompile blocks with vs10 and PCH (Dan Dunham)
+* Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
 * Bug 2920784: Symbol visibility in Xcode3 libraries (burnson2)
 * Bug 3133743: Sets ONLY_ACTIVE_ARCH = YES in Xcode debug builds (James Wynn)
 * Properly pass return codes back to shell in release builds
-* Bug 3135734: Removes WholeProgramOptimization setting in vs10 (doug)
+* Bug 3135734: Remove WholeProgramOptimization setting in vs10 (doug)
 
 -------
   4.3
