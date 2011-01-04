@@ -231,6 +231,11 @@
 		adjustpaths(obj.location, cfg)
 		mergeobject(cfg, obj)
 		
+		-- add `kind` to the filter terms
+		if (cfg.kind) then 
+			terms.kind = cfg.kind:lower()
+		end
+		
 		-- now add in any blocks that match the filter terms
 		for _, blk in ipairs(obj.blocks) do
 			if (premake.iskeywordsmatch(blk.keywords, terms)) then
@@ -275,9 +280,9 @@
 		-- build a project-level configuration. If a target kind is set at this level
 		-- then include it into the filter terms
 		merge(result, obj, basis, terms)
-		if result[""].kind then
-			terms.kind = result[""].kind:lower()
-		end
+		-- if result[""].kind then
+		--	terms.kind = result[""].kind:lower()
+		-- end
 
 		-- now build configurations for each build config/platform pair
 		for _, cfgname in ipairs(sln.configurations) do
