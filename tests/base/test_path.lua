@@ -171,6 +171,10 @@
 		test.isequal("trailing", path.join(".", "trailing"))
 	end
 	
+	function suite.join_OnNilSecondPart()
+		test.isequal("leading", path.join("leading", nil))
+	end
+
 
 --
 -- path.rebase() tests
