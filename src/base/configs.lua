@@ -691,15 +691,12 @@
 			for prjIx, prj in ipairs(sln.projects) do
 				if(not prj.usage) then
 					for cfgname, cfg in pairs(prj.__configs) do
-						printf("prj '%s', cfg '%s'", prj.name, cfgname);
-						printf("before:");
 						for _, linkName in ipairs(cfg.links) do
 							printf("\t link to '%s'.", linkName)
 						end
 						
 						local usesPrjs = getprojectsconnections(cfg, cfgname);
 						copyusagedata(cfg, cfgname, usesPrjs)
-						printf("after:");
 						for _, linkName in ipairs(cfg.links) do
 							printf("link to '%s'", linkName)
 						end
