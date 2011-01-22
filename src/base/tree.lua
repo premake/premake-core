@@ -143,31 +143,50 @@
 -- @param t
 --    The tree to traverse.
 -- @param fn
---    A collection of callback functions, which may contain:
+--    A collection of callback functions, which may contain any or all of the
+--    following entries. Entries are called in this order.
 --
---    onnode(node, depth)   - called on each node encountered
---    onleaf(node, depth)   - called only on leaf nodes
---    onbranch(node, depth) - called only on branch nodes
+--    onnode         - called on each node encountered
+--    onbranchenter  - called on branches, before processing children
+--    onbranch       - called only on branch nodes
+--    onleaf         - called only on leaf nodes
+--    onbranchexit   - called on branches, after processing children
+--
+--    Callbacks receive two arguments: the node being processed, and the
+--    current traversal depth.
 --
 -- @param includeroot
 --    True to include the root node in the traversal, otherwise it will be skipped.
+-- @param initialdepth
+--    An optional starting value for the traversal depth; defaults to zero.
 --
 
-	function premake.tree.traverse(t, fn, includeroot)
+	function premake.tree.traverse(t, fn, includeroot, initialdepth)
 
+		-- forward declare my handlers, which call each other
 		local donode, dochildren
+
+		-- process an individual node
 		donode = function(node, fn, depth)
 			if node.isremoved then 
 				return 
 			end
+
 			if fn.onnode then 
 				fn.onnode(node, depth) 
 			end
+			
 			if #node.children > 0 then
+				if fn.onbranchenter then
+					fn.onbranchenter(node, depth)
+				end
 				if fn.onbranch then 
 					fn.onbranch(node, depth) 
 				end
 				dochildren(node, fn, depth + 1)
+				if fn.onbranchexit then
+					fn.onbranchexit(node, depth)
+				end
 			else
 				if fn.onleaf then 
 					fn.onleaf(node, depth) 
@@ -175,8 +194,8 @@
 			end
 		end
 		
+		-- this goofy iterator allows nodes to be removed during the traversal
 		dochildren = function(parent, fn, depth)
-			-- this goofy iterator allows nodes to be removed during the traversal
 			local i = 1
 			while i <= #parent.children do
 				local node = parent.children[i]
@@ -187,9 +206,14 @@
 			end
 		end
 		
+		-- set a default initial traversal depth, if one wasn't set
+		if not initialdepth then
+			initialdepth = 0
+		end
+
 		if includeroot then
-			donode(t, fn, 0)
+			donode(t, fn, initialdepth)
 		else
-			dochildren(t, fn, 0)
+			dochildren(t, fn, initialdepth)
 		end
 	end

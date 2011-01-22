@@ -1,11 +1,17 @@
 --
 -- vs200x_vcproj.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009, 2010 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
-premake.vstudio.vcproj = { }
-local vcproj = premake.vstudio.vcproj
+
+--
+-- Set up a namespace for this file
+--
+
+	premake.vstudio.vcproj = { }
+	local vcproj = premake.vstudio.vcproj
+	local tree = premake.tree
 
 
 --
@@ -28,6 +34,71 @@ local vcproj = premake.vstudio.vcproj
 		_p(3,'>')
 	end
 	
+
+--
+-- Write out the <Files> element.
+--
+
+	function vcproj.Files(prj)
+		local tr = premake.project.buildsourcetree(prj)
+		
+		tree.traverse(tr, {
+			-- folders are handled at the internal nodes
+			onbranchenter = function(node, depth)
+				_p(depth, '<Filter')
+				_p(depth, '\tName="%s"', node.name)
+				_p(depth, '\tFilter=""')
+				_p(depth, '\t>')
+			end,
+
+			onbranchexit = function(node, depth)
+				_p(depth, '</Filter>')
+			end,
+
+			-- source files are handled at the leaves
+			onleaf = function(node, depth)
+				_p(depth, '<File')
+				_p(depth, '\tRelativePath="%s"', path.translate(node.path, "\\"))
+				_p(depth, '\t>')
+				depth = depth + 1
+
+				-- handle file configuration stuff. This needs to be cleaned up and simplified.
+				-- configurations are cached, so this isn't as bad as it looks
+				for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
+					if cfginfo.isreal then
+						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+						
+						local usePCH = (not prj.flags.NoPCH and prj.pchsource == node.path)
+						if (usePCH) then
+							_p(depth, '<FileConfiguration')
+							_p(depth, '\tName="%s"', cfginfo.name)
+							_p(depth, '\t>')
+							_p(depth, '\t<Tool')
+							_p(depth, '\t\tName="%s"', iif(cfg.system == "Xbox360", "VCCLX360CompilerTool", "VCCLCompilerTool"))
+
+			                if cfg.system == "PS3" then
+			                    local options = table.join(premake.snc.getcflags(cfg), premake.snc.getcxxflags(cfg), cfg.buildoptions)
+		                        options = table.concat(options, " ");
+			                    options = options .. ' --create_pch="$(IntDir)/$(TargetName).pch"'			                    
+			                    _p(depth, '\t\tAdditionalOptions="%s"', premake.esc(options))
+			                else
+			                    _p(depth, '\t\tUsePrecompiledHeader="1"')
+			                end
+
+							_p(depth, '\t/>')
+							_p(depth, '</FileConfiguration>')
+						end
+
+					end
+				end
+
+				depth = depth - 1
+				_p(depth, '</File>')
+			end,
+		}, false, 2)
+
+	end
+
 	
 --
 -- Write out the <Platforms> element; ensures that each target platform
@@ -650,7 +721,7 @@ local vcproj = premake.vstudio.vcproj
 		_p(1,'</References>')
 		
 		_p(1,'<Files>')
-		premake.walksources(prj, _VS.files)
+		vcproj.Files(prj)
 		_p(1,'</Files>')
 		
 		_p(1,'<Globals>')

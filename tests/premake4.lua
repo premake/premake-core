@@ -73,6 +73,7 @@
 	dofile("actions/vstudio/test_vs2010_links.lua")
 	dofile("actions/vstudio/test_vs2010_filters.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
+	dofile("actions/vstudio/vs200x/files.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
