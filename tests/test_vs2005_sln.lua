@@ -5,13 +5,15 @@
 --
 
 	T.vs2005_sln = { }
+	local suite = T.vs2005_sln
+	local sln2005 = premake.vstudio.sln2005
 
 --
 -- Configure a solution for testing
 --
 
 	local sln
-	function T.vs2005_sln.setup()
+	function suite.setup()
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms {}
@@ -27,7 +29,7 @@
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 	end	
 
 	local function addnetproject()
@@ -44,9 +46,9 @@
 -- Make sure I've got the basic layout correct
 --
 	
-	function T.vs2005_sln.BasicLayout()
+	function suite.BasicLayout()
 		prepare()
-		premake.vs2005_solution(sln)
+		sln2005.generate(sln)
 		test.capture ('\239\187\191' .. [[
 
 Microsoft Visual Studio Solution File, Format Version 9.00
@@ -77,11 +79,11 @@ EndGlobal
 -- Test a mixed runtime (C++/.NET) solution.
 --
 
-	function T.vs2005_sln.SolutionPlatforms_OnMixedModes()
+	function suite.SolutionPlatforms_OnMixedModes()
 		addnetproject()
 		prepare()
 
-		premake.vs2005_solution_platforms(sln)
+		sln2005.platforms(sln)
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,11 +97,11 @@ EndGlobal
 	end
 
 
-	function T.vs2005_sln.ProjectPlatforms_OnMixedModes()
+	function suite.ProjectPlatforms_OnMixedModes()
 		addnetproject()
 		prepare()
 				
-		premake.vs2005_solution_project_platforms(sln)
+		sln2005.project_platforms(sln)
 		test.capture [[
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AE61726D-187C-E440-BD07-2556188A6565}.Debug|Any CPU.ActiveCfg = Debug|Win32
@@ -132,11 +134,11 @@ EndGlobal
 -- Test multiple platforms
 --
 
-	function T.vs2005_sln.SolutionPlatforms_OnMultiplePlatforms()
+	function suite.SolutionPlatforms_OnMultiplePlatforms()
 		platforms { "x32", "x64" }
 		prepare()
 
-		premake.vs2005_solution_platforms(sln)
+		sln2005.platforms(sln)
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -148,11 +150,11 @@ EndGlobal
 	end
 
 
-	function T.vs2005_sln.ProjectPlatforms_OnMultiplePlatforms()
+	function suite.ProjectPlatforms_OnMultiplePlatforms()
 		platforms { "x32", "x64" }
 		prepare()
 				
-		premake.vs2005_solution_project_platforms(sln)
+		sln2005.project_platforms(sln)
 		test.capture [[
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AE61726D-187C-E440-BD07-2556188A6565}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -168,12 +170,12 @@ EndGlobal
 	end
 
 
-	function T.vs2005_sln.ProjectPlatforms_OnMultiplePlatformsAndMixedModes()
+	function suite.ProjectPlatforms_OnMultiplePlatformsAndMixedModes()
 		platforms { "x32", "x64" }
 		addnetproject()
 		prepare()
 				
-		premake.vs2005_solution_project_platforms(sln)
+		sln2005.project_platforms(sln)
 		test.capture [[
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AE61726D-187C-E440-BD07-2556188A6565}.Debug|Any CPU.ActiveCfg = Debug|Win32
@@ -211,11 +213,11 @@ EndGlobal
 -- Test PS3 support
 --
 
-	function T.vs2005_sln.SolutionPlatforms_OnPS3()
+	function suite.SolutionPlatforms_OnPS3()
 		platforms { "PS3" }
 		prepare()
 
-		premake.vs2005_solution_platforms(sln)
+		sln2005.platforms(sln)
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		PS3 Debug|Win32 = PS3 Debug|Win32
@@ -225,11 +227,11 @@ EndGlobal
 	end
 
 
-	function T.vs2005_sln.ProjectPlatforms_OnPS3()
+	function suite.ProjectPlatforms_OnPS3()
 		platforms { "PS3" }
 		prepare()
 				
-		premake.vs2005_solution_project_platforms(sln)
+		sln2005.project_platforms(sln)
 		test.capture [[
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AE61726D-187C-E440-BD07-2556188A6565}.PS3 Debug|Win32.ActiveCfg = PS3 Debug|Win32

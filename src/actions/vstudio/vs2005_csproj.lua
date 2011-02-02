@@ -100,7 +100,7 @@
 -- The main function: write the project file.
 --
 
-	function premake.vs2005_csproj(prj)
+	function cs2005.generate(prj)
 		io.eol = "\r\n"
 
 		local vsversion, toolversion
@@ -154,7 +154,7 @@
 
 		_p('  <ItemGroup>')
 		for _, ref in ipairs(premake.getlinks(prj, "siblings", "object")) do
-			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, _VS.projectfile(ref)), "\\"))
+			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, vstudio.projectfile(ref)), "\\"))
 			_p('      <Project>{%s}</Project>', ref.uuid)
 			_p('      <Name>%s</Name>', premake.esc(ref.name))
 			_p('    </ProjectReference>')

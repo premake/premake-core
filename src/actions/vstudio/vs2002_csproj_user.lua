@@ -4,7 +4,9 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
-	function premake.vs2002_csproj_user(prj)
+	local cs2002 = premake.vstudio.cs2002
+
+	function cs2002.generate_user(prj)
 		io.eol = "\r\n"
 
 		_p('<VisualStudioProject>')

@@ -1,10 +1,8 @@
 --
 -- _vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2008-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2011 Jason Perkins and the Premake project
 --
-
-	_VS = { }  -- deprecated, will remove eventually
 
 	premake.vstudio = { }
 	local vstudio = premake.vstudio
@@ -15,7 +13,7 @@
 -- Studio specific "any" and "mixed" to make solution generation easier.
 --
 
-	premake.vstudio_platforms = { 
+	vstudio.platforms = { 
 		any     = "Any CPU", 
 		mixed   = "Mixed Platforms", 
 		Native  = "Win32",
@@ -29,9 +27,10 @@
 
 --
 -- Returns the architecture identifier for a project.
+-- Used by the solutions.
 --
 
-	function _VS.arch(prj)
+	function vstudio.arch(prj)
 		if (prj.language == "C#") then
 			if (_ACTION < "vs2005") then
 				return ".NET"
@@ -46,31 +45,14 @@
 	
 
 --
--- Return the version-specific text for a boolean value.
--- (this should probably go in vs200x_vcproj.lua)
---
-
-	function _VS.bool(value)
-		if (_ACTION < "vs2005") then
-			return iif(value, "TRUE", "FALSE")
-		else
-			return iif(value, "true", "false")
-		end
-	end
-
-
---
 -- Process the solution's list of configurations and platforms, creates a list
 -- of build configuration/platform pairs in a Visual Studio compatible format.
 --
--- @param sln
---    The solution containing the configuration and platform lists.
---
 
-	function premake.vstudio_buildconfigs(sln)
+	function vstudio.buildconfigs(sln)
 		local cfgs = { }
 		
-		local platforms = premake.filterplatforms(sln, premake.vstudio_platforms, "Native")
+		local platforms = premake.filterplatforms(sln, vstudio.platforms, "Native")
 
 		-- .NET projects add "Any CPU", mixed mode solutions add "Mixed Platforms"
 		local hascpp    = premake.hascppproject(sln)
@@ -92,7 +74,7 @@
 				-- configuration than a platform from Visual Studio's point of view				
 				if platform ~= "PS3" then
 					entry.buildcfg = buildcfg
-					entry.platform = premake.vstudio_platforms[platform]
+					entry.platform = vstudio.platforms[platform]
 				else
 					entry.buildcfg = platform .. " " .. buildcfg
 					entry.platform = "Win32"
@@ -114,27 +96,10 @@
 
 
 --
--- Return a configuration type index.
--- (this should probably go in vs200x_vcproj.lua)
---
-
-	function _VS.cfgtype(cfg)
-		if (cfg.kind == "SharedLib") then
-			return 2
-		elseif (cfg.kind == "StaticLib") then
-			return 4
-		else
-			return 1
-		end
-	end
-	
-	
-
---
 -- Clean Visual Studio files
 --
 
-	function premake.vstudio.cleansolution(sln)
+	function vstudio.cleansolution(sln)
 		premake.clean.file(sln, "%%.sln")
 		premake.clean.file(sln, "%%.suo")
 		premake.clean.file(sln, "%%.ncb")
@@ -143,7 +108,7 @@
 		premake.clean.file(sln, "%%.usertasks")
 	end
 	
-	function premake.vstudio.cleanproject(prj)
+	function vstudio.cleanproject(prj)
 		local fname = premake.project.getfilename(prj, "%%")
 
 		os.remove(fname .. ".vcproj")
@@ -160,7 +125,7 @@
 		os.remove(fname .. ".sdf")
 	end
 
-	function premake.vstudio.cleantarget(name)
+	function vstudio.cleantarget(name)
 		os.remove(name .. ".pdb")
 		os.remove(name .. ".idb")
 		os.remove(name .. ".ilk")
@@ -171,31 +136,10 @@
 	
 
 --
--- Return the optimization code.
--- (this should probably go in vs200x_vcproj.lua)
---
-
-	function _VS.optimization(cfg)
-		local result = 0
-		for _, value in ipairs(cfg.flags) do
-			if (value == "Optimize") then
-				result = 3
-			elseif (value == "OptimizeSize") then
-				result = 1
-			elseif (value == "OptimizeSpeed") then
-				result = 2
-			end
-		end
-		return result
-	end
-
-
-
---
 -- Assemble the project file name.
 --
 
-	function _VS.projectfile(prj)
+	function vstudio.projectfile(prj)
 		local extension
 		if (prj.language == "C#") then
 			extension = ".csproj"
@@ -216,7 +160,7 @@
 -- Returns the Visual Studio tool ID for a given project type.
 --
 
-	function _VS.tool(prj)
+	function vstudio.tool(prj)
 		if (prj.language == "C#") then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
 		else
@@ -245,15 +189,15 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", premake.vs2002_solution)
+			premake.generate(sln, "%%.sln", vstudio.sln2002.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", premake.vs2002_csproj)
-				premake.generate(prj, "%%.csproj.user", premake.vs2002_csproj_user)
+				premake.generate(prj, "%%.csproj", vstudio.cs2002.generate)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2002.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", premake.vs200x_vcproj)
+				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
 			end
 		end,
 		
@@ -278,15 +222,15 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", premake.vs2003_solution)
+			premake.generate(sln, "%%.sln", vstudio.sln2003.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", premake.vs2002_csproj)
-				premake.generate(prj, "%%.csproj.user", premake.vs2002_csproj_user)
+				premake.generate(prj, "%%.csproj", vstudio.cs2002.generate)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2002.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", premake.vs200x_vcproj)
+				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
 			end
 		end,
 		
@@ -311,21 +255,21 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", premake.vs2005_solution)
+			premake.generate(sln, "%%.sln", vstudio.sln2005.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", premake.vs2005_csproj)
-				premake.generate(prj, "%%.csproj.user", premake.vs2005_csproj_user)
+				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", premake.vs200x_vcproj)
+				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
 			end
 		end,
 		
-		oncleansolution = premake.vstudio.cleansolution,
-		oncleanproject  = premake.vstudio.cleanproject,
-		oncleantarget   = premake.vstudio.cleantarget
+		oncleansolution = vstudio.cleansolution,
+		oncleanproject  = vstudio.cleanproject,
+		oncleantarget   = vstudio.cleantarget
 	}
 
 	newaction {
@@ -344,21 +288,21 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", premake.vs2005_solution)
+			premake.generate(sln, "%%.sln", vstudio.sln2005.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", premake.vs2005_csproj)
-				premake.generate(prj, "%%.csproj.user", premake.vs2005_csproj_user)
+				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", premake.vs200x_vcproj)
+				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
 			end
 		end,
 		
-		oncleansolution = premake.vstudio.cleansolution,
-		oncleanproject  = premake.vstudio.cleanproject,
-		oncleantarget   = premake.vstudio.cleantarget
+		oncleansolution = vstudio.cleansolution,
+		oncleanproject  = vstudio.cleanproject,
+		oncleantarget   = vstudio.cleantarget
 	}
 
 		

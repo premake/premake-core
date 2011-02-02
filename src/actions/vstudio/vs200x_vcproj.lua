@@ -9,21 +9,65 @@
 -- Set up a namespace for this file
 --
 
-	premake.vstudio.vcproj = { }
-	local vcproj = premake.vstudio.vcproj
+	premake.vstudio.vc200x = { }
+	local vc200x = premake.vstudio.vc200x
 	local tree = premake.tree
+
+
+--
+-- Return the version-specific text for a boolean value.
+--
+
+	local function bool(value)
+		if (_ACTION < "vs2005") then
+			return iif(value, "TRUE", "FALSE")
+		else
+			return iif(value, "true", "false")
+		end
+	end
+
+
+--
+-- Return the optimization code.
+-- (this should probably go in vs200x_vcproj.lua)
+--
+
+	function vc200x.optimization(cfg)
+		local result = 0
+		for _, value in ipairs(cfg.flags) do
+			if (value == "Optimize") then
+				result = 3
+			elseif (value == "OptimizeSize") then
+				result = 1
+			elseif (value == "OptimizeSpeed") then
+				result = 2
+			end
+		end
+		return result
+	end
+
 
 
 --
 -- Write out the <Configuration> element.
 --
 
-	function vcproj.Configuration(name, cfg)
+	function vc200x.Configuration(name, cfg)		
 		_p(2,'<Configuration')
 		_p(3,'Name="%s"', premake.esc(name))
 		_p(3,'OutputDirectory="%s"', premake.esc(cfg.buildtarget.directory))
 		_p(3,'IntermediateDirectory="%s"', premake.esc(cfg.objectsdir))
-		_p(3,'ConfigurationType="%s"', _VS.cfgtype(cfg))
+
+		local cfgtype
+		if (cfg.kind == "SharedLib") then
+			cfgtype = 2
+		elseif (cfg.kind == "StaticLib") then
+			cfgtype = 4
+		else
+			cfgtype = 1
+		end
+		_p(3,'ConfigurationType="%s"', cfgtype)
+
 		if (cfg.flags.MFC) then
 			_p(3, 'UseOfMFC="2"')			
 		end				  
@@ -39,7 +83,7 @@
 -- Write out the <Files> element.
 --
 
-	function vcproj.Files(prj)
+	function vc200x.Files(prj)
 		local tr = premake.project.buildsourcetree(prj)
 		
 		tree.traverse(tr, {
@@ -105,7 +149,7 @@
 -- is listed only once. Skips over .NET's pseudo-platforms (like "Any CPU").
 --
 
-	function premake.vs200x_vcproj_platforms(prj)
+	function vc200x.Platforms(prj)
 		local used = { }
 		_p(1,'<Platforms>')
 		for _, cfg in ipairs(prj.solution.vstudio_configs) do
@@ -124,13 +168,13 @@
 -- Return the debugging symbols level for a configuration.
 --
 
-	function premake.vs200x_vcproj_symbols(cfg)
+	function vc200x.Symbols(cfg)
 		if (not cfg.flags.Symbols) then
 			return 0
 		else
 			-- Edit-and-continue does't work for some configurations
 			if cfg.flags.NoEditAndContinue or 
-			   _VS.optimization(cfg) ~= 0 or 
+			   vc200x.optimization(cfg) ~= 0 or 
 			   cfg.flags.Managed or 
 			   cfg.platform == "x64" then
 				return 3
@@ -145,7 +189,7 @@
 -- Compiler block for Windows and XBox360 platforms.
 --
 
-	function premake.vs200x_vcproj_VCCLCompilerTool(cfg)
+	function vc200x.VCCLCompilerTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', iif(cfg.platform ~= "Xbox360", "VCCLCompilerTool", "VCCLX360CompilerTool"))
 		
@@ -153,10 +197,10 @@
 			_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.buildoptions), " "))
 		end
 		
-		_p(4,'Optimization="%s"', _VS.optimization(cfg))
+		_p(4,'Optimization="%s"', vc200x.optimization(cfg))
 		
 		if cfg.flags.NoFramePointer then
-			_p(4,'OmitFramePointers="%s"', _VS.bool(true))
+			_p(4,'OmitFramePointers="%s"', bool(true))
 		end
 		
 		if #cfg.includedirs > 0 then
@@ -168,7 +212,7 @@
 		end
 		
 		if premake.config.isdebugbuild(cfg) and not cfg.flags.NoMinimalRebuild and not cfg.flags.Managed then
-			_p(4,'MinimalRebuild="%s"', _VS.bool(true))
+			_p(4,'MinimalRebuild="%s"', bool(true))
 		end
 		
 		if cfg.flags.NoExceptions then
@@ -177,11 +221,11 @@
 			_p(4,'ExceptionHandling="2"')
 		end
 		
-		if _VS.optimization(cfg) == 0 and not cfg.flags.Managed then
+		if vc200x.optimization(cfg) == 0 and not cfg.flags.Managed then
 			_p(4,'BasicRuntimeChecks="3"')
 		end
-		if _VS.optimization(cfg) ~= 0 then
-			_p(4,'StringPooling="%s"', _VS.bool(true))
+		if vc200x.optimization(cfg) ~= 0 then
+			_p(4,'StringPooling="%s"', bool(true))
 		end
 		
 		local runtime
@@ -190,15 +234,9 @@
 		else
 			runtime = iif(cfg.flags.StaticRuntime, 0, 2)
 		end
-		
---		if cfg.flags.StaticRuntime then
---			runtime = iif(cfg.flags.Symbols, 1, 0)
---		else
---			runtime = iif(cfg.flags.Symbols, 3, 2)
---		end
 		_p(4,'RuntimeLibrary="%s"', runtime)
 
-		_p(4,'EnableFunctionLevelLinking="%s"', _VS.bool(true))
+		_p(4,'EnableFunctionLevelLinking="%s"', bool(true))
 
 		if _ACTION > "vs2003" and cfg.platform ~= "Xbox360" and cfg.platform ~= "x64" then
 			if cfg.flags.EnableSSE then
@@ -210,9 +248,9 @@
 	
 		if _ACTION < "vs2005" then
 			if cfg.flags.FloatFast then
-				_p(4,'ImproveFloatingPointConsistency="%s"', _VS.bool(false))
+				_p(4,'ImproveFloatingPointConsistency="%s"', bool(false))
 			elseif cfg.flags.FloatStrict then
-				_p(4,'ImproveFloatingPointConsistency="%s"', _VS.bool(true))
+				_p(4,'ImproveFloatingPointConsistency="%s"', bool(true))
 			end
 		else
 			if cfg.flags.FloatFast then
@@ -223,15 +261,15 @@
 		end
 		
 		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
-			_p(4,'RuntimeTypeInfo="%s"', _VS.bool(true))
+			_p(4,'RuntimeTypeInfo="%s"', bool(true))
 		elseif _ACTION > "vs2003" and cfg.flags.NoRTTI and not cfg.flags.Managed then
-			_p(4,'RuntimeTypeInfo="%s"', _VS.bool(false))
+			_p(4,'RuntimeTypeInfo="%s"', bool(false))
 		end
 		
 		if cfg.flags.NativeWChar then
-			_p(4,'TreatWChar_tAsBuiltInType="%s"', _VS.bool(true))
+			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(true))
 		elseif cfg.flags.NoNativeWChar then
-			_p(4,'TreatWChar_tAsBuiltInType="%s"', _VS.bool(false))
+			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(false))
 		end
 		
 		if not cfg.flags.NoPCH and cfg.pchheader then
@@ -244,15 +282,15 @@
 		_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
 		
 		if cfg.flags.FatalWarnings then
-			_p(4,'WarnAsError="%s"', _VS.bool(true))
+			_p(4,'WarnAsError="%s"', bool(true))
 		end
 		
 		if _ACTION < "vs2008" and not cfg.flags.Managed then
-			_p(4,'Detect64BitPortabilityProblems="%s"', _VS.bool(not cfg.flags.No64BitChecks))
+			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
 		end
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
-		_p(4,'DebugInformationFormat="%s"', premake.vs200x_vcproj_symbols(cfg))
+		_p(4,'DebugInformationFormat="%s"', vc200x.Symbols(cfg))
 		if cfg.language == "C" then
 			_p(4, 'CompileAs="1"')
 		end
@@ -265,13 +303,13 @@
 -- Linker block for Windows and Xbox 360 platforms.
 --
 
-	function premake.vs200x_vcproj_VCLinkerTool(cfg)
+	function vc200x.VCLinkerTool(cfg)
 		_p(3,'<Tool')
 		if cfg.kind ~= "StaticLib" then
 			_p(4,'Name="%s"', iif(cfg.platform ~= "Xbox360", "VCLinkerTool", "VCX360LinkerTool"))
 			
 			if cfg.flags.NoImportLib then
-				_p(4,'IgnoreImportLibrary="%s"', _VS.bool(true))
+				_p(4,'IgnoreImportLibrary="%s"', bool(true))
 			end
 			
 			if #cfg.linkoptions > 0 then
@@ -295,18 +333,18 @@
 			end
 			
 			if cfg.flags.NoManifest then
-				_p(4,'GenerateManifest="%s"', _VS.bool(false))
+				_p(4,'GenerateManifest="%s"', bool(false))
 			end
 			
-			_p(4,'GenerateDebugInformation="%s"', _VS.bool(premake.vs200x_vcproj_symbols(cfg) ~= 0))
+			_p(4,'GenerateDebugInformation="%s"', bool(vc200x.Symbols(cfg) ~= 0))
 			
-			if premake.vs200x_vcproj_symbols(cfg) ~= 0 then
+			if vc200x.Symbols(cfg) ~= 0 then
 				_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 			end
 			
 			_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
 			
-			if _VS.optimization(cfg) ~= 0 then
+			if vc200x.optimization(cfg) ~= 0 then
 				_p(4,'OptimizeReferences="2"')
 				_p(4,'EnableCOMDATFolding="2"')
 			end
@@ -348,7 +386,7 @@
 -- Compiler and linker blocks for the PS3 platform, which uses Sony's SNC.
 --
 
-	function premake.vs200x_vcproj_VCCLCompilerTool_PS3(cfg)
+	function vc200x.VCCLCompilerTool_PS3(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCCLCompilerTool"')
 
@@ -376,7 +414,8 @@
 		_p(3,'/>')
 	end
 
-	function premake.vs200x_vcproj_VCLinkerTool_PS3(cfg)
+
+	function vc200x.VCLinkerTool_PS3(cfg)
 		_p(3,'<Tool')
 		if cfg.kind ~= "StaticLib" then
 			_p(4,'Name="VCLinkerTool"')
@@ -393,7 +432,7 @@
 			_p(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 			_p(4,'LinkIncremental="0"')
 			_p(4,'AdditionalLibraryDirectories="%s"', table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"))
-			_p(4,'GenerateManifest="%s"', _VS.bool(false))
+			_p(4,'GenerateManifest="%s"', bool(false))
 			_p(4,'ProgramDatabaseFile=""')
 			_p(4,'RandomizedBaseAddress="1"')
 			_p(4,'DataExecutionPrevention="0"')			
@@ -425,7 +464,7 @@
 -- Resource compiler block.
 --
 
-	function premake.vs200x_vcproj_VCResourceCompilerTool(cfg)
+	function vc200x.VCResourceCompilerTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCResourceCompilerTool"')
 
@@ -451,7 +490,7 @@
 -- Manifest block.
 --
 
-	function premake.vs200x_vcproj_VCManifestTool(cfg)
+	function vc200x.VCManifestTool(cfg)
 		-- locate all manifest files
 		local manifests = { }
 		for _, fname in ipairs(cfg.files) do
@@ -474,7 +513,7 @@
 -- VCMIDLTool block
 --
 
-	function premake.vs200x_vcproj_VCMIDLTool(cfg)
+	function vc200x.VCMIDLTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCMIDLTool"')
 		if cfg.platform == "x64" then
@@ -489,7 +528,7 @@
 -- Write out a custom build steps block.
 --
 
-	function premake.vs200x_vcproj_buildstepsblock(name, steps)
+	function vc200x.buildstepsblock(name, steps)
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		if #steps > 0 then
@@ -507,13 +546,13 @@
 
 	local blockmap = 
 	{
-		VCCLCompilerTool       = premake.vs200x_vcproj_VCCLCompilerTool,
-		VCCLCompilerTool_PS3   = premake.vs200x_vcproj_VCCLCompilerTool_PS3,
-		VCLinkerTool           = premake.vs200x_vcproj_VCLinkerTool,
-		VCLinkerTool_PS3       = premake.vs200x_vcproj_VCLinkerTool_PS3,
-		VCManifestTool         = premake.vs200x_vcproj_VCManifestTool,
-		VCMIDLTool             = premake.vs200x_vcproj_VCMIDLTool,
-		VCResourceCompilerTool = premake.vs200x_vcproj_VCResourceCompilerTool,
+		VCCLCompilerTool       = vc200x.VCCLCompilerTool,
+		VCCLCompilerTool_PS3   = vc200x.VCCLCompilerTool_PS3,
+		VCLinkerTool           = vc200x.VCLinkerTool,
+		VCLinkerTool_PS3       = vc200x.VCLinkerTool_PS3,
+		VCManifestTool         = vc200x.VCManifestTool,
+		VCMIDLTool             = vc200x.VCMIDLTool,
+		VCResourceCompilerTool = vc200x.VCResourceCompilerTool,
 	}
 	
 	
@@ -624,7 +663,7 @@
 -- The main function: write the project file.
 --
 
-	function premake.vs200x_vcproj(prj)
+	function vc200x.generate(prj)
 		io.eol = "\r\n"
 		_p('<?xml version="1.0" encoding="Windows-1252"?>')
 		
@@ -649,7 +688,7 @@
 		_p(1,'>')
 
 		-- list the target platforms
-		premake.vs200x_vcproj_platforms(prj)
+		vc200x.Platforms(prj)
 
 		if _ACTION > "vs2003" then
 			_p(1,'<ToolFiles>')
@@ -662,7 +701,7 @@
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 		
 				-- Start a configuration
-				vcproj.Configuration(cfginfo.name, cfg)				
+				vc200x.Configuration(cfginfo.name, cfg)				
 				for _, block in ipairs(getsections(_ACTION, cfginfo.src_platform)) do
 				
 					if blockmap[block] then
@@ -670,11 +709,11 @@
 		
 					-- Build event blocks --
 					elseif block == "VCPreBuildEventTool" then
-						premake.vs200x_vcproj_buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
+						vc200x.buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
 					elseif block == "VCPreLinkEventTool" then
-						premake.vs200x_vcproj_buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
+						vc200x.buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
 					elseif block == "VCPostBuildEventTool" then
-						premake.vs200x_vcproj_buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
+						vc200x.buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
 					-- End build event blocks --
 					
 					-- Xbox 360 custom sections --
@@ -721,7 +760,7 @@
 		_p(1,'</References>')
 		
 		_p(1,'<Files>')
-		vcproj.Files(prj)
+		vc200x.Files(prj)
 		_p(1,'</Files>')
 		
 		_p(1,'<Globals>')

@@ -3,7 +3,7 @@
 	local include_directory = "bar/foo"
 	local include_directory2 = "baz/foo"
 	local debug_define = "I_AM_ALIVE_NUMBER_FIVE"
-	local vs10_helpers = premake.vstudio.vs10_helpers	
+	local vc2010 = premake.vstudio.vc2010	
 	
 	local sln, prj
 	function vs10_vcxproj.teardown()
@@ -49,7 +49,7 @@
 	local function get_buffer()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		premake.vs2010_vcxproj(prj)
 		local buffer = io.endcapture()
 		return buffer
@@ -197,32 +197,32 @@
 	end
 
 	function vs10_vcxproj.fileExtension_extEqualH()
-		local ext = vs10_helpers.get_file_extension('foo.h')
+		local ext = vc2010.get_file_extension('foo.h')
 		test.isequal('h', ext)
 	end
 	
 	function vs10_vcxproj.fileExtension_containsTwoDots_extEqualH()
-		local ext = vs10_helpers.get_file_extension('foo.bar.h')
+		local ext = vc2010.get_file_extension('foo.bar.h')
 		test.isequal('h', ext)
 	end
 	
 	function vs10_vcxproj.fileExtension_alphaNumeric_extEqualOneH()
-		local ext = vs10_helpers.get_file_extension('foo.1h')
+		local ext = vc2010.get_file_extension('foo.1h')
 		test.isequal('1h', ext)
 	end
 	
 	function vs10_vcxproj.fileExtension_alphaNumericWithUnderscore_extEqualOne_H()
-		local ext = vs10_helpers.get_file_extension('foo.1_h')
+		local ext = vc2010.get_file_extension('foo.1_h')
 		test.isequal('1_h', ext)
 	end
 
 	function vs10_vcxproj.fileExtension_containsHyphen_extEqualHHyphenH()
-		local ext = vs10_helpers.get_file_extension('foo.h-h')
+		local ext = vc2010.get_file_extension('foo.h-h')
 		test.isequal('h-h', ext)
 	end
 
 	function vs10_vcxproj.fileExtension_containsMoreThanOneDot_extEqualOneH()
-		local ext = vs10_helpers.get_file_extension('foo.bar.h')
+		local ext = vc2010.get_file_extension('foo.bar.h')
 		test.isequal('h', ext)
 	end
 	
@@ -234,7 +234,7 @@
 			None		={},
 			ResourceCompile ={}
 		}
-		vs10_helpers.sort_input_files(input,sorted)
+		vc2010.sort_input_files(input,sorted)
 		return sorted
 	end
 	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()

@@ -5,13 +5,15 @@
 --
 
 	T.vs2008_sln = { }
+	local suite = T.vs2008_sln
+	local sln2005 = premake.vstudio.sln2005
 
 --
 -- Configure a solution for testing
 --
 
 	local sln
-	function T.vs2008_sln.setup()
+	function suite.setup()
 		_ACTION = "vs2008"
 
 		sln = solution "MySolution"
@@ -32,9 +34,9 @@
 -- Make sure I've got the basic layout correct
 --
 	
-	function T.vs2008_sln.BasicLayout()
+	function suite.BasicLayout()
 		io.capture()
-		premake.vs2005_solution(sln)
+		sln2005.generate(sln)
 		test.capture ('\239\187\191' .. [[
 
 Microsoft Visual Studio Solution File, Format Version 10.00

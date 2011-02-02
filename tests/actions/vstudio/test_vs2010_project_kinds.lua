@@ -16,7 +16,7 @@
 	local function get_buffer()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		premake.vs2010_vcxproj(prj)
 		buffer = io.endcapture()
 		return buffer
@@ -139,7 +139,7 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 	
 	function vs10_project_kinds.configType_configIsWindowedApp_resultComparesEqualToApplication()
 		local t = { kind = "WindowedApp"}
-		local result = premake.vstudio.vs10_helpers.config_type(t)
+		local result = premake.vstudio.vc2010.config_type(t)
 		test.isequal('Application',result)
 	end
 	

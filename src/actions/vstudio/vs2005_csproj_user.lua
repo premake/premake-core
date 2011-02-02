@@ -4,7 +4,10 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
-	function premake.vs2005_csproj_user(prj)
+	local cs2005 = premake.vstudio.cs2005
+
+
+	function cs2005.generate_user(prj)
 		io.eol = "\r\n"
 		
 		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')

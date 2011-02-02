@@ -1,12 +1,12 @@
 --
 -- tests/actions/vstudio/test_vs200x_vcproj_linker.lua
 -- Automated tests for Visual Studio 2002-2008 C/C++ linker block.
--- Copyright (c) 2009, 2010 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
 	T.vs200x_vcproj_linker = { }
 	local suite = T.vs200x_vcproj_linker
-	local vcproj = premake.vstudio.vcproj
+	local vc200x = premake.vstudio.vc200x
 
 
 --
@@ -33,7 +33,7 @@
 	function suite.DefaultLinkerBlock_OnConsoleApp()
 		kind "ConsoleApp"
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCLinkerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
@@ -51,7 +51,7 @@
 	function suite.DefaultLinkerBlock_OnWindowedApp()
 		kind "WindowedApp"
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCLinkerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
@@ -69,7 +69,7 @@
 	function suite.DefaultLinkerBlock_OnSharedLib()
 		kind "SharedLib"
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCLinkerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
@@ -87,7 +87,7 @@
 	function suite.DefaultLinkerBlock_OnStaticLib()
 		kind "StaticLib"
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCLinkerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCLibrarianTool"
@@ -105,7 +105,7 @@
 		kind "StaticLib"
 		linkoptions { "/ltcg", "/lZ" }
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCLinkerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCLibrarianTool"

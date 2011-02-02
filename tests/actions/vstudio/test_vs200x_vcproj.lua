@@ -6,7 +6,7 @@
 
 	T.vs200x_vcproj = { }
 	local suite = T.vs200x_vcproj
-	local vcproj = premake.vstudio.vcproj
+	local vc200x = premake.vstudio.vc200x
 	
 
 --
@@ -34,7 +34,7 @@
 	local function prepare()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 
 		local cfg = premake.getconfig(sln.projects[2])
 		cfg.name = prj.name
@@ -49,7 +49,7 @@
 
 	function suite.BasicLayout()
 		prepare()
-		premake.vs200x_vcproj(prj)
+		vc200x.generate(prj)
 		test.capture [[
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
@@ -243,7 +243,7 @@
 	function suite.Configuration_OnMFCFlag()
 		flags { "MFC" }
 		prepare()
-		vcproj.Configuration("Debug|Win32", premake.getconfig(prj, "Debug"))
+		vc200x.Configuration("Debug|Win32", premake.getconfig(prj, "Debug"))
 		test.capture [[
 		<Configuration
 			Name="Debug|Win32"
@@ -265,7 +265,7 @@
 		platforms { "x32", "x64" }
 		prepare()
 
-		premake.vs200x_vcproj(prj)
+		vc200x.generate(prj)
 		local result = io.endcapture()		
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Debug|Win32"\r\n')
 		test.istrue(result:find '<Configuration\r\n\t\t\tName="Release|Win32"\r\n')
@@ -282,7 +282,7 @@
 	function suite.PlatformsList_OnX64()
 		platforms { "Native", "x64" }
 		prepare()
-		premake.vs200x_vcproj_platforms(prj)
+		vc200x.Platforms(prj)
 		test.capture [[
 	<Platforms>
 		<Platform
@@ -304,7 +304,7 @@
 	function suite.PlatformsList_OnXbox360()
 		platforms { "Native", "Xbox360" }
 		prepare()
-		premake.vs200x_vcproj_platforms(prj)
+		vc200x.Platforms(prj)
 		test.capture [[
 	<Platforms>
 		<Platform
@@ -320,7 +320,7 @@
 	function suite.CompilerBlock_OnXbox360()
 		platforms { "Xbox360" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug", "Xbox360"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug", "Xbox360"))
 		test.capture [[
 			<Tool
 				Name="VCCLX360CompilerTool"
@@ -345,7 +345,7 @@
 	function suite.PlatformsList_OnPS3()
 		platforms { "Native", "PS3" }
 		prepare()
-		premake.vs200x_vcproj_platforms(prj)
+		vc200x.Platforms(prj)
 		test.capture [[
 	<Platforms>
 		<Platform
@@ -361,7 +361,7 @@
 		includedirs { "include/pkg1", "include/pkg2" }
 		defines { "DEFINE1", "DEFINE2" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
+		vc200x.VCCLCompilerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -379,7 +379,7 @@
 	function suite.LinkerBlock_OnPS3ConsoleApp()
 		platforms { "PS3" }
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
+		vc200x.VCLinkerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
@@ -399,7 +399,7 @@
 		platforms { "PS3" }
 		kind "StaticLib"
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
+		vc200x.VCLinkerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
 		test.capture [[
 			<Tool
 				Name="VCLibrarianTool"
@@ -416,7 +416,7 @@
 		language "C++"
 		kind "SharedLib"
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
+		vc200x.VCLinkerTool_PS3(premake.getconfig(prj, "Debug", "PS3"))
 
 		test.capture [[
 			<Tool
@@ -442,7 +442,7 @@
 	function suite.VCManifestTool_OnNoManifests()
 		files { "hello.c", "goodbye.c" }
 		prepare()
-		premake.vs200x_vcproj_VCManifestTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCManifestTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCManifestTool"
@@ -454,7 +454,7 @@
 	function suite.VCManifestTool_OnNoManifests()
 		files { "hello.c", "project1.manifest", "goodbye.c", "project2.manifest" }
 		prepare()
-		premake.vs200x_vcproj_VCManifestTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCManifestTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCManifestTool"
@@ -472,7 +472,7 @@
 		pchheader "source/common.h"
 		pchsource "source/common.cpp"
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -498,7 +498,7 @@
 	function suite.CompilerBlock_OnFpFast()
 		flags { "FloatFast" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -519,7 +519,7 @@
 	function suite.CompilerBlock_OnFpStrict()
 		flags { "FloatStrict" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -545,7 +545,7 @@
 	function suite.CompilerBlock_OnTargetName()
 		targetname "foob"
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -570,7 +570,7 @@
 	function suite.CompilerBlock_OnNoMinimalRebuild()
 		flags { "Symbols", "NoMinimalRebuild" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -595,7 +595,7 @@
 	function suite.CompilerBlock_RuntimeLibrary_IsDebug_OnSymbolsNoOptimize()
 		flags { "Symbols" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -616,7 +616,7 @@
 	function suite.CompilerBlock_RuntimeLibrary_IsRelease_OnOptimize()
 		flags { "Symbols", "Optimize" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -642,7 +642,7 @@
 		language "C"
 		flags { "Symbols" }
 		prepare()
-		premake.vs200x_vcproj_VCCLCompilerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCCLCompilerTool(premake.getconfig(prj, "Debug"))
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
@@ -665,7 +665,7 @@
 	function suite.noLinkIncrementalFlag_valueEqualsOne()
 		flags { "NoIncrementalLink" }
 		prepare()
-		premake.vs200x_vcproj_VCLinkerTool(premake.getconfig(prj, "Debug"))
+		vc200x.VCLinkerTool(premake.getconfig(prj, "Debug"))
 		local result = io.endcapture()		
 		test.string_contains(result,'LinkIncremental="1"')
 	end

@@ -1,9 +1,13 @@
 --
 -- vs2002_csproj.lua
 -- Generate a Visual Studio 2002/2003 C# project.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
+	premake.vstudio.cs2002 = { }
+	local vstudio = premake.vstudio
+	local cs2002 = premake.vstudio.cs2002
+	
 	--
 	-- Figure out what elements a particular file need in its item block,
 	-- based on its build action and any related files in the project.
@@ -28,7 +32,7 @@
 
 
 
-	function premake.vs2002_csproj(prj)
+	function cs2002.generate(prj)
 		io.eol = "\r\n"
 		_p('<VisualStudioProject>')
 
@@ -99,7 +103,7 @@
 			_p(4,'<Reference')
 			_p(5,'Name = "%s"', ref.buildtarget.basename)
 			_p(5,'Project = "{%s}"', ref.uuid)
-			_p(5,'Package = "{%s}"', _VS.tool(ref))
+			_p(5,'Package = "{%s}"', vstudio.tool(ref))
 			_p(4,'/>')
 		end
 		for _, linkname in ipairs(premake.getlinks(prj, "system", "fullpath")) do

@@ -5,13 +5,15 @@
 --
 
 	T.vs2002_sln = { }
+	local suite = T.vs2002_sln
+	local sln2002 = premake.vstudio.sln2002
 
 --
 -- Configure a solution for testing
 --
 
 	local sln
-	function T.vs2002_sln.setup()
+	function suite.setup()
 		_ACTION = 'vs2002'
 
 		sln = solution "MySolution"
@@ -32,9 +34,9 @@
 -- Make sure I've got the basic layout correct
 --
 	
-	function T.vs2002_sln.BasicLayout()
+	function suite.BasicLayout()
 		io.capture()
-		premake.vs2002_solution(sln)
+		sln2002.generate(sln)
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 7.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "MyProject.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"

@@ -1,16 +1,16 @@
 
-premake.vstudio.vs10_helpers = { }
-local vs10_helpers = premake.vstudio.vs10_helpers
+premake.vstudio.vc2010 = { }
+local vc2010 = premake.vstudio.vc2010
 	
 		
-	function vs10_helpers.remove_relative_path(file)
+	function vc2010.remove_relative_path(file)
 		file = file:gsub("%.%.\\",'')
 		file = file:gsub("%.\\",'')
 		return file
 	end
 		
-	function vs10_helpers.file_path(file)
-		file = vs10_helpers.remove_relative_path(file)
+	function vc2010.file_path(file)
+		file = vc2010.remove_relative_path(file)
 		local path = string.find(file,'\\[%w%.%_%-]+$')
 		if path then
 			return string.sub(file,1,path-1)
@@ -19,9 +19,9 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		end
 	end
 	
-	function vs10_helpers.list_of_directories_in_path(path)
+	function vc2010.list_of_directories_in_path(path)
 		local list={}
-		path = vs10_helpers.remove_relative_path(path)
+		path = vc2010.remove_relative_path(path)
 		if path then
 			for dir in string.gmatch(path,"[%w%-%_%.]+\\")do
 				if #list == 0 then
@@ -34,12 +34,12 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		return list
 	end
 
-	function vs10_helpers.table_of_file_filters(files)
+	function vc2010.table_of_file_filters(files)
 		local filters ={}
 
 		for _, valueTable in pairs(files) do
 			for _, entry in ipairs(valueTable) do
-				local result = vs10_helpers.list_of_directories_in_path(entry)
+				local result = vc2010.list_of_directories_in_path(entry)
 				for __,dir in ipairs(result) do
 					if table.contains(filters,dir) ~= true then
 					filters[#filters +1] = dir
@@ -51,7 +51,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		return filters
 	end
 	
-	function vs10_helpers.get_file_extension(file)
+	function vc2010.get_file_extension(file)
 		local ext_start,ext_end = string.find(file,"%.[%w_%-]+$")
 		if ext_start then
 			return  string.sub(file,ext_start+1,ext_end)
@@ -61,7 +61,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 
 	
 	--also translates file paths from '/' to '\\'
-	function vs10_helpers.sort_input_files(files,sorted_container)
+	function vc2010.sort_input_files(files,sorted_container)
 		local types = 
 		{	
 			h	= "ClInclude",
@@ -76,7 +76,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 
 		for _, current_file in ipairs(files) do
 			local translated_path = path.translate(current_file, '\\')
-			local ext = vs10_helpers.get_file_extension(translated_path)
+			local ext = vc2010.get_file_extension(translated_path)
 			if ext then
 				local type = types[ext]
 				if type then
@@ -109,7 +109,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		_p(1,'</PropertyGroup>')
 	end
 	
-	function vs10_helpers.config_type(config)
+	function vc2010.config_type(config)
 		local t =
 		{	
 			SharedLib = "DynamicLibrary",
@@ -143,7 +143,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<PropertyGroup '..if_config_and_platform() ..' Label="Configuration">'
 					, premake.esc(cfginfo.name))
-				_p(2,'<ConfigurationType>%s</ConfigurationType>',vs10_helpers.config_type(cfg))
+				_p(2,'<ConfigurationType>%s</ConfigurationType>',vc2010.config_type(cfg))
 				_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
 			
 			if cfg.flags.MFC then
@@ -475,7 +475,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 							
 			common_link_section(cfg)
 			
-			if vs10_helpers.config_type(cfg) == 'Application' and not cfg.flags.WinMain then
+			if vc2010.config_type(cfg) == 'Application' and not cfg.flags.WinMain then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
 
@@ -568,7 +568,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		}
 		
 		cfg = premake.getconfig(prj)
-		vs10_helpers.sort_input_files(cfg.files,sorted)
+		vc2010.sort_input_files(cfg.files,sorted)
 		write_file_type_block(sorted.ClInclude,"ClInclude")
 		write_file_compile_block(sorted.ClCompile,prj,prj.solution.vstudio_configs)
 		write_file_type_block(sorted.None,'None')
@@ -577,7 +577,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	end
 	
 	local function write_filter_includes(sorted_table)
-		local directories = vs10_helpers.table_of_file_filters(sorted_table)
+		local directories = vc2010.table_of_file_filters(sorted_table)
 		--I am going to take a punt here that the ItemGroup is missing if no files!!!!
 		--there is a test for this see
 		--vs10_filters.noInputFiles_bufferDoesNotContainTagItemGroup
@@ -596,7 +596,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
-				local path_to_file = vs10_helpers.file_path(current_file)
+				local path_to_file = vc2010.file_path(current_file)
 				if path_to_file then
 					_p(2,'<%s Include=\"%s\">', group_type,path.translate(current_file, "\\"))
 						_p(3,'<Filter>%s</Filter>',path_to_file)
@@ -622,7 +622,7 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 		}
 		
 		cfg = premake.getconfig(prj)
-		vs10_helpers.sort_input_files(cfg.files,sorted)
+		vc2010.sort_input_files(cfg.files,sorted)
 
 		io.eol = "\r\n"
 		_p(xml_version_and_encoding)

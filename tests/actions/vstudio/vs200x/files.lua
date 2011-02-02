@@ -6,7 +6,7 @@
 
 	T.vstudio_200x_files = { }
 	local suite = T.vstudio_200x_files
-	local vcproj = premake.vstudio.vcproj
+	local vc200x = premake.vstudio.vc200x
 
 
 --
@@ -23,8 +23,8 @@
 		io.capture()
 		premake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
-		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
-		vcproj.Files(prj)
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+		vc200x.Files(prj)
 	end
 
 

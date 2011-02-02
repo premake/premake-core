@@ -18,7 +18,7 @@
 	local function get_buffer()
 		io.capture()
 		premake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio_buildconfigs(sln)
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		premake.vs2010_vcxproj(prj)
 		buffer = io.endcapture()
 		return buffer
