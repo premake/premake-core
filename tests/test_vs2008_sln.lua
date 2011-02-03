@@ -35,7 +35,6 @@
 --
 	
 	function suite.BasicLayout()
-		io.capture()
 		sln2005.generate(sln)
 		test.capture ('\239\187\191' .. [[
 

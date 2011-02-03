@@ -16,7 +16,6 @@
 	end
 	
 	local function get_buffer()
-		io.capture()
 		premake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		premake.vs2010_vcxproj(prj)

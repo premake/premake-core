@@ -29,7 +29,6 @@
 	end
 
 	local function prepare()
-		io.capture()
 		premake.buildconfigs()
 		xcode.preparesolution(sln)
 		tr = xcode.buildprjtree(premake.solution.getproject(sln, 1))

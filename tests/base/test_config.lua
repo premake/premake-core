@@ -18,7 +18,6 @@
 
 	local cfg
 	local function prepare()
-		io.capture()
 		premake.buildconfigs()
 		cfg = premake.solution.getproject(sln, 1)
 	end

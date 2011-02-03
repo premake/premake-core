@@ -205,6 +205,7 @@
 	
 
 	local function test_run(suite, fn)
+		io.capture()
 		return pcall(fn)
 	end
 	

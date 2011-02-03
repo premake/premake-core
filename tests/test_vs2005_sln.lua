@@ -27,7 +27,6 @@
 	end
 
 	local function prepare()
-		io.capture()
 		premake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 	end	

@@ -27,7 +27,6 @@
 	end
 
 	local function prepare()
-		io.capture()
 		premake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 	end

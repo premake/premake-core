@@ -19,7 +19,6 @@
 	end
 	
 	local function prepare()
-		io.capture()
 		premake.buildconfigs()
 		cfg = premake.getconfig(prj, "Debug")
 	end

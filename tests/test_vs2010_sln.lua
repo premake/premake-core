@@ -38,7 +38,6 @@ local constant_project_name = "MyProject"
 	end
 
 	local function get_buffer()
-		io.capture()
 		premake.vs_generic_solution(sln)
 		buffer = io.endcapture()
 		return buffer
@@ -85,7 +84,6 @@ local constant_project_name = "MyProject"
 	end
 	
 	function T.vs2010_sln.BasicLayout()
-		io.capture()
 		premake.vs_generic_solution(sln)
 		test.capture ('\239\187\191' .. [[
 

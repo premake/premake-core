@@ -20,7 +20,6 @@
 	end
 
 	local function prepare()
-		io.capture()
 		premake.buildconfigs()
 	end
 

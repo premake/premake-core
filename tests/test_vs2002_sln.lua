@@ -35,7 +35,6 @@
 --
 	
 	function suite.BasicLayout()
-		io.capture()
 		sln2002.generate(sln)
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 7.00
