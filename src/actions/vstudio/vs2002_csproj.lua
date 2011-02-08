@@ -7,11 +7,13 @@
 	premake.vstudio.cs2002 = { }
 	local vstudio = premake.vstudio
 	local cs2002 = premake.vstudio.cs2002
+
 	
-	--
-	-- Figure out what elements a particular file need in its item block,
-	-- based on its build action and any related files in the project.
-	-- 
+--
+-- Figure out what elements a particular file need in its item block,
+-- based on its build action and any related files in the project.
+-- 
+
 	local function getelements(prj, action, fname)
 	
 		if action == "Compile" and fname:endswith(".cs") then
@@ -31,6 +33,36 @@
 	end
 
 
+--
+-- Write out the <Files> element.
+--
+
+	function cs2002.Files(prj)
+		local tr = premake.project.buildsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node)
+				local action = premake.dotnet.getbuildaction(node.cfg)
+				local fname  = path.translate(premake.esc(node.path), "\\")
+				local elements, dependency = getelements(prj, action, node.path)
+
+				_p(4,'<File')
+				_p(5,'RelPath = "%s"', fname)
+				_p(5,'BuildAction = "%s"', action)
+				if dependency then
+					_p(5,'DependentUpon = "%s"', premake.esc(path.translate(dependency, "\\")))
+				end
+				if elements == "SubTypeCode" then
+					_p(5,'SubType = "Code"')
+				end
+				_p(4,'/>')
+			end
+		}, false)
+	end
+
+
+--
+-- The main function: write the project file.
+--
 
 	function cs2002.generate(prj)
 		io.eol = "\r\n"
@@ -122,22 +154,7 @@
 		-- List source files
 		_p(2,'<Files>')
 		_p(3,'<Include>')
-		for fcfg in premake.eachfile(prj) do
-			local action = premake.dotnet.getbuildaction(fcfg)
-			local fname  = path.translate(premake.esc(fcfg.name), "\\")
-			local elements, dependency = getelements(prj, action, fcfg.name)
-			
-			_p(4,'<File')
-			_p(5,'RelPath = "%s"', premake.esc(fname))
-			_p(5,'BuildAction = "%s"', action)
-			if dependency then
-				_p(5,'DependentUpon = "%s"', premake.esc(path.translate(dependency, "\\")))
-			end
-			if elements == "SubTypeCode" then
-				_p(5,'SubType = "Code"')
-			end
-			_p(4,'/>')
-		end
+		cs2002.Files(prj)
 		_p(3,'</Include>')
 		_p(2,'</Files>')
 		

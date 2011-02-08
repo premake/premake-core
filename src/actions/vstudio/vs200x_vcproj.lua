@@ -52,7 +52,7 @@
 -- Write out the <Configuration> element.
 --
 
-	function vc200x.Configuration(name, cfg)		
+	function vc200x.Configuration(name, cfg)
 		_p(2,'<Configuration')
 		_p(3,'Name="%s"', premake.esc(name))
 		_p(3,'OutputDirectory="%s"', premake.esc(cfg.buildtarget.directory))

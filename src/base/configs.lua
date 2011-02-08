@@ -360,6 +360,8 @@
 		end
 		
 		-- build configuration objects for all files
+		-- TODO: can I build this as a tree instead, and avoid the extra
+		-- step of building it later?
 		cfg.__fileconfigs = { }
 		for _, fname in ipairs(cfg.files) do
 			cfg.terms.required = fname:lower()
@@ -371,6 +373,8 @@
 			end
 
 			-- add indexed by name and integer
+			-- TODO: when everything is converted to trees I won't need
+			-- to index by name any longer
 			fcfg.name = fname
 			cfg.__fileconfigs[fname] = fcfg
 			table.insert(cfg.__fileconfigs, fcfg)

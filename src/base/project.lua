@@ -19,11 +19,14 @@
 
 	function premake.project.buildsourcetree(prj)
 		local tr = premake.tree.new(prj.name)
-		for _, fname in ipairs(prj.files) do
-			local node = premake.tree.add(tr, fname)
-		end
-		premake.tree.sort(tr)
 		tr.project = prj
+
+		for fcfg in premake.eachfile(prj) do
+			local node = premake.tree.add(tr, fcfg.name)
+			node.cfg = fcfg
+		end
+
+		premake.tree.sort(tr)
 		return tr
 	end
 
