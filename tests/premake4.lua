@@ -74,6 +74,7 @@
 	dofile("actions/vstudio/test_vs2010_filters.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 	dofile("actions/vstudio/cs2002/files.lua")
+	dofile("actions/vstudio/cs2005/files.lua")
 	dofile("actions/vstudio/vc200x/files.lua")
 
 	-- Makefile tests
