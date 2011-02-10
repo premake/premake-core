@@ -6,6 +6,7 @@ build
 bin
 obj
 release
+ipch
 src/host/scripts.c
 
 Makefile

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2011 Jason Perkins and the Premake project
 --
 
 
@@ -14,8 +14,13 @@
 --
 
 	function suite.findlib_FindSystemLib()
-		local libname = iif(os.is("windows"), "user32", "m")
-		test.istrue(os.findlib(libname))
+		if os.is("windows") then
+			test.istrue(os.findlib("user32"))
+		elseif os.is("haiku") then
+			test.istrue(os.findlib("root"))		
+		else
+			test.istrue(os.findlib("m"))		
+		end
 	end
 	
 	function suite.findlib_FailsOnBadLibName()

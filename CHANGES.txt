@@ -2,6 +2,7 @@
   4.4  (in progress)
 -------
 
+* Added support for Haiku OS (Yuriy O'Donnell)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Switched PS3 builds from GCC to SNC
 * Ignore NoRTTI flag for Managed C++ projects (Nick Darnell)

@@ -1,7 +1,7 @@
 --
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
 	
@@ -50,15 +50,15 @@
 	premake.gcc.platforms = 
 	{
 		Native = { 
-			cppflags = "-MMD -MP",
+			cppflags = "-MMD",
 		},
 		x32 = { 
-			cppflags = "-MMD -MP",	
+			cppflags = "-MMD",	
 			flags    = "-m32",
 			ldflags  = "-L/usr/lib32", 
 		},
 		x64 = { 
-			cppflags = "-MMD -MP",
+			cppflags = "-MMD",
 			flags    = "-m64",
 			ldflags  = "-L/usr/lib64",
 		},
@@ -78,7 +78,7 @@
 			cc         = "ppu-lv2-g++",
 			cxx        = "ppu-lv2-g++",
 			ar         = "ppu-lv2-ar",
-			cppflags   = "-MMD -MP",
+			cppflags   = "-MMD",
 		}
 	}
 
@@ -90,10 +90,19 @@
 --
 
 	function premake.gcc.getcppflags(cfg)
-		local result = { }
-		table.insert(result, platforms[cfg.platform].cppflags)
-		return result
+		local flags = { }
+		table.insert(flags, platforms[cfg.platform].cppflags)
+
+		-- We want the -MP flag for dependency generation (creates phony rules
+		-- for headers, prevents make errors if file is later deleted), but 
+		-- Haiku doesn't support it (yet)
+		if flags[1]:startswith("-MMD") and cfg.system ~= "haiku" then
+			table.insert(flags, "-MP")
+		end
+
+		return flags
 	end
+
 
 	function premake.gcc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
@@ -104,6 +113,7 @@
 		return result		
 	end
 	
+
 	function premake.gcc.getcxxflags(cfg)
 		local result = table.translate(cfg.flags, cxxflags)
 		return result

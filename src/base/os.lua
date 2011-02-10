@@ -1,7 +1,7 @@
 --
 -- os.lua
 -- Additions to the OS namespace.
--- Copyright (c) 2002-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
 
@@ -26,6 +26,9 @@
 		if os.is("windows") then
 			formats = { "%s.dll", "%s" }
 			path = os.getenv("PATH")
+		elseif os.is("haiku") then
+			formats = { "lib%s.so", "%s.so" }
+			path = os.getenv("LIBRARY_PATH")
 		else
 			if os.is("macosx") then
 				formats = { "lib%s.dylib", "%s.dylib" }
