@@ -23,7 +23,7 @@
 		premake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
-		cs2005.Files(prj)
+		cs2005.files(prj)
 	end
 
 

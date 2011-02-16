@@ -1,45 +1,35 @@
 --
--- tests/test_vs2008_sln.lua
--- Automated test suite for Visual Studio 2008 solution generation.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- tests/actions/vstudio/sln2005/layout.lua
+-- Validate the overall layout of VS 2005-2010 solutions.
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
-	T.vs2008_sln = { }
-	local suite = T.vs2008_sln
+	T.vstudio_sln2005_layout = { }
+	local suite = T.vstudio_sln2005_layout
 	local sln2005 = premake.vstudio.sln2005
 
---
--- Configure a solution for testing
---
 
 	local sln
+
 	function suite.setup()
-		_ACTION = "vs2008"
-
-		sln = solution "MySolution"
-		configurations { "Debug", "Release" }
-		platforms {}
-		
-		prj = project "MyProject"
-		language "C++"
-		kind "ConsoleApp"
+		_ACTION = "vs2005"
+		sln = test.createsolution()
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
-		
-		premake.buildconfigs()
 	end
-	
 
+	local function prepare()
+		premake.buildconfigs()
+		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+		sln2005.generate(sln)
+	end	
 
---
--- Make sure I've got the basic layout correct
---
 	
 	function suite.BasicLayout()
-		sln2005.generate(sln)
+		prepare()
 		test.capture ('\239\187\191' .. [[
 
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "MyProject.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
 EndProject
 Global

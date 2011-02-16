@@ -164,7 +164,6 @@
 	function suite.PBXGroup_ListsDependencies()
 		prepare()
 		xcode.PBXGroup(tr)
---		test.print(io.endcapture())
 		test.capture [[
 /* Begin PBXGroup section */
 		[MyProject] /* MyProject */ = {

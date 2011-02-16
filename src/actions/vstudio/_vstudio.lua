@@ -17,6 +17,7 @@
 		any     = "Any CPU", 
 		mixed   = "Mixed Platforms", 
 		Native  = "Win32",
+		x86     = "x86",
 		x32     = "Win32", 
 		x64     = "x64",
 		PS3     = "PS3",
@@ -54,16 +55,43 @@
 		
 		local platforms = premake.filterplatforms(sln, vstudio.platforms, "Native")
 
-		-- .NET projects add "Any CPU", mixed mode solutions add "Mixed Platforms"
+		-- Figure out what's in this solution
 		local hascpp    = premake.hascppproject(sln)
 		local hasdotnet = premake.hasdotnetproject(sln)
-		if hasdotnet then
-			table.insert(platforms, 1, "any")
-		end
-		if hasdotnet and hascpp then
-			table.insert(platforms, 2, "mixed")
+
+		-- "Mixed Platform" solutions are generally those containing both
+		-- C/C++ and .NET projects. Starting in VS2010, all .NET solutions
+		-- also contain the Mixed Platform option.
+		if hasdotnet and (_ACTION > "vs2008" or hascpp) then
+			table.insert(platforms, 1, "mixed")
 		end
 		
+		-- "Any CPU" is added to solutions with .NET projects. Starting in
+		-- VS2010, only pure .NET solutions get this option.
+		if hasdotnet and (_ACTION < "vs2010" or not hascpp) then
+			table.insert(platforms, 1, "any")
+		end
+
+		-- In Visual Studio 2010, pure .NET solutions replace the Win32 platform
+		-- with x86. In mixed mode solution, x86 is used in addition to Win32.
+		if _ACTION > "vs2008" then
+			local platforms2010 = { }
+			for _, platform in ipairs(platforms) do
+				if vstudio.platforms[platform] == "Win32" then
+					if hascpp then
+						table.insert(platforms2010, platform)
+					end
+					if hasdotnet then
+						table.insert(platforms2010, "x86")
+					end
+				else
+					table.insert(platforms2010, platform)
+				end
+			end
+			platforms = platforms2010
+		end
+
+
 		for _, buildcfg in ipairs(sln.configurations) do
 			for _, platform in ipairs(platforms) do
 				local entry = { }
@@ -79,13 +107,13 @@
 					entry.buildcfg = platform .. " " .. buildcfg
 					entry.platform = "Win32"
 				end
-				
+
 				-- create a name the way VS likes it
 				entry.name = entry.buildcfg .. "|" .. entry.platform
 				
 				-- flag the "fake" platforms added for .NET
 				entry.isreal = (platform ~= "any" and platform ~= "mixed")
-				
+								
 				table.insert(cfgs, entry)
 			end
 		end
@@ -141,14 +169,10 @@
 
 	function vstudio.projectfile(prj)
 		local extension
-		if (prj.language == "C#") then
+		if prj.language == "C#" then
 			extension = ".csproj"
-		elseif (_ACTION == "vs2010"  and prj.language == "C++" )then
-			extension = ".vcxproj"
-		elseif (_ACTION == "vs2010"  and prj.language == "C" )then
-			extension = ".vcxproj"
 		else
-			extension = ".vcproj"
+			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
 		local fname = path.join(prj.location, prj.name)
@@ -170,7 +194,7 @@
 
 
 --
--- Register the Visual Studio command line actions
+-- Register Visual Studio 2002
 --
 
 	newaction {
@@ -206,6 +230,11 @@
 		oncleantarget   = premake.vstudio.cleantarget
 	}
 
+
+--
+-- Register Visual Studio 2002
+--
+
 	newaction {
 		trigger         = "vs2003",
 		shortname       = "Visual Studio 2003",
@@ -239,6 +268,11 @@
 		oncleantarget   = premake.vstudio.cleantarget
 	}
 
+
+--
+-- Register Visual Studio 2002
+--
+
 	newaction {
 		trigger         = "vs2005",
 		shortname       = "Visual Studio 2005",
@@ -271,6 +305,11 @@
 		oncleanproject  = vstudio.cleanproject,
 		oncleantarget   = vstudio.cleantarget
 	}
+
+
+--
+-- Register Visual Studio 2002
+--
 
 	newaction {
 		trigger         = "vs2008",
@@ -306,30 +345,39 @@
 	}
 
 		
+--
+-- Register Visual Studio 2002
+--
+
 	newaction 
 	{
 		trigger         = "vs2010",
 		shortname       = "Visual Studio 2010",
-		description     = "Generate Visual Studio 2010 project files (experimental)",
+		description     = "Generate Visual Studio 2010 project files",
 		os              = "windows",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		
-		valid_languages = { "C++","C"},
+		valid_languages = { "C", "C++", "C#"},
 		
 		valid_tools     = {
 			cc     = { "msc"   },
-			--dotnet = { "msnet" },
+			dotnet = { "msnet" },
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", premake.vs_generic_solution)
+			premake.generate(sln, "%%.sln", vstudio.sln2005.generate)
 		end,
 		
 		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
+			else
 			premake.generate(prj, "%%.vcxproj", premake.vs2010_vcxproj)
 			premake.generate(prj, "%%.vcxproj.user", premake.vs2010_vcxproj_user)
 			premake.generate(prj, "%%.vcxproj.filters", premake.vs2010_vcxproj_filters)
+			end
 		end,
 		
 

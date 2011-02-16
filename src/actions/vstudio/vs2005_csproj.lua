@@ -1,7 +1,7 @@
 --
 -- vs2005_csproj.lua
 -- Generate a Visual Studio 2005/2008 C# project.
--- Copyright (c) 2009-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
 --
@@ -71,10 +71,21 @@
 
 
 --
+-- Return the Visual Studio architecture identification string. The logic
+-- to select this is getting more complicated in VS2010, but I haven't 
+-- tackled all the permutations yet.
+--
+
+	function cs2005.arch(prj)
+		return "AnyCPU"
+	end
+
+
+--
 -- Write out the <Files> element.
 --
 
-	function cs2005.Files(prj)
+	function cs2005.files(prj)
 		local tr = premake.project.buildsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node)
@@ -110,28 +121,68 @@
 
 
 --
--- Write the opening <Project> element and project level <PropertyGroup> block.
+-- Write the opening <Project> element.
 --
 
 	function cs2005.projectelement(prj)
-		_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"%s>', iif(_ACTION == 'vs2005', '', ' ToolsVersion="3.5"'))
+		local toolversion = {
+			vs2005 = '',
+			vs2008 = ' ToolsVersion="3.5"',
+			vs2010 = ' ToolsVersion="4.0"',
+		}
+
+		if _ACTION > "vs2008" then
+			_p('<?xml version="1.0" encoding="utf-8"?>')
+		end
+		_p('<Project%s DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', toolversion[_ACTION])
 	end
 
+
+--
+-- Write the opening PropertyGroup, which contains the project-level settings.
+--
+
 	function cs2005.projectsettings(prj)
+		local version = {
+			vs2005 = '8.0.50727',
+			vs2008 = '9.0.21022',
+			vs2010 = '8.0.30703',
+		}
+
 		_p('  <PropertyGroup>')
 		_p('    <Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(prj.solution.configurations[1]))
-		_p('    <Platform Condition=" \'$(Platform)\' == \'\' ">AnyCPU</Platform>')
-		_p('    <ProductVersion>%s</ProductVersion>', iif(_ACTION == "vs2005", "8.0.50727", "9.0.21022"))
+		_p('    <Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', cs2005.arch(prj))
+		_p('    <ProductVersion>%s</ProductVersion>', version[_ACTION])
 		_p('    <SchemaVersion>2.0</SchemaVersion>')
 		_p('    <ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 		_p('    <OutputType>%s</OutputType>', premake.dotnet.getkind(prj))
 		_p('    <AppDesignerFolder>Properties</AppDesignerFolder>')
 		_p('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
 		_p('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
-		if prj.framework then
-			_p('    <TargetFrameworkVersion>v%s</TargetFrameworkVersion>', prj.framework)
+
+		local framework = prj.framework or iif(_ACTION == "vs2010", "4.0", nil)
+		if framework then
+			_p('    <TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 		end
+
+		if _ACTION == "vs2010" then
+			_p('    <TargetFrameworkProfile>Client</TargetFrameworkProfile>')
+			_p('    <FileAlignment>512</FileAlignment>')
+		end
+		
 		_p('  </PropertyGroup>')
+	end
+
+
+--
+-- Write the PropertyGroup element for a specific configuration block.
+--
+
+	function cs2005.propertygroup(cfg)
+		_p('  <PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|%s\' ">', premake.esc(cfg.name), cs2005.arch(cfg))
+		if _ACTION > "vs2008" then
+			_p('    <PlatformTarget>%s</PlatformTarget>', cs2005.arch(cfg))
+		end
 	end
 
 
@@ -142,35 +193,12 @@
 	function cs2005.generate(prj)
 		io.eol = "\r\n"
 
-		local vsversion, toolversion
-		if _ACTION == "vs2005" then
-			vsversion   = "8.0.50727"
-			toolversion = nil
-		elseif _ACTION == "vs2008" then
-			vsversion   = "9.0.21022"
-			toolversion = "3.5"
-		end
-		
-		if toolversion then
-			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="%s">', toolversion)
-		else
-			_p('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-		end
-
-		_p('  <PropertyGroup>')
-		_p('    <Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(prj.solution.configurations[1]))
-		_p('    <Platform Condition=" \'$(Platform)\' == \'\' ">AnyCPU</Platform>')
-		_p('    <ProductVersion>%s</ProductVersion>', vsversion)
-		_p('    <SchemaVersion>2.0</SchemaVersion>')
-		_p('    <ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-		_p('    <OutputType>%s</OutputType>', premake.dotnet.getkind(prj))
-		_p('    <AppDesignerFolder>Properties</AppDesignerFolder>')
-		_p('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
-		_p('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
-		_p('  </PropertyGroup>')
+		cs2005.projectelement(prj)
+		cs2005.projectsettings(prj)
 
 		for cfg in premake.eachconfig(prj) do
-			_p('  <PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' ">', premake.esc(cfg.name))
+			cs2005.propertygroup(cfg)
+
 			if cfg.flags.Symbols then
 				_p('    <DebugSymbols>true</DebugSymbols>')
 				_p('    <DebugType>full</DebugType>')
@@ -204,7 +232,7 @@
 		_p('  </ItemGroup>')
 
 		_p('  <ItemGroup>')
-		cs2005.Files(prj)
+		cs2005.files(prj)
 		_p('  </ItemGroup>')
 
 		_p('  <Import Project="$(MSBuildBinPath)\\Microsoft.CSharp.targets" />')

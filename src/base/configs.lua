@@ -648,8 +648,6 @@
   			end
   
   			if((not bIsStaticLib) and prjEntry.proj) then
-  				printf("Adding direct link to project '%s' from project '%s'",
-  					prjEntry.proj.name, getCfgKind(cfg));
   				table.insert(cfg.links, prjEntry.proj.name);
   			end
   		end
@@ -695,15 +693,8 @@
 			for prjIx, prj in ipairs(sln.projects) do
 				if(not prj.usage) then
 					for cfgname, cfg in pairs(prj.__configs) do
-						for _, linkName in ipairs(cfg.links) do
-							printf("\t link to '%s'.", linkName)
-						end
-						
 						local usesPrjs = getprojectsconnections(cfg, cfgname);
 						copyusagedata(cfg, cfgname, usesPrjs)
-						for _, linkName in ipairs(cfg.links) do
-							printf("link to '%s'", linkName)
-						end
 					end
 				end
 			end

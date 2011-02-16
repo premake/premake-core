@@ -62,10 +62,6 @@
 	-- Visual Studio tests
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
-	dofile("test_vs2005_sln.lua")
-	dofile("test_vs2008_sln.lua")
-	dofile("test_vs2010_sln.lua")
-	dofile("actions/vstudio/test_vs2005_csproj.lua")
 	dofile("actions/vstudio/test_vs200x_vcproj.lua")
 	dofile("actions/vstudio/test_vs200x_vcproj_linker.lua")
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
@@ -73,8 +69,25 @@
 	dofile("actions/vstudio/test_vs2010_links.lua")
 	dofile("actions/vstudio/test_vs2010_filters.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
+
+	-- Visual Studio 2002-2003 C# projects
 	dofile("actions/vstudio/cs2002/files.lua")
+
+	-- Visual Studio 2005-2010 C# projects
 	dofile("actions/vstudio/cs2005/files.lua")
+	dofile("actions/vstudio/cs2005/projectelement.lua")
+	dofile("actions/vstudio/cs2005/projectsettings.lua")
+	dofile("actions/vstudio/cs2005/propertygroup.lua")
+
+	-- Visual Studio 2005-2010 solutions
+	dofile("actions/vstudio/sln2005/dependencies.lua")
+	dofile("actions/vstudio/sln2005/header.lua")
+	dofile("actions/vstudio/sln2005/layout.lua")
+	dofile("actions/vstudio/sln2005/platforms.lua")
+	dofile("actions/vstudio/sln2005/projectplatforms.lua")
+	dofile("actions/vstudio/sln2005/projects.lua")
+
+	-- Visual Studio 2002-2008 C/++ projects
 	dofile("actions/vstudio/vc200x/files.lua")
 
 	-- Makefile tests

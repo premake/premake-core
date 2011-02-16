@@ -1,6 +1,11 @@
+--
+-- vs200x_vcproj.lua
+-- Generate a Visual Studio 2002-2008 C/C++ project.
+-- Copyright (c) 2009-2011 Liam Devine and the Premake project
+--
 
-premake.vstudio.vc2010 = { }
-local vc2010 = premake.vstudio.vc2010
+	premake.vstudio.vc2010 = { }
+	local vc2010 = premake.vstudio.vc2010
 	
 		
 	function vc2010.remove_relative_path(file)

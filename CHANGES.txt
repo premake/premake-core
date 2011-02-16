@@ -2,6 +2,7 @@
   4.4  (in progress)
 -------
 
+* Feature 3100379: C# support for Visual Studio 2010 
 * Added support for Haiku OS (Yuriy O'Donnell)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Switched PS3 builds from GCC to SNC

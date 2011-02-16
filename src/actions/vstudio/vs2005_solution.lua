@@ -1,6 +1,6 @@
 --
 -- vs2005_solution.lua
--- Generate a Visual Studio 2005 or 2008 solution.
+-- Generate a Visual Studio 2005-2010 solution.
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
@@ -8,6 +8,7 @@
 	local vstudio = premake.vstudio
 	local sln2005 = premake.vstudio.sln2005
 	
+
 	function sln2005.generate(sln)
 		io.eol = '\r\n'
 
@@ -17,25 +18,10 @@
 		-- Mark the file as Unicode
 		_p('\239\187\191')
 
-		-- Write the solution file version header
-		_p('Microsoft Visual Studio Solution File, Format Version %s', iif(_ACTION == 'vs2005', '9.00', '10.00'))
-		_p('# Visual Studio %s', iif(_ACTION == 'vs2005', '2005', '2008'))
+		sln2005.header(sln)
 
-		-- Write out the list of project entries
 		for prj in premake.solution.eachproject(sln) do
-			-- Build a relative path from the solution file to the project file
-			local projpath = path.translate(path.getrelative(sln.location, vstudio.projectfile(prj)), "\\")
-			
-			_p('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, projpath, prj.uuid)
-			local deps = premake.getdependencies(prj)
-			if #deps > 0 then
-				_p('\tProjectSection(ProjectDependencies) = postProject')
-				for _, dep in ipairs(deps) do
-					_p('\t\t{%s} = {%s}', dep.uuid, dep.uuid)
-				end
-				_p('\tEndProjectSection')
-			end
-			_p('EndProject')
+			sln2005.project(prj)
 		end
 
 		_p('Global')
@@ -44,9 +30,57 @@
 		sln2005.properties(sln)
 		_p('EndGlobal')
 	end
-	
 
-	
+
+--
+-- Generate the solution header
+--
+
+	function sln2005.header(sln)
+		local version = {
+			vs2005 = 9,
+			vs2008 = 10,
+			vs2010 = 11
+		}
+
+		_p('Microsoft Visual Studio Solution File, Format Version %d.00', version[_ACTION])
+		_p('# Visual Studio %s', _ACTION:sub(3))
+	end
+
+
+--
+-- Write out an entry for a project
+--
+
+	function sln2005.project(prj)
+		-- Build a relative path from the solution file to the project file
+		local projpath = path.translate(path.getrelative(prj.solution.location, vstudio.projectfile(prj)), "\\")
+			
+		_p('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, projpath, prj.uuid)
+		sln2005.projectdependencies(prj)
+		_p('EndProject')
+	end
+
+
+--
+-- Write out the list of project dependencies for a particular project.
+--
+
+	function sln2005.projectdependencies(prj)
+		-- VS2010 C# gets dependencies right from the projects; doesn't need rules here
+		if _ACTION > "vs2008" and prj.language == "C#" then return end
+
+		local deps = premake.getdependencies(prj)
+		if #deps > 0 then
+			_p('\tProjectSection(ProjectDependencies) = postProject')
+			for _, dep in ipairs(deps) do
+				_p('\t\t{%s} = {%s}', dep.uuid, dep.uuid)
+			end
+			_p('\tEndProjectSection')
+		end
+	end
+
+
 --
 -- Write out the contents of the SolutionConfigurationPlatforms section, which
 -- lists all of the configuration/platform pairs that exist in the solution.
