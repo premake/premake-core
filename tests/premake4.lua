@@ -99,6 +99,7 @@
 	dofile("actions/xcode/test_xcode_project.lua")
 	dofile("actions/xcode/test_xcode_dependencies.lua")
 
+	dofile("actions/xcode/test_xcode4_workspace.lua")
 
 --
 -- Register a test action

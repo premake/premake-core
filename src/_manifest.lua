@@ -66,6 +66,9 @@
 		"actions/xcode/xcode_common.lua",
 		"actions/xcode/xcode_project.lua",
 		
+		-- Xcode4 action
+		"actions/xcode/xcode4_workspace.lua",
+		
 		-- Clean action
 		"actions/clean/_clean.lua",
 	}
