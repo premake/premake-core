@@ -84,7 +84,6 @@
 		default_platform = "Universal",
 		
 		onsolution = function(sln)
-			--xcode4.workspace_generate(sln)
 			premake.generate(sln, "%%.xcworkspace/contents.xcworkspacedata", premake.xcode4.workspace_generate)
 		end,
 		
@@ -94,6 +93,7 @@
 		
 		oncleanproject = function(prj)
 			premake.clean.directory(prj, "%%.xcodeproj")
+			premake.clean.directory(prj, "%%.xcworkspace")
 		end,
 		
 		oncheckproject = function(prj)
