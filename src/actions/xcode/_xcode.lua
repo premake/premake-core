@@ -84,8 +84,8 @@
 		default_platform = "Universal",
 		
 		onsolution = function(sln)
-			-- Assign IDs needed for inter-project dependencies
-			premake.xcode.preparesolution(sln)
+			--xcode4.workspace_generate(sln)
+			premake.generate(sln, "%%.xcworkspace/contents.xcworkspacedata", premake.xcode4.workspace_generate)
 		end,
 		
 		onproject = function(prj)

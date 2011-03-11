@@ -61,3 +61,11 @@
 										.. CONSTANT_PROJECT_NAME .. '.xcodeproj'
 										..'">%s+</FileRef>')	
 	end
+
+	function suite.pathPrefixAndProjectName_pathIsPathIsDifferentDir_pathPostfixSlashAdded()
+		prj.location = "foo"
+		local buffer = get_buffer()
+		test.string_contains(buffer,'.*<FileRef%s+location = "group:'
+										.. prj.location .. '/'.. CONSTANT_PROJECT_NAME .. '.xcodeproj'
+										..'">%s+</FileRef>')	
+	end

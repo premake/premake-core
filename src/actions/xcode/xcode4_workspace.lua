@@ -16,7 +16,9 @@ end
 function xcode4.workspace_file_ref(prj)
 
 		local projpath = path.getrelative(prj.solution.location, prj.location)
-		if projpath == '.' then projpath = '' end
+		if projpath == '.' then projpath = '' 
+		else projpath = projpath ..'/' 
+		end
 		_p(1,'<FileRef')
 			_p(2,'location = "group:%s">',projpath .. prj.name .. '.xcodeproj')
 		_p(1,'</FileRef>')
