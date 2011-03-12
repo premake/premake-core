@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2011 Jason Perkins and the Premake project
  */
 
 #define lua_c
@@ -24,6 +24,9 @@
 #elif defined(__sun__) && defined(__svr4__)
 #define PLATFORM_SOLARIS  (1)
 #define PLATFORM_STRING   "solaris"
+#elif defined(__HAIKU__)
+#define PLATFORM_HAIKU    (1)
+#define PLATFORM_STRING   "haiku"
 #else
 #define PLATFORM_WINDOWS  (1) 
 #define PLATFORM_STRING   "windows"
