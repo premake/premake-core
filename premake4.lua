@@ -48,6 +48,9 @@
 
 		configuration "vs*"
 			defines     { "_CRT_SECURE_NO_WARNINGS" }
+		
+		configuration "vs2005"
+			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "linux"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
