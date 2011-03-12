@@ -51,7 +51,7 @@ local function macosx_is_64_bit()
 	return false
 end
 
-host.is_64bit = function()
+host.is64bit = function()
 	local host_os = _OS
 
 	if host_os == 'linux' or host_os == 'bsd' or host_os == 'solaris' or host_os == 'haiku' then

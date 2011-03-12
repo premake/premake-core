@@ -59,7 +59,7 @@ static const luaL_Reg string_functions[] = {
 static const luaL_Reg host_functions[] = 
 {
 	{ "windows_is_64bit_running_under_wow",  windows_is_64bit_running_under_wow },
-	{ "windows_version",windows_version},
+	{ "windowsversion",windows_version},
 	{ NULL, NULL }
 };
 

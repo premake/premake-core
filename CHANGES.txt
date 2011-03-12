@@ -7,7 +7,8 @@
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
 * Switched PS3 builds from GCC to SNC
 * Ignore NoRTTI flag for Managed C++ projects (Nick Darnell)
-* Added host.is_64bit
+* Added host.is64bit
+* Added host.windowsversion
 
 
 -------
