@@ -68,4 +68,6 @@ int os_rmdir(lua_State* L);
 int os_uuid(lua_State* L);
 int string_endswith(lua_State* L);
 int windows_is_64bit_running_under_wow(struct lua_State* l);
+int windows_version(struct lua_State* l);
+
 
