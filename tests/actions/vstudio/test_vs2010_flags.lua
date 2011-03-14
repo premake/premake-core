@@ -252,7 +252,7 @@ end
 function vs10_flags.symbols_bufferContainsprogramDataBaseFile()
 	flags{"Symbols"}
 	local buffer = get_buffer()
-	test.string_contains(buffer,'<Link>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</Link>')
+	test.string_contains(buffer,'<ClCompile>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</ClCompile>')
 end
 
 

@@ -81,6 +81,7 @@
 - Bug 2927604: Unable to build Premake with Visual Studio
 - Clean action now removes MonoDevelop .pidb files correctly
 - Added os.executef()
+- Bug 3163703: pdb file being set in the wrong section. (hodsondd)
 
 
 -------
