@@ -30,6 +30,19 @@
 		test.isequal(expected, path.getabsolute("a/b/c/"))
 	end
 	
+	function suite.getabsolute_OnLeadingEnvVar()
+		test.isequal("$(HOME)/user", path.getabsolute("$(HOME)/user"))
+	end
+	
+	function suite.getabsolute_OnMultipleEnvVar()		
+		test.isequal("$(HOME)/$(USER)", path.getabsolute("$(HOME)/$(USER)"))
+	end
+	
+	function suite.getabsolute_OnTrailingEnvVar()
+		local expected = path.translate(os.getcwd(), "/") .. "/home/$(USER)"
+		test.isequal(expected, path.getabsolute("home/$(USER)"))
+	end
+	
 	
 --
 -- path.getbasename() tests
