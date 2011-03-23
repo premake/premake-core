@@ -315,7 +315,6 @@
 					if xcode.isframework(node.path) then
 						--respect user supplied paths
 						if string.find(node.path,'/')  then
-							io.write(node.path .. '\n')
 							if string.find(node.path,'^%.')then
 								error('relative paths are not currently supported for frameworks')
 							end
