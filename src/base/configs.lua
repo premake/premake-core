@@ -79,7 +79,7 @@
 --
 
 	function premake.getactiveterms()
-		local terms = { _ACTION:lower(), os.get() }
+		local terms = { _action = _ACTION:lower(), os = os.get() }
 		
 		-- add option keys or values
 		for key, value in pairs(_OPTIONS) do
@@ -188,10 +188,17 @@
 				if type(value) == "table" then
 					-- merge two lists, removing any duplicates along the way
 					local tbl = dest[field] or { }
-					for _, item in ipairs(value) do
-						if not tbl[item] then
-							table.insert(tbl, item)
-							tbl[item] = item
+					
+					if field == 'terms' then
+						for term_key,term_value in pairs(value)do
+							tbl[term_key]=term_value
+						end
+					else
+						for _, item in ipairs(value) do
+							if not tbl[item] then
+								table.insert(tbl, item)
+								tbl[item] = item
+							end
 						end
 					end
 					dest[field] = tbl
@@ -242,17 +249,28 @@
 		adjustpaths(obj.location, cfg)
 		mergeobject(cfg, obj)
 		
+		-- add `kind` to the filter terms
+		if (cfg.kind) then 
+			terms[kind]=cfg.kind:lower()
+		end
+		
 		-- now add in any blocks that match the filter terms
 		for _, blk in ipairs(obj.blocks) do
-			if (premake.iskeywordsmatch(blk.keywords, terms)) then
+			if (premake.iskeywordsmatch(blk.keywords, terms))then
 				mergeobject(cfg, blk)
+				if (cfg.kind and not cfg.terms.kind) then 
+					cfg.terms[kind] = cfg.kind:lower()
+					terms[kind] = cfg.kind:lower()
+				end
 			end
 		end
 		
 		-- package it all up and add it to the result set
 		cfg.name      = cfgname
 		cfg.platform  = pltname
-		cfg.terms     = terms
+		for k,v in pairs(terms) do
+			cfg.terms[k] =v
+		end
 		dest[key] = cfg
 	end
 	
@@ -283,19 +301,17 @@
 		-- with a matching set of keywords will be included in the merged results
 		local terms = premake.getactiveterms()
 
-		-- build a project-level configuration. If a target kind is set at this level
-		-- then include it into the filter terms
-		merge(result, obj, basis, terms)
-		if result[""].kind then
-			terms.kind = result[""].kind:lower()
-		end
+		-- build a project-level configuration. 
+		merge(result, obj, basis, terms)--this adjusts terms
 
 		-- now build configurations for each build config/platform pair
 		for _, cfgname in ipairs(sln.configurations) do
-			merge(result, obj, basis, terms, cfgname, "Native")
+			local terms_local = {}
+			for k,v in pairs(terms)do terms_local[k]=v end
+			merge(result, obj, basis, terms_local, cfgname, "Native")--terms cam also be adjusted here
 			for _, pltname in ipairs(sln.platforms or {}) do
 				if pltname ~= "Native" then
-					merge(result, obj, basis, terms, cfgname, pltname)
+					merge(result, obj, basis,terms_local, cfgname, pltname)--terms also here
 				end
 			end
 		end

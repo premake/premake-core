@@ -55,7 +55,8 @@
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
 	dofile("tools/test_gcc.lua")
-	
+	dofile("base/test_config_bug.lua")
+
 	-- Clean tests
 	dofile("actions/test_clean.lua")
 	

@@ -379,6 +379,10 @@
 			floating_point(cfg)
 			debug_info(cfg)
 			
+		if cfg.flags.Symbols then
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
+				, path.getbasename(cfg.buildtarget.name))
+		end
 
 		if cfg.flags.NoFramePointer then
 			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
@@ -456,11 +460,6 @@
 		if premake.config.isoptimizedbuild(cfg.flags) then
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
-		end
-		
-		if cfg.flags.Symbols then
-			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
-				, path.getbasename(cfg.buildtarget.name))
 		end
 	end
 	

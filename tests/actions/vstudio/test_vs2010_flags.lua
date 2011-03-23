@@ -190,12 +190,77 @@ function vs10_flags.debugYetNotMinimalRebuild_minimalRebuild_setToTrue()
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<MinimalRebuild>true</MinimalRebuild>')
 end
+<<<<<<< local
 
 function vs10_flags.release_minimalRebuild_setToFalse()
 	flags {release_string}
 	
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<MinimalRebuild>false</MinimalRebuild>')
+=======
+
+function vs10_flags.release_minimalRebuild_setToFalse()
+	flags {release_string}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<MinimalRebuild>false</MinimalRebuild>')
+end
+
+function vs10_flags.mfc_useOfMfc_setToStatic()
+    flags{"MFC"}
+    
+    local buffer = get_buffer()
+    test.string_contains(buffer,'<UseOfMfc>Dynamic</UseOfMfc>')
+end
+
+function vs10_flags.Symbols_DebugInformationFormat_setToEditAndContinue()
+	flags{"Symbols"}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>EditAndContinue</DebugInformationFormat>')
+end
+
+function vs10_flags.symbolsAndNoEditAndContinue_DebugInformationFormat_setToProgramDatabase()
+	flags{"Symbols","NoEditAndContinue"}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
+end
+
+function vs10_flags.symbolsAndRelease_DebugInformationFormat_setToProgramDatabase()
+	flags{"Symbols",release_string}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
+end
+function vs10_flags.noSymbols_DebugInformationFormat_blockIsEmpty()
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat></DebugInformationFormat>')
+end
+
+function vs10_flags.symbols_64BitBuild_DebugInformationFormat_setToOldStyle()
+	flags{"Symbols"}
+	platforms{"x64"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>OldStyle</DebugInformationFormat>')
+end
+
+function vs10_flags.noManifest_GenerateManifest_setToFalse()
+	flags{"NoManifest"}
+	
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<GenerateManifest Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'Debug|Win32\'">false</GenerateManifest>')
+end
+
+function vs10_flags.noSymbols_bufferDoesNotContainprogramDataBaseFile()
+	local buffer = get_buffer()
+	test.string_does_not_contain(buffer,'<Link>.*<ProgramDataBaseFileName>.*</Link>')
+end
+function vs10_flags.symbols_bufferContainsprogramDataBaseFile()
+	flags{"Symbols"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<ClCompile>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</ClCompile>')
+>>>>>>> other
 end
 
 function vs10_flags.mfc_useOfMfc_setToStatic()

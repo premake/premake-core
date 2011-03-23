@@ -176,6 +176,32 @@
 		[Cocoa.framework] /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Cocoa.framework"; path = "/System/Library/Frameworks/Cocoa.framework"; sourceTree = "<absolute>"; };
 		]]
 	end
+	
+	
+	function suite.PBXFileReference_leavesFrameWorkLocationsAsIsWhenSupplied_pathIsSetToInput()
+		local inputFrameWork = 'somedir/Foo.framework'
+		links(inputFrameWork)
+		prepare()
+		
+		io.capture()
+		xcode.PBXFileReference(tr)
+		local buffer = io.endcapture()
+
+		test.string_contains(buffer,'path = "'..inputFrameWork..'"')
+	end
+	
+	
+	function suite.PBXFileReference_relativeFrameworkPathSupplied_callsError()
+		local inputFrameWork = '../somedir/Foo.framework'
+		links(inputFrameWork)
+		prepare()
+		local error_called = false
+		local old_error = error
+		error = function( ... )error_called = true end
+		xcode.PBXFileReference(tr)
+		error = old_error
+		test.istrue(error_called)
+	end
 
 	function suite.PBXFileReference_ListsIconFiles()
 		files { "Icon.icns" }

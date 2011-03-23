@@ -17,7 +17,7 @@
 		
 		-- if the directory is already absolute I don't need to do anything
 		local result = iif (path.isabsolute(p), nil, os.getcwd())
-		
+
 		-- split up the supplied relative path and tackle it bit by bit
 		for n, part in ipairs(p:explode("/", true)) do
 			if (part == "" and n == 1) then
@@ -25,7 +25,13 @@
 			elseif (part == "..") then
 				result = path.getdirectory(result)
 			elseif (part ~= ".") then
-				result = path.join(result, part)
+				-- Environment variables embedded in the path need to be treated
+				-- as relative paths; path.join() makes them absolute
+				if (part:startswith("$") and n > 1) then
+					result = result .. "/" .. part
+				else
+					result = path.join(result, part)
+				end
 			end
 		end
 		
