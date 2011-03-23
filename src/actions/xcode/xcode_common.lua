@@ -313,8 +313,16 @@
 				else
 					local pth, src
 					if xcode.isframework(node.path) then
-						-- I need to figure out how to locate frameworks; this is just to get something working
-						pth = "/System/Library/Frameworks/" .. node.path
+						--respect user supplied paths
+						if string.find(node.path,'/')  then
+							io.write(node.path .. '\n')
+							if string.find(node.path,'^%.')then
+								error('relative paths are not currently supported for frameworks')
+							end
+							pth = node.path
+						else
+							pth = "/System/Library/Frameworks/" .. node.path
+						end
 						src = "absolute"
 					else
 						-- something else; probably a source code file

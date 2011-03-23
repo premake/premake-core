@@ -9,6 +9,7 @@
 * Bug 3135734: Remove WholeProgramOptimization setting in vs10 (doug)
 * Bug 3138377: Link dependencies ignored within "SharedLib" configuration
 * Bug 3163703: pdb file being set in the wrong section. (hodsondd)
+* Bug 3157645: Full path for xcode frameworks
 
 -------
   4.3
