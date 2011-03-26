@@ -10,6 +10,7 @@
 * Bug 3138377: Link dependencies ignored within "SharedLib" configuration
 * Bug 3163703: pdb file being set in the wrong section. (hodsondd)
 * Bug 3157645: Full path for xcode frameworks
+* Patch 3043933 gmake incorrectly links using -l when a solution contains a .so and .a of the same name and the static lib is wanted (Jonathan Derque)
 
 -------
   4.3
