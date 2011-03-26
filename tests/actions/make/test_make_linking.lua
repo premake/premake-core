@@ -4,6 +4,7 @@
 	
 	local staticPrj
 	local linksToStaticProj
+	local sln
 	
 	function suite.setup()
 		_ACTION = "gmake"
@@ -26,6 +27,7 @@
 	function suite.teardown()
 		staticPrj = nil
 		linksToStaticProj = nil
+		sln = nil
 	end
 	
 	local get_buffer = function()
