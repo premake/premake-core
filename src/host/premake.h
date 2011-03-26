@@ -55,6 +55,7 @@ int path_isabsolute(lua_State* L);
 int os_chdir(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
+int os_getversion(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);
 int os_matchdone(lua_State* L);
@@ -68,6 +69,5 @@ int os_rmdir(lua_State* L);
 int os_uuid(lua_State* L);
 int string_endswith(lua_State* L);
 int windows_is_64bit_running_under_wow(struct lua_State* l);
-int windows_version(struct lua_State* l);
 
 

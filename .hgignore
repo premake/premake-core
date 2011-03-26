@@ -16,6 +16,7 @@ Makefile
 *.sdf
 *.sln
 *.suo
+*.ncb
 *.vcproj*
 *.vcxproj*
 *.opensdf

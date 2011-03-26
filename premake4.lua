@@ -58,6 +58,7 @@
 			
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
+			links       { "CoreServices.framework" }
 			
 		configuration { "macosx", "gmake" }
 			buildoptions { "-mmacosx-version-min=10.1" }
