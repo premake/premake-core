@@ -174,7 +174,23 @@
 
 	function premake.gcc.getlinkflags(cfg)
 		local result = { }
-		for _, value in ipairs(premake.getlinks(cfg, "all", "basename")) do
+		for _, value in ipairs(premake.getlinks(cfg, "dependencies", "object")) do
+			-- don't use "-llib" arguments when linking static libraries
+			if (value.kind == "StaticLib") then
+				local pathstyle = premake.getpathstyle(value)
+				local namestyle = premake.getnamestyle(value)
+				local linktarget = premake.gettarget(value, "link",  pathstyle, namestyle, cfg.system)
+				table.insert(result, linktarget.fullpath)
+			else
+				if path.getextension(value.basename) == ".framework" then
+					table.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value.basename)))
+				else
+					table.insert(result, '-l' .. _MAKE.esc(value.basename))
+				end
+			end
+		end
+		-- "-llib" is fine for system dependencies
+		for _, value in ipairs(premake.getlinks(cfg, "system", "basename")) do
 			if path.getextension(value) == ".framework" then
 				table.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value)))
 			else
