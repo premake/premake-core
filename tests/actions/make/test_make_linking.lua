@@ -43,3 +43,36 @@
 		local format_exspected = 'LIBS      %+%= bar/libstaticPrj.a'
 		test.string_contains(buffer,format_exspected)
 	end
+
+	T.absolute_path_error= { }
+	local firstSharedLib = nil
+	local linksToFirstSharedLib = nil
+	function T.absolute_path_error.setup()
+		_ACTION = "gmake"
+		solution('dontCareSolution')
+		configurations{'Debug'}
+		platforms {}
+			
+		firstSharedLib = project 'firstSharedLib'
+			configuration{'Debug'}
+			kind 'SharedLib'
+			language 'C'
+			--files{'first.c'}
+	
+		linksToFirstSharedLib = project 'linksToFirstSharedLib'
+			configuration{'Debug'}
+			kind 'SharedLib'
+			language 'C'
+			links{'firstSharedLib'}
+	end
+	
+	function T.absolute_path_error.tear_down()
+		firstSharedLib = nil
+		linksToFirstSharedLib = nil
+	end
+	
+	function T.absolute_path_error.setUp_doesNotAssert()
+		premake.buildconfigs()
+		local cfg = premake.getconfig(linksToFirstSharedLib, 'Debug', 'Native')
+		premake.gmake_cpp_config(cfg, premake.gcc)	
+	end
