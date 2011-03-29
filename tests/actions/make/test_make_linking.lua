@@ -30,49 +30,67 @@
 		sln = nil
 	end
 	
-	local get_buffer = function()
+	local get_buffer = function(projectName)
 		io.capture()
 		premake.buildconfigs()
-		local cfg = premake.getconfig(linksToStaticProj, 'Debug', 'Native')
+		local cfg = premake.getconfig(projectName, 'Debug', 'Native')
 		premake.gmake_cpp_config(cfg, premake.gcc)
 		local buffer = io.endcapture()
 		return buffer
 	end
-	function suite.ProjectLinksToStaticPremakeMadeLibrary_linksUsingTheFormat_pathNameExtension()
-		local buffer = get_buffer()
+	
+	function suite.projectLinksToStaticPremakeMadeLibrary_linksUsingTheFormat_pathNameExtension()
+		local buffer = get_buffer(linksToStaticProj)
 		local format_exspected = 'LIBS      %+%= bar/libstaticPrj.a'
 		test.string_contains(buffer,format_exspected)
 	end
 
-	T.absolute_path_error= { }
-	local firstSharedLib = nil
-	local linksToFirstSharedLib = nil
-	function T.absolute_path_error.setup()
+	T.link_suite= { }
+	local firstProject = nil
+	local linksToFirstProject = nil
+	
+	function T.link_suite.setup()
 		_ACTION = "gmake"
 		solution('dontCareSolution')
-		configurations{'Debug'}
-		platforms {}
+			configurations{'Debug'}
+	end
+	
+	function T.link_suite.tear_down()
+		_ACTION = nil
+		firstProject = nil
+		linksToFirstProject = nil
+	end
+	
+	function T.link_suite.projectLinksToSharedPremakeMadeLibrary_linksUsingFormat_dashLName()
+	
+		firstProject = project 'firstProject'
+			kind 'SharedLib'
+			language 'C'
+	
+		linksToFirstProject = project 'linksToFirstProject'
+			kind 'ConsoleApp'
+			language 'C'
+			links{'firstProject'}
 			
-		firstSharedLib = project 'firstSharedLib'
-			configuration{'Debug'}
-			kind 'SharedLib'
+		local buffer = get_buffer(linksToFirstProject)
+		local format_exspected = 'LIBS      %+%= %-lfirstProject'
+		test.string_contains(buffer,format_exspected)
+	end
+		
+	function T.link_suite.projectLinksToPremakeMadeConsoleApp_doesNotLinkToConsoleApp()
+		
+		firstProject = project 'firstProject'
+			kind 'ConsoleApp'
 			language 'C'
-			--files{'first.c'}
 	
-		linksToFirstSharedLib = project 'linksToFirstSharedLib'
-			configuration{'Debug'}
-			kind 'SharedLib'
+		linksToFirstProject = project 'linksToFirstProject'
+			kind 'ConsoleApp'
 			language 'C'
-			links{'firstSharedLib'}
+			links{'firstProject'}
+			
+		local buffer = get_buffer(linksToFirstProject)
+		local format_exspected = 'LIBS      %+%=%s+\n'
+		test.string_contains(buffer,format_exspected)
 	end
 	
-	function T.absolute_path_error.tear_down()
-		firstSharedLib = nil
-		linksToFirstSharedLib = nil
-	end
 	
-	function T.absolute_path_error.setUp_doesNotAssert()
-		premake.buildconfigs()
-		local cfg = premake.getconfig(linksToFirstSharedLib, 'Debug', 'Native')
-		premake.gmake_cpp_config(cfg, premake.gcc)	
-	end
