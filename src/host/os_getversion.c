@@ -52,10 +52,9 @@ int os_getversion(lua_State* L)
 
 void getversion(struct OsVersionInfo* info)
 {
-	OSVERSIONINFOEX versionInfo;
-	SYSTEM_INFO systemInfo;
+	OSVERSIONINFOEX versionInfo = {0};
+	SYSTEM_INFO systemInfo = {0};
 
-	ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEX));
 	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 	GetVersionEx((OSVERSIONINFO*)&versionInfo);
 
@@ -63,7 +62,6 @@ void getversion(struct OsVersionInfo* info)
 	info->minorversion = versionInfo.dwMinorVersion;
 	info->revision = versionInfo.wServicePackMajor;
 
-	ZeroMemory(&systemInfo, sizeof(SYSTEM_INFO));
 	GetSystemInfo(&systemInfo);
 	
 	if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0)

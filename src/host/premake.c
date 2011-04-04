@@ -36,6 +36,7 @@ static const luaL_Reg path_functions[] = {
 static const luaL_Reg os_functions[] = {
 	{ "chdir",       os_chdir       },
 	{ "copyfile",    os_copyfile    },
+	{ "_is64bit",    os_is64bit     },
 	{ "isdir",       os_isdir       },
 	{ "getcwd",      os_getcwd      },
 	{ "getversion",  os_getversion  },
@@ -57,12 +58,6 @@ static const luaL_Reg string_functions[] = {
 	{ NULL, NULL }
 };
 
-static const luaL_Reg host_functions[] = 
-{
-	{ "windows_is_64bit_running_under_wow",  windows_is_64bit_running_under_wow },
-	{ NULL, NULL }
-};
-
 /**
  * Program entry point.
  */
@@ -77,7 +72,6 @@ int main(int argc, const char** argv)
 	luaL_register(L, "path",   path_functions);
 	luaL_register(L, "os",     os_functions);
 	luaL_register(L, "string", string_functions);
-	luaL_register(L, "host",   host_functions);
 	
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
