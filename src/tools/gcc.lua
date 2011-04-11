@@ -184,7 +184,25 @@
 
 	function premake.gcc.getlinkflags(cfg)
 		local result = { }
-		for _, value in ipairs(premake.getlinks(cfg, "all", "basename")) do
+
+		for _, value in ipairs(premake.getlinks(cfg, "siblings", "object")) do
+			if (value.kind == "StaticLib") then
+				-- don't use "-lname" when linking static libraries
+				-- instead use path/Name.ext so as not to link with a SharedLib of the same name
+				-- if one is present.
+				local pathstyle = premake.getpathstyle(value)
+				local namestyle = premake.getnamestyle(value)
+				local linktarget = premake.gettarget(value, "link",  pathstyle, namestyle, cfg.system)
+				table.insert(result, linktarget.fullpath)
+			else
+				--premake does not support creating frameworks so this is just a SharedLib link
+				--link using -lname
+				table.insert(result, '-l' .. _MAKE.esc(value.linktarget.basename))
+			end
+		end
+
+		-- "-llib" is fine for system dependencies
+		for _, value in ipairs(premake.getlinks(cfg, "system", "basename")) do
 			if path.getextension(value) == ".framework" then
 				table.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value)))
 			else
