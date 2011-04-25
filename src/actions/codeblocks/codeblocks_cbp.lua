@@ -33,6 +33,11 @@
 				_p(3,'<Target title="%s">', premake.esc(cfg.longname))
 				
 				_p(4,'<Option output="%s" prefix_auto="0" extension_auto="0" />', premake.esc(cfg.buildtarget.fullpath))
+				
+				if cfg.debugdir then
+					_p(4,'<Option working_dir="%s" />', premake.esc(cfg.debugdir))
+				end
+				
 				_p(4,'<Option object_output="%s" />', premake.esc(cfg.objectsdir))
 
 				-- identify the type of binary

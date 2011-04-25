@@ -676,9 +676,29 @@
 	end
 	
 
+--
+-- Generate the .vcxproj.user file
+--
+
+	function vc2010.debugdir(cfg)
+		if cfg.debugdir then
+			_p('    <LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(cfg.debugdir, '\\'))
+			_p('    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')
+		end
+		if cfg.debugargs then
+			_p('    <LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
+		end
+	end
+
 	function premake.vs2010_vcxproj_user(prj)
 		_p(xml_version_and_encoding)
 		_p('<Project ' ..tool_version_and_xmlns ..'>')
+		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
+			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+			_p('  <PropertyGroup '.. if_config_and_platform() ..'>', premake.esc(cfginfo.name))
+			vc2010.debugdir(cfg)
+			_p('  </PropertyGroup>')
+		end
 		_p('</Project>')
 	end
 	

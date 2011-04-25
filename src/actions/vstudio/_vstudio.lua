@@ -222,6 +222,7 @@
 				premake.generate(prj, "%%.csproj.user", vstudio.cs2002.generate_user)
 			else
 				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -232,7 +233,7 @@
 
 
 --
--- Register Visual Studio 2002
+-- Register Visual Studio 2003
 --
 
 	newaction {
@@ -260,6 +261,7 @@
 				premake.generate(prj, "%%.csproj.user", vstudio.cs2002.generate_user)
 			else
 				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -270,7 +272,7 @@
 
 
 --
--- Register Visual Studio 2002
+-- Register Visual Studio 2005
 --
 
 	newaction {
@@ -298,6 +300,7 @@
 				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
 			else
 				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -308,7 +311,7 @@
 
 
 --
--- Register Visual Studio 2002
+-- Register Visual Studio 2008
 --
 
 	newaction {
@@ -336,6 +339,7 @@
 				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
 			else
 				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -346,7 +350,7 @@
 
 		
 --
--- Register Visual Studio 2002
+-- Register Visual Studio 2010
 --
 
 	newaction 

@@ -49,6 +49,28 @@
 
 
 --
+-- Write the project file header
+--
+
+	function vc200x.header(element)
+		io.eol = "\r\n"
+		_p('<?xml version="1.0" encoding="Windows-1252"?>')
+		_p('<%s', element)
+		_p(1,'ProjectType="Visual C++"')
+
+		if _ACTION == "vs2002" then
+			_p(1,'Version="7.00"')
+		elseif _ACTION == "vs2003" then
+			_p(1,'Version="7.10"')
+		elseif _ACTION == "vs2005" then
+			_p(1,'Version="8.00"')
+		elseif _ACTION == "vs2008" then
+			_p(1,'Version="9.00"')
+		end
+	end
+
+
+--
 -- Write out the <Configuration> element.
 --
 
@@ -664,21 +686,8 @@
 --
 
 	function vc200x.generate(prj)
-		io.eol = "\r\n"
-		_p('<?xml version="1.0" encoding="Windows-1252"?>')
+		vc200x.header('VisualStudioProject')
 		
-		-- Write opening project block
-		_p('<VisualStudioProject')
-		_p(1,'ProjectType="Visual C++"')
-		if _ACTION == "vs2002" then
-			_p(1,'Version="7.00"')
-		elseif _ACTION == "vs2003" then
-			_p(1,'Version="7.10"')
-		elseif _ACTION == "vs2005" then
-			_p(1,'Version="8.00"')
-		elseif _ACTION == "vs2008" then
-			_p(1,'Version="9.00"')
-		end
 		_p(1,'Name="%s"', premake.esc(prj.name))
 		_p(1,'ProjectGUID="{%s}"', prj.uuid)
 		if _ACTION > "vs2003" then

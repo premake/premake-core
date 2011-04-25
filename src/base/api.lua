@@ -1,7 +1,7 @@
 --
 -- api.lua
 -- Implementation of the solution, project, and configuration APIs.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
 
@@ -41,7 +41,19 @@
 			kind  = "list",
 			scope = "solution",
 		},
+
+		debugargs =
+		{
+			kind = "list",
+			scope = "config",
+		},
 		
+		debugdir =
+		{
+			kind = "path",
+			scope = "config",
+		},
+
 		defines =
 		{
 			kind  = "list",

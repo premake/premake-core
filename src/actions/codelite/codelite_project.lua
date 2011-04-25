@@ -35,9 +35,10 @@
 				local fname  = premake.esc(cfg.buildtarget.fullpath)
 				local objdir = premake.esc(cfg.objectsdir)
 				local runcmd = cfg.buildtarget.name
-				local rundir = cfg.buildtarget.directory
+				local rundir = cfg.debugdir or cfg.buildtarget.directory
+				local runargs = table.concat(cfg.debugargs, " ")
 				local pause  = iif(cfg.kind == "WindowedApp", "no", "yes")
-				_p('      <General OutputFile="%s" IntermediateDirectory="%s" Command="./%s" CommandArguments="" WorkingDirectory="%s" PauseExecWhenProcTerminates="%s"/>', fname, objdir, runcmd, rundir, pause)
+				_p('      <General OutputFile="%s" IntermediateDirectory="%s" Command="./%s" CommandArguments="%s" WorkingDirectory="%s" PauseExecWhenProcTerminates="%s"/>', fname, objdir, runcmd, runargs, rundir, pause)
 				
 				-- begin compiler block --
 				local flags = premake.esc(table.join(premake.gcc.getcflags(cfg), premake.gcc.getcxxflags(cfg), cfg.buildoptions))
