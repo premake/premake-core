@@ -50,6 +50,7 @@
 	dofile("base/test_action.lua")
 	dofile("base/test_baking.lua")
 	dofile("base/test_config.lua")
+	dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
 	dofile("base/test_path.lua")
 	dofile("base/test_table.lua")

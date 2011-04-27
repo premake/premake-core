@@ -655,7 +655,6 @@
 		prj.solution       = sln
 		prj.name           = name
 		prj.basedir        = os.getcwd()
-		prj.location       = prj.basedir
 		prj.uuid           = os.uuid()
 		prj.blocks         = { }
 		prj.usage		   = isUsage;
