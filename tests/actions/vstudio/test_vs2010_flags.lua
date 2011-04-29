@@ -285,53 +285,6 @@ end
 T.vs2010_managedFlag = { }
 local vs10_managedFlag = T.vs2010_managedFlag
 
---[[
-function vs10_flags.Managed_bufferContainsTargetFrameworkVersion4()
-	prj.flags ={}
-	prj.flags.Managed =1
-	local buffer = get_buffer()
-	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
-end
---]]
---[[
-function vs10_flags.Managed_setAtProjectLevel()
-		sln = solution "Sol"
-		configurations { "Debug" }
-		language "C++"
-		kind "ConsoleApp"
-
-		prj = project "Prj"
-			flags {"Managed"}
-			files { "a.cpp" }
-
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
-
-end
---]]
---[[
-function vs10_flags.Managed_bufferContainsKeywordManagedCProj()
-	--flags{"Managed"}
-	prj.flags ={}
-	prj.flags.Managed =1
-	local buffer = get_buffer()
-	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<Keyword>ManagedCProj</Keyword>.*</PropertyGroup>')
-end
---]]
---[[
-function vs10_flags.Managed_bufferDoesNotContainKeywordWin32Proj()
-	--flags{"Managed"}
-	prj.flags ={}
-	prj.flags.Managed =1
-	local buffer = get_buffer()
-	test.string_does_not_contain(buffer,'<PropertyGroup Label="Globals">.*<Keyword>Win32Proj</Keyword>.*</PropertyGroup>')
-end
---]]
-
-
-
-
-
 local function vs10_managedFlag_setOnProject()
 		local sln = solution "Sol"
 		configurations { "Debug" }
