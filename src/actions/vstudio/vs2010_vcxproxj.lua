@@ -305,12 +305,14 @@ local vs10_helpers = premake.vstudio.vs10_helpers
 	--
 		local debug_info = ''
 		if cfg.flags.Symbols then
-			if optimisation(cfg) ~= "Disabled" or cfg.flags.NoEditAndContinue then
-				debug_info = "ProgramDatabase"
-			elseif cfg.platform ~= "x64" then
-				debug_info = "EditAndContinue"
+			if cfg.platform == "x64"
+				or cfg.flags.Managed 
+				or optimisation(cfg) ~= "Disabled"
+				or cfg.flags.NoEditAndContinue -- then
+			then
+					debug_info = "ProgramDatabase"
 			else
-				debug_info = "OldStyle"
+				debug_info = "EditAndContinue"
 			end
 		end
 		
