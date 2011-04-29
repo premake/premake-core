@@ -205,11 +205,22 @@ function vs10_flags.mfc_useOfMfc_setToStatic()
     test.string_contains(buffer,'<UseOfMfc>Dynamic</UseOfMfc>')
 end
 
-function vs10_flags.Symbols_DebugInformationFormat_setToEditAndContinue()
+--there is not an option for /Z7 OldStyle
+--/ZI is not compatible with /clr or x64_64
+--minimal Rebuild requires /Zi in x86_64
+
+function vs10_flags.symbols_32BitBuild_DebugInformationFormat_setToEditAndContinue()
 	flags{"Symbols"}
-	
+	platforms{'x32'}
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<DebugInformationFormat>EditAndContinue</DebugInformationFormat>')
+end
+
+function vs10_flags.symbols_64BitBuild_DebugInformationFormat_setToProgramDatabase()
+	flags{"Symbols"}
+	platforms{"x64"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
 end
 
 function vs10_flags.symbolsAndNoEditAndContinue_DebugInformationFormat_setToProgramDatabase()
@@ -225,16 +236,16 @@ function vs10_flags.symbolsAndRelease_DebugInformationFormat_setToProgramDatabas
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
 end
+
+function vs10_flags.symbolsManaged_DebugInformationFormat_setToProgramDatabase()
+	flags{"Symbols","Managed"}
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>')
+end
+
 function vs10_flags.noSymbols_DebugInformationFormat_blockIsEmpty()
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<DebugInformationFormat></DebugInformationFormat>')
-end
-
-function vs10_flags.symbols_64BitBuild_DebugInformationFormat_setToOldStyle()
-	flags{"Symbols"}
-	platforms{"x64"}
-	local buffer = get_buffer()
-	test.string_contains(buffer,'<DebugInformationFormat>OldStyle</DebugInformationFormat>')
 end
 
 function vs10_flags.noManifest_GenerateManifest_setToFalse()
