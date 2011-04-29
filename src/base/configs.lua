@@ -240,7 +240,7 @@
 		
 		-- add `kind` to the filter terms
 		if (cfg.kind) then 
-			terms[kind]=cfg.kind:lower()
+			terms['kind']=cfg.kind:lower()
 		end
 		
 		-- now add in any blocks that match the filter terms
@@ -248,8 +248,8 @@
 			if (premake.iskeywordsmatch(blk.keywords, terms))then
 				mergeobject(cfg, blk)
 				if (cfg.kind and not cfg.terms.kind) then 
-					cfg.terms[kind] = cfg.kind:lower()
-					terms[kind] = cfg.kind:lower()
+					cfg.terms['kind'] = cfg.kind:lower()
+					terms['kind'] = cfg.kind:lower()
 				end
 			end
 		end
