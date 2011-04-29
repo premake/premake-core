@@ -320,9 +320,9 @@ end
 
 function vs10_managedFlag.globals_bufferContainsKeywordManagedCProj()
 	local sln, prj = vs10_managedFlag_setOnProject()
-	--HACK ALERT
-	--For some reason the flags are not set on a proj when testing (yet they are recorded in prj.blocks)
-	--whilst in normal run mode, flags are set on the project ?
+	--HACK ALERT 
+	--For some reason the flags are not set on a proj when testing (yet they are recorded in prj.blocks) 
+	--whilst in normal run mode, flags are set on the project ? 
 	prj.flags = {["Managed"]=1}
 	local buffer = get_managed_buffer(sln,prj)
 	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<Keyword>ManagedCProj</Keyword>.*</PropertyGroup>')
@@ -372,3 +372,8 @@ function vs10_managedFlag.noOptimisationFlag_basicRuntimeChecksNotFoundInBuffer(
 	test.string_does_not_contain(buffer,'<BasicRuntimeChecks>.*</BasicRuntimeChecks>')
 end
 
+function vs10_managedFlag.applictionWithOutWinMain_EntryPointSymbolNotFoundInBuffer()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_does_not_contain(buffer,'<EntryPointSymbol>.*</EntryPointSymbol>')
+end

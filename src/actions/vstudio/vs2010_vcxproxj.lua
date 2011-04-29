@@ -320,7 +320,7 @@
 			if cfg.platform == "x64"
 				or cfg.flags.Managed 
 				or premake.config.isoptimizedbuild(cfg.flags)
-				or cfg.flags.NoEditAndContinue -- then
+				or cfg.flags.NoEditAndContinue
 			then
 					debug_info = "ProgramDatabase"
 			else
@@ -494,7 +494,7 @@
 							
 			common_link_section(cfg)
 			
-			if vc2010.config_type(cfg) == 'Application' and not cfg.flags.WinMain then
+			if vc2010.config_type(cfg) == 'Application' and not cfg.flags.WinMain and not cfg.flags.Managed then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 			end
 
