@@ -309,7 +309,7 @@
 		if cfg.flags.Symbols then
 			if cfg.platform == "x64"
 				or cfg.flags.Managed 
-				or optimisation(cfg) ~= "Disabled"
+				or premake.config.isoptimizedbuild(cfg.flags)
 				or cfg.flags.NoEditAndContinue -- then
 			then
 					debug_info = "ProgramDatabase"
