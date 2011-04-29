@@ -17,7 +17,13 @@ function vs10_flags.setup()
 	includedirs{"foo/bar"}	
 end
 
+function vs10_flags.teardown()
+	sln = nil
+	prj = nil
+end
+
 local function get_buffer()
+	io.capture()
 	premake.buildconfigs()
 	sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 	premake.vs2010_vcxproj(prj)
@@ -257,10 +263,159 @@ end
 
 function vs10_flags.noSymbols_bufferDoesNotContainprogramDataBaseFile()
 	local buffer = get_buffer()
-	test.string_does_not_contain(buffer,'<ClCompile>.*<ProgramDataBaseFileName>.*</ClCompile>')
+	test.string_does_not_contain(buffer,'<Link>.*<ProgramDataBaseFileName>.*</Link>')
 end
 function vs10_flags.symbols_bufferContainsprogramDataBaseFile()
 	flags{"Symbols"}
 	local buffer = get_buffer()
 	test.string_contains(buffer,'<ClCompile>.*<ProgramDataBaseFileName>%$%(OutDir%)MyProject%.pdb</ProgramDataBaseFileName>.*</ClCompile>')
 end
+
+
+function vs10_flags.WithOutManaged_bufferContainsKeywordWin32Proj()
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<Keyword>Win32Proj</Keyword>.*</PropertyGroup>')
+end
+
+function vs10_flags.WithOutManaged_bufferDoesNotContainKeywordManagedCProj()
+	local buffer = get_buffer()
+	test.string_does_not_contain(buffer,'<PropertyGroup Label="Globals">.*<Keyword>ManagedCProj</Keyword>.*</PropertyGroup>')
+end
+
+T.vs2010_managedFlag = { }
+local vs10_managedFlag = T.vs2010_managedFlag
+
+--[[
+function vs10_flags.Managed_bufferContainsTargetFrameworkVersion4()
+	prj.flags ={}
+	prj.flags.Managed =1
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
+end
+--]]
+--[[
+function vs10_flags.Managed_setAtProjectLevel()
+		sln = solution "Sol"
+		configurations { "Debug" }
+		language "C++"
+		kind "ConsoleApp"
+
+		prj = project "Prj"
+			flags {"Managed"}
+			files { "a.cpp" }
+
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
+
+end
+--]]
+--[[
+function vs10_flags.Managed_bufferContainsKeywordManagedCProj()
+	--flags{"Managed"}
+	prj.flags ={}
+	prj.flags.Managed =1
+	local buffer = get_buffer()
+	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<Keyword>ManagedCProj</Keyword>.*</PropertyGroup>')
+end
+--]]
+--[[
+function vs10_flags.Managed_bufferDoesNotContainKeywordWin32Proj()
+	--flags{"Managed"}
+	prj.flags ={}
+	prj.flags.Managed =1
+	local buffer = get_buffer()
+	test.string_does_not_contain(buffer,'<PropertyGroup Label="Globals">.*<Keyword>Win32Proj</Keyword>.*</PropertyGroup>')
+end
+--]]
+
+
+
+
+
+local function vs10_managedFlag_setOnProject()
+		local sln = solution "Sol"
+		configurations { "Debug" }
+		language "C++"
+		kind "ConsoleApp"
+
+		local prj = project "Prj"
+			flags {"Managed"}
+
+		return sln,prj
+end
+
+local function get_managed_buffer(sln,prj)
+	io.capture()
+	premake.buildconfigs()
+	sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+	premake.vs2010_vcxproj(prj)
+	local buffer = io.endcapture()
+	return buffer
+end
+
+function vs10_managedFlag.setup()
+end
+function vs10_managedFlag.managedSetOnProject_CLRSupport_setToTrue()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	local buffer = get_managed_buffer(sln,prj)
+
+	test.string_contains(buffer,
+			'<PropertyGroup Condition=".*" Label="Configuration">'
+				..'.*<CLRSupport>true</CLRSupport>'
+			..'.*</PropertyGroup>')
+end
+
+function vs10_managedFlag.globals_bufferContainsKeywordManagedCProj()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	--HACK ALERT
+	--For some reason the flags are not set on a proj when testing (yet they are recorded in prj.blocks)
+	--whilst in normal run mode, flags are set on the project ?
+	prj.flags = {["Managed"]=1}
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<Keyword>ManagedCProj</Keyword>.*</PropertyGroup>')
+end
+
+
+function vs10_managedFlag.globals_bufferDoesNotContainKeywordWin32Proj()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	prj.flags = {["Managed"]=1}
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_does_not_contain(buffer,'<PropertyGroup Label="Globals">.*<Keyword>Win32Proj</Keyword>.*</PropertyGroup>')
+end
+
+
+function vs10_managedFlag.globals_FrameworkVersion_setToV4()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	prj.flags = {["Managed"]=1}
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
+end
+
+
+function vs10_managedFlag.withFloatFast_FloatingPointModelNotFoundInBuffer()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	flags {"FloatStrict"}
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_does_not_contain(buffer,'<FloatingPointModel>.*</FloatingPointModel>')
+end
+
+function vs10_managedFlag.debugWithStaticRuntime_flagIgnoredAndRuntimeSetToMDd()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	flags {"Symbols","StaticRuntime"}
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
+end
+
+function vs10_managedFlag.notDebugWithStaticRuntime_flagIgnoredAndRuntimeSetToMD()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	flags {"StaticRuntime"}
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_contains(buffer,'<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>')
+end
+
+function vs10_managedFlag.noOptimisationFlag_basicRuntimeChecksNotFoundInBuffer()
+	local sln, prj = vs10_managedFlag_setOnProject()
+	local buffer = get_managed_buffer(sln,prj)
+	test.string_does_not_contain(buffer,'<BasicRuntimeChecks>.*</BasicRuntimeChecks>')
+end
+

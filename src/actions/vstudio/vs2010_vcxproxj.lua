@@ -110,7 +110,14 @@
 		_p(1,'<PropertyGroup Label="Globals">')
 			_p(2,'<ProjectGuid>{%s}</ProjectGuid>',prj.uuid)
 			_p(2,'<RootNamespace>%s</RootNamespace>',prj.name)
+		--if prj.flags is required as it is not set at project level for tests???
+		--vs200x generator seems to swap a config for the prj in test setup
+		if prj.flags and prj.flags.Managed then
+			_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
+			_p(2,'<Keyword>ManagedCProj</Keyword>')
+		else
 			_p(2,'<Keyword>Win32Proj</Keyword>')
+		end
 		_p(1,'</PropertyGroup>')
 	end
 	
@@ -156,7 +163,10 @@
 			end
 			
 			_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>'
-				,iif(optimisation(cfg) == "Disabled","true","false"))				
+				,iif(optimisation(cfg) == "Disabled","true","false"))
+			if cfg.flags.Managed then
+				_p(2,'<CLRSupport>true</CLRSupport>')
+			end		
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -215,14 +225,13 @@
 		_p(1,'</PropertyGroup>')
 	end
 	
-
-	
 	local function runtime(cfg)
 		local runtime
+		local flags = cfg.flags
 		if premake.config.isdebugbuild(cfg) then
-			runtime = iif(cfg.flags.StaticRuntime,"MultiThreadedDebug", "MultiThreadedDebugDLL")
+			runtime = iif(flags.StaticRuntime and not flags.Managed, "MultiThreadedDebug", "MultiThreadedDebugDLL")
 		else
-			runtime = iif(cfg.flags.StaticRuntime, "MultiThreaded", "MultiThreadedDLL")
+			runtime = iif(flags.StaticRuntime and not flags.Managed, "MultiThreaded", "MultiThreadedDLL")
 		end
 		return runtime
 	end
@@ -235,7 +244,7 @@
 			_p(3,'<PrecompiledHeader></PrecompiledHeader>')
 		end
 	end
-	
+
 	local function preprocessor(indent,cfg)
 		if #cfg.defines > 0 then
 			_p(indent,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>'
@@ -265,6 +274,7 @@
 			_p(2,'<ExceptionHandling>false</ExceptionHandling>')
 		elseif cfg.flags.SEH then
 			_p(2,'<ExceptionHandling>Async</ExceptionHandling>')
+		--SEH is not required for Managed and is implied
 		end
 	end
 	
@@ -293,7 +303,7 @@
 	local function floating_point(cfg)
 	     if cfg.flags.FloatFast then
 			_p(3,'<FloatingPointModel>Fast</FloatingPointModel>')
-		elseif cfg.flags.FloatStrict then
+		elseif cfg.flags.FloatStrict and not cfg.flags.Managed then
 			_p(3,'<FloatingPointModel>Strict</FloatingPointModel>')
 		end
 	end
@@ -350,7 +360,10 @@
 			minimal_build(cfg)
 		
 		if  not premake.config.isoptimizedbuild(cfg.flags) then
-			_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
+			if not cfg.flags.Managed then
+				_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
+			end
+			
 			if cfg.flags.ExtraWarnings then
 				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
 			end
