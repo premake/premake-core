@@ -26,6 +26,7 @@ local function get_buffer()
 	io.capture()
 	premake.buildconfigs()
 	sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+	prj = premake.solution.getproject(sln, 1)
 	premake.vs2010_vcxproj(prj)
 	local buffer = io.endcapture()
 	return buffer
@@ -297,10 +298,12 @@ local function vs10_managedFlag_setOnProject()
 		return sln,prj
 end
 
+
 local function get_managed_buffer(sln,prj)
 	io.capture()
 	premake.buildconfigs()
 	sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+	prj = premake.solution.getproject(sln, 1)
 	premake.vs2010_vcxproj(prj)
 	local buffer = io.endcapture()
 	return buffer
@@ -308,6 +311,7 @@ end
 
 function vs10_managedFlag.setup()
 end
+
 function vs10_managedFlag.managedSetOnProject_CLRSupport_setToTrue()
 	local sln, prj = vs10_managedFlag_setOnProject()
 	local buffer = get_managed_buffer(sln,prj)
@@ -320,10 +324,6 @@ end
 
 function vs10_managedFlag.globals_bufferContainsKeywordManagedCProj()
 	local sln, prj = vs10_managedFlag_setOnProject()
-	--HACK ALERT 
-	--For some reason the flags are not set on a proj when testing (yet they are recorded in prj.blocks) 
-	--whilst in normal run mode, flags are set on the project ? 
-	prj.flags = {["Managed"]=1}
 	local buffer = get_managed_buffer(sln,prj)
 	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<Keyword>ManagedCProj</Keyword>.*</PropertyGroup>')
 end
@@ -331,7 +331,7 @@ end
 
 function vs10_managedFlag.globals_bufferDoesNotContainKeywordWin32Proj()
 	local sln, prj = vs10_managedFlag_setOnProject()
-	prj.flags = {["Managed"]=1}
+	--prj.flags = {["Managed"]=1}
 	local buffer = get_managed_buffer(sln,prj)
 	test.string_does_not_contain(buffer,'<PropertyGroup Label="Globals">.*<Keyword>Win32Proj</Keyword>.*</PropertyGroup>')
 end
@@ -339,7 +339,7 @@ end
 
 function vs10_managedFlag.globals_FrameworkVersion_setToV4()
 	local sln, prj = vs10_managedFlag_setOnProject()
-	prj.flags = {["Managed"]=1}
+	--prj.flags = {["Managed"]=1}
 	local buffer = get_managed_buffer(sln,prj)
 	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
 end

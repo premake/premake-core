@@ -55,7 +55,7 @@
 			configurations{'Debug'}
 	end
 	
-	function T.link_suite.tear_down()
+	function T.link_suite.teardown()
 		_ACTION = nil
 		firstProject = nil
 		linksToFirstProject = nil
