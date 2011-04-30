@@ -35,11 +35,6 @@
 	end
 
 		
-	--[[
-check OutDir in debug it is showing "."
-shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noInportLib not used
-	--]]
-	--check why  <MinimalRebuild>true</MinimalRebuild> is missing in a debug static lib and shared lib build
 	function vs10_project_kinds.staticLib_valueInMinimalRebuildIsTrue()
 		kind "StaticLib"
 		flags  {"Symbols"}
@@ -52,7 +47,6 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<ClCompile>.*<MinimalRebuild>true</MinimalRebuild>.*</ClCompile>')
 	end
-	--shared lib missing <DebugInformationFormat>EditAndContinue</DebugInformationFormat> in ClCompile section
 	function vs10_project_kinds.sharedLib_valueDebugInformationFormatIsEditAndContinue()
 		kind "SharedLib"
 		flags  {"Symbols"}
@@ -76,7 +70,6 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<Link>.*<ImportLibrary>MyProject.lib</ImportLibrary>.*</Link>')
 	end
-	--should this go in vs2010_flags???
 
 	function vs10_project_kinds.sharedLib_withNoImportLibraryFlag_linkSectionContainsImportLibrary()
 		kind "SharedLib"
@@ -130,7 +123,6 @@ shared lib missing  <ImportLibrary>???</ImportLibrary> in link section when noIn
 		test.string_contains(buffer,'<LinkIncremental.*false</LinkIncremental>')
 	end
 	
-	--check all configs %(AdditionalIncludeDirectories) missing before AdditionalIncludeDirectories end tag in ClCompile
 	function vs10_project_kinds.kindDoesNotMatter_noAdditionalDirectoriesSpecified_bufferDoesNotContainAdditionalIncludeDirectories()
 		kind "SharedLib"
 		local buffer = get_buffer()

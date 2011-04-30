@@ -331,7 +331,6 @@ end
 
 function vs10_managedFlag.globals_bufferDoesNotContainKeywordWin32Proj()
 	local sln, prj = vs10_managedFlag_setOnProject()
-	--prj.flags = {["Managed"]=1}
 	local buffer = get_managed_buffer(sln,prj)
 	test.string_does_not_contain(buffer,'<PropertyGroup Label="Globals">.*<Keyword>Win32Proj</Keyword>.*</PropertyGroup>')
 end
@@ -339,7 +338,6 @@ end
 
 function vs10_managedFlag.globals_FrameworkVersion_setToV4()
 	local sln, prj = vs10_managedFlag_setOnProject()
-	--prj.flags = {["Managed"]=1}
 	local buffer = get_managed_buffer(sln,prj)
 	test.string_contains(buffer,'<PropertyGroup Label="Globals">.*<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>.*</PropertyGroup>')
 end
