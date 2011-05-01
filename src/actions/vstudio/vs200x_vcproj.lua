@@ -29,7 +29,6 @@
 
 --
 -- Return the optimization code.
--- (this should probably go in vs200x_vcproj.lua)
 --
 
 	function vc200x.optimization(cfg)
@@ -395,8 +394,15 @@
 				_p(4,'AdditionalLibraryDirectories="%s"', premake.esc(path.translate(table.concat(cfg.libdirs , ";"))))
 			end
 
-			if #cfg.linkoptions > 0 then
-				_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.linkoptions), " "))
+			local addlOptions = {}
+			if cfg.platform == "x32" then
+				table.insert(addlOptions, "/MACHINE:X86")
+			elseif cfg.platform == "x64" then
+				table.insert(addlOptions, "/MACHINE:X64")
+			end
+			addlOptions = table.join(addlOptions, cfg.linkoptions)
+			if #addlOptions > 0 then
+				_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(addlOptions), " "))
 			end
 		end
 		

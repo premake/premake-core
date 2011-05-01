@@ -668,3 +668,37 @@
 		local result = io.endcapture()		
 		test.string_contains(result,'LinkIncremental="1"')
 	end
+
+	function suite.staticLib_platformX64_MachineX64SetInAdditionalOptions()
+		local sln1 = solution "sol"
+		configurations { "foo" }
+		platforms {'x64'}
+
+		local prj1 = project "prj"
+		language 'C++'
+		kind 'StaticLib'
+
+		premake.buildconfigs()
+		sln1.vstudio_configs = premake.vstudio.buildconfigs(sln1)
+		prj1= premake.getconfig(sln1.projects[1])
+		vc200x.generate(prj1)
+		local result = io.endcapture()		
+		test.string_contains(result,'AdditionalOptions="/MACHINE:X64"')
+	end
+
+	function suite.staticLib_platformX32_MachineX86SetInAdditionalOptions()
+		local sln1 = solution "sol"
+		configurations { "foo" }
+		platforms {'x32'}
+
+		local prj1 = project "prj"
+		language 'C++'
+		kind 'StaticLib'
+
+		premake.buildconfigs()
+		sln1.vstudio_configs = premake.vstudio.buildconfigs(sln1)
+		prj1= premake.getconfig(sln1.projects[1])
+		vc200x.generate(prj1)
+		local result = io.endcapture()		
+		test.string_contains(result,'AdditionalOptions="/MACHINE:X86"')
+	end

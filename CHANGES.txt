@@ -10,7 +10,7 @@
 * Ignore NoRTTI flag for Managed C++ projects (Nick Darnell)
 * Added host.is64bit
 * Added os.getversion
-
+* Patch 3140456: Explicitly specify architecture for vs StaticLib (Brian Mazza)
 
 -------
  4.3.1 (in progress)
