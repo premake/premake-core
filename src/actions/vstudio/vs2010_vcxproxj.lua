@@ -435,24 +435,25 @@
 					table.concat(premake.esc(cfg.linkoptions), " "))
 		end
 	end
+
+	local function link_target_machine(index,cfg)
+		local platforms = {x32 = 'MachineX86',Native = 'MachineX86', x64 = 'MachineX64'}
+		if platforms[cfg.platform] then
+			_p(index,'<TargetMachine>%s</TargetMachine>', platforms[cfg.platform])
+		end
+	end
 		
 	local function item_def_lib(cfg)
 		if cfg.kind == 'StaticLib' then
 			_p(1,'<Lib>')
 				_p(2,'<OutputFile>$(OutDir)%s</OutputFile>',cfg.buildtarget.name)
 				additional_options(2,cfg)
+				link_target_machine(2,cfg)
 			_p(1,'</Lib>')
 		end
 	end
 	
-	local function link_target_machine(cfg)
-		local target
-		if cfg.platform == nil or cfg.platform == "x32" then target ="MachineX86"
-		elseif cfg.platform == "x64" then target ="MachineX64"
-		end
 
-		_p(3,'<TargetMachine>%s</TargetMachine>', target)
-	end
 	
 	local function import_lib(cfg)
 		--Prevent the generation of an import library for a Windows DLL.
@@ -499,9 +500,7 @@
 			end
 
 			import_lib(cfg)
-			
-			_p(3,'<TargetMachine>%s</TargetMachine>', iif(cfg.platform == "x64", "MachineX64", "MachineX86"))
-			
+			link_target_machine(3,cfg)
 			additional_options(3,cfg)
 		else
 			common_link_section(cfg)

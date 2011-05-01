@@ -180,4 +180,39 @@
 		test.string_contains(get_buffer(),
 			'<AdditionalOptions>.* %%%(AdditionalOptions%)</AdditionalOptions>.*</Link>')
 	end			
-				
+		
+		
+	function vs10_project_kinds.staticLibX64_TargetMachineSetInLib()
+		kind "StaticLib"
+		platforms{'x64'}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Lib>.*<TargetMachine>.*</TargetMachine>.*</Lib>')
+	end
+
+	function vs10_project_kinds.staticLibX64_TargetMachineInLibSetToMachineX64()
+		kind "StaticLib"
+		platforms{'x64'}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Lib>.*<TargetMachine>MachineX64</TargetMachine>.*</Lib>')
+	end
+
+	function vs10_project_kinds.staticLibX32_TargetMachineSetInLib()
+		kind "StaticLib"
+		platforms{'x32'}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Lib>.*<TargetMachine>.*</TargetMachine>.*</Lib>')
+	end
+
+	function vs10_project_kinds.staticLibX32_TargetMachineInLibSetToMachineX86()
+		kind "StaticLib"
+		platforms{'x32'}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Lib>.*<TargetMachine>MachineX86</TargetMachine>.*</Lib>')
+	end
+
+	function vs10_project_kinds.staticLibNative_TargetMachineInLibSetToMachineX86()
+		kind "StaticLib"
+		platforms{'Native'}
+		local buffer = get_buffer()
+		test.string_contains(buffer,'<Lib>.*<TargetMachine>MachineX86</TargetMachine>.*</Lib>')
+	end
