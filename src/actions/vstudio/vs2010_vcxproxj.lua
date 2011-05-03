@@ -1,7 +1,7 @@
 --
 -- vs200x_vcproj.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009-2011 Liam Devine and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc2010 = { }
