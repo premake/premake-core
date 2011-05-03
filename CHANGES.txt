@@ -10,12 +10,7 @@
 * Ignore NoRTTI flag for Managed C++ projects (Nick Darnell)
 * Added host.is64bit
 * Added os.getversion
-* Patch 3140456: Explicitly specify architecture for vs StaticLib (Brian Mazza)
-
--------
- 4.3.1 (in progress)
--------
-
+* Patch 3140456: Explicitly specify architecture for VS StaticLib (Brian Mazza)
 * Bug 3119793: Fixed ClCompile blocks with vs10 and PCH (Dan Dunham)
 * Bug 2920784: Symbol visibility in Xcode3 libraries (burnson2)
 * Bug 3133743: Sets ONLY_ACTIVE_ARCH = YES in Xcode debug builds (James Wynn)
@@ -25,7 +20,7 @@
 * Bug 3163703: pdb file being set in the wrong section. (hodsondd)
 * Bug 3157645: Full path for xcode frameworks
 * Bug 3232160: Environment variables are cut off
-* Patch 3043933 gmake incorrectly links using -l when a solution contains a .so and .a of the same name and the static lib is wanted (Jonathan Derque)
+* Patch 3043933 Allow gmake to use static lib when shared lib of same name exists (Jonathan Derque)
 * Bug 3294459: vs10 x86_64 using incorrect debug format for minimal rebuild (learner)
 
 -------
