@@ -11,8 +11,9 @@
 * Bug 3163703: pdb file being set in the wrong section. (hodsondd)
 * Bug 3157645: Full path for xcode frameworks
 * Bug 3232160: Environment variables are cut off
-* Patch 3043933 gmake incorrectly links using -l when a solution contains a .so and .a of the same name and the static lib is wanted (Jonathan Derque)
+* Patch 3043933 Allow gmake to use static lib when shared lib of same name exists (Jonathan Derque)
 * Bug 3294459: vs10 x86_64 using incorrect debug format for minimal rebuild (learner)
+* Bug 3297634: Special characters in directory name Xcode3 (jdale)
 
 -------
   4.3
@@ -134,7 +135,6 @@
 - Bug 1900333: Parentheses in build path
 - Bug 2790865: SharedLib on OSX fixes (Ash Berlin)
 - Bug 2790882: Trailing slash in path.getabsolute (Ash Berlin)
-
 
 RC2 -> RC3
 
