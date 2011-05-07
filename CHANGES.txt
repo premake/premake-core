@@ -22,6 +22,7 @@
 * Bug 3232160: Environment variables are cut off
 * Patch 3043933 Allow gmake to use static lib when shared lib of same name exists (Jonathan Derque)
 * Bug 3294459: vs10 x86_64 using incorrect debug format for minimal rebuild (learner)
+* Bug 3297634: Special characters in directory name Xcode3 (jdale)
 
 -------
   4.3

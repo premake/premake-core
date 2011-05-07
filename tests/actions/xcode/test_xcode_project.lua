@@ -358,7 +358,7 @@
 				[premake] /* premake */,
 			);
 			name = "include";
-			path = include;
+			path = "include";
 			sourceTree = "<group>";
 		};
 		[premake] /* premake */ = {
@@ -367,13 +367,20 @@
 				[source.h] /* source.h */,
 			);
 			name = "premake";
-			path = premake;
+			path = "premake";
 			sourceTree = "<group>";
 		};
 		]]
 	end
 
 
+	function suite.PBXGroup_pathHasPlusPlus_PathIsQuoted()
+		files { "RequiresQuoting++/h.h" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.string_contains( io.endcapture(),'path = "RequiresQuoting%+%+";' )
+	end
+	
 	function suite.PBXGroup_SortsFiles()
 		files { "test.h", "source.h", "source.cpp" }
 		prepare()

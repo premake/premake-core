@@ -402,7 +402,7 @@
 						if node.parent.path then
 							p = path.getrelative(node.parent.path, node.path)
 						end
-						_p(3,'path = %s;', p)
+						_p(3,'path = "%s";', p)
 					end
 				end
 				
