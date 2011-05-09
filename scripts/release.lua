@@ -11,7 +11,6 @@
 
 function dorelease()
 	local z
-	local hgroot = "https://bitbucket.org/premake/premake-stable"
 
 -- 
 -- Helper function: runs a command (formatted, with optional arguments) and
@@ -47,7 +46,7 @@ function dorelease()
 -- Look for required utilities
 --
 
-	local required = { "hg", "zip", "tar", "make", "gcc" }
+	local required = { "hg", "make", "gcc" }
 	for _, value in ipairs(required) do
 		z = exec("%s --version", value)
 		if z ~= 0 then
@@ -86,7 +85,7 @@ function dorelease()
 	os.chdir("release")
 	
 	os.rmdir(pkgname)
-	z = exec( "hg clone -r %s %s %s", version, hgroot, pkgname)
+	z = exec( "hg clone -r %s .. %s", version, pkgname)
 	if z ~= 0 then
 		error("** Failed to download tagged sources", 0)
 	end
