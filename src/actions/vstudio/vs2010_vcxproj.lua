@@ -1,6 +1,6 @@
 --
 -- vs200x_vcproj.lua
--- Generate a Visual Studio 2002-2008 C/C++ project.
+-- Generate a Visual Studio 2010 C/C++ project.
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
@@ -64,37 +64,6 @@
 	end
 	
 
-	
-	--also translates file paths from '/' to '\\'
-	function vc2010.sort_input_files(files,sorted_container)
-		local types = 
-		{	
-			h	= "ClInclude",
-			hpp	= "ClInclude",
-			hxx	= "ClInclude",
-			c	= "ClCompile",
-			cpp	= "ClCompile",
-			cxx	= "ClCompile",
-			cc	= "ClCompile",
-			rc  = "ResourceCompile"
-		}
-
-		for _, current_file in ipairs(files) do
-			local translated_path = path.translate(current_file, '\\')
-			local ext = vc2010.get_file_extension(translated_path)
-			if ext then
-				local type = types[ext]
-				if type then
-					table.insert(sorted_container[type],translated_path)
-				else
-					table.insert(sorted_container.None,translated_path)
-				end
-			end
-		end
-	end	
-		
-		
-	
 	local function vs2010_config(prj)		
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
@@ -527,15 +496,12 @@
 	
 	
 
-	--
-	--   <ItemGroup>
-  --     <ProjectReference Include="zlibvc.vcxproj">
-  --       <Project>{8fd826f8-3739-44e6-8cc8-997122e53b8d}</Project>
-  --     </ProjectReference>
-  --   </ItemGroup>
-	--
+--
+-- Generate the source code file list.
+--
 	
-	local function write_file_type_block(files,group_type)
+	
+	local function write_file_type_block(files, group_type)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
@@ -544,11 +510,10 @@
 			_p(1,'</ItemGroup>')
 		end
 	end
-	
-	local function write_file_compile_block(files,prj,configs)
-	
+
+
+	local function write_file_compile_block(files, prj,configs)
 		if #files > 0  then	
-		
 			local config_mappings = {}
 			for _, cfginfo in ipairs(configs) do
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
@@ -556,7 +521,6 @@
 					config_mappings[cfginfo] = path.translate(cfg.pchsource, "\\")
 				end
 			end
-
 			
 			_p(1,'<ItemGroup>')
 			for _, current_file in ipairs(files) do
@@ -575,25 +539,59 @@
 		end
 	end
 	
-	
-	local function vcxproj_files(prj)
+
+	function vc2010.sort_input_files(files)
 		local sorted =
 		{
-			ClCompile	={},
-			ClInclude	={},
-			None		={},
-			ResourceCompile ={}
+			ClCompile = {},
+			ClInclude = {},
+			None = {},
+			ResourceCompile = {}
 		}
-		
-		cfg = premake.getconfig(prj)
-		vc2010.sort_input_files(cfg.files,sorted)
-		write_file_type_block(sorted.ClInclude,"ClInclude")
-		write_file_compile_block(sorted.ClCompile,prj,prj.solution.vstudio_configs)
-		write_file_type_block(sorted.None,'None')
-		write_file_type_block(sorted.ResourceCompile,'ResourceCompile')
 
+		local types = 
+		{	
+			h	= "ClInclude",
+			hpp	= "ClInclude",
+			hxx	= "ClInclude",
+			c	= "ClCompile",
+			cpp	= "ClCompile",
+			cxx	= "ClCompile",
+			cc	= "ClCompile",
+			rc  = "ResourceCompile"
+		}
+
+		for _, current_file in ipairs(files) do
+			local translated_path = path.translate(current_file, '\\')
+			local ext = vc2010.get_file_extension(translated_path)
+			if ext then
+				local type = types[ext]
+				if type then
+					table.insert(sorted[type], translated_path)
+				else
+					table.insert(sorted.None, translated_path)
+				end
+			end
+		end
+
+		return sorted
 	end
-	
+
+
+	function vc2010.files(prj)
+		cfg = premake.getconfig(prj)
+		local sorted = vc2010.sort_input_files(cfg.files)
+		write_file_type_block(sorted.ClInclude, "ClInclude")
+		write_file_compile_block(sorted.ClCompile,prj, prj.solution.vstudio_configs)
+		write_file_type_block(sorted.None, 'None')
+		write_file_type_block(sorted.ResourceCompile, 'ResourceCompile')
+	end
+
+
+--
+-- Write filters
+--
+
 	local function write_filter_includes(sorted_table)
 		local directories = vc2010.table_of_file_filters(sorted_table)
 		--I am going to take a punt here that the ItemGroup is missing if no files!!!!
@@ -631,16 +629,8 @@
 	local xml_version_and_encoding = '<?xml version="1.0" encoding="utf-8"?>'
 	
 	local function vcxproj_filter_files(prj)
-		local sorted =
-		{
-			ClCompile	={},
-			ClInclude	={},
-			None		={},
-			ResourceCompile ={}
-		}
-		
 		cfg = premake.getconfig(prj)
-		vc2010.sort_input_files(cfg.files,sorted)
+		local sorted = vc2010.sort_input_files(cfg.files)
 
 		io.eol = "\r\n"
 		_p(xml_version_and_encoding)
@@ -680,7 +670,7 @@
 			
 			item_definitions(prj)
 			
-			vcxproj_files(prj)
+			vc2010.files(prj)
 
 			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
 			_p(1,'<ImportGroup Label="ExtensionTargets">')

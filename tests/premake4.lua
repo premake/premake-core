@@ -96,6 +96,7 @@
 	
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/debugdir.lua")
+	dofile("actions/vstudio/vc2010/files.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")

@@ -227,16 +227,9 @@
 	end
 	
 	local function SortAndReturnSortedInputFiles(input)
-		local sorted = 
-		{
-			ClInclude	={},
-			ClCompile	={},
-			None		={},
-			ResourceCompile ={}
-		}
-		vc2010.sort_input_files(input,sorted)
-		return sorted
+		return vc2010.sort_input_files(input)
 	end
+
 	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
 		local file = {"bar.h"}
 		local sorted = SortAndReturnSortedInputFiles(file)

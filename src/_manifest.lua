@@ -60,7 +60,7 @@
 		"actions/vstudio/vs2005_solution.lua",
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
-		"actions/vstudio/vs2010_vcxproxj.lua",
+		"actions/vstudio/vs2010_vcxproj.lua",
 		
 		-- Xcode action
 		"actions/xcode/_xcode.lua",
