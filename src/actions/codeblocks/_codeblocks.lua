@@ -1,9 +1,10 @@
 --
 -- _codeblocks.lua
 -- Define the Code::Blocks action(s).
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
+	premake.codeblocks = { }
 
 	newaction {
 		trigger         = "codeblocks",
@@ -19,11 +20,11 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, "%%.workspace", premake.codeblocks_workspace)
+			premake.generate(sln, "%%.workspace", premake.codeblocks.workspace)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "%%.cbp", premake.codeblocks_cbp)
+			premake.generate(prj, "%%.cbp", premake.codeblocks.cbp)
 		end,
 		
 		oncleansolution = function(sln)

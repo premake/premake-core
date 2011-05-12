@@ -1,10 +1,45 @@
 --
 -- codeblocks_cbp.lua
 -- Generate a Code::Blocks C/C++ project.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009, 2011 Jason Perkins and the Premake project
 --
 
-	function premake.codeblocks_cbp(prj)
+	local codeblocks = premake.codeblocks
+
+
+--
+-- Write out a list of the source code files in the project.
+--
+
+	function codeblocks.files(prj)
+		local pchheader
+		if (prj.pchheader) then
+			pchheader = path.getrelative(prj.location, prj.pchheader)
+		end
+		
+		for _,fname in ipairs(prj.files) do
+			_p(2,'<Unit filename="%s">', premake.esc(fname))
+			if path.isresourcefile(fname) then
+				_p(3,'<Option compilerVar="WINDRES" />')
+			elseif path.iscfile(fname) and prj.language == "C++" then
+				_p(3,'<Option compilerVar="CC" />')
+			end
+			if not prj.flags.NoPCH and fname == pchheader then
+				_p(3,'<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
+				_p(3,'<Option compile="1" />')
+				_p(3,'<Option weight="0" />')
+				_p(3,'<Add option="-x c++-header" />')
+			end
+			_p(2,'</Unit>')
+		end
+	end
+
+
+--
+-- The main function: write out the project file.
+--
+	
+	function premake.codeblocks.cbp(prj)
 		-- alias the C/C++ compiler interface
 		local cc = premake.gettool(prj)
 		
@@ -112,28 +147,7 @@
 		end
 		_p(2,'</Build>')
 		
-		-- begin files block --
-		local pchheader
-		if (prj.pchheader) then
-			pchheader = path.getrelative(prj.location, prj.pchheader)
-		end
-		
-		for _,fname in ipairs(prj.files) do
-			_p(2,'<Unit filename="%s">', premake.esc(fname))
-			if path.isresourcefile(fname) then
-				_p(3,'<Option compilerVar="WINDRES" />')
-			elseif path.iscfile(fname) and prj.language == "C++" then
-				_p(3,'<Option compilerVar="CC" />')
-			end
-			if not prj.flags.NoPCH and fname == pchheader then
-				_p(3,'<Option compilerVar="%s" />', iif(prj.language == "C", "CC", "CPP"))
-				_p(3,'<Option compile="1" />')
-				_p(3,'<Option weight="0" />')
-				_p(3,'<Add option="-x c++-header" />')
-			end
-			_p(2,'</Unit>')
-		end
-		-- end files block --
+		codeblocks.files(prj)
 		
 		_p(2,'<Extensions />')
 		_p(1,'</Project>')

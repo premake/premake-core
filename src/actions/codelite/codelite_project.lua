@@ -11,6 +11,7 @@
 --
 -- Write out a list of the source code files in the project.
 --
+
 	function codelite.files(prj)
 		local tr = premake.project.buildsourcetree(prj)
 		tree.traverse(tr, {

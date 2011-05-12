@@ -4,7 +4,7 @@
 -- Copyright (c) 2009 Jason Perkins and the Premake project
 --
 
-	function premake.codeblocks_workspace(sln)
+	function premake.codeblocks.workspace(sln)
 		_p('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>')
 		_p('<CodeBlocks_workspace_file>')
 		_p(1,'<Workspace title="%s">', sln.name)

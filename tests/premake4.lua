@@ -113,6 +113,9 @@
 	
 	-- CodeLite tests
 	dofile("actions/codelite/codelite_files.lua")
+	
+	-- CodeBlocks tests
+	dofile("actions/codeblocks/codeblocks_files.lua")
 
 --
 -- Register a test action
