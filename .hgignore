@@ -22,3 +22,7 @@ Makefile
 *.vcproj*
 *.vcxproj*
 *.opensdf
+*.workspace
+*.project
+*.tags
+
