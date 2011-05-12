@@ -1,10 +1,10 @@
 --
 -- codelite_workspace.lua
 -- Generate a CodeLite workspace file.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009, 2011 Jason Perkins and the Premake project
 --
 
-	function premake.codelite_workspace(sln)
+	function premake.codelite.workspace(sln)
 		_p('<?xml version="1.0" encoding="utf-8"?>')
 		_p('<CodeLite_Workspace Name="%s" Database="./%s.tags">', premake.esc(sln.name), premake.esc(sln.name))
 		

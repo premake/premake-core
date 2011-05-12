@@ -53,13 +53,16 @@
 --
 
 	function io.printf(msg, ...)
-		if (not io.eol) then
+		if not io.eol then
 			io.eol = "\n"
 		end
-		
-		local s
+
+		if not io.indent then
+			io.indent = "\t"
+		end
+
 		if type(msg) == "number" then
-			s = string.rep("\t", msg) .. string.format(unpack(arg))
+			s = string.rep(io.indent, msg) .. string.format(unpack(arg))
 		else
 			s = string.format(msg, unpack(arg))
 		end

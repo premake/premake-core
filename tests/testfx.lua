@@ -190,11 +190,12 @@
 		_ARGS = { }
 		_OPTIONS = { }
 		premake.solution.list = { }
+		io.indent = nil
 
 		-- reset captured I/O values
 		test.value_openedfilename = nil
 		test.value_openedfilemode = nil
-		test.value_closedfile     = false
+		test.value_closedfile = false
 
 		if suite.setup then
 			return pcall(suite.setup)

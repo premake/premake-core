@@ -4,6 +4,8 @@
 -- Copyright (c) 2008-2009 Jason Perkins and the Premake project
 --
 
+	premake.codelite = { }
+
 	newaction {
 		trigger         = "codelite",
 		shortname       = "CodeLite",
@@ -18,11 +20,11 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, "%%.workspace", premake.codelite_workspace)
+			premake.generate(sln, "%%.workspace", premake.codelite.workspace)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "%%.project", premake.codelite_project)
+			premake.generate(prj, "%%.project", premake.codelite.project)
 		end,
 		
 		oncleansolution = function(sln)

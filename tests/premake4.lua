@@ -103,12 +103,16 @@
 	dofile("actions/make/test_make_pch.lua")
 	dofile("actions/make/test_make_linking.lua")
 	
-	-- Xcode tests
+	-- Xcode3 tests
 	dofile("actions/xcode/test_xcode_common.lua")
 	dofile("actions/xcode/test_xcode_project.lua")
 	dofile("actions/xcode/test_xcode_dependencies.lua")
 
+	-- Xcode4 tests
 	dofile("actions/xcode/test_xcode4_workspace.lua")
+	
+	-- CodeLite tests
+	dofile("actions/codelite/codelite_files.lua")
 
 --
 -- Register a test action
