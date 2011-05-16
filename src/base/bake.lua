@@ -1,59 +1,16 @@
 --
--- configs.lua
+-- base/bake.lua
 --
--- Functions for working with configuration objects (which can include
--- projects and solutions).
+-- Takes all the configuration information provided by the project scripts
+-- and stored in the solution->project->block hierarchy and flattens it all 
+-- down into one object per configuration. These objects are cached with the 
+-- project, and can be retrieved by calling the getconfig() or eachconfig().
 --
--- This script also contains the configuration "baking" logic (though I 
--- would like to eventually move this out to a different file):
--- Once the project scripts have been run, flatten all of the configuration
--- data down into simpler objects, keeping only the settings that apply to 
--- the current runtime environment.
---
--- Copyright (c) 2008-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2011 Jason Perkins and the Premake project
 --
 
-	premake.config = { }
-	
-	function premake.config.isoptimizedbuild(flags)
-		return flags.Optimize or flags.OptimizeSize or flags.OptimizeSpeed
-	end
-	
-	function premake.config.should_link_incrementally(cfg)
-		if cfg.kind == "StaticLib" 
-				or premake.config.isoptimizedbuild(cfg.flags)
-				or cfg.flags.NoIncrementalLink then
-			return false
-		end
-		return true
-	end
--- 
--- Determine if a configuration represents a "debug" or "release" build.
--- This controls the runtime library selected for Visual Studio builds
--- (and might also be useful elsewhere).
---
--- @param cfg
---    The configuration object to test.
--- @returns
---    True if the configuration represents a debug build; false otherwise.
---
-
-	function premake.config.isdebugbuild(cfg)
-		-- If any of the optimize flags are set, it's a release a build
-		if cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed then
-			return false
-		end
-		-- If symbols are not defined, it's a release build
-		if not cfg.flags.Symbols then
-			return false
-		end
-		return true
-	end
-
-	
--------------------------------------------------------------------------
--- Configuration Baking Logic
--------------------------------------------------------------------------
+	premake.bake = { }
+	local bake = premake.bake
 
 	-- do not copy these fields into the configurations
 	local nocopy = 
@@ -668,7 +625,8 @@
   			end
   		end
   	end
-		
+
+
 --
 -- Takes the configuration information stored in solution->project->block
 -- hierarchy and flattens it all down into one object per configuration.
@@ -702,9 +660,9 @@
 			end
 		end	
 		
-		--This loop finds the projects that a configuration is connected to
-		--via its "uses" field. It will then copy any usage project information from that
-		--usage project to the configuration in question.
+		-- This loop finds the projects that a configuration is connected to
+		-- via its "uses" field. It will then copy any usage project information from that
+		-- usage project to the configuration in question.
 		for sln in premake.solution.each() do
 			for prjIx, prj in ipairs(sln.projects) do
 				if(not prj.usage) then

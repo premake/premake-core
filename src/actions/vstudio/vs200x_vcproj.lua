@@ -344,7 +344,7 @@
 			_p(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 
 			_p(4,'LinkIncremental="%s"', 
-				iif(premake.config.should_link_incrementally(cfg) , 2, 1))
+				iif(premake.config.isincrementallink(cfg) , 2, 1))
 			
 			_p(4,'AdditionalLibraryDirectories="%s"', table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"))
 			

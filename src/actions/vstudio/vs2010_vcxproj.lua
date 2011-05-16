@@ -155,7 +155,7 @@
 		if cfg.kind ~= "StaticLib" then
 			_p(2,'<LinkIncremental '..if_config_and_platform() ..'>%s</LinkIncremental>'
 					,premake.esc(cfginfo.name)
-					,tostring(premake.config.should_link_incrementally(cfg)))
+					,tostring(premake.config.isincrementallink(cfg)))
 		end
 	end
 		
