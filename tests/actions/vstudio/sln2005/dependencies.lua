@@ -27,7 +27,7 @@
 	local function prepare(language)
 		prj1.language = language
 		prj2.language = language
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		prj1 = premake.solution.getproject(sln, 1)
 		prj2 = premake.solution.getproject(sln, 2)
 		sln2005.projectdependencies(prj2)

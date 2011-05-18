@@ -23,7 +23,7 @@
 	end
 
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		xcode.preparesolution(sln)
 		local prj = premake.solution.getproject(sln, 1)
 		tr = xcode.buildprjtree(prj)

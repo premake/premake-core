@@ -21,7 +21,7 @@
 	
 	local function prepare()
 		io.indent = "  "
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 		codelite.files(prj)
 	end

@@ -20,7 +20,7 @@
 	end
 	
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln2005.header()
 	end
 

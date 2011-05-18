@@ -25,7 +25,7 @@
 		kind "ConsoleApp"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 		
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 	end
 	
 

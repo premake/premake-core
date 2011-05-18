@@ -19,7 +19,7 @@
 	end
 	
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		cfg = premake.getconfig(prj, "Debug")
 	end
 	

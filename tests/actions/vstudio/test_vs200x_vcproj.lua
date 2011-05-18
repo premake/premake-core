@@ -32,7 +32,7 @@
 	end
 
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 
 		local cfg = premake.getconfig(sln.projects[2])
@@ -678,7 +678,7 @@
 		language 'C++'
 		kind 'StaticLib'
 
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln1.vstudio_configs = premake.vstudio.buildconfigs(sln1)
 		prj1= premake.getconfig(sln1.projects[1])
 		vc200x.generate(prj1)
@@ -695,7 +695,7 @@
 		language 'C++'
 		kind 'StaticLib'
 
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln1.vstudio_configs = premake.vstudio.buildconfigs(sln1)
 		prj1= premake.getconfig(sln1.projects[1])
 		vc200x.generate(prj1)

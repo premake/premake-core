@@ -21,7 +21,7 @@
 		solution "MySolution"
 		configurations "Debug"
 		project "MyProject"
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 	end
 
 	function T.action.teardown()

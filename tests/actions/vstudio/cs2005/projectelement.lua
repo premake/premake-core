@@ -20,7 +20,7 @@
 	end
 	
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 		cs2005.projectelement(prj)
 	end

@@ -18,7 +18,7 @@
 
 	local cfg
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		cfg = premake.solution.getproject(sln, 1)
 	end
 

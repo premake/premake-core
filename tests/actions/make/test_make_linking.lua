@@ -32,7 +32,7 @@
 	
 	local get_buffer = function(projectName)
 		io.capture()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		local cfg = premake.getconfig(projectName, 'Debug', 'Native')
 		premake.gmake_cpp_config(cfg, premake.gcc)
 		local buffer = io.endcapture()

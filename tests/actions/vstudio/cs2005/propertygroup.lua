@@ -21,7 +21,7 @@
 	end
 	
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 		cfg = premake.getconfig(prj, "Debug")
 		cs2005.propertygroup(cfg)

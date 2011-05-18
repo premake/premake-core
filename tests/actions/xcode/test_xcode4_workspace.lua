@@ -23,7 +23,7 @@
 	end
 	
 	local function get_buffer()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		premake.xcode4.workspace_generate(sln)
 		local buffer = io.endcapture()
 		return buffer

@@ -137,7 +137,7 @@
 		
 		-- work-in-progress: build the configurations
 		print("Building configurations...")
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		
 		ok, err = premake.checkprojects()
 		if (not ok) then error("Error: " .. err, 0) end

@@ -22,7 +22,7 @@
 	
 	local function prepare(language)
 		prj.language = language
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		sln2005.project_platforms(sln)
 	end

@@ -24,7 +24,7 @@ end
 
 local function get_buffer()
 	io.capture()
-	premake.buildconfigs()
+	premake.bake.buildconfigs()
 	sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 	prj = premake.solution.getproject(sln, 1)
 	premake.vs2010_vcxproj(prj)
@@ -301,7 +301,7 @@ end
 
 local function get_managed_buffer(sln,prj)
 	io.capture()
-	premake.buildconfigs()
+	premake.bake.buildconfigs()
 	sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 	prj = premake.solution.getproject(sln, 1)
 	premake.vs2010_vcxproj(prj)

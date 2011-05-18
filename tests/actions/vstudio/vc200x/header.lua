@@ -20,7 +20,7 @@
 	end
 	
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		vc200x.header('VisualStudioProject')

@@ -18,7 +18,7 @@
 	end
 
 	local function prepare()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		sln2005.generate(sln)
 	end	

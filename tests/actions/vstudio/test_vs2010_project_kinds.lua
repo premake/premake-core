@@ -14,7 +14,7 @@
 	end
 	
 	local function get_buffer()
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		prj = premake.solution.getproject(sln, 1)
 		premake.vs2010_vcxproj(prj)

@@ -29,7 +29,7 @@
 	function T.project.findproject_IsCaseSensitive()
 		local sln = test.createsolution()
 		local prj = test.createproject(sln)
-		premake.buildconfigs()
+		premake.bake.buildconfigs()
 		test.isnil(premake.findproject("myproject"))
 	end
 	

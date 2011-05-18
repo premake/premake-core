@@ -12,7 +12,9 @@
 	premake.bake = { }
 	local bake = premake.bake
 
-	-- do not copy these fields into the configurations
+
+-- do not copy these fields into the configurations
+
 	local nocopy = 
 	{
 		blocks    = true,
@@ -21,8 +23,9 @@
 		__configs = true,
 	}
 	
-	-- leave these paths as absolute, rather than converting to project relative
-	local nofixup =
+-- leave these paths as absolute, rather than converting to project relative
+
+	local keeprelative =
 	{
 		basedir  = true,
 		location = true,
@@ -65,7 +68,6 @@
 		end
 		
 		for _, pattern in ipairs(keyword:explode(" or ")) do
---			local pattern = "^" .. word .. "$"
 			for termkey, term in pairs(terms) do
 				if term:match(pattern) == term then
 					return termkey
@@ -78,8 +80,10 @@
 		
 --
 -- Checks a set of configuration block keywords against a list of terms.
--- I've already forgotten the purpose of the required terms (d'oh!) but
--- I'll see if I can figure it out on a future refactoring.
+-- The required flag is used by the file configurations: only blocks
+-- with a term that explictly matches the filename get applied; more
+-- general blocks are skipped over (since they were already applied at
+-- the config level).
 --
 
 	function premake.iskeywordsmatch(keywords, terms)
@@ -114,7 +118,7 @@
 	local function adjustpaths(location, obj)
 		for name, value in pairs(obj) do
 			local field = premake.fields[name]
-			if field and value and not nofixup[name] then
+			if field and value and not keeprelative[name] then
 				if field.kind == "path" then
 					obj[name] = path.getrelative(location, value) 
 				elseif field.kind == "dirlist" or field.kind == "filelist" then
@@ -274,84 +278,6 @@
 		end
 		
 		return result
-	end
-	
-
---
--- Post-process a project configuration, applying path fix-ups and other adjustments
--- to the "raw" setting data pulled from the project script.
---
--- @param prj
---    The project object which contains the configuration.
--- @param cfg
---    The configuration object to be fixed up.
---
-
-	local function postprocess(prj, cfg)
-		cfg.project   = prj
-		cfg.shortname = premake.getconfigname(cfg.name, cfg.platform, true)
-		cfg.longname  = premake.getconfigname(cfg.name, cfg.platform)
-		
-		-- set the project location, if not already set
-		cfg.location = cfg.location or cfg.basedir
-		
-		-- figure out the target system
-		local platform = premake.platforms[cfg.platform]
-		if platform.iscrosscompiler then
-			cfg.system = cfg.platform
-		else
-			cfg.system = os.get()
-		end
-		
-		-- adjust the kind as required by the target system
-		if cfg.kind == "SharedLib" and platform.nosharedlibs then
-			cfg.kind = "StaticLib"
-		end
-		
-		-- remove excluded files from the file list
-		local files = { }
-		for _, fname in ipairs(cfg.files) do
-			local excluded = false
-			for _, exclude in ipairs(cfg.excludes) do
-				excluded = (fname == exclude)
-				if (excluded) then break end
-			end
-						
-			if (not excluded) then
-				table.insert(files, fname)
-			end
-		end
-		cfg.files = files
-
-		-- fixup the data		
-		for name, field in pairs(premake.fields) do
-			-- re-key flag fields for faster lookups
-			if field.isflags then
-				local values = cfg[name]
-				for _, flag in ipairs(values) do values[flag] = true end
-			end
-		end
-		
-		-- build configuration objects for all files
-		-- TODO: can I build this as a tree instead, and avoid the extra
-		-- step of building it later?
-		cfg.__fileconfigs = { }
-		for _, fname in ipairs(cfg.files) do
-			cfg.terms.required = fname:lower()
-			local fcfg = {}
-			for _, blk in ipairs(cfg.project.blocks) do
-				if (premake.iskeywordsmatch(blk.keywords, cfg.terms)) then
-					mergeobject(fcfg, blk)
-				end
-			end
-
-			-- add indexed by name and integer
-			-- TODO: when everything is converted to trees I won't need
-			-- to index by name any longer
-			fcfg.name = fname
-			cfg.__fileconfigs[fname] = fcfg
-			table.insert(cfg.__fileconfigs, fcfg)
-		end
 	end
 
 
@@ -546,6 +472,8 @@
   		
   		return false;
   	end
+	
+	
   --
   -- Copies the field from dstCfg to srcCfg.
   --
@@ -556,7 +484,7 @@
   		if type(srcCfg[strSrcField]) == "table" then
   			--handle paths.
   			if (srcField.kind == "dirlist" or srcField.kind == "filelist") and
-  				(not nofixup[strSrcField]) then
+  				(not keeprelative[strSrcField]) then
   				for i,p in ipairs(srcCfg[strSrcField]) do
   					table.insert(dstCfg[strDstField],
   						path.rebase(p, srcCfg.project.location, dstCfg.project.location))
@@ -578,7 +506,7 @@
   				end
   			end
   		else
-  			if(srcField.kind == "path" and (not nofixup[strSrcField])) then
+  			if(srcField.kind == "path" and (not keeprelative[strSrcField])) then
   				dstCfg[strDstField] = path.rebase(srcCfg[strSrcField],
   					prj.location, dstCfg.project.location);
   			else
@@ -587,6 +515,7 @@
   		end
   	end
   	
+	
   --
   -- This function will take the list of project entries and apply their usage project data
   -- to the given configuration. It will copy compiling information for the projects that are
@@ -628,13 +557,10 @@
 
 
 --
--- Takes the configuration information stored in solution->project->block
--- hierarchy and flattens it all down into one object per configuration.
--- These objects are cached with the project, and can be retrieved by
--- calling the getconfig() or the eachconfig() iterator function.
+-- Main function, controls the process of flattening the configurations.
 --
 		
-	function premake.buildconfigs()
+	function premake.bake.buildconfigs()
 	
 		-- convert project path fields to be relative to project location
 		for sln in premake.solution.each() do
@@ -655,7 +581,7 @@
 			for _, prj in ipairs(sln.projects) do
 				prj.__configs = collapse(prj, basis)
 				for _, cfg in pairs(prj.__configs) do
-					postprocess(prj, cfg)
+					bake.postprocess(prj, cfg)
 				end
 			end
 		end	
@@ -694,4 +620,82 @@
 		-- walk it again and build the targets and unique directories
 		buildtargets(cfg)
 
+	end
+	
+
+--
+-- Post-process a project configuration, applying path fix-ups and other adjustments
+-- to the "raw" setting data pulled from the project script.
+--
+-- @param prj
+--    The project object which contains the configuration.
+-- @param cfg
+--    The configuration object to be fixed up.
+--
+
+	function premake.bake.postprocess(prj, cfg)
+		cfg.project   = prj
+		cfg.shortname = premake.getconfigname(cfg.name, cfg.platform, true)
+		cfg.longname  = premake.getconfigname(cfg.name, cfg.platform)
+		
+		-- set the project location, if not already set
+		cfg.location = cfg.location or cfg.basedir
+		
+		-- figure out the target system
+		local platform = premake.platforms[cfg.platform]
+		if platform.iscrosscompiler then
+			cfg.system = cfg.platform
+		else
+			cfg.system = os.get()
+		end
+		
+		-- adjust the kind as required by the target system
+		if cfg.kind == "SharedLib" and platform.nosharedlibs then
+			cfg.kind = "StaticLib"
+		end
+		
+		-- remove excluded files from the file list
+		local files = { }
+		for _, fname in ipairs(cfg.files) do
+			local excluded = false
+			for _, exclude in ipairs(cfg.excludes) do
+				excluded = (fname == exclude)
+				if (excluded) then break end
+			end
+						
+			if (not excluded) then
+				table.insert(files, fname)
+			end
+		end
+		cfg.files = files
+
+		-- fixup the data		
+		for name, field in pairs(premake.fields) do
+			-- re-key flag fields for faster lookups
+			if field.isflags then
+				local values = cfg[name]
+				for _, flag in ipairs(values) do values[flag] = true end
+			end
+		end
+
+		-- build configuration objects for all files
+		-- TODO: can I build this as a tree instead, and avoid the extra
+		-- step of building it later?
+		cfg.__fileconfigs = { }
+		for _, fname in ipairs(cfg.files) do
+			cfg.terms.required = fname:lower()
+			local fcfg = {}
+			for _, blk in ipairs(cfg.project.blocks) do
+				if (premake.iskeywordsmatch(blk.keywords, cfg.terms)) then
+					mergeobject(fcfg, blk)
+				end
+			end
+
+			-- add indexed by name and integer
+			-- TODO: when everything is converted to trees I won't need
+			-- to index by name any longer
+			fcfg.name = fname
+			cfg.__fileconfigs[fname] = fcfg
+			table.insert(cfg.__fileconfigs, fcfg)
+		end
 	end
