@@ -85,37 +85,54 @@
 			scope = "config",
 			isflags = true,
 			usagecopy = true,
-			allowed = {
-				"EnableSSE",
-				"EnableSSE2",
-				"ExtraWarnings",
-				"FatalWarnings",
-				"FloatFast",
-				"FloatStrict",
-				"Managed",
-				"MFC",
-				"NativeWChar",
-				"No64BitChecks",
-				"NoEditAndContinue",
-				"NoExceptions",
-				"NoFramePointer",
-				"NoImportLib",
-				"NoIncrementalLink",
-				"NoManifest",
-				"NoMinimalRebuild",
-				"NoNativeWChar",
-				"NoPCH",
-				"NoRTTI",
-				"Optimize",
-				"OptimizeSize",
-				"OptimizeSpeed",
-				"SEH",
-				"StaticRuntime",
-				"Symbols",
-				"Unicode",
-				"Unsafe",
-				"WinMain"
-			},
+			allowed = function(value)
+			
+				local allowed_flags = {
+					EnableSSE = 1,
+					EnableSSE2 = 1,
+					ExtraWarnings = 1,
+					FatalWarnings = 1,
+					FloatFast = 1,
+					FloatStrict = 1,
+					Managed = 1,
+					MFC = 1,
+					NativeWChar = 1,
+					No64BitChecks = 1,
+					NoEditAndContinue = 1,
+					NoExceptions = 1,
+					NoFramePointer = 1,
+					NoImportLib = 1,
+					NoIncrementalLink = 1,
+					NoManifest = 1,
+					NoMinimalRebuild = 1,
+					NoNativeWChar = 1,
+					NoPCH = 1,
+					NoRTTI = 1,
+					Optimize = 1,
+					OptimizeSize = 1,
+					OptimizeSpeed = 1,
+					SEH = 1,
+					StaticRuntime = 1,
+					Symbols = 1,
+					Unicode = 1,
+					Unsafe = 1,
+					WinMain = 1
+				}
+				
+				local englishToAmericanSpelling =
+				{
+					Optimise = 'Optimize',
+					OptimiseSize = 'OptimizeSize',
+					OptimiseSpeed = 'OptimizeSpeed'
+				}
+				
+				if englishToAmericanSpelling[value] then value = englishToAmericanSpelling[value] end
+			
+				if allowed_flags[value] then return value 
+				else 
+					return nil, "invalid flag"
+				end
+			end,
 		},
 		
 		framework =
