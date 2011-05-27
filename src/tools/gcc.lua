@@ -193,7 +193,8 @@
 				local pathstyle = premake.getpathstyle(value)
 				local namestyle = premake.getnamestyle(value)
 				local linktarget = premake.gettarget(value, "link",  pathstyle, namestyle, cfg.system)
-				table.insert(result, linktarget.fullpath)
+				local rebasedpath = path.rebase(linktarget.fullpath, value.location, cfg.location)
+				table.insert(result, rebasedpath)
 			else
 				--premake does not support creating frameworks so this is just a SharedLib link
 				--link using -lname

@@ -24,7 +24,7 @@
 * Bug 3294459: vs10 x86_64 using incorrect debug format for minimal rebuild (learner)
 * Bug 3297634: Special characters in directory name Xcode3 (jdale)
 * Feature 3100194: English alais' for Optimize flags
-
+* Bug 3308203: Incorrect relative paths for gmake sibling static libraries (Adam)
 -------
   4.3
 -------
