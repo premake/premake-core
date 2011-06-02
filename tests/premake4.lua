@@ -48,7 +48,6 @@
 	dofile("test_gmake_cs.lua")
 	dofile("base/test_api.lua")
 	dofile("base/test_action.lua")
-	dofile("base/test_baking.lua")
 	dofile("base/test_config.lua")
 	dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
@@ -58,6 +57,10 @@
 	dofile("tools/test_gcc.lua")
 	dofile("base/test_config_bug.lua")
 
+	-- Baking tests
+	dofile("base/test_baking.lua")
+	dofile("baking/test_merging.lua")
+	
 	-- Clean tests
 	dofile("actions/test_clean.lua")
 	

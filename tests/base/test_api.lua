@@ -1,7 +1,7 @@
 --
 -- tests/base/test_api.lua
 -- Automated test suite for the project API support functions.
--- Copyright (c) 2008-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2011 Jason Perkins and the Premake project
 --
 
 	T.api = { }
@@ -118,6 +118,36 @@
 		premake.setstring("config", "myfield", "better", { "Good", "Better", "Best" })
 		test.isequal("Better", premake.CurrentConfiguration.myfield)
 	end
+
+
+--
+-- premake.setkeyvalue() tests
+--
+
+	function suite.setkeyvalue_InsertsValues_OnTable()
+		premake.CurrentConfiguration = { }
+		premake.setkeyvalue("config", "vpaths", { ["*.h"] = "Headers" })
+		test.isequal("Headers", premake.CurrentConfiguration.vpaths["*.h"])
+	end
+	
+	function suite.setkeyvalue_RaisesError_OnString()
+		premake.CurrentConfiguration = { }
+		ok, err = pcall(function () premake.setkeyvalue("config", "vpaths", "Headers") end)
+		test.isfalse(ok)
+	end
+	
+	function suite.setkeyvalue_RaisesError_OnNonStringKey()
+		premake.CurrentConfiguration = { }
+		ok, err = pcall(function () premake.setkeyvalue("config", "vpaths", { [1] = "Headers" }) end)
+		test.isfalse(ok)
+	end
+	
+	function suite.setkeyvalue_RaisesError_OnNonStringValue()
+		premake.CurrentConfiguration = { }
+		ok, err = pcall(function () premake.setkeyvalue("config", "vpaths", { ["*.h"] = 1 }) end)
+		test.isfalse(ok)
+	end
+	
 
 
 --

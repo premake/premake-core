@@ -378,6 +378,13 @@
 			kind  = "list",
 			scope = "config",
 		},
+		
+		vpaths = 
+		{
+			kind = "keyvalue",
+			scope = "container",
+		},
+
 	}
 
 
@@ -530,6 +537,43 @@
 	end
 	
 	
+--
+-- Adds values to a key-value field of a solution/project/configuration. `ctype`
+-- specifies the container type (see premake.getobject) for the field.
+--
+
+	function premake.setkeyvalue(ctype, fieldname, value)
+		local container, err = premake.getobject(ctype)
+		if not container then
+			error(err, 4)
+		end
+		
+		if not container[fieldname] then
+			container[fieldname] = { }
+		end
+
+		if type(value) ~= "table" then
+			error("invalid value; table expected", 4)
+		end
+		
+		local result = container[fieldname]
+		
+		local function doinsert(tbl, errordepth)
+			for key,value in pairs(tbl) do
+				if type(value) == "table" then
+					doinsert(value, errordepth + 1)
+				elseif type(key) == "string" and type(value) == "string" then
+					result[key] = value
+				else
+					error("invalid value; both key and value must be a string", errordepth)
+				end
+			end
+		end
+		
+		doinsert(value, 4)		
+		return container[fieldname]
+	end
+
 	
 --
 -- Set a new value for a string field of a solution/project/configuration. `ctype`
@@ -567,23 +611,25 @@
 		local scope   = premake.fields[name].scope
 		local allowed = premake.fields[name].allowed
 		
-		if ((kind == "string" or kind == "path") and value) then
+		if (kind == "string" or kind == "path") and value then
 			if type(value) ~= "string" then
 				error("string value expected", 3)
 			end
 		end
 		
-		if (kind == "string") then
+		if kind == "string" then
 			return premake.setstring(scope, name, value, allowed)
-		elseif (kind == "path") then
+		elseif kind == "path" then
 			if value then value = path.getabsolute(value) end
 			return premake.setstring(scope, name, value)
-		elseif (kind == "list") then
+		elseif kind == "list" then
 			return premake.setarray(scope, name, value, allowed)
-		elseif (kind == "dirlist") then
+		elseif kind == "dirlist" then
 			return premake.setdirarray(scope, name, value)
-		elseif (kind == "filelist") then
+		elseif kind == "filelist" then
 			return premake.setfilearray(scope, name, value)
+		elseif kind == "keyvalue" then
+			return premake.setkeyvalue(scope, name, value)
 		end
 	end
 

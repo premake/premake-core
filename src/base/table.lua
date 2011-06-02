@@ -116,6 +116,27 @@
 
 
 --
+-- Adds the key-value associations from one table into another
+-- and returns the resulting merged table.
+--
+
+	function table.merge(...)
+		local result = { }
+		for _,t in ipairs(arg) do
+			if type(t) == "table" then
+				for k,v in pairs(t) do
+					result[k] = v
+				end
+			else
+				error("invalid value")
+			end
+		end
+		return result
+	end
+	
+
+
+--
 -- Translates the values contained in array, using the specified
 -- translation table, and returns the results in a new array.
 --

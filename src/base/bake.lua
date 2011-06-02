@@ -142,29 +142,43 @@
 --    The source object, containing the settings to added to the destination.
 --
 
+	local function mergefield(kind, dest, src)
+		local tbl = dest or { }
+		if kind == "keyvalue" then
+			for key, value in pairs(src) do
+				tbl[key] = value
+			end
+		else
+			for _, item in ipairs(src) do
+				if not tbl[item] then
+					table.insert(tbl, item)
+					tbl[item] = item
+				end
+			end
+		end
+		return tbl
+	end
+	
 	local function mergeobject(dest, src)
-		if not src then return end
-		for field, value in pairs(src) do
-			if not nocopy[field] then
-				if type(value) == "table" then
-					-- merge two lists, removing any duplicates along the way
-					local tbl = dest[field] or { }
-					
-					if field == 'terms' then
-						for term_key,term_value in pairs(value)do
-							tbl[term_key]=term_value
-						end
+		-- if there's nothing to add, quick out
+		if not src then 
+			return 
+		end
+		
+		for fieldname, value in pairs(src) do
+			if not nocopy[fieldname] then
+				-- fields that are included in the API are merged...
+				local field = premake.fields[fieldname]
+				if field then
+					if type(value) == "table" then
+						dest[fieldname] = mergefield(field.kind, dest[fieldname], value)
 					else
-						for _, item in ipairs(value) do
-							if not tbl[item] then
-								table.insert(tbl, item)
-								tbl[item] = item
-							end
-						end
+						dest[fieldname] = value
 					end
-					dest[field] = tbl
+				
+				-- ...everything else is just copied as-is
 				else
-					dest[field] = value
+					dest[fieldname] = value
 				end
 			end
 		end
