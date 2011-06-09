@@ -40,7 +40,6 @@
 	dofile("test_dofile.lua")
 	dofile("test_string.lua")
 	dofile("test_premake.lua")
-	dofile("test_project.lua")
 	dofile("test_platforms.lua")
 	dofile("test_targets.lua")
 	dofile("test_keywords.lua")
@@ -57,6 +56,10 @@
 	dofile("tools/test_gcc.lua")
 	dofile("base/test_config_bug.lua")
 
+	-- Project API tests
+	dofile("test_project.lua")
+	dofile("project/test_vpaths.lua")
+	
 	-- Baking tests
 	dofile("base/test_baking.lua")
 	dofile("baking/test_merging.lua")
