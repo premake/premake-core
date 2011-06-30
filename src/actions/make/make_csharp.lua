@@ -53,7 +53,7 @@
 		local embedded = { }
 		local copypairs = { }
 		
-		for fcfg in premake.eachfile(prj) do
+		for fcfg in premake.project.eachfile(prj) do
 			local action = csc.getbuildaction(fcfg)
 			if action == "Compile" then
 				table.insert(sources, fcfg.name)

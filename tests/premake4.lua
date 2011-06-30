@@ -58,6 +58,7 @@
 
 	-- Project API tests
 	dofile("test_project.lua")
+	dofile("project/test_eachfile.lua")
 	dofile("project/test_vpaths.lua")
 	
 	-- Baking tests

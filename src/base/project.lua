@@ -21,7 +21,7 @@
 		local tr = premake.tree.new(prj.name)
 		tr.project = prj
 
-		for fcfg in premake.eachfile(prj) do
+		for fcfg in premake.project.eachfile(prj) do
 			local node = premake.tree.add(tr, fcfg.name)
 			node.cfg = fcfg
 		end
@@ -58,7 +58,7 @@
 -- Iterator for a project's files; returns a file configuration object.
 --
 
-	function premake.eachfile(prj)
+	function premake.project.eachfile(prj)
 		-- project root config contains the file config list
 		if not prj.project then prj = premake.getconfig(prj) end
 		local i = 0
@@ -66,7 +66,9 @@
 		return function ()
 			i = i + 1
 			if (i <= #t) then
-				return prj.__fileconfigs[t[i]]
+				local fcfg = prj.__fileconfigs[t[i]]
+				fcfg.vpath = premake.project.getvpath(prj, fcfg.name)
+				return fcfg
 			end
 		end
 	end
