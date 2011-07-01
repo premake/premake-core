@@ -197,6 +197,13 @@
 		local ext = path.getextension(fname):lower()
 		return table.contains(extensions, ext)
 	end
+	
+	function path.iscppheader(fname)
+		local extensions = { ".h", ".hh", ".hpp", ".hxx" }
+		local ext = path.getextension(fname):lower()
+		return table.contains(extensions, ext)
+	end
+
 
 
 --
@@ -209,8 +216,8 @@
 		local ext = path.getextension(fname):lower()
 		return table.contains(extensions, ext)
 	end
-	
-	
+
+
 	
 --
 -- Join two pieces of a path together into a single path.

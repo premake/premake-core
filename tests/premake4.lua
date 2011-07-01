@@ -76,7 +76,6 @@
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
 	dofile("actions/vstudio/test_vs2010_flags.lua")
 	dofile("actions/vstudio/test_vs2010_links.lua")
-	dofile("actions/vstudio/test_vs2010_filters.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 
 	-- Visual Studio 2002-2003 C# projects
@@ -102,8 +101,10 @@
 	dofile("actions/vstudio/vc200x/files.lua")
 	
 	-- Visual Studio 2010 C/C++ projects
-	dofile("actions/vstudio/vc2010/debugdir.lua")
-	dofile("actions/vstudio/vc2010/files.lua")
+	dofile("actions/vstudio/vc2010/test_debugdir.lua")
+	dofile("actions/vstudio/vc2010/test_header.lua")
+	dofile("actions/vstudio/vc2010/test_files.lua")
+	dofile("actions/vstudio/vc2010/test_filters.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")

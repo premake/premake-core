@@ -564,6 +564,19 @@
 			end
 		end
 		
+		-- remove any dot ("./", "../") patterns from the start of the path
+		local changed
+		repeat
+			changed = true
+			if vpath:startswith("./") then
+				vpath = vpath:sub(3)
+			elseif vpath:startswith("../") then
+				vpath = vpath:sub(4)
+			else
+				changed = false
+			end
+		until not changed
+		
 		return vpath
 	end
 

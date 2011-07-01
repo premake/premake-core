@@ -22,6 +22,7 @@
 		premake.bake.buildconfigs()
 		prj = premake.solution.getproject(sln, 1)
 	end
+
 	
 --
 -- Test simple replacements
@@ -58,6 +59,7 @@
 		prepare()
 		test.isequal("sources/hello.c", project.getvpath(prj, "src/myproject/hello.c"))
 	end
+
 
 --
 -- Test wildcard patterns
@@ -110,3 +112,23 @@
 		prepare()
 		test.isequal("Headers/myproject/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end	
+
+
+--
+-- Test directory dot patterns
+--
+
+	function suite.RemovesLeadingDotFolder()
+		prepare()
+		test.isequal("hello.c", project.getvpath(prj, "./hello.c"))
+	end
+
+	function suite.RemovesLeadingDotDotFolder()
+		prepare()
+		test.isequal("hello.c", project.getvpath(prj, "../hello.c"))
+	end
+
+	function suite.RemovesMultipleLeadingDotDotFolders()
+		prepare()
+		test.isequal("src/hello.c", project.getvpath(prj, "../../src/hello.c"))
+	end

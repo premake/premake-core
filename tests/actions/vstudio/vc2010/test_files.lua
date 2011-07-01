@@ -1,5 +1,5 @@
 --
--- tests/actions/vstudio/vc2010/files.lua
+-- tests/actions/vstudio/vc2010/test_files.lua
 -- Validate generation of files block in Visual Studio 2010 C/C++ projects.
 -- Copyright (c) 2011 Jason Perkins and the Premake project
 --

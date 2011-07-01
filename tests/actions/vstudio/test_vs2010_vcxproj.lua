@@ -55,6 +55,12 @@
 		return buffer
 	end
 
+
+
+--
+-- Tests
+--
+
 	function vs10_vcxproj.xmlDeclarationPresent()
 		local buffer = get_buffer()
 		test.istrue(string.startswith(buffer, '<?xml version=\"1.0\" encoding=\"utf-8\"?>'))
@@ -226,34 +232,6 @@
 		test.isequal('h', ext)
 	end
 	
-	local function SortAndReturnSortedInputFiles(input)
-		return vc2010.sort_input_files(input)
-	end
-
-	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
-		local file = {"bar.h"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.ClInclude)
-	end
-		
-	function vs10_vcxproj.sortFile_srcFile_SortedClCompileEqualToFile()
-		local file = {"b.cxx"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.ClCompile)
-	end
-	
-	function vs10_vcxproj.sortFile_notRegistered_SortedNoneEqualToFile()
-		local file = {"foo.bar.00h"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.None)
-	end
-	
-	function vs10_vcxproj.sortFile_resourceScript_resourceCompileEqualToFile()
-		local file = {"foo.rc"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.ResourceCompile)
-	end
-	
 	function vs10_vcxproj.itemGroupSection_hasResourceCompileSection()
 		--for some reason this does not work here and it needs to be in
 		--the project setting at the top ?
@@ -419,4 +397,38 @@
 	function vs10_vcxproj.wholeProgramOptimizationIsNotSetByDefault_bufferDoesNotContainWholeProgramOptimization()
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,"WholeProgramOptimization")
+	end
+
+
+
+--
+-- Test file sorting into build categories
+--
+
+	local function SortAndReturnSortedInputFiles(input)
+		return vc2010.sort_input_files(input)
+	end
+
+	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
+		local file = {"bar.h"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ClInclude)
+	end
+		
+	function vs10_vcxproj.sortFile_srcFile_SortedClCompileEqualToFile()
+		local file = {"b.cxx"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ClCompile)
+	end
+	
+	function vs10_vcxproj.sortFile_notRegistered_SortedNoneEqualToFile()
+		local file = {"foo.bar.00h"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.None)
+	end
+	
+	function vs10_vcxproj.sortFile_resourceScript_resourceCompileEqualToFile()
+		local file = {"foo.rc"}
+		local sorted = SortAndReturnSortedInputFiles(file)
+		test.isequal(file, sorted.ResourceCompile)
 	end

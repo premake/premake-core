@@ -1,5 +1,5 @@
 --
--- vs200x_vcproj.lua
+-- vs2010_vcxproj.lua
 -- Generate a Visual Studio 2010 C/C++ project.
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
@@ -22,38 +22,6 @@
 		else
 			return nil
 		end
-	end
-	
-	function vc2010.list_of_directories_in_path(path)
-		local list={}
-		path = vc2010.remove_relative_path(path)
-		if path then
-			for dir in string.gmatch(path,"[%w%-%_%.]+\\")do
-				if #list == 0 then
-					list[1] = dir:sub(1,#dir-1)
-				else
-					list[#list +1] = list[#list] .."\\" ..dir:sub(1,#dir-1)				
-				end
-			end		
-		end
-		return list
-	end
-
-	function vc2010.table_of_file_filters(files)
-		local filters ={}
-
-		for _, valueTable in pairs(files) do
-			for _, entry in ipairs(valueTable) do
-				local result = vc2010.list_of_directories_in_path(entry)
-				for __,dir in ipairs(result) do
-					if table.contains(filters,dir) ~= true then
-					filters[#filters +1] = dir
-					end
-				end
-			end
-		end
-		
-		return filters
 	end
 	
 	function vc2010.get_file_extension(file)
@@ -540,15 +508,17 @@
 	end
 	
 
+	-- TODO: remove files arg when everything is ported
 	function vc2010.sort_input_files(files)
 		local sorted =
 		{
 			ClCompile = {},
 			ClInclude = {},
 			None = {},
-			ResourceCompile = {}
+			ResourceCompile = {},
 		}
 
+		-- TODO: move this to path functions
 		local types = 
 		{	
 			h	= "ClInclude",
@@ -578,7 +548,47 @@
 	end
 
 
+--
+-- Retrieve a list of files for a particular build group, one of
+-- "ClInclude", "ClCompile", "ResourceCompile", and "None".
+--
+
+	function vc2010.getfilegroup(prj, group)
+		local sortedfiles = prj.vc2010sortedfiles
+		if not sortedfiles then
+			sortedfiles = {
+				ClCompile = {},
+				ClInclude = {},
+				None = {},
+				ResourceCompile = {},
+			}
+		
+			for file in premake.project.eachfile(prj) do
+				if path.iscppfile(file.name) then
+					table.insert(sortedfiles.ClCompile, file)
+				elseif path.iscppheader(file.name) then
+					table.insert(sortedfiles.ClInclude, file)
+				elseif path.isresourcefile(file.name) then
+					table.insert(sortedfiles.ResourceCompile, file)
+				else
+					table.insert(sortedfiles.None, file)
+				end
+			end
+			
+			-- Cache the sorted files; they are used several places
+			prj.vc2010sortedfiles = sortedfiles
+		end
+		
+		return sortedfiles[group]
+	end
+
+
+--
+-- Write the files section of the project file.
+--
+
 	function vc2010.files(prj)
+		-- TODO: I shouldn't need getconfig(), should already have root config
 		cfg = premake.getconfig(prj)
 		local sorted = vc2010.sort_input_files(cfg.files)
 		write_file_type_block(sorted.ClInclude, "ClInclude")
@@ -589,64 +599,29 @@
 
 
 --
--- Write filters
+-- Output the VC2010 project file header
 --
 
-	local function write_filter_includes(sorted_table)
-		local directories = vc2010.table_of_file_filters(sorted_table)
-		--I am going to take a punt here that the ItemGroup is missing if no files!!!!
-		--there is a test for this see
-		--vs10_filters.noInputFiles_bufferDoesNotContainTagItemGroup
-		if #directories >0 then
-			_p(1,'<ItemGroup>')
-			for _, dir in pairs(directories) do
-				_p(2,'<Filter Include="%s">',dir)
-					_p(3,'<UniqueIdentifier>{%s}</UniqueIdentifier>',os.uuid())
-				_p(2,'</Filter>')
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-	
-	local function write_file_filter_block(files,group_type)
-		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, current_file in ipairs(files) do
-				local path_to_file = vc2010.file_path(current_file)
-				if path_to_file then
-					_p(2,'<%s Include=\"%s\">', group_type,path.translate(current_file, "\\"))
-						_p(3,'<Filter>%s</Filter>',path_to_file)
-					_p(2,'</%s>',group_type)
-				else
-					_p(2,'<%s Include=\"%s\" />', group_type,path.translate(current_file, "\\"))
-				end
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-	
-	local tool_version_and_xmlns = 'ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"'	
-	local xml_version_and_encoding = '<?xml version="1.0" encoding="utf-8"?>'
-	
-	local function vcxproj_filter_files(prj)
-		cfg = premake.getconfig(prj)
-		local sorted = vc2010.sort_input_files(cfg.files)
-
+	function vc2010.header(targets)
 		io.eol = "\r\n"
-		_p(xml_version_and_encoding)
-		_p('<Project ' ..tool_version_and_xmlns ..'>')
-			write_filter_includes(sorted)
-			write_file_filter_block(sorted.ClInclude,"ClInclude")
-			write_file_filter_block(sorted.ClCompile,"ClCompile")
-			write_file_filter_block(sorted.None,"None")
-			write_file_filter_block(sorted.ResourceCompile,"ResourceCompile")
-		_p('</Project>')
+		_p('<?xml version="1.0" encoding="utf-8"?>')
+		
+		local t = ""
+		if targets then
+			t = ' DefaultTargets="' .. targets .. '"'
+		end
+		
+		_p('<Project%s ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', t)
 	end
+
+
+--
+-- Output the VC2010 C/C++ project file
+--
 
 	function premake.vs2010_vcxproj(prj)
-		io.eol = "\r\n"
-		_p(xml_version_and_encoding)
-		_p('<Project DefaultTargets="Build" ' ..tool_version_and_xmlns ..'>')
+		vc2010.header("Build")
+
 			vs2010_config(prj)
 			vs2010_globals(prj)
 			
@@ -695,8 +670,7 @@
 	end
 
 	function premake.vs2010_vcxproj_user(prj)
-		_p(xml_version_and_encoding)
-		_p('<Project ' ..tool_version_and_xmlns ..'>')
+		vc2010.header()
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p('  <PropertyGroup '.. if_config_and_platform() ..'>', premake.esc(cfginfo.name))
@@ -704,10 +678,6 @@
 			_p('  </PropertyGroup>')
 		end
 		_p('</Project>')
-	end
-	
-	function premake.vs2010_vcxproj_filters(prj)
-		vcxproj_filter_files(prj)
 	end
 	
 

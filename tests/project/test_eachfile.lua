@@ -40,8 +40,7 @@
 
 	function suite.ReturnedObjectIncludesVpath()
 		files { "hello.h", "hello.c" }
-		vpaths { ["*.h"] = "Headers" }
 		prepare()
 		local iter = project.eachfile(prj)
-		test.isequal("Headers/hello.h", iter().vpath)
+		test.isequal("hello.h", iter().vpath)
 	end

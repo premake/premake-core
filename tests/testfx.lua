@@ -86,6 +86,14 @@
 		end
 	end
 	
+
+	function test.isemptycapture()
+		local actual = io.endcapture()
+		if actual ~= "" then
+			test.fail("expected empty capture, but was %s", actual);
+		end
+	end
+
 	
 	function test.isequal(expected, actual)
 		if (type(expected) == "table") then

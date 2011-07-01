@@ -380,7 +380,7 @@
 			else
 			premake.generate(prj, "%%.vcxproj", premake.vs2010_vcxproj)
 			premake.generate(prj, "%%.vcxproj.user", premake.vs2010_vcxproj_user)
-			premake.generate(prj, "%%.vcxproj.filters", premake.vs2010_vcxproj_filters)
+			premake.generate(prj, "%%.vcxproj.filters", vstudio.vc2010.generate_filters)
 			end
 		end,
 		

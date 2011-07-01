@@ -1,5 +1,5 @@
 --
--- tests/actions/vstudio/vc2010/debugdir.lua
+-- tests/actions/vstudio/vc2010/test_debugdir.lua
 -- Validate handling of the working directory for debugging.
 -- Copyright (c) 2011 Jason Perkins and the Premake project
 --
