@@ -107,6 +107,8 @@
 --
 	
 	function vc2010.generate_filters(prj)
+		io.indent = "  "
+		
 		cfg = premake.getconfig(prj)
 		local sorted = vc2010.sort_input_files(cfg.files)
 

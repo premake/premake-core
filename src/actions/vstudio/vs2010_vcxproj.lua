@@ -620,6 +620,7 @@
 --
 
 	function premake.vs2010_vcxproj(prj)
+		io.indent = "  "
 		vc2010.header("Build")
 
 			vs2010_config(prj)
@@ -670,6 +671,7 @@
 	end
 
 	function premake.vs2010_vcxproj_user(prj)
+		io.indent = "  "
 		vc2010.header()
 		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
