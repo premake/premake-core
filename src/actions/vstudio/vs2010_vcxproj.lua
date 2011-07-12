@@ -6,31 +6,7 @@
 
 	premake.vstudio.vc2010 = { }
 	local vc2010 = premake.vstudio.vc2010
-	
 		
-	function vc2010.remove_relative_path(file)
-		file = file:gsub("%.%.\\",'')
-		file = file:gsub("%.\\",'')
-		return file
-	end
-		
-	function vc2010.file_path(file)
-		file = vc2010.remove_relative_path(file)
-		local path = string.find(file,'\\[%w%.%_%-]+$')
-		if path then
-			return string.sub(file,1,path-1)
-		else
-			return nil
-		end
-	end
-	
-	function vc2010.get_file_extension(file)
-		local ext_start,ext_end = string.find(file,"%.[%w_%-]+$")
-		if ext_start then
-			return  string.sub(file,ext_start+1,ext_end)
-		end
-	end
-	
 
 	local function vs2010_config(prj)		
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
@@ -68,6 +44,8 @@
 		}
 		return t[config.kind]
 	end
+	
+	
 	
 	local function if_config_and_platform()
 		return 'Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"'
@@ -465,90 +443,6 @@
 	
 
 --
--- Generate the source code file list.
---
-	
-	
-	local function write_file_type_block(files, group_type)
-		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, current_file in ipairs(files) do
-				_p(2,'<%s Include=\"%s\" />', group_type,current_file)
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-
-
-	local function write_file_compile_block(files, prj,configs)
-		if #files > 0  then	
-			local config_mappings = {}
-			for _, cfginfo in ipairs(configs) do
-				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-				if cfg.pchheader and cfg.pchsource and not cfg.flags.NoPCH then
-					config_mappings[cfginfo] = path.translate(cfg.pchsource, "\\")
-				end
-			end
-			
-			_p(1,'<ItemGroup>')
-			for _, current_file in ipairs(files) do
-				_p(2,'<ClCompile Include=\"%s\">', current_file)
-				for _, cfginfo in ipairs(configs) do
-					if config_mappings[cfginfo] and current_file == config_mappings[cfginfo] then 
-							_p(3,'<PrecompiledHeader '.. if_config_and_platform() .. '>Create</PrecompiledHeader>'
-								,premake.esc(cfginfo.name))
-							--only one source file per pch
-							config_mappings[cfginfo] = nil
-					end
-				end	
-				_p(2,'</ClCompile>')
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-	
-
-	-- TODO: remove files arg when everything is ported
-	function vc2010.sort_input_files(files)
-		local sorted =
-		{
-			ClCompile = {},
-			ClInclude = {},
-			None = {},
-			ResourceCompile = {},
-		}
-
-		-- TODO: move this to path functions
-		local types = 
-		{	
-			h	= "ClInclude",
-			hpp	= "ClInclude",
-			hxx	= "ClInclude",
-			c	= "ClCompile",
-			cpp	= "ClCompile",
-			cxx	= "ClCompile",
-			cc	= "ClCompile",
-			rc  = "ResourceCompile"
-		}
-
-		for _, current_file in ipairs(files) do
-			local translated_path = path.translate(current_file, '\\')
-			local ext = vc2010.get_file_extension(translated_path)
-			if ext then
-				local type = types[ext]
-				if type then
-					table.insert(sorted[type], translated_path)
-				else
-					table.insert(sorted.None, translated_path)
-				end
-			end
-		end
-
-		return sorted
-	end
-
-
---
 -- Retrieve a list of files for a particular build group, one of
 -- "ClInclude", "ClCompile", "ResourceCompile", and "None".
 --
@@ -588,13 +482,50 @@
 --
 
 	function vc2010.files(prj)
-		-- TODO: I shouldn't need getconfig(), should already have root config
-		cfg = premake.getconfig(prj)
-		local sorted = vc2010.sort_input_files(cfg.files)
-		write_file_type_block(sorted.ClInclude, "ClInclude")
-		write_file_compile_block(sorted.ClCompile,prj, prj.solution.vstudio_configs)
-		write_file_type_block(sorted.None, 'None')
-		write_file_type_block(sorted.ResourceCompile, 'ResourceCompile')
+		vc2010.simplefilesgroup(prj, "ClInclude")
+		vc2010.compilerfilesgroup(prj)
+		vc2010.simplefilesgroup(prj, "None")
+		vc2010.simplefilesgroup(prj, "ResourceCompile")
+	end
+
+
+	function vc2010.simplefilesgroup(prj, section)
+		local files = vc2010.getfilegroup(prj, section)
+		if #files > 0  then
+			_p(1,'<ItemGroup>')
+			for _, file in ipairs(files) do
+				_p(2,'<%s Include=\"%s\" />', section, path.translate(file.name, "\\"))
+			end
+			_p(1,'</ItemGroup>')
+		end
+	end
+
+	
+	function vc2010.compilerfilesgroup(prj)
+		local configs = prj.solution.vstudio_configs
+		local files = vc2010.getfilegroup(prj, "ClCompile")
+		if #files > 0  then	
+			local config_mappings = {}
+			for _, cfginfo in ipairs(configs) do
+				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+				if cfg.pchheader and cfg.pchsource and not cfg.flags.NoPCH then
+					config_mappings[cfginfo] = path.translate(cfg.pchsource, "\\")
+				end
+			end
+			
+			_p(1,'<ItemGroup>')
+			for _, file in ipairs(files) do
+				_p(2,'<ClCompile Include=\"%s\">', path.translate(file.name, "\\"))
+				for _, cfginfo in ipairs(configs) do
+					if config_mappings[cfginfo] and file.name == config_mappings[cfginfo] then 
+						_p(3,'<PrecompiledHeader '.. if_config_and_platform() .. '>Create</PrecompiledHeader>', premake.esc(cfginfo.name))
+						config_mappings[cfginfo] = nil  --only one source file per pch
+					end
+				end	
+				_p(2,'</ClCompile>')
+			end
+			_p(1,'</ItemGroup>')
+		end
 	end
 
 

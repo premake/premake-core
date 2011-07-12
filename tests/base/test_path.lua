@@ -104,6 +104,19 @@
 	function suite.getextension_OnMultipleDots()
 		test.isequal(".txt", path.getextension("filename.mod.txt"))
 	end
+	
+	function suite.getextension_OnLeadingNumeric()
+		test.isequal(".7z", path.getextension("filename.7z"))
+	end
+	
+	function suite.getextension_OnUnderscore()
+		test.isequal(".a_c", path.getextension("filename.a_c"))
+	end
+	
+	function suite.getextension_OnHyphen()
+		test.isequal(".a-c", path.getextension("filename.a-c"))
+	end
+
 
 
 --

@@ -28,9 +28,20 @@
 
 
 --
--- Test grouping and nesting
+-- Test file groups
 --
 
+	function suite.SimpleHeaderFile()
+		files { "include/hello.h" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClInclude Include="include\hello.h" />
+	</ItemGroup>
+		]]
+	end
+	
+	
 	function suite.SimpleSourceFile()
 		files { "hello.c" }
 		prepare()
@@ -41,19 +52,33 @@
 	</ItemGroup>
 		]]
 	end
-
-
-	function suite.SingleFolderLevel()
-		files { "src/hello.c" }
+	
+	
+	function suite.SimpleNoneFile()
+		files { "docs/hello.txt" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
-		<ClCompile Include="src\hello.c">
-		</ClCompile>
+		<None Include="docs\hello.txt" />
+	</ItemGroup>
+		]]
+	end
+	
+	
+	function suite.SimpleResourceFile()
+		files { "resources/hello.rc" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ResourceCompile Include="resources\hello.rc" />
 	</ItemGroup>
 		]]
 	end
 
+
+--
+-- Test path handling
+--
 
 	function suite.MultipleFolderLevels()
 		files { "src/greetings/hello.c" }

@@ -201,36 +201,6 @@
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<ItemGroup>.*</ItemGroup>')
 	end
-
-	function vs10_vcxproj.fileExtension_extEqualH()
-		local ext = vc2010.get_file_extension('foo.h')
-		test.isequal('h', ext)
-	end
-	
-	function vs10_vcxproj.fileExtension_containsTwoDots_extEqualH()
-		local ext = vc2010.get_file_extension('foo.bar.h')
-		test.isequal('h', ext)
-	end
-	
-	function vs10_vcxproj.fileExtension_alphaNumeric_extEqualOneH()
-		local ext = vc2010.get_file_extension('foo.1h')
-		test.isequal('1h', ext)
-	end
-	
-	function vs10_vcxproj.fileExtension_alphaNumericWithUnderscore_extEqualOne_H()
-		local ext = vc2010.get_file_extension('foo.1_h')
-		test.isequal('1_h', ext)
-	end
-
-	function vs10_vcxproj.fileExtension_containsHyphen_extEqualHHyphenH()
-		local ext = vc2010.get_file_extension('foo.h-h')
-		test.isequal('h-h', ext)
-	end
-
-	function vs10_vcxproj.fileExtension_containsMoreThanOneDot_extEqualOneH()
-		local ext = vc2010.get_file_extension('foo.bar.h')
-		test.isequal('h', ext)
-	end
 	
 	function vs10_vcxproj.itemGroupSection_hasResourceCompileSection()
 		--for some reason this does not work here and it needs to be in
@@ -238,11 +208,6 @@
 		--files{"dummyResourceScript.rc"}
 		local buffer = get_buffer()
 		test.string_contains(buffer,'<ItemGroup>.*<ResourceCompile.*</ItemGroup>')
-	end
-	
-	function vs10_vcxproj.itemGroupSection_hasHeaderListed()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<ItemGroup>.*<ClInclude Include="foo\\dummyHeader%.h" />.*</ItemGroup>')
 	end
 
 	function vs10_vcxproj.checkProjectConfigurationOpeningTag_hasACloseingAngleBracket()
@@ -360,15 +325,6 @@
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,debug_config_pch_string)
 	end	
-
-	
-	function vs10_vcxproj.pchHeaderAndPchSourceSet_bufferContainPchCreate()
-		configuration("Debug")
-			pchheader "foo/dummyHeader.h"
-			pchsource "foo/dummySource.cpp"
-		local buffer = get_buffer()
-		test.string_contains(buffer,debug_config_pch_string)
-	end
 	
 	function vs10_vcxproj.pchHeaderAndSourceSet_yetAlsoNoPch_bufferDoesNotContainpchCreate()
 		configuration('Debug')
@@ -379,56 +335,8 @@
 		test.string_does_not_contain(buffer,debug_config_pch_string)
 	end
 
-	function vs10_vcxproj.pchHeaderAndPchSourceSet_debugAndRelease_matchingClCompileBlocks()
-		configuration("Debug")
-			pchheader "foo/dummyHeader.h"
-			pchsource "foo/dummySource.cpp"
-		configuration("Release")
-			pchheader "foo/dummyHeader.h"
-			pchsource "foo/dummySource.cpp"
-		local buffer = get_buffer()
-		
-		local expected = '<ClCompile Include="foo\\dummySource.cpp">%s+'
-			..debug_config_pch_string ..'%s+'
-			..release_config_pch_string ..'%s+</ClCompile>'
-		test.string_contains(buffer,expected)
-	end
 
 	function vs10_vcxproj.wholeProgramOptimizationIsNotSetByDefault_bufferDoesNotContainWholeProgramOptimization()
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,"WholeProgramOptimization")
-	end
-
-
-
---
--- Test file sorting into build categories
---
-
-	local function SortAndReturnSortedInputFiles(input)
-		return vc2010.sort_input_files(input)
-	end
-
-	function vs10_vcxproj.sortFile_headerFile_SortedClIncludeEqualToFile()
-		local file = {"bar.h"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.ClInclude)
-	end
-		
-	function vs10_vcxproj.sortFile_srcFile_SortedClCompileEqualToFile()
-		local file = {"b.cxx"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.ClCompile)
-	end
-	
-	function vs10_vcxproj.sortFile_notRegistered_SortedNoneEqualToFile()
-		local file = {"foo.bar.00h"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.None)
-	end
-	
-	function vs10_vcxproj.sortFile_resourceScript_resourceCompileEqualToFile()
-		local file = {"foo.rc"}
-		local sorted = SortAndReturnSortedInputFiles(file)
-		test.isequal(file, sorted.ResourceCompile)
 	end

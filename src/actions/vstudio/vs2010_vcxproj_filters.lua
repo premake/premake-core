@@ -7,27 +7,6 @@
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake.project
 	
---
--- Write filters
---
-	
-	local function write_file_filter_block(files,group_type)
-		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, current_file in ipairs(files) do
-				local path_to_file = vc2010.file_path(current_file)
-				if path_to_file then
-					_p(2,'<%s Include=\"%s\">', group_type,path.translate(current_file, "\\"))
-						_p(3,'<Filter>%s</Filter>',path_to_file)
-					_p(2,'</%s>',group_type)
-				else
-					_p(2,'<%s Include=\"%s\" />', group_type,path.translate(current_file, "\\"))
-				end
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-
 
 --
 -- The first portion of the filters file assigns unique IDs to each
@@ -108,10 +87,6 @@
 	
 	function vc2010.generate_filters(prj)
 		io.indent = "  "
-		
-		cfg = premake.getconfig(prj)
-		local sorted = vc2010.sort_input_files(cfg.files)
-
 		vc2010.header()
 			vc2010.filteridgroup(prj)
 			vc2010.filefiltergroup(prj, "None")

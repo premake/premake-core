@@ -105,6 +105,7 @@
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
+	dofile("actions/vstudio/vc2010/test_pch.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
