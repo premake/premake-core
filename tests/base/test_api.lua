@@ -124,10 +124,22 @@
 -- premake.setkeyvalue() tests
 --
 
-	function suite.setkeyvalue_InsertsValues_OnTable()
+	function suite.setkeyvalue_Inserts_OnStringValue()
 		premake.CurrentConfiguration = { }
-		premake.setkeyvalue("config", "vpaths", { ["*.h"] = "Headers" })
-		test.isequal("Headers", premake.CurrentConfiguration.vpaths["*.h"])
+		premake.setkeyvalue("config", "vpaths", { ["Headers"] = "*.h" })
+		test.isequal({"*.h"}, premake.CurrentConfiguration.vpaths["Headers"])
+	end
+	
+	function suite.setkeyvalue_Inserts_OnTableValue()
+		premake.CurrentConfiguration = { }
+		premake.setkeyvalue("config", "vpaths", { ["Headers"] = {"*.h","*.hpp"} })
+		test.isequal({"*.h","*.hpp"}, premake.CurrentConfiguration.vpaths["Headers"])
+	end
+	
+	function suite.setkeyvalue_Inserts_OnEmptyStringKey()
+		premake.CurrentConfiguration = { }
+		premake.setkeyvalue("config", "vpaths", { [""] = "src" })
+		test.isequal({"src"}, premake.CurrentConfiguration.vpaths[""])
 	end
 	
 	function suite.setkeyvalue_RaisesError_OnString()
@@ -136,18 +148,19 @@
 		test.isfalse(ok)
 	end
 	
-	function suite.setkeyvalue_RaisesError_OnNonStringKey()
+	function suite.setkeyvalue_InsertsString_IntoExistingKey()
 		premake.CurrentConfiguration = { }
-		ok, err = pcall(function () premake.setkeyvalue("config", "vpaths", { [1] = "Headers" }) end)
-		test.isfalse(ok)
+		premake.setkeyvalue("config", "vpaths", { ["Headers"] = "*.h" })
+		premake.setkeyvalue("config", "vpaths", { ["Headers"] = "*.hpp" })
+		test.isequal({"*.h","*.hpp"}, premake.CurrentConfiguration.vpaths["Headers"])
 	end
 	
-	function suite.setkeyvalue_RaisesError_OnNonStringValue()
+	function suite.setkeyvalue_InsertsTable_IntoExistingKey()
 		premake.CurrentConfiguration = { }
-		ok, err = pcall(function () premake.setkeyvalue("config", "vpaths", { ["*.h"] = 1 }) end)
-		test.isfalse(ok)
+		premake.setkeyvalue("config", "vpaths", { ["Headers"] = {"*.h"} })
+		premake.setkeyvalue("config", "vpaths", { ["Headers"] = {"*.hpp"} })
+		test.isequal({"*.h","*.hpp"}, premake.CurrentConfiguration.vpaths["Headers"])
 	end
-	
 
 
 --

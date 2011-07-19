@@ -458,8 +458,8 @@
 		
 		return container, msg
 	end
-	
-	
+
+
 	
 --
 -- Adds values to an array field of a solution/project/configuration. `ctype`
@@ -542,36 +542,30 @@
 -- specifies the container type (see premake.getobject) for the field.
 --
 
-	function premake.setkeyvalue(ctype, fieldname, value)
+	function premake.setkeyvalue(ctype, fieldname, values)
 		local container, err = premake.getobject(ctype)
 		if not container then
 			error(err, 4)
 		end
 		
 		if not container[fieldname] then
-			container[fieldname] = { }
+			container[fieldname] = {}
 		end
 
-		if type(value) ~= "table" then
+		if type(values) ~= "table" then
 			error("invalid value; table expected", 4)
 		end
 		
-		local result = container[fieldname]
+		local field = container[fieldname]
 		
-		local function doinsert(tbl, errordepth)
-			for key,value in pairs(tbl) do
-				if type(value) == "table" then
-					doinsert(value, errordepth + 1)
-				elseif type(key) == "string" and type(value) == "string" then
-					result[key] = value
-				else
-					error("invalid value; both key and value must be a string", errordepth)
-				end
+		for key,value in pairs(values) do
+			if not field[key] then
+				field[key] = {}
 			end
+			table.insertflat(field[key], value)
 		end
-		
-		doinsert(value, 4)		
-		return container[fieldname]
+
+		return field
 	end
 
 	

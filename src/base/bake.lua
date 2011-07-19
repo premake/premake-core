@@ -146,7 +146,7 @@
 		local tbl = dest or { }
 		if kind == "keyvalue" then
 			for key, value in pairs(src) do
-				tbl[key] = value
+				tbl[key] = mergefield("list", tbl[key], value)
 			end
 		else
 			for _, item in ipairs(src) do

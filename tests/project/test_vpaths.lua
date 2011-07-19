@@ -34,28 +34,25 @@
 	end
 
 	function suite.ReturnsOriginalPath_OnNoMatches()
-		vpaths { ["**.h"] = "Headers" }
+		vpaths { ["Headers"] = "**.h" }
 		prepare()
 		test.isequal("hello.c", project.getvpath(prj, "hello.c"))
 	end
 
-
 	function suite.CanTrimLeadingPaths()
-		vpaths { ["src"] = "" }
+		vpaths { [""] = "src" }
 		prepare()
 		test.isequal("myproject/hello.c", project.getvpath(prj, "src/myproject/hello.c"))
 	end
 
-
 	function suite.PatternMayIncludeTrailingSlash()
-		vpaths { ["src/myproject/"] = "" }
+		vpaths { [""] = "src/myproject/" }
 		prepare()
 		test.isequal("hello.c", project.getvpath(prj, "src/myproject/hello.c"))
 	end
 
-
 	function suite.SimpleReplacementPatterns()
-		vpaths { ["src/myproject"] = "sources" }
+		vpaths { ["sources"] = "src/myproject" }
 		prepare()
 		test.isequal("sources/hello.c", project.getvpath(prj, "src/myproject/hello.c"))
 	end
@@ -66,52 +63,47 @@
 --
 
 	function suite.MatchFilePattern_ToGroup_Flat()
-		vpaths { ["**.h"] = "Headers" }
+		vpaths { ["Headers"] = "**.h" }
 		prepare()
 		test.isequal("Headers/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end
 
-
 	function suite.MatchFilePattern_ToNestedGroup_Flat()
-		vpaths { ["**.h"] = "Source/Headers" }
+		vpaths { ["Source/Headers"] = "**.h" }
 		prepare()
 		test.isequal("Source/Headers/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end	
 
-
 	function suite.MatchFilePattern_ToGroup_WithTrailingSlash()
-		vpaths { ["**.h"] = "Headers/" }
+		vpaths { ["Headers/"] = "**.h" }
 		prepare()
 		test.isequal("Headers/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end
 
-
 	function suite.MatchFilePattern_ToNestedGroup_Flat()
-		vpaths { ["**.h"] = "Group/Headers" }
+		vpaths { ["Group/Headers"] = "**.h" }
 		prepare()
 		test.isequal("Group/Headers/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end	
 
-
 	function suite.MatchFilePattern_ToGroup_Nested()
-		vpaths { ["**.h"] = "Headers/**" }
+		vpaths { ["Headers/**"] = "**.h" }
 		prepare()
 		test.isequal("Headers/src/myproject/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end	
-
 
 	function suite.MatchFilePattern_ToGroup_Nested_OneStar()
-		vpaths { ["**.h"] = "Headers/*" }
+		vpaths { ["Headers/*"] = "**.h" }
 		prepare()
 		test.isequal("Headers/src/myproject/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end	
 
-
 	function suite.MatchFilePatternWithPath_ToGroup_Nested()
-		vpaths { ["src/**.h"] = "Headers/**" }
+		vpaths { ["Headers/**"] = "src/**.h" }
 		prepare()
 		test.isequal("Headers/myproject/hello.h", project.getvpath(prj, "src/myproject/hello.h"))
 	end	
+
 
 
 --

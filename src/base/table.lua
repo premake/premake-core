@@ -74,6 +74,27 @@
 
 
 --
+-- Inserts a value of array of values into a table. If the value is
+-- itself a table, its contents are enumerated and added instead. So 
+-- these inputs give these outputs:
+--
+--   "x" -> { "x" }
+--   { "x", "y" } -> { "x", "y" }
+--   { "x", { "y" }} -> { "x", "y" }
+--
+
+	function table.insertflat(tbl, values)
+		if type(values) == "table" then
+			for _, value in ipairs(values) do
+				table.insertflat(tbl, value)
+			end
+		else
+			table.insert(tbl, values)
+		end
+	end
+
+
+--
 -- Returns true if the table is empty, and contains no indexed or keyed values.
 --
 

@@ -82,27 +82,18 @@
 --
 
 	function suite.KeyValue_AreMerged()
-		vpaths { ["sln"] = "Solution" }
+		vpaths { ["Solution"] = "*.sln" }
 		project "MyProject"
-		vpaths { ["prj"] = "Project" }
+		vpaths { ["Project"] = "*.prj" }
 		prepare()
-		test.isequal("Solution", prj.vpaths["sln"])
-		test.isequal("Project", prj.vpaths["prj"])
+		test.isequal({"*.sln"}, prj.vpaths["Solution"])
+		test.isequal({"*.prj"}, prj.vpaths["Project"])
 	end
 	
-	function suite.KeyValue_OverwritesOldValues()
-		vpaths { ["sln"] = "Solution", ["prj"] = "Solution2" }
+	function suite.KeyValue_MergesValues()
+		vpaths { ["Solution"] = "*.sln", ["Project"] = "*.prj" }
 		project "MyProject"
-		vpaths { ["prj"] = "Project" }
+		vpaths { ["Project"] = "*.prjx" }
 		prepare()
-		test.isequal("Project", prj.vpaths["prj"])
+		test.isequal({"*.prj","*.prjx"}, prj.vpaths["Project"])
 	end
-	
-	function suite.KeyValue_FlattensNestedTables()
-		vpaths { ["r"] = "Root", { ["n"] = "Nested" } }
-		project "MyProject"
-		prepare()
-		test.isequal("Root", prj.vpaths["r"])
-		test.isequal("Nested", prj.vpaths["n"])
-	end
-

@@ -80,7 +80,7 @@
 
 	function suite.UniqueIdentifiers_ListVpaths()
 		files { "hello.c", "goodbye.c" }
-		vpaths { ["**.c"] = "Source Files" }
+		vpaths { ["Source Files"] = "**.c" }
 		prepare()
 		vc2010.filteridgroup(prj)
 		test.capture [[
@@ -95,7 +95,7 @@
 
 	function suite.UniqueIdentifiers_ListRealAndVpaths()
 		files { "hello.h", "goodbye.c" }
-		vpaths { ["*.c"] = "Source Files", ["*.h"] = "Header Files" }
+		vpaths { ["Source Files"] = "*.c", ["Header Files"] = "*.h" }
 		prepare()
 		vc2010.filteridgroup(prj)
 		test.capture [[
@@ -144,7 +144,7 @@
 
 	function suite.FileFilters_HasFilter_OnVpath()
 		files { "src/hello.c" }
-		vpaths { ["**.c"] = "Source Files" }		
+		vpaths { ["Source Files"] = "**.c" }		
 		prepare()
 		vc2010.filefiltergroup(prj, "ClCompile")
 		test.capture [[
