@@ -2,6 +2,7 @@
   4.4  (in progress)
 -------
 
+* Feature 1590022: Source file filtering and grouping
 * Feature 3100379: C# support for Visual Studio 2010 
 * Feature 1657833: Set working directory for debugging
 * Added support for Haiku OS (Yuriy O'Donnell)
@@ -25,6 +26,8 @@
 * Bug 3297634: Special characters in directory name Xcode3 (jdale)
 * Feature 3100194: English alais' for Optimize flags
 * Bug 3308203: Incorrect relative paths for gmake sibling static libraries (Adam)
+
+
 -------
   4.3
 -------
