@@ -565,36 +565,7 @@
 				end
 			end
 		end
-		
---[[		
-		for pattern, replacement in pairs(prj.vpaths) do
-			-- does the filename match this vpath pattern?
-			local i = vpath:find(path.wildcards(pattern))
-			if i == 1 then				
-				-- yes; trim the leading portion of the path
-				i = pattern:find("*", 1, true) or (pattern:len() + 1)
-				local leaf = vpath:sub(i)
-				if leaf:startswith("/") then
-					leaf = leaf:sub(2)
-				end
 				
-				-- check for (and remove) stars in the replacement pattern.
-				-- If there are none, then trim all path info from the leaf
-				-- and use just the filename in the replacement (stars should
-				-- really only appear at the end; I'm cheating here)
-				local stem = ""
-				if replacement:len() > 0 then
-					stem, stars = replacement:gsub("%*", "")
-					if stars == 0 then
-						leaf = path.getname(leaf)
-					end
-				end
-				
-				vpath = path.join(stem, leaf)
-			end
-		end
---]]
-		
 		-- remove any dot ("./", "../") patterns from the start of the path
 		local changed
 		repeat
