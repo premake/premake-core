@@ -61,8 +61,8 @@
 			links       { "CoreServices.framework" }
 			
 		configuration { "macosx", "gmake" }
-			buildoptions { "-mmacosx-version-min=10.1" }
-			linkoptions { "-lstdc++-static", "-mmacosx-version-min=10.1" }
+			buildoptions { "-mmacosx-version-min=10.4" }
+			linkoptions  { "-mmacosx-version-min=10.4" }
 
 		configuration { "linux", "bsd", "macosx" }
 			linkoptions { "-rdynamic" }
