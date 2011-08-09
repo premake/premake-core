@@ -27,7 +27,7 @@
 
 			-- source files are handled at the leaves
 			onleaf = function(node, depth)
-				_p(depth, '<File Name="%s"/>', node.path)
+				_p(depth, '<File Name="%s"/>', node.cfg.name)
 			end,
 			
 		}, false, 1)

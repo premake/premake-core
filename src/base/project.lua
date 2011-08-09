@@ -1,7 +1,7 @@
 --
 -- project.lua
 -- Functions for working with the project data.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002 Jason Perkins and the Premake project
 --
 
 	premake.project = { }
@@ -22,7 +22,7 @@
 		tr.project = prj
 
 		for fcfg in premake.project.eachfile(prj) do
-			local node = premake.tree.add(tr, fcfg.name)
+			local node = premake.tree.add(tr, fcfg.vpath)
 			node.cfg = fcfg
 		end
 

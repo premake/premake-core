@@ -123,7 +123,7 @@
 			-- source files are handled at the leaves
 			onleaf = function(node, depth)
 				_p(depth, '<File')
-				_p(depth, '\tRelativePath="%s"', path.translate(node.path, "\\"))
+				_p(depth, '\tRelativePath="%s"', path.translate(node.cfg.name, "\\"))
 				_p(depth, '\t>')
 				depth = depth + 1
 
@@ -133,7 +133,7 @@
 					if cfginfo.isreal then
 						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 						
-						local usePCH = (not prj.flags.NoPCH and prj.pchsource == node.path)
+						local usePCH = (not prj.flags.NoPCH and prj.pchsource == node.cfg.name)
 						if (usePCH) then
 							_p(depth, '<FileConfiguration')
 							_p(depth, '\tName="%s"', cfginfo.name)
