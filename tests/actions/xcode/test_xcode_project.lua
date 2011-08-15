@@ -81,6 +81,19 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_IgnoresVpaths()
+		files { "source.h", "source.c", "source.cpp", "Info.plist" }
+		vpaths { ["Source Files"] = { "**.c", "**.cpp" } }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		[source.c:build] /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = [source.c] /* source.c */; };
+		[source.cpp:build] /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = [source.cpp] /* source.cpp */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 
 ---------------------------------------------------------------------------
 -- PBXFileReference tests
@@ -461,6 +474,34 @@
 				[Cocoa.framework] /* Cocoa.framework */,
 			);
 			name = "Frameworks";
+			sourceTree = "<group>";
+		};
+		]]
+	end
+
+
+	function suite.PBXGroup_OnVpaths()
+		files { "include/premake/source.h" }
+		vpaths { ["Headers"] = "**.h" }
+		prepare()
+		xcode.PBXGroup(tr)
+		test.capture [[
+/* Begin PBXGroup section */
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[Headers] /* Headers */,
+				[Products] /* Products */,
+			);
+			name = "MyProject";
+			sourceTree = "<group>";
+		};
+		[Headers] /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				[source.h] /* source.h */,
+			);
+			name = "Headers";
 			sourceTree = "<group>";
 		};
 		]]

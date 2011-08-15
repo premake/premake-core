@@ -21,8 +21,15 @@
 		local tr = premake.tree.new(prj.name)
 		tr.project = prj
 
+		local isvpath
+		
+		local function onadd(node)
+			node.isvpath = isvpath
+		end
+		
 		for fcfg in premake.project.eachfile(prj) do
-			local node = premake.tree.add(tr, fcfg.vpath)
+			isvpath = (fcfg.name ~= fcfg.vpath)			
+			local node = premake.tree.add(tr, fcfg.vpath, onadd)
 			node.cfg = fcfg
 		end
 

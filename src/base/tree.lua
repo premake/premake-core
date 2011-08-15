@@ -31,11 +31,14 @@
 --    The tree to contain the new node.
 -- @param p
 --    The path of the new node.
+-- @param onaddfunc
+--     A function to call when a new node is added to the tree. Receives the
+--     new node as an argument.
 -- @returns
 --    The new tree node.
 --
 
-	function premake.tree.add(tr, p)
+	function premake.tree.add(tr, p, onaddfunc)
 		-- Special case "." refers to the current node
 		if p == "." then
 			return tr
@@ -43,7 +46,7 @@
 		
 		-- Look for the immediate parent for this new node, creating it if necessary.
 		-- Recurses to create as much of the tree as necessary.
-		local parentnode = tree.add(tr, path.getdirectory(p))
+		local parentnode = tree.add(tr, path.getdirectory(p), onaddfunc)
 
 		-- Another special case, ".." refers to the parent node and doesn't create anything
 		local childname = path.getname(p)
@@ -59,6 +62,9 @@
 		if not childnode or childnode.path ~= p then
 			childnode = tree.insert(parentnode, tree.new(childname))
 			childnode.path = p
+			if onaddfunc then
+				onaddfunc(childnode)
+			end
 		end
 		
 		return childnode

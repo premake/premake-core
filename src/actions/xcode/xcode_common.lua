@@ -397,7 +397,7 @@
 					_p(3,'name = Products;')
 				else
 					_p(3,'name = "%s";', node.name)
-					if node.path then
+					if node.path and not node.isvpath then
 						local p = node.path
 						if node.parent.path then
 							p = path.getrelative(node.parent.path, node.path)
