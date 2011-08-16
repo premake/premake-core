@@ -325,8 +325,15 @@
 						src = "absolute"
 					else
 						-- something else; probably a source code file
-						pth = tree.getlocalpath(node)
 						src = "group"
+
+						-- if the parent node is virtual, it won't have a local path
+						-- of its own; need to use full relative path from project
+						if node.parent.isvpath then
+							pth = node.cfg.name
+						else
+							pth = tree.getlocalpath(node)
+						end
 					end
 					
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = "%s"; path = "%s"; sourceTree = "<%s>"; };',

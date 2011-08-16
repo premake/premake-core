@@ -156,6 +156,7 @@
 		]]
 	end
 
+
 	function suite.PBXFileReference_ListsXibCorrectly()
 		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
 		prepare()
@@ -191,7 +192,7 @@
 	end
 	
 	
-	function suite.PBXFileReference_leavesFrameWorkLocationsAsIsWhenSupplied_pathIsSetToInput()
+	function suite.PBXFileReference_leavesFrameworkLocationsAsIsWhenSupplied_pathIsSetToInput()
 		local inputFrameWork = 'somedir/Foo.framework'
 		links(inputFrameWork)
 		prepare()
@@ -248,6 +249,18 @@
 /* Begin PBXFileReference section */
 		[libMyProject-d.dylib:product] /* libMyProject-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "libMyProject-d.dylib"; path = "libMyProject-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+		]]
+	end
+
+
+	function suite.PBXFileReference_UsesFullPath_WhenParentIsVirtual()
+		files { "src/source.c" }
+		vpaths { ["Source Files"] = "**.c" }
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[source.c] /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "source.c"; path = "src/source.c"; sourceTree = "<group>"; };
 		]]
 	end
 

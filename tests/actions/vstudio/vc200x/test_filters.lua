@@ -56,8 +56,3 @@ local vc200x = premake.vstudio.vc200x
 		</Filter>
 		]]
 	end
-
-
--- TODO: should be NO filter, with uuid
---       can I tell if this is a virtual folder by munging the path?
---       can I build that feature into the source tree?
