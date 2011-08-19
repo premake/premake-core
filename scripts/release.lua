@@ -63,7 +63,7 @@ function dorelease()
    print( "BEFORE RUNNING THIS SCRIPT follow the checklist in RELEASE.txt" )
    print( "")
    print( "Press [Enter] to begin.")
-   io .read()
+   io.read()
 
 
 
