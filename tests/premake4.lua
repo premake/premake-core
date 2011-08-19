@@ -126,6 +126,7 @@
 	
 	-- CodeBlocks tests
 	dofile("actions/codeblocks/codeblocks_files.lua")
+	dofile("actions/codeblocks/test_filters.lua")
 
 --
 -- Register a test action
