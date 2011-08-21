@@ -14,7 +14,7 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, prj2, tr, _OS_original
+	local sln, prj, prj2, tr
 	function suite.setup()
 		premake.action.set("xcode3")
 		xcode.used_ids = { } -- reset the list of generated IDs
