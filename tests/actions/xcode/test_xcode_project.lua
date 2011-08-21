@@ -14,7 +14,7 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, tr
+	local sln, tr, _OS_original
 	function suite.setup()
 		premake.action.set("xcode3")
 		io.eol = "\n"

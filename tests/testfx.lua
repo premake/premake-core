@@ -191,12 +191,13 @@
 --
 -- Test execution function
 --
-
+	local _OS_host = _OS
 	local function test_setup(suite, fn)
 		-- clear out some important globals
 		_ACTION = "test"
 		_ARGS = { }
 		_OPTIONS = { }
+		_OS = _OS_host
 		premake.solution.list = { }
 		io.indent = nil
 
