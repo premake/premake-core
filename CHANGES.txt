@@ -26,7 +26,8 @@
 * Bug 3297634: Special characters in directory name Xcode3 (jdale)
 * Feature 3100194: English alais' for Optimize flags
 * Bug 3308203: Incorrect relative paths for gmake sibling static libraries (Adam)
-
+* Added environment argument support for Visual Studio
+ 
 
 -------
   4.3

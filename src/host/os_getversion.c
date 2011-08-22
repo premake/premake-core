@@ -53,7 +53,7 @@ int os_getversion(lua_State* L)
 void getversion(struct OsVersionInfo* info)
 {
 	OSVERSIONINFOEX versionInfo = {0};
-	SYSTEM_INFO systemInfo = {0};
+	SYSTEM_INFO systemInfo = {{0}};
 
 	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 	GetVersionEx((OSVERSIONINFO*)&versionInfo);
