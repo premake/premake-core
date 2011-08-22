@@ -66,7 +66,13 @@
 			scope = "config",
 			usagecopy = true,
 		},
-		
+
+		environmentargs = 
+		{
+			kind = "list",
+			scope = "config",
+		},
+
 		excludes =
 		{
 			kind  = "filelist",
@@ -91,6 +97,8 @@
 					EnableSSE = 1,
 					EnableSSE2 = 1,
 					ExtraWarnings = 1,
+					EnvironmentArgsInherit = 1,
+					EnvironmentArgsDontMerge =1,
 					FatalWarnings = 1,
 					FloatFast = 1,
 					FloatStrict = 1,

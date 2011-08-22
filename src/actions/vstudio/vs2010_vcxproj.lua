@@ -601,6 +601,17 @@
 		end
 	end
 
+	function vc2010.environmentargs(cfg)
+		if cfg.environmentargs and #cfg.environmentargs > 0 then 
+			_p(2,'<LocalDebuggerEnvironment>%s%s</LocalDebuggerEnvironment>',table.concat(cfg.environmentargs, "\n") 
+					,iif(cfg.flags.EnvironmentArgsInherit,'\n$(LocalDebuggerEnvironment)','')
+				)
+			if cfg.flags.EnvironmentArgsDontMerge then
+				_p(2,'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
+			end
+		end
+	end
+
 	function premake.vs2010_vcxproj_user(prj)
 		io.indent = "  "
 		vc2010.header()
@@ -608,6 +619,7 @@
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p('  <PropertyGroup '.. if_config_and_platform() ..'>', premake.esc(cfginfo.name))
 			vc2010.debugdir(cfg)
+			vc2010.environmentargs(cfg)
 			_p('  </PropertyGroup>')
 		end
 		_p('</Project>')
