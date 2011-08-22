@@ -58,3 +58,31 @@
 			/>
 		]]
 	end
+
+
+	T.vc200x_env_args = { }
+	local vs200x_env_args = T.vc200x_env_args
+
+	function vs200x_env_args.environmentArgs_notSet_bufferDoesNotContainEnvironment()
+		vc200x.environmentargs( {flags={}} )
+		test.string_does_not_contain(io.endcapture(),'Environment=')
+	end
+	function vs200x_env_args.environmentArgs_set_bufferContainsEnvironment()
+		vc200x.environmentargs( {flags={},environmentargs={'key=value'}} )
+		test.string_contains(io.endcapture(),'Environment=')
+	end	
+
+	function vs200x_env_args.environmentArgs_valueUsesQuotes_quotesMarksReplaced()
+		vc200x.environmentargs( {flags={},environmentargs={'key="value"'}} )
+		test.string_contains(io.endcapture(),'Environment="key=&quot;value&quot;"')
+	end
+
+	function vs200x_env_args.environmentArgs_multipleArgs_seperatedUsingCorrectEscape()
+		vc200x.environmentargs( {flags={},environmentargs={'key=value','foo=bar'}} )
+		test.string_contains(io.endcapture(),'Environment="key=value&#x0A;foo=bar"')
+	end
+
+	function vs200x_env_args.environmentArgs_withDontMergeFlag_EnvironmentArgsDontMergeEqualsFalse()
+		vc200x.environmentargs( {flags={EnvironmentArgsDontMerge=1},environmentargs={'key=value'}} )
+		test.string_contains(io.endcapture(),'EnvironmentMerge="false"')
+	end	

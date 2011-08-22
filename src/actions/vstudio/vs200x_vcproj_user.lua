@@ -45,7 +45,15 @@
 --
 -- Output the debug settings element
 --
-
+	function vc200x.environmentargs(cfg)
+		if cfg.environmentargs and #cfg.environmentargs > 0 then
+			_p(4,'Environment="%s"', string.gsub(table.concat(cfg.environmentargs, "&#x0A;"),'"','&quot;'))
+			if cfg.flags.EnvironmentArgsDontMerge then
+				_p(4,'EnvironmentMerge="false"')
+			end
+		end
+	end
+	
 	function vc200x.debugdir(cfg)
 		_p(3,'<DebugSettings')
 		
@@ -56,6 +64,8 @@
 		if #cfg.debugargs > 0 then
 			_p(4,'CommandArguments="%s"', table.concat(cfg.debugargs, " "))
 		end
-		
+
+			vc200x.environmentargs(cfg)
+				
 		_p(3,'/>')
 	end
