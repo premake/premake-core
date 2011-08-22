@@ -27,7 +27,7 @@
 * Feature 3100194: English alais' for Optimize flags
 * Bug 3308203: Incorrect relative paths for gmake sibling static libraries (Adam)
 * Added environment argument support for Visual Studio
- 
+* Bug 3277343: SM_SERVERR2 is not always defined by default
 
 -------
   4.3
