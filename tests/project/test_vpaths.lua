@@ -124,3 +124,32 @@
 		prepare()
 		test.isequal("src/hello.c", project.getvpath(prj, "../../src/hello.c"))
 	end
+	
+
+--
+-- Test with project locations
+--
+
+	function suite.MatchPath_OnProjectLocationSet()		
+		location "build"
+		files "src/hello.h"
+		vpaths { [""] = "src" }
+		prepare()
+		test.isequal("hello.h", project.getvpath(prj, prj.files[1]))
+	end
+
+	function suite.MatchFilePattern_OnProjectLocationSet()
+		location "build"
+		files "src/hello.h"
+		vpaths { ["Headers"] = "**.h" }
+		prepare()
+		test.isequal("Headers/hello.h", project.getvpath(prj, prj.files[1]))
+	end
+
+	function suite.MatchFilePatternWithPath_OnProjectLocationSet()
+		location "build"
+		files "src/hello.h"
+		vpaths { ["Headers"] = "src/**.h" }
+		prepare()
+		test.isequal("Headers/hello.h", project.getvpath(prj, prj.files[1]))
+	end
