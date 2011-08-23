@@ -50,19 +50,32 @@ int os_getversion(lua_State* L)
 #define VER_SUITE_WH_SERVER   (0x00008000)
 #endif
 
+#ifndef SM_SERVERR2
+#	define SM_SERVERR2 89
+#endif
+
+SYSTEM_INFO getsysteminfo()
+{
+	typedef void (WINAPI *GetNativeSystemInfoSig)(LPSYSTEM_INFO);
+	GetNativeSystemInfoSig nativeSystemInfo = (GetNativeSystemInfoSig)
+	GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetNativeSystemInfo");
+	
+	SYSTEM_INFO systemInfo = {{0}};
+	if ( nativeSystemInfo ) nativeSystemInfo(&systemInfo);
+	else GetSystemInfo(&systemInfo);
+	return systemInfo;
+}
+
 void getversion(struct OsVersionInfo* info)
 {
 	OSVERSIONINFOEX versionInfo = {0};
-	SYSTEM_INFO systemInfo = {0};
-
+	
 	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 	GetVersionEx((OSVERSIONINFO*)&versionInfo);
 
 	info->majorversion = versionInfo.dwMajorVersion;
 	info->minorversion = versionInfo.dwMinorVersion;
 	info->revision = versionInfo.wServicePackMajor;
-
-	GetSystemInfo(&systemInfo);
 	
 	if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0)
 	{
@@ -74,6 +87,7 @@ void getversion(struct OsVersionInfo* info)
 	}
 	else if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 2)
 	{
+		SYSTEM_INFO systemInfo = getsysteminfo();
 		if (versionInfo.wProductType == VER_NT_WORKSTATION &&
 			systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
 		{

@@ -26,7 +26,7 @@
 * Bug 3297634: Special characters in directory name Xcode3 (jdale)
 * Feature 3100194: English alais' for Optimize flags
 * Bug 3308203: Incorrect relative paths for gmake sibling static libraries (Adam)
-
+* Bug 3277343: SM_SERVERR2 is not always defined by default (Martin Ridgers)
 
 -------
   4.3
