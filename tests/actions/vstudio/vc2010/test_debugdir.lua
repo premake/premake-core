@@ -56,41 +56,41 @@
 
 
 
-	T.vs2010_env_args = { }
-	local vs10_env_args = T.vs2010_env_args
-	local env_args = premake.vstudio.vc2010.environmentargs
+	T.vs2010_debug_environment = { }
+	local vs10_debug_environment = T.vs2010_debug_environment
+	local vs2010 = premake.vstudio.vc2010
 
-	function vs10_env_args.environmentArgs_notSet_bufferDoesNotContainLocalDebuggerEnvironment()
-		env_args( {flags={}} )
+	function vs10_debug_environment.config_noDebugEnvsTable_bufferDoesNotContainLocalDebuggerEnvironment()
+		vs2010.debugenvs( {flags={}} )
 		test.string_does_not_contain(io.endcapture(),'<LocalDebuggerEnvironment>')
 	end
 
-	function vs10_env_args.environmentArgs_set_bufferContainsLocalDebuggerEnvironment()
-		env_args({flags={},environmentargs ={'key=value'}} )
+	function vs10_debug_environment.config_NoneEmtpyDebugEnvTable_bufferContainsLocalDebuggerEnvironment()
+		vs2010.debugenvs({flags={},debugenvs ={'key=value'}} )
 		test.string_contains(io.endcapture(),'<LocalDebuggerEnvironment>')
 	end
 
-	function vs10_env_args.environmentArgs_oneArgformat_openTagKeyValuePairCloseTag()
-		env_args({flags={},environmentargs ={'key=value'}} )
+	function vs10_debug_environment.format_listContainsOneEntry_openTagKeyValuePairCloseTag()
+		vs2010.debugenvs({flags={},debugenvs ={'key=value'}} )
 		test.string_contains(io.endcapture(),'<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>')
 	end
 	
-	function vs10_env_args.environmentArgs_twoArgformat_openTagKeyValueNewLineSecondPairCloseTag()
-		env_args({flags={},environmentargs ={'key=value','foo=bar'}} )
+	function vs10_debug_environment.format_listContainsTwoEntries_openTagFirstPairNewLineSecondPairCloseTag()
+		vs2010.debugenvs({flags={},debugenvs ={'key=value','foo=bar'}} )
 		test.string_contains(io.endcapture(),'<LocalDebuggerEnvironment>key=value\nfoo=bar</LocalDebuggerEnvironment>')
 	end
 
-	function vs10_env_args.environmentArgs_withOutFlagEnvironmentArgsInherit_doesNotContainLocalDebuggerEnvironmentArg()
-		env_args({flags={},environmentargs ={'key=value'}} )
+	function vs10_debug_environment.flags_withOutEnvironmentArgsInherit_doesNotContainLocalDebuggerEnvironmentArg()
+		vs2010.debugenvs({flags={},environmentargs ={'key=value'}} )
 		test.string_does_not_contain(io.endcapture(),'%$%(LocalDebuggerEnvironment%)')
 	end
 
-	function vs10_env_args.environmentArgs_withFlagEnvironmentArgsInherit_endsWithNewLineLocalDebuggerEnvironmentFollowedByClosedTag()
-		env_args({flags={EnvironmentArgsInherit=1},environmentargs ={'key=value'}} )
+	function vs10_debug_environment.flags_withDebugEnvsInherit_endsWithNewLineLocalDebuggerEnvironmentFollowedByClosedTag()
+		vs2010.debugenvs({flags={DebugEnvsInherit=1},debugenvs ={'key=value'}} )
 		test.string_contains(io.endcapture(),'\n%$%(LocalDebuggerEnvironment%)</LocalDebuggerEnvironment>')
 	end
 	
-	function vs10_env_args.environmentArgs_withEnvironmentArgsDontMerge_localDebuggerMergeEnvironmentSetToFalse()
-		env_args({flags={EnvironmentArgsDontMerge=1},environmentargs ={'key=value'}} )
+	function vs10_debug_environment.flags_withDebugEnvsDontMerge_localDebuggerMergeEnvironmentSetToFalse()
+		vs2010.debugenvs({flags={DebugEnvsDontMerge=1},debugenvs ={'key=value'}} )
 		test.string_contains(io.endcapture(),'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
 	end

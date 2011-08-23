@@ -37,7 +37,27 @@
 		end
 	end
 
-
+	function premake.codeblocks.debugenvs(cfg)
+		--Assumption: if gcc is being used then so is gdb although this section will be ignored by
+		--other debuggers. If using gcc and not gdb it will silently not pass the
+		--environment arguments to the debugger
+		if premake.gettool(cfg) == premake.gcc then
+			_p(3,'<debugger>')
+				_p(4,'<remote_debugging target="%s">', premake.esc(cfg.longname))
+					local args = ''
+					local sz = #cfg.debugenvs
+					for idx, v in ipairs(cfg.debugenvs) do
+						args = args .. 'set env ' .. v 
+						if sz ~= idx then args = args .. '&#x0A;' end
+					end
+					_p(5,'<options additional_cmds_before="%s" />',args)
+				_p(4,'</remote_debugging>')
+			_p(3,'</debugger>')
+		else
+			 error('Sorry at this moment there is no support for debug environment variables with this debugger and codeblocks')
+		end
+	end
+	
 --
 -- The main function: write out the project file.
 --
@@ -152,7 +172,16 @@
 		
 		codeblocks.files(prj)
 		
-		_p(2,'<Extensions />')
+		_p(2,'<Extensions>')
+        for _, platform in ipairs(platforms) do
+			for cfg in premake.eachconfig(prj, platform) do
+				if cfg.debugenvs and #cfg.debugenvs > 0 then
+					premake.codeblocks.debugenvs(cfg)
+				end
+			end
+		end
+		_p(2,'</Extensions>')
+
 		_p(1,'</Project>')
 		_p('</CodeBlocks_project_file>')
 		_p('')

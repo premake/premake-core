@@ -54,6 +54,12 @@
 			scope = "config",
 		},
 
+		debugenvs  = 
+		{
+			kind = "list",
+			scope = "config",
+		},
+		
 		defines =
 		{
 			kind  = "list",
@@ -66,13 +72,7 @@
 			scope = "config",
 			usagecopy = true,
 		},
-
-		environmentargs = 
-		{
-			kind = "list",
-			scope = "config",
-		},
-
+		
 		excludes =
 		{
 			kind  = "filelist",
@@ -94,11 +94,11 @@
 			allowed = function(value)
 			
 				local allowed_flags = {
+					DebugEnvsDontMerge = 1,
+					DebugEnvsInherit = 1,
 					EnableSSE = 1,
 					EnableSSE2 = 1,
 					ExtraWarnings = 1,
-					EnvironmentArgsInherit = 1,
-					EnvironmentArgsDontMerge =1,
 					FatalWarnings = 1,
 					FloatFast = 1,
 					FloatStrict = 1,

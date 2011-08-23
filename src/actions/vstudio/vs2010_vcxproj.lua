@@ -601,12 +601,12 @@
 		end
 	end
 
-	function vc2010.environmentargs(cfg)
-		if cfg.environmentargs and #cfg.environmentargs > 0 then 
-			_p(2,'<LocalDebuggerEnvironment>%s%s</LocalDebuggerEnvironment>',table.concat(cfg.environmentargs, "\n") 
-					,iif(cfg.flags.EnvironmentArgsInherit,'\n$(LocalDebuggerEnvironment)','')
+	function vc2010.debugenvs(cfg)
+		if cfg.debugenvs and #cfg.debugenvs > 0 then 
+			_p(2,'<LocalDebuggerEnvironment>%s%s</LocalDebuggerEnvironment>',table.concat(cfg.debugenvs, "\n") 
+					,iif(cfg.flags.DebugEnvsInherit,'\n$(LocalDebuggerEnvironment)','')
 				)
-			if cfg.flags.EnvironmentArgsDontMerge then
+			if cfg.flags.DebugEnvsDontMerge then
 				_p(2,'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
 			end
 		end
