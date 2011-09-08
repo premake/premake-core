@@ -334,7 +334,13 @@
 		local buffer = get_buffer()
 		test.string_does_not_contain(buffer,debug_config_pch_string)
 	end
-
+	function vs10_vcxproj.pchHeaderAndPchSourceSet_bufferContainPchCreate()
+		configuration("Debug")
+			pchheader "foo/dummyHeader.h"
+			pchsource "foo/dummySource.cpp"
+		local buffer = get_buffer()
+		test.string_contains(buffer,debug_config_pch_string)
+	end
 
 	function vs10_vcxproj.wholeProgramOptimizationIsNotSetByDefault_bufferDoesNotContainWholeProgramOptimization()
 		local buffer = get_buffer()
