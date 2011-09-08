@@ -619,7 +619,7 @@
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p('  <PropertyGroup '.. if_config_and_platform() ..'>', premake.esc(cfginfo.name))
 			vc2010.debugdir(cfg)
-			vc2010.environmentargs(cfg)
+			vc2010.debugenvs(cfg)
 			_p('  </PropertyGroup>')
 		end
 		_p('</Project>')
