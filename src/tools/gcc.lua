@@ -79,7 +79,16 @@
 			cxx        = "ppu-lv2-g++",
 			ar         = "ppu-lv2-ar",
 			cppflags   = "-MMD",
-		}
+		},
+		WiiDev = {
+			cppflags    = "-MMD -MP -I$(LIBOGC_INC) $(MACHDEP)",
+			ldflags		= "-L$(LIBOGC_LIB) $(MACHDEP)",
+			cfgsettings = [[
+  ifeq ($(strip $(DEVKITPPC)),)
+    $(error "DEVKITPPC environment variable is not set")'
+  endif
+  include $(DEVKITPPC)/wii_rules']],
+		},
 	}
 
 	local platforms = premake.gcc.platforms
@@ -118,9 +127,8 @@
 		local result = table.translate(cfg.flags, cxxflags)
 		return result
 	end
+
 	
-
-
 --
 -- Returns a list of linker flags, based on the supplied configuration.
 --
@@ -239,4 +247,14 @@
 			table.insert(result, "-I" .. _MAKE.esc(dir))
 		end
 		return result
+	end
+
+
+-- 
+-- Return platform specific project and configuration level
+-- makesettings blocks.
+--	
+
+	function premake.gcc.getcfgsettings(cfg)
+		return platforms[cfg.platform].cfgsettings
 	end

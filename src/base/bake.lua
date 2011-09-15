@@ -22,7 +22,14 @@
 		projects  = true,
 		__configs = true,
 	}
-	
+
+-- do not cascade these fields from projects to configurations
+
+	local nocascade = 
+	{
+		makesettings = true,
+	}
+		
 -- leave these paths as absolute, rather than converting to project relative
 
 	local keeprelative =

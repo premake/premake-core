@@ -254,6 +254,12 @@
 			scope = "container",
 		},
 		
+		makesettings =
+		{
+			kind = "list",
+			scope = "config",
+		},
+		
 		objdir =
 		{
 			kind  = "path",

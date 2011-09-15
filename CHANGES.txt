@@ -29,6 +29,7 @@
 * Bug 3277343: SM_SERVERR2 is not always defined by default (Martin Ridgers)
 * Added os.stat
 * Bug 3381149: Path of PCH source file in VS10 not being translated (intyuh)
+* Patch 3021550: Add Wii homebrew platform (Pathogen David)
 
 -------
   4.3

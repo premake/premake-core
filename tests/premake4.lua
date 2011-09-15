@@ -112,7 +112,9 @@
 	dofile("actions/make/test_make_escaping.lua")
 	dofile("actions/make/test_make_pch.lua")
 	dofile("actions/make/test_make_linking.lua")
-	
+	-- dofile("actions/make/test_makesettings.lua")
+	dofile("actions/make/test_wiidev.lua")
+
 	-- Xcode3 tests
 	dofile("actions/xcode/test_xcode_common.lua")
 	dofile("actions/xcode/test_xcode_project.lua")

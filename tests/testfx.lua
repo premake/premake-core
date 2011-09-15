@@ -199,6 +199,7 @@
 		_OPTIONS = { }
 		premake.solution.list = { }
 		io.indent = nil
+		io.eol = "\n"
 
 		-- reset captured I/O values
 		test.value_openedfilename = nil
