@@ -30,6 +30,8 @@
 * Added os.stat
 * Bug 3381149: Path of PCH source file in VS10 not being translated (intyuh)
 * Patch 3021550: Add Wii homebrew platform (Pathogen David)
+* Patch 3035550: Make/Distcc outputs dependencies to wrong location
+
 
 -------
   4.3

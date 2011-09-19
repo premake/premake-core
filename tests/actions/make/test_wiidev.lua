@@ -35,7 +35,7 @@
   CPPFLAGS  += -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) 
   CXXFLAGS  += $(CFLAGS) 
-  LDFLAGS   += -s lwiiuse -lbte -logc -lm -L$(LIBOGC_LIB) $(MACHDEP)
+  LDFLAGS   += -s -L$(LIBOGC_LIB) $(MACHDEP)
   RESFLAGS  += $(DEFINES) $(INCLUDES) 
   		]]
 	end
