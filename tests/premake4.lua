@@ -121,6 +121,7 @@
 	dofile("actions/xcode/test_xcode_dependencies.lua")
 
 	-- Xcode4 tests
+	dofile("actions/xcode/test_xcode4_project.lua")
 	dofile("actions/xcode/test_xcode4_workspace.lua")
 	
 	-- CodeLite tests

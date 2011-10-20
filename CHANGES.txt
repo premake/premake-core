@@ -32,6 +32,7 @@
 * Patch 3021550: Add Wii homebrew platform (Pathogen David)
 * Patch 3035550: Make/Distcc outputs dependencies to wrong location
 * Patch 3138574: NoImportLib ignored in Windows makefiles dependencies (rjmyst3)
+* Patch 3367641: Remove warnings in Xcode 4
 
 
 -------
