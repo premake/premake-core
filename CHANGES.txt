@@ -33,6 +33,7 @@
 * Patch 3035550: Make/Distcc outputs dependencies to wrong location
 * Patch 3138574: NoImportLib ignored in Windows makefiles dependencies (rjmyst3)
 * Patch 3367641: Remove warnings in Xcode 4
+* Patch 3372345: Gmake action's PCHs don't work with Mingw (Martin Ridgers)
 
 
 -------
