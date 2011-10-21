@@ -622,6 +622,15 @@
 
 
 --
+-- Returns true if the project use the C language.
+--
+
+	function premake.project.iscproject(prj)
+		return prj.language == "C"
+	end
+
+
+--
 -- Returns true if the project uses a C/C++ language.
 --
 

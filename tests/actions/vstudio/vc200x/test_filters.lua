@@ -40,8 +40,8 @@ local vc200x = premake.vstudio.vc200x
 --
 
 	function suite.Filter_UsesVirtualForm_OnVpath()
-		files { "src/hello.c" }
-		vpaths { ["Source Files"] = "**.c" }		
+		files { "src/hello.cpp" }
+		vpaths { ["Source Files"] = "**.cpp" }		
 		prepare()
 		vc200x.Files(prj)
 		test.capture [[
@@ -50,7 +50,7 @@ local vc200x = premake.vstudio.vc200x
 			Filter=""
 			>
 			<File
-				RelativePath="src\hello.c"
+				RelativePath="src\hello.cpp"
 				>
 			</File>
 		</Filter>
