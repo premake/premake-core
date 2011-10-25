@@ -268,7 +268,19 @@
 -- Precompiled header support
 --
 
-	function cpp.pchconfig(cfg)			
+	function cpp.pchconfig(cfg)
+		-- GCC needs the full path to the PCH, while Visual Studio needs
+		-- only the name (or rather, the name as specified in the #include
+		-- statement). Try to locate the PCH in the project.
+		local pchheader = cfg.pchheader
+		for _, incdir in ipairs(cfg.includedirs) do
+			local testname = path.join(incdir, cfg.pchheader)
+			if os.isfile(testname) then
+				pchheader = testname
+				break
+			end
+		end
+
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p('  PCH        = %s', _MAKE.esc(path.getrelative(cfg.location, cfg.pchheader)))
 			_p('  GCH        = $(OBJDIR)/%s.gch', _MAKE.esc(path.getname(cfg.pchheader))) 

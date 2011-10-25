@@ -26,3 +26,7 @@ Makefile
 *.project
 *.tags
 
+*.bbprojectsettings
+Scratchpad.txt
+Unix Worksheet.worksheet
+project.bbprojectdata

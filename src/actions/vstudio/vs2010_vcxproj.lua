@@ -154,7 +154,7 @@
 	local function precompiled_header(cfg)
       	if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
-			_p(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', path.getname(cfg.pchheader))
+			_p(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
 		else
 			_p(3,'<PrecompiledHeader></PrecompiledHeader>')
 		end
