@@ -36,6 +36,7 @@
 * Patch 3372345: Gmake action's PCHs don't work with Mingw (Martin Ridgers)
 * Patch 3317329: Support vstudio CompileAs for mixed-language projects (xpol)
 * Patch 3337372: Improved precompiled header support (Anders Ericsson)
+* Patch 3401184: Fix Gmake LDFLAGS generation order (Adam Petrone)
 
 
 -------
