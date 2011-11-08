@@ -13,7 +13,7 @@
 	test.createsolution = function()
 		local sln = solution "MySolution"
 		configurations { "Debug", "Release" }
-		
+
 		local prj = project "MyProject"
 		language "C++"
 		kind "ConsoleApp"
@@ -25,7 +25,7 @@
 	test.createproject = function(sln)
 		local n = #sln.projects + 1
 		if n == 1 then n = "" end
-		
+
 		local prj = project ("MyProject" .. n)
 		language "C++"
 		kind "ConsoleApp"
@@ -60,14 +60,14 @@
 	dofile("test_project.lua")
 	dofile("project/test_eachfile.lua")
 	dofile("project/test_vpaths.lua")
-	
+
 	-- Baking tests
 	dofile("base/test_baking.lua")
 	dofile("baking/test_merging.lua")
-	
+
 	-- Clean tests
 	dofile("actions/test_clean.lua")
-	
+
 	-- Visual Studio tests
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
@@ -100,12 +100,13 @@
 	dofile("actions/vstudio/vc200x/header.lua")
 	dofile("actions/vstudio/vc200x/files.lua")
 	dofile("actions/vstudio/vc200x/test_filters.lua")
-	
+
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/test_debugdir.lua")
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
+	dofile("actions/vstudio/vc2010/test_links.lua")
 	dofile("actions/vstudio/vc2010/test_pch.lua")
 
 	-- Makefile tests
@@ -123,10 +124,10 @@
 	-- Xcode4 tests
 	dofile("actions/xcode/test_xcode4_project.lua")
 	dofile("actions/xcode/test_xcode4_workspace.lua")
-	
+
 	-- CodeLite tests
 	dofile("actions/codelite/codelite_files.lua")
-	
+
 	-- CodeBlocks tests
 	dofile("actions/codeblocks/codeblocks_files.lua")
 	dofile("actions/codeblocks/test_filters.lua")
@@ -138,7 +139,7 @@
 	newaction {
 		trigger     = "test",
 		description = "Run the automated test suite",
-		
+
 		execute = function ()
 			passed, failed = test.runall()
 			msg = string.format("%d tests passed, %d failed", passed, failed)

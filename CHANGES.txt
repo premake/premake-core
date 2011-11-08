@@ -3,7 +3,7 @@
 -------
 
 * Feature 1590022: Source file filtering and grouping
-* Feature 3100379: C# support for Visual Studio 2010 
+* Feature 3100379: C# support for Visual Studio 2010
 * Feature 1657833: Set working directory for debugging
 * Added support for Haiku OS (Yuriy O'Donnell)
 * Patch 2963313: Enable setting .NET framework version (Justen Hyde)
@@ -37,6 +37,7 @@
 * Patch 3317329: Support vstudio CompileAs for mixed-language projects (xpol)
 * Patch 3337372: Improved precompiled header support (Anders Ericsson)
 * Patch 3401184: Fix Gmake LDFLAGS generation order (Adam Petrone)
+* Patch 3381066: Fix VS2010 project references
 
 
 -------
@@ -196,7 +197,7 @@ RC4 -> Final
 RC3 -> RC4
 
 - Embed scripts instead of bytecodes to avoid portability issues
-- solution() and project() now only set the active object when 
+- solution() and project() now only set the active object when
   called with a name; remains unchanged otherwise
 
 RC2 -> RC3
@@ -230,7 +231,7 @@ RC1 -> RC2
 - Added new cb-ow (Code::Blocks Open Watcom) target (Tim Channon)
 - Place OSX winexe's into Content/MacOS folder (William Burnson)
 - Sibling executables may now be listed in package.links
-- Bug 1520012: Improper Makefiles when filenames have spaces 
+- Bug 1520012: Improper Makefiles when filenames have spaces
   (Diaa Sami)
 - Bug 2045506: "no-exceptions" flag ignored for VS200x (Benoit Miller)
 - Bug 2034470: Error in cmd line error handler
@@ -242,12 +243,12 @@ RC1 -> RC2
 -----
 
 - Patch 1946122: Add support for VS2008 (Ryan Pusztai)
-- Patch 1913448: Win32 crash when using '--clean --usetargetpath' 
+- Patch 1913448: Win32 crash when using '--clean --usetargetpath'
   (David Walters)
 - Patch 1771168: luaL_getn speed optimization (Richard O'Grady)
 - Bug 1939089: Premake segfault on Linux/PPC (Fabio Till)
 - Fixed "bad argument #2 to 'chdir'" error
-- Disable -MMD on multiple -arch flags (poor man's Universal binary 
+- Disable -MMD on multiple -arch flags (poor man's Universal binary
   support)
 
 
@@ -257,12 +258,12 @@ RC1 -> RC2
 
 - Prevent creation of import libraries on OS X
 - Improved handling of dylibs on OS X
-- Patch 1771977: Ability to compile C source as C++ in Code::Blocks 
+- Patch 1771977: Ability to compile C source as C++ in Code::Blocks
   (Ryan Pusztai)
 - Bug 1804810: out-implib not present in linux gnu compler toolchain
 - Bug 1806949: .Net reference paths are broken when bindir is specified
 - Bug 1806960: Make clean does not remove .mdb files
-- Bug 1831389: Makefiles stored in subdirs contain no targets on 
+- Bug 1831389: Makefiles stored in subdirs contain no targets on
   first run
 
 
@@ -310,7 +311,7 @@ RC1 -> RC2
 - Bug 1655595: Compile/build problem on FreeBSD
 - Bug: "gnu" clean rule doesn't work in cmd.exe
 - Improved behavior of Linux findlib()
-- Updated Code::Blocks support to latest project version 
+- Updated Code::Blocks support to latest project version
   (major="1" minor="6")
 - Patch 1681666: GNU targets always show the console if kind = 'winexe'
 
@@ -358,7 +359,7 @@ RC1 -> RC2
 - Added unit test suite
 - Merged Scott Graham unicode build flag patch
 - Removed package.warninglevel in favor of extra-warnings flag
-- Added package.targetprefix 
+- Added package.targetprefix
 - Overhauled structure of generated GNU makefiles
 - Added --os command line option
 - Fixed bug 1268588: Use gcc to link C packages
@@ -394,7 +395,7 @@ RC1 -> RC2
 - Worked around VS.NET bug for .NET assemblies > 64K.
 - Added --very-verbose flag to GNU generator.
 - GNU generator now supports assembly sources.
- 
+
 
 -----
  2.1
@@ -461,13 +462,13 @@ RC1 -> RC2
 - Added support for Digital Mars compiler.
 
 
-------- 
+-------
  1.6.1
 -------
 
 - VS7 generator crashed if a package was built before one of its
   dependencies. Now immediately assigns UUID before processing.
-  
+
 
 -----
  1.6
@@ -475,20 +476,20 @@ RC1 -> RC2
 
 - Added support for Visual Studio 2003 and SharpDevelop.
 - Added binaries directory as a reference path for VS7.
-	
+
 
 -----
  1.5
 -----
 
 - Added initial support for building static libraries.
-- Added "no-main" flag, prevents overriding WinMain() on 
+- Added "no-main" flag, prevents overriding WinMain() on
   Windows builds.
 - Added "--no-rtti" and "no-exceptions" build flags to
   disable those C++ features.
 - Display error message when project has no packages.
 - Moved VC7 *.pdb files into intermediates directory.
-  
+
 
 -----
  1.4
@@ -496,7 +497,7 @@ RC1 -> RC2
 
 - Bug fixes to the path manipulation routines.
 - GNU makefiles are regenerated when premake scripts change.
-    
+
 
 -----
  1.3
