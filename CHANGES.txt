@@ -24,7 +24,7 @@
 * Patch 3043933 Allow gmake to use static lib when shared lib of same name exists (Jonathan Derque)
 * Bug 3294459: vs10 x86_64 using incorrect debug format for minimal rebuild (learner)
 * Bug 3297634: Special characters in directory name Xcode3 (jdale)
-* Feature 3100194: English alais' for Optimize flags
+* Feature 3100194: English aliases for Optimize flags
 * Bug 3308203: Incorrect relative paths for gmake sibling static libraries (Adam)
 * Bug 3277343: SM_SERVERR2 is not always defined by default (Martin Ridgers)
 * Added os.stat
