@@ -40,6 +40,7 @@
 * Patch 3381066: Fix VS2010 project references
 * Added debug environment variable support for Visual Studio
 * Added debug environment variable support for Codeblocks using gdb
+* Bug: Visual Studio 2010 forces x86 when platform is Native
 
 
 -------

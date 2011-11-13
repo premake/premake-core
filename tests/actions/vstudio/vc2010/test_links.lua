@@ -36,7 +36,7 @@
 -- entire project references item group should be skipped.
 --
 
-	function suite.noSectionWritten_onNoSiblingReferences()
+	function suite.noProjectReferencesGroup_onNoSiblingReferences()
 		prepare()
 		vc2010.projectReferences(prj2)
 		test.isemptycapture()
@@ -74,6 +74,12 @@
 		vc2010.additionalDependencies(prj2)
 		test.isemptycapture()
 	end
+
+
+--
+-- If a mix of sibling and system links are listed, only the system
+-- libraries should appear in the additional dependencies element.
+--
 
 	function suite.onlySystemDependencies_OnSiblingProjectLink()
 		links { "MyProject", "kernel32" }

@@ -75,7 +75,6 @@
 	dofile("actions/vstudio/test_vs200x_vcproj_linker.lua")
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
 	dofile("actions/vstudio/test_vs2010_flags.lua")
-	dofile("actions/vstudio/test_vs2010_links.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 
 	-- Visual Studio 2002-2003 C# projects
@@ -106,6 +105,7 @@
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
+	dofile("actions/vstudio/vc2010/test_link_settings.lua")
 	dofile("actions/vstudio/vc2010/test_links.lua")
 	dofile("actions/vstudio/vc2010/test_pch.lua")
 
