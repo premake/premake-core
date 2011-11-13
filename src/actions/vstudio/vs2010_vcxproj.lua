@@ -353,7 +353,7 @@
 	end
 
 	local function link_target_machine(index,cfg)
-		local platforms = {x32 = 'MachineX86',Native = 'MachineX86', x64 = 'MachineX64'}
+		local platforms = {x32 = 'MachineX86', x64 = 'MachineX64'}
 		if platforms[cfg.platform] then
 			_p(index,'<TargetMachine>%s</TargetMachine>', platforms[cfg.platform])
 		end
@@ -380,42 +380,28 @@
 	end
 
 
-	local function common_link_section(cfg)
-		_p(3,'<SubSystem>%s</SubSystem>',iif(cfg.kind == "ConsoleApp","Console", "Windows"))
+--
+-- Generate the <Link> element and its children.
+--
 
-		if cfg.flags.Symbols then
-			_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
-		else
-			_p(3,'<GenerateDebugInformation>false</GenerateDebugInformation>')
-		end
+	function vc2010.link(cfg)
+		_p(2,'<Link>')
+		_p(3,'<SubSystem>%s</SubSystem>', iif(cfg.kind == "ConsoleApp", "Console", "Windows"))
+		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
 
 		if premake.config.isoptimizedbuild(cfg.flags) then
-			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
+			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 		end
-	end
 
-
-	function vc2010.additionalDependencies(cfg)
-		local links = premake.getlinks(cfg, "system", "fullpath")
-		if #links > 0 then
-			_p(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>',
-						table.concat(links, ";"))
-		end
-	end
-
-
-	local function item_link(cfg)
-		_p(2,'<Link>')
 		if cfg.kind ~= 'StaticLib' then
 			vc2010.additionalDependencies(cfg)
 			_p(3,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
 
-			_p(3,'<AdditionalLibraryDirectories>%s%s%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>',
-						table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"),
-						iif(cfg.libdirs and #cfg.libdirs > 0,';',''))
-
-			common_link_section(cfg)
+			if #cfg.libdirs > 0 then
+				_p(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>',
+						premake.esc(path.translate(table.concat(cfg.libdirs, ';'), '\\')))
+			end
 
 			if vc2010.config_type(cfg) == 'Application' and not cfg.flags.WinMain and not cfg.flags.Managed then
 				_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
@@ -424,11 +410,24 @@
 			import_lib(cfg)
 			link_target_machine(3,cfg)
 			additional_options(3,cfg)
-		else
-			common_link_section(cfg)
 		end
 
 		_p(2,'</Link>')
+	end
+
+
+--
+-- Generate the <Link/AdditionalDependencies> element, which links in system
+-- libraries required by the project (but not sibling projects; that's handled
+-- by an <ItemGroup/ProjectReference>).
+--
+
+	function vc2010.additionalDependencies(cfg)
+		local links = premake.getlinks(cfg, "system", "fullpath")
+		if #links > 0 then
+			_p(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>',
+						table.concat(links, ";"))
+		end
 	end
 
 
@@ -440,7 +439,7 @@
 				vs10_clcompile(cfg)
 				resource_compile(cfg)
 				item_def_lib(cfg)
-				item_link(cfg)
+				vc2010.link(cfg)
 				event_hooks(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 
