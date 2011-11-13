@@ -1,11 +1,12 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
 	_MAKE = { }
 	premake.make = { }
+	local make = premake.make
 
 --
 -- Escape a string so it can be written to a makefile.
@@ -99,7 +100,26 @@
 		return result
 	end
 	
+
+
+--
+-- Write out the raw settings blocks.
+--
+
+	function make.settings(cfg, cc)
+		if #cfg.makesettings > 0 then
+			for _, value in ipairs(cfg.makesettings) do
+				_p(value)
+			end
+		end
 		
+		local toolsettings = cc.platforms[cfg.platform].cfgsettings
+		if toolsettings then
+			_p(toolsettings)
+		end
+	end
+
+
 --
 -- Register the "gmake" action
 --

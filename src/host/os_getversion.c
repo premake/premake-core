@@ -26,7 +26,7 @@ int os_getversion(lua_State* L)
 	lua_pushstring(L, "majorversion");
 	lua_pushnumber(L, info.majorversion);
 	lua_settable(L, -3);
-	
+
 	lua_pushstring(L, "minorversion");
 	lua_pushnumber(L, info.minorversion);
 	lua_settable(L, -3);
@@ -58,8 +58,8 @@ SYSTEM_INFO getsysteminfo()
 {
 	typedef void (WINAPI *GetNativeSystemInfoSig)(LPSYSTEM_INFO);
 	GetNativeSystemInfoSig nativeSystemInfo = (GetNativeSystemInfoSig)
-			GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetNativeSystemInfo");
-	
+	GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetNativeSystemInfo");
+
 	SYSTEM_INFO systemInfo = {{0}};
 	if ( nativeSystemInfo ) nativeSystemInfo(&systemInfo);
 	else GetSystemInfo(&systemInfo);
@@ -76,7 +76,7 @@ void getversion(struct OsVersionInfo* info)
 	info->majorversion = versionInfo.dwMajorVersion;
 	info->minorversion = versionInfo.dwMinorVersion;
 	info->revision = versionInfo.wServicePackMajor;
-	
+
 	if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0)
 	{
 		info->description = "Windows 2000";
@@ -123,7 +123,7 @@ void getversion(struct OsVersionInfo* info)
 		{
 			info->description = "Windows Server 2008 R2";
 		}
-		else 
+		else
 		{
 			info->description = "Windows 7";
 		}
@@ -141,11 +141,11 @@ void getversion(struct OsVersionInfo* info)
 #include <CoreServices/CoreServices.h>
 
 void getversion(struct OsVersionInfo* info)
-{	
+{
 	Gestalt(gestaltSystemVersionMajor, &info->majorversion);
 	Gestalt(gestaltSystemVersionMinor, &info->minorversion);
-	Gestalt(gestaltSystemVersionBugFix, &info->revision);	
-	
+	Gestalt(gestaltSystemVersionBugFix, &info->revision);
+
 	info->description = "Mac OS X";
 	if (info->majorversion == 10)
 	{

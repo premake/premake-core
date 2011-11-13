@@ -441,7 +441,10 @@
 		local kind = cfg.kind
 		if premake.iscppproject(cfg) then
 			-- On Windows, shared libraries link against a static import library
-			if (namestyle == "windows" or system == "windows") and kind == "SharedLib" and direction == "link" then
+			if (namestyle == "windows" or system == "windows") 
+				and kind == "SharedLib" and direction == "link" 
+				and not cfg.flags.NoImportLib 
+			then				
 				kind = "StaticLib"
 			end
 
@@ -616,6 +619,15 @@
 		end
 	end
 
+
+
+--
+-- Returns true if the project use the C language.
+--
+
+	function premake.project.iscproject(prj)
+		return prj.language == "C"
+	end
 
 
 --

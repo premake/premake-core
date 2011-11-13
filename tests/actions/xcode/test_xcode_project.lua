@@ -1,7 +1,7 @@
 --
 -- tests/actions/xcode/test_xcode_project.lua
 -- Automated test suite for Xcode project generation.
--- Copyright (c) 2009-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
 	T.xcode3_project = { }
@@ -16,7 +16,7 @@
 
 	local sln, tr
 	function suite.setup()
-		premake.action.set("xcode3")
+		_ACTION = "xcode3"
 		io.eol = "\n"
 		xcode.used_ids = { } -- reset the list of generated IDs
 		sln = test.createsolution()
@@ -656,7 +656,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 1;
 			mainGroup = [MyProject] /* MyProject */;
 			projectDirPath = "";
@@ -1084,7 +1084,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1109,7 +1108,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1134,7 +1132,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1159,7 +1156,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
 			name = "Debug";
@@ -1186,7 +1182,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 				SYMROOT = "bin";
 			};
 			name = "Debug";
@@ -1216,7 +1211,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1245,7 +1239,6 @@
 				);
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1274,7 +1267,6 @@
 					"build option 1",
 					"build option 2",
 				);
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1302,7 +1294,6 @@
 				OTHER_LDFLAGS = (
 					"-lldap",
 				);
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1330,7 +1321,6 @@
 					"link option 1",
 					"link option 2",
 				);
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1355,7 +1345,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = "Debug";
@@ -1382,7 +1371,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1410,7 +1398,6 @@
 				OTHER_CFLAGS = (
 					"-ffast-math",
 				);
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1438,7 +1425,6 @@
 				OTHER_CFLAGS = (
 					"-ffloat-store",
 				);
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1464,7 +1450,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1491,7 +1476,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1519,7 +1503,6 @@
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 				);
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1545,7 +1528,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1571,7 +1553,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1598,7 +1579,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1627,7 +1607,6 @@
 				);
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1654,7 +1633,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1679,7 +1657,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Universal/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1704,7 +1681,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Universal32/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1729,7 +1705,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Universal64/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1754,7 +1729,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1779,7 +1753,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/x32/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1804,7 +1777,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/x64/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug";
 		};
@@ -1828,7 +1800,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = "obj/Universal32/Debug";
 				ONLY_ACTIVE_ARCH = NO;
-				PREBINDING = NO;
 			};
 			name = "Debug 32-bit Universal";
 		};

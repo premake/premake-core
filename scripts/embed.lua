@@ -7,7 +7,7 @@
 
 	local function stripfile(fname)
 		local f = io.open(fname)
-		local s = f:read("*a")
+		local s = assert(f:read("*a"))
 		f:close()
 
 		-- strip tabs

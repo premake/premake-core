@@ -1,7 +1,7 @@
 --
 -- tests/actions/xcode/test_xcode_dependencies.lua
 -- Automated test suite for Xcode project dependencies.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
 	T.xcode3_deps = { }
@@ -249,7 +249,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 1;
 			mainGroup = [MyProject] /* MyProject */;
 			projectDirPath = "";

@@ -262,6 +262,12 @@
 			scope = "container",
 		},
 		
+		makesettings =
+		{
+			kind = "list",
+			scope = "config",
+		},
+		
 		objdir =
 		{
 			kind  = "path",
@@ -389,7 +395,7 @@
 		
 		vpaths = 
 		{
-			kind = "keyvalue",
+			kind = "keypath",
 			scope = "container",
 		},
 
@@ -630,7 +636,7 @@
 			return premake.setdirarray(scope, name, value)
 		elseif kind == "filelist" then
 			return premake.setfilearray(scope, name, value)
-		elseif kind == "keyvalue" then
+		elseif kind == "keyvalue" or kind == "keypath" then
 			return premake.setkeyvalue(scope, name, value)
 		end
 	end

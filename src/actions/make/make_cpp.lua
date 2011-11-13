@@ -1,11 +1,12 @@
 --
 -- make_cpp.lua
 -- Generate a C/C++ project makefile.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
 	premake.make.cpp = { }
-	local _ = premake.make.cpp
+	local cpp = premake.make.cpp
+	local make = premake.make
 	
 
 	function premake.make_cpp(prj)
@@ -106,18 +107,14 @@
 		_p('')
 
 		-- precompiler header rule
-		_.pchrules(prj)
+		cpp.pchrules(prj)
 				
 		-- per-file rules
 		for _, file in ipairs(prj.files) do
 			if path.iscppfile(file) then
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
-				if (path.iscfile(file)) then
-					_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
-				else
-					_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"')
-				end
+				cpp.buildcommand(path.iscfile(file))
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
@@ -166,7 +163,7 @@
 		_p('')
 	end
 	
-	
+
 --
 -- Write a block of configuration settings.
 --
@@ -175,33 +172,22 @@
 
 		_p('ifeq ($(config),%s)', _MAKE.esc(cfg.shortname))
 		
-		-- if this platform requires a special compiler or linker, list it now
-		local platform = cc.platforms[cfg.platform]
-		if platform.cc then
-			_p('  CC         = %s', platform.cc)
-		end
-		if platform.cxx then
-			_p('  CXX        = %s', platform.cxx)
-		end
-		if platform.ar then
-			_p('  AR         = %s', platform.ar)
-		end
+		-- if this platform requires a special compiler or linker, list it here
+		cpp.platformtools(cfg, cc)
 
 		_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))		
 		_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', _MAKE.esc(cfg.buildtarget.name))
 		_p('  DEFINES   += %s', table.concat(cc.getdefines(cfg.defines), " "))
 		_p('  INCLUDES  += %s', table.concat(cc.getincludedirs(cfg.includedirs), " "))
-		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(cc.getcppflags(cfg), " "))
+
+		-- CPPFLAGS, CFLAGS, CXXFLAGS, LDFLAGS, and RESFLAGS		
+		cpp.flags(cfg, cc)
 
 		-- set up precompiled headers
-		_.pchconfig(cfg)
+		cpp.pchconfig(cfg)
 				
-		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
-		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
-		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getldflags(cfg), cfg.linkoptions, cc.getlibdirflags(cfg)), " "))
 		_p('  LIBS      += %s', table.concat(cc.getlinkflags(cfg), " "))
-		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(table.join(cc.getdefines(cfg.resdefines), cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " "))
 		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
 		
 		if cfg.kind == "StaticLib" then
@@ -237,16 +223,67 @@
 		end
 		_p('  endef')
 		
+		-- write out config-level makesettings blocks
+		make.settings(cfg, cc)
+		
 		_p('endif')
 		_p('')
 	end
 	
 	
 --
+-- Platform support
+--
+	
+	function cpp.platformtools(cfg, cc)
+		local platform = cc.platforms[cfg.platform]
+		if platform.cc then
+			_p('  CC         = %s', platform.cc)
+		end
+		if platform.cxx then
+			_p('  CXX        = %s', platform.cxx)
+		end
+		if platform.ar then
+			_p('  AR         = %s', platform.ar)
+		end
+	end
+	
+	
+--
+-- Configurations
+--
+
+	function cpp.flags(cfg, cc)
+		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(cc.getcppflags(cfg), " "))
+		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(cc.getcflags(cfg), cfg.buildoptions), " "))
+		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(cc.getcxxflags(cfg), " "))
+		
+		-- Patch #3401184 changed the order
+		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getlibdirflags(cfg), cc.getldflags(cfg), cfg.linkoptions), " "))
+		
+		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', 
+		        table.concat(table.join(cc.getdefines(cfg.resdefines),
+		                                cc.getincludedirs(cfg.resincludedirs), cfg.resoptions), " "))
+	end
+		
+	
+--
 -- Precompiled header support
 --
 
-	function _.pchconfig(cfg)			
+	function cpp.pchconfig(cfg)
+		-- GCC needs the full path to the PCH, while Visual Studio needs
+		-- only the name (or rather, the name as specified in the #include
+		-- statement). Try to locate the PCH in the project.
+		local pchheader = cfg.pchheader
+		for _, incdir in ipairs(cfg.includedirs) do
+			local testname = path.join(incdir, cfg.pchheader)
+			if os.isfile(testname) then
+				pchheader = testname
+				break
+			end
+		end
+
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p('  PCH        = %s', _MAKE.esc(path.getrelative(cfg.location, cfg.pchheader)))
 			_p('  GCH        = $(OBJDIR)/%s.gch', _MAKE.esc(path.getname(cfg.pchheader))) 
@@ -254,16 +291,28 @@
 		end
 	end
 
-	function _.pchrules(prj)
+	function cpp.pchrules(prj)
 		_p('ifneq (,$(PCH))')
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
+		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t-$(SILENT) cp $< $(OBJDIR)')
-		if prj.language == "C" then
-			_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
-		else
-			_p('\t$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"')
-		end
+		_p('else')
+		_p('\t$(SILENT) xcopy /D /Y /Q "$(subst /,\\,$<)" "$(subst /,\\,$(OBJDIR))" 1>nul')
+		_p('endif')
+		cpp.buildcommand(prj.language == "C")
 		_p('endif')
 		_p('')
 	end
+	
+
+--
+-- Build command for a single file.
+--
+
+	function cpp.buildcommand(iscfile)
+		local flags = iif(iscfile, '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
+		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
+	end
+	
+
