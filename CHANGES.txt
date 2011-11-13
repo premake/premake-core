@@ -40,6 +40,7 @@
 * Patch 3381066: Fix VS2010 project references
 * Added debug environment variable support for Visual Studio
 * Added debug environment variable support for Codeblocks using gdb
+* Added new global _WORKING_DIR
 
 
 -------
