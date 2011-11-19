@@ -138,7 +138,7 @@
 			
 				if allowed_flags[value] then return value 
 				else 
-					return nil, "invalid flag"
+					return nil, "invalid flag '" .. value .. "'"
 				end
 			end,
 		},
