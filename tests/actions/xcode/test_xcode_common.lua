@@ -12,7 +12,7 @@
 
 --
 -- Replacement for xcode.newid(). Creates a synthetic ID based on the node name,
--- it's intended usage (file ID, build ID, etc.) and its place in the tree. This 
+-- its intended usage (file ID, build ID, etc.) and its place in the tree. This 
 -- makes it easier to tell if the right ID is being used in the right places.
 --
 

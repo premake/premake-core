@@ -16,6 +16,7 @@
 
 	local sln, tr
 	function suite.setup()
+		_OS = "macosx"
 		_ACTION = "xcode3"
 		io.eol = "\n"
 		xcode.used_ids = { } -- reset the list of generated IDs
