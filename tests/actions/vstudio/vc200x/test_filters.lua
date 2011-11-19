@@ -4,9 +4,9 @@
 -- Copyright (c) 2011 Jason Perkins and the Premake project
 --
 
-T.vs200x_filters = { }
-local suite = T.vs200x_filters
-local vc200x = premake.vstudio.vc200x
+	T.vs200x_filters = { }
+	local suite = T.vs200x_filters
+	local vc200x = premake.vstudio.vc200x
 
 
 --
@@ -14,18 +14,10 @@ local vc200x = premake.vstudio.vc200x
 --
 
 	local sln, prj
-	local os_uuid
 
 	function suite.setup()
-		os_uuid = os.uuid
-		os.uuid = function() return "00112233-4455-6677-8888-99AABBCCDDEE" end
-
 		_ACTION = "vs2008"
-		sln, prj = test.createsolution()
-	end
-
-	function suite.teardown()
-		os.uuid = os_uuid
+		sln = test.createsolution()
 	end
 
 	local function prepare()

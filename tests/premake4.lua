@@ -95,12 +95,15 @@
 	dofile("actions/vstudio/sln2005/projects.lua")
 
 	-- Visual Studio 2002-2008 C/C++ projects
+	dofile("actions/vstudio/vc200x/test_compiler_block.lua")
 	dofile("actions/vstudio/vc200x/debugdir.lua")
-	dofile("actions/vstudio/vc200x/header.lua")
 	dofile("actions/vstudio/vc200x/files.lua")
 	dofile("actions/vstudio/vc200x/test_filters.lua")
+	dofile("actions/vstudio/vc200x/header.lua")
+	dofile("actions/vstudio/vc200x/test_linker_block.lua")
 
 	-- Visual Studio 2010 C/C++ projects
+	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
 	dofile("actions/vstudio/vc2010/test_debugdir.lua")
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")

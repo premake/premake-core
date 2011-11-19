@@ -2,7 +2,8 @@
 Sony NGP  (in progress)
 --------
 
-* The error message for invalid flags now includes the offending value 
+* Added debugformat with C7 support for Visual Studio
+* The error message for invalid flags now includes the offending value
 
 
 -------

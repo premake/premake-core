@@ -54,12 +54,21 @@
 			scope = "config",
 		},
 
-		debugenvs  = 
+		debugenvs = 
 		{
 			kind = "list",
 			scope = "config",
 		},
 		
+		debugformat =
+		{
+			kind = "string",
+			scope = "container",
+			allowed = {
+				"c7",
+			}
+		},
+
 		defines =
 		{
 			kind  = "list",

@@ -226,33 +226,21 @@
 
 
 	local function debug_info(cfg)
-	--
-	--	EditAndContinue /ZI
-	--	ProgramDatabase /Zi
-	--	OldStyle C7 Compatable /Z7
-	--
-		local debug_info = ''
+		local value = ''
 		if cfg.flags.Symbols then
-			if cfg.platform == "x64"
-				or cfg.flags.Managed
-				or premake.config.isoptimizedbuild(cfg.flags)
-				or cfg.flags.NoEditAndContinue
+			if cfg.debugformat == "c7" then
+				value = "OldStyle"
+			elseif cfg.platform == "x64" or 
+			       cfg.flags.Managed or 
+				   premake.config.isoptimizedbuild(cfg.flags) or 
+				   cfg.flags.NoEditAndContinue
 			then
-					debug_info = "ProgramDatabase"
+				value = "ProgramDatabase"
 			else
-				debug_info = "EditAndContinue"
+				value = "EditAndContinue"
 			end
 		end
-
-		_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>',debug_info)
-	end
-
-	local function minimal_build(cfg)
-		if premake.config.isdebugbuild(cfg) and not cfg.flags.NoMinimalRebuild then
-			_p(3,'<MinimalRebuild>true</MinimalRebuild>')
-		else
-			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
-		end
+		_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>', value)
 	end
 
 	local function compile_language(cfg)
@@ -261,7 +249,7 @@
 		end
 	end
 
-	local function vs10_clcompile(cfg)
+	function vc2010.clcompile(cfg)
 		_p(2,'<ClCompile>')
 
 		if #cfg.buildoptions > 0 then
@@ -273,7 +261,12 @@
 
 			include_dirs(3,cfg)
 			preprocessor(3,cfg)
-			minimal_build(cfg)
+
+		-- MinimalRebuild
+		local value = premake.config.isdebugbuild(cfg) and
+		              not cfg.flags.NoMinimalRebuild and
+		              cfg.debugformat ~= "c7"
+		_p(3,'<MinimalRebuild>%s</MinimalRebuild>', tostring(value))
 
 		if  not premake.config.isoptimizedbuild(cfg.flags) then
 			if not cfg.flags.Managed then
@@ -310,9 +303,10 @@
 			floating_point(cfg)
 			debug_info(cfg)
 
-		if cfg.flags.Symbols then
-			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>'
-				, path.getbasename(cfg.buildtarget.name))
+		-- ProgramDataBaseFileName
+		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', 
+				path.getbasename(cfg.buildtarget.name))
 		end
 
 		if cfg.flags.NoFramePointer then
@@ -436,7 +430,7 @@
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<ItemDefinitionGroup ' ..if_config_and_platform() ..'>'
 					,premake.esc(cfginfo.name))
-				vs10_clcompile(cfg)
+				vc2010.clcompile(cfg)
 				resource_compile(cfg)
 				item_def_lib(cfg)
 				vc2010.link(cfg)

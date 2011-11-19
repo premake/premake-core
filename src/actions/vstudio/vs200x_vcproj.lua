@@ -203,15 +203,18 @@
 -- Return the debugging symbols level for a configuration.
 --
 
-	function vc200x.Symbols(cfg)
-		if (not cfg.flags.Symbols) then
+	function vc200x.symbols(cfg)
+		if not cfg.flags.Symbols then
 			return 0
+		elseif cfg.debugformat == "c7" then
+			return 1
 		else
-			-- Edit-and-continue does't work for some configurations
+			-- Edit-and-continue doesn't work for some configurations
 			if cfg.flags.NoEditAndContinue or 
-			   vc200x.optimization(cfg) ~= 0 or 
-			   cfg.flags.Managed or 
-			   cfg.platform == "x64" then
+			    vc200x.optimization(cfg) ~= 0 or 
+			    cfg.flags.Managed or 
+			    cfg.platform == "x64"
+			then
 				return 3
 			else
 				return 4
@@ -246,7 +249,11 @@
 			_p(4,'PreprocessorDefinitions="%s"', premake.esc(table.concat(cfg.defines, ";")))
 		end
 		
-		if premake.config.isdebugbuild(cfg) and not cfg.flags.NoMinimalRebuild and not cfg.flags.Managed then
+		if premake.config.isdebugbuild(cfg) and 
+		   cfg.debugformat ~= "c7" and 
+		   not cfg.flags.NoMinimalRebuild and 
+		   not cfg.flags.Managed 
+		then
 			_p(4,'MinimalRebuild="%s"', bool(true))
 		end
 		
@@ -325,7 +332,7 @@
 		end
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
-		_p(4,'DebugInformationFormat="%s"', vc200x.Symbols(cfg))
+		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
 		if cfg.language == "C" then
 			_p(4, 'CompileAs="1"')
 		end
@@ -371,9 +378,9 @@
 				_p(4,'GenerateManifest="%s"', bool(false))
 			end
 			
-			_p(4,'GenerateDebugInformation="%s"', bool(vc200x.Symbols(cfg) ~= 0))
+			_p(4,'GenerateDebugInformation="%s"', bool(vc200x.symbols(cfg) ~= 0))
 			
-			if vc200x.Symbols(cfg) ~= 0 then
+			if vc200x.symbols(cfg) >= 3 then
 				_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 			end
 			
