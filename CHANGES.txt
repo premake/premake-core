@@ -1,3 +1,10 @@
+--------
+Sony NGP  (in progress)
+--------
+
+* The error message for invalid flags now includes the offending value 
+
+
 -------
   4.4  (in progress)
 -------
