@@ -8,12 +8,17 @@
 #include <string.h>
 #include "premake.h"
 
+#if PLATFORM_MACOSX
+#include <CoreFoundation/CFBundle.h>
+#endif
+
 
 #define VERSION        "HEAD"
 #define COPYRIGHT      "Copyright (C) 2002-2011 Jason Perkins and the Premake Project"
 #define ERROR_MESSAGE  "%s\n"
 
 
+static int find_premake_executable(lua_State* L, const char* argv0);
 static int process_arguments(lua_State* L, int argc, const char** argv);
 static int process_option(lua_State* L, const char* arg);
 static int load_builtin_scripts(lua_State* L);
@@ -73,7 +78,11 @@ int main(int argc, const char** argv)
 	luaL_register(L, "path",   path_functions);
 	luaL_register(L, "os",     os_functions);
 	luaL_register(L, "string", string_functions);
-	
+
+	/* push the location of the Premake executable */
+	find_premake_executable(L, argv[0]);
+	lua_setglobal(L, "_PREMAKE_COMMAND");
+
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
 	lua_setglobal(L, "_COPYRIGHT");
@@ -102,6 +111,76 @@ int main(int argc, const char** argv)
 
 
 /**
+ * Locate the Premake executable, and push its full path to the Lua stack.
+ * Based on:
+ * http://sourceforge.net/tracker/index.php?func=detail&aid=3351583&group_id=71616&atid=531880
+ * http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
+ * http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
+ */
+int find_premake_executable(lua_State* L, const char* argv0)
+{
+#if !defined(PATH_MAX)
+#define PATH_MAX  (4096)
+#endif
+
+	char buffer[PATH_MAX];
+	const char* path = NULL;
+
+#if PLATFORM_WINDOWS
+	DWORD len = GetModuleFileName(NULL, buffer, PATH_MAX);
+	if (len > 0)
+		path = buffer;
+#endif
+
+#if PLATFORM_MACOSX
+	CFURLRef bundleURL = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
+	CFStringRef pathRef = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	if (CFStringGetCString(pathRef, buffer, PATH_MAX - 1, kCFStringEncodingUTF8))
+		path = buffer;
+#endif
+
+#if PLATFORM_LINUX
+	int len = readlink("/proc/self/exe", buffer, PATH_MAX);
+	if (len > 0)
+		path = buffer;
+#endif
+
+#if PLATFORM_BSD
+	int len = readlink("/proc/curproc/file", buffer, PATH_MAX);
+	if (len < 0)
+		len = readlink("/proc/curproc/exe", buffer, PATH_MAX);
+	if (len > 0)
+		path = buffer;
+#endif
+
+#if PLATFORM_SOLARIS
+	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX);
+	if (len > 0)
+		path = buffer;
+#endif
+
+	/* As a fallback, search the PATH with argv[0] */
+	if (!path)
+	{
+		lua_pushcfunction(L, os_pathsearch);
+		lua_pushstring(L, argv0);
+		lua_pushstring(L, getenv("PATH"));
+		if (lua_pcall(L, 2, 1, 0) == OKAY)
+		{
+			lua_pushstring(L, "/");
+			lua_pushstring(L, argv0);
+			lua_concat(L, 3);
+			path = lua_tostring(L, -1);
+		}
+	}
+
+	lua_pushstring(L, path);
+	return 1;
+}
+
+
+
+/**
  * Process the command line arguments, splitting them into options, the
  * target action, and any arguments to that action. The results are pushed
  * into the session for later use. I could have done this in the scripts,
@@ -111,7 +190,7 @@ int main(int argc, const char** argv)
 int process_arguments(lua_State* L, int argc, const char** argv)
 {
 	int i;
-	
+
 	/* Create empty lists for Options and Args */
 	lua_newtable(L);
 	lua_newtable(L);
@@ -200,7 +279,7 @@ int process_option(lua_State* L, const char* arg)
 int load_builtin_scripts(lua_State* L)
 {
 	const char* filename;
-	
+
 	/* call os.pathsearch() to locate _premake_main.lua */
 	lua_pushcfunction(L, os_pathsearch);
 	lua_pushstring(L, "_premake_main.lua");
@@ -210,7 +289,7 @@ int load_builtin_scripts(lua_State* L)
 
 	if (lua_isnil(L, -1))
 	{
-		printf(ERROR_MESSAGE, 
+		printf(ERROR_MESSAGE,
 			"Unable to find _premake_main.lua; use /scripts option when in debug mode!\n"
 			"Please refer to the documentation (or build in release mode instead)."
 		);

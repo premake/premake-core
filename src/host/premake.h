@@ -28,7 +28,7 @@
 #define PLATFORM_HAIKU    (1)
 #define PLATFORM_STRING   "haiku"
 #else
-#define PLATFORM_WINDOWS  (1) 
+#define PLATFORM_WINDOWS  (1)
 #define PLATFORM_STRING   "windows"
 #endif
 

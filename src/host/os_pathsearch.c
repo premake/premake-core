@@ -17,7 +17,7 @@ int os_pathsearch(lua_State* L)
 	for (i = 2; i <= lua_gettop(L); ++i)
 	{
 		const char* path;
-		
+
 		if (lua_isnil(L, i))
 			continue;
 
