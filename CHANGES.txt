@@ -4,6 +4,8 @@ Sony NGP  (in progress)
 
 * Added debugformat with C7 support for Visual Studio
 * The error message for invalid flags now includes the offending value
+* The include() function will now include each file only once
+* The include() function can now include specific files
 
 
 -------

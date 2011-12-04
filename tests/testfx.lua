@@ -30,9 +30,11 @@
 	function test.capture(expected)
 		local actual = io.endcapture()
 		
+		-- create line-by-line iterators for both values
 		local ait = actual:gfind("(.-)" .. io.eol)
 		local eit = expected:gfind("(.-)\n")
 		
+		-- compare each value line by line
 		local linenum = 1
 		local atxt = ait()
 		local etxt = eit()

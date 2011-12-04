@@ -1,0 +1,1 @@
+io.printf("ok")

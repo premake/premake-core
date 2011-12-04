@@ -37,6 +37,7 @@
 -- The test suites
 --
 
+	-- Base API tests
 	dofile("test_dofile.lua")
 	dofile("test_string.lua")
 	dofile("test_premake.lua")
@@ -48,6 +49,7 @@
 	dofile("base/test_api.lua")
 	dofile("base/test_action.lua")
 	dofile("base/test_config.lua")
+	dofile("base/test_include.lua")
 	dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
 	dofile("base/test_path.lua")

@@ -114,11 +114,25 @@
 	
 	
 --
--- A shortcut for including another "premake4.lua" file, often used for projects.
+-- Load and run an external script file, with a bit of extra logic to make 
+-- including projects easier. if "path" is a directory, will look for 
+-- path/premake4.lua. And each file is tracked, and loaded only once.
 --
 
-	function include(fname)
-		return dofile(fname .. "/premake4.lua")
+	io._includedFiles = { }
+	
+	function include(filename)
+		-- if a directory, load the premake script inside it
+		if os.isdir(filename) then
+			filename = path.join(filename, "premake4.lua")
+		end
+				
+		-- but only load each file once
+		filename = path.getabsolute(filename)
+		if not io._includedFiles[filename] then
+			io._includedFiles[filename] = true
+			dofile(filename)
+		end
 	end
 
 
