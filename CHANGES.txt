@@ -50,6 +50,7 @@ Sony NGP  (in progress)
 * Added debug environment variable support for Codeblocks using gdb
 * Bug: Visual Studio 2010 forces x86 when platform is Native
 * Added new global _WORKING_DIR
+* Patch 3351583: _PREMAKE_COMMAND variable (Konstantin Tokarev)
 
 
 -------
