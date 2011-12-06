@@ -1,5 +1,5 @@
 --
--- tests/actions/vstudio/vc200x/files.lua
+-- tests/actions/vstudio/vc200x/test_files.lua
 -- Validate generation of <files/> block in Visual Studio 200x projects.
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
@@ -76,6 +76,24 @@
 				</File>
 			</Filter>
 		</Filter>
+		]]
+	end
+
+
+--
+-- Non-source code files, such as header files and documentation, should
+-- be marked as such, so the compiler won't attempt to build them.
+--
+
+	function suite.file_markedAsNonBuildable_onSupportFiles()
+		language "c"
+		files { "hello.lua" }
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.lua"
+			>
+		</File>
 		]]
 	end
 

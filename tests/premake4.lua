@@ -97,7 +97,7 @@
 	-- Visual Studio 2002-2008 C/C++ projects
 	dofile("actions/vstudio/vc200x/debugdir.lua")
 	dofile("actions/vstudio/vc200x/header.lua")
-	dofile("actions/vstudio/vc200x/files.lua")
+	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_filters.lua")
 
 	-- Visual Studio 2010 C/C++ projects
