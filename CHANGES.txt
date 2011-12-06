@@ -41,7 +41,6 @@
 * Added debug environment variable support for Visual Studio
 * Added debug environment variable support for Codeblocks using gdb
 * Bug: Visual Studio 2010 forces x86 when platform is Native
-* Added new global _WORKING_DIR
 * Patch 3351583: _PREMAKE_COMMAND variable (Konstantin Tokarev)
 * Added new global _WORKING_DIR
 * Patch 3451928: VS2008 trying to build *.h files in C projects
