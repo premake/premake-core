@@ -55,6 +55,10 @@
 		configuration "linux"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m", "dl" } 
+
+		configuration "bsd"
+			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
+			links       { "m" } 
 			
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }

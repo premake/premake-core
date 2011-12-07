@@ -136,9 +136,10 @@
 						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 						
 						local usePCH = (not prj.flags.NoPCH and prj.pchsource == node.cfg.name)
-						local useCompileAs = (path.iscfile(fname) ~= premake.project.iscproject(prj))
+						local isSourceCode = path.iscppfile(fname)
+						local needsCompileAs = (path.iscfile(fname) ~= premake.project.iscproject(prj))
 						
-						if usePCH or useCompileAs then
+						if usePCH or (isSourceCode and needsCompileAs) then
 							_p(depth, '<FileConfiguration')
 							_p(depth, '\tName="%s"', cfginfo.name)
 							_p(depth, '\t>')
@@ -146,8 +147,7 @@
 							_p(depth, '\t\tName="%s"', iif(cfg.system == "Xbox360", 
 							                                 "VCCLX360CompilerTool", 
 							                                 "VCCLCompilerTool"))
-
-							if useCompileAs then
+							if needsCompileAs then
 								_p(depth, '\t\tCompileAs="%s"', iif(path.iscfile(fname), 1, 2))
 							end
 							
