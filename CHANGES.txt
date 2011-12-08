@@ -47,6 +47,7 @@
 * Patch 3429777: Support for DragonFly BSD (Joachim de Groot)
 * Patch 3445049: Build fix for FreeBSD (Konstantin Tokarev)
 * Bug 3121217: Test suite fails on Linux x86_64: os.findlib broken
+* Patch 3428348: Add .gitignore file (Konstantin Tokarev)
 
 
 -------
