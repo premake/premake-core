@@ -21,7 +21,7 @@
 
 	function os.findlib(libname)
 		local path, formats
-		
+
 		-- assemble a search path, depending on the platform
 		if os.is("windows") then
 			formats = { "%s.dll", "%s" }
@@ -36,7 +36,7 @@
 			else
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
-	
+
 				io.input("/etc/ld.so.conf")
 				if io.input() then
 					for line in io.lines() do
@@ -45,24 +45,24 @@
 					io.input():close()
 				end
 			end
-			
+
 			table.insert(formats, "%s")
 			path = path or ""
 			if os.is64bit() then
 				path = path .. ":/lib64:/usr/lib64/:usr/local/lib64"
 			end
-			path = ":/lib:/usr/lib:/usr/local/lib"
+			path = path .. ":/lib:/usr/lib:/usr/local/lib"
 		end
-		
+
 		for _, fmt in ipairs(formats) do
 			local name = string.format(fmt, libname)
 			local result = os.pathsearch(name, path)
 			if result then return result end
 		end
 	end
-	
-	
-	
+
+
+
 --
 -- Retrieve the current operating system ID string.
 --
@@ -70,9 +70,9 @@
 	function os.get()
 		return _OPTIONS.os or _OS
 	end
-	
 
-	
+
+
 --
 -- Check the current operating system; may be set with the /os command line flag.
 --
@@ -80,7 +80,7 @@
 	function os.is(id)
 		return (os.get():lower() == id:lower())
 	end
-	
+
 
 
 --
@@ -95,14 +95,14 @@
 		"powerpc64",
 		"sparc64"
 	}
-	
+
 	function os.is64bit()
 		-- Call the native code implementation. If this returns true then
 		-- we're 64-bit, otherwise do more checking locally
 		if (os._is64bit()) then
 			return true
 		end
-		
+
 		-- Identify the system
 		local arch
 		if _OS == "windows" then
@@ -116,8 +116,8 @@
 		-- Check our known 64-bit identifiers
 		arch = arch:lower()
 		for _, hosttype in ipairs(_64BitHostTypes) do
-			if arch:find(hosttype) then 
-				return true 
+			if arch:find(hosttype) then
+				return true
 			end
 		end
 		return false
@@ -128,10 +128,10 @@
 --
 -- The os.matchdirs() and os.matchfiles() functions
 --
-	
+
 	local function domatch(result, mask, wantfiles)
 		-- need to remove extraneous path info from the mask to ensure a match
-		-- against the paths returned by the OS. Haven't come up with a good 
+		-- against the paths returned by the OS. Haven't come up with a good
 		-- way to do it yet, so will handle cases as they come up
 		if mask:startswith("./") then
 			mask = mask:sub(3)
@@ -149,13 +149,13 @@
 
 		-- recurse into subdirectories?
 		local recurse = mask:find("**", nil, true)
-		
+
 		-- convert mask to a Lua pattern
 		mask = path.wildcards(mask)
 
 		local function matchwalker(basedir)
 			local wildcard = path.join(basedir, "*")
-			
+
 			-- retrieve files from OS and test against mask
 			local m = os.matchstart(wildcard)
 			while (os.matchnext(m)) do
@@ -184,7 +184,7 @@
 
 		matchwalker(basedir)
 	end
-	
+
 	function os.matchdirs(...)
 		local result = { }
 		for _, mask in ipairs(arg) do
@@ -192,7 +192,7 @@
 		end
 		return result
 	end
-	
+
 	function os.matchfiles(...)
 		local result = { }
 		for _, mask in ipairs(arg) do
@@ -200,9 +200,9 @@
 		end
 		return result
 	end
-	
-	
-	
+
+
+
 --
 -- An overload of the os.mkdir() function, which will create any missing
 -- subdirectories along the path.
@@ -213,17 +213,17 @@
 		local dir = iif(p:startswith("/"), "/", "")
 		for part in p:gmatch("[^/]+") do
 			dir = dir .. part
-			
+
 			if (part ~= "" and not path.isabsolute(part) and not os.isdir(dir)) then
 				local ok, err = builtin_mkdir(dir)
 				if (not ok) then
 					return nil, err
 				end
 			end
-						
+
 			dir = dir .. "/"
 		end
-		
+
 		return true
 	end
 
@@ -257,8 +257,8 @@
 		for _, fname in ipairs(files) do
 			os.remove(fname)
 		end
-				
+
 		-- remove this directory
 		builtin_rmdir(p)
 	end
-	
+
