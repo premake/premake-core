@@ -49,6 +49,7 @@
 * Bug 3121217: Test suite fails on Linux x86_64: os.findlib broken
 * Patch 3428348: Add .gitignore file (Konstantin Tokarev)
 * Patch 3430158: Reorder LINKCMD for Gmake (rjmyst3)
+* Patch 3451212: Fix Visual Studio MFC with StaticRuntime
 
 
 -------
