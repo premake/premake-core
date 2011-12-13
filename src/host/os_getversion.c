@@ -142,9 +142,14 @@ void getversion(struct OsVersionInfo* info)
 
 void getversion(struct OsVersionInfo* info)
 {
-	Gestalt(gestaltSystemVersionMajor, &info->majorversion);
-	Gestalt(gestaltSystemVersionMinor, &info->minorversion);
-	Gestalt(gestaltSystemVersionBugFix, &info->revision);
+	SInt32 majorversion, minorversion, bugfix;
+	Gestalt(gestaltSystemVersionMajor, &majorversion);
+	Gestalt(gestaltSystemVersionMinor, &minorversion);
+	Gestalt(gestaltSystemVersionBugFix, &bugfix);
+
+	info->majorversion = majorversion;
+	info->minorversion = minorversion;
+	info->revision = bugfix;
 
 	info->description = "Mac OS X";
 	if (info->majorversion == 10)

@@ -1,0 +1,34 @@
+syntax: glob
+
+.DS_Store
+
+*.orig
+*~
+
+build
+bin
+obj
+release
+ipch
+src/host/scripts.c
+
+Makefile
+*.make
+*.xcodeproj
+*.swp
+*.sdf
+*.sln
+*.suo
+*.ncb
+*.vcproj*
+*.vcxproj*
+*.opensdf
+*.workspace
+*.project
+*.tags
+
+*.bbprojectsettings
+Scratchpad.txt
+Unix Worksheet.worksheet
+project.bbprojectdata
+Premake4.tmproj

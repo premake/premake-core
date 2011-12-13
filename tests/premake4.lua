@@ -102,8 +102,8 @@
 	dofile("actions/vstudio/vc200x/header.lua")
 	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_filters.lua")
-	dofile("actions/vstudio/vc200x/header.lua")
 	dofile("actions/vstudio/vc200x/test_linker_block.lua")
+	dofile("actions/vstudio/vc200x/test_mfc.lua")
 
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
@@ -113,6 +113,7 @@
 	dofile("actions/vstudio/vc2010/test_filters.lua")
 	dofile("actions/vstudio/vc2010/test_link_settings.lua")
 	dofile("actions/vstudio/vc2010/test_links.lua")
+	dofile("actions/vstudio/vc2010/test_mfc.lua")
 	dofile("actions/vstudio/vc2010/test_pch.lua")
 
 	-- Makefile tests
