@@ -24,7 +24,7 @@
 		premake.bake.buildconfigs()
 		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
 		cfg = premake.getconfig(prj, "Debug", platform)
-		vc2010.configurationPropertyGroup(cfg)
+		vc2010.configurationPropertyGroup(cfg, sln.vstudio_configs[1])
 	end
 
 
@@ -37,7 +37,7 @@
 		flags { "MFC" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug'" Label="Configuration">
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 		<ConfigurationType>Application</ConfigurationType>
 		<UseDebugLibraries>true</UseDebugLibraries>
 		<CharacterSet>MultiByte</CharacterSet>
@@ -50,7 +50,7 @@
 		flags { "MFC", "StaticRuntime" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug'" Label="Configuration">
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 		<ConfigurationType>Application</ConfigurationType>
 		<UseDebugLibraries>true</UseDebugLibraries>
 		<CharacterSet>MultiByte</CharacterSet>

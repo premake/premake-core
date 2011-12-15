@@ -72,9 +72,9 @@
 -- kind of binary it produces, and some global settings.
 --
 
-	function vc2010.configurationPropertyGroup(cfg)
+	function vc2010.configurationPropertyGroup(cfg, cfginfo)
 		_p(1,'<PropertyGroup '..if_config_and_platform() ..' Label="Configuration">'
-				, premake.esc(cfg.name))
+				, premake.esc(cfginfo.name))
 		_p(2,'<ConfigurationType>%s</ConfigurationType>',vc2010.config_type(cfg))
 		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', iif(optimisation(cfg) == "Disabled","true","false"))
 		_p(2,'<CharacterSet>%s</CharacterSet>',iif(cfg.flags.Unicode,"Unicode","MultiByte"))
@@ -87,14 +87,6 @@
 			_p(2,'<CLRSupport>true</CLRSupport>')
 		end
 		_p(1,'</PropertyGroup>')
-	end
-
-
-	local function config_type_block(prj)
-		for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
-			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-			vc2010.configurationPropertyGroup(cfg)
-		end
 	end
 
 
@@ -579,7 +571,7 @@
 
 			for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
 				local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-				vc2010.configurationPropertyGroup(cfg)
+				vc2010.configurationPropertyGroup(cfg, cfginfo)
 			end
 
 			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
