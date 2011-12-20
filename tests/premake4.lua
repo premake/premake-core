@@ -119,6 +119,7 @@
 	dofile("actions/make/test_wiidev.lua")
 
 	-- Xcode3 tests
+	dofile("actions/xcode/test_file_references.lua")
 	dofile("actions/xcode/test_xcode_common.lua")
 	dofile("actions/xcode/test_xcode_project.lua")
 	dofile("actions/xcode/test_xcode_dependencies.lua")

@@ -101,6 +101,8 @@
 	function premake.tree.getlocalpath(node)
 		if node.parent.path then
 			return node.name
+		elseif node.cfg then
+			return node.cfg.name
 		else
 			return node.path
 		end
