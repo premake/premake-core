@@ -58,6 +58,14 @@ endif
 ifndef AR
   AR = ar
 endif
+
+ifndef RESCOMP
+  ifdef WINDRES
+    RESCOMP = $(WINDRES)
+  else
+    RESCOMP = windres
+  endif
+endif
 		]]
 	end
 	

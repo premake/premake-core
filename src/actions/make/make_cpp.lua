@@ -118,7 +118,7 @@
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
-				_p('\t$(SILENT) windres $< -O coff -o "$@" $(RESFLAGS)')
+				_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
 			end
 		end
 		_p('')
@@ -161,8 +161,16 @@
 		_p('  AR = %s', cc.ar)
 		_p('endif')
 		_p('')
+		
+		_p('ifndef RESCOMP')
+		_p('  ifdef WINDRES')
+		_p('    RESCOMP = $(WINDRES)')
+		_p('  else')
+		_p('    RESCOMP = windres')
+		_p('  endif')
+		_p('endif')
+		_p('')	
 	end
-
 
 --
 -- Write a block of configuration settings.
