@@ -50,6 +50,7 @@
 * Patch 3428348: Add .gitignore file (Konstantin Tokarev)
 * Patch 3430158: Reorder LINKCMD for Gmake (rjmyst3)
 * Patch 3451212: Fix Visual Studio MFC with StaticRuntime
+* Patch 3463020: Add windres environment variable for makefiles (icebreaker)
 
 
 -------
