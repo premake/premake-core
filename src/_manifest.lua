@@ -34,6 +34,10 @@
 		"base/help.lua",
 		"base/premake.lua",
 		
+		-- project APIs
+		"project/oven.lua",
+		"project/project.lua",
+
 		-- CodeBlocks action
 		"actions/codeblocks/_codeblocks.lua",
 		"actions/codeblocks/codeblocks_workspace.lua",

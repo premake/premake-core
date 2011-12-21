@@ -1,15 +1,10 @@
 --
 -- globals.lua
 -- Global tables and variables, replacements and extensions to Lua's global functions.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 	
 	
--- A top-level namespace for support functions
-
-	premake = { }
-	
-
 -- The list of supported platforms; also update list in cmdline.lua
 
 	premake.platforms = 
