@@ -9,6 +9,17 @@
 
 
 --
+-- These configuration fields are used to support the baking process, and
+-- should not be included in any generated configuration objects.
+--
+
+	local nomerge = 
+	{
+		keywords = true
+	}
+
+
+--
 -- The main entry point: walks through all of the configuration data
 -- present in the project and "bakes" it into a single object, filtered
 -- by the provided set of terms.
@@ -43,7 +54,7 @@
 		cfg[type(container)] = container
 
 		-- Walk the blocks available in this container, and merge their values
-		-- into my configuration-in-progress
+		-- into my configuration-in-progress, if they pass the keyword filter
 		for _, block in ipairs(container.blocks) do
 			if oven.filter(block, filterTerms) then
 				oven.merge(cfg, block)
@@ -126,10 +137,12 @@
 
 	function oven.merge(cfg, block)
 		for key, value in pairs(block) do
-			if type(value) == "table" then
-				cfg[key] = oven.mergetables(cfg[key] or {}, value)
-			else
-				cfg[key] = value
+			if not nomerge[key] then
+				if type(value) == "table" then
+					cfg[key] = oven.mergetables(cfg[key] or {}, value)
+				else
+					cfg[key] = value
+				end
 			end
 		end
 	end

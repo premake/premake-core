@@ -19,9 +19,6 @@
 		sln = solution("MySolution")
 	end
 
-	local function prepare()
-	end
-
 
 --
 -- When a solution is baked, a reference to that solution should be
@@ -163,4 +160,17 @@
 		defines("PRJ_DEBUG")
 		cfg = oven.bake(prj	, {"Debug"})
 		test.isequal("SOLUTION|SLN_DEBUG|PROJECT|PRJ_DEBUG", table.concat(cfg.defines, "|"))
+	end
+
+
+--
+-- The keywords field should NOT be included in the configuration objects
+-- returned by the backing process.
+--
+
+	function suite.noKeywordsInBakingResults()
+		configuration("Debug")
+		defines("DEBUG")
+		cfg = oven.bake(sln)
+		test.isnil(cfg.keywords)
 	end
