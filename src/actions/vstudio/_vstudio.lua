@@ -164,6 +164,19 @@
 	
 
 --
+-- Given a project configuration, return a Visual Studio compatible platform name.
+--
+
+	function vstudio.platform(cfg)
+		local platform = cfg.platform or "Win32"
+		if platform == "x32" then
+			platform = "Win32"
+		end
+		return platform
+	end
+
+
+--
 -- Assemble the project file name.
 --
 

@@ -17,7 +17,7 @@
 
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "native" }
+		platforms { "Native" }
 		
 		prj = project "MyProject"
 		language "C#"

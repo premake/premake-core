@@ -1,7 +1,7 @@
 --
 -- src/project/project.lua
 -- Premake 5.0 project object API
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	premake5.project = { }

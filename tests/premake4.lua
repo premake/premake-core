@@ -97,6 +97,7 @@
 	dofile("actions/vstudio/sln2005/platforms.lua")
 	dofile("actions/vstudio/sln2005/projectplatforms.lua")
 	dofile("actions/vstudio/sln2005/projects.lua")
+	dofile("actions/vstudio/sln2005/test_solution_platforms.lua")
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	dofile("actions/vstudio/vc200x/test_compiler_block.lua")

@@ -17,7 +17,7 @@
 
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "native" }
+		platforms { "Native" }
 		
 		prj = project "MyProject"
 		language "C++"
@@ -106,7 +106,7 @@ endif
 	
 
 	function T.gmake_cpp.BasicCfgBlockWithPlatformCc()
-		platforms { "ps3" }
+		platforms { "PS3" }
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "PS3")
 		premake.gmake_cpp_config(cfg, premake.gcc)
@@ -172,7 +172,7 @@ endif
 
 	function T.gmake_cpp.UniversalStaticLibBlock()
 		kind "StaticLib"
-		platforms { "universal32" }
+		platforms { "Universal32" }
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "Universal32")
 		premake.gmake_cpp_config(cfg, premake.gcc)

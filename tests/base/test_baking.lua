@@ -17,7 +17,7 @@
 		
 		solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "x32", "ps3" }
+		platforms { "x32", "PS3" }
 		
 		defines "SOLUTION"
 		

@@ -9,6 +9,10 @@
 	local sln2005 = premake.vstudio.sln2005
 	
 
+--
+-- Entry point; creates the solution file.
+--
+
 	function sln2005.generate(sln)
 		io.eol = '\r\n'
 
@@ -86,6 +90,19 @@
 -- lists all of the configuration/platform pairs that exist in the solution.
 --
 
+	function sln2005.solutionConfigurationPlatforms(sln)
+		-- eachconfig() requires a project object; any one will do
+		local prj = sln.projects[1]
+
+		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+		for cfg in premake5.project.eachconfig(prj) do
+			local platform = vstudio.platform(cfg)
+			_p(2,'%s|%s = %s|%s', cfg.buildcfg, platform, cfg.buildcfg, platform)
+		end
+		_p(1,'EndGlobalSection')
+	end
+
+	-- TODO: REMOVE THIS, OBSOLETE
 	function sln2005.platforms(sln)
 		_p('\tGlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		for _, cfg in ipairs(sln.vstudio_configs) do

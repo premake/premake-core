@@ -299,7 +299,6 @@
 		{
 			kind  = "list",
 			scope = "solution",
-			allowed = table.keys(premake.platforms),
 		},
 		
 		postbuildcommands =
