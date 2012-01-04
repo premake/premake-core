@@ -52,6 +52,9 @@
 		configuration "vs2005"
 			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
+		configuration "windows"
+			links { "ole32" }
+
 		configuration "linux"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m", "dl" } 
