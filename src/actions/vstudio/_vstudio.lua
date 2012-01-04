@@ -29,6 +29,7 @@
 --
 -- Returns the architecture identifier for a project.
 -- Used by the solutions.
+-- Deprecated, will be removed.
 --
 
 	function vstudio.arch(prj)
@@ -42,8 +43,19 @@
 			return "Win32"
 		end
 	end
-	
-	
+
+
+
+--
+-- Translate the architecture settings for a configuration into a Visual
+-- Studio compatible identifier.
+--
+
+	function vstudio.architecture(cfg)
+		local architecture = cfg.architecture or "Win32"
+		return architecture
+	end
+
 
 --
 -- Process the solution's list of configurations and platforms, creates a list
@@ -168,9 +180,20 @@
 --
 
 	function vstudio.platform(cfg)
-		local platform = cfg.platform or "Win32"
-		if platform == "x32" then
-			platform = "Win32"
+		return cfg.platform or "Win32"
+	end
+
+
+--
+-- Returns the project platform name for a specified configuration. Each build
+-- configuration/platform pairing set in the solution gets mapped to a project
+-- platform/architecture pair, i.e. Debug|Static => Debug Static|Win32".
+--
+
+	function vstudio.projectplatform(cfg)
+		local platform = cfg.buildcfg
+		if cfg.platform then
+			platform = platform .. " " .. cfg.platform
 		end
 		return platform
 	end

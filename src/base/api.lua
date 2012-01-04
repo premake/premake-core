@@ -12,6 +12,16 @@
 	
 	premake.fields = 
 	{
+		architecture = 
+		{
+			kind  = "string",
+			scope = "config",
+			allowed = {
+				"x32",
+				"x64",
+			},
+		},
+
 		basedir =
 		{
 			kind  = "path",

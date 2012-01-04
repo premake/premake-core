@@ -92,3 +92,17 @@
 		local r = collect(function(cfg) return (cfg.buildcfg .. "+" .. cfg.platform) end)
 		test.isequal("Debug+x32|Debug+x64|Release+x32|Release+x64", table.concat(r, "|"))
 	end
+
+
+--
+-- If the platform name matches an architecture identifier, set that as
+-- the default architecture. This is for backward compatibility with
+-- the old (4.3 and earlier) platform API.
+--
+
+	function suite.setsDefaultArchitecture_onKnownArchitecture()
+		configurations { "Test" }
+		platforms { "x32", "x64", "Custom Platform" }
+		local r = collect(function(cfg) return (cfg.architecture or "nil") end)
+		test.isequal("x32|x64|nil", table.concat(r, "|"))
+	end

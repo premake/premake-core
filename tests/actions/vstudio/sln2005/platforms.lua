@@ -28,22 +28,6 @@
 
 
 --
--- C/C++ Tests
---
-
-	function suite.On2005_Cpp()
-		_ACTION = "vs2005"
-		prepare("C++")
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
-	EndGlobalSection
-		]]
-	end
-
-
---
 -- C# Tests
 --
 

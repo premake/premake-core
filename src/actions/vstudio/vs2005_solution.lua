@@ -118,6 +118,22 @@
 -- the configuration/platform pairs into each project of the solution.
 --
 
+	function sln2005.projectConfigurationPlatforms(sln)
+		_p(1,'GlobalSection(ProjectConfigurationPlatforms) = postSolution')
+		for _, prj in ipairs(sln.projects) do
+			for cfg in premake5.project.eachconfig(prj) do				
+				local slnplatform = vstudio.platform(cfg)
+				local prjplatform = vstudio.projectplatform(cfg)
+				local architecture = vstudio.architecture(cfg)
+				
+				_p(2,'{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, cfg.buildcfg, slnplatform, prjplatform, architecture)
+				_p(2,'{%s}.%s|%s.Build.0 = %s|%s', prj.uuid, cfg.buildcfg, slnplatform, prjplatform, architecture)
+			end
+		end
+		_p(1,'EndGlobalSection')
+	end
+
+	-- TODO: REMOVE THIS, OBSOLETE
 	function sln2005.project_platforms(sln)
 		_p('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution')
 		for prj in premake.solution.eachproject(sln) do

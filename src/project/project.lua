@@ -5,8 +5,7 @@
 --
 
 	premake5.project = { }
-	local premake = premake5
-	local project = premake.project
+	local project = premake5.project
 
 
 --
@@ -38,9 +37,16 @@
 				return nil
 			end
 
-			local cfg = premake.oven.bake(prj, { buildconfigs[i], platforms[j] })
+			local cfg = premake5.oven.bake(prj, { buildconfigs[i], platforms[j] })
 			cfg.buildcfg = buildconfigs[i]
 			cfg.platform = platforms[j]
+
+			-- For backward compatibility with the old platforms API, use the platform
+			-- as the default architecture, if it would be a valid value.
+			if cfg.platform then
+				cfg.architecture = premake.checkvalue(cfg.platform, premake.fields.architecture.allowed)
+			end
+
 			return cfg
 		end
 	end
