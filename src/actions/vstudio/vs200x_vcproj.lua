@@ -10,6 +10,7 @@
 --
 
 	premake.vstudio.vc200x = { }
+	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local tree = premake.tree
 
@@ -72,7 +73,41 @@
 --
 -- Write out the <Configuration> element.
 --
+	
+	function vc200x.configuration(cfg)
+		_p(2,'<Configuration')
 
+		local platform = vstudio.projectplatform(cfg)
+		local architecture = vstudio.architecture(cfg)
+		_p(3,'Name="%s|%s"', premake.esc(platform), premake.esc(architecture))
+
+		_p(3,'OutputDirectory="%s"', premake.esc("."))
+		_p(3,'IntermediateDirectory="%s"', premake.esc("obj\\" .. cfg.buildcfg .. "\\" .. cfg.project.name))
+
+		local cfgtype
+		if (cfg.kind == "SharedLib") then
+			cfgtype = 2
+		elseif (cfg.kind == "StaticLib") then
+			cfgtype = 4
+		else
+			cfgtype = 1
+		end
+		_p(3,'ConfigurationType="%s"', cfgtype)
+
+		if (cfg.flags.MFC) then
+			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
+		end				  
+
+		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+
+		if cfg.flags.Managed then
+			_p(3,'ManagedExtensions="1"')
+		end
+
+		_p(3,'>')
+	end
+
+	-- TODO: REMOVE, OBSOLETE
 	function vc200x.Configuration(name, cfg)
 		_p(2,'<Configuration')
 		_p(3,'Name="%s"', premake.esc(name))
@@ -178,12 +213,30 @@
 
 	end
 
-	
+
 --
--- Write out the <Platforms> element; ensures that each target platform
--- is listed only once. Skips over .NET's pseudo-platforms (like "Any CPU").
+-- Write out the <Platforms> element, listing each architecture used
+-- by the project's configurations.
 --
 
+	function vc200x.platforms(prj)
+		_p(1,'<Platforms>')
+
+		architectures = { }
+		for cfg in premake5.project.eachconfig(prj) do
+			local arch = vstudio.architecture(cfg)
+			if not architectures[arch] then
+				_p(2,'<Platform')
+				_p(3,'Name="%s"', arch)
+				_p(2,'/>')
+				architectures[arch] = true
+			end
+		end
+
+		_p(1,'</Platforms>')
+	end
+
+	-- TODO: REMOVE, OBSOLETE
 	function vc200x.Platforms(prj)
 		local used = { }
 		_p(1,'<Platforms>')
@@ -805,4 +858,18 @@
 	end
 
 
+--
+-- Enumerate the project's configurations.
+--
 
+	function vc200x.configurations(prj)
+		_p(1,'<Configurations>')
+		for cfg in premake5.project.eachconfig(prj) do
+			-- write the opening <Configuration> element
+			vc200x.configuration(cfg)
+
+
+			_p(2,'</Configuration>')
+		end
+		_p(1,'</Configurations>')
+	end

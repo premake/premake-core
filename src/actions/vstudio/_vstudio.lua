@@ -52,8 +52,10 @@
 --
 
 	function vstudio.architecture(cfg)
-		local architecture = cfg.architecture or "Win32"
-		return architecture
+		if cfg.architecture == "x32" then
+			return "Win32"
+		end
+		return cfg.architecture or "Win32"
 	end
 
 
