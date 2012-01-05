@@ -5,7 +5,9 @@
  */
 
 #include "premake.h"
+#if PLATFORM_WINDOWS
 #include <Objbase.h>
+#endif
 
 int os_uuid(lua_State* L)
 {
