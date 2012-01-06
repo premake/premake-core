@@ -18,11 +18,11 @@
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln, prj = test.createsolution()
+		sln.platforms = {}
 	end
 	
 	local function prepare()
-		local it = premake5.project.eachconfig(prj)
-		local cfg = it()
+		local cfg = premake5.project.getconfig(prj, "Debug", sln.platforms[1])
 		vc200x.configuration(cfg)
 	end
 

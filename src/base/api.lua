@@ -346,6 +346,22 @@
 			kind  = "list",
 			scope = "config",
 		},
+
+		system = 
+		{
+			kind  = "string",
+			scope = "config",
+			allowed = {
+				"bsd",
+				"haiku",
+				"linux",
+				"macosx",
+				"ps3",
+				"solaris",
+				"windows",
+			},
+		},
+
 		
 		targetdir =
 		{

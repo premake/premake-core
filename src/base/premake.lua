@@ -1,8 +1,22 @@
 --
 -- premake.lua
 -- High-level processing functions.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
+
+
+--
+-- Define some commonly used symbols, for future-proofing.
+--
+
+	premake.CONSOLEAPP  = "ConsoleApp"
+	premake.MACOSX      = "macosx"
+	premake.POSIX       = "posix"
+	premake.PS3         = "ps3"
+	premake.SHAREDLIB   = "SharedLib"
+	premake.STATICLIB   = "StaticLib"
+	premake.WINDOWEDAPP = "WindowedApp"
+	premake.WINDOWS     = "windows"
 
 
 --

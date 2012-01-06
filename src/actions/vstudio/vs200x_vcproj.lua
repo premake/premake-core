@@ -12,6 +12,7 @@
 	premake.vstudio.vc200x = { }
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
+	local config = premake5.config
 	local tree = premake.tree
 
 
@@ -81,7 +82,7 @@
 		local architecture = vstudio.architecture(cfg)
 		_p(3,'Name="%s|%s"', premake.esc(platform), premake.esc(architecture))
 
-		_p(3,'OutputDirectory="%s"', premake.esc("."))
+		_p(3,'OutputDirectory="%s"', premake.esc(config.gettargetinfo(cfg).directory))
 		_p(3,'IntermediateDirectory="%s"', premake.esc("obj\\" .. cfg.buildcfg .. "\\" .. cfg.project.name))
 
 		local cfgtype

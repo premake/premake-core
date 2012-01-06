@@ -42,7 +42,6 @@
 	dofile("test_string.lua")
 	dofile("test_premake.lua")
 	dofile("test_platforms.lua")
-	dofile("test_targets.lua")
 	dofile("test_keywords.lua")
 	dofile("test_gmake_cpp.lua")
 	dofile("test_gmake_cs.lua")
@@ -60,6 +59,7 @@
 
 	-- Project API tests
 	dofile("test_project.lua")
+	dofile("config/test_targetinfo.lua")
 	dofile("project/test_baking.lua")
 	dofile("project/test_eachconfig.lua")
 	dofile("project/test_eachfile.lua")
