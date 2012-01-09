@@ -78,10 +78,10 @@
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
 
 	-- Visual Studio 2002-2003 C# projects
-	dofile("actions/vstudio/cs2002/files.lua")
+	dofile("actions/vstudio/cs2002/test_files.lua")
 
 	-- Visual Studio 2005-2010 C# projects
-	dofile("actions/vstudio/cs2005/files.lua")
+	dofile("actions/vstudio/cs2005/test_files.lua")
 	dofile("actions/vstudio/cs2005/projectelement.lua")
 	dofile("actions/vstudio/cs2005/projectsettings.lua")
 	dofile("actions/vstudio/cs2005/propertygroup.lua")
