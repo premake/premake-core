@@ -73,7 +73,7 @@
 		debugformat =
 		{
 			kind = "string",
-			scope = "container",
+			scope = "config",
 			allowed = {
 				"c7",
 			}
@@ -596,20 +596,15 @@
 			error(err, 4)
 		end
 		
-		if not container[fieldname] then
-			container[fieldname] = {}
-		end
-
 		if type(values) ~= "table" then
 			error("invalid value; table expected", 4)
 		end
 		
-		local field = container[fieldname]
+		container[fieldname] = container[fieldname] or {}
+		local field = container[fieldname] or {}
 		
 		for key,value in pairs(values) do
-			if not field[key] then
-				field[key] = {}
-			end
+			field[key] = field[key] or {}
 			table.insertflat(field[key], value)
 		end
 

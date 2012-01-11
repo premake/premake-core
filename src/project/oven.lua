@@ -29,11 +29,14 @@
 -- @param filterterms
 --    An optional list of filter terms. Only configuration blocks which
 --    match all of the terms in the list will be included in the result.
--- @returns
+-- @param filterfield
+--    An optional configuration field name. If set, that specific field,
+--    and only that field, will be baked and returned.
+-- @return
 --    A configuration object.
 --
 
-	function oven.bake(container, filterTerms)
+	function oven.bake(container, filterTerms, filterField)
 		filterTerms = filterTerms or {}
 
 		-- keyword/term tests are case-insensitive; convert all terms to lowercase
@@ -45,7 +48,7 @@
 		-- If I'm baking a project, start with the values from the solution level
 		local cfg
 		if container.solution then
-			cfg = oven.bake(container.solution, filterTerms)
+			cfg = oven.bake(container.solution, filterTerms, filterField)
 		else
 			cfg = {}
 		end
@@ -57,7 +60,7 @@
 		-- into my configuration-in-progress, if they pass the keyword filter
 		for _, block in ipairs(container.blocks) do
 			if oven.filter(block, filterTerms) then
-				oven.merge(cfg, block)
+				oven.merge(cfg, block, filterField)
 			end
 		end
 
@@ -130,20 +133,58 @@
 -- Merge from an individual block into the configuration object.
 -- 
 -- @param cfg
---    The configuration currently being built.
+--    The configuration currently being built; will contain the new values.
 -- @param block
 --    The block containing the values to merge.
+-- @param filterField
+--    An optional configuration field name. If present, only this specific
+--    field will be merged.
+-- @return
+--    The configuration object, which is also modified in place.
 --
 
-	function oven.merge(cfg, block)
-		for key, value in pairs(block) do
-			if not nomerge[key] then
-				if type(value) == "table" then
-					cfg[key] = oven.mergetables(cfg[key] or {}, value)
-				else
-					cfg[key] = value
+	function oven.merge(cfg, block, filterField)
+		if filterField then
+			oven.mergefield(cfg, filterField, block[filterField])
+		else
+			for key, value in pairs(block) do
+				if not nomerge[key] then
+					oven.mergefield(cfg, key, value)
 				end
 			end
+		end
+		return cfg
+	end
+
+
+--
+-- Merges a single field from a configuration block into a baked
+-- configuration object.
+-- @param cfg
+--    The configuration currently being built; will contain the new values.
+-- @param name
+--    The name of the field being merged.
+-- @param value
+--    The value of the field being merged.
+--
+
+	function oven.mergefield(cfg, name, value)
+		-- is this field part of the Premake API? If no, just copy and done
+		local field = premake.fields[name]
+		if not field then
+			cfg[name] = value
+			return
+		end
+
+		if field.kind == "keyvalue" or field.kind == "keypath" then
+			cfg[name] = cfg[name] or {}
+			for key, keyvalue in pairs(value) do
+				cfg[name][key] = oven.mergetables(cfg[name][key] or {}, keyvalue)
+			end
+		elseif type(value) == "table" then
+			cfg[name] = oven.mergetables(cfg[name] or {}, value)
+		else
+			cfg[name] = value
 		end
 	end
 
@@ -161,7 +202,11 @@
 
 	function oven.mergetables(original, additions)
 		for _, item in ipairs(additions) do
-			table.insert(original, item)
+			-- prevent duplicates
+			if not original[item] then
+				original[item] = item
+				table.insert(original, item)
+			end
 		end
 		return original
 	end

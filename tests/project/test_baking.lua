@@ -1,7 +1,7 @@
 --
 -- tests/project/test_baking.lua
--- Test the Premake 5.0 oven.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Test the Premake oven, which handles flattening of configurations.
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	T.project_baking = { }
@@ -52,6 +52,7 @@
 		local cfg = oven.bake(sln)
 		test.isequal(0, #cfg.defines)
 	end
+
 
 --
 -- Values defined at the solution level should be included in configurations
@@ -139,9 +140,9 @@
 
 	function suite.configValuePresent_ifMatchingFilterTerm()
 		configuration("Debug")
-		defines("DEBUG")
+		kind "SharedLib"
 		cfg = oven.bake(sln, {"Debug"})
-		test.isequal("DEBUG", cfg.defines[1])
+		test.isequal("SharedLib", cfg.kind)
 	end
 
 
@@ -173,4 +174,61 @@
 		defines("DEBUG")
 		cfg = oven.bake(sln)
 		test.isnil(cfg.keywords)
+	end
+
+
+--
+-- Requests for a single field should return just that value.
+--
+
+	function suite.fieldValueReturned_onFilterFieldPresent()
+		configuration("Debug")
+		kind "SharedLib"
+		cfg = oven.bake(sln, {"Debug"}, "kind")
+		test.isequal("SharedLib", cfg.kind)
+	end
+
+	function suite.otherFieldsNotReturned_onFilterFieldPresent()
+		configuration("Debug")
+		kind("SharedLib")
+		defines("DEBUG")
+		cfg = oven.bake(sln, {"Debug"}, "kind")
+		test.isnil(cfg.defines)
+	end
+
+
+--
+-- Duplicate values should be removed from list values.
+--
+
+	function suite.removesDuplicateValues()
+		defines { "SOLUTION", "DUPLICATE" }
+		prj = project("MyProject")
+		defines { "PROJECT", "DUPLICATE" }
+		cfg = oven.bake(prj, {"Debug"})
+		test.isequal("SOLUTION|DUPLICATE|PROJECT", table.concat(cfg.defines, "|"))
+	end
+
+
+--
+-- Multiple calls to key-value functions should be merged into a single key-value table.
+-- I don't have any config-level key-value fields yet, so have to bake project instead.
+--
+
+	function suite.keyValuesAreMerged_onMultipleKeys()
+		vpaths { ["Solution"] = "*.sln" }
+		prj = project("MyProject")
+		vpaths { ["Project"] = "*.prj" }
+		cfg = oven.merge(oven.merge({}, sln), prj)
+		test.isequal({"*.sln"}, cfg.vpaths["Solution"])
+		test.isequal({"*.prj"}, cfg.vpaths["Project"])
+	end
+
+	
+	function suite.keyValuesAreMerged_onMultipleValues()
+		vpaths { ["Solution"] = "*.sln", ["Project"] = "*.prj" }
+		prj = project "MyProject"
+		vpaths { ["Project"] = "*.prjx" }
+		cfg = oven.merge(oven.merge({}, sln), prj)
+		test.isequal({"*.prj","*.prjx"}, cfg.vpaths["Project"])
 	end

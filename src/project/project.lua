@@ -15,11 +15,14 @@
 --
 -- @param prj
 --    The project object to query.
+-- @param field
+--    An optional field name. If specified, only that field will be 
+--    included in the resulting configuration object.
 -- @return
 --    An iterator function returning configuration objects.
 --
 
-	function project.eachconfig(prj)
+	function project.eachconfig(prj, field)
 		local buildconfigs = prj.solution.configurations or {}
 		local platforms = prj.solution.platforms or {}
 
@@ -37,7 +40,7 @@
 				return nil
 			end
 
-			return project.getconfig(prj, buildconfigs[i], platforms[j])
+			return project.getconfig(prj, buildconfigs[i], platforms[j], field)
 		end
 	end
 
@@ -52,12 +55,15 @@
 --    The name of the build configuration on which to filter.
 -- @param platform
 --    Optional; the name of the platform on which to filter.
+-- @param field
+--    An optional field name. If specified, only that field will be 
+--    included in the resulting configuration object.
 -- @return
 --    A configuration object.
 --
 
-	function project.getconfig(prj, buildcfg, platform)
-		local cfg = premake5.oven.bake(prj, { buildcfg, platform })
+	function project.getconfig(prj, buildcfg, platform, field)
+		local cfg = premake5.oven.bake(prj, { buildcfg, platform }, field)
 		cfg.buildcfg = buildcfg
 		cfg.platform = platform
 

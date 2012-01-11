@@ -50,19 +50,6 @@
 
 
 --
--- A backslash path separator should be used when the target
--- action requires one.
---
-
-	function suite.directoryUsesBackslash_onWindows()
-		_ACTION = "vs2008"
-		targetdir "../bin"
-		i = prepare()
-		test.isequal("..\\bin", i.directory)
-	end
-
-
---
 -- Base name should use the project name by default.
 --
 

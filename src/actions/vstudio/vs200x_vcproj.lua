@@ -82,8 +82,11 @@
 		local architecture = vstudio.architecture(cfg)
 		_p(3,'Name="%s|%s"', premake.esc(platform), premake.esc(architecture))
 
-		_p(3,'OutputDirectory="%s"', premake.esc(config.gettargetinfo(cfg).directory))
-		_p(3,'IntermediateDirectory="%s"', premake.esc("obj\\" .. cfg.buildcfg .. "\\" .. cfg.project.name))
+		local outdir = path.translate(config.gettargetinfo(cfg).directory)
+		_p(3,'OutputDirectory="%s"', premake.esc(outdir))
+
+		local objdir = path.translate(config.getuniqueobjdir(cfg))
+		_p(3,'IntermediateDirectory="%s"', premake.esc(objdir))
 
 		local cfgtype
 		if (cfg.kind == "SharedLib") then

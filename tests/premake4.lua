@@ -59,6 +59,7 @@
 
 	-- Project API tests
 	dofile("test_project.lua")
+	dofile("config/test_objdir.lua")
 	dofile("config/test_targetinfo.lua")
 	dofile("project/test_baking.lua")
 	dofile("project/test_eachconfig.lua")
@@ -67,7 +68,6 @@
 
 	-- Baking tests
 	dofile("base/test_baking.lua")
-	dofile("baking/test_merging.lua")
 
 	-- Clean tests
 	dofile("actions/test_clean.lua")

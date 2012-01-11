@@ -38,7 +38,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="."
-			IntermediateDirectory="obj\Debug\MyProject"
+			IntermediateDirectory="obj\Debug"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -70,5 +70,20 @@
 		test.capture [[
 		<Configuration
 			Name="Debug x64|x64"
+		]]
+	end
+
+
+--
+-- The output directory should use backslashes
+--
+
+	function suite.usesX64Architecture_onX64Platform()
+		targetdir("../bin")
+		prepare()
+		test.capture [[
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="..\bin"
 		]]
 	end

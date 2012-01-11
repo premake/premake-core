@@ -45,6 +45,11 @@
 --
 
 	function config.gettargetinfo(cfg)
+		-- have I cached results from a previous call?
+		if cfg.targetinfo then
+			return cfg.targetinfo
+		end
+
 		local basedir = project.getlocation(prj)
 
 		local directory = cfg.targetdir or basedir
@@ -108,10 +113,62 @@
 		info.prefix     = prefix
 		info.suffix     = suffix
 
-		if config.getpathstyle(cfg) == premake.WINDOWS then
-			info.directory = path.translate(info.directory, "\\")
-			info.fullpath = path.translate(info.fullpath, "\\")
+		-- cache the results for future calls
+		cfg.targetinfo = info
+		return info
+	end
+
+
+--
+-- Retrieve the objects (or intermediates) directory for this configuration
+-- that is unique for this entire solution. This ensures that builds of 
+-- different configurations will not step on each others' object files.
+-- The path is built from these choices, in order:
+--
+--   [1] -> the objects directory as set in the config
+--   [2] -> [1] + the platform name
+--   [3] -> [2] + the build configuration name
+--   [4] -> [3] + the project name
+--
+--
+-- @param cfg
+--    The configuration object to query.
+-- @return
+--    A objects directory that is unique for the solution.
+--
+
+	function config.getuniqueobjdir(cfg)
+		-- compute the four options for a specific configuration
+		local function getobjdirs(cfg)
+			local dirs = { }
+			dirs[1] = path.getabsolute(path.join(project.getlocation(cfg.project), cfg.objdir or "obj"))
+			dirs[2] = path.join(dirs[1], cfg.platform or "")
+			dirs[3] = path.join(dirs[2], cfg.buildcfg)
+			dirs[4] = path.join(dirs[3], cfg.project.name)
+			return dirs
 		end
 
-		return info
+		-- walk all of the configs in the solution, and count the number of
+		-- times each obj dir gets used
+		local counts = {}
+		for sln in premake.solution.each() do
+			for _, prj in ipairs(sln.projects) do
+				for testcfg in project.eachconfig(prj, "objdir") do
+					local dirs = getobjdirs(testcfg)
+					for _, dir in ipairs(dirs) do
+						counts[dir] = (counts[dir] or 0) + 1
+					end
+				end
+			end
+		end
+
+		-- now test for dirs for the request configuration, and use the
+		-- first one that isn't in conflict
+		local dirs = getobjdirs(cfg)
+		for _, dir in ipairs(dirs) do
+			if counts[dir] == 1 then				
+				local prjlocation = project.getlocation(cfg.project)
+				return path.getrelative(prjlocation, dir)
+			end
+		end
 	end
