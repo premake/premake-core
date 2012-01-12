@@ -82,3 +82,15 @@
 --
 
 	_p = io.printf
+
+
+--
+-- Another variation that calls esc() on all of its arguments before formatting.
+--
+
+	_x = function(msg, ...)
+		for i,v in ipairs(arg) do
+			arg[i] = premake.esc(arg[i])
+		end
+		io.printf(msg, unpack(arg))
+	end

@@ -59,7 +59,7 @@
 		local prjpath = vstudio.projectfile_ng(prj)
 		prjpath = path.translate(path.getrelative(slnpath, prjpath))
 		
-		_p('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
+		_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
 		sln2005.projectdependencies_ng(prj)
 		_p('EndProject')
 	end

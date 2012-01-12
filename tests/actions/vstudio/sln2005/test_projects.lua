@@ -31,7 +31,6 @@
 --
 
 	function suite.structureIsOkay_onCpp()
-		_ACTION = "vs2005"
 		prepare()
 		test.capture [[
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "MyProject.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
@@ -45,11 +44,24 @@ EndProject
 --
 
 	function suite.structureIsOkay_onCSharp()
-		_ACTION = "vs2005"
 		language "C#"
 		prepare()
 		test.capture [[
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyProject", "MyProject.csproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
+EndProject
+		]]
+	end
+
+
+--
+-- Project names should be XML escaped.
+--
+
+	function suite.projectNamesAreEscaped()
+		prj.name = 'My "x64" Project';
+		prepare()
+		test.capture [[
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "My &quot;x64&quot; Project", "My &quot;x64&quot; Project.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
 EndProject
 		]]
 	end
