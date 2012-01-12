@@ -1,12 +1,81 @@
 --
 -- _vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2008-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2012 Jason Perkins and the Premake project
 --
 
 	premake.vstudio = { }
 	local vstudio = premake.vstudio
+	local project = premake5.project
 
+
+--
+-- The Visual Studio 2008 action, with support for the new platforms API
+--
+
+	newaction {
+		trigger         = "vs2008ng",
+		shortname       = "Visual Studio 2008 Next-gen",
+		description     = "Experimental Microsoft Visual Studio 2008 project files",
+		os              = "windows",
+
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
+
+		valid_languages = { "C", "C++", "C#" },
+
+		valid_tools     = {
+			cc     = { "msc"   },
+			dotnet = { "msnet" },
+		},
+
+		onsolution = function(sln)
+			premake.generate(sln, "%%.sln", vstudio.sln2005.generate_ng)
+		end,
+
+		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate_ng)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user_ng)
+			else
+				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate_ng)
+				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user_ng)
+			end
+		end,
+
+		oncleansolution = vstudio.cleansolution,
+		oncleanproject  = vstudio.cleanproject,
+		oncleantarget   = vstudio.cleantarget
+	}
+
+
+--
+-- Returns the full, absolute path to the Visual Studio project file
+-- corresponding to a particular project object.
+--
+-- @param prj
+--    The project object.
+-- @return
+--    The absolute path to the corresponding Visual Studio project file.
+--
+
+	function vstudio.projectfile_ng(prj)
+		local extension
+		if prj.language == "C#" then
+			extension = ".csproj"
+		else
+			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
+		end
+
+		local location = project.getlocation(prj)
+		local filename = path.join(location, prj.name) .. extension
+		return filename
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 --
 -- Map Premake platform identifiers to the Visual Studio versions. Adds the Visual

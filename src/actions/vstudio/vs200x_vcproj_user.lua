@@ -1,15 +1,18 @@
 --
 -- vs200x_vcproj_user.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project .user file
--- Copyright (c) 2011 Jason Perkins and the Premake project
---
-
-
---
--- Set up namespaces
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	local vc200x = premake.vstudio.vc200x
+
+--
+-- Generate a Visual Studio 200x C++ user file, with support for the new platforms API.
+--
+
+	function vc200x.generate_user_ng(prj)
+		print("** Warning: C++ user files have not been ported yet")
+	end
 
 
 --

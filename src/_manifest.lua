@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -19,7 +19,6 @@
 		"base/action.lua",
 		"base/option.lua",
 		"base/tree.lua",
-		"base/solution.lua",
 		"base/project.lua",
 		"base/config.lua",
 		"base/bake.lua",
@@ -38,6 +37,8 @@
 		"project/project.lua",
 		"project/config.lua",
 		"project/oven.lua",
+
+		"base/solution.lua",
 
 		-- CodeBlocks action
 		"actions/codeblocks/_codeblocks.lua",

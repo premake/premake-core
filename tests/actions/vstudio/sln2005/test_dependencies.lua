@@ -1,7 +1,7 @@
 --
--- tests/actions/vstudio/sln2005/dependencies.lua
+-- tests/actions/vstudio/sln2005/test_dependencies.lua
 -- Validate generation of Visual Studio 2005+ solution project dependencies.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	T.vstudio_sln2005_dependencies = { }
@@ -27,18 +27,14 @@
 	local function prepare(language)
 		prj1.language = language
 		prj2.language = language
-		premake.bake.buildconfigs()
-		prj1 = premake.solution.getproject(sln, 1)
-		prj2 = premake.solution.getproject(sln, 2)
-		sln2005.projectdependencies(prj2)
+		sln2005.projectdependencies_ng(prj2)
 	end
 
 
 --
--- Tests
+-- Verify dependencies between C++ projects are listed.
 --
-
-	function suite.On2005_Cpp()
+	function suite.dependency_onCppProjects()
 		prepare("C++")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
@@ -48,7 +44,11 @@
 	end
 
 
-	function suite.On2005_Cs()
+--
+-- Verify dependencies between C# projects are listed.
+--
+
+	function suite.dependency_onCSharpProjects()
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
@@ -58,10 +58,13 @@
 	end
 
 
-	function suite.On2010_Cs()
-		-- 2010 C# gets rules from the projects rather than the solution
+--
+-- Visual Studio 2010 C# projects lists dependencies in the project, rather 
+-- than the solution. Make sure nothing gets written in that case.
+--
+
+	function suite.nothingOutput_onVs2010()
 		_ACTION = "vs2010"
 		prepare("C#")
-		local actual = io.endcapture()
-		test.istrue(actual:len() == 0)
+		test.isemptycapture()
 	end

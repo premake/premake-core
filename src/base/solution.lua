@@ -5,6 +5,7 @@
 --
 
 	premake.solution = { }
+	local oven = premake5.oven
 
 
 -- The list of defined solutions (which contain projects, etc.)
@@ -77,6 +78,26 @@
 
 
 --
+-- Iterate over the projects of a solution (next-gen).
+--
+-- @param sln
+--    The solution.
+-- @return
+--    An iterator function, returning project configurations.
+--
+
+	function premake.solution.eachproject_ng(sln)
+		local i = 0
+		return function ()
+			i = i + 1
+			if (i <= #sln.projects) then
+				return premake.solution.getproject_ng(sln, i)
+			end
+		end
+	end
+
+
+--
 -- Retrieve a solution by name or index.
 --
 -- @param key
@@ -87,6 +108,20 @@
 
 	function premake.solution.get(key)
 		return premake.solution.list[key]
+	end
+
+
+--
+-- Retrieve the solution's file system location.
+--
+-- @param sln
+--    The solution object to query.
+-- @return
+--    The path to the solutions's file system location.
+--
+
+	function premake.solution.getlocation(sln)
+		return sln.location or sln.basedir
 	end
 
 
@@ -110,4 +145,21 @@
 		-- root configuration doesn't have a name; use the project's
 		cfg.name = prj.name
 		return cfg
+	end
+
+
+--
+-- Retrieve the project configuration at a particular index.
+--
+-- @param sln
+--    The solution.
+-- @param idx
+--    An index into the array of projects.
+-- @return
+--    The project configuration at the given index.
+--
+
+	function premake.solution.getproject_ng(sln, idx)
+		local prj = sln.projects[idx]
+		return oven.merge(oven.merge({}, sln), prj)
 	end

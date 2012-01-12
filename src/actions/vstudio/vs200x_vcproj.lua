@@ -4,16 +4,21 @@
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 
-
---
--- Set up a namespace for this file
---
-
 	premake.vstudio.vc200x = { }
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local config = premake5.config
 	local tree = premake.tree
+
+
+--
+-- Generate a Visual Studio 200x C++ project, with support for the new platforms API.
+--
+
+	function vc200x.generate_ng(prj)
+		print("** Warning: C++ projects have not been ported yet")
+	end
+
 
 
 --

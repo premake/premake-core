@@ -45,6 +45,26 @@
 	end
 
 
+-- 
+-- Locate a project by name; case insensitive.
+--
+-- @param name
+--    The name of the project for which to search.
+-- @return
+--    The corresponding project, or nil if no matching project could be found.
+--
+
+	function project.findproject(name)
+		for sln in premake.solution.each() do
+			for _, prj in ipairs(sln.projects) do
+				if (prj.name == name) then
+					return  prj
+				end
+			end
+		end
+	end
+
+
 --
 -- Retrieve the project's configuration information for a particular build 
 -- configuration/platform pair.
@@ -77,6 +97,48 @@
 		cfg.system = cfg.system or premake.action.current().os or os.get()
 
 		return cfg
+	end
+
+
+--
+-- Returns a list of sibling projects on which the specified project depends. 
+-- This is used to list dependencies within a solution or workspace. Must 
+-- consider all configurations because Visual Studio does not support per-config
+-- project dependencies.
+--
+-- @param prj
+--    The project to query.
+-- @return
+--    A list of dependent projects, as an array of project objects.
+--
+
+	function project.getdependencies(prj)
+		local result = {}
+		for cfg in project.eachconfig(prj, nil, "links") do
+			for _, link in ipairs(cfg.links) do
+				local dep = project.findproject(link)
+				if dep and not table.contains(result, dep) then
+					table.insert(result, dep)
+				end
+			end
+		end
+
+	--[[
+		-- make sure I've got the project and not root config
+		prj = prj.project or prj
+		
+		local results = { }
+		for _, cfg in pairs(prj.__configs) do
+			for _, link in ipairs(cfg.links) do
+				local dep = premake.findproject(link)
+				if dep and not table.contains(results, dep) then
+					table.insert(results, dep)
+				end
+			end
+		end
+	--]]
+
+		return result
 	end
 
 

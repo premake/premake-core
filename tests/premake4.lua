@@ -91,12 +91,11 @@
 	dofile("actions/vstudio/cs2005/propertygroup.lua")
 
 	-- Visual Studio 2005-2010 solutions
-	dofile("actions/vstudio/sln2005/dependencies.lua")
-	dofile("actions/vstudio/sln2005/header.lua")
-	dofile("actions/vstudio/sln2005/layout.lua")
+	dofile("actions/vstudio/sln2005/test_dependencies.lua")
+	dofile("actions/vstudio/sln2005/test_header.lua")
 	dofile("actions/vstudio/sln2005/platforms.lua")
 	dofile("actions/vstudio/sln2005/projectplatforms.lua")
-	dofile("actions/vstudio/sln2005/projects.lua")
+	dofile("actions/vstudio/sln2005/test_projects.lua")
 	dofile("actions/vstudio/sln2005/test_project_platforms.lua")
 	dofile("actions/vstudio/sln2005/test_solution_platforms.lua")
 

@@ -1,16 +1,21 @@
 --
 -- vs2005_csproj.lua
 -- Generate a Visual Studio 2005/2008 C# project.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
---
-
---
--- Set up namespaces
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.cs2005 = { }
 	local vstudio = premake.vstudio
 	local cs2005  = premake.vstudio.cs2005
+
+
+--
+-- Generate a Visual Studio 200x C# project, with support for the new platforms API.
+--
+
+	function cs2005.generate_ng(prj)
+		print("** Warning: C# projects have not been ported yet")
+	end
 
 
 --

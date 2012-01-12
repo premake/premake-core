@@ -1,7 +1,7 @@
 --
--- tests/actions/vstudio/sln2005/header.lua
+-- tests/actions/vstudio/sln2005/test_header.lua
 -- Validate generation of Visual Studio 2005+ solution header.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	T.vstudio_sln2005_header = { }
@@ -20,13 +20,12 @@
 	end
 	
 	local function prepare()
-		premake.bake.buildconfigs()
 		sln2005.header()
 	end
 
 
 --
--- Tests
+-- Each supported action should output the corresponding version numbers.
 --
 
 	function suite.On2005()
