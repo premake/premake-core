@@ -84,6 +84,7 @@
 
 	function project.getconfig(prj, buildcfg, platform, field)
 		local cfg = premake5.oven.bake(prj, { buildcfg, platform }, field)
+		cfg.project = prj
 		cfg.buildcfg = buildcfg
 		cfg.platform = platform
 
@@ -114,6 +115,7 @@
 
 	function project.getdependencies(prj)
 		local result = {}
+
 		for cfg in project.eachconfig(prj, nil, "links") do
 			for _, link in ipairs(cfg.links) do
 				local dep = project.findproject(link)
@@ -122,21 +124,6 @@
 				end
 			end
 		end
-
-	--[[
-		-- make sure I've got the project and not root config
-		prj = prj.project or prj
-		
-		local results = { }
-		for _, cfg in pairs(prj.__configs) do
-			for _, link in ipairs(cfg.links) do
-				local dep = premake.findproject(link)
-				if dep and not table.contains(results, dep) then
-					table.insert(results, dep)
-				end
-			end
-		end
-	--]]
 
 		return result
 	end

@@ -8,6 +8,7 @@
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local config = premake5.config
+	local project = premake5.project
 	local tree = premake.tree
 
 
@@ -16,10 +17,198 @@
 --
 
 	function vc200x.generate_ng(prj)
-		print("** Warning: C++ projects have not been ported yet")
+		io.eol = "\r\n"
+
+		vc200x.xmldeclaration()
+		vc200x.visualStudioProject(prj)
+		vc200x.platforms(prj)
+
+		if _ACTION > "vs2003" then
+			_p(1,'<ToolFiles>')
+			_p(1,'</ToolFiles>')
+		end
+
+		_p(1,'<Configurations>')
+		for cfg in project.eachconfig(prj) do
+			vc200x.configuration(cfg)
+		end
+
+	--[[
+		
+				for _, block in ipairs(getsections(_ACTION, cfginfo.src_platform)) do
+				
+					if blockmap[block] then
+						blockmap[block](cfg)						
+		
+					-- Build event blocks --
+					elseif block == "VCPreBuildEventTool" then
+						vc200x.buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
+					elseif block == "VCPreLinkEventTool" then
+						vc200x.buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
+					elseif block == "VCPostBuildEventTool" then
+						vc200x.buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
+					-- End build event blocks --
+					
+					-- Xbox 360 custom sections --
+					elseif block == "VCX360DeploymentTool" then
+						_p(3,'<Tool')
+						_p(4,'Name="VCX360DeploymentTool"')
+						_p(4,'DeploymentType="0"')
+						if #cfg.deploymentoptions > 0 then
+							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.deploymentoptions), " "))
+						end
+						_p(3,'/>')
+
+					elseif block == "VCX360ImageTool" then
+						_p(3,'<Tool')
+						_p(4,'Name="VCX360ImageTool"')
+						if #cfg.imageoptions > 0 then
+							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.imageoptions), " "))
+						end
+						if cfg.imagepath ~= nil then
+							_p(4,'OutputFileName="%s"', premake.esc(path.translate(cfg.imagepath)))
+						end
+						_p(3,'/>')
+						
+					elseif block == "DebuggerTool" then
+						_p(3,'<DebuggerTool')
+						_p(3,'/>')
+					
+					-- End Xbox 360 custom sections --
+						
+					else
+						_p(3,'<Tool')
+						_p(4,'Name="%s"', block)
+						_p(3,'/>')
+					end
+					
+				end
+
+				_p(2,'</Configuration>')
+			end
+		end
+		_p(1,'</Configurations>')
+
+		_p(1,'<References>')
+		_p(1,'</References>')
+		
+		_p(1,'<Files>')
+		vc200x.Files(prj)
+		_p(1,'</Files>')
+		
+		_p(1,'<Globals>')
+		_p(1,'</Globals>')
+		_p('</VisualStudioProject>')
+		--]]
+
 	end
 
 
+--
+-- Writes the opening XML declaration for both the project file
+-- and the project user file.
+--
+
+	function vc200x.xmldeclaration(element)
+		_p('<?xml version="1.0" encoding="Windows-1252"?>')
+	end
+
+
+--
+-- Write the opening <VisualStudioProject> element of the project file.
+--
+
+	function vc200x.visualStudioProject(prj)
+		local map = {
+			vs2002 = '7.0',
+			vs2003 = '7.1',
+			vs2005 = '8.0',
+			vs2008 = '9.0'
+		}
+
+		_p('<VisualStudioProject')
+		_p(1,'ProjectType="Visual C++"')
+		_p(1,'Version="%s0"', map[_ACTION])
+		_x(1,'Name="%s"', prj.name)
+		_p(1,'ProjectGUID="{%s}"', prj.uuid)
+		if _ACTION > "vs2003" then
+			_x(1,'RootNamespace="%s"', prj.name)
+		end
+		_p(1,'Keyword="%s"', iif(prj.flags.Managed, "ManagedCProj", "Win32Proj"))
+		_p(1,'>')
+	end
+
+
+--
+-- Write out the <Platforms> element, listing each architecture used
+-- by the project's configurations.
+--
+
+	function vc200x.platforms(prj)
+		_p(1,'<Platforms>')
+
+		architectures = { }
+		for cfg in project.eachconfig(prj) do
+			local arch = vstudio.architecture(cfg)
+			if not architectures[arch] then
+				_p(2,'<Platform')
+				_p(3,'Name="%s"', arch)
+				_p(2,'/>')
+				architectures[arch] = true
+			end
+		end
+
+		_p(1,'</Platforms>')
+	end
+
+
+--
+-- Write out the <Configuration> element, describing a specific Premake
+-- build configuration/platform pairing.
+--
+
+	function vc200x.configuration(cfg)
+		_p(2,'<Configuration')
+
+		local platform = vstudio.projectplatform(cfg)
+		local architecture = vstudio.architecture(cfg)
+		_x(3,'Name="%s|%s"', platform, architecture)
+
+		local outdir = path.translate(config.gettargetinfo(cfg).directory)
+		_x(3,'OutputDirectory="%s"', outdir)
+
+		local objdir = path.translate(config.getuniqueobjdir(cfg))
+		_x(3,'IntermediateDirectory="%s"', objdir)
+
+		local cfgtype
+		if (cfg.kind == "SharedLib") then
+			cfgtype = 2
+		elseif (cfg.kind == "StaticLib") then
+			cfgtype = 4
+		else
+			cfgtype = 1
+		end
+		_p(3,'ConfigurationType="%s"', cfgtype)
+
+		if (cfg.flags.MFC) then
+			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
+		end				  
+
+		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+
+		if cfg.flags.Managed then
+			_p(3,'ManagedExtensions="1"')
+		end
+
+		_p(3,'>')
+	end
+
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 --
 -- Return the version-specific text for a boolean value.
@@ -80,43 +269,6 @@
 -- Write out the <Configuration> element.
 --
 	
-	function vc200x.configuration(cfg)
-		_p(2,'<Configuration')
-
-		local platform = vstudio.projectplatform(cfg)
-		local architecture = vstudio.architecture(cfg)
-		_p(3,'Name="%s|%s"', premake.esc(platform), premake.esc(architecture))
-
-		local outdir = path.translate(config.gettargetinfo(cfg).directory)
-		_p(3,'OutputDirectory="%s"', premake.esc(outdir))
-
-		local objdir = path.translate(config.getuniqueobjdir(cfg))
-		_p(3,'IntermediateDirectory="%s"', premake.esc(objdir))
-
-		local cfgtype
-		if (cfg.kind == "SharedLib") then
-			cfgtype = 2
-		elseif (cfg.kind == "StaticLib") then
-			cfgtype = 4
-		else
-			cfgtype = 1
-		end
-		_p(3,'ConfigurationType="%s"', cfgtype)
-
-		if (cfg.flags.MFC) then
-			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
-		end				  
-
-		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
-
-		if cfg.flags.Managed then
-			_p(3,'ManagedExtensions="1"')
-		end
-
-		_p(3,'>')
-	end
-
-	-- TODO: REMOVE, OBSOLETE
 	function vc200x.Configuration(name, cfg)
 		_p(2,'<Configuration')
 		_p(3,'Name="%s"', premake.esc(name))
@@ -228,24 +380,6 @@
 -- by the project's configurations.
 --
 
-	function vc200x.platforms(prj)
-		_p(1,'<Platforms>')
-
-		architectures = { }
-		for cfg in premake5.project.eachconfig(prj) do
-			local arch = vstudio.architecture(cfg)
-			if not architectures[arch] then
-				_p(2,'<Platform')
-				_p(3,'Name="%s"', arch)
-				_p(2,'/>')
-				architectures[arch] = true
-			end
-		end
-
-		_p(1,'</Platforms>')
-	end
-
-	-- TODO: REMOVE, OBSOLETE
 	function vc200x.Platforms(prj)
 		local used = { }
 		_p(1,'<Platforms>')
@@ -864,21 +998,4 @@
 		_p(1,'<Globals>')
 		_p(1,'</Globals>')
 		_p('</VisualStudioProject>')
-	end
-
-
---
--- Enumerate the project's configurations.
---
-
-	function vc200x.configurations(prj)
-		_p(1,'<Configurations>')
-		for cfg in premake5.project.eachconfig(prj) do
-			-- write the opening <Configuration> element
-			vc200x.configuration(cfg)
-
-
-			_p(2,'</Configuration>')
-		end
-		_p(1,'</Configurations>')
 	end

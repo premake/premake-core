@@ -89,7 +89,7 @@
 --
 
 	_x = function(msg, ...)
-		for i,v in ipairs(arg) do
+		for i=2, #arg do
 			arg[i] = premake.esc(arg[i])
 		end
 		io.printf(msg, unpack(arg))

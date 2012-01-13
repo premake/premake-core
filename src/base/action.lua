@@ -50,17 +50,35 @@
 
 	function premake.action.call(name)
 		local a = premake.action.list[name]
-		for sln in premake.solution.each() do
-			if a.onsolution then
-				a.onsolution(sln)
+
+		-- a bit of a hack, but check for the new next-gen actions, and
+		-- translate things accordingly. I'll yank this once the next-gen
+		-- actions are done and official
+		if name:endswith("ng") then
+			_ACTION = _ACTION:sub(1, -3)
+			for sln in premake.solution.each() do
+				if a.onsolution then
+					a.onsolution(sln)
+				end
+				for prj in premake.solution.eachproject_ng(sln) do
+					if a.onproject then
+						a.onproject(prj)
+					end
+				end
 			end
-			for prj in premake.solution.eachproject(sln) do
-				if a.onproject then
-					a.onproject(prj)
+		else
+			for sln in premake.solution.each() do
+				if a.onsolution then
+					a.onsolution(sln)
+				end
+				for prj in premake.solution.eachproject(sln) do
+					if a.onproject then
+						a.onproject(prj)
+					end
 				end
 			end
 		end
-		
+				
 		if a.execute then
 			a.execute()
 		end

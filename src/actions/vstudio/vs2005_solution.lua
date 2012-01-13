@@ -15,10 +15,6 @@
 --
 
 	function sln2005.generate_ng(sln)
-		-- Remove the "_ng" from the end of the next-generation actions. I'll get
-		-- rid of this once they are all finished
-		_ACTION = _ACTION:sub(1,6)
-
 		io.eol = '\r\n'
 		
 		-- Mark the file as Unicode

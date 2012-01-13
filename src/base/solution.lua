@@ -6,6 +6,7 @@
 
 	premake.solution = { }
 	local oven = premake5.oven
+	local project = premake5.project
 
 
 -- The list of defined solutions (which contain projects, etc.)
@@ -161,5 +162,9 @@
 
 	function premake.solution.getproject_ng(sln, idx)
 		local prj = sln.projects[idx]
-		return oven.merge(oven.merge({}, sln), prj)
+
+		local cfg = oven.merge({}, sln)
+		cfg = oven.merge(cfg, prj)
+		cfg = oven.merge(cfg, project.getconfig(prj))
+		return cfg
 	end

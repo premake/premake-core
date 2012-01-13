@@ -50,7 +50,7 @@
 			return cfg.targetinfo
 		end
 
-		local basedir = project.getlocation(prj)
+		local basedir = project.getlocation(cfg.project)
 
 		local directory = cfg.targetdir or basedir
 		directory = path.getrelative(basedir, directory)
