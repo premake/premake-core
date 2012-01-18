@@ -32,67 +32,20 @@
 		for cfg in project.eachconfig(prj) do
 			vc200x.configuration(cfg)
 			vc200x.tools(cfg)
-		end
-
-	--[[
-		
-					-- Build event blocks --
-					elseif block == "VCPreBuildEventTool" then
-						vc200x.buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
-					elseif block == "VCPreLinkEventTool" then
-						vc200x.buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
-					elseif block == "VCPostBuildEventTool" then
-						vc200x.buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
-					-- End build event blocks --
-					
-					-- Xbox 360 custom sections --
-					elseif block == "VCX360DeploymentTool" then
-						_p(3,'<Tool')
-						_p(4,'Name="VCX360DeploymentTool"')
-						_p(4,'DeploymentType="0"')
-						if #cfg.deploymentoptions > 0 then
-							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.deploymentoptions), " "))
-						end
-						_p(3,'/>')
-
-					elseif block == "VCX360ImageTool" then
-						_p(3,'<Tool')
-						_p(4,'Name="VCX360ImageTool"')
-						if #cfg.imageoptions > 0 then
-							_p(4,'AdditionalOptions="%s"', table.concat(premake.esc(cfg.imageoptions), " "))
-						end
-						if cfg.imagepath ~= nil then
-							_p(4,'OutputFileName="%s"', premake.esc(path.translate(cfg.imagepath)))
-						end
-						_p(3,'/>')
-						
-					elseif block == "DebuggerTool" then
-						_p(3,'<DebuggerTool')
-						_p(3,'/>')
-					
-					-- End Xbox 360 custom sections --
-
-					end
-					
-				end
-
-				_p(2,'</Configuration>')
-			end
+			_p(2,'</Configuration>')
 		end
 		_p(1,'</Configurations>')
 
 		_p(1,'<References>')
 		_p(1,'</References>')
-		
+
 		_p(1,'<Files>')
-		vc200x.Files(prj)
+		vc200x.files_ng(prj)
 		_p(1,'</Files>')
-		
+
 		_p(1,'<Globals>')
 		_p(1,'</Globals>')
 		_p('</VisualStudioProject>')
-		--]]
-
 	end
 
 
@@ -534,7 +487,7 @@
 
 
 --
--- Write out the <VCManifest> element.
+-- Write out the <VCManifestTool> element.
 --
 
 	function vc200x.VCManifestTool_ng(cfg)
@@ -550,6 +503,115 @@
 		if #manifests > 0 then
 			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
 		end
+		_p(3,'/>')
+	end
+
+
+--
+-- Write out the <VCMIDLTool> block
+--
+
+	function vc200x.VCMIDLTool_ng(cfg)
+		_p(3,'<Tool')
+		_p(4,'Name="VCMIDLTool"')
+		if cfg.architecture == "x64" then
+			_p(4,'TargetEnvironment="3"')
+		end
+		_p(3,'/>')
+	end
+
+
+--
+-- Write out the resource compiler block.
+--
+
+	function vc200x.VCResourceCompilerTool_ng(cfg)
+		_p(3,'<Tool')
+		_p(4,'Name="VCResourceCompilerTool"')
+
+		if #cfg.resoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
+		end
+
+		if #cfg.defines > 0 or #cfg.resdefines > 0 then
+			local defines = table.join(cfg.defines, cfg.resdefines)
+			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
+		end
+
+		if #cfg.includedirs > 0 or #cfg.resincludedirs > 0 then
+			local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
+			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+
+		_p(3,'/>')
+	end
+
+
+--
+-- Write out the custom build step blocks.
+--
+
+	local function buildstepsblock(name, steps)
+		_p(3,'<Tool')
+		_p(4,'Name="%s"', name)
+		if #steps > 0 then
+			_x(4,'CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
+		end
+		_p(3,'/>')
+	end
+
+	function vc200x.VCPreBuildEventTool(cfg)
+		buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
+	end
+
+	function vc200x.VCPreLinkEventTool(cfg)
+		buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
+	end
+
+	function vc200x.VCPostBuildEventTool(cfg)
+		buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
+	end
+
+
+
+--
+-- Write out the Xbox 360 deployment tool block.
+--
+
+	function vc200x.VCX360DeploymentTool(cfg)
+		_p(3,'<Tool')
+		_p(4,'Name="VCX360DeploymentTool"')
+		_p(4,'DeploymentType="0"')
+		if #cfg.deploymentoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(cfg.deploymentoptions, " "))
+		end
+		_p(3,'/>')
+	end
+
+
+--
+-- Write out the Xbox 360 image tool block.
+--
+
+	function vc200x.VCX360ImageTool(cfg)
+		_p(3,'<Tool')
+		_p(4,'Name="VCX360ImageTool"')
+		if #cfg.imageoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(cfg.imageoptions, " "))
+		end
+		if cfg.imagepath ~= nil then
+			_x(4,'OutputFileName="%s"', path.translate(cfg.imagepath))
+		end
+		_p(3,'/>')
+	end
+
+
+--
+-- Write out the Xbox 360 debugger tool block.
+--
+
+	function vc200x.DebuggerTool(cfg)
+		_p(3,'<DebuggerTool')
 		_p(3,'/>')
 	end
 
@@ -635,18 +697,116 @@
 
 
 --
+-- Write out the source file tree.
+--
+
+	function vc200x.files_ng(cfg)
+		local tr = project.getsourcetree(prj)
+
+		tree.traverse(tr, {
+
+			-- source files are handled at the leaves
+			onleaf = function(node, depth)
+				_p(depth, '<File')
+				_p(depth, '\t>')
+			end
+
+		}, false, 2)
+
+		--[[
+		local tr = premake.project.buildsourcetree(prj)
+		
+		tree.traverse(tr, {
+			-- folders are handled at the internal nodes
+			onbranchenter = function(node, depth)
+				_p(depth, '<Filter')
+				_p(depth, '\tName="%s"', node.name)
+				_p(depth, '\tFilter=""')
+				_p(depth, '\t>')
+			end,
+
+			onbranchexit = function(node, depth)
+				_p(depth, '</Filter>')
+			end,
+
+			-- source files are handled at the leaves
+			onleaf = function(node, depth)
+				local fname = node.cfg.name
+				
+				_p(depth, '<File')
+				_p(depth, '\tRelativePath="%s"', path.translate(fname, "\\"))
+				_p(depth, '\t>')
+				depth = depth + 1
+
+				-- handle file configuration stuff. This needs to be cleaned up and simplified.
+				-- configurations are cached, so this isn't as bad as it looks
+				for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
+					if cfginfo.isreal then
+						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
+						
+						local usePCH = (not prj.flags.NoPCH and prj.pchsource == node.cfg.name)
+						local isSourceCode = path.iscppfile(fname)
+						local needsCompileAs = (path.iscfile(fname) ~= premake.project.iscproject(prj))
+						
+						if usePCH or (isSourceCode and needsCompileAs) then
+							_p(depth, '<FileConfiguration')
+							_p(depth, '\tName="%s"', cfginfo.name)
+							_p(depth, '\t>')
+							_p(depth, '\t<Tool')
+							_p(depth, '\t\tName="%s"', iif(cfg.system == "Xbox360", 
+							                                 "VCCLX360CompilerTool", 
+							                                 "VCCLCompilerTool"))
+							if needsCompileAs then
+								_p(depth, '\t\tCompileAs="%s"', iif(path.iscfile(fname), 1, 2))
+							end
+							
+							if usePCH then
+								if cfg.system == "PS3" then
+									local options = table.join(premake.snc.getcflags(cfg), 
+									                           premake.snc.getcxxflags(cfg), 
+									                           cfg.buildoptions)
+									options = table.concat(options, " ");
+									options = options .. ' --create_pch="$(IntDir)/$(TargetName).pch"'			                    
+									_p(depth, '\t\tAdditionalOptions="%s"', premake.esc(options))
+								else
+									_p(depth, '\t\tUsePrecompiledHeader="1"')
+								end
+							end
+
+							_p(depth, '\t/>')
+							_p(depth, '</FileConfiguration>')
+						end
+
+					end
+				end
+
+				depth = depth - 1
+				_p(depth, '</File>')
+			end,
+		}, false, 2)
+
+
+		--]]
+	end
+
+
+--
 -- Map tool names to output functions. Tools that aren't listed will
 -- output a standard empty tool element.
 --
 
 	vc200x.toolmap = {
+		DebuggerTool           = vc200x.DebuggerTool,
 		VCCLCompilerTool       = vc200x.VCCLCompilerTool_ng,
 		VCLinkerTool           = vc200x.VCLinkerTool_ng,
-		VCManifestTool         = vc200x.VCManifestTool,
-		--[[
-		VCMIDLTool             = vc200x.VCMIDLTool,
-		VCResourceCompilerTool = vc200x.VCResourceCompilerTool,
-		--]]
+		VCManifestTool         = vc200x.VCManifestTool_ng,
+		VCMIDLTool             = vc200x.VCMIDLTool_ng,
+		VCPostBuildEventTool   = vc200x.VCPostBuildEventTool,
+		VCPreBuildEventTool    = vc200x.VCPreBuildEventTool,
+		VCPreLinkEventTool     = vc200x.VCPreLinkEventTool,
+		VCResourceCompilerTool = vc200x.VCResourceCompilerTool_ng,
+		VCX360DeploymentTool   = vc200x.VCX360DeploymentTool,
+		VCX360ImageTool        = vc200x.VCX360ImageTool
 	}
 
 
@@ -1199,22 +1359,6 @@
 		end
 		_p(3,'/>')
 	end
-
-	
-
---
--- Write out a custom build steps block.
---
-
-	function vc200x.buildstepsblock(name, steps)
-		_p(3,'<Tool')
-		_p(4,'Name="%s"', name)
-		if #steps > 0 then
-			_p(4,'CommandLine="%s"', premake.esc(table.implode(steps, "", "", "\r\n")))
-		end
-		_p(3,'/>')
-	end
-
 
 
 --
