@@ -23,10 +23,10 @@
 		prj = project("MyProject")
 	end
 
-	local function collect(fn)
+	local function collect(fn, field)
 		prepare()
 		local result = { }
-		for cfg in premake.project.eachconfig(prj) do
+		for cfg in premake.project.eachconfig(prj, field) do
 			table.insert(result, fn(cfg))
 		end
 		return result
@@ -106,3 +106,16 @@
 		local r = collect(function(cfg) return (cfg.architecture or "nil") end)
 		test.isequal("x32|x64|nil", table.concat(r, "|"))
 	end
+
+
+--
+-- If a filter field is used, that field's value should be returned.
+--
+
+	function suite.returnsFieldValue_onFilterField()
+		configurations { "Debug" }
+		kind "ConsoleApp"
+		local r = collect(function(cfg) return cfg.kind end, "kind")
+		test.isequal("ConsoleApp", table.concat(r))
+	end
+

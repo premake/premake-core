@@ -1,12 +1,13 @@
 --
 -- snc.lua
 -- Provides Sony SNC-specific configuration strings.
--- Copyright (c) 2010 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2012 Jason Perkins and the Premake project
 --
 
 	
 	premake.snc = { }
-	
+	local config = premake5.config
+
 
 -- TODO: Will cfg.system == "windows" ever be true for SNC? If
 -- not, remove the conditional blocks that use this test.
@@ -66,7 +67,7 @@
 
 	function premake.snc.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)
-		table.insert(result, platforms[cfg.platform].flags)
+		table.insert(result, platforms["PS3"].flags)
 		if cfg.kind == "SharedLib" then
 			table.insert(result, "-fPIC")
 		end
@@ -85,6 +86,27 @@
 -- Returns a list of linker flags, based on the supplied configuration.
 --
 
+	function premake.snc.getldflags_ng(cfg)
+		local result = { }
+		
+		if not cfg.flags.Symbols then
+			table.insert(result, "-s")
+		end
+	
+		if cfg.kind == "SharedLib" then
+			table.insert(result, "-shared")				
+			if not cfg.flags.NoImportLib then
+				table.insert(result, '-Wl,--out-implib="' .. config.getlinkinfo(cfg).fullpath .. '"')
+			end
+		end
+		
+		local platform = platforms["PS3"]
+		table.insert(result, platform.flags)
+		table.insert(result, platform.ldflags)
+		
+		return result
+	end
+
 	function premake.snc.getldflags(cfg)
 		local result = { }
 		
@@ -99,7 +121,7 @@
 			end
 		end
 		
-		local platform = platforms[cfg.platform]
+		local platform = platforms["PS3"]
 		table.insert(result, platform.flags)
 		table.insert(result, platform.ldflags)
 		

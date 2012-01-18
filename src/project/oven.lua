@@ -145,7 +145,9 @@
 
 	function oven.merge(cfg, block, filterField)
 		if filterField then
-			oven.mergefield(cfg, filterField, block[filterField])
+			if block[filterField] then
+				oven.mergefield(cfg, filterField, block[filterField])
+			end
 		else
 			for key, value in pairs(block) do
 				if not nomerge[key] then

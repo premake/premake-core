@@ -114,7 +114,7 @@
 -- Use the correct keyword for Managed C++ projects.
 --
 
-	function suite.structureIsCorrect_onDefaultValues()
+	function suite.keywordIsCorrect_onManagedC()
 		flags { "Managed" }
 		prepare()
 		test.capture [[

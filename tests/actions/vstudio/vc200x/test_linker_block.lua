@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_linker_block.lua
--- Validate generation of filter blocks in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Validate generation of VCLinkerTool blocks in Visual Studio 200x C/C++ projects.
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	T.vs200x_linker_block = { }
@@ -21,29 +21,85 @@
 	end
 
 	local function prepare()
-		premake.bake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
-		local cfg = premake.getconfig(prj, "Debug")
-		vc200x.VCLinkerTool(cfg)
+		local cfg = premake5.project.getconfig(prj, "Debug")
+		vc200x.VCLinkerTool_ng(cfg)
 	end
 
 
 --
--- Verify the basic structure of the linker block with no flags or settings.
+-- Verify the basic structure of the console app linker block.
 --
 
-	function suite.defaultSettings()
+	function suite.onConsoleApp()
+		kind "ConsoleApp"
 		prepare()
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				EntryPointSymbol="mainCRTStartup"
 				TargetMachine="1"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the basic structure of windowed app linker block.
+--
+
+	function suite.onWindowedApp()
+		kind "WindowedApp"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\MyProject.exe"
+				LinkIncremental="2"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				EntryPointSymbol="mainCRTStartup"
+				TargetMachine="1"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the basic structure of static library linker block.
+--
+
+	function suite.onSharedLib()
+		kind "SharedLib"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\MyProject.dll"
+				LinkIncremental="2"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				ImportLibrary="MyProject.lib"
+				TargetMachine="1"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the basic structure of static library linker block.
+--
+
+	function suite.onStaticLib()
+		kind "StaticLib"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\MyProject.lib"
 			/>
 		]]
 	end
@@ -61,13 +117,8 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				SubSystem="1"
-				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"
-			/>
 		]]
 	end
 
@@ -85,7 +136,6 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				EntryPointSymbol="mainCRTStartup"
@@ -93,3 +143,132 @@
 			/>
 		]]
 	end
+
+
+--
+-- If a module definition file is present, make sure it is specified.
+--
+
+	function suite.onModuleDefinitionFile()
+		files { "MyProject.def" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\MyProject.exe"
+				LinkIncremental="2"
+				ModuleDefinitionFile="MyProject.def"
+		]]
+	end
+
+
+--
+-- Verify handling of the NoIncrementalLink flag.
+--
+	
+	function suite.onNoIncrementalLink()
+		flags { "NoIncrementalLink" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\MyProject.exe"
+				LinkIncremental="1"
+		]]
+	end
+
+
+--
+-- Verify that link options are specified.
+--
+
+	function suite.additionalOptionsUsed_onStaticLib()
+		kind "StaticLib"
+		linkoptions { "/ltcg", "/lZ" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\MyProject.lib"
+				AdditionalOptions="/ltcg /lZ"
+			/>
+		]]
+	end
+
+
+--
+-- Verify machine option settings for 32-bit builds.
+--
+
+	function suite.machineOptionSet_on32BitStaticLib()
+		kind "StaticLib"
+		architecture "x32"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\MyProject.lib"
+				AdditionalOptions="/MACHINE:X86"
+			/>
+		]]
+	end
+
+
+--
+-- Verify machine option settings for 64-bit builds.
+--
+
+	function suite.machineOptionSet_on64BitStaticLib()
+		kind "StaticLib"
+		architecture "x64"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\MyProject.lib"
+				AdditionalOptions="/MACHINE:X64"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the structure of a PS3 console application.
+--
+	
+	function suite.looksGood_onPS3ConsoleApp()
+		system "PS3"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="-s"
+				OutputFile="$(OutDir)\MyProject.elf"
+				LinkIncremental="0"
+				GenerateManifest="false"
+				ProgramDatabaseFile=""
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the structure of a PS3 static library.
+--
+
+	function suite.looksGood_onPS3StaticLib()
+		system "PS3"
+		kind "StaticLib"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalOptions="-s"
+				OutputFile="$(OutDir)\libMyProject.a"
+			/>
+		]]
+	end
+
+

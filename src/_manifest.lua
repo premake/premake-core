@@ -24,11 +24,6 @@
 		"base/bake.lua",
 		"base/api.lua",
 		"base/cmdline.lua",
-		"tools/dotnet.lua",
-		"tools/gcc.lua",
-		"tools/msc.lua",
-		"tools/ow.lua",
-		"tools/snc.lua",
 		"base/validate.lua",
 		"base/help.lua",
 		"base/premake.lua",
@@ -37,8 +32,14 @@
 		"project/project.lua",
 		"project/config.lua",
 		"project/oven.lua",
-
 		"base/solution.lua",
+
+		-- tool APIs
+		"tools/dotnet.lua",
+		"tools/gcc.lua",
+		"tools/msc.lua",
+		"tools/ow.lua",
+		"tools/snc.lua",
 
 		-- CodeBlocks action
 		"actions/codeblocks/_codeblocks.lua",

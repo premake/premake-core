@@ -75,8 +75,6 @@
 	-- Visual Studio tests
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
-	dofile("actions/vstudio/test_vs200x_vcproj.lua")
-	dofile("actions/vstudio/test_vs200x_vcproj_linker.lua")
 	dofile("actions/vstudio/test_vs2010_vcxproj.lua")
 	dofile("actions/vstudio/test_vs2010_flags.lua")
 	dofile("actions/vstudio/test_vs2010_project_kinds.lua")
@@ -106,6 +104,7 @@
 	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_filters.lua")
 	dofile("actions/vstudio/vc200x/test_linker_block.lua")
+	dofile("actions/vstudio/vc200x/test_manifest_block.lua")
 	dofile("actions/vstudio/vc200x/test_mfc.lua")
 	dofile("actions/vstudio/vc200x/test_platforms.lua")
 	dofile("actions/vstudio/vc200x/test_project.lua")

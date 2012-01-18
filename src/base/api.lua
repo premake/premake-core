@@ -359,6 +359,7 @@
 				"ps3",
 				"solaris",
 				"windows",
+				"xbox360"
 			},
 		},
 

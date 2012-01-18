@@ -89,8 +89,9 @@
 		cfg.platform = platform
 
 		-- For backward compatibility with the old platforms API, use platform
-		-- as the default architecture, if it would be a valid value.
+		-- as the default system or architecture if it would be a valid value.
 		if cfg.platform then
+			cfg.system = premake.checkvalue(cfg.platform, premake.fields.system.allowed)
 			cfg.architecture = premake.checkvalue(cfg.platform, premake.fields.architecture.allowed)
 		end
 
@@ -147,4 +148,20 @@
 			location = path.getrelative(relativeto, location)
 		end
 		return location
+	end
+
+
+--
+-- Return the relative path from the project to the specified file.
+--
+-- @param prj
+--    The project object to query.
+-- @param filename
+--    The full path to the file.
+-- @return
+--    The relative path from the project to the file.
+--
+
+	function project.getrelative(prj, filename)
+		return path.getrelative(project.getlocation(prj), filename)
 	end

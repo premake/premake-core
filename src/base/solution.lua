@@ -99,6 +99,28 @@
 
 
 --
+-- Locate a project by name, case insensitive.
+--
+-- @param sln
+--    The solution to query.
+-- @param name
+--    The name of the projec to find.
+-- @return
+--    The project object, or nil if a matching project could not be found.
+--
+
+	function premake.solution.findproject(sln, name)
+		name = name:lower()
+		for _, prj in ipairs(sln.projects) do
+			if name == prj.name:lower() then
+				return prj
+			end
+		end
+		return nil
+	end
+
+
+--
 -- Retrieve a solution by name or index.
 --
 -- @param key

@@ -232,3 +232,12 @@
 		cfg = oven.merge(oven.merge({}, sln), prj)
 		test.isequal({"*.prj","*.prjx"}, cfg.vpaths["Project"])
 	end
+
+
+
+	function suite.testInProgress()
+		kind("ConsoleApp")
+		prj = project("MyProject")
+		local cfg = premake5.oven.bake(prj, { "Debug", nil }, "kind")
+		test.isequal("ConsoleApp", cfg.kind)
+	end

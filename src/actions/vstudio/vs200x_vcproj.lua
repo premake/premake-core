@@ -1,7 +1,7 @@
 --
 -- vs200x_vcproj.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc200x = { }
@@ -31,14 +31,10 @@
 		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
 			vc200x.configuration(cfg)
+			vc200x.tools(cfg)
 		end
 
 	--[[
-		
-				for _, block in ipairs(getsections(_ACTION, cfginfo.src_platform)) do
-				
-					if blockmap[block] then
-						blockmap[block](cfg)						
 		
 					-- Build event blocks --
 					elseif block == "VCPreBuildEventTool" then
@@ -75,11 +71,7 @@
 						_p(3,'/>')
 					
 					-- End Xbox 360 custom sections --
-						
-					else
-						_p(3,'<Tool')
-						_p(4,'Name="%s"', block)
-						_p(3,'/>')
+
 					end
 					
 				end
@@ -101,6 +93,19 @@
 		_p('</VisualStudioProject>')
 		--]]
 
+	end
+
+
+--
+-- Return the version-specific text for a boolean value.
+--
+
+	local function bool(value)
+		if (_ACTION < "vs2005") then
+			return iif(value, "TRUE", "FALSE")
+		else
+			return iif(value, "true", "false")
+		end
 	end
 
 
@@ -204,31 +209,456 @@
 	end
 
 
-
-
------------------------------------------------------------------------------
--- Everything below this point is a candidate for deprecation
------------------------------------------------------------------------------
-
 --
--- Return the version-specific text for a boolean value.
+-- Write out the tool elements for a specific configuration.
 --
 
-	local function bool(value)
-		if (_ACTION < "vs2005") then
-			return iif(value, "TRUE", "FALSE")
-		else
-			return iif(value, "true", "false")
+	function vc200x.tools(cfg)
+		for _, tool in ipairs(vc200x.gettools(cfg)) do
+			if vc200x.toolmap[tool] then
+				vc200x.toolmap[tool](cfg)
+			else
+				vc200x.tool(tool)
+			end
 		end
 	end
 
 
 --
--- Return the optimization code.
+-- Return the list of tools required to build a specific configuration.
+-- Each tool gets represented by an XML element in the project file.
+--
+
+	function vc200x.gettools(cfg)
+		if _ACTION == "vs2002" then
+			return {
+				"VCCLCompilerTool",
+				"VCCustomBuildTool",
+				"VCLinkerTool",
+				"VCMIDLTool",
+				"VCPostBuildEventTool",
+				"VCPreBuildEventTool",
+				"VCPreLinkEventTool",
+				"VCResourceCompilerTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCWebDeploymentTool"
+			}
+		end
+		if _ACTION == "vs2003" then
+			return {
+				"VCCLCompilerTool",
+				"VCCustomBuildTool",
+				"VCLinkerTool",
+				"VCMIDLTool",
+				"VCPostBuildEventTool",
+				"VCPreBuildEventTool",
+				"VCPreLinkEventTool",
+				"VCResourceCompilerTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebDeploymentTool",
+				"VCManagedWrapperGeneratorTool",
+				"VCAuxiliaryManagedWrapperGeneratorTool"
+			}
+		end
+		if cfg.system == premake.XBOX360 then
+			return {
+				"VCPreBuildEventTool",
+				"VCCustomBuildTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCMIDLTool",
+				"VCCLCompilerTool",
+				"VCManagedResourceCompilerTool",
+				"VCResourceCompilerTool",
+				"VCPreLinkEventTool",
+				"VCLinkerTool",
+				"VCALinkTool",
+				"VCX360ImageTool",
+				"VCBscMakeTool",
+				"VCX360DeploymentTool",
+				"VCPostBuildEventTool",
+				"DebuggerTool",
+			}
+		end
+		return {	
+			"VCPreBuildEventTool",
+			"VCCustomBuildTool",
+			"VCXMLDataGeneratorTool",
+			"VCWebServiceProxyGeneratorTool",
+			"VCMIDLTool",
+			"VCCLCompilerTool",
+			"VCManagedResourceCompilerTool",
+			"VCResourceCompilerTool",
+			"VCPreLinkEventTool",
+			"VCLinkerTool",
+			"VCALinkTool",
+			"VCManifestTool",
+			"VCXDCMakeTool",
+			"VCBscMakeTool",
+			"VCFxCopTool",
+			"VCAppVerifierTool",
+			"VCWebDeploymentTool",
+			"VCPostBuildEventTool"
+		}	
+	end
+
+
+--
+-- Write out an empty tool element.
+--
+
+	function vc200x.tool(name)
+		_p(3,'<Tool')
+		_p(4,'Name="%s"', name)
+		_p(3,'/>')
+	end
+
+
+--
+-- Write out the VCCLCompilerTool element.
+--
+
+	function vc200x.VCCLCompilerTool_ng(cfg)
+		_p(3,'<Tool')
+		_p(4,'Name="%s"', iif(cfg.system ~= premake.XBOX360, "VCCLCompilerTool", "VCCLX360CompilerTool"))
+
+		if cfg.system == premake.PS3 then
+			vc200x.VCCLCompilerTool_ps3_ng(cfg)
+		else
+			vc200x.VCCLCompilerTool_windows(cfg)
+		end
+
+		_p(3,'/>')
+	end
+
+	function vc200x.VCCLCompilerTool_windows(cfg)
+		if #cfg.buildoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(cfg.buildoptions, " "))
+		end
+		
+		_p(4,'Optimization="%s"', vc200x.optimization(cfg))
+		
+		if cfg.flags.NoFramePointer then
+			_p(4,'OmitFramePointers="%s"', bool(true))
+		end
+		
+		if #cfg.includedirs > 0 then
+			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(cfg.includedirs, ";")))
+		end
+		
+		if #cfg.defines > 0 then
+			_x(4,'PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
+		end
+		
+		if premake.config.isdebugbuild(cfg) and 
+		   cfg.debugformat ~= "c7" and 
+		   not cfg.flags.NoMinimalRebuild and 
+		   not cfg.flags.Managed 
+		then
+			_p(4,'MinimalRebuild="%s"', bool(true))
+		end
+		
+		if cfg.flags.NoExceptions then
+			_p(4,'ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
+		elseif cfg.flags.SEH and _ACTION > "vs2003" then
+			_p(4,'ExceptionHandling="2"')
+		end
+		
+		if vc200x.optimization(cfg) == 0 and not cfg.flags.Managed then
+			_p(4,'BasicRuntimeChecks="3"')
+		end
+
+		if vc200x.optimization(cfg) ~= 0 then
+			_p(4,'StringPooling="%s"', bool(true))
+		end
+		
+		local runtime
+		if premake.config.isdebugbuild(cfg) then
+			runtime = iif(cfg.flags.StaticRuntime, 1, 3)
+		else
+			runtime = iif(cfg.flags.StaticRuntime, 0, 2)
+		end
+		_p(4,'RuntimeLibrary="%s"', runtime)
+
+		_p(4,'EnableFunctionLevelLinking="%s"', bool(true))
+
+		if _ACTION > "vs2003" and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
+			if cfg.flags.EnableSSE then
+				_p(4,'EnableEnhancedInstructionSet="1"')
+			elseif cfg.flags.EnableSSE2 then
+				_p(4,'EnableEnhancedInstructionSet="2"')
+			end
+		end
+	
+		if _ACTION < "vs2005" then
+			if cfg.flags.FloatFast then
+				_p(4,'ImproveFloatingPointConsistency="%s"', bool(false))
+			elseif cfg.flags.FloatStrict then
+				_p(4,'ImproveFloatingPointConsistency="%s"', bool(true))
+			end
+		else
+			if cfg.flags.FloatFast then
+				_p(4,'FloatingPointModel="2"')
+			elseif cfg.flags.FloatStrict then
+				_p(4,'FloatingPointModel="1"')
+			end
+		end
+		
+		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
+			_p(4,'RuntimeTypeInfo="%s"', bool(true))
+		elseif _ACTION > "vs2003" and cfg.flags.NoRTTI and not cfg.flags.Managed then
+			_p(4,'RuntimeTypeInfo="%s"', bool(false))
+		end
+		
+		if cfg.flags.NativeWChar then
+			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(true))
+		elseif cfg.flags.NoNativeWChar then
+			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(false))
+		end
+		
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
+			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+		else
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
+		end
+		
+		_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
+		
+		if cfg.flags.FatalWarnings then
+			_p(4,'WarnAsError="%s"', bool(true))
+		end
+		
+		if _ACTION < "vs2008" and not cfg.flags.Managed then
+			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
+		end
+		
+		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+		
+		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
+		
+		if cfg.project.language == "C" then
+			_p(4, 'CompileAs="1"')
+		end
+	end
+
+
+	function vc200x.VCCLCompilerTool_ps3_ng(cfg)
+		local buildoptions = table.join(premake.snc.getcflags(cfg), premake.snc.getcxxflags(cfg), cfg.buildoptions)
+		
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
+			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
+		else
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
+		end
+
+		_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
+
+		if #cfg.includedirs > 0 then
+			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(cfg.includedirs, ";")))
+		end
+
+		if #cfg.defines > 0 then
+			_x(4,'PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
+		end
+
+		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+
+		_p(4,'DebugInformationFormat="0"')
+		_p(4,'CompileAs="0"')
+	end
+
+
+--
+-- Write out the VCLinkerTool element.
+--
+
+	function vc200x.VCLinkerTool_ng(cfg)
+		_p(3,'<Tool')
+
+		if cfg.kind == premake.STATICLIB then
+			_p(4,'Name="VCLibrarianTool"')
+			if cfg.system == premake.PS3 then
+				vc200x.VCLinkerTool_ps3_ng(cfg)
+			else
+				vc200x.VCLinkerTool_windows_static(cfg)
+			end
+		else
+			_p(4,'Name="%s"', iif(cfg.platform ~= "Xbox360", "VCLinkerTool", "VCX360LinkerTool"))
+			if cfg.system == premake.PS3 then
+				vc200x.VCLinkerTool_ps3_ng(cfg)
+			else
+				vc200x.VCLinkerTool_windows(cfg)
+			end
+		end
+				
+		_p(3,'/>')
+	end
+
+
+	function vc200x.VCLinkerTool_windows(cfg)		
+		if cfg.flags.NoImportLib then
+			_p(4,'IgnoreImportLibrary="%s"', bool(true))
+		end
+			
+		if #cfg.linkoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(cfg.linkoptions, " "))
+		end
+
+		if #cfg.links > 0 then
+			_x(4,'AdditionalDependencies="%s"', table.concat(path.translate(config.getlinks(cfg, "all", "fullpath"), " ")))
+		end
+
+		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
+
+		_p(4,'LinkIncremental="%s"', iif(premake.config.isincrementallink(cfg) , 2, 1))
+
+		if #cfg.libdirs > 0 then
+			_x(4,'AdditionalLibraryDirectories="%s"', table.concat(path.translate(cfg.libdirs) , ";"))
+		end
+
+		local deffile = config.findfile(cfg, ".def")
+		if deffile then
+			_p(4,'ModuleDefinitionFile="%s"', deffile)
+		end
+
+		if cfg.flags.NoManifest then
+			_p(4,'GenerateManifest="%s"', bool(false))
+		end
+
+		_p(4,'GenerateDebugInformation="%s"', bool(vc200x.symbols(cfg) ~= 0))
+
+		if vc200x.symbols(cfg) >= 3 then
+			_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+		end
+
+		_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
+
+		if vc200x.optimization(cfg) ~= 0 then
+			_p(4,'OptimizeReferences="2"')
+			_p(4,'EnableCOMDATFolding="2"')
+		end
+
+		if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
+			_p(4,'EntryPointSymbol="mainCRTStartup"')
+		end
+
+		if cfg.kind == "SharedLib" then
+			local implibname = config.getlinkinfo(cfg).fullpath
+			-- I can't actually stop the import lib, but I can hide it in the objects directory
+			if cfg.flags.NoImportLib then
+				local objdir = config.getuniqueobjdir(cfg)
+				implibname = path.join(objdir, path.getname(implibname))
+			end
+			_x(4,'ImportLibrary="%s"', path.translate(implibname))
+		end
+
+		_p(4,'TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
+	end
+
+
+	function vc200x.VCLinkerTool_windows_static(cfg)
+		if #cfg.links > 0 then
+			_x(4,'AdditionalDependencies="%s"', table.concat(config.getlinks(cfg, "all", "fullpath"), " "))
+		end
+
+		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
+
+		if #cfg.libdirs > 0 then
+			_x(4,'AdditionalLibraryDirectories="%s"', path.translate(table.concat(cfg.libdirs, ";")))
+		end
+
+		local opts = {}
+		if cfg.architecture == premake.X32 then
+			table.insert(opts, "/MACHINE:X86")
+		elseif cfg.architecture == premake.X64 then
+			table.insert(opts, "/MACHINE:X64")
+		end
+		opts = table.join(opts, cfg.linkoptions)
+		if #opts > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(opts, " "))
+		end
+	end
+
+
+	function vc200x.VCLinkerTool_ps3_ng(cfg)
+		local buildoptions = table.join(premake.snc.getldflags_ng(cfg), cfg.linkoptions)
+		if #buildoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
+		end
+			
+		if #cfg.links > 0 then
+			_x(4,'AdditionalDependencies="%s"', table.concat(config.getlinks(cfg, "all", "fullpath"), " "))
+		end
+			
+		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
+
+		if cfg.kind ~= premake.STATICLIB then
+			_p(4,'LinkIncremental="0"')
+		end
+
+		if #cfg.libdirs > 0 then
+			_x(4,'AdditionalLibraryDirectories="%s"', table.concat(path.translate(cfg.libdirs) , ";"))
+		end
+		
+		if cfg.kind ~= premake.STATICLIB then
+			_p(4,'GenerateManifest="%s"', bool(false))
+			_p(4,'ProgramDatabaseFile=""')
+			_p(4,'RandomizedBaseAddress="1"')
+			_p(4,'DataExecutionPrevention="0"')
+		end
+	end
+
+
+--
+-- Write out the <VCManifest> element.
+--
+
+	function vc200x.VCManifestTool_ng(cfg)
+		local manifests = {}
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, project.getrelative(cfg.project, fname))
+			end
+		end
+		
+		_p(3,'<Tool')
+		_p(4,'Name="VCManifestTool"')
+		if #manifests > 0 then
+			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+		end
+		_p(3,'/>')
+	end
+
+
+--
+-- Map tool names to output functions. Tools that aren't listed will
+-- output a standard empty tool element.
+--
+
+	vc200x.toolmap = {
+		VCCLCompilerTool       = vc200x.VCCLCompilerTool_ng,
+		VCLinkerTool           = vc200x.VCLinkerTool_ng,
+		VCManifestTool         = vc200x.VCManifestTool,
+		--[[
+		VCMIDLTool             = vc200x.VCMIDLTool,
+		VCResourceCompilerTool = vc200x.VCResourceCompilerTool,
+		--]]
+	}
+
+
+--
+-- Translate Premake flags into a Visual Studio optimization value.
 --
 
 	function vc200x.optimization(cfg)
 		local result = 0
+
+		-- step through the flags in the order they were specified, so
+		-- later flags can override an earlier value
 		for _, value in ipairs(cfg.flags) do
 			if (value == "Optimize") then
 				result = 3
@@ -238,10 +668,40 @@
 				result = 2
 			end
 		end
+
 		return result
 	end
 
 
+--
+-- Return the debugging symbols level for a configuration.
+--
+
+	function vc200x.symbols(cfg)
+		if not cfg.flags.Symbols then
+			return 0
+		elseif cfg.debugformat == "c7" then
+			return 1
+		else
+			-- Edit-and-continue doesn't work for some configurations
+			if cfg.flags.NoEditAndContinue or 
+			    vc200x.optimization(cfg) ~= 0 or 
+			    cfg.flags.Managed or 
+			    cfg.system == "x64" or 
+				cfg.platform == "x64"  -- TODO: remove this when the _ng stuff goes live
+			then
+				return 3
+			else
+				return 4
+			end
+		end
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 --
 -- Write the project file header
@@ -392,30 +852,6 @@
 			end
 		end
 		_p(1,'</Platforms>')
-	end
-
-
---
--- Return the debugging symbols level for a configuration.
---
-
-	function vc200x.symbols(cfg)
-		if not cfg.flags.Symbols then
-			return 0
-		elseif cfg.debugformat == "c7" then
-			return 1
-		else
-			-- Edit-and-continue doesn't work for some configurations
-			if cfg.flags.NoEditAndContinue or 
-			    vc200x.optimization(cfg) ~= 0 or 
-			    cfg.flags.Managed or 
-			    cfg.platform == "x64"
-			then
-				return 3
-			else
-				return 4
-			end
-		end
 	end
 
 
@@ -592,7 +1028,7 @@
 			end
 			
 			if cfg.kind == "SharedLib" then
-				local implibname = cfg.linktarget.fullpath
+				local implibname = config.getlinkinfo(cfg).fullpath
 				_p(4,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 			end
 			
@@ -706,6 +1142,27 @@
 
 
 --
+-- Write out the <VCManifest> element.
+--
+
+	function vc200x.VCManifestTool(cfg)
+		local manifests = {}
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, fname)
+			end
+		end
+		
+		_p(3,'<Tool')
+		_p(4,'Name="VCManifestTool"')
+		if #manifests > 0 then
+			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+		end
+		_p(3,'/>')
+	end
+
+
+--
 -- Resource compiler block.
 --
 
@@ -728,30 +1185,6 @@
 
 		_p(3,'/>')
 	end
-	
-	
-
---
--- Manifest block.
---
-
-	function vc200x.VCManifestTool(cfg)
-		-- locate all manifest files
-		local manifests = { }
-		for _, fname in ipairs(cfg.files) do
-			if path.getextension(fname) == ".manifest" then
-				table.insert(manifests, fname)
-			end
-		end
-		
-		_p(3,'<Tool')
-		_p(4,'Name="VCManifestTool"')
-		if #manifests > 0 then
-			_p(4,'AdditionalManifestFiles="%s"', premake.esc(table.concat(manifests, ";")))
-		end
-		_p(3,'/>')
-	end
-
 
 
 --

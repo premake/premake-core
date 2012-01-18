@@ -49,6 +49,22 @@
 
 
 --
+-- Translate the architecture settings for a configuration into a Visual
+-- Studio compatible identifier.
+--
+
+	function vstudio.architecture(cfg)
+		if cfg.system == premake.XBOX360 then
+			return "Xbox 360"
+		end
+		if cfg.architecture == "x32" then
+			return "Win32"
+		end
+		return cfg.architecture or "Win32"
+	end
+
+
+--
 -- Returns the full, absolute path to the Visual Studio project file
 -- corresponding to a particular project object.
 --
@@ -111,20 +127,6 @@
 		else
 			return "Win32"
 		end
-	end
-
-
-
---
--- Translate the architecture settings for a configuration into a Visual
--- Studio compatible identifier.
---
-
-	function vstudio.architecture(cfg)
-		if cfg.architecture == "x32" then
-			return "Win32"
-		end
-		return cfg.architecture or "Win32"
 	end
 
 
