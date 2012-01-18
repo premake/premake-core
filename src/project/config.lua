@@ -29,7 +29,7 @@
 		local basedir = project.getlocation(cfg.project)
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
-		directory = path.getrelative(basedir, directory)
+		directory = project.getrelative(cfg.project, directory)
 
 		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
 
@@ -76,8 +76,8 @@
 			end
 		end
 
-		prefix = cfg.targetprefix or prefix
-		suffix = cfg.targetsuffix or suffix
+		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
+		suffix = cfg[field.."suffix"] or cfg.targetsuffix or suffix
 
 		local info = {}
 		info.directory  = directory

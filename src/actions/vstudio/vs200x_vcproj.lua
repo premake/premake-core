@@ -225,86 +225,6 @@
 
 
 --
--- Return the list of tools required to build a specific configuration.
--- Each tool gets represented by an XML element in the project file.
---
-
-	function vc200x.gettools(cfg)
-		if _ACTION == "vs2002" then
-			return {
-				"VCCLCompilerTool",
-				"VCCustomBuildTool",
-				"VCLinkerTool",
-				"VCMIDLTool",
-				"VCPostBuildEventTool",
-				"VCPreBuildEventTool",
-				"VCPreLinkEventTool",
-				"VCResourceCompilerTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCWebDeploymentTool"
-			}
-		end
-		if _ACTION == "vs2003" then
-			return {
-				"VCCLCompilerTool",
-				"VCCustomBuildTool",
-				"VCLinkerTool",
-				"VCMIDLTool",
-				"VCPostBuildEventTool",
-				"VCPreBuildEventTool",
-				"VCPreLinkEventTool",
-				"VCResourceCompilerTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCXMLDataGeneratorTool",
-				"VCWebDeploymentTool",
-				"VCManagedWrapperGeneratorTool",
-				"VCAuxiliaryManagedWrapperGeneratorTool"
-			}
-		end
-		if cfg.system == premake.XBOX360 then
-			return {
-				"VCPreBuildEventTool",
-				"VCCustomBuildTool",
-				"VCXMLDataGeneratorTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCMIDLTool",
-				"VCCLCompilerTool",
-				"VCManagedResourceCompilerTool",
-				"VCResourceCompilerTool",
-				"VCPreLinkEventTool",
-				"VCLinkerTool",
-				"VCALinkTool",
-				"VCX360ImageTool",
-				"VCBscMakeTool",
-				"VCX360DeploymentTool",
-				"VCPostBuildEventTool",
-				"DebuggerTool",
-			}
-		end
-		return {	
-			"VCPreBuildEventTool",
-			"VCCustomBuildTool",
-			"VCXMLDataGeneratorTool",
-			"VCWebServiceProxyGeneratorTool",
-			"VCMIDLTool",
-			"VCCLCompilerTool",
-			"VCManagedResourceCompilerTool",
-			"VCResourceCompilerTool",
-			"VCPreLinkEventTool",
-			"VCLinkerTool",
-			"VCALinkTool",
-			"VCManifestTool",
-			"VCXDCMakeTool",
-			"VCBscMakeTool",
-			"VCFxCopTool",
-			"VCAppVerifierTool",
-			"VCWebDeploymentTool",
-			"VCPostBuildEventTool"
-		}	
-	end
-
-
---
 -- Write out an empty tool element.
 --
 
@@ -631,6 +551,86 @@
 			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
 		end
 		_p(3,'/>')
+	end
+
+
+--
+-- Return the list of tools required to build a specific configuration.
+-- Each tool gets represented by an XML element in the project file.
+--
+
+	function vc200x.gettools(cfg)
+		if _ACTION == "vs2002" then
+			return {
+				"VCCLCompilerTool",
+				"VCCustomBuildTool",
+				"VCLinkerTool",
+				"VCMIDLTool",
+				"VCPostBuildEventTool",
+				"VCPreBuildEventTool",
+				"VCPreLinkEventTool",
+				"VCResourceCompilerTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCWebDeploymentTool"
+			}
+		end
+		if _ACTION == "vs2003" then
+			return {
+				"VCCLCompilerTool",
+				"VCCustomBuildTool",
+				"VCLinkerTool",
+				"VCMIDLTool",
+				"VCPostBuildEventTool",
+				"VCPreBuildEventTool",
+				"VCPreLinkEventTool",
+				"VCResourceCompilerTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebDeploymentTool",
+				"VCManagedWrapperGeneratorTool",
+				"VCAuxiliaryManagedWrapperGeneratorTool"
+			}
+		end
+		if cfg.system == premake.XBOX360 then
+			return {
+				"VCPreBuildEventTool",
+				"VCCustomBuildTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCMIDLTool",
+				"VCCLCompilerTool",
+				"VCManagedResourceCompilerTool",
+				"VCResourceCompilerTool",
+				"VCPreLinkEventTool",
+				"VCLinkerTool",
+				"VCALinkTool",
+				"VCX360ImageTool",
+				"VCBscMakeTool",
+				"VCX360DeploymentTool",
+				"VCPostBuildEventTool",
+				"DebuggerTool",
+			}
+		end
+		return {	
+			"VCPreBuildEventTool",
+			"VCCustomBuildTool",
+			"VCXMLDataGeneratorTool",
+			"VCWebServiceProxyGeneratorTool",
+			"VCMIDLTool",
+			"VCCLCompilerTool",
+			"VCManagedResourceCompilerTool",
+			"VCResourceCompilerTool",
+			"VCPreLinkEventTool",
+			"VCLinkerTool",
+			"VCALinkTool",
+			"VCManifestTool",
+			"VCXDCMakeTool",
+			"VCBscMakeTool",
+			"VCFxCopTool",
+			"VCAppVerifierTool",
+			"VCWebDeploymentTool",
+			"VCPostBuildEventTool"
+		}	
 	end
 
 

@@ -57,14 +57,18 @@
 	dofile("tools/test_gcc.lua")
 	dofile("base/test_config_bug.lua")
 
-	-- Project API tests
+	-- Project object tests
 	dofile("test_project.lua")
-	dofile("config/test_objdir.lua")
-	dofile("config/test_targetinfo.lua")
 	dofile("project/test_baking.lua")
 	dofile("project/test_eachconfig.lua")
 	dofile("project/test_eachfile.lua")
 	dofile("project/test_vpaths.lua")
+
+	-- Configuration object tests
+	dofile("config/test_linkinfo.lua")
+	dofile("config/test_links.lua")
+	dofile("config/test_objdir.lua")
+	dofile("config/test_targetinfo.lua")
 
 	-- Baking tests
 	dofile("base/test_baking.lua")
