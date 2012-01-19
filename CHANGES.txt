@@ -52,6 +52,7 @@
 * Patch 3451212: Fix Visual Studio MFC with StaticRuntime
 * Patch 3463020: Add windres environment variable for makefiles (icebreaker)
 * Bug 3413866: Incorrect VS200x .csproj relative source paths
+* Patch 3111264: Allow path.join() to accept any number of args
 
 
 -------
