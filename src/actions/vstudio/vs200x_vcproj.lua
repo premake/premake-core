@@ -127,10 +127,7 @@
 
 	function vc200x.configuration(cfg)
 		_p(2,'<Configuration')
-
-		local platform = vstudio.projectplatform(cfg)
-		local architecture = vstudio.architecture(cfg)
-		_x(3,'Name="%s|%s"', platform, architecture)
+		_x(3,'Name="%s"', vstudio.configname(cfg))
 
 		local outdir = path.translate(config.gettargetinfo(cfg).directory)
 		_x(3,'OutputDirectory="%s"', outdir)
@@ -194,7 +191,7 @@
 
 	function vc200x.VCCLCompilerTool_ng(cfg)
 		_p(3,'<Tool')
-		_p(4,'Name="%s"', iif(cfg.system ~= premake.XBOX360, "VCCLCompilerTool", "VCCLX360CompilerTool"))
+		_p(4,'Name="%s"', vc200x.compilertool(cfg))
 
 		if cfg.system == premake.PS3 then
 			vc200x.VCCLCompilerTool_ps3_ng(cfg)
@@ -290,9 +287,9 @@
 			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(false))
 		end
 		
-		if not cfg.flags.NoPCH and cfg.pchheader then
+		if not cfg.flags.NoPCH and cfg.project.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.project.pchheader))
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
@@ -697,100 +694,6 @@
 
 
 --
--- Write out the source file tree.
---
-
-	function vc200x.files_ng(cfg)
-		local tr = project.getsourcetree(prj)
-
-		tree.traverse(tr, {
-
-			-- source files are handled at the leaves
-			onleaf = function(node, depth)
-				_p(depth, '<File')
-				_p(depth, '\t>')
-			end
-
-		}, false, 2)
-
-		--[[
-		local tr = premake.project.buildsourcetree(prj)
-		
-		tree.traverse(tr, {
-			-- folders are handled at the internal nodes
-			onbranchenter = function(node, depth)
-				_p(depth, '<Filter')
-				_p(depth, '\tName="%s"', node.name)
-				_p(depth, '\tFilter=""')
-				_p(depth, '\t>')
-			end,
-
-			onbranchexit = function(node, depth)
-				_p(depth, '</Filter>')
-			end,
-
-			-- source files are handled at the leaves
-			onleaf = function(node, depth)
-				local fname = node.cfg.name
-				
-				_p(depth, '<File')
-				_p(depth, '\tRelativePath="%s"', path.translate(fname, "\\"))
-				_p(depth, '\t>')
-				depth = depth + 1
-
-				-- handle file configuration stuff. This needs to be cleaned up and simplified.
-				-- configurations are cached, so this isn't as bad as it looks
-				for _, cfginfo in ipairs(prj.solution.vstudio_configs) do
-					if cfginfo.isreal then
-						local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
-						
-						local usePCH = (not prj.flags.NoPCH and prj.pchsource == node.cfg.name)
-						local isSourceCode = path.iscppfile(fname)
-						local needsCompileAs = (path.iscfile(fname) ~= premake.project.iscproject(prj))
-						
-						if usePCH or (isSourceCode and needsCompileAs) then
-							_p(depth, '<FileConfiguration')
-							_p(depth, '\tName="%s"', cfginfo.name)
-							_p(depth, '\t>')
-							_p(depth, '\t<Tool')
-							_p(depth, '\t\tName="%s"', iif(cfg.system == "Xbox360", 
-							                                 "VCCLX360CompilerTool", 
-							                                 "VCCLCompilerTool"))
-							if needsCompileAs then
-								_p(depth, '\t\tCompileAs="%s"', iif(path.iscfile(fname), 1, 2))
-							end
-							
-							if usePCH then
-								if cfg.system == "PS3" then
-									local options = table.join(premake.snc.getcflags(cfg), 
-									                           premake.snc.getcxxflags(cfg), 
-									                           cfg.buildoptions)
-									options = table.concat(options, " ");
-									options = options .. ' --create_pch="$(IntDir)/$(TargetName).pch"'			                    
-									_p(depth, '\t\tAdditionalOptions="%s"', premake.esc(options))
-								else
-									_p(depth, '\t\tUsePrecompiledHeader="1"')
-								end
-							end
-
-							_p(depth, '\t/>')
-							_p(depth, '</FileConfiguration>')
-						end
-
-					end
-				end
-
-				depth = depth - 1
-				_p(depth, '</File>')
-			end,
-		}, false, 2)
-
-
-		--]]
-	end
-
-
---
 -- Map tool names to output functions. Tools that aren't listed will
 -- output a standard empty tool element.
 --
@@ -809,6 +712,102 @@
 		VCX360ImageTool        = vc200x.VCX360ImageTool
 	}
 
+
+--
+-- Write out the source file tree.
+--
+
+	function vc200x.files_ng(prj)
+		local tr = project.getsourcetree(prj)
+
+		local pchsource = project.getrelative(prj, prj.pchsource)
+
+		tree.traverse(tr, {
+
+			-- folders, virtual or otherwise, are handled at the internal nodes
+			onbranchenter = function(node, depth)
+				_p(depth, '<Filter')
+				_p(depth, '\tName="%s"', node.name)
+				_p(depth, '\tFilter=""')
+				_p(depth, '\t>')
+			end,
+
+			onbranchexit = function(node, depth)
+				_p(depth, '</Filter>')
+			end,
+
+			-- source files are handled at the leaves
+			onleaf = function(node, depth)
+				_p(depth, '<File')
+				_p(depth, '\tRelativePath="%s"', path.translate(node.cfg.fullpath))
+				_p(depth, '\t>')					
+
+				-- C files in C++ projects should still be compiled as C code
+				local compileAs
+				if path.iscfile(node.name) ~= premake.project.iscproject(prj) then
+					if path.iscppfile(node.name) then
+						compileAs = iif(prj.language == premake.CPP, 1, 2)
+					end
+				end
+
+				depth = depth + 1
+				for cfg in project.eachconfig(prj, nil, node.cfg.fullpath) do
+					local hasconfig
+
+					local out = function(depth, msg, ...)
+						if not hasconfig then
+							hasconfig = true
+							_p(depth, '<FileConfiguration')
+							_p(depth, '\tName="%s"', vstudio.configname(cfg))
+							_p(depth, '\t>')
+							_p(depth, '\t<Tool')
+							_p(depth, '\t\tName="%s"', vc200x.compilertool(cfg))
+						end
+						_x(depth, msg, unpack(arg))
+					end
+
+					if compileAs then
+						out(depth, '\t\tCompileAs="%s"', compileAs)
+					end
+
+					if pchsource == node.cfg.fullpath and not cfg.flags.NoPCH then
+						if cfg.system == premake.PS3 then
+							local options = table.join(premake.snc.getcflags(cfg), 
+									                    premake.snc.getcxxflags(cfg), 
+									                    cfg.buildoptions,
+														' --create_pch="$(IntDir)/$(TargetName).pch"')
+							out(depth, '\t\tAdditionalOptions="%s"', table.concat(options, " "))
+						else
+							out(depth, '\t\tUsePrecompiledHeader="1"')
+						end
+					end 
+					
+					if hasconfig then
+						_p(depth, '\t/>')
+						_p(depth, '</FileConfiguration>')
+					end
+				end
+
+				depth = depth - 1
+				_p(depth, '</File>')
+			end
+
+		}, false, 2)
+	end
+
+
+--
+-- Returns the correct name for the compiler tool element, based on
+-- the configuration target system.
+--
+
+	function vc200x.compilertool(cfg)
+		if cfg.system == premake.XBOX360 then
+			return "VCCLX360CompilerTool"
+		else
+			return "VCCLCompilerTool"
+		end
+	end
 
 --
 -- Translate Premake flags into a Visual Studio optimization value.

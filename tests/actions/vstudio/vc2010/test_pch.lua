@@ -45,19 +45,3 @@
 	</ItemGroup>
 		]]
 	end
-
-
-	function suite.pch_OnSingleConfig()
-		files { "afxwin.cpp" }
-		configuration "Debug"
-		pchheader "afxwin.h"
-		pchsource "afxwin.cpp"
-		prepare()
-		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="afxwin.cpp">
-			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-		</ClCompile>
-	</ItemGroup>
-		]]
-	end

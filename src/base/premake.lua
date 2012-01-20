@@ -9,7 +9,9 @@
 -- Define some commonly used symbols, for future-proofing.
 --
 
+	premake.C           = "C"
 	premake.CONSOLEAPP  = "ConsoleApp"
+	premake.CPP         = "C++"
 	premake.MACOSX      = "macosx"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"

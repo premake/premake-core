@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_files.lua
 -- Validate generation of <files/> block in Visual Studio 200x projects.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	T.vstudio_vs200x_files = { }
@@ -20,18 +20,16 @@
 	end
 	
 	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
-		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
-		vc200x.Files(prj)
+		prj = premake.solution.getproject_ng(sln, 1)
+		vc200x.files_ng(prj)
 	end
 
 
 --
--- Test grouping and nesting
+-- Check the structure of an individual file element.
 --
 
-	function suite.SimpleSourceFile()
+	function suite.file_onDefaults()
 		files { "hello.cpp" }
 		prepare()
 		test.capture [[
@@ -42,7 +40,12 @@
 		]]
 	end
 
-	function suite.SingleFolderLevel()
+
+--
+-- Check the structure of a file contained in a folder.
+--
+
+	function suite.file_inSingleLevelFolder()
 		files { "src/hello.cpp" }
 		prepare()
 		test.capture [[
@@ -58,7 +61,12 @@
 		]]
 	end
 
-	function suite.MultipleFolderLevels()
+
+--
+-- Check the structure of a file contained in multiple folders.
+--
+
+	function suite.file_onMultipleFolderLevels()
 		files { "src/greetings/hello.cpp" }
 		prepare()
 		test.capture [[
@@ -81,12 +89,12 @@
 
 
 --
--- Non-source code files, such as header files and documentation, should
--- be marked as such, so the compiler won't attempt to build them.
+-- Make sure that the special "build a C code" logic only gets triggered
+-- by actual C source code files.
 --
 
 	function suite.file_markedAsNonBuildable_onSupportFiles()
-		language "c"
+		language "C"
 		files { "hello.lua" }
 		prepare()
 		test.capture [[
@@ -99,11 +107,12 @@
 
 
 --
--- Mixed language support
+-- When a C code file is listed in a C++ project, it should still be
+-- compiled as C (and not C++), and vice versa.
 --
 
-	function suite.CompileAsC_InCppProject()
-		language "c++"
+	function suite.compileAsSet_onCFileInCppProject()
+		language "C++"
 		files { "hello.c" }
 		prepare()
 		test.capture [[
@@ -116,22 +125,12 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					CompileAs="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="1"
-				/>
-			</FileConfiguration>
-		</File>
 		]]
 	end
 
-	function suite.CompileAsCpp_InCProject()
-		language "c"
+
+	function suite.compileAsSet_onCppFileInCProject()
+		language "C"
 		files { "hello.cpp" }
 		prepare()
 		test.capture [[
@@ -144,26 +143,15 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					CompileAs="2"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
-		</File>
 		]]
 	end
 
 
 --
--- PCH support
+-- A PCH source file should be marked as such.
 --
 
-	function suite.OnPCH_OnWindows()
+	function suite.usePrecompiledHeadersSet_onPchSource()
 		files { "afxwin.cpp" }
 		pchsource "afxwin.cpp"
 		prepare()
@@ -177,46 +165,5 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-		</File>
 		]]
 	end
-	
-	function suite.Files_OnPCH_OnXbox360()
-		files { "afxwin.cpp" }
-		pchsource "afxwin.cpp"
-		platforms { "Xbox360" }
-		prepare()
-		test.capture [[
-		<File
-			RelativePath="afxwin.cpp"
-			>
-			<FileConfiguration
-				Name="Debug|Xbox 360"
-				>
-				<Tool
-					Name="VCCLX360CompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Xbox 360"
-				>
-				<Tool
-					Name="VCCLX360CompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-		</File>
-		]]
-	end
-

@@ -94,7 +94,7 @@
 			end
 			return result
 		else
-			value = value:gsub('&',  "&amp;")
+			value = string.gsub(value, '&',  "&amp;")
 			value = value:gsub('"',  "&quot;")
 			value = value:gsub("'",  "&apos;")
 			value = value:gsub('<',  "&lt;")

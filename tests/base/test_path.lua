@@ -244,3 +244,15 @@
 		local name = "file+name.c"
 		test.isequal(name, name:match(patt))
 	end
+
+	function suite.wildcards_escapeSpecialChars()
+		test.isequal("%.%-", path.wildcards(".-"))
+	end
+
+	function suite.wildcards_escapeStar()
+		test.isequal("vs[^/]*", path.wildcards("vs*"))
+	end
+	
+	function suite.wildcards_escapeStarStar()
+		test.isequal("Images/.*%.bmp", path.wildcards("Images/**.bmp"))
+	end

@@ -65,6 +65,18 @@
 
 
 --
+-- Returns the Visual Studio identifier for a specific configuration, in the
+-- form: <project platform name>|<architecture>.
+--
+
+	function vstudio.configname(cfg)
+		local platform = vstudio.projectplatform(cfg)
+		local architecture = vstudio.architecture(cfg)
+		return platform .. "|" .. architecture
+	end
+
+
+--
 -- Returns the full, absolute path to the Visual Studio project file
 -- corresponding to a particular project object.
 --

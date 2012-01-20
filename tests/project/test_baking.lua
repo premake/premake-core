@@ -227,17 +227,22 @@
 	
 	function suite.keyValuesAreMerged_onMultipleValues()
 		vpaths { ["Solution"] = "*.sln", ["Project"] = "*.prj" }
-		prj = project "MyProject"
+		prj = project("MyProject")
 		vpaths { ["Project"] = "*.prjx" }
 		cfg = oven.merge(oven.merge({}, sln), prj)
 		test.isequal({"*.prj","*.prjx"}, cfg.vpaths["Project"])
 	end
 
 
+--
+-- Test pulling "project global" values, which are associated with
+-- all configurations in the project.
+--
 
-	function suite.testInProgress()
-		kind("ConsoleApp")
+	function suite.callPullProjectLevelConfig()
 		prj = project("MyProject")
-		local cfg = premake5.oven.bake(prj, { "Debug", nil }, "kind")
-		test.isequal("ConsoleApp", cfg.kind)
+		files { "hello.cpp" }
+		cfg = oven.bake(prj, {}, "files")
+		test.isequal("hello.cpp", cfg.files[1]:sub(-9))
 	end
+
