@@ -123,21 +123,26 @@
 --
 
 	function project.getconfig(prj, buildcfg, platform, field, filename)
-		local cfg = premake5.oven.bake(prj, { buildcfg, platform }, field)
-		cfg.project = prj
-		cfg.buildcfg = buildcfg
-		cfg.platform = platform
+		local system
+		local architecture
 
 		-- For backward compatibility with the old platforms API, use platform
 		-- as the default system or architecture if it would be a valid value.
-		if cfg.platform then
-			cfg.system = premake.checkvalue(cfg.platform, premake.fields.system.allowed)
-			cfg.architecture = premake.checkvalue(cfg.platform, premake.fields.architecture.allowed)
+		if platform then
+			system = premake.checkvalue(platform, premake.fields.system.allowed)
+			architecture = premake.checkvalue(platform, premake.fields.architecture.allowed)
 		end
 
-		-- If no system is specified, try to find one
-		cfg.system = cfg.system or premake.action.current().os or os.get()
+		-- Figure out the target operating environment for this configuration
+		local cfg = premake5.oven.bake(prj, { buildcfg, platform, _ACTION }, "system")
+		system = cfg.system or system or premake.action.current().os or os.get()
 
+		cfg = premake5.oven.bake(prj, { buildcfg, platform, _ACTION, system }, field)
+		cfg.project = prj
+		cfg.buildcfg = buildcfg
+		cfg.platform = platform
+		cfg.system = system
+		cfg.architecture = cfg.architecture or architecture
 		return cfg
 	end
 

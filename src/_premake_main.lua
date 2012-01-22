@@ -146,13 +146,18 @@
 		if (not ok) then error("Error: " .. err, 0) end
 
 		
-		-- work-in-progress: build the configurations
-		print("Building configurations...")
-		premake.bake.buildconfigs()
+		-- Quick hack: disable the old configuration baking logic for the new
+		-- next-gen actions; this code will go away when everything has been
+		-- ported to the new API
+		if not _ACTION:endswith("ng") then
+			-- work-in-progress: build the configurations
+			print("Building configurations...")
+			premake.bake.buildconfigs()
 		
-		ok, err = premake.checkprojects()
-		if (not ok) then error("Error: " .. err, 0) end
-		
+			ok, err = premake.checkprojects()
+			if (not ok) then error("Error: " .. err, 0) end
+		end
+			
 		
 		-- Hand over control to the action
 		printf("Running action '%s'...", action.trigger)

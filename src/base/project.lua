@@ -207,6 +207,7 @@
 
 	function premake.getconfigname(cfgname, platform, useshortname)
 		if cfgname then
+			print(debug.traceback())
 			local name = cfgname
 			if platform and platform ~= "Native" then
 				if useshortname then

@@ -40,7 +40,6 @@
 		filterTerms = filterTerms or {}
 
 		-- keyword/term tests are case-insensitive; convert all terms to lowercase
-		-- right up front, to save a few cycles
 		for key, value in pairs(filterTerms) do
 			filterTerms[key] = value:lower()
 		end
@@ -118,7 +117,7 @@
 		end
 		
 		for _, pattern in ipairs(keyword:explode(" or ")) do
-			for _, term in ipairs(terms) do
+			for _, term in pairs(terms) do
 				if term:match(pattern) == term then
 					return true
 				end
