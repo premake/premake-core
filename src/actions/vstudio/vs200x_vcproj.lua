@@ -379,7 +379,7 @@
 		end
 
 		if #cfg.links > 0 then
-			_x(4,'AdditionalDependencies="%s"', table.concat(path.translate(config.getlinks(cfg, "all", "fullpath"), " ")))
+			_x(4,'AdditionalDependencies="%s"', vc200x.links(cfg))
 		end
 
 		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
@@ -432,7 +432,7 @@
 
 	function vc200x.VCLinkerTool_windows_static(cfg)
 		if #cfg.links > 0 then
-			_x(4,'AdditionalDependencies="%s"', table.concat(config.getlinks(cfg, "all", "fullpath"), " "))
+			_x(4,'AdditionalDependencies="%s"', vc200x.links(cfg))
 		end
 
 		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
@@ -808,6 +808,21 @@
 			return "VCCLCompilerTool"
 		end
 	end
+
+
+--
+-- Returns the list of libraries required to link a specific configuration,
+-- formatted for Visual Studio's XML.
+--
+
+	function vc200x.links(cfg)
+		local links = config.getlinks(cfg, "system", "fullpath")
+		links = table.concat(links, " ")
+		links = path.translate(links)
+		return links
+	 --table.concat(path.translate(config.getlinks(cfg, "all", "fullpath"), " ")))
+	end
+
 
 --
 -- Translate Premake flags into a Visual Studio optimization value.
