@@ -228,19 +228,6 @@
 	function project.getsourcetree(prj)
 		local tr = premake.tree.new(prj.name)
 
-		--[[
-		local isvpath		
-		local function onadd(node)
-			node.isvpath = isvpath
-		end
-		
-		for fcfg in premake.project.eachfile(prj) do
-			isvpath = (fcfg.name ~= fcfg.vpath)			
-			local node = premake.tree.add(tr, fcfg.vpath, onadd)
-			node.cfg = fcfg
-		end
-		--]]
-
 		for fcfg in project.eachfile(prj) do
 			local node = premake.tree.add(tr, fcfg.fullpath)
 			node.cfg = fcfg

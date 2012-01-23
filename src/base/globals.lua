@@ -4,6 +4,15 @@
 -- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 	
+--
+-- Create a top-level namespace for Premake's own APIs. The premake5 namespace 
+-- is a place to do next-gen (4.5) work without breaking the existing code (yet).
+-- I think it will eventually go away.
+--
+
+	premake = { }
+	premake5 = { }
+
 	
 -- The list of supported platforms; also update list in cmdline.lua
 

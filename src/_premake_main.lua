@@ -13,16 +13,6 @@
 
 
 --
--- Create a top-level namespace for Premake's own APIs. The premake5 namespace 
--- is a place to do next-gen (4.5) work without breaking the existing code (yet).
--- I think it will eventually go away.
---
-
-	premake = { }
-	premake5 = { }
-
-
---
 -- Inject a new target platform into each solution; called if the --platform
 -- argument was specified on the command line.
 --
