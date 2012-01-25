@@ -95,7 +95,7 @@
 		premake.tree.traverse(tr, {
 			onleaf = function(node)
 				local action = premake.dotnet.getbuildaction(node.cfg)
-				local fname  = path.translate(premake.esc(node.path), "\\")
+				local fname  = path.translate(premake.esc(node.cfg.name), "\\")
 				local elements, dependency = getelements(prj, action, node.path)
 
 				if elements == "None" then

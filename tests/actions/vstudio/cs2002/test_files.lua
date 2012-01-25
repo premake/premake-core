@@ -1,7 +1,7 @@
 --
--- tests/actions/vstudio/cs2002/files.lua
+-- tests/actions/vstudio/cs2002/test_files.lua
 -- Validate generation of <Files/> block in Visual Studio 2002 .csproj
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	T.vstudio_cs2002_files = { }
@@ -54,6 +54,25 @@
 				/>
 		]]
 	end
+
+
+--
+-- The relative path to the file is correct for files that live outside
+-- the project's folder.
+--
+
+	function suite.filesUseRelativePath_onOutOfTreePath()
+		files { "../Src/Hello.cs" }
+		prepare()
+		test.capture [[
+				<File
+					RelPath = "..\Src\Hello.cs"
+					BuildAction = "Compile"
+					SubType = "Code"
+				/>
+		]]
+	end
+
 
 
 --

@@ -5,7 +5,9 @@
  */
 
 #include "premake.h"
-
+#if PLATFORM_WINDOWS
+#include <Objbase.h>
+#endif
 
 int os_uuid(lua_State* L)
 {
@@ -13,15 +15,7 @@ int os_uuid(lua_State* L)
 	char uuid[38];
 
 #if PLATFORM_WINDOWS
-
-	static int (__stdcall *CoCreateGuid)(char*) = NULL;
-	if (CoCreateGuid == NULL)
-	{
-		HMODULE hOleDll = LoadLibrary("OLE32.DLL");
-		CoCreateGuid = (int(__stdcall*)(char*))GetProcAddress(hOleDll, "CoCreateGuid");
-	}
 	CoCreateGuid((char*)bytes);
-
 #else
 	int result;
 

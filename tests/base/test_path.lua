@@ -182,23 +182,43 @@
 --
 
 	function suite.join_OnValidParts()
-		test.isequal("leading/trailing", path.join("leading", "trailing"))
+		test.isequal("p1/p2", path.join("p1", "p2"))
 	end
 	
 	function suite.join_OnAbsoluteUnixPath()
-		test.isequal("/trailing", path.join("leading", "/trailing"))
+		test.isequal("/p2", path.join("p1", "/p2"))
 	end
 	
 	function suite.join_OnAbsoluteWindowsPath()
-		test.isequal("C:/trailing", path.join("leading", "C:/trailing"))
+		test.isequal("C:/p2", path.join("p1", "C:/p2"))
 	end
 
 	function suite.join_OnCurrentDirectory()
-		test.isequal("trailing", path.join(".", "trailing"))
+		test.isequal("p2", path.join(".", "p2"))
 	end
 	
 	function suite.join_OnNilSecondPart()
-		test.isequal("leading", path.join("leading", nil))
+		test.isequal("p1", path.join("p1", nil))
+	end
+	
+	function suite.join_onMoreThanTwoParts()
+		test.isequal("p1/p2/p3", path.join("p1", "p2", "p3"))
+	end
+
+	function suite.join_removesExtraInternalSlashes()
+		test.isequal("p1/p2", path.join("p1/", "p2"))
+	end
+
+	function suite.join_removesTrailingSlash()
+		test.isequal("p1/p2", path.join("p1", "p2/"))
+	end
+
+	function suite.join_ignoresNilParts()
+		test.isequal("p2", path.join(nil, "p2", nil))
+	end
+
+	function suite.join_ignoresEmptyParts()
+		test.isequal("p2", path.join("", "p2", ""))
 	end
 
 

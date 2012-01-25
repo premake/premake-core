@@ -14,7 +14,7 @@
 
 
 #define VERSION        "HEAD"
-#define COPYRIGHT      "Copyright (C) 2002-2011 Jason Perkins and the Premake Project"
+#define COPYRIGHT      "Copyright (C) 2002-2012 Jason Perkins and the Premake Project"
 #define ERROR_MESSAGE  "%s\n"
 
 
