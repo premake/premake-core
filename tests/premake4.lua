@@ -105,7 +105,7 @@
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	dofile("actions/vstudio/vc200x/test_compiler_block.lua")
-	dofile("actions/vstudio/vc200x/debugdir.lua")
+	dofile("actions/vstudio/vc200x/test_debug_settings.lua")
 	dofile("actions/vstudio/vc200x/test_configuration.lua")
 	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_filters.lua")

@@ -77,16 +77,10 @@
 --
 
 	function vc200x.visualStudioProject(prj)
-		local map = {
-			vs2002 = '7.0',
-			vs2003 = '7.1',
-			vs2005 = '8.0',
-			vs2008 = '9.0'
-		}
 
 		_p('<VisualStudioProject')
 		_p(1,'ProjectType="Visual C++"')
-		_p(1,'Version="%s0"', map[_ACTION])
+		vc200x.projectversion()
 		_x(1,'Name="%s"', prj.name)
 		_p(1,'ProjectGUID="{%s}"', prj.uuid)
 		if _ACTION > "vs2003" then
@@ -869,6 +863,21 @@
 				return 4
 			end
 		end
+	end
+
+
+--
+-- Output the correct project version attribute for the current action.
+--
+
+	function vc200x.projectversion()
+		local map = {
+			vs2002 = '7.0',
+			vs2003 = '7.1',
+			vs2005 = '8.0',
+			vs2008 = '9.0'
+		}
+		_p(1,'Version="%s0"', map[_ACTION])
 	end
 
 
