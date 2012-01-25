@@ -307,11 +307,22 @@
 
 		-- compute the four options for a specific configuration
 		local function getobjdirs(cfg)
-			local dirs = { }
-			dirs[1] = path.getabsolute(path.join(project.getlocation(cfg.project), cfg.objdir or "obj"))
-			dirs[2] = path.join(dirs[1], cfg.platform or "")
-			dirs[3] = path.join(dirs[2], cfg.buildcfg)
-			dirs[4] = path.join(dirs[3], cfg.project.name)
+			local dirs = {}
+			
+			local dir = path.getabsolute(path.join(project.getlocation(cfg.project), cfg.objdir or "obj"))
+			table.insert(dirs, dir)
+			
+			if cfg.platform then
+				dir = path.join(dir, cfg.platform)
+				table.insert(dirs, dir)
+			end
+			
+			dir = path.join(dir, cfg.buildcfg)
+			table.insert(dirs, dir)
+
+			dir = path.join(dir, cfg.project.name)
+			table.insert(dirs, dir)
+			
 			return dirs
 		end
 
