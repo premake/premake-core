@@ -220,13 +220,9 @@
 		test.isequal("dir/dir/file", path.translate("dir\\dir\\file", "/"))
 	end
 
-	function suite.translate_ReturnsCorrectSeparator_OnMixedPath()
-		local actual = path.translate("dir\\dir/file")
-		if (os.is("windows")) then
-			test.isequal("dir\\dir\\file", actual)
-		else
-			test.isequal("dir/dir/file", actual)
-		end
+	function suite.translate_returnsCorrectSeparator_onMixedPath()
+		local actual = path.translate("dir\\dir/file", "/")
+		test.isequal("dir/dir/file", actual)
 	end
 
 

@@ -260,23 +260,20 @@
 	
 --
 -- Convert the separators in a path from one form to another. If `sep`
--- is nil, then a platform-specific separator is used.
+-- is nil, then a Windows-style backslash is used (since those are 
+-- likely the only paths needing translating).
 --
 
-	function path.translate(p, sep)
-		if (type(p) == "table") then
+	function path.translate(p, sep)		
+		if type(p) == "table" then
 			local result = { }
 			for _, value in ipairs(p) do
 				table.insert(result, path.translate(value))
 			end
 			return result
 		else
-			if (not sep) then
-				if (os.is("windows")) then
-					sep = "\\"
-				else
-					sep = "/"
-				end
+			if not sep then
+				sep = "\\"
 			end
 			local result = p:gsub("[/\\]", sep)
 			return result

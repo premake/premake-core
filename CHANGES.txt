@@ -1,5 +1,5 @@
 --------
-Sony NGP  (in progress)
+  4.5 (in progress)
 --------
 
 * Completely overhauled the platform support; too many changes to list
@@ -7,6 +7,7 @@ Sony NGP  (in progress)
 * The error message for invalid flags now includes the offending value
 * The include() function will now include each file only once
 * The include() function can now include specific files
+* path.translate() now defaults to Windows-style backslashes
 
 
 -------
