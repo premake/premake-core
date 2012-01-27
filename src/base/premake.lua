@@ -10,6 +10,7 @@
 --
 
 	premake.C           = "C"
+	premake.C7          = "c7"
 	premake.CONSOLEAPP  = "ConsoleApp"
 	premake.CPP         = "C++"
 	premake.MACOSX      = "macosx"

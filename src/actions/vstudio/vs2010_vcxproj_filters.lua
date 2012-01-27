@@ -1,12 +1,25 @@
 --
 -- vs2010_vcxproj_filters.lua
 -- Generate a Visual Studio 2010 C/C++ filters file.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
 	
+
+--
+-- Generate a Visual Studio 2010 C++ project, with support for the new platforms API.
+--
+
+	function vc2010.generate_filters_ng(prj)
+		print("C++ project filters generation isn't implemented yet!");
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 --
 -- The first portion of the filters file assigns unique IDs to each
@@ -18,7 +31,7 @@
 		local filters = { }
 		local filterfound = false
 
-		for file in project.eachfile(prj) do
+		for file in premake.project.eachfile(prj) do
 			-- split the path into its component parts
 			local folders = string.explode(file.vpath, "/", true)
 			local path = ""

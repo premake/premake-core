@@ -1,45 +1,35 @@
 --
 -- tests/actions/vstudio/vc2010/test_header.lua
 -- Validate generation of the project file header block.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_header = { }
-	local suite = T.vstudio_vs2010_header
+	T.vstudio_vc2010_header = { }
+	local suite = T.vstudio_vc2010_header
 	local vc2010 = premake.vstudio.vc2010
 
 
 --
--- Setup 
+-- If a default build target is specified, it should be included in the
+-- generated Project element.
 --
 
-	local sln, prj
-	
-	function suite.setup()
-		_ACTION = 'vs2010'
-		sln = test.createsolution()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
-		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
-	end
-
-
---
--- Tests
---
-
-	function suite.On2010_WithNoTarget()
-		vc2010.header()
-		test.capture [[
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-		]]
-	end
-
-	function suite.On2010_WithTarget()
-		vc2010.header("Build")
+	function suite.project_onDefaultTarget()
+		vc2010.header_ng("Build")
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		]]
+	end
+
+--
+-- If no build target is specified, the entire attribute should be omitted.
+--
+
+	function suite.project_onNoDefaultTarget()
+		vc2010.header_ng()
+		test.capture [[
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
 	end

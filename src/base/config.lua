@@ -34,9 +34,9 @@
 -- Determines if this configuration can be linked incrementally.
 -- 
 	
-	function premake.config.isincrementallink(cfg)
+	function premake.config.canincrementallink(cfg)
 		if cfg.kind == "StaticLib" 
-				or config.isoptimizedbuild(cfg.flags)
+				or config.isoptimizedbuild(cfg)
 				or cfg.flags.NoIncrementalLink then
 			return false
 		end
@@ -50,7 +50,7 @@
 -- instead of incremental.
 --
 	
-	function premake.config.isoptimizedbuild(flags)
-		return flags.Optimize or flags.OptimizeSize or flags.OptimizeSpeed
+	function premake.config.isoptimizedbuild(cfg)
+		return cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed
 	end
 

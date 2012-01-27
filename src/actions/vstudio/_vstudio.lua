@@ -47,6 +47,45 @@
 		oncleantarget   = vstudio.cleantarget
 	}
 
+--
+-- The Visual Studio 2010 action, with support for the new platforms API
+--
+
+	newaction {
+		trigger         = "vs2010ng",
+		shortname       = "Visual Studio 2010 Next-gen",
+		description     = "Experimental Microsoft Visual Studio 2010 project files",
+		os              = "windows",
+
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
+
+		valid_languages = { "C", "C++", "C#" },
+
+		valid_tools     = {
+			cc     = { "msc"   },
+			dotnet = { "msnet" },
+		},
+
+		onsolution = function(sln)
+			premake.generate(sln, "%%.sln", vstudio.sln2005.generate_ng)
+		end,
+
+		onproject = function(prj)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate_ng)
+				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user_ng)
+			else
+				premake.generate(prj, "%%.vcxproj", vstudio.vc2010.generate_ng)
+				premake.generate(prj, "%%.vcxproj.user", vstudio.vc2010.generate_user_ng)
+				premake.generate(prj, "%%.vcxproj.filters", vstudio.vc2010.generate_filters_ng)
+			end
+		end,
+
+		oncleansolution = vstudio.cleansolution,
+		oncleanproject  = vstudio.cleanproject,
+		oncleantarget   = vstudio.cleantarget
+	}
+
 
 --
 -- Translate the architecture settings for a configuration into a Visual

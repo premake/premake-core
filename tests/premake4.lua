@@ -117,14 +117,19 @@
 
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
+	dofile("actions/vstudio/vc2010/test_config_props.lua")
 	dofile("actions/vstudio/vc2010/test_debugdir.lua")
+	dofile("actions/vstudio/vc2010/test_globals.lua")
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
 	dofile("actions/vstudio/vc2010/test_link_settings.lua")
 	dofile("actions/vstudio/vc2010/test_links.lua")
 	dofile("actions/vstudio/vc2010/test_mfc.lua")
+	dofile("actions/vstudio/vc2010/test_output_props.lua")
 	dofile("actions/vstudio/vc2010/test_pch.lua")
+	dofile("actions/vstudio/vc2010/test_project_configs.lua")
+	dofile("actions/vstudio/vc2010/test_prop_sheet.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")

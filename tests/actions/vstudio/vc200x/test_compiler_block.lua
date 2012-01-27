@@ -49,6 +49,23 @@
 
 
 --
+-- If include directories are specified, the <AdditionalIncludeDirectories> should be added.
+--
+
+
+	function suite.additionalIncludeDirs_onIncludeDirs()
+		includedirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="include\lua;include\zlib"
+		]]
+	end
+
+
+--
 -- Verify the handling of the Symbols flag. The format must be set, and the
 -- debug runtime library must be selected.
 --

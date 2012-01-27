@@ -83,6 +83,7 @@
 		info.directory  = directory
 		info.basename   = basename .. suffix
 		info.name       = prefix .. info.basename .. extension
+		info.extension  = extension
 		info.fullpath   = path.join(info.directory, info.name)
 		info.bundlename = bundlename
 		info.bundlepath = bundlepath
@@ -126,6 +127,7 @@
 --      basename   - the target with no directory or file extension
 --      name       - the target name and extension, with no directory
 --      directory  - relative path to the target, with no file name
+--      extension  - the file extension
 --      prefix     - the file name prefix
 --      suffix     - the file name suffix
 --      fullpath   - directory, name, and extension
@@ -261,6 +263,7 @@
 --      basename   - the target with no directory or file extension
 --      name       - the target name and extension, with no directory
 --      directory  - relative path to the target, with no file name
+--      extension  - the file extension
 --      prefix     - the file name prefix
 --      suffix     - the file name suffix
 --      fullpath   - directory, name, and extension

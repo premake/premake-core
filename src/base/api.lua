@@ -296,13 +296,13 @@
 		pchheader =
 		{
 			kind  = "string",
-			scope = "container",
+			scope = "config",
 		},
 		
 		pchsource =
 		{
 			kind  = "path",
-			scope = "container",
+			scope = "config",
 		},
 
 		platforms = 

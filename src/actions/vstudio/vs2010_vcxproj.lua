@@ -1,13 +1,377 @@
 --
 -- vs2010_vcxproj.lua
 -- Generate a Visual Studio 2010 C/C++ project.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc2010 = { }
 	local vc2010 = premake.vstudio.vc2010
 	local vstudio = premake.vstudio
+	local project = premake5.project
+	local config = premake5.config
 
+
+--
+-- Generate a Visual Studio 2010 C++ project, with support for the new platforms API.
+--
+
+	function vc2010.generate_ng(prj)
+		io.eol = "\r\n"
+		io.indent = "  "
+
+		vc2010.header_ng("Build")
+		vc2010.projectConfigurations(prj)
+		vc2010.globals(prj)
+
+		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
+
+		for cfg in project.eachconfig(prj) do
+			vc2010.configurationProperties(cfg)
+		end
+
+		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
+		_p(1,'<ImportGroup Label="ExtensionSettings">')
+		_p(1,'</ImportGroup>')
+
+		for cfg in project.eachconfig(prj) do
+			vc2010.propertySheet(cfg)
+		end
+
+		_p(1,'<PropertyGroup Label="UserMacros" />')
+
+		for cfg in project.eachconfig(prj) do
+			vc2010.outputProperties(cfg)
+		end
+
+		for cfg in project.eachconfig(prj) do
+			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
+			vc2010.clcompile_ng(cfg)
+
+		--[[
+				resource_compile(cfg)
+				item_def_lib(cfg)
+				vc2010.link(cfg)
+				event_hooks(cfg)
+		--]]
+
+
+			_p(1,'</ItemDefinitionGroup>')
+		end
+
+--[[
+			vc2010.files(prj)
+			vc2010.projectReferences(prj)
+
+			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
+			_p(1,'<ImportGroup Label="ExtensionTargets">')
+			_p(1,'</ImportGroup>')
+--]]
+
+		_p('</Project>')
+	end
+
+
+
+--
+-- Output the XML declaration and opening <Project> tag.
+--
+
+	function vc2010.header_ng(target)
+		_p('<?xml version="1.0" encoding="utf-8"?>')
+
+		local defaultTargets = ""
+		if target then
+			defaultTargets = string.format(' DefaultTargets="%s"', target)
+		end
+
+		_p('<Project%s ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', defaultTargets)
+	end
+
+
+--
+-- Write out the list of project configurations, which pairs build
+-- configurations with architectures.
+--
+
+	function vc2010.projectConfigurations(prj)
+		_p(1,'<ItemGroup Label="ProjectConfigurations">')
+		for cfg in project.eachconfig(prj) do
+			_x(2,'<ProjectConfiguration Include="%s">', vstudio.configname(cfg))
+			_x(3,'<Configuration>%s</Configuration>', vstudio.projectplatform(cfg))
+			_p(3,'<Platform>%s</Platform>', vstudio.architecture(cfg))
+			_p(2,'</ProjectConfiguration>')
+		end
+		_p(1,'</ItemGroup>')
+	end
+
+
+--
+-- Write out the Globals property group.
+--
+
+	function vc2010.globals(prj)
+		_p(1,'<PropertyGroup Label="Globals">')
+		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
+		if prj.flags.Managed then
+			_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
+			_p(2,'<Keyword>ManagedCProj</Keyword>')
+		else
+			_p(2,'<Keyword>Win32Proj</Keyword>')
+		end
+		_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+		_p(1,'</PropertyGroup>')
+	end
+
+
+--
+-- Write out the configuration property group: what kind of binary it 
+-- produces, and some global settings.
+--
+
+	function vc2010.configurationProperties(cfg)
+		_p(1,'<PropertyGroup %s Label="Configuration">', vc2010.condition(cfg))
+		_p(2,'<ConfigurationType>%s</ConfigurationType>', vc2010.config_type(cfg))
+		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(premake.config.isdebugbuild(cfg)))
+
+		if cfg.flags.MFC then
+			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
+		end
+
+		if cfg.flags.Managed then
+			_p(2,'<CLRSupport>true</CLRSupport>')
+		end
+
+		_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+		_p(1,'</PropertyGroup>')
+	end
+
+
+--
+-- Write out the default property sheets for a configuration.
+--
+
+	function vc2010.propertySheet(cfg)
+		_p(1,'<ImportGroup Label="PropertySheets" %s>', vc2010.condition(cfg))
+		_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
+		_p(1,'</ImportGroup>')
+	end
+
+
+--
+-- Write the output property group, which  includes the output and intermediate 
+-- directories, manifest, etc.
+--
+
+	function vc2010.outputProperties(cfg)
+		local target = config.gettargetinfo(cfg)
+
+		_p(1,'<PropertyGroup %s>', vc2010.condition(cfg))
+
+		if cfg.kind ~= premake.STATICLIB then
+			_p(2,'<LinkIncremental>%s</LinkIncremental>', tostring(premake.config.canincrementallink(cfg)))
+		end
+
+		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
+			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
+		end
+
+		local outdir = path.translate(target.directory)
+		_x(2,'<OutDir>%s\\</OutDir>', outdir)
+
+		local objdir = path.translate(config.getuniqueobjdir(cfg))
+		_x(2,'<IntDir>%s\\</IntDir>', objdir)
+
+		_x(2,'<TargetName>%s</TargetName>', target.basename)
+		_x(2,'<TargetExt>%s</TargetExt>', target.extension)
+
+		if cfg.flags.NoManifest then
+			_p(2,'<GenerateManifest>false</GenerateManifest>')
+		end
+
+		_p(1,'</PropertyGroup>')
+	end
+
+
+--
+-- Write the the <ClCompile> compiler settings block.
+--
+
+	function vc2010.clcompile_ng(cfg)
+		_p(2,'<ClCompile>')
+
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
+			_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', path.translate(cfg.pchheader))
+		else
+			_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+		end
+
+		_p(3,'<WarningLevel>Level%d</WarningLevel>', iif(cfg.flags.ExtraWarnings, 4, 3))
+
+		if premake.config.isdebugbuild(cfg) and cfg.flags.ExtraWarnings then
+			_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+		end
+
+		if cfg.flags.FatalWarnings then
+			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+		end
+
+		if #cfg.defines > 0 then
+			local defines = table.concat(cfg.defines, ";")
+			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
+		end
+
+		if #cfg.includedirs > 0 then
+			local dirs = path.translate(table.concat(project.getrelative(cfg.project, cfg.includedirs), ";"))
+			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+		end
+
+		vc2010.debuginfo(cfg)
+
+		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
+			local filename = config.gettargetinfo(cfg).basename
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
+		end
+
+		_p(3,'<Optimization>%s</Optimization>', vc2010.optimization(cfg))
+
+		if premake.config.isoptimizedbuild(cfg) then
+			_p(3,'<FunctionLevelLinking>true</FunctionLevelLinking>')
+			_p(3,'<IntrinsicFunctions>true</IntrinsicFunctions>')
+		end
+
+		local minimalRebuild = not premake.config.isoptimizedbuild(cfg) and
+		                       not cfg.flags.NoMinimalRebuild and
+							   cfg.debugformat ~= premake.C7
+		if not minimalRebuild then
+			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
+		end
+
+		if cfg.flags.NoFramePointer then
+			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
+		end
+
+		if premake.config.isoptimizedbuild(cfg) then
+			_p(3,'<StringPooling>true</StringPooling>')
+		end
+
+		if cfg.flags.StaticRuntime then
+			_p(3,'<RuntimeLibrary>%s</RuntimeLibrary>', iif(premake.config.isdebugbuild(cfg), "MultiThreadedDebug", "MultiThreaded"))
+		end
+
+		if cfg.flags.NoExceptions then
+			_p(2,'<ExceptionHandling>false</ExceptionHandling>')
+		elseif cfg.flags.SEH then
+			_p(2,'<ExceptionHandling>Async</ExceptionHandling>')
+		end
+
+		if cfg.flags.NoRTTI and not cfg.flags.Managed then
+			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
+		end
+
+		if cfg.flags.NativeWChar then
+			_p(3,'<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>')
+		elseif cfg.flags.NoNativeWChar then
+			_p(3,'<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>')
+		end
+
+		if cfg.flags.FloatFast then
+			_p(3,'<FloatingPointModel>Fast</FloatingPointModel>')
+		elseif cfg.flags.FloatStrict and not cfg.flags.Managed then
+			_p(3,'<FloatingPointModel>Strict</FloatingPointModel>')
+		end
+
+		if cfg.flags.EnableSSE2 then
+			_p(3,'<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>')
+		elseif cfg.flags.EnableSSE then
+			_p(3,'<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>')
+		end
+
+		if #cfg.buildoptions > 0 then
+			local options = table.concat(cfg.buildoptions, " ")
+			_x(3,'<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', options)
+		end
+
+		if prj.language == "C" then
+			_p(3,'<CompileAs>CompileAsC</CompileAs>')
+		end
+
+		_p(2,'</ClCompile>')
+	end
+
+
+--
+-- Format and return a Visual Studio Condition attribute.
+--
+
+	function vc2010.condition(cfg)
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.configname(cfg)))
+	end
+
+
+--
+-- Map Premake's project kinds to Visual Studio configuration types.
+--
+
+	function vc2010.config_type(cfg)
+		local map = {
+			SharedLib = "DynamicLibrary",
+			StaticLib = "StaticLibrary",
+			ConsoleApp = "Application",
+			WindowedApp = "Application"
+		}
+		return map[cfg.kind]
+	end
+
+
+--
+-- Translate Premake's debugging settings to the Visual Studio equivalent.
+--
+
+	function vc2010.debuginfo(cfg)
+		local value
+		if cfg.flags.Symbols then
+			if cfg.debugformat == "c7" then
+				value = "OldStyle"
+			elseif cfg.platform == "x64" or 
+			       cfg.flags.Managed or 
+				   premake.config.isoptimizedbuild(cfg) or 
+				   cfg.flags.NoEditAndContinue
+			then
+				value = "ProgramDatabase"
+			else
+				value = "EditAndContinue"
+			end
+		end
+		if value then
+			_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>', value)
+		end
+	end
+
+
+--
+-- Translate Premake's optimization flags to the Visual Studio equivalents.
+--
+
+	function vc2010.optimization(cfg)
+		local result = "Disabled"
+		for _, flag in ipairs(cfg.flags) do
+			if flag == "Optimize" then
+				result = "Full"
+			elseif flag == "OptimizeSize" then
+				result = "MinSpace"
+			elseif flag == "OptimizeSpeed" then
+				result = "MaxSpeed"
+			end
+		end
+		return result
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 	local function vs2010_config(prj)
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
@@ -33,17 +397,6 @@
 			_p(2,'<Keyword>Win32Proj</Keyword>')
 		end
 		_p(1,'</PropertyGroup>')
-	end
-
-	function vc2010.config_type(config)
-		local t =
-		{
-			SharedLib = "DynamicLibrary",
-			StaticLib = "StaticLibrary",
-			ConsoleApp = "Application",
-			WindowedApp = "Application"
-		}
-		return t[config.kind]
 	end
 
 
@@ -104,7 +457,7 @@
 		if cfg.kind ~= "StaticLib" then
 			_p(2,'<LinkIncremental '..if_config_and_platform() ..'>%s</LinkIncremental>'
 					,premake.esc(cfginfo.name)
-					,tostring(premake.config.isincrementallink(cfg)))
+					,tostring(premake.config.canincrementallink(cfg)))
 		end
 	end
 
@@ -234,7 +587,7 @@
 				value = "OldStyle"
 			elseif cfg.platform == "x64" or 
 			       cfg.flags.Managed or 
-				   premake.config.isoptimizedbuild(cfg.flags) or 
+				   premake.config.isoptimizedbuild(cfg) or 
 				   cfg.flags.NoEditAndContinue
 			then
 				value = "ProgramDatabase"
@@ -270,7 +623,7 @@
 		              cfg.debugformat ~= "c7"
 		_p(3,'<MinimalRebuild>%s</MinimalRebuild>', tostring(value))
 
-		if  not premake.config.isoptimizedbuild(cfg.flags) then
+		if  not premake.config.isoptimizedbuild(cfg) then
 			if not cfg.flags.Managed then
 				_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
 			end
@@ -385,7 +738,7 @@
 		_p(3,'<SubSystem>%s</SubSystem>', iif(cfg.kind == "ConsoleApp", "Console", "Windows"))
 		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
 
-		if premake.config.isoptimizedbuild(cfg.flags) then
+		if premake.config.isoptimizedbuild(cfg) then
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 		end

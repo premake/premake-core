@@ -208,7 +208,8 @@
 		end
 		
 		if #cfg.includedirs > 0 then
-			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(cfg.includedirs, ";")))
+			local dirs = table.concat(project.getrelative(cfg.project, cfg.includedirs), ";")
+			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(dirs))
 		end
 		
 		if #cfg.defines > 0 then
@@ -281,9 +282,9 @@
 			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(false))
 		end
 		
-		if not cfg.flags.NoPCH and cfg.project.pchheader then
+		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.project.pchheader))
+			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
@@ -378,7 +379,7 @@
 
 		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
 
-		_p(4,'LinkIncremental="%s"', iif(premake.config.isincrementallink(cfg) , 2, 1))
+		_p(4,'LinkIncremental="%s"', iif(premake.config.canincrementallink(cfg) , 2, 1))
 
 		if #cfg.libdirs > 0 then
 			_x(4,'AdditionalLibraryDirectories="%s"', table.concat(path.translate(cfg.libdirs) , ";"))
@@ -1180,7 +1181,7 @@
 			_p(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 
 			_p(4,'LinkIncremental="%s"', 
-				iif(premake.config.isincrementallink(cfg) , 2, 1))
+				iif(premake.config.canincrementallink(cfg) , 2, 1))
 			
 			_p(4,'AdditionalLibraryDirectories="%s"', table.concat(premake.esc(path.translate(cfg.libdirs, '\\')) , ";"))
 			

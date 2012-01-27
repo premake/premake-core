@@ -202,14 +202,22 @@
 -- @param prj
 --    The project object to query.
 -- @param filename
---    The full path to the file.
+--    The file path, or an array of file paths, to convert.
 -- @return
---    The relative path from the project to the file.
+--    The relative path, or array of paths, from the project to the file.
 --
 
 	function project.getrelative(prj, filename)
-		if filename then
-			return path.getrelative(project.getlocation(prj), filename)
+		if type(filename) == "table" then
+			local result = {}
+			for i, name in ipairs(filename) do
+				result[i] = project.getrelative(prj, name)
+			end
+			return result
+		else
+			if filename then
+				return path.getrelative(project.getlocation(prj), filename)
+			end
 		end
 	end
 

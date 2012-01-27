@@ -61,40 +61,6 @@
 -- Tests
 --
 
-	function vs10_vcxproj.xmlDeclarationPresent()
-		local buffer = get_buffer()
-		test.istrue(string.startswith(buffer, '<?xml version=\"1.0\" encoding=\"utf-8\"?>'))
-	end
-
-	function vs10_vcxproj.projectBlocksArePresent()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<Project.*</Project>')
-	end
-
-	function vs10_vcxproj.projectOpenTagIsCorrect()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">.*</Project>')
-	end
-
-	function vs10_vcxproj.configItemGroupPresent()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<ItemGroup Label="ProjectConfigurations">.*</ItemGroup>')
-	end
-
-	function vs10_vcxproj.configBlocksArePresent()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<ProjectConfiguration.*</ProjectConfiguration>')
-	end
-
-	function vs10_vcxproj.configTypeBlockPresent()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup Condition="\'%$%(Configuration%)|%$%(Platform%)\'==\'.*\'" Label="Configuration">.*</PropertyGroup>')
-	end
-
-	function vs10_vcxproj.twoConfigTypeBlocksPresent()
-		local buffer = get_buffer()
-		test.string_contains(buffer,'<PropertyGroup Condition.*</PropertyGroup>.*<PropertyGroup Condition=.*</PropertyGroup>')
-	end
 
 	function vs10_vcxproj.propsDefaultForCppProjArePresent()
 		local buffer = get_buffer()
