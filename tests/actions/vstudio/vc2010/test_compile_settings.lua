@@ -131,6 +131,18 @@
 		]]
 	end
 
+	function suite.omitFrames_onNoFramePointer()
+		flags "NoFramePointer"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<OmitFramePointers>true</OmitFramePointers>
+		]]
+	end
+
 
 --
 -- If defines are specified, the <PreprocessorDefinitions> element should be added.
@@ -311,3 +323,124 @@
 		]]
 	end
 
+
+--
+-- Check handling of floating point and SSE flags.
+--
+
+	function suite.instructionSet_onSSE()
+		flags "EnableSSE"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+		]]
+	end
+
+	function suite.instructionSet_onSSE2()
+		flags "EnableSSE2"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+		]]
+	end
+
+	function suite.floatingPoint_onFloatFast()
+		flags "FloatFast"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<FloatingPointModel>Fast</FloatingPointModel>
+		]]
+	end
+
+	function suite.floatingPoint_onFloatStrict()
+		flags "FloatStrict"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<FloatingPointModel>Strict</FloatingPointModel>
+		]]
+	end
+
+--
+-- Verify character handling.
+--
+
+	function suite.wchar_onNative()
+		flags "NativeWChar"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+		]]
+	end
+
+	function suite.wchar_onNoNative()
+		flags "NoNativeWChar"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+		]]
+	end
+
+
+--
+-- Check exception handling and RTTI.
+--
+
+	function suite.exceptions_onNoExceptions()
+		flags "NoExceptions"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<ExceptionHandling>false</ExceptionHandling>
+		]]
+	end
+
+	function suite.exceptions_onSEH()
+		flags "SEH"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<ExceptionHandling>Async</ExceptionHandling>
+		]]
+	end
+
+	function suite.runtimeTypeInfo_onNoRTTI()
+		flags "NoRTTI"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
+		]]
+	end

@@ -48,12 +48,7 @@
 			vc2010.clcompile_ng(cfg)
 			vc2010.resourceCompile(cfg)
 			vc2010.link_ng(cfg)
-
-		--[[
-				event_hooks(cfg)
-		--]]
-
-
+			vc2010.buildEvents(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 		end
 
@@ -355,6 +350,31 @@
 		_p(2,'<Lib>')
 		vc2010.additionalLinkOptions(cfg)
 		_p(2,'</Lib>')
+	end
+
+
+--
+-- Write out the pre- and post-build event settings.
+--
+
+	function vc2010.buildEvents(cfg)
+		if #cfg.prebuildcommands> 0 then
+		    _p(2,'<PreBuildEvent>')
+			_x(3,'<Command>%s</Command>', table.implode(cfg.prebuildcommands, "", "", "\r\n"))
+			_p(2,'</PreBuildEvent>')
+		end
+
+		if #cfg.prelinkcommands> 0 then
+		    _p(2,'<PreLinkEvent>')
+			_x(3,'<Command>%s</Command>', table.implode(cfg.prelinkcommands, "", "", "\r\n"))
+			_p(2,'</PreLinkEvent>')
+		end
+
+		if #cfg.postbuildcommands> 0 then
+		    _p(2,'<PostBuildEvent>')
+			_x(3,'<Command>%s</Command>', table.implode(cfg.postbuildcommands, "", "", "\r\n"))
+			_p(2,'</PostBuildEvent>')
+		end
 	end
 
 
