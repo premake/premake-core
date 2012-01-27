@@ -46,8 +46,10 @@
 		for cfg in project.eachconfig(prj) do
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
 			vc2010.clcompile_ng(cfg)
+			vc2010.resourceCompile(cfg)
 
 		--[[
+
 				resource_compile(cfg)
 				item_def_lib(cfg)
 				vc2010.link(cfg)
@@ -216,16 +218,8 @@
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 
-		if #cfg.defines > 0 then
-			local defines = table.concat(cfg.defines, ";")
-			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
-		end
-
-		if #cfg.includedirs > 0 then
-			local dirs = path.translate(table.concat(project.getrelative(cfg.project, cfg.includedirs), ";"))
-			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
-		end
-
+		vc2010.preprocessorDefinitions(cfg.defines)
+		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
 		vc2010.debuginfo(cfg)
 
 		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
@@ -299,6 +293,31 @@
 		_p(2,'</ClCompile>')
 	end
 
+--
+-- Write out the resource compiler block.
+--
+
+	function vc2010.resourceCompile(cfg)
+		_p(2,'<ResourceCompile>')
+		vc2010.preprocessorDefinitions(table.join(cfg.defines, cfg.resdefines))
+		vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+		_p(2,'</ResourceCompile>')
+	end
+
+
+--
+-- Write out the <AdditionalIncludeDirectories> element, which is used by 
+-- both the compiler and resource compiler blocks.
+--
+
+	function vc2010.additionalIncludeDirectories(cfg, includedirs)
+		if #includedirs > 0 then
+			local dirs = project.getrelative(cfg.project, includedirs)
+			dirs = path.translate(table.concat(dirs, ";"))
+			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+		end
+	end
+
 
 --
 -- Format and return a Visual Studio Condition attribute.
@@ -365,6 +384,19 @@
 			end
 		end
 		return result
+	end
+
+
+--
+-- Write out a <PreprocessorDefinitions> element, used by both the compiler
+-- and resource compiler blocks.
+--
+
+	function vc2010.preprocessorDefinitions(defines)
+		if #defines > 0 then
+			defines = table.concat(defines, ";")
+			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
+		end
 	end
 
 

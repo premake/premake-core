@@ -130,6 +130,7 @@
 	dofile("actions/vstudio/vc2010/test_pch.lua")
 	dofile("actions/vstudio/vc2010/test_project_configs.lua")
 	dofile("actions/vstudio/vc2010/test_prop_sheet.lua")
+	dofile("actions/vstudio/vc2010/test_resource_compile.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")

@@ -1,6 +1,6 @@
 --
 -- tests/actions/vstudio/vc2010/test_compile_settings.lua
--- Validate linker settings in Visual Studio 2010 C/C++ projects.
+-- Validate compiler settings in Visual Studio 2010 C/C++ projects.
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
