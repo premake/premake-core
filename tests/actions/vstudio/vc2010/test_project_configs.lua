@@ -41,6 +41,7 @@
 			<Configuration>Release</Configuration>
 			<Platform>Win32</Platform>
 		</ProjectConfiguration>
+	</ItemGroup>
 		]]
 	end
 

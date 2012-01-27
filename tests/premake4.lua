@@ -124,7 +124,7 @@
 	dofile("actions/vstudio/vc2010/test_files.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
 	dofile("actions/vstudio/vc2010/test_link_settings.lua")
-	dofile("actions/vstudio/vc2010/test_links.lua")
+	dofile("actions/vstudio/vc2010/test_link.lua")
 	dofile("actions/vstudio/vc2010/test_mfc.lua")
 	dofile("actions/vstudio/vc2010/test_output_props.lua")
 	dofile("actions/vstudio/vc2010/test_pch.lua")

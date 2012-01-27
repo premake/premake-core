@@ -47,12 +47,9 @@
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
 			vc2010.clcompile_ng(cfg)
 			vc2010.resourceCompile(cfg)
+			vc2010.link_ng(cfg)
 
 		--[[
-
-				resource_compile(cfg)
-				item_def_lib(cfg)
-				vc2010.link(cfg)
 				event_hooks(cfg)
 		--]]
 
@@ -254,9 +251,9 @@
 		end
 
 		if cfg.flags.NoExceptions then
-			_p(2,'<ExceptionHandling>false</ExceptionHandling>')
+			_p(3,'<ExceptionHandling>false</ExceptionHandling>')
 		elseif cfg.flags.SEH then
-			_p(2,'<ExceptionHandling>Async</ExceptionHandling>')
+			_p(3,'<ExceptionHandling>Async</ExceptionHandling>')
 		end
 
 		if cfg.flags.NoRTTI and not cfg.flags.Managed then
@@ -286,12 +283,13 @@
 			_x(3,'<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', options)
 		end
 
-		if prj.language == "C" then
+		if cfg.project.language == "C" then
 			_p(3,'<CompileAs>CompileAsC</CompileAs>')
 		end
 
 		_p(2,'</ClCompile>')
 	end
+
 
 --
 -- Write out the resource compiler block.
@@ -306,6 +304,61 @@
 
 
 --
+-- Write out the linker tool block.
+--
+
+	function vc2010.link_ng(cfg)
+		_p(2,'<Link>')
+
+		local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
+		_p(3,'<SubSystem>%s</SubSystem>', subsystem)
+
+		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
+
+		if premake.config.isoptimizedbuild(cfg) then
+			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
+			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
+		end
+
+		if cfg.kind ~= premake.STATICLIB then
+			vc2010.link_dynamic(cfg)
+		end
+
+		_p(2,'</Link>')
+
+		if cfg.kind == premake.STATICLIB then
+			vc2010.link_static(cfg)
+		end
+	end
+
+	function vc2010.link_dynamic(cfg)
+		local links = config.getlinks(cfg, "system", "fullpath")
+		if #links > 0 then
+			links = path.translate(table.concat(links, ";"))
+			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+		end
+
+		if #cfg.libdirs > 0 then
+			local dirs = project.getrelative(cfg.project, cfg.libdirs)
+			dirs = path.translate(table.concat(dirs, ";"))
+			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
+		end
+
+		if vc2010.config_type(cfg) == "Application" and not cfg.flags.WinMain and not cfg.flags.Managed then
+			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
+		end
+
+		vc2010.additionalLinkOptions(cfg)
+	end
+
+	function vc2010.link_static(cfg)
+		_p(2,'<Lib>')
+		vc2010.additionalLinkOptions(cfg)
+		_p(2,'</Lib>')
+	end
+
+
+--
 -- Write out the <AdditionalIncludeDirectories> element, which is used by 
 -- both the compiler and resource compiler blocks.
 --
@@ -315,6 +368,18 @@
 			local dirs = project.getrelative(cfg.project, includedirs)
 			dirs = path.translate(table.concat(dirs, ";"))
 			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+		end
+	end
+
+
+--
+-- Write out the <AdditionalOptions> element for the linker blocks.
+--
+
+	function vc2010.additionalLinkOptions(cfg)
+		if #cfg.linkoptions > 0 then
+			local opts = table.concat(cfg.linkoptions, " ")
+			_x(3, '<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
 		end
 	end
 

@@ -69,7 +69,7 @@
 
 
 --
--- Verify the basic structure of static library linker block.
+-- Verify the basic structure of shared library linker block.
 --
 
 	function suite.onSharedLib()

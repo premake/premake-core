@@ -381,9 +381,7 @@
 
 		_p(4,'LinkIncremental="%s"', iif(premake.config.canincrementallink(cfg) , 2, 1))
 
-		if #cfg.libdirs > 0 then
-			_x(4,'AdditionalLibraryDirectories="%s"', table.concat(path.translate(cfg.libdirs) , ";"))
-		end
+		vc200x.additionalLibraryDirectories(cfg)
 
 		local deffile = config.findfile(cfg, ".def")
 		if deffile then
@@ -432,9 +430,7 @@
 
 		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
 
-		if #cfg.libdirs > 0 then
-			_x(4,'AdditionalLibraryDirectories="%s"', path.translate(table.concat(cfg.libdirs, ";")))
-		end
+		vc200x.additionalLibraryDirectories(cfg)
 
 		local opts = {}
 		if cfg.architecture == premake.X32 then
@@ -465,9 +461,7 @@
 			_p(4,'LinkIncremental="0"')
 		end
 
-		if #cfg.libdirs > 0 then
-			_x(4,'AdditionalLibraryDirectories="%s"', table.concat(path.translate(cfg.libdirs) , ";"))
-		end
+		vc200x.additionalLibraryDirectories(cfg)
 		
 		if cfg.kind ~= premake.STATICLIB then
 			_p(4,'GenerateManifest="%s"', bool(false))
@@ -792,6 +786,19 @@
 
 
 --
+-- Write out the <AdditionalLibraryDirectories> block, used by the
+-- various linker tool variations.
+--
+
+	function vc200x.additionalLibraryDirectories(cfg)
+		if #cfg.libdirs > 0 then
+			local dirs = table.concat(project.getrelative(cfg.project, cfg.libdirs), ";")
+			_x(4,'AdditionalLibraryDirectories="%s"', path.translate(dirs))
+		end
+	end
+
+
+--
 -- Returns the correct name for the compiler tool element, based on
 -- the configuration target system.
 --
@@ -815,7 +822,6 @@
 		links = table.concat(links, " ")
 		links = path.translate(links)
 		return links
-	 --table.concat(path.translate(config.getlinks(cfg, "all", "fullpath"), " ")))
 	end
 
 
