@@ -17,6 +17,7 @@
 	local sln, prj, cfg
 	
 	function suite.setup()
+		_ACTION = "vs2010"
 		sln, prj = test.createsolution()
 	end
 	
