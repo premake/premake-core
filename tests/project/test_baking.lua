@@ -246,3 +246,21 @@
 		test.isequal("hello.cpp", cfg.files[1]:sub(-9))
 	end
 
+
+--
+-- Check removing a value with an exact match.
+--
+
+	function suite.remove_onExactValueMatch()
+		flags { "Symbols", "Optimize", "NoRTTI" }
+		removeflags "Optimize"
+		cfg = oven.bake(sln)
+		test.isequal("Symbols|NoRTTI", table.concat(cfg.flags, "|"))
+	end
+
+	function suite.remove_onMultipleValues()
+		flags { "Symbols", "NoExceptions", "Optimize", "NoRTTI" }
+		removeflags { "NoExceptions", "NoRTTI" }
+		cfg = oven.bake(sln)
+		test.isequal("Symbols|Optimize", table.concat(cfg.flags, "|"))
+	end

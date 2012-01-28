@@ -1,7 +1,7 @@
 --
 -- tests/base/test_api.lua
 -- Automated test suite for the project API support functions.
--- Copyright (c) 2008-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2012 Jason Perkins and the Premake project
 --
 
 	T.api = { }
@@ -44,51 +44,41 @@
 --
 
 	function suite.setarray_Inserts_OnStringValue()
-		premake.CurrentConfiguration = { }
-		premake.CurrentConfiguration.myfield = { }
-		premake.setarray("config", "myfield", "hello")
-		test.isequal("hello", premake.CurrentConfiguration.myfield[1])
+		local f = premake.setarray({}, "myfield", "hello")
+		test.isequal("hello", f[1])
 	end
 
 	function suite.setarray_Inserts_OnTableValue()
-		premake.CurrentConfiguration = { }
-		premake.CurrentConfiguration.myfield = { }
-		premake.setarray("config", "myfield", { "hello", "goodbye" })
-		test.isequal("hello", premake.CurrentConfiguration.myfield[1])
-		test.isequal("goodbye", premake.CurrentConfiguration.myfield[2])
+		local f = premake.setarray({}, "myfield", { "hello", "goodbye" })
+		test.isequal("hello", f[1])
+		test.isequal("goodbye", f[2])
 	end
 
 	function suite.setarray_Appends_OnNewValues()
-		premake.CurrentConfiguration = { }
-		premake.CurrentConfiguration.myfield = { "hello" }
-		premake.setarray("config", "myfield", "goodbye")
-		test.isequal("hello", premake.CurrentConfiguration.myfield[1])
-		test.isequal("goodbye", premake.CurrentConfiguration.myfield[2])
+		local obj = {
+			myfield = { "hello" }
+		}
+		local f = premake.setarray(obj, "myfield", "goodbye")
+		test.isequal("hello", f[1])
+		test.isequal("goodbye", f[2])
 	end
 
 	function suite.setarray_FlattensTables()
-		premake.CurrentConfiguration = { }
-		premake.CurrentConfiguration.myfield = { }
-		premake.setarray("config", "myfield", { {"hello"}, {"goodbye"} })
-		test.isequal("hello", premake.CurrentConfiguration.myfield[1])
-		test.isequal("goodbye", premake.CurrentConfiguration.myfield[2])
+		local f = premake.setarray({}, "myfield", { {"hello"}, {"goodbye"} })
+		test.isequal("hello", f[1])
+		test.isequal("goodbye", f[2])
 	end
 	
 	function suite.setarray_RaisesError_OnInvalidValue()
-		premake.CurrentConfiguration = { }
-		premake.CurrentConfiguration.myfield = { }
-		ok, err = pcall(function () premake.setarray("config", "myfield", "bad", { "Good", "Better", "Best" }) end)
+		ok, err = pcall(function () premake.setarray({}, "myfield", "bad", { "Good", "Better", "Best" }) end)
 		test.isfalse(ok)
 	end
 		
 	function suite.setarray_CorrectsCase_OnConstrainedValue()
-		premake.CurrentConfiguration = { }
-		premake.CurrentConfiguration.myfield = { }
-		premake.setarray("config", "myfield", "better", { "Good", "Better", "Best" })
-		test.isequal("Better", premake.CurrentConfiguration.myfield[1])
+		local f = premake.setarray({}, "myfield", "better", { "Good", "Better", "Best" })
+		test.isequal("Better", f[1])
 	end
-	
-	
+
 
 --
 -- premake.setstring() tests
@@ -373,7 +363,6 @@
 		test.istrue(prj.uuid)
 	end
 			
-
 
 --
 -- uuid() tests

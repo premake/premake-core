@@ -15,7 +15,8 @@
 
 	local nomerge = 
 	{
-		keywords = true
+		keywords = true,
+		removes = true
 	}
 
 
@@ -60,6 +61,9 @@
 		for _, block in ipairs(container.blocks) do
 			if oven.filter(block, filterTerms) then
 				oven.merge(cfg, block, filterField)
+				if block.removes then
+					oven.remove(cfg, block.removes, filterField)
+				end
 			end
 		end
 
@@ -212,3 +216,40 @@
 		return original
 	end
 
+
+--
+-- Removes a set of values from a configuration.
+--
+-- @param cfg
+--    The configuration from which to remove.
+-- @param removes
+--    The set of values to remove. Specified by a key-value
+--    list in the form:
+--      removes[key] = { list of values to remove }
+-- @param filterField
+--    An optional configuration field name. If present, only this specific
+--    field will be merged.
+--
+
+	function oven.remove(cfg, removes, filterField)
+		if filterField then
+			oven.removefromfield(cfg[filterField], removes[filterField])
+		else
+			for fieldname, values in pairs(removes) do
+				oven.removefromfield(cfg[fieldname], values)
+			end
+		end
+	end
+
+	function oven.removefromfield(field, removes)
+		if field and removes then
+			for index, value in ipairs(field) do
+				for key, pattern in ipairs(removes) do
+					if pattern == value then
+						table.remove(field, index)
+						break
+					end
+				end
+			end
+		end
+	end
