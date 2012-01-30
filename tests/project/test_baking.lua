@@ -264,3 +264,15 @@
 		cfg = oven.bake(sln)
 		test.isequal("Symbols|Optimize", table.concat(cfg.flags, "|"))
 	end
+
+
+--
+-- Remove should also accept wildcards.
+--
+
+	function suite.remove_onWildcard()
+		defines { "WIN32", "WIN64", "LINUX", "MACOSX" }
+		removedefines { "WIN*" }
+		cfg = oven.bake(sln)
+		test.isequal("LINUX|MACOSX", table.concat(cfg.defines, "|"))
+	end

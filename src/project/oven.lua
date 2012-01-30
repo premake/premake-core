@@ -243,13 +243,19 @@
 
 	function oven.removefromfield(field, removes)
 		if field and removes then
-			for index, value in ipairs(field) do
-				for key, pattern in ipairs(removes) do
-					if pattern == value then
-						table.remove(field, index)
-						break
+			for key, pattern in ipairs(removes) do
+				pattern = path.wildcards(pattern):lower()
+				
+				local i = 1
+				while i <= #field do
+					local value = field[i]:lower()
+					if value:match(pattern) == value then
+						table.remove(field, i)
+					else
+						i = i + 1
 					end
 				end
+				
 			end
 		end
 	end
