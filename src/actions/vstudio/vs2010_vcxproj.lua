@@ -55,13 +55,9 @@
 		vc2010.files_ng(prj)
 		vc2010.projectReferences_ng(prj)
 
-		
---[[
-			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-			_p(1,'<ImportGroup Label="ExtensionTargets">')
-			_p(1,'</ImportGroup>')
---]]
-
+		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
+		_p(1,'<ImportGroup Label="ExtensionTargets">')
+		_p(1,'</ImportGroup>')
 		_p('</Project>')
 	end
 
@@ -359,23 +355,16 @@
 --
 
 	function vc2010.buildEvents(cfg)
-		if #cfg.prebuildcommands> 0 then
-		    _p(2,'<PreBuildEvent>')
-			_x(3,'<Command>%s</Command>', table.implode(cfg.prebuildcommands, "", "", "\r\n"))
-			_p(2,'</PreBuildEvent>')
+		function write(group, list)			
+			if #list > 0 then
+				_p(2,'<%s>', group)
+				_x(3,'<Command>%s</Command>', table.implode(list, "", "", "\r\n"))
+				_p(2,'</%s>', group)
+			end
 		end
-
-		if #cfg.prelinkcommands> 0 then
-		    _p(2,'<PreLinkEvent>')
-			_x(3,'<Command>%s</Command>', table.implode(cfg.prelinkcommands, "", "", "\r\n"))
-			_p(2,'</PreLinkEvent>')
-		end
-
-		if #cfg.postbuildcommands> 0 then
-		    _p(2,'<PostBuildEvent>')
-			_x(3,'<Command>%s</Command>', table.implode(cfg.postbuildcommands, "", "", "\r\n"))
-			_p(2,'</PostBuildEvent>')
-		end
+		write("PreBuildEvent", cfg.prebuildcommands)
+		write("PreLinkEvent", cfg.prelinkcommands)
+		write("PostBuildEvent", cfg.postbuildcommands)
 	end
 
 
