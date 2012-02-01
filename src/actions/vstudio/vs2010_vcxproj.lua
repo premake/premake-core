@@ -52,8 +52,9 @@
 			_p(1,'</ItemDefinitionGroup>')
 		end
 
+		vc2010.files_ng(prj)
+		
 --[[
-			vc2010.files(prj)
 			vc2010.projectReferences(prj)
 
 			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
@@ -375,6 +376,76 @@
 			_x(3,'<Command>%s</Command>', table.implode(cfg.postbuildcommands, "", "", "\r\n"))
 			_p(2,'</PostBuildEvent>')
 		end
+	end
+
+
+--
+-- Write out the list of source code files, and any associated configuration.
+--
+
+	function vc2010.files_ng(prj)
+		vc2010.simplefilesgroup_ng(prj, "ClInclude")
+		vc2010.compilerfilesgroup_ng(prj)
+		vc2010.simplefilesgroup_ng(prj, "None")
+		vc2010.simplefilesgroup_ng(prj, "ResourceCompile")
+	end
+
+	function vc2010.simplefilesgroup_ng(prj, group)
+		local files = vc2010.getfilegroup_ng(prj, group)
+		if #files > 0  then
+			_p(1,'<ItemGroup>')
+			for _, file in ipairs(files) do
+				_x(2,'<%s Include=\"%s\" />', group, path.translate(file.fullpath))
+			end
+			_p(1,'</ItemGroup>')
+		end
+	end
+
+	function vc2010.compilerfilesgroup_ng(prj)
+		local files = vc2010.getfilegroup_ng(prj, "ClCompile")
+		if #files > 0  then
+			local pchsource = project.getrelative(prj, prj.pchsource)
+			
+			_p(1,'<ItemGroup>')
+			for _, file in ipairs(files) do
+				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.fullpath))
+				for cfg in project.eachconfig(prj, nil, file.fullpath) do
+					if pchsource == file.fullpath and not cfg.flags.NoPCH then
+						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', vc2010.condition(cfg))
+					end
+				end
+				_p(2,'</ClCompile>')
+			end
+			_p(1,'</ItemGroup>')
+		end
+	end
+
+	function vc2010.getfilegroup_ng(prj, group)
+		-- check for a cached copy before creating
+		local groups = prj.vc2010_file_groups
+		if not groups then
+			groups = {
+				ClCompile = {},
+				ClInclude = {},
+				None = {},
+				ResourceCompile = {},
+			}
+			prj.vc2010_file_groups = groups
+			
+			for file in project.eachfile(prj) do
+				if path.iscppfile(file.fullpath) then
+					table.insert(groups.ClCompile, file)
+				elseif path.iscppheader(file.fullpath) then
+					table.insert(groups.ClInclude, file)
+				elseif path.isresourcefile(file.fullpath) then
+					table.insert(groups.ResourceCompile, file)
+				else
+					table.insert(groups.None, file)
+				end
+			end
+		end
+
+		return groups[group]
 	end
 
 

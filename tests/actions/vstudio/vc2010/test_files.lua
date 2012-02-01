@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_files.lua
 -- Validate generation of files block in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	T.vstudio_vs2010_files = { }
@@ -20,18 +20,16 @@
 	end
 	
 	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
-		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
-		vc2010.files(prj)
+		prj = premake.solution.getproject_ng(sln, 1)
+		vc2010.files_ng(prj)
 	end
 
 
 --
--- Test file groups
+-- Test filtering of source files into the correct categories.
 --
 
-	function suite.SimpleHeaderFile()
+	function suite.clInclude_onHFile()
 		files { "include/hello.h" }
 		prepare()
 		test.capture [[
@@ -40,9 +38,8 @@
 	</ItemGroup>
 		]]
 	end
-	
-	
-	function suite.SimpleSourceFile()
+		
+	function suite.clCompile_onCFile()
 		files { "hello.c" }
 		prepare()
 		test.capture [[
@@ -53,19 +50,7 @@
 		]]
 	end
 	
-	
-	function suite.SimpleNoneFile()
-		files { "docs/hello.txt" }
-		prepare()
-		test.capture [[
-	<ItemGroup>
-		<None Include="docs\hello.txt" />
-	</ItemGroup>
-		]]
-	end
-	
-	
-	function suite.SimpleResourceFile()
+	function suite.resourceCompile_onRCFile()
 		files { "resources/hello.rc" }
 		prepare()
 		test.capture [[
@@ -75,17 +60,30 @@
 		]]
 	end
 
-
---
--- Test path handling
---
-
-	function suite.MultipleFolderLevels()
-		files { "src/greetings/hello.c" }
+	function suite.none_onTxtFile()
+		files { "docs/hello.txt" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
-		<ClCompile Include="src\greetings\hello.c">
+		<None Include="docs\hello.txt" />
+	</ItemGroup>
+		]]
+	end
+	
+--
+-- If a PCH source is specified, ensure it is included in the file configuration.
+--
+
+	function suite.precompiledHeader_onPchSource()
+		files { "afxwin.cpp" }
+		pchheader "afxwin.h"
+		pchsource "afxwin.cpp"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="afxwin.cpp">
+			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
 		</ClCompile>
 	</ItemGroup>
 		]]
