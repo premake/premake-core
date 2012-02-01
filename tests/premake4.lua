@@ -126,6 +126,7 @@
 	dofile("actions/vstudio/vc2010/test_mfc.lua")
 	dofile("actions/vstudio/vc2010/test_output_props.lua")
 	dofile("actions/vstudio/vc2010/test_project_configs.lua")
+	dofile("actions/vstudio/vc2010/test_project_refs.lua")
 	dofile("actions/vstudio/vc2010/test_prop_sheet.lua")
 	dofile("actions/vstudio/vc2010/test_resource_compile.lua")
 

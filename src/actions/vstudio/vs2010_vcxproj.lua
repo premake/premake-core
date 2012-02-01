@@ -53,10 +53,10 @@
 		end
 
 		vc2010.files_ng(prj)
+		vc2010.projectReferences_ng(prj)
+
 		
 --[[
-			vc2010.projectReferences(prj)
-
 			_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
 			_p(1,'<ImportGroup Label="ExtensionTargets">')
 			_p(1,'</ImportGroup>')
@@ -446,6 +446,26 @@
 		end
 
 		return groups[group]
+	end
+
+
+--
+-- Generate the list of project dependencies.
+--
+
+	function vc2010.projectReferences_ng(prj)
+		local deps = project.getdependencies(prj)
+		if #deps > 0 then
+			_p(1,'<ItemGroup>')
+			for _, dep in ipairs(deps) do
+				local slnpath = premake.solution.getlocation(prj.solution)
+				local relpath = path.getrelative(slnpath, vstudio.projectfile(dep))
+				_x(2,'<ProjectReference Include=\"%s\">', path.translate(relpath))
+				_p(3,'<Project>{%s}</Project>', dep.uuid)
+				_p(2,'</ProjectReference>')
+			end
+			_p(1,'</ItemGroup>')
+		end
 	end
 
 

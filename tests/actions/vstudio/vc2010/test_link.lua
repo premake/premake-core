@@ -154,6 +154,36 @@
 
 
 --
+-- If a sibling library is listed in links(), it should NOT appear in
+-- the additional dependencies element. Visual Studio will figure that
+-- out from the project reference item group.
+--
+
+	function suite.noDependencies_onOnlySiblingProjectLinks()
+		links { "MyProject2" }
+		test.createproject(sln)
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.onlySystemDependencies_OnSiblingProjectLink()
+		links { "MyProject2", "kernel32" }
+		test.createproject(sln)
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+
+--
 -- Static libraries do not link dependencies directly, to maintain
 -- compatibility with GCC and others.
 --

@@ -5,6 +5,7 @@
 --
 
 	premake.solution = { }
+	local solution = premake.solution
 	local oven = premake5.oven
 	local project = premake5.project
 
@@ -21,7 +22,7 @@
 --    The new solution's name.
 --
 
-	function premake.solution.new(name)
+	function solution.new(name)
 		local sln = { }
 
 		-- add to master list keyed by both name and index
@@ -47,7 +48,7 @@
 --    An iterator function.
 --
 
-	function premake.solution.each()
+	function solution.each()
 		local i = 0
 		return function ()
 			i = i + 1
@@ -67,7 +68,7 @@
 --    An iterator function.
 --
 
-	function premake.solution.eachproject(sln)
+	function solution.eachproject(sln)
 		local i = 0
 		return function ()
 			i = i + 1
@@ -87,7 +88,7 @@
 --    An iterator function, returning project configurations.
 --
 
-	function premake.solution.eachproject_ng(sln)
+	function solution.eachproject_ng(sln)
 		local i = 0
 		return function ()
 			i = i + 1
@@ -109,7 +110,7 @@
 --    The project object, or nil if a matching project could not be found.
 --
 
-	function premake.solution.findproject(sln, name)
+	function solution.findproject(sln, name)
 		name = name:lower()
 		for _, prj in ipairs(sln.projects) do
 			if name == prj.name:lower() then
@@ -129,7 +130,7 @@
 --    The solution with the provided key.
 --
 
-	function premake.solution.get(key)
+	function solution.get(key)
 		return premake.solution.list[key]
 	end
 
@@ -143,7 +144,7 @@
 --    The path to the solutions's file system location.
 --
 
-	function premake.solution.getlocation(sln)
+	function solution.getlocation(sln)
 		return sln.location or sln.basedir
 	end
 
@@ -159,7 +160,7 @@
 --    The project at the given index.
 --
 
-	function premake.solution.getproject(sln, idx)
+	function solution.getproject(sln, idx)
 		-- retrieve the root configuration of the project, with all of
 		-- the global (not configuration specific) settings collapsed
 		local prj = sln.projects[idx]
@@ -182,7 +183,7 @@
 --    The project configuration at the given index.
 --
 
-	function premake.solution.getproject_ng(sln, idx)
+	function solution.getproject_ng(sln, idx)
 		local prj = sln.projects[idx]
 
 		local cfg = oven.merge({}, sln)
