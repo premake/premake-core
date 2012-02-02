@@ -15,7 +15,7 @@ int os_uuid(lua_State* L)
 	char uuid[38];
 
 #if PLATFORM_WINDOWS
-	CoCreateGuid((char*)bytes);
+	CoCreateGuid((GUID*)bytes);
 #else
 	int result;
 

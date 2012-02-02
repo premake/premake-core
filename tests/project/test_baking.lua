@@ -276,3 +276,14 @@
 		cfg = oven.bake(sln)
 		test.isequal("LINUX|MACOSX", table.concat(cfg.defines, "|"))
 	end
+
+--
+-- Remove should removed both indexed and keyed values.
+--
+
+	function suite.remove_onExactValueMatch()
+		flags { "Symbols", "Optimize", "NoRTTI" }
+		removeflags "Optimize"
+		cfg = oven.bake(sln)
+		test.isnil(cfg.flags.Optimize)
+	end

@@ -250,6 +250,7 @@
 				while i <= #field do
 					local value = field[i]:lower()
 					if value:match(pattern) == value then
+						field[field[i]] = nil
 						table.remove(field, i)
 					else
 						i = i + 1
