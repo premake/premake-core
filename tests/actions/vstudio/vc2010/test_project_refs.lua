@@ -7,7 +7,6 @@
 	T.vstudio_vs2010_project_refs = { }
 	local suite = T.vstudio_vs2010_project_refs
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
 
 
 --
@@ -56,3 +55,23 @@
 		]]
 	end
 
+--
+-- Project references should always be specified relative to the 
+-- project doing the referencing.
+--
+
+	function suite.referencesAreRelative_onDifferentProjectLocation()
+		links { "MyProject" }
+		location "build/MyProject2"
+		project("MyProject")
+		location "build/MyProject"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ProjectReference Include="..\MyProject\MyProject.vcxproj">
+			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+		</ProjectReference>
+	</ItemGroup>
+		]]
+	end
+		

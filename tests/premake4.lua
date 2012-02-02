@@ -1,7 +1,7 @@
 --
 -- tests/premake4.lua
 -- Automated test suite for Premake 4.x
--- Copyright (c) 2008-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2012 Jason Perkins and the Premake project
 --
 
 	dofile("testfx.lua")
@@ -81,7 +81,6 @@
 	-- Visual Studio tests
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
-	dofile("actions/vstudio/test_vs2010_flags.lua")
 
 	-- Visual Studio 2002-2003 C# projects
 	dofile("actions/vstudio/cs2002/test_files.lua")
@@ -116,14 +115,13 @@
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
 	dofile("actions/vstudio/vc2010/test_config_props.lua")
-	dofile("actions/vstudio/vc2010/test_debugdir.lua")
+	dofile("actions/vstudio/vc2010/test_debug_settings.lua")
 	dofile("actions/vstudio/vc2010/test_globals.lua")
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")
+	dofile("actions/vstudio/vc2010/test_filter_ids.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
-	dofile("actions/vstudio/vc2010/test_link_settings.lua")
 	dofile("actions/vstudio/vc2010/test_link.lua")
-	dofile("actions/vstudio/vc2010/test_mfc.lua")
 	dofile("actions/vstudio/vc2010/test_output_props.lua")
 	dofile("actions/vstudio/vc2010/test_project_configs.lua")
 	dofile("actions/vstudio/vc2010/test_project_refs.lua")

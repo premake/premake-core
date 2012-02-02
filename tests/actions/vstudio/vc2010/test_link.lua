@@ -234,3 +234,18 @@
 		]]
 	end
  
+ --
+-- Enable reference optimizing if Optimize flag is specified.
+--
+
+	function suite.optimizeReferences_onOptimizeFlag()
+		flags { "Optimize" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<EnableCOMDATFolding>true</EnableCOMDATFolding>
+			<OptimizeReferences>true</OptimizeReferences>
+		]]
+	end

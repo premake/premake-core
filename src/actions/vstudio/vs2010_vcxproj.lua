@@ -445,10 +445,11 @@
 	function vc2010.projectReferences_ng(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
+			local prjpath = project.getlocation(prj)
+			
 			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
-				local slnpath = premake.solution.getlocation(prj.solution)
-				local relpath = path.getrelative(slnpath, vstudio.projectfile(dep))
+				local relpath = path.getrelative(prjpath, vstudio.projectfile_ng(dep))
 				_x(2,'<ProjectReference Include=\"%s\">', path.translate(relpath))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_p(2,'</ProjectReference>')
@@ -517,7 +518,7 @@
 		if cfg.flags.Symbols then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
-			elseif cfg.platform == "x64" or 
+			elseif cfg.architecture == "x64" or 
 			       cfg.flags.Managed or 
 				   premake.config.isoptimizedbuild(cfg) or 
 				   cfg.flags.NoEditAndContinue

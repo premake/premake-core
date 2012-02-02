@@ -14,5 +14,35 @@
 --
 
 	function vc2010.generate_user_ng(prj)
-		print("C++ project user files are not yet implemented")
+		io.eol = "\r\n"
+		io.indent = "  "
+		
+		vc2010.header_ng()
+		for cfg in project.eachconfig(prj) do
+			_p(1,'<PropertyGroup %s>', vc2010.condition(cfg))
+			vc2010.debugsettings(cfg)
+			_p(1,'</PropertyGroup>')
+		end
+		_p('</Project>')
+	end
+
+	function vc2010.debugsettings(cfg)
+		if cfg.debugdir then
+			local dir = project.getrelative(cfg.project, cfg.debugdir)
+			_x(2,'<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
+			_p(2,'<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')	
+		end
+		if #cfg.debugargs > 0 then
+			_x(2,'<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
+		end
+		if #cfg.debugenvs > 0 then
+			local envs = table.concat(cfg.debugenvs, "\n")
+			if cfg.flags.DebugEnvsInherit then
+				envs = envs .. "\n$(LocalDebuggerEnvironment)"
+			end
+			_p(2,'<LocalDebuggerEnvironment>%s</LocalDebuggerEnvironment>', envs)
+			if cfg.flags.DebugEnvsDontMerge then
+				_p(2,'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
+			end
+		end
 	end

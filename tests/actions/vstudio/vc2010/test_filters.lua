@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_filters.lua
--- Validate generation of filter blocks in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Validate generation of file filter blocks in Visual Studio 2010 C/C++ projects.
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	T.vs2010_filters = { }
@@ -14,111 +14,61 @@
 --
 
 	local sln, prj
-	local os_uuid
 	
 	function suite.setup()
-		os_uuid = os.uuid
-		os.uuid = function() return "00112233-4455-6677-8888-99AABBCCDDEE" end
-		
 		_ACTION = "vs2010"
-		sln, prj = test.createsolution()
-	end
-	
-	function suite.teardown()
-		os.uuid = os_uuid
+		sln = test.createsolution()
 	end
 
-	local function prepare()
-		premake.bake.buildconfigs()
-		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+	local function prepare(group)
+		prj = premake.solution.getproject_ng(sln, 1)
+		vc2010.filters_filegroup(prj, group)
 	end
-
 
 
 --
--- Filter identifiers sections
+-- Check contents of the different file groups.
 --
 
-	function suite.UniqueIdentifiers_IsEmpty_OnRootFilesOnly()
+	function suite.itemGroup_onClInclude()
+		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
+		prepare("ClInclude")
+		test.capture [[
+	<ItemGroup>
+		<ClInclude Include="hello.h" />
+	</ItemGroup>
+		]]
+	end
+
+	function suite.itemGroup_onResourceSection()
+		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
+		prepare("ResourceCompile")
+		test.capture [[
+	<ItemGroup>
+		<ResourceCompile Include="hello.rc" />
+	</ItemGroup>
+		]]
+	end
+
+	function suite.itemGroup_onNoneSection()
+		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
+		prepare("None")
+		test.capture [[
+	<ItemGroup>
+		<None Include="hello.txt" />
+	</ItemGroup>
+		]]
+	end
+
+
+--
+-- Files located at the root (in the same folder as the project) do not
+-- need a filter identifier.
+--
+
+	function suite.noFilter_onRootFiles()
 		files { "hello.c", "goodbye.c" }
-		prepare()
-		vc2010.filteridgroup(prj)
-		test.isemptycapture()
-	end
-
-
-	function suite.UniqueIdentifiers_MergeCommonSubfolders()
-		files { "src/hello.c", "src/goodbye.c" }
-		prepare()
-		vc2010.filteridgroup(prj)
-		test.capture [[
-	<ItemGroup>
-		<Filter Include="src">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-		]]
-	end
-
-
-	function suite.UniqueIdentifiers_ListAllSubfolders()
-		files { "src/hello.c", "src/departures/goodbye.c" }
-		prepare()
-		vc2010.filteridgroup(prj)
-		test.capture [[
-	<ItemGroup>
-		<Filter Include="src">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="src\departures">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-		]]
-	end
-
-
-	function suite.UniqueIdentifiers_ListVpaths()
-		files { "hello.c", "goodbye.c" }
-		vpaths { ["Source Files"] = "**.c" }
-		prepare()
-		vc2010.filteridgroup(prj)
-		test.capture [[
-	<ItemGroup>
-		<Filter Include="Source Files">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-		]]
-	end
-
-
-	function suite.UniqueIdentifiers_ListRealAndVpaths()
-		files { "hello.h", "goodbye.c" }
-		vpaths { ["Source Files"] = "*.c", ["Header Files"] = "*.h" }
-		prepare()
-		vc2010.filteridgroup(prj)
-		test.capture [[
-	<ItemGroup>
-		<Filter Include="Header Files">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="Source Files">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-		]]
-	end
-
-
---
--- File/filter assignment tests
---
-
-	function suite.FileFilters_NoFilter_OnRootFile()
-		files { "hello.c", "goodbye.c" }
-		prepare()
-		vc2010.filefiltergroup(prj, "ClCompile")
+		prepare("ClCompile")
 		test.capture [[
 	<ItemGroup>
 		<ClCompile Include="hello.c" />
@@ -127,11 +77,13 @@
 		]]
 	end
 
+--
+-- Check the filter with a real path.
+--
 
-	function suite.FileFilters_NoFilter_OnRealPath()
+	function suite.filter_onRealPath()
 		files { "src/hello.c" }
-		prepare()
-		vc2010.filefiltergroup(prj, "ClCompile")
+		prepare("ClCompile")
 		test.capture [[
 	<ItemGroup>
 		<ClCompile Include="src\hello.c">
@@ -141,53 +93,19 @@
 		]]
 	end
 
+--
+-- Check the filter with a virtual path.
+--
 
-	function suite.FileFilters_HasFilter_OnVpath()
+	function suite.filter_onVpath()
 		files { "src/hello.c" }
 		vpaths { ["Source Files"] = "**.c" }		
-		prepare()
-		vc2010.filefiltergroup(prj, "ClCompile")
+		prepare("ClCompile")
 		test.capture [[
 	<ItemGroup>
 		<ClCompile Include="src\hello.c">
 			<Filter>Source Files</Filter>
 		</ClCompile>
-	</ItemGroup>
-		]]
-	end
-
-
-	function suite.FileFilters_OnIncludeSection()
-		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
-		prepare()
-		vc2010.filefiltergroup(prj, "ClInclude")
-		test.capture [[
-	<ItemGroup>
-		<ClInclude Include="hello.h" />
-	</ItemGroup>
-		]]
-	end
-
-
-	function suite.FileFilters_OnResourceSection()
-		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
-		prepare()
-		vc2010.filefiltergroup(prj, "ResourceCompile")
-		test.capture [[
-	<ItemGroup>
-		<ResourceCompile Include="hello.rc" />
-	</ItemGroup>
-		]]
-	end
-
-
-	function suite.FileFilters_OnNoneSection()
-		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
-		prepare()
-		vc2010.filefiltergroup(prj, "None")
-		test.capture [[
-	<ItemGroup>
-		<None Include="hello.txt" />
 	</ItemGroup>
 		]]
 	end

@@ -444,3 +444,82 @@
 			<RuntimeTypeInfo>false</RuntimeTypeInfo>
 		]]
 	end
+
+
+--
+-- On Win32 builds, use the Edit-and-Continue debug information format.
+--
+
+	function suite.debugFormat_onWin32()
+		flags "Symbols"
+		architecture "x32"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+		]]
+	end
+	
+--
+-- Edit-and-Continue is not support on 64-bit builds.
+--
+
+	function suite.debugFormat_onWin64()
+		flags "Symbols"
+		architecture "x64"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		]]
+	end
+
+--
+-- Check the handling of the NoEditAndContinue flag.
+--
+
+	function suite.debugFormat_onNoEditAndContinue()
+		flags { "Symbols", "NoEditAndContinue" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		]]
+	end
+
+--
+-- Edit-and-Continue is not supported for optimized builds.
+--
+
+	function suite.debugFormat_onOptimizedBuild()
+		flags { "Symbols", "Optimize" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		]]
+	end
+
+--
+-- Edit-and-Continue is not supported for Managed builds.
+--
+
+	function suite.debugFormat_onManagedCode()
+		flags { "Symbols", "Managed" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		]]
+	end
+
