@@ -1,12 +1,12 @@
 --
 -- tests/project/test_vpaths.lua
 -- Automated test suite for the project support functions.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	T.project_vpaths = { }
 	local suite = T.project_vpaths	
-	local project = premake.project
+	local project = premake5.project
 
 
 --
@@ -19,8 +19,7 @@
 	end
 
 	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.solution.getproject_ng(sln, 1)
 	end
 
 	

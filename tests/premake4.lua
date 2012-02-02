@@ -105,7 +105,6 @@
 	dofile("actions/vstudio/vc200x/test_debug_settings.lua")
 	dofile("actions/vstudio/vc200x/test_configuration.lua")
 	dofile("actions/vstudio/vc200x/test_files.lua")
-	dofile("actions/vstudio/vc200x/test_filters.lua")
 	dofile("actions/vstudio/vc200x/test_linker_block.lua")
 	dofile("actions/vstudio/vc200x/test_manifest_block.lua")
 	dofile("actions/vstudio/vc200x/test_mfc.lua")

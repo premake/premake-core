@@ -89,6 +89,28 @@
 
 
 --
+-- Check the structure of a file with a virtual path.
+--
+
+	function suite.file_onVpath()
+		files { "src/hello.cpp" }
+		vpaths { ["Source Files"] = "**.cpp" }
+		prepare()
+		test.capture [[
+		<Filter
+			Name="Source Files"
+			Filter=""
+			>
+			<File
+				RelativePath="src\hello.cpp"
+				>
+			</File>
+		</Filter>
+		]]
+	end
+
+
+--
 -- Make sure that the special "build a C code" logic only gets triggered
 -- by actual C source code files.
 --

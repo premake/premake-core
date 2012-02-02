@@ -41,7 +41,7 @@
 			local fullpath = ""
 			
 			-- split the file's path into it's component parts
-			local folders = string.explode(file.fullpath, "/", true)
+			local folders = string.explode(file.vpath, "/", true)
 			for i = 1, #folders - 1 do
 				if numFilters == 0 then
 					_p(1,'<ItemGroup>')
@@ -78,7 +78,7 @@
 		if #files > 0 then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				local filter = path.getdirectory(file.fullpath)
+				local filter = path.getdirectory(file.vpath)
 				if filter ~= "." then
 					_p(2,'<%s Include=\"%s\">', group, path.translate(file.fullpath))
 					_p(3,'<Filter>%s</Filter>', path.translate(filter))

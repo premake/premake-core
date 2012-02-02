@@ -1,12 +1,12 @@
 --
 -- tests/project/test_eachfile.lua
 -- Automated test suite for the file iteration function.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	T.project_eachfile = { }
 	local suite = T.project_eachfile
-	local project = premake.project
+	local project = premake5.project
 
 
 --
@@ -15,32 +15,55 @@
 
 	local sln, prj
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
-	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
+	local function prepare(field)
+		if not field then
+			field = "fullpath"
+		end		
+		for file in project.eachfile(prj) do
+			_p(2, file[field])
+		end
 	end
 
 
 --
--- Tests
+-- Sanity check that all files are returned, with project relative paths.
 --
 
-	function suite.ReturnsAllFiles()
+	function suite.listsAllFiles()
 		files { "hello.h", "hello.c" }
 		prepare()
-		local iter = project.eachfile(prj)
-		test.isequal("hello.h", iter().name)
-		test.isequal("hello.c", iter().name)
-		test.isnil(iter())
+		test.capture [[
+		hello.h
+		hello.c
+		]]
 	end
 
+--
+-- Ensure that the virtual path field defaults to the real file path.
+--
 
-	function suite.ReturnedObjectIncludesVpath()
+	function suite.vpathsAreNil_onNoVpaths()
 		files { "hello.h", "hello.c" }
-		prepare()
-		local iter = project.eachfile(prj)
-		test.isequal("hello.h", iter().vpath)
+		prepare("vpath")
+		test.capture [[
+		hello.h
+		hello.c
+		]]
+	end
+
+--
+-- If a virtual path is specified, the vpath field should be set.
+--
+
+	function suite.vpathSet_onVpath()
+		files { "hello.h", "hello.c" }
+		vpaths { Headers = "**.h" }
+		prepare("vpath")
+		test.capture [[
+		Headers/hello.h
+		hello.c
+		]]
 	end

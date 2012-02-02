@@ -60,6 +60,7 @@
 --    These file configurations contain:
 --
 --      fullpath  - the relative path from the project to the file
+--      vpath     - the file's virtual path, if specified, or fullpath if not
 --
 
 	function project.eachfile(prj)
@@ -69,14 +70,17 @@
 		return function()
 			i = i + 1
 			if i <= #files then
-				local fullpath = project.getrelative(prj, files[i])
-
 				local fcfg = {}
-				fcfg.fullpath = fullpath
-				return fcfg
+				fcfg.fullpath = project.getrelative(prj, files[i])
 
-				-- local fcfg = prj.__fileconfigs[t[i]]
-				-- fcfg.vpath = premake.project.getvpath(prj, fcfg.name)
+				local vpath = project.getvpath(prj, files[i])
+				if vpath ~= files[i] then
+					fcfg.vpath = vpath
+				else
+					fcfg.vpath = fcfg.fullpath
+				end
+
+				return fcfg
 			end
 		end
 	end
@@ -237,10 +241,70 @@
 		local tr = premake.tree.new(prj.name)
 
 		for fcfg in project.eachfile(prj) do
-			local node = premake.tree.add(tr, fcfg.fullpath)
+			local node = premake.tree.add(tr, fcfg.vpath)
 			node.cfg = fcfg
 		end
 
 		premake.tree.sort(tr)
 		return tr
+	end
+
+
+--
+-- Given a source file path, return a corresponding virtual path based on
+-- the vpath entries in the project. If no matching vpath entry is found,
+-- the original path is returned.
+--
+
+	function project.getvpath(prj, filename)
+		-- if there is no match, return the input filename
+		local vpath = filename
+		
+		-- file are always specified relative to the script, so the vpath
+		-- patterns do too. Get the script relative path
+		local relpath = path.getrelative(prj.basedir, filename)
+		
+		for replacement,patterns in pairs(prj.vpaths or {}) do
+			for _,pattern in ipairs(patterns) do
+				-- does the filename match this vpath pattern?
+				local i = relpath:find(path.wildcards(pattern))
+				if i == 1 then				
+					-- yes; trim the leading portion of the path
+					i = pattern:find("*", 1, true) or (pattern:len() + 1)
+					local leaf = relpath:sub(i)
+					if leaf:startswith("/") then
+						leaf = leaf:sub(2)
+					end
+					
+					-- check for (and remove) stars in the replacement pattern.
+					-- If there are none, then trim all path info from the leaf
+					-- and use just the filename in the replacement (stars should
+					-- really only appear at the end; I'm cheating here)
+					local stem = ""
+					if replacement:len() > 0 then
+						stem, stars = replacement:gsub("%*", "")
+						if stars == 0 then
+							leaf = path.getname(leaf)
+						end
+					end
+					
+					vpath = path.join(stem, leaf)
+				end
+			end
+		end
+				
+		-- remove any dot ("./", "../") patterns from the start of the path
+		local changed
+		repeat
+			changed = true
+			if vpath:startswith("./") then
+				vpath = vpath:sub(3)
+			elseif vpath:startswith("../") then
+				vpath = vpath:sub(4)
+			else
+				changed = false
+			end
+		until not changed
+		
+		return vpath
 	end
