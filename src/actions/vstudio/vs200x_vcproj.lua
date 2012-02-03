@@ -740,7 +740,7 @@
 				end
 
 				depth = depth + 1
-				for cfg in project.eachconfig(prj, nil, node.cfg.fullpath) do
+				for cfg in project.eachconfig(prj) do
 					local hasconfig
 
 					local out = function(depth, msg, ...)

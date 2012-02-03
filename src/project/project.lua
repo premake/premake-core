@@ -9,6 +9,23 @@
 
 
 --
+-- Flattens the configurations of each of the configurations in the project
+-- and stores the results, which are then returned from subsequent calls
+-- to getconfig().
+--
+
+	function project.bakeconfigs(prj)
+		local configs = {}
+		configs["*"] = project.getconfig(prj)
+		for cfg in project.eachconfig(prj) do
+			local key = cfg.buildcfg .. (cfg.platform or "")
+			configs[key] = cfg
+		end
+		prj.configs = configs
+	end
+
+
+--
 -- Returns an iterator function for the configuration objects contained by
 -- the project. Each configuration corresponds to a build configuration/
 -- platform pair (i.e. "Debug|x32") as specified in the solution.
@@ -64,7 +81,7 @@
 --
 
 	function project.eachfile(prj)
-		cfg = project.getconfig(prj, nil, nil, "files")
+		local cfg = project.getconfig(prj, nil, nil, "files")
 		local files = cfg.files
 		local i = 0
 		return function()
@@ -125,8 +142,14 @@
 -- @return
 --    A configuration object.
 --
-
+	
 	function project.getconfig(prj, buildcfg, platform, field, filename)
+		-- check for a cached version, build by bakeconfigs()
+		if not filename and prj.configs then
+			local key = (buildcfg or "*") .. (platform or "")
+			return prj.configs[key]
+		end
+		
 		local system
 		local architecture
 

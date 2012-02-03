@@ -42,6 +42,21 @@
 
 
 --
+-- Flattens the configurations of each of the projects in the solution
+-- and stores the results, which are then returned from subsequent
+-- calls to getproject().
+--
+
+	function solution.bakeprojects(sln)
+		for i = 1, #sln.projects do
+			local prj = solution.getproject_ng(sln, i)
+			sln.projects[i].rootcfg = prj
+			project.bakeconfigs(prj)
+		end
+	end
+
+
+--
 -- Iterate over the collection of solutions in a session.
 --
 -- @returns
@@ -72,7 +87,7 @@
 		local i = 0
 		return function ()
 			i = i + 1
-			if (i <= #sln.projects) then
+			if i <= #sln.projects then
 				return premake.solution.getproject(sln, i)
 			end
 		end
@@ -92,7 +107,7 @@
 		local i = 0
 		return function ()
 			i = i + 1
-			if (i <= #sln.projects) then
+			if i <= #sln.projects then
 				return premake.solution.getproject_ng(sln, i)
 			end
 		end
@@ -185,9 +200,14 @@
 
 	function solution.getproject_ng(sln, idx)
 		local prj = sln.projects[idx]
-
-		local cfg = oven.merge({}, sln)
-		cfg = oven.merge(cfg, prj)
-		cfg = oven.merge(cfg, project.getconfig(prj))
-		return cfg
+		if prj.rootcfg then
+			-- cached version build by solution.bakeprojects()
+			return prj.rootcfg
+		else
+			-- "raw" version, accessible during scripting
+			local cfg = oven.merge({}, sln)
+			cfg = oven.merge(cfg, prj)
+			cfg = oven.merge(cfg, project.getconfig(prj))
+			return cfg
+		end
 	end

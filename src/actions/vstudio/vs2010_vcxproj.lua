@@ -398,7 +398,7 @@
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
 				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.fullpath))
-				for cfg in project.eachconfig(prj, nil, file.fullpath) do
+				for cfg in project.eachconfig(prj) do
 					if pchsource == file.fullpath and not cfg.flags.NoPCH then
 						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', vc2010.condition(cfg))
 					end

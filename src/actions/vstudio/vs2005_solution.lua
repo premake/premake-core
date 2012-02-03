@@ -7,6 +7,7 @@
 	premake.vstudio.sln2005 = { }
 	local vstudio = premake.vstudio
 	local sln2005 = premake.vstudio.sln2005
+	local solution = premake.solution
 	local project = premake5.project
 
 
@@ -87,7 +88,7 @@
 
 	function sln2005.solutionConfigurationPlatforms(sln)
 		-- eachconfig() requires a project object; any one will do
-		local prj = sln.projects[1]
+		local prj = solution.getproject_ng(sln, 1)
 
 		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		for cfg in project.eachconfig(prj) do
@@ -105,7 +106,7 @@
 
 	function sln2005.projectConfigurationPlatforms(sln)
 		_p(1,'GlobalSection(ProjectConfigurationPlatforms) = postSolution')
-		for _, prj in ipairs(sln.projects) do
+		for prj in solution.eachproject_ng(sln) do
 			for cfg in project.eachconfig(prj) do				
 				local slnplatform = vstudio.platform(cfg)
 				local prjplatform = vstudio.projectplatform(cfg)

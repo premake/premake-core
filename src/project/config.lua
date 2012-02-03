@@ -333,7 +333,7 @@
 		-- times each obj dir gets used
 		local counts = {}
 		for sln in premake.solution.each() do
-			for _, prj in ipairs(sln.projects) do
+			for prj in premake.solution.eachproject_ng(sln) do
 				for testcfg in project.eachconfig(prj, "objdir") do
 					local dirs = getobjdirs(testcfg)
 					for _, dir in ipairs(dirs) do
