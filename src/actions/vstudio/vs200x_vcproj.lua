@@ -320,7 +320,9 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 
-		_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
+		if #buildoptions > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
+		end
 
 		if #cfg.includedirs > 0 then
 			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(cfg.includedirs, ";")))
