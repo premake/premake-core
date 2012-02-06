@@ -109,6 +109,46 @@
 			scope = "config",
 			isflags = true,
 			usagecopy = true,
+			allowed = {
+				"DebugEnvsDontMerge",
+				"DebugEnvsInherit",
+				"EnableSSE",
+				"EnableSSE2",
+				"ExtraWarnings",
+				"FatalWarnings",
+				"FloatFast",
+				"FloatStrict",
+				"Managed",
+				"MFC",
+				"NativeWChar",
+				"No64BitChecks",
+				"NoEditAndContinue",
+				"NoExceptions",
+				"NoFramePointer",
+				"NoImportLib",
+				"NoIncrementalLink",
+				"NoManifest",
+				"NoMinimalRebuild",
+				"NoNativeWChar",
+				"NoPCH",
+				"NoRTTI",
+				"Optimize",
+				"OptimizeSize",
+				"OptimizeSpeed",
+				"SEH",
+				"StaticRuntime",
+				"Symbols",
+				"Unicode",
+				"Unsafe",
+				"WinMain",
+			},
+			aliases = {
+				Optimise = 'Optimize',
+				OptimiseSize = 'OptimizeSize',
+				OptimiseSpeed = 'OptimizeSpeed',
+			},
+
+			--[[
 			allowed = function(value)
 			
 				local allowed_flags = {
@@ -159,6 +199,7 @@
 					return nil, "invalid flag '" .. value .. "'"
 				end
 			end,
+			--]]
 		},
 		
 		framework =
@@ -443,13 +484,22 @@
 -- use case-sensitive comparisions.
 --
 
-	function premake.checkvalue(value, allowed)
-		if (allowed) then
-			if (type(allowed) == "function") then
+	function premake.checkvalue(value, allowed, aliases)
+		if aliases then
+			for k,v in pairs(aliases) do
+				if value:lower() == k:lower() then
+					value = v
+					break
+				end
+			end
+		end 
+			
+		if allowed then
+			if type(allowed) == "function" then
 				return allowed(value)
 			else
 				for _,v in ipairs(allowed) do
-					if (value:lower() == v:lower()) then
+					if value:lower() == v:lower() then
 						return v
 					end
 				end
@@ -519,14 +569,7 @@
 --    The value of the target field, with the new value(s) added.
 --
 
-	function premake.setarray(obj, fieldname, value, allowed)
-	--[[
-		local container, err = premake.getobject(ctype)
-		if (not container) then
-			error(err, 4)
-		end
-	--]]
-
+	function premake.setarray(obj, fieldname, value, allowed, aliases)
 		obj[fieldname] = obj[fieldname] or {}
 
 		local function add(value, depth)
@@ -535,7 +578,7 @@
 					add(v, depth + 1)
 				end
 			else
-				value, err = premake.checkvalue(value, allowed)
+				value, err = premake.checkvalue(value, allowed, aliases)
 				if not value then
 					error(err, depth)
 				end
@@ -622,7 +665,7 @@
 -- specifies the container type (see premake.getobject) for the field.
 --
 
-	function premake.setstring(ctype, fieldname, value, allowed)
+	function premake.setstring(ctype, fieldname, value, allowed, aliases)
 		-- find the container for this value
 		local container, err = premake.getobject(ctype)
 		if (not container) then
@@ -631,7 +674,7 @@
 	
 		-- if a value was provided, set it
 		if (value) then
-			value, err = premake.checkvalue(value, allowed)
+			value, err = premake.checkvalue(value, allowed, aliases)
 			if (not value) then 
 				error(err, 4)
 			end
@@ -648,10 +691,12 @@
 -- The getter/setter implemention.
 --
 
-	local function accessor(name, value)		
-		local kind    = premake.fields[name].kind
-		local scope   = premake.fields[name].scope
-		local allowed = premake.fields[name].allowed
+	local function accessor(name, value)
+		local field   = premake.fields[name]
+		local kind    = field.kind
+		local scope   = field.scope
+		local allowed = field.allowed
+		local aliases = field.aliases
 		
 		if (kind == "string" or kind == "path") and value then
 			if type(value) ~= "string" then
@@ -666,12 +711,12 @@
 		end
 	
 		if kind == "string" then
-			return premake.setstring(scope, name, value, allowed)
+			return premake.setstring(scope, name, value, allowed, aliases)
 		elseif kind == "path" then
 			if value then value = path.getabsolute(value) end
 			return premake.setstring(scope, name, value)
 		elseif kind == "list" then
-			return premake.setarray(container, name, value, allowed)
+			return premake.setarray(container, name, value, allowed, aliases)
 		elseif kind == "dirlist" then
 			return premake.setdirarray(container, name, value)
 		elseif kind == "filelist" then
