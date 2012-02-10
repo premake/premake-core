@@ -47,7 +47,7 @@
 				extension = ".lib"
 			end
 
-		elseif cfg.system == premake.WINDOWS then
+		elseif cfg.system == premake.WINDOWS or cfg.system == premake.XBOX360 then
 			if kind == premake.CONSOLEAPP or kind == premake.WINDOWEDAPP then
 				extension = ".exe"
 			elseif kind == premake.SHAREDLIB then

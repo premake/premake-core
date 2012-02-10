@@ -59,12 +59,17 @@
 
 
 --
--- Visual Studio 2010 C# projects lists dependencies in the project, rather 
--- than the solution. Make sure nothing gets written in that case.
+-- Most C# references should go into the project rather than the solution,
+-- but until I know the conditions, put everything here to be safe.
 --
 
 	function suite.nothingOutput_onVs2010()
 		_ACTION = "vs2010"
 		prepare("C#")
-		test.isemptycapture()
+		test.capture [[
+	ProjectSection(ProjectDependencies) = postProject
+		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
+	EndProjectSection
+		]]
 	end
+

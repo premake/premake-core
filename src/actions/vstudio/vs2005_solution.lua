@@ -67,9 +67,6 @@
 --
 
 	function sln2005.projectdependencies_ng(prj)
-		-- VS2010 C# gets dependencies right from the projects; doesn't need rules here
-		if _ACTION > "vs2008" and prj.language == "C#" then return end
-
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 			_p(1,'ProjectSection(ProjectDependencies) = postProject')
@@ -183,9 +180,6 @@
 --
 
 	function sln2005.projectdependencies(prj)
-		-- VS2010 C# gets dependencies right from the projects; doesn't need rules here
-		if _ACTION > "vs2008" and prj.language == "C#" then return end
-
 		local deps = premake.getdependencies(prj)
 		if #deps > 0 then
 			_p('\tProjectSection(ProjectDependencies) = postProject')

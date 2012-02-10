@@ -169,6 +169,10 @@
 		local outdir = path.translate(target.directory)
 		_x(2,'<OutDir>%s\\</OutDir>', outdir)
 
+		if cfg.system == premake.XBOX360 then
+			_x(2,'<OutputFile>$(OutDir)%s</OutputFile>', target.name)
+		end
+
 		local objdir = path.translate(config.getuniqueobjdir(cfg))
 		_x(2,'<IntDir>%s\\</IntDir>', objdir)
 

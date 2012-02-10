@@ -46,6 +46,26 @@
 
 
 --
+-- Xbox360 adds an extra <OutputFile> element to the block.
+--
+
+	function suite.structureIsCorrect_onXbox360()
+		system "Xbox360"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+		<LinkIncremental>true</LinkIncremental>
+		<OutDir>.\</OutDir>
+		<OutputFile>$(OutDir)MyProject.exe</OutputFile>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>.exe</TargetExt>
+	</PropertyGroup>
+		]]
+	end
+
+
+--
 -- Static libraries should omit the link incremental element entirely.
 --
 
