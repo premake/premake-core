@@ -391,16 +391,14 @@
 		{
 			kind  = "string",
 			scope = "config",
-			allowed = {
-				"bsd",
-				"haiku",
-				"linux",
-				"macosx",
-				"ps3",
-				"solaris",
-				"windows",
-				"xbox360"
-			},
+			allowed = function(value)
+				value = value:lower()
+				if premake.systems[value] then
+					return value
+				else
+					return nil, "unknown system"
+				end
+			end,
 		},
 
 		

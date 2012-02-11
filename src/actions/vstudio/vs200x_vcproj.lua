@@ -343,30 +343,26 @@
 
 	function vc200x.VCLinkerTool_ng(cfg)
 		_p(3,'<Tool')
+		_p(4,'Name="%s"', vc200x.linkertool(cfg))
 
-		if cfg.kind == premake.STATICLIB then
-			_p(4,'Name="VCLibrarianTool"')
-			if cfg.system == premake.PS3 then
-				vc200x.VCLinkerTool_ps3_ng(cfg)
-			else
-				vc200x.VCLinkerTool_windows_static(cfg)
-			end
+		-- Decide between the built-in linker or an external toolset;
+		-- PS3 uses the external toolset
+		local toolset = vc200x.toolset(cfg)
+		if toolset then
+			vc200x.VCExternalLinkerTool(cfg, toolset)
 		else
-			_p(4,'Name="%s"', iif(cfg.platform ~= "Xbox360", "VCLinkerTool", "VCX360LinkerTool"))
-			if cfg.system == premake.PS3 then
-				vc200x.VCLinkerTool_ps3_ng(cfg)
-			else
-				vc200x.VCLinkerTool_windows(cfg)
-			end
+			vc200x.VCBuiltInLinkerTool(cfg)
 		end
 				
 		_p(3,'/>')
 	end
 
 
-	function vc200x.VCLinkerTool_windows(cfg)		
-		if cfg.flags.NoImportLib then
-			_p(4,'IgnoreImportLibrary="%s"', bool(true))
+	function vc200x.VCBuiltInLinkerTool(cfg)
+		if cfg.kind ~= premake.STATICLIB then
+			if cfg.flags.NoImportLib then
+				_p(4,'IgnoreImportLibrary="%s"', bool(true))
+			end
 		end
 			
 		if #cfg.linkoptions > 0 then
@@ -379,74 +375,64 @@
 
 		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
 
-		_p(4,'LinkIncremental="%s"', iif(premake.config.canincrementallink(cfg) , 2, 1))
+		if cfg.kind ~= premake.STATICLIB then
+			_p(4,'LinkIncremental="%s"', iif(premake.config.canincrementallink(cfg) , 2, 1))
+		end
 
 		vc200x.additionalLibraryDirectories(cfg)
 
-		local deffile = config.findfile(cfg, ".def")
-		if deffile then
-			_p(4,'ModuleDefinitionFile="%s"', deffile)
-		end
-
-		if cfg.flags.NoManifest then
-			_p(4,'GenerateManifest="%s"', bool(false))
-		end
-
-		_p(4,'GenerateDebugInformation="%s"', bool(vc200x.symbols(cfg) ~= 0))
-
-		if vc200x.symbols(cfg) >= 3 then
-			_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
-		end
-
-		_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
-
-		if vc200x.optimization(cfg) ~= 0 then
-			_p(4,'OptimizeReferences="2"')
-			_p(4,'EnableCOMDATFolding="2"')
-		end
-
-		if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
-			_p(4,'EntryPointSymbol="mainCRTStartup"')
-		end
-
-		if cfg.kind == "SharedLib" then
-			local implibname = config.getlinkinfo(cfg).fullpath
-			-- I can't actually stop the import lib, but I can hide it in the objects directory
-			if cfg.flags.NoImportLib then
-				local objdir = config.getuniqueobjdir(cfg)
-				implibname = path.join(objdir, path.getname(implibname))
+		if cfg.kind ~= premake.STATICLIB then
+			local deffile = config.findfile(cfg, ".def")
+			if deffile then
+				_p(4,'ModuleDefinitionFile="%s"', deffile)
 			end
-			_x(4,'ImportLibrary="%s"', path.translate(implibname))
+	
+			if cfg.flags.NoManifest then
+				_p(4,'GenerateManifest="%s"', bool(false))
+			end
+	
+			_p(4,'GenerateDebugInformation="%s"', bool(vc200x.symbols(cfg) ~= 0))
+	
+			if vc200x.symbols(cfg) >= 3 then
+				_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+			end
+	
+			_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
+	
+			if vc200x.optimization(cfg) ~= 0 then
+				_p(4,'OptimizeReferences="2"')
+				_p(4,'EnableCOMDATFolding="2"')
+			end
+	
+			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
+				_p(4,'EntryPointSymbol="mainCRTStartup"')
+			end
+	
+			if cfg.kind == "SharedLib" then
+				local implibname = config.getlinkinfo(cfg).fullpath
+				-- I can't actually stop the import lib, but I can hide it in the objects directory
+				if cfg.flags.NoImportLib then
+					local objdir = config.getuniqueobjdir(cfg)
+					implibname = path.join(objdir, path.getname(implibname))
+				end
+				_x(4,'ImportLibrary="%s"', path.translate(implibname))
+			end
+	
+			_p(4,'TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
 		end
-
-		_p(4,'TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
 	end
 
 
-	function vc200x.VCLinkerTool_windows_static(cfg)
-		if #cfg.links > 0 then
-			_x(4,'AdditionalDependencies="%s"', vc200x.links(cfg))
+	function vc200x.VCExternalLinkerTool(cfg, toolset)
+		-- temporary: some tools need rewriting for new platforms API
+		local flags
+		if toolset.getldflags_ng then
+			flags = toolset.getldflags(cfg)
+		else
+			flags = toolset.getldflags(cfg)
 		end
-
-		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
-
-		vc200x.additionalLibraryDirectories(cfg)
-
-		local opts = {}
-		if cfg.architecture == premake.X32 then
-			table.insert(opts, "/MACHINE:X86")
-		elseif cfg.architecture == premake.X64 then
-			table.insert(opts, "/MACHINE:X64")
-		end
-		opts = table.join(opts, cfg.linkoptions)
-		if #opts > 0 then
-			_x(4,'AdditionalOptions="%s"', table.concat(opts, " "))
-		end
-	end
-
-
-	function vc200x.VCLinkerTool_ps3_ng(cfg)
-		local buildoptions = table.join(premake.snc.getldflags_ng(cfg), cfg.linkoptions)
+	
+		local buildoptions = table.join(flags, cfg.linkoptions)
 		if #buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
@@ -704,6 +690,16 @@
 
 
 --
+-- Map target systems to their default toolset. If no mapping is 
+-- listed, the built-in Visual Studio tools will be used
+--
+
+	vc200x.toolsets = {
+		ps3 = premake.snc
+	}
+
+
+--
 -- Write out the source file tree.
 --
 
@@ -827,6 +823,22 @@
 
 
 --
+-- Returns the correct name for the linker tool element, based on
+-- the configuration target system.
+--
+
+	function vc200x.linkertool(cfg)
+		if cfg.kind == premake.STATICLIB then
+			return "VCLibrarianTool"
+		elseif cfg.system == premake.XBOX360 then
+			return "VCX360LinkerTool"
+		else
+			return "VCLinkerTool"
+		end
+	end
+
+
+--
 -- Returns the list of libraries required to link a specific configuration,
 -- formatted for Visual Studio's XML.
 --
@@ -909,11 +921,7 @@
 --
 
 	function vc200x.toolset(cfg)
-		if cfg.system == premake.PS3 then
-			return premake.snc
-		else
-			return nil
-		end
+		return cfg.toolset or vc200x.toolsets[cfg.system]
 	end
 
 

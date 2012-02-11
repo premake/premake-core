@@ -35,45 +35,17 @@
 
 		local bundlename = ""
 		local bundlepath = ""
-		local extension = ""
-		local prefix = ""
 		local suffix = ""
 
-		if kind == premake.STATICLIB then
-			if cfg.system ~= premake.WINDOWS then
-				prefix = "lib"
-				extension = ".a"
-			else
-				extension = ".lib"
-			end
-
-		elseif cfg.system == premake.WINDOWS or cfg.system == premake.XBOX360 then
-			if kind == premake.CONSOLEAPP or kind == premake.WINDOWEDAPP then
-				extension = ".exe"
-			elseif kind == premake.SHAREDLIB then
-				extension = ".dll"
-			end
-
-		elseif cfg.system == premake.MACOSX then
-			if kind == premake.WINDOWEDAPP then
-				bundlename = basename .. ".app"
-				bundlepath = path.join(directory, bundlename)
-				bundlepath = path.join(bundlepath, "Contents/MacOS")
-			elseif kind == premake.SHAREDLIB then
-				prefix = "lib"
-				extension = ".dylib"
-			end
-
-		elseif cfg.system == premake.PS3 then
-			if kind == premake.CONSOLEAPP or kind == premake.WINDOWEDAPP then
-				extension = ".elf"
-			end
-
-		else
-			if kind == premake.SHAREDLIB then
-				prefix = "lib"
-				extension = ".so"
-			end
+		local sysinfo = premake.systems[cfg.system][kind:lower()] or {}
+		local prefix = sysinfo.prefix or ""
+		local extension = sysinfo.extension or ""
+		
+		-- Mac .app requires more logic than I can bundle up in a table right now
+		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then
+			bundlename = basename .. ".app"
+			bundlepath = path.join(directory, bundlename)
+			bundlepath = path.join(bundlepath, "Contents/MacOS")
 		end
 
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix

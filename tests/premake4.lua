@@ -105,6 +105,7 @@
 	dofile("actions/vstudio/vc200x/test_configuration.lua")
 	dofile("actions/vstudio/vc200x/test_debug_settings.lua")
 	dofile("actions/vstudio/vc200x/test_external_compiler.lua")
+	dofile("actions/vstudio/vc200x/test_external_linker.lua")
 	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_linker_block.lua")
 	dofile("actions/vstudio/vc200x/test_manifest_block.lua")

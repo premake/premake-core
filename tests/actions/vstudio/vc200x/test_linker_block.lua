@@ -189,86 +189,8 @@
 		test.capture [[
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\MyProject.lib"
 				AdditionalOptions="/ltcg /lZ"
-			/>
-		]]
-	end
-
-
---
--- Verify machine option settings for 32-bit builds.
---
-
-	function suite.machineOptionSet_on32BitStaticLib()
-		kind "StaticLib"
-		architecture "x32"
-		prepare()
-		test.capture [[
-			<Tool
-				Name="VCLibrarianTool"
 				OutputFile="$(OutDir)\MyProject.lib"
-				AdditionalOptions="/MACHINE:X86"
 			/>
 		]]
 	end
-
-
---
--- Verify machine option settings for 64-bit builds.
---
-
-	function suite.machineOptionSet_on64BitStaticLib()
-		kind "StaticLib"
-		architecture "x64"
-		prepare()
-		test.capture [[
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\MyProject.lib"
-				AdditionalOptions="/MACHINE:X64"
-			/>
-		]]
-	end
-
-
---
--- Verify the structure of a PS3 console application.
---
-	
-	function suite.looksGood_onPS3ConsoleApp()
-		system "PS3"
-		prepare()
-		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				OutputFile="$(OutDir)\MyProject.elf"
-				LinkIncremental="0"
-				GenerateManifest="false"
-				ProgramDatabaseFile=""
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-		]]
-	end
-
-
---
--- Verify the structure of a PS3 static library.
---
-
-	function suite.looksGood_onPS3StaticLib()
-		system "PS3"
-		kind "StaticLib"
-		prepare()
-		test.capture [[
-			<Tool
-				Name="VCLibrarianTool"
-				AdditionalOptions="-s"
-				OutputFile="$(OutDir)\libMyProject.a"
-			/>
-		]]
-	end
-
-
