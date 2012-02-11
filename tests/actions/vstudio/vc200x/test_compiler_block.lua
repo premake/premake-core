@@ -1,6 +1,6 @@
 --
 -- tests/actions/vstudio/vc200x/test_compiler_block.lua
--- Validate generation of filter blocks in Visual Studio 200x C/C++ projects.
+-- Validate generation the VCCLCompiler element in Visual Studio 200x C/C++ projects.
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
@@ -301,7 +301,7 @@
 
 
 --
--- Verify the basic structure when targeting the Xbox360.
+-- Xbox 360 uses the same structure, but changes the element name.
 --
 
 	function suite.looksGood_onXbox360()
@@ -318,25 +318,6 @@
 				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				DebugInformationFormat="0"
-			/>
-		]]
-	end
-	
-
---
--- Verify the basic structure when targeting the PS3.
---
-
-	function suite.looksGood_onPS3()
-		system "PS3"
-		prepare()
-		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				DebugInformationFormat="0"
-				CompileAs="0"
 			/>
 		]]
 	end

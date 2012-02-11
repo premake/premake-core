@@ -187,16 +187,19 @@
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', vc200x.compilertool(cfg))
 
-		if cfg.system == premake.PS3 then
-			vc200x.VCCLCompilerTool_ps3_ng(cfg)
+		-- Decide between the built-in compiler or an external toolset;
+		-- PS3 uses the external toolset
+		local toolset = vc200x.toolset(cfg)
+		if toolset then
+			vc200x.VCCLExternalCompilerTool(cfg, toolset)
 		else
-			vc200x.VCCLCompilerTool_windows(cfg)
+			vc200x.VCCLBuiltInCompilerTool(cfg)
 		end
 
 		_p(3,'/>')
 	end
 
-	function vc200x.VCCLCompilerTool_windows(cfg)
+	function vc200x.VCCLBuiltInCompilerTool(cfg)
 		if #cfg.buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.buildoptions, " "))
 		end
@@ -207,10 +210,7 @@
 			_p(4,'OmitFramePointers="%s"', bool(true))
 		end
 		
-		if #cfg.includedirs > 0 then
-			local dirs = table.concat(project.getrelative(cfg.project, cfg.includedirs), ";")
-			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(dirs))
-		end
+		vc200x.additionalIncludeDirectories(cfg)
 		
 		if #cfg.defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
@@ -309,8 +309,8 @@
 	end
 
 
-	function vc200x.VCCLCompilerTool_ps3_ng(cfg)
-		local buildoptions = table.join(premake.snc.getcflags(cfg), premake.snc.getcxxflags(cfg), cfg.buildoptions)
+	function vc200x.VCCLExternalCompilerTool(cfg, toolset)
+		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
 		
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
@@ -324,9 +324,7 @@
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
 
-		if #cfg.includedirs > 0 then
-			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(cfg.includedirs, ";")))
-		end
+		vc200x.additionalIncludeDirectories(cfg)
 
 		if #cfg.defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
@@ -660,27 +658,28 @@
 				"VCPostBuildEventTool",
 				"DebuggerTool",
 			}
+		else
+			return {	
+				"VCPreBuildEventTool",
+				"VCCustomBuildTool",
+				"VCXMLDataGeneratorTool",
+				"VCWebServiceProxyGeneratorTool",
+				"VCMIDLTool",
+				"VCCLCompilerTool",
+				"VCManagedResourceCompilerTool",
+				"VCResourceCompilerTool",
+				"VCPreLinkEventTool",
+				"VCLinkerTool",
+				"VCALinkTool",
+				"VCManifestTool",
+				"VCXDCMakeTool",
+				"VCBscMakeTool",
+				"VCFxCopTool",
+				"VCAppVerifierTool",
+				"VCWebDeploymentTool",
+				"VCPostBuildEventTool"
+			}
 		end
-		return {	
-			"VCPreBuildEventTool",
-			"VCCustomBuildTool",
-			"VCXMLDataGeneratorTool",
-			"VCWebServiceProxyGeneratorTool",
-			"VCMIDLTool",
-			"VCCLCompilerTool",
-			"VCManagedResourceCompilerTool",
-			"VCResourceCompilerTool",
-			"VCPreLinkEventTool",
-			"VCLinkerTool",
-			"VCALinkTool",
-			"VCManifestTool",
-			"VCXDCMakeTool",
-			"VCBscMakeTool",
-			"VCFxCopTool",
-			"VCAppVerifierTool",
-			"VCWebDeploymentTool",
-			"VCPostBuildEventTool"
-		}	
 	end
 
 
@@ -788,7 +787,20 @@
 
 
 --
--- Write out the <AdditionalLibraryDirectories> block, used by the
+-- Write out the <AdditionalIncludeDirectories> element, used by the
+-- various compiler tool variations.
+--
+
+	function vc200x.additionalIncludeDirectories(cfg)
+		if #cfg.includedirs > 0 then
+			local dirs = project.getrelative(cfg.project, cfg.includedirs)
+			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
+--
+-- Write out the <AdditionalLibraryDirectories> element, used by the
 -- various linker tool variations.
 --
 
@@ -851,6 +863,21 @@
 
 
 --
+-- Output the correct project version attribute for the current action.
+--
+
+	function vc200x.projectversion()
+		local map = {
+			vs2002 = '7.0',
+			vs2003 = '7.1',
+			vs2005 = '8.0',
+			vs2008 = '9.0'
+		}
+		_p(1,'Version="%s0"', map[_ACTION])
+	end
+
+
+--
 -- Return the debugging symbols level for a configuration.
 --
 
@@ -876,17 +903,17 @@
 
 
 --
--- Output the correct project version attribute for the current action.
+-- Identify the toolset to use for a given configuration. Returns nil to
+-- use the built-in Visual Studio compiler, or a toolset interface to
+-- use the alternate external compiler setup.
 --
 
-	function vc200x.projectversion()
-		local map = {
-			vs2002 = '7.0',
-			vs2003 = '7.1',
-			vs2005 = '8.0',
-			vs2008 = '9.0'
-		}
-		_p(1,'Version="%s0"', map[_ACTION])
+	function vc200x.toolset(cfg)
+		if cfg.system == premake.PS3 then
+			return premake.snc
+		else
+			return nil
+		end
 	end
 
 
