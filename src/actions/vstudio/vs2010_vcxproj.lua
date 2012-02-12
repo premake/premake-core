@@ -45,9 +45,9 @@
 
 		for cfg in project.eachconfig(prj) do
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
-			vc2010.clcompile_ng(cfg)
+			vc2010.clCompile(cfg)
 			vc2010.resourceCompile(cfg)
-			vc2010.link_ng(cfg)
+			vc2010.link(cfg)
 			vc2010.buildEvents(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 		end
@@ -191,7 +191,7 @@
 -- Write the the <ClCompile> compiler settings block.
 --
 
-	function vc2010.clcompile_ng(cfg)
+	function vc2010.clCompile(cfg)
 		_p(2,'<ClCompile>')
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
@@ -303,7 +303,7 @@
 -- Write out the linker tool block.
 --
 
-	function vc2010.link_ng(cfg)
+	function vc2010.link(cfg)
 		_p(2,'<Link>')
 
 		local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
@@ -328,17 +328,8 @@
 	end
 
 	function vc2010.link_dynamic(cfg)
-		local links = config.getlinks(cfg, "system", "fullpath")
-		if #links > 0 then
-			links = path.translate(table.concat(links, ";"))
-			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
-		end
-
-		if #cfg.libdirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.libdirs)
-			dirs = path.translate(table.concat(dirs, ";"))
-			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
-		end
+		vc2010.additionalDependencies(cfg)
+		vc2010.additionalLibraryDirectories(cfg)
 
 		if vc2010.config_type(cfg) == "Application" and not cfg.flags.WinMain and not cfg.flags.Managed then
 			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
@@ -464,6 +455,19 @@
 
 
 --
+-- Write out the linker's additionalDependencies element.
+--
+
+	function vc2010.additionalDependencies(cfg)
+		local links = config.getlinks(cfg, "system", "fullpath")
+		if #links > 0 then
+			links = path.translate(table.concat(links, ";"))
+			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+		end
+	end
+
+
+--
 -- Write out the <AdditionalIncludeDirectories> element, which is used by 
 -- both the compiler and resource compiler blocks.
 --
@@ -473,6 +477,19 @@
 			local dirs = project.getrelative(cfg.project, includedirs)
 			dirs = path.translate(table.concat(dirs, ";"))
 			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+		end
+	end
+
+
+--
+-- Write out the linker's <AdditionalLibraryDirectories> element.
+--
+
+	function vc2010.additionalLibraryDirectories(cfg)
+		if #cfg.libdirs > 0 then
+			local dirs = project.getrelative(cfg.project, cfg.libdirs)
+			dirs = path.translate(table.concat(dirs, ";"))
+			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
 		end
 	end
 
@@ -806,7 +823,7 @@
 		end
 	end
 
-	function vc2010.clcompile(cfg)
+	function vc2010.clcompile_old(cfg)
 		_p(2,'<ClCompile>')
 
 		if #cfg.buildoptions > 0 then
@@ -935,7 +952,7 @@
 -- Generate the <Link> element and its children.
 --
 
-	function vc2010.link(cfg)
+	function vc2010.link_old(cfg)
 		_p(2,'<Link>')
 		_p(3,'<SubSystem>%s</SubSystem>', iif(cfg.kind == "ConsoleApp", "Console", "Windows"))
 		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
@@ -946,7 +963,7 @@
 		end
 
 		if cfg.kind ~= 'StaticLib' then
-			vc2010.additionalDependencies(cfg)
+			vc2010.additionalDependencies_old(cfg)
 			_p(3,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
 
 			if #cfg.libdirs > 0 then
@@ -973,7 +990,7 @@
 -- by an <ItemGroup/ProjectReference>).
 --
 
-	function vc2010.additionalDependencies(cfg)
+	function vc2010.additionalDependencies_old(cfg)
 		local links = premake.getlinks(cfg, "system", "fullpath")
 		if #links > 0 then
 			_p(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>',
@@ -987,10 +1004,10 @@
 			local cfg = premake.getconfig(prj, cfginfo.src_buildcfg, cfginfo.src_platform)
 			_p(1,'<ItemDefinitionGroup ' ..if_config_and_platform() ..'>'
 					,premake.esc(cfginfo.name))
-				vc2010.clcompile(cfg)
+				vc2010.clcompile_old(cfg)
 				resource_compile(cfg)
 				item_def_lib(cfg)
-				vc2010.link(cfg)
+				vc2010.link_old(cfg)
 				event_hooks(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 

@@ -24,7 +24,7 @@
 
 	local function prepare(platform)
 		cfg = project.getconfig(prj, "Debug", platform)
-		vc2010.link_ng(cfg)
+		vc2010.link(cfg)
 	end
 
 

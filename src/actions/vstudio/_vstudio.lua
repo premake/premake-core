@@ -92,14 +92,16 @@
 -- Studio compatible identifier.
 --
 
+	vstudio.architectures =
+	{
+		x64     = "x64",
+		xbox360 = "Xbox 360",
+	}
+	
 	function vstudio.architecture(cfg)
-		if cfg.system == premake.XBOX360 then
-			return "Xbox 360"
-		end
-		if cfg.architecture == "x32" then
-			return "Win32"
-		end
-		return cfg.architecture or "Win32"
+		return vstudio.architectures[cfg.architecture] or
+		       vstudio.architectures[cfg.system] or
+		       "Win32"
 	end
 
 

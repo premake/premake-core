@@ -22,7 +22,7 @@
 
 	local function prepare(platform)
 		cfg = project.getconfig(prj, "Debug", platform)
-		vc2010.clcompile_ng(cfg)
+		vc2010.clCompile(cfg)
 	end
 
 
