@@ -15,10 +15,13 @@
 		
 		-- strip any CRs
 		s = s:gsub("[\r]", "")
-		
-		-- strip out comments
-		s = s:gsub("\n%-%-[^\n]*", "")
 				
+		-- strip out block comments
+		s = s:gsub("%-%-%[%[.-%-%-%]%]", "")
+
+		-- strip out inline comments
+		s = s:gsub("\n%-%-[^\n]*", "")
+		
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
 
