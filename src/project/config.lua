@@ -130,6 +130,25 @@
 
 
 --
+-- Retrieve the configuration settings for a specific file.
+--
+-- @param cfg
+--    The configuration object to query.
+-- @param filename
+--    The full, absolute path of the file to query.
+-- @return
+--    A configuration object for the file, or nil if the file is
+--    not included in this configuration.
+--
+
+	function config.getfileconfig(cfg, filename)
+		if cfg.files[filename] then
+			return {}
+		end
+	end
+
+
+--
 -- Retrieve a list of link targets from a configuration.
 --
 -- @param cfg

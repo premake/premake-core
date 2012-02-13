@@ -287,3 +287,14 @@
 		cfg = oven.bake(sln)
 		test.isnil(cfg.flags.Optimize)
 	end
+
+--
+-- Remove should also work with file paths.
+--
+
+	function suite.remove_onFileField()
+		files { "hello.c", "goodbye.c" }
+		removefiles { "goodbye.c" }
+		cfg = oven.bake(sln)
+		test.isequal(path.join(os.getcwd(), "hello.c"), table.concat(cfg.files))
+	end

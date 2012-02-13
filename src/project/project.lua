@@ -67,8 +67,6 @@
 
 --
 -- Return an iterator for the list of source code files contained by a project.
--- Note that this only returns the files specified at the project level; I'm
--- not supported configuration level file lists, yet.
 --
 -- @param prj
 --    The project to query.

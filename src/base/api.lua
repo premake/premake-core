@@ -90,10 +90,10 @@
 			scope = "config",
 			usagecopy = true,
 		},
-		
+
 		excludes =
 		{
-			kind  = "filelist",
+			kind = "filelist",
 			scope = "config",
 		},
 		
@@ -147,59 +147,6 @@
 				OptimiseSize = 'OptimizeSize',
 				OptimiseSpeed = 'OptimizeSpeed',
 			},
-
-			--[[
-			allowed = function(value)
-			
-				local allowed_flags = {
-					DebugEnvsDontMerge = 1,
-					DebugEnvsInherit = 1,
-					EnableSSE = 1,
-					EnableSSE2 = 1,
-					ExtraWarnings = 1,
-					FatalWarnings = 1,
-					FloatFast = 1,
-					FloatStrict = 1,
-					Managed = 1,
-					MFC = 1,
-					NativeWChar = 1,
-					No64BitChecks = 1,
-					NoEditAndContinue = 1,
-					NoExceptions = 1,
-					NoFramePointer = 1,
-					NoImportLib = 1,
-					NoIncrementalLink = 1,
-					NoManifest = 1,
-					NoMinimalRebuild = 1,
-					NoNativeWChar = 1,
-					NoPCH = 1,
-					NoRTTI = 1,
-					Optimize = 1,
-					OptimizeSize = 1,
-					OptimizeSpeed = 1,
-					SEH = 1,
-					StaticRuntime = 1,
-					Symbols = 1,
-					Unicode = 1,
-					Unsafe = 1,
-					WinMain = 1
-				}
-				
-				local englishToAmericanSpelling =
-				{
-					Optimise = 'Optimize',
-					OptimiseSize = 'OptimizeSize',
-					OptimiseSpeed = 'OptimizeSpeed'
-				}
-				
-				if englishToAmericanSpelling[value] then value = englishToAmericanSpelling[value] end
-			
-				if allowed_flags[value] then return value 
-				else 
-					return nil, "invalid flag '" .. value .. "'"
-				end
-			end,
-			--]]
 		},
 		
 		framework =
@@ -580,7 +527,7 @@
 				if not value then
 					error(err, depth)
 				end
-				table.insert(obj[fieldname], value)
+				obj[fieldname] = table.join(obj[fieldname], value)
 			end
 		end
 
@@ -599,7 +546,7 @@
 -- values are converted to absolute paths before being stored.
 --
 
-	local function domatchedarray(ctype, fieldname, value, matchfunc)
+	local function domatchedarray(obj, fieldname, value, matchfunc)
 		local result = { }
 		
 		function makeabsolute(value, depth)
@@ -619,15 +566,15 @@
 		end
 		
 		makeabsolute(value, 3)
-		return premake.setarray(ctype, fieldname, result)
+		return premake.setarray(obj, fieldname, result)
 	end
 	
-	function premake.setdirarray(ctype, fieldname, value)
-		return domatchedarray(ctype, fieldname, value, os.matchdirs)
+	function premake.setdirarray(obj, fieldname, value)
+		return domatchedarray(obj, fieldname, value, os.matchdirs)
 	end
 	
-	function premake.setfilearray(ctype, fieldname, value)
-		return domatchedarray(ctype, fieldname, value, os.matchfiles)
+	function premake.setfilearray(obj, fieldname, value)
+		return domatchedarray(obj, fieldname, value, os.matchfiles)
 	end
 	
 	
@@ -733,9 +680,18 @@
 --
 
 	function premake.remove(fieldname, value)
+		local kind = premake.fields[fieldname].kind
+		function set(value)
+			if kind ~= "list" and not value:startswith("**") then
+				return path.getabsolute(value)
+			else
+				return value
+			end
+		end
+		
 		local cfg = premake.CurrentConfiguration
 		cfg.removes = cfg.removes or {}
-		cfg.removes[fieldname] = premake.setarray(cfg.removes, fieldname, value)
+		cfg.removes[fieldname] = premake.setarray(cfg.removes, fieldname, value, set)
 	end
 
 	
@@ -758,8 +714,17 @@
 			end
 		end
 	end
-	
 
+
+--
+-- For backward compatibility, excludes() is becoming an alias for removefiles().
+--
+
+	function excludes(value)
+		removefiles(value)
+		return accessor("excludes", value)
+	end
+	
 
 --
 -- Project object constructors.
