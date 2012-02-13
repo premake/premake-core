@@ -570,11 +570,23 @@
 	end
 	
 	function premake.setdirarray(obj, fieldname, value)
-		return domatchedarray(obj, fieldname, value, os.matchdirs)
+		function set(value)
+			if value:find("*") then
+				value = os.matchdirs(value)
+			end
+			return path.getabsolute(value)
+		end
+		return premake.setarray(obj, fieldname, value, set)
 	end
 	
 	function premake.setfilearray(obj, fieldname, value)
-		return domatchedarray(obj, fieldname, value, os.matchfiles)
+		function set(value)
+			if value:find("*") then
+				value = os.matchfiles(value)
+			end
+			return path.getabsolute(value)
+		end
+		return premake.setarray(obj, fieldname, value, set)
 	end
 	
 	

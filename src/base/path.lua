@@ -1,7 +1,7 @@
 --
 -- path.lua
 -- Path manipulation functions.
--- Copyright (c) 2002-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
 
@@ -11,6 +11,14 @@
 --
 	
 	function path.getabsolute(p)
+		if type(p) == "table" then
+			local result = {}
+			for _, value in ipairs(p) do
+				table.insert(result, path.getabsolute(value))
+			end
+			return result
+		end
+		
 		-- normalize the target path
 		p = path.translate(p, "/")
 		if (p == "") then p = "." end

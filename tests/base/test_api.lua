@@ -111,6 +111,16 @@
 
 
 --
+-- premake.setfilearray() tests
+--
+
+	function suite.setfilearray_onWildcards()
+		local f = premake.setfilearray({}, "files", "*.lua")
+		test.istrue(table.contains(f, path.join(os.getcwd(), "testfx.lua")))
+	end
+
+
+--
 -- premake.setkeyvalue() tests
 --
 
