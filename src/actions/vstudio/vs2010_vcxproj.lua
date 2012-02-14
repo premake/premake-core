@@ -394,6 +394,11 @@
 			for _, file in ipairs(files) do
 				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.fullpath))
 				for cfg in project.eachconfig(prj) do
+					local filecfg = config.getfileconfig(cfg, file.abspath)
+					if not filecfg then
+						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', vc2010.condition(cfg))
+					end
+					
 					if pchsource == file.fullpath and not cfg.flags.NoPCH then
 						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', vc2010.condition(cfg))
 					end

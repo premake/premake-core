@@ -88,3 +88,22 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- If a file is excluded from a configuration, make sure it is marked as such.
+--
+
+	function suite.excludedFromBuild_onExcludedFile()
+		files { "hello.cpp" }
+		configuration "Debug"
+		removefiles { "hello.cpp" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end
