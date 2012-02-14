@@ -3,6 +3,7 @@
 --------
 
 * Completely overhauled the platform support; too many changes to list
+* Enabled per-configuration file lists
 * Added remove...() API to remove values from list fields
 * Added debugformat with C7 support for Visual Studio
 * The error message for invalid flags now includes the offending value
