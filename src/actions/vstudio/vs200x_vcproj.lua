@@ -738,22 +738,37 @@
 
 				depth = depth + 1
 				for cfg in project.eachconfig(prj) do
-					local hasconfig
+					local elementOpened = false
+					local filecfg = nil
 
-					local out = function(depth, msg, ...)
-						if not hasconfig then
-							hasconfig = true
+					-- helper function writes an attribute into the <Tool> element, opening
+					-- the containing <FileConfiguration> element on the first call.
+					local toolattrib = function(depth, msg, ...)
+						if not elementOpened then
+							elementOpened = true
 							_p(depth, '<FileConfiguration')
 							_p(depth, '\tName="%s"', vstudio.configname(cfg))
+							if not filecfg then
+								_p(depth, '\tExcludedFromBuild="true"')
+							end
 							_p(depth, '\t>')
 							_p(depth, '\t<Tool')
 							_p(depth, '\t\tName="%s"', vc200x.compilertool(cfg))
 						end
-						_x(depth, msg, unpack(arg))
+						if msg then
+							_x(depth, msg, unpack(arg))
+						end
 					end
-
+																	
+					-- get any settings specific to this file/config combination. If nil,
+					-- the file is excluded from this configuration
+					filecfg = config.getfileconfig(cfg, node.cfg.abspath)
+					if not filecfg then
+						toolattrib(depth)
+					end
+					
 					if compileAs then
-						out(depth, '\t\tCompileAs="%s"', compileAs)
+						toolattrib(depth, '\t\tCompileAs="%s"', compileAs)
 					end
 
 					if pchsource == node.cfg.fullpath and not cfg.flags.NoPCH then
@@ -762,13 +777,13 @@
 									                    premake.snc.getcxxflags(cfg), 
 									                    cfg.buildoptions,
 														' --create_pch="$(IntDir)/$(TargetName).pch"')
-							out(depth, '\t\tAdditionalOptions="%s"', table.concat(options, " "))
+							toolattrib(depth, '\t\tAdditionalOptions="%s"', table.concat(options, " "))
 						else
-							out(depth, '\t\tUsePrecompiledHeader="1"')
+							toolattrib(depth, '\t\tUsePrecompiledHeader="1"')
 						end
 					end 
 					
-					if hasconfig then
+					if elementOpened then
 						_p(depth, '\t/>')
 						_p(depth, '</FileConfiguration>')
 					end

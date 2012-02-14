@@ -87,6 +87,7 @@
 			if i <= #files then
 				local fcfg = {}
 				fcfg.fullpath = project.getrelative(prj, files[i])
+				fcfg.abspath = files[i]
 
 				local vpath = project.getvpath(prj, files[i])
 				if vpath ~= files[i] then

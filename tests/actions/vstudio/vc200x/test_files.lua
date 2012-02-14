@@ -189,3 +189,29 @@
 					UsePrecompiledHeader="1"
 		]]
 	end
+
+
+--
+-- A file excluded from a specific configuration should be marked as such.
+--
+
+	function suite.excludedFromBuild_onExcludedFile()
+		files { "hello.cpp" }
+		configuration "Debug"
+		removefiles { "hello.cpp" }
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+				/>
+			</FileConfiguration>
+		</File>
+		]]
+	end
