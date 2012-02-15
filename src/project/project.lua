@@ -79,9 +79,28 @@
 --
 
 	function project.eachfile(prj)
-		local cfg = project.getconfig(prj, nil, nil, "files")
-		local files = cfg.files
+		-- make sure I have the project, and not it's root configuration
+		prj = prj.project or prj
+		
+		-- find *all* files referenced by the project, regardless of configuration,
+		-- and cache the list for future calls
+		if not prj.files then
+			local files = {}
+			for _, block in ipairs(prj.blocks) do
+				for _, file in ipairs(block.files) do
+					if not files[file] then
+						-- add it both indexed for iteration and keyed for quick tests
+						table.insert(files, file)
+						files[file] = file
+					end
+				end
+			end
+			prj.files = files
+		end
+			
+		local files = prj.files
 		local i = 0
+		
 		return function()
 			i = i + 1
 			if i <= #files then

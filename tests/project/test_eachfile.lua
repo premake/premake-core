@@ -67,3 +67,18 @@
 		hello.c
 		]]
 	end
+
+--
+-- A file listed in a configuration should be included in the list.
+--
+
+	function suite.includesFile_setInConfiguration()
+		files { "hello.h" }
+		configuration { "Debug" }
+		files { "hello.c" }
+		prepare()
+		test.capture [[
+		hello.h
+		hello.c
+		]]
+	end
