@@ -4,9 +4,88 @@
 -- Copyright (c) 2010-2012 Jason Perkins and the Premake project
 --
 
+	premake.tools.snc = {}
+	local snc = premake.tools.snc
+	local config = premake5.config
+	
+
+--
+-- SNC flags for specific systems and architectures.
+--
+
+	snc.sysflags = {
+	}
+
+
+--
+-- Retrieve the CPPFLAGS for a specific configuration.
+--
+
+	function snc.getcppflags(cfg)
+		return { "-MMD", "-MP" }
+	end
+
+
+--
+-- Retrieve the CFLAGS for a specific configuration.
+--
+
+	snc.cflags = {
+		ExtraWarnings  = "-Xdiag=2",
+		FatalWarnings  = "-Xquit=2",
+	}
+
+	function snc.getcflags(cfg)
+		local flags = table.translate(cfg.flags, snc.cflags)
+		return flags
+	end
+
+
+--
+-- Retrieve the CXXFLAGS for a specific configuration.
+--
+
+	snc.cxxflags = {
+		NoExceptions   = "-Xc-=exceptions",
+		NoRTTI         = "-Xc-=rtti",
+	}
+
+	function snc.getcxxflags(cfg)
+		local flags = table.translate(cfg.flags, snc.cxxflags)
+		
+		-- turn on exceptions and RTTI by default, to match other toolsets
+		if not cfg.flags.NoExceptions then
+			table.insert(flags, "-Xc+=exceptions")
+		end
+		if not cfg.flags.NoRTTI then
+			table.insert(flags, "-Xc+=rtti")
+		end
+		
+		return flags
+	end
+
+
+--
+-- Retrieve the LDFLAGS for a specific configuration.
+--
+
+	function snc.getldflags(cfg)
+		local flags = { }
+		
+		if not cfg.flags.Symbols then
+			table.insert(flags, "-s")
+		end
+		
+		return flags
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 	
 	premake.snc = { }
-	local config = premake5.config
 
 
 -- TODO: Will cfg.system == "windows" ever be true for SNC? If
@@ -85,27 +164,6 @@
 --
 -- Returns a list of linker flags, based on the supplied configuration.
 --
-
-	function premake.snc.getldflags_ng(cfg)
-		local result = { }
-		
-		if not cfg.flags.Symbols then
-			table.insert(result, "-s")
-		end
-	
-		if cfg.kind == "SharedLib" then
-			table.insert(result, "-shared")				
-			if not cfg.flags.NoImportLib then
-				table.insert(result, '-Wl,--out-implib="' .. config.getlinkinfo(cfg).fullpath .. '"')
-			end
-		end
-		
-		local platform = platforms["PS3"]
-		table.insert(result, platform.flags)
-		table.insert(result, platform.ldflags)
-		
-		return result
-	end
 
 	function premake.snc.getldflags(cfg)
 		local result = { }

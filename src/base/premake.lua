@@ -13,6 +13,8 @@
 	premake.C7          = "c7"
 	premake.CONSOLEAPP  = "ConsoleApp"
 	premake.CPP         = "C++"
+	premake.GCC         = "gcc"
+	premake.HAIKU       = "haiku"
 	premake.MACOSX      = "macosx"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"

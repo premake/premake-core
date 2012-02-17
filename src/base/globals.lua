@@ -12,6 +12,7 @@
 
 	premake = { }
 	premake5 = { }
+	premake.tools = { }
 
 	
 -- The list of supported platforms; also update list in cmdline.lua

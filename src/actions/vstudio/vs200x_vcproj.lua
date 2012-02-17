@@ -424,15 +424,7 @@
 
 
 	function vc200x.VCExternalLinkerTool(cfg, toolset)
-		-- temporary: some tools need rewriting for new platforms API
-		local flags
-		if toolset.getldflags_ng then
-			flags = toolset.getldflags(cfg)
-		else
-			flags = toolset.getldflags(cfg)
-		end
-	
-		local buildoptions = table.join(flags, cfg.linkoptions)
+		local buildoptions = table.join(toolset.getldflags(cfg), cfg.linkoptions)
 		if #buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
@@ -936,7 +928,7 @@
 --
 
 	function vc200x.toolset(cfg)
-		return cfg.toolset or vc200x.toolsets[cfg.system]
+		return premake.tools[cfg.toolset] or vc200x.toolsets[cfg.system]
 	end
 
 

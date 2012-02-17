@@ -1,9 +1,139 @@
 --
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
+	premake.tools.gcc = {}
+	local gcc = premake.tools.gcc
+	local config = premake5.config
+	
+
+--
+-- GCC flags for specific systems and architectures.
+--
+
+	gcc.sysflags = {
+		x32 = {
+			cflags  = "-m32",
+			ldflags = { "-m32", "-L/usr/lib32" }
+		},
+
+		x64 = {
+			cflags = "-m64",
+			ldflags = { "-m64", "-L/usr/lib64" }
+		}
+	}
+
+
+--
+-- Returns list of CPPFLAGS for a specific configuration.
+--
+
+	function gcc.getcppflags(cfg)
+		-- always use -MMD to generate dependency information
+		local flags = { "-MMD" }
+		
+		-- We want the -MP flag for dependency generation (creates phony rules 
+		-- for headers, prevents make errors if file is later deleted), but Haiku 
+		-- OS doesn't support it (yet)
+		if cfg.system ~= premake.HAIKU then
+			table.insert(flags, "-MP")
+		end
+		
+		return flags
+	end
+
+--
+-- Returns list of CFLAGS for a specific configuration.
+--
+
+	gcc.cflags = {
+		EnableSSE      = "-msse",
+		EnableSSE2     = "-msse2",
+		ExtraWarnings  = "-Wall",
+		FatalWarnings  = "-Werror",
+		FloatFast      = "-ffast-math",
+		FloatStrict    = "-ffloat-store",
+		NoFramePointer = "-fomit-frame-pointer",
+		Optimize       = "-O2",
+		OptimizeSize   = "-Os",
+		OptimizeSpeed  = "-O3",
+		Symbols        = "-g",
+	}
+	
+	function gcc.getcflags(cfg)
+		local flags = table.translate(cfg.flags, gcc.cflags)
+
+		local sysflags = gcc.sysflags[cfg.architecture] or {}
+		flags = table.join(flags, sysflags.cflags)
+
+		if cfg.system ~= premake.WINDOWS and cfg.kind == premake.SHAREDLIB then
+			table.insert(flags, "-fPIC")
+		end
+
+		return flags
+	end
+
+
+--
+-- Returns a list of CXXFLAGS for a specific configuration.
+--
+
+	gcc.cxxflags = {
+		NoExceptions   = "-fno-exceptions",
+		NoRTTI         = "-fno-rtti",
+	}
+
+	function gcc.getcxxflags(cfg)
+		local flags = table.translate(cfg.flags, gcc.cxxflags)
+		return flags
+	end
+
+
+--
+-- Return a list of LDFLAGS for a specific configuration.
+--
+
+	function gcc.getldflags(cfg)
+		local flags = {}
+		
+		if not cfg.flags.Symbols then
+			-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
+			if cfg.system == premake.MACOSX then
+				table.insert(flags, "-Wl,-x")
+			else
+				table.insert(flags, "-s")
+			end
+		end
+		
+		if cfg.kind == premake.SHAREDLIB then
+			if cfg.system == premake.MACOSX then
+				flags = table.join(flags, { "-dynamiclib", "-flat_namespace" })
+			else
+				table.insert(flags, "-shared")
+			end
+
+			if cfg.system == "windows" and not cfg.flags.NoImportLib then
+				table.insert(flags, '-Wl,--out-implib="' .. config.getlinkinfo(cfg).fullpath .. '"')
+			end
+		end
+	
+		if cfg.kind == premake.WINDOWEDAPP and cfg.system == premake.WINDOWS then
+			table.insert(flags, "-mwindows")
+		end
+		
+		local sysflags = gcc.sysflags[cfg.architecture] or {}
+		flags = table.join(flags, sysflags.ldflags)
+		
+		return flags
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 	
 	premake.gcc = { }
 	

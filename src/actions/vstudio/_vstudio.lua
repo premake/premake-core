@@ -92,16 +92,25 @@
 -- Studio compatible identifier.
 --
 
-	vstudio.architectures =
-	{
+	vstudio.vs200x_architectures = {
 		x64     = "x64",
 		xbox360 = "Xbox 360",
 	}
 	
+	vstudio.vs2010_architectures = {
+	}
+	
 	function vstudio.architecture(cfg)
-		return vstudio.architectures[cfg.architecture] or
-		       vstudio.architectures[cfg.system] or
-		       "Win32"
+		local arch
+		if _ACTION >= "vs2010" then
+			arch = vstudio.vs2010_architectures[cfg.architecture] or
+			       vstudio.vs2010_architectures[cfg.system]
+		end
+		
+		arch = arch or vstudio.vs200x_architectures[cfg.architecture] or
+		       vstudio.vs200x_architectures[cfg.system] or "Win32"
+		
+		return arch
 	end
 
 

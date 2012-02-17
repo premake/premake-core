@@ -54,7 +54,6 @@
 	dofile("base/test_path.lua")
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
-	dofile("tools/test_gcc.lua")
 	dofile("base/test_config_bug.lua")
 
 	-- Project object tests
@@ -75,6 +74,10 @@
 
 	-- Baking tests
 	dofile("base/test_baking.lua")
+
+	-- Toolset tests
+	dofile("tools/test_gcc.lua")
+	dofile("tools/test_snc.lua")
 
 	-- Clean tests
 	dofile("actions/test_clean.lua")
@@ -154,6 +157,7 @@
 	dofile("actions/codeblocks/codeblocks_files.lua")
 	dofile("actions/codeblocks/test_filters.lua")
 	dofile("actions/codeblocks/environment_variables.lua")
+
 
 --
 -- Register a test action

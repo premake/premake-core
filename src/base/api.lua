@@ -379,6 +379,15 @@
 			scope = "config",
 		},
 		
+		toolset =
+		{
+			kind  = "string",
+			scope = "config",
+			allowed = {
+				"gcc"
+			},
+		},
+		
 		trimpaths =
 		{
 			kind = "dirlist",

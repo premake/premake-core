@@ -1,86 +1,177 @@
 --
 -- tests/test_gcc.lua
 -- Automated test suite for the GCC toolset interface.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
-	T.gcc = { }
-	local suite = T.gcc
+	T.tools_gcc = { }
+	local suite = T.tools_gcc
 
-	local cfg
+	local gcc = premake.tools.gcc
+
+
+--
+-- Setup/teardown
+--
+
+	local sln, prj, cfg
+
 	function suite.setup()
-		cfg = { }
-		cfg.basedir    = "."
-		cfg.location   = "."
-		cfg.language   = "C++"
-		cfg.project    = { name = "MyProject" }
-		cfg.flags      = { }
-		cfg.objectsdir = "obj"
-		cfg.platform   = "Native"
-		cfg.links      = { }
-		cfg.libdirs    = { }
-		cfg.linktarget = { fullpath="libMyProject.a" }
+		sln, prj = test.createsolution()
+		system "Linux"
+	end
+
+	local function prepare()
+		cfg = premake5.project.getconfig(prj, "Debug")
 	end
 
 
 --
--- CPPFLAGS tests
+-- By default, the -MMD -MP are used to generate dependencies.
 --
 
-	function suite.cppflags_OnWindows()
-		cfg.system = "windows"
-		local r = premake.gcc.getcppflags(cfg)
-		test.isequal("-MMD -MP", table.concat(r, " "))
+	function suite.cppflags_defaultWithMMD()
+		prepare()
+		test.isequal({ "-MMD", "-MP" }, gcc.getcppflags(cfg))
 	end
 
-	function suite.cppflags_OnHaiku()
-		cfg.system = "haiku"
-		local r = premake.gcc.getcppflags(cfg)
-		test.isequal("-MMD", table.concat(r, " "))
+
+--
+-- Haiku OS doesn't support the -MP flag yet (that's weird, isn't it?)
+--
+
+	function suite.cppflagsExcludeMP_onHaiku()
+		system "Haiku"
+		prepare()
+		test.isequal({ "-MMD" }, gcc.getcppflags(cfg))
 	end
 
+
+--
+-- Check the translation of CFLAGS.
+--
+
+	function suite.cflags_onEnableSSE()
+		flags { "EnableSSE" }
+		prepare()
+		test.isequal({ "-msse" }, gcc.getcflags(cfg))
+	end
+	
+	function suite.cflags_onFatalWarnings()
+		flags { "FatalWarnings" }
+		prepare()
+		test.isequal({ "-Werror" }, gcc.getcflags(cfg))
+	end
+
+
+--
+-- Check the translation of CXXFLAGS.
+--
+
+	function suite.cflags_onNoExceptions()
+		flags { "NoExceptions" }
+		prepare()
+		test.isequal({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
+	end
+
+
+--
+-- Check the basic translation of LDFLAGS for a Posix system.
+--
+
+	function suite.ldflags_defaultOnLinux()
+		prepare()
+		test.isequal({ "-s" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onSymbols()
+		flags { "Symbols" }
+		prepare()
+		test.isequal({}, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onSharedLib()
+		kind "SharedLib"
+		prepare()
+		test.isequal({ "-s", "-shared" }, gcc.getldflags(cfg))
+	end
+
+
+--
+-- Check Mac OS X variants on LDFLAGS.
+--
+
+	function suite.ldflags_onMacOSXStrip()
+		system "MacOSX"
+		prepare()
+		test.isequal({ "-Wl,-x" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onMacOSXSharedLib()
+		system "MacOSX"
+		kind "SharedLib"
+		prepare()
+		test.isequal({ "-Wl,-x", "-dynamiclib", "-flat_namespace" }, gcc.getldflags(cfg))
+	end
+
+
+--
+-- Check Windows variants on LDFLAGS.
+--
+
+	function suite.ldflags_onWindowsharedLib()
+		system "Windows"
+		kind "SharedLib"
+		prepare()
+		test.isequal({ "-s", "-shared", '-Wl,--out-implib="MyProject.lib"' }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onWindowsApp()
+		system "Windows"
+		kind "WindowedApp"
+		prepare()
+		test.isequal({ "-s", "-mwindows" }, gcc.getldflags(cfg))
+	end
+		
 		
 
 --
--- CFLAGS tests
+-- Make sure system or architecture flags are added properly.
 --
 
-	function suite.cflags_SharedLib_Windows()
-		cfg.kind = "SharedLib"
-		cfg.system = "windows"
-		local r = premake.gcc.getcflags(cfg)
-		test.isequal('', table.concat(r,"|"))
+	function suite.cflags_onX32()
+		architecture "x32"
+		prepare()
+		test.isequal({ "-m32" }, gcc.getcflags(cfg))
 	end
 
-
-	function suite.cflags_OnFpFast()
-		cfg.flags = { "FloatFast" }
-		local r = premake.gcc.getcflags(cfg)
-		test.isequal('-ffast-math', table.concat(r,"|"))
+	function suite.ldflags_onX32()
+		architecture "x32"
+		prepare()
+		test.isequal({ "-s", "-m32", "-L/usr/lib32" }, gcc.getldflags(cfg))
 	end
 
+	function suite.cflags_onX64()
+		architecture "x64"
+		prepare()
+		test.isequal({ "-m64" }, gcc.getcflags(cfg))
+	end
 
-	function suite.cflags_OnFpStrict()
-		cfg.flags = { "FloatStrict" }
-		local r = premake.gcc.getcflags(cfg)
-		test.isequal('-ffloat-store', table.concat(r,"|"))
+	function suite.ldflags_onX64()
+		architecture "x64"
+		prepare()
+		test.isequal({ "-s", "-m64", "-L/usr/lib64" }, gcc.getldflags(cfg))
 	end
 
 
 --
--- LDFLAGS tests
+-- Non-Windows shared libraries should marked as position independent.
 --
 
-	function suite.ldflags_SharedLib_Windows()
-		cfg.kind = "SharedLib"
-		cfg.system = "windows"
-		local r = premake.gcc.getldflags(cfg)
-		test.isequal('-s|-shared|-Wl,--out-implib="libMyProject.a"', table.concat(r,"|"))
+	function suite.cflags_onWindowsSharedLib()
+		system "MacOSX"
+		kind "SharedLib"
+		prepare()
+		test.isequal({ "-fPIC" }, gcc.getcflags(cfg))
 	end
 
-
-	function suite.linkflags_OnFrameworks()
-		cfg.links = { "Cocoa.framework" }
-		local r = premake.gcc.getlinkflags(cfg)
-		test.isequal('-framework Cocoa', table.concat(r,"|"))
-	end
