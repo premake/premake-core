@@ -1045,6 +1045,7 @@
 
 
 	function suite.XCBuildConfigurationTarget_OnMultiplePlatforms()
+		solution("MySolution")
 		platforms { "Universal32", "Universal64" }
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
@@ -1642,6 +1643,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnUniversal()
+		solution("MySolution")
 		platforms { "Universal" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1666,6 +1668,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnUniversal32()
+		solution("MySolution")
 		platforms { "Universal32" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1690,6 +1693,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnUniversal64()
+		solution("MySolution")
 		platforms { "Universal64" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1714,6 +1718,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnNative()
+		solution("MySolution")
 		platforms { "Native" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1738,6 +1743,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnX32()
+		solution("MySolution")
 		platforms { "x32" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1762,6 +1768,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnX64()
+		solution("MySolution")
 		platforms { "x64" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1785,6 +1792,7 @@
 	end
 
 	function suite.XCBuildConfigurationProject_OnMultiplePlatforms()
+		solution("MySolution")
 		platforms { "Universal32", "Universal64" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1870,6 +1878,7 @@
 
 
 	function suite.XCBuildConfigurationList_OnMultiplePlatforms()
+		solution("MySolution")
 		platforms { "Universal32", "Universal64" }
 		prepare()
 		xcode.XCBuildConfigurationList(tr)

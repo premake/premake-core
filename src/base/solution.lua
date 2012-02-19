@@ -75,6 +75,69 @@
 
 
 --
+-- Iterate over the configurations of a solution.
+--
+-- @param sln
+--    The solution to query.
+-- @return
+--    A configuration iteration function.
+--
+
+	function solution.eachconfig(sln)
+		-- find *all* build configurations and platforms in the solution,
+		-- and cache the lists for future calls
+		if not sln.configs then
+			local configurations = sln.configurations or {}
+			local platforms = sln.platforms or {}
+			for _, prj in ipairs(sln.projects) do
+				-- iterate build configs and add missing
+				if prj.configurations then
+					for _, cfg in ipairs(prj.configurations) do
+						if not configurations[cfg] then
+							table.insert(configurations, cfg)
+							configurations[cfg] = cfg
+						end
+					end
+				end
+				
+				-- iterate platforms and add missing
+				if prj.platforms then
+					for _, plt in ipairs(prj.platforms) do
+						if not platforms[plt] then
+							table.insert(platforms, plt)
+							platforms[plt] = plt
+						end
+					end
+				end
+			end
+			
+			-- pair up the build configurations and platforms, store the result
+			sln.configs = {}
+			for _, cfg in ipairs(configurations) do
+				if #platforms > 0 then
+					for _, plt in ipairs(platforms) do
+						table.insert(sln.configs, { buildcfg=cfg, platform=plt })
+					end
+				else
+					table.insert(sln.configs, { buildcfg=cfg })
+				end
+			end
+		end
+		
+		local i = 0
+		
+		return function()
+			i = i + 1
+			if i > #sln.configs then
+				return nil
+			else
+				return sln.configs[i]
+			end
+		end
+	end
+
+
+--
 -- Iterate over the projects of a solution.
 --
 -- @param sln
@@ -201,7 +264,7 @@
 	function solution.getproject_ng(sln, idx)
 		local prj = sln.projects[idx]
 		if prj.rootcfg then
-			-- cached version build by solution.bakeprojects()
+			-- cached version built by solution.bakeprojects()
 			return prj.rootcfg
 		else
 			-- "raw" version, accessible during scripting

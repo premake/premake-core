@@ -27,6 +27,7 @@
 	local function prepare(language)
 		prj1.language = language
 		prj2.language = language
+		prj2 = premake.solution.getproject_ng(sln, 2)
 		sln2005.projectdependencies_ng(prj2)
 	end
 

@@ -61,9 +61,6 @@
 		for _, block in ipairs(container.blocks) do
 			if oven.filter(block, filterTerms) then
 				oven.merge(cfg, block, filterField)
-				if block.removes then
-					oven.remove(cfg, block.removes, filterField)
-				end
 			end
 		end
 
@@ -158,6 +155,11 @@
 				end
 			end
 		end
+		
+		if block.removes then
+			oven.remove(cfg, block.removes, filterField)
+		end
+		
 		return cfg
 	end
 
@@ -231,7 +233,7 @@
 --    field will be merged.
 --
 
-	function oven.remove(cfg, removes, filterField)
+	function oven.remove(cfg, removes, filterField)		
 		if filterField then
 			oven.removefromfield(cfg[filterField], removes[filterField])
 		else

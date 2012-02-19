@@ -17,6 +17,7 @@
 	
 	function suite.setup()
 		sln, prj = test.createsolution()
+		solution("MySolution")
 	end
 	
 	local function prepare(language)

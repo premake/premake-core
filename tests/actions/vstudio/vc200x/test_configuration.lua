@@ -51,6 +51,7 @@
 --
 
 	function suite.usesWin32_onX32()
+		solution "MySolution"
 		platforms { "x32" }
 		prepare()
 		test.capture [[
@@ -65,6 +66,7 @@
 --
 
 	function suite.usesX64Architecture_onX64Platform()
+		solution "MySolution"
 		platforms { "x64" }
 		prepare()
 		test.capture [[

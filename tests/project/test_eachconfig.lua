@@ -1,12 +1,11 @@
 --
 -- tests/project/test_eachconfig.lua
 -- Test the project object configuration iterator function.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	T.project_eachconfig = { }
 	local suite = T.project_eachconfig
-	local premake = premake5
 
 
 --
@@ -20,27 +19,11 @@
 	end
 
 	local function prepare()
-		prj = project("MyProject")
-	end
-
-	local function collect(fn, field)
-		prepare()
-		local result = { }
-		for cfg in premake.project.eachconfig(prj, field) do
-			table.insert(result, fn(cfg))
+		project("MyProject")
+		prj = premake.solution.getproject_ng(sln, 1)
+		for cfg in premake5.project.eachconfig(prj, field) do
+			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end
-		return result
-	end
-
-
---
--- The return value should be a function.
---
-
-	function suite.returnsIteratorFunction()
-		prepare()
-		local it = premake.project.eachconfig(prj)
-		test.isequal("function", type(it))
 	end
 
 
@@ -51,8 +34,7 @@
 
 	function suite.returnsNoValues_onNoConfigurationsAndNoPlatforms()
 		prepare()
-		local it = premake.project.eachconfig(prj)
-		test.isnil(it())
+		test.isemptycapture()
 	end
 
 
@@ -64,8 +46,7 @@
 	function suite.returnsNoValues_onNoConfigurationsButPlatforms()
 		platforms { "x32", "x64" }
 		prepare()
-		local it = premake.project.eachconfig(prj)
-		test.isnil(it())
+		test.isemptycapture()
 	end
 
 
@@ -76,8 +57,13 @@
 
 	function suite.iteratesConfigsInOrder()
 		configurations { "Debug", "Profile", "Release", "Deploy" }
-		local r = collect(function(cfg) return cfg.buildcfg end)
-		test.isequal("Debug|Profile|Release|Deploy", table.concat(r, "|"))
+		prepare()
+		test.capture [[
+		Debug:
+		Profile:
+		Release:
+		Deploy:
+		]]
 	end
 
 
@@ -89,33 +75,11 @@
 	function suite.pairsConfigsAndPlatformsInOrder()
 		configurations { "Debug", "Release" }
 		platforms { "x32", "x64" }
-		local r = collect(function(cfg) return (cfg.buildcfg .. "+" .. cfg.platform) end)
-		test.isequal("Debug+x32|Debug+x64|Release+x32|Release+x64", table.concat(r, "|"))
+		prepare()
+		test.capture [[
+		Debug:x32
+		Debug:x64
+		Release:x32
+		Release:x64
+		]]
 	end
-
-
---
--- If the platform name matches an architecture identifier, set that as
--- the default architecture. This is for backward compatibility with
--- the old (4.3 and earlier) platform API.
---
-
-	function suite.setsDefaultArchitecture_onKnownArchitecture()
-		configurations { "Test" }
-		platforms { "x32", "x64", "Custom Platform" }
-		local r = collect(function(cfg) return (cfg.architecture or "nil") end)
-		test.isequal("x32|x64|nil", table.concat(r, "|"))
-	end
-
-
---
--- If a filter field is used, that field's value should be returned.
---
-
-	function suite.returnsFieldValue_onFilterField()
-		configurations { "Debug" }
-		kind "ConsoleApp"
-		local r = collect(function(cfg) return cfg.kind end, "kind")
-		test.isequal("ConsoleApp", table.concat(r))
-	end
-

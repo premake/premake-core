@@ -84,11 +84,8 @@
 --
 
 	function sln2005.solutionConfigurationPlatforms(sln)
-		-- eachconfig() requires a project object; any one will do
-		local prj = solution.getproject_ng(sln, 1)
-
 		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
-		for cfg in project.eachconfig(prj) do
+		for cfg in solution.eachconfig(sln) do
 			local platform = vstudio.platform(cfg)
 			_p(2,'%s|%s = %s|%s', cfg.buildcfg, platform, cfg.buildcfg, platform)
 		end

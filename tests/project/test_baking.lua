@@ -298,3 +298,17 @@
 		cfg = oven.bake(sln)
 		test.isequal(path.join(os.getcwd(), "hello.c"), table.concat(cfg.files))
 	end
+
+--
+-- Remove should work on container-level fields too.
+--
+
+	function suite.remove_onContainerField()
+		configurations { "Debug", "Release" }
+		local prj = project "MyProject"
+		removeconfigurations { "Debug" }
+
+		cfg = oven.merge({}, sln)
+		cfg = oven.merge(cfg, prj)
+		test.isequal({ "Release" }, cfg.configurations)
+	end

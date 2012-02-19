@@ -43,8 +43,11 @@
 --
 
 	function project.eachconfig(prj, field, filename)
-		local buildconfigs = prj.solution.configurations or {}
-		local platforms = prj.solution.platforms or {}
+		-- local buildconfigs = prj.solution.configurations or {}
+		-- local platforms = prj.solution.platforms or {}
+		
+		local buildconfigs = prj.configurations or {}
+		local platforms = prj.platforms or {}
 
 		local i = 0
 		local j = #platforms
@@ -348,4 +351,19 @@
 		until not changed
 		
 		return vpath
+	end
+
+
+--
+-- Determines if a project contains a particular build configuration/platform pair.
+--
+
+	function project.hasconfig(prj, buildcfg, platform)
+		if buildcfg and not prj.configurations[buildcfg] then
+			return false
+		end
+		if platform and not prj.platforms[platform] then
+			return false
+		end
+		return true
 	end

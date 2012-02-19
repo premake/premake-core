@@ -18,12 +18,12 @@
 	function suite.setup()
 		_ACTION = "test"
 		sln = solution("MySolution")
-		prj = project("MyProject")
 		system "macosx"
 	end
 
 	local function prepare()
 		local platforms = sln.platforms or {}
+		prj = project("MyProject")
 		cfg = premake5.project.getconfig(prj, "Debug", platforms[1])
 		return config.getuniqueobjdir(cfg)
 	end

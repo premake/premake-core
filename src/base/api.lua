@@ -48,7 +48,7 @@
 		configurations = 
 		{
 			kind  = "list",
-			scope = "solution",
+			scope = "container",
 		},
 
 		debugargs =
@@ -295,7 +295,7 @@
 		platforms = 
 		{
 			kind  = "list",
-			scope = "solution",
+			scope = "container",
 		},
 		
 		postbuildcommands =
@@ -710,7 +710,7 @@
 			end
 		end
 		
-		local cfg = premake.CurrentConfiguration
+		local cfg = premake.getobject(premake.fields[fieldname].scope)
 		cfg.removes = cfg.removes or {}
 		cfg.removes[fieldname] = premake.setarray(cfg.removes, fieldname, value, set)
 	end

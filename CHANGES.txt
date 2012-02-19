@@ -3,6 +3,7 @@
 --------
 
 * Completely overhauled the platform support; too many changes to list
+* Enabled per-project configurations and platforms
 * Enabled per-configuration file lists
 * Enabled per-configuration toolset selection
 * Added remove...() API to remove values from list fields

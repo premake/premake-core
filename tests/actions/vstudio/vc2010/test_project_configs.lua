@@ -17,10 +17,11 @@
 	
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 	
 	local function prepare()
+		prj = premake.solution.getproject_ng(sln, 1)
 		vc2010.projectConfigurations(prj)
 	end
 

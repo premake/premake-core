@@ -21,7 +21,9 @@
 		
 		prj = project "MyProject"
 		language "C++"
-		kind "ConsoleApp"		
+		kind "ConsoleApp"
+		
+		solution("MySolution")
 	end
 
 	local function prepare()
@@ -171,8 +173,9 @@ endif
 
 
 	function T.gmake_cpp.UniversalStaticLibBlock()
-		kind "StaticLib"
 		platforms { "Universal32" }
+		project "MyProject"
+		kind "StaticLib"
 		prepare()
 		local cfg = premake.getconfig(prj, "Debug", "Universal32")
 		premake.gmake_cpp_config(cfg, premake.gcc)
