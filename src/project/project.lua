@@ -43,9 +43,6 @@
 --
 
 	function project.eachconfig(prj, field, filename)
-		-- local buildconfigs = prj.solution.configurations or {}
-		-- local platforms = prj.solution.platforms or {}
-		
 		local buildconfigs = prj.configurations or {}
 		local platforms = prj.platforms or {}
 

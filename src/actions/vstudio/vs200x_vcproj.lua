@@ -210,11 +210,8 @@
 			_p(4,'OmitFramePointers="%s"', bool(true))
 		end
 		
-		vc200x.additionalIncludeDirectories(cfg)
-		
-		if #cfg.defines > 0 then
-			_x(4,'PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
-		end
+		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
+		vc200x.preprocessorDefinitions(cfg, cfg.defines)
 		
 		if premake.config.isdebugbuild(cfg) and 
 		   cfg.debugformat ~= "c7" and 
@@ -324,11 +321,8 @@
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
 
-		vc200x.additionalIncludeDirectories(cfg)
-
-		if #cfg.defines > 0 then
-			_x(4,'PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
-		end
+		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
+		vc200x.preprocessorDefinitions(cfg, cfg.defines)
 
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
 
@@ -497,16 +491,9 @@
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 
-		if #cfg.defines > 0 or #cfg.resdefines > 0 then
-			local defines = table.join(cfg.defines, cfg.resdefines)
-			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
-		end
-
-		if #cfg.includedirs > 0 or #cfg.resincludedirs > 0 then
-			local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
-			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
-		end
-
+		vc200x.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+		vc200x.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
+		
 		_p(3,'/>')
 	end
 
@@ -794,9 +781,9 @@
 -- various compiler tool variations.
 --
 
-	function vc200x.additionalIncludeDirectories(cfg)
-		if #cfg.includedirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.includedirs)
+	function vc200x.additionalIncludeDirectories(cfg, includedirs)
+		if #includedirs > 0 then
+			local dirs = project.getrelative(cfg.project, includedirs)
 			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
 		end
 	end
@@ -881,6 +868,16 @@
 	end
 
 
+--
+-- Output the list of preprocessor symbols.
+
+	function vc200x.preprocessorDefinitions(cfg, defines)
+		if #defines > 0 then
+			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
+		end
+	end
+
+	
 --
 -- Output the correct project version attribute for the current action.
 --

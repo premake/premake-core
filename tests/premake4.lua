@@ -120,6 +120,7 @@
 	dofile("actions/vstudio/vc200x/test_mfc.lua")
 	dofile("actions/vstudio/vc200x/test_platforms.lua")
 	dofile("actions/vstudio/vc200x/test_project.lua")
+	dofile("actions/vstudio/vc200x/test_resource_compiler.lua")
 
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
