@@ -264,3 +264,14 @@
 		i = prepare()
 		test.isequal("MyProject.app/Contents/MacOS", i.bundlepath)
 	end
+
+
+--
+-- Target extension is used if set.
+--
+
+	function suite.extensionSet_onTargetExtension()
+		targetextension ".self"
+		i = prepare()
+		test.isequal("MyProject.self", i.name)
+	end
