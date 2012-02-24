@@ -139,11 +139,9 @@
 		-- Quick hack: disable the old configuration baking logic for the new
 		-- next-gen actions; this code will go away when everything has been
 		-- ported to the new API
-		if not _ACTION:endswith("ng") then
-			-- work-in-progress: build the configurations
-			print("Building configurations...")
-			premake.bake.buildconfigs()
-		
+		print("Building configurations...")
+		if not action.isnextgen then
+			premake.bake.buildconfigs()		
 			ok, err = premake.checkprojects()
 			if (not ok) then error("Error: " .. err, 0) end
 		else

@@ -54,7 +54,7 @@
 		-- a bit of a hack, but check for the new next-gen actions, and
 		-- translate things accordingly. I'll yank this once the next-gen
 		-- actions are done and official
-		if name:endswith("ng") then
+		if a.isnextgen then
 			_ACTION = _ACTION:sub(1, -3)
 			for sln in premake.solution.each() do
 				if a.onsolution then

@@ -19,6 +19,9 @@
 		description     = "Experimental Microsoft Visual Studio 2008 project files",
 		os              = "windows",
 
+		-- temporary, until I can phase out the legacy implementations
+		isnextgen = true,
+		
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 
 		valid_languages = { "C", "C++", "C#" },
@@ -56,6 +59,9 @@
 		shortname       = "Visual Studio 2010 Next-gen",
 		description     = "Experimental Microsoft Visual Studio 2010 project files",
 		os              = "windows",
+
+		-- temporary, until I can phase out the legacy implementations
+		isnextgen = true,
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 

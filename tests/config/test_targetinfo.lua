@@ -275,3 +275,15 @@
 		i = prepare()
 		test.isequal("MyProject.self", i.name)
 	end
+
+
+--
+-- Base name should use prefix if set.
+--
+
+	function suite.basenameHasPrefix_onPrefix()
+		targetprefix "lib"
+		i = prepare()
+		test.isequal("libMyProject", i.basename)
+	end
+

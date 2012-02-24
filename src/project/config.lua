@@ -54,8 +54,8 @@
 
 		local info = {}
 		info.directory  = directory
-		info.basename   = basename .. suffix
-		info.name       = prefix .. info.basename .. extension
+		info.basename   = prefix .. basename .. suffix
+		info.name       = info.basename .. extension
 		info.extension  = extension
 		info.fullpath   = path.join(info.directory, info.name)
 		info.bundlename = bundlename
