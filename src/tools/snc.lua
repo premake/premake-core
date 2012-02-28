@@ -80,6 +80,20 @@
 	end
 
 
+--
+-- Return the list of libraries to link, formatted for the linker command line.
+--
+
+	function snc.getlinks(cfg)
+		local result = {}
+		local links = config.getlinks(cfg, "all", "basename")
+		for _, link in ipairs(links) do
+			table.insert(result, "-l" .. link)
+		end
+		return result
+	end
+
+
 
 -----------------------------------------------------------------------------
 -- Everything below this point is a candidate for deprecation

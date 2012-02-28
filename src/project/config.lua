@@ -29,8 +29,6 @@
 		local basedir = project.getlocation(cfg.project)
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
-		directory = project.getrelative(cfg.project, directory)
-
 		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
 
 		local bundlename = ""
@@ -44,8 +42,7 @@
 		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then
 			bundlename = basename .. ".app"
-			bundlepath = path.join(directory, bundlename)
-			bundlepath = path.join(bundlepath, "Contents/MacOS")
+			bundlepath = path.join(bundlename, "Contents/MacOS")
 		end
 
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
@@ -53,13 +50,14 @@
 		extension = cfg[field.."extension"] or cfg.targetextension or extension
 
 		local info = {}
-		info.directory  = directory
+		info.directory  = project.getrelative(cfg.project, directory)
 		info.basename   = prefix .. basename .. suffix
 		info.name       = info.basename .. extension
 		info.extension  = extension
+		info.abspath    = path.join(directory, info.name)
 		info.fullpath   = path.join(info.directory, info.name)
 		info.bundlename = bundlename
-		info.bundlepath = bundlepath
+		info.bundlepath = path.join(info.directory, bundlepath)
 		info.prefix     = prefix
 		info.suffix     = suffix
 		return info
@@ -103,7 +101,8 @@
 --      extension  - the file extension
 --      prefix     - the file name prefix
 --      suffix     - the file name suffix
---      fullpath   - directory, name, and extension
+--      fullpath   - directory, name, and extension relative to project
+--      abspath    - absolute directory, name, and extension
 --
 
 	function config.getlinkinfo(cfg)
@@ -125,7 +124,7 @@
 		local info = buildtargetinfo(cfg, kind, field)
 
 		-- cache the results for future calls
-		cfg.linktinfo = info
+		cfg.linkinfo = info
 		return info
 	end
 
@@ -258,7 +257,8 @@
 --      extension  - the file extension
 --      prefix     - the file name prefix
 --      suffix     - the file name suffix
---      fullpath   - directory, name, and extension
+--      fullpath   - directory, name, and extension, relative to project
+--      abspath    - absolute directory, name, and extension
 --      bundlepath - the relative path and file name of the bundle
 --
 

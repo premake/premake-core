@@ -37,6 +37,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				UsePrecompiledHeader="0"
+				AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				DebugInformationFormat="0"
 				CompileAs="0"
@@ -56,6 +57,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				UsePrecompiledHeader="0"
+				AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
 				AdditionalIncludeDirectories="..\include;include"
 		]]
 	end

@@ -6,6 +6,7 @@
 
 	premake.tools.gcc = {}
 	local gcc = premake.tools.gcc
+	local project = premake5.project
 	local config = premake5.config
 	
 
@@ -129,6 +130,39 @@
 		return flags
 	end
 
+
+--
+-- Return the list of libraries to link, decorated with flags as needed.
+--
+
+	function gcc.getlinks(cfg)
+		local result = {}
+		
+		local links = config.getlinks(cfg, "siblings", "object")
+		for _, link in ipairs(links) do
+			if link.kind == premake.STATICLIB then
+				-- Don't use "-l" flag when linking static libraries; instead use 
+				-- path/libname.a to avoid linking a shared library of the same
+				-- name if one is present
+				local linkinfo = config.getlinkinfo(link)
+				table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
+			else
+				table.insert(result, "-l" .. link.basename)
+			end
+		end
+		
+		-- The "-l" flag is fine for system libraries
+		links = config.getlinks(cfg, "system", "basename")
+		for _, link in ipairs(links) do
+			if path.getextension(link) == ".framework" then
+				table.insert(result, "-framework " .. path.getbasename(link))
+			else
+				table.insert(result, "-l" .. link)
+			end
+		end
+		
+		return result
+	end
 
 
 -----------------------------------------------------------------------------

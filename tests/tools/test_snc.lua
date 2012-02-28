@@ -65,3 +65,15 @@
 		prepare()
 		test.isequal({ "-s" }, snc.getldflags(cfg))
 	end
+
+
+--
+-- Check the formatting of linked libraries.
+--
+
+	function suite.links_onSystemLibs()
+		links { "fs_stub", "net_stub" }
+		prepare()
+		test.isequal({ "-lfs_stub", "-lnet_stub" }, snc.getlinks(cfg))
+	end
+	

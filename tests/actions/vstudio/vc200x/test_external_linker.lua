@@ -64,3 +64,20 @@
 			/>
 		]]
 	end
+
+
+--
+-- Verify the handling of system libraries.
+--
+
+	function suite.additionalDependencies_onSystemLibs()
+		kind "ConsoleApp"
+		links { "fs_stub", "net_stub" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="-s"
+				AdditionalDependencies="-lfs_stub -lnet_stub"
+		]]
+	end
