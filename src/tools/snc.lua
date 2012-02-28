@@ -81,17 +81,10 @@
 
 
 --
--- Return the list of libraries to link, formatted for the linker command line.
+-- The linking behavior is the same as GCC.
 --
 
-	function snc.getlinks(cfg)
-		local result = {}
-		local links = config.getlinks(cfg, "all", "basename")
-		for _, link in ipairs(links) do
-			table.insert(result, "-l" .. link)
-		end
-		return result
-	end
+	snc.getlinks = premake.tools.gcc.getlinks
 
 
 

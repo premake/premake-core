@@ -76,4 +76,21 @@
 		prepare()
 		test.isequal({ "-lfs_stub", "-lnet_stub" }, snc.getlinks(cfg))
 	end
+
+
+--
+-- When linking to a static sibling library, the relative path to the library
+-- should be used instead of the "-l" flag. This prevents linking against a
+-- shared library of the same name, should one be present.
+--
+
+	function suite.links_onStaticSiblingLibrary()
+		links { "MyProject2" }
+		test.createproject(sln)
+		kind "StaticLib"
+		location "MyProject2"
+		targetdir "lib"
+		prepare()
+		test.isequal({ "lib/libMyProject2.a" }, snc.getlinks(cfg))
+	end
 	
