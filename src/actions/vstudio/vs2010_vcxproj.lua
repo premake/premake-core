@@ -464,7 +464,17 @@
 --
 
 	function vc2010.additionalDependencies(cfg)
-		local links = config.getlinks(cfg, "system", "fullpath")
+		local links
+		
+		-- check to see if this project uses an external toolset. If so, let the
+		-- toolset define the format of the links
+		local toolset = premake.vstudio.vc200x.toolset(cfg)
+		if toolset then
+			links = toolset.getlinks(cfg, true)
+		else
+			links = config.getlinks(cfg, "system", "fullpath")
+		end
+		
 		if #links > 0 then
 			links = path.translate(table.concat(links, ";"))
 			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)

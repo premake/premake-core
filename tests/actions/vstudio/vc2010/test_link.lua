@@ -141,6 +141,11 @@
 		]]
 	end
 
+
+--
+-- Additional library directories should be specified, relative to the project.
+--
+
 	function suite.additionalLibraryDirectories_onLibDirs()
 		libdirs { "../lib", "../lib64" }
 		prepare()
@@ -233,8 +238,9 @@
 		</Lib>
 		]]
 	end
+
  
- --
+--
 -- Enable reference optimizing if Optimize flag is specified.
 --
 
@@ -247,5 +253,22 @@
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<EnableCOMDATFolding>true</EnableCOMDATFolding>
 			<OptimizeReferences>true</OptimizeReferences>
+		]]
+	end
+
+
+--
+-- On the PS3, system libraries must be prefixed with the "-l" flag.
+--
+
+	function suite.additionalDependencies_onPS3SystemLinks()
+		system "PS3"
+		links { "fs_stub", "net_stub" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>-lfs_stub;-lnet_stub;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
