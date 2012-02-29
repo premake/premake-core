@@ -157,8 +157,10 @@
 		-- The "-l" flag is fine for system libraries
 		links = config.getlinks(cfg, "system", "basename")
 		for _, link in ipairs(links) do
-			if path.getextension(link) == ".framework" then
+			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))
+			elseif path.isobjectfile(link) then
+				table.insert(result, link)
 			else
 				table.insert(result, "-l" .. link)
 			end

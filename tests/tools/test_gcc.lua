@@ -208,3 +208,15 @@
 		prepare()
 		test.isequal({ "lib/libMyProject2.a" }, gcc.getlinks(cfg))
 	end
+
+
+--
+-- When linking object files, leave off the "-l".
+--
+
+	function suite.links_onObjectFile()
+		links { "generated.o" }
+		prepare()
+		test.isequal({ "generated.o" }, gcc.getlinks(cfg))
+	end
+

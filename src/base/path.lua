@@ -189,29 +189,65 @@
 	
 
 --
+-- Returns true if the filename has a particular extension.
+--
+-- @param fname
+--    The file name to test.
+-- @param extensions
+--    The extension(s) to test. Maybe be a string or table.
+--
+
+	function path.hasextension(fname, extensions)
+		local fext = path.getextension(fname):lower()
+		if type(extensions) == "table" then
+			for _, extension in pairs(extensions) do
+				if fext == extension then
+					return true
+				end
+			end
+			return false
+		else
+			return (fext == extensions)
+		end
+	end
+
+
+--
 -- Returns true if the filename represents a C/C++ source code file. This check
 -- is used to prevent passing non-code files to the compiler in makefiles. It is
 -- not foolproof, but it has held up well. I'm open to better suggestions.
 --
 
 	function path.iscfile(fname)
-		local extensions = { ".c", ".s", ".m" }
-		local ext = path.getextension(fname):lower()
-		return table.contains(extensions, ext)
+		return path.hasextension(fname, { ".c", ".s", ".m" })
 	end
 	
 	function path.iscppfile(fname)
-		local extensions = { ".cc", ".cpp", ".cxx", ".c", ".s", ".m", ".mm" }
-		local ext = path.getextension(fname):lower()
-		return table.contains(extensions, ext)
+		return path.hasextension(fname, { ".cc", ".cpp", ".cxx", ".c", ".s", ".m", ".mm" })
 	end
 	
 	function path.iscppheader(fname)
-		local extensions = { ".h", ".hh", ".hpp", ".hxx" }
-		local ext = path.getextension(fname):lower()
-		return table.contains(extensions, ext)
+		return path.hasextension(fname, { ".h", ".hh", ".hpp", ".hxx" })
 	end
 
+
+
+--
+-- Returns true if the filename represents an OS X framework.
+--
+
+	function path.isframework(fname)
+		return path.hasextension(fname, ".framework")
+	end
+
+
+--
+-- Returns true if the filename represents an object file.
+--
+
+	function path.isobjectfile(fname)
+		return path.hasextension(fname, { ".o", ".obj" })
+	end
 
 
 --
@@ -220,9 +256,7 @@
 --
 
 	function path.isresourcefile(fname)
-		local extensions = { ".rc" }
-		local ext = path.getextension(fname):lower()
-		return table.contains(extensions, ext)
+		return path.hasextension(fname, ".rc")
 	end
 
 	

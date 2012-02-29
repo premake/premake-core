@@ -93,4 +93,16 @@
 		prepare()
 		test.isequal({ "lib/libMyProject2.a" }, snc.getlinks(cfg))
 	end
-	
+
+
+
+--
+-- When linking object files, leave off the "-l".
+--
+
+	function suite.links_onObjectFile()
+		links { "generated.o" }
+		prepare()
+		test.isequal({ "generated.o" }, snc.getlinks(cfg))
+	end
+
