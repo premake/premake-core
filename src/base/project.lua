@@ -626,7 +626,8 @@
 --
 
 	function premake.project.iscproject(prj)
-		return prj.language == "C"
+		local language = prj.language or prj.solution.language
+		return language == "C"
 	end
 
 
@@ -635,7 +636,8 @@
 --
 
 	function premake.iscppproject(prj)
-		return (prj.language == "C" or prj.language == "C++")
+		local language = prj.language or prj.solution.language
+		return language == "C" or language == "C++"
 	end
 
 
@@ -645,5 +647,6 @@
 --
 
 	function premake.isdotnetproject(prj)
-		return (prj.language == "C#")
+		local language = prj.language or prj.solution.language
+		return language == "C#"
 	end

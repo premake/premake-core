@@ -139,7 +139,7 @@
 		local result = {}
 		
 		local links
-		if not systemLibsOnly then
+		if not systemonly then
 			links = config.getlinks(cfg, "siblings", "object")
 			for _, link in ipairs(links) do
 				if link.kind == premake.STATICLIB then
