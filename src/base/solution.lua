@@ -87,9 +87,11 @@
 		-- find *all* build configurations and platforms in the solution,
 		-- and cache the lists for future calls
 		if not sln.configs then
-			local configurations = sln.configurations or {}
-			local platforms = sln.platforms or {}
-			for _, prj in ipairs(sln.projects) do
+			local configurations = {}
+			local platforms = {}
+
+			-- for _, prj in ipairs(sln.projects) do
+			for prj in solution.eachproject_ng(sln) do
 				-- iterate build configs and add missing
 				if prj.configurations then
 					for _, cfg in ipairs(prj.configurations) do

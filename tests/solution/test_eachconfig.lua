@@ -18,9 +18,11 @@
 	end
 
 	local function prepare()
+		_p(2,"-")
 		for cfg in premake.solution.eachconfig(sln) do
 			_p(2, "%s:%s", cfg.buildcfg or "", cfg.platform or "")
 		end
+		_p(2,"-")
 	end
 
 
@@ -30,10 +32,13 @@
 
 	function suite.listsBuildConfigurations_onSolutionLevel()
 		configurations { "Debug", "Release" }
+		project("MyProject")
 		prepare()
 		test.capture [[
+		-
 		Debug:
 		Release:
+		-
 		]]
 	end
 
@@ -45,12 +50,15 @@
 	function suite.listsInOrder_onBuildConfigsAndPlatforms()
 		configurations { "Debug", "Release" }
 		platforms { "x32", "x64" }
+		project("MyProject")
 		prepare()
 		test.capture [[
+		-
 		Debug:x32
 		Debug:x64
 		Release:x32
 		Release:x64
+		-
 		]]
 	end
 
@@ -65,9 +73,29 @@
 		platforms { "x32", "x64" }
 		prepare()
 		test.capture [[
+		-
 		Debug:x32
 		Debug:x64
 		Release:x32
 		Release:x64
+		-
+		]]
+	end
+
+
+--
+-- If a configuration is not included in any projects, it should
+-- also be removed from the solution.
+--
+
+	function suite.configIsExcluded_onExcludedFromAllProjects()
+		configurations { "Debug", "Release" }
+		project("MyProject")
+		removeconfigurations { "Release" }
+		prepare()
+		test.capture [[
+		-
+		Debug:
+		-
 		]]
 	end
