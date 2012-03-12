@@ -45,6 +45,12 @@
 			scope = "config",
 		},
 
+		buildrule =
+		{
+			kind  = "object",
+			scope = "config",
+		},
+		
 		configurations = 
 		{
 			kind  = "list",
@@ -506,6 +512,24 @@
 	end
 
 
+--
+-- Sets the value of an object field on the provided container.
+--
+-- @param obj
+--    The object containing the field to be set.
+-- @param fieldname
+--    The name of the object field to be set.
+-- @param value
+--    The new object value for the field.
+-- @return
+--    The new value of the field.
+--
+
+	function premake.setobject(obj, fieldname, value)
+		obj[fieldname] = value
+		return value
+	end
+
 	
 --
 -- Adds values to an array field.
@@ -625,7 +649,7 @@
 		return field
 	end
 
-	
+
 --
 -- Set a new value for a string field of a solution/project/configuration. `ctype`
 -- specifies the container type (see premake.getobject) for the field.
@@ -689,6 +713,8 @@
 			return premake.setfilearray(container, name, value)
 		elseif kind == "keyvalue" or kind == "keypath" then
 			return premake.setkeyvalue(scope, name, value)
+		elseif kind == "object" then
+			return premake.setobject(container, name, value)
 		end
 	end
 

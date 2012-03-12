@@ -90,7 +90,6 @@
 			local configurations = {}
 			local platforms = {}
 
-			-- for _, prj in ipairs(sln.projects) do
 			for prj in solution.eachproject_ng(sln) do
 				-- iterate build configs and add missing
 				if prj.configurations then

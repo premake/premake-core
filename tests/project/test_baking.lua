@@ -235,6 +235,25 @@
 
 
 --
+-- Object values should be merged into baked results.
+--
+
+	function suite.objectValuesAreMerged()
+		buildrule { description="test" }
+		cfg = oven.bake(sln)
+		test.isequal("test", cfg.buildrule.description)
+	end
+
+	function suite.objectValueOverwritten_onMultipleValues()
+		buildrule { description="sln" }
+		prj = project("MyProject")
+		buildrule { description="prj" }
+		cfg = oven.bake(prj, {"Debug"})
+		test.isequal("prj", cfg.buildrule.description)
+	end
+
+
+--
 -- Test pulling "project global" values, which are associated with
 -- all configurations in the project.
 --
