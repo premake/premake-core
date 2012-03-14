@@ -87,3 +87,17 @@
 		prepare()
 		test.isnotnil(fcfg)
 	end
+
+
+--
+-- A build option specified on a specific set of files should appear in the
+-- file configuration
+--
+
+	function suite.settingIsPresent_onFileSpecificFilter()
+		files "hello.c"
+		configuration "**.c"
+		buildoptions "-Xc"
+		prepare()
+		test.isequal({ "-Xc" }, fcfg.buildoptions)
+	end

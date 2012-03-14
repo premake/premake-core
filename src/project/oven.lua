@@ -1,7 +1,7 @@
 --
 -- src/project/oven.lua
 -- Premake next-generation configuration "baking" API.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
 	premake5.oven = { }
@@ -64,7 +64,43 @@
 			end
 		end
 
+		-- Remember the list of terms used to create this config
+		cfg.terms = filterTerms
+		
 		return cfg
+	end
+
+
+--
+-- Retrieve the settings for a specific file within a configuration. Files
+-- have special rules: they only return those values from blocks that
+-- explicitly match the filename.
+--
+-- @param cfg
+--    The base configuration to query.
+-- @param filename
+--    The name of the file to query.
+-- @return
+--    A file configuration object, which may be empty.
+--
+
+	function oven.bakefile(cfg, filename)
+		local fcfg = {}
+		filename = { filename }
+		
+		for _, block in ipairs(cfg.solution.blocks) do
+			if oven.filter(block, cfg.terms, filename) then
+				oven.mergefile(fcfg, cfg, block)
+			end
+		end
+		
+		for _, block in ipairs(cfg.project.blocks) do
+			if oven.filter(block, cfg.terms, filename) then
+				oven.mergefile(fcfg, cfg, block)
+			end
+		end
+
+		return fcfg
 	end
 
 
@@ -90,12 +126,31 @@
 --
 
 	function oven.filter(block, anyOfThese, allOfThese)
+		allOfThese = allOfThese or {}
+		
+		-- All of these terms must match at least one block keyword
+		for _, term in ipairs(allOfThese) do
+			local matched = false
+
+			for _, keyword in ipairs(block.keywords) do
+				if oven.testkeyword(keyword, { term }) then
+					matched = true
+					break
+				end
+			end
+			
+			if not matched then
+				return false
+			end
+		end			
+						
 		-- All block keywords must match at least one term
 		for _, keyword in ipairs(block.keywords) do
-			if not oven.testkeyword(keyword, anyOfThese) then
+			if not oven.testkeyword(keyword, anyOfThese) and not oven.testkeyword(keyword, allOfThese) then
 				return false
 			end
 		end
+		
 		return true
 	end
 
@@ -161,6 +216,32 @@
 		end
 		
 		return cfg
+	end
+
+
+--
+-- Merge from an individual block into a file configuration object, using the
+-- provided configuration as a basis.
+--
+-- @param fcfg
+--    The file configuration being built; will contain the new values.
+-- @param cfg
+--    The base configuration.
+-- @param block
+--    The block containing the values to merge.
+--
+
+	function oven.mergefile(fcfg, cfg, block)
+		for key, value in pairs(block) do
+			-- if this is the first appearance of this field, start by
+			-- copying over the basis values from the configuration
+			if not fcfg[key] then
+				oven.merge(fcfg, cfg, key)
+			end
+			
+			-- then merge the file specific values over that
+			oven.merge(fcfg, block, key)
+		end
 	end
 
 

@@ -7,6 +7,7 @@
 	premake5.config = { }
 	local project = premake5.project
 	local config = premake5.config
+	local oven = premake5.oven
 
 
 --
@@ -87,6 +88,36 @@
 
 
 --
+-- Retrieve the configuration settings for a specific file.
+--
+-- @param cfg
+--    The configuration object to query.
+-- @param filename
+--    The full, absolute path of the file to query.
+-- @return
+--    A configuration object for the file, or nil if the file is
+--    not included in this configuration.
+--
+
+	function config.getfileconfig(cfg, filename)
+		-- if there is no entry, then this file is not part of the config
+		local fcfg = cfg.files[filename]
+		if not fcfg then
+			return nil
+		end
+		
+		-- initially this value will be a string (the file name); replace
+		-- it with the full file configuration
+		if type(fcfg) ~= "table" then
+			fcfg = oven.bakefile(cfg, filename)
+			cfg.files[filename] = fcfg
+		end
+		
+		return fcfg
+	end
+
+
+--
 -- Retrieve linking information for a specific configuration. That is,
 -- the path information that is required to link against the library
 -- built by this configuration.
@@ -126,25 +157,6 @@
 		-- cache the results for future calls
 		cfg.linkinfo = info
 		return info
-	end
-
-
---
--- Retrieve the configuration settings for a specific file.
---
--- @param cfg
---    The configuration object to query.
--- @param filename
---    The full, absolute path of the file to query.
--- @return
---    A configuration object for the file, or nil if the file is
---    not included in this configuration.
---
-
-	function config.getfileconfig(cfg, filename)
-		if cfg.files[filename] then
-			return {}
-		end
 	end
 
 

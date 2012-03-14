@@ -215,3 +215,37 @@
 		</File>
 		]]
 	end
+
+
+--
+-- If a custom build rule is supplied, the custom build tool settings should be used.
+--
+
+	function suite.customBuildTool_onBuildRule()
+		files { "hello.x" }
+		configuration "**.x"
+			buildrule {
+				description = "Compiling $(InputFile)",
+				commands = { 
+					'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"', 
+					'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
+				},
+				outputs = "$(IntDir)/$(InputName).obj"
+			}
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.x"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="cxc &quot;-c $(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
+					Outputs="$(IntDir)/$(InputName).obj"
+				/>
+			</FileConfiguration>			
+		</File>
+		]]		
+	end
