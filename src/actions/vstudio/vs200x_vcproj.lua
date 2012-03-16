@@ -685,8 +685,6 @@
 	function vc200x.files_ng(prj)
 		local tr = project.getsourcetree(prj)
 
-		local pchsource = project.getrelative(prj, prj.pchsource)
-
 		tree.traverse(tr, {
 
 			-- folders, virtual or otherwise, are handled at the internal nodes
@@ -707,74 +705,94 @@
 				_p(depth, '\tRelativePath="%s"', path.translate(node.cfg.fullpath))
 				_p(depth, '\t>')					
 
-				-- C files in C++ projects should still be compiled as C code
-				local compileAs
-				if path.iscfile(node.name) ~= premake.project.iscproject(prj) then
-					if path.iscppfile(node.name) then
-						compileAs = iif(prj.language == premake.CPP, 1, 2)
-					end
-				end
+				vc200x.fileConfiguration(prj, node, depth + 1)
 
-				depth = depth + 1
-				for cfg in project.eachconfig(prj) do
-					local elementOpened = false
-					local filecfg = nil
-
-					-- helper function writes an attribute into the <Tool> element, opening
-					-- the containing <FileConfiguration> element on the first call.
-					local toolattrib = function(depth, msg, ...)
-						if not elementOpened then
-							elementOpened = true
-							_p(depth, '<FileConfiguration')
-							_p(depth, '\tName="%s"', vstudio.configname(cfg))
-							if not filecfg then
-								_p(depth, '\tExcludedFromBuild="true"')
-							end
-							_p(depth, '\t>')
-							_p(depth, '\t<Tool')
-							_p(depth, '\t\tName="%s"', vc200x.compilertool(cfg))
-						end
-						if msg then
-							_x(depth, msg, unpack(arg))
-						end
-					end
-																	
-					-- get any settings specific to this file/config combination. If nil,
-					-- the file is excluded from this configuration
-					filecfg = config.getfileconfig(cfg, node.cfg.abspath)
-					if not filecfg then
-						toolattrib(depth)
-					end
-					
-					if compileAs then
-						toolattrib(depth, '\t\tCompileAs="%s"', compileAs)
-					end
-
-					if pchsource == node.cfg.fullpath and not cfg.flags.NoPCH then
-						if cfg.system == premake.PS3 then
-							local options = table.join(premake.snc.getcflags(cfg), 
-									                    premake.snc.getcxxflags(cfg), 
-									                    cfg.buildoptions,
-														' --create_pch="$(IntDir)/$(TargetName).pch"')
-							toolattrib(depth, '\t\tAdditionalOptions="%s"', table.concat(options, " "))
-						else
-							toolattrib(depth, '\t\tUsePrecompiledHeader="1"')
-						end
-					end 
-					
-					if elementOpened then
-						_p(depth, '\t/>')
-						_p(depth, '</FileConfiguration>')
-					end
-				end
-
-				depth = depth - 1
 				_p(depth, '</File>')
 			end
 
 		}, false, 2)
 	end
 
+
+--
+-- Write out the <FileConfiguration> element for a specific file.
+--
+
+	function vc200x.fileConfiguration(prj, node, depth)		
+		-- check to see if this is a C file in a C++ project, or vice versa,
+		-- that needs to be built with a different compiler
+		local compileAs
+		if path.iscfile(node.name) ~= premake.project.iscproject(prj) then
+			if path.iscppfile(node.name) then
+				compileAs = iif(prj.language == premake.CPP, "C++", "C")
+			end
+		end
+		
+		for cfg in project.eachconfig(prj) do
+		
+			-- get any settings specific to this file for this configuration;
+			-- if nil this file is excluded from the configuration entirely
+			local filecfg = config.getfileconfig(cfg, node.cfg.abspath)
+			
+			-- if there is a file configuration, see if it contains any values
+			-- (will be empty if it matches the project config)
+			local hasSettings = (filecfg ~= nil and filecfg.terms ~= nil)
+			
+			-- check to see if this is the PCH source file
+			local isPchSource = (prj.pchsource == node.cfg.abspath and not cfg.flags.NoPCH)
+
+			-- only write the element if we have something to say			
+			if compileAs or isPchSource or not filecfg or hasSettings then
+
+				_p(depth,'<FileConfiguration')
+				depth = depth + 1
+				_p(depth, 'Name="%s"', vstudio.configname(cfg))
+
+				if not filecfg then
+					_p(depth, 'ExcludedFromBuild="true"')
+				end
+
+				_p(depth, '>')
+
+				_p(depth, '<Tool')
+				depth = depth + 1
+				
+				filecfg = filecfg or {}
+				
+				-- write out a custom build rule, if it has one
+				if filecfg.buildrule then
+					_p(depth,'Name="VCCustomBuildTool"')
+					_x(depth,'CommandLine="%s"', table.concat(filecfg.buildrule.commands,'\r\n'))
+					_x(depth,'Outputs="%s"', table.concat(filecfg.buildrule.outputs, ' '))
+				else
+					_p(depth, 'Name="%s"', vc200x.compilertool(cfg))
+				end
+				
+				if compileAs then
+					_p(depth, 'CompileAs="%s"', iif(compileAs == "C++", 1, 2))
+				end
+
+				-- include the precompiled header, if this is marked as the PCH source
+				if isPchSource then
+					if cfg.system == premake.PS3 then
+						local options = table.join(premake.snc.getcflags(cfg), 
+													premake.snc.getcxxflags(cfg), 
+													cfg.buildoptions,
+													' --create_pch="$(IntDir)/$(TargetName).pch"')
+						_p(depth, 'AdditionalOptions="%s"', table.concat(options, " "))
+					else
+						_p(depth, 'UsePrecompiledHeader="1"')
+					end
+				end 
+
+				depth = depth - 2
+				_p(depth, '\t/>')
+				_p(depth, '</FileConfiguration>')
+				
+			end
+
+		end
+	end
 
 --
 -- Write out the <AdditionalIncludeDirectories> element, used by the

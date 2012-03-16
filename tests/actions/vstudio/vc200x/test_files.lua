@@ -230,7 +230,7 @@
 					'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"', 
 					'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
 				},
-				outputs = "$(IntDir)/$(InputName).obj"
+				outputs = { "$(IntDir)/$(InputName).obj" }
 			}
 		prepare()
 		test.capture [[
@@ -242,10 +242,9 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="cxc &quot;-c $(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
+					CommandLine="cxc -c &quot;$(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
 					Outputs="$(IntDir)/$(InputName).obj"
 				/>
-			</FileConfiguration>			
-		</File>
+			</FileConfiguration>
 		]]		
 	end
