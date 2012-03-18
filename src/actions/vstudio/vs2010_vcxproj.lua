@@ -1189,9 +1189,11 @@
 	function vc2010.projectReferences(prj)
 		local deps = premake.getdependencies(prj)
 		if #deps > 0 then
+			local prjpath = project.getlocation(prj)
+			
 			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
-				local deppath = path.getrelative(prj.solution.location, vstudio.projectfile(dep))
+				local deppath = path.getrelative(prjpath, vstudio.projectfile(dep))
 				_p(2,'<ProjectReference Include=\"%s\">', path.translate(deppath, "\\"))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_p(2,'</ProjectReference>')
