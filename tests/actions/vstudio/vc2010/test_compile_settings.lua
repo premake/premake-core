@@ -47,7 +47,7 @@
 --
 
 	function suite.usePrecompiledHeaders_onPrecompiledHeaders()
-		pchheader "afxwin.h"
+		pchheader "include/afxwin.h"
 		prepare()
 		test.capture [[
 		<ClCompile>
