@@ -372,6 +372,7 @@
 		vc2010.compilerfilesgroup_ng(prj)
 		vc2010.simplefilesgroup_ng(prj, "None")
 		vc2010.simplefilesgroup_ng(prj, "ResourceCompile")
+		vc2010.customBuildFilesGroup(prj)
 	end
 
 	function vc2010.simplefilesgroup_ng(prj, group)
@@ -409,6 +410,31 @@
 		end
 	end
 
+	function vc2010.customBuildFilesGroup(prj)
+		local files = vc2010.getfilegroup_ng(prj, "CustomBuild")
+		if #files > 0  then
+			_p(1,'<ItemGroup>')
+			for _, file in ipairs(files) do
+				_x(2,'<CustomBuild Include=\"%s\">', path.translate(file.fullpath))
+				_p(3,'<FileType>Document</FileType>')
+				
+				for cfg in project.eachconfig(prj) do
+					local condition = vc2010.condition(cfg)					
+					local filecfg = config.getfileconfig(cfg, file.abspath)
+					
+					local commands = table.concat(filecfg.buildrule.commands,'\r\n')
+					_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
+
+					local outputs = table.concat(filecfg.buildrule.outputs, ' ')
+					_p(3,'<Outputs %s>%s</Outputs>', condition, premake.esc(outputs))
+				end
+				
+				_p(2,'</CustomBuild>')
+			end
+			_p(1,'</ItemGroup>')
+		end
+	end
+
 	function vc2010.getfilegroup_ng(prj, group)
 		-- check for a cached copy before creating
 		local groups = prj.vc2010_file_groups
@@ -418,11 +444,20 @@
 				ClInclude = {},
 				None = {},
 				ResourceCompile = {},
+				CustomBuild = {},
 			}
 			prj.vc2010_file_groups = groups
 			
+			-- I need a project configuration in order to fetch a file's configuration,
+			-- which would contain any custom build rules. I'm hoping that I can get
+			-- away with only looking at the first config, and not iterating them all
+			local cfg = project.getconfig(prj, prj.solution.configurations[1])
+			
 			for file in project.eachfile(prj) do
-				if path.iscppfile(file.fullpath) then
+				local filecfg = config.getfileconfig(cfg, file.abspath)
+				if filecfg and filecfg.buildrule then
+					table.insert(groups.CustomBuild, file)
+				elseif path.iscppfile(file.fullpath) then
 					table.insert(groups.ClCompile, file)
 				elseif path.iscppheader(file.fullpath) then
 					table.insert(groups.ClInclude, file)

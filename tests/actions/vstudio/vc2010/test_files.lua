@@ -69,6 +69,28 @@
 	</ItemGroup>
 		]]
 	end
+
+	function suite.customBuild_onBuildRule()
+		files { "hello.cg" }
+		configuration "**.cg"
+			buildrule {
+				commands = { "cgc $(InputFile)" },
+				outputs = { "$(InputName).obj" }
+			}
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<CustomBuild Include="hello.cg">
+			<FileType>Document</FileType>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		</CustomBuild>
+	</ItemGroup>
+		]]
+	end
+
 	
 --
 -- If a PCH source is specified, ensure it is included in the file configuration.
