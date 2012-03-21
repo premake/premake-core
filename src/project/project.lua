@@ -88,10 +88,12 @@
 			local files = {}
 			for _, block in ipairs(prj.blocks) do
 				for _, file in ipairs(block.files) do
-					if not files[file] then
+					if not files[file] then						
+						local fcfg = project.getfileconfig(prj, file)
+					
 						-- add it both indexed for iteration and keyed for quick tests
 						table.insert(files, file)
-						files[file] = file
+						files[file] = fcfg
 					end
 				end
 			end
@@ -104,18 +106,8 @@
 		return function()
 			i = i + 1
 			if i <= #files then
-				local fcfg = {}
-				fcfg.relpath = project.getrelative(prj, files[i])
-				fcfg.abspath = files[i]
-
-				local vpath = project.getvpath(prj, files[i])
-				if vpath ~= files[i] then
-					fcfg.vpath = vpath
-				else
-					fcfg.vpath = fcfg.relpath
-				end
-
-				return fcfg
+				local filename = files[i]
+				return files[filename]
 			end
 		end
 	end
@@ -217,6 +209,34 @@
 		end
 
 		return result
+	end
+
+
+--
+-- Builds a file configuration for a specific file from a project.
+--
+-- @param prj
+--    The project to query.
+-- @param filename
+--    The absolute path of the file to query.
+-- @return
+--    A corresponding file configuration object.
+--
+
+	function project.getfileconfig(prj, filename)
+		local fcfg = {}
+
+		fcfg.abspath = filename
+		fcfg.relpath = project.getrelative(prj, filename)
+
+		local vpath = project.getvpath(prj, filename)
+		if vpath ~= filename then
+			fcfg.vpath = vpath
+		else
+			fcfg.vpath = fcfg.relpath
+		end
+
+		return fcfg
 	end
 
 
