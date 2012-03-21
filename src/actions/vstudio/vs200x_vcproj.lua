@@ -702,7 +702,7 @@
 			-- source files are handled at the leaves
 			onleaf = function(node, depth)
 				_p(depth, '<File')
-				_p(depth, '\tRelativePath="%s"', path.translate(node.cfg.fullpath))
+				_p(depth, '\tRelativePath="%s"', path.translate(node.cfg.relpath))
 				_p(depth, '\t>')					
 
 				vc200x.fileConfiguration(prj, node, depth + 1)

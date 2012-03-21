@@ -380,7 +380,7 @@
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				_x(2,'<%s Include=\"%s\" />', group, path.translate(file.fullpath))
+				_x(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
 			end
 			_p(1,'</ItemGroup>')
 		end
@@ -389,18 +389,16 @@
 	function vc2010.compilerfilesgroup_ng(prj)
 		local files = vc2010.getfilegroup_ng(prj, "ClCompile")
 		if #files > 0  then
-			local pchsource = project.getrelative(prj, prj.pchsource)
-			
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.fullpath))
+				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
 				for cfg in project.eachconfig(prj) do
 					local filecfg = config.getfileconfig(cfg, file.abspath)
 					if not filecfg then
 						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', vc2010.condition(cfg))
 					end
 					
-					if pchsource == file.fullpath and not cfg.flags.NoPCH then
+					if prj.pchsource == file.abspath and not cfg.flags.NoPCH then
 						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', vc2010.condition(cfg))
 					end
 				end
@@ -415,7 +413,7 @@
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				_x(2,'<CustomBuild Include=\"%s\">', path.translate(file.fullpath))
+				_x(2,'<CustomBuild Include=\"%s\">', path.translate(file.relpath))
 				_p(3,'<FileType>Document</FileType>')
 				
 				for cfg in project.eachconfig(prj) do
@@ -457,11 +455,11 @@
 				local filecfg = config.getfileconfig(cfg, file.abspath)
 				if filecfg and filecfg.buildrule then
 					table.insert(groups.CustomBuild, file)
-				elseif path.iscppfile(file.fullpath) then
+				elseif path.iscppfile(file.relpath) then
 					table.insert(groups.ClCompile, file)
-				elseif path.iscppheader(file.fullpath) then
+				elseif path.iscppheader(file.relpath) then
 					table.insert(groups.ClInclude, file)
-				elseif path.isresourcefile(file.fullpath) then
+				elseif path.isresourcefile(file.relpath) then
 					table.insert(groups.ResourceCompile, file)
 				else
 					table.insert(groups.None, file)

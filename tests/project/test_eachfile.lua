@@ -20,7 +20,7 @@
 
 	local function prepare(field)
 		if not field then
-			field = "fullpath"
+			field = "relpath"
 		end		
 		for file in project.eachfile(prj) do
 			_p(2, file[field])

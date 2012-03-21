@@ -80,11 +80,11 @@
 			for _, file in ipairs(files) do
 				local filter = path.getdirectory(file.vpath)
 				if filter ~= "." then
-					_p(2,'<%s Include=\"%s\">', group, path.translate(file.fullpath))
+					_p(2,'<%s Include=\"%s\">', group, path.translate(file.relpath))
 					_p(3,'<Filter>%s</Filter>', path.translate(filter))
 					_p(2,'</%s>', group)
 				else
-					_p(2,'<%s Include=\"%s\" />', group, path.translate(file.fullpath))
+					_p(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
 				end					
 			end
 			_p(1,'</ItemGroup>')
