@@ -11,14 +11,23 @@
 --
 
 	function path.appendextension(p, ext)
-		if not p:endswith(ext) then
-			-- if the path ends with a quote, move it to the end of the string
-			if p:endswith('"') then
-				p = p:sub(1, -2) .. ext .. '"'
-			else
-				p = p .. ext
-			end
+		-- if the path ends with a quote, pull it off
+		local endquote
+		if p:endswith('"') then
+			p = p:sub(1, -2)
+			endquote = '"'
 		end
+		
+		-- add the extension if it isn't there already
+		if not p:endswith(ext) then
+			p = p .. ext
+		end
+		
+		-- put the quote back if necessary
+		if endquote then
+			p = p .. endquote
+		end
+		
 		return p
 	end
 

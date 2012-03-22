@@ -84,7 +84,7 @@
 	function suite.variableMaintained_onQuotedVariable()
 		system "windows"
 		location "build"
-		links { '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI"' }
+		links { '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib"' }
 		local r = prepare("all", "fullpath")
 		test.isequal({ '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib"' }, r)
 	end
