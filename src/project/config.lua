@@ -233,9 +233,9 @@
 					item = link
 					if cfg.system == premake.WINDOWS then
 						if premake.iscppproject(cfg.project) then
-							item = item .. ".lib"
+							item = path.appendextension(item, ".lib")
 						elseif premake.isdotnetproject(cfg.project) then
-							item = item .. ".dll"
+							item = path.appendextension(item, ".dll")
 						end
 					end
 					if item:find("/", nil, true) then

@@ -6,6 +6,24 @@
 
 
 --
+-- Appends a file extension to the path. Verifies that the extension
+-- isn't already present, and adjusts quotes as necessary.
+--
+
+	function path.appendextension(p, ext)
+		if not p:endswith(ext) then
+			-- if the path ends with a quote, move it to the end of the string
+			if p:endswith('"') then
+				p = p:sub(1, -2) .. ext .. '"'
+			else
+				p = p .. ext
+			end
+		end
+		return p
+	end
+
+
+--
 -- Get the absolute file path from a relative path. The requested
 -- file path doesn't actually need to exist.
 --

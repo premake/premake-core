@@ -46,7 +46,7 @@
 		location "build"
 		links { "../libs/z" }
 		local r = prepare("all", "fullpath")
-		test.isequal("../../libs/z", r[1])
+		test.isequal({ "../../libs/z" }, r)
 	end
 
 
@@ -58,5 +58,33 @@
 		system "windows"
 		links { "user32" }
 		local r = prepare("all", "fullpath")
-		test.isequal("user32.lib", r[1])
+		test.isequal({ "user32.lib" }, r)
+	end
+
+	function suite.libAdded_onWindowsSystemLibs()
+		system "windows"
+		links { "user32.lib" }
+		local r = prepare("all", "fullpath")
+		test.isequal({ "user32.lib" }, r)
+	end
+
+
+--
+-- Check handling of shell variables in library paths.
+--
+
+	function suite.variableMaintained_onLeadingVariable()
+		system "windows"
+		location "build"
+		links { "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI" }
+		local r = prepare("all", "fullpath")
+		test.isequal({ "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib" }, r)
+	end
+
+	function suite.variableMaintained_onQuotedVariable()
+		system "windows"
+		location "build"
+		links { '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI"' }
+		local r = prepare("all", "fullpath")
+		test.isequal({ '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib"' }, r)
 	end
