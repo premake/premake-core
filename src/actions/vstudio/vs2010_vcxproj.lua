@@ -449,8 +449,9 @@
 			-- I need a project configuration in order to fetch a file's configuration,
 			-- which would contain any custom build rules. I'm hoping that I can get
 			-- away with only looking at the first config, and not iterating them all
-			local cfg = project.getconfig(prj, prj.solution.configurations[1])
-			
+			local iter = project.eachconfig(prj)
+			local cfg = iter()
+						
 			for file in project.eachfile(prj) do
 				local filecfg = config.getfileconfig(cfg, file.abspath)
 				if filecfg and filecfg.buildrule then
