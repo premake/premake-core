@@ -104,27 +104,6 @@
 	end	
 
 
-
---
--- Test directory dot patterns
---
-
-	function suite.RemovesLeadingDotFolder()
-		prepare()
-		test.isequal("hello.c", project.getvpath(prj, "./hello.c"))
-	end
-
-	function suite.RemovesLeadingDotDotFolder()
-		prepare()
-		test.isequal("hello.c", project.getvpath(prj, "../hello.c"))
-	end
-
-	function suite.RemovesMultipleLeadingDotDotFolders()
-		prepare()
-		test.isequal("src/hello.c", project.getvpath(prj, "../../src/hello.c"))
-	end
-	
-
 --
 -- Test with project locations
 --

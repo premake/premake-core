@@ -293,9 +293,15 @@
 -- @param prj
 --    The project to query.
 -- @return
---    A tree object containing the source file hierarchy. Each leaf
---    node contains a file configuration object at node.cfg; see
---    project.eachfile() for a description of this object.
+--    A tree object containing the source file hierarchy. Leaf nodes
+--    representing the individual files contain the fields:
+--      abspath  - the absolute path of the file
+--      relpath  - the relative path from the project to the file
+--      vpath    - the file's virtual path
+--    All nodes contain the fields:
+--      path     - the node's path within the tree
+--      realpath - the node's file system path (nil for virtual paths)
+--      name     - the directory or file name represented by the node
 --
 
 	function project.getsourcetree(prj)
@@ -322,7 +328,6 @@
 			node.abspath = fcfg.abspath
 			node.relpath = fcfg.relpath
 			node.vpath = fcfg.vpath
-			node.cfg = fcfg
 		end
 
 		premake.tree.trimroot(tr)
@@ -376,19 +381,6 @@
 				end
 			end
 		end
-				
-		-- remove any dot ("./", "../") patterns from the start of the path
-		local changed
-		repeat
-			changed = true
-			if vpath:startswith("./") then
-				vpath = vpath:sub(3)
-			elseif vpath:startswith("../") then
-				vpath = vpath:sub(4)
-			else
-				changed = false
-			end
-		until not changed
 		
 		return vpath
 	end

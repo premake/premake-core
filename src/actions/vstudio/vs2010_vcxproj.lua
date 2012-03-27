@@ -459,11 +459,11 @@
 					local filecfg = config.getfileconfig(cfg, node.abspath)
 					if filecfg and filecfg.buildrule then
 						table.insert(groups.CustomBuild, node)
-					elseif path.iscppfile(node.relpath) then
+					elseif path.iscppfile(node.name) then
 						table.insert(groups.ClCompile, node)
-					elseif path.iscppheader(node.relpath) then
+					elseif path.iscppheader(node.name) then
 						table.insert(groups.ClInclude, node)
-					elseif path.isresourcefile(node.relpath) then
+					elseif path.isresourcefile(node.name) then
 						table.insert(groups.ResourceCompile, node)
 					else
 						table.insert(groups.None, node)

@@ -702,7 +702,7 @@
 			-- source files are handled at the leaves
 			onleaf = function(node, depth)
 				_p(depth, '<File')
-				_p(depth, '\tRelativePath="%s"', path.translate(node.cfg.relpath))
+				_p(depth, '\tRelativePath="%s"', path.translate(node.relpath))
 				_p(depth, '\t>')					
 
 				vc200x.fileConfiguration(prj, node, depth + 1)
@@ -732,14 +732,14 @@
 		
 			-- get any settings specific to this file for this configuration;
 			-- if nil this file is excluded from the configuration entirely
-			local filecfg = config.getfileconfig(cfg, node.cfg.abspath)
+			local filecfg = config.getfileconfig(cfg, node.abspath)
 			
 			-- if there is a file configuration, see if it contains any values
 			-- (will be empty if it matches the project config)
 			local hasSettings = (filecfg ~= nil and filecfg.terms ~= nil)
 			
 			-- check to see if this is the PCH source file
-			local isPchSource = (prj.pchsource == node.cfg.abspath and not cfg.flags.NoPCH)
+			local isPchSource = (prj.pchsource == node.abspath and not cfg.flags.NoPCH)
 
 			-- only write the element if we have something to say			
 			if compileAs or isPchSource or not filecfg or hasSettings then
