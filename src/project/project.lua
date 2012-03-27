@@ -65,54 +65,6 @@
 	end
 
 
---
--- Return an iterator for the list of source code files contained by a project.
---
--- @param prj
---    The project to query.
--- @return
---    A source code file iterator, which returns file configuration objects.
---    These file configurations contain:
---
---      fullpath  - the relative path from the project to the file
---      vpath     - the file's virtual path, if specified, or fullpath if not
---
-
-	function project.eachfile(prj)
-		-- make sure I have the project, and not it's root configuration
-		prj = prj.project or prj
-		
-		-- find *all* files referenced by the project, regardless of configuration,
-		-- and cache the list for future calls
-		if not prj.files then
-			local files = {}
-			for _, block in ipairs(prj.blocks) do
-				for _, file in ipairs(block.files) do
-					if not files[file] then						
-						local fcfg = project.getfileconfig(prj, file)
-					
-						-- add it both indexed for iteration and keyed for quick tests
-						table.insert(files, file)
-						files[file] = fcfg
-					end
-				end
-			end
-			prj.files = files
-		end
-			
-		local files = prj.files
-		local i = 0
-		
-		return function()
-			i = i + 1
-			if i <= #files then
-				local filename = files[i]
-				return files[filename]
-			end
-		end
-	end
-
-
 -- 
 -- Locate a project by name; case insensitive.
 --
@@ -305,14 +257,28 @@
 --
 
 	function project.getsourcetree(prj)
+		-- make sure I have the project, and not it's root configuration
+		prj = prj.project or prj
+		
 		-- check for a previously cached tree
 		if prj.sourcetree then
 			return prj.sourcetree
 		end
-		
-		local tr = premake.tree.new(prj.name)
 
-		for fcfg in project.eachfile(prj) do
+		-- find *all* files referenced by the project, regardless of configuration
+		local files = {}
+		for _, block in ipairs(prj.blocks) do
+			for _, file in ipairs(block.files) do
+				files[file] = file
+			end
+		end
+
+		-- create a tree from the file list
+		local tr = premake.tree.new(prj.name)
+		
+		for file in pairs(files) do
+			local fcfg = project.getfileconfig(prj, file)
+
 			-- The tree represents the logical source code tree to be displayed
 			-- in the IDE, not the physical organization of the file system. So
 			-- virtual paths are used when adding nodes.
@@ -324,10 +290,10 @@
 				end
 			end)
 
-			-- Store additional path information for file (leaf) nodes
-			node.abspath = fcfg.abspath
-			node.relpath = fcfg.relpath
-			node.vpath = fcfg.vpath
+			-- Store full file configuration in file (leaf) nodes
+			for key, value in pairs(fcfg) do
+				node[key] = value
+			end
 		end
 
 		premake.tree.trimroot(tr)

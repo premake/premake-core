@@ -203,6 +203,51 @@
 
 
 --
+-- A ".." folder containing a single subfolder should never appear
+-- at the top of the source tree.
+--
+
+	function suite.trimroot_removesDotDot_onTopLevelSiblings()
+		tree.add(tr, "../../tests/test_hello.c")
+		tree.add(tr, "../src/test.c")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		tests
+			test_hello.c
+		src
+			test.c
+		]]
+	end
+
+	function suite.trimroot_removesDotDot_onTopLevel()
+		tree.add(tr, "../tests/test_hello.c")
+		tree.add(tr, "src/test.c")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		tests
+			test_hello.c
+		src
+			test.c
+		]]
+	end
+
+	function suite.trimroot_removesDotDot_onMultipleNestings()
+		tree.add(tr, "../../../tests/test_hello.c")
+		tree.add(tr, "../src/test.c")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		tests
+			test_hello.c
+		src
+			test.c
+		]]
+	end
+
+
+--
 -- When nodes are trimmed, the paths on the remaining nodes should
 -- be updated to reflect the new hierarchy.
 --
@@ -211,6 +256,13 @@
 		tree.add(tr, "A/1")
 		tree.add(tr, "A/2")
 		tree.trimroot(tr)
-		prepare()
 		test.isequal("1", tr.children[1].path)
+	end
+
+
+	function suite.trimroot_updatesPaths_onDotDotRemoved()
+		tree.add(tr, "../../../tests/test_hello.c")
+		tree.add(tr, "../src/test.c")
+		tree.trimroot(tr)
+		test.isequal("tests", tr.children[1].path)
 	end

@@ -63,7 +63,6 @@
 	dofile("test_project.lua")
 	dofile("project/test_baking.lua")
 	dofile("project/test_eachconfig.lua")
-	dofile("project/test_eachfile.lua")
 	dofile("project/test_filtering.lua")
 	dofile("project/test_getconfig.lua")
 	dofile("project/test_hasconfig.lua")

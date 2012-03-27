@@ -228,6 +228,7 @@
 	function tree.trimroot(tr)
 		local trimmed
 		
+		-- start by removing single-children folders from the top of the tree
 		while #tr.children == 1 do
 			local node = tr.children[1]
 			
@@ -237,8 +238,7 @@
 			end			
 			
 			-- remove this node from the tree, and move its children up a level
-			trimmed = node.path
-			
+			trimmed = true			
 			local numChildren = #node.children
 			for i = 1, numChildren do
 				local child = node.children[i]
@@ -247,13 +247,33 @@
 			end
 		end
 		
+		-- found the top, now remove any single-children ".." folders from here
+		local dotdot
+		local count = #tr.children
+		repeat
+			dotdot = false
+			for i = 1, count do
+				local node = tr.children[i]
+				if node.name == ".." and #node.children == 1 then
+					local child = node.children[1]
+					child.parent = node.parent
+					tr.children[i] = child
+					trimmed = true
+					dotdot = true
+				end
+			end
+		until not dotdot
+				
 		-- if nodes were removed, adjust the paths on all remaining nodes
 		if trimmed then
-			local trimlen = #trimmed + 2
 			tree.traverse(tr, {
 				onnode = function(node)
-					node.path = node.path:sub(trimlen)
+					if node.parent.path then
+						node.path = path.join(node.parent.path, node.name)
+					else
+						node.path = node.name
+					end
 				end
-			})
+			}, false)
 		end
 	end
