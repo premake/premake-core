@@ -9,6 +9,7 @@
 	local vstudio = premake.vstudio
 	local project = premake5.project
 	local config = premake5.config
+	local tree = premake.tree
 
 
 --
@@ -451,21 +452,24 @@
 			-- away with only looking at the first config, and not iterating them all
 			local iter = project.eachconfig(prj)
 			local cfg = iter()
-						
-			for file in project.eachfile(prj) do
-				local filecfg = config.getfileconfig(cfg, file.abspath)
-				if filecfg and filecfg.buildrule then
-					table.insert(groups.CustomBuild, file)
-				elseif path.iscppfile(file.relpath) then
-					table.insert(groups.ClCompile, file)
-				elseif path.iscppheader(file.relpath) then
-					table.insert(groups.ClInclude, file)
-				elseif path.isresourcefile(file.relpath) then
-					table.insert(groups.ResourceCompile, file)
-				else
-					table.insert(groups.None, file)
+
+			local tr = project.getsourcetree(prj)
+			tree.traverse(tr, {
+				onleaf = function(node)
+					local filecfg = config.getfileconfig(cfg, node.abspath)
+					if filecfg and filecfg.buildrule then
+						table.insert(groups.CustomBuild, node)
+					elseif path.iscppfile(node.relpath) then
+						table.insert(groups.ClCompile, node)
+					elseif path.iscppheader(node.relpath) then
+						table.insert(groups.ClInclude, node)
+					elseif path.isresourcefile(node.relpath) then
+						table.insert(groups.ResourceCompile, node)
+					else
+						table.insert(groups.None, node)
+					end
 				end
-			end
+			})
 		end
 
 		return groups[group]

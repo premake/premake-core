@@ -299,14 +299,37 @@
 --
 
 	function project.getsourcetree(prj)
+		-- check for a previously cached tree
+		if prj.sourcetree then
+			return prj.sourcetree
+		end
+		
 		local tr = premake.tree.new(prj.name)
 
 		for fcfg in project.eachfile(prj) do
-			local node = premake.tree.add(tr, fcfg.vpath)
+			-- The tree represents the logical source code tree to be displayed
+			-- in the IDE, not the physical organization of the file system. So
+			-- virtual paths are used when adding nodes.
+			local node = premake.tree.add(tr, fcfg.vpath, function(node)
+				-- ...but when a real file system path is used, store it so that
+				-- an association can be made in the IDE 
+				if fcfg.vpath == fcfg.relpath then
+					node.realpath = node.path
+				end
+			end)
+
+			-- Store additional path information for file (leaf) nodes
+			node.abspath = fcfg.abspath
+			node.relpath = fcfg.relpath
+			node.vpath = fcfg.vpath
 			node.cfg = fcfg
 		end
 
+		premake.tree.trimroot(tr)
 		premake.tree.sort(tr)
+		
+		-- cache result and return
+		prj.sourcetree = tr
 		return tr
 	end
 
@@ -321,8 +344,8 @@
 		-- if there is no match, return the input filename
 		local vpath = filename
 		
-		-- file are always specified relative to the script, so the vpath
-		-- patterns do too. Get the script relative path
+		-- files are always specified relative to the script, so the vpath
+		-- patterns are too. Get the script relative path
 		local relpath = path.getrelative(prj.basedir, filename)
 		
 		for replacement,patterns in pairs(prj.vpaths or {}) do

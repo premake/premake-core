@@ -46,9 +46,13 @@
 --
 
 	function suite.file_inSingleLevelFolder()
-		files { "src/hello.cpp" }
+		files { "src/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
+		<File
+			RelativePath="so_long.cpp"
+			>
+		</File>
 		<Filter
 			Name="src"
 			Filter=""
@@ -67,9 +71,13 @@
 --
 
 	function suite.file_onMultipleFolderLevels()
-		files { "src/greetings/hello.cpp" }
+		files { "src/greetings/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
+		<File
+			RelativePath="so_long.cpp"
+			>
+		</File>
 		<Filter
 			Name="src"
 			Filter=""
@@ -93,7 +101,7 @@
 --
 
 	function suite.file_onVpath()
-		files { "src/hello.cpp" }
+		files { "src/hello.cpp", "so_long.h" }
 		vpaths { ["Source Files"] = "**.cpp" }
 		prepare()
 		test.capture [[

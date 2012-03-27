@@ -1,7 +1,7 @@
 --
 -- tree.lua
 -- Functions for working with the source code tree.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	premake.tree = { }
@@ -15,7 +15,7 @@
 --    The name of the tree, applied to the root node (optional).
 --
 
-	function premake.tree.new(n)
+	function tree.new(n)
 		local t = {
 			name = n,
 			children = { }
@@ -38,7 +38,7 @@
 --    The new tree node.
 --
 
-	function premake.tree.add(tr, p, onaddfunc)
+	function tree.add(tr, p, onaddfunc)
 		-- Special case "." refers to the current node
 		if p == "." then
 			return tr
@@ -48,16 +48,8 @@
 		-- Recurses to create as much of the tree as necessary.
 		local parentnode = tree.add(tr, path.getdirectory(p), onaddfunc)
 
-		-- Another special case, ".." refers to the parent node and doesn't create anything
+		-- Create the child if necessary
 		local childname = path.getname(p)
-		if childname == ".." then
-			return parentnode
-		end
-		
-		-- Create the child if necessary. If two children with the same name appear
-		-- at the same level, make sure they have the same path to prevent conflicts
-		-- i.e. ../Common and ../../Common can both appear at the top of the tree
-		-- yet they have different paths (Bug #3016050)
 		local childnode = parentnode.children[childname]
 		if not childnode or childnode.path ~= p then
 			childnode = tree.insert(parentnode, tree.new(childname))
@@ -80,7 +72,7 @@
 --    The child tree, to be inserted.
 --
 
-	function premake.tree.insert(parent, child)
+	function tree.insert(parent, child)
 		table.insert(parent.children, child)
 		if child.name then
 			parent.children[child.name] = child
@@ -98,7 +90,7 @@
 --    The node to query.
 --
 
-	function premake.tree.getlocalpath(node)
+	function tree.getlocalpath(node)
 		if node.parent.path then
 			return node.name
 		elseif node.cfg then
@@ -116,7 +108,7 @@
 --    The node to remove.
 --
 
-	function premake.tree.remove(node)
+	function tree.remove(node)
 		local children = node.parent.children
 		for i = 1, #children do
 			if children[i] == node then
@@ -134,7 +126,7 @@
 --    The tree to sort.
 --
 
-	function premake.tree.sort(tr)
+	function tree.sort(tr)
 		tree.traverse(tr, {
 			onnode = function(node)
 				table.sort(node.children, function(a,b)
@@ -169,7 +161,7 @@
 --    An optional starting value for the traversal depth; defaults to zero.
 --
 
-	function premake.tree.traverse(t, fn, includeroot, initialdepth)
+	function tree.traverse(t, fn, includeroot, initialdepth)
 
 		-- forward declare my handlers, which call each other
 		local donode, dochildren
@@ -223,5 +215,45 @@
 			donode(t, fn, initialdepth)
 		else
 			dochildren(t, fn, initialdepth)
+		end
+	end
+
+
+--
+-- Starting at the top of the tree, remove nodes that contain only a single 
+-- item until I hit a node that has multiple items. This is used to remove
+-- superfluous folders from the top of the source tree.
+--
+
+	function tree.trimroot(tr)
+		local trimmed
+		
+		while #tr.children == 1 do
+			local node = tr.children[1]
+			
+			-- if this node has no children (it is the last node in the tree) I'm done
+			if #node.children == 0 then
+				break
+			end			
+			
+			-- remove this node from the tree, and move its children up a level
+			trimmed = node.path
+			
+			local numChildren = #node.children
+			for i = 1, numChildren do
+				local child = node.children[i]
+				child.parent = node.parent
+				tr.children[i] = child
+			end
+		end
+		
+		-- if nodes were removed, adjust the paths on all remaining nodes
+		if trimmed then
+			local trimlen = #trimmed + 2
+			tree.traverse(tr, {
+				onnode = function(node)
+					node.path = node.path:sub(trimlen)
+				end
+			})
 		end
 	end

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_tree.lua
 -- Automated test suite source code tree handling.
--- Copyright (c) 2009 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
 	T.tree = { }
@@ -13,23 +13,20 @@
 -- Setup/teardown
 --
 
-	local tr, nodes
+	local tr
 			
 	function suite.setup()
 		tr = tree.new()
-		nodes = { }
 	end
 
-	local function getresult()
+	local function prepare()
 		tree.traverse(tr, {
 			onnode = function(node, depth)
-				table.insert(nodes, string.rep(">", depth) .. node.name)
+				_p(depth + 2, node.name)
 			end
 		})
-		return table.concat(nodes)
 	end
 
-	
 
 --
 -- Tests for tree.new()
@@ -46,37 +43,29 @@
 
 	function suite.CanAddAtRoot()
 		tree.add(tr, "Root")
-		test.isequal("Root", getresult())
+		prepare()
+		test.capture [[
+		Root
+		]]
 	end
 
 	function suite.CanAddAtChild()
 		tree.add(tr, "Root/Child")
-		test.isequal("Root>Child", getresult())
+		prepare()
+		test.capture [[
+		Root
+			Child
+		]]
 	end
 
 	function suite.CanAddAtGrandchild()
 		tree.add(tr, "Root/Child/Grandchild")
-		test.isequal("Root>Child>>Grandchild", getresult())
-	end
-	
-	function suite.SkipsLeadingDotDots()
-		tree.add(tr, "../MyProject/hello")
-		test.isequal("MyProject>hello", getresult())
-	end
-
-	function suite.SkipsInlineDotDots()
-		tree.add(tr, "MyProject/../hello")
-		test.isequal("MyProject>hello", getresult())
-	end
-	
-	function suite.AddsNodes_OnDifferentParentLevel()
-		tree.add(tr, "../Common")
-		tree.add(tr, "../../Common")
-		test.isequal(2, #tr.children)
-		test.isequal("Common", tr.children[1].name)
-		test.isequal("Common", tr.children[2].name)
-		test.isequal("../Common", tr.children[1].path)
-		test.isequal("../../Common", tr.children[2].path)
+		prepare()
+		test.capture [[
+		Root
+			Child
+				Grandchild
+		]]
 	end
 
 
@@ -138,6 +127,90 @@
 		tree.add(tr, "A/1")
 		tree.add(tr, "B/2")
 		tree.sort(tr)
-		test.isequal("A>1>2B>1>2>3", getresult(tr))
+		prepare()
+		test.capture [[
+		A
+			1
+			2
+		B
+			1
+			2
+			3
+		]]
 	end
 
+
+--
+-- If the root of the tree contains multiple items, it should not
+-- be removed by trimroot()
+--
+
+	function suite.trimroot_onItemsAtRoot()
+		tree.add(tr, "A/1")
+		tree.add(tr, "B/1")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		A
+			1
+		B
+			1
+		]]
+	end
+
+--
+-- Should trim to first level with multiple items.
+--
+
+	function suite.trimroot_onItemsInFirstNode()
+		tree.add(tr, "A/1")
+		tree.add(tr, "A/2")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		1
+		2
+		]]
+	end
+
+
+--
+-- If the tree contains only a single node, don't trim it.
+--
+
+	function suite.trimroot_onSingleNode()
+		tree.add(tr, "A")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		A
+		]]
+	end
+
+
+--
+-- If the tree contains only a single node, don't trim it.
+--
+
+	function suite.trimroot_onSingleLeafNode()
+		tree.add(tr, "A/1")
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		1
+		]]
+	end
+
+
+--
+-- When nodes are trimmed, the paths on the remaining nodes should
+-- be updated to reflect the new hierarchy.
+--
+
+	function suite.trimroot_updatesPaths_onNodesRemoved()
+		tree.add(tr, "A/1")
+		tree.add(tr, "A/2")
+		tree.trimroot(tr)
+		prepare()
+		test.isequal("1", tr.children[1].path)
+	end

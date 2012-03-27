@@ -91,8 +91,8 @@
 		prepare("ClCompile")
 		test.capture [[
 	<ItemGroup>
-		<ClCompile Include="hello.c" />
 		<ClCompile Include="goodbye.c" />
+		<ClCompile Include="hello.c" />
 	</ItemGroup>
 		]]
 	end
@@ -102,7 +102,7 @@
 --
 
 	function suite.filter_onRealPath()
-		files { "src/hello.c" }
+		files { "src/hello.c", "hello.h" }
 		prepare("ClCompile")
 		test.capture [[
 	<ItemGroup>
@@ -118,7 +118,7 @@
 --
 
 	function suite.filter_onVpath()
-		files { "src/hello.c" }
+		files { "src/hello.c", "hello.h" }
 		vpaths { ["Source Files"] = "**.c" }		
 		prepare("ClCompile")
 		test.capture [[

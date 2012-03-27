@@ -50,7 +50,7 @@
 --
 
 	function suite.singleIdentifier_onMultipleFilesInSameFolder()
-		files { "src/hello.c", "src/goodbye.c" }
+		files { "src/hello.c", "src/goodbye.c", "so_long.h" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
@@ -67,7 +67,7 @@
 --
 
 	function suite.multipleIdentifiers_forNestedFolders()
-		files { "src/hello.c", "src/departures/goodbye.c" }
+		files { "src/hello.c", "src/departures/goodbye.c", "so_long.h" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
@@ -87,7 +87,7 @@
 --
 
 	function suite.filterUsesVpath_onVpath()
-		files { "hello.c", "goodbye.c" }
+		files { "hello.c", "goodbye.h" }
 		vpaths { ["Source Files"] = "**.c" }
 		prepare()
 		test.capture [[
