@@ -80,6 +80,21 @@
 		]]
 	end
 
+	function suite.itemGroup_onSingleConfigBuildRule()
+		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
+		configuration { "Release", "**.cg" }
+			buildrule {
+				commands = { "cgc $(InputFile)" },
+				outputs = { "$(InputName).obj" }
+			}
+		prepare("CustomBuild")
+		test.capture [[
+	<ItemGroup>
+		<CustomBuild Include="hello.cg" />
+	</ItemGroup>
+		]]
+	end
+
 
 --
 -- Files located at the root (in the same folder as the project) do not

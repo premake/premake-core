@@ -24,6 +24,7 @@
 		vc2010.filters_filegroup(prj, "ClInclude")
 		vc2010.filters_filegroup(prj, "ClCompile")
 		vc2010.filters_filegroup(prj, "ResourceCompile")
+		vc2010.filters_filegroup(prj, "CustomBuild")
 		
 		_p('</Project>')
 	end

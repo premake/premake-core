@@ -420,12 +420,13 @@
 				for cfg in project.eachconfig(prj) do
 					local condition = vc2010.condition(cfg)					
 					local filecfg = config.getfileconfig(cfg, file.abspath)
-					
-					local commands = table.concat(filecfg.buildrule.commands,'\r\n')
-					_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
-
-					local outputs = table.concat(filecfg.buildrule.outputs, ' ')
-					_p(3,'<Outputs %s>%s</Outputs>', condition, premake.esc(outputs))
+					if filecfg and filecfg.buildrule then
+						local commands = table.concat(filecfg.buildrule.commands,'\r\n')
+						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
+	
+						local outputs = table.concat(filecfg.buildrule.outputs, ' ')
+						_p(3,'<Outputs %s>%s</Outputs>', condition, premake.esc(outputs))
+					end
 				end
 				
 				_p(2,'</CustomBuild>')
@@ -447,17 +448,21 @@
 			}
 			prj.vc2010_file_groups = groups
 			
-			-- I need a project configuration in order to fetch a file's configuration,
-			-- which would contain any custom build rules. I'm hoping that I can get
-			-- away with only looking at the first config, and not iterating them all
-			local iter = project.eachconfig(prj)
-			local cfg = iter()
-
 			local tr = project.getsourcetree(prj)
 			tree.traverse(tr, {
 				onleaf = function(node)
-					local filecfg = config.getfileconfig(cfg, node.abspath)
-					if filecfg and filecfg.buildrule then
+					-- if any configuration of this file uses a custom build rule,
+					-- then they all must be marked as custom build
+					local hasbuildrule = false
+					for cfg in project.eachconfig(prj) do				
+						local filecfg = config.getfileconfig(cfg, node.abspath)
+						if filecfg and filecfg.buildrule then
+							hasbuildrule = true
+							break
+						end
+					end
+						
+					if hasbuildrule then
 						table.insert(groups.CustomBuild, node)
 					elseif path.iscppfile(node.name) then
 						table.insert(groups.ClCompile, node)
