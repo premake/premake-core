@@ -75,6 +75,10 @@
 	dofile("config/test_objdir.lua")
 	dofile("config/test_targetinfo.lua")
 
+	-- API tests
+	dofile("api/test_callback.lua")
+	dofile("api/test_register.lua")
+
 	-- Baking tests
 	dofile("base/test_baking.lua")
 

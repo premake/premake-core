@@ -8,6 +8,8 @@
 	T.table = { }
 	local suite = T.table
 
+	local t
+
 
 --
 -- table.contains() tests
@@ -44,6 +46,16 @@
 	end
 
 
+--
+-- table.indexof() tests
+--
+
+	function suite.indexof_returnsIndexOfValueFound()
+		local idx = table.indexof({ "a", "b", "c" }, "b")
+		test.isequal(2, idx)
+	end
+
+		
 --
 -- table.isempty() tests
 --

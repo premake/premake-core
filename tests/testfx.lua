@@ -197,13 +197,18 @@
 -- Test execution function
 --
 	local _OS_host = _OS
+
+	-- TODO: move this out to the test suite's premake4.lua so 
+	-- this file can be reused for other projects
 	local function test_setup(suite, fn)
-		-- clear out some important globals
 		_ACTION = "test"
 		_ARGS = { }
 		_OPTIONS = { }
 		_OS = _OS_host
+
 		premake.solution.list = { }
+		premake.api.scope = { }
+
 		io.indent = nil
 		io.eol = "\n"
 

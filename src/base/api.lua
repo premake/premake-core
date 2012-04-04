@@ -4,6 +4,82 @@
 -- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
+	premake.api = {}
+	local api = premake.api
+
+
+--
+-- A place to store the current active objects in each project scope.
+--
+
+	api.scope = {}
+
+
+--
+-- Register a new API function. See the built-in API definitions below
+-- for usage examples.
+--
+
+	function api.register(description)
+		-- verify the name
+		local name = description.name
+		if not name then
+			error("missing name", 2)
+		end
+		
+		if _G[name] then
+			error("name in use", 2)
+		end
+
+		-- make sure there is a handler available for this kind of value
+		if not api["set" .. description.kind] then
+			error("invalid kind", 2)
+		end
+		
+		_G[name] = function(value)
+			return api.callback(description, value)
+		end
+	end
+
+
+--
+-- Callback for all API functions; everything comes here first, and then
+-- parceled out to the individual set...() functions.
+--
+
+	function api.callback(field, value)
+		-- find the right target object for this field
+		local target
+		if field.scope == "project" then
+			target = api.scope.project or api.scope.solution
+		else
+			target = api.scope.configuration
+		end
+		
+		if not target then
+			error("no " .. field.scope .. " in scope", 3)
+		end
+		
+		-- find and call the setter for this field's value kind
+		local setter = api["set" .. field.kind]
+		setter(target, field, value)
+	end
+
+
+--
+-- Set a new string value on an API field.
+--
+
+	function api.setstring(target, field, value)
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
+
+
 --
 -- Here I define all of the getter/setter functions as metadata. The actual
 -- functions are built programmatically below.
@@ -807,6 +883,10 @@
 				cfg[name] = { }
 			end
 		end
+
+		
+		-- this is the new place for storing scoped objects
+		api.scope.configuration = cfg
 		
 		return cfg
 	end
@@ -914,6 +994,9 @@
 		
 		-- add an empty, global configuration to the project
 		configuration { }
+		
+		-- this is the new place for storing scoped objects
+		api.scope.project = premake.CurrentContainer
 	
 		return premake.CurrentContainer
 	end
@@ -935,6 +1018,9 @@
 
 		-- add an empty, global configuration
 		configuration { }
+		
+		-- this is the new place for storing scoped objects
+		api.scope.solution = premake.CurrentContainer
 		
 		return premake.CurrentContainer
 	end

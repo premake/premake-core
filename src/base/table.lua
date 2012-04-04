@@ -154,7 +154,22 @@
 		end
 		return result
 	end
-	
+
+
+
+--
+-- Looks for an object within an array. Returns its index if found,
+-- or nil if the object could not be found.
+--
+
+	function table.indexof(tbl, obj)
+		local count = #tbl
+		for i = 1, count do
+			if tbl[i] == obj then
+				return i
+			end
+		end		
+	end
 
 
 --
