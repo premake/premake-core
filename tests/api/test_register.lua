@@ -13,18 +13,8 @@
 -- Setup and teardown
 --
 
-	local callback_args
-	
-	function suite.setup()
-		suite.callback = api.callback
-		api.callback = function(...) callback_args = arg end
-	end
-
-
 	function suite.teardown()
-		_G["testapi"] = nil
-		api.callback = suite.callback
-		callback_args = nil
+		testapi = nil
 	end
 
 
@@ -87,11 +77,12 @@
 
 
 --
--- Verify that the central API callback is invoked by the registered function.
+-- Verify that key-value forms are accepted.
 --
 
-	function suite.callbackInvoked_onApiCall()
-		api.register { name = "testapi", kind = "testkind", scope = "project" }
-		testapi "testvalue"
-		test.isnotnil(callback_args)
+	function suite.succeeds_onKeyValueForm()
+		ok, err = pcall(function () 
+			api.register { name = "testapi", kind = "key-string", scope = "project" }
+		end)				
+		test.istrue(ok)
 	end

@@ -20,9 +20,9 @@
 -- for usage examples.
 --
 
-	function api.register(description)
+	function api.register(field)
 		-- verify the name
-		local name = description.name
+		local name = field.name
 		if not name then
 			error("missing name", 2)
 		end
@@ -32,12 +32,17 @@
 		end
 
 		-- make sure there is a handler available for this kind of value
-		if not api["set" .. description.kind] then
-			error("invalid kind", 2)
+		local kind = field.kind
+		if kind:startswith("key-") then
+			kind = kind:sub(5)
+		end
+		
+		if not api["set" .. kind] then
+			error("invalid kind '" .. kind .. "'", 2)
 		end
 		
 		_G[name] = function(value)
-			return api.callback(description, value)
+			return api.callback(field, value)
 		end
 	end
 
@@ -60,9 +65,51 @@
 			error("no " .. field.scope .. " in scope", 3)
 		end
 		
-		-- find and call the setter for this field's value kind
-		local setter = api["set" .. field.kind]
-		setter(target, field, value)
+		-- A keyed value is a table containing key-value pairs, where the
+		-- type of the value is defined by the field. 
+		if field.kind:startswith("key-") then		
+			target[field.name] = target[field.name] or {}
+			api.setkeyvalue(target[field.name], field, value)
+			
+		-- Otherwise, it is a "simple" value defined by the field
+		else
+			local setter = api["set" .. field.kind]
+			setter(target, field.name, field, value)
+		end
+	end
+
+
+--
+-- Update a keyed value. Iterate over the keys in the new value, and use
+-- the corresponding values to update the target object.
+--
+
+	function api.setkeyvalue(target, field, values)
+		if type(values) ~= "table" then
+			error("value must be a table of key-value pairs", 4)
+		end
+		
+		local kind = field.kind:sub(5)
+		local setter = api["set" .. kind]
+		for key, value in pairs(values) do
+			setter(target, key, field, value)
+		end
+	end
+
+
+--
+-- Set a new array value. Arrays are lists of values stored by "value",
+-- in that new values overwrite old ones, rather than merging like lists.
+--
+
+	function api.setarray(target, name, field, value)
+		-- put simple values in an array
+		if type(value) ~= "table" then
+			value = { value }
+		end
+		
+		-- store it, overwriting any existing value
+		target[field.name] = value
 	end
 
 
@@ -70,7 +117,8 @@
 -- Set a new string value on an API field.
 --
 
-	function api.setstring(target, field, value)
+	function api.setstring(target, name, field, value)
+		error("setstring is not yet implemented")
 	end
 
 

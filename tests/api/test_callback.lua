@@ -14,9 +14,10 @@
 --
 
 	function suite.setup()
-		api.settest = function(target, field, value) 
+		api.settest = function(target, name, field, value) 
 			test_args = {
 				["target"] = target,
+				["name"] = name,
 				["field"] = field,
 				["value"] = value
 			}
@@ -25,7 +26,7 @@
 
 
 	function suite.teardown()
-		_G["testapi"] = nil
+		testapi = nil
 		test_args = nil
 		api.settest = nil
 	end
@@ -43,6 +44,18 @@
 		solution "MySolution"
 		testapi "test"
 		test.isnotnil(test_args)
+	end
+
+
+-- 
+-- Verify that the target field name is getting passed to the setter.
+--
+
+	function suite.setterGetsFieldName()
+		api.register { name = "testapi", kind = "test", scope = "project" }
+		solution "MySolution"
+		testapi "test"
+		test.isequal("testapi", test_args.name)
 	end
 
 
@@ -137,3 +150,43 @@
 		testapi "test"
 		test.istrue(cfg == test_args.target)
 	end
+
+
+--
+-- On key-value APIs, the keyed object value should be the target.
+--
+
+	function suite.keyObjectTarget_onKeyValue()
+		api.register { name = "testapi", kind = "key-test", scope = "project" }
+		local sln = solution "MySolution"
+		testapi { key = "test" }
+		test.istrue(sln.testapi == test_args.target)
+	end
+
+
+
+--
+-- On key-value APIs, the field name should be the key value from the supplied table.
+--
+
+	function suite.keyObjectName_onKeyValue()
+		api.register { name = "testapi", kind = "key-test", scope = "project" }
+		local sln = solution "MySolution"
+		testapi { key = "test" }
+		test.isequal("key", test_args.name)
+	end
+
+
+--
+-- Raise an error is a simple value is passed to a key-value API.
+--
+
+	function suite.keyValueRaisesError_onSimpleValue()
+		api.register { name = "testapi", kind = "key-test", scope = "project" }
+		local sln = solution "MySolution"
+		ok, err = pcall(function () 
+			testapi "test"
+		end)
+		test.isfalse(ok)
+	end
+

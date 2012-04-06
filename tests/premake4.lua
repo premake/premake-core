@@ -76,6 +76,7 @@
 	dofile("config/test_targetinfo.lua")
 
 	-- API tests
+	dofile("api/test_array_kind.lua")
 	dofile("api/test_callback.lua")
 	dofile("api/test_register.lua")
 
