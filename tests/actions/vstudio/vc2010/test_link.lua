@@ -33,11 +33,13 @@
 --
 
 	function suite.defaultSettings()
+		kind "SharedLib"
 		prepare()
 		test.capture [[
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
@@ -56,6 +58,7 @@
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<EnableCOMDATFolding>true</EnableCOMDATFolding>
 			<OptimizeReferences>true</OptimizeReferences>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
@@ -94,12 +97,13 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
 
 	function suite.subsystem_onStaticLib()
-		kind "SharedLib"
+		kind "StaticLib"
 		prepare()
 		test.capture [[
 		<Link>
@@ -208,6 +212,24 @@
 
 
 --
+-- Check handling of the import library settings.
+--
+
+	function suite.importLibrary_onImpLibDir()
+		implibdir "../lib"
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>..\lib\MyProject.lib</ImportLibrary>
+		</Link>
+		]]
+	end
+
+
+
+--
 -- Check handling of additional options.
 --
 
@@ -219,8 +241,8 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
 			<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
-		</Link>
 		]]
 	end
 

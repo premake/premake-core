@@ -332,6 +332,11 @@
 		vc2010.additionalDependencies(cfg)
 		vc2010.additionalLibraryDirectories(cfg)
 
+		if cfg.kind == premake.SHAREDLIB then
+			local implibname = config.getlinkinfo(cfg).fullpath
+			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(implibname))
+		end
+
 		if vc2010.config_type(cfg) == "Application" and not cfg.flags.WinMain and not cfg.flags.Managed then
 			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 		end
