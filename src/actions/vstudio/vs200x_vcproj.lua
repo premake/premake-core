@@ -286,15 +286,21 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
-		
-		if cfg.flags.FatalWarnings then
-			_p(4,'WarnAsError="%s"', bool(true))
+		if cfg.flags.NoWarnings then
+			_p(4,'WarningLevel="0"')
+		else
+			_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
+
+			if cfg.flags.FatalWarnings then
+				_p(4,'WarnAsError="%s"', bool(true))
+			end
+			
+			if _ACTION < "vs2008" and not cfg.flags.Managed then
+				_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
+			end
 		end
 		
-		if _ACTION < "vs2008" and not cfg.flags.Managed then
-			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
-		end
+		
 		
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
 		
@@ -1202,14 +1208,18 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
-		
-		if cfg.flags.FatalWarnings then
-			_p(4,'WarnAsError="%s"', bool(true))
-		end
-		
-		if _ACTION < "vs2008" and not cfg.flags.Managed then
-			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
+		if cfg.flags.NoWarnings then
+			_p(4,'WarningLevel="0"')
+		else
+			_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
+			
+			if cfg.flags.FatalWarnings then
+				_p(4,'WarnAsError="%s"', bool(true))
+			end
+			
+			if _ACTION < "vs2008" and not cfg.flags.Managed then
+				_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
+			end
 		end
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))

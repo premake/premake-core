@@ -202,15 +202,21 @@
 			_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
 		end
 
-		_p(3,'<WarningLevel>Level%d</WarningLevel>', iif(cfg.flags.ExtraWarnings, 4, 3))
+		if cfg.flags.NoWarnings then
+			_p(3,'<WarningLevel>Level0</WarningLevel>')
+		else
+			_p(3,'<WarningLevel>Level%d</WarningLevel>', iif(cfg.flags.ExtraWarnings, 4, 3))
 
-		if premake.config.isdebugbuild(cfg) and cfg.flags.ExtraWarnings then
-			_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+			if premake.config.isdebugbuild(cfg) and cfg.flags.ExtraWarnings then
+				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+			end
+
+			if cfg.flags.FatalWarnings then
+				_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+			end
 		end
 
-		if cfg.flags.FatalWarnings then
-			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
-		end
+
 
 		vc2010.preprocessorDefinitions(cfg.defines)
 		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
@@ -910,7 +916,7 @@
 				_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
 			end
 
-			if cfg.flags.ExtraWarnings then
+			if not cfg.flags.NoWarnings and cfg.flags.ExtraWarnings then
 				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
 			end
 		else
@@ -923,14 +929,18 @@
 
 			precompiled_header(cfg)
 
-		if cfg.flags.ExtraWarnings then
-			_p(3,'<WarningLevel>Level4</WarningLevel>')
+		if cfg.flags.NoWarnings then
+			_p(3,'<WarningLevel>Level0</WarningLevel>')
 		else
-			_p(3,'<WarningLevel>Level3</WarningLevel>')
-		end
+			if cfg.flags.ExtraWarnings then
+				_p(3,'<WarningLevel>Level4</WarningLevel>')
+			else
+				_p(3,'<WarningLevel>Level3</WarningLevel>')
+			end
 
-		if cfg.flags.FatalWarnings then
-			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+			if cfg.flags.FatalWarnings then
+				_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+			end
 		end
 
 			exceptions(cfg)
