@@ -6,7 +6,7 @@
 -- down into one object per configuration. These objects are cached with the 
 -- project, and can be retrieved by calling the getconfig() or eachconfig().
 --
--- Copyright (c) 2008-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2012 Jason Perkins and the Premake project
 --
 
 	premake.bake = { }
@@ -159,7 +159,7 @@
 
 	local function mergefield(kind, dest, src)
 		local tbl = dest or { }
-		if kind == "keyvalue" or kind == "keypath" then
+		if kind == "key-value" or kind == "key-pathlist" then
 			for key, value in pairs(src) do
 				tbl[key] = mergefield("list", tbl[key], value)
 			end

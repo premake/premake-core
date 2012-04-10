@@ -42,3 +42,13 @@
 		test.isequal({ "myvalue" }, api.scope.project.testapi)
 	end
 
+
+-- 
+-- New values should overwrite old.
+--
+
+	function suite.overwrites_onNewValue()
+		testapi "first"
+		testapi "second"
+		test.isequal({ "second" }, api.scope.project.testapi)
+	end

@@ -82,6 +82,7 @@
 
 	-- Baking tests
 	dofile("base/test_baking.lua")
+	dofile("oven/test_keyvalues.lua")
 
 	-- Toolset tests
 	dofile("tools/test_gcc.lua")

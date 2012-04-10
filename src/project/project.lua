@@ -106,7 +106,7 @@
 --
 	
 	function project.getconfig(prj, buildcfg, platform, field, filename)
-		-- check for a cached version, build by bakeconfigs()
+		-- check for a cached version, built by bakeconfigs()
 		if not filename and prj.configs then
 			local key = (buildcfg or "*") .. (platform or "")
 			return prj.configs[key]

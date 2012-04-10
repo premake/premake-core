@@ -9,126 +9,6 @@
 
 
 --
--- A place to store the current active objects in each project scope.
---
-
-	api.scope = {}
-
-
---
--- Register a new API function. See the built-in API definitions below
--- for usage examples.
---
-
-	function api.register(field)
-		-- verify the name
-		local name = field.name
-		if not name then
-			error("missing name", 2)
-		end
-		
-		if _G[name] then
-			error("name in use", 2)
-		end
-
-		-- make sure there is a handler available for this kind of value
-		local kind = field.kind
-		if kind:startswith("key-") then
-			kind = kind:sub(5)
-		end
-		
-		if not api["set" .. kind] then
-			error("invalid kind '" .. kind .. "'", 2)
-		end
-		
-		_G[name] = function(value)
-			return api.callback(field, value)
-		end
-	end
-
-
---
--- Callback for all API functions; everything comes here first, and then
--- parceled out to the individual set...() functions.
---
-
-	function api.callback(field, value)
-		-- find the right target object for this field
-		local target
-		if field.scope == "project" then
-			target = api.scope.project or api.scope.solution
-		else
-			target = api.scope.configuration
-		end
-		
-		if not target then
-			error("no " .. field.scope .. " in scope", 3)
-		end
-		
-		-- A keyed value is a table containing key-value pairs, where the
-		-- type of the value is defined by the field. 
-		if field.kind:startswith("key-") then		
-			target[field.name] = target[field.name] or {}
-			api.setkeyvalue(target[field.name], field, value)
-			
-		-- Otherwise, it is a "simple" value defined by the field
-		else
-			local setter = api["set" .. field.kind]
-			setter(target, field.name, field, value)
-		end
-	end
-
-
---
--- Update a keyed value. Iterate over the keys in the new value, and use
--- the corresponding values to update the target object.
---
-
-	function api.setkeyvalue(target, field, values)
-		if type(values) ~= "table" then
-			error("value must be a table of key-value pairs", 4)
-		end
-		
-		local kind = field.kind:sub(5)
-		local setter = api["set" .. kind]
-		for key, value in pairs(values) do
-			setter(target, key, field, value)
-		end
-	end
-
-
---
--- Set a new array value. Arrays are lists of values stored by "value",
--- in that new values overwrite old ones, rather than merging like lists.
---
-
-	function api.setarray(target, name, field, value)
-		-- put simple values in an array
-		if type(value) ~= "table" then
-			value = { value }
-		end
-		
-		-- store it, overwriting any existing value
-		target[field.name] = value
-	end
-
-
---
--- Set a new string value on an API field.
---
-
-	function api.setstring(target, name, field, value)
-		error("setstring is not yet implemented")
-	end
-
-
-
------------------------------------------------------------------------------
--- Everything below this point is a candidate for deprecation
------------------------------------------------------------------------------
-
-
---
 -- Here I define all of the getter/setter functions as metadata. The actual
 -- functions are built programmatically below.
 --
@@ -554,13 +434,150 @@
 		
 		vpaths = 
 		{
-			kind = "keypath",
+			kind = "key-pathlist",
 			scope = "container",
 		},
 
 	}
 
 		
+
+
+--
+-- A place to store the current active objects in each project scope.
+--
+
+	api.scope = {}
+
+
+--
+-- Register a new API function. See the built-in API definitions below
+-- for usage examples.
+--
+
+	function api.register(field)
+		-- verify the name
+		local name = field.name
+		if not name then
+			error("missing name", 2)
+		end
+		
+		if _G[name] then
+			error("name in use", 2)
+		end
+
+		-- make sure there is a handler available for this kind of value
+		local kind = field.kind
+		if kind:startswith("key-") then
+			kind = kind:sub(5)
+		end
+		
+		if not api["set" .. kind] then
+			error("invalid kind '" .. kind .. "'", 2)
+		end
+		
+		-- add this new field to my master list
+		premake.fields[field.name] = field
+		
+		-- add create a setter function for it
+		_G[name] = function(value)
+			return api.callback(field, value)
+		end
+	end
+
+
+--
+-- Callback for all API functions; everything comes here first, and then
+-- parceled out to the individual set...() functions.
+--
+
+	function api.callback(field, value)
+		-- find the right target object for this field
+		local target
+		if field.scope == "project" then
+			target = api.scope.project or api.scope.solution
+		else
+			target = api.scope.configuration
+		end
+				
+		if not target then
+			error("no " .. field.scope .. " in scope", 3)
+		end
+		
+		-- A keyed value is a table containing key-value pairs, where the
+		-- type of the value is defined by the field. 
+		if field.kind:startswith("key-") then		
+			target[field.name] = target[field.name] or {}
+			api.setkeyvalue(target[field.name], field, value)
+			
+		-- Otherwise, it is a "simple" value defined by the field
+		else
+			local setter = api["set" .. field.kind]
+			setter(target, field.name, field, value)
+		end
+	end
+
+
+--
+-- Update a keyed value. Iterate over the keys in the new value, and use
+-- the corresponding values to update the target object.
+--
+
+	function api.setkeyvalue(target, field, values)
+		if type(values) ~= "table" then
+			error("value must be a table of key-value pairs", 4)
+		end
+		
+		local kind = field.kind:sub(5)
+		local setter = api["set" .. kind]
+		for key, value in pairs(values) do
+			setter(target, key, field, value)
+		end
+	end
+
+
+--
+-- Set a new array value. Arrays are lists of values stored by "value",
+-- in that new values overwrite old ones, rather than merging like lists.
+--
+
+	function api.setarray(target, name, field, value)
+		-- put simple values in an array
+		if type(value) ~= "table" then
+			value = { value }
+		end
+		
+		-- store it, overwriting any existing value
+		target[name] = value
+	end
+
+
+--
+-- Set a new string value on an API field.
+--
+
+	function api.setstring(target, name, field, value)
+		error("setstring is not yet implemented")
+	end
+
+
+--
+-- Register the core API functions.
+--
+
+	api.register {
+		name = "configmaps",
+		scope = "project",
+		kind = "key-array"
+	}
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
+
+
 --
 -- Check to see if a value exists in a list of values, using a 
 -- case-insensitive match. If the value does exist, the canonical
@@ -835,7 +852,7 @@
 			return premake.setdirarray(container, name, value)
 		elseif kind == "filelist" then
 			return premake.setfilearray(container, name, value)
-		elseif kind == "keyvalue" or kind == "keypath" then
+		elseif kind == "key-value" or kind == "key-pathlist" then
 			return premake.setkeyvalue(scope, name, value)
 		elseif kind == "object" then
 			return premake.setobject(container, name, value)
@@ -871,17 +888,20 @@
 --
 	
 	for name, info in pairs(premake.fields) do
-		_G[name] = function(value)
-			return accessor(name, value)
-		end
-		
-		-- list value types get a remove() call too
-		if info.kind == "list" or 
-		   info.kind == "dirlist" or 
-		   info.kind == "filelist" 
-		then
-			_G["remove"..name] = function(value)
-				premake.remove(name, value)
+		-- skip my new register() fields
+		if not info.name then
+			_G[name] = function(value)
+				return accessor(name, value)
+			end
+			
+			-- list value types get a remove() call too
+			if info.kind == "list" or 
+			   info.kind == "dirlist" or 
+			   info.kind == "filelist" 
+			then
+				_G["remove"..name] = function(value)
+					premake.remove(name, value)
+				end
 			end
 		end
 	end
@@ -931,7 +951,6 @@
 				cfg[name] = { }
 			end
 		end
-
 		
 		-- this is the new place for storing scoped objects
 		api.scope.configuration = cfg

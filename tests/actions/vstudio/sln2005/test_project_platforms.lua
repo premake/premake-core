@@ -99,3 +99,21 @@
 	EndGlobalSection
 		]]
 	end
+
+
+--
+-- Verify that solution-project configuration maps are correctly applied.
+--
+
+	function suite.configIsMapped_onProjectConfigMapping()
+		configmaps { ["Debug"] = "Development" }
+		prepare()
+		test.capture [[
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.ActiveCfg = Development|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.Build.0 = Development|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.ActiveCfg = Release|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+		]]
+	end

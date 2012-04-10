@@ -257,18 +257,27 @@
 --
 
 	function oven.mergefield(cfg, name, value)
-		-- is this field part of the Premake API? If no, just copy and done
 		local field = premake.fields[name]
+
+		-- if this isn't a Premake field, then just copy
 		if not field then
 			cfg[name] = value
 			return
 		end
 
-		if field.kind == "keyvalue" or field.kind == "keypath" then
+		if field.kind:startswith("key-") then
+			oven.mergekeyvalue(cfg, name, field.kind, value)
+		else
+			oven.mergevalue(cfg, name, field.kind, value)
+		end
+		
+		--[[
+		if field.kind:startswith("key-") then
 			cfg[name] = cfg[name] or {}
 			for key, keyvalue in pairs(value) do
 				cfg[name][key] = oven.mergetables(cfg[name][key] or {}, keyvalue)
 			end
+			
 		elseif field.kind == "object" then
 			cfg[name] = value
 		elseif type(value) == "table" then
@@ -276,13 +285,61 @@
 		else
 			cfg[name] = value
 		end
+		--]]
 	end
 
 
 --
--- Merge the values of one table into another.
+-- Merge a collection of key-values into an baked configuration.
+-- @param target
+--    The object receiving the values.
+-- @param fieldname
+--    The name of the field being set.
+-- @param fieldkind
+--    The data type of the field.
+-- @param values
+--    The object containing the key-value pairs.
+-- 
+
+	function oven.mergekeyvalue(target, fieldname, fieldkind, values)
+		-- make sure I've got an object to hold the key-value pairs
+		target[fieldname] = target[fieldname] or {}
+		
+		-- get the data type of the values (remove the "key-" part)
+		fieldkind = fieldkind:sub(5)
+		
+		-- merge in the values
+		for key, value in pairs(values) do
+			oven.mergevalue(target[fieldname], key, fieldkind, value)
+		end
+	end
+
+
 --
--- @param original
+-- Copy, and optionally merge, a value into a baked configuration.
+-- @param target
+--    The object receiving the values.
+-- @param fieldname
+--    The name of the field being set.
+-- @param fieldkind
+--    The data type of the field.
+-- @param values
+--    The object containing the key-value pairs.
+-- 
+
+	function oven.mergevalue(target, fieldname, fieldkind, value)
+		-- list values get merged, others overwrite
+		if fieldkind:endswith("list") then
+			target[fieldname] = oven.mergetables(target[fieldname] or {}, value)
+		else
+			target[fieldname] = value
+		end
+	end
+
+
+--
+-- Merge a collection of key-values into an baked configuration.
+-- @param target
 --    The original value of the table being merged into.
 -- @param additions
 --    The new values to add to the table.
