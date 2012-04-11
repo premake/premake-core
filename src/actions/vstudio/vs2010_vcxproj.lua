@@ -188,6 +188,29 @@
 	end
 
 
+	function vc2010.warningBlocks(cfg)
+		local warnLevel = 3 -- default to normal warning level if there is not any warnings flags specified
+		if cfg.flags.NoWarnings then
+			warnLevel = 0
+		elseif cfg.flags.ExtraWarnings then
+			warnLevel = 4
+		end
+		_p(3,'<WarningLevel>Level%d</WarningLevel>', warnLevel)
+
+		-- Ohter warning blocks only when NoWarnings are not specified
+		if cfg.flags.NoWarnings then
+			return
+		end
+
+		if premake.config.isdebugbuild(cfg) and cfg.flags.ExtraWarnings then
+			_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
+		end
+
+		if cfg.flags.FatalWarnings then
+			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+		end
+	end
+
 --
 -- Write the the <ClCompile> compiler settings block.
 --
@@ -202,22 +225,7 @@
 			_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
 		end
 
-		if cfg.flags.NoWarnings then
-			_p(3,'<WarningLevel>Level0</WarningLevel>')
-		else
-			_p(3,'<WarningLevel>Level%d</WarningLevel>', iif(cfg.flags.ExtraWarnings, 4, 3))
-
-			if premake.config.isdebugbuild(cfg) and cfg.flags.ExtraWarnings then
-				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
-			end
-
-			if cfg.flags.FatalWarnings then
-				_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
-			end
-		end
-
-
-
+        vc2010.warningBlocks(cfg)
 		vc2010.preprocessorDefinitions(cfg.defines)
 		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
 		vc2010.debuginfo(cfg)
@@ -915,10 +923,6 @@
 			if not cfg.flags.Managed then
 				_p(3,'<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>')
 			end
-
-			if not cfg.flags.NoWarnings and cfg.flags.ExtraWarnings then
-				_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
-			end
 		else
 			_p(3,'<StringPooling>true</StringPooling>')
 		end
@@ -928,21 +932,7 @@
 			_p(3,'<FunctionLevelLinking>true</FunctionLevelLinking>')
 
 			precompiled_header(cfg)
-
-		if cfg.flags.NoWarnings then
-			_p(3,'<WarningLevel>Level0</WarningLevel>')
-		else
-			if cfg.flags.ExtraWarnings then
-				_p(3,'<WarningLevel>Level4</WarningLevel>')
-			else
-				_p(3,'<WarningLevel>Level3</WarningLevel>')
-			end
-
-			if cfg.flags.FatalWarnings then
-				_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
-			end
-		end
-
+			vc2010.warningBlocks(cfg)
 			exceptions(cfg)
 			rtti(cfg)
 			wchar_t_buildin(cfg)

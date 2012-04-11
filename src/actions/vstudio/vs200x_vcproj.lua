@@ -179,6 +179,24 @@
 	end
 
 
+	local function warningsblocks(cfg)
+		-- if NoWarnings flags specified just disable warnings, and return.
+		if cfg.flags.NoWarnings then
+			_p(4,'WarningLevel="0"')
+			return
+		end
+
+		-- else setup all warning blocks as needed.
+		_p(4,'WarningLevel="%d"', iif(cfg.flags.ExtraWarnings, 4, 3))
+
+		if cfg.flags.FatalWarnings then
+			_p(4,'WarnAsError="%s"', bool(true))
+		end
+		
+		if _ACTION < "vs2008" and not cfg.flags.Managed then
+			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
+		end
+	end
 --
 -- Write out the VCCLCompilerTool element.
 --
@@ -286,21 +304,7 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		if cfg.flags.NoWarnings then
-			_p(4,'WarningLevel="0"')
-		else
-			_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
-
-			if cfg.flags.FatalWarnings then
-				_p(4,'WarnAsError="%s"', bool(true))
-			end
-			
-			if _ACTION < "vs2008" and not cfg.flags.Managed then
-				_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
-			end
-		end
-		
-		
+		warningsblocks(cfg)
 		
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
 		
@@ -1208,19 +1212,7 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		if cfg.flags.NoWarnings then
-			_p(4,'WarningLevel="0"')
-		else
-			_p(4,'WarningLevel="%s"', iif(cfg.flags.ExtraWarnings, 4, 3))
-			
-			if cfg.flags.FatalWarnings then
-				_p(4,'WarnAsError="%s"', bool(true))
-			end
-			
-			if _ACTION < "vs2008" and not cfg.flags.Managed then
-				_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
-			end
-		end
+		warningsblocks(cfg)
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
@@ -1617,11 +1609,11 @@
 		
 					-- Build event blocks --
 					elseif block == "VCPreBuildEventTool" then
-						vc200x.buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
+						buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
 					elseif block == "VCPreLinkEventTool" then
-						vc200x.buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
+						buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
 					elseif block == "VCPostBuildEventTool" then
-						vc200x.buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
+						buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
 					-- End build event blocks --
 					
 					-- Xbox 360 custom sections --
