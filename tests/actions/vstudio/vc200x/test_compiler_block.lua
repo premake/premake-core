@@ -301,6 +301,124 @@
 
 
 --
+-- Verify the correct warnings settings are used when ExtraWarnings are enabled.
+--
+
+	function suite.runtimeLibraryIsDebug_onExtraWarnings()
+		flags { "ExtraWarnings" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="4"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the correct warnings settings are used when FatalWarnings are enabled.
+--
+
+	function suite.runtimeLibraryIsDebug_onFatalWarnings()
+		flags { "FatalWarnings" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				WarnAsError="true"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the correct warnings settings are used when NoWarnings are enabled.
+--
+
+	function suite.runtimeLibraryIsDebug_onNoWarnings_whichDisablesAllOtherWarningsFlags()
+		flags { "NoWarnings", "ExtraWarnings", "FatalWarnings" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the correct Detect64BitPortabilityProblems settings are used when _ACTION < "VS2008".
+--
+
+	function suite.runtimeLibraryIsDebug_onVS2005()
+		_ACTION = "vs2005"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+
+--
+-- Verify the correct warnings settings are used when NoWarnings are enabled.
+--
+
+	function suite.runtimeLibraryIsDebug_onVS2005_NoWarnings()
+		_ACTION = "vs2005"
+		flags { "NoWarnings" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
+
+
+--
 -- Xbox 360 uses the same structure, but changes the element name.
 --
 
