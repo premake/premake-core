@@ -270,22 +270,6 @@
 		else
 			oven.mergevalue(cfg, name, field.kind, value)
 		end
-		
-		--[[
-		if field.kind:startswith("key-") then
-			cfg[name] = cfg[name] or {}
-			for key, keyvalue in pairs(value) do
-				cfg[name][key] = oven.mergetables(cfg[name][key] or {}, keyvalue)
-			end
-			
-		elseif field.kind == "object" then
-			cfg[name] = value
-		elseif type(value) == "table" then
-			cfg[name] = oven.mergetables(cfg[name] or {}, value)
-		else
-			cfg[name] = value
-		end
-		--]]
 	end
 
 

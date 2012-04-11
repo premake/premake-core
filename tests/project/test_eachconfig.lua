@@ -83,3 +83,50 @@
 		Release:x64
 		]]
 	end
+
+
+--
+-- Test the mapping of a build configuration from solution to project.
+--
+
+	function suite.mapsBuildCfg_toBuildCfg()
+		configurations { "SolutionDebug", "Release" }
+		configmaps { ["SolutionDebug"] = "ProjectDebug" }
+		prepare()
+		test.capture [[
+		ProjectDebug:
+		Release:
+		]]
+	end
+
+
+--
+-- Test mapping a platform from solution to project.
+--
+
+	function suite.mapsPlatform_toPlatform()
+		configurations { "Debug", "Release" }
+		platforms { "Win32", "Xbox360" }		
+		configmaps { ["Xbox360"] = "x64" }
+		prepare()
+		test.capture [[
+		Debug:Win32
+		Debug:x64
+		]]
+	end
+
+	
+--
+-- Test mapping a build configuration to a build config/platform pair.
+--
+
+	function suite.mapsBuildCfg_toBuildCfgAndPlatform()
+		configurations { "Debug", "Release" }
+		configmaps { ["Debug"] = { "Debug", "Win32" } }
+		prepare()
+		test.capture [[
+		Debug:Win32
+		Release:
+		]]
+	end
+		
