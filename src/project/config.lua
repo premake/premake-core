@@ -161,6 +161,15 @@
 
 
 --
+-- Returns a string key that can be used to identify this configuration.
+--
+
+	function config.getlookupkey(cfg)
+		return (cfg.buildcfg or "*") .. (cfg.platform or "")
+	end
+
+
+--
 -- Retrieve a list of link targets from a configuration.
 --
 -- @param cfg

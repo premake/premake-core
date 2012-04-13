@@ -58,6 +58,26 @@
 
 
 --
+-- Merge two lists into an array of objects, containing pairs
+-- of values, one from each list.
+--
+
+	function table.fold(list1, list2)
+		local result = {}
+		for _, item1 in ipairs(list1 or {}) do
+			if list2 and #list2 > 0 then
+				for _, item2 in ipairs(list2) do
+					table.insert(result, { item1, item2 })
+				end
+			else
+				table.insert(result, { item1 })
+			end
+		end
+		return result
+	end
+
+
+--
 -- Merges an array of items into a string.
 --
 

@@ -25,9 +25,9 @@
 --
 
 	function suite.valuePresentInResult()
-		configmaps { ["key"] = "value" }		
+		configmap { ["key"] = "value" }		
 		local cfg = oven.merge({}, sln)
-		test.isequal("value", cfg.configmaps["key"][1])
+		test.isequal("value", cfg.configmap["key"][1])
 	end
 
 	
@@ -37,9 +37,9 @@
 --
 
 	function suite.keysMerged_onMultipleValues()
-		configmaps { ["sln"] = "slnvalue" }
+		configmap { ["sln"] = "slnvalue" }
 		prj = project("MyProject")
-		configmaps { ["prj"] = "prjvalue" }
+		configmap { ["prj"] = "prjvalue" }
 		local cfg = oven.merge(oven.merge({}, sln), prj)
-		test.istrue(cfg.configmaps.sln ~= nil and cfg.configmaps.prj ~= nil)
+		test.istrue(cfg.configmap.sln ~= nil and cfg.configmap.prj ~= nil)
 	end

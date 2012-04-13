@@ -106,7 +106,7 @@
 --
 
 	function suite.configIsMapped_onProjectConfigMapping()
-		configmaps { ["Debug"] = "Development" }
+		configmap { ["Debug"] = "Development" }
 		prepare()
 		test.capture [[
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution

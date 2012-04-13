@@ -90,8 +90,8 @@
 --
 
 	function suite.mapsBuildCfg_toBuildCfg()
-		configurations { "SolutionDebug", "Release" }
-		configmaps { ["SolutionDebug"] = "ProjectDebug" }
+		configurations { "Debug", "Release" }
+		configmap { ["Debug"] = "ProjectDebug" }
 		prepare()
 		test.capture [[
 		ProjectDebug:
@@ -106,12 +106,12 @@
 
 	function suite.mapsPlatform_toPlatform()
 		configurations { "Debug", "Release" }
-		platforms { "Win32", "Xbox360" }		
-		configmaps { ["Xbox360"] = "x64" }
+		platforms { "Win32" }
+		configmap { ["Win32"] = "x64" }
 		prepare()
 		test.capture [[
-		Debug:Win32
 		Debug:x64
+		Release:x64
 		]]
 	end
 
@@ -122,11 +122,29 @@
 
 	function suite.mapsBuildCfg_toBuildCfgAndPlatform()
 		configurations { "Debug", "Release" }
-		configmaps { ["Debug"] = { "Debug", "Win32" } }
+		platforms { "Win32" }
+		configmap { ["Debug"] = { "ProjectDebug", "x64" } }
 		prepare()
 		test.capture [[
-		Debug:Win32
+		ProjectDebug:x64
+		ProjectDebug:Win32
+		Release:x64
+		Release:Win32
+		]]
+	end
+
+
+--
+-- Any duplicate configurations created by the mapping should be removed.
+--
+
+	function suite.removesDups_onConfigMapping()
+		configurations { "Debug", "Development", "Release" }
+		configmap { ["Development"] = "Debug" }
+		prepare()
+		test.capture [[
+		Debug:
 		Release:
 		]]
 	end
-		
+	

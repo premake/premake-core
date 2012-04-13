@@ -566,7 +566,7 @@
 --
 
 	api.register {
-		name = "configmaps",
+		name = "configmap",
 		scope = "project",
 		kind = "key-array"
 	}

@@ -101,14 +101,17 @@
 	function sln2005.projectConfigurationPlatforms(sln)
 		_p(1,'GlobalSection(ProjectConfigurationPlatforms) = postSolution')
 		for prj in solution.eachproject_ng(sln) do
-			for cfg in project.eachconfig(prj) do				
-				local slnplatform = vstudio.platform(cfg)
-				local prjplatform = vstudio.projectplatform(cfg)
-				local architecture = vstudio.architecture(cfg)
-				
-				_p(2,'{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, cfg.buildcfg, slnplatform, prjplatform, architecture)
-				_p(2,'{%s}.%s|%s.Build.0 = %s|%s', prj.uuid, cfg.buildcfg, slnplatform, prjplatform, architecture)
-			end
+			for slncfg in solution.eachconfig(sln) do
+				local prjcfg = project.mapconfig(prj, slncfg.buildcfg, slncfg.platform)
+				if prjcfg then
+					local slnplatform = vstudio.platform(slncfg)
+					local prjplatform = vstudio.projectplatform(prjcfg)
+					local architecture = vstudio.architecture(prjcfg)
+					
+					_p(2,'{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, slncfg.buildcfg, slnplatform, prjplatform, architecture)
+					_p(2,'{%s}.%s|%s.Build.0 = %s|%s', prj.uuid, slncfg.buildcfg, slnplatform, prjplatform, architecture)
+				end
+			end		
 		end
 		_p(1,'EndGlobalSection')
 	end
