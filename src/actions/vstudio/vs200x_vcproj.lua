@@ -1609,11 +1609,11 @@
 		
 					-- Build event blocks --
 					elseif block == "VCPreBuildEventTool" then
-						buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
+						vc200x.buildstepsblock("VCPreBuildEventTool", cfg.prebuildcommands)
 					elseif block == "VCPreLinkEventTool" then
-						buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
+						vc200x.buildstepsblock("VCPreLinkEventTool", cfg.prelinkcommands)
 					elseif block == "VCPostBuildEventTool" then
-						buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
+						vc200x.buildstepsblock("VCPostBuildEventTool", cfg.postbuildcommands)
 					-- End build event blocks --
 					
 					-- Xbox 360 custom sections --
