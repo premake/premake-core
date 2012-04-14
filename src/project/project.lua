@@ -164,7 +164,7 @@
 						result[i] = replacements[1]
 					else
 						result = { replacements[1], replacements[2] }
-					end	
+					end
 					return result
 				end
 			end
@@ -183,8 +183,9 @@
 				patterns = { patterns }
 			end
 			
-			for i, pairing in ipairs(slncfgs) do
-				prjcfgs[i] = applymap(pairing, patterns, replacements)
+			local count = #slncfgs
+			for i = 1, count do
+				prjcfgs[i] = applymap(prjcfgs[i] or slncfgs[i], patterns, replacements)
 			end
 		end
 
@@ -202,7 +203,7 @@
 		for _, pairing in ipairs(prjcfgs) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
-			
+						
 			if not buildcfgs[buildcfg] then
 				buildcfgs[buildcfg] = #buildcfgs
 				table.insert(buildcfgs, buildcfg)
@@ -216,7 +217,7 @@
 
 		-- merge these canonical lists back into pairs for the final result
 		local result = table.fold(buildcfgs, platforms)
-
+		
 		-- finally, build a map from the original, solution-facing configs
 		-- to these results
 		local map = {}
