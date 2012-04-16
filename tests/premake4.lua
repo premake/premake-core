@@ -61,7 +61,6 @@
 	
 	-- Project object tests
 	dofile("test_project.lua")
-	dofile("project/test_baking.lua")
 	dofile("project/test_eachconfig.lua")
 	dofile("project/test_filtering.lua")
 	dofile("project/test_getconfig.lua")
@@ -83,7 +82,11 @@
 
 	-- Baking tests
 	dofile("base/test_baking.lua")
+	dofile("oven/test_basics.lua")
 	dofile("oven/test_keyvalues.lua")
+	dofile("oven/test_lists.lua")
+	dofile("oven/test_objects.lua")
+	dofile("oven/test_removes.lua")
 
 	-- Toolset tests
 	dofile("tools/test_gcc.lua")
