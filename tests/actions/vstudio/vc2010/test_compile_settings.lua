@@ -81,6 +81,33 @@
 		]]
 	end
 
+--
+-- If the NoWarnings flag is specified, mute on warnings.
+--
+
+	function suite.warningLevel_onNoWarnings()
+		flags "NoWarnings"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level0</WarningLevel>
+		]]
+	end
+
+--
+-- NoWarnings disables ExtraWarnings FatalWarnings flagss.
+--
+
+	function suite.warningLevel_onNoWarningsOverOtherWarningsFlags()
+		flags { "NoWarnings", "ExtraWarnings", "FatalWarnings" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level0</WarningLevel>
+		]]
+	end
 
 --
 -- Check the optimization flags.

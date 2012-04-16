@@ -142,6 +142,7 @@
 				"NoNativeWChar",
 				"NoPCH",
 				"NoRTTI",
+				"NoWarnings",
 				"Optimize",
 				"OptimizeSize",
 				"OptimizeSpeed",
