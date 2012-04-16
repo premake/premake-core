@@ -54,6 +54,11 @@
 	function vc200x.debugdir_ng(cfg)
 		_p(3,'<DebugSettings')
 		
+		if cfg.debugcommand then
+			local command = project.getrelative(cfg.project, cfg.debugcommand)
+			_x(4,'Command="%s"', path.translate(command))
+		end
+
 		if cfg.debugdir then
 			local debugdir = project.getrelative(cfg.project, cfg.debugdir)
 			_x(4,'WorkingDirectory="%s"', path.translate(debugdir))
@@ -124,6 +129,10 @@
 	function vc200x.debugdir(cfg)
 		_p(3,'<DebugSettings')
 		
+		if cfg.debugcommand then
+			_x(4,'Command="%s"', path.translate(cfg.debugcommand, '\\'))
+		end
+
 		if cfg.debugdir then
 			_p(4,'WorkingDirectory="%s"', path.translate(cfg.debugdir, '\\'))
 		end
