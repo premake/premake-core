@@ -79,6 +79,7 @@
 	dofile("api/test_array_kind.lua")
 	dofile("api/test_callback.lua")
 	dofile("api/test_register.lua")
+	dofile("api/test_string_kind.lua")
 
 	-- Baking tests
 	dofile("base/test_baking.lua")

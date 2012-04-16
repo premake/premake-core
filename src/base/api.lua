@@ -15,32 +15,10 @@
 	
 	premake.fields = 
 	{
-		architecture = 
-		{
-			kind  = "string",
-			scope = "config",
-			allowed = {
-				"x32",
-				"x64",
-			},
-		},
-
 		basedir =
 		{
 			kind  = "path",
 			scope = "container",
-		},
-		
-		buildaction =
-		{
-			kind  = "string",
-			scope = "config",
-			allowed = {
-				"Compile",
-				"Copy",
-				"Embed",
-				"None"
-			}
 		},
 		
 		buildoptions =
@@ -77,15 +55,6 @@
 		{
 			kind = "list",
 			scope = "config",
-		},
-		
-		debugformat =
-		{
-			kind = "string",
-			scope = "config",
-			allowed = {
-				"c7",
-			}
 		},
 
 		defines =
@@ -160,20 +129,6 @@
 			},
 		},
 		
-		framework =
-		{
-			kind = "string",
-			scope = "container",
-			allowed = {
-				"1.0",
-				"1.1",
-				"2.0",
-				"3.0",
-				"3.5",
-				"4.0"
-			}
-		},
-		
 		imagepath = 
 		{
 			kind = "path",
@@ -192,58 +147,11 @@
 			scope = "config",
 		},
 		
-		implibextension =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		implibname =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		implibprefix =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		implibsuffix =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
 		includedirs =
 		{
 			kind  = "dirlist",
 			scope = "config",
 			usagecopy = true,
-		},
-		
-		kind =
-		{
-			kind  = "string",
-			scope = "config",
-			allowed = {
-				"ConsoleApp",
-				"WindowedApp",
-				"StaticLib",
-				"SharedLib"
-			}
-		},
-		
-		language =
-		{
-			kind  = "string",
-			scope = "container",
-			allowed = {
-				"C",
-				"C++",
-				"C#"
-			}
 		},
 		
 		libdirs =
@@ -288,12 +196,6 @@
 		objdir =
 		{
 			kind  = "path",
-			scope = "config",
-		},
-		
-		pchheader =
-		{
-			kind  = "string",
 			scope = "config",
 		},
 		
@@ -345,20 +247,6 @@
 			scope = "config",
 		},
 
-		system = 
-		{
-			kind  = "string",
-			scope = "config",
-			allowed = function(value)
-				value = value:lower()
-				if premake.systems[value] then
-					return value
-				else
-					return nil, "unknown system"
-				end
-			end,
-		},
-
 		
 		targetdir =
 		{
@@ -366,65 +254,10 @@
 			scope = "config",
 		},
 		
-		targetextension =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		targetname =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		targetprefix =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		targetsuffix =
-		{
-			kind  = "string",
-			scope = "config",
-		},
-		
-		toolset =
-		{
-			kind  = "string",
-			scope = "config",
-			allowed = {
-				"gcc"
-			},
-		},
-		
 		trimpaths =
 		{
 			kind = "dirlist",
 			scope = "config",
-		},
-		
-		uuid =
-		{
-			kind  = "string",
-			scope = "container",
-			allowed = function(value)
-				local ok = true
-				if (#value ~= 36) then ok = false end
-				for i=1,36 do
-					local ch = value:sub(i,i)
-					if (not ch:find("[ABCDEFabcdef0123456789-]")) then ok = false end
-				end
-				if (value:sub(9,9) ~= "-")   then ok = false end
-				if (value:sub(14,14) ~= "-") then ok = false end
-				if (value:sub(19,19) ~= "-") then ok = false end
-				if (value:sub(24,24) ~= "-") then ok = false end
-				if (not ok) then
-					return nil, "invalid UUID"
-				end
-				return value:upper()
-			end
 		},
 		
 		uses =
@@ -538,55 +371,13 @@
 
 
 --
--- Set a new array value. Arrays are lists of values stored by "value",
--- in that new values overwrite old ones, rather than merging like lists.
---
-
-	function api.setarray(target, name, field, value)
-		-- put simple values in an array
-		if type(value) ~= "table" then
-			value = { value }
-		end
-		
-		-- store it, overwriting any existing value
-		target[name] = value
-	end
-
-
---
--- Set a new string value on an API field.
---
-
-	function api.setstring(target, name, field, value)
-		error("setstring is not yet implemented")
-	end
-
-
---
--- Register the core API functions.
---
-
-	api.register {
-		name = "configmap",
-		scope = "project",
-		kind = "key-array"
-	}
-
-
-
------------------------------------------------------------------------------
--- Everything below this point is a candidate for deprecation
------------------------------------------------------------------------------
-
-
---
 -- Check to see if a value exists in a list of values, using a 
 -- case-insensitive match. If the value does exist, the canonical
 -- version contained in the list is returned, so future tests can
 -- use case-sensitive comparisions.
 --
 
-	function premake.checkvalue(value, allowed, aliases)
+	function api.checkvalue(value, allowed, aliases)
 		if aliases then
 			for k,v in pairs(aliases) do
 				if value:lower() == k:lower() then
@@ -612,6 +403,223 @@
 		end
 	end
 
+
+--
+-- Set a new array value. Arrays are lists of values stored by "value",
+-- in that new values overwrite old ones, rather than merging like lists.
+--
+
+	function api.setarray(target, name, field, value)
+		-- put simple values in an array
+		if type(value) ~= "table" then
+			value = { value }
+		end
+		
+		-- store it, overwriting any existing value
+		target[name] = value
+	end
+
+
+--
+-- Set a new string value on an API field.
+--
+
+	function api.setstring(target, name, field, value)
+		if type(value) == "table" then
+			error("expected string; got table", 3)
+		end
+
+		value, err = api.checkvalue(value, field.allowed, field.aliases)
+		if not value then
+			error(err, 3)
+		end
+
+		target[name] = value
+	end
+
+
+--
+-- Register the core API functions.
+--
+
+	api.register {
+		name = "architecture",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"x32",
+			"x64",
+		},
+	}
+
+	api.register {
+		name = "buildaction",
+		scope = "config",
+		kind = "string",
+		allowed = {		
+			"Compile",
+			"Copy",
+			"Embed",
+			"None"
+		},
+	}
+
+	api.register {
+		name = "configmap",
+		scope = "project",
+		kind = "key-array"
+	}
+
+	api.register {
+		name = "debugformat",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"c7",
+		},
+	}
+
+	api.register {
+		name = "framework",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"1.0",
+			"1.1",
+			"2.0",
+			"3.0",
+			"3.5",
+			"4.0"
+		},
+	}
+
+	api.register {
+		name = "implibextension",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "implibname",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "implibprefix",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "implibsuffix",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "kind",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"ConsoleApp",
+			"WindowedApp",
+			"StaticLib",
+			"SharedLib",
+		},
+	}
+
+	api.register {
+		name = "language",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"C",
+			"C++",
+			"C#",
+		},
+	}
+
+	api.register {
+		name = "pchheader",
+		scope = "config",
+		kind = "string"
+	}
+
+	api.register {
+		name = "system",
+		scope = "config",
+		kind = "string",
+		allowed = function(value)
+			value = value:lower()
+			if premake.systems[value] then
+				return value
+			else
+				return nil, "unknown system"
+			end
+		end,
+	}
+
+	api.register {
+		name = "targetextension",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "targetname",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "targetprefix",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "targetsuffix",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "toolset",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"gcc"
+		},
+	}
+
+	api.register {
+		name = "uuid",
+		scope = "project",
+		kind = "string",
+		allowed = function(value)
+			local ok = true
+			if (#value ~= 36) then ok = false end
+			for i=1,36 do
+				local ch = value:sub(i,i)
+				if (not ch:find("[ABCDEFabcdef0123456789-]")) then ok = false end
+			end
+			if (value:sub(9,9) ~= "-")   then ok = false end
+			if (value:sub(14,14) ~= "-") then ok = false end
+			if (value:sub(19,19) ~= "-") then ok = false end
+			if (value:sub(24,24) ~= "-") then ok = false end
+			if (not ok) then
+				return nil, "invalid UUID"
+			end
+			return value:upper()
+		end
+	}
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 
 --
@@ -698,7 +706,7 @@
 					add(v, depth + 1)
 				end
 			else
-				value, err = premake.checkvalue(value, allowed, aliases)
+				value, err = api.checkvalue(value, allowed, aliases)
 				if not value then
 					error(err, depth)
 				end
@@ -806,7 +814,7 @@
 	
 		-- if a value was provided, set it
 		if (value) then
-			value, err = premake.checkvalue(value, allowed, aliases)
+			value, err = api.checkvalue(value, allowed, aliases)
 			if (not value) then 
 				error(err, 4)
 			end

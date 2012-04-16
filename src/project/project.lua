@@ -109,8 +109,8 @@
 		-- For backward compatibility with the old platforms API, use platform
 		-- as the default system or architecture if it would be a valid value.
 		if platform then
-			system = premake.checkvalue(platform, premake.fields.system.allowed)
-			architecture = premake.checkvalue(platform, premake.fields.architecture.allowed)
+			system = premake.api.checkvalue(platform, premake.fields.system.allowed)
+			architecture = premake.api.checkvalue(platform, premake.fields.architecture.allowed)
 		end
 
 		-- Figure out the target operating environment for this configuration

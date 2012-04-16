@@ -164,16 +164,6 @@
 
 
 --
--- accessor tests
---
-
-	function suite.accessor_CanRetrieveString()
-		sln.blocks[1].kind = "ConsoleApp"
-		test.isequal("ConsoleApp", kind())
-	end
-
-
---
 -- solution() tests
 --
 
@@ -372,14 +362,4 @@
 		local prj = project "MyProject"
 		test.istrue(prj.uuid)
 	end
-			
 
---
--- uuid() tests
---
-
-	function suite.uuid_makes_uppercase()
-		premake.CurrentContainer = {}
-		uuid "7CBB5FC2-7449-497f-947F-129C5129B1FB"
-		test.isequal(premake.CurrentContainer.uuid, "7CBB5FC2-7449-497F-947F-129C5129B1FB")
-	end
