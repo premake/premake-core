@@ -179,24 +179,6 @@
 	end
 
 
-	local function warningsblocks(cfg)
-		-- if NoWarnings flags specified just disable warnings, and return.
-		if cfg.flags.NoWarnings then
-			_p(4,'WarningLevel="0"')
-			return
-		end
-
-		-- else setup all warning blocks as needed.
-		_p(4,'WarningLevel="%d"', iif(cfg.flags.ExtraWarnings, 4, 3))
-
-		if cfg.flags.FatalWarnings then
-			_p(4,'WarnAsError="%s"', bool(true))
-		end
-		
-		if _ACTION < "vs2008" and not cfg.flags.Managed then
-			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
-		end
-	end
 --
 -- Write out the VCCLCompilerTool element.
 --
@@ -304,7 +286,7 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		warningsblocks(cfg)
+		vc200x.warnings(cfg)
 		
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
 		
@@ -957,6 +939,31 @@
 	end
 
 
+--
+-- Convert Premake warning flags to Visual Studio equivalents.
+--
+
+	function vc200x.warnings(cfg)
+		-- if NoWarnings flags specified just disable warnings, and return.
+		if cfg.flags.NoWarnings then
+			_p(4,'WarningLevel="0"')
+			return
+		end
+
+		-- else setup all warning blocks as needed.
+		_p(4,'WarningLevel="%d"', iif(cfg.flags.ExtraWarnings, 4, 3))
+
+		if cfg.flags.FatalWarnings then
+			_p(4,'WarnAsError="%s"', bool(true))
+		end
+		
+		if _ACTION < "vs2008" and not cfg.flags.Managed then
+			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
+		end
+	end
+
+
+
 
 -----------------------------------------------------------------------------
 -- Everything below this point is a candidate for deprecation
@@ -1212,7 +1219,7 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		warningsblocks(cfg)
+		vc200x.warnings(cfg)
 		
 		_p(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', path.getbasename(cfg.buildtarget.name))
 		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
