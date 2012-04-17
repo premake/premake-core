@@ -15,12 +15,6 @@
 	
 	premake.fields = 
 	{
-		basedir =
-		{
-			kind  = "path",
-			scope = "container",
-		},
-		
 		buildoptions =
 		{
 			kind  = "list",
@@ -42,18 +36,6 @@
 		debugargs =
 		{
 			kind = "list",
-			scope = "config",
-		},
-
-		debugcommand =
-		{
-			kind = "path",
-			scope = "config",
-		},
-		
-		debugdir =
-		{
-			kind = "path",
 			scope = "config",
 		},
 
@@ -135,21 +117,9 @@
 			},
 		},
 		
-		imagepath = 
-		{
-			kind = "path",
-			scope = "config",
-		},
-		
 		imageoptions =
 		{
 			kind  = "list",
-			scope = "config",
-		},
-		
-		implibdir =
-		{
-			kind  = "path",
 			scope = "config",
 		},
 		
@@ -187,27 +157,9 @@
 			linkagecopy = true,
 		},
 		
-		location =
-		{
-			kind  = "path",
-			scope = "container",
-		},
-		
 		makesettings =
 		{
 			kind = "list",
-			scope = "config",
-		},
-		
-		objdir =
-		{
-			kind  = "path",
-			scope = "config",
-		},
-		
-		pchsource =
-		{
-			kind  = "path",
 			scope = "config",
 		},
 
@@ -253,13 +205,6 @@
 			scope = "config",
 		},
 
-		
-		targetdir =
-		{
-			kind  = "path",
-			scope = "config",
-		},
-		
 		trimpaths =
 		{
 			kind = "dirlist",
@@ -277,9 +222,7 @@
 			kind = "key-pathlist",
 			scope = "container",
 		},
-
 	}
-
 		
 
 
@@ -427,6 +370,16 @@
 
 
 --
+-- Set a new path value on an API field.
+--
+
+	function api.setpath(target, name, field, value)
+		api.setstring(target, name, field, value)
+		target[name] = path.getabsolute(target[name])
+	end
+
+
+--
 -- Set a new string value on an API field.
 --
 
@@ -459,6 +412,12 @@
 	}
 
 	api.register {
+		name = "basedir",
+		scope = "project",
+		kind = "path"
+	}
+
+	api.register {
 		name = "buildaction",
 		scope = "config",
 		kind = "string",
@@ -474,6 +433,18 @@
 		name = "configmap",
 		scope = "project",
 		kind = "key-array"
+	}
+
+	api.register {
+		name = "debugcommand",
+		scope = "config",
+		kind = "path"
+	}
+
+	api.register {
+		name = "debugdir",
+		scope = "config",
+		kind = "path"
 	}
 
 	api.register {
@@ -498,6 +469,18 @@
 			"4.0"
 		},
 	}
+
+	api.register {
+		name = "imagepath",
+		scope = "config",
+		kind = "path"
+	}	
+
+	api.register {
+		name = "implibdir",
+		scope = "config",
+		kind = "path"
+	}			
 
 	api.register {
 		name = "implibextension",
@@ -547,10 +530,28 @@
 	}
 
 	api.register {
+		name = "location",
+		scope = "project",
+		kind = "path"
+	}
+
+	api.register {
+		name = "objdir",
+		scope = "config",
+		kind = "path"
+	}
+
+	api.register {
 		name = "pchheader",
 		scope = "config",
 		kind = "string"
 	}
+
+	api.register {
+		name = "pchsource",
+		scope = "config",
+		kind = "path"
+	}		
 
 	api.register {
 		name = "system",
@@ -565,6 +566,12 @@
 			end
 		end,
 	}
+
+	api.register {
+		name = "targetdir",
+		scope = "config",
+		kind = "path"
+	}		
 
 	api.register {
 		name = "targetextension",
