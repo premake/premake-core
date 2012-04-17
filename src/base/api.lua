@@ -44,6 +44,12 @@
 			kind = "list",
 			scope = "config",
 		},
+
+		debugcommand =
+		{
+			kind = "path",
+			scope = "config",
+		},
 		
 		debugdir =
 		{

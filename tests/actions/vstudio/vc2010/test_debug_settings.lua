@@ -37,6 +37,20 @@
 	end
 
 --
+-- The debug command should specified relative to the project location.
+--
+
+	function suite.debugCommand_isProjectRelative()
+		debugcommand "bin/emulator.exe"
+		prepare()
+		test.capture [[
+		<LocalDebuggerCommand>bin\emulator.exe</LocalDebuggerCommand>
+		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+		]]
+	end
+
+
+--
 -- The debug directory should specified relative to the project location.
 --
 

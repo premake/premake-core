@@ -38,6 +38,24 @@
 		]]
 	end
 
+
+--
+-- If a debug command is provided, it should be specified relative to
+-- the project.
+--
+
+	function suite.debugCommand_onRelativePath()
+		location "build"
+		debugcommand "bin/emulator.exe"
+		prepare()
+		test.capture [[
+			<DebugSettings
+				Command="..\bin\emulator.exe"
+			/>
+		]]
+	end
+
+
 --
 -- If a working directory is provided, it should be specified relative to
 -- the project.

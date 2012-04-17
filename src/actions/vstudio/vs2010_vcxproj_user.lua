@@ -27,11 +27,21 @@
 	end
 
 	function vc2010.debugsettings(cfg)
+		if cfg.debugcommand then
+			local dir = project.getrelative(cfg.project, cfg.debugcommand)
+			_p(2,'<LocalDebuggerCommand>%s</LocalDebuggerCommand>', path.translate(dir))
+		end
+
 		if cfg.debugdir then
 			local dir = project.getrelative(cfg.project, cfg.debugdir)
 			_x(2,'<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
+
+		end
+
+		if cfg.debugdir or cfg.debugcommand then
 			_p(2,'<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')	
 		end
+
 		if #cfg.debugargs > 0 then
 			_x(2,'<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
 		end
