@@ -89,6 +89,7 @@
 	dofile("oven/test_lists.lua")
 	dofile("oven/test_objects.lua")
 	dofile("oven/test_removes.lua")
+	dofile("oven/test_tokens.lua")
 
 	-- Toolset tests
 	dofile("tools/test_gcc.lua")

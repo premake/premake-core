@@ -97,6 +97,9 @@
 --
 	
 	function project.getconfig(prj, buildcfg, platform, field, filename)
+		-- make sure I've got the actual project, and not a baked configuration
+		prj = prj.project or prj
+	
 		-- check for a cached version, built by bakeconfigs()
 		if not filename and prj.configs then
 			local key = (buildcfg or "*") .. (platform or "")
@@ -114,14 +117,16 @@
 		end
 
 		-- Figure out the target operating environment for this configuration
-		local cfg = premake5.oven.bake(prj, { buildcfg, platform, _ACTION }, "system")
-		system = cfg.system or system or premake.action.current().os or os.get()
+		local filter = {
+			["buildcfg"] = buildcfg,
+			["platform"] = platform,
+			["action"] = _ACTION
+		}
+		
+		local cfg = premake5.oven.bake(prj, filter, "system")
+		filter.system = cfg.system or system or premake.action.current().os or os.get()
 
-		cfg = premake5.oven.bake(prj, { buildcfg, platform, _ACTION, system }, field)
-		cfg.project = prj
-		cfg.buildcfg = buildcfg
-		cfg.platform = platform
-		cfg.system = system
+		cfg = premake5.oven.bake(prj, filter, field)		
 		cfg.architecture = cfg.architecture or architecture
 		return cfg
 	end

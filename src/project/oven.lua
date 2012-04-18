@@ -16,7 +16,9 @@
 	local nomerge = 
 	{
 		keywords = true,
-		removes = true
+		project = true,
+		removes = true,
+		solution = true,
 	}
 
 
@@ -41,14 +43,15 @@
 		filterTerms = filterTerms or {}
 
 		-- keyword/term tests are case-insensitive; convert all terms to lowercase
+		local casedTerms = {}
 		for key, value in pairs(filterTerms) do
-			filterTerms[key] = value:lower()
+			casedTerms[key] = value:lower()
 		end
 
 		-- If I'm baking a project, start with the values from the solution level
 		local cfg
 		if container.solution then
-			cfg = oven.bake(container.solution, filterTerms, filterField)
+			cfg = oven.bake(container.solution, casedTerms, filterField)
 		else
 			cfg = {}
 		end
@@ -59,13 +62,19 @@
 		-- Walk the blocks available in this container, and merge their values
 		-- into my configuration-in-progress, if they pass the keyword filter
 		for _, block in ipairs(container.blocks) do
-			if oven.filter(block, filterTerms) then
+			if oven.filter(block, casedTerms) then
 				oven.merge(cfg, block, filterField)
 			end
 		end
 
-		-- Remember the list of terms used to create this config
-		cfg.terms = filterTerms
+		-- Store the filter terms in the configuration (i.e. buildcfg, platform)
+		cfg.terms = casedTerms
+		for key, value in pairs(filterTerms) do
+			cfg[key] = value
+		end
+		
+		-- Expand inline tokens
+		oven.expandtokens(cfg)
 		
 		return cfg
 	end
@@ -104,6 +113,60 @@
 	end
 
 
+--
+-- Scan an object for expandable tokens, and expand them, in place.
+--
+
+	function oven.expandtokens(target)
+		-- build a context for the tokens to use
+		local context = {
+			_G = _G,
+			sln = target.solution,
+			prj = target.project,
+			cfg = target
+		}
+		
+		-- function to do the work of replacing the tokens
+		local expander = function(token)
+			-- convert the token into a function to execute
+			local func, err = loadstring("return " .. token)
+			if not func then
+				return nil, err
+			end
+			
+			-- give the function access to the project objects
+			setfenv(func, context)
+								
+			-- run it and return the result
+			local result = func()
+			if not result then
+				return nil, "Invalid token '" .. token .. "'"
+			end
+			return result
+		end
+		
+		-- scan the object and replace all tokens encountered
+		for key, value in pairs(target) do
+			if type(value) == "string" then
+			
+				 target[key] = string.gsub(value, "%%{(.-)}", function(token)
+				 	result, err = expander(token)
+				 	if not result then
+				 		error(err, 0)
+				 	end
+				 	return result
+				 end)
+				
+			elseif not nomerge[key] then
+			
+				-- recurse
+				
+			end
+		end
+	end
+
+
+--
 --
 -- Compare a list of block keywords against a set of filter terms. Keywords
 -- are Lua patterns applied to the block when it is specified in the script
@@ -214,6 +277,9 @@
 		if block.removes then
 			oven.remove(cfg, block.removes, filterField)
 		end
+		
+		-- remember the container object (solution, project, etc.)
+		cfg[type(block)] = block
 		
 		return cfg
 	end
