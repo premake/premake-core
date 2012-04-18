@@ -180,12 +180,23 @@
 -- Register a test action
 --
 
+	newoption {
+		trigger     = "test",
+		description = "A suite or test to run"
+	}
+	
 	newaction {
 		trigger     = "test",
 		description = "Run the automated test suite",
 
 		execute = function ()
-			passed, failed = test.runall()
+			if _OPTIONS["test"] then
+				local t = string.explode(_OPTIONS["test"] or "", ".", true)
+				passed, failed = test.runall(t[1], t[2])
+			else
+				passed, failed = test.runall()
+			end
+						
 			msg = string.format("%d tests passed, %d failed", passed, failed)
 			if (failed > 0) then
 				error(msg, 0)

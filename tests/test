@@ -1,2 +1,2 @@
 #!/bin/sh
-../bin/debug/premake4 /scripts=../src test
+../bin/debug/premake4 /scripts=../src $1 $2 $3 test
