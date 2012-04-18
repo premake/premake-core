@@ -240,7 +240,7 @@
 	end
 
 
-	function test.runall()		
+	function test.runall(suitename, testname)
 		test.print = print
 
 		print      = stub_print
@@ -250,30 +250,46 @@
 		local numpassed = 0
 		local numfailed = 0
 		local start_time = os.clock()
-		for suitename, suitetests in pairs(T) do
-			for testname, testfunc in pairs(suitetests) do
-			
-				if suitetests.setup ~= testfunc and suitetests.teardown ~= testfunc then
-					local ok, err = test_setup(suitetests, testfunc)
+		
+		function runtest(suitename, suitetests, testname, testfunc)
+			if suitetests.setup ~= testfunc and suitetests.teardown ~= testfunc then
+				local ok, err = test_setup(suitetests, testfunc)
 
-					if ok then
-						ok, err = test_run(suitetests, testfunc)
-					end
-
-					local tok, terr = test_teardown(suitetests, testfunc)
-					ok = ok and tok
-					err = err or tok
-				
-					if (not ok) then
-						test.print(string.format("%s.%s: %s", suitename, testname, err))
-						numfailed = numfailed + 1
-					else
-						numpassed = numpassed + 1
-					end
+				if ok then
+					ok, err = test_run(suitetests, testfunc)
 				end
-				
+
+				local tok, terr = test_teardown(suitetests, testfunc)
+				ok = ok and tok
+				err = err or tok
+			
+				if (not ok) then
+					test.print(string.format("%s.%s: %s", suitename, testname, err))
+					numfailed = numfailed + 1
+				else
+					numpassed = numpassed + 1
+				end
+			end					
+		end
+		
+		function runsuite(suitename, suitetests, testname)
+			if testname then
+				runtest(suitename, suitetests, testname, suitetests[testname])
+			else
+				for testname, testfunc in pairs(suitetests) do
+					runtest(suitename, suitetests, testname, testfunc)
+				end
 			end
 		end
+		
+		if suitename then
+			runsuite(suitename, T[suitename], testname)
+		else
+			for suitename, suitetests in pairs(T) do
+				runsuite(suitename, suitetests, testname)
+			end
+		end        
+        
         io.write('running time : ',  os.clock() - start_time,'\n')
 		print = test.print
 		return numpassed, numfailed 
