@@ -19,12 +19,14 @@
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 
 		buildrule =
 		{
 			kind  = "object",
 			scope = "config",
+			tokens = true,
 		},
 		
 		configurations = 
@@ -37,18 +39,21 @@
 		{
 			kind = "list",
 			scope = "config",
+			tokens = true,
 		},
 
 		debugenvs = 
 		{
 			kind = "list",
 			scope = "config",
+			tokens = true,
 		},
 
 		defines =
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		deploymentoptions =
@@ -56,6 +61,7 @@
 			kind  = "list",
 			scope = "config",
 			usagecopy = true,
+			tokens = true,
 		},
 
 		excludes =
@@ -121,6 +127,7 @@
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		includedirs =
@@ -128,6 +135,7 @@
 			kind  = "dirlist",
 			scope = "config",
 			usagecopy = true,
+			tokens = true,
 		},
 		
 		libdirs =
@@ -135,12 +143,14 @@
 			kind  = "dirlist",
 			scope = "config",
 			linkagecopy = true,
+			tokens = true,
 		},
 		
 		linkoptions =
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		links =
@@ -155,12 +165,14 @@
 				return value
 			end,
 			linkagecopy = true,
+			tokens = true,
 		},
 		
 		makesettings =
 		{
 			kind = "list",
 			scope = "config",
+			tokens = true,
 		},
 
 		platforms = 
@@ -173,36 +185,42 @@
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		prebuildcommands =
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		prelinkcommands =
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		resdefines =
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 		
 		resincludedirs =
 		{
 			kind  = "dirlist",
 			scope = "config",
+			tokens = true,
 		},
 		
 		resoptions =
 		{
 			kind  = "list",
 			scope = "config",
+			tokens = true,
 		},
 
 		trimpaths =
@@ -221,6 +239,7 @@
 		{
 			kind = "key-pathlist",
 			scope = "container",
+			tokens = true,
 		},
 	}
 		
@@ -438,13 +457,15 @@
 	api.register {
 		name = "debugcommand",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}
 
 	api.register {
 		name = "debugdir",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}
 
 	api.register {
@@ -473,37 +494,43 @@
 	api.register {
 		name = "imagepath",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,		
 	}	
 
 	api.register {
 		name = "implibdir",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}			
 
 	api.register {
 		name = "implibextension",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "implibname",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "implibprefix",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "implibsuffix",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
@@ -532,25 +559,29 @@
 	api.register {
 		name = "location",
 		scope = "project",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}
 
 	api.register {
 		name = "objdir",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}
 
 	api.register {
 		name = "pchheader",
 		scope = "config",
-		kind = "string"
+		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "pchsource",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}		
 
 	api.register {
@@ -570,31 +601,36 @@
 	api.register {
 		name = "targetdir",
 		scope = "config",
-		kind = "path"
+		kind = "path",
+		tokens = true,
 	}		
 
 	api.register {
 		name = "targetextension",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "targetname",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "targetprefix",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "targetsuffix",
 		scope = "config",
 		kind = "string",
+		tokens = true,
 	}
 
 	api.register {

@@ -26,7 +26,7 @@
 
 	function suite.valuePresentInResult()
 		configmap { ["key"] = "value" }		
-		local cfg = oven.merge({}, sln)
+		local cfg = oven.bake(sln)
 		test.isequal("value", cfg.configmap["key"][1])
 	end
 
@@ -40,6 +40,6 @@
 		configmap { ["sln"] = "slnvalue" }
 		prj = project("MyProject")
 		configmap { ["prj"] = "prjvalue" }
-		local cfg = oven.merge(oven.merge({}, sln), prj)
+		local cfg = oven.bake(prj)
 		test.istrue(cfg.configmap.sln ~= nil and cfg.configmap.prj ~= nil)
 	end

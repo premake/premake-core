@@ -41,6 +41,69 @@
 	end
 
 
+
+--
+-- Assigns a unique objects directory to every configuration of every project
+-- in the solution, taking into any objdir settings into account. Ensures that 
+-- builds from different configurations will not step on each others' object 
+-- files. The path is built from these choices, in order:
+--
+--   [1] -> the objects directory as set in the config
+--   [2] -> [1] + the platform name
+--   [3] -> [2] + the build configuration name
+--   [4] -> [3] + the project name
+--
+
+	function solution.bakeobjdirs(sln)
+		-- function to compute the four options for a specific configuration
+		local function getobjdirs(cfg)
+			local dirs = {}
+			
+			local dir = path.getabsolute(path.join(project.getlocation(cfg.project), cfg.objdir or "obj"))
+			table.insert(dirs, dir)
+			
+			if cfg.platform then
+				dir = path.join(dir, cfg.platform)
+				table.insert(dirs, dir)
+			end
+			
+			dir = path.join(dir, cfg.buildcfg)
+			table.insert(dirs, dir)
+
+			dir = path.join(dir, cfg.project.name)
+			table.insert(dirs, dir)
+			
+			return dirs
+		end
+
+		-- walk all of the configs in the solution, and count the number of
+		-- times each obj dir gets used
+		local counts = {}
+		local configs = {}
+		
+		for prj in premake.solution.eachproject_ng(sln) do
+			for cfg in project.eachconfig(prj, "objdir") do
+				-- get the dirs for this config, and remember the association
+				local dirs = getobjdirs(cfg)
+				configs[cfg] = dirs
+				
+				for _, dir in ipairs(dirs) do
+					counts[dir] = (counts[dir] or 0) + 1
+				end
+			end
+		end
+
+		-- now walk the list again, and assign the first unique value
+		for cfg, dirs in pairs(configs) do
+			for _, dir in ipairs(dirs) do
+				if counts[dir] == 1 then
+					cfg.objdir = project.getrelative(cfg.project, dir)
+				end
+			end
+		end
+	end
+
+
 --
 -- Flattens the configurations of each of the projects in the solution
 -- and stores the results, which are then returned from subsequent
@@ -269,9 +332,6 @@
 			return prj.rootcfg
 		else
 			-- "raw" version, accessible during scripting
-			local cfg = oven.merge({}, sln)
-			cfg = oven.merge(cfg, prj)
-			cfg = oven.merge(cfg, project.getconfig(prj))
-			return cfg
+			return oven.bake(prj)
 		end
 	end

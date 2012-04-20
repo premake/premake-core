@@ -15,6 +15,7 @@
 
 	local nomerge = 
 	{
+		blocks = true,
 		keywords = true,
 		project = true,
 		removes = true,
@@ -56,6 +57,9 @@
 			cfg = {}
 		end
 
+		-- Merge container level (solution, project) in the result
+		cfg = oven.merge(cfg, container)
+		
 		-- Attach a reference to the source container, as "solution" or "project"
 		cfg[type(container)] = container
 
@@ -94,7 +98,13 @@
 --
 
 	function oven.bakefile(cfg, filename)
-		local fcfg = {}
+		local fcfg = {
+			solution = cfg.solution,
+			project = cfg.project,
+			buildcfg = cfg.buildcfg,
+			platform = cfg.platform
+		}
+		
 		filename = { filename }
 		
 		for _, block in ipairs(cfg.solution.blocks) do
@@ -109,6 +119,7 @@
 			end
 		end
 
+		oven.expandtokens(cfg, fcfg)
 		return fcfg
 	end
 
@@ -117,16 +128,41 @@
 -- Scan an object for expandable tokens, and expand them, in place.
 --
 
-	function oven.expandtokens(target)
+	function oven.expandtokens(cfg, filecfg)
 		-- build a context for the tokens to use
 		local context = {
 			_G = _G,
-			sln = target.solution,
-			prj = target.project,
-			cfg = target
+			sln = cfg.solution,
+			prj = cfg.project,
+			cfg = cfg,
+			file = filecfg
 		}
 		
-		-- function to do the work of replacing the tokens
+		function expand(target, field)
+			local value = target[field]
+			if type(value) == "string" then
+				target[field] = oven.expandvalue(value, context)
+			else
+				for key in pairs(value) do
+					expand(value, key)
+				end
+			end
+		end
+
+		local target = filecfg or cfg
+		for key, value in pairs(target) do
+			-- to avoid unexpected errors or recursions, I only process
+			-- Premake's own API fields, and only those marked for it
+			local field = premake.fields[key]
+			if field ~= nil and field.tokens then
+				expand(target, key)
+			end
+		end
+	end
+
+
+	function oven.expandvalue(value, context)
+		-- function to do the work of replacing a single token
 		local expander = function(token)
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
@@ -144,26 +180,16 @@
 			end
 			return result
 		end
-		
-		-- scan the object and replace all tokens encountered
-		for key, value in pairs(target) do
-			if type(value) == "string" then
-			
-				 target[key] = string.gsub(value, "%%{(.-)}", function(token)
-				 	result, err = expander(token)
-				 	if not result then
-				 		error(err, 0)
-				 	end
-				 	return result
-				 end)
-				
-			elseif not nomerge[key] then
-			
-				-- recurse
-				
+
+		 return string.gsub(value, "%%{(.-)}", function(token)
+			result, err = expander(token)
+			if not result then
+				error(err, 0)
 			end
-		end
+			return result
+		 end)
 	end
+
 
 
 --

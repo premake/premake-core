@@ -80,8 +80,6 @@
 		configurations { "Debug", "Release" }
 		local prj = project "MyProject"
 		removeconfigurations { "Debug" }
-
-		cfg = oven.merge({}, sln)
-		cfg = oven.merge(cfg, prj)
+		cfg = oven.bake(prj)
 		test.isequal({ "Release" }, cfg.configurations)
 	end
