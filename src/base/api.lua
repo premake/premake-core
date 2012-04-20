@@ -294,6 +294,10 @@
 --
 
 	function api.callback(field, value)
+		-- right now, ignore calls with no value; later might want to
+		-- return the current baked value
+		if not value then return end
+		
 		-- find the right target object for this field
 		local target
 		if field.scope == "project" then
