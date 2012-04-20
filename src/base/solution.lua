@@ -43,10 +43,32 @@
 
 
 --
+-- Prepare the contents of a solution for the next stage. Flattens out
+-- all configurations, computes composite values (i.e. build targets,
+-- objects directories), and expands tokens.
+--
+
+	function solution.bake(sln)
+		-- flatten out all of the projects and their configurations
+		for _, prj in ipairs(sln.projects) do
+			prj.baked = project.bake(prj)
+		end
+		
+		-- expand all tokens contained by the solution
+		for prj in solution.eachproject_ng(sln) do
+			oven.expandtokens(prj, "project")
+			for cfg in project.eachconfig(prj) do
+				oven.expandtokens(cfg, "config")
+			end
+		end
+	end
+
+
+--
 -- Assigns a unique objects directory to every configuration of every project
--- in the solution, taking into any objdir settings into account. Ensures that 
--- builds from different configurations will not step on each others' object 
--- files. The path is built from these choices, in order:
+-- in the solution, taking any objdir settings into account, to ensure builds
+-- from different configurations won't step on each others' object files. 
+-- The path is built from these choices, in order:
 --
 --   [1] -> the objects directory as set in the config
 --   [2] -> [1] + the platform name
@@ -100,21 +122,6 @@
 					cfg.objdir = project.getrelative(cfg.project, dir)
 				end
 			end
-		end
-	end
-
-
---
--- Flattens the configurations of each of the projects in the solution
--- and stores the results, which are then returned from subsequent
--- calls to getproject().
---
-
-	function solution.bakeprojects(sln)
-		for i = 1, #sln.projects do
-			local prj = solution.getproject_ng(sln, i)
-			sln.projects[i].rootcfg = prj
-			project.bakeconfigs(prj)
 		end
 	end
 
@@ -326,12 +333,14 @@
 --
 
 	function solution.getproject_ng(sln, idx)
+		-- fetch the "raw" project object
 		local prj = sln.projects[idx]
-		if prj.rootcfg then
-			-- cached version built by solution.bakeprojects()
-			return prj.rootcfg
-		else
-			-- "raw" version, accessible during scripting
-			return oven.bake(prj)
+		
+		-- if there is a baked version available, use it
+		if prj.baked then
+			return prj.baked
 		end
+		
+		-- otherwise, bake a new copy on-the-fly
+		return project.bake(prj)
 	end

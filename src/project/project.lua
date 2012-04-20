@@ -6,22 +6,29 @@
 
 	premake5.project = { }
 	local project = premake5.project
+	local oven = premake5.oven
 
 
 --
--- Flattens the configurations of each of the configurations in the project
--- and stores the results, which are then returned from subsequent calls
--- to getconfig().
+-- Flatten out a project and all of its configurations, merging all of the
+-- values contained in the script-supplied configuration blocks.
 --
 
-	function project.bakeconfigs(prj)
+	function project.bake(prj)
+		-- bake the project's "root" configuration, which are all of the values
+		-- that aren't part of a more specific configuration
+		prj = project.getconfig(prj)
+		
+		-- bake all of the individual configurations
 		local configs = {}
-		configs["*"] = project.getconfig(prj)
+		configs["*"] = prj
 		for cfg in project.eachconfig(prj) do
 			local key = cfg.buildcfg .. (cfg.platform or "")
 			configs[key] = cfg
 		end
 		prj.configs = configs
+		
+		return prj
 	end
 
 
@@ -44,6 +51,9 @@
 
 	function project.eachconfig(prj, field, filename)
 		local configs = project.getconfigmap(prj)
+		if not configs then
+			error("Project configurations are not yet available")
+		end
 		
 		local i = 0		
 		return function ()
@@ -97,10 +107,7 @@
 --
 	
 	function project.getconfig(prj, buildcfg, platform, field, filename)
-		-- make sure I've got the actual project, and not a baked configuration
-		prj = prj.project or prj
-	
-		-- check for a cached version, built by bakeconfigs()
+		-- if there is a previous baked version, use it
 		if not filename and prj.configs then
 			local key = (buildcfg or "*") .. (platform or "")
 			return prj.configs[key]
@@ -123,10 +130,10 @@
 			["action"] = _ACTION
 		}
 		
-		local cfg = premake5.oven.bake(prj, filter, "system")
+		local cfg = premake5.oven.bake(prj.project or prj, filter, "system")
 		filter.system = cfg.system or system or premake.action.current().os or os.get()
 
-		cfg = premake5.oven.bake(prj, filter, field)		
+		cfg = premake5.oven.bake(prj.project or prj, filter, field)
 		cfg.architecture = cfg.architecture or architecture
 		return cfg
 	end

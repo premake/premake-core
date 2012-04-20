@@ -7,6 +7,7 @@
 	T.oven_tokens = { }
 	local suite = T.oven_tokens
 	local oven = premake5.oven
+	local solution = premake.solution
 	local project = premake5.project
 	local config = premake5.config
 
@@ -25,7 +26,7 @@
 			tokens = true
 		}
 
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 
 	function suite.teardown()
@@ -33,18 +34,10 @@
 	end
 	
 	function prepare()
+		-- some values are only accessible after a full bake
+		solution.bake(sln)
+		prj = solution.getproject_ng(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
-	end
-
-
---
--- Verify that solution values can be expanded.
---
-
-	function suite.doesExpandSolutionValues()
-		testapi "bin/%{sln.name}"
-		prepare()
-		test.isequal("bin/MySolution", cfg.testapi)
 	end
 
 
@@ -56,17 +49,6 @@
 		testapi "bin/%{prj.name}/%{cfg.buildcfg}"
 		prepare()
 		test.isequal("bin/MyProject/Debug", cfg.testapi)
-	end
-
-
---
--- Verify that project level values are expanded too.
---
-
-	function suite.doesExpandTokens_onProjects()
-		location "build/%{prj.name}"
-		prj = premake.solution.getproject_ng(sln, 1)
-		test.isequal(os.getcwd().."/build/MyProject", prj.location)
 	end
 
 

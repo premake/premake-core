@@ -146,7 +146,7 @@
 			if (not ok) then error("Error: " .. err, 0) end
 		else
 			for sln in premake.solution.each() do
-				premake.solution.bakeprojects(sln)
+				premake.solution.bake(sln)
 			end
 		end
 			

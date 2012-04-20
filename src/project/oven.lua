@@ -77,8 +77,10 @@
 			cfg[key] = value
 		end
 		
+		--[[
 		-- Expand inline tokens
 		oven.expandtokens(cfg)
+		--]]
 		
 		return cfg
 	end
@@ -119,7 +121,10 @@
 			end
 		end
 
+		--[[
 		oven.expandtokens(cfg, fcfg)
+		--]]
+		
 		return fcfg
 	end
 
@@ -128,7 +133,7 @@
 -- Scan an object for expandable tokens, and expand them, in place.
 --
 
-	function oven.expandtokens(cfg, filecfg)
+	function oven.expandtokens(cfg, scope, filecfg)
 		-- build a context for the tokens to use
 		local context = {
 			_G = _G,
@@ -154,7 +159,7 @@
 			-- to avoid unexpected errors or recursions, I only process
 			-- Premake's own API fields, and only those marked for it
 			local field = premake.fields[key]
-			if field ~= nil and field.tokens then
+			if field ~= nil and field.tokens and field.scope == scope then
 				expand(target, key)
 			end
 		end
