@@ -15,13 +15,6 @@
 	
 	premake.fields = 
 	{
-		buildoptions =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-
 		buildrule =
 		{
 			kind  = "object",
@@ -29,41 +22,6 @@
 			tokens = true,
 		},
 		
-		configurations = 
-		{
-			kind  = "list",
-			scope = "container",
-		},
-
-		debugargs =
-		{
-			kind = "list",
-			scope = "config",
-			tokens = true,
-		},
-
-		debugenvs = 
-		{
-			kind = "list",
-			scope = "config",
-			tokens = true,
-		},
-
-		defines =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-		
-		deploymentoptions =
-		{
-			kind  = "list",
-			scope = "config",
-			usagecopy = true,
-			tokens = true,
-		},
-
 		excludes =
 		{
 			kind = "filelist",
@@ -74,60 +32,6 @@
 		{
 			kind  = "filelist",
 			scope = "config",
-		},
-		
-		flags =
-		{
-			kind  = "list",
-			scope = "config",
-			isflags = true,
-			usagecopy = true,
-			allowed = {
-				"DebugEnvsDontMerge",
-				"DebugEnvsInherit",
-				"EnableSSE",
-				"EnableSSE2",
-				"ExtraWarnings",
-				"FatalWarnings",
-				"FloatFast",
-				"FloatStrict",
-				"Managed",
-				"MFC",
-				"NativeWChar",
-				"No64BitChecks",
-				"NoEditAndContinue",
-				"NoExceptions",
-				"NoFramePointer",
-				"NoImportLib",
-				"NoIncrementalLink",
-				"NoManifest",
-				"NoMinimalRebuild",
-				"NoNativeWChar",
-				"NoPCH",
-				"NoRTTI",
-				"NoWarnings",
-				"Optimize",
-				"OptimizeSize",
-				"OptimizeSpeed",
-				"SEH",
-				"StaticRuntime",
-				"Symbols",
-				"Unicode",
-				"Unsafe",
-				"WinMain",
-			},
-			aliases = {
-				Optimise = 'Optimize',
-				OptimiseSize = 'OptimizeSize',
-				OptimiseSpeed = 'OptimizeSpeed',
-			},
-		},
-		
-		imageoptions =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
 		},
 		
 		includedirs =
@@ -145,35 +49,6 @@
 			linkagecopy = true,
 			tokens = true,
 		},
-		
-		linkoptions =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-		
-		links =
-		{
-			kind  = "list",
-			scope = "config",
-			allowed = function(value)
-				-- if library name contains a '/' then treat it as a path to a local file
-				if value:find('/', nil, true) then
-					value = path.getabsolute(value)
-				end
-				return value
-			end,
-			linkagecopy = true,
-			tokens = true,
-		},
-		
-		makesettings =
-		{
-			kind = "list",
-			scope = "config",
-			tokens = true,
-		},
 
 		platforms = 
 		{
@@ -181,44 +56,9 @@
 			scope = "container",
 		},
 		
-		postbuildcommands =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-		
-		prebuildcommands =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-		
-		prelinkcommands =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-		
-		resdefines =
-		{
-			kind  = "list",
-			scope = "config",
-			tokens = true,
-		},
-		
 		resincludedirs =
 		{
 			kind  = "dirlist",
-			scope = "config",
-			tokens = true,
-		},
-		
-		resoptions =
-		{
-			kind  = "list",
 			scope = "config",
 			tokens = true,
 		},
@@ -285,6 +125,33 @@
 		_G[name] = function(value)
 			return api.callback(field, value)
 		end
+		
+		-- list values also get a removal function
+		if field.kind:endswith("list") then
+			_G["remove" .. name] = function(value)
+				return api.remove(field, value)
+			end
+		end
+	end
+
+
+--
+-- Find the right target object for a given scope.
+--
+
+	function api.gettarget(scope)
+		local target
+		if scope == "project" then
+			target = api.scope.project or api.scope.solution
+		else
+			target = api.scope.configuration
+		end
+				
+		if not target then
+			error("no " .. scope .. " in scope", 4)
+		end
+		
+		return target
 	end
 
 
@@ -298,17 +165,7 @@
 		-- return the current baked value
 		if not value then return end
 		
-		-- find the right target object for this field
-		local target
-		if field.scope == "project" then
-			target = api.scope.project or api.scope.solution
-		else
-			target = api.scope.configuration
-		end
-				
-		if not target then
-			error("no " .. field.scope .. " in scope", 3)
-		end
+		local target = api.gettarget(field.scope)
 		
 		-- A keyed value is a table containing key-value pairs, where the
 		-- type of the value is defined by the field. 
@@ -321,6 +178,25 @@
 			local setter = api["set" .. field.kind]
 			setter(target, field.name, field, value)
 		end
+	end
+
+
+--
+-- The remover: adds values to be removed to the "removes" field on
+-- current configuration. Removes are keyed by the associated field,
+-- so the call `removedefines("X")` will add the entry:
+--  cfg.removes["defines"] = { "X" }
+--
+
+	function api.remove(field, value)
+		-- right now, ignore calls with no value; later might want to
+		-- return the current baked value
+		if not value then return end
+		
+		local target = api.gettarget(field.scope)
+		
+		target.removes = target.removes or {}
+		api.setlist(target.removes, field.name, field, value)
 	end
 
 
@@ -393,6 +269,37 @@
 
 
 --
+-- Set a new list value. Lists are arrays of values, with new values
+-- appended to any previous values.
+--
+
+	function api.setlist(target, name, field, value)
+		-- start with the existing list, or an empty one
+		target[name] = target[name] or {}
+		
+		-- function to add values
+		local function addvalue(value, depth)
+			-- recurse into tables
+			if type(value) == "table" then
+				for _, v in ipairs(value) do
+					addvalue(v, depth + 1)
+				end
+			
+			-- insert simple values
+			else
+				value, err = api.checkvalue(value, field.allowed, field.aliases)
+				if not value then
+					error(err, depth)
+				end
+				table.insert(target[name], value)
+			end
+		end
+		
+		addvalue(value, 3)
+	end
+
+
+--
 -- Set a new path value on an API field.
 --
 
@@ -453,9 +360,29 @@
 	}
 
 	api.register {
+		name = "buildoptions",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+
+	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "key-array"
+	}
+
+	api.register {
+		name = "configurations",
+		scope = "project",
+		kind = "list",
+	}
+	
+	api.register {
+		name = "debugargs",
+		scope = "config",
+		kind = "list",
+		tokens = true,
 	}
 
 	api.register {
@@ -471,6 +398,13 @@
 		kind = "path",
 		tokens = true,
 	}
+	
+	api.register {
+		name = "debugenvs",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
 
 	api.register {
 		name = "debugformat",
@@ -478,6 +412,65 @@
 		kind = "string",
 		allowed = {
 			"c7",
+		},
+	}
+	
+	api.register {
+		name = "defines",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+	
+	api.register {
+		name = "deploymentoptions",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "flags",		
+		scope = "config",
+		kind  = "list",
+		allowed = {
+			"DebugEnvsDontMerge",
+			"DebugEnvsInherit",
+			"EnableSSE",
+			"EnableSSE2",
+			"ExtraWarnings",
+			"FatalWarnings",
+			"FloatFast",
+			"FloatStrict",
+			"Managed",
+			"MFC",
+			"NativeWChar",
+			"No64BitChecks",
+			"NoEditAndContinue",
+			"NoExceptions",
+			"NoFramePointer",
+			"NoImportLib",
+			"NoIncrementalLink",
+			"NoManifest",
+			"NoMinimalRebuild",
+			"NoNativeWChar",
+			"NoPCH",
+			"NoRTTI",
+			"NoWarnings",
+			"Optimize",
+			"OptimizeSize",
+			"OptimizeSpeed",
+			"SEH",
+			"StaticRuntime",
+			"Symbols",
+			"Unicode",
+			"Unsafe",
+			"WinMain",
+		},
+		aliases = {
+			Optimise = 'Optimize',
+			OptimiseSize = 'OptimizeSize',
+			OptimiseSpeed = 'OptimizeSpeed',
 		},
 	}
 
@@ -495,6 +488,13 @@
 		},
 	}
 
+	api.register {
+		name = "imageoptions",
+		scope = "config",
+		kind = "list",
+		tokens = true,		
+	}
+	
 	api.register {
 		name = "imagepath",
 		scope = "config",
@@ -561,11 +561,39 @@
 	}
 
 	api.register {
+		name = "linkoptions",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+	
+	api.register {
+		name = "links",
+		scope = "config",
+		kind = "list",
+		allowed = function(value)
+			-- if library name contains a '/' then treat it as a path to a local file
+			if value:find('/', nil, true) then
+				value = path.getabsolute(value)
+			end
+			return value
+		end,
+		tokens = true,
+	}
+
+	api.register {
 		name = "location",
 		scope = "project",
 		kind = "path",
 		tokens = true,
 	}
+
+	api.register {
+		name = "makesettings",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}		
 
 	api.register {
 		name = "objdir",
@@ -587,6 +615,41 @@
 		kind = "path",
 		tokens = true,
 	}		
+
+	api.register {
+		name = "postbuildcommands",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "prebuildcommands",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "prelinkcommands",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "resdefines",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "resoptions",
+		scope = "config",
+		kind = "list",
+		tokens = true,
+	}
 
 	api.register {
 		name = "system",
