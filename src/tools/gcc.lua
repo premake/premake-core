@@ -52,7 +52,7 @@
 	gcc.cflags = {
 		EnableSSE      = "-msse",
 		EnableSSE2     = "-msse2",
-		ExtraWarnings  = "-Wall",
+		ExtraWarnings  = "-Wall -Wextra",
 		FatalWarnings  = "-Werror",
 		FloatFast      = "-ffast-math",
 		FloatStrict    = "-ffloat-store",
