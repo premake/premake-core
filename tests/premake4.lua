@@ -58,6 +58,7 @@
 
 	-- Solution object tests
 	dofile("solution/test_eachconfig.lua")
+	dofile("solution/test_objdirs.lua")
 	
 	-- Project object tests
 	dofile("test_project.lua")
@@ -72,7 +73,6 @@
 	dofile("config/test_fileconfig.lua")
 	dofile("config/test_linkinfo.lua")
 	dofile("config/test_links.lua")
-	dofile("config/test_objdir.lua")
 	dofile("config/test_targetinfo.lua")
 
 	-- API tests

@@ -120,10 +120,6 @@
 				oven.mergefile(fcfg, cfg, block)
 			end
 		end
-
-		--[[
-		oven.expandtokens(cfg, fcfg)
-		--]]
 		
 		return fcfg
 	end

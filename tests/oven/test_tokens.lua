@@ -83,5 +83,5 @@
 			}
 		prepare()
 		local fcfg = config.getfileconfig(cfg, os.getcwd().."/shaders/hello.cg")
-		test.isequal("cgc --profile gp5vp shaders/hello.cg -o obj/hello.gxp", fcfg.buildrule.commands[1])
+		test.isequal("cgc --profile gp5vp shaders/hello.cg -o obj/Debug/hello.gxp", fcfg.buildrule.commands[1])
 	end

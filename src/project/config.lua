@@ -101,19 +101,32 @@
 
 	function config.getfileconfig(cfg, filename)
 		-- if there is no entry, then this file is not part of the config
-		local fcfg = cfg.files[filename]
-		if not fcfg then
+		local filecfg = cfg.files[filename]
+		if not filecfg then
 			return nil
 		end
 		
-		-- initially this value will be a string (the file name); replace
-		-- it with the full file configuration
-		if type(fcfg) ~= "table" then
-			fcfg = oven.bakefile(cfg, filename)
-			cfg.files[filename] = fcfg
+		-- initially this value will be a string (the file name); if so, build
+		-- and replace it with a full file configuration object
+		if type(filecfg) ~= "table" then
+			-- fold up all of the configuration settings for this file
+			filecfg = oven.bakefile(cfg, filename)
+			
+			-- merge in the file path information (virtual paths, etc.) that are
+			-- computed at the project level, for token expansions to use
+			local prjcfg = project.getfileconfig(cfg.project, filename)
+			for key, value in pairs(prjcfg) do
+				filecfg[key] = value
+			end
+			
+			-- expand inline tokens
+			oven.expandtokens(cfg, "config", filecfg)
+			
+			-- and cache the result
+			cfg.files[filename] = filecfg
 		end
 		
-		return fcfg
+		return filecfg
 	end
 
 

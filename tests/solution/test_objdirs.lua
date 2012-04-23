@@ -1,12 +1,11 @@
 --
--- tests/config/test_objdir.lua
--- Test the config object's build target accessor. 
+-- tests/solution/test_objdirs.lua
+-- Test the solution unique objects directory building.
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.config_objdir = { }
-	local suite = T.config_objdir
-	local config = premake5.config
+	T.solution_objdir = { }
+	local suite = T.solution_objdir
 
 
 --
@@ -24,8 +23,9 @@
 	local function prepare()
 		local platforms = sln.platforms or {}
 		prj = project("MyProject")
+		premake.solution.bake(sln)
+		prj = premake.solution.getproject_ng(sln, "MyProject")
 		cfg = premake5.project.getconfig(prj, "Debug", platforms[1])
-		return config.getuniqueobjdir(cfg)
 	end
 
 
@@ -35,8 +35,8 @@
 
 	function suite.directoryIsObj_onNoValueSet()
 		configurations { "Debug" }
-		local dir = prepare()
-		test.isequal("obj", dir)
+		prepare()
+		test.isequal("obj", cfg.objdir)
 	end
 
 
@@ -48,8 +48,8 @@
 	function suite.directoryIncludesPlatform_onConflictAndPlatform()
 		configurations { "Debug" }
 		platforms { "x32", "x64" }
-		local dir = prepare()
-		test.isequal("obj/x32", dir)
+		prepare()
+		test.isequal("obj/x32", cfg.objdir)
 	end
 
 
@@ -60,8 +60,8 @@
 
 	function suite.directoryIncludesBuildCfg_onConflictAndNoPlatforms()
 		configurations { "Debug", "Release" }
-		local dir = prepare()
-		test.isequal("obj/Debug", dir)
+		prepare()
+		test.isequal("obj/Debug", cfg.objdir)
 	end
 
 
@@ -73,8 +73,8 @@
 	function suite.directoryIncludesBuildCfg_onConflictAndNoPlatforms()
 		configurations { "Debug", "Release" }
 		platforms { "x32", "x64" }
-		local dir = prepare()
-		test.isequal("obj/x32/Debug", dir)
+		prepare()
+		test.isequal("obj/x32/Debug", cfg.objdir)
 	end
 
 
@@ -86,7 +86,7 @@
 	function suite.directoryIncludesBuildCfg_onConflictAndNoPlatforms()
 		configurations { "Debug", "Release" }
 		project "MyProject2"
-		local dir = prepare()
-		test.isequal("obj/Debug/MyProject", dir)
+		prepare()
+		test.isequal("obj/Debug/MyProject", cfg.objdir)
 	end
 

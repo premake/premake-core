@@ -308,6 +308,9 @@
 			fcfg.vpath = fcfg.relpath
 		end
 
+		fcfg.basename = path.getbasename(filename)
+		fcfg.path = fcfg.relpath
+		
 		return fcfg
 	end
 

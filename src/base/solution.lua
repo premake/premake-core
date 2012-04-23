@@ -54,6 +54,9 @@
 			prj.baked = project.bake(prj)
 		end
 		
+		-- assign unique object directories to every project configuration
+		solution.bakeobjdirs(sln)
+		
 		-- expand all tokens contained by the solution
 		for prj in solution.eachproject_ng(sln) do
 			oven.expandtokens(prj, "project")
@@ -120,6 +123,7 @@
 			for _, dir in ipairs(dirs) do
 				if counts[dir] == 1 then
 					cfg.objdir = project.getrelative(cfg.project, dir)
+					break
 				end
 			end
 		end
