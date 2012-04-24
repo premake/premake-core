@@ -30,6 +30,9 @@
 --
 -- @param container
 --    The solution or project to query.
+-- @param basis
+--    A "parent" object containing an initial configuration. For example,
+--    if baking a project, this would be the containing solution.
 -- @param filterterms
 --    An optional list of filter terms. Only configuration blocks which
 --    match all of the terms in the list will be included in the result.
@@ -40,7 +43,8 @@
 --    A configuration object.
 --
 
-	function oven.bake(container, filterTerms, filterField)
+	function oven.bake(container, basis, filterTerms, filterField)
+		local cfg = {}
 		filterTerms = filterTerms or {}
 
 		-- keyword/term tests are case-insensitive; convert all terms to lowercase
@@ -49,19 +53,13 @@
 			casedTerms[key] = value:lower()
 		end
 
-		-- If I'm baking a project, start with the values from the solution level
-		local cfg
-		if container.solution then
-			cfg = oven.bake(container.solution, casedTerms, filterField)
-		else
-			cfg = {}
-		end
-
+		-- If there is a basis object, start with that
+		if basis then
+			cfg = oven.bake(basis, nil, filterTerms, filterField)
+		end				
+		
 		-- Merge container level (solution, project) in the result
 		cfg = oven.merge(cfg, container)
-		
-		-- Attach a reference to the source container, as "solution" or "project"
-		cfg[type(container)] = container
 
 		-- Walk the blocks available in this container, and merge their values
 		-- into my configuration-in-progress, if they pass the keyword filter

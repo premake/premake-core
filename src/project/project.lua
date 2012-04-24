@@ -130,10 +130,12 @@
 			["action"] = _ACTION
 		}
 		
-		local cfg = premake5.oven.bake(prj.project or prj, filter, "system")
+		local cfg = premake5.oven.bake(prj.project or prj, prj.solution, filter, "system")
 		filter.system = cfg.system or system or premake.action.current().os or os.get()
 
-		cfg = premake5.oven.bake(prj.project or prj, filter, field)
+		cfg = premake5.oven.bake(prj.project or prj, prj.solution, filter, field)
+		cfg.solution = prj.solution
+		cfg.project = prj.project or prj
 		cfg.architecture = cfg.architecture or architecture
 		return cfg
 	end

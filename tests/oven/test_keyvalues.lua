@@ -40,6 +40,6 @@
 		configmap { ["sln"] = "slnvalue" }
 		prj = project("MyProject")
 		configmap { ["prj"] = "prjvalue" }
-		local cfg = oven.bake(prj)
+		local cfg = oven.bake(prj, sln)
 		test.istrue(cfg.configmap.sln ~= nil and cfg.configmap.prj ~= nil)
 	end

@@ -34,6 +34,6 @@
 		buildrule { description="sln" }
 		prj = project("MyProject")
 		buildrule { description="prj" }
-		cfg = oven.bake(prj, {"Debug"})
+		cfg = oven.bake(prj, sln, {"Debug"})
 		test.isequal("prj", cfg.buildrule.description)
 	end

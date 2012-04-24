@@ -51,7 +51,7 @@
 	function suite.projectValuePreset_onProjectConfig()
 		prj = project "MyProject"
 		defines "PROJECT"
-		local cfg = oven.bake(prj)
+		local cfg = oven.bake(prj, sln)
 		test.isequal("PROJECT", table.concat(cfg.defines))
 	end
 
@@ -64,7 +64,7 @@
 	function suite.solutionValuePresent_onProjectConfig()
 		defines("SOLUTION")
 		prj = project("MyProject")
-		local cfg = oven.bake(prj)
+		local cfg = oven.bake(prj, sln)
 		test.isequal("SOLUTION", table.concat(cfg.defines))
 	end
 
@@ -79,7 +79,7 @@
 		defines("SOLUTION")
 		prj = project("MyProject")
 		defines("PROJECT")
-		local cfg = oven.bake(prj)
+		local cfg = oven.bake(prj, sln)
 		test.isequal("SOLUTION|PROJECT", table.concat(cfg.defines, "|"))
 	end
 
@@ -91,14 +91,14 @@
 
 	function suite.valueFromGeneralConfigPreset_onMoreSpecificConfig()
 		defines("SOLUTION")
-		local cfg = oven.bake(sln, {"Debug"})
+		local cfg = oven.bake(sln, nil, {"Debug"})
 		test.isequal("SOLUTION", table.concat(cfg.defines))
 	end
 
 	function suite.valueFromGeneralConfigPreset_onMoreSpecificConfig()
 		configuration("Debug")
 		defines("DEBUG")
-		local cfg = oven.bake(sln, {"Debug","Windows"})
+		local cfg = oven.bake(sln, nil, {"Debug","Windows"})
 		test.isequal("DEBUG", table.concat(cfg.defines))
 	end
 
@@ -118,7 +118,7 @@
 	function suite.configValuePresent_ifMatchingFilterTerm()
 		configuration("Debug")
 		kind "SharedLib"
-		cfg = oven.bake(sln, {"Debug"})
+		cfg = oven.bake(sln, nil, {"Debug"})
 		test.isequal("SharedLib", cfg.kind)
 	end
 
@@ -136,7 +136,7 @@
 		defines("PROJECT")
 		configuration("Debug")
 		defines("PRJ_DEBUG")
-		cfg = oven.bake(prj	, {"Debug"})
+		cfg = oven.bake(prj	, sln, {"Debug"})
 		test.isequal("SOLUTION|SLN_DEBUG|PROJECT|PRJ_DEBUG", table.concat(cfg.defines, "|"))
 	end
 
@@ -149,6 +149,6 @@
 		defines { "SOLUTION", "DUPLICATE" }
 		prj = project("MyProject")
 		defines { "PROJECT", "DUPLICATE" }
-		cfg = oven.bake(prj, {"Debug"})
+		cfg = oven.bake(prj, sln, {"Debug"})
 		test.isequal("SOLUTION|DUPLICATE|PROJECT", table.concat(cfg.defines, "|"))
 	end

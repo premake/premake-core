@@ -38,7 +38,7 @@
 
 	function suite.solutionSet_whenCalledOnSolution()
 		prj = project("MyProject")
-		local cfg = oven.bake(prj)
+		local cfg = oven.bake(prj, sln)
 		test.istrue(prj == cfg.project)
 	end
 
@@ -51,7 +51,7 @@
 	function suite.callPullProjectLevelConfig()
 		prj = project("MyProject")
 		files { "hello.cpp" }
-		cfg = oven.bake(prj, {}, "files")
+		cfg = oven.bake(prj, sln, {}, "files")
 		test.isequal("hello.cpp", cfg.files[1]:sub(-9))
 	end
 
@@ -76,7 +76,7 @@
 	function suite.fieldValueReturned_onFilterFieldPresent()
 		configuration("Debug")
 		kind "SharedLib"
-		cfg = oven.bake(sln, {"Debug"}, "kind")
+		cfg = oven.bake(sln, nil, {"Debug"}, "kind")
 		test.isequal("SharedLib", cfg.kind)
 	end
 
@@ -84,6 +84,6 @@
 		configuration("Debug")
 		kind("SharedLib")
 		defines("DEBUG")
-		cfg = oven.bake(sln, {"Debug"}, "kind")
+		cfg = oven.bake(sln, nil, {"Debug"}, "kind")
 		test.isnil(cfg.defines)
 	end
