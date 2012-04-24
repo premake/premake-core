@@ -67,23 +67,34 @@
 --
 
 	function solution.bake(sln)
-		-- flatten out all of the projects and their configurations
-		for _, prj in ipairs(sln.projects) do
-			prj.baked = project.bake(prj)
-		end
+		-- start by copying all field values into the baked result
+		local result = oven.merge({}, sln)
+		result.baked = true
 		
-		-- assign unique object directories to every project configuration
-		solution.bakeobjdirs(sln)
+		-- keep a reference to the original configuration blocks, in
+		-- case additional filtering (i.e. for files) is needed later
+		result.blocks = sln.blocks
+		
+		-- bake all of the projects in the list, and store that result
+		local projects = {}
+		for i, prj in ipairs(sln.projects) do
+			projects[i] = project.bake(prj)
+			projects[prj.name] = projects[i]
+		end
+		result.projects = projects
+	
+		-- assign unique object directories to every project configurations
+		solution.bakeobjdirs(result)
 		
 		-- expand all tokens contained by the solution
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject_ng(result) do
 			oven.expandtokens(prj, "project")
 			for cfg in project.eachconfig(prj) do
 				oven.expandtokens(cfg, "config")
 			end
 		end
 		
-		return sln
+		return result
 	end
 
 
@@ -357,14 +368,10 @@
 --
 
 	function solution.getproject_ng(sln, idx)
-		-- fetch the "raw" project object
-		local prj = sln.projects[idx]
-		
-		-- if there is a baked version available, use it
-		if prj.baked then
-			return prj.baked
+		-- to make testing a little easier, allow this function to
+		-- accept an unbaked solution, and fix it on the fly
+		if not sln.baked then
+			sln = solution.bake(sln)
 		end
-		
-		-- otherwise, bake a new copy on-the-fly
-		return project.bake(prj)
+		return sln.projects[idx]
 	end

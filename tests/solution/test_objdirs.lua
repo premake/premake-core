@@ -22,8 +22,7 @@
 
 	local function prepare()
 		local platforms = sln.platforms or {}
-		prj = project("MyProject")
-		premake.solution.bake(sln)
+		project("MyProject")
 		prj = premake.solution.getproject_ng(sln, "MyProject")
 		cfg = premake5.project.getconfig(prj, "Debug", platforms[1])
 	end
@@ -45,7 +44,7 @@
 -- be used to make unique.
 --
 
-	function suite.directoryIncludesPlatform_onConflictAndPlatform()
+	function suite.directoryIncludesPlatform_onPlatformConflict()
 		configurations { "Debug" }
 		platforms { "x32", "x64" }
 		prepare()
@@ -58,7 +57,7 @@
 -- configuration names should be used to make unique.
 --
 
-	function suite.directoryIncludesBuildCfg_onConflictAndNoPlatforms()
+	function suite.directoryIncludesBuildCfg_onBuildCfgConflict()
 		configurations { "Debug", "Release" }
 		prepare()
 		test.isequal("obj/Debug", cfg.objdir)
@@ -70,7 +69,7 @@
 -- both should be used to make unique.
 --
 
-	function suite.directoryIncludesBuildCfg_onConflictAndNoPlatforms()
+	function suite.directoryIncludesBuildCfg_onPlatformAndBuildCfgConflict()
 		configurations { "Debug", "Release" }
 		platforms { "x32", "x64" }
 		prepare()
@@ -83,7 +82,7 @@
 -- used to make unique.
 --
 
-	function suite.directoryIncludesBuildCfg_onConflictAndNoPlatforms()
+	function suite.directoryIncludesBuildCfg_onProjectConflict()
 		configurations { "Debug", "Release" }
 		project "MyProject2"
 		prepare()
