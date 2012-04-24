@@ -96,11 +96,6 @@
 --
 
 	function project.bakeconfigmap(prj)
-		-- check for a cached version
-		if prj.mappedconfigs then
-			return prj.mappedconfigs, prj.slnconfigmap
-		end
-
 		-- apply an individual config map entry to a build cfg + platform pair
 		function applymap(pairing, patterns, replacements)
 			-- does this pattern match any part of the pair?
@@ -146,7 +141,6 @@
 		end
 
 		if #prjcfgs == 0 then
-			prj.mappedconfigs = slncfgs
 			return slncfgs
 		end
 		
@@ -194,8 +188,6 @@
 		end
 		
 		-- cache the results for future calls and return
-		prj.mappedconfigs = result
-		prj.slnconfigmap = map
 		return result, map
 	end
 
