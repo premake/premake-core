@@ -77,11 +77,6 @@
 			cfg[key] = value
 		end
 		
-		--[[
-		-- Expand inline tokens
-		oven.expandtokens(cfg)
-		--]]
-		
 		return cfg
 	end
 

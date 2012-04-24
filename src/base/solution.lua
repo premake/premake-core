@@ -1,7 +1,7 @@
 --
 -- solution.lua
 -- Work with the list of solutions loaded from the script.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
 	premake.solution = { }
@@ -43,9 +43,27 @@
 
 
 --
+-- Iterates through all of the current solutions, bakes down their contents,
+-- and then replaces the original solution object with this baked result.
+-- This is the entry point to the whole baking process, which happens after
+-- the scripts have run, but before the project files are generated.
+--
+
+	function solution.bakeall()
+		result = {}
+		for i, sln in ipairs(solution.list) do
+			result[i] = solution.bake(sln)
+		end
+		solution.list = result
+	end
+
+
+--
 -- Prepare the contents of a solution for the next stage. Flattens out
 -- all configurations, computes composite values (i.e. build targets,
 -- objects directories), and expands tokens.
+-- @return
+--    The baked version of the solution.
 --
 
 	function solution.bake(sln)
@@ -64,6 +82,8 @@
 				oven.expandtokens(cfg, "config")
 			end
 		end
+		
+		return sln
 	end
 
 
