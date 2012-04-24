@@ -14,135 +14,77 @@
 -- values contained in the script-supplied configuration blocks.
 --
 
-	function project.bake(prj)
-		-- bake the project's "root" configuration, which are all of the values
-		-- that aren't part of a more specific configuration
-		prj = project.getconfig(prj)
+	function project.bake(prj, sln)
+		-- bake the project's "root" configuration, which are all of the
+		-- values that aren't part of a more specific configuration
+		local result = project.bakeconfig(prj)
+		result.solution = sln
+		result.blocks = prj.blocks
+		result.baked = true
 		
-		-- bake all of the individual configurations
+		-- prevent any default system setting from influencing configurations
+		result.system = nil
+		
+		-- create a map between solution and project configurations
+		local cfglist, cfgmap = project.bakeconfigmap(result)
+		result.cfglist = cfglist
+		result.cfgmap = cfgmap
+
+		-- bake all configurations contained by the project
 		local configs = {}
-		configs["*"] = prj
-		for cfg in project.eachconfig(prj) do
-			local key = cfg.buildcfg .. (cfg.platform or "")
-			configs[key] = cfg
+		for _, pairing in ipairs(cfglist) do
+			local buildcfg = pairing[1]
+			local platform = pairing[2]
+			local cfg = project.bakeconfig(result, buildcfg, platform)
+
+			configs[(buildcfg or "*") .. (platform or "")] = cfg
 		end
-		prj.configs = configs
+		result.configs = configs
 		
-		return prj
+		return result
 	end
 
 
 --
--- Returns an iterator function for the configuration objects contained by
--- the project. Each configuration corresponds to a build configuration/
--- platform pair (i.e. "Debug|x32") as specified in the solution.
---
--- @param prj
---    The project object to query.
--- @param field
---    An optional field name. If specified, only that field will be 
---    included in the resulting configuration object.
--- @param filename
---    An optional file name. If specified, only configuration blocks 
---    with a keyword matching the filename will be considered.
--- @return
---    An iterator function returning configuration objects.
+-- Flattens out the build settings for a particular build configuration and
+-- platform pairing, and returns the result.
 --
 
-	function project.eachconfig(prj, field, filename)
-		local configs = project.getconfigmap(prj)
-		if not configs then
-			error("Project configurations are not yet available")
-		end
-		
-		local i = 0		
-		return function ()
-			i = i + 1
-			if i <= #configs then
-				local pairing = configs[i]
-				return project.getconfig(prj, pairing[1], pairing[2], field, filename)
-			end
-		end
-	end
-
-
--- 
--- Locate a project by name; case insensitive.
---
--- @param name
---    The name of the project for which to search.
--- @return
---    The corresponding project, or nil if no matching project could be found.
---
-
-	function project.findproject(name)
-		for sln in premake.solution.each() do
-			for _, prj in ipairs(sln.projects) do
-				if (prj.name == name) then
-					return  prj
-				end
-			end
-		end
-	end
-
-
---
--- Retrieve the project's configuration information for a particular build 
--- configuration/platform pair.
---
--- @param prj
---    The project object to query.
--- @param buildcfg
---    The name of the build configuration on which to filter.
--- @param platform
---    Optional; the name of the platform on which to filter.
--- @param field
---    An optional field name. If specified, only that field will be 
---    included in the resulting configuration object.
--- @param filename
---    An optional file name. If specified, only configuration blocks 
---    with a keyword matching the filename will be considered.
--- @return
---    A configuration object.
---
-	
-	function project.getconfig(prj, buildcfg, platform, field, filename)
-		-- if there is a previous baked version, use it
-		if not filename and prj.configs then
-			local key = (buildcfg or "*") .. (platform or "")
-			return prj.configs[key]
-		end
-		
+	function project.bakeconfig(prj, buildcfg, platform)
 		local system
 		local architecture
 
-		-- For backward compatibility with the old platforms API, use platform
+		-- for backward compatibility with the old platforms API, use platform
 		-- as the default system or architecture if it would be a valid value.
 		if platform then
 			system = premake.api.checkvalue(platform, premake.fields.system.allowed)
 			architecture = premake.api.checkvalue(platform, premake.fields.architecture.allowed)
 		end
 
-		-- Figure out the target operating environment for this configuration
+		-- figure out the target operating environment for this configuration
 		local filter = {
 			["buildcfg"] = buildcfg,
 			["platform"] = platform,
 			["action"] = _ACTION
 		}
 		
-		local cfg = premake5.oven.bake(prj.project or prj, prj.solution, filter, "system")
+		-- look to see if this configuration specifies a target system and, if so,
+		-- use that to further filter the results
+		local cfg = oven.bake(prj, prj.solution, filter, "system")
 		filter.system = cfg.system or system or premake.action.current().os or os.get()
 
-		cfg = premake5.oven.bake(prj.project or prj, prj.solution, filter, field)
+		cfg = oven.bake(prj, prj.solution, filter)
 		cfg.solution = prj.solution
 		cfg.project = prj.project or prj
 		cfg.architecture = cfg.architecture or architecture
+		
 		return cfg
 	end
 
 
 --
--- Applies any configuration maps specified in a project.
+-- Builds a list of build configuration/platform pairs for a project,
+-- along with a mapping between the solution and project configurations.
 -- @param prj
 --    The project to query.
 -- @return
@@ -153,7 +95,7 @@
 --        platform pairs to project configurations.
 --
 
-	function project.getconfigmap(prj)
+	function project.bakeconfigmap(prj)
 		-- check for a cached version
 		if prj.mappedconfigs then
 			return prj.mappedconfigs, prj.slnconfigmap
@@ -255,6 +197,93 @@
 		prj.mappedconfigs = result
 		prj.slnconfigmap = map
 		return result, map
+	end
+
+
+--
+-- Returns an iterator function for the configuration objects contained by
+-- the project. Each configuration corresponds to a build configuration/
+-- platform pair (i.e. "Debug|x32") as specified in the solution.
+--
+-- @param prj
+--    The project object to query.
+-- @param field
+--    An optional field name. If specified, only that field will be 
+--    included in the resulting configuration object.
+-- @param filename
+--    An optional file name. If specified, only configuration blocks 
+--    with a keyword matching the filename will be considered.
+-- @return
+--    An iterator function returning configuration objects.
+--
+
+	function project.eachconfig(prj, field, filename)
+		-- to make testing a little easier, allow this function to
+		-- accept an unbaked project, and fix it on the fly
+		if not prj.baked then
+			prj = project.bake(prj, prj.solution)
+		end
+
+		local configs = prj.cfglist
+		local count = #configs
+		
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= count then
+				return project.getconfig(prj, configs[i][1], configs[i][2])
+			end
+		end
+	end
+
+
+-- 
+-- Locate a project by name; case insensitive.
+--
+-- @param name
+--    The name of the project for which to search.
+-- @return
+--    The corresponding project, or nil if no matching project could be found.
+--
+
+	function project.findproject(name)
+		for sln in premake.solution.each() do
+			for _, prj in ipairs(sln.projects) do
+				if (prj.name == name) then
+					return  prj
+				end
+			end
+		end
+	end
+
+
+--
+-- Retrieve the project's configuration information for a particular build 
+-- configuration/platform pair.
+--
+-- @param prj
+--    The project object to query.
+-- @param buildcfg
+--    The name of the build configuration on which to filter.
+-- @param platform
+--    Optional; the name of the platform on which to filter.
+-- @return
+--    A configuration object.
+--
+	
+	function project.getconfig(prj, buildcfg, platform)
+		-- to make testing a little easier, allow this function to
+		-- accept an unbaked project, and fix it on the fly
+		if not prj.baked then
+			prj = project.bake(prj, prj.solution)
+		end
+	
+		if not buildcfg then
+			return prj
+		end
+		
+		local key = (buildcfg or "*") .. (platform or "")
+		return prj.configs[key]
 	end
 
 
@@ -498,9 +527,8 @@
 --
 
 	function project.mapconfig(prj, buildcfg, platform)
-		local configs, map = project.getconfigmap(prj)
-		if map then
-			local cfg = map[buildcfg .. (platform or "")]
+		if prj.cfgmap then
+			local cfg = prj.cfgmap[buildcfg .. (platform or "")]
 			buildcfg = cfg[1]
 			platform = cfg[2]
 		end

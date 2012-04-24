@@ -78,7 +78,7 @@
 		-- bake all of the projects in the list, and store that result
 		local projects = {}
 		for i, prj in ipairs(sln.projects) do
-			projects[i] = project.bake(prj)
+			projects[i] = project.bake(prj, result)
 			projects[prj.name] = projects[i]
 		end
 		result.projects = projects
