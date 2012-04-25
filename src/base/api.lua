@@ -1213,6 +1213,7 @@
 		
 		-- this is the new place for storing scoped objects
 		api.scope.solution = premake.CurrentContainer
+		api.scope.project = nil
 		
 		return premake.CurrentContainer
 	end

@@ -21,7 +21,7 @@
 		result.solution = sln
 		result.blocks = prj.blocks
 		result.baked = true
-		
+				
 		-- prevent any default system setting from influencing configurations
 		result.system = nil
 		
@@ -75,7 +75,7 @@
 
 		cfg = oven.bake(prj, prj.solution, filter)
 		cfg.solution = prj.solution
-		cfg.project = prj.project or prj
+		cfg.project = prj
 		cfg.architecture = cfg.architecture or architecture
 		
 		return cfg
