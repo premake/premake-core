@@ -56,10 +56,7 @@
 		-- If there is a basis object, start with that
 		if basis then
 			cfg = oven.bake(basis, nil, filterTerms, filterField)
-		end				
-		
-		-- Merge container level (solution, project) in the result
-		cfg = oven.merge(cfg, container)
+		end
 
 		-- Walk the blocks available in this container, and merge their values
 		-- into my configuration-in-progress, if they pass the keyword filter

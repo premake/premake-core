@@ -104,12 +104,17 @@
 	function vc2010.globals(prj)
 		_p(1,'<PropertyGroup Label="Globals">')
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-		if prj.flags.Managed then
+				
+		-- flags are located on the configurations; grab one
+		local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])		
+		
+		if cfg.flags.Managed then
 			_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
 			_p(2,'<Keyword>ManagedCProj</Keyword>')
 		else
 			_p(2,'<Keyword>Win32Proj</Keyword>')
 		end
+		
 		_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 		_p(1,'</PropertyGroup>')
 	end
@@ -395,7 +400,7 @@
 						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', vc2010.condition(cfg))
 					end
 					
-					if prj.pchsource == file.abspath and not cfg.flags.NoPCH then
+					if cfg.pchsource == file.abspath and not cfg.flags.NoPCH then
 						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', vc2010.condition(cfg))
 					end
 				end

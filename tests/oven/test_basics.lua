@@ -21,29 +21,6 @@
 
 
 --
--- When a solution is baked, a reference to that solution should be
--- placed in the resulting configuration.
---
-
-	function suite.solutionSet_whenCalledOnSolution()
-		local cfg = oven.bake(sln)
-		test.istrue(sln == cfg.solution)
-	end
-
-
---
--- When a project is baked, a reference to that project should be
--- placed in the resulting configuration.
---
-
-	function suite.solutionSet_whenCalledOnSolution()
-		prj = project("MyProject")
-		local cfg = oven.bake(prj, sln)
-		test.istrue(prj == cfg.project)
-	end
-
-
---
 -- Test pulling "project global" values, which are associated with
 -- all configurations in the project.
 --

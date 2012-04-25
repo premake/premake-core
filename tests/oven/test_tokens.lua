@@ -33,7 +33,7 @@
 		testapi = nil
 	end
 	
-	function prepare()
+	local function prepare()
 		-- some values are only accessible after a full bake
 		solution.bake(sln)
 		prj = solution.getproject_ng(sln, 1)

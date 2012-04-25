@@ -6,18 +6,23 @@
 
 	T.oven_removes = { }
 	local suite = T.oven_removes
-	local oven = premake5.oven
+	local project = premake5.project
 
 
 --
 -- Setup and teardown
 --
 
-	local sln, prj
+	local sln, prj, cfg
 
 	function suite.setup()
-		sln = solution("MySolution")
+		sln, prj = test.createsolution()
 	end
+	
+	local function prepare()
+		cfg = premake5.project.getconfig(prj, "Debug")
+	end
+
 
 
 --
@@ -27,15 +32,15 @@
 	function suite.remove_onExactValueMatch()
 		flags { "Symbols", "Optimize", "NoRTTI" }
 		removeflags "Optimize"
-		cfg = oven.bake(sln)
-		test.isequal("Symbols|NoRTTI", table.concat(cfg.flags, "|"))
+		prepare()
+		test.isequal({ "Symbols", "NoRTTI" }, cfg.flags)
 	end
 
 	function suite.remove_onMultipleValues()
 		flags { "Symbols", "NoExceptions", "Optimize", "NoRTTI" }
 		removeflags { "NoExceptions", "NoRTTI" }
-		cfg = oven.bake(sln)
-		test.isequal("Symbols|Optimize", table.concat(cfg.flags, "|"))
+		prepare()
+		test.isequal({ "Symbols", "Optimize" }, cfg.flags)
 	end
 
 
@@ -46,8 +51,8 @@
 	function suite.remove_onWildcard()
 		defines { "WIN32", "WIN64", "LINUX", "MACOSX" }
 		removedefines { "WIN*" }
-		cfg = oven.bake(sln)
-		test.isequal("LINUX|MACOSX", table.concat(cfg.defines, "|"))
+		prepare()
+		test.isequal({ "LINUX", "MACOSX" }, cfg.defines)
 	end
 
 --
@@ -57,7 +62,7 @@
 	function suite.remove_onExactValueMatch()
 		flags { "Symbols", "Optimize", "NoRTTI" }
 		removeflags "Optimize"
-		cfg = oven.bake(sln)
+		prepare()
 		test.isnil(cfg.flags.Optimize)
 	end
 
@@ -68,7 +73,7 @@
 	function suite.remove_onFileField()
 		files { "hello.c", "goodbye.c" }
 		removefiles { "goodbye.c" }
-		cfg = oven.bake(sln)
+		prepare()
 		test.isequal(path.join(os.getcwd(), "hello.c"), table.concat(cfg.files))
 	end
 
@@ -77,9 +82,7 @@
 --
 
 	function suite.remove_onContainerField()
-		configurations { "Debug", "Release" }
-		local prj = project "MyProject"
-		removeconfigurations { "Debug" }
-		cfg = oven.bake(prj, sln)
-		test.isequal({ "Release" }, cfg.configurations)
+		removeconfigurations { "Release" }
+		prepare()
+		test.isequal({ "Debug" }, cfg.project.configurations)
 	end

@@ -86,7 +86,11 @@
 		if _ACTION > "vs2003" then
 			_x(1,'RootNamespace="%s"', prj.name)
 		end
-		_p(1,'Keyword="%s"', iif(prj.flags.Managed, "ManagedCProj", "Win32Proj"))
+		
+		-- flags are located on the configurations; grab one
+		local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])
+		_p(1,'Keyword="%s"', iif(cfg.flags.Managed, "ManagedCProj", "Win32Proj"))
+		
 		_p(1,'>')
 	end
 
@@ -731,7 +735,7 @@
 			local hasSettings = (filecfg ~= nil and filecfg.terms ~= nil)
 			
 			-- check to see if this is the PCH source file
-			local isPchSource = (prj.pchsource == node.abspath and not cfg.flags.NoPCH)
+			local isPchSource = (cfg.pchsource == node.abspath and not cfg.flags.NoPCH)
 
 			-- only write the element if we have something to say			
 			if compileAs or isPchSource or not filecfg or hasSettings then

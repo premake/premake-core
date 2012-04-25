@@ -17,8 +17,9 @@
 	function project.bake(prj, sln)
 		-- bake the project's "root" configuration, which are all of the
 		-- values that aren't part of a more specific configuration
-		local result = project.bakeconfig(prj)
+		local result = oven.merge(oven.merge({}, sln), prj)
 		result.solution = sln
+		result.platforms = result.platforms or {}
 		result.blocks = prj.blocks
 		result.baked = true
 				
@@ -72,7 +73,7 @@
 		-- use that to further filter the results
 		local cfg = oven.bake(prj, prj.solution, filter, "system")
 		filter.system = cfg.system or system or premake.action.current().os or os.get()
-
+				
 		cfg = oven.bake(prj, prj.solution, filter)
 		cfg.solution = prj.solution
 		cfg.project = prj
@@ -126,7 +127,7 @@
 		
 		-- pair up the project's original list of build cfgs and platforms
 		local slncfgs = table.fold(prj.configurations or {}, prj.platforms or {})
-
+		
 		-- apply the set of mappings
 		local prjcfgs = {}
 		for patterns, replacements in pairs(prj.configmap or {}) do

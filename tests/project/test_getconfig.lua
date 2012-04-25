@@ -20,7 +20,7 @@
 	end
 
 	local function prepare()
-		cfg = premake.project.getconfig(prj)
+		cfg = premake.project.getconfig(prj, "Debug")
 	end
 
 
@@ -44,7 +44,7 @@
 -- operating environment.
 --
 
-	function suite.usesCurrentOS_onNoSystemSpecified()
+	function suite.actionOverridesOS()
 		_OS = "linux"
 		_ACTION = "vs2005"
 		configuration { "windows" }
@@ -59,7 +59,7 @@
 -- the current operating environment, as well as the tool's target OS.
 --
 
-	function suite.usesCurrentOS_onNoSystemSpecified()
+	function suite.usesCfgSystem()
 		_OS = "linux"
 		_ACTION = "vs2005"
 		system "macosx"
@@ -74,7 +74,7 @@
 -- The current action should be taken into account.
 --
 
-	function suite.usesCurrentOS_onNoSystemSpecified()
+	function suite.appliesActionToFilters()
 		_ACTION = "vs2005"
 		configuration { "vs2005" }
 		defines { "correct" }

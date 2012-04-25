@@ -13,13 +13,15 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local sln, prj, cfg
+	
 	function suite.setup()
 		sln = test.createsolution()
 	end
 
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
+		cfg = project.getconfig(prj, "Debug")
 	end
 
 	
@@ -113,7 +115,7 @@
 		files "src/hello.h"
 		vpaths { [""] = "src" }
 		prepare()
-		test.isequal("hello.h", project.getvpath(prj, prj.files[1]))
+		test.isequal("hello.h", project.getvpath(prj, cfg.files[1]))
 	end
 
 	function suite.MatchFilePattern_OnProjectLocationSet()
@@ -121,7 +123,7 @@
 		files "src/hello.h"
 		vpaths { ["Headers"] = "**.h" }
 		prepare()
-		test.isequal("Headers/hello.h", project.getvpath(prj, prj.files[1]))
+		test.isequal("Headers/hello.h", project.getvpath(prj, cfg.files[1]))
 	end
 
 	function suite.MatchFilePatternWithPath_OnProjectLocationSet()
@@ -129,5 +131,5 @@
 		files "src/hello.h"
 		vpaths { ["Headers"] = "src/**.h" }
 		prepare()
-		test.isequal("Headers/hello.h", project.getvpath(prj, prj.files[1]))
+		test.isequal("Headers/hello.h", project.getvpath(prj, cfg.files[1]))
 	end

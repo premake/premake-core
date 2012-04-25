@@ -72,6 +72,7 @@
 		]]
 	end
 
+
 --
 -- Make sure debug arguments are being written.
 --
@@ -85,6 +86,7 @@
 			/>
 		]]
 	end
+
 
 --
 -- Make sure environment variables are being written.
@@ -100,6 +102,7 @@
 		]]
 	end
 
+
 --
 -- Make sure quotes around environment variables are properly escaped.
 --
@@ -113,6 +116,7 @@
 			/>
 		]]
 	end
+
 
 --
 -- If multiple environment variables are specified, make sure they get
@@ -128,6 +132,7 @@
 			/>
 		]]
 	end
+
 
 --
 -- Make sure that environment merging is turned off if the build
