@@ -122,7 +122,6 @@
 	function oven.expandtokens(cfg, scope, filecfg)
 		-- build a context for the tokens to use
 		local context = {
-			_G = _G,
 			sln = cfg.solution,
 			prj = cfg.project,
 			cfg = cfg,
@@ -163,7 +162,8 @@
 			
 			-- give the function access to the project objects
 			setfenv(func, context)
-								
+			setmetatable(context, {__index = _G})
+
 			-- run it and return the result
 			local result = func()
 			if not result then
@@ -395,11 +395,13 @@
 -- 
 
 	function oven.mergevalue(target, fieldname, fieldkind, value)
-		-- list values get merged, others overwrite
+		-- list values get merged, others overwrite; note that if the 
+		-- values contain tokens they will be modified in the token 
+		-- expansion phase, so important to make copies of objects
 		if fieldkind:endswith("list") then
 			target[fieldname] = oven.mergetables(target[fieldname] or {}, value)
 		else
-			target[fieldname] = value
+			target[fieldname] = table.deepcopy(value)
 		end
 	end
 

@@ -85,3 +85,37 @@
 		local fcfg = config.getfileconfig(cfg, os.getcwd().."/shaders/hello.cg")
 		test.isequal("cgc --profile gp5vp shaders/hello.cg -o obj/Debug/hello.gxp", fcfg.buildrule.commands[1])
 	end
+
+
+--
+-- Make sure that the same token source can be applied to multiple targets.
+--
+
+	function suite.canReuseTokenSources()
+		files { "shaders/hello.cg", "shaders/goodbye.cg" }
+		configuration { "**.cg" }
+			buildrule {
+				commands = {
+					"cgc --profile gp5vp %{file.path} -o %{cfg.objdir}/%{file.basename}.gxp",
+				},
+				outputs = {
+					"%{cfg.objdir}/%{file.basename}.o"
+				}
+			}
+		prepare()
+		local fcfg = config.getfileconfig(cfg, os.getcwd().."/shaders/hello.cg")
+		test.isequal("cgc --profile gp5vp shaders/hello.cg -o obj/Debug/hello.gxp", fcfg.buildrule.commands[1])
+		fcfg = config.getfileconfig(cfg, os.getcwd().."/shaders/goodbye.cg")
+		test.isequal("cgc --profile gp5vp shaders/goodbye.cg -o obj/Debug/goodbye.gxp", fcfg.buildrule.commands[1])
+	end
+
+
+--
+-- Verify the global namespace is still accessible.
+--
+
+	function suite.canUseGlobalFunctions()
+		testapi "%{iif(true, 'a', 'b')}"
+		prepare()
+		test.isequal("a", cfg.testapi)
+	end
