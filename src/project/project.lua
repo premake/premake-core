@@ -200,17 +200,11 @@
 --
 -- @param prj
 --    The project object to query.
--- @param field
---    An optional field name. If specified, only that field will be 
---    included in the resulting configuration object.
--- @param filename
---    An optional file name. If specified, only configuration blocks 
---    with a keyword matching the filename will be considered.
 -- @return
 --    An iterator function returning configuration objects.
 --
 
-	function project.eachconfig(prj, field, filename)
+	function project.eachconfig(prj)
 		-- to make testing a little easier, allow this function to
 		-- accept an unbaked project, and fix it on the fly
 		if not prj.baked then

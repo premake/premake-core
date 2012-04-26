@@ -50,7 +50,7 @@
 --
 
 	function solution.bakeall()
-		result = {}
+		local result = {}
 		for i, sln in ipairs(solution.list) do
 			result[i] = solution.bake(sln)
 		end
@@ -138,7 +138,10 @@
 		local configs = {}
 		
 		for prj in premake.solution.eachproject_ng(sln) do
-			for cfg in project.eachconfig(prj, "objdir") do
+			for cfg in project.eachconfig(prj) do
+				-- expand any tokens contained in the field
+				oven.expandtokens(cfg, "config", nil, "objdir")
+				
 				-- get the dirs for this config, and remember the association
 				local dirs = getobjdirs(cfg)
 				configs[cfg] = dirs

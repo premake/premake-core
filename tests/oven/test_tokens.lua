@@ -119,3 +119,13 @@
 		prepare()
 		test.isequal("a", cfg.testapi)
 	end
+
+--
+-- Make sure I can use tokens in the objects directory, which can also be a token itself.
+--
+
+	function suite.canUseTokensInObjDir()
+		objdir "tmp/%{prj.name}_%{cfg.buildcfg}"
+		prepare()
+		test.isequal("tmp/MyProject_Debug", cfg.objdir)
+	end
