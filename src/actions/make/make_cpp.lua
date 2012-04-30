@@ -5,8 +5,26 @@
 --
 
 	premake.make.cpp = { }
-	local cpp = premake.make.cpp
 	local make = premake.make
+	local cpp = premake.make.cpp
+
+
+--
+
+-- Generate a GNU make C++ project makefile, with support for the new platforms API.
+
+--
+
+
+	function make.generate_cpp(prj)
+		print("** Warning: GMake C++ project have not been ported yet")
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 
 	function premake.make_cpp(prj)

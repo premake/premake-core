@@ -10,8 +10,11 @@
 
 
 --
+
 -- Generate a Visual Studio 200x C# project, with support for the new platforms API.
+
 --
+
 
 	function cs2005.generate_ng(prj)
 		print("** Warning: C# projects have not been ported yet")

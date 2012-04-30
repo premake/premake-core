@@ -1,8 +1,29 @@
 --
 -- make_csharp.lua
 -- Generate a C# project makefile.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
+
+	local make = premake.make
+
+
+--
+
+-- Generate a GNU make C# project makefile, with support for the new platforms API.
+
+--
+
+
+	function make.generate_csharp(prj)
+		print("** Warning: GMake C# projects have not been ported yet")
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
+
 
 --
 -- Given a .resx resource file, builds the path to corresponding .resource

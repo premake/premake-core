@@ -1,12 +1,95 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
-	_MAKE = { }
 	premake.make = { }
 	local make = premake.make
+
+--
+-- The GNU make action, with support for the new platforms API
+--
+
+	newaction {
+		trigger         = "gmakeng",
+		shortname       = "GNU Make Next-gen",
+		description     = "Experimental GNU makefiles for POSIX, MinGW, and Cygwin",
+
+		-- temporary, until I can phase out the legacy implementations
+		isnextgen = true,
+		
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
+
+		valid_languages = { "C", "C++", "C#" },
+
+		valid_tools     = {
+			cc     = { "gcc"   },
+			dotnet = { "mono", "msnet", "pnet" }
+		},
+
+		onsolution = function(sln)
+			premake.generate(sln, make.getmakefilename(sln, false), make.generate_solution)
+		end,
+
+		onproject = function(prj)
+			local makefile = make.getmakefilename(prj, true)
+			if premake.isdotnetproject(prj) then
+				premake.generate(prj, makefile, make.generate_csharp)
+			else
+				premake.generate(prj, makefile, make.generate_cpp)
+			end
+		end,
+		
+		oncleansolution = function(sln)
+			premake.clean.file(sln, make.getmakefilename(sln, false))
+		end,
+		
+		oncleanproject = function(prj)
+			premake.clean.file(prj, make.getmakefilename(prj, true))
+		end
+	}
+
+
+--
+-- Get the makefile file name for a solution or a project. If this object is the
+-- only one writing to a location then I can use "Makefile". If more than one object
+-- writes to the same location I use name + ".make" to keep it unique.
+--
+
+	function make.getmakefilename(this, searchprjs)
+		local count = 0
+		for sln in premake.solution.each() do
+			if sln.location == this.location then 
+				count = count + 1 
+			end
+			
+			if (searchprjs) then
+				for _,prj in ipairs(sln.projects) do
+					if prj.location == this.location then
+						count = count + 1
+					end
+				end
+			end
+		end
+		
+		if count == 1 then
+			return "Makefile"
+		else
+			return this.name .. ".make"
+		end
+	end
+
+
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
+
+	_MAKE = { }
+
 
 --
 -- Escape a string so it can be written to a makefile.
@@ -63,32 +146,6 @@
 	
 
 --
--- Get the makefile file name for a solution or a project. If this object is the
--- only one writing to a location then I can use "Makefile". If more than one object
--- writes to the same location I use name + ".make" to keep it unique.
---
-
-	function _MAKE.getmakefilename(this, searchprjs)
-		-- how many projects/solutions use this location?
-		local count = 0
-		for sln in premake.solution.each() do
-			if (sln.location == this.location) then count = count + 1 end
-			if (searchprjs) then
-				for _,prj in ipairs(sln.projects) do
-					if (prj.location == this.location) then count = count + 1 end
-				end
-			end
-		end
-		
-		if (count == 1) then
-			return "Makefile"
-		else
-			return this.name .. ".make"
-		end
-	end
-	
-
---
 -- Returns a list of object names, properly escaped to be included in the makefile.
 --
 
@@ -139,11 +196,11 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, _MAKE.getmakefilename(sln, false), premake.make_solution)
+			premake.generate(sln, make.getmakefilename(sln, false), premake.make_solution)
 		end,
 		
 		onproject = function(prj)
-			local makefile = _MAKE.getmakefilename(prj, true)
+			local makefile = make.getmakefilename(prj, true)
 			if premake.isdotnetproject(prj) then
 				premake.generate(prj, makefile, premake.make_csharp)
 			else
@@ -152,10 +209,10 @@
 		end,
 		
 		oncleansolution = function(sln)
-			premake.clean.file(sln, _MAKE.getmakefilename(sln, false))
+			premake.clean.file(sln, make.getmakefilename(sln, false))
 		end,
 		
 		oncleanproject = function(prj)
-			premake.clean.file(prj, _MAKE.getmakefilename(prj, true))
+			premake.clean.file(prj, make.getmakefilename(prj, true))
 		end
 	}

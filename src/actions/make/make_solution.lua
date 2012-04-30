@@ -1,8 +1,28 @@
 --
 -- make_solution.lua
 -- Generate a solution-level makefile.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
+
+	local make = premake.make
+
+
+--
+
+-- Generate a GNU make "solution" makefile, with support for the new platforms API.
+
+--
+
+
+	function make.generate_solution(sln)
+		print("** Warning: GMake solutions have not been ported yet")
+	end
+
+
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 	function premake.make_solution(sln)
 		-- create a shortcut to the compiler interface
@@ -35,14 +55,14 @@
 		for _, prj in ipairs(sln.projects) do
 			_p('%s: %s', _MAKE.esc(prj.name), table.concat(_MAKE.esc(table.extract(premake.getdependencies(prj), "name")), " "))
 			_p('\t@echo "==== Building %s ($(config)) ===="', prj.name)
-			_p('\t@${MAKE} --no-print-directory -C %s -f %s', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
+			_p('\t@${MAKE} --no-print-directory -C %s -f %s', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(make.getmakefilename(prj, true)))
 			_p('')
 		end
 
 		-- clean rules
 		_p('clean:')
 		for _ ,prj in ipairs(sln.projects) do
-			_p('\t@${MAKE} --no-print-directory -C %s -f %s clean', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
+			_p('\t@${MAKE} --no-print-directory -C %s -f %s clean', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(make.getmakefilename(prj, true)))
 		end
 		_p('')
 		
