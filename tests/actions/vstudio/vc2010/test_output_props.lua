@@ -14,15 +14,16 @@
 -- Setup 
 --
 
-	local sln, prj, cfg
+	local sln
 	
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 	
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local prj = premake.solution.getproject_ng(sln, 1)
+		local cfg = project.getconfig(prj, "Debug")
 		vc2010.outputProperties(cfg)
 	end
 

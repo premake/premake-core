@@ -179,8 +179,7 @@
 			_x(2,'<OutputFile>$(OutDir)%s</OutputFile>', target.name)
 		end
 
-		local objdir = path.translate(config.getuniqueobjdir(cfg))
-		_x(2,'<IntDir>%s\\</IntDir>', objdir)
+		_x(2,'<IntDir>%s\\</IntDir>', path.translate(cfg.objdir))
 
 		_x(2,'<TargetName>%s</TargetName>', target.basename)
 		_x(2,'<TargetExt>%s</TargetExt>', target.extension)

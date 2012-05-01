@@ -130,8 +130,7 @@
 		local outdir = path.translate(config.gettargetinfo(cfg).directory)
 		_x(3,'OutputDirectory="%s"', outdir)
 
-		local objdir = path.translate(config.getuniqueobjdir(cfg))
-		_x(3,'IntermediateDirectory="%s"', objdir)
+		_x(3,'IntermediateDirectory="%s"', path.translate(cfg.objdir))
 
 		local cfgtype
 		if (cfg.kind == "SharedLib") then
@@ -402,8 +401,7 @@
 				local implibname = config.getlinkinfo(cfg).fullpath
 				-- I can't actually stop the import lib, but I can hide it in the objects directory
 				if cfg.flags.NoImportLib then
-					local objdir = config.getuniqueobjdir(cfg)
-					implibname = path.join(objdir, path.getname(implibname))
+					implibname = path.join(cfg.objdir, path.getname(implibname))
 				end
 				_x(4,'ImportLibrary="%s"', path.translate(implibname))
 			end

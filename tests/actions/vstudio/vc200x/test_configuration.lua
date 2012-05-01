@@ -7,22 +7,23 @@
 	T.vstudio_vc200x_configuration = { }
 	local suite = T.vstudio_vc200x_configuration
 	local vc200x = premake.vstudio.vc200x
+	local project = premake5.project
 
 
 --
 -- Setup 
 --
 
-	local sln, prj
+	local sln
 	
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln, prj = test.createsolution()
-		sln.platforms = {}
+		sln = test.createsolution()
 	end
 	
 	local function prepare()
-		local cfg = premake5.project.getconfig(prj, "Debug", sln.platforms[1])
+		local prj = premake.solution.getproject_ng(sln, 1)
+		local cfg = project.getconfig(prj, "Debug", (prj.platforms or {})[1])
 		vc200x.configuration(cfg)
 	end
 
@@ -66,7 +67,6 @@
 --
 
 	function suite.usesX64Architecture_onX64Platform()
-		solution "MySolution"
 		platforms { "x64" }
 		prepare()
 		test.capture [[
