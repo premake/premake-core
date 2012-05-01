@@ -289,9 +289,9 @@
 	function project.getdependencies(prj)
 		local result = {}
 
-		for cfg in project.eachconfig(prj, nil, "links") do
+		for cfg in project.eachconfig(prj) do
 			for _, link in ipairs(cfg.links) do
-				local dep = project.findproject(link)
+				local dep = premake.solution.findproject(cfg.solution, link)
 				if dep and not table.contains(result, dep) then
 					table.insert(result, dep)
 				end
