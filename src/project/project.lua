@@ -37,8 +37,11 @@
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = project.bakeconfig(result, buildcfg, platform)
-
-			configs[(buildcfg or "*") .. (platform or "")] = cfg
+			
+			-- make sure this config is supported by the action; skip if not
+			if premake.action.supportsconfig(cfg) then
+				configs[(buildcfg or "*") .. (platform or "")] = cfg
+			end
 		end
 		result.configs = configs
 		
@@ -78,7 +81,10 @@
 		cfg.solution = prj.solution
 		cfg.project = prj
 		cfg.architecture = cfg.architecture or architecture
-		
+
+		-- fill in any calculated values
+		premake5.config.bake(cfg)
+
 		return cfg
 	end
 
@@ -147,7 +153,7 @@
 		
 		-- split the result back into separate build configuration and platform
 		-- lists, removing any duplicates along the way. Storing the insertion
-		-- index of each values gives a key into the final list later
+		-- index of each value gives a key into the final list later
 		local buildcfgs = {}
 		local platforms = {}
 		
@@ -188,7 +194,6 @@
 			map[key] = result[index]
 		end
 		
-		-- cache the results for future calls and return
 		return result, map
 	end
 

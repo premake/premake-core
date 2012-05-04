@@ -11,6 +11,19 @@
 
 
 --
+-- Finish the baking process for a solution or project level configurations.
+-- Doesn't bake per se, just fills in some calculated values.
+--
+
+	function config.bake(cfg)		
+		-- assign human-readable names
+		cfg.longname = table.concat({ cfg.buildcfg, cfg.platform }, "|")
+		cfg.shortname = table.concat({ cfg.buildcfg, cfg.platform }, " ")
+		cfg.shortname = cfg.shortname:gsub(" ", "_"):lower()
+	end
+
+
+--
 -- Helper function for getlinkinfo() and gettargetinfo(); builds the
 -- name parts for a configuration, for building or linking.
 --
@@ -221,6 +234,8 @@
 			end
 		end	
 
+		if not cfg.links then print(debug.traceback()) end
+		
 		for _, link in ipairs(cfg.links) do
 			local item
 

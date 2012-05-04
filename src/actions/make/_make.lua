@@ -6,6 +6,7 @@
 
 	premake.make = { }
 	local make = premake.make
+	local project = premake5.project
 
 --
 -- The GNU make action, with support for the new platforms API
@@ -49,6 +50,52 @@
 			premake.clean.file(prj, make.getmakefilename(prj, true))
 		end
 	}
+
+
+--
+-- Output the default configuration for a project.
+-- @return
+--    True if a default configuration is written, false if the project
+--    does not contain any supported configurations.
+--
+
+	function make.defaultconfig(prj)
+		-- I don't actually loop, just getting the first config
+		for cfg in project.eachconfig(prj) do
+			_p('ifndef config')
+			_p('  config=%s', make.esc(cfg.shortname))
+			_p('endif')
+			_p('export config')
+			_p('')
+			return true
+		end
+	end
+
+
+--
+-- Escape a string so it can be written to a makefile.
+--
+
+	function make.esc(value)
+		local result
+		if (type(value) == "table") then
+			result = { }
+			for _,v in ipairs(value) do
+				table.insert(result, _MAKE.esc(v))
+			end
+			return result
+		else
+			-- handle simple replacements
+			result = value:gsub("\\", "\\\\")
+			result = result:gsub(" ", "\\ ")
+			result = result:gsub("%(", "\\%(")
+			result = result:gsub("%)", "\\%)")
+			
+			-- leave $(...) shell replacement sequences alone
+			result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
+			return result
+		end
+	end
 
 
 --

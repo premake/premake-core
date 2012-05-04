@@ -94,7 +94,62 @@
 			end
 		end
 		
+		-- build a master list of solution-level configuration/platform pairs
+		result.configs = solution.bakeconfigs(result)
+		
 		return result
+	end
+
+
+--
+-- Create a list of solution-level build configuration/platform pairs, collating
+-- all of the project-level information into this top-level list.
+--
+
+	function solution.bakeconfigs(sln)
+		local configurations = {}
+		local platforms = {}
+
+		for prj in solution.eachproject_ng(sln) do
+			-- iterate build configs and add missing ones to the list
+			if prj.configurations then
+				for _, cfg in ipairs(prj.configurations) do
+					if not configurations[cfg] then
+						table.insert(configurations, cfg)
+						configurations[cfg] = cfg
+					end
+				end
+			end
+			
+			-- iterate platforms and add missing ones to the list
+			if prj.platforms then
+				for _, plt in ipairs(prj.platforms) do
+					if not platforms[plt] then
+						table.insert(platforms, plt)
+						platforms[plt] = plt
+					end
+				end
+			end
+		end
+		
+		-- pair up the build configurations and platforms, store the result
+		local configs = {}
+		for _, cfg in ipairs(configurations) do
+			if #platforms > 0 then
+				for _, plt in ipairs(platforms) do
+					table.insert(configs, { buildcfg=cfg, platform=plt })
+				end
+			else
+				table.insert(configs, { buildcfg=cfg })
+			end
+		end
+					
+		-- fill in any calculated values
+		for _, cfg in ipairs(configs) do
+			premake5.config.bake(cfg)
+		end
+		
+		return configs
 	end
 
 
@@ -192,49 +247,13 @@
 --
 
 	function solution.eachconfig(sln)
-		-- find *all* build configurations and platforms in the solution,
-		-- and cache the lists for future calls
-		if not sln.configs then
-			local configurations = {}
-			local platforms = {}
-
-			for prj in solution.eachproject_ng(sln) do
-				-- iterate build configs and add missing
-				if prj.configurations then
-					for _, cfg in ipairs(prj.configurations) do
-						if not configurations[cfg] then
-							table.insert(configurations, cfg)
-							configurations[cfg] = cfg
-						end
-					end
-				end
-				
-				-- iterate platforms and add missing
-				if prj.platforms then
-					for _, plt in ipairs(prj.platforms) do
-						if not platforms[plt] then
-							table.insert(platforms, plt)
-							platforms[plt] = plt
-						end
-					end
-				end
-			end
-			
-			-- pair up the build configurations and platforms, store the result
-			sln.configs = {}
-			for _, cfg in ipairs(configurations) do
-				if #platforms > 0 then
-					for _, plt in ipairs(platforms) do
-						table.insert(sln.configs, { buildcfg=cfg, platform=plt })
-					end
-				else
-					table.insert(sln.configs, { buildcfg=cfg })
-				end
-			end
+		-- to make testing a little easier, allow this function to
+		-- accept an unbaked solution, and fix it on the fly
+		if not sln.baked then
+			sln = solution.bake(sln)
 		end
-		
+
 		local i = 0
-		
 		return function()
 			i = i + 1
 			if i > #sln.configs then
