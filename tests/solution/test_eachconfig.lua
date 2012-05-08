@@ -64,38 +64,20 @@
 
 
 --
--- Project-level configurations should be included in the list.
+-- Configurations listed at the project level should *not* be included
+-- in the solution-level lists.
 --
 
-	function suite.listsBuildConfigurations_onProjectLevel()
-		project("MyProject")
+	function suite.excludesProjectLevelConfigs()
 		configurations { "Debug", "Release" }
+		project ("MyProject")
+		configurations { "PrjDebug", "PrjRelease" }
 		platforms { "x32", "x64" }
 		prepare()
 		test.capture [[
 		-
-		Debug:x32
-		Debug:x64
-		Release:x32
-		Release:x64
-		-
-		]]
-	end
-
-
---
--- If a configuration is not included in any projects, it should
--- also be removed from the solution.
---
-
-	function suite.configIsExcluded_onExcludedFromAllProjects()
-		configurations { "Debug", "Release" }
-		project("MyProject")
-		removeconfigurations { "Release" }
-		prepare()
-		test.capture [[
-		-
 		Debug:
+		Release:
 		-
 		]]
 	end

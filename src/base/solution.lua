@@ -102,48 +102,24 @@
 
 
 --
--- Create a list of solution-level build configuration/platform pairs, collating
--- all of the project-level information into this top-level list.
+-- Create a list of solution-level build configuration/platform pairs.
 --
 
 	function solution.bakeconfigs(sln)
-		local configurations = {}
-		local platforms = {}
-
-		for prj in solution.eachproject_ng(sln) do
-			-- iterate build configs and add missing ones to the list
-			if prj.configurations then
-				for _, cfg in ipairs(prj.configurations) do
-					if not configurations[cfg] then
-						table.insert(configurations, cfg)
-						configurations[cfg] = cfg
-					end
-				end
-			end
-			
-			-- iterate platforms and add missing ones to the list
-			if prj.platforms then
-				for _, plt in ipairs(prj.platforms) do
-					if not platforms[plt] then
-						table.insert(platforms, plt)
-						platforms[plt] = plt
-					end
-				end
-			end
-		end
+		local buildcfgs = sln.configurations or {}
+		local platforms = sln.platforms or {}
 		
-		-- pair up the build configurations and platforms, store the result
 		local configs = {}
-		for _, cfg in ipairs(configurations) do
+		for _, buildcfg in ipairs(buildcfgs) do
 			if #platforms > 0 then
-				for _, plt in ipairs(platforms) do
-					table.insert(configs, { buildcfg=cfg, platform=plt })
+				for _, platform in ipairs(platforms) do
+					table.insert(configs, { ["buildcfg"] = buildcfg, ["platform"] = platform })
 				end
 			else
-				table.insert(configs, { buildcfg=cfg })
+				table.insert(configs, { ["buildcfg"] = buildcfg })
 			end
 		end
-					
+
 		-- fill in any calculated values
 		for _, cfg in ipairs(configs) do
 			premake5.config.bake(cfg)

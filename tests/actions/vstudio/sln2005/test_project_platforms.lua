@@ -17,12 +17,15 @@
 	
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln, prj = test.createsolution()
-		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
+		sln = solution("MySolution")
+		configurations { "Debug", "Release" }
+		
 	end
 	
-	local function prepare(language)
-		prj.language = language or "C++"
+	local function prepare()
+		prj = project("MyProject")
+		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
+		language "C++"
 		sln2005.projectConfigurationPlatforms(sln)
 	end
 

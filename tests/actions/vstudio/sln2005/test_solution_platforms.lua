@@ -17,11 +17,13 @@
 	
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln, prj = test.createsolution()
+		sln = solution("MySolution")
+		configurations { "Debug", "Release" }
 	end
 	
-	local function prepare(language)
-		prj.language = language or "C++"
+	local function prepare()
+		prj = project("MyProject")
+		language "C++"
 		sln2005.solutionConfigurationPlatforms(sln)
 	end
 

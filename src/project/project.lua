@@ -147,6 +147,8 @@
 			end
 		end
 
+		-- if there was no configuration map, then project configs will be empty,
+		-- and I can just use the solution level lists for this project
 		if #prjcfgs == 0 then
 			return slncfgs
 		end
