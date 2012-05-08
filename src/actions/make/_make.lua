@@ -6,6 +6,7 @@
 
 	premake.make = { }
 	local make = premake.make
+	local solution = premake.solution
 	local project = premake5.project
 
 --
@@ -38,7 +39,7 @@
 			if premake.isdotnetproject(prj) then
 				premake.generate(prj, makefile, make.generate_csharp)
 			else
-				premake.generate(prj, makefile, make.generate_cpp)
+				premake.generate(prj, makefile, make.cpp.generate)
 			end
 		end,
 		
@@ -53,21 +54,24 @@
 
 
 --
--- Output the default configuration for a project.
--- @return
---    True if a default configuration is written, false if the project
---    does not contain any supported configurations.
+-- Write out the default configuration rule for a solution or project.
+-- @param target
+--    The solution or project object for which a makefile is being generated.
 --
 
-	function make.defaultconfig(prj)
-		-- I don't actually loop, just getting the first config
-		for cfg in project.eachconfig(prj) do
+	function make.defaultconfig(target)
+		-- find the configuration iterator function
+		local eachconfig = iif(target.project, project.eachconfig, solution.eachconfig)
+		local iter = eachconfig(target)
+		
+		-- grab the first configuration and write the block
+		local cfg = iter()
+		if cfg then
 			_p('ifndef config')
 			_p('  config=%s', make.esc(cfg.shortname))
 			_p('endif')
 			_p('export config')
 			_p('')
-			return true
 		end
 	end
 
@@ -111,8 +115,8 @@
 				count = count + 1 
 			end
 			
-			if (searchprjs) then
-				for _,prj in ipairs(sln.projects) do
+			if searchprjs then
+				for _, prj in ipairs(sln.projects) do
 					if prj.location == this.location then
 						count = count + 1
 					end
