@@ -102,7 +102,7 @@
 		_p(1,'GlobalSection(ProjectConfigurationPlatforms) = postSolution')
 		for prj in solution.eachproject_ng(sln) do
 			for slncfg in solution.eachconfig(sln) do
-				local prjcfg = project.mapconfig(prj, slncfg.buildcfg, slncfg.platform)
+				local prjcfg = project.getconfig(prj, slncfg.buildcfg, slncfg.platform)
 				if prjcfg then
 					local slnplatform = vstudio.platform(slncfg)
 					local prjplatform = vstudio.projectplatform(prjcfg)

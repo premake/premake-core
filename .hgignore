@@ -2,8 +2,6 @@ syntax: glob
 
 .DS_Store
 
-*.orig
-
 build
 bin
 obj

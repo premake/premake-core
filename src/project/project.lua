@@ -272,10 +272,27 @@
 			prj = project.bake(prj, prj.solution)
 		end
 	
+		-- if no build configuration is specified, return the "root" project
+		-- configurations, which includes all configuration values that
+		-- weren't set with a specific configuration filter
 		if not buildcfg then
 			return prj
 		end
 		
+		-- if a configuration mapping is present, apply it
+		if prj.cfgmap then
+			local cfg = prj.cfgmap[buildcfg .. (platform or "")]
+			if cfg then
+				buildcfg = cfg[1]
+				platform = cfg[2]
+			end
+		end
+
+		-- if the project has a platforms list, and the solution does
+		-- not, default to the first project platform
+		platform = platform or prj.platforms[1]
+		
+		-- look up and return the associated config		
 		local key = (buildcfg or "*") .. (platform or "")
 		return prj.configs[key]
 	end
@@ -512,19 +529,4 @@
 			return false
 		end
 		return true
-	end
-
-
---
--- Given a solution-level build configuration and platform, returns the 
--- corresponding project configuration, or nil if no such configuration exists.
---
-
-	function project.mapconfig(prj, buildcfg, platform)
-		if prj.cfgmap then
-			local cfg = prj.cfgmap[buildcfg .. (platform or "")]
-			buildcfg = cfg[1]
-			platform = cfg[2]
-		end
-		return project.getconfig(prj, buildcfg, platform)
 	end

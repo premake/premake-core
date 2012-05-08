@@ -19,8 +19,68 @@
 		sln, prj = test.createsolution()
 	end
 
-	local function prepare()
-		cfg = premake.project.getconfig(prj, "Debug")
+	local function prepare(buildcfg)
+		buildcfg = buildcfg or "Debug"
+		cfg = premake.project.getconfig(prj, buildcfg)
+	end
+
+
+--
+-- When no configuration is specified in the project, the solution
+-- settings should map directly to a configuration object.
+--
+
+	function suite.solutionConfig_onNoProjectConfigs()
+		prepare()
+		test.isequal("Debug", cfg.buildcfg)
+	end
+
+
+--
+-- If a project configuration mapping exists, it should be taken into
+-- account when fetching the configuration object.
+--
+
+	function suite.appliesCfgMapping_onMappingExists()
+		configmap { ["Debug"] = "Development" }
+		prepare()
+		test.isequal("Development", cfg.buildcfg)
+	end
+
+
+--
+-- If a configuration mapping exists, can also use the mapped value
+-- to fetch the configuration.
+--
+
+	function suite.fetchesMappedCfg_onMappedName()
+		configmap { ["Debug"] = "Development" }
+		prepare("Development")
+		test.isequal("Development", cfg.buildcfg)
+	end
+
+
+--
+-- If the specified configuration has been removed from the project,
+-- then nil should be returned.
+--
+
+	function suite.returnsNil_onRemovedConfig()
+		removeconfigurations { "Debug" }
+		prepare()
+		test.isnil(cfg)
+	end
+
+
+--
+-- If the project has a platforms list, and the solution does not, 
+-- use the first project platform.
+--
+
+	function suite.usesFirstPlatform_onNoSolutionPlatforms()
+		platforms { "x32", "x64" }
+		prepare()
+		test.isequal("x32", cfg.platform)
 	end
 
 

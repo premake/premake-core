@@ -66,7 +66,6 @@
 	dofile("project/test_filtering.lua")
 	dofile("project/test_getconfig.lua")
 	dofile("project/test_hasconfig.lua")
-	dofile("project/test_mapconfig.lua")
 	dofile("project/test_vpaths.lua")
 
 	-- Configuration object tests
