@@ -86,6 +86,7 @@
 	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
 	RootNamespace="MyProject"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 		]]
 	end
@@ -105,7 +106,6 @@
 	Name="MyProject"
 	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
 	Keyword="Win32Proj"
-	>
 		]]
 	end
 
@@ -125,7 +125,6 @@
 	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
 	RootNamespace="MyProject"
 	Keyword="ManagedCProj"
-	>
 		]]
 	end
 

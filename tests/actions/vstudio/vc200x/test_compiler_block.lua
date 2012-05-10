@@ -40,8 +40,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -82,8 +82,8 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 		]]
@@ -106,8 +106,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
 		]]
@@ -130,8 +130,8 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="1"
 			/>
 		]]
@@ -155,8 +155,8 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="common.h"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -179,8 +179,8 @@
 				EnableFunctionLevelLinking="true"
 				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -198,8 +198,8 @@
 				EnableFunctionLevelLinking="true"
 				FloatingPointModel="1"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -221,8 +221,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\foob.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -244,8 +244,8 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 		]]
@@ -267,8 +267,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
@@ -292,8 +292,8 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 		]]
@@ -315,8 +315,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="4"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -338,9 +338,9 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				WarningLevel="3"
 				WarnAsError="true"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -362,8 +362,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="0"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="0"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -385,9 +385,9 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -410,8 +410,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="0"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="0"
 				DebugInformationFormat="0"
 			/>
 		]]
@@ -433,8 +433,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
 		]]

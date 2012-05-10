@@ -21,8 +21,8 @@
 
 		vc200x.xmldeclaration()
 		vc200x.visualStudioProject(prj)
-		vc200x.platforms(prj)
-
+		local architectures = vc200x.platforms(prj)
+		
 		if _ACTION > "vs2003" then
 			_p(1,'<ToolFiles>')
 			_p(1,'</ToolFiles>')
@@ -30,9 +30,19 @@
 
 		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
-			vc200x.configuration(cfg)
-			vc200x.tools(cfg)
-			_p(2,'</Configuration>')
+			-- Visual Studio requires each project configuration to have an
+			-- entry for every project architecture. Those that are not 
+			-- actually part of the solution, use a skeleton configuration.
+			local cfgarch = vstudio.architecture(cfg)
+			for _, prjarch in ipairs(architectures) do
+				if cfgarch == prjarch then
+					vc200x.configuration(cfg)
+					vc200x.tools(cfg)
+					_p(2,'</Configuration>')
+				else
+					vc200x.emptyconfiguration(cfg, prjarch)
+				end
+			end
 		end
 		_p(1,'</Configurations>')
 
@@ -91,6 +101,7 @@
 		local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])
 		_p(1,'Keyword="%s"', iif(cfg.flags.Managed, "ManagedCProj", "Win32Proj"))
 		
+		_p(1,'TargetFrameworkVersion=\"0\"')
 		_p(1,'>')
 	end
 
@@ -103,18 +114,19 @@
 	function vc200x.platforms(prj)
 		_p(1,'<Platforms>')
 
-		architectures = { }
+		architectures = {}
 		for cfg in project.eachconfig(prj) do
 			local arch = vstudio.architecture(cfg)
-			if not architectures[arch] then
+			if not table.contains(architectures, arch) then
+				table.insert(architectures, arch)
 				_p(2,'<Platform')
 				_p(3,'Name="%s"', arch)
 				_p(2,'/>')
-				architectures[arch] = true
 			end
 		end
 
 		_p(1,'</Platforms>')
+		return architectures
 	end
 
 
@@ -153,6 +165,26 @@
 		end
 
 		_p(3,'>')
+	end
+
+
+--
+-- Write out an empty configuration element for a build configuration/
+-- platform that is not actually part of the solution.
+--
+
+	function vc200x.emptyconfiguration(cfg, arch)
+		_p(2,'<Configuration')
+		_x(3,'Name="%s|%s"', vstudio.projectplatform(cfg), arch)
+		_p(3,'ConfigurationType="1"')
+		_p(3,'>')
+	
+		local tools = vc200x.gettools(cfg)
+		for _, tool in ipairs(tools) do
+			vc200x.tool(tool)
+		end
+		
+		_p(2,'</Configuration>')
 	end
 
 
@@ -289,9 +321,9 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		vc200x.warnings(cfg)
-		
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+		
+		vc200x.warnings(cfg)
 		
 		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
 		
@@ -450,12 +482,12 @@
 			end
 		end
 		
-		_p(3,'<Tool')
-		_p(4,'Name="VCManifestTool"')
 		if #manifests > 0 then
+			_p(3,'<Tool')
+			_p(4,'Name="VCManifestTool"')
 			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+			_p(3,'/>')
 		end
-		_p(3,'/>')
 	end
 
 
@@ -485,8 +517,8 @@
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 
-		vc200x.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
 		vc200x.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
+			vc200x.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
 		
 		_p(3,'/>')
 	end
@@ -634,8 +666,6 @@
 				"VCXDCMakeTool",
 				"VCBscMakeTool",
 				"VCFxCopTool",
-				"VCAppVerifierTool",
-				"VCWebDeploymentTool",
 				"VCPostBuildEventTool"
 			}
 		end

@@ -33,11 +33,7 @@
 	function suite.isEmpty_onNoManifests()
 		files { "hello.c" }
 		prepare()
-		test.capture [[
-			<Tool
-				Name="VCManifestTool"
-			/>
-		]]
+		test.isemptycapture()
 	end
 
 
