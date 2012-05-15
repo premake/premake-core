@@ -125,9 +125,9 @@
 -- form: <project platform name>|<architecture>.
 --
 
-	function vstudio.configname(cfg)
+	function vstudio.configname(cfg, arch)
 		local platform = vstudio.projectplatform(cfg)
-		local architecture = vstudio.architecture(cfg)
+		local architecture = arch or vstudio.architecture(cfg)
 		return platform .. "|" .. architecture
 	end
 

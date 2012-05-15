@@ -60,6 +60,14 @@
 			<Configuration>Debug x32</Configuration>
 			<Platform>Win32</Platform>
 		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug x32|x64">
+			<Configuration>Debug x32</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug x64|Win32">
+			<Configuration>Debug x64</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
 		<ProjectConfiguration Include="Debug x64|x64">
 			<Configuration>Debug x64</Configuration>
 			<Platform>x64</Platform>

@@ -86,12 +86,23 @@
 --
 
 	function vc2010.projectConfigurations(prj)
+		-- build a list of all architectures used in this project
+		local platforms = {}
+		for cfg in project.eachconfig(prj) do
+			local arch = vstudio.architecture(cfg)
+			if not table.contains(platforms, arch) then
+				table.insert(platforms, arch)
+			end
+		end
+	
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
 		for cfg in project.eachconfig(prj) do
-			_x(2,'<ProjectConfiguration Include="%s">', vstudio.configname(cfg))
-			_x(3,'<Configuration>%s</Configuration>', vstudio.projectplatform(cfg))
-			_p(3,'<Platform>%s</Platform>', vstudio.architecture(cfg))
-			_p(2,'</ProjectConfiguration>')
+			for _, arch in ipairs(platforms) do
+				_x(2,'<ProjectConfiguration Include="%s">', vstudio.configname(cfg, arch))
+				_x(3,'<Configuration>%s</Configuration>', vstudio.projectplatform(cfg))
+				_p(3,'<Platform>%s</Platform>', vstudio.architecture(cfg))
+				_p(2,'</ProjectConfiguration>')
+			end
 		end
 		_p(1,'</ItemGroup>')
 	end
