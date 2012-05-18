@@ -93,6 +93,32 @@
 
 
 --
+-- Decorate defines for the GCC command line.
+--
+
+	function gcc.getdefines(defines)
+		local result = {}
+		for _, define in ipairs(defines) do
+			table.insert(result, '-D' .. define)
+		end
+		return result
+	end
+
+
+--
+-- Decorate include file search paths for the GCC command line.
+--
+
+	function gcc.getincludedirs(dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			table.insert(result, "-I" .. dir)
+		end
+		return result
+	end
+
+
+--
 -- Return a list of LDFLAGS for a specific configuration.
 --
 

@@ -7,6 +7,8 @@
 	premake.make.cpp = { }
 	local make = premake.make
 	local cpp = premake.make.cpp
+	local project = premake5.project
+	local config = premake5.config
 
 
 --
@@ -24,14 +26,11 @@
 		
 		cpp.header(prj)
 
-		--[[
-		premake.gmake_cpp_header(prj, cc, platforms)
-
-		for _, platform in ipairs(platforms) do
-			for cfg in premake.eachconfig(prj, platform) do
-				premake.gmake_cpp_config(cfg, cc)
-			end
+		for cfg in project.eachconfig(prj) do
+			cpp.config(cfg)
 		end
+		
+		--[[
 
 		-- list intermediate files
 		_p('OBJECTS := \\')
@@ -49,7 +48,8 @@
 			end
 		end
 		_p('')
-
+	--]]
+		
 		-- identify the shell type
 		_p('SHELLTYPE := msdos')
 		_p('ifeq (,$(ComSpec)$(COMSPEC))')
@@ -64,6 +64,7 @@
 		_p('.PHONY: clean prebuild prelink')
 		_p('')
 
+	--[[
 		if os.is("MacOSX") and prj.kind == "WindowedApp" then
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 		else
@@ -93,7 +94,8 @@
 			_p('$(dir $(TARGETDIR))Info.plist:')
 			_p('')
 		end
-
+	--]]
+	
 		-- clean target
 		_p('clean:')
 		_p('\t@echo Cleaning %s', prj.name)
@@ -115,6 +117,7 @@
 		_p('\t$(PRELINKCMDS)')
 		_p('')
 
+	--[[
 		-- precompiler header rule
 		cpp.pchrules(prj)
 
@@ -182,6 +185,97 @@
 		_p('')	
 		--]]
 	end
+
+
+--
+-- Write out the settings for a particular configuration.
+--
+
+	function cpp.config(cfg)
+		-- identify the toolset used by this configurations
+		local toolset = premake.tools[cfg.toolset or "gcc"]
+		if not toolset then
+			error("Invalid toolset '" + cfg.toolset + "'")
+		end
+	
+		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+	
+	--[[
+		-- if this platform requires a special compiler or linker, list it here
+		cpp.platformtools(cfg, cc)
+	--]]
+
+		local targetinfo = config.gettargetinfo(cfg)
+		
+		_p('  OBJDIR     = %s', make.esc(cfg.objdir))
+		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
+		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
+		_p('  DEFINES   += %s', table.concat(toolset.getdefines(cfg.defines), " "))
+		_p('  INCLUDES  += %s', table.concat(make.esc(toolset.getincludedirs(cfg.includedirs), " ")))
+		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
+		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), " "))
+		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(toolset.getcxxflags(cfg), " "))
+
+	--[[
+		-- Patch #3401184 changed the order
+		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getlibdirflags(cfg), cc.getldflags(cfg), cfg.linkoptions), " "))
+	--]]
+	
+		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg.resincludedirs), cfg.resoptions)
+		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(resflags, " "))
+
+	--[[
+		-- set up precompiled headers
+		cpp.pchconfig(cfg)
+
+		_p('  LIBS      += %s', table.concat(cc.getlinkflags(cfg), " "))
+		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
+
+		if cfg.kind == "StaticLib" then
+			if cfg.platform:startswith("Universal") then
+				_p('  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)')
+			else
+				_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
+			end
+		else
+			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
+			--  but had trouble linking to certain static libs so $(OBJECTS) moved up
+			-- then $(LDFLAGS) moved to end
+			--   https://sourceforge.net/tracker/?func=detail&aid=3430158&group_id=71616&atid=531880
+			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)', iif(cfg.language == "C", "CC", "CXX"))
+		end
+	--]]
+	
+		_p('  define PREBUILDCMDS')
+		if #cfg.prebuildcommands > 0 then
+			_p('\t@echo Running pre-build commands')
+			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+
+		_p('  define PRELINKCMDS')
+		if #cfg.prelinkcommands > 0 then
+			_p('\t@echo Running pre-link commands')
+			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+
+		_p('  define POSTBUILDCMDS')
+		if #cfg.postbuildcommands > 0 then
+			_p('\t@echo Running post-build commands')
+			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+
+	--[[
+		-- write out config-level makesettings blocks
+		make.settings(cfg, cc)
+	--]]
+
+		_p('endif')
+		_p('')	
+	end
+
 
 
 -----------------------------------------------------------------------------
@@ -361,7 +455,7 @@
 		_p('ifeq ($(config),%s)', _MAKE.esc(cfg.shortname))
 
 		-- if this platform requires a special compiler or linker, list it here
-		cpp.platformtools(cfg, cc)
+		cpp.platformtools_old(cfg, cc)
 
 		_p('  OBJDIR     = %s', _MAKE.esc(cfg.objectsdir))
 		_p('  TARGETDIR  = %s', _MAKE.esc(cfg.buildtarget.directory))
@@ -425,7 +519,7 @@
 -- Platform support
 --
 
-	function cpp.platformtools(cfg, cc)
+	function cpp.platformtools_old(cfg, cc)
 		local platform = cc.platforms[cfg.platform]
 		if platform.cc then
 			_p('  CC         = %s', platform.cc)
