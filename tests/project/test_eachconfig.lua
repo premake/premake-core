@@ -18,8 +18,11 @@
 		sln = solution("MySolution")
 	end
 
-	local function prepare()
+	local function prepare(buildcfgs)
 		project("MyProject")
+		if buildcfgs then
+			configurations ( buildcfgs )
+		end
 		prj = premake.solution.getproject_ng(sln, 1)
 		for cfg in premake5.project.eachconfig(prj, field) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
@@ -147,4 +150,22 @@
 		Release:
 		]]
 	end
-	
+
+
+--
+-- If there is overlap in the solution and project configuration lists,
+-- the ordering at the project level should be maintained to avoid
+-- unnecessarily dirtying the project file.
+--
+
+	function suite.maintainsProjectOrdering_onSolutionOverlap()
+		configurations { "Debug", "Release" }
+		prepare { "Debug", "Development", "Profile", "Release" }
+		test.capture [[
+		Debug:
+		Development:
+		Profile:
+		Release:
+		]]
+	end
+

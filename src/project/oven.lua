@@ -424,11 +424,16 @@
 
 	function oven.mergetables(original, additions)
 		for _, item in ipairs(additions) do
-			-- prevent duplicates
-			if not original[item] then
-				original[item] = item
-				table.insert(original, item)
+			-- if the item is already in the list, remove it. This allows a
+			-- later configuration block (i.e. a project) to override the
+			-- ordering of values from an earlier block (i.e. a solution).
+			-- Could be a performance hit; have to wait and see.
+			if original[item] then
+				local i = table.indexof(original, item)
+				table.remove(original, i)
 			end
+			original[item] = item
+			table.insert(original, item)
 		end
 		return original
 	end

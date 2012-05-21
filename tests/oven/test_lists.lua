@@ -150,5 +150,5 @@
 		prj = project("MyProject")
 		defines { "PROJECT", "DUPLICATE" }
 		cfg = oven.bake(prj, sln, {"Debug"})
-		test.isequal("SOLUTION|DUPLICATE|PROJECT", table.concat(cfg.defines, "|"))
+		test.isequal("SOLUTION|PROJECT|DUPLICATE", table.concat(cfg.defines, "|"))
 	end
