@@ -31,6 +31,7 @@
 
 	function suite.remove_onExactValueMatch()
 		flags { "Symbols", "Optimize", "NoRTTI" }
+		configuration {}
 		removeflags "Optimize"
 		prepare()
 		test.isequal({ "Symbols", "NoRTTI" }, cfg.flags)
@@ -38,6 +39,7 @@
 
 	function suite.remove_onMultipleValues()
 		flags { "Symbols", "NoExceptions", "Optimize", "NoRTTI" }
+		configuration {}
 		removeflags { "NoExceptions", "NoRTTI" }
 		prepare()
 		test.isequal({ "Symbols", "Optimize" }, cfg.flags)
@@ -50,6 +52,7 @@
 
 	function suite.remove_onWildcard()
 		defines { "WIN32", "WIN64", "LINUX", "MACOSX" }
+		configuration {}
 		removedefines { "WIN*" }
 		prepare()
 		test.isequal({ "LINUX", "MACOSX" }, cfg.defines)
@@ -61,6 +64,7 @@
 
 	function suite.remove_onExactValueMatch()
 		flags { "Symbols", "Optimize", "NoRTTI" }
+		configuration {}
 		removeflags "Optimize"
 		prepare()
 		test.isnil(cfg.flags.Optimize)
@@ -72,6 +76,7 @@
 
 	function suite.remove_onFileField()
 		files { "hello.c", "goodbye.c" }
+		configuration {}
 		removefiles { "goodbye.c" }
 		prepare()
 		test.isequal(path.join(os.getcwd(), "hello.c"), table.concat(cfg.files))

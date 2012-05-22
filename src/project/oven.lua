@@ -285,6 +285,10 @@
 --
 
 	function oven.merge(cfg, block, filterField)
+		if block.removes then
+			oven.remove(cfg, block.removes, filterField)
+		end
+		
 		if filterField then
 			if block[filterField] then
 				oven.mergefield(cfg, filterField, block[filterField])
@@ -295,10 +299,6 @@
 					oven.mergefield(cfg, key, value)
 				end
 			end
-		end
-		
-		if block.removes then
-			oven.remove(cfg, block.removes, filterField)
 		end
 		
 		-- remember the container object (solution, project, etc.)

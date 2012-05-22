@@ -59,7 +59,7 @@ endif
 -- over as the default config as well.
 --
 
-	function suite.defaultsToFirstPairing_onPlatforms()
+	function suite.usesFirstValidPairing_onExcludedConfig()
 		platforms { "Win32", "Win64" }
 		removeconfigurations { "Debug" }
 		prepare()
@@ -69,22 +69,3 @@ ifndef config
 endif
 		]]
 	end
-
-
---
--- If the project excludes a solution platform, it should be skipped
--- over as the default config as well.
---
-
-	function suite.defaultsToFirstPairing_onPlatforms()
-		platforms { "Win32", "Win64" }
-		removeplatforms { "Win32" }
-		prepare()
-		test.capture [[
-ifndef config
-  config=debug_win64
-endif
-		]]
-	end
-
-	
