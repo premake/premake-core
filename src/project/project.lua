@@ -26,14 +26,12 @@
 		-- prevent any default system setting from influencing configurations
 		result.system = nil
 		
-		-- create a map between solution and project configurations
-		local cfglist, cfgmap = project.bakeconfigmap(result)
-		result.cfglist = cfglist
-		result.cfgmap = cfgmap
+		-- apply any mappings to the project's configuration set
+		result.cfglist = project.bakeconfigmap(result)
 
 		-- bake all configurations contained by the project
 		local configs = {}
-		for _, pairing in ipairs(cfglist) do
+		for _, pairing in ipairs(result.cfglist) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = project.bakeconfig(result, buildcfg, platform)
@@ -103,100 +101,34 @@
 --
 
 	function project.bakeconfigmap(prj)
-		-- apply an individual config map entry to a build cfg + platform pair
-		function applymap(pairing, patterns, replacements)
-			-- does this pattern match any part of the pair?
-			for i = 1, #pairing do
-				local matched = true
-				for j = 1, #patterns do
-					if pairing[i] ~= patterns[j] then
-						matched = false
-					end
-				end
-				
-				-- yes, replace one or more parts (with a copy)
-				if matched then
-					local result
-					if #patterns == 1 and #replacements == 1 then
-						result = { pairing[1], pairing[2] }
-						result[i] = replacements[1]
-					else
-						result = { replacements[1], replacements[2] }
-					end
-					return result
-				end
-			end
-			
-			-- no, return the original pair
-			return pairing
+		-- Apply any mapping tables to the project's initial configuration set,
+		-- which includes configurations inherited from the solution. These rules
+		-- may cause configurations to be added ore removed from the project.
+		local configs = table.fold(prj.configurations or {}, prj.platforms or {})
+		for i, cfg in ipairs(configs) do
+			configs[i] = project.mapconfig(prj, cfg[1], cfg[2])
 		end
 		
-		-- pair up the project's original list of build cfgs and platforms
-		local slncfgs = table.fold(prj.configurations or {}, prj.platforms or {})
-		
-		-- apply the set of mappings
-		local prjcfgs = {}
-		for patterns, replacements in pairs(prj.configmap or {}) do
-			if type(patterns) ~= "table" then
-				patterns = { patterns }
-			end
-			
-			local count = #slncfgs
-			for i = 1, count do
-				prjcfgs[i] = applymap(prjcfgs[i] or slncfgs[i], patterns, replacements)
-			end
-		end
-
-		-- if there was no configuration map, then project configs will be empty,
-		-- and I can just use the solution level lists for this project
-		if #prjcfgs == 0 then
-			return slncfgs
-		end
-		
-		-- split the result back into separate build configuration and platform
-		-- lists, removing any duplicates along the way. Storing the insertion
-		-- index of each value gives a key into the final list later
+		-- walk through the result and remove duplicates
 		local buildcfgs = {}
 		local platforms = {}
 		
-		for _, pairing in ipairs(prjcfgs) do
+		for _, pairing in ipairs(configs) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
-						
-			if not buildcfgs[buildcfg] then
-				buildcfgs[buildcfg] = #buildcfgs
+			
+			if not table.contains(buildcfgs, buildcfg) then
 				table.insert(buildcfgs, buildcfg)
 			end
 			
-			if platform and not platforms[platform] then
-				platforms[platform] = #platforms
+			if platform and not table.contains(platforms, platform) then
 				table.insert(platforms, platform)
 			end
 		end
 
 		-- merge these canonical lists back into pairs for the final result
-		local result = table.fold(buildcfgs, platforms)
-		
-		-- finally, build a map from the original, solution-facing configs
-		-- to these results
-		local map = {}
-		for i, slncfg in ipairs(slncfgs) do
-			local prjcfg = prjcfgs[i]
-			
-			-- figure out where this project cfg appears in the result list
-			local index = buildcfgs[prjcfg[1]]
-			if #platforms > 0 then
-				local platformIndex = platforms[prjcfg[2] or platforms[1]]
-				index = (index * #platforms) + platformIndex
-			end
-			index = index + 1
-			
-			-- add an entry to the map point to this result
-			local key = slncfg[1] .. (slncfg[2] or "")
-			map[key] = result[index]
-		end
-		
-		return result, map
+		configs = table.fold(buildcfgs, platforms)	
+		return configs
 	end
 
 
@@ -279,14 +211,10 @@
 			return prj
 		end
 		
-		-- if a configuration mapping is present, apply it
-		if prj.cfgmap then
-			local cfg = prj.cfgmap[buildcfg .. (platform or "")]
-			if cfg then
-				buildcfg = cfg[1]
-				platform = cfg[2]
-			end
-		end
+		-- apply any configuration mappings
+		local pairing = project.mapconfig(prj, buildcfg, platform)
+		buildcfg = pairing[1]
+		platform = pairing[2]
 
 		-- if the project has a platforms list, and the solution does
 		-- not, default to the first project platform
@@ -530,3 +458,44 @@
 		end
 		return true
 	end
+
+
+--
+-- Given a build config/platform pairing, applies any project configuration maps
+-- and returns a new (or the same) pairing.
+--
+
+	function project.mapconfig(prj, buildcfg, platform)
+		local pairing = { buildcfg, platform }
+		
+		for patterns, replacements in pairs(prj.configmap or {}) do
+			if type(patterns) ~= "table" then
+				patterns = { patterns }
+			end
+			
+			-- does this pattern match any part of the pair?
+			for i = 1, #pairing do
+				local matched = true
+				for j = 1, #patterns do
+					if pairing[i] ~= patterns[j] then
+						matched = false
+					end
+				end
+
+				-- yes, replace one or more parts (with a copy)
+				if matched then
+					if #patterns == 1 and #replacements == 1 then
+						result = { pairing[1], pairing[2] }
+						pairing[i] = replacements[1]
+					else
+						pairing = { replacements[1], replacements[2] }
+					end
+
+					return pairing
+				end
+			end			
+		end
+	
+		return pairing
+	end
+

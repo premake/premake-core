@@ -151,7 +151,7 @@
 		]]
 	end
 
-
+	
 --
 -- If there is overlap in the solution and project configuration lists,
 -- the ordering at the project level should be maintained to avoid

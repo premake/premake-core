@@ -141,3 +141,18 @@
 		prepare()
 		test.isequal("correct", cfg.defines[1])
 	end
+
+
+--
+-- If the configuration doesn't exist in the project, but it can be mapped
+-- from the solution, returned the mapped configuration.
+--
+
+	function suite.returnsMappedConfig_onOtherwiseMissing()
+		removeconfigurations "Debug"
+		configmap { Debug = "Release" }
+		prepare()
+		test.isequal("Release", cfg.buildcfg)
+	end
+
+		
