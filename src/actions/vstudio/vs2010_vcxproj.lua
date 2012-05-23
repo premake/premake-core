@@ -100,7 +100,7 @@
 			for _, arch in ipairs(platforms) do
 				_x(2,'<ProjectConfiguration Include="%s">', vstudio.configname(cfg, arch))
 				_x(3,'<Configuration>%s</Configuration>', vstudio.projectplatform(cfg))
-				_p(3,'<Platform>%s</Platform>', vstudio.architecture(cfg))
+				_p(3,'<Platform>%s</Platform>', arch)
 				_p(2,'</ProjectConfiguration>')
 			end
 		end
