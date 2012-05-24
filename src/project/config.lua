@@ -234,8 +234,6 @@
 			end
 		end	
 
-		if not cfg.links then print(debug.traceback()) end
-		
 		for _, link in ipairs(cfg.links) do
 			local item
 
@@ -253,7 +251,7 @@
 						item = path.rebase(config.getlinkinfo(prjcfg).fullpath, 
 						                   project.getlocation(prjcfg.project), 
 						                   project.getlocation(cfg.project))
-						if item == "directory" then
+						if part == "directory" then
 							item = path.getdirectory(item)
 						end
 					end

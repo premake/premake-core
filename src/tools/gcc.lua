@@ -125,6 +125,12 @@
 	function gcc.getldflags(cfg)
 		local flags = {}
 		
+		-- Scan the list of linked libraries. If any are referenced with
+		-- paths, add those to the list of library search paths
+		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do
+			table.insert(flags, '-L' .. dir)
+		end
+		
 		if not cfg.flags.Symbols then
 			-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
 			if cfg.system == premake.MACOSX then

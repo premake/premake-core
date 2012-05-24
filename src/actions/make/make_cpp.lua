@@ -215,11 +215,7 @@
 		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(toolset.getcxxflags(cfg), " "))
-
-	--[[
-		-- Patch #3401184 changed the order
-		_p('  LDFLAGS   += %s', table.concat(table.join(cc.getlibdirflags(cfg), cc.getldflags(cfg), cfg.linkoptions), " "))
-	--]]
+		_p('  LDFLAGS   += %s', table.concat(table.join(toolset.getldflags(cfg), cfg.linkoptions), " "))
 	
 		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg.resincludedirs), cfg.resoptions)
 		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(resflags, " "))
