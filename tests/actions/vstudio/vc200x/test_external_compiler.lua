@@ -36,8 +36,8 @@
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
-				UsePrecompiledHeader="0"
 				AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
+				UsePrecompiledHeader="0"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				DebugInformationFormat="0"
 				CompileAs="0"
@@ -56,8 +56,8 @@
 		test.capture [[
 			<Tool
 				Name="VCCLCompilerTool"
-				UsePrecompiledHeader="0"
 				AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
 				AdditionalIncludeDirectories="..\include;include"
+				UsePrecompiledHeader="0"
 		]]
 	end

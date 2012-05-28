@@ -176,6 +176,7 @@
 	function vc200x.emptyconfiguration(cfg, arch)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s|%s"', vstudio.projectplatform(cfg), arch)
+		_p(3,'IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"')
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
 	
@@ -256,18 +257,18 @@
 			_p(4,'MinimalRebuild="%s"', bool(true))
 		end
 		
-		if cfg.flags.NoExceptions then
-			_p(4,'ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
-		elseif cfg.flags.SEH and _ACTION > "vs2003" then
-			_p(4,'ExceptionHandling="2"')
-		end
-		
 		if vc200x.optimization(cfg) == 0 and not cfg.flags.Managed then
 			_p(4,'BasicRuntimeChecks="3"')
 		end
 
 		if vc200x.optimization(cfg) ~= 0 then
 			_p(4,'StringPooling="%s"', bool(true))
+		end
+		
+		if cfg.flags.NoExceptions then
+			_p(4,'ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
+		elseif cfg.flags.SEH and _ACTION > "vs2003" then
+			_p(4,'ExceptionHandling="2"')
 		end
 		
 		local runtime
@@ -334,22 +335,23 @@
 
 
 	function vc200x.VCCLExternalCompilerTool(cfg, toolset)
-		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
-		
+		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)		
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
-		else
-			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
-
 		if #buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
 
 		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
 		vc200x.preprocessorDefinitions(cfg, cfg.defines)
+
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
+			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+		else
+			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
+		end
 
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
 
@@ -482,12 +484,12 @@
 			end
 		end
 		
-		if #manifests > 0 then
 			_p(3,'<Tool')
 			_p(4,'Name="VCManifestTool"')
-			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+			if #manifests > 0 then
+				_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+			end
 			_p(3,'/>')
-		end
 	end
 
 
@@ -666,6 +668,7 @@
 				"VCXDCMakeTool",
 				"VCBscMakeTool",
 				"VCFxCopTool",
+				"VCAppVerifierTool",
 				"VCPostBuildEventTool"
 			}
 		end
