@@ -219,7 +219,7 @@
 	
  	function config.getlinks(cfg, kind, part)
 		-- if I'm building a list of link directories, include libdirs
-		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
+		local result = iif (part == "directory" and kind == "all", table.arraycopy(cfg.libdirs), {})
 
 		local function canlink(source, target)
 			-- can't link executables

@@ -20,6 +20,19 @@
 	
 
 --
+-- Make a copy of the indexed elements of the table.
+--
+
+	function table.arraycopy(object)
+		local result = {}
+		for i, value in ipairs(object) do
+			result[i] = value
+		end
+		return result
+	end
+
+
+--
 -- Make a complete copy of a table, including any child tables it contains.
 --
 
