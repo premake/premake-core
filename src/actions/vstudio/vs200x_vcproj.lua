@@ -176,7 +176,7 @@
 	function vc200x.emptyconfiguration(cfg, arch)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s|%s"', vstudio.projectplatform(cfg), arch)
-		_p(3,'IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"')
+		_p(3,'IntermediateDirectory="$(PlatformName)\\$(ConfigurationName)"')
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
 	
