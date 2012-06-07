@@ -151,8 +151,8 @@
 		end
 
 		local location = project.getlocation(prj)
-		local filename = path.join(location, prj.name) .. extension
-		return filename
+		local filename = path.join(location, project.getfilename(prj))
+		return filename .. extension
 	end
 
 

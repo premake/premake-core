@@ -7,6 +7,7 @@
 * Enabled per-configuration file lists
 * Enabled per-configuration toolset selection
 * Added custom build rules
+* Added external() to reference non-Premake generated projects
 * Added remove...() API to remove values from list fields
 * Folders containing single sub-folder now trimmed from top of source tree
 * Added debugformat with C7 support for Visual Studio

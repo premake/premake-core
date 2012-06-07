@@ -430,7 +430,7 @@
 	}
 
 	api.register {
-		name = "flags",		
+		name = "flags",
 		scope = "config",
 		kind  = "list",
 		allowed = {
@@ -1216,6 +1216,22 @@
 		api.scope.project = nil
 		
 		return premake.CurrentContainer
+	end
+
+
+--
+-- Creates a reference to an external, non-Premake generated project.
+--
+
+	function external(name)
+		-- define it like a regular project
+		local prj = project(name)
+		
+		-- then mark it as external
+		prj.external = true;
+		prj.externalname = prj.name
+		
+		return prj
 	end
 
 
