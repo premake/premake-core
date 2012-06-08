@@ -137,6 +137,7 @@
 			vs2005 = '',
 			vs2008 = ' ToolsVersion="3.5"',
 			vs2010 = ' ToolsVersion="4.0"',
+			vs2012 = ' ToolsVersion="4.0"',
 		}
 
 		if _ACTION > "vs2008" then
@@ -155,6 +156,12 @@
 			vs2005 = '8.0.50727',
 			vs2008 = '9.0.21022',
 			vs2010 = '8.0.30703',
+			vs2012 = '8.0.30703',
+		}
+		
+		local frameworks = {
+			vs2010 = "4.0",
+			vs2012 = "4.5",
 		}
 
 		_p('  <PropertyGroup>')
@@ -168,12 +175,12 @@
 		_p('    <RootNamespace>%s</RootNamespace>', prj.buildtarget.basename)
 		_p('    <AssemblyName>%s</AssemblyName>', prj.buildtarget.basename)
 
-		local framework = prj.framework or iif(_ACTION == "vs2010", "4.0", nil)
+		local framework = prj.framework or frameworks[_ACTION]
 		if framework then
 			_p('    <TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 		end
 
-		if _ACTION == "vs2010" then
+		if _ACTION >= "vs2010" then
 			_p('    <TargetFrameworkProfile>Client</TargetFrameworkProfile>')
 			_p('    <FileAlignment>512</FileAlignment>')
 		end

@@ -1,6 +1,6 @@
 --
 -- vs2010_vcxproj.lua
--- Generate a Visual Studio 2010 C/C++ project.
+-- Generate a Visual Studio 201x C/C++ project.
 -- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
@@ -13,7 +13,7 @@
 
 
 --
--- Generate a Visual Studio 2010 C++ project, with support for the new platforms API.
+-- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
 
 	function vc2010.generate_ng(prj)
@@ -126,6 +126,10 @@
 			_p(2,'<Keyword>Win32Proj</Keyword>')
 		end
 		
+		if _ACTION == "vs2012" then
+			_p(2,[[<VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath11)</VCTargetsPath>]])
+		end
+
 		_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 		_p(1,'</PropertyGroup>')
 	end
@@ -141,6 +145,10 @@
 		_p(2,'<ConfigurationType>%s</ConfigurationType>', vc2010.config_type(cfg))
 		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(premake.config.isdebugbuild(cfg)))
 
+		if _ACTION == "vs2012" then
+			_p(2,'<PlatformToolset>v110</PlatformToolset>')
+		end
+		
 		if cfg.flags.MFC then
 			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
 		end

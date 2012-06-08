@@ -1,6 +1,6 @@
 --
 -- vs2010_vcxproj_filters.lua
--- Generate a Visual Studio 2010 C/C++ filters file.
+-- Generate a Visual Studio 201x C/C++ filters file.
 -- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
@@ -10,7 +10,7 @@
 	
 
 --
--- Generate a Visual Studio 2010 C++ project, with support for the new platforms API.
+-- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
 
 	function vc2010.generate_filters_ng(prj)
