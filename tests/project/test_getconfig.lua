@@ -6,8 +6,6 @@
 
 	T.project_getconfig = { }
 	local suite = T.project_getconfig
-	local premake = premake5
-
 
 --
 -- Setup and teardown
@@ -16,12 +14,13 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		sln = solution("MySolution")
+		configurations { "Debug", "Release" }
 	end
 
-	local function prepare(buildcfg)
-		buildcfg = buildcfg or "Debug"
-		cfg = premake.project.getconfig(prj, buildcfg)
+	local function prepare(buildcfg, platform)
+		prj = premake.solution.getproject_ng(sln, 1)
+		cfg = premake5.project.getconfig(prj, buildcfg or "Debug", platform)
 	end
 
 
@@ -31,6 +30,7 @@
 --
 
 	function suite.solutionConfig_onNoProjectConfigs()
+		project ("MyProject")
 		prepare()
 		test.isequal("Debug", cfg.buildcfg)
 	end
@@ -42,6 +42,7 @@
 --
 
 	function suite.appliesCfgMapping_onMappingExists()
+		project ("MyProject")
 		configmap { ["Debug"] = "Development" }
 		prepare()
 		test.isequal("Development", cfg.buildcfg)
@@ -54,6 +55,7 @@
 --
 
 	function suite.fetchesMappedCfg_onMappedName()
+		project ("MyProject")
 		configmap { ["Debug"] = "Development" }
 		prepare("Development")
 		test.isequal("Development", cfg.buildcfg)
@@ -66,21 +68,10 @@
 --
 
 	function suite.returnsNil_onRemovedConfig()
+		project ("MyProject")
 		removeconfigurations { "Debug" }
 		prepare()
 		test.isnil(cfg)
-	end
-
-
---
--- If the project has a platforms list, and the solution does not, 
--- use the first project platform.
---
-
-	function suite.usesFirstPlatform_onNoSolutionPlatforms()
-		platforms { "x32", "x64" }
-		prepare()
-		test.isequal("x32", cfg.platform)
 	end
 
 
@@ -91,6 +82,7 @@
 
 	function suite.usesCurrentOS_onNoSystemSpecified()
 		_OS = "linux"
+		project ("MyProject")
 		configuration { "linux" }
 		defines { "correct" }
 		prepare()
@@ -107,6 +99,7 @@
 	function suite.actionOverridesOS()
 		_OS = "linux"
 		_ACTION = "vs2005"
+		project ("MyProject")
 		configuration { "windows" }
 		defines { "correct" }
 		prepare()
@@ -122,6 +115,7 @@
 	function suite.usesCfgSystem()
 		_OS = "linux"
 		_ACTION = "vs2005"
+		project ("MyProject")
 		system "macosx"
 		configuration { "macosx" }
 		defines { "correct" }
@@ -136,6 +130,7 @@
 
 	function suite.appliesActionToFilters()
 		_ACTION = "vs2005"
+		project ("MyProject")
 		configuration { "vs2005" }
 		defines { "correct" }
 		prepare()
@@ -149,10 +144,31 @@
 --
 
 	function suite.returnsMappedConfig_onOtherwiseMissing()
+		project ("MyProject")
 		removeconfigurations "Debug"
 		configmap { Debug = "Release" }
 		prepare()
 		test.isequal("Release", cfg.buildcfg)
 	end
 
-		
+
+--
+-- Check mapping from solution build cfg + platform pairs to a simple
+-- project configuration.
+--
+
+	function suite.canMapSolutionPairToProjectBuildCfg()
+		platforms { "Win32", "PS3" }
+		project ("MyProject")
+		removeconfigurations "*"
+		removeplatforms "*"
+		configurations { "Debug Win32", "Release Win32", "Debug PS3", "Release PS3" }
+		configmap {
+			[{"Debug", "Win32"}] = "Debug Win32",
+			[{"Debug", "PS3"}] = "Debug PS3",
+			[{"Release", "Win32"}] = "Release Win32",
+			[{"Release", "PS3"}] = "Release PS3"
+		}
+		prepare("Debug", "PS3")
+		test.isequal("Debug PS3", cfg.buildcfg)
+	end

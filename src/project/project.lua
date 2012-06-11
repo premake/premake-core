@@ -216,10 +216,6 @@
 		buildcfg = pairing[1]
 		platform = pairing[2]
 
-		-- if the project has a platforms list, and the solution does
-		-- not, default to the first project platform
-		platform = platform or prj.platforms[1]
-		
 		-- look up and return the associated config		
 		local key = (buildcfg or "*") .. (platform or "")
 		return prj.configs[key]
@@ -483,34 +479,36 @@
 	function project.mapconfig(prj, buildcfg, platform)
 		local pairing = { buildcfg, platform }
 		
-		for patterns, replacements in pairs(prj.configmap or {}) do
-			if type(patterns) ~= "table" then
-				patterns = { patterns }
+		local testpattern = function(pattern, pairing, i)
+			local j = 1
+			while i <= #pairing and j <= #pattern do
+				if pairing[i] ~= pattern[j] then
+					return false
+				end
+				i = i + 1
+				j = j + 1
+			end
+			return true
+		end
+		
+		for pattern, replacements in pairs(prj.configmap or {}) do
+			if type(pattern) ~= "table" then
+				pattern = { pattern }
 			end
 			
-			-- does this pattern match any part of the pair?
+			-- does this pattern match any part of the pair? If so,
+			-- replace it with the corresponding values
 			for i = 1, #pairing do
-				local matched = true
-				for j = 1, #patterns do
-					if pairing[i] ~= patterns[j] then
-						matched = false
-					end
-				end
-
-				-- yes, replace one or more parts (with a copy)
-				if matched then
-					if #patterns == 1 and #replacements == 1 then
-						result = { pairing[1], pairing[2] }
+				if testpattern(pattern, pairing, i) then
+					if #pattern == 1 and #replacements == 1 then
 						pairing[i] = replacements[1]
 					else
 						pairing = { replacements[1], replacements[2] }
 					end
-
-					return pairing
 				end
-			end			
+			end
 		end
-	
+				
 		return pairing
 	end
 
