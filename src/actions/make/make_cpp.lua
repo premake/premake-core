@@ -117,16 +117,16 @@
 		_p('\t$(PRELINKCMDS)')
 		_p('')
 
-	--[[
 		-- precompiler header rule
 		cpp.pchrules(prj)
 
+	--[[
 		-- per-file rules
 		for _, file in ipairs(prj.files) do
 			if path.iscppfile(file) then
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
-				cpp.buildcommand(path.iscfile(file))
+				cpp.buildcommand_old(path.iscfile(file))
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
@@ -205,11 +205,13 @@
 		cpp.platformtools(cfg, cc)
 	--]]
 
+		-- write target information
 		local targetinfo = config.gettargetinfo(cfg)
-		
 		_p('  OBJDIR     = %s', make.esc(cfg.objdir))
 		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
+		
+		-- write flags
 		_p('  DEFINES   += %s', table.concat(toolset.getdefines(cfg.defines), " "))
 		_p('  INCLUDES  += %s', table.concat(make.esc(toolset.getincludedirs(cfg.includedirs), " ")))
 		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
@@ -220,10 +222,10 @@
 		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg.resincludedirs), cfg.resoptions)
 		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(resflags, " "))
 
-	--[[
 		-- set up precompiled headers
 		cpp.pchconfig(cfg)
 
+	--[[
 		_p('  LIBS      += %s', table.concat(cc.getlinkflags(cfg), " "))
 		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
 
@@ -270,6 +272,56 @@
 
 		_p('endif')
 		_p('')	
+	end
+
+
+--
+-- Precompiled header support
+--
+
+	function cpp.pchconfig(cfg)
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			-- Visual Studio needs the PCH path to match the way it appears in
+			-- the project's #include statement. GCC needs the full path. Assume
+			-- the #include path is given, is search the include dirs for it.
+			local pchheader = cfg.pchheader
+			for _, incdir in ipairs(cfg.includedirs) do
+				local testname = path.join(incdir, cfg.pchheader)
+				if os.isfile(testname) then
+					pchheader = testname
+					break
+				end
+			end
+
+			local gch = make.esc(path.getname(pchheader))
+			_p('  PCH        = %s', make.esc(project.getrelative(cfg.project, pchheader)))
+			_p('  GCH        = $(OBJDIR)/%s.gch', gch)
+			_p('  CPPFLAGS  += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
+		end
+	end
+
+	function cpp.pchrules(prj)
+		_p('ifneq (,$(PCH))')
+		_p('$(GCH): $(PCH)')
+		_p('\t@echo $(notdir $<)')
+		_p('ifeq (posix,$(SHELLTYPE))')
+		_p('\t-$(SILENT) cp $< $(OBJDIR)')
+		_p('else')
+		_p('\t$(SILENT) xcopy /D /Y /Q "$(subst /,\\,$<)" "$(subst /,\\,$(OBJDIR))" 1>nul')
+		_p('endif')
+		cpp.buildcommand(prj)
+		_p('endif')
+		_p('')
+	end
+
+
+--
+-- Build command for a single file.
+--
+
+	function cpp.buildcommand(prj)
+		local flags = iif(prj.language == "C", '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
+		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
 	end
 
 
@@ -384,7 +436,7 @@
 			if path.iscppfile(file) then
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
-				cpp.buildcommand(path.iscfile(file))
+				cpp.buildcommand_old(path.iscfile(file))
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
 				_p('\t@echo $(notdir $<)')
@@ -463,7 +515,7 @@
 		cpp.flags(cfg, cc)
 
 		-- set up precompiled headers
-		cpp.pchconfig(cfg)
+		cpp.pchconfig_old(cfg)
 
 		_p('  LIBS      += %s', table.concat(cc.getlinkflags(cfg), " "))
 		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
@@ -551,7 +603,7 @@
 -- Precompiled header support
 --
 
-	function cpp.pchconfig(cfg)
+	function cpp.pchconfig_old(cfg)
 		-- GCC needs the full path to the PCH, while Visual Studio needs
 		-- only the name (or rather, the name as specified in the #include
 		-- statement). Try to locate the PCH in the project.
@@ -571,26 +623,12 @@
 		end
 	end
 
-	function cpp.pchrules(prj)
-		_p('ifneq (,$(PCH))')
-		_p('$(GCH): $(PCH)')
-		_p('\t@echo $(notdir $<)')
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('\t-$(SILENT) cp $< $(OBJDIR)')
-		_p('else')
-		_p('\t$(SILENT) xcopy /D /Y /Q "$(subst /,\\,$<)" "$(subst /,\\,$(OBJDIR))" 1>nul')
-		_p('endif')
-		cpp.buildcommand(prj.language == "C")
-		_p('endif')
-		_p('')
-	end
-
 
 --
 -- Build command for a single file.
 --
 
-	function cpp.buildcommand(iscfile)
+	function cpp.buildcommand_old(iscfile)
 		local flags = iif(iscfile, '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
 		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
 	end

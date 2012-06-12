@@ -151,10 +151,14 @@
 	dofile("actions/vstudio/vc2010/test_resource_compile.lua")
 
 	-- Makefile tests
+	dofile("actions/make/test_make_escaping.lua")
+	
+	-- Makefile solutions
 	dofile("actions/make/solution/test_default_config.lua")
 	dofile("actions/make/solution/test_help_rule.lua")
-	dofile("actions/make/test_make_escaping.lua")
-	dofile("actions/make/test_make_pch.lua")
+	
+	-- Makefile C/C++ projects
+	dofile("actions/make/cpp/test_make_pch.lua")
 	dofile("actions/make/test_make_linking.lua")
 	-- dofile("actions/make/test_makesettings.lua")
 	dofile("actions/make/test_wiidev.lua")
