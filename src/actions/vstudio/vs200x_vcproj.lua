@@ -47,6 +47,7 @@
 		_p(1,'</Configurations>')
 
 		_p(1,'<References>')
+		vc200x.projectReferences(prj)
 		_p(1,'</References>')
 
 		_p(1,'<Files>')
@@ -596,6 +597,26 @@
 
 
 --
+-- Write out the list of project references.
+--
+
+	function vc200x.projectReferences(prj)
+		local deps = project.getdependencies(prj)
+		if #deps > 0 then
+			local prjpath = project.getlocation(prj)
+			
+			for _, dep in ipairs(deps) do
+				local relpath = path.getrelative(prjpath, vstudio.projectfile_ng(dep))
+				_p(2,'<ProjectReference')
+				_p(3,'ReferencedProjectIdentifier="{%s}"', dep.uuid)
+				_p(3,'RelativePathToProject="%s"', path.translate(relpath))
+				_p(2,'/>')
+			end
+		end
+	end
+
+
+--
 -- Return the list of tools required to build a specific configuration.
 -- Each tool gets represented by an XML element in the project file.
 --
@@ -922,7 +943,7 @@
 		end
 	end
 
-	
+
 --
 -- Output the correct project version attribute for the current action.
 --
