@@ -132,6 +132,23 @@
 	end
 
 
+--
+-- Write out raw makefile rules for a configuration.
+--
+
+	function make.settings(cfg, toolset)
+		if #cfg.makesettings > 0 then
+			for _, value in ipairs(cfg.makesettings) do
+				_p(value)
+			end
+		end
+		
+		local sysflags = toolset.sysflags[cfg.architecture] or toolset.sysflags[cfg.system] or {}
+		if sysflags.cfgsettings then
+			_p(sysflags.cfgsettings)
+		end
+	end
+
 
 
 
@@ -214,7 +231,7 @@
 -- Write out the raw settings blocks.
 --
 
-	function make.settings(cfg, cc)
+	function make.settings_old(cfg, cc)
 		if #cfg.makesettings > 0 then
 			for _, value in ipairs(cfg.makesettings) do
 				_p(value)

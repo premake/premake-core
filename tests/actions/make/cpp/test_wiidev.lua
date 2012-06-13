@@ -1,27 +1,26 @@
 --
--- tests/actions/make/test_wiidev.lua
+-- tests/actions/make/cpp/test_wiidev.lua
 -- Tests for Wii homebrew support in makefiles.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 	
-	T.make_wiidev = { }
+	T.make_wiidev = {}
 	local suite = T.make_wiidev
 	local make = premake.make
 	local cpp = premake.make.cpp
+	local project = premake5.project
+
+
+--
+-- Setup
+--
 	
 	local sln, prj, cfg
-	
-	function suite.setup()
-		_ACTION = "gmake"
 
-		sln = solution("MySolution")
-		configurations { "Debug", "Release" }
-		platforms { "WiiDev" }		
-		
-		prj = project("MyProject")
-		
-		premake.bake.buildconfigs()
-		cfg = premake.getconfig(prj, "Debug", "WiiDev")
+	function suite.setup()
+		sln, prj = test.createsolution()
+		system "wii"
+		cfg = project.getconfig(prj, "Debug")
 	end
 
 
@@ -30,9 +29,11 @@
 --
 
 	function suite.writesCorrectFlags()
-		cpp.flags(cfg, premake.gcc)
+		cpp.flags(cfg, premake.tools.gcc)
 		test.capture [[
-  CPPFLAGS  += -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) -MP $(DEFINES) $(INCLUDES)
+  DEFINES   += 
+  INCLUDES  += 
+  CPPFLAGS  += -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) 
   CXXFLAGS  += $(CFLAGS) 
   LDFLAGS   += -s -L$(LIBOGC_LIB) $(MACHDEP)
@@ -46,7 +47,7 @@
 --
 
 	function suite.writesIncludeBlock()
-		make.settings(cfg, premake.gcc)
+		make.settings(cfg, premake.tools.gcc)
 		test.capture [[
   ifeq ($(strip $(DEVKITPPC)),)
     $(error "DEVKITPPC environment variable is not set")'

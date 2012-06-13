@@ -161,8 +161,7 @@
 	-- Makefile C/C++ projects
 	dofile("actions/make/cpp/test_make_pch.lua")
 	dofile("actions/make/cpp/test_make_linking.lua")
-	-- dofile("actions/make/test_makesettings.lua")
-	dofile("actions/make/test_wiidev.lua")
+	dofile("actions/make/cpp/test_wiidev.lua")
 
 	-- Xcode3 tests
 	dofile("actions/xcode/test_file_references.lua")

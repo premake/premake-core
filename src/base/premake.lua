@@ -65,6 +65,7 @@
 	premake.systems.bsd     = premake.systems.linux
 	premake.systems.haiku   = premake.systems.linux
 	premake.systems.solaris = premake.systems.linux
+	premake.systems.wii     = premake.systems.linux
 	premake.systems.xbox360 = premake.systems.windows
 	
 	

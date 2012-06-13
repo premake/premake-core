@@ -23,7 +23,17 @@
 		x64 = {
 			cflags = "-m64",
 			ldflags = { "-m64", "-L/usr/lib64" }
-		}
+		},
+		
+		["wii"] = {
+			cppflags = "-I$(LIBOGC_INC) $(MACHDEP)",
+			ldflags	= "-L$(LIBOGC_LIB) $(MACHDEP)",
+			cfgsettings = [[
+  ifeq ($(strip $(DEVKITPPC)),)
+    $(error "DEVKITPPC environment variable is not set")'
+  endif
+  include $(DEVKITPPC)/wii_rules']],
+		},
 	}
 
 
@@ -42,6 +52,9 @@
 			table.insert(flags, "-MP")
 		end
 		
+		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
+		table.insert(flags, sysflags.cppflags)
+
 		return flags
 	end
 
@@ -156,7 +169,7 @@
 			table.insert(flags, "-mwindows")
 		end
 		
-		local sysflags = gcc.sysflags[cfg.architecture] or {}
+		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
 		flags = table.join(flags, sysflags.ldflags)
 		
 		return flags
