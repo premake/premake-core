@@ -88,3 +88,14 @@
 		local r = prepare("all", "fullpath")
 		test.isequal({ '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib"' }, r)
 	end
+
+
+--
+-- If fetching directories, the libdirs should be included in the result.
+--
+
+	function suite.includesLibDirs_onDirectories()
+		libdirs { "../libs" }
+		local r = prepare("all", "directory")
+		test.isequal({ "../libs" }, r)
+	end
