@@ -225,25 +225,10 @@
 		-- set up precompiled headers
 		cpp.pchconfig(cfg)
 
-	--[[
-		_p('  LIBS      += %s', table.concat(cc.getlinkflags(cfg), " "))
-		_p('  LDDEPS    += %s', table.concat(_MAKE.esc(premake.getlinks(cfg, "siblings", "fullpath")), " "))
+		-- write the link step
+		cpp.linkconfig(cfg, toolset)
 
-		if cfg.kind == "StaticLib" then
-			if cfg.platform:startswith("Universal") then
-				_p('  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)')
-			else
-				_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
-			end
-		else
-			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
-			--  but had trouble linking to certain static libs so $(OBJECTS) moved up
-			-- then $(LDFLAGS) moved to end
-			--   https://sourceforge.net/tracker/?func=detail&aid=3430158&group_id=71616&atid=531880
-			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)', iif(cfg.language == "C", "CC", "CXX"))
-		end
-	--]]
-	
+		-- write the custom build commands		
 		_p('  define PREBUILDCMDS')
 		if #cfg.prebuildcommands > 0 then
 			_p('\t@echo Running pre-build commands')
@@ -272,6 +257,33 @@
 
 		_p('endif')
 		_p('')	
+	end
+
+
+--
+-- Link step
+--
+
+	function cpp.linkconfig(cfg, toolset)
+		local flags = toolset.getlinks(cfg)
+		_p('  LIBS      += %s', table.concat(flags, " "))
+		
+		local deps = config.getlinks(cfg, "siblings", "fullpath")
+		_p('  LDDEPS    += %s', table.concat(make.esc(deps), " "))
+
+		if cfg.kind == premake.STATICLIB then
+			if cfg.architecture == premake.UNIVERSAL then
+				_p('  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)')
+			else
+				_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
+			end
+		else
+			-- This started as: $(TARGET) $(LDFLAGS) $(OBJECTS).
+			-- Had trouble linking to certain static libs, so $(OBJECTS) moved up.
+			-- $(LDFLAGS) moved: https://sf.net/tracker/?func=detail&aid=3430158&group_id=71616&atid=531880
+			local cc = iif(cfg.project.language == "C", "CC", "CXX")
+			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)', cc)
+		end
 	end
 
 

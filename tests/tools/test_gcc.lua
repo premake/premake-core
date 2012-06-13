@@ -203,10 +203,23 @@
 		links { "MyProject2" }
 		test.createproject(sln)
 		kind "StaticLib"
-		location "MyProject2"
 		targetdir "lib"
 		prepare()
 		test.isequal({ "lib/libMyProject2.a" }, gcc.getlinks(cfg))
+	end
+
+
+--
+-- Use the -lname format when linking to sibling shared libraries.
+--
+
+	function suite.links_onStaticSharedLibrary()
+		links { "MyProject2" }
+		test.createproject(sln)
+		kind "SharedLib"
+		targetdir "lib"
+		prepare()
+		test.isequal({ "-lMyProject2" }, gcc.getlinks(cfg))
 	end
 
 

@@ -323,8 +323,7 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 		
-		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
-		
+		vc200x.programDatabase(cfg)		
 		vc200x.warnings(cfg)
 		
 		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
@@ -354,7 +353,7 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 
-		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+		vc200x.programDatabase(cfg)
 
 		_p(4,'DebugInformationFormat="0"')
 		_p(4,'CompileAs="0"')
@@ -936,11 +935,22 @@
 
 --
 -- Output the list of preprocessor symbols.
+--
 
 	function vc200x.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
 		end
+	end
+
+
+--
+-- Output the program database filename.
+--
+
+	function vc200x.programDatabase(cfg)
+		local target = config.gettargetinfo(cfg)
+		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s%s.pdb"', target.prefix, target.basename)
 	end
 
 

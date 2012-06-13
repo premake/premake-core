@@ -192,7 +192,7 @@
 
 		_x(2,'<IntDir>%s\\</IntDir>', path.translate(cfg.objdir))
 
-		_x(2,'<TargetName>%s</TargetName>', target.basename)
+		_x(2,'<TargetName>%s%s</TargetName>', target.prefix, target.basename)
 		_x(2,'<TargetExt>%s</TargetExt>', target.extension)
 
 		if cfg.flags.NoManifest then

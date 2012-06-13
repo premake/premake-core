@@ -174,14 +174,14 @@
 		if not systemonly then
 			links = config.getlinks(cfg, "siblings", "object")
 			for _, link in ipairs(links) do
+				local linkinfo = config.getlinkinfo(link)
 				if link.kind == premake.STATICLIB then
 					-- Don't use "-l" flag when linking static libraries; instead use 
 					-- path/libname.a to avoid linking a shared library of the same
 					-- name if one is present
-					local linkinfo = config.getlinkinfo(link)
 					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
 				else
-					table.insert(result, "-l" .. link.basename)
+					table.insert(result, "-l" .. linkinfo.basename)
 				end
 			end
 		end

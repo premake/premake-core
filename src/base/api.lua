@@ -336,6 +336,7 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
+			"universal",
 			"x32",
 			"x64",
 		},

@@ -20,6 +20,7 @@
 	premake.PS3         = "ps3"
 	premake.SHAREDLIB   = "SharedLib"
 	premake.STATICLIB   = "StaticLib"
+	premake.UNIVERSAL   = "universal"
 	premake.WINDOWEDAPP = "WindowedApp"
 	premake.WINDOWS     = "windows"
 	premake.X32         = "x32"

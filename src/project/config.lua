@@ -65,8 +65,8 @@
 
 		local info = {}
 		info.directory  = project.getrelative(cfg.project, directory)
-		info.basename   = prefix .. basename .. suffix
-		info.name       = info.basename .. extension
+		info.basename   = basename .. suffix
+		info.name       = prefix .. info.basename .. extension
 		info.extension  = extension
 		info.abspath    = path.join(directory, info.name)
 		info.fullpath   = path.join(info.directory, info.name)
