@@ -218,9 +218,15 @@
 --	
 	
  	function config.getlinks(cfg, kind, part)
-		-- if I'm building a list of link directories, include libdirs
-		local result = iif (part == "directory" and kind == "all", table.arraycopy(cfg.libdirs), {})
+		local result = {}
 
+		-- if I'm building a list of link directories, include libdirs
+		if part == "directory" and kind == "all" then
+			for _, dir in ipairs(cfg.libdirs) do
+				table.insert(result, project.getrelative(cfg.project, dir))
+			end
+		end
+		
 		local function canlink(source, target)
 			-- can't link executables
 			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then 
