@@ -25,7 +25,13 @@
 			ldflags = { "-m64", "-L/usr/lib64" }
 		},
 		
-		["wii"] = {
+		ps3 = {
+			cc = "ppu-lv2-g++",
+			cxx = "ppu-lv2-g++",
+			ar = "ppu-lv2-ar",
+		},
+				
+		wii = {
 			cppflags = "-I$(LIBOGC_INC) $(MACHDEP)",
 			ldflags	= "-L$(LIBOGC_LIB) $(MACHDEP)",
 			cfgsettings = [[
@@ -213,6 +219,7 @@
 		
 		return result
 	end
+
 
 
 -----------------------------------------------------------------------------

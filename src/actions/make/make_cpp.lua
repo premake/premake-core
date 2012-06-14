@@ -158,32 +158,6 @@
 		_p('  SILENT = @')
 		_p('endif')
 		_p('')
-				
-		--[[
-		_p('ifndef CC')
-		_p('  CC = %s', cc.cc)
-		_p('endif')
-		_p('')
-
-		_p('ifndef CXX')
-		_p('  CXX = %s', cc.cxx)
-		_p('endif')
-		_p('')
-
-		_p('ifndef AR')
-		_p('  AR = %s', cc.ar)
-		_p('endif')
-		_p('')
-		
-		_p('ifndef RESCOMP')
-		_p('  ifdef WINDRES')
-		_p('    RESCOMP = $(WINDRES)')
-		_p('  else')
-		_p('    RESCOMP = windres')
-		_p('  endif')
-		_p('endif')
-		_p('')	
-		--]]
 	end
 
 
@@ -199,11 +173,9 @@
 		end
 	
 		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
-	
-	--[[
-		-- if this platform requires a special compiler or linker, list it here
-		cpp.platformtools(cfg, cc)
-	--]]
+
+		-- write toolset specific configurations
+		cpp.toolconfig(cfg, toolset)
 
 		-- write target information
 		local targetinfo = config.gettargetinfo(cfg)
@@ -247,6 +219,16 @@
 
 		_p('endif')
 		_p('')	
+	end
+
+
+--
+-- Build command for a single file.
+--
+
+	function cpp.buildcommand(prj)
+		local flags = iif(prj.language == "C", '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
+		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
 	end
 
 
@@ -335,14 +317,21 @@
 
 
 --
--- Build command for a single file.
+-- System specific toolset configuration.
 --
 
-	function cpp.buildcommand(prj)
-		local flags = iif(prj.language == "C", '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
-		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
+	function cpp.toolconfig(cfg, toolset)
+		local sysflags = toolset.sysflags[cfg.architecture] or toolset.sysflags[cfg.system] or {}
+		if sysflags.cc then
+			_p('  CC         = %s', sysflags.cc)
+		end
+		if sysflags.cxx then
+			_p('  CXX        = %s', sysflags.cxx)
+		end
+		if sysflags.ar then
+			_p('  AR         = %s', sysflags.ar)
+		end
 	end
-
 
 
 -----------------------------------------------------------------------------
