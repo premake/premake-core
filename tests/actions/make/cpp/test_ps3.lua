@@ -18,8 +18,9 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 		system "ps3"
+		prj = premake.solution.getproject_ng(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 	end
 
@@ -34,5 +35,19 @@
   CC         = ppu-lv2-g++
   CXX        = ppu-lv2-g++
   AR         = ppu-lv2-ar
+  		]]
+	end
+
+
+--
+-- Make sure the target is correctly named.
+--
+
+	function suite.usesCorrectTarget()
+		cpp.targetconfig(cfg)
+		test.capture [[
+  OBJDIR     = obj/Debug
+  TARGETDIR  = .
+  TARGET     = $(TARGETDIR)/MyProject.elf
   		]]
 	end

@@ -32,7 +32,7 @@
 
 	function suite.cppflags_defaultWithMMD()
 		prepare()
-		test.isequal({ "-MMD", "-MP" }, gcc.getcppflags(cfg))
+		test.isequal({"-MMD -MP"}, gcc.getcppflags(cfg))
 	end
 
 

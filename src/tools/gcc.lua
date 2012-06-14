@@ -15,6 +15,10 @@
 --
 
 	gcc.sysflags = {
+		haiku = {
+			cppflags = "-MMD"
+		},
+		
 		x32 = {
 			cflags  = "-m32",
 			ldflags = { "-m32", "-L/usr/lib32" }
@@ -30,9 +34,13 @@
 			cxx = "ppu-lv2-g++",
 			ar = "ppu-lv2-ar",
 		},
-				
+		
+		universal = {
+			cppflags = "",
+		},
+		
 		wii = {
-			cppflags = "-I$(LIBOGC_INC) $(MACHDEP)",
+			cppflags = "-MMD -MP -I$(LIBOGC_INC) $(MACHDEP)",
 			ldflags	= "-L$(LIBOGC_LIB) $(MACHDEP)",
 			cfgsettings = [[
   ifeq ($(strip $(DEVKITPPC)),)
@@ -48,18 +56,11 @@
 --
 
 	function gcc.getcppflags(cfg)
-		-- always use -MMD to generate dependency information
-		local flags = { "-MMD" }
-		
-		-- We want the -MP flag for dependency generation (creates phony rules 
-		-- for headers, prevents make errors if file is later deleted), but Haiku 
-		-- OS doesn't support it (yet)
-		if cfg.system ~= premake.HAIKU then
-			table.insert(flags, "-MP")
-		end
-		
+		local flags = {}
 		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
-		table.insert(flags, sysflags.cppflags)
+		
+		-- Use -MMD -P by default to generate dependency information
+		table.insert(flags, sysflags.cppflags or "-MMD -MP")		
 
 		return flags
 	end

@@ -43,7 +43,6 @@
 	dofile("test_premake.lua")
 	dofile("test_platforms.lua")
 	dofile("test_keywords.lua")
-	dofile("test_gmake_cpp.lua")
 	dofile("test_gmake_cs.lua")
 	dofile("base/test_api.lua")
 	dofile("base/test_action.lua")

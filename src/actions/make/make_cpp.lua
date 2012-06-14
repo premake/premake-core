@@ -177,11 +177,8 @@
 		-- write toolset specific configurations
 		cpp.toolconfig(cfg, toolset)
 
-		-- write target information
-		local targetinfo = config.gettargetinfo(cfg)
-		_p('  OBJDIR     = %s', make.esc(cfg.objdir))
-		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
-		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
+		-- write target information (target dir, name, obj dir)
+		cpp.targetconfig(cfg)
 		
 		-- write flags
 		cpp.flags(cfg, toolset)
@@ -313,6 +310,18 @@
 		cpp.buildcommand(prj)
 		_p('endif')
 		_p('')
+	end
+
+
+--
+-- Target (name, dir) configuration.
+--
+
+	function cpp.targetconfig(cfg)		
+		local targetinfo = config.gettargetinfo(cfg)
+		_p('  OBJDIR     = %s', make.esc(cfg.objdir))
+		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
+		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
 	end
 
 
