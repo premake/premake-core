@@ -30,17 +30,10 @@
 			cpp.config(cfg)
 		end
 		
-		--[[
-
 		-- list intermediate files
-		_p('OBJECTS := \\')
-		for _, file in ipairs(prj.files) do
-			if path.iscppfile(file) then
-				_p('\t$(OBJDIR)/%s.o \\', _MAKE.esc(path.getbasename(file)))
-			end
-		end
-		_p('')
-
+		cpp.objects(prj)
+		
+		--[[
 		_p('RESOURCES := \\')
 		for _, file in ipairs(prj.files) do
 			if path.isresourcefile(file) then
@@ -48,7 +41,7 @@
 			end
 		end
 		_p('')
-	--]]
+		--]]
 		
 		-- identify the shell type
 		_p('SHELLTYPE := msdos')
@@ -134,10 +127,10 @@
 			end
 		end
 		_p('')
+		--]]
 
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
-		--]]
 		
 		print("** Warning: GMake C++ project have not been ported yet")
 	end
@@ -269,6 +262,73 @@
 			-- $(LDFLAGS) moved: https://sf.net/tracker/?func=detail&aid=3430158&group_id=71616&atid=531880
 			local cc = iif(cfg.project.language == "C", "CC", "CXX")
 			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)', cc)
+		end
+	end
+
+
+--
+-- List the objects file for the project, and each configuration.
+--
+
+	function cpp.objects(prj)
+		-- create a set of lists, one per configuration, to contain any
+		-- per-configuration files I find.
+		local cfgfiles = {}
+		for cfg in project.eachconfig(prj) do
+			cfgfiles[cfg] = {}
+		end
+		
+		-- now walk the list of files in the project
+		local incfg = {}
+		
+		_p('OBJECTS := \\')
+		local tr = project.getsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				-- skip files that can't be built
+				if not path.iscppfile(node.abspath) then
+					return
+				end
+			
+				-- see what set of configurations contains this file
+				local inallcfgs = true
+				for cfg in project.eachconfig(prj) do
+					local filecfg = config.getfileconfig(cfg, node.abspath)
+					incfg[cfg] = (filecfg ~= nil)
+					if not filecfg then
+						inallcfgs = false
+					end
+				end
+				
+				-- if this file exists in all configurations, write it to
+				-- the project's list of files		
+				if inallcfgs then
+					_p('\t$(OBJDIR)/%s.o \\', make.esc(node.basename))
+					
+				-- otherwise add it to the individual configuration lists
+				else
+					for cfg in project.eachconfig(prj) do
+						if incfg[cfg] then
+							table.insert(cfgfiles[cfg], node.basename)
+						end
+					end
+				end
+			end
+		})
+		_p('')
+		
+		-- project file list is now complete; write any per-config lists
+		for cfg in project.eachconfig(prj) do
+			if #cfgfiles[cfg] > 0 then
+				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+				_p('  OBJECTS += \\')
+				for _, basename in ipairs(cfgfiles[cfg]) do
+					_p('\t$(OBJDIR)/%s.o \\', make.esc(basename))
+				end
+				_p('')
+				_p('endif')
+				_p('')
+			end
 		end
 	end
 
