@@ -775,6 +775,15 @@
 			end
 		end
 		
+		-- see if this file needs a modified object file name
+		local objectname
+		if path.iscppfile(node.name) then
+			objectname = project.getfileobject(prj, node.abspath)
+			if objectname == path.getbasename(node.abspath) then
+				objectname = nil
+			end
+		end
+				
 		for cfg in project.eachconfig(prj) do
 		
 			-- get any settings specific to this file for this configuration;
@@ -789,7 +798,7 @@
 			local isPchSource = (cfg.pchsource == node.abspath and not cfg.flags.NoPCH)
 
 			-- only write the element if we have something to say			
-			if compileAs or isPchSource or not filecfg or hasSettings then
+			if compileAs or isPchSource or not filecfg or hasSettings or objectname then
 
 				_p(depth,'<FileConfiguration')
 				depth = depth + 1
@@ -819,6 +828,10 @@
 					_p(depth, 'CompileAs="%s"', iif(compileAs == "C++", 1, 2))
 				end
 
+				if objectname then
+					_p(depth, 'ObjectFile="$(IntDir)\\%s.obj"', objectname)
+				end
+				
 				-- include the precompiled header, if this is marked as the PCH source
 				if isPchSource then
 					if cfg.system == premake.PS3 then

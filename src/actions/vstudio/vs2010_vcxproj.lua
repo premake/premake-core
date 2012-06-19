@@ -405,13 +405,20 @@
 			for _, file in ipairs(files) do
 				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
 				for cfg in project.eachconfig(prj) do
+					local condition = vc2010.condition(cfg)
+					
 					local filecfg = config.getfileconfig(cfg, file.abspath)
 					if not filecfg then
-						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', vc2010.condition(cfg))
+						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', condition)
+					end
+					
+					local objectname = project.getfileobject(prj, file.abspath)
+					if objectname ~= path.getbasename(file.abspath) then
+						_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', condition, objectname)
 					end
 					
 					if cfg.pchsource == file.abspath and not cfg.flags.NoPCH then
-						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', vc2010.condition(cfg))
+						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', condition)
 					end
 				end
 				_p(2,'</ClCompile>')

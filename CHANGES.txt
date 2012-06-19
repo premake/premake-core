@@ -17,6 +17,7 @@
 * path.translate() now defaults to Windows-style backslashes
 * Added NoWarnings flag for Visual Studio (xpol)
 * Added debugcommand for Visual Studio (xpol)
+* Bug 1674173: Allow source files to have the same name
 
 
 -------

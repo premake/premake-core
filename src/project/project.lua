@@ -282,6 +282,44 @@
 
 
 --
+-- Returns a unique object file name for a project source code file.
+--
+-- @param prj
+--    The project object to query.
+-- @param filename
+--    The name of the file being compiled to the object file.
+--
+
+	function project.getfileobject(prj, filename)
+		-- make sure I have the project, and not it's root configuration
+		prj = prj.project or prj
+		
+		-- create a list of objects if necessary
+		prj.fileobjects = prj.fileobjects or {}
+
+		-- look for the corresponding object file		
+		local basename = path.getbasename(filename)
+		local uniqued = basename
+		local i = 0
+		
+		while prj.fileobjects[uniqued] do
+			-- found a match?
+			if prj.fileobjects[uniqued] == filename then
+				return uniqued
+			end
+			
+			-- check a different name
+			i = i + 1
+			uniqued = basename .. i
+		end
+		
+		-- no match, create a new one
+		prj.fileobjects[uniqued] = filename
+		return uniqued
+	end
+
+
+--
 -- Retrieve the project's file name.
 --
 -- @param prj

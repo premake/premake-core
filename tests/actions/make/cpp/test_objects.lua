@@ -77,3 +77,19 @@ endif
   		]]
 	end
 
+
+--
+-- Two files with the same base name should have different object files.
+--
+
+	function suite.uniqueObjNames_onBaseNameCollision()
+		files { "src/hello.cpp", "src/greetings/hello.cpp" }
+		prepare()
+		test.capture [[
+OBJECTS := \
+	$(OBJDIR)/hello.o \
+	$(OBJDIR)/hello1.o \
+
+  		]]
+	end
+

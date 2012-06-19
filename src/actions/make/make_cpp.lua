@@ -113,22 +113,9 @@
 		-- precompiler header rule
 		cpp.pchrules(prj)
 
-	--[[
-		-- per-file rules
-		for _, file in ipairs(prj.files) do
-			if path.iscppfile(file) then
-				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo $(notdir $<)')
-				cpp.buildcommand_old(path.iscfile(file))
-			elseif (path.getextension(file) == ".rc") then
-				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo $(notdir $<)')
-				_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
-			end
-		end
-		_p('')
-		--]]
-
+		-- file building rules
+		cpp.filerules(prj)
+		
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
 		
@@ -223,6 +210,42 @@
 
 
 --
+-- Output the list of file building rules.
+--
+
+	function cpp.filerules(prj)
+		local tr = project.getsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if path.iscppfile(node.abspath) then
+					local objectname = project.getfileobject(prj, node.abspath)
+					_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))	
+					_p('')
+				end
+			end
+		})
+
+	--[[
+		-- per-file rules
+		for _, file in ipairs(prj.files) do
+			if path.iscppfile(file) then
+				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
+				_p('\t@echo $(notdir $<)')
+				cpp.buildcommand_old(path.iscfile(file))
+			elseif (path.getextension(file) == ".rc") then
+				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
+				_p('\t@echo $(notdir $<)')
+				_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
+			end
+		end
+		_p('')
+		--]]
+
+	end
+
+
+
+--
 -- Compile flags
 --
 
@@ -290,6 +313,10 @@
 					return
 				end
 			
+				-- assign a unique object file name to avoid collisions from
+				-- files at different folder levels with the same name
+				local objectname = project.getfileobject(prj, node.abspath)
+				
 				-- see what set of configurations contains this file
 				local inallcfgs = true
 				for cfg in project.eachconfig(prj) do
@@ -303,13 +330,13 @@
 				-- if this file exists in all configurations, write it to
 				-- the project's list of files		
 				if inallcfgs then
-					_p('\t$(OBJDIR)/%s.o \\', make.esc(node.basename))
+					_p('\t$(OBJDIR)/%s.o \\', make.esc(objectname))
 					
 				-- otherwise add it to the individual configuration lists
 				else
 					for cfg in project.eachconfig(prj) do
 						if incfg[cfg] then
-							table.insert(cfgfiles[cfg], node.basename)
+							table.insert(cfgfiles[cfg], objectname)
 						end
 					end
 				end
@@ -322,8 +349,8 @@
 			if #cfgfiles[cfg] > 0 then
 				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
 				_p('  OBJECTS += \\')
-				for _, basename in ipairs(cfgfiles[cfg]) do
-					_p('\t$(OBJDIR)/%s.o \\', make.esc(basename))
+				for _, objectname in ipairs(cfgfiles[cfg]) do
+					_p('\t$(OBJDIR)/%s.o \\', make.esc(objectname))
 				end
 				_p('')
 				_p('endif')

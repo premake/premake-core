@@ -129,3 +129,24 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- If two files at different folder levels have the same name, a different
+-- object file name should be used for each.
+--
+
+	function suite.uniqueObjectNames_onSourceNameCollision()
+		files { "hello.cpp", "greetings/hello.cpp" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="greetings\hello.cpp">
+		</ClCompile>
+		<ClCompile Include="hello.cpp">
+			<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+			<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end

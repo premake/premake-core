@@ -256,3 +256,45 @@
 			</FileConfiguration>
 		]]		
 	end
+
+
+--
+-- If two files at different folder levels have the same name, a different
+-- object file name should be used for each.
+--
+
+	function suite.uniqueObjectNames_onSourceNameCollision()
+		files { "hello.cpp", "greetings/hello.cpp" }
+		prepare()
+		test.capture [[
+		<Filter
+			Name="greetings"
+			Filter=""
+			>
+			<File
+				RelativePath="greetings\hello.cpp"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ObjectFile="$(IntDir)\hello1.obj"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ObjectFile="$(IntDir)\hello1.obj"
+				/>
+			</FileConfiguration>
+		</File>
+		]]
+	end
