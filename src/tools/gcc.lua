@@ -36,7 +36,7 @@
 		},
 		
 		universal = {
-			cppflags = "",
+			cppflags = "",  -- block default -MMD -MP flags
 		},
 		
 		wii = {
@@ -51,16 +51,36 @@
 	}
 
 
+	function gcc.getsysflags(cfg, field)
+		local result = {}
+		
+		-- merge in system-level flags
+		local system = gcc.sysflags[cfg.system]
+		if system then
+			result = table.join(result, system[field])
+		end
+		
+		-- merge in architecture-level flags
+		local arch = gcc.sysflags[cfg.architecture]
+		if arch then
+			result = table.join(result, arch[field])
+		end
+
+		return result
+	end
+
+
 --
 -- Returns list of CPPFLAGS for a specific configuration.
 --
 
 	function gcc.getcppflags(cfg)
-		local flags = {}
-		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
-		
+		local flags = gcc.getsysflags(cfg, 'cppflags')
+
 		-- Use -MMD -P by default to generate dependency information
-		table.insert(flags, sysflags.cppflags or "-MMD -MP")		
+		if #flags == 0 then
+			flags = { "-MMD", "-MP" }
+		end
 
 		return flags
 	end
@@ -86,8 +106,8 @@
 	function gcc.getcflags(cfg)
 		local flags = table.translate(cfg.flags, gcc.cflags)
 
-		local sysflags = gcc.sysflags[cfg.architecture] or {}
-		flags = table.join(flags, sysflags.cflags)
+		local sysflags = gcc.getsysflags(cfg, 'cflags')
+		flags = table.join(flags, sysflags)
 
 		if cfg.system ~= premake.WINDOWS and cfg.kind == premake.SHAREDLIB then
 			table.insert(flags, "-fPIC")
@@ -176,8 +196,8 @@
 			table.insert(flags, "-mwindows")
 		end
 		
-		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
-		flags = table.join(flags, sysflags.ldflags)
+		local sysflags = gcc.getsysflags(cfg, 'ldflags')
+		flags = table.join(flags, sysflags)
 		
 		return flags
 	end
