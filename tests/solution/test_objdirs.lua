@@ -20,11 +20,12 @@
 		system "macosx"
 	end
 
-	local function prepare()
+	local function result()
 		local platforms = sln.platforms or {}
 		project("MyProject")
 		prj = premake.solution.getproject_ng(sln, "MyProject")
 		cfg = premake5.project.getconfig(prj, "Debug", platforms[1])
+		return premake5.project.getrelative(prj, cfg.objdir)
 	end
 
 
@@ -34,8 +35,7 @@
 
 	function suite.directoryIsObj_onNoValueSet()
 		configurations { "Debug" }
-		prepare()
-		test.isequal("obj", cfg.objdir)
+		test.isequal("obj", result())
 	end
 
 
@@ -47,8 +47,7 @@
 	function suite.directoryIncludesPlatform_onPlatformConflict()
 		configurations { "Debug" }
 		platforms { "x32", "x64" }
-		prepare()
-		test.isequal("obj/x32", cfg.objdir)
+		test.isequal("obj/x32",  result())
 	end
 
 
@@ -59,8 +58,7 @@
 
 	function suite.directoryIncludesBuildCfg_onBuildCfgConflict()
 		configurations { "Debug", "Release" }
-		prepare()
-		test.isequal("obj/Debug", cfg.objdir)
+		test.isequal("obj/Debug",  result())
 	end
 
 
@@ -72,8 +70,7 @@
 	function suite.directoryIncludesBuildCfg_onPlatformAndBuildCfgConflict()
 		configurations { "Debug", "Release" }
 		platforms { "x32", "x64" }
-		prepare()
-		test.isequal("obj/x32/Debug", cfg.objdir)
+		test.isequal("obj/x32/Debug",  result())
 	end
 
 
@@ -85,7 +82,6 @@
 	function suite.directoryIncludesBuildCfg_onProjectConflict()
 		configurations { "Debug", "Release" }
 		project "MyProject2"
-		prepare()
-		test.isequal("obj/Debug/MyProject", cfg.objdir)
+		test.isequal("obj/Debug/MyProject",  result())
 	end
 

@@ -187,7 +187,7 @@
 		for cfg, dirs in pairs(configs) do
 			for _, dir in ipairs(dirs) do
 				if counts[dir] == 1 then
-					cfg.objdir = project.getrelative(cfg.project, dir)
+					cfg.objdir = dir
 					break
 				end
 			end

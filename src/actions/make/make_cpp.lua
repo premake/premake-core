@@ -406,7 +406,7 @@
 
 	function cpp.targetconfig(cfg)		
 		local targetinfo = config.gettargetinfo(cfg)
-		_p('  OBJDIR     = %s', make.esc(cfg.objdir))
+		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
 		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
 	end

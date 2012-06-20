@@ -143,7 +143,7 @@
 		local outdir = path.translate(config.gettargetinfo(cfg).directory)
 		_x(3,'OutputDirectory="%s"', outdir)
 
-		_x(3,'IntermediateDirectory="%s"', path.translate(cfg.objdir))
+		_x(3,'IntermediateDirectory="%s"', path.translate(project.getrelative(cfg.project, cfg.objdir)))
 
 		local cfgtype
 		if (cfg.kind == "SharedLib") then

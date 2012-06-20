@@ -190,7 +190,7 @@
 			_x(2,'<OutputFile>$(OutDir)%s</OutputFile>', target.name)
 		end
 
-		_x(2,'<IntDir>%s\\</IntDir>', path.translate(cfg.objdir))
+		_x(2,'<IntDir>%s\\</IntDir>', path.translate(project.getrelative(cfg.project, cfg.objdir)))
 
 		_x(2,'<TargetName>%s%s</TargetName>', target.prefix, target.basename)
 		_x(2,'<TargetExt>%s</TargetExt>', target.extension)
