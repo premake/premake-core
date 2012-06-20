@@ -195,13 +195,18 @@
 			return result
 		end
 
-		 return string.gsub(value, "%%{(.-)}", function(token)
-			result, err = expander(token)
-			if not result then
-				error(err, 0)
-			end
-			return result
-		 end)
+		-- keep expanding tokens until they are all handled
+		repeat
+			value, count = string.gsub(value, "%%{(.-)}", function(token)			
+				local result, err = expander(token)
+				if not result then
+					error(err, 0)
+				end
+				return result
+			end)
+		until count == 0
+
+		return value
 	end
 
 
