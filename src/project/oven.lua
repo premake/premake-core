@@ -120,11 +120,28 @@
 --
 
 	function oven.expandtokens(cfg, scope, filecfg, fieldname)
+		-- File this under "too clever by half": I want path tokens (targetdir, etc.)
+		-- to expand to relative paths, but it is easier to work with absolute paths 
+		-- everywhere else. So create a proxy object with an attached metatable that
+		-- will translate any path fields from absolute to relative on the fly.
+		local _cfg = cfg
+		local cfgproxy = {}
+		setmetatable(cfgproxy, {
+			__index = function(cfg, key)
+				-- pass through access to non-Premake fields
+				local field = premake.fields[key]
+				if field and field.kind == "path" then
+					return premake5.project.getrelative(_cfg.project, _cfg[key])
+				end				
+				return _cfg[key]
+			end	
+		})
+			
 		-- build a context for the tokens to use
 		local context = {
 			sln = cfg.solution,
 			prj = cfg.project,
-			cfg = cfg,
+			cfg = cfgproxy,
 			file = filecfg
 		}
 		

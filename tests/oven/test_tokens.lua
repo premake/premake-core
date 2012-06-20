@@ -120,12 +120,22 @@
 		test.isequal("a", cfg.testapi)
 	end
 
+
 --
--- Make sure I can use tokens in the objects directory, which can also be a token itself.
+-- Make sure I can use tokens in the objects directory and targets,
+-- which can also be a tokens themselves.
 --
 
 	function suite.canUseTokensInObjDir()
 		objdir "tmp/%{prj.name}_%{cfg.buildcfg}"
+		testapi "%{cfg.objdir}"
 		prepare()
-		test.isequal("tmp/MyProject_Debug", cfg.objdir)
+		test.isequal("tmp/MyProject_Debug", cfg.testapi)
+	end
+
+	function suite.canUseTokensInBuildTarget()
+		targetdir "bin/%{prj.name}_%{cfg.buildcfg}"
+		testapi "%{cfg.targetdir}"
+		prepare()
+		test.isequal("bin/MyProject_Debug", cfg.testapi)
 	end
