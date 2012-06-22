@@ -16,15 +16,11 @@
 --
 
 	function make.cpp.generate(prj)
-		--[[
-		-- create a shortcut to the compiler interface
-		local cc = premake.gettool(prj)
-
-		-- build a list of supported target platforms that also includes a generic build
-		local platforms = premake.filterplatforms(prj.solution, cc.platforms, "Native")
-		--]]
-		
 		cpp.header(prj)
+
+		-- main build rule(s)
+		_p('.PHONY: clean prebuild prelink')
+		_p('')
 
 		for cfg in project.eachconfig(prj) do
 			cpp.config(cfg)
@@ -43,41 +39,19 @@
 		_p('endif')
 		_p('')
 
-		-- main build rule(s)
-		_p('.PHONY: clean prebuild prelink')
-		_p('')
-
-	--[[
-		if os.is("MacOSX") and prj.kind == "WindowedApp" then
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
-		else
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
-		end
+		-- common build target rules
+		_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
 		_p('\t@:')
 		_p('')
 
-		-- target build rule
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 
-		-- Create destination directories. Can't use $@ for this because it loses the
-		-- escaping, causing issues with spaces and parenthesis
-		_p('$(TARGETDIR):')
-		premake.make_mkdirrule("$(TARGETDIR)")
-
-		_p('$(OBJDIR):')
-		premake.make_mkdirrule("$(OBJDIR)")
-
-		-- Mac OS X specific targets
-		if os.is("MacOSX") and prj.kind == "WindowedApp" then
-			_p('$(dir $(TARGETDIR))PkgInfo:')
-			_p('$(dir $(TARGETDIR))Info.plist:')
-			_p('')
-		end
-	--]]
+		make.mkdirrule("$(TARGETDIR)")
+		make.mkdirrule("$(OBJDIR)")
 	
 		-- clean target
 		_p('clean:')
@@ -108,8 +82,6 @@
 		
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
-		
-		print("** Warning: GMake C++ project have not been ported yet")
 	end
 
 
@@ -180,7 +152,11 @@
 			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
-
+		_p('')
+		
+		-- write the target building rule
+		-- cpp.targetrules(cfg)
+		
 		-- write out config-level makesettings blocks
 		make.settings(cfg, toolset)
 
@@ -209,30 +185,19 @@
 			onleaf = function(node, depth)
 				if path.iscppfile(node.abspath) then
 					local objectname = project.getfileobject(prj, node.abspath)
-					_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))	
-					_p('')
+					_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
+					_p('\t@echo $(notdir $<)')
+					cpp.buildcommand(prj)
+				elseif path.isresourcefile(node.abspath) then
+					local objectname = project.getfileobject(prj, node.abspath)
+					_p('$(OBJDIR)/%s.res: %s', make.esc(objectname), make.esc(node.relpath))
+					_p('\t@echo $(notdir $<)')
+					_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
 				end
 			end
 		})
-
-	--[[
-		-- per-file rules
-		for _, file in ipairs(prj.files) do
-			if path.iscppfile(file) then
-				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo $(notdir $<)')
-				cpp.buildcommand_old(path.iscfile(file))
-			elseif (path.getextension(file) == ".rc") then
-				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo $(notdir $<)')
-				_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
-			end
-		end
 		_p('')
-		--]]
-
 	end
-
 
 
 --
@@ -421,6 +386,29 @@
 		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
 		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
 		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
+	end
+
+
+--
+-- The main build target rules.
+--
+
+	function cpp.targetrules(cfg)
+		local macapp = (cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP)
+		
+		if macapp then
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
+		else
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+		end
+		_p('\t@:')
+		_p('')
+		
+		if macapp then
+			_p('$(dir $(TARGETDIR))PkgInfo:')
+			_p('$(dir $(TARGETDIR))Info.plist:')
+			_p('')
+		end
 	end
 
 

@@ -28,7 +28,6 @@
 
 		excludes
 		{
-			"src/premake.lua",
 			"src/host/lua-5.1.4/src/lua.c",
 			"src/host/lua-5.1.4/src/luac.c",
 			"src/host/lua-5.1.4/src/print.c",

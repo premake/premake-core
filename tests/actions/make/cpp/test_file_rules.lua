@@ -35,8 +35,11 @@
 		prepare()
 		test.capture [[
 $(OBJDIR)/hello.o: src/greetings/hello.cpp
-
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 $(OBJDIR)/hello1.o: src/hello.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 
   		]]
 	end

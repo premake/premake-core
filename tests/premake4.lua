@@ -163,6 +163,7 @@
 	dofile("actions/make/cpp/test_make_linking.lua")
 	dofile("actions/make/cpp/test_objects.lua")
 	dofile("actions/make/cpp/test_ps3.lua")
+	dofile("actions/make/cpp/test_target_rules.lua")
 	dofile("actions/make/cpp/test_wiidev.lua")
 
 	-- Xcode3 tests

@@ -133,6 +133,33 @@
 
 
 --
+-- Rules for file ops based on the shell type. Can't use defines and $@ because
+-- it screws up the escaping of spaces and parethesis (anyone know a solution?)
+--
+
+	function make.copyrule(source, target)
+		_p('%s: %s', target, source)
+		_p('\t@echo Copying $(notdir %s)', target)
+		_p('ifeq (posix,$(SHELLTYPE))')
+		_p('\t$(SILENT) cp -fR %s %s', source, target)
+		_p('else')
+		_p('\t$(SILENT) copy /Y $(subst /,\\\\,%s) $(subst /,\\\\,%s)', source, target)
+		_p('endif')
+	end
+
+	function make.mkdirrule(dirname)
+		_p('%s:', dirname)
+		_p('\t@echo Creating %s', dirname)
+		_p('ifeq (posix,$(SHELLTYPE))')
+		_p('\t$(SILENT) mkdir -p %s', dirname)
+		_p('else')
+		_p('\t$(SILENT) mkdir $(subst /,\\\\,%s)', dirname)
+		_p('endif')
+		_p('')
+	end	
+
+
+--
 -- Write out raw makefile rules for a configuration.
 --
 
