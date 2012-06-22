@@ -33,16 +33,6 @@
 		-- list intermediate files
 		cpp.objects(prj)
 		
-		--[[
-		_p('RESOURCES := \\')
-		for _, file in ipairs(prj.files) do
-			if path.isresourcefile(file) then
-				_p('\t$(OBJDIR)/%s.res \\', _MAKE.esc(path.getbasename(file)))
-			end
-		end
-		_p('')
-		--]]
-		
 		-- identify the shell type
 		_p('SHELLTYPE := msdos')
 		_p('ifeq (,$(ComSpec)$(COMSPEC))')
@@ -294,29 +284,39 @@
 --
 
 	function cpp.objects(prj)
-		-- create a set of lists, one per configuration, to contain any
-		-- per-configuration files I find.
-		local cfgfiles = {}
+		-- create lists for intermediate files, at the project level and
+		-- for each configuration
+		local root = { objects={}, resources={} }
+		local configs = {}		
 		for cfg in project.eachconfig(prj) do
-			cfgfiles[cfg] = {}
+			configs[cfg] = { objects={}, resources={} }
 		end
-		
-		-- now walk the list of files in the project
+
+		-- for each file in the iterator below, keep track of which
+		-- configurations to which it belongs
 		local incfg = {}
-		
-		_p('OBJECTS := \\')
+
+		-- now walk the list of files in the project
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
-				-- skip files that can't be built
-				if not path.iscppfile(node.abspath) then
+				-- identify the file type
+				local kind
+				if path.iscppfile(node.abspath) then
+					kind = "objects"
+				elseif path.isresourcefile(node.abspath) then
+					kind = "resources"
+				end
+				
+				-- skip files that aren't compiled
+				if not kind then
 					return
 				end
-			
+
 				-- assign a unique object file name to avoid collisions from
 				-- files at different folder levels with the same name
 				local objectname = project.getfileobject(prj, node.abspath)
-				
+
 				-- see what set of configurations contains this file
 				local inallcfgs = true
 				for cfg in project.eachconfig(prj) do
@@ -326,33 +326,45 @@
 						inallcfgs = false
 					end
 				end
-				
+
 				-- if this file exists in all configurations, write it to
-				-- the project's list of files		
+				-- the project's list of files, else add to specific cfgs
 				if inallcfgs then
-					_p('\t$(OBJDIR)/%s.o \\', make.esc(objectname))
-					
-				-- otherwise add it to the individual configuration lists
+					table.insert(root[kind], objectname)
 				else
 					for cfg in project.eachconfig(prj) do
 						if incfg[cfg] then
-							table.insert(cfgfiles[cfg], objectname)
+							table.insert(configs[cfg][kind], objectname)
 						end
 					end
 				end
+				
 			end
 		})
-		_p('')
 		
-		-- project file list is now complete; write any per-config lists
+		-- now I can write out the lists, project level first...
+		function listobjects(var, list, ext)
+			_p('%s \\', var)
+			for _, objectname in ipairs(list) do
+				_p('\t$(OBJDIR)/%s.%s \\', make.esc(objectname), ext)
+			end
+			_p('')
+		end
+		
+		listobjects('OBJECTS :=', root.objects, 'o')
+		listobjects('RESOURCES :=', root.resources, 'res')
+		
+		-- ...then individual configurations, as needed
 		for cfg in project.eachconfig(prj) do
-			if #cfgfiles[cfg] > 0 then
+			local files = configs[cfg]
+			if #files.objects > 0 or #files.resources > 0 then
 				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
-				_p('  OBJECTS += \\')
-				for _, objectname in ipairs(cfgfiles[cfg]) do
-					_p('\t$(OBJDIR)/%s.o \\', make.esc(objectname))
+				if #files.objects > 0 then
+					listobjects('  OBJECTS +=', files.objects, 'o')
 				end
-				_p('')
+				if #files.resources > 0 then
+					listobjects('  RESOURCES +=', files.resources, 'res')
+				end
 				_p('endif')
 				_p('')
 			end

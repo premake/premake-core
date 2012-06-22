@@ -68,6 +68,8 @@ OBJECTS := \
 		test.capture [[
 OBJECTS := \
 
+RESOURCES := \
+
 ifeq ($(config),debug)
   OBJECTS += \
 	$(OBJDIR)/hello.o \
@@ -93,3 +95,20 @@ OBJECTS := \
   		]]
 	end
 
+
+--
+-- Check handling of Windows resource files.
+--
+
+	function suite.compilesWindowsResourceFiles()
+		files { "src/hello.rc", "src/greetings/hello.rc" }
+		prepare()
+		test.capture [[
+OBJECTS := \
+
+RESOURCES := \
+	$(OBJDIR)/hello.res \
+	$(OBJDIR)/hello1.res \
+
+		]]
+	end
