@@ -452,7 +452,7 @@
 		end
 			
 		if #cfg.links > 0 then
-			_x(4,'AdditionalDependencies="%s"', table.concat(toolset.getlinks(cfg, true), " "))
+			_x(4,'AdditionalDependencies="%s"', table.concat(toolset.getlinks(cfg), " "))
 		end
 			
 		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
