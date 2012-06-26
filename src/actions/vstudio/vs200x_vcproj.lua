@@ -916,7 +916,7 @@
 --
 
 	function vc200x.links(cfg)
-		local links = config.getlinks(cfg, "system", "fullpath")
+		local links = config.getlinks(cfg, "all", "fullpath")
 		links = table.concat(links, " ")
 		links = path.translate(links)
 		return links
