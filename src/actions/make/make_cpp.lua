@@ -40,10 +40,6 @@
 		_p('')
 
 		-- common build target rules
-		_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
-		_p('\t@:')
-		_p('')
-
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
@@ -155,7 +151,7 @@
 		_p('')
 		
 		-- write the target building rule
-		-- cpp.targetrules(cfg)
+		cpp.targetrules(cfg)
 		
 		-- write out config-level makesettings blocks
 		make.settings(cfg, toolset)
@@ -402,12 +398,11 @@
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
 		end
 		_p('\t@:')
-		_p('')
 		
 		if macapp then
+			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')
 			_p('$(dir $(TARGETDIR))Info.plist:')
-			_p('')
 		end
 	end
 
