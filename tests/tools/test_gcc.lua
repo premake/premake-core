@@ -233,3 +233,14 @@
 		test.isequal({ "generated.o" }, gcc.getlinks(cfg))
 	end
 
+
+--
+-- Include directories should be made project relative.
+--
+
+	function suite.includeDirsAreRelative()
+		includedirs { "../include", "src/include" }
+		prepare()
+		test.isequal({ "-I../include", "-Isrc/include" }, gcc.getincludedirs(cfg, cfg.includedirs))
+	end
+

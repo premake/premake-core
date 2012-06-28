@@ -149,10 +149,10 @@
 -- Decorate include file search paths for the GCC command line.
 --
 
-	function gcc.getincludedirs(dirs)
+	function gcc.getincludedirs(cfg, dirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
-			table.insert(result, "-I" .. dir)
+			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
 		end
 		return result
 	end

@@ -6,6 +6,7 @@
 
 	premake.tools.snc = {}
 	local snc = premake.tools.snc
+	local gcc = premake.tools.gcc
 	local config = premake5.config
 	
 
@@ -81,10 +82,12 @@
 
 
 --
--- The linking behavior is the same as GCC.
+-- These are the same as GCC
 --
 
-	snc.getlinks = premake.tools.gcc.getlinks
+	snc.getdefines = gcc.getdefines
+	snc.getincludedirs = gcc.getincludedirs
+	snc.getlinks = gcc.getlinks
 
 
 

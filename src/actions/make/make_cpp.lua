@@ -206,13 +206,13 @@
 
 	function cpp.flags(cfg, toolset)
 		_p('  DEFINES   += %s', table.concat(toolset.getdefines(cfg.defines), " "))
-		_p('  INCLUDES  += %s', table.concat(make.esc(toolset.getincludedirs(cfg.includedirs), " ")))
+		_p('  INCLUDES  += %s', table.concat(make.esc(toolset.getincludedirs(cfg, cfg.includedirs), " ")))
 		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(toolset.getcxxflags(cfg), " "))
 		_p('  LDFLAGS   += %s', table.concat(table.join(toolset.getldflags(cfg), cfg.linkoptions), " "))
 	
-		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg.resincludedirs), cfg.resoptions)
+		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)
 		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(resflags, " "))
 	end
 
