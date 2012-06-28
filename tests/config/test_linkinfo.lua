@@ -20,7 +20,7 @@
 		_ACTION = "test"
 		sln, prj = test.createsolution()
 		kind "StaticLib"
-		system "windows"
+		system "Windows"
 	end
 
 	local function prepare()
@@ -96,3 +96,19 @@
 		test.isequal("MyTargetImports", i.basename)
 	end
 
+
+--
+-- Test library name formatting.
+--
+
+	function suite.nameFormatting_onWindows()
+		system "Windows"
+		i = prepare()
+		test.isequal("MyProject.lib", i.name)
+	end
+
+	function suite.nameFormatting_onLinux()
+		system "Linux"
+		i = prepare()
+		test.isequal("libMyProject.a", i.name)
+	end

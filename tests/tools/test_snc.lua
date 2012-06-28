@@ -86,10 +86,13 @@
 
 	function suite.links_onStaticSiblingLibrary()
 		links { "MyProject2" }
+
 		test.createproject(sln)
+		system "Linux"
 		kind "StaticLib"
 		location "MyProject2"
 		targetdir "lib"
+
 		prepare()
 		test.isequal({ "lib/libMyProject2.a" }, snc.getlinks(cfg))
 	end

@@ -201,9 +201,12 @@
 
 	function suite.links_onStaticSiblingLibrary()
 		links { "MyProject2" }
+
 		test.createproject(sln)
+		system "Linux"
 		kind "StaticLib"
 		targetdir "lib"
+
 		prepare()
 		test.isequal({ "lib/libMyProject2.a" }, gcc.getlinks(cfg))
 	end
@@ -215,9 +218,12 @@
 
 	function suite.links_onStaticSharedLibrary()
 		links { "MyProject2" }
+
 		test.createproject(sln)
+		system "Linux"
 		kind "SharedLib"
 		targetdir "lib"
+
 		prepare()
 		test.isequal({ "-lMyProject2" }, gcc.getlinks(cfg))
 	end
