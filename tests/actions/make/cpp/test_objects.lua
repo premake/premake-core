@@ -112,3 +112,37 @@ RESOURCES := \
 
 		]]
 	end
+
+
+
+
+--
+-- If a custom rule builds to an object file, include it in the
+-- link automatically to match the behavior of Visual Studio
+--
+
+	function suite.customBuildRule()
+		files { "hello.x" }
+		configuration "**.x"
+			buildrule {
+				description = "Compiling %{file.name}",
+				commands = { 
+					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"', 
+					'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
+				},
+				outputs = { "%{cfg.objdir}/%{file.basename}.obj" }
+			}
+		prepare()
+		test.capture [[
+OBJECTS := \
+
+RESOURCES := \
+
+ifeq ($(config),debug)
+  OBJECTS += \
+	obj/Debug/hello.obj \
+
+endif
+
+		]]
+	end

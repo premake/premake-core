@@ -274,6 +274,7 @@
 			fcfg.vpath = fcfg.relpath
 		end
 
+		fcfg.name = path.getname(filename)
 		fcfg.basename = path.getbasename(filename)
 		fcfg.path = fcfg.relpath
 		

@@ -179,22 +179,60 @@
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
-				if path.iscppfile(node.abspath) then
-					local objectname = project.getfileobject(prj, node.abspath)
-					_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
-					_p('\t@echo $(notdir $<)')
-					cpp.buildcommand(prj)
-				elseif path.isresourcefile(node.abspath) then
-					local objectname = project.getfileobject(prj, node.abspath)
-					_p('$(OBJDIR)/%s.res: %s', make.esc(objectname), make.esc(node.relpath))
-					_p('\t@echo $(notdir $<)')
-					_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
+				-- check to see if this file has custom rules
+				local rules
+				for cfg in project.eachconfig(prj) do
+					local filecfg = config.getfileconfig(cfg, node.abspath)
+					if filecfg and filecfg.buildrule then
+						rules = true
+						break
+					end
+				end
+
+				-- if it has custom rules, need to break them out
+				-- into individual configurations
+				if rules then
+					cpp.customfilerules(prj, node)
+				else
+					cpp.standardfilerules(prj, node)
 				end
 			end
 		})
 		_p('')
 	end
 
+	function cpp.standardfilerules(prj, node)
+		-- C/C++ file
+		if path.iscppfile(node.abspath) then
+			local objectname = project.getfileobject(prj, node.abspath)
+			_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
+			_p('\t@echo $(notdir $<)')
+			cpp.buildcommand(prj)
+			
+		-- resource file
+		elseif path.isresourcefile(node.abspath) then
+			local objectname = project.getfileobject(prj, node.abspath)
+			_p('$(OBJDIR)/%s.res: %s', make.esc(objectname), make.esc(node.relpath))
+			_p('\t@echo $(notdir $<)')
+			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
+		end
+	end
+
+	function cpp.customfilerules(prj, node)
+		for cfg in project.eachconfig(prj) do
+			local filecfg = config.getfileconfig(cfg, node.abspath)
+			local rule = filecfg.buildrule
+
+			_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+			_p('%s: %s', make.esc(rule.outputs[1]), make.esc(filecfg.relpath))
+			_p('\t@echo "%s"', rule.description)
+			for _, cmd in ipairs(rule.commands) do
+				_p('\t$(SILENT) %s', cmd)
+			end
+			_p('endif')
+		end
+	end
+	
 
 --
 -- Compile flags
@@ -261,53 +299,72 @@
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
-				-- identify the file type
-				local kind
-				if path.iscppfile(node.abspath) then
-					kind = "objects"
-				elseif path.isresourcefile(node.abspath) then
-					kind = "resources"
-				end
-				
-				-- skip files that aren't compiled
-				if not kind then
-					return
-				end
-
-				-- assign a unique object file name to avoid collisions from
-				-- files at different folder levels with the same name
-				local objectname = project.getfileobject(prj, node.abspath)
-
-				-- see what set of configurations contains this file
-				local inallcfgs = true
+				-- figure out what configurations contain this file, and
+				-- if it uses custom build rules
+				local inall = true
+				local custom = false
 				for cfg in project.eachconfig(prj) do
 					local filecfg = config.getfileconfig(cfg, node.abspath)
-					incfg[cfg] = (filecfg ~= nil)
-					if not filecfg then
-						inallcfgs = false
+					if filecfg then
+						incfg[cfg] = filecfg
+						custom = (filecfg.buildrule ~= nil)
+					else
+						inall = false
 					end
 				end
 
-				-- if this file exists in all configurations, write it to
-				-- the project's list of files, else add to specific cfgs
-				if inallcfgs then
-					table.insert(root[kind], objectname)
+				if not custom then
+					-- identify the file type
+					local kind
+					if path.iscppfile(node.abspath) then
+						kind = "objects"
+					elseif path.isresourcefile(node.abspath) then
+						kind = "resources"
+					end
+				
+					-- skip files that aren't compiled
+					if not custom and not kind then
+						return
+					end
+
+					-- assign a unique object file name to avoid collisions
+					local objectname = project.getfileobject(prj, node.abspath)
+					objectname = "$(OBJDIR)/" .. objectname .. iif(kind == "objects", ".o", ".res")
+					
+					-- if this file exists in all configurations, write it to
+					-- the project's list of files, else add to specific cfgs
+					if inall then
+						table.insert(root[kind], objectname)
+					else
+						for cfg in project.eachconfig(prj) do
+							if incfg[cfg] then
+								table.insert(configs[cfg][kind], objectname)
+							end
+						end
+					end
+
 				else
 					for cfg in project.eachconfig(prj) do
-						if incfg[cfg] then
-							table.insert(configs[cfg][kind], objectname)
+						local filecfg = incfg[cfg]
+						if filecfg then							
+							-- if the custom build outputs an object file, add it to
+							-- the link step automatically to match Visual Studio
+							local output = filecfg.buildrule.outputs[1]
+							if path.isobjectfile(output) then
+								table.insert(configs[cfg].objects, output)
+							end
 						end
 					end
 				end
-				
+					
 			end
 		})
 		
 		-- now I can write out the lists, project level first...
-		function listobjects(var, list, ext)
+		function listobjects(var, list)
 			_p('%s \\', var)
 			for _, objectname in ipairs(list) do
-				_p('\t$(OBJDIR)/%s.%s \\', make.esc(objectname), ext)
+				_p('\t%s \\', make.esc(objectname))
 			end
 			_p('')
 		end
@@ -321,10 +378,10 @@
 			if #files.objects > 0 or #files.resources > 0 then
 				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
 				if #files.objects > 0 then
-					listobjects('  OBJECTS +=', files.objects, 'o')
+					listobjects('  OBJECTS +=', files.objects)
 				end
 				if #files.resources > 0 then
-					listobjects('  RESOURCES +=', files.resources, 'res')
+					listobjects('  RESOURCES +=', files.resources)
 				end
 				_p('endif')
 				_p('')

@@ -43,3 +43,36 @@ $(OBJDIR)/hello1.o: src/hello.cpp
 
   		]]
 	end
+
+
+--
+-- If a custom build rule is supplied, it should be used.
+--
+
+	function suite.customBuildRule()
+		files { "hello.x" }
+		configuration "**.x"
+			buildrule {
+				description = "Compiling %{file.name}",
+				commands = { 
+					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"', 
+					'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
+				},
+				outputs = { "%{cfg.objdir}/%{file.basename}.obj" }
+			}
+		prepare()
+		test.capture [[
+ifeq ($(config),debug)
+obj/Debug/hello.obj: hello.x
+	@echo "Compiling hello.x"
+	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
+	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
+endif
+ifeq ($(config),release)
+obj/Release/hello.obj: hello.x
+	@echo "Compiling hello.x"
+	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
+	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+endif
+		]]
+	end
