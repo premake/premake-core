@@ -249,16 +249,22 @@
 
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 				if kind == "dependencies" or canlink(cfg, prjcfg) then
+					-- if the caller wants the whole project object, then okay
 					if part == "object" then
 						item = prjcfg
-					elseif part == "basename" then
-						item = config.getlinkinfo(prjcfg).basename
-					else
-						item = path.rebase(config.getlinkinfo(prjcfg).fullpath, 
-						                   project.getlocation(prjcfg.project), 
-						                   project.getlocation(cfg.project))
-						if part == "directory" then
-							item = path.getdirectory(item)
+					
+					-- if this is an external project reference, I can't return
+					-- any kind of path info, because I don't know the target name
+					elseif not prj.externalname then
+						if part == "basename" then
+							item = config.getlinkinfo(prjcfg).basename
+						else
+							item = path.rebase(config.getlinkinfo(prjcfg).fullpath, 
+											   project.getlocation(prjcfg.project), 
+											   project.getlocation(cfg.project))
+							if part == "directory" then
+								item = path.getdirectory(item)
+							end
 						end
 					end
 				end

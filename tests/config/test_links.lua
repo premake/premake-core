@@ -99,3 +99,22 @@
 		local r = prepare("all", "directory")
 		test.isequal({ "../libs" }, r)
 	end
+
+
+--
+-- References to external projects should not appear in any results that
+-- use file paths, since there is no way to know what the actual library
+-- path might be. It is okay to return project objects though (right?)
+--
+
+	function suite.skipsExternalProjectRefs()
+		links { "MyProject2" }
+		
+		external "MyProject2"
+		kind "StaticLib"
+		language "C++"
+		
+		local r = prepare("all", "fullpath")
+		test.isequal({}, r)
+	end
+

@@ -250,3 +250,20 @@
 		test.isequal({ "-I../include", "-Isrc/include" }, gcc.getincludedirs(cfg, cfg.includedirs))
 	end
 
+
+--
+-- Skip external projects when building the list of linked
+-- libraries, since I don't know the actual output target.
+--
+
+
+	function suite.skipsExternalProjectRefs()
+		links { "MyProject2" }
+		
+		external "MyProject2"
+		kind "StaticLib"
+		language "C++"
+		
+		prepare()
+		test.isequal({}, gcc.getlinks(cfg, false))
+	end
