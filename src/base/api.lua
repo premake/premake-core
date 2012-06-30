@@ -12,6 +12,9 @@
 -- Here I define all of the getter/setter functions as metadata. The actual
 -- functions are built programmatically below.
 --
+-- Note that these are deprecated in favor of the api.register() calls below,
+-- and will be going away as soon as I have a chance to port them.
+--
 	
 	premake.fields = 
 	{
@@ -192,6 +195,14 @@
 		-- right now, ignore calls with no value; later might want to
 		-- return the current baked value
 		if not value then return end
+		
+		-- hack: start a new configuration block if I can, so that the
+		-- remove will be processed in the same context as it appears in
+		-- the script. Can be removed when I rewrite the internals to
+		-- be truly declarative
+		if field.scope == "config" then
+			configuration(api.scope.configuration.terms)
+		end
 		
 		local target = api.gettarget(field.scope)
 		
@@ -994,7 +1005,9 @@
 --
 
 	function premake.remove(fieldname, value)
-		local kind = premake.fields[fieldname].kind
+		local field = premake.fields[fieldname]
+		local kind = field.kind
+		
 		function set(value)
 			if kind ~= "list" and not value:startswith("**") then
 				return path.getabsolute(value)
@@ -1003,7 +1016,11 @@
 			end
 		end
 		
-		local cfg = premake.getobject(premake.fields[fieldname].scope)
+		if field.scope == "config" then
+			configuration(api.scope.configuration.terms)
+		end
+		
+		local cfg = premake.getobject(field.scope)
 		cfg.removes = cfg.removes or {}
 		cfg.removes[fieldname] = premake.setarray(cfg.removes, fieldname, value, set)
 	end

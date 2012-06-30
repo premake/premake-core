@@ -410,8 +410,8 @@
 
 		-- find *all* files referenced by the project, regardless of configuration
 		local files = {}
-		for _, block in ipairs(prj.blocks) do
-			for _, file in ipairs(block.files) do
+		for cfg in project.eachconfig(prj) do
+			for _, file in ipairs(cfg.files) do
 				files[file] = file
 			end
 		end

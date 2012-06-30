@@ -475,7 +475,7 @@
 --    field will be merged.
 --
 
-	function oven.remove(cfg, removes, filterField)		
+	function oven.remove(cfg, removes, filterField)
 		if filterField then
 			oven.removefromfield(cfg[filterField], removes[filterField])
 		else
