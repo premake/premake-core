@@ -1,6 +1,6 @@
 --
 -- vs2005_solution.lua
--- Generate a Visual Studio 2005-2010 solution.
+-- Generate a Visual Studio 2005-2012 solution.
 -- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
@@ -40,7 +40,12 @@
 --
 
 	function sln2005.header(sln)
-		local version = { vs2005 = 9, vs2008 = 10, vs2010 = 11 }
+		local version = { 
+			vs2005 = 9, 
+			vs2008 = 10, 
+			vs2010 = 11, 
+			vs2012 = 12,
+		}
 		_p('Microsoft Visual Studio Solution File, Format Version %d.00', version[_ACTION])
 		_p('# Visual Studio %s', _ACTION:sub(3))
 	end
@@ -57,7 +62,9 @@
 		prjpath = path.translate(path.getrelative(slnpath, prjpath))
 		
 		_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
-		sln2005.projectdependencies_ng(prj)
+		if _ACTION < "vs2012" then
+			sln2005.projectdependencies_ng(prj)
+		end
 		_p('EndProject')
 	end
 

@@ -1,6 +1,6 @@
 --
 -- vs2019_vcxproj_user.lua
--- Generate a Visual Studio 2010 C/C++ project .user file
+-- Generate a Visual Studio 201x C/C++ project .user file
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
@@ -10,7 +10,7 @@
 
 
 --
--- Generate a Visual Studio 2010 C++ user file, with support for the new platforms API.
+-- Generate a Visual Studio 201x C++ user file, with support for the new platforms API.
 --
 
 	function vc2010.generate_user_ng(prj)

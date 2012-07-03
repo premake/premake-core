@@ -150,6 +150,9 @@
 	dofile("actions/vstudio/vc2010/test_prop_sheet.lua")
 	dofile("actions/vstudio/vc2010/test_resource_compile.lua")
 
+	-- Visual Studio 2012 C/C++ projects
+	dofile("actions/vstudio/vc2012/test_globals.lua")
+
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
 	
