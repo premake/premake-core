@@ -291,16 +291,13 @@
 			configs[cfg] = { objects={}, resources={} }
 		end
 
-		-- for each file in the iterator below, keep track of which
-		-- configurations to which it belongs
-		local incfg = {}
-
 		-- now walk the list of files in the project
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- figure out what configurations contain this file, and
 				-- if it uses custom build rules
+				local incfg = {}
 				local inall = true
 				local custom = false
 				for cfg in project.eachconfig(prj) do

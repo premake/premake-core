@@ -63,7 +63,9 @@ OBJECTS := \
 
 	function suite.configFilesAreConditioned()
 		configuration "Debug"
-		files { "src/hello.cpp" }
+		files { "src/hello_debug.cpp" }
+		configuration "Release"
+		files { "src/hello_release.cpp" }
 		prepare()
 		test.capture [[
 OBJECTS := \
@@ -72,7 +74,13 @@ RESOURCES := \
 
 ifeq ($(config),debug)
   OBJECTS += \
-	$(OBJDIR)/hello.o \
+	$(OBJDIR)/hello_debug.o \
+
+endif
+
+ifeq ($(config),release)
+  OBJECTS += \
+	$(OBJDIR)/hello_release.o \
 
 endif
 
