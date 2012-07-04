@@ -221,15 +221,17 @@
 	function cpp.customfilerules(prj, node)
 		for cfg in project.eachconfig(prj) do
 			local filecfg = config.getfileconfig(cfg, node.abspath)
-			local rule = filecfg.buildrule
-
-			_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
-			_p('%s: %s', make.esc(rule.outputs[1]), make.esc(filecfg.relpath))
-			_p('\t@echo "%s"', rule.description)
-			for _, cmd in ipairs(rule.commands) do
-				_p('\t$(SILENT) %s', cmd)
+			if filecfg then
+				local rule = filecfg.buildrule
+	
+				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+				_p('%s: %s', make.esc(rule.outputs[1]), make.esc(filecfg.relpath))
+				_p('\t@echo "%s"', rule.description or ("Building " .. filecfg.relpath))
+				for _, cmd in ipairs(rule.commands) do
+					_p('\t$(SILENT) %s', cmd)
+				end
+				_p('endif')
 			end
-			_p('endif')
 		end
 	end
 	
