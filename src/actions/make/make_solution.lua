@@ -95,7 +95,7 @@
 		for prj in solution.eachproject_ng(sln) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")			
-			_p('%s: %s', make.esc(prj.name), make.esc(table.concat(deps, " ")))
+			_p('%s: %s', make.esc(prj.name), table.concat(deps, " "))
 			
 			_p(1,'@echo "==== Building %s ($(config)) ===="', prj.name)
 
