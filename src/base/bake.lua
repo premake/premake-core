@@ -712,6 +712,7 @@
 		-- step of building it later?
 		cfg.__fileconfigs = { }
 		for _, fname in ipairs(cfg.files) do
+			fname = premake5.project.getrelative(prj, fname)
 			cfg.terms.required = fname:lower()
 			local fcfg = {}
 			for _, blk in ipairs(cfg.project.blocks) do

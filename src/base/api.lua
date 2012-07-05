@@ -18,66 +18,12 @@
 	
 	premake.fields = 
 	{
-		buildrule =
-		{
-			kind  = "object",
-			scope = "config",
-			tokens = true,
-		},
-		
-		excludes =
-		{
-			kind = "filelist",
-			scope = "config",
-		},
-		
-		files =
-		{
-			kind  = "filelist",
-			scope = "config",
-		},
-		
-		includedirs =
-		{
-			kind  = "dirlist",
-			scope = "config",
-			usagecopy = true,
-			tokens = true,
-		},
-		
-		libdirs =
-		{
-			kind  = "dirlist",
-			scope = "config",
-			linkagecopy = true,
-			tokens = true,
-		},
-
-		platforms = 
-		{
-			kind  = "list",
-			scope = "container",
-		},
-		
-		resincludedirs =
-		{
-			kind  = "dirlist",
-			scope = "config",
-			tokens = true,
-		},
-
-		trimpaths =
-		{
-			kind = "dirlist",
-			scope = "config",
-		},
-		
 		uses =
 		{
 			kind  = "list",
 			scope = "config",
 		},
-		
+	
 		vpaths = 
 		{
 			kind = "key-pathlist",
@@ -116,7 +62,10 @@
 		if kind:startswith("key-") then
 			kind = kind:sub(5)
 		end
-		
+		if kind:endswith("-list") then
+			kind = kind:sub(1, -6)
+		end
+			
 		if not api["set" .. kind] then
 			error("invalid kind '" .. kind .. "'", 2)
 		end
@@ -130,7 +79,7 @@
 		end
 		
 		-- list values also get a removal function
-		if field.kind:endswith("list") then
+		if field.kind:endswith("-list") then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
@@ -175,6 +124,10 @@
 		if field.kind:startswith("key-") then		
 			target[field.name] = target[field.name] or {}
 			api.setkeyvalue(target[field.name], field, value)
+		
+		-- Lists is an array containing values of another type
+		elseif field.kind:endswith("-list") then
+			api.setlist(target, field.name, field, value)
 			
 		-- Otherwise, it is a "simple" value defined by the field
 		else
@@ -206,8 +159,30 @@
 		
 		local target = api.gettarget(field.scope)
 		
-		target.removes = target.removes or {}
-		api.setlist(target.removes, field.name, field, value)
+		-- start a removal list, and make it the target for my values
+		target.removes = {}
+		target.removes[field.name] = {}
+		target = target.removes[field.name]
+
+		-- some field kinds have a removal function to process the value
+		local kind = field.kind:sub(1, -6)
+		local remover = api["remove" .. kind] or table.insert
+
+		-- iterate the list of values and add them all to the list
+		local function addvalue(value)
+			-- recurse into tables
+			if type(value) == "table" then
+				for _, v in ipairs(value) do
+					addvalue(v)
+				end
+			
+			-- insert simple values
+			else
+				remover(target, value)
+			end
+		end
+		
+		addvalue(value)
 	end
 
 
@@ -280,6 +255,42 @@
 
 
 --
+-- Set a new file value on an API field. Unlike paths, file value can
+-- use wildcards (and so must always be a list).
+--
+
+	function api.setfile(target, name, field, value)
+		if value:find("*") then
+			local values = os.matchfiles(value)
+			for _, value in ipairs(values) do
+				api.setfile(target, name, field, value)
+				name = name + 1
+			end
+		else
+			target[name] = path.getabsolute(value)
+		end
+	end
+
+	function api.setdirectory(target, name, field, value)
+		if value:find("*") then
+			local values = os.matchdirs(value)
+			for _, value in ipairs(values) do
+				api.setdirectory(target, name, field, value)
+				name = name + 1
+			end
+		else
+			target[name] = path.getabsolute(value)
+		end
+	end
+	
+	function api.removefile(target, value)
+		table.insert(target, path.getabsolute(value))
+	end
+	
+	api.removedirectory = api.removefile
+
+
+--
 -- Set a new list value. Lists are arrays of values, with new values
 -- appended to any previous values.
 --
@@ -287,7 +298,12 @@
 	function api.setlist(target, name, field, value)
 		-- start with the existing list, or an empty one
 		target[name] = target[name] or {}
+		target = target[name]
 		
+		-- find the contained data type
+		local kind = field.kind:sub(1, -6)
+		local setter = api["set" .. kind]
+
 		-- function to add values
 		local function addvalue(value, depth)
 			-- recurse into tables
@@ -298,15 +314,20 @@
 			
 			-- insert simple values
 			else
-				value, err = api.checkvalue(value, field.allowed, field.aliases)
-				if not value then
-					error(err, depth)
-				end
-				table.insert(target[name], value)
+				setter(target, #target + 1, field, value)
 			end
 		end
 		
 		addvalue(value, 3)
+	end
+
+
+--
+-- Set a new object value on an API field.
+--
+
+	function api.setobject(target, name, field, value)
+		target[name] = value
 	end
 
 
@@ -374,7 +395,14 @@
 	api.register {
 		name = "buildoptions",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "buildrule",
+		scope = "config",
+		kind = "object",
 		tokens = true,
 	}
 
@@ -387,13 +415,13 @@
 	api.register {
 		name = "configurations",
 		scope = "project",
-		kind = "list",
+		kind = "string-list",
 	}
 	
 	api.register {
 		name = "debugargs",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 
@@ -414,7 +442,7 @@
 	api.register {
 		name = "debugenvs",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 
@@ -430,21 +458,33 @@
 	api.register {
 		name = "defines",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 	
 	api.register {
 		name = "deploymentoptions",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
+	}
+
+	api.register {
+		name = "excludes",
+		scope = "config",
+		kind = "file-list",
+	}
+
+	api.register {
+		name = "files",
+		scope = "config",
+		kind = "file-list",
 	}
 
 	api.register {
 		name = "flags",
 		scope = "config",
-		kind  = "list",
+		kind  = "string-list",
 		allowed = {
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
@@ -503,7 +543,7 @@
 	api.register {
 		name = "imageoptions",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,		
 	}
 	
@@ -550,6 +590,12 @@
 	}
 
 	api.register {
+		name = "includedirs",
+		scope = "config",
+		kind = "directory-list",
+	}
+
+	api.register {
 		name = "kind",
 		scope = "config",
 		kind = "string",
@@ -573,16 +619,22 @@
 	}
 
 	api.register {
+		name = "libdirs",
+		scope = "config",
+		kind = "directory-list",
+	}
+
+	api.register {
 		name = "linkoptions",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 	
 	api.register {
 		name = "links",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		allowed = function(value)
 			-- if library name contains a '/' then treat it as a path to a local file
 			if value:find('/', nil, true) then
@@ -603,7 +655,7 @@
 	api.register {
 		name = "makesettings",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}		
 
@@ -629,37 +681,49 @@
 	}		
 
 	api.register {
+		name = "platforms",
+		scope = "project",
+		kind = "string-list",
+	}
+
+	api.register {
 		name = "postbuildcommands",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 
 	api.register {
 		name = "prebuildcommands",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 
 	api.register {
 		name = "prelinkcommands",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 
 	api.register {
 		name = "resdefines",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
+	}
+
+	api.register {
+		name = "resincludedirs",
+		scope = "config",
+		kind = "directory-list",
 	}
 
 	api.register {
 		name = "resoptions",
 		scope = "config",
-		kind = "list",
+		kind = "string-list",
 		tokens = true,
 	}
 
@@ -1056,6 +1120,8 @@
 
 	function excludes(value)
 		removefiles(value)
+		-- remove this when switching to "ng" actions
+		-- also remove the api.register() call for excludes
 		return accessor("excludes", value)
 	end
 	

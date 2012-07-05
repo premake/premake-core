@@ -780,6 +780,13 @@
 		_p(4,'GCC_WARN_ABOUT_RETURN_TYPE = YES;')
 		_p(4,'GCC_WARN_UNUSED_VARIABLE = YES;')
 
+		for i,v in ipairs(cfg.includedirs) do
+			cfg.includedirs[i] = premake5.project.getrelative(cfg.project, cfg.includedirs[i])
+		end
+		for i,v in ipairs(cfg.libdirs) do
+			cfg.libdirs[i] = premake5.project.getrelative(cfg.project, cfg.libdirs[i])
+		end
+		
 		xcode.printlist(cfg.includedirs, 'HEADER_SEARCH_PATHS')
 		xcode.printlist(cfg.libdirs, 'LIBRARY_SEARCH_PATHS')
 		

@@ -16,7 +16,7 @@
 	function suite.setup()
 		api.register {
 			name = "testapi",
-			kind = "list",
+			kind = "string-list",
 			scope = "project",
 			allowed = { "first", "second", "third" }
 		}

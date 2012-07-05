@@ -28,7 +28,7 @@
 		end
 		
 		for fcfg in premake.project.eachfile(prj) do
-			isvpath = (fcfg.name ~= fcfg.vpath)			
+			isvpath = (fcfg.name ~= fcfg.vpath)
 			local node = premake.tree.add(tr, fcfg.vpath, onadd)
 			node.cfg = fcfg
 		end
@@ -73,7 +73,8 @@
 		return function ()
 			i = i + 1
 			if (i <= #t) then
-				local fcfg = prj.__fileconfigs[t[i]]
+				local name = premake5.project.getrelative(prj, t[i])
+				local fcfg = prj.__fileconfigs[name]
 				fcfg.vpath = premake.project.getvpath(prj, fcfg.name)
 				return fcfg
 			end
