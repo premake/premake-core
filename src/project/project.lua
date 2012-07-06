@@ -458,18 +458,16 @@
 		-- if there is no match, return the input filename
 		local vpath = filename
 		
-		-- files are always specified relative to the script, so the vpath
-		-- patterns are too. Get the script relative path
-		local relpath = path.getrelative(prj.basedir, filename)
-		
 		for replacement,patterns in pairs(prj.vpaths or {}) do
 			for _,pattern in ipairs(patterns) do
+
 				-- does the filename match this vpath pattern?
-				local i = relpath:find(path.wildcards(pattern))
+				local i = filename:find(path.wildcards(pattern))
 				if i == 1 then				
+
 					-- yes; trim the leading portion of the path
 					i = pattern:find("*", 1, true) or (pattern:len() + 1)
-					local leaf = relpath:sub(i)
+					local leaf = filename:sub(i)
 					if leaf:startswith("/") then
 						leaf = leaf:sub(2)
 					end
@@ -487,6 +485,7 @@
 					end
 					
 					vpath = path.join(stem, leaf)
+
 				end
 			end
 		end

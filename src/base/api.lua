@@ -23,13 +23,6 @@
 			kind  = "list",
 			scope = "config",
 		},
-	
-		vpaths = 
-		{
-			kind = "key-pathlist",
-			scope = "container",
-			tokens = true,
-		},
 	}
 		
 
@@ -58,14 +51,7 @@
 		end
 
 		-- make sure there is a handler available for this kind of value
-		local kind = field.kind
-		if kind:startswith("key-") then
-			kind = kind:sub(5)
-		end
-		if kind:endswith("-list") then
-			kind = kind:sub(1, -6)
-		end
-			
+		local kind = api.getbasekind(field)
 		if not api["set" .. kind] then
 			error("invalid kind '" .. kind .. "'", 2)
 		end
@@ -79,7 +65,7 @@
 		end
 		
 		-- list values also get a removal function
-		if field.kind:endswith("-list") then
+		if api.islistfield(field) and not api.iskeyedfield(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
@@ -121,12 +107,12 @@
 		
 		-- A keyed value is a table containing key-value pairs, where the
 		-- type of the value is defined by the field. 
-		if field.kind:startswith("key-") then		
+		if api.iskeyedfield(field) then
 			target[field.name] = target[field.name] or {}
 			api.setkeyvalue(target[field.name], field, value)
 		
 		-- Lists is an array containing values of another type
-		elseif field.kind:endswith("-list") then
+		elseif api.islistfield(field) then
 			api.setlist(target, field.name, field, value)
 			
 		-- Otherwise, it is a "simple" value defined by the field
@@ -165,7 +151,7 @@
 		target = target.removes[field.name]
 
 		-- some field kinds have a removal function to process the value
-		local kind = field.kind:sub(1, -6)
+		local kind = api.getbasekind(field)
 		local remover = api["remove" .. kind] or table.insert
 
 		-- iterate the list of values and add them all to the list
@@ -183,24 +169,6 @@
 		end
 		
 		addvalue(value)
-	end
-
-
---
--- Update a keyed value. Iterate over the keys in the new value, and use
--- the corresponding values to update the target object.
---
-
-	function api.setkeyvalue(target, field, values)
-		if type(values) ~= "table" then
-			error("value must be a table of key-value pairs", 4)
-		end
-		
-		local kind = field.kind:sub(5)
-		local setter = api["set" .. kind]
-		for key, value in pairs(values) do
-			setter(target, key, field, value)
-		end
 	end
 
 
@@ -235,6 +203,36 @@
 		else
 			return value
 		end
+	end
+
+
+--
+-- Retrieve the base data kind of a field, by removing any key- prefix
+-- or -list suffix and returning what's left.
+--
+
+	function api.getbasekind(field)
+		local kind = field.kind
+		if kind:startswith("key-") then
+			kind = kind:sub(5)
+		end
+		if kind:endswith("-list") then
+			kind = kind:sub(1, -6)
+		end
+		return kind
+	end
+
+
+--
+-- Check the collection properties of a field.
+--
+
+	function api.iskeyedfield(field)
+		return field.kind:startswith("key-")
+	end
+	
+	function api.islistfield(field)
+		return field.kind:endswith("-list")
 	end
 
 
@@ -291,6 +289,32 @@
 
 
 --
+-- Update a keyed value. Iterate over the keys in the new value, and use
+-- the corresponding values to update the target object.
+--
+
+	function api.setkeyvalue(target, field, values)
+		if type(values) ~= "table" then
+			error("value must be a table of key-value pairs", 4)
+		end
+		
+		-- remove the "key-" prefix from the field kind
+		local kind = api.getbasekind(field)
+		
+		if api.islistfield(field) then
+			for key, value in pairs(values) do
+				api.setlist(target, key, field, value)
+			end
+		else
+			local setter = api["set" .. kind]
+			for key, value in pairs(values) do
+				setter(target, key, field, value)
+			end
+		end
+	end
+
+
+--
 -- Set a new list value. Lists are arrays of values, with new values
 -- appended to any previous values.
 --
@@ -301,7 +325,7 @@
 		target = target[name]
 		
 		-- find the contained data type
-		local kind = field.kind:sub(1, -6)
+		local kind = api.getbasekind(field)
 		local setter = api["set" .. kind]
 
 		-- function to add values
@@ -805,6 +829,12 @@
 			end
 			return value:upper()
 		end
+	}
+
+	api.register {
+		name = "vpaths",
+		scope = "project",
+		kind = "key-path-list",
 	}
 
 

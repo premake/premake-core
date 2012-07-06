@@ -32,7 +32,7 @@
 
 	function suite.Filter_UsesVirtualForm_OnVpath()
 		files { "src/hello.cpp" }
-		vpaths { ["Source Files"] = "**.c" }		
+		vpaths { ["Source Files"] = "**.cpp" }		
 		prepare()
 		test.capture [[
 		<Unit filename="src/hello.cpp">

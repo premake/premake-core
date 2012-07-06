@@ -545,11 +545,15 @@
 --
 
 	function premake.project.getvpath(prj, filename)
+		prj = prj.project
+		
 		-- if there is no match, return the input filename
 		local vpath = filename
-		
-		for replacement,patterns in pairs(prj.vpaths) do
+
+		for replacement,patterns in pairs(prj.vpaths or {}) do
 			for _,pattern in ipairs(patterns) do
+				pattern = premake5.project.getrelative(prj, pattern)
+				
 				-- does the filename match this vpath pattern?
 				local i = vpath:find(path.wildcards(pattern))
 				if i == 1 then				
