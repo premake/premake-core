@@ -497,12 +497,14 @@
 		name = "excludes",
 		scope = "config",
 		kind = "file-list",
+		tokens = true,
 	}
 
 	api.register {
 		name = "files",
 		scope = "config",
 		kind = "file-list",
+		tokens = true,
 	}
 
 	api.register {
@@ -617,6 +619,7 @@
 		name = "includedirs",
 		scope = "config",
 		kind = "directory-list",
+		tokens = true,
 	}
 
 	api.register {
@@ -646,6 +649,7 @@
 		name = "libdirs",
 		scope = "config",
 		kind = "directory-list",
+		tokens = true,
 	}
 
 	api.register {
@@ -742,6 +746,7 @@
 		name = "resincludedirs",
 		scope = "config",
 		kind = "directory-list",
+		tokens = true,
 	}
 
 	api.register {
