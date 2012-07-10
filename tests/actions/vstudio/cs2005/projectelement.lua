@@ -16,12 +16,10 @@
 	local sln, prj
 	
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 	
 	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
 		cs2005.projectelement(prj)
 	end
 

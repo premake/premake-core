@@ -15,6 +15,9 @@
 --
 
 	function project.bake(prj, sln)
+		-- make sure I've got the actual project, and not the root configurations
+		prj = prj.project or prj
+		
 		-- bake the project's "root" configuration, which are all of the
 		-- values that aren't part of a more specific configuration
 		local result = oven.merge(oven.merge({}, sln), prj)
@@ -332,6 +335,24 @@
 
 	function project.getfilename(prj)
 		return prj.externalname or prj.name
+	end
+
+
+--
+-- Return the first configuration of a project, which is used in some
+-- actions to generate project-wide defaults.
+--
+-- @param prj
+--    The project object to query.
+-- @return
+--    The first configuration in a project, as would be returned by
+--    eachconfig().
+--
+
+	function project.getfirstconfig(prj)
+		local iter = project.eachconfig(prj)
+		local first = iter()
+		return first
 	end
 
 

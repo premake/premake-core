@@ -7,7 +7,7 @@
 	T.vstudio_cs2005_propertygroup = { }
 	local suite = T.vstudio_cs2005_propertygroup
 	local cs2005 = premake.vstudio.cs2005
-
+	local project = premake5.project
 
 --
 -- Setup 
@@ -16,14 +16,12 @@
 	local sln, prj, cfg
 	
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		language "C#"
 	end
 	
 	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = premake.getconfig(prj, "Debug")
+		cfg = project.getconfig(prj, "Debug")
 		cs2005.propertygroup(cfg)
 	end
 
@@ -36,7 +34,7 @@
 		_ACTION = "vs2005"
 		prepare()
 		test.capture [[
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		]]
 	end
 
@@ -45,7 +43,7 @@
 		_ACTION = "vs2008"
 		prepare()
 		test.capture [[
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		]]
 	end
 
@@ -54,6 +52,7 @@
 		_ACTION = "vs2010"
 		prepare()
 		test.capture [[
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<PlatformTarget>AnyCPU</PlatformTarget>
 		]]
 	end
