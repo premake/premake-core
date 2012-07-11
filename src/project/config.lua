@@ -61,7 +61,7 @@
 
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
 		suffix = cfg[field.."suffix"] or cfg.targetsuffix or suffix
-		extension = cfg[field.."extension"] or cfg.targetextension or extension
+		extension = cfg[field.."extension"] or extension
 
 		local info = {}
 		info.directory  = project.getrelative(cfg.project, directory)

@@ -112,3 +112,17 @@
 		i = prepare()
 		test.isequal("libMyProject.a", i.name)
 	end
+
+
+--
+-- The import library extension should change if the a 
+-- custom target extension is set.
+--
+
+	function suite.impLibExtensionUnmodified_OnCustomTargetExt()
+		system "windows"
+		kind "SharedLib"
+		targetextension ".mil"
+		i = prepare()
+		test.isequal("MyProject.lib", i.name)
+	end
