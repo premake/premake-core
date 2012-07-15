@@ -236,12 +236,13 @@
 	function oven.filter(block, anyOfThese, allOfThese)
 		allOfThese = allOfThese or {}
 		
-		-- All of these terms must match at least one block keyword
+		-- All of these terms must match at least one block keyword;
+		-- negative matches (i.e. "not X") do not count
 		for _, term in ipairs(allOfThese) do
 			local matched = false
 
 			for _, keyword in ipairs(block.keywords) do
-				if oven.testkeyword(keyword, { term }) then
+				if oven.testkeyword(keyword, { term }, true) then
 					matched = true
 					break
 				end
@@ -271,13 +272,20 @@
 --    The keyword to test.
 -- @param terms
 --    The list of terms to filter against.
+-- @param skipNots
+--    Boolean flag indicating whether negative matches (i.e. "not X")
+--    should be considered (they are not for filename searches).
 -- @returns
 --    True if the keyword matches at least one filter term.
 --
 
-	function oven.testkeyword(keyword, terms)
+	function oven.testkeyword(keyword, terms, skipNots)
 		if keyword:startswith("not ") then
-			return not oven.testkeyword(keyword:sub(5), terms)
+			if skipNots then
+				return false
+			else
+				return not oven.testkeyword(keyword:sub(5), terms)
+			end
 		end
 		
 		for _, pattern in ipairs(keyword:explode(" or ")) do

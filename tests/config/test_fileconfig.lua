@@ -101,3 +101,19 @@
 		prepare()
 		test.isequal({ "-Xc" }, fcfg.buildoptions)
 	end
+
+
+--
+-- A "not" filter should not provide the positive match for a
+-- file configuration filename mask.
+--
+
+	function suite.fileIsUnmatched_onNotFilter()
+		files "hello.c"
+		configuration "not Debug"
+		buildoptions "-Xc"
+		prepare()
+		test.isnil(fcfg.buildoptions)
+	end
+	
+	

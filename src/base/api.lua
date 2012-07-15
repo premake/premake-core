@@ -1191,7 +1191,7 @@
 
 		-- initialize list-type fields to empty tables
 		for name, field in pairs(premake.fields) do
-			if (field.kind ~= "string" and field.kind ~= "path") then
+			if field.kind:endswith("-list") then
 				cfg[name] = { }
 			end
 		end

@@ -412,7 +412,7 @@
   		if(not cfg) then return end
   		
   		local foundUsePrjs = {};
-  		for _, useName in ipairs(cfg[searchField]) do
+  		for _, useName in ipairs(cfg[searchField] or {}) do
   			local testName = useName:lower();
   			if((not foundList[testName])) then
   				local theProj = nil;
