@@ -20,9 +20,9 @@
 		sln, prj = test.createsolution()
 	end
 
-	local function prepare()
+	local function prepare(filename)
 		local cfg = project.getconfig(prj, "Debug")
-		fcfg = config.getfileconfig(cfg, path.join(os.getcwd(), "hello.c"))
+		fcfg = config.getfileconfig(cfg, path.join(os.getcwd(), filename or "hello.c"))
 	end
 
 
@@ -115,5 +115,18 @@
 		prepare()
 		test.isnil(fcfg.buildoptions)
 	end
+
+
+--
+-- Check case-sensitivity of file name tests.
+--
+
+	function suite.fileMatches_onCaseMismatch()
+		files "Hello.c"
+		configuration "**/HeLLo.c"
+		buildoptions "-Xc"
+		prepare("Hello.c")
+		test.isequal({ "-Xc" }, fcfg.buildoptions)
+	end
 	
-	
+

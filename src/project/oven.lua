@@ -97,7 +97,7 @@
 			platform = cfg.platform
 		}
 		
-		filename = { filename }
+		filename = { filename:lower() }
 		
 		for _, block in ipairs(cfg.solution.blocks) do
 			if oven.filter(block, cfg.terms, filename) then
