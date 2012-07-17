@@ -248,7 +248,7 @@
 			if prj and kind ~= "system" then
 
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-				if kind == "dependencies" or canlink(cfg, prjcfg) then
+				if prjcfg and (kind == "dependencies" or canlink(cfg, prjcfg)) then
 					-- if the caller wants the whole project object, then okay
 					if part == "object" then
 						item = prjcfg
