@@ -70,7 +70,7 @@
 			buildoptions { "-mmacosx-version-min=10.4" }
 			linkoptions  { "-mmacosx-version-min=10.4" }
 
-		configuration { "linux", "bsd", "macosx" }
+		configuration { "linux or bsd" }
 			linkoptions { "-rdynamic" }
 			
 		configuration { "solaris" }
