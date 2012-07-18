@@ -7,7 +7,6 @@
 	T.oven_tokens = { }
 	local suite = T.oven_tokens
 	local oven = premake5.oven
-	local solution = premake.solution
 	local project = premake5.project
 	local config = premake5.config
 
@@ -35,8 +34,8 @@
 	
 	local function prepare()
 		-- some values are only accessible after a full bake
-		solution.bake(sln)
-		prj = solution.getproject_ng(sln, 1)
+		sln = premake.solution.bake(sln)
+		prj = premake.solution.getproject_ng(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 	end
 
@@ -139,3 +138,17 @@
 		prepare()
 		test.isequal("bin/MyProject_Debug", cfg.testapi)
 	end
+
+
+--
+-- Verify that solution-level values are expanded too.
+--
+
+	function suite.canUseTokens_onSolution()
+		solution "MySolution"
+		location "build/%{sln.name}"
+		prepare()
+		test.isequal(os.getcwd() .. "/build/MySolution", sln.location)
+	end
+
+		

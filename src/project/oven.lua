@@ -118,6 +118,17 @@
 --
 -- Scan an object for expandable tokens, and expand them, in place.
 --
+-- @param cfg
+--    A configuration object. If the filecfg parameter is nil, the tokens in this
+--    object will be expanded; else this will be used as the cfg context object.
+-- @param scope
+--    The scope of fields which should be expanded, one of "project" or "config".
+-- @param filecfg
+--    A file configuration object, optional. If set, the tokens in this object 
+--    will be expanded, and the cfg parameter will be used as a context variable.
+-- @param fieldname
+--    Optional; if set, only this field will be expanded.
+--
 
 	function oven.expandtokens(cfg, scope, filecfg, fieldname)
 		-- File this under "too clever by half": I want path tokens (targetdir, etc.)

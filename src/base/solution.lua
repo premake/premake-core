@@ -93,7 +93,8 @@
 				oven.expandtokens(cfg, "config")
 			end
 		end
-		
+		oven.expandtokens(result, "project")
+
 		-- build a master list of solution-level configuration/platform pairs
 		result.configs = solution.bakeconfigs(result)
 		
@@ -187,7 +188,7 @@
 		for cfg, dirs in pairs(configs) do
 			for _, dir in ipairs(dirs) do
 				if counts[dir] == 1 then
-					cfg.objdir = dir
+					cfg.objdir = dir 
 					break
 				end
 			end
