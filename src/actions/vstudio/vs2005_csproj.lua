@@ -106,7 +106,7 @@
 		_p(2,'<OutputType>%s</OutputType>', dotnet.getkind(cfg))
 		_p(2,'<AppDesignerFolder>Properties</AppDesignerFolder>')
 
-		local target = config.gettargetinfo(cfg)
+		local target = cfg.buildtarget
 		_p(2,'<RootNamespace>%s</RootNamespace>', target.basename)
 		_p(2,'<AssemblyName>%s</AssemblyName>', target.basename)
 
@@ -138,8 +138,7 @@
 
 		_p(2,'<Optimize>%s</Optimize>', iif(premake.config.isoptimizedbuild(cfg), "true", "false"))
 
-		local target = config.gettargetinfo(cfg)
-		_p(2,'<OutputPath>%s</OutputPath>', target.directory)
+		_p(2,'<OutputPath>%s</OutputPath>', cfg.buildtarget.directory)
 
 		_p(2,'<DefineConstants>%s</DefineConstants>', table.concat(premake.esc(cfg.defines), ";"))
 

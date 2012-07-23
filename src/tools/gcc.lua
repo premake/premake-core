@@ -188,7 +188,7 @@
 			end
 
 			if cfg.system == "windows" and not cfg.flags.NoImportLib then
-				table.insert(flags, '-Wl,--out-implib="' .. config.getlinkinfo(cfg).fullpath .. '"')
+				table.insert(flags, '-Wl,--out-implib="' .. cfg.linktarget.fullpath .. '"')
 			end
 		end
 	
@@ -217,14 +217,13 @@
 				-- skip external project references, since I have no way
 				-- to know the actual output target path
 				if not link.project.externalname then
-					local linkinfo = config.getlinkinfo(link)
 					if link.kind == premake.STATICLIB then
 						-- Don't use "-l" flag when linking static libraries; instead use 
 						-- path/libname.a to avoid linking a shared library of the same
 						-- name if one is present
-						table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
+						table.insert(result, project.getrelative(cfg.project, link.linktarget.abspath))
 					else
-						table.insert(result, "-l" .. linkinfo.basename)
+						table.insert(result, "-l" .. link.linktarget.basename)
 					end
 				end
 			end

@@ -179,7 +179,7 @@
 --
 
 	function vc2010.outputProperties(cfg)
-		local target = config.gettargetinfo(cfg)
+		local target = cfg.buildtarget
 
 		_p(1,'<PropertyGroup %s>', vc2010.condition(cfg))
 
@@ -231,7 +231,7 @@
 		vc2010.debuginfo(cfg)
 
 		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
-			local filename = config.gettargetinfo(cfg).basename
+			local filename = cfg.buildtarget.basename
 			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
 		end
 
@@ -347,7 +347,7 @@
 		vc2010.additionalLibraryDirectories(cfg)
 
 		if cfg.kind == premake.SHAREDLIB then
-			local implibname = config.getlinkinfo(cfg).fullpath
+			local implibname = cfg.linktarget.fullpath
 			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(implibname))
 		end
 

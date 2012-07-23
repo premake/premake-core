@@ -140,7 +140,7 @@
 		_p(2,'<Configuration')
 		_x(3,'Name="%s"', vstudio.configname(cfg))
 
-		local outdir = path.translate(config.gettargetinfo(cfg).directory)
+		local outdir = path.translate(cfg.buildtarget.directory)
 		_x(3,'OutputDirectory="%s"', outdir)
 
 		_x(3,'IntermediateDirectory="%s"', path.translate(project.getrelative(cfg.project, cfg.objdir)))
@@ -396,7 +396,7 @@
 			_x(4,'AdditionalDependencies="%s"', vc200x.links(cfg))
 		end
 
-		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
+		_x(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 
 		if cfg.kind ~= premake.STATICLIB then
 			_p(4,'LinkIncremental="%s"', iif(premake.config.canincrementallink(cfg) , 2, 1))
@@ -417,7 +417,7 @@
 			_p(4,'GenerateDebugInformation="%s"', bool(vc200x.symbols(cfg) ~= 0))
 	
 			if vc200x.symbols(cfg) >= 3 then
-				_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', config.gettargetinfo(cfg).basename)
+				_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', cfg.buildtarget.basename)
 			end
 	
 			_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
@@ -432,7 +432,7 @@
 			end
 	
 			if cfg.kind == "SharedLib" then
-				local implibname = config.getlinkinfo(cfg).fullpath
+				local implibname = cfg.linktarget.fullpath
 				-- I can't actually stop the import lib, but I can hide it in the objects directory
 				if cfg.flags.NoImportLib then
 					implibname = path.join(cfg.objdir, path.getname(implibname))
@@ -455,7 +455,7 @@
 			_x(4,'AdditionalDependencies="%s"', table.concat(toolset.getlinks(cfg), " "))
 		end
 			
-		_x(4,'OutputFile="$(OutDir)\\%s"', config.gettargetinfo(cfg).name)
+		_x(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 
 		if cfg.kind ~= premake.STATICLIB then
 			_p(4,'LinkIncremental="0"')
@@ -962,7 +962,7 @@
 --
 
 	function vc200x.programDatabase(cfg)
-		local target = config.gettargetinfo(cfg)
+		local target = cfg.buildtarget
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s%s.pdb"', target.prefix, target.basename)
 	end
 
@@ -1365,7 +1365,7 @@
 			end
 			
 			if cfg.kind == "SharedLib" then
-				local implibname = config.getlinkinfo(cfg).fullpath
+				local implibname = cfg.linktarget.fullpath
 				_p(4,'ImportLibrary="%s"', iif(cfg.flags.NoImportLib, cfg.objectsdir .. "\\" .. path.getname(implibname), implibname))
 			end
 			

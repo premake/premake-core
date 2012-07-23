@@ -82,7 +82,7 @@
 		cfg.solution = prj.solution
 		cfg.project = prj
 		cfg.architecture = cfg.architecture or architecture
-
+		
 		-- fill in any calculated values
 		premake5.config.bake(cfg)
 

@@ -8,6 +8,7 @@
 	local suite = T.tools_gcc
 
 	local gcc = premake.tools.gcc
+	local project = premake5.project
 
 
 --
@@ -17,11 +18,12 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 		system "Linux"
 	end
 
 	local function prepare()
+		prj = premake.solution.getproject_ng(sln, 1)
 		cfg = premake5.project.getconfig(prj, "Debug")
 	end
 

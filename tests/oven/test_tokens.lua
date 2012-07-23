@@ -151,4 +151,25 @@
 		test.isequal(os.getcwd() .. "/build/MySolution", sln.location)
 	end
 
+
+--
+-- Verify that target information is available.
+--
+
+	function suite.canAccessBuildTarget()
+		_OS = "windows"
+		targetdir "%{cfg.buildcfg}"
+		testapi "%{cfg.buildtarget.relpath}"
+		prepare()
+		test.isequal("Debug/MyProject.exe", cfg.testapi)
+	end
+
+	function suite.canAccessLinkTarget()
+		_OS = "windows"
+		kind "SharedLib"
+		testapi "%{cfg.linktarget.relpath}"
+		prepare()
+		test.isequal("MyProject.lib", cfg.testapi)
+	end
+
 		

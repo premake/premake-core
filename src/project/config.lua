@@ -4,7 +4,7 @@
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	premake5.config = { }
+	premake5.config = {}
 	local project = premake5.project
 	local config = premake5.config
 	local oven = premake5.oven
@@ -20,6 +20,13 @@
 		cfg.longname = table.concat({ cfg.buildcfg, cfg.platform }, "|")
 		cfg.shortname = table.concat({ cfg.buildcfg, cfg.platform }, " ")
 		cfg.shortname = cfg.shortname:gsub(" ", "_"):lower()
+
+		if cfg.project and cfg.kind then
+			cfg.buildtarget = config.gettargetinfo(cfg)
+			oven.expandtokens(cfg, nil, nil, "buildtarget")
+			cfg.linktarget = config.getlinkinfo(cfg)
+			oven.expandtokens(cfg, nil, nil, "linktarget")
+		end
 	end
 
 
@@ -70,6 +77,7 @@
 		info.extension  = extension
 		info.abspath    = path.join(directory, info.name)
 		info.fullpath   = path.join(info.directory, info.name)
+		info.relpath    = info.fullpath
 		info.bundlename = bundlename
 		info.bundlepath = path.join(info.directory, bundlepath)
 		info.prefix     = prefix
@@ -163,11 +171,6 @@
 --
 
 	function config.getlinkinfo(cfg)
-		-- have I cached results from a previous call?
-		if cfg.linkinfo then
-			return cfg.linkinfo
-		end
-
 		-- if an import library is in use, switch the target kind
 		local kind = cfg.kind
 		local field = "target"
@@ -178,11 +181,7 @@
 			end
 		end
 
-		local info = buildtargetinfo(cfg, kind, field)
-
-		-- cache the results for future calls
-		cfg.linkinfo = info
-		return info
+		return buildtargetinfo(cfg, kind, field)
 	end
 
 
@@ -257,9 +256,9 @@
 					-- any kind of path info, because I don't know the target name
 					elseif not prj.externalname then
 						if part == "basename" then
-							item = config.getlinkinfo(prjcfg).basename
+							item = prjcfg.linktarget.basename
 						else
-							item = path.rebase(config.getlinkinfo(prjcfg).fullpath, 
+							item = path.rebase(prjcfg.linktarget.fullpath, 
 											   project.getlocation(prjcfg.project), 
 											   project.getlocation(cfg.project))
 							if part == "directory" then
@@ -322,14 +321,5 @@
 --
 
 	function config.gettargetinfo(cfg)
-		-- have I cached results from a previous call?
-		if cfg.targetinfo then
-			return cfg.targetinfo
-		end
-
-		local info = buildtargetinfo(cfg, cfg.kind, "target")
-
-		-- cache the results for future calls
-		cfg.targetinfo = info
-		return info
+		return buildtargetinfo(cfg, cfg.kind, "target")
 	end
