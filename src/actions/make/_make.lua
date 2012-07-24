@@ -70,7 +70,6 @@
 			_p('ifndef config')
 			_p('  config=%s', make.esc(cfg.shortname))
 			_p('endif')
-			_p('export config')
 			_p('')
 		end
 	end
@@ -176,6 +175,16 @@
 		end
 	end
 
+
+--
+-- Convert an arbitrary string (project name) to a make variable name.
+--
+
+	function make.tovar(value)
+		value = value:gsub("[ -]", "_")
+		value = value:gsub("[()]", "")
+		return value
+	end
 
 
 

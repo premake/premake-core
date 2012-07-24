@@ -1,0 +1,78 @@
+--
+-- tests/actions/make/test_config_maps.lua
+-- Validate handling of configuration maps in makefiles.
+-- Copyright (c) 2012 Jason Perkins and the Premake project
+--
+
+	T.make_config_maps = {}
+	local suite = T.make_config_maps
+	local make = premake.make
+
+
+--
+-- Setup/teardown
+--
+
+	local sln, prj
+
+	function suite.setup()
+		sln = test.createsolution()
+	end
+
+	local function prepare()
+		make.configmap(sln)
+	end
+
+
+--
+-- If no map is present, the configurations should pass through
+-- to the projects unchanged.
+--
+
+	function suite.passesThroughConfigs_onNoMap()
+		prepare()
+		test.capture [[
+ifeq ($(config),debug)
+  MyProject_config = debug
+endif
+ifeq ($(config),release)
+  MyProject_config = release
+endif
+		]]
+	end
+
+
+--
+-- If a map is present, the configuration change should be applied.
+--
+
+	function suite.passesThroughConfigs_onNoMap()
+		configmap { Debug = "Development" }
+		prepare()
+		test.capture [[
+ifeq ($(config),debug)
+  MyProject_config = development
+endif
+ifeq ($(config),release)
+  MyProject_config = release
+endif
+		]]
+	end
+
+
+--
+-- If a configuration is not included in a particular project,
+-- no mapping should be created.
+--
+
+	function suite.passesThroughConfigs_onNoMap()
+		removeconfigurations { "Debug" }
+		prepare()
+		test.capture [[
+ifeq ($(config),debug)
+endif
+ifeq ($(config),release)
+  MyProject_config = release
+endif
+		]]
+	end

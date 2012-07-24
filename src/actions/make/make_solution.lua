@@ -20,6 +20,7 @@
 		_p('')
 
 		make.defaultconfig(sln)
+		make.configmap(sln)
 		make.projects(sln)
 
 		_p('.PHONY: all clean help $(PROJECTS)')
@@ -30,6 +31,26 @@
 		make.projectrules(sln)
 		make.cleanrules(sln)
 		make.helprule(sln)
+	end
+
+
+--
+-- Write out the solution's configuration map, which maps solution
+-- level configurations to the project level equivalents.
+--
+
+	function make.configmap(sln)
+		for cfg in solution.eachconfig(sln) do
+			_p('ifeq ($(config),%s)', cfg.shortname)
+			for prj in solution.eachproject_ng(sln) do
+				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+				if prjcfg then
+					_p('  %s_config = %s', make.tovar(prj.name), prjcfg.shortname)
+				end
+			end
+			_p('endif')
+		end
+		_p('')
 	end
 
 
@@ -97,12 +118,17 @@
 			deps = table.extract(deps, "name")			
 			_p('%s: %s', make.esc(prj.name), table.concat(deps, " "))
 			
-			_p(1,'@echo "==== Building %s ($(config)) ===="', prj.name)
+			local cfgvar = make.tovar(prj.name)
+			_p('ifneq (,$(%s_config))', cfgvar)
+			
+			_p(1,'@echo "==== Building %s ($(%s_config)) ===="', prj.name, cfgvar)
 
 			local slnpath = solution.getlocation(sln)
 			local prjpath = path.getrelative(slnpath, project.getlocation(prj))
-			_p(1,'@${MAKE} --no-print-directory -C %s -f %s', make.esc(prjpath), make.esc(make.getmakefilename(prj, true)))
+			local filename = make.getmakefilename(prj, true)
+			_p(1,'@${MAKE} --no-print-directory -C %s -f %s config=$(%s_config)', make.esc(prjpath), make.esc(filename), cfgvar)
 			
+			_p('endif')
 			_p('')
 		end
 	end
