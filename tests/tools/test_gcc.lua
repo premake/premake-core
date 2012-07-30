@@ -71,7 +71,7 @@
 		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
 	end
 
-	function suite.cflags_onExtraWarnings()
+	function suite.cflags_onNoWarnings()
 		flags { "NoWarnings" }
 		prepare()
 		test.isequal({ "-w" }, gcc.getcflags(cfg))
