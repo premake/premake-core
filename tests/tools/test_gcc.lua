@@ -65,7 +65,17 @@
 		test.isequal({ "-Werror" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onExtraWarnings()
+		flags { "ExtraWarnings" }
+		prepare()
+		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+	end
 
+	function suite.cflags_onExtraWarnings()
+		flags { "NoWarnings" }
+		prepare()
+		test.isequal({ "-w" }, gcc.getcflags(cfg))
+	end
 --
 -- Check the translation of CXXFLAGS.
 --
