@@ -340,6 +340,13 @@
 		if cfg.kind == premake.STATICLIB then
 			vc2010.link_static(cfg)
 		end
+
+		-- Left to its own devices, VS will happily link against a project dependency
+		-- that has been excluded from the build. As a workaround, disable dependency
+		-- linking and list all siblings explicitly
+		_p(2,'<ProjectReference>')
+		_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
+		_p(2,'</ProjectReference>')
 	end
 
 	function vc2010.link_dynamic(cfg)
@@ -541,7 +548,10 @@
 		if toolset then
 			links = toolset.getlinks(cfg, true)
 		else
-			links = config.getlinks(cfg, "system", "fullpath")
+			-- VS always tries to link against project dependencies, even when those
+			-- projects are excluded from the build. To work around, linking dependent
+			-- projects is disabled, and sibling projects link explicitly
+			links = config.getlinks(cfg, "all", "fullpath")
 		end
 		
 		if #links > 0 then

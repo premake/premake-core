@@ -383,6 +383,10 @@
 
 	function vc200x.VCBuiltInLinkerTool(cfg)
 		if cfg.kind ~= premake.STATICLIB then
+			-- Complex builds can fail intermittently, as VS fails to link the
+			-- dependencies. Workaround by explicitly linking siblings.
+			_p(4,'LinkLibraryDependencies="false"')
+
 			if cfg.flags.NoImportLib then
 				_p(4,'IgnoreImportLibrary="%s"', bool(true))
 			end

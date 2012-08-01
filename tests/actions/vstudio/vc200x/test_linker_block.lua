@@ -36,6 +36,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="false"
@@ -57,6 +58,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="false"
@@ -78,6 +80,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="false"
@@ -115,6 +118,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -134,6 +138,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -155,6 +160,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				ModuleDefinitionFile="MyProject.def"
@@ -172,6 +178,7 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="1"
 		]]

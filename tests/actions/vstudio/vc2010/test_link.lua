@@ -41,6 +41,9 @@
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<ImportLibrary>MyProject.lib</ImportLibrary>
 		</Link>
+		<ProjectReference>
+			<LinkLibraryDependencies>false</LinkLibraryDependencies>
+		</ProjectReference>
 		]]
 	end
 
@@ -163,25 +166,42 @@
 
 
 --
--- If a sibling library is listed in links(), it should NOT appear in
--- the additional dependencies element. Visual Studio will figure that
--- out from the project reference item group.
+-- Let to its own devices, VS will attempt to link against dependencies
+-- that have been excluded from the build. To work around this, dependency
+-- linking is turned off, and siblings are linked explicitly instead.
 --
 
-	function suite.noDependencies_onOnlySiblingProjectLinks()
+	function suite.includeSiblings_onOnlySiblingProjectLinks()
 		links { "MyProject2" }
 		test.createproject(sln)
+		kind "SharedLib"
 		prepare()
 		test.capture [[
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
 
-	function suite.onlySystemDependencies_OnSiblingProjectLink()
+	function suite.includeSiblings_OnMixedLinks()
 		links { "MyProject2", "kernel32" }
 		test.createproject(sln)
+		kind "SharedLib"
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>MyProject2.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+	function suite.excludeSibling_OnExcludedConfig()
+		links { "MyProject2", "kernel32" }
+		test.createproject(sln)
+		kind "SharedLib"
+		removeconfigurations { "Debug" }
 		prepare()
 		test.capture [[
 		<Link>
