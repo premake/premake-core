@@ -234,9 +234,7 @@
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
-		local location = project.getlocation(prj)
-		local filename = path.join(location, project.getfilename(prj))
-		return filename .. extension
+		return premake.project.getfilename(prj, "%%" .. extension)
 	end
 
 

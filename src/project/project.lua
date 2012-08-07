@@ -324,21 +324,6 @@
 
 
 --
--- Retrieve the project's file name.
---
--- @param prj
---    The project object to query.
--- @return
---    The project's file name. This will usually match the project's
---    name, or the external name for externally created projects.
---
-
-	function project.getfilename(prj)
-		return prj.externalname or prj.name
-	end
-
-
---
 -- Return the first configuration of a project, which is used in some
 -- actions to generate project-wide defaults.
 --
