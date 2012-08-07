@@ -20,9 +20,7 @@
 	end
 	
 	local function prepare()
-		premake.bake.buildconfigs()
-		prj = premake.solution.getproject(sln, 1)
-		sln.vstudio_configs = premake.vstudio.buildconfigs(sln)
+		prj = premake.solution.getproject_ng(sln, 1)
 		cs2005.files(prj)
 	end
 
@@ -35,7 +33,7 @@
 		files { "Hello.cs" }
 		prepare()
 		test.capture [[
-    <Compile Include="Hello.cs" />
+		<Compile Include="Hello.cs" />
 		]]
 	end
 
@@ -43,7 +41,7 @@
 		files { "Src/Hello.cs" }
 		prepare()
 		test.capture [[
-    <Compile Include="Src\Hello.cs" />
+		<Compile Include="Src\Hello.cs" />
 		]]
 	end
 
@@ -57,7 +55,7 @@
 		files { "../Src/Hello.cs" }
 		prepare()
 		test.capture [[
-    <Compile Include="..\Src\Hello.cs" />
+		<Compile Include="..\Src\Hello.cs" />
 		]]
 	end
 
@@ -70,14 +68,14 @@
 		files { "Resources.resx", "Resources.Designer.cs" }
 		prepare()
 		test.capture [[
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+		<Compile Include="Resources.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<EmbeddedResource Include="Resources.resx">
+			<SubType>Designer</SubType>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 		]]
 	end
