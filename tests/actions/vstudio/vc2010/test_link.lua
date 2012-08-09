@@ -314,3 +314,23 @@
 			<AdditionalDependencies>-lfs_stub;-lnet_stub;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
+
+
+--
+-- On the PS3, sibling libraries should be linked directly.
+--
+
+	function suite.includeSiblings_onPS3SiblingLinks()
+		system "PS3"
+		links { "MyProject2" }
+		test.createproject(sln)
+		kind "StaticLib"
+		system "PS3"
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>libMyProject2.a;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end

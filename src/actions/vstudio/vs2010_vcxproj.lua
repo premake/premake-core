@@ -546,7 +546,7 @@
 		-- toolset define the format of the links
 		local toolset = premake.vstudio.vc200x.toolset(cfg)
 		if toolset then
-			links = toolset.getlinks(cfg, true)
+			links = toolset.getlinks(cfg, false)
 		else
 			-- VS always tries to link against project dependencies, even when those
 			-- projects are excluded from the build. To work around, linking dependent
