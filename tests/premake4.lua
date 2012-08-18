@@ -92,6 +92,7 @@
 
 	-- Toolset tests
 	dofile("tools/test_gcc.lua")
+	dofile("tools/test_msc.lua")
 	dofile("tools/test_snc.lua")
 
 	-- Clean tests

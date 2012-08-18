@@ -71,7 +71,7 @@
 
 
 --
--- Returns list of CPPFLAGS for a specific configuration.
+-- Returns list of C preprocessor flags for a configuration.
 --
 
 	function gcc.getcppflags(cfg)
@@ -86,7 +86,7 @@
 	end
 
 --
--- Returns list of CFLAGS for a specific configuration.
+-- Returns list of C compiler flags for a configuration.
 --
 
 	gcc.cflags = {
@@ -118,7 +118,7 @@
 
 
 --
--- Returns a list of CXXFLAGS for a specific configuration.
+-- Returns list of C++ compiler flags for a configuration.
 --
 
 	gcc.cxxflags = {
