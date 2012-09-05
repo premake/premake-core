@@ -165,9 +165,9 @@
 -- Build command for a single file.
 --
 
-	function cpp.buildcommand(prj)
+	function cpp.buildcommand(prj, objext)
 		local flags = iif(prj.language == "C", '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
-		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
+		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
 	end
 
 
@@ -207,7 +207,7 @@
 			local objectname = project.getfileobject(prj, node.abspath)
 			_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
 			_p('\t@echo $(notdir $<)')
-			cpp.buildcommand(prj)
+			cpp.buildcommand(prj, "o")
 			
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
@@ -423,7 +423,7 @@
 		_p('else')
 		_p('\t$(SILENT) xcopy /D /Y /Q "$(subst /,\\,$<)" "$(subst /,\\,$(OBJDIR))" 1>nul')
 		_p('endif')
-		cpp.buildcommand(prj)
+		cpp.buildcommand(prj, "gch")
 		_p('endif')
 		_p('')
 	end
