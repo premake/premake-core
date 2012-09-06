@@ -78,6 +78,9 @@
 		
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
+		_p('ifneq (,$(PCH))')
+			_p('  -include $(OBJDIR)/$(notdir $(PCH)).d')
+		_p('endif')
 	end
 
 
