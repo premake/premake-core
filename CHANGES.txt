@@ -81,6 +81,8 @@
 * Patch 3505903: Fix VC2010 project reference paths (Pavel Czerný)
 * Patch 3305599: Add -Wextra to ExtraWarnings (ergosys)
 * Patch 3476176: Fix dependencies of precompiled header in makefile (Konstantin Tokarev)
+* Patch 3476176: Remove conditionals from makefile compiler assignments (Konstantin Tokarev)
+* Pull 1: Fixed path to Info.plist in Xcode projects (Adrien Anselme)
 
 
 -------
