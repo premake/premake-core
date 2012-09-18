@@ -438,7 +438,7 @@
 					node.realpath = node.path
 				end
 			end)
-
+			
 			-- Store full file configuration in file (leaf) nodes
 			for key, value in pairs(fcfg) do
 				node[key] = value
@@ -469,11 +469,15 @@
 
 				-- does the filename match this vpath pattern?
 				local i = filename:find(path.wildcards(pattern))
-				if i == 1 then				
-
-					-- yes; trim the leading portion of the path
+				if i == 1 then
+					-- yes; trim the pattern out of the target file's path
+					local leaf
 					i = pattern:find("*", 1, true) or (pattern:len() + 1)
-					local leaf = filename:sub(i)
+					if i < filename:len() then
+						leaf = filename:sub(i)
+					else
+						leaf = path.getname(filename)
+					end
 					if leaf:startswith("/") then
 						leaf = leaf:sub(2)
 					end
@@ -491,7 +495,6 @@
 					end
 					
 					vpath = path.join(stem, leaf)
-
 				end
 			end
 		end
