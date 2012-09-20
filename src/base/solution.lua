@@ -374,3 +374,46 @@
 		end
 		return sln.projects[idx]
 	end
+
+
+--
+-- Checks to see if any projects contained by a solution use
+-- a C or C++ as their language.
+--
+-- @param sln
+--    The solution to query.
+-- @return
+--    True if at least one project in the solution uses C or C++.
+--
+
+	function solution.hascppproject(sln)
+		for prj in solution.eachproject_ng(sln) do
+			if premake.iscppproject(prj) then
+				return true
+			end
+		end
+		return false
+	end
+
+
+--
+-- Checks to see if any projects contained by a solution use
+-- a .NET language.
+--
+-- @param sln
+--    The solution to query.
+-- @return
+--    True if at least one project in the solution uses a 
+--    .NET language
+--
+
+	function solution.hasdotnetproject(sln)
+		for prj in solution.eachproject_ng(sln) do
+			if premake.isdotnetproject(prj) then
+				return true
+			end
+		end
+		return false
+	end
+
+

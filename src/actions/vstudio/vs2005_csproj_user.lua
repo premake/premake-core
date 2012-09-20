@@ -13,8 +13,20 @@
 	
 	function cs2005.generate_user_ng(prj)
 		print("** Warning: C# projects have not been ported yet")
+
+		io.eol = "\r\n"
+		
+		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		_p('  <PropertyGroup>')
+		
+		_p('  </PropertyGroup>')
+		_p('</Project>')
 	end
 
+
+-----------------------------------------------------------------------------
+-- Everything below this point is a candidate for deprecation
+-----------------------------------------------------------------------------
 
 	function cs2005.generate_user(prj)
 		io.eol = "\r\n"
