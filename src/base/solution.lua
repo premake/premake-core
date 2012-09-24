@@ -123,6 +123,7 @@
 
 		-- fill in any calculated values
 		for _, cfg in ipairs(configs) do
+			cfg.solution = sln
 			premake5.config.bake(cfg)
 		end
 		

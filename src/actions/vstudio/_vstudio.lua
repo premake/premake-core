@@ -6,6 +6,7 @@
 
 	premake.vstudio = { }
 	local vstudio = premake.vstudio
+	local solution = premake.solution
 	local project = premake5.project
 
 
@@ -192,6 +193,8 @@
 	
 	function vstudio.architecture(cfg)
 		local arch
+		
+		-- allow add-ons to override the architecture for VS2010 specifically
 		if _ACTION >= "vs2010" then
 			arch = vstudio.vs2010_architectures[cfg.architecture] or
 			       vstudio.vs2010_architectures[cfg.system]
@@ -213,6 +216,56 @@
 		local platform = vstudio.projectplatform(cfg)
 		local architecture = arch or vstudio.architecture(cfg)
 		return platform .. "|" .. architecture
+	end
+
+
+--
+-- Returns the Visual Studio solution configuration identifier corresponding
+-- to the given Premake configuration.
+--
+-- @param cfg
+--    The configuration to query.
+-- @return
+--    A solution configuration identifier of the format BuildCfg|Platform,
+--    corresponding to the Premake values of the same names. If no platform
+--    was specified by the script, the architecture is used instead.
+--
+
+	function vstudio.solutionconfig(cfg)
+		local platform = cfg.platform
+		
+		-- if no platform name was specified, use the architecture instead;
+		-- since architectures are defined in the projects and not at the 
+		-- solution level, need to poke around to figure this out
+		if not platform then
+			local hascpp = false
+			local hasdotnet = false
+			
+			for prj in premake.solution.eachproject_ng(cfg.solution) do
+				if premake.iscppproject(prj) then 
+					hascpp = true
+				elseif premake.isdotnetproject(prj) then
+					hasdotnet = true
+				end
+				
+				-- map the solution config to the corresponding project cfg
+				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+				if prjcfg then
+					if prjcfg.architecture then
+						platform = vstudio.architecture(prjcfg)
+					end
+				end
+			end
+			
+			-- use a default if no other architecture was specified
+			if hascpp and hasdotnet then
+				platform = "Mixed Platforms"
+			else
+				platform = platform or iif(hascpp, "Win32", "Any CPU")
+			end
+		end
+		
+		return string.format("%s|%s", cfg.buildcfg, platform)
 	end
 
 
@@ -397,15 +450,6 @@
 	end
 	
 	
-
---
--- Given a project configuration, return a Visual Studio compatible platform name.
---
-
-	function vstudio.platform(cfg)
-		return cfg.platform or "Win32"
-	end
-
 
 --
 -- Returns the project platform name for a specified configuration. Each build

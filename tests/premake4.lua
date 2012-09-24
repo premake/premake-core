@@ -115,7 +115,6 @@
 	-- Visual Studio 2005-2010 solutions
 	dofile("actions/vstudio/sln2005/test_dependencies.lua")
 	dofile("actions/vstudio/sln2005/test_header.lua")
-	dofile("actions/vstudio/sln2005/projectplatforms.lua")
 	dofile("actions/vstudio/sln2005/test_projects.lua")
 	dofile("actions/vstudio/sln2005/test_project_platforms.lua")
 	dofile("actions/vstudio/sln2005/test_solution_platforms.lua")

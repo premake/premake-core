@@ -93,10 +93,8 @@
 	function sln2005.solutionConfigurationPlatforms(sln)
 		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		for cfg in solution.eachconfig(sln) do
-			local platforms = sln2005.getcfgplatforms(sln, cfg)
-			for _, platform in ipairs(platforms) do
-				_p(2,'%s|%s = %s|%s', cfg.buildcfg, platform, cfg.buildcfg, platform)
-			end
+			local ident = vstudio.solutionconfig(cfg)
+			_p(2,'%s = %s', ident, ident)
 		end
 		_p(1,'EndGlobalSection')
 	end
@@ -113,12 +111,12 @@
 			for slncfg in solution.eachconfig(sln) do
 				local prjcfg = project.getconfig(prj, slncfg.buildcfg, slncfg.platform)
 				if prjcfg then
-					local slnplatform = vstudio.platform(slncfg)
+					local slnident = vstudio.solutionconfig(slncfg)
 					local prjplatform = vstudio.projectplatform(prjcfg)
 					local architecture = vstudio.architecture(prjcfg)
 					
-					_p(2,'{%s}.%s|%s.ActiveCfg = %s|%s', prj.uuid, slncfg.buildcfg, slnplatform, prjplatform, architecture)
-					_p(2,'{%s}.%s|%s.Build.0 = %s|%s', prj.uuid, slncfg.buildcfg, slnplatform, prjplatform, architecture)
+					_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slnident, prjplatform, architecture)
+					_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slnident, prjplatform, architecture)
 				end
 			end		
 		end
@@ -134,50 +132,6 @@
 		_p('\tGlobalSection(SolutionProperties) = preSolution')
 		_p('\t\tHideSolutionNode = FALSE')
 		_p('\tEndGlobalSection')
-	end
-
-
---
--- Return a list of required platforms for a specific configuration. 
--- Depending on mix of languages used by the solution, a configuration
--- may need multiple platforms listed.
---
--- @param sln
---    The current solution.
--- @param cfg
---    The configuration to query.
--- @return
---    A array of one or more platform identifiers.
---
-
-	function sln2005.getcfgplatforms(sln, cfg)
-		local r = {}
-
-		local hasdotnet = solution.hasdotnetproject(sln)
-		local hascpp = solution.hascppproject(sln)
-		local is2010 = _ACTION > "vs2008"
-		
-		if hasdotnet then
-			if not hascpp or not is2010 then
-				table.insert(r, "Any CPU")
-			end
-			if hascpp or is2010 then
-				table.insert(r, "Mixed Platforms")
-			end
-		end
-
-		if cfg.platform then
-			table.insert(r, cfg.platform)
-		else
-			if hascpp or not is2010 then
-				table.insert(r, "Win32")
-			end
-			if hasdotnet and is2010 then
-				table.insert(r, "x86")
-			end
-		end
-		
-		return r
 	end
 
 

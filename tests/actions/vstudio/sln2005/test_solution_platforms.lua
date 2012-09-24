@@ -29,11 +29,10 @@
 
 
 --
--- Check the basic form of C++ solutions: only the specified build configurations
--- should be listed, and the architecture should default to Win32.
+-- If no platforms are specified, the architecture should be used as a default.
 --
 
-	function suite.buildCfgAndWin32Used_onNoPlatformsSet()
+	function suite.useArchAsPlatform_onCppAndNoArch()
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +42,69 @@
 		]]
 	end
 
+	function suite.useArchAsPlatform_onCppAnd32()
+		architecture "x32"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+		]]
+	end
+
+	function suite.useArchAsPlatform_onCppAnd64()
+		architecture "x64"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+		]]
+	end
+
+	function suite.useArchAsPlatform_onCs()
+		prepare("C#")
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+		]]
+	end
+
+	function suite.useArchAsPlatform_onMixedLanguage()
+		project("MyProject2")
+		language "C++"
+		prepare("C#")
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Release|Mixed Platforms = Release|Mixed Platforms
+	EndGlobalSection
+		]]
+	end
+
 
 --
--- When a platform is specified, it should be listed instead of the default Win32.
+-- When a platform is specified, it should be listed instead of the architecture default.
 --
 
-	function suite.buildCfgAndPlatformUsed_onPlatformsSet()
+	function suite.buildCfgAndPlatformUsed_onPlatformsSet_onCpp()
 		platforms { "Static" }
 		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Static = Debug|Static
+		Release|Static = Release|Static
+	EndGlobalSection
+		]]
+	end
+
+	function suite.buildCfgAndPlatformUsed_onPlatformsSet_onCs()
+		platforms { "Static" }
+		prepare("C#")
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Static = Debug|Static
@@ -77,85 +131,3 @@
 		]]
 	end
 
-
---
--- When the only project language is C#, the Any CPU configuration should be added.
---
-
-	function suite.addsAnyCPU_onCsOnly()
-		prepare("C#")
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|Win32 = Debug|Win32
-		Release|Any CPU = Release|Any CPU
-		Release|Win32 = Release|Win32
-	EndGlobalSection
-		]]
-	end
-
-
---
--- If projects in the solution use both C# and C++, the Mixed Platforms
--- configuration should be added.
---
-
-	function suite.addsMixedPlatforms_onMixedLanguages()
-		project("MyProject2")
-		language "C#"
-		prepare()
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|Win32 = Debug|Win32
-		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|Win32 = Release|Win32
-	EndGlobalSection
-		]]
-	end
-
-
---
--- Visual Studio 2010 does things a little differently: x86 instead of
--- Win32, and Mixed Platforms are always listed.
---
-
-	function suite.onCsharpAndVs2010()
-		_ACTION = "vs2010"
-		prepare("C#")
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|x86 = Release|x86
-	EndGlobalSection
-		]]
-	end
-
-
---
--- On mixed language projects, Visual Studio 2010 lists both x86 and
--- Win32 architectures by default.
---
-
-	function suite.onMixedLanguageAndVs2010()
-		_ACTION = "vs2010"
-		project("MyProject2")
-		language "C#"
-		prepare()
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|Win32 = Debug|Win32
-		Debug|x86 = Debug|x86
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|Win32 = Release|Win32
-		Release|x86 = Release|x86
-	EndGlobalSection
-		]]
-	end
