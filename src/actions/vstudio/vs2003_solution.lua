@@ -19,7 +19,7 @@
 
 		-- Write out the list of project entries
 		for prj in premake.solution.eachproject(sln) do
-			local projpath = path.translate(path.getrelative(sln.location, vstudio.projectfile(prj)))
+			local projpath = path.translate(path.getrelative(sln.location, vstudio.projectfile_old(prj)))
 			_p('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, projpath, prj.uuid)
 			
 			local deps = premake.getdependencies(prj)

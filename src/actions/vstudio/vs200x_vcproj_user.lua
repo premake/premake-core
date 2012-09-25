@@ -42,7 +42,7 @@
 
 	function vc200x.userconfiguration(cfg)
 		_p(2,'<Configuration')
-		_x(3,'Name="%s"', vstudio.configname(cfg))
+		_x(3,'Name="%s"', vstudio.projectconfig(cfg))
 		_p(3,'>')
 	end
 

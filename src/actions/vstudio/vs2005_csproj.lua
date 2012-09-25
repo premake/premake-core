@@ -495,7 +495,7 @@
 
 		_p('  <ItemGroup>')
 		for _, ref in ipairs(premake.getlinks(prj, "siblings", "object")) do
-			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, vstudio.projectfile(ref)), "\\"))
+			_p('    <ProjectReference Include="%s">', path.translate(path.getrelative(prj.location, vstudio.projectfile_old(ref)), "\\"))
 			_p('      <Project>{%s}</Project>', ref.uuid)
 			_p('      <Name>%s</Name>', premake.esc(ref.name))
 			_p('    </ProjectReference>')

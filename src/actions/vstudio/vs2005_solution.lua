@@ -58,7 +58,7 @@
 	function sln2005.project_ng(prj)
 		-- Build a relative path from the solution file to the project file
 		local slnpath = premake.solution.getlocation(prj.solution)
-		local prjpath = vstudio.projectfile_ng(prj)
+		local prjpath = vstudio.projectfile(prj)
 		prjpath = path.translate(path.getrelative(slnpath, prjpath))
 		
 		_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
@@ -173,7 +173,7 @@
 
 	function sln2005.project(prj)
 		-- Build a relative path from the solution file to the project file
-		local projpath = path.translate(path.getrelative(prj.solution.location, vstudio.projectfile(prj)), "\\")
+		local projpath = path.translate(path.getrelative(prj.solution.location, vstudio.projectfile_old(prj)), "\\")
 			
 		_p('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, projpath, prj.uuid)
 		sln2005.projectdependencies(prj)

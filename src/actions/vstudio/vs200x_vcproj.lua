@@ -138,7 +138,7 @@
 
 	function vc200x.configuration(cfg)
 		_p(2,'<Configuration')
-		_x(3,'Name="%s"', vstudio.configname(cfg))
+		_x(3,'Name="%s"', vstudio.projectconfig(cfg))
 
 		local outdir = path.translate(cfg.buildtarget.directory)
 		_x(3,'OutputDirectory="%s"', outdir)
@@ -609,7 +609,7 @@
 			local prjpath = project.getlocation(prj)
 			
 			for _, dep in ipairs(deps) do
-				local relpath = path.getrelative(prjpath, vstudio.projectfile_ng(dep))
+				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
 				_p(2,'<ProjectReference')
 				_p(3,'ReferencedProjectIdentifier="{%s}"', dep.uuid)
 				_p(3,'RelativePathToProject="%s"', path.translate(relpath))
@@ -806,7 +806,7 @@
 
 				_p(depth,'<FileConfiguration')
 				depth = depth + 1
-				_p(depth, 'Name="%s"', vstudio.configname(cfg))
+				_p(depth, 'Name="%s"', vstudio.projectconfig(cfg))
 
 				if not filecfg then
 					_p(depth, 'ExcludedFromBuild="true"')

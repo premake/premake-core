@@ -209,14 +209,59 @@
 
 
 --
--- Returns the Visual Studio identifier for a specific configuration, in the
--- form: <project platform name>|<architecture>.
+-- Returns the Visual Studio project configuration identifier corresponding
+-- to the given Premake configuration.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param arch
+--    An optional architecture identifier, to override the configuration.
+-- @return
+--    A project configuration identifier of the form 
+--    <project platform name>|<architecture>.
 --
 
-	function vstudio.configname(cfg, arch)
+	function vstudio.projectconfig(cfg, arch)
 		local platform = vstudio.projectplatform(cfg)
 		local architecture = arch or vstudio.architecture(cfg)
 		return platform .. "|" .. architecture
+	end
+
+
+--
+-- Returns the full, absolute path to the Visual Studio project file
+-- corresponding to a particular project object.
+--
+-- @param prj
+--    The project object.
+-- @return
+--    The absolute path to the corresponding Visual Studio project file.
+--
+
+	function vstudio.projectfile(prj)
+		local extension
+		if prj.language == "C#" then
+			extension = ".csproj"
+		else
+			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
+		end
+
+		return premake.project.getfilename(prj, "%%" .. extension)
+	end
+
+
+--
+-- Returns a project configuration name corresponding to the given
+-- Premake configuration. This is just the solution build configuration
+-- and platform identifiers concatenated.
+--
+
+	function vstudio.projectplatform(cfg)
+		local platform = cfg.buildcfg
+		if cfg.platform then
+			platform = platform .. " " .. cfg.platform
+		end
+		return platform
 	end
 
 
@@ -268,29 +313,6 @@
 		
 		return string.format("%s|%s", cfg.buildcfg, platform)
 	end
-
-
---
--- Returns the full, absolute path to the Visual Studio project file
--- corresponding to a particular project object.
---
--- @param prj
---    The project object.
--- @return
---    The absolute path to the corresponding Visual Studio project file.
---
-
-	function vstudio.projectfile_ng(prj)
-		local extension
-		if prj.language == "C#" then
-			extension = ".csproj"
-		else
-			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
-		end
-
-		return premake.project.getfilename(prj, "%%" .. extension)
-	end
-
 
 
 -----------------------------------------------------------------------------
@@ -453,25 +475,10 @@
 	
 
 --
--- Returns the project platform name for a specified configuration. Each build
--- configuration/platform pairing set in the solution gets mapped to a project
--- platform/architecture pair, i.e. Debug|Static => Debug Static|Win32".
---
-
-	function vstudio.projectplatform(cfg)
-		local platform = cfg.buildcfg
-		if cfg.platform then
-			platform = platform .. " " .. cfg.platform
-		end
-		return platform
-	end
-
-
---
 -- Assemble the project file name.
 --
 
-	function vstudio.projectfile(prj)
+	function vstudio.projectfile_old(prj)
 		local extension
 		if prj.language == "C#" then
 			extension = ".csproj"

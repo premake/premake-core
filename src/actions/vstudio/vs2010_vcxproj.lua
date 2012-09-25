@@ -98,7 +98,7 @@
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
 		for cfg in project.eachconfig(prj) do
 			for _, arch in ipairs(platforms) do
-				_x(2,'<ProjectConfiguration Include="%s">', vstudio.configname(cfg, arch))
+				_x(2,'<ProjectConfiguration Include="%s">', vstudio.projectconfig(cfg, arch))
 				_x(3,'<Configuration>%s</Configuration>', vstudio.projectplatform(cfg))
 				_p(3,'<Platform>%s</Platform>', arch)
 				_p(2,'</ProjectConfiguration>')
@@ -345,7 +345,9 @@
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
 		_p(2,'<ProjectReference>')
+
 		_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
+
 		_p(2,'</ProjectReference>')
 	end
 
@@ -525,7 +527,7 @@
 			
 			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
-				local relpath = path.getrelative(prjpath, vstudio.projectfile_ng(dep))
+				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
 				_x(2,'<ProjectReference Include=\"%s\">', path.translate(relpath))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_p(2,'</ProjectReference>')
@@ -605,7 +607,7 @@
 --
 
 	function vc2010.condition(cfg)
-		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.configname(cfg)))
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectconfig(cfg)))
 	end
 
 
@@ -1285,7 +1287,7 @@
 			
 			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
-				local deppath = path.getrelative(prjpath, vstudio.projectfile(dep))
+				local deppath = path.getrelative(prjpath, vstudio.projectfile_old(dep))
 				_p(2,'<ProjectReference Include=\"%s\">', path.translate(deppath, "\\"))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_p(2,'</ProjectReference>')
