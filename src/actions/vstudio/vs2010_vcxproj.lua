@@ -345,9 +345,7 @@
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
 		_p(2,'<ProjectReference>')
-
 		_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
-
 		_p(2,'</ProjectReference>')
 	end
 
@@ -548,7 +546,7 @@
 		-- toolset define the format of the links
 		local toolset = premake.vstudio.vc200x.toolset(cfg)
 		if toolset then
-			links = toolset.getlinks(cfg, true)
+			links = toolset.getlinks(cfg, false)
 		else
 			-- VS always tries to link against project dependencies, even when those
 			-- projects are excluded from the build. To work around, linking dependent
@@ -1287,7 +1285,7 @@
 			
 			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
-				local deppath = path.getrelative(prjpath, vstudio.projectfile_old(dep))
+				local deppath = path.getrelative(prjpath, vstudio.projectfile(dep))
 				_p(2,'<ProjectReference Include=\"%s\">', path.translate(deppath, "\\"))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_p(2,'</ProjectReference>')

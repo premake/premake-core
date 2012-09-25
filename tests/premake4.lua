@@ -92,6 +92,7 @@
 
 	-- Toolset tests
 	dofile("tools/test_gcc.lua")
+	dofile("tools/test_msc.lua")
 	dofile("tools/test_snc.lua")
 
 	-- Clean tests
@@ -165,6 +166,7 @@
 	
 	-- Makefile C/C++ projects
 	dofile("actions/make/cpp/test_file_rules.lua")
+	dofile("actions/make/cpp/test_flags.lua")
 	dofile("actions/make/cpp/test_make_pch.lua")
 	dofile("actions/make/cpp/test_make_linking.lua")
 	dofile("actions/make/cpp/test_objects.lua")

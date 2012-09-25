@@ -692,7 +692,7 @@
 		_p(4,'GCC_MODEL_TUNING = G5;')
 
 		if tr.infoplist then
-			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.path)
+			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.cfg.name)
 		end
 
 		installpaths = {

@@ -961,7 +961,7 @@
 	end
 
 	function suite.XCBuildConfigurationTarget_OnInfoPlist()
-		files { "MyProject-Info.plist" }
+		files { "../../MyProject-Info.plist" }
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
@@ -972,7 +972,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = "MyProject-Info.plist";
+				INFOPLIST_FILE = "../../MyProject-Info.plist";
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = "MyProject";
 			};

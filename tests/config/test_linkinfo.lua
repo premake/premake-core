@@ -115,7 +115,7 @@
 
 
 --
--- The import library extension should change if the a 
+-- The import library extension should not change if the a 
 -- custom target extension is set.
 --
 

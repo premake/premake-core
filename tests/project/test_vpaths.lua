@@ -65,6 +65,13 @@
 		test.isequal("sources/hello.c", project.getvpath(prj, cfg.files[1]))
 	end
 
+	function suite.ExactFilenameMatch()
+		files { "src/hello.c" }
+		vpaths { ["sources"] = "src/hello.c" }
+		prepare()
+		test.isequal("sources/hello.c", project.getvpath(prj, cfg.files[1]))
+	end
+
 
 --
 -- Test wildcard patterns

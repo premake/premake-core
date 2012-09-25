@@ -78,6 +78,9 @@
 		
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
+		_p('ifneq (,$(PCH))')
+			_p('  -include $(OBJDIR)/$(notdir $(PCH)).d')
+		_p('endif')
 	end
 
 
@@ -165,9 +168,9 @@
 -- Build command for a single file.
 --
 
-	function cpp.buildcommand(prj)
+	function cpp.buildcommand(prj, objext)
 		local flags = iif(prj.language == "C", '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
-		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.o=%%.d) -c "$<"', flags)
+		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
 	end
 
 
@@ -207,7 +210,7 @@
 			local objectname = project.getfileobject(prj, node.abspath)
 			_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
 			_p('\t@echo $(notdir $<)')
-			cpp.buildcommand(prj)
+			cpp.buildcommand(prj, "o")
 			
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
@@ -242,7 +245,10 @@
 
 	function cpp.flags(cfg, toolset)
 		_p('  DEFINES   += %s', table.concat(toolset.getdefines(cfg.defines), " "))
-		_p('  INCLUDES  += %s', table.concat(make.esc(toolset.getincludedirs(cfg, cfg.includedirs), " ")))
+		
+		local includes = make.esc(toolset.getincludedirs(cfg, cfg.includedirs))
+		_p('  INCLUDES  += %s', table.concat(includes, " "))
+		
 		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
 		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), " "))
 		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(toolset.getcxxflags(cfg), " "))
@@ -423,7 +429,7 @@
 		_p('else')
 		_p('\t$(SILENT) xcopy /D /Y /Q "$(subst /,\\,$<)" "$(subst /,\\,$(OBJDIR))" 1>nul')
 		_p('endif')
-		cpp.buildcommand(prj)
+		cpp.buildcommand(prj, "gch")
 		_p('endif')
 		_p('')
 	end
