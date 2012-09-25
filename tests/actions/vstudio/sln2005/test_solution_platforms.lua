@@ -113,6 +113,19 @@
 		]]
 	end
 
+	function suite.buildCfgAndPlatformUsed_onPlatformsSet_onMixedLanguage()
+		platforms { "Static" }
+		project("MyProject2")
+		language "C++"
+		prepare("C#")
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Static = Debug|Static
+		Release|Static = Release|Static
+	EndGlobalSection
+		]]
+	end
+
 
 --
 -- When multiple platforms are provided, the sort order should match Visual Studio.

@@ -201,8 +201,9 @@
 		end
 		
 		arch = arch or vstudio.vs200x_architectures[cfg.architecture] or
-		       vstudio.vs200x_architectures[cfg.system] or "Win32"
+		       vstudio.vs200x_architectures[cfg.system]
 		
+		arch = arch or iif(premake.isdotnetproject(cfg.project), "Any CPU", "Win32")
 		return arch
 	end
 
