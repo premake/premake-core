@@ -455,15 +455,19 @@
 --
 
 	function cpp.toolconfig(cfg, toolset)
-		local sysflags = toolset.sysflags[cfg.architecture] or toolset.sysflags[cfg.system] or {}
-		if sysflags.cc then
-			_p('  CC         = %s', sysflags.cc)
+		local tool = toolset.gettoolname(cfg, "cc")
+		if tool then
+			_p('  CC         = %s', tool)
 		end
-		if sysflags.cxx then
-			_p('  CXX        = %s', sysflags.cxx)
+
+		tool = toolset.gettoolname(cfg, "cxx")
+		if tool then
+			_p('  CXX        = %s', tool)
 		end
-		if sysflags.ar then
-			_p('  AR         = %s', sysflags.ar)
+
+		tool = toolset.gettoolname(cfg, "ar")
+		if tool then
+			_p('  AR         = %s', tool)
 		end
 	end
 

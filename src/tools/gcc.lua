@@ -51,6 +51,7 @@
 	}
 
 
+
 	function gcc.getsysflags(cfg, field)
 		local result = {}
 		
@@ -242,6 +243,26 @@
 		end
 		
 		return result
+	end
+
+
+--
+-- Retrieves the executable command name for a tool, based on the
+-- provided configuration and the operating environment.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param tool
+--    The tool to fetch, one of "cc" for the C compiler, "cxx" for
+--    the C++ compiler, or "ar" for the static linker.
+-- @return
+--    The executable command name for a tool, or nil if the system's
+--    default value should be used.
+--
+
+	function gcc.gettoolname(cfg, tool)
+		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
+		return sysflags[tool]
 	end
 
 

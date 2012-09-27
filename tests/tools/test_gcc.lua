@@ -29,6 +29,26 @@
 
 
 --
+-- Check the selection of tools based on the target system.
+--
+
+	function suite.tools_onDefaults()
+		prepare()
+		test.isnil(gcc.gettoolname(cfg, "cc"))
+		test.isnil(gcc.gettoolname(cfg, "cxx"))
+		test.isnil(gcc.gettoolname(cfg, "ar"))
+	end
+
+	function suite.tools_onPS3()
+		system "PS3"
+		prepare()
+		test.isequal("ppu-lv2-g++", gcc.gettoolname(cfg, "cc"))
+		test.isequal("ppu-lv2-g++", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("ppu-lv2-ar", gcc.gettoolname(cfg, "ar"))
+	end
+		
+
+--
 -- By default, the -MMD -MP are used to generate dependencies.
 --
 

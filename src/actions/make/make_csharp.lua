@@ -7,6 +7,7 @@
 	premake.make.cs = {}
 	local make = premake.make
 	local cs = premake.make.cs
+	local project = premake5.project
 
 
 --
@@ -16,8 +17,45 @@
 	function make.generate_csharp(prj)
 		make.header(prj)
 
+		-- main build rule(s)
+		_p('.PHONY: clean prebuild prelink')
+		_p('')
+
+		for cfg in project.eachconfig(prj) do
+			cs.config(cfg)
+		end
+
 		print("** Warning: GMake C# projects have not been ported yet")
 	end
+
+
+--
+-- Write out the settings for a particular configuration.
+--
+
+	function cs.config(cfg)
+		-- I've only got one .NET toolset right now
+		local toolset = premake.dotnet		
+		
+		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+	
+		-- write toolset specific configurations
+		cs.toolconfig(cfg, toolset)
+	
+		_p('endif')
+		_p('')	
+	end
+
+
+--
+-- System specific toolset configuration.
+--
+
+	function cs.toolconfig(cfg, toolset)
+		_p('  CSC       = %s', toolset.gettoolname(cfg, "csc"))
+		_p('  RESGEN    = %s', toolset.gettoolname(cfg, "resgen"))
+	end
+
 
 
 

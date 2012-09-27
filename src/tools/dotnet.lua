@@ -6,6 +6,8 @@
 
 	
 	premake.dotnet = { }
+	local dotnet = premake.dotnet
+	
 	premake.dotnet.namestyle = "windows"
 	
 
@@ -28,7 +30,7 @@
 -- Return the default build action for a given file, based on the file extension.
 --
 
-	function premake.dotnet.getbuildaction(fcfg)
+	function dotnet.getbuildaction(fcfg)
 		local ext = path.getextension(fcfg.name):lower()
 		if fcfg.buildaction == "Compile" or ext == ".cs" then
 			return "Compile"
@@ -42,24 +44,33 @@
 	end
 	
 	
-	
+
 --
--- Returns the compiler filename (they all use the same arguments)
+-- Retrieves the executable command name for a tool, based on the
+-- provided configuration and the operating environment.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param tool
+--    The tool to fetch, one of "csc" for the C# compiler, or
+--    "resgen" for the resource compiler.
+-- @return
+--    The executable command name for a tool, or nil if the system's
+--    default value should be used.
 --
 
-	function premake.dotnet.getcompilervar(cfg)
-		if (_OPTIONS.dotnet == "msnet") then
-			return "csc"
-		elseif (_OPTIONS.dotnet == "mono") then
-			if (cfg.framework <= "1.1") then
-				return "mcs"
-			elseif (cfg.framework >= "4.0") then
-				return "dmcs"
-			else 
-				return "gmcs"
-			end
+	function dotnet.gettoolname(cfg, tool)
+		local compilers = {
+			msnet = "csc",
+			mono = "mcs",
+			pnet = "cscc",
+		}
+
+		if tool == "csc" then		
+			local toolset = _OPTIONS.dotnet or iif(os.is(premake.WINDOWS), "msnet", "mono")
+			return compilers[toolset]
 		else
-			return "cscc"
+			return "resgen"
 		end
 	end
 
@@ -69,7 +80,7 @@
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
-	function premake.dotnet.getflags(cfg)
+	function dotnet.getflags(cfg)
 		local result = table.translate(cfg.flags, flags)
 		return result		
 	end
@@ -80,7 +91,7 @@
 -- Translates the Premake kind into the CSC kind string.
 --
 
-	function premake.dotnet.getkind(cfg)
+	function dotnet.getkind(cfg)
 		if (cfg.kind == "ConsoleApp") then
 			return "Exe"
 		elseif (cfg.kind == "WindowedApp") then

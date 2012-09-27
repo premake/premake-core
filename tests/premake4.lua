@@ -91,6 +91,7 @@
 	dofile("oven/test_tokens.lua")
 
 	-- Toolset tests
+	dofile("tools/test_dotnet.lua")
 	dofile("tools/test_gcc.lua")
 	dofile("tools/test_msc.lua")
 	dofile("tools/test_snc.lua")
