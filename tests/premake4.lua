@@ -106,6 +106,7 @@
 	dofile("actions/vstudio/cs2002/test_files.lua")
 
 	-- Visual Studio 2005-2010 C# projects
+	dofile("actions/vstudio/cs2005/test_assembly_refs.lua")
 	dofile("actions/vstudio/cs2005/test_files.lua")
 	dofile("actions/vstudio/cs2005/test_flags.lua")
 	dofile("actions/vstudio/cs2005/projectelement.lua")

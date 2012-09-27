@@ -83,7 +83,7 @@
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
 		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-		<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+		<TargetFrameworkProfile></TargetFrameworkProfile>
 		<FileAlignment>512</FileAlignment>
 	</PropertyGroup>
 		]]
@@ -105,7 +105,7 @@
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
 		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-		<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+		<TargetFrameworkProfile></TargetFrameworkProfile>
 		<FileAlignment>512</FileAlignment>
 	</PropertyGroup>
 		]]

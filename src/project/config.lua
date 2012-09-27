@@ -275,20 +275,23 @@
 					if dir ~= "." then
 						item = dir
 					end
-				elseif part == "fullpath" then
-					item = link
-					if cfg.system == premake.WINDOWS then
-						if premake.iscppproject(cfg.project) then
-							item = path.appendextension(item, ".lib")
-						elseif premake.isdotnetproject(cfg.project) then
-							item = path.appendextension(item, ".dll")
-						end
-					end
-					if item:find("/", nil, true) then
-						item = project.getrelative(cfg.project, item)
-					end
+
+				elseif part == "basename" then
+					item = path.getname(link)					
+
 				else
 					item = link
+					if premake.isdotnetproject(cfg.project) then
+						item = path.appendextension(item, ".dll")
+					elseif cfg.system == premake.WINDOWS then
+						item = path.appendextension(item, ".lib")
+					end
+					
+					if part == "name" then
+						item = path.getname(item)
+					elseif item:find("/", nil, true) then
+						item = project.getrelative(cfg.project, item)
+					end
 				end
 
 			end

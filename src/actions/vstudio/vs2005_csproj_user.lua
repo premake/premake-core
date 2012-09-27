@@ -5,6 +5,7 @@
 --
 
 	local cs2005 = premake.vstudio.cs2005
+	local project = premake5.project
 
 
 --
@@ -12,12 +13,18 @@
 --
 	
 	function cs2005.generate_user_ng(prj)
-		print("** Warning: C# projects have not been ported yet")
-
 		io.eol = "\r\n"
+		io.indent = "  "
 		
 		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-		_p('  <PropertyGroup>')
+		_p(1,'<PropertyGroup>')
+		
+		-- Per-configuration reference paths aren't supported (are they?) so just
+		-- use the first configuration in the project
+		local cfg = project.getfirstconfig(prj)
+		
+		local refpaths = path.translate(project.getrelative(prj, cfg.libdirs))
+		_p(2,'<ReferencePath>%s</ReferencePath>', table.concat(refpaths, ";"))
 		
 		_p('  </PropertyGroup>')
 		_p('</Project>')

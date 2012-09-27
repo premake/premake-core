@@ -422,6 +422,9 @@
 			end
 		end
 
+		-- create a file config lookup cache
+		prj.fileconfigs = {}
+		
 		-- create a tree from the file list
 		local tr = premake.tree.new(prj.name)
 		
@@ -443,6 +446,8 @@
 			for key, value in pairs(fcfg) do
 				node[key] = value
 			end
+			
+			prj.fileconfigs[node.abspath] = node
 		end
 
 		premake.tree.trimroot(tr)
@@ -515,6 +520,29 @@
 			return false
 		end
 		return true
+	end
+
+
+--
+-- Determines if a project contains a particular source code file.
+--
+-- @param prj
+--    The project to query.
+-- @param filename
+--    The absolute path to the source code file being checked.
+-- @return
+--    True if the file belongs to the project, in any configuration.
+--
+
+	function project.hasfile(prj, filename)
+		-- make sure I have the project, and not it's root configuration
+		prj = prj.project or prj
+
+		-- TODO: the file cache should be built during the baking process;
+		-- I shouldn't need to fetch the tree to get it.
+		project.getsourcetree(prj)
+
+		return prj.fileconfigs[filename] ~= nil
 	end
 
 
