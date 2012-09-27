@@ -51,6 +51,7 @@
 	dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
 	dofile("base/test_path.lua")
+	dofile("base/test_premake_command.lua")
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
 	dofile("base/test_config_bug.lua")
