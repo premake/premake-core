@@ -4,17 +4,18 @@
 -- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
+	premake.make.cs = {}
 	local make = premake.make
+	local cs = premake.make.cs
 
 
 --
-
 -- Generate a GNU make C# project makefile, with support for the new platforms API.
-
 --
-
 
 	function make.generate_csharp(prj)
+		make.header(prj)
+
 		print("** Warning: GMake C# projects have not been ported yet")
 	end
 
