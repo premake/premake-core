@@ -276,3 +276,30 @@
 		test.isequal("MyProject.self", i.name)
 	end
 
+
+--
+-- .NET executables should always default to ".exe" extensions.
+--
+
+	function suite.appUsesExe_onDotNet()
+		_OS = "macosx"
+		language "C#"
+		i = prepare()
+		test.isequal("MyProject.exe", i.name)
+	end
+
+
+
+--
+-- .NET libraries should always default to ".dll" extensions.
+--
+
+	function suite.appUsesExe_onDotNet()
+		_OS = "macosx"
+		language "C#"
+		kind "SharedLib"
+		i = prepare()
+		test.isequal("MyProject.dll", i.name)
+	end
+
+

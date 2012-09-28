@@ -5,16 +5,18 @@
 --
 
 	premake.ow = { }
+	local ow = premake.ow
+
 	premake.ow.namestyle = "windows"
-	
+
 	
 --
 -- Set default tools
 --
 
-	premake.ow.cc     = "WCL386"
-	premake.ow.cxx    = "WCL386"
-	premake.ow.ar     = "ar"
+	ow.cc     = "WCL386"
+	ow.cxx    = "WCL386"
+	ow.ar     = "ar"
 	
 	
 --
@@ -45,7 +47,7 @@
 -- No specific platform support yet
 --
 
-	premake.ow.platforms = 
+	ow.platforms = 
 	{
 		Native = { 
 			flags = "" 
@@ -58,11 +60,11 @@
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
-	function premake.ow.getcppflags(cfg)
+	function ow.getcppflags(cfg)
 		return {}
 	end
 
-	function premake.ow.getcflags(cfg)
+	function ow.getcflags(cfg)
 		local result = table.translate(cfg.flags, cflags)		
 		if (cfg.flags.Symbols) then
 			table.insert(result, "-hw")   -- Watcom debug format for Watcom debugger
@@ -70,7 +72,7 @@
 		return result		
 	end
 	
-	function premake.ow.getcxxflags(cfg)
+	function ow.getcxxflags(cfg)
 		local result = table.translate(cfg.flags, cxxflags)
 		return result
 	end
@@ -81,7 +83,7 @@
 -- Returns a list of linker flags, based on the supplied configuration.
 --
 
-	function premake.ow.getldflags(cfg)
+	function ow.getldflags(cfg)
 		local result = { }
 		
 		if (cfg.flags.Symbols) then
@@ -97,7 +99,7 @@
 -- library names.
 --
 
-	function premake.ow.getlinkflags(cfg)
+	function ow.getlinkflags(cfg)
 		local result = { }
 		return result
 	end
@@ -108,7 +110,7 @@
 -- Decorate defines for the command line.
 --
 
-	function premake.ow.getdefines(defines)
+	function ow.getdefines(defines)
 		local result = { }
 		for _,def in ipairs(defines) do
 			table.insert(result, '-D' .. def)
@@ -122,11 +124,30 @@
 -- Decorate include file search paths for the command line.
 --
 
-	function premake.ow.getincludedirs(includedirs)
+	function ow.getincludedirs(includedirs)
 		local result = { }
 		for _,dir in ipairs(includedirs) do
 			table.insert(result, '-I "' .. dir .. '"')
 		end
 		return result
+	end
+
+
+--
+-- Retrieves the executable command name for a tool, based on the
+-- provided configuration and the operating environment.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param tool
+--    The tool to fetch, one of "cc" for the C compiler, "cxx" for
+--    the C++ compiler, or "ar" for the static linker.
+-- @return
+--    The executable command name for a tool, or nil if the system's
+--    default value should be used.
+--
+
+	function ow.gettoolname(cfg, tool)
+		return ow[tool]
 	end
 

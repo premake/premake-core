@@ -200,6 +200,19 @@
 
 
 --
+-- Output the main target variables: target directory, target name,
+-- and objects (or intermediate files) directory. These values are
+-- common across both C++ and C# projects.
+--
+
+	function make.targetconfig(cfg)
+		_p('  TARGETDIR  = %s', make.esc(cfg.buildtarget.directory))
+		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(cfg.buildtarget.name))
+		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
+	end
+
+
+--
 -- Convert an arbitrary string (project name) to a make variable name.
 --
 

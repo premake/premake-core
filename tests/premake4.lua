@@ -94,6 +94,7 @@
 	dofile("tools/test_dotnet.lua")
 	dofile("tools/test_gcc.lua")
 	dofile("tools/test_msc.lua")
+	dofile("tools/test_ow.lua")
 	dofile("tools/test_snc.lua")
 
 	-- Clean tests

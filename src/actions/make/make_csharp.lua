@@ -41,7 +41,51 @@
 	
 		-- write toolset specific configurations
 		cs.toolconfig(cfg, toolset)
+
+		-- write target information (target dir, name, obj dir)
+		make.targetconfig(cfg)
+		
 	
+		--[[
+		-- write flags
+		cpp.flags(cfg, toolset)
+
+		-- set up precompiled headers
+		cpp.pchconfig(cfg)
+
+		-- write the link step
+		cpp.linkconfig(cfg, toolset)
+
+		-- write the custom build commands		
+		_p('  define PREBUILDCMDS')
+		if #cfg.prebuildcommands > 0 then
+			_p('\t@echo Running pre-build commands')
+			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+
+		_p('  define PRELINKCMDS')
+		if #cfg.prelinkcommands > 0 then
+			_p('\t@echo Running pre-link commands')
+			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+
+		_p('  define POSTBUILDCMDS')
+		if #cfg.postbuildcommands > 0 then
+			_p('\t@echo Running post-build commands')
+			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+		_p('')
+		
+		-- write the target building rule
+		cpp.targetrules(cfg)
+		
+		-- write out config-level makesettings blocks
+		make.settings(cfg, toolset)
+		--]]
+		
 		_p('endif')
 		_p('')	
 	end
@@ -52,8 +96,8 @@
 --
 
 	function cs.toolconfig(cfg, toolset)
-		_p('  CSC       = %s', toolset.gettoolname(cfg, "csc"))
-		_p('  RESGEN    = %s', toolset.gettoolname(cfg, "resgen"))
+		_p('  CSC        = %s', toolset.gettoolname(cfg, "csc"))
+		_p('  RESGEN     = %s', toolset.gettoolname(cfg, "resgen"))
 	end
 
 

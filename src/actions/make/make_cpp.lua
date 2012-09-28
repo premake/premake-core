@@ -101,7 +101,7 @@
 		cpp.toolconfig(cfg, toolset)
 
 		-- write target information (target dir, name, obj dir)
-		cpp.targetconfig(cfg)
+		make.targetconfig(cfg)
 		
 		-- write flags
 		cpp.flags(cfg, toolset)
@@ -414,17 +414,6 @@
 		cpp.buildcommand(prj, "gch")
 		_p('endif')
 		_p('')
-	end
-
-
---
--- Target (name, dir) configuration.
---
-
-	function cpp.targetconfig(cfg)		
-		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
-		_p('  TARGETDIR  = %s', make.esc(cfg.buildtarget.directory))
-		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(cfg.buildtarget.name))
 	end
 
 

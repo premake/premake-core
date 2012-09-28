@@ -56,7 +56,9 @@
 		local bundlepath = ""
 		local suffix = ""
 
-		local sysinfo = premake.systems[cfg.system][kind:lower()] or {}
+		local system = iif(premake.isdotnetproject(cfg.project), premake.WINDOWS, cfg.system)
+
+		local sysinfo = premake.systems[system][kind:lower()] or {}
 		local prefix = sysinfo.prefix or ""
 		local extension = sysinfo.extension or ""
 		

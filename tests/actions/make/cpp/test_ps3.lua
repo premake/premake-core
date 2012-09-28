@@ -44,10 +44,10 @@
 --
 
 	function suite.usesCorrectTarget()
-		cpp.targetconfig(cfg)
+		make.targetconfig(cfg)
 		test.capture [[
-  OBJDIR     = obj/Debug
   TARGETDIR  = .
   TARGET     = $(TARGETDIR)/MyProject.elf
+  OBJDIR     = obj/Debug
   		]]
 	end

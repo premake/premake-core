@@ -27,6 +27,26 @@
 
 
 --
+-- Check the selection of tools based on the target system.
+--
+
+	function suite.tools_onDefaults()
+		prepare()
+		test.isnil(snc.gettoolname(cfg, "cc"))
+		test.isnil(snc.gettoolname(cfg, "cxx"))
+		test.isnil(snc.gettoolname(cfg, "ar"))
+	end
+
+	function suite.tools_onPS3()
+		system "PS3"
+		prepare()
+		test.isnil(snc.gettoolname(cfg, "cc"))
+		test.isnil(snc.gettoolname(cfg, "cxx"))
+		test.isnil(snc.gettoolname(cfg, "ar"))
+	end
+		
+
+--
 -- By default, the -MMD -MP are used to generate dependencies.
 --
 
