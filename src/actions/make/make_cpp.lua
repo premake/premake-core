@@ -28,16 +28,8 @@
 		
 		-- list intermediate files
 		cpp.objects(prj)
-		
-		-- identify the shell type
-		_p('SHELLTYPE := msdos')
-		_p('ifeq (,$(ComSpec)$(COMSPEC))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('')
+
+		make.detectshell()		
 
 		-- common build target rules
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')

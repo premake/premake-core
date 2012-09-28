@@ -90,6 +90,14 @@
 	snc.getlinks = gcc.getlinks
 
 
+--
+-- Returns makefile-specific configuration rules.
+--
+
+	function snc.getmakesettings(cfg)
+		return nil
+	end
+
 
 --
 -- Retrieves the executable command name for a tool, based on the

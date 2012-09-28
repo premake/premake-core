@@ -247,6 +247,16 @@
 
 
 --
+-- Returns makefile-specific configuration rules.
+--
+
+	function gcc.getmakesettings(cfg)
+		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
+		return sysflags.cfgsettings
+	end
+
+
+--
 -- Retrieves the executable command name for a tool, based on the
 -- provided configuration and the operating environment.
 --

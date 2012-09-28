@@ -100,3 +100,12 @@
 			return "Library"
 		end
 	end
+
+
+--
+-- Returns makefile-specific configuration rules.
+--
+
+	function dotnet.getmakesettings(cfg)
+		return nil
+	end

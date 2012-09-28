@@ -134,6 +134,15 @@
 
 
 --
+-- Returns makefile-specific configuration rules.
+--
+
+	function ow.getmakesettings(cfg)
+		return nil
+	end
+
+
+--
 -- Retrieves the executable command name for a tool, based on the
 -- provided configuration and the operating environment.
 --

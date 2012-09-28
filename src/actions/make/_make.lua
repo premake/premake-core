@@ -76,6 +76,23 @@
 
 
 --
+-- Output logic to detect the shell type at runtime.
+--
+
+	function make.detectshell()
+		-- identify the shell type
+		_p('SHELLTYPE := msdos')
+		_p('ifeq (,$(ComSpec)$(COMSPEC))')
+		_p('  SHELLTYPE := posix')
+		_p('endif')
+		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
+		_p('  SHELLTYPE := posix')
+		_p('endif')
+		_p('')
+	end
+
+
+--
 -- Escape a string so it can be written to a makefile.
 --
 
@@ -191,10 +208,10 @@
 				_p(value)
 			end
 		end
-		
-		local sysflags = toolset.sysflags[cfg.architecture] or toolset.sysflags[cfg.system] or {}
-		if sysflags.cfgsettings then
-			_p(sysflags.cfgsettings)
+
+		local value = toolset.getmakesettings(cfg)
+		if value then
+			_p(value)
 		end
 	end
 
