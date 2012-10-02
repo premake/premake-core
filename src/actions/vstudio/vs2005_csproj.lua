@@ -25,7 +25,10 @@
 
 		for cfg in project.eachconfig(prj) do
 			cs2005.propertygroup(cfg)
-			cs2005.flags(cfg)		
+			cs2005.debugProps(cfg)
+			cs2005.outputProps(cfg)
+			cs2005.compilerProps(cfg)		
+			_p(1,'</PropertyGroup>')			
 		end
 
 		cs2005.projectReferences(prj)
@@ -159,22 +162,11 @@
 
 
 --
--- Write the flags for a particular configuration.
+-- Write the compiler flags for a particular configuration.
 --
 
-	function cs2005.flags(cfg)
-		if cfg.flags.Symbols then
-			_p(2,'<DebugSymbols>true</DebugSymbols>')
-			_p(2,'<DebugType>full</DebugType>')
-		else
-			_p(2,'<DebugType>pdbonly</DebugType>')
-		end
-
-		_p(2,'<Optimize>%s</Optimize>', iif(premake.config.isoptimizedbuild(cfg), "true", "false"))
-
-		_p(2,'<OutputPath>%s</OutputPath>', cfg.buildtarget.directory)
-
-		_p(2,'<DefineConstants>%s</DefineConstants>', table.concat(premake.esc(cfg.defines), ";"))
+	function cs2005.compilerProps(cfg)
+		_x(2,'<DefineConstants>%s</DefineConstants>', table.concat(cfg.defines, ";"))
 
 		_p(2,'<ErrorReport>prompt</ErrorReport>')
 		_p(2,'<WarningLevel>4</WarningLevel>')
@@ -186,8 +178,40 @@
 		if cfg.flags.FatalWarnings then
 			_p(2,'<TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 		end
+	end
 
-		_p(1,'</PropertyGroup>')			
+
+--
+-- Write out the debugging and optimization flags for a configuration.
+--
+
+	function cs2005.debugProps(cfg)
+		if cfg.flags.Symbols then
+			_p(2,'<DebugSymbols>true</DebugSymbols>')
+			_p(2,'<DebugType>full</DebugType>')
+		else
+			_p(2,'<DebugType>pdbonly</DebugType>')
+		end
+		_p(2,'<Optimize>%s</Optimize>', iif(premake.config.isoptimizedbuild(cfg), "true", "false"))
+	end
+
+
+--
+-- Write out the target and intermediates settings for a configuration.
+--
+
+	function cs2005.outputProps(cfg)
+		_x(2,'<OutputPath>%s</OutputPath>', path.translate(cfg.buildtarget.directory))
+		
+		-- Want to set BaseIntermediateOutputPath because otherwise VS will create obj/
+		-- anyway. But VS2008 throws up ominous warning if present.
+		local objdir = project.getrelative(cfg.project, cfg.objdir)
+		if _ACTION > "vs2008" then
+			_x(2,'<BaseIntermediateOutputPath>%s\\</BaseIntermediateOutputPath>', path.translate(objdir))
+			_p(2,'<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>')
+		else
+			_x(2,'<IntermediateOutputPath>%s\\</IntermediateOutputPath>', path.translate(objdir))
+		end
 	end
 
 

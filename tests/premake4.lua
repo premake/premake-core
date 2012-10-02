@@ -109,8 +109,10 @@
 
 	-- Visual Studio 2005-2010 C# projects
 	dofile("actions/vstudio/cs2005/test_assembly_refs.lua")
+	dofile("actions/vstudio/cs2005/test_compiler_props.lua")
+	dofile("actions/vstudio/cs2005/test_debug_props.lua")
 	dofile("actions/vstudio/cs2005/test_files.lua")
-	dofile("actions/vstudio/cs2005/test_flags.lua")
+	dofile("actions/vstudio/cs2005/test_output_props.lua")
 	dofile("actions/vstudio/cs2005/projectelement.lua")
 	dofile("actions/vstudio/cs2005/test_project_refs.lua")
 	dofile("actions/vstudio/cs2005/projectsettings.lua")
