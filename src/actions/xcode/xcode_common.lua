@@ -683,6 +683,12 @@
 			_p(4,'EXECUTABLE_PREFIX = %s;', cfg.buildtarget.prefix)
 		end
 		
+		if cfg.targetextension then
+			local ext = cfg.targetextension
+			ext = iif(ext:startswith("."), ext:sub(2), ext)
+			_p(4,'EXECUTABLE_EXTENSION = %s;', ext)
+		end
+
 		local outdir = path.getdirectory(cfg.buildtarget.bundlepath)
 		if outdir ~= "." then
 			_p(4,'CONFIGURATION_BUILD_DIR = %s;', outdir)

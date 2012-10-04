@@ -83,6 +83,7 @@
 * Patch 3476176: Fix dependencies of precompiled header in makefile (Konstantin Tokarev)
 * Patch 3476176: Remove conditionals from makefile compiler assignments (Konstantin Tokarev)
 * Pull 1: Fixed path to Info.plist in Xcode projects (Adrien Anselme)
+* Patch 3367642: Add support for targetextension property to Xcode
 
 
 -------

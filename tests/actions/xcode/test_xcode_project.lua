@@ -960,6 +960,31 @@
 		]]
 	end
 
+
+	function suite.XCBuildConfigurationTarget_OnTargetExtension()
+		kind "SharedLib"
+		targetextension ".xyz"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[libMyProject.xyz:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = xyz;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = "MyProject";
+			};
+			name = "Debug";
+		};
+		]]
+	end
+
+
 	function suite.XCBuildConfigurationTarget_OnInfoPlist()
 		files { "../../MyProject-Info.plist" }
 		prepare()
