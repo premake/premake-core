@@ -74,15 +74,15 @@
 		make.mkdirrule("$(OBJDIR)")
 		
 		-- clean target
-		local targetbase = firstcfg.buildtarget.basename
+		local target = firstcfg.buildtarget
 		
 		_p('clean:')
 		_p('\t@echo Cleaning %s', prj.name)
 		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('\t$(SILENT) rm -f $(TARGETDIR)/%s.* $(COPYFILES)', targetbase)
+		_p('\t$(SILENT) rm -f $(TARGETDIR)/%s.* $(COPYFILES)', target.basename)
 		_p('\t$(SILENT) rm -rf $(OBJDIR)')
 		_p('else')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGETDIR)/%s.*) del $(subst /,\\\\,$(TARGETDIR)/%s.*)', targetbase, targetbase)
+		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGETDIR)/%s) del $(subst /,\\\\,$(TARGETDIR)/%s.*)', target.name, target.basename)
 		--[[
 		for target, source in pairs(cfgpairs[anycfg]) do
 			_p('\t$(SILENT) if exist $(subst /,\\\\,%s) del $(subst /,\\\\,%s)', target, target)
@@ -130,8 +130,6 @@
 			_p('')
 		end
 		--]]
-
-		print("** Warning: GMake C# projects have not been ported yet")
 	end
 
 
@@ -219,13 +217,9 @@
 --
 
 	function cs.linking(cfg, toolset)
-		local deps = config.getlinks(cfg, "dependencies", "fullpath")
-		_p('  DEPENDS    = %s', table.concat(make.esc(deps)))
-		_p('  REFERENCES = ')
-		
-		--[[
-		_p('  REFERENCES := %s', table.implode(_MAKE.esc(cfglibs[cfg]), "/r:", "", " "))
-		--]]
+		local deps = make.esc(config.getlinks(cfg, "dependencies", "fullpath"))
+		_p('  DEPENDS    = %s', table.concat(deps))
+		_p('  REFERENCES = %s', table.implode(deps, "/r:", "", " "))
 	end
 
 

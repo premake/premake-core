@@ -202,7 +202,7 @@
 
 	function cs2005.outputProps(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
-		_x(2,'<OutputPath>%s</OutputPath>', path.translate(outdir))
+		_x(2,'<OutputPath>%s\\</OutputPath>', path.translate(outdir))
 		
 		-- Want to set BaseIntermediateOutputPath because otherwise VS will create obj/
 		-- anyway. But VS2008 throws up ominous warning if present.

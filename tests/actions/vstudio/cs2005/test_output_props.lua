@@ -37,7 +37,7 @@
 		targetdir "../build"
 		prepare()
 		test.capture [[
-		<OutputPath>..\build</OutputPath>
+		<OutputPath>..\build\</OutputPath>
 		]]
 	end
 
@@ -50,7 +50,7 @@
 		_ACTION = "vs2008"
 		prepare()
 		test.capture [[
-		<OutputPath>.</OutputPath>
+		<OutputPath>.\</OutputPath>
 		<IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
 		]]	
 	end
@@ -59,7 +59,7 @@
 		_ACTION = "vs2010"
 		prepare()
 		test.capture [[
-		<OutputPath>.</OutputPath>
+		<OutputPath>.\</OutputPath>
 		<BaseIntermediateOutputPath>obj\Debug\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
 		]]	
