@@ -128,9 +128,12 @@
 --    will be expanded, and the cfg parameter will be used as a context variable.
 -- @param fieldname
 --    Optional; if set, only this field will be expanded.
+-- @param isPathField
+--    Optional; if true checks are made for tokens which expand to absolute 
+--    paths, and the value is trimmed appropriately.
 --
 
-	function oven.expandtokens(cfg, scope, filecfg, fieldname)
+	function oven.expandtokens(cfg, scope, filecfg, fieldname, isPathField)
 		-- File this under "too clever by half": I want path tokens (targetdir, etc.)
 		-- to expand to relative paths, but it is easier to work with absolute paths 
 		-- everywhere else. So create a proxy object with an attached metatable that
@@ -162,7 +165,7 @@
 				target[field] = oven.expandvalue(value, context, isPath)
 			else
 				for key in pairs(value) do
-					expand(value, key)
+					expand(value, key, isPath)
 				end
 			end
 		end
@@ -170,8 +173,11 @@
 		local target = filecfg or cfg
 		if fieldname then
 			if target[fieldname] then
-				local field = premake.fields[fieldname]
-				expand(target, fieldname, field and field.kind:startswith("path"))
+				if isPathField == nil then
+					local field = premake.fields[fieldname]
+					isPathField = field and field.kind:startswith("path")
+				end
+				expand(target, fieldname, isPathField)
 			end
 		else
 			for key, value in pairs(target) do

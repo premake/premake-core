@@ -34,7 +34,7 @@
 
 	function suite.directoryIsDot_onNoTargetDir()
 		i = prepare()
-		test.isequal(".", i.directory)
+		test.isequal(".", path.getrelative(os.getcwd(), i.directory))
 	end
 
 
@@ -45,7 +45,7 @@
 	function suite.directoryIsTargetDir_onTargetDir()
 		targetdir "../bin"
 		i = prepare()
-		test.isequal("../bin", i.directory)
+		test.isequal("../bin", path.getrelative(os.getcwd(), i.directory))
 	end
 
 
@@ -262,7 +262,7 @@
 		kind "WindowedApp"
 		system "MacOSX"
 		i = prepare()
-		test.isequal("MyProject.app/Contents/MacOS", i.bundlepath)
+		test.isequal("MyProject.app/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
 	end
 
 

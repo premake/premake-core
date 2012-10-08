@@ -189,7 +189,7 @@
 			end
 
 			if cfg.system == "windows" and not cfg.flags.NoImportLib then
-				table.insert(flags, '-Wl,--out-implib="' .. cfg.linktarget.fullpath .. '"')
+				table.insert(flags, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 			end
 		end
 	

@@ -223,7 +223,8 @@
 --
 
 	function make.targetconfig(cfg)
-		_p('  TARGETDIR  = %s', make.esc(cfg.buildtarget.directory))
+		local targetdir = 
+		_p('  TARGETDIR  = %s', make.esc(project.getrelative(cfg.project, cfg.buildtarget.directory)))
 		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(cfg.buildtarget.name))
 		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
 	end

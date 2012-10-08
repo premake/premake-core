@@ -23,9 +23,12 @@
 
 		if cfg.project and cfg.kind then
 			cfg.buildtarget = config.gettargetinfo(cfg)
-			oven.expandtokens(cfg, nil, nil, "buildtarget")
+			oven.expandtokens(cfg, nil, nil, "buildtarget", true)
+			cfg.buildtarget.relpath = project.getrelative(cfg.project, cfg.buildtarget.abspath)
+			
 			cfg.linktarget = config.getlinkinfo(cfg)
-			oven.expandtokens(cfg, nil, nil, "linktarget")
+			oven.expandtokens(cfg, nil, nil, "linktarget", true)
+			cfg.linktarget.relpath = project.getrelative(cfg.project, cfg.linktarget.abspath)
 		end
 	end
 
@@ -73,15 +76,14 @@
 		extension = cfg[field.."extension"] or extension
 
 		local info = {}
-		info.directory  = project.getrelative(cfg.project, directory)
+		info.directory  = directory
 		info.basename   = basename .. suffix
 		info.name       = prefix .. info.basename .. extension
 		info.extension  = extension
 		info.abspath    = path.join(directory, info.name)
-		info.fullpath   = path.join(info.directory, info.name)
-		info.relpath    = info.fullpath
+		info.fullpath   = info.abspath
 		info.bundlename = bundlename
-		info.bundlepath = path.join(info.directory, bundlepath)
+		info.bundlepath = path.join(directory, bundlepath)
 		info.prefix     = prefix
 		info.suffix     = suffix
 		return info
@@ -260,9 +262,7 @@
 						if part == "basename" then
 							item = prjcfg.linktarget.basename
 						else
-							item = path.rebase(prjcfg.linktarget.fullpath, 
-											   project.getlocation(prjcfg.project), 
-											   project.getlocation(cfg.project))
+							item = project.getrelative(cfg.project, prjcfg.linktarget.fullpath)
 							if part == "directory" then
 								item = path.getdirectory(item)
 							end

@@ -191,14 +191,15 @@
 			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
 		end
 
-		local outdir = path.translate(target.directory)
-		_x(2,'<OutDir>%s\\</OutDir>', outdir)
+		local outdir = project.getrelative(cfg.project, target.directory)
+		_x(2,'<OutDir>%s\\</OutDir>', path.translate(outdir))
 
 		if cfg.system == premake.XBOX360 then
 			_x(2,'<OutputFile>$(OutDir)%s</OutputFile>', target.name)
 		end
 
-		_x(2,'<IntDir>%s\\</IntDir>', path.translate(project.getrelative(cfg.project, cfg.objdir)))
+		local objdir = project.getrelative(cfg.project, cfg.objdir)
+		_x(2,'<IntDir>%s\\</IntDir>', path.translate(objdir))
 
 		_x(2,'<TargetName>%s%s</TargetName>', target.prefix, target.basename)
 		_x(2,'<TargetExt>%s</TargetExt>', target.extension)
@@ -354,8 +355,7 @@
 		vc2010.additionalLibraryDirectories(cfg)
 
 		if cfg.kind == premake.SHAREDLIB then
-			local implibname = cfg.linktarget.fullpath
-			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(implibname))
+			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
 		end
 
 		if vc2010.config_type(cfg) == "Application" and not cfg.flags.WinMain and not cfg.flags.Managed then

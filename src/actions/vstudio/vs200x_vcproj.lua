@@ -140,10 +140,11 @@
 		_p(2,'<Configuration')
 		_x(3,'Name="%s"', vstudio.projectconfig(cfg))
 
-		local outdir = path.translate(cfg.buildtarget.directory)
-		_x(3,'OutputDirectory="%s"', outdir)
+		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
+		_x(3,'OutputDirectory="%s"', path.translate(outdir))
 
-		_x(3,'IntermediateDirectory="%s"', path.translate(project.getrelative(cfg.project, cfg.objdir)))
+		local objdir = project.getrelative(cfg.project, cfg.objdir)
+		_x(3,'IntermediateDirectory="%s"', path.translate(objdir))
 
 		local cfgtype
 		if (cfg.kind == "SharedLib") then
@@ -436,12 +437,13 @@
 			end
 	
 			if cfg.kind == "SharedLib" then
-				local implibname = cfg.linktarget.fullpath
+				local implibdir = cfg.linktarget.abspath
 				-- I can't actually stop the import lib, but I can hide it in the objects directory
 				if cfg.flags.NoImportLib then
-					implibname = path.join(cfg.objdir, path.getname(implibname))
+					implibdir = path.join(cfg.objdir, path.getname(implibdir))
 				end
-				_x(4,'ImportLibrary="%s"', path.translate(implibname))
+				implibdir = project.getrelative(cfg.project, implibdir)
+				_x(4,'ImportLibrary="%s"', path.translate(implibdir))
 			end
 	
 			_p(4,'TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
