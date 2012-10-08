@@ -172,4 +172,14 @@
 		test.isequal("MyProject.lib", cfg.testapi)
 	end
 
-		
+
+--
+-- Verify that tokens can expand to absolute paths.
+--
+
+	function suite.canExpandToAbsPath()
+		targetdir "%{os.getcwd()}/%{cfg.buildcfg}"
+		prepare()
+		test.isequal(path.join(os.getcwd(), "Debug"), cfg.targetdir)
+	end
+

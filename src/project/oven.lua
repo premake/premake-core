@@ -156,10 +156,10 @@
 			file = filecfg
 		}
 		
-		function expand(target, field)
+		function expand(target, field, isPath)
 			local value = target[field]
 			if type(value) == "string" then
-				target[field] = oven.expandvalue(value, context)
+				target[field] = oven.expandvalue(value, context, isPath)
 			else
 				for key in pairs(value) do
 					expand(value, key)
@@ -170,7 +170,8 @@
 		local target = filecfg or cfg
 		if fieldname then
 			if target[fieldname] then
-				expand(target, fieldname)
+				local field = premake.fields[fieldname]
+				expand(target, fieldname, field and field.kind:startswith("path"))
 			end
 		else
 			for key, value in pairs(target) do
@@ -178,14 +179,30 @@
 				-- Premake's own API fields, and only those marked for it
 				local field = premake.fields[key]
 				if field ~= nil and field.tokens and field.scope == scope then
-					expand(target, key)
+					expand(target, key, field.kind:startswith("path"))
 				end
 			end
 		end
 	end
 
 
-	function oven.expandvalue(value, context)
+--
+-- Expands the tokens contained within a value, using the provided context.
+--
+-- @param value
+--    The value containing the tokens to be expanded.
+-- @param context
+--    The context in which the expansion should occur, containing variables
+--    which may be used within the tokens.
+-- @param isPath
+--    True if value represents a filesystem path. In this case, checks are
+--    made for tokens which expand to absolute paths, and the value is
+--    trimmed appropriately.
+-- @return
+--    The value, with all tokens expanded.
+--
+
+	function oven.expandvalue(value, context, isPath)
 		-- function to do the work of replacing a single token
 		local expander = function(token)
 			-- convert the token into a function to execute
@@ -203,6 +220,14 @@
 			if not result then
 				return nil, "Invalid token '" .. token .. "'"
 			end
+
+			-- if I'm replacing within a path value, and the replacement is
+			-- itself and absolute path, insert a marker at the start of it.
+			-- This will be my clue later to trim the path here.
+			if isPath and path.isabsolute(result) then
+				result = "\0" .. result
+			end
+
 			return result
 		end
 
@@ -217,9 +242,20 @@
 			end)
 		until count == 0
 
+		-- if I replaced into a path value, look for embedded absolute paths
+		-- and trim to the start of the last one found
+		if isPath then
+			local i, j
+			repeat
+				i, j = value:find("\0")
+				if i then
+					value = value:sub(i + 1)
+				end
+			until not i
+		end
+
 		return value
 	end
-
 
 
 --
