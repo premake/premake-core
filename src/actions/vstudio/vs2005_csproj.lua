@@ -31,11 +31,13 @@
 			_p(1,'</PropertyGroup>')			
 		end
 
-		cs2005.projectReferences(prj)
+		cs2005.assemblyReferences(prj)
 
 		_p(1,'<ItemGroup>')
 		cs2005.files(prj)
 		_p(1,'</ItemGroup>')
+
+		cs2005.projectReferences(prj)
 
 		_p('  <Import Project="$(MSBuildBinPath)\\Microsoft.CSharp.targets" />')
 		_p('  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.')
@@ -128,7 +130,11 @@
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
 
-				local action = premake.dotnet.getbuildaction(node)
+				-- Some settings applied at project level; can't be changed in cfg
+				local cfg = project.getfirstconfig(prj)
+				local filecfg = config.getfileconfig(cfg, node.abspath)
+				
+				local action = premake.dotnet.getbuildaction(filecfg)
 				local fname = path.translate(node.relpath)
 				local elements, dependency = cs2005.getrelated(prj, node.abspath, action)
 				
@@ -280,7 +286,31 @@
 			return "CopyNewest"
 		end
 		
-		return "None"		
+		return "None"
+	end
+
+
+--
+-- Write the list of assembly (system, or non-sibling) references.
+--
+
+	function cs2005.assemblyReferences(prj)
+		_p(1,'<ItemGroup>')
+
+		-- C# doesn't support per-configuration links (does it?) so just use
+		-- the settings from the first available config instead
+		local links = config.getlinks(project.getfirstconfig(prj), "system", "fullpath")
+		for _, link in ipairs(links) do
+			if link:find("/", nil, true) then
+				_x(2,'<Reference Include="%s">', path.getbasename(link))
+				_x(3,'<HintPath>%s</HintPath>', path.translate(link))
+				_p(2,'</Reference>')
+			else
+				_x(2,'<Reference Include="%s" />', path.getbasename(link))
+			end
+		end
+	
+		_p(1,'</ItemGroup>')
 	end
 
 	
@@ -299,19 +329,6 @@
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_x(3,'<Name>%s</Name>', dep.name)
 				_p(2,'</ProjectReference>')
-			end
-		end
-
-		-- C# doesn't support per-configuration links (does it?) so just use
-		-- the settings from the first available config instead
-		local links = config.getlinks(project.getfirstconfig(prj), "system", "fullpath")
-		for _, link in ipairs(links) do
-			if link:find("/", nil, true) then
-				_x(2,'<Reference Include="%s">', path.getbasename(link))
-				_x(3,'<HintPath>%s</HintPath>', path.translate(link))
-				_p(2,'</Reference>')
-			else
-				_x(2,'<Reference Include="%s" />', path.getbasename(link))
 			end
 		end
 	

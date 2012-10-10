@@ -23,7 +23,7 @@
 
 	local function prepare(platform)
 		prj = premake.solution.getproject_ng(sln, 1)
-		cs2005.projectReferences(prj)
+		cs2005.assemblyReferences(prj)
 	end
 
 
