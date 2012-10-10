@@ -86,7 +86,7 @@
 		end
 				
 		if not target then
-			error("no " .. scope .. " in scope", 4)
+			error({ msg="no " .. scope .. " in scope" })
 		end
 		
 		return target
@@ -103,22 +103,28 @@
 		-- return the current baked value
 		if not value then return end
 		
-		local target = api.gettarget(field.scope)
-		
-		-- A keyed value is a table containing key-value pairs, where the
-		-- type of the value is defined by the field. 
-		if api.iskeyedfield(field) then
-			target[field.name] = target[field.name] or {}
-			api.setkeyvalue(target[field.name], field, value)
-		
-		-- Lists is an array containing values of another type
-		elseif api.islistfield(field) then
-			api.setlist(target, field.name, field, value)
+		local status, result = pcall(function ()
+			local target = api.gettarget(field.scope)
 			
-		-- Otherwise, it is a "simple" value defined by the field
-		else
-			local setter = api["set" .. field.kind]
-			setter(target, field.name, field, value)
+			-- A keyed value is a table containing key-value pairs, where the
+			-- type of the value is defined by the field. 
+			if api.iskeyedfield(field) then
+				target[field.name] = target[field.name] or {}
+				api.setkeyvalue(target[field.name], field, value)
+			
+			-- Lists is an array containing values of another type
+			elseif api.islistfield(field) then
+				api.setlist(target, field.name, field, value)
+				
+			-- Otherwise, it is a "simple" value defined by the field
+			else
+				local setter = api["set" .. field.kind]
+				setter(target, field.name, field, value)
+			end
+		end)
+		
+		if not status then
+			error(result.msg, 3)
 		end
 	end
 
@@ -295,7 +301,7 @@
 
 	function api.setkeyvalue(target, field, values)
 		if type(values) ~= "table" then
-			error("value must be a table of key-value pairs", 4)
+			error({ msg="value must be a table of key-value pairs" })
 		end
 		
 		-- remove the "key-" prefix from the field kind
@@ -329,11 +335,11 @@
 		local setter = api["set" .. kind]
 
 		-- function to add values
-		local function addvalue(value, depth)
+		local function addvalue(value)
 			-- recurse into tables
 			if type(value) == "table" then
 				for _, v in ipairs(value) do
-					addvalue(v, depth + 1)
+					addvalue(v)
 				end
 			
 			-- insert simple values
@@ -342,7 +348,7 @@
 			end
 		end
 		
-		addvalue(value, 3)
+		addvalue(value)
 	end
 
 
@@ -371,14 +377,11 @@
 
 	function api.setstring(target, name, field, value)
 		if type(value) == "table" then
-			error("expected string; got table", 3)
+			error({ msg="expected string; got table" })
 		end
 
-		value, err = api.checkvalue(value, field.allowed, field.aliases)
-		if not value then
-			error(err, 3)
-		end
-
+		local value, err = api.checkvalue(value, field.allowed, field.aliases)
+		if err then error({ msg=err }) end
 		target[name] = value
 	end
 
@@ -927,22 +930,20 @@
 	function premake.setarray(obj, fieldname, value, allowed, aliases)
 		obj[fieldname] = obj[fieldname] or {}
 
-		local function add(value, depth)
+		local function add(value)
 			if type(value) == "table" then
 				for _,v in ipairs(value) do
-					add(v, depth + 1)
+					add(v)
 				end
 			else
 				value, err = api.checkvalue(value, allowed, aliases)
-				if not value then
-					error(err, depth)
-				end
+				if err then error(err) end
 				obj[fieldname] = table.join(obj[fieldname], value)
 			end
 		end
 
 		if value then
-			add(value, 5)
+			add(value)
 		end
 		
 		return obj[fieldname]
