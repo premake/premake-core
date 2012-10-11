@@ -99,6 +99,9 @@
 	
 	function test.isequal(expected, actual)
 		if type(expected) == "table" then
+			if expected and not actual then
+				test.fail("expected table, got nil")
+			end
 			if #expected < #actual then
 				test.fail("expected %d items, got %d", #expected, #actual)
 			end
