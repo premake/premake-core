@@ -102,16 +102,17 @@
 		-- the base dir of the configuration, so single-star wildcards
 		-- (i.e. "*.cpp") will work as expected, and lower-case to make
 		-- the test case-insensitive.
-		filename = { path.getrelative(cfg.basedir, filename):lower() }
 		
 		for _, block in ipairs(cfg.solution.blocks) do
-			if oven.filter(block, cfg.terms, filename) then
+			local filter = { path.getrelative(block.basedir, filename):lower() }
+			if oven.filter(block, cfg.terms, filter) then
 				oven.mergefile(fcfg, cfg, block)
 			end
 		end
 		
 		for _, block in ipairs(cfg.project.blocks) do
-			if oven.filter(block, cfg.terms, filename) then
+			local filter = { path.getrelative(block.basedir, filename):lower() }
+			if oven.filter(block, cfg.terms, filter) then
 				oven.mergefile(fcfg, cfg, block)
 			end
 		end

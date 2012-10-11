@@ -1177,7 +1177,8 @@
 		end
 		
 		local cfg = { }
-		cfg.terms = table.flatten({terms})
+		cfg.terms   = table.flatten({terms})
+		cfg.basedir = os.getcwd()
 		
 		table.insert(container.blocks, cfg)
 		premake.CurrentConfiguration = cfg
