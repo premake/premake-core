@@ -257,6 +257,10 @@
 				if project.hasfile(prj, testname) then
 					return "Form"
 				end
+				
+				if filecfg.flags and filecfg.flags.Component then
+					return "Component"
+				end
 			end
 		end
 		

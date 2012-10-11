@@ -515,6 +515,7 @@
 		scope = "config",
 		kind  = "string-list",
 		allowed = {
+			"Component",
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"EnableSSE",
