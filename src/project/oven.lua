@@ -90,6 +90,7 @@
 --
 
 	function oven.bakefile(cfg, filename)
+		-- start the file configuration object
 		local fcfg = {
 			solution = cfg.solution,
 			project = cfg.project,
@@ -97,7 +98,11 @@
 			platform = cfg.platform
 		}
 		
-		filename = { filename:lower() }
+		-- the filename becomes my filtering term; made relative to
+		-- the base dir of the configuration, so single-star wildcards
+		-- (i.e. "*.cpp") will work as expected, and lower-case to make
+		-- the test case-insensitive.
+		filename = { path.getrelative(cfg.basedir, filename):lower() }
 		
 		for _, block in ipairs(cfg.solution.blocks) do
 			if oven.filter(block, cfg.terms, filename) then

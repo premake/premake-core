@@ -123,10 +123,32 @@
 
 	function suite.fileMatches_onCaseMismatch()
 		files "Hello.c"
-		configuration "**/HeLLo.c"
+		configuration "HeLLo.c"
 		buildoptions "-Xc"
 		prepare("Hello.c")
 		test.isequal({ "-Xc" }, fcfg.buildoptions)
 	end
 	
+
+--
+-- A leading single star should match files files in the same 
+-- folder as the project script, for consistency with files(),
+-- but not files in other folders.
+--
+
+	function suite.singleStarMatches_onSameFolder()
+		files "hello.c"
+		configuration "*.c"
+		buildoptions "-Xc"
+		prepare()
+		test.isequal({ "-Xc" }, fcfg.buildoptions)
+	end
+
+	function suite.singleStarNoMatch_onDifferentFolder()
+		files "src/hello.c"
+		configuration "*.c"
+		buildoptions "-Xc"
+		prepare("src/hello.c")
+		test.isnil(fcfg.buildoptions)
+	end
 

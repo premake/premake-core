@@ -57,7 +57,7 @@
 
 	function suite.doesExpandTokens_onFileCfg()
 		files { "hello.c" }
-		configuration "**/hello.c"
+		configuration "hello.c"
 			testapi "%{cfg.buildcfg}"
 		prepare()
 		local fcfg = config.getfileconfig(cfg, os.getcwd().."/hello.c")		
