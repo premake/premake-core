@@ -84,6 +84,8 @@
 * Patch 3476176: Remove conditionals from makefile compiler assignments (Konstantin Tokarev)
 * Pull 1: Fixed path to Info.plist in Xcode projects (Adrien Anselme)
 * Patch 3367642: Add support for targetextension property to Xcode
+* Patch 3435716: Fix for PS3 config generation in VS2010 (Jake)
+* Patch 3441850: Use debug.traceback() as error handler (Konstantin Tokarev)
 
 
 -------
