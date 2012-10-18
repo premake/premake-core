@@ -182,7 +182,7 @@
 		
 		if cfg.kind == premake.SHAREDLIB then
 			if cfg.system == premake.MACOSX then
-				flags = table.join(flags, { "-dynamiclib", "-flat_namespace" })
+				table.insert(flags, "-dynamiclib")
 			else
 				table.insert(flags, "-shared")
 			end
@@ -392,7 +392,7 @@
 	
 		if cfg.kind == "SharedLib" then
 			if cfg.system == "macosx" then
-				result = table.join(result, { "-dynamiclib", "-flat_namespace" })
+				table.insert(result, "-dynamiclib")
 			else
 				table.insert(result, "-shared")
 			end

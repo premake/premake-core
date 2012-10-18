@@ -86,6 +86,8 @@
 * Patch 3367642: Add support for targetextension property to Xcode
 * Patch 3435716: Fix for PS3 config generation in VS2010 (Jake)
 * Patch 3441850: Use debug.traceback() as error handler (Konstantin Tokarev)
+* Patch 3462994: Make flag values case-insensitive (Konstantin Tokarev)
+* Patch 3466877: Removed -flat_namespace from Mac OS X flags (Konstantin Tokarev)
 
 
 -------

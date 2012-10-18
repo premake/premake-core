@@ -113,7 +113,7 @@
 		system "MacOSX"
 		kind "SharedLib"
 		prepare()
-		test.isequal({ "-Wl,-x", "-dynamiclib", "-flat_namespace" }, gcc.getldflags(cfg))
+		test.isequal({ "-Wl,-x", "-dynamiclib" }, gcc.getldflags(cfg))
 	end
 
 
