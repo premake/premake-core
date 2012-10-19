@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	premake5.project = { }
+	premake5.project = {}
 	local project = premake5.project
+	local context = premake.context
 	local oven = premake5.oven
 
 
@@ -82,10 +83,24 @@
 		cfg.solution = prj.solution
 		cfg.project = prj
 		cfg.architecture = cfg.architecture or architecture
+
+		-- Temporary: Create a context for this configuration. Eventually, the context
+		-- will become the configuration object and much of this baking code will go
+		-- away. For right now, it provides a way to access the global settings that
+		-- match this configuration's setup.
+		filter = { cfg.buildcfg, cfg.platform, _ACTION, cfg.system, cfg.architecture, cfg.kind }
+
+		local terms = {}
+		for k, v in pairs(filter) do
+			if filter[k] then
+				table.insert(terms, v)
+			end
+		end
+		cfg.context = context.new(premake.root, terms)
 		
 		-- fill in any calculated values
 		premake5.config.bake(cfg)
-
+		
 		return cfg
 	end
 

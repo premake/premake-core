@@ -55,10 +55,8 @@
 		local bundlename = ""
 		local bundlepath = ""
 		local suffix = ""
-
-		local sysinfo = premake.systems[cfg.system][kind:lower()] or {}
-		local prefix = sysinfo.prefix or ""
-		local extension = sysinfo.extension or ""
+		local prefix = cfg.context[field.."prefix"]
+		local extension = cfg.context[field.."extension"]
 		
 		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then

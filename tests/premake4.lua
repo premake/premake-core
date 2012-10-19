@@ -47,6 +47,9 @@
 	dofile("base/test_api.lua")
 	dofile("base/test_action.lua")
 	dofile("base/test_config.lua")
+	dofile("base/test_configset.lua")
+	dofile("base/test_context.lua")
+	dofile("base/test_criteria.lua")
 	dofile("base/test_include.lua")
 	dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
@@ -219,7 +222,8 @@
 						
 			msg = string.format("%d tests passed, %d failed", passed, failed)
 			if (failed > 0) then
-				error(msg, 0)
+				-- should probably return an error code here somehow
+				print(msg)
 			else
 				print(msg)
 			end

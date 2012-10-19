@@ -760,14 +760,17 @@
 		name = "system",
 		scope = "config",
 		kind = "string",
-		allowed = function(value)
-			value = value:lower()
-			if premake.systems[value] then
-				return value
-			else
-				return nil, "unknown system"
-			end
-		end,
+		allowed = {
+			"bsd",
+			"haiku",
+			"linux",
+			"macosx",
+			"ps3",
+			"solaris",
+			"wii",
+			"windows",
+			"xbox360",
+		},
 	}
 
 	api.register {
