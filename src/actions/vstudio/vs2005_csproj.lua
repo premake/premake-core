@@ -285,7 +285,7 @@
 		end
 				
 		if action == "Content" then
-			return "CopyNewest"
+			return "PreserveNewest"
 		end
 		
 		return "None"

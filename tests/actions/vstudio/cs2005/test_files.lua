@@ -79,3 +79,20 @@
 		</EmbeddedResource>
 		]]
 	end
+
+
+--
+-- Test copy build action
+--
+
+	function suite.copyAction()
+		files { "Hello.txt" }
+		configuration "**.txt"
+		buildaction "Copy"
+		prepare()
+		test.capture [[
+		<Content Include="Hello.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
