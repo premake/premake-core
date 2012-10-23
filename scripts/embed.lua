@@ -78,8 +78,8 @@
 		-- load the manifest of script files
 		scripts = dofile("src/_manifest.lua")
 		
-		-- main script always goes at the end
-		table.insert(scripts, "_premake_main.lua")
+		-- main script always goes first
+		table.insert(scripts, 1, "_premake_main.lua")
 		
 		-- open scripts.c and write the file header
 		local out = io.open("src/host/scripts.c", "w+b")

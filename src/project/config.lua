@@ -23,12 +23,9 @@
 
 		if cfg.project and cfg.kind then
 			cfg.buildtarget = config.gettargetinfo(cfg)
-			oven.expandtokens(cfg, nil, nil, "buildtarget", true)
-			cfg.buildtarget.relpath = project.getrelative(cfg.project, cfg.buildtarget.abspath)
-			
+			oven.expandtokens(cfg, nil, nil, "buildtarget")
 			cfg.linktarget = config.getlinkinfo(cfg)
-			oven.expandtokens(cfg, nil, nil, "linktarget", true)
-			cfg.linktarget.relpath = project.getrelative(cfg.project, cfg.linktarget.abspath)
+			oven.expandtokens(cfg, nil, nil, "linktarget")
 		end
 	end
 
@@ -58,12 +55,8 @@
 		local bundlename = ""
 		local bundlepath = ""
 		local suffix = ""
-
-		local system = iif(premake.isdotnetproject(cfg.project), premake.WINDOWS, cfg.system)
-
-		local sysinfo = premake.systems[system][kind:lower()] or {}
-		local prefix = sysinfo.prefix or ""
-		local extension = sysinfo.extension or ""
+		local prefix = cfg.context[field.."prefix"]
+		local extension = cfg.context[field.."extension"]
 		
 		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then
@@ -76,14 +69,15 @@
 		extension = cfg[field.."extension"] or extension
 
 		local info = {}
-		info.directory  = directory
+		info.directory  = project.getrelative(cfg.project, directory)
 		info.basename   = basename .. suffix
 		info.name       = prefix .. info.basename .. extension
 		info.extension  = extension
 		info.abspath    = path.join(directory, info.name)
-		info.fullpath   = info.abspath
+		info.fullpath   = path.join(info.directory, info.name)
+		info.relpath    = info.fullpath
 		info.bundlename = bundlename
-		info.bundlepath = path.join(directory, bundlepath)
+		info.bundlepath = path.join(info.directory, bundlepath)
 		info.prefix     = prefix
 		info.suffix     = suffix
 		return info
@@ -262,7 +256,9 @@
 						if part == "basename" then
 							item = prjcfg.linktarget.basename
 						else
-							item = project.getrelative(cfg.project, prjcfg.linktarget.fullpath)
+							item = path.rebase(prjcfg.linktarget.fullpath, 
+											   project.getlocation(prjcfg.project), 
+											   project.getlocation(cfg.project))
 							if part == "directory" then
 								item = path.getdirectory(item)
 							end
@@ -277,23 +273,20 @@
 					if dir ~= "." then
 						item = dir
 					end
-
-				elseif part == "basename" then
-					item = path.getname(link)					
-
-				else
+				elseif part == "fullpath" then
 					item = link
-					if premake.isdotnetproject(cfg.project) then
-						item = path.appendextension(item, ".dll")
-					elseif cfg.system == premake.WINDOWS then
-						item = path.appendextension(item, ".lib")
+					if cfg.system == premake.WINDOWS then
+						if premake.iscppproject(cfg.project) then
+							item = path.appendextension(item, ".lib")
+						elseif premake.isdotnetproject(cfg.project) then
+							item = path.appendextension(item, ".dll")
+						end
 					end
-					
-					if part == "name" then
-						item = path.getname(item)
-					elseif item:find("/", nil, true) then
+					if item:find("/", nil, true) then
 						item = project.getrelative(cfg.project, item)
 					end
+				else
+					item = link
 				end
 
 			end

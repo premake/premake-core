@@ -8,8 +8,7 @@
 
 
 int path_isabsolute(lua_State* L)
-{
-	const char* path = luaL_checkstring(L, 1);
+{	const char* path = luaL_checkstring(L, -1);
 	if (path[0] == '/' || 
 	    path[0] == '\\' || 
 	    path[0] == '$' || 

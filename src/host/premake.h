@@ -71,4 +71,7 @@ int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int string_endswith(lua_State* L);
 
-
+/* Engine interface */
+int premake_init(lua_State* L);
+int premake_locate(lua_State* L, const char* argv0);
+int premake_execute(lua_State* L, int argc, const char** argv);

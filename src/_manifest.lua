@@ -9,24 +9,34 @@
 
 	return
 	{
-		-- core files
+		-- Lua extensions
 		"base/os.lua",
 		"base/path.lua",
 		"base/string.lua",
 		"base/table.lua",
+		
+		-- core files
 		"base/io.lua",
 		"base/globals.lua",
 		"base/action.lua",
+		"base/criteria.lua",
 		"base/option.lua",
 		"base/tree.lua",
 		"base/project.lua",
 		"base/config.lua",
 		"base/bake.lua",
-		"base/api.lua",
-		"base/cmdline.lua",
 		"base/validate.lua",
 		"base/help.lua",
 		"base/premake.lua",
+		
+		-- configuration APIs
+		"base/api.lua",		
+		"base/configset.lua",
+		"base/context.lua",
+		
+		-- runtime environment setup
+		"_premake_init.lua",
+		"base/cmdline.lua",
 		
 		-- project APIs
 		"project/oven.lua",

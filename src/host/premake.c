@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2011 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2012 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -18,10 +18,11 @@
 #define ERROR_MESSAGE  "%s\n"
 
 
-static int find_premake_executable(lua_State* L, const char* argv0);
 static int process_arguments(lua_State* L, int argc, const char** argv);
 static int process_option(lua_State* L, const char* arg);
 static int load_builtin_scripts(lua_State* L);
+
+int premake_locate(lua_State* L, const char* argv0);
 
 
 /* A search path for script files */
@@ -64,24 +65,15 @@ static const luaL_Reg string_functions[] = {
 	{ NULL, NULL }
 };
 
-/**
- * Program entry point.
- */
-int main(int argc, const char** argv)
-{
-	lua_State* L;
-	int z = OKAY;
 
-	/* prepare Lua for use */
-	L = lua_open();
-	luaL_openlibs(L);
+/**
+ * Initialize the Premake Lua environment.
+ */
+int premake_init(lua_State* L)
+{
 	luaL_register(L, "path",   path_functions);
 	luaL_register(L, "os",     os_functions);
 	luaL_register(L, "string", string_functions);
-
-	/* push the location of the Premake executable */
-	find_premake_executable(L, argv[0]);
-	lua_setglobal(L, "_PREMAKE_COMMAND");
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
@@ -96,18 +88,21 @@ int main(int argc, const char** argv)
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);
 	lua_setglobal(L, "_OS");
+		
+	return OKAY;
+}
 
+
+int premake_execute(lua_State* L, int argc, const char** argv)
+{
 	/* Parse the command line arguments */
-	if (z == OKAY)  z = process_arguments(L, argc, argv);
+	int z = process_arguments(L, argc, argv);
 
 	/* Run the built-in Premake scripts */
 	if (z == OKAY)  z = load_builtin_scripts(L);
-
-	/* Clean up and turn off the lights */
-	lua_close(L);
+	
 	return z;
 }
-
 
 
 /**
@@ -117,7 +112,7 @@ int main(int argc, const char** argv)
  * http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
  * http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
  */
-int find_premake_executable(lua_State* L, const char* argv0)
+int premake_locate(lua_State* L, const char* argv0)
 {
 #if !defined(PATH_MAX)
 #define PATH_MAX  (4096)
@@ -165,13 +160,31 @@ int find_premake_executable(lua_State* L, const char* argv0)
 		lua_pushcfunction(L, os_pathsearch);
 		lua_pushstring(L, argv0);
 		lua_pushstring(L, getenv("PATH"));
-		if (lua_pcall(L, 2, 1, 0) == OKAY)
+		if (lua_pcall(L, 2, 1, 0) == OKAY && !lua_isnil(L, -1))
 		{
 			lua_pushstring(L, "/");
 			lua_pushstring(L, argv0);
 			lua_concat(L, 3);
 			path = lua_tostring(L, -1);
 		}
+	}
+
+	/* If all else fails, use argv[0] as-is and hope for the best */
+	if (!path)
+	{
+		/* make it absolute, if needed */
+		os_getcwd(L);
+		lua_pushstring(L, "/");
+		lua_pushstring(L, argv0);
+		
+		if (!path_isabsolute(L)) {
+			lua_concat(L, 3);
+		}
+		else {
+			lua_pop(L, 1);
+		}
+		
+		path = lua_tostring(L, -1);
 	}
 
 	lua_pushstring(L, path);
@@ -270,7 +283,7 @@ int process_option(lua_State* L, const char* arg)
 
 
 
-#if defined(_DEBUG)
+#if !defined(NDEBUG)
 /**
  * When running in debug mode, the scripts are loaded from the disk. The path to
  * the scripts must be provided via either the /scripts command line option or
@@ -305,10 +318,14 @@ int load_builtin_scripts(lua_State* L)
 		return !OKAY;
 	}
 
+	/* in debug mode, show full traceback on all errors */
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
+
 	/* hand off control to the scripts */
 	lua_getglobal(L, "_premake_main");
 	lua_pushstring(L, scripts_path);
-	if (lua_pcall(L, 1, 1, 0) != OKAY)
+	if (lua_pcall(L, 1, 1, -3) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;

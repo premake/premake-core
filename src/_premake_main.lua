@@ -64,6 +64,12 @@
 		end
 		
 
+		-- Now that the scripts are loaded, I can use path.getabsolute() to properly
+		-- canonicalize the executable path.
+		
+		_PREMAKE_COMMAND = path.getabsolute(_PREMAKE_COMMAND)
+
+
 		-- Set up the environment for the chosen action early, so side-effects
 		-- can be picked up by the scripts.
 
