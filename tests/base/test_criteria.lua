@@ -45,3 +45,13 @@
 		crit = criteria.new { "orange", "pear" }
 		test.isfalse(criteria.matches(crit, { "apple", "orange" }))
 	end
+
+
+--
+-- Context terms must match the entire criteria term.
+--
+
+	function suite.fails_onIncompleteMatch()
+		crit = criteria.new { "ps3" }
+		test.isfalse(criteria.matches(crit, { "ps3 ppu sn" }))
+	end

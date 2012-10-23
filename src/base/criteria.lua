@@ -51,7 +51,7 @@
 	function criteria.matches(crit, context)
 		local checkterm = function(term)
 			for _, value in ipairs(context) do
-				if value:match(term) then
+				if value:match(term) == value then
 					return true
 				end
 			end
