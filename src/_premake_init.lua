@@ -32,6 +32,10 @@
 --         implibextension ".lib"
 --
 
+--
+-- Use Posix-style target naming by default, since it is the most common.
+--
+
 	configset.addblock(root, { "SharedLib" })
 	
 		configset.addvalue(root, "targetprefix", "lib")
@@ -42,6 +46,11 @@
 		configset.addvalue(root, "targetprefix", "lib")
 		configset.addvalue(root, "targetextension", ".a")
 
+
+--
+-- Add variations for other Posix-like systems.
+--
+
 	configset.addblock(root, { "MacOSX", "SharedLib" })
 	
 		configset.addvalue(root, "targetextension", ".dylib")
@@ -49,6 +58,11 @@
 	configset.addblock(root, { "PS3", "ConsoleApp" })
 	
 		configset.addvalue(root, "targetextension", ".elf")
+
+
+--
+-- Windows and friends.
+--
 
 	configset.addblock(root, { "Windows", "ConsoleApp" })
 	
@@ -87,3 +101,21 @@
 	
 		configset.addvalue(root, "targetprefix", "")
 		configset.addvalue(root, "targetextension", ".lib")
+
+
+--
+-- .NET languages always use Windows-style naming.
+--
+
+	configset.addblock(root, { "C#", "ConsoleApp" })
+	
+		configset.addvalue(root, "targetextension", ".exe")
+
+	configset.addblock(root, { "C#", "WindowedApp" })
+	
+		configset.addvalue(root, "targetextension", ".exe")
+
+	configset.addblock(root, { "C#", "SharedLib" })
+	
+		configset.addvalue(root, "targetprefix", "")
+		configset.addvalue(root, "targetextension", ".dll")

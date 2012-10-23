@@ -88,7 +88,7 @@
 		-- will become the configuration object and much of this baking code will go
 		-- away. For right now, it provides a way to access the global settings that
 		-- match this configuration's setup.
-		filter = { cfg.buildcfg, cfg.platform, _ACTION, cfg.system, cfg.architecture, cfg.kind }
+		filter = { cfg.buildcfg, cfg.platform, _ACTION, cfg.system, cfg.architecture, cfg.kind, prj.language }
 
 		local terms = {}
 		for k, v in pairs(filter) do
