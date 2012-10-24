@@ -254,7 +254,7 @@
 					
 					-- if this is an external project reference, I can't return
 					-- any kind of path info, because I don't know the target name
-					elseif not prj.externalname then
+					elseif not prj.external then
 						if part == "basename" then
 							item = prjcfg.linktarget.basename
 						else

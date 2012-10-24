@@ -217,7 +217,7 @@
 			for _, link in ipairs(links) do
 				-- skip external project references, since I have no way
 				-- to know the actual output target path
-				if not link.project.externalname then
+				if not link.project.external then
 					if link.kind == premake.STATICLIB then
 						-- Don't use "-l" flag when linking static libraries; instead use 
 						-- path/libname.a to avoid linking a shared library of the same

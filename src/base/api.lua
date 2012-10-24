@@ -504,6 +504,13 @@
 	}
 
 	api.register {
+		name = "filename",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "files",
 		scope = "config",
 		kind = "file-list",
@@ -1210,7 +1217,7 @@
 	
 	local function createproject(name, sln, isUsage)
 		local prj = {}
-		
+
 		-- attach a type
 		setmetatable(prj, {
 			__type = "project",
@@ -1240,6 +1247,7 @@
 		
 		prj.solution       = sln
 		prj.name           = name
+		prj.filename       = name
 		prj.basedir        = os.getcwd()
 		prj.script         = _SCRIPT
 		prj.uuid           = os.uuid()
@@ -1330,7 +1338,9 @@
 		
 		premake.CurrentContainer = premake.solution.get(name)
 		if (not premake.CurrentContainer) then
-			premake.CurrentContainer = premake.solution.new(name)
+			local sln = premake.solution.new(name)
+			sln.filename = name
+			premake.CurrentContainer = sln
 		end
 
 		-- add an empty, global configuration
@@ -1349,13 +1359,8 @@
 --
 
 	function external(name)
-		-- define it like a regular project
 		local prj = project(name)
-		
-		-- then mark it as external
 		prj.external = true;
-		prj.externalname = prj.name
-		
 		return prj
 	end
 

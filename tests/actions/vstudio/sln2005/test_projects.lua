@@ -58,7 +58,8 @@ EndProject
 --
 
 	function suite.projectNamesAreEscaped()
-		prj.name = 'My "x64" Project';
+		prj.name = 'My "x64" Project'
+		filename ('My "x64" Project')
 		prepare()
 		test.capture [[
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "My &quot;x64&quot; Project", "My &quot;x64&quot; Project.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"

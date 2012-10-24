@@ -301,6 +301,24 @@
 
 
 --
+-- Returns the file name for this project. Also works with solutions.
+--
+-- @param prj
+--    The project object to query.
+-- @param ext
+--    An optional file extension to add, with the leading dot.
+-- @return
+--    The absolute path to the project's file.
+--
+
+	function project.getfilename(prj, ext)
+		local fn = path.join(project.getlocation(prj), prj.filename)
+		if ext then fn = fn .. ext end
+		return fn
+	end
+
+
+--
 -- Returns a unique object file name for a project source code file.
 --
 -- @param prj
@@ -357,7 +375,7 @@
 
 
 --
--- Retrieve the project's file system location.
+-- Retrieve the project's file system location. Also works with solutions.
 --
 -- @param prj
 --    The project object to query.
@@ -369,7 +387,13 @@
 --
 
 	function project.getlocation(prj, relativeto)
-		local location = prj.location or prj.solution.location or prj.basedir
+		local location = prj.location
+		if not location and prj.solution then
+			location = prj.solution.location
+		end
+		if not location then
+			location = prj.basedir
+		end	
 		if relativeto then
 			location = path.getrelative(relativeto, location)
 		end

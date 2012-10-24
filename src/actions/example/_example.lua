@@ -61,14 +61,14 @@
 		-- function that will actually do the work of generating the file contents.
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln.txt", premake.example.solution)
+			premake.generate(sln, ".sln.txt", premake.example.solution)
 		end,
 
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csprj.txt", premake.example.project)
+				premake.generate(prj, ".csprj.txt", premake.example.project)
 			else
-				premake.generate(prj, "%%.cprj.txt", premake.example.project)
+				premake.generate(prj, ".cprj.txt", premake.example.project)
 			end
 		end,
 

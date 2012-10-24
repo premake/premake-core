@@ -38,7 +38,7 @@
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "%%.xcodeproj/project.pbxproj", premake.xcode.project)
+			premake.generate(prj, ".xcodeproj/project.pbxproj", premake.xcode.project)
 		end,
 		
 		oncleanproject = function(prj)
@@ -84,11 +84,11 @@
 		default_platform = "Universal",
 		
 		onsolution = function(sln)
-			premake.generate(sln, "%%.xcworkspace/contents.xcworkspacedata", premake.xcode4.workspace_generate)
+			premake.generate(sln, ".xcworkspace/contents.xcworkspacedata", premake.xcode4.workspace_generate)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "%%.xcodeproj/project.pbxproj", premake.xcode.project)
+			premake.generate(prj, ".xcodeproj/project.pbxproj", premake.xcode.project)
 		end,
 		
 		oncleanproject = function(prj)

@@ -34,19 +34,18 @@
 --
 -- @param obj
 --    A solution or project object; will be based to the callback function.
--- @param filename
---    The output filename; see the docs for premake.project.getfilename()
---    for the expected format.
+-- @param ext
+--    An optional extension for the generated file, with the leading dot.
 -- @param callback
 --    The function responsible for writing the file, should take a solution
 --    or project as a parameters.
 --
 
-	function premake.generate(obj, filename, callback)
-		filename = premake.project.getfilename(obj, filename)
-		printf("Generating %s...", filename)
+	function premake.generate(obj, ext, callback)
+		local fn = premake5.project.getfilename(obj, ext)
+		printf("Generating %s...", path.getrelative(os.getcwd(), fn))
 
-		local f, err = io.open(filename, "wb")
+		local f, err = io.open(fn, "wb")
 		if (not f) then
 			error(err, 0)
 		end

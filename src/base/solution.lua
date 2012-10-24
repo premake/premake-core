@@ -320,17 +320,33 @@
 
 
 --
+-- Returns the file name for this solution.
+--
+-- @param sln
+--    The solution object to query.
+-- @param ext
+--    An optional file extension to add, with the leading dot.
+-- @return
+--    The absolute path to the solution's file.
+--
+
+
+	solution.getfilename = project.getfilename
+
+
+--
 -- Retrieve the solution's file system location.
 --
 -- @param sln
 --    The solution object to query.
+-- @param relativeto
+--    Optional; if supplied, the location will be made relative
+--    to this path.
 -- @return
---    The path to the solutions's file system location.
+--    The path to the solution's file system location.
 --
 
-	function solution.getlocation(sln)
-		return sln.location or sln.basedir
-	end
+	solution.getlocation = project.getlocation
 
 
 --

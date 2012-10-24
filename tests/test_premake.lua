@@ -5,43 +5,32 @@
 --
 
 
-	T.premake = { }
+	T.premake = {}
+	local suite = T.premake
 
 
 --
--- premake.checktools() tests
+-- Setup
 --
 
-	function T.premake.checktools_SetsDefaultTools()
-		_ACTION = "gmake"
-		premake.checktools()
-		test.isequal("gcc", _OPTIONS.cc)
-		test.isequal("mono", _OPTIONS.dotnet)
-	end
-	
-	
-	function T.premake.checktools_Fails_OnToolMismatch()
-		_ACTION = "gmake"
-		_OPTIONS["cc"] = "xyz"
-		ok, err = premake.checktools()
-		test.isfalse( ok )
-		test.isequal("the GNU Make action does not support /cc=xyz (yet)", err)
+	local sln, prj
+	function suite.setup()
+		sln = test.createsolution()
+		location "MyLocation"
+		prj = premake.solution.getproject_ng(sln, 1)		
 	end
 
-
-
+	
 --
 -- generate() tests
 --
 
-	function T.premake.generate_OpensCorrectFile()
-		prj = { name = "MyProject", location = "MyLocation" }
-		premake.generate(prj, "%%.prj", function () end)
-		test.openedfile("MyLocation/MyProject.prj")
+	function suite.generate_OpensCorrectFile()
+		premake.generate(prj, ".prj", function () end)
+		test.openedfile(path.join(os.getcwd(), "MyLocation/MyProject.prj"))
 	end
 
 	function T.premake.generate_ClosesFile()
-		prj = { name = "MyProject", location = "MyLocation" }
-		premake.generate(prj, "%%.prj", function () end)
+		premake.generate(prj, ".prj", function () end)
 		test.closedfile(true)
 	end

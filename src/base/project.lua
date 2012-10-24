@@ -267,7 +267,7 @@
 --
 
 	function premake.project.getfilename(prj, pattern)
-		local fname = pattern:gsub("%%%%", prj.externalname or prj.name)
+		local fname = pattern:gsub("%%%%", prj.filename or prj.name)
 		fname = path.join(premake5.project.getlocation(prj), fname)
 		return path.getrelative(os.getcwd(), fname)
 	end

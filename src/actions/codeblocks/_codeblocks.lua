@@ -20,11 +20,11 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, "%%.workspace", premake.codeblocks.workspace)
+			premake.generate(sln, ".workspace", premake.codeblocks.workspace)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "%%.cbp", premake.codeblocks.cbp)
+			premake.generate(prj, ".cbp", premake.codeblocks.cbp)
 		end,
 		
 		oncleansolution = function(sln)

@@ -20,11 +20,11 @@
 		},
 		
 		onsolution = function(sln)
-			premake.generate(sln, "%%.workspace", premake.codelite.workspace)
+			premake.generate(sln, ".workspace", premake.codelite.workspace)
 		end,
 		
 		onproject = function(prj)
-			premake.generate(prj, "%%.project", premake.codelite.project)
+			premake.generate(prj, ".project", premake.codelite.project)
 		end,
 		
 		oncleansolution = function(sln)

@@ -33,16 +33,16 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate_ng)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate_ng)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate_ng)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user_ng)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate_ng)
-				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user_ng)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate_ng)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user_ng)
 			end
 		end,
 		
@@ -74,16 +74,16 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate_ng)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate_ng)
 		end,
 
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate_ng)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user_ng)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate_ng)
-				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user_ng)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate_ng)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user_ng)
 			end
 		end,
 
@@ -115,17 +115,17 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate_ng)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate_ng)
 		end,
 
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate_ng)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user_ng)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, "%%.vcxproj", vstudio.vc2010.generate_ng)
-				premake.generate(prj, "%%.vcxproj.user", vstudio.vc2010.generate_user_ng)
-				premake.generate(prj, "%%.vcxproj.filters", vstudio.vc2010.generate_filters_ng)
+				premake.generate(prj, ".vcxproj", vstudio.vc2010.generate_ng)
+				premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generate_user_ng)
+				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generate_filters_ng)
 			end
 		end,
 
@@ -158,17 +158,17 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate_ng)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate_ng)
 		end,
 
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate_ng)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user_ng)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, "%%.vcxproj", vstudio.vc2010.generate_ng)
-				premake.generate(prj, "%%.vcxproj.user", vstudio.vc2010.generate_user_ng)
-				premake.generate(prj, "%%.vcxproj.filters", vstudio.vc2010.generate_filters_ng)
+				premake.generate(prj, ".vcxproj", vstudio.vc2010.generate_ng)
+				premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generate_user_ng)
+				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generate_filters_ng)
 			end
 		end,
 
@@ -246,7 +246,7 @@
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
-		return premake.project.getfilename(prj, "%%" .. extension)
+		return project.getfilename(prj, extension)
 	end
 
 
@@ -448,7 +448,7 @@
 	end
 	
 	function vstudio.cleanproject(prj)
-		local fname = premake.project.getfilename(prj, "%%")
+		local fname = project.getfilename(prj)
 
 		os.remove(fname .. ".vcproj")
 		os.remove(fname .. ".vcproj.user")
@@ -524,16 +524,16 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2002.generate)
+			premake.generate(sln, ".sln", vstudio.sln2002.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2002.generate)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2002.generate_user)
+				premake.generate(prj, ".csproj", vstudio.cs2002.generate)
+				premake.generate(prj, ".csproj.user", vstudio.cs2002.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
-				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -563,16 +563,16 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2003.generate)
+			premake.generate(sln, ".sln", vstudio.sln2003.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2002.generate)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2002.generate_user)
+				premake.generate(prj, ".csproj", vstudio.cs2002.generate)
+				premake.generate(prj, ".csproj.user", vstudio.cs2002.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
-				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -602,16 +602,16 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
-				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -641,16 +641,16 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
 			else
-				premake.generate(prj, "%%.vcproj", vstudio.vc200x.generate)
-				premake.generate(prj, "%%.vcproj.user", vstudio.vc200x.generate_user)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 		
@@ -681,17 +681,17 @@
 		},
 
 		onsolution = function(sln)
-			premake.generate(sln, "%%.sln", vstudio.sln2005.generate)
+			premake.generate(sln, ".sln", vstudio.sln2005.generate)
 		end,
 		
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
-				premake.generate(prj, "%%.csproj", vstudio.cs2005.generate)
-				premake.generate(prj, "%%.csproj.user", vstudio.cs2005.generate_user)
+				premake.generate(prj, ".csproj", vstudio.cs2005.generate)
+				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
 			else
-			premake.generate(prj, "%%.vcxproj", premake.vs2010_vcxproj)
-			premake.generate(prj, "%%.vcxproj.user", premake.vs2010_vcxproj_user)
-			premake.generate(prj, "%%.vcxproj.filters", vstudio.vc2010.generate_filters)
+			premake.generate(prj, ".vcxproj", premake.vs2010_vcxproj)
+			premake.generate(prj, ".vcxproj.user", premake.vs2010_vcxproj_user)
+			premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generate_filters)
 			end
 		end,
 		
