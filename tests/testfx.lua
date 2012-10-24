@@ -201,8 +201,13 @@
 --
 	local _OS_host = _OS
 
-	-- TODO: move this out to the test suite's premake4.lua so 
-	-- this file can be reused for other projects
+	local function error_handler(err)
+		local msg = debug.traceback(err, 2)
+		msg = msg:sub(1, msg:find("[C]", 1, true) - 3)
+		return msg
+	end
+	
+	
 	local function test_setup(suite, fn)
 		_ACTION = "test"
 		_ARGS = { }
@@ -221,7 +226,7 @@
 		test.value_closedfile = false
 
 		if suite.setup then
-			return pcall(suite.setup)
+			return xpcall(suite.setup, error_handler)
 		else
 			return true
 		end
@@ -230,13 +235,13 @@
 
 	local function test_run(suite, fn)
 		io.capture()
-		return pcall(fn)
+		return xpcall(fn, error_handler)
 	end
 	
 
 	local function test_teardown(suite, fn)
 		if suite.teardown then
-			return pcall(suite.teardown)
+			return xpcall(suite.teardown, error_handler)
 		else
 			return true
 		end
