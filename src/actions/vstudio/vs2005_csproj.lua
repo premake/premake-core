@@ -104,7 +104,7 @@
 		_p(2,'<AppDesignerFolder>Properties</AppDesignerFolder>')
 
 		local target = cfg.buildtarget
-		_p(2,'<RootNamespace>%s</RootNamespace>', target.basename)
+		_p(2,'<RootNamespace>%s</RootNamespace>', prj.namespace or target.basename)
 		_p(2,'<AssemblyName>%s</AssemblyName>', target.basename)
 
 		local framework = prj.framework or frameworks[_ACTION]

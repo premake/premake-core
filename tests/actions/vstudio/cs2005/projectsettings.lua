@@ -16,12 +16,14 @@
 	local sln, prj
 	
 	function suite.setup()
-		sln, prj = test.createsolution()
+		_ACTION = "vs2005"
+		sln = test.createsolution()
 		language "C#"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"		
 	end
 	
 	local function prepare()
+		prj = premake.solution.getproject_ng(sln, 1)
 		cs2005.projectsettings(prj)
 	end
 
@@ -31,7 +33,6 @@
 --
 
 	function suite.OnVs2005()
-		_ACTION = "vs2005"
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -117,7 +118,6 @@
 --
 
 	function suite.OnFrameworkVersion()
-		_ACTION = "vs2005"
 		framework "3.0"
 		prepare()
 		test.capture [[
@@ -136,4 +136,26 @@
 		]]
 	end
 
+
+--
+-- Make sure the root namespace can be overridden.
+--
+
+	function suite.canOverrideRootNamespace()
+		namespace "MyCompany.%{prj.name}"
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProductVersion>8.0.50727</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>MyCompany.MyProject</RootNamespace>
+		<AssemblyName>MyProject</AssemblyName>
+	</PropertyGroup>
+		]]
+	end
 

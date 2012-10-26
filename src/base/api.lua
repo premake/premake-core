@@ -698,6 +698,14 @@
 		tokens = true,
 	}		
 
+
+	api.register {
+		name = "namespace",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
 	api.register {
 		name = "objdir",
 		scope = "config",
