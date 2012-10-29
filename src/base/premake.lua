@@ -15,6 +15,7 @@
 	premake.CPP         = "C++"
 	premake.GCC         = "gcc"
 	premake.HAIKU       = "haiku"
+	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"
