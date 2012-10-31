@@ -75,7 +75,9 @@
 				arg[i] = "{" .. table.concat(arg[i], ", ") .. "}"
 			end
 		end
-		error(string.format(format, unpack(arg)), 3)
+		
+		local msg = string.format(format, unpack(arg))
+		error(debug.traceback(msg, 3), 3)
 	end
 		
 	
@@ -202,8 +204,25 @@
 	local _OS_host = _OS
 
 	local function error_handler(err)
-		local msg = debug.traceback(err, 2)
-		msg = msg:sub(1, msg:find("[C]", 1, true) - 3)
+		local msg = err
+		
+		-- if the error doesn't include a stack trace, add one
+		if not msg:find("stack traceback:", 1, true) then
+			msg = debug.traceback(err, 2)
+		end
+		
+		-- trim of the trailing context of the originating xpcall
+		local i = msg:find("[C]: in function 'xpcall'", 1, true)
+		if i then
+			msg = msg:sub(1, i - 3)
+		end
+		
+		-- if the resulting stack trace is only one level deep, ignore it
+		local n = select(2, msg:gsub('\n', '\n'))
+		if n == 2 then
+			msg = msg:sub(1, msg:find('\n', 1, true) - 1)
+		end
+		
 		return msg
 	end
 	
@@ -269,7 +288,7 @@
 
 				local tok, terr = test_teardown(suitetests, testfunc)
 				ok = ok and tok
-				err = err or tok
+				err = err or terr
 			
 				if (not ok) then
 					test.print(string.format("%s.%s: %s", suitename, testname, err))
