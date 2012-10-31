@@ -30,9 +30,9 @@
 		"base/premake.lua",
 		
 		-- configuration APIs
-		"base/api.lua",		
 		"base/configset.lua",
 		"base/context.lua",
+		"base/api.lua",
 		
 		-- runtime environment setup
 		"_premake_init.lua",

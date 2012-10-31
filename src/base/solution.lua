@@ -8,6 +8,7 @@
 	local solution = premake.solution
 	local oven = premake5.oven
 	local project = premake5.project
+	local configset = premake.configset
 
 
 -- The list of defined solutions (which contain projects, etc.)
@@ -20,10 +21,12 @@
 --
 -- @param name
 --    The new solution's name.
+-- @return
+--    A new solution object.
 --
 
 	function solution.new(name)
-		local sln = { }
+		local sln = {}
 
 		-- add to master list keyed by both name and index
 		table.insert(premake.solution.list, sln)
@@ -32,16 +35,20 @@
 		-- attach a type descriptor
 		setmetatable(sln, { __type="solution" })
 
-		sln.name           = name
-		sln.basedir        = os.getcwd()			
-		sln.projects       = { }
-		sln.blocks         = { }
-		sln.configurations = { }
+		sln.name = name
+		sln.basedir = os.getcwd()
+		sln.configset = configset.new(configset.root)
+		sln.filename = name
+		sln.projects = {}
+		sln.blocks = {}
+		sln.configurations = {}
+
 		return sln
 	end
 
 
-
+--
+-- Creates a new project, which the given
 --
 -- Iterates through all of the current solutions, bakes down their contents,
 -- and then replaces the original solution object with this baked result.

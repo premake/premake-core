@@ -58,8 +58,8 @@
 		local bundlename = ""
 		local bundlepath = ""
 		local suffix = ""
-		local prefix = cfg.context[field.."prefix"]
-		local extension = cfg.context[field.."extension"]
+		local prefix = cfg.context[field.."prefix"] or ""
+		local extension = cfg.context[field.."extension"] or ""
 		
 		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then

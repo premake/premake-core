@@ -24,9 +24,16 @@
 --
 -- Create a new configuration set.
 --
+-- @param parent
+--    An optional parent configuration set. If provided, the parent provides
+--    a base configuration, which this set will extend.
+-- @return
+--    A new, empty configuration set.
+--
 
-	function configset.new()
+	function configset.new(parent)
 		local cfgset = {}
+		cfgset.parent = parent
 		cfgset.blocks = {}
 		configset.addblock(cfgset, {})
 		return cfgset
@@ -50,7 +57,7 @@
 		local block = {}
 		
 		-- convert terms to a simple, all-lower-case array
-		terms = table.flatten(terms)
+		terms = table.flatten({ terms })
 		for i, term in ipairs(terms) do
 			terms[i] = term:lower()
 		end
@@ -98,7 +105,7 @@
 --
 
 	function configset.fetchvalue(cfgset, fieldname, context)
-		local value = ""
+		local value = nil
 
 		for _, block in ipairs(cfgset.blocks) do
 			if criteria.matches(block.terms, context) then

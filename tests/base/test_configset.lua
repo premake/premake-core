@@ -35,7 +35,7 @@
 --
 
 	function suite.defaultValue_onString()
-		test.isequal("", configset.fetchvalue(cfgset, "targetextension", {}))
+		test.isnil(configset.fetchvalue(cfgset, "targetextension", {}))
 	end
 
 

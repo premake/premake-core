@@ -8,6 +8,36 @@
 	local project = premake5.project
 	local context = premake.context
 	local oven = premake5.oven
+	local configset = premake.configset
+
+
+--
+-- Create a new project object.
+--
+-- @param sln
+--    The solution object to contain the new project.
+-- @param name
+--    The new project's name.
+-- @return
+--    A new project object, contained by the specified solution.
+--
+
+	function project.new(sln, name)
+		local prj = {}
+			
+		-- attach a type descriptor
+		setmetatable(prj, { __type="project" })
+
+		prj.name = name
+		prj.basedir = os.getcwd()
+		prj.solution = sln
+		prj.configset = configset.new(sln.configset)
+		prj.filename = name
+		prj.uuid = os.uuid()
+		prj.blocks = {}
+
+		return prj
+	end
 
 
 --
@@ -96,7 +126,7 @@
 				table.insert(terms, v)
 			end
 		end
-		cfg.context = context.new(premake.root, terms)
+		cfg.context = context.new(premake.configset.root, terms)
 		
 		-- fill in any calculated values
 		premake5.config.bake(cfg)

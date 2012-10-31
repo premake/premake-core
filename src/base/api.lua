@@ -6,6 +6,7 @@
 
 	premake.api = {}
 	local api = premake.api
+	local configset = premake.configset
 
 
 --
@@ -84,10 +85,18 @@
 		else
 			target = api.scope.configuration
 		end
-				
-		if not target then
-			error({ msg="no " .. scope .. " in scope" })
-		end
+
+		-- WORK IN PROGRESS: I am moving everything toward the new config
+		-- set objects, which means that it will no longer be possible to
+		-- ever be completely out of scope. 
+		--
+		-- TODO: Get rid of this function and use the active config set
+		-- in api.scope instead.
+		--
+		-- In the meantime, return a dummy container for the accessor while
+		-- I get things ported.
+		
+		target = target or {}
 		
 		return target
 	end
@@ -382,6 +391,14 @@
 
 		local value, err = api.checkvalue(value, field.allowed, field.aliases)
 		if err then error({ msg=err }) end
+
+		-- NEW APPROACH:
+		-- TODO: receive config set directly instead of going through target
+		local cset = target.configset or configset.root
+		configset.addvalue(cset, name, value)
+
+		-- OLD APPROACH:
+		-- TODO: phase this out ASAP
 		target[name] = value
 	end
 
@@ -1189,15 +1206,25 @@
 		if not terms then
 			return premake.CurrentConfiguration
 		end
+
+		-- NEW APPROACH: Create a new block in the current config set
+		-- TODO: Fetch the current config set from api.scope instead
+		local container = api.scope.project or api.scope.solution or {}
+		local cset = container.configset or configset.root
+		configset.addblock(cset, terms)
 		
+		-- OLD APPROACH:
+		-- TODO: Phase this out ASAP
 		local container, err = premake.getobject("container")
 		if (not container) then
-			error(err, 2)
+			-- error(err, 2)
+			return
 		end
 		
 		local cfg = { }
 		cfg.terms   = table.flatten({terms})
 		cfg.basedir = os.getcwd()
+		cfg.configset = container.configset
 		
 		table.insert(container.blocks, cfg)
 		premake.CurrentConfiguration = cfg
@@ -1219,17 +1246,12 @@
 		
 		-- this is the new place for storing scoped objects
 		api.scope.configuration = cfg
-		
+
 		return cfg
 	end
 	
 	local function createproject(name, sln, isUsage)
-		local prj = {}
-
-		-- attach a type
-		setmetatable(prj, {
-			__type = "project",
-		})
+		local prj = premake5.project.new(sln, name)
 		
 		-- add to master list keyed by both name and index
 		table.insert(sln.projects, prj)
@@ -1253,14 +1275,8 @@
 			sln.projects[name] = prj
 		end
 		
-		prj.solution       = sln
-		prj.name           = name
-		prj.filename       = name
-		prj.basedir        = os.getcwd()
-		prj.script         = _SCRIPT
-		prj.uuid           = os.uuid()
-		prj.blocks         = { }
-		prj.usage		   = isUsage;
+		prj.script = _SCRIPT
+		prj.usage = isUsage;
 		
 		return prj;
 	end
@@ -1326,7 +1342,7 @@
   		end
 		
 		-- add an empty, global configuration to the project
-		configuration { }
+		configuration {}
 		
 		-- this is the new place for storing scoped objects
 		api.scope.project = premake.CurrentContainer
@@ -1347,7 +1363,6 @@
 		premake.CurrentContainer = premake.solution.get(name)
 		if (not premake.CurrentContainer) then
 			local sln = premake.solution.new(name)
-			sln.filename = name
 			premake.CurrentContainer = sln
 		end
 

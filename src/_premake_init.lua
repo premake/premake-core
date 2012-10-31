@@ -15,8 +15,8 @@
 -- and on down the line.
 --
 
-	premake.root = configset.new()
-	local root = premake.root
+	configset.root = configset.new()
+	local root = configset.root
 
 
 --
@@ -36,86 +36,71 @@
 -- Use Posix-style target naming by default, since it is the most common.
 --
 
-	configset.addblock(root, { "SharedLib" })
-	
-		configset.addvalue(root, "targetprefix", "lib")
-		configset.addvalue(root, "targetextension", ".so")
+	configuration { "SharedLib" }
+		targetprefix "lib"
+		targetextension ".so"
 
-	configset.addblock(root, { "StaticLib" })
-	
-		configset.addvalue(root, "targetprefix", "lib")
-		configset.addvalue(root, "targetextension", ".a")
+	configuration { "StaticLib" }
+		targetprefix "lib"
+		targetextension ".a"
 
 
 --
 -- Add variations for other Posix-like systems.
 --
 
-	configset.addblock(root, { "MacOSX", "SharedLib" })
-	
-		configset.addvalue(root, "targetextension", ".dylib")
+	configuration { "MacOSX", "SharedLib" }
+		targetextension ".dylib"
 
-	configset.addblock(root, { "PS3", "ConsoleApp" })
-	
-		configset.addvalue(root, "targetextension", ".elf")
+	configuration { "PS3", "ConsoleApp" }
+		targetextension ".elf"
 
 
 --
 -- Windows and friends.
 --
 
-	configset.addblock(root, { "Windows", "ConsoleApp" })
-	
-		configset.addvalue(root, "targetextension", ".exe")
+	configuration { "Windows", "ConsoleApp" }
+		targetextension ".exe"
 
-	configset.addblock(root, { "Windows", "WindowedApp" })
-	
-		configset.addvalue(root, "targetextension", ".exe")
+	configuration { "Windows", "WindowedApp" }
+		targetextension ".exe"
 
-	configset.addblock(root, { "Windows", "SharedLib" })
-	
-		configset.addvalue(root, "targetprefix", "")
-		configset.addvalue(root, "targetextension", ".dll")
-		configset.addvalue(root, "implibextension", ".lib")
+	configuration { "Windows", "SharedLib" }
+		targetprefix ""
+		targetextension ".dll"
+		implibextension ".lib"
 
-	configset.addblock(root, { "Windows", "StaticLib" })
+	configuration { "Windows", "StaticLib" }
+		targetprefix ""
+		targetextension ".lib"
 	
-		configset.addvalue(root, "targetprefix", "")
-		configset.addvalue(root, "targetextension", ".lib")
+	configuration { "Xbox360", "ConsoleApp" }
+		targetextension ".exe"
+	
+	configuration { "Xbox360", "WindowedApp" }
+		targetextension ".exe"
 
-	configset.addblock(root, { "Xbox360", "ConsoleApp" })
-	
-		configset.addvalue(root, "targetextension", ".exe")
+	configuration { "Xbox360", "SharedLib" }
+		targetprefix ""
+		targetextension ".dll"
+		implibextension ".lib"
 
-	configset.addblock(root, { "Xbox360", "WindowedApp" })
-	
-		configset.addvalue(root, "targetextension", ".exe")
-
-	configset.addblock(root, { "Xbox360", "SharedLib" })
-	
-		configset.addvalue(root, "targetprefix", "")
-		configset.addvalue(root, "targetextension", ".dll")
-		configset.addvalue(root, "implibextension", ".lib")
-
-	configset.addblock(root, { "Xbox360", "StaticLib" })
-	
-		configset.addvalue(root, "targetprefix", "")
-		configset.addvalue(root, "targetextension", ".lib")
+	configuration { "Xbox360", "StaticLib" }
+		targetprefix ""
+		targetextension ".lib"		
 
 
 --
 -- .NET languages always use Windows-style naming.
 --
 
-	configset.addblock(root, { "C#", "ConsoleApp" })
-	
-		configset.addvalue(root, "targetextension", ".exe")
+	configuration { "C#", "ConsoleApp" }
+		targetextension ".exe"
 
-	configset.addblock(root, { "C#", "WindowedApp" })
-	
-		configset.addvalue(root, "targetextension", ".exe")
+	configuration { "C#", "WindowedApp" }
+		targetextension ".exe"
 
-	configset.addblock(root, { "C#", "SharedLib" })
-	
-		configset.addvalue(root, "targetprefix", "")
-		configset.addvalue(root, "targetextension", ".dll")
+	configuration { "C#", "SharedLib" }
+		targetprefix ""
+		targetextension ".dll"

@@ -41,11 +41,15 @@
 		end
 		ctx.terms = terms
 		
-		-- attach field lookup metatable
+		-- when a missing field is requested, fetch it from my config
+		-- set, and then cache the value for future lookups
 		setmetatable(ctx, {
 			__index = function(ctx, key)
-				ctx[key] = configset.fetchvalue(cfgset, key, terms)
-				return ctx[key]
+				local value = configset.fetchvalue(cfgset, key, terms)
+				if value then
+					ctx[key] = value
+				end
+				return value
 			end	
 		})
 		

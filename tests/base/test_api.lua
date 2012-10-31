@@ -240,13 +240,6 @@
 --
 -- configuration() tests
 --
-		
-	function suite.configuration_RaisesError_OnNoContainer()
-		premake.CurrentContainer = nil
-		local fn = function() configuration{"Debug"} end
-		ok, err = pcall(fn)
-		test.isfalse(ok)
-	end
 
 	function suite.configuration_SetsCurrentConfiguration_OnKeywords()
 		local cfg = configuration {"Debug"}
