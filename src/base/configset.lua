@@ -56,12 +56,8 @@
 	function configset.addblock(cfgset, terms)
 		local block = {}
 		
-		-- convert terms to a simple, all-lower-case array
-		terms = table.flatten({ terms })
-		for i, term in ipairs(terms) do
-			terms[i] = term:lower()
-		end
-		block.terms = terms
+		-- attach a criteria object to the block to control its application
+		block.criteria = criteria.new(terms)
 		
 		table.insert(cfgset.blocks, block)
 		cfgset.current = block
@@ -108,7 +104,7 @@
 		local value = nil
 
 		for _, block in ipairs(cfgset.blocks) do
-			if criteria.matches(block.terms, context) then
+			if criteria.matches(block.criteria, context) then
 				value = block[fieldname] or value
 			end
 		end

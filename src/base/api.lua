@@ -27,12 +27,21 @@
 	}
 		
 
-
 --
 -- A place to store the current active objects in each project scope.
 --
 
 	api.scope = {}
+
+
+--
+-- Create a "root" configuration set, to hold the global configuration. Values
+-- that are added to this set become available for all add-ons, solution, projects,
+-- and on down the line.
+--
+
+	configset.root = configset.new()
+	local root = configset.root
 
 
 --
@@ -1211,7 +1220,7 @@
 		-- TODO: Fetch the current config set from api.scope instead
 		local container = api.scope.project or api.scope.solution or {}
 		local cset = container.configset or configset.root
-		configset.addblock(cset, terms)
+		configset.addblock(cset, {terms})
 		
 		-- OLD APPROACH:
 		-- TODO: Phase this out ASAP

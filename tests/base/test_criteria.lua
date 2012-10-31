@@ -55,3 +55,79 @@
 		crit = criteria.new { "ps3" }
 		test.isfalse(criteria.matches(crit, { "ps3 ppu sn" }))
 	end
+
+
+--
+-- Wildcard matches should work.
+--
+
+	function suite.passes_onPatternMatch()
+		crit = criteria.new { "vs*" }
+		test.istrue(criteria.matches(crit, { "vs2005" }))
+	end
+
+
+--
+-- The "not" modifier should fail the test if the term is matched.
+--
+	
+	function suite.fails_onNotMatch()
+		crit = criteria.new { "not windows" }
+		test.isfalse(criteria.matches(crit, { "windows" }))
+	end
+
+	function suite.passes_onNotUnmatched()
+		crit = criteria.new { "not windows" }
+		test.istrue(criteria.matches(crit, { "linux" }))
+	end
+
+
+--
+-- The "or" modifier should pass if either term is present.
+--
+
+	function suite.passes_onFirstOrTermMatched()
+		crit = criteria.new { "windows or linux" }
+		test.istrue(criteria.matches(crit, { "windows" }))
+	end
+
+	function suite.passes_onSecondOrTermMatched()
+		crit = criteria.new { "windows or linux" }
+		test.istrue(criteria.matches(crit, { "linux" }))
+	end
+
+	function suite.passes_onThirdOrTermMatched()
+		crit = criteria.new { "windows or linux or vs2005" }
+		test.istrue(criteria.matches(crit, { "vs2005" }))
+	end
+
+	function suite.fails_onNoOrTermMatched()
+		crit = criteria.new { "windows or linux" }
+		test.isfalse(criteria.matches(crit, { "vs2005" }))
+	end
+
+
+--
+-- The "not" modifier should fail on any match with an "or" modifier.
+--
+
+	function suite.passes_onNotOrMatchesFirst()
+		crit = criteria.new { "not windows or linux" }
+		test.isfalse(criteria.matches(crit, { "windows" }))
+	end
+
+	function suite.passes_onNotOrMatchesSecond()
+		crit = criteria.new { "windows or not linux" }
+		test.isfalse(criteria.matches(crit, { "linux" }))
+	end
+
+
+--
+-- The "not" modifier should succeed with "or" if there are no matches.
+--
+
+	function suite.passes_onNoNotMatch()
+		crit = criteria.new { "not windows or linux" }
+		test.istrue(criteria.matches(crit, { "macosx" }))
+	end
+

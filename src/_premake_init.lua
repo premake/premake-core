@@ -6,30 +6,10 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	local configset = premake.configset
-
-
---
--- Create a "root" configuration set, to hold the global configuration. Values
--- that are added to this set become available for all add-ons, solution, projects,
--- and on down the line.
---
-
-	configset.root = configset.new()
-	local root = configset.root
-
 
 --
 -- Set up the global environment for the systems I know about. I would like to see
 -- at least some if not all of this moved into add-ons in the future.
---
--- TODO: use the same configuration API as the user project scripts, once they
--- have been ported, like:
---
---     configuration { "Windows or Xbox360", "SharedLib" }
---         targetprefix ""
---         targetextension ".dll"
---         implibextension ".lib"
 --
 
 --
@@ -60,47 +40,14 @@
 -- Windows and friends.
 --
 
-	configuration { "Windows", "ConsoleApp" }
+	configuration { "Windows or Xbox360 or C#", "ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	configuration { "Windows", "WindowedApp" }
-		targetextension ".exe"
-
-	configuration { "Windows", "SharedLib" }
+	configuration { "Windows or Xbox360 or C#", "SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".lib"
 
-	configuration { "Windows", "StaticLib" }
+	configuration { "Windows or Xbox360 or C#", "StaticLib" }
 		targetprefix ""
 		targetextension ".lib"
-	
-	configuration { "Xbox360", "ConsoleApp" }
-		targetextension ".exe"
-	
-	configuration { "Xbox360", "WindowedApp" }
-		targetextension ".exe"
-
-	configuration { "Xbox360", "SharedLib" }
-		targetprefix ""
-		targetextension ".dll"
-		implibextension ".lib"
-
-	configuration { "Xbox360", "StaticLib" }
-		targetprefix ""
-		targetextension ".lib"		
-
-
---
--- .NET languages always use Windows-style naming.
---
-
-	configuration { "C#", "ConsoleApp" }
-		targetextension ".exe"
-
-	configuration { "C#", "WindowedApp" }
-		targetextension ".exe"
-
-	configuration { "C#", "SharedLib" }
-		targetprefix ""
-		targetextension ".dll"

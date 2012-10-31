@@ -24,15 +24,21 @@
 --    A new criteria object.
 --
 
-	function criteria.new(terms)
+	function criteria.new(terms)		
 		terms = table.flatten(terms)
-		
-		-- make future tests case-insensitive
-		for i, term in ipairs(terms) do
-			terms[i] = term:lower()
+
+		-- convert Premake wildcard symbols into the appropriate Lua patterns; this
+		-- list of patterns is what will actually be tested against
+		local patterns = {}
+		for _, term in ipairs(terms) do
+			local pattern = path.wildcards(term):lower()
+			table.insert(patterns, pattern)
 		end
 
-		return terms
+		local crit = {}
+		crit.terms = terms
+		crit.patterns = patterns
+		return crit
 	end
 
 
@@ -49,16 +55,25 @@
 --
 
 	function criteria.matches(crit, context)
-		local checkterm = function(term)
-			for _, value in ipairs(context) do
-				if value:match(term) == value then
-					return true
+
+		function testpattern(pattern)
+			for _, part in ipairs(pattern:explode(" or ")) do
+				if part:startswith("not ") then
+					return not testpattern(part:sub(5))
+				end
+	
+				for _, value in ipairs(context) do
+					if value:match(part) == value then
+						return true
+					end
 				end
 			end
+			
+			return false
 		end
-		
-		for _, term in ipairs(crit) do
-			if not checkterm(term) then
+
+		for _, pattern in ipairs(crit.patterns) do
+			if not testpattern(pattern) then
 				return false
 			end
 		end
