@@ -14,10 +14,11 @@
 -- Setup and teardown
 --
 
-	local cfgset
+	local cfgset, parentset
 	
 	function suite.setup()
-		cfgset = configset.new()
+		parentset = configset.new()
+		cfgset = configset.new(parentset)
 	end
 
 
@@ -73,3 +74,25 @@
 		configset.addvalue(cfgset, "targetextension", ".dll")
 		test.isequal(".so", configset.fetchvalue(cfgset, "targetextension", { "linux" }))
 	end
+
+
+--
+-- Values stored in a parent configuration set should propagate into child.
+--
+
+	function suite.canRoundtrip_fromParentToChild()
+		configset.addvalue(parentset, "targetextension", ".so")
+		test.isequal(".so", configset.fetchvalue(cfgset, "targetextension", {}))
+	end
+
+
+--
+-- Child should be able to override parent values.
+--
+
+	function suite.child_canOverrideStringValueFromParent()
+		configset.addvalue(parentset, "targetextension", ".so")
+		configset.addvalue(cfgset, "targetextension", ".dll")
+		test.isequal(".dll", configset.fetchvalue(cfgset, "targetextension", {}))
+	end
+

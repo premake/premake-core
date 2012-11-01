@@ -53,24 +53,20 @@
 		local basedir = project.getlocation(cfg.project)
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
-		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
+		local basename = cfg.context[field.."name"] or cfg.context.targetname or cfg.project.name
+
+		local prefix = cfg.context[field.."prefix"] or cfg.context.targetprefix or ""
+		local suffix = cfg.context[field.."suffix"] or cfg.context.targetsuffix or ""
+		local extension = cfg.context[field.."extension"] or ""
 
 		local bundlename = ""
 		local bundlepath = ""
-		local suffix = ""
-		local prefix = cfg.context[field.."prefix"] or ""
-		local extension = cfg.context[field.."extension"] or ""
 		
 		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then
 			bundlename = basename .. ".app"
 			bundlepath = path.join(bundlename, "Contents/MacOS")
 		end
-
-		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
-		suffix = cfg[field.."suffix"] or cfg.targetsuffix or suffix
-		extension = cfg[field.."extension"] or extension
-
 		local info = {}
 		info.directory  = directory
 		info.basename   = basename .. suffix

@@ -103,6 +103,10 @@
 	function configset.fetchvalue(cfgset, fieldname, context)
 		local value = nil
 
+		if cfgset.parent then
+			value = configset.fetchvalue(cfgset.parent, fieldname, context)
+		end
+
 		for _, block in ipairs(cfgset.blocks) do
 			if criteria.matches(block.criteria, context) then
 				value = block[fieldname] or value

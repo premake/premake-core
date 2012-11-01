@@ -116,8 +116,8 @@
 
 		-- Temporary: Create a context for this configuration. Eventually, the context
 		-- will become the configuration object and much of this baking code will go
-		-- away. For right now, it provides a way to access the global settings that
-		-- match this configuration's setup.
+		-- away. Right now, I am gradually filling in the gaps in the config sets and
+		-- contexts, and passing through accessors as they are ready
 		filter = { cfg.buildcfg, cfg.platform, _ACTION, cfg.system, cfg.architecture, cfg.kind, prj.language }
 
 		local terms = {}
@@ -126,7 +126,8 @@
 				table.insert(terms, v)
 			end
 		end
-		cfg.context = context.new(premake.configset.root, terms)
+		
+		cfg.context = context.new(cfg.configset, terms)
 		
 		-- fill in any calculated values
 		premake5.config.bake(cfg)
