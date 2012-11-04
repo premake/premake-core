@@ -41,32 +41,24 @@
 	dofile("test_dofile.lua")
 	dofile("test_string.lua")
 	dofile("test_premake.lua")
-	dofile("test_platforms.lua")
-	dofile("test_keywords.lua")
-	dofile("test_gmake_cs.lua")
 
-	dofile("base/test_api.lua")
-	dofile("base/test_action.lua")
-	-- dofile("base/test_config.lua")
 	dofile("base/test_configset.lua")
 	dofile("base/test_context.lua")
 	dofile("base/test_criteria.lua")
 	dofile("base/test_detoken.lua")
 	dofile("base/test_include.lua")
-	-- dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
 	dofile("base/test_path.lua")
 	dofile("base/test_premake_command.lua")
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
-	-- dofile("base/test_config_bug.lua")
 
 	-- Solution object tests
 	dofile("solution/test_eachconfig.lua")
 	dofile("solution/test_objdirs.lua")
 	
 	-- Project object tests
-	dofile("test_project.lua")
+	-- dofile("test_project.lua")
 	dofile("project/test_eachconfig.lua")
 	dofile("project/test_filtering.lua")
 	dofile("project/test_filename.lua")
@@ -104,20 +96,6 @@
 	dofile("tools/test_ow.lua")
 	dofile("tools/test_snc.lua")
 
-	--[[
-	-- Clean tests
-	dofile("actions/test_clean.lua")
-	--]]
-
-	--[[
-	-- Visual Studio tests
-	dofile("test_vs2002_sln.lua")
-	dofile("test_vs2003_sln.lua")
-
-	-- Visual Studio 2002-2003 C# projects
-	dofile("actions/vstudio/cs2002/test_files.lua")
-	--]]
-
 	-- Visual Studio 2005-2010 C# projects
 	dofile("actions/vstudio/cs2005/test_assembly_refs.lua")
 	dofile("actions/vstudio/cs2005/test_compiler_props.lua")
@@ -145,7 +123,6 @@
 	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_linker_block.lua")
 	dofile("actions/vstudio/vc200x/test_manifest_block.lua")
-	dofile("actions/vstudio/vc200x/test_mfc.lua")
 	dofile("actions/vstudio/vc200x/test_platforms.lua")
 	dofile("actions/vstudio/vc200x/test_project.lua")
 	dofile("actions/vstudio/vc200x/test_project_refs.lua")
@@ -189,26 +166,6 @@
 	dofile("actions/make/cpp/test_ps3.lua")
 	dofile("actions/make/cpp/test_target_rules.lua")
 	dofile("actions/make/cpp/test_wiidev.lua")
-
-	--[[
-	-- Xcode3 tests
-	dofile("actions/xcode/test_file_references.lua")
-	dofile("actions/xcode/test_xcode_common.lua")
-	dofile("actions/xcode/test_xcode_project.lua")
-	dofile("actions/xcode/test_xcode_dependencies.lua")
-
-	-- Xcode4 tests
-	dofile("actions/xcode/test_xcode4_project.lua")
-	dofile("actions/xcode/test_xcode4_workspace.lua")
-
-	-- CodeLite tests
-	dofile("actions/codelite/codelite_files.lua")
-
-	-- CodeBlocks tests
-	dofile("actions/codeblocks/codeblocks_files.lua")
-	dofile("actions/codeblocks/test_filters.lua")
-	dofile("actions/codeblocks/environment_variables.lua")
-	--]]
 
 
 --

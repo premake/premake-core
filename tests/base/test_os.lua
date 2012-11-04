@@ -63,8 +63,8 @@
 	end
 	
 	function suite.matchfiles_OnSubfolderMatch()
-		local result = os.matchfiles("**/xcode/*")
-		test.istrue(table.contains(result, "actions/xcode/test_xcode_project.lua"))
+		local result = os.matchfiles("**/vc2012/*")
+		test.istrue(table.contains(result, "actions/vstudio/vc2012/test_globals.lua"))
 		test.isfalse(table.contains(result, "premake4.lua"))
 	end
 	

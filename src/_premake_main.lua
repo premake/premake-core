@@ -1,7 +1,7 @@
 --
 -- _premake_main.lua
 -- Script-side entry point for the main program logic.
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
 
@@ -11,40 +11,6 @@
 	
 	_WORKING_DIR        = os.getcwd()
 
-
---
--- Inject a new target platform into each solution; called if the --platform
--- argument was specified on the command line.
---
-
-	local function injectplatform(platform)
-		if not platform then return true end
-		platform = premake.checkvalue(platform, premake.fields.platforms.allowed)
-		
-		for sln in premake.solution.each() do
-			local platforms = sln.platforms or { }
-			
-			-- an empty table is equivalent to a native build
-			if #platforms == 0 then
-				table.insert(platforms, "Native")
-			end
-			
-			-- the solution must provide a native build in order to support this feature
-			if not table.contains(platforms, "Native") then
-				return false, sln.name .. " does not target native platform\nNative platform settings are required for the --platform feature."
-			end
-			
-			-- add it to the end of the list, if it isn't in there already
-			if not table.contains(platforms, platform) then
-				table.insert(platforms, platform)
-			end
-			
-			sln.platforms = platforms
-		end
-		
-		return true
-	end
-	
 
 --
 -- Script-side program entry point.
@@ -136,24 +102,12 @@
 		if (not ok) then error("Error: " .. err, 0) end
 		
 		
-		-- If a platform was specified on the command line, inject it now
-
-		ok, err = injectplatform(_OPTIONS["platform"])
-		if (not ok) then error("Error: " .. err, 0) end
-
-		
 		-- Quick hack: disable the old configuration baking logic for the new
 		-- next-gen actions; this code will go away when everything has been
 		-- ported to the new API
 		print("Building configurations...")
-		if not action.isnextgen then
-			premake.bake.buildconfigs()		
-			ok, err = premake.checkprojects()
-			if (not ok) then error("Error: " .. err, 0) end
-		else
-			premake.solution.bakeall()
-		end
-			
+		premake.solution.bakeall()
+
 		
 		-- Hand over control to the action
 		printf("Running action '%s'...", action.trigger)

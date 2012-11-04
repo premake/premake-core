@@ -45,6 +45,7 @@
 -- Register the "clean" action.
 --
 
+	--[[
 	newaction {
 		trigger     = "clean",
 		description = "Remove all binaries and generated files",
@@ -102,3 +103,4 @@
 			end
 		end
 	}
+	--]]
