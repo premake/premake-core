@@ -7,6 +7,7 @@
 	premake5.config = {}
 	local project = premake5.project
 	local config = premake5.config
+	local context = premake.context
 	local oven = premake5.oven
 
 
@@ -126,7 +127,8 @@
 		-- initially this value will be a string (the file name); if so, build
 		-- and replace it with a full file configuration object
 		if type(filecfg) ~= "table" then
-			-- fold up all of the configuration settings for this file
+			-- TODO, OLD, REMOVE: This is being replaced by configuration
+			-- contexts; will be removed soon
 			filecfg = oven.bakefile(cfg, filename)
 			
 			-- merge in the file path information (virtual paths, etc.) that are
@@ -141,6 +143,31 @@
 			
 			-- and cache the result
 			cfg.files[filename] = filecfg
+
+			-- NEW:
+			-- set up an environment for expanding tokens contained 
+			-- by this file configuration
+			local environ = {
+				sln = cfg.solution,
+				prj = cfg.project,
+				cfg = cfg,
+				file = filecfg
+			}
+			
+			-- create a context to provide access to this file's information
+			local ctx = context.new(cfg.project.configset, environ, filename)
+			context.copyterms(ctx, cfg.context)
+			
+			-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
+			-- through to the config context. Eventually all values will be in the 
+			-- context and the cfg wrapper can be done away with
+			filecfg.context = ctx
+			setmetatable(filecfg, {
+				__index = function(filecfg, key)
+					return filecfg.context[key]
+				end,
+			})
+		
 		end
 		
 		return filecfg

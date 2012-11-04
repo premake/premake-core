@@ -44,20 +44,22 @@
 	dofile("test_platforms.lua")
 	dofile("test_keywords.lua")
 	dofile("test_gmake_cs.lua")
+
 	dofile("base/test_api.lua")
 	dofile("base/test_action.lua")
-	dofile("base/test_config.lua")
+	-- dofile("base/test_config.lua")
 	dofile("base/test_configset.lua")
 	dofile("base/test_context.lua")
 	dofile("base/test_criteria.lua")
+	dofile("base/test_detoken.lua")
 	dofile("base/test_include.lua")
-	dofile("base/test_location.lua")
+	-- dofile("base/test_location.lua")
 	dofile("base/test_os.lua")
 	dofile("base/test_path.lua")
 	dofile("base/test_premake_command.lua")
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
-	dofile("base/test_config_bug.lua")
+	-- dofile("base/test_config_bug.lua")
 
 	-- Solution object tests
 	dofile("solution/test_eachconfig.lua")
@@ -87,7 +89,7 @@
 	dofile("api/test_string_kind.lua")
 
 	-- Baking tests
-	dofile("base/test_baking.lua")
+	-- dofile("base/test_baking.lua")
 	dofile("oven/test_basics.lua")
 	dofile("oven/test_keyvalues.lua")
 	dofile("oven/test_lists.lua")
@@ -102,15 +104,19 @@
 	dofile("tools/test_ow.lua")
 	dofile("tools/test_snc.lua")
 
+	--[[
 	-- Clean tests
 	dofile("actions/test_clean.lua")
+	--]]
 
+	--[[
 	-- Visual Studio tests
 	dofile("test_vs2002_sln.lua")
 	dofile("test_vs2003_sln.lua")
 
 	-- Visual Studio 2002-2003 C# projects
 	dofile("actions/vstudio/cs2002/test_files.lua")
+	--]]
 
 	-- Visual Studio 2005-2010 C# projects
 	dofile("actions/vstudio/cs2005/test_assembly_refs.lua")
@@ -184,6 +190,7 @@
 	dofile("actions/make/cpp/test_target_rules.lua")
 	dofile("actions/make/cpp/test_wiidev.lua")
 
+	--[[
 	-- Xcode3 tests
 	dofile("actions/xcode/test_file_references.lua")
 	dofile("actions/xcode/test_xcode_common.lua")
@@ -201,6 +208,7 @@
 	dofile("actions/codeblocks/codeblocks_files.lua")
 	dofile("actions/codeblocks/test_filters.lua")
 	dofile("actions/codeblocks/environment_variables.lua")
+	--]]
 
 
 --

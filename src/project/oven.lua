@@ -152,7 +152,7 @@
 				local field = premake.fields[key]
 				if field and field.kind == "path" then
 					return premake5.project.getrelative(_cfg.project, _cfg[key])
-				end				
+				end
 				return _cfg[key]
 			end	
 		})
@@ -245,7 +245,7 @@
 
 		-- keep expanding tokens until they are all handled
 		repeat
-			value, count = string.gsub(value, "%%{(.-)}", function(token)			
+			value, count = string.gsub(value, "%%{(.-)}", function(token)
 				local result, err = expander(token)
 				if not result then
 					error(err, 0)

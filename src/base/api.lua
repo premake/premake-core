@@ -92,20 +92,8 @@
 		if scope == "project" then
 			target = api.scope.project or api.scope.solution
 		else
-			target = api.scope.configuration
+			target = api.scope.configuration or api.scope.root
 		end
-
-		-- WORK IN PROGRESS: I am moving everything toward the new config
-		-- set objects, which means that it will no longer be possible to
-		-- ever be completely out of scope. 
-		--
-		-- TODO: Get rid of this function and use the active config set
-		-- in api.scope instead.
-		--
-		-- In the meantime, return a dummy container for the accessor while
-		-- I get things ported.
-		
-		target = target or {}
 		
 		return target
 	end
@@ -117,13 +105,13 @@
 --
 
 	function api.callback(field, value)
-		-- right now, ignore calls with no value; later might want to
-		-- return the current baked value
-		if not value then return end
+		local target = api.gettarget(field.scope)
 		
-		local status, result = pcall(function ()
-			local target = api.gettarget(field.scope)
-			
+		if not value then
+			return target.configset[field.name]
+		end
+
+		local status, result = pcall(function ()			
 			-- A keyed value is a table containing key-value pairs, where the
 			-- type of the value is defined by the field. 
 			if api.iskeyedfield(field) then
@@ -384,8 +372,7 @@
 --
 
 	function api.setpath(target, name, field, value)
-		api.setstring(target, name, field, value)
-		target[name] = path.getabsolute(target[name])
+		api.setstring(target, name, field, path.getabsolute(value))
 	end
 
 
@@ -401,13 +388,11 @@
 		local value, err = api.checkvalue(value, field.allowed, field.aliases)
 		if err then error({ msg=err }) end
 
-		-- NEW APPROACH:
-		-- TODO: receive config set directly instead of going through target
-		local cset = target.configset or configset.root
-		configset.addvalue(cset, name, value)
-
-		-- OLD APPROACH:
-		-- TODO: phase this out ASAP
+		-- if the target is the project, configset will be set and I can push
+		-- the value there. Otherwise I was called to store into some other kind
+		-- of object (i.e. an array or list)		
+		target = target.configset or target
+		
 		target[name] = value
 	end
 
@@ -898,6 +883,20 @@
 
 
 --
+-- Set up a dummy "root" container to hold global configuration data. This
+-- can go away with the rest of this deprecated code when the new config
+-- system is finished.
+--
+
+	api.scope.root = {
+		configset = configset.root,
+		blocks = {}
+	}
+
+	premake.CurrentContainer = api.scope.root
+
+
+--
 -- Retrieve the current object of a particular type from the session. The
 -- type may be "solution", "container" (the last activated solution or
 -- project), or "config" (the last activated configuration). Returns the
@@ -1216,18 +1215,11 @@
 			return premake.CurrentConfiguration
 		end
 
-		-- NEW APPROACH: Create a new block in the current config set
-		-- TODO: Fetch the current config set from api.scope instead
-		local container = api.scope.project or api.scope.solution or {}
-		local cset = container.configset or configset.root
-		configset.addblock(cset, {terms})
-		
 		-- OLD APPROACH:
 		-- TODO: Phase this out ASAP
 		local container, err = premake.getobject("container")
 		if (not container) then
-			-- error(err, 2)
-			return
+			error(err, 2)
 		end
 		
 		local cfg = { }
@@ -1256,12 +1248,16 @@
 		-- this is the new place for storing scoped objects
 		api.scope.configuration = cfg
 
+
+		-- NEW APPROACH:
+		configset.addblock(container.configset, {terms}, os.getcwd())
+
 		return cfg
 	end
 	
 	local function createproject(name, sln, isUsage)
 		local prj = premake5.project.new(sln, name)
-		
+
 		-- add to master list keyed by both name and index
 		table.insert(sln.projects, prj)
 		if(isUsage) then
@@ -1286,7 +1282,7 @@
 		
 		prj.script = _SCRIPT
 		prj.usage = isUsage;
-		
+
 		return prj;
 	end
 	

@@ -24,17 +24,28 @@
 
 	function project.new(sln, name)
 		local prj = {}
-			
-		-- attach a type descriptor
-		setmetatable(prj, { __type="project" })
 
 		prj.name = name
-		prj.basedir = os.getcwd()
 		prj.solution = sln
-		prj.configset = configset.new(sln.configset)
-		prj.filename = name
-		prj.uuid = os.uuid()
 		prj.blocks = {}
+
+		local cwd = os.getcwd()
+
+		local cset = configset.new(sln.configset)
+		cset.basedir = cwd
+		cset.location = cwd
+		cset.filename = name
+		cset.uuid = os.uuid()
+		prj.configset = cset
+			
+		-- attach a type descriptor
+		prj.storage = {}
+		setmetatable(prj, {
+			__type="project",
+			__index = function(prj, key)
+				return prj.configset[key]
+			end,
+		})
 
 		return prj
 	end
@@ -48,18 +59,57 @@
 	function project.bake(prj, sln)
 		-- make sure I've got the actual project, and not the root configurations
 		prj = prj.project or prj
+
+		-- set up an environment for expanding tokens contained by this project
+		local environ = {
+			sln = sln,
+			prj = prj,
+		}
+
+		-- create a context to represent the project's "root" configuration; some
+		-- of the filter terms may be nil, so not safe to use a list
+		local ctx = context.new(prj.configset, environ)
+		context.addterms(ctx, _ACTION)
+		context.addterms(ctx, prj.language)
 		
-		-- bake the project's "root" configuration, which are all of the
-		-- values that aren't part of a more specific configuration
+		-- allow script to override system and architecture
+		ctx.system = ctx.system or premake.action.current().os or os.get()
+		context.addterms(ctx, ctx.system)
+		context.addterms(ctx, ctx.architecture)
+
+		-- if a kind is specified at the project level, use that too
+		context.addterms(ctx, ctx.kind)
+	
+		-- attach a bit more local state
+		ctx.solution = sln
+		
+		
+		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
 		local result = oven.merge(oven.merge({}, sln), prj)
 		result.solution = sln
 		result.platforms = result.platforms or {}
 		result.blocks = prj.blocks
 		result.baked = true
-				
+
 		-- prevent any default system setting from influencing configurations
 		result.system = nil
 		
+
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
+		-- through to the config context. Eventually all values will be in the 
+		-- context and the cfg wrapper can be done away with
+		setmetatable(prj, nil)
+
+		result.context = ctx
+		prj.context = ctx		
+		setmetatable(result, {
+			__index = function(prj, key)
+				return prj.context[key]
+			end,
+		})
+		setmetatable(prj, getmetatable(result))
+
+
 		-- apply any mappings to the project's configuration set
 		result.cfglist = project.bakeconfigmap(result)
 
@@ -87,51 +137,81 @@
 --
 
 	function project.bakeconfig(prj, buildcfg, platform)
-		local system
+		-- set the default system and architecture values; for backward 
+		-- compatibility, use platform if it would be a valid value
+		local system = premake.action.current().os or os.get()
 		local architecture
-
-		-- for backward compatibility with the old platforms API, use platform
-		-- as the default system or architecture if it would be a valid value.
 		if platform then
-			system = premake.api.checkvalue(platform, premake.fields.system.allowed)
-			architecture = premake.api.checkvalue(platform, premake.fields.architecture.allowed)
+			system = premake.api.checkvalue(platform, premake.fields.system.allowed) or system
+			architecture = premake.api.checkvalue(platform, premake.fields.architecture.allowed) or architecture
 		end
 
-		-- figure out the target operating environment for this configuration
+		-- set up an environment for expanding tokens contained by this configuration
+		local environ = {
+			sln = sln,
+			prj = prj,
+		}
+
+		-- create a context to represent this configuration; contains the terms
+		-- that defines what belongs to this configuration, and controls access
+		local ctx = context.new(prj.configset, environ)
+
+		-- add base filters; some may be nil, so not safe to put in a list
+		context.addterms(ctx, buildcfg)
+		context.addterms(ctx, platform)
+		context.addterms(ctx, _ACTION)
+		context.addterms(ctx, prj.language)
+
+		-- allow the project script to override the default system
+		ctx.system = ctx.system or system
+		context.addterms(ctx, ctx.system)
+
+		-- allow the project script to override the default architecture
+		ctx.architecture = ctx.architecture or architecture
+		context.addterms(ctx, ctx.architecture)
+
+		-- allow configuration to override the project kind
+		context.addterms(ctx, ctx.kind)
+
+		-- attach a bit more local state
+		ctx.project = prj
+		ctx.solution = prj.solution
+		ctx.buildcfg = buildcfg
+		ctx.platform = platform
+		ctx.action = _ACTION
+		ctx.language = prj.language
+
+
+		
+		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
 		local filter = {
 			["buildcfg"] = buildcfg,
 			["platform"] = platform,
-			["action"] = _ACTION
+			["action"] = _ACTION,
+			["system"] = ctx.system,
+			["architecture"] = ctx.architecture,
 		}
 		
-		-- look to see if this configuration specifies a target system and, if so,
-		-- use that to further filter the results
-		local cfg = oven.bake(prj, prj.solution, filter, "system")
-		filter.system = cfg.system or system or premake.action.current().os or os.get()
-				
-		cfg = oven.bake(prj, prj.solution, filter)
+		local cfg = oven.bake(prj, prj.solution, filter)
 		cfg.solution = prj.solution
 		cfg.project = prj
-		cfg.architecture = cfg.architecture or architecture
+		cfg.context = ctx
 
-		-- Temporary: Create a context for this configuration. Eventually, the context
-		-- will become the configuration object and much of this baking code will go
-		-- away. Right now, I am gradually filling in the gaps in the config sets and
-		-- contexts, and passing through accessors as they are ready
-		filter = { cfg.buildcfg, cfg.platform, _ACTION, cfg.system, cfg.architecture, cfg.kind, prj.language }
+		environ.cfg = cfg
 
-		local terms = {}
-		for k, v in pairs(filter) do
-			if filter[k] then
-				table.insert(terms, v)
-			end
-		end
-		
-		cfg.context = context.new(cfg.configset, terms)
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
+		-- through to the config context. Eventually all values will be in the 
+		-- context and the cfg wrapper can be done away with
+		setmetatable(cfg, {
+			__index = function(cfg, key)
+				return cfg.context[key]
+			end,
+		})
+
 		
 		-- fill in any calculated values
 		premake5.config.bake(cfg)
-		
+
 		return cfg
 	end
 

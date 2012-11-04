@@ -131,3 +131,27 @@
 		test.istrue(criteria.matches(crit, { "macosx" }))
 	end
 
+
+--
+-- If a filename is provided, it must be matched by at least one pattern.
+--
+
+	function suite.passes_onFilenameAndMatchingPattern()
+		crit = criteria.new { "**.c", "windows" }
+		test.istrue(criteria.matches(crit, { "windows" }, "hello.c"))
+	end
+
+	function suite.fails_onFilenameAndNoMatchingPattern()
+		crit = criteria.new { "windows" }
+		test.isfalse(criteria.matches(crit, { "windows" }, "hello.c"))
+	end
+	
+
+--
+-- "Not" modifiers should not match filenames.
+--
+
+	function suite.fails_onFilnameAndNotModifier()
+		crit = criteria.new { "not linux" }
+		test.isfalse(criteria.matches(crit, { "windows" }, "hello.c"))
+	end

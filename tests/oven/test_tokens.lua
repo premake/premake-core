@@ -60,7 +60,7 @@
 		configuration "hello.c"
 			testapi "%{cfg.buildcfg}"
 		prepare()
-		local fcfg = config.getfileconfig(cfg, os.getcwd().."/hello.c")		
+		local fcfg = config.getfileconfig(cfg, os.getcwd().."/hello.c")
 		test.isequal("Debug", fcfg.testapi)
 	end
 
@@ -129,14 +129,14 @@
 		objdir "tmp/%{prj.name}_%{cfg.buildcfg}"
 		testapi "%{cfg.objdir}"
 		prepare()
-		test.isequal("tmp/MyProject_Debug", cfg.testapi)
+		test.isequal(path.join(os.getcwd(),"tmp/MyProject_Debug"), cfg.testapi)
 	end
 
 	function suite.canUseTokensInBuildTarget()
 		targetdir "bin/%{prj.name}_%{cfg.buildcfg}"
 		testapi "%{cfg.targetdir}"
 		prepare()
-		test.isequal("bin/MyProject_Debug", cfg.testapi)
+		test.isequal(path.join(os.getcwd(),"bin/MyProject_Debug"), cfg.testapi)
 	end
 
 

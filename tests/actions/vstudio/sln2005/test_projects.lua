@@ -22,6 +22,7 @@
 	end
 	
 	local function prepare()
+		prj = premake.solution.getproject_ng(sln, 1)
 		sln2005.project_ng(prj)
 	end
 

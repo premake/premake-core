@@ -115,13 +115,6 @@
 		test.isequal(0, #cfg.defines)
 	end
 
-	function suite.configValuePresent_ifMatchingFilterTerm()
-		configuration("Debug")
-		kind "SharedLib"
-		cfg = oven.bake(sln, nil, {"Debug"})
-		test.isequal("SharedLib", cfg.kind)
-	end
-
 
 --
 -- When values for a field are present in solution and project configurations,

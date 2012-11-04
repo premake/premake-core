@@ -19,7 +19,7 @@
 
 	function suite.setup()
 		cfgset = configset.new()
-		ctx = context.new(cfgset, {"Windows"})
+		ctx = context.new(cfgset)
 	end
 
 
@@ -38,6 +38,16 @@
 --
 
 	function suite.returnsConfigValue_onExistingValue()
-		configset.addvalue(cfgset, "targetextension", ".so")
+		cfgset.targetextension = ".so"
 		test.isequal(".so", ctx.targetextension)
+	end
+
+
+--
+-- Tokens encountered in enabled fields should be expanded.
+--
+
+	function suite.doesExpandTokens()
+		cfgset.targetname = "MyProject%{1 + 1}"
+		test.isequal("MyProject2", ctx.targetname)
 	end

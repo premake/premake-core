@@ -9,6 +9,7 @@
 	local oven = premake5.oven
 	local project = premake5.project
 	local configset = premake.configset
+	local context = premake.context
 
 
 -- The list of defined solutions (which contain projects, etc.)
@@ -36,12 +37,16 @@
 		setmetatable(sln, { __type="solution" })
 
 		sln.name = name
-		sln.basedir = os.getcwd()
-		sln.configset = configset.new(configset.root)
-		sln.filename = name
-		sln.projects = {}
 		sln.blocks = {}
-		sln.configurations = {}
+		sln.projects = {}
+
+		local cwd = os.getcwd()
+
+		local cset = configset.new(configset.root)
+		cset.basedir = cwd
+		cset.location = cwd
+		cset.filename = name
+		sln.configset = cset
 
 		return sln
 	end
@@ -74,12 +79,20 @@
 --
 
 	function solution.bake(sln)
-		-- start by copying all field values into the baked result
+		-- set up an environment for expanding tokens contained by this solution
+		local environ = {
+			sln = sln,
+		}
+
+		-- create a context to represent the solution's "root" configuration; some
+		-- of the filter terms may be nil, so not safe to use a list
+		local ctx = context.new(sln.configset, environ)
+		context.addterms(ctx, _ACTION)
+
+
+		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
 		local result = oven.merge({}, sln)
 		result.baked = true
-		
-		-- keep a reference to the original configuration blocks, in
-		-- case additional filtering (i.e. for files) is needed later
 		result.blocks = sln.blocks
 		
 		-- bake all of the projects in the list, and store that result
@@ -104,6 +117,19 @@
 
 		-- build a master list of solution-level configuration/platform pairs
 		result.configs = solution.bakeconfigs(result)
+
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
+		-- through to the config context. Eventually all values will be in the 
+		-- context and the cfg wrapper can be done away with
+		result.context = ctx
+		sln.context = ctx
+
+		setmetatable(result, {
+			__index = function(sln, key)
+				return sln.context[key]
+			end,
+		})
+		setmetatable(sln, getmetatable(result))
 		
 		return result
 	end

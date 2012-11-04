@@ -14,11 +14,11 @@
 -- Setup and teardown
 --
 
-	local cfgset, parentset
+	local cset, parentset
 	
 	function suite.setup()
 		parentset = configset.new()
-		cfgset = configset.new(parentset)
+		cset = configset.new(parentset)
 	end
 
 
@@ -27,7 +27,7 @@
 --
 
 	function suite.new_returnsValidObject()
-		test.isequal("table", type(cfgset))
+		test.isequal("table", type(cset))
 	end
 
 
@@ -36,7 +36,7 @@
 --
 
 	function suite.defaultValue_onString()
-		test.isnil(configset.fetchvalue(cfgset, "targetextension", {}))
+		test.isnil(configset.fetchvalue(cset, "targetextension", {}))
 	end
 
 
@@ -46,8 +46,13 @@
 --
 
 	function suite.canRoundtrip_onDefaultBlock()
-		configset.addvalue(cfgset, "targetextension", ".so")
-		test.isequal(".so", configset.fetchvalue(cfgset, "targetextension", {}))
+		configset.addvalue(cset, "targetextension", ".so")
+		test.isequal(".so", configset.fetchvalue(cset, "targetextension", {}))
+	end
+
+	function suite.canRoundtrip_onDefaultBlock_usingDirectSet()
+		cset.targetextension = ".so"
+		test.isequal(".so", configset.fetchvalue(cset, "targetextension", {}))
 	end
 
 
@@ -57,9 +62,15 @@
 --
 
 	function suite.canRoundtrip_onSimpleTermMatch()
-		configset.addblock(cfgset, { "Windows" })
-		configset.addvalue(cfgset, "targetextension", ".dll")
-		test.isequal(".dll", configset.fetchvalue(cfgset, "targetextension", { "windows" }))
+		configset.addblock(cset, { "Windows" })
+		configset.addvalue(cset, "targetextension", ".dll")
+		test.isequal(".dll", configset.fetchvalue(cset, "targetextension", { "windows" }))
+	end
+
+	function suite.canRoundtrip_onSimpleTermMatch_usingDirectGet()
+		configset.addblock(cset, { "Windows" })
+		configset.addvalue(cset, "targetextension", ".dll")
+		test.isequal(".dll", cset.targetextension)
 	end
 
 
@@ -69,10 +80,10 @@
 --
 
 	function suite.skipsBlock_onTermMismatch()
-		configset.addvalue(cfgset, "targetextension", ".so")		
-		configset.addblock(cfgset, { "Windows" })
-		configset.addvalue(cfgset, "targetextension", ".dll")
-		test.isequal(".so", configset.fetchvalue(cfgset, "targetextension", { "linux" }))
+		configset.addvalue(cset, "targetextension", ".so")		
+		configset.addblock(cset, { "Windows" })
+		configset.addvalue(cset, "targetextension", ".dll")
+		test.isequal(".so", configset.fetchvalue(cset, "targetextension", { "linux" }))
 	end
 
 
@@ -82,7 +93,7 @@
 
 	function suite.canRoundtrip_fromParentToChild()
 		configset.addvalue(parentset, "targetextension", ".so")
-		test.isequal(".so", configset.fetchvalue(cfgset, "targetextension", {}))
+		test.isequal(".so", configset.fetchvalue(cset, "targetextension", {}))
 	end
 
 
@@ -92,7 +103,18 @@
 
 	function suite.child_canOverrideStringValueFromParent()
 		configset.addvalue(parentset, "targetextension", ".so")
-		configset.addvalue(cfgset, "targetextension", ".dll")
-		test.isequal(".dll", configset.fetchvalue(cfgset, "targetextension", {}))
+		configset.addvalue(cset, "targetextension", ".dll")
+		test.isequal(".dll", configset.fetchvalue(cset, "targetextension", {}))
 	end
 
+
+--
+-- If a base directory is set, filename tests should be performed
+-- relative to this path.
+--
+
+	function suite.filenameMadeRelative_onBaseDirSet()
+		configset.addblock(cset, { "hello.c" }, os.getcwd())
+		configset.addvalue(cset, "buildaction", "copy")
+		test.isequal("copy", configset.fetchvalue(cset, "buildaction", {}, path.join(os.getcwd(), "hello.c")))
+	end

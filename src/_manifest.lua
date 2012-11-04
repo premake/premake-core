@@ -33,6 +33,7 @@
 		"base/configset.lua",
 		"base/context.lua",
 		"base/api.lua",
+		"base/detoken.lua",
 		
 		-- runtime environment setup
 		"_premake_init.lua",

@@ -50,13 +50,6 @@
 -- Requests for a single field should return just that value.
 --
 
-	function suite.fieldValueReturned_onFilterFieldPresent()
-		configuration("Debug")
-		kind "SharedLib"
-		cfg = oven.bake(sln, nil, {"Debug"}, "kind")
-		test.isequal("SharedLib", cfg.kind)
-	end
-
 	function suite.otherFieldsNotReturned_onFilterFieldPresent()
 		configuration("Debug")
 		kind("SharedLib")

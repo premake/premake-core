@@ -29,7 +29,7 @@
 -- Make sure that the correct compilers are used.
 --
 
-	function suite.usesCorrectCompilers()
+	function suite.usesCorrectCompilers()		
 		cpp.toolconfig(cfg, premake.tools.gcc)
 		test.capture [[
   CC         = ppu-lv2-g++
