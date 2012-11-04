@@ -24,7 +24,7 @@
 			configurations ( buildcfgs )
 		end
 		prj = premake.solution.getproject_ng(sln, 1)
-		for cfg in premake5.project.eachconfig(prj, field) do
+		for cfg in premake5.project.eachconfig(prj) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end
 	end
@@ -121,6 +121,8 @@
 	
 --
 -- Test mapping a build configuration to a build config/platform pair.
+-- This will cause a second platform to appear in the project, alongside
+-- the one defined by the solution.
 --
 
 	function suite.mapsBuildCfg_toBuildCfgAndPlatform()

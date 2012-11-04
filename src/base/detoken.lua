@@ -53,28 +53,43 @@
 			return result
 		end
 
-		local count
-		repeat
-			value, count = value:gsub("%%{(.-)}", function(token)
-				local result, err = expandtoken(token, environ)
-				if not result then
-					error(err, 0)
-				end
-				return result
-			end)
-		until count == 0
-
-		-- if a path, look for a split out embedded absolute paths
-		if ispath then
-			local i, j
+		function expandvalue(value)
+			local count
 			repeat
-				i, j = value:find("\0")
-				if i then
-					value = value:sub(i + 1)
-				end
-			until not i
+				value, count = value:gsub("%%{(.-)}", function(token)
+					local result, err = expandtoken(token, environ)
+					if not result then
+						error(err, 0)
+					end
+					return result
+				end)
+			until count == 0
+	
+			-- if a path, look for a split out embedded absolute paths
+			if ispath then
+				local i, j
+				repeat
+					i, j = value:find("\0")
+					if i then
+						value = value:sub(i + 1)
+					end
+				until not i
+			end
+			
+			return value
 		end
 
-		return value
+		function recurse(value)
+			if type(value) == "table" then
+				for k, v in pairs(value) do
+					value[k] = recurse(v)
+				end
+				return value
+			else
+				return expandvalue(value)
+			end
+		end
+				
+		return recurse(value)
 	end
 

@@ -32,9 +32,6 @@
 		-- add to master list keyed by both name and index
 		table.insert(premake.solution.list, sln)
 		premake.solution.list[name] = sln
-			
-		-- attach a type descriptor
-		setmetatable(sln, { __type="solution" })
 
 		sln.name = name
 		sln.blocks = {}
@@ -47,6 +44,14 @@
 		cset.location = cwd
 		cset.filename = name
 		sln.configset = cset
+
+		-- attach a type descriptor
+		setmetatable(sln, {
+			__type = "solution",
+			__index = function(sln, key)
+				return sln.configset[key]
+			end,
+		})
 
 		return sln
 	end
@@ -94,6 +99,21 @@
 		local result = oven.merge({}, sln)
 		result.baked = true
 		result.blocks = sln.blocks
+
+
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
+		-- through to the config context. Eventually all values will be in the 
+		-- context and the cfg wrapper can be done away with
+		result.context = ctx
+		sln.context = ctx
+
+		setmetatable(result, {
+			__index = function(sln, key)
+				return sln.context[key]
+			end,
+		})
+		setmetatable(sln, getmetatable(result))
+		
 		
 		-- bake all of the projects in the list, and store that result
 		local projects = {}
@@ -118,19 +138,6 @@
 		-- build a master list of solution-level configuration/platform pairs
 		result.configs = solution.bakeconfigs(result)
 
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
-		-- through to the config context. Eventually all values will be in the 
-		-- context and the cfg wrapper can be done away with
-		result.context = ctx
-		sln.context = ctx
-
-		setmetatable(result, {
-			__index = function(sln, key)
-				return sln.context[key]
-			end,
-		})
-		setmetatable(sln, getmetatable(result))
-		
 		return result
 	end
 

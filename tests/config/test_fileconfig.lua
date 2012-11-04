@@ -113,7 +113,7 @@
 		configuration "not Debug"
 		buildoptions "-Xc"
 		prepare()
-		test.isnil(fcfg.buildoptions)
+		test.isequal({}, fcfg.buildoptions)
 	end
 
 
@@ -149,6 +149,6 @@
 		configuration "*.c"
 		buildoptions "-Xc"
 		prepare("src/hello.c")
-		test.isnil(fcfg.buildoptions)
+		test.isequal({}, fcfg.buildoptions)
 	end
 

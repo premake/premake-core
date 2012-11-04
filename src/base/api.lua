@@ -9,9 +9,7 @@
 	local configset = premake.configset
 
 
-	premake.fields = 
-	{
-	}
+	premake.fields = {}
 		
 
 --
@@ -67,6 +65,11 @@
 				return api.remove(field, value)
 			end
 		end
+		
+		-- if the field needs special handling, tell the config
+		-- set system about it
+		local merge = field.kind:endswith("-list")
+		configset.registerfield(field.name, { merge = merge })
 	end
 
 
@@ -88,7 +91,7 @@
 
 --
 -- Callback for all API functions; everything comes here first, and then
--- parceled out to the individual set...() functions.
+-- gets parceled out to the individual set...() functions.
 --
 
 	function api.callback(field, value)
@@ -117,7 +120,10 @@
 		end)
 		
 		if not status then
-			error(result.msg, 3)
+			if type(result) == "table" then
+				result = result.msg
+			end
+			error(result, 3)
 		end
 	end
 
@@ -133,41 +139,27 @@
 		-- right now, ignore calls with no value; later might want to
 		-- return the current baked value
 		if not value then return end
-		
-		-- hack: start a new configuration block if I can, so that the
-		-- remove will be processed in the same context as it appears in
-		-- the script. Can be removed when I rewrite the internals to
-		-- be truly declarative
-		if field.scope == "config" then
-			configuration(api.scope.configuration.terms)
-		end
-		
-		local target = api.gettarget(field.scope)
-		
-		-- start a removal list, and make it the target for my values
-		target.removes = {}
-		target.removes[field.name] = {}
-		target = target.removes[field.name]
 
-		-- some field kinds have a removal function to process the value
+		-- process the values list
 		local kind = api.getbasekind(field)
 		local remover = api["remove" .. kind] or table.insert
 
-		-- iterate the list of values and add them all to the list
-		local function addvalue(value)
-			-- recurse into tables
+		local removes = {}
+		
+		function recurse(value)
 			if type(value) == "table" then
 				for _, v in ipairs(value) do
-					addvalue(v)
+					recurse(v)
 				end
-			
-			-- insert simple values
 			else
-				remover(target, value)
+				remover(removes, value)
 			end
 		end
+
+		recurse(value)
 		
-		addvalue(value)
+		local target = api.gettarget(field.scope)
+		configset.removevalues(target.configset, field.name, removes)
 	end
 
 
@@ -241,6 +233,11 @@
 --
 
 	function api.setarray(target, name, field, value)
+		-- if the target is the project, configset will be set and I can push
+		-- the value there. Otherwise I was called to store into some other kind
+		-- of object (i.e. an array or list)		
+		target = target.configset or target
+		
 		-- put simple values in an array
 		if type(value) ~= "table" then
 			value = { value }
@@ -319,29 +316,33 @@
 --
 
 	function api.setlist(target, name, field, value)
-		-- start with the existing list, or an empty one
-		target[name] = target[name] or {}
-		target = target[name]
-		
 		-- find the contained data type
 		local kind = api.getbasekind(field)
 		local setter = api["set" .. kind]
 
-		-- function to add values
-		local function addvalue(value)
-			-- recurse into tables
+		-- am I setting a configurable object, or some kind of subfield?
+		local result
+		if name == field.name then
+			target = target.configset
+			result = {}
+		else
+			result = target[name]
+		end
+
+		-- process all of the values, according to the data type
+		local result = {}
+		function recurse(value)
 			if type(value) == "table" then
 				for _, v in ipairs(value) do
-					addvalue(v)
+					recurse(v)
 				end
-			
-			-- insert simple values
 			else
-				setter(target, #target + 1, field, value)
+				setter(result, #result + 1, field, value)
 			end
 		end
-		
-		addvalue(value)
+		recurse(value)
+
+		target[name] = result
 	end
 
 
@@ -350,6 +351,7 @@
 --
 
 	function api.setobject(target, name, field, value)
+		target = target.configset or target
 		target[name] = value
 	end
 
@@ -963,13 +965,15 @@
 			table.insert(cfg.keywords, path.wildcards(word):lower())
 		end
 
+		--[[
 		-- initialize list-type fields to empty tables
 		for name, field in pairs(premake.fields) do
 			if field.kind:endswith("-list") then
 				cfg[name] = { }
 			end
 		end
-		
+		--]]
+
 		-- this is the new place for storing scoped objects
 		api.scope.configuration = cfg
 

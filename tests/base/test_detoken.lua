@@ -70,3 +70,13 @@
 		x = detoken.expand("bin/debug/%{cfg.basedir}", environ, true)
 		test.isequal(os.getcwd(), x)
 	end
+
+
+--
+-- If the value being expanded is a table, iterate over all of its values.
+--
+
+	function suite.expandsAllItemsInList()
+		x = detoken.expand({ "A%{1}", "B%{2}", "C%{3}" }, environ)
+		test.isequal({ "A1", "B2", "C3" }, x)
+	end

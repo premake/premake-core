@@ -134,7 +134,7 @@
 
 	function suite.filter_onVpath()
 		files { "src/hello.c", "hello.h" }
-		vpaths { ["Source Files"] = "**.c" }		
+		vpaths { ["Source Files"] = "**.c" }
 		prepare("ClCompile")
 		test.capture [[
 	<ItemGroup>

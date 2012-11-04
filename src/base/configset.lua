@@ -20,7 +20,9 @@
 	local configset = premake.configset
 	local criteria = premake.criteria
 
-	
+	configset._fields = {}
+
+
 --
 -- Create a new configuration set.
 --
@@ -44,6 +46,25 @@
 		setmetatable(cset, configset.__mt)
 		
 		return cset
+	end
+
+
+--
+-- Register a field that requires special handling.
+--
+-- @param name
+--    The name of the field to register.
+-- @param behavior
+--    A table containing the flags:
+--
+--     merge - if set, the field will be treated as a list, and multiple
+--             values will be merged together when fetched.
+--     keys  - if set, the field will be treated an associative array (sets
+--             of key-value pairs) instead of an indexed array.
+--
+
+	function configset.registerfield(name, behavior)
+		configset._fields[name] = behavior
 	end
 
 
@@ -91,7 +112,142 @@
 --
 
 	function configset.addvalue(cset, fieldname, value)
-		cset._current[fieldname] = value
+		local current = cset._current
+		local field = configset._fields[fieldname]
+		if field and field.merge then
+			current[fieldname] = current[fieldname] or {}
+			table.insert(current[fieldname], value)
+		else
+			current[fieldname] = value
+		end
+	end
+
+
+--
+-- Remove values from a configuration set.
+--
+-- @param cset
+--    The configuration set from which to remove.
+-- @param fieldname
+--    The name of the field holding the values to be removed.
+-- @param values
+--    A list of values to be removed.
+--
+
+	function configset.removevalues(cset, fieldname, values)
+		-- removes are always processed first; starting a new block here
+		-- ensures that they will be processed in the proper order
+		local current = cset._current
+		configset.addblock(cset, current._criteria.terms, current._basedir)
+
+		values = table.flatten(values)
+		for i, value in ipairs(values) do
+			values[i] = path.wildcards(value):lower()
+		end
+
+		-- add a list of removed values to the block
+		current = cset._current
+		current._removes = {}
+		current._removes[fieldname] = values
+	end
+
+
+--
+-- Check to see if an individual configuration block applies to the
+-- given context and filename.
+--
+
+	local function testblock(block, context, filename)
+		-- Make file tests relative to the blocks base directory,
+		-- so path relative pattern matches will work.
+		if block._basedir and filename then
+			filename = path.getrelative(block._basedir, filename)
+		end
+		return criteria.matches(block._criteria, context, filename)
+	end
+
+
+--
+-- Retrieve a directly assigned value from the configuration set. No merging
+-- takes place; the last value set is the one returned.
+--
+
+	local function fetchassign(cset, fieldname, context, filename)
+		local n = #cset._blocks
+		for i = n, 1, -1 do
+			local block = cset._blocks[i]
+			if block[fieldname] and testblock(block, context, filename) then
+				return block[fieldname]
+			end
+		end
+		
+		if cset._parent ~= cset then
+			return fetchassign(cset._parent, fieldname, context, filename)
+		end
+	end
+
+
+--
+-- Retrieve a merged value from the configuration set; all values are
+-- assembled together into a single result.
+--
+
+	local function fetchmerge(cset, fieldname, context, filename)
+		local result = {}
+
+		-- grab values from the parent set first
+		if cset._parent ~= cset then
+			result = fetchmerge(cset._parent, fieldname, context, filename)
+		end
+
+		function add(value)
+			-- recurse into tables to flatten out the list as I go
+			if type(value) == "table" then
+				for _, v in ipairs(value) do
+					add(v)
+				end
+			else
+				-- if the value is already in the result, remove it; enables later
+				-- blocks to adjust the order of earlier values
+				if result[value] then
+					table.remove(result, table.indexof(result, value))
+				end
+
+				-- add the value with both an index and a key (for fast existence checks)
+				table.insert(result, value)
+				result[value] = value
+			end
+		end
+		
+		function remove(patterns)
+			for _, pattern in ipairs(patterns) do
+				local i = 1
+				while i <= #result do
+					local value = result[i]:lower()
+					if value:match(pattern) == value then
+						result[result[i]] = nil
+						table.remove(result, i)
+					else
+						i = i + 1
+					end
+				end
+			end
+		end
+
+		for _, block in ipairs(cset._blocks) do
+			if testblock(block, context, filename) then
+				if block._removes and block._removes[fieldname] then
+					remove(block._removes[fieldname])
+				end
+				
+				local value = block[fieldname]
+				if value then
+					add(value)
+				end
+			end
+		end
+		
+		return result
 	end
 
 
@@ -116,29 +272,27 @@
 --
 
 	function configset.fetchvalue(cset, fieldname, context, filename)
-		local value = nil
+		local value
 
-		if cset._parent ~= cset then
-			value = configset.fetchvalue(cset._parent, fieldname, context, filename)
-		end
-
-		for _, block in ipairs(cset._blocks) do
-			-- Make file tests relative to the blocks base directory,
-			-- so path relative pattern matches will work.
-			local fn = filename
-			if block._basedir and filename then
-				fn = path.getrelative(block._basedir, filename)
-			end
-
-			if criteria.matches(block._criteria, context, fn) then
-				value = block[fieldname] or value
+		-- should this field be merged or assigned?
+		local field = configset._fields[fieldname]
+		local merge = field and field.merge
+		
+		if merge then
+			value = fetchmerge(cset, fieldname, context, filename)
+		else
+			value = fetchassign(cset, fieldname, context, filename)			
+			-- if value is an object, return a copy of it, so that they can
+			-- modified by the caller without altering the source data
+			if type(value) == "table" then
+				value = table.deepcopy(value)
 			end
 		end
 		
 		return value
 	end
-
-
+	
+	
 --
 -- Metatable allows configuration sets to be used like objects in the API.
 -- Setting a value adds it to the currently active block. Getting a value

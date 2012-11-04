@@ -36,7 +36,7 @@
 	function context.new(cfgset, environ, filename)
 		local ctx = {}
 		ctx._cfgset = cfgset
-		ctx._environ = environ or {}
+		ctx.environ = environ or {}
 		ctx._filename = { filename } or {}
 		ctx._terms = {}
 		
@@ -102,7 +102,7 @@
 			local field = premake.fields[key]
 			if field and field.tokens then
 				local ispath = field.kind:startswith("path")
-				value = premake.detoken.expand(value, ctx._environ, ispath)
+				value = premake.detoken.expand(value, ctx.environ, ispath)
 			end
 			
 			-- store the result for later lookups

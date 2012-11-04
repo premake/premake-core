@@ -37,11 +37,10 @@
 		cset.filename = name
 		cset.uuid = os.uuid()
 		prj.configset = cset
-			
+
 		-- attach a type descriptor
-		prj.storage = {}
 		setmetatable(prj, {
-			__type="project",
+			__type = "project",
 			__index = function(prj, key)
 				return prj.configset[key]
 			end,
@@ -87,7 +86,6 @@
 		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
 		local result = oven.merge(oven.merge({}, sln), prj)
 		result.solution = sln
-		result.platforms = result.platforms or {}
 		result.blocks = prj.blocks
 		result.baked = true
 
@@ -197,7 +195,24 @@
 		cfg.project = prj
 		cfg.context = ctx
 
-		environ.cfg = cfg
+		-- File this under "too clever by half": I want path tokens (targetdir, etc.)
+		-- to expand to relative paths, so they can be used in custom build rules and
+		-- other places where it would be impractical to detect and convert them. So
+		-- create a proxy object with an attached metatable that converts path fields
+		-- on the fly as they are requested.
+		local proxy = {}
+		setmetatable(proxy, {
+			__index = function(proxy, key)
+				local field = premake.fields[key]
+				if field and field.kind == "path" then
+					return premake5.project.getrelative(cfg.project, cfg[key])
+				end
+				return cfg[key]
+			end
+		})
+
+		environ.cfg = proxy
+
 
 		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
 		-- through to the config context. Eventually all values will be in the 
@@ -230,9 +245,6 @@
 --
 
 	function project.bakeconfigmap(prj)
-		-- Apply any mapping tables to the project's initial configuration set,
-		-- which includes configurations inherited from the solution. These rules
-		-- may cause configurations to be added ore removed from the project.
 		local configs = table.fold(prj.configurations or {}, prj.platforms or {})
 		for i, cfg in ipairs(configs) do
 			configs[i] = project.mapconfig(prj, cfg[1], cfg[2])

@@ -118,3 +118,73 @@
 		configset.addvalue(cset, "buildaction", "copy")
 		test.isequal("copy", configset.fetchvalue(cset, "buildaction", {}, path.join(os.getcwd(), "hello.c")))
 	end
+
+
+--
+-- List fields should return an empty list of not set.
+--
+
+     function suite.lists_returnsEmptyTable_onNotSet()
+          test.isequal({}, configset.fetchvalue(cset, "buildoptions", {}))
+     end
+
+--
+-- List fields should merge values fetched from different blocks.
+--
+
+	function suite.lists_mergeValues_onFetch()
+		configset.addvalue(cset, "buildoptions", "v1")
+		configset.addblock(cset, { "windows" })
+		configset.addvalue(cset, "buildoptions", "v2")
+		test.isequal({"v1", "v2"}, configset.fetchvalue(cset, "buildoptions", {"windows"}))
+	end
+
+
+--
+-- Multiple adds to a list field in the same block should be merged together.
+--
+
+	function suite.lists_mergeValues_onAdd()
+		configset.addvalue(cset, "buildoptions", "v1")
+		configset.addvalue(cset, "buildoptions", "v2")
+		test.isequal({"v1", "v2"}, configset.fetchvalue(cset, "buildoptions", {"windows"}))
+	end
+
+
+--
+-- Fetched lists should be both keyed and indexed.
+--
+
+	function suite.lists_includeValueKeys()
+		configset.addvalue(cset, "buildoptions", { "v1", "v2" })
+		local x = configset.fetchvalue(cset, "buildoptions", {})
+		test.isequal("v2", x.v2)
+	end
+
+
+--
+-- Check removing a value with an exact match.
+--
+
+	function suite.remove_onExactValueMatch()
+		configset.addvalue(cset, "flags", { "Symbols", "Optimize", "NoRTTI" })
+		configset.removevalues(cset, "flags", { "Optimize" })
+		test.isequal({ "Symbols", "NoRTTI" }, configset.fetchvalue(cset, "flags", {}))
+	end
+
+	function suite.remove_onMultipleValues()
+		configset.addvalue(cset, "flags", { "Symbols", "NoExceptions", "Optimize", "NoRTTI" })
+		configset.removevalues(cset, "flags", { "NoExceptions", "NoRTTI" })
+		test.isequal({ "Symbols", "Optimize" }, configset.fetchvalue(cset, "flags", {}))
+	end
+
+
+--
+-- Remove should also accept wildcards.
+--
+
+	function suite.remove_onWildcard()
+		configset.addvalue(cset, "defines", { "WIN32", "WIN64", "LINUX", "MACOSX" })
+		configset.removevalues(cset, "defines", { "WIN*" })
+		test.isequal({ "LINUX", "MACOSX" }, configset.fetchvalue(cset, "defines", {}))
+	end

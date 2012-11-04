@@ -144,15 +144,15 @@
 			-- and cache the result
 			cfg.files[filename] = filecfg
 
-			-- NEW:
-			-- set up an environment for expanding tokens contained 
-			-- by this file configuration
+			-- set up an environment for expanding tokens contained by this file
+			-- configuration; based on the configuration's environment so that
+			-- any magic set up there gets maintained
 			local environ = {
-				sln = cfg.solution,
-				prj = cfg.project,
-				cfg = cfg,
 				file = filecfg
 			}
+			for envkey, envval in pairs(cfg.context.environ) do
+				environ[envkey] = envval
+			end
 			
 			-- create a context to provide access to this file's information
 			local ctx = context.new(cfg.project.configset, environ, filename)
