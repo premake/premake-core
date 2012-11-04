@@ -67,6 +67,14 @@
 	
 		
 	function test.fail(format, ...)
+		
+		-- if format is a number then it is the stack depth
+		local depth = 3
+		if type(format) == "number" then
+			depth = depth + format
+			format = table.remove(arg, 1)
+		end
+		
 		-- convert nils into something more usefuls
 		for i = 1, arg.n do
 			if (arg[i] == nil) then 
@@ -77,7 +85,7 @@
 		end
 		
 		local msg = string.format(format, unpack(arg))
-		error(debug.traceback(msg, 3), 3)
+		error(debug.traceback(msg, depth), depth)
 	end
 		
 	
@@ -99,22 +107,21 @@
 	end
 
 	
-	function test.isequal(expected, actual)
+	function test.isequal(expected, actual, depth)
+		depth = depth or 0
 		if type(expected) == "table" then
 			if expected and not actual then
-				test.fail("expected table, got nil")
+				test.fail(depth, "expected table, got nil")
 			end
 			if #expected < #actual then
-				test.fail("expected %d items, got %d", #expected, #actual)
+				test.fail(depth, "expected %d items, got %d", #expected, #actual)
 			end
 			for k,v in pairs(expected) do
-				if not (test.isequal(expected[k], actual[k])) then
-					test.fail("expected %s but was %s", expected, actual)
-				end
+				test.isequal(expected[k], actual[k], depth + 1)
 			end
 		else
 			if (expected ~= actual) then
-				test.fail("expected %s but was %s", expected, actual)
+				test.fail(depth, "expected %s but was %s", expected, actual)
 			end
 		end
 		return true
