@@ -403,6 +403,7 @@
 		]]
 	end
 
+
 --
 -- Verify character handling.
 --
@@ -488,6 +489,7 @@
 			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 		]]
 	end
+
 	
 --
 -- Edit-and-Continue is not support on 64-bit builds.
@@ -505,6 +507,7 @@
 		]]
 	end
 
+
 --
 -- Check the handling of the NoEditAndContinue flag.
 --
@@ -519,6 +522,7 @@
 			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
+
 
 --
 -- Edit-and-Continue is not supported for optimized builds.
@@ -535,6 +539,7 @@
 		]]
 	end
 
+
 --
 -- Edit-and-Continue is not supported for Managed builds.
 --
@@ -550,3 +555,18 @@
 		]]
 	end
 
+
+--
+-- Check handling of forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		forceincludes { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<ForcedIncludeFiles>stdafx.h;include/sys.h</ForcedIncludeFiles>
+		]]
+	end

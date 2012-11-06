@@ -229,6 +229,12 @@
         vc2010.warnings(cfg)
 		vc2010.preprocessorDefinitions(cfg.defines)
 		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
+
+		if #cfg.forceincludes > 0 then
+			local includes = project.getrelative(cfg.project, cfg.forceincludes)
+			_x(3,'<ForcedIncludeFiles>%s</ForcedIncludeFiles>', table.concat(includes, ';'))
+		end
+
 		vc2010.debuginfo(cfg)
 
 		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then

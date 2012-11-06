@@ -61,3 +61,23 @@
 				UsePrecompiledHeader="0"
 		]]
 	end
+
+
+--
+-- Check handling of forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		forceincludes { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
+				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				DebugInformationFormat="0"
+				CompileAs="0"
+				ForcedIncludeFiles="stdafx.h;include/sys.h"
+		]]
+	end

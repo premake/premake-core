@@ -332,6 +332,8 @@
 		if cfg.project.language == "C" then
 			_p(4, 'CompileAs="1"')
 		end
+
+		vc200x.forcedIncludeFiles(cfg)
 	end
 
 
@@ -358,6 +360,8 @@
 
 		_p(4,'DebugInformationFormat="0"')
 		_p(4,'CompileAs="0"')
+
+		vc200x.forcedIncludeFiles(cfg)
 	end
 
 
@@ -896,6 +900,18 @@
 			return "VCCLX360CompilerTool"
 		else
 			return "VCCLCompilerTool"
+		end
+	end
+
+
+--
+-- Write out the ForcedIncludeFiles element, used by both compiler variations.
+--
+
+	function vc200x.forcedIncludeFiles(cfg)
+		if #cfg.forceincludes > 0 then
+			local includes = project.getrelative(cfg.project, cfg.forceincludes)
+			_x(4,'ForcedIncludeFiles="%s"', table.concat(includes, ';'))
 		end
 	end
 

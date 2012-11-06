@@ -278,7 +278,6 @@
 -- libraries, since I don't know the actual output target.
 --
 
-
 	function suite.skipsExternalProjectRefs()
 		links { "MyProject2" }
 		
@@ -288,4 +287,15 @@
 		
 		prepare()
 		test.isequal({}, gcc.getlinks(cfg, false))
+	end
+
+
+--
+-- Check handling of forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		forceincludes { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.isequal({"-MMD", "-MP", '-include "stdafx.h"', '-include "include/sys.h"'}, gcc.getcppflags(cfg))
 	end

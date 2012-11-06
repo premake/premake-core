@@ -210,7 +210,7 @@
 -- Verify that the PDB file uses the target name if specified.
 --
 
-	function suite.pdfUsesTargetName_onTargetName()
+	function suite.pdbUsesTargetName_onTargetName()
 		targetname "foob"
 		prepare()
 		test.capture [[
@@ -437,5 +437,28 @@
 				WarningLevel="3"
 				DebugInformationFormat="0"
 			/>
+		]]
+	end
+
+
+--
+-- Check handling of forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		forceincludes { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="0"
+				ForcedIncludeFiles="stdafx.h;include/sys.h"
 		]]
 	end
