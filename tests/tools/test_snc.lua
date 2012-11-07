@@ -129,3 +129,13 @@
 		test.isequal({ "generated.o" }, snc.getlinks(cfg))
 	end
 
+
+--
+-- Check handling of forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		forceincludes { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.isequal({"-MMD", "-MP", '-include "stdafx.h"', '-include "include/sys.h"'}, snc.getcppflags(cfg))
+	end

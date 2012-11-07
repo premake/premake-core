@@ -208,6 +208,9 @@
 					return premake5.project.getrelative(cfg.project, cfg[key])
 				end
 				return cfg[key]
+			end,
+			__newindex = function(proxy, key, value)
+				cfg[key] = value
 			end
 		})
 

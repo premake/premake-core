@@ -14,17 +14,7 @@
 -- SNC flags for specific systems and architectures.
 --
 
-	snc.sysflags = {
-	}
-
-
---
--- Retrieve the CPPFLAGS for a specific configuration.
---
-
-	function snc.getcppflags(cfg)
-		return { "-MMD", "-MP" }
-	end
+	snc.sysflags = {}
 
 
 --
@@ -85,6 +75,7 @@
 -- These are the same as GCC
 --
 
+	snc.getcppflags = gcc.getcppflags
 	snc.getdefines = gcc.getdefines
 	snc.getincludedirs = gcc.getincludedirs
 	snc.getlinks = gcc.getlinks
