@@ -209,9 +209,6 @@
 				end
 				return cfg[key]
 			end,
-			__newindex = function(proxy, key, value)
-				cfg[key] = value
-			end
 		})
 
 		environ.cfg = proxy
@@ -224,6 +221,9 @@
 			__index = function(cfg, key)
 				return cfg.context[key]
 			end,
+			__newindex = function(cfg, key, value)
+				cfg.context[key] = value
+			end
 		})
 
 		
