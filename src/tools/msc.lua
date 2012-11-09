@@ -16,7 +16,14 @@
 --
 
 	function msc.getcppflags(cfg)
-		return {}
+		local flags = {}
+
+		for _, fi in ipairs(cfg.forceincludes) do
+			local fn = project.getrelative(cfg.project, fi)
+			table.insert(flags, string.format('/FI "%s"', fn))
+		end
+
+		return flags		
 	end
 
 

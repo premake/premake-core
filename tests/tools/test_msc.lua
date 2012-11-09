@@ -48,3 +48,14 @@
 		prepare()
 		test.isequal({ '/LIBPATH:"../libs"', '/LIBPATH:"libs"' }, msc.getldflags(cfg))
 	end
+
+
+--
+-- Check handling of forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		forceincludes { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.isequal({'/FI "stdafx.h"', '/FI "include/sys.h"'}, msc.getcppflags(cfg))
+	end

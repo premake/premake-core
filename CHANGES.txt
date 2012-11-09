@@ -20,6 +20,7 @@
 * Added NoWarnings flag for Visual Studio (xpol)
 * Added debugcommand for Visual Studio (xpol)
 * Bug 1674173: Allow source files to have the same name
+* Added forceinclude() to specify forced include files
 
 
 -------
