@@ -89,6 +89,7 @@
 * Patch 3441850: Use debug.traceback() as error handler (Konstantin Tokarev)
 * Patch 3462994: Make flag values case-insensitive (Konstantin Tokarev)
 * Patch 3466877: Removed -flat_namespace from Mac OS X flags (Konstantin Tokarev)
+* Pull 25: Add Unix support to os.getversion() (wfgleper)
 
 
 -------

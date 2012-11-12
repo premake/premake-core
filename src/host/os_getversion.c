@@ -1,10 +1,11 @@
 /**
  * \file   os_getversioninfo.c
  * \brief  Retrieve operating system version information.
- * \author Copyright (c) 2011 Jason Perkins and the Premake project
+ * \author Copyright (c) 2011-2012 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
+#include <stdlib.h>
 
 struct OsVersionInfo
 {
@@ -12,13 +13,15 @@ struct OsVersionInfo
 	int minorversion;
 	int revision;
 	const char* description;
-} ;
+	int isalloc;
+};
 
 static void getversion(struct OsVersionInfo* info);
 
+
 int os_getversion(lua_State* L)
 {
-	struct OsVersionInfo info;
+	struct OsVersionInfo info = {0};
 	getversion(&info);
 
 	lua_newtable(L);
@@ -38,6 +41,10 @@ int os_getversion(lua_State* L)
 	lua_pushstring(L, "description");
 	lua_pushstring(L, info.description);
 	lua_settable(L, -3);
+
+	if (info.isalloc) {
+		free((void*)info.description);
+	}
 
 	return 1;
 }
@@ -168,6 +175,53 @@ void getversion(struct OsVersionInfo* info)
 		case 7:
 			info->description = "Mac OS X Lion";
 			break;
+		}
+	}
+}
+
+/*************************************************************/
+
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS)
+
+#include <string.h>
+#include <sys/utsname.h>
+
+void getversion(struct OsVersionInfo* info)
+{
+	struct utsname u;
+	char* ver;
+
+	info->majorversion = 0;
+	info->minorversion = 0;
+	info->revision = 0;
+
+	if (uname(&u))
+	{
+		// error
+		info->description = PLATFORM_STRING;
+		return;
+	}
+
+#if __GLIBC__
+	// When using glibc, info->description gets set to u.sysname,
+	// but it isn't passed out of this function, so we need to copy 
+	// the string.
+	info->description = malloc(strlen(u.sysname) + 1);
+	strcpy((char*)info->description, u.sysname);
+	info->isalloc = 1;
+#else
+	info->description = u.sysname;
+#endif
+
+	if ((ver = strtok(u.release, ".-")) != NULL)
+	{
+		info->majorversion = atoi(ver);
+		// continue parsing from the previous position
+		if ((ver = strtok(NULL, ".-")) != NULL)
+		{
+			info->minorversion = atoi(ver);
+			if ((ver = strtok(NULL, ".-")) != NULL)
+				info->revision = atoi(ver);
 		}
 	}
 }

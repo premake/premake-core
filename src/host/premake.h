@@ -15,7 +15,7 @@
 #if defined(__linux__)
 #define PLATFORM_LINUX    (1)
 #define PLATFORM_STRING   "linux"
-#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 #define PLATFORM_BSD      (1)
 #define PLATFORM_STRING   "bsd"
 #elif defined(__APPLE__) && defined(__MACH__)
