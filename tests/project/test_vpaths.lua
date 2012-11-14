@@ -44,9 +44,16 @@
 		test.isequal(cfg.files[1], project.getvpath(prj, cfg.files[1]))
 	end
 
-	function suite.CanTrimLeadingPaths()
+	function suite.CanStripPaths()
 		files { "src/myproject/hello.c" }
 		vpaths { [""] = "src" }
+		prepare()
+		test.isequal("hello.c", project.getvpath(prj, cfg.files[1]))
+	end
+
+	function suite.CanTrimLeadingPaths()
+		files { "src/myproject/hello.c" }
+		vpaths { ["*"] = "src" }
 		prepare()
 		test.isequal("myproject/hello.c", project.getvpath(prj, cfg.files[1]))
 	end
@@ -84,6 +91,13 @@
 		test.isequal("Headers/hello.h", project.getvpath(prj, cfg.files[1]))
 	end
 
+	function suite.MatchFilePattern_ToNone_Flat()
+		files { "src/myproject/hello.h" }
+		vpaths { [""] = "**.h" }
+		prepare()
+		test.isequal("hello.h", project.getvpath(prj, cfg.files[1]))
+	end
+
 	function suite.MatchFilePattern_ToNestedGroup_Flat()
 		files { "src/myproject/hello.h" }
 		vpaths { ["Source/Headers"] = "**.h" }
@@ -107,7 +121,7 @@
 
 	function suite.MatchFilePattern_ToGroup_Nested()
 		files { "src/myproject/hello.h" }
-		vpaths { ["Headers/**"] = "**.h" }
+		vpaths { ["Headers/*"] = "**.h" }
 		prepare()
 		test.isequal("Headers/src/myproject/hello.h", project.getvpath(prj, cfg.files[1]))
 	end	
@@ -121,7 +135,7 @@
 
 	function suite.MatchFilePatternWithPath_ToGroup_Nested()
 		files { "src/myproject/hello.h" }
-		vpaths { ["Headers/**"] = "src/**.h" }
+		vpaths { ["Headers/*"] = "src/**.h" }
 		prepare()
 		test.isequal("Headers/myproject/hello.h", project.getvpath(prj, cfg.files[1]))
 	end	

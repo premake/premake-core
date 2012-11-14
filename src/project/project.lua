@@ -651,7 +651,7 @@
 					if leaf:startswith("/") then
 						leaf = leaf:sub(2)
 					end
-					
+
 					-- check for (and remove) stars in the replacement pattern.
 					-- If there are none, then trim all path info from the leaf
 					-- and use just the filename in the replacement (stars should
@@ -662,6 +662,8 @@
 						if stars == 0 then
 							leaf = path.getname(leaf)
 						end
+					else
+						leaf = path.getname(leaf)
 					end
 					
 					vpath = path.join(stem, leaf)

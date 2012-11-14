@@ -46,8 +46,7 @@
 		end
 
 		-- make sure there is a handler available for this kind of value
-		local kind = api.getbasekind(field)
-		if not api["set" .. kind] then
+		if not api.getsetter(field) then
 			error("invalid kind '" .. kind .. "'", 2)
 		end
 		
@@ -68,8 +67,10 @@
 		
 		-- if the field needs special handling, tell the config
 		-- set system about it
-		local merge = field.kind:endswith("-list")
-		configset.registerfield(field.name, { merge = merge })
+		configset.registerfield(field.name, {
+			keyed = api.iskeyedfield(field),
+			merge = api.islistfield(field),
+		})
 	end
 
 
@@ -102,19 +103,10 @@
 		end
 
 		local status, result = pcall(function ()			
-			-- A keyed value is a table containing key-value pairs, where the
-			-- type of the value is defined by the field. 
 			if api.iskeyedfield(field) then
-				target[field.name] = target[field.name] or {}
-				api.setkeyvalue(target[field.name], field, value)
-			
-			-- Lists is an array containing values of another type
-			elseif api.islistfield(field) then
-				api.setlist(target, field.name, field, value)
-				
-			-- Otherwise, it is a "simple" value defined by the field
+				api.setkeyvalue(target, field, value)			
 			else
-				local setter = api["set" .. field.kind]
+				local setter = api.getsetter(field, true)
 				setter(target, field.name, field, value)
 			end
 		end)
@@ -228,6 +220,27 @@
 
 
 --
+-- Retrieve the "set" function for a field.
+--
+-- @param field
+--    The field to query.
+-- @param lists
+--    If true, will return the list setter for list fields (i.e. string-list);
+--    else returns base type setter (i.e. string).
+-- @return
+--    The setter for the field.
+--
+
+	function api.getsetter(field, lists)
+		if lists and api.islistfield(field) then
+			return api.setlist
+		else
+			return api["set" .. api.getbasekind(field)]
+		end
+	end
+
+
+--
 -- Set a new array value. Arrays are lists of values stored by "value",
 -- in that new values overwrite old ones, rather than merging like lists.
 --
@@ -294,19 +307,14 @@
 			error({ msg="value must be a table of key-value pairs" })
 		end
 		
-		-- remove the "key-" prefix from the field kind
-		local kind = api.getbasekind(field)
+		local newval = {}
 		
-		if api.islistfield(field) then
-			for key, value in pairs(values) do
-				api.setlist(target, key, field, value)
-			end
-		else
-			local setter = api["set" .. kind]
-			for key, value in pairs(values) do
-				setter(target, key, field, value)
-			end
+		local setter = api.getsetter(field, true)
+		for key, value in pairs(values) do
+			setter(newval, key, field, value)
 		end
+		
+		configset.addvalue(target.configset, field.name, newval)
 	end
 
 
@@ -316,9 +324,7 @@
 --
 
 	function api.setlist(target, name, field, value)
-		-- find the contained data type
-		local kind = api.getbasekind(field)
-		local setter = api["set" .. kind]
+		local setter = api.getsetter(field)
 
 		-- am I setting a configurable object, or some kind of subfield?
 		local result
@@ -495,15 +501,6 @@
 		kind = "string-list",
 		tokens = true,
 	}
-
-	--[[
-	api.register {
-		name = "excludes",
-		scope = "config",
-		kind = "file-list",
-		tokens = true,
-	}
-	--]]
 
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
@@ -970,15 +967,6 @@
 		for _, word in ipairs(cfg.terms) do
 			table.insert(cfg.keywords, path.wildcards(word):lower())
 		end
-
-		--[[
-		-- initialize list-type fields to empty tables
-		for name, field in pairs(premake.fields) do
-			if field.kind:endswith("-list") then
-				cfg[name] = { }
-			end
-		end
-		--]]
 
 		-- this is the new place for storing scoped objects
 		api.scope.configuration = cfg

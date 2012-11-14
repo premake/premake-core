@@ -128,6 +128,7 @@
           test.isequal({}, configset.fetchvalue(cset, "buildoptions", {}))
      end
 
+
 --
 -- List fields should merge values fetched from different blocks.
 --
@@ -187,4 +188,69 @@
 		configset.addvalue(cset, "defines", { "WIN32", "WIN64", "LINUX", "MACOSX" })
 		configset.removevalues(cset, "defines", { "WIN*" })
 		test.isequal({ "LINUX", "MACOSX" }, configset.fetchvalue(cset, "defines", {}))
+	end
+
+
+--
+-- Keyed values should merge keys fetched from different blocks.
+--
+
+	function suite.keyed_mergesKeys_onFetch()
+		configset.addvalue(cset, "configmap", { Debug="Debug", Release="Release" })
+		configset.addblock(cset, { "windows" })
+		configset.addvalue(cset, "configmap", { Profile="Profile" })
+		local x = configset.fetchvalue(cset, "configmap", {"windows"})
+		test.istrue(x.Debug and x.Release and x.Profile)
+	end
+
+
+--
+-- Multiple adds to a keyed value field in the same block should be merged.
+--
+
+	function suite.keyed_mergesKeys_onAdd()
+		configset.addvalue(cset, "configmap", { Debug="Debug", Release="Release" })
+		configset.addvalue(cset, "configmap", { Profile="Profile" })
+		local x = configset.fetchvalue(cset, "configmap", {"windows"})
+		test.istrue(x.Debug and x.Release and x.Profile)
+	end
+
+
+--
+-- Keyed values should overwrite when non-merged fields are fetched.
+--
+
+	function suite.keyed_overwritesValues_onNonMergeFetch()
+		configset.addvalue(cset, "configmap", { Debug="Debug" })
+		configset.addblock(cset, { "windows" })
+		configset.addvalue(cset, "configmap", { Debug="Development" })
+		local x = configset.fetchvalue(cset, "configmap", {"windows"})
+		test.isequal("Development", x.Debug)
+	end
+
+	function suite.keyed_overwritesValues_onNonMergeAdd()
+		configset.addvalue(cset, "configmap", { Debug="Debug" })
+		configset.addvalue(cset, "configmap", { Debug="Development" })
+		local x = configset.fetchvalue(cset, "configmap", {"windows"})
+		test.isequal("Development", x.Debug)
+	end
+
+
+--
+-- Keyed values should merge when merged fields are fetched.
+--
+
+	function suite.keyed_mergesValues_onMergeFetch()
+		configset.addvalue(cset, "vpaths", { includes="*.h" })
+		configset.addblock(cset, { "windows" })
+		configset.addvalue(cset, "vpaths", { includes="*.hpp" })
+		local x = configset.fetchvalue(cset, "vpaths", {"windows"})
+		test.isequal({ "*.h", "*.hpp" }, x.includes)
+	end
+
+	function suite.keyed_mergesValues_onMergeAdd()
+		configset.addvalue(cset, "vpaths", { includes="*.h" })
+		configset.addvalue(cset, "vpaths", { includes="*.hpp" })
+		local x = configset.fetchvalue(cset, "vpaths", {"windows"})
+		test.isequal({ "*.h", "*.hpp" }, x.includes)
 	end

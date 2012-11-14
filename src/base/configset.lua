@@ -114,7 +114,7 @@
 	function configset.addvalue(cset, fieldname, value)
 		local current = cset._current
 		local field = configset._fields[fieldname]
-		if field and field.merge then
+		if field and (field.keyed or field.merge) then
 			current[fieldname] = current[fieldname] or {}
 			table.insert(current[fieldname], value)
 		else
@@ -168,11 +168,38 @@
 
 
 --
+-- Merges two lists of values together. The merged list is both indexed
+-- and keyed for faster lookups. If duplicate values are encountered,
+-- the earlier value is removed.
+--
+
+	local function merge(a, b)
+		-- if b is itself a list, flatten it out
+		if type(b) == "table" then
+			for _, v in ipairs(b) do
+				merge(a, v)
+			end
+			
+		-- if b is a simple value, insert it
+		else
+			-- find and remove earlier values
+			if a[b] then
+				table.remove(a, table.indexof(a, b))
+			end
+			
+			table.insert(a, b)
+			a[b] = b
+		end
+	end
+
+
+--
 -- Retrieve a directly assigned value from the configuration set. No merging
 -- takes place; the last value set is the one returned.
 --
 
 	local function fetchassign(cset, fieldname, context, filename)
+		-- walk the loop backwards and return on first value encountered
 		local n = #cset._blocks
 		for i = n, 1, -1 do
 			local block = cset._blocks[i]
@@ -184,6 +211,45 @@
 		if cset._parent ~= cset then
 			return fetchassign(cset._parent, fieldname, context, filename)
 		end
+	end
+
+
+--
+-- Retrieve a keyed from the configuration set; keys are assembled into
+-- a single result; values may optionally be merged too.
+--
+
+	local function fetchkeyed(cset, fieldname, context, filename, mergevalues)	
+		local result = {}
+
+		-- grab values from the parent set first
+		if cset._parent ~= cset then
+			result = fetchkeyed(cset._parent, fieldname, context, filename, merge)
+		end
+		
+		function process(values)
+			for k, v in pairs(values) do
+				if type(k) == "number" then
+					process(v)
+				elseif mergevalues then
+					result[k] = result[k] or {}
+					merge(result[k], v)
+				else
+					result[k] = v
+				end
+			end
+		end
+
+		for _, block in ipairs(cset._blocks) do
+			if testblock(block, context, filename) then
+				local value = block[fieldname]
+				if value then
+					process(value)
+				end
+			end
+		end
+
+		return result
 	end
 
 
@@ -200,25 +266,6 @@
 			result = fetchmerge(cset._parent, fieldname, context, filename)
 		end
 
-		function add(value)
-			-- recurse into tables to flatten out the list as I go
-			if type(value) == "table" then
-				for _, v in ipairs(value) do
-					add(v)
-				end
-			else
-				-- if the value is already in the result, remove it; enables later
-				-- blocks to adjust the order of earlier values
-				if result[value] then
-					table.remove(result, table.indexof(result, value))
-				end
-
-				-- add the value with both an index and a key (for fast existence checks)
-				table.insert(result, value)
-				result[value] = value
-			end
-		end
-		
 		function remove(patterns)
 			for _, pattern in ipairs(patterns) do
 				local i = 1
@@ -242,7 +289,7 @@
 				
 				local value = block[fieldname]
 				if value then
-					add(value)
+					merge(result, value)
 				end
 			end
 		end
@@ -276,9 +323,12 @@
 
 		-- should this field be merged or assigned?
 		local field = configset._fields[fieldname]
+		local keyed = field and field.keyed
 		local merge = field and field.merge
 		
-		if merge then
+		if keyed then
+			value = fetchkeyed(cset, fieldname, context, filename, merge)
+		elseif merge then
 			value = fetchmerge(cset, fieldname, context, filename)
 		else
 			value = fetchassign(cset, fieldname, context, filename)			

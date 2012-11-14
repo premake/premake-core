@@ -125,19 +125,6 @@
 
 
 --
--- On key-value APIs, the keyed object value should be the target.
---
-
-	function suite.keyObjectTarget_onKeyValue()
-		api.register { name = "testapi", kind = "key-test", scope = "project" }
-		local sln = solution "MySolution"
-		testapi { key = "test" }
-		test.istrue(sln.testapi == test_args.target)
-	end
-
-
-
---
 -- On key-value APIs, the field name should be the key value from the supplied table.
 --
 
