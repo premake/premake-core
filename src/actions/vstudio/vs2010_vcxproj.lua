@@ -89,19 +89,24 @@
 		-- build a list of all architectures used in this project
 		local platforms = {}
 		for cfg in project.eachconfig(prj) do
-			local arch = vstudio.architecture(cfg)
+			local arch = vstudio.archFromConfig(cfg, true)
 			if not table.contains(platforms, arch) then
 				table.insert(platforms, arch)
 			end
 		end
 	
+		local configs = {}
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
 		for cfg in project.eachconfig(prj) do
 			for _, arch in ipairs(platforms) do
-				_x(2,'<ProjectConfiguration Include="%s">', vstudio.projectconfig(cfg, arch))
-				_x(3,'<Configuration>%s</Configuration>', vstudio.projectplatform(cfg))
-				_p(3,'<Platform>%s</Platform>', arch)
-				_p(2,'</ProjectConfiguration>')
+				local prjcfg = vstudio.projectConfig(cfg, arch)
+				if not configs[prjcfg] then
+					configs[prjcfg] = prjcfg
+					_x(2,'<ProjectConfiguration Include="%s">', vstudio.projectConfig(cfg, arch))
+					_x(3,'<Configuration>%s</Configuration>', vstudio.projectPlatform(cfg))
+					_p(3,'<Platform>%s</Platform>', arch)
+					_p(2,'</ProjectConfiguration>')
+				end
 			end
 		end
 		_p(1,'</ItemGroup>')
@@ -611,7 +616,7 @@
 --
 
 	function vc2010.condition(cfg)
-		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectconfig(cfg)))
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
 	end
 
 

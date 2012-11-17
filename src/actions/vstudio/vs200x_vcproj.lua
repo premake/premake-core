@@ -33,7 +33,7 @@
 			-- Visual Studio requires each project configuration to have an
 			-- entry for every project architecture. Those that are not 
 			-- actually part of the solution, use a skeleton configuration.
-			local cfgarch = vstudio.architecture(cfg)
+			local cfgarch = vstudio.archFromConfig(cfg, true)
 			for _, prjarch in ipairs(architectures) do
 				if cfgarch == prjarch then
 					vc200x.configuration(cfg)
@@ -117,7 +117,7 @@
 
 		architectures = {}
 		for cfg in project.eachconfig(prj) do
-			local arch = vstudio.architecture(cfg)
+			local arch = vstudio.archFromConfig(cfg, true)
 			if not table.contains(architectures, arch) then
 				table.insert(architectures, arch)
 				_p(2,'<Platform')
@@ -138,7 +138,7 @@
 
 	function vc200x.configuration(cfg)
 		_p(2,'<Configuration')
-		_x(3,'Name="%s"', vstudio.projectconfig(cfg))
+		_x(3,'Name="%s"', vstudio.projectConfig(cfg))
 
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		_x(3,'OutputDirectory="%s"', path.translate(outdir))
@@ -177,7 +177,7 @@
 
 	function vc200x.emptyconfiguration(cfg, arch)
 		_p(2,'<Configuration')
-		_x(3,'Name="%s|%s"', vstudio.projectplatform(cfg), arch)
+		_x(3,'Name="%s|%s"', vstudio.projectPlatform(cfg), arch)
 		_p(3,'IntermediateDirectory="$(PlatformName)\\$(ConfigurationName)"')
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
@@ -812,7 +812,7 @@
 
 				_p(depth,'<FileConfiguration')
 				depth = depth + 1
-				_p(depth, 'Name="%s"', vstudio.projectconfig(cfg))
+				_p(depth, 'Name="%s"', vstudio.projectConfig(cfg))
 
 				if not filecfg then
 					_p(depth, 'ExcludedFromBuild="true"')

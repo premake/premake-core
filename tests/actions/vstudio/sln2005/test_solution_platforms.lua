@@ -29,11 +29,12 @@
 
 
 --
--- If no platforms are specified, the architecture should be used as a default.
+-- If no platform or architecture is specified, default the appropriate
+-- default for the language.
 --
 
-	function suite.useArchAsPlatform_onCppAndNoArch()
-		prepare()
+	function suite.correctDefault_onCpp()
+		prepare("C++")
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -42,7 +43,34 @@
 		]]
 	end
 
-	function suite.useArchAsPlatform_onCppAnd32()
+	function suite.correctDefault_onCs()
+		prepare("C#")
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+		]]
+	end
+
+	function suite.correctDefault_onMixedLanguage()
+		project("MyProject2")
+		language "C++"
+		prepare("C#")
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Release|Mixed Platforms = Release|Mixed Platforms
+	EndGlobalSection
+		]]
+	end
+
+
+--
+-- If an architecture is specified, use it.
+--
+
+	function suite.usesArch_onx32()
 		architecture "x32"
 		prepare()
 		test.capture [[
@@ -53,35 +81,13 @@
 		]]
 	end
 
-	function suite.useArchAsPlatform_onCppAnd64()
+	function suite.usesArch_onx64()
 		architecture "x64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
-	EndGlobalSection
-		]]
-	end
-
-	function suite.useArchAsPlatform_onCs()
-		prepare("C#")
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-		]]
-	end
-
-	function suite.useArchAsPlatform_onMixedLanguage()
-		project("MyProject2")
-		language "C++"
-		prepare("C#")
-		test.capture [[
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Release|Mixed Platforms = Release|Mixed Platforms
 	EndGlobalSection
 		]]
 	end
@@ -122,6 +128,25 @@
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Static = Debug|Static
 		Release|Static = Release|Static
+	EndGlobalSection
+		]]
+	end
+
+
+--
+-- If the platform matches a system or architecture, omit the platform name.
+--
+
+	function suite.usesArch_onPlatformMatch()
+		platforms { "x32", "x64", "Xbox360" }
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Win32 = Release|Win32
+		Release|Xbox 360 = Release|Xbox 360
 	EndGlobalSection
 		]]
 	end

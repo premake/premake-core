@@ -179,32 +179,77 @@
 
 
 --
--- Translate the architecture settings for a configuration into a Visual
--- Studio compatible identifier.
+-- Mapping tables from Premake systems and architectures to Visual Studio
+-- identifiers. Broken out as tables to new values can be pushed in by
+-- add-ons.
 --
 
-	vstudio.vs200x_architectures = {
+	vstudio.vs200x_architectures = 
+	{
+		x32     = "x86",
 		x64     = "x64",
 		xbox360 = "Xbox 360",
 	}
 	
-	vstudio.vs2010_architectures = {
+	vstudio.vs2010_architectures = 
+	{
 	}
-	
-	function vstudio.architecture(cfg)
-		local arch
-		
-		-- allow add-ons to override the architecture for VS2010 specifically
+
+
+	local function architecture(system, arch)
+		local result
 		if _ACTION >= "vs2010" then
-			arch = vstudio.vs2010_architectures[cfg.architecture] or
-			       vstudio.vs2010_architectures[cfg.system]
+			result = vstudio.vs2010_architectures[arch] or vstudio.vs2010_architectures[system]
+		end
+		return result or vstudio.vs200x_architectures[arch] or vstudio.vs200x_architectures[system]
+	end
+
+
+--
+-- Translate the system and architecture settings from a configuration
+-- into a corresponding Visual Studio identifier. If no settings are
+-- found in the configuration, a default value is returned, based on
+-- the project settings.
+--
+-- @param cfg
+--    The configuration to translate.
+-- @param win32
+--    If true, enables the "Win32" symbol. If false, uses "x86" instead.
+-- @return
+--    A Visual Studio architecture identifier.
+--
+
+	function vstudio.archFromConfig(cfg, win32)
+		local iscpp = premake.iscppproject(cfg.project)
+
+		local arch = architecture(cfg.system, cfg.architecture)			
+		if not arch then
+			arch = iif(iscpp, "x86", "Any CPU")
+		end
+
+		if win32 and iscpp and arch == "x86" then
+			arch = "Win32"
 		end
 		
-		arch = arch or vstudio.vs200x_architectures[cfg.architecture] or
-		       vstudio.vs200x_architectures[cfg.system]
-		
-		arch = arch or iif(premake.isdotnetproject(cfg.project), "Any CPU", "Win32")
 		return arch
+	end
+
+
+--
+-- Attempt to translate a platform identifier into a corresponding
+-- Visual Studio architecture identifier.
+--
+-- @param platform
+--    The platform identifier to translate.
+-- @return
+--    A Visual Studio architecture identifier, or nil if no mapping
+--    could be made.
+--    
+
+	function vstudio.archFromPlatform(platform)
+		local system = premake.api.checkvalue(platform, premake.fields.system)
+		local arch = premake.api.checkvalue(platform, premake.fields.architecture)
+		return architecture(system, arch)
 	end
 
 
@@ -221,9 +266,9 @@
 --    <project platform name>|<architecture>.
 --
 
-	function vstudio.projectconfig(cfg, arch)
-		local platform = vstudio.projectplatform(cfg)
-		local architecture = arch or vstudio.architecture(cfg)
+	function vstudio.projectConfig(cfg, arch)
+		local platform = vstudio.projectPlatform(cfg)
+		local architecture = arch or vstudio.archFromConfig(cfg, true)
 		return platform .. "|" .. architecture
 	end
 
@@ -256,12 +301,132 @@
 -- and platform identifiers concatenated.
 --
 
-	function vstudio.projectplatform(cfg)
-		local platform = cfg.buildcfg
-		if cfg.platform then
-			platform = platform .. " " .. cfg.platform
+	function vstudio.projectPlatform(cfg)
+		local platform = cfg.platform
+		if platform then
+			local pltarch = vstudio.archFromPlatform(cfg.platform)
+			local cfgarch = vstudio.archFromConfig(cfg)
+			if pltarch == cfgarch then
+				platform = nil
+			end
 		end
-		return platform
+
+		if platform then
+			return cfg.buildcfg .. " " .. platform
+		else
+			return cfg.buildcfg
+		end
+	end
+
+
+--
+-- Determine the appropriate Visual Studio platform identifier for a 
+-- solution-level configuration.
+--
+-- @param cfg
+--    The configuration to be identified.
+-- @return
+--    A corresponding Visual Studio platform identifier.
+--
+
+	function vstudio.solutionPlatform(cfg)
+		local platform = cfg.platform
+
+		-- if a platform is specified use it, translating to the corresponding
+		-- Visual Studio identifier if appropriate
+		local platarch
+		if platform then
+			platform = vstudio.archFromPlatform(platform) or platform
+			
+			-- Value for 32-bit arch is different depending on whether this solution
+			-- contains C++ or C# projects or both
+			if platform ~= "x86" then
+				return platform
+			end
+		end
+
+		-- scan the contained projects to identify the platform
+		local hascpp = false
+		local hasnet = false
+		local slnarch
+		for prj in solution.eachproject_ng(cfg.solution) do
+			if premake.iscppproject(prj) then
+				hascpp = true
+			elseif premake.isdotnetproject(prj) then
+				hasnet = true
+			end
+
+			-- get a VS architecture identifier for this project
+			local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+			if prjcfg then
+				local prjarch = vstudio.archFromConfig(prjcfg)				
+				if not slnarch then
+					slnarch = prjarch
+				elseif slnarch ~= prjarch then
+					slnarch = "Mixed Platforms"
+				end
+			end
+		end
+
+
+		if platform then
+			return iif(hasnet, "x86", "Win32")
+		elseif slnarch then
+			return iif(slnarch == "x86" and not hasnet, "Win32", slnarch)
+		elseif hasnet and hascpp then
+			return "Mixed Platforms"
+		elseif hasnet then
+			return "Any CPU"
+		else
+			return "Win32"
+		end
+	end
+
+
+--
+-- Attempt to determine an appropriate Visual Studio architecture identifier
+-- for a solution configuration.
+--
+-- @param cfg
+--    The configuration to query.
+-- @return
+--    A best guess at the corresponding Visual Studio architecture identifier.
+--
+
+	function vstudio.solutionarch(cfg)
+		local hascpp = false
+		local hasdotnet = false
+		
+		-- if the configuration has a platform identifier, use that as default
+		local arch = cfg.platform
+		
+		-- if the platform identifier matches a known system or architecture,
+		--
+		
+		for prj in solution.eachproject_ng(cfg.solution) do
+			if premake.iscppproject(prj) then 
+				hascpp = true
+			elseif premake.isdotnetproject(prj) then
+				hasdotnet = true
+			end
+			
+			if hascpp and hasdotnet then
+				return "Mixed Platforms"
+			end
+
+			if not arch then
+				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+				if prjcfg then
+					if prjcfg.architecture then
+						arch = vstudio.archFromConfig(prjcfg)
+					end
+				end
+			end
+		end
+		
+		-- use a default if no other architecture was specified
+		arch = arch or iif(hascpp, "Win32", "Any CPU")
+		return arch
 	end
 
 
@@ -284,35 +449,13 @@
 		-- since architectures are defined in the projects and not at the 
 		-- solution level, need to poke around to figure this out
 		if not platform then
-			local hascpp = false
-			local hasdotnet = false
-			
-			for prj in premake.solution.eachproject_ng(cfg.solution) do
-				if premake.iscppproject(prj) then 
-					hascpp = true
-				elseif premake.isdotnetproject(prj) then
-					hasdotnet = true
-				end
-				
-				-- map the solution config to the corresponding project cfg
-				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-				if prjcfg then
-					if prjcfg.architecture then
-						platform = vstudio.architecture(prjcfg)
-					end
-				end
-			end
-			
-			-- use a default if no other architecture was specified
-			if hascpp and hasdotnet then
-				platform = "Mixed Platforms"
-			else
-				platform = platform or iif(hascpp, "Win32", "Any CPU")
-			end
+			platform = vstudio.solutionarch(cfg)
 		end
 		
 		return string.format("%s|%s", cfg.buildcfg, platform)
 	end
+
+
 
 
 -----------------------------------------------------------------------------

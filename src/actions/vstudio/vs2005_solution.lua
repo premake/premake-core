@@ -28,8 +28,7 @@
 		end
 
 		_p('Global')
-		sln2005.solutionConfigurationPlatforms(sln)
-		sln2005.projectConfigurationPlatforms(sln)
+		sln2005.configurationPlatforms(sln)
 		sln2005.properties(sln)
 		_p('EndGlobal')
 	end
@@ -86,6 +85,41 @@
 
 
 --
+-- Write out the tables that map solution configurations to project configurations.
+--
+
+	function sln2005.configurationPlatforms(sln)
+		-- build a VS cfg descriptor for each solution configuration
+		local slncfg = {}
+		for cfg in solution.eachconfig(sln) do
+			local platform = vstudio.solutionPlatform(cfg)
+			slncfg[cfg] = string.format("%s|%s", cfg.buildcfg, platform)
+		end
+	
+		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+		for cfg in solution.eachconfig(sln) do
+			_p(2,'%s = %s', slncfg[cfg], slncfg[cfg])
+		end
+		_p(1,'EndGlobalSection')
+
+		_p(1,'GlobalSection(ProjectConfigurationPlatforms) = postSolution')
+		for prj in solution.eachproject_ng(sln) do
+			for cfg in solution.eachconfig(sln) do
+				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+				if prjcfg then
+					local prjplatform = vstudio.projectPlatform(prjcfg)
+					local architecture = vstudio.archFromConfig(prjcfg, true)
+					
+					_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
+					_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
+				end
+			end
+		end
+		_p(1,'EndGlobalSection')		
+	end
+
+
+--
 -- Write out the contents of the SolutionConfigurationPlatforms section, which
 -- lists all of the configuration/platform pairs that exist in the solution.
 --
@@ -112,8 +146,8 @@
 				local prjcfg = project.getconfig(prj, slncfg.buildcfg, slncfg.platform)
 				if prjcfg then
 					local slnident = vstudio.solutionconfig(slncfg)
-					local prjplatform = vstudio.projectplatform(prjcfg)
-					local architecture = vstudio.architecture(prjcfg)
+					local prjplatform = vstudio.projectPlatform(prjcfg)
+					local architecture = vstudio.archFromConfig(prjcfg)
 					
 					_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slnident, prjplatform, architecture)
 					_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slnident, prjplatform, architecture)

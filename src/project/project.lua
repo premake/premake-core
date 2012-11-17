@@ -138,10 +138,14 @@
 		-- set the default system and architecture values; for backward 
 		-- compatibility, use platform if it would be a valid value
 		local system = premake.action.current().os or os.get()
-		local architecture
+		local architecture = nil
+
+		-- if the platform's name matches a known system or architecture, use
+		-- that as the default. More than a convenience; this is required to
+		-- work properly with external Visual Studio project files.
 		if platform then
-			system = premake.api.checkvalue(platform, premake.fields.system.allowed) or system
-			architecture = premake.api.checkvalue(platform, premake.fields.architecture.allowed) or architecture
+			system = premake.api.checkvalue(platform, premake.fields.system) or system
+			architecture = premake.api.checkvalue(platform, premake.fields.architecture) or architecture
 		end
 
 		-- set up an environment for expanding tokens contained by this configuration
