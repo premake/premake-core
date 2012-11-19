@@ -48,7 +48,9 @@
 
 
 --
--- If multiple architectures are used, they should all be listed.
+-- Visual Studio requires that all combinations of configurations and
+-- architectures be listed (even if some pairings would make no sense
+-- for our build, i.e. Win32 DLL DCRT|PS3).
 --
 
 	function suite.allArchitecturesListed_onMultipleArchitectures()
@@ -79,6 +81,12 @@
 		<ProjectConfiguration Include="Release 32b|Win32">
 		]]
 	end
+
+
+--
+-- Sometimes unrolling the configuration-architecture combinations
+-- can cause duplicates. Make sure those get removed.
+--
 
 	function suite.allArchitecturesListed_onImplicitArchitectures()
 		platforms { "x32", "x64" }

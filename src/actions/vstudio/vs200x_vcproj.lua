@@ -21,6 +21,9 @@
 
 		vc200x.xmldeclaration()
 		vc200x.visualStudioProject(prj)
+		
+		-- output the list of configuration/architecture pairs used by
+		-- the project; sends back list of unique architectures
 		local architectures = vc200x.platforms(prj)
 		
 		if _ACTION > "vs2003" then
@@ -28,21 +31,31 @@
 			_p(1,'</ToolFiles>')
 		end
 
+		-- Visual Studio requires each configuration to be paired up with each
+		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
+		-- DLL DCRT|PS3). I already have a list of all the unique architectures;
+		-- make a list of configuration-architecture pairs used by the project.
+		local prjcfgs = {}
+		for cfg in project.eachconfig(prj) do
+			local cfgname = vstudio.projectConfig(cfg)
+			prjcfgs[cfgname] = cfgname
+		end
+		
 		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
-			-- Visual Studio requires each project configuration to have an
-			-- entry for every project architecture. Those that are not 
-			-- actually part of the solution, use a skeleton configuration.
-			local cfgarch = vstudio.archFromConfig(cfg, true)
-			for _, prjarch in ipairs(architectures) do
-				if cfgarch == prjarch then
+			local prjcfg = vstudio.projectConfig(cfg)
+			for _, arch in ipairs(architectures) do
+				local tstcfg = vstudio.projectConfig(cfg, arch)
+				if prjcfg == tstcfg then
+					-- this is a real project configuration
 					vc200x.configuration(cfg)
 					vc200x.tools(cfg)
 					_p(2,'</Configuration>')
-				else
+				elseif not prjcfgs[tstcfg] then
+					-- this is a fake config to make VS happy					
 					vc200x.emptyconfiguration(cfg, prjarch)
 				end
-			end
+			end		
 		end
 		_p(1,'</Configurations>')
 
