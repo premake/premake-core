@@ -10,7 +10,7 @@
 
 
 	premake.fields = {}
-		
+
 
 --
 -- A place to store the current active objects in each project scope.
@@ -40,7 +40,7 @@
 		if not name then
 			error("missing name", 2)
 		end
-		
+
 		if _G[name] then
 			error("name in use", 2)
 		end
@@ -49,22 +49,22 @@
 		if not api.getsetter(field) then
 			error("invalid kind '" .. kind .. "'", 2)
 		end
-		
+
 		-- add this new field to my master list
 		premake.fields[field.name] = field
-		
+
 		-- add create a setter function for it
 		_G[name] = function(value)
 			return api.callback(field, value)
 		end
-		
+
 		-- list values also get a removal function
 		if api.islistfield(field) and not api.iskeyedfield(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
 		end
-		
+
 		-- if the field needs special handling, tell the config
 		-- set system about it
 		configset.registerfield(field.name, {
@@ -85,7 +85,7 @@
 		else
 			target = api.scope.configuration or api.scope.root
 		end
-		
+
 		return target
 	end
 
@@ -97,20 +97,20 @@
 
 	function api.callback(field, value)
 		local target = api.gettarget(field.scope)
-		
+
 		if not value then
 			return target.configset[field.name]
 		end
 
-		local status, result = pcall(function ()			
+		local status, result = pcall(function ()
 			if api.iskeyedfield(field) then
-				api.setkeyvalue(target, field, value)			
+				api.setkeyvalue(target, field, value)
 			else
 				local setter = api.getsetter(field, true)
 				setter(target, field.name, field, value)
 			end
 		end)
-		
+
 		if not status then
 			if type(result) == "table" then
 				result = result.msg
@@ -137,7 +137,7 @@
 		local remover = api["remove" .. kind] or table.insert
 
 		local removes = {}
-		
+
 		function recurse(value)
 			if type(value) == "table" then
 				for _, v in ipairs(value) do
@@ -149,14 +149,14 @@
 		end
 
 		recurse(value)
-		
+
 		local target = api.gettarget(field.scope)
 		configset.removevalues(target.configset, field.name, removes)
 	end
 
 
 --
--- Check to see if a value exists in a list of values, using a 
+-- Check to see if a value exists in a list of values, using a
 -- case-insensitive match. If the value does exist, the canonical
 -- version contained in the list is returned, so future tests can
 -- use case-sensitive comparisions.
@@ -170,8 +170,8 @@
 					break
 				end
 			end
-		end 
-			
+		end
+
 		if allowed then
 			if type(allowed) == "function" then
 				return allowed(value)
@@ -213,7 +213,7 @@
 	function api.iskeyedfield(field)
 		return field.kind:startswith("key-")
 	end
-	
+
 	function api.islistfield(field)
 		return field.kind:endswith("-list")
 	end
@@ -248,14 +248,14 @@
 	function api.setarray(target, name, field, value)
 		-- if the target is the project, configset will be set and I can push
 		-- the value there. Otherwise I was called to store into some other kind
-		-- of object (i.e. an array or list)		
+		-- of object (i.e. an array or list)
 		target = target.configset or target
-		
+
 		-- put simple values in an array
 		if type(value) ~= "table" then
 			value = { value }
 		end
-		
+
 		-- store it, overwriting any existing value
 		target[name] = value
 	end
@@ -289,11 +289,11 @@
 			target[name] = path.getabsolute(value)
 		end
 	end
-	
+
 	function api.removefile(target, value)
 		table.insert(target, path.getabsolute(value))
 	end
-	
+
 	api.removedirectory = api.removefile
 
 
@@ -306,14 +306,14 @@
 		if type(values) ~= "table" then
 			error({ msg="value must be a table of key-value pairs" })
 		end
-		
+
 		local newval = {}
-		
+
 		local setter = api.getsetter(field, true)
 		for key, value in pairs(values) do
 			setter(newval, key, field, value)
 		end
-		
+
 		configset.addvalue(target.configset, field.name, newval)
 	end
 
@@ -385,9 +385,9 @@
 
 		-- if the target is the project, configset will be set and I can push
 		-- the value there. Otherwise I was called to store into some other kind
-		-- of object (i.e. an array or list)		
+		-- of object (i.e. an array or list)
 		target = target.configset or target
-		
+
 		target[name] = value
 	end
 
@@ -417,7 +417,7 @@
 		name = "buildaction",
 		scope = "config",
 		kind = "string",
-		allowed = {		
+		allowed = {
 			"Compile",
 			"Copy",
 			"Embed",
@@ -450,7 +450,7 @@
 		scope = "project",
 		kind = "string-list",
 	}
-	
+
 	api.register {
 		name = "debugargs",
 		scope = "config",
@@ -471,7 +471,7 @@
 		kind = "path",
 		tokens = true,
 	}
-	
+
 	api.register {
 		name = "debugenvs",
 		scope = "config",
@@ -487,14 +487,21 @@
 			"c7",
 		},
 	}
-	
+
 	api.register {
 		name = "defines",
 		scope = "config",
 		kind = "string-list",
 		tokens = true,
 	}
-	
+
+	api.register {
+		name = "dependson",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
 	api.register {
 		name = "deploymentoptions",
 		scope = "config",
@@ -591,22 +598,22 @@
 		name = "imageoptions",
 		scope = "config",
 		kind = "string-list",
-		tokens = true,		
+		tokens = true,
 	}
-	
+
 	api.register {
 		name = "imagepath",
 		scope = "config",
 		kind = "path",
-		tokens = true,		
-	}	
+		tokens = true,
+	}
 
 	api.register {
 		name = "implibdir",
 		scope = "config",
 		kind = "path",
 		tokens = true,
-	}			
+	}
 
 	api.register {
 		name = "implibextension",
@@ -679,7 +686,7 @@
 		kind = "string-list",
 		tokens = true,
 	}
-	
+
 	api.register {
 		name = "links",
 		scope = "config",
@@ -706,7 +713,7 @@
 		scope = "config",
 		kind = "string-list",
 		tokens = true,
-	}		
+	}
 
 
 	api.register {
@@ -735,7 +742,7 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
-	}		
+	}
 
 	api.register {
 		name = "platforms",
@@ -807,7 +814,7 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
-	}		
+	}
 
 	api.register {
 		name = "targetextension",
@@ -905,13 +912,13 @@
 
 	function premake.getobject(t)
 		local container
-		
+
 		if (t == "container" or t == "solution") then
 			container = premake.CurrentContainer
 		else
 			container = premake.CurrentConfiguration
 		end
-		
+
 		if t == "solution" then
 			if type(container) == "project" then
 				container = container.solution
@@ -920,7 +927,7 @@
 				container = nil
 			end
 		end
-		
+
 		local msg
 		if (not container) then
 			if (t == "container") then
@@ -931,7 +938,7 @@
 				msg = "no active solution, project, or configuration"
 			end
 		end
-		
+
 		return container, msg
 	end
 
@@ -951,15 +958,15 @@
 		if (not container) then
 			error(err, 2)
 		end
-		
+
 		local cfg = { }
 		cfg.terms   = table.flatten({terms})
 		cfg.basedir = os.getcwd()
 		cfg.configset = container.configset
-		
+
 		table.insert(container.blocks, cfg)
 		premake.CurrentConfiguration = cfg
-		
+
 		-- create a keyword list using just the indexed keyword items. This is a little
 		-- confusing: "terms" are what the user specifies in the script, "keywords" are
 		-- the Lua patterns that result. I'll refactor to better names.
@@ -977,7 +984,7 @@
 
 		return cfg
 	end
-	
+
 	local function createproject(name, sln, isUsage)
 		local prj = premake5.project.new(sln, name)
 
@@ -1002,7 +1009,7 @@
 
 			sln.projects[name] = prj
 		end
-		
+
 		prj.script = _SCRIPT
 		prj.usage = isUsage;
 
@@ -1017,31 +1024,31 @@
   			if(premake.CurrentContainer.usage) then return nil end
   			return premake.CurrentContainer
 		end
-		
+
   		-- identify the parent solution
   		local sln
   		if (type(premake.CurrentContainer) == "project") then
   			sln = premake.CurrentContainer.solution
   		else
   			sln = premake.CurrentContainer
-  		end			
+  		end
   		if (type(sln) ~= "solution") then
   			error("no active solution", 2)
   		end
-  		
+
   		-- if this is a new project, or the old project is a usage project, create it
   		if((not sln.projects[name]) or sln.projects[name].usage) then
   			premake.CurrentContainer = createproject(name, sln)
   		else
   			premake.CurrentContainer = sln.projects[name];
   		end
-		
+
 		-- add an empty, global configuration to the project
 		configuration {}
-		
+
 		-- this is the new place for storing scoped objects
 		api.scope.project = premake.CurrentContainer
-	
+
 		return premake.CurrentContainer
 	end
 
@@ -1054,7 +1061,7 @@
 				return premake.CurrentContainer
 			end
 		end
-		
+
 		premake.CurrentContainer = premake.solution.get(name)
 		if (not premake.CurrentContainer) then
 			local sln = premake.solution.new(name)
@@ -1063,11 +1070,11 @@
 
 		-- add an empty, global configuration
 		configuration { }
-		
+
 		-- this is the new place for storing scoped objects
 		api.scope.solution = premake.CurrentContainer
 		api.scope.project = nil
-		
+
 		return premake.CurrentContainer
 	end
 

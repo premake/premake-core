@@ -5,7 +5,7 @@
 --
 
 	premake.project = { }
-	
+
 
 --
 -- Create a tree from a project's list of files, representing the filesystem hierarchy.
@@ -22,11 +22,11 @@
 		tr.project = prj
 
 		local isvpath
-		
+
 		local function onadd(node)
 			node.isvpath = isvpath
 		end
-		
+
 		for fcfg in premake.project.eachfile(prj) do
 			isvpath = (fcfg.name ~= fcfg.vpath)
 			local node = premake.tree.add(tr, fcfg.vpath, onadd)
@@ -47,10 +47,10 @@
 	function premake.eachconfig(prj, platform)
 		-- I probably have the project root config, rather than the actual project
 		if prj.project then prj = prj.project end
-		
+
 		local cfgs = prj.solution.configurations
 		local i = 0
-		
+
 		return function ()
 			i = i + 1
 			if i <= #cfgs then
@@ -58,7 +58,7 @@
 			end
 		end
 	end
-	
+
 
 
 --
@@ -105,8 +105,8 @@
 			return value
 		end
 	end
-	
-	
+
+
 
 --
 -- Given a map of supported platform identifiers, filters the solution's list
@@ -130,17 +130,17 @@
 				end
 			end
 		end
-		
+
 		if #result == 0 and default then
 			table.insert(result, default)
 		end
-		
+
 		return result
 	end
-	
 
 
--- 
+
+--
 -- Locate a project by name; case insensitive.
 --
 
@@ -153,8 +153,8 @@
 			end
 		end
 	end
-	
-	
+
+
 
 --
 -- Locate a file in a project with a given extension; used to locate "special"
@@ -219,12 +219,12 @@
 			return iif(useshortname, name:lower(), name)
 		end
 	end
-	
-	
-	
+
+
+
 --
--- Returns a list of sibling projects on which the specified project depends. 
--- This is used to list dependencies within a solution or workspace. Must 
+-- Returns a list of sibling projects on which the specified project depends.
+-- This is used to list dependencies within a solution or workspace. Must
 -- consider all configurations because Visual Studio does not support per-config
 -- project dependencies.
 --
@@ -237,15 +237,22 @@
 	function premake.getdependencies(prj)
 		-- make sure I've got the project and not root config
 		prj = prj.project or prj
-		
+
+		local function add_to_project_list(depproj, results)
+			local dep = premake.findproject(depproj)
+			if dep and not table.contains(results, dep) then
+				table.insert(results, dep)
+			end
+		end
+
 		local results = { }
 		for _, cfg in pairs(prj.__configs) do
 			for _, link in ipairs(cfg.links) do
-				local dep = premake.findproject(link)
-				if dep and not table.contains(results, dep) then
-					table.insert(results, dep)
-				end
+				add_to_project_list(link, results)
 			end
+			for _, depproj in ipairs(cfg.dependson) do
+				add_to_project_list(depproj, results)
+ 			end
 		end
 
 		return results
@@ -271,9 +278,9 @@
 		fname = path.join(premake5.project.getlocation(prj), fname)
 		return path.getrelative(os.getcwd(), fname)
 	end
-	
-	
-	
+
+
+
 --
 -- Returns a list of link targets. Kind may be one of:
 --   siblings     - linkable sibling projects
@@ -287,21 +294,21 @@
 --   directory - just the directory, no name
 --   fullpath  - full path with decorated name
 --   object    - return the project object of the dependency
---	
-	
+--
+
  	function premake.getlinks(cfg, kind, part)
 		-- if I'm building a list of link directories, include libdirs
 		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
 
 		-- am I getting links for a configuration or a project?
 		local cfgname = iif(cfg.name == cfg.project.name, "", cfg.name)
-		
+
 		-- how should files be named?
 		local pathstyle = premake.getpathstyle(cfg)
 		local namestyle = premake.getnamestyle(cfg)
-		
+
 		local function canlink(source, target)
-			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then 
+			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then
 				return false
 			end
 			if premake.iscppproject(source) then
@@ -310,14 +317,14 @@
 				return premake.isdotnetproject(target)
 			end
 		end
-		
+
 		for _, link in ipairs(cfg.links) do
 			local item
-			
+
 			-- is this a sibling project?
 			local prj = premake.findproject(link)
 			if prj and kind ~= "system" then
-				
+
 				local prjcfg = premake.getconfig(prj, cfgname, cfg.platform)
 				if kind == "dependencies" or canlink(cfg, prjcfg) then
 					if (part == "directory") then
@@ -332,7 +339,7 @@
 				end
 
 			elseif not prj and (kind == "system" or kind == "all") then
-				
+
 				if (part == "directory") then
 					local dir = path.getdirectory(link)
 					if (dir ~= ".") then
@@ -365,12 +372,12 @@
 				end
 			end
 		end
-	
+
 		return result
 	end
-	
 
-	
+
+
 --
 -- Gets the name style for a configuration, indicating what kind of prefix,
 -- extensions, etc. should be used in target file names.
@@ -384,7 +391,7 @@
 	function premake.getnamestyle(cfg)
 		return premake.platforms[cfg.platform].namestyle or premake.gettool(cfg).namestyle or "posix"
 	end
-	
+
 
 
 --
@@ -404,7 +411,7 @@
 			return "posix"
 		end
 	end
-	
+
 
 --
 -- Assembles a target for a particular tool/system/configuration.
@@ -434,18 +441,18 @@
 --
 
 	function premake.gettarget(cfg, direction, pathstyle, namestyle, system)
-		if system == "bsd" or system == "solaris" then 
-			system = "linux" 
+		if system == "bsd" or system == "solaris" then
+			system = "linux"
 		end
 
 		-- Fix things up based on the current system
 		local kind = cfg.kind
 		if premake.iscppproject(cfg) then
 			-- On Windows, shared libraries link against a static import library
-			if (namestyle == "windows" or system == "windows") 
-				and kind == "SharedLib" and direction == "link" 
-				and not cfg.flags.NoImportLib 
-			then				
+			if (namestyle == "windows" or system == "windows")
+				and kind == "SharedLib" and direction == "link"
+				and not cfg.flags.NoImportLib
+			then
 				kind = "StaticLib"
 			end
 
@@ -492,11 +499,11 @@
 				ext = ".a"
 			end
 		end
-			
+
 		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
 		suffix = cfg[field.."suffix"] or cfg.targetsuffix or suffix
 		ext    = cfg[field.."extension"] or cfg.targetextension or ext
-		
+
 		-- build the results object
 		local result = { }
 		result.basename   = name .. suffix
@@ -506,12 +513,12 @@
 		result.suffix     = suffix
 		result.fullpath   = path.join(result.directory, result.name)
 		result.bundlepath = bundlepath or result.fullpath
-		
+
 		if pathstyle == "windows" then
 			result.directory = path.translate(result.directory, "\\")
 			result.fullpath  = path.translate(result.fullpath,  "\\")
 		end
-		
+
 		return result
 	end
 
@@ -535,8 +542,8 @@
 			return premake.dotnet
 		end
 	end
-	
-	
+
+
 
 --
 -- Given a source file path, return a corresponding virtual path based on
@@ -546,24 +553,24 @@
 
 	function premake.project.getvpath(prj, filename)
 		prj = prj.project
-		
+
 		-- if there is no match, return the input filename
 		local vpath = filename
 
 		for replacement,patterns in pairs(prj.vpaths or {}) do
 			for _,pattern in ipairs(patterns) do
 				pattern = premake5.project.getrelative(prj, pattern)
-				
+
 				-- does the filename match this vpath pattern?
 				local i = vpath:find(path.wildcards(pattern))
-				if i == 1 then				
+				if i == 1 then
 					-- yes; trim the leading portion of the path
 					i = pattern:find("*", 1, true) or (pattern:len() + 1)
 					local leaf = vpath:sub(i)
 					if leaf:startswith("/") then
 						leaf = leaf:sub(2)
 					end
-					
+
 					-- check for (and remove) stars in the replacement pattern.
 					-- If there are none, then trim all path info from the leaf
 					-- and use just the filename in the replacement (stars should
@@ -575,12 +582,12 @@
 							leaf = path.getname(leaf)
 						end
 					end
-					
+
 					vpath = path.join(stem, leaf)
 				end
 			end
 		end
-				
+
 		-- remove any dot ("./", "../") patterns from the start of the path
 		local changed
 		repeat
@@ -593,12 +600,12 @@
 				changed = false
 			end
 		until not changed
-		
+
 		return vpath
 	end
 
 
--- 
+--
 -- Returns true if the solution contains at least one C/C++ project.
 --
 
@@ -610,9 +617,9 @@
 		end
 	end
 
-	
 
--- 
+
+--
 -- Returns true if the solution contains at least one .NET project.
 --
 
