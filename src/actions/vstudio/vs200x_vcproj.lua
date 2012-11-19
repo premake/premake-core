@@ -53,7 +53,7 @@
 					_p(2,'</Configuration>')
 				elseif not prjcfgs[tstcfg] then
 					-- this is a fake config to make VS happy					
-					vc200x.emptyconfiguration(cfg, prjarch)
+					vc200x.emptyconfiguration(cfg, arch)
 				end
 			end		
 		end
