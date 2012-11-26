@@ -548,3 +548,71 @@
 	EndGlobalSection
 		]]
 	end
+
+
+--
+-- Check the handling of the "Any CPU" .NET architecture.
+--
+
+	function suite.onSingleCpp_withAnyCpuPlatform()
+		platforms { "Any CPU" }
+		project "MyProject"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.ActiveCfg = Debug Any CPU|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.Build.0 = Debug Any CPU|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.ActiveCfg = Release Any CPU|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.Build.0 = Release Any CPU|Win32
+	EndGlobalSection
+		]]
+	end
+
+	function suite.onSingleCs_withAnyCpuPlatform()
+		platforms { "Any CPU" }
+		project "MyProject"
+		language "C#"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+		]]
+	end
+
+	function suite.onMixedLanguage_withAnyCpuPlatform()
+		platforms { "Any CPU" }
+		project "MyProject1"
+		language "C#"
+		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
+		
+		project "MyProject2"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.ActiveCfg = Debug Any CPU|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.Build.0 = Debug Any CPU|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.ActiveCfg = Release Any CPU|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.Build.0 = Release Any CPU|Win32
+	EndGlobalSection
+		]]
+	end

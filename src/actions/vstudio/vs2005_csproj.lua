@@ -24,7 +24,7 @@
 		cs2005.projectsettings(prj)
 
 		for cfg in project.eachconfig(prj) do
-			cs2005.propertygroup(cfg)
+			cs2005.propertyGroup(cfg)
 			cs2005.debugProps(cfg)
 			cs2005.outputProps(cfg)
 			cs2005.compilerProps(cfg)		
@@ -344,8 +344,12 @@
 -- tackled all the permutations yet.
 --
 
-	function cs2005.arch(prj)
-		return "AnyCPU"
+	function cs2005.arch(cfg)
+		local arch = vstudio.archFromConfig(cfg)
+		if arch == "Any CPU" then
+			arch = "AnyCPU"
+		end
+		return arch
 	end
 
 
@@ -353,10 +357,11 @@
 -- Write the PropertyGroup element for a specific configuration block.
 --
 
-	function cs2005.propertygroup(cfg)
-		_p(1,'<PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|%s\' ">', premake.esc(cfg.buildcfg), cs2005.arch(cfg))
-		if _ACTION > "vs2008" then
-			_p(2,'<PlatformTarget>%s</PlatformTarget>', cs2005.arch(cfg))
+	function cs2005.propertyGroup(cfg)
+		local arch = cs2005.arch(cfg)
+		_x(1,'<PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|%s\' ">', cfg.buildcfg, arch)
+		if arch ~= "AnyCPU" or _ACTION > "vs2008" then
+			_x(2,'<PlatformTarget>%s</PlatformTarget>', arch)
 		end
 	end
 
@@ -516,7 +521,7 @@
 		cs2005.projectsettings_old(prj)
 
 		for cfg in premake.eachconfig(prj) do
-			cs2005.propertygroup(cfg)
+			cs2005.propertyGroup(cfg)
 
 			if cfg.flags.Symbols then
 				_p('    <DebugSymbols>true</DebugSymbols>')

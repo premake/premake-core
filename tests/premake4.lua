@@ -94,9 +94,9 @@
 	dofile("actions/vstudio/cs2005/test_files.lua")
 	dofile("actions/vstudio/cs2005/test_output_props.lua")
 	dofile("actions/vstudio/cs2005/projectelement.lua")
+	dofile("actions/vstudio/cs2005/test_platform_groups.lua")
 	dofile("actions/vstudio/cs2005/test_project_refs.lua")
 	dofile("actions/vstudio/cs2005/projectsettings.lua")
-	dofile("actions/vstudio/cs2005/propertygroup.lua")
 
 	-- Visual Studio 2005-2010 solutions
 	dofile("actions/vstudio/sln2005/test_dependencies.lua")

@@ -304,7 +304,7 @@
 	function vstudio.projectPlatform(cfg)
 		local platform = cfg.platform
 		if platform then
-			local pltarch = vstudio.archFromPlatform(cfg.platform)
+			local pltarch = vstudio.archFromPlatform(cfg.platform) or platform
 			local cfgarch = vstudio.archFromConfig(cfg)
 			if pltarch == cfgarch then
 				platform = nil
