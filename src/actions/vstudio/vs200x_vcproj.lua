@@ -952,9 +952,13 @@
 
 	function vc200x.links(cfg)
 		local links = config.getlinks(cfg, "all", "fullpath")
-		links = table.concat(links, " ")
-		links = path.translate(links)
-		return links
+		for i, link in ipairs(links) do
+			if link:find(" ", 1, true) then
+				link = '"' .. link .. '"'
+			end
+			links[i] = path.translate(link)
+		end
+		return table.concat(links, " ")
 	end
 
 

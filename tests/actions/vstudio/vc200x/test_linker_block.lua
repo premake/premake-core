@@ -201,3 +201,20 @@
 			/>
 		]]
 	end
+
+
+--
+-- Libraries with spaces in the name must be wrapped in quotes.
+--
+
+	function suite.wrapsWithQuotes_onSpaceInLibraryName()
+		links { "My Lib" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalDependencies="&quot;My Lib.lib&quot;"
+		]]
+	end
+
