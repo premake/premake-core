@@ -102,9 +102,8 @@
 		if (not ok) then error("Error: " .. err, 0) end
 		
 		
-		-- Quick hack: disable the old configuration baking logic for the new
-		-- next-gen actions; this code will go away when everything has been
-		-- ported to the new API
+		-- "Bake" the project information, preparing it for use by the action
+
 		print("Building configurations...")
 		premake.solution.bakeall()
 
