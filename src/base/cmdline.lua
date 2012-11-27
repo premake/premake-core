@@ -16,7 +16,6 @@
 		description = "Choose a C/C++ compiler set",
 		allowed = {
 			{ "gcc", "GNU GCC (gcc/g++)" },
-			{ "ow",  "OpenWatcom"        },
 		}
 	}
 

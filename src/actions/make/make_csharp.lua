@@ -17,7 +17,7 @@
 
 	function make.generate_csharp(prj)
 		-- I've only got one .NET toolset right now
-		local toolset = premake.dotnet		
+		local toolset = premake.tools.dotnet		
 		
 		make.header(prj)
 

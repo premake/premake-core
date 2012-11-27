@@ -48,7 +48,6 @@
 		"tools/dotnet.lua",
 		"tools/gcc.lua",
 		"tools/msc.lua",
-		"tools/ow.lua",
 		"tools/snc.lua",
 
 		-- GNU make action

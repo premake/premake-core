@@ -9,7 +9,7 @@
 	local cs2005  = premake.vstudio.cs2005
 	local project = premake5.project
 	local config = premake5.config
-	local dotnet = premake.dotnet
+	local dotnet = premake.tools.dotnet
 
 
 --
@@ -134,7 +134,7 @@
 				local cfg = project.getfirstconfig(prj)
 				local filecfg = config.getfileconfig(cfg, node.abspath)
 
-				local action = premake.dotnet.getbuildaction(filecfg)
+				local action = dotnet.getbuildaction(filecfg)
 				local fname = path.translate(node.relpath)
 				local elements, dependency = cs2005.getrelated(prj, filecfg, action)
 				

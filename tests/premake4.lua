@@ -84,7 +84,6 @@
 	dofile("tools/test_dotnet.lua")
 	dofile("tools/test_gcc.lua")
 	dofile("tools/test_msc.lua")
-	dofile("tools/test_ow.lua")
 	dofile("tools/test_snc.lua")
 
 	-- Visual Studio 2005-2010 C# projects
