@@ -226,7 +226,7 @@
 	function premake.snc.getlibdirflags(cfg)
 		local result = { }
 		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
-			table.insert(result, '-L' .. _MAKE.esc(value))
+			table.insert(result, '-L' .. premake.make.esc(value))
 		end
 		return result
 	end
@@ -241,7 +241,7 @@
 	function premake.snc.getlinkflags(cfg)
 		local result = { }
 		for _, value in ipairs(premake.getlinks(cfg, "all", "basename")) do
-			table.insert(result, '-l' .. _MAKE.esc(value))
+			table.insert(result, '-l' .. premake.make.esc(value))
 		end
 		return result
 	end
@@ -269,7 +269,7 @@
 	function premake.snc.getincludedirs(includedirs)
 		local result = { }
 		for _,dir in ipairs(includedirs) do
-			table.insert(result, "-I" .. _MAKE.esc(dir))
+			table.insert(result, "-I" .. premake.make.esc(dir))
 		end
 		return result
 	end

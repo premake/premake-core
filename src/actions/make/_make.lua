@@ -4,7 +4,7 @@
 -- Copyright (c) 2002-2012 Jason Perkins and the Premake project
 --
 
-	premake.make = { }
+	premake.make = {}
 	local make = premake.make
 	local solution = premake.solution
 	local project = premake5.project
@@ -14,9 +14,9 @@
 --
 
 	newaction {
-		trigger         = "gmakeng",
-		shortname       = "GNU Make Next-gen",
-		description     = "Experimental GNU makefiles for POSIX, MinGW, and Cygwin",
+		trigger         = "gmake",
+		shortname       = "GNU Make",
+		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 
 		-- temporary, until I can phase out the legacy implementations
 		isnextgen = true,
@@ -80,7 +80,6 @@
 --
 
 	function make.detectshell()
-		-- identify the shell type
 		_p('SHELLTYPE := msdos')
 		_p('ifeq (,$(ComSpec)$(COMSPEC))')
 		_p('  SHELLTYPE := posix')
@@ -101,7 +100,7 @@
 		if (type(value) == "table") then
 			result = { }
 			for _,v in ipairs(value) do
-				table.insert(result, _MAKE.esc(v))
+				table.insert(result, make.esc(v))
 			end
 			return result
 		else

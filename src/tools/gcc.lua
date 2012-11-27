@@ -459,7 +459,7 @@
 	function premake.gcc.getlibdirflags(cfg)
 		local result = { }
 		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
-			table.insert(result, '-L' .. _MAKE.esc(value))
+			table.insert(result, '-L' .. make.esc(value))
 		end
 		return result
 	end
@@ -487,16 +487,16 @@
 			else
 				--premake does not support creating frameworks so this is just a SharedLib link
 				--link using -lname
-				table.insert(result, '-l' .. _MAKE.esc(value.linktarget.basename))
+				table.insert(result, '-l' .. premake.make.esc(value.linktarget.basename))
 			end
 		end
 
 		-- "-llib" is fine for system dependencies
 		for _, value in ipairs(premake.getlinks(cfg, "system", "basename")) do
 			if path.getextension(value) == ".framework" then
-				table.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value)))
+				table.insert(result, '-framework ' .. premake.make.esc(path.getbasename(value)))
 			else
-				table.insert(result, '-l' .. _MAKE.esc(value))
+				table.insert(result, '-l' .. premake.make.esc(value))
 			end
 		end
 		return result
@@ -525,7 +525,7 @@
 	function premake.gcc.getincludedirs(includedirs)
 		local result = { }
 		for _,dir in ipairs(includedirs) do
-			table.insert(result, "-I" .. _MAKE.esc(dir))
+			table.insert(result, "-I" .. premake.make.esc(dir))
 		end
 		return result
 	end
