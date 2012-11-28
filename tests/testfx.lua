@@ -241,7 +241,7 @@
 		_OS = _OS_host
 
 		premake.solution.list = { }
-		premake.api.scope = { }
+		premake.api.reset()
 
 		io.indent = nil
 		io.eol = "\n"

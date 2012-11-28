@@ -247,6 +247,20 @@
 
 
 --
+-- Clears all active API objects; resets to root configuration block.
+--
+
+	function api.reset()
+		api.scope = {
+			root = { 
+				configset = configset.root,
+				blocks = {}  -- TODO: remove this when switch-over to new APIs is done
+			}
+		}
+	end
+
+
+--
 -- Set a new array value. Arrays are lists of values stored by "value",
 -- in that new values overwrite old ones, rather than merging like lists.
 --
@@ -887,17 +901,7 @@
 -- Everything below this point is a candidate for deprecation
 -----------------------------------------------------------------------------
 
-
---
--- Set up a dummy "root" container to hold global configuration data. This
--- can go away with the rest of this deprecated code when the new config
--- system is finished.
---
-
-	api.scope.root = {
-		configset = configset.root,
-		blocks = {}
-	}
+	api.reset()
 
 	premake.CurrentContainer = api.scope.root
 

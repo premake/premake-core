@@ -36,6 +36,13 @@
 		_PREMAKE_COMMAND = path.getabsolute(_PREMAKE_COMMAND)
 
 
+		-- The "next-gen" actions have now replaced their deprecated counterparts. 
+		-- Provide a warning for a little while before I remove them entirely.
+		if _ACTION:endswith("ng") then
+			_ACTION = _ACTION:sub(1, -3)
+			print(string.format("** Warning: '%sng' has been deprecated; use '%s' instead", _ACTION, _ACTION))
+		end
+
 		-- Set up the environment for the chosen action early, so side-effects
 		-- can be picked up by the scripts.
 
