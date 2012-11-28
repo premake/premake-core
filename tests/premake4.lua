@@ -88,6 +88,7 @@
 
 	-- Visual Studio 2005-2010 C# projects
 	dofile("actions/vstudio/cs2005/test_assembly_refs.lua")
+	dofile("actions/vstudio/cs2005/test_build_events.lua")
 	dofile("actions/vstudio/cs2005/test_compiler_props.lua")
 	dofile("actions/vstudio/cs2005/test_debug_props.lua")
 	dofile("actions/vstudio/cs2005/test_files.lua")

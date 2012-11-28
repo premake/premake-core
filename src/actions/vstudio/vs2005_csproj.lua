@@ -27,7 +27,7 @@
 			cs2005.propertyGroup(cfg)
 			cs2005.debugProps(cfg)
 			cs2005.outputProps(cfg)
-			cs2005.compilerProps(cfg)		
+			cs2005.compilerProps(cfg)
 			_p(1,'</PropertyGroup>')			
 		end
 
@@ -47,6 +47,8 @@
 		_p('  <Target Name="AfterBuild">')
 		_p('  </Target>')
 		_p('  -->')
+
+		cs2005.buildEvents(prj)
 
 		_p('</Project>')
 	end
@@ -162,6 +164,26 @@
 
 			end
 		}, false)
+	end
+
+
+--
+-- Write out pre- and post-build events, if provided.
+--
+
+	function cs2005.buildEvents(prj)
+		local function output(name, steps)
+			if #steps > 0 then
+				_x(2,'<%sBuildEvent>%s</%sBuildEvent>', name, table.implode(steps, "", "", "\r\n"), name)
+			end
+		end
+
+		if #prj.prebuildcommands > 0 or #prj.postbuildcommands > 0 then
+			_p(1,'<PropertyGroup>')
+			output("Pre", prj.prebuildcommands)			
+			output("Post", prj.postbuildcommands)			
+			_p(1,'</PropertyGroup>')
+		end
 	end
 
 
