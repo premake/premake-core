@@ -8,6 +8,7 @@
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local config = premake5.config
+	local context = premake.context
 	local project = premake5.project
 	local tree = premake.tree
 
@@ -815,7 +816,7 @@
 			
 			-- if there is a file configuration, see if it contains any values
 			-- (will be empty if it matches the project config)
-			local hasSettings = (filecfg ~= nil and filecfg.terms ~= nil)
+			local hasSettings = (filecfg ~= nil and not context.empty(filecfg))
 			
 			-- check to see if this is the PCH source file
 			local isPchSource = (cfg.pchsource == node.abspath and not cfg.flags.NoPCH)

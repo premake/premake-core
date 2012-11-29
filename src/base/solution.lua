@@ -93,6 +93,7 @@
 		-- of the filter terms may be nil, so not safe to use a list
 		local ctx = context.new(sln.configset, environ)
 		context.addterms(ctx, _ACTION)
+		context.compile(ctx)
 
 
 		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 

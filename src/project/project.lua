@@ -78,7 +78,8 @@
 
 		-- if a kind is specified at the project level, use that too
 		context.addterms(ctx, ctx.kind)
-	
+		context.compile(ctx)
+
 		-- attach a bit more local state
 		ctx.solution = sln
 		
@@ -174,6 +175,7 @@
 
 		-- allow configuration to override the project kind
 		context.addterms(ctx, ctx.kind)
+		context.compile(ctx)
 
 		-- attach a bit more local state
 		ctx.project = prj
