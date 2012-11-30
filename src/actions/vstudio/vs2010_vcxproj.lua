@@ -331,6 +331,8 @@
 --
 
 	function vc2010.link(cfg)
+		local explicit = vstudio.needsExplicitLink(cfg)
+
 		_p(2,'<Link>')
 
 		local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
@@ -344,7 +346,7 @@
 		end
 
 		if cfg.kind ~= premake.STATICLIB then
-			vc2010.link_dynamic(cfg)
+			vc2010.link_dynamic(cfg, explicit)
 		end
 
 		_p(2,'</Link>')
@@ -356,13 +358,15 @@
 		-- Left to its own devices, VS will happily link against a project dependency
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
-		_p(2,'<ProjectReference>')
-		_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
-		_p(2,'</ProjectReference>')
+		if explicit then
+			_p(2,'<ProjectReference>')
+			_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
+			_p(2,'</ProjectReference>')
+		end
 	end
 
-	function vc2010.link_dynamic(cfg)
-		vc2010.additionalDependencies(cfg)
+	function vc2010.link_dynamic(cfg, explicit)
+		vc2010.additionalDependencies(cfg, explicit)
 		vc2010.additionalLibraryDirectories(cfg)
 
 		if cfg.kind == premake.SHAREDLIB then
@@ -550,19 +554,20 @@
 -- Write out the linker's additionalDependencies element.
 --
 
-	function vc2010.additionalDependencies(cfg)
+	function vc2010.additionalDependencies(cfg, explicit)
 		local links
-		
+
 		-- check to see if this project uses an external toolset. If so, let the
 		-- toolset define the format of the links
 		local toolset = premake.vstudio.vc200x.toolset(cfg)
 		if toolset then
-			links = toolset.getlinks(cfg, false)
+			links = toolset.getlinks(cfg, not explicit)
 		else
 			-- VS always tries to link against project dependencies, even when those
 			-- projects are excluded from the build. To work around, linking dependent
 			-- projects is disabled, and sibling projects link explicitly
-			links = config.getlinks(cfg, "all", "fullpath")
+			local scope = iif(explicit, "all", "system")
+			links = config.getlinks(cfg, scope, "fullpath")
 		end
 		
 		if #links > 0 then

@@ -385,18 +385,19 @@
 --
 
 	function project.getdependencies(prj)
-		local result = {}
-
-		for cfg in project.eachconfig(prj) do
-			for _, link in ipairs(cfg.links) do
-				local dep = premake.solution.findproject(cfg.solution, link)
-				if dep and not table.contains(result, dep) then
-					table.insert(result, dep)
+		if not prj.dependencies then	
+			local result = {}
+			for cfg in project.eachconfig(prj) do
+				for _, link in ipairs(cfg.links) do
+					local dep = premake.solution.findproject(cfg.solution, link)
+					if dep and not table.contains(result, dep) then
+						table.insert(result, dep)
+					end
 				end
 			end
+			prj.dependencies = result
 		end
-
-		return result
+		return prj.dependencies
 	end
 
 

@@ -36,7 +36,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="false"
@@ -58,7 +57,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="false"
@@ -80,7 +78,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="false"
@@ -118,7 +115,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -138,7 +134,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -160,7 +155,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="2"
 				ModuleDefinitionFile="MyProject.def"
@@ -178,7 +172,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				OutputFile="$(OutDir)\MyProject.exe"
 				LinkIncremental="1"
 		]]
@@ -204,6 +197,61 @@
 
 
 --
+-- Links to system libraries should appear in the list, properly decorated.
+--
+
+	function suite.includesSystemLibs()
+		links { "GL", "GLU" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="GL.lib GLU.lib"
+		]]
+	end
+
+
+--
+-- Links to sibling projects should not appear in the list; Visual Studio
+-- will link to those automatically.
+--
+
+	function suite.excludesSiblings()
+		links { "MyProject2" }
+		project ("MyProject2")
+		kind "StaticLib"
+		language "C++"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\MyProject.exe"
+		]]
+	end
+
+
+--
+-- If the NoImplicitLinking flag is set, sibling projects should
+-- then be added to the list.
+--
+
+	function suite.includesSiblings_onNoImplicitLink()
+		flags { "NoImplicitLink" }
+		links { "MyProject2" }
+		project ("MyProject2")
+		kind "StaticLib"
+		language "C++"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalDependencies="MyProject2.lib"
+		]]
+	end
+
+
+--
 -- Libraries with spaces in the name must be wrapped in quotes.
 --
 
@@ -213,8 +261,6 @@
 		test.capture [[
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="&quot;My Lib.lib&quot;"
 		]]
 	end
-

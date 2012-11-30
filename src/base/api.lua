@@ -562,6 +562,7 @@
 			"NoEditAndContinue",
 			"NoExceptions",
 			"NoFramePointer",
+			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
 			"NoManifest",

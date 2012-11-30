@@ -401,10 +401,13 @@
 
 
 	function vc200x.VCBuiltInLinkerTool(cfg)
+		local explicitLink = vstudio.needsExplicitLink(cfg)
+
 		if cfg.kind ~= premake.STATICLIB then
-			-- Complex builds can fail intermittently, as VS fails to link the
-			-- dependencies. Workaround by explicitly linking siblings.
-			_p(4,'LinkLibraryDependencies="false"')
+			
+			if explicitLink then
+				_p(4,'LinkLibraryDependencies="false"')
+			end
 
 			if cfg.flags.NoImportLib then
 				_p(4,'IgnoreImportLibrary="%s"', bool(true))
@@ -416,7 +419,10 @@
 		end
 
 		if #cfg.links > 0 then
-			_x(4,'AdditionalDependencies="%s"', vc200x.links(cfg))
+			local links = vc200x.links(cfg, explicitLink)
+			if links ~= "" then
+				_x(4,'AdditionalDependencies="%s"', links)
+			end
 		end
 
 		_x(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
@@ -470,13 +476,18 @@
 
 
 	function vc200x.VCExternalLinkerTool(cfg, toolset)
+		local explicitLink = vstudio.needsExplicitLink(cfg)
+
 		local buildoptions = table.join(toolset.getldflags(cfg), cfg.linkoptions)
 		if #buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
 			
 		if #cfg.links > 0 then
-			_x(4,'AdditionalDependencies="%s"', table.concat(toolset.getlinks(cfg), " "))
+			local links = toolset.getlinks(cfg, not explicitLink)
+			if #links > 0 then
+				_x(4,'AdditionalDependencies="%s"', table.concat(links, " "))
+			end
 		end
 			
 		_x(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
@@ -508,12 +519,12 @@
 			end
 		end
 		
-			_p(3,'<Tool')
-			_p(4,'Name="VCManifestTool"')
-			if #manifests > 0 then
-				_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
-			end
-			_p(3,'/>')
+		_p(3,'<Tool')
+		_p(4,'Name="VCManifestTool"')
+		if #manifests > 0 then
+			_x(4,'AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+		end
+		_p(3,'/>')
 	end
 
 
@@ -951,8 +962,9 @@
 -- formatted for Visual Studio's XML.
 --
 
-	function vc200x.links(cfg)
-		local links = config.getlinks(cfg, "all", "fullpath")
+	function vc200x.links(cfg, explicit)
+		local scope = iif(explicit, "all", "system")
+		local links = config.getlinks(cfg, scope, "fullpath")
 		for i, link in ipairs(links) do
 			if link:find(" ", 1, true) then
 				link = '"' .. link .. '"'

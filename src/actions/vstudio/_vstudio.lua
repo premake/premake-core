@@ -8,6 +8,7 @@
 	local vstudio = premake.vstudio
 	local solution = premake.solution
 	local project = premake5.project
+	local config = premake5.config
 
 
 --
@@ -240,6 +241,29 @@
 		local system = premake.api.checkvalue(platform, premake.fields.system)
 		local arch = premake.api.checkvalue(platform, premake.fields.architecture)
 		return architecture(system, arch)
+	end
+
+
+--
+-- If a dependency of a project configuration is excluded from that particular
+-- build configuration or platform, Visual Studio will still try to link it.
+-- This function detects that case, so that the individual actions can work
+-- around it by switching to external linking.
+--
+-- @param cfg
+--    The configuration to test.
+-- @return
+--    True if the configuration excludes one or more dependencies.
+--
+
+	function vstudio.needsExplicitLink(cfg)
+		local ex = cfg.flags.NoImplicitLink
+		if not ex then
+			local prjdeps = project.getdependencies(cfg.project)
+			local cfgdeps = config.getlinks(cfg, "dependencies", "object")
+			ex = #prjdeps ~= #cfgdeps
+		end
+		return ex 
 	end
 
 
