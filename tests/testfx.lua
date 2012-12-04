@@ -1,7 +1,7 @@
 --
 -- tests/testfx.lua
 -- Automated test framework for Premake.
--- Copyright (c) 2008-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2012 Jason Perkins and the Premake project
 --
 
 
@@ -9,24 +9,13 @@
 -- Define a namespace for the testing functions
 --
 
-	test = { }
+	test = {}
 
 
 --
 -- Assertion functions
 --
-	function test.string_contains(buffer, expected)
-		if not string.find(buffer,expected) then
-			test.fail("\n==Fail==: Expected to find :\n%s\nyet it was not found in buffer:\n%s\n", expected,buffer)
-		end
-	end
-	
-	function test.string_does_not_contain(buffer, expected)
-		if string.find(buffer,expected) then
-			test.fail("\n==Fail==: Did not expected to find :\n%s\nyet it was found in buffer:\n%s\n", expected,buffer)
-		end
-	end
-	
+
 	function test.capture(expected)
 		local actual = io.endcapture()
 		
@@ -201,7 +190,7 @@
 -- Define a collection for the test suites
 --
 
-	T = { }
+	T = {}
 
 
 

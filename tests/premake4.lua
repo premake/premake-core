@@ -48,6 +48,7 @@
 	dofile("base/test_detoken.lua")
 	dofile("base/test_include.lua")
 	dofile("base/test_os.lua")
+	dofile("base/test_override.lua")
 	dofile("base/test_path.lua")
 	dofile("base/test_premake_command.lua")
 	dofile("base/test_table.lua")
