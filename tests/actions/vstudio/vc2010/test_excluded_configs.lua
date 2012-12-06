@@ -37,7 +37,7 @@
 
 	local function prepare(platform)
 		local cfg = premake5.project.getconfig(prj, "Debug", platform)
-		vc2010.link(cfg)
+		vc2010.Link(cfg)
 	end
 
 

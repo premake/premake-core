@@ -48,7 +48,7 @@
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
 			vc2010.clCompile(cfg)
 			vc2010.resourceCompile(cfg)
-			vc2010.link(cfg)
+			vc2010.Link(cfg)
 			vc2010.buildEvents(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 		end
@@ -330,7 +330,7 @@
 -- Write out the linker tool block.
 --
 
-	function vc2010.link(cfg)
+	function vc2010.Link(cfg)
 		local explicit = vstudio.needsExplicitLink(cfg)
 
 		_p(2,'<Link>')
@@ -346,13 +346,13 @@
 		end
 
 		if cfg.kind ~= premake.STATICLIB then
-			vc2010.link_dynamic(cfg, explicit)
+			vc2010.LinkDynamic(cfg, explicit)
 		end
 
 		_p(2,'</Link>')
 
 		if cfg.kind == premake.STATICLIB then
-			vc2010.link_static(cfg)
+			vc2010.LinkStatic(cfg)
 		end
 
 		-- Left to its own devices, VS will happily link against a project dependency
@@ -365,7 +365,7 @@
 		end
 	end
 
-	function vc2010.link_dynamic(cfg, explicit)
+	function vc2010.LinkDynamic(cfg, explicit)
 		vc2010.additionalDependencies(cfg, explicit)
 		vc2010.additionalLibraryDirectories(cfg)
 
@@ -380,7 +380,7 @@
 		vc2010.additionalLinkOptions(cfg)
 	end
 
-	function vc2010.link_static(cfg)
+	function vc2010.LinkStatic(cfg)
 		_p(2,'<Lib>')
 		vc2010.additionalLinkOptions(cfg)
 		_p(2,'</Lib>')
