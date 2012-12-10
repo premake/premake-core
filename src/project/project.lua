@@ -78,7 +78,8 @@
 
 		-- if a kind is specified at the project level, use that too
 		context.addterms(ctx, ctx.kind)
-	
+		context.compile(ctx)
+
 		-- attach a bit more local state
 		ctx.solution = sln
 		
@@ -138,10 +139,14 @@
 		-- set the default system and architecture values; for backward 
 		-- compatibility, use platform if it would be a valid value
 		local system = premake.action.current().os or os.get()
-		local architecture
+		local architecture = nil
+
+		-- if the platform's name matches a known system or architecture, use
+		-- that as the default. More than a convenience; this is required to
+		-- work properly with external Visual Studio project files.
 		if platform then
-			system = premake.api.checkvalue(platform, premake.fields.system.allowed) or system
-			architecture = premake.api.checkvalue(platform, premake.fields.architecture.allowed) or architecture
+			system = premake.api.checkvalue(platform, premake.fields.system) or system
+			architecture = premake.api.checkvalue(platform, premake.fields.architecture) or architecture
 		end
 
 		-- set up an environment for expanding tokens contained by this configuration
@@ -170,6 +175,7 @@
 
 		-- allow configuration to override the project kind
 		context.addterms(ctx, ctx.kind)
+		context.compile(ctx)
 
 		-- attach a bit more local state
 		ctx.project = prj
@@ -379,18 +385,19 @@
 --
 
 	function project.getdependencies(prj)
-		local result = {}
-
-		for cfg in project.eachconfig(prj) do
-			for _, link in ipairs(cfg.links) do
-				local dep = premake.solution.findproject(cfg.solution, link)
-				if dep and not table.contains(result, dep) then
-					table.insert(result, dep)
+		if not prj.dependencies then	
+			local result = {}
+			for cfg in project.eachconfig(prj) do
+				for _, link in ipairs(cfg.links) do
+					local dep = premake.solution.findproject(cfg.solution, link)
+					if dep and not table.contains(result, dep) then
+						table.insert(result, dep)
+					end
 				end
 			end
+			prj.dependencies = result
 		end
-
-		return result
+		return prj.dependencies
 	end
 
 

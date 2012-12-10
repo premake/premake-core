@@ -48,29 +48,59 @@
 
 
 --
--- If multiple architectures are used, they should all be listed.
+-- Visual Studio requires that all combinations of configurations and
+-- architectures be listed (even if some pairings would make no sense
+-- for our build, i.e. Win32 DLL DCRT|PS3).
 --
 
 	function suite.allArchitecturesListed_onMultipleArchitectures()
+		platforms { "32b", "64b" }
+		configuration "32b"
+			architecture "x32"
+		configuration "64b"
+			architecture "x64"
+		prepare()
+		test.capture [[
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug 32b|Win32">
+			<Configuration>Debug 32b</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug 32b|x64">
+			<Configuration>Debug 32b</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug 64b|Win32">
+			<Configuration>Debug 64b</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug 64b|x64">
+			<Configuration>Debug 64b</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release 32b|Win32">
+		]]
+	end
+
+
+--
+-- Sometimes unrolling the configuration-architecture combinations
+-- can cause duplicates. Make sure those get removed.
+--
+
+	function suite.allArchitecturesListed_onImplicitArchitectures()
 		platforms { "x32", "x64" }
 		prepare()
 		test.capture [[
 	<ItemGroup Label="ProjectConfigurations">
-		<ProjectConfiguration Include="Debug x32|Win32">
-			<Configuration>Debug x32</Configuration>
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
 			<Platform>Win32</Platform>
 		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug x32|x64">
-			<Configuration>Debug x32</Configuration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
 			<Platform>x64</Platform>
 		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug x64|Win32">
-			<Configuration>Debug x64</Configuration>
-			<Platform>Win32</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug x64|x64">
-			<Configuration>Debug x64</Configuration>
-			<Platform>x64</Platform>
-		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
 		]]
 	end

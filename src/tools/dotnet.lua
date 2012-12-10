@@ -5,10 +5,10 @@
 --
 
 	
-	premake.dotnet = { }
-	local dotnet = premake.dotnet
+	premake.tools.dotnet = {}
+	local dotnet = premake.tools.dotnet
 	
-	premake.dotnet.namestyle = "windows"
+	dotnet.namestyle = "windows"
 	
 
 --

@@ -24,7 +24,7 @@
 
 	local function prepare(platform)
 		cfg = project.getconfig(prj, "Debug", platform)
-		vc2010.link(cfg)
+		vc2010.Link(cfg)
 	end
 
 
@@ -41,9 +41,6 @@
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<ImportLibrary>MyProject.lib</ImportLibrary>
 		</Link>
-		<ProjectReference>
-			<LinkLibraryDependencies>false</LinkLibraryDependencies>
-		</ProjectReference>
 		]]
 	end
 
@@ -118,6 +115,25 @@
 
 
 --
+-- Test the handling of the NoImplicitLink flag.
+--
+
+	function suite.linkDependencies_onNoImplicitLink()
+		flags "NoImplicitLink"
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
+		</Link>
+		<ProjectReference>
+			<LinkLibraryDependencies>false</LinkLibraryDependencies>
+		</ProjectReference>
+		]]
+	end
+
+--
 -- Test the handling of the Symbols flag.
 --
 
@@ -166,12 +182,30 @@
 
 
 --
--- Let to its own devices, VS will attempt to link against dependencies
--- that have been excluded from the build. To work around this, dependency
--- linking is turned off, and siblings are linked explicitly instead.
+-- Sibling projects do not need to be listed in additional dependencies, as Visual
+-- Studio will link them implicitly.
 --
 
-	function suite.includeSiblings_onOnlySiblingProjectLinks()
+	function suite.excludeSiblings()
+		links { "MyProject2" }
+		test.createproject(sln)
+		kind "SharedLib"
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
+		]]
+	end
+
+
+--
+-- If the NoImplicitLink flag is set, all dependencies should be listed explicitly.
+--
+
+	function suite.includeSiblings_onNoImplicitLink()
+		flags { "NoImplicitLink" }
 		links { "MyProject2" }
 		test.createproject(sln)
 		kind "SharedLib"
@@ -181,33 +215,11 @@
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<AdditionalDependencies>MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-		]]
-	end
-
-	function suite.includeSiblings_OnMixedLinks()
-		links { "MyProject2", "kernel32" }
-		test.createproject(sln)
-		kind "SharedLib"
-		prepare()
-		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>MyProject2.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-		]]
-	end
-
-	function suite.excludeSibling_OnExcludedConfig()
-		links { "MyProject2", "kernel32" }
-		test.createproject(sln)
-		kind "SharedLib"
-		removeconfigurations { "Debug" }
-		prepare()
-		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
+		</Link>
+		<ProjectReference>
+			<LinkLibraryDependencies>false</LinkLibraryDependencies>
+		</ProjectReference>
 		]]
 	end
 
@@ -312,25 +324,5 @@
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<AdditionalDependencies>-lfs_stub;-lnet_stub;%(AdditionalDependencies)</AdditionalDependencies>
-		]]
-	end
-
-
---
--- On the PS3, sibling libraries should be linked directly.
---
-
-	function suite.includeSiblings_onPS3SiblingLinks()
-		system "PS3"
-		links { "MyProject2" }
-		test.createproject(sln)
-		kind "StaticLib"
-		system "PS3"
-		prepare()
-		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>libMyProject2.a;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end

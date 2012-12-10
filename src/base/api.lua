@@ -156,15 +156,21 @@
 
 
 --
--- Check to see if a value exists in a list of values, using a 
--- case-insensitive match. If the value does exist, the canonical
--- version contained in the list is returned, so future tests can
--- use case-sensitive comparisions.
+-- Check to see if a value is valid for a particular field.
+--
+-- @param value
+--    The value to check.
+-- @param field
+--    The field to check against.
+-- @return
+--    If the value is valid for this field, the canonical version
+--    of that value is returned. If the value is not valid two
+--    values are returned: nil, and an error message.
 --
 
-	function api.checkvalue(value, allowed, aliases)
-		if aliases then
-			for k,v in pairs(aliases) do
+	function api.checkvalue(value, field)
+		if field.aliases then
+			for k,v in pairs(field.aliases) do
 				if value:lower() == k:lower() then
 					value = v
 					break
@@ -172,11 +178,11 @@
 			end
 		end 
 			
-		if allowed then
-			if type(allowed) == "function" then
-				return allowed(value)
+		if field.allowed then
+			if type(field.allowed) == "function" then
+				return field.allowed(value)
 			else
-				for _,v in ipairs(allowed) do
+				for _,v in ipairs(field.allowed) do
 					if value:lower() == v:lower() then
 						return v
 					end
@@ -237,6 +243,20 @@
 		else
 			return api["set" .. api.getbasekind(field)]
 		end
+	end
+
+
+--
+-- Clears all active API objects; resets to root configuration block.
+--
+
+	function api.reset()
+		api.scope = {
+			root = { 
+				configset = configset.root,
+				blocks = {}  -- TODO: remove this when switch-over to new APIs is done
+			}
+		}
 	end
 
 
@@ -380,7 +400,7 @@
 			error({ msg="expected string; got table" })
 		end
 
-		local value, err = api.checkvalue(value, field.allowed, field.aliases)
+		local value, err = api.checkvalue(value, field)
 		if err then error({ msg=err }) end
 
 		-- if the target is the project, configset will be set and I can push
@@ -542,6 +562,7 @@
 			"NoEditAndContinue",
 			"NoExceptions",
 			"NoFramePointer",
+			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
 			"NoManifest",
@@ -881,17 +902,7 @@
 -- Everything below this point is a candidate for deprecation
 -----------------------------------------------------------------------------
 
-
---
--- Set up a dummy "root" container to hold global configuration data. This
--- can go away with the rest of this deprecated code when the new config
--- system is finished.
---
-
-	api.scope.root = {
-		configset = configset.root,
-		blocks = {}
-	}
+	api.reset()
 
 	premake.CurrentContainer = api.scope.root
 

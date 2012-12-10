@@ -48,6 +48,7 @@
 	dofile("base/test_detoken.lua")
 	dofile("base/test_include.lua")
 	dofile("base/test_os.lua")
+	dofile("base/test_override.lua")
 	dofile("base/test_path.lua")
 	dofile("base/test_premake_command.lua")
 	dofile("base/test_table.lua")
@@ -58,7 +59,7 @@
 	dofile("solution/test_objdirs.lua")
 	
 	-- Project object tests
-	-- dofile("test_project.lua")
+	dofile("project/test_config_maps.lua")
 	dofile("project/test_eachconfig.lua")
 	dofile("project/test_filtering.lua")
 	dofile("project/test_filename.lua")
@@ -84,31 +85,31 @@
 	dofile("tools/test_dotnet.lua")
 	dofile("tools/test_gcc.lua")
 	dofile("tools/test_msc.lua")
-	dofile("tools/test_ow.lua")
 	dofile("tools/test_snc.lua")
 
 	-- Visual Studio 2005-2010 C# projects
 	dofile("actions/vstudio/cs2005/test_assembly_refs.lua")
+	dofile("actions/vstudio/cs2005/test_build_events.lua")
 	dofile("actions/vstudio/cs2005/test_compiler_props.lua")
 	dofile("actions/vstudio/cs2005/test_debug_props.lua")
 	dofile("actions/vstudio/cs2005/test_files.lua")
 	dofile("actions/vstudio/cs2005/test_output_props.lua")
 	dofile("actions/vstudio/cs2005/projectelement.lua")
+	dofile("actions/vstudio/cs2005/test_platform_groups.lua")
 	dofile("actions/vstudio/cs2005/test_project_refs.lua")
 	dofile("actions/vstudio/cs2005/projectsettings.lua")
-	dofile("actions/vstudio/cs2005/propertygroup.lua")
 
 	-- Visual Studio 2005-2010 solutions
 	dofile("actions/vstudio/sln2005/test_dependencies.lua")
 	dofile("actions/vstudio/sln2005/test_header.lua")
 	dofile("actions/vstudio/sln2005/test_projects.lua")
-	dofile("actions/vstudio/sln2005/test_project_platforms.lua")
-	dofile("actions/vstudio/sln2005/test_solution_platforms.lua")
+	dofile("actions/vstudio/sln2005/test_platforms.lua")
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	dofile("actions/vstudio/vc200x/test_compiler_block.lua")
 	dofile("actions/vstudio/vc200x/test_configuration.lua")
 	dofile("actions/vstudio/vc200x/test_debug_settings.lua")
+	dofile("actions/vstudio/vc200x/test_excluded_configs.lua")
 	dofile("actions/vstudio/vc200x/test_external_compiler.lua")
 	dofile("actions/vstudio/vc200x/test_external_linker.lua")
 	dofile("actions/vstudio/vc200x/test_files.lua")
@@ -123,6 +124,7 @@
 	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
 	dofile("actions/vstudio/vc2010/test_config_props.lua")
 	dofile("actions/vstudio/vc2010/test_debug_settings.lua")
+	dofile("actions/vstudio/vc2010/test_excluded_configs.lua")
 	dofile("actions/vstudio/vc2010/test_globals.lua")
 	dofile("actions/vstudio/vc2010/test_header.lua")
 	dofile("actions/vstudio/vc2010/test_files.lua")

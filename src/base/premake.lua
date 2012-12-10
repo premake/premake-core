@@ -55,3 +55,25 @@
 		callback(obj)
 		f:close()
 	end
+
+
+--
+-- Override an existing function with a new one; the original function
+-- is passed as the first argument to the replacement when called.
+--
+-- @param scope
+--    The table containing the function to be overridden. Use _G for
+--    global functions.
+-- @param name
+--    The name of the function to override.
+-- @param repl
+--    The replacement function. The first argument to the function
+--    will be the original implementation.
+--
+
+	function premake.override(scope, name, repl)
+		local original = scope[name]
+		scope[name] = function(...)
+			return repl(original, ...)
+		end
+	end

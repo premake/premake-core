@@ -6,8 +6,7 @@
 
 	T.tools_dotnet = {}
 	local suite = T.tools_dotnet
-
-	local dotnet = premake.dotnet
+	local dotnet = premake.tools.dotnet
 
 
 --
