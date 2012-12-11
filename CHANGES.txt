@@ -24,6 +24,8 @@
 * Visual Studio C# projects now support architectures
 * Visual Studio C# projects now support pre- and post-build commands
 * Added NoImplicitLink flag to force explicit linking from Visual Studio
+* Decoupled VS2010 smaller type checks (/RTCc) from extra warnings (/W4)
+* Added NoRuntimeChecks flag to disable Visual Studio default checks
 
 
 -------

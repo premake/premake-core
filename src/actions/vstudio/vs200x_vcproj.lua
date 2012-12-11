@@ -273,9 +273,7 @@
 			_p(4,'MinimalRebuild="%s"', bool(true))
 		end
 		
-		if vc200x.optimization(cfg) == 0 and not cfg.flags.Managed then
-			_p(4,'BasicRuntimeChecks="3"')
-		end
+		vc200x.BasicRuntimeChecks(cfg)
 
 		if vc200x.optimization(cfg) ~= 0 then
 			_p(4,'StringPooling="%s"', bool(true))
@@ -378,6 +376,16 @@
 		vc200x.forcedIncludeFiles(cfg)
 	end
 
+
+	function vc200x.BasicRuntimeChecks(cfg)
+		if not premake.config.isoptimizedbuild(cfg) 
+			and not cfg.flags.Managed 
+			and not cfg.flags.NoRuntimeChecks
+		then
+			_p(4,'BasicRuntimeChecks="3"')
+		end
+	end
+	
 
 --
 -- Write out the VCLinkerTool element.

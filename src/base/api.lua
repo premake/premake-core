@@ -569,6 +569,7 @@
 			"NoMinimalRebuild",
 			"NoNativeWChar",
 			"NoPCH",
+			"NoRuntimeChecks",
 			"NoRTTI",
 			"NoWarnings",
 			"Optimize",

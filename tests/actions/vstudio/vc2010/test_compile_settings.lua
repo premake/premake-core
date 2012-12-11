@@ -22,11 +22,11 @@
 
 	local function prepare(platform)
 		cfg = project.getconfig(prj, "Debug", platform)
-		vc2010.clCompile(cfg)
+		vc2010.ClCompile(cfg)
 	end
 
 
- --
+--
 -- Check the basic element structure with default settings.
 --
 
@@ -553,5 +553,21 @@
 			<PrecompiledHeader>NotUsing</PrecompiledHeader>
 			<WarningLevel>Level3</WarningLevel>
 			<ForcedIncludeFiles>stdafx.h;include/sys.h</ForcedIncludeFiles>
+		]]
+	end
+
+
+--
+-- Check handling of the NoRuntimeChecks flag.
+--
+
+	function suite.onNoRuntimeChecks()
+		flags { "NoRuntimeChecks" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 		]]
 	end

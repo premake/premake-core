@@ -46,7 +46,7 @@
 
 		for cfg in project.eachconfig(prj) do
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
-			vc2010.clCompile(cfg)
+			vc2010.ClCompile(cfg)
 			vc2010.resourceCompile(cfg)
 			vc2010.Link(cfg)
 			vc2010.buildEvents(cfg)
@@ -221,7 +221,7 @@
 -- Write the the <ClCompile> compiler settings block.
 --
 
-	function vc2010.clCompile(cfg)
+	function vc2010.ClCompile(cfg)
 		_p(2,'<ClCompile>')
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
@@ -231,7 +231,10 @@
 			_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
 		end
 
-        vc2010.warnings(cfg)
+		vc2010.WarningLevel(cfg)
+		vc2010.TreatWarningAsError(cfg)
+        vc2010.BasicRuntimeChecks(cfg)
+
 		vc2010.preprocessorDefinitions(cfg.defines)
 		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
 
@@ -698,24 +701,29 @@
 
 
 --
--- Convert Premake warning flags to Visual Studio equivalents.
+-- Handlers for individual project elements.
 --
 
-	function vc2010.warnings(cfg)
-		local warnLevel = 3 -- default to normal warning level if there is not any warnings flags specified
-		if cfg.flags.NoWarnings then
-			warnLevel = 0
-		elseif cfg.flags.ExtraWarnings then
-			warnLevel = 4
+	function vc2010.BasicRuntimeChecks(cfg)
+		if cfg.flags.NoRuntimeChecks then
+			_p(3,'<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
 		end
-		_p(3,'<WarningLevel>Level%d</WarningLevel>', warnLevel)
+	end
 
-		-- Ohter warning blocks only when NoWarnings are not specified
-		if cfg.flags.NoWarnings then
-			return
-		end
 
-		if cfg.flags.FatalWarnings then
+	function vc2010.TreatWarningAsError(cfg)
+		if cfg.flags.FatalWarnings and not cfg.flags.NoWarnings then
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+		end		
+	end
+
+
+	function vc2010.WarningLevel(cfg)
+		local w = 3
+		if cfg.flags.NoWarnings then
+			w = 0
+		elseif cfg.flags.ExtraWarnings then
+			w = 4
 		end
+		_p(3,'<WarningLevel>Level%d</WarningLevel>', w)
 	end
