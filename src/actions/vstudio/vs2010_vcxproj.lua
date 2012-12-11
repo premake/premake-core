@@ -715,10 +715,6 @@
 			return
 		end
 
-		if premake.config.isdebugbuild(cfg) and cfg.flags.ExtraWarnings then
-			_p(3,'<SmallerTypeCheck>true</SmallerTypeCheck>')
-		end
-
 		if cfg.flags.FatalWarnings then
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
 		end

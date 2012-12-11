@@ -251,21 +251,6 @@
 		]]
 	end
 
---
--- Debug builds with extra warnings unlock smaller type checks.
---
-
-	function suite.smallerTypeCheck_onDebugWithExtraWarnings()
-		flags { "Symbols", "ExtraWarnings" }
-		prepare()
-		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level4</WarningLevel>
-			<SmallerTypeCheck>true</SmallerTypeCheck>
-		]]
-	end
-
 
 --
 -- If the StaticRuntime flag is specified, add the <RuntimeLibrary> element.
