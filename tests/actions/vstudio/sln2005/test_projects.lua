@@ -13,17 +13,16 @@
 -- Setup 
 --
 
-	local sln, prj
+	local sln
 	
 	function suite.setup()
-		_ACTION = "vs2005"
-		sln, prj = test.createsolution()
-		uuid "AE61726D-187C-E440-BD07-2556188A6565"
+		_ACTION = "vs2008"
+		sln = solution "MySolution"
+		configurations { "Debug", "Release" }		
 	end
 	
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
-		sln2005.project_ng(prj)
+		sln2005.projects(sln)
 	end
 
 
@@ -32,9 +31,10 @@
 --
 
 	function suite.structureIsOkay_onCpp()
+		project "MyProject"
 		prepare()
 		test.capture [[
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "MyProject.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "MyProject.vcproj", "{42B5DBC6-AE1F-903D-F75D-41E363076E92}"
 EndProject
 		]]
 	end
@@ -45,10 +45,11 @@ EndProject
 --
 
 	function suite.structureIsOkay_onCSharp()
+		project "MyProject"
 		language "C#"
 		prepare()
 		test.capture [[
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyProject", "MyProject.csproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyProject", "MyProject.csproj", "{42B5DBC6-AE1F-903D-F75D-41E363076E92}"
 EndProject
 		]]
 	end
@@ -59,11 +60,44 @@ EndProject
 --
 
 	function suite.projectNamesAreEscaped()
-		prj.name = 'My "x64" Project'
-		filename ('My "x64" Project')
+		project 'My "x64" Project'
+		filename 'My "x64" Project'
 		prepare()
 		test.capture [[
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "My &quot;x64&quot; Project", "My &quot;x64&quot; Project.vcproj", "{AE61726D-187C-E440-BD07-2556188A6565}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "My &quot;x64&quot; Project", "My &quot;x64&quot; Project.vcproj", "{48E4ED8F-34DD-0CE2-5D0F-F2664967ECED}"
+EndProject
+		]]
+	end
+
+
+--
+-- Check the structure of a top-level group entry.
+--
+
+	function suite.onSingleTopLevelGroup()
+		group "Alpha"
+		project "MyProject"
+		prepare()
+		test.capture [[
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
+EndProject
+		]]
+	end
+
+
+
+--
+-- Nested groups should be listed individually.
+--
+
+	function suite.OnNestedGroups()
+		group "Alpha/Beta"
+		project "MyProject"
+		prepare()
+		test.capture [[
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{96080FE9-82C0-5036-EBC7-2992D79EEB26}"
 EndProject
 		]]
 	end

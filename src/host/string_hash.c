@@ -32,4 +32,4 @@ unsigned long do_hash(const char* str, int seed)
 	}
 
 	return hash;
-}	
+}

@@ -35,7 +35,7 @@
 		cset.basedir = cwd
 		cset.location = cwd
 		cset.filename = name
-		cset.uuid = os.uuid()
+		cset.uuid = os.uuid(name)
 		prj.configset = cset
 
 		-- attach a type descriptor

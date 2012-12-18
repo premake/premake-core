@@ -9,6 +9,7 @@
 	local sln2005 = premake.vstudio.sln2005
 	local solution = premake.solution
 	local project = premake5.project
+	local tree = premake.tree
 
 
 --
@@ -22,14 +23,12 @@
 		_p('\239\187\191')
 
 		sln2005.header(sln)
-
-		for prj in premake.solution.eachproject_ng(sln) do
-			sln2005.project_ng(prj)
-		end
+		sln2005.projects(sln)
 
 		_p('Global')
 		sln2005.configurationPlatforms(sln)
 		sln2005.properties(sln)
+		sln2005.NestedProjects(sln)
 		_p('EndGlobal')
 	end
 
@@ -51,20 +50,32 @@
 
 
 --
--- Write out an entry for a project
+-- Write out the list of projects and groups contained by the solution.
 --
 
-	function sln2005.project_ng(prj)
-		-- Build a relative path from the solution file to the project file
-		local slnpath = premake.solution.getlocation(prj.solution)
-		local prjpath = vstudio.projectfile(prj)
-		prjpath = path.translate(path.getrelative(slnpath, prjpath))
+	function sln2005.projects(sln)
+		local tr = solution.grouptree(sln)
+		tree.traverse(tr, {
+			onleaf = function(n)
+				local prj = n.project
+
+				-- Build a relative path from the solution file to the project file
+				local slnpath = premake.solution.getlocation(prj.solution)
+				local prjpath = vstudio.projectfile(prj)
+				prjpath = path.translate(path.getrelative(slnpath, prjpath))
 		
-		_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
-		if _ACTION < "vs2012" then
-			sln2005.projectdependencies_ng(prj)
-		end
-		_p('EndProject')
+				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
+				if _ACTION < "vs2012" then
+					sln2005.projectdependencies_ng(prj)
+				end
+				_p('EndProject')
+			end,
+			
+			onbranch = function(n)
+				_x('Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "%s", "%s", "{%s}"', n.name, n.name, n.uuid)
+				_p('EndProject')
+			end,				
+		})
 	end
 
 
@@ -127,4 +138,25 @@
 		_p('\tGlobalSection(SolutionProperties) = preSolution')
 		_p('\t\tHideSolutionNode = FALSE')
 		_p('\tEndGlobalSection')
+	end
+
+
+--
+-- Write out the NestedProjects block, which describes the structure of
+-- any solution groups.
+--
+
+	function sln2005.NestedProjects(sln)
+		local tr = solution.grouptree(sln)
+		if #tr.children > 0 and #tr.children[1].children > 0 then
+			_p(1,'GlobalSection(NestedProjects) = preSolution')
+			tree.traverse(tr, {
+				onnode = function(n)
+					if n.parent.uuid then
+						_p(2,'{%s} = {%s}', (n.project or n).uuid, n.parent.uuid)
+					end
+				end
+			})
+			_p(1,'EndGlobalSection')
+		end
 	end

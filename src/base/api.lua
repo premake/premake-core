@@ -252,7 +252,7 @@
 
 	function api.reset()
 		api.scope = {
-			root = { 
+			root = {
 				configset = configset.root,
 				blocks = {}  -- TODO: remove this when switch-over to new APIs is done
 			}
@@ -989,7 +989,17 @@
 
 		return cfg
 	end
-	
+
+
+--
+-- Begin a new solution group, which will contain any subsequent projects.
+--
+
+	function group(name)
+		api.scope.group = name
+	end
+
+
 	local function createproject(name, sln, isUsage)
 		local prj = premake5.project.new(sln, name)
 
@@ -1017,6 +1027,7 @@
 		
 		prj.script = _SCRIPT
 		prj.usage = isUsage;
+		prj.group = api.scope.group or ""
 
 		return prj;
 	end
@@ -1058,6 +1069,10 @@
 	end
 
 
+--
+-- Define a new solution object.
+--
+
 	function solution(name)
 		if not name then
 			if type(premake.CurrentContainer) == "project" then
@@ -1074,11 +1089,12 @@
 		end
 
 		-- add an empty, global configuration
-		configuration { }
+		configuration {}
 		
 		-- this is the new place for storing scoped objects
 		api.scope.solution = premake.CurrentContainer
 		api.scope.project = nil
+		api.scope.group = nil
 		
 		return premake.CurrentContainer
 	end
