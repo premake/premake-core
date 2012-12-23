@@ -38,7 +38,7 @@
 		ctx._cfgset = cfgset
 		ctx.environ = environ or {}
 		ctx._filename = { filename } or {}
-		ctx._terms = {}
+		ctx.terms = {}
 		
 		-- when a missing field is requested, fetch it from my config
 		-- set, and then cache the value for future lookups
@@ -62,7 +62,7 @@
 			terms = table.flatten({terms})
 			for _, term in ipairs(terms) do
 				-- make future tests case-insensitive
-				table.insert(ctx._terms, term:lower())
+				table.insert(ctx.terms, term:lower())
 			end
 		end
 	end
@@ -78,7 +78,7 @@
 --
 
 	function context.copyterms(ctx, src)
-		ctx._terms = table.arraycopy(src._terms)
+		ctx.terms = table.arraycopy(src.terms)
 	end
 
 
@@ -91,7 +91,7 @@
 --
 
 	function context.compile(ctx)
-		ctx._cfgset = configset.compile(ctx._cfgset, ctx._terms, ctx._filename[1])
+		ctx._cfgset = configset.compile(ctx._cfgset, ctx.terms, ctx._filename[1])
 	end
 
 
@@ -124,7 +124,7 @@
 --
 
 	function context.fetchvalue(ctx, key)
-		local value = configset.fetchvalue(ctx._cfgset, key, ctx._terms, ctx._filename[1])
+		local value = configset.fetchvalue(ctx._cfgset, key, ctx.terms, ctx._filename[1])
 		if value then
 			-- do I need to expand tokens?
 			local field = premake.fields[key]

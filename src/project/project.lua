@@ -82,6 +82,15 @@
 
 		-- attach a bit more local state
 		ctx.solution = sln
+
+		-- create a list of build cfg/platform pairs for the project
+		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
+		
+		-- roll up any config maps from the contained configurations
+		project.bakeconfigmap(ctx, prj.configset, cfgs)
+		
+		-- apply any mappings to the project's list of configurations and platforms
+		ctx._cfglist = project.bakeconfiglist(ctx, cfgs)
 		
 		
 		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
@@ -109,12 +118,9 @@
 		setmetatable(prj, getmetatable(result))
 
 
-		-- apply any mappings to the project's configuration set
-		result.cfglist = project.bakeconfigmap(result)
-
 		-- bake all configurations contained by the project
 		local configs = {}
-		for _, pairing in ipairs(result.cfglist) do
+		for _, pairing in ipairs(result._cfglist) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = project.bakeconfig(result, buildcfg, platform)
@@ -127,6 +133,79 @@
 		result.configs = configs
 		
 		return result
+	end
+
+--
+-- It can be useful to state "use this map if this configuration is present".
+-- To allow this to happen, config maps that are specified within a project
+-- configuration are allowed to "bubble up" to the top level. Currently, 
+-- maps are the only values that get this special behavior.
+--
+-- @param ctx
+--    The project context information.
+-- @param cset
+--    The project's original configuration set, which contains the settings
+--    of all the project configurations.
+-- @param cfgs
+--    The list of the project's build cfg/platform pairs.
+--
+
+	function project.bakeconfigmap(ctx, cset, cfgs)
+		-- It can be useful to state "use this map if this configuration is present".
+		-- To allow this to happen, config maps that are specified within a project
+		-- configuration are allowed to "bubble up" to the top level. Currently, 
+		-- maps are the only values that get this special behavior.
+		for _, cfg in ipairs(cfgs) do
+			local terms = table.join(ctx.terms, (cfg[1] or ""):lower(), (cfg[2] or ""):lower())
+			local map = configset.fetchvalue(cset, "configmap", terms)
+			if map then
+				for key, value in pairs(map) do
+					ctx.configmap[key] = value
+				end
+			end
+		end
+
+	end
+
+
+--
+-- Builds a list of build configuration/platform pairs for a project,
+-- along with a mapping between the solution and project configurations.
+--
+-- @param ctx
+--    The project context information.
+-- @param cfgs
+--    The list of the project's build cfg/platform pairs.
+-- @return
+--     An array of the project's build configuration/platform pairs,
+--     based on any discovered mappings.
+--
+
+	function project.bakeconfiglist(ctx, cfgs)
+		-- run them all through the project's config map
+		for i, cfg in ipairs(cfgs) do
+			cfgs[i] = project.mapconfig(ctx, cfg[1], cfg[2])
+		end
+		
+		-- walk through the result and remove any duplicates
+		local buildcfgs = {}
+		local platforms = {}
+		
+		for _, pairing in ipairs(cfgs) do
+			local buildcfg = pairing[1]
+			local platform = pairing[2]
+			
+			if not table.contains(buildcfgs, buildcfg) then
+				table.insert(buildcfgs, buildcfg)
+			end
+			
+			if platform and not table.contains(platforms, platform) then
+				table.insert(platforms, platform)
+			end
+		end
+
+		-- merge these de-duped lists back into pairs for the final result
+		return table.fold(buildcfgs, platforms)	
 	end
 
 
@@ -173,8 +252,10 @@
 		ctx.architecture = ctx.architecture or architecture
 		context.addterms(ctx, ctx.architecture)
 
-		-- allow configuration to override the project kind
+		-- if a kind is set, allow that to influence the configuration
 		context.addterms(ctx, ctx.kind)
+		
+		-- process that
 		context.compile(ctx)
 
 		-- attach a bit more local state
@@ -183,8 +264,7 @@
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
-		ctx.language = prj.language
-
+		ctx.language = prj.language		
 
 		
 		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
@@ -241,48 +321,6 @@
 
 
 --
--- Builds a list of build configuration/platform pairs for a project,
--- along with a mapping between the solution and project configurations.
--- @param prj
---    The project to query.
--- @return
---    Two values: 
---      - an array of the project's build configuration/platform
---        pairs, based on the result of the mapping
---      - a key-value table that maps solution build configuration/
---        platform pairs to project configurations.
---
-
-	function project.bakeconfigmap(prj)
-		local configs = table.fold(prj.configurations or {}, prj.platforms or {})
-		for i, cfg in ipairs(configs) do
-			configs[i] = project.mapconfig(prj, cfg[1], cfg[2])
-		end
-		
-		-- walk through the result and remove duplicates
-		local buildcfgs = {}
-		local platforms = {}
-		
-		for _, pairing in ipairs(configs) do
-			local buildcfg = pairing[1]
-			local platform = pairing[2]
-			
-			if not table.contains(buildcfgs, buildcfg) then
-				table.insert(buildcfgs, buildcfg)
-			end
-			
-			if platform and not table.contains(platforms, platform) then
-				table.insert(platforms, platform)
-			end
-		end
-
-		-- merge these canonical lists back into pairs for the final result
-		configs = table.fold(buildcfgs, platforms)	
-		return configs
-	end
-
-
---
 -- Returns an iterator function for the configuration objects contained by
 -- the project. Each configuration corresponds to a build configuration/
 -- platform pair (i.e. "Debug|x32") as specified in the solution.
@@ -300,7 +338,7 @@
 			prj = project.bake(prj, prj.solution)
 		end
 
-		local configs = prj.cfglist
+		local configs = prj._cfglist
 		local count = #configs
 		
 		local i = 0

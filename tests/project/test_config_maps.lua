@@ -145,3 +145,22 @@
 		prepare("Debug", "PS3")
 		test.isequal({ "Development", "x64" }, { cfg.buildcfg, cfg.platform })
 	end
+
+
+--
+-- To allow some measure of global configuration, config maps that are contained
+-- in configuration blocks are allowed to bubble up to the project level.
+--
+
+	function suite.canBubbleUp_onConfiguration()
+		platforms { "XCUA", "XCUB" }
+		
+		configuration { "CCU" }
+		configmap { XCUA = "CCU", XCUB = "CCU" }
+
+		project "MyProject"
+		platforms { "CCU" }
+		
+		prepare("Debug", "XCUA")
+		test.isequal({"Debug", "CCU"}, {cfg.buildcfg, cfg.platform})
+	end
