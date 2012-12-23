@@ -19,6 +19,7 @@
 	function vc2010.generate_ng(prj)
 		io.eol = "\r\n"
 		io.indent = "  "
+		io.utf8()
 
 		vc2010.header_ng("Build")
 		vc2010.projectConfigurations(prj)

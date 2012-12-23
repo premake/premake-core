@@ -78,6 +78,15 @@
 
 
 --
+-- Output a UTF-8 signature.
+--
+
+	function io.utf8()
+		io.write('\239\187\191')
+	end
+
+
+--
 -- Because I use io.printf() so often in the generators, create a terse shortcut
 -- for it. This saves me typing, and also reduces the size of the executable.
 --
