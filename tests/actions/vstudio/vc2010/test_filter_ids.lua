@@ -4,8 +4,7 @@
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	T.vs2010_filter_ids = { }
-	local suite = T.vs2010_filter_ids
+	local suite = test.declare("vs2010_filter_ids")
 	local vc2010 = premake.vstudio.vc2010	
 
 
@@ -14,18 +13,10 @@
 --
 
 	local sln, prj
-	local os_uuid
 	
 	function suite.setup()
-		os_uuid = os.uuid
-		os.uuid = function() return "00112233-4455-6677-8888-99AABBCCDDEE" end
-		
 		_ACTION = "vs2010"
 		sln = test.createsolution()
-	end
-	
-	function suite.teardown()
-		os.uuid = os_uuid
 	end
 
 	local function prepare()
@@ -55,7 +46,7 @@
 		test.capture [[
 	<ItemGroup>
 		<Filter Include="src">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
+			<UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 		]]
@@ -72,10 +63,10 @@
 		test.capture [[
 	<ItemGroup>
 		<Filter Include="src">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
+			<UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
 		</Filter>
 		<Filter Include="src\departures">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
+			<UniqueIdentifier>{BB36ED8F-A704-E195-9098-51BC7C05BDFA}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 		]]
@@ -93,7 +84,7 @@
 		test.capture [[
 	<ItemGroup>
 		<Filter Include="Source Files">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
+			<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 		]]
@@ -106,10 +97,10 @@
 		test.capture [[
 	<ItemGroup>
 		<Filter Include="Header Files">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
+			<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
 		</Filter>
 		<Filter Include="Source Files">
-			<UniqueIdentifier>{00112233-4455-6677-8888-99AABBCCDDEE}</UniqueIdentifier>
+			<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 		]]

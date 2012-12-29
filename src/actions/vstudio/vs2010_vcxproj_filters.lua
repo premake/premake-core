@@ -48,7 +48,7 @@
 				end
 
 				_x(2, '<Filter Include="%s">', path.translate(node.path))
-				_p(3, '<UniqueIdentifier>{%s}</UniqueIdentifier>', os.uuid())
+				_p(3, '<UniqueIdentifier>{%s}</UniqueIdentifier>', os.uuid(node.path))
 				_p(2, '</Filter>')
 			end
 		}, false)

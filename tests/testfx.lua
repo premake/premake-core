@@ -263,6 +263,15 @@
 	end
 
 
+	function test.declare(id)
+		if T[id] then
+			error("Duplicate test suite " .. id)
+		end
+		T[id] = {}
+		return T[id]
+	end
+
+
 	function test.runall(suitename, testname)
 		test.print = print
 

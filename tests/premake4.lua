@@ -53,6 +53,7 @@
 	dofile("base/test_premake_command.lua")
 	dofile("base/test_table.lua")
 	dofile("base/test_tree.lua")
+	dofile("base/test_uuid.lua")
 
 	-- Solution object tests
 	dofile("solution/test_eachconfig.lua")
