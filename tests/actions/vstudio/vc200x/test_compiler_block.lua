@@ -462,3 +462,20 @@
 				ForcedIncludeFiles="stdafx.h;include/sys.h"
 		]]
 	end
+
+
+--
+-- Verify handling of the NoRuntimeChecks flag.
+--
+
+	function suite.onNoRuntimeChecks()
+		flags { "NoRuntimeChecks" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				RuntimeLibrary="2"
+		]]
+	end
+		

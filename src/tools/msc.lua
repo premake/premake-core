@@ -165,14 +165,3 @@
 	function msc.gettoolname(cfg, tool)
 		return nil
 	end
-
-
-
------------------------------------------------------------------------------
--- Everything below this point is a candidate for deprecation
------------------------------------------------------------------------------
-	
-	premake.msc = { }
-	premake.msc.namestyle = "windows"
-
-

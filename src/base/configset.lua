@@ -35,11 +35,10 @@
 
 	function configset.new(parent)
 		local cset = {}
-		cset._parent = parent or cset
+		cset._parent = parent or false
 		cset._blocks = {}
-		
-		-- set always starts with a single, global block
-		configset.addblock(cset, {})
+		cset._current = false
+		cset.compiled = false
 
 		-- enable config sets to be treat like plain old tables; storing
 		-- a value will place it into the current block
@@ -67,7 +66,7 @@
 		configset._fields[name] = behavior
 	end
 
-
+	
 --
 -- Create a new block of configuration field-value pairs, with the provided
 -- set of context terms to control their application.
@@ -112,6 +111,11 @@
 --
 
 	function configset.addvalue(cset, fieldname, value)
+		-- make sure there is an active block
+		if not cset._current then
+			configset.addblock(cset, {})
+		end
+
 		local current = cset._current
 		local field = configset._fields[fieldname]
 		if field and (field.keyed or field.merge) then
@@ -153,6 +157,21 @@
 
 
 --
+-- Check to see if a configuration set is empty; that is, it does
+-- not contain any configuration blocks.
+--
+-- @param cset
+--    The configuration set to query.
+-- @return
+--    True if the set does not contain any blocks.
+--
+
+	function configset.empty(cset)
+		return (#cset._blocks == 0)
+	end
+
+
+--
 -- Check to see if an individual configuration block applies to the
 -- given context and filename.
 --
@@ -164,6 +183,48 @@
 			filename = path.getrelative(block._basedir, filename)
 		end
 		return criteria.matches(block._criteria, context, filename)
+	end
+
+
+--
+-- Compiles a new configuration set containing only the blocks which match
+-- the specified criteria. Fetches against this compiled configuration set
+-- may omit the context argument, resulting in faster fetches against a
+-- smaller set of configuration blocks.
+--
+-- @param cset
+--    The configuration set to query.
+-- @param context
+--    A list of lowercase context terms to use during the fetch. Only those 
+--    blocks with terms fully contained by this list will be considered in 
+--    determining the returned value. Terms should be lower case to make
+--    the context filtering case-insensitive.
+-- @param filename
+--    An optional filename; if provided, only blocks with pattern that
+--    matches the name will be considered.
+-- @return
+--    A new configuration set containing only the selected blocks, and the
+--    "compiled" field set to true.
+--
+
+	function configset.compile(cset, context, filename)
+		-- always start with the parent
+		local result
+		if cset._parent then
+			result = configset.compile(cset._parent, context, filename)
+		else
+			result = configset.new()
+		end
+
+		-- add in my own blocks
+		for _, block in ipairs(cset._blocks) do
+			if testblock(block, context, filename) then
+				table.insert(result._blocks, block)
+			end
+		end
+		
+		result.compiled = true
+		return result
 	end
 
 
@@ -203,12 +264,12 @@
 		local n = #cset._blocks
 		for i = n, 1, -1 do
 			local block = cset._blocks[i]
-			if block[fieldname] and testblock(block, context, filename) then
+			if block[fieldname] and (cset.compiled or testblock(block, context, filename)) then
 				return block[fieldname]
 			end
 		end
 		
-		if cset._parent ~= cset then
+		if cset._parent then
 			return fetchassign(cset._parent, fieldname, context, filename)
 		end
 	end
@@ -223,7 +284,7 @@
 		local result = {}
 
 		-- grab values from the parent set first
-		if cset._parent ~= cset then
+		if cset._parent then
 			result = fetchkeyed(cset._parent, fieldname, context, filename, merge)
 		end
 		
@@ -241,7 +302,7 @@
 		end
 
 		for _, block in ipairs(cset._blocks) do
-			if testblock(block, context, filename) then
+			if cset.compiled or testblock(block, context, filename) then
 				local value = block[fieldname]
 				if value then
 					process(value)
@@ -262,7 +323,7 @@
 		local result = {}
 
 		-- grab values from the parent set first
-		if cset._parent ~= cset then
+		if cset._parent then
 			result = fetchmerge(cset._parent, fieldname, context, filename)
 		end
 
@@ -282,7 +343,7 @@
 		end
 
 		for _, block in ipairs(cset._blocks) do
-			if testblock(block, context, filename) then
+			if cset.compiled or testblock(block, context, filename) then
 				if block._removes and block._removes[fieldname] then
 					remove(block._removes[fieldname])
 				end

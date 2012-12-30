@@ -31,26 +31,6 @@
 -- Verify the version numbers for each action.
 --
 
-	function suite.hasCorrectVersion_on2002()
-		_ACTION = 'vs2002'
-		prepare()
-		test.capture [[
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="7.00"
-		]]
-	end
-
-	function suite.hasCorrectVersion_on2003()
-		_ACTION = 'vs2003'
-		prepare()
-		test.capture [[
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="7.10"
-		]]
-	end
-
 	function suite.hasCorrectVersion_on2005()
 		_ACTION = 'vs2005'
 		prepare()
@@ -88,24 +68,6 @@
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
 	>
-		]]
-	end
-
-
---
--- Visual Studio 2002 and 2003 should not include the root namespace.
---
-
-	function suite.noRootNamespace_on2003()
-		_ACTION = 'vs2003'
-		prepare()
-		test.capture [[
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="7.10"
-	Name="MyProject"
-	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
-	Keyword="Win32Proj"
 		]]
 	end
 

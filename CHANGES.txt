@@ -1,5 +1,5 @@
 --------
-  4.5 (in progress)
+  5.0 (in progress)
 --------
 
 * Completely overhauled the platform support; too many changes to list
@@ -21,6 +21,13 @@
 * Added debugcommand for Visual Studio (xpol)
 * Bug 1674173: Allow source files to have the same name
 * Added forceinclude() to specify forced include files
+* Visual Studio C# projects now support architectures
+* Visual Studio C# projects now support pre- and post-build commands
+* Added NoImplicitLink flag to force explicit linking from Visual Studio
+* Decoupled VS2010 smaller type checks (/RTCc) from extra warnings (/W4)
+* Added NoRuntimeChecks flag to disable Visual Studio default checks
+* Generated Visual Studio GUIDs are now deterministic
+* Added support for Visual Studio solution groups
 
 
 -------

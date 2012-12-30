@@ -38,7 +38,7 @@
 		ctx._cfgset = cfgset
 		ctx.environ = environ or {}
 		ctx._filename = { filename } or {}
-		ctx._terms = {}
+		ctx.terms = {}
 		
 		-- when a missing field is requested, fetch it from my config
 		-- set, and then cache the value for future lookups
@@ -62,7 +62,7 @@
 			terms = table.flatten({terms})
 			for _, term in ipairs(terms) do
 				-- make future tests case-insensitive
-				table.insert(ctx._terms, term:lower())
+				table.insert(ctx.terms, term:lower())
 			end
 		end
 	end
@@ -78,7 +78,35 @@
 --
 
 	function context.copyterms(ctx, src)
-		ctx._terms = table.arraycopy(src._terms)
+		ctx.terms = table.arraycopy(src.terms)
+	end
+
+
+--
+-- Compiles the context for better performance. The list of context terms
+-- becomes locked down; any subsequent changes are ignored.
+--
+-- @param ctx
+--    The context to compile.
+--
+
+	function context.compile(ctx)
+		ctx._cfgset = configset.compile(ctx._cfgset, ctx.terms, ctx._filename[1])
+	end
+
+
+--
+-- Check to see if a context's underlying configuration set is empty; that 
+-- is, it does not contain any configuration blocks.
+--
+-- @param ctx
+--    The context to query.
+-- @return
+--    True if the set does not contain any blocks.
+--
+
+	function context.empty(ctx)
+		return configset.empty(ctx._cfgset)
 	end
 
 
@@ -96,7 +124,7 @@
 --
 
 	function context.fetchvalue(ctx, key)
-		local value = configset.fetchvalue(ctx._cfgset, key, ctx._terms, ctx._filename[1])
+		local value = configset.fetchvalue(ctx._cfgset, key, ctx.terms, ctx._filename[1])
 		if value then
 			-- do I need to expand tokens?
 			local field = premake.fields[key]

@@ -109,6 +109,11 @@
 --
 
 	function premake.action.get(name)
+		-- "Next-gen" actions are deprecated
+		if name:endswith("ng") then
+			name = name:sub(1, -3)
+		end
+
 		return premake.action.list[name]
 	end
 
@@ -142,6 +147,7 @@
 
 	function premake.action.set(name)
 		_ACTION = name
+		
 		-- Some actions imply a particular operating system
 		local action = premake.action.get(name)
 		if action then

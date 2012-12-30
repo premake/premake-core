@@ -127,47 +127,32 @@
 		-- initially this value will be a string (the file name); if so, build
 		-- and replace it with a full file configuration object
 		if type(filecfg) ~= "table" then
-			-- TODO, OLD, REMOVE: This is being replaced by configuration
-			-- contexts; will be removed soon
-			filecfg = oven.bakefile(cfg, filename)
-			
+			-- create context to represent the file's configuration, based on
+			-- the specified project configuration
+			local environ = {}
+			filecfg = context.new(cfg.project.configset, environ, filename)
+			context.copyterms(filecfg, cfg.context)
+
+			-- set up an environment for expanding tokens contained by this file
+			-- configuration; based on the configuration's environment so that
+			-- any magic set up there gets maintained
+			for envkey, envval in pairs(cfg.context.environ) do
+				environ[envkey] = envval
+			end
+			environ.file = filecfg
+
 			-- merge in the file path information (virtual paths, etc.) that are
 			-- computed at the project level, for token expansions to use
 			local prjcfg = project.getfileconfig(cfg.project, filename)
 			for key, value in pairs(prjcfg) do
 				filecfg[key] = value
 			end
-			
-			-- expand inline tokens
-			oven.expandtokens(cfg, "config", filecfg)
+
+			-- finish the setup
+			context.compile(filecfg)
 			
 			-- and cache the result
 			cfg.files[filename] = filecfg
-
-			-- set up an environment for expanding tokens contained by this file
-			-- configuration; based on the configuration's environment so that
-			-- any magic set up there gets maintained
-			local environ = {
-				file = filecfg
-			}
-			for envkey, envval in pairs(cfg.context.environ) do
-				environ[envkey] = envval
-			end
-			
-			-- create a context to provide access to this file's information
-			local ctx = context.new(cfg.project.configset, environ, filename)
-			context.copyterms(ctx, cfg.context)
-			
-			-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
-			-- through to the config context. Eventually all values will be in the 
-			-- context and the cfg wrapper can be done away with
-			filecfg.context = ctx
-			setmetatable(filecfg, {
-				__index = function(filecfg, key)
-					return filecfg.context[key]
-				end,
-			})
-		
 		end
 		
 		return filecfg

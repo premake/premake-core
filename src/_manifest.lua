@@ -48,7 +48,6 @@
 		"tools/dotnet.lua",
 		"tools/gcc.lua",
 		"tools/msc.lua",
-		"tools/ow.lua",
 		"tools/snc.lua",
 
 		-- GNU make action
@@ -59,12 +58,8 @@
 		
 		-- Visual Studio actions
 		"actions/vstudio/_vstudio.lua",
-		"actions/vstudio/vs2002_solution.lua",
-		"actions/vstudio/vs2002_csproj.lua",
-		"actions/vstudio/vs2002_csproj_user.lua",
 		"actions/vstudio/vs200x_vcproj.lua",
 		"actions/vstudio/vs200x_vcproj_user.lua",
-		"actions/vstudio/vs2003_solution.lua",
 		"actions/vstudio/vs2005_solution.lua",
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",

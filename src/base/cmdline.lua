@@ -16,7 +16,6 @@
 		description = "Choose a C/C++ compiler set",
 		allowed = {
 			{ "gcc", "GNU GCC (gcc/g++)" },
-			{ "ow",  "OpenWatcom"        },
 		}
 	}
 
@@ -57,22 +56,6 @@
 			{ "macosx",   "Apple Mac OS X" },
 			{ "solaris",  "Solaris" },
 			{ "windows",  "Microsoft Windows" },
-		}
-	}
-
-	newoption
-	{
-		trigger     = "platform",
-		value       = "VALUE",
-		description = "Add target architecture (if supported by action)",
-		allowed = {
-			{ "x32",         "32-bit" },
-			{ "x64",         "64-bit" },
-			{ "universal",   "Mac OS X Universal, 32- and 64-bit" },
-			{ "universal32", "Mac OS X Universal, 32-bit only" },
-			{ "universal64", "Mac OS X Universal, 64-bit only" },
-			{ "ps3",         "Playstation 3 (experimental)" },
-			{ "xbox360",     "Xbox 360 (experimental)" },
 		}
 	}
 	

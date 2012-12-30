@@ -27,24 +27,40 @@
 	end
 
 	function vc2010.debugsettings(cfg)
+		vc2010.LocalDebuggerCommand(cfg)
+		vc2010.LocalDebuggerWorkingDirectory(cfg)
+		vc2010.DebuggerFlavor(cfg)
+		vc2010.LocalDebuggerCommandArguments(cfg)
+		vc2010.LocalDebuggerEnvironment(cfg)
+	end
+
+	function vc2010.DebuggerFlavor(cfg)
+		if cfg.debugdir or cfg.debugcommand then
+			_p(2,'<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')	
+		end
+	end
+
+	function vc2010.LocalDebuggerCommand(cfg)
 		if cfg.debugcommand then
 			local dir = project.getrelative(cfg.project, cfg.debugcommand)
 			_p(2,'<LocalDebuggerCommand>%s</LocalDebuggerCommand>', path.translate(dir))
 		end
+	end
 
-		if cfg.debugdir then
-			local dir = project.getrelative(cfg.project, cfg.debugdir)
-			_x(2,'<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
-
-		end
-
-		if cfg.debugdir or cfg.debugcommand then
-			_p(2,'<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')	
-		end
-
+	function vc2010.LocalDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then
 			_x(2,'<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
 		end
+	end
+
+	function vc2010.LocalDebuggerWorkingDirectory(cfg)
+		if cfg.debugdir then
+			local dir = project.getrelative(cfg.project, cfg.debugdir)
+			_x(2,'<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
+		end
+	end
+
+	function vc2010.LocalDebuggerEnvironment(cfg)
 		if #cfg.debugenvs > 0 then
 			local envs = table.concat(cfg.debugenvs, "\n")
 			if cfg.flags.DebugEnvsInherit then

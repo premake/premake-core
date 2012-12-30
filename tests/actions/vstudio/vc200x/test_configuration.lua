@@ -57,7 +57,7 @@
 		prepare()
 		test.capture [[
 		<Configuration
-			Name="Debug x32|Win32"
+			Name="Debug|Win32"
 		]]
 	end
 
@@ -71,7 +71,7 @@
 		prepare()
 		test.capture [[
 		<Configuration
-			Name="Debug x64|x64"
+			Name="Debug|x64"
 		]]
 	end
 
@@ -80,7 +80,7 @@
 -- The output directory should use backslashes
 --
 
-	function suite.usesX64Architecture_onX64Platform()
+	function suite.escapesOutputDir()
 		targetdir("../bin")
 		prepare()
 		test.capture [[

@@ -10,6 +10,7 @@
 	local project = premake5.project
 	local configset = premake.configset
 	local context = premake.context
+	local tree = premake.tree
 
 
 -- The list of defined solutions (which contain projects, etc.)
@@ -93,6 +94,7 @@
 		-- of the filter terms may be nil, so not safe to use a list
 		local ctx = context.new(sln.configset, environ)
 		context.addterms(ctx, _ACTION)
+		context.compile(ctx)
 
 
 		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
@@ -372,6 +374,35 @@
 
 
 	solution.getfilename = project.getfilename
+
+
+--
+-- Retrieve the tree of project groups.
+--
+-- @param sln
+--    The solution to query.
+-- @return
+--    The tree of project groups defined for the solution.
+--
+
+	function solution.grouptree(sln)
+		-- check for a previously cached tree
+		if sln.grouptree then
+			return sln.grouptree
+		end
+		
+		local tr = tree.new()
+		sln.grouptree = tr
+
+		for prj in solution.eachproject_ng(sln) do
+			local prjpath = path.join(prj.group, prj.name)
+			local node = tree.add(tr, prjpath, function(n) n.uuid = os.uuid(n.path) end)
+			node.project = prj
+		end
+
+		tree.sort(tr)		
+		return tr
+	end
 
 
 --

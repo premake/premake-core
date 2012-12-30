@@ -4,9 +4,7 @@
 -- Copyright (c) 2008-2011 Jason Perkins and the Premake project
 --
 
-
-	T.os = { }
-	local suite = T.os
+	local suite = test.declare("base_os")
 
 	
 --
@@ -105,22 +103,3 @@
 	function suite.pathsearch_NilPathsAllowed()
 		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", nil, os.getcwd(), nil))
 	end
-
-	
---
--- os.uuid() tests
---
-
-	function suite.guid_ReturnsValidUUID()
-		local g = os.uuid()
-		test.istrue(#g == 36)
-		for i=1,36 do
-			local ch = g:sub(i,i)
-			test.istrue(ch:find("[ABCDEF0123456789-]"))
-		end
-		test.isequal("-", g:sub(9,9))
-		test.isequal("-", g:sub(14,14))
-		test.isequal("-", g:sub(19,19))
-		test.isequal("-", g:sub(24,24))
-	end
-	

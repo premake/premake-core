@@ -47,6 +47,7 @@
 
 
 /* Bootstrapping helper functions */
+unsigned long do_hash(const char* str, int seed);
 int do_isfile(const char* filename);
 
 
@@ -70,6 +71,7 @@ int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int string_endswith(lua_State* L);
+int string_hash(lua_State* L);
 
 /* Engine interface */
 int premake_init(lua_State* L);

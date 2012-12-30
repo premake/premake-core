@@ -17,6 +17,7 @@
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln, prj = test.createsolution()
+		kind "ConsoleApp"
 		system "PS3"
 	end
 
@@ -71,7 +72,6 @@
 --
 
 	function suite.additionalDependencies_onSystemLibs()
-		kind "ConsoleApp"
 		links { "fs_stub", "net_stub" }
 		prepare()
 		test.capture [[
@@ -79,5 +79,49 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="-s"
 				AdditionalDependencies="-lfs_stub -lnet_stub"
+		]]
+	end
+
+
+--
+-- Sibling dependencies should not appear in the list of links;
+-- Visual Studio will add those automatically.
+--
+
+	function suite.excludesSiblings()
+		links { "MyProject2" }
+		project ("MyProject2")
+		system "PS3"
+		kind "StaticLib"
+		language "C++"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="-s"
+				OutputFile="$(OutDir)\MyProject.elf"
+		]]
+	end
+
+
+
+--
+-- Sibling dependencies should appear in the list of links if
+-- the NoImplicitLinks flag is set.
+--
+
+	function suite.includesSiblings_onNoExplicitLink()
+		flags { "NoImplicitLink" }
+		links { "MyProject2" }
+		project ("MyProject2")
+		system "PS3"
+		kind "StaticLib"
+		language "C++"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="-s"
+				AdditionalDependencies="libMyProject2.a"
 		]]
 	end
