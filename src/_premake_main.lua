@@ -38,7 +38,7 @@
 
 		-- The "next-gen" actions have now replaced their deprecated counterparts. 
 		-- Provide a warning for a little while before I remove them entirely.
-		if _ACTION:endswith("ng") then
+		if _ACTION and _ACTION:endswith("ng") then
 			print(string.format("** Warning: '%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3)))
 		end
 
