@@ -14,7 +14,7 @@
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = test.createsolution()
@@ -42,7 +42,7 @@
 
 
 --
--- If a sibling project is listed in links(), an item group should
+-- If a sibling project is listed in links()/dependson(), an item group should
 -- be written with a reference to that sibling project.
 --
 
@@ -59,8 +59,22 @@
 		]]
 	end
 
+	function suite.projectReferenceAdded_onSiblingProjectDependson()
+		dependson { "MyProject" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ProjectReference Include="MyProject.vcproj">
+			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+			<Name>MyProject</Name>
+		</ProjectReference>
+	</ItemGroup>
+		]]
+	end
+
+
 --
--- Project references should always be specified relative to the 
+-- Project references should always be specified relative to the
 -- project doing the referencing.
 --
 
@@ -79,4 +93,4 @@
 	</ItemGroup>
 		]]
 	end
-		
+

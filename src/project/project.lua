@@ -70,7 +70,7 @@
 		local ctx = context.new(prj.configset, environ)
 		context.addterms(ctx, _ACTION)
 		context.addterms(ctx, prj.language)
-		
+
 		-- allow script to override system and architecture
 		ctx.system = ctx.system or premake.action.current().os or os.get()
 		context.addterms(ctx, ctx.system)
@@ -91,9 +91,9 @@
 		
 		-- apply any mappings to the project's list of configurations and platforms
 		ctx._cfglist = project.bakeconfiglist(ctx, cfgs)
-		
-		
-		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
+
+
+		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
 		local result = oven.merge(oven.merge({}, sln), prj)
 		result.solution = sln
 		result.blocks = prj.blocks
@@ -101,15 +101,15 @@
 
 		-- prevent any default system setting from influencing configurations
 		result.system = nil
-		
 
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
-		-- through to the config context. Eventually all values will be in the 
+
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values
+		-- through to the config context. Eventually all values will be in the
 		-- context and the cfg wrapper can be done away with
 		setmetatable(prj, nil)
 
 		result.context = ctx
-		prj.context = ctx		
+		prj.context = ctx
 		setmetatable(result, {
 			__index = function(prj, key)
 				return prj.context[key]
@@ -124,14 +124,14 @@
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = project.bakeconfig(result, buildcfg, platform)
-			
+
 			-- make sure this config is supported by the action; skip if not
 			if premake.action.supportsconfig(cfg) then
 				configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
 		end
 		result.configs = configs
-		
+
 		return result
 	end
 
@@ -215,7 +215,7 @@
 --
 
 	function project.bakeconfig(prj, buildcfg, platform)
-		-- set the default system and architecture values; for backward 
+		-- set the default system and architecture values; for backward
 		-- compatibility, use platform if it would be a valid value
 		local system = premake.action.current().os or os.get()
 		local architecture = nil
@@ -266,8 +266,8 @@
 		ctx.action = _ACTION
 		ctx.language = prj.language		
 
-		
-		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
+
+		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
 		local filter = {
 			["buildcfg"] = buildcfg,
 			["platform"] = platform,
@@ -275,7 +275,7 @@
 			["system"] = ctx.system,
 			["architecture"] = ctx.architecture,
 		}
-		
+
 		local cfg = oven.bake(prj, prj.solution, filter)
 		cfg.solution = prj.solution
 		cfg.project = prj
@@ -300,8 +300,8 @@
 		environ.cfg = proxy
 
 
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
-		-- through to the config context. Eventually all values will be in the 
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values
+		-- through to the config context. Eventually all values will be in the
 		-- context and the cfg wrapper can be done away with
 		setmetatable(cfg, {
 			__index = function(cfg, key)
@@ -312,7 +312,7 @@
 			end
 		})
 
-		
+
 		-- fill in any calculated values
 		premake5.config.bake(cfg)
 
@@ -321,6 +321,10 @@
 
 
 --
+		
+		
+			
+			
 -- Returns an iterator function for the configuration objects contained by
 -- the project. Each configuration corresponds to a build configuration/
 -- platform pair (i.e. "Debug|x32") as specified in the solution.
@@ -340,7 +344,7 @@
 
 		local configs = prj._cfglist
 		local count = #configs
-		
+
 		local i = 0
 		return function ()
 			i = i + 1
@@ -351,7 +355,7 @@
 	end
 
 
--- 
+--
 -- Locate a project by name; case insensitive.
 --
 -- @param name
@@ -372,7 +376,7 @@
 
 
 --
--- Retrieve the project's configuration information for a particular build 
+-- Retrieve the project's configuration information for a particular build
 -- configuration/platform pair.
 --
 -- @param prj
@@ -384,35 +388,35 @@
 -- @return
 --    A configuration object.
 --
-	
+
 	function project.getconfig(prj, buildcfg, platform)
 		-- to make testing a little easier, allow this function to
 		-- accept an unbaked project, and fix it on the fly
 		if not prj.baked then
 			prj = project.bake(prj, prj.solution)
 		end
-	
+
 		-- if no build configuration is specified, return the "root" project
 		-- configurations, which includes all configuration values that
 		-- weren't set with a specific configuration filter
 		if not buildcfg then
 			return prj
 		end
-		
+
 		-- apply any configuration mappings
 		local pairing = project.mapconfig(prj, buildcfg, platform)
 		buildcfg = pairing[1]
 		platform = pairing[2]
 
-		-- look up and return the associated config		
+		-- look up and return the associated config
 		local key = (buildcfg or "*") .. (platform or "")
 		return prj.configs[key]
 	end
 
 
 --
--- Returns a list of sibling projects on which the specified project depends. 
--- This is used to list dependencies within a solution or workspace. Must 
+-- Returns a list of sibling projects on which the specified project depends.
+-- This is used to list dependencies within a solution or workspace. Must
 -- consider all configurations because Visual Studio does not support per-config
 -- project dependencies.
 --
@@ -425,12 +429,19 @@
 	function project.getdependencies(prj)
 		if not prj.dependencies then	
 			local result = {}
-			for cfg in project.eachconfig(prj) do
-				for _, link in ipairs(cfg.links) do
-					local dep = premake.solution.findproject(cfg.solution, link)
+			local function add_to_project_list(cfg, depproj, result)
+				local dep = premake.solution.findproject(cfg.solution, depproj)
 					if dep and not table.contains(result, dep) then
 						table.insert(result, dep)
 					end
+			end
+
+			for cfg in project.eachconfig(prj) do
+				for _, link in ipairs(cfg.links) do
+					add_to_project_list(cfg, link, result)
+				end
+				for _, depproj in ipairs(cfg.dependson) do
+					add_to_project_list(cfg, depproj, result)
 				end
 			end
 			prj.dependencies = result
@@ -466,7 +477,7 @@
 		fcfg.name = path.getname(filename)
 		fcfg.basename = path.getbasename(filename)
 		fcfg.path = fcfg.relpath
-		
+
 		return fcfg
 	end
 
@@ -501,26 +512,26 @@
 	function project.getfileobject(prj, filename)
 		-- make sure I have the project, and not it's root configuration
 		prj = prj.project or prj
-		
+
 		-- create a list of objects if necessary
 		prj.fileobjects = prj.fileobjects or {}
 
-		-- look for the corresponding object file		
+		-- look for the corresponding object file
 		local basename = path.getbasename(filename)
 		local uniqued = basename
 		local i = 0
-		
+
 		while prj.fileobjects[uniqued] do
 			-- found a match?
 			if prj.fileobjects[uniqued] == filename then
 				return uniqued
 			end
-			
+
 			-- check a different name
 			i = i + 1
 			uniqued = basename .. i
 		end
-		
+
 		-- no match, create a new one
 		prj.fileobjects[uniqued] = filename
 		return uniqued
@@ -564,7 +575,7 @@
 		end
 		if not location then
 			location = prj.basedir
-		end	
+		end
 		if relativeto then
 			location = path.getrelative(relativeto, location)
 		end
@@ -618,7 +629,7 @@
 	function project.getsourcetree(prj)
 		-- make sure I have the project, and not it's root configuration
 		prj = prj.project or prj
-		
+
 		-- check for a previously cached tree
 		if prj.sourcetree then
 			return prj.sourcetree
@@ -634,10 +645,10 @@
 
 		-- create a file config lookup cache
 		prj.fileconfigs = {}
-		
+
 		-- create a tree from the file list
 		local tr = premake.tree.new(prj.name)
-		
+
 		for file in pairs(files) do
 			local fcfg = project.getfileconfig(prj, file)
 
@@ -646,23 +657,23 @@
 			-- virtual paths are used when adding nodes.
 			local node = premake.tree.add(tr, fcfg.vpath, function(node)
 				-- ...but when a real file system path is used, store it so that
-				-- an association can be made in the IDE 
+				-- an association can be made in the IDE
 				if fcfg.vpath == fcfg.relpath then
 					node.realpath = node.path
 				end
 			end)
-			
+
 			-- Store full file configuration in file (leaf) nodes
 			for key, value in pairs(fcfg) do
 				node[key] = value
 			end
-			
+
 			prj.fileconfigs[node.abspath] = node
 		end
 
 		premake.tree.trimroot(tr)
 		premake.tree.sort(tr)
-		
+
 		-- cache result and return
 		prj.sourcetree = tr
 		return tr
@@ -678,7 +689,7 @@
 	function project.getvpath(prj, filename)
 		-- if there is no match, return the input filename
 		local vpath = filename
-		
+
 		for replacement,patterns in pairs(prj.vpaths or {}) do
 			for _,pattern in ipairs(patterns) do
 
@@ -710,12 +721,12 @@
 					else
 						leaf = path.getname(leaf)
 					end
-					
+
 					vpath = path.join(stem, leaf)
 				end
 			end
 		end
-		
+
 		return vpath
 	end
 
@@ -765,7 +776,7 @@
 
 	function project.mapconfig(prj, buildcfg, platform)
 		local pairing = { buildcfg, platform }
-		
+
 		local testpattern = function(pattern, pairing, i)
 			local j = 1
 			while i <= #pairing and j <= #pattern do
@@ -777,12 +788,12 @@
 			end
 			return true
 		end
-		
+
 		for pattern, replacements in pairs(prj.configmap or {}) do
 			if type(pattern) ~= "table" then
 				pattern = { pattern }
 			end
-			
+
 			-- does this pattern match any part of the pair? If so,
 			-- replace it with the corresponding values
 			for i = 1, #pairing do
@@ -795,7 +806,7 @@
 				end
 			end
 		end
-				
+
 		return pairing
 	end
 
