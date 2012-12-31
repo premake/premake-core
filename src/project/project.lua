@@ -85,10 +85,10 @@
 
 		-- create a list of build cfg/platform pairs for the project
 		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
-		
+
 		-- roll up any config maps from the contained configurations
 		project.bakeconfigmap(ctx, prj.configset, cfgs)
-		
+
 		-- apply any mappings to the project's list of configurations and platforms
 		ctx._cfglist = project.bakeconfiglist(ctx, cfgs)
 
@@ -138,7 +138,7 @@
 --
 -- It can be useful to state "use this map if this configuration is present".
 -- To allow this to happen, config maps that are specified within a project
--- configuration are allowed to "bubble up" to the top level. Currently, 
+-- configuration are allowed to "bubble up" to the top level. Currently,
 -- maps are the only values that get this special behavior.
 --
 -- @param ctx
@@ -153,7 +153,7 @@
 	function project.bakeconfigmap(ctx, cset, cfgs)
 		-- It can be useful to state "use this map if this configuration is present".
 		-- To allow this to happen, config maps that are specified within a project
-		-- configuration are allowed to "bubble up" to the top level. Currently, 
+		-- configuration are allowed to "bubble up" to the top level. Currently,
 		-- maps are the only values that get this special behavior.
 		for _, cfg in ipairs(cfgs) do
 			local terms = table.join(ctx.terms, (cfg[1] or ""):lower(), (cfg[2] or ""):lower())
@@ -186,26 +186,26 @@
 		for i, cfg in ipairs(cfgs) do
 			cfgs[i] = project.mapconfig(ctx, cfg[1], cfg[2])
 		end
-		
+
 		-- walk through the result and remove any duplicates
 		local buildcfgs = {}
 		local platforms = {}
-		
+
 		for _, pairing in ipairs(cfgs) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
-			
+
 			if not table.contains(buildcfgs, buildcfg) then
 				table.insert(buildcfgs, buildcfg)
 			end
-			
+
 			if platform and not table.contains(platforms, platform) then
 				table.insert(platforms, platform)
 			end
 		end
 
 		-- merge these de-duped lists back into pairs for the final result
-		return table.fold(buildcfgs, platforms)	
+		return table.fold(buildcfgs, platforms)
 	end
 
 
@@ -254,7 +254,7 @@
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addterms(ctx, ctx.kind)
-		
+
 		-- process that
 		context.compile(ctx)
 
@@ -264,7 +264,7 @@
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
-		ctx.language = prj.language		
+		ctx.language = prj.language
 
 
 		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
@@ -321,10 +321,10 @@
 
 
 --
-		
-		
-			
-			
+
+
+
+
 -- Returns an iterator function for the configuration objects contained by
 -- the project. Each configuration corresponds to a build configuration/
 -- platform pair (i.e. "Debug|x32") as specified in the solution.
@@ -427,7 +427,7 @@
 --
 
 	function project.getdependencies(prj)
-		if not prj.dependencies then	
+		if not prj.dependencies then
 			local result = {}
 			local function add_to_project_list(cfg, depproj, result)
 				local dep = premake.solution.findproject(cfg.solution, depproj)
@@ -488,14 +488,22 @@
 -- @param prj
 --    The project object to query.
 -- @param ext
---    An optional file extension to add, with the leading dot.
+--    An optional file extension to add, with the leading dot. If provided
+--    without a leading dot, it will treated as a file name.
 -- @return
 --    The absolute path to the project's file.
 --
 
 	function project.getfilename(prj, ext)
-		local fn = path.join(project.getlocation(prj), prj.filename)
-		if ext then fn = fn .. ext end
+		local fn = project.getlocation(prj)
+		if ext and not ext:startswith(".") then
+			fn = path.join(fn, ext)
+		else
+			fn = path.join(fn, prj.filename)
+			if ext then
+				fn = fn .. ext
+			end
+		end
 		return fn
 	end
 

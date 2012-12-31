@@ -58,8 +58,10 @@
 		_p('clean:')
 		for prj in solution.eachproject_ng(sln) do
 			local slnpath = solution.getlocation(sln)
-			local prjpath = path.getrelative(slnpath, project.getlocation(prj))
-			_p(1,'@${MAKE} --no-print-directory -C %s -f %s clean', make.esc(prjpath), make.esc(make.getmakefilename(prj, true)))
+			local prjpath = project.getfilename(prj, make.getmakefilename(prj, true))
+			local prjdir = path.getdirectory(path.getrelative(slnpath, prjpath))
+			local prjname = path.getname(prjpath)
+			_p(1,'@${MAKE} --no-print-directory -C %s -f %s clean', make.esc(prjdir), make.esc(prjname))
 		end
 		_p('')
 	end
@@ -111,19 +113,21 @@
 	function make.projectrules(sln)
 		for prj in solution.eachproject_ng(sln) do
 			local deps = project.getdependencies(prj)
-			deps = table.extract(deps, "name")			
+			deps = table.extract(deps, "name")
 			_p('%s: %s', make.esc(prj.name), table.concat(deps, " "))
-			
+
 			local cfgvar = make.tovar(prj.name)
 			_p('ifneq (,$(%s_config))', cfgvar)
-			
+
 			_p(1,'@echo "==== Building %s ($(%s_config)) ===="', prj.name, cfgvar)
 
 			local slnpath = solution.getlocation(sln)
-			local prjpath = path.getrelative(slnpath, project.getlocation(prj))
-			local filename = make.getmakefilename(prj, true)
-			_p(1,'@${MAKE} --no-print-directory -C %s -f %s config=$(%s_config)', make.esc(prjpath), make.esc(filename), cfgvar)
-			
+			local prjpath = project.getfilename(prj, make.getmakefilename(prj, true))
+			local prjdir = path.getdirectory(path.getrelative(slnpath, prjpath))
+			local prjname = path.getname(prjpath)
+
+			_p(1,'@${MAKE} --no-print-directory -C %s -f %s config=$(%s_config)', make.esc(prjdir), make.esc(prjname), cfgvar)
+
 			_p('endif')
 			_p('')
 		end

@@ -15,11 +15,11 @@
 --
 
 	local sln
-	
+
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 	end
@@ -85,5 +85,16 @@
 		filename ("Howdy")
 		prepare()
 		test.isequal("MyProject", path.getname(project.getfilename(prj)))
+	end
+
+
+--
+-- If extension is provided without a leading dot, it should override any
+-- project filename.
+--
+
+	function suite.canOverrideFilename()
+		prepare()
+		test.isequal("Makefile", path.getname(project.getfilename(prj, "Makefile")))
 	end
 
