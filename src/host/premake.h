@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2011 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
  */
 
 #define lua_c
@@ -48,11 +48,13 @@
 
 /* Bootstrapping helper functions */
 unsigned long do_hash(const char* str, int seed);
+int do_isabsolute(const char* path);
 int do_isfile(const char* filename);
 
 
 /* Built-in functions */
 int path_isabsolute(lua_State* L);
+int path_join(lua_State* L);
 int os_chdir(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);

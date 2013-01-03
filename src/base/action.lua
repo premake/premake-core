@@ -12,14 +12,14 @@
 --
 
 	premake.action.list = { }
-	
+
 
 --
 -- Register a new action.
 --
 -- @param a
 --    The new action object.
--- 
+--
 
 	function premake.action.add(a)
 		-- validate the action object, at least a little bit
@@ -29,13 +29,13 @@
 				missing = field
 			end
 		end
-		
+
 		if (missing) then
 			error("action needs a " .. missing, 3)
 		end
 
 		-- add it to the master list
-		premake.action.list[a.trigger] = a		
+		premake.action.list[a.trigger] = a
 	end
 
 
@@ -51,36 +51,23 @@
 	function premake.action.call(name)
 		local a = premake.action.list[name]
 
-		-- a bit of a hack, but check for the new next-gen actions, and
-		-- translate things accordingly. I'll yank this once the next-gen
-		-- actions are done and official
-		if a.isnextgen then
-			if _ACTION:endswith("ng") then
-				_ACTION = _ACTION:sub(1, -3)
+		-- TODO: remove this once everyone's had a chance to see
+		-- the deprecation warning
+		if _ACTION:endswith("ng") then
+			_ACTION = _ACTION:sub(1, -3)
+		end
+
+		for sln in premake.solution.each() do
+			if a.onsolution then
+				a.onsolution(sln)
 			end
-			for sln in premake.solution.each() do
-				if a.onsolution then
-					a.onsolution(sln)
-				end
-				for prj in premake.solution.eachproject_ng(sln) do
-					if a.onproject and not prj.external then
-						a.onproject(prj)
-					end
-				end
-			end
-		else
-			for sln in premake.solution.each() do
-				if a.onsolution then
-					a.onsolution(sln)
-				end
-				for prj in premake.solution.eachproject(sln) do
-					if a.onproject and not prj.external then
-						a.onproject(prj)
-					end
+			for prj in premake.solution.eachproject_ng(sln) do
+				if a.onproject and not prj.external then
+					a.onproject(prj)
 				end
 			end
 		end
-				
+
 		if a.execute then
 			a.execute()
 		end
@@ -97,8 +84,8 @@
 	function premake.action.current()
 		return premake.action.get(_ACTION)
 	end
-	
-	
+
+
 --
 -- Retrieve an action by name.
 --
@@ -129,7 +116,7 @@
 			table.insert(keys, action.trigger)
 		end
 		table.sort(keys)
-		
+
 		local i = 0
 		return function()
 			i = i + 1
@@ -147,7 +134,7 @@
 
 	function premake.action.set(name)
 		_ACTION = name
-		
+
 		-- Some actions imply a particular operating system
 		local action = premake.action.get(name)
 		if action then
@@ -195,11 +182,11 @@
 		if not action then
 			return false
 		end
-		
+
 		if action.supportsconfig then
 			return action.supportsconfig(cfg)
 		end
-		
+
 		return true
 	end
 

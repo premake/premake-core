@@ -1,7 +1,7 @@
 --
 -- path.lua
 -- Path manipulation functions.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 
@@ -17,17 +17,17 @@
 			p = p:sub(1, -2)
 			endquote = '"'
 		end
-		
+
 		-- add the extension if it isn't there already
 		if not p:endswith(ext) then
 			p = p .. ext
 		end
-		
+
 		-- put the quote back if necessary
 		if endquote then
 			p = p .. endquote
 		end
-		
+
 		return p
 	end
 
@@ -36,7 +36,7 @@
 -- Get the absolute file path from a relative path. The requested
 -- file path doesn't actually need to exist.
 --
-	
+
 	function path.getabsolute(p)
 		if type(p) == "table" then
 			local result = {}
@@ -45,11 +45,11 @@
 			end
 			return result
 		end
-		
+
 		-- normalize the target path
 		p = path.translate(p, "/")
 		if (p == "") then p = "." end
-		
+
 		-- if the directory is already absolute I don't need to do anything
 		local result = iif (path.isabsolute(p), nil, os.getcwd())
 
@@ -69,13 +69,13 @@
 				end
 			end
 		end
-		
+
 		-- if I end up with a trailing slash remove it
 		result = iif(result:endswith("/"), result:sub(1, -2), result)
-		
+
 		return result
 	end
-	
+
 
 --
 -- Retrieve the filename portion of a path, without any extension.
@@ -90,10 +90,10 @@
 			return name
 		end
 	end
-	
-		
+
+
 --
--- Retrieve the directory portion of a path, or an empty string if 
+-- Retrieve the directory portion of a path, or an empty string if
 -- the path does not include a directory.
 --
 
@@ -134,9 +134,9 @@
 			return ""
 		end
 	end
-	
-	
-	
+
+
+
 --
 -- Retrieve the filename portion of a path.
 --
@@ -149,8 +149,8 @@
 			return p
 		end
 	end
-	
-	
+
+
 --
 -- Returns the relative path from src to dest.
 --
@@ -164,13 +164,13 @@
 		if (src == dst) then
 			return "."
 		end
-		
+
 		-- dollar macro? Can't tell what the real path is; use absolute
 		-- This enables paths like $(SDK_ROOT)/include to work correctly.
 		if dst:startswith("$") then
 			return dst
 		end
-		
+
 		src = src .. "/"
 		dst = dst .. "/"
 
@@ -188,19 +188,19 @@
 				break
 			end
 		end
-		
+
 		-- if they have nothing in common return absolute path
 		local first = src:find("/", 0, true)
 		if idx <= first then
 			return dst:sub(1, -2)
 		end
-		
-		-- trim off the common directories from the front 
+
+		-- trim off the common directories from the front
 		src = src:sub(idx + 1)
 		dst = dst:sub(idx + 1)
-		
+
 		-- back up from dst to get to this common parent
-		local result = ""		
+		local result = ""
 		idx = src:find("/")
 		while (idx) do
 			result = result .. "../"
@@ -213,7 +213,7 @@
 		-- remove the trailing slash
 		return result:sub(1, -2)
 	end
-	
+
 
 --
 -- Returns true if the filename has a particular extension.
@@ -248,11 +248,11 @@
 	function path.iscfile(fname)
 		return path.hasextension(fname, { ".c", ".s", ".m" })
 	end
-	
+
 	function path.iscppfile(fname)
 		return path.hasextension(fname, { ".cc", ".cpp", ".cxx", ".c", ".s", ".m", ".mm" })
 	end
-	
+
 	function path.iscppheader(fname)
 		return path.hasextension(fname, { ".h", ".hh", ".hpp", ".hxx" })
 	end
@@ -286,41 +286,6 @@
 		return path.hasextension(fname, ".rc")
 	end
 
-	
---
--- Join one or more pieces of a path together into a single path.
--- 
--- @param ...
---    One or more path strings.
--- @return
---    The joined path.
---
-
-	function path.join(...)
-		local numargs = select("#", ...)
-		if numargs == 0 then
-			return "";
-		end
-		
-		local allparts = {}
-		for i = numargs, 1, -1 do
-			local part = select(i, ...)
-			if part and #part > 0 and part ~= "." then
-				-- trim off trailing slashes
-				while part:endswith("/") do
-					part = part:sub(1, -2)
-				end
-				
-				table.insert(allparts, 1, part)
-				if path.isabsolute(part) then
-					break
-				end
-			end
-		end
-		
-		return table.concat(allparts, "/")
-	end
-
 
 --
 -- Takes a path which is relative to one location and makes it relative
@@ -332,15 +297,15 @@
 		p = path.getrelative(newbase, p)
 		return p
 	end
-	
-	
+
+
 --
 -- Convert the separators in a path from one form to another. If `sep`
--- is nil, then a Windows-style backslash is used (since those are 
+-- is nil, then a Windows-style backslash is used (since those are
 -- likely the only paths needing translating).
 --
 
-	function path.translate(p, sep)		
+	function path.translate(p, sep)
 		if type(p) == "table" then
 			local result = { }
 			for _, value in ipairs(p) do
@@ -375,10 +340,10 @@
 		-- have competing star replacements to worry about
 		pattern = pattern:gsub("%*%*", "\001")
 		pattern = pattern:gsub("%*", "\002")
-		
+
 		-- Replace the placeholders with their Lua patterns
 		pattern = pattern:gsub("\001", ".*")
 		pattern = pattern:gsub("\002", "[^/]*")
-		
+
 		return pattern
 	end
