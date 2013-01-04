@@ -48,11 +48,13 @@
 
 /* Bootstrapping helper functions */
 unsigned long do_hash(const char* str, int seed);
+int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
 int do_isfile(const char* filename);
 
 
 /* Built-in functions */
+int path_getabsolute(lua_State* L);
 int path_isabsolute(lua_State* L);
 int path_join(lua_State* L);
 int os_chdir(lua_State* L);

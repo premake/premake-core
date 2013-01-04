@@ -1,7 +1,7 @@
 --
 -- tests/base/test_path.lua
 -- Automated test suite for the action list.
--- Copyright (c) 2008-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("path")
@@ -11,39 +11,57 @@
 -- path.getabsolute() tests
 --
 
-	function suite.getabsolute_ReturnsCorrectPath_OnMissingSubdir()
-		local expected = path.translate(os.getcwd(), "/") .. "/a/b/c"
+	function suite.getabsolute_worksWithMissingSubdirs()
+		local expected = os.getcwd() .. "/a/b/c"
 		test.isequal(expected, path.getabsolute("a/b/c"))
 	end
 
-	function suite.getabsolute_RemovesDotDots_OnWindowsAbsolute()
+	function suite.getabsolute_removesDotDots_onWindows()
 		test.isequal("c:/ProjectB/bin", path.getabsolute("c:/ProjectA/../ProjectB/bin"))
 	end
 
-	function suite.getabsolute_RemovesDotDots_OnPosixAbsolute()
+	function suite.getabsolute_removesDotDots_OnPosix()
 		test.isequal("/ProjectB/bin", path.getabsolute("/ProjectA/../ProjectB/bin"))
 	end
 
-	function suite.getabsolute_OnTrailingSlash()
-		local expected = path.translate(os.getcwd(), "/") .. "/a/b/c"
-		test.isequal(expected, path.getabsolute("a/b/c/"))
+	function suite.getabsolute_limitsDotDots_onWindows()
+		test.isequal("c:/ProjectB/bin", path.getabsolute("c:/ProjectA/../../ProjectB/bin"))
 	end
 
-	function suite.getabsolute_OnLeadingEnvVar()
+	function suite.getabsolute_limitsDotDots_OnPosix()
+		test.isequal("/ProjectB/bin", path.getabsolute("/ProjectA/../../ProjectB/bin"))
+	end
+
+	function suite.getabsolute_removesDot()
+		test.isequal("/ProjectA/ProjectB/bin", path.getabsolute("/ProjectA/./ProjectB/bin"))
+	end
+
+	function suite.getabsolute_removesTrailingSlash()
+		test.isequal("/a/b/c", path.getabsolute("/a/b/c/"))
+	end
+
+	function suite.getabsolute_onLeadingEnvVar()
 		test.isequal("$(HOME)/user", path.getabsolute("$(HOME)/user"))
 	end
 
-	function suite.getabsolute_OnMultipleEnvVar()
+	function suite.getabsolute_onMultipleEnvVar()
 		test.isequal("$(HOME)/$(USER)", path.getabsolute("$(HOME)/$(USER)"))
 	end
 
-	function suite.getabsolute_OnTrailingEnvVar()
-		local expected = path.translate(os.getcwd(), "/") .. "/home/$(USER)"
-		test.isequal(expected, path.getabsolute("home/$(USER)"))
+	function suite.getabsolute_onTrailingEnvVar()
+		test.isequal("/home/$(USER)", path.getabsolute("/home/$(USER)"))
 	end
 
-	function suite.getabsolute_OnLeadingEnvVarQuoted()
+	function suite.getabsolute_onLeadingEnvVarQuoted()
 		test.isequal('"$(HOME)/user"', path.getabsolute('"$(HOME)/user"'))
+	end
+
+	function suite.getabsolute_normalizesPaths()
+		test.isequal("c:/ProjectB/bin", path.getabsolute("c:\\ProjectB\\bin"))
+	end
+
+	function suite.getabsolute_acceptsTables()
+		test.isequal({ "/a/b", "/c/d" }, path.getabsolute({ "/a/b", "/c/d" }))
 	end
 
 
