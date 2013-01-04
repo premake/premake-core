@@ -10,7 +10,8 @@
 
 int path_join(lua_State* L)
 {
-	int i;
+	int i, len;
+	const char* part;
 	char buffer[0x4000];
 	char* ptr = buffer;
 
@@ -23,8 +24,8 @@ int path_join(lua_State* L)
 		}
 
 		/* grab the next argument */
-		const char* part = luaL_checkstring(L, i);
-		int len = strlen(part);
+		part = luaL_checkstring(L, i);
+		len = strlen(part);
 
 		/* remove trailing slashes */
 		while (len > 1 && part[len - 1] == '/') {

@@ -22,11 +22,7 @@ static void getabsolute(char* result, const char* value)
 
 	/* normalize the path */
 	strcat(buffer, value);
-	for (ch = buffer; *ch != '\0'; ++ch) {
-		if (*ch == '\\') {
-			*ch = '/';
-		}
-	}
+	do_translate(buffer, '/');
 
 	/* process it part by part */
 	result[0] = '\0';

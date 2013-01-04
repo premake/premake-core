@@ -4,7 +4,7 @@
 -- Copyright (c) 2009, 2013 Jason Perkins and the Premake project
 --
 
-local numprojects  = 5
+local numprojects  = 10
 local numfiles     = 100
 local numbuildcfgs = 4
 local numplatforms = 6

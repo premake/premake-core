@@ -106,68 +106,6 @@
 	end
 
 
---
--- Returns the relative path from src to dest.
---
-
-	function path.getrelative(src, dst)
-		-- normalize the two paths
-		src = path.getabsolute(src)
-		dst = path.getabsolute(dst)
-
-		-- same directory?
-		if (src == dst) then
-			return "."
-		end
-
-		-- dollar macro? Can't tell what the real path is; use absolute
-		-- This enables paths like $(SDK_ROOT)/include to work correctly.
-		if dst:startswith("$") then
-			return dst
-		end
-
-		src = src .. "/"
-		dst = dst .. "/"
-
-		-- find the common leading directories
-		local idx = 0
-		while (true) do
-			local tst = src:find("/", idx + 1, true)
-			if tst then
-				if src:sub(1,tst) == dst:sub(1,tst) then
-					idx = tst
-				else
-					break
-				end
-			else
-				break
-			end
-		end
-
-		-- if they have nothing in common return absolute path
-		local first = src:find("/", 0, true)
-		if idx <= first then
-			return dst:sub(1, -2)
-		end
-
-		-- trim off the common directories from the front
-		src = src:sub(idx + 1)
-		dst = dst:sub(idx + 1)
-
-		-- back up from dst to get to this common parent
-		local result = ""
-		idx = src:find("/")
-		while (idx) do
-			result = result .. "../"
-			idx = src:find("/", idx + 1)
-		end
-
-		-- tack on the path down to the dst from here
-		result = result .. dst
-
-		-- remove the trailing slash
-		return result:sub(1, -2)
-	end
 
 
 --
@@ -251,29 +189,6 @@
 		p = path.getabsolute(path.join(oldbase, p))
 		p = path.getrelative(newbase, p)
 		return p
-	end
-
-
---
--- Convert the separators in a path from one form to another. If `sep`
--- is nil, then a Windows-style backslash is used (since those are
--- likely the only paths needing translating).
---
-
-	function path.translate(p, sep)
-		if type(p) == "table" then
-			local result = { }
-			for _, value in ipairs(p) do
-				table.insert(result, path.translate(value))
-			end
-			return result
-		else
-			if not sep then
-				sep = "\\"
-			end
-			local result = p:gsub("[/\\]", sep)
-			return result
-		end
 	end
 
 

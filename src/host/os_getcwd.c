@@ -24,16 +24,12 @@ int do_getcwd(char* buffer, size_t size)
 	int result;
 
 #if PLATFORM_WINDOWS
-	result = (GetCurrentDirectory(0x4000, buffer) != 0);
+	result = (GetCurrentDirectory(size, buffer) != 0);
 	if (result) {
-		char* ch;
-		for (ch = buffer; *ch != '\0'; ++ch)
-		{
-			if (*ch == '\\') *ch = '/';
-		}
+		do_translate(buffer, '/');
 	}
 #else
-	result = (getcwd(buffer, 0x4000) != 0);
+	result = (getcwd(buffer, size) != 0);
 #endif
 
 	return result;
