@@ -97,14 +97,14 @@
 		context.compile(ctx)
 
 
-		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now 
+		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
 		local result = oven.merge({}, sln)
 		result.baked = true
 		result.blocks = sln.blocks
 
 
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values 
-		-- through to the config context. Eventually all values will be in the 
+		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values
+		-- through to the config context. Eventually all values will be in the
 		-- context and the cfg wrapper can be done away with
 		result.context = ctx
 		sln.context = ctx
@@ -115,8 +115,8 @@
 			end,
 		})
 		setmetatable(sln, getmetatable(result))
-		
-		
+
+
 		-- bake all of the projects in the list, and store that result
 		local projects = {}
 		for i, prj in ipairs(sln.projects) do
@@ -124,10 +124,10 @@
 			projects[prj.name] = projects[i]
 		end
 		result.projects = projects
-	
+
 		-- assign unique object directories to every project configurations
 		solution.bakeobjdirs(result)
-		
+
 		-- expand all tokens contained by the solution
 		for prj in solution.eachproject_ng(result) do
 			oven.expandtokens(prj, "project")
@@ -151,7 +151,7 @@
 	function solution.bakeconfigs(sln)
 		local buildcfgs = sln.configurations or {}
 		local platforms = sln.platforms or {}
-		
+
 		local configs = {}
 		for _, buildcfg in ipairs(buildcfgs) do
 			if #platforms > 0 then
@@ -168,7 +168,7 @@
 			cfg.solution = sln
 			premake5.config.bake(cfg)
 		end
-		
+
 		return configs
 	end
 
@@ -176,7 +176,7 @@
 --
 -- Assigns a unique objects directory to every configuration of every project
 -- in the solution, taking any objdir settings into account, to ensure builds
--- from different configurations won't step on each others' object files. 
+-- from different configurations won't step on each others' object files.
 -- The path is built from these choices, in order:
 --
 --   [1] -> the objects directory as set in the config
@@ -189,21 +189,21 @@
 		-- function to compute the four options for a specific configuration
 		local function getobjdirs(cfg)
 			local dirs = {}
-			
+
 			local dir = path.getabsolute(path.join(project.getlocation(cfg.project), cfg.objdir or "obj"))
 			table.insert(dirs, dir)
-			
+
 			if cfg.platform then
 				dir = path.join(dir, cfg.platform)
 				table.insert(dirs, dir)
 			end
-			
+
 			dir = path.join(dir, cfg.buildcfg)
 			table.insert(dirs, dir)
 
 			dir = path.join(dir, cfg.project.name)
 			table.insert(dirs, dir)
-			
+
 			return dirs
 		end
 
@@ -211,16 +211,16 @@
 		-- times each obj dir gets used
 		local counts = {}
 		local configs = {}
-		
+
 		for prj in premake.solution.eachproject_ng(sln) do
 			for cfg in project.eachconfig(prj) do
 				-- expand any tokens contained in the field
 				oven.expandtokens(cfg, "config", nil, "objdir")
-				
+
 				-- get the dirs for this config, and remember the association
 				local dirs = getobjdirs(cfg)
 				configs[cfg] = dirs
-				
+
 				for _, dir in ipairs(dirs) do
 					counts[dir] = (counts[dir] or 0) + 1
 				end
@@ -231,7 +231,7 @@
 		for cfg, dirs in pairs(configs) do
 			for _, dir in ipairs(dirs) do
 				if counts[dir] == 1 then
-					cfg.objdir = dir 
+					cfg.objdir = dir
 					break
 				end
 			end
@@ -390,7 +390,7 @@
 		if sln.grouptree then
 			return sln.grouptree
 		end
-		
+
 		local tr = tree.new()
 		sln.grouptree = tr
 
@@ -400,7 +400,6 @@
 			node.project = prj
 		end
 
-		tree.sort(tr)		
 		return tr
 	end
 
@@ -436,7 +435,7 @@
 		-- the global (not configuration specific) settings collapsed
 		local prj = sln.projects[idx]
 		local cfg = premake.getconfig(prj)
-		
+
 		-- root configuration doesn't have a name; use the project's
 		cfg.name = prj.name
 		return cfg
@@ -491,7 +490,7 @@
 -- @param sln
 --    The solution to query.
 -- @return
---    True if at least one project in the solution uses a 
+--    True if at least one project in the solution uses a
 --    .NET language
 --
 

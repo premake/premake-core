@@ -10,17 +10,17 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = solution "MySolution"
-		configurations { "Debug", "Release" }		
+		configurations { "Debug", "Release" }
 	end
-	
+
 	local function prepare()
 		sln2005.projects(sln)
 	end
