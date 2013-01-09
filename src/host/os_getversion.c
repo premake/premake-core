@@ -156,39 +156,65 @@ void getversion(struct OsVersionInfo* info)
 
 #elif defined(PLATFORM_MACOSX)
 
-#include <CoreServices/CoreServices.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <string.h>
+#include <stdio.h>
 
 void getversion(struct OsVersionInfo* info)
 {
-	SInt32 majorversion, minorversion, bugfix;
-	Gestalt(gestaltSystemVersionMajor, &majorversion);
-	Gestalt(gestaltSystemVersionMinor, &minorversion);
-	Gestalt(gestaltSystemVersionBugFix, &bugfix);
-
-	info->majorversion = majorversion;
-	info->minorversion = minorversion;
-	info->revision = bugfix;
-
-	info->description = "Mac OS X";
-	if (info->majorversion == 10)
+	info->description = "Mac OS";
+	info->majorversion=0;
+	info->minorversion=0;
+	info->revision=0;
+	
+    int mib[] = {CTL_KERN, KERN_OSRELEASE};
+    size_t len;
+    sysctl(mib, sizeof(mib)/sizeof(mib[0]), NULL, &len, NULL, 0);
+	
+	char kernel_version[len];
+    sysctl(mib, sizeof(mib)/sizeof(mib[0]), kernel_version, &len, NULL, 0);
+	
+	int kern_major;
+	int kern_minor;
+	sscanf(kernel_version, "%d.%d.%*d",&kern_major,&kern_minor);
+	switch (kern_major) 
 	{
-		switch (info->minorversion)
-		{
-		case 4:
+		case 8:
 			info->description = "Mac OS X Tiger";
+			info->majorversion = 10;
+			info->minorversion = 4;
+			info->revision = kern_minor;
 			break;
-		case 5:
+		case 9:
 			info->description = "Mac OS X Leopard";
+			info->majorversion = 10;
+			info->minorversion = 5;
+			info->revision = kern_minor;
 			break;
-		case 6:
+		case 10:
 			info->description = "Mac OS X Snow Leopard";
+			info->majorversion = 10;
+			info->minorversion = 6;
+			info->revision = kern_minor;
 			break;
-		case 7:
+		case 11:
 			info->description = "Mac OS X Lion";
+			info->majorversion = 10;
+			info->minorversion = 7;
+			info->revision = kern_minor;
 			break;
-		}
+		case 12:
+			info->description = "Mac OS X Mountain Lion";
+			info->majorversion = 10;
+			info->minorversion = 8;
+			info->revision = kern_minor;
+			break;
+		default:
+			break;
 	}
 }
+
 
 /*************************************************************/
 
