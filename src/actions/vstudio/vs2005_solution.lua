@@ -153,7 +153,7 @@
 
 	function sln2005.NestedProjects(sln)
 		local tr = solution.grouptree(sln)
-		if #tr.children > 0 and #tr.children[1].children > 0 then
+		if tree.hasbranches(tr) then
 			_p(1,'GlobalSection(NestedProjects) = preSolution')
 			tree.traverse(tr, {
 				onnode = function(n)

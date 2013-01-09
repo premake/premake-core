@@ -10,18 +10,19 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		language "C++"
+		kind "ConsoleApp"
 	end
-	
+
 	local function prepare()
 		sln2005.NestedProjects(sln)
 	end
@@ -31,10 +32,25 @@
 -- This block should only be written if solution groups are present.
 --
 
-	function suite.isEmpty_onNoGroups()		
+	function suite.isEmpty_onNoGroups()
 		project "MyProject"
 		prepare()
 		test.isemptycapture()
+	end
+
+
+--
+-- Should be written even if first entry in project tree is not a group.
+--
+
+	function suite.writesBlock_onUngroupedFirstProject()
+		project "MyProject"
+		group "Alpha"
+		project "MyProject2"
+		prepare()
+		test.capture [[
+	GlobalSection(NestedProjects) = preSolution
+		]]
 	end
 
 
@@ -86,4 +102,3 @@
 	EndGlobalSection
 		]]
 	end
-	

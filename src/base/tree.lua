@@ -43,7 +43,7 @@
 		if p == "." then
 			return tr
 		end
-		
+
 		-- Look for the immediate parent for this new node, creating it if necessary.
 		-- Recurses to create as much of the tree as necessary.
 		local parentnode = tree.add(tr, path.getdirectory(p), onaddfunc)
@@ -58,7 +58,7 @@
 				onaddfunc(childnode)
 			end
 		end
-		
+
 		return childnode
 	end
 
@@ -101,6 +101,29 @@
 	end
 
 
+--
+-- Determines if the tree contains any branch nodes, or only leaves.
+--
+-- @param tr
+--    The root node of the tree to query.
+-- @return
+--    True if a node below the root contains children, false otherwise.
+--
+
+	function tree.hasbranches(tr)
+		local n = #tr.children
+		if n > 0 then
+			for i = 1, n do
+				if #tr.children[i].children > 0 then
+					return true
+				end
+			end
+		end
+		return false
+	end
+
+
+--
 --
 -- Remove a node from a tree.
 --
@@ -168,32 +191,32 @@
 
 		-- process an individual node
 		donode = function(node, fn, depth)
-			if node.isremoved then 
-				return 
+			if node.isremoved then
+				return
 			end
 
-			if fn.onnode then 
-				fn.onnode(node, depth) 
+			if fn.onnode then
+				fn.onnode(node, depth)
 			end
-			
+
 			if #node.children > 0 then
 				if fn.onbranchenter then
 					fn.onbranchenter(node, depth)
 				end
-				if fn.onbranch then 
-					fn.onbranch(node, depth) 
+				if fn.onbranch then
+					fn.onbranch(node, depth)
 				end
 				dochildren(node, fn, depth + 1)
 				if fn.onbranchexit then
 					fn.onbranchexit(node, depth)
 				end
 			else
-				if fn.onleaf then 
-					fn.onleaf(node, depth) 
+				if fn.onleaf then
+					fn.onleaf(node, depth)
 				end
 			end
 		end
-		
+
 		-- this goofy iterator allows nodes to be removed during the traversal
 		dochildren = function(parent, fn, depth)
 			local i = 1
@@ -205,7 +228,7 @@
 				end
 			end
 		end
-		
+
 		-- set a default initial traversal depth, if one wasn't set
 		if not initialdepth then
 			initialdepth = 0
@@ -220,25 +243,25 @@
 
 
 --
--- Starting at the top of the tree, remove nodes that contain only a single 
+-- Starting at the top of the tree, remove nodes that contain only a single
 -- item until I hit a node that has multiple items. This is used to remove
 -- superfluous folders from the top of the source tree.
 --
 
 	function tree.trimroot(tr)
 		local trimmed
-		
+
 		-- start by removing single-children folders from the top of the tree
 		while #tr.children == 1 do
 			local node = tr.children[1]
-			
+
 			-- if this node has no children (it is the last node in the tree) I'm done
 			if #node.children == 0 then
 				break
-			end			
-			
+			end
+
 			-- remove this node from the tree, and move its children up a level
-			trimmed = true			
+			trimmed = true
 			local numChildren = #node.children
 			for i = 1, numChildren do
 				local child = node.children[i]
@@ -246,7 +269,7 @@
 				tr.children[i] = child
 			end
 		end
-		
+
 		-- found the top, now remove any single-children ".." folders from here
 		local dotdot
 		local count = #tr.children
@@ -263,7 +286,7 @@
 				end
 			end
 		until not dotdot
-				
+
 		-- if nodes were removed, adjust the paths on all remaining nodes
 		if trimmed then
 			tree.traverse(tr, {
