@@ -135,6 +135,17 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Windows 7";
 		}
 	}
+	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 2 )
+	{
+		if (versionInfo.wProductType != VER_NT_WORKSTATION)
+		{
+			info->description = "Windows Server 2012";
+		}
+		else
+		{
+			info->description = "Windows 8";
+		}
+	}
 	else
 	{
 		info->description = "Windows";
