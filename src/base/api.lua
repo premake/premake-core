@@ -815,6 +815,13 @@
 	}
 
 	api.register {
+		name = "startproject",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "system",
 		scope = "config",
 		kind = "string",

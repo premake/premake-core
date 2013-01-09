@@ -124,6 +124,28 @@
 
 
 --
+-- Determines if one node is a parent if another.
+--
+-- @param n
+--    The node being tested for parentage.
+-- @param child
+--    The child node being testing against.
+-- @return
+--    True if n is a parent of child.
+--
+
+	function tree.isparent(n, child)
+		local p = child.parent
+		while p do
+			if p == n then
+				return true
+			end
+			p = p.parent
+		end
+		return false
+	end
+
+
 --
 -- Remove a node from a tree.
 --

@@ -29,6 +29,7 @@
 * Generated Visual Studio GUIDs are now deterministic
 * Added support for Visual Studio solution groups
 * Added dependson() to specify non-linking dependencies (Alexey Orlov)
+* Added startproject() to specify solution startup project
 
 
 -------

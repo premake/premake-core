@@ -22,6 +22,8 @@
 		-- Mark the file as Unicode
 		_p('\239\187\191')
 
+		sln2005.reorderProjects(sln)
+
 		sln2005.header(sln)
 		sln2005.projects(sln)
 
@@ -46,6 +48,39 @@
 		}
 		_p('Microsoft Visual Studio Solution File, Format Version %d.00', version[_ACTION])
 		_p('# Visual Studio %s', _ACTION:sub(3))
+	end
+
+
+--
+-- If a startup project is specified, move it (and any enclosing groups)
+-- to the front of the project list. This will make Visual Studio treat
+-- it like a startup project.
+--
+-- I force the new ordering into the tree so that it will get applied to
+-- all sections of the solution; otherwise the first change to the solution
+-- in the IDE will cause the orderings to get rewritten.
+--
+
+	function sln2005.reorderProjects(sln)
+		if sln.startproject then
+			local np
+			local tr = solution.grouptree(sln)
+			tree.traverse(tr, {
+				onleaf = function(n)
+					if n.project.name == sln.startproject then
+						np = n
+					end
+				end
+			})
+
+			while np and np.parent do
+				local p = np.parent
+				local i = table.indexof(p.children, np)
+				table.remove(p.children, i)
+				table.insert(p.children, 1, np)
+				np = p
+			end
+		end
 	end
 
 

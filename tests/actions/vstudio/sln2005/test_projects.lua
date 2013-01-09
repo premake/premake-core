@@ -19,9 +19,12 @@
 		_ACTION = "vs2008"
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
+		language "C++"
+		kind "ConsoleApp"
 	end
 
 	local function prepare()
+		sln2005.reorderProjects(sln)
 		sln2005.projects(sln)
 	end
 
@@ -98,6 +101,79 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{96080FE9-82C0-5036-EBC7-2992D79EEB26}"
+EndProject
+		]]
+	end
+
+
+--
+-- If a startup project is specified, it should appear first in the list.
+--
+
+	function suite.startupProjectFirst_onNoGroups()
+		startproject "MyProject2"
+		project "MyProject1"
+		project "MyProject2"
+		project "MyProject3"
+		prepare()
+		test.capture [[
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject2", "MyProject2.vcproj", "{B45D52A2-A015-94EF-091D-6D4BF5F32EE0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject1", "MyProject1.vcproj", "{B35D52A2-9F15-94EF-081D-6D4BF4F32EE0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject3", "MyProject3.vcproj", "{B55D52A2-A115-94EF-0A1D-6D4BF6F32EE0}"
+EndProject
+		]]
+	end
+
+
+--
+-- If the startup project is contained by a group, that group (and any parent
+-- groups) should appear first in the list.
+--
+
+	function suite.startupProjectFirst_onSingleGroup()
+		startproject "MyProject2"
+		project "MyProject1"
+		group "Zed"
+		project "MyProject2"
+		group "Beta"
+		project "MyProject3"
+		prepare()
+		test.capture [[
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zed", "Zed", "{283F880B-9448-887C-1DC4-9E7C89CC937C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject2", "MyProject2.vcproj", "{B45D52A2-A015-94EF-091D-6D4BF5F32EE0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject1", "MyProject1.vcproj", "{B35D52A2-9F15-94EF-081D-6D4BF4F32EE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{81FD827C-6D34-840D-1621-6A100237000F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject3", "MyProject3.vcproj", "{B55D52A2-A115-94EF-0A1D-6D4BF6F32EE0}"
+EndProject
+		]]
+	end
+
+	function suite.startupProjectFirst_onMultipleGroups()
+		startproject "MyProject2"
+		project "MyProject1"
+		group "Zed"
+		project "MyProject3"
+		group "Alpha/Beta"
+		project "MyProject2"
+		prepare()
+		test.capture [[
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{96080FE9-82C0-5036-EBC7-2992D79EEB26}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject2", "MyProject2.vcproj", "{B45D52A2-A015-94EF-091D-6D4BF5F32EE0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject1", "MyProject1.vcproj", "{B35D52A2-9F15-94EF-081D-6D4BF4F32EE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zed", "Zed", "{283F880B-9448-887C-1DC4-9E7C89CC937C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject3", "MyProject3.vcproj", "{B55D52A2-A115-94EF-0A1D-6D4BF6F32EE0}"
 EndProject
 		]]
 	end
