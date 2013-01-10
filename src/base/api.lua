@@ -373,6 +373,20 @@
 
 
 --
+-- Set a new value into a mixed value field, which contain both
+-- simple strings and paths.
+--
+
+	function api.setmixed(target, name, field, value)
+		-- if the value contains a '/' treat it as a path
+		if type(value) == "string" and value:find('/', nil, true) then
+			value = path.getabsolute(value)
+		end
+		return api.setstring(target, name, field, value)
+	end
+
+
+--
 -- Set a new object value on an API field.
 --
 
@@ -712,14 +726,7 @@
 	api.register {
 		name = "links",
 		scope = "config",
-		kind = "string-list",
-		allowed = function(value)
-			-- if library name contains a '/' then treat it as a path to a local file
-			if value:find('/', nil, true) then
-				value = path.getabsolute(value)
-			end
-			return value
-		end,
+		kind = "mixed-list",
 		tokens = true,
 	}
 

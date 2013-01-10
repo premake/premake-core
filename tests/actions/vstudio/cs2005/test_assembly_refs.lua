@@ -14,7 +14,7 @@
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = test.createsolution()
@@ -61,6 +61,24 @@
 
 	function suite.assemblyRef_onPath()
 		links { "../Libraries/nunit.framework" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>..\Libraries\nunit.framework.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+
+--
+-- Assemblies referenced via a token that expands to an absolute
+-- path should still end up with a relative hint path.
+--
+
+	function suite.assemblyRef_onAbsoluteToken()
+		links { "%{path.getdirectory(os.getcwd())}/Libraries/nunit.framework" }
 		prepare()
 		test.capture [[
 	<ItemGroup>

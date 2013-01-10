@@ -39,11 +39,11 @@
 		ctx.environ = environ or {}
 		ctx._filename = { filename } or {}
 		ctx.terms = {}
-		
+
 		-- when a missing field is requested, fetch it from my config
 		-- set, and then cache the value for future lookups
 		setmetatable(ctx, context.__mt)
-		
+
 		return ctx
 	end
 
@@ -96,7 +96,7 @@
 
 
 --
--- Check to see if a context's underlying configuration set is empty; that 
+-- Check to see if a context's underlying configuration set is empty; that
 -- is, it does not contain any configuration blocks.
 --
 -- @param ctx
@@ -129,17 +129,18 @@
 			-- do I need to expand tokens?
 			local field = premake.fields[key]
 			if field and field.tokens then
-				local ispath = field.kind:startswith("path")
+				local kind = field.kind
+				local ispath = kind:startswith("path") or kind:startswith("mixed")
 				value = premake.detoken.expand(value, ctx.environ, ispath)
 			end
-			
+
 			-- store the result for later lookups
 			ctx[key] = value
 		end
 
 		return value
 	end
-	
+
 	context.__mt = {
 		__index = context.fetchvalue
 	}
