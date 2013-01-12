@@ -1,26 +1,25 @@
 --
 -- tests/actions/vstudio/vc200x/test_project.lua
 -- Validate generation of the opening <VisualStudioProject> element.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs200x_project = { }
-	local suite = T.vstudio_vs200x_project
+	local suite = test.declare("vstudio_vs200x_project")
 	local vc200x = premake.vstudio.vc200x
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = 'vs2008'
 		sln = test.createsolution()
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		vc200x.visualStudioProject(prj)
@@ -90,3 +89,45 @@
 		]]
 	end
 
+
+--
+-- Omit Keyword and RootNamespace for non-Windows projects.
+--
+
+	function suite.noKeyword_onNotWindows()
+		system "PS3"
+		prepare()
+		test.capture [[
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="MyProject"
+	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
+	TargetFrameworkVersion="196613"
+	>
+		]]
+	end
+
+
+--
+-- Include Keyword and RootNamespace for mixed system projects.
+--
+
+	function suite.includeKeyword_onMixedConfigs()
+		configuration "Debug"
+			system "Windows"
+		configuration "Release"
+			system "PS3"
+		prepare()
+		test.capture [[
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="MyProject"
+	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
+	RootNamespace="MyProject"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
+	>
+		]]
+	end

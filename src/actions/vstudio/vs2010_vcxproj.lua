@@ -95,7 +95,7 @@
 				table.insert(platforms, arch)
 			end
 		end
-	
+
 		local configs = {}
 		_p(1,'<ItemGroup Label="ProjectConfigurations">')
 		for cfg in project.eachconfig(prj) do
@@ -121,28 +121,34 @@
 	function vc2010.globals(prj)
 		_p(1,'<PropertyGroup Label="Globals">')
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-				
-		-- flags are located on the configurations; grab one
-		local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])		
-		
-		if cfg.flags.Managed then
-			_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
-			_p(2,'<Keyword>ManagedCProj</Keyword>')
-		else
-			_p(2,'<Keyword>Win32Proj</Keyword>')
-		end
-		
-		if _ACTION == "vs2012" then
-			_p(2,[[<VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath11)</VCTargetsPath>]])
+
+		-- try to determine what kind of targets we're building here
+		local isWin, isManaged
+		for cfg in project.eachconfig(prj) do
+			if cfg.system == premake.WINDOWS then
+				isWin = true
+			end
+			if cfg.flags.Managed then
+				isManaged = true
+			end
 		end
 
-		_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+		if isWin then
+			if isManaged then
+				_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
+				_p(2,'<Keyword>ManagedCProj</Keyword>')
+			else
+				_p(2,'<Keyword>Win32Proj</Keyword>')
+			end
+			_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+		end
+
 		_p(1,'</PropertyGroup>')
 	end
 
 
 --
--- Write out the configuration property group: what kind of binary it 
+-- Write out the configuration property group: what kind of binary it
 -- produces, and some global settings.
 --
 
@@ -154,7 +160,7 @@
 		if _ACTION == "vs2012" then
 			_p(2,'<PlatformToolset>v110</PlatformToolset>')
 		end
-		
+
 		if cfg.flags.MFC then
 			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
 		end
@@ -180,7 +186,7 @@
 
 
 --
--- Write the output property group, which  includes the output and intermediate 
+-- Write the output property group, which  includes the output and intermediate
 -- directories, manifest, etc.
 --
 
@@ -396,7 +402,7 @@
 --
 
 	function vc2010.buildEvents(cfg)
-		function write(group, list)			
+		function write(group, list)
 			if #list > 0 then
 				_p(2,'<%s>', group)
 				_x(3,'<Command>%s</Command>', table.implode(list, "", "", "\r\n"))
@@ -440,17 +446,17 @@
 				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
 				for cfg in project.eachconfig(prj) do
 					local condition = vc2010.condition(cfg)
-					
+
 					local filecfg = config.getfileconfig(cfg, file.abspath)
 					if not filecfg then
 						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', condition)
 					end
-					
+
 					local objectname = project.getfileobject(prj, file.abspath)
 					if objectname ~= path.getbasename(file.abspath) then
 						_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', condition, objectname)
 					end
-					
+
 					if cfg.pchsource == file.abspath and not cfg.flags.NoPCH then
 						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', condition)
 					end
@@ -468,19 +474,19 @@
 			for _, file in ipairs(files) do
 				_x(2,'<CustomBuild Include=\"%s\">', path.translate(file.relpath))
 				_p(3,'<FileType>Document</FileType>')
-				
+
 				for cfg in project.eachconfig(prj) do
-					local condition = vc2010.condition(cfg)					
+					local condition = vc2010.condition(cfg)
 					local filecfg = config.getfileconfig(cfg, file.abspath)
 					if filecfg and filecfg.buildrule then
 						local commands = table.concat(filecfg.buildrule.commands,'\r\n')
 						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
-	
+
 						local outputs = table.concat(filecfg.buildrule.outputs, ' ')
 						_p(3,'<Outputs %s>%s</Outputs>', condition, premake.esc(outputs))
 					end
 				end
-				
+
 				_p(2,'</CustomBuild>')
 			end
 			_p(1,'</ItemGroup>')
@@ -499,21 +505,21 @@
 				CustomBuild = {},
 			}
 			prj.vc2010_file_groups = groups
-			
+
 			local tr = project.getsourcetree(prj)
 			tree.traverse(tr, {
 				onleaf = function(node)
 					-- if any configuration of this file uses a custom build rule,
 					-- then they all must be marked as custom build
 					local hasbuildrule = false
-					for cfg in project.eachconfig(prj) do				
+					for cfg in project.eachconfig(prj) do
 						local filecfg = config.getfileconfig(cfg, node.abspath)
 						if filecfg and filecfg.buildrule then
 							hasbuildrule = true
 							break
 						end
 					end
-						
+
 					if hasbuildrule then
 						table.insert(groups.CustomBuild, node)
 					elseif path.iscppfile(node.name) then
@@ -541,7 +547,7 @@
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 			local prjpath = project.getlocation(prj)
-			
+
 			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
 				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
@@ -573,7 +579,7 @@
 			local scope = iif(explicit, "all", "system")
 			links = config.getlinks(cfg, scope, "fullpath")
 		end
-		
+
 		if #links > 0 then
 			links = path.translate(table.concat(links, ";"))
 			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
@@ -582,7 +588,7 @@
 
 
 --
--- Write out the <AdditionalIncludeDirectories> element, which is used by 
+-- Write out the <AdditionalIncludeDirectories> element, which is used by
 -- both the compiler and resource compiler blocks.
 --
 
@@ -653,9 +659,9 @@
 		if cfg.flags.Symbols then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
-			elseif cfg.architecture == "x64" or 
-			       cfg.flags.Managed or 
-				   premake.config.isoptimizedbuild(cfg) or 
+			elseif cfg.architecture == "x64" or
+			       cfg.flags.Managed or
+				   premake.config.isoptimizedbuild(cfg) or
 				   cfg.flags.NoEditAndContinue
 			then
 				value = "ProgramDatabase"
@@ -715,7 +721,7 @@
 	function vc2010.TreatWarningAsError(cfg)
 		if cfg.flags.FatalWarnings and not cfg.flags.NoWarnings then
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
-		end		
+		end
 	end
 
 

@@ -1,25 +1,24 @@
 --
 -- tests/actions/vstudio/vc2010/test_globals.lua
 -- Validate generation of the Globals property group.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_globals = { }
-	local suite = T.vstudio_vs2010_globals
+	local suite = test.declare("vstudio_vs2010_globals")
 	local vc2010 = premake.vstudio.vc2010
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
+		_ACTION = "vs2010"
 		sln = test.createsolution()
-		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		vc2010.globals(prj)
@@ -34,12 +33,13 @@
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>MyProject</RootNamespace>
 	</PropertyGroup>
 		]]
 	end
+
 
 --
 -- Ensure CLR support gets enabled for Managed C++ projects.
@@ -50,7 +50,7 @@
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
-		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
 		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 		<Keyword>ManagedCProj</Keyword>
 		<RootNamespace>MyProject</RootNamespace>
@@ -58,3 +58,37 @@
 		]]
 	end
 
+
+--
+-- Omit Keyword and RootNamespace for non-Windows projects.
+--
+
+	function suite.noKeyword_onNotWindows()
+		system "PS3"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	</PropertyGroup>
+		]]
+	end
+
+
+--
+-- Include Keyword and RootNamespace for mixed system projects.
+--
+
+	function suite.includeKeyword_onMixedConfigs()
+		configuration "Debug"
+			system "Windows"
+		configuration "Release"
+			system "PS3"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>MyProject</RootNamespace>
+	</PropertyGroup>
+		]]
+	end

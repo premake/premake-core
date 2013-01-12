@@ -22,11 +22,11 @@
 
 		vc200x.xmldeclaration()
 		vc200x.visualStudioProject(prj)
-		
+
 		-- output the list of configuration/architecture pairs used by
 		-- the project; sends back list of unique architectures
 		local architectures = vc200x.platforms(prj)
-		
+
 		if _ACTION > "vs2003" then
 			_p(1,'<ToolFiles>')
 			_p(1,'</ToolFiles>')
@@ -41,7 +41,7 @@
 			local cfgname = vstudio.projectConfig(cfg)
 			prjcfgs[cfgname] = cfgname
 		end
-		
+
 		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
 			local prjcfg = vstudio.projectConfig(cfg)
@@ -53,10 +53,10 @@
 					vc200x.tools(cfg)
 					_p(2,'</Configuration>')
 				elseif not prjcfgs[tstcfg] then
-					-- this is a fake config to make VS happy					
+					-- this is a fake config to make VS happy
 					vc200x.emptyconfiguration(cfg, arch)
 				end
-			end		
+			end
 		end
 		_p(1,'</Configurations>')
 
@@ -108,15 +108,30 @@
 		vc200x.projectversion()
 		_x(1,'Name="%s"', prj.name)
 		_p(1,'ProjectGUID="{%s}"', prj.uuid)
-		if _ACTION > "vs2003" then
-			_x(1,'RootNamespace="%s"', prj.name)
+
+		-- try to determine what kind of targets we're building here
+		local isWin, isPS3, isManaged
+		for cfg in project.eachconfig(prj) do
+			if cfg.system == premake.WINDOWS then
+				isWin = true
+			elseif cfg.system == premake.PS3 then
+				isPS3 = true
+			end
+			if cfg.flags.Managed then
+				isManaged = true
+			end
 		end
-		
-		-- flags are located on the configurations; grab one
-		local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])
-		_p(1,'Keyword="%s"', iif(cfg.flags.Managed, "ManagedCProj", "Win32Proj"))
-		
-		_p(1,'TargetFrameworkVersion=\"0\"')
+
+		if isWin then
+			if _ACTION > "vs2003" then
+				_x(1,'RootNamespace="%s"', prj.name)
+			end
+			_p(1,'Keyword="%s"', iif(isManaged, "ManagedCProj", "Win32Proj"))
+			_p(1,'TargetFrameworkVersion="0"')
+		elseif isPS3 then
+			_p(1,'TargetFrameworkVersion="196613"')
+		end
+
 		_p(1,'>')
 	end
 
@@ -172,7 +187,7 @@
 
 		if (cfg.flags.MFC) then
 			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
-		end				  
+		end
 
 		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
 
@@ -195,12 +210,12 @@
 		_p(3,'IntermediateDirectory="$(PlatformName)\\$(ConfigurationName)"')
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
-	
+
 		local tools = vc200x.gettools(cfg)
 		for _, tool in ipairs(tools) do
 			vc200x.tool(tool)
 		end
-		
+
 		_p(2,'</Configuration>')
 	end
 
@@ -255,36 +270,36 @@
 		if #cfg.buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.buildoptions, " "))
 		end
-		
+
 		_p(4,'Optimization="%s"', vc200x.optimization(cfg))
-		
+
 		if cfg.flags.NoFramePointer then
 			_p(4,'OmitFramePointers="%s"', bool(true))
 		end
-		
+
 		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
 		vc200x.preprocessorDefinitions(cfg, cfg.defines)
-		
-		if premake.config.isdebugbuild(cfg) and 
-		   cfg.debugformat ~= "c7" and 
-		   not cfg.flags.NoMinimalRebuild and 
-		   not cfg.flags.Managed 
+
+		if premake.config.isdebugbuild(cfg) and
+		   cfg.debugformat ~= "c7" and
+		   not cfg.flags.NoMinimalRebuild and
+		   not cfg.flags.Managed
 		then
 			_p(4,'MinimalRebuild="%s"', bool(true))
 		end
-		
+
 		vc200x.BasicRuntimeChecks(cfg)
 
 		if vc200x.optimization(cfg) ~= 0 then
 			_p(4,'StringPooling="%s"', bool(true))
 		end
-		
+
 		if cfg.flags.NoExceptions then
 			_p(4,'ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
 		elseif cfg.flags.SEH and _ACTION > "vs2003" then
 			_p(4,'ExceptionHandling="2"')
 		end
-		
+
 		local runtime
 		if premake.config.isdebugbuild(cfg) then
 			runtime = iif(cfg.flags.StaticRuntime, 1, 3)
@@ -302,7 +317,7 @@
 				_p(4,'EnableEnhancedInstructionSet="2"')
 			end
 		end
-	
+
 		if _ACTION < "vs2005" then
 			if cfg.flags.FloatFast then
 				_p(4,'ImproveFloatingPointConsistency="%s"', bool(false))
@@ -316,31 +331,31 @@
 				_p(4,'FloatingPointModel="1"')
 			end
 		end
-		
+
 		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
 			_p(4,'RuntimeTypeInfo="%s"', bool(true))
 		elseif _ACTION > "vs2003" and cfg.flags.NoRTTI and not cfg.flags.Managed then
 			_p(4,'RuntimeTypeInfo="%s"', bool(false))
 		end
-		
+
 		if cfg.flags.NativeWChar then
 			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(true))
 		elseif cfg.flags.NoNativeWChar then
 			_p(4,'TreatWChar_tAsBuiltInType="%s"', bool(false))
 		end
-		
+
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
 			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
-		
-		vc200x.programDatabase(cfg)		
+
+		vc200x.programDatabase(cfg)
 		vc200x.warnings(cfg)
-		
+
 		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
-		
+
 		if cfg.project.language == "C" then
 			_p(4, 'CompileAs="1"')
 		end
@@ -350,7 +365,7 @@
 
 
 	function vc200x.VCCLExternalCompilerTool(cfg, toolset)
-		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)		
+		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
 		end
@@ -378,14 +393,14 @@
 
 
 	function vc200x.BasicRuntimeChecks(cfg)
-		if not premake.config.isoptimizedbuild(cfg) 
-			and not cfg.flags.Managed 
+		if not premake.config.isoptimizedbuild(cfg)
+			and not cfg.flags.Managed
 			and not cfg.flags.NoRuntimeChecks
 		then
 			_p(4,'BasicRuntimeChecks="3"')
 		end
 	end
-	
+
 
 --
 -- Write out the VCLinkerTool element.
@@ -403,7 +418,7 @@
 		else
 			vc200x.VCBuiltInLinkerTool(cfg)
 		end
-				
+
 		_p(3,'/>')
 	end
 
@@ -412,7 +427,7 @@
 		local explicitLink = vstudio.needsExplicitLink(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
-			
+
 			if explicitLink then
 				_p(4,'LinkLibraryDependencies="false"')
 			end
@@ -421,7 +436,7 @@
 				_p(4,'IgnoreImportLibrary="%s"', bool(true))
 			end
 		end
-			
+
 		if #cfg.linkoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.linkoptions, " "))
 		end
@@ -446,28 +461,28 @@
 			if deffile then
 				_p(4,'ModuleDefinitionFile="%s"', deffile)
 			end
-	
+
 			if cfg.flags.NoManifest then
 				_p(4,'GenerateManifest="%s"', bool(false))
 			end
-	
+
 			_p(4,'GenerateDebugInformation="%s"', bool(vc200x.symbols(cfg) ~= 0))
-	
+
 			if vc200x.symbols(cfg) >= 3 then
 				_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', cfg.buildtarget.basename)
 			end
-	
+
 			_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
-	
+
 			if vc200x.optimization(cfg) ~= 0 then
 				_p(4,'OptimizeReferences="2"')
 				_p(4,'EnableCOMDATFolding="2"')
 			end
-	
+
 			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
 				_p(4,'EntryPointSymbol="mainCRTStartup"')
 			end
-	
+
 			if cfg.kind == "SharedLib" then
 				local implibdir = cfg.linktarget.abspath
 				-- I can't actually stop the import lib, but I can hide it in the objects directory
@@ -477,7 +492,7 @@
 				implibdir = project.getrelative(cfg.project, implibdir)
 				_x(4,'ImportLibrary="%s"', path.translate(implibdir))
 			end
-	
+
 			_p(4,'TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
 		end
 	end
@@ -490,14 +505,14 @@
 		if #buildoptions > 0 then
 			_x(4,'AdditionalOptions="%s"', table.concat(buildoptions, " "))
 		end
-			
+
 		if #cfg.links > 0 then
 			local links = toolset.getlinks(cfg, not explicitLink)
 			if #links > 0 then
 				_x(4,'AdditionalDependencies="%s"', table.concat(links, " "))
 			end
 		end
-			
+
 		_x(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 
 		if cfg.kind ~= premake.STATICLIB then
@@ -505,7 +520,7 @@
 		end
 
 		vc200x.additionalLibraryDirectories(cfg)
-		
+
 		if cfg.kind ~= premake.STATICLIB then
 			_p(4,'GenerateManifest="%s"', bool(false))
 			_p(4,'ProgramDatabaseFile=""')
@@ -526,7 +541,7 @@
 				table.insert(manifests, project.getrelative(cfg.project, fname))
 			end
 		end
-		
+
 		_p(3,'<Tool')
 		_p(4,'Name="VCManifestTool"')
 		if #manifests > 0 then
@@ -564,7 +579,7 @@
 
 		vc200x.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
 			vc200x.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
-		
+
 		_p(3,'/>')
 	end
 
@@ -646,7 +661,7 @@
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 			local prjpath = project.getlocation(prj)
-			
+
 			for _, dep in ipairs(deps) do
 				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
 				_p(2,'<ProjectReference')
@@ -715,7 +730,7 @@
 				"DebuggerTool",
 			}
 		else
-			return {	
+			return {
 				"VCPreBuildEventTool",
 				"VCCustomBuildTool",
 				"VCXMLDataGeneratorTool",
@@ -759,7 +774,7 @@
 
 
 --
--- Map target systems to their default toolset. If no mapping is 
+-- Map target systems to their default toolset. If no mapping is
 -- listed, the built-in Visual Studio tools will be used
 --
 
@@ -793,7 +808,7 @@
 			onleaf = function(node, depth)
 				_p(depth, '<File')
 				_p(depth, '\tRelativePath="%s"', path.translate(node.relpath))
-				_p(depth, '\t>')					
+				_p(depth, '\t>')
 
 				vc200x.fileConfiguration(prj, node, depth + 1)
 
@@ -808,7 +823,7 @@
 -- Write out the <FileConfiguration> element for a specific file.
 --
 
-	function vc200x.fileConfiguration(prj, node, depth)		
+	function vc200x.fileConfiguration(prj, node, depth)
 		-- check to see if this is a C file in a C++ project, or vice versa,
 		-- that needs to be built with a different compiler
 		local compileAs
@@ -817,7 +832,7 @@
 				compileAs = iif(prj.language == premake.CPP, "C++", "C")
 			end
 		end
-		
+
 		-- see if this file needs a modified object file name
 		local objectname
 		if path.iscppfile(node.name) then
@@ -826,21 +841,21 @@
 				objectname = nil
 			end
 		end
-				
+
 		for cfg in project.eachconfig(prj) do
-		
+
 			-- get any settings specific to this file for this configuration;
 			-- if nil this file is excluded from the configuration entirely
 			local filecfg = config.getfileconfig(cfg, node.abspath)
-			
+
 			-- if there is a file configuration, see if it contains any values
 			-- (will be empty if it matches the project config)
 			local hasSettings = (filecfg ~= nil and not context.empty(filecfg))
-			
+
 			-- check to see if this is the PCH source file
 			local isPchSource = (cfg.pchsource == node.abspath and not cfg.flags.NoPCH)
 
-			-- only write the element if we have something to say			
+			-- only write the element if we have something to say
 			if compileAs or isPchSource or not filecfg or hasSettings or objectname then
 
 				_p(depth,'<FileConfiguration')
@@ -855,9 +870,9 @@
 
 				_p(depth, '<Tool')
 				depth = depth + 1
-				
+
 				filecfg = filecfg or {}
-				
+
 				-- write out a custom build rule, if it has one
 				if filecfg.buildrule then
 					_p(depth,'Name="VCCustomBuildTool"')
@@ -866,7 +881,7 @@
 				else
 					_p(depth, 'Name="%s"', vc200x.compilertool(cfg))
 				end
-				
+
 				if compileAs then
 					_p(depth, 'CompileAs="%s"', iif(compileAs == "C++", 1, 2))
 				end
@@ -874,24 +889,24 @@
 				if objectname then
 					_p(depth, 'ObjectFile="$(IntDir)\\%s.obj"', objectname)
 				end
-				
+
 				-- include the precompiled header, if this is marked as the PCH source
 				if isPchSource then
 					if cfg.system == premake.PS3 then
-						local options = table.join(premake.snc.getcflags(cfg), 
-													premake.snc.getcxxflags(cfg), 
+						local options = table.join(premake.snc.getcflags(cfg),
+													premake.snc.getcxxflags(cfg),
 													cfg.buildoptions,
 													' --create_pch="$(IntDir)/$(TargetName).pch"')
 						_p(depth, 'AdditionalOptions="%s"', table.concat(options, " "))
 					else
 						_p(depth, 'UsePrecompiledHeader="1"')
 					end
-				end 
+				end
 
 				depth = depth - 2
 				_p(depth, '\t/>')
 				_p(depth, '</FileConfiguration>')
-				
+
 			end
 
 		end
@@ -1053,10 +1068,10 @@
 			return 1
 		else
 			-- Edit-and-continue doesn't work for some configurations
-			if cfg.flags.NoEditAndContinue or 
-			    vc200x.optimization(cfg) ~= 0 or 
-			    cfg.flags.Managed or 
-			    cfg.system == "x64" or 
+			if cfg.flags.NoEditAndContinue or
+			    vc200x.optimization(cfg) ~= 0 or
+			    cfg.flags.Managed or
+			    cfg.system == "x64" or
 				cfg.platform == "x64"  -- TODO: remove this when the _ng stuff goes live
 			then
 				return 3
@@ -1095,7 +1110,7 @@
 		if cfg.flags.FatalWarnings then
 			_p(4,'WarnAsError="%s"', bool(true))
 		end
-		
+
 		if _ACTION < "vs2008" and not cfg.flags.Managed then
 			_p(4,'Detect64BitPortabilityProblems="%s"', bool(not cfg.flags.No64BitChecks))
 		end

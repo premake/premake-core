@@ -58,7 +58,7 @@
 	-- Solution object tests
 	dofile("solution/test_eachconfig.lua")
 	dofile("solution/test_objdirs.lua")
-	
+
 	-- Project object tests
 	dofile("project/test_config_maps.lua")
 	dofile("project/test_eachconfig.lua")
@@ -140,18 +140,18 @@
 	dofile("actions/vstudio/vc2010/test_resource_compile.lua")
 
 	-- Visual Studio 2012 C/C++ projects
-	dofile("actions/vstudio/vc2012/test_globals.lua")
+
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
 	dofile("actions/make/test_make_tovar.lua")
-	
+
 	-- Makefile solutions
 	dofile("actions/make/solution/test_config_maps.lua")
 	dofile("actions/make/solution/test_default_config.lua")
 	dofile("actions/make/solution/test_help_rule.lua")
 	dofile("actions/make/solution/test_project_rule.lua")
-	
+
 	-- Makefile C/C++ projects
 	dofile("actions/make/cpp/test_file_rules.lua")
 	dofile("actions/make/cpp/test_flags.lua")
@@ -171,7 +171,7 @@
 		trigger     = "test",
 		description = "A suite or test to run"
 	}
-	
+
 	newaction {
 		trigger     = "test",
 		description = "Run the automated test suite",
@@ -183,7 +183,7 @@
 			else
 				passed, failed = test.runall()
 			end
-						
+
 			msg = string.format("%d tests passed, %d failed", passed, failed)
 			if (failed > 0) then
 				-- should probably return an error code here somehow
