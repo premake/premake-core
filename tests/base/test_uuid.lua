@@ -12,7 +12,7 @@
 --
 
 	local builtin_print, result
-	
+
 	function suite.setup()
 		builtin_print = print
 		print = function(value)
@@ -49,16 +49,4 @@
 
 	function suite.isDeterministic_onName()
 		test.isequal("885E8F4B-F43D-0EE7-FD55-99BD69B47448", os.uuid("MyValue"))
-	end
-
-
---
--- A warning should be shown is an ID clash is ever discovered.
---
-
-	function suite.showsWarning_onCollision()
-		-- use a bit of secret knowledge to make the test possible
-		os._uuids["885E8F4B-F43D-0EE7-FD55-99BD69B47448"] = "Some other value"
-		os.uuid("MyValue")
-		test.istrue(result:startswith("** Warning:"))	
 	end
