@@ -57,9 +57,8 @@
 		vc2010.files_ng(prj)
 		vc2010.projectReferences_ng(prj)
 
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-		_p(1,'<ImportGroup Label="ExtensionTargets">')
-		_p(1,'</ImportGroup>')
+		vc2010.Import(prj)
+
 		_p('</Project>')
 	end
 
@@ -557,6 +556,17 @@
 			end
 			_p(1,'</ItemGroup>')
 		end
+	end
+
+
+--
+-- Generate the list of target imports.
+--
+
+	function vc2010.Import(prj)
+		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
+		_p(1,'<ImportGroup Label="ExtensionTargets">')
+		_p(1,'</ImportGroup>')
 	end
 
 
