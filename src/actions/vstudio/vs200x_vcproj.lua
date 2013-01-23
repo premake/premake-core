@@ -189,7 +189,7 @@
 			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
 		end
 
-		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+		vc200x.ConfigurationCharacterSet(cfg)
 
 		if cfg.flags.Managed then
 			_p(3,'ManagedExtensions="1"')
@@ -197,6 +197,11 @@
 
 		_p(3,'>')
 	end
+
+	function vc200x.ConfigurationCharacterSet(cfg)
+		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+	end
+
 
 
 --
