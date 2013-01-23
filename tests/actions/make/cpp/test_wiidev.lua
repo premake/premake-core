@@ -3,7 +3,7 @@
 -- Tests for Wii homebrew support in makefiles.
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
-	
+
 	T.make_wiidev = {}
 	local suite = T.make_wiidev
 	local make = premake.make
@@ -14,7 +14,7 @@
 --
 -- Setup
 --
-	
+
 	local sln, prj, cfg
 
 	function suite.setup()
@@ -31,13 +31,13 @@
 	function suite.writesCorrectFlags()
 		cpp.flags(cfg, premake.tools.gcc)
 		test.capture [[
-  DEFINES   += 
-  INCLUDES  += 
-  CPPFLAGS  += -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
-  CFLAGS    += $(CPPFLAGS) $(ARCH) 
-  CXXFLAGS  += $(CFLAGS) 
-  LDFLAGS   += -s -L$(LIBOGC_LIB) $(MACHDEP)
-  RESFLAGS  += $(DEFINES) $(INCLUDES) 
+  DEFINES   +=
+  INCLUDES  +=
+  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
+  ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
+  ALL_LDFLAGS  += $(LDFLAGS) -s -L$(LIBOGC_LIB) $(MACHDEP)
+  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   		]]
 	end
 

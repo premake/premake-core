@@ -7,8 +7,8 @@
 	T.make_linking = { }
 	local suite = T.make_linking
 	local cpp = premake.make.cpp
-	local project = premake5.project	
-	
+	local project = premake5.project
+
 
 --
 -- Setup and teardown
@@ -35,9 +35,9 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-  LIBS      += 
-  LDDEPS    += 
-  LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)
+  LIBS      +=
+  LDDEPS    +=
+  LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(ALL_LDFLAGS)
 		]]
 	end
 
@@ -51,9 +51,9 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-  LIBS      += 
-  LDDEPS    += 
-  LINKCMD    = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)
+  LIBS      +=
+  LDDEPS    +=
+  LINKCMD    = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(ALL_LDFLAGS)
 		]]
 	end
 
@@ -66,8 +66,8 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-  LIBS      += 
-  LDDEPS    += 
+  LIBS      +=
+  LDDEPS    +=
   LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)
 		]]
 	end
@@ -82,8 +82,8 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-  LIBS      += 
-  LDDEPS    += 
+  LIBS      +=
+  LDDEPS    +=
   LINKCMD    = libtool -o $(TARGET) $(OBJECTS)
 		]]
 	end
@@ -95,11 +95,11 @@
 
 	function suite.links_onSiblingStaticLib()
 		links "MyProject2"
-		
+
 		test.createproject(sln)
 		kind "StaticLib"
 		location "build"
-		
+
 		prepare()
 		test.capture [[
   LIBS      += build/libMyProject2.a
@@ -114,11 +114,11 @@
 
 	function suite.links_onSiblingSharedLib()
 		links "MyProject2"
-		
+
 		test.createproject(sln)
 		kind "SharedLib"
 		location "build"
-		
+
 		prepare()
 		test.capture [[
   LIBS      += -lMyProject2

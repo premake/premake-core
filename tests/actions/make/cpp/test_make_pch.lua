@@ -8,8 +8,8 @@
 	local suite = T.make_pch
 	local cpp = premake.make.cpp
 	local project = premake5.project
-	
-	
+
+
 
 --
 -- Setup and teardown
@@ -19,7 +19,7 @@
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
-	
+
 	local function prepare()
 		cfg = project.getconfig(prj, "Debug")
 	end
@@ -28,7 +28,7 @@
 --
 -- If no header has been set, nothing should be output.
 --
-	
+
 	function suite.noConfig_onNoHeaderSet()
 		prepare()
 		cpp.pchconfig(cfg)
@@ -62,7 +62,7 @@
 		test.capture [[
   PCH        = include/myproject.h
   GCH        = $(OBJDIR)/myproject.h.gch
-  CPPFLAGS  += -I$(OBJDIR) -include $(OBJDIR)/myproject.h
+  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/myproject.h
 		]]
 	end
 
@@ -79,12 +79,12 @@
 		test.capture [[
   PCH        = ../src/host/premake.h
   GCH        = $(OBJDIR)/premake.h.gch
-  CPPFLAGS  += -I$(OBJDIR) -include $(OBJDIR)/premake.h
+  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/premake.h
 		]]
 	end
 
 
--- 
+--
 -- Verify the format of the PCH rules block for a C++ file.
 --
 
@@ -101,13 +101,13 @@ ifeq (posix,$(SHELLTYPE))
 else
 	$(SILENT) xcopy /D /Y /Q "$(subst /,\,$<)" "$(subst /,\,$(OBJDIR))" 1>nul
 endif
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.gch=%.d) -c "$<"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) -o "$@" -MF $(@:%.gch=%.d) -c "$<"
 endif
 		]]
 	end
 
 
--- 
+--
 -- Verify the format of the PCH rules block for a C file.
 --
 
@@ -125,7 +125,7 @@ ifeq (posix,$(SHELLTYPE))
 else
 	$(SILENT) xcopy /D /Y /Q "$(subst /,\,$<)" "$(subst /,\,$(OBJDIR))" 1>nul
 endif
-	$(SILENT) $(CC) $(CFLAGS) -o "$@" -MF $(@:%.gch=%.d) -c "$<"
+	$(SILENT) $(CC) $(ALL_CFLAGS) -o "$@" -MF $(@:%.gch=%.d) -c "$<"
 endif
 		]]
 	end

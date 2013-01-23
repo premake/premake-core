@@ -198,6 +198,19 @@
 
 
 --
+-- Format a list of values to be safely written as part of a variable assignment.
+--
+
+	function make.list(value)
+		if #value > 0 then
+			return " " .. table.concat(value, " ")
+		else
+			return ""
+		end
+	end
+
+
+--
 -- Write out raw makefile rules for a configuration.
 --
 

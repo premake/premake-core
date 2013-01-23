@@ -25,11 +25,11 @@
 		for cfg in project.eachconfig(prj) do
 			cpp.config(cfg)
 		end
-		
+
 		-- list intermediate files
 		cpp.objects(prj)
 
-		make.detectshell()		
+		make.detectshell()
 
 		-- common build target rules
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
@@ -40,7 +40,7 @@
 
 		make.mkdirrule("$(TARGETDIR)")
 		make.mkdirrule("$(OBJDIR)")
-	
+
 		-- clean target
 		_p('clean:')
 		_p('\t@echo Cleaning %s', prj.name)
@@ -67,7 +67,7 @@
 
 		-- file building rules
 		cpp.filerules(prj)
-		
+
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
 		_p('ifneq (,$(PCH))')
@@ -86,7 +86,7 @@
 		if not toolset then
 			error("Invalid toolset '" + cfg.toolset + "'")
 		end
-	
+
 		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
 
 		-- write toolset specific configurations
@@ -94,7 +94,7 @@
 
 		-- write target information (target dir, name, obj dir)
 		make.targetconfig(cfg)
-		
+
 		-- write flags
 		cpp.flags(cfg, toolset)
 
@@ -104,7 +104,7 @@
 		-- write the link step
 		cpp.linkconfig(cfg, toolset)
 
-		-- write the custom build commands		
+		-- write the custom build commands
 		_p('  define PREBUILDCMDS')
 		if #cfg.prebuildcommands > 0 then
 			_p('\t@echo Running pre-build commands')
@@ -126,15 +126,15 @@
 		end
 		_p('  endef')
 		_p('')
-		
+
 		-- write the target building rule
 		cpp.targetrules(cfg)
-		
+
 		-- write out config-level makesettings blocks
 		make.settings(cfg, toolset)
 
 		_p('endif')
-		_p('')	
+		_p('')
 	end
 
 
@@ -143,7 +143,7 @@
 --
 
 	function cpp.buildcommand(prj, objext)
-		local flags = iif(prj.language == "C", '$(CC) $(CFLAGS)', '$(CXX) $(CXXFLAGS)')
+		local flags = iif(prj.language == "C", '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
 		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
 	end
 
@@ -185,13 +185,13 @@
 			_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
 			_p('\t@echo $(notdir $<)')
 			cpp.buildcommand(prj, "o")
-			
+
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
 			local objectname = project.getfileobject(prj, node.abspath)
 			_p('$(OBJDIR)/%s.res: %s', make.esc(objectname), make.esc(node.relpath))
 			_p('\t@echo $(notdir $<)')
-			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(RESFLAGS)')
+			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)')
 		end
 	end
 
@@ -200,7 +200,7 @@
 			local filecfg = config.getfileconfig(cfg, node.abspath)
 			if filecfg then
 				local rule = filecfg.buildrule
-	
+
 				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
 				_p('%s: %s', make.esc(rule.outputs[1]), make.esc(filecfg.relpath))
 				_p('\t@echo "%s"', rule.description or ("Building " .. filecfg.relpath))
@@ -211,25 +211,25 @@
 			end
 		end
 	end
-	
+
 
 --
 -- Compile flags
 --
 
 	function cpp.flags(cfg, toolset)
-		_p('  DEFINES   += %s', table.concat(toolset.getdefines(cfg.defines), " "))
-		
+		_p('  DEFINES   +=%s', make.list(cfg.defines))
+
 		local includes = make.esc(toolset.getincludedirs(cfg, cfg.includedirs))
-		_p('  INCLUDES  += %s', table.concat(includes, " "))
-		
-		_p('  CPPFLAGS  += %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
-		_p('  CFLAGS    += $(CPPFLAGS) $(ARCH) %s', table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), " "))
-		_p('  CXXFLAGS  += $(CFLAGS) %s', table.concat(toolset.getcxxflags(cfg), " "))
-		_p('  LDFLAGS   += %s', table.concat(table.join(toolset.getldflags(cfg), cfg.linkoptions), " "))
-	
+		_p('  INCLUDES  +=%s', make.list(includes))
+
+		_p('  ALL_CPPFLAGS += $(CPPFLAGS) %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
+		_p('  ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
+		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
+		_p('  ALL_LDFLAGS  += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
+
 		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)
-		_p('  RESFLAGS  += $(DEFINES) $(INCLUDES) %s', table.concat(resflags, " "))
+		_p('  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)%s', make.list(resflags))
 	end
 
 
@@ -239,10 +239,10 @@
 
 	function cpp.linkconfig(cfg, toolset)
 		local flags = toolset.getlinks(cfg)
-		_p('  LIBS      += %s', table.concat(flags, " "))
-		
+		_p('  LIBS      +=%s', make.list(flags))
+
 		local deps = config.getlinks(cfg, "siblings", "fullpath")
-		_p('  LDDEPS    += %s', table.concat(make.esc(deps), " "))
+		_p('  LDDEPS    +=%s', make.list(make.esc(deps)))
 
 		if cfg.kind == premake.STATICLIB then
 			if cfg.architecture == premake.UNIVERSAL then
@@ -255,7 +255,7 @@
 			-- Had trouble linking to certain static libs, so $(OBJECTS) moved up.
 			-- $(LDFLAGS) moved: https://sf.net/tracker/?func=detail&aid=3430158&group_id=71616&atid=531880
 			local cc = iif(cfg.project.language == "C", "CC", "CXX")
-			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(LDFLAGS)', cc)
+			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(ALL_LDFLAGS)', cc)
 		end
 	end
 
@@ -268,7 +268,7 @@
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
 		local root = { objects={}, resources={} }
-		local configs = {}		
+		local configs = {}
 		for cfg in project.eachconfig(prj) do
 			configs[cfg] = { objects={}, resources={} }
 		end
@@ -300,7 +300,7 @@
 					elseif path.isresourcefile(node.abspath) then
 						kind = "resources"
 					end
-				
+
 					-- skip files that aren't compiled
 					if not custom and not kind then
 						return
@@ -309,7 +309,7 @@
 					-- assign a unique object file name to avoid collisions
 					local objectname = project.getfileobject(prj, node.abspath)
 					objectname = "$(OBJDIR)/" .. objectname .. iif(kind == "objects", ".o", ".res")
-					
+
 					-- if this file exists in all configurations, write it to
 					-- the project's list of files, else add to specific cfgs
 					if inall then
@@ -325,7 +325,7 @@
 				else
 					for cfg in project.eachconfig(prj) do
 						local filecfg = incfg[cfg]
-						if filecfg then							
+						if filecfg then
 							-- if the custom build outputs an object file, add it to
 							-- the link step automatically to match Visual Studio
 							local output = filecfg.buildrule.outputs[1]
@@ -335,10 +335,10 @@
 						end
 					end
 				end
-					
+
 			end
 		})
-		
+
 		-- now I can write out the lists, project level first...
 		function listobjects(var, list)
 			_p('%s \\', var)
@@ -347,10 +347,10 @@
 			end
 			_p('')
 		end
-		
+
 		listobjects('OBJECTS :=', root.objects, 'o')
 		listobjects('RESOURCES :=', root.resources, 'res')
-		
+
 		-- ...then individual configurations, as needed
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
@@ -390,7 +390,7 @@
 			local gch = make.esc(path.getname(pchheader))
 			_p('  PCH        = %s', make.esc(project.getrelative(cfg.project, pchheader)))
 			_p('  GCH        = $(OBJDIR)/%s.gch', gch)
-			_p('  CPPFLAGS  += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
+			_p('  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
 		end
 	end
 
@@ -415,14 +415,14 @@
 
 	function cpp.targetrules(cfg)
 		local macapp = (cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP)
-		
+
 		if macapp then
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 		else
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
 		end
 		_p('\t@:')
-		
+
 		if macapp then
 			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')

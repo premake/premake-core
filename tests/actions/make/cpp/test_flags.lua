@@ -3,7 +3,7 @@
 -- Tests compiler and linker flags for Makefiles.
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
-	
+
 	T.make_flags = {}
 	local suite = T.make_flags
 	local make = premake.make
@@ -14,7 +14,7 @@
 --
 -- Setup
 --
-	
+
 	local sln, prj, cfg
 
 	function suite.setup()
@@ -26,7 +26,7 @@
 		cfg = project.getconfig(prj, "Debug")
 		cpp.flags(cfg, premake.tools.gcc)
 	end
-	
+
 
 --
 -- Include directories should be relative and space separated.
@@ -36,7 +36,7 @@
 		includedirs { "src/include", "../include" }
 		prepare()
 		test.capture [[
-  DEFINES   += 
+  DEFINES   +=
   INCLUDES  += -Isrc/include -I../include
 		]]
 	end

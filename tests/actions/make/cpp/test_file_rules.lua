@@ -11,15 +11,15 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		cpp.filerules(prj)
@@ -36,10 +36,10 @@
 		test.capture [[
 $(OBJDIR)/hello.o: src/greetings/hello.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 $(OBJDIR)/hello1.o: src/hello.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 
   		]]
 	end
@@ -54,8 +54,8 @@ $(OBJDIR)/hello1.o: src/hello.cpp
 		configuration "**.x"
 			buildrule {
 				description = "Compiling %{file.name}",
-				commands = { 
-					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"', 
+				commands = {
+					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
 					'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
 				},
 				outputs = { "%{cfg.objdir}/%{file.basename}.obj" }
