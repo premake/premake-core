@@ -19,6 +19,36 @@
 -- Scan the well-known system locations for a particular library.
 --
 
+	local function parse_ld_so_conf(conf_file)
+		-- Linux ldconfig file parser to find system library locations
+		local first, last
+		local dirs = { }
+		for line in io.lines(conf_file) do
+			-- ignore comments
+			first = line:find("#", 1, true)
+			if first ~= nil then
+				line = line:sub(1, first - 1)
+			end
+
+			if line ~= "" then
+				-- check for include files
+				first, last = line:find("include%s+")
+				if first ~= nil then
+					-- found include glob
+					local include_glob = line:sub(last + 1)
+					local includes = os.matchfiles(include_glob)
+					for _, v in ipairs(includes) do
+						dirs = table.join(dirs, parse_ld_so_conf(v))
+					end
+				else
+					-- found an actual ld path entry
+					table.insert(dirs, line)
+				end
+			end
+		end
+		return dirs
+	end
+
 	function os.findlib(libname)
 		local path, formats
 
@@ -37,12 +67,8 @@
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
 
-				io.input("/etc/ld.so.conf")
-				if io.input() then
-					for line in io.lines() do
-						path = path .. ":" .. line
-					end
-					io.input():close()
+				for _, v in ipairs(parse_ld_so_conf("/etc/ld.so.conf")) do
+					path = path .. ":" .. v
 				end
 			end
 
