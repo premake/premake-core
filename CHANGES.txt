@@ -101,6 +101,7 @@
 * Pull 25: Add Unix support to os.getversion() (wfgleper)
 * Bug 268: Target extension not set properly for Visual Studio 2010
 * Allow command line override of makefile flags (Cameron Hart)
+* Fix linking to external libraries outside of project folder
 
 
 -------

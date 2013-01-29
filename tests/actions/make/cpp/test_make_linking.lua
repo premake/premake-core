@@ -51,6 +51,7 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -s -shared
   LIBS      +=
   LDDEPS    +=
   LINKCMD    = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(ALL_LDFLAGS)
@@ -82,6 +83,7 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -s
   LIBS      +=
   LDDEPS    +=
   LINKCMD    = libtool -o $(TARGET) $(OBJECTS)
@@ -102,6 +104,7 @@
 
 		prepare()
 		test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -Lbuild -s
   LIBS      += build/libMyProject2.a
   LDDEPS    += build/libMyProject2.a
 		]]
@@ -121,7 +124,25 @@
 
 		prepare()
 		test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -Lbuild -s
   LIBS      += -lMyProject2
   LDDEPS    += build/libMyProject2.so
 		]]
 	end
+
+--
+-- When referencing an external library via a path, the directory
+-- should be added to the library search paths, and the library
+-- itself included via an -l flag.
+--
+
+ function suite.onExternalLibraryWithPath()
+ 	location "MyProject"
+	links { "libs/SomeLib" }
+	prepare()
+	test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -L../libs -s
+  LIBS      += -lSomeLib
+  LDDEPS    +=
+	]]
+ end

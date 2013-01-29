@@ -16,7 +16,7 @@
 -- Doesn't bake per se, just fills in some calculated values.
 --
 
-	function config.bake(cfg)		
+	function config.bake(cfg)
 		-- assign human-readable names
 		cfg.longname = table.concat({ cfg.buildcfg, cfg.platform }, "|")
 		cfg.shortname = table.concat({ cfg.buildcfg, cfg.platform }, " ")
@@ -62,7 +62,7 @@
 
 		local bundlename = ""
 		local bundlepath = ""
-		
+
 		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then
 			bundlename = basename .. ".app"
@@ -84,7 +84,7 @@
 
 
 --
--- Check a configuration for a source code file with the specified 
+-- Check a configuration for a source code file with the specified
 -- extension. Used for locating special files, such as Windows
 -- ".def" module definition files.
 --
@@ -123,7 +123,7 @@
 		if not filecfg then
 			return nil
 		end
-		
+
 		-- initially this value will be a string (the file name); if so, build
 		-- and replace it with a full file configuration object
 		if type(filecfg) ~= "table" then
@@ -150,11 +150,11 @@
 
 			-- finish the setup
 			context.compile(filecfg)
-			
+
 			-- and cache the result
 			cfg.files[filename] = filecfg
 		end
-		
+
 		return filecfg
 	end
 
@@ -222,8 +222,8 @@
 --      object    - return the project object of the dependency
 -- @return
 --    An array containing the requested link target information.
---	
-	
+--
+
  	function config.getlinks(cfg, kind, part)
 		local result = {}
 
@@ -233,10 +233,10 @@
 				table.insert(result, project.getrelative(cfg.project, dir))
 			end
 		end
-		
+
 		local function canlink(source, target)
 			-- can't link executables
-			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then 
+			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then
 				return false
 			end
 			-- can't link managed and unmanaged projects
@@ -245,7 +245,7 @@
 			elseif premake.isdotnetproject(source.project) then
 				return premake.isdotnetproject(target.project)
 			end
-		end	
+		end
 
 		for _, link in ipairs(cfg.links) do
 			local item
@@ -259,15 +259,15 @@
 					-- if the caller wants the whole project object, then okay
 					if part == "object" then
 						item = prjcfg
-					
+
 					-- if this is an external project reference, I can't return
 					-- any kind of path info, because I don't know the target name
 					elseif not prj.external then
 						if part == "basename" then
 							item = prjcfg.linktarget.basename
 						else
-							item = path.rebase(prjcfg.linktarget.fullpath, 
-											   project.getlocation(prjcfg.project), 
+							item = path.rebase(prjcfg.linktarget.fullpath,
+											   project.getlocation(prjcfg.project),
 											   project.getlocation(cfg.project))
 							if part == "directory" then
 								item = path.getdirectory(item)
@@ -295,6 +295,10 @@
 					if item:find("/", nil, true) then
 						item = project.getrelative(cfg.project, item)
 					end
+				elseif part == "name" then
+					item = path.getname(link)
+				elseif part == "basename" then
+					item = path.getbasename(link)
 				else
 					item = link
 				end
@@ -305,7 +309,7 @@
 				table.insert(result, item)
 			end
 		end
-	
+
 		return result
 	end
 

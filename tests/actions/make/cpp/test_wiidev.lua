@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_wiidev.lua
 -- Tests for Wii homebrew support in makefiles.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
 	T.make_wiidev = {}
@@ -36,9 +36,15 @@
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
   ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
-  ALL_LDFLAGS  += $(LDFLAGS) -s -L$(LIBOGC_LIB) $(MACHDEP)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   		]]
+	end
+
+	function suite.writesCorrectLinkerFlags()
+		cpp.linkconfig(cfg, premake.tools.gcc)
+		test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -s -L$(LIBOGC_LIB) $(MACHDEP)
+		]]
 	end
 
 

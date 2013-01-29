@@ -226,7 +226,6 @@
 		_p('  ALL_CPPFLAGS += $(CPPFLAGS) %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
 		_p('  ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
 		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
-		_p('  ALL_LDFLAGS  += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
 
 		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)
 		_p('  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)%s', make.list(resflags))
@@ -238,6 +237,8 @@
 --
 
 	function cpp.linkconfig(cfg, toolset)
+		_p('  ALL_LDFLAGS  += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
+
 		local flags = toolset.getlinks(cfg)
 		_p('  LIBS      +=%s', make.list(flags))
 
