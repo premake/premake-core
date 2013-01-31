@@ -236,14 +236,14 @@
 		end
 
 		-- The "-l" flag is fine for system libraries
-		links = config.getlinks(cfg, "system", "name")
+		links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				table.insert(result, "-l" .. link)
+				table.insert(result, "-l" .. path.getbasename(link))
 			end
 		end
 

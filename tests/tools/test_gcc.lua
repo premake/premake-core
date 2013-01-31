@@ -46,7 +46,7 @@
 		test.isequal("ppu-lv2-g++", gcc.gettoolname(cfg, "cxx"))
 		test.isequal("ppu-lv2-ar", gcc.gettoolname(cfg, "ar"))
 	end
-		
+
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.
@@ -78,7 +78,7 @@
 		prepare()
 		test.isequal({ "-msse" }, gcc.getcflags(cfg))
 	end
-	
+
 	function suite.cflags_onFatalWarnings()
 		flags { "FatalWarnings" }
 		prepare()
@@ -154,8 +154,8 @@
 		prepare()
 		test.isequal({ "-s", "-mwindows" }, gcc.getldflags(cfg))
 	end
-		
-		
+
+
 
 --
 -- Make sure system or architecture flags are added properly.
@@ -263,6 +263,31 @@
 
 
 --
+-- If the object file is referenced with a path, it should be
+-- made relative to the project.
+--
+
+	function suite.links_onObjectFileOutsideProject()
+		location "MyProject"
+		links { "obj/Debug/generated.o" }
+		prepare()
+		test.isequal({ "../obj/Debug/generated.o" }, gcc.getlinks(cfg))
+	end
+
+
+--
+-- Make sure shell variables are kept intact for object file paths.
+--
+
+	function suite.links_onObjectFileWithShellVar()
+		location "MyProject"
+		links { "$(IntDir)/generated.o" }
+		prepare()
+		test.isequal({ "$(IntDir)/generated.o" }, gcc.getlinks(cfg))
+	end
+
+
+--
 -- Include directories should be made project relative.
 --
 
@@ -280,11 +305,11 @@
 
 	function suite.skipsExternalProjectRefs()
 		links { "MyProject2" }
-		
+
 		external "MyProject2"
 		kind "StaticLib"
 		language "C++"
-		
+
 		prepare()
 		test.isequal({}, gcc.getlinks(cfg, false))
 	end
