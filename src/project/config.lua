@@ -21,6 +21,7 @@
 		cfg.longname = table.concat({ cfg.buildcfg, cfg.platform }, "|")
 		cfg.shortname = table.concat({ cfg.buildcfg, cfg.platform }, " ")
 		cfg.shortname = cfg.shortname:gsub(" ", "_"):lower()
+		cfg.name = cfg.longname
 
 		if cfg.project and cfg.kind then
 			cfg.buildtarget = config.gettargetinfo(cfg)

@@ -102,16 +102,15 @@
 		if (not ok) then error("Error: " .. err, 0) end
 
 
-		-- Sanity check the current project setup
-
-		ok, err = premake.checktools()
-		if (not ok) then error("Error: " .. err, 0) end
-
-
 		-- "Bake" the project information, preparing it for use by the action
 
 		print("Building configurations...")
 		premake.solution.bakeall()
+
+
+		-- Sanity check the current project setup
+
+		premake.validate()
 
 
 		-- Hand over control to the action

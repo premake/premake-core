@@ -196,6 +196,58 @@
 
 
 --
+-- Compare two values of a field to see if they are (roughly) equivalent.
+-- Real high-level checking right now for performance; can make it more
+-- exact later if there is a need.
+--
+-- @param field
+--    The description of the field being checked.
+-- @param value1
+--    The first value to be compared.
+-- @param value2
+--    The second value to be compared.
+-- @return
+--    True if the values are (roughly) equivalent; false otherwise.
+--
+
+	function api.comparevalues(field, value1, value2)
+		-- both nil?
+		if not value1 and not value2 then
+			return true
+		end
+
+		-- one nil, but not the other?
+		if not value1 or not value2 then
+			return false
+		end
+
+		-- for keyed list, I just make sure all keys are present,
+		-- no checking of values is done (yet)
+		if field.kind:startswith("key") then
+			for k,v in pairs(value1) do
+				if not value2[k] then
+					return false
+				end
+			end
+			for k,v in pairs(value2) do
+				if not value1[k] then
+					return false
+				end
+			end
+			return true
+
+		-- for arrays, just see if the lengths match, for now
+		elseif field.kind:endswith("list") then
+			return #value1 == #value2
+
+		-- everything else can use a simple compare
+		else
+			return value1 == value2
+		end
+	end
+
+
+--
 -- Retrieve the base data kind of a field, by removing any key- prefix
 -- or -list suffix and returning what's left.
 --
@@ -475,7 +527,7 @@
 
 	api.register {
 		name = "configmap",
-		scope = "project",
+		scope = "config",
 		kind = "key-array"
 	}
 
@@ -823,7 +875,7 @@
 
 	api.register {
 		name = "startproject",
-		scope = "project",
+		scope = "solution",
 		kind = "string",
 		tokens = true,
 	}

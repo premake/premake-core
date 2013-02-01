@@ -1,7 +1,7 @@
 --
 -- tests/premake4.lua
 -- Automated test suite for Premake 4.x
--- Copyright (c) 2008-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 	dofile("testfx.lua")
@@ -40,7 +40,6 @@
 	-- Base API tests
 	dofile("test_dofile.lua")
 	dofile("test_string.lua")
-	dofile("test_premake.lua")
 
 	dofile("base/test_configset.lua")
 	dofile("base/test_context.lua")
@@ -81,6 +80,10 @@
 	dofile("api/test_path_kind.lua")
 	dofile("api/test_register.lua")
 	dofile("api/test_string_kind.lua")
+
+	-- Control system tests
+	dofile("test_premake.lua")
+	dofile("base/test_validation.lua")
 
 	-- Toolset tests
 	dofile("tools/test_dotnet.lua")

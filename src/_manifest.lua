@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -14,7 +14,7 @@
 		"base/path.lua",
 		"base/string.lua",
 		"base/table.lua",
-		
+
 		-- core files
 		"base/io.lua",
 		"base/globals.lua",
@@ -24,25 +24,24 @@
 		"base/tree.lua",
 		"base/project.lua",
 		"base/config.lua",
-		"base/validate.lua",
 		"base/help.lua",
-		"base/premake.lua",
-		
+
 		-- configuration APIs
 		"base/configset.lua",
 		"base/context.lua",
 		"base/api.lua",
 		"base/detoken.lua",
-		
+
 		-- runtime environment setup
 		"_premake_init.lua",
 		"base/cmdline.lua",
-		
+
 		-- project APIs
 		"project/oven.lua",
 		"project/project.lua",
 		"project/config.lua",
 		"base/solution.lua",
+		"base/premake.lua",
 
 		-- tool APIs
 		"tools/dotnet.lua",
@@ -55,7 +54,7 @@
 		"actions/make/make_solution.lua",
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
-		
+
 		-- Visual Studio actions
 		"actions/vstudio/_vstudio.lua",
 		"actions/vstudio/vs200x_vcproj.lua",
