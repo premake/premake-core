@@ -246,3 +246,20 @@
 	function premake.warn(message, ...)
 		io.stderr:write(string.format("** Warning: " .. message .. "\n", ...), 0)
 	end
+
+
+--
+-- Displays a warning just once per run.
+--
+-- @param message
+--    The warning message, which may contain string formatting tokens.
+-- @param ...
+--    Values to fill in the string formatting tokens.
+--
+
+	function premake.warnOnce(ctx, message, ...)
+		if not ctx.warnings[message] then
+			ctx.warnings[message] = true
+			premake.warn(message, ...)
+		end
+	end
