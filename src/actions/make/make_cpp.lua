@@ -218,7 +218,7 @@
 --
 
 	function cpp.flags(cfg, toolset)
-		_p('  DEFINES   +=%s', make.list(cfg.defines))
+		_p('  DEFINES   +=%s', make.list(toolset.getdefines(cfg.defines)))
 
 		local includes = make.esc(toolset.getincludedirs(cfg, cfg.includedirs))
 		_p('  INCLUDES  +=%s', make.list(includes))
