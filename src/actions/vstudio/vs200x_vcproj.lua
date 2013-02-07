@@ -1,7 +1,7 @@
 --
 -- vs200x_vcproj.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc200x = {}
@@ -65,7 +65,7 @@
 		_p(1,'</References>')
 
 		_p(1,'<Files>')
-		vc200x.files_ng(prj)
+		vc200x.files(prj)
 		_p(1,'</Files>')
 
 		_p(1,'<Globals>')
@@ -792,7 +792,7 @@
 -- Write out the source file tree.
 --
 
-	function vc200x.files_ng(prj)
+	function vc200x.files(prj)
 		local tr = project.getsourcetree(prj)
 
 		tree.traverse(tr, {
@@ -867,7 +867,7 @@
 				depth = depth + 1
 				_p(depth, 'Name="%s"', vstudio.projectConfig(cfg))
 
-				if not filecfg then
+				if not filecfg or filecfg.flags.ExcludeFromBuild then
 					_p(depth, 'ExcludedFromBuild="true"')
 				end
 

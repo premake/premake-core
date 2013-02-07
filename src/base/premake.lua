@@ -244,7 +244,7 @@
 --
 
 	function premake.warn(message, ...)
-		io.stderr:write(string.format("** Warning: " .. message .. "\n", ...), 0)
+		io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
 	end
 
 

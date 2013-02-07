@@ -1,27 +1,26 @@
 --
 -- tests/actions/vstudio/vc200x/test_files.lua
 -- Validate generation of <files/> block in Visual Studio 200x projects.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs200x_files = { }
-	local suite = T.vstudio_vs200x_files
+	local suite = test.declare("vstudio_vs200x_files")
 	local vc200x = premake.vstudio.vc200x
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
-		vc200x.files_ng(prj)
+		vc200x.files(prj)
 	end
 
 
@@ -224,6 +223,35 @@
 		]]
 	end
 
+	function suite.excludedFromBuild_onExcludeFlag()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+				/>
+			</FileConfiguration>
+		</File>
+		]]
+	end
+
 
 --
 -- If a custom build rule is supplied, the custom build tool settings should be used.
@@ -234,8 +262,8 @@
 		configuration "**.x"
 			buildrule {
 				description = "Compiling $(InputFile)",
-				commands = { 
-					'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"', 
+				commands = {
+					'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"',
 					'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
 				},
 				outputs = { "$(IntDir)/$(InputName).obj" }
@@ -254,7 +282,7 @@
 					Outputs="$(IntDir)/$(InputName).obj"
 				/>
 			</FileConfiguration>
-		]]		
+		]]
 	end
 
 

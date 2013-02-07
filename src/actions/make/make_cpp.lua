@@ -285,7 +285,7 @@
 				local custom = false
 				for cfg in project.eachconfig(prj) do
 					local filecfg = config.getfileconfig(cfg, node.abspath)
-					if filecfg then
+					if filecfg and not filecfg.flags.ExcludeFromBuild then
 						incfg[cfg] = filecfg
 						custom = (filecfg.buildrule ~= nil)
 					else

@@ -1,24 +1,23 @@
 --
 -- tests/actions/vstudio/vc2010/test_files.lua
 -- Validate generation of files block in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_files = { }
-	local suite = T.vstudio_vs2010_files
+	local suite =  test.declare("vstudio_vs2010_files")
 	local vc2010 = premake.vstudio.vc2010
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		vc2010.files_ng(prj)
@@ -38,7 +37,7 @@
 	</ItemGroup>
 		]]
 	end
-		
+
 	function suite.clCompile_onCFile()
 		files { "hello.c" }
 		prepare()
@@ -49,7 +48,7 @@
 	</ItemGroup>
 		]]
 	end
-	
+
 	function suite.resourceCompile_onRCFile()
 		files { "resources/hello.rc" }
 		prepare()
@@ -91,7 +90,7 @@
 		]]
 	end
 
-	
+
 --
 -- If a PCH source is specified, ensure it is included in the file configuration.
 --
@@ -125,6 +124,21 @@
 	<ItemGroup>
 		<ClCompile Include="hello.cpp">
 			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onExcludeFlag()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 		</ClCompile>
 	</ItemGroup>
 		]]

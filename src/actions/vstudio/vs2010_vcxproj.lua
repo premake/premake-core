@@ -447,7 +447,7 @@
 					local condition = vc2010.condition(cfg)
 
 					local filecfg = config.getfileconfig(cfg, file.abspath)
-					if not filecfg then
+					if not filecfg or filecfg.flags.ExcludeFromBuild then
 						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', condition)
 					end
 

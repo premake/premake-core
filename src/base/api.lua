@@ -624,6 +624,7 @@
 			"DebugEnvsInherit",
 			"EnableSSE",
 			"EnableSSE2",
+			"ExcludeFromBuild",
 			"ExtraWarnings",
 			"FatalWarnings",
 			"FloatFast",

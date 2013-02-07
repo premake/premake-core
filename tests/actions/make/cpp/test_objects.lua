@@ -1,25 +1,24 @@
 --
 -- tests/actions/make/cpp/test_objects.lua
 -- Validate the list of objects for a makefile.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.make_cpp_objects = { }
-	local suite = T.make_cpp_objects
+	local suite = test.declare("make_cpp_objects")
 	local cpp = premake.make.cpp
 	local project = premake5.project
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		cpp.objects(prj)
@@ -122,8 +121,6 @@ RESOURCES := \
 	end
 
 
-
-
 --
 -- If a custom rule builds to an object file, include it in the
 -- link automatically to match the behavior of Visual Studio
@@ -134,8 +131,8 @@ RESOURCES := \
 		configuration "**.x"
 			buildrule {
 				description = "Compiling %{file.name}",
-				commands = { 
-					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"', 
+				commands = {
+					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
 					'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
 				},
 				outputs = { "%{cfg.objdir}/%{file.basename}.obj" }
@@ -149,6 +146,49 @@ RESOURCES := \
 ifeq ($(config),debug)
   OBJECTS += \
 	obj/Debug/hello.obj \
+
+endif
+
+		]]
+	end
+
+
+--
+-- If a file is excluded from a configuration, it should not be listed.
+--
+
+	function suite.excludedFromBuild_onExcludedFile()
+		files { "hello.cpp" }
+		configuration "Debug"
+		removefiles { "hello.cpp" }
+		prepare()
+		test.capture [[
+OBJECTS := \
+
+RESOURCES := \
+
+ifeq ($(config),release)
+  OBJECTS += \
+	$(OBJDIR)/hello.o \
+
+endif
+
+		]]
+	end
+
+	function suite.excludedFromBuild_onExcludeFlag()
+		files { "hello.cpp" }
+		configuration { "Debug", "hello.cpp" }
+		flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+OBJECTS := \
+
+RESOURCES := \
+
+ifeq ($(config),release)
+  OBJECTS += \
+	$(OBJDIR)/hello.o \
 
 endif
 
