@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_compiler_block.lua
 -- Validate generation the VCCLCompiler element in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vs200x_compiler_block = { }
-	local suite = T.vs200x_compiler_block
+	local suite = test.declare("vs200x_compiler_block")
 	local vc200x = premake.vstudio.vc200x
 
 
@@ -478,4 +477,21 @@
 				RuntimeLibrary="2"
 		]]
 	end
-		
+
+
+
+--
+-- Check handling of the EnableMultiProcessorCompile flag.
+--
+
+	function suite.onMultiProcessorCompile()
+		flags { "MultiProcessorCompile" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+		]]
+	end

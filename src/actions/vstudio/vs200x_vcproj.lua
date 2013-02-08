@@ -272,9 +272,7 @@
 	end
 
 	function vc200x.VCCLBuiltInCompilerTool(cfg)
-		if #cfg.buildoptions > 0 then
-			_x(4,'AdditionalOptions="%s"', table.concat(cfg.buildoptions, " "))
-		end
+		vc200x.VCCL_AdditionalOptions(cfg)
 
 		_p(4,'Optimization="%s"', vc200x.optimization(cfg))
 
@@ -285,15 +283,8 @@
 		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
 		vc200x.preprocessorDefinitions(cfg, cfg.defines)
 
-		if premake.config.isdebugbuild(cfg) and
-		   cfg.debugformat ~= "c7" and
-		   not cfg.flags.NoMinimalRebuild and
-		   not cfg.flags.Managed
-		then
-			_p(4,'MinimalRebuild="%s"', bool(true))
-		end
-
-		vc200x.BasicRuntimeChecks(cfg)
+		vc200x.VCCL_MinimalRebuild(cfg)
+		vc200x.VCCL_BasicRuntimeChecks(cfg)
 
 		if vc200x.optimization(cfg) ~= 0 then
 			_p(4,'StringPooling="%s"', bool(true))
@@ -397,12 +388,35 @@
 	end
 
 
-	function vc200x.BasicRuntimeChecks(cfg)
+	function vc200x.VCCL_BasicRuntimeChecks(cfg)
 		if not premake.config.isoptimizedbuild(cfg)
 			and not cfg.flags.Managed
 			and not cfg.flags.NoRuntimeChecks
 		then
 			_p(4,'BasicRuntimeChecks="3"')
+		end
+	end
+
+
+	function vc200x.VCCL_AdditionalOptions(cfg)
+		local opts = cfg.buildoptions
+		if cfg.flags.MultiProcessorCompile then
+			table.insert(opts, "/MP")
+		end
+		if #opts > 0 then
+			_x(4,'AdditionalOptions="%s"', table.concat(cfg.buildoptions, " "))
+		end
+	end
+
+
+	function vc200x.VCCL_MinimalRebuild(cfg)
+		if premake.config.isdebugbuild(cfg) and
+		   cfg.debugformat ~= "c7" and
+		   not cfg.flags.NoMinimalRebuild and
+		   not cfg.flags.Managed and
+		   not cfg.flags.MultiProcessorCompile
+		then
+			_p(4,'MinimalRebuild="%s"', bool(true))
 		end
 	end
 

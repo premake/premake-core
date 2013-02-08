@@ -263,12 +263,7 @@
 			_p(3,'<IntrinsicFunctions>true</IntrinsicFunctions>')
 		end
 
-		local minimalRebuild = not premake.config.isoptimizedbuild(cfg) and
-		                       not cfg.flags.NoMinimalRebuild and
-							   cfg.debugformat ~= premake.C7
-		if not minimalRebuild then
-			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
-		end
+		vc2010.MinimalRebuild(cfg)
 
 		if cfg.flags.NoFramePointer then
 			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
@@ -309,6 +304,8 @@
 		elseif cfg.flags.EnableSSE then
 			_p(3,'<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>')
 		end
+
+		vc2010.MultiProcessorCompilation(cfg)
 
 		if #cfg.buildoptions > 0 then
 			local options = table.concat(cfg.buildoptions, " ")
@@ -724,6 +721,24 @@
 	function vc2010.BasicRuntimeChecks(cfg)
 		if cfg.flags.NoRuntimeChecks then
 			_p(3,'<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
+		end
+	end
+
+
+	function vc2010.MinimalRebuild(cfg)
+		if premake.config.isoptimizedbuild(cfg) or
+		   cfg.flags.NoMinimalRebuild or
+		   cfg.flags.MultiProcessorCompile or
+		   cfg.debugformat == premake.C7
+		then
+			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
+		end
+	end
+
+
+	function vc2010.MultiProcessorCompilation(cfg)
+		if cfg.flags.MultiProcessorCompile then
+			_p(3,'<MultiProcessorCompilation>true</MultiProcessorCompilation>')
 		end
 	end
 

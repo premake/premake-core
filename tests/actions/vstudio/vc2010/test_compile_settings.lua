@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_compile_settings.lua
 -- Validate compiler settings in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_compile_settings = { }
-	local suite = T.vstudio_vs2010_compile_settings
+	local suite = test.declare("vstudio_vs2010_compile_settings")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake5.project
 
@@ -186,7 +185,7 @@
 		]]
 	end
 
-	
+
 --
 -- If build options are specified, the <AdditionalOptions> element should be specified.
 --
@@ -475,7 +474,7 @@
 		]]
 	end
 
-	
+
 --
 -- Edit-and-Continue is not support on 64-bit builds.
 --
@@ -569,5 +568,23 @@
 			<PrecompiledHeader>NotUsing</PrecompiledHeader>
 			<WarningLevel>Level3</WarningLevel>
 			<BasicRuntimeChecks>Default</BasicRuntimeChecks>
+		]]
+	end
+
+
+--
+-- Check handling of the EnableMultiProcessorCompile flag.
+--
+
+	function suite.onMultiProcessorCompile()
+		flags { "MultiProcessorCompile" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<MinimalRebuild>false</MinimalRebuild>
+			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		]]
 	end

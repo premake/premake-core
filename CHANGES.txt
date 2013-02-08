@@ -30,6 +30,8 @@
 * Added support for Visual Studio solution groups
 * Added dependson() to specify non-linking dependencies (Alexey Orlov)
 * Added startproject() to specify solution startup project
+* Added ExcludeFromBuild flag to mark source files as non-buildable
+* Added MultiProcessorCompile flag to run multiple compiler processes
 
 
 -------

@@ -631,6 +631,7 @@
 			"FloatStrict",
 			"Managed",
 			"MFC",
+			"MultiProcessorCompile",
 			"NativeWChar",
 			"No64BitChecks",
 			"NoEditAndContinue",
