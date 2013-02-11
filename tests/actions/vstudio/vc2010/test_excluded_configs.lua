@@ -17,19 +17,19 @@
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		
+
 		sln = solution("MySolution")
 		configurations { "Debug", "Release" }
 		platforms { "Zeus", "Ares" }
 		language "C++"
-		
+
 		prj = project("MyProject")
 		kind "ConsoleApp"
 		links { "MyProject2", "MyProject3" }
-		
+
 		project("MyProject2")
 		kind "StaticLib"
-		
+
 		project("MyProject3")
 		kind "StaticLib"
 		removeplatforms { "Ares" }
@@ -37,7 +37,7 @@
 
 	local function prepare(platform)
 		local cfg = premake5.project.getconfig(prj, "Debug", platform)
-		vc2010.Link(cfg)
+		vc2010.link(cfg)
 	end
 
 

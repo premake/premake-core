@@ -24,7 +24,7 @@
 
 	local function prepare(platform)
 		prj = premake.solution.getproject_ng(sln, 2)
-		vc2010.projectReferences_ng(prj)
+		vc2010.projectReferences(prj)
 	end
 
 
@@ -56,7 +56,7 @@
 	end
 
 --
--- Project references should always be specified relative to the 
+-- Project references should always be specified relative to the
 -- project doing the referencing.
 --
 
@@ -74,4 +74,4 @@
 	</ItemGroup>
 		]]
 	end
-		
+

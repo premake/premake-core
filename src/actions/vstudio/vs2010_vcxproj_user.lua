@@ -1,7 +1,7 @@
 --
--- vs2019_vcxproj_user.lua
+-- vs2010_vcxproj_user.lua
 -- Generate a Visual Studio 201x C/C++ project .user file
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
 	local vstudio = premake.vstudio
@@ -13,11 +13,11 @@
 -- Generate a Visual Studio 201x C++ user file, with support for the new platforms API.
 --
 
-	function vc2010.generate_user_ng(prj)
+	function vc2010.generateUser(prj)
 		io.eol = "\r\n"
 		io.indent = "  "
-		
-		vc2010.header_ng()
+
+		vc2010.project()
 		for cfg in project.eachconfig(prj) do
 			_p(1,'<PropertyGroup %s>', vc2010.condition(cfg))
 			vc2010.debugsettings(cfg)
@@ -27,40 +27,40 @@
 	end
 
 	function vc2010.debugsettings(cfg)
-		vc2010.LocalDebuggerCommand(cfg)
-		vc2010.LocalDebuggerWorkingDirectory(cfg)
-		vc2010.DebuggerFlavor(cfg)
-		vc2010.LocalDebuggerCommandArguments(cfg)
-		vc2010.LocalDebuggerEnvironment(cfg)
+		vc2010.localDebuggerCommand(cfg)
+		vc2010.localDebuggerWorkingDirectory(cfg)
+		vc2010.debuggerFlavor(cfg)
+		vc2010.localDebuggerCommandArguments(cfg)
+		vc2010.localDebuggerEnvironment(cfg)
 	end
 
-	function vc2010.DebuggerFlavor(cfg)
+	function vc2010.debuggerFlavor(cfg)
 		if cfg.debugdir or cfg.debugcommand then
-			_p(2,'<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')	
+			_p(2,'<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')
 		end
 	end
 
-	function vc2010.LocalDebuggerCommand(cfg)
+	function vc2010.localDebuggerCommand(cfg)
 		if cfg.debugcommand then
 			local dir = project.getrelative(cfg.project, cfg.debugcommand)
 			_p(2,'<LocalDebuggerCommand>%s</LocalDebuggerCommand>', path.translate(dir))
 		end
 	end
 
-	function vc2010.LocalDebuggerCommandArguments(cfg)
+	function vc2010.localDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then
 			_x(2,'<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
 		end
 	end
 
-	function vc2010.LocalDebuggerWorkingDirectory(cfg)
+	function vc2010.localDebuggerWorkingDirectory(cfg)
 		if cfg.debugdir then
 			local dir = project.getrelative(cfg.project, cfg.debugdir)
 			_x(2,'<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
 		end
 	end
 
-	function vc2010.LocalDebuggerEnvironment(cfg)
+	function vc2010.localDebuggerEnvironment(cfg)
 		if #cfg.debugenvs > 0 then
 			local envs = table.concat(cfg.debugenvs, "\n")
 			if cfg.flags.DebugEnvsInherit then

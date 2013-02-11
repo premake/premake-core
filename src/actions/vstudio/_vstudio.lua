@@ -25,9 +25,9 @@
 		isnextgen = true,
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
-		
+
 		valid_languages = { "C", "C++", "C#" },
-		
+
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },
@@ -36,7 +36,7 @@
 		onsolution = function(sln)
 			premake.generate(sln, ".sln", vstudio.sln2005.generate_ng)
 		end,
-		
+
 		onproject = function(prj)
 			if premake.isdotnetproject(prj) then
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
@@ -46,7 +46,7 @@
 				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user_ng)
 			end
 		end,
-		
+
 		oncleansolution = vstudio.cleansolution,
 		oncleanproject  = vstudio.cleanproject,
 		oncleantarget   = vstudio.cleantarget
@@ -61,7 +61,7 @@
 
 		-- temporary, until I can phase out the legacy implementations
 		isnextgen = true,
-		
+
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 
 		valid_languages = { "C", "C++", "C#" },
@@ -118,9 +118,9 @@
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, ".vcxproj", vstudio.vc2010.generate_ng)
-				premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generate_user_ng)
-				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generate_filters_ng)
+				premake.generate(prj, ".vcxproj", vstudio.vc2010.generate)
+				premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generateUser)
+				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
 		end,
 
@@ -157,9 +157,9 @@
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, ".vcxproj", vstudio.vc2010.generate_ng)
-				premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generate_user_ng)
-				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generate_filters_ng)
+				premake.generate(prj, ".vcxproj", vstudio.vc2010.generate)
+				premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generateUser)
+				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
 		end,
 
@@ -175,14 +175,14 @@
 -- add-ons.
 --
 
-	vstudio.vs200x_architectures = 
+	vstudio.vs200x_architectures =
 	{
 		x32     = "x86",
 		x64     = "x64",
 		xbox360 = "Xbox 360",
 	}
-	
-	vstudio.vs2010_architectures = 
+
+	vstudio.vs2010_architectures =
 	{
 	}
 
@@ -213,7 +213,7 @@
 	function vstudio.archFromConfig(cfg, win32)
 		local iscpp = premake.iscppproject(cfg.project)
 
-		local arch = architecture(cfg.system, cfg.architecture)			
+		local arch = architecture(cfg.system, cfg.architecture)
 		if not arch then
 			arch = iif(iscpp, "x86", "Any CPU")
 		end
@@ -221,7 +221,7 @@
 		if win32 and iscpp and arch == "x86" then
 			arch = "Win32"
 		end
-		
+
 		return arch
 	end
 
@@ -235,7 +235,7 @@
 -- @return
 --    A Visual Studio architecture identifier, or nil if no mapping
 --    could be made.
---    
+--
 
 	function vstudio.archFromPlatform(platform)
 		local system = premake.api.checkvalue(platform, premake.fields.system)
@@ -263,7 +263,7 @@
 			local cfgdeps = config.getlinks(cfg, "dependencies", "object")
 			ex = #prjdeps ~= #cfgdeps
 		end
-		return ex 
+		return ex
 	end
 
 
@@ -276,7 +276,7 @@
 -- @param arch
 --    An optional architecture identifier, to override the configuration.
 -- @return
---    A project configuration identifier of the form 
+--    A project configuration identifier of the form
 --    <project platform name>|<architecture>.
 --
 
@@ -334,7 +334,7 @@
 
 
 --
--- Determine the appropriate Visual Studio platform identifier for a 
+-- Determine the appropriate Visual Studio platform identifier for a
 -- solution-level configuration.
 --
 -- @param cfg
@@ -351,7 +351,7 @@
 		local platarch
 		if platform then
 			platform = vstudio.archFromPlatform(platform) or platform
-			
+
 			-- Value for 32-bit arch is different depending on whether this solution
 			-- contains C++ or C# projects or both
 			if platform ~= "x86" then
@@ -373,7 +373,7 @@
 			-- get a VS architecture identifier for this project
 			local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 			if prjcfg then
-				local prjarch = vstudio.archFromConfig(prjcfg)				
+				local prjarch = vstudio.archFromConfig(prjcfg)
 				if not slnarch then
 					slnarch = prjarch
 				elseif slnarch ~= prjarch then
@@ -410,20 +410,20 @@
 	function vstudio.solutionarch(cfg)
 		local hascpp = false
 		local hasdotnet = false
-		
+
 		-- if the configuration has a platform identifier, use that as default
 		local arch = cfg.platform
-		
+
 		-- if the platform identifier matches a known system or architecture,
 		--
-		
+
 		for prj in solution.eachproject_ng(cfg.solution) do
-			if premake.iscppproject(prj) then 
+			if premake.iscppproject(prj) then
 				hascpp = true
 			elseif premake.isdotnetproject(prj) then
 				hasdotnet = true
 			end
-			
+
 			if hascpp and hasdotnet then
 				return "Mixed Platforms"
 			end
@@ -437,7 +437,7 @@
 				end
 			end
 		end
-		
+
 		-- use a default if no other architecture was specified
 		arch = arch or iif(hascpp, "Win32", "Any CPU")
 		return arch
@@ -458,14 +458,14 @@
 
 	function vstudio.solutionconfig(cfg)
 		local platform = cfg.platform
-		
+
 		-- if no platform name was specified, use the architecture instead;
-		-- since architectures are defined in the projects and not at the 
+		-- since architectures are defined in the projects and not at the
 		-- solution level, need to poke around to figure this out
 		if not platform then
 			platform = vstudio.solutionarch(cfg)
 		end
-		
+
 		return string.format("%s|%s", cfg.buildcfg, platform)
 	end
 

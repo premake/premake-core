@@ -21,7 +21,7 @@
 
 	local function prepare(platform)
 		cfg = project.getconfig(prj, "Debug", platform)
-		vc2010.ClCompile(cfg)
+		vc2010.clCompile(cfg)
 	end
 
 

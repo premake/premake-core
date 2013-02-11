@@ -11,18 +11,18 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj, cfg
-	
+
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
-	
+
 	local function prepare()
 		cfg = project.getconfig(prj, "Debug")
-		vc2010.propertySheet(cfg)
+		vc2010.propertySheets(cfg)
 	end
 
 

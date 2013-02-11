@@ -20,7 +20,7 @@
 
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
-		vc2010.files_ng(prj)
+		vc2010.files(prj)
 	end
 
 

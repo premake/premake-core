@@ -24,7 +24,7 @@
 
 	local function prepare(platform)
 		cfg = project.getconfig(prj, "Debug", platform)
-		vc2010.Link(cfg)
+		vc2010.link(cfg)
 	end
 
 
@@ -293,7 +293,7 @@
 		]]
 	end
 
- 
+
 --
 -- Enable reference optimizing if Optimize flag is specified.
 --

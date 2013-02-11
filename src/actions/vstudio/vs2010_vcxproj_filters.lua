@@ -7,25 +7,25 @@
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake5.project
 	local tree = premake.tree
-	
+
 
 --
 -- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
 
-	function vc2010.generate_filters_ng(prj)
+	function vc2010.generateFilters(prj)
 		io.eol = "\r\n"
 		io.indent = "  "
-		
-		vc2010.header_ng()
-		
+
+		vc2010.project()
+
 		vc2010.filters_uniqueidentifiers(prj)
 		vc2010.filters_filegroup(prj, "None")
 		vc2010.filters_filegroup(prj, "ClInclude")
 		vc2010.filters_filegroup(prj, "ClCompile")
 		vc2010.filters_filegroup(prj, "ResourceCompile")
 		vc2010.filters_filegroup(prj, "CustomBuild")
-		
+
 		_p('</Project>')
 	end
 
@@ -38,7 +38,7 @@
 
 	function vc2010.filters_uniqueidentifiers(prj)
 		local opened = false
-		
+
 		local tr = project.getsourcetree(prj)
 		tree.traverse(tr, {
 			onbranch = function(node, depth)
@@ -55,18 +55,18 @@
 
 		if opened then
 			_p(1,'</ItemGroup>')
-		end			
+		end
 	end
 
 
 --
 -- The second portion of the filters file assigns filters to each source
--- code file, as needed. Group is one of "ClCompile", "ClInclude", 
+-- code file, as needed. Group is one of "ClCompile", "ClInclude",
 -- "ResourceCompile", or "None".
 --
 
 	function vc2010.filters_filegroup(prj, group)
-		local files = vc2010.getfilegroup_ng(prj, group)
+		local files = vc2010.getfilegroup(prj, group)
 		if #files > 0 then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
@@ -76,7 +76,7 @@
 					_p(2,'</%s>', group)
 				else
 					_p(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
-				end					
+				end
 			end
 			_p(1,'</ItemGroup>')
 		end
