@@ -1,7 +1,7 @@
 --
 -- solution.lua
 -- Work with the list of solutions loaded from the script.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	premake.solution = { }
@@ -55,6 +55,22 @@
 		})
 
 		return sln
+	end
+
+
+--
+-- Add a new project to the solution.
+--
+-- @param sln
+--    The solution to contain the project.
+-- @param prj
+--    The new project object.
+--
+
+	function solution.addproject(sln, prj)
+		-- add keyed by array index AND name
+		table.insert(sln.projects, prj)
+		sln.projects[prj.name] = prj
 	end
 
 

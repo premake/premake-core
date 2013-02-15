@@ -10,18 +10,18 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = solution("MySolution")
 		configurations { "Debug", "Release" }
 		language "C++"
 	end
-	
+
 	local function prepare(lang)
 		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
 		sln = premake.solution.bake(sln)
@@ -72,7 +72,7 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
+
 		project "MyProject2"
 		prepare()
 		test.capture [[
@@ -153,7 +153,7 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
+
 		project "MyProject2"
 		prepare()
 		test.capture [[
@@ -232,8 +232,8 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
-		project "MyProject2"		
+
+		project "MyProject2"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -254,7 +254,7 @@
 	end
 
 
--- 
+--
 -- If the projects contain a mix of architectures, handle that.
 --
 
@@ -262,8 +262,8 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
-		project "MyProject2"		
+
+		project "MyProject2"
 		architecture "x64"
 		prepare()
 		test.capture [[
@@ -332,8 +332,8 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
-		project "MyProject2"		
+
+		project "MyProject2"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -427,7 +427,7 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
+
 		project "MyProject2"
 		prepare()
 		test.capture [[
@@ -460,7 +460,7 @@
 
 
 --
--- If the platform identifier matches a system or architecture, omit it 
+-- If the platform identifier matches a system or architecture, omit it
 -- from the configuration description.
 --
 
@@ -518,7 +518,7 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
+
 		project "MyProject2"
 		prepare()
 		test.capture [[
@@ -596,7 +596,7 @@
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
-		
+
 		project "MyProject2"
 		prepare()
 		test.capture [[

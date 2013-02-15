@@ -972,95 +972,24 @@
 	}
 
 
-
-
------------------------------------------------------------------------------
--- Everything below this point is a candidate for deprecation
------------------------------------------------------------------------------
-
 	api.reset()
 
-	premake.CurrentContainer = api.scope.root
-
 
 --
--- Retrieve the current object of a particular type from the session. The
--- type may be "solution", "container" (the last activated solution or
--- project), or "config" (the last activated configuration). Returns the
--- requested container, or nil and an error message.
---
-
-	function premake.getobject(t)
-		local container
-
-		if (t == "container" or t == "solution") then
-			container = premake.CurrentContainer
-		else
-			container = premake.CurrentConfiguration
-		end
-
-		if t == "solution" then
-			if type(container) == "project" then
-				container = container.solution
-			end
-			if type(container) ~= "solution" then
-				container = nil
-			end
-		end
-
-		local msg
-		if (not container) then
-			if (t == "container") then
-				msg = "no active solution or project"
-			elseif (t == "solution") then
-				msg = "no active solution"
-			else
-				msg = "no active solution, project, or configuration"
-			end
-		end
-
-		return container, msg
-	end
-
-
---
--- Project object constructors.
+-- Start a new block of configuration settings.
 --
 
 	function configuration(terms)
 		if not terms then
-			return premake.CurrentConfiguration
+			return api.scope.configuration
 		end
 
-		-- OLD APPROACH:
-		-- TODO: Phase this out ASAP
-		local container, err = premake.getobject("container")
-		if (not container) then
-			error(err, 2)
-		end
-
-		local cfg = { }
-		cfg.terms   = table.flatten({terms})
-		cfg.basedir = os.getcwd()
-		cfg.configset = container.configset
-
-		table.insert(container.blocks, cfg)
-		premake.CurrentConfiguration = cfg
-
-		-- create a keyword list using just the indexed keyword items. This is a little
-		-- confusing: "terms" are what the user specifies in the script, "keywords" are
-		-- the Lua patterns that result. I'll refactor to better names.
-		cfg.keywords = { }
-		for _, word in ipairs(cfg.terms) do
-			table.insert(cfg.keywords, path.wildcards(word):lower())
-		end
-
-		-- this is the new place for storing scoped objects
-		api.scope.configuration = cfg
-
-
-		-- NEW APPROACH:
+		local container = api.scope.project or api.scope.solution or api.scope.root
 		configset.addblock(container.configset, {terms}, os.getcwd())
+
+		local cfg = {}
+		cfg.configset = container.configset
+		api.scope.configuration = cfg
 
 		return cfg
 	end
@@ -1075,114 +1004,99 @@
 	end
 
 
-	local function createproject(name, sln, isUsage)
-		local prj = premake5.project.new(sln, name)
-
-		-- add to master list keyed by both name and index
-		table.insert(sln.projects, prj)
-		if(isUsage) then
-			--If we're creating a new usage project, and there's already a project
-			--with our name, then set us as the usage project for that project.
-			--Otherwise, set us as the project in that slot.
-			if(sln.projects[name]) then
-				sln.projects[name].usageProj = prj;
-			else
-				sln.projects[name] = prj
-			end
-		else
-			--If we're creating a regular project, and there's already a project
-			--with our name, then it must be a usage project. Set it as our usage project
-			--and set us as the project in that slot.
-			if(sln.projects[name]) then
-				prj.usageProj = sln.projects[name];
-			end
-
-			sln.projects[name] = prj
-		end
-
-		prj.script = _SCRIPT
-		prj.usage = isUsage;
-		prj.group = api.scope.group or ""
-
-		return prj;
-	end
-
+--
+-- Set the current configuration scope to a project.
+--
+-- @param name
+--    The name of the project. If a project with this name already
+--    exists, it is made current, otherwise a new project is created
+--    with this name. If no name is provided, the most recently defined
+--    project is made active.
+-- @return
+--    The active project object.
+--
 
   	function project(name)
-  		if (not name) then
-  			--Only return non-usage projects
-  			if(type(premake.CurrentContainer) ~= "project") then return nil end
-  			if(premake.CurrentContainer.usage) then return nil end
-  			return premake.CurrentContainer
-		end
-
-  		-- identify the parent solution
-  		local sln
-  		if (type(premake.CurrentContainer) == "project") then
-  			sln = premake.CurrentContainer.solution
-  		else
-  			sln = premake.CurrentContainer
-  		end
-  		if (type(sln) ~= "solution") then
-  			error("no active solution", 2)
-  		end
-
-  		-- if this is a new project, or the old project is a usage project, create it
-  		if((not sln.projects[name]) or sln.projects[name].usage) then
-  			premake.CurrentContainer = createproject(name, sln)
-  		else
-  			premake.CurrentContainer = sln.projects[name];
-  		end
-
-		-- add an empty, global configuration to the project
-		configuration {}
-
-		-- this is the new place for storing scoped objects
-		api.scope.project = premake.CurrentContainer
-
-		return premake.CurrentContainer
-	end
-
-
---
--- Define a new solution object.
---
-
-	function solution(name)
 		if not name then
-			if type(premake.CurrentContainer) == "project" then
-				return premake.CurrentContainer.solution
+			if api.scope.project then
+				name = api.scope.project.name
 			else
-				return premake.CurrentContainer
+				return nil
 			end
 		end
 
-		premake.CurrentContainer = premake.solution.get(name)
-		if (not premake.CurrentContainer) then
-			local sln = premake.solution.new(name)
-			premake.CurrentContainer = sln
+		local sln = api.scope.solution
+		if not sln then
+			error("no active solution", 2)
 		end
 
-		-- add an empty, global configuration
+		local prj = sln.projects[name]
+		if not prj then
+			prj = premake5.project.new(sln, name)
+			prj.group = api.scope.group or ""
+			premake.solution.addproject(sln, prj)
+		end
+
+		api.scope.project = prj
+
 		configuration {}
 
-		-- this is the new place for storing scoped objects
-		api.scope.solution = premake.CurrentContainer
-		api.scope.project = nil
-		api.scope.group = nil
-
-		return premake.CurrentContainer
+		return prj
 	end
 
 
 --
--- Creates a reference to an external, non-Premake generated project.
+-- Activates a reference to an external, non-Premake generated project.
+--
+-- @param name
+--    The name of the project. If a project with this name already
+--    exists, it is made current, otherwise a new project is created
+--    with this name. If no name is provided, the most recently defined
+--    project is made active.
+-- @return
+--    The active project object.
 --
 
 	function external(name)
 		local prj = project(name)
 		prj.external = true;
 		return prj
+	end
+
+
+--
+-- Set the current configuration scope to a solution.
+--
+-- @param name
+--    The name of the solution. If a solution with this name already
+--    exists, it is made current, otherwise a new solution is created
+--    with this name. If no name is provided, the most recently defined
+--    solution is made active.
+-- @return
+--    The active solution object.
+--
+
+	function solution(name)
+		if not name then
+			if api.scope.solution then
+				name = api.scope.solution.name
+			else
+				return nil
+			end
+		end
+
+		local sln = premake.solution.get(name)
+		if not sln then
+			sln = premake.solution.new(name)
+		end
+
+		api.scope.solution = sln
+		api.scope.project = nil
+		api.scope.group = nil
+
+		configuration {}
+
+		return sln
 	end
 
 

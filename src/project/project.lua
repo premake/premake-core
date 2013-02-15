@@ -27,6 +27,7 @@
 
 		prj.name = name
 		prj.solution = sln
+		prj.script = _SCRIPT
 		prj.blocks = {}
 
 		local cwd = os.getcwd()
