@@ -140,9 +140,9 @@
 
 		function recurse(value)
 			if type(value) == "table" then
-				for _, v in ipairs(value) do
+				table.foreachi(value, function(v)
 					recurse(v)
-				end
+				end)
 			else
 				remover(removes, value)
 			end
@@ -182,7 +182,9 @@
 			if type(field.allowed) == "function" then
 				return field.allowed(value)
 			else
-				for _,v in ipairs(field.allowed) do
+				local n = #field.allowed
+				for i = 1, n do
+					local v = field.allowed[i]
 					if value:lower() == v:lower() then
 						return v
 					end
@@ -341,10 +343,10 @@
 	function api.setfile(target, name, field, value)
 		if value:find("*") then
 			local values = os.matchfiles(value)
-			for _, value in ipairs(values) do
-				api.setfile(target, name, field, value)
+			table.foreachi(values, function(v)
+				api.setfile(target, name, field, v)
 				name = name + 1
-			end
+			end)
 		else
 			target[name] = path.getabsolute(value)
 		end
@@ -353,10 +355,10 @@
 	function api.setdirectory(target, name, field, value)
 		if value:find("*") then
 			local values = os.matchdirs(value)
-			for _, value in ipairs(values) do
-				api.setdirectory(target, name, field, value)
+			table.foreachi(values, function(v)
+				api.setdirectory(target, name, field, values[i])
 				name = name + 1
-			end
+			end)
 		else
 			target[name] = path.getabsolute(value)
 		end
@@ -411,9 +413,9 @@
 		local result = {}
 		function recurse(value)
 			if type(value) == "table" then
-				for _, v in ipairs(value) do
-					recurse(v)
-				end
+				table.foreachi(value, function (value)
+					recurse(value)
+				end)
 			else
 				setter(result, #result + 1, field, value)
 			end

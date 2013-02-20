@@ -3,7 +3,7 @@
 -- Additions to Lua's built-in table functions.
 -- Copyright (c) 2002-2008 Jason Perkins and the Premake project
 --
-	
+
 
 --
 -- Returns true if the table contains the specified value.
@@ -17,7 +17,7 @@
 		end
 		return false
 	end
-	
+
 
 --
 -- Make a copy of the indexed elements of the table.
@@ -39,23 +39,23 @@
 	function table.deepcopy(object)
 		-- keep track of already seen objects to avoid loops
 		local seen = {}
-		
+
 		local function copy(object)
 			if type(object) ~= "table" then
 				return object
 			elseif seen[object] then
 				return seen[object]
 			end
-			
+
 			local clone = {}
 			seen[object] = clone
 			for key, value in pairs(object) do
 				clone[key] = copy(value)
 			end
-			
+
 			return clone
 		end
-		
+
 		return copy(object)
 	end
 
@@ -72,8 +72,8 @@
 		end
 		return result
 	end
-	
-	
+
+
 
 --
 -- Flattens a hierarchy of tables into a single array containing all
@@ -81,20 +81,45 @@
 --
 
 	function table.flatten(arr)
-		local result = { }
-		
+		local result = {}
+
 		local function flatten(arr)
-			for _, v in ipairs(arr) do
+			local n = #arr
+			for i = 1, n do
+				local v = arr[i]
 				if type(v) == "table" then
 					flatten(v)
-				else
+				elseif v then
 					table.insert(result, v)
 				end
 			end
 		end
-		
+
 		flatten(arr)
 		return result
+	end
+
+
+--
+-- Walk the elements of an array and call the specified function
+-- for each non-nil element. This works around a "feature" of the
+-- ipairs() function that stops iteration at the first nil.
+--
+-- @param arr
+--    The array to iterate.
+-- @param func
+--    The function to call. The value (not the index) will be passed
+--    as the only argument.
+--
+
+	function table.foreachi(arr, func)
+		local n = #arr
+		for i = 1, n do
+			local v = arr[i]
+			if v then
+				func(v)
+			end
+		end
 	end
 
 
@@ -136,7 +161,7 @@
 
 --
 -- Inserts a value of array of values into a table. If the value is
--- itself a table, its contents are enumerated and added instead. So 
+-- itself a table, its contents are enumerated and added instead. So
 -- these inputs give these outputs:
 --
 --   "x" -> { "x" }
@@ -229,7 +254,7 @@
 			if tbl[i] == obj then
 				return i
 			end
-		end		
+		end
 	end
 
 
@@ -253,5 +278,5 @@
 		end
 		return result
 	end
-	
-		
+
+
