@@ -619,6 +619,10 @@
 			local includes = project.getrelative(cfg.project, cfg.forceincludes)
 			_x(3,'<ForcedIncludeFiles>%s</ForcedIncludeFiles>', table.concat(includes, ';'))
 		end
+		if #cfg.forceusings > 0 then
+			local usings = project.getrelative(cfg.project, cfg.forceusings)
+			_x(3,'<ForcedUsingFiles>%s</ForcedUsingFiles>', table.concat(usings, ';'))
+		end
 	end
 
 

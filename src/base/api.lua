@@ -673,6 +673,12 @@
 	}
 
 	api.register {
+		name = "forceusings",
+		scope = "config",
+		kind = "file-list",
+	}
+
+	api.register {
 		name = "framework",
 		scope = "project",
 		kind = "string",

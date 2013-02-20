@@ -555,6 +555,17 @@
 		]]
 	end
 
+	function suite.forcedUsingFiles()
+		forceusings { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<ForcedUsingFiles>stdafx.h;include/sys.h</ForcedUsingFiles>
+		]]
+	end
+
 
 --
 -- Check handling of the NoRuntimeChecks flag.

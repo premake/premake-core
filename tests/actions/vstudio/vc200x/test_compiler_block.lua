@@ -462,6 +462,24 @@
 		]]
 	end
 
+	function suite.forcedUsingFiles()
+		forceusings { "stdafx.h", "include/sys.h" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="0"
+				ForcedUsingFiles="stdafx.h;include/sys.h"
+		]]
+	end
+
 
 --
 -- Verify handling of the NoRuntimeChecks flag.
