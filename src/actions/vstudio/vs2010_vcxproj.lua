@@ -270,6 +270,7 @@
 		vc2010.additionalLibraryDirectories(cfg)
 		vc2010.importLibrary(cfg)
 		vc2010.entryPointSymbol(cfg)
+		vc2010.moduleDefinitionFile(cfg)
 		vc2010.additionalLinkOptions(cfg)
 	end
 
@@ -705,6 +706,14 @@
 		   cfg.debugformat == premake.C7
 		then
 			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
+		end
+	end
+
+
+	function vc2010.moduleDefinitionFile(cfg)
+		local df = config.findfile(cfg, ".def")
+		if df then
+			_p(3,'<ModuleDefinitionFile>%s</ModuleDefinitionFile>', df)
 		end
 	end
 

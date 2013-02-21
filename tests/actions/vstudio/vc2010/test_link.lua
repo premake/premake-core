@@ -326,3 +326,21 @@
 			<AdditionalDependencies>-lfs_stub;-lnet_stub;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
+
+
+--
+-- Correctly handle module definition (.def) files.
+--
+
+	function suite.recognizesModuleDefinitionFile()
+		files { "hello.cpp", "hello.def" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
+		</Link>
+		]]
+	end
