@@ -693,6 +693,13 @@
 	}
 
 	api.register {
+		name = "icon",
+		scope = "project",
+		kind = "file",
+		tokens = true,
+	}
+
+	api.register {
 		name = "imageoptions",
 		scope = "config",
 		kind = "string-list",

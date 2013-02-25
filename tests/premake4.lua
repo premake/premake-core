@@ -98,6 +98,7 @@
 	dofile("actions/vstudio/cs2005/test_compiler_props.lua")
 	dofile("actions/vstudio/cs2005/test_debug_props.lua")
 	dofile("actions/vstudio/cs2005/test_files.lua")
+	dofile("actions/vstudio/cs2005/test_icon.lua")
 	dofile("actions/vstudio/cs2005/test_output_props.lua")
 	dofile("actions/vstudio/cs2005/projectelement.lua")
 	dofile("actions/vstudio/cs2005/test_platform_groups.lua")
@@ -165,6 +166,9 @@
 	dofile("actions/make/cpp/test_ps3.lua")
 	dofile("actions/make/cpp/test_target_rules.lua")
 	dofile("actions/make/cpp/test_wiidev.lua")
+
+	-- Makefile C# projects
+	dofile("actions/make/cs/test_flags.lua")
 
 
 --

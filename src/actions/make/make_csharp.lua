@@ -1,7 +1,7 @@
 --
 -- make_csharp.lua
 -- Generate a C# project makefile.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	premake.make.cs = {}
@@ -17,8 +17,8 @@
 
 	function make.generate_csharp(prj)
 		-- I've only got one .NET toolset right now
-		local toolset = premake.tools.dotnet		
-		
+		local toolset = premake.tools.dotnet
+
 		make.header(prj)
 
 		-- main build rule(s)
@@ -59,23 +59,23 @@
 		end
 		_p('')
 		--]]
-		
+
 		make.detectshell()
-		
+
 		_p('all: $(TARGETDIR) $(OBJDIR) prebuild $(EMBEDFILES) $(COPYFILES) prelink $(TARGET)')
 		_p('')
-		
+
 		_p('$(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS)')
 		_p('\t$(SILENT) $(CSC) /nologo /out:$@ $(FLAGS) $(REFERENCES) $(SOURCES) $(patsubst %%,/resource:%%,$(EMBEDFILES))')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
-		
+
 		make.mkdirrule("$(TARGETDIR)")
 		make.mkdirrule("$(OBJDIR)")
-		
+
 		-- clean target
 		local target = firstcfg.buildtarget
-		
+
 		_p('clean:')
 		_p('\t@echo Cleaning %s', prj.name)
 		_p('ifeq (posix,$(SHELLTYPE))')
@@ -94,12 +94,12 @@
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
 		_p('endif')
 		_p('')
-		
+
 		-- custom build step targets
 		_p('prebuild:')
 		_p('\t$(PREBUILDCMDS)')
 		_p('')
-		
+
 		_p('prelink:')
 		_p('\t$(PRELINKCMDS)')
 		_p('')
@@ -115,14 +115,14 @@
 			_p('endif')
 			_p('')
 		end
-		
+
 		_p('# Copied file rules')
 		for target, source in pairs(copypairs) do
 			premake.make_copyrule(source, target)
 		end
 
 		_p('# Embedded file rules')
-		for _, fname in ipairs(embedded) do 
+		for _, fname in ipairs(embedded) do
 			if path.getextension(fname) == ".resx" then
 				_p('%s: %s', getresourcefilename(prj, fname), _MAKE.esc(fname))
 				_p('\t$(SILENT) $(RESGEN) $^ $@')
@@ -139,46 +139,46 @@
 
 	function cs.config(cfg, toolset)
 		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
-	
+
 		-- write toolset specific configurations
 		cs.toolconfig(cfg, toolset)
 
 		-- write target information (target dir, name, obj dir)
 		make.targetconfig(cfg)
-		
+
 		-- write flags
 		cs.flags(cfg, toolset)
 
 		-- write the linking information
 		cs.linking(cfg, toolset)
 
-		-- write the custom build commands		
+		-- write the custom build commands
 		_p('  define PREBUILDCMDS')
 		if #cfg.prebuildcommands > 0 then
 			_p('\t@echo Running pre-build commands')
 			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
-		
+
 		_p('  define PRELINKCMDS')
 		if #cfg.prelinkcommands > 0 then
 			_p('\t@echo Running pre-link commands')
 			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
-		
+
 		_p('  define POSTBUILDCMDS')
 		if #cfg.postbuildcommands > 0 then
 			_p('\t@echo Running post-build commands')
 			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
-		
+
 		-- write out config-level makesettings blocks
 		make.settings(cfg, toolset)
-		
+
 		_p('endif')
-		_p('')	
+		_p('')
 	end
 
 
@@ -187,9 +187,7 @@
 --
 
 	function cs.flags(cfg, toolset)
-		local defines = table.implode(cfg.defines, "/d:", "", " ")
-		local flags = table.join(defines, toolset.getflags(cfg), cfg.buildoptions)
-		_p('  FLAGS      = %s', table.concat(flags, " "))
+		_p('  FLAGS      =%s', make.list(toolset.getflags(cfg)))
 	end
 
 
@@ -197,12 +195,12 @@
 -- Given a .resx resource file, builds the path to corresponding .resource
 -- file, matching the behavior and naming of Visual Studio.
 --
-		
+
 	function cs.getresourcefilename(cfg, fname)
 		if path.getextension(fname) == ".resx" then
 		    local name = cfg.buildtarget.basename .. "."
 		    local dir = path.getdirectory(fname)
-		    if dir ~= "." then 
+		    if dir ~= "." then
 				name = name .. path.translate(dir, ".") .. "."
 			end
 			return "$(OBJDIR)/" .. make.esc(name .. path.getbasename(fname)) .. ".resources"
@@ -236,7 +234,7 @@
 					_p('\t%s \\', make.esc(path.translate(value)))
 				end
 			end
-		})		
+		})
 	end
 
 
@@ -247,9 +245,9 @@
 
 	function cs.prj_config(cfg, toolset)
 		local kindflag = "/t:" .. toolset.getkind(cfg):lower()
-		local libdirs = table.implode(make.esc(cfg.libdirs), "/lib:", "", " ")		
+		local libdirs = table.implode(make.esc(cfg.libdirs), "/lib:", "", " ")
 		_p('FLAGS      += %s', table.concat(table.join(kindflag, libdirs), " "))
-	
+
 		local refs = make.esc(config.getlinks(cfg, "system", "fullpath"))
 		_p('REFERENCES += %s', table.implode(refs, "/r:", "", " "))
 

@@ -1,15 +1,16 @@
 --
 -- dotnet.lua
 -- Interface for the C# compilers, all of which are flag compatible.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
-	
+
 	premake.tools.dotnet = {}
 	local dotnet = premake.tools.dotnet
-	
+	local project = premake5.project
+
 	dotnet.namestyle = "windows"
-	
+
 
 --
 -- Translation of Premake flags into CSC flags
@@ -42,8 +43,8 @@
 			return "None"
 		end
 	end
-	
-	
+
+
 
 --
 -- Retrieves the executable command name for a tool, based on the
@@ -66,7 +67,7 @@
 			pnet = "cscc",
 		}
 
-		if tool == "csc" then		
+		if tool == "csc" then
 			local toolset = _OPTIONS.dotnet or iif(os.is(premake.WINDOWS), "msnet", "mono")
 			return compilers[toolset]
 		else
@@ -81,8 +82,19 @@
 --
 
 	function dotnet.getflags(cfg)
-		local result = table.translate(cfg.flags, flags)
-		return result		
+		local flags = {}
+
+		if cfg.project.icon then
+			local fn = project.getrelative(cfg.project, cfg.project.icon)
+			table.insert(flags, string.format('/win32icon:"%s"', fn))
+		end
+
+		if #cfg.defines > 0 then
+			table.insert(flags, table.implode(cfg.defines, "/d:", "", " "))
+		end
+
+		flags = table.join(flags, table.translate(cfg.flags, flags), cfg.buildoptions)
+		return flags
 	end
 
 

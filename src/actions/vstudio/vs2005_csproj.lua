@@ -1,7 +1,7 @@
 --
 -- vs2005_csproj.lua
--- Generate a Visual Studio 2005/2008 C# project.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Generate a Visual Studio 2005-2010 C# project.
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.cs2005 = {}
@@ -19,7 +19,7 @@
 	function cs2005.generate_ng(prj)
 		io.eol = "\r\n"
 		io.indent = "  "
-		
+
 		cs2005.projectelement(prj)
 		cs2005.projectsettings(prj)
 
@@ -28,9 +28,10 @@
 			cs2005.debugProps(cfg)
 			cs2005.outputProps(cfg)
 			cs2005.compilerProps(cfg)
-			_p(1,'</PropertyGroup>')			
+			_p(1,'</PropertyGroup>')
 		end
 
+		cs2005.applicationIcon(prj)
 		cs2005.assemblyReferences(prj)
 
 		_p(1,'<ItemGroup>')
@@ -84,24 +85,24 @@
 			vs2010 = '8.0.30703',
 			vs2012 = '8.0.30703',
 		}
-		
+
 		local frameworks = {
 			vs2010 = "4.0",
 			vs2012 = "4.5",
 		}
 
 		_p(1,'<PropertyGroup>')
-		
+
 		-- find the first configuration in the project, use as the default
 		local cfg = project.getfirstconfig(prj)
-		
+
 		_p(2,'<Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(cfg.buildcfg))
 		_p(2,'<Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', cs2005.arch(prj))
-		
+
 		_p(2,'<ProductVersion>%s</ProductVersion>', version[_ACTION])
 		_p(2,'<SchemaVersion>2.0</SchemaVersion>')
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-		
+
 		_p(2,'<OutputType>%s</OutputType>', dotnet.getkind(cfg))
 		_p(2,'<AppDesignerFolder>Properties</AppDesignerFolder>')
 
@@ -118,7 +119,7 @@
 			_p(2,'<TargetFrameworkProfile></TargetFrameworkProfile>')
 			_p(2,'<FileAlignment>512</FileAlignment>')
 		end
-		
+
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -139,7 +140,7 @@
 				local action = dotnet.getbuildaction(filecfg)
 				local fname = path.translate(node.relpath)
 				local elements, dependency = cs2005.getrelated(prj, filecfg, action)
-				
+
 				if elements == "None" then
 					_p(2,'<%s Include="%s" />', action, fname)
 				else
@@ -180,8 +181,8 @@
 
 		if #prj.prebuildcommands > 0 or #prj.postbuildcommands > 0 then
 			_p(1,'<PropertyGroup>')
-			output("Pre", prj.prebuildcommands)			
-			output("Post", prj.postbuildcommands)			
+			output("Pre", prj.prebuildcommands)
+			output("Post", prj.postbuildcommands)
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -200,7 +201,7 @@
 		if cfg.flags.Unsafe then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 		end
-		
+
 		if cfg.flags.FatalWarnings then
 			_p(2,'<TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 		end
@@ -229,7 +230,7 @@
 	function cs2005.outputProps(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		_x(2,'<OutputPath>%s\\</OutputPath>', path.translate(outdir))
-		
+
 		-- Want to set BaseIntermediateOutputPath because otherwise VS will create obj/
 		-- anyway. But VS2008 throws up ominous warning if present.
 		local objdir = path.translate(project.getrelative(cfg.project, cfg.objdir))
@@ -266,7 +267,7 @@
 				if project.hasfile(prj, testname) then
 					return "Dependency", testname
 				end
-				
+
 				-- is there a matching *.resx file
 				testname = basename .. ".resx"
 				if project.hasfile(prj, testname) then
@@ -279,13 +280,13 @@
 				if project.hasfile(prj, testname) then
 					return "Form"
 				end
-				
+
 				if filecfg.flags and filecfg.flags.Component then
 					return "Component"
 				end
 			end
 		end
-		
+
 		if action == "EmbeddedResource" and fname:endswith(".resx") then
 			local basename = fname:sub(1, -6)
 
@@ -305,11 +306,11 @@
 				end
 			end
 		end
-				
+
 		if action == "Content" then
 			return "PreserveNewest"
 		end
-		
+
 		return "None"
 	end
 
@@ -333,11 +334,11 @@
 				_x(2,'<Reference Include="%s" />', path.getbasename(link))
 			end
 		end
-	
+
 		_p(1,'</ItemGroup>')
 	end
 
-	
+
 --
 -- Write the list of project dependencies.
 --
@@ -346,7 +347,7 @@
 
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
-			local prjpath = project.getlocation(prj)			
+			local prjpath = project.getlocation(prj)
 			for _, dep in ipairs(deps) do
 				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
 				_x(2,'<ProjectReference Include="%s">', path.translate(relpath))
@@ -355,14 +356,14 @@
 				_p(2,'</ProjectReference>')
 			end
 		end
-	
+
 		_p(1,'</ItemGroup>')
 	end
 
 
 --
 -- Return the Visual Studio architecture identification string. The logic
--- to select this is getting more complicated in VS2010, but I haven't 
+-- to select this is getting more complicated in VS2010, but I haven't
 -- tackled all the permutations yet.
 --
 
@@ -386,3 +387,18 @@
 			_x(2,'<PlatformTarget>%s</PlatformTarget>', arch)
 		end
 	end
+
+
+--
+-- Generators for individual project elements.
+--
+
+	function cs2005.applicationIcon(prj)
+		if prj.icon then
+			local icon = path.translate(project.getrelative(prj, prj.icon))
+			_p(1,'<PropertyGroup>')
+			_x(2,'<ApplicationIcon>%s</ApplicationIcon>', icon)
+			_p(1,'</PropertyGroup>')
+		end
+	end
+
