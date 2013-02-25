@@ -106,6 +106,7 @@
 * Fix linking to external libraries outside of project folder
 * Improve processing of ld.so.conf (Cameron Hart)
 * Patch 154: Fix .def file support for VS2010 (Riccardo Ghetta)
+* Patch 159: Validate all values passed to options (Moi_ioM)
 
 
 -------
