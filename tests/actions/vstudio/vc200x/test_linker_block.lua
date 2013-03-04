@@ -106,7 +106,7 @@
 
 
 --
--- Verify the handling of the Symbols flag. 
+-- Verify the handling of the Symbols flag.
 --
 
 	function suite.onSymbolsFlag()
@@ -165,7 +165,7 @@
 --
 -- Verify handling of the NoIncrementalLink flag.
 --
-	
+
 	function suite.onNoIncrementalLink()
 		flags { "NoIncrementalLink" }
 		prepare()
@@ -262,5 +262,20 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;My Lib.lib&quot;"
+		]]
+	end
+
+
+--
+-- Managed assembly references should not be listed in additional dependencies.
+--
+
+	function suite.ignoresAssemblyReferences()
+		links { "kernel32", "System.dll", "System.Data.dll" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="kernel32.lib"
 		]]
 	end

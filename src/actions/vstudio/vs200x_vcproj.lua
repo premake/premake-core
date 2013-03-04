@@ -61,6 +61,7 @@
 		_p(1,'</Configurations>')
 
 		_p(1,'<References>')
+		vc200x.assemblyReferences(prj)
 		vc200x.projectReferences(prj)
 		_p(1,'</References>')
 
@@ -669,6 +670,22 @@
 	function vc200x.DebuggerTool(cfg)
 		_p(3,'<DebuggerTool')
 		_p(3,'/>')
+	end
+
+
+--
+-- For a managed C++ project, write out any linked system assemblies.
+--
+
+	function vc200x.assemblyReferences(prj)
+		-- Visual Studio doesn't support per-config references
+		local cfg = project.getfirstconfig(prj)
+		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
+		table.foreachi(refs, function(value)
+			_p(2,'<AssemblyReference')
+			_x(3,'RelativePath="%s"', value)
+			_p(2,'/>')
+		end)
 	end
 
 

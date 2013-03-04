@@ -11,6 +11,11 @@
 --
 
 	function path.appendextension(p, ext)
+		-- if the extension is nil or empty, do nothing
+		if not ext or ext == "" then
+			return p
+		end
+
 		-- if the path ends with a quote, pull it off
 		local endquote
 		if p:endswith('"') then

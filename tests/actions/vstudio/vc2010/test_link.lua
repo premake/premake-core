@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_link.lua
 -- Validate linking and project references in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_link = { }
-	local suite = T.vstudio_vs2010_link
+	local suite = test.declare("vs2010_link")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake5.project
 
@@ -342,5 +341,21 @@
 			<ImportLibrary>MyProject.lib</ImportLibrary>
 			<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
 		</Link>
+		]]
+	end
+
+
+--
+-- Managed assembly references should not be listed in additional dependencies.
+--
+
+	function suite.ignoresAssemblyReferences()
+		links { "kernel32", "System.dll", "System.Data.dll" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end

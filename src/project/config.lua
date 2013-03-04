@@ -85,6 +85,115 @@
 
 
 --
+-- Determine whether the given configuration can meaningfully link
+-- against the target object.
+--
+-- @param cfg
+--    The configuration to be tested.
+-- @param target
+--    The object to test against. This can be a library file name, or a
+--    configuration from another project.
+-- @param linkage
+--    Optional. For languages or environments that support different kinds of
+--    linking (i.e. Managed/CLR C++, which can link both managed and unmanaged
+--    libs), which one to return. One of "unmanaged", "managed". If not
+--    specified, the default for the configuration will be used.
+-- @return
+--    True if linking the target into the configuration makes sense.
+--
+
+	function config.canlink(cfg, target, linkage)
+
+		-- Have I got a project configuration? If so, I've got some checks
+		-- I can do with the extra information
+
+		if type(target) ~= "string" then
+
+			-- Can't link against executables
+
+			if target.kind ~= "SharedLib" and target.kind ~= "StaticLib" then
+				return false
+			end
+
+			-- Can't link managed and unmanaged projects
+
+			local cfgManaged = premake.isdotnetproject(cfg.project) or (cfg.flags.Managed ~= nil)
+			local tgtManaged = premake.isdotnetproject(target.project) or (target.flags.Managed ~= nil)
+			return (cfgManaged == tgtManaged)
+
+		end
+
+		-- For now, I assume that everything listed in a .NET project can be
+		-- linked; unmanaged code is simply not supported
+
+		if premake.isdotnetproject(cfg.project) then
+			return true
+		end
+
+		-- In C++ projects, managed dependencies must explicitly include
+		-- the ".dll" extension, to distinguish from unmanaged libraries
+
+		local isManaged = (path.getextension(target) == ".dll")
+
+		-- Unmanaged projects can never link managed assemblies
+
+		if isManaged and not cfg.flags.Managed then
+			return false
+		end
+
+		-- Only allow this link it matches the requested linkage
+
+		return (isManaged) == (linkage == "managed")
+
+	end
+
+
+--
+-- Given a raw link target filename, properly format it for the given
+-- configuration. Adds file decorations, and handles relative path
+-- conversions.
+--
+-- @param cfg
+--    The configuration that is linking.
+-- @param target
+--    The file name of the library being linked.
+-- @param linkage
+--    Optional. For languages or environments that support different kinds of
+--    linking (i.e. Managed/CLR C++, which can link both managed and unmanaged
+--    libs), which one to return. One of "unmanaged", "managed". If not
+--    specified, the default for the configuration will be used.
+-- @return
+--    The decorated library file name.
+--
+
+	function config.decoratelink(cfg, target, linkage)
+
+		-- Determine if a file extension is required, and append if so
+
+		local ext
+		if cfg.system == premake.WINDOWS then
+			if premake.isdotnetproject(cfg.project) or linkage == "managed" then
+				ext = ".dll"
+			elseif premake.iscppproject(cfg.project) then
+				ext = ".lib"
+			end
+		end
+
+		target = path.appendextension(target, ext)
+
+		-- if the target is listed via an explicit path (i.e. not a
+		-- system library or assembly), make it project-relative
+
+		if target:find("/", nil, true) then
+			target = project.getrelative(cfg.project, target)
+		end
+
+		return target
+
+	end
+
+
+--
 -- Check a configuration for a source code file with the specified
 -- extension. Used for locating special files, such as Windows
 -- ".def" module definition files.
@@ -221,95 +330,92 @@
 --      directory - just the directory, no name
 --      fullpath  - full path with decorated name
 --      object    - return the project object of the dependency
+-- @param linkage
+--    Optional. For languages or environments that support different kinds of
+--    linking (i.e. Managed/CLR C++, which can link both managed and unmanaged
+--    libs), which one to return. One of "unmanaged", "managed". If not
+--    specified, the default for the configuration will be used.
 -- @return
 --    An array containing the requested link target information.
 --
 
- 	function config.getlinks(cfg, kind, part)
+ 	function config.getlinks(cfg, kind, part, linkage)
 		local result = {}
 
-		-- if I'm building a list of link directories, include libdirs
+		-- If I'm building a list of link directories, include libdirs
+
 		if part == "directory" and kind == "all" then
-			for _, dir in ipairs(cfg.libdirs) do
+			table.foreachi(cfg.libdirs, function(dir)
 				table.insert(result, project.getrelative(cfg.project, dir))
-			end
+			end)
 		end
 
-		local function canlink(source, target)
-			-- can't link executables
-			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then
-				return false
-			end
-			-- can't link managed and unmanaged projects
-			if premake.iscppproject(source.project) then
-				return premake.iscppproject(target.project)
-			elseif premake.isdotnetproject(source.project) then
-				return premake.isdotnetproject(target.project)
-			end
-		end
+		-- Iterate all of the links listed in the configuration and boil
+		-- them down to the requested data set
 
-		for _, link in ipairs(cfg.links) do
+		table.foreachi(cfg.links, function(link)
 			local item
 
-			-- is this a sibling project?
+			-- Sort the links into "sibling" (is another project in this same
+			-- solution) and "system" (is not part of this solution) libraries.
+
 			local prj = premake.solution.findproject(cfg.solution, link)
 			if prj and kind ~= "system" then
 
+				-- Sibling; is there a matching configuration in this project that
+				-- is compatible with linking to me?
+
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-				if prjcfg and (kind == "dependencies" or canlink(cfg, prjcfg)) then
-					-- if the caller wants the whole project object, then okay
+				if prjcfg and (kind == "dependencies" or config.canlink(cfg, prjcfg)) then
+
+					-- Yes; does the caller want the whole project config or only part?
+
 					if part == "object" then
 						item = prjcfg
 
-					-- if this is an external project reference, I can't return
-					-- any kind of path info, because I don't know the target name
+					-- Just some part of the path. Grab the whole thing now, split it up
+					-- below. Skip external projects, because I have no way to know their
+					-- target file (without parsing the project, which I'm not doing)
+
 					elseif not prj.external then
-						if part == "basename" then
-							item = prjcfg.linktarget.basename
-						else
-							item = path.rebase(prjcfg.linktarget.fullpath,
-											   project.getlocation(prjcfg.project),
-											   project.getlocation(cfg.project))
-							if part == "directory" then
-								item = path.getdirectory(item)
-							end
-						end
+						item = project.getrelative(cfg.project, prjcfg.linktarget.fullpath)
 					end
+
 				end
 
 			elseif not prj and (kind == "system" or kind == "all") then
 
-				if part == "directory" then
-					local dir = path.getdirectory(link)
-					if dir ~= "." then
-						item = dir
-					end
-				elseif part == "fullpath" then
-					item = link
-					if cfg.system == premake.WINDOWS then
-						if premake.iscppproject(cfg.project) then
-							item = path.appendextension(item, ".lib")
-						elseif premake.isdotnetproject(cfg.project) then
-							item = path.appendextension(item, ".dll")
-						end
-					end
-					if item:find("/", nil, true) then
-						item = project.getrelative(cfg.project, item)
-					end
-				elseif part == "name" then
-					item = path.getname(link)
-				elseif part == "basename" then
-					item = path.getbasename(link)
-				else
-					item = link
+				-- Make sure this library makes sense for the requested linkage; don't
+				-- link managed .DLLs into unmanaged code, etc.
+
+				if config.canlink(cfg, link, linkage) then
+					item = config.decoratelink(cfg, link, linkage)
 				end
 
 			end
 
+			-- If this is something I can link against, pull out the requested part
+
+			if item then
+				if part == "directory" then
+					item = path.getdirectory(item)
+					if item == "." then
+						item = nil
+					end
+				elseif part == "name" then
+					item = path.getname(item)
+				elseif part == "basename" then
+					item = path.getbasename(item)
+				end
+			end
+
+			-- Add it to the list, skipping duplicates
+
 			if item and not table.contains(result, item) then
 				table.insert(result, item)
 			end
-		end
+
+		end)
 
 		return result
 	end

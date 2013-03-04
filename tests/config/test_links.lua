@@ -6,7 +6,6 @@
 
 	T.config_links = { }
 	local suite = T.config_links
-	local project = premake5.project
 	local config = premake5.config
 
 
@@ -18,13 +17,13 @@
 
 	function suite.setup()
 		_ACTION = "test"
+		_OS = "windows"
 		sln, prj = test.createsolution()
-		system "macosx"
 	end
 
-	local function prepare(kind, part)
-		cfg = project.getconfig(prj, "Debug")
-		return config.getlinks(cfg, kind, part)
+	local function prepare(kind, part, linkage)
+		cfg = premake5.project.getconfig(prj, "Debug")
+		return config.getlinks(cfg, kind, part, linkage)
 	end
 
 
@@ -46,7 +45,7 @@
 		location "build"
 		links { "../libs/z" }
 		local r = prepare("all", "fullpath")
-		test.isequal({ "../../libs/z" }, r)
+		test.isequal({ "../../libs/z.lib" }, r)
 	end
 
 
@@ -55,13 +54,18 @@
 --
 
 	function suite.libAdded_onWindowsSystemLibs()
-		system "windows"
 		links { "user32" }
 		local r = prepare("all", "fullpath")
 		test.isequal({ "user32.lib" }, r)
 	end
 
-	function suite.libAdded_onWindowsSystemLibs()
+
+--
+-- Handle the case where the library extension has been explicitly
+-- included in the link statement.
+--
+
+	function suite.skipsExtension_onExplicitExtension()
 		system "windows"
 		links { "user32.lib" }
 		local r = prepare("all", "fullpath")
@@ -109,12 +113,110 @@
 
 	function suite.skipsExternalProjectRefs()
 		links { "MyProject2" }
-		
+
 		external "MyProject2"
 		kind "StaticLib"
 		language "C++"
-		
+
 		local r = prepare("all", "fullpath")
 		test.isequal({}, r)
 	end
 
+
+--
+-- Managed C++ projects should ignore links to managed assemblies, which
+-- are designated with an explicit ".dll" extension.
+--
+
+	function suite.skipsAssemblies_onManagedCpp()
+		system "windows"
+		flags { "Managed" }
+		links { "user32", "System.dll" }
+		local r = prepare("all", "fullpath")
+		test.isequal({ "user32.lib" }, r)
+	end
+
+
+--
+-- When explicitly requesting managed links, any unmanaged items in the
+-- list should be ignored.
+--
+
+	function suite.skipsUnmanagedLibs_onManagedLinkage()
+		system "windows"
+		flags { "Managed" }
+		links { "user32", "System.dll" }
+		local r = prepare("all", "fullpath", "managed")
+		test.isequal({ "System.dll" }, r)
+	end
+
+
+--
+-- Managed projects can link to other managed projects, and unmanaged
+-- projects can link to unmanaged projects.
+--
+
+	function suite.canLink_CppAndCpp()
+		links { "MyProject2" }
+
+		project "MyProject2"
+		kind "StaticLib"
+		language "C++"
+
+		local r = prepare("all", "fullpath")
+		test.isequal({ "MyProject2.lib" }, r)
+	end
+
+	function suite.canLink_CsAndCs()
+		language "C#"
+		links { "MyProject2" }
+
+		project "MyProject2"
+		kind "SharedLib"
+		language "C#"
+
+		local r = prepare("all", "fullpath")
+		test.isequal({ "MyProject2.dll" }, r)
+	end
+
+	function suite.canLink_ManagedCppAndManagedCpp()
+		flags { "Managed" }
+		links { "MyProject2" }
+
+		project "MyProject2"
+		kind "StaticLib"
+		language "C++"
+		flags { "Managed" }
+
+		local r = prepare("all", "fullpath")
+		test.isequal({ "MyProject2.lib" }, r)
+	end
+
+	function suite.canLink_ManagedCppAndCs()
+		flags { "Managed" }
+		links { "MyProject2" }
+
+		project "MyProject2"
+		kind "SharedLib"
+		language "C#"
+
+		local r = prepare("all", "fullpath")
+		test.isequal({ "MyProject2.dll" }, r)
+	end
+
+
+--
+-- Managed and unmanaged projects can not link to each other.
+--
+
+
+	function suite.ignoreLink_CppAndCs()
+		links { "MyProject2" }
+
+		project "MyProject2"
+		kind "SharedLib"
+		language "C#"
+
+		local r = prepare("all", "fullpath")
+		test.isequal({}, r)
+	end

@@ -54,6 +54,7 @@
 			_p(1,'</ItemDefinitionGroup>')
 		end
 
+		vc2010.assemblyReferences(prj)
 		vc2010.files(prj)
 		vc2010.projectReferences(prj)
 
@@ -300,6 +301,24 @@
 
 
 --
+-- Reference any managed assemblies listed in the links()
+--
+
+	function vc2010.assemblyReferences(prj)
+		-- Visual Studio doesn't support per-config references
+		local cfg = project.getfirstconfig(prj)
+		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
+		 if #refs > 0 then
+		 	_p(1,'<ItemGroup>')
+		 	table.foreachi(refs, function(value)
+		 		_x(2,'<Reference Include="%s" />', path.getbasename(value))
+		 	end)
+		 	_p(1,'</ItemGroup>')
+		 end
+	end
+
+
+--
 -- Write out the list of source code files, and any associated configuration.
 --
 
@@ -481,9 +500,6 @@
 		if toolset then
 			links = toolset.getlinks(cfg, not explicit)
 		else
-			-- VS always tries to link against project dependencies, even when those
-			-- projects are excluded from the build. To work around, linking dependent
-			-- projects is disabled, and sibling projects link explicitly
 			local scope = iif(explicit, "all", "system")
 			links = config.getlinks(cfg, scope, "fullpath")
 		end

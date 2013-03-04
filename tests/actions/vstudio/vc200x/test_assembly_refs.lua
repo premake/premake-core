@@ -1,0 +1,69 @@
+--
+-- tests/actions/vstudio/vc200x/test_assembly_refs.lua
+-- Validate managed assembly references in Visual Studio 2010 C/C++ projects.
+-- Copyright (c) 2013 Jason Perkins and the Premake project
+--
+
+	local suite = test.declare("vs200x_assembly_refs")
+	local vc200x = premake.vstudio.vc200x
+
+
+--
+-- Setup
+--
+
+	local sln, prj
+
+	function suite.setup()
+		sln = test.createsolution()
+		flags { "Managed" }
+	end
+
+	local function prepare(platform)
+		prj = premake.solution.getproject_ng(sln, 1)
+		vc200x.assemblyReferences(prj)
+	end
+
+
+--
+-- If there are no managed assemblies listed in links, output nothing.
+--
+
+	function suite.noOutput_onNoAssemblies()
+		prepare()
+		test.isemptycapture()
+	end
+
+
+--
+-- To distinguish between managed and unmanaged libraries, the ".dll"
+-- extension must be explicitly supplied.
+--
+
+	function suite.listsAssemblies()
+		links { "System.dll", "System.Data.dll" }
+		prepare()
+		test.capture [[
+		<AssemblyReference
+			RelativePath="System.dll"
+		/>
+		<AssemblyReference
+			RelativePath="System.Data.dll"
+		/>
+		]]
+	end
+
+
+--
+-- Any unmanaged libraries included in the list should be ignored.
+--
+
+	function suite.ignoresUnmanagedLibraries()
+		links { "m", "System.dll" }
+		prepare()
+		test.capture [[
+		<AssemblyReference
+			RelativePath="System.dll"
+		/>
+		]]
+	end
