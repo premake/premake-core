@@ -67,3 +67,18 @@
 		/>
 		]]
 	end
+
+
+--
+-- Local (non-system) assemblies can be referenced with a relative path.
+--
+
+	function suite.canReferenceLocalAssembly()
+		links { "../nunit.framework.dll" }
+		prepare()
+		test.capture [[
+		<AssemblyReference
+			RelativePath="..\nunit.framework.dll"
+		/>
+		]]
+	end

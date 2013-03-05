@@ -305,13 +305,25 @@
 --
 
 	function vc2010.assemblyReferences(prj)
-		-- Visual Studio doesn't support per-config references
+		-- Visual Studio doesn't support per-config references; use
+		-- whatever is contained in the first configuration
 		local cfg = project.getfirstconfig(prj)
+
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
 		 if #refs > 0 then
 		 	_p(1,'<ItemGroup>')
 		 	table.foreachi(refs, function(value)
-		 		_x(2,'<Reference Include="%s" />', path.getbasename(value))
+
+				-- If the link contains a '/' then it is a relative path to
+				-- a local assembly. Otherwise treat it as a system assembly.
+				if value:find('/', 1, true) then
+					_x(2,'<Reference Include="%s">', path.getbasename(value))
+					_x(3,'<HintPath>%s</HintPath>', path.translate(value))
+					_p(2,'</Reference>')
+				else
+					_x(2,'<Reference Include="%s" />', path.getbasename(value))
+				end
+
 		 	end)
 		 	_p(1,'</ItemGroup>')
 		 end

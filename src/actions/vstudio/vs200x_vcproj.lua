@@ -683,7 +683,7 @@
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
 		table.foreachi(refs, function(value)
 			_p(2,'<AssemblyReference')
-			_x(3,'RelativePath="%s"', value)
+			_x(3,'RelativePath="%s"', path.translate(value))
 			_p(2,'/>')
 		end)
 	end
