@@ -176,6 +176,14 @@
 		test.isequal("/opt/include", path.getrelative("/home/me/src/project", "/opt/include"))
 	end
 
+	function suite.ignoresExtraSlashes2()
+		test.isequal("..", path.getrelative("/a//b/c","/a/b"))
+	end
+
+	function suite.ignoresExtraSlashes3()
+		test.isequal("..", path.getrelative("/a///b/c","/a/b"))
+	end
+
 
 --
 -- path.isabsolute() tests
