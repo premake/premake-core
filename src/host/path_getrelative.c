@@ -10,13 +10,17 @@
 
 static void normalize(char* buffer, const char* path)
 {
+	char* src;
+	char* dst;
+	char last;
+
 	strcpy(buffer, path);
 	do_translate(buffer, '/');
 
 	/* remove any duplicate slashes within the path */
-	char* src = buffer;
-	char* dst = buffer;
-	char last = '\0';
+	src = buffer;
+	dst = buffer;
+	last = '\0';
 
 	while (*src != '\0') {
 		/* if I don't have consecutive slashes, keep the char */
