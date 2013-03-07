@@ -359,3 +359,20 @@
 			<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
+
+
+--
+-- Xbox 360 doesn't list a subsystem or entry point.
+--
+
+	function suite.onXbox360()
+		kind "ConsoleApp"
+		system "Xbox360"
+		prepare()
+		test.capture [[
+		<Link>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+		</Link>
+		]]
+	end
+

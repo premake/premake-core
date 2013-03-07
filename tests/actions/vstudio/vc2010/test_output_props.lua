@@ -11,16 +11,16 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln
-	
+
 	function suite.setup()
 		_ACTION = "vs2010"
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		local prj = premake.solution.getproject_ng(sln, 1)
 		local cfg = project.getconfig(prj, "Debug")
@@ -57,10 +57,11 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
 		<LinkIncremental>true</LinkIncremental>
 		<OutDir>.\</OutDir>
-		<OutputFile>$(OutDir)MyProject.exe</OutputFile>
+		<OutputFile>$(OutDir)MyProject.xex</OutputFile>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
+		<TargetExt>.xex</TargetExt>
+		<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
 	</PropertyGroup>
 		]]
 	end
@@ -151,7 +152,7 @@
 		<IgnoreImportLibrary>true</IgnoreImportLibrary>
 		]]
 	end
-	
+
 	function suite.omitIgnoreImportLib_onNonSharedLib()
 		kind "ConsoleApp"
 		flags "NoImportLib"

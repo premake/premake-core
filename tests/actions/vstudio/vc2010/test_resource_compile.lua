@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_resource_compile.lua
 -- Validate resource compiler settings in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_resource_compiler = { }
-	local suite = T.vstudio_vs2010_resource_compiler
+	local suite = test.declare("vs2010_resource_compiler")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake5.project
 
@@ -20,8 +19,8 @@
 		sln, prj = test.createsolution()
 	end
 
-	local function prepare(platform)
-		cfg = project.getconfig(prj, "Debug", platform)
+	local function prepare()
+		cfg = project.getconfig(prj, "Debug")
 		vc2010.resourceCompile(cfg)
 	end
 
@@ -65,4 +64,15 @@
 		<ResourceCompile>
 			<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 		]]
+	end
+
+
+--
+-- Xbox 360 doesn't use the resource compiler.
+--
+
+	function suite.skips_onXbox360()
+		system "Xbox360"
+		prepare()
+		test.isemptycapture()
 	end

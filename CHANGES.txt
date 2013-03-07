@@ -33,6 +33,7 @@
 * Added ExcludeFromBuild flag to mark source files as non-buildable
 * Added MultiProcessorCompile flag to run multiple compiler processes
 * Fixed assembly references for Visual Studio Managed C++ projects
+* Improved Xbox 360 support
 
 
 -------

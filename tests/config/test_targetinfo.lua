@@ -1,6 +1,6 @@
 --
 -- tests/config/test_targetinfo.lua
--- Test the config object's build target accessor. 
+-- Test the config object's build target accessor.
 -- Copyright (c) 2011 Jason Perkins and the Premake project
 --
 
@@ -29,7 +29,7 @@
 
 
 --
--- Directory should be current (".") by default. 
+-- Directory should be current (".") by default.
 --
 
 	function suite.directoryIsDot_onNoTargetDir()
@@ -103,7 +103,7 @@
 		test.isequal("MyProject", i.name)
 	end
 
-		
+
 --
 -- Name should use ".exe" for Windows executables.
 --
@@ -220,14 +220,14 @@
 
 
 --
--- Name should use ".exe" for Xbox360 executables.
+-- Name should use ".xex" for Xbox360 executables.
 --
 
 	function suite.nameUsesExe_onWindowsConsoleApp()
 		kind "ConsoleApp"
 		system "Xbox360"
 		i = prepare()
-		test.isequal("MyProject.exe", i.name)
+		test.isequal("MyProject.xex", i.name)
 	end
 
 

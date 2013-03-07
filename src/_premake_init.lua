@@ -40,8 +40,11 @@
 -- Windows and friends.
 --
 
-	configuration { "Windows or Xbox360 or C#", "ConsoleApp or WindowedApp" }
+	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
 		targetextension ".exe"
+
+	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
+		targetextension ".xex"
 
 	configuration { "Windows or Xbox360 or C#", "SharedLib" }
 		targetprefix ""

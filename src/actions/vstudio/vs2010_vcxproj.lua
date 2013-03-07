@@ -51,6 +51,8 @@
 			vc2010.resourceCompile(cfg)
 			vc2010.link(cfg)
 			vc2010.buildEvents(cfg)
+			vc2010.imageXex(cfg)
+			vc2010.deploy(cfg)
 			_p(1,'</ItemDefinitionGroup>')
 		end
 
@@ -189,6 +191,7 @@
 		vc2010.intDir(cfg)
 		vc2010.targetName(cfg)
 		vc2010.targetExt(cfg)
+		vc2010.imageXexOutput(cfg)
 		vc2010.generateManifest(cfg)
 		_p(1,'</PropertyGroup>')
 	end
@@ -233,10 +236,12 @@
 --
 
 	function vc2010.resourceCompile(cfg)
-		_p(2,'<ResourceCompile>')
-		vc2010.preprocessorDefinitions(table.join(cfg.defines, cfg.resdefines))
-		vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
-		_p(2,'</ResourceCompile>')
+		if cfg.system ~= premake.XBOX360 then
+			_p(2,'<ResourceCompile>')
+			vc2010.preprocessorDefinitions(table.join(cfg.defines, cfg.resdefines))
+			vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+			_p(2,'</ResourceCompile>')
+		end
 	end
 
 
@@ -499,9 +504,11 @@
 	end
 
 
+---------------------------------------------------------------------------
 --
--- Handlers for individual project elements.
+-- Handlers for individual project elements
 --
+---------------------------------------------------------------------------
 
 	function vc2010.additionalDependencies(cfg, explicit)
 		local links
@@ -609,6 +616,17 @@
 	end
 
 
+	function vc2010.deploy(cfg)
+		if cfg.system == premake.XBOX360 then
+			_p(2,'<Deploy>')
+			_p(3,'<DeploymentType>CopyToHardDrive</DeploymentType>')
+			_p(3,'<DvdEmulationType>ZeroSeekTimes</DvdEmulationType>')
+			_p(3,'<DeploymentFiles>$(RemoteRoot)=$(ImagePath);</DeploymentFiles>')
+			_p(2,'</Deploy>')
+		end
+	end
+
+
 	function vc2010.enableEnhancedInstructionSet(cfg)
 		if cfg.flags.EnableSSE2 then
 			_p(3,'<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>')
@@ -619,7 +637,11 @@
 
 
 	function vc2010.entryPointSymbol(cfg)
-		if vc2010.configType(cfg) == "Application" and not cfg.flags.WinMain and not cfg.flags.Managed then
+		if vc2010.configType(cfg) == "Application" and
+		   not cfg.flags.WinMain and
+		   not cfg.flags.Managed and
+		   cfg.system ~= premake.XBOX360
+		then
 			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 		end
 	end
@@ -677,6 +699,25 @@
 	function vc2010.ignoreImportLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
 			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
+		end
+	end
+
+
+	function vc2010.imageXex(cfg)
+		if cfg.system == premake.XBOX360 then
+			_p(2,'<ImageXex>')
+			_p(3,'<ConfigurationFile>')
+			_p(3,'</ConfigurationFile>')
+			_p(3,'<AdditionalSections>')
+			_p(3,'</AdditionalSections>')
+			_p(2,'</ImageXex>')
+		end
+	end
+
+
+	function vc2010.imageXexOutput(cfg)
+		if cfg.system == premake.XBOX360 then
+			_x(2,'<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>')
 		end
 	end
 
@@ -870,8 +911,10 @@
 
 
 	function vc2010.subSystem(cfg)
-		local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
-		_p(3,'<SubSystem>%s</SubSystem>', subsystem)
+		if cfg.system ~= premake.XBOX360 then
+			local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
+			_p(3,'<SubSystem>%s</SubSystem>', subsystem)
+		end
 	end
 
 
