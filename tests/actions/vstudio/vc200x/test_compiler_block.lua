@@ -21,7 +21,7 @@
 
 	local function prepare()
 		cfg = premake5.project.getconfig(prj, "Debug")
-		vc200x.VCCLCompilerTool_ng(cfg)
+		vc200x.VCCLCompilerTool(cfg)
 	end
 
 

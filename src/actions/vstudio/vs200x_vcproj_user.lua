@@ -13,13 +13,13 @@
 -- Generate a Visual Studio 200x C++ user file, with support for the new platforms API.
 --
 
-	function vc200x.generate_user_ng(prj)
+	function vc200x.generate_user(prj)
 		io.eol = "\r\n"
 
-		vc200x.xmldeclaration()
+		vc200x.xmlElement()
 		_p('<VisualStudioUserFile')
 		_p(1,'ProjectType="Visual C++"')
-		vc200x.projectversion()
+		vc200x.version()
 		_p(1,'ShowAllFiles="false"')
 		_p(1,'>')
 
@@ -53,7 +53,7 @@
 
 	function vc200x.debugdir_ng(cfg)
 		_p(3,'<DebugSettings')
-		
+
 		if cfg.debugcommand then
 			local command = project.getrelative(cfg.project, cfg.debugcommand)
 			_x(4,'Command="%s"', path.translate(command))
@@ -63,7 +63,7 @@
 			local debugdir = project.getrelative(cfg.project, cfg.debugdir)
 			_x(4,'WorkingDirectory="%s"', path.translate(debugdir))
 		end
-		
+
 		if #cfg.debugargs > 0 then
 			_x(4,'CommandArguments="%s"', table.concat(cfg.debugargs, " "))
 		end

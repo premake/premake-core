@@ -23,7 +23,7 @@
 
 	local function prepare()
 		local cfg = premake5.project.getconfig(prj, "Debug")
-		vc200x.VCLinkerTool_ng(cfg)
+		vc200x.VCLinkerTool(cfg)
 	end
 
 
@@ -31,7 +31,7 @@
 -- Verify the basic structure of a PS3 executable, with no extra
 -- flags or settings.
 --
-	
+
 	function suite.looksGood_onPS3ConsoleApp()
 		kind "ConsoleApp"
 		prepare()

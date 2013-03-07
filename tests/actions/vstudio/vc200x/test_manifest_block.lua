@@ -22,7 +22,7 @@
 
 	local function prepare()
 		local cfg = premake5.project.getconfig(prj, "Debug")
-		vc200x.VCManifestTool_ng(cfg)
+		vc200x.VCManifestTool(cfg)
 	end
 
 

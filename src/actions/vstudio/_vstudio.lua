@@ -42,8 +42,8 @@
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, ".vcproj", vstudio.vc200x.generate_ng)
-				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user_ng)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 
@@ -80,8 +80,8 @@
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
-				premake.generate(prj, ".vcproj", vstudio.vc200x.generate_ng)
-				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user_ng)
+				premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+				premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 			end
 		end,
 
