@@ -10,15 +10,15 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		cs2005.files(prj)
@@ -42,20 +42,6 @@
 		prepare()
 		test.capture [[
 		<Compile Include="Src\Hello.cs" />
-		]]
-	end
-
-
---
--- The relative path to the file is correct for files that live outside
--- the project's folder.
---
-
-	function suite.filesUseRelativePath_onOutOfTreePath()
-		files { "../Src/Hello.cs" }
-		prepare()
-		test.capture [[
-		<Compile Include="..\Src\Hello.cs" />
 		]]
 	end
 
@@ -92,6 +78,35 @@
 		prepare()
 		test.capture [[
 		<Content Include="Hello.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
+
+--
+-- Files that exist outside the project folder should be added as
+-- links, with a relative path. Weird but true.
+--
+
+	function suite.usesLinks_onExternalSourceFile()
+		files { "../Src/Hello.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="..\Src\Hello.cs">
+			<Link>Hello.cs</Link>
+		</Compile>
+		]]
+	end
+
+	function suite.copyAction_onExternalResource()
+		files { "../Resources/Hello.txt" }
+		configuration "**.txt"
+		buildaction "Copy"
+		prepare()
+		test.capture [[
+		<Content Include="..\Resources\Hello.txt">
+			<Link>Hello.txt</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		]]
