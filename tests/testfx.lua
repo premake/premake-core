@@ -1,7 +1,7 @@
 --
 -- tests/testfx.lua
 -- Automated test framework for Premake.
--- Copyright (c) 2008-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 
@@ -34,7 +34,8 @@
 --
 
 	function test.capture(expected)
-		local actual = io.endcapture()
+
+		local actual = io.captured() .. io.eol
 
 		-- create line-by-line iterators for both values
 		local ait = actual:gfind("(.-)" .. io.eol)
@@ -106,7 +107,7 @@
 
 
 	function test.isemptycapture()
-		local actual = io.endcapture()
+		local actual = io.captured()
 		if actual ~= "" then
 			test.fail("expected empty capture, but was %s", actual);
 		end
@@ -289,8 +290,11 @@
 
 
 	local function test_run(suite, fn)
-		io.capture()
-		return xpcall(fn, error_handler)
+		local result, err
+		io.capture(function()
+			result, err = xpcall(fn, error_handler)
+		end)
+		return result, err
 	end
 
 

@@ -1,32 +1,48 @@
 --
 -- io.lua
 -- Additions to the I/O namespace.
--- Copyright (c) 2008-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 
 --
--- Prepare to capture the output from all subsequent calls to io.printf(), 
+-- Prepare to capture the output from all subsequent calls to io.printf(),
 -- used for automated testing of the generators.
 --
 
-	function io.capture()
-		io.captured = ''
+	function io.capture(fn)
+		-- start a new capture without forgetting the old one
+		local old = io._captured
+		io._captured = {}
+
+		-- capture
+		fn()
+
+		-- build the result
+		local captured = io.captured()
+
+		-- restore the old capture and done
+		io._captured = old
+		io._captured_string = nil
+		return captured
 	end
-	
-	
-	
+
+
+
 --
 -- Returns the captured text and stops capturing.
 --
 
-	function io.endcapture()
-		local captured = io.captured
-		io.captured = nil
-		return captured
+	function io.captured()
+		if io._captured then
+			if not io._captured_string then
+				io._captured_string = table.concat(io._captured, io.eol)
+			end
+			return io._captured_string
+		end
 	end
-	
-	
+
+
 --
 -- Open an overload of the io.open() function, which will create any missing
 -- subdirectories in the filename if "mode" is set to writeable.
@@ -48,7 +64,7 @@
 
 
 
--- 
+--
 -- A shortcut for printing formatted output to an output stream.
 --
 
@@ -67,12 +83,13 @@
 		else
 			s = string.format(msg, unpack(arg))
 		end
-		
-		if io.captured then
-			io.captured = io.captured .. s .. io.eol
-		else
+
+		if not io._captured then
 			io.write(s)
 			io.write(io.eol)
+		else
+			table.insert(io._captured, s)
+			io._captured_string = nil
 		end
 	end
 
