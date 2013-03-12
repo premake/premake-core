@@ -260,6 +260,8 @@
 
 			-- finish the setup
 			context.compile(filecfg)
+			filecfg.config = cfg
+			filecfg.project = cfg.project
 
 			-- and cache the result
 			cfg.files[filename] = filecfg

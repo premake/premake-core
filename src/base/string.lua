@@ -8,7 +8,7 @@
 --
 -- Returns an array of strings, each of which is a substring of s
 -- formed by splitting on boundaries formed by `pattern`.
--- 
+--
 
 	function string.explode(s, pattern, plain)
 		if (pattern == '') then return false end
@@ -21,7 +21,7 @@
 		table.insert(arr, s:sub(pos))
 		return arr
 	end
-	
+
 
 
 --
@@ -36,9 +36,22 @@
 		until (not next)
 		if (curr > 0) then
 			return curr
-		end	
+		end
 	end
 
+
+
+--
+-- Returns the number of lines of text contained by the string.
+--
+
+	function string.lines(s)
+		local trailing, n = s:gsub('.-\n', '')
+		if #trailing > 0 then
+			n = n + 1
+		end
+		return n
+	end
 
 
 --

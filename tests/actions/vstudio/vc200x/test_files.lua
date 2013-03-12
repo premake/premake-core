@@ -326,3 +326,53 @@
 		</File>
 		]]
 	end
+
+
+--
+-- Check handling of per-file forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		language "C++"
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			forceincludes { "../include/force1.h", "../include/force2.h" }
+
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ForcedIncludeFiles="..\include\force1.h;..\include\force2.h"
+		]]
+	end
+
+
+--
+-- Check handling of per-file command line build options.
+--
+
+	function suite.additionalOptions()
+		language "C++"
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			buildoptions { "/Xc" }
+
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					AdditionalOptions="/Xc"
+		]]
+	end

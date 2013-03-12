@@ -319,7 +319,7 @@
 
 	function vc200x.VCCLCompilerTool(cfg)
 		_p(3,'<Tool')
-		_p(4,'Name="%s"', vc200x.compilerTool(cfg))
+		vc200x.compilerToolName(cfg)
 
 		-- Decide between the built-in compiler or an external toolset;
 		-- PS3 uses the external toolset
@@ -714,7 +714,9 @@
 				_p(depth, '\tRelativePath="%s"', path.translate(node.relpath))
 				_p(depth, '\t>')
 
-				vc200x.fileConfiguration(prj, node, depth + 1)
+				for cfg in project.eachconfig(prj) do
+					vc200x.fileConfiguration(cfg, node, depth + 1)
+				end
 
 				_p(depth, '</File>')
 			end
@@ -723,94 +725,88 @@
 	end
 
 
-	function vc200x.fileConfiguration(prj, node, depth)
-		-- check to see if this is a C file in a C++ project, or vice versa,
-		-- that needs to be built with a different compiler
-		local compileAs
-		if path.iscfile(node.name) ~= premake.project.iscproject(prj) then
-			if path.iscppfile(node.name) then
-				compileAs = iif(prj.language == premake.CPP, "C++", "C")
+	function vc200x.fileConfiguration(cfg, node, depth)
+
+		local filecfg = config.getfileconfig(cfg, node.abspath)
+
+		-- Generate the individual sections of the file configuration
+		-- element and capture the results to a buffer. I will only
+		-- write the file configuration if the buffers are not empty.
+
+		local configAttribs = io.capture(function ()
+			vc200x.fileConfiguration_extraAttributes(cfg, filecfg, depth + 1)
+		end)
+
+		local compilerAttribs = io.capture(function ()
+			vc200x.fileConfiguration_compilerAttributes(cfg, filecfg, depth + 2)
+		end)
+
+		if #configAttribs > 0 or compilerAttribs:lines() > 1 then
+
+			_p(depth,'<FileConfiguration')
+			_p(depth + 1, 'Name="%s"', vstudio.projectConfig(cfg))
+			if #configAttribs > 0 then
+				_p("%s", configAttribs)
 			end
+			_p(depth + 1, '>')
+
+			_p(depth + 1, '<Tool')
+			if #compilerAttribs > 0 then
+				_p("%s", compilerAttribs)
+			end
+			_p(depth + 1, '/>')
+
+			_p(depth, '</FileConfiguration>')
 		end
 
-		-- see if this file needs a modified object file name
-		local objectname
-		if path.iscppfile(node.name) then
-			objectname = project.getfileobject(prj, node.abspath)
-			if objectname == path.getbasename(node.abspath) then
-				objectname = nil
-			end
-		end
-
-		for cfg in project.eachconfig(prj) do
-
-			-- get any settings specific to this file for this configuration;
-			-- if nil this file is excluded from the configuration entirely
-			local filecfg = config.getfileconfig(cfg, node.abspath)
-
-			-- if there is a file configuration, see if it contains any values
-			-- (will be empty if it matches the project config)
-			local hasSettings = (filecfg ~= nil and not context.empty(filecfg))
-
-			-- check to see if this is the PCH source file
-			local isPchSource = (cfg.pchsource == node.abspath and not cfg.flags.NoPCH)
-
-			-- only write the element if we have something to say
-			if compileAs or isPchSource or not filecfg or hasSettings or objectname then
-
-				_p(depth,'<FileConfiguration')
-				depth = depth + 1
-				_p(depth, 'Name="%s"', vstudio.projectConfig(cfg))
-
-				if not filecfg or filecfg.flags.ExcludeFromBuild then
-					_p(depth, 'ExcludedFromBuild="true"')
-				end
-
-				_p(depth, '>')
-
-				_p(depth, '<Tool')
-				depth = depth + 1
-
-				filecfg = filecfg or {}
-
-				-- write out a custom build rule, if it has one
-				if filecfg.buildrule then
-					_p(depth,'Name="VCCustomBuildTool"')
-					_x(depth,'CommandLine="%s"', table.concat(filecfg.buildrule.commands,'\r\n'))
-					_x(depth,'Outputs="%s"', table.concat(filecfg.buildrule.outputs, ' '))
-				else
-					_p(depth, 'Name="%s"', vc200x.compilerTool(cfg))
-				end
-
-				if compileAs then
-					_p(depth, 'CompileAs="%s"', iif(compileAs == "C++", 1, 2))
-				end
-
-				if objectname then
-					_p(depth, 'ObjectFile="$(IntDir)\\%s.obj"', objectname)
-				end
-
-				-- include the precompiled header, if this is marked as the PCH source
-				if isPchSource then
-					if cfg.system == premake.PS3 then
-						local options = table.join(premake.snc.getcflags(cfg),
-													premake.snc.getcxxflags(cfg),
-													cfg.buildoptions,
-													' --create_pch="$(IntDir)/$(TargetName).pch"')
-						_p(depth, 'AdditionalOptions="%s"', table.concat(options, " "))
-					else
-						_p(depth, 'UsePrecompiledHeader="1"')
-					end
-				end
-
-				depth = depth - 2
-				_p(depth, '\t/>')
-				_p(depth, '</FileConfiguration>')
-
-			end
-
-		end
 	end
+
+
+--
+-- Collect extra attributes for the opening element of a particular file
+-- configuration block.
+--
+-- @param cfg
+--    The project configuration under consideration.
+-- @param filecfg
+--    The file configuration under consideration.
+-- @param depth
+--    The indentation level for any new attributes.
+--
+
+	function vc200x.fileConfiguration_extraAttributes(cfg, filecfg, depth)
+		vc200x.excludedFromBuild(filecfg, depth)
+	end
+
+
+--
+-- Collect attributes for the compiler tool element of a particular
+-- file configuration block.
+--
+-- @param cfg
+--    The project configuration under consideration.
+-- @param filecfg
+--    The file configuration under consideration.
+-- @param depth
+--    The indentation level any new attributes.
+--
+
+	function vc200x.fileConfiguration_compilerAttributes(cfg, filecfg, depth)
+
+		-- Must always have a name attribute
+		vc200x.compilerToolName(cfg, filecfg, depth)
+
+		if filecfg then
+			vc200x.customBuildTool(filecfg, depth)
+			vc200x.objectFile(filecfg, depth)
+			vc200x.usePrecompiledHeader(filecfg, depth)
+			vc200x.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
+			vc200x.forcedIncludeFiles(filecfg, depth)
+			vc200x.compileAs(filecfg, depth)
+		end
+
+	end
+
 
 
 ---------------------------------------------------------------------------
@@ -842,7 +838,15 @@
 			table.insert(opts, "/MP")
 		end
 		if #opts > 0 then
-			_x(4,'AdditionalOptions="%s"', table.concat(cfg.buildoptions, " "))
+			_x(4,'AdditionalOptions="%s"', table.concat(opts, " "))
+		end
+	end
+
+
+	function vc200x.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
+		local opts = filecfg.buildoptions
+		if #opts > 0 then
+			_x(depth, 'AdditionalOptions="%s"', table.concat(opts, " "))
 		end
 	end
 
@@ -885,14 +889,50 @@
 	end
 
 
-	function vc200x.forcedIncludeFiles(cfg)
+	function vc200x.compileAs(filecfg, depth)
+		if path.iscfile(filecfg.name) ~= premake.project.iscproject(filecfg.project) then
+			if path.iscppfile(filecfg.name) then
+				local value = iif(filecfg.project.language == premake.CPP, 1, 2)
+				_p(depth, 'CompileAs="%s"', value)
+			end
+		end
+	end
+
+
+	function vc200x.compilerToolName(cfg, filecfg, depth)
+		local name
+		if filecfg and filecfg.buildrule then
+			name = "VCCustomBuildTool"
+		else
+			name = iif(cfg.system == premake.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
+		end
+		_p(depth or 4,'Name="%s"', name)
+	end
+
+
+	function vc200x.customBuildTool(filecfg, depth)
+		if filecfg.buildrule then
+			_x(depth, 'CommandLine="%s"', table.concat(filecfg.buildrule.commands,'\r\n'))
+			_x(depth, 'Outputs="%s"', table.concat(filecfg.buildrule.outputs, ' '))
+		end
+	end
+
+
+	function vc200x.excludedFromBuild(filecfg, depth)
+		if not filecfg or filecfg.flags.ExcludeFromBuild then
+			_p(depth, 'ExcludedFromBuild="true"')
+		end
+	end
+
+
+	function vc200x.forcedIncludeFiles(cfg, depth)
 		if #cfg.forceincludes > 0 then
-			local includes = project.getrelative(cfg.project, cfg.forceincludes)
-			_x(4,'ForcedIncludeFiles="%s"', table.concat(includes, ';'))
+			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
+			_x(depth or 4,'ForcedIncludeFiles="%s"', table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
-			local usings = project.getrelative(cfg.project, cfg.forceusings)
-			_x(4,'ForcedUsingFiles="%s"', table.concat(usings, ';'))
+			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
+			_x(depth or 4,'ForcedUsingFiles="%s"', table.concat(usings, ';'))
 		end
 	end
 
@@ -905,6 +945,16 @@
 		   not cfg.flags.MultiProcessorCompile
 		then
 			_p(4,'MinimalRebuild="%s"', vc200x.bool(true))
+		end
+	end
+
+
+	function vc200x.objectFile(filecfg, depth)
+		if path.iscppfile(filecfg.name) then
+			local objectName = project.getfileobject(filecfg.project, filecfg.abspath)
+			if objectName ~= path.getbasename(filecfg.abspath) then
+				_x(depth, 'ObjectFile="$(IntDir)\\%s.obj"', objectName)
+			end
 		end
 	end
 
@@ -942,6 +992,17 @@
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		_p(3,'/>')
+	end
+
+
+	function vc200x.usePrecompiledHeader(filecfg, depth)
+		local cfg = filecfg.config
+		if cfg.pchsource == filecfg.abspath and
+		   not cfg.flags.NoPCH and
+		   cfg.system ~= premake.PS3
+		then
+			_p(depth, 'UsePrecompiledHeader="1"')
+		end
 	end
 
 
@@ -986,20 +1047,6 @@
 			return iif(value, "TRUE", "FALSE")
 		else
 			return iif(value, "true", "false")
-		end
-	end
-
-
---
--- Returns the correct name for the compiler tool element, based on
--- the configuration target system.
---
-
-	function vc200x.compilerTool(cfg)
-		if cfg.system == premake.XBOX360 then
-			return "VCCLX360CompilerTool"
-		else
-			return "VCCLCompilerTool"
 		end
 	end
 

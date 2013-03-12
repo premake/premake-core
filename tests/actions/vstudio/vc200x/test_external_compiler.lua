@@ -78,6 +78,6 @@
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				DebugInformationFormat="0"
 				CompileAs="0"
-				ForcedIncludeFiles="stdafx.h;include/sys.h"
+				ForcedIncludeFiles="stdafx.h;include\sys.h"
 		]]
 	end
