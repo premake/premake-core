@@ -347,6 +347,7 @@
 		vc2010.customBuildFilesGroup(prj)
 	end
 
+
 	function vc2010.simplefilesgroup(prj, group)
 		local files = vc2010.getfilegroup(prj, group)
 		if #files > 0  then
@@ -358,6 +359,7 @@
 		end
 	end
 
+
 	function vc2010.compilerfilesgroup(prj)
 		local files = vc2010.getfilegroup(prj, "ClCompile")
 		if #files > 0  then
@@ -368,24 +370,21 @@
 					local condition = vc2010.condition(cfg)
 
 					local filecfg = config.getfileconfig(cfg, file.abspath)
-					if not filecfg or filecfg.flags.ExcludeFromBuild then
-						_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', condition)
+					vc2010.excludedFromBuild(cfg, filecfg)
+					if filecfg then
+						vc2010.objectFileName(filecfg)
+						vc2010.forceIncludes(filecfg, condition)
+						vc2010.precompiledHeader(cfg, filecfg, condition)
+						vc2010.additionalCompileOptions(filecfg, condition)
 					end
 
-					local objectname = project.getfileobject(prj, file.abspath)
-					if objectname ~= path.getbasename(file.abspath) then
-						_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', condition, objectname)
-					end
-
-					if cfg.pchsource == file.abspath and not cfg.flags.NoPCH then
-						_p(3,'<PrecompiledHeader %s>Create</PrecompiledHeader>', condition)
-					end
 				end
 				_p(2,'</ClCompile>')
 			end
 			_p(1,'</ItemGroup>')
 		end
 	end
+
 
 	function vc2010.customBuildFilesGroup(prj)
 		local files = vc2010.getfilegroup(prj, "CustomBuild")
@@ -412,6 +411,7 @@
 			_p(1,'</ItemGroup>')
 		end
 	end
+
 
 	function vc2010.getfilegroup(prj, group)
 		-- check for a cached copy before creating
@@ -480,29 +480,6 @@
 	end
 
 
---
--- Format and return a Visual Studio Condition attribute.
---
-
-	function vc2010.condition(cfg)
-		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
-	end
-
-
---
--- Map Premake's project kinds to Visual Studio configuration types.
---
-
-	function vc2010.configType(cfg)
-		local map = {
-			SharedLib = "DynamicLibrary",
-			StaticLib = "StaticLibrary",
-			ConsoleApp = "Application",
-			WindowedApp = "Application"
-		}
-		return map[cfg.kind]
-	end
-
 
 ---------------------------------------------------------------------------
 --
@@ -547,6 +524,13 @@
 		end
 	end
 
+
+	function vc2010.additionalCompileOptions(cfg, condition)
+		if #cfg.buildoptions > 0 then
+			local opts = table.concat(cfg.buildoptions, " ")
+			vc2010.element(3, "AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+		end
+	end
 
 	function vc2010.additionalLinkOptions(cfg)
 		if #cfg.linkoptions > 0 then
@@ -656,6 +640,13 @@
 	end
 
 
+	function vc2010.excludedFromBuild(cfg, filecfg)
+		if not filecfg or filecfg.flags.ExcludeFromBuild then
+			_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', vc2010.condition(cfg))
+		end
+	end
+
+
 	function vc2010.floatingPointModel(cfg)
 		if cfg.flags.FloatFast then
 			_p(3,'<FloatingPointModel>Fast</FloatingPointModel>')
@@ -665,13 +656,13 @@
 	end
 
 
-	function vc2010.forceIncludes(cfg)
+	function vc2010.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
-			local includes = project.getrelative(cfg.project, cfg.forceincludes)
-			_x(3,'<ForcedIncludeFiles>%s</ForcedIncludeFiles>', table.concat(includes, ';'))
+			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
+			vc2010.element(3, "ForcedIncludeFiles", condition, table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
-			local usings = project.getrelative(cfg.project, cfg.forceusings)
+			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
 			_x(3,'<ForcedUsingFiles>%s</ForcedUsingFiles>', table.concat(usings, ';'))
 		end
 	end
@@ -794,6 +785,14 @@
 	end
 
 
+	function vc2010.objectFileName(filecfg)
+		local objectname = project.getfileobject(filecfg.project, filecfg.abspath)
+		if objectname ~= path.getbasename(filecfg.abspath) then
+			_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', vc2010.condition(filecfg.config), objectname)
+		end
+	end
+
+
 	function vc2010.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
 			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
@@ -844,12 +843,18 @@
 	end
 
 
-	function vc2010.precompiledHeader(cfg)
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
-			_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', path.getname(cfg.pchheader))
+	function vc2010.precompiledHeader(cfg, filecfg, condition)
+		if filecfg then
+			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
+				vc2010.element(3, 'PrecompiledHeader', condition, 'Create')
+			end
 		else
-			_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+			if not cfg.flags.NoPCH and cfg.pchheader then
+				_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
+				_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', path.getname(cfg.pchheader))
+			else
+				_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+			end
 		end
 	end
 
@@ -964,4 +969,68 @@
 			w = 4
 		end
 		_p(3,'<WarningLevel>Level%d</WarningLevel>', w)
+	end
+
+
+
+
+---------------------------------------------------------------------------
+--
+-- Support functions
+--
+---------------------------------------------------------------------------
+
+--
+-- Format and return a Visual Studio Condition attribute.
+--
+
+	function vc2010.condition(cfg)
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
+	end
+
+
+--
+-- Map Premake's project kinds to Visual Studio configuration types.
+--
+
+	function vc2010.configType(cfg)
+		local map = {
+			SharedLib = "DynamicLibrary",
+			StaticLib = "StaticLibrary",
+			ConsoleApp = "Application",
+			WindowedApp = "Application"
+		}
+		return map[cfg.kind]
+	end
+
+
+--
+-- Output an individual project XML element, with an optional configuration
+-- condition.
+--
+-- @param depth
+--    How much to indent the element.
+-- @param name
+--    The element name.
+-- @param condition
+--    An optional configuration condition, formatted with vc2010.condition().
+-- @param value
+--    The element value, which may contain printf formatting tokens.
+-- @param ...
+--    Optional additional arguments to satisfy any tokens in the value.
+--
+
+	function vc2010.element(depth, name, condition, value, ...)
+		if select('#',...) == 0 then
+			value = premake.esc(value)
+		end
+
+		local format
+		if condition then
+			format = string.format('<%s %s>%s</%s>', name, condition, value, name)
+		else
+			format = string.format('<%s>%s</%s>', name, value, name)
+		end
+
+		_x(depth, format, ...)
 	end

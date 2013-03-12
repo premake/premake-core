@@ -551,7 +551,7 @@
 		<ClCompile>
 			<PrecompiledHeader>NotUsing</PrecompiledHeader>
 			<WarningLevel>Level3</WarningLevel>
-			<ForcedIncludeFiles>stdafx.h;include/sys.h</ForcedIncludeFiles>
+			<ForcedIncludeFiles>stdafx.h;include\sys.h</ForcedIncludeFiles>
 		]]
 	end
 
@@ -562,7 +562,7 @@
 		<ClCompile>
 			<PrecompiledHeader>NotUsing</PrecompiledHeader>
 			<WarningLevel>Level3</WarningLevel>
-			<ForcedUsingFiles>stdafx.h;include/sys.h</ForcedUsingFiles>
+			<ForcedUsingFiles>stdafx.h;include\sys.h</ForcedUsingFiles>
 		]]
 	end
 

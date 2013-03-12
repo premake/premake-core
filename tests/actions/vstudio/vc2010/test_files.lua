@@ -164,3 +164,47 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- Check handling of per-file forced includes.
+--
+
+	function suite.forcedIncludeFiles()
+		language "C++"
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			forceincludes { "../include/force1.h", "../include/force2.h" }
+
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
+			<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end
+
+
+--
+-- Check handling of per-file command line build options.
+--
+
+	function suite.additionalOptions()
+		language "C++"
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			buildoptions { "/Xc" }
+
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
+			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end
