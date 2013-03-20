@@ -9,12 +9,13 @@
 -- Built-in command line options
 --
 
-	newoption 
+	newoption
 	{
 		trigger     = "cc",
 		value       = "VALUE",
 		description = "Choose a C/C++ compiler set",
 		allowed = {
+			{ "clang", "Clang (clang)" },
 			{ "gcc", "GNU GCC (gcc/g++)" },
 		}
 	}
@@ -37,13 +38,13 @@
 		value       = "FILE",
 		description = "Read FILE as a Premake script; default is 'premake4.lua'"
 	}
-	
+
 	newoption
 	{
 		trigger     = "help",
 		description = "Display this information"
 	}
-		
+
 	newoption
 	{
 		trigger     = "os",
@@ -58,17 +59,16 @@
 			{ "windows",  "Microsoft Windows" },
 		}
 	}
-	
+
 	newoption
 	{
 		trigger     = "scripts",
 		value       = "path",
 		description = "Search for additional scripts on the given path"
 	}
-	
+
 	newoption
 	{
 		trigger     = "version",
 		description = "Display version information"
 	}
-	

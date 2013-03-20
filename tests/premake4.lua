@@ -159,6 +159,7 @@
 	dofile("actions/make/solution/test_project_rule.lua")
 
 	-- Makefile C/C++ projects
+	dofile("actions/make/cpp/test_clang.lua")
 	dofile("actions/make/cpp/test_file_rules.lua")
 	dofile("actions/make/cpp/test_flags.lua")
 	dofile("actions/make/cpp/test_make_pch.lua")

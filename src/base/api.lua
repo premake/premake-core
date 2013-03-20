@@ -954,7 +954,10 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
-			"gcc"
+			"clang",
+			"gcc",
+			"msc",
+			"snc",
 		},
 	}
 
