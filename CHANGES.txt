@@ -35,6 +35,7 @@
 * Added MultiProcessorCompile flag to run multiple compiler processes
 * Fixed assembly references for Visual Studio Managed C++ projects
 * Improved Xbox 360 support
+* Added support for Clang C/C++ compiler
 
 
 -------

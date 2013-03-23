@@ -225,7 +225,7 @@
 		vc2010.floatingPointModel(cfg)
 		vc2010.enableEnhancedInstructionSet(cfg)
 		vc2010.multiProcessorCompilation(cfg)
-		vc2010.clCompile_AdditionalOptions(cfg)
+		vc2010.additionalCompileOptions(cfg)
 		vc2010.compileAs(cfg)
 		_p(2,'</ClCompile>')
 	end
@@ -549,14 +549,6 @@
 
 	function vc2010.characterSet(cfg)
 		_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
-	end
-
-
-	function vc2010.clCompile_AdditionalOptions(cfg)
-		if #cfg.buildoptions > 0 then
-			local options = table.concat(cfg.buildoptions, " ")
-			_x(3,'<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', options)
-		end
 	end
 
 
