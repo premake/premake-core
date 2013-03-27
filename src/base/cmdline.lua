@@ -51,6 +51,7 @@
 		value       = "VALUE",
 		description = "Generate files for a different operating system",
 		allowed = {
+			{ "aix",      "IBM AIX" },
 			{ "bsd",      "OpenBSD, NetBSD, or FreeBSD" },
 			{ "haiku",    "Haiku" },
 			{ "linux",    "Linux" },

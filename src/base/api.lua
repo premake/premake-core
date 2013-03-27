@@ -903,6 +903,7 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
+			"aix",
 			"bsd",
 			"haiku",
 			"linux",
