@@ -132,22 +132,37 @@
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
-
 				-- Some settings applied at project level; can't be changed in cfg
 				local cfg = project.getfirstconfig(prj)
 				local filecfg = config.getfileconfig(cfg, node.abspath)
 
 				local action = dotnet.getbuildaction(filecfg)
 				local fname = path.translate(node.relpath)
-				local external = node.relpath:startswith("../")
 				local elements, dependency = cs2005.getrelated(prj, filecfg, action)
+
+				-- Files that live outside of the project tree need to be "linked"
+				-- and provided with a project relative pseudo-path. Check for any
+				-- leading "../" sequences and, if found, remove them and mark this
+				-- path as external.
+
+				local link, count = node.relpath:gsub("%.%.%/", "")
+				local external = (count > 0)
+
+				-- Try to provide a little bit of flexibility by allowing virtual
+				-- paths for external files. Would be great to support them for all
+				-- files but Visual Studio chokes if file is already in project area.
+
+				if external and node.vpath ~= node.relpath then
+					link = node.vpath
+				end
 
 				if elements == "None" and not external then
 					_p(2,'<%s Include="%s" />', action, fname)
 				else
 					_p(2,'<%s Include="%s">', action, fname)
+
 					if external then
-						_p(3,'<Link>%s</Link>', path.getname(fname))
+						_p(3,'<Link>%s</Link>', path.translate(link))
 					end
 
 					if elements == "AutoGen" then
@@ -161,10 +176,12 @@
 					elseif elements ~= "None" then
 						_p(3,'<SubType>%s</SubType>', elements)
 					end
+
 					if dependency then
 						dependency = project.getrelative(prj, dependency)
 						_x(3,'<DependentUpon>%s</DependentUpon>', path.translate(dependency))
 					end
+
 					_p(2,'</%s>', action)
 				end
 

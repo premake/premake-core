@@ -7,7 +7,7 @@
 * Enabled per-configuration file lists
 * Enabled per-configuration toolset selection
 * Added custom build rules
-* Added support for Visual Studio 2012 (mopey)
+* Added support for Visual Studio 2012 (James Whitworth)
 * Added token expansion
 * Added external() to reference non-Premake generated projects
 * Added remove...() API to remove values from list fields
@@ -36,6 +36,7 @@
 * Fixed assembly references for Visual Studio Managed C++ projects
 * Improved Xbox 360 support
 * Added support for Clang C/C++ compiler
+* Added external files and virtual paths for C# projects (James Whitworth)
 
 
 -------

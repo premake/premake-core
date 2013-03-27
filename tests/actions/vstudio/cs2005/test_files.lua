@@ -89,25 +89,73 @@
 -- links, with a relative path. Weird but true.
 --
 
-	function suite.usesLinks_onExternalSourceFile()
-		files { "../Src/Hello.cs" }
+	function suite.usesLink_onExternalSourceCode()
+		files { "../Hello.cs" }
 		prepare()
 		test.capture [[
-		<Compile Include="..\Src\Hello.cs">
+		<Compile Include="..\Hello.cs">
 			<Link>Hello.cs</Link>
 		</Compile>
 		]]
 	end
 
-	function suite.copyAction_onExternalResource()
+	function suite.usesLinkInFolder_onExternalSourceCode()
+		files { "../Src/Hello.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="..\Src\Hello.cs">
+			<Link>Src\Hello.cs</Link>
+		</Compile>
+		]]
+	end
+
+	function suite.usesLinkInFolder_onExternalContent()
 		files { "../Resources/Hello.txt" }
 		configuration "**.txt"
 		buildaction "Copy"
 		prepare()
 		test.capture [[
 		<Content Include="..\Resources\Hello.txt">
-			<Link>Hello.txt</Link>
+			<Link>Resources\Hello.txt</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		]]
+	end
+
+	function suite.usesLinkInFolder_onExternalReference()
+		files { "../Resources/Hello.txt" }
+		prepare()
+		test.capture [[
+		<None Include="..\Resources\Hello.txt">
+			<Link>Resources\Hello.txt</Link>
+		</None>
+		]]
+	end
+
+
+--
+-- Files that exist outside the project's folder are allowed to be
+-- placed into a folder using a virtual path, which is better than
+-- dropping them at the root. Files within the project folder cannot
+-- use virtual paths, because Visual Studio won't allow it.
+--
+
+	function suite.usesLinks_onVpath_onLocalSourceFile()
+		files { "Hello.cs" }
+		vpaths { ["Sources"] = "**.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="Hello.cs" />
+		]]
+	end
+
+	function suite.usesLinks_onVpath_onExternalSourceFile()
+		files { "../Src/Hello.cs" }
+		vpaths { ["Sources"] = "../**.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="..\Src\Hello.cs">
+			<Link>Sources\Hello.cs</Link>
+		</Compile>
 		]]
 	end
