@@ -652,6 +652,7 @@
 			"Optimize",
 			"OptimizeSize",
 			"OptimizeSpeed",
+			"ReleaseRuntime",
 			"SEH",
 			"StaticRuntime",
 			"Symbols",

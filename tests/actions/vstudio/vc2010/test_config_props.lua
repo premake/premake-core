@@ -152,3 +152,20 @@
 		]]
 	end
 
+
+--
+-- Check handling of the ReleaseRuntime flag; should override the
+-- default behavior of linking the debug runtime when symbols are
+-- enabled with no optimizations.
+--
+
+	function suite.releaseRuntime_onFlag()
+		flags { "Symbols", "ReleaseRuntime" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		]]
+	end
+

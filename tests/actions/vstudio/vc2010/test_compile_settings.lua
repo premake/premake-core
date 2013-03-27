@@ -599,3 +599,26 @@
 			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		]]
 	end
+
+
+
+
+--
+-- Check handling of the ReleaseRuntime flag; should override the
+-- default behavior of linking the debug runtime when symbols are
+-- enabled with no optimizations.
+--
+
+	function suite.releaseRuntime_onStaticAndReleaseRuntime()
+		flags { "Symbols", "ReleaseRuntime", "StaticRuntime" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+			<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
+			<Optimization>Disabled</Optimization>
+			<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+		]]
+	end

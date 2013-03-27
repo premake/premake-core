@@ -887,8 +887,13 @@
 
 
 	function vc2010.runtimeLibrary(cfg)
-		if cfg.flags.StaticRuntime then
-			_p(3,'<RuntimeLibrary>%s</RuntimeLibrary>', iif(premake.config.isdebugbuild(cfg), "MultiThreadedDebug", "MultiThreaded"))
+		local runtimes = {
+			StaticDebug = "MultiThreadedDebug",
+			StaticRelease = "MultiThreaded",
+		}
+		local runtime = runtimes[config.getruntime(cfg)]
+		if runtime then
+			_p(3,'<RuntimeLibrary>%s</RuntimeLibrary>', runtime)
 		end
 	end
 
@@ -942,7 +947,8 @@
 
 
 	function vc2010.useDebugLibraries(cfg)
-		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(premake.config.isdebugbuild(cfg)))
+		local runtime = config.getruntime(cfg)
+		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(runtime:endswith("Debug")))
 	end
 
 

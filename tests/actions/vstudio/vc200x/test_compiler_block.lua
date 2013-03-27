@@ -458,7 +458,7 @@
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="0"
-				ForcedIncludeFiles="stdafx.h;include/sys.h"
+				ForcedIncludeFiles="stdafx.h;include\sys.h"
 		]]
 	end
 
@@ -476,7 +476,7 @@
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="0"
-				ForcedUsingFiles="stdafx.h;include/sys.h"
+				ForcedUsingFiles="stdafx.h;include\sys.h"
 		]]
 	end
 
@@ -511,5 +511,38 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				BasicRuntimeChecks="3"
+		]]
+	end
+
+
+--
+-- Check handling of the ReleaseRuntime flag; should override the
+-- default behavior of linking the debug runtime when symbols are
+-- enabled with no optimizations.
+--
+
+	function suite.releaseRuntime_onFlag()
+		flags { "Symbols", "ReleaseRuntime" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+		]]
+	end
+
+	function suite.releaseRuntime_onStaticAndReleaseRuntime()
+		flags { "Symbols", "ReleaseRuntime", "StaticRuntime" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="0"
 		]]
 	end

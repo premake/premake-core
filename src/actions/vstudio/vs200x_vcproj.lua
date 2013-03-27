@@ -359,13 +359,7 @@
 			_p(4,'ExceptionHandling="2"')
 		end
 
-		local runtime
-		if premake.config.isdebugbuild(cfg) then
-			runtime = iif(cfg.flags.StaticRuntime, 1, 3)
-		else
-			runtime = iif(cfg.flags.StaticRuntime, 0, 2)
-		end
-		_p(4,'RuntimeLibrary="%s"', runtime)
+		vc200x.runtimeLibrary(cfg)
 
 		_p(4,'EnableFunctionLevelLinking="%s"', vc200x.bool(true))
 
@@ -985,6 +979,17 @@
 				_p(2,'/>')
 			end
 		end
+	end
+
+
+	function vc200x.runtimeLibrary(cfg)
+		local runtimes = {
+			StaticRelease = 0,
+			StaticDebug = 1,
+			SharedRelease = 2,
+			SharedDebug = 3,
+		}
+		_p(4,'RuntimeLibrary="%s"', runtimes[config.getruntime(cfg)])
 	end
 
 

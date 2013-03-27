@@ -115,6 +115,7 @@
 	-- Visual Studio 2002-2008 C/C++ projects
 	dofile("actions/vstudio/vc200x/test_assembly_refs.lua")
 	dofile("actions/vstudio/vc200x/test_configuration.lua")
+	dofile("actions/vstudio/vc200x/test_compiler_block.lua")
 	dofile("actions/vstudio/vc200x/test_debug_settings.lua")
 	dofile("actions/vstudio/vc200x/test_excluded_configs.lua")
 	dofile("actions/vstudio/vc200x/test_external_compiler.lua")

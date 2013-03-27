@@ -37,6 +37,7 @@
 * Improved Xbox 360 support
 * Added support for Clang C/C++ compiler
 * Added external files and virtual paths for C# projects (James Whitworth)
+* Added ReleaseRuntime build flag (Tarmo Pikaro)
 
 
 -------

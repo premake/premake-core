@@ -424,6 +424,23 @@
 
 
 --
+-- Determines the correct runtime library for a configuration.
+--
+-- @param cfg
+--    The configuration object to query.
+-- @return
+--    A string identifying the runtime library, one of
+--    StaticDebug, StaticRelease, SharedDebug, SharedRelease.
+--
+
+	function config.getruntime(cfg)
+		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
+		local mode = iif(premake.config.isdebugbuild(cfg) and not cfg.flags.ReleaseRuntime, "Debug", "Release")
+		return linkage .. mode
+	end
+
+
+--
 -- Retrieve information about a configuration's build target.
 --
 -- @param cfg
