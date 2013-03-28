@@ -74,6 +74,9 @@
 		configuration { "solaris" }
 			linkoptions { "-Wl,--export-dynamic" }
 
+		configuration "aix"
+			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
+			links       { "m" }
 
 
 --
