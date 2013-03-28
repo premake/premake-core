@@ -491,7 +491,7 @@
 
 	function solution.hascppproject(sln)
 		for prj in solution.eachproject_ng(sln) do
-			if premake.iscppproject(prj) then
+			if project.iscpp(prj) then
 				return true
 			end
 		end
@@ -512,7 +512,7 @@
 
 	function solution.hasdotnetproject(sln)
 		for prj in solution.eachproject_ng(sln) do
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				return true
 			end
 		end

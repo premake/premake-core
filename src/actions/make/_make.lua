@@ -36,7 +36,7 @@
 
 		onproject = function(prj)
 			local makefile = make.getmakefilename(prj, true)
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				premake.generate(prj, makefile, make.generate_csharp)
 			else
 				premake.generate(prj, makefile, make.cpp.generate)

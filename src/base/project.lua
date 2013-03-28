@@ -311,10 +311,10 @@
 			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then
 				return false
 			end
-			if premake.iscppproject(source) then
-				return premake.iscppproject(target)
-			elseif premake.isdotnetproject(source) then
-				return premake.isdotnetproject(target)
+			if project.iscpp(source) then
+				return project.iscpp(target)
+			elseif project.isdotnet(source) then
+				return project.isdotnet(target)
 			end
 		end
 
@@ -348,9 +348,9 @@
 				elseif (part == "fullpath") then
 					item = link
 					if namestyle == "windows" then
-						if premake.iscppproject(cfg) then
+						if project.iscpp(cfg) then
 							item = item .. ".lib"
-						elseif premake.isdotnetproject(cfg) then
+						elseif project.isdotnet(cfg) then
 							item = item .. ".dll"
 						end
 					end
@@ -447,7 +447,7 @@
 
 		-- Fix things up based on the current system
 		local kind = cfg.kind
-		if premake.iscppproject(cfg) then
+		if project.iscpp(cfg) then
 			-- On Windows, shared libraries link against a static import library
 			if (namestyle == "windows" or system == "windows")
 				and kind == "SharedLib" and direction == "link"
@@ -529,7 +529,7 @@
 --
 
 	function premake.gettool(cfg)
-		if premake.iscppproject(cfg) then
+		if project.iscpp(cfg) then
 			if _OPTIONS.cc then
 				return premake[_OPTIONS.cc]
 			end
@@ -611,7 +611,7 @@
 
 	function premake.hascppproject(sln)
 		for prj in premake.solution.eachproject(sln) do
-			if premake.iscppproject(prj) then
+			if project.iscpp(prj) then
 				return true
 			end
 		end
@@ -625,40 +625,9 @@
 
 	function premake.hasdotnetproject(sln)
 		for prj in premake.solution.eachproject(sln) do
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				return true
 			end
 		end
 	end
 
-
-
---
--- Returns true if the project use the C language.
---
-
-	function premake.project.iscproject(prj)
-		local language = prj.language or prj.solution.language
-		return language == "C"
-	end
-
-
---
--- Returns true if the project uses a C/C++ language.
---
-
-	function premake.iscppproject(prj)
-		local language = prj.language or prj.solution.language
-		return language == "C" or language == "C++"
-	end
-
-
-
---
--- Returns true if the project uses a .NET language.
---
-
-	function premake.isdotnetproject(prj)
-		local language = prj.language or prj.solution.language
-		return language == "C#"
-	end

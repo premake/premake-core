@@ -1,7 +1,7 @@
 --
 -- _vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2008-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 	premake.vstudio = {}
@@ -38,7 +38,7 @@
 		end,
 
 		onproject = function(prj)
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
@@ -76,7 +76,7 @@
 		end,
 
 		onproject = function(prj)
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
@@ -100,7 +100,7 @@
 		-- temporary, until I can phase out the legacy implementations
 		isnextgen = true,
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile" },
 
 		valid_languages = { "C", "C++", "C#" },
 
@@ -114,7 +114,7 @@
 		end,
 
 		onproject = function(prj)
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
@@ -153,7 +153,7 @@
 		end,
 
 		onproject = function(prj)
-			if premake.isdotnetproject(prj) then
+			if project.isdotnet(prj) then
 				premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 				premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 			else
@@ -211,7 +211,7 @@
 --
 
 	function vstudio.archFromConfig(cfg, win32)
-		local iscpp = premake.iscppproject(cfg.project)
+		local iscpp = project.iscpp(cfg.project)
 
 		local arch = architecture(cfg.system, cfg.architecture)
 		if not arch then
@@ -364,9 +364,9 @@
 		local hasnet = false
 		local slnarch
 		for prj in solution.eachproject_ng(cfg.solution) do
-			if premake.iscppproject(prj) then
+			if project.iscpp(prj) then
 				hascpp = true
-			elseif premake.isdotnetproject(prj) then
+			elseif project.isdotnet(prj) then
 				hasnet = true
 			end
 
@@ -418,9 +418,9 @@
 		--
 
 		for prj in solution.eachproject_ng(cfg.solution) do
-			if premake.iscppproject(prj) then
+			if project.iscpp(prj) then
 				hascpp = true
-			elseif premake.isdotnetproject(prj) then
+			elseif project.isdotnet(prj) then
 				hasdotnet = true
 			end
 

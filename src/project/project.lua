@@ -775,6 +775,37 @@
 
 
 --
+-- Returns true if the project uses the C (and not C++) language.
+--
+
+	function project.isc(prj)
+		local language = prj.language or prj.solution.language
+		return language == "C"
+	end
+
+
+--
+-- Returns true if the project uses a C/C++ language.
+--
+
+	function project.iscpp(prj)
+		local language = prj.language or prj.solution.language
+		return language == "C" or language == "C++"
+	end
+
+
+
+--
+-- Returns true if the project uses a .NET language.
+--
+
+	function project.isdotnet(prj)
+		local language = prj.language or prj.solution.language
+		return language == "C#"
+	end
+
+
+--
 -- Given a build config/platform pairing, applies any project configuration maps
 -- and returns a new (or the same) pairing.
 --

@@ -117,8 +117,8 @@
 
 			-- Can't link managed and unmanaged projects
 
-			local cfgManaged = premake.isdotnetproject(cfg.project) or (cfg.flags.Managed ~= nil)
-			local tgtManaged = premake.isdotnetproject(target.project) or (target.flags.Managed ~= nil)
+			local cfgManaged = project.isdotnet(cfg.project) or (cfg.flags.Managed ~= nil)
+			local tgtManaged = project.isdotnet(target.project) or (target.flags.Managed ~= nil)
 			return (cfgManaged == tgtManaged)
 
 		end
@@ -126,7 +126,7 @@
 		-- For now, I assume that everything listed in a .NET project can be
 		-- linked; unmanaged code is simply not supported
 
-		if premake.isdotnetproject(cfg.project) then
+		if project.isdotnet(cfg.project) then
 			return true
 		end
 
@@ -172,9 +172,9 @@
 
 		local ext
 		if cfg.system == premake.WINDOWS then
-			if premake.isdotnetproject(cfg.project) or linkage == "managed" then
+			if project.isdotnet(cfg.project) or linkage == "managed" then
 				ext = ".dll"
-			elseif premake.iscppproject(cfg.project) then
+			elseif project.iscpp(cfg.project) then
 				ext = ".lib"
 			end
 		end
@@ -294,7 +294,7 @@
 		-- if an import library is in use, switch the target kind
 		local kind = cfg.kind
 		local field = "target"
-		if premake.iscppproject(cfg.project) then
+		if project.iscpp(cfg.project) then
 			if cfg.system == premake.WINDOWS and kind == premake.SHAREDLIB and not cfg.flags.NoImportLib then
 				kind = premake.STATICLIB
 				field = "implib"

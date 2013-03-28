@@ -1,7 +1,7 @@
 --
 -- cmdline.lua
 -- Functions to define and handle command line actions and options.
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 

@@ -884,7 +884,7 @@
 
 
 	function vc200x.compileAs(filecfg, depth)
-		if path.iscfile(filecfg.name) ~= premake.project.iscproject(filecfg.project) then
+		if path.iscfile(filecfg.name) ~= project.isc(filecfg.project) then
 			if path.iscppfile(filecfg.name) then
 				local value = iif(filecfg.project.language == premake.CPP, 1, 2)
 				_p(depth, 'CompileAs="%s"', value)
