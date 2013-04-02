@@ -1,7 +1,7 @@
 --
 -- premake.lua
 -- High-level processing functions.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	local solution = premake.solution
@@ -18,10 +18,12 @@
 	premake.CLANG       = "clang"
 	premake.CONSOLEAPP  = "ConsoleApp"
 	premake.CPP         = "C++"
+	premake.CSHARP      = "C#"
 	premake.GCC         = "gcc"
 	premake.HAIKU       = "haiku"
 	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
+	premake.MAKEFILE    = "Makefile"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"
 	premake.SHAREDLIB   = "SharedLib"
@@ -150,7 +152,6 @@
 	end
 
 
-
 --
 -- Sanity check the settings of a specific project. Raises an error if
 -- an insane state is detected.
@@ -186,6 +187,11 @@
 		-- must have a kind
 		if not cfg.kind then
 			premake.error("project '%s' needs a kind in configuration '%s'", cfg.project.name, cfg.name)
+		end
+
+		-- makefile configuration can only appear in C++ projects
+		if cfg.kind == premake.MAKEFILE and not project.iscpp(cfg.project) then
+			premake.error("project '%s' uses Makefile kind in configuration '%s'; language must be C++", cfg.project.name, cfg.name)
 		end
 
 		-- check for out of scope fields

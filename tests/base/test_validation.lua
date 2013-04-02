@@ -48,20 +48,6 @@
 
 
 --
--- Fail if no language is set on the project.
---
-
-	function suite.fails_onNoProjectLanguage()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-
-		test.isfalse(pcall(premake.validate))
-	end
-
-
---
 -- Fail on duplicate project UUIDs.
 --
 

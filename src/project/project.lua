@@ -84,6 +84,11 @@
 		-- attach a bit more local state
 		ctx.solution = sln
 
+		-- if no language is set for the project, default to C++
+		if not ctx.language then
+			ctx.language = premake.CPP
+		end
+
 		-- create a list of build cfg/platform pairs for the project
 		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
 
@@ -117,7 +122,6 @@
 			end,
 		})
 		setmetatable(prj, getmetatable(result))
-
 
 		-- bake all configurations contained by the project
 		local configs = {}
@@ -779,8 +783,7 @@
 --
 
 	function project.isc(prj)
-		local language = prj.language or prj.solution.language
-		return language == "C"
+		return prj.language == premake.C
 	end
 
 
@@ -789,10 +792,8 @@
 --
 
 	function project.iscpp(prj)
-		local language = prj.language or prj.solution.language
-		return language == "C" or language == "C++"
+		return prj.language == premake.C or prj.language == premake.CPP
 	end
-
 
 
 --
@@ -800,8 +801,7 @@
 --
 
 	function project.isdotnet(prj)
-		local language = prj.language or prj.solution.language
-		return language == "C#"
+		return prj.language == premake.CSHARP
 	end
 
 

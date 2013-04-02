@@ -762,9 +762,10 @@
 		kind = "string",
 		allowed = {
 			"ConsoleApp",
-			"WindowedApp",
-			"StaticLib",
+			"Makefile",
 			"SharedLib",
+			"StaticLib",
+			"WindowedApp",
 		},
 	}
 
