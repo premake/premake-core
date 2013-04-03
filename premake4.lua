@@ -67,7 +67,7 @@
 			links       { "CoreServices.framework" }
 
 		configuration { "macosx", "gmake" }
-			toolset "clang"
+			-- toolset "clang"  (not until a 5.0 binary is available)
 			buildoptions { "-mmacosx-version-min=10.4" }
 			linkoptions  { "-mmacosx-version-min=10.4" }
 
