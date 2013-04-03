@@ -17,10 +17,11 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 
 	local function prepare()
+		prj = premake.solution.getproject_ng(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 		vc2010.configurationProperties(cfg)
 	end
@@ -169,3 +170,23 @@
 		]]
 	end
 
+
+--
+-- Check the default settings for a Makefile configuration: new
+-- configuration type, no character set, output and intermediate
+-- folders are moved up from their normal location in the output
+-- configuration element.
+--
+
+	function suite.structureIsCorrect_onMakefile()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Makefile</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+	</PropertyGroup>
+		]]
+	end

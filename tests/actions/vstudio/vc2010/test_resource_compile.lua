@@ -37,6 +37,7 @@
 		]]
 	end
 
+
 --
 -- If defines are specified, the <PreprocessorDefinitions> element should be added.
 --

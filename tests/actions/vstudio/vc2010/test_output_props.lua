@@ -47,6 +47,17 @@
 
 
 --
+-- This entire block gets skipped for Makefile projects.
+--
+
+	function suite.omitsBlock_onMakefile()
+		kind "Makefile"
+		prepare()
+		test.isemptycapture()
+	end
+
+
+--
 -- Xbox360 adds an extra <OutputFile> element to the block.
 --
 

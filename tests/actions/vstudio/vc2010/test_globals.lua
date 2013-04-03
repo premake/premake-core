@@ -92,3 +92,19 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+--
+-- Makefile projects set new keyword and drop the root namespace.
+--
+
+	function suite.keywordIsCorrect_onMakefile()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<Keyword>MakeFileProj</Keyword>
+	</PropertyGroup>
+		]]
+	end

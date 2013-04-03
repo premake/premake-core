@@ -139,7 +139,7 @@
 		-- temporary, until I can phase out the legacy implementations
 		isnextgen = true,
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile" },
 
 		valid_languages = { "C", "C++", "C#" },
 

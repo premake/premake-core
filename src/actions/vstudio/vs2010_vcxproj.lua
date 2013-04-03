@@ -43,17 +43,11 @@
 
 		for cfg in project.eachconfig(prj) do
 			vc2010.outputProperties(cfg)
+			vc2010.nmakeProperties(cfg)
 		end
 
 		for cfg in project.eachconfig(prj) do
-			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
-			vc2010.clCompile(cfg)
-			vc2010.resourceCompile(cfg)
-			vc2010.link(cfg)
-			vc2010.buildEvents(cfg)
-			vc2010.imageXex(cfg)
-			vc2010.deploy(cfg)
-			_p(1,'</ItemDefinitionGroup>')
+			vc2010.itemDefinitionGroup(cfg)
 		end
 
 		vc2010.assemblyReferences(prj)
@@ -89,6 +83,7 @@
 --
 
 	function vc2010.projectConfigurations(prj)
+
 		-- build a list of all architectures used in this project
 		local platforms = {}
 		for cfg in project.eachconfig(prj) do
@@ -125,7 +120,7 @@
 		vc2010.projectGuid(prj)
 
 		-- try to determine what kind of targets we're building here
-		local isWin, isManaged
+		local isWin, isManaged, isMakefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == premake.WINDOWS then
 				isWin = true
@@ -133,16 +128,23 @@
 			if cfg.flags.Managed then
 				isManaged = true
 			end
+			if cfg.kind == premake.MAKEFILE then
+				isMakefile = true
+			end
 		end
 
 		if isWin then
-			if isManaged then
-				_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
-				_p(2,'<Keyword>ManagedCProj</Keyword>')
+			if isMakefile then
+				_p(2,'<Keyword>MakeFileProj</Keyword>')
 			else
-				_p(2,'<Keyword>Win32Proj</Keyword>')
+				if isManaged then
+					_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
+					_p(2,'<Keyword>ManagedCProj</Keyword>')
+				else
+					_p(2,'<Keyword>Win32Proj</Keyword>')
+				end
+				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 			end
-			_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 		end
 
 		_p(1,'</PropertyGroup>')
@@ -162,6 +164,12 @@
 		vc2010.useOfMfc(cfg)
 		vc2010.clrSupport(cfg)
 		vc2010.characterSet(cfg)
+
+		if cfg.kind == premake.MAKEFILE then
+			vc2010.outDir(cfg)
+			vc2010.intDir(cfg)
+		end
+
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -178,22 +186,63 @@
 
 
 --
--- Write the output property group, which  includes the output and intermediate
+-- Write the output property group, which includes the output and intermediate
 -- directories, manifest, etc.
 --
 
 	function vc2010.outputProperties(cfg)
-		vc2010.propertyGroup(cfg)
-		vc2010.linkIncremental(cfg)
-		vc2010.ignoreImportLibrary(cfg)
-		vc2010.outDir(cfg)
-		vc2010.outputFile(cfg)
-		vc2010.intDir(cfg)
-		vc2010.targetName(cfg)
-		vc2010.targetExt(cfg)
-		vc2010.imageXexOutput(cfg)
-		vc2010.generateManifest(cfg)
-		_p(1,'</PropertyGroup>')
+		if cfg.kind ~= premake.MAKEFILE then
+			vc2010.propertyGroup(cfg)
+			vc2010.linkIncremental(cfg)
+			vc2010.ignoreImportLibrary(cfg)
+			vc2010.outDir(cfg)
+			vc2010.outputFile(cfg)
+			vc2010.intDir(cfg)
+			vc2010.targetName(cfg)
+			vc2010.targetExt(cfg)
+			vc2010.imageXexOutput(cfg)
+			vc2010.generateManifest(cfg)
+			_p(1,'</PropertyGroup>')
+		end
+	end
+
+
+--
+-- Write the NMake property group for Makefile projects, which includes the custom
+-- build commands, output file location, etc.
+--
+
+	function vc2010.nmakeProperties(cfg)
+		if cfg.kind == premake.MAKEFILE then
+			vc2010.propertyGroup(cfg)
+			vc2010.nmakeOutput(cfg)
+			_p(1,'</PropertyGroup>')
+		end
+	end
+
+
+--
+-- Write a configuration's item definition group, which contains all
+-- of the per-configuration compile and link settings.
+--
+
+	function vc2010.itemDefinitionGroup(cfg)
+		if cfg.kind ~= premake.MAKEFILE then
+			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
+			vc2010.clCompile(cfg)
+			vc2010.resourceCompile(cfg)
+			vc2010.link(cfg)
+			vc2010.buildEvents(cfg)
+			vc2010.imageXex(cfg)
+			vc2010.deploy(cfg)
+			_p(1,'</ItemDefinitionGroup>')
+
+		else
+			if cfg == project.getfirstconfig(cfg.project) then
+				_p(1,'<ItemDefinitionGroup>')
+				_p(1,'</ItemDefinitionGroup>')
+			end
+		end
 	end
 
 
@@ -202,32 +251,34 @@
 --
 
 	function vc2010.clCompile(cfg)
-		_p(2,'<ClCompile>')
-		vc2010.precompiledHeader(cfg)
-		vc2010.warningLevel(cfg)
-		vc2010.treatWarningAsError(cfg)
-        vc2010.basicRuntimeChecks(cfg)
-		vc2010.preprocessorDefinitions(cfg.defines)
-		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
-		vc2010.forceIncludes(cfg)
-		vc2010.debugInformationFormat(cfg)
-		vc2010.programDataBaseFileName(cfg)
-		vc2010.optimization(cfg)
-		vc2010.functionLevelLinking(cfg)
-		vc2010.intrinsicFunctions(cfg)
-		vc2010.minimalRebuild(cfg)
-		vc2010.omitFramePointers(cfg)
-		vc2010.stringPooling(cfg)
-		vc2010.runtimeLibrary(cfg)
-		vc2010.exceptionHandling(cfg)
-		vc2010.runtimeTypeInfo(cfg)
-		vc2010.treatWChar_tAsBuiltInType(cfg)
-		vc2010.floatingPointModel(cfg)
-		vc2010.enableEnhancedInstructionSet(cfg)
-		vc2010.multiProcessorCompilation(cfg)
-		vc2010.additionalCompileOptions(cfg)
-		vc2010.compileAs(cfg)
-		_p(2,'</ClCompile>')
+		if cfg.kind ~= premake.MAKEFILE then
+			_p(2,'<ClCompile>')
+			vc2010.precompiledHeader(cfg)
+			vc2010.warningLevel(cfg)
+			vc2010.treatWarningAsError(cfg)
+			vc2010.basicRuntimeChecks(cfg)
+			vc2010.preprocessorDefinitions(cfg, cfg.defines)
+			vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
+			vc2010.forceIncludes(cfg)
+			vc2010.debugInformationFormat(cfg)
+			vc2010.programDataBaseFileName(cfg)
+			vc2010.optimization(cfg)
+			vc2010.functionLevelLinking(cfg)
+			vc2010.intrinsicFunctions(cfg)
+			vc2010.minimalRebuild(cfg)
+			vc2010.omitFramePointers(cfg)
+			vc2010.stringPooling(cfg)
+			vc2010.runtimeLibrary(cfg)
+			vc2010.exceptionHandling(cfg)
+			vc2010.runtimeTypeInfo(cfg)
+			vc2010.treatWChar_tAsBuiltInType(cfg)
+			vc2010.floatingPointModel(cfg)
+			vc2010.enableEnhancedInstructionSet(cfg)
+			vc2010.multiProcessorCompilation(cfg)
+			vc2010.additionalCompileOptions(cfg)
+			vc2010.compileAs(cfg)
+			_p(2,'</ClCompile>')
+		end
 	end
 
 
@@ -236,9 +287,9 @@
 --
 
 	function vc2010.resourceCompile(cfg)
-		if cfg.system ~= premake.XBOX360 then
+		if cfg.kind ~= premake.MAKEFILE and cfg.system ~= premake.XBOX360 then
 			_p(2,'<ResourceCompile>')
-			vc2010.preprocessorDefinitions(table.join(cfg.defines, cfg.resdefines))
+			vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
 			vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
 			_p(2,'</ResourceCompile>')
 		end
@@ -250,25 +301,27 @@
 --
 
 	function vc2010.link(cfg)
-		local explicit = vstudio.needsExplicitLink(cfg)
+		if cfg.kind ~= premake.MAKEFILE then
+			local explicit = vstudio.needsExplicitLink(cfg)
 
-		_p(2,'<Link>')
+			_p(2,'<Link>')
 
-		vc2010.subSystem(cfg)
-		vc2010.generateDebugInformation(cfg)
-		vc2010.optimizeReferences(cfg)
+			vc2010.subSystem(cfg)
+			vc2010.generateDebugInformation(cfg)
+			vc2010.optimizeReferences(cfg)
 
-		if cfg.kind ~= premake.STATICLIB then
-			vc2010.linkDynamic(cfg, explicit)
+			if cfg.kind ~= premake.STATICLIB then
+				vc2010.linkDynamic(cfg, explicit)
+			end
+
+			_p(2,'</Link>')
+
+			if cfg.kind == premake.STATICLIB then
+				vc2010.linkStatic(cfg)
+			end
+
+			vc2010.linkLibraryDependencies(cfg, explicit)
 		end
-
-		_p(2,'</Link>')
-
-		if cfg.kind == premake.STATICLIB then
-			vc2010.linkStatic(cfg)
-		end
-
-		vc2010.linkLibraryDependencies(cfg, explicit)
 	end
 
 	function vc2010.linkDynamic(cfg, explicit)
@@ -532,6 +585,7 @@
 		end
 	end
 
+
 	function vc2010.additionalLinkOptions(cfg)
 		if #cfg.linkoptions > 0 then
 			local opts = table.concat(cfg.linkoptions, " ")
@@ -548,7 +602,9 @@
 
 
 	function vc2010.characterSet(cfg)
-		_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+		if cfg.kind ~= premake.MAKEFILE then
+			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+		end
 	end
 
 
@@ -567,7 +623,14 @@
 
 
 	function vc2010.configurationType(cfg)
-		_p(2,'<ConfigurationType>%s</ConfigurationType>', vc2010.configType(cfg))
+		local types = {
+			SharedLib = "DynamicLibrary",
+			StaticLib = "StaticLibrary",
+			ConsoleApp = "Application",
+			WindowedApp = "Application",
+			Makefile = "Makefile",
+		}
+		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
 	end
 
 
@@ -613,7 +676,7 @@
 
 
 	function vc2010.entryPointSymbol(cfg)
-		if vc2010.configType(cfg) == "Application" and
+		if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
 		   not cfg.flags.WinMain and
 		   not cfg.flags.Managed and
 		   cfg.system ~= premake.XBOX360
@@ -777,6 +840,11 @@
 	end
 
 
+	function vc2010.nmakeOutput(cfg)
+		_p(2,'<NMakeOutput>$(OutDir)%s</NMakeOutput>', cfg.buildtarget.name)
+	end
+
+
 	function vc2010.objectFileName(filecfg)
 		local objectname = project.getfileobject(filecfg.project, filecfg.abspath)
 		if objectname ~= path.getbasename(filecfg.abspath) then
@@ -823,7 +891,7 @@
 
 	function vc2010.outputFile(cfg)
 		if cfg.system == premake.XBOX360 then
-			_x(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
+			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
 		end
 	end
 
@@ -851,7 +919,7 @@
 	end
 
 
-	function vc2010.preprocessorDefinitions(defines)
+	function vc2010.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			defines = table.concat(defines, ";")
 			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
@@ -984,21 +1052,6 @@
 
 	function vc2010.condition(cfg)
 		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
-	end
-
-
---
--- Map Premake's project kinds to Visual Studio configuration types.
---
-
-	function vc2010.configType(cfg)
-		local map = {
-			SharedLib = "DynamicLibrary",
-			StaticLib = "StaticLibrary",
-			ConsoleApp = "Application",
-			WindowedApp = "Application"
-		}
-		return map[cfg.kind]
 	end
 
 
