@@ -11,16 +11,16 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		local prj = premake.solution.getproject_ng(sln, 1)
 		local cfg = project.getconfig(prj, "Debug", (prj.platforms or {})[1])
@@ -87,5 +87,24 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\bin"
+		]]
+	end
+
+
+--
+-- Makefiles set the configuration type and drop the
+-- character encoding.
+--
+
+	function suite.defaultSettings()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="."
+			IntermediateDirectory="obj\Debug"
+			ConfigurationType="0"
+			>
 		]]
 	end

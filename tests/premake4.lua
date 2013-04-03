@@ -123,6 +123,7 @@
 	dofile("actions/vstudio/vc200x/test_files.lua")
 	dofile("actions/vstudio/vc200x/test_linker_block.lua")
 	dofile("actions/vstudio/vc200x/test_manifest_block.lua")
+	dofile("actions/vstudio/vc200x/test_nmake_settings.lua")
 	dofile("actions/vstudio/vc200x/test_platforms.lua")
 	dofile("actions/vstudio/vc200x/test_project.lua")
 	dofile("actions/vstudio/vc200x/test_project_refs.lua")

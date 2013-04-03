@@ -86,27 +86,42 @@
 		_p(1,'ProjectGUID="{%s}"', prj.uuid)
 
 		-- try to determine what kind of targets we're building here
-		local isWin, isPS3, isManaged
+		local isWin, isPS3, isManaged, isMakefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == premake.WINDOWS then
 				isWin = true
-			elseif cfg.system == premake.PS3 then
+			end
+			if cfg.system == premake.PS3 then
 				isPS3 = true
 			end
 			if cfg.flags.Managed then
 				isManaged = true
 			end
+			if cfg.kind == premake.MAKEFILE then
+				isMakefile = true
+			end
 		end
 
 		if isWin then
-			if _ACTION > "vs2003" then
+			if _ACTION > "vs2003" and not isMakefile then
 				_x(1,'RootNamespace="%s"', prj.name)
 			end
-			_p(1,'Keyword="%s"', iif(isManaged, "ManagedCProj", "Win32Proj"))
-			_p(1,'TargetFrameworkVersion="0"')
-		elseif isPS3 then
-			_p(1,'TargetFrameworkVersion="196613"')
+
+			local keyword = "Win32Proj"
+			if isManaged then
+				keyword = "ManagedCProj"
+			end
+			if isMakefile then
+				keyword = "MakeFileProj"
+			end
+			_p(1,'Keyword="%s"', keyword)
 		end
+
+		local version = 0
+		if isMakefile or not isWin then
+			version = 196613
+		end
+		_p(1,'TargetFrameworkVersion="%d"', version)
 
 		_p(1,'>')
 	end
@@ -154,15 +169,7 @@
 		local objdir = project.getrelative(cfg.project, cfg.objdir)
 		_x(3,'IntermediateDirectory="%s"', path.translate(objdir))
 
-		local cfgtype
-		if (cfg.kind == "SharedLib") then
-			cfgtype = 2
-		elseif (cfg.kind == "StaticLib") then
-			cfgtype = 4
-		else
-			cfgtype = 1
-		end
-		_p(3,'ConfigurationType="%s"', cfgtype)
+		vc200x.configurationType(cfg)
 
 		if (cfg.flags.MFC) then
 			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
@@ -206,6 +213,11 @@
 --
 
 	function vc200x.toolsForConfig(cfg)
+		if cfg.kind == premake.MAKEFILE then
+			return {
+				"VCNMakeTool"
+			}
+		end
 		if _ACTION == "vs2002" then
 			return {
 				"VCCLCompilerTool",
@@ -595,6 +607,23 @@
 	end
 
 
+	function vc200x.VCNMakeTool(cfg)
+		_p(3,'<Tool')
+		_p(4,'Name="VCNMakeTool"')
+		_p(4,'BuildCommandLine=""')
+		_p(4,'ReBuildCommandLine=""')
+		_p(4,'CleanCommandLine=""')
+		vc200x.nmakeOutput(cfg)
+		_p(4,'PreprocessorDefinitions=""')
+		_p(4,'IncludeSearchPath=""')
+		_p(4,'ForcedIncludes=""')
+		_p(4,'AssemblySearchPath=""')
+		_p(4,'ForcedUsingAssemblies=""')
+		_p(4,'CompileAsManaged=""')
+		_p(3,'/>')
+	end
+
+
 	function vc200x.VCResourceCompilerTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCResourceCompilerTool"')
@@ -670,6 +699,7 @@
 		VCLinkerTool           = vc200x.VCLinkerTool,
 		VCManifestTool         = vc200x.VCManifestTool,
 		VCMIDLTool             = vc200x.VCMIDLTool,
+		VCNMakeTool            = vc200x.VCNMakeTool,
 		VCPostBuildEventTool   = vc200x.VCPostBuildEventTool,
 		VCPreBuildEventTool    = vc200x.VCPreBuildEventTool,
 		VCPreLinkEventTool     = vc200x.VCPreLinkEventTool,
@@ -879,7 +909,9 @@
 
 
 	function vc200x.characterSet(cfg)
-		_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+		if cfg.kind ~= premake.MAKEFILE then
+			_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+		end
 	end
 
 
@@ -901,6 +933,16 @@
 			name = iif(cfg.system == premake.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
 		end
 		_p(depth or 4,'Name="%s"', name)
+	end
+
+
+	function vc200x.configurationType(cfg)
+		local cfgtypes = {
+			Makefile = 0,
+			SharedLib = 2,
+			StaticLib = 4,
+		}
+		_p(3,'ConfigurationType="%s"', cfgtypes[cfg.kind] or 1)
 	end
 
 
@@ -940,6 +982,11 @@
 		then
 			_p(4,'MinimalRebuild="%s"', vc200x.bool(true))
 		end
+	end
+
+
+	function vc200x.nmakeOutput(cfg)
+		_p(4,'Output="$(OutDir)%s"', cfg.buildtarget.name)
 	end
 
 

@@ -131,3 +131,23 @@
 	>
 		]]
 	end
+
+
+--
+-- Makefile projects set new keyword and drop the root namespace.
+--
+
+	function suite.keywordIsCorrect_onMakefile()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="MyProject"
+	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="196613"
+	>
+		]]
+	end

@@ -16,6 +16,7 @@
 	local sln, prj, cfg
 
 	function suite.setup()
+		_ACTION = "vs2010"
 		sln = test.createsolution()
 		kind "Makefile"
 	end
