@@ -216,6 +216,9 @@
 		if cfg.kind == premake.MAKEFILE then
 			vc2010.propertyGroup(cfg)
 			vc2010.nmakeOutput(cfg)
+			vc2010.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+			vc2010.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+			vc2010.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -836,6 +839,14 @@
 	function vc2010.multiProcessorCompilation(cfg)
 		if cfg.flags.MultiProcessorCompile then
 			_p(3,'<MultiProcessorCompilation>true</MultiProcessorCompilation>')
+		end
+	end
+
+
+	function vc2010.nmakeCommandLine(cfg, commands, phase)
+		if #commands > 0 then
+			commands = table.concat(premake.esc(commands), io.eol)
+			_p(2, '<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
 	end
 

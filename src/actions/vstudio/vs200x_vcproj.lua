@@ -610,9 +610,9 @@
 	function vc200x.VCNMakeTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCNMakeTool"')
-		_p(4,'BuildCommandLine=""')
-		_p(4,'ReBuildCommandLine=""')
-		_p(4,'CleanCommandLine=""')
+		vc200x.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+		vc200x.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+		vc200x.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
 		vc200x.nmakeOutput(cfg)
 		_p(4,'PreprocessorDefinitions=""')
 		_p(4,'IncludeSearchPath=""')
@@ -982,6 +982,12 @@
 		then
 			_p(4,'MinimalRebuild="%s"', vc200x.bool(true))
 		end
+	end
+
+
+	function vc200x.nmakeCommandLine(cfg, commands, phase)
+		commands = table.concat(commands, "\r\n")
+		_p(4,'%sCommandLine="%s"', phase, premake.esc(commands))
 	end
 
 

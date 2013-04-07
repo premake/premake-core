@@ -67,3 +67,56 @@
 				Output="$(OutDir)MyProject.exe"
 		]]
 	end
+
+
+--
+-- Verify generation of the build commands.
+--
+
+	function suite.buildCommandLine_onSingleCommand()
+		buildcommands { "command 1" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="command 1"
+				ReBuildCommandLine=""
+				CleanCommandLine=""
+		]]
+	end
+
+	function suite.buildCommandLine_onMultipleCommands()
+		buildcommands { "command 1", "command 2" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="command 1&#x0D;&#x0A;command 2"
+				ReBuildCommandLine=""
+				CleanCommandLine=""
+		]]
+	end
+
+	function suite.rebuildCommandLine()
+		rebuildcommands { "command 1" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine=""
+				ReBuildCommandLine="command 1"
+				CleanCommandLine=""
+		]]
+	end
+
+	function suite.cleanCommandLine()
+		cleancommands { "command 1" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine=""
+				ReBuildCommandLine=""
+				CleanCommandLine="command 1"
+		]]
+	end

@@ -66,3 +66,53 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+--
+-- Verify generation of the build commands.
+--
+
+	function suite.buildCommandLine_onSingleCommand()
+		buildcommands { "command 1" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+		<NMakeBuildCommandLine>command 1</NMakeBuildCommandLine>
+	</PropertyGroup>
+		]]
+	end
+
+	function suite.buildCommandLine_onMultipleCommands()
+		buildcommands { "command 1", "command 2" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+		<NMakeBuildCommandLine>command 1
+command 2</NMakeBuildCommandLine>
+	</PropertyGroup>
+		]]
+	end
+
+	function suite.rebuildCommandLine()
+		rebuildcommands { "command 1" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+		<NMakeReBuildCommandLine>command 1</NMakeReBuildCommandLine>
+	</PropertyGroup>
+		]]
+	end
+
+	function suite.cleanCommandLine()
+		cleancommands { "command 1" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+		<NMakeCleanCommandLine>command 1</NMakeCleanCommandLine>
+	</PropertyGroup>
+		]]
+	end

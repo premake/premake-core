@@ -514,6 +514,13 @@
 	}
 
 	api.register {
+		name = "buildcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
 		name = "buildoptions",
 		scope = "config",
 		kind = "string-list",
@@ -524,6 +531,13 @@
 		name = "buildrule",
 		scope = "config",
 		kind = "object",
+		tokens = true,
+	}
+
+	api.register {
+		name = "cleancommands",
+		scope = "config",
+		kind = "string-list",
 		tokens = true,
 	}
 
@@ -866,6 +880,13 @@
 
 	api.register {
 		name = "prelinkcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "rebuildcommands",
 		scope = "config",
 		kind = "string-list",
 		tokens = true,
