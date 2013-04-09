@@ -96,10 +96,8 @@
 --
 
 	function api.callback(field, value)
-		if field.deprecated and not field.warned then
-			local msg = "** Warning: %s has been deprecated.\n   See %s for more information."
-			print(string.format(msg, field.name, _PREMAKE_URL))
-			field.warned = true
+		if field.deprecated then
+			api.deprecated(field)
 		end
 
 		local target = api.gettarget(field.scope)
@@ -122,6 +120,22 @@
 				result = result.msg
 			end
 			error(result, 3)
+		end
+	end
+
+
+--
+-- Display an API deprecation warning for a specific field.
+--
+-- @param field
+--    The field description object.
+--
+
+	function api.deprecated(field)
+		if not field.warned then
+			local msg = "** Warning: %s has been deprecated.\n   See %s for more information.\n"
+			io.stderr:write(string.format(msg, field.name, _PREMAKE_URL))
+			field.warned = true
 		end
 	end
 
@@ -520,6 +534,13 @@
 	}
 
 	api.register {
+		name = "buildmessage",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "buildcommands",
 		scope = "config",
 		kind = "string-list",
@@ -530,6 +551,13 @@
 		name = "buildoptions",
 		scope = "config",
 		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "buildoutputs",
+		scope = "config",
+		kind = "file-list",
 		tokens = true,
 	}
 
@@ -1019,6 +1047,17 @@
 		scope = "project",
 		kind = "key-path-list",
 	}
+
+
+	-- Deprecated 09 Apr 2013
+	function buildrule(rule)
+		api.deprecated(premake.fields.buildrule)
+		if rule.description then
+			buildmessage(rule.description)
+		end
+		buildcommands(rule.commands)
+		buildoutputs(rule.outputs)
+	end
 
 
 	api.reset()

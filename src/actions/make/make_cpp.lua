@@ -160,7 +160,7 @@
 				local rules
 				for cfg in project.eachconfig(prj) do
 					local filecfg = config.getfileconfig(cfg, node.abspath)
-					if filecfg and filecfg.buildrule then
+					if config.hasCustomBuildRule(filecfg) then
 						rules = true
 						break
 					end
@@ -199,12 +199,12 @@
 		for cfg in project.eachconfig(prj) do
 			local filecfg = config.getfileconfig(cfg, node.abspath)
 			if filecfg then
-				local rule = filecfg.buildrule
-
 				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
-				_p('%s: %s', make.esc(rule.outputs[1]), make.esc(filecfg.relpath))
-				_p('\t@echo "%s"', rule.description or ("Building " .. filecfg.relpath))
-				for _, cmd in ipairs(rule.commands) do
+
+				local output = project.getrelative(prj, filecfg.buildoutputs[1])
+				_p('%s: %s', make.esc(output), make.esc(filecfg.relpath))
+				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
+				for _, cmd in ipairs(filecfg.buildcommands) do
 					_p('\t$(SILENT) %s', cmd)
 				end
 				_p('endif')
@@ -287,7 +287,7 @@
 					local filecfg = config.getfileconfig(cfg, node.abspath)
 					if filecfg and not filecfg.flags.ExcludeFromBuild then
 						incfg[cfg] = filecfg
-						custom = (filecfg.buildrule ~= nil)
+						custom = config.hasCustomBuildRule(filecfg)
 					else
 						inall = false
 					end
@@ -329,7 +329,7 @@
 						if filecfg then
 							-- if the custom build outputs an object file, add it to
 							-- the link step automatically to match Visual Studio
-							local output = filecfg.buildrule.outputs[1]
+							local output = project.getrelative(prj, filecfg.buildoutputs[1])
 							if path.isobjectfile(output) then
 								table.insert(configs[cfg].objects, output)
 							end

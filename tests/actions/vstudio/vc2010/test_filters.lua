@@ -6,7 +6,7 @@
 
 	T.vs2010_filters = { }
 	local suite = T.vs2010_filters
-	local vc2010 = premake.vstudio.vc2010	
+	local vc2010 = premake.vstudio.vc2010
 
 
 --
@@ -14,7 +14,7 @@
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2010"
 		sln = test.createsolution()
@@ -68,10 +68,8 @@
 	function suite.itemGroup_onBuildRule()
 		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
 		configuration "**.cg"
-			buildrule {
-				commands = { "cgc $(InputFile)" },
-				outputs = { "$(InputName).obj" }
-			}
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
 		prepare("CustomBuild")
 		test.capture [[
 	<ItemGroup>
@@ -83,10 +81,8 @@
 	function suite.itemGroup_onSingleConfigBuildRule()
 		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
 		configuration { "Release", "**.cg" }
-			buildrule {
-				commands = { "cgc $(InputFile)" },
-				outputs = { "$(InputName).obj" }
-			}
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
 		prepare("CustomBuild")
 		test.capture [[
 	<ItemGroup>

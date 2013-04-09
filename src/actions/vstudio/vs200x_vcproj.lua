@@ -927,7 +927,7 @@
 
 	function vc200x.compilerToolName(cfg, filecfg, depth)
 		local name
-		if filecfg and filecfg.buildrule then
+		if config.hasCustomBuildRule(filecfg) then
 			name = "VCCustomBuildTool"
 		else
 			name = iif(cfg.system == premake.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
@@ -947,9 +947,11 @@
 
 
 	function vc200x.customBuildTool(filecfg, depth)
-		if filecfg.buildrule then
-			_x(depth, 'CommandLine="%s"', table.concat(filecfg.buildrule.commands,'\r\n'))
-			_x(depth, 'Outputs="%s"', table.concat(filecfg.buildrule.outputs, ' '))
+		if config.hasCustomBuildRule(filecfg) then
+			_x(depth, 'CommandLine="%s"', table.concat(filecfg.buildcommands,'\r\n'))
+
+			local outputs = project.getrelative(filecfg.project, filecfg.buildoutputs)
+			_x(depth, 'Outputs="%s"', table.concat(outputs, ' '))
 		end
 	end
 

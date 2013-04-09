@@ -461,3 +461,19 @@
 	function config.gettargetinfo(cfg)
 		return buildtargetinfo(cfg, cfg.kind, "target")
 	end
+
+
+--
+-- Checks to see if the project or file configuration contains a
+-- custom build rule.
+--
+-- @param cfg
+--    A project or file configuration.
+-- @return
+--    True if the configuration contains settings for a custom
+--    build rule.
+--
+
+	function config.hasCustomBuildRule(cfg)
+		return cfg and (#cfg.buildcommands > 0) and (#cfg.buildoutputs > 0)
+	end

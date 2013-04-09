@@ -129,14 +129,12 @@ RESOURCES := \
 	function suite.customBuildRule()
 		files { "hello.x" }
 		configuration "**.x"
-			buildrule {
-				description = "Compiling %{file.name}",
-				commands = {
-					'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
-					'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
-				},
-				outputs = { "%{cfg.objdir}/%{file.basename}.obj" }
+			buildmessage "Compiling %{file.name}"
+			buildcommands {
+				'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
+				'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
 			}
+			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
 		prepare()
 		test.capture [[
 OBJECTS := \

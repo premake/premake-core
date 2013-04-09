@@ -260,14 +260,12 @@
 	function suite.customBuildTool_onBuildRule()
 		files { "hello.x" }
 		configuration "**.x"
-			buildrule {
-				description = "Compiling $(InputFile)",
-				commands = {
-					'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"',
-					'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
-				},
-				outputs = { "$(IntDir)/$(InputName).obj" }
+			buildmessage "Compiling $(InputFile)"
+			buildcommands {
+				'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"',
+				'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
 			}
+			buildoutputs { "$(IntDir)/$(InputName).obj" }
 		prepare()
 		test.capture [[
 		<File
@@ -280,6 +278,33 @@
 					Name="VCCustomBuildTool"
 					CommandLine="cxc -c &quot;$(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
 					Outputs="$(IntDir)/$(InputName).obj"
+				/>
+			</FileConfiguration>
+		]]
+	end
+
+	function suite.customBuildTool_onBuildRuleWithTokens()
+		files { "hello.x" }
+		objdir "../../../tmp"
+		configuration "**.x"
+			buildmessage "Compiling $(InputFile)"
+			buildcommands {
+				'cxc -c %{file.relpath} -o %{cfg.objdir}/%{file.basename}.xo',
+				'c2o -c %{cfg.objdir}/%{file.basename}.xo -o %{cfg.objdir}/%{file.basename}.obj'
+			}
+			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.x"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="cxc -c hello.x -o obj/Debug/hello.xo&#x0D;&#x0A;c2o -c obj/Debug/hello.xo -o obj/Debug/hello.obj"
+					Outputs="obj/Debug/hello.obj"
 				/>
 			</FileConfiguration>
 		]]

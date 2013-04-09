@@ -72,10 +72,8 @@
 	function suite.customBuild_onBuildRule()
 		files { "hello.cg" }
 		configuration "**.cg"
-			buildrule {
-				commands = { "cgc $(InputFile)" },
-				outputs = { "$(InputName).obj" }
-			}
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
 		prepare()
 		test.capture [[
 	<ItemGroup>

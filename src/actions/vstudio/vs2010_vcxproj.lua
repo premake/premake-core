@@ -453,11 +453,11 @@
 				for cfg in project.eachconfig(prj) do
 					local condition = vc2010.condition(cfg)
 					local filecfg = config.getfileconfig(cfg, file.abspath)
-					if filecfg and filecfg.buildrule then
-						local commands = table.concat(filecfg.buildrule.commands,'\r\n')
+					if config.hasCustomBuildRule(filecfg) then
+						local commands = table.concat(filecfg.buildcommands,'\r\n')
 						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
 
-						local outputs = table.concat(filecfg.buildrule.outputs, ' ')
+						local outputs = table.concat(filecfg.buildoutputs, ' ')
 						_p(3,'<Outputs %s>%s</Outputs>', condition, premake.esc(outputs))
 					end
 				end
@@ -490,7 +490,7 @@
 					local hasbuildrule = false
 					for cfg in project.eachconfig(prj) do
 						local filecfg = config.getfileconfig(cfg, node.abspath)
-						if filecfg and filecfg.buildrule then
+						if config.hasCustomBuildRule(filecfg) then
 							hasbuildrule = true
 							break
 						end
