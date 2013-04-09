@@ -14,7 +14,8 @@
 
 
 #define VERSION        "HEAD"
-#define COPYRIGHT      "Copyright (C) 2002-2012 Jason Perkins and the Premake Project"
+#define COPYRIGHT      "Copyright (C) 2002-2013 Jason Perkins and the Premake Project"
+#define PROJECT_URL    "https://bitbucket.org/premake/premake-stable/wiki"
 #define ERROR_MESSAGE  "%s\n"
 
 
@@ -89,6 +90,9 @@ int premake_init(lua_State* L)
 
 	lua_pushstring(L, COPYRIGHT);
 	lua_setglobal(L, "_PREMAKE_COPYRIGHT");
+
+	lua_pushstring(L, PROJECT_URL);
+	lua_setglobal(L, "_PREMAKE_URL");
 
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);

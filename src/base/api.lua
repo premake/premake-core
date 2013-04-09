@@ -96,6 +96,12 @@
 --
 
 	function api.callback(field, value)
+		if field.deprecated and not field.warned then
+			local msg = "** Warning: %s has been deprecated.\n   See %s for more information."
+			print(string.format(msg, field.name, _PREMAKE_URL))
+			field.warned = true
+		end
+
 		local target = api.gettarget(field.scope)
 
 		if not value then
@@ -532,6 +538,7 @@
 		scope = "config",
 		kind = "object",
 		tokens = true,
+		deprecated = true,  -- 09 Apr 2013
 	}
 
 	api.register {
