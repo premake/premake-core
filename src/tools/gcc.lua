@@ -100,6 +100,7 @@
 		EnableSSE2     = "-msse2",
 		ExtraWarnings  = "-Wall -Wextra",
 		FatalWarnings  = "-Werror",
+		NoWarnings     = "-w",
 		FloatFast      = "-ffast-math",
 		FloatStrict    = "-ffloat-store",
 		NoFramePointer = "-fomit-frame-pointer",
