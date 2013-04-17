@@ -457,8 +457,8 @@
 						local commands = table.concat(filecfg.buildcommands,'\r\n')
 						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
 
-						local outputs = table.concat(filecfg.buildoutputs, ' ')
-						_p(3,'<Outputs %s>%s</Outputs>', condition, premake.esc(outputs))
+						local outputs = project.getrelative(prj, filecfg.buildoutputs)
+						vc2010.element(3, "Outputs", condition, '%s', table.concat(outputs, " "))
 					end
 				end
 

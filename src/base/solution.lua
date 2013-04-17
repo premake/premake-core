@@ -132,6 +132,10 @@
 		})
 		setmetatable(sln, getmetatable(result))
 
+		-- Specify the solution's file system location; when path tokens are
+		-- expanded in solution values, they will be made relative to this path.
+
+		context.basedir(ctx, project.getlocation(sln))
 
 		-- bake all of the projects in the list, and store that result
 		local projects = {}

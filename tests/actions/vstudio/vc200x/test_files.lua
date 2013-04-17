@@ -285,7 +285,7 @@
 
 	function suite.customBuildTool_onBuildRuleWithTokens()
 		files { "hello.x" }
-		objdir "../../../tmp"
+		objdir "../tmp/%{cfg.name}"
 		configuration "**.x"
 			buildmessage "Compiling $(InputFile)"
 			buildcommands {
@@ -303,8 +303,8 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="cxc -c hello.x -o obj/Debug/hello.xo&#x0D;&#x0A;c2o -c obj/Debug/hello.xo -o obj/Debug/hello.obj"
-					Outputs="obj/Debug/hello.obj"
+					CommandLine="cxc -c hello.x -o ../tmp/Debug/hello.xo&#x0D;&#x0A;c2o -c ../tmp/Debug/hello.xo -o ../tmp/Debug/hello.obj"
+					Outputs="../tmp/Debug/hello.obj"
 				/>
 			</FileConfiguration>
 		]]

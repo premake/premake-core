@@ -40,6 +40,14 @@
 		ctx._filename = { filename } or {}
 		ctx.terms = {}
 
+		-- This base directory is used when expanding path tokens encountered
+		-- in non-path value; such values will be made relative to this value
+		-- so the resulting projects will only contain relative paths. It is
+		-- expected that the creator of the context will set this value using
+		-- the setbasedir() function.
+
+		ctx._basedir = os.getcwd()
+
 		-- when a missing field is requested, fetch it from my config
 		-- set, and then cache the value for future lookups
 		setmetatable(ctx, context.__mt)
@@ -79,6 +87,26 @@
 
 	function context.copyterms(ctx, src)
 		ctx.terms = table.arraycopy(src.terms)
+	end
+
+
+--
+-- Sets the base directory for path token expansion in non-path fields; such
+-- values will be made relative to this path.
+--
+-- @param ctx
+--    The context in which to set the value.
+-- @param basedir
+--    The new base directory for path token expansion. This should be
+--    provided as an absolute path. This may be left nil to simply fetch
+--    the current base directory.
+-- @return
+--    The context's base directory.
+--
+
+	function context.basedir(ctx, basedir)
+		ctx._basedir = basedir or ctx._basedir
+		return ctx._basedir
 	end
 
 
@@ -130,8 +158,8 @@
 			local field = premake.fields[key]
 			if field and field.tokens then
 				local kind = field.kind
-				local ispath = kind:startswith("path") or kind:startswith("mixed")
-				value = premake.detoken.expand(value, ctx.environ, ispath)
+				local ispath = kind:startswith("path") or kind:startswith("file") or kind:startswith("mixed")
+				value = premake.detoken.expand(value, ctx.environ, ispath, ctx._basedir)
 			end
 
 			-- store the result for later lookups

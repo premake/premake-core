@@ -4,8 +4,7 @@
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	T.detoken = {}
-	local suite = T.detoken
+	local suite = test.declare("detoken")
 
 	local detoken = premake.detoken
 
@@ -66,9 +65,22 @@
 --
 
 	function suite.canExpandToAbsPath()
-		environ.cfg = { basedir=os.getcwd() }
+		environ.cfg = { basedir = os.getcwd() }
 		x = detoken.expand("bin/debug/%{cfg.basedir}", environ, true)
 		test.isequal(os.getcwd(), x)
+	end
+
+
+--
+-- If a non-path field contains a token that expands to a path, that
+-- path should be converted to a relative value.
+--
+
+	function suite.canExpandToRelPath()
+		local cwd = os.getcwd()
+		environ.cfg = { basedir = path.getdirectory(cwd) }
+		x = detoken.expand("cd %{cfg.basedir}", environ,  false, cwd)
+		test.isequal("cd ..", x)
 	end
 
 
@@ -80,3 +92,4 @@
 		x = detoken.expand({ "A%{1}", "B%{2}", "C%{3}" }, environ)
 		test.isequal({ "A1", "B2", "C3" }, x)
 	end
+

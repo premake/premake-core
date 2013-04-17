@@ -123,6 +123,12 @@
 		})
 		setmetatable(prj, getmetatable(result))
 
+		-- Set the context's base directory the project's file system
+		-- location. Any path tokens which are expanded in non-path fields
+		-- are made relative to this, ensuring a portable generated project.
+
+		context.basedir(ctx, project.getlocation(prj))
+
 		-- bake all configurations contained by the project
 		local configs = {}
 		for _, pairing in ipairs(result._cfglist) do
@@ -285,24 +291,8 @@
 		cfg.solution = prj.solution
 		cfg.project = prj
 		cfg.context = ctx
+		environ.cfg = cfg
 
-		-- File this under "too clever by half": I want path tokens (targetdir, etc.)
-		-- to expand to relative paths, so they can be used in custom build rules and
-		-- other places where it would be impractical to detect and convert them. So
-		-- create a proxy object with an attached metatable that converts path fields
-		-- on the fly as they are requested.
-		local proxy = {}
-		setmetatable(proxy, {
-			__index = function(proxy, key)
-				local field = premake.fields[key]
-				if field and field.kind == "path" then
-					return premake5.project.getrelative(cfg.project, cfg[key])
-				end
-				return cfg[key]
-			end,
-		})
-
-		environ.cfg = proxy
 
 
 		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values

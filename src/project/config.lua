@@ -263,6 +263,13 @@
 			filecfg.config = cfg
 			filecfg.project = cfg.project
 
+			-- Set the context's base directory the project's file system
+			-- location. Any path tokens which are expanded in non-path fields
+			-- (such as the custom build commands) will be made relative to
+			-- this path, ensuring a portable generated project.
+
+			context.basedir(filecfg, project.getlocation(cfg.project))
+
 			-- and cache the result
 			cfg.files[filename] = filecfg
 		end

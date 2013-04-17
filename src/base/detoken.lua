@@ -3,7 +3,7 @@
 --
 -- Expands tokens.
 --
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
 	premake.detoken = {}
@@ -22,11 +22,14 @@
 -- @param ispath
 --    If true, the value treated as a file system path, and checks will be made
 --    for nested absolute paths from expanded tokens.
+-- @param basedir
+--    If provided, path tokens encountered in non-path fields (where the ispath
+--    parameter is set to false) will be made relative to this location.
 -- @return
 --    The value with any contained tokens expanded.
 --
 
-	function detoken.expand(value, environ, ispath)
+	function detoken.expand(value, environ, ispath, basedir)
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
@@ -36,20 +39,42 @@
 			if not func then
 				return nil, err
 			end
-	
+
 			-- give the function access to the project objects
 			setfenv(func, environ)
-	
+
 			-- run it and return the result
 			local result = func() or ""
 
-			-- if I'm replacing within a path value, and the replacement is
-			-- itself and absolute path, insert a marker at the start of it.
-			-- This will be my clue later to trim the path here.
-			if ispath and path.isabsolute(result) then
+			-- If the result is an absolute path, and it is being inserted into
+			-- a path value, place a special marker at the start of it. After
+			-- all results have been processed, I can look for these markers to
+			-- find the last absolute path expanded.
+			--
+			-- Example: the value "/home/user/myprj/%{cfg.objdir}" expands to:
+			--    "/home/user/myprj//home/user/myprj/obj/Debug".
+			--
+			-- By inserting a marker this becomes:
+			--    "/home/user/myprj/[\0]/home/user/myprj/obj/Debug".
+			--
+			-- I can now trim everything before the marker to get the right
+			-- result, which should always be the last absolute path specified:
+			--    "/home/user/myprj/obj/Debug"
+
+			local isAbs = path.isabsolute(result)
+			if isAbs and ispath then
 				result = "\0" .. result
 			end
-			
+
+			-- If the result is an absolute path, and it is being inserted into
+			-- a NON-path value, I need to make it relative to the project that
+			-- will contain it. Otherwise I ended up with an absolute path in
+			-- the generated project, and it can no longer be moved around.
+
+			if isAbs and not ispath and basedir then
+				result = path.getrelative(basedir, result)
+			end
+
 			return result
 		end
 
@@ -64,7 +89,7 @@
 					return result
 				end)
 			until count == 0
-	
+
 			-- if a path, look for a split out embedded absolute paths
 			if ispath then
 				local i, j
@@ -75,7 +100,7 @@
 					end
 				until not i
 			end
-			
+
 			return value
 		end
 
@@ -89,7 +114,7 @@
 				return expandvalue(value)
 			end
 		end
-				
+
 		return recurse(value)
 	end
 
