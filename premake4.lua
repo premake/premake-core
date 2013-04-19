@@ -54,12 +54,15 @@
 		configuration "windows"
 			links { "ole32" }
 
-		configuration "linux or bsd"
+		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 			linkoptions { "-rdynamic" }
 
 		configuration "linux"
+			links       { "dl" }
+
+		configuration "hurd"
 			links       { "dl" }
 
 		configuration "macosx"

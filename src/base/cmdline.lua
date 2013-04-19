@@ -54,6 +54,7 @@
 			{ "aix",      "IBM AIX" },
 			{ "bsd",      "OpenBSD, NetBSD, or FreeBSD" },
 			{ "haiku",    "Haiku" },
+			{ "hurd",     "GNU/Hurd" },
 			{ "linux",    "Linux" },
 			{ "macosx",   "Apple Mac OS X" },
 			{ "solaris",  "Solaris" },

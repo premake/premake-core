@@ -218,7 +218,7 @@ void getversion(struct OsVersionInfo* info)
 
 /*************************************************************/
 
-#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_HURD)
 
 #include <string.h>
 #include <sys/utsname.h>
