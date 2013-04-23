@@ -37,7 +37,6 @@
 		"base/cmdline.lua",
 
 		-- project APIs
-		"project/oven.lua",
 		"project/project.lua",
 		"project/config.lua",
 		"base/solution.lua",

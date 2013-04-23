@@ -61,7 +61,6 @@
 	-- Project object tests
 	dofile("project/test_config_maps.lua")
 	dofile("project/test_eachconfig.lua")
-	dofile("project/test_filtering.lua")
 	dofile("project/test_filename.lua")
 	dofile("project/test_getconfig.lua")
 	dofile("project/test_hasconfig.lua")

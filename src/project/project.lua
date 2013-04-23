@@ -52,99 +52,113 @@
 
 
 --
--- Flatten out a project and all of its configurations, merging all of the
--- values contained in the script-supplied configuration blocks.
+-- Prepare the project information received from the project script
+-- for project generation.
+--
+-- @param prj
+--    The project to be prepared for project generation.
+-- @param sln
+--    The solution which contains the project.
+-- @return
+--    The baked version of the project.
 --
 
 	function project.bake(prj, sln)
-		-- make sure I've got the actual project, and not the root configurations
-		prj = prj.project or prj
 
-		-- set up an environment for expanding tokens contained by this project
-		local environ = {
-			sln = sln,
-			prj = prj,
-		}
+		-- Create a new configuration context to represent this project. This
+		-- context will contain all of the "root" or global settings for the
+		-- project, those that aren't part of a more specific configuration.
+		-- Use an empty token expansion environment for the moment.
 
-		-- create a context to represent the project's "root" configuration; some
-		-- of the filter terms may be nil, so not safe to use a list
+		local environ = {}
 		local ctx = context.new(prj.configset, environ)
-		context.addterms(ctx, _ACTION)
-		context.addterms(ctx, prj.language)
 
-		-- allow script to override system and architecture
+		-- Add filtering terms to the context to make it as specific as I can.
+		-- Action comes first, because it never depends on anything else.
+
+		context.addterms(ctx, _ACTION)
+
+		-- Now filter on the current system and architecture, allowing the
+		-- values that might already in the context to override my defaults.
+
 		ctx.system = ctx.system or premake.action.current().os or os.get()
 		context.addterms(ctx, ctx.system)
 		context.addterms(ctx, ctx.architecture)
 
-		-- if a kind is specified at the project level, use that too
-		context.addterms(ctx, ctx.kind)
-		context.compile(ctx)
+		-- If no language has been set, default to C++. This might come back to
+		-- bite me later, but let's see how it goes.
 
-		-- attach a bit more local state
-		ctx.solution = sln
-
-		-- if no language is set for the project, default to C++
 		if not ctx.language then
 			ctx.language = premake.CPP
 		end
 
-		-- create a list of build cfg/platform pairs for the project
-		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
+		-- The kind is a configuration level value, but it has been set at the
+		-- project level allow that to influence the other project-level results.
 
-		-- roll up any config maps from the contained configurations
-		project.bakeconfigmap(ctx, prj.configset, cfgs)
+		context.addterms(ctx, ctx.kind)
 
-		-- apply any mappings to the project's list of configurations and platforms
-		ctx._cfglist = project.bakeconfiglist(ctx, cfgs)
+		-- Go ahead and distill all of that down now; this is my new project object
 
+		context.compile(ctx)
+		ctx.baked = true
 
-		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
-		local result = oven.merge(oven.merge({}, sln), prj)
-		result.solution = sln
-		result.blocks = prj.blocks
-		result.baked = true
+		-- Fill in some additional state. Copying the keys over from the
+		-- scripted project object allows custom values to passed through to
+		-- extension scripts.
 
-		-- prevent any default system setting from influencing configurations
-		result.system = nil
+		for key, value in pairs(prj) do
+			ctx[key] = value
+		end
 
+		ctx.solution = sln
+		ctx.project = ctx
 
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values
-		-- through to the config context. Eventually all values will be in the
-		-- context and the cfg wrapper can be done away with
-		setmetatable(prj, nil)
+		-- Now I can populate the token expansion environment
 
-		result.context = ctx
-		prj.context = ctx
-		setmetatable(result, {
-			__index = function(prj, key)
-				return prj.context[key]
-			end,
-		})
-		setmetatable(prj, getmetatable(result))
+		environ.sln = sln
+		environ.prj = ctx
 
-		-- Set the context's base directory the project's file system
+		-- Set the context's base directory to the project's file system
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated project.
 
-		context.basedir(ctx, project.getlocation(prj))
+		context.basedir(ctx, project.getlocation(ctx))
 
-		-- bake all configurations contained by the project
-		local configs = {}
-		for _, pairing in ipairs(result._cfglist) do
+		-- This bit could use some work: create a canonical set of configurations
+		-- for the project, along with a mapping from the solution's configurations.
+		-- This works, but it could probably be simplified.
+
+		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
+		project.bakeconfigmap(ctx, prj.configset, cfgs)
+		ctx._cfglist = project.bakeconfiglist(ctx, cfgs)
+
+		-- Don't allow a project-level system setting to influence the configurations
+
+		ctx.system = nil
+
+		-- Finally, step through the list of configurations I built above and
+		-- bake all of those down into configuration contexts as well. Store
+		-- the results with the project.
+
+		ctx.configs = {}
+
+		for _, pairing in ipairs(ctx._cfglist) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
-			local cfg = project.bakeconfig(result, buildcfg, platform)
+			local cfg = project.bakeconfig(ctx, buildcfg, platform)
 
-			-- make sure this config is supported by the action; skip if not
+			-- Check to make sure this configuration is supported by the current
+			-- action; add it to the project's configuration cache if so.
+
 			if premake.action.supportsconfig(cfg) then
-				configs[(buildcfg or "*") .. (platform or "")] = cfg
+				ctx.configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
-		end
-		result.configs = configs
 
-		return result
+		end
+
+		return ctx
 	end
+
 
 --
 -- It can be useful to state "use this map if this configuration is present".
@@ -226,30 +240,48 @@
 --
 
 	function project.bakeconfig(prj, buildcfg, platform)
-		-- set the default system and architecture values; for backward
-		-- compatibility, use platform if it would be a valid value
+
+		-- Set the default system and architecture values; if the platform's
+		-- name matches a known system or architecture, use that as the default.
+		-- More than a convenience; this is required to work properly with
+		-- external Visual Studio project files.
+
 		local system = premake.action.current().os or os.get()
 		local architecture = nil
 
-		-- if the platform's name matches a known system or architecture, use
-		-- that as the default. More than a convenience; this is required to
-		-- work properly with external Visual Studio project files.
 		if platform then
 			system = premake.api.checkvalue(platform, premake.fields.system) or system
 			architecture = premake.api.checkvalue(platform, premake.fields.architecture) or architecture
 		end
 
-		-- set up an environment for expanding tokens contained by this configuration
+		-- Wrap the projects's configuration set (which contains all of the information
+		-- provided by the project script) with a context object. The context handles
+		-- the expansion of tokens, and caching of retrieved values. The environment
+		-- values are used when expanding tokens.
+
 		local environ = {
-			sln = sln,
+			sln = prj.solution,
 			prj = prj,
 		}
 
-		-- create a context to represent this configuration; contains the terms
-		-- that defines what belongs to this configuration, and controls access
 		local ctx = context.new(prj.configset, environ)
 
-		-- add base filters; some may be nil, so not safe to put in a list
+		ctx.project = prj
+		ctx.solution = prj.solution
+		ctx.buildcfg = buildcfg
+		ctx.platform = platform
+		ctx.action = _ACTION
+		ctx.language = prj.language
+
+		-- Allow the configuration information to accessed by tokens contained
+		-- within the configuration itself
+
+		environ.cfg = ctx
+
+		-- Add filtering terms to the context and then compile the results. These
+		-- terms describe the "operating environment"; only results contained by
+		-- configuration blocks which match these terms will be returned.
+
 		context.addterms(ctx, buildcfg)
 		context.addterms(ctx, platform)
 		context.addterms(ctx, _ACTION)
@@ -266,52 +298,15 @@
 		-- if a kind is set, allow that to influence the configuration
 		context.addterms(ctx, ctx.kind)
 
-		-- process that
 		context.compile(ctx)
 
-		-- attach a bit more local state
-		ctx.project = prj
-		ctx.solution = prj.solution
-		ctx.buildcfg = buildcfg
-		ctx.platform = platform
-		ctx.action = _ACTION
-		ctx.language = prj.language
+		-- Fill in a few calculated for the configuration, including the long
+		-- and short names and the build and link target.
+		-- TODO: Merge these two functions
 
+		premake5.config.bake(ctx)
 
-		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
-		local filter = {
-			["buildcfg"] = buildcfg,
-			["platform"] = platform,
-			["action"] = _ACTION,
-			["system"] = ctx.system,
-			["architecture"] = ctx.architecture,
-		}
-
-		local cfg = oven.bake(prj, prj.solution, filter)
-		cfg.solution = prj.solution
-		cfg.project = prj
-		cfg.context = ctx
-		environ.cfg = cfg
-
-
-
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values
-		-- through to the config context. Eventually all values will be in the
-		-- context and the cfg wrapper can be done away with
-		setmetatable(cfg, {
-			__index = function(cfg, key)
-				return cfg.context[key]
-			end,
-			__newindex = function(cfg, key, value)
-				cfg.context[key] = value
-			end
-		})
-
-
-		-- fill in any calculated values
-		premake5.config.bake(cfg)
-
-		return cfg
+		return ctx
 	end
 
 

@@ -93,74 +93,68 @@
 
 
 --
--- Prepare the contents of a solution for the next stage. Flattens out
--- all configurations, computes composite values (i.e. build targets,
--- objects directories), and expands tokens.
+-- Prepare the solution information received from the project script
+-- for project generation.
+--
+-- @param sln
+--    The solution to be baked.
 -- @return
 --    The baked version of the solution.
 --
 
 	function solution.bake(sln)
-		-- set up an environment for expanding tokens contained by this solution
+
+		-- Wrap the solution's configuration set (which contains all of the information
+		-- provided by the project script) with a context object. The context handles
+		-- the expansion of tokens, and caching of retrieved values. The environment
+		-- values are used when expanding tokens.
+
 		local environ = {
 			sln = sln,
 		}
 
-		-- create a context to represent the solution's "root" configuration; some
-		-- of the filter terms may be nil, so not safe to use a list
 		local ctx = context.new(sln.configset, environ)
+
+		ctx.name = sln.name
+		ctx.baked = true
+
+		-- Add filtering terms to the context and then compile the results. These
+		-- terms describe the "operating environment"; only results contained by
+		-- configuration blocks which match these terms will be returned.
+
 		context.addterms(ctx, _ACTION)
 		context.compile(ctx)
 
-
-		-- TODO: OLD, REMOVE: build an old-style configuration to wrap context, for now
-		local result = oven.merge({}, sln)
-		result.baked = true
-		result.blocks = sln.blocks
-
-
-		-- TODO: HACK, TRANSITIONAL, REMOVE: pass requests for missing values
-		-- through to the config context. Eventually all values will be in the
-		-- context and the cfg wrapper can be done away with
-		result.context = ctx
-		sln.context = ctx
-
-		setmetatable(result, {
-			__index = function(sln, key)
-				return sln.context[key]
-			end,
-		})
-		setmetatable(sln, getmetatable(result))
-
 		-- Specify the solution's file system location; when path tokens are
-		-- expanded in solution values, they will be made relative to this path.
+		-- expanded in solution values, they will be made relative to this.
 
 		context.basedir(ctx, project.getlocation(sln))
 
-		-- bake all of the projects in the list, and store that result
+		-- Now bake down all of the projects contained in the solution, and
+		-- store that for future reference
+
 		local projects = {}
 		for i, prj in ipairs(sln.projects) do
-			projects[i] = project.bake(prj, result)
+			projects[i] = project.bake(prj, ctx)
 			projects[prj.name] = projects[i]
 		end
-		result.projects = projects
 
-		-- assign unique object directories to every project configurations
-		solution.bakeobjdirs(result)
+		ctx.projects = projects
 
-		-- expand all tokens contained by the solution
-		for prj in solution.eachproject_ng(result) do
-			oven.expandtokens(prj, "project")
-			for cfg in project.eachconfig(prj) do
-				oven.expandtokens(cfg, "config")
-			end
-		end
-		oven.expandtokens(result, "project")
+		-- I now have enough information to assign unique object directories
+		-- to each project configuration in the solution.
 
-		-- build a master list of solution-level configuration/platform pairs
-		result.configs = solution.bakeconfigs(result)
+		solution.bakeobjdirs(ctx)
 
-		return result
+		-- Build a master list of configuration/platform pairs from all of the
+		-- projects contained by the solution; I will need this when generating
+		-- solution files in order to provide a map from solution configurations
+		-- to project configurations.
+
+		ctx.configs = solution.bakeconfigs(ctx)
+
+		return ctx
+
 	end
 
 
@@ -234,9 +228,6 @@
 
 		for prj in premake.solution.eachproject_ng(sln) do
 			for cfg in project.eachconfig(prj) do
-				-- expand any tokens contained in the field
-				oven.expandtokens(cfg, "config", nil, "objdir")
-
 				-- get the dirs for this config, and remember the association
 				local dirs = getobjdirs(cfg)
 				configs[cfg] = dirs

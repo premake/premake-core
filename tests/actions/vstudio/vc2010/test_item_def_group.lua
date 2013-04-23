@@ -4,7 +4,7 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("vs2010_config_props")
+	local suite = test.declare("vs2010_item_def_group")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake5.project
 
@@ -16,11 +16,10 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function prepare(buildcfg)
-		prj = premake.solution.getproject_ng(sln, 1)
 		cfg = project.getconfig(prj, buildcfg or "Debug")
 		vc2010.itemDefinitionGroup(cfg)
 	end

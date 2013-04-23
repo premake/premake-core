@@ -25,11 +25,9 @@
 
 		if cfg.project and cfg.kind then
 			cfg.buildtarget = config.gettargetinfo(cfg)
-			oven.expandtokens(cfg, nil, nil, "buildtarget", true)
 			cfg.buildtarget.relpath = project.getrelative(cfg.project, cfg.buildtarget.abspath)
 
 			cfg.linktarget = config.getlinkinfo(cfg)
-			oven.expandtokens(cfg, nil, nil, "linktarget", true)
 			cfg.linktarget.relpath = project.getrelative(cfg.project, cfg.linktarget.abspath)
 		end
 	end
@@ -55,11 +53,11 @@
 		local basedir = project.getlocation(cfg.project)
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
-		local basename = cfg.context[field.."name"] or cfg.context.targetname or cfg.project.name
+		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
 
-		local prefix = cfg.context[field.."prefix"] or cfg.context.targetprefix or ""
-		local suffix = cfg.context[field.."suffix"] or cfg.context.targetsuffix or ""
-		local extension = cfg.context[field.."extension"] or ""
+		local prefix = cfg[field.."prefix"] or cfg.targetprefix or ""
+		local suffix = cfg[field.."suffix"] or cfg.targetsuffix or ""
+		local extension = cfg[field.."extension"] or ""
 
 		local bundlename = ""
 		local bundlepath = ""
@@ -241,12 +239,12 @@
 			-- the specified project configuration
 			local environ = {}
 			filecfg = context.new(cfg.project.configset, environ, filename)
-			context.copyterms(filecfg, cfg.context)
+			context.copyterms(filecfg, cfg)
 
 			-- set up an environment for expanding tokens contained by this file
 			-- configuration; based on the configuration's environment so that
 			-- any magic set up there gets maintained
-			for envkey, envval in pairs(cfg.context.environ) do
+			for envkey, envval in pairs(cfg.environ) do
 				environ[envkey] = envval
 			end
 			environ.file = filecfg
