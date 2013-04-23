@@ -292,7 +292,7 @@
 	function vc2010.resourceCompile(cfg)
 		if cfg.kind ~= premake.MAKEFILE and cfg.system ~= premake.XBOX360 then
 			_p(2,'<ResourceCompile>')
-			vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
+			vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
 			vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
 			_p(2,'</ResourceCompile>')
 		end
@@ -930,12 +930,9 @@
 	end
 
 
-	function vc2010.preprocessorDefinitions(cfg, defines, escapeQuotes)
+	function vc2010.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			defines = table.concat(defines, ";")
-			if escapeQuotes then
-				defines = defines:gsub('"', '\\"')
-			end
 			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
 		end
 	end
