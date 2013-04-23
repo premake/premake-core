@@ -9,6 +9,13 @@
 	local config = premake5.config
 
 
+---
+-- Add a namespace for extensions to use.
+---
+
+	premake.extensions = {}
+
+
 --
 -- Define some commonly used symbols, for future-proofing.
 --
