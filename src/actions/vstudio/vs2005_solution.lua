@@ -24,7 +24,7 @@
 
 		sln2005.reorderProjects(sln)
 
-		sln2005.header(sln)
+		sln2005.header()
 		sln2005.projects(sln)
 
 		_p('Global')
@@ -36,17 +36,13 @@
 
 
 --
--- Generate the solution header
+-- Generate the solution header. Each Visual Studio action definition
+-- should include its own version.
 --
 
-	function sln2005.header(sln)
-		local version = {
-			vs2005 = 9,
-			vs2008 = 10,
-			vs2010 = 11,
-			vs2012 = 12,
-		}
-		_p('Microsoft Visual Studio Solution File, Format Version %d.00', version[_ACTION])
+	function sln2005.header()
+		local action = premake.action.current()
+		_p('Microsoft Visual Studio Solution File, Format Version %d.00', action.vstudioSolutionVersion)
 		_p('# Visual Studio %s', _ACTION:sub(3))
 	end
 

@@ -65,6 +65,7 @@
 		"actions/vstudio/vs2010_vcxproj.lua",
 		"actions/vstudio/vs2010_vcxproj_user.lua",
 		"actions/vstudio/vs2010_vcxproj_filters.lua",
+		"actions/vstudio/vs2012.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",
