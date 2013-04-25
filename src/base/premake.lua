@@ -43,6 +43,47 @@
 	premake.XBOX360     = "xbox360"
 
 
+---
+-- Call a list of functions to generate a block of project file elements.
+-- This follows a particular convention for where the list of element
+-- names and the implementation functions should be stored; read the
+-- parameter descriptions for more information.
+--
+-- @param namespace
+--    The namespace table that contains the functions to be called.
+-- @param elements
+--    The name of the element list. This list should be contained within
+--    a namespace called "elements", enclosed in the namespace provided
+--    above. So if namespace is "vs2010", and elements is "header", the
+--    list variable will be accessed as vs2010.elements.header.
+-- @param ...
+--    An optional set of arguments to be passed to each of the functions
+--    that are called.
+---
+
+	function premake.callsequence(namespace, elements, ...)
+
+		-- Fetch the sequence from namespace.elements.{elements}; this
+		-- gives the list of names of things that need to be called.
+		local seq = namespace["elements"][elements]
+
+		local n = #seq
+		for i = 1, n do
+
+			-- Fetch the name and look it up in the same namespace.
+			local name = seq[i]
+			local fn = namespace[name]
+			if not fn then
+				error(string.format("Unable to find function '%s'", name))
+			end
+
+			-- Call the function I just looked up with an extra arguments
+			fn(...)
+		end
+
+	end
+
+
 --
 -- Raises an error, with a formatted message built from the provided
 -- arguments.

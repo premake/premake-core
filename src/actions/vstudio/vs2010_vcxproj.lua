@@ -12,6 +12,13 @@
 	local tree = premake.tree
 
 
+---
+-- Add namespace for element definition lists for premake.callsequence()
+---
+
+	vc2010.elements = {}
+
+
 --
 -- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
@@ -156,20 +163,18 @@
 -- produces, and some global settings.
 --
 
+	vc2010.elements.configurationProperties = {
+		"configurationType",
+		"useDebugLibraries",
+		"useOfMfc",
+		"clrSupport",
+		"characterSet",
+		"nmakeOutDirs",
+	}
+
 	function vc2010.configurationProperties(cfg)
 		vc2010.propertyGroup(cfg, "Configuration")
-		vc2010.configurationType(cfg)
-		vc2010.useDebugLibraries(cfg)
-		vc2010.platformToolset(cfg)
-		vc2010.useOfMfc(cfg)
-		vc2010.clrSupport(cfg)
-		vc2010.characterSet(cfg)
-
-		if cfg.kind == premake.MAKEFILE then
-			vc2010.outDir(cfg)
-			vc2010.intDir(cfg)
-		end
-
+		premake.callsequence(vc2010, "configurationProperties", cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -851,6 +856,13 @@
 	end
 
 
+	function vc2010.nmakeOutDirs(cfg)
+		if cfg.kind == premake.MAKEFILE then
+			vc2010.outDir(cfg)
+			vc2010.intDir(cfg)
+		end
+	end
+
 	function vc2010.nmakeOutput(cfg)
 		_p(2,'<NMakeOutput>$(OutDir)%s</NMakeOutput>', cfg.buildtarget.name)
 	end
@@ -903,13 +915,6 @@
 	function vc2010.outputFile(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
-		end
-	end
-
-
-	function vc2010.platformToolset(cfg)
-		if _ACTION == "vs2012" then
-			_p(2,'<PlatformToolset>v110</PlatformToolset>')
 		end
 	end
 

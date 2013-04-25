@@ -1,8 +1,21 @@
 --
 -- table.lua
 -- Additions to Lua's built-in table functions.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
+
+
+--
+-- Make a copy of the indexed elements of the table.
+--
+
+	function table.arraycopy(object)
+		local result = {}
+		for i, value in ipairs(object) do
+			result[i] = value
+		end
+		return result
+	end
 
 
 --
@@ -16,19 +29,6 @@
 			end
 		end
 		return false
-	end
-
-
---
--- Make a copy of the indexed elements of the table.
---
-
-	function table.arraycopy(object)
-		local result = {}
-		for i, value in ipairs(object) do
-			result[i] = value
-		end
-		return result
 	end
 
 
@@ -159,6 +159,45 @@
 	end
 
 
+
+--
+-- Looks for an object within an array. Returns its index if found,
+-- or nil if the object could not be found.
+--
+
+	function table.indexof(tbl, obj)
+		local count = #tbl
+		for i = 1, count do
+			if tbl[i] == obj then
+				return i
+			end
+		end
+	end
+
+
+---
+-- Insert a new value into a table in the position after the specified
+-- existing value. If the specified value does not exist in the table,
+-- the new value is appended to the end of the table.
+--
+-- @param tbl
+--    The table in which to insert.
+-- @param after
+--    The existing value to insert after.
+-- @param value
+--    The new value to insert.
+--
+
+	function table.insertafter(tbl, after, value)
+		local i = table.indexof(tbl, after)
+		if i then
+			table.insert(tbl, i + 1, value)
+		else
+			table.insert(tbl, value)
+		end
+	end
+
+
 --
 -- Inserts a value of array of values into a table. If the value is
 -- itself a table, its contents are enumerated and added instead. So
@@ -239,22 +278,6 @@
 			end
 		end
 		return result
-	end
-
-
-
---
--- Looks for an object within an array. Returns its index if found,
--- or nil if the object could not be found.
---
-
-	function table.indexof(tbl, obj)
-		local count = #tbl
-		for i = 1, count do
-			if tbl[i] == obj then
-				return i
-			end
-		end
 	end
 
 

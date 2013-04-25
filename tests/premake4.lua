@@ -150,6 +150,7 @@
 
 	-- Visual Studio 2012
 	dofile("actions/vs2012/test_sln_header.lua")
+	dofile("actions/vs2012/test_vcxproj_config_props.lua")
 
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
