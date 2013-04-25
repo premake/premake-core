@@ -9,15 +9,15 @@
 	local cs2005 = premake.vstudio.cs2005
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj, cfg
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 	end
-	
+
 	local function prepare(platform)
 		sln = solution ("MySolution")
 		configurations ("Debug")

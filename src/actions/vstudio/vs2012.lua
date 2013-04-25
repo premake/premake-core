@@ -4,10 +4,9 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc2012 = {}
 	local vstudio = premake.vstudio
+	local cs2005 = vstudio.cs2005
 	local vc2010 = vstudio.vc2010
-	local vc2012 = vstudio.vc2012
 
 
 ---
@@ -56,7 +55,11 @@
 		oncleantarget   = vstudio.cleantarget,
 
 		-- This stuff is specific to the Visual Studio exporters
-		vstudioSolutionVersion = 12,
+		vstudio = {
+			solutionVersion = "12",
+			targetFramework = "4.5",
+			toolsVersion    = "4.0",
+		}
 	}
 
 
@@ -69,5 +72,18 @@
 	function vc2010.platformToolset(cfg)
 		if _ACTION > "vs2010" then
 			_p(2,'<PlatformToolset>v110</PlatformToolset>')
+		end
+	end
+
+
+--
+-- Add a common properties import statement to the top of C# projects.
+--
+
+	table.insertafter(cs2005.elements.project, "projectElement", "commonProperties")
+
+	function cs2005.commonProperties(prj)
+		if _ACTION > "vs2010" then
+			_p(1,'<Import Project="$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props" Condition="Exists(\'$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\')" />')
 		end
 	end

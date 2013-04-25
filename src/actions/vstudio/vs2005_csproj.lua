@@ -12,23 +12,26 @@
 	local dotnet = premake.tools.dotnet
 
 
+	cs2005.elements = {}
+
+
 --
 -- Generate a Visual Studio 200x C# project, with support for the new platforms API.
 --
+
+	cs2005.elements.project = {
+		"projectElement",
+		"projectProperties",
+	}
 
 	function cs2005.generate_ng(prj)
 		io.eol = "\r\n"
 		io.indent = "  "
 
-		cs2005.projectelement(prj)
-		cs2005.projectsettings(prj)
+		premake.callarray(cs2005, cs2005.elements.project, prj)
 
 		for cfg in project.eachconfig(prj) do
-			cs2005.propertyGroup(cfg)
-			cs2005.debugProps(cfg)
-			cs2005.outputProps(cfg)
-			cs2005.compilerProps(cfg)
-			_p(1,'</PropertyGroup>')
+			cs2005.configurationProperties(cfg)
 		end
 
 		cs2005.applicationIcon(prj)
@@ -39,16 +42,7 @@
 		_p(1,'</ItemGroup>')
 
 		cs2005.projectReferences(prj)
-
-		_p('  <Import Project="$(MSBuildBinPath)\\Microsoft.CSharp.targets" />')
-		_p('  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.')
-		_p('       Other similar extension points exist, see Microsoft.Common.targets.')
-		_p('  <Target Name="BeforeBuild">')
-		_p('  </Target>')
-		_p('  <Target Name="AfterBuild">')
-		_p('  </Target>')
-		_p('  -->')
-
+		cs2005.targets(prj)
 		cs2005.buildEvents(prj)
 
 		_p('</Project>')
@@ -59,18 +53,17 @@
 -- Write the opening <Project> element.
 --
 
-	function cs2005.projectelement(prj)
-		local toolversion = {
-			vs2005 = '',
-			vs2008 = ' ToolsVersion="3.5"',
-			vs2010 = ' ToolsVersion="4.0"',
-			vs2012 = ' ToolsVersion="4.0"',
-		}
-
+	function cs2005.projectElement(prj)
 		if _ACTION > "vs2008" then
 			_p('<?xml version="1.0" encoding="utf-8"?>')
 		end
-		_p('<Project%s DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', toolversion[_ACTION])
+
+		local ver = ''
+		local action = premake.action.current()
+		if action.vstudio.toolsVersion then
+			ver = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
+		end
+		_p('<Project%s DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', ver)
 	end
 
 
@@ -78,18 +71,7 @@
 -- Write the opening PropertyGroup, which contains the project-level settings.
 --
 
-	function cs2005.projectsettings(prj)
-		local version = {
-			vs2005 = '8.0.50727',
-			vs2008 = '9.0.21022',
-			vs2010 = '8.0.30703',
-			vs2012 = '8.0.30703',
-		}
-
-		local frameworks = {
-			vs2010 = "4.0",
-			vs2012 = "4.5",
-		}
+	function cs2005.projectProperties(prj)
 
 		_p(1,'<PropertyGroup>')
 
@@ -99,8 +81,9 @@
 		_p(2,'<Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(cfg.buildcfg))
 		_p(2,'<Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', cs2005.arch(prj))
 
-		_p(2,'<ProductVersion>%s</ProductVersion>', version[_ACTION])
-		_p(2,'<SchemaVersion>2.0</SchemaVersion>')
+		cs2005.productVersion(prj)
+		cs2005.schemaVersion(prj)
+
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 
 		_p(2,'<OutputType>%s</OutputType>', dotnet.getkind(cfg))
@@ -110,16 +93,23 @@
 		_p(2,'<RootNamespace>%s</RootNamespace>', prj.namespace or target.basename)
 		_p(2,'<AssemblyName>%s</AssemblyName>', target.basename)
 
-		local framework = prj.framework or frameworks[_ACTION]
-		if framework then
-			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
-		end
+		cs2005.targetFrameworkVersion(prj)
+		cs2005.targetFrameworkProfile(prj)
+		cs2005.fileAlignment(prj)
 
-		if _ACTION >= "vs2010" then
-			_p(2,'<TargetFrameworkProfile></TargetFrameworkProfile>')
-			_p(2,'<FileAlignment>512</FileAlignment>')
-		end
+		_p(1,'</PropertyGroup>')
+	end
 
+
+--
+-- Write out the settings for an individual configuration.
+--
+
+	function cs2005.configurationProperties(cfg)
+		cs2005.propertyGroup(cfg)
+		cs2005.debugProps(cfg)
+		cs2005.outputProps(cfg)
+		cs2005.compilerProps(cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -424,3 +414,60 @@
 		end
 	end
 
+
+---------------------------------------------------------------------------
+--
+-- Handlers for individual project elements
+--
+---------------------------------------------------------------------------
+
+	function cs2005.fileAlignment(prj)
+		if _ACTION >= "vs2010" then
+			_p(2,'<FileAlignment>512</FileAlignment>')
+		end
+	end
+
+
+	function cs2005.productVersion(prj)
+		local action = premake.action.current()
+		if action.vstudio.productVersion then
+			_p(2,'<ProductVersion>%s</ProductVersion>', action.vstudio.productVersion)
+		end
+	end
+
+
+	function cs2005.schemaVersion(prj)
+		local action = premake.action.current()
+		if action.vstudio.csprojSchemaVersion then
+			_p(2,'<SchemaVersion>%s</SchemaVersion>', action.vstudio.csprojSchemaVersion)
+		end
+	end
+
+
+	function cs2005.targetFrameworkVersion(prj)
+		local action = premake.action.current()
+		local framework = prj.framework or action.vstudio.targetFramework
+		if framework then
+			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		end
+	end
+
+
+	function cs2005.targetFrameworkProfile(prj)
+		if _ACTION == "vs2010" then
+			_p(2,'<TargetFrameworkProfile></TargetFrameworkProfile>')
+		end
+	end
+
+
+	function cs2005.targets(prj)
+		local bin = iif(_ACTION <= "vs2010", "MSBuildBinPath", "MSBuildToolsPath")
+		_p(1,'<Import Project="$(%s)\\Microsoft.CSharp.targets" />', bin)
+		_p(1,'<!-- To modify your build process, add your task inside one of the targets below and uncomment it.')
+		_p(1,'     Other similar extension points exist, see Microsoft.Common.targets.')
+		_p(1,'<Target Name="BeforeBuild">')
+		_p(1,'</Target>')
+		_p(1,'<Target Name="AfterBuild">')
+		_p(1,'</Target>')
+		_p(1,'-->')
+	end

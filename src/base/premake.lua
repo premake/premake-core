@@ -61,23 +61,13 @@
 --    that are called.
 ---
 
-	function premake.callsequence(namespace, elements, ...)
-
-		-- Fetch the sequence from namespace.elements.{elements}; this
-		-- gives the list of names of things that need to be called.
-		local seq = namespace["elements"][elements]
-
-		local n = #seq
+	function premake.callarray(namespace, array, ...)
+		local n = #array
 		for i = 1, n do
-
-			-- Fetch the name and look it up in the same namespace.
-			local name = seq[i]
-			local fn = namespace[name]
+			local fn = namespace[array[i]]
 			if not fn then
 				error(string.format("Unable to find function '%s'", name))
 			end
-
-			-- Call the function I just looked up with an extra arguments
 			fn(...)
 		end
 

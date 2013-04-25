@@ -51,7 +51,11 @@
 		oncleanproject  = vstudio.cleanproject,
 		oncleantarget   = vstudio.cleantarget,
 
-		vstudioSolutionVersion = 9,
+		vstudio = {
+			csprojSchemaVersion = "2.0",
+			productVersion      = "8.0.50727",
+			solutionVersion     = "9",
+		}
 	}
 
 
@@ -91,7 +95,12 @@
 		oncleanproject  = vstudio.cleanproject,
 		oncleantarget   = vstudio.cleantarget,
 
-		vstudioSolutionVersion = 10,
+		vstudio = {
+			csprojSchemaVersion = "2.0",
+			productVersion      = "9.0.21022",
+			solutionVersion     = "10",
+			toolsVersion        = "3.5",
+		}
 	}
 
 
@@ -132,7 +141,13 @@
 		oncleanproject  = vstudio.cleanproject,
 		oncleantarget   = vstudio.cleantarget,
 
-		vstudioSolutionVersion = 11,
+		vstudio = {
+			csprojSchemaVersion = "2.0",
+			productVersion      = "8.0.30703",
+			solutionVersion     = "11",
+			targetFramework     = "4.0",
+			toolsVersion        = "4.0",
+		}
 	}
 
 

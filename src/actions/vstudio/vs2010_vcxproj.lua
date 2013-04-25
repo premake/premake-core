@@ -174,7 +174,7 @@
 
 	function vc2010.configurationProperties(cfg)
 		vc2010.propertyGroup(cfg, "Configuration")
-		premake.callsequence(vc2010, "configurationProperties", cfg)
+		premake.callarray(vc2010, vc2010.elements.configurationProperties, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -195,18 +195,22 @@
 -- directories, manifest, etc.
 --
 
+	vc2010.elements.outputProperties = {
+		"propertyGroup",
+		"linkIncremental",
+		"ignoreImportLibrary",
+		"outDir",
+		"outputFile",
+		"intDir",
+		"targetName",
+		"targetExt",
+		"imageXexOutput",
+		"generateManifest",
+	}
+
 	function vc2010.outputProperties(cfg)
 		if cfg.kind ~= premake.MAKEFILE then
-			vc2010.propertyGroup(cfg)
-			vc2010.linkIncremental(cfg)
-			vc2010.ignoreImportLibrary(cfg)
-			vc2010.outDir(cfg)
-			vc2010.outputFile(cfg)
-			vc2010.intDir(cfg)
-			vc2010.targetName(cfg)
-			vc2010.targetExt(cfg)
-			vc2010.imageXexOutput(cfg)
-			vc2010.generateManifest(cfg)
+			premake.callarray(vc2010, vc2010.elements.outputProperties, cfg)
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -234,15 +238,19 @@
 -- of the per-configuration compile and link settings.
 --
 
+	vc2010.elements.itemDefinitionGroup = {
+		"clCompile",
+		"resourceCompile",
+		"link",
+		"buildEvents",
+		"imageXex",
+		"deploy",
+	}
+
 	function vc2010.itemDefinitionGroup(cfg)
 		if cfg.kind ~= premake.MAKEFILE then
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
-			vc2010.clCompile(cfg)
-			vc2010.resourceCompile(cfg)
-			vc2010.link(cfg)
-			vc2010.buildEvents(cfg)
-			vc2010.imageXex(cfg)
-			vc2010.deploy(cfg)
+			premake.callarray(vc2010, vc2010.elements.itemDefinitionGroup, cfg)
 			_p(1,'</ItemDefinitionGroup>')
 
 		else
@@ -259,34 +267,32 @@
 --
 
 	function vc2010.clCompile(cfg)
-		if cfg.kind ~= premake.MAKEFILE then
-			_p(2,'<ClCompile>')
-			vc2010.precompiledHeader(cfg)
-			vc2010.warningLevel(cfg)
-			vc2010.treatWarningAsError(cfg)
-			vc2010.basicRuntimeChecks(cfg)
-			vc2010.preprocessorDefinitions(cfg, cfg.defines)
-			vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
-			vc2010.forceIncludes(cfg)
-			vc2010.debugInformationFormat(cfg)
-			vc2010.programDataBaseFileName(cfg)
-			vc2010.optimization(cfg)
-			vc2010.functionLevelLinking(cfg)
-			vc2010.intrinsicFunctions(cfg)
-			vc2010.minimalRebuild(cfg)
-			vc2010.omitFramePointers(cfg)
-			vc2010.stringPooling(cfg)
-			vc2010.runtimeLibrary(cfg)
-			vc2010.exceptionHandling(cfg)
-			vc2010.runtimeTypeInfo(cfg)
-			vc2010.treatWChar_tAsBuiltInType(cfg)
-			vc2010.floatingPointModel(cfg)
-			vc2010.enableEnhancedInstructionSet(cfg)
-			vc2010.multiProcessorCompilation(cfg)
-			vc2010.additionalCompileOptions(cfg)
-			vc2010.compileAs(cfg)
-			_p(2,'</ClCompile>')
-		end
+		_p(2,'<ClCompile>')
+		vc2010.precompiledHeader(cfg)
+		vc2010.warningLevel(cfg)
+		vc2010.treatWarningAsError(cfg)
+		vc2010.basicRuntimeChecks(cfg)
+		vc2010.preprocessorDefinitions(cfg, cfg.defines)
+		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
+		vc2010.forceIncludes(cfg)
+		vc2010.debugInformationFormat(cfg)
+		vc2010.programDataBaseFileName(cfg)
+		vc2010.optimization(cfg)
+		vc2010.functionLevelLinking(cfg)
+		vc2010.intrinsicFunctions(cfg)
+		vc2010.minimalRebuild(cfg)
+		vc2010.omitFramePointers(cfg)
+		vc2010.stringPooling(cfg)
+		vc2010.runtimeLibrary(cfg)
+		vc2010.exceptionHandling(cfg)
+		vc2010.runtimeTypeInfo(cfg)
+		vc2010.treatWChar_tAsBuiltInType(cfg)
+		vc2010.floatingPointModel(cfg)
+		vc2010.enableEnhancedInstructionSet(cfg)
+		vc2010.multiProcessorCompilation(cfg)
+		vc2010.additionalCompileOptions(cfg)
+		vc2010.compileAs(cfg)
+		_p(2,'</ClCompile>')
 	end
 
 
@@ -295,7 +301,7 @@
 --
 
 	function vc2010.resourceCompile(cfg)
-		if cfg.kind ~= premake.MAKEFILE and cfg.system ~= premake.XBOX360 then
+		if cfg.system ~= premake.XBOX360 then
 			_p(2,'<ResourceCompile>')
 			vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
 			vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
@@ -309,27 +315,25 @@
 --
 
 	function vc2010.link(cfg)
-		if cfg.kind ~= premake.MAKEFILE then
-			local explicit = vstudio.needsExplicitLink(cfg)
+		local explicit = vstudio.needsExplicitLink(cfg)
 
-			_p(2,'<Link>')
+		_p(2,'<Link>')
 
-			vc2010.subSystem(cfg)
-			vc2010.generateDebugInformation(cfg)
-			vc2010.optimizeReferences(cfg)
+		vc2010.subSystem(cfg)
+		vc2010.generateDebugInformation(cfg)
+		vc2010.optimizeReferences(cfg)
 
-			if cfg.kind ~= premake.STATICLIB then
-				vc2010.linkDynamic(cfg, explicit)
-			end
-
-			_p(2,'</Link>')
-
-			if cfg.kind == premake.STATICLIB then
-				vc2010.linkStatic(cfg)
-			end
-
-			vc2010.linkLibraryDependencies(cfg, explicit)
+		if cfg.kind ~= premake.STATICLIB then
+			vc2010.linkDynamic(cfg, explicit)
 		end
+
+		_p(2,'</Link>')
+
+		if cfg.kind == premake.STATICLIB then
+			vc2010.linkStatic(cfg)
+		end
+
+		vc2010.linkLibraryDependencies(cfg, explicit)
 	end
 
 	function vc2010.linkDynamic(cfg, explicit)
