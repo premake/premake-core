@@ -266,32 +266,36 @@
 -- Write the the <ClCompile> compiler settings block.
 --
 
+	vc2010.elements.clCompile = {
+		"precompiledHeader",
+		"warningLevel",
+		"treatWarningAsError",
+		"basicRuntimeChecks",
+		"clCompilePreprocessorDefinitions",
+		"clCompileAdditionalIncludeDirectories",
+		"forceIncludes",
+		"debugInformationFormat",
+		"programDataBaseFileName",
+		"optimization",
+		"functionLevelLinking",
+		"intrinsicFunctions",
+		"minimalRebuild",
+		"omitFramePointers",
+		"stringPooling",
+		"runtimeLibrary",
+		"exceptionHandling",
+		"runtimeTypeInfo",
+		"treatWChar_tAsBuiltInType",
+		"floatingPointModel",
+		"enableEnhancedInstructionSet",
+		"multiProcessorCompilation",
+		"additionalCompileOptions",
+		"compileAs",
+	}
+
 	function vc2010.clCompile(cfg)
 		_p(2,'<ClCompile>')
-		vc2010.precompiledHeader(cfg)
-		vc2010.warningLevel(cfg)
-		vc2010.treatWarningAsError(cfg)
-		vc2010.basicRuntimeChecks(cfg)
-		vc2010.preprocessorDefinitions(cfg, cfg.defines, false)
-		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
-		vc2010.forceIncludes(cfg)
-		vc2010.debugInformationFormat(cfg)
-		vc2010.programDataBaseFileName(cfg)
-		vc2010.optimization(cfg)
-		vc2010.functionLevelLinking(cfg)
-		vc2010.intrinsicFunctions(cfg)
-		vc2010.minimalRebuild(cfg)
-		vc2010.omitFramePointers(cfg)
-		vc2010.stringPooling(cfg)
-		vc2010.runtimeLibrary(cfg)
-		vc2010.exceptionHandling(cfg)
-		vc2010.runtimeTypeInfo(cfg)
-		vc2010.treatWChar_tAsBuiltInType(cfg)
-		vc2010.floatingPointModel(cfg)
-		vc2010.enableEnhancedInstructionSet(cfg)
-		vc2010.multiProcessorCompilation(cfg)
-		vc2010.additionalCompileOptions(cfg)
-		vc2010.compileAs(cfg)
+		premake.callarray(vc2010, vc2010.elements.clCompile, cfg)
 		_p(2,'</ClCompile>')
 	end
 
@@ -300,11 +304,15 @@
 -- Write out the resource compiler block.
 --
 
+	vc2010.elements.resourceCompile = {
+		"resourcePreprocessorDefinitions",
+		"resourceAdditionalIncludeDirectories",
+	}
+
 	function vc2010.resourceCompile(cfg)
 		if cfg.system ~= premake.XBOX360 then
 			_p(2,'<ResourceCompile>')
-			vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
-			vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+			premake.callarray(vc2010, vc2010.elements.resourceCompile, cfg)
 			_p(2,'</ResourceCompile>')
 		end
 	end
@@ -617,6 +625,16 @@
 		if cfg.kind ~= premake.MAKEFILE then
 			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
 		end
+	end
+
+
+	function vc2010.clCompileAdditionalIncludeDirectories(cfg)
+		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
+	end
+
+
+	function vc2010.clCompilePreprocessorDefinitions(cfg)
+		vc2010.preprocessorDefinitions(cfg, cfg.defines, false)
 	end
 
 
@@ -974,6 +992,16 @@
 		end
 
 		_p(1,'<PropertyGroup%s%s>', cond or "", label or "")
+	end
+
+
+	function vc2010.resourceAdditionalIncludeDirectories(cfg)
+		vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+	end
+
+
+	function vc2010.resourcePreprocessorDefinitions(cfg)
+		vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
 	end
 
 
