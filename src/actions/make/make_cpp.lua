@@ -142,8 +142,9 @@
 -- Build command for a single file.
 --
 
-	function cpp.buildcommand(prj, objext)
-		local flags = iif(prj.language == "C", '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
+	function cpp.buildcommand(prj, objext, is_cfile_)
+		local is_cfile = is_cfile_ and is_cfile_ or false
+		local flags = iif(prj.language == "C" or is_cfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
 		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
 	end
 
@@ -184,7 +185,7 @@
 			local objectname = project.getfileobject(prj, node.abspath)
 			_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
 			_p('\t@echo $(notdir $<)')
-			cpp.buildcommand(prj, "o")
+			cpp.buildcommand(prj, "o", path.iscfile(node.abspath))
 
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
