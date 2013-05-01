@@ -154,6 +154,7 @@
 			end
 		end
 
+		vc2010.projectName(prj)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -978,6 +979,13 @@
 
 	function vc2010.projectGuid(prj)
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
+	end
+
+
+	function vc2010.projectName(prj)
+		if prj.name ~= prj.filename then
+			_x(2,'<ProjectName>%s</ProjectName>', prj.name)
+		end
 	end
 
 

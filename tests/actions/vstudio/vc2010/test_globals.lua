@@ -108,3 +108,22 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+---
+-- If the project name differs from the project filename, output a
+-- <ProjectName> element to indicate that.
+---
+
+	function suite.addsFilename_onDifferentFilename()
+		filename "MyProject_2012"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>MyProject</RootNamespace>
+		<ProjectName>MyProject</ProjectName>
+	</PropertyGroup>
+		]]
+	end
