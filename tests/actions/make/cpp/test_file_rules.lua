@@ -46,6 +46,25 @@ $(OBJDIR)/hello1.o: src/hello.cpp
 
 
 --
+-- C files in C++ projects should been compiled as c
+--
+
+	function suite.cFilesGetsCompiledWithCCWhileInCppProject()
+		files { "src/hello.c", "src/test.cpp" }
+		prepare()
+		test.capture [[
+$(OBJDIR)/hello.o: src/hello.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/test.o: src/test.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+  		]]
+	end
+
+
+--
 -- If a custom build rule is supplied, it should be used.
 --
 
