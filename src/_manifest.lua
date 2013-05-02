@@ -57,11 +57,14 @@
 
 		-- Visual Studio actions
 		"actions/vstudio/_vstudio.lua",
+		"actions/vstudio/vs2005.lua",
+		"actions/vstudio/vs2008.lua",
 		"actions/vstudio/vs200x_vcproj.lua",
 		"actions/vstudio/vs200x_vcproj_user.lua",
 		"actions/vstudio/vs2005_solution.lua",
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
+		"actions/vstudio/vs2010.lua",
 		"actions/vstudio/vs2010_vcxproj.lua",
 		"actions/vstudio/vs2010_vcxproj_user.lua",
 		"actions/vstudio/vs2010_vcxproj_filters.lua",
