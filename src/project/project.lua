@@ -299,6 +299,7 @@
 		context.addterms(ctx, ctx.kind)
 
 		context.compile(ctx)
+		context.basedir(ctx, project.getlocation(prj))
 
 		-- Fill in a few calculated for the configuration, including the long
 		-- and short names and the build and link target.
