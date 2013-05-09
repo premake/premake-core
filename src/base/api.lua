@@ -720,12 +720,14 @@
 		name = "forceincludes",
 		scope = "config",
 		kind = "file-list",
+		tokens = true,
 	}
 
 	api.register {
 		name = "forceusings",
 		scope = "config",
 		kind = "file-list",
+		tokens = true,
 	}
 
 	api.register {
