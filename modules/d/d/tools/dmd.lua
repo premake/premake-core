@@ -1,6 +1,4 @@
 
-printf( "[AG] Loading dmd.lua..." )
-
 --
 -- dmd.lua
 -- Provides dmd-specific configuration strings.
@@ -167,48 +165,46 @@ printf( "[AG] Loading dmd.lua..." )
 	end
 
 
-	--
-	-- Returns a list of linker flags for library names.
-	--
+--
+-- Return the list of libraries to link, decorated with flags as needed.
+--
 
-	function tdmd.gcc.getlinks(cfg)
+	function tdmd.gcc.getlinks(cfg, systemonly)
 		local result = {}
 
-		local links = config.getlinks(cfg, "dependencies", "object")
-		for _, link in ipairs(links) do
-			-- skip external project references, since I have no way
-			-- to know the actual output target path
-			if not link.project.externalname then
-				local linkinfo = config.getlinkinfo(link)
-				if link.kind == premake.STATICLIB then
-					-- Don't use "-l" flag when linking static libraries; instead use 
-					-- path/libname.a to avoid linking a shared library of the same
-					-- name if one is present
-					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
-				else
-					table.insert(result, "-L-l" .. linkinfo.basename)
+		local links
+		if not systemonly then
+			links = config.getlinks(cfg, "siblings", "object")
+			for _, link in ipairs(links) do
+				-- skip external project references, since I have no way
+				-- to know the actual output target path
+				if not link.project.external then
+					if link.kind == premake.STATICLIB then
+						-- Don't use "-l" flag when linking static libraries; instead use
+						-- path/libname.a to avoid linking a shared library of the same
+						-- name if one is present
+						table.insert(result, project.getrelative(cfg.project, link.linktarget.abspath))
+					else
+						table.insert(result, "-L-l" .. link.linktarget.basename)
+					end
 				end
 			end
 		end
 
 		-- The "-l" flag is fine for system libraries
-		links = config.getlinks(cfg, "system", "basename")
+		links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
-				table.insert(result, "-L-framework " .. path.getbasename(link))
+				table.insert(result, "-framework " .. path.getbasename(link))
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
-			elseif path.hasextension(link, premake.systems[cfg.system].staticlib.extension) then
-				table.insert(result, link)
 			else
-				table.insert(result, "-L-l" .. link)
+				table.insert(result, "-L-l" .. path.getbasename(link))
 			end
 		end
 
 		return result
-
 	end
-
 
 	--
 	-- Decorate defines for the tdmd.gcc command line.
@@ -289,32 +285,8 @@ printf( "[AG] Loading dmd.lua..." )
 	tdmd.optlink.getobjdir = tdmd.gcc.getobjdir
 	-- getdefines is common
 	tdmd.optlink.getdefines = tdmd.gcc.getdefines
-
-	--
-	-- Returns a list of compiler flags, based on the supplied configuration.
-	--
-
-	function tdmd.optlink.getflags(cfg)
-		local flags = tdmd.optlink.getsysflags(cfg, 'flags')
-
-		--table.insert( f, "-v" )
-		if cfg.kind == premake.STATICLIB then
-			table.insert( flags, "-lib" )
-		elseif cfg.kind == premake.SHAREDLIB then
-			table.insert( flags, "-shared" )
-			if cfg.system ~= premake.WINDOWS then
-				table.insert( flags, "-fPIC" )
-			end
-		end
-
-		if premake.config.isdebugbuild( cfg ) then
-			table.insert( flags, "-debug" )
-		else
-			table.insert( flags, "-release" )
-		end
-
-		return flags
-	end
+	-- getflags is common
+	tdmd.optlink.getflags = tdmd.gcc.getflags
 
 
 	--
@@ -397,7 +369,6 @@ printf( "[AG] Loading dmd.lua..." )
 		premake.tools.dmd = tdmd.optlink
 		premake.tools.dmd.sysflags = tdmd.optlink.sysflags
 	else
-        io.stdout:write( "Setting DMD toolchain to GCC" )
 		premake.tools.dmd = tdmd.gcc
 		premake.tools.dmd.sysflags = tdmd.gcc.sysflags
 	end

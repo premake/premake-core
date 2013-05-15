@@ -1,55 +1,55 @@
 
 --
+-- Create a D namespace to isolate the additions
+--
+    premake.extensions.d = {}
+    local project = premake5.project
+
+    local d = premake.extensions.d
+    d.support_url = "https://bitbucket.org/premakeext/d/wiki/Home"
+
+    d.printf = function( msg, ... )
+        printf( "[premake-d] " .. msg, ...)
+    end
+
+
+    d.printf( "Loading Premake D extension (cwd = %s)", os.getcwd() )
+
+--
 -- Register the D extension
 --
-premake.D = "D"
+    premake.D = "D"
 
-local lang = premake.fields["language"];
-if lang ~= nil and lang.allowed.D == nil then
-    table.insert( lang.allowed, "D" );
-end
+    local lang = premake.fields["language"];
+    if lang ~= nil and lang.allowed.D == nil then
+        table.insert( lang.allowed, "D" );
+    end
 
 --
 -- Provide information for the help output
 --
-newoption
-{
-    trigger     = "dc",
-    value       = "VALUE",
-    description = "Choose a D compiler",
-    allowed = {
-        { "dmd", "Digital Mars (dmd)" },
-        { "gdc", "GNU GDC (gdc)" },
-        { "ldc", "LLVM LDC (ldc2)" },
+    newoption
+    {
+        trigger     = "dc",
+        value       = "VALUE",
+        description = "Choose a D compiler",
+        allowed = {
+            { "dmd", "Digital Mars (dmd)" },
+            { "gdc", "GNU GDC (gdc)" },
+            { "ldc", "LLVM LDC (ldc2)" },
+        }
     }
-}
-
---
--- Create a D namespace to isolate the additions
---
-premake.extensions.d = {}
-local d = premake.extensions.d
-local project = premake5.project
 
 --
 -- Add our valid actions/tools to the ipredefined action(s)
---
-
-printf( "[AG] Current working directory is %s", os.getcwd() )
-
---
 -- For each of the nominated allowed toolsets in the 'dc' options above,
 -- we require a similarly named tools file in 'd/tools/<dc>.lua
 --
 
-local dc = premake.option.get( "dc" )
-if dc ~= nil then
-    for k,v in pairs(dc.allowed) do
-        if os.isfile( "d/tools/" .. v[ 1 ] .. ".lua" ) then
-            require( "d/tools/" .. v[ 1 ] )
-        end
+    for k,v in pairs({"dmd", "gdc", "ldc"}) do
+        require( "d/tools/" .. v )
+        d.printf( "Loaded D tool '%s.lua'", v )
     end
-end
 
 --
 -- For each registered premake <action>, we can simply add a file to the
@@ -58,11 +58,10 @@ end
 -- pre-defined actions by adding a named file.  This eases development as
 -- we don't need to cram make stuff in with VS stuff etc.
 --
-for k,v in pairs(premake.action.list) do
-    if os.isfile( "d/actions/" .. v.trigger .. ".lua" ) then
-        require( "d/actions/" .. v.trigger )
+    for k,v in pairs({ "gmake" }) do
+        require( "d/actions/" .. v )
+        d.printf( "Loaded D action '%s.lua'", v )
     end
-end
 
 --
 -- Patch the project structure to allow the determination of project type
@@ -70,14 +69,14 @@ end
 -- extension files
 --
 
-function project.isd(prj)
-	return string.lower( prj.language ) == string.lower( premake.D )
-end
+    function project.isd(prj)
+        return string.lower( prj.language ) == string.lower( premake.D )
+    end
 
 --
 -- Patch the path table to provide knowledge of D file extenstions
 --
-function path.isdfile(fname)
-    return path.hasextension(fname, { ".d", ".di" })
-end
+    function path.isdfile(fname)
+        return path.hasextension(fname, { ".d", ".di" })
+    end
 
