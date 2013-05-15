@@ -69,24 +69,15 @@
 --
 
 	function io.printf(msg, ...)
-		if not io.eol then
-			io.eol = "\n"
-		end
-
-		if not io.indent then
-			io.indent = "\t"
-		end
-
 		if type(msg) == "number" then
 			local str, fmt, x = unpack(arg)
-			s = string.rep(io.indent, msg) .. string.format(unpack(arg))
+			s = string.rep(io.indent or "\t", msg) .. string.format(unpack(arg))
 		else
 			s = string.format(msg, unpack(arg))
 		end
 
 		if not io._captured then
 			io.write(s)
-			io.write(io.eol)
 		else
 			table.insert(io._captured, s)
 			io._captured_string = nil
@@ -108,16 +99,21 @@
 -- for it. This saves me typing, and also reduces the size of the executable.
 --
 
-	_p = io.printf
+	function _p(msg, ...)
+		io.printf(msg, unpack(arg))
+		if not io._captured then
+			io.write(io.eol or "\n")
+		end
+	end
 
 
 --
 -- Another variation that calls esc() on all of its arguments before formatting.
 --
 
-	_x = function(msg, ...)
+	function _x(msg, ...)
 		for i=2, #arg do
 			arg[i] = premake.esc(arg[i])
 		end
-		io.printf(msg, unpack(arg))
+		_p(msg, unpack(arg))
 	end

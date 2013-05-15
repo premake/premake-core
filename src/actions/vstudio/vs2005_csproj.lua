@@ -27,6 +27,7 @@
 	function cs2005.generate_ng(prj)
 		io.eol = "\r\n"
 		io.indent = "  "
+		io.utf8()
 
 		premake.callarray(cs2005, cs2005.elements.project, prj)
 
@@ -45,7 +46,7 @@
 		cs2005.targets(prj)
 		cs2005.buildEvents(prj)
 
-		_p('</Project>')
+		io.printf('</Project>')
 	end
 
 
@@ -455,7 +456,8 @@
 
 	function cs2005.targetFrameworkProfile(prj)
 		if _ACTION == "vs2010" then
-			_p(2,'<TargetFrameworkProfile></TargetFrameworkProfile>')
+			_p(2,'<TargetFrameworkProfile>')
+			_p(2,'</TargetFrameworkProfile>')
 		end
 	end
 

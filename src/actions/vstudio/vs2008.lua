@@ -50,7 +50,7 @@
 
 		vstudio = {
 			csprojSchemaVersion = "2.0",
-			productVersion      = "9.0.21022",
+			productVersion      = "9.0.30729",
 			solutionVersion     = "10",
 			toolsVersion        = "3.5",
 		}
