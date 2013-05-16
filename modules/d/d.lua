@@ -13,7 +13,13 @@
     end
 
 
-    d.printf( "Loading Premake D extension (cwd = %s)", os.getcwd() )
+    d.printf( "Loading Premake D extension" )
+
+    -- Extend the package path to include the directory containing this
+    -- script so we can easily 'require' additional resources
+    local this_dir = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]]; 
+    package.path = this_dir .. "tools/?.lua;" .. this_dir .. "actions/?.lua;".. package.path
+    d.printf( "Added D tools/actions directories to LUA_PATH: %s", package.path )
 
 --
 -- Register the D extension
@@ -47,7 +53,7 @@
 --
 
     for k,v in pairs({"dmd", "gdc", "ldc"}) do
-        require( "d/tools/" .. v )
+        require( v )
         d.printf( "Loaded D tool '%s.lua'", v )
     end
 
@@ -59,7 +65,7 @@
 -- we don't need to cram make stuff in with VS stuff etc.
 --
     for k,v in pairs({ "gmake" }) do
-        require( "d/actions/" .. v )
+        require( v )
         d.printf( "Loaded D action '%s.lua'", v )
     end
 
