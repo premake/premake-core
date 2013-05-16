@@ -1,7 +1,7 @@
 --
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	premake.tools.gcc = {}
@@ -173,7 +173,7 @@
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
-		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do
+		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-L' .. project.getrelative(cfg.project, dir))
 		end
 
@@ -216,27 +216,17 @@
 	function gcc.getlinks(cfg, systemonly)
 		local result = {}
 
-		local links
+		-- Don't use the -l form for sibling libraries, since they may have
+		-- custom prefixes or extensions that will confuse the linker. Instead
+		-- just list out the full relative path to the library.
+
 		if not systemonly then
-			links = config.getlinks(cfg, "siblings", "object")
-			for _, link in ipairs(links) do
-				-- skip external project references, since I have no way
-				-- to know the actual output target path
-				if not link.project.external then
-					if link.kind == premake.STATICLIB then
-						-- Don't use "-l" flag when linking static libraries; instead use
-						-- path/libname.a to avoid linking a shared library of the same
-						-- name if one is present
-						table.insert(result, project.getrelative(cfg.project, link.linktarget.abspath))
-					else
-						table.insert(result, "-l" .. link.linktarget.basename)
-					end
-				end
-			end
+			result = config.getlinks(cfg, "siblings", "fullpath")
 		end
 
 		-- The "-l" flag is fine for system libraries
-		links = config.getlinks(cfg, "system", "fullpath")
+
+		local links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))

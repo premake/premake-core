@@ -114,6 +114,8 @@
 * Patch 154: Fix .def file support for VS2010 (Riccardo Ghetta)
 * Patch 159: Validate all values passed to options (Moi_ioM)
 * Pull 11: Add support for Visual Studio 2012 (Oliver Schneider)
+* Bug 171: ImpLib used incorrectly in dependency paths
+* Bug 176: Target prefix breaks GCC linking
 
 
 -------

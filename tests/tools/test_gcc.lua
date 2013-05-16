@@ -1,7 +1,7 @@
 --
 -- tests/test_gcc.lua
 -- Automated test suite for the GCC toolset interface.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	T.tools_gcc = { }
@@ -238,7 +238,7 @@
 -- Use the -lname format when linking to sibling shared libraries.
 --
 
-	function suite.links_onStaticSharedLibrary()
+	function suite.links_onSharedSiblingLibrary()
 		links { "MyProject2" }
 
 		test.createproject(sln)
@@ -247,7 +247,7 @@
 		targetdir "lib"
 
 		prepare()
-		test.isequal({ "-lMyProject2" }, gcc.getlinks(cfg))
+		test.isequal({ "lib/libMyProject2.so" }, gcc.getlinks(cfg))
 	end
 
 

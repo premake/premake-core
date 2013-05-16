@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_make_linking.lua
 -- Validate the link step generation for makefiles.
--- Copyright (c) 2010-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2013 Jason Perkins and the Premake project
 --
 
 	T.make_linking = { }
@@ -104,7 +104,7 @@
 
 		prepare()
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -Lbuild -s
+  ALL_LDFLAGS  += $(LDFLAGS) -s
   LIBS      += build/libMyProject2.a
   LDDEPS    += build/libMyProject2.a
 		]]
@@ -124,8 +124,8 @@
 
 		prepare()
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -Lbuild -s
-  LIBS      += -lMyProject2
+  ALL_LDFLAGS  += $(LDFLAGS) -s
+  LIBS      += build/libMyProject2.so
   LDDEPS    += build/libMyProject2.so
 		]]
 	end
