@@ -39,7 +39,7 @@ require "d"
 
 ### Example ###
 
-Simplisticly, lets assume you have the [Premake D Extension](https://bitbucket.org/premakeext/d) 
+Simplistically, lets assume you have the [Premake D Extension](https://bitbucket.org/premakeext/d) 
 checked out to "/home/user/premake-ext/d" and have a D console application project with the following 
 structure:
 
