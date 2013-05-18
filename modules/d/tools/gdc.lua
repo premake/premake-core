@@ -163,9 +163,6 @@
 		local result = {}
 
 		local links = config.getlinks(cfg, "dependencies", "object")
-        if #links > 0 then
-            table.insert(result,"-Wl,--start-group" )
-        end
 		for _, link in ipairs(links) do
 			-- skip external project references, since I have no way
 			-- to know the actual output target path
@@ -181,9 +178,6 @@
 				end
 			end
 		end
-        if #links > 0 then
-            table.insert(result,"-Wl,--end-group" )
-        end
 
 		-- The "-l" flag is fine for system libraries
 		links = config.getlinks(cfg, "system", "basename")
@@ -191,8 +185,6 @@
 			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))
 			elseif path.isobjectfile(link) then
-				table.insert(result, link)
-			elseif path.hasextension(link, premake.systems[cfg.system].staticlib.extension) then
 				table.insert(result, link)
 			else
 				table.insert(result, "-Wl,-l" .. link)
@@ -228,5 +220,10 @@
 			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
 		end
 		return result
+	end
+
+	function gdc.getmakesettings(cfg)
+		local sysflags = gdc.sysflags[cfg.architecture] or gdc.sysflags[cfg.system] or {}
+		return sysflags.cfgsettings
 	end
 

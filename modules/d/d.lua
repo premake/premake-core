@@ -16,10 +16,11 @@
     d.printf( "Loading Premake D extension" )
 
     -- Extend the package path to include the directory containing this
-    -- script so we can easily 'require' additional resources
+    -- script so we can easily 'require' additional resources from
+    -- subdirectories as necessary
     local this_dir = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]]; 
     package.path = this_dir .. "tools/?.lua;" .. this_dir .. "actions/?.lua;".. package.path
-    d.printf( "Added D tools/actions directories to LUA_PATH: %s", package.path )
+--    d.printf( "Added D tools/actions directories to LUA_PATH: %s", package.path )
 
 --
 -- Register the D extension
@@ -47,14 +48,49 @@
     }
 
 --
+-- Return the appropriate tool interface, based on the target language and
+-- any relevant command-line options.
+--
+
+	premake.override( premake, "gettool", function(oldfn, cfg)
+		d.printf( "D overridden gettool")
+		if project.iscpp(cfg) then
+			if _OPTIONS.cc then
+				return premake[_OPTIONS.cc]
+			end
+			local action = premake.action.current()
+			if action.valid_tools then
+				return premake[action.valid_tools.cc[1]]
+			end
+			return premake.gcc
+		elseif project.isd(cfg) then
+			if _OPTIONS.dc then
+				return premake[_OPTIONS.dc]
+			end
+			local action = premake.action.current()
+			if action.valid_tools then
+				return premake[action.valid_tools.dc[1]]
+			end
+			return premake.dmd
+		else
+			return premake.dotnet
+		end
+	end)
+
+
+--
 -- Add our valid actions/tools to the ipredefined action(s)
 -- For each of the nominated allowed toolsets in the 'dc' options above,
 -- we require a similarly named tools file in 'd/tools/<dc>.lua
 --
 
+	local toolsets = premake.fields[ "toolset" ]
     for k,v in pairs({"dmd", "gdc", "ldc"}) do
         require( v )
         d.printf( "Loaded D tool '%s.lua'", v )
+		if toolsets ~= nil then
+			table.insert( toolsets.allowed, v )
+		end
     end
 
 --

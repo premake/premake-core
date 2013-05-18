@@ -4,23 +4,28 @@
 -- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
+	premake.tools.ldc = { }
 
-	premake.ldc = { }
+	local ldc = premake.tools.ldc
+	local project = premake5.project
+	local config = premake5.config
+	
+    local d = premake.extensions.d
 
 
 --
 -- Set default tools
 --
 
-	premake.ldc.dc    = "ldc2"
-
+	ldc.dc    = "ldc2"
+	ldc.namestyle = "posix"
 
 --
 -- Translation of Premake flags into GCC flags
 --
 
 	local flags =
-		{
+	{
 		ExtraWarnings   = "-w",
 		Optimize        = "-O2",
 		Symbols         = "-g",
@@ -39,9 +44,9 @@
 -- Map platforms to flags
 --
 
-	premake.ldc.platforms = 
+	ldc.sysflags = 
 	{
-		Native = {
+		universal = {
 			flags    = "",
 			ldflags  = "", 
 		},
@@ -55,24 +60,41 @@
 		}
 	}
 
-	local platforms = premake.ldc.platforms
-
+	local sysflags = ldc.sysflags
 
 	--
 	-- Returns the target name specific to compiler
 	--
 
-	function premake.ldc.gettarget(name)
+	function ldc.gettarget(name)
 		return "-of=" .. name
 	end
-
 
 	--
 	-- Returns the object directory name specific to compiler
 	--
 
-	function premake.ldc.getobjdir(name)
+	function ldc.getobjdir(name)
 		return "-od=" .. name
+	end
+
+
+	function ldc.getsysflags(cfg, field)
+		local result = {}
+
+		-- merge in system-level flags
+		local system = sysflags[cfg.system]
+		if system then
+			result = table.join(result, system[field])
+		end
+
+		-- merge in architecture-level flags
+		local arch = sysflags[cfg.architecture]
+		if arch then
+			result = table.join(result, arch[field])
+		end
+
+		return result
 	end
 
 
@@ -80,10 +102,8 @@
 	-- Returns a list of compiler flags, based on the supplied configuration.
 	--
 
-	function premake.ldc.getflags(cfg)
-		local f = table.translate(cfg.flags, flags)
-
-		table.insert(f, platforms[cfg.platform].flags)
+	function ldc.getflags(cfg)
+		local f = ldc.getsysflags(cfg, 'flags')
 
 		--table.insert( f, "-v" )
 		if cfg.kind == "StaticLib" then
@@ -104,10 +124,11 @@
 	-- Returns a list of linker flags, based on the supplied configuration.
 	--
 
-	function premake.ldc.getldflags(cfg)
+	function ldc.getldflags(cfg)
 		local result = {}
 
-		table.insert(result, platforms[cfg.platform].ldflags)
+		local sysflags = ldc.getsysflags(cfg, 'ldflags')
+		table.join(result, sysflags)
 
 		return result
 	end
@@ -117,7 +138,7 @@
 	-- Return a list of library search paths.
 	--
 
-	function premake.ldc.getlibdirflags(cfg)
+	function ldc.getlibdirflags(cfg)
 		local result = {}
 
 		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
@@ -132,32 +153,40 @@
 	-- Returns a list of linker flags for library names.
 	--
 
-	function premake.ldc.getlinkflags(cfg)
+	function ldc.getlinks(cfg)
 		local result = {}
 
-		for _, value in ipairs(premake.getlinks(cfg, "siblings", "object")) do
-			if (value.kind == "StaticLib") then
-				local pathstyle = premake.getpathstyle(value)
-				local namestyle = premake.getnamestyle(value)
-				local linktarget = premake.gettarget(value, "link",  pathstyle, namestyle, cfg.system)
-				local rebasedpath = path.rebase(linktarget.fullpath, value.location, cfg.location)
-				table.insert(result, rebasedpath)
-			elseif (value.kind == "SharedLib") then
-				table.insert(result, '-L-l' .. _MAKE.esc(value.linktarget.basename))
-			else
-				-- TODO When premake supports the creation of frameworks
+		local links = config.getlinks(cfg, "dependencies", "object")
+		for _, link in ipairs(links) do
+			-- skip external project references, since I have no way
+			-- to know the actual output target path
+			if not link.project.externalname then
+				local linkinfo = config.getlinkinfo(link)
+				if link.kind == premake.STATICLIB then
+					-- Don't use "-l" flag when linking static libraries; instead use 
+					-- path/libname.a to avoid linking a shared library of the same
+					-- name if one is present
+					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
+				else
+					table.insert(result, "-L-l" .. linkinfo.basename)
+				end
 			end
 		end
 
-		for _, value in ipairs(premake.getlinks(cfg, "system", "basename")) do
-			if path.getextension(value) == ".framework" then
-				table.insert(result, '-L-framework -L' .. _MAKE.esc(path.getbasename(value)))
+		-- The "-l" flag is fine for system libraries
+		links = config.getlinks(cfg, "system", "basename")
+		for _, link in ipairs(links) do
+			if path.isframework(link) then
+				table.insert(result, "-framework " .. path.getbasename(link))
+			elseif path.isobjectfile(link) then
+				table.insert(result, link)
 			else
-				table.insert(result, '-L-l' .. _MAKE.esc(value))
+				table.insert(result, "-L-l" .. link)
 			end
 		end
 
 		return result
+
 	end
 
 
@@ -165,7 +194,7 @@
 	-- Decorate defines for the ldc command line.
 	--
 
-	function premake.ldc.getdefines(defines)
+	function ldc.getdefines(defines)
 		local result = { }
 		for _,def in ipairs(defines) do
 			table.insert(result, '-d-version=' .. def)
@@ -179,11 +208,16 @@
 	-- Decorate include file search paths for the ldc command line.
 	--
 
-	function premake.ldc.getincludedirs(includedirs)
-		local result = { }
-		for _,dir in ipairs(includedirs) do
-			table.insert(result, "-I=" .. _MAKE.esc(dir))
+	function ldc.getincludedirs(cfg)
+		local result = {}
+		for _, dir in ipairs(cfg.includedirs) do
+			table.insert(result, "-I=" .. project.getrelative(cfg.project, dir))
 		end
 		return result
+	end
+
+	function ldc.getmakesettings(cfg)
+		local sysflags = ldc.sysflags[cfg.architecture] or ldc.sysflags[cfg.system] or {}
+		return sysflags.cfgsettings
 	end
 

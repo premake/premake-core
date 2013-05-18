@@ -51,8 +51,10 @@
     local toolset
     function d.generate(prj)
 
-        _p( "# Premake D extension generated file.  See %s", premake.extensions.d.support_url )
+        toolset = premake.tools[_OPTIONS.dc or "dmd"]
+
         make.header(prj)
+        _p( "# Premake D extension generated file.  See %s", premake.extensions.d.support_url )
 
         -- main build rule(s)
         _p('.PHONY: clean prebuild prelink')
@@ -114,11 +116,6 @@
 --
 
     function d.config(cfg)
-
-        toolset = premake.tools[cfg.toolset or "dmd"]
-        if not toolset then
-            error("Invalid toolset '" + cfg.toolset + "'")
-        end
 
         _p('ifeq ($(config),%s)', make.esc(cfg.shortname))
 
@@ -183,8 +180,8 @@
 --
 
     function d.linkconfig(cfg, toolset)
-        local flags = toolset.getlinks(cfg)
-        _p('  LIBS      += %s', table.concat(flags, " "))
+        local libs = toolset.getlinks(cfg)
+        _p('  LIBS      += %s', table.concat(libs, " "))
 
         local deps = config.getlinks(cfg, "siblings", "fullpath")
         _p('  LDDEPS    += %s', table.concat(make.esc(deps), " "))

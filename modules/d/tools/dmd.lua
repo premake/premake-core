@@ -220,7 +220,7 @@
 
 
 	--
-	-- Decorate include file search paths for the GCC command line.
+	-- Decorate include file search paths for the DMD command line.
 	--
 
 	function tdmd.gcc.getincludedirs(cfg)
