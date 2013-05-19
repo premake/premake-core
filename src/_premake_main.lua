@@ -38,9 +38,11 @@
 		-- Enable extensions - the '?' character is replaced with the extension
 		-- name so the extension directory name _must_ be the same as the
 		-- extension Lua file.  eg. .../d/d.lua, .../codelite/codelite.lua etc
+		local home = os.getenv("HOME") or os.getenv("USERPROFILE")
 		local extdirs = { 
+			home .. "/.premake/?/?.lua",
 			path.getdirectory( _PREMAKE_COMMAND ) .. "/ext/?/?.lua", 
-			"./premake/?/?.lua", 
+			"./premake/?/?.lua",
 			"/usr/share/premake/?/?.lua" }
 		for _,v in ipairs(extdirs) do
 			package.path = package.path .. ";" .. v
