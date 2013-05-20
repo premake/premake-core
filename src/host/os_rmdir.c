@@ -1,7 +1,7 @@
 /**
  * \file   os_rmdir.c
  * \brief  Remove a subdirectory.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -16,7 +16,7 @@ int os_rmdir(lua_State* L)
 #if PLATFORM_WINDOWS
 	z = RemoveDirectory(path);
 #else
-	z = rmdir(path);
+	z = (0 == rmdir(path));
 #endif
 
 	if (!z)
