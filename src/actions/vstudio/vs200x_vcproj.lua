@@ -22,41 +22,64 @@
 		vc200x.xmlElement()
 		vc200x.visualStudioProject(prj)
 
-		-- output the list of configuration/architecture pairs used by
-		-- the project; sends back list of unique architectures
+		-- Output the list of configuration/architecture pairs used by the project.
+		-- Returns the set of unique architectures, to be used in the configuration
+		-- enumeration loop below.
+
 		local architectures = vc200x.platforms(prj)
 
-		if _ACTION > "vs2003" then
-			_p(1,'<ToolFiles>')
-			_p(1,'</ToolFiles>')
-		end
+		vc200x.toolFiles(prj)
+
+		_p(1,'<Configurations>')
 
 		-- Visual Studio requires each configuration to be paired up with each
 		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
-		-- DLL DCRT|PS3). I already have a list of all the unique architectures;
-		-- make a list of configuration-architecture pairs used by the project.
+		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
+		-- that actually are in the project; I'll use this to help identify the
+		-- configurations that *aren't* in the project below.
+
 		local prjcfgs = {}
 		for cfg in project.eachconfig(prj) do
 			local cfgname = vstudio.projectConfig(cfg)
-			prjcfgs[cfgname] = cfgname
+			prjcfgs[cfgname] = true
 		end
 
-		_p(1,'<Configurations>')
+		-- Now enumerate all of the configurations in the project and write
+		-- out their <Configuration> blocks.
+
 		for cfg in project.eachconfig(prj) do
 			local prjcfg = vstudio.projectConfig(cfg)
+
+			-- Visual Studio wants the architectures listed in a specific
+			-- order, so enumerate them that way.
+
 			for _, arch in ipairs(architectures) do
 				local tstcfg = vstudio.projectConfig(cfg, arch)
+
+				-- Does this architecture match the one in the project config
+				-- that I'm trying to write? If so, go ahead and output the
+				-- full <Configuration> block.
+
 				if prjcfg == tstcfg then
 					-- this is a real project configuration
 					vc200x.configuration(cfg)
 					vc200x.tools(cfg)
 					_p(2,'</Configuration>')
+
+				-- Otherwise, check the list of valid configurations I built
+				-- earlier. If this configuration is in the list, then I will
+				-- get to it on another pass of this loop. If it is not in
+				-- the list, then it isn't really part of the project, and I
+				-- need to output a dummy configuration in its place.
+
 				elseif not prjcfgs[tstcfg] then
 					-- this is a fake config to make VS happy
 					vc200x.emptyConfiguration(cfg, arch)
 				end
+
 			end
 		end
+
 		_p(1,'</Configurations>')
 
 		_p(1,'<References>')
@@ -103,7 +126,12 @@
 		end
 
 		if isWin then
-			if _ACTION > "vs2003" and not isMakefile then
+
+			-- Technically, this should be skipped for pure makefile projects that
+			-- do not contain any empty configurations. But I need to figure out a
+			-- a good way to check the empty configuration bit first.
+
+			if _ACTION > "vs2003" then
 				_x(1,'RootNamespace="%s"', prj.name)
 			end
 
@@ -192,7 +220,7 @@
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
 
-		local tools = vc200x.toolsForConfig(cfg)
+		local tools = vc200x.toolsForConfig(cfg, true)
 		for _, tool in ipairs(tools) do
 			vc200x.tool(tool)
 		end
@@ -207,13 +235,19 @@
 --
 ---------------------------------------------------------------------------
 
---
+---
 -- Return the list of tools required to build a specific configuration.
 -- Each tool gets represented by an XML element in the project file.
 --
+-- @param cfg
+--    The configuration being written.
+-- @param isEmptyCfg
+--    If true, the list is for the generation of an empty or dummy
+--    configuration block; in this case different rules apply.
+--
 
-	function vc200x.toolsForConfig(cfg)
-		if cfg.kind == premake.MAKEFILE then
+	function vc200x.toolsForConfig(cfg, isEmptyCfg)
+		if cfg.kind == premake.MAKEFILE and not isEmptyCfg then
 			return {
 				"VCNMakeTool"
 			}
@@ -325,6 +359,13 @@
 			else
 				vc200x.tool(tool)
 			end
+		end
+	end
+
+
+	function vc200x.VCAppVerifierTool(cfg)
+		if cfg.kind ~= premake.STATICLIB then
+			vc200x.tool("VCAppVerifierTool")
 		end
 	end
 
@@ -581,6 +622,10 @@
 
 
 	function vc200x.VCManifestTool(cfg)
+		if cfg.kind == premake.STATICLIB then
+			return
+		end
+
 		local manifests = {}
 		for _, fname in ipairs(cfg.files) do
 			if path.getextension(fname) == ".manifest" then
@@ -695,6 +740,7 @@
 
 	vc200x.toolmap = {
 		DebuggerTool           = vc200x.DebuggerTool,
+		VCAppVerifierTool      = vc200x.VCAppVerifierTool,
 		VCCLCompilerTool       = vc200x.VCCLCompilerTool,
 		VCLinkerTool           = vc200x.VCLinkerTool,
 		VCManifestTool         = vc200x.VCManifestTool,
@@ -716,7 +762,16 @@
 ---------------------------------------------------------------------------
 
 	function vc200x.files(prj)
-		local tr = project.getsourcetree(prj)
+		local tr = project.getsourcetree(prj, function(a,b)
+			local aSortName = a.name
+			local bSortName = b.name
+
+			-- Only file nodes have a relpath field; folder nodes do not
+			if a.relpath then aSortName = a.relpath:gsub("%.%.%/", "") end
+			if b.relpath then bSortName = b.relpath:gsub("%.%.%/", "") end
+
+			return aSortName < bSortName
+		end)
 
 		premake.tree.traverse(tr, {
 
@@ -1051,6 +1106,14 @@
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		_p(3,'/>')
+	end
+
+
+	function vc200x.toolFiles(prj)
+		if _ACTION > "vs2003" then
+			_p(1,'<ToolFiles>')
+			_p(1,'</ToolFiles>')
+		end
 	end
 
 

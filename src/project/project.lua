@@ -609,6 +609,8 @@
 --
 -- @param prj
 --    The project to query.
+-- @param sorter
+--    An optional comparator function for the sorting pass.
 -- @return
 --    A tree object containing the source file hierarchy. Leaf nodes
 --    representing the individual files contain the fields:
@@ -621,7 +623,7 @@
 --      name     - the directory or file name represented by the node
 --
 
-	function project.getsourcetree(prj)
+	function project.getsourcetree(prj, sorter)
 		-- make sure I have the project, and not it's root configuration
 		prj = prj.project or prj
 
@@ -650,24 +652,24 @@
 			-- The tree represents the logical source code tree to be displayed
 			-- in the IDE, not the physical organization of the file system. So
 			-- virtual paths are used when adding nodes.
-			local node = premake.tree.add(tr, fcfg.vpath, function(node)
-				-- ...but when a real file system path is used, store it so that
-				-- an association can be made in the IDE
-				if fcfg.vpath == fcfg.relpath then
-					node.realpath = node.path
-				end
-			end)
+			local node = premake.tree.add(tr, fcfg.vpath)
 
 			-- Store full file configuration in file (leaf) nodes
 			for key, value in pairs(fcfg) do
 				node[key] = value
 			end
 
+			-- ...but when a real file system path is used, store it so that
+			-- an association can be made in the IDE
+			if fcfg.vpath == fcfg.relpath then
+				node.realpath = node.path
+			end
+
 			prj.fileconfigs[node.abspath] = node
 		end
 
 		premake.tree.trimroot(tr)
-		premake.tree.sort(tr)
+		premake.tree.sort(tr, sorter)
 
 		-- cache result and return
 		prj.sourcetree = tr

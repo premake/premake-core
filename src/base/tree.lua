@@ -169,14 +169,17 @@
 --
 -- @param tr
 --    The tree to sort.
+-- @param fn
+--    An optional comparator function.
 --
 
-	function tree.sort(tr)
+	function tree.sort(tr, fn)
+		if not fn then
+			fn = function(a,b) return a.name < b.name end
+		end
 		tree.traverse(tr, {
 			onnode = function(node)
-				table.sort(node.children, function(a,b)
-					return a.name < b.name
-				end)
+				table.sort(node.children, fn)
 			end
 		}, true)
 	end

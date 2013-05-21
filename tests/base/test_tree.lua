@@ -14,7 +14,7 @@
 --
 
 	local tr
-			
+
 	function suite.setup()
 		tr = tree.new()
 	end
@@ -99,7 +99,7 @@
 		test.isequal("13", r)
 	end
 
-	
+
 	function suite.Remove_WorksInTraversal()
 		tree.add(tr, "Root/1")
 		tree.add(tr, "Root/2")
@@ -157,6 +157,7 @@
 			1
 		]]
 	end
+
 
 --
 -- Should trim to first level with multiple items.
