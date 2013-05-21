@@ -54,7 +54,6 @@
 		</File>
 		<Filter
 			Name="src"
-			Filter=""
 			>
 			<File
 				RelativePath="src\hello.cpp"
@@ -79,11 +78,9 @@
 		</File>
 		<Filter
 			Name="src"
-			Filter=""
 			>
 			<Filter
 				Name="greetings"
-				Filter=""
 				>
 				<File
 					RelativePath="src\greetings\hello.cpp"
@@ -106,7 +103,6 @@
 		test.capture [[
 		<Filter
 			Name="Source Files"
-			Filter=""
 			>
 			<File
 				RelativePath="src\hello.cpp"
@@ -322,7 +318,6 @@
 		test.capture [[
 		<Filter
 			Name="greetings"
-			Filter=""
 			>
 			<File
 				RelativePath="greetings\hello.cpp"

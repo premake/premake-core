@@ -63,7 +63,7 @@
 
 		vc2010.import(prj)
 
-		_p('</Project>')
+		io.printf('</Project>')
 	end
 
 

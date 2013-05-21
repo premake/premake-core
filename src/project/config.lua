@@ -351,7 +351,7 @@
 
 		-- If I'm building a list of link directories, include libdirs
 
-		if part == "directory" and kind == "all" then
+		if part == "directory" then
 			table.foreachi(cfg.libdirs, function(dir)
 				table.insert(result, project.getrelative(cfg.project, dir))
 			end)

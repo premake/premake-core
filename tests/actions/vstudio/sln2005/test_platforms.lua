@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_platforms.lua
 -- Test the Visual Studio 2005-2010 platform mapping blocks.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	T.vstudio_sln2005_platforms = { }
@@ -495,20 +495,20 @@
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
 		Debug|x64 = Debug|x64
-		Release|x86 = Release|x86
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.ActiveCfg = Debug|x86
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.Build.0 = Debug|x86
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x64.ActiveCfg = Debug|x64
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x64.Build.0 = Debug|x64
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.ActiveCfg = Release|x86
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.Build.0 = Release|x86
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.ActiveCfg = Debug|x86
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.Build.0 = Debug|x86
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x64.ActiveCfg = Release|x64
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x64.Build.0 = Release|x64
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.ActiveCfg = Release|x86
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 		]]
 	end
@@ -523,28 +523,28 @@
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
 		Debug|x64 = Debug|x64
-		Release|x86 = Release|x86
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|x86.ActiveCfg = Debug|x86
-		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|x86.Build.0 = Debug|x86
 		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|x64.ActiveCfg = Debug|x64
 		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|x64.Build.0 = Debug|x64
-		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|x86.ActiveCfg = Release|x86
-		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|x86.Build.0 = Release|x86
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|x86.ActiveCfg = Debug|x86
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Debug|x86.Build.0 = Debug|x86
 		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|x64.ActiveCfg = Release|x64
 		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|x64.Build.0 = Release|x64
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.ActiveCfg = Debug|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.Build.0 = Debug|Win32
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|x86.ActiveCfg = Release|x86
+		{52AD9329-0D74-4F66-A213-E649D8CCD737}.Release|x86.Build.0 = Release|x86
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x64.ActiveCfg = Debug|x64
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x64.Build.0 = Debug|x64
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.ActiveCfg = Release|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.Build.0 = Release|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.ActiveCfg = Debug|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|x86.Build.0 = Debug|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x64.ActiveCfg = Release|x64
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x64.Build.0 = Release|x64
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.ActiveCfg = Release|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 		]]
 	end
@@ -613,6 +613,35 @@
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Any CPU.Build.0 = Debug Any CPU|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.ActiveCfg = Release Any CPU|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Any CPU.Build.0 = Release Any CPU|Win32
+	EndGlobalSection
+		]]
+	end
+
+
+---
+-- Check the sort order of the configurations.
+---
+
+	function suite.sortsByBuildCfgAndPlatform()
+		platforms { "Windows", "PS3" }
+		project "MyProject"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|PS3 = Debug|PS3
+		Debug|Windows = Debug|Windows
+		Release|PS3 = Release|PS3
+		Release|Windows = Release|Windows
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|PS3.ActiveCfg = Debug PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|PS3.Build.0 = Debug PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Windows.ActiveCfg = Debug Windows|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Windows.Build.0 = Debug Windows|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|PS3.ActiveCfg = Release PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|PS3.Build.0 = Release PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Windows.ActiveCfg = Release Windows|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Windows.Build.0 = Release Windows|Win32
 	EndGlobalSection
 		]]
 	end

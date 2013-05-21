@@ -643,7 +643,7 @@
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		if #steps > 0 then
-			_x(4,'CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
+			_x(4,'CommandLine="%s"', table.implode(steps, "", "\r\n", ""))
 		end
 		_p(3,'/>')
 	end
@@ -724,7 +724,6 @@
 			onbranchenter = function(node, depth)
 				_p(depth, '<Filter')
 				_p(depth, '\tName="%s"', node.name)
-				_p(depth, '\tFilter=""')
 				_p(depth, '\t>')
 			end,
 

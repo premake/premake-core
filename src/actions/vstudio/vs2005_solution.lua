@@ -131,26 +131,43 @@
 --
 
 	function sln2005.configurationPlatforms(sln)
-		-- build a VS cfg descriptor for each solution configuration
+
+		-- Build a VS cfg descriptor for each solution configuration.
+
 		local slncfg = {}
 		for cfg in solution.eachconfig(sln) do
 			local platform = vstudio.solutionPlatform(cfg)
 			slncfg[cfg] = string.format("%s|%s", cfg.buildcfg, platform)
 		end
 
-		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
-		for cfg in solution.eachconfig(sln) do
-			_p(2,'%s = %s', slncfg[cfg], slncfg[cfg])
-		end
-		_p(1,'EndGlobalSection')
+		-- Make a working list of each solution configuration, and sort it into
+		-- Visual Studio's desired ordering. If I don't this, Visual Studio will
+		-- reshuffle everything on the first save.
 
-		_p(1,'GlobalSection(ProjectConfigurationPlatforms) = postSolution')
+		local sorted = {}
+		for cfg in solution.eachconfig(sln) do
+			table.insert(sorted, cfg)
+		end
+
+		table.sort(sorted, function(a,b)
+			return slncfg[a]:lower() < slncfg[b]:lower()
+		end)
+
+		-- Now use the sorted list to output the configuration maps.
+
+		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+		table.foreachi(sorted, function (cfg)
+			_p(2,'%s = %s', slncfg[cfg], slncfg[cfg])
+		end)
+		_p(1,"EndGlobalSection")
+
+		_p(1,"GlobalSection(ProjectConfigurationPlatforms) = postSolution")
 		local tr = solution.grouptree(sln)
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
 
-				for cfg in solution.eachconfig(sln) do
+				table.foreachi(sorted, function (cfg)
 					local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 					if prjcfg then
 						local prjplatform = vstudio.projectPlatform(prjcfg)
@@ -159,10 +176,10 @@
 						_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
 						_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
 					end
-				end
+				end)
 			end
 		})
-		_p(1,'EndGlobalSection')
+		_p(1,"EndGlobalSection")
 	end
 
 
