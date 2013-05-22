@@ -1048,7 +1048,13 @@
 
 
 	function vc2010.targetExt(cfg)
-		_x(2,'<TargetExt>%s</TargetExt>', cfg.buildtarget.extension)
+		local ext = cfg.buildtarget.extension
+		if ext ~= "" then
+			_x(2,'<TargetExt>%s</TargetExt>', ext)
+		else
+			_p(2,'<TargetExt>')
+			_p(2,'</TargetExt>')
+		end
 	end
 
 

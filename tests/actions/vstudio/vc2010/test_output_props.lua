@@ -193,3 +193,23 @@
 		<GenerateManifest>false</GenerateManifest>
 		]]
 	end
+
+
+---
+-- The <TargetExt> should be split if there is no extension.
+---
+
+	function suite.splitTargetExt_onNoTargetExtension()
+		targetextension ""
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<LinkIncremental>true</LinkIncremental>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>
+		</TargetExt>
+	</PropertyGroup>
+		]]
+	end
