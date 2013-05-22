@@ -16,6 +16,7 @@
 	local sln, prj, cfg
 
 	function suite.setup()
+		io.esc = premake.vstudio.vs2010.esc
 		sln, prj = test.createsolution()
 	end
 
@@ -84,10 +85,10 @@
 --
 
 	function suite.preprocessorDefinitions_onDefinesEscaping()
-		defines { "VERSION_STRING=\"1.0.0 (testing)\"" }
+		defines { 'VERSION_STRING="1.0.0 (testing)"' }
 		prepare()
 		test.capture [[
 		<ResourceCompile>
-			<PreprocessorDefinitions>VERSION_STRING=\&quot;1.0.0 (testing)\&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions>VERSION_STRING=\"1.0.0 (testing)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
 	end

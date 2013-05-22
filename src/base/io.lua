@@ -108,11 +108,12 @@
 
 
 --
--- Another variation that calls esc() on all of its arguments before formatting.
+-- Another variation that calls io.esc() on all of its arguments before
+-- write out the formatting string.
 --
 
 	function _x(msg, ...)
-		for i=2, #arg do
+		for i = 2, #arg do
 			arg[i] = premake.esc(arg[i])
 		end
 		_p(msg, unpack(arg))

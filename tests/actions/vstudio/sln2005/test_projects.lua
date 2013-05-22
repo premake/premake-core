@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/sln2005/test_projects.lua
 -- Validate generation of Visual Studio 2005+ solution project entries.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_sln2005_projects = { }
-	local suite = T.vstudio_sln2005_projects
+	local suite = test.declare("vstudio_sln2005_projects")
 	local sln2005 = premake.vstudio.sln2005
 
 
@@ -16,7 +15,7 @@
 	local sln
 
 	function suite.setup()
-		_ACTION = "vs2008"
+		io.esc = premake.vstudio.vs2005.esc
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		language "C++"

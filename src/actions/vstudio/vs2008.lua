@@ -10,7 +10,7 @@
 
 
 ---
--- Register a command-line action for Visual Studio 2008.
+-- Define the Visual Studio 2008 export action.
 ---
 
 	newaction {

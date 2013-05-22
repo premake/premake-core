@@ -14,7 +14,6 @@
 --
 
 	function vc2010.generateUser(prj)
-		io.eol = "\r\n"
 		io.indent = "  "
 
 		vc2010.project()

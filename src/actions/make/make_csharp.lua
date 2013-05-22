@@ -108,7 +108,7 @@
 		-- per-file rules
 		_p('# Per-configuration copied file rules')
 		for cfg in premake.eachconfig(prj) do
-			_p('ifneq (,$(findstring %s,$(config)))', _MAKE.esc(cfg.name:lower()))
+			_x('ifneq (,$(findstring %s,$(config)))', cfg.name:lower())
 			for target, source in pairs(cfgpairs[cfg]) do
 				premake.make_copyrule(source, target)
 			end
@@ -124,7 +124,7 @@
 		_p('# Embedded file rules')
 		for _, fname in ipairs(embedded) do
 			if path.getextension(fname) == ".resx" then
-				_p('%s: %s', getresourcefilename(prj, fname), _MAKE.esc(fname))
+				_x('%s: %s', getresourcefilename(prj, fname), fname)
 				_p('\t$(SILENT) $(RESGEN) $^ $@')
 			end
 			_p('')
@@ -138,7 +138,7 @@
 --
 
 	function cs.config(cfg, toolset)
-		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+		_x('ifeq ($(config),%s)', cfg.shortname)
 
 		-- write toolset specific configurations
 		cs.toolconfig(cfg, toolset)
@@ -203,7 +203,7 @@
 		    if dir ~= "." then
 				name = name .. path.translate(dir, ".") .. "."
 			end
-			return "$(OBJDIR)/" .. make.esc(name .. path.getbasename(fname)) .. ".resources"
+			return "$(OBJDIR)/" .. premake.esc(name .. path.getbasename(fname)) .. ".resources"
 		else
 			return fname
 		end
@@ -215,7 +215,7 @@
 --
 
 	function cs.linking(cfg, toolset)
-		local deps = make.esc(config.getlinks(cfg, "dependencies", "fullpath"))
+		local deps = premake.esc(config.getlinks(cfg, "dependencies", "fullpath"))
 		_p('  DEPENDS    = %s', table.concat(deps))
 		_p('  REFERENCES = %s', table.implode(deps, "/r:", "", " "))
 	end
@@ -231,7 +231,7 @@
 			onleaf = function(node, depth)
 				local value = selector(node)
 				if value then
-					_p('\t%s \\', make.esc(path.translate(value)))
+					_x('\t%s \\', path.translate(value))
 				end
 			end
 		})
@@ -245,10 +245,10 @@
 
 	function cs.prj_config(cfg, toolset)
 		local kindflag = "/t:" .. toolset.getkind(cfg):lower()
-		local libdirs = table.implode(make.esc(cfg.libdirs), "/lib:", "", " ")
+		local libdirs = table.implode(premake.esc(cfg.libdirs), "/lib:", "", " ")
 		_p('FLAGS      += %s', table.concat(table.join(kindflag, libdirs), " "))
 
-		local refs = make.esc(config.getlinks(cfg, "system", "fullpath"))
+		local refs = premake.esc(config.getlinks(cfg, "system", "fullpath"))
 		_p('REFERENCES += %s', table.implode(refs, "/r:", "", " "))
 
 		_p('')

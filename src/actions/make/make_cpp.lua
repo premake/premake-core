@@ -87,7 +87,7 @@
 			error("Invalid toolset '" + cfg.toolset + "'")
 		end
 
-		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+		_x('ifeq ($(config),%s)', cfg.shortname)
 
 		-- write toolset specific configurations
 		cpp.toolconfig(cfg, toolset)
@@ -183,14 +183,14 @@
 		-- C/C++ file
 		if path.iscppfile(node.abspath) then
 			local objectname = project.getfileobject(prj, node.abspath)
-			_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
+			_x('$(OBJDIR)/%s.o: %s', objectname, node.relpath)
 			_p('\t@echo $(notdir $<)')
 			cpp.buildcommand(prj, "o", node)
 
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
 			local objectname = project.getfileobject(prj, node.abspath)
-			_p('$(OBJDIR)/%s.res: %s', make.esc(objectname), make.esc(node.relpath))
+			_x('$(OBJDIR)/%s.res: %s', objectname, node.relpath)
 			_p('\t@echo $(notdir $<)')
 			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)')
 		end
@@ -200,10 +200,10 @@
 		for cfg in project.eachconfig(prj) do
 			local filecfg = config.getfileconfig(cfg, node.abspath)
 			if filecfg then
-				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+				_x('ifeq ($(config),%s)', cfg.shortname)
 
 				local output = project.getrelative(prj, filecfg.buildoutputs[1])
-				_p('%s: %s', make.esc(output), make.esc(filecfg.relpath))
+				_x('%s: %s', output, filecfg.relpath)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
 				for _, cmd in ipairs(filecfg.buildcommands) do
 					_p('\t$(SILENT) %s', cmd)
@@ -221,7 +221,7 @@
 	function cpp.flags(cfg, toolset)
 		_p('  DEFINES   +=%s', make.list(toolset.getdefines(cfg.defines)))
 
-		local includes = make.esc(toolset.getincludedirs(cfg, cfg.includedirs))
+		local includes = premake.esc(toolset.getincludedirs(cfg, cfg.includedirs))
 		_p('  INCLUDES  +=%s', make.list(includes))
 
 		_p('  ALL_CPPFLAGS += $(CPPFLAGS) %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
@@ -244,7 +244,7 @@
 		_p('  LIBS      +=%s', make.list(flags))
 
 		local deps = config.getlinks(cfg, "siblings", "fullpath")
-		_p('  LDDEPS    +=%s', make.list(make.esc(deps)))
+		_p('  LDDEPS    +=%s', make.list(premake.esc(deps)))
 
 		if cfg.kind == premake.STATICLIB then
 			if cfg.architecture == premake.UNIVERSAL then
@@ -345,7 +345,7 @@
 		function listobjects(var, list)
 			_p('%s \\', var)
 			for _, objectname in ipairs(list) do
-				_p('\t%s \\', make.esc(objectname))
+				_x('\t%s \\', objectname)
 			end
 			_p('')
 		end
@@ -357,7 +357,7 @@
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
 			if #files.objects > 0 or #files.resources > 0 then
-				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+				_x('ifeq ($(config),%s)', cfg.shortname)
 				if #files.objects > 0 then
 					listobjects('  OBJECTS +=', files.objects)
 				end
@@ -389,10 +389,10 @@
 				end
 			end
 
-			local gch = make.esc(path.getname(pchheader))
-			_p('  PCH        = %s', make.esc(project.getrelative(cfg.project, pchheader)))
-			_p('  GCH        = $(OBJDIR)/%s.gch', gch)
-			_p('  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
+			local gch = path.getname(pchheader)
+			_x('  PCH        = %s', project.getrelative(cfg.project, pchheader))
+			_x('  GCH        = $(OBJDIR)/%s.gch', gch)
+			_x('  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
 		end
 	end
 

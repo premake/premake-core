@@ -12,12 +12,11 @@
 	local project = premake5.project
 
 
---
--- Generate a Visual Studio 200x C++ project, with support for the new platforms API.
---
+---
+-- Generate a Visual Studio 200x C++ or Makefile project.
+---
 
 	function vc200x.generate(prj)
-		io.eol = "\r\n"
 
 		vc200x.xmlElement()
 		vc200x.visualStudioProject(prj)

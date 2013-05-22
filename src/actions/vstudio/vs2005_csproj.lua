@@ -25,7 +25,6 @@
 	}
 
 	function cs2005.generate_ng(prj)
-		io.eol = "\r\n"
 		io.indent = "  "
 		io.utf8()
 

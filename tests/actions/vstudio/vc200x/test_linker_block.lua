@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_linker_block.lua
 -- Validate generation of VCLinkerTool blocks in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.vs200x_linker_block = { }
-	local suite = T.vs200x_linker_block
+	local suite = test.declare("vs200x_linker_block")
 	local vc200x = premake.vstudio.vc200x
 
 
@@ -17,6 +16,7 @@
 
 	function suite.setup()
 		_ACTION = "vs2008"
+		io.esc = premake.vstudio.vs2005.esc
 		sln, prj = test.createsolution()
 	end
 

@@ -1,7 +1,7 @@
 --
 -- vs200x_vcproj_user.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project .user file
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
 	local vstudio = premake.vstudio
@@ -14,8 +14,6 @@
 --
 
 	function vc200x.generate_user(prj)
-		io.eol = "\r\n"
-
 		vc200x.xmlElement()
 		_p('<VisualStudioUserFile')
 		_p(1,'ProjectType="Visual C++"')

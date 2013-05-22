@@ -15,6 +15,7 @@
 	local sln, prj, cfg
 
 	function suite.setup()
+		io.esc = premake.vstudio.vs2005.esc
 		sln, prj = test.createsolution()
 	end
 

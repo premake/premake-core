@@ -1,7 +1,7 @@
 --
 -- vs2005_solution.lua
 -- Generate a Visual Studio 2005-2012 solution.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.sln2005 = {}
@@ -17,8 +17,6 @@
 --
 
 	function sln2005.generate_ng(sln)
-		io.eol = '\r\n'
-
 		-- Mark the file as Unicode
 		_p('\239\187\191')
 
@@ -32,6 +30,7 @@
 		sln2005.properties(sln)
 		sln2005.NestedProjects(sln)
 		_p('EndGlobal')
+
 	end
 
 

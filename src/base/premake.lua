@@ -89,6 +89,40 @@
 	end
 
 
+---
+-- Call the io.esc() value escaping function a value, or a list
+-- of values.
+--
+-- @param value
+--    Either a single string value, or an array of string values.
+--    If an array, it may contain nested sub-arrays.
+-- @return
+--    Either a single, esacaped string value, or a new array of
+--    escaped string values.
+---
+
+	function premake.esc(value)
+		if not io.esc then
+			return value
+		end
+
+		if type(value) == "table" then
+			local result = {}
+			table.foreachi(value, function(v)
+				table.insert(result, premake.esc(v))
+			end)
+			return result
+
+		else
+			if io.esc then
+				value = io.esc(value)
+			end
+			return value
+
+		end
+	end
+
+
 --
 -- Open a file for output, and call a function to actually do the writing.
 -- Used by the actions to generate solution and project files.

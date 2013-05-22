@@ -15,7 +15,7 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		_ACTION = "vs2008"
+		io.esc = premake.vstudio.vs2005.esc
 		sln = test.createsolution()
 		kind "Makefile"
 	end

@@ -61,7 +61,7 @@
 			local prjpath = project.getfilename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(slnpath, prjpath))
 			local prjname = path.getname(prjpath)
-			_p(1,'@${MAKE} --no-print-directory -C %s -f %s clean', make.esc(prjdir), make.esc(prjname))
+			_x(1,'@${MAKE} --no-print-directory -C %s -f %s clean', prjdir, prjname)
 		end
 		_p('')
 	end
@@ -78,7 +78,7 @@
 		_p(1,'@echo "CONFIGURATIONS:"')
 
 		for cfg in solution.eachconfig(sln) do
-			_p(1, '@echo "  %s"', make.esc(cfg.shortname))
+			_x(1, '@echo "  %s"', cfg.shortname)
 		end
 
 		_p(1,'@echo ""')
@@ -101,7 +101,7 @@
 --
 
 	function make.projects(sln)
-		_p('PROJECTS := %s', table.concat(make.esc(table.extract(sln.projects, "name")), " "))
+		_p('PROJECTS := %s', table.concat(premake.esc(table.extract(sln.projects, "name")), " "))
 		_p('')
 	end
 
@@ -114,7 +114,7 @@
 		for prj in solution.eachproject_ng(sln) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
-			_p('%s: %s', make.esc(prj.name), table.concat(deps, " "))
+			_p('%s: %s', premake.esc(prj.name), table.concat(deps, " "))
 
 			local cfgvar = make.tovar(prj.name)
 			_p('ifneq (,$(%s_config))', cfgvar)
@@ -126,7 +126,7 @@
 			local prjdir = path.getdirectory(path.getrelative(slnpath, prjpath))
 			local prjname = path.getname(prjpath)
 
-			_p(1,'@${MAKE} --no-print-directory -C %s -f %s config=$(%s_config)', make.esc(prjdir), make.esc(prjname), cfgvar)
+			_x(1,'@${MAKE} --no-print-directory -C %s -f %s config=$(%s_config)', prjdir, prjname, cfgvar)
 
 			_p('endif')
 			_p('')

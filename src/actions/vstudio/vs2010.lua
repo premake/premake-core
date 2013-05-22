@@ -11,10 +11,30 @@
 
 
 ---
--- Register a command-line action for Visual Studio 2010.
+-- Apply XML escaping on a value to be included in an
+-- exported project file.
+---
+
+	function vs2010.esc(value)
+		value = string.gsub(value, '&',  "&amp;")
+		value = value:gsub('<',  "&lt;")
+		value = value:gsub('>',  "&gt;")
+		value = value:gsub('\r', "&#x0D;")
+		value = value:gsub('\n', "&#x0A;")
+		return value
+	end
+
+
+
+---
+-- Identify the type of project being exported and hand it off
+-- the right generator.
 ---
 
 	function vs2010.generateProject(prj)
+		io.eol = "\r\n"
+		io.esc = vs2010.esc
+
 		if premake5.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
@@ -25,6 +45,11 @@
 		end
 	end
 
+
+
+---
+-- Define the Visual Studio 2010 export action.
+---
 
 	newaction {
 		-- Metadata for the command line and help system

@@ -1,7 +1,7 @@
 --
 -- vs2010_vcxproj_filters.lua
 -- Generate a Visual Studio 201x C/C++ filters file.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	local vc2010 = premake.vstudio.vc2010
@@ -14,7 +14,6 @@
 --
 
 	function vc2010.generateFilters(prj)
-		io.eol = "\r\n"
 		io.indent = "  "
 
 		vc2010.project()

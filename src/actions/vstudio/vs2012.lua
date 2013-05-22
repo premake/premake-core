@@ -10,7 +10,7 @@
 
 
 ---
--- Register a command-line action for Visual Studio 2012.
+-- Define the Visual Studio 2010 export action.
 ---
 
 	newaction {

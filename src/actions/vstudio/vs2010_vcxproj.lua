@@ -24,7 +24,6 @@
 --
 
 	function vc2010.generate(prj)
-		io.eol = "\r\n"
 		io.indent = "  "
 		io.utf8()
 

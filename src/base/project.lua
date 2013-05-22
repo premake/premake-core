@@ -82,32 +82,6 @@
 	end
 
 
-
---
--- Apply XML escaping to a value.
---
-
-	function premake.esc(value)
-		if (type(value) == "table") then
-			local result = { }
-			for _,v in ipairs(value) do
-				table.insert(result, premake.esc(v))
-			end
-			return result
-		else
-			value = string.gsub(value, '&',  "&amp;")
-			value = value:gsub('"',  "&quot;")
-			value = value:gsub("'",  "&apos;")
-			value = value:gsub('<',  "&lt;")
-			value = value:gsub('>',  "&gt;")
-			value = value:gsub('\r', "&#x0D;")
-			value = value:gsub('\n', "&#x0A;")
-			return value
-		end
-	end
-
-
-
 --
 -- Given a map of supported platform identifiers, filters the solution's list
 -- of platforms to match. A map takes the form of a table like:

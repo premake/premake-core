@@ -1,24 +1,24 @@
 --
 -- tests/actions/vstudio/cs2005/test_build_events.lua
 -- Check generation of pre- and post-build commands for C# projects.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_build_events = {}
-	local suite = T.vstudio_cs2005_build_events
+	local suite = test.declare("vstudio_cs2005_build_events")
 	local cs2005 = premake.vstudio.cs2005
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj, cfg
-	
+
 	function suite.setup()
+		io.esc = premake.vstudio.vs2005.esc
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare(platform)
 		prj = premake.solution.getproject_ng(sln, 1)
 		cs2005.buildEvents(prj)

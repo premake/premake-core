@@ -1,7 +1,7 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	premake.make = {}
@@ -9,9 +9,10 @@
 	local solution = premake.solution
 	local project = premake5.project
 
---
+
+---
 -- The GNU make action, with support for the new platforms API
---
+---
 
 	newaction {
 		trigger         = "gmake",
@@ -31,10 +32,12 @@
 		},
 
 		onsolution = function(sln)
+			io.esc = make.esc
 			premake.generate(sln, make.getmakefilename(sln, false), make.generate_solution)
 		end,
 
 		onproject = function(prj)
+			io.esc = make.esc
 			local makefile = make.getmakefilename(prj, true)
 			if project.isdotnet(prj) then
 				premake.generate(prj, makefile, make.generate_csharp)
@@ -68,7 +71,7 @@
 		local cfg = iter()
 		if cfg then
 			_p('ifndef config')
-			_p('  config=%s', make.esc(cfg.shortname))
+			_x('  config=%s', cfg.shortname)
 			_p('endif')
 			_p('')
 		end
@@ -91,29 +94,19 @@
 	end
 
 
---
+---
 -- Escape a string so it can be written to a makefile.
---
+---
 
 	function make.esc(value)
-		local result
-		if (type(value) == "table") then
-			result = { }
-			for _,v in ipairs(value) do
-				table.insert(result, make.esc(v))
-			end
-			return result
-		else
-			-- handle simple replacements
-			result = value:gsub("\\", "\\\\")
-			result = result:gsub(" ", "\\ ")
-			result = result:gsub("%(", "\\%(")
-			result = result:gsub("%)", "\\%)")
+		result = value:gsub("\\", "\\\\")
+		result = result:gsub(" ", "\\ ")
+		result = result:gsub("%(", "\\%(")
+		result = result:gsub("%)", "\\%)")
 
-			-- leave $(...) shell replacement sequences alone
-			result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
-			return result
-		end
+		-- leave $(...) shell replacement sequences alone
+		result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
+		return result
 	end
 
 
@@ -236,9 +229,9 @@
 
 	function make.targetconfig(cfg)
 		local targetdir =
-		_p('  TARGETDIR  = %s', make.esc(project.getrelative(cfg.project, cfg.buildtarget.directory)))
-		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(cfg.buildtarget.name))
-		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
+		_x('  TARGETDIR  = %s', project.getrelative(cfg.project, cfg.buildtarget.directory))
+		_x('  TARGET     = $(TARGETDIR)/%s', cfg.buildtarget.name)
+		_x('  OBJDIR     = %s', project.getrelative(cfg.project, cfg.objdir))
 	end
 
 
