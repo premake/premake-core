@@ -50,14 +50,16 @@
 		test.capture [[
 		<ProjectReference
 			ReferencedProjectIdentifier="{00112233-4455-6677-8888-99AABBCCDDEE}"
-			RelativePathToProject="MyProject.vcproj"
+			RelativePathToProject=".\MyProject.vcproj"
 		/>
 		]]
 	end
 
 --
--- Project references should always be specified relative to the 
--- project doing the referencing.
+-- Project references should always be specified relative to the
+-- *solution* doing the referencing. Which is kind of weird, since it
+-- would be incorrect if the project were included in more than one
+-- solution file, yes?
 --
 
 	function suite.referencesAreRelative_onDifferentProjectLocation()
@@ -69,8 +71,8 @@
 		test.capture [[
 		<ProjectReference
 			ReferencedProjectIdentifier="{00112233-4455-6677-8888-99AABBCCDDEE}"
-			RelativePathToProject="..\MyProject\MyProject.vcproj"
+			RelativePathToProject=".\build\MyProject\MyProject.vcproj"
 		/>
 		]]
 	end
-		
+

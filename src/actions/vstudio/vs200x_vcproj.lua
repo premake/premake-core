@@ -1077,10 +1077,23 @@
 	function vc200x.projectReferences(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
-			local prjpath = project.getlocation(prj)
+
+			-- This is a little odd: Visual Studio wants the "relative path to project"
+			-- to relative to the *solution*, rather than the project doing the
+			-- referencing. Which, in theory, would break if the project is included
+			-- in more than one solution. But that's how they do it.
+
+			local prjpath = project.getlocation(prj.solution)
 
 			for _, dep in ipairs(deps) do
+
 				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
+
+				-- Visual Studio wants the path to start with ./ or ../
+				if not relpath:startswith(".") then
+					relpath = "./" .. relpath
+				end
+
 				_p(2,'<ProjectReference')
 				_p(3,'ReferencedProjectIdentifier="{%s}"', dep.uuid)
 				_p(3,'RelativePathToProject="%s"', path.translate(relpath))
