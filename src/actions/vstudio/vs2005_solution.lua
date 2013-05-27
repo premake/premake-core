@@ -173,7 +173,9 @@
 						local architecture = vstudio.archFromConfig(prjcfg, true)
 
 						_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
-						_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
+						if prjcfg.kind ~= premake.NONE then
+							_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
+						end
 					end
 				end)
 			end

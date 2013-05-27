@@ -645,3 +645,24 @@
 	EndGlobalSection
 		]]
 	end
+
+
+---
+-- Configurations with a kind of "None" should be excluded from the build.
+---
+
+	function suite.excludesFromBuild_onNone()
+		project "MyProject"
+		kind "None"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+		]]
+	end

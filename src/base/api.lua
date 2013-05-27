@@ -815,6 +815,7 @@
 		allowed = {
 			"ConsoleApp",
 			"Makefile",
+			"None",
 			"SharedLib",
 			"StaticLib",
 			"WindowedApp",
