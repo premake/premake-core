@@ -666,3 +666,32 @@
 	EndGlobalSection
 		]]
 	end
+
+
+---
+-- Excluded configurations should write an ActiveCfg entry, pointing to some
+-- arbitrary project configuration, and skip the Build.0 entry.
+---
+
+	function suite.onExcludedConfiguration()
+		platforms { "DLL", "Static" }
+		project "MyProject"
+		removeplatforms { "Static" }
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|DLL = Debug|DLL
+		Debug|Static = Debug|Static
+		Release|DLL = Release|DLL
+		Release|Static = Release|Static
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.ActiveCfg = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.Build.0 = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Debug DLL|Win32
+	EndGlobalSection
+		]]
+	end

@@ -139,9 +139,9 @@
 			slncfg[cfg] = string.format("%s|%s", cfg.buildcfg, platform)
 		end
 
-		-- Make a working list of each solution configuration, and sort it into
-		-- Visual Studio's desired ordering. If I don't this, Visual Studio will
-		-- reshuffle everything on the first save.
+		-- Make a working list of all solution configurations, and sort it into
+		-- Visual Studio's desired ordering. If I don't do this, Visual Studio
+		-- will reshuffle everything on the first save.
 
 		local sorted = {}
 		for cfg in solution.eachconfig(sln) do
@@ -152,7 +152,7 @@
 			return slncfg[a]:lower() < slncfg[b]:lower()
 		end)
 
-		-- Now use the sorted list to output the configuration maps.
+		-- Output the list of solution level configurations
 
 		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		table.foreachi(sorted, function (cfg)
@@ -160,23 +160,42 @@
 		end)
 		_p(1,"EndGlobalSection")
 
+		-- Map each of the solution level configurations to the corresponding
+		-- project level configurations.
+
 		_p(1,"GlobalSection(ProjectConfigurationPlatforms) = postSolution")
 		local tr = solution.grouptree(sln)
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
 
-				table.foreachi(sorted, function (cfg)
-					local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-					if prjcfg then
-						local prjplatform = vstudio.projectPlatform(prjcfg)
-						local architecture = vstudio.archFromConfig(prjcfg, true)
+				-- Take an initial pass to map the solution configurations into the
+				-- project. Make a note of the first valid mapping I encounter; I'll
+				-- use this to represent excluded configurations in the project (if
+				-- I don't, Visual Studio will modify the solution later to add it).
 
-						_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
-						if prjcfg.kind ~= premake.NONE then
-							_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
-						end
+				local prjCfgs = {}
+				local firstPrjCfg
+
+				table.foreachi(sorted, function (cfg)
+					local prjCfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+					firstPrjCfg = firstPrjCfg or prjCfg
+					prjCfgs[cfg] = prjCfg
+				end)
+
+				-- With that out of the way, I can now output the map
+
+				table.foreachi(sorted, function (cfg)
+					local prjcfg = prjCfgs[cfg] or firstPrjCfg
+
+					local prjplatform = vstudio.projectPlatform(prjcfg)
+					local architecture = vstudio.archFromConfig(prjcfg, true)
+
+					_p(2,'{%s}.%s.ActiveCfg = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
+					if prjcfg.kind ~= premake.NONE and prjCfgs[cfg] then
+						_p(2,'{%s}.%s.Build.0 = %s|%s', prj.uuid, slncfg[cfg], prjplatform, architecture)
 					end
+
 				end)
 			end
 		})
