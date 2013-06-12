@@ -354,9 +354,11 @@
 	end
 
 	function vc2010.linkStatic(cfg)
-		_p(2,'<Lib>')
-		vc2010.additionalLinkOptions(cfg)
-		_p(2,'</Lib>')
+		if #cfg.linkoptions > 0 then
+			_p(2,'<Lib>')
+			vc2010.additionalLinkOptions(cfg)
+			_p(2,'</Lib>')
+		end
 	end
 
 
