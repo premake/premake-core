@@ -45,14 +45,10 @@
 -- Check the structure of a file contained in a folder.
 --
 
-	function suite.file_inSingleLevelFolder()
+	function suite.file_onSingleLevelFolder()
 		files { "src/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
-		<File
-			RelativePath="so_long.cpp"
-			>
-		</File>
 		<Filter
 			Name="src"
 			>
@@ -61,6 +57,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="so_long.cpp"
+			>
+		</File>
 		]]
 	end
 
@@ -73,10 +73,6 @@
 		files { "src/greetings/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
-		<File
-			RelativePath="so_long.cpp"
-			>
-		</File>
 		<Filter
 			Name="src"
 			>
@@ -89,6 +85,10 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath="so_long.cpp"
+			>
+		</File>
 		]]
 	end
 

@@ -761,13 +761,31 @@
 ---------------------------------------------------------------------------
 
 	function vc200x.files(prj)
+
+		-- Fetch the source tree, sorted how Visual Studio likes it: alpha
+		-- sorted, with any leading ../ sequences ignored. At the top level
+		-- of the tree, files go after folders, otherwise before.
+
 		local tr = project.getsourcetree(prj, function(a,b)
+			local istop = (a.parent.parent == nil)
+
 			local aSortName = a.name
 			local bSortName = b.name
 
 			-- Only file nodes have a relpath field; folder nodes do not
-			if a.relpath then aSortName = a.relpath:gsub("%.%.%/", "") end
-			if b.relpath then bSortName = b.relpath:gsub("%.%.%/", "") end
+			if a.relpath then
+				if not b.relpath then
+					return not istop
+				end
+				aSortName = a.relpath:gsub("%.%.%/", "")
+			end
+
+			if b.relpath then
+				if not a.relpath then
+					return istop
+				end
+				bSortName = b.relpath:gsub("%.%.%/", "")
+			end
 
 			return aSortName < bSortName
 		end)
@@ -799,6 +817,7 @@
 			end
 
 		}, false, 2)
+
 	end
 
 
