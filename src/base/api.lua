@@ -20,6 +20,13 @@
 
 
 --
+-- A place to remember warning messages, so each will only be shown once.
+--
+
+	api.warnings = {}
+
+
+--
 -- Create a "root" configuration set, to hold the global configuration. Values
 -- that are added to this set become available for all add-ons, solution, projects,
 -- and on down the line.
@@ -96,7 +103,7 @@
 --
 
 	function api.callback(field, value)
-		if field.deprecated then
+		if field.deprecated == true then
 			api.deprecated(field)
 		end
 
@@ -129,13 +136,25 @@
 --
 -- @param field
 --    The field description object.
+-- @param value
+--    Optional; the specific value that was deprecated.
 --
 
-	function api.deprecated(field)
-		if not field.warned then
-			local msg = "** Warning: %s has been deprecated.\n   See %s for more information.\n"
-			io.stderr:write(string.format(msg, field.name, _PREMAKE_URL))
-			field.warned = true
+	function api.deprecated(field, value)
+		local key = value or field
+		if not api.warnings[key] then
+			api.warnings[key] = true
+
+			local msg
+			if value then
+				msg = "the %s value %s"
+			else
+				msg = "the field %s"
+			end
+			msg = string.format(msg, field.name, value)
+
+			msg = string.format("** Warning: %s has been deprecated.\n   See %s for more information.\n", msg, _PREMAKE_URL)
+			io.stderr:write(msg)
 		end
 	end
 
@@ -491,6 +510,10 @@
 		local value, err = api.checkvalue(value, field)
 		if err then error({ msg=err }) end
 
+		if field.deprecated and type(field.deprecated) == "table" and field.deprecated[value] then
+			api.deprecated(field, value)
+		end
+
 		-- if the target is the project, configset will be set and I can push
 		-- the value there. Otherwise I was called to store into some other kind
 		-- of object (i.e. an array or list)
@@ -673,6 +696,7 @@
 		scope = "config",
 		kind  = "string-list",
 		allowed = {
+			"Component",
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"EnableSSE",
@@ -715,6 +739,9 @@
 			Optimise = 'Optimize',
 			OptimiseSize = 'OptimizeSize',
 			OptimiseSpeed = 'OptimizeSpeed',
+		},
+		deprecated = {
+			Component = true,   -- 17 Jun 2013
 		},
 	}
 

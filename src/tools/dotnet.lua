@@ -80,6 +80,7 @@
 				-- Is there a matching *.cs file?
 				local testname = basename .. ".cs"
 				if project.hasfile(fcfg.project, testname) then
+					info.subtype = "Dependency"
 					info.dependency = testname
 				end
 
@@ -100,6 +101,11 @@
 			   fcfg.buildaction == "UserControl"
 		   then
 				info.subtype = fcfg.buildaction
+			end
+
+			-- This flag is deprecated, will remove eventually
+			if fcfg.flags and fcfg.flags.Component then
+				info.subtype = "Component"
 			end
 
 		end
