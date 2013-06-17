@@ -527,9 +527,12 @@
 		kind = "string",
 		allowed = {
 			"Compile",
+			"Component",
 			"Copy",
 			"Embed",
-			"None"
+			"Form",
+			"None",
+			"UserControl",
 		},
 	}
 
@@ -670,7 +673,6 @@
 		scope = "config",
 		kind  = "string-list",
 		allowed = {
-			"Component",
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"EnableSSE",

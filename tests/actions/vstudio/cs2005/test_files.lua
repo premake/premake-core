@@ -68,7 +68,7 @@
 
 
 --
--- Test copy build action
+-- Test build actions.
 --
 
 	function suite.copyAction()
@@ -82,6 +82,62 @@
 		</Content>
 		]]
 	end
+
+	function suite.componentAction()
+		files { "Hello.cs" }
+		configuration "Hello.cs"
+		buildaction "Component"
+		prepare()
+		test.capture [[
+		<Compile Include="Hello.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		]]
+	end
+
+	function suite.formAction()
+		files { "HelloForm.cs" }
+		configuration "HelloForm.cs"
+		buildaction "Form"
+		prepare()
+		test.capture [[
+		<Compile Include="HelloForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		]]
+	end
+
+	function suite.userControlAction()
+		files { "Hello.cs" }
+		configuration "Hello.cs"
+		buildaction "UserControl"
+		prepare()
+		test.capture [[
+		<Compile Include="Hello.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		]]
+	end
+
+
+--
+-- If a resource file has a matching .Designer.cs, the designer
+-- file should be marked as auto-generated.
+--
+
+	function suite.autogenDesignerFromResource()
+		files { "Hello.Designer.cs", "Hello.resx"}
+		prepare()
+		test.capture [[
+		<Compile Include="Hello.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Hello.resx</DependentUpon>
+		</Compile>
+		]]
+	end
+
+	-- test Component
+	-- test UserControl
 
 
 --
