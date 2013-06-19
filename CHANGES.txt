@@ -38,6 +38,7 @@
 * Added support for Clang C/C++ compiler
 * Added external files and virtual paths for C# projects (James Whitworth)
 * Added ReleaseRuntime build flag (Tarmo Pikaro)
+* Added Component, Form, and UserControl build actions
 
 
 -------
