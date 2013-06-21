@@ -687,7 +687,7 @@
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		if #steps > 0 then
-			_x(4,'CommandLine="%s"', table.implode(steps, "", "\r\n", ""))
+			_x(4,'CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
 		end
 		_p(3,'/>')
 	end

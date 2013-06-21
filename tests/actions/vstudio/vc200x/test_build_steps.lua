@@ -49,7 +49,7 @@
 		test.capture [[
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="command_1&#x0D;&#x0A;command_2&#x0D;&#x0A;"
+				CommandLine="command_1&#x0D;&#x0A;command_2"
 			/>
 		]]
 	end
