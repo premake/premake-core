@@ -92,7 +92,7 @@
 			ctx.language = premake.CPP
 		end
 
-		-- The kind is a configuration level value, but it has been set at the
+		-- The kind is a configuration level value, but if it has been set at the
 		-- project level allow that to influence the other project-level results.
 
 		context.addterms(ctx, ctx.kind)
@@ -103,8 +103,8 @@
 		ctx.baked = true
 
 		-- Fill in some additional state. Copying the keys over from the
-		-- scripted project object allows custom values to passed through to
-		-- extension scripts.
+		-- scripted project object allows custom values set in the project 
+		-- script to be passed through to extension scripts.
 
 		for key, value in pairs(prj) do
 			ctx[key] = value
@@ -465,6 +465,8 @@
 		fcfg.basename = path.getbasename(filename)
 		fcfg.path = fcfg.relpath
 
+		fcfg.objname = project.getfileobject(prj, filename)
+
 		return fcfg
 	end
 
@@ -508,6 +510,16 @@
 		-- make sure I have the project, and not it's root configuration
 		prj = prj.project or prj
 
+		-- Only C/C++ projects need object files
+		if not project.iscpp(prj) then
+			return nil
+		end
+		
+		-- Only C/C++ source code files need objects
+		if not path.iscppfile(filename) and not path.isresourcefile(filename) then
+			return nil
+		end
+		
 		-- create a list of objects if necessary
 		prj.fileobjects = prj.fileobjects or {}
 

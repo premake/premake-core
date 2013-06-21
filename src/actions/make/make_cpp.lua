@@ -182,15 +182,13 @@
 	function cpp.standardfilerules(prj, node)
 		-- C/C++ file
 		if path.iscppfile(node.abspath) then
-			local objectname = project.getfileobject(prj, node.abspath)
-			_x('$(OBJDIR)/%s.o: %s', objectname, node.relpath)
+			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
 			_p('\t@echo $(notdir $<)')
 			cpp.buildcommand(prj, "o", node)
 
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
-			local objectname = project.getfileobject(prj, node.abspath)
-			_x('$(OBJDIR)/%s.res: %s', objectname, node.relpath)
+			_x('$(OBJDIR)/%s.res: %s', node.objname, node.relpath)
 			_p('\t@echo $(notdir $<)')
 			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)')
 		end
@@ -309,8 +307,7 @@
 					end
 
 					-- assign a unique object file name to avoid collisions
-					local objectname = project.getfileobject(prj, node.abspath)
-					objectname = "$(OBJDIR)/" .. objectname .. iif(kind == "objects", ".o", ".res")
+					objectname = "$(OBJDIR)/" .. node.objname .. iif(kind == "objects", ".o", ".res")
 
 					-- if this file exists in all configurations, write it to
 					-- the project's list of files, else add to specific cfgs

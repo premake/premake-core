@@ -893,9 +893,8 @@
 
 
 	function vc2010.objectFileName(filecfg)
-		local objectname = project.getfileobject(filecfg.project, filecfg.abspath)
-		if objectname ~= path.getbasename(filecfg.abspath) then
-			_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', vc2010.condition(filecfg.config), objectname)
+		if filecfg.objname ~= path.getbasename(filecfg.abspath) then
+			_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', vc2010.condition(filecfg.config), filecfg.objname)
 		end
 	end
 

@@ -1072,9 +1072,8 @@
 
 	function vc200x.objectFile(filecfg, depth)
 		if path.iscppfile(filecfg.name) then
-			local objectName = project.getfileobject(filecfg.project, filecfg.abspath)
-			if objectName ~= path.getbasename(filecfg.abspath) then
-				_x(depth, 'ObjectFile="$(IntDir)\\%s.obj"', objectName)
+			if filecfg.objname ~= path.getbasename(filecfg.abspath) then
+				_x(depth, 'ObjectFile="$(IntDir)\\%s.obj"', filecfg.objname)
 			end
 		end
 	end
