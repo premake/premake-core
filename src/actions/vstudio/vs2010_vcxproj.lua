@@ -661,6 +661,7 @@
 			ConsoleApp = "Application",
 			WindowedApp = "Application",
 			Makefile = "Makefile",
+			None = "Makefile",
 		}
 		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
 	end
