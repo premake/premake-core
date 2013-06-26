@@ -96,8 +96,21 @@
 -- character encoding.
 --
 
-	function suite.defaultSettings()
+	function suite.defaultSettings_onMakefile()
 		kind "Makefile"
+		prepare()
+		test.capture [[
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="."
+			IntermediateDirectory="obj\Debug"
+			ConfigurationType="0"
+			>
+		]]
+	end
+
+	function suite.defaultSettings_onNone()
+		kind "None"
 		prepare()
 		test.capture [[
 		<Configuration

@@ -190,3 +190,16 @@
 	</PropertyGroup>
 		]]
 	end
+
+	function suite.structureIsCorrect_onNone()
+		kind "None"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Makefile</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+	</PropertyGroup>
+		]]
+	end

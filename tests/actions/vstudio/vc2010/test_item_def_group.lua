@@ -50,6 +50,15 @@
 		]]
 	end
 
+	function suite.structureIsCorrect_onNone()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+	<ItemDefinitionGroup>
+	</ItemDefinitionGroup>
+		]]
+	end
+
 
 
 --
@@ -60,6 +69,12 @@
 
 	function suite.skipped_onSubsequentConfigs()
 		kind "Makefile"
+		prepare("Release")
+		test.isemptycapture()
+	end
+
+	function suite.skipped_onSubsequentConfigs_onNone()
+		kind "None"
 		prepare("Release")
 		test.isemptycapture()
 	end

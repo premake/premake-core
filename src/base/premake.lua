@@ -262,9 +262,10 @@
 			premake.error("project '%s' needs a kind in configuration '%s'", cfg.project.name, cfg.name)
 		end
 
-		-- makefile configuration can only appear in C++ projects
-		if cfg.kind == premake.MAKEFILE and not project.iscpp(cfg.project) then
-			premake.error("project '%s' uses Makefile kind in configuration '%s'; language must be C++", cfg.project.name, cfg.name)
+		-- makefile configuration can only appear in C++ projects; this is the
+		-- default now, so should only be a problem if overridden.
+		if (cfg.kind == premake.MAKEFILE or cfg.kind == premake.NONE) and not project.iscpp(cfg.project) then
+			premake.error("project '%s' uses %s kind in configuration '%s'; language must be C++", cfg.project.name, cfg.kind, cfg.name)
 		end
 
 		-- check for out of scope fields

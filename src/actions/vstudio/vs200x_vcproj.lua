@@ -119,7 +119,7 @@
 			if cfg.flags.Managed then
 				isManaged = true
 			end
-			if cfg.kind == premake.MAKEFILE then
+			if vstudio.isMakefile(cfg) then
 				isMakefile = true
 			end
 		end
@@ -246,7 +246,7 @@
 --
 
 	function vc200x.toolsForConfig(cfg, isEmptyCfg)
-		if cfg.kind == premake.MAKEFILE and not isEmptyCfg then
+		if vstudio.isMakefile(cfg) and not isEmptyCfg then
 			return {
 				"VCNMakeTool"
 			}
@@ -981,7 +981,7 @@
 
 
 	function vc200x.characterSet(cfg)
-		if cfg.kind ~= premake.MAKEFILE then
+		if not vstudio.isMakefile(cfg) then
 			_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
 		end
 	end
@@ -1011,6 +1011,7 @@
 	function vc200x.configurationType(cfg)
 		local cfgtypes = {
 			Makefile = 0,
+			None = 0,
 			SharedLib = 2,
 			StaticLib = 4,
 		}

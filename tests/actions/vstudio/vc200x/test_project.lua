@@ -134,25 +134,42 @@
 
 
 --
--- Makefile projects set new keyword and drop the root namespace. But I
--- can't get this working yet; need to figure out a better way to test
--- for empty configurations in the project first.
+-- Makefile projects set new keyword. It should also drop the root 
+-- namespace, but I need to figure out a better way to test for
+-- empty configurations in the project first.
 --
 
---	function suite.keywordIsCorrect_onMakefile()
---		kind "Makefile"
---		prepare()
---		test.capture [[
---<VisualStudioProject
---	ProjectType="Visual C++"
---	Version="9.00"
---	Name="MyProject"
---	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
---	Keyword="MakeFileProj"
---	TargetFrameworkVersion="196613"
---	>
---		]]
---	end
+	function suite.keywordIsCorrect_onMakefile()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="MyProject"
+	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
+	RootNamespace="MyProject"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="196613"
+	>
+		]]
+	end
+
+	function suite.keywordIsCorrect_onNone()
+		kind "None"
+		prepare()
+		test.capture [[
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="MyProject"
+	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
+	RootNamespace="MyProject"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="196613"
+	>
+		]]
+	end
 
 
 ---
@@ -163,6 +180,23 @@
 	function suite.keywordIsCorrect_onMakefileWithMixedConfigs()
 		removeconfigurations { "Release" }
 		kind "Makefile"
+		prepare()
+		test.capture [[
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="MyProject"
+	ProjectGUID="{AE61726D-187C-E440-BD07-2556188A6565}"
+	RootNamespace="MyProject"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="196613"
+	>
+		]]
+	end
+
+	function suite.keywordIsCorrect_onNoneWithMixedConfigs()
+		removeconfigurations { "Release" }
+		kind "None"
 		prepare()
 		test.capture [[
 <VisualStudioProject

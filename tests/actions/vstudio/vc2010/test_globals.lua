@@ -109,6 +109,17 @@
 		]]
 	end
 
+	function suite.keywordIsCorrect_onNone()
+		kind "None"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<Keyword>MakeFileProj</Keyword>
+	</PropertyGroup>
+		]]
+	end
+
 
 ---
 -- If the project name differs from the project filename, output a

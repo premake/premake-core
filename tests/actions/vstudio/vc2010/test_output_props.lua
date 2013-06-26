@@ -56,6 +56,12 @@
 		test.isemptycapture()
 	end
 
+	function suite.omitsBlock_onNone()
+		kind "Makefile"
+		prepare()
+		test.isemptycapture()
+	end
+
 
 --
 -- Xbox360 adds an extra <OutputFile> element to the block.

@@ -134,7 +134,7 @@
 			if cfg.flags.Managed then
 				isManaged = true
 			end
-			if cfg.kind == premake.MAKEFILE then
+			if vstudio.isMakefile(cfg) then
 				isMakefile = true
 			end
 		end
@@ -209,7 +209,7 @@
 	}
 
 	function vc2010.outputProperties(cfg)
-		if cfg.kind ~= premake.MAKEFILE then
+		if not vstudio.isMakefile(cfg) then
 			premake.callarray(vc2010, vc2010.elements.outputProperties, cfg)
 			_p(1,'</PropertyGroup>')
 		end
@@ -222,7 +222,7 @@
 --
 
 	function vc2010.nmakeProperties(cfg)
-		if cfg.kind == premake.MAKEFILE then
+		if vstudio.isMakefile(cfg) then
 			vc2010.propertyGroup(cfg)
 			vc2010.nmakeOutput(cfg)
 			vc2010.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
@@ -248,7 +248,7 @@
 	}
 
 	function vc2010.itemDefinitionGroup(cfg)
-		if cfg.kind ~= premake.MAKEFILE then
+		if not vstudio.isMakefile(cfg) then
 			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
 			premake.callarray(vc2010, vc2010.elements.itemDefinitionGroup, cfg)
 			_p(1,'</ItemDefinitionGroup>')
@@ -624,7 +624,7 @@
 
 
 	function vc2010.characterSet(cfg)
-		if cfg.kind ~= premake.MAKEFILE then
+		if not vstudio.isMakefile(cfg) then
 			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
 		end
 	end
@@ -882,7 +882,7 @@
 
 
 	function vc2010.nmakeOutDirs(cfg)
-		if cfg.kind == premake.MAKEFILE then
+		if vstudio.isMakefile(cfg) then
 			vc2010.outDir(cfg)
 			vc2010.intDir(cfg)
 		end
