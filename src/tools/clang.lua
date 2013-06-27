@@ -89,6 +89,26 @@
 	end
 
 
+
+--
+-- Returns a list of forced include files, decorated for the compiler
+-- command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of force include files with the appropriate flags.
+--
+
+	function clang.getforceincludes(cfg)
+
+		-- Just pass through to GCC for now
+		local flags = gcc.getforceincludes(cfg)
+		return flags
+
+	end
+
+
 --
 -- Returns a list of include file search directories, decorated for
 -- the compiler command line.

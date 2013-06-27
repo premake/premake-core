@@ -37,6 +37,6 @@
 		prepare()
 		test.capture [[
   DEFINES   +=
-  INCLUDES  += -Isrc/include -I../include
+  INCLUDES  += -I"src/include" -I"../include"
 		]]
 	end

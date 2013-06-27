@@ -57,5 +57,5 @@
 	function suite.forcedIncludeFiles()
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
-		test.isequal({'/FI "stdafx.h"', '/FI "include/sys.h"'}, msc.getcppflags(cfg))
+		test.isequal({'/FI"stdafx.h"', '/FI"include/sys.h"'}, msc.getforceincludes(cfg))
 	end

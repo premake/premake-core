@@ -17,12 +17,6 @@
 
 	function msc.getcppflags(cfg)
 		local flags = {}
-
-		for _, fi in ipairs(cfg.forceincludes) do
-			local fn = project.getrelative(cfg.project, fi)
-			table.insert(flags, string.format('/FI "%s"', fn))
-		end
-
 		return flags		
 	end
 
@@ -91,13 +85,36 @@
 
 
 --
+-- Returns a list of forced include files, decorated for the compiler
+-- command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of force include files with the appropriate flags.
+--
+
+	function msc.getforceincludes(cfg)
+		local result = {}
+
+		table.foreachi(cfg.forceincludes, function(value)
+			local fn = project.getrelative(cfg.project, value)
+			table.insert(result, string.format('/FI"%s"', fn))
+		end)
+
+		return result
+	end
+
+
+
+--
 -- Decorate include file search paths for the MSVC command line.
 --
 
 	function msc.getincludedirs(cfg, dirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
-			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
+			table.insert(result, '-I"' .. project.getrelative(cfg.project, dir) .. '"')
 		end
 		return result
 	end

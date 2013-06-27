@@ -57,6 +57,25 @@
 
 
 --
+-- Returns a list of forced include files, decorated for the compiler
+-- command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of force include files with the appropriate flags.
+--
+
+	function snc.getforceincludes(cfg)
+
+		-- Just pass through to GCC for now
+		local flags = gcc.getforceincludes(cfg)
+		return flags
+
+	end
+
+
+--
 -- Retrieve the LDFLAGS for a specific configuration.
 --
 

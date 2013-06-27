@@ -137,5 +137,5 @@
 	function suite.forcedIncludeFiles()
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
-		test.isequal({"-MMD", "-MP", '-include "stdafx.h"', '-include "include/sys.h"'}, snc.getcppflags(cfg))
+		test.isequal({'-include "stdafx.h"', '-include "include/sys.h"'}, snc.getforceincludes(cfg))
 	end

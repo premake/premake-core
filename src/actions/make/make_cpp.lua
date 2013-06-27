@@ -221,8 +221,11 @@
 
 		local includes = premake.esc(toolset.getincludedirs(cfg, cfg.includedirs))
 		_p('  INCLUDES  +=%s', make.list(includes))
+		
+		includes = toolset.getforceincludes(cfg)
+		_x('  FORCE_INCLUDE +=%s', make.list(includes))
 
-		_p('  ALL_CPPFLAGS += $(CPPFLAGS) %s $(DEFINES) $(INCLUDES)', table.concat(toolset.getcppflags(cfg), " "))
+		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES) $(FORCE_INCLUDE)', make.list(toolset.getcppflags(cfg)))
 		_p('  ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
 		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
 

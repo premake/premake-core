@@ -294,7 +294,7 @@
 	function suite.includeDirsAreRelative()
 		includedirs { "../include", "src/include" }
 		prepare()
-		test.isequal({ "-I../include", "-Isrc/include" }, gcc.getincludedirs(cfg, cfg.includedirs))
+		test.isequal({ '-I"../include"', '-I"src/include"' }, gcc.getincludedirs(cfg, cfg.includedirs))
 	end
 
 
@@ -322,5 +322,5 @@
 	function suite.forcedIncludeFiles()
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
-		test.isequal({"-MMD", "-MP", '-include "stdafx.h"', '-include "include/sys.h"'}, gcc.getcppflags(cfg))
+		test.isequal({'-include "stdafx.h"', '-include "include/sys.h"'}, gcc.getforceincludes(cfg))
 	end

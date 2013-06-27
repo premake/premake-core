@@ -71,6 +71,7 @@
 	end
 
 
+
 --
 -- Returns list of C preprocessor flags for a configuration.
 --
@@ -83,13 +84,9 @@
 			flags = { "-MMD", "-MP" }
 		end
 
-		for _, fi in ipairs(cfg.forceincludes) do
-			local fn = project.getrelative(cfg.project, fi)
-			table.insert(flags, string.format('-include "%s"', fn))
-		end
-
 		return flags
 	end
+
 
 --
 -- Returns list of C compiler flags for a configuration.
@@ -152,13 +149,35 @@
 
 
 --
+-- Returns a list of forced include files, decorated for the compiler
+-- command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of force include files with the appropriate flags.
+--
+	
+	function gcc.getforceincludes(cfg)
+		local result = {}
+		
+		table.foreachi(cfg.forceincludes, function(value)
+			local fn = project.getrelative(cfg.project, value)
+			table.insert(result, string.format('-include "%s"', fn))
+		end)
+		
+		return result
+	end
+
+
+--
 -- Decorate include file search paths for the GCC command line.
 --
 
 	function gcc.getincludedirs(cfg, dirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
-			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
+			table.insert(result, '-I"' .. project.getrelative(cfg.project, dir) .. '"')
 		end
 		return result
 	end
