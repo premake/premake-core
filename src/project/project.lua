@@ -1,7 +1,7 @@
 --
 -- src/project/project.lua
 -- Premake project object API
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
 	premake5.project = {}
@@ -9,6 +9,8 @@
 	local context = premake.context
 	local oven = premake5.oven
 	local configset = premake.configset
+
+	local project_bakefiles
 
 
 --
@@ -103,7 +105,7 @@
 		ctx.baked = true
 
 		-- Fill in some additional state. Copying the keys over from the
-		-- scripted project object allows custom values set in the project 
+		-- scripted project object allows custom values set in the project
 		-- script to be passed through to extension scripts.
 
 		for key, value in pairs(prj) do
@@ -156,7 +158,129 @@
 
 		end
 
+		-- Process the sub-objects that are contained by this project. The
+		-- configuration build stuff above really belongs in here now.
+
+		ctx._ = {}
+
+		ctx._.files = project_bakefiles(ctx)
+
 		return ctx
+	end
+
+
+--
+-- Create configuration objects for each file contained in the project. This
+-- collects and collates all of the values specified in the project scripts,
+-- and computes extra values like the relative path and object names.
+--
+-- @param prj
+--    The project object being baked. The project
+-- @return
+--    A collection of file configurations, keyed by both the absolute file
+--    path and an alpha-sorted index.
+--
+
+	project_bakefiles = function(prj)
+
+		local files = {}
+
+		-- Start by building a comprehensive list of all the files contained
+		-- by the project. Some files may only be included in specific
+		-- configurations so I need to look at them all.
+
+		for cfg in project.eachconfig(prj) do
+			table.foreachi(cfg.files, function(fname)
+
+				-- If this is the first time I've seen this file, start a new
+				-- file configuration for it. Build all the project-level values,
+				-- which are the same for all project configurations.
+
+				if not files[fname] then
+					local fcfg = {}
+
+					files[fname] = fcfg
+					table.insert(files, fcfg)
+
+					fcfg.configs = {}
+					fcfg.numConfigs = 0
+
+					fcfg.abspath = fname
+					fcfg.relpath = project.getrelative(prj, fname)
+					fcfg.name = path.getname(fname)
+					fcfg.basename = path.getbasename(fname)
+
+					local vpath = project.getvpath(prj, fname)
+					if vpath ~= fname then
+						fcfg.vpath = vpath
+					else
+						fcfg.vpath = fcfg.relpath
+					end
+				end
+
+				local fcfg = files[fname]
+
+				-- Create a context to hold the information specific to this
+				-- project configuration, and also note the total number of
+				-- configurations to which this file belongs.
+
+				local environ = {}
+				local ctx = context.new(prj.configset, environ, fname)
+				context.copyterms(ctx, cfg)
+
+				-- set up an environment for expanding tokens contained by this file
+				-- configuration; based on the configuration's environment so that
+				-- any magic set up there gets maintained
+				for envkey, envval in pairs(cfg.environ) do
+					environ[envkey] = envval
+				end
+				environ.file = ctx
+
+				-- merge in the file path information (virtual paths, etc.) that are
+				-- computed at the project level, for token expansions to use
+
+				ctx.abspath = fcfg.abspath
+				ctx.relpath = fcfg.relpath
+				ctx.vpath = fcfg.vpath
+				ctx.name = fcfg.name
+				ctx.basename = fcfg.basename
+				ctx.path = fcfg.relpath
+
+				-- finish the setup
+				context.compile(ctx)
+				ctx.config = cfg
+				ctx.project = prj
+
+				-- Set the context's base directory the project's file system
+				-- location. Any path tokens which are expanded in non-path fields
+				-- (such as the custom build commands) will be made relative to
+				-- this path, ensuring a portable generated project.
+
+				context.basedir(ctx, project.getlocation(prj))
+
+				fcfg.configs[cfg] = ctx
+				fcfg.numConfigs = fcfg.numConfigs + 1
+
+			end)
+		end
+
+		-- Alpha sort the indices, so I will get consistent results in
+		-- the exported project files.
+
+		table.sort(files, function(a,b)
+			return a.vpath < b.vpath
+		end)
+
+		-- Now iterate over the sources and assign unique file names
+
+		table.foreachi(files, function(fcfg)
+			fcfg.objname = project.getfileobject(prj, fcfg.abspath)
+			for _, cfg in pairs(fcfg.configs) do
+				cfg.objname = fcfg.objname
+			end
+		end)
+
+		return files
 	end
 
 
@@ -438,40 +562,6 @@
 
 
 --
--- Builds a file configuration for a specific file from a project.
---
--- @param prj
---    The project to query.
--- @param filename
---    The absolute path of the file to query.
--- @return
---    A corresponding file configuration object.
---
-
-	function project.getfileconfig(prj, filename)
-		local fcfg = {}
-
-		fcfg.abspath = filename
-		fcfg.relpath = project.getrelative(prj, filename)
-
-		local vpath = project.getvpath(prj, filename)
-		if vpath ~= filename then
-			fcfg.vpath = vpath
-		else
-			fcfg.vpath = fcfg.relpath
-		end
-
-		fcfg.name = path.getname(filename)
-		fcfg.basename = path.getbasename(filename)
-		fcfg.path = fcfg.relpath
-
-		fcfg.objname = project.getfileobject(prj, filename)
-
-		return fcfg
-	end
-
-
---
 -- Returns the file name for this project. Also works with solutions.
 --
 -- @param prj
@@ -514,12 +604,12 @@
 		if not project.iscpp(prj) then
 			return nil
 		end
-		
+
 		-- Only C/C++ source code files need objects
 		if not path.iscppfile(filename) and not path.isresourcefile(filename) then
 			return nil
 		end
-		
+
 		-- create a list of objects if necessary
 		prj.fileobjects = prj.fileobjects or {}
 
@@ -636,30 +726,14 @@
 --
 
 	function project.getsourcetree(prj, sorter)
-		-- make sure I have the project, and not it's root configuration
-		prj = prj.project or prj
 
-		-- check for a previously cached tree
-		if prj.sourcetree then
-			return prj.sourcetree
+		if prj._.sourcetree then
+			return prj._.sourcetree
 		end
 
-		-- find *all* files referenced by the project, regardless of configuration
-		local files = {}
-		for cfg in project.eachconfig(prj) do
-			for _, file in ipairs(cfg.files) do
-				files[file] = file
-			end
-		end
-
-		-- create a file config lookup cache
-		prj.fileconfigs = {}
-
-		-- create a tree from the file list
 		local tr = premake.tree.new(prj.name)
 
-		for file in pairs(files) do
-			local fcfg = project.getfileconfig(prj, file)
+		table.foreachi(prj._.files, function(fcfg)
 
 			-- The tree represents the logical source code tree to be displayed
 			-- in the IDE, not the physical organization of the file system. So
@@ -677,14 +751,14 @@
 				node.realpath = node.path
 			end
 
-			prj.fileconfigs[node.abspath] = node
-		end
+		end)
 
 		premake.tree.trimroot(tr)
-		premake.tree.sort(tr, sorter)
+		if sorter then
+			premake.tree.sort(tr, sorter)
+		end
 
-		-- cache result and return
-		prj.sourcetree = tr
+		prj._.sourcetree = tr
 		return tr
 	end
 
@@ -767,14 +841,7 @@
 --
 
 	function project.hasfile(prj, filename)
-		-- make sure I have the project, and not it's root configuration
-		prj = prj.project or prj
-
-		-- TODO: the file cache should be built during the baking process;
-		-- I shouldn't need to fetch the tree to get it.
-		project.getsourcetree(prj)
-
-		return prj.fileconfigs[filename] ~= nil
+		return (prj._.files[filename] ~= nil)
 	end
 
 

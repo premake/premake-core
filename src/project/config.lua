@@ -226,53 +226,13 @@
 --
 
 	function config.getfileconfig(cfg, filename)
-		-- if there is no entry, then this file is not part of the config
-		local filecfg = cfg.files[filename]
-		if not filecfg then
-			return nil
+		-- The project contains the cached list of file configurations. If I can't
+		-- find an entry, it means this file was excluded from that configuration.
+		local fcfg = cfg.project._.files[filename]
+		if fcfg then
+			return fcfg.configs[cfg]
 		end
-
-		-- initially this value will be a string (the file name); if so, build
-		-- and replace it with a full file configuration object
-		if type(filecfg) ~= "table" then
-			-- create context to represent the file's configuration, based on
-			-- the specified project configuration
-			local environ = {}
-			filecfg = context.new(cfg.project.configset, environ, filename)
-			context.copyterms(filecfg, cfg)
-
-			-- set up an environment for expanding tokens contained by this file
-			-- configuration; based on the configuration's environment so that
-			-- any magic set up there gets maintained
-			for envkey, envval in pairs(cfg.environ) do
-				environ[envkey] = envval
-			end
-			environ.file = filecfg
-
-			-- merge in the file path information (virtual paths, etc.) that are
-			-- computed at the project level, for token expansions to use
-			local prjcfg = project.getfileconfig(cfg.project, filename)
-			for key, value in pairs(prjcfg) do
-				filecfg[key] = value
-			end
-
-			-- finish the setup
-			context.compile(filecfg)
-			filecfg.config = cfg
-			filecfg.project = cfg.project
-
-			-- Set the context's base directory the project's file system
-			-- location. Any path tokens which are expanded in non-path fields
-			-- (such as the custom build commands) will be made relative to
-			-- this path, ensuring a portable generated project.
-
-			context.basedir(filecfg, project.getlocation(cfg.project))
-
-			-- and cache the result
-			cfg.files[filename] = filecfg
-		end
-
-		return filecfg
+		return nil
 	end
 
 

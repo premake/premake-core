@@ -114,8 +114,8 @@ OBJECTS := \
 OBJECTS := \
 
 RESOURCES := \
-	$(OBJDIR)/hello1.res \
 	$(OBJDIR)/hello.res \
+	$(OBJDIR)/hello1.res \
 
 		]]
 	end

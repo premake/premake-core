@@ -131,7 +131,7 @@
 	
 
 --
--- A leading single star should match files files in the same 
+-- A leading single star should match files in the same 
 -- folder as the project script, for consistency with files(),
 -- but not files in other folders.
 --
