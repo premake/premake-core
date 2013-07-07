@@ -104,24 +104,6 @@ OBJECTS := \
 
 
 --
--- Check handling of Windows resource files.
---
-
-	function suite.compilesWindowsResourceFiles()
-		files { "src/hello.rc", "src/greetings/hello.rc" }
-		prepare()
-		test.capture [[
-OBJECTS := \
-
-RESOURCES := \
-	$(OBJDIR)/hello.res \
-	$(OBJDIR)/hello1.res \
-
-		]]
-	end
-
-
---
 -- If a custom rule builds to an object file, include it in the
 -- link automatically to match the behavior of Visual Studio
 --

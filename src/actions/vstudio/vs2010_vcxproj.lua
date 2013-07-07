@@ -894,7 +894,7 @@
 
 
 	function vc2010.objectFileName(filecfg)
-		if filecfg.objname ~= path.getbasename(filecfg.abspath) then
+		if filecfg.objname ~= filecfg.basename then
 			_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', vc2010.condition(filecfg.config), filecfg.objname)
 		end
 	end

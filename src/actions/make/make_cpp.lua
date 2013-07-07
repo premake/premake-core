@@ -221,7 +221,7 @@
 
 		local includes = premake.esc(toolset.getincludedirs(cfg, cfg.includedirs))
 		_p('  INCLUDES  +=%s', make.list(includes))
-		
+
 		includes = toolset.getforceincludes(cfg)
 		_x('  FORCE_INCLUDE +=%s', make.list(includes))
 

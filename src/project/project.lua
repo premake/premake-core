@@ -10,8 +10,6 @@
 	local oven = premake5.oven
 	local configset = premake.configset
 
-	local project_bakefiles
-
 
 --
 -- Create a new project object.
@@ -162,8 +160,17 @@
 		-- configuration build stuff above really belongs in here now.
 
 		ctx._ = {}
+		ctx._.files = project.bakeFiles(ctx)
 
-		ctx._.files = project_bakefiles(ctx)
+		-- If this type of project generates object files, look for files that will
+		-- generate object name collisions (i.e. src/hello.cpp and tests/hello.cpp
+		-- both create hello.o) and assign unique sequence numbers to each. I need
+		-- to do this up front to make sure the sequence numbers are the same for
+		-- all the tools, even they reorder the source file list.
+
+		if project.iscpp(ctx) then
+			project.assignObjectSequences(ctx)
+		end
 
 		return ctx
 	end
@@ -181,7 +188,7 @@
 --    path and an alpha-sorted index.
 --
 
-	project_bakefiles = function(prj)
+	function project.bakeFiles(prj)
 
 		local files = {}
 
@@ -228,6 +235,9 @@
 				local ctx = context.new(prj.configset, environ, fname)
 				context.copyterms(ctx, cfg)
 
+				fcfg.configs[cfg] = ctx
+				fcfg.numConfigs = fcfg.numConfigs + 1
+
 				-- set up an environment for expanding tokens contained by this file
 				-- configuration; based on the configuration's environment so that
 				-- any magic set up there gets maintained
@@ -251,15 +261,12 @@
 				ctx.config = cfg
 				ctx.project = prj
 
-				-- Set the context's base directory the project's file system
+				-- Set the context's base directory to the project's file system
 				-- location. Any path tokens which are expanded in non-path fields
 				-- (such as the custom build commands) will be made relative to
 				-- this path, ensuring a portable generated project.
 
 				context.basedir(ctx, project.getlocation(prj))
-
-				fcfg.configs[cfg] = ctx
-				fcfg.numConfigs = fcfg.numConfigs + 1
 
 			end)
 		end
@@ -271,17 +278,64 @@
 			return a.vpath < b.vpath
 		end)
 
-		-- Now iterate over the sources and assign unique file names
-
-		table.foreachi(files, function(fcfg)
-			fcfg.objname = project.getfileobject(prj, fcfg.abspath)
-			for _, cfg in pairs(fcfg.configs) do
-				cfg.objname = fcfg.objname
-			end
-		end)
-
 		return files
 	end
+
+
+	--
+	-- Assign unique sequence numbers to any source code files that would generate
+	-- conflicting object file names (i.e. src/hello.cpp and tests/hello.cpp both
+	-- create hello.o).
+	--
+
+		function project.assignObjectSequences(prj)
+
+			-- Iterate over the file configurations which were prepared and cached in
+			-- project.bakeFiles(); find buildable files with common base file names.
+
+			local bases = {}
+			table.foreachi(prj._.files, function(fcfg)
+
+				-- Only consider sources that actually generate object files
+
+				if not path.iscppfile(fcfg.abspath) then
+					return
+				end
+
+				-- For each base file name encountered, keep a count of the number of
+				-- collisions that have occurred for each project configuration. Use
+				-- this collision count to generate the unique object file names.
+
+				if not bases[fcfg.basename] then
+					bases[fcfg.basename] = {}
+				end
+				local sequences = bases[fcfg.basename]
+
+				for _, ctx in pairs(fcfg.configs) do
+					local sequence = sequences[ctx.config] or 0
+
+					if sequence > 0 then
+						ctx.objname = fcfg.basename .. sequence
+					else
+						ctx.objname = fcfg.basename
+					end
+
+					sequences[ctx.config] = sequence + 1
+				end
+
+				-- Makefiles don't use per-configuration object names yet; keep
+				-- this around until they do. At which point I might consider just
+				-- storing the sequence number instead of the whole object name
+
+				local sequence = sequences[prj] or 0
+				if sequence > 0 then
+					fcfg.objname = fcfg.basename .. sequence
+				else
+					fcfg.objname = fcfg.basename
+				end
+				sequences[prj] = sequence + 1
+			end)
+		end
 
 
 --
@@ -588,54 +642,6 @@
 
 
 --
--- Returns a unique object file name for a project source code file.
---
--- @param prj
---    The project object to query.
--- @param filename
---    The name of the file being compiled to the object file.
---
-
-	function project.getfileobject(prj, filename)
-		-- make sure I have the project, and not it's root configuration
-		prj = prj.project or prj
-
-		-- Only C/C++ projects need object files
-		if not project.iscpp(prj) then
-			return nil
-		end
-
-		-- Only C/C++ source code files need objects
-		if not path.iscppfile(filename) and not path.isresourcefile(filename) then
-			return nil
-		end
-
-		-- create a list of objects if necessary
-		prj.fileobjects = prj.fileobjects or {}
-
-		-- look for the corresponding object file
-		local basename = path.getbasename(filename)
-		local uniqued = basename
-		local i = 0
-
-		while prj.fileobjects[uniqued] do
-			-- found a match?
-			if prj.fileobjects[uniqued] == filename then
-				return uniqued
-			end
-
-			-- check a different name
-			i = i + 1
-			uniqued = basename .. i
-		end
-
-		-- no match, create a new one
-		prj.fileobjects[uniqued] = filename
-		return uniqued
-	end
-
-
---
 -- Return the first configuration of a project, which is used in some
 -- actions to generate project-wide defaults.
 --
@@ -754,9 +760,7 @@
 		end)
 
 		premake.tree.trimroot(tr)
-		if sorter then
-			premake.tree.sort(tr, sorter)
-		end
+		premake.tree.sort(tr, sorter)
 
 		prj._.sourcetree = tr
 		return tr
