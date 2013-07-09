@@ -192,81 +192,24 @@
 
 		local files = {}
 
-		-- Start by building a comprehensive list of all the files contained
-		-- by the project. Some files may only be included in specific
-		-- configurations so I need to look at them all.
+		-- Start by building a comprehensive list of all the files contained by the
+		-- project. Some files may only be included in a subset of configurations so
+		-- I need to look at them all.
 
 		for cfg in project.eachconfig(prj) do
 			table.foreachi(cfg.files, function(fname)
 
 				-- If this is the first time I've seen this file, start a new
-				-- file configuration for it. Build all the project-level values,
-				-- which are the same for all project configurations.
+				-- file configuration for it. Track both by key for quick lookups
+				-- and indexed for ordered iteration.
 
 				if not files[fname] then
-					local fcfg = {}
-
+					local fcfg = premake5.fileconfig.new(fname, prj)
 					files[fname] = fcfg
 					table.insert(files, fcfg)
-
-					fcfg.configs = {}
-					fcfg.numConfigs = 0
-
-					fcfg.abspath = fname
-					fcfg.relpath = project.getrelative(prj, fname)
-					fcfg.name = path.getname(fname)
-					fcfg.basename = path.getbasename(fname)
-
-					local vpath = project.getvpath(prj, fname)
-					if vpath ~= fname then
-						fcfg.vpath = vpath
-					else
-						fcfg.vpath = fcfg.relpath
-					end
 				end
 
-				local fcfg = files[fname]
-
-				-- Create a context to hold the information specific to this
-				-- project configuration, and also note the total number of
-				-- configurations to which this file belongs.
-
-				local environ = {}
-				local ctx = context.new(prj.configset, environ, fname)
-				context.copyterms(ctx, cfg)
-
-				fcfg.configs[cfg] = ctx
-				fcfg.numConfigs = fcfg.numConfigs + 1
-
-				-- set up an environment for expanding tokens contained by this file
-				-- configuration; based on the configuration's environment so that
-				-- any magic set up there gets maintained
-				for envkey, envval in pairs(cfg.environ) do
-					environ[envkey] = envval
-				end
-				environ.file = ctx
-
-				-- merge in the file path information (virtual paths, etc.) that are
-				-- computed at the project level, for token expansions to use
-
-				ctx.abspath = fcfg.abspath
-				ctx.relpath = fcfg.relpath
-				ctx.vpath = fcfg.vpath
-				ctx.name = fcfg.name
-				ctx.basename = fcfg.basename
-				ctx.path = fcfg.relpath
-
-				-- finish the setup
-				context.compile(ctx)
-				ctx.config = cfg
-				ctx.project = prj
-
-				-- Set the context's base directory to the project's file system
-				-- location. Any path tokens which are expanded in non-path fields
-				-- (such as the custom build commands) will be made relative to
-				-- this path, ensuring a portable generated project.
-
-				context.basedir(ctx, project.getlocation(prj))
+				premake5.fileconfig.addconfig(files[fname], cfg)
 
 			end)
 		end
@@ -282,60 +225,53 @@
 	end
 
 
-	--
-	-- Assign unique sequence numbers to any source code files that would generate
-	-- conflicting object file names (i.e. src/hello.cpp and tests/hello.cpp both
-	-- create hello.o).
-	--
+--
+-- Assign unique sequence numbers to any source code files that would generate
+-- conflicting object file names (i.e. src/hello.cpp and tests/hello.cpp both
+-- create hello.o).
+--
 
-		function project.assignObjectSequences(prj)
+	function project.assignObjectSequences(prj)
 
-			-- Iterate over the file configurations which were prepared and cached in
-			-- project.bakeFiles(); find buildable files with common base file names.
+		-- Iterate over the file configurations which were prepared and cached in
+		-- project.bakeFiles(); find buildable files with common base file names.
 
-			local bases = {}
-			table.foreachi(prj._.files, function(fcfg)
+		local bases = {}
+		table.foreachi(prj._.files, function(file)
 
-				-- Only consider sources that actually generate object files
+			-- Only consider sources that actually generate object files
 
-				if not path.iscppfile(fcfg.abspath) then
-					return
+			if not path.iscppfile(file.abspath) then
+				return
+			end
+
+			-- For each base file name encountered, keep a count of the number of
+			-- collisions that have occurred for each project configuration. Use
+			-- this collision count to generate the unique object file names.
+
+			if not bases[file.basename] then
+				bases[file.basename] = {}
+			end
+
+			local sequences = bases[file.basename]
+
+			for cfg in project.eachconfig(prj) do
+				local fcfg = premake5.fileconfig.getconfig(file, cfg)
+				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
+					fcfg.sequence = sequences[cfg] or 0
+					sequences[cfg] = fcfg.sequence + 1
 				end
+			end
 
-				-- For each base file name encountered, keep a count of the number of
-				-- collisions that have occurred for each project configuration. Use
-				-- this collision count to generate the unique object file names.
+			-- Makefiles don't use per-configuration object names yet; keep
+			-- this around until they do. At which point I might consider just
+			-- storing the sequence number instead of the whole object name
 
-				if not bases[fcfg.basename] then
-					bases[fcfg.basename] = {}
-				end
-				local sequences = bases[fcfg.basename]
+			file.sequence = sequences[prj] or 0
+			sequences[prj] = file.sequence + 1
 
-				for _, ctx in pairs(fcfg.configs) do
-					local sequence = sequences[ctx.config] or 0
-
-					if sequence > 0 then
-						ctx.objname = fcfg.basename .. sequence
-					else
-						ctx.objname = fcfg.basename
-					end
-
-					sequences[ctx.config] = sequence + 1
-				end
-
-				-- Makefiles don't use per-configuration object names yet; keep
-				-- this around until they do. At which point I might consider just
-				-- storing the sequence number instead of the whole object name
-
-				local sequence = sequences[prj] or 0
-				if sequence > 0 then
-					fcfg.objname = fcfg.basename .. sequence
-				else
-					fcfg.objname = fcfg.basename
-				end
-				sequences[prj] = sequence + 1
-			end)
-		end
+		end)
+	end
 
 
 --
@@ -746,16 +682,8 @@
 			-- virtual paths are used when adding nodes.
 			local node = premake.tree.add(tr, fcfg.vpath)
 
-			-- Store full file configuration in file (leaf) nodes
-			for key, value in pairs(fcfg) do
-				node[key] = value
-			end
-
-			-- ...but when a real file system path is used, store it so that
-			-- an association can be made in the IDE
-			if fcfg.vpath == fcfg.relpath then
-				node.realpath = node.path
-			end
+			-- Pass through value fetches to the file configuration
+			setmetatable(node, { __index = fcfg })
 
 		end)
 

@@ -39,6 +39,7 @@
 		-- project APIs
 		"project/project.lua",
 		"project/config.lua",
+		"project/fileconfig.lua",
 		"base/solution.lua",
 		"base/premake.lua",
 
