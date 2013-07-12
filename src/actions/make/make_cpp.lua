@@ -9,6 +9,7 @@
 	local cpp = premake.make.cpp
 	local project = premake5.project
 	local config = premake5.config
+	local fileconfig = premake5.fileconfig
 
 
 --
@@ -160,8 +161,8 @@
 				-- check to see if this file has custom rules
 				local rules
 				for cfg in project.eachconfig(prj) do
-					local filecfg = config.getfileconfig(cfg, node.abspath)
-					if config.hasCustomBuildRule(filecfg) then
+					local filecfg = fileconfig.getconfig(node, cfg)
+					if fileconfig.hasCustomBuildRule(filecfg) then
 						rules = true
 						break
 					end
@@ -196,7 +197,7 @@
 
 	function cpp.customfilerules(prj, node)
 		for cfg in project.eachconfig(prj) do
-			local filecfg = config.getfileconfig(cfg, node.abspath)
+			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
 				_x('ifeq ($(config),%s)', cfg.shortname)
 
@@ -286,10 +287,10 @@
 				local inall = true
 				local custom = false
 				for cfg in project.eachconfig(prj) do
-					local filecfg = config.getfileconfig(cfg, node.abspath)
+					local filecfg = fileconfig.getconfig(node, cfg)
 					if filecfg and not filecfg.flags.ExcludeFromBuild then
 						incfg[cfg] = filecfg
-						custom = config.hasCustomBuildRule(filecfg)
+						custom = fileconfig.hasCustomBuildRule(filecfg)
 					else
 						inall = false
 					end

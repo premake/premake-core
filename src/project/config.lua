@@ -214,29 +214,6 @@
 
 
 --
--- Retrieve the configuration settings for a specific file.
---
--- @param cfg
---    The configuration object to query.
--- @param filename
---    The full, absolute path of the file to query.
--- @return
---    A configuration object for the file, or nil if the file is
---    not included in this configuration.
---
-
-	function config.getfileconfig(cfg, filename)
-		-- The project contains the cached list of file configurations. If I can't
-		-- find an entry, it means this file was excluded from that configuration.
-		local fcfg = cfg.project._.files[filename]
-		if fcfg then
-			return fcfg.configs[cfg]
-		end
-		return nil
-	end
-
-
---
 -- Retrieve linking information for a specific configuration. That is,
 -- the path information that is required to link against the library
 -- built by this configuration.
@@ -425,20 +402,4 @@
 
 	function config.gettargetinfo(cfg)
 		return buildtargetinfo(cfg, cfg.kind, "target")
-	end
-
-
---
--- Checks to see if the project or file configuration contains a
--- custom build rule.
---
--- @param cfg
---    A project or file configuration.
--- @return
---    True if the configuration contains settings for a custom
---    build rule.
---
-
-	function config.hasCustomBuildRule(cfg)
-		return cfg and (#cfg.buildcommands > 0) and (#cfg.buildoutputs > 0)
 	end

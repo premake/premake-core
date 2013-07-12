@@ -67,7 +67,6 @@
 	dofile("project/test_vpaths.lua")
 
 	-- Configuration object tests
-	dofile("config/test_fileconfig.lua")
 	dofile("config/test_linkinfo.lua")
 	dofile("config/test_links.lua")
 	dofile("config/test_targetinfo.lua")

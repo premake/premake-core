@@ -5,10 +5,12 @@
 --
 
 	premake.vstudio.cs2005 = {}
+
 	local vstudio = premake.vstudio
 	local cs2005  = premake.vstudio.cs2005
 	local project = premake5.project
 	local config = premake5.config
+	local fileconfig = premake5.fileconfig
 	local dotnet = premake.tools.dotnet
 
 
@@ -125,7 +127,7 @@
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
-				local filecfg = config.getfileconfig(cfg, node.abspath)
+				local filecfg = fileconfig.getconfig(node, cfg)
 				local fname = path.translate(node.relpath)
 
 				-- Files that live outside of the project tree need to be "linked"

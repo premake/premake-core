@@ -8,9 +8,27 @@
 
 	local fileconfig = premake5.fileconfig
 	local context = premake.context
+	local project = premake5.project
 
-	fileconfig.file_mt = {}
+
+--
+-- A little confusing: the file configuration actually contains two objects.
+-- The first object, the one that is returned by fileconfig.new() and later
+-- passed back in as *the* file configuration object, contains the common
+-- project-wide settings for the file. This object also contains a list of
+-- "sub-configurations", one for each project configuration to which the file
+-- belongs.
+--
+-- Internally, I'm calling the first object the "file configuration" (fcfg)
+-- and the children "file sub-configurations" (fsub). To distinguish them
+-- from the project configurations (cfg).
+--
+-- Define metatables for each of types; more info below.
+--
+
 	fileconfig.fcfg_mt = {}
+	fileconfig.fsub_mt = {}
+
 
 --
 -- Create a new file configuration object.
@@ -25,27 +43,22 @@
 
 	function fileconfig.new(fname, prj)
 		local fcfg = {}
-		setmetatable(fcfg, fileconfig.file_mt)
-
-		-- Compute all the variations on path information for this file once up
-		-- front; will be reused by each of the configuration supported by this
-		-- file, and referenced by tokens in the scripts.
-
-		fcfg.abspath = fname
-		fcfg.relpath = premake5.project.getrelative(prj, fname)
-		fcfg.name = path.getname(fname)
-		fcfg.basename = path.getbasename(fname)
-
-		local vpath = premake5.project.getvpath(prj, fname)
-		if vpath ~= fname then
-			fcfg.vpath = vpath
-		else
-			fcfg.vpath = fcfg.relpath
-		end
-
-		-- Start a list of configurations supported by this file.
-
+		fcfg.project = prj
 		fcfg.configs = {}
+		fcfg.abspath = fname
+
+		-- Most of the other path properties are computed on demand
+		-- from the file's absolute path.
+
+		setmetatable(fcfg, fileconfig.fcfg_mt)
+
+		-- Except for the virtual path, which is expensive to compute, and
+		-- can be used across all the sub-configurations
+
+		local vpath = project.getvpath(prj, fname)
+		if vpath ~= fcfg.abspath then
+			fcfg.vpath = vpath
+		end
 
 		return fcfg
 	end
@@ -69,10 +82,10 @@
 		-- specific to the file.
 
 		local environ = {}
-		local ctx = context.new(cfg.project.configset, environ, fcfg.abspath)
-		context.copyterms(ctx, cfg)
+		local fsub = context.new(cfg.project.configset, environ, fcfg.abspath)
+		context.copyterms(fsub, cfg)
 
-		fcfg.configs[cfg] = ctx
+		fcfg.configs[cfg] = fsub
 
 		-- set up an environment for expanding tokens contained by this file
 		-- configuration; based on the configuration's environment so that
@@ -84,34 +97,27 @@
 
 		-- Make the context being built here accessible to tokens
 
-		environ.file = ctx
-
-		-- Merge in the file path information (virtual paths, etc.) that are
-		-- computed at the project level, for token expansions to use
-
-		for key, value in pairs(fcfg) do
-			if type(value) == "string" then
-				ctx[key] = value
-			end
-		end
+		environ.file = fsub
 
 		-- finish the setup
 
-		context.compile(ctx)
-		ctx.path = fcfg.relpath
-		ctx.config = cfg
-		ctx.project = cfg.project
+		context.compile(fsub)
+		fsub.abspath = fcfg.abspath
+		fsub.vpath = fcfg.vpath
+		fsub.config = cfg
+		fsub.project = cfg.project
 
 		-- Set the context's base directory to the project's file system
 		-- location. Any path tokens which are expanded in non-path fields
 		-- (such as the custom build commands) will be made relative to
 		-- this path, ensuring a portable generated project.
 
-		context.basedir(ctx, premake5.project.getlocation(cfg.project))
+		context.basedir(fsub, project.getlocation(cfg.project))
 
-		setmetatable(ctx, fileconfig.fcfg_mt)
+		setmetatable(fsub, fileconfig.fsub_mt)
 
 	end
+
 
 
 --
@@ -134,28 +140,93 @@
 
 
 --
--- The metatable computes most of the path related fields. I do this instead
--- of functions to make it easier to access these values from tokens, and to
--- avoid the memory overhead of all these strings for large solutions.
+-- Checks to see if the project or file configuration contains a
+-- custom build rule.
+--
+-- @param cfg
+--    A project or file configuration.
+-- @return
+--    True if the configuration contains settings for a custom
+--    build rule.
 --
 
-	local file_mt = fileconfig.file_mt
+	function fileconfig.hasCustomBuildRule(fcfg)
+		return fcfg and (#fcfg.buildcommands > 0) and (#fcfg.buildoutputs > 0)
+	end
+
+
+
+--
+-- Rather than store pre-computed strings for all of the path variations
+-- (abspath, relpath, vpath, name, etc.) for each file (there can be quite
+-- a lot of them) I assign a metatable to the file configuration objects
+-- that will build these values on the fly.
+--
+-- I am using these pseudo-properties, rather than explicit functions, to make
+-- it easier to fetch them script tokens (i.e. %{file.relpath} with no need
+-- for knowledge of the internal Premake APIs.
+--
+
+
+--
+-- The indexer for the file configurations. If I have a path building function
+-- to fulfill the request, call it. Else this is a missing index so return nil.
+--
+
 	local fcfg_mt = fileconfig.fcfg_mt
 
-	file_mt.__index = function(file, key)
-		if type(file_mt[key]) == "function" then
-			return file_mt[key](file)
+	fcfg_mt.__index = function(file, key)
+		if type(fcfg_mt[key]) == "function" then
+			return fcfg_mt[key](file)
 		end
 	end
 
-	fcfg_mt.__index = function(fcfg, key)
-		return file_mt.__index(fcfg, key) or context.__mt.__index(fcfg, key)
+
+--
+-- The indexer for the file sub-configurations. Check for a path building
+-- function first, and then fall back to the context's own value lookups.
+-- TODO: Would be great if this didn't require inside knowledge of context.
+--
+
+	fileconfig.fsub_mt.__index = function(fcfg, key)
+		return fcfg_mt.__index(fcfg, key) or context.__mt.__index(fcfg, key)
 	end
 
-	function file_mt.objname(fcfg)
+
+--
+-- And here are the path building functions.
+--
+
+	function fcfg_mt.basename(fcfg)
+		return path.getbasename(fcfg.abspath)
+	end
+
+
+	function fcfg_mt.name(fcfg)
+		return path.getname(fcfg.abspath)
+	end
+
+
+	function fcfg_mt.objname(fcfg)
 		if fcfg.sequence ~= nil and fcfg.sequence > 0 then
 			return fcfg.basename .. fcfg.sequence
 		else
 			return fcfg.basename
 		end
+	end
+
+
+	function fcfg_mt.path(fcfg)
+		return fcfg.relpath
+	end
+
+
+	function fcfg_mt.relpath(fcfg)
+		return project.getrelative(fcfg.project, fcfg.abspath)
+	end
+
+
+	function fcfg_mt.vpath(fcfg)
+		-- This only gets called if no explicit virtual path was set
+		return fcfg.relpath
 	end

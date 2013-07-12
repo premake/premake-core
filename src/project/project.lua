@@ -656,15 +656,9 @@
 -- @param sorter
 --    An optional comparator function for the sorting pass.
 -- @return
---    A tree object containing the source file hierarchy. Leaf nodes
---    representing the individual files contain the fields:
---      abspath  - the absolute path of the file
---      relpath  - the relative path from the project to the file
---      vpath    - the file's virtual path
---    All nodes contain the fields:
---      path     - the node's path within the tree
---      realpath - the node's file system path (nil for virtual paths)
---      name     - the directory or file name represented by the node
+--    A tree object containing the source file hierarchy. Leaf nodes,
+--    representing the individual files, are file configuration
+--    objects.
 --
 
 	function project.getsourcetree(prj, sorter)

@@ -5,11 +5,13 @@
 --
 
 	premake.vstudio.vc200x = {}
+
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
-	local config = premake5.config
 	local context = premake.context
 	local project = premake5.project
+	local config = premake5.config
+	local fileconfig = premake5.fileconfig
 
 
 ---
@@ -823,7 +825,7 @@
 
 	function vc200x.fileConfiguration(cfg, node, depth)
 
-		local filecfg = config.getfileconfig(cfg, node.abspath)
+		local filecfg = fileconfig.getconfig(node, cfg)
 
 		-- Generate the individual sections of the file configuration
 		-- element and capture the results to a buffer. I will only
@@ -999,7 +1001,7 @@
 
 	function vc200x.compilerToolName(cfg, filecfg, depth)
 		local name
-		if config.hasCustomBuildRule(filecfg) then
+		if fileconfig.hasCustomBuildRule(filecfg) then
 			name = "VCCustomBuildTool"
 		else
 			name = iif(cfg.system == premake.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
@@ -1020,7 +1022,7 @@
 
 
 	function vc200x.customBuildTool(filecfg, depth)
-		if config.hasCustomBuildRule(filecfg) then
+		if fileconfig.hasCustomBuildRule(filecfg) then
 			_x(depth, 'CommandLine="%s"', table.concat(filecfg.buildcommands,'\r\n'))
 
 			local outputs = project.getrelative(filecfg.project, filecfg.buildoutputs)
@@ -1098,7 +1100,7 @@
 		if #deps > 0 then
 
 			-- This is a little odd: Visual Studio wants the "relative path to project"
-			-- to relative to the *solution*, rather than the project doing the
+			-- to be relative to the *solution*, rather than the project doing the
 			-- referencing. Which, in theory, would break if the project is included
 			-- in more than one solution. But that's how they do it.
 

@@ -5,10 +5,12 @@
 --
 
 	premake.vstudio.vc2010 = {}
+
 	local vc2010 = premake.vstudio.vc2010
 	local vstudio = premake.vstudio
 	local project = premake5.project
 	local config = premake5.config
+	local fileconfig = premake5.fileconfig
 	local tree = premake.tree
 
 
@@ -444,7 +446,7 @@
 				for cfg in project.eachconfig(prj) do
 					local condition = vc2010.condition(cfg)
 
-					local filecfg = config.getfileconfig(cfg, file.abspath)
+					local filecfg = fileconfig.getconfig(file, cfg)
 					vc2010.excludedFromBuild(cfg, filecfg)
 					if filecfg then
 						vc2010.objectFileName(filecfg)
@@ -471,8 +473,8 @@
 
 				for cfg in project.eachconfig(prj) do
 					local condition = vc2010.condition(cfg)
-					local filecfg = config.getfileconfig(cfg, file.abspath)
-					if config.hasCustomBuildRule(filecfg) then
+					local filecfg = fileconfig.getconfig(file, cfg)
+					if fileconfig.hasCustomBuildRule(filecfg) then
 						local commands = table.concat(filecfg.buildcommands,'\r\n')
 						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
 
@@ -508,8 +510,8 @@
 					-- then they all must be marked as custom build
 					local hasbuildrule = false
 					for cfg in project.eachconfig(prj) do
-						local filecfg = config.getfileconfig(cfg, node.abspath)
-						if config.hasCustomBuildRule(filecfg) then
+						local filecfg = fileconfig.getconfig(node, cfg)
+						if fileconfig.hasCustomBuildRule(filecfg) then
 							hasbuildrule = true
 							break
 						end
