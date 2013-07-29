@@ -224,7 +224,7 @@
 --
 
 	function table.isempty(t)
-		return not next(t)
+		return next(t) == nil
 	end
 
 

@@ -1,12 +1,11 @@
 --
 -- tests/base/test_table.lua
 -- Automated test suite for the new table functions.
--- Copyright (c) 2008-2010 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 
-	T.table = { }
-	local suite = T.table
+	local suite = test.declare("table")
 
 	local t
 
@@ -55,7 +54,7 @@
 		test.isequal(2, idx)
 	end
 
-		
+
 --
 -- table.isempty() tests
 --
@@ -66,4 +65,12 @@
 
 	function suite.isempty_ReturnsFalseOnNotEmpty()
 		test.isfalse(table.isempty({ 1 }))
+	end
+
+	function suite.isempty_ReturnsFalseOnNotEmptyMap()
+		test.isfalse(table.isempty({ name = 'premake' }))
+	end
+
+	function suite.isempty_ReturnsFalseOnNotEmptyMapWithFalseKey()
+		test.isfalse(table.isempty({ [false] = 0 }))
 	end
