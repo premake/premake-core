@@ -35,9 +35,10 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
+  ALL_LDFLAGS  += $(LDFLAGS) -s -shared
   LIBS      +=
   LDDEPS    +=
-  LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(ALL_LDFLAGS)
+  LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -46,7 +47,7 @@
 -- Check link command for a shared C library.
 --
 
-	function suite.links_onCppSharedLib()
+	function suite.links_onCSharedLib()
 		language "C"
 		kind "SharedLib"
 		prepare()
@@ -54,7 +55,7 @@
   ALL_LDFLAGS  += $(LDFLAGS) -s -shared
   LIBS      +=
   LDDEPS    +=
-  LINKCMD    = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(LIBS) $(ALL_LDFLAGS)
+  LINKCMD    = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
