@@ -442,21 +442,33 @@
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
-				for cfg in project.eachconfig(prj) do
-					local condition = vc2010.condition(cfg)
 
-					local filecfg = fileconfig.getconfig(file, cfg)
-					vc2010.excludedFromBuild(cfg, filecfg)
-					if filecfg then
-						vc2010.objectFileName(filecfg)
-						vc2010.forceIncludes(filecfg, condition)
-						vc2010.precompiledHeader(cfg, filecfg, condition)
-						vc2010.additionalCompileOptions(filecfg, condition)
+				-- Capture the contents of the <ClCompile> element, if any, so
+				-- I know which form to use.
+
+				local contents = io.capture(function ()
+					for cfg in project.eachconfig(prj) do
+						local condition = vc2010.condition(cfg)
+
+						local filecfg = fileconfig.getconfig(file, cfg)
+						vc2010.excludedFromBuild(cfg, filecfg)
+						if filecfg then
+							vc2010.objectFileName(filecfg)
+							vc2010.forceIncludes(filecfg, condition)
+							vc2010.precompiledHeader(cfg, filecfg, condition)
+							vc2010.additionalCompileOptions(filecfg, condition)
+						end
 					end
+				end)
 
+				if #contents > 0 then
+					_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
+					_p("%s", contents)
+					_p(2,'</ClCompile>')
+				else
+					_x(2,'<ClCompile Include=\"%s\" />', path.translate(file.relpath))
 				end
-				_p(2,'</ClCompile>')
+
 			end
 			_p(1,'</ItemGroup>')
 		end

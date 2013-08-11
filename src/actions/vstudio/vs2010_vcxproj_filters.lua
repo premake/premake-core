@@ -25,7 +25,7 @@
 		vc2010.filters_filegroup(prj, "ResourceCompile")
 		vc2010.filters_filegroup(prj, "CustomBuild")
 
-		_p('</Project>')
+		io.printf('</Project>')
 	end
 
 

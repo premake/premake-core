@@ -43,8 +43,7 @@
 		prepare()
 		test.capture [[
 	<ItemGroup>
-		<ClCompile Include="hello.c">
-		</ClCompile>
+		<ClCompile Include="hello.c" />
 	</ItemGroup>
 		]]
 	end
@@ -153,8 +152,7 @@
 		prepare()
 		test.capture [[
 	<ItemGroup>
-		<ClCompile Include="greetings\hello.cpp">
-		</ClCompile>
+		<ClCompile Include="greetings\hello.cpp" />
 		<ClCompile Include="hello.cpp">
 			<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
 			<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
