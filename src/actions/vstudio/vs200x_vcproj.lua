@@ -453,7 +453,7 @@
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+			_x(4,'PrecompiledHeaderThrough="%s"', cfg.pchheader)
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
@@ -478,7 +478,7 @@
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			_x(4,'PrecompiledHeaderThrough="%s"', path.getname(cfg.pchheader))
+			_x(4,'PrecompiledHeaderThrough="%s"', cfg.pchheader)
 		else
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end

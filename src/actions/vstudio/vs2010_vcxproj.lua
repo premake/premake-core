@@ -15,7 +15,7 @@
 
 
 ---
--- Add namespace for element definition lists for premake.callsequence()
+-- Add namespace for element definition lists for premake.callarray()
 ---
 
 	vc2010.elements = {}
@@ -965,7 +965,7 @@
 		else
 			if not cfg.flags.NoPCH and cfg.pchheader then
 				_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
-				_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', path.getname(cfg.pchheader))
+				_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
 			else
 				_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
 			end

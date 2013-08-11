@@ -41,19 +41,28 @@
 	end
 
 
---
--- If precompiled headers are specified, add those elements.
---
+---
+-- Test precompiled header handling; the header should be treated as
+-- a plain string value, with no path manipulation applied, since it
+-- needs to match the value of the #include statement used in the
+-- project code.
+---
 
 	function suite.usePrecompiledHeaders_onPrecompiledHeaders()
+		location "build"
 		pchheader "include/afxwin.h"
 		prepare()
 		test.capture [[
 		<ClCompile>
 			<PrecompiledHeader>Use</PrecompiledHeader>
-			<PrecompiledHeaderFile>afxwin.h</PrecompiledHeaderFile>
+			<PrecompiledHeaderFile>include/afxwin.h</PrecompiledHeaderFile>
 		]]
 	end
+
+
+---
+-- The NoPCH flag should override any other PCH settings.
+---
 
 	function suite.noPrecompiledHeaders_onNoPCH()
 		pchheader "afxwin.h"

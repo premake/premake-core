@@ -137,12 +137,16 @@
 	end
 
 
---
--- Verify the handling of precompiled headers.
---
+---
+-- Test precompiled header handling; the header should be treated as
+-- a plain string value, with no path manipulation applied, since it
+-- needs to match the value of the #include statement used in the
+-- project code.
+---
 
 	function suite.compilerBlock_OnPCH()
-		pchheader "source/common.h"
+		location "build"
+		pchheader "include/common.h"
 		pchsource "source/common.cpp"
 		prepare()
 		test.capture [[
@@ -153,7 +157,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="common.h"
+				PrecompiledHeaderThrough="include/common.h"
 				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="0"
