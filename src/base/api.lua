@@ -615,6 +615,13 @@
 	}
 
 	api.register {
+		name = "copylocal",
+		scope = "config",
+		kind = "mixed-list",
+		tokens = true,
+	}
+
+	api.register {
 		name = "debugargs",
 		scope = "config",
 		kind = "string-list",
@@ -711,6 +718,7 @@
 			"MultiProcessorCompile",
 			"NativeWChar",
 			"No64BitChecks",
+			"NoCopyLocal",
 			"NoEditAndContinue",
 			"NoExceptions",
 			"NoFramePointer",

@@ -274,6 +274,9 @@
 --      directory - just the directory, no name
 --      fullpath  - full path with decorated name
 --      object    - return the project object of the dependency
+--    Or, a function(original, decorated) can be supplied, in which case it
+--    will be called for each matching link, providing the original value as
+--    it was specified in links(), and the decorated value.
 -- @param linkage
 --    Optional. For languages or environments that support different kinds of
 --    linking (i.e. Managed/CLR C++, which can link both managed and unmanaged
@@ -350,6 +353,8 @@
 					item = path.getname(item)
 				elseif part == "basename" then
 					item = path.getbasename(item)
+				elseif type(part) == "function" then
+					part(link, item)
 				end
 			end
 
@@ -402,4 +407,35 @@
 
 	function config.gettargetinfo(cfg)
 		return buildtargetinfo(cfg, cfg.kind, "target")
+	end
+
+
+
+--
+-- Determine if the specified library or assembly reference should be copied
+-- to the build's target directory. "Copy Local" is the terminology used by
+-- Visual Studio C# projects for this feature.
+--
+-- @param cfg
+--    The configuration to query. Can be a project (and will be for C#
+--    projects).
+-- @param linkname
+--    The name of the library or assembly reference to check. This should
+--    match the name as it was provided in the call to links().
+-- @param default
+--    The value to return if the library is not mentioned in any settings.
+-- @return
+--    True if the library should be copied local, false otherwise.
+--
+
+	function config.isCopyLocal(cfg, linkname, default)
+		if cfg.flags.NoCopyLocal then
+			return false
+		end
+
+		if #cfg.copylocal > 0 then
+			return table.contains(cfg.copylocal, linkname)
+		end
+
+		return default
 	end

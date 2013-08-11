@@ -88,3 +88,57 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- The assembly should not be copied to the target directory if the
+-- NoCopyLocal flag has been set for the configuration.
+--
+
+	function suite.markedPrivate_onNoCopyLocal()
+		links { "../Libraries/nunit.framework" }
+		flags { "NoCopyLocal" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>..\Libraries\nunit.framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+
+--
+-- If there are entries in the copylocal() list, then only those
+-- specific libraries should be copied.
+--
+
+	function suite.markedPrivate_onCopyLocalListExclusion()
+		links { "../Libraries/nunit.framework" }
+		copylocal { "SomeOtherProject" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>..\Libraries\nunit.framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.notMarkedPrivate_onCopyLocalListInclusion()
+		links { "../Libraries/nunit.framework" }
+		copylocal { "../Libraries/nunit.framework" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>..\Libraries\nunit.framework.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+

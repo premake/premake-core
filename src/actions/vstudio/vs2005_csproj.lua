@@ -277,16 +277,22 @@
 
 		-- C# doesn't support per-configuration links (does it?) so just use
 		-- the settings from the first available config instead
-		local links = config.getlinks(project.getfirstconfig(prj), "system", "fullpath")
-		for _, link in ipairs(links) do
-			if link:find("/", nil, true) then
-				_x(2,'<Reference Include="%s">', path.getbasename(link))
-				_x(3,'<HintPath>%s</HintPath>', path.translate(link))
+		local cfg = project.getfirstconfig(prj)
+
+		config.getlinks(cfg, "system", function(original, decorated)
+			if decorated:find("/", nil, true) then
+				_x(2,'<Reference Include="%s">', path.getbasename(decorated))
+				_x(3,'<HintPath>%s</HintPath>', path.translate(decorated))
+
+				if not config.isCopyLocal(prj, original, true) then
+					_p(3,"<Private>False</Private>")
+				end
+
 				_p(2,'</Reference>')
 			else
-				_x(2,'<Reference Include="%s" />', path.getbasename(link))
+				_x(2,'<Reference Include="%s" />', path.getbasename(decorated))
 			end
-		end
+		end)
 
 		_p(1,'</ItemGroup>')
 	end
@@ -306,6 +312,11 @@
 				_x(2,'<ProjectReference Include="%s">', path.translate(relpath))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_x(3,'<Name>%s</Name>', dep.name)
+
+				if not config.isCopyLocal(prj, dep.name, true) then
+					_p(3,"<Private>False</Private>")
+				end
+
 				_p(2,'</ProjectReference>')
 			end
 		end

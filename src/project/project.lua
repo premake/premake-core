@@ -822,6 +822,7 @@
 	end
 
 
+
 --
 -- Returns true if the project uses a C/C++ language.
 --

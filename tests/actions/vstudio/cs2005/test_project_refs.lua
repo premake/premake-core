@@ -94,3 +94,59 @@
 		]]
 	end
 
+
+--
+-- The assembly should not be copied to the target directory if the
+-- NoCopyLocal flag has been set for the configuration.
+--
+
+	function suite.markedPrivate_onNoCopyLocal()
+		links { "MyProject" }
+		flags { "NoCopyLocal" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ProjectReference Include="MyProject.vcproj">
+			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+			<Name>MyProject</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+		]]
+	end
+
+
+--
+-- If there are entries in the copylocal() list, then only those
+-- specific libraries should be copied.
+--
+
+	function suite.markedPrivate_onCopyLocalListExclusion()
+		links { "MyProject" }
+		copylocal { "SomeOtherProject" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ProjectReference Include="MyProject.vcproj">
+			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+			<Name>MyProject</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.notMarkedPrivate_onCopyLocalListInclusion()
+		links { "MyProject" }
+		copylocal { "MyProject" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ProjectReference Include="MyProject.vcproj">
+			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+			<Name>MyProject</Name>
+		</ProjectReference>
+	</ItemGroup>
+		]]
+	end
+
