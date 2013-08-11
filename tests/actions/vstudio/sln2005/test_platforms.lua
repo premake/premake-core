@@ -670,10 +670,34 @@
 
 ---
 -- Excluded configurations should write an ActiveCfg entry, pointing to some
--- arbitrary project configuration, and skip the Build.0 entry.
+-- arbitrary project configuration, and skip the Build.0 entry. Try to match
+-- the available project configurations as closely as possible.
 ---
 
-	function suite.onExcludedConfiguration()
+	function suite.onExcludedBuildCfg()
+		platforms { "DLL", "Static" }
+		project "MyProject"
+		removeconfigurations { "Debug" }
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|DLL = Debug|DLL
+		Debug|Static = Debug|Static
+		Release|DLL = Release|DLL
+		Release|Static = Release|Static
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.ActiveCfg = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Release Static|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Release Static|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.Build.0 = Release Static|Win32
+	EndGlobalSection
+		]]
+	end
+
+	function suite.onExcludedPlatform()
 		platforms { "DLL", "Static" }
 		project "MyProject"
 		removeplatforms { "Static" }
@@ -691,7 +715,24 @@
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Debug DLL|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Release DLL|Win32
+	EndGlobalSection
+		]]
+	end
+
+	function suite.onExcludedBuildCfg_noPlatforms()
+		project "MyProject"
+		removeconfigurations { "Debug" }
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.ActiveCfg = Release|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.ActiveCfg = Release|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 		]]
 	end

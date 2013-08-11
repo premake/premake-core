@@ -456,6 +456,48 @@
 	end
 
 
+
+--
+-- When an exact match is not available (project.getconfig() returns nil), use
+-- this function to find the closest alternative.
+--
+-- @param prj
+--    The project object to query.
+-- @param buildcfg
+--    The name of the build configuration on which to filter.
+-- @param platform
+--    Optional; the name of the platform on which to filter.
+-- @return
+--    A configuration object.
+--
+
+	function project.findClosestMatch(prj, buildcfg, platform)
+
+		-- One or both of buildcfg and platform do not match any of the project
+		-- configurations, otherwise I would have had an exact match. Map them
+		-- separately to apply any partial rules.
+
+		buildcfg = project.mapconfig(prj, buildcfg)[1]
+		platform = project.mapconfig(prj, platform)[1]
+
+		-- Replace missing values with whatever is first in the list
+
+		if not table.contains(prj.configurations, buildcfg) then
+			buildcfg = prj.configurations[1]
+		end
+
+		if not table.contains(prj.platforms, platform) then
+			platform = prj.platforms[1]
+		end
+
+		-- Now I should have a workable pairing
+
+		return project.getconfig(prj, buildcfg, platform)
+
+	end
+
+
+
 --
 -- Locate a project by name; case insensitive.
 --
