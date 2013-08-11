@@ -4,10 +4,8 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.make_wiidev = {}
-	local suite = T.make_wiidev
+	local suite = test.declare("make_wiidev")
 	local make = premake.make
-	local cpp = premake.make.cpp
 	local project = premake5.project
 
 
@@ -28,23 +26,17 @@
 -- Make sure that the Wii-specific flags are passed to the tools.
 --
 
-	function suite.writesCorrectFlags()
-		cpp.flags(cfg, premake.tools.gcc)
+	function suite.writesCorrectCppFlags()
+		make.cppFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  DEFINES   +=
-  INCLUDES  +=
-  FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES) $(FORCE_INCLUDE)
-  ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
-  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   		]]
 	end
 
 	function suite.writesCorrectLinkerFlags()
-		cpp.linkconfig(cfg, premake.tools.gcc)
+		make.ldFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -s -L$(LIBOGC_LIB) $(MACHDEP)
+  ALL_LDFLAGS += $(LDFLAGS) -s -L$(LIBOGC_LIB) $(MACHDEP)
 		]]
 	end
 

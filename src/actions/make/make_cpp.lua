@@ -1,7 +1,7 @@
 --
 -- make_cpp.lua
 -- Generate a C/C++ project makefile.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	premake.make.cpp = {}
@@ -12,68 +12,36 @@
 	local fileconfig = premake5.fileconfig
 
 
+---
+-- Add namespace for element definition lists for premake.callarray()
+---
+
+	cpp.elements = {}
+
+
 --
 -- Generate a GNU make C++ project makefile, with support for the new platforms API.
 --
 
+	cpp.elements.makefile = {
+		"header",
+		"phonyRules",
+		"cppConfigs",
+		"cppObjects",
+		"shellType",
+		"cppTargetRules",
+		"targetDirRules",
+		"objDirRules",
+		"cppCleanRules",
+		"preBuildRules",
+		"preLinkRules",
+		"pchRules",
+		"cppFileRules",
+		"cppDependencies",
+	}
+
 	function make.cpp.generate(prj)
-		make.header(prj)
-
-		-- main build rule(s)
-		_p('.PHONY: clean prebuild prelink')
-		_p('')
-
-		for cfg in project.eachconfig(prj) do
-			cpp.config(cfg)
-		end
-
-		-- list intermediate files
-		cpp.objects(prj)
-
-		make.detectshell()
-
-		-- common build target rules
-		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
-		_p('\t@echo Linking %s', prj.name)
-		_p('\t$(SILENT) $(LINKCMD)')
-		_p('\t$(POSTBUILDCMDS)')
-		_p('')
-
-		make.mkdirrule("$(TARGETDIR)")
-		make.mkdirrule("$(OBJDIR)")
-
-		-- clean target
-		_p('clean:')
-		_p('\t@echo Cleaning %s', prj.name)
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('\t$(SILENT) rm -f  $(TARGET)')
-		_p('\t$(SILENT) rm -rf $(OBJDIR)')
-		_p('else')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGET)) del $(subst /,\\\\,$(TARGET))')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
-		_p('endif')
-		_p('')
-
-		-- custom build step targets
-		_p('prebuild:')
-		_p('\t$(PREBUILDCMDS)')
-		_p('')
-
-		_p('prelink:')
-		_p('\t$(PRELINKCMDS)')
-		_p('')
-
-		-- precompiler header rule
-		cpp.pchrules(prj)
-
-		-- file building rules
-		cpp.filerules(prj)
-
-		-- include the dependencies, built by GCC (with the -MMD flag)
-		_p('-include $(OBJECTS:%%.o=%%.d)')
-		_p('ifneq (,$(PCH))')
-			_p('  -include $(OBJDIR)/$(notdir $(PCH)).d')
-		_p('endif')
+		premake.callarray(make, cpp.elements.makefile, prj)
 	end
 
 
@@ -81,61 +49,44 @@
 -- Write out the settings for a particular configuration.
 --
 
-	function cpp.config(cfg)
-		-- identify the toolset used by this configurations
-		local toolset = premake.tools[cfg.toolset or "gcc"]
-		if not toolset then
-			error("Invalid toolset '" + cfg.toolset + "'")
+	cpp.elements.configuration = {
+		"cppTools",
+		"target",
+		"objdir",
+		"defines",
+		"includes",
+		"forceIncludes",
+		"cppFlags",
+		"cFlags",
+		"cxxFlags",
+		"resFlags",
+		"pch",
+		"libs",
+		"ldDeps",
+		"ldFlags",
+		"linkCmd",
+		"preBuildCmds",
+		"preLinkCmds",
+		"postBuildCmds",
+		"cppAllRules",
+		"settings",
+	}
+
+	function make.cppConfigs(prj)
+		for cfg in project.eachconfig(prj) do
+			-- identify the toolset used by this configurations (would be nicer if
+			-- this were computed and stored with the configuration up front)
+
+			local toolset = premake.tools[cfg.toolset or "gcc"]
+			if not toolset then
+				error("Invalid toolset '" + cfg.toolset + "'")
+			end
+
+			_x('ifeq ($(config),%s)', cfg.shortname)
+			premake.callarray(make, cpp.elements.configuration, cfg, toolset)
+			_p('endif')
+			_p('')
 		end
-
-		_x('ifeq ($(config),%s)', cfg.shortname)
-
-		-- write toolset specific configurations
-		cpp.toolconfig(cfg, toolset)
-
-		-- write target information (target dir, name, obj dir)
-		make.targetconfig(cfg)
-
-		-- write flags
-		cpp.flags(cfg, toolset)
-
-		-- set up precompiled headers
-		cpp.pchconfig(cfg)
-
-		-- write the link step
-		cpp.linkconfig(cfg, toolset)
-
-		-- write the custom build commands
-		_p('  define PREBUILDCMDS')
-		if #cfg.prebuildcommands > 0 then
-			_p('\t@echo Running pre-build commands')
-			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
-
-		_p('  define PRELINKCMDS')
-		if #cfg.prelinkcommands > 0 then
-			_p('\t@echo Running pre-link commands')
-			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
-
-		_p('  define POSTBUILDCMDS')
-		if #cfg.postbuildcommands > 0 then
-			_p('\t@echo Running post-build commands')
-			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
-		_p('')
-
-		-- write the target building rule
-		cpp.targetrules(cfg)
-
-		-- write out config-level makesettings blocks
-		make.settings(cfg, toolset)
-
-		_p('endif')
-		_p('')
 	end
 
 
@@ -154,7 +105,7 @@
 -- Output the list of file building rules.
 --
 
-	function cpp.filerules(prj)
+	function make.cppFileRules(prj)
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
@@ -171,16 +122,16 @@
 				-- if it has custom rules, need to break them out
 				-- into individual configurations
 				if rules then
-					cpp.customfilerules(prj, node)
+					cpp.customFileRules(prj, node)
 				else
-					cpp.standardfilerules(prj, node)
+					cpp.standardFileRules(prj, node)
 				end
 			end
 		})
 		_p('')
 	end
 
-	function cpp.standardfilerules(prj, node)
+	function cpp.standardFileRules(prj, node)
 		-- C/C++ file
 		if path.iscppfile(node.abspath) then
 			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
@@ -195,7 +146,7 @@
 		end
 	end
 
-	function cpp.customfilerules(prj, node)
+	function cpp.customFileRules(prj, node)
 		for cfg in project.eachconfig(prj) do
 			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
@@ -214,65 +165,10 @@
 
 
 --
--- Compile flags
---
-
-	function cpp.flags(cfg, toolset)
-		_p('  DEFINES   +=%s', make.list(toolset.getdefines(cfg.defines)))
-
-		local includes = premake.esc(toolset.getincludedirs(cfg, cfg.includedirs))
-		_p('  INCLUDES  +=%s', make.list(includes))
-
-		includes = toolset.getforceincludes(cfg)
-		_x('  FORCE_INCLUDE +=%s', make.list(includes))
-
-		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES) $(FORCE_INCLUDE)', make.list(toolset.getcppflags(cfg)))
-		_p('  ALL_CFLAGS   += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
-		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
-
-		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)
-		_p('  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)%s', make.list(resflags))
-	end
-
-
---
--- Link step
---
-
-	function cpp.linkconfig(cfg, toolset)
-		_p('  ALL_LDFLAGS  += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
-
-		local flags = toolset.getlinks(cfg)
-		_p('  LIBS      +=%s', make.list(flags))
-
-		local deps = config.getlinks(cfg, "siblings", "fullpath")
-		_p('  LDDEPS    +=%s', make.list(premake.esc(deps)))
-
-		if cfg.kind == premake.STATICLIB then
-			if cfg.architecture == premake.UNIVERSAL then
-				_p('  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)')
-			else
-				_p('  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)')
-			end
-		else
-
-			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
-			--   but had trouble linking to certain static libs; $(OBJECTS) moved up
-			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
-			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
-
-			local cc = iif(cfg.language == "C", "CC", "CXX")
-			_p('  LINKCMD    = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
-
-		end
-	end
-
-
---
 -- List the objects file for the project, and each configuration.
 --
 
-	function cpp.objects(prj)
+	function make.cppObjects(prj)
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
 		local root = { objects={}, resources={} }
@@ -376,15 +272,147 @@
 	end
 
 
+---------------------------------------------------------------------------
 --
--- Precompiled header support
+-- Handlers for individual makefile elements
 --
+---------------------------------------------------------------------------
 
-	function cpp.pchconfig(cfg)
+	function make.cFlags(cfg, toolset)
+		_p('  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
+	end
+
+
+	function make.cppAllRules(cfg, toolset)
+		if cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP then
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
+			_p('\t@:')
+			_p('')
+			_p('$(dir $(TARGETDIR))PkgInfo:')
+			_p('$(dir $(TARGETDIR))Info.plist:')
+		else
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+			_p('\t@:')
+		end
+	end
+
+
+	function make.cppFlags(cfg, toolset)
+		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES) $(FORCE_INCLUDE)', make.list(toolset.getcppflags(cfg)))
+	end
+
+
+	function make.cxxFlags(cfg, toolset)
+		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
+	end
+
+
+	function make.cppCleanRules(prj)
+		_p('clean:')
+		_p('\t@echo Cleaning %s', prj.name)
+		_p('ifeq (posix,$(SHELLTYPE))')
+		_p('\t$(SILENT) rm -f  $(TARGET)')
+		_p('\t$(SILENT) rm -rf $(OBJDIR)')
+		_p('else')
+		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGET)) del $(subst /,\\\\,$(TARGET))')
+		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
+		_p('endif')
+		_p('')
+	end
+
+
+	function make.cppDependencies(prj)
+		-- include the dependencies, built by GCC (with the -MMD flag)
+		_p('-include $(OBJECTS:%%.o=%%.d)')
+		_p('ifneq (,$(PCH))')
+			_p('  -include $(OBJDIR)/$(notdir $(PCH)).d')
+		_p('endif')
+	end
+
+
+	function make.cppTargetRules(prj)
+		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
+		_p('\t@echo Linking %s', prj.name)
+		_p('\t$(SILENT) $(LINKCMD)')
+		_p('\t$(POSTBUILDCMDS)')
+		_p('')
+	end
+
+
+	function make.cppTools(cfg, toolset)
+		local tool = toolset.gettoolname(cfg, "cc")
+		if tool then
+			_p('  CC = %s', tool)
+		end
+
+		tool = toolset.gettoolname(cfg, "cxx")
+		if tool then
+			_p('  CXX = %s', tool)
+		end
+
+		tool = toolset.gettoolname(cfg, "ar")
+		if tool then
+			_p('  AR = %s', tool)
+		end
+	end
+
+
+	function make.defines(cfg, toolset)
+		_p('  DEFINES +=%s', make.list(toolset.getdefines(cfg.defines)))
+	end
+
+
+	function make.forceIncludes(cfg, toolset)
+		local includes = toolset.getforceincludes(cfg)
+		_x('  FORCE_INCLUDE +=%s', make.list(includes))
+	end
+
+
+	function make.includes(cfg, toolset)
+		local includes = premake.esc(toolset.getincludedirs(cfg, cfg.includedirs))
+		_p('  INCLUDES +=%s', make.list(includes))
+	end
+
+
+	function make.ldDeps(cfg, toolset)
+		local deps = config.getlinks(cfg, "siblings", "fullpath")
+		_p('  LDDEPS +=%s', make.list(premake.esc(deps)))
+	end
+
+
+	function make.ldFlags(cfg, toolset)
+		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
+	end
+
+
+	function make.libs(cfg, toolset)
+		local flags = toolset.getlinks(cfg)
+		_p('  LIBS +=%s', make.list(flags))
+	end
+
+
+	function make.linkCmd(cfg, toolset)
+		if cfg.kind == premake.STATICLIB then
+			if cfg.architecture == premake.UNIVERSAL then
+				_p('  LINKCMD = libtool -o $(TARGET) $(OBJECTS)')
+			else
+				_p('  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)')
+			end
+		else
+			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
+			--   but had trouble linking to certain static libs; $(OBJECTS) moved up
+			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
+			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
+
+			local cc = iif(cfg.language == "C", "CC", "CXX")
+			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
+		end
+	end
+
+
+	function make.pch(cfg, toolset)
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			-- Visual Studio needs the PCH path to match the way it appears in
-			-- the project's #include statement. GCC needs the full path. Assume
-			-- the #include path is given, is search the include dirs for it.
+			-- Try to locate the header on the include search paths
 			local pchheader = cfg.pchheader
 			for _, incdir in ipairs(cfg.includedirs) do
 				local testname = path.join(incdir, cfg.pchheader)
@@ -395,13 +423,13 @@
 			end
 
 			local gch = path.getname(pchheader)
-			_x('  PCH        = %s', project.getrelative(cfg.project, pchheader))
-			_x('  GCH        = $(OBJDIR)/%s.gch', gch)
+			_x('  PCH = %s', project.getrelative(cfg.project, pchheader))
+			_x('  GCH = $(OBJDIR)/%s.gch', gch)
 			_x('  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
 		end
 	end
 
-	function cpp.pchrules(prj)
+	function make.pchRules(prj)
 		_p('ifneq (,$(PCH))')
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
@@ -416,45 +444,7 @@
 	end
 
 
---
--- The main build target rules.
---
-
-	function cpp.targetrules(cfg)
-		local macapp = (cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP)
-
-		if macapp then
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
-		else
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
-		end
-		_p('\t@:')
-
-		if macapp then
-			_p('')
-			_p('$(dir $(TARGETDIR))PkgInfo:')
-			_p('$(dir $(TARGETDIR))Info.plist:')
-		end
-	end
-
-
---
--- System specific toolset configuration.
---
-
-	function cpp.toolconfig(cfg, toolset)
-		local tool = toolset.gettoolname(cfg, "cc")
-		if tool then
-			_p('  CC         = %s', tool)
-		end
-
-		tool = toolset.gettoolname(cfg, "cxx")
-		if tool then
-			_p('  CXX        = %s', tool)
-		end
-
-		tool = toolset.gettoolname(cfg, "ar")
-		if tool then
-			_p('  AR         = %s', tool)
-		end
+	function make.resFlags(cfg, toolset)
+		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)
+		_p('  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)%s', make.list(resflags))
 	end

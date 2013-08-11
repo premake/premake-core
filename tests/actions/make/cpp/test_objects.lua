@@ -5,7 +5,7 @@
 --
 
 	local suite = test.declare("make_cpp_objects")
-	local cpp = premake.make.cpp
+	local make = premake.make
 	local project = premake5.project
 
 
@@ -21,7 +21,7 @@
 
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
-		cpp.objects(prj)
+		make.cppObjects(prj)
 	end
 
 

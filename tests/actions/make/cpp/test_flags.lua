@@ -1,13 +1,11 @@
 --
 -- tests/actions/make/cpp/test_flags.lua
 -- Tests compiler and linker flags for Makefiles.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.make_flags = {}
-	local suite = T.make_flags
+	local suite = test.declare("make_flags")
 	local make = premake.make
-	local cpp = premake.make.cpp
 	local project = premake5.project
 
 
@@ -15,16 +13,16 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
-	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
-		cpp.flags(cfg, premake.tools.gcc)
+	local function prepare(calls)
+		local cfg = project.getconfig(prj, "Debug")
+		local toolset = premake.tools.gcc
+		premake.callarray(make, calls, cfg, toolset)
 	end
 
 
@@ -34,9 +32,8 @@
 
 	function suite.includeDirs()
 		includedirs { "src/include", "../include" }
-		prepare()
+		prepare { "includes" }
 		test.capture [[
-  DEFINES   +=
-  INCLUDES  += -I"src/include" -I"../include"
+  INCLUDES += -I"src/include" -I"../include"
 		]]
 	end

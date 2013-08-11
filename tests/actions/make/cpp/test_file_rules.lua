@@ -1,12 +1,11 @@
 --
 -- tests/actions/make/cpp/test_file_rules.lua
 -- Validate the makefile source building rules.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.make_cpp_file_rules = { }
-	local suite = T.make_cpp_file_rules
-	local cpp = premake.make.cpp
+	local suite = test.declare("make_cpp_file_rules")
+	local make = premake.make
 	local project = premake5.project
 
 
@@ -22,7 +21,7 @@
 
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
-		cpp.filerules(prj)
+		make.cppFileRules(prj)
 	end
 
 

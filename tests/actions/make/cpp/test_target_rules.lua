@@ -1,28 +1,27 @@
 --
 -- tests/actions/make/cpp/test_target_rules.lua
 -- Validate the makefile target building rules.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.make_cpp_target_rules = { }
-	local suite = T.make_cpp_target_rules
-	local cpp = premake.make.cpp
+	local suite = test.declare("make_cpp_target_rules")
+	local make = premake.make
 	local project = premake5.project
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
-	
+
 	local function prepare()
 		local cfg = project.getconfig(prj, "Debug")
-		cpp.targetrules(cfg)
+		make.cppAllRules(cfg)
 	end
 
 

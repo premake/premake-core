@@ -67,7 +67,7 @@
 		for i = 1, n do
 			local fn = namespace[array[i]]
 			if not fn then
-				error(string.format("Unable to find function '%s'", name))
+                error(string.format("Unable to find function '%s'", array[i]))
 			end
 			fn(...)
 		end

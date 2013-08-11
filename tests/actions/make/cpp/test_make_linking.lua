@@ -4,9 +4,8 @@
 -- Copyright (c) 2010-2013 Jason Perkins and the Premake project
 --
 
-	T.make_linking = { }
-	local suite = T.make_linking
-	local cpp = premake.make.cpp
+	local suite = test.declare("make_linking")
+	local make = premake.make
 	local project = premake5.project
 
 
@@ -21,9 +20,10 @@
 		sln, prj = test.createsolution()
 	end
 
-	local function prepare()
+	local function prepare(calls)
 		local cfg = project.getconfig(prj, "Debug")
-		cpp.linkconfig(cfg, premake.tools.gcc)
+		local toolset = premake.tools.gcc
+		premake.callarray(make, calls, cfg, toolset)
 	end
 
 
@@ -33,12 +33,10 @@
 
 	function suite.links_onCppSharedLib()
 		kind "SharedLib"
-		prepare()
+		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -s -shared
-  LIBS      +=
-  LDDEPS    +=
-  LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
+  ALL_LDFLAGS += $(LDFLAGS) -s -shared
+  LINKCMD = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -50,12 +48,10 @@
 	function suite.links_onCSharedLib()
 		language "C"
 		kind "SharedLib"
-		prepare()
+		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -s -shared
-  LIBS      +=
-  LDDEPS    +=
-  LINKCMD    = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
+  ALL_LDFLAGS += $(LDFLAGS) -s -shared
+  LINKCMD = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -66,11 +62,10 @@
 
 	function suite.links_onStaticLib()
 		kind "StaticLib"
-		prepare()
+		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  LIBS      +=
-  LDDEPS    +=
-  LINKCMD    = $(AR) -rcs $(TARGET) $(OBJECTS)
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)
 		]]
 	end
 
@@ -79,15 +74,13 @@
 -- Check link command for a Mac OS X universal static library.
 --
 
-	function suite.links_onStaticLib()
+	function suite.links_onMacUniversalStaticLib()
 		architecture "universal"
 		kind "StaticLib"
-		prepare()
+		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -s
-  LIBS      +=
-  LDDEPS    +=
-  LINKCMD    = libtool -o $(TARGET) $(OBJECTS)
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LINKCMD = libtool -o $(TARGET) $(OBJECTS)
 		]]
 	end
 
@@ -103,11 +96,11 @@
 		kind "StaticLib"
 		location "build"
 
-		prepare()
+		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -s
-  LIBS      += build/libMyProject2.a
-  LDDEPS    += build/libMyProject2.a
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LIBS += build/libMyProject2.a
+  LDDEPS += build/libMyProject2.a
 		]]
 	end
 
@@ -123,11 +116,11 @@
 		kind "SharedLib"
 		location "build"
 
-		prepare()
+		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -s
-  LIBS      += build/libMyProject2.so
-  LDDEPS    += build/libMyProject2.so
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LIBS += build/libMyProject2.so
+  LDDEPS += build/libMyProject2.so
 		]]
 	end
 
@@ -140,10 +133,9 @@
  function suite.onExternalLibraryWithPath()
  	location "MyProject"
 	links { "libs/SomeLib" }
-	prepare()
+	prepare { "ldFlags", "libs" }
 	test.capture [[
-  ALL_LDFLAGS  += $(LDFLAGS) -L../libs -s
-  LIBS      += -lSomeLib
-  LDDEPS    +=
+  ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
+  LIBS += -lSomeLib
 	]]
  end

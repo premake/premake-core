@@ -14,13 +14,12 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		sln = test.createsolution()
 		toolset "clang"
 		prj = premake.solution.getproject_ng(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
 	end
 
 
@@ -29,12 +28,12 @@
 --
 
 	function suite.usesCorrectCompilers()
-		cpp.config(cfg)
+		make.cppConfigs(prj)
 		test.capture [[
 ifeq ($(config),debug)
-  CC         = clang
-  CXX        = clang
-  AR         = ar
+  CC = clang
+  CXX = clang
+  AR = ar
   		]]
 	end
 

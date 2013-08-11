@@ -78,22 +78,6 @@
 	end
 
 
---
--- Output logic to detect the shell type at runtime.
---
-
-	function make.detectshell()
-		_p('SHELLTYPE := msdos')
-		_p('ifeq (,$(ComSpec)$(COMSPEC))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('')
-	end
-
-
 ---
 -- Escape a string so it can be written to a makefile.
 ---
@@ -168,17 +152,7 @@
 -- it screws up the escaping of spaces and parethesis (anyone know a solution?)
 --
 
-	function make.copyrule(source, target)
-		_p('%s: %s', target, source)
-		_p('\t@echo Copying $(notdir %s)', target)
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('\t$(SILENT) cp -fR %s %s', source, target)
-		_p('else')
-		_p('\t$(SILENT) copy /Y $(subst /,\\\\,%s) $(subst /,\\\\,%s)', source, target)
-		_p('endif')
-	end
-
-	function make.mkdirrule(dirname)
+	function make.mkdirRules(dirname)
 		_p('%s:', dirname)
 		_p('\t@echo Creating %s', dirname)
 		_p('ifeq (posix,$(SHELLTYPE))')
@@ -204,8 +178,82 @@
 
 
 --
--- Write out raw makefile rules for a configuration.
+-- Convert an arbitrary string (project name) to a make variable name.
 --
+
+	function make.tovar(value)
+		value = value:gsub("[ -]", "_")
+		value = value:gsub("[()]", "")
+		return value
+	end
+
+
+---------------------------------------------------------------------------
+--
+-- Handlers for the individual makefile elements that can be shared
+-- between the different language projects.
+--
+---------------------------------------------------------------------------
+
+	function make.objdir(cfg)
+		_x('  OBJDIR = %s', project.getrelative(cfg.project, cfg.objdir))
+	end
+
+
+	function make.objDirRules(prj)
+		make.mkdirRules("$(OBJDIR)")
+	end
+
+
+	function make.phonyRules(prj)
+		_p('.PHONY: clean prebuild prelink')
+		_p('')
+	end
+
+
+	function make.preBuildCmds(cfg, toolset)
+		_p('  define PREBUILDCMDS')
+		if #cfg.prebuildcommands > 0 then
+			_p('\t@echo Running pre-build commands')
+			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+	end
+
+
+	function make.preBuildRules(prj)
+		_p('prebuild:')
+		_p('\t$(PREBUILDCMDS)')
+		_p('')
+	end
+
+
+	function make.preLinkCmds(cfg, toolset)
+		_p('  define PRELINKCMDS')
+		if #cfg.prelinkcommands > 0 then
+			_p('\t@echo Running pre-link commands')
+			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+	end
+
+
+	function make.preLinkRules(prj)
+		_p('prelink:')
+		_p('\t$(PRELINKCMDS)')
+		_p('')
+	end
+
+
+	function make.postBuildCmds(cfg, toolset)
+		_p('  define POSTBUILDCMDS')
+		if #cfg.postbuildcommands > 0 then
+			_p('\t@echo Running post-build commands')
+			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
+		end
+		_p('  endef')
+	end
+
 
 	function make.settings(cfg, toolset)
 		if #cfg.makesettings > 0 then
@@ -221,26 +269,24 @@
 	end
 
 
---
--- Output the main target variables: target directory, target name,
--- and objects (or intermediate files) directory. These values are
--- common across both C++ and C# projects.
---
-
-	function make.targetconfig(cfg)
-		local targetdir =
-		_x('  TARGETDIR  = %s', project.getrelative(cfg.project, cfg.buildtarget.directory))
-		_x('  TARGET     = $(TARGETDIR)/%s', cfg.buildtarget.name)
-		_x('  OBJDIR     = %s', project.getrelative(cfg.project, cfg.objdir))
+	function make.shellType()
+		_p('SHELLTYPE := msdos')
+		_p('ifeq (,$(ComSpec)$(COMSPEC))')
+		_p('  SHELLTYPE := posix')
+		_p('endif')
+		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
+		_p('  SHELLTYPE := posix')
+		_p('endif')
+		_p('')
 	end
 
 
---
--- Convert an arbitrary string (project name) to a make variable name.
---
+	function make.target(cfg)
+		_x('  TARGETDIR = %s', project.getrelative(cfg.project, cfg.buildtarget.directory))
+		_x('  TARGET = $(TARGETDIR)/%s', cfg.buildtarget.name)
+	end
 
-	function make.tovar(value)
-		value = value:gsub("[ -]", "_")
-		value = value:gsub("[()]", "")
-		return value
+
+	function make.targetDirRules(prj)
+		make.mkdirRules("$(TARGETDIR)")
 	end

@@ -1,12 +1,11 @@
 --
 -- tests/actions/make/cpp/test_make_pch.lua
 -- Validate the setup for precompiled headers in makefiles.
--- Copyright (c) 2010-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2013 Jason Perkins and the Premake project
 --
 
-	T.make_pch = { }
-	local suite = T.make_pch
-	local cpp = premake.make.cpp
+	local suite = test.declare("make_pch")
+	local make = premake.make
 	local project = premake5.project
 
 
@@ -20,8 +19,14 @@
 		sln, prj = test.createsolution()
 	end
 
-	local function prepare()
+	local function prepareVars()
 		cfg = project.getconfig(prj, "Debug")
+		make.pch(cfg)
+	end
+
+	local function prepareRules()
+		cfg = project.getconfig(prj, "Debug")
+		make.pchRules(cfg.project)
 	end
 
 
@@ -30,8 +35,7 @@
 --
 
 	function suite.noConfig_onNoHeaderSet()
-		prepare()
-		cpp.pchconfig(cfg)
+		prepareVars()
 		test.isemptycapture()
 	end
 
@@ -44,8 +48,7 @@
 	function suite.noConfig_onHeaderAndNoPCHFlag()
 		pchheader "include/myproject.h"
 		flags "NoPCH"
-		prepare()
-		cpp.pchconfig(cfg)
+		prepareVars()
 		test.isemptycapture()
 	end
 
@@ -57,12 +60,10 @@
 
 	function suite.config_onPchEnabled()
 		pchheader "include/myproject.h"
-		prepare()
-		cpp.pchconfig(cfg)
+		prepareVars()
 		test.capture [[
-  PCH        = include/myproject.h
-  GCH        = $(OBJDIR)/myproject.h.gch
-  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/myproject.h
+  PCH = include/myproject.h
+  GCH = $(OBJDIR)/myproject.h.gch
 		]]
 	end
 
@@ -74,12 +75,10 @@
 	function suite.pch_searchesIncludeDirs()
 		pchheader "premake.h"
 		includedirs { "../src/host" }
-		prepare()
-		cpp.pchconfig(cfg)
+		prepareVars()
 		test.capture [[
-  PCH        = ../src/host/premake.h
-  GCH        = $(OBJDIR)/premake.h.gch
-  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/premake.h
+  PCH = ../src/host/premake.h
+  GCH = $(OBJDIR)/premake.h.gch
 		]]
 	end
 
@@ -90,8 +89,7 @@
 
 	function suite.buildRules_onCpp()
 		pchheader "include/myproject.h"
-		prepare()
-		cpp.pchrules(cfg.project)
+		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
 $(GCH): $(PCH)
@@ -114,8 +112,7 @@ endif
 	function suite.buildRules_onC()
 		language "C"
 		pchheader "include/myproject.h"
-		prepare()
-		cpp.pchrules(cfg.project)
+		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
 $(GCH): $(PCH)

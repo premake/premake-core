@@ -60,7 +60,7 @@
 		_p('')
 		--]]
 
-		make.detectshell()
+		make.shellType()
 
 		_p('all: $(TARGETDIR) $(OBJDIR) prebuild $(EMBEDFILES) $(COPYFILES) prelink $(TARGET)')
 		_p('')
@@ -70,8 +70,8 @@
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 
-		make.mkdirrule("$(TARGETDIR)")
-		make.mkdirrule("$(OBJDIR)")
+		make.mkdirRules("$(TARGETDIR)")
+		make.mkdirRules("$(OBJDIR)")
 
 		-- clean target
 		local target = firstcfg.buildtarget
@@ -144,7 +144,8 @@
 		cs.toolconfig(cfg, toolset)
 
 		-- write target information (target dir, name, obj dir)
-		make.targetconfig(cfg)
+		make.target(cfg)
+		make.objdir(cfg)
 
 		-- write flags
 		cs.flags(cfg, toolset)
