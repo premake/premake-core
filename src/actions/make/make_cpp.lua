@@ -53,14 +53,14 @@
 		"cppTools",
 		"target",
 		"objdir",
+		"pch",
 		"defines",
 		"includes",
-		"forceIncludes",
+		"forceInclude",
 		"cppFlags",
 		"cFlags",
 		"cxxFlags",
 		"resFlags",
-		"pch",
 		"libs",
 		"ldDeps",
 		"ldFlags",
@@ -362,8 +362,11 @@
 	end
 
 
-	function make.forceIncludes(cfg, toolset)
+	function make.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			table.insert(includes, "-include $(OBJDIR)/$(notdir $(PCH))")
+		end
 		_x('  FORCE_INCLUDE +=%s', make.list(includes))
 	end
 
@@ -411,34 +414,44 @@
 
 
 	function make.pch(cfg, toolset)
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			-- Try to locate the header on the include search paths
-			local pchheader = cfg.pchheader
-			for _, incdir in ipairs(cfg.includedirs) do
-				local testname = path.join(incdir, cfg.pchheader)
-				if os.isfile(testname) then
-					pchheader = testname
-					break
-				end
-			end
-
-			local gch = path.getname(pchheader)
-			_x('  PCH = %s', project.getrelative(cfg.project, pchheader))
-			_x('  GCH = $(OBJDIR)/%s.gch', gch)
-			_x('  ALL_CPPFLAGS += -I$(OBJDIR) -include $(OBJDIR)/%s', gch)
+		-- If there is no header, or if PCH has been disabled, I can early out
+		if not cfg.pchheader or cfg.flags.NoPCH then
+			return
 		end
+
+		-- Visual Studio requires the PCH header to be specified in the same way
+		-- it appears in the #include statements used in the source code; the PCH
+		-- source actual handles the compilation of the header. GCC compiles the
+		-- header file directly, and needs the file's actual file system path in
+		-- order to locate it.
+
+		-- To maximize the compatibility between the two approaches, see if I can
+		-- locate the specified PCH header on one of the include file search paths
+		-- and, if so, adjust the path automatically so the user doesn't have
+		-- add a conditional configuration to the project script.
+
+		local pch = cfg.pchheader
+		for _, incdir in ipairs(cfg.includedirs) do
+			local testname = path.join(incdir, pch)
+			if os.isfile(testname) then
+				pch = testname
+				break
+			end
+		end
+
+		_x('  PCH = %s', path.getrelative(cfg.location, pch))
+		_p('  GCH = $(OBJDIR)/$(notdir $(PCH)).gch')
 	end
+
 
 	function make.pchRules(prj)
 		_p('ifneq (,$(PCH))')
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('\t-$(SILENT) cp $< $(OBJDIR)')
-		_p('else')
-		_p('\t$(SILENT) xcopy /D /Y /Q "$(subst /,\\,$<)" "$(subst /,\\,$(OBJDIR))" 1>nul')
-		_p('endif')
-		cpp.buildcommand(prj, "gch")
+
+		local cmd = iif(prj.language == "C", "$(CC) -x c-header", "$(CXX) -x c++-header")
+		_p('\t$(SILENT) %s $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+
 		_p('endif')
 		_p('')
 	end

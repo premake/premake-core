@@ -63,7 +63,7 @@
 		prepareVars()
 		test.capture [[
   PCH = include/myproject.h
-  GCH = $(OBJDIR)/myproject.h.gch
+  GCH = $(OBJDIR)/$(notdir $(PCH)).gch
 		]]
 	end
 
@@ -78,7 +78,6 @@
 		prepareVars()
 		test.capture [[
   PCH = ../src/host/premake.h
-  GCH = $(OBJDIR)/premake.h.gch
 		]]
 	end
 
@@ -94,12 +93,7 @@
 ifneq (,$(PCH))
 $(GCH): $(PCH)
 	@echo $(notdir $<)
-ifeq (posix,$(SHELLTYPE))
-	-$(SILENT) cp $< $(OBJDIR)
-else
-	$(SILENT) xcopy /D /Y /Q "$(subst /,\,$<)" "$(subst /,\,$(OBJDIR))" 1>nul
-endif
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) -o "$@" -MF $(@:%.gch=%.d) -c "$<"
+	$(SILENT) $(CXX) -x c++-header $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 endif
 		]]
 	end
@@ -117,12 +111,7 @@ endif
 ifneq (,$(PCH))
 $(GCH): $(PCH)
 	@echo $(notdir $<)
-ifeq (posix,$(SHELLTYPE))
-	-$(SILENT) cp $< $(OBJDIR)
-else
-	$(SILENT) xcopy /D /Y /Q "$(subst /,\,$<)" "$(subst /,\,$(OBJDIR))" 1>nul
-endif
-	$(SILENT) $(CC) $(ALL_CFLAGS) -o "$@" -MF $(@:%.gch=%.d) -c "$<"
+	$(SILENT) $(CC) -x c-header $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 endif
 		]]
 	end
