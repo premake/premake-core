@@ -375,3 +375,19 @@
 		</Link>
 		]]
 	end
+
+--
+-- Xbox 360 uses .lib for library extensions
+--
+	function suite.libAdded_onXbox360SystemLibs()
+		kind "ConsoleApp"
+		system "Xbox360"
+		links { "user32" }
+		prepare()
+		test.capture [[
+		<Link>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+		]]
+	end

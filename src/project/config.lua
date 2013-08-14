@@ -175,6 +175,10 @@
 			elseif project.iscpp(cfg.project) then
 				ext = ".lib"
 			end
+		elseif cfg.system == premake.XBOX360 then
+			if project.iscpp(cfg.project) then
+				ext = ".lib"
+			end
 		end
 
 		target = path.appendextension(target, ext)
