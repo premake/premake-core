@@ -60,23 +60,10 @@
 -- Add new elements to the configuration properties block of C++ projects.
 ---
 
-	table.insertafter(vc2010.elements.configurationProperties, "characterSet", "platformToolset")
-
-	function vc2010.platformToolset(cfg)
+	premake.override(vc2010, "platformToolset", function(orig, cfg)
 		if _ACTION > "vs2012" then
 			_p(2,'<PlatformToolset>v120</PlatformToolset>')
+		else
+			orig(cfg)
 		end
-	end
-
-
---
--- Add a common properties import statement to the top of C# projects.
---
-
-	table.insertafter(cs2005.elements.project, "projectElement", "commonProperties")
-
-	function cs2005.commonProperties(prj)
-		if _ACTION > "vs2010" then
-			_p(1,'<Import Project="$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props" Condition="Exists(\'$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\')" />')
-		end
-	end
+	end)

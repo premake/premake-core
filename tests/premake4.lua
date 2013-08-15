@@ -156,6 +156,14 @@
 	dofile("actions/vs2012/test_sln_header.lua")
 	dofile("actions/vs2012/test_vcxproj_config_props.lua")
 
+	-- Visual Studio 2013
+	dofile("actions/vs2013/test_csproj_common_props.lua")
+	dofile("actions/vs2013/test_csproj_project_element.lua")
+	dofile("actions/vs2013/test_csproj_project_props.lua")
+	dofile("actions/vs2013/test_csproj_targets.lua")
+	dofile("actions/vs2013/test_sln_header.lua")
+	dofile("actions/vs2013/test_vcxproj_config_props.lua")
+
 	-- Makefile tests
 	dofile("actions/make/test_make_escaping.lua")
 	dofile("actions/make/test_make_tovar.lua")
