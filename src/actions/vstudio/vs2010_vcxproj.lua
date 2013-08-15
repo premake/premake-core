@@ -287,6 +287,7 @@
 		"runtimeLibrary",
 		"exceptionHandling",
 		"runtimeTypeInfo",
+		"bufferSecurityCheck",
 		"treatWChar_tAsBuiltInType",
 		"floatingPointModel",
 		"enableEnhancedInstructionSet",
@@ -1046,6 +1047,11 @@
 		end
 	end
 
+	function vc2010.bufferSecurityCheck(cfg)
+		if cfg.flags.NoBufferSecurityCheck then
+			_p(3,'<BufferSecurityCheck>false</BufferSecurityCheck>')
+		end
+	end
 
 	function vc2010.stringPooling(cfg)
 		if premake.config.isoptimizedbuild(cfg) then

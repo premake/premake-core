@@ -127,6 +127,7 @@
 	gcc.cxxflags = {
 		NoExceptions   = "-fno-exceptions",
 		NoRTTI         = "-fno-rtti",
+		NoBufferSecurityCheck = "-fno-stack-protector"
 	}
 
 	function gcc.getcxxflags(cfg)

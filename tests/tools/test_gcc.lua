@@ -96,6 +96,11 @@
 		test.isequal({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
 	end
 
+	function suite.cflags_onNoBufferSecurityCheck()
+		flags { "NoBufferSecurityCheck" }
+		prepare()
+		test.isequal({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
+	end
 
 --
 -- Check the basic translation of LDFLAGS for a Posix system.

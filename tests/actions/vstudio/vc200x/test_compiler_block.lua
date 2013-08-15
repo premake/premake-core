@@ -254,6 +254,28 @@
 		]]
 	end
 
+--
+-- Check that the "no buffer security check" flag is applied correctly.
+--
+
+	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck()
+		flags { "NoBufferSecurityCheck" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				BufferSecurityCheck="false"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="0"
+			/>
+		]]
+	end
 
 --
 -- Check that the CompileAs value is set correctly for C language projects.
