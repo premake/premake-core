@@ -434,12 +434,12 @@
 		for _, incdir in ipairs(cfg.includedirs) do
 			local testname = path.join(incdir, pch)
 			if os.isfile(testname) then
-				pch = testname
+				pch = path.getrelative(cfg.location, testname)
 				break
 			end
 		end
 
-		_x('  PCH = %s', path.getrelative(cfg.location, pch))
+		_x('  PCH = %s', pch)
 		_p('  GCH = $(OBJDIR)/$(notdir $(PCH)).gch')
 	end
 
