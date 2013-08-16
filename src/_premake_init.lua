@@ -44,7 +44,7 @@
 		targetextension ".exe"
 
 	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
-		targetextension ".xex"
+		targetextension ".exe"
 
 	configuration { "Windows or Xbox360 or C#", "SharedLib" }
 		targetprefix ""
