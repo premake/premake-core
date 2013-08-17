@@ -74,10 +74,26 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
 		<LinkIncremental>true</LinkIncremental>
 		<OutDir>.\</OutDir>
-		<OutputFile>$(OutDir)MyProject.xex</OutputFile>
+		<OutputFile>$(OutDir)MyProject.exe</OutputFile>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
-		<TargetExt>.xex</TargetExt>
+		<TargetExt>.exe</TargetExt>
+		<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
+	</PropertyGroup>
+		]]
+	end
+
+	function suite.staticLibStructureIsCorrect_onXbox360()
+		system "Xbox360"
+		kind "StaticLib"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+		<OutDir>.\</OutDir>
+		<OutputFile>$(OutDir)MyProject.lib</OutputFile>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>.lib</TargetExt>
 		<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
 	</PropertyGroup>
 		]]
