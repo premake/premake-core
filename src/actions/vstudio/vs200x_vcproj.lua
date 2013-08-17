@@ -402,6 +402,7 @@
 
 		vc200x.minimalRebuild(cfg)
 		vc200x.basicRuntimeChecks(cfg)
+		vc200x.bufferSecurityCheck(cfg)
 
 		if vc200x.optimization(cfg) ~= 0 then
 			_p(4,'StringPooling="%s"', vc200x.bool(true))
@@ -981,6 +982,11 @@
 		end
 	end
 
+	function vc200x.bufferSecurityCheck(cfg)
+		if cfg.flags.NoBufferSecurityCheck then
+			_p(4,'BufferSecurityCheck="false"')
+		end
+	end
 
 	function vc200x.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then

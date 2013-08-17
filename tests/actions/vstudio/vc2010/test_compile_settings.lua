@@ -466,6 +466,18 @@
 		]]
 	end
 
+	function suite.runtimeTypeInfo_onNoRTTI()
+		flags "NoBufferSecurityCheck"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<BufferSecurityCheck>false</BufferSecurityCheck>
+		]]
+	end
+
 
 --
 -- On Win32 builds, use the Edit-and-Continue debug information format.

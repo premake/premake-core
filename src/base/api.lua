@@ -731,6 +731,7 @@
 			"NoPCH",
 			"NoRuntimeChecks",
 			"NoRTTI",
+			"NoBufferSecurityCheck",
 			"NoWarnings",
 			"Optimize",
 			"OptimizeSize",
