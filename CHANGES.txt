@@ -117,6 +117,7 @@
 * Pull 11: Add support for Visual Studio 2012 (Oliver Schneider)
 * Bug 171: ImpLib used incorrectly in dependency paths
 * Bug 176: Target prefix breaks GCC linking
+* Initial support for Visual Studio 2013 (Igor Karatayev)
 
 
 -------
