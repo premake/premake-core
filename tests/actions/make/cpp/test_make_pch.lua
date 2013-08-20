@@ -115,3 +115,20 @@ $(GCH): $(PCH)
 endif
 		]]
 	end
+
+
+
+	--
+	-- If the header is located on one of the include file
+	-- search directories, it should get found automatically.
+	--
+
+		function suite.findsPCH_onIncludeDirs()
+			location "MyProject"
+			pchheader "premake.h"
+			includedirs { "../src/host" }
+			prepareVars()
+			test.capture [[
+  PCH = ../../src/host/premake.h
+			]]
+		end
