@@ -171,6 +171,7 @@
 		"useOfMfc",
 		"clrSupport",
 		"characterSet",
+		"wholeProgramOptimization",
 		"nmakeOutDirs",
 	}
 
@@ -644,6 +645,11 @@
 		end
 	end
 
+	function vc2010.wholeProgramOptimization(cfg)
+		if cfg.flags.LinkTimeOptimization then
+			_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
+		end
+	end
 
 	function vc2010.clCompileAdditionalIncludeDirectories(cfg)
 		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)

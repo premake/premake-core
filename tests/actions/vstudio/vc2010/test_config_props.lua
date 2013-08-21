@@ -203,3 +203,20 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+--
+-- Check the LinkTimeOptimization flag
+--
+
+	function suite.useOfLinkTimeOptimization()
+		flags { "LinkTimeOptimization" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+		<WholeProgramOptimization>true</WholeProgramOptimization>
+		]]
+	end
