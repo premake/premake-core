@@ -713,6 +713,7 @@
 			"FatalWarnings",
 			"FloatFast",
 			"FloatStrict",
+			"LinkTimeOptimization",
 			"Managed",
 			"MFC",
 			"MultiProcessorCompile",

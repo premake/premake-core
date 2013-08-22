@@ -572,3 +572,19 @@
 				RuntimeLibrary="0"
 		]]
 	end
+
+--
+-- Check the LinkTimeOptimization flag.
+--
+
+	function suite.flags_onLinkTimeOptimization()
+		flags { "LinkTimeOptimization" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				WholeProgramOptimization="true"
+		]]
+
+	end

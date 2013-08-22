@@ -398,6 +398,7 @@
 		end
 
 		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
+		vc200x.wholeProgramOptimization(cfg)
 		vc200x.preprocessorDefinitions(cfg, cfg.defines)
 
 		vc200x.minimalRebuild(cfg)
@@ -919,6 +920,13 @@
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
 			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
+	function vc200x.wholeProgramOptimization(cfg)
+		if cfg.flags.LinkTimeOptimization then
+			_x(4,'WholeProgramOptimization="true"')
 		end
 	end
 
