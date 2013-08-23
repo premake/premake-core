@@ -290,17 +290,23 @@
 --
 
 	function project.bakeconfigmap(ctx, cset, cfgs)
-		-- It can be useful to state "use this map if this configuration is present".
-		-- To allow this to happen, config maps that are specified within a project
-		-- configuration are allowed to "bubble up" to the top level. Currently,
-		-- maps are the only values that get this special behavior.
+
+		-- build a query filter that will match any configuration name,
+		-- within the existing constraints of the project
+
+		local terms = table.arraycopy(ctx.terms)
 		for _, cfg in ipairs(cfgs) do
-			local terms = table.join(ctx.terms, (cfg[1] or ""):lower(), (cfg[2] or ""):lower())
-			local map = configset.fetchvalue(cset, "configmap", terms)
-			if map then
-				for key, value in pairs(map) do
-					ctx.configmap[key] = value
-				end
+			if cfg[1] then table.insert(terms, cfg[1]:lower()) end
+			if cfg[2] then table.insert(terms, cfg[2]:lower()) end
+		end
+
+		-- assemble all matching configmaps, and then merge their keys
+		-- into the project's configmap
+
+		local map = configset.fetchvalue(cset, "configmap", terms)
+		if map then
+			for key, value in pairs(map) do
+				ctx.configmap[key] = value
 			end
 		end
 
@@ -844,6 +850,10 @@
 --
 -- Given a build config/platform pairing, applies any project configuration maps
 -- and returns a new (or the same) pairing.
+--
+-- TODO: I think this could be made much simpler by building a string pattern
+-- like :part1:part2: and then doing string comparisions, instead of trying to
+-- iterate over variable number of table elements.
 --
 
 	function project.mapconfig(prj, buildcfg, platform)
