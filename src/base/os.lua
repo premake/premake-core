@@ -300,7 +300,7 @@
 		local id = builtin_uuid(name)
 		if name then
 			if os._uuids[id] and os._uuids[id] ~= name then
-				io.stderr:write(string.format("** Warning: UUID clash between %s and %s\n", os._uuids[id], name))
+				premake.warnOnce(id, "UUID clash between %s and %s", os._uuids[id], name)
 			end
 			os._uuids[id] = name
 		end

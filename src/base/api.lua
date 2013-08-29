@@ -20,13 +20,6 @@
 
 
 --
--- A place to remember warning messages, so each will only be shown once.
---
-
-	api.warnings = {}
-
-
---
 -- Create a "root" configuration set, to hold the global configuration. Values
 -- that are added to this set become available for all add-ons, solution, projects,
 -- and on down the line.
@@ -141,21 +134,16 @@
 --
 
 	function api.deprecated(field, value)
-		local key = value or field
-		if not api.warnings[key] then
-			api.warnings[key] = true
-
-			local msg
-			if value then
-				msg = "the %s value %s"
-			else
-				msg = "the field %s"
-			end
-			msg = string.format(msg, field.name, value)
-
-			msg = string.format("** Warning: %s has been deprecated.\n   See %s for more information.\n", msg, _PREMAKE_URL)
-			io.stderr:write(msg)
+		local msg
+		if value then
+			msg = "the %s value %s"
+		else
+			msg = "the field %s"
 		end
+		msg = string.format(msg, field.name, value)
+
+		local key = value or field
+		premake.warnOnce(key, "%s has been deprecated.\n   See %s for more information.", msg, _PREMAKE_URL)
 	end
 
 

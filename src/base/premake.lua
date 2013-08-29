@@ -17,6 +17,13 @@
 
 
 --
+-- List of warning messages that have been fired so far.
+--
+
+	local warnings = {}
+
+
+--
 -- Define some commonly used symbols, for future-proofing.
 --
 
@@ -72,6 +79,16 @@
 			fn(...)
 		end
 
+	end
+
+
+--
+-- Clears the list of already fired warning messages, allowing them
+-- to be fired again.
+--
+
+	function premake.clearWarnings()
+		warnings = {}
 	end
 
 
@@ -182,7 +199,6 @@
 
 	function premake.validate()
 		local ctx = {}
-		ctx.warnings = {}
 
 		for sln in solution.each() do
 			premake.validateSolution(sln, ctx)
@@ -294,11 +310,6 @@
 				okay = true
 			end
 
-			-- already warned about this field?
-			if ctx.warnings[field.name] then
-				okay = true
-			end
-
 			-- this one needs to checked
 			if not okay then
 				okay = premake.api.comparevalues(field, cfg[field.scope][name], cfg[name])
@@ -306,8 +317,8 @@
 
 			-- found a problem?
 			if not okay then
-				ctx.warnings[field.name] = true
-				premake.warn("'%s' on %s '%s' differs from %s '%s'; may be set out of scope", name, expected, cfg.name, field.scope, cfg[field.scope].name)
+				local key = "validate." .. field.name
+				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", name, expected, cfg.name, field.scope, cfg[field.scope].name)
 			end
 
 		end
@@ -332,15 +343,18 @@
 --
 -- Displays a warning just once per run.
 --
+-- @param key
+--    A unique key to identify this warning. Subsequent warnings messages
+--    using the same key will not be shown.
 -- @param message
 --    The warning message, which may contain string formatting tokens.
 -- @param ...
 --    Values to fill in the string formatting tokens.
 --
 
-	function premake.warnOnce(ctx, message, ...)
-		if not ctx.warnings[message] then
-			ctx.warnings[message] = true
+	function premake.warnOnce(key, message, ...)
+		if not warnings[key] then
+			warnings[key] = true
 			premake.warn(message, ...)
 		end
 	end

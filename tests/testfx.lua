@@ -272,6 +272,7 @@
 
 		premake.solution.list = { }
 		premake.api.reset()
+		premake.clearWarnings()
 
 		io.indent = nil
 		io.eol = "\n"
