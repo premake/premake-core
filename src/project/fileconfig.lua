@@ -157,6 +157,37 @@
 
 
 --
+-- Checks to see if the file configuration contains any unique information,
+-- or if it is the same as its parent configuration.
+--
+-- @param fcfg
+--    A file configuration.
+-- @return
+--    True if the file configuration contains values which differ from the
+--    parent project configuration, false otherwise.
+--
+
+	function fileconfig.hasFileSettings(fcfg)
+		for key, field in pairs(premake.fields) do
+			if field.scope == "config" then
+				local value = fcfg[field.name]
+				if value then
+					if type(value) == "table" then
+						if #value > 0 then
+							return true
+						end
+					else
+						return true
+					end
+				end
+			end
+		end
+		return false
+	end
+
+
+
+--
 -- Rather than store pre-computed strings for all of the path variations
 -- (abspath, relpath, vpath, name, etc.) for each file (there can be quite
 -- a lot of them) I assign a metatable to the file configuration objects
