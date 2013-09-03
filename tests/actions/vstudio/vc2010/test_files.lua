@@ -88,6 +88,29 @@
 	end
 
 
+	function suite.customBuild_onBuildRuleWithMessage()
+		files { "hello.cg" }
+		configuration "**.cg"
+			buildmessage "Compiling shader $(InputFile)"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<CustomBuild Include="hello.cg">
+			<FileType>Document</FileType>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+			<Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling shader $(InputFile)</Message>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+			<Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling shader $(InputFile)</Message>
+		</CustomBuild>
+	</ItemGroup>
+		]]
+	end
+
+
 --
 -- If a PCH source is specified, ensure it is included in the file configuration.
 --
