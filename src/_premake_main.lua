@@ -29,25 +29,6 @@
 			end
 		end
 
-
-		-- Now that the scripts are loaded, I can use path.getabsolute() to properly
-		-- canonicalize the executable path.
-
-		_PREMAKE_COMMAND = path.getabsolute(_PREMAKE_COMMAND)
-
-		-- Enable extensions - the '?' character is replaced with the extension
-		-- name so the extension directory name _must_ be the same as the
-		-- extension Lua file.  eg. .../d/d.lua, .../codelite/codelite.lua etc
-		local home = os.getenv("HOME") or os.getenv("USERPROFILE")
-		local extdirs = {
-			home .. "/.premake/?/?.lua",
-			path.getdirectory( _PREMAKE_COMMAND ) .. "/ext/?/?.lua",
-			"./premake/?/?.lua",
-			"/usr/share/premake/?/?.lua" }
-		for _,v in ipairs(extdirs) do
-			package.path = package.path .. ";" .. v
-		end
-
 		-- The "next-gen" actions have now replaced their deprecated counterparts.
 		-- Provide a warning for a little while before I remove them entirely.
 		if _ACTION and _ACTION:endswith("ng") then
