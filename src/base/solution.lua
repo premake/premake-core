@@ -402,15 +402,23 @@
 			return sln.grouptree
 		end
 
-		local tr = tree.new()
-		sln.grouptree = tr
+		-- build the tree of groups
 
+		local tr = tree.new()
 		for prj in solution.eachproject_ng(sln) do
 			local prjpath = path.join(prj.group, prj.name)
-			local node = tree.add(tr, prjpath, function(n) n.uuid = os.uuid(n.path) end)
+			local node = tree.add(tr, prjpath)
 			node.project = prj
 		end
 
+		-- assign UUIDs to each node in the tree
+		tree.traverse(tr, {
+			onnode = function(node)
+				node.uuid = os.uuid(node.path)
+			end
+		})
+
+		sln.grouptree = tr
 		return tr
 	end
 

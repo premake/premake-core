@@ -1,10 +1,10 @@
 --
 -- tree.lua
 -- Functions for working with the source code tree.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	premake.tree = { }
+	premake.tree = {}
 	local tree = premake.tree
 
 
@@ -18,7 +18,7 @@
 	function tree.new(n)
 		local t = {
 			name = n,
-			children = { }
+			children = {}
 		}
 		return t
 	end
@@ -31,14 +31,11 @@
 --    The tree to contain the new node.
 -- @param p
 --    The path of the new node.
--- @param onaddfunc
---     A function to call when a new node is added to the tree. Receives the
---     new node as an argument.
 -- @returns
 --    The new tree node.
 --
 
-	function tree.add(tr, p, onaddfunc)
+	function tree.add(tr, p)
 		-- Special case "." refers to the current node
 		if p == "." then
 			return tr
@@ -54,9 +51,6 @@
 		if not childnode or childnode.path ~= p then
 			childnode = tree.insert(parentnode, tree.new(childname))
 			childnode.path = p
-			if onaddfunc then
-				onaddfunc(childnode)
-			end
 		end
 
 		return childnode

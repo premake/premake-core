@@ -6,9 +6,9 @@
 
 	premake5.project = {}
 	local project = premake5.project
-	local context = premake.context
-	local oven = premake5.oven
 	local configset = premake.configset
+	local context = premake.context
+	local tree = premake.tree
 
 
 --
@@ -715,22 +715,28 @@
 			return prj._.sourcetree
 		end
 
-		local tr = premake.tree.new(prj.name)
+		local tr = tree.new(prj.name)
 
 		table.foreachi(prj._.files, function(fcfg)
-
 			-- The tree represents the logical source code tree to be displayed
 			-- in the IDE, not the physical organization of the file system. So
 			-- virtual paths are used when adding nodes.
-			local node = premake.tree.add(tr, fcfg.vpath)
+
+			-- Virtual paths can overlap, potentially putting files with the same
+			-- name in the same folder, even though they have different paths on
+			-- the underlying filesystem. The tree.add() call won't overwrite
+			-- existing nodes, so provide the extra logic here. Start by getting
+			-- the parent folder node, creating it if necessary.
+
+			local parent = tree.add(tr, path.getdirectory(fcfg.vpath))
+			local node = tree.insert(parent, tree.new(path.getname(fcfg.vpath)))
 
 			-- Pass through value fetches to the file configuration
 			setmetatable(node, { __index = fcfg })
-
 		end)
 
-		premake.tree.trimroot(tr)
-		premake.tree.sort(tr, sorter)
+		tree.trimroot(tr)
+		tree.sort(tr, sorter)
 
 		prj._.sourcetree = tr
 		return tr
