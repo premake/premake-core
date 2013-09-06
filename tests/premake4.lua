@@ -141,6 +141,7 @@
 	dofile("actions/vstudio/vc2010/test_filters.lua")
 	dofile("actions/vstudio/vc2010/test_item_def_group.lua")
 	dofile("actions/vstudio/vc2010/test_link.lua")
+	dofile("actions/vstudio/vc2010/test_manifest.lua")
 	dofile("actions/vstudio/vc2010/test_nmake_props.lua")
 	dofile("actions/vstudio/vc2010/test_output_props.lua")
 	dofile("actions/vstudio/vc2010/test_project_configs.lua")
