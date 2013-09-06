@@ -23,7 +23,7 @@
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
-		cs.flags(cfg, premake.tools.dotnet)
+		make.csFlags(cfg, premake.tools.dotnet)
 	end
 
 
@@ -34,7 +34,7 @@
 	function suite.isEmptyAssignment_onNoSettings()
 		prepare()
 		test.capture [[
-  FLAGS      =
+  FLAGS =
   		]]
   	end
 
@@ -47,6 +47,6 @@
 		icon "MyProject.ico"
 		prepare()
 		test.capture [[
-  FLAGS      = /win32icon:"MyProject.ico"
+  FLAGS = /win32icon:"MyProject.ico"
   		]]
   	end

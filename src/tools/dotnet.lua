@@ -36,8 +36,8 @@
 -- @return
 --    A table containing the following keys:
 --
---      action:     the build action for the file; one of "Compile", or
---                  "None".
+--      action:     the build action for the file; one of "Compile", "Copy",
+--                  "EmbeddedResource", or "None".
 --      subtype:    an additional categorization of the file type, or nil if
 --                  no subtype is required.
 --      dependency: a related file name, (i.e. *.Designer.cs) if appropriate

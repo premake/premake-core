@@ -40,7 +40,7 @@
 			io.esc = make.esc
 			local makefile = make.getmakefilename(prj, true)
 			if project.isdotnet(prj) then
-				premake.generate(prj, makefile, make.generate_csharp)
+				premake.generate(prj, makefile, make.cs.generate)
 			else
 				premake.generate(prj, makefile, make.cpp.generate)
 			end
