@@ -21,7 +21,7 @@ static void getversion(struct OsVersionInfo* info);
 
 int os_getversion(lua_State* L)
 {
-	struct OsVersionInfo info = {0};
+	struct OsVersionInfo info = {0, 0, 0, NULL, 0};
 	getversion(&info);
 
 	lua_newtable(L);
@@ -167,18 +167,18 @@ void getversion(struct OsVersionInfo* info)
 	info->majorversion=0;
 	info->minorversion=0;
 	info->revision=0;
-	
+
     int mib[] = {CTL_KERN, KERN_OSRELEASE};
     size_t len;
     sysctl(mib, sizeof(mib)/sizeof(mib[0]), NULL, &len, NULL, 0);
-	
+
 	char kernel_version[len];
     sysctl(mib, sizeof(mib)/sizeof(mib[0]), kernel_version, &len, NULL, 0);
-	
+
 	int kern_major;
 	int kern_minor;
 	sscanf(kernel_version, "%d.%d.%*d",&kern_major,&kern_minor);
-	switch (kern_major) 
+	switch (kern_major)
 	{
 		case 8:
 			info->description = "Mac OS X Tiger";
@@ -241,7 +241,7 @@ void getversion(struct OsVersionInfo* info)
 
 #if __GLIBC__
 	// When using glibc, info->description gets set to u.sysname,
-	// but it isn't passed out of this function, so we need to copy 
+	// but it isn't passed out of this function, so we need to copy
 	// the string.
 	info->description = malloc(strlen(u.sysname) + 1);
 	strcpy((char*)info->description, u.sysname);
