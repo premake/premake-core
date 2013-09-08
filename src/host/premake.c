@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "premake.h"
 
 #if PLATFORM_MACOSX
@@ -276,6 +277,9 @@ int process_option(lua_State* L, const char* arg)
 		strcpy(key, arg);
 		value = "";
 	}
+
+	/* Make keys lowercase to avoid case issues */
+	for (char* p = key; *p; ++p) { *p = tolower(*p); }
 
 	/* Store it in the Options table, which is already on the stack */
 	lua_pushstring(L, value);
