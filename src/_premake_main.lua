@@ -29,8 +29,17 @@
 			end
 		end
 
+		-- Seed the random number generator so actions don't have to do it themselves
+
+		math.randomseed(os.time())
+
+		-- Look for and run the system-wide configuration script
+
+		dofileopt(_OPTIONS["systemscript"] or { "premake5-system.lua", "premake-system.lua" })
+
 		-- The "next-gen" actions have now replaced their deprecated counterparts.
 		-- Provide a warning for a little while before I remove them entirely.
+
 		if _ACTION and _ACTION:endswith("ng") then
 			premake.warnOnce(_ACTION, "'%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3))
 		end
@@ -39,12 +48,6 @@
 		-- can be picked up by the scripts.
 
 		premake.action.set(_ACTION)
-
-
-		-- Seed the random number generator so actions don't have to do it themselves
-
-		math.randomseed(os.time())
-
 
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.

@@ -34,7 +34,6 @@
 
 		-- runtime environment setup
 		"_premake_init.lua",
-		"base/cmdline.lua",
 
 		-- project APIs
 		"project/project.lua",
