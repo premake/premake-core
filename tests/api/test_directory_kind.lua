@@ -1,0 +1,47 @@
+--
+-- tests/api/test_directory_kind.lua
+-- Tests the directory API value type.
+-- Copyright (c) 2013 Jason Perkins and the Premake project
+--
+
+	local suite = test.declare("api_directory_kind")
+	local api = premake.api
+
+
+--
+-- Setup and teardown
+--
+
+	function suite.setup()
+		api.register {
+			name = "testapi",
+			kind = "directory-list",
+			scope = "project"
+		}
+		test.createsolution()
+	end
+
+	function suite.teardown()
+		testapi = nil
+	end
+
+
+--
+-- Values should be converted to absolute paths, relative to
+-- the currently running script.
+--
+
+	function suite.convertsToAbsolute()
+		testapi "self/local"
+		test.isequal({os.getcwd() .. "/self/local"}, api.scope.project.testapi)
+	end
+
+
+--
+-- Check expansion of wildcards.
+--
+
+	function suite.expandsWildcards()
+		testapi "./*"
+		test.istrue(table.contains(api.scope.project.testapi, os.getcwd() .. "/api"))
+	end

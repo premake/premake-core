@@ -383,7 +383,7 @@
 		if value:find("*") then
 			local values = os.matchdirs(value)
 			table.foreachi(values, function(v)
-				api.setdirectory(target, name, field, values[i])
+				api.setdirectory(target, name, field, v)
 				name = name + 1
 			end)
 		else
