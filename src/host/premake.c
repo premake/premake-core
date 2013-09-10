@@ -322,8 +322,28 @@ int load_builtin_scripts(lua_State* L)
 		return !OKAY;
 	}
 
-	/* run the bootstrapping script */
+	/* load the manifest, which includes all the required scripts */
 	scripts_path = lua_tostring(L, -1);
+	filename = lua_pushfstring(L, "%s/_manifest.lua", scripts_path);
+	if (luaL_dofile(L, filename))
+	{
+		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		return !OKAY;
+	}
+
+	lua_pushnil(L);
+	while (lua_next(L, -2))
+	{
+		filename = lua_pushfstring(L, "%s/%s", scripts_path, lua_tostring(L, -1));
+		if (luaL_dofile(L, filename)) {
+			printf(ERROR_MESSAGE, lua_tostring(L, -1));
+			return !OKAY;
+		}
+		lua_pop(L, 2);
+	}
+	lua_pop(L, 1);
+
+	/* run the bootstrapping script */
 	filename = lua_pushfstring(L, "%s/_premake_main.lua", scripts_path);
 	if (luaL_dofile(L, filename))
 	{
@@ -337,8 +357,7 @@ int load_builtin_scripts(lua_State* L)
 
 	/* hand off control to the scripts */
 	lua_getglobal(L, "_premake_main");
-	lua_pushstring(L, scripts_path);
-	if (lua_pcall(L, 1, 1, -3) != OKAY)
+	if (lua_pcall(L, 0, 1, -3) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
