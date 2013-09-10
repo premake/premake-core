@@ -357,7 +357,7 @@ int load_builtin_scripts(lua_State* L)
 
 	/* hand off control to the scripts */
 	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, -3) != OKAY)
+	if (lua_pcall(L, 0, 1, -2) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
