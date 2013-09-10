@@ -4,10 +4,8 @@
 -- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
-
-	local scriptfile    = "premake4.lua"
-	local shorthelp     = "Type 'premake4 --help' for help"
-	local versionhelp   = "premake4 (Premake Build Script Generator) %s"
+	local shorthelp     = "Type 'premake5 --help' for help"
+	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 
 	_WORKING_DIR        = os.getcwd()
 
@@ -52,11 +50,7 @@
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
 
-		local fname = _OPTIONS["file"] or scriptfile
-		if (os.isfile(fname)) then
-			dofile(fname)
-		end
-
+		local hasScript = dofileopt(_OPTIONS["file"] or { "premake5.lua", "premake4.lua" })
 
 		-- Process special options
 
@@ -81,8 +75,8 @@
 
 		-- If there wasn't a project script I've got to bail now
 
-		if (not os.isfile(fname)) then
-			error("No Premake script ("..scriptfile..") found!", 2)
+		if not hasScript then
+			error("No Premake script (premake5.lua) found!", 0)
 		end
 
 
@@ -90,12 +84,12 @@
 		-- script has run to allow for project-specific options
 
 		action = premake.action.current()
-		if (not action) then
+		if not action then
 			error("Error: no such action '" .. _ACTION .. "'", 0)
 		end
 
 		ok, err = premake.option.validate(_OPTIONS)
-		if (not ok) then error("Error: " .. err, 0) end
+		if not ok then error("Error: " .. err, 0) end
 
 
 		-- "Bake" the project information, preparing it for use by the action

@@ -1,6 +1,6 @@
 --
 -- Premake 5.x build configuration script
--- Use this script to configure the project with Premake4.
+-- Use this script to configure the project with Premake5.
 --
 
 --
@@ -68,7 +68,7 @@
 			links       { "CoreServices.framework" }
 
 		configuration { "macosx", "gmake" }
-			-- toolset "clang"  (not until a 5.0 binary is available)
+			toolset "clang"
 			buildoptions { "-mmacosx-version-min=10.4" }
 			linkoptions  { "-mmacosx-version-min=10.4" }
 

@@ -1,6 +1,6 @@
 --
--- tests/premake4.lua
--- Automated test suite for Premake 4.x
+-- tests/premake5.lua
+-- Automated test suite for Premake 5.x
 -- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 

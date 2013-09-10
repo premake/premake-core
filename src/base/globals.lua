@@ -141,7 +141,7 @@
 --    file path or an array of file paths, in which case the first
 --    file found is run.
 -- @return
---    Any return values from the executed script are passed back.
+--    True if a file was found and executed, nil otherwise.
 --
 
 	function dofileopt(fname)
@@ -149,7 +149,8 @@
 		for i = 1, #fname do
 			local found = locate(fname[i])
 			if found then
-				return dofile(found)
+				dofile(found)
+				return true
 			end
 		end
 	end
@@ -173,7 +174,7 @@
 --
 -- Load and run an external script file, with a bit of extra logic to make
 -- including projects easier. if "path" is a directory, will look for
--- path/premake4.lua. And each file is tracked, and loaded only once.
+-- path/premake5.lua. And each file is tracked, and loaded only once.
 --
 
 	io._includedFiles = {}

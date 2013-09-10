@@ -355,7 +355,7 @@ int load_builtin_scripts(lua_State* L)
 /**
  * When running in release mode, the scripts are loaded from a static data
  * buffer, where they were stored by a preprocess. To update these embedded
- * scripts, run `premake4 embed` then rebuild.
+ * scripts, run `premake5 embed` then rebuild.
  */
 int load_builtin_scripts(lua_State* L)
 {
