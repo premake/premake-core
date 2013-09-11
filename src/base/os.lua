@@ -265,6 +265,34 @@
 		return result
 	end
 
+--
+-- Remove files (accepts wildcards)
+--
+
+    local builtin_remove = os.remove
+    function os.remove(f)
+        -- in case of string, just match files
+        if type(f) == "string" then
+            local p = os.matchfiles(f)
+            for _, v in pairs(p) do
+                ok, err = builtin_remove(v)
+                if not ok then return ok, err end
+            end
+        -- in case of table, match files for every table entry
+        elseif type(f) == "table" then
+            
+            for _, ent in pairs(f) do
+                local p = os.matchfiles(ent)
+                for _, v in pairs(p) do
+                    ok, err = builtin_remove(v)
+                    if not ok then return ok, err end
+                end
+            end
+        end
+    end
+
+
+
 
 --
 -- Remove a directory, along with any contained files or subdirectories.
