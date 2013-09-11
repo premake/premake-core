@@ -280,14 +280,8 @@
             end
         -- in case of table, match files for every table entry
         elseif type(f) == "table" then
-            
-            for _, ent in pairs(f) do
-                local p = os.matchfiles(ent)
-                for _, v in pairs(p) do
-                    ok, err = builtin_remove(v)
-                    if not ok then return ok, err end
-                end
-            end
+            for _, v in pairs(f) do
+                return os.remove(v)
         end
     end
 
