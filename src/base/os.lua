@@ -282,6 +282,7 @@
         elseif type(f) == "table" then
             for _, v in pairs(f) do
                 return os.remove(v)
+            end
         end
     end
 
