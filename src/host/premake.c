@@ -279,7 +279,7 @@ int process_option(lua_State* L, const char* arg)
 	}
 
 	/* Make keys lowercase to avoid case issues */
-	for (ptr = key; *ptr; ++ptr) { *ptr = tolower(*ptr); }
+	for (ptr = key; *ptr; ++ptr) { *ptr = (char)tolower(*ptr); }
 
 	/* Store it in the Options table, which is already on the stack */
 	lua_pushstring(L, value);
