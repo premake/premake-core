@@ -44,7 +44,7 @@
 		test.isnil(snc.gettoolname(cfg, "cxx"))
 		test.isnil(snc.gettoolname(cfg, "ar"))
 	end
-		
+
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.
@@ -137,5 +137,5 @@
 	function suite.forcedIncludeFiles()
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
-		test.isequal({'-include "stdafx.h"', '-include "include/sys.h"'}, snc.getforceincludes(cfg))
+		test.isequal({'-include stdafx.h', '-include include/sys.h'}, snc.getforceincludes(cfg))
 	end

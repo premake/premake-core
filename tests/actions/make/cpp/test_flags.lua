@@ -34,6 +34,6 @@
 		includedirs { "src/include", "../include" }
 		prepare { "includes" }
 		test.capture [[
-  INCLUDES += -I"src/include" -I"../include"
+  INCLUDES += -Isrc/include -I../include
 		]]
 	end

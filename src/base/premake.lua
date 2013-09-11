@@ -192,6 +192,23 @@
 
 
 --
+-- Wrap the provided value in double quotes if it contains spaces, or
+-- if it contains a shell variable of the form $(...).
+--
+
+	function premake.quoted(value)
+		local q = value:find(" ", 1, true)
+		if not q then
+			q = value:find("$%(.-%)", 1)
+		end
+		if q then
+			value = '"' .. value .. '"'
+		end
+		return value
+	end
+
+
+--
 -- Sanity check the project information loaded from the scripts, to
 -- make sure it all meets some minimum requirements. Raises an error if
 -- an insane state is detected.
