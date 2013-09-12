@@ -722,13 +722,22 @@
 			-- in the IDE, not the physical organization of the file system. So
 			-- virtual paths are used when adding nodes.
 
+			-- If the project script specifies a virtual path for a file, disable
+			-- the logic that could trim out empty root nodes from that path. If
+			-- the script writer wants an empty root node they should get it.
+
+			local flags
+			if fcfg.vpath ~= fcfg.relpath then
+				flags = { trim = false }
+			end
+
 			-- Virtual paths can overlap, potentially putting files with the same
 			-- name in the same folder, even though they have different paths on
 			-- the underlying filesystem. The tree.add() call won't overwrite
 			-- existing nodes, so provide the extra logic here. Start by getting
 			-- the parent folder node, creating it if necessary.
 
-			local parent = tree.add(tr, path.getdirectory(fcfg.vpath))
+			local parent = tree.add(tr, path.getdirectory(fcfg.vpath), flags)
 			local node = tree.insert(parent, tree.new(path.getname(fcfg.vpath)))
 
 			-- Pass through value fetches to the file configuration

@@ -31,11 +31,13 @@
 --    The tree to contain the new node.
 -- @param p
 --    The path of the new node.
+-- @param extraFields
+--    A table containing key-value pairs to be added to any new nodes.
 -- @returns
 --    The new tree node.
 --
 
-	function tree.add(tr, p)
+	function tree.add(tr, p, extraFields)
 		-- Special case "." refers to the current node
 		if p == "." then
 			return tr
@@ -43,7 +45,7 @@
 
 		-- Look for the immediate parent for this new node, creating it if necessary.
 		-- Recurses to create as much of the tree as necessary.
-		local parentnode = tree.add(tr, path.getdirectory(p), onaddfunc)
+		local parentnode = tree.add(tr, path.getdirectory(p), extraFields)
 
 		-- Create the child if necessary
 		local childname = path.getname(p)
@@ -51,6 +53,11 @@
 		if not childnode or childnode.path ~= p then
 			childnode = tree.insert(parentnode, tree.new(childname))
 			childnode.path = p
+			if extraFields then
+				for k,v in pairs(extraFields) do
+					childnode[k] = v
+				end
+			end
 		end
 
 		return childnode
@@ -275,7 +282,7 @@
 			local node = tr.children[1]
 
 			-- if this node has no children (it is the last node in the tree) I'm done
-			if #node.children == 0 then
+			if #node.children == 0 or node.trim == false then
 				break
 			end
 
