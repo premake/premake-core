@@ -5,13 +5,10 @@
 --
 
 --
--- Create a top-level namespace for Premake's own APIs. The premake5 namespace
--- is a place to do next-gen (5.0) work without breaking the existing code (yet).
--- I think it will eventually go away.
+-- Create a top-level namespace for Premake's own APIs
 --
 
 	premake = {}
-	premake5 = {}
 	premake.tools = {}
 
 
