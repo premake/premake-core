@@ -7,8 +7,8 @@
 
 	premake.tools.msc = {}
 	local msc = premake.tools.msc
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --
@@ -34,12 +34,12 @@
 		local flags = table.translate(cfg.flags, msc.cflags)
 
 		local runtime = iif(cfg.flags.StaticRuntime, "/MT", "/MD")
-		if premake.config.isdebugbuild(cfg) then
+		if config.isDebugBuild(cfg) then
 			runtime = runtime .. "d"
 		end
 		table.insert(flags, runtime)
 
-		if not premake.config.isoptimizedbuild(cfg) then
+		if not config.isOptimizedBuild(cfg) then
 			table.insert(flags, "/Od")
 		end
 
@@ -135,7 +135,7 @@
 			table.insert(flags, "/MANIFEST")
 		end
 
-		if premake.config.isoptimizedbuild(cfg) then
+		if config.isOptimizedBuild(cfg) then
 			table.insert(flags, "/OPT:REF /OPT:ICF")
 		end
 

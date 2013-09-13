@@ -7,7 +7,7 @@
 	T.vstudio_vs200x_debugdir = { }
 	local suite = T.vstudio_vs200x_debugdir
 	local vc200x = premake.vstudio.vc200x
-	local project = premake5.project
+	local project = premake.project
 
 
 --

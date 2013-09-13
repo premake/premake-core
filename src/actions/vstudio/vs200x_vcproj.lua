@@ -9,9 +9,9 @@
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local context = premake.context
-	local project = premake5.project
-	local config = premake5.config
-	local fileconfig = premake5.fileconfig
+	local project = premake.project
+	local config = premake.config
+	local fileconfig = premake.fileconfig
 
 
 ---
@@ -545,7 +545,7 @@
 		_x(4,'OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 
 		if cfg.kind ~= premake.STATICLIB then
-			_p(4,'LinkIncremental="%s"', iif(premake.config.canincrementallink(cfg) , 2, 1))
+			_p(4,'LinkIncremental="%s"', iif(config.canLinkIncremental(cfg) , 2, 1))
 		end
 
 		vc200x.additionalLibraryDirectories(cfg)
@@ -982,7 +982,7 @@
 
 
 	function vc200x.basicRuntimeChecks(cfg)
-		if not premake.config.isoptimizedbuild(cfg)
+		if not config.isOptimizedBuild(cfg)
 			and not cfg.flags.Managed
 			and not cfg.flags.NoRuntimeChecks
 		then
@@ -1065,7 +1065,7 @@
 
 
 	function vc200x.minimalRebuild(cfg)
-		if premake.config.isdebugbuild(cfg) and
+		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
 		   not cfg.flags.NoMinimalRebuild and
 		   not cfg.flags.Managed and

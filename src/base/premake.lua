@@ -5,8 +5,8 @@
 --
 
 	local solution = premake.solution
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 ---
@@ -155,7 +155,7 @@
 --
 
 	function premake.generate(obj, ext, callback)
-		local fn = premake5.project.getfilename(obj, ext)
+		local fn = premake.project.getfilename(obj, ext)
 		printf("Generating %s...", path.getrelative(os.getcwd(), fn))
 
 		local f, err = io.open(fn, "wb")

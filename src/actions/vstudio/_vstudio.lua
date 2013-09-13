@@ -7,8 +7,8 @@
 	premake.vstudio = {}
 	local vstudio = premake.vstudio
 	local solution = premake.solution
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --
@@ -90,11 +90,11 @@
 -- Return true if the configuration kind is one of "Makefile" or "None". The
 -- latter is generated like a Makefile project and excluded from the solution.
 --
-	
+
 	function vstudio.isMakefile(cfg)
 		return (cfg.kind == premake.MAKEFILE or cfg.kind == premake.NONE)
 	end
-	
+
 
 --
 -- If a dependency of a project configuration is excluded from that particular

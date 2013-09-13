@@ -7,7 +7,7 @@
 	local suite = test.declare("make_cs_embed_files")
 	local make = premake.make
 	local cs = premake.make.cs
-	local project = premake5.project
+	local project = premake.project
 
 
 --

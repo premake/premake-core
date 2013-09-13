@@ -5,7 +5,7 @@
 --
 
 	local cs2005 = premake.vstudio.cs2005
-	local project = premake5.project
+	local project = premake.project
 
 
 --

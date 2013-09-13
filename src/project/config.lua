@@ -1,14 +1,13 @@
 --
 -- src/project/config.lua
 -- Premake configuration object API
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake5.config = {}
-	local project = premake5.project
-	local config = premake5.config
+	premake.config = {}
+	local project = premake.project
+	local config = premake.config
 	local context = premake.context
-	local oven = premake5.oven
 
 
 --
@@ -144,6 +143,21 @@
 		return (isManaged) == (linkage == "managed")
 
 	end
+
+
+--
+-- Determines if this configuration can be linked incrementally.
+--
+
+	function config.canLinkIncremental(cfg)
+		if cfg.kind == "StaticLib"
+				or config.isOptimizedBuild(cfg)
+				or cfg.flags.NoIncrementalLink then
+			return false
+		end
+		return true
+	end
+
 
 
 --
@@ -386,7 +400,7 @@
 
 	function config.getruntime(cfg)
 		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
-		local mode = iif(premake.config.isdebugbuild(cfg) and not cfg.flags.ReleaseRuntime, "Debug", "Release")
+		local mode = iif(config.isDebugBuild(cfg) and not cfg.flags.ReleaseRuntime, "Debug", "Release")
 		return linkage .. mode
 	end
 
@@ -443,3 +457,34 @@
 
 		return default
 	end
+
+
+--
+-- Determine if a configuration represents a "debug" or "release" build.
+-- This controls the runtime library selected for Visual Studio builds
+-- (and might also be useful elsewhere).
+--
+
+	function config.isDebugBuild(cfg)
+		-- If any of the optimize flags are set, it's a release build
+		if cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed then
+			return false
+		end
+		-- If symbols are not defined, it's a release build
+		if not cfg.flags.Symbols then
+			return false
+		end
+		return true
+	end
+
+
+--
+-- Determine if this configuration uses one of the optimize flags.
+-- Optimized builds get different treatment, such as full linking
+-- instead of incremental.
+--
+
+	function config.isOptimizedBuild(cfg)
+		return cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed
+	end
+

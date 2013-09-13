@@ -25,7 +25,7 @@
 		io.eol = "\r\n"
 		io.esc = vs2005.esc
 
-		if premake5.project.isdotnet(prj) then
+		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
 			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
 		else

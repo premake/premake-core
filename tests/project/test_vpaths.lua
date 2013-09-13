@@ -5,8 +5,8 @@
 --
 
 	T.project_vpaths = { }
-	local suite = T.project_vpaths	
-	local project = premake5.project
+	local suite = T.project_vpaths
+	local project = premake.project
 
 
 --
@@ -14,7 +14,7 @@
 --
 
 	local sln
-	
+
 	function suite.setup()
 		sln = test.createsolution()
 	end
@@ -25,7 +25,7 @@
 		return project.getvpath(prj, cfg.files[1])
 	end
 
-	
+
 --
 -- Test simple replacements
 --
@@ -93,7 +93,7 @@
 		files { "src/myproject/hello.h" }
 		vpaths { ["Source/Headers"] = "**.h" }
 		test.isequal("Source/Headers/hello.h", run())
-	end	
+	end
 
 	function suite.MatchFilePattern_ToGroup_WithTrailingSlash()
 		files { "src/myproject/hello.h" }
@@ -105,32 +105,32 @@
 		files { "src/myproject/hello.h" }
 		vpaths { ["Group/Headers"] = "**.h" }
 		test.isequal("Group/Headers/hello.h", run())
-	end	
+	end
 
 	function suite.MatchFilePattern_ToGroup_Nested()
 		files { "src/myproject/hello.h" }
 		vpaths { ["Headers/*"] = "**.h" }
 		test.isequal("Headers/src/myproject/hello.h", run())
-	end	
+	end
 
 	function suite.MatchFilePattern_ToGroup_Nested_OneStar()
 		files { "src/myproject/hello.h" }
 		vpaths { ["Headers/*"] = "**.h" }
 		test.isequal("Headers/src/myproject/hello.h", run())
-	end	
+	end
 
 	function suite.MatchFilePatternWithPath_ToGroup_Nested()
 		files { "src/myproject/hello.h" }
 		vpaths { ["Headers/*"] = "src/**.h" }
 		test.isequal("Headers/myproject/hello.h", run())
-	end	
+	end
 
 
 --
 -- Test with project locations
 --
 
-	function suite.MatchPath_OnProjectLocationSet()		
+	function suite.MatchPath_OnProjectLocationSet()
 		location "build"
 		files "src/hello.h"
 		vpaths { [""] = "src" }

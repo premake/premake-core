@@ -7,19 +7,19 @@
 	T.vstudio_vs2010_debug_settings = { }
 	local suite = T.vstudio_vs2010_debug_settings
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj, cfg
-	
+
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
-	
+
 	local function prepare()
 		cfg = project.getconfig(prj, "Debug")
 		vc2010.debugsettings(cfg)
@@ -84,7 +84,7 @@
 		prepare()
 		test.capture [[
 		<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>
-		]]	
+		]]
 	end
 
 --
@@ -97,6 +97,6 @@
 		test.capture [[
 		<LocalDebuggerEnvironment>key=value
 foo=bar</LocalDebuggerEnvironment>
-		]]	
+		]]
 	end
 

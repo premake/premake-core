@@ -7,7 +7,7 @@
 	T.vstudio_vc200x_configuration = { }
 	local suite = T.vstudio_vc200x_configuration
 	local vc200x = premake.vstudio.vc200x
-	local project = premake5.project
+	local project = premake.project
 
 
 --

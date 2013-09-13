@@ -4,8 +4,8 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake5.project = {}
-	local project = premake5.project
+	premake.project = {}
+	local project = premake.project
 	local configset = premake.configset
 	local context = premake.context
 	local tree = premake.tree
@@ -204,12 +204,12 @@
 				-- and indexed for ordered iteration.
 
 				if not files[fname] then
-					local fcfg = premake5.fileconfig.new(fname, prj)
+					local fcfg = premake.fileconfig.new(fname, prj)
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end
 
-				premake5.fileconfig.addconfig(files[fname], cfg)
+				premake.fileconfig.addconfig(files[fname], cfg)
 
 			end)
 		end
@@ -256,7 +256,7 @@
 			local sequences = bases[file.basename]
 
 			for cfg in project.eachconfig(prj) do
-				local fcfg = premake5.fileconfig.getconfig(file, cfg)
+				local fcfg = premake.fileconfig.getconfig(file, cfg)
 				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
 					fcfg.sequence = sequences[cfg] or 0
 					sequences[cfg] = fcfg.sequence + 1
@@ -425,7 +425,7 @@
 		-- and short names and the build and link target.
 		-- TODO: Merge these two functions
 
-		premake5.config.bake(ctx)
+		premake.config.bake(ctx)
 
 		return ctx
 	end

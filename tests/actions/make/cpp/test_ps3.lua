@@ -7,7 +7,7 @@
 	local suite = test.declare("make_ps3")
 	local make = premake.make
 	local cpp = premake.make.cpp
-	local project = premake5.project
+	local project = premake.project
 
 
 --

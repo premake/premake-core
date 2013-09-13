@@ -7,7 +7,7 @@
 	T.vstudio_vs2010_config_props = { }
 	local suite = T.vstudio_vs2010_config_props
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 
 
 --

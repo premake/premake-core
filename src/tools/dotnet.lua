@@ -7,7 +7,7 @@
 
 	premake.tools.dotnet = {}
 	local dotnet = premake.tools.dotnet
-	local project = premake5.project
+	local project = premake.project
 
 	dotnet.namestyle = "windows"
 

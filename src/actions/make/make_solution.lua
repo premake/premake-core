@@ -6,7 +6,7 @@
 
 	local make = premake.make
 	local solution = premake.solution
-	local project = premake5.project
+	local project = premake.project
 
 
 --

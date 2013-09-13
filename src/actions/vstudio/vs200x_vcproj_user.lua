@@ -6,7 +6,7 @@
 
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
-	local project = premake5.project
+	local project = premake.project
 
 
 --

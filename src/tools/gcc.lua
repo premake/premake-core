@@ -6,8 +6,8 @@
 
 	premake.tools.gcc = {}
 	local gcc = premake.tools.gcc
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --

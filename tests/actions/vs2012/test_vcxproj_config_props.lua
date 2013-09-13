@@ -6,7 +6,7 @@
 
 	local suite = test.declare("vs2012_vcxproj_config_props")
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 
 
 ---

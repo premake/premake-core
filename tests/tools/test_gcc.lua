@@ -7,7 +7,7 @@
 	local suite = test.declare("tools_gcc")
 
 	local gcc = premake.tools.gcc
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -23,7 +23,7 @@
 
 	local function prepare()
 		prj = premake.solution.getproject_ng(sln, 1)
-		cfg = premake5.project.getconfig(prj, "Debug")
+		cfg = project.getconfig(prj, "Debug")
 	end
 
 

@@ -8,7 +8,7 @@
 	local vstudio = premake.vstudio
 	local sln2005 = premake.vstudio.sln2005
 	local solution = premake.solution
-	local project = premake5.project
+	local project = premake.project
 	local tree = premake.tree
 
 

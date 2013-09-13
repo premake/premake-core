@@ -7,7 +7,7 @@
 	T.project_filename = {}
 	local suite = T.project_filename
 
-	local project = premake5.project
+	local project = premake.project
 
 
 --

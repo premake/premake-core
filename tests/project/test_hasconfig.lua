@@ -29,7 +29,7 @@
 
 	function suite.returnsTrue_onSolutionConfig()
 		prepare()
-		test.istrue(premake5.project.hasconfig(prj, "Debug"))
+		test.istrue(premake.project.hasconfig(prj, "Debug"))
 	end
 
 
@@ -40,7 +40,7 @@
 	function suite.returnsTrue_onSolutionConfig()
 		configurations { "Custom" }
 		prepare()
-		test.istrue(premake5.project.hasconfig(prj, "Custom"))
+		test.istrue(premake.project.hasconfig(prj, "Custom"))
 	end
 
 
@@ -52,7 +52,7 @@
 		project("MyProject2")
 		configurations { "Custom" }
 		prepare()
-		test.isfalse(premake5.project.hasconfig(prj, "Custom"))
+		test.isfalse(premake.project.hasconfig(prj, "Custom"))
 	end
 
 
@@ -63,6 +63,6 @@
 	function suite.returnsFalse_onConfigRemoved()
 		removeconfigurations { "Debug" }
 		prepare()
-		test.isfalse(premake5.project.hasconfig(prj, "Debug"))
+		test.isfalse(premake.project.hasconfig(prj, "Debug"))
 	end
 
