@@ -19,7 +19,7 @@
 	end
 
 	local function prepare(buildcfg, platform)
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = premake.project.getconfig(prj, buildcfg or "Debug", platform)
 	end
 

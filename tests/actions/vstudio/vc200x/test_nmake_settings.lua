@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = premake.project.getconfig(prj, "Debug")
 		vc200x.VCNMakeTool(cfg)
 	end

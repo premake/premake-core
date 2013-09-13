@@ -215,7 +215,7 @@
 		local hascpp = false
 		local hasnet = false
 		local slnarch
-		for prj in solution.eachproject_ng(cfg.solution) do
+		for prj in solution.eachproject(cfg.solution) do
 			if project.iscpp(prj) then
 				hascpp = true
 			elseif project.isdotnet(prj) then
@@ -269,7 +269,7 @@
 		-- if the platform identifier matches a known system or architecture,
 		--
 
-		for prj in solution.eachproject_ng(cfg.solution) do
+		for prj in solution.eachproject(cfg.solution) do
 			if project.iscpp(prj) then
 				hascpp = true
 			elseif project.isdotnet(prj) then

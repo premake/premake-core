@@ -38,7 +38,7 @@
 	function make.configmap(sln)
 		for cfg in solution.eachconfig(sln) do
 			_p('ifeq ($(config),%s)', cfg.shortname)
-			for prj in solution.eachproject_ng(sln) do
+			for prj in solution.eachproject(sln) do
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 				if prjcfg then
 					_p('  %s_config = %s', make.tovar(prj.name), prjcfg.shortname)
@@ -56,7 +56,7 @@
 
 	function make.cleanrules(sln)
 		_p('clean:')
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			local slnpath = solution.getlocation(sln)
 			local prjpath = project.getfilename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(slnpath, prjpath))
@@ -87,7 +87,7 @@
 		_p(1,'@echo "   all (default)"')
 		_p(1,'@echo "   clean"')
 
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			_p(1,'@echo "   %s"', prj.name)
 		end
 
@@ -111,7 +111,7 @@
 --
 
 	function make.projectrules(sln)
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
 			_p('%s: %s', premake.esc(prj.name), table.concat(deps, " "))

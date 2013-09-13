@@ -30,11 +30,11 @@
 	local function prepare(language)
 		prj1.language = language
 		prj2.language = language
-		prj2 = premake.solution.getproject_ng(sln, 2)
-		sln2005.projectdependencies_ng(prj2)
+		prj2 = premake.solution.getproject(sln, 2)
+		sln2005.projectdependencies(prj2)
 		prj3.language = language
-		prj3 = premake.solution.getproject_ng(sln, 3)
-		sln2005.projectdependencies_ng(prj3)
+		prj3 = premake.solution.getproject(sln, 3)
+		sln2005.projectdependencies(prj3)
 	end
 
 

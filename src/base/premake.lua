@@ -220,7 +220,7 @@
 		for sln in solution.each() do
 			premake.validateSolution(sln, ctx)
 
-			for prj in solution.eachproject_ng(sln) do
+			for prj in solution.eachproject(sln) do
 				premake.validateProject(prj, ctx)
 
 				for cfg in project.eachconfig(prj) do
@@ -249,7 +249,7 @@
 
 		-- all project UUIDs must be unique
 		local uuids = {}
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			if uuids[prj.uuid] then
 				premake.error("projects '%s' and '%s' have the same UUID", uuids[prj.uuid], prj.name)
 			end

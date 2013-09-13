@@ -20,7 +20,7 @@
 	end
 
 	local function run()
-		local prj = premake.solution.getproject_ng(sln, 1)
+		local prj = premake.solution.getproject(sln, 1)
 		local cfg = project.getconfig(prj, "Debug")
 		return project.getvpath(prj, cfg.files[1])
 	end

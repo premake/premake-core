@@ -225,7 +225,7 @@
 		local counts = {}
 		local configs = {}
 
-		for prj in premake.solution.eachproject_ng(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			for cfg in project.eachconfig(prj) do
 				-- get the dirs for this config, and remember the association
 				local dirs = getobjdirs(cfg)
@@ -304,12 +304,12 @@
 --    An iterator function, returning project configurations.
 --
 
-	function solution.eachproject_ng(sln)
+	function solution.eachproject(sln)
 		local i = 0
 		return function ()
 			i = i + 1
 			if i <= #sln.projects then
-				return premake.solution.getproject_ng(sln, i)
+				return premake.solution.getproject(sln, i)
 			end
 		end
 	end
@@ -384,7 +384,7 @@
 		-- build the tree of groups
 
 		local tr = tree.new()
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			local prjpath = path.join(prj.group, prj.name)
 			local node = tree.add(tr, prjpath)
 			node.project = prj
@@ -428,7 +428,7 @@
 --    The project configuration at the given index.
 --
 
-	function solution.getproject_ng(sln, idx)
+	function solution.getproject(sln, idx)
 		-- to make testing a little easier, allow this function to
 		-- accept an unbaked solution, and fix it on the fly
 		if not sln.baked then
@@ -449,7 +449,7 @@
 --
 
 	function solution.hascppproject(sln)
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			if project.iscpp(prj) then
 				return true
 			end
@@ -470,7 +470,7 @@
 --
 
 	function solution.hasdotnetproject(sln)
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			if project.isdotnet(prj) then
 				return true
 			end

@@ -26,7 +26,7 @@
 		"projectProperties",
 	}
 
-	function cs2005.generate_ng(prj)
+	function cs2005.generate(prj)
 		io.indent = "  "
 		io.utf8()
 

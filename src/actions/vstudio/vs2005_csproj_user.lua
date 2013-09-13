@@ -12,7 +12,7 @@
 -- Generate a Visual Studio 200x C# user file, with support for the new platforms API.
 --
 
-	function cs2005.generate_user_ng(prj)
+	function cs2005.generate_user(prj)
 		io.indent = "  "
 
 		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')

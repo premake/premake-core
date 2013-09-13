@@ -19,9 +19,6 @@
 		shortname       = "GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 
-		-- temporary, until I can phase out the legacy implementations
-		isnextgen = true,
-
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 
 		valid_languages = { "C", "C++", "C#" },

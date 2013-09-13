@@ -16,7 +16,7 @@
 -- Generate a Visual Studio 200x solution, with support for the new platforms API.
 --
 
-	function sln2005.generate_ng(sln)
+	function sln2005.generate(sln)
 		-- Mark the file as Unicode
 		_p('\239\187\191')
 
@@ -96,7 +96,7 @@
 
 				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
 				if _ACTION < "vs2012" then
-					sln2005.projectdependencies_ng(prj)
+					sln2005.projectdependencies(prj)
 				end
 				_p('EndProject')
 			end,
@@ -113,7 +113,7 @@
 -- Write out the list of project dependencies for a particular project.
 --
 
-	function sln2005.projectdependencies_ng(prj)
+	function sln2005.projectdependencies(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 			_p(1,'ProjectSection(ProjectDependencies) = postProject')

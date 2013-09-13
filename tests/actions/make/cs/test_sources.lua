@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		make.csSources(prj, premake.tools.dotnet)
 	end
 

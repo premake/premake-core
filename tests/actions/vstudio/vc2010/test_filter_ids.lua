@@ -5,7 +5,7 @@
 --
 
 	local suite = test.declare("vs2010_filter_ids")
-	local vc2010 = premake.vstudio.vc2010	
+	local vc2010 = premake.vstudio.vc2010
 
 
 --
@@ -13,14 +13,14 @@
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2010"
 		sln = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		vc2010.filters_uniqueidentifiers(prj)
 	end
 

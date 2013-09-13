@@ -23,7 +23,7 @@
 		if buildcfgs then
 			configurations ( buildcfgs )
 		end
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		for cfg in premake.project.eachconfig(prj) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end

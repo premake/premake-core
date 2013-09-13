@@ -22,7 +22,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 	end
 

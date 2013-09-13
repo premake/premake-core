@@ -24,10 +24,6 @@
 
 		os = "windows",
 
-		-- temporary, until I can phase out the legacy implementations
-
-		isnextgen = true,
-
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },

@@ -19,7 +19,7 @@
 	function suite.setup()
 		sln = test.createsolution()
 		system "ps3"
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 	end
 

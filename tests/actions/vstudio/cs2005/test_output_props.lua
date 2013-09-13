@@ -23,7 +23,7 @@
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject_ng(sln, 1)
+		local prj = premake.solution.getproject(sln, 1)
 		local cfg = project.getconfig(prj, "Debug")
 		cs2005.outputProps(cfg)
 	end

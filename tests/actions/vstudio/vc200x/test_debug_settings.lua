@@ -23,7 +23,7 @@
 
 	local function prepare()
 		cfg = project.getconfig(prj, "Debug")
-		vc200x.debugdir_ng(cfg)
+		vc200x.debugdir(cfg)
 	end
 
 
