@@ -1151,7 +1151,7 @@
 
 		local prj = sln.projects[name]
 		if not prj then
-			prj = premake5.project.new(sln, name)
+			prj = premake.project.new(sln, name)
 			prj.group = api.scope.group or ""
 			premake.solution.addproject(sln, prj)
 		end

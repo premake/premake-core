@@ -6,8 +6,8 @@
 
 	premake.tools.gcc = {}
 	local gcc = premake.tools.gcc
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --
@@ -97,6 +97,7 @@
 		EnableSSE2     = "-msse2",
 		ExtraWarnings  = "-Wall -Wextra",
 		FatalWarnings  = "-Werror",
+		NoWarnings     = "-w",
 		FloatFast      = "-ffast-math",
 		FloatStrict    = "-ffloat-store",
 		NoFramePointer = "-fomit-frame-pointer",
@@ -158,15 +159,15 @@
 -- @return
 --    An array of force include files with the appropriate flags.
 --
-	
+
 	function gcc.getforceincludes(cfg)
 		local result = {}
-		
+
 		table.foreachi(cfg.forceincludes, function(value)
 			local fn = project.getrelative(cfg.project, value)
-			table.insert(result, string.format('-include "%s"', fn))
+			table.insert(result, string.format('-include %s', premake.quoted(fn)))
 		end)
-		
+
 		return result
 	end
 
@@ -178,7 +179,8 @@
 	function gcc.getincludedirs(cfg, dirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
-			table.insert(result, '-I"' .. project.getrelative(cfg.project, dir) .. '"')
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-I' .. premake.quoted(dir))
 		end
 		return result
 	end

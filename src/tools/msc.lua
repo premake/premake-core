@@ -1,14 +1,14 @@
 --
 -- msc.lua
 -- Interface for the MS C/C++ compiler.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	
+
 	premake.tools.msc = {}
 	local msc = premake.tools.msc
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --
@@ -17,7 +17,7 @@
 
 	function msc.getcppflags(cfg)
 		local flags = {}
-		return flags		
+		return flags
 	end
 
 
@@ -29,20 +29,20 @@
 		SEH           = "/EHa",
 		OptimizeSpeed = "/O2",
 	}
-	
+
 	function msc.getcflags(cfg)
 		local flags = table.translate(cfg.flags, msc.cflags)
 
 		local runtime = iif(cfg.flags.StaticRuntime, "/MT", "/MD")
-		if premake.config.isdebugbuild(cfg) then
+		if config.isDebugBuild(cfg) then
 			runtime = runtime .. "d"
 		end
 		table.insert(flags, runtime)
-		
-		if not premake.config.isoptimizedbuild(cfg) then
+
+		if not config.isOptimizedBuild(cfg) then
 			table.insert(flags, "/Od")
 		end
-		
+
 		if cfg.flags.Symbols then
 			table.insert(flags, "/Z7")
 		end
@@ -50,7 +50,7 @@
 		if not cfg.flags.SEH then
 			table.insert(flags, "/EHsc")
 		end
-				
+
 		return flags
 	end
 
@@ -61,7 +61,7 @@
 
 	msc.cxxflags = {
 	}
-	
+
 	function msc.getcxxflags(cfg)
 		return table.translate(cfg.flags, msc.cxxflags)
 	end
@@ -69,7 +69,7 @@
 	msc.ldflags = {
 		Symbols = "/DEBUG",
 	}
-	
+
 
 --
 -- Decorate defines for the MSVC command line.
@@ -99,7 +99,7 @@
 
 		table.foreachi(cfg.forceincludes, function(value)
 			local fn = project.getrelative(cfg.project, value)
-			table.insert(result, string.format('/FI"%s"', fn))
+			table.insert(result, "/FI" .. premake.quoted(fn))
 		end)
 
 		return result
@@ -114,7 +114,8 @@
 	function msc.getincludedirs(cfg, dirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
-			table.insert(result, '-I"' .. project.getrelative(cfg.project, dir) .. '"')
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-I' ..  premake.quoted(dir))
 		end
 		return result
 	end
@@ -133,15 +134,15 @@
 		if not cfg.flags.NoManifest and cfg.kind ~= premake.STATICLIB then
 			table.insert(flags, "/MANIFEST")
 		end
-		
-		if premake.config.isoptimizedbuild(cfg) then
+
+		if config.isOptimizedBuild(cfg) then
 			table.insert(flags, "/OPT:REF /OPT:ICF")
 		end
-		
+
 		for _, libdir in ipairs(project.getrelative(cfg.project, cfg.libdirs)) do
 			table.insert(flags, '/LIBPATH:"' .. libdir .. '"')
 		end
-		
+
 		return flags
 	end
 

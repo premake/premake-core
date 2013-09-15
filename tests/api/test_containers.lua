@@ -29,7 +29,7 @@
 
 	function suite.project_createsOnFirstUse()
 		project("MyProject")
-		test.isnotnil(premake.solution.getproject_ng(sln, "MyProject"))
+		test.isnotnil(premake.solution.getproject(sln, "MyProject"))
 	end
 
 

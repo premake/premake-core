@@ -4,11 +4,10 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.tools_gcc = { }
-	local suite = T.tools_gcc
+	local suite = test.declare("tools_gcc")
 
 	local gcc = premake.tools.gcc
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -23,8 +22,8 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
-		cfg = premake5.project.getconfig(prj, "Debug")
+		prj = premake.solution.getproject(sln, 1)
+		cfg = project.getconfig(prj, "Debug")
 	end
 
 
@@ -85,7 +84,17 @@
 		test.isequal({ "-Werror" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onExtraWarnings()
+		flags { "ExtraWarnings" }
+		prepare()
+		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+	end
 
+	function suite.cflags_onNoWarnings()
+		flags { "NoWarnings" }
+		prepare()
+		test.isequal({ "-w" }, gcc.getcflags(cfg))
+	end
 --
 -- Check the translation of CXXFLAGS.
 --
@@ -299,7 +308,7 @@
 	function suite.includeDirsAreRelative()
 		includedirs { "../include", "src/include" }
 		prepare()
-		test.isequal({ '-I"../include"', '-I"src/include"' }, gcc.getincludedirs(cfg, cfg.includedirs))
+		test.isequal({ '-I../include', '-Isrc/include' }, gcc.getincludedirs(cfg, cfg.includedirs))
 	end
 
 
@@ -327,5 +336,24 @@
 	function suite.forcedIncludeFiles()
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
-		test.isequal({'-include "stdafx.h"', '-include "include/sys.h"'}, gcc.getforceincludes(cfg))
+		test.isequal({'-include stdafx.h', '-include include/sys.h'}, gcc.getforceincludes(cfg))
 	end
+
+
+--
+-- Include directories containing spaces (or which could contain spaces)
+-- should be wrapped in quotes.
+--
+
+	function suite.includeDirs_onSpaces()
+		includedirs { "include files" }
+		prepare()
+		test.isequal({ '-I"include files"' }, gcc.getincludedirs(cfg, cfg.includedirs))
+	end
+
+	function suite.includeDirs_onEnvVars()
+		includedirs { "$(IntDir)/includes" }
+		prepare()
+		test.isequal({ '-I"$(IntDir)/includes"' }, gcc.getincludedirs(cfg, cfg.includedirs))
+	end
+

@@ -7,7 +7,7 @@
 	T.vstudio_cs2005_compiler_props = {}
 	local suite = T.vstudio_cs2005_compiler_props
 	local cs2005 = premake.vstudio.cs2005
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -15,12 +15,12 @@
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2005"
 		sln, prj = test.createsolution()
 	end
-	
+
 	local function prepare()
 		local cfg = project.getconfig(prj, "Debug")
 		cs2005.compilerProps(cfg)

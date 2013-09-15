@@ -7,8 +7,8 @@
 	premake.vstudio = {}
 	local vstudio = premake.vstudio
 	local solution = premake.solution
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --
@@ -90,11 +90,11 @@
 -- Return true if the configuration kind is one of "Makefile" or "None". The
 -- latter is generated like a Makefile project and excluded from the solution.
 --
-	
+
 	function vstudio.isMakefile(cfg)
 		return (cfg.kind == premake.MAKEFILE or cfg.kind == premake.NONE)
 	end
-	
+
 
 --
 -- If a dependency of a project configuration is excluded from that particular
@@ -215,7 +215,7 @@
 		local hascpp = false
 		local hasnet = false
 		local slnarch
-		for prj in solution.eachproject_ng(cfg.solution) do
+		for prj in solution.eachproject(cfg.solution) do
 			if project.iscpp(prj) then
 				hascpp = true
 			elseif project.isdotnet(prj) then
@@ -269,7 +269,7 @@
 		-- if the platform identifier matches a known system or architecture,
 		--
 
-		for prj in solution.eachproject_ng(cfg.solution) do
+		for prj in solution.eachproject(cfg.solution) do
 			if project.iscpp(prj) then
 				hascpp = true
 			elseif project.isdotnet(prj) then

@@ -4,8 +4,8 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake5.project = {}
-	local project = premake5.project
+	premake.project = {}
+	local project = premake.project
 	local configset = premake.configset
 	local context = premake.context
 	local tree = premake.tree
@@ -204,12 +204,12 @@
 				-- and indexed for ordered iteration.
 
 				if not files[fname] then
-					local fcfg = premake5.fileconfig.new(fname, prj)
+					local fcfg = premake.fileconfig.new(fname, prj)
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end
 
-				premake5.fileconfig.addconfig(files[fname], cfg)
+				premake.fileconfig.addconfig(files[fname], cfg)
 
 			end)
 		end
@@ -256,7 +256,7 @@
 			local sequences = bases[file.basename]
 
 			for cfg in project.eachconfig(prj) do
-				local fcfg = premake5.fileconfig.getconfig(file, cfg)
+				local fcfg = premake.fileconfig.getconfig(file, cfg)
 				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
 					fcfg.sequence = sequences[cfg] or 0
 					sequences[cfg] = fcfg.sequence + 1
@@ -425,7 +425,7 @@
 		-- and short names and the build and link target.
 		-- TODO: Merge these two functions
 
-		premake5.config.bake(ctx)
+		premake.config.bake(ctx)
 
 		return ctx
 	end
@@ -722,13 +722,22 @@
 			-- in the IDE, not the physical organization of the file system. So
 			-- virtual paths are used when adding nodes.
 
+			-- If the project script specifies a virtual path for a file, disable
+			-- the logic that could trim out empty root nodes from that path. If
+			-- the script writer wants an empty root node they should get it.
+
+			local flags
+			if fcfg.vpath ~= fcfg.relpath then
+				flags = { trim = false }
+			end
+
 			-- Virtual paths can overlap, potentially putting files with the same
 			-- name in the same folder, even though they have different paths on
 			-- the underlying filesystem. The tree.add() call won't overwrite
 			-- existing nodes, so provide the extra logic here. Start by getting
 			-- the parent folder node, creating it if necessary.
 
-			local parent = tree.add(tr, path.getdirectory(fcfg.vpath))
+			local parent = tree.add(tr, path.getdirectory(fcfg.vpath), flags)
 			local node = tree.insert(parent, tree.new(path.getname(fcfg.vpath)))
 
 			-- Pass through value fetches to the file configuration

@@ -1,8 +1,17 @@
 --
 -- string.lua
 -- Additions to Lua's built-in string functions.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
+
+
+--
+-- Returns true if the string has a match for the plain specified pattern
+--
+
+	function string.contains(s, match)
+		return string.find(s, match, 1, true) ~= nil
+	end
 
 
 --

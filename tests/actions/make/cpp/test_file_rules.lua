@@ -6,7 +6,7 @@
 
 	local suite = test.declare("make_cpp_file_rules")
 	local make = premake.make
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -20,7 +20,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		make.cppFileRules(prj)
 	end
 

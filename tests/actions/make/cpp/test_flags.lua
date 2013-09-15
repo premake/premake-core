@@ -6,7 +6,7 @@
 
 	local suite = test.declare("make_flags")
 	local make = premake.make
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -34,6 +34,6 @@
 		includedirs { "src/include", "../include" }
 		prepare { "includes" }
 		test.capture [[
-  INCLUDES += -I"src/include" -I"../include"
+  INCLUDES += -Isrc/include -I../include
 		]]
 	end

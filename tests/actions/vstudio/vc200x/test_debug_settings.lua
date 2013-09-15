@@ -7,7 +7,7 @@
 	T.vstudio_vs200x_debugdir = { }
 	local suite = T.vstudio_vs200x_debugdir
 	local vc200x = premake.vstudio.vc200x
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -23,7 +23,7 @@
 
 	local function prepare()
 		cfg = project.getconfig(prj, "Debug")
-		vc200x.debugdir_ng(cfg)
+		vc200x.debugdir(cfg)
 	end
 
 

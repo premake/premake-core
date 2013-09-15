@@ -5,8 +5,8 @@
 --
 
 	local solution = premake.solution
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 ---
@@ -155,7 +155,7 @@
 --
 
 	function premake.generate(obj, ext, callback)
-		local fn = premake5.project.getfilename(obj, ext)
+		local fn = premake.project.getfilename(obj, ext)
 		printf("Generating %s...", path.getrelative(os.getcwd(), fn))
 
 		local f, err = io.open(fn, "wb")
@@ -192,6 +192,23 @@
 
 
 --
+-- Wrap the provided value in double quotes if it contains spaces, or
+-- if it contains a shell variable of the form $(...).
+--
+
+	function premake.quoted(value)
+		local q = value:find(" ", 1, true)
+		if not q then
+			q = value:find("$%(.-%)", 1)
+		end
+		if q then
+			value = '"' .. value .. '"'
+		end
+		return value
+	end
+
+
+--
 -- Sanity check the project information loaded from the scripts, to
 -- make sure it all meets some minimum requirements. Raises an error if
 -- an insane state is detected.
@@ -203,7 +220,7 @@
 		for sln in solution.each() do
 			premake.validateSolution(sln, ctx)
 
-			for prj in solution.eachproject_ng(sln) do
+			for prj in solution.eachproject(sln) do
 				premake.validateProject(prj, ctx)
 
 				for cfg in project.eachconfig(prj) do
@@ -232,7 +249,7 @@
 
 		-- all project UUIDs must be unique
 		local uuids = {}
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			if uuids[prj.uuid] then
 				premake.error("projects '%s' and '%s' have the same UUID", uuids[prj.uuid], prj.name)
 			end

@@ -23,9 +23,9 @@
 	local function result()
 		local platforms = sln.platforms or {}
 		project("MyProject")
-		prj = premake.solution.getproject_ng(sln, "MyProject")
-		cfg = premake5.project.getconfig(prj, "Debug", platforms[1])
-		return premake5.project.getrelative(prj, cfg.objdir)
+		prj = premake.solution.getproject(sln, "MyProject")
+		cfg = premake.project.getconfig(prj, "Debug", platforms[1])
+		return premake.project.getrelative(prj, cfg.objdir)
 	end
 
 

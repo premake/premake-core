@@ -20,8 +20,8 @@
 	end
 
 	local function prepare(buildcfg, platform)
-		prj = premake.solution.getproject_ng(sln, 1)
-		cfg = premake5.project.getconfig(prj, buildcfg or "Debug", platform)
+		prj = premake.solution.getproject(sln, 1)
+		cfg = premake.project.getconfig(prj, buildcfg or "Debug", platform)
 	end
 
 
@@ -56,7 +56,7 @@
 		prepare("Debug", "Shared")
 		test.isequal("DLL", cfg.platform)
 	end
-	
+
 
 
 --
@@ -135,7 +135,7 @@
 		removeplatforms "*"
 		configurations { "Development", "Production" }
 		platforms { "x32", "x64" }
-		
+
 		configmap {
 			[{"Debug", "Win32"}] = { "Development", "x32" },
 			[{"Debug", "PS3"}] = { "Development", "x64" },
@@ -154,13 +154,13 @@
 
 	function suite.canBubbleUp_onConfiguration()
 		platforms { "XCUA", "XCUB" }
-		
+
 		configuration { "CCU" }
 		configmap { XCUA = "CCU", XCUB = "CCU" }
 
 		project "MyProject"
 		platforms { "CCU" }
-		
+
 		prepare("Debug", "XCUA")
 		test.isequal({"Debug", "CCU"}, {cfg.buildcfg, cfg.platform})
 	end

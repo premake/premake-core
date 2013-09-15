@@ -17,7 +17,7 @@
 	function suite.setup()
 		sln = test.createsolution()
 		location "MyLocation"
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 	end
 
 

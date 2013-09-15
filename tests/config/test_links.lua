@@ -6,7 +6,7 @@
 
 	T.config_links = { }
 	local suite = T.config_links
-	local config = premake5.config
+	local config = premake.config
 
 
 --
@@ -22,7 +22,7 @@
 	end
 
 	local function prepare(kind, part, linkage)
-		cfg = premake5.project.getconfig(prj, "Debug")
+		cfg = premake.project.getconfig(prj, "Debug")
 		return config.getlinks(cfg, kind, part, linkage)
 	end
 

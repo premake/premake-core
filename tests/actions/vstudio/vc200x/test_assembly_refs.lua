@@ -20,7 +20,7 @@
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		vc200x.assemblyReferences(prj)
 	end
 

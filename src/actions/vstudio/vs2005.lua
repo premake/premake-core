@@ -17,7 +17,7 @@
 		io.eol = "\r\n"
 		io.esc = vs2005.esc
 
-		premake.generate(sln, ".sln", vstudio.sln2005.generate_ng)
+		premake.generate(sln, ".sln", vstudio.sln2005.generate)
 	end
 
 
@@ -25,9 +25,9 @@
 		io.eol = "\r\n"
 		io.esc = vs2005.esc
 
-		if premake5.project.isdotnet(prj) then
-			premake.generate(prj, ".csproj", vstudio.cs2005.generate_ng)
-			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user_ng)
+		if premake.project.isdotnet(prj) then
+			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
+			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
 		else
 			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
 			premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
@@ -68,10 +68,6 @@
 		-- Visual Studio always uses Windows path and naming conventions
 
 		os = "windows",
-
-		-- temporary, until I can phase out the legacy implementations
-
-		isnextgen = true,
 
 		-- The capabilities of this action
 

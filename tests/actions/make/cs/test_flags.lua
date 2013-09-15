@@ -7,7 +7,7 @@
 	local suite = test.declare("make_cs_flags")
 	local make = premake.make
 	local cs = premake.make.cs
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 		make.csFlags(cfg, premake.tools.dotnet)
 	end

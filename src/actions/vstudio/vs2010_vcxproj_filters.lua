@@ -5,7 +5,7 @@
 --
 
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 	local tree = premake.tree
 
 

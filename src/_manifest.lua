@@ -22,8 +22,6 @@
 		"base/criteria.lua",
 		"base/option.lua",
 		"base/tree.lua",
-		"base/project.lua",
-		"base/config.lua",
 		"base/help.lua",
 
 		-- configuration APIs

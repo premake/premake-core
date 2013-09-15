@@ -4,11 +4,11 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake5.fileconfig = {}
+	premake.fileconfig = {}
 
-	local fileconfig = premake5.fileconfig
+	local fileconfig = premake.fileconfig
 	local context = premake.context
-	local project = premake5.project
+	local project = premake.project
 
 
 --
