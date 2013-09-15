@@ -269,38 +269,38 @@
 -- @brief An overloaded os.remove() that will be able to handle list of files,
 --        as well as wildcards for files. Uses the syntax os.matchfiles() for
 --        matching pattern wildcards.
---  
+--
 -- @param f A file, a wildcard, or a list of files or wildcards to be removed
 --
 -- @return true on success, false and an appropriate error message on error
 --
 -- @example     ok, err = os.remove{"**.bak", "**.log"}
---				if not ok then
---					error(err)
---				end
+--              if not ok then
+--                  error(err)
+--              end
 --
 
-    local builtin_remove = os.remove
-    function os.remove(f)
-        -- in case of string, just match files
-        if type(f) == "string" then
-            local p = os.matchfiles(f)
-            for _, v in pairs(p) do
-                local ok, err = builtin_remove(v)
-                if not ok then 
-					return ok, err 
+	local builtin_remove = os.remove
+	function os.remove(f)
+		-- in case of string, just match files
+		if type(f) == "string" then
+			local p = os.matchfiles(f)
+			for _, v in pairs(p) do
+				local ok, err = builtin_remove(v)
+				if not ok then
+					return ok, err
 				end
-            end
-        -- in case of table, match files for every table entry
-        elseif type(f) == "table" then
-            for _, v in pairs(f) do
-                local ok, err = os.remove(v)
-				if not ok then 
-					return ok, err 
+			end
+		-- in case of table, match files for every table entry
+		elseif type(f) == "table" then
+			for _, v in pairs(f) do
+				local ok, err = os.remove(v)
+				if not ok then
+					return ok, err
 				end
-            end
-        end
-    end
+			end
+		end
+	end
 
 
 --
