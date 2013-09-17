@@ -1,5 +1,5 @@
 --
--- src/project/project.lua
+-- project.lua
 -- Premake project object API
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --

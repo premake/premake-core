@@ -1,5 +1,5 @@
 --
--- src/project/fileconfig.lua
+-- fileconfig.lua
 -- The set of configuration information for a specific file.
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --

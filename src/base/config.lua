@@ -1,5 +1,5 @@
 --
--- src/project/config.lua
+-- config.lua
 -- Premake configuration object API
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
