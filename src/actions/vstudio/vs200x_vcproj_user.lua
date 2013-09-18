@@ -6,7 +6,7 @@
 
 	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -24,7 +24,7 @@
 		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
 			vc200x.userconfiguration(cfg)
-			vc200x.debugdir_ng(cfg)
+			vc200x.debugdir(cfg)
 			_p(2,'</Configuration>')
 		end
 		_p(1,'</Configurations>')
@@ -49,7 +49,7 @@
 -- Write out the debug settings for this project.
 --
 
-	function vc200x.debugdir_ng(cfg)
+	function vc200x.debugdir(cfg)
 		_p(3,'<DebugSettings')
 
 		if cfg.debugcommand then

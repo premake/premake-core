@@ -23,7 +23,7 @@
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject_ng(sln, 2)
+		prj = premake.solution.getproject(sln, 2)
 		vc2010.projectReferences(prj)
 	end
 

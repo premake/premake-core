@@ -7,8 +7,8 @@
 	premake.tools.snc = {}
 	local snc = premake.tools.snc
 	local gcc = premake.tools.gcc
-	local config = premake5.config
-	
+	local config = premake.config
+
 
 --
 -- SNC flags for specific systems and architectures.
@@ -43,7 +43,7 @@
 
 	function snc.getcxxflags(cfg)
 		local flags = table.translate(cfg.flags, snc.cxxflags)
-		
+
 		-- turn on exceptions and RTTI by default, to match other toolsets
 		if not cfg.flags.NoExceptions then
 			table.insert(flags, "-Xc+=exceptions")
@@ -51,7 +51,7 @@
 		if not cfg.flags.NoRTTI then
 			table.insert(flags, "-Xc+=rtti")
 		end
-		
+
 		return flags
 	end
 
@@ -81,11 +81,11 @@
 
 	function snc.getldflags(cfg)
 		local flags = { }
-		
+
 		if not cfg.flags.Symbols then
 			table.insert(flags, "-s")
 		end
-		
+
 		return flags
 	end
 

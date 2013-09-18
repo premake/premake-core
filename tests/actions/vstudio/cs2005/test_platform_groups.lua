@@ -24,7 +24,7 @@
 		platforms (platform)
 		prj = project ("MyProject")
 		language "C#"
-		cfg = premake5.project.getconfig(prj, "Debug", platform)
+		cfg = premake.project.getconfig(prj, "Debug", platform)
 		cs2005.propertyGroup(cfg)
 	end
 

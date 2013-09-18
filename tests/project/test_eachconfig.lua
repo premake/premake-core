@@ -23,8 +23,8 @@
 		if buildcfgs then
 			configurations ( buildcfgs )
 		end
-		prj = premake.solution.getproject_ng(sln, 1)
-		for cfg in premake5.project.eachconfig(prj) do
+		prj = premake.solution.getproject(sln, 1)
+		for cfg in premake.project.eachconfig(prj) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end
 	end
@@ -71,7 +71,7 @@
 
 
 --
--- If platforms are supplied, they should be paired with build 
+-- If platforms are supplied, they should be paired with build
 -- configurations, with the order of both maintained.
 --
 
@@ -118,7 +118,7 @@
 		]]
 	end
 
-	
+
 --
 -- Test mapping a build configuration to a build config/platform pair.
 -- This will cause a second platform to appear in the project, alongside
@@ -153,7 +153,7 @@
 		]]
 	end
 
-	
+
 --
 -- If there is overlap in the solution and project configuration lists,
 -- the ordering at the project level should be maintained to avoid

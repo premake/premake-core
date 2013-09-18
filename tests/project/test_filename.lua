@@ -7,7 +7,7 @@
 	T.project_filename = {}
 	local suite = T.project_filename
 
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 	end
 
 

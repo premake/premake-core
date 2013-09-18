@@ -8,7 +8,7 @@
 	local suite = T.tools_msc
 
 	local msc = premake.tools.msc
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -23,8 +23,8 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
-		cfg = premake5.project.getconfig(prj, "Debug")
+		prj = premake.solution.getproject(sln, 1)
+		cfg = project.getconfig(prj, "Debug")
 	end
 
 
@@ -57,5 +57,5 @@
 	function suite.forcedIncludeFiles()
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
-		test.isequal({'/FI"stdafx.h"', '/FI"include/sys.h"'}, msc.getforceincludes(cfg))
+		test.isequal({'/FIstdafx.h', '/FIinclude/sys.h'}, msc.getforceincludes(cfg))
 	end

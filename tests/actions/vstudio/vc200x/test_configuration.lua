@@ -7,7 +7,7 @@
 	T.vstudio_vc200x_configuration = { }
 	local suite = T.vstudio_vc200x_configuration
 	local vc200x = premake.vstudio.vc200x
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -22,7 +22,7 @@
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject_ng(sln, 1)
+		local prj = premake.solution.getproject(sln, 1)
 		local cfg = project.getconfig(prj, "Debug", (prj.platforms or {})[1])
 		vc200x.configuration(cfg)
 	end

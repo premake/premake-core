@@ -1,21 +1,21 @@
 --
 -- help.lua
 -- User help, displayed on /help option.
--- Copyright (c) 2002-2008 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 
 	function premake.showhelp()
-	
+
 		-- display the basic usage
 		printf("Premake %s, a build script generator", _PREMAKE_VERSION)
 		printf(_PREMAKE_COPYRIGHT)
 		printf("%s %s", _VERSION, _COPYRIGHT)
 		printf("")
-		printf("Usage: premake4 [options] action [arguments]")
+		printf("Usage: premake5 [options] action [arguments]")
 		printf("")
 
-		
+
 		-- display all options
 		printf("OPTIONS")
 		printf("")
@@ -24,8 +24,8 @@
 			local description = option.description
 			if (option.value) then trigger = trigger .. "=" .. option.value end
 			if (option.allowed) then description = description .. "; one of:" end
-			
-			printf(" --%-15s %s", trigger, description) 
+
+			printf(" --%-15s %s", trigger, description)
 			if (option.allowed) then
 				for _, value in ipairs(option.allowed) do
 					printf("     %-14s %s", value[1], value[2])
@@ -45,7 +45,7 @@
 
 		-- see more
 		printf("For additional information, see http://industriousone.com/premake")
-		
+
 	end
 
 

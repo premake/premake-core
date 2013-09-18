@@ -6,8 +6,8 @@
 
 	T.config_targetinfo = { }
 	local suite = T.config_targetinfo
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --

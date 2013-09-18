@@ -7,7 +7,7 @@
 	local suite = test.declare("make_cs_flags")
 	local make = premake.make
 	local cs = premake.make.cs
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -21,9 +21,9 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
-		cs.flags(cfg, premake.tools.dotnet)
+		make.csFlags(cfg, premake.tools.dotnet)
 	end
 
 
@@ -34,7 +34,7 @@
 	function suite.isEmptyAssignment_onNoSettings()
 		prepare()
 		test.capture [[
-  FLAGS      =
+  FLAGS =
   		]]
   	end
 
@@ -47,6 +47,6 @@
 		icon "MyProject.ico"
 		prepare()
 		test.capture [[
-  FLAGS      = /win32icon:"MyProject.ico"
+  FLAGS = /win32icon:"MyProject.ico"
   		]]
   	end

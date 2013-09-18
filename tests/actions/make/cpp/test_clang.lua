@@ -7,7 +7,7 @@
 	local suite = test.declare("make_clang")
 	local make = premake.make
 	local cpp = premake.make.cpp
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -19,7 +19,7 @@
 	function suite.setup()
 		sln = test.createsolution()
 		toolset "clang"
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 	end
 
 

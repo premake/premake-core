@@ -1,13 +1,13 @@
 --
 -- tests/config/test_linkinfo.lua
--- Test the config object's link target accessor. 
+-- Test the config object's link target accessor.
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
 	T.config_linkinfo = { }
 	local suite = T.config_linkinfo
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 
 
 --
@@ -30,7 +30,7 @@
 
 
 --
--- Directory should be current (".") by default. 
+-- Directory should be current (".") by default.
 --
 
 	function suite.directoryIsDot_onNoTargetDir()
@@ -115,7 +115,7 @@
 
 
 --
--- The import library extension should not change if the a 
+-- The import library extension should not change if the a
 -- custom target extension is set.
 --
 

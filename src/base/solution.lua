@@ -6,8 +6,7 @@
 
 	premake.solution = { }
 	local solution = premake.solution
-	local oven = premake5.oven
-	local project = premake5.project
+	local project = premake.project
 	local configset = premake.configset
 	local context = premake.context
 	local tree = premake.tree
@@ -180,7 +179,7 @@
 		-- fill in any calculated values
 		for _, cfg in ipairs(configs) do
 			cfg.solution = sln
-			premake5.config.bake(cfg)
+			premake.config.bake(cfg)
 		end
 
 		return configs
@@ -226,7 +225,7 @@
 		local counts = {}
 		local configs = {}
 
-		for prj in premake.solution.eachproject_ng(sln) do
+		for prj in premake.solution.eachproject(sln) do
 			for cfg in project.eachconfig(prj) do
 				-- get the dirs for this config, and remember the association
 				local dirs = getobjdirs(cfg)
@@ -297,26 +296,6 @@
 
 
 --
--- Iterate over the projects of a solution.
---
--- @param sln
---    The solution.
--- @returns
---    An iterator function.
---
-
-	function solution.eachproject(sln)
-		local i = 0
-		return function ()
-			i = i + 1
-			if i <= #sln.projects then
-				return premake.solution.getproject(sln, i)
-			end
-		end
-	end
-
-
---
 -- Iterate over the projects of a solution (next-gen).
 --
 -- @param sln
@@ -325,12 +304,12 @@
 --    An iterator function, returning project configurations.
 --
 
-	function solution.eachproject_ng(sln)
+	function solution.eachproject(sln)
 		local i = 0
 		return function ()
 			i = i + 1
 			if i <= #sln.projects then
-				return premake.solution.getproject_ng(sln, i)
+				return premake.solution.getproject(sln, i)
 			end
 		end
 	end
@@ -402,15 +381,23 @@
 			return sln.grouptree
 		end
 
-		local tr = tree.new()
-		sln.grouptree = tr
+		-- build the tree of groups
 
-		for prj in solution.eachproject_ng(sln) do
+		local tr = tree.new()
+		for prj in solution.eachproject(sln) do
 			local prjpath = path.join(prj.group, prj.name)
-			local node = tree.add(tr, prjpath, function(n) n.uuid = os.uuid(n.path) end)
+			local node = tree.add(tr, prjpath)
 			node.project = prj
 		end
 
+		-- assign UUIDs to each node in the tree
+		tree.traverse(tr, {
+			onnode = function(node)
+				node.uuid = os.uuid(node.path)
+			end
+		})
+
+		sln.grouptree = tr
 		return tr
 	end
 
@@ -431,29 +418,6 @@
 
 
 --
--- Retrieve the project at a particular index.
---
--- @param sln
---    The solution.
--- @param idx
---    An index into the array of projects.
--- @returns
---    The project at the given index.
---
-
-	function solution.getproject(sln, idx)
-		-- retrieve the root configuration of the project, with all of
-		-- the global (not configuration specific) settings collapsed
-		local prj = sln.projects[idx]
-		local cfg = premake.getconfig(prj)
-
-		-- root configuration doesn't have a name; use the project's
-		cfg.name = prj.name
-		return cfg
-	end
-
-
---
 -- Retrieve the project configuration at a particular index.
 --
 -- @param sln
@@ -464,7 +428,7 @@
 --    The project configuration at the given index.
 --
 
-	function solution.getproject_ng(sln, idx)
+	function solution.getproject(sln, idx)
 		-- to make testing a little easier, allow this function to
 		-- accept an unbaked solution, and fix it on the fly
 		if not sln.baked then
@@ -485,7 +449,7 @@
 --
 
 	function solution.hascppproject(sln)
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			if project.iscpp(prj) then
 				return true
 			end
@@ -506,7 +470,7 @@
 --
 
 	function solution.hasdotnetproject(sln)
-		for prj in solution.eachproject_ng(sln) do
+		for prj in solution.eachproject(sln) do
 			if project.isdotnet(prj) then
 				return true
 			end

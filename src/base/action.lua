@@ -61,7 +61,7 @@
 			if a.onsolution then
 				a.onsolution(sln)
 			end
-			for prj in premake.solution.eachproject_ng(sln) do
+			for prj in premake.solution.eachproject(sln) do
 				if a.onproject and not prj.external then
 					a.onproject(prj)
 				end

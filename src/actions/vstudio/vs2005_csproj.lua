@@ -8,9 +8,9 @@
 
 	local vstudio = premake.vstudio
 	local cs2005  = premake.vstudio.cs2005
-	local project = premake5.project
-	local config = premake5.config
-	local fileconfig = premake5.fileconfig
+	local project = premake.project
+	local config = premake.config
+	local fileconfig = premake.fileconfig
 	local dotnet = premake.tools.dotnet
 
 
@@ -26,7 +26,7 @@
 		"projectProperties",
 	}
 
-	function cs2005.generate_ng(prj)
+	function cs2005.generate(prj)
 		io.indent = "  "
 		io.utf8()
 
@@ -244,7 +244,7 @@
 		else
 			_p(2,'<DebugType>pdbonly</DebugType>')
 		end
-		_p(2,'<Optimize>%s</Optimize>', iif(premake.config.isoptimizedbuild(cfg), "true", "false"))
+		_p(2,'<Optimize>%s</Optimize>', iif(config.isOptimizedBuild(cfg), "true", "false"))
 	end
 
 

@@ -6,7 +6,7 @@
 
 	local suite = test.declare("vs2012_vcxproj_config_props")
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 
 
 ---
@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		cfg = project.getconfig(prj, "Debug")
 		vc2010.configurationProperties(cfg)
 	end

@@ -7,9 +7,9 @@
 	premake.make.cpp = {}
 	local make = premake.make
 	local cpp = premake.make.cpp
-	local project = premake5.project
-	local config = premake5.config
-	local fileconfig = premake5.fileconfig
+	local project = premake.project
+	local config = premake.config
+	local fileconfig = premake.fileconfig
 
 
 ---

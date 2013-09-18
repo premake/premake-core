@@ -267,3 +267,20 @@
 		tree.trimroot(tr)
 		test.isequal("tests", tr.children[1].path)
 	end
+
+
+--
+-- Nodes with the key "trim" set to false should be removed.
+--
+
+	function suite.trimroot_respectsTrimFlag()
+		local n = tree.add(tr, "A")
+		tree.add(tr, "A/1")
+		n.trim = false
+		tree.trimroot(tr)
+		prepare()
+		test.capture [[
+		A
+			1
+		]]
+	end

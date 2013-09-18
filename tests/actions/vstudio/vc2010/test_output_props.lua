@@ -7,7 +7,7 @@
 	T.vstudio_vs2010_output_props = { }
 	local suite = T.vstudio_vs2010_output_props
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -22,7 +22,7 @@
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject_ng(sln, 1)
+		local prj = premake.solution.getproject(sln, 1)
 		local cfg = project.getconfig(prj, "Debug")
 		vc2010.outputProperties(cfg)
 	end

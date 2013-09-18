@@ -75,6 +75,36 @@
 
 
 --
+-- Add a new value to a field's list of allowed values.
+--
+-- @param fieldName
+--    The name of the field to which to add the value.
+-- @param value
+--    The value to add. May be a single string value, or an array
+--    of values.
+--
+
+	function api.addAllowed(fieldName, value)
+		local field = premake.fields[fieldName]
+		if not field then
+			error("No such field: " .. fieldName, 2)
+		end
+
+		if not field.allowed then
+			field.allowed = {}
+		end
+
+		if type(value) == "table" then
+			field.allowed = table.join(field.allowed, value)
+		else
+			table.insert(field.allowed, value)
+		end
+
+		table.sort(field.allowed)
+	end
+
+
+--
 -- Find the right target object for a given scope.
 --
 
@@ -383,7 +413,7 @@
 		if value:find("*") then
 			local values = os.matchdirs(value)
 			table.foreachi(values, function(v)
-				api.setdirectory(target, name, field, values[i])
+				api.setdirectory(target, name, field, v)
 				name = name + 1
 			end)
 		else
@@ -1151,7 +1181,7 @@
 
 		local prj = sln.projects[name]
 		if not prj then
-			prj = premake5.project.new(sln, name)
+			prj = premake.project.new(sln, name)
 			prj.group = api.scope.group or ""
 			premake.solution.addproject(sln, prj)
 		end

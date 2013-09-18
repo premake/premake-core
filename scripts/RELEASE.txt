@@ -16,7 +16,7 @@ PREP
 
  * Prep release announcement for forums
 
- * Run `premake4 embed`
+ * Run `premake5 embed`
 
  * Commit all changes to premake-stable
 
@@ -27,9 +27,9 @@ PREP
 
 BUILD
 
- * On each platform, run `premake4 release {version} binary`
+ * On each platform, run `premake5 release {version} binary`
 
- * On one platform, run `premake4 release {version} source`
+ * On one platform, run `premake5 release {version} source`
 
  * If desired, copy binary to local path
 

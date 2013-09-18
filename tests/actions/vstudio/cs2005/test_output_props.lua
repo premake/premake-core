@@ -7,7 +7,7 @@
 	T.vstudio_cs2005_output_props = {}
 	local suite = T.vstudio_cs2005_output_props
 	local cs2005 = premake.vstudio.cs2005
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -15,15 +15,15 @@
 --
 
 	local sln
-	
+
 	function suite.setup()
 		_ACTION = "vs2005"
 		sln = test.createsolution()
 		language "C#"
 	end
-	
+
 	local function prepare()
-		local prj = premake.solution.getproject_ng(sln, 1)
+		local prj = premake.solution.getproject(sln, 1)
 		local cfg = project.getconfig(prj, "Debug")
 		cs2005.outputProps(cfg)
 	end
@@ -42,7 +42,7 @@
 	end
 
 
--- 
+--
 -- Check handling of the intermediates directory.
 --
 
@@ -52,7 +52,7 @@
 		test.capture [[
 		<OutputPath>.\</OutputPath>
 		<IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
-		]]	
+		]]
 	end
 
 	function suite.intermediateDirectory_onVs2010()
@@ -62,6 +62,6 @@
 		<OutputPath>.\</OutputPath>
 		<BaseIntermediateOutputPath>obj\Debug\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-		]]	
+		]]
 	end
 

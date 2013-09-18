@@ -21,7 +21,7 @@
 	end
 
 	local function prepare(group)
-		prj = premake.solution.getproject_ng(sln, 1)
+		prj = premake.solution.getproject(sln, 1)
 		vc2010.filters_filegroup(prj, group)
 	end
 

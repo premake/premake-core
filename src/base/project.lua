@@ -1,115 +1,505 @@
 --
 -- project.lua
--- Functions for working with the project data.
--- Copyright (c) 2002 Jason Perkins and the Premake project
+-- Premake project object API
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake.project = { }
+	premake.project = {}
+	local project = premake.project
+	local configset = premake.configset
+	local context = premake.context
+	local tree = premake.tree
 
 
 --
--- Create a tree from a project's list of files, representing the filesystem hierarchy.
+-- Create a new project object.
+--
+-- @param sln
+--    The solution object to contain the new project.
+-- @param name
+--    The new project's name.
+-- @return
+--    A new project object, contained by the specified solution.
+--
+
+	function project.new(sln, name)
+		local prj = {}
+
+		prj.name = name
+		prj.solution = sln
+		prj.script = _SCRIPT
+		prj.blocks = {}
+
+		local cwd = os.getcwd()
+
+		local cset = configset.new(sln.configset)
+		cset.basedir = cwd
+		cset.location = cwd
+		cset.filename = name
+		cset.uuid = os.uuid(name)
+		prj.configset = cset
+
+		-- attach a type descriptor
+		setmetatable(prj, {
+			__type = "project",
+			__index = function(prj, key)
+				return prj.configset[key]
+			end,
+		})
+
+		return prj
+	end
+
+
+--
+-- Prepare the project information received from the project script
+-- for project generation.
 --
 -- @param prj
---    The project containing the files to map.
--- @returns
---    A new tree object containing a corresponding filesystem hierarchy. The root node
---    contains a reference back to the original project: prj = tr.project.
+--    The project to be prepared for project generation.
+-- @param sln
+--    The solution which contains the project.
+-- @return
+--    The baked version of the project.
 --
 
-	function premake.project.buildsourcetree(prj)
-		local tr = premake.tree.new(prj.name)
-		tr.project = prj
+	function project.bake(prj, sln)
 
-		local isvpath
+		-- Create a new configuration context to represent this project. This
+		-- context will contain all of the "root" or global settings for the
+		-- project, those that aren't part of a more specific configuration.
+		-- Use an empty token expansion environment for the moment.
 
-		local function onadd(node)
-			node.isvpath = isvpath
+		local environ = {}
+		local ctx = context.new(prj.configset, environ)
+
+		-- Add filtering terms to the context to make it as specific as I can.
+		-- Action comes first, because it never depends on anything else.
+
+		context.addterms(ctx, _ACTION)
+
+		-- Now filter on the current system and architecture, allowing the
+		-- values that might already in the context to override my defaults.
+
+		ctx.system = ctx.system or premake.action.current().os or os.get()
+		context.addterms(ctx, ctx.system)
+		context.addterms(ctx, ctx.architecture)
+
+		-- If no language has been set, default to C++. This might come back to
+		-- bite me later, but let's see how it goes.
+
+		if not ctx.language then
+			ctx.language = premake.CPP
 		end
 
-		for fcfg in premake.project.eachfile(prj) do
-			isvpath = (fcfg.name ~= fcfg.vpath)
-			local node = premake.tree.add(tr, fcfg.vpath, onadd)
-			node.cfg = fcfg
+		-- The kind is a configuration level value, but if it has been set at the
+		-- project level allow that to influence the other project-level results.
+
+		context.addterms(ctx, ctx.kind)
+
+		-- Go ahead and distill all of that down now; this is my new project object
+
+		context.compile(ctx)
+		ctx.baked = true
+
+		-- Fill in some additional state. Copying the keys over from the
+		-- scripted project object allows custom values set in the project
+		-- script to be passed through to extension scripts.
+
+		for key, value in pairs(prj) do
+			ctx[key] = value
 		end
 
-		premake.tree.sort(tr)
-		return tr
-	end
+		ctx.solution = sln
+		ctx.project = ctx
 
+		-- Now I can populate the token expansion environment
 
---
--- Returns an iterator for a set of build configuration settings. If a platform is
--- specified, settings specific to that platform and build configuration pair are
--- returned.
---
+		environ.sln = sln
+		environ.prj = ctx
 
-	function premake.eachconfig(prj, platform)
-		-- I probably have the project root config, rather than the actual project
-		if prj.project then prj = prj.project end
+		-- Set the context's base directory to the project's file system
+		-- location. Any path tokens which are expanded in non-path fields
+		-- are made relative to this, ensuring a portable generated project.
 
-		local cfgs = prj.solution.configurations
-		local i = 0
+		context.basedir(ctx, project.getlocation(ctx))
 
-		return function ()
-			i = i + 1
-			if i <= #cfgs then
-				return premake.getconfig(prj, cfgs[i], platform)
+		-- This bit could use some work: create a canonical set of configurations
+		-- for the project, along with a mapping from the solution's configurations.
+		-- This works, but it could probably be simplified.
+
+		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
+		project.bakeconfigmap(ctx, prj.configset, cfgs)
+		ctx._cfglist = project.bakeconfiglist(ctx, cfgs)
+
+		-- Don't allow a project-level system setting to influence the configurations
+
+		ctx.system = nil
+
+		-- Finally, step through the list of configurations I built above and
+		-- bake all of those down into configuration contexts as well. Store
+		-- the results with the project.
+
+		ctx.configs = {}
+
+		for _, pairing in ipairs(ctx._cfglist) do
+			local buildcfg = pairing[1]
+			local platform = pairing[2]
+			local cfg = project.bakeconfig(ctx, buildcfg, platform)
+
+			-- Check to make sure this configuration is supported by the current
+			-- action; add it to the project's configuration cache if so.
+
+			if premake.action.supportsconfig(cfg) then
+				ctx.configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
+
 		end
+
+		-- Process the sub-objects that are contained by this project. The
+		-- configuration build stuff above really belongs in here now.
+
+		ctx._ = {}
+		ctx._.files = project.bakeFiles(ctx)
+
+		-- If this type of project generates object files, look for files that will
+		-- generate object name collisions (i.e. src/hello.cpp and tests/hello.cpp
+		-- both create hello.o) and assign unique sequence numbers to each. I need
+		-- to do this up front to make sure the sequence numbers are the same for
+		-- all the tools, even they reorder the source file list.
+
+		if project.iscpp(ctx) then
+			project.assignObjectSequences(ctx)
+		end
+
+		return ctx
 	end
 
 
+--
+-- Create configuration objects for each file contained in the project. This
+-- collects and collates all of the values specified in the project scripts,
+-- and computes extra values like the relative path and object names.
+--
+-- @param prj
+--    The project object being baked. The project
+-- @return
+--    A collection of file configurations, keyed by both the absolute file
+--    path and an alpha-sorted index.
+--
+
+	function project.bakeFiles(prj)
+
+		local files = {}
+
+		-- Start by building a comprehensive list of all the files contained by the
+		-- project. Some files may only be included in a subset of configurations so
+		-- I need to look at them all.
+
+		for cfg in project.eachconfig(prj) do
+			table.foreachi(cfg.files, function(fname)
+
+				-- If this is the first time I've seen this file, start a new
+				-- file configuration for it. Track both by key for quick lookups
+				-- and indexed for ordered iteration.
+
+				if not files[fname] then
+					local fcfg = premake.fileconfig.new(fname, prj)
+					files[fname] = fcfg
+					table.insert(files, fcfg)
+				end
+
+				premake.fileconfig.addconfig(files[fname], cfg)
+
+			end)
+		end
+
+		-- Alpha sort the indices, so I will get consistent results in
+		-- the exported project files.
+
+		table.sort(files, function(a,b)
+			return a.vpath < b.vpath
+		end)
+
+		return files
+	end
+
 
 --
--- Iterator for a project's files; returns a file configuration object.
+-- Assign unique sequence numbers to any source code files that would generate
+-- conflicting object file names (i.e. src/hello.cpp and tests/hello.cpp both
+-- create hello.o).
 --
 
-	function premake.project.eachfile(prj)
-		-- project root config contains the file config list
-		if not prj.project then prj = premake.getconfig(prj) end
-		local i = 0
-		local t = prj.files
-		return function ()
-			i = i + 1
-			if (i <= #t) then
-				local name = premake5.project.getrelative(prj, t[i])
-				local fcfg = prj.__fileconfigs[name]
-				fcfg.vpath = premake.project.getvpath(prj, fcfg.name)
-				return fcfg
+	function project.assignObjectSequences(prj)
+
+		-- Iterate over the file configurations which were prepared and cached in
+		-- project.bakeFiles(); find buildable files with common base file names.
+
+		local bases = {}
+		table.foreachi(prj._.files, function(file)
+
+			-- Only consider sources that actually generate object files
+
+			if not path.iscppfile(file.abspath) then
+				return
 			end
-		end
-	end
 
+			-- For each base file name encountered, keep a count of the number of
+			-- collisions that have occurred for each project configuration. Use
+			-- this collision count to generate the unique object file names.
 
---
--- Given a map of supported platform identifiers, filters the solution's list
--- of platforms to match. A map takes the form of a table like:
---
---  { x32 = "Win32", x64 = "x64" }
---
--- Only platforms that are listed in both the solution and the map will be
--- included in the results. An optional default platform may also be specified;
--- if the result set would otherwise be empty this platform will be used.
---
+			if not bases[file.basename] then
+				bases[file.basename] = {}
+			end
 
-	function premake.filterplatforms(sln, map, default)
-		local result = { }
-		local keys = { }
-		if sln.platforms then
-			for _, p in ipairs(sln.platforms) do
-				if map[p] and not table.contains(keys, map[p]) then
-					table.insert(result, p)
-					table.insert(keys, map[p])
+			local sequences = bases[file.basename]
+
+			for cfg in project.eachconfig(prj) do
+				local fcfg = premake.fileconfig.getconfig(file, cfg)
+				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
+					fcfg.sequence = sequences[cfg] or 0
+					sequences[cfg] = fcfg.sequence + 1
 				end
 			end
+
+			-- Makefiles don't use per-configuration object names yet; keep
+			-- this around until they do. At which point I might consider just
+			-- storing the sequence number instead of the whole object name
+
+			file.sequence = sequences[prj] or 0
+			sequences[prj] = file.sequence + 1
+
+		end)
+	end
+
+
+--
+-- It can be useful to state "use this map if this configuration is present".
+-- To allow this to happen, config maps that are specified within a project
+-- configuration are allowed to "bubble up" to the top level. Currently,
+-- maps are the only values that get this special behavior.
+--
+-- @param ctx
+--    The project context information.
+-- @param cset
+--    The project's original configuration set, which contains the settings
+--    of all the project configurations.
+-- @param cfgs
+--    The list of the project's build cfg/platform pairs.
+--
+
+	function project.bakeconfigmap(ctx, cset, cfgs)
+
+		-- build a query filter that will match any configuration name,
+		-- within the existing constraints of the project
+
+		local terms = table.arraycopy(ctx.terms)
+		for _, cfg in ipairs(cfgs) do
+			if cfg[1] then table.insert(terms, cfg[1]:lower()) end
+			if cfg[2] then table.insert(terms, cfg[2]:lower()) end
 		end
 
-		if #result == 0 and default then
-			table.insert(result, default)
+		-- assemble all matching configmaps, and then merge their keys
+		-- into the project's configmap
+
+		local map = configset.fetchvalue(cset, "configmap", terms)
+		if map then
+			for key, value in pairs(map) do
+				ctx.configmap[key] = value
+			end
 		end
 
-		return result
+	end
+
+
+--
+-- Builds a list of build configuration/platform pairs for a project,
+-- along with a mapping between the solution and project configurations.
+--
+-- @param ctx
+--    The project context information.
+-- @param cfgs
+--    The list of the project's build cfg/platform pairs.
+-- @return
+--     An array of the project's build configuration/platform pairs,
+--     based on any discovered mappings.
+--
+
+	function project.bakeconfiglist(ctx, cfgs)
+		-- run them all through the project's config map
+		for i, cfg in ipairs(cfgs) do
+			cfgs[i] = project.mapconfig(ctx, cfg[1], cfg[2])
+		end
+
+		-- walk through the result and remove any duplicates
+		local buildcfgs = {}
+		local platforms = {}
+
+		for _, pairing in ipairs(cfgs) do
+			local buildcfg = pairing[1]
+			local platform = pairing[2]
+
+			if not table.contains(buildcfgs, buildcfg) then
+				table.insert(buildcfgs, buildcfg)
+			end
+
+			if platform and not table.contains(platforms, platform) then
+				table.insert(platforms, platform)
+			end
+		end
+
+		-- merge these de-duped lists back into pairs for the final result
+		return table.fold(buildcfgs, platforms)
+	end
+
+
+--
+-- Flattens out the build settings for a particular build configuration and
+-- platform pairing, and returns the result.
+--
+
+	function project.bakeconfig(prj, buildcfg, platform)
+
+		-- Set the default system and architecture values; if the platform's
+		-- name matches a known system or architecture, use that as the default.
+		-- More than a convenience; this is required to work properly with
+		-- external Visual Studio project files.
+
+		local system = premake.action.current().os or os.get()
+		local architecture = nil
+
+		if platform then
+			system = premake.api.checkvalue(platform, premake.fields.system) or system
+			architecture = premake.api.checkvalue(platform, premake.fields.architecture) or architecture
+		end
+
+		-- Wrap the projects's configuration set (which contains all of the information
+		-- provided by the project script) with a context object. The context handles
+		-- the expansion of tokens, and caching of retrieved values. The environment
+		-- values are used when expanding tokens.
+
+		local environ = {
+			sln = prj.solution,
+			prj = prj,
+		}
+
+		local ctx = context.new(prj.configset, environ)
+
+		ctx.project = prj
+		ctx.solution = prj.solution
+		ctx.buildcfg = buildcfg
+		ctx.platform = platform
+		ctx.action = _ACTION
+		ctx.language = prj.language
+
+		-- Allow the configuration information to accessed by tokens contained
+		-- within the configuration itself
+
+		environ.cfg = ctx
+
+		-- Add filtering terms to the context and then compile the results. These
+		-- terms describe the "operating environment"; only results contained by
+		-- configuration blocks which match these terms will be returned.
+
+		context.addterms(ctx, buildcfg)
+		context.addterms(ctx, platform)
+		context.addterms(ctx, _ACTION)
+		context.addterms(ctx, prj.language)
+
+		-- allow the project script to override the default system
+		ctx.system = ctx.system or system
+		context.addterms(ctx, ctx.system)
+
+		-- allow the project script to override the default architecture
+		ctx.architecture = ctx.architecture or architecture
+		context.addterms(ctx, ctx.architecture)
+
+		-- if a kind is set, allow that to influence the configuration
+		context.addterms(ctx, ctx.kind)
+
+		context.compile(ctx)
+		context.basedir(ctx, project.getlocation(prj))
+
+		-- Fill in a few calculated for the configuration, including the long
+		-- and short names and the build and link target.
+		-- TODO: Merge these two functions
+
+		premake.config.bake(ctx)
+
+		return ctx
+	end
+
+
+--
+-- Returns an iterator function for the configuration objects contained by
+-- the project. Each configuration corresponds to a build configuration/
+-- platform pair (i.e. "Debug|x32") as specified in the solution.
+--
+-- @param prj
+--    The project object to query.
+-- @return
+--    An iterator function returning configuration objects.
+--
+
+	function project.eachconfig(prj)
+		-- to make testing a little easier, allow this function to
+		-- accept an unbaked project, and fix it on the fly
+		if not prj.baked then
+			prj = project.bake(prj, prj.solution)
+		end
+
+		local configs = prj._cfglist
+		local count = #configs
+
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= count then
+				return project.getconfig(prj, configs[i][1], configs[i][2])
+			end
+		end
+	end
+
+
+
+--
+-- When an exact match is not available (project.getconfig() returns nil), use
+-- this function to find the closest alternative.
+--
+-- @param prj
+--    The project object to query.
+-- @param buildcfg
+--    The name of the build configuration on which to filter.
+-- @param platform
+--    Optional; the name of the platform on which to filter.
+-- @return
+--    A configuration object.
+--
+
+	function project.findClosestMatch(prj, buildcfg, platform)
+
+		-- One or both of buildcfg and platform do not match any of the project
+		-- configurations, otherwise I would have had an exact match. Map them
+		-- separately to apply any partial rules.
+
+		buildcfg = project.mapconfig(prj, buildcfg)[1]
+		platform = project.mapconfig(prj, platform)[1]
+
+		-- Replace missing values with whatever is first in the list
+
+		if not table.contains(prj.configurations, buildcfg) then
+			buildcfg = prj.configurations[1]
+		end
+
+		if not table.contains(prj.platforms, platform) then
+			platform = prj.platforms[1]
+		end
+
+		-- Now I should have a workable pairing
+
+		return project.getconfig(prj, buildcfg, platform)
+
 	end
 
 
@@ -117,10 +507,15 @@
 --
 -- Locate a project by name; case insensitive.
 --
+-- @param name
+--    The name of the project for which to search.
+-- @return
+--    The corresponding project, or nil if no matching project could be found.
+--
 
-	function premake.findproject(name)
+	function project.findproject(name)
 		for sln in premake.solution.each() do
-			for prj in premake.solution.eachproject(sln) do
+			for _, prj in ipairs(sln.projects) do
 				if (prj.name == name) then
 					return  prj
 				end
@@ -129,71 +524,43 @@
 	end
 
 
-
 --
--- Locate a file in a project with a given extension; used to locate "special"
--- items such as Windows .def files.
+-- Retrieve the project's configuration information for a particular build
+-- configuration/platform pair.
 --
-
-	function premake.findfile(prj, extension)
-		for _, fname in ipairs(prj.files) do
-			if fname:endswith(extension) then return fname end
-		end
-	end
-
-
-
---
--- Retrieve a configuration for a given project/configuration pairing.
 -- @param prj
---   The project to query.
--- @param cfgname
---   The target build configuration; only settings applicable to this configuration
---   will be returned. May be nil to retrieve project-wide settings.
--- @param pltname
---   The target platform; only settings applicable to this platform will be returned.
---   May be nil to retrieve platform-independent settings.
--- @returns
---   A configuration object containing all the settings for the given platform/build
---   configuration pair.
+--    The project object to query.
+-- @param buildcfg
+--    The name of the build configuration on which to filter.
+-- @param platform
+--    Optional; the name of the platform on which to filter.
+-- @return
+--    A configuration object.
 --
 
-	function premake.getconfig(prj, cfgname, pltname)
-		-- might have the root configuration, rather than the actual project
-		prj = prj.project or prj
-
-		-- if platform is not included in the solution, use general settings instead
-		if pltname == "Native" or not table.contains(prj.solution.platforms or {}, pltname) then
-			pltname = nil
+	function project.getconfig(prj, buildcfg, platform)
+		-- to make testing a little easier, allow this function to
+		-- accept an unbaked project, and fix it on the fly
+		if not prj.baked then
+			prj = project.bake(prj, prj.solution)
 		end
 
-		local key = (cfgname or "")
-		if pltname then key = key .. pltname end
-		return prj.__configs[key]
-	end
-
-
-
---
--- Build a name from a build configuration/platform pair. The short name
--- is good for makefiles or anywhere a user will have to type it in. The
--- long name is more readable.
---
-
-	function premake.getconfigname(cfgname, platform, useshortname)
-		if cfgname then
-			local name = cfgname
-			if platform and platform ~= "Native" then
-				if useshortname then
-					name = name .. premake.platforms[platform].cfgsuffix
-				else
-					name = name .. "|" .. platform
-				end
-			end
-			return iif(useshortname, name:lower(), name)
+		-- if no build configuration is specified, return the "root" project
+		-- configurations, which includes all configuration values that
+		-- weren't set with a specific configuration filter
+		if not buildcfg then
+			return prj
 		end
-	end
 
+		-- apply any configuration mappings
+		local pairing = project.mapconfig(prj, buildcfg, platform)
+		buildcfg = pairing[1]
+		platform = pairing[2]
+
+		-- look up and return the associated config
+		local key = (buildcfg or "*") .. (platform or "")
+		return prj.configs[key]
+	end
 
 
 --
@@ -204,319 +571,185 @@
 --
 -- @param prj
 --    The project to query.
--- @returns
---    A list of dependent projects, as an array of objects.
+-- @return
+--    A list of dependent projects, as an array of project objects.
 --
 
-	function premake.getdependencies(prj)
-		-- make sure I've got the project and not root config
-		prj = prj.project or prj
-
-		local function add_to_project_list(depproj, results)
-			local dep = premake.findproject(depproj)
-			if dep and not table.contains(results, dep) then
-				table.insert(results, dep)
+	function project.getdependencies(prj)
+		if not prj.dependencies then
+			local result = {}
+			local function add_to_project_list(cfg, depproj, result)
+				local dep = premake.solution.findproject(cfg.solution, depproj)
+					if dep and not table.contains(result, dep) then
+						table.insert(result, dep)
+					end
 			end
-		end
 
-		local results = { }
-		for _, cfg in pairs(prj.__configs) do
-			for _, link in ipairs(cfg.links) do
-				add_to_project_list(link, results)
+			for cfg in project.eachconfig(prj) do
+				for _, link in ipairs(cfg.links) do
+					add_to_project_list(cfg, link, result)
+				end
+				for _, depproj in ipairs(cfg.dependson) do
+					add_to_project_list(cfg, depproj, result)
+				end
 			end
-			for _, depproj in ipairs(cfg.dependson) do
-				add_to_project_list(depproj, results)
- 			end
+			prj.dependencies = result
 		end
-
-		return results
+		return prj.dependencies
 	end
 
 
-
 --
--- Uses information from a project (or solution) to format a filename.
+-- Returns the file name for this project. Also works with solutions.
 --
 -- @param prj
---    A project or solution object with the file naming information.
--- @param pattern
---    A naming pattern. The sequence "%%" will be replaced by the
---    project name.
--- @returns
---    A filename matching the specified pattern, with a relative path
---    from the current directory to the project location.
+--    The project object to query.
+-- @param ext
+--    An optional file extension to add, with the leading dot. If provided
+--    without a leading dot, it will treated as a file name.
+-- @return
+--    The absolute path to the project's file.
 --
 
-	function premake.project.getfilename(prj, pattern)
-		local fname = pattern:gsub("%%%%", prj.filename or prj.name)
-		fname = path.join(premake5.project.getlocation(prj), fname)
-		return path.getrelative(os.getcwd(), fname)
-	end
-
-
-
---
--- Returns a list of link targets. Kind may be one of:
---   siblings     - linkable sibling projects
---   system       - system (non-sibling) libraries
---   dependencies - all sibling dependencies, including non-linkable
---   all          - return everything
---
--- Part may be one of:
---   name      - the decorated library name with no directory
---   basename  - the undecorated library name
---   directory - just the directory, no name
---   fullpath  - full path with decorated name
---   object    - return the project object of the dependency
---
-
- 	function premake.getlinks(cfg, kind, part)
-		-- if I'm building a list of link directories, include libdirs
-		local result = iif (part == "directory" and kind == "all", cfg.libdirs, {})
-
-		-- am I getting links for a configuration or a project?
-		local cfgname = iif(cfg.name == cfg.project.name, "", cfg.name)
-
-		-- how should files be named?
-		local pathstyle = premake.getpathstyle(cfg)
-		local namestyle = premake.getnamestyle(cfg)
-
-		local function canlink(source, target)
-			if (target.kind ~= "SharedLib" and target.kind ~= "StaticLib") then
-				return false
-			end
-			if project.iscpp(source) then
-				return project.iscpp(target)
-			elseif project.isdotnet(source) then
-				return project.isdotnet(target)
-			end
-		end
-
-		for _, link in ipairs(cfg.links) do
-			local item
-
-			-- is this a sibling project?
-			local prj = premake.findproject(link)
-			if prj and kind ~= "system" then
-
-				local prjcfg = premake.getconfig(prj, cfgname, cfg.platform)
-				if kind == "dependencies" or canlink(cfg, prjcfg) then
-					if (part == "directory") then
-						item = path.rebase(prjcfg.linktarget.directory, prjcfg.location, cfg.location)
-					elseif (part == "basename") then
-						item = prjcfg.linktarget.basename
-					elseif (part == "fullpath") then
-						item = path.rebase(prjcfg.linktarget.fullpath, prjcfg.location, cfg.location)
-					elseif (part == "object") then
-						item = prjcfg
-					end
-				end
-
-			elseif not prj and (kind == "system" or kind == "all") then
-
-				if (part == "directory") then
-					local dir = path.getdirectory(link)
-					if (dir ~= ".") then
-						item = dir
-					end
-				elseif (part == "fullpath") then
-					item = link
-					if namestyle == "windows" then
-						if project.iscpp(cfg) then
-							item = item .. ".lib"
-						elseif project.isdotnet(cfg) then
-							item = item .. ".dll"
-						end
-					end
-					if item:find("/", nil, true) then
-						item = path.getrelative(cfg.basedir, item)
-					end
-				else
-					item = link
-				end
-
-			end
-
-			if item then
-				if pathstyle == "windows" and part ~= "object" then
-					item = path.translate(item, "\\")
-				end
-				if not table.contains(result, item) then
-					table.insert(result, item)
-				end
-			end
-		end
-
-		return result
-	end
-
-
-
---
--- Gets the name style for a configuration, indicating what kind of prefix,
--- extensions, etc. should be used in target file names.
---
--- @param cfg
---    The configuration to check.
--- @returns
---    The target naming style, one of "windows", "posix", or "PS3".
---
-
-	function premake.getnamestyle(cfg)
-		return premake.platforms[cfg.platform].namestyle or premake.gettool(cfg).namestyle or "posix"
-	end
-
-
-
---
--- Gets the path style for a configuration, indicating what kind of path separator
--- should be used in target file names.
---
--- @param cfg
---    The configuration to check.
--- @returns
---    The target path style, one of "windows" or "posix".
---
-
-	function premake.getpathstyle(cfg)
-		if premake.action.current().os == "windows" then
-			return "windows"
+	function project.getfilename(prj, ext)
+		local fn = project.getlocation(prj)
+		if ext and not ext:startswith(".") then
+			fn = path.join(fn, ext)
 		else
-			return "posix"
+			fn = path.join(fn, prj.filename)
+			if ext then
+				fn = fn .. ext
+			end
 		end
+		return fn
 	end
 
 
 --
--- Assembles a target for a particular tool/system/configuration.
+-- Return the first configuration of a project, which is used in some
+-- actions to generate project-wide defaults.
 --
--- @param cfg
---    The configuration to be targeted.
--- @param direction
---    One of 'build' for the build target, or 'link' for the linking target.
--- @param pathstyle
---    The path format, one of "windows" or "posix". This comes from the current
---    action: Visual Studio uses "windows", GMake uses "posix", etc.
--- @param namestyle
---    The file naming style, one of "windows" or "posix". This comes from the
---    current tool: GCC uses "posix", MSC uses "windows", etc.
--- @param system
---    The target operating system, which can modify the naming style. For example,
---    shared libraries on Mac OS X use a ".dylib" extension.
--- @returns
---    An object with these fields:
---      basename   - the target with no directory or file extension
---      name       - the target name and extension, with no directory
---      directory  - relative path to the target, with no file name
---      prefix     - the file name prefix
---      suffix     - the file name suffix
---      fullpath   - directory, name, and extension
---      bundlepath - the relative path and file name of the bundle
+-- @param prj
+--    The project object to query.
+-- @return
+--    The first configuration in a project, as would be returned by
+--    eachconfig().
 --
 
-	function premake.gettarget(cfg, direction, pathstyle, namestyle, system)
-		if system == "bsd" or system == "solaris" then
-			system = "linux"
-		end
-
-		-- Fix things up based on the current system
-		local kind = cfg.kind
-		if project.iscpp(cfg) then
-			-- On Windows, shared libraries link against a static import library
-			if (namestyle == "windows" or system == "windows")
-				and kind == "SharedLib" and direction == "link"
-				and not cfg.flags.NoImportLib
-			then
-				kind = "StaticLib"
-			end
-
-			-- Posix name conventions only apply to static libs on windows (by user request)
-			if namestyle == "posix" and system == "windows" and kind ~= "StaticLib" then
-				namestyle = "windows"
-			end
-		end
-
-		-- Initialize the target components
-		local field   = iif(direction == "build", "target", "implib")
-		local name    = cfg[field.."name"] or cfg.targetname or cfg.project.name
-		local dir     = cfg[field.."dir"] or cfg.targetdir or path.getrelative(cfg.location, cfg.basedir)
-		local prefix  = ""
-		local suffix  = ""
-		local ext     = ""
-		local bundlepath, bundlename
-
-		if namestyle == "windows" then
-			if kind == "ConsoleApp" or kind == "WindowedApp" then
-				ext = ".exe"
-			elseif kind == "SharedLib" then
-				ext = ".dll"
-			elseif kind == "StaticLib" then
-				ext = ".lib"
-			end
-		elseif namestyle == "posix" then
-			if kind == "WindowedApp" and system == "macosx" then
-				bundlename = name .. ".app"
-				bundlepath = path.join(dir, bundlename)
-				dir = path.join(bundlepath, "Contents/MacOS")
-			elseif kind == "SharedLib" then
-				prefix = "lib"
-				ext = iif(system == "macosx", ".dylib", ".so")
-			elseif kind == "StaticLib" then
-				prefix = "lib"
-				ext = ".a"
-			end
-		elseif namestyle == "PS3" then
-			if kind == "ConsoleApp" or kind == "WindowedApp" then
-				ext = ".elf"
-			elseif kind == "StaticLib" then
-				prefix = "lib"
-				ext = ".a"
-			end
-		end
-
-		prefix = cfg[field.."prefix"] or cfg.targetprefix or prefix
-		suffix = cfg[field.."suffix"] or cfg.targetsuffix or suffix
-		ext    = cfg[field.."extension"] or cfg.targetextension or ext
-
-		-- build the results object
-		local result = { }
-		result.basename   = name .. suffix
-		result.name       = prefix .. name .. suffix .. ext
-		result.directory  = dir
-		result.prefix     = prefix
-		result.suffix     = suffix
-		result.fullpath   = path.join(result.directory, result.name)
-		result.bundlepath = bundlepath or result.fullpath
-
-		if pathstyle == "windows" then
-			result.directory = path.translate(result.directory, "\\")
-			result.fullpath  = path.translate(result.fullpath,  "\\")
-		end
-
-		return result
+	function project.getfirstconfig(prj)
+		local iter = project.eachconfig(prj)
+		local first = iter()
+		return first
 	end
 
 
 --
--- Return the appropriate tool interface, based on the target language and
--- any relevant command-line options.
+-- Retrieve the project's file system location. Also works with solutions.
+--
+-- @param prj
+--    The project object to query.
+-- @param relativeto
+--    Optional; if supplied, the project location will be made relative
+--    to this path.
+-- @return
+--    The path to the project's file system location.
 --
 
-	function premake.gettool(cfg)
-		if project.iscpp(cfg) then
-			if _OPTIONS.cc then
-				return premake[_OPTIONS.cc]
+	function project.getlocation(prj, relativeto)
+		local location = prj.location
+		if not location and prj.solution then
+			location = prj.solution.location
+		end
+		if not location then
+			location = prj.basedir
+		end
+		if relativeto then
+			location = path.getrelative(relativeto, location)
+		end
+		return location
+	end
+
+
+--
+-- Return the relative path from the project to the specified file.
+--
+-- @param prj
+--    The project object to query.
+-- @param filename
+--    The file path, or an array of file paths, to convert.
+-- @return
+--    The relative path, or array of paths, from the project to the file.
+--
+
+	function project.getrelative(prj, filename)
+		if type(filename) == "table" then
+			local result = {}
+			for i, name in ipairs(filename) do
+				result[i] = project.getrelative(prj, name)
 			end
-			local action = premake.action.current()
-			if action.valid_tools then
-				return premake[action.valid_tools.cc[1]]
-			end
-			return premake.gcc
+			return result
 		else
-			return premake.dotnet
+			if filename then
+				return path.getrelative(project.getlocation(prj), filename)
+			end
 		end
 	end
 
+
+--
+-- Create a tree from a project's list of source files.
+--
+-- @param prj
+--    The project to query.
+-- @param sorter
+--    An optional comparator function for the sorting pass.
+-- @return
+--    A tree object containing the source file hierarchy. Leaf nodes,
+--    representing the individual files, are file configuration
+--    objects.
+--
+
+	function project.getsourcetree(prj, sorter)
+
+		if prj._.sourcetree then
+			return prj._.sourcetree
+		end
+
+		local tr = tree.new(prj.name)
+
+		table.foreachi(prj._.files, function(fcfg)
+			-- The tree represents the logical source code tree to be displayed
+			-- in the IDE, not the physical organization of the file system. So
+			-- virtual paths are used when adding nodes.
+
+			-- If the project script specifies a virtual path for a file, disable
+			-- the logic that could trim out empty root nodes from that path. If
+			-- the script writer wants an empty root node they should get it.
+
+			local flags
+			if fcfg.vpath ~= fcfg.relpath then
+				flags = { trim = false }
+			end
+
+			-- Virtual paths can overlap, potentially putting files with the same
+			-- name in the same folder, even though they have different paths on
+			-- the underlying filesystem. The tree.add() call won't overwrite
+			-- existing nodes, so provide the extra logic here. Start by getting
+			-- the parent folder node, creating it if necessary.
+
+			local parent = tree.add(tr, path.getdirectory(fcfg.vpath), flags)
+			local node = tree.insert(parent, tree.new(path.getname(fcfg.vpath)))
+
+			-- Pass through value fetches to the file configuration
+			setmetatable(node, { __index = fcfg })
+		end)
+
+		tree.trimroot(tr)
+		tree.sort(tr, sorter)
+
+		prj._.sourcetree = tr
+		return tr
+	end
 
 
 --
@@ -525,22 +758,24 @@
 -- the original path is returned.
 --
 
-	function premake.project.getvpath(prj, filename)
-		prj = prj.project
-
+	function project.getvpath(prj, filename)
 		-- if there is no match, return the input filename
 		local vpath = filename
 
 		for replacement,patterns in pairs(prj.vpaths or {}) do
 			for _,pattern in ipairs(patterns) do
-				pattern = premake5.project.getrelative(prj, pattern)
 
 				-- does the filename match this vpath pattern?
-				local i = vpath:find(path.wildcards(pattern))
+				local i = filename:find(path.wildcards(pattern))
 				if i == 1 then
-					-- yes; trim the leading portion of the path
+					-- yes; trim the pattern out of the target file's path
+					local leaf
 					i = pattern:find("*", 1, true) or (pattern:len() + 1)
-					local leaf = vpath:sub(i)
+					if i < filename:len() then
+						leaf = filename:sub(i)
+					else
+						leaf = path.getname(filename)
+					end
 					if leaf:startswith("/") then
 						leaf = leaf:sub(2)
 					end
@@ -555,6 +790,8 @@
 						if stars == 0 then
 							leaf = path.getname(leaf)
 						end
+					else
+						leaf = path.getname(leaf)
 					end
 
 					vpath = path.join(stem, leaf)
@@ -562,46 +799,111 @@
 			end
 		end
 
-		-- remove any dot ("./", "../") patterns from the start of the path
-		local changed
-		repeat
-			changed = true
-			if vpath:startswith("./") then
-				vpath = vpath:sub(3)
-			elseif vpath:startswith("../") then
-				vpath = vpath:sub(4)
-			else
-				changed = false
-			end
-		until not changed
-
 		return vpath
 	end
 
 
 --
--- Returns true if the solution contains at least one C/C++ project.
+-- Determines if a project contains a particular build configuration/platform pair.
 --
 
-	function premake.hascppproject(sln)
-		for prj in premake.solution.eachproject(sln) do
-			if project.iscpp(prj) then
-				return true
-			end
+	function project.hasconfig(prj, buildcfg, platform)
+		if buildcfg and not prj.configurations[buildcfg] then
+			return false
 		end
+		if platform and not prj.platforms[platform] then
+			return false
+		end
+		return true
+	end
+
+
+--
+-- Determines if a project contains a particular source code file.
+--
+-- @param prj
+--    The project to query.
+-- @param filename
+--    The absolute path to the source code file being checked.
+-- @return
+--    True if the file belongs to the project, in any configuration.
+--
+
+	function project.hasfile(prj, filename)
+		return (prj._.files[filename] ~= nil)
+	end
+
+
+--
+-- Returns true if the project uses the C (and not C++) language.
+--
+
+	function project.isc(prj)
+		return prj.language == premake.C
 	end
 
 
 
 --
--- Returns true if the solution contains at least one .NET project.
+-- Returns true if the project uses a C/C++ language.
 --
 
-	function premake.hasdotnetproject(sln)
-		for prj in premake.solution.eachproject(sln) do
-			if project.isdotnet(prj) then
-				return true
+	function project.iscpp(prj)
+		return prj.language == premake.C or prj.language == premake.CPP
+	end
+
+
+--
+-- Returns true if the project uses a .NET language.
+--
+
+	function project.isdotnet(prj)
+		return prj.language == premake.CSHARP
+	end
+
+
+--
+-- Given a build config/platform pairing, applies any project configuration maps
+-- and returns a new (or the same) pairing.
+--
+-- TODO: I think this could be made much simpler by building a string pattern
+-- like :part1:part2: and then doing string comparisions, instead of trying to
+-- iterate over variable number of table elements.
+--
+
+	function project.mapconfig(prj, buildcfg, platform)
+		local pairing = { buildcfg, platform }
+
+		local testpattern = function(pattern, pairing, i)
+			local j = 1
+			while i <= #pairing and j <= #pattern do
+				if pairing[i] ~= pattern[j] then
+					return false
+				end
+				i = i + 1
+				j = j + 1
+			end
+			return true
+		end
+
+		for pattern, replacements in pairs(prj.configmap or {}) do
+			if type(pattern) ~= "table" then
+				pattern = { pattern }
+			end
+
+			-- does this pattern match any part of the pair? If so,
+			-- replace it with the corresponding values
+			for i = 1, #pairing do
+				if testpattern(pattern, pairing, i) then
+					if #pattern == 1 and #replacements == 1 then
+						pairing[i] = replacements[1]
+					else
+						pairing = { replacements[1], replacements[2] }
+					end
+				end
 			end
 		end
+
+		return pairing
 	end
 

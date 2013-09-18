@@ -7,7 +7,7 @@
 	premake.make = {}
 	local make = premake.make
 	local solution = premake.solution
-	local project = premake5.project
+	local project = premake.project
 
 
 ---
@@ -18,9 +18,6 @@
 		trigger         = "gmake",
 		shortname       = "GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
-
-		-- temporary, until I can phase out the legacy implementations
-		isnextgen = true,
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 
@@ -40,7 +37,7 @@
 			io.esc = make.esc
 			local makefile = make.getmakefilename(prj, true)
 			if project.isdotnet(prj) then
-				premake.generate(prj, makefile, make.generate_csharp)
+				premake.generate(prj, makefile, make.cs.generate)
 			else
 				premake.generate(prj, makefile, make.cpp.generate)
 			end

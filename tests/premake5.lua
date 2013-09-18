@@ -1,6 +1,6 @@
 --
--- tests/premake4.lua
--- Automated test suite for Premake 4.x
+-- tests/premake5.lua
+-- Automated test suite for Premake 5.x
 -- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
@@ -75,6 +75,7 @@
 	dofile("api/test_array_kind.lua")
 	dofile("api/test_callback.lua")
 	dofile("api/test_containers.lua")
+	dofile("api/test_directory_kind.lua")
 	dofile("api/test_list_kind.lua")
 	dofile("api/test_path_kind.lua")
 	dofile("api/test_register.lua")
@@ -141,7 +142,6 @@
 	dofile("actions/vstudio/vc2010/test_filters.lua")
 	dofile("actions/vstudio/vc2010/test_item_def_group.lua")
 	dofile("actions/vstudio/vc2010/test_link.lua")
-	dofile("actions/vstudio/vc2010/test_manifest.lua")
 	dofile("actions/vstudio/vc2010/test_nmake_props.lua")
 	dofile("actions/vstudio/vc2010/test_output_props.lua")
 	dofile("actions/vstudio/vc2010/test_project_configs.lua")
@@ -184,7 +184,9 @@
 	dofile("actions/make/cpp/test_wiidev.lua")
 
 	-- Makefile C# projects
+	dofile("actions/make/cs/test_embed_files.lua")
 	dofile("actions/make/cs/test_flags.lua")
+	dofile("actions/make/cs/test_sources.lua")
 
 
 --

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("base_os")
@@ -31,7 +31,7 @@
 --
 
 	function suite.isfile_ReturnsTrue_OnExistingFile()
-		test.istrue(os.isfile("premake4.lua"))
+		test.istrue(os.isfile("premake5.lua"))
 	end
 
 	function suite.isfile_ReturnsFalse_OnNonexistantFile()
@@ -93,13 +93,13 @@
 	end
 
 	function suite.pathsearch_ReturnsPath_OnFound()
-		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", os.getcwd()))
+		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", os.getcwd()))
 	end
 
 	function suite.pathsearch_FindsFile_OnComplexPath()
-		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", "aaa;"..os.getcwd()..";bbb"))
+		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", "aaa;"..os.getcwd()..";bbb"))
 	end
 
 	function suite.pathsearch_NilPathsAllowed()
-		test.isequal(os.getcwd(), os.pathsearch("premake4.lua", nil, os.getcwd(), nil))
+		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", nil, os.getcwd(), nil))
 	end

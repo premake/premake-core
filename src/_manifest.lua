@@ -22,8 +22,6 @@
 		"base/criteria.lua",
 		"base/option.lua",
 		"base/tree.lua",
-		"base/project.lua",
-		"base/config.lua",
 		"base/help.lua",
 
 		-- configuration APIs
@@ -32,16 +30,15 @@
 		"base/api.lua",
 		"base/detoken.lua",
 
-		-- runtime environment setup
-		"_premake_init.lua",
-		"base/cmdline.lua",
-
 		-- project APIs
-		"project/project.lua",
-		"project/config.lua",
-		"project/fileconfig.lua",
+		"base/project.lua",
+		"base/config.lua",
+		"base/fileconfig.lua",
 		"base/solution.lua",
 		"base/premake.lua",
+
+		-- runtime environment setup
+		"_premake_init.lua",
 
 		-- tool APIs
 		"tools/dotnet.lua",

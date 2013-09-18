@@ -4,10 +4,8 @@
 -- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
-
-	local scriptfile    = "premake4.lua"
-	local shorthelp     = "Type 'premake4 --help' for help"
-	local versionhelp   = "premake4 (Premake Build Script Generator) %s"
+	local shorthelp     = "Type 'premake5 --help' for help"
+	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 
 	_WORKING_DIR        = os.getcwd()
 
@@ -16,40 +14,19 @@
 -- Script-side program entry point.
 --
 
-	function _premake_main(scriptpath)
+	function _premake_main()
 
-		-- if running off the disk (in debug mode), load everything
-		-- listed in _manifest.lua; the list divisions make sure
-		-- everything gets initialized in the proper order.
+		-- Seed the random number generator so actions don't have to do it themselves
 
-		if (scriptpath) then
-			local scripts  = dofile(scriptpath .. "/_manifest.lua")
-			for _,v in ipairs(scripts) do
-				dofile(scriptpath .. "/" .. v)
-			end
-		end
+		math.randomseed(os.time())
 
+		-- Look for and run the system-wide configuration script
 
-		-- Now that the scripts are loaded, I can use path.getabsolute() to properly
-		-- canonicalize the executable path.
-
-		_PREMAKE_COMMAND = path.getabsolute(_PREMAKE_COMMAND)
-
-		-- Enable extensions - the '?' character is replaced with the extension
-		-- name so the extension directory name _must_ be the same as the
-		-- extension Lua file.  eg. .../d/d.lua, .../codelite/codelite.lua etc
-		local home = os.getenv("HOME") or os.getenv("USERPROFILE")
-		local extdirs = {
-			home .. "/.premake/?/?.lua",
-			path.getdirectory( _PREMAKE_COMMAND ) .. "/ext/?/?.lua",
-			"./premake/?/?.lua",
-			"/usr/share/premake/?/?.lua" }
-		for _,v in ipairs(extdirs) do
-			package.path = package.path .. ";" .. v
-		end
+		dofileopt(_OPTIONS["systemscript"] or { "premake5-system.lua", "premake-system.lua" })
 
 		-- The "next-gen" actions have now replaced their deprecated counterparts.
 		-- Provide a warning for a little while before I remove them entirely.
+
 		if _ACTION and _ACTION:endswith("ng") then
 			premake.warnOnce(_ACTION, "'%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3))
 		end
@@ -59,20 +36,10 @@
 
 		premake.action.set(_ACTION)
 
-
-		-- Seed the random number generator so actions don't have to do it themselves
-
-		math.randomseed(os.time())
-
-
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
 
-		local fname = _OPTIONS["file"] or scriptfile
-		if (os.isfile(fname)) then
-			dofile(fname)
-		end
-
+		local hasScript = dofileopt(_OPTIONS["file"] or { "premake5.lua", "premake4.lua" })
 
 		-- Process special options
 
@@ -97,8 +64,8 @@
 
 		-- If there wasn't a project script I've got to bail now
 
-		if (not os.isfile(fname)) then
-			error("No Premake script ("..scriptfile..") found!", 2)
+		if not hasScript then
+			error("No Premake script (premake5.lua) found!", 0)
 		end
 
 
@@ -106,12 +73,12 @@
 		-- script has run to allow for project-specific options
 
 		action = premake.action.current()
-		if (not action) then
+		if not action then
 			error("Error: no such action '" .. _ACTION .. "'", 0)
 		end
 
 		ok, err = premake.option.validate(_OPTIONS)
-		if (not ok) then error("Error: " .. err, 0) end
+		if not ok then error("Error: " .. err, 0) end
 
 
 		-- "Bake" the project information, preparing it for use by the action

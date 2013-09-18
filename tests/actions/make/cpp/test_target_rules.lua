@@ -6,7 +6,7 @@
 
 	local suite = test.declare("make_cpp_target_rules")
 	local make = premake.make
-	local project = premake5.project
+	local project = premake.project
 
 
 --

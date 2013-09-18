@@ -8,9 +8,9 @@
 
 	local vc2010 = premake.vstudio.vc2010
 	local vstudio = premake.vstudio
-	local project = premake5.project
-	local config = premake5.config
-	local fileconfig = premake5.fileconfig
+	local project = premake.project
+	local config = premake.config
+	local fileconfig = premake.fileconfig
 	local tree = premake.tree
 
 
@@ -725,7 +725,7 @@
 				value = "OldStyle"
 			elseif cfg.architecture == "x64" or
 			       cfg.flags.Managed or
-				   premake.config.isoptimizedbuild(cfg) or
+				   config.isOptimizedBuild(cfg) or
 				   cfg.flags.NoEditAndContinue
 			then
 				value = "ProgramDatabase"
@@ -808,7 +808,7 @@
 
 
 	function vc2010.functionLevelLinking(cfg)
-		if premake.config.isoptimizedbuild(cfg) then
+		if config.isOptimizedBuild(cfg) then
 			_p(3,'<FunctionLevelLinking>true</FunctionLevelLinking>')
 		end
 	end
@@ -873,7 +873,7 @@
 
 
 	function vc2010.intrinsicFunctions(cfg)
-		if premake.config.isoptimizedbuild(cfg) then
+		if config.isOptimizedBuild(cfg) then
 			_p(3,'<IntrinsicFunctions>true</IntrinsicFunctions>')
 		end
 	end
@@ -881,7 +881,7 @@
 
 	function vc2010.linkIncremental(cfg)
 		if cfg.kind ~= premake.STATICLIB then
-			_p(2,'<LinkIncremental>%s</LinkIncremental>', tostring(premake.config.canincrementallink(cfg)))
+			_p(2,'<LinkIncremental>%s</LinkIncremental>', tostring(config.canLinkIncremental(cfg)))
 		end
 	end
 
@@ -899,7 +899,7 @@
 
 
 	function vc2010.minimalRebuild(cfg)
-		if premake.config.isoptimizedbuild(cfg) or
+		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
 		   cfg.flags.MultiProcessorCompile or
 		   cfg.debugformat == premake.C7
@@ -959,7 +959,7 @@
 
 
 	function vc2010.optimizeReferences(cfg)
-		if premake.config.isoptimizedbuild(cfg) then
+		if config.isOptimizedBuild(cfg) then
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
 		end
@@ -1090,7 +1090,7 @@
 	end
 
 	function vc2010.stringPooling(cfg)
-		if premake.config.isoptimizedbuild(cfg) then
+		if config.isOptimizedBuild(cfg) then
 			_p(3,'<StringPooling>true</StringPooling>')
 		end
 	end
