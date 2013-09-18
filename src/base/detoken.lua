@@ -34,12 +34,6 @@
 		setmetatable(environ, {__index = _G})
 
 		function expandtoken(token, environ)
-			-- check if we should leave the path alone
-			local leavealone = token:startswith("ro-")
-			if leavealone then
-				token = token:sub(4)
-			end
-
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
@@ -77,7 +71,7 @@
 			-- will contain it. Otherwise I ended up with an absolute path in
 			-- the generated project, and it can no longer be moved around.
 
-			if isAbs and not ispath and basedir and not leavealone then
+			if isAbs and not ispath and basedir then
 				result = path.getrelative(basedir, result)
 			end
 
