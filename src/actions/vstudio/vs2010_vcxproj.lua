@@ -496,7 +496,7 @@
 						vc2010.element(3, "Outputs", condition, '%s', table.concat(outputs, " "))
 
 						if filecfg.buildmessage then
-							_p(3,'<Message %s>%s</Message>', condition, premake.esc(filecfg.buildmessage))
+							vc2010.element(3, "Message", condition, '%s', premake.esc(filecfg.buildmessage))
 						end
 					end
 				end
