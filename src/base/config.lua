@@ -488,3 +488,27 @@
 		return cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed
 	end
 
+
+--
+-- Does this configuration's list of links contain the specified
+-- project? Performs a case-insensitive search for the project's
+-- name in the configuration's link array.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param prjName
+--    The name of the project for which to search.
+-- @return
+--    True if the project name is found in the configuration's
+--    list of links; nil otherwise.
+--
+
+	function config.linksToProject(cfg, prjName)
+		prjName = prjName:lower()
+		local n = #cfg.links
+		for i = 1,n do
+			if cfg.links[i]:lower() == prjName then
+				return true
+			end
+		end
+	end
