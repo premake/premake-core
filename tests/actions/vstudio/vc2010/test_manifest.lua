@@ -1,12 +1,12 @@
 --
 -- tests/actions/vstudio/vc2010/test_manifest.lua
 -- Validate generation of Manifest block in Visual Studio 201x C/C++ projects.
--- Copyright (c) 2090-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vs2010_manifest")
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake5.project
+	local project = premake.project
 
 
 --
@@ -49,6 +49,5 @@
 		kind "StaticLib"
 		files { "test.manifest" }
 		prepare()
-		test.capture [[
-		]]
+		test.isemptycapture()
 	end
