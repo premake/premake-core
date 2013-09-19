@@ -47,7 +47,7 @@
 
 		-- make sure there is a handler available for this kind of value
 		if not api.getsetter(field) then
-			error("invalid kind '" .. kind .. "'", 2)
+			error("invalid kind '" .. field.kind .. "'", 2)
 		end
 
 		-- add this new field to my master list
