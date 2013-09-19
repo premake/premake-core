@@ -245,6 +245,7 @@
 		"clCompile",
 		"resourceCompile",
 		"link",
+		"manifest",
 		"buildEvents",
 		"imageXex",
 		"deploy",
@@ -363,6 +364,35 @@
 			vc2010.additionalLinkOptions(cfg)
 			_p(2,'</Lib>')
 		end
+	end
+
+
+--
+-- Write the manifest section.
+--
+
+	function vc2010.manifest(cfg)
+		-- no additional manifests in static lib
+		if cfg.kind == premake.STATICLIB then
+			return
+		end
+
+		-- get the manifests files
+		local manifests = {}
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, project.getrelative(cfg.project, fname))
+			end
+		end
+
+		-- when a project is not using manifest files, visual studio doesn't write the section.
+		if #manifests == 0 then
+			return
+		end
+
+		_p(2,'<Manifest>')
+		vc2010.element(3, "AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
+		_p(2,'</Manifest>')
 	end
 
 
