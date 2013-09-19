@@ -99,7 +99,7 @@
 		test.capture [[
 		<ClCompile>
 			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level0</WarningLevel>
+			<WarningLevel>TurnOffAllWarnings</WarningLevel>
 		]]
 	end
 
@@ -113,7 +113,7 @@
 		test.capture [[
 		<ClCompile>
 			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level0</WarningLevel>
+			<WarningLevel>TurnOffAllWarnings</WarningLevel>
 		]]
 	end
 

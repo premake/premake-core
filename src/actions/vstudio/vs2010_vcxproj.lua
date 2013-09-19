@@ -1154,13 +1154,13 @@
 
 
 	function vc2010.warningLevel(cfg)
-		local w = 3
+		local w = "Level3"
 		if cfg.flags.NoWarnings then
-			w = 0
+			w = "TurnOffAllWarnings"
 		elseif cfg.flags.ExtraWarnings then
-			w = 4
+			w = "Level4"
 		end
-		_p(3,'<WarningLevel>Level%d</WarningLevel>', w)
+		vc2010.element(3, "WarningLevel", nil, "%s", w)
 	end
 
 
