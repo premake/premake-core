@@ -524,6 +524,10 @@
 
 						local outputs = project.getrelative(prj, filecfg.buildoutputs)
 						vc2010.element(3, "Outputs", condition, '%s', table.concat(outputs, " "))
+
+						if filecfg.buildmessage then
+							vc2010.element(3, "Message", condition, '%s', premake.esc(filecfg.buildmessage))
+						end
 					end
 				end
 
