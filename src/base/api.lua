@@ -1,13 +1,12 @@
 --
 -- api.lua
 -- Implementation of the solution, project, and configuration APIs.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 	premake.api = {}
 	local api = premake.api
 	local configset = premake.configset
-
 
 	premake.fields = {}
 
@@ -105,6 +104,50 @@
 
 
 --
+-- Mark an API field as deprecated.
+--
+-- @param name
+--    The name of the field to mark as deprecated.
+-- @param handler
+--    A function to call when the field is used. Passes the value
+--    provided to the field as the only argument. The function
+--    should return a URL for more information, to be shown in the
+--    deprecation warning message.
+--
+
+	function api.deprecateField(name, handler)
+		premake.fields[name].deprecated = handler
+	end
+
+
+--
+-- Mark a specific value of a field as deprecated.
+--
+-- @param name
+--    The name of the field containing the value.
+-- @param value
+--    The value to mark as deprecated
+-- @param handler
+--    A function to call when the field is used. Passes the value
+--    provided to the field as the only argument. The function
+--    should return a URL for more information, to be shown in the
+--    deprecation warning message.
+--
+
+	function api.deprecateValue(name, value, handler)
+		if type(value) == "table" then
+			for _, v in pairs(value) do
+				api.deprecateValue(name, v, handler)
+			end
+		else
+			local field = premake.fields[name]
+			field.deprecated = field.deprecated or {}
+			field.deprecated[value] = handler
+		end
+	end
+
+
+--
 -- Find the right target object for a given scope.
 --
 
@@ -126,8 +169,11 @@
 --
 
 	function api.callback(field, value)
-		if field.deprecated == true then
-			api.deprecated(field)
+		if type(field.deprecated) == "function" then
+			local url = field.deprecated(value)
+			if url then
+				premake.warnOnce(field.name, "the field %s has been deprecated.\n   See %s", field.name, url)
+			end
 		end
 
 		local target = api.gettarget(field.scope)
@@ -151,29 +197,6 @@
 			end
 			error(result, 3)
 		end
-	end
-
-
---
--- Display an API deprecation warning for a specific field.
---
--- @param field
---    The field description object.
--- @param value
---    Optional; the specific value that was deprecated.
---
-
-	function api.deprecated(field, value)
-		local msg
-		if value then
-			msg = "the %s value %s"
-		else
-			msg = "the field %s"
-		end
-		msg = string.format(msg, field.name, value)
-
-		local key = value or field
-		premake.warnOnce(key, "%s has been deprecated.\n   See %s for more information.", msg, _PREMAKE_URL)
 	end
 
 
@@ -529,14 +552,17 @@
 		if err then error({ msg=err }) end
 
 		if field.deprecated and type(field.deprecated) == "table" and field.deprecated[value] then
-			api.deprecated(field, value)
+			local url = field.deprecated[value](value)
+			if url then
+				local key = field.name .. ":" .. value
+				premake.warnOnce(key, "the %s value %s has been deprecated.\n   See %s", field.name, value, url)
+			end
 		end
 
 		-- if the target is the project, configset will be set and I can push
 		-- the value there. Otherwise I was called to store into some other kind
 		-- of object (i.e. an array or list)
 		target = target.configset or target
-
 		target[name] = value
 	end
 
@@ -606,11 +632,10 @@
 	}
 
 	api.register {
-		name = "buildrule",
+		name = "buildrule",     -- DEPRECATED
 		scope = "config",
 		kind = "object",
 		tokens = true,
-		deprecated = true,  -- 09 Apr 2013
 	}
 
 	api.register {
@@ -721,7 +746,7 @@
 		scope = "config",
 		kind  = "string-list",
 		allowed = {
-			"Component",
+			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"EnableSSE",
@@ -767,9 +792,6 @@
 			Optimise = 'Optimize',
 			OptimiseSize = 'OptimizeSize',
 			OptimiseSpeed = 'OptimizeSpeed',
-		},
-		deprecated = {
-			Component = true,   -- 17 Jun 2013
 		},
 	}
 
@@ -1109,18 +1131,6 @@
 		kind = "key-path-list",
 	}
 
-
-	-- Deprecated 09 Apr 2013
-	function buildrule(rule)
-		api.deprecated(premake.fields.buildrule)
-		if rule.description then
-			buildmessage(rule.description)
-		end
-		buildcommands(rule.commands)
-		buildoutputs(rule.outputs)
-	end
-
-
 	api.reset()
 
 
@@ -1271,3 +1281,27 @@
 	function newoption(opt)
 		premake.option.add(opt)
 	end
+
+
+--
+-- These fields and values are getting phased out; provide wrappers for
+-- backward compatibility while I can.
+--
+
+	-- 09 Apr 2013
+
+	api.deprecateField("buildrule", function(value)
+		if value.description then
+			buildmessage(value.description)
+		end
+		buildcommands(value.commands)
+		buildoutputs(value.outputs)
+		return "https://bitbucket.org/premake/premake-dev/wiki/Custom_Build_Commands"
+	end)
+
+	-- 17 Jun 2013
+
+	api.deprecateValue("flags", "Component", function(value)
+		buildaction "Component"
+		return "https://bitbucket.org/premake/premake-dev/wiki/buildaction"
+	end)
