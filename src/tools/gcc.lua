@@ -288,6 +288,10 @@
 --
 
 	function gcc.gettoolname(cfg, tool)
+		if tool == "rc" then
+			return "windres"
+		end
+
 		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
 		return sysflags[tool]
 	end

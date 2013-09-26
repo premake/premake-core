@@ -36,6 +36,7 @@
 		test.isnil(gcc.gettoolname(cfg, "cc"))
 		test.isnil(gcc.gettoolname(cfg, "cxx"))
 		test.isnil(gcc.gettoolname(cfg, "ar"))
+		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
 	function suite.tools_onPS3()
