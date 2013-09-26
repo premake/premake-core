@@ -178,6 +178,10 @@
 	function dotnet.getflags(cfg)
 		local flags = {}
 
+		if cfg.flags.Unsafe then
+			table.insert(flags, '/unsafe')
+		end			
+
 		if cfg.project.icon then
 			local fn = project.getrelative(cfg.project, cfg.project.icon)
 			table.insert(flags, string.format('/win32icon:"%s"', fn))
