@@ -178,6 +178,11 @@
 	function dotnet.getflags(cfg)
 		local flags = {}
 
+		-- Tells the compiler not to include the csc.rsp response file which
+		-- it does by default and references all the assemblies shipped with
+		-- the .NET Framework. VS sets this flag by default for C# projects.
+		table.insert(flags, '/noconfig')
+
 		if cfg.project.icon then
 			local fn = project.getrelative(cfg.project, cfg.project.icon)
 			table.insert(flags, string.format('/win32icon:"%s"', fn))
