@@ -6,12 +6,18 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local api = premake.api
 
+
+-----------------------------------------------------------------------------
 --
--- Set the default module search paths. Modules will generally live in a
--- folder of the same name: ninja/ninja.lua. The search order is the same
--- as what is specified here.
+-- Prepare the global environment.
 --
+-----------------------------------------------------------------------------
+
+	-- Set the default module search paths. Modules will generally live in
+	-- a folder of the same name: ninja/ninja.lua. The search order is the
+	-- same as what is specified here.
 
 	local home = os.getenv("HOME") or os.getenv("USERPROFILE")
 
@@ -27,12 +33,606 @@
 	package.path = table.concat(packagePaths, ";")
 
 
+-----------------------------------------------------------------------------
 --
--- Set up the global environment for the systems I know about. I would like to see
--- at least some if not all of this moved into add-ons in the future.
+-- Register the core API functions.
 --
--- Use Posix-style target naming by default, since it is the most common.
+-----------------------------------------------------------------------------
+
+	api.register {
+		name = "architecture",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"universal",
+			"x32",
+			"x64",
+		},
+	}
+
+	api.register {
+		name = "basedir",
+		scope = "project",
+		kind = "path"
+	}
+
+	api.register {
+		name = "buildaction",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Compile",
+			"Component",
+			"Copy",
+			"Embed",
+			"Form",
+			"None",
+			"UserControl",
+		},
+	}
+
+	api.register {
+		name = "buildmessage",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "buildcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "buildoptions",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "buildoutputs",
+		scope = "config",
+		kind = "file-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "buildrule",     -- DEPRECATED
+		scope = "config",
+		kind = "object",
+		tokens = true,
+	}
+
+	api.register {
+		name = "cleancommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "configmap",
+		scope = "config",
+		kind = "key-array"
+	}
+
+	api.register {
+		name = "configurations",
+		scope = "project",
+		kind = "string-list",
+	}
+
+	api.register {
+		name = "copylocal",
+		scope = "config",
+		kind = "mixed-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugargs",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugcommand",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugenvs",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugformat",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"c7",
+		},
+	}
+
+	api.register {
+		name = "defines",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "dependson",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "deploymentoptions",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	-- For backward compatibility, excludes() is now an alias for removefiles()
+	function excludes(value)
+		removefiles(value)
+	end
+
+	api.register {
+		name = "filename",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "files",
+		scope = "config",
+		kind = "file-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "flags",
+		scope = "config",
+		kind  = "string-list",
+		allowed = {
+			"Component",           -- DEPRECATED
+			"DebugEnvsDontMerge",
+			"DebugEnvsInherit",
+			"EnableSSE",
+			"EnableSSE2",
+			"ExcludeFromBuild",
+			"ExtraWarnings",
+			"FatalWarnings",
+			"FloatFast",
+			"FloatStrict",
+			"LinkTimeOptimization",
+			"Managed",
+			"MFC",
+			"MultiProcessorCompile",
+			"NativeWChar",
+			"No64BitChecks",
+			"NoCopyLocal",
+			"NoEditAndContinue",
+			"NoExceptions",
+			"NoFramePointer",
+			"NoImplicitLink",
+			"NoImportLib",
+			"NoIncrementalLink",
+			"NoManifest",
+			"NoMinimalRebuild",
+			"NoNativeWChar",
+			"NoPCH",
+			"NoRuntimeChecks",
+			"NoRTTI",
+			"NoBufferSecurityCheck",
+			"NoWarnings",
+			"Optimize",
+			"OptimizeSize",
+			"OptimizeSpeed",
+			"ReleaseRuntime",
+			"SEH",
+			"StaticRuntime",
+			"Symbols",
+			"Unicode",
+			"Unsafe",
+			"WinMain",
+		},
+		aliases = {
+			Optimise = 'Optimize',
+			OptimiseSize = 'OptimizeSize',
+			OptimiseSpeed = 'OptimizeSpeed',
+		},
+	}
+
+	api.register {
+		name = "forceincludes",
+		scope = "config",
+		kind = "file-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "forceusings",
+		scope = "config",
+		kind = "file-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "framework",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"1.0",
+			"1.1",
+			"2.0",
+			"3.0",
+			"3.5",
+			"4.0",
+			"4.5",
+		},
+	}
+
+	api.register {
+		name = "icon",
+		scope = "project",
+		kind = "file",
+		tokens = true,
+	}
+
+	api.register {
+		name = "imageoptions",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "imagepath",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "implibdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "implibextension",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "implibname",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "implibprefix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "implibsuffix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "includedirs",
+		scope = "config",
+		kind = "directory-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "kind",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"ConsoleApp",
+			"Makefile",
+			"None",
+			"SharedLib",
+			"StaticLib",
+			"WindowedApp",
+		},
+	}
+
+	api.register {
+		name = "language",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"C",
+			"C++",
+			"C#",
+		},
+	}
+
+	api.register {
+		name = "libdirs",
+		scope = "config",
+		kind = "directory-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "linkoptions",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "links",
+		scope = "config",
+		kind = "mixed-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "location",
+		scope = "project",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "makesettings",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+
+	api.register {
+		name = "namespace",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "objdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "pchheader",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "pchsource",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "platforms",
+		scope = "project",
+		kind = "string-list",
+	}
+
+	api.register {
+		name = "postbuildcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "prebuildcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "prelinkcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "rebuildcommands",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "resdefines",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "resincludedirs",
+		scope = "config",
+		kind = "directory-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "resoptions",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "startproject",
+		scope = "solution",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "system",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"aix",
+			"bsd",
+			"haiku",
+			"linux",
+			"macosx",
+			"ps3",
+			"solaris",
+			"wii",
+			"windows",
+			"xbox360",
+		},
+	}
+
+	api.register {
+		name = "targetdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "targetextension",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "targetname",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "targetprefix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "targetsuffix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "toolset",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"clang",
+			"gcc",
+			"msc",
+			"snc",
+		},
+	}
+
+	api.register {
+		name = "uuid",
+		scope = "project",
+		kind = "string",
+		allowed = function(value)
+			local ok = true
+			if (#value ~= 36) then ok = false end
+			for i=1,36 do
+				local ch = value:sub(i,i)
+				if (not ch:find("[ABCDEFabcdef0123456789-]")) then ok = false end
+			end
+			if (value:sub(9,9) ~= "-")   then ok = false end
+			if (value:sub(14,14) ~= "-") then ok = false end
+			if (value:sub(19,19) ~= "-") then ok = false end
+			if (value:sub(24,24) ~= "-") then ok = false end
+			if (not ok) then
+				return nil, "invalid UUID"
+			end
+			return value:upper()
+		end
+	}
+
+	api.register {
+		name = "vpaths",
+		scope = "project",
+		kind = "key-path-list",
+	}
+
+
+-----------------------------------------------------------------------------
 --
+-- Handlers for deprecated fields and values.
+--
+-----------------------------------------------------------------------------
+
+	-- 09 Apr 2013
+
+	api.deprecateField("buildrule", function(value)
+		if value.description then
+			buildmessage(value.description)
+		end
+		buildcommands(value.commands)
+		buildoutputs(value.outputs)
+		return "https://bitbucket.org/premake/premake-dev/wiki/Custom_Build_Commands"
+	end)
+
+	-- 17 Jun 2013
+
+	api.deprecateValue("flags", "Component", function(value)
+		buildaction "Component"
+		return "https://bitbucket.org/premake/premake-dev/wiki/buildaction"
+	end)
+
+
+-----------------------------------------------------------------------------
+--
+-- Set up the global environment for the systems I know about. I would like
+-- to see at least some if not all of this moved into add-ons in the future.
+--
+-----------------------------------------------------------------------------
+
+	-- Use Posix-style target naming by default, since it is the most common.
 
 	configuration { "SharedLib" }
 		targetprefix "lib"
@@ -42,10 +642,7 @@
 		targetprefix "lib"
 		targetextension ".a"
 
-
---
--- Add variations for other Posix-like systems.
---
+	-- Add variations for other Posix-like systems.
 
 	configuration { "MacOSX", "SharedLib" }
 		targetextension ".dylib"
@@ -53,10 +650,7 @@
 	configuration { "PS3", "ConsoleApp" }
 		targetextension ".elf"
 
-
---
--- Windows and friends.
---
+	-- Windows and friends.
 
 	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
 		targetextension ".exe"
@@ -74,9 +668,11 @@
 		targetextension ".lib"
 
 
+-----------------------------------------------------------------------------
 --
 -- Install Premake's default set of command line arguments.
 --
+-----------------------------------------------------------------------------
 
 	newoption
 	{
