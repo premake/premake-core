@@ -39,6 +39,7 @@
 * Added external files and virtual paths for C# projects (James Whitworth)
 * Added ReleaseRuntime build flag (Tarmo Pikaro)
 * Added Component, Form, and UserControl build actions
+* Added usingdirs() to specify C++/CLI additional using directories (João Matos / triton)
 
 
 -------

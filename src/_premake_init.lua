@@ -571,6 +571,13 @@
 		},
 	}
 
+ 	api.register {
+		name = "usingdirs",
+		scope = "config",
+		kind = "directory-list",
+		tokens = true,
+	}	
+
 	api.register {
 		name = "uuid",
 		scope = "project",
