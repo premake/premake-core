@@ -1126,10 +1126,10 @@
 
 
 	function vc2010.treatWChar_tAsBuiltInType(cfg)
-		if cfg.flags.NativeWChar then
-			_p(3,'<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>')
-		elseif cfg.flags.NoNativeWChar then
-			_p(3,'<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>')
+		local map = { On = "true", Off = "false" }
+		local value = map[cfg.nativewchar]
+		if value then
+			_p(3,'<TreatWChar_tAsBuiltInType>%s</TreatWChar_tAsBuiltInType>', value)
 		end
 	end
 

@@ -398,6 +398,8 @@
 	vc200x.elements.builtInCompilerTool = {
 		"enableEnhancedInstructionSet",
 		"floatingPointModel",
+		"runtimeTypeInfo",
+		"treatWChar_tAsBuiltInType",
 	}
 
 	function vc200x.VCCLBuiltInCompilerTool(cfg)
@@ -432,18 +434,6 @@
 		_p(4,'EnableFunctionLevelLinking="%s"', vc200x.bool(true))
 
 		premake.callarray(vc200x, vc200x.elements.builtInCompilerTool, cfg)
-
-		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
-			_p(4,'RuntimeTypeInfo="%s"', vc200x.bool(true))
-		elseif _ACTION > "vs2003" and cfg.flags.NoRTTI and not cfg.flags.Managed then
-			_p(4,'RuntimeTypeInfo="%s"', vc200x.bool(false))
-		end
-
-		if cfg.flags.NativeWChar then
-			_p(4,'TreatWChar_tAsBuiltInType="%s"', vc200x.bool(true))
-		elseif cfg.flags.NoNativeWChar then
-			_p(4,'TreatWChar_tAsBuiltInType="%s"', vc200x.bool(false))
-		end
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
@@ -1152,6 +1142,13 @@
 	end
 
 
+	function vc200x.runtimeTypeInfo(cfg)
+		if cfg.flags.NoRTTI and not cfg.flags.Managed then
+			_p(4,'RuntimeTypeInfo="false"')
+		end
+	end
+
+
 	function vc200x.tool(name)
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
@@ -1163,6 +1160,15 @@
 		if _ACTION > "vs2003" then
 			_p(1,'<ToolFiles>')
 			_p(1,'</ToolFiles>')
+		end
+	end
+
+
+	function vc200x.treatWChar_tAsBuiltInType(cfg)
+		local map = { On = "true", Off = "false" }
+		local value = map[cfg.nativewchar]
+		if value then
+			_p(4,'TreatWChar_tAsBuiltInType="%s"', value)
 		end
 	end
 

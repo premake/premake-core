@@ -8,6 +8,8 @@
 
 	local api = premake.api
 
+	local DOC_URL = "https://bitbucket.org/premake/premake-dev/wiki/"
+
 
 -----------------------------------------------------------------------------
 --
@@ -435,6 +437,17 @@
 	}
 
 	api.register {
+		name = "nativewchar",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		}
+	}
+
+	api.register {
 		name = "objdir",
 		scope = "config",
 		kind = "path",
@@ -637,26 +650,32 @@
 		end
 		buildcommands(value.commands)
 		buildoutputs(value.outputs)
-		return "https://bitbucket.org/premake/premake-dev/wiki/Custom_Build_Commands"
+		return DOC_URL ..  "Custom_Build_Commands"
 	end)
 
 	-- 17 Jun 2013
 
 	api.deprecateValue("flags", "Component", function(value)
 		buildaction "Component"
-		return "https://bitbucket.org/premake/premake-dev/wiki/buildaction"
+		return DOC_URL .. "buildaction"
 	end)
 
 	-- 26 Sep 2013
 
 	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, function(value)
 		vectorextensions(value:sub(7))
-		return "https://bitbucket.org/premake/premake-dev/wiki/vectorextensions"
+		return DOC_URL .. "vectorextensions"
 	end)
 
 	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, function(value)
 		floatingpoint(value:sub(6))
-		return "https://bitbucket.org/premake/premake-dev/wiki/floatingpoint"
+		return DOC_URL ..  "floatingpoint"
+	end)
+
+	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, function(value)
+		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
+		nativewchar(map[value] or "Default")
+		return DOC_URL .. "nativewchar"
 	end)
 
 
