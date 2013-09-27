@@ -113,11 +113,14 @@
 --
 
 	function table.foreachi(arr, func)
-		local n = #arr
-		for i = 1, n do
-			local v = arr[i]
-			if v then
-				func(v)
+		if arr then
+			if type(arr) == "string" then arr = { arr } end
+			local n = #arr
+			for i = 1, n do
+				local v = arr[i]
+				if v then
+					func(v)
+				end
 			end
 		end
 	end

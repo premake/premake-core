@@ -217,18 +217,18 @@
 			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
-			"EnableSSE",
-			"EnableSSE2",
+			"EnableSSE",           -- DEPRECATED
+			"EnableSSE2",          -- DEPRECATED
 			"ExcludeFromBuild",
-			"ExtraWarnings",
+			"ExtraWarnings",       -- DEPRECATED
 			"FatalWarnings",
-			"FloatFast",
-			"FloatStrict",
+			"FloatFast",           -- DEPRECATED
+			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
 			"Managed",
 			"MFC",
 			"MultiProcessorCompile",
-			"NativeWChar",
+			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",
@@ -239,15 +239,15 @@
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",
-			"NoNativeWChar",
+			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
 			"NoRTTI",
 			"NoBufferSecurityCheck",
-			"NoWarnings",
-			"Optimize",
-			"OptimizeSize",
-			"OptimizeSpeed",
+			"NoWarnings",          -- DEPRECATED
+			"Optimize",            -- DEPRECATED
+			"OptimizeSize",        -- DEPRECATED
+			"OptimizeSpeed",       -- DEPRECATED
 			"ReleaseRuntime",
 			"SEH",
 			"StaticRuntime",
@@ -594,10 +594,22 @@
 	}
 
 	api.register {
+		name = "vectorextensions",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"SSE",
+			"SSE2",
+		}
+	}
+
+	api.register {
 		name = "vpaths",
 		scope = "project",
 		kind = "key-path-list",
 	}
+
 
 
 -----------------------------------------------------------------------------
@@ -624,48 +636,13 @@
 		return "https://bitbucket.org/premake/premake-dev/wiki/buildaction"
 	end)
 
+	-- 26 Sep 2013
 
------------------------------------------------------------------------------
---
--- Set up the global environment for the systems I know about. I would like
--- to see at least some if not all of this moved into add-ons in the future.
---
------------------------------------------------------------------------------
+	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, function(value)
+		vectorextensions(value:sub(7))
+		return "https://bitbucket.org/premake/premake-dev/wiki/vectorextensions"
+	end)
 
-	-- Use Posix-style target naming by default, since it is the most common.
-
-	configuration { "SharedLib" }
-		targetprefix "lib"
-		targetextension ".so"
-
-	configuration { "StaticLib" }
-		targetprefix "lib"
-		targetextension ".a"
-
-	-- Add variations for other Posix-like systems.
-
-	configuration { "MacOSX", "SharedLib" }
-		targetextension ".dylib"
-
-	configuration { "PS3", "ConsoleApp" }
-		targetextension ".elf"
-
-	-- Windows and friends.
-
-	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
-		targetextension ".exe"
-
-	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
-		targetextension ".exe"
-
-	configuration { "Windows or Xbox360 or C#", "SharedLib" }
-		targetprefix ""
-		targetextension ".dll"
-		implibextension ".lib"
-
-	configuration { "Windows or Xbox360 or C#", "StaticLib" }
-		targetprefix ""
-		targetextension ".lib"
 
 
 -----------------------------------------------------------------------------
@@ -746,3 +723,46 @@
 		trigger     = "version",
 		description = "Display version information"
 	}
+
+
+-----------------------------------------------------------------------------
+--
+-- Set up the global environment for the systems I know about. I would like
+-- to see at least some if not all of this moved into add-ons in the future.
+--
+-----------------------------------------------------------------------------
+
+	-- Use Posix-style target naming by default, since it is the most common.
+
+	configuration { "SharedLib" }
+		targetprefix "lib"
+		targetextension ".so"
+
+	configuration { "StaticLib" }
+		targetprefix "lib"
+		targetextension ".a"
+
+	-- Add variations for other Posix-like systems.
+
+	configuration { "MacOSX", "SharedLib" }
+		targetextension ".dylib"
+
+	configuration { "PS3", "ConsoleApp" }
+		targetextension ".elf"
+
+	-- Windows and friends.
+
+	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
+		targetextension ".exe"
+
+	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
+		targetextension ".exe"
+
+	configuration { "Windows or Xbox360 or C#", "SharedLib" }
+		targetprefix ""
+		targetextension ".dll"
+		implibextension ".lib"
+
+	configuration { "Windows or Xbox360 or C#", "StaticLib" }
+		targetprefix ""
+		targetextension ".lib"

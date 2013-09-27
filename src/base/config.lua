@@ -512,3 +512,30 @@
 			end
 		end
 	end
+
+
+--
+-- Map the values contained in the configuration to an array of flags.
+--
+-- @param cfg
+--    The configuration to map.
+-- @param mappings
+--    A mapping from configuration fields and values to flags. See
+--    the GCC tool interface for examples of these mappings.
+-- @return
+--    An array containing the translated flags.
+--
+
+	function config.mapFlags(cfg, mappings)
+		local flags = {}
+		for field, map in pairs(mappings) do
+			local value = cfg[field]
+			table.foreachi(value, function(v)
+				local flag = map[v]
+				if flag then
+					table.insert(flags, flag)
+				end
+			end)
+		end
+		return flags
+	end

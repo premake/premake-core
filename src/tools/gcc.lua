@@ -20,12 +20,10 @@
 		},
 
 		x32 = {
-			cflags  = "-m32",
 			ldflags = { "-m32", "-L/usr/lib32" }
 		},
 
 		x64 = {
-			cflags = "-m64",
 			ldflags = { "-m64", "-L/usr/lib64" }
 		},
 
@@ -93,25 +91,34 @@
 --
 
 	gcc.cflags = {
-		EnableSSE      = "-msse",
-		EnableSSE2     = "-msse2",
-		ExtraWarnings  = "-Wall -Wextra",
-		FatalWarnings  = "-Werror",
-		NoWarnings     = "-w",
-		FloatFast      = "-ffast-math",
-		FloatStrict    = "-ffloat-store",
-		NoFramePointer = "-fomit-frame-pointer",
-		Optimize       = "-O2",
-		OptimizeSize   = "-Os",
-		OptimizeSpeed  = "-O3",
-		Symbols        = "-g",
+		architecture = {
+			x32 = "-m32",
+			x64 = "-m64",
+		},
+		flags = {
+			ExtraWarnings = "-Wall -Wextra",
+			FatalWarnings = "-Werror",
+			NoWarnings = "-w",
+			FloatFast = "-ffast-math",
+			FloatStrict = "-ffloat-store",
+			NoFramePointer = "-fomit-frame-pointer",
+			Optimize = "-O2",
+			OptimizeSize = "-Os",
+			OptimizeSpeed = "-O3",
+			Symbols = "-g"
+		},
+		vectorextensions = {
+			SSE = "-msse",
+			SSE2 = "-msse2"
+		}
 	}
 
 	function gcc.getcflags(cfg)
-		local flags = table.translate(cfg.flags, gcc.cflags)
+		local flags = config.mapFlags(cfg, gcc.cflags)
 
-		local sysflags = gcc.getsysflags(cfg, 'cflags')
-		flags = table.join(flags, sysflags)
+		-- TODO: Would love to see this as a configuration
+		--   configuration { "SharedLib", "not Windows" }
+		--       flags { "PIC" }
 
 		if cfg.system ~= premake.WINDOWS and cfg.kind == premake.SHAREDLIB then
 			table.insert(flags, "-fPIC")

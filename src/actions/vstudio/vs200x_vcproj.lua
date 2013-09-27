@@ -15,6 +15,13 @@
 
 
 ---
+-- Add namespace for element definition lists for premake.callarray()
+---
+
+	vc200x.elements = {}
+
+
+---
 -- Generate a Visual Studio 200x C++ or Makefile project.
 ---
 
@@ -388,6 +395,10 @@
 	end
 
 
+	vc200x.elements.builtInCompilerTool = {
+		"enableEnhancedInstructionSet"
+	}
+
 	function vc200x.VCCLBuiltInCompilerTool(cfg)
 		vc200x.VCCLCompilerTool_additionalOptions(cfg)
 
@@ -419,13 +430,7 @@
 
 		_p(4,'EnableFunctionLevelLinking="%s"', vc200x.bool(true))
 
-		if _ACTION > "vs2003" and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
-			if cfg.flags.EnableSSE then
-				_p(4,'EnableEnhancedInstructionSet="1"')
-			elseif cfg.flags.EnableSSE2 then
-				_p(4,'EnableEnhancedInstructionSet="2"')
-			end
-		end
+		premake.callarray(vc200x, vc200x.elements.builtInCompilerTool, cfg)
 
 		if _ACTION < "vs2005" then
 			if cfg.flags.FloatFast then
@@ -920,6 +925,15 @@
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
 			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
+	function vc200x.enableEnhancedInstructionSet(cfg)
+		local map = { SSE = "1", SSE2 = "2" }
+		local value = map[cfg.vectorextensions]
+		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
+			_p(4,'EnableEnhancedInstructionSet="%d"', value)
 		end
 	end
 

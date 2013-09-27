@@ -349,7 +349,7 @@
 --
 
 	function suite.instructionSet_onSSE()
-		flags "EnableSSE"
+		vectorextensions "SSE"
 		prepare()
 		test.capture [[
 		<ClCompile>
@@ -361,7 +361,7 @@
 	end
 
 	function suite.instructionSet_onSSE2()
-		flags "EnableSSE2"
+		vectorextensions "SSE2"
 		prepare()
 		test.capture [[
 		<ClCompile>

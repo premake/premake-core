@@ -73,9 +73,15 @@
 --
 
 	function suite.cflags_onEnableSSE()
-		flags { "EnableSSE" }
+		vectorextensions "SSE"
 		prepare()
 		test.isequal({ "-msse" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onEnableSSE2()
+		vectorextensions "SSE2"
+		prepare()
+		test.isequal({ "-msse2" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFatalWarnings()
