@@ -396,7 +396,8 @@
 
 
 	vc200x.elements.builtInCompilerTool = {
-		"enableEnhancedInstructionSet"
+		"enableEnhancedInstructionSet",
+		"floatingPointModel",
 	}
 
 	function vc200x.VCCLBuiltInCompilerTool(cfg)
@@ -431,20 +432,6 @@
 		_p(4,'EnableFunctionLevelLinking="%s"', vc200x.bool(true))
 
 		premake.callarray(vc200x, vc200x.elements.builtInCompilerTool, cfg)
-
-		if _ACTION < "vs2005" then
-			if cfg.flags.FloatFast then
-				_p(4,'ImproveFloatingPointConsistency="%s"', vc200x.bool(false))
-			elseif cfg.flags.FloatStrict then
-				_p(4,'ImproveFloatingPointConsistency="%s"', vc200x.bool(true))
-			end
-		else
-			if cfg.flags.FloatFast then
-				_p(4,'FloatingPointModel="2"')
-			elseif cfg.flags.FloatStrict then
-				_p(4,'FloatingPointModel="1"')
-			end
-		end
 
 		if _ACTION < "vs2005" and not cfg.flags.NoRTTI then
 			_p(4,'RuntimeTypeInfo="%s"', vc200x.bool(true))
@@ -929,22 +916,6 @@
 	end
 
 
-	function vc200x.enableEnhancedInstructionSet(cfg)
-		local map = { SSE = "1", SSE2 = "2" }
-		local value = map[cfg.vectorextensions]
-		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
-			_p(4,'EnableEnhancedInstructionSet="%d"', value)
-		end
-	end
-
-
-	function vc200x.wholeProgramOptimization(cfg)
-		if cfg.flags.LinkTimeOptimization then
-			_x(4,'WholeProgramOptimization="true"')
-		end
-	end
-
-
 	function vc200x.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(project.getrelative(cfg.project, cfg.libdirs), ";")
@@ -1059,9 +1030,27 @@
 	end
 
 
+	function vc200x.enableEnhancedInstructionSet(cfg)
+		local map = { SSE = "1", SSE2 = "2" }
+		local value = map[cfg.vectorextensions]
+		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
+			_p(4,'EnableEnhancedInstructionSet="%d"', value)
+		end
+	end
+
+
 	function vc200x.excludedFromBuild(filecfg, depth)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
 			_p(depth, 'ExcludedFromBuild="true"')
+		end
+	end
+
+
+	function vc200x.floatingPointModel(cfg)
+		local map = { Strict = "1", Fast = "2" }
+		local value = map[cfg.floatingpoint]
+		if value then
+			_p(4,'FloatingPointModel="%d"', value)
 		end
 	end
 
@@ -1205,6 +1194,13 @@
 
 		if _ACTION < "vs2008" and not cfg.flags.Managed then
 			_p(4,'Detect64BitPortabilityProblems="%s"', vc200x.bool(not cfg.flags.No64BitChecks))
+		end
+	end
+
+
+	function vc200x.wholeProgramOptimization(cfg)
+		if cfg.flags.LinkTimeOptimization then
+			_x(4,'WholeProgramOptimization="true"')
 		end
 	end
 

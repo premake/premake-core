@@ -72,16 +72,10 @@
 -- Check the translation of CFLAGS.
 --
 
-	function suite.cflags_onEnableSSE()
-		vectorextensions "SSE"
+	function suite.cflags_onExtraWarnings()
+		flags { "ExtraWarnings" }
 		prepare()
-		test.isequal({ "-msse" }, gcc.getcflags(cfg))
-	end
-
-	function suite.cflags_onEnableSSE2()
-		vectorextensions "SSE2"
-		prepare()
-		test.isequal({ "-msse2" }, gcc.getcflags(cfg))
+		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFatalWarnings()
@@ -90,10 +84,16 @@
 		test.isequal({ "-Werror" }, gcc.getcflags(cfg))
 	end
 
-	function suite.cflags_onExtraWarnings()
-		flags { "ExtraWarnings" }
+	function suite.cflags_onFloastFast()
+		floatingpoint "Fast"
 		prepare()
-		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+		test.isequal({ "-ffast-math" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloastStrict()
+		floatingpoint "Strict"
+		prepare()
+		test.isequal({ "-ffloat-store" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onNoWarnings()
@@ -101,6 +101,20 @@
 		prepare()
 		test.isequal({ "-w" }, gcc.getcflags(cfg))
 	end
+
+	function suite.cflags_onSSE()
+		vectorextensions "SSE"
+		prepare()
+		test.isequal({ "-msse" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onSSE2()
+		vectorextensions "SSE2"
+		prepare()
+		test.isequal({ "-msse2" }, gcc.getcflags(cfg))
+	end
+
+
 --
 -- Check the translation of CXXFLAGS.
 --
@@ -116,6 +130,7 @@
 		prepare()
 		test.isequal({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
+
 
 --
 -- Check the basic translation of LDFLAGS for a Posix system.

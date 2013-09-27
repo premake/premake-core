@@ -171,7 +171,7 @@
 --
 
 	function suite.compilerBlock_OnFpFast()
-		flags { "FloatFast" }
+		floatingpoint "Fast"
 		prepare()
 		test.capture [[
 			<Tool
@@ -190,7 +190,7 @@
 	end
 
 	function suite.compilerBlock_OnFpStrict()
-		flags { "FloatStrict" }
+		floatingpoint "Strict"
 		prepare()
 		test.capture [[
 			<Tool

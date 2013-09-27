@@ -264,6 +264,17 @@
 	}
 
 	api.register {
+		name = "floatingpoint",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Fast",
+			"Strict",
+		}
+	}
+
+	api.register {
 		name = "forceincludes",
 		scope = "config",
 		kind = "file-list",
@@ -641,6 +652,11 @@
 	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, function(value)
 		vectorextensions(value:sub(7))
 		return "https://bitbucket.org/premake/premake-dev/wiki/vectorextensions"
+	end)
+
+	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, function(value)
+		floatingpoint(value:sub(6))
+		return "https://bitbucket.org/premake/premake-dev/wiki/floatingpoint"
 	end)
 
 

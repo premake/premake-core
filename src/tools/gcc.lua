@@ -99,17 +99,19 @@
 			ExtraWarnings = "-Wall -Wextra",
 			FatalWarnings = "-Werror",
 			NoWarnings = "-w",
-			FloatFast = "-ffast-math",
-			FloatStrict = "-ffloat-store",
 			NoFramePointer = "-fomit-frame-pointer",
 			Optimize = "-O2",
 			OptimizeSize = "-Os",
 			OptimizeSpeed = "-O3",
 			Symbols = "-g"
 		},
+		floatingpoint = {
+			Fast = "-ffast-math",
+			Strict = "-ffloat-store",
+		},
 		vectorextensions = {
 			SSE = "-msse",
-			SSE2 = "-msse2"
+			SSE2 = "-msse2",
 		}
 	}
 

@@ -794,10 +794,8 @@
 
 
 	function vc2010.floatingPointModel(cfg)
-		if cfg.flags.FloatFast then
-			_p(3,'<FloatingPointModel>Fast</FloatingPointModel>')
-		elseif cfg.flags.FloatStrict and not cfg.flags.Managed then
-			_p(3,'<FloatingPointModel>Strict</FloatingPointModel>')
+		if cfg.floatingpoint then
+			_p(3,'<FloatingPointModel>%s</FloatingPointModel>', cfg.floatingpoint)
 		end
 	end
 
