@@ -73,7 +73,7 @@
 --
 
 	function suite.cflags_onExtraWarnings()
-		flags { "ExtraWarnings" }
+		warnings "extra"
 		prepare()
 		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
 	end
@@ -97,7 +97,7 @@
 	end
 
 	function suite.cflags_onNoWarnings()
-		flags { "NoWarnings" }
+		warnings "Off"
 		prepare()
 		test.isequal({ "-w" }, gcc.getcflags(cfg))
 	end

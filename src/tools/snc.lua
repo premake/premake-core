@@ -22,12 +22,16 @@
 --
 
 	snc.cflags = {
-		ExtraWarnings  = "-Xdiag=2",
-		FatalWarnings  = "-Xquit=2",
+		flags = {
+			FatalWarnings = "-Xquit=2",
+		},
+		warnings = {
+			Extra = "-Xdiag=2",
+		}
 	}
 
 	function snc.getcflags(cfg)
-		local flags = table.translate(cfg.flags, snc.cflags)
+		local flags = config.mapFlags(cfg, snc.cflags)
 		return flags
 	end
 

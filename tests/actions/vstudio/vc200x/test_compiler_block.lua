@@ -327,11 +327,11 @@
 
 
 --
--- Verify the correct warnings settings are used when ExtraWarnings are enabled.
+-- Verify the correct warnings settings are used when extra warnings are enabled.
 --
 
 	function suite.runtimeLibraryIsDebug_onExtraWarnings()
-		flags { "ExtraWarnings" }
+		warnings "Extra"
 		prepare()
 		test.capture [[
 			<Tool
@@ -374,11 +374,12 @@
 
 
 --
--- Verify the correct warnings settings are used when NoWarnings are enabled.
+-- Verify the correct warnings settings are used when no warnings are enabled.
 --
 
 	function suite.runtimeLibraryIsDebug_onNoWarnings_whichDisablesAllOtherWarningsFlags()
-		flags { "NoWarnings", "ExtraWarnings", "FatalWarnings" }
+		flags { "FatalWarnings" }
+		warnings "Off"
 		prepare()
 		test.capture [[
 			<Tool
@@ -421,12 +422,12 @@
 
 
 --
--- Verify the correct warnings settings are used when NoWarnings are enabled.
+-- Verify the correct warnings settings are used when no warnings are enabled.
 --
 
 	function suite.runtimeLibraryIsDebug_onVS2005_NoWarnings()
 		_ACTION = "vs2005"
-		flags { "NoWarnings" }
+		warnings "Off"
 		prepare()
 		test.capture [[
 			<Tool

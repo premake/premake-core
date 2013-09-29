@@ -76,11 +76,11 @@
 
 
 --
--- If the ExtraWarnings flag is specified, pump up the volume.
+-- If extra warnings is specified, pump up the volume.
 --
 
 	function suite.warningLevel_onExtraWarnings()
-		flags "ExtraWarnings"
+		warnings "Extra"
 		prepare()
 		test.capture [[
 		<ClCompile>
@@ -90,11 +90,11 @@
 	end
 
 --
--- If the NoWarnings flag is specified, mute on warnings.
+-- If the warnings are disabled, mute all warnings.
 --
 
 	function suite.warningLevel_onNoWarnings()
-		flags "NoWarnings"
+		warnings "Off"
 		prepare()
 		test.capture [[
 		<ClCompile>
@@ -104,11 +104,13 @@
 	end
 
 --
--- NoWarnings disables ExtraWarnings FatalWarnings flagss.
+-- If warnings are turned off, the fatal warnings flags should
+-- not be generated.
 --
 
 	function suite.warningLevel_onNoWarningsOverOtherWarningsFlags()
-		flags { "NoWarnings", "ExtraWarnings", "FatalWarnings" }
+		flags { "FatalWarnings" }
+		warnings "Off"
 		prepare()
 		test.capture [[
 		<ClCompile>

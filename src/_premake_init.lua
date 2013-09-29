@@ -646,6 +646,16 @@
 		kind = "key-path-list",
 	}
 
+	api.register {
+		name = "warnings",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"Default",
+			"Extra",
+		}
+	}
 
 
 -----------------------------------------------------------------------------
@@ -694,6 +704,12 @@
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
 		optimize (map[value] or "Off")
 		return DOC_URL .. "optimize"
+	end)
+
+	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, function(value)
+		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
+		warnings (map[value] or "Default")
+		return DOC_URL .. "warnings"
 	end)
 
 

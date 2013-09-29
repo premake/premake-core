@@ -1126,7 +1126,7 @@
 
 
 	function vc2010.treatWarningAsError(cfg)
-		if cfg.flags.FatalWarnings and not cfg.flags.NoWarnings then
+		if cfg.flags.FatalWarnings and cfg.warnings ~= "Off" then
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end
@@ -1146,13 +1146,8 @@
 
 
 	function vc2010.warningLevel(cfg)
-		local w = "Level3"
-		if cfg.flags.NoWarnings then
-			w = "TurnOffAllWarnings"
-		elseif cfg.flags.ExtraWarnings then
-			w = "Level4"
-		end
-		vc2010.element(3, "WarningLevel", nil, "%s", w)
+		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
+		vc2010.element(3, "WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
 	end
 
 

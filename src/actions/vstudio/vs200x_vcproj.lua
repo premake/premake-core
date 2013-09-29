@@ -1185,21 +1185,16 @@
 
 
 	function vc200x.warnings(cfg)
-		-- if NoWarnings flags specified just disable warnings, and return.
-		if cfg.flags.NoWarnings then
+		if cfg.warnings == "Off" then
 			_p(4,'WarningLevel="0"')
-			return
-		end
-
-		-- else setup all warning blocks as needed.
-		_p(4,'WarningLevel="%d"', iif(cfg.flags.ExtraWarnings, 4, 3))
-
-		if cfg.flags.FatalWarnings then
-			_p(4,'WarnAsError="%s"', vc200x.bool(true))
-		end
-
-		if _ACTION < "vs2008" and not cfg.flags.Managed then
-			_p(4,'Detect64BitPortabilityProblems="%s"', vc200x.bool(not cfg.flags.No64BitChecks))
+		else
+			_p(4,'WarningLevel="%d"', iif(cfg.warnings == "Extra", 4, 3))
+			if cfg.flags.FatalWarnings then
+				_p(4,'WarnAsError="%s"', vc200x.bool(true))
+			end
+			if _ACTION < "vs2008" and not cfg.flags.Managed then
+				_p(4,'Detect64BitPortabilityProblems="%s"', vc200x.bool(not cfg.flags.No64BitChecks))
+			end
 		end
 	end
 

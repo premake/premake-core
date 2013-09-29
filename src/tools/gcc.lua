@@ -96,9 +96,7 @@
 			x64 = "-m64",
 		},
 		flags = {
-			ExtraWarnings = "-Wall -Wextra",
 			FatalWarnings = "-Werror",
-			NoWarnings = "-w",
 			NoFramePointer = "-fomit-frame-pointer",
 			Symbols = "-g"
 		},
@@ -114,6 +112,10 @@
 		vectorextensions = {
 			SSE = "-msse",
 			SSE2 = "-msse2",
+		},
+		warnings = {
+			Extra = "-Wall -Wextra",
+			Off = "-w",
 		}
 	}
 
