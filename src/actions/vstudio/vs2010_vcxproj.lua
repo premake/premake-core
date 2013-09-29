@@ -972,17 +972,8 @@
 
 
 	function vc2010.optimization(cfg)
-		local result = "Disabled"
-		for _, flag in ipairs(cfg.flags) do
-			if flag == "Optimize" then
-				result = "Full"
-			elseif flag == "OptimizeSize" then
-				result = "MinSpace"
-			elseif flag == "OptimizeSpeed" then
-				result = "MaxSpeed"
-			end
-		end
-		_p(3,'<Optimization>%s</Optimization>', result)
+		local map = { On = "Full", Size = "MinSpace", Speed = "MaxSpeed" }
+		_p(3,'<Optimization>%s</Optimization>', map[cfg.optimize] or "Disabled")
 	end
 
 

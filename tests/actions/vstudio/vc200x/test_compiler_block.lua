@@ -95,7 +95,8 @@
 --
 
 	function suite.looksGood_onSymbolsAndOptimizeFlags()
-		flags { "Symbols", "Optimize" }
+		flags { "Symbols" }
+		optimize "On"
 		prepare()
 		test.capture [[
 			<Tool

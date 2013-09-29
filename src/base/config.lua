@@ -466,15 +466,7 @@
 --
 
 	function config.isDebugBuild(cfg)
-		-- If any of the optimize flags are set, it's a release build
-		if cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed then
-			return false
-		end
-		-- If symbols are not defined, it's a release build
-		if not cfg.flags.Symbols then
-			return false
-		end
-		return true
+		return cfg.flags.Symbols and not config.isOptimizedBuild(cfg)
 	end
 
 
@@ -485,7 +477,7 @@
 --
 
 	function config.isOptimizedBuild(cfg)
-		return cfg.flags.Optimize or cfg.flags.OptimizeSize or cfg.flags.OptimizeSpeed
+		return cfg.optimize ~= nil and cfg.optimize ~= "Off"
 	end
 
 

@@ -55,7 +55,7 @@
 --
 
 	function suite.optimize_onOptimizeFlag()
-		flags { "Optimize" }
+		optimize "On"
 		prepare()
 		test.capture [[
 		<DebugType>pdbonly</DebugType>
@@ -64,7 +64,7 @@
 	end
 
 	function suite.optimize_onOptimizeSizeFlag()
-		flags { "OptimizeSize" }
+		optimize "Size"
 		prepare()
 		test.capture [[
 		<DebugType>pdbonly</DebugType>
@@ -73,7 +73,7 @@
 	end
 
 	function suite.optimize_onOptimizeSpeedFlag()
-		flags { "OptimizeSpeed" }
+		optimize "Speed"
 		prepare()
 		test.capture [[
 		<DebugType>pdbonly</DebugType>

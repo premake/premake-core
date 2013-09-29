@@ -49,7 +49,7 @@
 --
 
 	function suite.defaultSettings_onOptimize()
-		flags "Optimize"
+		optimize "On"
 		prepare()
 		test.capture [[
 		<Link>
@@ -298,7 +298,7 @@
 --
 
 	function suite.optimizeReferences_onOptimizeFlag()
-		flags { "Optimize" }
+		optimize "On"
 		prepare()
 		test.capture [[
 		<Link>

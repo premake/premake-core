@@ -1275,21 +1275,8 @@
 --
 
 	function vc200x.optimization(cfg)
-		local result = 0
-
-		-- step through the flags in the order they were specified, so
-		-- later flags can override an earlier value
-		for _, value in ipairs(cfg.flags) do
-			if (value == "Optimize") then
-				result = 3
-			elseif (value == "OptimizeSize") then
-				result = 1
-			elseif (value == "OptimizeSpeed") then
-				result = 2
-			end
-		end
-
-		return result
+		local map = { On = 3, Size = 1, Speed = 2 }
+		return map[cfg.optimize] or 0
 	end
 
 

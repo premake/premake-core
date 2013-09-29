@@ -16,8 +16,7 @@
 --
 
 	function msc.getcppflags(cfg)
-		local flags = {}
-		return flags
+		return {}
 	end
 
 
@@ -26,30 +25,24 @@
 --
 
 	msc.cflags = {
-		SEH           = "/EHa",
-		OptimizeSpeed = "/O2",
+		flags = {
+			SEH = "/EHa /EHsc",
+			Symbols = "/Z7",
+		},
+		optimize = {
+			Off = "/Od",
+			Speed = "/O2",
+		}
 	}
 
 	function msc.getcflags(cfg)
-		local flags = table.translate(cfg.flags, msc.cflags)
+		local flags = config.mapFlags(cfg, msc.cflags)
 
 		local runtime = iif(cfg.flags.StaticRuntime, "/MT", "/MD")
 		if config.isDebugBuild(cfg) then
 			runtime = runtime .. "d"
 		end
 		table.insert(flags, runtime)
-
-		if not config.isOptimizedBuild(cfg) then
-			table.insert(flags, "/Od")
-		end
-
-		if cfg.flags.Symbols then
-			table.insert(flags, "/Z7")
-		end
-
-		if not cfg.flags.SEH then
-			table.insert(flags, "/EHsc")
-		end
 
 		return flags
 	end

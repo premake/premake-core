@@ -118,7 +118,7 @@
 --
 
 	function suite.noIncrementalLink_onOptimizedBuild()
-		flags "Optimize"
+		optimize "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

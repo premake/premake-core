@@ -122,7 +122,7 @@
 --
 
 	function suite.optimization_onOptimize()
-		flags "Optimize"
+		optimize "On"
 		prepare()
 		test.capture [[
 		<ClCompile>
@@ -137,7 +137,7 @@
 	end
 
 	function suite.optimization_onOptimizeSize()
-		flags "OptimizeSize"
+		optimize "Size"
 		prepare()
 		test.capture [[
 		<ClCompile>
@@ -152,7 +152,7 @@
 	end
 
 	function suite.optimization_onOptimizeSpeed()
-		flags "OptimizeSpeed"
+		optimize "Speed"
 		prepare()
 		test.capture [[
 		<ClCompile>
@@ -534,7 +534,8 @@
 --
 
 	function suite.debugFormat_onOptimizedBuild()
-		flags { "Symbols", "Optimize" }
+		flags { "Symbols" }
+		optimize "On"
 		prepare()
 		test.capture [[
 		<ClCompile>

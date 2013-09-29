@@ -455,6 +455,18 @@
 	}
 
 	api.register {
+		name = "optimize",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+			"Size",
+			"Speed",
+		}
+	}
+
+	api.register {
 		name = "pchheader",
 		scope = "config",
 		kind = "string",
@@ -678,6 +690,11 @@
 		return DOC_URL .. "nativewchar"
 	end)
 
+	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, function(value)
+		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
+		optimize (map[value] or "Off")
+		return DOC_URL .. "optimize"
+	end)
 
 
 -----------------------------------------------------------------------------

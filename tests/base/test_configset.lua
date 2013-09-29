@@ -15,7 +15,7 @@
 --
 
 	local cset, parentset
-	
+
 	function suite.setup()
 		parentset = configset.new()
 		cset = configset.new(parentset)
@@ -57,7 +57,7 @@
 
 
 --
--- Make sure that I can roundtrip a value stored into a block 
+-- Make sure that I can roundtrip a value stored into a block
 -- with a simple matching term.
 --
 
@@ -80,7 +80,7 @@
 --
 
 	function suite.skipsBlock_onTermMismatch()
-		configset.addvalue(cset, "targetextension", ".so")		
+		configset.addvalue(cset, "targetextension", ".so")
 		configset.addblock(cset, { "Windows" })
 		configset.addvalue(cset, "targetextension", ".dll")
 		test.isequal(".so", configset.fetchvalue(cset, "targetextension", { "linux" }))
@@ -168,15 +168,15 @@
 --
 
 	function suite.remove_onExactValueMatch()
-		configset.addvalue(cset, "flags", { "Symbols", "Optimize", "NoRTTI" })
-		configset.removevalues(cset, "flags", { "Optimize" })
+		configset.addvalue(cset, "flags", { "Symbols", "Unsafe", "NoRTTI" })
+		configset.removevalues(cset, "flags", { "Unsafe" })
 		test.isequal({ "Symbols", "NoRTTI" }, configset.fetchvalue(cset, "flags", {}))
 	end
 
 	function suite.remove_onMultipleValues()
-		configset.addvalue(cset, "flags", { "Symbols", "NoExceptions", "Optimize", "NoRTTI" })
+		configset.addvalue(cset, "flags", { "Symbols", "NoExceptions", "Unsafe", "NoRTTI" })
 		configset.removevalues(cset, "flags", { "NoExceptions", "NoRTTI" })
-		test.isequal({ "Symbols", "Optimize" }, configset.fetchvalue(cset, "flags", {}))
+		test.isequal({ "Symbols", "Unsafe" }, configset.fetchvalue(cset, "flags", {}))
 	end
 
 

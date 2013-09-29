@@ -8,23 +8,9 @@
 	premake.tools.dotnet = {}
 	local dotnet = premake.tools.dotnet
 	local project = premake.project
+	local config = premake.config
 
 	dotnet.namestyle = "windows"
-
-
---
--- Translation of Premake flags into CSC flags
---
-
-	local flags =
-	{
-		FatalWarning   = "/warnaserror",
-		Optimize       = "/optimize",
-		OptimizeSize   = "/optimize",
-		OptimizeSpeed  = "/optimize",
-		Symbols        = "/debug",
-		Unsafe         = "/unsafe"
-	}
 
 
 --
@@ -175,8 +161,21 @@
 -- Returns a list of compiler flags, based on the supplied configuration.
 --
 
+	dotnet.flags = {
+		flags = {
+			FatalWarning = "/warnaserror",
+			Symbols = "/debug",
+			Unsafe = "/unsafe"
+		},
+		optimize = {
+			On = "/optimize",
+			Size = "/optimize",
+			Speed = "/optimize",
+		},
+	}
+
 	function dotnet.getflags(cfg)
-		local flags = {}
+		local flags = config.mapFlags(cfg, dotnet.flags)
 
 		if cfg.project.icon then
 			local fn = project.getrelative(cfg.project, cfg.project.icon)
@@ -187,8 +186,7 @@
 			table.insert(flags, table.implode(cfg.defines, "/d:", "", " "))
 		end
 
-		flags = table.join(flags, table.translate(cfg.flags, flags), cfg.buildoptions)
-		return flags
+		return table.join(flags, cfg.buildoptions)
 	end
 
 

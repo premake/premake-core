@@ -100,14 +100,16 @@
 			FatalWarnings = "-Werror",
 			NoWarnings = "-w",
 			NoFramePointer = "-fomit-frame-pointer",
-			Optimize = "-O2",
-			OptimizeSize = "-Os",
-			OptimizeSpeed = "-O3",
 			Symbols = "-g"
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
 			Strict = "-ffloat-store",
+		},
+		optimize = {
+			On = "-O2",
+			Size = "-Os",
+			Speed = "-O3",
 		},
 		vectorextensions = {
 			SSE = "-msse",

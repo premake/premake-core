@@ -39,6 +39,7 @@
 	premake.MACOSX      = "macosx"
 	premake.MAKEFILE    = "Makefile"
 	premake.NONE        = "None"
+	premake.OFF         = "Off"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"
 	premake.SHAREDLIB   = "SharedLib"
