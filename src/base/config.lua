@@ -526,7 +526,7 @@
 			table.foreachi(value, function(v)
 				local flag = map[v]
 				if flag then
-					table.insert(flags, flag)
+					table.insertflat(flags, flag)
 				end
 			end)
 		end

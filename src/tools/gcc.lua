@@ -19,14 +19,6 @@
 			cppflags = "-MMD"
 		},
 
-		x32 = {
-			ldflags = { "-m32", "-L/usr/lib32" }
-		},
-
-		x64 = {
-			ldflags = { "-m64", "-L/usr/lib64" }
-		},
-
 		ps3 = {
 			cc = "ppu-lv2-g++",
 			cxx = "ppu-lv2-g++",
@@ -39,7 +31,6 @@
 
 		wii = {
 			cppflags = "-MMD -MP -I$(LIBOGC_INC) $(MACHDEP)",
-			ldflags	= "-L$(LIBOGC_LIB) $(MACHDEP)",
 			cfgsettings = [[
   ifeq ($(strip $(DEVKITPPC)),)
     $(error "DEVKITPPC environment variable is not set")'
@@ -203,6 +194,16 @@
 -- Return a list of LDFLAGS for a specific configuration.
 --
 
+	gcc.ldflags = {
+		architecture = {
+			x32 = { "-m32", "-L/usr/lib32" },
+			x64 = { "-m64", "-L/usr/lib64" },
+		},
+		system = {
+			wii = { "-L$(LIBOGC_LIB)", "$(MACHDEP)" },
+		}
+	}
+
 	function gcc.getldflags(cfg)
 		local flags = {}
 
@@ -237,10 +238,7 @@
 			table.insert(flags, "-mwindows")
 		end
 
-		local sysflags = gcc.getsysflags(cfg, 'ldflags')
-		flags = table.join(flags, sysflags)
-
-		return flags
+		return table.join(flags, config.mapFlags(cfg, gcc.ldflags))
 	end
 
 

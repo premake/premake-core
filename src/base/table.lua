@@ -270,16 +270,23 @@
 --
 
 	function table.merge(...)
-		local result = { }
+		local result = {}
 		for _,t in ipairs(arg) do
+
 			if type(t) == "table" then
 				for k,v in pairs(t) do
-					result[k] = v
+					if type(result[k]) == "table" and type(v) == "table" then
+						result[k] = table.merge(result[k], v)
+					else
+						result[k] = v
+					end
 				end
+
 			else
 				error("invalid value")
 			end
 		end
+
 		return result
 	end
 
