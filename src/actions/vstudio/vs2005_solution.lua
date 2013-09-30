@@ -90,9 +90,8 @@
 				local prj = n.project
 
 				-- Build a relative path from the solution file to the project file
-				local slnpath = premake.solution.getlocation(prj.solution)
 				local prjpath = vstudio.projectfile(prj)
-				prjpath = path.translate(path.getrelative(slnpath, prjpath))
+				prjpath = path.translate(path.getrelative(prj.solution.location, prjpath))
 
 				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
 				if _ACTION < "vs2012" then

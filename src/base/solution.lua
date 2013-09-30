@@ -37,11 +37,8 @@
 		sln.blocks = {}
 		sln.projects = {}
 
-		local cwd = os.getcwd()
-
 		local cset = configset.new(configset.root)
-		cset.basedir = cwd
-		cset.location = cwd
+		cset.basedir = os.getcwd()
 		cset.filename = name
 		sln.configset = cset
 
@@ -127,7 +124,8 @@
 		-- Specify the solution's file system location; when path tokens are
 		-- expanded in solution values, they will be made relative to this.
 
-		context.basedir(ctx, project.getlocation(sln))
+		ctx.location = ctx.location or sln.basedir
+		context.basedir(ctx, ctx.location)
 
 		-- Now bake down all of the projects contained in the solution, and
 		-- store that for future reference
@@ -139,6 +137,10 @@
 		end
 
 		ctx.projects = projects
+
+		-- Synthesize a default solution file output location
+
+		ctx.location = ctx.location or sln.basedir
 
 		-- I now have enough information to assign unique object directories
 		-- to each project configuration in the solution.
@@ -203,7 +205,7 @@
 		local function getobjdirs(cfg)
 			local dirs = {}
 
-			local dir = path.getabsolute(path.join(project.getlocation(cfg.project), cfg.objdir or "obj"))
+			local dir = path.getabsolute(path.join(cfg.project.location, cfg.objdir or "obj"))
 			table.insert(dirs, dir)
 
 			if cfg.platform then
@@ -400,21 +402,6 @@
 		sln.grouptree = tr
 		return tr
 	end
-
-
---
--- Retrieve the solution's file system location.
---
--- @param sln
---    The solution object to query.
--- @param relativeto
---    Optional; if supplied, the location will be made relative
---    to this path.
--- @return
---    The path to the solution's file system location.
---
-
-	solution.getlocation = project.getlocation
 
 
 --

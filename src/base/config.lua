@@ -22,6 +22,7 @@
 		cfg.shortname = cfg.shortname:gsub(" ", "_"):lower()
 		cfg.name = cfg.longname
 
+		-- compute build and link targets
 		if cfg.project and cfg.kind then
 			cfg.buildtarget = config.gettargetinfo(cfg)
 			cfg.buildtarget.relpath = project.getrelative(cfg.project, cfg.buildtarget.abspath)
@@ -49,7 +50,7 @@
 --
 
 	local function buildtargetinfo(cfg, kind, field)
-		local basedir = project.getlocation(cfg.project)
+		local basedir = cfg.project.location
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
 		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name

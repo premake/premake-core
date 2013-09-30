@@ -112,7 +112,7 @@
 		-- (such as the custom build commands) will be made relative to
 		-- this path, ensuring a portable generated project.
 
-		context.basedir(fsub, project.getlocation(cfg.project))
+		context.basedir(fsub, cfg.project.location)
 
 		setmetatable(fsub, fileconfig.fsub_mt)
 

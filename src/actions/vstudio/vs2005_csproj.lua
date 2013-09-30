@@ -306,9 +306,8 @@
 
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
-			local prjpath = project.getlocation(prj)
 			for _, dep in ipairs(deps) do
-				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
+				local relpath = project.getrelative(prj, vstudio.projectfile(dep))
 				_x(2,'<ProjectReference Include="%s">', path.translate(relpath))
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_x(3,'<Name>%s</Name>', dep.name)

@@ -434,7 +434,7 @@
 		for _, incdir in ipairs(cfg.includedirs) do
 			local testname = path.join(incdir, pch)
 			if os.isfile(testname) then
-				pch = path.getrelative(cfg.location, testname)
+				pch = project.getrelative(cfg.project, testname)
 				break
 			end
 		end

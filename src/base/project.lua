@@ -30,11 +30,8 @@
 		prj.script = _SCRIPT
 		prj.blocks = {}
 
-		local cwd = os.getcwd()
-
 		local cset = configset.new(sln.configset)
-		cset.basedir = cwd
-		cset.location = cwd
+		cset.basedir = os.getcwd()
 		cset.filename = name
 		cset.uuid = os.uuid(name)
 		prj.configset = cset
@@ -122,7 +119,8 @@
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated project.
 
-		context.basedir(ctx, project.getlocation(ctx))
+		ctx.location = ctx.location or sln.location or prj.basedir
+		context.basedir(ctx, ctx.location)
 
 		-- This bit could use some work: create a canonical set of configurations
 		-- for the project, along with a mapping from the solution's configurations.
@@ -391,7 +389,7 @@
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
-		ctx.language = prj.language
+		ctx.language = ctx.language
 
 		-- Allow the configuration information to accessed by tokens contained
 		-- within the configuration itself
@@ -419,14 +417,15 @@
 		context.addterms(ctx, ctx.kind)
 
 		context.compile(ctx)
-		context.basedir(ctx, project.getlocation(prj))
+
+		ctx.location = ctx.location or prj.location
+		context.basedir(ctx, ctx.location)
 
 		-- Fill in a few calculated for the configuration, including the long
 		-- and short names and the build and link target.
 		-- TODO: Merge these two functions
 
 		premake.config.bake(ctx)
-
 		return ctx
 	end
 
@@ -612,7 +611,7 @@
 --
 
 	function project.getfilename(prj, ext)
-		local fn = project.getlocation(prj)
+		local fn = prj.location
 		if ext and not ext:startswith(".") then
 			fn = path.join(fn, ext)
 		else
@@ -644,33 +643,6 @@
 
 
 --
--- Retrieve the project's file system location. Also works with solutions.
---
--- @param prj
---    The project object to query.
--- @param relativeto
---    Optional; if supplied, the project location will be made relative
---    to this path.
--- @return
---    The path to the project's file system location.
---
-
-	function project.getlocation(prj, relativeto)
-		local location = prj.location
-		if not location and prj.solution then
-			location = prj.solution.location
-		end
-		if not location then
-			location = prj.basedir
-		end
-		if relativeto then
-			location = path.getrelative(relativeto, location)
-		end
-		return location
-	end
-
-
---
 -- Return the relative path from the project to the specified file.
 --
 -- @param prj
@@ -690,7 +662,7 @@
 			return result
 		else
 			if filename then
-				return path.getrelative(project.getlocation(prj), filename)
+				return path.getrelative(prj.location, filename)
 			end
 		end
 	end

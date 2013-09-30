@@ -1111,11 +1111,9 @@
 			-- referencing. Which, in theory, would break if the project is included
 			-- in more than one solution. But that's how they do it.
 
-			local prjpath = project.getlocation(prj.solution)
-
 			for _, dep in ipairs(deps) do
 
-				local relpath = path.getrelative(prjpath, vstudio.projectfile(dep))
+				local relpath = path.getrelative(prj.solution.location, vstudio.projectfile(dep))
 
 				-- Visual Studio wants the path to start with ./ or ../
 				if not relpath:startswith(".") then
