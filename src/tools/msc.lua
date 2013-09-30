@@ -26,7 +26,7 @@
 
 	msc.cflags = {
 		flags = {
-			SEH = "/EHa /EHsc",
+			SEH = "/EHa",
 			Symbols = "/Z7",
 		},
 		optimize = {
@@ -43,6 +43,10 @@
 			runtime = runtime .. "d"
 		end
 		table.insert(flags, runtime)
+
+		if not cfg.flags.SEH then
+			table.insert(flags, "/EHsc")
+		end
 
 		return flags
 	end
