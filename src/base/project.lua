@@ -389,7 +389,6 @@
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
-		ctx.language = ctx.language
 
 		-- Allow the configuration information to accessed by tokens contained
 		-- within the configuration itself
