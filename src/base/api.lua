@@ -108,15 +108,19 @@
 --
 -- @param name
 --    The name of the field to mark as deprecated.
+-- @param message
+--    A optional message providing more information, to be shown
+--    as part of the deprecation warning message.
 -- @param handler
 --    A function to call when the field is used. Passes the value
---    provided to the field as the only argument. The function
---    should return a URL for more information, to be shown in the
---    deprecation warning message.
+--    provided to the field as the only argument.
 --
 
-	function api.deprecateField(name, handler)
-		premake.fields[name].deprecated = handler
+	function api.deprecateField(name, message, handler)
+		premake.fields[name].deprecated = {
+			handler = handler,
+			message = message
+		}
 	end
 
 
@@ -126,23 +130,32 @@
 -- @param name
 --    The name of the field containing the value.
 -- @param value
---    The value to mark as deprecated
--- @param handler
---    A function to call when the field is used. Passes the value
---    provided to the field as the only argument. The function
---    should return a URL for more information, to be shown in the
---    deprecation warning message.
+--    The value or values to mark as deprecated. May be a string
+--    for a single value or an array of multiple values.
+-- @param message
+--    A optional message providing more information, to be shown
+--    as part of the deprecation warning message.
+-- @param addHandler
+--    A function to call when the value is used, receiving the
+--    value as its only argument.
+-- @param removeHandler
+--    A function to call when the value is removed from a list
+--    field, receiving the value as its only argument (optional).
 --
 
-	function api.deprecateValue(name, value, handler)
+	function api.deprecateValue(name, value, message, addHandler, removeHandler)
 		if type(value) == "table" then
 			for _, v in pairs(value) do
-				api.deprecateValue(name, v, handler)
+				api.deprecateValue(name, v, message, addHandler, removeHandler)
 			end
 		else
 			local field = premake.fields[name]
 			field.deprecated = field.deprecated or {}
-			field.deprecated[value] = handler
+			field.deprecated[value] = {
+				add = addHandler,
+				remove = removeHandler,
+				message = message
+			}
 		end
 	end
 
@@ -169,11 +182,9 @@
 --
 
 	function api.callback(field, value)
-		if type(field.deprecated) == "function" then
-			local url = field.deprecated(value)
-			if url then
-				premake.warnOnce(field.name, "the field %s has been deprecated.\n   See %s", field.name, url)
-			end
+		if field.deprecated and type(field.deprecated.handler) == "function" then
+			field.deprecated.handler(value)
+			premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message or "")
 		end
 
 		local target = api.gettarget(field.scope)
@@ -224,6 +235,18 @@
 					recurse(v)
 				end)
 			else
+				-- get the canonical value
+				local value, err = api.checkvalue(value, field)
+				if err then error({ msg=err }) end
+
+				-- process deprecated values
+				if field.deprecated and field.deprecated[value] then
+					local handler = field.deprecated[value]
+					if handler.remove then handler.remove(value) end
+					local key = field.name .. "_" .. value
+					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
+				end
+
 				remover(removes, value)
 			end
 		end
@@ -553,12 +576,11 @@
 		local value, err = api.checkvalue(value, field)
 		if err then error({ msg=err }) end
 
-		if field.deprecated and type(field.deprecated) == "table" and field.deprecated[value] then
-			local url = field.deprecated[value](value)
-			if url then
-				local key = field.name .. ":" .. value
-				premake.warnOnce(key, "the %s value %s has been deprecated.\n   See %s", field.name, value, url)
-			end
+		if field.deprecated and field.deprecated[value] then
+			local handler = field.deprecated[value]
+			handler.add(value)
+			local key = field.name .. "_" .. value
+			premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
 		end
 
 		-- if the target is the project, configset will be set and I can push

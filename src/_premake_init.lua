@@ -8,7 +8,7 @@
 
 	local api = premake.api
 
-	local DOC_URL = "https://bitbucket.org/premake/premake-dev/wiki/"
+	local DOC_URL = "See https://bitbucket.org/premake/premake-dev/wiki/"
 
 
 -----------------------------------------------------------------------------
@@ -666,50 +666,65 @@
 
 	-- 09 Apr 2013
 
-	api.deprecateField("buildrule", function(value)
+	api.deprecateField("buildrule", DOC_URL ..  "Custom_Build_Commands",
+	function(value)
 		if value.description then
 			buildmessage(value.description)
 		end
 		buildcommands(value.commands)
 		buildoutputs(value.outputs)
-		return DOC_URL ..  "Custom_Build_Commands"
 	end)
 
 	-- 17 Jun 2013
 
-	api.deprecateValue("flags", "Component", function(value)
+	api.deprecateValue("flags", "Component", DOC_URL .. "buildaction",
+	function(value)
 		buildaction "Component"
-		return DOC_URL .. "buildaction"
 	end)
 
 	-- 26 Sep 2013
 
-	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, function(value)
+	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, DOC_URL .. "vectorextensions",
+	function(value)
 		vectorextensions(value:sub(7))
-		return DOC_URL .. "vectorextensions"
+	end,
+	function(value)
+		vectorextension "Default"
 	end)
 
-	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, function(value)
+	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, DOC_URL ..  "floatingpoint",
+	function(value)
 		floatingpoint(value:sub(6))
-		return DOC_URL ..  "floatingpoint"
+	end,
+	function(value)
+		floatingpoint "Default"
 	end)
 
-	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, function(value)
+	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, DOC_URL .. "nativewchar",
+	function(value)
 		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
 		nativewchar(map[value] or "Default")
-		return DOC_URL .. "nativewchar"
+	end,
+	function(value)
+		nativewchar "Default"
 	end)
 
-	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, function(value)
+	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, DOC_URL .. "optimize",
+	function(value)
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
 		optimize (map[value] or "Off")
-		return DOC_URL .. "optimize"
+	end,
+	function(value)
+		optimize "Off"
 	end)
 
-	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, function(value)
+	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, DOC_URL .. "warnings",
+	function(value)
 		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
 		warnings (map[value] or "Default")
-		return DOC_URL .. "warnings"
+	end,
+	function(value)
+		warnings "Default"
 	end)
 
 
