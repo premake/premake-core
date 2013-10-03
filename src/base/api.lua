@@ -527,9 +527,6 @@
 		local result
 		if name == field.name then
 			target = target.configset
-			result = {}
-		else
-			result = target[name]
 		end
 
 		-- process all of the values, according to the data type
