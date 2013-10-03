@@ -36,6 +36,11 @@
 		cset.uuid = os.uuid(name)
 		prj.configset = cset
 
+		-- Default the language to C++. This might come back to bite me later, but
+		-- let's see how it goes (why did I need to do this? I don't remember.)
+
+		cset.language = premake.CPP
+
 		-- attach a type descriptor
 		setmetatable(prj, {
 			__type = "project",
@@ -81,13 +86,6 @@
 		ctx.system = ctx.system or premake.action.current().os or os.get()
 		context.addterms(ctx, ctx.system)
 		context.addterms(ctx, ctx.architecture)
-
-		-- If no language has been set, default to C++. This might come back to
-		-- bite me later, but let's see how it goes.
-
-		if not ctx.language then
-			ctx.language = premake.CPP
-		end
 
 		-- The kind is a configuration level value, but if it has been set at the
 		-- project level allow that to influence the other project-level results.
