@@ -97,7 +97,7 @@
 	function cpp.buildcommand(prj, objext, node)
 		local iscfile = node and path.iscfile(node.abspath) or false
 		local flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
-		_p('\t$(SILENT) %s -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
+		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
 	end
 
 
@@ -298,7 +298,7 @@
 
 
 	function make.cppFlags(cfg, toolset)
-		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES) $(FORCE_INCLUDE)', make.list(toolset.getcppflags(cfg)))
+		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES)', make.list(toolset.getcppflags(cfg)))
 	end
 
 
@@ -449,8 +449,8 @@
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
 
-		local cmd = iif(prj.language == "C", "$(CC) -x c-header", "$(CXX) -x c++-header")
-		_p('\t$(SILENT) %s $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
+		_p('\t$(SILENT) %s -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
 
 		_p('endif')
 		_p('')

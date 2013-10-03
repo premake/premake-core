@@ -29,7 +29,7 @@
 	function suite.writesCorrectCppFlags()
 		make.cppFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES) $(FORCE_INCLUDE)
+  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
   		]]
 	end
 
