@@ -236,8 +236,11 @@
 				end)
 			else
 				-- get the canonical value
+				local origValue = value
 				local value, err = api.checkvalue(value, field)
-				if err then error({ msg=err }) end
+				if err then
+					error(err)
+				end
 
 				-- process deprecated values
 				if field.deprecated and field.deprecated[value] then
