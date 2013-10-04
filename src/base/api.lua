@@ -223,11 +223,25 @@
 		-- return the current baked value
 		if not value then return end
 
-		-- process the values list
+		local target = api.gettarget(field.scope)
 		local kind = api.getbasekind(field)
-		local remover = api["remove" .. kind] or table.insert
+
+		-- Build a list of values to be removed. If this field has deprecated
+		-- values, check to see if any of those are going to be removed by this
+		-- call (which means matching against any provided wildcards) and call
+		-- the appropriate logic for removing that value.
 
 		local removes = {}
+		local remover = api["remove" .. kind] or table.insert
+
+		function check(value)
+			if field.deprecated[value] then
+				local handler = field.deprecated[value]
+				if handler.remove then handler.remove(value) end
+				local key = field.name .. "_" .. value
+				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
+			end
+		end
 
 		function recurse(value)
 			if type(value) == "table" then
@@ -235,30 +249,31 @@
 					recurse(v)
 				end)
 			else
-				-- get the canonical value
-				local origValue = value
-				local value, err = api.checkvalue(value, field)
-				if err then
-					error(err)
+				if field.deprecated then
+					if value:contains("*") then
+						local current = target.configset[field.name]
+						for _, item in ipairs(current) do
+							if item:match(value) == item then
+								check(item)
+							end
+						end
+					else
+						value, err = api.checkvalue(value, field)
+						if err then error(err, 4) end
+						check(value)
+					end
 				end
-
-				-- process deprecated values
-				if field.deprecated and field.deprecated[value] then
-					local handler = field.deprecated[value]
-					if handler.remove then handler.remove(value) end
-					local key = field.name .. "_" .. value
-					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-				end
-
 				remover(removes, value)
 			end
 		end
 
 		recurse(value)
 
-		local target = api.gettarget(field.scope)
+		-- Tell the config set to remove these values from future queries
+
 		configset.removevalues(target.configset, field.name, removes)
 	end
+
 
 
 --
