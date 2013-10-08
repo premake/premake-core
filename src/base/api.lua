@@ -161,6 +161,25 @@
 
 
 --
+-- Control the handling of API deprecations.
+--
+-- @param value
+--    One of "on" to enable the deprecation behavior, "off" to disable it,
+--    and "error" to raise an error instead of logging a warning.
+--
+
+	function api.deprecations(value)
+		value = value:lower()
+		if not table.contains({ "on", "off", "error"}, value) then
+			error("Invalid value: " .. value, 2)
+		end
+		api._deprecations = value:lower()
+	end
+
+	api._deprecations = "on"
+
+
+--
 -- Find the right target object for a given scope.
 --
 
@@ -182,9 +201,10 @@
 --
 
 	function api.callback(field, value)
-		if field.deprecated and type(field.deprecated.handler) == "function" then
+		if field.deprecated and type(field.deprecated.handler) == "function" and api._deprecations ~= "off" then
 			field.deprecated.handler(value)
 			premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message or "")
+			if api._deprecations == "error" then error({ msg="deprecation errors enabled" })  end
 		end
 
 		local target = api.gettarget(field.scope)
@@ -240,6 +260,7 @@
 				if handler.remove then handler.remove(value) end
 				local key = field.name .. "_" .. value
 				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
+				if api._deprecations == "error" then error("deprecation errors enabled") end
 			end
 		end
 
@@ -249,7 +270,7 @@
 					recurse(v)
 				end)
 			else
-				if field.deprecated then
+				if field.deprecated and api._deprecations ~= "off" then
 					if value:contains("*") then
 						local current = target.configset[field.name]
 						local mask = path.wildcards(value)
@@ -592,11 +613,12 @@
 		local value, err = api.checkvalue(value, field)
 		if err then error({ msg=err }) end
 
-		if field.deprecated and field.deprecated[value] then
+		if field.deprecated and field.deprecated[value] and api._deprecations ~= "off" then
 			local handler = field.deprecated[value]
 			handler.add(value)
 			local key = field.name .. "_" .. value
 			premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
+			if api._deprecations == "error" then error({ msg="deprecation errors enabled" }) end
 		end
 
 		-- if the target is the project, configset will be set and I can push
