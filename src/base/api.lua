@@ -252,8 +252,9 @@
 				if field.deprecated then
 					if value:contains("*") then
 						local current = target.configset[field.name]
+						local mask = path.wildcards(value)
 						for _, item in ipairs(current) do
-							if item:match(value) == item then
+							if item:match(mask) == item then
 								check(item)
 							end
 						end
