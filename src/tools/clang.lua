@@ -214,8 +214,10 @@
 
 		if tool == "ar" then
 			return "ar"
-		else
+		elseif tool == "cc" then
 			return "clang"
+		elseif tool == "cxx" then
+			return "clang++"
 		end
 
 	end
