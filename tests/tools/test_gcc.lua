@@ -114,6 +114,11 @@
 		test.isequal({ "-msse2" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onNoOptimize()
+		optimize "Off"
+		prepare()
+		test.isequal({ "-O0" }, gcc.getcflags(cfg))
+	end
 
 --
 -- Check the translation of CXXFLAGS.

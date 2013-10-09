@@ -32,7 +32,7 @@
 		test.capture [[
 ifeq ($(config),debug)
   CC = clang
-  CXX = clang
+  CXX = clang++
   AR = ar
   		]]
 	end
