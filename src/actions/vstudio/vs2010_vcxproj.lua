@@ -120,6 +120,15 @@
 
 
 --
+-- Write out the TargetFrameworkVersion property.
+--
+
+	function vc2010.targetFramework(prj)
+		local framework = prj.framework or "4.0"
+		_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+	end
+
+--
 -- Write out the Globals property group.
 --
 
@@ -146,7 +155,7 @@
 				_p(2,'<Keyword>MakeFileProj</Keyword>')
 			else
 				if isManaged then
-					_p(2,'<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>')
+					vc2010.targetFramework(prj)	
 					_p(2,'<Keyword>ManagedCProj</Keyword>')
 				else
 					_p(2,'<Keyword>Win32Proj</Keyword>')
