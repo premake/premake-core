@@ -96,6 +96,7 @@
 			Strict = "-ffloat-store",
 		},
 		optimize = {
+			Off = "-O0",
 			On = "-O2",
 			Size = "-Os",
 			Speed = "-O3",
