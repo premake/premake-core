@@ -549,9 +549,10 @@
 	function api.setlist(target, name, field, value)
 		local setter = api.getsetter(field)
 
-		-- am I setting a configurable object, or some kind of subfield?
-		local result
-		if name == field.name then
+		-- If this target is just a wrapper for a configuration set,
+		-- apply the new values to that set instead. The current
+		-- solution and project objects act this way.
+		if target.configset then
 			target = target.configset
 		end
 
