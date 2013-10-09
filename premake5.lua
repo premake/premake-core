@@ -4,6 +4,13 @@
 --
 
 --
+-- Disable deprecation warnings for myself, so that older development
+-- versions will still be able to regenerate the scripts.
+--
+
+	premake.api.deprecations "off"
+
+--
 -- Define the project. Put the release configuration first so it will be the
 -- default when folks build using the makefile. That way they don't have to
 -- worry about the /scripts argument and all that.

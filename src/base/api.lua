@@ -204,7 +204,7 @@
 		if field.deprecated and type(field.deprecated.handler) == "function" and api._deprecations ~= "off" then
 			field.deprecated.handler(value)
 			premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message or "")
-			if api._deprecations == "error" then error({ msg="deprecation errors enabled" })  end
+			if api._deprecations == "error" then error("deprecation errors enabled", 3)  end
 		end
 
 		local target = api.gettarget(field.scope)
@@ -260,7 +260,7 @@
 				if handler.remove then handler.remove(value) end
 				local key = field.name .. "_" .. value
 				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-				if api._deprecations == "error" then error("deprecation errors enabled") end
+				if api._deprecations == "error" then error("deprecation errors enabled", 8) end
 			end
 		end
 
