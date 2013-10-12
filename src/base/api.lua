@@ -41,7 +41,7 @@
 		end
 
 		if _G[name] then
-			error("name in use", 2)
+			error("name '" .. name .. "' in use", 2)
 		end
 
 		-- make sure there is a handler available for this kind of value
