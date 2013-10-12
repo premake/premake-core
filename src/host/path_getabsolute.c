@@ -8,15 +8,21 @@
 #include <string.h>
 
 
-static void getabsolute(char* result, const char* value)
+static void getabsolute(char* result, const char* value, const char* relative_to)
 {
 	int i;
 	char* ch;
+	char* prev;
 	char buffer[0x4000] = { '\0' };
 
 	/* if the path is not already absolute, base it on working dir */
 	if (!do_isabsolute(value)) {
-		do_getcwd(buffer, 0x4000);
+		if (relative_to) {
+			strcpy(buffer, relative_to);
+		}
+		else {
+			do_getcwd(buffer, 0x4000);
+		}
 		strcat(buffer, "/");
 	}
 
@@ -30,10 +36,11 @@ static void getabsolute(char* result, const char* value)
 		strcat(result, "/");
 	}
 
+	prev = NULL;
 	ch = strtok(buffer, "/");
 	while (ch) {
-		/* remove ".." */
-		if (strcmp(ch, "..") == 0) {
+		/* remove ".." where I can */
+		if (strcmp(ch, "..") == 0 && (prev == NULL || (prev[0] != '$' && strcmp(prev, "..") != 0))) {
 			i = strlen(result) - 2;
 			while (i >= 0 && result[i] != '/') {
 				--i;
@@ -41,6 +48,7 @@ static void getabsolute(char* result, const char* value)
 			if (i >= 0) {
 				result[i + 1] = '\0';
 			}
+			ch = NULL;
 		}
 
 		/* allow everything except "." */
@@ -49,6 +57,7 @@ static void getabsolute(char* result, const char* value)
 			strcat(result, "/");
 		}
 
+		prev = ch;
 		ch = strtok(NULL, "/");
 	}
 
@@ -62,26 +71,32 @@ static void getabsolute(char* result, const char* value)
 
 int path_getabsolute(lua_State* L)
 {
+	const char* relative_to;
 	char buffer[0x4000];
+
+	relative_to = NULL;
+	if (lua_gettop(L) > 1 && !lua_isnil(L,2)) {
+		relative_to = luaL_checkstring(L, 2);
+	}
 
 	if (lua_istable(L, 1)) {
 		int i = 0;
 		lua_newtable(L);
 		lua_pushnil(L);
 		while (lua_next(L, 1)) {
-			const char* value = luaL_checkstring(L, 4);
-			getabsolute(buffer, value);
+			const char* value = luaL_checkstring(L, -1);
+			getabsolute(buffer, value, relative_to);
 			lua_pop(L, 1);
 
 			lua_pushnumber(L, ++i);
 			lua_pushstring(L, buffer);
-			lua_settable(L, 2);
+			lua_settable(L, -4);
 		}
 		return 1;
 	}
 	else {
 		const char* value = luaL_checkstring(L, 1);
-		getabsolute(buffer, value);
+		getabsolute(buffer, value, relative_to);
 		lua_pushstring(L, buffer);
 		return 1;
 	}

@@ -64,6 +64,31 @@
 		test.isequal({ "/a/b", "/c/d" }, path.getabsolute({ "/a/b", "/c/d" }))
 	end
 
+	function suite.getabsolute_withRelativeTo()
+		local relto = path.getdirectory(os.getcwd())
+		local expected = relto .. "/a/b/c"
+		test.isequal(expected, path.getabsolute("a/b/c", relto))
+	end
+
+	function suite.getabsolute_withRelativeTo_withTrailingSlashes()
+		local relto = path.getdirectory(os.getcwd())
+		local expected = relto .. "/a/b/c"
+		test.isequal(expected, path.getabsolute("a/b/c", relto .. "/"))
+	end
+
+	function suite.getabsolute_acceptsTables_withRelativeTo()
+		local relto = path.getdirectory(os.getcwd())
+		test.isequal({ relto .. "/a/b", relto .. "/c/d" }, path.getabsolute({ "a/b", "c/d" }, relto))
+	end
+
+	function suite.getabsolute_leavesDotDot_onShellVar()
+		test.isequal("$ORIGIN/../libs", path.getabsolute("$ORIGIN/../libs"))
+	end
+
+	function suite.getabsolute_leavesDotDot2_onShellVar()
+		test.isequal("$ORIGIN/../../libs", path.getabsolute("$ORIGIN/../../libs"))
+	end
+
 
 --
 -- path.getbasename() tests
