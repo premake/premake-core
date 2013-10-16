@@ -303,3 +303,23 @@
 			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
 		]]
 	end
+
+
+--
+-- Check handling of per-file no PCH build options.
+--
+
+	function suite.excludedFromPCH()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+		flags { "NoPCH" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end

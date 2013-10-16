@@ -1005,6 +1005,8 @@
 		if filecfg then
 			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
 				vc2010.element(3, 'PrecompiledHeader', condition, 'Create')
+			elseif filecfg.flags.NoPCH then
+				vc2010.element(3, 'PrecompiledHeader', condition, 'NotUsing')
 			end
 		else
 			if not cfg.flags.NoPCH and cfg.pchheader then
