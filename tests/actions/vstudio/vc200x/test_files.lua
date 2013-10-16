@@ -354,7 +354,6 @@
 --
 
 	function suite.forcedIncludeFiles()
-		language "C++"
 		files { "hello.cpp" }
 		configuration "**.cpp"
 			forceincludes { "../include/force1.h", "../include/force2.h" }
@@ -379,7 +378,6 @@
 --
 
 	function suite.additionalOptions()
-		language "C++"
 		files { "hello.cpp" }
 		configuration "**.cpp"
 			buildoptions { "/Xc" }
@@ -395,5 +393,119 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					AdditionalOptions="/Xc"
+		]]
+	end
+
+
+--
+-- Check handling of per-file optimization levels.
+--
+
+	function suite.onOptimize()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			optimize "On"
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="3"
+		]]
+	end
+
+
+	function suite.onOptimizeSize()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			optimize "Size"
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="1"
+		]]
+	end
+
+	function suite.onOptimizeSpeed()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			optimize "Speed"
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="2"
+		]]
+	end
+
+	function suite.onOptimizeFull()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			optimize "Full"
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="3"
+		]]
+	end
+
+	function suite.onOptimizeOff()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			optimize "Off"
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="0"
+		]]
+	end
+
+	function suite.onOptimizeDebug()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			optimize "Debug"
+		prepare()
+		test.capture [[
+		<File
+			RelativePath="hello.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="0"
 		]]
 	end

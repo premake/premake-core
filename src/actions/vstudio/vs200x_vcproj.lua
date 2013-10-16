@@ -404,7 +404,7 @@
 
 	function vc200x.VCCLBuiltInCompilerTool(cfg)
 		vc200x.VCCLCompilerTool_additionalOptions(cfg)
-		vc200x.optimization(cfg)
+		vc200x.optimization(cfg, 4)
 
 		if cfg.flags.NoFramePointer then
 			_p(4,'OmitFramePointers="%s"', vc200x.bool(true))
@@ -880,6 +880,7 @@
 		if filecfg then
 			vc200x.customBuildTool(filecfg, depth)
 			vc200x.objectFile(filecfg, depth)
+			vc200x.optimization(filecfg, depth)
 			vc200x.usePrecompiledHeader(filecfg, depth)
 			vc200x.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
 			vc200x.forcedIncludeFiles(filecfg, depth)
@@ -1088,9 +1089,12 @@
 	end
 
 
-	function vc200x.optimization(cfg)
-		local map = { On = 3, Full = 3, Size = 1, Speed = 2 }
-		_p(4,'Optimization="%s"', map[cfg.optimize] or 0)
+	function vc200x.optimization(cfg, depth)
+		local map = { Off=0, On=3, Debug=0, Full=3, Size=1, Speed=2 }
+		local value = map[cfg.optimize]
+		if value or not cfg.abspath then
+			_p(depth,'Optimization="%s"', value or 0)
+		end
 	end
 
 

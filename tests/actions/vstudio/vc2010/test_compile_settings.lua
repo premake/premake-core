@@ -27,7 +27,7 @@
 
 --
 -- Check the basic element structure with default settings.
---
+---
 
 	function suite.defaultSettings()
 		prepare()

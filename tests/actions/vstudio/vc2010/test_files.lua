@@ -190,7 +190,6 @@
 --
 
 	function suite.forcedIncludeFiles()
-		language "C++"
 		files { "hello.cpp" }
 		configuration "**.cpp"
 			forceincludes { "../include/force1.h", "../include/force2.h" }
@@ -212,7 +211,6 @@
 --
 
 	function suite.additionalOptions()
-		language "C++"
 		files { "hello.cpp" }
 		configuration "**.cpp"
 			buildoptions { "/Xc" }
@@ -225,5 +223,83 @@
 			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
 		</ClCompile>
 	</ItemGroup>
+		]]
+	end
+
+
+--
+-- Check handling of per-file optimization levels.
+--
+
+	function suite.onOptimize()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		optimize "On"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+		]]
+	end
+
+
+	function suite.onOptimizeSize()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		optimize "Size"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MinSpace</Optimization>
+		]]
+	end
+
+	function suite.onOptimizeSpeed()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		optimize "Speed"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MaxSpeed</Optimization>
+		]]
+	end
+
+	function suite.onOptimizeFull()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		optimize "Full"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+		]]
+	end
+
+	function suite.onOptimizeOff()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		optimize "Off"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+		]]
+	end
+
+	function suite.onOptimizeDebug()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+		optimize "Debug"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
 		]]
 	end

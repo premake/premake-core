@@ -495,6 +495,7 @@
 						vc2010.excludedFromBuild(cfg, filecfg)
 						if filecfg then
 							vc2010.objectFileName(filecfg)
+							vc2010.optimization(filecfg, condition)
 							vc2010.forceIncludes(filecfg, condition)
 							vc2010.precompiledHeader(cfg, filecfg, condition)
 							vc2010.additionalCompileOptions(filecfg, condition)
@@ -978,9 +979,12 @@
 	end
 
 
-	function vc2010.optimization(cfg)
-		local map = { On = "Full", Full = "Full", Size = "MinSpace", Speed = "MaxSpeed" }
-		_p(3,'<Optimization>%s</Optimization>', map[cfg.optimize] or "Disabled")
+	function vc2010.optimization(cfg, condition)
+		local map = { Off="Disabled", On="Full", Debug="Disabled", Full="Full", Size="MinSpace", Speed="MaxSpeed" }
+		local value = map[cfg.optimize]
+		if value or not condition then
+			vc2010.element(3, 'Optimization', condition, value or "Disabled")
+		end
 	end
 
 
