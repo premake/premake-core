@@ -31,6 +31,10 @@
 		},
 		optimize = {
 			Off = "/Od",
+			On = "/Ot",
+			Debug = "/Od",
+			Full = "/Ox",
+			Size = "/O1",
 			Speed = "/O2",
 		}
 	}

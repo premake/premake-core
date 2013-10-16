@@ -114,11 +114,47 @@
 		test.isequal({ "-msse2" }, gcc.getcflags(cfg))
 	end
 
+
+--
+-- Check the optimization flags.
+--
+
 	function suite.cflags_onNoOptimize()
 		optimize "Off"
 		prepare()
 		test.isequal({ "-O0" }, gcc.getcflags(cfg))
 	end
+
+	function suite.cflags_onOptimize()
+		optimize "On"
+		prepare()
+		test.isequal({ "-O2" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeSize()
+		optimize "Size"
+		prepare()
+		test.isequal({ "-Os" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeSpeed()
+		optimize "Speed"
+		prepare()
+		test.isequal({ "-O3" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeFull()
+		optimize "Full"
+		prepare()
+		test.isequal({ "-O3" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeDebug()
+		optimize "Debug"
+		prepare()
+		test.isequal({ "-Og" }, gcc.getcflags(cfg))
+	end
+
 
 --
 -- Check the translation of CXXFLAGS.

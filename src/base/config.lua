@@ -478,7 +478,7 @@
 --
 
 	function config.isOptimizedBuild(cfg)
-		return cfg.optimize ~= nil and cfg.optimize ~= "Off"
+		return cfg.optimize ~= nil and cfg.optimize ~= "Off" and cfg.optimize ~= "Debug"
 	end
 
 

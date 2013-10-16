@@ -155,7 +155,7 @@
 				_p(2,'<Keyword>MakeFileProj</Keyword>')
 			else
 				if isManaged then
-					vc2010.targetFramework(prj)	
+					vc2010.targetFramework(prj)
 					_p(2,'<Keyword>ManagedCProj</Keyword>')
 				else
 					_p(2,'<Keyword>Win32Proj</Keyword>')
@@ -979,7 +979,7 @@
 
 
 	function vc2010.optimization(cfg)
-		local map = { On = "Full", Size = "MinSpace", Speed = "MaxSpeed" }
+		local map = { On = "Full", Full = "Full", Size = "MinSpace", Speed = "MaxSpeed" }
 		_p(3,'<Optimization>%s</Optimization>', map[cfg.optimize] or "Disabled")
 	end
 

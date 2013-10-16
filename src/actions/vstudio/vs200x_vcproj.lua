@@ -404,8 +404,7 @@
 
 	function vc200x.VCCLBuiltInCompilerTool(cfg)
 		vc200x.VCCLCompilerTool_additionalOptions(cfg)
-
-		_p(4,'Optimization="%s"', vc200x.optimization(cfg))
+		vc200x.optimization(cfg)
 
 		if cfg.flags.NoFramePointer then
 			_p(4,'OmitFramePointers="%s"', vc200x.bool(true))
@@ -419,7 +418,7 @@
 		vc200x.basicRuntimeChecks(cfg)
 		vc200x.bufferSecurityCheck(cfg)
 
-		if vc200x.optimization(cfg) ~= 0 then
+		if config.isOptimizedBuild(cfg) then
 			_p(4,'StringPooling="%s"', vc200x.bool(true))
 		end
 
@@ -550,7 +549,7 @@
 
 			_p(4,'SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
 
-			if vc200x.optimization(cfg) ~= 0 then
+			if config.isOptimizedBuild(cfg) then
 				_p(4,'OptimizeReferences="2"')
 				_p(4,'EnableCOMDATFolding="2"')
 			end
@@ -1089,6 +1088,12 @@
 	end
 
 
+	function vc200x.optimization(cfg)
+		local map = { On = 3, Full = 3, Size = 1, Speed = 2 }
+		_p(4,'Optimization="%s"', map[cfg.optimize] or 0)
+	end
+
+
 	function vc200x.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
@@ -1264,16 +1269,6 @@
 
 
 --
--- Translate Premake flags into a Visual Studio optimization value.
---
-
-	function vc200x.optimization(cfg)
-		local map = { On = 3, Size = 1, Speed = 2 }
-		return map[cfg.optimize] or 0
-	end
-
-
---
 -- Return the debugging symbol level for a configuration.
 --
 
@@ -1285,7 +1280,7 @@
 		else
 			-- Edit-and-continue doesn't work for some configurations
 			if cfg.flags.NoEditAndContinue or
-			    vc200x.optimization(cfg) ~= 0 or
+			    config.isOptimizedBuild(cfg) or
 			    cfg.flags.Managed or
 			    cfg.system == "x64" or
 				cfg.platform == "x64"  -- TODO: remove this when the _ng stuff goes live

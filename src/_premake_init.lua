@@ -461,8 +461,10 @@
 		allowed = {
 			"Off",
 			"On",
+			"Debug",
 			"Size",
 			"Speed",
+			"Full",
 		}
 	}
 

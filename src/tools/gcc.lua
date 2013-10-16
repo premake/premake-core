@@ -12,6 +12,8 @@
 
 --
 -- GCC flags for specific systems and architectures.
+-- I am in the process of phasing this out for the more detailed
+-- flag tables below (i.e. gcc.cflags).
 --
 
 	gcc.sysflags = {
@@ -98,6 +100,8 @@
 		optimize = {
 			Off = "-O0",
 			On = "-O2",
+			Debug = "-Og",
+			Full = "-O3",
 			Size = "-Os",
 			Speed = "-O3",
 		},

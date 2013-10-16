@@ -590,3 +590,74 @@
 		]]
 
 	end
+
+
+--
+-- Check the optimization flags.
+--
+
+	function suite.optimization_onOptimize()
+		optimize "On"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				StringPooling="true"
+		]]
+	end
+
+	function suite.optimization_onOptimizeSize()
+		optimize "Size"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="1"
+				StringPooling="true"
+		]]
+	end
+
+	function suite.optimization_onOptimizeSpeed()
+		optimize "Speed"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				StringPooling="true"
+		]]
+	end
+
+	function suite.optimization_onOptimizeFull()
+		optimize "Full"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				StringPooling="true"
+		]]
+	end
+
+	function suite.optimization_onOptimizeOff()
+		optimize "Off"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+		]]
+	end
+
+	function suite.optimization_onOptimizeDebug()
+		optimize "Debug"
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+		]]
+	end

@@ -25,6 +25,14 @@
 		flags = {
 			FatalWarnings = "-Xquit=2",
 		},
+		optimize = {
+			Off = "-O0",
+			On = "-O1",
+			Debug = "-Od",
+			Full = "-O3",
+			Size = "-Os",
+			Speed = "-O2",
+			},
 		warnings = {
 			Extra = "-Xdiag=2",
 		}

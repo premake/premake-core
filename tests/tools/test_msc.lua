@@ -29,6 +29,47 @@
 
 
 --
+-- Check the optimization flags.
+--
+
+	function suite.cflags_onNoOptimize()
+		optimize "Off"
+		prepare()
+		test.isequal("/Od", msc.getcflags(cfg)[1])
+	end
+
+	function suite.cflags_onOptimize()
+		optimize "On"
+		prepare()
+		test.isequal("/Ot", msc.getcflags(cfg)[1])
+	end
+
+	function suite.cflags_onOptimizeSize()
+		optimize "Size"
+		prepare()
+		test.isequal("/O1", msc.getcflags(cfg)[1])
+	end
+
+	function suite.cflags_onOptimizeSpeed()
+		optimize "Speed"
+		prepare()
+		test.isequal("/O2", msc.getcflags(cfg)[1])
+	end
+
+	function suite.cflags_onOptimizeFull()
+		optimize "Full"
+		prepare()
+		test.isequal("/Ox", msc.getcflags(cfg)[1])
+	end
+
+	function suite.cflags_onOptimizeDebug()
+		optimize "Debug"
+		prepare()
+		test.isequal("/Od", msc.getcflags(cfg)[1])
+	end
+
+
+--
 -- Check handling of basic linker flags.
 --
 

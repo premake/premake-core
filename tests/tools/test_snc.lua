@@ -68,6 +68,47 @@
 
 
 --
+-- Check the optimization flags.
+--
+
+	function suite.cflags_onNoOptimize()
+		optimize "Off"
+		prepare()
+		test.isequal({ "-O0" }, snc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimize()
+		optimize "On"
+		prepare()
+		test.isequal({ "-O1" }, snc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeSize()
+		optimize "Size"
+		prepare()
+		test.isequal({ "-Os" }, snc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeSpeed()
+		optimize "Speed"
+		prepare()
+		test.isequal({ "-O2" }, snc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeFull()
+		optimize "Full"
+		prepare()
+		test.isequal({ "-O3" }, snc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOptimizeDebug()
+		optimize "Debug"
+		prepare()
+		test.isequal({ "-Od" }, snc.getcflags(cfg))
+	end
+
+
+--
 -- Turn on exceptions and RTTI by default, to match the other Premake supported toolsets.
 --
 

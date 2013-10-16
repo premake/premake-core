@@ -168,6 +168,45 @@
 		]]
 	end
 
+	function suite.optimization_onOptimizeFull()
+		optimize "Full"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Full</Optimization>
+			<FunctionLevelLinking>true</FunctionLevelLinking>
+			<IntrinsicFunctions>true</IntrinsicFunctions>
+			<MinimalRebuild>false</MinimalRebuild>
+			<StringPooling>true</StringPooling>
+		]]
+	end
+
+	function suite.optimization_onOptimizeOff()
+		optimize "Off"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+		</ClCompile>
+		]]
+	end
+
+	function suite.optimization_onOptimizeDebug()
+		optimize "Debug"
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+		</ClCompile>
+		]]
+	end
+
 	function suite.omitFrames_onNoFramePointer()
 		flags "NoFramePointer"
 		prepare()
