@@ -35,7 +35,7 @@
 		prepare()
 		test.capture [[
 EMBEDFILES += \
-	$(OBJDIR)\MyProject.Hello.resources \
+	$(OBJDIR)/MyProject.Hello.resources \
 
   		]]
   	end
@@ -50,7 +50,7 @@ EMBEDFILES += \
 		prepare()
 		test.capture [[
 EMBEDFILES += \
-	$(OBJDIR)\MyProject.Hello.resources \
+	$(OBJDIR)/MyProject.Hello.resources \
 
   		]]
   	end
