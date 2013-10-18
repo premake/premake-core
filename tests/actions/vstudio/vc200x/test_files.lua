@@ -33,6 +33,7 @@
 		files { "hello.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -49,6 +50,7 @@
 		files { "src/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<Filter
 			Name="src"
 			>
@@ -73,6 +75,7 @@
 		files { "src/greetings/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<Filter
 			Name="src"
 			>
@@ -102,6 +105,7 @@
 		vpaths { ["Source Files"] = "**.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<Filter
 			Name="Source Files"
 			>
@@ -124,6 +128,7 @@
 		files { "hello.lua" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.lua"
 			>
@@ -142,6 +147,7 @@
 		files { "hello.c" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.c"
 			>
@@ -160,6 +166,7 @@
 		files { "hello.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -182,6 +189,7 @@
 		pchsource "afxwin.cpp"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="afxwin.cpp"
 			>
@@ -205,6 +213,7 @@
 		removefiles { "hello.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -226,6 +235,7 @@
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -265,6 +275,7 @@
 			buildoutputs { "$(IntDir)/$(InputName).obj" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.x"
 			>
@@ -292,6 +303,7 @@
 			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.x"
 			>
@@ -317,6 +329,7 @@
 		files { "hello.cpp", "greetings/hello.cpp" }
 		prepare()
 		test.capture [[
+	<Files>
 		<Filter
 			Name="greetings"
 			>
@@ -360,6 +373,7 @@
 
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -384,6 +398,7 @@
 
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -407,6 +422,7 @@
 			optimize "On"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -426,6 +442,7 @@
 			optimize "Size"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -444,6 +461,7 @@
 			optimize "Speed"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -462,6 +480,7 @@
 			optimize "Full"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -480,6 +499,7 @@
 			optimize "Off"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>
@@ -498,6 +518,7 @@
 			optimize "Debug"
 		prepare()
 		test.capture [[
+	<Files>
 		<File
 			RelativePath="hello.cpp"
 			>

@@ -25,88 +25,27 @@
 -- Generate a Visual Studio 200x C++ or Makefile project.
 ---
 
+	vc200x.elements.project = {
+		"xmlElement",
+		"visualStudioProject",
+		"platforms",
+		"toolFiles",
+		"configurations",
+		"references",
+		"files",
+		"globals",
+	}
+
 	function vc200x.generate(prj)
-
-		vc200x.xmlElement()
-		vc200x.visualStudioProject(prj)
-
-		-- Output the list of configuration/architecture pairs used by the project.
-		-- Returns the set of unique architectures, to be used in the configuration
-		-- enumeration loop below.
-
-		local architectures = vc200x.platforms(prj)
-
-		vc200x.toolFiles(prj)
-
-		_p(1,'<Configurations>')
-
-		-- Visual Studio requires each configuration to be paired up with each
-		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
-		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
-		-- that actually are in the project; I'll use this to help identify the
-		-- configurations that *aren't* in the project below.
-
-		local prjcfgs = {}
-		for cfg in project.eachconfig(prj) do
-			local cfgname = vstudio.projectConfig(cfg)
-			prjcfgs[cfgname] = true
-		end
-
-		-- Now enumerate all of the configurations in the project and write
-		-- out their <Configuration> blocks.
-
-		for cfg in project.eachconfig(prj) do
-			local prjcfg = vstudio.projectConfig(cfg)
-
-			-- Visual Studio wants the architectures listed in a specific
-			-- order, so enumerate them that way.
-
-			for _, arch in ipairs(architectures) do
-				local tstcfg = vstudio.projectConfig(cfg, arch)
-
-				-- Does this architecture match the one in the project config
-				-- that I'm trying to write? If so, go ahead and output the
-				-- full <Configuration> block.
-
-				if prjcfg == tstcfg then
-					-- this is a real project configuration
-					vc200x.configuration(cfg)
-					vc200x.tools(cfg)
-					_p(2,'</Configuration>')
-
-				-- Otherwise, check the list of valid configurations I built
-				-- earlier. If this configuration is in the list, then I will
-				-- get to it on another pass of this loop. If it is not in
-				-- the list, then it isn't really part of the project, and I
-				-- need to output a dummy configuration in its place.
-
-				elseif not prjcfgs[tstcfg] then
-					-- this is a fake config to make VS happy
-					vc200x.emptyConfiguration(cfg, arch)
-				end
-
-			end
-		end
-
-		_p(1,'</Configurations>')
-
-		_p(1,'<References>')
-		vc200x.assemblyReferences(prj)
-		vc200x.projectReferences(prj)
-		_p(1,'</References>')
-
-		_p(1,'<Files>')
-		vc200x.files(prj)
-		_p(1,'</Files>')
-
-		_p(1,'<Globals>')
-		_p(1,'</Globals>')
+		premake.callarray(vc200x, vc200x.elements.project, prj)
 		_p('</VisualStudioProject>')
 	end
 
 
 --
--- Write the opening <VisualStudioProject> element of the project file.
+-- Write the opening <VisualStudioProject> element of the project file. These
+-- values are all inter-related, so this isn't as easy as dumping out an XML
+-- element or two.
 --
 
 	function vc200x.visualStudioProject(prj)
@@ -164,29 +103,66 @@
 
 
 --
--- Write out the <Platforms> element, listing each architecture used
--- by the project's configurations.
---
--- @return
---    The list of unique Visual Studio architectures used by the project.
+-- Write out the <Configurations> element group, enumerating each of the
+-- configuration-architecture pairings.
 --
 
-	function vc200x.platforms(prj)
-		_p(1,'<Platforms>')
+	function vc200x.configurations(prj)
+		_p(1,'<Configurations>')
 
-		architectures = {}
+		-- Visual Studio requires each configuration to be paired up with each
+		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
+		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
+		-- that actually are in the project; I'll use this to help identify the
+		-- configurations that *aren't* in the project below.
+
+		local prjcfgs = {}
 		for cfg in project.eachconfig(prj) do
-			local arch = vstudio.archFromConfig(cfg, true)
-			if not table.contains(architectures, arch) then
-				table.insert(architectures, arch)
-				_p(2,'<Platform')
-				_p(3,'Name="%s"', arch)
-				_p(2,'/>')
+			local cfgname = vstudio.projectConfig(cfg)
+			prjcfgs[cfgname] = true
+		end
+
+		-- Build a list of the architectures used in the project
+
+		local architectures = vc200x.architectures(prj)
+
+		-- Now enumerate all of the configurations in the project and write
+		-- out their <Configuration> blocks.
+
+		for cfg in project.eachconfig(prj) do
+			local prjcfg = vstudio.projectConfig(cfg)
+
+			-- Visual Studio wants the architectures listed in a specific
+			-- order, so enumerate them that way.
+
+			for _, arch in ipairs(architectures) do
+				local tstcfg = vstudio.projectConfig(cfg, arch)
+
+				-- Does this architecture match the one in the project config
+				-- that I'm trying to write? If so, go ahead and output the
+				-- full <Configuration> block.
+
+				if prjcfg == tstcfg then
+					-- this is a real project configuration
+					vc200x.configuration(cfg)
+					vc200x.tools(cfg)
+					_p(2,'</Configuration>')
+
+				-- Otherwise, check the list of valid configurations I built
+				-- earlier. If this configuration is in the list, then I will
+				-- get to it on another pass of this loop. If it is not in
+				-- the list, then it isn't really part of the project, and I
+				-- need to output a dummy configuration in its place.
+
+				elseif not prjcfgs[tstcfg] then
+					-- this is a fake config to make VS happy
+					vc200x.emptyConfiguration(cfg, arch)
+				end
+
 			end
 		end
 
-		_p(1,'</Platforms>')
-		return architectures
+		_p(1,'</Configurations>')
 	end
 
 
@@ -234,6 +210,37 @@
 		end
 
 		_p(2,'</Configuration>')
+	end
+
+
+--
+-- Write out the <References> element group.
+--
+
+	vc200x.elements.references = {
+		"assemblyReferences",
+		"projectReferences",
+	}
+
+	function vc200x.references(prj)
+		_p(1,'<References>')
+		premake.callarray(vc200x, vc200x.elements.references, prj)
+		_p(1,'</References>')
+	end
+
+
+--
+-- I don't do anything with globals yet, but here it is if you want to
+-- extend it.
+--
+
+	vc200x.elements.globals = {
+	}
+
+	function vc200x.globals(prj)
+		_p(1,'<Globals>')
+		premake.callarray(vc200x, vc200x.elements.globals, prj)
+		_p(1,'</Globals>')
 	end
 
 
@@ -746,6 +753,7 @@
 ---------------------------------------------------------------------------
 
 	function vc200x.files(prj)
+		_p(1,'<Files>')
 
 		-- Fetch the source tree, sorted how Visual Studio likes it: alpha
 		-- sorted, with any leading ../ sequences ignored. At the top level
@@ -803,6 +811,7 @@
 
 		}, false, 2)
 
+		_p(1,'</Files>')
 	end
 
 
@@ -889,6 +898,119 @@
 
 	end
 
+
+---------------------------------------------------------------------------
+--
+-- Support functions
+--
+---------------------------------------------------------------------------
+
+--
+-- Build a list architectures which are used by a project.
+--
+-- @param prj
+--    The project under consideration.
+-- @return
+--    An array of Visual Studio architectures.
+--
+
+	function vc200x.architectures(prj)
+		architectures = {}
+		for cfg in project.eachconfig(prj) do
+			local arch = vstudio.archFromConfig(cfg, true)
+			if not table.contains(architectures, arch) then
+				table.insert(architectures, arch)
+			end
+		end
+		return architectures
+	end
+
+
+--
+-- Return a properly cased boolean for the current Visual Studio version.
+--
+
+	function vc200x.bool(value)
+		if (_ACTION < "vs2005") then
+			return iif(value, "TRUE", "FALSE")
+		else
+			return iif(value, "true", "false")
+		end
+	end
+
+
+--
+-- Returns the list of libraries required to link a specific configuration,
+-- formatted for Visual Studio's XML.
+--
+
+	function vc200x.links(cfg, explicit)
+		local scope = iif(explicit, "all", "system")
+		local links = config.getlinks(cfg, scope, "fullpath")
+		for i, link in ipairs(links) do
+			if link:find(" ", 1, true) then
+				link = '"' .. link .. '"'
+			end
+			links[i] = path.translate(link)
+		end
+		return table.concat(links, " ")
+	end
+
+
+--
+-- Returns the correct name for the linker tool element, based on
+-- the configuration target system.
+--
+
+	function vc200x.linkerTool(cfg)
+		if cfg.kind == premake.STATICLIB then
+			return "VCLibrarianTool"
+		elseif cfg.system == premake.XBOX360 then
+			return "VCX360LinkerTool"
+		else
+			return "VCLinkerTool"
+		end
+	end
+
+
+--
+-- Return the debugging symbol level for a configuration.
+--
+
+	function vc200x.symbols(cfg)
+		if not cfg.flags.Symbols then
+			return 0
+		elseif cfg.debugformat == "c7" then
+			return 1
+		else
+			-- Edit-and-continue doesn't work for some configurations
+			if cfg.flags.NoEditAndContinue or
+				config.isOptimizedBuild(cfg) or
+			    cfg.flags.Managed or
+			    cfg.system == "x64" or
+				cfg.platform == "x64"  -- TODO: remove this when the _ng stuff goes live
+			then
+				return 3
+			else
+				return 4
+			end
+		end
+	end
+
+
+--
+-- Output the correct project version attribute for the current action.
+--
+
+	function vc200x.version()
+		local map = {
+			vs2002 = '7.0',
+			vs2003 = '7.1',
+			vs2005 = '8.0',
+			vs2008 = '9.0'
+		}
+		_p(1,'Version="%s0"', map[_ACTION])
+	end
 
 
 ---------------------------------------------------------------------------
@@ -1098,6 +1220,17 @@
 	end
 
 
+	function vc200x.platforms(prj)
+		_p(1,'<Platforms>')
+		table.foreachi(vc200x.architectures(prj), function(arch)
+			_p(2,'<Platform')
+			_p(3,'Name="%s"', arch)
+			_p(2,'/>')
+		end)
+		_p(1,'</Platforms>')
+	end
+
+
 	function vc200x.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
@@ -1216,100 +1349,3 @@
 	function vc200x.xmlElement()
 		_p('<?xml version="1.0" encoding="Windows-1252"?>')
 	end
-
-
----------------------------------------------------------------------------
---
--- Support functions
---
----------------------------------------------------------------------------
-
---
--- Return a properly cased boolean constant for the currently
--- targeted Visual Studio version.
---
-
-	function vc200x.bool(value)
-		if (_ACTION < "vs2005") then
-			return iif(value, "TRUE", "FALSE")
-		else
-			return iif(value, "true", "false")
-		end
-	end
-
-
---
--- Returns the list of libraries required to link a specific configuration,
--- formatted for Visual Studio's XML.
---
-
-	function vc200x.links(cfg, explicit)
-		local scope = iif(explicit, "all", "system")
-		local links = config.getlinks(cfg, scope, "fullpath")
-		for i, link in ipairs(links) do
-			if link:find(" ", 1, true) then
-				link = '"' .. link .. '"'
-			end
-			links[i] = path.translate(link)
-		end
-		return table.concat(links, " ")
-	end
-
-
---
--- Returns the correct name for the linker tool element, based on
--- the configuration target system.
---
-
-	function vc200x.linkerTool(cfg)
-		if cfg.kind == premake.STATICLIB then
-			return "VCLibrarianTool"
-		elseif cfg.system == premake.XBOX360 then
-			return "VCX360LinkerTool"
-		else
-			return "VCLinkerTool"
-		end
-	end
-
-
---
--- Return the debugging symbol level for a configuration.
---
-
-	function vc200x.symbols(cfg)
-		if not cfg.flags.Symbols then
-			return 0
-		elseif cfg.debugformat == "c7" then
-			return 1
-		else
-			-- Edit-and-continue doesn't work for some configurations
-			if cfg.flags.NoEditAndContinue or
-			    config.isOptimizedBuild(cfg) or
-			    cfg.flags.Managed or
-			    cfg.system == "x64" or
-				cfg.platform == "x64"  -- TODO: remove this when the _ng stuff goes live
-			then
-				return 3
-			else
-				return 4
-			end
-		end
-	end
-
-
---
--- Output the correct project version attribute for the current action.
---
-
-	function vc200x.version()
-		local map = {
-			vs2002 = '7.0',
-			vs2003 = '7.1',
-			vs2005 = '8.0',
-			vs2008 = '9.0'
-		}
-		_p(1,'Version="%s0"', map[_ACTION])
-	end
-
-
-
