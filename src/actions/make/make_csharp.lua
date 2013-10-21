@@ -108,7 +108,7 @@
 			onleaf = function(node, depth)
 				local value = selector(node)
 				if value then
-					_x('\t%s \\', path.translate(value))
+					_x('\t%s \\', value)
 				end
 			end
 		})

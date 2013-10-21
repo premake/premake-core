@@ -40,6 +40,21 @@ SOURCES += \
   		]]
   	end
 
+--
+-- Path delimiter uses slash instead of backslash
+--
+
+	function suite.doesUseProperPathDelimiter()
+		files { "Folder\\Hello.cs", "Folder/World.cs" }
+		prepare()
+		test.capture [[
+SOURCES += \
+	Folder/Hello.cs \
+	Folder/World.cs \
+
+		]]
+	end
+
 
 --
 -- Files that should not be compiled should be excluded.
@@ -72,4 +87,3 @@ SOURCES += \
 
   		]]
   	end
-
