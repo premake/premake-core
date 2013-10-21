@@ -10,6 +10,11 @@ PREMAKE BUILD INSTRUCTIONS
  Build the release configuration (the default for the makefiles) and you
  will find the executable in bin/release ready to go.
 
+    $ cd build/gmake.unix
+	$ make
+
+ The binaries will be left in the bin/release directory.
+
  If you want to use a debug build instead, or if you pulled the sources
  from BitBucket instead of a SourceForge release, or if you plan on
  making changes to Premake, read the next section to learn how to
@@ -17,7 +22,7 @@ PREMAKE BUILD INSTRUCTIONS
 
  If you find all of this very confusing and need some help, see the end
  of this document for contact information. I'll be glad to help. And if
- you have any suggestions for improving this process, we'd be glad to
+ you have any suggestions for improving this process, I'd be glad to
  hear them too.
 
 
