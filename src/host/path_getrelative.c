@@ -38,6 +38,11 @@ static void normalize(char* buffer, const char* path)
 		++src;
 	}
 
+    /* remove any trailing slashes */
+    for (--src; src > buffer && *src == '/'; --src) {
+         *src = '\0';
+    }
+
 	*dst = '\0';
 }
 

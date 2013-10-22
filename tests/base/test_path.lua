@@ -209,6 +209,10 @@
 		test.isequal("..", path.getrelative("/a///b/c","/a/b"))
 	end
 
+    function suite.ignoresTrailingSlashes()
+         test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
+    end
+
 
 --
 -- path.isabsolute() tests
