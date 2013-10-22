@@ -520,15 +520,27 @@
 --
 
 	function config.mapFlags(cfg, mappings)
+
+		-- for each field included in the map...
+
 		local flags = {}
 		for field, map in pairs(mappings) do
-			local value = cfg[field]
-			table.foreachi(value, function(v)
-				local flag = map[v]
+
+			-- ...pull that field's list of values from the config, and pass each one
+			-- through the mapping, and add it to my list if a value is returned
+			local values = cfg[field]
+			table.foreachi(values, function(value)
+				local flag = map[value]
+
+				if type(flag) == "function" then
+					flag = flag(cfg)
+				end
+
 				if flag then
 					table.insertflat(flags, flag)
 				end
 			end)
 		end
+
 		return flags
 	end
