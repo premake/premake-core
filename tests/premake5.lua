@@ -64,7 +64,6 @@
 	dofile("project/test_eachconfig.lua")
 	dofile("project/test_filename.lua")
 	dofile("project/test_getconfig.lua")
-	dofile("project/test_hasconfig.lua")
 	dofile("project/test_location.lua")
 	dofile("project/test_vpaths.lua")
 

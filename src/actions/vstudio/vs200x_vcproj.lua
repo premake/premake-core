@@ -48,56 +48,19 @@
 -- element or two.
 --
 
+	vc200x.elements.projectAttributes = {
+		"projectType",
+		"version",
+		"projectName",
+		"projectGUID",
+		"rootNamespace",
+		"keyword",
+		"targetFrameworkVersion"
+	}
+
 	function vc200x.visualStudioProject(prj)
 		_p('<VisualStudioProject')
-		_p(1,'ProjectType="Visual C++"')
-		vc200x.version()
-		_x(1,'Name="%s"', prj.name)
-		_p(1,'ProjectGUID="{%s}"', prj.uuid)
-
-		-- try to determine what kind of targets we're building here
-		local isWin, isPS3, isManaged, isMakefile
-		for cfg in project.eachconfig(prj) do
-			if cfg.system == premake.WINDOWS then
-				isWin = true
-			end
-			if cfg.system == premake.PS3 then
-				isPS3 = true
-			end
-			if cfg.flags.Managed then
-				isManaged = true
-			end
-			if vstudio.isMakefile(cfg) then
-				isMakefile = true
-			end
-		end
-
-		if isWin then
-
-			-- Technically, this should be skipped for pure makefile projects that
-			-- do not contain any empty configurations. But I need to figure out a
-			-- a good way to check the empty configuration bit first.
-
-			if _ACTION > "vs2003" then
-				_x(1,'RootNamespace="%s"', prj.name)
-			end
-
-			local keyword = "Win32Proj"
-			if isManaged then
-				keyword = "ManagedCProj"
-			end
-			if isMakefile then
-				keyword = "MakeFileProj"
-			end
-			_p(1,'Keyword="%s"', keyword)
-		end
-
-		local version = 0
-		if isMakefile or not isWin then
-			version = 196613
-		end
-		_p(1,'TargetFrameworkVersion="%d"', version)
-
+		premake.callarray(vc200x, vc200x.elements.projectAttributes, prj)
 		_p(1,'>')
 	end
 
@@ -998,21 +961,6 @@
 	end
 
 
---
--- Output the correct project version attribute for the current action.
---
-
-	function vc200x.version()
-		local map = {
-			vs2002 = '7.0',
-			vs2003 = '7.1',
-			vs2005 = '8.0',
-			vs2008 = '9.0'
-		}
-		_p(1,'Version="%s0"', map[_ACTION])
-	end
-
-
 ---------------------------------------------------------------------------
 --
 -- Handlers for individual project elements
@@ -1179,6 +1127,27 @@
 	end
 
 
+	function vc200x.keyword(prj)
+		local windows, managed, makefile
+		for cfg in project.eachconfig(prj) do
+			if cfg.system == premake.WINDOWS then windows = true end
+			if cfg.flags.Managed then managed = true end
+			if vstudio.isMakefile(cfg) then makefile = true end
+		end
+
+		if windows then
+			local keyword = "Win32Proj"
+			if managed then
+				keyword = "ManagedCProj"
+			end
+			if makefile then
+				keyword = "MakeFileProj"
+			end
+			_p(1,'Keyword="%s"', keyword)
+		end
+	end
+
+
 	function vc200x.minimalRebuild(cfg)
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
@@ -1244,6 +1213,16 @@
 	end
 
 
+	function vc200x.projectGUID(prj)
+		_p(1,'ProjectGUID="{%s}"', prj.uuid)
+	end
+
+
+	function vc200x.projectName(prj)
+		_x(1,'Name="%s"', prj.name)
+	end
+
+
 	function vc200x.projectReferences(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
@@ -1271,6 +1250,26 @@
 	end
 
 
+	function vc200x.projectType(prj)
+		_p(1,'ProjectType="Visual C++"')
+	end
+
+
+	function vc200x.rootNamespace(prj)
+		local hasWindows = project.hasConfig(prj, function(cfg)
+			return cfg.system == premake.WINDOWS
+		end)
+
+		-- Technically, this should be skipped for pure makefile projects that
+		-- do not contain any empty configurations. But I need to figure out a
+		-- a good way to check the empty configuration bit first.
+
+		if hasWindows and _ACTION > "vs2003" then
+			_x(1,'RootNamespace="%s"', prj.name)
+		end
+	end
+
+
 	function vc200x.runtimeLibrary(cfg)
 		local runtimes = {
 			StaticRelease = 0,
@@ -1286,6 +1285,21 @@
 		if cfg.flags.NoRTTI and not cfg.flags.Managed then
 			_p(4,'RuntimeTypeInfo="false"')
 		end
+	end
+
+
+	function vc200x.targetFrameworkVersion(prj)
+		local windows, makefile
+		for cfg in project.eachconfig(prj) do
+			if cfg.system == premake.WINDOWS then windows = true end
+			if vstudio.isMakefile(cfg) then makefile = true end
+		end
+
+		local version = 0
+		if makefile or not windows then
+			version = 196613
+		end
+		_p(1,'TargetFrameworkVersion="%d"', version)
 	end
 
 
@@ -1321,6 +1335,17 @@
 		then
 			_p(depth, 'UsePrecompiledHeader="1"')
 		end
+	end
+
+
+	function vc200x.version(prj)
+		local map = {
+			vs2002 = '7.0',
+			vs2003 = '7.1',
+			vs2005 = '8.0',
+			vs2008 = '9.0'
+		}
+		_p(1,'Version="%s0"', map[_ACTION])
 	end
 
 

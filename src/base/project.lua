@@ -773,17 +773,23 @@
 
 
 --
--- Determines if a project contains a particular build configuration/platform pair.
+-- Determines if project contains a configuration meeting certain criteria.
+--
+-- @param prj
+--    The project to query.
+-- @param func
+--    A test function. Takes a project configuration as an argument and
+--    returns a boolean result of the test.
+-- @return
+--    True if the test function returned true.
 --
 
-	function project.hasconfig(prj, buildcfg, platform)
-		if buildcfg and not prj.configurations[buildcfg] then
-			return false
+	function project.hasConfig(prj, func)
+		for cfg in project.eachconfig(prj) do
+			if func(cfg) then
+				return true
+			end
 		end
-		if platform and not prj.platforms[platform] then
-			return false
-		end
-		return true
 	end
 
 
