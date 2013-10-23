@@ -279,7 +279,7 @@
 	api.register {
 		name = "forceincludes",
 		scope = "config",
-		kind = "file-list",
+		kind = "mixed-list",
 		tokens = true,
 	}
 
