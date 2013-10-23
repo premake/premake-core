@@ -24,6 +24,9 @@
 	cs2005.elements.project = {
 		"projectElement",
 		"projectProperties",
+		"configurations",
+		"applicationIcon",
+		"assemblyReferences",
 	}
 
 	function cs2005.generate(prj)
@@ -31,13 +34,6 @@
 		io.utf8()
 
 		premake.callarray(cs2005, cs2005.elements.project, prj)
-
-		for cfg in project.eachconfig(prj) do
-			cs2005.configurationProperties(cfg)
-		end
-
-		cs2005.applicationIcon(prj)
-		cs2005.assemblyReferences(prj)
 
 		_p(1,'<ItemGroup>')
 		cs2005.files(prj)
@@ -104,14 +100,25 @@
 
 
 --
--- Write out the settings for an individual configuration.
+-- Write out the settings for the project configurations.
 --
 
-	function cs2005.configurationProperties(cfg)
-		cs2005.propertyGroup(cfg)
-		cs2005.debugProps(cfg)
-		cs2005.outputProps(cfg)
-		cs2005.compilerProps(cfg)
+	cs2005.elements.configuration = {
+		"propertyGroup",
+		"debugProps",
+		"outputProps",
+		"compilerProps",
+	}
+
+	function cs2005.configurations(prj)
+		for cfg in project.eachconfig(prj) do
+			print(cfg.shortname)
+			cs2005.configuration(cfg)
+		end
+	end
+
+	function cs2005.configuration(cfg)
+		premake.callarray(cs2005, cs2005.elements.configuration, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
