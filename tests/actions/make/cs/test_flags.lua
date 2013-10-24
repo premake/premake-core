@@ -34,7 +34,7 @@
 	function suite.isEmptyAssignment_onNoSettings()
 		prepare()
 		test.capture [[
-  FLAGS =
+  FLAGS = /noconfig
   		]]
   	end
 
@@ -47,6 +47,6 @@
 		icon "MyProject.ico"
 		prepare()
 		test.capture [[
-  FLAGS = /win32icon:"MyProject.ico"
+  FLAGS = /noconfig /win32icon:"MyProject.ico"
   		]]
   	end
