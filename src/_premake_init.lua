@@ -817,6 +817,10 @@
 --
 -----------------------------------------------------------------------------
 
+	-- Setting a default language makes some validation easier later
+
+	language "C++"
+
 	-- Use Posix-style target naming by default, since it is the most common.
 
 	configuration { "SharedLib" }

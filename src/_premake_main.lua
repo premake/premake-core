@@ -16,13 +16,19 @@
 
 	function _premake_main()
 
+		-- Clear out any configuration scoping left over from initialization
+
+		configuration {}
+
 		-- Seed the random number generator so actions don't have to do it themselves
 
 		math.randomseed(os.time())
 
-		-- Look for and run the system-wide configuration script
+		-- Look for and run the system-wide configuration script; make sure any
+		-- configuration scoping gets cleared before continuing
 
 		dofileopt(_OPTIONS["systemscript"] or { "premake5-system.lua", "premake-system.lua" })
+		configuration {}
 
 		-- The "next-gen" actions have now replaced their deprecated counterparts.
 		-- Provide a warning for a little while before I remove them entirely.
@@ -53,7 +59,6 @@
 			return 1
 		end
 
-
 		-- If no action was specified, show a short help message
 
 		if (not _ACTION) then
@@ -61,13 +66,11 @@
 			return 1
 		end
 
-
 		-- If there wasn't a project script I've got to bail now
 
 		if not hasScript then
 			error("No Premake script (premake5.lua) found!", 0)
 		end
-
 
 		-- Validate the command-line arguments. This has to happen after the
 		-- script has run to allow for project-specific options
@@ -80,19 +83,17 @@
 		ok, err = premake.option.validate(_OPTIONS)
 		if not ok then error("Error: " .. err, 0) end
 
-
 		-- "Bake" the project information, preparing it for use by the action
 
 		print("Building configurations...")
 		premake.solution.bakeall()
 
-
 		-- Sanity check the current project setup
 
 		premake.validate()
 
-
 		-- Hand over control to the action
+
 		printf("Running action '%s'...", action.trigger)
 		premake.action.call(action.trigger)
 

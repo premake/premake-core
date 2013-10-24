@@ -36,11 +36,6 @@
 		cset.uuid = os.uuid(name)
 		prj.configset = cset
 
-		-- Default the language to C++. This might come back to bite me later, but
-		-- let's see how it goes (why did I need to do this? I don't remember.)
-
-		cset.language = premake.CPP
-
 		-- attach a type descriptor
 		setmetatable(prj, {
 			__type = "project",

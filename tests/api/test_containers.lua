@@ -68,3 +68,26 @@
 		test.isequal(prj, api.scope.project)
 	end
 
+
+--
+-- The "*" name should activate the parent scope.
+--
+
+	function suite.solution_onStar()
+		project("MyProject")
+		group("MyGroup")
+		configuration("Debug")
+		solution "*"
+		test.isnil(api.scope.solution)
+		test.isnil(api.scope.project)
+		test.isnil(api.scope.group)
+	end
+
+	function suite.project_onStar()
+		project("MyProject")
+		group("MyGroup")
+		configuration("Debug")
+		project "*"
+		test.isequal(sln, api.scope.solution)
+		test.isnil(api.scope.project)
+	end

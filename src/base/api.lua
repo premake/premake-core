@@ -186,7 +186,7 @@
 	function api.gettarget(scope)
 		local target
 		if scope == "project" then
-			target = api.scope.project or api.scope.solution
+			target = api.scope.project or api.scope.solution or api.scope.root
 		else
 			target = api.scope.configuration or api.scope.root
 		end
@@ -645,6 +645,8 @@
 			return api.scope.configuration
 		end
 
+		if terms == "*" then terms = nil end
+
 		local container = api.scope.project or api.scope.solution or api.scope.root
 		configset.addblock(container.configset, {terms}, os.getcwd())
 
@@ -661,6 +663,7 @@
 --
 
 	function group(name)
+		if name == "*" then name = nil end
 		api.scope.group = name
 	end
 
@@ -691,11 +694,14 @@
 			error("no active solution", 2)
 		end
 
-		local prj = sln.projects[name]
-		if not prj then
-			prj = premake.project.new(sln, name)
-			prj.group = api.scope.group or ""
-			premake.solution.addproject(sln, prj)
+		local prj
+		if name ~= "*" then
+			prj = sln.projects[name]
+			if not prj then
+				prj = premake.project.new(sln, name)
+				prj.group = api.scope.group or ""
+				premake.solution.addproject(sln, prj)
+			end
 		end
 
 		api.scope.project = prj
@@ -746,9 +752,15 @@
 			end
 		end
 
-		local sln = premake.solution.get(name)
-		if not sln then
-			sln = premake.solution.new(name)
+		if name == "*" then
+			api.scope.solution = nil
+		else
+
+		end
+
+		local sln
+		if name ~= "*" then
+			sln = premake.solution.get(name) or premake.solution.new(name)
 		end
 
 		api.scope.solution = sln
