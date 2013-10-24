@@ -220,7 +220,7 @@
 
 	function make.csLinkCmd(cfg, toolset)
 		local deps = premake.esc(config.getlinks(cfg, "dependencies", "fullpath"))
-		_p('  DEPENDS = %s', table.concat(deps))
+		_p('  DEPENDS =%s', make.list(deps))
 		_p('  REFERENCES = %s', table.implode(deps, "/r:", "", " "))
 	end
 
