@@ -286,6 +286,7 @@
 		"basicRuntimeChecks",
 		"clCompilePreprocessorDefinitions",
 		"clCompileAdditionalIncludeDirectories",
+		"clCompileAdditionalUsingDirectories",
 		"forceIncludes",
 		"debugInformationFormat",
 		"programDataBaseFileName",
@@ -657,6 +658,14 @@
 		end
 	end
 
+	function vc2010.additionalUsingDirectories(cfg)
+		if #cfg.usingdirs > 0 then
+			local dirs = project.getrelative(cfg.project, cfg.usingdirs)
+			dirs = path.translate(table.concat(dirs, ";"))
+			_x(3,'<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
+		end
+	end	
+
 
 	function vc2010.additionalCompileOptions(cfg, condition)
 		if #cfg.buildoptions > 0 then
@@ -696,6 +705,10 @@
 	function vc2010.clCompileAdditionalIncludeDirectories(cfg)
 		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
 	end
+
+	function vc2010.clCompileAdditionalUsingDirectories(cfg)
+		vc2010.additionalUsingDirectories(cfg, cfg.usingdirs)
+	end	
 
 
 	function vc2010.clCompilePreprocessorDefinitions(cfg)

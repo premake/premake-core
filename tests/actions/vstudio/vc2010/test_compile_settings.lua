@@ -268,6 +268,22 @@
 		]]
 	end
 
+
+--
+-- If include directories are specified, the <AdditionalUsingDirectories> should be added.
+--
+
+	function suite.additionalUsingDirs_onUsingDirs()
+		usingdirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<AdditionalUsingDirectories>include\lua;include\zlib;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+		]]
+	end	
+
 --
 -- Turn off minimal rebuilds if the NoMinimalRebuild flag is set.
 --
