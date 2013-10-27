@@ -7,7 +7,8 @@
 	premake.vstudio.vs2010 = {}
 	local vs2010 = premake.vstudio.vs2010
 	local vstudio = premake.vstudio
-
+	local project = premake.project
+	local tree = premake.tree
 
 
 ---
@@ -41,7 +42,11 @@
 		else
 			premake.generate(prj, ".vcxproj", vstudio.vc2010.generate)
 			premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generateUser)
-			premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
+
+			-- Only generate a filters file if the source tree actually has subfolders
+			if tree.hasbranches(project.getsourcetree(prj)) then
+				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
+			end
 		end
 	end
 
