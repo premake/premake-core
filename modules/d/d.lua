@@ -3,7 +3,7 @@
 -- Create a D namespace to isolate the additions
 --
 	premake.extensions.d = {}
-	local project = premake5.project
+	local project = premake.project
 
 	local d = premake.extensions.d
 	d.support_url = "https://bitbucket.org/premakeext/d/wiki/Home"
@@ -36,9 +36,9 @@
 --
 	newoption
 	{
-		trigger	 = "dc",
-		value	   = "VALUE",
-		description = "Choose a D compiler",
+		trigger		= "dc",
+		value		= "VALUE",
+		description	= "Choose a D compiler",
 		allowed = {
 			{ "dmd", "Digital Mars (dmd)" },
 			{ "gdc", "GNU GDC (gdc)" },
@@ -47,33 +47,37 @@
 	}
 
 --
--- Return the appropriate tool interface, based on the target language and
--- any relevant command-line options.
+-- Add flags used by the D language
 --
-
-	premake.override(premake, "gettool", function(oldfn, cfg)
-		if project.iscpp(cfg) then
-			if _OPTIONS.cc then
-				return premake[_OPTIONS.cc]
+	local function addflags(newflags)
+		local flags = premake.fields["flags"];
+		if flags ~= nil then
+			for k,v in pairs(newflags) do
+				if flags.allowed[v] == nil then
+					table.insert( flags.allowed, v )
+				end
 			end
-			local action = premake.action.current()
-			if action.valid_tools then
-				return premake[action.valid_tools.cc[1]]
-			end
-			return premake.gcc
-		elseif project.isd(cfg) then
-			if _OPTIONS.dc then
-				return premake[_OPTIONS.dc]
-			end
-			local action = premake.action.current()
-			if action.valid_tools then
-				return premake[action.valid_tools.dc[1]]
-			end
-			return premake.dmd
-		else
-			return premake.dotnet
 		end
-	end)
+	end
+
+	addflags {
+		"SymbolsLikeC",
+		"Deprecated",
+		"Documentation",
+		"PIC",
+		"NoBoundsCheck",
+		"UnitTest",
+		"GenerateJSON",
+		"Verbose",
+		"Release",
+		"Inline",
+		"GenerateHeader",
+		"GenerateMap",
+		"RetainPaths",
+		"Profile",
+		"Quiet",
+		"CodeCoverage"
+	}
 
 --
 -- Patch the project structure to allow the determination of project type
@@ -82,7 +86,7 @@
 --
 
 	function project.isd(prj)
-		return string.lower( prj.language ) == string.lower( premake.D )
+		return prj.language == premake.D
 	end
 
 --
@@ -90,15 +94,6 @@
 --
 	function path.isdfile(fname)
 		return path.hasextension(fname, { ".d", ".di" })
-	end
-
---
--- Returns true if the project uses the D language.
---
-
-	function premake.isdproject(prj)
-		local language = prj.language or prj.solution.language
-		return language == "D"
 	end
 
 --
@@ -127,4 +122,3 @@
 		require( v )
 		d.printf( "Loaded D action '%s.lua'", v )
 	end
-

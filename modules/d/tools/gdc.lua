@@ -7,15 +7,15 @@
 	premake.tools.gdc = { }
 
 	local gdc = premake.tools.gdc
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 	
 
 	--
 	-- Set default tools
 	--
 
-	gdc.dc    = "gdc"
+	gdc.dc = "gdc"
 
 
 	--
@@ -24,19 +24,19 @@
 
 	local flags =
 	{
-		ExtraWarnings   = "-w",
-		Optimize        = "-O2",
-		Symbols         = "-g -fdebug",
-		SymbolsLikeC    = "-fdebug-c",
-		Deprecated      = "-fdeprecated",
-		Release         = "-frelease",
-		Documentation   = "-fdoc",
-		PIC             = "-fPIC",
-		NoBoundsCheck   = "-fno-bounds-check",
-		NoFloat         = "-nofloat",
-		Test            = "-funittest",
-		GenerateJSON    = "-fXf",
-		Verbose         = "-fd-verbose"
+		ExtraWarnings	= "-w",
+		Optimize		= "-O2",
+		Symbols			= "-g -fdebug",
+		SymbolsLikeC	= "-fdebug-c",
+		Deprecated		= "-fdeprecated",
+		Release			= "-frelease",
+		Documentation	= "-fdoc",
+		PIC				= "-fPIC",
+		NoBoundsCheck	= "-fno-bounds-check",
+		NoFloat			= "-nofloat",
+		UnitTest		= "-funittest",
+		GenerateJSON	= "-fXf",
+		Verbose			= "-fd-verbose"
 	}
 
 
@@ -116,7 +116,7 @@
 			end
 		end
 
-		if premake.config.isdebugbuild( cfg ) then
+		if premake.config.isDebugBuild( cfg ) then
 			table.insert( f, flags.Symbols )
 		else
 			table.insert( f, flags.Release )

@@ -7,8 +7,8 @@
 	premake.tools.ldc = { }
 
 	local ldc = premake.tools.ldc
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 	
     local d = premake.extensions.d
 
@@ -17,25 +17,25 @@
 -- Set default tools
 --
 
-	ldc.dc    = "ldc2"
+	ldc.dc = "ldc2"
 	ldc.namestyle = "posix"
 
 --
--- Translation of Premake flags into GCC flags
+-- Translation of Premake flags into LDC flags
 --
 
 	local flags =
 	{
-		ExtraWarnings   = "-w",
-		Optimize        = "-O2",
-		Symbols         = "-g",
-		SymbolsLikeC    = "-gc",
-		Release         = "-release",
-		Documentation   = "-D",
-		GenerateHeader  = "-H",
-		RetainPaths     = "-op",
-		Verbose         = "-v",
-		Test            = "-unittest",
+		ExtraWarnings	= "-w",
+		Optimize		= "-O2",
+		Symbols			= "-g",
+		SymbolsLikeC	= "-gc",
+		Release			= "-release",
+		Documentation	= "-D",
+		GenerateHeader	= "-H",
+		RetainPaths		= "-op",
+		Verbose			= "-v",
+		UnitTest		= "-unittest",
 	}
 
 
@@ -112,7 +112,7 @@
 			table.insert( f, "-relocation-model=pic" )
 		end
 
-		if premake.config.isdebugbuild( cfg ) then
+		if premake.config.isDebugBuild( cfg ) then
 			table.insert( f, "-d-debug" )
 		else
 			table.insert( f, "-release" )

@@ -6,17 +6,17 @@
 
 	local tdmd = {}
 
-	local project = premake5.project
-	local config = premake5.config
+	local project = premake.project
+	local config = premake.config
 	
 --
 -- Set default tools
 --
 	tdmd.gcc = {}
-    tdmd.gcc.dc = "dmd"
+	tdmd.gcc.dc = "dmd"
 
 	tdmd.optlink = {}
-    tdmd.optlink.dc = "dmd"
+	tdmd.optlink.dc = "dmd"
 
 
 --
@@ -25,25 +25,25 @@
 
 	local flags =
 	{
-		ExtraWarnings   = "-w",
-		Optimize        = "-O",
-		Symbols         = "-g",
-		SymbolsLikeC    = "-gc",
-		Release         = "-release",
-		Documentation   = "-D",
--- GCC:		PIC             = "-fPIC",
-		Inline          = "-inline",
-		GenerateHeader  = "-H",
-		GenerateMap     = "-map",
-		NoBoundsCheck   = "-noboundscheck",
-		NoFloat         = "-nofloat",
-		RetainPaths     = "-op",
-		Profile         = "-profile",
-		Quiet           = "-quiet",
-		Verbose         = "-v",
-		Test            = "-unittest",
-		GenerateJSON    = "-X",
-		CodeCoverage    = "-cov",
+		ExtraWarnings	= "-w",
+		Optimize		= "-O",
+		Symbols			= "-g",
+		SymbolsLikeC	= "-gc",
+		Release			= "-release",
+		Documentation	= "-D",
+-- GCC:	PIC				= "-fPIC",
+		Inline			= "-inline",
+		GenerateHeader	= "-H",
+		GenerateMap		= "-map",
+		NoBoundsCheck	= "-noboundscheck",
+		NoFloat			= "-nofloat",
+		RetainPaths		= "-op",
+		Profile			= "-profile",
+		Quiet			= "-quiet",
+		Verbose			= "-v",
+		UnitTest		= "-unittest",
+		GenerateJSON	= "-X",
+		CodeCoverage	= "-cov",
 	}
 
 
@@ -126,7 +126,7 @@
 			end
 		end
 
-		if premake.config.isdebugbuild( cfg ) then
+		if premake.config.isDebugBuild( cfg ) then
 			table.insert( flags, "-debug" )
 		else
 			table.insert( flags, "-release" )
