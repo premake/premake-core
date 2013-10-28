@@ -71,42 +71,34 @@
 --
 
 	function vc200x.configurations(prj)
-		_p(1,'<Configurations>')
-
 		-- Visual Studio requires each configuration to be paired up with each
 		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
 		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
 		-- that actually are in the project; I'll use this to help identify the
 		-- configurations that *aren't* in the project below.
 
-		local prjcfgs = {}
+		local isRealConfig = {}
 		for cfg in project.eachconfig(prj) do
-			local cfgname = vstudio.projectConfig(cfg)
-			prjcfgs[cfgname] = true
+			local name = vstudio.projectConfig(cfg)
+			isRealConfig[name] = true
 		end
-
-		-- Build a list of the architectures used in the project
 
 		local architectures = vc200x.architectures(prj)
 
 		-- Now enumerate all of the configurations in the project and write
 		-- out their <Configuration> blocks.
 
+		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
-			local prjcfg = vstudio.projectConfig(cfg)
-
-			-- Visual Studio wants the architectures listed in a specific
-			-- order, so enumerate them that way.
-
+			local thisName = vstudio.projectConfig(cfg)
 			for _, arch in ipairs(architectures) do
-				local tstcfg = vstudio.projectConfig(cfg, arch)
+				local testName = vstudio.projectConfig(cfg, arch)
 
 				-- Does this architecture match the one in the project config
 				-- that I'm trying to write? If so, go ahead and output the
 				-- full <Configuration> block.
 
-				if prjcfg == tstcfg then
-					-- this is a real project configuration
+				if thisName == testName then
 					vc200x.configuration(cfg)
 					vc200x.tools(cfg)
 					_p(2,'</Configuration>')
@@ -117,7 +109,7 @@
 				-- the list, then it isn't really part of the project, and I
 				-- need to output a dummy configuration in its place.
 
-				elseif not prjcfgs[tstcfg] then
+				elseif not isRealConfig[tstcfg] then
 					-- this is a fake config to make VS happy
 					vc200x.emptyConfiguration(cfg, arch)
 				end
@@ -134,28 +126,19 @@
 -- build configuration/platform pairing.
 --
 
+	vc200x.elements.configuration = {
+		"outputDirectory",
+		"intermediateDirectory",
+		"configurationType",
+		"useOfMFC",
+		"characterSet",
+		"managedExtensions",
+	}
+
 	function vc200x.configuration(cfg)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s"', vstudio.projectConfig(cfg))
-
-		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
-		_x(3,'OutputDirectory="%s"', path.translate(outdir))
-
-		local objdir = project.getrelative(cfg.project, cfg.objdir)
-		_x(3,'IntermediateDirectory="%s"', path.translate(objdir))
-
-		vc200x.configurationType(cfg)
-
-		if (cfg.flags.MFC) then
-			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
-		end
-
-		vc200x.characterSet(cfg)
-
-		if cfg.flags.Managed then
-			_p(3,'ManagedExtensions="1"')
-		end
-
+		premake.callarray(vc200x, vc200x.elements.configuration, cfg)
 		_p(3,'>')
 	end
 
@@ -1148,6 +1131,19 @@
 	end
 
 
+	function vc200x.intermediateDirectory(cfg)
+		local objdir = project.getrelative(cfg.project, cfg.objdir)
+		_x(3,'IntermediateDirectory="%s"', path.translate(objdir))
+	end
+
+
+	function vc200x.managedExtensions(cfg)
+		if cfg.flags.Managed then
+			_p(3,'ManagedExtensions="1"')
+		end
+	end
+
+
 	function vc200x.minimalRebuild(cfg)
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
@@ -1186,6 +1182,12 @@
 		if value or not cfg.abspath then
 			_p(depth,'Optimization="%s"', value or 0)
 		end
+	end
+
+
+	function vc200x.outputDirectory(cfg)
+		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
+		_x(3,'OutputDirectory="%s"', path.translate(outdir))
 	end
 
 
@@ -1323,6 +1325,13 @@
 		local value = map[cfg.nativewchar]
 		if value then
 			_p(4,'TreatWChar_tAsBuiltInType="%s"', value)
+		end
+	end
+
+
+	function vc200x.useOfMFC(cfg)
+		if (cfg.flags.MFC) then
+			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
 		end
 	end
 
