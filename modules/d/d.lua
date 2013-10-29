@@ -3,9 +3,10 @@
 -- Create a D namespace to isolate the additions
 --
 	premake.extensions.d = {}
-	local project = premake.project
-
 	local d = premake.extensions.d
+	local project = premake.project
+	local api = premake.api
+
 	d.support_url = "https://bitbucket.org/premakeext/d/wiki/Home"
 
 	d.printf = function( msg, ... )
@@ -80,6 +81,39 @@
 	}
 
 --
+-- Register some D specific properties
+--
+
+	api.register {
+		name = "versionconstants",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugconstants",
+		scope = "config",
+		kind = "string-list",
+		tokens = true,
+	}
+
+	api.register {
+		name = "ddocpath",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	-- TODO: no support for integer properties!
+--	api.register {
+--		name = "debuglevel",
+--		scope = "config",
+--		kind = "integer",
+--	}
+
+
+--
 -- Patch the project structure to allow the determination of project type
 -- This is then used in the override of gmake.onproject() in the
 -- extension files
@@ -121,4 +155,10 @@
 	for k,v in pairs({ "gmake", "vstudio" }) do
 		require( v )
 		d.printf( "Loaded D action '%s.lua'", v )
+	end
+
+	-- this one depends on the monodevelop extension
+	if premake.extensions.monodevelop then
+		require( "monodev" )
+		d.printf( "Loaded D action 'monodev.lua'", v )
 	end

@@ -1,34 +1,34 @@
 --
--- visualdproj.lua
--- Generate a Visual D visualdproj project.
+-- vstudio.lua
+-- Generate a VisualD .visualdproj project.
 -- Copyright (c) 2012 Manu Evans and the Premake project
 --
 
-	premake.vstudio.visuald = { }
-	local visuald = premake.vstudio.visuald
+	premake.extensions.d.visuald = { }
+
+	local d = premake.extensions.d
+	local visuald = d.visuald
 	local vstudio = premake.vstudio
 	local solution = premake.solution
 	local project = premake.project
 	local config = premake.config
 	local tree = premake.tree
-	local d = premake.extensions.d
 
 --
--- Patch the VSTUDIO configuration with D support...
+-- Patch the vstudio actions with D support...
 --
 
-	for k,v in pairs({ "vs2008", "vs2010", "vs2012", "vs2013", }) do
+	for k,v in pairs({ "vs2008", "vs2010", "vs2012", "vs2013" }) do
 		local vs = premake.action.list[v]
 		if vs ~= nil then
 			table.insert( vs.valid_languages, premake.D )
 			vs.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
 			premake.override(vs, "onproject", function(oldfn, prj)
-				if premake.project.isd(prj) then
-					premake.generate(prj, ".visualdproj", vstudio.visuald.generate)
-				end
-
 				oldfn(prj)
+				if premake.project.isd(prj) then
+					premake.generate(prj, ".visualdproj", visuald.generate)
+				end
 			end)
 		end
 	end
@@ -39,18 +39,18 @@
 --
 
 	premake.override(project, "isnative", function(oldfn, prj)
-		return prj.language == premake.D or oldfn(prj)
+		return project.isd(prj) or oldfn(prj)
 	end)
 
 	premake.override(vstudio, "projectfile", function(oldfn, prj)
-		if prj.language == "D" then
+		if project.isd(prj) then
 			return project.getfilename(prj, ".visualdproj")
 		end
 		return oldfn(prj)
 	end)
 
 	premake.override(vstudio, "tool", function(oldfn, prj)
-		if prj.language == "D" then
+		if project.isd(prj) then
 			return "002A2DE9-8BB6-484D-9802-7E4AD4084715"
 		end
 		return oldfn(prj)
@@ -58,7 +58,7 @@
 
 
 --
--- Generate a Visual D project, with support for the new platforms API.
+-- Generate a Visual D project.
 --
 
 	function visuald.generate(prj)
