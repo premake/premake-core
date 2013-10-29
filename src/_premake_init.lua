@@ -238,6 +238,7 @@
 			"NoFramePointer",
 			"NoImplicitLink",
 			"NoImportLib",
+			"OmitDefaultLibrary",
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",

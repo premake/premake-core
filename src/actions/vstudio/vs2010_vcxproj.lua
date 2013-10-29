@@ -297,6 +297,7 @@
 		"omitFramePointers",
 		"stringPooling",
 		"runtimeLibrary",
+		"omitDefaultLib",
 		"exceptionHandling",
 		"runtimeTypeInfo",
 		"bufferSecurityCheck",
@@ -1098,6 +1099,11 @@
 		end
 	end
 
+	function vc2010.omitDefaultLib(cfg)
+		if cfg.flags.OmitDefaultLibrary then
+			_p(3,'<OmitDefaultLibName>true</OmitDefaultLibName>')
+		end
+	end
 
 	function vc2010.runtimeTypeInfo(cfg)
 		if cfg.flags.NoRTTI and not cfg.flags.Managed then
