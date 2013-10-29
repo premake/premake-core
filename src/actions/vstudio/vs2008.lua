@@ -48,6 +48,7 @@
 			csprojSchemaVersion = "2.0",
 			productVersion      = "9.0.30729",
 			solutionVersion     = "10",
+			versionName         = "2008",
 			toolsVersion        = "3.5",
 		}
 	}

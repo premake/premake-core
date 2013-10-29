@@ -151,9 +151,9 @@
 
 	function vstudio.projectfile(prj)
 		local extension
-		if prj.language == "C#" then
+		if project.isdotnet(prj) then
 			extension = ".csproj"
-		else
+		elseif project.iscpp(prj) then
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 

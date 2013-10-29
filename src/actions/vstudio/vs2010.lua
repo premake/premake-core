@@ -91,6 +91,7 @@
 			csprojSchemaVersion = "2.0",
 			productVersion      = "8.0.30703",
 			solutionVersion     = "11",
+			versionName         = "2010",
 			targetFramework     = "4.0",
 			toolsVersion        = "4.0",
 		}
