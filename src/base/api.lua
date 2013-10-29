@@ -752,12 +752,6 @@
 			end
 		end
 
-		if name == "*" then
-			api.scope.solution = nil
-		else
-
-		end
-
 		local sln
 		if name ~= "*" then
 			sln = premake.solution.get(name) or premake.solution.new(name)
