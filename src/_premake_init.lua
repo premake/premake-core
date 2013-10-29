@@ -273,6 +273,7 @@
 			"Default",
 			"Fast",
 			"Strict",
+			"None",
 		}
 	}
 
