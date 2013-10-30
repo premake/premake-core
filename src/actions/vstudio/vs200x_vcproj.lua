@@ -109,7 +109,7 @@
 				-- the list, then it isn't really part of the project, and I
 				-- need to output a dummy configuration in its place.
 
-				elseif not isRealConfig[tstcfg] then
+				elseif not isRealConfig[testName] then
 					-- this is a fake config to make VS happy
 					vc200x.emptyConfiguration(cfg, arch)
 				end

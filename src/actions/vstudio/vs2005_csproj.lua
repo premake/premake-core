@@ -188,8 +188,8 @@
 					end
 
 					if info.dependency then
-						local dependency = path.translate(project.getrelative(prj, info.dependency))
-						_x(3,'<DependentUpon>%s</DependentUpon>', dependency)
+						local dependency = path.getrelative(path.getdirectory(filecfg.abspath), info.dependency)
+						_x(3,'<DependentUpon>%s</DependentUpon>', path.translate(dependency))
 					end
 
 					_p(2,'</%s>', info.action)

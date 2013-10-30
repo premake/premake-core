@@ -50,7 +50,7 @@
 -- Test file dependencies
 --
 
-	function suite.SimpleResourceDependency()
+	function suite.resourceDesignerDependency()
 		files { "Resources.resx", "Resources.Designer.cs" }
 		prepare()
 		test.capture [[
@@ -62,6 +62,23 @@
 			<SubType>Designer</SubType>
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		]]
+	end
+
+
+--
+-- File associations should always be made relative to the file
+-- which is doing the associating.
+--
+
+	function suite.resourceDependency_inSubfolder()
+		files { "Forms/TreeListView.resx", "Forms/TreeListView.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="Forms\TreeListView.cs" />
+		<EmbeddedResource Include="Forms\TreeListView.resx">
+			<DependentUpon>TreeListView.cs</DependentUpon>
 		</EmbeddedResource>
 		]]
 	end
@@ -118,26 +135,6 @@
 		</Compile>
 		]]
 	end
-
-
---
--- If a resource file has a matching .Designer.cs, the designer
--- file should be marked as auto-generated.
---
-
-	function suite.autogenDesignerFromResource()
-		files { "Hello.Designer.cs", "Hello.resx"}
-		prepare()
-		test.capture [[
-		<Compile Include="Hello.Designer.cs">
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Hello.resx</DependentUpon>
-		</Compile>
-		]]
-	end
-
-	-- test Component
-	-- test UserControl
 
 
 --
