@@ -1,5 +1,9 @@
-Premake Extension to support Android
+# Premake Extension to support Android
 
 Supported features:
 
-* VisualStudio support through VS-Android
+* VisualStudio support through vs-android (https://code.google.com/p/vs-android/)
+
+Todo:
+
+* gmake support
