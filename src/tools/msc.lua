@@ -28,6 +28,7 @@
 		flags = {
 			SEH = "/EHa",
 			Symbols = "/Z7",
+			OmitDefaultLibrary = "/Zl",
 		},
 		optimize = {
 			Off = "/Od",

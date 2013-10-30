@@ -661,3 +661,26 @@
 				BasicRuntimeChecks="3"
 		]]
 	end
+
+
+--
+-- Check handling of the OmitDefaultLibrary flag.
+--
+
+	function suite.onOmitDefaultLibrary()
+		flags { "OmitDefaultLibrary" }
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="0"
+				OmitDefaultLibName="true"
+		]]
+	end

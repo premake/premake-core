@@ -680,8 +680,6 @@
 	end
 
 
-
-
 --
 -- Check handling of the ReleaseRuntime flag; should override the
 -- default behavior of linking the debug runtime when symbols are
@@ -699,5 +697,22 @@
 			<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
 			<Optimization>Disabled</Optimization>
 			<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+		]]
+	end
+
+
+--
+-- Check handling of the OmitDefaultLibrary flag.
+--
+
+	function suite.onOmitDefaultLibrary()
+		flags { "OmitDefaultLibrary" }
+		prepare()
+		test.capture [[
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<WarningLevel>Level3</WarningLevel>
+			<Optimization>Disabled</Optimization>
+			<OmitDefaultLibName>true</OmitDefaultLibName>
 		]]
 	end
