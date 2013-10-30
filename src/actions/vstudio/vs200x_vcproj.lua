@@ -404,6 +404,7 @@
 		end
 
 		vc200x.forcedIncludeFiles(cfg)
+		vc200x.omitDefaultLib(cfg)
 	end
 
 
@@ -1106,6 +1107,13 @@
 		if #cfg.forceusings > 0 then
 			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
 			_x(depth or 4,'ForcedUsingFiles="%s"', table.concat(usings, ';'))
+		end
+	end
+
+
+	function vc200x.omitDefaultLib(cfg)
+		if cfg.flags.OmitDefaultLibrary then
+			_p(4,'OmitDefaultLibName="true"')
 		end
 	end
 
