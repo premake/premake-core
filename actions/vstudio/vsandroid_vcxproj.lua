@@ -5,6 +5,7 @@
 --
 
 	premake.extensions.vsandroid = { }
+	local android = premake.extensions.android
 	local vsandroid = premake.extensions.vsandroid
 	local sln2005 = premake.vstudio.sln2005
 	local vc2010 = premake.vstudio.vc2010
@@ -58,7 +59,7 @@
 	function vc2010.androidAPILevel(cfg)
 		if cfg.system == premake.ANDROID then
 			if cfg.androidapilevel ~= nil then
---				_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
+				_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
 			end
 		end
 	end

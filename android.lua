@@ -30,60 +30,10 @@
 
 	premake.ANDROID = "android"
 
-	local sys = premake.fields["system"];
-	if sys ~= nil and sys.allowed.android == nil then
-		table.insert( sys.allowed, premake.ANDROID )
-	end
-
-	local os = premake.fields["os"];
---	if os ~= nil and os.allowed.android == nil then
-	if os ~= nil then
-		table.insert( sys.allowed, { "android",  "Android" } )
-	end
-
-	local arch = premake.fields["architecture"];
-	if arch ~= nil then
-		if arch.allowed["armv5"] == nil then
-			table.insert( arch.allowed, "armv5" )
-		end
-		if arch.allowed["armv7"] == nil then
-			table.insert( arch.allowed, "armv7" )
-		end
-		if arch.allowed["mips"] == nil then
-			table.insert( arch.allowed, "mips" )
-		end
-	end
-
-	local vectorext = premake.fields["vectorextensions"];
-	if vectorext ~= nil and vectorext.allowed.NEON == nil then
-		table.insert( vectorext.allowed, "NEON" )
-	end
-
-	if premake.platforms ~= nil then
-		premake.platforms.Android = { 
-			cfgsuffix       = "android",
-			iscrosscompiler = true,
-		}
-	end
-
-
---
--- Add Android-specific flags
---
-
-	local function addflags(newflags)
-		local flags = premake.fields["flags"];
-		if flags ~= nil then
-			for k,v in pairs(newflags) do
-				if flags.allowed[v] == nil then
-					table.insert( flags.allowed, v )
-				end
-			end
-		end
-	end
-
-	-- TODO: refactor these into independent options?
-	addflags {
+	api.addAllowed("system", premake.ANDROID)
+	api.addAllowed("architecture", { "x86", "armv5", "armv7", "mips" })
+	api.addAllowed("vectorextensions", "NEON")
+	api.addAllowed("flags", {
 		"EnableThumb",
 --		"EnablePIC",
 --		"DisablePIC",
@@ -93,6 +43,17 @@
 		"HardwareFloat",
 --		"LittleEndian",
 --		"BigEndian"
+	})
+
+	-- TODO: can I api.addAllowed() a key-value pair?
+	local os = premake.fields["os"];
+	if os ~= nil then
+		table.insert(sys.allowed, { "android",  "Android" })
+	end
+
+	premake.platforms.Android = { 
+		cfgsuffix       = "android",
+		iscrosscompiler = true,
 	}
 
 
@@ -111,12 +72,11 @@
 		},
 	}
 
-	-- TODO: no support for integer properties!
---	api.register {
---		name = "androidapilevel",
---		scope = "config",
---		kind = "integer",
---	}
+	api.register {
+		name = "androidapilevel",
+		scope = "config",
+		kind = "integer",
+	}
 
 
 --
