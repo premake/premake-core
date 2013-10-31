@@ -833,6 +833,15 @@
 
 
 --
+-- Returns true if the project uses a native language.
+--
+
+	function project.isnative(prj)
+		return project.iscpp(prj)
+	end
+
+
+--
 -- Given a build config/platform pairing, applies any project configuration maps
 -- and returns a new (or the same) pairing.
 --

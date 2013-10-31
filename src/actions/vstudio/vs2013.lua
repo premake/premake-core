@@ -46,6 +46,7 @@
 
 		vstudio = {
 			solutionVersion = "12",
+			versionName     = "2013",
 			targetFramework = "4.5",
 			toolsVersion    = "12.0",
 		}

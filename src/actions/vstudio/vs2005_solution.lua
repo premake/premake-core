@@ -13,6 +13,19 @@
 
 
 --
+-- Return the list of sections contained in the solution.
+--
+
+	function sln2005.solutionSections(sln)
+		return {
+			"ConfigurationPlatforms",
+			"SolutionProperties",
+			"NestedProjects",
+		}
+	end
+
+
+--
 -- Generate a Visual Studio 200x solution, with support for the new platforms API.
 --
 
@@ -26,9 +39,7 @@
 		sln2005.projects(sln)
 
 		_p('Global')
-		sln2005.configurationPlatforms(sln)
-		sln2005.properties(sln)
-		sln2005.NestedProjects(sln)
+		sln2005.sections(sln)
 		_p('EndGlobal')
 
 	end
@@ -42,7 +53,7 @@
 	function sln2005.header()
 		local action = premake.action.current()
 		_p('Microsoft Visual Studio Solution File, Format Version %d.00', action.vstudio.solutionVersion)
-		_p('# Visual Studio %s', _ACTION:sub(3))
+		_p('# Visual Studio %s', action.vstudio.versionName)
 	end
 
 
@@ -238,5 +249,30 @@
 				end
 			})
 			_p(1,'EndGlobalSection')
+		end
+	end
+
+
+--
+-- Map solution sections to output functions. Tools that aren't listed will
+-- be ignored.
+--
+
+	sln2005.sectionmap = {
+		ConfigurationPlatforms = sln2005.configurationPlatforms,
+		SolutionProperties     = sln2005.properties,
+		NestedProjects         = sln2005.NestedProjects
+	}
+
+
+--
+-- Write out all of the solution sections.
+--
+
+	function sln2005.sections(sln)
+		for _, section in ipairs(sln2005.solutionSections(sln)) do
+			if sln2005.sectionmap[section] then
+				sln2005.sectionmap[section](sln)
+			end
 		end
 	end

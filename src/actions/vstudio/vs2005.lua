@@ -28,7 +28,7 @@
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
 			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
-		else
+		elseif premake.project.iscpp(prj) then
 			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
 			premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
 		end
@@ -93,5 +93,6 @@
 			csprojSchemaVersion = "2.0",
 			productVersion      = "8.0.50727",
 			solutionVersion     = "9",
+			versionName         = "2005",
 		}
 	}

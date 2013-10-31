@@ -53,14 +53,14 @@
 --
 
 	function vstudio.archFromConfig(cfg, win32)
-		local iscpp = project.iscpp(cfg.project)
+		local isnative = project.isnative(cfg.project)
 
 		local arch = architecture(cfg.system, cfg.architecture)
 		if not arch then
-			arch = iif(iscpp, "x86", "Any CPU")
+			arch = iif(isnative, "x86", "Any CPU")
 		end
 
-		if win32 and iscpp and arch == "x86" then
+		if win32 and isnative and arch == "x86" then
 			arch = "Win32"
 		end
 
@@ -151,9 +151,9 @@
 
 	function vstudio.projectfile(prj)
 		local extension
-		if prj.language == "C#" then
+		if project.isdotnet(prj) then
 			extension = ".csproj"
-		else
+		elseif project.iscpp(prj) then
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
@@ -212,12 +212,12 @@
 		end
 
 		-- scan the contained projects to identify the platform
-		local hascpp = false
+		local hasnative = false
 		local hasnet = false
 		local slnarch
 		for prj in solution.eachproject(cfg.solution) do
-			if project.iscpp(prj) then
-				hascpp = true
+			if project.isnative(prj) then
+				hasnative = true
 			elseif project.isdotnet(prj) then
 				hasnet = true
 			end
@@ -239,7 +239,7 @@
 			return iif(hasnet, "x86", "Win32")
 		elseif slnarch then
 			return iif(slnarch == "x86" and not hasnet, "Win32", slnarch)
-		elseif hasnet and hascpp then
+		elseif hasnet and hasnative then
 			return "Mixed Platforms"
 		elseif hasnet then
 			return "Any CPU"
@@ -260,7 +260,7 @@
 --
 
 	function vstudio.solutionarch(cfg)
-		local hascpp = false
+		local hasnative = false
 		local hasdotnet = false
 
 		-- if the configuration has a platform identifier, use that as default
@@ -270,13 +270,13 @@
 		--
 
 		for prj in solution.eachproject(cfg.solution) do
-			if project.iscpp(prj) then
-				hascpp = true
+			if project.isnative(prj) then
+				hasnative = true
 			elseif project.isdotnet(prj) then
 				hasdotnet = true
 			end
 
-			if hascpp and hasdotnet then
+			if hasnative and hasdotnet then
 				return "Mixed Platforms"
 			end
 
@@ -291,7 +291,7 @@
 		end
 
 		-- use a default if no other architecture was specified
-		arch = arch or iif(hascpp, "Win32", "Any CPU")
+		arch = arch or iif(hasnative, "Win32", "Any CPU")
 		return arch
 	end
 
@@ -327,9 +327,9 @@
 --
 
 	function vstudio.tool(prj)
-		if (prj.language == "C#") then
+		if project.isdotnet(prj) then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
-		else
+		elseif project.iscpp(prj) then
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 		end
 	end
