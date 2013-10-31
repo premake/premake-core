@@ -10,8 +10,6 @@
 	local project = premake.project
 	local config = premake.config
 
-	dotnet.namestyle = "windows"
-
 
 --
 -- Examine the file and project configurations to glean additional
