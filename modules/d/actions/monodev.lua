@@ -69,7 +69,7 @@
 			return groups.CustomBuild
 		elseif path.isdfile(node.name) then
 			return groups.Compile
---		elseif path.iscppheader(node.name) then -- TODO: do .di files belong in here?
+--		elseif path.isdheader(node.name) then -- TODO: do .di files belong in here?
 --			return groups.Include
 		elseif path.isresourcefile(node.name) then
 			return groups.ResourceCompile
@@ -100,7 +100,7 @@
 	end)
 
 	function monodevelop.elements.useDefaultCompiler(prj)
-		_p(2,'<UseDefaultCompiler>true</UseDefaultCompiler>')
+		_p(2,'<UseDefaultCompiler>%s</UseDefaultCompiler>', iif(_OPTIONS.dc, 'false', 'true'))
 	end
 
 	function monodevelop.elements.incrementalLinking(prj)
@@ -116,7 +116,8 @@
 	end
 
 	function monodevelop.elements.dCompiler(prj)
-		_p(2,'<Compiler>%s</Compiler>', 'DMD2')
+		local compiler = { dmd="DMD2", gdc="GDC", ldc="ldc2" }
+		_p(2,'<Compiler>%s</Compiler>', compiler[_OPTIONS.dc or "dmd"])
 	end
 
 
@@ -160,7 +161,7 @@
 	end
 
 	function monodevelop.elements.debugLevel(cfg)
-		_p(2,'<DebugLevel>%s</DebugLevel>', '0')
+		_p(2,'<DebugLevel>%d</DebugLevel>', iif(cfg.debuglevel, cfg.debuglevel, 0))
 	end
 
 	function monodevelop.elements.target(cfg)
@@ -198,8 +199,8 @@
 	end
 
 	function monodevelop.elements.dDocDirectory(cfg)
-		if cfg.ddocpath then
-			local docdir = project.getrelative(cfg.project, cfg.ddocpath)
+		if cfg.docdir then
+			local docdir = project.getrelative(cfg.project, cfg.docdir)
 			_x(2,'<DDocDirectory>%s</DDocDirectory>', path.translate(docdir))
 		end
 	end
@@ -220,14 +221,14 @@
 
 	function monodevelop.elements.debugIds(cfg)
 		if #cfg.debugconstants > 0 then
-			_x(2,'<VersionIds>')
-			_x(3,'<VersionIds>')
+			_x(2,'<DebugIds>')
+			_x(3,'<DebugIds>')
 
 			for _, d in ipairs(cfg.debugconstants) do
 				_x(4,'<String>%s</String>', d)
 			end
 
-			_x(3,'</VersionIds>')
-			_x(2,'</VersionIds>')
+			_x(3,'</DebugIds>')
+			_x(2,'</DebugIds>')
 		end
 	end

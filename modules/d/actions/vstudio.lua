@@ -18,7 +18,7 @@
 -- Patch the vstudio actions with D support...
 --
 
-	for k,v in pairs({ "vs2008", "vs2010", "vs2012", "vs2013" }) do
+	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013" }) do
 		local vs = premake.action.list[v]
 		if vs ~= nil then
 			table.insert( vs.valid_languages, premake.D )
@@ -167,45 +167,36 @@
 			_p(2,'<ignoreUnsupportedPragmas>0</ignoreUnsupportedPragmas>')
 
 			local compiler = { dmd="0", gdc="1", ldc="2" }
-			_p(2,'<compiler>%s</compiler>', compiler[_OPTIONS.dc or "dmd"] or "0")
+			visuald.element(2, "compiler", compiler[_OPTIONS.dc or cfg.toolset or "dmd"])
 
-			_p(2,'<otherDMD>0</otherDMD>')
-			_p(2,'<program>$(DMDInstallDir)windows\\bin\\dmd.exe</program>')
+			visuald.element(2, "otherDMD", '0')
+			visuald.element(2, "program", '$(DMDInstallDir)windows\\bin\\dmd.exe')
 
-			if #cfg.includedirs > 0 then
-				_p(2,'<imppath>%s</imppath>',premake.esc(table.implode(cfg.includedirs, "", "", ";")))
-			else
-				_p(2,'<imppath />')
-			end
+			visuald.element(2, "imppath", cfg.includedirs)
 
-			_p(2,'<fileImppath />')
-			local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
-			_p(2,'<outdir>%s</outdir>', path.translate(outdir))
-			_p(2,'<objdir>%s</objdir>', path.translate(project.getrelative(cfg.project, cfg.objdir)))
-			_p(2,'<objname />')
-			_p(2,'<libname />')
+			visuald.element(2, "fileImppath")
+			visuald.element(2, "outdir", path.translate(project.getrelative(cfg.project, cfg.buildtarget.directory)))
+			visuald.element(2, "objdir", path.translate(project.getrelative(cfg.project, cfg.objdir)))
+			visuald.element(2, "objname")
+			visuald.element(2, "libname")
 
-			_p(2,'<doDocComments>%s</doDocComments>', iif(cfg.flags.Documentation, '1', '0'))
-			_p(2,'<docdir />')
-			_p(2,'<docname />')
-			_p(2,'<modules_ddoc />')
-			_p(2,'<ddocfiles />')
+			visuald.element(2, "doDocComments", iif(cfg.flags.Documentation, '1', '0'))
+			visuald.element(2, "docdir", cfg.docdir)
+			visuald.element(2, "docname", cfg.docname)
+			visuald.element(2, "modules_ddoc")
+			visuald.element(2, "ddocfiles")
 
-			_p(2,'<doHdrGeneration>%s</doHdrGeneration>', iif(cfg.flags.GenerateHeader, '1', '0'))
-			_p(2,'<hdrdir />')
-			_p(2,'<hdrname />')
+			visuald.element(2, "doHdrGeneration", iif(cfg.flags.GenerateHeader, '1', '0'))
+			visuald.element(2, "hdrdir", cfg.headerdir)
+			visuald.element(2, "hdrname", cfg.headername)
 
-			_p(2,'<doXGeneration>%s</doXGeneration>', iif(cfg.flags.GenerateJSON, '1', '0'))
-			_p(2,'<xfilename>$(IntDir)\\$(TargetName).json</xfilename>')
+			visuald.element(2, "doXGeneration", iif(cfg.flags.GenerateJSON, '1', '0'))
+			visuald.element(2, "xfilename", '$(IntDir)\\$(TargetName).json')
 
-			_p(2,'<debuglevel>0</debuglevel>')
-			_p(2,'<debugids />')
-			_p(2,'<versionlevel>0</versionlevel>')
-			if #cfg.defines > 0 then
-				_p(2,'<versionids>%s</versionids>',premake.esc(table.implode(cfg.defines, "", "", ";")))
-			else
-				_p(2,'<versionids />')
-			end
+			visuald.element(2, "debuglevel", iif(cfg.debuglevel, tostring(cfg.debuglevel), '0'))
+			visuald.element(2, "debugids", cfg.debugconstants)
+			visuald.element(2, "versionlevel", iif(cfg.versionlevel, tostring(cfg.versionlevel), '0'))
+			visuald.element(2, "versionids", cfg.versionconstants)
 
 			_p(2,'<dump_source>0</dump_source>')
 			_p(2,'<mapverbosity>0</mapverbosity>')
@@ -295,6 +286,28 @@
 		}, false, 2)
 
 		_p(1,'</Folder>')
+	end
+
+
+--
+-- Output an individual project XML element.
+--
+
+	function visuald.element(depth, name, value, ...)
+		local isTable = type(value) == "table"
+		if not value or (isTable and #value == 0) then
+			_p(depth, '<%s />', name)
+		else
+			if isTable then
+				value = premake.esc(table.implode(value, "", "", ";"))
+				_p(depth, '<%s>%s</%s>', name, value, name)
+			else
+				if select('#',...) == 0 then
+					value = premake.esc(value)
+				end
+				_x(depth, string.format('<%s>%s</%s>', name, value, name), ...)
+			end
+		end
 	end
 
 

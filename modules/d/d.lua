@@ -3,6 +3,7 @@
 -- Create a D namespace to isolate the additions
 --
 	premake.extensions.d = {}
+
 	local d = premake.extensions.d
 	local project = premake.project
 	local api = premake.api
@@ -22,46 +23,16 @@
 	package.path = this_dir .. "tools/?.lua;" .. this_dir .. "actions/?.lua;".. package.path
 --	d.printf( "Added D tools/actions directories to LUA_PATH: %s", package.path )
 
+
 --
 -- Register the D extension
 --
+
 	premake.D = "D"
 
-	local lang = premake.fields["language"];
-	if lang ~= nil and lang.allowed.D == nil then
-		table.insert( lang.allowed, premake.D )
-	end
-
---
--- Provide information for the help output
---
-	newoption
-	{
-		trigger		= "dc",
-		value		= "VALUE",
-		description	= "Choose a D compiler",
-		allowed = {
-			{ "dmd", "Digital Mars (dmd)" },
-			{ "gdc", "GNU GDC (gdc)" },
-			{ "ldc", "LLVM LDC (ldc2)" },
-		}
-	}
-
---
--- Add flags used by the D language
---
-	local function addflags(newflags)
-		local flags = premake.fields["flags"];
-		if flags ~= nil then
-			for k,v in pairs(newflags) do
-				if flags.allowed[v] == nil then
-					table.insert( flags.allowed, v )
-				end
-			end
-		end
-	end
-
-	addflags {
+	api.addAllowed("language", premake.D)
+	api.addAllowed("toolset", { "dmd", "gdc", "ldc" })
+	api.addAllowed("flags", {
 		"SymbolsLikeC",
 		"Deprecated",
 		"Documentation",
@@ -78,7 +49,8 @@
 		"Profile",
 		"Quiet",
 		"CodeCoverage"
-	}
+	})
+
 
 --
 -- Register some D specific properties
@@ -92,6 +64,12 @@
 	}
 
 	api.register {
+		name = "versionlevel",
+		scope = "config",
+		kind = "integer",
+	}
+
+	api.register {
 		name = "debugconstants",
 		scope = "config",
 		kind = "string-list",
@@ -99,18 +77,54 @@
 	}
 
 	api.register {
-		name = "ddocpath",
+		name = "debuglevel",
+		scope = "config",
+		kind = "integer",
+	}
+
+	api.register {
+		name = "docdir",
 		scope = "config",
 		kind = "path",
 		tokens = true,
 	}
 
-	-- TODO: no support for integer properties!
---	api.register {
---		name = "debuglevel",
---		scope = "config",
---		kind = "integer",
---	}
+	api.register {
+		name = "docname",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "headerdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "headername",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+
+--
+-- Provide information for the help output
+--
+	newoption
+	{
+		trigger		= "dc",
+		value		= "VALUE",
+		description	= "Choose a D compiler",
+		allowed = {
+			{ "dmd", "Digital Mars (dmd)" },
+			{ "gdc", "GNU GDC (gdc)" },
+			{ "ldc", "LLVM LDC (ldc2)" },
+		}
+	}
 
 
 --
@@ -136,13 +150,9 @@
 -- we require a similarly named tools file in 'd/tools/<dc>.lua
 --
 
-	local toolsets = premake.fields[ "toolset" ]
 	for k,v in pairs({"dmd", "gdc", "ldc"}) do
 		require( v )
 		d.printf( "Loaded D tool '%s.lua'", v )
-		if toolsets ~= nil then
-			table.insert( toolsets.allowed, v )
-		end
 	end
 
 --
