@@ -354,6 +354,11 @@
 		if tool then
 			_p('  AR = %s', tool)
 		end
+
+		tool = toolset.gettoolname(cfg, "rc")
+		if tool then
+			_p('  RESCOMP = %s', tool)
+		end
 	end
 
 
