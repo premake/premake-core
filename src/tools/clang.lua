@@ -207,17 +207,12 @@
 --    default value should be used.
 --
 
+	clang.tools = {
+		cc = "clang",
+		cxx = "clang++",
+		ar = "ar"
+	}
+
 	function clang.gettoolname(cfg, tool)
-
-		-- Real simple implementation for now, buying time until I
-		-- get a chance to rewrite (and possibly sufficient?)
-
-		if tool == "ar" then
-			return "ar"
-		elseif tool == "cc" then
-			return "clang"
-		elseif tool == "cxx" then
-			return "clang++"
-		end
-
+		return clang.tools[tool]
 	end

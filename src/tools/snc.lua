@@ -11,13 +11,6 @@
 
 
 --
--- SNC flags for specific systems and architectures.
---
-
-	snc.sysflags = {}
-
-
---
 -- Retrieve the CFLAGS for a specific configuration.
 --
 
@@ -135,8 +128,10 @@
 --    default value should be used.
 --
 
-	function snc.gettoolname(cfg, tool)
-		local sysflags = snc.sysflags[cfg.architecture] or snc.sysflags[cfg.system] or {}
-		return sysflags[tool]
-	end
+	snc.tools = {
+	}
 
+	function snc.gettoolname(cfg, tool)
+		local names = snc.tools[cfg.architecture] or snc.tools[cfg.system] or {}
+		return names[tool]
+	end

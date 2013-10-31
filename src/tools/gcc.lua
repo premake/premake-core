@@ -11,64 +11,18 @@
 
 
 --
--- GCC flags for specific systems and architectures.
--- I am in the process of phasing this out for the more detailed
--- flag tables below (i.e. gcc.cflags).
---
-
-	gcc.sysflags = {
-		haiku = {
-			cppflags = "-MMD"
-		},
-
-		ps3 = {
-			cc = "ppu-lv2-g++",
-			cxx = "ppu-lv2-g++",
-			ar = "ppu-lv2-ar",
-		},
-
-		universal = {
-			cppflags = "",  -- block default -MMD -MP flags
-		},
-
-		wii = {
-			cppflags = "-MMD -MP -I$(LIBOGC_INC) $(MACHDEP)",
-			cfgsettings = [[
-  ifeq ($(strip $(DEVKITPPC)),)
-    $(error "DEVKITPPC environment variable is not set")'
-  endif
-  include $(DEVKITPPC)/wii_rules']],
-		},
-	}
-
-
-
-	function gcc.getsysflags(cfg, field)
-		local result = {}
-
-		-- merge in system-level flags
-		local system = gcc.sysflags[cfg.system]
-		if system then
-			result = table.join(result, system[field])
-		end
-
-		-- merge in architecture-level flags
-		local arch = gcc.sysflags[cfg.architecture]
-		if arch then
-			result = table.join(result, arch[field])
-		end
-
-		return result
-	end
-
-
-
---
 -- Returns list of C preprocessor flags for a configuration.
 --
 
+	gcc.cppflags = {
+		system = {
+			haiku = "-MMD",
+			wii = { "-MMD", "-MP", "-I$(LIBOGC_INC)", "$(MACHDEP)" }
+		}
+	}
+
 	function gcc.getcppflags(cfg)
-		local flags = gcc.getsysflags(cfg, 'cppflags')
+		local flags = config.mapFlags(cfg, gcc.cppflags)
 
 		-- Use -MMD -P by default to generate dependency information
 		if #flags == 0 then
@@ -135,13 +89,15 @@
 --
 
 	gcc.cxxflags = {
-		NoExceptions   = "-fno-exceptions",
-		NoRTTI         = "-fno-rtti",
-		NoBufferSecurityCheck = "-fno-stack-protector"
+		flags = {
+			NoExceptions = "-fno-exceptions",
+			NoRTTI = "-fno-rtti",
+			NoBufferSecurityCheck = "-fno-stack-protector"
+		}
 	}
 
 	function gcc.getcxxflags(cfg)
-		local flags = table.translate(cfg.flags, gcc.cxxflags)
+		local flags = config.mapFlags(cfg, gcc.cxxflags)
 		return flags
 	end
 
@@ -210,7 +166,7 @@
 	}
 
 	function gcc.getldflags(cfg)
-		local flags = {}
+		local flags = config.mapFlags(cfg, gcc.ldflags)
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
@@ -243,7 +199,7 @@
 			table.insert(flags, "-mwindows")
 		end
 
-		return table.join(flags, config.mapFlags(cfg, gcc.ldflags))
+		return flags
 	end
 
 
@@ -283,9 +239,19 @@
 -- Returns makefile-specific configuration rules.
 --
 
+	gcc.makesettings = {
+		system = {
+			wii = [[
+  ifeq ($(strip $(DEVKITPPC)),)
+    $(error "DEVKITPPC environment variable is not set")'
+  endif
+  include $(DEVKITPPC)/wii_rules']]
+		}
+	}
+
 	function gcc.getmakesettings(cfg)
-		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
-		return sysflags.cfgsettings
+		local settings = config.mapFlags(cfg, gcc.makesettings)
+		return table.concat(settings)
 	end
 
 
@@ -303,12 +269,22 @@
 --    default value should be used.
 --
 
+	gcc.tools = {
+		ps3 = {
+			cc = "ppu-lv2-g++",
+			cxx = "ppu-lv2-g++",
+			ar = "ppu-lv2-ar",
+		},
+	}
+
 	function gcc.gettoolname(cfg, tool)
+		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
+		local name = names[tool]
+
 		if tool == "rc" then
-			return "windres"
+			name = name or "windres"
 		end
 
-		local sysflags = gcc.sysflags[cfg.architecture] or gcc.sysflags[cfg.system] or {}
-		return sysflags[tool]
+		return name
 	end
 

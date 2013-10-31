@@ -65,12 +65,9 @@
 	}
 
 	function msc.getcxxflags(cfg)
-		return table.translate(cfg.flags, msc.cxxflags)
+		local flags = config.mapFlags(cfg, msc.cxxflags)
+		return flags
 	end
-
-	msc.ldflags = {
-		Symbols = "/DEBUG",
-	}
 
 
 --
@@ -127,11 +124,13 @@
 -- Return a list of linker flags for a specific configuration.
 --
 	msc.ldflags = {
-		Symbols = "/DEBUG",
+		flags = {
+			Symbols = "/DEBUG",
+		}
 	}
 
 	function msc.getldflags(cfg)
-		local flags = table.translate(cfg.flags, msc.ldflags)
+		local flags = config.mapFlags(cfg, msc.ldflags)
 
 		if not cfg.flags.NoManifest and cfg.kind ~= premake.STATICLIB then
 			table.insert(flags, "/MANIFEST")
