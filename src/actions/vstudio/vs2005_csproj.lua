@@ -69,32 +69,25 @@
 -- Write the opening PropertyGroup, which contains the project-level settings.
 --
 
+	cs2005.elements.projectProperties = {
+		"configurationCondition",
+		"platformCondition",
+		"productVersion",
+		"schemaVersion",
+		"projectGuid",
+		"outputType",
+		"appDesignerFolder",
+		"rootNamespace",
+		"assemblyName",
+		"targetFrameworkVersion",
+		"targetFrameworkProfile",
+		"fileAlignment",
+	}
+
 	function cs2005.projectProperties(prj)
-
 		_p(1,'<PropertyGroup>')
-
-		-- find the first configuration in the project, use as the default
 		local cfg = project.getfirstconfig(prj)
-
-		_p(2,'<Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', premake.esc(cfg.buildcfg))
-		_p(2,'<Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', cs2005.arch(prj))
-
-		cs2005.productVersion(prj)
-		cs2005.schemaVersion(prj)
-
-		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
-
-		_p(2,'<OutputType>%s</OutputType>', dotnet.getkind(cfg))
-		_p(2,'<AppDesignerFolder>Properties</AppDesignerFolder>')
-
-		local target = cfg.buildtarget
-		_p(2,'<RootNamespace>%s</RootNamespace>', prj.namespace or target.basename)
-		_p(2,'<AssemblyName>%s</AssemblyName>', target.basename)
-
-		cs2005.targetFrameworkVersion(prj)
-		cs2005.targetFrameworkProfile(prj)
-		cs2005.fileAlignment(prj)
-
+		premake.callarray(cs2005, cs2005.elements.projectProperties, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -112,7 +105,6 @@
 
 	function cs2005.configurations(prj)
 		for cfg in project.eachconfig(prj) do
-			print(cfg.shortname)
 			cs2005.configuration(cfg)
 		end
 	end
@@ -379,22 +371,56 @@
 --
 ---------------------------------------------------------------------------
 
-	function cs2005.fileAlignment(prj)
+	function cs2005.appDesignerFolder(cfg)
+		_p(2,'<AppDesignerFolder>Properties</AppDesignerFolder>')
+	end
+
+
+	function cs2005.assemblyName(cfg)
+		_p(2,'<AssemblyName>%s</AssemblyName>', cfg.buildtarget.basename)
+	end
+
+
+	function cs2005.configurationCondition(cfg)
+		_x(2,'<Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', cfg.buildcfg)
+	end
+
+
+	function cs2005.fileAlignment(cfg)
 		if _ACTION >= "vs2010" then
 			_p(2,'<FileAlignment>512</FileAlignment>')
 		end
 	end
 
 
-	function cs2005.productVersion(prj)
+	function cs2005.outputType(cfg)
+		_p(2,'<OutputType>%s</OutputType>', dotnet.getkind(cfg))
+	end
+
+
+	function cs2005.platformCondition(cfg)
+		_p(2,'<Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', cs2005.arch(cfg.project))
+	end
+
+
+	function cs2005.productVersion(cfg)
 		local action = premake.action.current()
 		if action.vstudio.productVersion then
 			_p(2,'<ProductVersion>%s</ProductVersion>', action.vstudio.productVersion)
 		end
 	end
 
+	function cs2005.projectGuid(cfg)
+		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', cfg.uuid)
+	end
 
-	function cs2005.schemaVersion(prj)
+
+	function cs2005.rootNamespace(cfg)
+		_p(2,'<RootNamespace>%s</RootNamespace>', cfg.namespace or cfg.buildtarget.basename)
+	end
+
+
+	function cs2005.schemaVersion(cfg)
 		local action = premake.action.current()
 		if action.vstudio.csprojSchemaVersion then
 			_p(2,'<SchemaVersion>%s</SchemaVersion>', action.vstudio.csprojSchemaVersion)
@@ -402,16 +428,16 @@
 	end
 
 
-	function cs2005.targetFrameworkVersion(prj)
+	function cs2005.targetFrameworkVersion(cfg)
 		local action = premake.action.current()
-		local framework = prj.framework or action.vstudio.targetFramework
+		local framework = cfg.framework or action.vstudio.targetFramework
 		if framework then
 			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 		end
 	end
 
 
-	function cs2005.targetFrameworkProfile(prj)
+	function cs2005.targetFrameworkProfile(cfg)
 		if _ACTION == "vs2010" then
 			_p(2,'<TargetFrameworkProfile>')
 			_p(2,'</TargetFrameworkProfile>')
