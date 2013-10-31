@@ -637,6 +637,54 @@
 
 
 --
+-- Set a number value on an API field.
+--
+
+	function api.setnumber(target, name, field, value)
+		local t = type(value)
+		if t ~= "number" then
+			error({ msg="expected number; got " .. t })
+		end
+
+		target = target.configset or target
+		target[name] = value
+	end
+
+
+--
+-- Set a integer value on an API field.
+--
+
+	function api.setinteger(target, name, field, value)
+		local t = type(value)
+		if t ~= "number" then
+			error({ msg="expected number; got " .. t })
+		end
+		if math.floor(value) ~= value then
+			error({ msg="expected integer; got " .. tostring(value) })
+		end
+
+		target = target.configset or target
+		target[name] = value
+	end
+
+
+--
+-- Set a boolean value on an API field.
+--
+
+	function api.setboolean(target, name, field, value)
+		local t = type(value)
+		if t ~= "boolean" then
+			error({ msg="expected boolean; got " .. t })
+		end
+
+		target = target.configset or target
+		target[name] = value
+	end
+
+
+--
 -- Start a new block of configuration settings.
 --
 
