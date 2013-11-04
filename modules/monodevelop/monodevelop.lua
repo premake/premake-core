@@ -47,6 +47,12 @@
 				end
 			end
 		end
+
+		-- NOTE: multiline descriptions, or descriptions with tab's (/n, /t, etc) need to be escaped with @
+		-- Looks like: description = @descriptopn with\nnewline and\ttab's.
+--		_p('\t\tdescription = %s', 'solution description')
+
+--		_p('\t\tversion = %s', '0.1')
 		_p('\tEndGlobalSection')
 	end
 
@@ -54,6 +60,24 @@
 --
 -- Patch some functions
 --
+
+	premake.override(vstudio, "projectPlatform", function(oldfn, cfg)
+		if _ACTION == "monodevelop" then
+			if cfg.platform then
+				return cfg.buildcfg .. " " .. cfg.platform
+			else
+				return cfg.buildcfg
+			end
+		end
+		return oldfn(cfg)
+	end)
+
+	premake.override(vstudio, "archFromConfig", function(oldfn, cfg, win32)
+		if _ACTION == "monodevelop" then
+			return "Any CPU"
+		end
+		return oldfn(cfg, win32)
+	end)
 
 	premake.override(sln2005, "solutionSections", function(oldfn, sln)
 		if _ACTION == "monodevelop" then

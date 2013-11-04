@@ -8,6 +8,7 @@
 	local vstudio = premake.vstudio
 	local project = premake.project
 	local config = premake.config
+	local fileconfig = premake.fileconfig
 	local tree = premake.tree
 
 	monodevelop.elements = {}
@@ -63,9 +64,12 @@
 				"productVersion",
 				"schemaVersion",
 				"projectGuid",
-				"target",
-				"language",
 				"compiler",
+				"language",
+				"target",
+				"version",
+				"synchSlnVersion",
+				"description",
 			}
 		end
 	end
@@ -94,10 +98,10 @@
 			return {
 				"debuginfo",
 				"outputPath",
-				"preprocessorDefinitions",
-				"sourceDirectory",
 				"outputName",
 				"config_type",
+				"preprocessorDefinitions",
+				"sourceDirectory",
 				"warnings",
 				"optimization",
 				"externalconsole",
@@ -119,11 +123,11 @@
 
 
 --
--- Format and return a Visual Studio Condition attribute.
+-- Format and return a MonoDevelop Condition attribute.
 --
 
 	function monodevelop.condition(cfg)
-		return string.format('Condition=" \'$(Configuration)|$(Platform)\' == \'%s\' "', premake.esc(vstudio.projectConfig(cfg)))
+		return string.format('Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' "', premake.esc(vstudio.projectPlatform(cfg)))
 	end
 
 
@@ -270,18 +274,33 @@
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 	end
 
-	function monodevelop.elements.target(prj)
-		_p(2,'<Target>%s</Target>', 'Bin')
+	function monodevelop.elements.compiler(prj)
+		_p(2,'<Compiler>')
+		_p(3,'<Compiler ctype="%s" />', iif(prj.language == 'C', 'GccCompiler', 'GppCompiler'))
+		_p(2,'</Compiler>')
 	end
 
 	function monodevelop.elements.language(prj)
 		_p(2,'<Language>%s</Language>', iif(prj.language == 'C', 'C', 'CPP'))
 	end
 
-	function monodevelop.elements.compiler(prj)
-		_p(2,'<Compiler>')
-		_p(3,'<Compiler ctype="%s" />', iif(prj.language == 'C', 'GccCompiler', 'GppCompiler'))
-		_p(2,'</Compiler>')
+	function monodevelop.elements.target(prj)
+		_p(2,'<Target>%s</Target>', 'Bin')
+	end
+
+	function monodevelop.elements.version(prj)
+		-- TODO: write a project version number into the project
+--		_p(2,'<ReleaseVersion>%s</ReleaseVersion>', '0.1')
+	end
+
+	function monodevelop.elements.synchSlnVersion(prj)
+		-- TODO: true = use solution version
+--		_p(2,'<SynchReleaseVersion>%s</SynchReleaseVersion>', 'false')
+	end
+
+	function monodevelop.elements.description(prj)
+		-- TODO: project description
+--		_p(2,'<Description>%s</Description>', 'project description')
 	end
 
 
@@ -300,18 +319,6 @@
 		_x(2,'<OutputPath>%s</OutputPath>', path.translate(outdir))
 	end
 
-	function monodevelop.elements.preprocessorDefinitions(cfg)
-		local defines = cfg.defines
-		if #defines > 0 then
-			defines = table.concat(defines, ' ')
-			_x(2,'<DefineSymbols>%s</DefineSymbols>', defines)
-		end
-	end
-
-	function monodevelop.elements.sourceDirectory(cfg)
-		_x(2,'<SourceDirectory>%s</SourceDirectory>', '.')
-	end
-
 	function monodevelop.elements.outputName(cfg)
 		_x(2,'<OutputName>%s</OutputName>', cfg.buildtarget.name)
 	end
@@ -326,42 +333,35 @@
 		_p(2,'<CompileTarget>%s</CompileTarget>', map[cfg.kind])
 	end
 
+	function monodevelop.elements.preprocessorDefinitions(cfg)
+		local defines = cfg.defines
+		if #defines > 0 then
+			defines = table.concat(defines, ' ')
+			_x(2,'<DefineSymbols>%s</DefineSymbols>', defines)
+		end
+	end
+
+	function monodevelop.elements.sourceDirectory(cfg)
+		_x(2,'<SourceDirectory>%s</SourceDirectory>', '.')
+	end
+
 	function monodevelop.elements.warnings(cfg)
-
-		local warnLevel = nil -- default to normal warning level if there is not any warnings flags specified
-		if cfg.flags.NoWarnings then
-			warnLevel = 'None'
-		elseif cfg.flags.ExtraWarnings then
-			warnLevel = 'All'
-		end
-		if warnLevel then
-			_p(2,'<WarningLevel>%s</WarningLevel>', warnLevel)
+		local map = { Off = "None", Extra = "All" }
+		if cfg.warnings ~= nil and map[cfg.warnings] ~= nil then
+			_p(2,'<WarningLevel>%s</WarningLevel>', map[cfg.warnings])
 		end
 
-		-- Ohter warning blocks only when NoWarnings are not specified
-		if cfg.flags.NoWarnings then
-			return
-		end
-
-		if cfg.flags.FatalWarnings then
+		-- other warning blocks only when warnings are not disabled
+		if cfg.warnings ~= "Off" and cfg.flags.FatalWarnings then
 			_p(2,'<WarningsAsErrors>%s</WarningsAsErrors>', iif(cfg.flags.FatalWarnings, 'true', 'false'))
 		end
 	end
 
 	function monodevelop.elements.optimization(cfg)
-		-- this needs work, it's all or nothing as is!
-		local level = 0
-		for _, flag in ipairs(cfg.flags) do
-			if flag == "Optimize" then
-				level = 2
-			elseif flag == "OptimizeSize" then
-				level = 2	-- TODO: What we really want is Os, but this option just seems to be a numeric value
-			elseif flag == "OptimizeSpeed" then
-				level = 3
-			end
-		end
-		if level > 0 then
-			_p(2,'<OptimizationLevel>%s</OptimizationLevel>', level)
+		-- TODO: 'size' should be Os, but this option just seems to be a numeric value
+		local map = { Off = "0", On = "2", Debug = "0", Size = "2", Speed = "3", Full = "3" }
+		if cfg.optimize ~= nil and map[cfg.optimize] then
+			_p(2,'<OptimizationLevel>%s</OptimizationLevel>', map[cfg.optimize])
 		end
 	end
 
@@ -388,9 +388,9 @@
 --			table.insert(opts, "-mieee-fp")
 --		end
 
-		if cfg.flags.EnableSSE2 then
+		if cfg.vectorextensions == "SSE2" then
 			table.insert(opts, "-msse2")
-		elseif cfg.flags.EnableSSE then
+		elseif cfg.vectorextensions == "SSE" then
 			table.insert(opts, "-msse")
 		end
 
@@ -491,3 +491,4 @@
 			_x(2,'</CustomCommands>')
 		end
 	end
+
