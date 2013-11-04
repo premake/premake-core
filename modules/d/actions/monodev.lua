@@ -94,6 +94,9 @@
 				"preferOneStepBuild",
 --				"baseDirectory",
 				"dCompiler",
+				"version",
+				"synchSlnVersion",
+				"description",
 			}
 		end
 		return oldfn(cfg)
@@ -179,7 +182,7 @@
 
 		-- TODO: handle all those options, and they also need to be compiler-specific!
 
-		-- float node
+		-- float mode
 		-- SIMD
 		-- etc
 		-- like this: table.insert(opts, "-msse2")
@@ -232,3 +235,4 @@
 			_x(2,'</DebugIds>')
 		end
 	end
+
