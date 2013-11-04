@@ -54,27 +54,31 @@
 
 
 	premake.override(monodevelop, "getTargetGroup", function(oldfn, node, prj, groups)
-		-- if any configuration of this file uses a custom build rule,
-		-- then they all must be marked as custom build
-		local hasbuildrule = false
-		for cfg in project.eachconfig(prj) do				
-			local filecfg = fileconfig.getconfig(node, cfg)
-			if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
-				hasbuildrule = true
-				break
+		if project.isd(prj) then
+			-- if any configuration of this file uses a custom build rule,
+			-- then they all must be marked as custom build
+			local hasbuildrule = false
+			for cfg in project.eachconfig(prj) do				
+				local filecfg = fileconfig.getconfig(node, cfg)
+				if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
+					hasbuildrule = true
+					break
+				end
 			end
-		end
 
-		if hasbuildrule then
-			return groups.CustomBuild
-		elseif path.isdfile(node.name) then
-			return groups.Compile
---		elseif path.isdheader(node.name) then -- TODO: do .di files belong in here?
---			return groups.Include
-		elseif path.isresourcefile(node.name) then
-			return groups.ResourceCompile
+			if hasbuildrule then
+				return groups.CustomBuild
+			elseif path.isdfile(node.name) then
+				return groups.Compile
+--			elseif path.isdheader(node.name) then -- TODO: do .di files belong in here?
+--				return groups.Include
+			elseif path.isresourcefile(node.name) then
+				return groups.ResourceCompile
+			else
+				return groups.None
+			end
 		else
-			return groups.None
+			return oldfn(node, prj, groups)
 		end
 	end)
 
@@ -99,7 +103,7 @@
 				"description",
 			}
 		end
-		return oldfn(cfg)
+		return oldfn(prj)
 	end)
 
 	function monodevelop.elements.useDefaultCompiler(prj)
