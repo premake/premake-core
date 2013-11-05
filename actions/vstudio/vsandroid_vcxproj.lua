@@ -1,6 +1,6 @@
 --
 -- vsandroid_vcxproj.lua
--- vs-android helpers for vstudio.
+-- vs-android integration for vstudio.
 -- Copyright (c) 2012 Manu Evans and the Premake project
 --
 
@@ -18,6 +18,10 @@
 -- Add android tools to vstudio actions.
 --
 
+	if vstudio.vs200x_architectures ~= nil then
+		vstudio.vs200x_architectures.x86 = "x86"
+	end
+
 	if vstudio.vs2010_architectures ~= nil then
 		vstudio.vs2010_architectures.android = "Android"
 	end
@@ -33,23 +37,36 @@
 	-- Note: this function is already patched in by vs2012...
 	premake.override(vc2010, "platformToolset", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
-			local defaultToolsetMap = {
-				x32 = "x86-4.6",
-				armv5 = "arm-linux-androideabi-4.6",
-				armv7 = "arm-linux-androideabi-4.6",
-				mips = "mipsel-linux-android-4.6",
-			}
 			local archMap = {
-				x32 = "x86",
+				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
 				armv5 = "armv5te",
 				armv7 = "armv7-a",
 				mips = "mips",
+				x86 = "x86",
 			}
-			-- TODO: use 'toolset' options to select GCC or Clang
-			-- TODO: allow the user to select the toolset version somehow
-			if cfg.architecture ~= nil and defaultToolsetMap[cfg.architecture] ~= nil then
-				_p(2,'<PlatformToolset>%s</PlatformToolset>', defaultToolsetMap[cfg.architecture])
-				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[cfg.architecture])
+			local arch = cfg.architecture or "arm"
+
+			if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
+				local defaultToolsetMap = {
+					arm = "arm-linux-androideabi-",
+					armv5 = "arm-linux-androideabi-",
+					armv7 = "arm-linux-androideabi-",
+					mips = "mipsel-linux-android-",
+					x86 = "x86-",
+				}
+				local toolset = defaultToolsetMap[arch]
+
+				if cfg.toolset == "clang" then
+					error("The clang toolset is not yet supported by vs-android", 2)
+					toolset = toolset .. "clang"
+				elseif cfg.toolset and cfg.toolset ~= "gcc" then
+					error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
+				end
+
+				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.3", "4.6")
+
+				_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
+				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
 			end
 		else
 			oldfn(cfg)
@@ -121,14 +138,15 @@
 	end)
 
 	premake.override(vc2010, "optimization", function(oldfn, cfg, condition)
-		if cfg.system == premake.ANDROID then
+		local config = cfg.config or cfg
+		if config.system == premake.ANDROID then
 			local map = { Off="O0", On="O2", Debug="O0", Full="O3", Size="Os", Speed="O3" }
 			local value = map[cfg.optimize]
 			if value or not condition then
 				vc2010.element(3, 'OptimizationLevel', condition, value or "O0")
 			end
 		else
-			oldfn(cfg)
+			oldfn(cfg, condition)
 		end
 	end)
 
@@ -206,7 +224,8 @@
 	end
 
 	premake.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
-		if cfg.system == premake.ANDROID then
+		local config = cfg.config or cfg
+		if config.system == premake.ANDROID then
 			vsandroid.additionalOptions(cfg)
 		end
 		return oldfn(cfg, condition)
@@ -230,69 +249,83 @@
 
 		-- Flags that are not supported by the vs-android UI may be added manually here...
 
-		-- we might want to define the arch to generate better code
---		if not alreadyHas(cfg.buildoptions, "-march=") then
---			if cfg.architecture == "armv6" then
---				table.insert(cfg.buildoptions, "-march=armv6")
---			elseif cfg.architecture == "armv7" then
---				table.insert(cfg.buildoptions, "-march=armv7")
+		if not cfg.architecture or string.startswith(cfg.architecture, "arm") then
+			-- we might want to define the arch to generate better code
+--			if not alreadyHas(cfg.buildoptions, "-march=") then
+--				if cfg.architecture == "armv6" then
+--					table.insert(cfg.buildoptions, "-march=armv6")
+--				elseif cfg.architecture == "armv7" then
+--					table.insert(cfg.buildoptions, "-march=armv7")
+--				end
 --			end
---		end
 
-		-- Android has a comprehensive set of floating point options
-		if not cfg.flags.SoftwareFloat and cfg.floatabi ~= "soft" then
+			-- ARM has a comprehensive set of floating point options
+			if not cfg.flags.SoftwareFloat and cfg.floatabi ~= "soft" then
 
-			if cfg.architecture == "armv7" then
+				if cfg.architecture == "armv7" then
 
-				-- armv7 always has VFP, may not have NEON
+					-- armv7 always has VFP, may not have NEON
 
-				if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-					if cfg.vectorextensions ~= nil and cfg.vectorextensions == "NEON" then
-						table.insert(cfg.buildoptions, "-mfpu=neon")
-					elseif cfg.flags.HardwareFloat or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
-						table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
+					if not alreadyHas(cfg.buildoptions, "-mfpu=") then
+						if cfg.vectorextensions == "NEON" then
+							table.insert(cfg.buildoptions, "-mfpu=neon")
+						elseif cfg.flags.HardwareFloat or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+							table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
+						end
 					end
+
+					if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
+						if cfg.floatabi == "hard" then
+							table.insert(cfg.buildoptions, "-mfloat-abi=hard")
+						else
+							-- Android should probably use softfp by default for compatibility
+							table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
+						end
+					end
+
+				else
+
+					-- armv5/6 may not have VFP
+
+					if not alreadyHas(cfg.buildoptions, "-mfpu=") then
+						if cfg.flags.HardwareFloat or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+							table.insert(cfg.buildoptions, "-mfpu=vfp")
+						end
+					end
+
+					if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
+						if cfg.floatabi == "softfp" then
+							table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
+						elseif cfg.floatabi == "hard" then
+							table.insert(cfg.buildoptions, "-mfloat-abi=hard")
+						end
+					end
+
 				end
 
-				if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-					if cfg.floatabi == "hard" then
-						table.insert(cfg.buildoptions, "-mfloat-abi=hard")
-					else
-						-- Android should probably use softfp by default for compatibility
-						table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-					end
-				end
+			elseif cfg.floatabi == "soft" then
 
-			else
-
-				-- armv5/6 may not have VFP
-
-				if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-					if cfg.flags.HardwareFloat or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
-						table.insert(cfg.buildoptions, "-mfpu=vfp")
-					end
-				end
-
-				if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-					if cfg.floatabi == "softfp" then
-						table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-					elseif cfg.floatabi == "hard" then
-						table.insert(cfg.buildoptions, "-mfloat-abi=hard")
-					end
-				end
+				table.insert(cfg.buildoptions, "-mfloat-abi=soft")
 
 			end
 
-		elseif cfg.floatabi == "soft" then
+--			if cfg.flags.LittleEndian then
+--				table.insert(cfg.buildoptions, "-mlittle-endian")
+--			elseif cfg.flags.BigEndian then
+--				table.insert(cfg.buildoptions, "-mbig-endian")
+--			end
 
-			table.insert(cfg.buildoptions, "-mfloat-abi=soft")
+		elseif cfg.architecture == "mips" then
+
+			-- TODO...
+
+			if cfg.vectorextensions == "MXU" then
+				table.insert(cfg.buildoptions, "-mmxu")
+			end
+
+		elseif cfg.architecture == "x86" then
+
+			-- TODO...
 
 		end
-
---		if cfg.flags.LittleEndian then
---			table.insert(cfg.buildoptions, "-mlittle-endian")
---		elseif cfg.flags.BigEndian then
---			table.insert(cfg.buildoptions, "-mbig-endian")
---		end
-
 	end

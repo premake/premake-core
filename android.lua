@@ -1,6 +1,6 @@
 
 --
--- Create a Android namespace to isolate the additions
+-- Create an android namespace to isolate the additions
 --
 	premake.extensions.android = {}
 
@@ -31,8 +31,8 @@
 	premake.ANDROID = "android"
 
 	api.addAllowed("system", premake.ANDROID)
-	api.addAllowed("architecture", { "x86", "armv5", "armv7", "mips" })
-	api.addAllowed("vectorextensions", "NEON")
+	api.addAllowed("architecture", { "x86", "arm", "armv5", "armv7", "mips" })
+	api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	api.addAllowed("flags", {
 		"EnableThumb",
 --		"EnablePIC",
@@ -76,6 +76,21 @@
 		name = "androidapilevel",
 		scope = "config",
 		kind = "integer",
+	}
+
+	api.register {
+		name = "toolchainversion",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"4.4.3", -- NDK GCC versions
+			"4.6",
+			"4.7",
+			"4.8",
+			"3.1", -- NDK clang versions
+			"3.2",
+			"3.3",
+		},
 	}
 
 
