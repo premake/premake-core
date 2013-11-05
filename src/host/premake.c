@@ -105,6 +105,12 @@ int premake_init(lua_State* L)
 
 int premake_execute(lua_State* L, int argc, const char** argv)
 {
+	/* push the absolute path to the Premake executable */
+	lua_pushcfunction(L, path_getabsolute);
+	premake_locate(L, argv[0]);
+	lua_call(L, 1, 1);
+	lua_setglobal(L, "_PREMAKE_COMMAND");
+
 	/* Parse the command line arguments */
 	int z = process_arguments(L, argc, argv);
 

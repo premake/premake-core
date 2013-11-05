@@ -1,7 +1,7 @@
 /**
  * \file   premake_main.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2012 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
@@ -9,20 +9,13 @@
 int main(int argc, const char** argv)
 {
 	lua_State* L;
-	int z = OKAY;
+	int z;
 
 	L = lua_open();
 	luaL_openlibs(L);
+
 	z = premake_init(L);
-
-	/* push the location of the Premake executable */
-	lua_pushcfunction(L, path_getabsolute);
-	premake_locate(L, argv[0]);
-	lua_call(L, 1, 1);
-	lua_setglobal(L, "_PREMAKE_COMMAND");
-
-	if (z == OKAY)
-	{
+	if (z == OKAY) {
 		z = premake_execute(L, argc, argv);
 	}
 
