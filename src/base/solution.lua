@@ -34,7 +34,6 @@
 		premake.solution.list[name] = sln
 
 		sln.name = name
-		sln.blocks = {}
 		sln.projects = {}
 
 		local cset = configset.new(configset.root)

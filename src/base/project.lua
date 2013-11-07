@@ -28,7 +28,6 @@
 		prj.name = name
 		prj.solution = sln
 		prj.script = _SCRIPT
-		prj.blocks = {}
 
 		local cset = configset.new(sln.configset)
 		cset.basedir = os.getcwd()
