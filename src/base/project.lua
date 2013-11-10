@@ -721,24 +721,42 @@
 -- the original path is returned.
 --
 
-	function project.getvpath(prj, filename)
-		-- if there is no match, return the input filename
-		local vpath = filename
+	function project.getvpath(prj, abspath)
+		-- If there is no match, the result is the original filename
+		local vpath = abspath
 
-		for replacement,patterns in pairs(prj.vpaths or {}) do
-			for _,pattern in ipairs(patterns) do
+		-- The file's name must be maintained in the resulting path; use these
+		-- to make sure I don't cut off too much
 
-				-- does the filename match this vpath pattern?
-				local i = filename:find(path.wildcards(pattern))
+		local fname = path.getname(abspath)
+		local max = abspath:len() - fname:len()
+
+		-- Look for matching patterns
+		for replacement, patterns in pairs(prj.vpaths or {}) do
+			for _, pattern in ipairs(patterns) do
+				local i = abspath:find(path.wildcards(pattern))
 				if i == 1 then
-					-- yes; trim the pattern out of the target file's path
-					local leaf
+
+					-- Trim out the part of the name that matched the pattern; what's
+					-- left is the part that gets appended to the replacement to make
+					-- the virtual path. So a pattern like "src/**.h" matching the
+					-- file src/include/hello.h, I want to trim out the src/ part,
+					-- leaving include/hello.h.
+
+					-- Find out where the wildcard appears in the match. If there is
+					-- no wildcard, the match includes the entire pattern
+
 					i = pattern:find("*", 1, true) or (pattern:len() + 1)
-					if i < filename:len() then
-						leaf = filename:sub(i)
+
+					-- Trim, taking care to keep the actual file name intact.
+
+					local leaf
+					if i < max then
+						leaf = abspath:sub(i)
 					else
-						leaf = path.getname(filename)
+						leaf = fname
 					end
+
 					if leaf:startswith("/") then
 						leaf = leaf:sub(2)
 					end
@@ -747,6 +765,7 @@
 					-- If there are none, then trim all path info from the leaf
 					-- and use just the filename in the replacement (stars should
 					-- really only appear at the end; I'm cheating here)
+
 					local stem = ""
 					if replacement:len() > 0 then
 						stem, stars = replacement:gsub("%*", "")
@@ -758,6 +777,7 @@
 					end
 
 					vpath = path.join(stem, leaf)
+
 				end
 			end
 		end

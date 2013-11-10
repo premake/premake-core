@@ -125,6 +125,12 @@
 		test.isequal("Headers/myproject/hello.h", run())
 	end
 
+    function suite.matchBaseFileName_onWildcardExtension()
+         files { "hello.cpp" }
+         vpaths { ["Sources"] = "hello.*" }
+         test.isequal("Sources/hello.cpp", run())
+    end
+
 
 --
 -- Test with project locations
