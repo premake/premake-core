@@ -13,16 +13,15 @@
 -- Setup
 ---
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2013"
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.configurationProperties(cfg)
 	end
 

@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_configuration.lua
 -- Test the Visual Studio 2002-2008 project's Configuration block
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vc200x_configuration = { }
-	local suite = T.vstudio_vc200x_configuration
+	local suite = test.declare("vstudio_vc200x_configuration")
 	local vc200x = premake.vstudio.vc200x
 	local project = premake.project
 
@@ -14,16 +13,15 @@
 -- Setup
 --
 
-	local sln
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject(sln, 1)
-		local cfg = project.getconfig(prj, "Debug", (prj.platforms or {})[1])
+		local cfg = test.getconfig(prj, "Debug", (prj.platforms or sln.platforms or {})[1])
 		vc200x.configuration(cfg)
 	end
 

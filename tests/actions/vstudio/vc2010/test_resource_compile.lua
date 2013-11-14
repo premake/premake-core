@@ -13,7 +13,7 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		io.esc = premake.vstudio.vs2010.esc
@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.resourceCompile(cfg)
 	end
 

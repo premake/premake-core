@@ -12,7 +12,7 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
@@ -20,7 +20,7 @@
 	end
 
 	local function prepare()
-		cfg = premake.project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.VCCLCompilerTool(cfg)
 	end
 

@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_resource_compiler.lua
 -- Validate generation the VCResourceCompilerTool element in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.vs200x_resource_compiler = { }
-	local suite = T.vs200x_resource_compiler
+	local suite = test.declare("vs200x_resource_compiler")
 	local vc200x = premake.vstudio.vc200x
 
 
@@ -13,7 +12,7 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
@@ -21,7 +20,7 @@
 	end
 
 	local function prepare()
-		cfg = premake.project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.VCResourceCompilerTool(cfg)
 	end
 

@@ -6,24 +6,22 @@
 
 	local suite = test.declare("vs2010_nmake_props")
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
 
 
 --
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		kind "Makefile"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.nmakeProperties(cfg)
 	end
 

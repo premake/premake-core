@@ -12,17 +12,16 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		io.esc = premake.vstudio.vs2005.esc
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		kind "Makefile"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = premake.project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.VCNMakeTool(cfg)
 	end
 

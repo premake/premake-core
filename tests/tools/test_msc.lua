@@ -1,14 +1,12 @@
 --
 -- tests/test_msc.lua
 -- Automated test suite for the Microsoft C toolset interface.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.tools_msc = { }
-	local suite = T.tools_msc
+	local suite = test.declare("tools_msc")
 
 	local msc = premake.tools.msc
-	local project = premake.project
 
 
 --
@@ -18,13 +16,12 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		kind "StaticLib"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

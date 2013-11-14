@@ -13,14 +13,14 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
 
 	local function prepare(platform)
-		cfg = project.getconfig(prj, "Debug", platform)
+		local cfg = test.getconfig(prj, "Debug", platform)
 		vc2010.clCompile(cfg)
 	end
 
@@ -282,7 +282,7 @@
 			<WarningLevel>Level3</WarningLevel>
 			<AdditionalUsingDirectories>include\lua;include\zlib;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
 		]]
-	end	
+	end
 
 --
 -- Turn off minimal rebuilds if the NoMinimalRebuild flag is set.

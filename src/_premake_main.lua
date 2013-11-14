@@ -86,7 +86,7 @@
 		-- "Bake" the project information, preparing it for use by the action
 
 		print("Building configurations...")
-		premake.solution.bakeall()
+		premake.oven.bake()
 
 		-- Sanity check the current project setup
 

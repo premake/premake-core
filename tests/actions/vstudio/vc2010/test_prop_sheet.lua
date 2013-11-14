@@ -4,8 +4,7 @@
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_prop_sheet = { }
-	local suite = T.vstudio_vs2010_prop_sheet
+	local suite = test.declare("vstudio_vs2010_prop_sheet")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake.project
 
@@ -14,14 +13,14 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.propertySheets(cfg)
 	end
 

@@ -13,14 +13,14 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
 
 	local function prepare(buildcfg)
-		cfg = project.getconfig(prj, buildcfg or "Debug")
+		local cfg = test.getconfig(prj, buildcfg or "Debug")
 		vc2010.itemDefinitionGroup(cfg)
 	end
 

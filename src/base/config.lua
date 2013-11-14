@@ -11,29 +11,6 @@
 
 
 --
--- Finish the baking process for a solution or project level configurations.
--- Doesn't bake per se, just fills in some calculated values.
---
-
-	function config.bake(cfg)
-		-- assign human-readable names
-		cfg.longname = table.concat({ cfg.buildcfg, cfg.platform }, "|")
-		cfg.shortname = table.concat({ cfg.buildcfg, cfg.platform }, " ")
-		cfg.shortname = cfg.shortname:gsub(" ", "_"):lower()
-		cfg.name = cfg.longname
-
-		-- compute build and link targets
-		if cfg.project and cfg.kind then
-			cfg.buildtarget = config.gettargetinfo(cfg)
-			cfg.buildtarget.relpath = project.getrelative(cfg.project, cfg.buildtarget.abspath)
-
-			cfg.linktarget = config.getlinkinfo(cfg)
-			cfg.linktarget.relpath = project.getrelative(cfg.project, cfg.linktarget.abspath)
-		end
-	end
-
-
---
 -- Helper function for getlinkinfo() and gettargetinfo(); builds the
 -- name parts for a configuration, for building or linking.
 --

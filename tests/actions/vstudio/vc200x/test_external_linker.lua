@@ -1,10 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_external_compiler.lua
 -- Validate generation the VCCLLinker element for external tools in VS 200x C/C++ projects.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
-	T.vs200x_external_linker = { }
-	local suite = T.vs200x_external_linker
+
+	local suite = test.declare("vs200x_external_linker")
 	local vc200x = premake.vstudio.vc200x
 
 
@@ -22,7 +22,7 @@
 	end
 
 	local function prepare()
-		local cfg = premake.project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.VCLinkerTool(cfg)
 	end
 

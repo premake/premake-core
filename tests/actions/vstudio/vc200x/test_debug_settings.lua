@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_debugdir.lua
 -- Validate handling of the working directory for debugging.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs200x_debugdir = { }
-	local suite = T.vstudio_vs200x_debugdir
+	local suite = test.declare("vstudio_vs200x_debugdir")
 	local vc200x = premake.vstudio.vc200x
 	local project = premake.project
 
@@ -14,7 +13,7 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		io.esc = premake.vstudio.vs2005.esc
@@ -22,7 +21,7 @@
 	end
 
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.debugdir(cfg)
 	end
 

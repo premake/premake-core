@@ -13,7 +13,7 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2010"
@@ -22,7 +22,7 @@
 	end
 
 	local function prepare(platform)
-		cfg = project.getconfig(prj, "Debug", platform)
+		local cfg = test.getconfig(prj, "Debug", platform)
 		vc2010.manifest(cfg)
 	end
 

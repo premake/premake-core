@@ -1,13 +1,11 @@
 --
 -- tests/actions/vstudio/vc2010/test_output_props.lua
 -- Validate generation of the output property groups.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_output_props = { }
-	local suite = T.vstudio_vs2010_output_props
+	local suite = test.declare("vstudio_vs2010_output_props")
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
 
 
 --
@@ -18,12 +16,11 @@
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject(sln, 1)
-		local cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.outputProperties(cfg)
 	end
 

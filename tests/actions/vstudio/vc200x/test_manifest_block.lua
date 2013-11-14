@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc200x/test_manifest_block.lua
 -- Validate generation of VCManifest elements Visual Studio 200x C/C++ projects.
--- Copyright (c) 2090-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.vs200x_manifest_block = { }
-	local suite = T.vs200x_manifest_block
+	local suite = test.declare("vs200x_manifest_block")
 	local vc200x = premake.vstudio.vc200x
 
 
@@ -21,7 +20,7 @@
 	end
 
 	local function prepare()
-		local cfg = premake.project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.VCManifestTool(cfg)
 	end
 

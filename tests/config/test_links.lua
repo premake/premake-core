@@ -1,11 +1,10 @@
 --
 -- tests/config/test_links.lua
 -- Test the list of linked objects retrieval function.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.config_links = { }
-	local suite = T.config_links
+	local suite = test.declare("config_links")
 	local config = premake.config
 
 
@@ -13,7 +12,7 @@
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "test"
@@ -22,7 +21,7 @@
 	end
 
 	local function prepare(kind, part, linkage)
-		cfg = premake.project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 		return config.getlinks(cfg, kind, part, linkage)
 	end
 

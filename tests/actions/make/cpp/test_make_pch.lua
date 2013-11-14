@@ -14,18 +14,18 @@
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
 
 	local function prepareVars()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		make.pch(cfg)
 	end
 
 	local function prepareRules()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		make.pchRules(cfg.project)
 	end
 

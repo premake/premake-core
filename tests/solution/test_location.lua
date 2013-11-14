@@ -18,7 +18,7 @@
 	end
 
 	local function prepare()
-		sln = premake.solution.bake(sln)
+		sln = premake.oven.bakeSolution(sln)
 	end
 
 

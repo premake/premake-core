@@ -1,12 +1,10 @@
 --
 -- tests/config/test_targetinfo.lua
 -- Test the config object's build target accessor.
--- Copyright (c) 2011 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.config_targetinfo = { }
-	local suite = T.config_targetinfo
-	local project = premake.project
+	local suite = test.declare("config_targetinfo")
 	local config = premake.config
 
 
@@ -14,7 +12,7 @@
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "test"
@@ -23,7 +21,7 @@
 	end
 
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		return config.gettargetinfo(cfg)
 	end
 

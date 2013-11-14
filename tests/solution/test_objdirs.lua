@@ -4,15 +4,14 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.solution_objdir = { }
-	local suite = T.solution_objdir
+	local suite = test.declare("solution_objdir")
 
 
 --
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local sln
 
 	function suite.setup()
 		_ACTION = "test"
@@ -22,10 +21,9 @@
 
 	local function result()
 		local platforms = sln.platforms or {}
-		project("MyProject")
-		prj = premake.solution.getproject(sln, "MyProject")
-		cfg = premake.project.getconfig(prj, "Debug", platforms[1])
-		return premake.project.getrelative(prj, cfg.objdir)
+		local prj = project("MyProject")
+		local cfg = test.getconfig(prj, "Debug", platforms[1])
+		return premake.project.getrelative(cfg.project, cfg.objdir)
 	end
 
 

@@ -1,12 +1,10 @@
 --
 -- tests/config/test_linkinfo.lua
 -- Test the config object's link target accessor.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.config_linkinfo = { }
-	local suite = T.config_linkinfo
-	local project = premake.project
+	local suite = test.declare("config_linkinfo")
 	local config = premake.config
 
 
@@ -14,7 +12,7 @@
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "test"
@@ -24,7 +22,7 @@
 	end
 
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		return config.getlinkinfo(cfg)
 	end
 

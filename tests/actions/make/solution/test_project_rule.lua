@@ -1,27 +1,26 @@
 --
 -- tests/actions/make/solution/test_project_rule.lua
 -- Validate generation of project rules in solution makefile.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
 	T.make_project_rule = {}
 	local suite = T.make_project_rule
 	local make = premake.make
-	local solution = premake.solution
 
 
 --
 -- Setup/teardown
 --
 
-	local sln, prj
+	local sln
 
 	function suite.setup()
 		sln = test.createsolution()
 	end
 
 	local function prepare()
-		sln = solution.bake(sln)
+		sln = premake.oven.bakeSolution(sln)
 		make.projectrules(sln)
 	end
 
@@ -33,7 +32,7 @@
 	function suite.projectRule_onNoDependencies()
 		prepare()
 		test.capture [[
-MyProject: 
+MyProject:
 ifneq (,$(MyProject_config))
 	@echo "==== Building MyProject ($(MyProject_config)) ===="
 	@${MAKE} --no-print-directory -C . -f MyProject.make config=$(MyProject_config)

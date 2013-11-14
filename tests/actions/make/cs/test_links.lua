@@ -13,15 +13,14 @@
 -- Setup
 --
 
-    local sln, prj, cfg
+    local sln, prj
 
     function suite.setup()
         sln, prj = test.createsolution()
     end
 
     local function prepare()
-        prj = premake.solution.getproject(sln, 1)
-        cfg = project.getconfig(prj, "Debug")
+        local cfg = test.getconfig(prj, "Debug")
         make.csLinkCmd(cfg, premake.tools.dotnet)
     end
 

@@ -1,11 +1,10 @@
 --
 -- tests/project/test_getconfig.lua
 -- Test the project object configuration accessor.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.project_getconfig = { }
-	local suite = T.project_getconfig
+	local suite = test.declare("project_getconfig")
 
 --
 -- Setup and teardown
@@ -19,8 +18,8 @@
 	end
 
 	local function prepare(buildcfg, platform)
-		prj = premake.solution.getproject(sln, 1)
-		cfg = premake.project.getconfig(prj, buildcfg or "Debug", platform)
+		prj = sln.projects[1]
+		cfg = test.getconfig(prj, buildcfg or "Debug", platform)
 	end
 
 

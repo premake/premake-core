@@ -20,7 +20,7 @@
 	end
 
 	local function prepare(calls)
-		local cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		local toolset = premake.tools.gcc
 		premake.callarray(make, calls, cfg, toolset)
 	end

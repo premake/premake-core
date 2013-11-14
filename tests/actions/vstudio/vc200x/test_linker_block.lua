@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		local cfg = premake.project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc200x.VCLinkerTool(cfg)
 	end
 

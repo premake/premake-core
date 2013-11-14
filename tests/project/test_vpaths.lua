@@ -1,11 +1,10 @@
 --
 -- tests/project/test_vpaths.lua
 -- Automated test suite for the project support functions.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.project_vpaths = { }
-	local suite = T.project_vpaths
+	local suite = test.declare("project_vpaths")
 	local project = premake.project
 
 
@@ -13,15 +12,14 @@
 -- Setup and teardown
 --
 
-	local sln
+	local sln, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function run()
-		local prj = premake.solution.getproject(sln, 1)
-		local cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		return project.getvpath(prj, cfg.files[1])
 	end
 

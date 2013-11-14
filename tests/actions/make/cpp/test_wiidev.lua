@@ -13,12 +13,12 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		local sln, prj = test.createsolution()
 		system "wii"
-		cfg = project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

@@ -1,30 +1,27 @@
 --
 -- tests/actions/vstudio/cs2005/test_platform_groups.lua
 -- Check creation of per-platform property groups in VS2005+ C# projects.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_platform_groups = {}
-	local suite = T.vstudio_cs2005_platform_groups
+	local suite = test.declare("vstudio_cs2005_platform_groups")
 	local cs2005 = premake.vstudio.cs2005
 
 --
 -- Setup
 --
 
-	local sln, prj, cfg
-
 	function suite.setup()
 		_ACTION = "vs2008"
 	end
 
 	local function prepare(platform)
-		sln = solution ("MySolution")
+		local sln = solution ("MySolution")
 		configurations ("Debug")
 		platforms (platform)
-		prj = project ("MyProject")
+		local prj = project ("MyProject")
 		language "C#"
-		cfg = premake.project.getconfig(prj, "Debug", platform)
+		local cfg = test.getconfig(prj, "Debug", platform)
 		cs2005.propertyGroup(cfg)
 	end
 

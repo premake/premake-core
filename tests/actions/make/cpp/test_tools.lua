@@ -14,12 +14,11 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local cfg
 
 	function suite.setup()
-		sln = test.createsolution()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
+		local sln, prj = test.createsolution()
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

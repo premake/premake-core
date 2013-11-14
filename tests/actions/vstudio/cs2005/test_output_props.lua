@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/cs2005/test_output_props.lua
 -- Test the target output settings of a Visual Studio 2005+ C# project.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_output_props = {}
-	local suite = T.vstudio_cs2005_output_props
+	local suite = test.declare("vstudio_cs2005_output_props")
 	local cs2005 = premake.vstudio.cs2005
 	local project = premake.project
 
@@ -14,17 +13,16 @@
 -- Setup and teardown
 --
 
-	local sln
+	local sln, prj
 
 	function suite.setup()
 		_ACTION = "vs2005"
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		language "C#"
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject(sln, 1)
-		local cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		cs2005.outputProps(cfg)
 	end
 

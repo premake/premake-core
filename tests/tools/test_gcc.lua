@@ -17,13 +17,12 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 		system "Linux"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_config_props.lua
 -- Validate generation of the configuration property group.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_config_props = { }
-	local suite = T.vstudio_vs2010_config_props
+	local suite = test.declare("vstudio_vs2010_config_props")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake.project
 
@@ -14,15 +13,14 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 		vc2010.configurationProperties(cfg)
 	end
 

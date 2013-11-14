@@ -35,6 +35,7 @@
 		"base/config.lua",
 		"base/fileconfig.lua",
 		"base/solution.lua",
+		"base/oven.lua",
 		"base/premake.lua",
 
 		-- runtime environment setup

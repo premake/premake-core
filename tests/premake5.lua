@@ -33,6 +33,13 @@
 	end
 
 
+	test.getconfig = function(prj, buildcfg, platform)
+		local sln = premake.oven.bakeSolution(prj.solution)
+		prj = premake.solution.getproject(sln, prj.name)
+		return premake.project.getconfig(prj, buildcfg, platform)
+	end
+
+
 --
 -- The test suites
 --

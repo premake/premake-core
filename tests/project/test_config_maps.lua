@@ -1,11 +1,10 @@
 --
 -- tests/project/test_config_maps.lua
 -- Test mapping from solution to project configurations.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.project_config_maps = { }
-	local suite = T.project_config_maps
+	local suite = test.declare("project_config_maps")
 
 
 --
@@ -20,8 +19,8 @@
 	end
 
 	local function prepare(buildcfg, platform)
-		prj = premake.solution.getproject(sln, 1)
-		cfg = premake.project.getconfig(prj, buildcfg or "Debug", platform)
+		prj = sln.projects[1]
+		cfg = test.getconfig(prj, buildcfg or "Debug", platform)
 	end
 
 

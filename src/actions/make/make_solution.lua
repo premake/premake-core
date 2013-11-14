@@ -113,7 +113,7 @@
 		for prj in solution.eachproject(sln) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
-			_p('%s: %s', premake.esc(prj.name), table.concat(deps, " "))
+			_p('%s:%s', premake.esc(prj.name), make.list(deps))
 
 			local cfgvar = make.tovar(prj.name)
 			_p('ifneq (,$(%s_config))', cfgvar)

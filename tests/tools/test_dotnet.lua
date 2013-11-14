@@ -1,11 +1,10 @@
 --
 -- tests/tools/test_dotnet.lua
 -- Automated test suite for the .NET toolset interface.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.tools_dotnet = {}
-	local suite = T.tools_dotnet
+	local suite = test.declare("tools_dotnet")
 	local dotnet = premake.tools.dotnet
 
 
@@ -16,12 +15,11 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		sln = test.createsolution()
+		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		cfg = premake.project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

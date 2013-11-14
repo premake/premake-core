@@ -13,7 +13,7 @@
 -- Setup
 --
 
-	local sln, prj
+	local sln
 
 	function suite.setup()
 		_ACTION = "vs2008"
@@ -24,7 +24,7 @@
 
 	local function prepare(lang)
 		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
-		sln = premake.solution.bake(sln)
+		sln = premake.oven.bakeSolution(sln)
 		sln2005.configurationPlatforms(sln)
 	end
 

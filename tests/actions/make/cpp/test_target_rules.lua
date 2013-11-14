@@ -20,7 +20,7 @@
 	end
 
 	local function prepare()
-		local cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		make.cppAllRules(cfg)
 	end
 

@@ -1,11 +1,10 @@
 --
 -- tests/test_snc.lua
 -- Automated test suite for the SNC toolset interface.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.tools_snc = {}
-	local suite = T.tools_snc
+	local suite = test.declare("tools_snc")
 
 	local snc = premake.tools.snc
 
@@ -22,7 +21,7 @@
 	end
 
 	local function prepare()
-		cfg = premake.project.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

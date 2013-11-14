@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_debug_settings.lua
 -- Validate handling of the working directory for debugging.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs2010_debug_settings = { }
-	local suite = T.vstudio_vs2010_debug_settings
+	local suite = test.declare("vstudio_vs2010_debug_settings")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake.project
 
@@ -14,14 +13,14 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local sln, prj
 
 	function suite.setup()
 		sln, prj = test.createsolution()
 	end
 
 	local function prepare()
-		cfg = project.getconfig(prj, "Debug")
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.debugsettings(cfg)
 	end
 
@@ -32,8 +31,7 @@
 
 	function suite.noOutput_onNoDebugDir()
 		prepare()
-		test.capture [[
-		]]
+		test.isemptycapture()
 	end
 
 --

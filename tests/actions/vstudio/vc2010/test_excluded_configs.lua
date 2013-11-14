@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_excluded_configs.lua
 -- Check handling of configurations which have been excluded from the build.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	T.vs2010_excluded_configs = {}
-	local suite = T.vs2010_excluded_configs
+	local suite = test.declare("vs2010_excluded_configs")
 	local vc2010 = premake.vstudio.vc2010
 
 
@@ -36,7 +35,7 @@
 	end
 
 	local function prepare(platform)
-		local cfg = premake.project.getconfig(prj, "Debug", platform)
+		local cfg = test.getconfig(prj, "Debug", platform)
 		vc2010.link(cfg)
 	end
 
