@@ -258,6 +258,7 @@
 			"Unicode",
 			"Unsafe",
 			"WinMain",
+			"WPF",
 		},
 		aliases = {
 			Optimise = 'Optimize',
@@ -615,7 +616,7 @@
 		scope = "config",
 		kind = "directory-list",
 		tokens = true,
-	}	
+	}
 
 	api.register {
 		name = "uuid",

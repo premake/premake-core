@@ -149,8 +149,6 @@
 --
 
 	function project.getconfig(prj, buildcfg, platform)
-		-- prj = premake.oven.bakeProject(prj, prj.solution)
-
 		-- if no build configuration is specified, return the "root" project
 		-- configurations, which includes all configuration values that
 		-- weren't set with a specific configuration filter

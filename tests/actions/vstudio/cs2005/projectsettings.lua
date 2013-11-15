@@ -138,3 +138,31 @@
 		]]
 	end
 
+
+--
+-- WPF adds an additional element.
+--
+
+	function suite.projectTypeGuids_onWPF()
+		_ACTION = "vs2010"
+		flags { "WPF" }
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProductVersion>8.0.30703</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>MyProject</RootNamespace>
+		<AssemblyName>MyProject</AssemblyName>
+		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+		<TargetFrameworkProfile>
+		</TargetFrameworkProfile>
+		<FileAlignment>512</FileAlignment>
+		<ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+	</PropertyGroup>
+		]]
+	end

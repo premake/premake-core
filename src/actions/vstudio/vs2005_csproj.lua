@@ -82,6 +82,7 @@
 		"targetFrameworkVersion",
 		"targetFrameworkProfile",
 		"fileAlignment",
+		"projectTypeGuids",
 	}
 
 	function cs2005.projectProperties(prj)
@@ -412,6 +413,13 @@
 
 	function cs2005.projectGuid(cfg)
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', cfg.uuid)
+	end
+
+
+	function cs2005.projectTypeGuids(cfg)
+		if cfg.flags.WPF then
+			_p(2,'<ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>')
+		end
 	end
 
 
