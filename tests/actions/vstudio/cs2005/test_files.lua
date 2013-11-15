@@ -212,3 +212,57 @@
 		</Compile>
 		]]
 	end
+
+
+--
+-- Check WPF XAML handling.
+--
+
+	function suite.associatesFiles_onXamlForm()
+		files { "MainWindow.xaml", "MainWindow.xaml.cs" }
+		prepare()
+		test.capture [[
+		<Page Include="MainWindow.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Compile Include="MainWindow.xaml.cs">
+			<SubType>Code</SubType>
+			<DependentUpon>MainWindow.xaml</DependentUpon>
+		</Compile>
+		]]
+	end
+
+
+	function suite.xamlApp_onAppXaml()
+		files { "App.xaml", "App.xaml.cs" }
+		prepare()
+		test.capture [[
+		<ApplicationDefinition Include="App.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</ApplicationDefinition>
+		<Compile Include="App.xaml.cs">
+			<SubType>Code</SubType>
+			<DependentUpon>App.xaml</DependentUpon>
+		</Compile>
+		]]
+	end
+
+
+	function suite.xamlApp_onBuildAction()
+		files { "MyApp.xaml", "MyApp.xaml.cs" }
+		configuration "MyApp.xaml"
+		buildaction "Application"
+		prepare()
+		test.capture [[
+		<ApplicationDefinition Include="MyApp.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</ApplicationDefinition>
+		<Compile Include="MyApp.xaml.cs">
+			<SubType>Code</SubType>
+			<DependentUpon>MyApp.xaml</DependentUpon>
+		</Compile>
+		]]
+	end

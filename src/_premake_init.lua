@@ -63,6 +63,7 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
+			"Application",
 			"Compile",
 			"Component",
 			"Copy",

@@ -665,7 +665,7 @@
 			dirs = path.translate(table.concat(dirs, ";"))
 			_x(3,'<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
 		end
-	end	
+	end
 
 
 	function vc2010.additionalCompileOptions(cfg, condition)
@@ -709,7 +709,7 @@
 
 	function vc2010.clCompileAdditionalUsingDirectories(cfg)
 		vc2010.additionalUsingDirectories(cfg, cfg.usingdirs)
-	end	
+	end
 
 
 	function vc2010.clCompilePreprocessorDefinitions(cfg)

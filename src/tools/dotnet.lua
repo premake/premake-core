@@ -43,6 +43,12 @@
 			info.action = "EmbeddedResource"
 		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" then
 			info.action = "Content"
+		elseif ext == ".xaml" then
+			if fcfg.buildaction == "Application" or path.getbasename(fname) == "App" then
+				info.action = "ApplicationDefinition"
+			else
+				info.action = "Page"
+			end
 		else
 			info.action = "None"
 		end
@@ -67,6 +73,10 @@
 					info.subtype = "Dependency"
 					info.dependency = testname
 				end
+
+			elseif fname:endswith(".xaml.cs") then
+				info.subtype = "Code"
+				info.dependency = fname:sub(1, -4)
 
 			else
 
@@ -94,6 +104,10 @@
 
 		end
 
+		if info.action == "Content" then
+			info.subtype = "PreserveNewest"
+		end
+
 		if info.action == "EmbeddedResource" and fname:endswith(".resx") then
 
 			local basename = fname:sub(1, -6)
@@ -110,13 +124,20 @@
 				testname = basename .. ".Designer.cs"
 				if project.hasfile(fcfg.project, testname) then
 					info.subtype = "Designer"
+					info.generator = "ResXFileCodeGenerator"
 				end
 			end
 
 		end
 
-		if info.action == "Content" then
-			info.subtype = "PreserveNewest"
+		if fname:endswith(".xaml") then
+
+			local testname = fname .. ".cs"
+			if project.hasfile(fcfg.project, testname) then
+				info.subtype = "Designer"
+				info.generator = "MSBuild:Compile"
+			end
+
 		end
 
 		return info
