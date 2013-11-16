@@ -43,6 +43,8 @@
 			info.action = "EmbeddedResource"
 		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" then
 			info.action = "Content"
+		elseif fcfg.buildaction == "Resource" then
+			info.action = "Resource"
 		elseif ext == ".xaml" then
 			if fcfg.buildaction == "Application" or path.getbasename(fname) == "App" then
 				info.action = "ApplicationDefinition"

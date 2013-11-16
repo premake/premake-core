@@ -112,6 +112,16 @@
 		]]
 	end
 
+	function suite.embeddedResourceAction()
+		files { "Hello.ico" }
+		configuration "*.ico"
+		buildaction "Embed"
+		prepare()
+		test.capture [[
+		<EmbeddedResource Include="Hello.ico" />
+		]]
+	end
+
 	function suite.formAction()
 		files { "HelloForm.cs" }
 		configuration "HelloForm.cs"
@@ -133,6 +143,16 @@
 		<Compile Include="Hello.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
+		]]
+	end
+
+	function suite.resourceAction()
+		files { "Hello.ico" }
+		configuration "*.ico"
+		buildaction "Resource"
+		prepare()
+		test.capture [[
+		<Resource Include="Hello.ico" />
 		]]
 	end
 

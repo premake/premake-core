@@ -70,6 +70,7 @@
 			"Embed",
 			"Form",
 			"None",
+			"Resource",
 			"UserControl",
 		},
 	}
