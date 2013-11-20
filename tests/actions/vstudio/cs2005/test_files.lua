@@ -59,10 +59,27 @@
 			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
 		<EmbeddedResource Include="Resources.resx">
-			<SubType>Designer</SubType>
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
 		</EmbeddedResource>
+		]]
+	end
+
+
+	function suite.settingsDesignerDependency()
+		files { "Properties/Settings.settings", "Properties/Settings.Designer.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="Properties\Settings.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+		</Compile>
+		<None Include="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
 		]]
 	end
 
@@ -243,12 +260,12 @@
 		prepare()
 		test.capture [[
 		<Page Include="MainWindow.xaml">
-			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
 		</Page>
 		<Compile Include="MainWindow.xaml.cs">
-			<SubType>Code</SubType>
 			<DependentUpon>MainWindow.xaml</DependentUpon>
+			<SubType>Code</SubType>
 		</Compile>
 		]]
 	end
@@ -259,12 +276,12 @@
 		prepare()
 		test.capture [[
 		<ApplicationDefinition Include="App.xaml">
-			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
 		</ApplicationDefinition>
 		<Compile Include="App.xaml.cs">
-			<SubType>Code</SubType>
 			<DependentUpon>App.xaml</DependentUpon>
+			<SubType>Code</SubType>
 		</Compile>
 		]]
 	end
@@ -277,12 +294,13 @@
 		prepare()
 		test.capture [[
 		<ApplicationDefinition Include="MyApp.xaml">
-			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
 		</ApplicationDefinition>
 		<Compile Include="MyApp.xaml.cs">
-			<SubType>Code</SubType>
 			<DependentUpon>MyApp.xaml</DependentUpon>
+			<SubType>Code</SubType>
 		</Compile>
 		]]
 	end
+
