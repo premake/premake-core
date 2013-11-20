@@ -38,12 +38,12 @@
 --
 
 	function suite.solution_setsActiveScope()
-		test.isequal(api.scope.solution, sln)
+		test.issame(api.scope.solution, sln)
 	end
 
 	function suite.project_setsActiveScope()
 		local prj = project("MyProject")
-		test.isequal(api.scope.project, prj)
+		test.issame(api.scope.project, prj)
 	end
 
 
@@ -56,7 +56,7 @@
 		project("MyProject")
 		group("MyGroup")
 		solution()
-		test.isequal(sln, api.scope.solution)
+		test.issame(sln, api.scope.solution)
 		test.isnil(api.scope.project)
 		test.isnil(api.scope.group)
 	end
@@ -65,7 +65,7 @@
 		local prj = project("MyProject")
 		group("MyGroup")
 		project()
-		test.isequal(prj, api.scope.project)
+		test.issame(prj, api.scope.project)
 	end
 
 
@@ -88,6 +88,6 @@
 		group("MyGroup")
 		configuration("Debug")
 		project "*"
-		test.isequal(sln, api.scope.solution)
+		test.issame(sln, api.scope.solution)
 		test.isnil(api.scope.project)
 	end

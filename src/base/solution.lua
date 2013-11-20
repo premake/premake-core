@@ -43,7 +43,6 @@
 
 		-- attach a type descriptor
 		setmetatable(sln, {
-			__type = "solution",
 			__index = function(sln, key)
 				return sln.configset[key]
 			end,

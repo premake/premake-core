@@ -37,7 +37,6 @@
 
 		-- attach a type descriptor
 		setmetatable(prj, {
-			__type = "project",
 			__index = function(prj, key)
 				return prj.configset[key]
 			end,

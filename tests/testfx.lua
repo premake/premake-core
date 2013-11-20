@@ -156,6 +156,13 @@
 	end
 
 
+	function test.issame(expected, action)
+		if expected ~= action then
+			test.fail("expected same value")
+		end
+	end
+
+
 	function test.istrue(value)
 		if (not value) then
 			test.fail("expected true but was false")

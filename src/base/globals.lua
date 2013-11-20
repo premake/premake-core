@@ -152,21 +152,3 @@
 	function printf(msg, ...)
 		print(string.format(msg, unpack(arg)))
 	end
-
-
-
---
--- An extension to type() to identify project object types by reading the
--- "__type" field from the metatable.
---
-
-	local builtin_type = type
-	function type(t)
-		local mt = getmetatable(t)
-		if (mt) then
-			if (mt.__type) then
-				return mt.__type
-			end
-		end
-		return builtin_type(t)
-	end
