@@ -66,9 +66,9 @@
 	end
 
 
-	function test.contains(value, expected)
-		if not table.contains(value, expected) then
-			test.fail("expected value %s not found", expected)
+	function test.contains(value, actual)
+		if not table.contains(actual, value) then
+			test.fail("expected value %s not found", value)
 		end
 	end
 
@@ -169,6 +169,11 @@
 		end
 	end
 
+	function test.missing(value, actual)
+		if table.contains(actual, value) then
+			test.fail("unexpected value %s found", value)
+		end
+	end
 
 	function test.openedfile(fname)
 		if fname ~= test.value_openedfilename then

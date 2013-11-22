@@ -32,48 +32,89 @@
 	function suite.cflags_onNoOptimize()
 		optimize "Off"
 		prepare()
-		test.isequal("/Od", msc.getcflags(cfg)[1])
+		test.contains("/Od", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimize()
 		optimize "On"
 		prepare()
-		test.isequal("/Ot", msc.getcflags(cfg)[1])
+		test.contains("/Ot", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeSize()
 		optimize "Size"
 		prepare()
-		test.isequal("/O1", msc.getcflags(cfg)[1])
+		test.contains("/O1", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeSpeed()
 		optimize "Speed"
 		prepare()
-		test.isequal("/O2", msc.getcflags(cfg)[1])
+		test.contains("/O2", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeFull()
 		optimize "Full"
 		prepare()
-		test.isequal("/Ox", msc.getcflags(cfg)[1])
+		test.contains("/Ox", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeDebug()
 		optimize "Debug"
 		prepare()
-		test.isequal("/Od", msc.getcflags(cfg)[1])
+		test.contains("/Od", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onNoFramePointers()
+		flags "NoFramePointer"
+		prepare()
+		test.contains("/Oy", msc.getcflags(cfg))
+	end
+
+	function suite.ldflags_onLinkTimeOptimizations()
+		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("/GL", msc.getldflags(cfg))
 	end
 
 
 --
--- Check handling of basic linker flags.
+-- Check handling of debugging support.
 --
 
 	function suite.ldflags_onSymbols()
-		flags { "Symbols" }
+		flags "Symbols"
 		prepare()
-		test.isequal({ "/DEBUG" }, msc.getldflags(cfg))
+		test.contains("/DEBUG", msc.getldflags(cfg))
+	end
+
+
+--
+-- Check handling warnings and errors.
+--
+
+	function suite.cflags_OnNoWarnings()
+		warnings "Off"
+		prepare()
+		test.contains("/W0", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_OnExtraWarnings()
+		warnings "Extra"
+		prepare()
+		test.contains("/W4", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_OnFatalWarnings()
+		flags "FatalWarnings"
+		prepare()
+		test.contains("/WX", msc.getcflags(cfg))
+	end
+
+	function suite.ldflags_OnFatalWarnings()
+		flags "FatalWarnings"
+		prepare()
+		test.contains("/WX", msc.getldflags(cfg))
 	end
 
 
@@ -82,9 +123,9 @@
 --
 
 	function suite.libdirs_onLibdirs()
-		libdirs { "../libs", "libs" }
+		libdirs { "../libs" }
 		prepare()
-		test.isequal({ '/LIBPATH:"../libs"', '/LIBPATH:"libs"' }, msc.getldflags(cfg))
+		test.contains('/LIBPATH:"../libs"', msc.getldflags(cfg))
 	end
 
 
@@ -93,7 +134,98 @@
 --
 
 	function suite.forcedIncludeFiles()
-		forceincludes { "stdafx.h", "include/sys.h" }
+		forceincludes { "include/sys.h" }
 		prepare()
-		test.isequal({'/FIstdafx.h', '/FIinclude/sys.h'}, msc.getforceincludes(cfg))
+		test.contains('/FIinclude/sys.h', msc.getforceincludes(cfg))
+	end
+
+
+--
+-- Check handling of floating point modifiers.
+--
+
+	function suite.cflags_onFloatingPointFast()
+		floatingpoint "Fast"
+		prepare()
+		test.contains("/fp:fast", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointStrict()
+		floatingpoint "Strict"
+		prepare()
+		test.contains("/fp:strict", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onSSE()
+		vectorextensions "SSE"
+		prepare()
+		test.contains("/arch:sse", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onSSE2()
+		vectorextensions "SSE2"
+		prepare()
+		test.contains("/arch:sse2", msc.getcflags(cfg))
+	end
+
+
+--
+-- Check compilation options.
+--
+
+	function suite.cflags_onNoMinimalRebuild()
+		flags "NoMinimalRebuild"
+		prepare()
+		test.contains("/Gm-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onMultiProcessorCompile()
+		flags "MultiProcessorCompile"
+		prepare()
+		test.contains("/MP", msc.getcflags(cfg))
+	end
+
+
+--
+-- Check handling of C++ language features.
+--
+
+	function suite.cflags_onExceptions()
+		prepare()
+		test.contains("/EHsc", msc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onNoExceptions()
+		flags "NoExceptions"
+		prepare()
+		test.missing("/EHsc", msc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onNoRTTI()
+		flags "NoRTTI"
+		prepare()
+		test.contains("/GR-", msc.getcxxflags(cfg))
+	end
+
+
+--
+-- Check handling of additional linker options.
+--
+
+	function suite.ldflags_onOmitDefaultLibrary()
+		flags "OmitDefaultLibrary"
+		prepare()
+		test.contains("/NODEFAULTLIB", msc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onNoIncrementalLink()
+		flags "NoIncrementalLink"
+		prepare()
+		test.contains("/INCREMENTAL:NO", msc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onNoManifest()
+		flags "NoManifest"
+		prepare()
+		test.contains("/MANIFEST:NO", msc.getldflags(cfg))
 	end

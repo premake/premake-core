@@ -26,9 +26,17 @@
 
 	msc.cflags = {
 		flags = {
+			FatalWarnings = "/WX",
+			MultiProcessorCompile = "/MP",
+			NoFramePointer = "/Oy",
+			NoMinimalRebuild = "/Gm-",
 			SEH = "/EHa",
 			Symbols = "/Z7",
 			OmitDefaultLibrary = "/Zl",
+		},
+		floatingpoint = {
+			Fast = "/fp:fast",
+			Strict = "/fp:strict",
 		},
 		optimize = {
 			Off = "/Od",
@@ -37,6 +45,14 @@
 			Full = "/Ox",
 			Size = "/O1",
 			Speed = "/O2",
+		},
+		vectorextensions = {
+			SSE = "/arch:sse",
+			SSE2 = "/arch:sse2",
+		},
+		warnings = {
+			Extra = "/W4",
+			Off = "/W0",
 		}
 	}
 
@@ -49,10 +65,6 @@
 		end
 		table.insert(flags, runtime)
 
-		if not cfg.flags.SEH then
-			table.insert(flags, "/EHsc")
-		end
-
 		return flags
 	end
 
@@ -62,10 +74,18 @@
 --
 
 	msc.cxxflags = {
+		flags = {
+			NoRTTI = "/GR-",
+		}
 	}
 
 	function msc.getcxxflags(cfg)
 		local flags = config.mapFlags(cfg, msc.cxxflags)
+
+		if not cfg.flags.SEH and not cfg.flags.NoExceptions then
+			table.insert(flags, "/EHsc")
+		end
+
 		return flags
 	end
 
@@ -125,6 +145,11 @@
 --
 	msc.ldflags = {
 		flags = {
+			FatalWarnings = "/WX",
+			LinkTimeOptimization = "/GL",
+			NoIncrementalLink = "/INCREMENTAL:NO",
+			NoManifest = "/MANIFEST:NO",
+			OmitDefaultLibrary = "/NODEFAULTLIB",
 			Symbols = "/DEBUG",
 		}
 	}

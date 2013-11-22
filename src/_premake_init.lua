@@ -240,7 +240,6 @@
 			"NoFramePointer",
 			"NoImplicitLink",
 			"NoImportLib",
-			"OmitDefaultLibrary",
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",
@@ -250,6 +249,7 @@
 			"NoRTTI",
 			"NoBufferSecurityCheck",
 			"NoWarnings",          -- DEPRECATED
+			"OmitDefaultLibrary",
 			"Optimize",            -- DEPRECATED
 			"OptimizeSize",        -- DEPRECATED
 			"OptimizeSpeed",       -- DEPRECATED
