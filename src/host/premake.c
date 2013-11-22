@@ -221,15 +221,20 @@ int premake_locate(lua_State* L, const char* argv0)
 int process_arguments(lua_State* L, int argc, const char** argv)
 {
 	int i;
+	int found = 0;
 
-	/* Create empty lists for Options and Args */
+	/* Create empty lists for _ARGV, _OPTIONS, and _ARGS */
+	lua_newtable(L);
 	lua_newtable(L);
 	lua_newtable(L);
 
 	for (i = 1; i < argc; ++i)
 	{
-		/* Options start with '/' or '--'. The first argument that isn't an option
-		 * is the action. Anything after that is an argument to the action */
+		/* Everything goes into the _ARGV list */
+		lua_pushstring(L, argv[i]);
+		lua_rawseti(L, -4, luaL_getn(L, -4) + 1);
+
+		/* Options start with '/' or '--' */
 		if (argv[i][0] == '/')
 		{
 			process_option(L, argv[i] + 1);
@@ -240,14 +245,15 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 		}
 		else
 		{
-			/* not an option, is the action */
-			lua_pushstring(L, argv[i++]);
-			lua_setglobal(L, "_ACTION");
-
-			/* everything else is an argument */
-			while (i < argc)
-			{
+			/* The first non-option is the action */
+			if (!found) {
+				found = 1;
 				lua_pushstring(L, argv[i++]);
+				lua_setglobal(L, "_ACTION");
+			}
+			/* everything else is an argument */
+			else {
+				lua_pushstring(L, argv[i]);
 				lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
 			}
 		}
@@ -256,6 +262,7 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 	/* push the Options and Args lists */
 	lua_setglobal(L, "_ARGS");
 	lua_setglobal(L, "_OPTIONS");
+	lua_setglobal(L, "_ARGV");
 	return OKAY;
 }
 
