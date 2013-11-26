@@ -268,7 +268,7 @@
 			end
 		end
 
-		function recurse(value)
+		local function recurse(value)
 			if type(value) == "table" then
 				table.foreachi(value, function(v)
 					recurse(v)
@@ -558,7 +558,7 @@
 
 		-- process all of the values, according to the data type
 		local result = {}
-		function recurse(value)
+		local function recurse(value)
 			if type(value) == "table" then
 				table.foreachi(value, function (value)
 					recurse(value)
