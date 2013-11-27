@@ -85,6 +85,7 @@ int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int string_endswith(lua_State* L);
 int string_hash(lua_State* L);
+int string_startswith(lua_State* L);
 
 /* Engine interface */
 int premake_init(lua_State* L);
