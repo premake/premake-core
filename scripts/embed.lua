@@ -20,10 +20,12 @@
 		s = s:gsub("[\r]", "")
 
 		-- strip out block comments
-		s = s:gsub("%-%-%[%[.-%-%-%]%]", "")
+		s = s:gsub("[^\"']%-%-%[%[.-%]%]", "")
+		s = s:gsub("[^\"']%-%-%[=%[.-%]=%]", "")
+		s = s:gsub("[^\"']%-%-%[==%[.-%]==%]", "")
 
 		-- strip out inline comments
-		s = s:gsub("\n%-%-[^\n]*", "")
+		s = s:gsub("\n%-%-[^\n]*", "\n")
 
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
@@ -32,7 +34,7 @@
 		s = s:gsub("\n+", "\n")
 
 		-- strip out leading comments
-		s = s:gsub("^%-%-\n", "")
+		s = s:gsub("^%-%-[^\n]*\n", "")
 
 		-- escape line feeds
 		s = s:gsub("\n", "\\n")
