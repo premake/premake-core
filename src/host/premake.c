@@ -249,7 +249,7 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 			/* The first non-option is the action */
 			if (!found) {
 				found = 1;
-				lua_pushstring(L, argv[i++]);
+				lua_pushstring(L, argv[i]);
 				lua_setglobal(L, "_ACTION");
 			}
 			/* everything else is an argument */
