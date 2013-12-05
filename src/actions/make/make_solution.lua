@@ -6,6 +6,7 @@
 
 	local make = premake.make
 	local solution = premake.solution
+	local tree = premake.tree
 	local project = premake.project
 
 
@@ -18,11 +19,41 @@
 
 		make.configmap(sln)
 		make.projects(sln)
-
-		_p('.PHONY: all clean help $(PROJECTS)')
+		
+		local groups = {}
+		local tr = solution.grouptree(sln)
+		tree.traverse(tr, {
+			onbranch = function(n)
+				table.insert(groups, n.path) 
+			end
+		})
+		
+		_p('.PHONY: all clean help $(PROJECTS) ' .. table.implode(groups, '', '', ' '))
 		_p('')
 		_p('all: $(PROJECTS)')
 		_p('')
+		
+		-- Transform solution groups into target aggregate
+		local tr = solution.grouptree(sln)
+		tree.traverse(tr, {
+			onbranch = function(n)
+				local rule = n.path .. ":"
+				for i, c in pairs(n.children)
+				do
+					if type(i) == "string"
+					then
+						if c.project
+						then
+							rule = rule .. " " .. c.name
+						else
+							rule = rule .. " " .. c.path
+						end
+					end
+				end
+				_p(rule)
+				_p('')
+			end
+		})
 
 		make.projectrules(sln)
 		make.cleanrules(sln)
