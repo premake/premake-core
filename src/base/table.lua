@@ -212,7 +212,9 @@
 --
 
 	function table.insertflat(tbl, values)
-		if type(values) == "table" then
+		if values == nil then
+			return
+		elseif type(values) == "table" then
 			for _, value in ipairs(values) do
 				table.insertflat(tbl, value)
 			end
@@ -297,7 +299,9 @@
 --
 
 	function table.translate(arr, translation)
-		local result = { }
+		if not translation then return {} end
+
+		local result = {}
 		for _, value in ipairs(arr) do
 			local tvalue
 			if type(translation) == "function" then
