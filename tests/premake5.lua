@@ -79,6 +79,9 @@
 	dofile("config/test_links.lua")
 	dofile("config/test_targetinfo.lua")
 
+	-- Baking tests
+	dofile("oven/test_filtering.lua")
+
 	-- API tests
 	dofile("api/test_array_kind.lua")
 	dofile("api/test_callback.lua")

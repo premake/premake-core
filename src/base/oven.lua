@@ -68,6 +68,17 @@
 		-- configuration blocks which match these terms will be returned.
 
 		context.addterms(ctx, _ACTION)
+
+		-- Add command line options to the filtering options
+
+		for key, value in pairs(_OPTIONS) do
+			local term = key
+			if value ~= "" then
+				term = term .. "=" .. value
+			end
+			context.addterms(ctx, term)
+		end
+
 		context.compile(ctx)
 
 		-- Specify the solution's file system location; when path tokens are
@@ -131,9 +142,9 @@
 		local ctx = context.new(prj.configset, environ)
 
 		-- Add filtering terms to the context to make it as specific as I can.
-		-- Action comes first, because it never depends on anything else.
+		-- Start with the same filtering that was applied at the solution level.
 
-		context.addterms(ctx, _ACTION)
+		context.copyterms(ctx, sln)
 
 		-- Now filter on the current system and architecture, allowing the
 		-- values that might already in the context to override my defaults.
@@ -447,11 +458,14 @@
 
 		-- Add filtering terms to the context and then compile the results. These
 		-- terms describe the "operating environment"; only results contained by
-		-- configuration blocks which match these terms will be returned.
+		-- configuration blocks which match these terms will be returned. Start
+		-- by copying over the top-level environment from the solution. Don't
+		-- copy the project terms though, so configurations can override those.
+
+		context.copyterms(ctx, prj.solution)
 
 		context.addterms(ctx, buildcfg)
 		context.addterms(ctx, platform)
-		context.addterms(ctx, _ACTION)
 		context.addterms(ctx, prj.language)
 
 		-- allow the project script to override the default system
