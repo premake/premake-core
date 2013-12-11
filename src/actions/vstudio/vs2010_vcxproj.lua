@@ -338,41 +338,52 @@
 -- Write out the linker tool block.
 --
 
+	vc2010.elements.link = {
+		"subSystem",
+		"generateDebugInformation",
+		"optimizeReferences",
+		"linkDynamic",
+	}
+
+	vc2010.elements.linkDynamic = {
+		"additionalDependencies",
+		"additionalLibraryDirectories",
+		"importLibrary",
+		"entryPointSymbol",
+		"moduleDefinitionFile",
+		"additionalLinkOptions",
+	}
+
+	vc2010.elements.linkStatic = {
+		"additionalLinkOptions",
+	}
+
 	function vc2010.link(cfg)
-		local explicit = vstudio.needsExplicitLink(cfg)
-
 		_p(2,'<Link>')
-
-		vc2010.subSystem(cfg)
-		vc2010.generateDebugInformation(cfg)
-		vc2010.optimizeReferences(cfg)
-
-		if cfg.kind ~= premake.STATICLIB then
-			vc2010.linkDynamic(cfg, explicit)
-		end
-
+		local explicit = vstudio.needsExplicitLink(cfg)
+		premake.callarray(vc2010, vc2010.elements.link, cfg, explicit)
 		_p(2,'</Link>')
 
 		if cfg.kind == premake.STATICLIB then
-			vc2010.linkStatic(cfg)
+			vc2010.linkStatic(cfg, explicit)
 		end
 
 		vc2010.linkLibraryDependencies(cfg, explicit)
 	end
 
 	function vc2010.linkDynamic(cfg, explicit)
-		vc2010.additionalDependencies(cfg, explicit)
-		vc2010.additionalLibraryDirectories(cfg)
-		vc2010.importLibrary(cfg)
-		vc2010.entryPointSymbol(cfg)
-		vc2010.moduleDefinitionFile(cfg)
-		vc2010.additionalLinkOptions(cfg)
+		if cfg.kind ~= premake.STATICLIB then
+			premake.callarray(vc2010, vc2010.elements.linkDynamic, cfg, explicit)
+		end
 	end
 
-	function vc2010.linkStatic(cfg)
-		if #cfg.linkoptions > 0 then
+	function vc2010.linkStatic(cfg, explicit)
+		local contents = io.capture(function ()
+			premake.callarray(vc2010, vc2010.elements.linkStatic, cfg, explicit)
+		end)
+		if #contents > 0 then
 			_p(2,'<Lib>')
-			vc2010.additionalLinkOptions(cfg)
+			_p("%s", contents)
 			_p(2,'</Lib>')
 		end
 	end
