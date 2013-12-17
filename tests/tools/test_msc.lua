@@ -17,7 +17,7 @@
 
 	function suite.setup()
 		sln, prj = test.createsolution()
-		kind "StaticLib"
+		kind "SharedLib"
 	end
 
 	local function prepare()
@@ -222,6 +222,11 @@
 		flags "NoIncrementalLink"
 		prepare()
 		test.contains("/INCREMENTAL:NO", msc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onManifest()
+		prepare()
+		test.contains("/MANIFEST", msc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onNoManifest()

@@ -497,26 +497,57 @@
 --
 
 	function config.mapFlags(cfg, mappings)
-
-		-- for each field included in the map...
-
 		local flags = {}
+
+		-- Helper function to append replacement values to the result
+
+		local function add(replacement)
+			if type(replacement) == "function" then
+				replacement = replacement(cfg)
+			end
+			table.insertflat(flags, replacement)
+		end
+
+		-- For each configuration field provided in the mapping, pull the
+		-- corresponding list of values from the configuration
+
 		for field, map in pairs(mappings) do
-
-			-- ...pull that field's list of values from the config, and pass each one
-			-- through the mapping, and add it to my list if a value is returned
 			local values = cfg[field]
+			if type(values) ~= "table" then
+				values = { values }
+			end
+
+			-- Pass each value in the list through the map and append the
+			-- replacement, if any, to the result
+
+			local foundValue = false
 			table.foreachi(values, function(value)
-				local flag = map[value]
-
-				if type(flag) == "function" then
-					flag = flag(cfg)
-				end
-
-				if flag then
-					table.insertflat(flags, flag)
+				local replacement = map[value]
+				if replacement ~= nil then
+					foundValue = true
+					add(replacement)
 				end
 			end)
+
+			-- If no value was mapped, check to see if the map specifies a
+			-- default value and, if so, push that into the result
+
+			if not foundValue then
+				add(map._)
+			end
+
+			-- Finally, check for "not values", which should be added to the
+			-- result if the corresponding value is not present
+
+			for key, replacement in pairs(map) do
+				if #key > 1 and key:startswith("_") then
+					key = key:sub(2)
+					if values[key] == nil then
+						add(replacement)
+					end
+				end
+			end
+
 		end
 
 		return flags

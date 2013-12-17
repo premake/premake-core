@@ -135,7 +135,7 @@
 	links { "libs/SomeLib" }
 	prepare { "ldFlags", "libs" }
 	test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
+  ALL_LDFLAGS += $(LDFLAGS) -s -L../libs
   LIBS += -lSomeLib
 	]]
  end

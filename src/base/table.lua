@@ -114,7 +114,6 @@
 
 	function table.foreachi(arr, func)
 		if arr then
-			if type(arr) == "string" then arr = { arr } end
 			local n = #arr
 			for i = 1, n do
 				local v = arr[i]

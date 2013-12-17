@@ -17,18 +17,13 @@
 	gcc.cppflags = {
 		system = {
 			haiku = "-MMD",
-			wii = { "-MMD", "-MP", "-I$(LIBOGC_INC)", "$(MACHDEP)" }
+			wii = { "-MMD", "-MP", "-I$(LIBOGC_INC)", "$(MACHDEP)" },
+			_ = { "-MMD", "-MP" }
 		}
 	}
 
 	function gcc.getcppflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cppflags)
-
-		-- Use -MMD -P by default to generate dependency information
-		if #flags == 0 then
-			flags = { "-MMD", "-MP" }
-		end
-
 		return flags
 	end
 
@@ -51,6 +46,11 @@
 			Fast = "-ffast-math",
 			Strict = "-ffloat-store",
 		},
+		kind = {
+			SharedLib = function(cfg)
+				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
+			end,
+		},
 		optimize = {
 			Off = "-O0",
 			On = "-O2",
@@ -71,15 +71,6 @@
 
 	function gcc.getcflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cflags)
-
-		-- TODO: Would love to see this as a configuration
-		--   configuration { "SharedLib", "not Windows" }
-		--       flags { "PIC" }
-
-		if cfg.system ~= premake.WINDOWS and cfg.kind == premake.SHAREDLIB then
-			table.insert(flags, "-fPIC")
-		end
-
 		return flags
 	end
 
@@ -160,6 +151,24 @@
 			x32 = { "-m32", "-L/usr/lib32" },
 			x64 = { "-m64", "-L/usr/lib64" },
 		},
+		flags = {
+			_Symbols = function(cfg)
+				-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
+				return iif(cfg.system == premake.MACOSX, "-Wl,-x", "-s")
+			end,
+		},
+		kind = {
+			SharedLib = function(cfg)
+				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				if cfg.system == "windows" and not cfg.flags.NoImportLib then
+					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+				end
+				return r
+			end,
+			WindowedApp = function(cfg)
+				if cfg.system == premake.WINDOWS then return "-mwindows" end
+			end,
+		},
 		system = {
 			wii = { "-L$(LIBOGC_LIB)", "$(MACHDEP)" },
 		}
@@ -172,31 +181,6 @@
 		-- paths, add those to the list of library search paths
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-L' .. project.getrelative(cfg.project, dir))
-		end
-
-		if not cfg.flags.Symbols then
-			-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
-			if cfg.system == premake.MACOSX then
-				table.insert(flags, "-Wl,-x")
-			else
-				table.insert(flags, "-s")
-			end
-		end
-
-		if cfg.kind == premake.SHAREDLIB then
-			if cfg.system == premake.MACOSX then
-				table.insert(flags, "-dynamiclib")
-			else
-				table.insert(flags, "-shared")
-			end
-
-			if cfg.system == "windows" and not cfg.flags.NoImportLib then
-				table.insert(flags, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
-			end
-		end
-
-		if cfg.kind == premake.WINDOWEDAPP and cfg.system == premake.WINDOWS then
-			table.insert(flags, "-mwindows")
 		end
 
 		return flags

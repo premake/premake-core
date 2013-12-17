@@ -143,27 +143,31 @@
 --
 -- Return a list of linker flags for a specific configuration.
 --
-	msc.ldflags = {
+
+	msc.linkerFlags = {
 		flags = {
 			FatalWarnings = "/WX",
 			LinkTimeOptimization = "/GL",
 			NoIncrementalLink = "/INCREMENTAL:NO",
+			_NoIncrementalLink = "/INCREMENTAL",
 			NoManifest = "/MANIFEST:NO",
+			_NoManifest = "/MANIFEST",
 			OmitDefaultLibrary = "/NODEFAULTLIB",
 			Symbols = "/DEBUG",
 		}
 	}
 
+	msc.librarianFlags = {
+		flags = {
+			FatalWarnings = "/WX",
+			Symbols = "/DEBUG",
+		}
+	}
+
 	function msc.getldflags(cfg)
-		local flags = config.mapFlags(cfg, msc.ldflags)
-
-		if not cfg.flags.NoManifest and cfg.kind ~= premake.STATICLIB then
-			table.insert(flags, "/MANIFEST")
-		end
-
-		if config.isOptimizedBuild(cfg) then
-			table.insert(flags, "/OPT:REF /OPT:ICF")
-		end
+		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
+		local flags = config.mapFlags(cfg, map)
+		table.insert(flags, 1, "/NOLOGO")
 
 		for _, libdir in ipairs(project.getrelative(cfg.project, cfg.libdirs)) do
 			table.insert(flags, '/LIBPATH:"' .. libdir .. '"')
