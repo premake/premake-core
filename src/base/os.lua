@@ -1,7 +1,7 @@
 --
 -- os.lua
 -- Additions to the OS namespace.
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
 
@@ -110,8 +110,10 @@
 
 
 --
--- Determine if the current system is running a 64-bit architecture
+-- Determine if the current system is running a 64-bit architecture.
 --
+
+	local _is64bit
 
 	local _64BitHostTypes = {
 		"x86_64",
@@ -123,55 +125,74 @@
 	}
 
 	function os.is64bit()
+		-- This can be expensive to compute, so cache and reuse the response
+		if _is64bit ~= nil then
+			return _is64bit
+		end
+
+		_is64bit = false
+
 		-- Call the native code implementation. If this returns true then
 		-- we're 64-bit, otherwise do more checking locally
 		if (os._is64bit()) then
-			return true
-		end
-
-		-- Identify the system
-		local arch
-		if _OS == "windows" then
-			arch = os.getenv("PROCESSOR_ARCHITECTURE")
-		elseif _OS == "macosx" then
-			arch = os.outputof("echo $HOSTTYPE")
+			_is64bit = true
 		else
-			arch = os.outputof("uname -m")
-		end
+			-- Identify the system
+			local arch
+			if _OS == "windows" then
+				arch = os.getenv("PROCESSOR_ARCHITECTURE")
+			elseif _OS == "macosx" then
+				arch = os.outputof("echo $HOSTTYPE")
+			else
+				arch = os.outputof("uname -m")
+			end
 
-		-- Check our known 64-bit identifiers
-		arch = arch:lower()
-		for _, hosttype in ipairs(_64BitHostTypes) do
-			if arch:find(hosttype) then
-				return true
+			-- Check our known 64-bit identifiers
+			arch = arch:lower()
+			for _, hosttype in ipairs(_64BitHostTypes) do
+				if arch:find(hosttype) then
+					_is64bit = true
+				end
 			end
 		end
-		return false
+
+		return _is64bit
 	end
 
 
 
+---
+-- Perform a wildcard search for files or directories.
 --
--- The os.matchdirs() and os.matchfiles() functions
---
+-- @param mask
+--    The file search pattern. Use "*" to match any part of a file or
+--    directory name, "**" to recurse into subdirectories.
+-- @param matchFiles
+--    True to match against files, false to match directories.
+-- @return
+--    A table containing the matched file or directory names.
+---
 
-	local function domatch(result, mask, wantfiles)
-		-- need to remove extraneous path info from the mask to ensure a match
-		-- against the paths returned by the OS. Haven't come up with a good
-		-- way to do it yet, so will handle cases as they come up
-		if mask:startswith("./") then
-			mask = mask:sub(3)
-		end
+	function os.match(mask, matchFiles)
+
+		-- Strip any extraneous weirdness from the mask to ensure a good
+		-- match against the paths returned by the OS. I don't know if I've
+		-- caught all the possibilities here yet; will add more as I go.
+
+		mask = path.normalize(mask)
 
 		-- strip off any leading directory information to find out
 		-- where the search should take place
+
 		local basedir = mask
 		local starpos = mask:find("%*")
 		if starpos then
 			basedir = basedir:sub(1, starpos - 1)
 		end
 		basedir = path.getdirectory(basedir)
-		if (basedir == ".") then basedir = "" end
+		if basedir == "." then
+			basedir = ""
+		end
 
 		-- recurse into subdirectories?
 		local recurse = mask:find("**", nil, true)
@@ -179,14 +200,16 @@
 		-- convert mask to a Lua pattern
 		mask = path.wildcards(mask)
 
+		local result = {}
+
 		local function matchwalker(basedir)
 			local wildcard = path.join(basedir, "*")
 
 			-- retrieve files from OS and test against mask
 			local m = os.matchstart(wildcard)
-			while (os.matchnext(m)) do
+			while os.matchnext(m) do
 				local isfile = os.matchisfile(m)
-				if ((wantfiles and isfile) or (not wantfiles and not isfile)) then
+				if (matchFiles and isfile) or (not matchFiles and not isfile) then
 					local fname = path.join(basedir, os.matchname(m))
 					if fname:match(mask) == fname then
 						table.insert(result, fname)
@@ -198,7 +221,7 @@
 			-- check subdirectories
 			if recurse then
 				m = os.matchstart(wildcard)
-				while (os.matchnext(m)) do
+				while os.matchnext(m) do
 					if not os.matchisfile(m) then
 						local dirname = os.matchname(m)
 						matchwalker(path.join(basedir, dirname))
@@ -209,24 +232,38 @@
 		end
 
 		matchwalker(basedir)
-	end
-
-	function os.matchdirs(...)
-		local result = { }
-		for _, mask in ipairs(arg) do
-			domatch(result, mask, false)
-		end
 		return result
 	end
 
-	function os.matchfiles(...)
-		local result = { }
-		for _, mask in ipairs(arg) do
-			domatch(result, mask, true)
-		end
-		return result
+
+---
+-- Perform a wildcard search for directories.
+--
+-- @param mask
+--    The search pattern. Use "*" to match any part of a directory
+--    name, "**" to recurse into subdirectories.
+-- @return
+--    A table containing the matched directory names.
+---
+
+	function os.matchdirs(mask)
+		return os.match(mask, false)
 	end
 
+
+---
+-- Perform a wildcard search for files.
+--
+-- @param mask
+--    The search pattern. Use "*" to match any part of a file
+--    name, "**" to recurse into subdirectories.
+-- @return
+--    A table containing the matched directory names.
+---
+
+	function os.matchfiles(mask)
+		return os.match(mask, true)
+	end
 
 
 --
