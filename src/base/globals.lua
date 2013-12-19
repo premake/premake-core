@@ -1,15 +1,8 @@
 --
 -- globals.lua
--- Global tables and variables, replacements and extensions to Lua's global functions.
+-- Replacements and extensions to Lua's global functions.
 -- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
-
---
--- Create a top-level namespace for Premake's own APIs
---
-
-	premake = {}
-	premake.tools = {}
 
 
 --
@@ -105,20 +98,6 @@
 
 
 --
--- "Immediate If" - returns one of the two values depending on the value of expr.
---
-
-	function iif(expr, trueval, falseval)
-		if (expr) then
-			return trueval
-		else
-			return falseval
-		end
-	end
-
-
-
---
 -- Load and run an external script file, with a bit of extra logic to make
 -- including projects easier. if "path" is a directory, will look for
 -- path/premake5.lua. And each file is tracked, and loaded only once.
@@ -141,14 +120,4 @@
 			io._includedFiles[fname] = true
 			dofile(fname)
 		end
-	end
-
-
-
---
--- A shortcut for printing formatted output.
---
-
-	function printf(msg, ...)
-		print(string.format(msg, unpack(arg)))
 	end

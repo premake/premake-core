@@ -9,37 +9,41 @@
 
 	return
 	{
-		-- Lua extensions
-		"base/os.lua",
-		"base/path.lua",
+		-- core files
+		"base/_foundation.lua",
 		"base/string.lua",
 		"base/table.lua",
-
-		-- core files
+		"base/path.lua",
+		"base/os.lua",
 		"base/io.lua",
-		"base/globals.lua",
-		"base/action.lua",
-		"base/criteria.lua",
-		"base/option.lua",
 		"base/tree.lua",
-		"base/help.lua",
 
-		-- configuration APIs
+		"base/globals.lua",
+
+		-- configuration data
+		"base/criteria.lua",
+		"base/detoken.lua",
 		"base/configset.lua",
 		"base/context.lua",
-		"base/api.lua",
-		"base/detoken.lua",
 
-		-- project APIs
+		-- project objects
 		"base/project.lua",
+		"base/solution.lua",
 		"base/config.lua",
 		"base/fileconfig.lua",
-		"base/solution.lua",
+
+		-- runtime switches
+		"base/option.lua",
+		"base/action.lua",
+
+		-- project script setup
+		"base/api.lua",
+		"_premake_init.lua",
+
+		-- project script processing
 		"base/oven.lua",
 		"base/premake.lua",
-
-		-- runtime environment setup
-		"_premake_init.lua",
+		"base/help.lua",
 
 		-- tool APIs
 		"tools/dotnet.lua",

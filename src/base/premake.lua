@@ -1,6 +1,6 @@
 --
 -- premake.lua
--- High-level processing functions.
+-- High-level helper functions for the project exporters.
 -- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
@@ -8,104 +8,6 @@
 	local project = premake.project
 	local config = premake.config
 
-
----
--- Add a namespace for extensions to use.
----
-
-	premake.extensions = {}
-
-
---
--- List of warning messages that have been fired so far.
---
-
-	local warnings = {}
-
-
---
--- Define some commonly used symbols, for future-proofing.
---
-
-	premake.C           = "C"
-	premake.C7          = "c7"
-	premake.CLANG       = "clang"
-	premake.CONSOLEAPP  = "ConsoleApp"
-	premake.CPP         = "C++"
-	premake.CSHARP      = "C#"
-	premake.GCC         = "gcc"
-	premake.HAIKU       = "haiku"
-	premake.LINUX       = "linux"
-	premake.MACOSX      = "macosx"
-	premake.MAKEFILE    = "Makefile"
-	premake.NONE        = "None"
-	premake.OFF         = "Off"
-	premake.POSIX       = "posix"
-	premake.PS3         = "ps3"
-	premake.SHAREDLIB   = "SharedLib"
-	premake.STATICLIB   = "StaticLib"
-	premake.UNIVERSAL   = "universal"
-	premake.WINDOWEDAPP = "WindowedApp"
-	premake.WINDOWS     = "windows"
-	premake.X32         = "x32"
-	premake.X64         = "x64"
-	premake.XBOX360     = "xbox360"
-
-
----
--- Call a list of functions to generate a block of project file elements.
--- This follows a particular convention for where the list of element
--- names and the implementation functions should be stored; read the
--- parameter descriptions for more information.
---
--- @param namespace
---    The namespace table that contains the functions to be called.
--- @param elements
---    The name of the element list. This list should be contained within
---    a namespace called "elements", enclosed in the namespace provided
---    above. So if namespace is "vs2010", and elements is "header", the
---    list variable will be accessed as vs2010.elements.header.
--- @param ...
---    An optional set of arguments to be passed to each of the functions
---    that are called.
----
-
-	function premake.callarray(namespace, array, ...)
-		local n = #array
-		for i = 1, n do
-			local fn = namespace[array[i]]
-			if not fn then
-                error(string.format("Unable to find function '%s'", array[i]))
-			end
-			fn(...)
-		end
-
-	end
-
-
---
--- Clears the list of already fired warning messages, allowing them
--- to be fired again.
---
-
-	function premake.clearWarnings()
-		warnings = {}
-	end
-
-
---
--- Raises an error, with a formatted message built from the provided
--- arguments.
---
--- @param message
---    The error message, which may contain string formatting tokens.
--- @param ...
---    Values to fill in the string formatting tokens.
---
-
-	function premake.error(message, ...)
-		error(string.format("** Error: " .. message, ...), 0)
-	end
 
 
 ---
@@ -131,13 +33,11 @@
 				table.insert(result, premake.esc(v))
 			end)
 			return result
-
 		else
 			if io.esc then
 				value = io.esc(value)
 			end
 			return value
-
 		end
 	end
 
@@ -167,28 +67,6 @@
 		io.output(f)
 		callback(obj)
 		f:close()
-	end
-
-
---
--- Override an existing function with a new one; the original function
--- is passed as the first argument to the replacement when called.
---
--- @param scope
---    The table containing the function to be overridden. Use _G for
---    global functions.
--- @param name
---    The name of the function to override.
--- @param repl
---    The replacement function. The first argument to the function
---    will be the original implementation.
---
-
-	function premake.override(scope, name, repl)
-		local original = scope[name]
-		scope[name] = function(...)
-			return repl(original, ...)
-		end
 	end
 
 
@@ -339,40 +217,5 @@
 				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", name, expected, cfg.name, field.scope, cfg[field.scope].name)
 			end
 
-		end
-	end
-
-
---
--- Display a warning, with a formatted message built from the provided
--- arguments.
---
--- @param message
---    The warning message, which may contain string formatting tokens.
--- @param ...
---    Values to fill in the string formatting tokens.
---
-
-	function premake.warn(message, ...)
-		io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
-	end
-
-
---
--- Displays a warning just once per run.
---
--- @param key
---    A unique key to identify this warning. Subsequent warnings messages
---    using the same key will not be shown.
--- @param message
---    The warning message, which may contain string formatting tokens.
--- @param ...
---    Values to fill in the string formatting tokens.
---
-
-	function premake.warnOnce(key, message, ...)
-		if not warnings[key] then
-			warnings[key] = true
-			premake.warn(message, ...)
 		end
 	end
