@@ -154,6 +154,9 @@
 			_NoManifest = "/MANIFEST",
 			OmitDefaultLibrary = "/NODEFAULTLIB",
 			Symbols = "/DEBUG",
+		},
+		kind = {
+			SharedLib = "/DLL",
 		}
 	}
 

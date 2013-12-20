@@ -234,3 +234,9 @@
 		prepare()
 		test.contains("/MANIFEST:NO", msc.getldflags(cfg))
 	end
+
+	function suite.ldflags_onDLL()
+		kind "SharedLib"
+		prepare()
+		test.contains("/DLL", msc.getldflags(cfg))
+	end
