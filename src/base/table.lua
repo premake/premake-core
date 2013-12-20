@@ -220,6 +220,7 @@
 		else
 			table.insert(tbl, values)
 		end
+		return tbl
 	end
 
 
