@@ -858,11 +858,16 @@
 	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	configuration { "Windows or Xbox360 or C#", "SharedLib" }
+	configuration { "Windows or Xbox360", "SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".lib"
 
-	configuration { "Windows or Xbox360 or C#", "StaticLib" }
+	configuration { "Windows or Xbox360", "StaticLib" }
 		targetprefix ""
 		targetextension ".lib"
+
+	configuration { "C#", "SharedLib" }
+		targetprefix ""
+		targetextension ".dll"
+		implibextension ".dll"

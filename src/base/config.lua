@@ -7,10 +7,9 @@
 	premake.config = {}
 	local project = premake.project
 	local config = premake.config
-	local context = premake.context
 
 
---
+---
 -- Helper function for getlinkinfo() and gettargetinfo(); builds the
 -- name parts for a configuration, for building or linking.
 --
@@ -24,7 +23,7 @@
 -- @return
 --    A target info object; see one of getlinkinfo() or gettargetinfo()
 --    for more information.
---
+---
 
 	local function buildtargetinfo(cfg, kind, field)
 		local basedir = cfg.project.location
@@ -34,16 +33,16 @@
 
 		local prefix = cfg[field.."prefix"] or cfg.targetprefix or ""
 		local suffix = cfg[field.."suffix"] or cfg.targetsuffix or ""
-		local extension = cfg[field.."extension"] or ""
+		local extension = cfg[field.."extension"] or cfg.targetextension or ""
 
 		local bundlename = ""
 		local bundlepath = ""
 
-		-- Mac .app requires more logic than I can bundle up in a table right now
 		if cfg.system == premake.MACOSX and kind == premake.WINDOWEDAPP then
 			bundlename = basename .. ".app"
 			bundlepath = path.join(bundlename, "Contents/MacOS")
 		end
+
 		local info = {}
 		info.directory  = directory
 		info.basename   = basename .. suffix
@@ -59,7 +58,7 @@
 	end
 
 
---
+---
 -- Determine whether the given configuration can meaningfully link
 -- against the target object.
 --
@@ -75,9 +74,9 @@
 --    specified, the default for the configuration will be used.
 -- @return
 --    True if linking the target into the configuration makes sense.
---
+---
 
-	function config.canlink(cfg, target, linkage)
+	function config.canLink(cfg, target, linkage)
 
 		-- Have I got a project configuration? If so, I've got some checks
 		-- I can do with the extra information
@@ -209,7 +208,7 @@
 	end
 
 
---
+---
 -- Retrieve linking information for a specific configuration. That is,
 -- the path information that is required to link against the library
 -- built by this configuration.
@@ -226,20 +225,18 @@
 --      suffix     - the file name suffix
 --      fullpath   - directory, name, and extension relative to project
 --      abspath    - absolute directory, name, and extension
---
+---
 
 	function config.getlinkinfo(cfg)
-		-- if an import library is in use, switch the target kind
+		-- if the configuration target is a DLL, and an import library
+		-- is provided, change the kind as import libraries are static.
 		local kind = cfg.kind
-		local field = "target"
 		if project.iscpp(cfg.project) then
 			if cfg.system == premake.WINDOWS and kind == premake.SHAREDLIB and not cfg.flags.NoImportLib then
 				kind = premake.STATICLIB
-				field = "implib"
 			end
 		end
-
-		return buildtargetinfo(cfg, kind, field)
+		return buildtargetinfo(cfg, kind, "implib")
 	end
 
 
@@ -309,7 +306,7 @@
 				-- is compatible with linking to me?
 
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-				if prjcfg and (kind == "dependencies" or config.canlink(cfg, prjcfg)) then
+				if prjcfg and (kind == "dependencies" or config.canLink(cfg, prjcfg)) then
 
 					-- Yes; does the caller want the whole project config or only part?
 
@@ -331,7 +328,7 @@
 				-- Make sure this library makes sense for the requested linkage; don't
 				-- link managed .DLLs into unmanaged code, etc.
 
-				if config.canlink(cfg, link, linkage) then
+				if config.canLink(cfg, link, linkage) then
 					item = config.decoratelink(cfg, link, linkage)
 				end
 

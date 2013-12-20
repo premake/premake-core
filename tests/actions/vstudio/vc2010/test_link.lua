@@ -195,6 +195,7 @@
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<ImportLibrary>MyProject.lib</ImportLibrary>
+		</Link>
 		]]
 	end
 
