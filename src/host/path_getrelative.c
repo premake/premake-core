@@ -87,8 +87,9 @@ int path_getrelative(lua_State* L)
 		++i;
 	}
 
-	/* if they have nothing in common return absolute path */
-	if (last <= 0) {
+	/* if I end up with just the root of the filesystem, either a single
+	 * slash (/) or a drive letter (c:) then return the absolute path. */
+	if (last <= 0 || (last == 2 && src[1] == ':')) {
 		dst[strlen(dst) - 1] = '\0';
 		lua_pushstring(L, dst);
 		return 1;

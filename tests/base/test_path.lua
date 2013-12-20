@@ -201,17 +201,21 @@
 		test.isequal("/opt/include", path.getrelative("/home/me/src/project", "/opt/include"))
 	end
 
-	function suite.ignoresExtraSlashes2()
+	function suite.getrelative_ignoresExtraSlashes2()
 		test.isequal("..", path.getrelative("/a//b/c","/a/b"))
 	end
 
-	function suite.ignoresExtraSlashes3()
+	function suite.getrelative_ignoresExtraSlashes3()
 		test.isequal("..", path.getrelative("/a///b/c","/a/b"))
 	end
 
-    function suite.ignoresTrailingSlashes()
+    function suite.getrelative_ignoresTrailingSlashes()
          test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
     end
+
+  	function suite.getrelative_returnsAbsPath_onContactWithFileSysRoot()
+  		test.isequal("C:/Boost/Include", path.getrelative("C:/Code/MyApp", "C:/Boost/Include"))
+  	end
 
 
 --
