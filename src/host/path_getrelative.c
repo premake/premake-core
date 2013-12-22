@@ -8,45 +8,6 @@
 #include <string.h>
 
 
-static void normalize(char* buffer, const char* path)
-{
-	char* src;
-	char* dst;
-	char last;
-
-	strcpy(buffer, path);
-	do_translate(buffer, '/');
-
-	/* remove any duplicate slashes within the path */
-	src = buffer;
-	dst = buffer;
-	last = '\0';
-
-	while (*src != '\0') {
-		/* if I don't have consecutive slashes, keep the char */
-		if (*src != '/' || last != '/') {
-			*(dst++) = *src;
-		}
-
-		/* Allow double-slash at the start of the string, so absolute
-		 * UNC paths can be expressed, but nowhere else */
-		if (src != buffer) {
-			last = (*src);
-		}
-
-		/* check the next one */
-		++src;
-	}
-
-    /* remove any trailing slashes */
-    for (--src; src > buffer && *src == '/'; --src) {
-         *src = '\0';
-    }
-
-	*dst = '\0';
-}
-
-
 int path_getrelative(lua_State* L)
 {
 	int i, last, count;
@@ -57,8 +18,8 @@ int path_getrelative(lua_State* L)
 	const char* p2 = luaL_checkstring(L, 2);
 
 	/* normalize the paths */
-	normalize(src, p1);
-	normalize(dst, p2);
+	do_normalize(L, src, p1);
+	do_normalize(L, dst, p2);
 
 	/* same directory? */
 	if (strcmp(src, dst) == 0) {

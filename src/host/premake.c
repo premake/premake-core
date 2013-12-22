@@ -41,6 +41,7 @@ static const luaL_Reg path_functions[] = {
 	{ "getrelative", path_getrelative },
 	{ "isabsolute",  path_isabsolute },
 	{ "join", path_join },
+	{ "normalize", path_normalize },
 	{ "translate", path_translate },
 	{ NULL, NULL }
 };

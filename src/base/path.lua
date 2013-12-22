@@ -186,29 +186,6 @@
 
 
 --
--- Remove any extraneous weirdness from a path, such as double slashes or
--- leading single dots.
---
--- @param p
---    The path to normalize.
--- @return
---    A path known weirdnesses removed.
---
-
-	function path.normalize(p)
-		-- trim off any leading "./" sequences
-		while p:startswith("./") do
-			p = p:sub(3)
-		end
-
-		-- remove any "//" sequences from path concatenation
-		p = p:gsub("//", "/")
-
-		return p
-	end
-
-
---
 -- Takes a path which is relative to one location and makes it relative
 -- to another location instead.
 --
