@@ -224,11 +224,6 @@
 		test.contains("/INCREMENTAL:NO", msc.getldflags(cfg))
 	end
 
-	function suite.ldflags_onManifest()
-		prepare()
-		test.contains("/MANIFEST", msc.getldflags(cfg))
-	end
-
 	function suite.ldflags_onNoManifest()
 		flags "NoManifest"
 		prepare()
