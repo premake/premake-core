@@ -392,3 +392,36 @@
 		</Link>
 		]]
 	end
+
+
+--
+-- Check handling of warning flags.
+--
+
+	function suite.fatalWarnings_onDynamicLink()
+		kind "ConsoleApp"
+		flags { "FatalWarnings" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Console</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+			<TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+		]]
+	end
+
+	function suite.fatalWarnings_onStaticLink()
+		kind "StaticLib"
+		flags { "FatalWarnings" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+		</Link>
+		<Lib>
+			<TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+		</Lib>
+		]]
+	end

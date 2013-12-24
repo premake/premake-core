@@ -351,10 +351,12 @@
 		"importLibrary",
 		"entryPointSymbol",
 		"moduleDefinitionFile",
+		"treatLinkerWarningAsErrors",
 		"additionalLinkOptions",
 	}
 
 	vc2010.elements.linkStatic = {
+		"treatLinkerWarningAsErrors",
 		"additionalLinkOptions",
 	}
 
@@ -1156,6 +1158,14 @@
 
 	function vc2010.targetName(cfg)
 		_x(2,'<TargetName>%s%s</TargetName>', cfg.buildtarget.prefix, cfg.buildtarget.basename)
+	end
+
+
+	function vc2010.treatLinkerWarningAsErrors(cfg)
+		if cfg.flags.FatalWarnings then
+			local el = iif(cfg.kind == premake.STATICLIB, "Lib", "Linker")
+			_p(3,'<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
+		end
 	end
 
 
