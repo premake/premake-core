@@ -5,10 +5,16 @@
 --
 
 
+---
+-- Capture and store everything sent through io.printf() during the
+-- execution of the supplied function.
 --
--- Prepare to capture the output from all subsequent calls to io.printf(),
--- used for automated testing of the generators.
---
+-- @param fn
+--    The function to execute. All calls to io.printf() will be
+--    caught and stored.
+-- @return
+--    The captured output.
+---
 
 	function io.capture(fn)
 		-- start a new capture without forgetting the old one
@@ -48,19 +54,18 @@
 -- subdirectories in the filename if "mode" is set to writeable.
 --
 
-	local builtin_open = io.open
-	function io.open(fname, mode)
-		if (mode) then
-			if (mode:find("w")) then
+	premake.override(io, "open", function(base, fname, mode)
+		if mode then
+			if mode:find("w") then
 				local dir = path.getdirectory(fname)
 				ok, err = os.mkdir(dir)
-				if (not ok) then
+				if not ok then
 					error(err, 0)
 				end
 			end
 		end
-		return builtin_open(fname, mode)
-	end
+		return base(fname, mode)
+	end)
 
 
 
@@ -69,11 +74,11 @@
 --
 
 	function io.printf(msg, ...)
+		local s
 		if type(msg) == "number" then
-			local str, fmt, x = unpack(arg)
-			s = string.rep(io.indent or "\t", msg) .. string.format(unpack(arg))
+			s = string.rep(io.indent or "\t", msg) .. string.format(...)
 		else
-			s = string.format(msg, unpack(arg))
+			s = string.format(msg, ...)
 		end
 
 		if not io._captured then
@@ -100,7 +105,7 @@
 --
 
 	function _p(msg, ...)
-		io.printf(msg, unpack(arg))
+		io.printf(msg, ...)
 		if not io._captured then
 			io.write(io.eol or "\n")
 		end
