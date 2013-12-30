@@ -25,7 +25,7 @@
 --    for more information.
 ---
 
-	local function buildtargetinfo(cfg, kind, field)
+	function config.buildtargetinfo(cfg, kind, field)
 		local basedir = cfg.project.location
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
@@ -236,16 +236,7 @@
 				kind = premake.STATICLIB
 			end
 		end
-		return buildtargetinfo(cfg, kind, "implib")
-	end
-
-
---
--- Returns a string key that can be used to identify this configuration.
---
-
-	function config.getlookupkey(cfg)
-		return (cfg.buildcfg or "*") .. (cfg.platform or "")
+		return config.buildtargetinfo(cfg, kind, "implib")
 	end
 
 
@@ -399,7 +390,7 @@
 --
 
 	function config.gettargetinfo(cfg)
-		return buildtargetinfo(cfg, cfg.kind, "target")
+		return config.buildtargetinfo(cfg, cfg.kind, "target")
 	end
 
 
