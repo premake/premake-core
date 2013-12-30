@@ -25,13 +25,14 @@
 		-- validate the action object, at least a little bit
 		local missing
 		for _, field in ipairs({"description", "trigger"}) do
-			if (not a[field]) then
+			if not a[field] then
 				missing = field
 			end
 		end
 
-		if (missing) then
-			error("action needs a " .. missing, 3)
+		if missing then
+			local name = a.trigger or ""
+			error(string.format('action "%s" needs a  %s', name, missing), 3)
 		end
 
 		-- add it to the master list
