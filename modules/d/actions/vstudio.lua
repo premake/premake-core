@@ -218,8 +218,21 @@
 
 			_p(2,'<objfiles />')
 			_p(2,'<linkswitches />')
-			_p(2,'<libfiles />')
-			_p(2,'<libpaths />')
+
+			local links
+			local explicit = vstudio.needsExplicitLink(cfg)
+			-- check to see if this project uses an external toolset. If so, let the
+			-- toolset define the format of the links
+			local toolset = vstudio.vc200x.toolset(cfg)
+			if toolset then
+				links = toolset.getlinks(cfg, not explicit)
+			else
+				local scope = iif(explicit, "all", "system")
+				links = config.getlinks(cfg, scope, "fullpath")
+			end
+			visuald.element(2, "libfiles", table.concat(links, " "))
+
+			visuald.element(2, "libpaths", cfg.libdirs)
 			_p(2,'<deffile />')
 			_p(2,'<resfile />')
 
@@ -228,12 +241,19 @@
 
 			_p(2,'<useStdLibPath>1</useStdLibPath>')
 
+			local additionalOptions
 			if #cfg.buildoptions > 0 then
-				local options = table.concat(cfg.buildoptions, " ")
-				_p(2,'<additionalOptions>%s</additionalOptions>', options)
-			else
-				_p(2,'<additionalOptions />')
+				additionalOptions = table.concat(cfg.buildoptions, " ")
 			end
+			if #cfg.linkoptions > 0 then
+				local linkOpts = table.implode(cfg.linkoptions, "-L", "", " ")
+				if additionalOptions then
+					additionalOptions = additionalOptions .. " " .. linkOpts
+				else
+					additionalOptions = linkOpts
+				end
+			end
+			visuald.element(2, "additionalOptions", additionalOptions)
 
 			if #cfg.prebuildcommands > 0 then
 				_p(2,'<preBuildCommand>%s</preBuildCommand>',premake.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")))
@@ -317,7 +337,7 @@
 
 	function visuald.fileConfiguration(prj, node, depth)
 
-		-- maybe we'll nee this in the future...
+		-- maybe we'll need this in the future...
 
 	end
 
