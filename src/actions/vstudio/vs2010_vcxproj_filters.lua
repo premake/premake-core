@@ -16,6 +16,7 @@
 	function vc2010.generateFilters(prj)
 		io.indent = "  "
 
+		vc2010.xmlDeclaration()
 		vc2010.project()
 
 		vc2010.filters_uniqueidentifiers(prj)

@@ -20,6 +20,7 @@
 	end
 
 	local function prepare()
+		cs2005.xmlDeclaration()
 		cs2005.projectElement(prj)
 	end
 

@@ -29,6 +29,7 @@
 		io.indent = "  "
 		io.utf8()
 
+		vc2010.xmlDeclaration()
 		vc2010.project("Build")
 		vc2010.projectConfigurations(prj)
 		vc2010.globals(prj)
@@ -74,8 +75,6 @@
 --
 
 	function vc2010.project(target)
-		_p('<?xml version="1.0" encoding="utf-8"?>')
-
 		local defaultTargets = ""
 		if target then
 			defaultTargets = string.format(' DefaultTargets="%s"', target)
@@ -1203,6 +1202,10 @@
 		vc2010.element(3, "WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
 	end
 
+
+	function vc2010.xmlDeclaration()
+		_p('<?xml version="1.0" encoding="utf-8"?>')
+	end
 
 
 

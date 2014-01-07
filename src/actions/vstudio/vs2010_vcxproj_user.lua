@@ -16,6 +16,7 @@
 	function vc2010.generateUser(prj)
 		io.indent = "  "
 
+		vc2010.xmlDeclaration()
 		vc2010.project()
 		for cfg in project.eachconfig(prj) do
 			_p(1,'<PropertyGroup %s>', vc2010.condition(cfg))

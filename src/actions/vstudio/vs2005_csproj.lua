@@ -22,6 +22,7 @@
 --
 
 	cs2005.elements.project = {
+		"xmlDeclaration",
 		"projectElement",
 		"projectProperties",
 		"configurations",
@@ -52,10 +53,6 @@
 --
 
 	function cs2005.projectElement(prj)
-		if _ACTION > "vs2008" then
-			_p('<?xml version="1.0" encoding="utf-8"?>')
-		end
-
 		local ver = ''
 		local action = premake.action.current()
 		if action.vstudio.toolsVersion then
@@ -465,3 +462,11 @@
 		_p(1,'</Target>')
 		_p(1,'-->')
 	end
+
+
+	function cs2005.xmlDeclaration()
+		if _ACTION > "vs2008" then
+			_p('<?xml version="1.0" encoding="utf-8"?>')
+		end
+	end
+
