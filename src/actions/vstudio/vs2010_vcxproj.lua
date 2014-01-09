@@ -27,6 +27,7 @@
 
 	function vc2010.generate(prj)
 		io.indent = "  "
+		io.esc = vc2010.esc
 		io.utf8()
 
 		vc2010.xmlDeclaration()
@@ -66,6 +67,22 @@
 		vc2010.import(prj)
 
 		io.printf('</Project>')
+	end
+
+
+
+---
+-- Apply XML escaping on a value to be included in an
+-- exported project file.
+---
+
+	function vc2010.esc(value)
+		value = string.gsub(value, '&',  "&amp;")
+		value = value:gsub('<',  "&lt;")
+		value = value:gsub('>',  "&gt;")
+		value = value:gsub('\r', "&#x0D;")
+		value = value:gsub('\n', "&#x0A;")
+		return value
 	end
 
 

@@ -15,7 +15,7 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		io.esc = premake.vstudio.vs2005.esc
+		io.esc = cs2005.esc
 		sln = test.createsolution()
 	end
 
@@ -73,16 +73,27 @@
 
 
 --
--- Multiple commands are separated with escaped EOL characters.
+-- Multiple commands should be separated with un-escaped EOLs.
 --
 
 	function suite.splits_onMultipleCommands()
 		postbuildcommands { "command1", "command2" }
 		prepare()
+		test.capture ("\t<PropertyGroup>\n\t\t<PostBuildEvent>command1\r\ncommand2</PostBuildEvent>\n\t</PropertyGroup>\n")
+	end
+
+
+
+--
+-- Quotes should not be escaped, other special characters should.
+--
+
+	function suite.onSpecialChars()
+		postbuildcommands { '\' " < > &' }
+		prepare()
 		test.capture [[
 	<PropertyGroup>
-		<PostBuildEvent>command1&#x0D;&#x0A;command2</PostBuildEvent>
+		<PostBuildEvent>' " &lt; &gt; &amp;</PostBuildEvent>
 	</PropertyGroup>
 		]]
 	end
-

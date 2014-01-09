@@ -12,22 +12,6 @@
 
 
 ---
--- Apply XML escaping on a value to be included in an
--- exported project file.
----
-
-	function vs2010.esc(value)
-		value = string.gsub(value, '&',  "&amp;")
-		value = value:gsub('<',  "&lt;")
-		value = value:gsub('>',  "&gt;")
-		value = value:gsub('\r', "&#x0D;")
-		value = value:gsub('\n', "&#x0A;")
-		return value
-	end
-
-
-
----
 -- Identify the type of project being exported and hand it off
 -- the right generator.
 ---
