@@ -161,7 +161,6 @@
 	msc.librarianFlags = {
 		flags = {
 			FatalWarnings = "/WX",
-			Symbols = "/DEBUG",
 		}
 	}
 
