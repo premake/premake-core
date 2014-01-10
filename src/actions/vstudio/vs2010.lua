@@ -36,6 +36,19 @@
 
 
 
+--
+-- The VS 2010 standard for XML escaping in generated project files.
+--
+
+	function vs2010.esc(value)
+		value = value:gsub('&',  "&amp;")
+		value = value:gsub('<',  "&lt;")
+		value = value:gsub('>',  "&gt;")
+		return value
+	end
+
+
+
 ---
 -- Define the Visual Studio 2010 export action.
 ---

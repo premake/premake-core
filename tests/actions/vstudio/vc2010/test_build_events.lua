@@ -1,11 +1,11 @@
 --
--- tests/actions/vstudio/cs2005/test_build_events.lua
--- Check generation of pre- and post-build commands for C# projects.
+-- tests/actions/vstudio/vc2010/test_build_events.lua
+-- Check generation of pre- and post-build commands for C++ projects.
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("vstudio_cs2005_build_events")
-	local cs2005 = premake.vstudio.cs2005
+	local suite = test.declare("vstudio_vc2010_build_events")
+	local vc2010 = premake.vstudio.vc2010
 
 
 --
@@ -21,7 +21,7 @@
 
 	local function prepare(platform)
 		prj = premake.solution.getproject(sln, 1)
-		cs2005.buildEvents(prj)
+		vc2010.buildEvents(prj)
 	end
 
 
@@ -43,9 +43,9 @@
 		prebuildcommands { "command1" }
 		prepare()
 		test.capture [[
-	<PropertyGroup>
-		<PreBuildEvent>command1</PreBuildEvent>
-	</PropertyGroup>
+		<PreBuildEvent>
+			<Command>command1</Command>
+		</PreBuildEvent>
 		]]
 	end
 
@@ -53,9 +53,9 @@
 		postbuildcommands { "command1" }
 		prepare()
 		test.capture [[
-	<PropertyGroup>
-		<PostBuildEvent>command1</PostBuildEvent>
-	</PropertyGroup>
+		<PostBuildEvent>
+			<Command>command1</Command>
+		</PostBuildEvent>
 		]]
 	end
 
@@ -64,10 +64,12 @@
 		postbuildcommands { "command2" }
 		prepare()
 		test.capture [[
-	<PropertyGroup>
-		<PreBuildEvent>command1</PreBuildEvent>
-		<PostBuildEvent>command2</PostBuildEvent>
-	</PropertyGroup>
+		<PreBuildEvent>
+			<Command>command1</Command>
+		</PreBuildEvent>
+		<PostBuildEvent>
+			<Command>command2</Command>
+		</PostBuildEvent>
 		]]
 	end
 
@@ -79,7 +81,7 @@
 	function suite.splits_onMultipleCommands()
 		postbuildcommands { "command1", "command2" }
 		prepare()
-		test.capture ("\t<PropertyGroup>\n\t\t<PostBuildEvent>command1\r\ncommand2</PostBuildEvent>\n\t</PropertyGroup>\n")
+		test.capture ("\t\t<PostBuildEvent>\n\t\t\t<Command>command1\r\ncommand2</Command>\n\t\t</PostBuildEvent>\n")
 	end
 
 
@@ -92,8 +94,8 @@
 		postbuildcommands { '\' " < > &' }
 		prepare()
 		test.capture [[
-	<PropertyGroup>
-		<PostBuildEvent>' " &lt; &gt; &amp;</PostBuildEvent>
-	</PropertyGroup>
+		<PostBuildEvent>
+			<Command>' " &lt; &gt; &amp;</Command>
+		</PostBuildEvent>
 		]]
 	end

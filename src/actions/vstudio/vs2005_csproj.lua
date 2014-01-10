@@ -18,18 +18,6 @@
 
 
 --
--- XML escaping for C# projects is a little different than for C++.
---
-
-	function cs2005.esc(value)
-		value = value:gsub('&',  "&amp;")
-		value = value:gsub('<',  "&lt;")
-		value = value:gsub('>',  "&gt;")
-		return value
-	end
-
-
---
 -- Generate a Visual Studio 200x C# project, with support for the new platforms API.
 --
 
@@ -45,7 +33,6 @@
 	function cs2005.generate(prj)
 		io.indent = "  "
 		io.eol = "\r\n"
-		io.esc = cs2005.esc
 		io.utf8()
 
 		premake.callarray(cs2005, cs2005.elements.project, prj)

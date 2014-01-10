@@ -142,6 +142,7 @@
 
 	-- Visual Studio 2010 C/C++ projects
 	dofile("actions/vstudio/vc2010/test_assembly_refs.lua")
+	dofile("actions/vstudio/vc2010/test_build_events.lua")
 	dofile("actions/vstudio/vc2010/test_compile_settings.lua")
 	dofile("actions/vstudio/vc2010/test_config_props.lua")
 	dofile("actions/vstudio/vc2010/test_debug_settings.lua")
