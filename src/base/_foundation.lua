@@ -4,8 +4,10 @@
 ---
 
 	premake = {}
-	premake.extensions = {}
+	premake.modules = {}
 	premake.tools = {}
+
+	premake.extensions = premake.modules
 
 
 -- Keep track of warnings that have been shown, so they don't get shown twice
