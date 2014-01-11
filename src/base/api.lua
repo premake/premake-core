@@ -73,6 +73,26 @@
 	end
 
 
+
+---
+-- Create an alias to one of the canonical API functions. This creates
+-- new setter and remover names pointing to the same functions.
+--
+-- @param original
+--    The name of the function to be aliased (a string value).
+-- @param alias
+--    The alias name (another string value).
+---
+
+     function api.alias(original, alias)
+          _G[alias] = _G[original]
+          if api.islistfield(premake.fields[original]) then
+               _G["remove" .. alias] = _G["remove" .. original]
+          end
+     end
+
+
+
 --
 -- Add a new value to a field's list of allowed values.
 --
