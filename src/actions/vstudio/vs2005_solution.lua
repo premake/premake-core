@@ -104,6 +104,10 @@
 				local prjpath = vstudio.projectfile(prj)
 				prjpath = path.translate(path.getrelative(prj.solution.location, prjpath))
 
+				-- Unlike projects, solutions must use old-school %...% DOS style
+				-- for environment variables.
+				prjpath = prjpath:gsub("$%((.-)%)", "%%%1%%")
+
 				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
 				if _ACTION < "vs2012" then
 					sln2005.projectdependencies(prj)

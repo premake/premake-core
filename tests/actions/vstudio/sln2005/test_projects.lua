@@ -176,3 +176,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject3", "MyProject3.vc
 EndProject
 		]]
 	end
+
+
+--
+-- Environment variables in the form of $(...) need to be translated
+-- to old school %...% DOS style.
+--
+
+	function suite.translatesEnvironmentVars()
+		external "MyProject"
+		location "$(SDK_LOCATION)/MyProject"
+		uuid "30A1B994-C2C6-485F-911B-FB4674366DA8"
+		kind "SharedLib"
+		prepare()
+		test.capture [[
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "%SDK_LOCATION%\MyProject\MyProject.vcproj", "{30A1B994-C2C6-485F-911B-FB4674366DA8}"
+EndProject
+		]]
+	end
