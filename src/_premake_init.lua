@@ -85,21 +85,24 @@
 	api.register {
 		name = "buildcommands",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "buildoptions",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "buildoutputs",
 		scope = "config",
-		kind = "file-list",
+		kind = "file",
+		list = true,
 		tokens = true,
 	}
 
@@ -113,33 +116,38 @@
 	api.register {
 		name = "cleancommands",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "configmap",
 		scope = "config",
-		kind = "key-array"
+		kind = "array",
+		keyed = true,
 	}
 
 	api.register {
 		name = "configurations",
 		scope = "project",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 	}
 
 	api.register {
 		name = "copylocal",
 		scope = "config",
-		kind = "mixed-list",
+		kind = "mixed",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "debugargs",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
@@ -160,7 +168,8 @@
 	api.register {
 		name = "debugenvs",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
@@ -176,21 +185,24 @@
 	api.register {
 		name = "defines",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "dependson",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "deploymentoptions",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
@@ -209,14 +221,16 @@
 	api.register {
 		name = "files",
 		scope = "config",
-		kind = "file-list",
+		kind = "file",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "flags",
 		scope = "config",
-		kind  = "string-list",
+		kind  = "string",
+		list = true,
 		allowed = {
 			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
@@ -283,14 +297,16 @@
 	api.register {
 		name = "forceincludes",
 		scope = "config",
-		kind = "mixed-list",
+		kind = "mixed",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "forceusings",
 		scope = "config",
-		kind = "file-list",
+		kind = "file",
+		list = true,
 		tokens = true,
 	}
 
@@ -319,7 +335,8 @@
 	api.register {
 		name = "imageoptions",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
@@ -368,7 +385,8 @@
 	api.register {
 		name = "includedirs",
 		scope = "config",
-		kind = "directory-list",
+		kind = "directory",
+		list = true,
 		tokens = true,
 	}
 
@@ -400,21 +418,24 @@
 	api.register {
 		name = "libdirs",
 		scope = "config",
-		kind = "directory-list",
+		kind = "directory",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "linkoptions",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "links",
 		scope = "config",
-		kind = "mixed-list",
+		kind = "mixed",
+		list = true,
 		tokens = true,
 	}
 
@@ -428,10 +449,10 @@
 	api.register {
 		name = "makesettings",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
-
 
 	api.register {
 		name = "namespace",
@@ -489,55 +510,63 @@
 	api.register {
 		name = "platforms",
 		scope = "project",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 	}
 
 	api.register {
 		name = "postbuildcommands",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "prebuildcommands",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "prelinkcommands",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "rebuildcommands",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "resdefines",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "resincludedirs",
 		scope = "config",
-		kind = "directory-list",
+		kind = "directory",
+		list = true,
 		tokens = true,
 	}
 
 	api.register {
 		name = "resoptions",
 		scope = "config",
-		kind = "string-list",
+		kind = "string",
+		list = true,
 		tokens = true,
 	}
 
@@ -616,7 +645,8 @@
  	api.register {
 		name = "usingdirs",
 		scope = "config",
-		kind = "directory-list",
+		kind = "directory",
+		list = true,
 		tokens = true,
 	}
 
@@ -656,7 +686,9 @@
 	api.register {
 		name = "vpaths",
 		scope = "project",
-		kind = "key-path-list",
+		kind = "path",
+		keyed = true,
+		list = true,
 	}
 
 	api.register {

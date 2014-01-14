@@ -44,6 +44,19 @@
 			error("name '" .. name .. "' in use", 2)
 		end
 
+		-- Translate the old "key-" and "-list" field kind modifiers to the
+		-- new boolean values (13 Jan 2014; should deprecate eventually)
+
+		if field.kind:startswith("key-") then
+			field.kind = field.kind:sub(5)
+			field.keyed = true
+		end
+
+		if field.kind:endswith("-list") then
+			field.kind = field.kind:sub(1, -6)
+			field.list = true
+		end
+
 		-- make sure there is a handler available for this kind of value
 		if not api.getsetter(field) then
 			error("invalid kind '" .. field.kind .. "'", 2)
@@ -58,7 +71,7 @@
 		end
 
 		-- list values also get a removal function
-		if api.islistfield(field) and not api.iskeyedfield(field) then
+		if api.isListField(field) and not api.isKeyedField(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
@@ -67,8 +80,8 @@
 		-- if the field needs special handling, tell the config
 		-- set system about it
 		configset.registerfield(field.name, {
-			keyed = api.iskeyedfield(field),
-			merge = api.islistfield(field),
+			keyed = api.isKeyedField(field),
+			merge = api.isListField(field),
 		})
 	end
 
@@ -86,7 +99,7 @@
 
      function api.alias(original, alias)
           _G[alias] = _G[original]
-          if api.islistfield(premake.fields[original]) then
+          if api.isListField(premake.fields[original]) then
                _G["remove" .. alias] = _G["remove" .. original]
           end
      end
@@ -236,7 +249,7 @@
 		end
 
 		local status, result = pcall(function ()
-			if api.iskeyedfield(field) then
+			if api.isKeyedField(field) then
 				api.setkeyvalue(target, field, value)
 			else
 				local setter = api.getsetter(field, true)
@@ -266,7 +279,7 @@
 		if not value then return end
 
 		local target = api.gettarget(field.scope)
-		local kind = api.getbasekind(field)
+		local kind = field.kind
 
 		-- Build a list of values to be removed. If this field has deprecated
 		-- values, check to see if any of those are going to be removed by this
@@ -392,7 +405,7 @@
 
 		-- for keyed list, I just make sure all keys are present,
 		-- no checking of values is done (yet)
-		if field.kind:startswith("key") then
+		if api.isKeyedField(field) then
 			for k,v in pairs(value1) do
 				if not value2[k] then
 					return false
@@ -406,7 +419,7 @@
 			return true
 
 		-- for arrays, just see if the lengths match, for now
-		elseif field.kind:endswith("list") then
+		elseif api.isListField(field) then
 			return #value1 == #value2
 
 		-- everything else can use a simple compare
@@ -417,32 +430,15 @@
 
 
 --
--- Retrieve the base data kind of a field, by removing any key- prefix
--- or -list suffix and returning what's left.
---
-
-	function api.getbasekind(field)
-		local kind = field.kind
-		if kind:startswith("key-") then
-			kind = kind:sub(5)
-		end
-		if kind:endswith("-list") then
-			kind = kind:sub(1, -6)
-		end
-		return kind
-	end
-
-
---
 -- Check the collection properties of a field.
 --
 
-	function api.iskeyedfield(field)
-		return field.kind:startswith("key-")
+	function api.isKeyedField(field)
+		return field.keyed
 	end
 
-	function api.islistfield(field)
-		return field.kind:endswith("-list")
+	function api.isListField(field)
+		return field.list
 	end
 
 
@@ -459,10 +455,10 @@
 --
 
 	function api.getsetter(field, lists)
-		if lists and api.islistfield(field) then
+		if lists and api.isListField(field) then
 			return api.setlist
 		else
-			return api["set" .. api.getbasekind(field)]
+			return api["set" .. field.kind]
 		end
 	end
 

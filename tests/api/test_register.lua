@@ -69,9 +69,9 @@
 --
 
 	function suite.raisesError_onInvalidKind()
-		ok, err = pcall(function () 
+		ok, err = pcall(function ()
 			api.register { name = "testapi", kind = "bogus", scope = "project" }
-		end)				
+		end)
 		test.isfalse(ok)
 	end
 
@@ -81,8 +81,8 @@
 --
 
 	function suite.succeeds_onKeyValueForm()
-		ok, err = pcall(function () 
-			api.register { name = "testapi", kind = "key-string", scope = "project" }
-		end)				
+		ok, err = pcall(function ()
+			api.register { name = "testapi", kind = "string", keyed = true, scope = "project" }
+		end)
 		test.istrue(ok)
 	end

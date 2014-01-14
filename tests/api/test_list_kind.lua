@@ -16,7 +16,8 @@
 	function suite.setup()
 		api.register {
 			name = "testapi",
-			kind = "string-list",
+			kind = "string",
+			list = true,
 			scope = "project",
 			allowed = { "first", "second", "third" }
 		}
@@ -48,7 +49,7 @@
 	end
 
 
--- 
+--
 -- New values should be appended to any previous values.
 --
 
@@ -73,7 +74,7 @@
 --
 
 	function suite.raisesError_onDisallowedValue()
-		ok, err = pcall(function () 
+		ok, err = pcall(function ()
 			testapi "NotAllowed"
 		end)
 		test.isfalse(ok)

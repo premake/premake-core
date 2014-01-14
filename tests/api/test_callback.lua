@@ -14,7 +14,7 @@
 --
 
 	function suite.setup()
-		api.settest = function(target, name, field, value) 
+		api.settest = function(target, name, field, value)
 			test_args = {
 				["target"] = target,
 				["name"] = name,
@@ -31,9 +31,9 @@
 		api.settest = nil
 	end
 
-	
 
-	
+
+
 --
 -- Verify that the callback hands off control to setter for
 -- the field's value kind.
@@ -47,7 +47,7 @@
 	end
 
 
--- 
+--
 -- Verify that the target field name is getting passed to the setter.
 --
 
@@ -59,7 +59,7 @@
 	end
 
 
--- 
+--
 -- Verify that the field description is passed along to the setter.
 --
 
@@ -71,7 +71,7 @@
 	end
 
 
--- 
+--
 -- Verify that the value is passed along to the setter.
 --
 
@@ -111,7 +111,7 @@
 
 
 --
--- If the field scope is "configuration" and there is an active configuration, 
+-- If the field scope is "configuration" and there is an active configuration,
 -- it should be the target.
 --
 
@@ -129,7 +129,7 @@
 --
 
 	function suite.keyObjectName_onKeyValue()
-		api.register { name = "testapi", kind = "key-test", scope = "project" }
+		api.register { name = "testapi", kind = "test", keyed = true, scope = "project" }
 		local sln = solution "MySolution"
 		testapi { key = "test" }
 		test.isequal("key", test_args.name)
@@ -141,9 +141,9 @@
 --
 
 	function suite.keyValueRaisesError_onSimpleValue()
-		api.register { name = "testapi", kind = "key-test", scope = "project" }
+		api.register { name = "testapi", kind = "test", keyed = true, scope = "project" }
 		local sln = solution "MySolution"
-		ok, err = pcall(function () 
+		ok, err = pcall(function ()
 			testapi "test"
 		end)
 		test.isfalse(ok)

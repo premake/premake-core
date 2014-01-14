@@ -15,7 +15,8 @@
 	function suite.setup()
 		api.register {
 			name = "testapi",
-			kind = "directory-list",
+			kind = "directory",
+			list = true,
 			scope = "project"
 		}
 		test.createsolution()
