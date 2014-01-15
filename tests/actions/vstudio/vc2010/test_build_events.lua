@@ -99,3 +99,20 @@
 		</PostBuildEvent>
 		]]
 	end
+
+
+--
+-- If a message is specified, it should be included.
+--
+
+	function suite.onMessageProvided()
+		postbuildcommands { "command1" }
+		postbuildmessage "Post-building..."
+		prepare()
+		test.capture [[
+		<PostBuildEvent>
+			<Command>command1</Command>
+			<Message>Post-building...</Message>
+		</PostBuildEvent>
+		]]
+	end

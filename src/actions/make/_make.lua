@@ -208,13 +208,21 @@
 	end
 
 
-	function make.preBuildCmds(cfg, toolset)
-		_p('  define PREBUILDCMDS')
-		if #cfg.prebuildcommands > 0 then
-			_p('\t@echo Running pre-build commands')
-			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
+	function make.buildCmds(cfg, event)
+		_p('  define %sCMDS', event:upper())
+		local steps = cfg[event .. "commands"]
+		local msg = cfg[event .. "message"]
+		if #steps > 0 then
+			msg = msg or string.format("Running %s commands", event)
+			_p('\t@echo %s', msg)
+			_p('\t%s', table.implode(steps, "", "", "\n\t"))
 		end
 		_p('  endef')
+	end
+
+
+	function make.preBuildCmds(cfg, toolset)
+		make.buildCmds(cfg, "prebuild")
 	end
 
 
@@ -226,12 +234,7 @@
 
 
 	function make.preLinkCmds(cfg, toolset)
-		_p('  define PRELINKCMDS')
-		if #cfg.prelinkcommands > 0 then
-			_p('\t@echo Running pre-link commands')
-			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
+		make.buildCmds(cfg, "prelink")
 	end
 
 
@@ -243,12 +246,7 @@
 
 
 	function make.postBuildCmds(cfg, toolset)
-		_p('  define POSTBUILDCMDS')
-		if #cfg.postbuildcommands > 0 then
-			_p('\t@echo Running post-build commands')
-			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
+		make.buildCmds(cfg, "postbuild")
 	end
 
 

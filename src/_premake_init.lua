@@ -523,6 +523,13 @@
 	}
 
 	api.register {
+		name = "postbuildmessage",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "prebuildcommands",
 		scope = "config",
 		kind = "string",
@@ -531,10 +538,24 @@
 	}
 
 	api.register {
+		name = "prebuildmessage",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "prelinkcommands",
 		scope = "config",
 		kind = "string",
 		list = true,
+		tokens = true,
+	}
+
+	api.register {
+		name = "prelinkmessage",
+		scope = "config",
+		kind = "string",
 		tokens = true,
 	}
 

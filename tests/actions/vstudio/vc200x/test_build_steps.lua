@@ -53,3 +53,22 @@
 			/>
 		]]
 	end
+
+
+
+--
+-- If a message is specified, it should be included.
+--
+
+	function suite.onMessageProvided()
+		prebuildcommands { "command1" }
+		prebuildmessage "Pre-building..."
+		prepare()
+		test.capture [[
+			<Tool
+				Name="VCPreBuildEventTool"
+				Description="Pre-building..."
+				CommandLine="command1"
+			/>
+		]]
+	end

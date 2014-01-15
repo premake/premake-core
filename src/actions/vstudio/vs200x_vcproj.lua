@@ -622,10 +622,18 @@
 	end
 
 
-	function vc200x.VCBuildEventTool(name, steps)
+	function vc200x.VCBuildEventTool(cfg, event)
+		local name = "VC" .. event .. "EventTool"
+		local field = event:lower()
+		local steps = cfg[field .. "commands"]
+		local msg = cfg[field .. "message"]
+
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		if #steps > 0 then
+			if msg then
+				_x(4,'Description="%s"', msg)
+			end
 			_x(4,'CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
 		end
 		_p(3,'/>')
@@ -633,17 +641,17 @@
 
 
 	function vc200x.VCPreBuildEventTool(cfg)
-		vc200x.VCBuildEventTool("VCPreBuildEventTool", cfg.prebuildcommands)
+		vc200x.VCBuildEventTool(cfg, "PreBuild")
 	end
 
 
 	function vc200x.VCPreLinkEventTool(cfg)
-		vc200x.VCBuildEventTool("VCPreLinkEventTool", cfg.prelinkcommands)
+		vc200x.VCBuildEventTool(cfg, "PreLink")
 	end
 
 
 	function vc200x.VCPostBuildEventTool(cfg)
-		vc200x.VCBuildEventTool("VCPostBuildEventTool", cfg.postbuildcommands)
+		vc200x.VCBuildEventTool(cfg, "PostBuild")
 	end
 
 

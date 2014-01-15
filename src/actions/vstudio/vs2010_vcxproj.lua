@@ -419,21 +419,31 @@
 	end
 
 
---
+
+---
 -- Write out the pre- and post-build event settings.
---
+---
 
 	function vc2010.buildEvents(cfg)
-		function write(group, list)
-			if #list > 0 then
-				_p(2,'<%s>', group)
-				_x(3,'<Command>%s</Command>', table.implode(list, "", "", "\r\n"))
-				_p(2,'</%s>', group)
+		local write = function (event)
+			local name = event .. "Event"
+			local field = event:lower()
+			local steps = cfg[field .. "commands"]
+			local msg = cfg[field .. "message"]
+
+			if #steps > 0 then
+				_p(2,'<%s>', name)
+				_x(3,'<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
+				if msg then
+					_x(3,'<Message>%s</Message>', msg)
+				end
+				_p(2,'</%s>', name)
 			end
 		end
-		write("PreBuildEvent", cfg.prebuildcommands)
-		write("PreLinkEvent", cfg.prelinkcommands)
-		write("PostBuildEvent", cfg.postbuildcommands)
+
+		write("PreBuild")
+		write("PreLink")
+		write("PostBuild")
 	end
 
 
