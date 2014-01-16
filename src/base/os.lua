@@ -6,6 +6,17 @@
 
 
 --
+-- Add a path normalization step to the execution command to
+-- replace special symbols and any scripted weirdness.
+--
+
+	premake.override(os, "execute", function(base, cmd)
+		cmd = path.normalize(cmd)
+		return base(cmd)
+	end)
+
+
+--
 -- Same as os.execute(), but accepts string formatting arguments.
 --
 
@@ -13,6 +24,7 @@
 		cmd = string.format(cmd, unpack(arg))
 		return os.execute(cmd)
 	end
+
 
 
 --
@@ -106,6 +118,40 @@
 	function os.is(id)
 		return (os.get():lower() == id:lower())
 	end
+
+
+
+---
+-- Determine if a directory exists on the file system, and that it is a
+-- directory and not a file.
+--
+-- @param p
+--    The path to check.
+-- @return
+--    True if a directory exists at the given path.
+---
+
+	premake.override(os, "isdir", function(base, p)
+		p = path.normalize(p)
+		return base(p)
+	end)
+
+
+
+---
+-- Determine if a file exists on the file system, and that it is a
+-- file and not a directory.
+--
+-- @param p
+--    The path to check.
+-- @return
+--    True if a file exists at the given path.
+---
+
+	premake.override(os, "isfile", function(base, p)
+		p = path.normalize(p)
+		return base(p)
+	end)
 
 
 
@@ -273,6 +319,8 @@
 
 	local builtin_mkdir = os.mkdir
 	function os.mkdir(p)
+		p = path.normalize(p)
+
 		local dir = iif(p:startswith("/"), "/", "")
 		for part in p:gmatch("[^/]+") do
 			dir = dir .. part
@@ -296,11 +344,15 @@
 --
 
 	function os.outputof(cmd)
+		cmd = path.normalize(cmd)
+
 		local pipe = io.popen(cmd)
 		local result = pipe:read('*a')
 		pipe:close()
+
 		return result
 	end
+
 
 --
 -- @brief An overloaded os.remove() that will be able to handle list of files,
@@ -361,6 +413,17 @@
 		-- remove this directory
 		builtin_rmdir(p)
 	end
+
+
+---
+-- Return information about a file.
+---
+
+	premake.override(os, "stat", function(base, p)
+		p = path.normalize(p)
+		return base(p)
+	end)
+
 
 
 --
