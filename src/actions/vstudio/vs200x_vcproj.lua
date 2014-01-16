@@ -5,64 +5,65 @@
 --
 
 	premake.vstudio.vc200x = {}
+	local _ = premake.vstudio.vc200x
 
 	local vstudio = premake.vstudio
-	local vc200x = premake.vstudio.vc200x
 	local context = premake.context
 	local project = premake.project
 	local config = premake.config
 	local fileconfig = premake.fileconfig
 
+	_.elements = {}
 
----
--- Add namespace for element definition lists for premake.callarray()
----
-
-	vc200x.elements = {}
 
 
 ---
 -- Generate a Visual Studio 200x C++ or Makefile project.
 ---
 
-	vc200x.elements.project = {
-		"xmlElement",
-		"visualStudioProject",
-		"platforms",
-		"toolFiles",
-		"configurations",
-		"references",
-		"files",
-		"globals",
-	}
+	_.elements.project = function(prj)
+		return {
+			_.xmlElement,
+			_.visualStudioProject,
+			_.platforms,
+			_.toolFiles,
+			_.configurations,
+			_.references,
+			_.files,
+			_.globals
+		}
+	end
 
-	function vc200x.generate(prj)
-		premake.callarray(vc200x, vc200x.elements.project, prj)
+	function _.generate(prj)
+		premake.callArray(_.elements.project, prj)
 		_p('</VisualStudioProject>')
 	end
 
 
+
 --
--- Write the opening <VisualStudioProject> element of the project file. These
--- values are all inter-related, so this isn't as easy as dumping out an XML
--- element or two.
+-- Write the opening <VisualStudioProject> element of the project file.
+-- In this case, the call list is for XML attributes rather than elements.
 --
 
-	vc200x.elements.projectAttributes = {
-		"projectType",
-		"version",
-		"projectName",
-		"projectGUID",
-		"rootNamespace",
-		"keyword",
-		"targetFrameworkVersion"
-	}
+	_.elements.visualStudioProject = function(prj)
+		return {
+			_.projectType,
+			_.version,
+			_.projectName,
+			_.projectGUID,
+			_.rootNamespace,
+			_.keyword,
+			_.targetFrameworkVersion
+		}
+	end
 
-	function vc200x.visualStudioProject(prj)
+	function _.visualStudioProject(prj)
 		_p('<VisualStudioProject')
-		premake.callarray(vc200x, vc200x.elements.projectAttributes, prj)
+		premake.callArray(_.elements.visualStudioProject, prj)
 		_p(1,'>')
 	end
+
 
 
 --
@@ -70,7 +71,7 @@
 -- configuration-architecture pairings.
 --
 
-	function vc200x.configurations(prj)
+	function _.configurations(prj)
 		-- Visual Studio requires each configuration to be paired up with each
 		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
 		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
@@ -83,7 +84,7 @@
 			isRealConfig[name] = true
 		end
 
-		local architectures = vc200x.architectures(prj)
+		local architectures = _.architectures(prj)
 
 		-- Now enumerate all of the configurations in the project and write
 		-- out their <Configuration> blocks.
@@ -99,8 +100,8 @@
 				-- full <Configuration> block.
 
 				if thisName == testName then
-					vc200x.configuration(cfg)
-					vc200x.tools(cfg)
+					_.configuration(cfg)
+					_.tools(cfg)
 					_p(2,'</Configuration>')
 
 				-- Otherwise, check the list of valid configurations I built
@@ -111,7 +112,7 @@
 
 				elseif not isRealConfig[testName] then
 					-- this is a fake config to make VS happy
-					vc200x.emptyConfiguration(cfg, arch)
+					_.emptyConfiguration(cfg, arch)
 				end
 
 			end
@@ -121,58 +122,71 @@
 	end
 
 
+
 --
 -- Write out the <Configuration> element, describing a specific Premake
 -- build configuration/platform pairing.
 --
 
-	vc200x.elements.configuration = {
-		"outputDirectory",
-		"intermediateDirectory",
-		"configurationType",
-		"useOfMFC",
-		"characterSet",
-		"managedExtensions",
-	}
+	_.elements.configuration = function(cfg)
+		return {
+			_.outputDirectory,
+			_.intermediateDirectory,
+			_.configurationType,
+			_.useOfMFC,
+			_.characterSet,
+			_.managedExtensions
+		}
+	end
 
-	function vc200x.configuration(cfg)
+	function _.configuration(cfg)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s"', vstudio.projectConfig(cfg))
-		premake.callarray(vc200x, vc200x.elements.configuration, cfg)
+		premake.callArray(_.elements.configuration, cfg)
 		_p(3,'>')
 	end
 
 
-	function vc200x.emptyConfiguration(cfg, arch)
+
+--
+-- Write an empty, placehold configuration for those build configuration
+-- and architecture pairs that aren't valid build targets in the solution.
+--
+
+	function _.emptyConfiguration(cfg, arch)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s|%s"', vstudio.projectPlatform(cfg), arch)
 		_p(3,'IntermediateDirectory="$(PlatformName)\\$(ConfigurationName)"')
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
 
-		local tools = vc200x.toolsForConfig(cfg, true)
+		local tools = _.toolsForConfig(cfg, true)
 		for _, tool in ipairs(tools) do
-			vc200x.tool(tool)
+			_.tool(tool)
 		end
 
 		_p(2,'</Configuration>')
 	end
 
 
+
 --
 -- Write out the <References> element group.
 --
 
-	vc200x.elements.references = {
-		"assemblyReferences",
-		"projectReferences",
-	}
+	_.elements.references = function(prj)
+		return {
+			"assemblyReferences",
+			"projectReferences",
+		}
+	end
 
-	function vc200x.references(prj)
+	function _.references(prj)
 		_p(1,'<References>')
-		premake.callarray(vc200x, vc200x.elements.references, prj)
+		premake.callArray(_.elements.references, prj)
 		_p(1,'</References>')
 	end
+
 
 
 --
@@ -180,14 +194,16 @@
 -- extend it.
 --
 
-	vc200x.elements.globals = {
-	}
+	_.elements.globals = function(prj)
+		return {}
+	end
 
-	function vc200x.globals(prj)
+	function _.globals(prj)
 		_p(1,'<Globals>')
-		premake.callarray(vc200x, vc200x.elements.globals, prj)
+		premake.callArray(_.elements.globals, prj)
 		_p(1,'</Globals>')
 	end
+
 
 
 ---------------------------------------------------------------------------
@@ -207,7 +223,7 @@
 --    configuration block; in this case different rules apply.
 --
 
-	function vc200x.toolsForConfig(cfg, isEmptyCfg)
+	function _.toolsForConfig(cfg, isEmptyCfg)
 		if vstudio.isMakefile(cfg) and not isEmptyCfg then
 			return {
 				"VCNMakeTool"
@@ -292,7 +308,7 @@
 -- listed, the built-in Visual Studio tools will be used
 --
 
-	vc200x.toolsets = {
+	_.toolsets = {
 		ps3 = premake.tools.snc
 	}
 
@@ -303,8 +319,8 @@
 -- use the alternate external compiler setup.
 --
 
-	function vc200x.toolset(cfg)
-		return premake.tools[cfg.toolset] or vc200x.toolsets[cfg.system]
+	function _.toolset(cfg)
+		return premake.tools[cfg.toolset] or _.toolsets[cfg.system]
 	end
 
 
@@ -313,66 +329,68 @@
 -- of the project.
 --
 
-	function vc200x.tools(cfg)
-		for _, tool in ipairs(vc200x.toolsForConfig(cfg)) do
-			if vc200x.toolmap[tool] then
-				vc200x.toolmap[tool](cfg)
+	function _.tools(cfg)
+		for _, tool in ipairs(_.toolsForConfig(cfg)) do
+			if _.toolmap[tool] then
+				_.toolmap[tool](cfg)
 			else
-				vc200x.tool(tool)
+				_.tool(tool)
 			end
 		end
 	end
 
 
-	function vc200x.VCAppVerifierTool(cfg)
+	function _.VCAppVerifierTool(cfg)
 		if cfg.kind ~= premake.STATICLIB then
-			vc200x.tool("VCAppVerifierTool")
+			_.tool("VCAppVerifierTool")
 		end
 	end
 
 
-	function vc200x.VCCLCompilerTool(cfg)
+	function _.VCCLCompilerTool(cfg)
 		_p(3,'<Tool')
-		vc200x.compilerToolName(cfg)
+		_.compilerToolName(cfg)
 
 		-- Decide between the built-in compiler or an external toolset;
 		-- PS3 uses the external toolset
-		local toolset = vc200x.toolset(cfg)
+		local toolset = _.toolset(cfg)
 		if toolset then
-			vc200x.VCCLExternalCompilerTool(cfg, toolset)
+			_.VCCLExternalCompilerTool(cfg, toolset)
 		else
-			vc200x.VCCLBuiltInCompilerTool(cfg)
+			_.VCCLBuiltInCompilerTool(cfg)
 		end
 
 		_p(3,'/>')
 	end
 
 
-	vc200x.elements.builtInCompilerTool = {
-		"enableEnhancedInstructionSet",
-		"floatingPointModel",
-		"runtimeTypeInfo",
-		"treatWChar_tAsBuiltInType",
-	}
+	_.elements.builtInCompilerTool = function(cfg)
+		return {
+			_.enableEnhancedInstructionSet,
+			_.floatingPointModel,
+			_.runtimeTypeInfo,
+			_.treatWChar_tAsBuiltInType,
+		}
+	end
 
-	function vc200x.VCCLBuiltInCompilerTool(cfg)
-		vc200x.VCCLCompilerTool_additionalOptions(cfg)
-		vc200x.optimization(cfg, 4)
+	function _.VCCLBuiltInCompilerTool(cfg)
+		_.VCCLCompilerTool_additionalOptions(cfg)
+		_.optimization(cfg, 4)
 
 		if cfg.flags.NoFramePointer then
-			_p(4,'OmitFramePointers="%s"', vc200x.bool(true))
+			_p(4,'OmitFramePointers="%s"', _.bool(true))
 		end
 
-		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
-		vc200x.wholeProgramOptimization(cfg)
-		vc200x.preprocessorDefinitions(cfg, cfg.defines)
+		_.additionalIncludeDirectories(cfg, cfg.includedirs)
+		_.wholeProgramOptimization(cfg)
+		_.preprocessorDefinitions(cfg, cfg.defines)
 
-		vc200x.minimalRebuild(cfg)
-		vc200x.basicRuntimeChecks(cfg)
-		vc200x.bufferSecurityCheck(cfg)
+		_.minimalRebuild(cfg)
+		_.basicRuntimeChecks(cfg)
+		_.bufferSecurityCheck(cfg)
 
 		if config.isOptimizedBuild(cfg) then
-			_p(4,'StringPooling="%s"', vc200x.bool(true))
+			_p(4,'StringPooling="%s"', _.bool(true))
 		end
 
 		if cfg.flags.NoExceptions then
@@ -381,11 +399,11 @@
 			_p(4,'ExceptionHandling="2"')
 		end
 
-		vc200x.runtimeLibrary(cfg)
+		_.runtimeLibrary(cfg)
 
-		_p(4,'EnableFunctionLevelLinking="%s"', vc200x.bool(true))
+		_p(4,'EnableFunctionLevelLinking="%s"', _.bool(true))
 
-		premake.callarray(vc200x, vc200x.elements.builtInCompilerTool, cfg)
+		premake.callArray(_.elements.builtInCompilerTool, cfg)
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
@@ -394,24 +412,24 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 
-		vc200x.programDatabaseFileName(cfg)
-		vc200x.warnings(cfg)
+		_.programDatabaseFileName(cfg)
+		_.warnings(cfg)
 
-		_p(4,'DebugInformationFormat="%s"', vc200x.symbols(cfg))
+		_p(4,'DebugInformationFormat="%s"', _.symbols(cfg))
 
 		if cfg.project.language == "C" then
 			_p(4, 'CompileAs="1"')
 		end
 
-		vc200x.forcedIncludeFiles(cfg)
-		vc200x.omitDefaultLib(cfg)
+		_.forcedIncludeFiles(cfg)
+		_.omitDefaultLib(cfg)
 	end
 
 
-	function vc200x.VCCLExternalCompilerTool(cfg, toolset)
-		vc200x.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
-		vc200x.additionalIncludeDirectories(cfg, cfg.includedirs)
-		vc200x.preprocessorDefinitions(cfg, cfg.defines)
+	function _.VCCLExternalCompilerTool(cfg, toolset)
+		_.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
+		_.additionalIncludeDirectories(cfg, cfg.includedirs)
+		_.preprocessorDefinitions(cfg, cfg.defines)
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
@@ -420,39 +438,39 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 
-		vc200x.programDatabaseFileName(cfg)
+		_.programDatabaseFileName(cfg)
 
 		_p(4,'DebugInformationFormat="0"')
 		_p(4,'CompileAs="0"')
 
-		vc200x.forcedIncludeFiles(cfg)
+		_.forcedIncludeFiles(cfg)
 	end
 
 
-	function vc200x.DebuggerTool(cfg)
+	function _.DebuggerTool(cfg)
 		_p(3,'<DebuggerTool')
 		_p(3,'/>')
 	end
 
 
-	function vc200x.VCLinkerTool(cfg)
+	function _.VCLinkerTool(cfg)
 		_p(3,'<Tool')
-		_p(4,'Name="%s"', vc200x.linkerTool(cfg))
+		_p(4,'Name="%s"', _.linkerTool(cfg))
 
 		-- Decide between the built-in linker or an external toolset;
 		-- PS3 uses the external toolset
-		local toolset = vc200x.toolset(cfg)
+		local toolset = _.toolset(cfg)
 		if toolset then
-			vc200x.VCExternalLinkerTool(cfg, toolset)
+			_.VCExternalLinkerTool(cfg, toolset)
 		else
-			vc200x.VCBuiltInLinkerTool(cfg)
+			_.VCBuiltInLinkerTool(cfg)
 		end
 
 		_p(3,'/>')
 	end
 
 
-	function vc200x.VCBuiltInLinkerTool(cfg)
+	function _.VCBuiltInLinkerTool(cfg)
 		local explicitLink = vstudio.needsExplicitLink(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
@@ -462,7 +480,7 @@
 			end
 
 			if cfg.flags.NoImportLib then
-				_p(4,'IgnoreImportLibrary="%s"', vc200x.bool(true))
+				_p(4,'IgnoreImportLibrary="%s"', _.bool(true))
 			end
 		end
 
@@ -471,7 +489,7 @@
 		end
 
 		if #cfg.links > 0 then
-			local links = vc200x.links(cfg, explicitLink)
+			local links = _.links(cfg, explicitLink)
 			if links ~= "" then
 				_x(4,'AdditionalDependencies="%s"', links)
 			end
@@ -483,7 +501,7 @@
 			_p(4,'LinkIncremental="%s"', iif(config.canLinkIncremental(cfg) , 2, 1))
 		end
 
-		vc200x.additionalLibraryDirectories(cfg)
+		_.additionalLibraryDirectories(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
 			local deffile = config.findfile(cfg, ".def")
@@ -492,12 +510,12 @@
 			end
 
 			if cfg.flags.NoManifest then
-				_p(4,'GenerateManifest="%s"', vc200x.bool(false))
+				_p(4,'GenerateManifest="%s"', _.bool(false))
 			end
 
-			_p(4,'GenerateDebugInformation="%s"', vc200x.bool(vc200x.symbols(cfg) ~= 0))
+			_p(4,'GenerateDebugInformation="%s"', _.bool(_.symbols(cfg) ~= 0))
 
-			if vc200x.symbols(cfg) >= 3 then
+			if _.symbols(cfg) >= 3 then
 				_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', cfg.buildtarget.basename)
 			end
 
@@ -527,7 +545,7 @@
 	end
 
 
-	function vc200x.VCExternalLinkerTool(cfg, toolset)
+	function _.VCExternalLinkerTool(cfg, toolset)
 		local explicitLink = vstudio.needsExplicitLink(cfg)
 
 		local buildoptions = table.join(toolset.getldflags(cfg), cfg.linkoptions)
@@ -548,10 +566,10 @@
 			_p(4,'LinkIncremental="0"')
 		end
 
-		vc200x.additionalLibraryDirectories(cfg)
+		_.additionalLibraryDirectories(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
-			_p(4,'GenerateManifest="%s"', vc200x.bool(false))
+			_p(4,'GenerateManifest="%s"', _.bool(false))
 			_p(4,'ProgramDatabaseFile=""')
 			_p(4,'RandomizedBaseAddress="1"')
 			_p(4,'DataExecutionPrevention="0"')
@@ -559,7 +577,7 @@
 	end
 
 
-	function vc200x.VCManifestTool(cfg)
+	function _.VCManifestTool(cfg)
 		if cfg.kind == premake.STATICLIB then
 			return
 		end
@@ -580,7 +598,7 @@
 	end
 
 
-	function vc200x.VCMIDLTool(cfg)
+	function _.VCMIDLTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCMIDLTool"')
 		if cfg.architecture == "x64" then
@@ -590,13 +608,13 @@
 	end
 
 
-	function vc200x.VCNMakeTool(cfg)
+	function _.VCNMakeTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCNMakeTool"')
-		vc200x.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-		vc200x.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-		vc200x.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-		vc200x.nmakeOutput(cfg)
+		_.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+		_.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+		_.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+		_.nmakeOutput(cfg)
 		_p(4,'PreprocessorDefinitions=""')
 		_p(4,'IncludeSearchPath=""')
 		_p(4,'ForcedIncludes=""')
@@ -607,7 +625,7 @@
 	end
 
 
-	function vc200x.VCResourceCompilerTool(cfg)
+	function _.VCResourceCompilerTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCResourceCompilerTool"')
 
@@ -615,14 +633,14 @@
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 
-		vc200x.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
-			vc200x.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+		_.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
+			_.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
 
 		_p(3,'/>')
 	end
 
 
-	function vc200x.VCBuildEventTool(cfg, event)
+	function _.VCBuildEventTool(cfg, event)
 		local name = "VC" .. event .. "EventTool"
 		local field = event:lower()
 		local steps = cfg[field .. "commands"]
@@ -640,22 +658,23 @@
 	end
 
 
-	function vc200x.VCPreBuildEventTool(cfg)
-		vc200x.VCBuildEventTool(cfg, "PreBuild")
+	function _.VCPreBuildEventTool(cfg)
+		_.VCBuildEventTool(cfg, "PreBuild")
 	end
 
 
-	function vc200x.VCPreLinkEventTool(cfg)
-		vc200x.VCBuildEventTool(cfg, "PreLink")
+	function _.VCPreLinkEventTool(cfg)
+		_.VCBuildEventTool(cfg, "PreLink")
 	end
 
 
-	function vc200x.VCPostBuildEventTool(cfg)
-		vc200x.VCBuildEventTool(cfg, "PostBuild")
+	function _.VCPostBuildEventTool(cfg)
+		_.VCBuildEventTool(cfg, "PostBuild")
 	end
 
 
-	function vc200x.VCX360DeploymentTool(cfg)
+
+	function _.VCX360DeploymentTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCX360DeploymentTool"')
 		_p(4,'DeploymentType="0"')
@@ -666,7 +685,7 @@
 	end
 
 
-	function vc200x.VCX360ImageTool(cfg)
+	function _.VCX360ImageTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCX360ImageTool"')
 		if #cfg.imageoptions > 0 then
@@ -684,20 +703,20 @@
 -- output a standard empty tool element.
 --
 
-	vc200x.toolmap = {
-		DebuggerTool           = vc200x.DebuggerTool,
-		VCAppVerifierTool      = vc200x.VCAppVerifierTool,
-		VCCLCompilerTool       = vc200x.VCCLCompilerTool,
-		VCLinkerTool           = vc200x.VCLinkerTool,
-		VCManifestTool         = vc200x.VCManifestTool,
-		VCMIDLTool             = vc200x.VCMIDLTool,
-		VCNMakeTool            = vc200x.VCNMakeTool,
-		VCPostBuildEventTool   = vc200x.VCPostBuildEventTool,
-		VCPreBuildEventTool    = vc200x.VCPreBuildEventTool,
-		VCPreLinkEventTool     = vc200x.VCPreLinkEventTool,
-		VCResourceCompilerTool = vc200x.VCResourceCompilerTool,
-		VCX360DeploymentTool   = vc200x.VCX360DeploymentTool,
-		VCX360ImageTool        = vc200x.VCX360ImageTool
+	_.toolmap = {
+		DebuggerTool           = _.DebuggerTool,
+		VCAppVerifierTool      = _.VCAppVerifierTool,
+		VCCLCompilerTool       = _.VCCLCompilerTool,
+		VCLinkerTool           = _.VCLinkerTool,
+		VCManifestTool         = _.VCManifestTool,
+		VCMIDLTool             = _.VCMIDLTool,
+		VCNMakeTool            = _.VCNMakeTool,
+		VCPostBuildEventTool   = _.VCPostBuildEventTool,
+		VCPreBuildEventTool    = _.VCPreBuildEventTool,
+		VCPreLinkEventTool     = _.VCPreLinkEventTool,
+		VCResourceCompilerTool = _.VCResourceCompilerTool,
+		VCX360DeploymentTool   = _.VCX360DeploymentTool,
+		VCX360ImageTool        = _.VCX360ImageTool
 	}
 
 
@@ -707,7 +726,7 @@
 --
 ---------------------------------------------------------------------------
 
-	function vc200x.files(prj)
+	function _.files(prj)
 		_p(1,'<Files>')
 
 		-- Fetch the source tree, sorted how Visual Studio likes it: alpha
@@ -758,7 +777,7 @@
 				_p(depth, '\t>')
 
 				for cfg in project.eachconfig(prj) do
-					vc200x.fileConfiguration(cfg, node, depth + 1)
+					_.fileConfiguration(cfg, node, depth + 1)
 				end
 
 				_p(depth, '</File>')
@@ -770,7 +789,7 @@
 	end
 
 
-	function vc200x.fileConfiguration(cfg, node, depth)
+	function _.fileConfiguration(cfg, node, depth)
 
 		local filecfg = fileconfig.getconfig(node, cfg)
 
@@ -779,11 +798,11 @@
 		-- write the file configuration if the buffers are not empty.
 
 		local configAttribs = io.capture(function ()
-			vc200x.fileConfiguration_extraAttributes(cfg, filecfg, depth + 1)
+			_.fileConfiguration_extraAttributes(cfg, filecfg, depth + 1)
 		end)
 
 		local compilerAttribs = io.capture(function ()
-			vc200x.fileConfiguration_compilerAttributes(cfg, filecfg, depth + 2)
+			_.fileConfiguration_compilerAttributes(cfg, filecfg, depth + 2)
 		end)
 
 		if #configAttribs > 0 or compilerAttribs:lines() > 1 then
@@ -819,8 +838,8 @@
 --    The indentation level for any new attributes.
 --
 
-	function vc200x.fileConfiguration_extraAttributes(cfg, filecfg, depth)
-		vc200x.excludedFromBuild(filecfg, depth)
+	function _.fileConfiguration_extraAttributes(cfg, filecfg, depth)
+		_.excludedFromBuild(filecfg, depth)
 	end
 
 
@@ -836,19 +855,19 @@
 --    The indentation level any new attributes.
 --
 
-	function vc200x.fileConfiguration_compilerAttributes(cfg, filecfg, depth)
+	function _.fileConfiguration_compilerAttributes(cfg, filecfg, depth)
 
 		-- Must always have a name attribute
-		vc200x.compilerToolName(cfg, filecfg, depth)
+		_.compilerToolName(cfg, filecfg, depth)
 
 		if filecfg then
-			vc200x.customBuildTool(filecfg, depth)
-			vc200x.objectFile(filecfg, depth)
-			vc200x.optimization(filecfg, depth)
-			vc200x.usePrecompiledHeader(filecfg, depth)
-			vc200x.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
-			vc200x.forcedIncludeFiles(filecfg, depth)
-			vc200x.compileAs(filecfg, depth)
+			_.customBuildTool(filecfg, depth)
+			_.objectFile(filecfg, depth)
+			_.optimization(filecfg, depth)
+			_.usePrecompiledHeader(filecfg, depth)
+			_.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
+			_.forcedIncludeFiles(filecfg, depth)
+			_.compileAs(filecfg, depth)
 		end
 
 	end
@@ -869,7 +888,7 @@
 --    An array of Visual Studio architectures.
 --
 
-	function vc200x.architectures(prj)
+	function _.architectures(prj)
 		architectures = {}
 		for cfg in project.eachconfig(prj) do
 			local arch = vstudio.archFromConfig(cfg, true)
@@ -885,7 +904,7 @@
 -- Return a properly cased boolean for the current Visual Studio version.
 --
 
-	function vc200x.bool(value)
+	function _.bool(value)
 		if (_ACTION < "vs2005") then
 			return iif(value, "TRUE", "FALSE")
 		else
@@ -899,7 +918,7 @@
 -- formatted for Visual Studio's XML.
 --
 
-	function vc200x.links(cfg, explicit)
+	function _.links(cfg, explicit)
 		local scope = iif(explicit, "all", "system")
 		local links = config.getlinks(cfg, scope, "fullpath")
 		for i, link in ipairs(links) do
@@ -917,7 +936,7 @@
 -- the configuration target system.
 --
 
-	function vc200x.linkerTool(cfg)
+	function _.linkerTool(cfg)
 		if cfg.kind == premake.STATICLIB then
 			return "VCLibrarianTool"
 		elseif cfg.system == premake.XBOX360 then
@@ -932,7 +951,7 @@
 -- Return the debugging symbol level for a configuration.
 --
 
-	function vc200x.symbols(cfg)
+	function _.symbols(cfg)
 		if not cfg.flags.Symbols then
 			return 0
 		elseif cfg.debugformat == "c7" then
@@ -960,7 +979,7 @@
 ---------------------------------------------------------------------------
 
 
-	function vc200x.additionalIncludeDirectories(cfg, includedirs)
+	function _.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
 			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
@@ -968,7 +987,7 @@
 	end
 
 
-	function vc200x.additionalLibraryDirectories(cfg)
+	function _.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(project.getrelative(cfg.project, cfg.libdirs), ";")
 			_x(4,'AdditionalLibraryDirectories="%s"', path.translate(dirs))
@@ -976,7 +995,7 @@
 	end
 
 
-	function vc200x.VCCLCompilerTool_additionalOptions(cfg)
+	function _.VCCLCompilerTool_additionalOptions(cfg)
 		local opts = cfg.buildoptions
 		if cfg.flags.MultiProcessorCompile then
 			table.insert(opts, "/MP")
@@ -987,7 +1006,7 @@
 	end
 
 
-	function vc200x.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
+	function _.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
 		local opts = filecfg.buildoptions
 		if #opts > 0 then
 			_x(depth, 'AdditionalOptions="%s"', table.concat(opts, " "))
@@ -995,7 +1014,7 @@
 	end
 
 
-	function vc200x.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
+	function _.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
 		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
@@ -1006,7 +1025,7 @@
 	end
 
 
-	function vc200x.assemblyReferences(prj)
+	function _.assemblyReferences(prj)
 		-- Visual Studio doesn't support per-config references
 		local cfg = project.getfirstconfig(prj)
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
@@ -1018,7 +1037,7 @@
 	end
 
 
-	function vc200x.basicRuntimeChecks(cfg)
+	function _.basicRuntimeChecks(cfg)
 		if not config.isOptimizedBuild(cfg)
 			and not cfg.flags.Managed
 			and not cfg.flags.NoRuntimeChecks
@@ -1027,20 +1046,20 @@
 		end
 	end
 
-	function vc200x.bufferSecurityCheck(cfg)
+	function _.bufferSecurityCheck(cfg)
 		if cfg.flags.NoBufferSecurityCheck then
 			_p(4,'BufferSecurityCheck="false"')
 		end
 	end
 
-	function vc200x.characterSet(cfg)
+	function _.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
 		end
 	end
 
 
-	function vc200x.compileAs(filecfg, depth)
+	function _.compileAs(filecfg, depth)
 		if path.iscfile(filecfg.name) ~= project.isc(filecfg.project) then
 			if path.iscppfile(filecfg.name) then
 				local value = iif(filecfg.project.language == premake.CPP, 1, 2)
@@ -1050,7 +1069,7 @@
 	end
 
 
-	function vc200x.compilerToolName(cfg, filecfg, depth)
+	function _.compilerToolName(cfg, filecfg, depth)
 		local name
 		if fileconfig.hasCustomBuildRule(filecfg) then
 			name = "VCCustomBuildTool"
@@ -1061,7 +1080,7 @@
 	end
 
 
-	function vc200x.configurationType(cfg)
+	function _.configurationType(cfg)
 		local cfgtypes = {
 			Makefile = 0,
 			None = 0,
@@ -1072,7 +1091,7 @@
 	end
 
 
-	function vc200x.customBuildTool(filecfg, depth)
+	function _.customBuildTool(filecfg, depth)
 		if fileconfig.hasCustomBuildRule(filecfg) then
 			_x(depth, 'CommandLine="%s"', table.concat(filecfg.buildcommands,'\r\n'))
 
@@ -1082,7 +1101,7 @@
 	end
 
 
-	function vc200x.enableEnhancedInstructionSet(cfg)
+	function _.enableEnhancedInstructionSet(cfg)
 		local map = { SSE = "1", SSE2 = "2" }
 		local value = map[cfg.vectorextensions]
 		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
@@ -1091,14 +1110,14 @@
 	end
 
 
-	function vc200x.excludedFromBuild(filecfg, depth)
+	function _.excludedFromBuild(filecfg, depth)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
 			_p(depth, 'ExcludedFromBuild="true"')
 		end
 	end
 
 
-	function vc200x.floatingPointModel(cfg)
+	function _.floatingPointModel(cfg)
 		local map = { Strict = "1", Fast = "2" }
 		local value = map[cfg.floatingpoint]
 		if value then
@@ -1107,7 +1126,7 @@
 	end
 
 
-	function vc200x.forcedIncludeFiles(cfg, depth)
+	function _.forcedIncludeFiles(cfg, depth)
 		if #cfg.forceincludes > 0 then
 			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
 			_x(depth or 4,'ForcedIncludeFiles="%s"', table.concat(includes, ';'))
@@ -1119,14 +1138,14 @@
 	end
 
 
-	function vc200x.omitDefaultLib(cfg)
+	function _.omitDefaultLib(cfg)
 		if cfg.flags.OmitDefaultLibrary then
 			_p(4,'OmitDefaultLibName="true"')
 		end
 	end
 
 
-	function vc200x.keyword(prj)
+	function _.keyword(prj)
 		local windows, managed, makefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == premake.WINDOWS then windows = true end
@@ -1147,43 +1166,43 @@
 	end
 
 
-	function vc200x.intermediateDirectory(cfg)
+	function _.intermediateDirectory(cfg)
 		local objdir = project.getrelative(cfg.project, cfg.objdir)
 		_x(3,'IntermediateDirectory="%s"', path.translate(objdir))
 	end
 
 
-	function vc200x.managedExtensions(cfg)
+	function _.managedExtensions(cfg)
 		if cfg.flags.Managed then
 			_p(3,'ManagedExtensions="1"')
 		end
 	end
 
 
-	function vc200x.minimalRebuild(cfg)
+	function _.minimalRebuild(cfg)
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
 		   not cfg.flags.NoMinimalRebuild and
 		   not cfg.flags.Managed and
 		   not cfg.flags.MultiProcessorCompile
 		then
-			_p(4,'MinimalRebuild="%s"', vc200x.bool(true))
+			_p(4,'MinimalRebuild="%s"', _.bool(true))
 		end
 	end
 
 
-	function vc200x.nmakeCommandLine(cfg, commands, phase)
+	function _.nmakeCommandLine(cfg, commands, phase)
 		commands = table.concat(commands, "\r\n")
 		_p(4,'%sCommandLine="%s"', phase, premake.esc(commands))
 	end
 
 
-	function vc200x.nmakeOutput(cfg)
+	function _.nmakeOutput(cfg)
 		_p(4,'Output="$(OutDir)%s"', cfg.buildtarget.name)
 	end
 
 
-	function vc200x.objectFile(filecfg, depth)
+	function _.objectFile(filecfg, depth)
 		if path.iscppfile(filecfg.name) then
 			if filecfg.objname ~= path.getbasename(filecfg.abspath) then
 				_x(depth, 'ObjectFile="$(IntDir)\\%s.obj"', filecfg.objname)
@@ -1192,7 +1211,7 @@
 	end
 
 
-	function vc200x.optimization(cfg, depth)
+	function _.optimization(cfg, depth)
 		local map = { Off=0, On=3, Debug=0, Full=3, Size=1, Speed=2 }
 		local value = map[cfg.optimize]
 		if value or not cfg.abspath then
@@ -1201,15 +1220,15 @@
 	end
 
 
-	function vc200x.outputDirectory(cfg)
+	function _.outputDirectory(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		_x(3,'OutputDirectory="%s"', path.translate(outdir))
 	end
 
 
-	function vc200x.platforms(prj)
+	function _.platforms(prj)
 		_p(1,'<Platforms>')
-		table.foreachi(vc200x.architectures(prj), function(arch)
+		table.foreachi(_.architectures(prj), function(arch)
 			_p(2,'<Platform')
 			_p(3,'Name="%s"', arch)
 			_p(2,'/>')
@@ -1218,30 +1237,30 @@
 	end
 
 
-	function vc200x.preprocessorDefinitions(cfg, defines)
+	function _.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
 		end
 	end
 
 
-	function vc200x.programDatabaseFileName(cfg)
+	function _.programDatabaseFileName(cfg)
 		local target = cfg.buildtarget
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s%s.pdb"', target.prefix, target.basename)
 	end
 
 
-	function vc200x.projectGUID(prj)
+	function _.projectGUID(prj)
 		_p(1,'ProjectGUID="{%s}"', prj.uuid)
 	end
 
 
-	function vc200x.projectName(prj)
+	function _.projectName(prj)
 		_x(1,'Name="%s"', prj.name)
 	end
 
 
-	function vc200x.projectReferences(prj)
+	function _.projectReferences(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 
@@ -1268,12 +1287,12 @@
 	end
 
 
-	function vc200x.projectType(prj)
+	function _.projectType(prj)
 		_p(1,'ProjectType="Visual C++"')
 	end
 
 
-	function vc200x.rootNamespace(prj)
+	function _.rootNamespace(prj)
 		local hasWindows = project.hasConfig(prj, function(cfg)
 			return cfg.system == premake.WINDOWS
 		end)
@@ -1288,7 +1307,7 @@
 	end
 
 
-	function vc200x.runtimeLibrary(cfg)
+	function _.runtimeLibrary(cfg)
 		local runtimes = {
 			StaticRelease = 0,
 			StaticDebug = 1,
@@ -1299,14 +1318,14 @@
 	end
 
 
-	function vc200x.runtimeTypeInfo(cfg)
+	function _.runtimeTypeInfo(cfg)
 		if cfg.flags.NoRTTI and not cfg.flags.Managed then
 			_p(4,'RuntimeTypeInfo="false"')
 		end
 	end
 
 
-	function vc200x.targetFrameworkVersion(prj)
+	function _.targetFrameworkVersion(prj)
 		local windows, makefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == premake.WINDOWS then windows = true end
@@ -1321,14 +1340,14 @@
 	end
 
 
-	function vc200x.tool(name)
+	function _.tool(name)
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		_p(3,'/>')
 	end
 
 
-	function vc200x.toolFiles(prj)
+	function _.toolFiles(prj)
 		if _ACTION > "vs2003" then
 			_p(1,'<ToolFiles>')
 			_p(1,'</ToolFiles>')
@@ -1336,7 +1355,7 @@
 	end
 
 
-	function vc200x.treatWChar_tAsBuiltInType(cfg)
+	function _.treatWChar_tAsBuiltInType(cfg)
 		local map = { On = "true", Off = "false" }
 		local value = map[cfg.nativewchar]
 		if value then
@@ -1345,14 +1364,14 @@
 	end
 
 
-	function vc200x.useOfMFC(cfg)
+	function _.useOfMFC(cfg)
 		if (cfg.flags.MFC) then
 			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
 		end
 	end
 
 
-	function vc200x.usePrecompiledHeader(filecfg, depth)
+	function _.usePrecompiledHeader(filecfg, depth)
 		local cfg = filecfg.config
 		if cfg.pchsource == filecfg.abspath and
 		   not cfg.flags.NoPCH and
@@ -1363,7 +1382,7 @@
 	end
 
 
-	function vc200x.version(prj)
+	function _.version(prj)
 		local map = {
 			vs2002 = '7.0',
 			vs2003 = '7.1',
@@ -1374,28 +1393,28 @@
 	end
 
 
-	function vc200x.warnings(cfg)
+	function _.warnings(cfg)
 		if cfg.warnings == "Off" then
 			_p(4,'WarningLevel="0"')
 		else
 			_p(4,'WarningLevel="%d"', iif(cfg.warnings == "Extra", 4, 3))
 			if cfg.flags.FatalWarnings then
-				_p(4,'WarnAsError="%s"', vc200x.bool(true))
+				_p(4,'WarnAsError="%s"', _.bool(true))
 			end
 			if _ACTION < "vs2008" and not cfg.flags.Managed then
-				_p(4,'Detect64BitPortabilityProblems="%s"', vc200x.bool(not cfg.flags.No64BitChecks))
+				_p(4,'Detect64BitPortabilityProblems="%s"', _.bool(not cfg.flags.No64BitChecks))
 			end
 		end
 	end
 
 
-	function vc200x.wholeProgramOptimization(cfg)
+	function _.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
 			_x(4,'WholeProgramOptimization="true"')
 		end
 	end
 
 
-	function vc200x.xmlElement()
+	function _.xmlElement()
 		_p('<?xml version="1.0" encoding="Windows-1252"?>')
 	end

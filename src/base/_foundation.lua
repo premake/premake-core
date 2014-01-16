@@ -44,27 +44,32 @@
 	premake.XBOX360     = "xbox360"
 
 
+
 ---
 -- Call a list of functions.
 --
--- The functions are provided as string names, so they are not bound to
--- any particular implementation until they are looked up by name here.
--- This allows the implementation of the function to replaced or
--- overridden between the time the array is assembled and the time it
--- is actually used.
---
--- @param namespace
---    The namespace table that contains the functions to be called. To save
---    some typing, it is assumed that all functions will live in within this
---    one single namespace.
--- @param array
---    The functions to be called, as an array of string names. So if namespace
---    is premake.vc2010 and the array contains the string "header", the
---    function premake.vc2010.header header.
+-- @param funcs
+--    The list of functions to be called, or a function that can be called
+--    to build and return the list. If this is a function, it will be called
+--    with all of the additional arguments (below).
 -- @param ...
---    An optional set of arguments to be passed to each of the functions
+--    An optional set of arguments to be passed to each of the functions as
 --    as they are called.
 ---
+
+	function premake.callArray(funcs, ...)
+		if type(funcs) == "function" then
+			funcs = funcs(...)
+		end
+
+		local n = #funcs
+		for i = 1, n do
+			funcs[i](...)
+		end
+	end
+
+
+	-- TODO: THIS IMPLEMENTATION IS GOING AWAY
 
 	function premake.callarray(namespace, array, ...)
 		local n = #array
