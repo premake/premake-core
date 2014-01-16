@@ -40,7 +40,7 @@
 			error("missing name", 2)
 		end
 
-		if _G[name] then
+		if rawget(_G, name) then
 			error("name '" .. name .. "' in use", 2)
 		end
 
@@ -65,7 +65,7 @@
 		-- add this new field to my master list
 		premake.fields[field.name] = field
 
-		-- add create a setter function for it
+		-- create a setter function for it
 		_G[name] = function(value)
 			return api.callback(field, value)
 		end
