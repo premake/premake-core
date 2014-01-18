@@ -92,7 +92,7 @@
 		_p(1,'<Configurations>')
 		for cfg in project.eachconfig(prj) do
 			local thisName = vstudio.projectConfig(cfg)
-			for _, arch in ipairs(architectures) do
+			for i, arch in ipairs(architectures) do
 				local testName = vstudio.projectConfig(cfg, arch)
 
 				-- Does this architecture match the one in the project config
@@ -161,7 +161,7 @@
 		_p(3,'>')
 
 		local tools = _.toolsForConfig(cfg, true)
-		for _, tool in ipairs(tools) do
+		for i, tool in ipairs(tools) do
 			_.tool(tool)
 		end
 
@@ -176,8 +176,8 @@
 
 	_.elements.references = function(prj)
 		return {
-			"assemblyReferences",
-			"projectReferences",
+			_.assemblyReferences,
+			_.projectReferences,
 		}
 	end
 
@@ -330,7 +330,7 @@
 --
 
 	function _.tools(cfg)
-		for _, tool in ipairs(_.toolsForConfig(cfg)) do
+		for i, tool in ipairs(_.toolsForConfig(cfg)) do
 			if _.toolmap[tool] then
 				_.toolmap[tool](cfg)
 			else
@@ -583,7 +583,7 @@
 		end
 
 		local manifests = {}
-		for _, fname in ipairs(cfg.files) do
+		for i, fname in ipairs(cfg.files) do
 			if path.getextension(fname) == ".manifest" then
 				table.insert(manifests, project.getrelative(cfg.project, fname))
 			end
@@ -1269,7 +1269,7 @@
 			-- referencing. Which, in theory, would break if the project is included
 			-- in more than one solution. But that's how they do it.
 
-			for _, dep in ipairs(deps) do
+			for i, dep in ipairs(deps) do
 
 				local relpath = path.getrelative(prj.solution.location, vstudio.projectfile(dep))
 
