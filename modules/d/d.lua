@@ -1,7 +1,9 @@
+--
+-- d/d.lua
+-- Define the D makefile action(s).
+-- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
+--
 
---
--- Create a D namespace to isolate the additions
---
 	premake.extensions.d = {}
 
 	local d = premake.extensions.d
@@ -172,3 +174,4 @@
 		require( "monodev" )
 		d.printf( "Loaded D action 'monodev.lua'", v )
 	end
+

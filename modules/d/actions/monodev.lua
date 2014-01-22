@@ -1,7 +1,7 @@
 --
--- monodev.lua
+-- d/actions/monodev.lua
 -- Generate a Mono-D .dproj project.
--- Copyright (c) 2012-2013 Manu Evans and the Premake project
+-- Copyright (c) 2012-2014 Manu Evans and the Premake project
 --
 
 	local monodevelop = premake.extensions.monodevelop

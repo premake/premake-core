@@ -1,7 +1,7 @@
 --
--- vstudio.lua
+-- d/actions/vstudio.lua
 -- Generate a VisualD .visualdproj project.
--- Copyright (c) 2012 Manu Evans and the Premake project
+-- Copyright (c) 2012-2014 Manu Evans and the Premake project
 --
 
 	premake.extensions.d.visuald = { }
@@ -26,7 +26,7 @@
 
 			premake.override(vs, "onproject", function(oldfn, prj)
 				oldfn(prj)
-				if premake.project.isd(prj) then
+				if project.isd(prj) then
 					premake.generate(prj, ".visualdproj", visuald.generate)
 				end
 			end)

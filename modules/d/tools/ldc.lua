@@ -1,17 +1,15 @@
 --
--- ldc.lua
+-- d/tools/ldc.lua
 -- Provides LDC-specific configuration strings.
--- Copyright (c) 2002-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	premake.tools.ldc = { }
 
+    local d = premake.extensions.d
 	local ldc = premake.tools.ldc
 	local project = premake.project
 	local config = premake.config
-	
-    local d = premake.extensions.d
-
 
 --
 -- Set default tools
@@ -44,17 +42,17 @@
 -- Map platforms to flags
 --
 
-	ldc.sysflags = 
+	ldc.sysflags =
 	{
 		universal = {
 			flags    = "",
-			ldflags  = "", 
+			ldflags  = "",
 		},
-		x32 = { 
+		x32 = {
 			flags    = "-m32",
-			ldflags  = "-L-L/usr/lib", 
+			ldflags  = "-L-L/usr/lib",
 		},
-		x64 = { 
+		x64 = {
 			flags    = "-m64",
 			ldflags  = "-L-L/usr/lib64",
 		}
@@ -62,17 +60,17 @@
 
 	local sysflags = ldc.sysflags
 
-	--
-	-- Returns the target name specific to compiler
-	--
+--
+-- Returns the target name specific to compiler
+--
 
 	function ldc.gettarget(name)
 		return "-of=" .. name
 	end
 
-	--
-	-- Returns the object directory name specific to compiler
-	--
+--
+-- Returns the object directory name specific to compiler
+--
 
 	function ldc.getobjdir(name)
 		return "-od=" .. name
@@ -98,9 +96,9 @@
 	end
 
 
-	--
-	-- Returns a list of compiler flags, based on the supplied configuration.
-	--
+--
+-- Returns a list of compiler flags, based on the supplied configuration.
+--
 
 	function ldc.getflags(cfg)
 		local f = ldc.getsysflags(cfg, 'flags')
@@ -120,9 +118,9 @@
 		return f
 	end
 
-	--
-	-- Returns a list of linker flags, based on the supplied configuration.
-	--
+--
+-- Returns a list of linker flags, based on the supplied configuration.
+--
 
 	function ldc.getldflags(cfg)
 		local result = {}
@@ -134,9 +132,9 @@
 	end
 
 
-	--
-	-- Return a list of library search paths.
-	--
+--
+-- Return a list of library search paths.
+--
 
 	function ldc.getlibdirflags(cfg)
 		local result = {}
@@ -149,9 +147,9 @@
 	end
 
 
-	--
-	-- Returns a list of linker flags for library names.
-	--
+--
+-- Returns a list of linker flags for library names.
+--
 
 	function ldc.getlinks(cfg)
 		local result = {}
@@ -163,7 +161,7 @@
 			if not link.project.externalname then
 				local linkinfo = config.getlinkinfo(link)
 				if link.kind == premake.STATICLIB then
-					-- Don't use "-l" flag when linking static libraries; instead use 
+					-- Don't use "-l" flag when linking static libraries; instead use
 					-- path/libname.a to avoid linking a shared library of the same
 					-- name if one is present
 					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
@@ -190,9 +188,9 @@
 	end
 
 
-	--
-	-- Decorate defines for the ldc command line.
-	--
+--
+-- Decorate defines for the ldc command line.
+--
 
 	function ldc.getdefines(defines)
 		local result = { }
@@ -204,9 +202,9 @@
 
 
 
-	--
-	-- Decorate include file search paths for the ldc command line.
-	--
+--
+-- Decorate include file search paths for the ldc command line.
+--
 
 	function ldc.getincludedirs(cfg)
 		local result = {}
@@ -221,3 +219,26 @@
 		return sysflags.cfgsettings
 	end
 
+
+--
+-- Retrieves the executable command name for a tool, based on the
+-- provided configuration and the operating environment.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param tool
+--    The tool to fetch, one of "dc" for the D compiler, or "ar" for the static linker.
+-- @return
+--    The executable command name for a tool, or nil if the system's
+--    default value should be used.
+--
+
+	ldc.tools = {
+		-- I think this is pointless; LDC uses compile flags to choose target architecture no?
+	}
+
+	function ldc.gettoolname(cfg, tool)
+		local names = ldc.tools[cfg.architecture] or ldc.tools[cfg.system] or {}
+		local name = names[tool]
+		return name or ldc[tool]
+	end

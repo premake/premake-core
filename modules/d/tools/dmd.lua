@@ -1,14 +1,15 @@
-
 --
--- dmd.lua
+-- d/tools/dmd.lua
 -- Provides dmd-specific configuration strings.
+-- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	local tdmd = {}
 
+    local d = premake.extensions.d
 	local project = premake.project
 	local config = premake.config
-	
+
 --
 -- Set default tools
 --
@@ -48,24 +49,24 @@
 
 
 -- /////////////////////////////////////////////////////////////////////////
--- dmd + GCC toolchain						
+-- dmd + GCC toolchain
 -- /////////////////////////////////////////////////////////////////////////
 
 --
 -- dmd.gcc flags
 --
 
-	tdmd.gcc.sysflags = 
+	tdmd.gcc.sysflags =
 	{
 		universal = {
 			flags    = "",
-			ldflags  = "", 
+			ldflags  = "",
 		},
-		x32 = { 
+		x32 = {
 			flags    = "-m32",
-			ldflags  = "-L-L/usr/lib", 
+			ldflags  = "-L-L/usr/lib",
 		},
-		x64 = { 
+		x64 = {
 			flags    = "-m64",
 			ldflags  = "-L-L/usr/lib64",
 		}
@@ -136,9 +137,9 @@
 	end
 
 
-	--
-	-- Returns a list of linker flags, based on the supplied configuration.
-	--
+--
+-- Returns a list of linker flags, based on the supplied configuration.
+--
 
 	function tdmd.gcc.getldflags(cfg)
 		local flags = {}
@@ -150,9 +151,9 @@
 	end
 
 
-	--
-	-- Return a list of library search paths.
-	--
+--
+-- Return a list of library search paths.
+--
 
 	function tdmd.gcc.getlibdirflags(cfg)
 		local result = {}
@@ -206,9 +207,9 @@
 		return result
 	end
 
-	--
-	-- Decorate defines for the tdmd.gcc command line.
-	--
+--
+-- Decorate defines for the tdmd.gcc command line.
+--
 
 	function tdmd.gcc.getdefines(defines)
 		local result = { }
@@ -219,9 +220,9 @@
 	end
 
 
-	--
-	-- Decorate include file search paths for the DMD command line.
-	--
+--
+-- Decorate include file search paths for the DMD command line.
+--
 
 	function tdmd.gcc.getincludedirs(cfg)
 		local result = {}
@@ -242,20 +243,20 @@
 
 
 -- /////////////////////////////////////////////////////////////////////////
--- tdmd + OPTLINK toolchain						
+-- tdmd + OPTLINK toolchain
 -- /////////////////////////////////////////////////////////////////////////
 
-	tdmd.optlink.sysflags = 
+	tdmd.optlink.sysflags =
 	{
 		universal = {
 			flags    = "",
-			ldflags  = "", 
+			ldflags  = "",
 		},
-		x32 = { 
+		x32 = {
 			flags    = "",
-			ldflags  = "", 
+			ldflags  = "",
 		},
-		x64 = { 
+		x64 = {
 			flags    = "",
 			ldflags  = "",
 		}
@@ -289,9 +290,9 @@
 	tdmd.optlink.getflags = tdmd.gcc.getflags
 
 
-	--
-	-- Returns a list of linker flags, based on the supplied configuration.
-	--
+--
+-- Returns a list of linker flags, based on the supplied configuration.
+--
 
 	function tdmd.optlink.getldflags(cfg)
 		local flags = {}
@@ -303,9 +304,9 @@
 	end
 
 
-	--
-	-- Return a list of library search paths.
-	--
+--
+-- Return a list of library search paths.
+--
 
 	function tdmd.optlink.getlibdirflags(cfg)
 		local result = {}
@@ -350,9 +351,9 @@
 
 	end
 
-	--
-	-- Decorate include file search paths for the GCC command line.
-	--
+--
+-- Decorate include file search paths for the GCC command line.
+--
 
 	function tdmd.optlink.getincludedirs(cfg)
 		local result = {}
@@ -364,7 +365,7 @@
 
 
 	-- if we are compiling on windows, we need to specialise to OPTLINK as the linker
--- OR!!!			if cfg.system ~= premake.WINDOWS then
+-- OR!!!	if cfg.system ~= premake.WINDOWS then
 	if string.match( os.getversion().description, "Windows" ) ~= nil then
 		premake.tools.dmd = tdmd.optlink
 		premake.tools.dmd.sysflags = tdmd.optlink.sysflags
@@ -372,4 +373,29 @@
 		premake.tools.dmd = tdmd.gcc
 		premake.tools.dmd.sysflags = tdmd.gcc.sysflags
 	end
-	
+
+	local dmd = premake.tools.dmd
+
+
+--
+-- Retrieves the executable command name for a tool, based on the
+-- provided configuration and the operating environment.
+--
+-- @param cfg
+--    The configuration to query.
+-- @param tool
+--    The tool to fetch, one of "dc" for the D compiler, or "ar" for the static linker.
+-- @return
+--    The executable command name for a tool, or nil if the system's
+--    default value should be used.
+--
+
+	dmd.tools = {
+		-- dmd will probably never support any foreign architectures...?
+	}
+
+	function dmd.gettoolname(cfg, tool)
+		local names = dmd.tools[cfg.architecture] or dmd.tools[cfg.system] or {}
+		local name = names[tool]
+		return name or dmd[tool]
+	end

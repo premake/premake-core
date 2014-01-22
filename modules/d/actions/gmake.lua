@@ -1,16 +1,17 @@
-
 --
 -- d/actions/gmake.lua
 -- Define the D makefile action(s).
--- Copyright (c) 2013 Andrew Gough and the Premake project
+-- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
 --
 
-	premake.make.d = { }
+	premake.extensions.d.make = { }
 
+	local d = premake.extensions.d
 	local make = premake.make
-	local d = premake.make.d
+	local dmake = d.make
 	local project = premake.project
 	local config = premake.config
+	local fileconfig = premake.fileconfig
 
 -- This check may be unnecessary as we only 'require' this file from d.lua
 -- IFF the action already exists, however this may help if this file is
@@ -25,198 +26,189 @@
 --
 	gmake.valid_languages = table.join(gmake.valid_languages, { premake.D } )
 	gmake.valid_tools.dc = { "dmd", "gdc", "ldc" }
-	--table.print( gmake )
 
 --
--- Override the GMake action 'onproject' funtion to provide 
+-- Override the GMake action 'onproject' funtion to provide
 -- D knowledge...
 --
 	premake.override( gmake, "onproject", function(oldfn, prj)
- 
-		local makefile = make.getmakefilename(prj, true)
+		io.esc = make.esc
 		if project.isd(prj) then
-			premake.generate(prj, makefile, make.d.generate)
+			local makefile = make.getmakefilename(prj, true)
+			premake.generate(prj, makefile, dmake.generate)
 			return
 		end
-
-		oldfn(prj)
+ 		oldfn(prj)
 	end)
 
+---
+-- Add namespace for element definition lists for premake.callarray()
+---
+
+	dmake.elements = {}
+
 --
--- d/gmake.lua
--- Generate a D project makefile.
--- Copyright (c) 2002-2009 Andrew Gough and the Premake project
+-- Generate a GNU make C++ project makefile, with support for the new platforms API.
 --
 
-	local toolset
-	function d.generate(prj)
+	dmake.elements.makefile = {
+		"dHeaderMessage",
+		"header",
+		"phonyRules",
+		"dConfigs",
+		"dObjects",			-- TODO: This is basically identical to make.cppObjects(), and should ideally be merged/shared
+		"shellType",
+		"dTargetRules",
+		"targetDirRules",
+		"objDirRules",
+		"cppCleanRules",	-- D clean code is identical to C/C++
+		"preBuildRules",
+		"preLinkRules",
+		"dFileRules",		-- TODO: there is probably opportunity for sharing here
+	}
 
-		toolset = premake.tools[_OPTIONS.dc or "dmd"]
+	function dmake.generate(prj)
+		premake.callarray(make, dmake.elements.makefile, prj)
+	end
 
-		make.header(prj)
-		_p( "# Premake D extension generated file.  See %s", premake.extensions.d.support_url )
 
-		-- main build rule(s)
-		_p('.PHONY: clean prebuild prelink')
+	function make.dHeaderMessage(prj)
+		_p( "# Premake D extension generated file. See %s", d.support_url )
 		_p('')
+	end
 
-		for cfg in project.eachconfig(prj) do
-			d.config(cfg)
-		end
-
-		-- list intermediate files
-		d.objects(prj)
-
-		make.detectshell()
-
-		_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
-		_p('\t@:')
-		_p('')
-
-		-- common build target rules
+	function make.dTargetRules(prj)
 		_p('$(TARGET): $(OBJECTS) $(LDDEPS)')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
-
-		-- Create destination directories. Can't use $@ for this because it loses the
-		-- escaping, causing issues with spaces and parenthesis
-		make.mkdirrule("$(TARGETDIR)")
-		make.mkdirrule("$(OBJDIR)")
-
-		-- clean target
-		_p('clean:')
-		_p('\t@echo Cleaning %s...', prj.name)
-		_p('ifeq (posix,$(SHELLTYPE))')
-		_p('\t$(SILENT) rm -f  $(TARGET)')
-		_p('\t$(SILENT) rm -rf  $(OBJDIR)')
-		_p('else')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGET)) del $(subst /,\\\\,$(TARGET))')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
-		_p('endif')
-		_p('')
-
-		-- custom build step targets
-		_p('prebuild:')
-		_p('\t$(PREBUILDCMDS)')
-		_p('')
-
-		_p('prelink:')
-		_p('\t$(PRELINKCMDS)')
-		_p('')
-
-		-- file building rules
-		d.filerules(prj)
-
 	end
 
---
--- Write a block of configuration settings.
---
-
-	function d.config(cfg)
-
-		_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
-
-		-- write toolset specific configurations
-		local sysflags = toolset.sysflags[cfg.architecture] or toolset.sysflags[cfg.system] or {}
-		_p('  DC         = %s', toolset.dc)
-
-		-- write target information (target dir, name, obj dir)
-		d.targetconfig(cfg,toolset)
-		d.linkconfig(cfg,toolset)
-
-		-- write the custom build commands		
-		_p('  define PREBUILDCMDS')
-		if #cfg.prebuildcommands > 0 then
-			_p('\t@echo Running pre-build commands')
-			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
-
-		_p('  define PRELINKCMDS')
-		if #cfg.prelinkcommands > 0 then
-			_p('\t@echo Running pre-link commands')
-			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
-
-		_p('  define POSTBUILDCMDS')
-		if #cfg.postbuildcommands > 0 then
-			_p('\t@echo Running post-build commands')
-			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
-		end
-		_p('  endef')
-		_p('')
-
-		-- write out config-level makesettings blocks
-		make.settings(cfg, toolset)
-
-		_p('endif')
-		_p('')
-
-	end
-
---
--- Target (name, dir) configuration.
---
-
-	function d.targetconfig(cfg,toolset)
-		local targetinfo = config.gettargetinfo(cfg)
-		_p('  OBJDIR     = %s', make.esc(project.getrelative(cfg.project, cfg.objdir)))
-		_p('  TARGETDIR  = %s', make.esc(targetinfo.directory))
-		_p('  TARGET     = $(TARGETDIR)/%s', make.esc(targetinfo.name))
-		_p('')
-		_p('  DEFINES   += %s', table.concat(toolset.getdefines(cfg.defines), " "))
-		_p('  INCLUDES  += %s', table.concat(toolset.getincludedirs(cfg), " "))
-		_p('  DFLAGS    += $(ARCH) $(DEFINES) $(INCLUDES) %s', table.concat(table.join(toolset.getflags(cfg), cfg.buildoptions), " "))
-		_p('  LDFLAGS   += %s', table.concat(table.join(toolset.getldflags(cfg), cfg.linkoptions), " "))
-		_p('')
-	end
-
---
--- Link Step
---
-
-	function d.linkconfig(cfg, toolset)
-		local libs = toolset.getlinks(cfg)
-		_p('  LIBS      += %s', table.concat(libs, " "))
-
-		local deps = config.getlinks(cfg, "siblings", "fullpath")
-		_p('  LDDEPS    += %s', table.concat(make.esc(deps), " "))
-		_p('  LINKCMD   = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(LDFLAGS) $(LIBS) $(OBJECTS)')
-		_p('')
-	end
-
-
-	function d.filerules(prj)
+	function make.dFileRules(prj)
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- check to see if this file has custom rules
-				d.standardfilerules(prj, node, toolset)
+				dmake.standardFileRules(prj, node, toolset)
 			end
 		})
 		_p('')
 	end
 
-	function d.standardfilerules(prj, node, toolset)
-		local objectname = project.getfileobject(prj, node.abspath)
-		_p('$(OBJDIR)/%s.o: %s', make.esc(objectname), make.esc(node.relpath))
+	function dmake.standardFileRules(prj, node, toolset)
+		_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
 		_p('\t@echo $(notdir $<)')
-		_p('\t$(SILENT) $(DC) $(DFLAGS) %s -c $<', toolset.gettarget("$@"), objext)
+		_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
 	end
+
+
+--
+-- Write out the settings for a particular configuration.
+--
+
+	dmake.elements.configuration = {
+		"dTools",
+		"target",
+		"dTarget",
+		"objdir",
+		"defines",
+		"includes",
+		"dFlags",
+		"libs",
+		"ldDeps",
+		"ldFlags",
+		"dLinkCmd",
+		"preBuildCmds",
+		"preLinkCmds",
+		"postBuildCmds",
+		"dAllRules",
+		"settings",
+	}
+
+	function make.dConfigs(prj)
+		for cfg in project.eachconfig(prj) do
+			-- identify the toolset used by this configurations (would be nicer if
+			-- this were computed and stored with the configuration up front)
+
+			local toolset = premake.tools[_OPTIONS.dc or cfg.toolset or "dmd"]
+			if not toolset then
+				error("Invalid toolset '" + (_OPTIONS.dc or cfg.toolset) + "'")
+			end
+
+			_x('ifeq ($(config),%s)', cfg.shortname)
+			premake.callarray(make, dmake.elements.configuration, cfg, toolset)
+			_p('endif')
+			_p('')
+		end
+	end
+
+	function make.dTools(cfg, toolset)
+		local tool = toolset.gettoolname(cfg, "dc")
+		if tool then
+			_p('  DC = %s', tool)
+		end
+	end
+
+	function make.dTarget(cfg, toolset)
+		_p('  OUTPUTFLAG = %s', toolset.gettarget("$@"))
+	end
+
+	function make.dFlags(cfg, toolset)
+		_p('  ALL_DFLAGS += $(DFLAGS) $(ARCH) $(DEFINES) $(INCLUDES) %s', table.concat(table.join(toolset.getflags(cfg), cfg.buildoptions), " "))
+	end
+
+-- TODO: These are the C++ flags, dFlags() should probably be more like these...
+--	function make.cppFlags(cfg, toolset)
+--		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES)', make.list(toolset.getcppflags(cfg)))
+--	end
+--	function make.cFlags(cfg, toolset)
+--		_p('  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
+--	end
+--	function make.cxxFlags(cfg, toolset)
+--		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
+--	end
+
+	function make.dLinkCmd(cfg, toolset)
+		_p('  LINKCMD   = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
+
+-- TODO: this is the C++ version, we should more carefully verify that the D version is correct...
+--		if cfg.kind == premake.STATICLIB then
+--			if cfg.architecture == premake.UNIVERSAL then
+--				_p('  LINKCMD = libtool -o $(TARGET) $(OBJECTS)')
+--			else
+--				_p('  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)')
+--			end
+--		else
+			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
+			--   but had trouble linking to certain static libs; $(OBJECTS) moved up
+			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
+			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
+
+--			local cc = iif(cfg.language == "C", "CC", "CXX")
+--			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
+--		end
+	end
+
+	function make.dAllRules(cfg, toolset)
+		-- TODO: The C++ version has some special cases for OSX and Windows... check whether they should be here too?
+		_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+		_p('\t@:')
+--		_p('')
+	end
+
 
 --
 -- List the objects file for the project, and each configuration.
 --
 
-	function d.objects(prj)
+-- TODO: This is basically identical to make.cppObjects(), and should ideally be merged/shared
+
+	function make.dObjects(prj)
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
 		local root = { objects={}, resources={} }
-		local configs = {}		
+		local configs = {}
 		for cfg in project.eachconfig(prj) do
 			configs[cfg] = { objects={}, resources={} }
 		end
@@ -231,10 +223,10 @@
 				local inall = true
 				local custom = false
 				for cfg in project.eachconfig(prj) do
-					local filecfg = config.getfileconfig(cfg, node.abspath)
-					if filecfg then
+					local filecfg = fileconfig.getconfig(node, cfg)
+					if filecfg and not filecfg.flags.ExcludeFromBuild then
 						incfg[cfg] = filecfg
-						custom = config.hasCustomBuildRule(filecfg)
+						custom = fileconfig.hasCustomBuildRule(filecfg)
 					else
 						inall = false
 					end
@@ -253,8 +245,7 @@
 					end
 
 					-- assign a unique object file name to avoid collisions
-					local objectname = project.getfileobject(prj, node.abspath)
-					objectname = "$(OBJDIR)/" .. objectname .. ".o"
+					local objectname = "$(OBJDIR)/" .. node.objname .. ".o"
 
 					-- if this file exists in all configurations, write it to
 					-- the project's list of files, else add to specific cfgs
@@ -279,7 +270,7 @@
 		function listobjects(var, list)
 			_p('%s \\', var)
 			for _, objectname in ipairs(list) do
-				_p('\t%s \\', make.esc(objectname))
+				_x('\t%s \\', objectname)
 			end
 			_p('')
 		end
@@ -290,7 +281,7 @@
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
 			if #files.objects > 0 then
-				_p('ifeq ($(config),%s)', make.esc(cfg.shortname))
+				_x('ifeq ($(config),%s)', cfg.shortname)
 				if #files.objects > 0 then
 					listobjects('  OBJECTS +=', files.objects)
 				end
