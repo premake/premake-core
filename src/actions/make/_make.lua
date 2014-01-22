@@ -38,7 +38,7 @@
 			local makefile = make.getmakefilename(prj, true)
 			if project.isdotnet(prj) then
 				premake.generate(prj, makefile, make.cs.generate)
-			else
+			elseif project.iscpp(prj) then
 				premake.generate(prj, makefile, make.cpp.generate)
 			end
 		end,
