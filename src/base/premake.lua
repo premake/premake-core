@@ -9,6 +9,8 @@
 	local config = premake.config
 
 
+	premake.indentation = 0
+
 
 ---
 -- Call the io.esc() value escaping function a value, or a list
@@ -64,10 +66,37 @@
 			error(err, 0)
 		end
 
+		premake.indentation = 0
+
 		io.output(f)
 		callback(obj)
 		f:close()
 	end
+
+
+
+---
+-- Write a formatted string to the exported file, after decreasing the
+-- indentation level by one.
+---
+
+	function premake.pop(...)
+		premake.indentation = premake.indentation - 1
+		premake.w(...)
+	end
+
+
+
+---
+-- Write a formatted string to the exported file, and increase the
+-- indentation level by one.
+---
+
+	function premake.push(...)
+		premake.w(...)
+		premake.indentation = premake.indentation + 1
+	end
+
 
 
 --
@@ -217,5 +246,21 @@
 				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", name, expected, cfg.name, field.scope, cfg[field.scope].name)
 			end
 
+		end
+	end
+
+
+
+---
+-- Write a formatted string to the exported file (the indentation
+-- level is not changed). This gets called quite a lot, hence the
+-- very short name.
+---
+
+	function premake.w(...)
+		if select("#",...) > 0 then
+			_p(premake.indentation, ...)
+		else
+			_p('')
 		end
 	end
