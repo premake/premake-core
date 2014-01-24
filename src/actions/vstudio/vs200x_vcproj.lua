@@ -208,9 +208,133 @@
 
 ---------------------------------------------------------------------------
 --
--- Handlers for the individual tool sections of the project
+-- Handlers for the individual tool sections of the project.
+--
+-- There is a lot of repetition here; most of these tools are just
+-- placeholders for modules to override as needed.
 --
 ---------------------------------------------------------------------------
+
+
+---
+-- The implementation of a "normal" tool. Writes the opening tool element
+-- and name attribute, calls the corresponding function list, and then
+-- closes the element.
+--
+-- @param name
+--    The name of the tool, e.g. "VCCustomBuildTool".
+-- @param ...
+--    Any additional arguments required by the call list.
+---
+
+	function _.VCTool(name, ...)
+		_p(3,'<Tool')
+		_p(4,'Name="%s"', name)
+		premake.callArray(_.elements[name], ...)
+		_p(3,'/>')
+	end
+
+
+
+	_.elements.VCALinkTool = function(cfg)
+		return {}
+	end
+
+	function _.VCALinkTool(cfg)
+		_.VCTool("VCALinkTool", cfg)
+	end
+
+
+
+	_.elements.VCAppVerifierTool = function(cfg)
+		return {}
+	end
+
+	function _.VCAppVerifierTool(cfg)
+		if cfg.kind ~= premake.STATICLIB then
+			_.VCTool("VCAppVerifierTool", cfg)
+		end
+	end
+
+
+	_.elements.VCBscMakeTool = function(cfg)
+		return {}
+	end
+
+	function _.VCBscMakeTool(cfg)
+		_.VCTool("VCBscMakeTool", cfg)
+	end
+
+
+
+	_.elements.VCCustomBuildTool = function(cfg)
+		return {}
+	end
+
+	function _.VCCustomBuildTool(cfg)
+		_.VCTool("VCCustomBuildTool", cfg)
+	end
+
+
+
+	_.elements.VCFxCopTool = function(cfg)
+		return {}
+	end
+
+	function _.VCFxCopTool(cfg)
+		_.VCTool("VCFxCopTool", cfg)
+	end
+
+
+
+	_.elements.VCManagedResourceCompilerTool = function(cfg)
+		return {}
+	end
+
+	function _.VCManagedResourceCompilerTool(cfg)
+		_.VCTool("VCManagedResourceCompilerTool", cfg)
+	end
+
+
+
+	_.elements.VCWebServiceProxyGeneratorTool = function(cfg)
+		return {}
+	end
+
+	function _.VCWebServiceProxyGeneratorTool(cfg)
+		_.VCTool("VCWebServiceProxyGeneratorTool", cfg)
+	end
+
+
+
+	_.elements.VCXDCMakeTool = function(cfg)
+		return {}
+	end
+
+	function _.VCXDCMakeTool(cfg)
+		_.VCTool("VCXDCMakeTool", cfg)
+	end
+
+
+
+	_.elements.VCXMLDataGeneratorTool = function(cfg)
+		return {}
+	end
+
+	function _.VCXMLDataGeneratorTool(cfg)
+		_.VCTool("VCXMLDataGeneratorTool", cfg)
+	end
+
+
+
+---------------------------------------------------------------------------
+--
+-- EVERYTHING BELOW THIS NEEDS REWORK, which I'm in the process of
+-- doing right now. Hold on tight.
+--
+---------------------------------------------------------------------------
+
+
 
 ---
 -- Return the list of tools required to build a specific configuration.
@@ -330,19 +454,11 @@
 --
 
 	function _.tools(cfg)
-		for i, tool in ipairs(_.toolsForConfig(cfg)) do
-			if _.toolmap[tool] then
-				_.toolmap[tool](cfg)
-			else
-				_.tool(tool)
+		local calls = _.toolsForConfig(cfg)
+		for i, tool in ipairs(calls) do
+			if _[tool] then
+				_[tool](cfg)
 			end
-		end
-	end
-
-
-	function _.VCAppVerifierTool(cfg)
-		if cfg.kind ~= premake.STATICLIB then
-			_.tool("VCAppVerifierTool")
 		end
 	end
 
@@ -698,26 +814,6 @@
 	end
 
 
---
--- Map tool names to output functions. Tools that aren't listed will
--- output a standard empty tool element.
---
-
-	_.toolmap = {
-		DebuggerTool           = _.DebuggerTool,
-		VCAppVerifierTool      = _.VCAppVerifierTool,
-		VCCLCompilerTool       = _.VCCLCompilerTool,
-		VCLinkerTool           = _.VCLinkerTool,
-		VCManifestTool         = _.VCManifestTool,
-		VCMIDLTool             = _.VCMIDLTool,
-		VCNMakeTool            = _.VCNMakeTool,
-		VCPostBuildEventTool   = _.VCPostBuildEventTool,
-		VCPreBuildEventTool    = _.VCPreBuildEventTool,
-		VCPreLinkEventTool     = _.VCPreLinkEventTool,
-		VCResourceCompilerTool = _.VCResourceCompilerTool,
-		VCX360DeploymentTool   = _.VCX360DeploymentTool,
-		VCX360ImageTool        = _.VCX360ImageTool
-	}
 
 
 ---------------------------------------------------------------------------
