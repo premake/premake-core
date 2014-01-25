@@ -103,3 +103,25 @@
 	function suite.pathsearch_NilPathsAllowed()
 		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", nil, os.getcwd(), nil))
 	end
+
+--
+-- os.pathsearch() tests
+--
+	function suite.outputof_commandExitCode()
+		if os.is("macosx")
+			or os.is("linux")
+			or os.is("solaris")
+			or os.is("bsd")
+		then
+			-- Assumes 'true' and 'false' commands exits
+			-- which should be the case on all *nix platforms 
+			for cmd, exitcode in pairs ({
+				["true"] = 0,
+				["false"] = 1
+			})
+			do
+				local o, e = os.outputof(cmd)
+				test.isequal(e, exitcode)
+			end
+		end
+	end
