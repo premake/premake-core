@@ -107,9 +107,14 @@ static int io_noclose (lua_State *L) {
 */
 static int io_pclose (lua_State *L) {
   FILE **p = tofilep(L);
-  int ok = lua_pclose(L, *p);
+  int result = lua_pclose(L, *p);
   *p = NULL;
-  return pushresult(L, ok, NULL);
+  if (result == -1) {
+	  return pushresult(L, 0, NULL);
+  }
+  lua_pushboolean(L, 1);
+  lua_pushinteger(L, result / 255);
+  return 2;
 }
 
 

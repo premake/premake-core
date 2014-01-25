@@ -668,12 +668,12 @@ union luai_Cast { double l_d; long l_l; };
 #if defined(LUA_USE_POPEN)
 
 #define lua_popen(L,c,m)	((void)L, fflush(NULL), popen(c,m))
-#define lua_pclose(L,file)	((void)L, (pclose(file) != -1))
+#define lua_pclose(L,file)	((void)L, (pclose(file)))
 
 #elif defined(LUA_WIN)
 
 #define lua_popen(L,c,m)	((void)L, _popen(c,m))
-#define lua_pclose(L,file)	((void)L, (_pclose(file) != -1))
+#define lua_pclose(L,file)	((void)L, (_pclose(file)))
 
 #else
 
