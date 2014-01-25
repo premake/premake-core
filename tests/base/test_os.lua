@@ -105,7 +105,7 @@
 	end
 
 --
--- os.pathsearch() tests
+-- os.outputof() tests
 --
 	function suite.outputof_commandExitCode()
 		if os.is("macosx")
