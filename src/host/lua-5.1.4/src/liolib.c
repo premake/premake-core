@@ -106,7 +106,7 @@ static int io_noclose (lua_State *L) {
 ** function to close 'popen' files
 */
 /*
- * PREAAKE change: return both output and exit code
+ * PREMAKE change: return both output and exit code
  */
 static int io_pclose (lua_State *L) {
   FILE **p = tofilep(L);
