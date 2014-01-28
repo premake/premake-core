@@ -5,7 +5,7 @@
 --
 
 	premake.vstudio.vc200x = {}
-	local _ = premake.vstudio.vc200x
+	local m = premake.vstudio.vc200x
 
 	local vstudio = premake.vstudio
 	local context = premake.context
@@ -13,7 +13,7 @@
 	local config = premake.config
 	local fileconfig = premake.fileconfig
 
-	_.elements = {}
+	m.elements = {}
 
 
 
@@ -21,21 +21,21 @@
 -- Generate a Visual Studio 200x C++ or Makefile project.
 ---
 
-	_.elements.project = function(prj)
+	m.elements.project = function(prj)
 		return {
-			_.xmlElement,
-			_.visualStudioProject,
-			_.platforms,
-			_.toolFiles,
-			_.configurations,
-			_.references,
-			_.files,
-			_.globals
+			m.xmlElement,
+			m.visualStudioProject,
+			m.platforms,
+			m.toolFiles,
+			m.configurations,
+			m.references,
+			m.files,
+			m.globals
 		}
 	end
 
-	function _.generate(prj)
-		premake.callArray(_.elements.project, prj)
+	function m.generate(prj)
+		premake.callArray(m.elements.project, prj)
 		_p('</VisualStudioProject>')
 	end
 
@@ -46,21 +46,21 @@
 -- In this case, the call list is for XML attributes rather than elements.
 --
 
-	_.elements.visualStudioProject = function(prj)
+	m.elements.visualStudioProject = function(prj)
 		return {
-			_.projectType,
-			_.version,
-			_.projectName,
-			_.projectGUID,
-			_.rootNamespace,
-			_.keyword,
-			_.targetFrameworkVersion
+			m.projectType,
+			m.version,
+			m.projectName,
+			m.projectGUID,
+			m.rootNamespace,
+			m.keyword,
+			m.targetFrameworkVersion
 		}
 	end
 
-	function _.visualStudioProject(prj)
+	function m.visualStudioProject(prj)
 		_p('<VisualStudioProject')
-		premake.callArray(_.elements.visualStudioProject, prj)
+		premake.callArray(m.elements.visualStudioProject, prj)
 		_p(1,'>')
 	end
 
@@ -71,7 +71,7 @@
 -- configuration-architecture pairings.
 --
 
-	function _.configurations(prj)
+	function m.configurations(prj)
 		-- Visual Studio requires each configuration to be paired up with each
 		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
 		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
@@ -84,7 +84,7 @@
 			isRealConfig[name] = true
 		end
 
-		local architectures = _.architectures(prj)
+		local architectures = m.architectures(prj)
 
 		-- Now enumerate all of the configurations in the project and write
 		-- out their <Configuration> blocks.
@@ -100,8 +100,8 @@
 				-- full <Configuration> block.
 
 				if thisName == testName then
-					_.configuration(cfg)
-					_.tools(cfg)
+					m.configuration(cfg)
+					m.tools(cfg)
 					_p(2,'</Configuration>')
 
 				-- Otherwise, check the list of valid configurations I built
@@ -112,7 +112,7 @@
 
 				elseif not isRealConfig[testName] then
 					-- this is a fake config to make VS happy
-					_.emptyConfiguration(cfg, arch)
+					m.emptyConfiguration(cfg, arch)
 				end
 
 			end
@@ -128,21 +128,21 @@
 -- build configuration/platform pairing.
 --
 
-	_.elements.configuration = function(cfg)
+	m.elements.configuration = function(cfg)
 		return {
-			_.outputDirectory,
-			_.intermediateDirectory,
-			_.configurationType,
-			_.useOfMFC,
-			_.characterSet,
-			_.managedExtensions
+			m.outputDirectory,
+			m.intermediateDirectory,
+			m.configurationType,
+			m.useOfMFC,
+			m.characterSet,
+			m.managedExtensions
 		}
 	end
 
-	function _.configuration(cfg)
+	function m.configuration(cfg)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s"', vstudio.projectConfig(cfg))
-		premake.callArray(_.elements.configuration, cfg)
+		premake.callArray(m.elements.configuration, cfg)
 		_p(3,'>')
 	end
 
@@ -153,16 +153,16 @@
 -- and architecture pairs that aren't valid build targets in the solution.
 --
 
-	function _.emptyConfiguration(cfg, arch)
+	function m.emptyConfiguration(cfg, arch)
 		_p(2,'<Configuration')
 		_x(3,'Name="%s|%s"', vstudio.projectPlatform(cfg), arch)
 		_p(3,'IntermediateDirectory="$(PlatformName)\\$(ConfigurationName)"')
 		_p(3,'ConfigurationType="1"')
 		_p(3,'>')
 
-		local tools = _.toolsForConfig(cfg, true)
+		local tools = m.toolsForConfig(cfg, true)
 		for i, tool in ipairs(tools) do
-			_.tool(tool)
+			m.tool(tool)
 		end
 
 		_p(2,'</Configuration>')
@@ -174,16 +174,16 @@
 -- Write out the <References> element group.
 --
 
-	_.elements.references = function(prj)
+	m.elements.references = function(prj)
 		return {
-			_.assemblyReferences,
-			_.projectReferences,
+			m.assemblyReferences,
+			m.projectReferences,
 		}
 	end
 
-	function _.references(prj)
+	function m.references(prj)
 		_p(1,'<References>')
-		premake.callArray(_.elements.references, prj)
+		premake.callArray(m.elements.references, prj)
 		_p(1,'</References>')
 	end
 
@@ -194,13 +194,13 @@
 -- extend it.
 --
 
-	_.elements.globals = function(prj)
+	m.elements.globals = function(prj)
 		return {}
 	end
 
-	function _.globals(prj)
+	function m.globals(prj)
 		_p(1,'<Globals>')
-		premake.callArray(_.elements.globals, prj)
+		premake.callArray(m.elements.globals, prj)
 		_p(1,'</Globals>')
 	end
 
@@ -227,102 +227,102 @@
 --    Any additional arguments required by the call list.
 ---
 
-	function _.VCTool(name, ...)
+	function m.VCTool(name, ...)
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
-		premake.callArray(_.elements[name], ...)
+		premake.callArray(m.elements[name], ...)
 		_p(3,'/>')
 	end
 
 
 
-	_.elements.VCALinkTool = function(cfg)
+	m.elements.VCALinkTool = function(cfg)
 		return {}
 	end
 
-	function _.VCALinkTool(cfg)
-		_.VCTool("VCALinkTool", cfg)
+	function m.VCALinkTool(cfg)
+		m.VCTool("VCALinkTool", cfg)
 	end
 
 
 
-	_.elements.VCAppVerifierTool = function(cfg)
+	m.elements.VCAppVerifierTool = function(cfg)
 		return {}
 	end
 
-	function _.VCAppVerifierTool(cfg)
+	function m.VCAppVerifierTool(cfg)
 		if cfg.kind ~= premake.STATICLIB then
-			_.VCTool("VCAppVerifierTool", cfg)
+			m.VCTool("VCAppVerifierTool", cfg)
 		end
 	end
 
 
-	_.elements.VCBscMakeTool = function(cfg)
+	m.elements.VCBscMakeTool = function(cfg)
 		return {}
 	end
 
-	function _.VCBscMakeTool(cfg)
-		_.VCTool("VCBscMakeTool", cfg)
+	function m.VCBscMakeTool(cfg)
+		m.VCTool("VCBscMakeTool", cfg)
 	end
 
 
 
-	_.elements.VCCustomBuildTool = function(cfg)
+	m.elements.VCCustomBuildTool = function(cfg)
 		return {}
 	end
 
-	function _.VCCustomBuildTool(cfg)
-		_.VCTool("VCCustomBuildTool", cfg)
+	function m.VCCustomBuildTool(cfg)
+		m.VCTool("VCCustomBuildTool", cfg)
 	end
 
 
 
-	_.elements.VCFxCopTool = function(cfg)
+	m.elements.VCFxCopTool = function(cfg)
 		return {}
 	end
 
-	function _.VCFxCopTool(cfg)
-		_.VCTool("VCFxCopTool", cfg)
+	function m.VCFxCopTool(cfg)
+		m.VCTool("VCFxCopTool", cfg)
 	end
 
 
 
-	_.elements.VCManagedResourceCompilerTool = function(cfg)
+	m.elements.VCManagedResourceCompilerTool = function(cfg)
 		return {}
 	end
 
-	function _.VCManagedResourceCompilerTool(cfg)
-		_.VCTool("VCManagedResourceCompilerTool", cfg)
+	function m.VCManagedResourceCompilerTool(cfg)
+		m.VCTool("VCManagedResourceCompilerTool", cfg)
 	end
 
 
 
-	_.elements.VCWebServiceProxyGeneratorTool = function(cfg)
+	m.elements.VCWebServiceProxyGeneratorTool = function(cfg)
 		return {}
 	end
 
-	function _.VCWebServiceProxyGeneratorTool(cfg)
-		_.VCTool("VCWebServiceProxyGeneratorTool", cfg)
+	function m.VCWebServiceProxyGeneratorTool(cfg)
+		m.VCTool("VCWebServiceProxyGeneratorTool", cfg)
 	end
 
 
 
-	_.elements.VCXDCMakeTool = function(cfg)
+	m.elements.VCXDCMakeTool = function(cfg)
 		return {}
 	end
 
-	function _.VCXDCMakeTool(cfg)
-		_.VCTool("VCXDCMakeTool", cfg)
+	function m.VCXDCMakeTool(cfg)
+		m.VCTool("VCXDCMakeTool", cfg)
 	end
 
 
 
-	_.elements.VCXMLDataGeneratorTool = function(cfg)
+	m.elements.VCXMLDataGeneratorTool = function(cfg)
 		return {}
 	end
 
-	function _.VCXMLDataGeneratorTool(cfg)
-		_.VCTool("VCXMLDataGeneratorTool", cfg)
+	function m.VCXMLDataGeneratorTool(cfg)
+		m.VCTool("VCXMLDataGeneratorTool", cfg)
 	end
 
 
@@ -347,7 +347,7 @@
 --    configuration block; in this case different rules apply.
 --
 
-	function _.toolsForConfig(cfg, isEmptyCfg)
+	function m.toolsForConfig(cfg, isEmptyCfg)
 		if vstudio.isMakefile(cfg) and not isEmptyCfg then
 			return {
 				"VCNMakeTool"
@@ -432,7 +432,7 @@
 -- listed, the built-in Visual Studio tools will be used
 --
 
-	_.toolsets = {
+	m.toolsets = {
 		ps3 = premake.tools.snc
 	}
 
@@ -443,8 +443,8 @@
 -- use the alternate external compiler setup.
 --
 
-	function _.toolset(cfg)
-		return premake.tools[cfg.toolset] or _.toolsets[cfg.system]
+	function m.toolset(cfg)
+		return premake.tools[cfg.toolset] or m.toolsets[cfg.system]
 	end
 
 
@@ -453,60 +453,60 @@
 -- of the project.
 --
 
-	function _.tools(cfg)
-		local calls = _.toolsForConfig(cfg)
+	function m.tools(cfg)
+		local calls = m.toolsForConfig(cfg)
 		for i, tool in ipairs(calls) do
-			if _[tool] then
-				_[tool](cfg)
+			if m[tool] then
+				m[tool](cfg)
 			end
 		end
 	end
 
 
-	function _.VCCLCompilerTool(cfg)
+	function m.VCCLCompilerTool(cfg)
 		_p(3,'<Tool')
-		_.compilerToolName(cfg)
+		m.compilerToolName(cfg)
 
 		-- Decide between the built-in compiler or an external toolset;
 		-- PS3 uses the external toolset
-		local toolset = _.toolset(cfg)
+		local toolset = m.toolset(cfg)
 		if toolset then
-			_.VCCLExternalCompilerTool(cfg, toolset)
+			m.VCCLExternalCompilerTool(cfg, toolset)
 		else
-			_.VCCLBuiltInCompilerTool(cfg)
+			m.VCCLBuiltInCompilerTool(cfg)
 		end
 
 		_p(3,'/>')
 	end
 
 
-	_.elements.builtInCompilerTool = function(cfg)
+	m.elements.builtInCompilerTool = function(cfg)
 		return {
-			_.enableEnhancedInstructionSet,
-			_.floatingPointModel,
-			_.runtimeTypeInfo,
-			_.treatWChar_tAsBuiltInType,
+			m.enableEnhancedInstructionSet,
+			m.floatingPointModel,
+			m.runtimeTypeInfo,
+			m.treatWChar_tAsBuiltInType,
 		}
 	end
 
-	function _.VCCLBuiltInCompilerTool(cfg)
-		_.VCCLCompilerTool_additionalOptions(cfg)
-		_.optimization(cfg, 4)
+	function m.VCCLBuiltInCompilerTool(cfg)
+		m.VCCLCompilerTool_additionalOptions(cfg)
+		m.optimization(cfg, 4)
 
 		if cfg.flags.NoFramePointer then
-			_p(4,'OmitFramePointers="%s"', _.bool(true))
+			_p(4,'OmitFramePointers="%s"', m.bool(true))
 		end
 
-		_.additionalIncludeDirectories(cfg, cfg.includedirs)
-		_.wholeProgramOptimization(cfg)
-		_.preprocessorDefinitions(cfg, cfg.defines)
+		m.additionalIncludeDirectories(cfg, cfg.includedirs)
+		m.wholeProgramOptimization(cfg)
+		m.preprocessorDefinitions(cfg, cfg.defines)
 
-		_.minimalRebuild(cfg)
-		_.basicRuntimeChecks(cfg)
-		_.bufferSecurityCheck(cfg)
+		m.minimalRebuild(cfg)
+		m.basicRuntimeChecks(cfg)
+		m.bufferSecurityCheck(cfg)
 
 		if config.isOptimizedBuild(cfg) then
-			_p(4,'StringPooling="%s"', _.bool(true))
+			_p(4,'StringPooling="%s"', m.bool(true))
 		end
 
 		if cfg.flags.NoExceptions then
@@ -515,11 +515,11 @@
 			_p(4,'ExceptionHandling="2"')
 		end
 
-		_.runtimeLibrary(cfg)
+		m.runtimeLibrary(cfg)
 
-		_p(4,'EnableFunctionLevelLinking="%s"', _.bool(true))
+		_p(4,'EnableFunctionLevelLinking="%s"', m.bool(true))
 
-		premake.callArray(_.elements.builtInCompilerTool, cfg)
+		premake.callArray(m.elements.builtInCompilerTool, cfg)
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
@@ -528,24 +528,24 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 
-		_.programDatabaseFileName(cfg)
-		_.warnings(cfg)
+		m.programDatabaseFileName(cfg)
+		m.warnings(cfg)
 
-		_p(4,'DebugInformationFormat="%s"', _.symbols(cfg))
+		_p(4,'DebugInformationFormat="%s"', m.symbols(cfg))
 
 		if cfg.project.language == "C" then
 			_p(4, 'CompileAs="1"')
 		end
 
-		_.forcedIncludeFiles(cfg)
-		_.omitDefaultLib(cfg)
+		m.forcedIncludeFiles(cfg)
+		m.omitDefaultLib(cfg)
 	end
 
 
-	function _.VCCLExternalCompilerTool(cfg, toolset)
-		_.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
-		_.additionalIncludeDirectories(cfg, cfg.includedirs)
-		_.preprocessorDefinitions(cfg, cfg.defines)
+	function m.VCCLExternalCompilerTool(cfg, toolset)
+		m.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
+		m.additionalIncludeDirectories(cfg, cfg.includedirs)
+		m.preprocessorDefinitions(cfg, cfg.defines)
 
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
@@ -554,39 +554,39 @@
 			_p(4,'UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
 		end
 
-		_.programDatabaseFileName(cfg)
+		m.programDatabaseFileName(cfg)
 
 		_p(4,'DebugInformationFormat="0"')
 		_p(4,'CompileAs="0"')
 
-		_.forcedIncludeFiles(cfg)
+		m.forcedIncludeFiles(cfg)
 	end
 
 
-	function _.DebuggerTool(cfg)
+	function m.DebuggerTool(cfg)
 		_p(3,'<DebuggerTool')
 		_p(3,'/>')
 	end
 
 
-	function _.VCLinkerTool(cfg)
+	function m.VCLinkerTool(cfg)
 		_p(3,'<Tool')
-		_p(4,'Name="%s"', _.linkerTool(cfg))
+		_p(4,'Name="%s"', m.linkerTool(cfg))
 
 		-- Decide between the built-in linker or an external toolset;
 		-- PS3 uses the external toolset
-		local toolset = _.toolset(cfg)
+		local toolset = m.toolset(cfg)
 		if toolset then
-			_.VCExternalLinkerTool(cfg, toolset)
+			m.VCExternalLinkerTool(cfg, toolset)
 		else
-			_.VCBuiltInLinkerTool(cfg)
+			m.VCBuiltInLinkerTool(cfg)
 		end
 
 		_p(3,'/>')
 	end
 
 
-	function _.VCBuiltInLinkerTool(cfg)
+	function m.VCBuiltInLinkerTool(cfg)
 		local explicitLink = vstudio.needsExplicitLink(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
@@ -596,7 +596,7 @@
 			end
 
 			if cfg.flags.NoImportLib then
-				_p(4,'IgnoreImportLibrary="%s"', _.bool(true))
+				_p(4,'IgnoreImportLibrary="%s"', m.bool(true))
 			end
 		end
 
@@ -605,7 +605,7 @@
 		end
 
 		if #cfg.links > 0 then
-			local links = _.links(cfg, explicitLink)
+			local links = m.links(cfg, explicitLink)
 			if links ~= "" then
 				_x(4,'AdditionalDependencies="%s"', links)
 			end
@@ -617,7 +617,7 @@
 			_p(4,'LinkIncremental="%s"', iif(config.canLinkIncremental(cfg) , 2, 1))
 		end
 
-		_.additionalLibraryDirectories(cfg)
+		m.additionalLibraryDirectories(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
 			local deffile = config.findfile(cfg, ".def")
@@ -626,12 +626,12 @@
 			end
 
 			if cfg.flags.NoManifest then
-				_p(4,'GenerateManifest="%s"', _.bool(false))
+				_p(4,'GenerateManifest="%s"', m.bool(false))
 			end
 
-			_p(4,'GenerateDebugInformation="%s"', _.bool(_.symbols(cfg) ~= 0))
+			_p(4,'GenerateDebugInformation="%s"', m.bool(m.symbols(cfg) ~= 0))
 
-			if _.symbols(cfg) >= 3 then
+			if m.symbols(cfg) >= 3 then
 				_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', cfg.buildtarget.basename)
 			end
 
@@ -661,7 +661,7 @@
 	end
 
 
-	function _.VCExternalLinkerTool(cfg, toolset)
+	function m.VCExternalLinkerTool(cfg, toolset)
 		local explicitLink = vstudio.needsExplicitLink(cfg)
 
 		local buildoptions = table.join(toolset.getldflags(cfg), cfg.linkoptions)
@@ -682,10 +682,10 @@
 			_p(4,'LinkIncremental="0"')
 		end
 
-		_.additionalLibraryDirectories(cfg)
+		m.additionalLibraryDirectories(cfg)
 
 		if cfg.kind ~= premake.STATICLIB then
-			_p(4,'GenerateManifest="%s"', _.bool(false))
+			_p(4,'GenerateManifest="%s"', m.bool(false))
 			_p(4,'ProgramDatabaseFile=""')
 			_p(4,'RandomizedBaseAddress="1"')
 			_p(4,'DataExecutionPrevention="0"')
@@ -693,7 +693,7 @@
 	end
 
 
-	function _.VCManifestTool(cfg)
+	function m.VCManifestTool(cfg)
 		if cfg.kind == premake.STATICLIB then
 			return
 		end
@@ -714,7 +714,7 @@
 	end
 
 
-	function _.VCMIDLTool(cfg)
+	function m.VCMIDLTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCMIDLTool"')
 		if cfg.architecture == "x64" then
@@ -724,13 +724,13 @@
 	end
 
 
-	function _.VCNMakeTool(cfg)
+	function m.VCNMakeTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCNMakeTool"')
-		_.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-		_.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-		_.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-		_.nmakeOutput(cfg)
+		m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+		m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+		m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+		m.nmakeOutput(cfg)
 		_p(4,'PreprocessorDefinitions=""')
 		_p(4,'IncludeSearchPath=""')
 		_p(4,'ForcedIncludes=""')
@@ -741,7 +741,7 @@
 	end
 
 
-	function _.VCResourceCompilerTool(cfg)
+	function m.VCResourceCompilerTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCResourceCompilerTool"')
 
@@ -749,14 +749,14 @@
 			_x(4,'AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 
-		_.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
-			_.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+		m.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
+			m.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
 
 		_p(3,'/>')
 	end
 
 
-	function _.VCBuildEventTool(cfg, event)
+	function m.VCBuildEventTool(cfg, event)
 		local name = "VC" .. event .. "EventTool"
 		local field = event:lower()
 		local steps = cfg[field .. "commands"]
@@ -774,23 +774,23 @@
 	end
 
 
-	function _.VCPreBuildEventTool(cfg)
-		_.VCBuildEventTool(cfg, "PreBuild")
+	function m.VCPreBuildEventTool(cfg)
+		m.VCBuildEventTool(cfg, "PreBuild")
 	end
 
 
-	function _.VCPreLinkEventTool(cfg)
-		_.VCBuildEventTool(cfg, "PreLink")
+	function m.VCPreLinkEventTool(cfg)
+		m.VCBuildEventTool(cfg, "PreLink")
 	end
 
 
-	function _.VCPostBuildEventTool(cfg)
-		_.VCBuildEventTool(cfg, "PostBuild")
+	function m.VCPostBuildEventTool(cfg)
+		m.VCBuildEventTool(cfg, "PostBuild")
 	end
 
 
 
-	function _.VCX360DeploymentTool(cfg)
+	function m.VCX360DeploymentTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCX360DeploymentTool"')
 		_p(4,'DeploymentType="0"')
@@ -801,7 +801,7 @@
 	end
 
 
-	function _.VCX360ImageTool(cfg)
+	function m.VCX360ImageTool(cfg)
 		_p(3,'<Tool')
 		_p(4,'Name="VCX360ImageTool"')
 		if #cfg.imageoptions > 0 then
@@ -822,7 +822,7 @@
 --
 ---------------------------------------------------------------------------
 
-	function _.files(prj)
+	function m.files(prj)
 		_p(1,'<Files>')
 
 		-- Fetch the source tree, sorted how Visual Studio likes it: alpha
@@ -873,7 +873,7 @@
 				_p(depth, '\t>')
 
 				for cfg in project.eachconfig(prj) do
-					_.fileConfiguration(cfg, node, depth + 1)
+					m.fileConfiguration(cfg, node, depth + 1)
 				end
 
 				_p(depth, '</File>')
@@ -885,7 +885,7 @@
 	end
 
 
-	function _.fileConfiguration(cfg, node, depth)
+	function m.fileConfiguration(cfg, node, depth)
 
 		local filecfg = fileconfig.getconfig(node, cfg)
 
@@ -894,11 +894,11 @@
 		-- write the file configuration if the buffers are not empty.
 
 		local configAttribs = io.capture(function ()
-			_.fileConfiguration_extraAttributes(cfg, filecfg, depth + 1)
+			m.fileConfiguration_extraAttributes(cfg, filecfg, depth + 1)
 		end)
 
 		local compilerAttribs = io.capture(function ()
-			_.fileConfiguration_compilerAttributes(cfg, filecfg, depth + 2)
+			m.fileConfiguration_compilerAttributes(cfg, filecfg, depth + 2)
 		end)
 
 		if #configAttribs > 0 or compilerAttribs:lines() > 1 then
@@ -934,8 +934,8 @@
 --    The indentation level for any new attributes.
 --
 
-	function _.fileConfiguration_extraAttributes(cfg, filecfg, depth)
-		_.excludedFromBuild(filecfg, depth)
+	function m.fileConfiguration_extraAttributes(cfg, filecfg, depth)
+		m.excludedFromBuild(filecfg, depth)
 	end
 
 
@@ -951,19 +951,19 @@
 --    The indentation level any new attributes.
 --
 
-	function _.fileConfiguration_compilerAttributes(cfg, filecfg, depth)
+	function m.fileConfiguration_compilerAttributes(cfg, filecfg, depth)
 
 		-- Must always have a name attribute
-		_.compilerToolName(cfg, filecfg, depth)
+		m.compilerToolName(cfg, filecfg, depth)
 
 		if filecfg then
-			_.customBuildTool(filecfg, depth)
-			_.objectFile(filecfg, depth)
-			_.optimization(filecfg, depth)
-			_.usePrecompiledHeader(filecfg, depth)
-			_.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
-			_.forcedIncludeFiles(filecfg, depth)
-			_.compileAs(filecfg, depth)
+			m.customBuildTool(filecfg, depth)
+			m.objectFile(filecfg, depth)
+			m.optimization(filecfg, depth)
+			m.usePrecompiledHeader(filecfg, depth)
+			m.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
+			m.forcedIncludeFiles(filecfg, depth)
+			m.compileAs(filecfg, depth)
 		end
 
 	end
@@ -984,7 +984,7 @@
 --    An array of Visual Studio architectures.
 --
 
-	function _.architectures(prj)
+	function m.architectures(prj)
 		architectures = {}
 		for cfg in project.eachconfig(prj) do
 			local arch = vstudio.archFromConfig(cfg, true)
@@ -1000,7 +1000,7 @@
 -- Return a properly cased boolean for the current Visual Studio version.
 --
 
-	function _.bool(value)
+	function m.bool(value)
 		if (_ACTION < "vs2005") then
 			return iif(value, "TRUE", "FALSE")
 		else
@@ -1014,7 +1014,7 @@
 -- formatted for Visual Studio's XML.
 --
 
-	function _.links(cfg, explicit)
+	function m.links(cfg, explicit)
 		local scope = iif(explicit, "all", "system")
 		local links = config.getlinks(cfg, scope, "fullpath")
 		for i, link in ipairs(links) do
@@ -1032,7 +1032,7 @@
 -- the configuration target system.
 --
 
-	function _.linkerTool(cfg)
+	function m.linkerTool(cfg)
 		if cfg.kind == premake.STATICLIB then
 			return "VCLibrarianTool"
 		elseif cfg.system == premake.XBOX360 then
@@ -1047,7 +1047,7 @@
 -- Return the debugging symbol level for a configuration.
 --
 
-	function _.symbols(cfg)
+	function m.symbols(cfg)
 		if not cfg.flags.Symbols then
 			return 0
 		elseif cfg.debugformat == "c7" then
@@ -1075,7 +1075,7 @@
 ---------------------------------------------------------------------------
 
 
-	function _.additionalIncludeDirectories(cfg, includedirs)
+	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
 			_x(4,'AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
@@ -1083,7 +1083,7 @@
 	end
 
 
-	function _.additionalLibraryDirectories(cfg)
+	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(project.getrelative(cfg.project, cfg.libdirs), ";")
 			_x(4,'AdditionalLibraryDirectories="%s"', path.translate(dirs))
@@ -1091,7 +1091,7 @@
 	end
 
 
-	function _.VCCLCompilerTool_additionalOptions(cfg)
+	function m.VCCLCompilerTool_additionalOptions(cfg)
 		local opts = cfg.buildoptions
 		if cfg.flags.MultiProcessorCompile then
 			table.insert(opts, "/MP")
@@ -1102,7 +1102,7 @@
 	end
 
 
-	function _.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
+	function m.VCCLCompilerTool_fileConfig_additionalOptions(filecfg, depth)
 		local opts = filecfg.buildoptions
 		if #opts > 0 then
 			_x(depth, 'AdditionalOptions="%s"', table.concat(opts, " "))
@@ -1110,7 +1110,7 @@
 	end
 
 
-	function _.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
+	function m.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
 		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
@@ -1121,7 +1121,7 @@
 	end
 
 
-	function _.assemblyReferences(prj)
+	function m.assemblyReferences(prj)
 		-- Visual Studio doesn't support per-config references
 		local cfg = project.getfirstconfig(prj)
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
@@ -1133,7 +1133,7 @@
 	end
 
 
-	function _.basicRuntimeChecks(cfg)
+	function m.basicRuntimeChecks(cfg)
 		if not config.isOptimizedBuild(cfg)
 			and not cfg.flags.Managed
 			and not cfg.flags.NoRuntimeChecks
@@ -1142,20 +1142,20 @@
 		end
 	end
 
-	function _.bufferSecurityCheck(cfg)
+	function m.bufferSecurityCheck(cfg)
 		if cfg.flags.NoBufferSecurityCheck then
 			_p(4,'BufferSecurityCheck="false"')
 		end
 	end
 
-	function _.characterSet(cfg)
+	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			_p(3,'CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
 		end
 	end
 
 
-	function _.compileAs(filecfg, depth)
+	function m.compileAs(filecfg, depth)
 		if path.iscfile(filecfg.name) ~= project.isc(filecfg.project) then
 			if path.iscppfile(filecfg.name) then
 				local value = iif(filecfg.project.language == premake.CPP, 1, 2)
@@ -1165,7 +1165,7 @@
 	end
 
 
-	function _.compilerToolName(cfg, filecfg, depth)
+	function m.compilerToolName(cfg, filecfg, depth)
 		local name
 		if fileconfig.hasCustomBuildRule(filecfg) then
 			name = "VCCustomBuildTool"
@@ -1176,7 +1176,7 @@
 	end
 
 
-	function _.configurationType(cfg)
+	function m.configurationType(cfg)
 		local cfgtypes = {
 			Makefile = 0,
 			None = 0,
@@ -1187,7 +1187,7 @@
 	end
 
 
-	function _.customBuildTool(filecfg, depth)
+	function m.customBuildTool(filecfg, depth)
 		if fileconfig.hasCustomBuildRule(filecfg) then
 			_x(depth, 'CommandLine="%s"', table.concat(filecfg.buildcommands,'\r\n'))
 
@@ -1197,7 +1197,7 @@
 	end
 
 
-	function _.enableEnhancedInstructionSet(cfg)
+	function m.enableEnhancedInstructionSet(cfg)
 		local map = { SSE = "1", SSE2 = "2" }
 		local value = map[cfg.vectorextensions]
 		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
@@ -1206,14 +1206,14 @@
 	end
 
 
-	function _.excludedFromBuild(filecfg, depth)
+	function m.excludedFromBuild(filecfg, depth)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
 			_p(depth, 'ExcludedFromBuild="true"')
 		end
 	end
 
 
-	function _.floatingPointModel(cfg)
+	function m.floatingPointModel(cfg)
 		local map = { Strict = "1", Fast = "2" }
 		local value = map[cfg.floatingpoint]
 		if value then
@@ -1222,7 +1222,7 @@
 	end
 
 
-	function _.forcedIncludeFiles(cfg, depth)
+	function m.forcedIncludeFiles(cfg, depth)
 		if #cfg.forceincludes > 0 then
 			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
 			_x(depth or 4,'ForcedIncludeFiles="%s"', table.concat(includes, ';'))
@@ -1234,14 +1234,14 @@
 	end
 
 
-	function _.omitDefaultLib(cfg)
+	function m.omitDefaultLib(cfg)
 		if cfg.flags.OmitDefaultLibrary then
 			_p(4,'OmitDefaultLibName="true"')
 		end
 	end
 
 
-	function _.keyword(prj)
+	function m.keyword(prj)
 		local windows, managed, makefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == premake.WINDOWS then windows = true end
@@ -1262,43 +1262,43 @@
 	end
 
 
-	function _.intermediateDirectory(cfg)
+	function m.intermediateDirectory(cfg)
 		local objdir = project.getrelative(cfg.project, cfg.objdir)
 		_x(3,'IntermediateDirectory="%s"', path.translate(objdir))
 	end
 
 
-	function _.managedExtensions(cfg)
+	function m.managedExtensions(cfg)
 		if cfg.flags.Managed then
 			_p(3,'ManagedExtensions="1"')
 		end
 	end
 
 
-	function _.minimalRebuild(cfg)
+	function m.minimalRebuild(cfg)
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
 		   not cfg.flags.NoMinimalRebuild and
 		   not cfg.flags.Managed and
 		   not cfg.flags.MultiProcessorCompile
 		then
-			_p(4,'MinimalRebuild="%s"', _.bool(true))
+			_p(4,'MinimalRebuild="%s"', m.bool(true))
 		end
 	end
 
 
-	function _.nmakeCommandLine(cfg, commands, phase)
+	function m.nmakeCommandLine(cfg, commands, phase)
 		commands = table.concat(commands, "\r\n")
 		_p(4,'%sCommandLine="%s"', phase, premake.esc(commands))
 	end
 
 
-	function _.nmakeOutput(cfg)
+	function m.nmakeOutput(cfg)
 		_p(4,'Output="$(OutDir)%s"', cfg.buildtarget.name)
 	end
 
 
-	function _.objectFile(filecfg, depth)
+	function m.objectFile(filecfg, depth)
 		if path.iscppfile(filecfg.name) then
 			if filecfg.objname ~= path.getbasename(filecfg.abspath) then
 				_x(depth, 'ObjectFile="$(IntDir)\\%s.obj"', filecfg.objname)
@@ -1307,7 +1307,7 @@
 	end
 
 
-	function _.optimization(cfg, depth)
+	function m.optimization(cfg, depth)
 		local map = { Off=0, On=3, Debug=0, Full=3, Size=1, Speed=2 }
 		local value = map[cfg.optimize]
 		if value or not cfg.abspath then
@@ -1316,15 +1316,15 @@
 	end
 
 
-	function _.outputDirectory(cfg)
+	function m.outputDirectory(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		_x(3,'OutputDirectory="%s"', path.translate(outdir))
 	end
 
 
-	function _.platforms(prj)
+	function m.platforms(prj)
 		_p(1,'<Platforms>')
-		table.foreachi(_.architectures(prj), function(arch)
+		table.foreachi(m.architectures(prj), function(arch)
 			_p(2,'<Platform')
 			_p(3,'Name="%s"', arch)
 			_p(2,'/>')
@@ -1333,30 +1333,30 @@
 	end
 
 
-	function _.preprocessorDefinitions(cfg, defines)
+	function m.preprocessorDefinitions(cfg, defines)
 		if #defines > 0 then
 			_x(4,'PreprocessorDefinitions="%s"', table.concat(defines, ";"))
 		end
 	end
 
 
-	function _.programDatabaseFileName(cfg)
+	function m.programDatabaseFileName(cfg)
 		local target = cfg.buildtarget
 		_x(4,'ProgramDataBaseFileName="$(OutDir)\\%s%s.pdb"', target.prefix, target.basename)
 	end
 
 
-	function _.projectGUID(prj)
+	function m.projectGUID(prj)
 		_p(1,'ProjectGUID="{%s}"', prj.uuid)
 	end
 
 
-	function _.projectName(prj)
+	function m.projectName(prj)
 		_x(1,'Name="%s"', prj.name)
 	end
 
 
-	function _.projectReferences(prj)
+	function m.projectReferences(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 
@@ -1383,12 +1383,12 @@
 	end
 
 
-	function _.projectType(prj)
+	function m.projectType(prj)
 		_p(1,'ProjectType="Visual C++"')
 	end
 
 
-	function _.rootNamespace(prj)
+	function m.rootNamespace(prj)
 		local hasWindows = project.hasConfig(prj, function(cfg)
 			return cfg.system == premake.WINDOWS
 		end)
@@ -1403,7 +1403,7 @@
 	end
 
 
-	function _.runtimeLibrary(cfg)
+	function m.runtimeLibrary(cfg)
 		local runtimes = {
 			StaticRelease = 0,
 			StaticDebug = 1,
@@ -1414,14 +1414,14 @@
 	end
 
 
-	function _.runtimeTypeInfo(cfg)
+	function m.runtimeTypeInfo(cfg)
 		if cfg.flags.NoRTTI and not cfg.flags.Managed then
 			_p(4,'RuntimeTypeInfo="false"')
 		end
 	end
 
 
-	function _.targetFrameworkVersion(prj)
+	function m.targetFrameworkVersion(prj)
 		local windows, makefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == premake.WINDOWS then windows = true end
@@ -1436,14 +1436,14 @@
 	end
 
 
-	function _.tool(name)
+	function m.tool(name)
 		_p(3,'<Tool')
 		_p(4,'Name="%s"', name)
 		_p(3,'/>')
 	end
 
 
-	function _.toolFiles(prj)
+	function m.toolFiles(prj)
 		if _ACTION > "vs2003" then
 			_p(1,'<ToolFiles>')
 			_p(1,'</ToolFiles>')
@@ -1451,7 +1451,7 @@
 	end
 
 
-	function _.treatWChar_tAsBuiltInType(cfg)
+	function m.treatWChar_tAsBuiltInType(cfg)
 		local map = { On = "true", Off = "false" }
 		local value = map[cfg.nativewchar]
 		if value then
@@ -1460,14 +1460,14 @@
 	end
 
 
-	function _.useOfMFC(cfg)
+	function m.useOfMFC(cfg)
 		if (cfg.flags.MFC) then
 			_p(3, 'UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
 		end
 	end
 
 
-	function _.usePrecompiledHeader(filecfg, depth)
+	function m.usePrecompiledHeader(filecfg, depth)
 		local cfg = filecfg.config
 		if cfg.pchsource == filecfg.abspath and
 		   not cfg.flags.NoPCH and
@@ -1478,7 +1478,7 @@
 	end
 
 
-	function _.version(prj)
+	function m.version(prj)
 		local map = {
 			vs2002 = '7.0',
 			vs2003 = '7.1',
@@ -1489,28 +1489,28 @@
 	end
 
 
-	function _.warnings(cfg)
+	function m.warnings(cfg)
 		if cfg.warnings == "Off" then
 			_p(4,'WarningLevel="0"')
 		else
 			_p(4,'WarningLevel="%d"', iif(cfg.warnings == "Extra", 4, 3))
 			if cfg.flags.FatalWarnings then
-				_p(4,'WarnAsError="%s"', _.bool(true))
+				_p(4,'WarnAsError="%s"', m.bool(true))
 			end
 			if _ACTION < "vs2008" and not cfg.flags.Managed then
-				_p(4,'Detect64BitPortabilityProblems="%s"', _.bool(not cfg.flags.No64BitChecks))
+				_p(4,'Detect64BitPortabilityProblems="%s"', m.bool(not cfg.flags.No64BitChecks))
 			end
 		end
 	end
 
 
-	function _.wholeProgramOptimization(cfg)
+	function m.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
 			_x(4,'WholeProgramOptimization="true"')
 		end
 	end
 
 
-	function _.xmlElement()
+	function m.xmlElement()
 		_p('<?xml version="1.0" encoding="Windows-1252"?>')
 	end
