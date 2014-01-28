@@ -323,3 +323,24 @@
 	</ItemGroup>
 		]]
 	end
+
+
+
+--
+-- Check handling of per-file command line build options.
+--
+
+	function suite.perFileDefines()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			defines { "IS_CPP" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end

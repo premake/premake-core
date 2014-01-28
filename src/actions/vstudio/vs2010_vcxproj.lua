@@ -519,6 +519,7 @@
 						vc2010.excludedFromBuild(cfg, filecfg)
 						if filecfg then
 							vc2010.objectFileName(filecfg)
+							vc2010.clCompilePreprocessorDefinitions(filecfg, condition)
 							vc2010.optimization(filecfg, condition)
 							vc2010.forceIncludes(filecfg, condition)
 							vc2010.precompiledHeader(cfg, filecfg, condition)
@@ -734,8 +735,8 @@
 	end
 
 
-	function vc2010.clCompilePreprocessorDefinitions(cfg)
-		vc2010.preprocessorDefinitions(cfg, cfg.defines, false)
+	function vc2010.clCompilePreprocessorDefinitions(cfg, condition)
+		vc2010.preprocessorDefinitions(cfg, cfg.defines, false, condition)
 	end
 
 
@@ -1055,13 +1056,14 @@
 	end
 
 
-	function vc2010.preprocessorDefinitions(cfg, defines, escapeQuotes)
+	function vc2010.preprocessorDefinitions(cfg, defines, escapeQuotes, condition)
 		if #defines > 0 then
 			defines = table.concat(defines, ";")
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
 			end
-			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
+			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
+			vc2010.element(3, 'PreprocessorDefinitions', condition, defines)
 		end
 	end
 
