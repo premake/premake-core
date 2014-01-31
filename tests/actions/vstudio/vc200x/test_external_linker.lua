@@ -36,16 +36,16 @@
 		kind "ConsoleApp"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				OutputFile="$(OutDir)\MyProject.elf"
-				LinkIncremental="0"
-				GenerateManifest="false"
-				ProgramDatabaseFile=""
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="-s"
+	OutputFile="$(OutDir)\MyProject.elf"
+	LinkIncremental="0"
+	GenerateManifest="false"
+	ProgramDatabaseFile=""
+	RandomizedBaseAddress="1"
+	DataExecutionPrevention="0"
+/>
 		]]
 	end
 
@@ -58,11 +58,11 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLibrarianTool"
-				AdditionalOptions="-s"
-				OutputFile="$(OutDir)\libMyProject.a"
-			/>
+<Tool
+	Name="VCLibrarianTool"
+	AdditionalOptions="-s"
+	OutputFile="$(OutDir)\libMyProject.a"
+/>
 		]]
 	end
 
@@ -75,10 +75,10 @@
 		links { "fs_stub", "net_stub" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				AdditionalDependencies="-lfs_stub -lnet_stub"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="-s"
+	AdditionalDependencies="-lfs_stub -lnet_stub"
 		]]
 	end
 
@@ -96,10 +96,10 @@
 		language "C++"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				OutputFile="$(OutDir)\MyProject.elf"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="-s"
+	OutputFile="$(OutDir)\MyProject.elf"
 		]]
 	end
 
@@ -119,9 +119,9 @@
 		language "C++"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				AdditionalDependencies="libMyProject2.a"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="-s"
+	AdditionalDependencies="libMyProject2.a"
 		]]
 	end

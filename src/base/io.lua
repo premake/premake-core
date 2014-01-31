@@ -41,10 +41,10 @@
 
 	function io.captured()
 		if io._captured then
-			if not io._captured_string then
+			if not io._captured_string and #io._captured > 0 then
 				io._captured_string = table.concat(io._captured, io.eol)
 			end
-			return io._captured_string
+			return io._captured_string or ""
 		end
 	end
 

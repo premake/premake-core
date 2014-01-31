@@ -44,12 +44,12 @@
 		links { "System.dll", "System.Data.dll" }
 		prepare()
 		test.capture [[
-		<AssemblyReference
-			RelativePath="System.dll"
-		/>
-		<AssemblyReference
-			RelativePath="System.Data.dll"
-		/>
+<AssemblyReference
+	RelativePath="System.dll"
+/>
+<AssemblyReference
+	RelativePath="System.Data.dll"
+/>
 		]]
 	end
 
@@ -62,9 +62,9 @@
 		links { "m", "System.dll" }
 		prepare()
 		test.capture [[
-		<AssemblyReference
-			RelativePath="System.dll"
-		/>
+<AssemblyReference
+	RelativePath="System.dll"
+/>
 		]]
 	end
 
@@ -77,8 +77,8 @@
 		links { "../nunit.framework.dll" }
 		prepare()
 		test.capture [[
-		<AssemblyReference
-			RelativePath="..\nunit.framework.dll"
-		/>
+<AssemblyReference
+	RelativePath="..\nunit.framework.dll"
+/>
 		]]
 	end

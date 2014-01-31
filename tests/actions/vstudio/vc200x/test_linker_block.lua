@@ -34,15 +34,15 @@
 		kind "ConsoleApp"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
-				LinkIncremental="2"
-				GenerateDebugInformation="false"
-				SubSystem="1"
-				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"
-			/>
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	EntryPointSymbol="mainCRTStartup"
+	TargetMachine="1"
+/>
 		]]
 	end
 
@@ -55,15 +55,15 @@
 		kind "WindowedApp"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
-				LinkIncremental="2"
-				GenerateDebugInformation="false"
-				SubSystem="2"
-				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"
-			/>
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="2"
+	EntryPointSymbol="mainCRTStartup"
+	TargetMachine="1"
+/>
 		]]
 	end
 
@@ -76,15 +76,15 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.dll"
-				LinkIncremental="2"
-				GenerateDebugInformation="false"
-				SubSystem="2"
-				ImportLibrary="MyProject.lib"
-				TargetMachine="1"
-			/>
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.dll"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="2"
+	ImportLibrary="MyProject.lib"
+	TargetMachine="1"
+/>
 		]]
 	end
 
@@ -97,10 +97,10 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\MyProject.lib"
-			/>
+<Tool
+	Name="VCLibrarianTool"
+	OutputFile="$(OutDir)\MyProject.lib"
+/>
 		]]
 	end
 
@@ -113,12 +113,12 @@
 		flags "Symbols"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="true"
+	ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 		]]
 	end
 
@@ -132,15 +132,15 @@
 		debugformat "C7"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"
-			/>
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="true"
+	SubSystem="1"
+	EntryPointSymbol="mainCRTStartup"
+	TargetMachine="1"
+/>
 		]]
 	end
 
@@ -153,11 +153,11 @@
 		files { "MyProject.def" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
-				LinkIncremental="2"
-				ModuleDefinitionFile="MyProject.def"
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	ModuleDefinitionFile="MyProject.def"
 		]]
 	end
 
@@ -170,10 +170,10 @@
 		flags { "NoIncrementalLink" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
-				LinkIncremental="1"
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="1"
 		]]
 	end
 
@@ -187,11 +187,11 @@
 		linkoptions { "/ltcg", "/lZ" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLibrarianTool"
-				AdditionalOptions="/ltcg /lZ"
-				OutputFile="$(OutDir)\MyProject.lib"
-			/>
+<Tool
+	Name="VCLibrarianTool"
+	AdditionalOptions="/ltcg /lZ"
+	OutputFile="$(OutDir)\MyProject.lib"
+/>
 		]]
 	end
 
@@ -204,9 +204,9 @@
 		links { "GL", "GLU" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="GL.lib GLU.lib"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalDependencies="GL.lib GLU.lib"
 		]]
 	end
 
@@ -223,9 +223,9 @@
 		language "C++"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
 		]]
 	end
 
@@ -243,10 +243,10 @@
 		language "C++"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
-				AdditionalDependencies="MyProject2.lib"
+<Tool
+	Name="VCLinkerTool"
+	LinkLibraryDependencies="false"
+	AdditionalDependencies="MyProject2.lib"
 		]]
 	end
 
@@ -259,9 +259,9 @@
 		links { "My Lib" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;My Lib.lib&quot;"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalDependencies="&quot;My Lib.lib&quot;"
 		]]
 	end
 
@@ -274,8 +274,8 @@
 		links { "kernel32", "System.dll", "System.Data.dll" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalDependencies="kernel32.lib"
 		]]
 	end

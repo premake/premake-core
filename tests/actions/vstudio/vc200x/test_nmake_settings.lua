@@ -33,19 +33,19 @@
 	function suite.onDefaultSettings()
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine=""
-				ReBuildCommandLine=""
-				CleanCommandLine=""
-				Output="$(OutDir)MyProject"
-				PreprocessorDefinitions=""
-				IncludeSearchPath=""
-				ForcedIncludes=""
-				AssemblySearchPath=""
-				ForcedUsingAssemblies=""
-				CompileAsManaged=""
-			/>
+<Tool
+	Name="VCNMakeTool"
+	BuildCommandLine=""
+	ReBuildCommandLine=""
+	CleanCommandLine=""
+	Output="$(OutDir)MyProject"
+	PreprocessorDefinitions=""
+	IncludeSearchPath=""
+	ForcedIncludes=""
+	AssemblySearchPath=""
+	ForcedUsingAssemblies=""
+	CompileAsManaged=""
+/>
 		]]
 	end
 
@@ -58,12 +58,12 @@
 		targetextension ".exe"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine=""
-				ReBuildCommandLine=""
-				CleanCommandLine=""
-				Output="$(OutDir)MyProject.exe"
+<Tool
+	Name="VCNMakeTool"
+	BuildCommandLine=""
+	ReBuildCommandLine=""
+	CleanCommandLine=""
+	Output="$(OutDir)MyProject.exe"
 		]]
 	end
 
@@ -76,11 +76,11 @@
 		buildcommands { "command 1" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine="command 1"
-				ReBuildCommandLine=""
-				CleanCommandLine=""
+<Tool
+	Name="VCNMakeTool"
+	BuildCommandLine="command 1"
+	ReBuildCommandLine=""
+	CleanCommandLine=""
 		]]
 	end
 
@@ -88,11 +88,11 @@
 		buildcommands { "command 1", "command 2" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine="command 1&#x0D;&#x0A;command 2"
-				ReBuildCommandLine=""
-				CleanCommandLine=""
+<Tool
+	Name="VCNMakeTool"
+	BuildCommandLine="command 1&#x0D;&#x0A;command 2"
+	ReBuildCommandLine=""
+	CleanCommandLine=""
 		]]
 	end
 
@@ -100,11 +100,11 @@
 		rebuildcommands { "command 1" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine=""
-				ReBuildCommandLine="command 1"
-				CleanCommandLine=""
+<Tool
+	Name="VCNMakeTool"
+	BuildCommandLine=""
+	ReBuildCommandLine="command 1"
+	CleanCommandLine=""
 		]]
 	end
 
@@ -112,10 +112,10 @@
 		cleancommands { "command 1" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine=""
-				ReBuildCommandLine=""
-				CleanCommandLine="command 1"
+<Tool
+	Name="VCNMakeTool"
+	BuildCommandLine=""
+	ReBuildCommandLine=""
+	CleanCommandLine="command 1"
 		]]
 	end

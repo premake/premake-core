@@ -33,11 +33,11 @@
 		files { "hello.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
-			>
-		</File>
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+	</File>
 		]]
 	end
 
@@ -50,19 +50,19 @@
 		files { "src/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
-		<Filter
-			Name="src"
-			>
-			<File
-				RelativePath="src\hello.cpp"
-				>
-			</File>
-		</Filter>
+<Files>
+	<Filter
+		Name="src"
+		>
 		<File
-			RelativePath="so_long.cpp"
+			RelativePath="src\hello.cpp"
 			>
 		</File>
+	</Filter>
+	<File
+		RelativePath="so_long.cpp"
+		>
+	</File>
 		]]
 	end
 
@@ -75,23 +75,23 @@
 		files { "src/greetings/hello.cpp", "so_long.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
+<Files>
+	<Filter
+		Name="src"
+		>
 		<Filter
-			Name="src"
+			Name="greetings"
 			>
-			<Filter
-				Name="greetings"
+			<File
+				RelativePath="src\greetings\hello.cpp"
 				>
-				<File
-					RelativePath="src\greetings\hello.cpp"
-					>
-				</File>
-			</Filter>
+			</File>
 		</Filter>
-		<File
-			RelativePath="so_long.cpp"
-			>
-		</File>
+	</Filter>
+	<File
+		RelativePath="so_long.cpp"
+		>
+	</File>
 		]]
 	end
 
@@ -105,15 +105,15 @@
 		vpaths { ["Source Files"] = "**.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
-		<Filter
-			Name="Source Files"
+<Files>
+	<Filter
+		Name="Source Files"
+		>
+		<File
+			RelativePath="src\hello.cpp"
 			>
-			<File
-				RelativePath="src\hello.cpp"
-				>
-			</File>
-		</Filter>
+		</File>
+	</Filter>
 		]]
 	end
 
@@ -128,11 +128,11 @@
 		files { "hello.lua" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.lua"
-			>
-		</File>
+<Files>
+	<File
+		RelativePath="hello.lua"
+		>
+	</File>
 		]]
 	end
 
@@ -147,16 +147,16 @@
 		files { "hello.c" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.c"
+<Files>
+	<File
+		RelativePath="hello.c"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="1"
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="1"
 		]]
 	end
 
@@ -166,16 +166,16 @@
 		files { "hello.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="2"
 		]]
 	end
 
@@ -189,16 +189,16 @@
 		pchsource "afxwin.cpp"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="afxwin.cpp"
+<Files>
+	<File
+		RelativePath="afxwin.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
+			<Tool
+				Name="VCCLCompilerTool"
+				UsePrecompiledHeader="1"
 		]]
 	end
 
@@ -213,19 +213,19 @@
 		removefiles { "hello.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			ExcludedFromBuild="true"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-				/>
-			</FileConfiguration>
-		</File>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+		</FileConfiguration>
+	</File>
 		]]
 	end
 
@@ -235,27 +235,27 @@
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			ExcludedFromBuild="true"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-				/>
-			</FileConfiguration>
-		</File>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			ExcludedFromBuild="true"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+		</FileConfiguration>
+	</File>
 		]]
 	end
 
@@ -275,19 +275,19 @@
 			buildoutputs { "$(IntDir)/$(InputName).obj" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.x"
+<Files>
+	<File
+		RelativePath="hello.x"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="cxc -c &quot;$(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
-					Outputs="$(IntDir)/$(InputName).obj"
-				/>
-			</FileConfiguration>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine="cxc -c &quot;$(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
+				Outputs="$(IntDir)/$(InputName).obj"
+			/>
+		</FileConfiguration>
 		]]
 	end
 
@@ -303,19 +303,19 @@
 			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.x"
+<Files>
+	<File
+		RelativePath="hello.x"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="cxc -c hello.x -o ../tmp/Debug/hello.xo&#x0D;&#x0A;c2o -c ../tmp/Debug/hello.xo -o ../tmp/Debug/hello.obj"
-					Outputs="../tmp/Debug/hello.obj"
-				/>
-			</FileConfiguration>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine="cxc -c hello.x -o ../tmp/Debug/hello.xo&#x0D;&#x0A;c2o -c ../tmp/Debug/hello.xo -o ../tmp/Debug/hello.obj"
+				Outputs="../tmp/Debug/hello.obj"
+			/>
+		</FileConfiguration>
 		]]
 	end
 
@@ -329,35 +329,35 @@
 		files { "hello.cpp", "greetings/hello.cpp" }
 		prepare()
 		test.capture [[
-	<Files>
-		<Filter
-			Name="greetings"
-			>
-			<File
-				RelativePath="greetings\hello.cpp"
-				>
-			</File>
-		</Filter>
+<Files>
+	<Filter
+		Name="greetings"
+		>
 		<File
-			RelativePath="hello.cpp"
+			RelativePath="greetings\hello.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\hello1.obj"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ObjectFile="$(IntDir)\hello1.obj"
-				/>
-			</FileConfiguration>
 		</File>
+	</Filter>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				ObjectFile="$(IntDir)\hello1.obj"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				ObjectFile="$(IntDir)\hello1.obj"
+			/>
+		</FileConfiguration>
+	</File>
 		]]
 	end
 
@@ -373,16 +373,16 @@
 
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					ForcedIncludeFiles="..\include\force1.h;..\include\force2.h"
+			<Tool
+				Name="VCCLCompilerTool"
+				ForcedIncludeFiles="..\include\force1.h;..\include\force2.h"
 		]]
 	end
 
@@ -398,16 +398,16 @@
 
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					AdditionalOptions="/Xc"
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Xc"
 		]]
 	end
 
@@ -422,16 +422,16 @@
 			optimize "On"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="3"
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
 		]]
 	end
 
@@ -442,16 +442,16 @@
 			optimize "Size"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="1"
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="1"
 		]]
 	end
 
@@ -461,16 +461,16 @@
 			optimize "Speed"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="2"
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
 		]]
 	end
 
@@ -480,16 +480,16 @@
 			optimize "Full"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="3"
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
 		]]
 	end
 
@@ -499,16 +499,16 @@
 			optimize "Off"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
 		]]
 	end
 
@@ -518,15 +518,15 @@
 			optimize "Debug"
 		prepare()
 		test.capture [[
-	<Files>
-		<File
-			RelativePath="hello.cpp"
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
 		]]
 	end

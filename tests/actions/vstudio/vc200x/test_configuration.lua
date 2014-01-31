@@ -34,13 +34,13 @@
 	function suite.defaultSettings()
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
-			ConfigurationType="1"
-			CharacterSet="2"
-			>
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="."
+	IntermediateDirectory="obj\Debug"
+	ConfigurationType="1"
+	CharacterSet="2"
+	>
 		]]
 	end
 
@@ -54,8 +54,8 @@
 		platforms { "x32" }
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
+<Configuration
+	Name="Debug|Win32"
 		]]
 	end
 
@@ -68,8 +68,8 @@
 		platforms { "x64" }
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|x64"
+<Configuration
+	Name="Debug|x64"
 		]]
 	end
 
@@ -82,9 +82,9 @@
 		targetdir("../bin")
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="..\bin"
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="..\bin"
 		]]
 	end
 
@@ -98,12 +98,12 @@
 		kind "Makefile"
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
-			ConfigurationType="0"
-			>
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="."
+	IntermediateDirectory="obj\Debug"
+	ConfigurationType="0"
+	>
 		]]
 	end
 
@@ -111,11 +111,11 @@
 		kind "None"
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
-			ConfigurationType="0"
-			>
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="."
+	IntermediateDirectory="obj\Debug"
+	ConfigurationType="0"
+	>
 		]]
 	end

@@ -384,7 +384,7 @@
 		end)
 		if #contents > 0 then
 			_p(2,'<Lib>')
-			_p("%s", contents)
+			io.printf("%s", contents)
 			_p(2,'</Lib>')
 		end
 	end
@@ -529,7 +529,7 @@
 
 				if #contents > 0 then
 					_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
-					_p("%s", contents)
+					io.printf("%s", contents)
 					_p(2,'</ClCompile>')
 				else
 					_x(2,'<ClCompile Include=\"%s\" />', path.translate(file.relpath))

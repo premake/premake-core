@@ -49,9 +49,9 @@
 	function suite.normalLink_onIncludedConfig()
 		prepare("Zeus")
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\MyProject.exe"
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
 		]]
 	end
 
@@ -60,10 +60,10 @@
 		system "PS3"
 		prepare("Zeus")
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				OutputFile="$(OutDir)\MyProject.elf"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="-s"
+	OutputFile="$(OutDir)\MyProject.elf"
 		]]
 	end
 
@@ -77,10 +77,10 @@
 	function suite.explicitLink_onExcludedConfig()
 		prepare("Ares")
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
-				AdditionalDependencies="MyProject2.lib"
+<Tool
+	Name="VCLinkerTool"
+	LinkLibraryDependencies="false"
+	AdditionalDependencies="MyProject2.lib"
 		]]
 	end
 
@@ -89,9 +89,9 @@
 		system "PS3"
 		prepare("Ares")
 		test.capture [[
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="-s"
-				AdditionalDependencies="libMyProject2.a"
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="-s"
+	AdditionalDependencies="libMyProject2.a"
 		]]
 	end

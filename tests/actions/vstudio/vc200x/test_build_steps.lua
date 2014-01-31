@@ -32,9 +32,9 @@
 	function suite.noCommandLine_onNoBuildSteps()
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
+<Tool
+	Name="VCPreBuildEventTool"
+/>
 		]]
 	end
 
@@ -47,10 +47,10 @@
 		prebuildcommands { "command_1", "command_2" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="command_1&#x0D;&#x0A;command_2"
-			/>
+<Tool
+	Name="VCPreBuildEventTool"
+	CommandLine="command_1&#x0D;&#x0A;command_2"
+/>
 		]]
 	end
 
@@ -65,10 +65,10 @@
 		prebuildmessage "Pre-building..."
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCPreBuildEventTool"
-				Description="Pre-building..."
-				CommandLine="command1"
-			/>
+<Tool
+	Name="VCPreBuildEventTool"
+	Description="Pre-building..."
+	CommandLine="command1"
+/>
 		]]
 	end

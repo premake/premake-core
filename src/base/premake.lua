@@ -78,11 +78,21 @@
 ---
 -- Write a formatted string to the exported file, after decreasing the
 -- indentation level by one.
+--
+-- @param i
+--    If set to a number, the indentation level will be decreased by
+--    this amount. If nil, the indentation level is decremented and
+--    no output is written. Otherwise, pass to premake.w() as the
+--    formatting string, followed by any additional arguments.
 ---
 
-	function premake.pop(...)
-		premake.indentation = premake.indentation - 1
-		premake.w(...)
+	function premake.pop(i, ...)
+		if i == nil or type(i) == "number" then
+			premake.indentation = premake.indentation - (i or 1)
+		else
+			premake.indentation = premake.indentation - 1
+			premake.w(i, ...)
+		end
 	end
 
 
@@ -90,11 +100,21 @@
 ---
 -- Write a formatted string to the exported file, and increase the
 -- indentation level by one.
+--
+-- @param i
+--    If set to a number, the indentation level will be increased by
+--    this amount. If nil, the indentation level is incremented and
+--    no output is written. Otherwise, pass to premake.w() as the
+--    formatting string, followed by any additional arguments.
 ---
 
-	function premake.push(...)
-		premake.w(...)
-		premake.indentation = premake.indentation + 1
+	function premake.push(i, ...)
+		if i == nil or type(i) == "number" then
+			premake.indentation = premake.indentation + (i or 1)
+		else
+			premake.w(i, ...)
+			premake.indentation = premake.indentation + 1
+		end
 	end
 
 
@@ -263,4 +283,19 @@
 		else
 			_p('')
 		end
+	end
+
+
+
+---
+-- Write a formatted string to the exported file, after passing all
+-- arguments (except for the first, which is the formatting string)
+-- through premake.esc().
+---
+
+	function premake.x(msg, ...)
+		for i = 1, #arg do
+			arg[i] = premake.esc(arg[i])
+		end
+		premake.w(msg, unpack(arg))
 	end

@@ -180,7 +180,7 @@
 						_p(3,'<Link>%s</Link>', path.translate(link))
 					end
 					if #contents > 0 then
-						_p("%s", contents)
+						io.printf("%s", contents)
 					end
 					_p(2,'</%s>', info.action)
 				else

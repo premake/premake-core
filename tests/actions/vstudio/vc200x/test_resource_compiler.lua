@@ -32,9 +32,9 @@
 	function suite.looksGood_onDefaultSettings()
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
+<Tool
+	Name="VCResourceCompilerTool"
+/>
 		]]
 	end
 
@@ -48,9 +48,9 @@
 		resincludedirs { "../res/include" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\include;..\res\include"
-			/>
+<Tool
+	Name="VCResourceCompilerTool"
+	AdditionalIncludeDirectories="..\include;..\res\include"
+/>
 		]]
 	end
