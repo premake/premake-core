@@ -4,32 +4,33 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local vstudio = premake.vstudio
-	local vc200x = premake.vstudio.vc200x
-	local project = premake.project
+	local project = p.project
+
+	local m = p.vstudio.vc200x
 
 
 --
 -- Generate a Visual Studio 200x C++ user file, with support for the new platforms API.
 --
 
-	function vc200x.generate_user(prj)
-		vc200x.xmlElement()
-		_p('<VisualStudioUserFile')
-		_p(1,'ProjectType="Visual C++"')
-		vc200x.version()
-		_p(1,'ShowAllFiles="false"')
-		_p(1,'>')
+	function m.generate_user(prj)
+		m.xmlElement()
+		p.push('<VisualStudioUserFile')
+		p.w('ProjectType="Visual C++"')
+		m.version()
+		p.w('ShowAllFiles="false"')
+		p.w('>')
 
-		_p(1,'<Configurations>')
+		p.push('<Configurations>')
 		for cfg in project.eachconfig(prj) do
-			vc200x.userconfiguration(cfg)
-			vc200x.debugdir(cfg)
-			_p(2,'</Configuration>')
+			m.userconfiguration(cfg)
+			m.debugdir(cfg)
+			p.pop('</Configuration>')
 		end
-		_p(1,'</Configurations>')
-
-		_p('</VisualStudioUserFile>')
+		p.pop('</Configurations>')
+		p.pop('</VisualStudioUserFile>')
 	end
 
 
@@ -38,10 +39,10 @@
 -- build configuration/platform pairing.
 --
 
-	function vc200x.userconfiguration(cfg)
-		_p(2,'<Configuration')
-		_x(3,'Name="%s"', vstudio.projectConfig(cfg))
-		_p(3,'>')
+	function m.userconfiguration(cfg)
+		p.push('<Configuration')
+		p.x('Name="%s"', vstudio.projectConfig(cfg))
+		p.w('>')
 	end
 
 
@@ -49,29 +50,29 @@
 -- Write out the debug settings for this project.
 --
 
-	function vc200x.debugdir(cfg)
-		_p(3,'<DebugSettings')
+	function m.debugdir(cfg)
+		p.push('<DebugSettings')
 
 		if cfg.debugcommand then
 			local command = project.getrelative(cfg.project, cfg.debugcommand)
-			_x(4,'Command="%s"', path.translate(command))
+			p.x('Command="%s"', path.translate(command))
 		end
 
 		if cfg.debugdir then
 			local debugdir = project.getrelative(cfg.project, cfg.debugdir)
-			_x(4,'WorkingDirectory="%s"', path.translate(debugdir))
+			p.x('WorkingDirectory="%s"', path.translate(debugdir))
 		end
 
 		if #cfg.debugargs > 0 then
-			_x(4,'CommandArguments="%s"', table.concat(cfg.debugargs, " "))
+			p.x('CommandArguments="%s"', table.concat(cfg.debugargs, " "))
 		end
 
 		if #cfg.debugenvs > 0 then
-			_p(4,'Environment="%s"', table.concat(premake.esc(cfg.debugenvs), "&#x0A;"))
+			p.x('Environment="%s"', table.concat(cfg.debugenvs, "\n"))
 			if cfg.flags.DebugEnvsDontMerge then
-				_p(4,'EnvironmentMerge="false"')
+				p.x('EnvironmentMerge="false"')
 			end
 		end
 
-		_p(3,'/>')
+		p.pop('/>')
 	end

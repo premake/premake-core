@@ -103,6 +103,7 @@
 				if thisName == testName then
 					m.configuration(cfg)
 					m.tools(cfg)
+					p.pop('</Configuration>')
 
 				-- Otherwise, check the list of valid configurations I built
 				-- earlier. If this configuration is in the list, then I will
@@ -113,9 +114,8 @@
 				elseif not isRealConfig[testName] then
 					-- this is a fake config to make VS happy
 					m.emptyConfiguration(cfg, arch)
+					p.pop('</Configuration>')
 				end
-
-				p.pop('</Configuration>')
 
 			end
 		end
