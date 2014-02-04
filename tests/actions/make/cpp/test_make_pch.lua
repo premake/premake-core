@@ -91,6 +91,7 @@
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
+.NOTPARALLEL: $(GCH) $(PCH)
 $(GCH): $(PCH)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
@@ -109,6 +110,7 @@ endif
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
+.NOTPARALLEL: $(GCH) $(PCH)
 $(GCH): $(PCH)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
