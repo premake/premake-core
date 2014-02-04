@@ -463,103 +463,56 @@
 	end
 
 
+	m.elements.VCCLCompilerTool = function(cfg, toolset)
+		if not toolset then
+			-- no, use the standard set of attributes
+			return {
+				m.compilerToolName,
+				m.VCCLCompilerTool_additionalOptions,
+				m.optimization,
+				m.additionalIncludeDirectories,
+				m.wholeProgramOptimization,
+				m.preprocessorDefinitions,
+				m.minimalRebuild,
+				m.basicRuntimeChecks,
+				m.bufferSecurityCheck,
+				m.stringPooling,
+				m.exceptionHandling,
+				m.runtimeLibrary,
+				m.enableFunctionLevelLinking,
+				m.enableEnhancedInstructionSet,
+				m.floatingPointModel,
+				m.runtimeTypeInfo,
+				m.treatWChar_tAsBuiltInType,
+				m.usePrecompiledHeader,
+				m.programDatabaseFileName,
+				m.warnings,
+				m.debugInformationFormat,
+				m.compileAs,
+				m.forcedIncludeFiles,
+				m.omitDefaultLib,
+			}
+		else
+			-- yes, use the custom tool attributes
+			return {
+				m.compilerToolName,
+				m.VCCLExternalCompilerTool_additionalOptions,
+				m.additionalIncludeDirectories,
+				m.preprocessorDefinitions,
+				m.usePrecompiledHeader,
+				m.programDatabaseFileName,
+				m.debugInformationFormat,
+				m.compileAs,
+				m.forcedIncludeFiles,
+			}
+		end
+
+	end
+
 	function m.VCCLCompilerTool(cfg)
 		p.push('<Tool')
-		m.compilerToolName(cfg)
-
-		-- Decide between the built-in compiler or an external toolset;
-		-- PS3 uses the external toolset
-		local toolset = m.toolset(cfg)
-		if toolset then
-			m.VCCLExternalCompilerTool(cfg, toolset)
-		else
-			m.VCCLBuiltInCompilerTool(cfg)
-		end
-
+		p.callArray(m.elements.VCCLCompilerTool, cfg, m.toolset(cfg))
 		p.pop('/>')
-	end
-
-
-	m.elements.builtInCompilerTool = function(cfg)
-		return {
-			m.enableEnhancedInstructionSet,
-			m.floatingPointModel,
-			m.runtimeTypeInfo,
-			m.treatWChar_tAsBuiltInType,
-		}
-	end
-
-	function m.VCCLBuiltInCompilerTool(cfg)
-		m.VCCLCompilerTool_additionalOptions(cfg)
-		m.optimization(cfg, 4)
-
-		if cfg.flags.NoFramePointer then
-			p.w('OmitFramePointers="%s"', m.bool(true))
-		end
-
-		m.additionalIncludeDirectories(cfg, cfg.includedirs)
-		m.wholeProgramOptimization(cfg)
-		m.preprocessorDefinitions(cfg, cfg.defines)
-
-		m.minimalRebuild(cfg)
-		m.basicRuntimeChecks(cfg)
-		m.bufferSecurityCheck(cfg)
-
-		if config.isOptimizedBuild(cfg) then
-			p.w('StringPooling="%s"', m.bool(true))
-		end
-
-		if cfg.flags.NoExceptions then
-			p.w('ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
-		elseif cfg.flags.SEH and _ACTION > "vs2003" then
-			p.w('ExceptionHandling="2"')
-		end
-
-		m.runtimeLibrary(cfg)
-
-		p.w('EnableFunctionLevelLinking="%s"', m.bool(true))
-
-		p.callArray(m.elements.builtInCompilerTool, cfg)
-
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			p.w('UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			p.x('PrecompiledHeaderThrough="%s"', cfg.pchheader)
-		else
-			p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
-		end
-
-		m.programDatabaseFileName(cfg)
-		m.warnings(cfg)
-
-		p.w('DebugInformationFormat="%s"', m.symbols(cfg))
-
-		if cfg.project.language == "C" then
-			p.w('CompileAs="1"')
-		end
-
-		m.forcedIncludeFiles(cfg)
-		m.omitDefaultLib(cfg)
-	end
-
-
-	function m.VCCLExternalCompilerTool(cfg, toolset)
-		m.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
-		m.additionalIncludeDirectories(cfg, cfg.includedirs)
-		m.preprocessorDefinitions(cfg, cfg.defines)
-
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			p.w('UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-			p.x('PrecompiledHeaderThrough="%s"', cfg.pchheader)
-		else
-			p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or cfg.flags.NoPCH, 0, 2))
-		end
-
-		m.programDatabaseFileName(cfg)
-
-		p.w('DebugInformationFormat="0"')
-		p.w('CompileAs="0"')
-
-		m.forcedIncludeFiles(cfg)
 	end
 
 
@@ -749,8 +702,8 @@
 			p.x('AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 
-		m.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines))
-			m.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+		m.resourcePreprocessorDefinitions(cfg)
+		m.resourceAdditionalIncludeDirectories(cfg)
 
 		p.pop('/>')
 	end
@@ -950,7 +903,7 @@
 	function m.fileConfiguration_compilerAttributes(cfg, filecfg)
 
 		-- Must always have a name attribute
-		m.compilerToolName(cfg, filecfg)
+		m.compilerToolName(filecfg or cfg)
 
 		if filecfg then
 			m.customBuildTool(filecfg)
@@ -1071,9 +1024,9 @@
 ---------------------------------------------------------------------------
 
 
-	function m.additionalIncludeDirectories(cfg, includedirs)
-		if #includedirs > 0 then
-			local dirs = project.getrelative(cfg.project, includedirs)
+	function m.additionalIncludeDirectories(cfg)
+		if #cfg.includedirs > 0 then
+			local dirs = project.getrelative(cfg.project, cfg.includedirs)
 			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
 		end
 	end
@@ -1151,22 +1104,52 @@
 	end
 
 
-	function m.compileAs(filecfg)
-		if path.iscfile(filecfg.name) ~= project.isc(filecfg.project) then
-			if path.iscppfile(filecfg.name) then
-				local value = iif(filecfg.project.language == p.CPP, 1, 2)
-				p.w('CompileAs="%s"', value)
+	function m.compileAs(cfg, toolset)
+		local prjcfg, filecfg
+		if cfg.config then
+			prjcfg = cfg.config
+			filecfg = cfg
+		else
+			prjcfg = cfg
+			filecfg = nil
+		end
+
+		if filecfg then
+			if path.iscfile(filecfg.name) ~= project.isc(filecfg.project) then
+				if path.iscppfile(filecfg.name) then
+					local value = iif(filecfg.project.language == p.CPP, 1, 2)
+					p.w('CompileAs="%s"', value)
+				end
+			end
+		else
+			local compileAs
+			if toolset then
+				compileAs = "0"
+			elseif prjcfg.project.language == "C" then
+				compileAs = "1"
+			end
+			if compileAs then
+				p.w('CompileAs="%s"', compileAs)
 			end
 		end
 	end
 
 
-	function m.compilerToolName(cfg, filecfg)
+	function m.compilerToolName(cfg)
+		local prjcfg, filecfg
+		if cfg.config then
+			prjcfg = cfg.config
+			filecfg = cfg
+		else
+			prjcfg = cfg
+			filecfg = nil
+		end
+
 		local name
-		if fileconfig.hasCustomBuildRule(filecfg) then
+		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
 			name = "VCCustomBuildTool"
 		else
-			name = iif(cfg.system == p.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
+			name = iif(prjcfg.system == p.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
 		end
 		p.w('Name="%s"', name)
 	end
@@ -1193,11 +1176,31 @@
 	end
 
 
+	function m.debugInformationFormat(cfg, toolset)
+		local fmt = iif(toolset, "0", m.symbols(cfg))
+		p.w('DebugInformationFormat="%s"', fmt)
+	end
+
+
 	function m.enableEnhancedInstructionSet(cfg)
 		local map = { SSE = "1", SSE2 = "2" }
 		local value = map[cfg.vectorextensions]
 		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
 			p.w('EnableEnhancedInstructionSet="%d"', value)
+		end
+	end
+
+
+	function m.enableFunctionLevelLinking(cfg)
+		p.w('EnableFunctionLevelLinking="%s"', m.bool(true))
+	end
+
+
+	function m.exceptionHandling(cfg)
+		if cfg.flags.NoExceptions then
+			p.w('ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
+		elseif cfg.flags.SEH and _ACTION > "vs2003" then
+			p.w('ExceptionHandling="2"')
 		end
 	end
 
@@ -1303,6 +1306,13 @@
 	end
 
 
+	function m.omitFramePointers(cfg)
+		if cfg.flags.NoFramePointer then
+			p.w('OmitFramePointers="%s"', m.bool(true))
+		end
+	end
+
+
 	function m.optimization(cfg)
 		local map = { Off=0, On=3, Debug=0, Full=3, Size=1, Speed=2 }
 		local value = map[cfg.optimize]
@@ -1329,9 +1339,9 @@
 	end
 
 
-	function m.preprocessorDefinitions(cfg, defines)
-		if #defines > 0 then
-			p.x('PreprocessorDefinitions="%s"', table.concat(defines, ";"))
+	function m.preprocessorDefinitions(cfg)
+		if #cfg.defines > 0 then
+			p.x('PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
 		end
 	end
 
@@ -1384,6 +1394,23 @@
 	end
 
 
+	function m.resourceAdditionalIncludeDirectories(cfg)
+		local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
+		if #dirs > 0 then
+			dirs = project.getrelative(cfg.project, dirs)
+			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
+	function m.resourcePreprocessorDefinitions(cfg)
+		local defs = table.join(cfg.defines, cfg.resdefines)
+		if #defs > 0 then
+			p.x('PreprocessorDefinitions="%s"', table.concat(defs, ";"))
+		end
+	end
+
+
 	function m.rootNamespace(prj)
 		local hasWindows = project.hasConfig(prj, function(cfg)
 			return cfg.system == p.WINDOWS
@@ -1413,6 +1440,13 @@
 	function m.runtimeTypeInfo(cfg)
 		if cfg.flags.NoRTTI and not cfg.flags.Managed then
 			p.w('RuntimeTypeInfo="false"')
+		end
+	end
+
+
+	function m.stringPooling(cfg)
+		if config.isOptimizedBuild(cfg) then
+			p.w('StringPooling="%s"', m.bool(true))
 		end
 	end
 
@@ -1463,15 +1497,41 @@
 	end
 
 
-	function m.usePrecompiledHeader(filecfg)
-		local cfg = filecfg.config
-		if cfg.pchsource == filecfg.abspath and
-		   not cfg.flags.NoPCH and
-		   cfg.system ~= p.PS3
-		then
-			p.w('UsePrecompiledHeader="1"')
+	function m.usePrecompiledHeader(cfg)
+		-- TODO: make a generic way to get both the project and, if
+		-- applicable, the file configuration from an object that might
+		-- be either. Then I can write more generic code.
+
+		local prjcfg, filecfg
+		if cfg.config then
+			prjcfg = cfg.config
+			filecfg = cfg
+		else
+			prjcfg = cfg
+			filecfg = nil
+		end
+
+		-- AND THEN simplify this block; I can merge some of this logic.
+
+		if not filecfg then
+			-- project configuration
+			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
+				p.w('UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
+				p.x('PrecompiledHeaderThrough="%s"', prjcfg.pchheader)
+			else
+				p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or prjcfg.flags.NoPCH, 0, 2))
+			end
+		else
+			-- file configuration
+			if prjcfg.pchsource == filecfg.abspath and
+			   not prjcfg.flags.NoPCH and
+			   prjcfg.system ~= p.PS3
+			then
+				p.w('UsePrecompiledHeader="1"')
+			end
 		end
 	end
+
 
 
 	function m.version(prj)
