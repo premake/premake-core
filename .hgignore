@@ -12,6 +12,8 @@ obj
 release
 ipch
 src/host/scripts.c
+**.lnt
+**.vlstatus
 
 Makefile
 *.make
