@@ -2,6 +2,10 @@ syntax: glob
 
 .DS_Store
 
+*.bak
+*.orig
+*~
+
 build
 bin
 obj
