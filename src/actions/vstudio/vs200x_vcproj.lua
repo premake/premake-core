@@ -870,6 +870,7 @@
 				_p("%s", compilerAttribs)
 			end
 			p.pop('/>')
+
 			p.pop('</FileConfiguration>')
 		end
 	end
@@ -909,6 +910,7 @@
 			m.customBuildTool(filecfg)
 			m.objectFile(filecfg)
 			m.optimization(filecfg)
+			m.preprocessorDefinitions(filecfg)
 			m.usePrecompiledHeader(filecfg)
 			m.VCCLCompilerTool_fileConfig_additionalOptions(filecfg)
 			m.forcedIncludeFiles(filecfg)

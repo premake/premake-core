@@ -530,3 +530,28 @@
 				Optimization="0"
 		]]
 	end
+
+
+
+--
+-- Check handling of per-file defines.
+--
+
+	function suite.defines()
+		files { "hello.cpp" }
+		configuration "hello.cpp"
+			defines { "HELLO" }
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				PreprocessorDefinitions="HELLO"
+		]]
+	end
