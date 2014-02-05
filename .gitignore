@@ -2,6 +2,7 @@ syntax: glob
 
 .DS_Store
 
+*.bak
 *.orig
 *~
 
@@ -11,6 +12,8 @@ obj
 release
 ipch
 src/host/scripts.c
+**.lnt
+**.vlstatus
 
 Makefile
 *.make
