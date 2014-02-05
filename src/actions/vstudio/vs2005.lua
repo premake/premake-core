@@ -14,6 +14,7 @@
 ---
 
 	function vs2005.generateSolution(sln)
+		io.indent = nil -- back to default
 		io.eol = "\r\n"
 		io.esc = vs2005.esc
 
