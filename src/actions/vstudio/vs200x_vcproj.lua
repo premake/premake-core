@@ -704,6 +704,7 @@
 
 		m.resourcePreprocessorDefinitions(cfg)
 		m.resourceAdditionalIncludeDirectories(cfg)
+		m.culture(cfg)
 
 		p.pop('/>')
 	end
@@ -1166,6 +1167,16 @@
 		}
 		p.w('ConfigurationType="%s"', cfgtypes[cfg.kind] or 1)
 	end
+
+
+
+	function m.culture(cfg)
+		local value = vstudio.cultureForLocale(cfg.locale)
+		if value then
+			p.w('Culture="%d"', value)
+		end
+	end
+
 
 
 	function m.customBuildTool(filecfg)

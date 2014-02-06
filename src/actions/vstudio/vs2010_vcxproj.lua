@@ -322,6 +322,7 @@
 	vc2010.elements.resourceCompile = {
 		"resourcePreprocessorDefinitions",
 		"resourceAdditionalIncludeDirectories",
+		"culture",
 	}
 
 	function vc2010.resourceCompile(cfg)
@@ -764,6 +765,14 @@
 			None = "Makefile",
 		}
 		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
+	end
+
+
+	function vc2010.culture(cfg)
+		local value = vstudio.cultureForLocale(cfg.locale)
+		if value then
+			_p(3,'<Culture>0x%04x</Culture>', value)
+		end
 	end
 
 

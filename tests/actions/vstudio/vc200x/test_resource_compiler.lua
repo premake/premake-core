@@ -54,3 +54,19 @@
 />
 		]]
 	end
+
+
+--
+-- Test locale conversion to culture codes.
+--
+
+	function suite.culture_en_NZ()
+		locale "en-NZ"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCResourceCompilerTool"
+	Culture="5129"
+/>
+		]]
+	end

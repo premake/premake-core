@@ -92,3 +92,17 @@
 			<PreprocessorDefinitions>VERSION_STRING=\"1.0.0 (testing)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
 	end
+
+
+--
+-- Test locale conversion to culture codes.
+--
+
+	function suite.culture_en_US()
+		locale "en-US"
+		prepare()
+		test.capture [[
+		<ResourceCompile>
+			<Culture>0x0409</Culture>
+		]]
+	end

@@ -440,6 +440,13 @@
 	}
 
 	api.register {
+		name = "locale",
+		scope = "config",
+		kind = "string",
+		tokens = false,
+	}
+
+	api.register {
 		name = "location",
 		scope = "project",
 		kind = "path",
