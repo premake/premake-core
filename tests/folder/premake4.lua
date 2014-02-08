@@ -1,1 +1,1 @@
-io.printf("ok")
+premake.out("ok")

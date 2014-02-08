@@ -1,12 +1,13 @@
 --
 -- vs2010_vcxproj_filters.lua
 -- Generate a Visual Studio 201x C/C++ filters file.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
-	local tree = premake.tree
+	local p = premake
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
+	local tree = p.tree
 
 
 --
@@ -14,8 +15,6 @@
 --
 
 	function vc2010.generateFilters(prj)
-		io.indent = "  "
-
 		vc2010.xmlDeclaration()
 		vc2010.project()
 
@@ -26,7 +25,7 @@
 		vc2010.filters_filegroup(prj, "ResourceCompile")
 		vc2010.filters_filegroup(prj, "CustomBuild")
 
-		io.printf('</Project>')
+		p.out('</Project>')
 	end
 
 

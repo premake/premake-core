@@ -48,6 +48,7 @@
 --
 
 	function make.cs.generate(prj)
+		premake.eol("\n")
 		local toolset = premake.tools.dotnet
 		premake.callarray(make, cs.elements.makefile, prj, toolset)
 	end

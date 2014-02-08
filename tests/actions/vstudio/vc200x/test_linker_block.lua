@@ -16,7 +16,7 @@
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		io.esc = premake.vstudio.vs2005.esc
+		premake.escaper(premake.vstudio.vs2005.esc)
 		sln, prj = test.createsolution()
 	end
 

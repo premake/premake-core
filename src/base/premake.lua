@@ -1,7 +1,7 @@
 --
 -- premake.lua
 -- High-level helper functions for the project exporters.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	local solution = premake.solution
@@ -9,39 +9,125 @@
 	local config = premake.config
 
 
-	premake.indentation = 0
+-- Store captured output text for later testing
+
+	local _captured
+
+-- The string escaping function.
+
+	local _esc = function(v) return v end
+
+-- The output settings and defaults
+
+	local _eol = "\n"
+	local _indentString = "\t"
+	local _indentLevel = 0
+
 
 
 ---
--- Call the io.esc() value escaping function a value, or a list
--- of values.
+-- Capture and store everything sent through the output stream functions
+-- premake.w(), premake.x(), and premake.out(). Retrieve the captured
+-- text using the premake.captured() function.
+--
+-- @param fn
+--    A function to execute. Any output calls made during the execution
+--    of the function will be captured.
+-- @return
+--    The captured output.
+---
+
+	function premake.capture(fn)
+		-- start a new capture without forgetting the old one
+		local old = _captured
+		_captured = {}
+
+		-- capture
+		fn()
+
+		-- build the result
+		local captured = premake.captured()
+
+		-- restore the old capture and done
+		_captured = old
+		return captured
+	end
+
+
+
+--
+-- Returns the captured text and stops capturing.
+--
+
+	function premake.captured()
+		if _captured then
+			return table.concat(_captured, _eol)
+		else
+			return ""
+		end
+	end
+
+
+
+---
+-- Set the output stream end-of-line sequence.
+--
+-- @param s
+--    The string to use to mark line ends, or nil to keep the existing
+--    EOL sequence.
+-- @return
+--    The new EOL sequence.
+---
+
+	function premake.eol(s)
+		_eol = s or _eol
+		return _eol
+	end
+
+
+
+---
+-- Handle escaping of strings for various outputs.
 --
 -- @param value
---    Either a single string value, or an array of string values.
---    If an array, it may contain nested sub-arrays.
+--    If this is a string: escape it and return the new value. If it is an
+--    array, return a new array of escaped values.
 -- @return
---    Either a single, esacaped string value, or a new array of
---    escaped string values.
+--    If the input was a single string, returns the escaped version. If it
+--    was an array, returns an corresponding array of escaped strings.
 ---
 
 	function premake.esc(value)
-		if not io.esc then
-			return value
-		end
-
 		if type(value) == "table" then
 			local result = {}
-			table.foreachi(value, function(v)
-				table.insert(result, premake.esc(v))
-			end)
-			return result
-		else
-			if io.esc then
-				value = io.esc(value)
+			local n = #value
+			for i = 1, n do
+				table.insert(result, premake.esc(value[i]))
 			end
-			return value
+			return result
+		end
+
+		return _esc(value or "")
+	end
+
+
+
+---
+-- Set a new string escaping function.
+--
+-- @param func
+--    The new escaping function, which should take a single string argument
+--    and return the escaped version of that string. If nil, uses a default
+--    no-op function.
+---
+
+	function premake.escaper(func)
+		_esc = func
+		if not _esc then
+			_esc = function (value) return value end
 		end
 	end
+
 
 
 --
@@ -66,11 +152,56 @@
 			error(err, 0)
 		end
 
-		premake.indentation = 0
-
 		io.output(f)
 		callback(obj)
 		f:close()
+	end
+
+
+
+---
+-- Sets the output indentation parameters.
+--
+-- @param s
+--    The indentation string.
+-- @param i
+--    The new indentation level, or nil to reset to zero.
+---
+
+	function premake.indent(s, i)
+		_indentString = s or "\t"
+		_indentLevel = i or 0
+	end
+
+
+
+---
+-- Write a simple, unformatted string to the output stream, with no indentation
+-- or end of line sequence.
+---
+
+	function premake.out(s)
+		if not _captured then
+			io.write(s)
+		else
+			table.insert(_captured, s)
+		end
+	end
+
+
+
+---
+-- Write a simple, unformatted string to the output stream, with no indentation,
+-- and append the current EOL sequence.
+---
+
+	function premake.outln(s)
+		if not _captured then
+			io.write(s)
+			io.write(_eol or "\n")
+		else
+			table.insert(_captured, s)
+		end
 	end
 
 
@@ -88,9 +219,9 @@
 
 	function premake.pop(i, ...)
 		if i == nil or type(i) == "number" then
-			premake.indentation = premake.indentation - (i or 1)
+			_indentLevel = _indentLevel - (i or 1)
 		else
-			premake.indentation = premake.indentation - 1
+			_indentLevel = _indentLevel - 1
 			premake.w(i, ...)
 		end
 	end
@@ -110,19 +241,19 @@
 
 	function premake.push(i, ...)
 		if i == nil or type(i) == "number" then
-			premake.indentation = premake.indentation + (i or 1)
+			_indentLevel = _indentLevel + (i or 1)
 		else
 			premake.w(i, ...)
-			premake.indentation = premake.indentation + 1
+			_indentLevel = _indentLevel + 1
 		end
 	end
 
 
 
---
+---
 -- Wrap the provided value in double quotes if it contains spaces, or
 -- if it contains a shell variable of the form $(...).
---
+---
 
 	function premake.quoted(value)
 		local q = value:find(" ", 1, true)
@@ -134,6 +265,7 @@
 		end
 		return value
 	end
+
 
 
 --
@@ -207,6 +339,7 @@
 	end
 
 
+
 --
 -- Sanity check the settings of a specific configuration. Raises an error
 -- if an insane state is detected.
@@ -232,6 +365,7 @@
 		-- check for out of scope fields
 		premake.validateScopes(cfg, "config", ctx)
 	end
+
 
 
 --
@@ -272,16 +406,16 @@
 
 
 ---
--- Write a formatted string to the exported file (the indentation
--- level is not changed). This gets called quite a lot, hence the
--- very short name.
+-- Write a formatted string to the exported file, at the current
+-- level of indentation, and appends an end of line sequence.
+-- This gets called quite a lot, hence the very short name.
 ---
 
 	function premake.w(...)
 		if select("#",...) > 0 then
-			_p(premake.indentation, ...)
+			premake.outln(string.rep(_indentString or "\t", _indentLevel) .. string.format(...))
 		else
-			_p('')
+			premake.outln('');
 		end
 	end
 
@@ -298,4 +432,37 @@
 			arg[i] = premake.esc(arg[i])
 		end
 		premake.w(msg, unpack(arg))
+	end
+
+
+
+--
+-- These are the output shortcuts that I used before switching to the
+-- indentation-aware calls above. They are still in use all over the
+-- place, including lots of community code, so let's keep them around.
+--
+-- @param i
+--    This will either be a printf-style formatting string suitable
+--    for passing to string.format(), OR an integer number indicating
+--    the desired level of indentation. If the latter, the formatting
+--    string should be the next argument in the list.
+-- @param ...
+--    The values necessary to fill out the formatting string tokens.
+--
+
+	function _p(i, ...)
+		if type(i) == "number" then
+			_indentLevel = i
+			premake.w(...)
+		else
+			_indentLevel = 0
+			premake.w(i, ...)
+		end
+	end
+
+	function _x(i, ...)
+		for i = 2, #arg do
+			arg[i] = premake.esc(arg[i])
+		end
+		_p(i, unpack(arg))
 	end

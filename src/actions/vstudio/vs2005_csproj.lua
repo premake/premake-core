@@ -1,17 +1,18 @@
 --
 -- vs2005_csproj.lua
 -- Generate a Visual Studio 2005-2010 C# project.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.cs2005 = {}
 
-	local vstudio = premake.vstudio
-	local cs2005  = premake.vstudio.cs2005
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local dotnet = premake.tools.dotnet
+	local p = premake
+	local vstudio = p.vstudio
+	local cs2005  = p.vstudio.cs2005
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local dotnet = p.tools.dotnet
 
 
 	cs2005.elements = {}
@@ -31,8 +32,6 @@
 	}
 
 	function cs2005.generate(prj)
-		io.indent = "  "
-		io.eol = "\r\n"
 		io.utf8()
 
 		premake.callarray(cs2005, cs2005.elements.project, prj)
@@ -45,7 +44,7 @@
 		cs2005.targets(prj)
 		cs2005.buildEvents(prj)
 
-		io.printf('</Project>')
+		p.out('</Project>')
 	end
 
 
@@ -165,7 +164,7 @@
 				-- Process any sub-elements required by this file; choose the write
 				-- element form to use based on the results.
 
-				local contents = io.capture(function ()
+				local contents = premake.capture(function ()
 					for _, el in ipairs(elements) do
 						local value = info[el]
 						if value then

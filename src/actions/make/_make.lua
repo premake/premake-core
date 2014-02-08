@@ -29,12 +29,12 @@
 		},
 
 		onsolution = function(sln)
-			io.esc = make.esc
+			premake.escaper(make.esc)
 			premake.generate(sln, make.getmakefilename(sln, false), make.generate_solution)
 		end,
 
 		onproject = function(prj)
-			io.esc = make.esc
+			premake.escaper(make.esc)
 			local makefile = make.getmakefilename(prj, true)
 			if project.isdotnet(prj) then
 				premake.generate(prj, makefile, make.cs.generate)

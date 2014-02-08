@@ -24,25 +24,25 @@
 
 	function suite.include_findsPremakeFile_onFolderNameOnly()
 		include "folder"
-		test.isequal("ok", io.captured())
+		test.isequal("ok", premake.captured())
 	end
 
 
 	function suite.include_onExactFilename()
 		include "folder/premake4.lua"
-		test.isequal("ok", io.captured())
+		test.isequal("ok", premake.captured())
 	end
 
 
 	function suite.include_runsOnlyOnce_onMultipleIncludes()
 		include "folder/premake4.lua"
 		include "folder/premake4.lua"
-		test.isequal("ok", io.captured())
+		test.isequal("ok", premake.captured())
 	end
 
 
 	function suite.include_runsOnlyOnce_onMultipleIncludesWithDifferentPaths()
 		include "folder/premake4.lua"
 		include "../tests/folder/premake4.lua"
-		test.isequal("ok", io.captured())
+		test.isequal("ok", premake.captured())
 	end

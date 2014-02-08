@@ -15,7 +15,7 @@
 	local sln
 
 	function suite.setup()
-		io.esc = premake.vstudio.vs2005.esc
+		premake.escaper(premake.vstudio.vs2005.esc)
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 		language "C++"

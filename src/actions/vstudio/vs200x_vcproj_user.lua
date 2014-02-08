@@ -16,6 +16,7 @@
 --
 
 	function m.generate_user(prj)
+		p.indent("\t")
 		m.xmlElement()
 		p.push('<VisualStudioUserFile')
 		p.w('ProjectType="Visual C++"')

@@ -4,9 +4,10 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	local vstudio = premake.vstudio
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local p = premake
+	local vstudio = p.vstudio
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -14,8 +15,6 @@
 --
 
 	function vc2010.generateUser(prj)
-		io.indent = "  "
-
 		vc2010.xmlDeclaration()
 		vc2010.project()
 		for cfg in project.eachconfig(prj) do

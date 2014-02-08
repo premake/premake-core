@@ -14,6 +14,8 @@
 --
 
 	function make.generate_solution(sln)
+		premake.eol("\n")
+
 		make.header(sln)
 
 		make.configmap(sln)

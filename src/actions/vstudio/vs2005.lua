@@ -1,12 +1,14 @@
 --
 -- actions/vstudio/vs2005.lua
 -- Add support for the  Visual Studio 2005 project formats.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vs2005 = {}
-	local vs2005 = premake.vstudio.vs2005
-	local vstudio = premake.vstudio
+
+	local p = premake
+	local vs2005 = p.vstudio.vs2005
+	local vstudio = p.vstudio
 
 
 ---
@@ -14,17 +16,18 @@
 ---
 
 	function vs2005.generateSolution(sln)
-		io.indent = nil -- back to default
-		io.eol = "\r\n"
-		io.esc = vs2005.esc
+		p.indent("\t")
+		p.eol("\r\n")
+		p.escaper(vs2005.esc)
 
 		premake.generate(sln, ".sln", vstudio.sln2005.generate)
 	end
 
 
 	function vs2005.generateProject(prj)
-		io.eol = "\r\n"
-		io.esc = vs2005.esc
+		p.indent("  ")
+		p.eol("\r\n")
+		p.escaper(vs2005.esc)
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)

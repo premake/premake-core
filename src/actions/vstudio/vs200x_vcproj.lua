@@ -36,6 +36,7 @@
 	end
 
 	function m.generate(prj)
+		p.indent("\t")
 		p.callArray(m.elements.project, prj)
 		p.pop('</VisualStudioProject>')
 	end
@@ -846,13 +847,13 @@
 		-- element and capture the results to a buffer. I will only
 		-- write the file configuration if the buffers are not empty.
 
-		local configAttribs = io.capture(function ()
+		local configAttribs = p.capture(function ()
 			p.push()
 			m.fileConfiguration_extraAttributes(cfg, filecfg)
 			p.pop()
 		end)
 
-		local compilerAttribs = io.capture(function ()
+		local compilerAttribs = p.capture(function ()
 			p.push(2)
 			m.fileConfiguration_compilerAttributes(cfg, filecfg)
 			p.pop(2)
@@ -862,13 +863,13 @@
 			p.push('<FileConfiguration')
 			p.w('Name="%s"', vstudio.projectConfig(cfg))
 			if #configAttribs > 0 then
-				_p("%s", configAttribs)
+				p.outln(configAttribs)
 			end
 			p.w('>')
 
 			p.push('<Tool')
 			if #compilerAttribs > 0 then
-				_p("%s", compilerAttribs)
+				p.outln(compilerAttribs)
 			end
 			p.pop('/>')
 

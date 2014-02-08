@@ -1,17 +1,18 @@
 --
 -- vs2010_vcxproj.lua
 -- Generate a Visual Studio 201x C/C++ project.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc2010 = {}
 
-	local vc2010 = premake.vstudio.vc2010
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local tree = premake.tree
+	local p = premake
+	local vc2010 = p.vstudio.vc2010
+	local vstudio = p.vstudio
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local tree = p.tree
 
 
 ---
@@ -26,7 +27,6 @@
 --
 
 	function vc2010.generate(prj)
-		io.indent = "  "
 		io.utf8()
 
 		vc2010.xmlDeclaration()
@@ -65,7 +65,7 @@
 
 		vc2010.import(prj)
 
-		io.printf('</Project>')
+		p.out('</Project>')
 	end
 
 
@@ -380,7 +380,7 @@
 	end
 
 	function vc2010.linkStatic(cfg, explicit)
-		local contents = io.capture(function ()
+		local contents = p.capture(function ()
 			premake.callarray(vc2010, vc2010.elements.linkStatic, cfg, explicit)
 		end)
 		if #contents > 0 then
@@ -512,7 +512,7 @@
 				-- Capture the contents of the <ClCompile> element, if any, so
 				-- I know which form to use.
 
-				local contents = io.capture(function ()
+				local contents = p.capture(function ()
 					for cfg in project.eachconfig(prj) do
 						local condition = vc2010.condition(cfg)
 
@@ -985,7 +985,7 @@
 
 	function vc2010.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
-			commands = table.concat(premake.esc(commands), io.eol)
+			commands = table.concat(premake.esc(commands), p.eol())
 			_p(2, '<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
 	end

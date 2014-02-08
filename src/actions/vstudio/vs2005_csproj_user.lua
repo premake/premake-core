@@ -1,11 +1,12 @@
 --
 -- vs2005_csproj_user.lua
 -- Generate a Visual Studio 2005/2008 C# .user file.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	local cs2005 = premake.vstudio.cs2005
-	local project = premake.project
+	local p = premake
+	local cs2005 = p.vstudio.cs2005
+	local project = p.project
 
 
 --
@@ -13,8 +14,6 @@
 --
 
 	function cs2005.generate_user(prj)
-		io.indent = "  "
-
 		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 		_p(1,'<PropertyGroup>')
 

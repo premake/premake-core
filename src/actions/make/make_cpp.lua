@@ -41,6 +41,7 @@
 	}
 
 	function make.cpp.generate(prj)
+		io.eol("\n")
 		premake.callarray(make, cpp.elements.makefile, prj)
 	end
 

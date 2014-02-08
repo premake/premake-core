@@ -12,7 +12,7 @@
 
 -- Keep track of warnings that have been shown, so they don't get shown twice
 
-	local warnings = {}
+	local _warnings = {}
 
 
 --
@@ -84,14 +84,16 @@
 	end
 
 
+
 ---
 -- Clears the list of already fired warning messages, allowing them
 -- to be fired again.
 ---
 
 	function premake.clearWarnings()
-		warnings = {}
+		_warnings = {}
 	end
+
 
 
 --
@@ -134,6 +136,7 @@
 	end
 
 
+
 ---
 -- Override an existing function with a new implementation; the original
 -- function is passed as the first argument to the replacement when called.
@@ -156,14 +159,6 @@
 		end
 	end
 
-
---
--- A shortcut for printing formatted output.
---
-
-	function printf(msg, ...)
-		print(string.format(msg, unpack(arg)))
-	end
 
 
 --
@@ -194,8 +189,18 @@
 --
 
 	function premake.warnOnce(key, message, ...)
-		if not warnings[key] then
-			warnings[key] = true
+		if not _warnings[key] then
+			_warnings[key] = true
 			premake.warn(message, ...)
 		end
+	end
+
+
+
+--
+-- A shortcut for printing formatted output.
+--
+
+	function printf(msg, ...)
+		print(string.format(msg, unpack(arg)))
 	end

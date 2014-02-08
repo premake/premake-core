@@ -5,10 +5,12 @@
 --
 
 	premake.vstudio.vs2010 = {}
-	local vs2010 = premake.vstudio.vs2010
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local tree = premake.tree
+
+	local p = premake
+	local vs2010 = p.vstudio.vs2010
+	local vstudio = p.vstudio
+	local project = p.project
+	local tree = p.tree
 
 
 ---
@@ -17,8 +19,9 @@
 ---
 
 	function vs2010.generateProject(prj)
-		io.eol = "\r\n"
-		io.esc = vs2010.esc
+		p.eol("\r\n")
+		p.indent("  ")
+		p.escaper(vs2010.esc)
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
