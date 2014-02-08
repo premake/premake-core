@@ -196,11 +196,9 @@
 ---
 
 	function premake.outln(s)
+		premake.out(s)
 		if not _captured then
-			io.write(s)
 			io.write(_eol or "\n")
-		else
-			table.insert(_captured, s)
 		end
 	end
 
