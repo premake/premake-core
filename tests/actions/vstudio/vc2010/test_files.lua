@@ -15,6 +15,7 @@
 	local sln, prj
 
 	function suite.setup()
+		_ACTION = "vs2010"
 		sln = test.createsolution()
 	end
 
@@ -160,6 +161,109 @@
 			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
 			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 		</ClCompile>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_excludedFile()
+		files { "hello.rc" }
+		configuration "Debug"
+		removefiles { "hello.rc" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ResourceCompile Include="hello.rc">
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		</ResourceCompile>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_excludeFlag()
+		files { "hello.rc" }
+		configuration "hello.rc"
+		flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ResourceCompile Include="hello.rc">
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+		</ResourceCompile>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_excludeFlag_nonWindows()
+		files { "hello.rc" }
+		system "PS3"
+		configuration "hello.rc"
+		flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ResourceCompile Include="hello.rc" />
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onCustomBuildRule_excludedFile()
+		files { "hello.cg" }
+		configuration "**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+		configuration "Debug"
+			removefiles { "hello.cg" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<CustomBuild Include="hello.cg">
+			<FileType>Document</FileType>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		</CustomBuild>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onCustomBuildRule_excludeFlag()
+		files { "hello.cg" }
+		configuration "**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+			flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<CustomBuild Include="hello.cg">
+			<FileType>Document</FileType>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		</CustomBuild>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onCustomBuildRule_withNoCommands()
+		files { "hello.cg" }
+		configuration { "**.cg", "Debug" }
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+		configuration { "**.cg" }
+			flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<CustomBuild Include="hello.cg">
+			<FileType>Document</FileType>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		</CustomBuild>
 	</ItemGroup>
 		]]
 	end

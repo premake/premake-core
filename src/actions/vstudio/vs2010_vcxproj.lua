@@ -496,7 +496,29 @@
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				_x(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
+
+				-- Capture the contents of the <ClCompile> element, if any, so
+				-- I know which form to use.
+
+				local contents = p.capture(function ()
+					if group == "ResourceCompile" then
+						for cfg in project.eachconfig(prj) do
+							local condition = vc2010.condition(cfg)
+							local filecfg = fileconfig.getconfig(file, cfg)
+							if cfg.system == premake.WINDOWS then
+								vc2010.excludedFromBuild(cfg, filecfg)
+							end
+						end
+					end
+				end)
+
+				if #contents > 0 then
+					_x(2,'<%s Include=\"%s\">', group, path.translate(file.relpath))
+					_p("%s", contents)
+					_p(2,'</%s>', group)
+				else
+					_x(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
+				end
 			end
 			_p(1,'</ItemGroup>')
 		end
@@ -555,6 +577,8 @@
 					local condition = vc2010.condition(cfg)
 					local filecfg = fileconfig.getconfig(file, cfg)
 					if fileconfig.hasCustomBuildRule(filecfg) then
+						vc2010.excludedFromBuild(cfg, filecfg)
+
 						local commands = table.concat(filecfg.buildcommands,'\r\n')
 						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
 

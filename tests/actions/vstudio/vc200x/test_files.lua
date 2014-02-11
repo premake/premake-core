@@ -259,6 +259,62 @@
 		]]
 	end
 
+	function suite.excludedFromBuild_onCustomBuildRule_excludedFile()
+		files { "hello.cg" }
+		configuration "**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+		configuration "Debug"
+			removefiles { "hello.cg" }
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.cg"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			ExcludedFromBuild="true"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+		]]
+	end
+
+	function suite.excludedFromBuild_onCustomBuildRule_excludeFlag()
+		files { "hello.cg" }
+		configuration "**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+			flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.cg"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			ExcludedFromBuild="true"
+			>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine="cgc $(InputFile)"
+				Outputs="$(InputName).obj"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			ExcludedFromBuild="true"
+			>
+		]]
+	end
+
 
 --
 -- If a custom build rule is supplied, the custom build tool settings should be used.
