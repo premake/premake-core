@@ -12,10 +12,25 @@
 
 
 --
--- A place to store the current active objects in each project scope.
+-- A place to store the current active objects in each configuration scope
+-- (e.g. solutions, projects, groups, and configurations).
 --
 
 	api.scope = {}
+
+
+--
+-- Levels of "setters" for populating configuration objects. The top-level
+-- API contains keyed, list, and plain values; keyed values can contain
+-- lists and plain values; lists can contain only plain values. Each time
+-- a setter function is fetched one of these values are passed along to
+-- indicate the current resolution level.
+--
+
+	api.TopLevel = 0
+	api.KeyedLevel = 1
+	api.ListLevel = 2
+	api.ValueLevel = 3
 
 
 --
@@ -58,7 +73,7 @@
 		end
 
 		-- make sure there is a handler available for this kind of value
-		if not api.getsetter(field) then
+		if not api.getSetter(field, api.ValueLevel) then
 			error("invalid kind '" .. field.kind .. "'", 2)
 		end
 
@@ -249,12 +264,8 @@
 		end
 
 		local status, result = pcall(function ()
-			if api.isKeyedField(field) then
-				api.setkeyvalue(target, field, value)
-			else
-				local setter = api.getsetter(field, true)
-				setter(target, field.name, field, value)
-			end
+			local setter = api.getSetter(field, api.TopLevel)
+			setter(target, field.name, field, value)
 		end)
 
 		if not status then
@@ -443,23 +454,28 @@
 
 
 --
--- Retrieve the "set" function for a field.
+-- Retrieve the "set" function for a field, at a given level of resolution.
 --
 -- @param field
 --    The field to query.
--- @param lists
---    If true, will return the list setter for list fields (i.e. string-list);
---    else returns base type setter (i.e. string).
+-- @param level
+--    One of the setter resolution levels TopLevel, KeyedLevel, or ListLevel,
+--    indicating who is asking for a setter. At the top, the API contains
+--    keyed, list, and plain values and desires a setter for any of them.
+--    Keyed values can contain only lists and plain values, and so should only
+--    receive those setter. Finally, lists can contain only plain values.
 -- @return
 --    The setter for the field.
 --
 
-	function api.getsetter(field, lists)
-		if lists and api.isListField(field) then
-			return api.setlist
-		else
-			return api["set" .. field.kind]
+	function api.getSetter(field, level)
+		if level < api.KeyedLevel and api.isKeyedField(field) then
+			return api.setkeyvalue
 		end
+		if level < api.ListLevel and api.isListField(field) then
+			return api.setlist
+		end
+		return api["set" .. field.kind]
 	end
 
 
@@ -541,19 +557,19 @@
 -- the corresponding values to update the target object.
 --
 
-	function api.setkeyvalue(target, field, values)
+	function api.setkeyvalue(target, name, field, values)
 		if type(values) ~= "table" then
 			error({ msg="value must be a table of key-value pairs" })
 		end
 
 		local newval = {}
 
-		local setter = api.getsetter(field, true)
+		local setter = api.getSetter(field, api.KeyedLevel)
 		for key, value in pairs(values) do
 			setter(newval, key, field, value)
 		end
 
-		configset.addvalue(target.configset, field.name, newval)
+		configset.addvalue(target.configset, name, newval)
 	end
 
 
@@ -563,7 +579,7 @@
 --
 
 	function api.setlist(target, name, field, value)
-		local setter = api.getsetter(field)
+		local setter = api.getSetter(field, api.ListLevel)
 
 		-- If this target is just a wrapper for a configuration set,
 		-- apply the new values to that set instead. The current
