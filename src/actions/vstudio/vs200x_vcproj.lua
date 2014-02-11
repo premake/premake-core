@@ -43,10 +43,10 @@
 
 
 
---
+---
 -- Write the opening <VisualStudioProject> element of the project file.
 -- In this case, the call list is for XML attributes rather than elements.
---
+---
 
 	m.elements.visualStudioProject = function(prj)
 		return {
@@ -68,10 +68,10 @@
 
 
 
---
+---
 -- Write out the <Configurations> element group, enumerating each of the
 -- configuration-architecture pairings.
---
+---
 
 	function m.configurations(prj)
 		-- Visual Studio requires each configuration to be paired up with each
@@ -126,10 +126,10 @@
 
 
 
---
+---
 -- Write out the <Configuration> element, describing a specific Premake
 -- build configuration/platform pairing.
---
+---
 
 	m.elements.configuration = function(cfg)
 		return {
@@ -151,29 +151,9 @@
 
 
 
---
--- Write an empty, placehold configuration for those build configuration
--- and architecture pairs that aren't valid build targets in the solution.
---
-
-	function m.emptyConfiguration(cfg, arch)
-		p.push('<Configuration')
-		p.w('Name="%s|%s"', vstudio.projectPlatform(cfg), arch)
-		p.w('IntermediateDirectory="$(PlatformName)\\$(ConfigurationName)"')
-		p.w('ConfigurationType="1"')
-		p.w('>')
-
-		local tools = m.toolsForConfig(cfg, true)
-		for i, tool in ipairs(tools) do
-			m.tool(tool)
-		end
-	end
-
-
-
---
+---
 -- Write out the <References> element group.
---
+---
 
 	m.elements.references = function(prj)
 		return {
@@ -190,10 +170,10 @@
 
 
 
---
+---
 -- I don't do anything with globals yet, but here it is if you want to
 -- extend it.
---
+---
 
 	m.elements.globals = function(prj)
 		return {}
@@ -258,12 +238,67 @@
 	end
 
 
+
 	m.elements.VCBscMakeTool = function(cfg)
 		return {}
 	end
 
 	function m.VCBscMakeTool(cfg)
 		m.VCTool("VCBscMakeTool", cfg)
+	end
+
+
+
+	m.elements.VCCLCompilerTool = function(cfg, toolset)
+		if not toolset then
+			-- no, use the standard set of attributes
+			return {
+				m.compilerToolName,
+				m.VCCLCompilerTool_additionalOptions,
+				m.optimization,
+				m.additionalIncludeDirectories,
+				m.wholeProgramOptimization,
+				m.preprocessorDefinitions,
+				m.minimalRebuild,
+				m.basicRuntimeChecks,
+				m.bufferSecurityCheck,
+				m.stringPooling,
+				m.exceptionHandling,
+				m.runtimeLibrary,
+				m.enableFunctionLevelLinking,
+				m.enableEnhancedInstructionSet,
+				m.floatingPointModel,
+				m.runtimeTypeInfo,
+				m.treatWChar_tAsBuiltInType,
+				m.usePrecompiledHeader,
+				m.programDatabaseFileName,
+				m.warnings,
+				m.debugInformationFormat,
+				m.compileAs,
+				m.forcedIncludeFiles,
+				m.omitDefaultLib,
+			}
+		else
+			-- yes, use the custom tool attributes
+			return {
+				m.compilerToolName,
+				m.VCCLExternalCompilerTool_additionalOptions,
+				m.additionalIncludeDirectories,
+				m.preprocessorDefinitions,
+				m.usePrecompiledHeader,
+				m.programDatabaseFileName,
+				m.debugInformationFormat,
+				m.compileAs,
+				m.forcedIncludeFiles,
+			}
+		end
+
+	end
+
+	function m.VCCLCompilerTool(cfg)
+		p.push('<Tool')
+		p.callArray(m.elements.VCCLCompilerTool, cfg, m.toolset(cfg))
+		p.pop('/>')
 	end
 
 
@@ -461,59 +496,6 @@
 				m[tool](cfg)
 			end
 		end
-	end
-
-
-	m.elements.VCCLCompilerTool = function(cfg, toolset)
-		if not toolset then
-			-- no, use the standard set of attributes
-			return {
-				m.compilerToolName,
-				m.VCCLCompilerTool_additionalOptions,
-				m.optimization,
-				m.additionalIncludeDirectories,
-				m.wholeProgramOptimization,
-				m.preprocessorDefinitions,
-				m.minimalRebuild,
-				m.basicRuntimeChecks,
-				m.bufferSecurityCheck,
-				m.stringPooling,
-				m.exceptionHandling,
-				m.runtimeLibrary,
-				m.enableFunctionLevelLinking,
-				m.enableEnhancedInstructionSet,
-				m.floatingPointModel,
-				m.runtimeTypeInfo,
-				m.treatWChar_tAsBuiltInType,
-				m.usePrecompiledHeader,
-				m.programDatabaseFileName,
-				m.warnings,
-				m.debugInformationFormat,
-				m.compileAs,
-				m.forcedIncludeFiles,
-				m.omitDefaultLib,
-			}
-		else
-			-- yes, use the custom tool attributes
-			return {
-				m.compilerToolName,
-				m.VCCLExternalCompilerTool_additionalOptions,
-				m.additionalIncludeDirectories,
-				m.preprocessorDefinitions,
-				m.usePrecompiledHeader,
-				m.programDatabaseFileName,
-				m.debugInformationFormat,
-				m.compileAs,
-				m.forcedIncludeFiles,
-			}
-		end
-
-	end
-
-	function m.VCCLCompilerTool(cfg)
-		p.push('<Tool')
-		p.callArray(m.elements.VCCLCompilerTool, cfg, m.toolset(cfg))
-		p.pop('/>')
 	end
 
 
@@ -1109,19 +1091,12 @@
 
 
 	function m.compileAs(cfg, toolset)
-		local prjcfg, filecfg
-		if cfg.config then
-			prjcfg = cfg.config
-			filecfg = cfg
-		else
-			prjcfg = cfg
-			filecfg = nil
-		end
-
-		if filecfg then
-			if path.iscfile(filecfg.name) ~= project.isc(filecfg.project) then
-				if path.iscppfile(filecfg.name) then
-					local value = iif(filecfg.project.language == p.CPP, 1, 2)
+		local prj, file = config.normalize(cfg)
+		local c = project.isc(prj)
+		if file then
+			if path.iscfile(file.name) ~= c then
+				if path.iscppfile(file.name) then
+					local value = iif(c, 2, 1)
 					p.w('CompileAs="%s"', value)
 				end
 			end
@@ -1129,7 +1104,7 @@
 			local compileAs
 			if toolset then
 				compileAs = "0"
-			elseif prjcfg.project.language == "C" then
+			elseif c then
 				compileAs = "1"
 			end
 			if compileAs then
@@ -1139,24 +1114,18 @@
 	end
 
 
-	function m.compilerToolName(cfg)
-		local prjcfg, filecfg
-		if cfg.config then
-			prjcfg = cfg.config
-			filecfg = cfg
-		else
-			prjcfg = cfg
-			filecfg = nil
-		end
 
+	function m.compilerToolName(cfg)
 		local name
-		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
+		local prj, file = config.normalize(cfg)
+		if file and fileconfig.hasCustomBuildRule(file) then
 			name = "VCCustomBuildTool"
 		else
-			name = iif(prjcfg.system == p.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
+			name = iif(prj.system == p.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
 		end
 		p.w('Name="%s"', name)
 	end
+
 
 
 	function m.configurationType(cfg)
@@ -1511,37 +1480,22 @@
 	end
 
 
+
 	function m.usePrecompiledHeader(cfg)
-		-- TODO: make a generic way to get both the project and, if
-		-- applicable, the file configuration from an object that might
-		-- be either. Then I can write more generic code.
-
-		local prjcfg, filecfg
-		if cfg.config then
-			prjcfg = cfg.config
-			filecfg = cfg
-		else
-			prjcfg = cfg
-			filecfg = nil
-		end
-
-		-- AND THEN simplify this block; I can merge some of this logic.
-
-		if not filecfg then
-			-- project configuration
-			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
-				p.w('UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
-				p.x('PrecompiledHeaderThrough="%s"', prjcfg.pchheader)
-			else
-				p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or prjcfg.flags.NoPCH, 0, 2))
-			end
-		else
-			-- file configuration
-			if prjcfg.pchsource == filecfg.abspath and
-			   not prjcfg.flags.NoPCH and
-			   prjcfg.system ~= p.PS3
+		local prj, file = config.normalize(cfg)
+		if file then
+			if prj.pchsource == file.abspath and
+			   not prj.flags.NoPCH and
+			   prj.system ~= p.PS3
 			then
 				p.w('UsePrecompiledHeader="1"')
+			end
+		else
+			if not prj.flags.NoPCH and prj.pchheader then
+				p.w('UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
+				p.x('PrecompiledHeaderThrough="%s"', prj.pchheader)
+			else
+				p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or prj.flags.NoPCH, 0, 2))
 			end
 		end
 	end

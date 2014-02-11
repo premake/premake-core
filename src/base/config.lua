@@ -540,3 +540,26 @@
 
 		return flags
 	end
+
+
+---
+-- Returns both a project configuration and a file configuration from a
+-- configuration argument that could be either.
+--
+-- @param cfg
+--    A project or file configuration object.
+-- @return
+--    Both a project configuration and a file configuration. If the input
+--    argument is a project configuration, the file configuration value is
+--    returned as nil.
+---
+
+	function config.normalize(cfg)
+		if cfg.config ~= nil then
+			return cfg.config, cfg
+		else
+			return cfg, nil
+		end
+	end
+
+
