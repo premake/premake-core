@@ -226,7 +226,7 @@
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 		end
 
-		if cfg.flags.FatalWarnings then
+		if cfg.flags.FatalCompileWarnings then
 			_p(2,'<TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 		end
 	end

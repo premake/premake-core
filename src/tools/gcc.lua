@@ -38,7 +38,7 @@
 			x64 = "-m64",
 		},
 		flags = {
-			FatalWarnings = "-Werror",
+			FatalCompileWarnings = "-Werror",
 			NoFramePointer = "-fomit-frame-pointer",
 			Symbols = "-g"
 		},

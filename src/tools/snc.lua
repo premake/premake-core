@@ -16,7 +16,7 @@
 
 	snc.cflags = {
 		flags = {
-			FatalWarnings = "-Xquit=2",
+			FatalCompileWarnings = "-Xquit=2",
 		},
 		optimize = {
 			Off = "-O0",

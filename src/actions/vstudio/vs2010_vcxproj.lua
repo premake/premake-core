@@ -1206,7 +1206,7 @@
 
 
 	function vc2010.treatLinkerWarningAsErrors(cfg)
-		if cfg.flags.FatalWarnings then
+		if cfg.flags.FatalLinkWarnings then
 			local el = iif(cfg.kind == premake.STATICLIB, "Lib", "Linker")
 			_p(3,'<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
 		end
@@ -1223,7 +1223,7 @@
 
 
 	function vc2010.treatWarningAsError(cfg)
-		if cfg.flags.FatalWarnings and cfg.warnings ~= "Off" then
+		if cfg.flags.FatalLinkWarnings and cfg.warnings ~= "Off" then
 			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end

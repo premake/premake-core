@@ -317,30 +317,37 @@
 				table.foreachi(value, function(v)
 					recurse(v)
 				end)
-			else
-				if field.deprecated then
-					if value:contains("*") then
-						local current = target.configset[field.name]
-						local mask = path.wildcards(value)
-						for _, item in ipairs(current) do
-							if item:match(mask) == item then
-								check(item)
-							end
-						end
-					else
-						value, err = api.checkvalue(value, field)
-						if err then error(err, 4) end
-						check(value)
+				return
+			end
+
+			if value:contains("*") then
+				local current = target.configset[field.name]
+				local mask = path.wildcards(value)
+				for _, item in ipairs(current) do
+					if item:match(mask) == item then
+						recurse(item)
 					end
 				end
 				remover(removes, value)
+				return
+			end
+
+			local value, err, additional = api.checkvalue(value, field)
+			if err then error(err, 4) end
+
+			if field.deprecated then
+				check(value)
+			end
+
+			remover(removes, value)
+			if additional then
+				remover(removes, additional)
 			end
 		end
 
 		recurse(value)
 
 		-- Tell the config set to remove these values from future queries
-
 		configset.removevalues(target.configset, field.name, removes)
 	end
 
@@ -354,17 +361,24 @@
 -- @param field
 --    The field to check against.
 -- @return
---    If the value is valid for this field, the canonical version
---    of that value is returned. If the value is not valid two
---    values are returned: nil, and an error message.
+--    Returns up to three values: the canonical match for the input value
+--    or nil if there is no match. An error message if the input value is
+--    invalid. And one (string) or more (array) additional values that are
+--    associated with the input value (e.g. FatalWarnings expands to also
+--    set FatalCompileWarnings and FatalLinkWarnings).
+--
+--    That's a wonky return value; grew that way out of historical usage.
 --
 
 	function api.checkvalue(value, field)
+		local lowerValue = value:lower()
+
 		if field.aliases then
 			for k,v in pairs(field.aliases) do
-				if value:lower() == k:lower() then
-					value = v
-					break
+				-- if I find a matching alias, assume that it has already been
+				-- set to the right canonical value, and just return
+				if lowerValue == k:lower() then
+					return k, nil, v
 				end
 			end
 		end
@@ -376,15 +390,15 @@
 				local n = #field.allowed
 				for i = 1, n do
 					local v = field.allowed[i]
-					if value:lower() == v:lower() then
+					if lowerValue == v:lower() then
 						return v
 					end
 				end
 				return nil, "invalid value '" .. value .. "'"
 			end
-		else
-			return value
 		end
+
+		return value
 	end
 
 
@@ -647,7 +661,7 @@
 			error({ msg="expected string; got table" })
 		end
 
-		local value, err = api.checkvalue(value, field)
+		local value, err, additional = api.checkvalue(value, field)
 		if err then error({ msg=err }) end
 
 		if field.deprecated and field.deprecated[value] then
@@ -665,6 +679,14 @@
 		-- of object (i.e. an array or list)
 		target = target.configset or target
 		target[name] = value
+
+		-- Odd case: the FatalWarnings flag expands to multiple values now
+		-- (FatalCompileWarnings, FatalLinkWarnings). Generalize this
+		-- behavior by running multiple return values back through again.
+
+		if additional then
+			api.callback(field, additional)
+		end
 	end
 
 

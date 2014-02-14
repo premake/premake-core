@@ -1564,7 +1564,7 @@
 			p.w('WarningLevel="0"')
 		else
 			p.w('WarningLevel="%d"', iif(cfg.warnings == "Extra", 4, 3))
-			if cfg.flags.FatalWarnings then
+			if cfg.flags.FatalCompileWarnings then
 				p.w('WarnAsError="%s"', m.bool(true))
 			end
 			if _ACTION < "vs2008" and not cfg.flags.Managed then

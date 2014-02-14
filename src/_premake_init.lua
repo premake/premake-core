@@ -239,7 +239,8 @@
 			"EnableSSE2",          -- DEPRECATED
 			"ExcludeFromBuild",
 			"ExtraWarnings",       -- DEPRECATED
-			"FatalWarnings",
+			"FatalCompileWarnings",
+			"FatalLinkWarnings",
 			"FloatFast",           -- DEPRECATED
 			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
@@ -277,6 +278,7 @@
 			"WPF",
 		},
 		aliases = {
+			FatalWarnings = { "FatalCompileWarnings", "FatalLinkWarnings" },
 			Optimise = 'Optimize',
 			OptimiseSize = 'OptimizeSize',
 			OptimiseSpeed = 'OptimizeSpeed',
@@ -776,6 +778,15 @@
 	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, DOC_URL .. "optimize",
 	function(value)
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
+		optimize (map[value] or "Off")
+	end,
+	function(value)
+		optimize "Off"
+	end)
+
+	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, DOC_URL .. "optimize",
+	function(value)
+		local map = { Optimise = "On", OptimiseSize = "Size", OptimiseSpeed = "Speed" }
 		optimize (map[value] or "Off")
 	end,
 	function(value)

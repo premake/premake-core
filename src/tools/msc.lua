@@ -26,7 +26,7 @@
 
 	msc.cflags = {
 		flags = {
-			FatalWarnings = "/WX",
+			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
@@ -146,7 +146,7 @@
 
 	msc.linkerFlags = {
 		flags = {
-			FatalWarnings = "/WX",
+			FatalLinkWarnings = "/WX",
 			LinkTimeOptimization = "/GL",
 			NoIncrementalLink = "/INCREMENTAL:NO",
 			NoManifest = "/MANIFEST:NO",
@@ -160,7 +160,7 @@
 
 	msc.librarianFlags = {
 		flags = {
-			FatalWarnings = "/WX",
+			FatalLinkWarnings = "/WX",
 		}
 	}
 
