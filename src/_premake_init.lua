@@ -314,7 +314,7 @@
 
 	api.register {
 		name = "framework",
-		scope = "project",
+		scope = "config",
 		kind = "string",
 	}
 
