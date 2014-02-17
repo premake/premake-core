@@ -94,7 +94,7 @@
 		 	xcnode.targetdependid = xcode.newid(xcnode, "targdep")
 			
 			-- create a grandchild node for the dependency's link target
-		 	local lprj = project.findproject(dep.name)
+		 	local lprj = premake.solution.findproject(prj.solution, dep.name)
 		 	local cfg = project.findClosestMatch(lprj, prj.configurations[1])
 		 	node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
 		 	node.path = cfg.linktarget.fullpath					

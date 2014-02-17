@@ -1,6 +1,7 @@
 --
 
-	dofile("../../../source/premake5/tests/testfx.lua")
+
+	dofile("../tests/testfx.lua")
 	
 	local xcode = dofile("../xcode/xcode.lua")
 --
@@ -62,10 +63,11 @@
 				passed, failed = test.runall()
 			end
 
-			msg = string.format("%d tests passed, %d failed", passed, failed)
+			msg = string.format("!!! %d tests passed, %d failed", passed, failed)
 			if (failed > 0) then
 				-- should probably return an error code here somehow
 				print(msg)
+				os.exit(2)
 			else
 				print(msg)
 			end

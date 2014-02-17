@@ -35,11 +35,11 @@
 	end
 
 	local function prepare()		
-		premake.solution.bakeall()
-		local sln = premake.solution.get(1)		
-		xcode.preparesolution(sln)	    
-		local prj = premake.solution.getproject(sln, 1) 			
-		tr = xcode.buildprjtree(prj)
+		sln = premake.oven.bakeSolution(sln)
+		xcode.preparesolution(sln)
+		local prj3 = premake.solution.getproject(sln, 1)
+		--prj2 = premake.solution.getproject(sln, 2)
+		tr = xcode.buildprjtree(prj3)
 	end
 
 

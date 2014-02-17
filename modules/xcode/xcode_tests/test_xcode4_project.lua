@@ -12,7 +12,7 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local tr
+	local tr, sln
 		
 	function suite.teardown()		
 		tr = nil
@@ -23,14 +23,13 @@
 		_ACTION = "xcode4"
 		io.eol = "\n"
 		xcode.used_ids = { } -- reset the list of generated IDs
-		test.createsolution()
+		sln = test.createsolution()
 	end
 
-	local function prepare()
-		premake.solution.bakeall()
-		local sln = premake.solution.get(1)		
-		xcode.preparesolution(sln)	    
-		local prj = premake.solution.getproject(sln, 1) 			
+	local function prepare()		
+		sln = premake.oven.bakeSolution(sln)		
+		xcode.preparesolution(sln)
+		local prj = premake.solution.getproject(sln, 1)
 		tr = xcode.buildprjtree(prj)
 	end
 

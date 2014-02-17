@@ -7,23 +7,21 @@
 --
 -- Setup
 -- 
-	local prj
+	local sln, prj
 	function suite.teardown()
 		prj = nil
 	end
 		
 	function suite.setup()
-		_ACTION = "xcode4"
-		local sln
+		_ACTION = "xcode4"		
 		sln, prj = test.createsolution() 						
 	end
 	
 	local function prepare()		
-		premake.solution.bakeall()
-		local sln = premake.solution.get(1)		
-	    premake.xcode.preparesolution(sln)	
-		prj = premake.solution.getproject(sln, 1)     
-	    xcode4.workspace_file_ref(prj)
+		sln = premake.oven.bakeSolution(sln)
+		premake.xcode.preparesolution(sln)	
+		local prj1 = premake.solution.getproject(sln, 1)     
+	    xcode4.workspace_file_ref(prj1)
 	end
  
 	function suite.xmlDeclarationPresent()		

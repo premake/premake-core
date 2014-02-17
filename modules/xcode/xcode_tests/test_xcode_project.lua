@@ -12,7 +12,7 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local tr
+	local tr, sln
 	
 	function suite.teardown()		
 		tr = nil
@@ -21,16 +21,15 @@
 	function suite.setup()
 		_OS = "macosx"
 		_ACTION = "xcode4"
-		io.eol = "\n"
+		premake.eol("\n")
 		xcode.used_ids = { } -- reset the list of generated IDs
-		test.createsolution()			
+		sln = test.createsolution()			
 	end
 
 	local function prepare()
-		premake.solution.bakeall()
-		local sln = premake.solution.get(1)		
-		xcode.preparesolution(sln)	    
-		local prj = premake.solution.getproject(sln, 1) 			
+		sln = premake.oven.bakeSolution(sln)
+		xcode.preparesolution(sln)
+		local prj = premake.solution.getproject(sln, 1)
 		tr = xcode.buildprjtree(prj)
 	end
 
@@ -412,7 +411,7 @@
 		prepare()
 		xcode.PBXGroup(tr)
 		
-		local str = io.captured()
+		local str = premake.captured()
 		--test.istrue(str:find('path = "RequiresQuoting%+%+";'))
 				
 	end
@@ -1132,7 +1131,8 @@
 
 
 	function suite.XCBuildConfigurationProject_OnOptimize()
-		optimize "Size" 
+		--flags { "Optimize" }
+		optimize "Size"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1369,7 +1369,8 @@
 
 
 	function suite.XCBuildConfigurationProject_OnExtraWarnings()
-		warnings "extra" 
+		--flags { "ExtraWarnings" }
+		warnings "Extra"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1951,7 +1952,7 @@
 function suite.defaultVisibility_settingIsFound()
 	prepare()
 	xcode.XCBuildConfiguration(tr)
-	local str = io.captured()
+	local str = premake.captured()
 	test.istrue(str:find('GCC_SYMBOLS_PRIVATE_EXTERN'))
 end
 
@@ -1959,7 +1960,7 @@ end
 function suite.defaultVisibilitySetting_setToNo()
 	prepare()
 	xcode.XCBuildConfiguration(tr)
-	local str = io.captured()
+	local str = premake.captured()
 	test.istrue(str:find('GCC_SYMBOLS_PRIVATE_EXTERN = NO;'))
 end
 
@@ -1967,7 +1968,7 @@ function suite.releaseBuild_onlyDefaultArch_equalsNo()
 	flags { "Optimize" }
 	prepare()
 	xcode.XCBuildConfiguration_Project(tr, tr.configs[2])
-	local str = io.captured()
+	local str = premake.captured()
 	test.istrue(str:find('ONLY_ACTIVE_ARCH = NO;'))
 end
 
@@ -1976,6 +1977,6 @@ function suite.debugBuild_onlyDefaultArch_equalsYes()
 	prepare()
 	xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 	
-	local str = io.captured()
+	local str = premake.captured()
 	test.istrue(str:find('ONLY_ACTIVE_ARCH = YES;'))
 end

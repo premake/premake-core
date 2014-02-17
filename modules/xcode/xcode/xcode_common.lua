@@ -805,14 +805,17 @@
 		end
 	end
 
-	function printSetting(obs, level, name, value, quoted)
+	function printSetting(obs, level, name, value, quoted, onlyIfOverridden)
 		-- 
 		-- 
 		
 		-- if we have this name in the xcodebuildsettings the override the value 
+		local reallyPrint = onlyIfOverridden and obs[name] and obs[name][1] or not onlyIfOverridden
 		local overridenValue = obs[name] and obs[name][1] or value 
 		local format = quoted and '%s = "%s";' or '%s = %s;'
-		_p(level, format, name, overridenValue)
+		if reallyPrint then
+			_p(level, format, name, overridenValue)
+		end	
 	end	
 
 	function xcode.XCBuildConfiguration_Target(tr, target, cfg)
@@ -881,7 +884,7 @@
 		"GCC_VERSION",
 		"GCC_SYMBOLS_PRIVATE_EXTERN",
 		"CODE_SIGN_IDENTITY",
-		"IPHONEOS_DEPLOYMENT_TARGET"
+		"IPHONEOS_DEPLOYMENT_TARGET",		
 		}
 		
 		local function inTable(tbl, item)
@@ -897,6 +900,22 @@
 			end	
 		end			
 		
+		local fileNameList = ""
+		local file_tree = project.getsourcetree(tr.project, nil , false) 
+		tree.traverse(file_tree, {
+				onleaf = function(node)
+					if node.configs then
+						local filecfg = fileconfig.getconfig(node, cfg)
+						if filecfg and filecfg.flags.ExcludeFromBuild then
+							fileNameList = fileNameList .. " " ..filecfg.name
+						end
+					end						
+				end
+			}) 
+		
+		if fileNameList ~= "" then
+			printSetting(bs, 4,"EXCLUDED_SOURCE_FILE_NAMES", fileNameList, true)
+		end	
 		printSetting(bs, 4,"INSTALL_PATH", installpaths[cfg.kind])
 		printSetting(bs, 4,"PRODUCT_NAME", cfg.buildtarget.basename, true)
 						
@@ -920,34 +939,34 @@
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		
-		local builtInSettings = 
-		{		
-			"ARCHS",		
-			"CONFIGURATION_BUILD_DIR",
-			"CONFIGURATION_TEMP_DIR",
-			"COPY_PHASE_STRIP",		
-			"GCC_C_LANGUAGE_STANDARD",	
-			"GCC_ENABLE_CPP_EXCEPTIONS",
-			"GCC_ENABLE_CPP_RTTI",
-			"GCC_ENABLE_FIX_AND_CONTINUE",
-			
-			"GCC_ENABLE_OBJC_EXCEPTIONS",
-			"GCC_OPTIMIZATION_LEVEL",
-			"GCC_PRECOMPILE_PREFIX_HEADER",
-			
-			"GCC_SYMBOLS_PRIVATE_EXTERN",
-			"GCC_TREAT_WARNINGS_AS_ERRORS",
-			"GCC_WARN_ABOUT_RETURN_TYPE",
-			"GCC_WARN_UNUSED_VARIABLE",		
-			"WARNING_CFLAGS"
+		local builtInSettings = {
+		"ARCHS",
+		"SDKROOT",
+		"CONFIGURATION_BUILD_DIR",
+		"CONFIGURATION_TEMP_DIR",
+		"COPY_PHASE_STRIP",		
+		"GCC_C_LANGUAGE_STANDARD",	
+		"GCC_ENABLE_CPP_EXCEPTIONS",
+		"GCC_ENABLE_CPP_RTTI",
+		"GCC_ENABLE_FIX_AND_CONTINUE",
+		
+		"GCC_ENABLE_OBJC_EXCEPTIONS",
+		"GCC_OPTIMIZATION_LEVEL",
+		"GCC_PRECOMPILE_PREFIX_HEADER",
+		
+		"GCC_SYMBOLS_PRIVATE_EXTERN",
+		"GCC_TREAT_WARNINGS_AS_ERRORS",
+		"GCC_WARN_ABOUT_RETURN_TYPE",
+		"GCC_WARN_UNUSED_VARIABLE",
+
+		
 		}
 		
-		local additionalSettings = 
-		{
-			"SDKROOT",
+		local additionalSettings = {
 			"VALID_ARCHS",
 			"CLANG_CXX_LANGUAGE_STANDARD",	
-			"CLANG_CXX_LIBRARY"		
+			"CLANG_CXX_LIBRARY"
+		
 		}
 		
 		local archs = {
@@ -960,15 +979,13 @@
 		}
 		
 		printSetting(bs, 4,"ARCHS", archs[cfg.platform or "Native"], true)
-						
+		
+		printSetting(bs, 4,"SDKROOT", "macosx", true, true)		
+				
 		local targetdir = path.getdirectory(cfg.buildtarget.relpath)
-		print(targetdir)
-
 		if targetdir ~= "." then
 			printSetting(bs, 4,"CONFIGURATION_BUILD_DIR" , "$(SYMROOT)", true);
 		end
-		
-		--printSetting(bs, 4,"SDKROOT", "macosx", true)		
 		
 		printSetting(bs, 4,"CONFIGURATION_TEMP_DIR" , "$(OBJROOT)", true)
 		

@@ -92,11 +92,4 @@
 				last = cfg.kind
 			end
 		end,
-	}	
-	
-	newoption
-	{
-		trigger     = "modules",
-		value       = "path",
-		description = "Search for additional scripts on the given path"
-	} 
+	}
