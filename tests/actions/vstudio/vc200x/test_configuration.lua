@@ -5,6 +5,7 @@
 --
 
 	local suite = test.declare("vstudio_vc200x_configuration")
+	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local project = premake.project
 
@@ -22,7 +23,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug", (prj.platforms or sln.platforms or {})[1])
-		vc200x.configuration(cfg)
+		vc200x.configuration(cfg, vstudio.projectConfig(cfg))
 	end
 
 

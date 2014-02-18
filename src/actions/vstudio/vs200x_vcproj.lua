@@ -74,50 +74,52 @@
 ---
 
 	function m.configurations(prj)
+		p.push('<Configurations>')
+
 		-- Visual Studio requires each configuration to be paired up with each
 		-- architecture, even if the pairing doesn't make any sense (i.e. Win32
-		-- DLL DCRT|PS3). Start by finding the names of all of the configurations
-		-- that actually are in the project; I'll use this to help identify the
-		-- configurations that *aren't* in the project below.
+		-- DLL DCRT|PS3). Start by building a map between configurations and
+		-- their Visual Studio names. I will use this to determine which
+		-- pairings are "real", and which need to be synthesized.
 
-		local isRealConfig = {}
+		local mapping = {}
 		for cfg in project.eachconfig(prj) do
 			local name = vstudio.projectConfig(cfg)
-			isRealConfig[name] = true
+			mapping[cfg] = name
+			mapping[name] = cfg
 		end
 
-		local architectures = m.architectures(prj)
+		-- Now enumerate each configuration and architecture pairing
 
-		-- Now enumerate all of the configurations in the project and write
-		-- out their <Configuration> blocks.
-
-		p.push('<Configurations>')
 		for cfg in project.eachconfig(prj) do
-			local thisName = vstudio.projectConfig(cfg)
 			for i, arch in ipairs(architectures) do
+				local target
+
+				-- Generate a Visual Studio name from this pairing and see if
+				-- it matches. If so, I can go ahead and output the markup for
+				-- this configuration.
+
 				local testName = vstudio.projectConfig(cfg, arch)
+				if testName == mapping[cfg] then
+					target = cfg
 
-				-- Does this architecture match the one in the project config
-				-- that I'm trying to write? If so, go ahead and output the
-				-- full <Configuration> block.
+				-- Okay, this pairing doesn't match this configuration. Check
+				-- the mapping to see if it matches some *other* configuration.
+				-- If it does, I can ignore it as it will getting written on
+				-- another pass through the loop. If it does not, then this is
+				-- one of those fake configurations that I have to synthesize.
 
-				if thisName == testName then
-					m.configuration(cfg)
-					m.tools(cfg)
-					p.pop('</Configuration>')
-
-				-- Otherwise, check the list of valid configurations I built
-				-- earlier. If this configuration is in the list, then I will
-				-- get to it on another pass of this loop. If it is not in
-				-- the list, then it isn't really part of the project, and I
-				-- need to output a dummy configuration in its place.
-
-				elseif not isRealConfig[testName] then
-					-- this is a fake config to make VS happy
-					m.emptyConfiguration(cfg, arch)
-					p.pop('</Configuration>')
+				elseif not mapping[testName] then
+					target = { fake = true }
 				end
 
+				-- If I'm not ignoring this pairing, output the result now
+
+				if target then
+					m.configuration(target, testName)
+					m.tools(target)
+					p.pop('</Configuration>')
+				end
 			end
 		end
 
@@ -132,19 +134,26 @@
 ---
 
 	m.elements.configuration = function(cfg)
-		return {
-			m.outputDirectory,
-			m.intermediateDirectory,
-			m.configurationType,
-			m.useOfMFC,
-			m.characterSet,
-			m.managedExtensions
-		}
+		if cfg.fake then
+			return {
+				m.intermediateDirectory,
+				m.configurationType
+			}
+		else
+			return {
+				m.outputDirectory,
+				m.intermediateDirectory,
+				m.configurationType,
+				m.useOfMFC,
+				m.characterSet,
+				m.managedExtensions
+			}
+		end
 	end
 
-	function m.configuration(cfg)
+	function m.configuration(cfg, name)
 		p.push('<Configuration')
-		p.w('Name="%s"', vstudio.projectConfig(cfg))
+		p.w('Name="%s"', name)
 		p.callArray(m.elements.configuration, cfg)
 		p.w('>')
 	end
@@ -203,19 +212,42 @@
 -- closes the element.
 --
 -- @param name
---    The name of the tool, e.g. "VCCustomBuildTool".
+--    The name of the tool, e.g. "VCCustomBuildTool". If nil, no name
+--    attribute will be written.
 -- @param ...
 --    Any additional arguments required by the call list.
 ---
 
-	function m.VCTool(name, ...)
+	function m.VCTool(name, cfg, ...)
 		p.push('<Tool')
+
+		local nameFunc = m[name .. "Name"]
+		local callFunc = m.elements[name]
+
+		if nameFunc then
+			name = nameFunc(cfg, ...)
+		end
 		p.w('Name="%s"', name)
-		p.callArray(m.elements[name], ...)
+
+		if not cfg.fake then
+			p.callArray(callFunc, cfg, ...)
+		end
+
 		p.pop('/>')
 	end
 
+	------------
 
+	m.elements.DebuggerTool = function(cfg)
+		return {}
+	end
+
+	function m.DebuggerTool(cfg)
+		p.w('<DebuggerTool')
+		p.w('/>')
+	end
+
+	------------
 
 	m.elements.VCALinkTool = function(cfg)
 		return {}
@@ -225,7 +257,7 @@
 		m.VCTool("VCALinkTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCAppVerifierTool = function(cfg)
 		return {}
@@ -237,7 +269,7 @@
 		end
 	end
 
-
+	------------
 
 	m.elements.VCBscMakeTool = function(cfg)
 		return {}
@@ -247,13 +279,12 @@
 		m.VCTool("VCBscMakeTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCCLCompilerTool = function(cfg, toolset)
 		if not toolset then
 			-- no, use the standard set of attributes
 			return {
-				m.compilerToolName,
 				m.VCCLCompilerTool_additionalOptions,
 				m.optimization,
 				m.additionalIncludeDirectories,
@@ -281,7 +312,6 @@
 		else
 			-- yes, use the custom tool attributes
 			return {
-				m.compilerToolName,
 				m.VCCLExternalCompilerTool_additionalOptions,
 				m.additionalIncludeDirectories,
 				m.preprocessorDefinitions,
@@ -295,13 +325,22 @@
 
 	end
 
-	function m.VCCLCompilerTool(cfg)
-		p.push('<Tool')
-		p.callArray(m.elements.VCCLCompilerTool, cfg, m.toolset(cfg))
-		p.pop('/>')
+	function m.VCCLCompilerToolName(cfg)
+		local prj, file = config.normalize(cfg)
+		if file and fileconfig.hasCustomBuildRule(file) then
+			return "VCCustomBuildTool"
+		elseif prj.system == p.XBOX360 then
+			return "VCCLX360CompilerTool"
+		else
+			return "VCCLCompilerTool"
+		end
 	end
 
+	function m.VCCLCompilerTool(cfg)
+		m.VCTool("VCCLCompilerTool", cfg, m.toolset(cfg))
+	end
 
+	------------
 
 	m.elements.VCCustomBuildTool = function(cfg)
 		return {}
@@ -311,7 +350,7 @@
 		m.VCTool("VCCustomBuildTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCFxCopTool = function(cfg)
 		return {}
@@ -321,7 +360,7 @@
 		m.VCTool("VCFxCopTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCManagedResourceCompilerTool = function(cfg)
 		return {}
@@ -331,7 +370,7 @@
 		m.VCTool("VCManagedResourceCompilerTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCWebServiceProxyGeneratorTool = function(cfg)
 		return {}
@@ -341,7 +380,7 @@
 		m.VCTool("VCWebServiceProxyGeneratorTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCXDCMakeTool = function(cfg)
 		return {}
@@ -351,7 +390,7 @@
 		m.VCTool("VCXDCMakeTool", cfg)
 	end
 
-
+	------------
 
 	m.elements.VCXMLDataGeneratorTool = function(cfg)
 		return {}
@@ -499,15 +538,14 @@
 	end
 
 
-	function m.DebuggerTool(cfg)
-		p.w('<DebuggerTool')
-		p.w('/>')
-	end
-
-
 	function m.VCLinkerTool(cfg)
 		p.push('<Tool')
 		p.w('Name="%s"', m.linkerTool(cfg))
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
 
 		-- Decide between the built-in linker or an external toolset;
 		-- PS3 uses the external toolset
@@ -634,6 +672,14 @@
 			return
 		end
 
+		p.push('<Tool')
+		p.w('Name="VCManifestTool"')
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
+
 		local manifests = {}
 		for i, fname in ipairs(cfg.files) do
 			if path.getextension(fname) == ".manifest" then
@@ -641,8 +687,6 @@
 			end
 		end
 
-		p.push('<Tool')
-		p.w('Name="VCManifestTool"')
 		if #manifests > 0 then
 			p.x('AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
 		end
@@ -653,9 +697,16 @@
 	function m.VCMIDLTool(cfg)
 		p.push('<Tool')
 		p.w('Name="VCMIDLTool"')
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
+
 		if cfg.architecture == "x64" then
 			p.w('TargetEnvironment="3"')
 		end
+
 		p.pop('/>')
 	end
 
@@ -663,6 +714,12 @@
 	function m.VCNMakeTool(cfg)
 		p.push('<Tool')
 		p.w('Name="VCNMakeTool"')
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
+
 		m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
 		m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
 		m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
@@ -680,6 +737,11 @@
 	function m.VCResourceCompilerTool(cfg)
 		p.push('<Tool')
 		p.w('Name="VCResourceCompilerTool"')
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
 
 		if #cfg.resoptions > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
@@ -701,6 +763,12 @@
 
 		p.push('<Tool')
 		p.w('Name="%s"', name)
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
+
 		if #steps > 0 then
 			if msg then
 				p.x('Description="%s"', msg)
@@ -730,6 +798,12 @@
 	function m.VCX360DeploymentTool(cfg)
 		p.push('<Tool')
 		p.w('Name="VCX360DeploymentTool"')
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
+
 		p.w('DeploymentType="0"')
 		if #cfg.deploymentoptions > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(cfg.deploymentoptions, " "))
@@ -741,6 +815,12 @@
 	function m.VCX360ImageTool(cfg)
 		p.push('<Tool')
 		p.w('Name="VCX360ImageTool"')
+
+		if cfg.fake then
+			p.pop('/>')
+			return
+		end
+
 		if #cfg.imageoptions > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(cfg.imageoptions, " "))
 		end
@@ -886,9 +966,8 @@
 --
 
 	function m.fileConfiguration_compilerAttributes(cfg, filecfg)
-
 		-- Must always have a name attribute
-		m.compilerToolName(filecfg or cfg)
+		p.w('Name="%s"', m.VCCLCompilerToolName(filecfg or cfg))
 
 		if filecfg then
 			m.customBuildTool(filecfg)
@@ -1115,19 +1194,6 @@
 
 
 
-	function m.compilerToolName(cfg)
-		local name
-		local prj, file = config.normalize(cfg)
-		if file and fileconfig.hasCustomBuildRule(file) then
-			name = "VCCustomBuildTool"
-		else
-			name = iif(prj.system == p.XBOX360, "VCCLX360CompilerTool", "VCCLCompilerTool")
-		end
-		p.w('Name="%s"', name)
-	end
-
-
-
 	function m.configurationType(cfg)
 		local cfgtypes = {
 			Makefile = 0,
@@ -1245,7 +1311,12 @@
 
 
 	function m.intermediateDirectory(cfg)
-		local objdir = project.getrelative(cfg.project, cfg.objdir)
+		local objdir
+		if not cfg.fake then
+			objdir = project.getrelative(cfg.project, cfg.objdir)
+		else
+			objdir = "$(PlatformName)/$(ConfigurationName)"
+		end
 		p.x('IntermediateDirectory="%s"', path.translate(objdir))
 	end
 
