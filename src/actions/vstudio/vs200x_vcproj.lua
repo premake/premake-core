@@ -161,6 +161,72 @@
 
 
 ---
+-- Return the list of tools required to build a specific configuration.
+-- Each tool gets represented by an XML element in the project file, all
+-- of which are implemented farther down in this file.
+--
+-- @param cfg
+--    The configuration being written.
+-- @param isEmptyCfg
+--    If true, the list is for the generation of an empty or dummy
+--    configuration block; in this case different rules apply.
+--
+
+	m.elements.tools = function(cfg)
+		if vstudio.isMakefile(cfg) and not cfg.fake then
+			return {
+				m.VCNMakeTool
+			}
+		end
+		if cfg.system == p.XBOX360 then
+			return {
+				m.VCPreBuildEventTool,
+				m.VCCustomBuildTool,
+				m.VCXMLDataGeneratorTool,
+				m.VCWebServiceProxyGeneratorTool,
+				m.VCMIDLTool,
+				m.VCCLCompilerTool,
+				m.VCManagedResourceCompilerTool,
+				m.VCResourceCompilerTool,
+				m.VCPreLinkEventTool,
+				m.VCLinkerTool,
+				m.VCALinkTool,
+				m.VCX360ImageTool,
+				m.VCBscMakeTool,
+				m.VCX360DeploymentTool,
+				m.VCPostBuildEventTool,
+				m.DebuggerTool,
+			}
+		else
+			return {
+				m.VCPreBuildEventTool,
+				m.VCCustomBuildTool,
+				m.VCXMLDataGeneratorTool,
+				m.VCWebServiceProxyGeneratorTool,
+				m.VCMIDLTool,
+				m.VCCLCompilerTool,
+				m.VCManagedResourceCompilerTool,
+				m.VCResourceCompilerTool,
+				m.VCPreLinkEventTool,
+				m.VCLinkerTool,
+				m.VCALinkTool,
+				m.VCManifestTool,
+				m.VCXDCMakeTool,
+				m.VCBscMakeTool,
+				m.VCFxCopTool,
+				m.VCAppVerifierTool,
+				m.VCPostBuildEventTool,
+			}
+		end
+	end
+
+	function m.tools(cfg)
+		premake.callArray(m.elements.tools, cfg)
+	end
+
+
+
+---
 -- Write out the <References> element group.
 ---
 
@@ -243,8 +309,8 @@
 	end
 
 	function m.DebuggerTool(cfg)
-		p.w('<DebuggerTool')
-		p.w('/>')
+		p.push('<DebuggerTool')
+		p.pop('/>')
 	end
 
 	------------
@@ -283,7 +349,7 @@
 
 	m.elements.VCCLCompilerTool = function(cfg, toolset)
 		if not toolset then
-			-- no, use the standard set of attributes
+			-- not a custom tool, use the standard set of attributes
 			return {
 				m.VCCLCompilerTool_additionalOptions,
 				m.optimization,
@@ -310,7 +376,7 @@
 				m.omitDefaultLib,
 			}
 		else
-			-- yes, use the custom tool attributes
+			-- custom tool, use subset of attributes
 			return {
 				m.VCCLExternalCompilerTool_additionalOptions,
 				m.additionalIncludeDirectories,
@@ -411,97 +477,6 @@
 
 
 
----
--- Return the list of tools required to build a specific configuration.
--- Each tool gets represented by an XML element in the project file.
---
--- @param cfg
---    The configuration being written.
--- @param isEmptyCfg
---    If true, the list is for the generation of an empty or dummy
---    configuration block; in this case different rules apply.
---
-
-	function m.toolsForConfig(cfg, isEmptyCfg)
-		if vstudio.isMakefile(cfg) and not isEmptyCfg then
-			return {
-				"VCNMakeTool"
-			}
-		end
-		if _ACTION == "vs2002" then
-			return {
-				"VCCLCompilerTool",
-				"VCCustomBuildTool",
-				"VCLinkerTool",
-				"VCMIDLTool",
-				"VCPostBuildEventTool",
-				"VCPreBuildEventTool",
-				"VCPreLinkEventTool",
-				"VCResourceCompilerTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCWebDeploymentTool"
-			}
-		end
-		if _ACTION == "vs2003" then
-			return {
-				"VCCLCompilerTool",
-				"VCCustomBuildTool",
-				"VCLinkerTool",
-				"VCMIDLTool",
-				"VCPostBuildEventTool",
-				"VCPreBuildEventTool",
-				"VCPreLinkEventTool",
-				"VCResourceCompilerTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCXMLDataGeneratorTool",
-				"VCWebDeploymentTool",
-				"VCManagedWrapperGeneratorTool",
-				"VCAuxiliaryManagedWrapperGeneratorTool"
-			}
-		end
-		if cfg.system == p.XBOX360 then
-			return {
-				"VCPreBuildEventTool",
-				"VCCustomBuildTool",
-				"VCXMLDataGeneratorTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCMIDLTool",
-				"VCCLCompilerTool",
-				"VCManagedResourceCompilerTool",
-				"VCResourceCompilerTool",
-				"VCPreLinkEventTool",
-				"VCLinkerTool",
-				"VCALinkTool",
-				"VCX360ImageTool",
-				"VCBscMakeTool",
-				"VCX360DeploymentTool",
-				"VCPostBuildEventTool",
-				"DebuggerTool",
-			}
-		else
-			return {
-				"VCPreBuildEventTool",
-				"VCCustomBuildTool",
-				"VCXMLDataGeneratorTool",
-				"VCWebServiceProxyGeneratorTool",
-				"VCMIDLTool",
-				"VCCLCompilerTool",
-				"VCManagedResourceCompilerTool",
-				"VCResourceCompilerTool",
-				"VCPreLinkEventTool",
-				"VCLinkerTool",
-				"VCALinkTool",
-				"VCManifestTool",
-				"VCXDCMakeTool",
-				"VCBscMakeTool",
-				"VCFxCopTool",
-				"VCAppVerifierTool",
-				"VCPostBuildEventTool"
-			}
-		end
-	end
-
-
 --
 -- Map target systems to their default toolset. If no mapping is
 -- listed, the built-in Visual Studio tools will be used
@@ -522,20 +497,6 @@
 		return p.tools[cfg.toolset] or m.toolsets[cfg.system]
 	end
 
-
---
--- Write out all of the tool elements for a specific configuration
--- of the project.
---
-
-	function m.tools(cfg)
-		local calls = m.toolsForConfig(cfg)
-		for i, tool in ipairs(calls) do
-			if m[tool] then
-				m[tool](cfg)
-			end
-		end
-	end
 
 
 	function m.VCLinkerTool(cfg)
