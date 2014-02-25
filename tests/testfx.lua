@@ -248,6 +248,7 @@
 -- Test execution function
 --
 	local _OS_host = _OS
+	local _OPTIONS_host = _OPTIONS
 
 	local function error_handler(err)
 		local msg = err
@@ -275,9 +276,10 @@
 
 	local function test_setup(suite, fn)
 		_ACTION = "test"
-		_ARGS = { }
-		_OPTIONS = { }
 		_OS = _OS_host
+
+		_OPTIONS = {}
+		setmetatable(_OPTIONS, getmetatable(_OPTIONS_host))
 
 		stderr_capture = nil
 

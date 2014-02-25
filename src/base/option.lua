@@ -1,17 +1,45 @@
 --
 -- option.lua
 -- Work with the list of registered options.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	premake.option = {}
+	local m = premake.option
+
 
 
 --
--- The list of registered options.
+-- We can't control how people will type in the command line arguments, or how
+-- project scripts will define their custom options, so case becomes an issue.
+-- To mimimize issues, set up the _OPTIONS table to always use lowercase keys.
 --
 
-	premake.option.list = {}
+	local _OPTIONS_metatable = {
+		__index = function(tbl, key)
+			if type(key) == "string" then
+				key = key:lower()
+			end
+			return rawget(tbl, key)
+		end,
+		__newindex = function(tbl, key, value)
+			if type(key) == "string" then
+				key = key:lower()
+			end
+			rawset(tbl, key, value)
+		end
+	}
+
+	setmetatable(_OPTIONS, _OPTIONS_metatable)
+
+
+
+--
+-- The list of registered options. Calls to newoption() will add
+-- new entries here.
+--
+
+	m.list = {}
 
 
 --
@@ -21,7 +49,7 @@
 --    The new option object.
 --
 
-	function premake.option.add(opt)
+	function m.add(opt)
 		-- some sanity checking
 		local missing
 		for _, field in ipairs({ "description", "trigger" }) do
@@ -39,6 +67,7 @@
 	end
 
 
+
 --
 -- Retrieve an option by name.
 --
@@ -48,16 +77,17 @@
 --    The requested option, or nil if the option does not exist.
 --
 
-	function premake.option.get(name)
+	function m.get(name)
 		return premake.option.list[name]
 	end
+
 
 
 --
 -- Iterator for the list of options.
 --
 
-	function premake.option.each()
+	function m.each()
 		-- sort the list by trigger
 		local keys = { }
 		for _, option in pairs(premake.option.list) do
@@ -73,6 +103,7 @@
 	end
 
 
+
 --
 -- Validate a list of user supplied key/value pairs against the list of registered options.
 --
@@ -82,7 +113,7 @@
 ---   True if the list of pairs are valid, false and an error message otherwise.
 --
 
-	function premake.option.validate(values)
+	function m.validate(values)
 		for key, value in pairs(values) do
 			-- does this option exist
 			local opt = premake.option.get(key)

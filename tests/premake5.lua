@@ -53,6 +53,7 @@
 	dofile("base/test_criteria.lua")
 	dofile("base/test_detoken.lua")
 	dofile("base/test_include.lua")
+	dofile("base/test_option.lua")
 	dofile("base/test_os.lua")
 	dofile("base/test_override.lua")
 	dofile("base/test_path.lua")
