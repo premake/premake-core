@@ -213,26 +213,21 @@ int premake_locate(lua_State* L, const char* argv0)
 
 
 /**
- * Process the command line arguments, splitting them into options, the
- * target action, and any arguments to that action. The results are pushed
- * into the session for later use. I could have done this in the scripts,
- * but I need the value of the /scripts option to find them.
+ * Copy all command line arguments into the script-side _ARGV global, and
+ * check for the presence of a /scripts=<path> argument to help locate
+ * the manifest if needed.
  * \returns OKAY if successful.
  */
 int process_arguments(lua_State* L, int argc, const char** argv)
 {
 	int i;
-	int found = 0;
 
-	/* Create empty lists for _ARGV and _ARGS */
+	/* Copy all arguments in the _ARGV global */
 	lua_newtable(L);
-	lua_newtable(L);
-
 	for (i = 1; i < argc; ++i)
 	{
-		/* Everything goes into the _ARGV list */
 		lua_pushstring(L, argv[i]);
-		lua_rawseti(L, -3, luaL_getn(L, -3) + 1);
+		lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
 
 		/* The /scripts option gets picked up here; used later to find the
 		 * manifest and scripts later if necessary */
@@ -244,25 +239,9 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 		{
 			scripts_path = argv[i] + 10;
 		}
-		else if (argv[i][0] != '/' && strncmp(argv[i], "--", 2) != 0)
-		{
-			/* The first non-option is the action */
-			if (!found) {
-				found = 1;
-				lua_pushstring(L, argv[i]);
-				lua_setglobal(L, "_ACTION");
-			}
-			/* everything else is an argument */
-			else {
-				lua_pushstring(L, argv[i]);
-				lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
-			}
-		}
 	}
-
-	/* push the Options and Args lists */
-	lua_setglobal(L, "_ARGS");
 	lua_setglobal(L, "_ARGV");
+
 	return OKAY;
 }
 

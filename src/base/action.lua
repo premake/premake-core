@@ -4,14 +4,35 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
-	premake.action = { }
+	premake.action = {}
 
 
 --
--- The list of registered actions.
+-- Process the raw command line arguments from _ARGV to populate
+-- the _ACTION global and _ARGS table.
 --
 
-	premake.action.list = { }
+	_ACTION = nil
+	_ARGS = {}
+
+	for i, arg in ipairs(_ARGV) do
+		if not arg:startswith("/") and not arg:startswith("--") then
+			if not _ACTION then
+				_ACTION = arg
+			else
+				table.insert(_ARGS, arg)
+			end
+		end
+	end
+
+
+
+--
+-- The list of registered actions. Calls to newaction() will add
+-- new entries here.
+--
+
+	premake.action.list = {}
 
 
 --
