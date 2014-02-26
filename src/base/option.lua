@@ -8,7 +8,6 @@
 	local m = premake.option
 
 
-
 --
 -- We can't control how people will type in the command line arguments, or how
 -- project scripts will define their custom options, so case becomes an issue.
@@ -30,7 +29,32 @@
 		end
 	}
 
+	_OPTIONS = {}
 	setmetatable(_OPTIONS, _OPTIONS_metatable)
+
+
+--
+-- Process the raw command line arguments from _ARGV to populate
+-- the _OPTIONS table
+--
+
+	for i, arg in ipairs(_ARGV) do
+		local key, value
+		local i = arg:find("=", 1, true)
+		if i then
+			key = arg:sub(1, i - 1)
+			value = arg:sub(i + 1)
+		else
+			key = arg
+			value = ""
+		end
+
+		if key:startswith("/") then
+			_OPTIONS[key:sub(2)] = value
+		elseif key:startswith("--") then
+			_OPTIONS[key:sub(3)] = value
+		end
+	end
 
 
 

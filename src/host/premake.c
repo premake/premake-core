@@ -21,7 +21,6 @@
 
 
 static int process_arguments(lua_State* L, int argc, const char** argv);
-static int process_option(lua_State* L, const char* arg);
 static int load_builtin_scripts(lua_State* L);
 
 int premake_locate(lua_State* L, const char* argv0);
@@ -225,8 +224,7 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 	int i;
 	int found = 0;
 
-	/* Create empty lists for _ARGV, _OPTIONS, and _ARGS */
-	lua_newtable(L);
+	/* Create empty lists for _ARGV and _ARGS */
 	lua_newtable(L);
 	lua_newtable(L);
 
@@ -234,18 +232,19 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 	{
 		/* Everything goes into the _ARGV list */
 		lua_pushstring(L, argv[i]);
-		lua_rawseti(L, -4, luaL_getn(L, -4) + 1);
+		lua_rawseti(L, -3, luaL_getn(L, -3) + 1);
 
-		/* Options start with '/' or '--' */
-		if (argv[i][0] == '/')
+		/* The /scripts option gets picked up here; used later to find the
+		 * manifest and scripts later if necessary */
+		if (strncmp(argv[i], "/scripts=", 9) == 0)
 		{
-			process_option(L, argv[i] + 1);
+			scripts_path = argv[i] + 9;
 		}
-		else if (argv[i][0] == '-' && argv[i][1] == '-')
+		else if (strncmp(argv[i], "--scripts=", 10) == 0)
 		{
-			process_option(L, argv[i] + 2);
+			scripts_path = argv[i] + 10;
 		}
-		else
+		else if (argv[i][0] != '/' && strncmp(argv[i], "--", 2) != 0)
 		{
 			/* The first non-option is the action */
 			if (!found) {
@@ -263,51 +262,7 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 
 	/* push the Options and Args lists */
 	lua_setglobal(L, "_ARGS");
-	lua_setglobal(L, "_OPTIONS");
 	lua_setglobal(L, "_ARGV");
-	return OKAY;
-}
-
-
-
-/**
- * Parse an individual command-line option.
- * \returns OKAY if successful.
- */
-int process_option(lua_State* L, const char* arg)
-{
-	char key[512];
-	const char* value;
-
-	/* If a value is specified, split the option into a key/value pair */
-	char* ptr = strchr(arg, '=');
-	if (ptr)
-	{
-		int len = ptr - arg;
-		if (len > 511) len = 511;
-		strncpy(key, arg, len);
-		key[len] = '\0';
-		value = ptr + 1;
-	}
-	else
-	{
-		strcpy(key, arg);
-		value = "";
-	}
-
-	/* Make keys lowercase to avoid case issues */
-	for (ptr = key; *ptr; ++ptr) { *ptr = (char)tolower(*ptr); }
-
-	/* Store it in the Options table, which is already on the stack */
-	lua_pushstring(L, value);
-	lua_setfield(L, -3, key);
-
-	/* The /scripts option gets picked up here to find the built-in scripts */
-	if (strcmp(key, "scripts") == 0 && strlen(value) > 0)
-	{
-		scripts_path = value;
-	}
-
 	return OKAY;
 }
 
