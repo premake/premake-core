@@ -448,3 +448,25 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- Make sure that the sort order of the source files is maintained even
+-- when virtual paths are used to organize them.
+--
+
+	function suite.maintainsSortOrder_onVirtualPaths()
+		files { "SystemTray.h", "PrefsWriter.h", "SystemTray.cpp", "PrefsWriter.cpp" }
+		vpaths {
+			["source/mfc"] = { "PrefsWriter.*" },
+			["source/core"] = { "SystemTray.*" },
+		}
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClInclude Include="PrefsWriter.h" />
+		<ClInclude Include="SystemTray.h" />
+	</ItemGroup>
+		]]
+	end
+

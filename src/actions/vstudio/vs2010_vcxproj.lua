@@ -638,6 +638,13 @@
 					end
 				end
 			})
+
+			-- sort by relative to path; otherwise VS will reorder the files
+			for group, files in pairs(groups) do
+				table.sort(files, function (a, b)
+					return a.relpath < b.relpath
+				end)
+			end
 		end
 
 		return groups[group]
