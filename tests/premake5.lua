@@ -228,8 +228,8 @@
 
 			msg = string.format("%d tests passed, %d failed", passed, failed)
 			if (failed > 0) then
-				-- should probably return an error code here somehow
 				print(msg)
+				os.exit(5)
 			else
 				print(msg)
 			end
