@@ -151,6 +151,31 @@
 		]]
 	end
 
+--
+-- Check the support for building with ATL.
+--
+
+	function suite.useOfAtl_onDynamicRuntime()
+		atl "Dynamic"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<UseOfATL>Dynamic</UseOfATL>
+		]]
+	end
+
+	function suite.useOfAtl_onStaticRuntime()
+		atl "Static"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<UseOfATL>Static</UseOfATL>
+		]]
+	end
 
 --
 -- Check handling of the ReleaseRuntime flag; should override the

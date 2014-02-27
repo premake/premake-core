@@ -286,6 +286,17 @@
 	}
 
 	api.register {
+		name = "atl",
+		scope = "config",
+		kind  = "string",
+		allowed = {
+			"Off",
+			"Dynamic",
+			"Static",
+		},
+	}
+
+	api.register {
 		name = "floatingpoint",
 		scope = "config",
 		kind = "string",

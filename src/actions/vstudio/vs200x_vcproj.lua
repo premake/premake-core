@@ -146,7 +146,7 @@
 				m.configurationType,
 				m.useOfMFC,
 				m.characterSet,
-				m.managedExtensions
+				m.managedExtensions,
 			}
 		end
 	end
@@ -1483,7 +1483,6 @@
 			p.w('UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
 		end
 	end
-
 
 
 	function m.usePrecompiledHeader(cfg)

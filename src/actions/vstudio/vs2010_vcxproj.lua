@@ -177,6 +177,7 @@
 		"configurationType",
 		"useDebugLibraries",
 		"useOfMfc",
+		"useOfAtl",
 		"clrSupport",
 		"characterSet",
 		"wholeProgramOptimization",
@@ -1245,6 +1246,12 @@
 	function vc2010.useOfMfc(cfg)
 		if cfg.flags.MFC then
 			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
+		end
+	end
+
+	function vc2010.useOfAtl(cfg)
+		if cfg.atl then
+			_p(2,'<UseOfATL>%s</UseOfATL>', cfg.atl)
 		end
 	end
 
