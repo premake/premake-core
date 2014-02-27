@@ -1,7 +1,7 @@
 --
 -- vs200x_vcproj.lua
 -- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc200x = {}
@@ -167,10 +167,7 @@
 --
 -- @param cfg
 --    The configuration being written.
--- @param isEmptyCfg
---    If true, the list is for the generation of an empty or dummy
---    configuration block; in this case different rules apply.
---
+---
 
 	m.elements.tools = function(cfg)
 		if vstudio.isMakefile(cfg) and not cfg.fake then
@@ -221,7 +218,7 @@
 	end
 
 	function m.tools(cfg)
-		premake.callArray(m.elements.tools, cfg)
+		premake.callArray(m.elements.tools, cfg, config.toolset(cfg))
 	end
 
 
@@ -402,8 +399,8 @@
 		end
 	end
 
-	function m.VCCLCompilerTool(cfg)
-		m.VCTool("VCCLCompilerTool", cfg, m.toolset(cfg))
+	function m.VCCLCompilerTool(cfg, toolset)
+		m.VCTool("VCCLCompilerTool", cfg, toolset)
 	end
 
 	------------
@@ -476,30 +473,7 @@
 ---------------------------------------------------------------------------
 
 
-
---
--- Map target systems to their default toolset. If no mapping is
--- listed, the built-in Visual Studio tools will be used
---
-
-	m.toolsets = {
-		ps3 = p.tools.snc
-	}
-
-
---
--- Identify the toolset to use for a given configuration. Returns nil to
--- use the built-in Visual Studio compiler, or a toolset interface to
--- use the alternate external compiler setup.
---
-
-	function m.toolset(cfg)
-		return p.tools[cfg.toolset] or m.toolsets[cfg.system]
-	end
-
-
-
-	function m.VCLinkerTool(cfg)
+	function m.VCLinkerTool(cfg, toolset)
 		p.push('<Tool')
 		p.w('Name="%s"', m.linkerTool(cfg))
 
@@ -510,7 +484,6 @@
 
 		-- Decide between the built-in linker or an external toolset;
 		-- PS3 uses the external toolset
-		local toolset = m.toolset(cfg)
 		if toolset then
 			m.VCExternalLinkerTool(cfg, toolset)
 		else

@@ -682,7 +682,7 @@
 
 		-- check to see if this project uses an external toolset. If so, let the
 		-- toolset define the format of the links
-		local toolset = premake.vstudio.vc200x.toolset(cfg)
+		local toolset = config.toolset(cfg)
 		if toolset then
 			links = toolset.getlinks(cfg, not explicit)
 		else

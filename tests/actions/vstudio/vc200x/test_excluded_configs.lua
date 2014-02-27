@@ -1,12 +1,12 @@
 --
 -- tests/actions/vstudio/vc200x/test_excluded_configs.lua
 -- Check handling of configurations which have been excluded from the build.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vs200x_excluded_configs")
 	local vc200x = premake.vstudio.vc200x
-
+	local config = premake.config
 
 --
 -- Setup/teardown
@@ -36,7 +36,7 @@
 
 	local function prepare(platform)
 		local cfg = test.getconfig(prj, "Debug", platform)
-		vc200x.VCLinkerTool(cfg)
+		vc200x.VCLinkerTool(cfg, config.toolset(cfg))
 	end
 
 

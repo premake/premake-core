@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -38,7 +38,6 @@
 
 		-- project script setup
 		"base/api.lua",
-		"_premake_init.lua",
 
 		-- project script processing
 		"base/oven.lua",
@@ -76,4 +75,6 @@
 
 		-- Clean action
 		"actions/clean/_clean.lua",
+
+		"_premake_init.lua",
 	}

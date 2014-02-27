@@ -563,3 +563,12 @@
 	end
 
 
+
+---
+-- Return the appropriate toolset adapter for the provided configuration,
+-- or nil if no toolset is specified.
+---
+
+	function config.toolset(cfg)
+		return premake.tools[cfg.toolset]
+	end

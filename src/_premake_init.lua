@@ -655,12 +655,12 @@
 		name = "toolset",
 		scope = "config",
 		kind = "string",
-		allowed = {
-			"clang",
-			"gcc",
-			"msc",
-			"snc",
-		},
+		allowed = function(value)
+			local key = value:lower()
+			if premake.tools[key] ~= nil then
+				return key
+			end
+		end,
 	}
 
  	api.register {
@@ -909,9 +909,6 @@
 	configuration { "MacOSX", "SharedLib" }
 		targetextension ".dylib"
 
-	configuration { "PS3", "ConsoleApp" }
-		targetextension ".elf"
-
 	-- Windows and friends.
 
 	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
@@ -933,3 +930,11 @@
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"
+
+	-- PS3 configurations
+
+	configuration { "PS3" }
+		toolset "snc"
+
+	configuration { "PS3", "ConsoleApp" }
+		targetextension ".elf"
