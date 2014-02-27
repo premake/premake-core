@@ -43,10 +43,58 @@
 	local root = configset.root
 
 
+---
+-- Register a new API function. See the built-in API definitions in
+-- _premake_init.lua for lots of usage examples.
 --
--- Register a new API function. See the built-in API definitions below
--- for usage examples.
+-- A new global function will be created to receive values for the field.
+-- List fields will also receive a `remove...()` function to remove values.
 --
+-- @param field
+--    A table describing the new field, with these keys:
+--
+--     name     The API name of the new field. This is used to create a global
+--              function with the same name, and so should follow Lua symbol
+--              naming conventions. (required)
+--     scope    The scoping level at which this value can be used; see list
+--              below. (required)
+--     kind     The type of values that can be stored into this field; see
+--              list below. (required)
+--     allowed  An array of valid values for this field, or a function which
+--              accepts a value as input and returns the canonical value as a
+--              result, or nil if the input value is invalid. (optional)
+--     list     A boolean indicating whether this field can hold multiple
+--              values. If true, multiple calls to this field will concatonate
+--              the values; if false or unset multiple calls will replace the
+--              preceding value.
+--     keyed    A boolean indicating whether the field uses an associative
+--              table for values. If true, associative tables will be expected
+--              as input; the values of the table will handled according the
+--              setting of `kind`, above. (optional)
+--     tokens   A boolean indicating whether token expansion should be
+--              performed on this field.
+--
+--   The available field scopes are:
+--
+--     project  The field applies to solutions and projects.
+--     config   The field applies to solutions, projects, and individual build
+--              configurations.
+--
+--   The available field kinds are:
+--
+--     string     A simple string value.
+--     path       A file system path. The value will be made into an absolute
+--                path, but no wildcard expansion will be performed.
+--     file       One or more file names. Wilcard expansion will be performed,
+--                and the results made absolute. Implies a list.
+--     directory  One of more directory names. Wildcard expansion will be
+--                performed, and the results made absolute. Implies a list.
+--     mixed      A mix of simple string values and file system paths. Values
+--                which contain a directory separator ("/") will be made
+--                absolute; other values will be left intact.
+--     table      A table of values. If the input value is not a table, it is
+--                wrapped in one.
+---
 
 	function api.register(field)
 		-- verify the name
@@ -510,11 +558,11 @@
 
 
 --
--- Set a new array value. Arrays are lists of values stored by "value",
--- in that new values overwrite old ones, rather than merging like lists.
+-- Set a new table value. Tables are arbitrary Lua tables; new values replace
+-- old ones, rather than merging like lists.
 --
 
-	function api.setarray(target, name, field, value)
+	function api.settable(target, name, field, value)
 		-- if the target is the project, configset will be set and I can push
 		-- the value there. Otherwise I was called to store into some other kind
 		-- of object (i.e. an array or list)
@@ -630,16 +678,6 @@
 			value = path.getabsolute(value)
 		end
 		return api.setstring(target, name, field, value)
-	end
-
-
---
--- Set a new object value on an API field.
---
-
-	function api.setobject(target, name, field, value)
-		target = target.configset or target
-		target[name] = value
 	end
 
 

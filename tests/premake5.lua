@@ -84,7 +84,6 @@
 	dofile("oven/test_filtering.lua")
 
 	-- API tests
-	dofile("api/test_array_kind.lua")
 	dofile("api/test_callback.lua")
 	dofile("api/test_containers.lua")
 	dofile("api/test_directory_kind.lua")
@@ -92,6 +91,7 @@
 	dofile("api/test_path_kind.lua")
 	dofile("api/test_register.lua")
 	dofile("api/test_string_kind.lua")
+	dofile("api/test_table_kind.lua")
 
 	-- Control system tests
 	dofile("test_premake.lua")

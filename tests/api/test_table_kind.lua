@@ -1,11 +1,10 @@
 --
--- tests/api/test_array_kind.lua
--- Tests the array API value type.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- tests/api/test_table_kind.lua
+-- Tests the table API value type.
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	T.api_array_kind = {}
-	local suite = T.api_array_kind
+	local suite = test.declare("api_table_kind")
 	local api = premake.api
 
 
@@ -14,7 +13,7 @@
 --
 
 	function suite.setup()
-		api.register { name = "testapi", kind = "array", scope = "project" }
+		api.register { name = "testapi", kind = "table", scope = "project" }
 		test.createsolution()
 	end
 
@@ -43,7 +42,7 @@
 	end
 
 
--- 
+--
 -- New values should overwrite old.
 --
 

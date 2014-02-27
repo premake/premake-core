@@ -109,7 +109,7 @@
 	api.register {
 		name = "buildrule",     -- DEPRECATED
 		scope = "config",
-		kind = "object",
+		kind = "table",
 		tokens = true,
 	}
 
@@ -124,7 +124,7 @@
 	api.register {
 		name = "configmap",
 		scope = "config",
-		kind = "array",
+		kind = "table",
 		keyed = true,
 	}
 
