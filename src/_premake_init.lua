@@ -286,7 +286,7 @@
 	}
 
 	api.register {
-		name = "ATL",
+		name = "atl",
 		scope = "config",
 		kind  = "string",
 		allowed = {

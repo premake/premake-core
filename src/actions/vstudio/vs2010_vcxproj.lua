@@ -1250,8 +1250,8 @@
 	end
 
 	function vc2010.useOfAtl(cfg)
-		if cfg.ATL then
-			_p(2,'<UseOfATL>%s</UseOfATL>', cfg.ATL or "nil")
+		if cfg.atl then
+			_p(2,'<UseOfATL>%s</UseOfATL>', cfg.atl)
 		end
 	end
 

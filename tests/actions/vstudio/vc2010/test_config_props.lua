@@ -156,7 +156,7 @@
 --
 
 	function suite.useOfAtl_onDynamicRuntime()
-		ATL "Dynamic"
+		atl "Dynamic"
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -167,7 +167,7 @@
 	end
 
 	function suite.useOfAtl_onStaticRuntime()
-		ATL "Static"
+		atl "Static"
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
