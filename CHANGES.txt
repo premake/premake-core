@@ -40,7 +40,8 @@
 * Added ReleaseRuntime build flag (Tarmo Pikaro)
 * Added Component, Form, and UserControl build actions
 * Added usingdirs() to specify C++/CLI additional using directories (João Matos / triton)
-
+* Added support for VS utility projects (Michael Skibbe / tbasnoopy)
+* Added ATL support for VS (Michael Skibbe / tbasnoopy)
 
 -------
   4.4  (in progress)
