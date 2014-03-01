@@ -795,6 +795,7 @@
 			WindowedApp = "Application",
 			Makefile = "Makefile",
 			None = "Makefile",
+			Utility = "Utility",
 		}
 		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
 	end

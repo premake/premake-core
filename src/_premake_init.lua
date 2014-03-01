@@ -405,6 +405,7 @@
 			"SharedLib",
 			"StaticLib",
 			"WindowedApp",
+			"Utility",
 		},
 	}
 
