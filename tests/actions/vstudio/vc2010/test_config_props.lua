@@ -227,6 +227,21 @@
 		]]
 	end
 
+--
+-- Same as above but for Utility
+--
+
+	function suite.structureIsCorrect_onUtility()
+		kind "Utility"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Utility</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+	</PropertyGroup>
+		]]
+	end
 
 --
 -- Check the LinkTimeOptimization flag
