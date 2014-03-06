@@ -275,8 +275,7 @@
 -- closes the element.
 --
 -- @param name
---    The name of the tool, e.g. "VCCustomBuildTool". If nil, no name
---    attribute will be written.
+--    The name of the tool, e.g. "VCCustomBuildTool".
 -- @param ...
 --    Any additional arguments required by the call list.
 ---
@@ -365,7 +364,7 @@
 				m.runtimeTypeInfo,
 				m.treatWChar_tAsBuiltInType,
 				m.usePrecompiledHeader,
-				m.programDatabaseFileName,
+				m.programDataBaseFileName,
 				m.warnings,
 				m.debugInformationFormat,
 				m.compileAs,
@@ -379,13 +378,12 @@
 				m.additionalIncludeDirectories,
 				m.preprocessorDefinitions,
 				m.usePrecompiledHeader,
-				m.programDatabaseFileName,
+				m.programDataBaseFileName,
 				m.debugInformationFormat,
 				m.compileAs,
 				m.forcedIncludeFiles,
 			}
 		end
-
 	end
 
 	function m.VCCLCompilerToolName(cfg)
@@ -421,6 +419,54 @@
 
 	function m.VCFxCopTool(cfg)
 		m.VCTool("VCFxCopTool", cfg)
+	end
+
+	------------
+
+	m.elements.VCLinkerTool = function(cfg, toolset)
+		if cfg.kind ~= p.STATICLIB then
+			return {
+				m.linkLibraryDependencies,
+				m.ignoreImportLibrary,
+				m.additionalLinkerOptions,
+				m.additionalDependencies,
+				m.outputFile,
+				m.linkIncremental,
+				m.additionalLibraryDirectories,
+				m.moduleDefinitionFile,
+				m.generateManifest,
+				m.generateDebugInformation,
+				m.subSystem,
+				m.optimizeReferences,
+				m.enableCOMDATFolding,
+				m.entryPointSymbol,
+				m.importLibrary,
+				m.targetMachine,
+				m.randomizedBaseAddress,
+				m.dataExecutionPrevention,
+			}
+		else
+			return {
+				m.additionalLinkerOptions,
+				m.additionalDependencies,
+				m.outputFile,
+				m.additionalLibraryDirectories,
+			}
+		end
+	end
+
+	function m.VCLinkerToolName(cfg)
+		if cfg.kind == p.STATICLIB then
+			return "VCLibrarianTool"
+		elseif cfg.system == p.XBOX360 then
+			return "VCX360LinkerTool"
+		else
+			return "VCLinkerTool"
+		end
+	end
+
+	function m.VCLinkerTool(cfg, toolset)
+		m.VCTool("VCLinkerTool", cfg, toolset)
 	end
 
 	------------
@@ -471,135 +517,6 @@
 -- doing right now. Hold on tight.
 --
 ---------------------------------------------------------------------------
-
-
-	function m.VCLinkerTool(cfg, toolset)
-		p.push('<Tool')
-		p.w('Name="%s"', m.linkerTool(cfg))
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		-- Decide between the built-in linker or an external toolset;
-		-- PS3 uses the external toolset
-		if toolset then
-			m.VCExternalLinkerTool(cfg, toolset)
-		else
-			m.VCBuiltInLinkerTool(cfg)
-		end
-
-		p.pop('/>')
-	end
-
-
-	function m.VCBuiltInLinkerTool(cfg)
-		local explicitLink = vstudio.needsExplicitLink(cfg)
-
-		if cfg.kind ~= p.STATICLIB then
-
-			if explicitLink then
-				p.w('LinkLibraryDependencies="false"')
-			end
-
-			if cfg.flags.NoImportLib then
-				p.w('IgnoreImportLibrary="%s"', m.bool(true))
-			end
-		end
-
-		if #cfg.linkoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.linkoptions, " "))
-		end
-
-		if #cfg.links > 0 then
-			local links = m.links(cfg, explicitLink)
-			if links ~= "" then
-				p.x('AdditionalDependencies="%s"', links)
-			end
-		end
-
-		p.x('OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-
-		if cfg.kind ~= p.STATICLIB then
-			p.w('LinkIncremental="%s"', iif(config.canLinkIncremental(cfg) , 2, 1))
-		end
-
-		m.additionalLibraryDirectories(cfg)
-
-		if cfg.kind ~= p.STATICLIB then
-			local deffile = config.findfile(cfg, ".def")
-			if deffile then
-				p.w('ModuleDefinitionFile="%s"', deffile)
-			end
-
-			if cfg.flags.NoManifest then
-				p.w('GenerateManifest="%s"', m.bool(false))
-			end
-
-			p.w('GenerateDebugInformation="%s"', m.bool(m.symbols(cfg) ~= 0))
-
-			if m.symbols(cfg) >= 3 then
-				p.x('ProgramDataBaseFileName="$(OutDir)\\%s.pdb"', cfg.buildtarget.basename)
-			end
-
-			p.w('SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
-
-			if config.isOptimizedBuild(cfg) then
-				p.w('OptimizeReferences="2"')
-				p.w('EnableCOMDATFolding="2"')
-			end
-
-			if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and not cfg.flags.WinMain then
-				p.w('EntryPointSymbol="mainCRTStartup"')
-			end
-
-			if cfg.kind == "SharedLib" then
-				local implibdir = cfg.linktarget.abspath
-				-- I can't actually stop the import lib, but I can hide it in the objects directory
-				if cfg.flags.NoImportLib then
-					implibdir = path.join(cfg.objdir, path.getname(implibdir))
-				end
-				implibdir = project.getrelative(cfg.project, implibdir)
-				p.x('ImportLibrary="%s"', path.translate(implibdir))
-			end
-
-			p.w('TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
-		end
-	end
-
-
-	function m.VCExternalLinkerTool(cfg, toolset)
-		local explicitLink = vstudio.needsExplicitLink(cfg)
-
-		local buildoptions = table.join(toolset.getldflags(cfg), cfg.linkoptions)
-		if #buildoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(buildoptions, " "))
-		end
-
-		if #cfg.links > 0 then
-			local links = toolset.getlinks(cfg, not explicitLink)
-			if #links > 0 then
-				p.x('AdditionalDependencies="%s"', table.concat(links, " "))
-			end
-		end
-
-		p.x('OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-
-		if cfg.kind ~= p.STATICLIB then
-			p.w('LinkIncremental="0"')
-		end
-
-		m.additionalLibraryDirectories(cfg)
-
-		if cfg.kind ~= p.STATICLIB then
-			p.w('GenerateManifest="%s"', m.bool(false))
-			p.w('ProgramDatabaseFile=""')
-			p.w('RandomizedBaseAddress="1"')
-			p.w('DataExecutionPrevention="0"')
-		end
-	end
-
 
 	function m.VCManifestTool(cfg)
 		if cfg.kind == p.STATICLIB then
@@ -957,39 +874,6 @@
 	end
 
 
---
--- Returns the list of libraries required to link a specific configuration,
--- formatted for Visual Studio's XML.
---
-
-	function m.links(cfg, explicit)
-		local scope = iif(explicit, "all", "system")
-		local links = config.getlinks(cfg, scope, "fullpath")
-		for i, link in ipairs(links) do
-			if link:find(" ", 1, true) then
-				link = '"' .. link .. '"'
-			end
-			links[i] = path.translate(link)
-		end
-		return table.concat(links, " ")
-	end
-
-
---
--- Returns the correct name for the linker tool element, based on
--- the configuration target system.
---
-
-	function m.linkerTool(cfg)
-		if cfg.kind == p.STATICLIB then
-			return "VCLibrarianTool"
-		elseif cfg.system == p.XBOX360 then
-			return "VCX360LinkerTool"
-		else
-			return "VCLinkerTool"
-		end
-	end
-
 
 --
 -- Return the debugging symbol level for a configuration.
@@ -1021,6 +905,31 @@
 -- Handlers for individual project elements
 --
 ---------------------------------------------------------------------------
+
+
+	function m.additionalDependencies(cfg, toolset)
+		if #cfg.links == 0 then return end
+
+		local ex = vstudio.needsExplicitLink(cfg)
+
+		local links
+		if not toolset then
+			local scope = iif(ex, "all", "system")
+			links = config.getlinks(cfg, scope, "fullpath")
+			for i, link in ipairs(links) do
+				if link:find(" ", 1, true) then
+					link = '"' .. link .. '"'
+				end
+				links[i] = path.translate(link)
+			end
+		else
+			links = toolset.getlinks(cfg, not ex)
+		end
+
+		if #links > 0 then
+			p.x('AdditionalDependencies="%s"', table.concat(links, " "))
+		end
+	end
 
 
 	function m.additionalIncludeDirectories(cfg)
@@ -1065,6 +974,17 @@
 		end
 		if #buildoptions > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(buildoptions, " "))
+		end
+	end
+
+
+	function m.additionalLinkerOptions(cfg, toolset)
+		local flags = cfg.linkoptions
+		if toolset then
+			flags = table.join(toolset.getldflags(cfg), flags)
+		end
+		if #flags > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(flags, " "))
 		end
 	end
 
@@ -1159,9 +1079,23 @@
 	end
 
 
+	function m.dataExecutionPrevention(cfg, toolset)
+		if toolset then
+			p.w('DataExecutionPrevention="0"')
+		end
+	end
+
+
 	function m.debugInformationFormat(cfg, toolset)
 		local fmt = iif(toolset, "0", m.symbols(cfg))
 		p.w('DebugInformationFormat="%s"', fmt)
+	end
+
+
+	function m.enableCOMDATFolding(cfg, toolset)
+		if config.isOptimizedBuild(cfg) and not toolset then
+			p.w('EnableCOMDATFolding="2"')
+		end
 	end
 
 
@@ -1176,6 +1110,16 @@
 
 	function m.enableFunctionLevelLinking(cfg)
 		p.w('EnableFunctionLevelLinking="%s"', m.bool(true))
+	end
+
+
+	function m.entryPointSymbol(cfg, toolset)
+		if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and
+			not cfg.flags.WinMain and
+			not toolset
+		then
+			p.w('EntryPointSymbol="mainCRTStartup"')
+		end
 	end
 
 
@@ -1216,13 +1160,6 @@
 	end
 
 
-	function m.omitDefaultLib(cfg)
-		if cfg.flags.OmitDefaultLibrary then
-			p.w('OmitDefaultLibName="true"')
-		end
-	end
-
-
 	function m.keyword(prj)
 		local windows, managed, makefile
 		for cfg in project.eachconfig(prj) do
@@ -1244,6 +1181,42 @@
 	end
 
 
+	function m.generateDebugInformation(cfg, toolset)
+		if not toolset then
+			p.w('GenerateDebugInformation="%s"', m.bool(m.symbols(cfg) ~= 0))
+		end
+	end
+
+
+	function m.generateManifest(cfg, toolset)
+		if cfg.flags.NoManifest or toolset then
+			p.w('GenerateManifest="%s"', m.bool(false))
+		end
+	end
+
+
+	function m.ignoreImportLibrary(cfg, toolset)
+		if cfg.flags.NoImportLib and not toolset then
+			p.w('IgnoreImportLibrary="%s"', m.bool(true))
+		end
+	end
+
+
+	function m.importLibrary(cfg, toolset)
+		if cfg.kind == p.SHAREDLIB and not toolset then
+			local implibdir = cfg.linktarget.abspath
+
+			-- I can't actually stop the import lib, but I can hide it in the objects directory
+			if cfg.flags.NoImportLib then
+				implibdir = path.join(cfg.objdir, path.getname(implibdir))
+			end
+
+			implibdir = project.getrelative(cfg.project, implibdir)
+			p.x('ImportLibrary="%s"', path.translate(implibdir))
+		end
+	end
+
+
 	function m.intermediateDirectory(cfg)
 		local objdir
 		if not cfg.fake then
@@ -1252,6 +1225,24 @@
 			objdir = "$(PlatformName)/$(ConfigurationName)"
 		end
 		p.x('IntermediateDirectory="%s"', path.translate(objdir))
+	end
+
+
+	function m.linkIncremental(cfg, toolset)
+		local value
+		if not toolset then
+			value = iif(config.canLinkIncremental(cfg) , 2, 1)
+		else
+			value = 0
+		end
+		p.w('LinkIncremental="%s"', value)
+	end
+
+
+	function m.linkLibraryDependencies(cfg, toolset)
+		if vstudio.needsExplicitLink(cfg) and not toolset then
+			p.w('LinkLibraryDependencies="false"')
+		end
 	end
 
 
@@ -1270,6 +1261,16 @@
 		   not cfg.flags.MultiProcessorCompile
 		then
 			p.w('MinimalRebuild="%s"', m.bool(true))
+		end
+	end
+
+
+	function m.moduleDefinitionFile(cfg, toolset)
+		if not toolset then
+			local deffile = config.findfile(cfg, ".def")
+			if deffile then
+				p.w('ModuleDefinitionFile="%s"', deffile)
+			end
 		end
 	end
 
@@ -1294,6 +1295,13 @@
 	end
 
 
+	function m.omitDefaultLib(cfg)
+		if cfg.flags.OmitDefaultLibrary then
+			p.w('OmitDefaultLibName="true"')
+		end
+	end
+
+
 	function m.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
 			p.w('OmitFramePointers="%s"', m.bool(true))
@@ -1310,9 +1318,21 @@
 	end
 
 
+	function m.optimizeReferences(cfg, toolset)
+		if config.isOptimizedBuild(cfg) and not toolset then
+			p.w('OptimizeReferences="2"')
+		end
+	end
+
+
 	function m.outputDirectory(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		p.x('OutputDirectory="%s"', path.translate(outdir))
+	end
+
+
+	function m.outputFile(cfg)
+		p.x('OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 	end
 
 
@@ -1334,9 +1354,10 @@
 	end
 
 
-	function m.programDatabaseFileName(cfg)
-		local target = cfg.buildtarget
-		p.x('ProgramDataBaseFileName="$(OutDir)\\%s%s.pdb"', target.prefix, target.basename)
+	function m.programDataBaseFileName(cfg, toolset)
+		if toolset then
+			p.w('ProgramDataBaseFileName=""')
+		end
 	end
 
 
@@ -1380,6 +1401,14 @@
 	function m.projectType(prj)
 		p.w('ProjectType="Visual C++"')
 	end
+
+
+	function m.randomizedBaseAddress(cfg, toolset)
+		if toolset then
+			p.w('RandomizedBaseAddress="1"')
+		end
+	end
+
 
 
 	function m.resourceAdditionalIncludeDirectories(cfg)
@@ -1439,6 +1468,13 @@
 	end
 
 
+	function m.subSystem(cfg, toolset)
+		if not toolset then
+			p.w('SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
+		end
+	end
+
+
 	function m.targetFrameworkVersion(prj)
 		local windows, makefile
 		for cfg in project.eachconfig(prj) do
@@ -1454,10 +1490,10 @@
 	end
 
 
-	function m.tool(name)
-		p.push('<Tool')
-		p.w('Name="%s"', name)
-		p.pop('/>')
+	function m.targetMachine(cfg, toolset)
+		if not toolset then
+			p.w('TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
+		end
 	end
 
 

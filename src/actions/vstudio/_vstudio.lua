@@ -335,13 +335,16 @@
 --
 
 	function vstudio.needsExplicitLink(cfg)
-		local ex = cfg.flags.NoImplicitLink
-		if not ex then
-			local prjdeps = project.getdependencies(cfg.project)
-			local cfgdeps = config.getlinks(cfg, "dependencies", "object")
-			ex = #prjdeps ~= #cfgdeps
+		if not cfg._needsExplicitLink then
+			local ex = cfg.flags.NoImplicitLink
+			if not ex then
+				local prjdeps = project.getdependencies(cfg.project)
+				local cfgdeps = config.getlinks(cfg, "dependencies", "object")
+				ex = #prjdeps ~= #cfgdeps
+			end
+			cfg._needsExplicitLink = ex
 		end
-		return ex
+		return cfg._needsExplicitLink
 	end
 
 

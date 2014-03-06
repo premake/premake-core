@@ -118,7 +118,6 @@
 	OutputFile="$(OutDir)\MyProject.exe"
 	LinkIncremental="2"
 	GenerateDebugInformation="true"
-	ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
 		]]
 	end
 

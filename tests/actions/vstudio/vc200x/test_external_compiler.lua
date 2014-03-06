@@ -38,7 +38,7 @@
 	Name="VCCLCompilerTool"
 	AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
 	UsePrecompiledHeader="0"
-	ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+	ProgramDataBaseFileName=""
 	DebugInformationFormat="0"
 	CompileAs="0"
 />
@@ -75,7 +75,7 @@
 	Name="VCCLCompilerTool"
 	AdditionalOptions="-Xc+=exceptions -Xc+=rtti"
 	UsePrecompiledHeader="0"
-	ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
+	ProgramDataBaseFileName=""
 	DebugInformationFormat="0"
 	CompileAs="0"
 	ForcedIncludeFiles="stdafx.h;include\sys.h"
