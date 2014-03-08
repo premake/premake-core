@@ -362,7 +362,7 @@
 		-- assemble all matching configmaps, and then merge their keys
 		-- into the project's configmap
 
-		local map = configset.fetchvalue(cset, "configmap", terms)
+		local map = configset.fetch(cset, premake.field.get("configmap"), terms)
 		if map then
 			for key, value in pairs(map) do
 				ctx.configmap[key] = value

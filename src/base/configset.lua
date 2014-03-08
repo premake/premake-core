@@ -1,19 +1,16 @@
 --
 -- configset.lua
 --
--- DO NOT USE THIS YET! I am just getting started here; please wait until
--- I've had a chance to build it out more before using.
+-- A configuration set manages a collection of fields, which are organized
+-- into "blocks". Each block stores a set of field-value pairs, along with
+-- a list of terms which indicate the context in which those field values
+-- should be applied.
 --
--- A configuration set manages a collection of configuration values, which
--- are organized into "blocks". Each block stores a set of field-value pairs,
--- along with a list of terms which indicate the context in which those
--- values should be applied.
---
--- Configurations use the API definition to know what fields are available,
+-- Configurations use the field definitions to know what fields are available,
 -- and the corresponding value types for those fields. Only fields that have
--- been registered via api.register() can be stored.
+-- been registered via field.new() can be stored.
 --
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
 	premake.configset = {}
@@ -44,6 +41,103 @@
 
 
 ---
+-- Retrieve a value from the configuration set.
+--
+-- @param cset
+--    The configuration set to query.
+-- @param field
+--    The definition of field to be queried.
+-- @param context
+--    A list of lowercase context terms to use during the fetch. Only those
+--    blocks with terms fully contained by this list will be considered in
+--    determining the returned value. Terms should be lower case to make
+--    the context filtering case-insensitive.
+-- @param filename
+--    An optional filename; if provided, only blocks with pattern that
+--    matches the name will be considered.
+-- @return
+--    The requested value.
+---
+
+	function configset.fetch(cset, field, context, filename)
+		if not context then
+			context = cset._current._criteria.terms
+		end
+
+		if premake.field.merges(field) then
+			return configset._fetchMerged(cset, field, context, filename)
+		else
+			return configset._fetchDirect(cset, field, context, filename)
+		end
+	end
+
+
+	function configset._fetchDirect(cset, field, filter, filename)
+		local key = field.name
+
+		local n = #cset._blocks
+		for i = n, 1, -1 do
+			local block = cset._blocks[i]
+			local value = block[key]
+			if value and (cset.compiled or configset.testblock(block, filter, filename)) then
+				-- If value is an object, return a copy of it so that any
+				-- changes later made to it by the caller won't alter the
+				-- original value (that was a tough bug to find)
+				if type(value) == "table" then
+					value = table.deepcopy(value)
+				end
+				return value
+			end
+		end
+
+		if cset._parent then
+			return configset._fetchDirect(cset._parent, field, filter, filename)
+		end
+	end
+
+
+	function configset._fetchMerged(cset, field, filter, filename)
+		local result = {}
+
+		local function remove(patterns)
+			for _, pattern in ipairs(patterns) do
+				local i = 1
+				while i <= #result do
+					local value = result[i]:lower()
+					if value:match(pattern) == value then
+						result[result[i]] = nil
+						table.remove(result, i)
+					else
+						i = i + 1
+					end
+				end
+			end
+		end
+
+		if cset._parent then
+			result = configset._fetchMerged(cset._parent, field, filter, filename)
+		end
+
+		local key = field.name
+		for _, block in ipairs(cset._blocks) do
+			if cset.compiled or configset.testblock(block, filter, filename) then
+				if block._removes and block._removes[key] then
+					remove(block._removes[key])
+				end
+
+				local value = block[key]
+				if value then
+					result = premake.field.merge(field, result, value)
+				end
+			end
+		end
+
+		return result
+	end
+
+
+
+---
 -- Create and return a metatable which allows a configuration set to act as a
 -- "backing store" for a regular Lua table. Table operations that access a
 -- registered field will fetch from or store to the configurations set, while
@@ -64,14 +158,13 @@
 			__index = function(tbl, key)
 				local f = premake.field.get(key)
 				if f then
-					return configset.fetchvalue(cset, f.name, cset._current._criteria.terms)
+					return configset.fetch(cset, f, cset._current._criteria.terms)
 				else
 					return nil
 				end
 			end
 		}
 	end
-
 
 
 
@@ -92,6 +185,7 @@
 	function configset.registerfield(name, behavior)
 		configset._fields[name] = behavior
 	end
+
 
 
 --
@@ -121,6 +215,7 @@
 		cset._current = block
 		return block
 	end
+
 
 
 --
@@ -154,6 +249,7 @@
 	end
 
 
+
 --
 -- Remove values from a configuration set.
 --
@@ -183,6 +279,7 @@
 	end
 
 
+
 --
 -- Check to see if a configuration set is empty; that is, it does
 -- not contain any configuration blocks.
@@ -198,12 +295,13 @@
 	end
 
 
+
 --
 -- Check to see if an individual configuration block applies to the
 -- given context and filename.
 --
 
-	local function testblock(block, context, filename)
+	function configset.testblock(block, context, filename)
 		-- Make file tests relative to the blocks base directory,
 		-- so path relative pattern matches will work.
 		if block._basedir and filename then
@@ -211,6 +309,7 @@
 		end
 		return criteria.matches(block._criteria, context, filename)
 	end
+
 
 
 --
@@ -245,7 +344,7 @@
 
 		-- add in my own blocks
 		for _, block in ipairs(cset._blocks) do
-			if testblock(block, context, filename) then
+			if configset.testblock(block, context, filename) then
 				table.insert(result._blocks, block)
 			end
 		end
@@ -255,181 +354,4 @@
 	end
 
 
---
--- Merges two lists of values together. The merged list is both indexed
--- and keyed for faster lookups. If duplicate values are encountered,
--- the earlier value is removed.
---
 
-	local function merge(a, b)
-		-- if b is itself a list, flatten it out
-		if type(b) == "table" then
-			for _, v in ipairs(b) do
-				merge(a, v)
-			end
-
-		-- if b is a simple value, insert it
-		else
-			-- find and remove earlier values
-			if a[b] then
-				table.remove(a, table.indexof(a, b))
-			end
-
-			table.insert(a, b)
-			a[b] = b
-		end
-	end
-
-
---
--- Retrieve a directly assigned value from the configuration set. No merging
--- takes place; the last value set is the one returned.
---
-
-	local function fetchassign(cset, fieldname, context, filename)
-		-- walk the loop backwards and return on first value encountered
-		local n = #cset._blocks
-		for i = n, 1, -1 do
-			local block = cset._blocks[i]
-			if block[fieldname] and (cset.compiled or testblock(block, context, filename)) then
-				return block[fieldname]
-			end
-		end
-
-		if cset._parent then
-			return fetchassign(cset._parent, fieldname, context, filename)
-		end
-	end
-
-
---
--- Retrieve a keyed from the configuration set; keys are assembled into
--- a single result; values may optionally be merged too.
---
-
-	local function fetchkeyed(cset, fieldname, context, filename, mergevalues)
-		local result = {}
-
-		-- grab values from the parent set first
-		if cset._parent then
-			result = fetchkeyed(cset._parent, fieldname, context, filename, merge)
-		end
-
-		function process(values)
-			for k, v in pairs(values) do
-				if type(k) == "number" then
-					process(v)
-				elseif mergevalues then
-					result[k] = result[k] or {}
-					merge(result[k], v)
-				else
-					result[k] = v
-				end
-			end
-		end
-
-		for _, block in ipairs(cset._blocks) do
-			if cset.compiled or testblock(block, context, filename) then
-				local value = block[fieldname]
-				if value then
-					process(value)
-				end
-			end
-		end
-
-		return result
-	end
-
-
---
--- Retrieve a merged value from the configuration set; all values are
--- assembled together into a single result.
---
-
-	local function fetchmerge(cset, fieldname, context, filename)
-		local result = {}
-
-		-- grab values from the parent set first
-		if cset._parent then
-			result = fetchmerge(cset._parent, fieldname, context, filename)
-		end
-
-		function remove(patterns)
-			for _, pattern in ipairs(patterns) do
-				local i = 1
-				while i <= #result do
-					local value = result[i]:lower()
-					if value:match(pattern) == value then
-						result[result[i]] = nil
-						table.remove(result, i)
-					else
-						i = i + 1
-					end
-				end
-			end
-		end
-
-		for _, block in ipairs(cset._blocks) do
-			if cset.compiled or testblock(block, context, filename) then
-				if block._removes and block._removes[fieldname] then
-					remove(block._removes[fieldname])
-				end
-
-				local value = block[fieldname]
-				if value then
-					merge(result, value)
-				end
-			end
-		end
-
-		return result
-	end
-
-
---
--- Retrieve a value from the configuration set.
---
--- @param cset
---    The configuration set to query.
--- @param fieldname
---    The name of the field to query. The field should have already been
---    defined using the api.register() function.
--- @param context
---    A list of lowercase context terms to use during the fetch. Only those
---    blocks with terms fully contained by this list will be considered in
---    determining the returned value. Terms should be lower case to make
---    the context filtering case-insensitive.
--- @param filename
---    An optional filename; if provided, only blocks with pattern that
---    matches the name will be considered.
--- @return
---    The requested value.
---
-
-	function configset.fetchvalue(cset, fieldname, context, filename)
-		local value
-
-		if not context then
-			context = cset._current._criteria.terms
-		end
-
-		-- should this field be merged or assigned?
-		local field = configset._fields[fieldname]
-		local keyed = field and field.keyed
-		local merge = field and field.merge
-
-		if keyed then
-			value = fetchkeyed(cset, fieldname, context, filename, merge)
-		elseif merge then
-			value = fetchmerge(cset, fieldname, context, filename)
-		else
-			value = fetchassign(cset, fieldname, context, filename)
-			-- if value is an object, return a copy of it, so that they can
-			-- modified by the caller without altering the source data
-			if type(value) == "table" then
-				value = table.deepcopy(value)
-			end
-		end
-
-		return value
-	end

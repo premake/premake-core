@@ -84,7 +84,6 @@
 	dofile("oven/test_filtering.lua")
 
 	-- API tests
-	dofile("api/test_callback.lua")
 	dofile("api/test_containers.lua")
 	dofile("api/test_directory_kind.lua")
 	dofile("api/test_list_kind.lua")

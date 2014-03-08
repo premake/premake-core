@@ -164,9 +164,9 @@
 		-- If there is a matching field, then go fetch the aggregated value
 		-- from my configuration set, and then cache it future lookups.
 
-		local value = configset.fetchvalue(ctx._cfgset, key, ctx.terms, ctx._filename[1])
+		local value = configset.fetch(ctx._cfgset, field, ctx.terms, ctx._filename[1])
 		if value then
-			-- do I need to expand tokens?			-- local field = premake.fields[key]
+			-- do I need to expand tokens?
 			if field and field.tokens then
 				local kind = field.kind
 				local ispath = kind:startswith("path") or kind:startswith("file") or kind:startswith("mixed")

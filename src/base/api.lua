@@ -306,7 +306,7 @@
 		local target = api.gettarget(field.scope)
 
 		if not value then
-			return configset.fetchvalue(target.configset, field.name)
+			return configset.fetch(target.configset, field)
 		end
 
 		local status, result = pcall(function ()
@@ -367,7 +367,7 @@
 			end
 
 			if value:contains("*") then
-				local current = configset.fetchvalue(target.configset, field.name)
+				local current = configset.fetch(target.configset, field)
 				local mask = path.wildcards(value)
 				for _, item in ipairs(current) do
 					if item:match(mask) == item then
@@ -773,6 +773,99 @@
 		target = target.configset or target
 		target[name] = value
 	end
+
+
+
+	premake.field.kind("boolean", {
+
+	})
+
+	premake.field.kind("directory", {
+
+	})
+
+	premake.field.kind("file", {
+
+	})
+
+	premake.field.kind("integer", {
+
+	})
+
+--
+-- Key-value data kind definition. Merges key domains; values may be any kind.
+--
+
+	local function setKeyed(field, current, value, processor)
+		current = current or {}
+
+		for k, v in pairs(value) do
+			if type(k) == "number" then
+				current = setKeyed(field, current, v, processor)
+			else
+				if processor then
+					v = processor(field, current[k], v)
+				end
+				current[k] = v
+			end
+		end
+
+		return current
+	end
+
+	premake.field.kind("keyed", {
+		merge = setKeyed
+	})
+
+
+--
+-- List data kind definition. Actually a misnomer, lists are more like sets in
+-- that duplicate values are weeded out; each will only appear once. Can
+-- contain any other kind of data.
+--
+
+	local function setList(field, current, value, processor)
+		if type(value) == "table" then
+			for _, item in ipairs(value) do
+				current = setList(field, current, item, processor)
+			end
+			return current
+		end
+
+		current = current or {}
+
+		if current[value] then
+			table.remove(current, table.indexof(current, value))
+		end
+
+		table.insert(current, value)
+		current[value] = value
+		return current
+	end
+
+	premake.field.kind("list", {
+		merge = setList,
+	})
+
+	premake.field.kind("mixed", {
+
+	})
+
+	premake.field.kind("number", {
+
+	})
+
+	premake.field.kind("path", {
+
+	})
+
+	premake.field.kind("string", {
+
+	})
+
+	premake.field.kind("table", {
+
+	})
 
 
 --
