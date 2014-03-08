@@ -47,8 +47,9 @@
 --
 
 	function suite.canRoundtrip_onDefaultBlock()
-		configset.addvalue(cset, "targetextension", ".so")
-		test.isequal(".so", configset.fetch(cset, field.get("targetextension"), {}))
+		local f = field.get("targetextension")
+		configset.store(cset, f, ".so")
+		test.isequal(".so", configset.fetch(cset, f, {}))
 	end
 
 
@@ -58,9 +59,10 @@
 --
 
 	function suite.canRoundtrip_onSimpleTermMatch()
+		local f = field.get("targetextension")
 		configset.addblock(cset, { "Windows" })
-		configset.addvalue(cset, "targetextension", ".dll")
-		test.isequal(".dll", configset.fetch(cset, field.get("targetextension"), { "windows" }))
+		configset.store(cset, f, ".dll")
+		test.isequal(".dll", configset.fetch(cset, f, { "windows" }))
 	end
 
 
@@ -70,10 +72,11 @@
 --
 
 	function suite.skipsBlock_onTermMismatch()
-		configset.addvalue(cset, "targetextension", ".so")
+		local f = field.get("targetextension")
+		configset.store(cset, f, ".so")
 		configset.addblock(cset, { "Windows" })
-		configset.addvalue(cset, "targetextension", ".dll")
-		test.isequal(".so", configset.fetch(cset, field.get("targetextension"), { "linux" }))
+		configset.store(cset, f, ".dll")
+		test.isequal(".so", configset.fetch(cset, f, { "linux" }))
 	end
 
 
@@ -82,8 +85,9 @@
 --
 
 	function suite.canRoundtrip_fromParentToChild()
-		configset.addvalue(parentset, "targetextension", ".so")
-		test.isequal(".so", configset.fetch(cset, field.get("targetextension"), {}))
+		local f = field.get("targetextension")
+		configset.store(parentset, f, ".so")
+		test.isequal(".so", configset.fetch(cset, f, {}))
 	end
 
 
@@ -92,9 +96,10 @@
 --
 
 	function suite.child_canOverrideStringValueFromParent()
-		configset.addvalue(parentset, "targetextension", ".so")
-		configset.addvalue(cset, "targetextension", ".dll")
-		test.isequal(".dll", configset.fetch(cset, field.get("targetextension"), {}))
+		local f = field.get("targetextension")
+		configset.store(parentset, f, ".so")
+		configset.store(cset, f, ".dll")
+		test.isequal(".dll", configset.fetch(cset, f, {}))
 	end
 
 
@@ -104,9 +109,10 @@
 --
 
 	function suite.filenameMadeRelative_onBaseDirSet()
+		local f = field.get("buildaction")
 		configset.addblock(cset, { "hello.c" }, os.getcwd())
-		configset.addvalue(cset, "buildaction", "copy")
-		test.isequal("copy", configset.fetch(cset, field.get("buildaction"), {}, path.join(os.getcwd(), "hello.c")))
+		configset.store(cset, f, "Copy")
+		test.isequal("Copy", configset.fetch(cset, f, {}, path.join(os.getcwd(), "hello.c")))
 	end
 
 
@@ -124,10 +130,11 @@
 --
 
 	function suite.lists_mergeValues_onFetch()
-		configset.addvalue(cset, "buildoptions", "v1")
+		local f = field.get("buildoptions")
+		configset.store(cset, f, "v1")
 		configset.addblock(cset, { "windows" })
-		configset.addvalue(cset, "buildoptions", "v2")
-		test.isequal({"v1", "v2"}, configset.fetch(cset, field.get("buildoptions"), {"windows"}))
+		configset.store(cset, f, "v2")
+		test.isequal({"v1", "v2"}, configset.fetch(cset, f, {"windows"}))
 	end
 
 
@@ -136,9 +143,10 @@
 --
 
 	function suite.lists_mergeValues_onAdd()
-		configset.addvalue(cset, "buildoptions", "v1")
-		configset.addvalue(cset, "buildoptions", "v2")
-		test.isequal({"v1", "v2"}, configset.fetch(cset, field.get("buildoptions"), {"windows"}))
+		local f = field.get("buildoptions")
+		configset.store(cset, f, "v1")
+		configset.store(cset, f, "v2")
+		test.isequal({"v1", "v2"}, configset.fetch(cset, f, {"windows"}))
 	end
 
 
@@ -147,8 +155,9 @@
 --
 
 	function suite.lists_includeValueKeys()
-		configset.addvalue(cset, "buildoptions", { "v1", "v2" })
-		local x = configset.fetch(cset, field.get("buildoptions"), {})
+		local f = field.get("buildoptions")
+		configset.store(cset, f, { "v1", "v2" })
+		local x = configset.fetch(cset, f, {})
 		test.isequal("v2", x.v2)
 	end
 
@@ -158,15 +167,17 @@
 --
 
 	function suite.remove_onExactValueMatch()
-		configset.addvalue(cset, "flags", { "Symbols", "Unsafe", "NoRTTI" })
+		local f = field.get("flags")
+		configset.store(cset, f, { "Symbols", "Unsafe", "NoRTTI" })
 		configset.removevalues(cset, "flags", { "Unsafe" })
-		test.isequal({ "Symbols", "NoRTTI" }, configset.fetch(cset, field.get("flags"), {}))
+		test.isequal({ "Symbols", "NoRTTI" }, configset.fetch(cset, f, {}))
 	end
 
 	function suite.remove_onMultipleValues()
-		configset.addvalue(cset, "flags", { "Symbols", "NoExceptions", "Unsafe", "NoRTTI" })
+		local f = field.get("flags")
+		configset.store(cset, f, { "Symbols", "NoExceptions", "Unsafe", "NoRTTI" })
 		configset.removevalues(cset, "flags", { "NoExceptions", "NoRTTI" })
-		test.isequal({ "Symbols", "Unsafe" }, configset.fetch(cset, field.get("flags"), {}))
+		test.isequal({ "Symbols", "Unsafe" }, configset.fetch(cset, f, {}))
 	end
 
 
@@ -175,9 +186,10 @@
 --
 
 	function suite.remove_onWildcard()
-		configset.addvalue(cset, "defines", { "WIN32", "WIN64", "LINUX", "MACOSX" })
+		local f = field.get("defines")
+		configset.store(cset, f, { "WIN32", "WIN64", "LINUX", "MACOSX" })
 		configset.removevalues(cset, "defines", { "WIN*" })
-		test.isequal({ "LINUX", "MACOSX" }, configset.fetch(cset, field.get("defines"), {}))
+		test.isequal({ "LINUX", "MACOSX" }, configset.fetch(cset, f, {}))
 	end
 
 
@@ -186,10 +198,11 @@
 --
 
 	function suite.keyed_mergesKeys_onFetch()
-		configset.addvalue(cset, "configmap", { Debug="Debug", Release="Release" })
+		local f = field.get("configmap")
+		configset.store(cset, f, { Debug="Debug", Release="Release" })
 		configset.addblock(cset, { "windows" })
-		configset.addvalue(cset, "configmap", { Profile="Profile" })
-		local x = configset.fetch(cset, field.get("configmap"), {"windows"})
+		configset.store(cset, f, { Profile="Profile" })
+		local x = configset.fetch(cset, f, {"windows"})
 		test.istrue(x.Debug and x.Release and x.Profile)
 	end
 
@@ -199,9 +212,10 @@
 --
 
 	function suite.keyed_mergesKeys_onAdd()
-		configset.addvalue(cset, "configmap", { Debug="Debug", Release="Release" })
-		configset.addvalue(cset, "configmap", { Profile="Profile" })
-		local x = configset.fetch(cset, field.get("configmap"), {"windows"})
+		local f = field.get("configmap")
+		configset.store(cset, f, { Debug="Debug", Release="Release" })
+		configset.store(cset, f, { Profile="Profile" })
+		local x = configset.fetch(cset, f, {"windows"})
 		test.istrue(x.Debug and x.Release and x.Profile)
 	end
 
@@ -211,18 +225,20 @@
 --
 
 	function suite.keyed_overwritesValues_onNonMergeFetch()
-		configset.addvalue(cset, "configmap", { Debug="Debug" })
+		local f = field.get("configmap")
+		configset.store(cset, f, { Debug="Debug" })
 		configset.addblock(cset, { "windows" })
-		configset.addvalue(cset, "configmap", { Debug="Development" })
-		local x = configset.fetch(cset, field.get("configmap"), {"windows"})
-		test.isequal("Development", x.Debug)
+		configset.store(cset, f, { Debug="Development" })
+		local x = configset.fetch(cset, f, {"windows"})
+		test.isequal({"Development"}, x.Debug)
 	end
 
 	function suite.keyed_overwritesValues_onNonMergeAdd()
-		configset.addvalue(cset, "configmap", { Debug="Debug" })
-		configset.addvalue(cset, "configmap", { Debug="Development" })
-		local x = configset.fetch(cset, field.get("configmap"), {"windows"})
-		test.isequal("Development", x.Debug)
+		local f = field.get("configmap")
+		configset.store(cset, f, { Debug="Debug" })
+		configset.store(cset, f, { Debug="Development" })
+		local x = configset.fetch(cset, f, {"windows"})
+		test.isequal({"Development"}, x.Debug)
 	end
 
 
@@ -231,16 +247,18 @@
 --
 
 	function suite.keyed_mergesValues_onMergeFetch()
-		configset.addvalue(cset, "vpaths", { includes="*.h" })
+		local f = field.get("vpaths")
+		configset.store(cset, f, { includes="*.h" })
 		configset.addblock(cset, { "windows" })
-		configset.addvalue(cset, "vpaths", { includes="*.hpp" })
-		local x = configset.fetch(cset, field.get("vpaths"), {"windows"})
-		test.isequal({ "*.h", "*.hpp" }, x.includes)
+		configset.store(cset, f, { includes="*.hpp" })
+		local x = configset.fetch(cset, f, {"windows"})
+		test.isequal({ os.getcwd().."/*.h", os.getcwd().."/*.hpp" }, x.includes)
 	end
 
 	function suite.keyed_mergesValues_onMergeAdd()
-		configset.addvalue(cset, "vpaths", { includes="*.h" })
-		configset.addvalue(cset, "vpaths", { includes="*.hpp" })
-		local x = configset.fetch(cset, field.get("vpaths"), {"windows"})
-		test.isequal({ "*.h", "*.hpp" }, x.includes)
+		local f = field.get("vpaths")
+		configset.store(cset, f, { includes="*.h" })
+		configset.store(cset, f, { includes="*.hpp" })
+		local x = configset.fetch(cset, f, {"windows"})
+		test.isequal({ os.getcwd().."/*.h", os.getcwd().."/*.hpp" }, x.includes)
 	end

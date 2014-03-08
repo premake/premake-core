@@ -18,20 +18,6 @@
 
 
 --
--- Levels of "setters" for populating configuration objects. The top-level
--- API contains keyed, list, and plain values; keyed values can contain
--- lists and plain values; lists can contain only plain values. Each time
--- a setter function is fetched one of these values are passed along to
--- indicate the current resolution level.
---
-
-	api.TopLevel = 0
-	api.KeyedLevel = 1
-	api.ListLevel = 2
-	api.ValueLevel = 3
-
-
---
 -- Create a "root" configuration set, to hold the global configuration. Values
 -- that are added to this set become available for all add-ons, solution, projects,
 -- and on down the line.
@@ -118,11 +104,6 @@
 			field.list = true
 		end
 
-		-- make sure there is a handler available for this kind of value
-		if not api.getSetter(field, api.ValueLevel) then
-			error("invalid kind '" .. field.kind .. "'", 2)
-		end
-
 		-- add this new field to my master list
 		field = premake.field.new(field)
 
@@ -137,13 +118,6 @@
 				return api.remove(field, value)
 			end
 		end
-
-		-- if the field needs special handling, tell the config
-		-- set system about it
-		configset.registerfield(field.name, {
-			keyed = api.isKeyedField(field),
-			merge = api.isListField(field),
-		})
 	end
 
 
@@ -310,8 +284,7 @@
 		end
 
 		local status, result = pcall(function ()
-			local setter = api.getSetter(field, api.TopLevel)
-			setter(target, field.name, field, value)
+			configset.store(target.configset, field, value)
 		end)
 
 		if not status then
@@ -514,32 +487,6 @@
 
 
 --
--- Retrieve the "set" function for a field, at a given level of resolution.
---
--- @param field
---    The field to query.
--- @param level
---    One of the setter resolution levels TopLevel, KeyedLevel, or ListLevel,
---    indicating who is asking for a setter. At the top, the API contains
---    keyed, list, and plain values and desires a setter for any of them.
---    Keyed values can contain only lists and plain values, and so should only
---    receive those setter. Finally, lists can contain only plain values.
--- @return
---    The setter for the field.
---
-
-	function api.getSetter(field, level)
-		if level < api.KeyedLevel and api.isKeyedField(field) then
-			return api.setkeyvalue
-		end
-		if level < api.ListLevel and api.isListField(field) then
-			return api.setlist
-		end
-		return api["set" .. field.kind]
-	end
-
-
---
 -- Clears all active API objects; resets to root configuration block.
 --
 
@@ -556,52 +503,9 @@
 
 
 --
--- Set a new table value. Tables are arbitrary Lua tables; new values replace
--- old ones, rather than merging like lists.
---
-
-	function api.settable(target, name, field, value)
-		-- put simple values in an array
-		if type(value) ~= "table" then
-			value = { value }
-		end
-
-		if target.configset then
-			configset.addvalue(target.configset, field.name, value)
-		else
-			target[name] = value
-		end
-	end
-
-
---
 -- Set a new file value on an API field. Unlike paths, file value can
 -- use wildcards (and so must always be a list).
 --
-
-	function api.setfile(target, name, field, value)
-		if value:find("*") then
-			local values = os.matchfiles(value)
-			table.foreachi(values, function(v)
-				api.setfile(target, name, field, v)
-				name = name + 1
-			end)
-		else
-			target[name] = path.getabsolute(value)
-		end
-	end
-
-	function api.setdirectory(target, name, field, value)
-		if value:find("*") then
-			local values = os.matchdirs(value)
-			table.foreachi(values, function(v)
-				api.setdirectory(target, name, field, v)
-				name = name + 1
-			end)
-		else
-			target[name] = path.getabsolute(value)
-		end
-	end
 
 	function api.removefile(target, value)
 		table.insert(target, path.getabsolute(value))
@@ -610,198 +514,79 @@
 	api.removedirectory = api.removefile
 
 
---
--- Update a keyed value. Iterate over the keys in the new value, and use
--- the corresponding values to update the target object.
---
-
-	function api.setkeyvalue(target, name, field, values)
-		if type(values) ~= "table" then
-			error({ msg="value must be a table of key-value pairs" })
-		end
-
-		local newval = {}
-
-		local setter = api.getSetter(field, api.KeyedLevel)
-		for key, value in pairs(values) do
-			setter(newval, key, field, value)
-		end
-
-		configset.addvalue(target.configset, name, newval)
-	end
-
 
 --
--- Set a new list value. Lists are arrays of values, with new values
--- appended to any previous values.
+-- Directory data kind; performs wildcard directory searches, converts
+-- results to absolute paths.
 --
-
-	function api.setlist(target, name, field, value)
-		local setter = api.getSetter(field, api.ListLevel)
-
-		-- process all of the values, according to the data type
-		local result = {}
-		local function recurse(value)
-			if type(value) == "table" then
-				table.foreachi(value, function (value)
-					recurse(value)
-				end)
-			else
-				setter(result, #result + 1, field, value)
-			end
-		end
-		recurse(value)
-
-		-- If this target is just a wrapper for a configuration set,
-		-- apply the new values to that set instead. The current
-		-- solution and project objects act this way.
-		if target.configset then
-			configset.addvalue(target.configset, field.name, result)
-		else
-			target[name] = result
-		end
-	end
-
-
---
--- Set a new value into a mixed value field, which contain both
--- simple strings and paths.
---
-
-	function api.setmixed(target, name, field, value)
-		-- if the value contains a '/' treat it as a path
-		if type(value) == "string" and value:find('/', nil, true) then
-			value = path.getabsolute(value)
-		end
-		return api.setstring(target, name, field, value)
-	end
-
-
---
--- Set a new path value on an API field.
---
-
-	function api.setpath(target, name, field, value)
-		api.setstring(target, name, field, path.getabsolute(value))
-	end
-
-
---
--- Set a new string value on an API field.
---
-
-	function api.setstring(target, name, field, value)
-		if type(value) == "table" then
-			error({ msg="expected string; got table" })
-		end
-
-		local value, err, additional = api.checkvalue(value, field)
-		if err then error({ msg=err }) end
-
-		if field.deprecated and field.deprecated[value] then
-			local handler = field.deprecated[value]
-			handler.add(value)
-			if api._deprecations ~= "off" then
-				local key = field.name .. "_" .. value
-				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-				if api._deprecations == "error" then error({ msg="deprecation errors enabled" }) end
-			end
-		end
-
-		-- if the target is the project, configset will be set and I can push
-		-- the value there. Otherwise I was called to store into some other kind
-		-- of object (i.e. an array or list)
-		if target.configset then
-			configset.addvalue(target.configset, field.name, value)
-		else
-			target[name] = value
-		end
-
-		-- Odd case: the FatalWarnings flag expands to multiple values now
-		-- (FatalCompileWarnings, FatalLinkWarnings). Generalize this
-		-- behavior by running multiple return values back through again.
-
-		if additional then
-			api.callback(field, additional)
-		end
-	end
-
-
---
--- Set a number value on an API field.
---
-
-	function api.setnumber(target, name, field, value)
-		local t = type(value)
-		if t ~= "number" then
-			error({ msg="expected number; got " .. t })
-		end
-
-		target = target.configset or target
-		target[name] = value
-	end
-
-
---
--- Set a integer value on an API field.
---
-
-	function api.setinteger(target, name, field, value)
-		local t = type(value)
-		if t ~= "number" then
-			error({ msg="expected number; got " .. t })
-		end
-		if math.floor(value) ~= value then
-			error({ msg="expected integer; got " .. tostring(value) })
-		end
-
-		target = target.configset or target
-		target[name] = value
-	end
-
-
---
--- Set a boolean value on an API field.
---
-
-	function api.setboolean(target, name, field, value)
-		local t = type(value)
-		if t ~= "boolean" then
-			error({ msg="expected boolean; got " .. t })
-		end
-
-		target = target.configset or target
-		target[name] = value
-	end
-
-
-
-	premake.field.kind("boolean", {
-
-	})
 
 	premake.field.kind("directory", {
+		store = function(field, current, value, processor)
+			if value:find("*") then
+				value = os.matchdirs(value)
+				for i, file in ipairs(value) do
+					value[i] = path.getabsolute(value[i])
+				end
+			else
+				value = path.getabsolute(value)
+			end
+			return value
+		end
 
 	})
+
+
+
+--
+-- File data kind; performs wildcard file searches, converts results
+-- to absolute paths.
+--
 
 	premake.field.kind("file", {
-
+		store = function(field, current, value, processor)
+			if value:find("*") then
+				value = os.matchfiles(value)
+				for i, file in ipairs(value) do
+					value[i] = path.getabsolute(value[i])
+				end
+			else
+				value = path.getabsolute(value)
+			end
+			return value
+		end
 	})
+
+
+
+--
+-- Integer data kind; validates inputs.
+--
 
 	premake.field.kind("integer", {
-
+		store = function(field, current, value, processor)
+			local t = type(value)
+			if t ~= "number" then
+				error { msg="expected number; got " .. t }
+			end
+			if math.floor(value) ~= value then
+				error { msg="expected integer; got " .. tostring(value) }
+			end
+			return value
+		end
 	})
+
+
 
 --
 -- Key-value data kind definition. Merges key domains; values may be any kind.
 --
 
-	local function setKeyed(field, current, value, processor)
+	local function storeKeyed(field, current, value, processor)
 		current = current or {}
 
 		for k, v in pairs(value) do
 			if type(k) == "number" then
-				current = setKeyed(field, current, v, processor)
+				current = storeKeyed(field, current, v, processor)
 			else
 				if processor then
 					v = processor(field, current[k], v)
@@ -814,7 +599,8 @@
 	end
 
 	premake.field.kind("keyed", {
-		merge = setKeyed
+		store = storeKeyed,
+		merge = storeKeyed,
 	})
 
 
@@ -824,48 +610,143 @@
 -- contain any other kind of data.
 --
 
-	local function setList(field, current, value, processor)
+	local function storeList(field, current, value, processor)
 		if type(value) == "table" then
-			for _, item in ipairs(value) do
-				current = setList(field, current, item, processor)
-			end
+			table.foreachi(value, function(item)
+				current = storeList(field, current, item, processor)
+			end)
 			return current
+		end
+
+		local function store(item)
+			if current[item] then
+				table.remove(current, table.indexof(current, item))
+			end
+			table.insert(current, item)
+			current[item] = item
 		end
 
 		current = current or {}
 
-		if current[value] then
-			table.remove(current, table.indexof(current, value))
+		if processor then
+			value = processor(field, nil, value)
 		end
 
-		table.insert(current, value)
-		current[value] = value
+		if type(value) == "table" then
+			table.foreachi(value, store)
+		else
+			store(value)
+		end
+
 		return current
 	end
 
 	premake.field.kind("list", {
-		merge = setList,
+		store = storeList,
+		merge = storeList,
 	})
+
+
+
+--
+-- Mixed data kind; values containing a directory separator "/" are converted
+-- to absolute paths, other values left as-is. Used for links, where system
+-- libraries and local library paths can be mixed into a single list.
+--
 
 	premake.field.kind("mixed", {
-
+		store = function(field, current, value, processor)
+			if type(value) == "string" and value:find('/', nil, true) then
+				value = path.getabsolute(value)
+			end
+			return value
+		end
 	})
+
+
+
+--
+-- Number data kind; validates inputs.
+--
 
 	premake.field.kind("number", {
-
+		store = function(field, current, value, processor)
+			local t = type(value)
+			if t ~= "number" then
+				error { msg="expected number; got " .. t }
+			end
+			return value
+		end
 	})
+
+
+
+--
+-- Path data kind; converts all inputs to absolute paths.
+--
 
 	premake.field.kind("path", {
-
+		store = function(field, current, value, processor)
+			return path.getabsolute(value)
+		end
 	})
+
+
+
+--
+-- String data kind; performs validation against allowed fields, checks for
+-- value deprecations.
+--
 
 	premake.field.kind("string", {
+		store = function(field, current, value, processor)
+			if type(value) == "table" then
+				error({ msg="expected string; got table" })
+			end
 
+			local value, err, additional = api.checkvalue(value, field)
+			if err then
+				error { msg=err }
+			end
+
+			if field.deprecated and field.deprecated[value] then
+				local handler = field.deprecated[value]
+				handler.add(value)
+				if api._deprecations ~= "off" then
+					local key = field.name .. "_" .. value
+					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
+					if api._deprecations == "error" then
+						error { msg="deprecation errors enabled" }
+					end
+				end
+			end
+
+			-- If my single value also returned additional results (aliases, or
+			-- see FatalWarnings flag), return them all together. This is an
+			-- unusual but occasionally useful ability.
+
+			if additional then
+				return table.flatten { value, additional }
+			end
+
+			return value
+		end
 	})
+
+
+--
+-- Table data kind; wraps simple values into a table, returns others as-is.
+--
 
 	premake.field.kind("table", {
-
+		store = function(field, current, value, processor)
+			if type(value) ~= "table" then
+				value = { value }
+			end
+			return value
+		end
 	})
+
 
 
 --

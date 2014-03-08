@@ -17,8 +17,6 @@
 	local configset = premake.configset
 	local criteria = premake.criteria
 
-	configset._fields = {}
-
 
 --
 -- Create a new configuration set.
@@ -149,7 +147,7 @@
 			__newindex = function(tbl, key, value)
 				local f = premake.field.get(key)
 				if f then
-					return configset.addvalue(cset, f.name, value)
+					return configset.store(cset, f, value)
 				else
 					rawset(tbl, key, value)
 					return value
@@ -164,26 +162,6 @@
 				end
 			end
 		}
-	end
-
-
-
---
--- Register a field that requires special handling.
---
--- @param name
---    The name of the field to register.
--- @param behavior
---    A table containing the flags:
---
---     merge - if set, the field will be treated as a list, and multiple
---             values will be merged together when fetched.
---     keys  - if set, the field will be treated an associative array (sets
---             of key-value pairs) instead of an indexed array.
---
-
-	function configset.registerfield(name, behavior)
-		configset._fields[name] = behavior
 	end
 
 
@@ -232,20 +210,14 @@
 --    The new value for the field.
 --
 
-	function configset.addvalue(cset, fieldname, value)
-		-- make sure there is an active block
+	function configset.store(cset, field, value)
 		if not cset._current then
 			configset.addblock(cset, {})
 		end
 
+		local key = field.name
 		local current = cset._current
-		local field = configset._fields[fieldname]
-		if field and (field.keyed or field.merge) then
-			current[fieldname] = current[fieldname] or {}
-			table.insert(current[fieldname], value)
-		else
-			current[fieldname] = value
-		end
+		current[key] = premake.field.store(field, current[key], value)
 	end
 
 

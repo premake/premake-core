@@ -64,6 +64,11 @@
 
 		f._kind = kind
 
+		-- All fields must have a valid store() function
+		if not field.accessor(f, "store") then
+			error("invalid field kind '" .. f.kind .. "'")
+		end
+
 		field._list[f.name] = f
 		return f
 	end
@@ -123,6 +128,11 @@
 		-- cached from earlier calls are reused again.
 
 		local function accessorForKind(kind)
+			-- I'll end up with a kind of "" when I hit the end of the string
+			if kind == "" then
+				return nil
+			end
+
 			-- Have I already cached a result from an earlier call?
 			if cache[kind] then
 				return cache[kind]
@@ -185,7 +195,6 @@
 	end
 
 
-
 	function field.merge(f, current, value)
 		local processor = field.accessor(f, "merge")
 		if processor then
@@ -204,4 +213,15 @@
 
 	function field.merges(f)
 		return (field.accessor(f, "merge") ~= nil)
+	end
+
+
+
+	function field.store(f, current, value)
+		local processor = field.accessor(f, "store")
+		if processor then
+			return processor(f, current, value)
+		else
+			return value
+		end
 	end

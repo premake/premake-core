@@ -8,6 +8,7 @@
 
 	local context = premake.context
 	local configset = premake.configset
+	local field = premake.field
 
 
 --
@@ -37,7 +38,7 @@
 --
 
 	function suite.returnsConfigValue_onExistingValue()
-		configset.addvalue(cset, "targetextension", ".so")
+		configset.store(cset, field.get("targetextension"), ".so")
 		test.isequal(".so", ctx.targetextension)
 	end
 
@@ -47,6 +48,6 @@
 --
 
 	function suite.doesExpandTokens()
-		configset.addvalue(cset, "targetname", "MyProject%{1 + 1}")
+		configset.store(cset, field.get("targetname"), "MyProject%{1 + 1}")
 		test.isequal("MyProject2", ctx.targetname)
 	end
