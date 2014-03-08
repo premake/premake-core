@@ -17,10 +17,10 @@
 		"base/os.lua",
 		"base/io.lua",
 		"base/tree.lua",
-
 		"base/globals.lua",
 
 		-- configuration data
+		"base/field.lua",
 		"base/criteria.lua",
 		"base/detoken.lua",
 		"base/configset.lua",

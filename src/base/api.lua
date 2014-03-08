@@ -8,8 +8,6 @@
 	local api = premake.api
 	local configset = premake.configset
 
-	premake.fields = {}
-
 
 --
 -- A place to store the current active objects in each configuration scope
@@ -126,7 +124,7 @@
 		end
 
 		-- add this new field to my master list
-		premake.fields[field.name] = field
+		field = premake.field.new(field)
 
 		-- create a setter function for it
 		_G[name] = function(value)
