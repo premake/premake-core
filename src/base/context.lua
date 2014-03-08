@@ -10,7 +10,7 @@
 --
 -- The context also provides caching for the values returned from the set.
 --
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
 	premake.context = {}
@@ -152,10 +152,21 @@
 --
 
 	function context.fetchvalue(ctx, key)
+		-- The underlying configuration set will only hold registered fields.
+		-- If the requested key doesn't have a corresponding field, it is just
+		-- a regular value to be stored and fetched from the table.
+
+		local field = premake.field.get(key)
+		if not field then
+			return rawget(ctx, key)
+		end
+
+		-- If there is a matching field, then go fetch the aggregated value
+		-- from my configuration set, and then cache it future lookups.
+
 		local value = configset.fetchvalue(ctx._cfgset, key, ctx.terms, ctx._filename[1])
 		if value then
-			-- do I need to expand tokens?
-			local field = premake.fields[key]
+			-- do I need to expand tokens?			-- local field = premake.fields[key]
 			if field and field.tokens then
 				local kind = field.kind
 				local ispath = kind:startswith("path") or kind:startswith("file") or kind:startswith("mixed")

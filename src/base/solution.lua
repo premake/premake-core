@@ -1,10 +1,10 @@
 --
 -- solution.lua
 -- Work with the list of solutions loaded from the script.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.solution = { }
+	premake.solution = {}
 	local solution = premake.solution
 	local project = premake.project
 	local configset = premake.configset
@@ -14,7 +14,7 @@
 
 -- The list of defined solutions (which contain projects, etc.)
 
-	premake.solution.list = {}
+	solution.list = {}
 
 
 --
@@ -29,24 +29,25 @@
 	function solution.new(name)
 		local sln = {}
 
-		-- add to master list keyed by both name and index
-		table.insert(premake.solution.list, sln)
-		premake.solution.list[name] = sln
-
 		sln.name = name
 		sln.projects = {}
 
-		local cset = configset.new(configset.root)
-		cset.basedir = os.getcwd()
-		cset.filename = name
-		sln.configset = cset
+		-- Start a new configuration set to hold this project's info. For
+		-- convenience and backward compatibility with the old Premake 3.x
+		-- way of doing things, allow the solution to be treated like a
+		-- regular table.
 
-		-- attach a type descriptor
-		setmetatable(sln, {
-			__index = function(sln, key)
-				return sln.configset[key]
-			end,
-		})
+		local cset = configset.new(configset.root)
+		sln.configset = cset
+		setmetatable(sln, configset.metatable(cset))
+
+		-- Set defaults for some of the fields
+		sln.basedir = os.getcwd()
+		sln.filename = name
+
+		-- Add to master list keyed by both name and index
+		table.insert(premake.solution.list, sln)
+		premake.solution.list[name] = sln
 
 		return sln
 	end

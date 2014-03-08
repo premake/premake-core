@@ -306,7 +306,7 @@
 		local target = api.gettarget(field.scope)
 
 		if not value then
-			return target.configset[field.name]
+			return configset.fetchvalue(target.configset, field.name)
 		end
 
 		local status, result = pcall(function ()
@@ -367,7 +367,7 @@
 			end
 
 			if value:contains("*") then
-				local current = target.configset[field.name]
+				local current = configset.fetchvalue(target.configset, field.name)
 				local mask = path.wildcards(value)
 				for _, item in ipairs(current) do
 					if item:match(mask) == item then
@@ -561,18 +561,16 @@
 --
 
 	function api.settable(target, name, field, value)
-		-- if the target is the project, configset will be set and I can push
-		-- the value there. Otherwise I was called to store into some other kind
-		-- of object (i.e. an array or list)
-		target = target.configset or target
-
 		-- put simple values in an array
 		if type(value) ~= "table" then
 			value = { value }
 		end
 
-		-- store it, overwriting any existing value
-		target[name] = value
+		if target.configset then
+			configset.addvalue(target.configset, field.name, value)
+		else
+			target[name] = value
+		end
 	end
 
 
@@ -641,13 +639,6 @@
 	function api.setlist(target, name, field, value)
 		local setter = api.getSetter(field, api.ListLevel)
 
-		-- If this target is just a wrapper for a configuration set,
-		-- apply the new values to that set instead. The current
-		-- solution and project objects act this way.
-		if target.configset then
-			target = target.configset
-		end
-
 		-- process all of the values, according to the data type
 		local result = {}
 		local function recurse(value)
@@ -661,7 +652,14 @@
 		end
 		recurse(value)
 
-		target[name] = result
+		-- If this target is just a wrapper for a configuration set,
+		-- apply the new values to that set instead. The current
+		-- solution and project objects act this way.
+		if target.configset then
+			configset.addvalue(target.configset, field.name, result)
+		else
+			target[name] = result
+		end
 	end
 
 
@@ -713,8 +711,11 @@
 		-- if the target is the project, configset will be set and I can push
 		-- the value there. Otherwise I was called to store into some other kind
 		-- of object (i.e. an array or list)
-		target = target.configset or target
-		target[name] = value
+		if target.configset then
+			configset.addvalue(target.configset, field.name, value)
+		else
+			target[name] = value
+		end
 
 		-- Odd case: the FatalWarnings flag expands to multiple values now
 		-- (FatalCompileWarnings, FatalLinkWarnings). Generalize this

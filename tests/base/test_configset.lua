@@ -50,11 +50,6 @@
 		test.isequal(".so", configset.fetchvalue(cset, "targetextension", {}))
 	end
 
-	function suite.canRoundtrip_onDefaultBlock_usingDirectSet()
-		cset.targetextension = ".so"
-		test.isequal(".so", configset.fetchvalue(cset, "targetextension", {}))
-	end
-
 
 --
 -- Make sure that I can roundtrip a value stored into a block
@@ -65,12 +60,6 @@
 		configset.addblock(cset, { "Windows" })
 		configset.addvalue(cset, "targetextension", ".dll")
 		test.isequal(".dll", configset.fetchvalue(cset, "targetextension", { "windows" }))
-	end
-
-	function suite.canRoundtrip_onSimpleTermMatch_usingDirectGet()
-		configset.addblock(cset, { "Windows" })
-		configset.addvalue(cset, "targetextension", ".dll")
-		test.isequal(".dll", cset.targetextension)
 	end
 
 

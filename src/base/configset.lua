@@ -5,7 +5,7 @@
 -- I've had a chance to build it out more before using.
 --
 -- A configuration set manages a collection of configuration values, which
--- are organized into "blocks". Each block stores a set of field-value pairs, 
+-- are organized into "blocks". Each block stores a set of field-value pairs,
 -- along with a list of terms which indicate the context in which those
 -- values should be applied.
 --
@@ -35,17 +35,44 @@
 
 	function configset.new(parent)
 		local cset = {}
-		cset._parent = parent or false
+		cset._parent = parent
 		cset._blocks = {}
-		cset._current = false
+		cset._current = nil
 		cset.compiled = false
-
-		-- enable config sets to be treat like plain old tables; storing
-		-- a value will place it into the current block
-		setmetatable(cset, configset.__mt)
-		
 		return cset
 	end
+
+
+---
+-- Create and return a metatable which allows a configuration set to act as a
+-- "backing store" for a regular Lua table. Table operations that access a
+-- registered field will fetch from or store to the configurations set, while
+-- unknown keys are get and set to the table normally.
+---
+
+	function configset.metatable(cset)
+		return {
+			__newindex = function(tbl, key, value)
+				local f = premake.field.get(key)
+				if f then
+					return configset.addvalue(cset, f.name, value)
+				else
+					rawset(tbl, key, value)
+					return value
+				end
+			end,
+			__index = function(tbl, key)
+				local f = premake.field.get(key)
+				if f then
+					return configset.fetchvalue(cset, f.name, cset._current._criteria.terms)
+				else
+					return nil
+				end
+			end
+		}
+	end
+
+
 
 
 --
@@ -66,7 +93,7 @@
 		configset._fields[name] = behavior
 	end
 
-	
+
 --
 -- Create a new block of configuration field-value pairs, with the provided
 -- set of context terms to control their application.
@@ -86,10 +113,10 @@
 	function configset.addblock(cset, terms, basedir)
 		local block = {}
 		block._basedir = basedir
-		
+
 		-- attach a criteria object to the block to control its application
 		block._criteria = criteria.new(terms)
-		
+
 		table.insert(cset._blocks, block)
 		cset._current = block
 		return block
@@ -195,8 +222,8 @@
 -- @param cset
 --    The configuration set to query.
 -- @param context
---    A list of lowercase context terms to use during the fetch. Only those 
---    blocks with terms fully contained by this list will be considered in 
+--    A list of lowercase context terms to use during the fetch. Only those
+--    blocks with terms fully contained by this list will be considered in
 --    determining the returned value. Terms should be lower case to make
 --    the context filtering case-insensitive.
 -- @param filename
@@ -222,7 +249,7 @@
 				table.insert(result._blocks, block)
 			end
 		end
-		
+
 		result.compiled = true
 		return result
 	end
@@ -240,14 +267,14 @@
 			for _, v in ipairs(b) do
 				merge(a, v)
 			end
-			
+
 		-- if b is a simple value, insert it
 		else
 			-- find and remove earlier values
 			if a[b] then
 				table.remove(a, table.indexof(a, b))
 			end
-			
+
 			table.insert(a, b)
 			a[b] = b
 		end
@@ -268,7 +295,7 @@
 				return block[fieldname]
 			end
 		end
-		
+
 		if cset._parent then
 			return fetchassign(cset._parent, fieldname, context, filename)
 		end
@@ -280,14 +307,14 @@
 -- a single result; values may optionally be merged too.
 --
 
-	local function fetchkeyed(cset, fieldname, context, filename, mergevalues)	
+	local function fetchkeyed(cset, fieldname, context, filename, mergevalues)
 		local result = {}
 
 		-- grab values from the parent set first
 		if cset._parent then
 			result = fetchkeyed(cset._parent, fieldname, context, filename, merge)
 		end
-		
+
 		function process(values)
 			for k, v in pairs(values) do
 				if type(k) == "number" then
@@ -347,14 +374,14 @@
 				if block._removes and block._removes[fieldname] then
 					remove(block._removes[fieldname])
 				end
-				
+
 				local value = block[fieldname]
 				if value then
 					merge(result, value)
 				end
 			end
 		end
-		
+
 		return result
 	end
 
@@ -368,8 +395,8 @@
 --    The name of the field to query. The field should have already been
 --    defined using the api.register() function.
 -- @param context
---    A list of lowercase context terms to use during the fetch. Only those 
---    blocks with terms fully contained by this list will be considered in 
+--    A list of lowercase context terms to use during the fetch. Only those
+--    blocks with terms fully contained by this list will be considered in
 --    determining the returned value. Terms should be lower case to make
 --    the context filtering case-insensitive.
 -- @param filename
@@ -382,37 +409,27 @@
 	function configset.fetchvalue(cset, fieldname, context, filename)
 		local value
 
+		if not context then
+			context = cset._current._criteria.terms
+		end
+
 		-- should this field be merged or assigned?
 		local field = configset._fields[fieldname]
 		local keyed = field and field.keyed
 		local merge = field and field.merge
-		
+
 		if keyed then
 			value = fetchkeyed(cset, fieldname, context, filename, merge)
 		elseif merge then
 			value = fetchmerge(cset, fieldname, context, filename)
 		else
-			value = fetchassign(cset, fieldname, context, filename)			
+			value = fetchassign(cset, fieldname, context, filename)
 			-- if value is an object, return a copy of it, so that they can
 			-- modified by the caller without altering the source data
 			if type(value) == "table" then
 				value = table.deepcopy(value)
 			end
 		end
-		
+
 		return value
 	end
-	
-	
---
--- Metatable allows configuration sets to be used like objects in the API.
--- Setting a value adds it to the currently active block. Getting a value
--- retrieves it using the currently active's block list of filter terms.
---
-
-	configset.__mt = {
-		__newindex = configset.addvalue,
-		__index = function(cset, fieldname)
-			return configset.fetchvalue(cset, fieldname, cset._current._criteria.terms)
-		end
-	}

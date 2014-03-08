@@ -29,18 +29,19 @@
 		prj.solution = sln
 		prj.script = _SCRIPT
 
-		local cset = configset.new(sln.configset)
-		cset.basedir = os.getcwd()
-		cset.filename = name
-		cset.uuid = os.uuid(name)
-		prj.configset = cset
+		-- Start a new configuration set to hold this project's info. For
+		-- convenience and backward compatibility with the old Premake 3.x
+		-- way of doing things, allow the project to be treated like a
+		-- regular table.
 
-		-- attach a type descriptor
-		setmetatable(prj, {
-			__index = function(prj, key)
-				return prj.configset[key]
-			end,
-		})
+		local cset = configset.new(sln.configset)
+		prj.configset = cset
+		setmetatable(prj, configset.metatable(cset))
+
+		-- And set defaults for some of the fields
+		prj.basedir = os.getcwd()
+		prj.filename = name
+		prj.uuid = os.uuid(name)
 
 		return prj
 	end
