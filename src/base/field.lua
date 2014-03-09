@@ -52,6 +52,16 @@
 		-- Translate the old approaches to data kind definitions to the new
 		-- one used here. These should probably be deprecated eventually.
 
+		if f.kind:startswith("key-") then
+			f.kind = f.kind:sub(5)
+			f.keyed = true
+		end
+
+		if f.kind:endswith("-list") then
+			f.kind = f.kind:sub(1, -6)
+			f.list = true
+		end
+
 		local kind = f.kind
 
 		if f.list then
@@ -213,6 +223,23 @@
 
 	function field.merges(f)
 		return (field.accessor(f, "merge") ~= nil)
+	end
+
+
+
+	function field.remove(f, current, value)
+		local processor = field.accessor(f, "remove")
+		if processor then
+			return processor(f, current, value)
+		else
+			return value
+		end
+	end
+
+
+
+	function field.removes(f)
+		return (field.accessor(f, "merge") ~= nil and field.accessor(f, "remove") ~= nil)
 	end
 
 

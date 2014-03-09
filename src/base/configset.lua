@@ -227,19 +227,28 @@
 --
 -- @param cset
 --    The configuration set from which to remove.
--- @param fieldname
---    The name of the field holding the values to be removed.
+-- @param field
+--    The field holding the values to be removed.
 -- @param values
 --    A list of values to be removed.
 --
 
-	function configset.removevalues(cset, fieldname, values)
+	function configset.remove(cset, field, values)
 		-- removes are always processed first; starting a new block here
 		-- ensures that they will be processed in the proper order
 		local current = cset._current
 		configset.addblock(cset, current._criteria.terms, current._basedir)
 
-		values = table.flatten(values)
+		-- This needs work; right now it is hardcoded to only work for lists.
+		-- To support removing from keyed collections, I first need to figure
+		-- out how to move the wildcard():lower() bit into the value
+		-- processing call chain (i.e. that should happen somewhere inside of
+		-- the field.remove() call). And then I will probably need to add
+		-- another accessor to actually do the removing, which right now is
+		-- hardcoded inside of _fetchMerged(). Oh, and some of the logic in
+		-- api.remove() needs to get pushed down to here (or field).
+
+		values = premake.field.remove(field, {}, values)
 		for i, value in ipairs(values) do
 			values[i] = path.wildcards(value):lower()
 		end
@@ -247,7 +256,7 @@
 		-- add a list of removed values to the block
 		current = cset._current
 		current._removes = {}
-		current._removes[fieldname] = values
+		current._removes[field.name] = values
 	end
 
 

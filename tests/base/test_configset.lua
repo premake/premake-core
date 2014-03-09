@@ -169,14 +169,14 @@
 	function suite.remove_onExactValueMatch()
 		local f = field.get("flags")
 		configset.store(cset, f, { "Symbols", "Unsafe", "NoRTTI" })
-		configset.removevalues(cset, "flags", { "Unsafe" })
+		configset.remove(cset, f, { "Unsafe" })
 		test.isequal({ "Symbols", "NoRTTI" }, configset.fetch(cset, f, {}))
 	end
 
 	function suite.remove_onMultipleValues()
 		local f = field.get("flags")
 		configset.store(cset, f, { "Symbols", "NoExceptions", "Unsafe", "NoRTTI" })
-		configset.removevalues(cset, "flags", { "NoExceptions", "NoRTTI" })
+		configset.remove(cset, f, { "NoExceptions", "NoRTTI" })
 		test.isequal({ "Symbols", "Unsafe" }, configset.fetch(cset, f, {}))
 	end
 
@@ -188,7 +188,7 @@
 	function suite.remove_onWildcard()
 		local f = field.get("defines")
 		configset.store(cset, f, { "WIN32", "WIN64", "LINUX", "MACOSX" })
-		configset.removevalues(cset, "defines", { "WIN*" })
+		configset.remove(cset, f, { "WIN*" })
 		test.isequal({ "LINUX", "MACOSX" }, configset.fetch(cset, f, {}))
 	end
 

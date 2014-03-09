@@ -1,7 +1,7 @@
 --
 -- api.lua
 -- Implementation of the solution, project, and configuration APIs.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	premake.api = {}
@@ -91,19 +91,6 @@
 			error("name '" .. name .. "' in use", 2)
 		end
 
-		-- Translate the old "key-" and "-list" field kind modifiers to the
-		-- new boolean values (13 Jan 2014; should deprecate eventually)
-
-		if field.kind:startswith("key-") then
-			field.kind = field.kind:sub(5)
-			field.keyed = true
-		end
-
-		if field.kind:endswith("-list") then
-			field.kind = field.kind:sub(1, -6)
-			field.list = true
-		end
-
 		-- add this new field to my master list
 		field = premake.field.new(field)
 
@@ -112,8 +99,7 @@
 			return api.callback(field, value)
 		end
 
-		-- list values also get a removal function
-		if api.isListField(field) and not api.isKeyedField(field) then
+		if premake.field.removes(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
@@ -133,10 +119,8 @@
 ---
 
      function api.alias(original, alias)
-          _G[alias] = _G[original]
-          if api.isListField(premake.fields[original]) then
-               _G["remove" .. alias] = _G["remove" .. original]
-          end
+		_G[alias] = _G[original]
+		_G["remove" .. alias] = _G["remove" .. original]
      end
 
 
@@ -309,7 +293,7 @@
 		if not value then return end
 
 		local target = api.gettarget(field.scope)
-		local kind = field.kind
+		local hasDeprecatedValues = (type(field.deprecated) == "table")
 
 		-- Build a list of values to be removed. If this field has deprecated
 		-- values, check to see if any of those are going to be removed by this
@@ -317,7 +301,6 @@
 		-- the appropriate logic for removing that value.
 
 		local removes = {}
-		local remover = api["remove" .. kind] or table.insert
 
 		function check(value)
 			if field.deprecated[value] then
@@ -326,20 +309,18 @@
 				if api._deprecations ~= "off" then
 					local key = field.name .. "_" .. value
 					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-					if api._deprecations == "error" then error("deprecation errors enabled", 8) end
+					if api._deprecations == "error" then
+						error { msg="deprecation errors enabled" }
+					end
 				end
 			end
 		end
 
 		local function recurse(value)
 			if type(value) == "table" then
-				table.foreachi(value, function(v)
-					recurse(v)
-				end)
-				return
-			end
+				table.foreachi(value, recurse)
 
-			if value:contains("*") then
+			elseif hasDeprecatedValues and value:contains("*") then
 				local current = configset.fetch(target.configset, field)
 				local mask = path.wildcards(value)
 				for _, item in ipairs(current) do
@@ -347,27 +328,27 @@
 						recurse(item)
 					end
 				end
-				remover(removes, value)
-				return
-			end
+				table.insert(removes, value)
 
-			local value, err, additional = api.checkvalue(value, field)
-			if err then error(err, 4) end
+			else
+				local value, err, additional = api.checkvalue(value, field)
+				if err then
+					error { msg=err }
+				end
 
-			if field.deprecated then
-				check(value)
-			end
+				if field.deprecated then
+					check(value)
+				end
 
-			remover(removes, value)
-			if additional then
-				remover(removes, additional)
+				table.insert(removes, value)
+				if additional then
+					table.insert(removes, additional)
+				end
 			end
 		end
 
 		recurse(value)
-
-		-- Tell the config set to remove these values from future queries
-		configset.removevalues(target.configset, field.name, removes)
+		configset.remove(target.configset, field, removes)
 	end
 
 
@@ -437,8 +418,8 @@
 --
 
 	function api.comparevalues(field, value1, value2)
-		-- both nil?
-		if not value1 and not value2 then
+		-- both the same?
+		if value1 == value2 then
 			return true
 		end
 
@@ -447,9 +428,16 @@
 			return false
 		end
 
-		-- for keyed list, I just make sure all keys are present,
-		-- no checking of values is done (yet)
-		if api.isKeyedField(field) then
+		-- different types?
+		if type(value1) ~= type(value2) then
+			return false
+		end
+
+		if type(value1) == "table" then
+			if #value1 ~= #value2 then
+				return false
+			end
+
 			for k,v in pairs(value1) do
 				if not value2[k] then
 					return false
@@ -460,29 +448,11 @@
 					return false
 				end
 			end
-			return true
-
-		-- for arrays, just see if the lengths match, for now
-		elseif api.isListField(field) then
-			return #value1 == #value2
-
-		-- everything else can use a simple compare
-		else
-			return value1 == value2
+		elseif value1 ~= value2 then
+			return false
 		end
-	end
 
-
---
--- Check the collection properties of a field.
---
-
-	function api.isKeyedField(field)
-		return field.keyed
-	end
-
-	function api.isListField(field)
-		return field.list
+		return true
 	end
 
 
@@ -503,19 +473,6 @@
 
 
 --
--- Set a new file value on an API field. Unlike paths, file value can
--- use wildcards (and so must always be a list).
---
-
-	function api.removefile(target, value)
-		table.insert(target, path.getabsolute(value))
-	end
-
-	api.removedirectory = api.removefile
-
-
-
---
 -- Directory data kind; performs wildcard directory searches, converts
 -- results to absolute paths.
 --
@@ -531,8 +488,10 @@
 				value = path.getabsolute(value)
 			end
 			return value
+		end,
+		remove = function(field, current, value, processor)
+			return path.getabsolute(value)
 		end
-
 	})
 
 
@@ -553,6 +512,9 @@
 				value = path.getabsolute(value)
 			end
 			return value
+		end,
+		remove = function(field, current, value, processor)
+			return path.getabsolute(value)
 		end
 	})
 
@@ -585,14 +547,15 @@
 		current = current or {}
 
 		for k, v in pairs(value) do
-			if type(k) == "number" then
-				current = storeKeyed(field, current, v, processor)
-			else
+			-- if type(k) == "number" then
+			-- 	error ()
+			-- 	current = storeKeyed(field, current, v, processor)
+			-- else
 				if processor then
 					v = processor(field, current[k], v)
 				end
 				current[k] = v
-			end
+			-- end
 		end
 
 		return current
@@ -643,6 +606,7 @@
 
 	premake.field.kind("list", {
 		store = storeList,
+		remove = storeList,
 		merge = storeList,
 	})
 
