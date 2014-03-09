@@ -240,25 +240,3 @@
 		local x = configset.fetch(cset, f, {"windows"})
 		test.isequal({"Development"}, x.Debug)
 	end
-
-
---
--- Keyed values should merge when merged fields are fetched.
---
-
-	function suite.keyed_mergesValues_onMergeFetch()
-		local f = field.get("vpaths")
-		configset.store(cset, f, { includes="*.h" })
-		configset.addblock(cset, { "windows" })
-		configset.store(cset, f, { includes="*.hpp" })
-		local x = configset.fetch(cset, f, {"windows"})
-		test.isequal({ os.getcwd().."/*.h", os.getcwd().."/*.hpp" }, x.includes)
-	end
-
-	function suite.keyed_mergesValues_onMergeAdd()
-		local f = field.get("vpaths")
-		configset.store(cset, f, { includes="*.h" })
-		configset.store(cset, f, { includes="*.hpp" })
-		local x = configset.fetch(cset, f, {"windows"})
-		test.isequal({ os.getcwd().."/*.h", os.getcwd().."/*.hpp" }, x.includes)
-	end

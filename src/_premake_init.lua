@@ -688,7 +688,7 @@
 	api.register {
 		name = "vpaths",
 		scope = "project",
-		kind = "keyed:list:path",
+		kind = "list:keyed:list:path",
 	}
 
 	api.register {

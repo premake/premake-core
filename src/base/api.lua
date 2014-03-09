@@ -576,15 +576,10 @@
 		current = current or {}
 
 		for k, v in pairs(value) do
-			-- if type(k) == "number" then
-			-- 	error ()
-			-- 	current = storeKeyed(field, current, v, processor)
-			-- else
-				if processor then
-					v = processor(field, current[k], v)
-				end
-				current[k] = v
-			-- end
+			if processor then
+				v = processor(field, current[k], v)
+			end
+			current[k] = v
 		end
 
 		return current
@@ -604,10 +599,18 @@
 
 	local function storeList(field, current, value, processor)
 		if type(value) == "table" then
-			table.foreachi(value, function(item)
-				current = storeList(field, current, item, processor)
-			end)
-			return current
+			-- Flatten out incoming arrays of values
+			if #value > 0 then
+				table.foreachi(value, function(item)
+					current = storeList(field, current, item, processor)
+				end)
+				return current
+			end
+
+			-- Ignore empty lists
+			if table.isempty(value) then
+				return current
+			end
 		end
 
 		local function store(item)
@@ -624,7 +627,7 @@
 			value = processor(field, nil, value)
 		end
 
-		if type(value) == "table" then
+		if type(value) == "table" and #value > 0 then
 			table.foreachi(value, store)
 		else
 			store(value)
