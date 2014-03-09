@@ -168,9 +168,7 @@
 		if value then
 			-- do I need to expand tokens?
 			if field and field.tokens then
-				local kind = field.kind
-				local ispath = kind:startswith("path") or kind:startswith("file") or kind:startswith("mixed")
-				value = premake.detoken.expand(value, ctx.environ, ispath, ctx._basedir)
+				value = premake.detoken.expand(value, ctx.environ, field.paths, ctx._basedir)
 			end
 
 			-- store the result for later lookups

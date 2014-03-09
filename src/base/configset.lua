@@ -30,9 +30,9 @@
 
 	function configset.new(parent)
 		local cset = {}
-		cset._parent = parent
-		cset._blocks = {}
-		cset._current = nil
+		cset.parent = parent
+		cset.blocks = {}
+		cset.current = nil
 		cset.compiled = false
 		return cset
 	end
@@ -59,7 +59,7 @@
 
 	function configset.fetch(cset, field, context, filename)
 		if not context then
-			context = cset._current._criteria.terms
+			context = cset.current._criteria.terms
 		end
 
 		if premake.field.merges(field) then
@@ -73,9 +73,9 @@
 	function configset._fetchDirect(cset, field, filter, filename)
 		local key = field.name
 
-		local n = #cset._blocks
+		local n = #cset.blocks
 		for i = n, 1, -1 do
-			local block = cset._blocks[i]
+			local block = cset.blocks[i]
 			local value = block[key]
 			if value and (cset.compiled or configset.testblock(block, filter, filename)) then
 				-- If value is an object, return a copy of it so that any
@@ -88,8 +88,8 @@
 			end
 		end
 
-		if cset._parent then
-			return configset._fetchDirect(cset._parent, field, filter, filename)
+		if cset.parent then
+			return configset._fetchDirect(cset.parent, field, filter, filename)
 		end
 	end
 
@@ -112,12 +112,12 @@
 			end
 		end
 
-		if cset._parent then
-			result = configset._fetchMerged(cset._parent, field, filter, filename)
+		if cset.parent then
+			result = configset._fetchMerged(cset.parent, field, filter, filename)
 		end
 
 		local key = field.name
-		for _, block in ipairs(cset._blocks) do
+		for _, block in ipairs(cset.blocks) do
 			if cset.compiled or configset.testblock(block, filter, filename) then
 				if block._removes and block._removes[key] then
 					remove(block._removes[key])
@@ -156,7 +156,7 @@
 			__index = function(tbl, key)
 				local f = premake.field.get(key)
 				if f then
-					return configset.fetch(cset, f, cset._current._criteria.terms)
+					return configset.fetch(cset, f, cset.current._criteria.terms)
 				else
 					return nil
 				end
@@ -189,8 +189,8 @@
 		-- attach a criteria object to the block to control its application
 		block._criteria = criteria.new(terms)
 
-		table.insert(cset._blocks, block)
-		cset._current = block
+		table.insert(cset.blocks, block)
+		cset.current = block
 		return block
 	end
 
@@ -211,12 +211,12 @@
 --
 
 	function configset.store(cset, field, value)
-		if not cset._current then
+		if not cset.current then
 			configset.addblock(cset, {})
 		end
 
 		local key = field.name
-		local current = cset._current
+		local current = cset.current
 		current[key] = premake.field.store(field, current[key], value)
 	end
 
@@ -236,7 +236,7 @@
 	function configset.remove(cset, field, values)
 		-- removes are always processed first; starting a new block here
 		-- ensures that they will be processed in the proper order
-		local current = cset._current
+		local current = cset.current
 		configset.addblock(cset, current._criteria.terms, current._basedir)
 
 		-- This needs work; right now it is hardcoded to only work for lists.
@@ -254,7 +254,7 @@
 		end
 
 		-- add a list of removed values to the block
-		current = cset._current
+		current = cset.current
 		current._removes = {}
 		current._removes[field.name] = values
 	end
@@ -272,7 +272,7 @@
 --
 
 	function configset.empty(cset)
-		return (#cset._blocks == 0)
+		return (#cset.blocks == 0)
 	end
 
 
@@ -317,16 +317,16 @@
 	function configset.compile(cset, context, filename)
 		-- always start with the parent
 		local result
-		if cset._parent then
-			result = configset.compile(cset._parent, context, filename)
+		if cset.parent then
+			result = configset.compile(cset.parent, context, filename)
 		else
 			result = configset.new()
 		end
 
 		-- add in my own blocks
-		for _, block in ipairs(cset._blocks) do
+		for _, block in ipairs(cset.blocks) do
 			if configset.testblock(block, context, filename) then
-				table.insert(result._blocks, block)
+				table.insert(result.blocks, block)
 			end
 		end
 

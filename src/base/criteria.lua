@@ -24,9 +24,9 @@
 --    A new criteria object.
 --
 
-	function criteria.new(terms)		
+	function criteria.new(terms)
 		terms = table.flatten(terms)
-		
+
 		-- make the terms case-insensitive by converting to lower
 		for i, term in ipairs(terms) do
 			terms[i] = term:lower()
@@ -73,13 +73,13 @@
 				if part:startswith("not ") then
 					return not testcontext(part:sub(5), true)
 				end
-	
+
 				for _, value in ipairs(context) do
 					if value:match(part) == value then
 						return true
 					end
 				end
-				
+
 				if filename and not negated and filename:match(part) == filename then
 					filematched = true
 					return true
@@ -87,13 +87,13 @@
 			end
 			return false
 		end
-		
+
 		for _, pattern in ipairs(crit.patterns) do
 			if not testcontext(pattern) then
 				return false
 			end
 		end
-		
+
 		if filename and not filematched then
 			return false
 		end

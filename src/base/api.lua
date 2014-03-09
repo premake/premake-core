@@ -94,6 +94,12 @@
 		-- add this new field to my master list
 		field = premake.field.new(field)
 
+		-- Flag fields which contain filesystem paths. The context object will
+		-- use this information when expanding tokens, to ensure that the paths
+		-- are still well-formed after replacements.
+
+		field.paths = premake.field.property(field, "paths")
+
 		-- create a setter function for it
 		_G[name] = function(value)
 			return api.callback(field, value)
@@ -361,45 +367,66 @@
 -- @param field
 --    The field to check against.
 -- @return
---    Returns up to three values: the canonical match for the input value
---    or nil if there is no match. An error message if the input value is
---    invalid. And one (string) or more (array) additional values that are
---    associated with the input value (e.g. FatalWarnings expands to also
---    set FatalCompileWarnings and FatalLinkWarnings).
---
---    That's a wonky return value; grew that way out of historical usage.
+--    If the value is valid for this field, the canonical version
+--    of that value is returned. If the value is not valid two
+--    values are returned: nil, and an error message.
 --
 
 	function api.checkvalue(value, field)
+		if not field.allowed then
+			return value
+		end
+
+		local canonical, result
 		local lowerValue = value:lower()
 
 		if field.aliases then
 			for k,v in pairs(field.aliases) do
-				-- if I find a matching alias, assume that it has already been
-				-- set to the right canonical value, and just return
+				-- if I find a matching alias, assume that it has already
+				-- been set to the right canonical value; no further
+				-- checking against allowed values is needed
 				if lowerValue == k:lower() then
-					return k, nil, v
+					canonical = k
+					result = v
+					break
 				end
 			end
 		end
 
-		if field.allowed then
+		if not canonical then
 			if type(field.allowed) == "function" then
-				return field.allowed(value)
+				canonical = field.allowed(value)
 			else
 				local n = #field.allowed
 				for i = 1, n do
 					local v = field.allowed[i]
 					if lowerValue == v:lower() then
-						return v
+						canonical = v
+						break
 					end
 				end
-				return nil, "invalid value '" .. value .. "'"
 			end
 		end
 
-		return value
+		if not canonical then
+			return nil, "invalid value '" .. value .. "'"
+		end
+
+		if field.deprecated and field.deprecated[canonical] then
+			local handler = field.deprecated[canonical]
+			handler.add(canonical)
+			if api._deprecations ~= "off" then
+				local key = field.name .. "_" .. value
+				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, canonical, handler.message or "")
+				if api._deprecations == "error" then
+					return nil, "deprecation errors enabled"
+				end
+			end
+		end
+
+		return result or canonical
 	end
+
 
 
 --
@@ -478,6 +505,7 @@
 --
 
 	premake.field.kind("directory", {
+		paths = true,
 		store = function(field, current, value, processor)
 			if value:find("*") then
 				value = os.matchdirs(value)
@@ -502,6 +530,7 @@
 --
 
 	premake.field.kind("file", {
+		paths = true,
 		store = function(field, current, value, processor)
 			if value:find("*") then
 				value = os.matchfiles(value)
@@ -619,6 +648,7 @@
 --
 
 	premake.field.kind("mixed", {
+		paths = true,
 		store = function(field, current, value, processor)
 			if type(value) == "string" and value:find('/', nil, true) then
 				value = path.getabsolute(value)
@@ -650,6 +680,7 @@
 --
 
 	premake.field.kind("path", {
+		paths = true,
 		store = function(field, current, value, processor)
 			return path.getabsolute(value)
 		end
@@ -668,29 +699,9 @@
 				error({ msg="expected string; got table" })
 			end
 
-			local value, err, additional = api.checkvalue(value, field)
+			local value, err = api.checkvalue(value, field)
 			if err then
 				error { msg=err }
-			end
-
-			if field.deprecated and field.deprecated[value] then
-				local handler = field.deprecated[value]
-				handler.add(value)
-				if api._deprecations ~= "off" then
-					local key = field.name .. "_" .. value
-					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-					if api._deprecations == "error" then
-						error { msg="deprecation errors enabled" }
-					end
-				end
-			end
-
-			-- If my single value also returned additional results (aliases, or
-			-- see FatalWarnings flag), return them all together. This is an
-			-- unusual but occasionally useful ability.
-
-			if additional then
-				return table.flatten { value, additional }
 			end
 
 			return value

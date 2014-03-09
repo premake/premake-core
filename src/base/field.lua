@@ -65,14 +65,12 @@
 		local kind = f.kind
 
 		if f.list then
-			kind = "list:" .. kind
+			f.kind = "list:" .. f.kind
 		end
 
 		if f.keyed then
-			kind = "keyed:" .. kind
+			f.kind = "keyed:" .. f.kind
 		end
-
-		f._kind = kind
 
 		-- All fields must have a valid store() function
 		if not field.accessor(f, "store") then
@@ -188,10 +186,7 @@
 			return accessor
 		end
 
-		-- The _kind is temporary; I'm using it while I transition off the old
-		-- codebase. Once everything is migrated it can go away.
-
-		return accessorForKind(f._kind or f.kind)
+		return accessorForKind(f.kind)
 	end
 
 
@@ -223,6 +218,24 @@
 
 	function field.merges(f)
 		return (field.accessor(f, "merge") ~= nil)
+	end
+
+
+
+---
+-- Retrieve a property from a field, based on it's data kind. Allows extra
+-- information to be stored along with the data kind definitions; use this
+-- call to find the first value in the field's data kind chain.
+---
+
+	function field.property(f, tag)
+		local kinds = string.explode(f.kind, ":", true)
+		for i, kind in ipairs(kinds) do
+			local value = field._kinds[kind][tag]
+			if value then
+				return value
+			end
+		end
 	end
 
 
