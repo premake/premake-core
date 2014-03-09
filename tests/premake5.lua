@@ -6,6 +6,21 @@
 
 	dofile("testfx.lua")
 
+	newoption {
+		trigger     = "test",
+		description = "A suite or test to run"
+	}
+
+	newoption {
+		trigger     = "profile",
+		description = "Profile execution times; saves to profile.txt"
+	}
+
+	if _OPTIONS["profile"] then
+		dofile("pepperfish_profiler.lua")
+	end
+
+
 --
 -- Some helper functions
 --
@@ -204,25 +219,32 @@
 	dofile("actions/make/cs/test_sources.lua")
 
 
---
--- Register a test action
---
-
-	newoption {
-		trigger     = "test",
-		description = "A suite or test to run"
-	}
-
 	newaction {
 		trigger     = "test",
 		description = "Run the automated test suite",
 
 		execute = function ()
+			local focus = {}
 			if _OPTIONS["test"] then
-				local t = string.explode(_OPTIONS["test"] or "", ".", true)
-				passed, failed = test.runall(t[1], t[2])
-			else
-				passed, failed = test.runall()
+				focus = string.explode(_OPTIONS["test"] or "", ".", true)
+			end
+
+			local profile = _OPTIONS["profile"]
+			if profile == "" then profile = "time" end
+
+			local profiler
+			if profile then
+				profiler = newProfiler()
+				profiler:start()
+			end
+
+			passed, failed = test.runall(focus[1], focus[2])
+
+			if profile then
+				profiler:stop()
+				local outfile = io.open("profile.txt", "w+")
+				profiler:report(outfile)
+				outfile:close()
 			end
 
 			msg = string.format("%d tests passed, %d failed", passed, failed)

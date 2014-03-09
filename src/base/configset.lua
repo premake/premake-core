@@ -62,6 +62,10 @@
 			context = cset.current._criteria.terms
 		end
 
+		if filename then
+			filename = filename:lower()
+		end
+
 		if premake.field.merges(field) then
 			return configset._fetchMerged(cset, field, context, filename)
 		else
@@ -72,10 +76,11 @@
 
 	function configset._fetchDirect(cset, field, filter, filename)
 		local key = field.name
+		local blocks = cset.blocks
 
-		local n = #cset.blocks
+		local n = #blocks
 		for i = n, 1, -1 do
-			local block = cset.blocks[i]
+			local block = blocks[i]
 			local value = block[key]
 			if value and (cset.compiled or configset.testblock(block, filter, filename)) then
 				-- If value is an object, return a copy of it so that any
@@ -184,7 +189,10 @@
 
 	function configset.addblock(cset, terms, basedir)
 		local block = {}
-		block._basedir = basedir
+
+		if basedir then
+			block._basedir = basedir:lower()
+		end
 
 		-- attach a criteria object to the block to control its application
 		block._criteria = criteria.new(terms)
@@ -315,6 +323,10 @@
 --
 
 	function configset.compile(cset, context, filename)
+		if filename then
+			filename = filename:lower()
+		end
+
 		-- always start with the parent
 		local result
 		if cset.parent then

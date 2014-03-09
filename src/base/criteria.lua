@@ -1,14 +1,11 @@
 --
 -- criteria.lua
 --
--- DO NOT USE THIS YET! I am just getting started here; please wait until
--- I've had a chance to build it out more before using.
---
 -- Stores a list of criteria terms with support for negation, conjunction,
 -- and wildcard matches. Provides functions match match these criteria
 -- against various contexts.
 --
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
 	premake.criteria = {}
@@ -27,16 +24,26 @@
 	function criteria.new(terms)
 		terms = table.flatten(terms)
 
-		-- make the terms case-insensitive by converting to lower
-		for i, term in ipairs(terms) do
-			terms[i] = term:lower()
-		end
-
 		-- convert Premake wildcard symbols into the appropriate Lua patterns; this
 		-- list of patterns is what will actually be tested against
+
 		local patterns = {}
-		for _, term in ipairs(terms) do
-			local pattern = path.wildcards(term)
+		for i, term in ipairs(terms) do
+			terms[i] = term:lower()
+
+			local parts = path.wildcards(terms[i])
+			parts = parts:explode(" or ")
+
+			local pattern = {}
+			for i, part in ipairs(parts) do
+				if part:startswith("not ") then
+					table.insert(pattern, "not")
+					table.insert(pattern, part:sub(5))
+				else
+					table.insert(pattern, part)
+				end
+			end
+
 			table.insert(patterns, pattern)
 		end
 
@@ -47,7 +54,7 @@
 	end
 
 
---
+---
 -- Determine if this criteria is met by the provided list of context terms.
 --
 -- @param crit
@@ -60,36 +67,52 @@
 --    name must be present to pass the test.
 -- @return
 --    True if all criteria are satisfied by the context.
---
+---
 
 	function criteria.matches(crit, context, filename)
 		local filematched = false
-		if filename then
-			filename = filename:lower()
+
+		function testcontext(part, negated)
+			for i = 1, #context do
+				local value = context[i]
+				if value:match(part) == value then
+					return true
+				end
+			end
+
+			if filename and not negated and filename:match(part) == filename then
+				filematched = true
+				return true
+			end
+
+			return false
 		end
 
-		function testcontext(pattern, negated)
-			for _, part in ipairs(pattern:explode(" or ")) do
-				if part:startswith("not ") then
-					return not testcontext(part:sub(5), true)
-				end
+		function testparts(pattern)
+			local n = #pattern
+			local i = 1
+			while i <= n do
+				local part = pattern[i]
 
-				for _, value in ipairs(context) do
-					if value:match(part) == value then
+				if part == "not" then
+					i = i + 1
+					if not testcontext(pattern[i], true) then
+						return true
+					end
+				else
+					if testcontext(part) then
 						return true
 					end
 				end
 
-				if filename and not negated and filename:match(part) == filename then
-					filematched = true
-					return true
-				end
+				i = i + 1
 			end
-			return false
 		end
 
-		for _, pattern in ipairs(crit.patterns) do
-			if not testcontext(pattern) then
+		local n = #crit.patterns
+		for i = 1, n do
+			local pattern = crit.patterns[i]
+			if not testparts(pattern) then
 				return false
 			end
 		end

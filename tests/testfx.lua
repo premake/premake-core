@@ -333,9 +333,13 @@
 	function test.runall(suitename, testname)
 		test.print = print
 
-		print      = stub_print
-		io.open    = stub_io_open
-		io.output  = stub_io_output
+		local real_print = print
+		local real_open = io.open
+		local real_output = io.output
+
+		print = stub_print
+		io.open = stub_io_open
+		io.output = stub_io_output
 
 		local numpassed = 0
 		local numfailed = 0
@@ -381,7 +385,11 @@
 		end
 
         io.write('running time : ',  os.clock() - start_time,'\n')
-		print = test.print
+
+		print = real_print
+		io.open = real_open
+		io.output = real_output
+
 		return numpassed, numfailed
 	end
 
