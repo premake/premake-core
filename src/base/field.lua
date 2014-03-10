@@ -64,17 +64,26 @@
 
 		local kind = f.kind
 
+		if kind == "object" or kind == "array" then
+			kind = "table"
+		end
+
 		if f.list then
-			f.kind = "list:" .. f.kind
+			kind = "list:" .. kind
 		end
 
 		if f.keyed then
-			f.kind = "keyed:" .. f.kind
+			kind = "keyed:" .. kind
 		end
+
+		-- Store the translated kind with a new name, so legacy add-on code
+		-- can continue to work with the old value.
+
+		f._kind = kind
 
 		-- All fields must have a valid store() function
 		if not field.accessor(f, "store") then
-			error("invalid field kind '" .. f.kind .. "'")
+			error("invalid field kind '" .. f._kind .. "'")
 		end
 
 		field._list[f.name] = f
@@ -89,12 +98,18 @@
 -- @param tag
 --    A unique name of the kind; used in the kind string in new field
 --    definitions (see new(), above).
--- @param functions
---    A table of processor functions for the new kind.
+-- @param settings
+--    A table containing the processor functions for the new kind. If
+--    nil, no change is made to the current field settings.
+-- @return
+--    The settings table for the specified tag.
 ---
 
-	function field.kind(tag, functions)
-		field._kinds[tag] = functions
+	function field.kind(tag, settings)
+		if settings then
+			field._kinds[tag] = settings
+		end
+		return field._kinds[tag]
 	end
 
 
@@ -186,7 +201,7 @@
 			return accessor
 		end
 
-		return accessorForKind(f.kind)
+		return accessorForKind(f._kind)
 	end
 
 
@@ -229,7 +244,7 @@
 ---
 
 	function field.property(f, tag)
-		local kinds = string.explode(f.kind, ":", true)
+		local kinds = string.explode(f._kind, ":", true)
 		for i, kind in ipairs(kinds) do
 			local value = field._kinds[kind][tag]
 			if value then

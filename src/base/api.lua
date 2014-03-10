@@ -696,9 +696,11 @@
 				error({ msg="expected string; got table" })
 			end
 
-			local value, err = api.checkvalue(value, field)
-			if err then
-				error { msg=err }
+			if value then
+				local value, err = api.checkvalue(value, field)
+				if err then
+					error { msg=err }
+				end
 			end
 
 			return value
