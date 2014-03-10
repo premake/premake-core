@@ -273,14 +273,8 @@
 			return configset.fetch(target.configset, field)
 		end
 
-		local status, result = pcall(function ()
-			configset.store(target.configset, field, value)
-		end)
-
-		if not status then
-			if type(result) == "table" then
-				result = result.msg
-			end
+		local status, err = configset.store(target.configset, field, value)
+		if err then
 			error(result, 3)
 		end
 	end

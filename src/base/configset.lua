@@ -152,7 +152,10 @@
 			__newindex = function(tbl, key, value)
 				local f = premake.field.get(key)
 				if f then
-					return configset.store(cset, f, value)
+					local status, err = configset.store(cset, f, value)
+					if err then
+						error(err, 2)
+					end
 				else
 					rawset(tbl, key, value)
 					return value
@@ -204,7 +207,7 @@
 
 
 
---
+---
 -- Add a new field-value pair to the current configuration data block. The
 -- data type of the field is taken into account when adding the values:
 -- strings are replaced, arrays are merged, etc.
@@ -216,7 +219,10 @@
 --    defined using the api.register() function.
 -- @param value
 --    The new value for the field.
---
+-- @return
+--    If successful, returns true. If an error occurred, returns nil and
+--    an error message.
+---
 
 	function configset.store(cset, field, value)
 		if not cset.current then
@@ -225,7 +231,19 @@
 
 		local key = field.name
 		local current = cset.current
-		current[key] = premake.field.store(field, current[key], value)
+
+		local status, result = pcall(function ()
+			current[key] = premake.field.store(field, current[key], value)
+		end)
+
+		if not status then
+			if type(result) == "table" then
+				result = result.msg
+			end
+			return nil, result
+		end
+
+		return true
 	end
 
 
