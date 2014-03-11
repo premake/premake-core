@@ -43,8 +43,7 @@
 	OutputFile="$(OutDir)\MyProject.elf"
 	LinkIncremental="0"
 	GenerateManifest="false"
-	RandomizedBaseAddress="1"
-	DataExecutionPrevention="0"
+	ProgramDatabaseFile=""
 />
 		]]
 	end

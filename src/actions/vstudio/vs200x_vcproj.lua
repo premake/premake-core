@@ -436,14 +436,13 @@
 				m.moduleDefinitionFile,
 				m.generateManifest,
 				m.generateDebugInformation,
+				m.programDatabaseFile,
 				m.subSystem,
 				m.optimizeReferences,
 				m.enableCOMDATFolding,
 				m.entryPointSymbol,
 				m.importLibrary,
 				m.targetMachine,
-				m.randomizedBaseAddress,
-				m.dataExecutionPrevention,
 			}
 		else
 			return {
@@ -477,6 +476,53 @@
 
 	function m.VCManagedResourceCompilerTool(cfg)
 		m.VCTool("VCManagedResourceCompilerTool", cfg)
+	end
+
+	------------
+
+	m.elements.VCManifestTool = function(cfg)
+		return {
+			m.additionalManifestFiles,
+		}
+	end
+
+	function m.VCManifestTool(cfg)
+		if cfg.kind ~= p.STATICLIB then
+			m.VCTool("VCManifestTool", cfg)
+		end
+	end
+
+	------------
+
+	m.elements.VCMIDLTool = function(cfg)
+		return {
+			m.targetEnvironment(cfg)
+		}
+	end
+
+	function m.VCMIDLTool(cfg)
+		m.VCTool("VCMIDLTool", cfg)
+	end
+
+	------------
+
+	m.elements.VCNMakeTool = function(cfg)
+		return {
+			m.buildCommandLine,
+			m.reBuildCommandLine,
+			m.cleanCommandLine,
+			m.output,
+			m.preprocessorDefinitions,
+			m.includeSearchPath,
+			m.forcedIncludes,
+			m.assemblySearchPath,
+			m.forcedUsingAssemblies,
+			m.compileAsManaged,
+		}
+	end
+
+	function m.VCNMakeTool(cfg)
+		m.VCTool("VCNMakeTool", cfg)
 	end
 
 	------------
@@ -517,72 +563,6 @@
 -- doing right now. Hold on tight.
 --
 ---------------------------------------------------------------------------
-
-	function m.VCManifestTool(cfg)
-		if cfg.kind == p.STATICLIB then
-			return
-		end
-
-		p.push('<Tool')
-		p.w('Name="VCManifestTool"')
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		local manifests = {}
-		for i, fname in ipairs(cfg.files) do
-			if path.getextension(fname) == ".manifest" then
-				table.insert(manifests, project.getrelative(cfg.project, fname))
-			end
-		end
-
-		if #manifests > 0 then
-			p.x('AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
-		end
-		p.pop('/>')
-	end
-
-
-	function m.VCMIDLTool(cfg)
-		p.push('<Tool')
-		p.w('Name="VCMIDLTool"')
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		if cfg.architecture == "x64" then
-			p.w('TargetEnvironment="3"')
-		end
-
-		p.pop('/>')
-	end
-
-
-	function m.VCNMakeTool(cfg)
-		p.push('<Tool')
-		p.w('Name="VCNMakeTool"')
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-		m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-		m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-		m.nmakeOutput(cfg)
-		p.w('PreprocessorDefinitions=""')
-		p.w('IncludeSearchPath=""')
-		p.w('ForcedIncludes=""')
-		p.w('AssemblySearchPath=""')
-		p.w('ForcedUsingAssemblies=""')
-		p.w('CompileAsManaged=""')
-		p.pop('/>')
-	end
 
 
 	function m.VCResourceCompilerTool(cfg)
@@ -948,6 +928,27 @@
 	end
 
 
+
+	function m.additionalManifestFiles(cfg)
+		local manifests = {}
+		for i, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, project.getrelative(cfg.project, fname))
+			end
+		end
+		if #manifests > 0 then
+			p.x('AdditionalManifestFiles="%s"', table.concat(manifests, ";"))
+		end
+	end
+
+
+
+	function m.assemblySearchPath(cfg)
+		p.w('AssemblySearchPath=""')
+	end
+
+
+
 	function m.VCCLCompilerTool_additionalOptions(cfg)
 		local opts = cfg.buildoptions
 		if cfg.flags.MultiProcessorCompile then
@@ -959,12 +960,14 @@
 	end
 
 
+
 	function m.VCCLCompilerTool_fileConfig_additionalOptions(filecfg)
 		local opts = filecfg.buildoptions
 		if #opts > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(opts, " "))
 		end
 	end
+
 
 
 	function m.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
@@ -978,6 +981,7 @@
 	end
 
 
+
 	function m.additionalLinkerOptions(cfg, toolset)
 		local flags = cfg.linkoptions
 		if toolset then
@@ -987,6 +991,7 @@
 			p.x('AdditionalOptions="%s"', table.concat(flags, " "))
 		end
 	end
+
 
 
 	function m.assemblyReferences(prj)
@@ -1001,6 +1006,7 @@
 	end
 
 
+
 	function m.basicRuntimeChecks(cfg)
 		if not config.isOptimizedBuild(cfg)
 			and not cfg.flags.Managed
@@ -1010,17 +1016,36 @@
 		end
 	end
 
+
+
 	function m.bufferSecurityCheck(cfg)
 		if cfg.flags.NoBufferSecurityCheck then
 			p.w('BufferSecurityCheck="false"')
 		end
 	end
 
+
+
+	function m.buildCommandLine(cfg)
+		commands = table.concat(cfg.buildcommands, "\r\n")
+		p.x('BuildCommandLine="%s"', commands)
+	end
+
+
+
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			p.w('CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
 		end
 	end
+
+
+
+	function m.cleanCommandLine(cfg)
+		commands = table.concat(cfg.cleancommands, "\r\n")
+		p.x('CleanCommandLine="%s"', commands)
+	end
+
 
 
 	function m.compileAs(cfg, toolset)
@@ -1044,6 +1069,12 @@
 				p.w('CompileAs="%s"', compileAs)
 			end
 		end
+	end
+
+
+
+	function m.compileAsManaged(cfg)
+		p.w('CompileAsManaged=""')
 	end
 
 
@@ -1079,12 +1110,6 @@
 	end
 
 
-	function m.dataExecutionPrevention(cfg, toolset)
-		if toolset then
-			p.w('DataExecutionPrevention="0"')
-		end
-	end
-
 
 	function m.debugInformationFormat(cfg, toolset)
 		local fmt = iif(toolset, "0", m.symbols(cfg))
@@ -1092,11 +1117,13 @@
 	end
 
 
+
 	function m.enableCOMDATFolding(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('EnableCOMDATFolding="2"')
 		end
 	end
+
 
 
 	function m.enableEnhancedInstructionSet(cfg)
@@ -1108,9 +1135,11 @@
 	end
 
 
+
 	function m.enableFunctionLevelLinking(cfg)
 		p.w('EnableFunctionLevelLinking="%s"', m.bool(true))
 	end
+
 
 
 	function m.entryPointSymbol(cfg, toolset)
@@ -1123,6 +1152,7 @@
 	end
 
 
+
 	function m.exceptionHandling(cfg)
 		if cfg.flags.NoExceptions then
 			p.w('ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
@@ -1132,11 +1162,13 @@
 	end
 
 
+
 	function m.excludedFromBuild(filecfg)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
 			p.w('ExcludedFromBuild="true"')
 		end
 	end
+
 
 
 	function m.floatingPointModel(cfg)
@@ -1146,6 +1178,7 @@
 			p.w('FloatingPointModel="%d"', value)
 		end
 	end
+
 
 
 	function m.forcedIncludeFiles(cfg)
@@ -1158,6 +1191,19 @@
 			p.w('ForcedUsingFiles="%s"', table.concat(usings, ';'))
 		end
 	end
+
+
+
+	function m.forcedIncludes(cfg)
+		p.w('ForcedIncludes=""')
+	end
+
+
+
+	function m.forcedUsingAssemblies(cfg)
+		p.w('ForcedUsingAssemblies=""')
+	end
+
 
 
 	function m.keyword(prj)
@@ -1181,11 +1227,13 @@
 	end
 
 
+
 	function m.generateDebugInformation(cfg, toolset)
 		if not toolset then
 			p.w('GenerateDebugInformation="%s"', m.bool(m.symbols(cfg) ~= 0))
 		end
 	end
+
 
 
 	function m.generateManifest(cfg, toolset)
@@ -1195,11 +1243,13 @@
 	end
 
 
+
 	function m.ignoreImportLibrary(cfg, toolset)
 		if cfg.flags.NoImportLib and not toolset then
 			p.w('IgnoreImportLibrary="%s"', m.bool(true))
 		end
 	end
+
 
 
 	function m.importLibrary(cfg, toolset)
@@ -1217,6 +1267,13 @@
 	end
 
 
+
+	function m.includeSearchPath(cfg)
+		p.w('IncludeSearchPath=""')
+	end
+
+
+
 	function m.intermediateDirectory(cfg)
 		local objdir
 		if not cfg.fake then
@@ -1226,6 +1283,7 @@
 		end
 		p.x('IntermediateDirectory="%s"', path.translate(objdir))
 	end
+
 
 
 	function m.linkIncremental(cfg, toolset)
@@ -1239,6 +1297,7 @@
 	end
 
 
+
 	function m.linkLibraryDependencies(cfg, toolset)
 		if vstudio.needsExplicitLink(cfg) and not toolset then
 			p.w('LinkLibraryDependencies="false"')
@@ -1246,11 +1305,13 @@
 	end
 
 
+
 	function m.managedExtensions(cfg)
 		if cfg.flags.Managed then
 			p.w('ManagedExtensions="1"')
 		end
 	end
+
 
 
 	function m.minimalRebuild(cfg)
@@ -1265,6 +1326,7 @@
 	end
 
 
+
 	function m.moduleDefinitionFile(cfg, toolset)
 		if not toolset then
 			local deffile = config.findfile(cfg, ".def")
@@ -1274,16 +1336,6 @@
 		end
 	end
 
-
-	function m.nmakeCommandLine(cfg, commands, phase)
-		commands = table.concat(commands, "\r\n")
-		p.w('%sCommandLine="%s"', phase, p.esc(commands))
-	end
-
-
-	function m.nmakeOutput(cfg)
-		p.w('Output="$(OutDir)%s"', cfg.buildtarget.name)
-	end
 
 
 	function m.objectFile(filecfg)
@@ -1295,6 +1347,7 @@
 	end
 
 
+
 	function m.omitDefaultLib(cfg)
 		if cfg.flags.OmitDefaultLibrary then
 			p.w('OmitDefaultLibName="true"')
@@ -1302,11 +1355,13 @@
 	end
 
 
+
 	function m.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
 			p.w('OmitFramePointers="%s"', m.bool(true))
 		end
 	end
+
 
 
 	function m.optimization(cfg)
@@ -1318,11 +1373,19 @@
 	end
 
 
+
 	function m.optimizeReferences(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('OptimizeReferences="2"')
 		end
 	end
+
+
+
+	function m.output(cfg)
+		p.w('Output="$(OutDir)%s"', cfg.buildtarget.name)
+	end
+
 
 
 	function m.outputDirectory(cfg)
@@ -1331,9 +1394,11 @@
 	end
 
 
+
 	function m.outputFile(cfg)
 		p.x('OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
 	end
+
 
 
 	function m.platforms(prj)
@@ -1347,9 +1412,18 @@
 	end
 
 
+
 	function m.preprocessorDefinitions(cfg)
-		if #cfg.defines > 0 then
+		if #cfg.defines > 0 or vstudio.isMakefile(cfg) then
 			p.x('PreprocessorDefinitions="%s"', table.concat(cfg.defines, ";"))
+		end
+	end
+
+
+
+	function m.programDatabaseFile(cfg, toolset)
+		if toolset then
+			p.w('ProgramDatabaseFile=""')
 		end
 	end
 
@@ -1361,14 +1435,17 @@
 	end
 
 
+
 	function m.projectGUID(prj)
 		p.w('ProjectGUID="{%s}"', prj.uuid)
 	end
 
 
+
 	function m.projectName(prj)
 		p.x('Name="%s"', prj.name)
 	end
+
 
 
 	function m.projectReferences(prj)
@@ -1398,15 +1475,16 @@
 	end
 
 
+
 	function m.projectType(prj)
 		p.w('ProjectType="Visual C++"')
 	end
 
 
-	function m.randomizedBaseAddress(cfg, toolset)
-		if toolset then
-			p.w('RandomizedBaseAddress="1"')
-		end
+
+	function m.reBuildCommandLine(cfg)
+		commands = table.concat(cfg.rebuildcommands, "\r\n")
+		p.x('ReBuildCommandLine="%s"', commands)
 	end
 
 
@@ -1420,12 +1498,14 @@
 	end
 
 
+
 	function m.resourcePreprocessorDefinitions(cfg)
 		local defs = table.join(cfg.defines, cfg.resdefines)
 		if #defs > 0 then
 			p.x('PreprocessorDefinitions="%s"', table.concat(defs, ";"))
 		end
 	end
+
 
 
 	function m.rootNamespace(prj)
@@ -1441,6 +1521,7 @@
 			p.x('RootNamespace="%s"', prj.name)
 		end
 	end
+
 
 
 	function m.runtimeLibrary(cfg)
@@ -1471,6 +1552,13 @@
 	function m.subSystem(cfg, toolset)
 		if not toolset then
 			p.w('SubSystem="%s"', iif(cfg.kind == "ConsoleApp", 1, 2))
+		end
+	end
+
+
+	function m.targetEnvironment(cfg)
+		if cfg.architecture == "x64" then
+			p.w('TargetEnvironment="3"')
 		end
 	end
 
