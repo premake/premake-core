@@ -206,6 +206,17 @@
 
 
 
+	function field.compare(f, a, b)
+		local processor = field.accessor(f, "compare")
+		if processor then
+			return processor(f, a, b)
+		else
+			return (a == b)
+		end
+	end
+
+
+
 ---
 -- Fetch a field description by name.
 ---

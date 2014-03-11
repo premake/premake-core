@@ -424,60 +424,6 @@
 
 
 --
--- Compare two values of a field to see if they are (roughly) equivalent.
--- Real high-level checking right now for performance; can make it more
--- exact later if there is a need.
---
--- @param field
---    The description of the field being checked.
--- @param value1
---    The first value to be compared.
--- @param value2
---    The second value to be compared.
--- @return
---    True if the values are (roughly) equivalent; false otherwise.
---
-
-	function api.comparevalues(field, value1, value2)
-		-- both the same?
-		if value1 == value2 then
-			return true
-		end
-
-		-- one nil, but not the other?
-		if not value1 or not value2 then
-			return false
-		end
-
-		-- different types?
-		if type(value1) ~= type(value2) then
-			return false
-		end
-
-		if type(value1) == "table" then
-			if #value1 ~= #value2 then
-				return false
-			end
-
-			for k,v in pairs(value1) do
-				if not value2[k] then
-					return false
-				end
-			end
-			for k,v in pairs(value2) do
-				if not value1[k] then
-					return false
-				end
-			end
-		elseif value1 ~= value2 then
-			return false
-		end
-
-		return true
-	end
-
-
---
 -- Clears all active API objects; resets to root configuration block.
 --
 
@@ -513,6 +459,9 @@
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -538,6 +487,9 @@
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -557,6 +509,9 @@
 				error { msg="expected integer; got " .. tostring(value) }
 			end
 			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -582,6 +537,14 @@
 	premake.field.kind("keyed", {
 		store = storeKeyed,
 		merge = storeKeyed,
+		compare = function(field, a, b, processor)
+			for k in pairs(a) do
+				if not processor(field, a[k], b[k]) then
+					return false
+				end
+			end
+			return true
+		end
 	})
 
 
@@ -634,6 +597,17 @@
 		store = storeList,
 		remove = storeList,
 		merge = storeList,
+		compare = function(field, a, b, processor)
+			if #a ~= #b then
+				return false
+			end
+			for i = 1, #a do
+				if not processor(field, a[i], b[i]) then
+					return false
+				end
+			end
+			return true
+		end
 	})
 
 
@@ -651,6 +625,9 @@
 				value = path.getabsolute(value)
 			end
 			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -667,6 +644,9 @@
 				error { msg="expected number; got " .. t }
 			end
 			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -680,6 +660,9 @@
 		paths = true,
 		store = function(field, current, value, processor)
 			return path.getabsolute(value)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -705,6 +688,9 @@
 			end
 
 			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
 	})
 
@@ -719,6 +705,10 @@
 				value = { value }
 			end
 			return value
+		end,
+		compare = function(field, a, b, processor)
+			-- TODO: is there a reliable way to check this?
+			return true
 		end
 	})
 

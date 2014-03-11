@@ -389,7 +389,7 @@
 
 			-- this one needs to checked
 			if not okay then
-				okay = premake.api.comparevalues(field, cfg[field.scope][name], cfg[name])
+				okay = premake.field.compare(field, cfg[field.scope][name], cfg[name])
 			end
 
 			-- found a problem?
