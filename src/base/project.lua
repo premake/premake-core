@@ -62,11 +62,21 @@
 		local configs = prj._cfglist
 		local count = #configs
 
+		-- Once the configurations are mapped into the solution I could get
+		-- the same one multiple times. Make sure that doesn't happen.
+		local seen = {}
+
 		local i = 0
 		return function ()
 			i = i + 1
 			if i <= count then
-				return project.getconfig(prj, configs[i][1], configs[i][2])
+				local cfg = project.getconfig(prj, configs[i][1], configs[i][2])
+				if not seen[cfg] then
+					seen[cfg] = true
+					return cfg
+				else
+					i = i + 1
+				end
 			end
 		end
 	end
