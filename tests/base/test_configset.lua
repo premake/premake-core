@@ -1,11 +1,10 @@
 --
 -- tests/base/test_configset.lua
 -- Test suite for the configset API.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	T.configset = {}
-	local suite = T.configset
+	local suite = test.declare("configset")
 
 	local configset = premake.configset
 	local field = premake.field

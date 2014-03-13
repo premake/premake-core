@@ -284,7 +284,6 @@
 		stderr_capture = nil
 
 		premake.solution.list = { }
-		premake.api.reset()
 		premake.clearWarnings()
 		premake.eol("\n")
 		premake.escaper(nil)

@@ -10,14 +10,6 @@
 
 
 --
--- A place to store the current active objects in each configuration scope
--- (e.g. solutions, projects, groups, and configurations).
---
-
-	api.scope = {}
-
-
---
 -- Create a "root" configuration set, to hold the global configuration. Values
 -- that are added to this set become available for all add-ons, solution, projects,
 -- and on down the line.
@@ -25,6 +17,14 @@
 
 	configset.root = configset.new()
 	local root = configset.root
+
+
+--
+-- A place to store the current active objects in each configuration scope
+-- (e.g. solutions, projects, groups, and configurations).
+--
+
+	api.scope = { root = configset.root }
 
 
 ---
@@ -242,14 +242,7 @@
 --
 
 	function api.gettarget(scope)
-		local target
-		if scope == "project" then
-			target = api.scope.project or api.scope.solution or api.scope.root
-		else
-			target = api.scope.configuration or api.scope.root
-		end
-
-		return target
+		return api.scope.project or api.scope.solution or api.scope.root
 	end
 
 
@@ -268,12 +261,11 @@
 		end
 
 		local target = api.gettarget(field.scope)
-
 		if not value then
-			return configset.fetch(target.configset, field)
+			return configset.fetch(target, field)
 		end
 
-		local status, err = configset.store(target.configset, field, value)
+		local status, err = configset.store(target, field, value)
 		if err then
 			error(result, 3)
 		end
@@ -321,7 +313,7 @@
 				table.foreachi(value, recurse)
 
 			elseif hasDeprecatedValues and value:contains("*") then
-				local current = configset.fetch(target.configset, field)
+				local current = configset.fetch(target, field)
 				local mask = path.wildcards(value)
 				for _, item in ipairs(current) do
 					if item:match(mask) == item then
@@ -348,7 +340,7 @@
 		end
 
 		recurse(value)
-		configset.remove(target.configset, field, removes)
+		configset.remove(target, field, removes)
 	end
 
 
@@ -421,22 +413,6 @@
 		return result or canonical
 	end
 
-
-
---
--- Clears all active API objects; resets to root configuration block.
---
-
-	function api.reset()
-		api.scope = {
-			root = {
-				configset = configset.root,
-				blocks = {}  -- TODO: remove this when switch-over to new APIs is done
-			}
-		}
-	end
-
-	api.reset()
 
 
 --
@@ -719,20 +695,13 @@
 --
 
 	function configuration(terms)
-		if not terms then
-			return api.scope.configuration
+		local target = api.gettarget()
+		if terms then
+			if terms == "*" then terms = nil end
+			configset.addblock(target, {terms}, os.getcwd())
 		end
 
-		if terms == "*" then terms = nil end
-
-		local container = api.scope.project or api.scope.solution or api.scope.root
-		configset.addblock(container.configset, {terms}, os.getcwd())
-
-		local cfg = {}
-		cfg.configset = container.configset
-		api.scope.configuration = cfg
-
-		return cfg
+		return target
 	end
 
 

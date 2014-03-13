@@ -1,7 +1,7 @@
 --
 -- fileconfig.lua
 -- The set of configuration information for a specific file.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	premake.fileconfig = {}
@@ -76,13 +76,14 @@
 --
 
 	function fileconfig.addconfig(fcfg, cfg)
+		local prj = cfg.project
 
 		-- Create a new context object for this configuration-file pairing.
 		-- The context has the ability to pull out configuration settings
 		-- specific to the file.
 
 		local environ = {}
-		local fsub = context.new(cfg.project.configset, environ, fcfg.abspath)
+		local fsub = context.new(prj, environ, fcfg.abspath)
 		context.copyterms(fsub, cfg)
 
 		fcfg.configs[cfg] = fsub
@@ -105,14 +106,14 @@
 		fsub.abspath = fcfg.abspath
 		fsub.vpath = fcfg.vpath
 		fsub.config = cfg
-		fsub.project = cfg.project
+		fsub.project = prj
 
 		-- Set the context's base directory to the project's file system
 		-- location. Any path tokens which are expanded in non-path fields
 		-- (such as the custom build commands) will be made relative to
 		-- this path, ensuring a portable generated project.
 
-		context.basedir(fsub, cfg.project.location)
+		context.basedir(fsub, prj.location)
 
 		setmetatable(fsub, fileconfig.fsub_mt)
 

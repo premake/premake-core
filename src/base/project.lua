@@ -1,7 +1,7 @@
 --
 -- project.lua
 -- Premake project object API
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	premake.project = {}
@@ -23,22 +23,12 @@
 --
 
 	function project.new(sln, name)
-		local prj = {}
+		local prj = configset.new(sln)
+		setmetatable(prj, configset.metatable(prj))
 
 		prj.name = name
 		prj.solution = sln
 		prj.script = _SCRIPT
-
-		-- Start a new configuration set to hold this project's info. For
-		-- convenience and backward compatibility with the old Premake 3.x
-		-- way of doing things, allow the project to be treated like a
-		-- regular table.
-
-		local cset = configset.new(sln.configset)
-		prj.configset = cset
-		setmetatable(prj, configset.metatable(cset))
-
-		-- And set defaults for some of the fields
 		prj.basedir = os.getcwd()
 		prj.filename = name
 		prj.uuid = os.uuid(name)

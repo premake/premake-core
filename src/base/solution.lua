@@ -27,21 +27,11 @@
 --
 
 	function solution.new(name)
-		local sln = {}
+		sln = configset.new(configset.root)
+		setmetatable(sln, configset.metatable(sln))
 
 		sln.name = name
 		sln.projects = {}
-
-		-- Start a new configuration set to hold this project's info. For
-		-- convenience and backward compatibility with the old Premake 3.x
-		-- way of doing things, allow the solution to be treated like a
-		-- regular table.
-
-		local cset = configset.new(configset.root)
-		sln.configset = cset
-		setmetatable(sln, configset.metatable(cset))
-
-		-- Set defaults for some of the fields
 		sln.basedir = os.getcwd()
 		sln.filename = name
 

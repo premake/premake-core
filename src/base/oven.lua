@@ -6,7 +6,7 @@
 -- and actions. Fills in computed values (e.g. object directories) and
 -- optimizes the layout of the data for faster fetches.
 --
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	premake.oven = {}
@@ -58,8 +58,7 @@
 			sln = sln,
 		}
 
-		local ctx = context.new(sln.configset, environ)
-
+		local ctx = context.new(sln, environ)
 		ctx.name = sln.name
 		ctx.baked = true
 
@@ -139,7 +138,7 @@
 		-- Use an empty token expansion environment for the moment.
 
 		local environ = {}
-		local ctx = context.new(prj.configset, environ)
+		local ctx = context.new(prj, environ)
 
 		-- Add filtering terms to the context to make it as specific as I can.
 		-- Start with the same filtering that was applied at the solution level.
@@ -191,7 +190,7 @@
 		-- This works, but it could probably be simplified.
 
 		local cfgs = table.fold(ctx.configurations or {}, ctx.platforms or {})
-		oven.bakeConfigMap(ctx, prj.configset, cfgs)
+		oven.bakeConfigMap(ctx, prj, cfgs)
 		ctx._cfglist = oven.bakeConfigList(ctx, cfgs)
 
 		-- Don't allow a project-level system setting to influence the configurations
@@ -443,7 +442,7 @@
 			prj = prj,
 		}
 
-		local ctx = context.new(prj.configset, environ)
+		local ctx = context.new(prj, environ)
 
 		ctx.project = prj
 		ctx.solution = prj.solution
