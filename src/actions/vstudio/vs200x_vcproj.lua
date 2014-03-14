@@ -496,7 +496,7 @@
 
 	m.elements.VCMIDLTool = function(cfg)
 		return {
-			m.targetEnvironment(cfg)
+			m.targetEnvironment
 		}
 	end
 
@@ -527,12 +527,64 @@
 
 	------------
 
+	m.elements.VCBuildTool = function(cfg, stage)
+		return {
+			m.commandLine,
+		}
+	end
+
+	function m.VCBuildToolName(cfg, stage)
+		return "VC" .. stage .. "EventTool"
+	end
+
+	function m.VCPreBuildEventTool(cfg)
+		m.VCTool("VCBuildTool", cfg, "PreBuild")
+	end
+
+	function m.VCPreLinkEventTool(cfg)
+		m.VCTool("VCBuildTool", cfg, "PreLink")
+	end
+
+	function m.VCPostBuildEventTool(cfg)
+		m.VCTool("VCBuildTool", cfg, "PostBuild")
+	end
+
+	------------
+
+	m.elements.VCResourceCompilerTool = function(cfg)
+		return {
+			m.additionalResourceOptions,
+			m.resourcePreprocessorDefinitions,
+			m.additionalResourceIncludeDirectories,
+			m.culture,
+		}
+	end
+
+	function m.VCResourceCompilerTool(cfg)
+		m.VCTool("VCResourceCompilerTool", cfg)
+	end
+
+	------------
+
 	m.elements.VCWebServiceProxyGeneratorTool = function(cfg)
 		return {}
 	end
 
 	function m.VCWebServiceProxyGeneratorTool(cfg)
 		m.VCTool("VCWebServiceProxyGeneratorTool", cfg)
+	end
+
+	------------
+
+	m.elements.VCX360DeploymentTool = function(cfg)
+		return {
+			m.deploymentType,
+			m.additionalDeploymentOptions,
+		}
+	end
+
+	function m.VCX360DeploymentTool(cfg)
+		m.VCTool("VCX360DeploymentTool", cfg)
 	end
 
 	------------
@@ -565,100 +617,15 @@
 ---------------------------------------------------------------------------
 
 
-	function m.VCResourceCompilerTool(cfg)
-		p.push('<Tool')
-		p.w('Name="VCResourceCompilerTool"')
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		if #cfg.resoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
-		end
-
-		m.resourcePreprocessorDefinitions(cfg)
-		m.resourceAdditionalIncludeDirectories(cfg)
-		m.culture(cfg)
-
-		p.pop('/>')
+	m.elements.VCX360ImageTool = function(cfg)
+		return {
+			m.additionalImageOptions,
+			m.outputFileName,
+		}
 	end
-
-
-	function m.VCBuildEventTool(cfg, event)
-		local name = "VC" .. event .. "EventTool"
-		local field = event:lower()
-		local steps = cfg[field .. "commands"]
-		local msg = cfg[field .. "message"]
-
-		p.push('<Tool')
-		p.w('Name="%s"', name)
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		if #steps > 0 then
-			if msg then
-				p.x('Description="%s"', msg)
-			end
-			p.x('CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
-		end
-		p.pop('/>')
-	end
-
-
-	function m.VCPreBuildEventTool(cfg)
-		m.VCBuildEventTool(cfg, "PreBuild")
-	end
-
-
-	function m.VCPreLinkEventTool(cfg)
-		m.VCBuildEventTool(cfg, "PreLink")
-	end
-
-
-	function m.VCPostBuildEventTool(cfg)
-		m.VCBuildEventTool(cfg, "PostBuild")
-	end
-
-
-
-	function m.VCX360DeploymentTool(cfg)
-		p.push('<Tool')
-		p.w('Name="VCX360DeploymentTool"')
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		p.w('DeploymentType="0"')
-		if #cfg.deploymentoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.deploymentoptions, " "))
-		end
-		p.pop('/>')
-	end
-
 
 	function m.VCX360ImageTool(cfg)
-		p.push('<Tool')
-		p.w('Name="VCX360ImageTool"')
-
-		if cfg.fake then
-			p.pop('/>')
-			return
-		end
-
-		if #cfg.imageoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.imageoptions, " "))
-		end
-		if cfg.imagepath ~= nil then
-			p.x('OutputFileName="%s"', path.translate(cfg.imagepath))
-		end
-		p.pop('/>')
+		m.VCTool("VCX360ImageTool", cfg)
 	end
 
 
@@ -842,20 +809,6 @@
 
 
 --
--- Return a properly cased boolean for the current Visual Studio version.
---
-
-	function m.bool(value)
-		if (_ACTION < "vs2005") then
-			return iif(value, "TRUE", "FALSE")
-		else
-			return iif(value, "true", "false")
-		end
-	end
-
-
-
---
 -- Return the debugging symbol level for a configuration.
 --
 
@@ -912,6 +865,23 @@
 	end
 
 
+
+	function m.additionalDeploymentOptions(cfg)
+		if #cfg.deploymentoptions > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(cfg.deploymentoptions, " "))
+		end
+	end
+
+
+
+	function m.additionalImageOptions(cfg)
+		if #cfg.imageoptions > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(cfg.imageoptions, " "))
+		end
+	end
+
+
+
 	function m.additionalIncludeDirectories(cfg)
 		if #cfg.includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, cfg.includedirs)
@@ -924,6 +894,14 @@
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(project.getrelative(cfg.project, cfg.libdirs), ";")
 			p.x('AdditionalLibraryDirectories="%s"', path.translate(dirs))
+		end
+	end
+
+
+
+	function m.additionalResourceOptions(cfg)
+		if #cfg.resoptions > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 	end
 
@@ -994,6 +972,16 @@
 
 
 
+	function m.additionalResourceIncludeDirectories(cfg)
+		local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
+		if #dirs > 0 then
+			dirs = project.getrelative(cfg.project, dirs)
+			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
+
 	function m.assemblyReferences(prj)
 		-- Visual Studio doesn't support per-config references
 		local cfg = project.getfirstconfig(prj)
@@ -1044,6 +1032,20 @@
 	function m.cleanCommandLine(cfg)
 		commands = table.concat(cfg.cleancommands, "\r\n")
 		p.x('CleanCommandLine="%s"', commands)
+	end
+
+
+
+	function m.commandLine(cfg, stage)
+		local field = stage:lower()
+		local steps = cfg[field .. "commands"]
+		local msg = cfg[field .. "message"]
+		if #steps > 0 then
+			if msg then
+				p.x('Description="%s"', msg)
+			end
+			p.x('CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
+		end
 	end
 
 
@@ -1118,6 +1120,12 @@
 
 
 
+	function m.deploymentType(cfg)
+		p.w('DeploymentType="0"')
+	end
+
+
+
 	function m.enableCOMDATFolding(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('EnableCOMDATFolding="2"')
@@ -1137,7 +1145,7 @@
 
 
 	function m.enableFunctionLevelLinking(cfg)
-		p.w('EnableFunctionLevelLinking="%s"', m.bool(true))
+		p.w('EnableFunctionLevelLinking="true"')
 	end
 
 
@@ -1230,7 +1238,7 @@
 
 	function m.generateDebugInformation(cfg, toolset)
 		if not toolset then
-			p.w('GenerateDebugInformation="%s"', m.bool(m.symbols(cfg) ~= 0))
+			p.w('GenerateDebugInformation="%s"', tostring(m.symbols(cfg) ~= 0))
 		end
 	end
 
@@ -1238,7 +1246,7 @@
 
 	function m.generateManifest(cfg, toolset)
 		if cfg.flags.NoManifest or toolset then
-			p.w('GenerateManifest="%s"', m.bool(false))
+			p.w('GenerateManifest="false"')
 		end
 	end
 
@@ -1246,7 +1254,7 @@
 
 	function m.ignoreImportLibrary(cfg, toolset)
 		if cfg.flags.NoImportLib and not toolset then
-			p.w('IgnoreImportLibrary="%s"', m.bool(true))
+			p.w('IgnoreImportLibrary="true"')
 		end
 	end
 
@@ -1321,7 +1329,7 @@
 		   not cfg.flags.Managed and
 		   not cfg.flags.MultiProcessorCompile
 		then
-			p.w('MinimalRebuild="%s"', m.bool(true))
+			p.w('MinimalRebuild="true"')
 		end
 	end
 
@@ -1358,7 +1366,7 @@
 
 	function m.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
-			p.w('OmitFramePointers="%s"', m.bool(true))
+			p.w('OmitFramePointers="true"')
 		end
 	end
 
@@ -1397,6 +1405,14 @@
 
 	function m.outputFile(cfg)
 		p.x('OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
+	end
+
+
+
+	function m.outputFileName(cfg)
+		if cfg.imagepath ~= nil then
+			p.x('OutputFileName="%s"', path.translate(cfg.imagepath))
+		end
 	end
 
 
@@ -1489,16 +1505,6 @@
 
 
 
-	function m.resourceAdditionalIncludeDirectories(cfg)
-		local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
-		if #dirs > 0 then
-			dirs = project.getrelative(cfg.project, dirs)
-			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
-		end
-	end
-
-
-
 	function m.resourcePreprocessorDefinitions(cfg)
 		local defs = table.join(cfg.defines, cfg.resdefines)
 		if #defs > 0 then
@@ -1544,7 +1550,7 @@
 
 	function m.stringPooling(cfg)
 		if config.isOptimizedBuild(cfg) then
-			p.w('StringPooling="%s"', m.bool(true))
+			p.w('StringPooling="true"')
 		end
 	end
 
@@ -1647,10 +1653,10 @@
 		else
 			p.w('WarningLevel="%d"', iif(cfg.warnings == "Extra", 4, 3))
 			if cfg.flags.FatalCompileWarnings then
-				p.w('WarnAsError="%s"', m.bool(true))
+				p.w('WarnAsError="true"')
 			end
 			if _ACTION < "vs2008" and not cfg.flags.Managed then
-				p.w('Detect64BitPortabilityProblems="%s"', m.bool(not cfg.flags.No64BitChecks))
+				p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
 			end
 		end
 	end
