@@ -120,7 +120,7 @@
 	api.register {
 		name = "configmap",
 		scope = "config",
-		kind = "keyed:table",
+		kind = "keyed:array:string",
 	}
 
 	api.register {

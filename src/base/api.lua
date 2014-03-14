@@ -267,7 +267,7 @@
 
 		local status, err = configset.store(target, field, value)
 		if err then
-			error(result, 3)
+			error(err, 3)
 		end
 	end
 
@@ -412,6 +412,38 @@
 
 		return result or canonical
 	end
+
+
+
+--
+-- Arrays are integer indexed tables; unlike lists, a new array value
+-- will replace the old one, rather than merging both.
+--
+
+	premake.field.kind("array", {
+		store = function(field, current, value, processor)
+			if type(value) ~= "table" then
+				value = { value }
+			end
+
+			for i, item in ipairs(value) do
+				value[i] = processor(field, nil, value[i])
+			end
+
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			if #a ~= #b then
+				return false
+			end
+			for i = 1, #a do
+				if not processor(field, a[i], b[i]) then
+					return false
+				end
+			end
+			return true
+		end
+	})
 
 
 
@@ -652,7 +684,7 @@
 	premake.field.kind("string", {
 		store = function(field, current, value, processor)
 			if type(value) == "table" then
-				error({ msg="expected string; got table" })
+				error { msg="expected string; got table" }
 			end
 
 			if value ~= nil then
