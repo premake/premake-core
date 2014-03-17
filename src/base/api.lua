@@ -100,6 +100,22 @@
 
 		field.paths = premake.field.property(field, "paths")
 
+		-- Add preprocessed, lowercase keys to the allowed and aliased value
+		-- lists to speed up value checking later on.
+
+		if type(field.allowed) == "table" then
+			for i, item in ipairs(field.allowed) do
+				field.allowed[item:lower()] = item
+			end
+		end
+
+		if type(field.aliases) == "table" then
+			local keys = table.keys(field.aliases)
+			for i, key in ipairs(keys) do
+				field.aliases[key:lower()] = field.aliases[key]
+			end
+		end
+
 		-- create a setter function for it
 		_G[name] = function(value)
 			return api.callback(field, value)
@@ -147,18 +163,17 @@
 			error("No such field: " .. fieldName, 2)
 		end
 
-		if not field.allowed then
-			field.allowed = {}
-		end
-
 		if type(value) == "table" then
-			field.allowed = table.join(field.allowed, value)
+			for i, item in ipairs(value) do
+				api.addAllowed(fieldName, item)
+			end
 		else
+			field.allowed = field.allowed or {}
 			table.insert(field.allowed, value)
+			field.allowed[value:lower()] = value
 		end
-
-		table.sort(field.allowed)
 	end
+
 
 
 --
@@ -367,30 +382,14 @@
 		local lowerValue = value:lower()
 
 		if field.aliases then
-			for k,v in pairs(field.aliases) do
-				-- if I find a matching alias, assume that it has already
-				-- been set to the right canonical value; no further
-				-- checking against allowed values is needed
-				if lowerValue == k:lower() then
-					canonical = k
-					result = v
-					break
-				end
-			end
+			canonical = field.aliases[lowerValue]
 		end
 
 		if not canonical then
 			if type(field.allowed) == "function" then
 				canonical = field.allowed(value)
 			else
-				local n = #field.allowed
-				for i = 1, n do
-					local v = field.allowed[i]
-					if lowerValue == v:lower() then
-						canonical = v
-						break
-					end
-				end
+				canonical = field.allowed[lowerValue]
 			end
 		end
 
@@ -410,7 +409,7 @@
 			end
 		end
 
-		return result or canonical
+		return canonical
 	end
 
 
