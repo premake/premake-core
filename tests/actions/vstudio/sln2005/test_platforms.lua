@@ -736,3 +736,23 @@
 	EndGlobalSection
 		]]
 	end
+
+-- Check that when a default platform is specified it is written in a separate
+-- configuration block so that Visual Studio picks it up as default.
+
+	function suite.onDefaultPlatforms()
+		platforms { "x32", "x64" }
+		defaultplatform "x64"
+		project "MyProject"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+		]]
+	end
