@@ -842,11 +842,17 @@
 
 
 	function vc2010.enableEnhancedInstructionSet(cfg)
-		local map = {
-			SSE = "StreamingSIMDExtensions",
-			SSE2 = "StreamingSIMDExtensions2"
-		}
-		local value = map[cfg.vectorextensions]
+		local value
+
+		local x = cfg.vectorextensions
+		if _ACTION > "vc2010" and x == "AVX" then
+			value = "AdvancedVectorExtensions"
+		elseif x == "SSE2" then
+			value = "StreamingSIMDExtensions2"
+		elseif x == "SSE" then
+			value = "StreamingSIMDExtensions"
+		end
+
 		if value then
 			_p(3,'<EnableEnhancedInstructionSet>%s</EnableEnhancedInstructionSet>', value)
 		end

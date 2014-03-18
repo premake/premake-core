@@ -1,7 +1,7 @@
 --
 -- msc.lua
 -- Interface for the MS C/C++ compiler.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 
@@ -47,6 +47,7 @@
 			Speed = "/O2",
 		},
 		vectorextensions = {
+			AVX = "/arch:AVX",
 			SSE = "/arch:sse",
 			SSE2 = "/arch:sse2",
 		},

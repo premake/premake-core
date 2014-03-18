@@ -680,6 +680,7 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"AVX",
 			"SSE",
 			"SSE2",
 		}

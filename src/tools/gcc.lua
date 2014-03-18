@@ -1,7 +1,7 @@
 --
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	premake.tools.gcc = {}
@@ -60,6 +60,7 @@
 			Speed = "-O3",
 		},
 		vectorextensions = {
+			AVX = "-mavx",
 			SSE = "-msse",
 			SSE2 = "-msse2",
 		},
