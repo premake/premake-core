@@ -93,6 +93,16 @@
 
 
 ---
+-- Remove a previously created field definition.
+---
+
+	function field.unregister(f)
+		field._list[f.name] = nil
+	end
+
+
+
+---
 -- Register a new kind of data for field storage.
 --
 -- @param tag
@@ -130,7 +140,7 @@
 --    The field for which an accessor should be returned.
 -- @param method
 --    The type of accessor function required; currently this should be one of
---    "set", "remove", or "merge" though it is possible for add-on modules to
+--    "store", "remove", or "merge" though it is possible for add-on modules to
 --    extend the available methods by implementing appropriate processing
 --    functions.
 -- @return

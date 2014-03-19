@@ -131,6 +131,19 @@
 
 
 ---
+-- Unregister a field definition, removing its functions and field
+-- list entries.
+---
+
+	function api.unregister(field)
+		premake.field.unregister(field)
+		_G[field.name] = nil
+		_G["remove" .. field.name] = nil
+	end
+
+
+
+---
 -- Create an alias to one of the canonical API functions. This creates
 -- new setter and remover names pointing to the same functions.
 --
@@ -158,7 +171,7 @@
 --
 
 	function api.addAllowed(fieldName, value)
-		local field = premake.fields[fieldName]
+		local field = premake.field.get(fieldName)
 		if not field then
 			error("No such field: " .. fieldName, 2)
 		end
