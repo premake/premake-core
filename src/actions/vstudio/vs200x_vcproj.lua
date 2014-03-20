@@ -243,6 +243,135 @@
 
 
 ---
+-- Write out the <Files> element group.
+---
+
+	function m.files(prj)
+		local tr = m.filesSorted(prj)
+		p.push('<Files>')
+		p.tree.traverse(tr, {
+			onbranchenter = m.filesFilterStart,
+			onbranchexit = m.filesFilterEnd,
+			onleaf = m.filesFile,
+		}, false)
+		p.pop('</Files>')
+	end
+
+	function m.filesSorted(prj)
+		-- Fetch the source tree, sorted how Visual Studio likes it: alpha
+		-- sorted, with any leading ../ sequences ignored. At the top level
+		-- of the tree, files go after folders, otherwise before.
+		return project.getsourcetree(prj, function(a,b)
+			local istop = (a.parent.parent == nil)
+
+			local aSortName = a.name
+			local bSortName = b.name
+
+			-- Only file nodes have a relpath field; folder nodes do not
+			if a.relpath then
+				if not b.relpath then
+					return not istop
+				end
+				aSortName = a.relpath:gsub("%.%.%/", "")
+			end
+
+			if b.relpath then
+				if not a.relpath then
+					return istop
+				end
+				bSortName = b.relpath:gsub("%.%.%/", "")
+			end
+
+			return aSortName < bSortName
+		end)
+	end
+
+	function m.filesFilterStart(node)
+		p.push('<Filter')
+		p.w('Name="%s"', node.name)
+		p.w('>')
+	end
+
+	function m.filesFilterEnd(node)
+		p.pop('</Filter>')
+
+	end
+
+	function m.filesFile(node)
+		p.push('<File')
+		p.w('RelativePath="%s"', path.translate(node.relpath))
+		p.w('>')
+		local prj = node.project
+		for cfg in project.eachconfig(prj) do
+			m.fileConfiguration(cfg, node)
+		end
+		p.pop('</File>')
+	end
+
+	m.elements.fileConfigurationAttributes = function(filecfg)
+		return {
+			m.excludedFromBuild,
+		}
+	end
+
+	m.elements.fileConfigurationCompiler = function(filecfg)
+		if filecfg then
+			return {
+				m.customBuildTool,
+				m.objectFile,
+				m.optimization,
+				m.preprocessorDefinitions,
+				m.usePrecompiledHeader,
+				m.VCCLCompilerTool_fileConfig_additionalOptions,
+				m.forcedIncludeFiles,
+				m.compileAs,
+			}
+		else
+			return {}
+		end
+	end
+
+	function m.fileConfiguration(cfg, node)
+		local filecfg = fileconfig.getconfig(node, cfg)
+
+		-- Generate the individual sections of the file configuration
+		-- element and capture the results to a buffer. I will only
+		-- write the file configuration if the buffers are not empty.
+
+		local configAttribs = p.capture(function ()
+			p.push()
+			p.callArray(m.elements.fileConfigurationAttributes, filecfg)
+			p.pop()
+		end)
+
+		local compilerAttribs = p.capture(function ()
+			p.push(2)
+			p.callArray(m.elements.fileConfigurationCompiler, filecfg)
+			p.pop(2)
+		end)
+
+		if #configAttribs > 0 or #compilerAttribs > 0 then
+			p.push('<FileConfiguration')
+			p.w('Name="%s"', vstudio.projectConfig(cfg))
+			if #configAttribs > 0 then
+				p.outln(configAttribs)
+			end
+			p.w('>')
+
+			p.push('<Tool')
+			p.w('Name="%s"', m.VCCLCompilerToolName(filecfg or cfg))
+			if #compilerAttribs > 0 then
+				p.outln(compilerAttribs)
+			end
+			p.pop('/>')
+
+			p.pop('</FileConfiguration>')
+		end
+	end
+
+
+
+---
 -- I don't do anything with globals yet, but here it is if you want to
 -- extend it.
 ---
@@ -589,6 +718,19 @@
 
 	------------
 
+	m.elements.VCX360ImageTool = function(cfg)
+		return {
+			m.additionalImageOptions,
+			m.outputFileName,
+		}
+	end
+
+	function m.VCX360ImageTool(cfg)
+		m.VCTool("VCX360ImageTool", cfg)
+	end
+
+	------------
+
 	m.elements.VCXDCMakeTool = function(cfg)
 		return {}
 	end
@@ -615,170 +757,6 @@
 -- doing right now. Hold on tight.
 --
 ---------------------------------------------------------------------------
-
-
-	m.elements.VCX360ImageTool = function(cfg)
-		return {
-			m.additionalImageOptions,
-			m.outputFileName,
-		}
-	end
-
-	function m.VCX360ImageTool(cfg)
-		m.VCTool("VCX360ImageTool", cfg)
-	end
-
-
-
-
----------------------------------------------------------------------------
---
--- Handlers for the source file tree
---
----------------------------------------------------------------------------
-
-	function m.files(prj)
-		p.push('<Files>')
-
-		-- Fetch the source tree, sorted how Visual Studio likes it: alpha
-		-- sorted, with any leading ../ sequences ignored. At the top level
-		-- of the tree, files go after folders, otherwise before.
-
-		local tr = project.getsourcetree(prj, function(a,b)
-			local istop = (a.parent.parent == nil)
-
-			local aSortName = a.name
-			local bSortName = b.name
-
-			-- Only file nodes have a relpath field; folder nodes do not
-			if a.relpath then
-				if not b.relpath then
-					return not istop
-				end
-				aSortName = a.relpath:gsub("%.%.%/", "")
-			end
-
-			if b.relpath then
-				if not a.relpath then
-					return istop
-				end
-				bSortName = b.relpath:gsub("%.%.%/", "")
-			end
-
-			return aSortName < bSortName
-		end)
-
-		p.tree.traverse(tr, {
-
-			-- folders, virtual or otherwise, are handled at the internal nodes
-			onbranchenter = function(node)
-				p.push('<Filter')
-				p.w('Name="%s"', node.name)
-				p.w('>')
-			end,
-
-			onbranchexit = function(node)
-				p.pop('</Filter>')
-			end,
-
-			-- source files are handled at the leaves
-			onleaf = function(node)
-				p.push('<File')
-				p.w('RelativePath="%s"', path.translate(node.relpath))
-				p.w('>')
-
-				for cfg in project.eachconfig(prj) do
-					m.fileConfiguration(cfg, node)
-				end
-
-				p.pop('</File>')
-			end
-
-		}, false, 2)
-
-		p.pop('</Files>')
-	end
-
-
-	function m.fileConfiguration(cfg, node)
-		local filecfg = fileconfig.getconfig(node, cfg)
-
-		-- Generate the individual sections of the file configuration
-		-- element and capture the results to a buffer. I will only
-		-- write the file configuration if the buffers are not empty.
-
-		local configAttribs = p.capture(function ()
-			p.push()
-			m.fileConfiguration_extraAttributes(cfg, filecfg)
-			p.pop()
-		end)
-
-		local compilerAttribs = p.capture(function ()
-			p.push(2)
-			m.fileConfiguration_compilerAttributes(cfg, filecfg)
-			p.pop(2)
-		end)
-
-		if #configAttribs > 0 or compilerAttribs:lines() > 1 then
-			p.push('<FileConfiguration')
-			p.w('Name="%s"', vstudio.projectConfig(cfg))
-			if #configAttribs > 0 then
-				p.outln(configAttribs)
-			end
-			p.w('>')
-
-			p.push('<Tool')
-			if #compilerAttribs > 0 then
-				p.outln(compilerAttribs)
-			end
-			p.pop('/>')
-
-			p.pop('</FileConfiguration>')
-		end
-	end
-
-
---
--- Collect extra attributes for the opening element of a particular file
--- configuration block.
---
--- @param cfg
---    The project configuration under consideration.
--- @param filecfg
---    The file configuration under consideration.
---
-
-	function m.fileConfiguration_extraAttributes(cfg, filecfg)
-		m.excludedFromBuild(filecfg)
-	end
-
-
---
--- Collect attributes for the compiler tool element of a particular
--- file configuration block.
---
--- @param cfg
---    The project configuration under consideration.
--- @param filecfg
---    The file configuration under consideration.
---
-
-	function m.fileConfiguration_compilerAttributes(cfg, filecfg)
-		-- Must always have a name attribute
-		p.w('Name="%s"', m.VCCLCompilerToolName(filecfg or cfg))
-
-		if filecfg then
-			m.customBuildTool(filecfg)
-			m.objectFile(filecfg)
-			m.optimization(filecfg)
-			m.preprocessorDefinitions(filecfg)
-			m.usePrecompiledHeader(filecfg)
-			m.VCCLCompilerTool_fileConfig_additionalOptions(filecfg)
-			m.forcedIncludeFiles(filecfg)
-			m.compileAs(filecfg)
-		end
-
-	end
 
 
 ---------------------------------------------------------------------------
@@ -831,6 +809,7 @@
 			end
 		end
 	end
+
 
 
 ---------------------------------------------------------------------------
