@@ -516,6 +516,26 @@
 
 
 --
+-- Function data kind; this isn't terribly useful right now, but makes
+-- a nice extension point for modules to build on.
+--
+
+	premake.field.kind("function", {
+		store = function(field, current, value, processor)
+			local t = type(value)
+			if t ~= "function" then
+				error { msg="expected function; got " .. t }
+			end
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
+
+
+--
 -- Integer data kind; validates inputs.
 --
 
