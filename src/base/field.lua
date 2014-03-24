@@ -276,6 +276,21 @@
 
 
 
+
+---
+-- Override one of the field kind accessor functions. This works just like
+-- premake.override(), but applies the new function to the internal field
+-- description and clears the accessor caches to make sure the change gets
+-- picked up by future operations.
+---
+
+	function field.override(fieldName, accessorName, func)
+		local kind = field.kind(fieldName)
+		premake.override(kind, accessorName, func)
+		field._accessors = {}
+	end
+
+
 	function field.remove(f, current, value)
 		local processor = field.accessor(f, "remove")
 		if processor then
