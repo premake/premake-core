@@ -555,7 +555,7 @@
 ---
 
 	function config.normalize(cfg)
-		if cfg.config ~= nil then
+		if cfg and cfg.config ~= nil then
 			return cfg.config, cfg
 		else
 			return cfg, nil

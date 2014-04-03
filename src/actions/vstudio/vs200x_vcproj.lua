@@ -314,23 +314,6 @@
 		}
 	end
 
-	m.elements.fileConfigurationCompiler = function(filecfg)
-		if filecfg then
-			return {
-				m.customBuildTool,
-				m.objectFile,
-				m.optimization,
-				m.preprocessorDefinitions,
-				m.usePrecompiledHeader,
-				m.VCCLCompilerTool_fileConfig_additionalOptions,
-				m.forcedIncludeFiles,
-				m.compileAs,
-			}
-		else
-			return {}
-		end
-	end
-
 	function m.fileConfiguration(cfg, node)
 		local filecfg = fileconfig.getconfig(node, cfg)
 
@@ -345,26 +328,20 @@
 		end)
 
 		local compilerAttribs = p.capture(function ()
-			p.push(2)
-			p.callArray(m.elements.fileConfigurationCompiler, filecfg)
-			p.pop(2)
+			p.push()
+			m.VCCLCompilerTool(filecfg)
+			p.pop()
 		end)
 
-		if #configAttribs > 0 or #compilerAttribs > 0 then
+		-- lines() > 3 skips empty <Tool Name="VCCLCompiler" /> elements
+		if #configAttribs > 0 or compilerAttribs:lines() > 3 then
 			p.push('<FileConfiguration')
 			p.w('Name="%s"', vstudio.projectConfig(cfg))
 			if #configAttribs > 0 then
 				p.outln(configAttribs)
 			end
 			p.w('>')
-
-			p.push('<Tool')
-			p.w('Name="%s"', m.VCCLCompilerToolName(filecfg or cfg))
-			if #compilerAttribs > 0 then
-				p.outln(compilerAttribs)
-			end
-			p.pop('/>')
-
+			p.outln(compilerAttribs)
 			p.pop('</FileConfiguration>')
 		end
 	end
@@ -420,7 +397,7 @@
 		end
 		p.w('Name="%s"', name)
 
-		if not cfg.fake then
+		if cfg and not cfg.fake then
 			p.callArray(callFunc, cfg, ...)
 		end
 
@@ -476,7 +453,9 @@
 		if not toolset then
 			-- not a custom tool, use the standard set of attributes
 			return {
-				m.VCCLCompilerTool_additionalOptions,
+				m.customBuildTool,
+				m.objectFile,
+				m.additionalCompilerOptions,
 				m.optimization,
 				m.additionalIncludeDirectories,
 				m.wholeProgramOptimization,
@@ -503,7 +482,7 @@
 		else
 			-- custom tool, use subset of attributes
 			return {
-				m.VCCLExternalCompilerTool_additionalOptions,
+				m.additionalExternalCompilerOptions,
 				m.additionalIncludeDirectories,
 				m.preprocessorDefinitions,
 				m.usePrecompiledHeader,
@@ -516,10 +495,10 @@
 	end
 
 	function m.VCCLCompilerToolName(cfg)
-		local prj, file = config.normalize(cfg)
-		if file and fileconfig.hasCustomBuildRule(file) then
+		local prjcfg, filecfg = config.normalize(cfg)
+		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
 			return "VCCustomBuildTool"
-		elseif prj.system == p.XBOX360 then
+		elseif prjcfg and prjcfg.system == p.XBOX360 then
 			return "VCCLX360CompilerTool"
 		else
 			return "VCCLCompilerTool"
@@ -819,6 +798,18 @@
 ---------------------------------------------------------------------------
 
 
+	function m.additionalCompilerOptions(cfg)
+		local opts = cfg.buildoptions
+		if cfg.flags.MultiProcessorCompile then
+			table.insert(opts, "/MP")
+		end
+		if #opts > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(opts, " "))
+		end
+	end
+
+
+
 	function m.additionalDependencies(cfg, toolset)
 		if #cfg.links == 0 then return end
 
@@ -853,6 +844,18 @@
 
 
 
+	function m.additionalExternalCompilerOptions(cfg, toolset)
+		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
+		if not cfg.flags.NoPCH and cfg.pchheader then
+			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
+		end
+		if #buildoptions > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(buildoptions, " "))
+		end
+	end
+
+
+
 	function m.additionalImageOptions(cfg)
 		if #cfg.imageoptions > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(cfg.imageoptions, " "))
@@ -878,9 +881,13 @@
 
 
 
-	function m.additionalResourceOptions(cfg)
-		if #cfg.resoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
+	function m.additionalLinkerOptions(cfg, toolset)
+		local flags = cfg.linkoptions
+		if toolset then
+			flags = table.join(toolset.getldflags(cfg), flags)
+		end
+		if #flags > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(flags, " "))
 		end
 	end
 
@@ -900,62 +907,19 @@
 
 
 
-	function m.assemblySearchPath(cfg)
-		p.w('AssemblySearchPath=""')
-	end
-
-
-
-	function m.VCCLCompilerTool_additionalOptions(cfg)
-		local opts = cfg.buildoptions
-		if cfg.flags.MultiProcessorCompile then
-			table.insert(opts, "/MP")
-		end
-		if #opts > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(opts, " "))
-		end
-	end
-
-
-
-	function m.VCCLCompilerTool_fileConfig_additionalOptions(filecfg)
-		local opts = filecfg.buildoptions
-		if #opts > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(opts, " "))
-		end
-	end
-
-
-
-	function m.VCCLExternalCompilerTool_additionalOptions(cfg, toolset)
-		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
-		end
-		if #buildoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(buildoptions, " "))
-		end
-	end
-
-
-
-	function m.additionalLinkerOptions(cfg, toolset)
-		local flags = cfg.linkoptions
-		if toolset then
-			flags = table.join(toolset.getldflags(cfg), flags)
-		end
-		if #flags > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(flags, " "))
-		end
-	end
-
-
-
 	function m.additionalResourceIncludeDirectories(cfg)
 		local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
 		if #dirs > 0 then
 			dirs = project.getrelative(cfg.project, dirs)
 			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
+
+	function m.additionalResourceOptions(cfg)
+		if #cfg.resoptions > 0 then
+			p.x('AdditionalOptions="%s"', table.concat(cfg.resoptions, " "))
 		end
 	end
 
@@ -974,8 +938,16 @@
 
 
 
+	function m.assemblySearchPath(cfg)
+		p.w('AssemblySearchPath=""')
+	end
+
+
+
 	function m.basicRuntimeChecks(cfg)
-		if not config.isOptimizedBuild(cfg)
+		local cfg, filecfg = config.normalize(cfg)
+		if not filecfg
+			and not config.isOptimizedBuild(cfg)
 			and not cfg.flags.Managed
 			and not cfg.flags.NoRuntimeChecks
 		then
@@ -1030,11 +1002,11 @@
 
 
 	function m.compileAs(cfg, toolset)
-		local prj, file = config.normalize(cfg)
-		local c = project.isc(prj)
-		if file then
-			if path.iscfile(file.name) ~= c then
-				if path.iscppfile(file.name) then
+		local cfg, filecfg = config.normalize(cfg)
+		local c = project.isc(cfg)
+		if filecfg then
+			if path.iscfile(filecfg.name) ~= c then
+				if path.iscppfile(filecfg.name) then
 					local value = iif(c, 2, 1)
 					p.w('CompileAs="%s"', value)
 				end
@@ -1081,8 +1053,9 @@
 
 
 
-	function m.customBuildTool(filecfg)
-		if fileconfig.hasCustomBuildRule(filecfg) then
+	function m.customBuildTool(cfg)
+		local cfg, filecfg = config.normalize(cfg)
+		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
 			p.x('CommandLine="%s"', table.concat(filecfg.buildcommands,'\r\n'))
 
 			local outputs = project.getrelative(filecfg.project, filecfg.buildoutputs)
@@ -1093,8 +1066,11 @@
 
 
 	function m.debugInformationFormat(cfg, toolset)
-		local fmt = iif(toolset, "0", m.symbols(cfg))
-		p.w('DebugInformationFormat="%s"', fmt)
+		local prjcfg, filecfg = config.normalize(cfg)
+		if not filecfg then
+			local fmt = iif(toolset, "0", m.symbols(cfg))
+			p.w('DebugInformationFormat="%s"', fmt)
+		end
 	end
 
 
@@ -1124,7 +1100,10 @@
 
 
 	function m.enableFunctionLevelLinking(cfg)
-		p.w('EnableFunctionLevelLinking="true"')
+		local cfg, filecfg = config.normalize(cfg)
+		if not filecfg then
+			p.w('EnableFunctionLevelLinking="true"')
+		end
 	end
 
 
@@ -1325,8 +1304,9 @@
 
 
 
-	function m.objectFile(filecfg)
-		if path.iscppfile(filecfg.name) then
+	function m.objectFile(cfg)
+		local cfg, filecfg = config.normalize(cfg)
+		if filecfg and path.iscppfile(filecfg.name) then
 			if filecfg.objname ~= path.getbasename(filecfg.abspath) then
 				p.x('ObjectFile="$(IntDir)\\%s.obj"', filecfg.objname)
 			end
@@ -1510,14 +1490,18 @@
 
 
 	function m.runtimeLibrary(cfg)
-		local runtimes = {
-			StaticRelease = 0,
-			StaticDebug = 1,
-			SharedRelease = 2,
-			SharedDebug = 3,
-		}
-		p.w('RuntimeLibrary="%s"', runtimes[config.getruntime(cfg)])
+		local cfg, filecfg = config.normalize(cfg)
+		if not filecfg then
+			local runtimes = {
+				StaticRelease = 0,
+				StaticDebug = 1,
+				SharedRelease = 2,
+				SharedDebug = 3,
+			}
+			p.w('RuntimeLibrary="%s"', runtimes[config.getruntime(cfg)])
+		end
 	end
+
 
 
 	function m.runtimeTypeInfo(cfg)
@@ -1627,16 +1611,27 @@
 
 
 	function m.warnings(cfg)
+		local prjcfg, filecfg = config.normalize(cfg)
+
+		local level
 		if cfg.warnings == "Off" then
-			p.w('WarningLevel="0"')
-		else
-			p.w('WarningLevel="%d"', iif(cfg.warnings == "Extra", 4, 3))
-			if cfg.flags.FatalCompileWarnings then
-				p.w('WarnAsError="true"')
-			end
-			if _ACTION < "vs2008" and not cfg.flags.Managed then
-				p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
-			end
+			level = "0"
+		elseif cfg.warnings == "Extra" then
+			level = "4"
+		elseif not filecfg then
+			level = "3"
+		end
+
+		if level then
+			p.w('WarningLevel="%s"', level)
+		end
+
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
+			p.w('WarnAsError="true"')
+		end
+
+		if _ACTION < "vs2008" and not cfg.flags.Managed and cfg.warnings ~= "Off" and not filecfg then
+			p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
 		end
 	end
 
