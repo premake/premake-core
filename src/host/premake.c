@@ -279,9 +279,13 @@ int load_builtin_scripts(lua_State* L)
 		return !OKAY;
 	}
 
-	/* load the manifest, which includes all the required scripts */
+	/* set the _SCRIPTS variable for the manifest, so it can locate everything */
 	scripts_path = lua_tostring(L, -1);
 	filename = lua_pushfstring(L, "%s/_manifest.lua", scripts_path);
+	lua_pushvalue(L, -1);
+	lua_setglobal(L, "_SCRIPT");
+
+	/* load the manifest, which includes all the required scripts */
 	if (luaL_dofile(L, filename))
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
