@@ -111,7 +111,7 @@
 		local f = field.get("buildaction")
 		configset.addblock(cset, { "hello.c" }, os.getcwd())
 		configset.store(cset, f, "Copy")
-		test.isequal("Copy", configset.fetch(cset, f, {}, path.join(os.getcwd(), "hello.c")))
+		test.isequal("Copy", configset.fetch(cset, f, { files=path.join(os.getcwd(), "hello.c"):lower() }))
 	end
 
 

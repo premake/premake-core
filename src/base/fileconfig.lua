@@ -83,8 +83,9 @@
 		-- specific to the file.
 
 		local environ = {}
-		local fsub = context.new(prj, environ, fcfg.abspath)
-		context.copyterms(fsub, cfg)
+		local fsub = context.new(prj, environ)
+		context.copyFilters(fsub, cfg)
+		context.addFilter(fsub, "files", fcfg.abspath:lower())
 
 		fcfg.configs[cfg] = fsub
 

@@ -1,11 +1,10 @@
 --
 -- tests/base/test_criteria.lua
 -- Test suite for the criteria matching API.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	T.criteria = {}
-	local suite = T.criteria
+	local suite = test.declare("criteria")
 
 	local criteria = premake.criteria
 
@@ -70,7 +69,7 @@
 --
 -- The "not" modifier should fail the test if the term is matched.
 --
-	
+
 	function suite.fails_onNotMatch()
 		crit = criteria.new { "not windows" }
 		test.isfalse(criteria.matches(crit, { "windows" }))
@@ -138,20 +137,80 @@
 
 	function suite.passes_onFilenameAndMatchingPattern()
 		crit = criteria.new { "**.c", "windows" }
-		test.istrue(criteria.matches(crit, { "windows" }, "hello.c"))
+		test.istrue(criteria.matches(crit, { system = "windows", files = "hello.c" }))
 	end
 
 	function suite.fails_onFilenameAndNoMatchingPattern()
 		crit = criteria.new { "windows" }
-		test.isfalse(criteria.matches(crit, { "windows" }, "hello.c"))
+		test.isfalse(criteria.matches(crit, { "windows", files = "hello.c" }))
 	end
-	
+
 
 --
 -- "Not" modifiers should not match filenames.
 --
 
-	function suite.fails_onFilnameAndNotModifier()
+	function suite.fails_onFilenameAndNotModifier()
 		crit = criteria.new { "not linux" }
-		test.isfalse(criteria.matches(crit, { "windows" }, "hello.c"))
+		test.isfalse(criteria.matches(crit, { "windows", files = "hello.c" }))
+	end
+
+
+--
+-- "Open" or non-prefixed terms can match against any scope.
+--
+
+	function suite.openTerm_matchesAnyKeyedScope()
+		crit = criteria.new { "debug" }
+		test.istrue(criteria.matches(crit, { configuration="debug" }))
+	end
+
+
+--
+-- Prefixed terms should only matching against context that
+-- uses a matching key.
+--
+
+	function suite.prefixedTermMatches_onKeyMatch()
+		crit = criteria.new { "configurations:debug" }
+		test.istrue(criteria.matches(crit, { configurations="debug" }))
+	end
+
+	function suite.prefixedTermFails_onNoKeyMatch()
+		crit = criteria.new { "configurations:debug" }
+		test.isfalse(criteria.matches(crit, { configurations="release", platforms="debug" }))
+	end
+
+	function suite.prefixTermFails_onFilenameMatch()
+		crit = criteria.new { "configurations:hello**" }
+		test.isfalse(criteria.matches(crit, { files = "hello.cpp" }))
+	end
+
+--
+-- If context provides a list of values, match against them.
+--
+
+	function suite.termMatchesList_onNoPrefix()
+		crit = criteria.new { "debug" }
+		test.istrue(criteria.matches(crit, { options={ "debug", "logging" }}))
+	end
+
+	function suite.termMatchesList_onPrefix()
+		crit = criteria.new { "options:debug" }
+		test.istrue(criteria.matches(crit, { options={ "debug", "logging" }}))
+	end
+
+
+--
+-- Check handling of the files: prefix.
+--
+
+	function suite.matchesFilePrefix_onPositiveMatch()
+		crit = criteria.new { "files:**.cpp" }
+		test.istrue(criteria.matches(crit, { files = "hello.cpp" }))
+	end
+
+	function suite.matchesFilePrefix_onNotModifier()
+		crit = criteria.new { "files:not **.h" }
+		test.istrue(criteria.matches(crit, { files = "hello.cpp" }))
 	end

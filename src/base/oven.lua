@@ -66,17 +66,21 @@
 		-- terms describe the "operating environment"; only results contained by
 		-- configuration blocks which match these terms will be returned.
 
-		context.addterms(ctx, _ACTION)
+		context.addFilter(ctx, "_ACTION", _ACTION)
+		context.addFilter(ctx, "action", _ACTION)
 
 		-- Add command line options to the filtering options
 
+		local options = {}
 		for key, value in pairs(_OPTIONS) do
 			local term = key
 			if value ~= "" then
 				term = term .. "=" .. value
 			end
-			context.addterms(ctx, term)
+			table.insert(options, term)
 		end
+		context.addFilter(ctx, "_OPTIONS", options)
+		context.addFilter(ctx, "options", options)
 
 		context.compile(ctx)
 
@@ -143,19 +147,19 @@
 		-- Add filtering terms to the context to make it as specific as I can.
 		-- Start with the same filtering that was applied at the solution level.
 
-		context.copyterms(ctx, sln)
+		context.copyFilters(ctx, sln)
 
 		-- Now filter on the current system and architecture, allowing the
 		-- values that might already in the context to override my defaults.
 
 		ctx.system = ctx.system or premake.action.current().os or os.get()
-		context.addterms(ctx, ctx.system)
-		context.addterms(ctx, ctx.architecture)
+		context.addFilter(ctx, "system", ctx.system)
+		context.addFilter(ctx, "architecture", ctx.architecture)
 
 		-- The kind is a configuration level value, but if it has been set at the
 		-- project level allow that to influence the other project-level results.
 
-		context.addterms(ctx, ctx.kind)
+		context.addFilter(ctx, "kind", ctx.kind)
 
 		-- Go ahead and distill all of that down now; this is my new project object
 
@@ -461,22 +465,22 @@
 		-- by copying over the top-level environment from the solution. Don't
 		-- copy the project terms though, so configurations can override those.
 
-		context.copyterms(ctx, prj.solution)
+		context.copyFilters(ctx, prj.solution)
 
-		context.addterms(ctx, buildcfg)
-		context.addterms(ctx, platform)
-		context.addterms(ctx, prj.language)
+		context.addFilter(ctx, "configurations", buildcfg)
+		context.addFilter(ctx, "platforms", platform)
+		context.addFilter(ctx, "language", prj.language)
 
 		-- allow the project script to override the default system
 		ctx.system = ctx.system or system
-		context.addterms(ctx, ctx.system)
+		context.addFilter(ctx, "system", ctx.system)
 
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
-		context.addterms(ctx, ctx.architecture)
+		context.addFilter(ctx, "architecture", ctx.architecture)
 
 		-- if a kind is set, allow that to influence the configuration
-		context.addterms(ctx, ctx.kind)
+		context.addFilter(ctx, "kind", ctx.kind)
 
 		context.compile(ctx)
 

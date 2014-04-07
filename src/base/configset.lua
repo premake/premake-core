@@ -41,6 +41,9 @@
 ---
 -- Retrieve a value from the configuration set.
 --
+-- This and the criteria supporting code are the inner loops of the app. Some
+-- readability has been sacrificed for overall performance.
+--
 -- @param cset
 --    The configuration set to query.
 -- @param field
@@ -50,39 +53,42 @@
 --    blocks with terms fully contained by this list will be considered in
 --    determining the returned value. Terms should be lower case to make
 --    the context filtering case-insensitive.
--- @param filename
---    An optional filename; if provided, only blocks with pattern that
---    matches the name will be considered.
 -- @return
 --    The requested value.
 ---
 
-	function configset.fetch(cset, field, context, filename)
+	function configset.fetch(cset, field, context)
 		if not context then
 			context = cset.current._criteria.terms
 		end
 
-		if filename then
-			filename = filename:lower()
-		end
-
 		if premake.field.merges(field) then
-			return configset._fetchMerged(cset, field, context, filename)
+			return configset._fetchMerged(cset, field, context)
 		else
-			return configset._fetchDirect(cset, field, context, filename)
+			return configset._fetchDirect(cset, field, context)
 		end
 	end
 
 
-	function configset._fetchDirect(cset, field, filter, filename)
+	function configset._fetchDirect(cset, field, filter)
+		local abspath = filter.files
+		local basedir
+
 		local key = field.name
 		local blocks = cset.blocks
-
 		local n = #blocks
 		for i = n, 1, -1 do
 			local block = blocks[i]
 			local value = block[key]
-			if value and (cset.compiled or configset.testblock(block, filter, filename)) then
+
+			-- If the filter contains a file path, make it relative to
+			-- this block's basedir
+			if value and abspath and block._basedir ~= basedir and not cset.compiled then
+				basedir = block._basedir
+				filter.files = path.getrelative(basedir, abspath)
+			end
+
+			if value and (cset.compiled or criteria.matches(block._criteria, filter)) then
 				-- If value is an object, return a copy of it so that any
 				-- changes later made to it by the caller won't alter the
 				-- original value (that was a tough bug to find)
@@ -93,37 +99,55 @@
 			end
 		end
 
+		filter.files = abspath
+
 		if cset.parent then
-			return configset._fetchDirect(cset.parent, field, filter, filename)
+			return configset._fetchDirect(cset.parent, field, filter)
 		end
 	end
 
 
-	function configset._fetchMerged(cset, field, filter, filename)
+	function configset._fetchMerged(cset, field, filter)
 		local result = {}
 
 		local function remove(patterns)
-			for _, pattern in ipairs(patterns) do
-				local i = 1
-				while i <= #result do
-					local value = result[i]:lower()
+			for i = 1, #patterns do
+				local pattern = patterns[i]
+
+				local j = 1
+				while j <= #result do
+					local value = result[j]:lower()
 					if value:match(pattern) == value then
-						result[result[i]] = nil
-						table.remove(result, i)
+						result[result[j]] = nil
+						table.remove(result, j)
 					else
-						i = i + 1
+						j = j + 1
 					end
 				end
 			end
 		end
 
 		if cset.parent then
-			result = configset._fetchMerged(cset.parent, field, filter, filename)
+			result = configset._fetchMerged(cset.parent, field, filter)
 		end
 
+		local abspath = filter.files
+		local basedir
+
 		local key = field.name
-		for _, block in ipairs(cset.blocks) do
-			if cset.compiled or configset.testblock(block, filter, filename) then
+		local blocks = cset.blocks
+		local n = #blocks
+		for i = 1, n do
+			local block = blocks[i]
+
+			-- If the filter contains a file path, make it relative to
+			-- this block's basedir
+			if abspath and block._basedir ~= basedir and not cset.compiled then
+				basedir = block._basedir
+				filter.files = path.getrelative(basedir, abspath)
+			end
+
+			if cset.compiled or criteria.matches(block._criteria, filter) then
 				if block._removes and block._removes[key] then
 					remove(block._removes[key])
 				end
@@ -135,6 +159,7 @@
 			end
 		end
 
+		filter.files = abspath
 		return result
 	end
 
@@ -304,22 +329,6 @@
 
 
 --
--- Check to see if an individual configuration block applies to the
--- given context and filename.
---
-
-	function configset.testblock(block, context, filename)
-		-- Make file tests relative to the blocks base directory,
-		-- so path relative pattern matches will work.
-		if block._basedir and filename then
-			filename = path.getrelative(block._basedir, filename)
-		end
-		return criteria.matches(block._criteria, context, filename)
-	end
-
-
-
---
 -- Compiles a new configuration set containing only the blocks which match
 -- the specified criteria. Fetches against this compiled configuration set
 -- may omit the context argument, resulting in faster fetches against a
@@ -327,42 +336,48 @@
 --
 -- @param cset
 --    The configuration set to query.
--- @param context
+-- @param filter
 --    A list of lowercase context terms to use during the fetch. Only those
 --    blocks with terms fully contained by this list will be considered in
 --    determining the returned value. Terms should be lower case to make
 --    the context filtering case-insensitive.
--- @param filename
---    An optional filename; if provided, only blocks with pattern that
---    matches the name will be considered.
 -- @return
 --    A new configuration set containing only the selected blocks, and the
 --    "compiled" field set to true.
 --
 
-	function configset.compile(cset, context, filename)
-		if filename then
-			filename = filename:lower()
-		end
-
+	function configset.compile(cset, filter)
 		-- always start with the parent
 		local result
 		if cset.parent then
-			result = configset.compile(cset.parent, context, filename)
+			result = configset.compile(cset.parent, filter)
 		else
 			result = configset.new()
 		end
 
-		-- add in my own blocks
-		for _, block in ipairs(cset.blocks) do
-			if configset.testblock(block, context, filename) then
+		local blocks = cset.blocks
+		local n = #blocks
+
+		local abspath = filter.files
+		local basedir
+
+		for i = 1, n do
+			local block = blocks[i]
+
+			-- If the filter contains a file path, make it relative to
+			-- this block's basedir
+			if abspath and block._basedir ~= basedir then
+				basedir = block._basedir
+				filter.files = path.getrelative(basedir, abspath)
+			end
+
+			if criteria.matches(block._criteria, filter) then
 				table.insert(result.blocks, block)
 			end
 		end
 
+		filter.files = abspath
+
 		result.compiled = true
 		return result
 	end
-
-
-

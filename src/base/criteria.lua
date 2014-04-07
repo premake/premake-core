@@ -24,17 +24,27 @@
 	function criteria.new(terms)
 		terms = table.flatten(terms)
 
-		-- convert Premake wildcard symbols into the appropriate Lua patterns; this
-		-- list of patterns is what will actually be tested against
+		-- Preprocess the terms list for performance in matches() later.
+		-- Wildcards are replaced with Lua patterns. Terms with "or" and
+		-- "not" modifiers are split into arrays of parts to test.
+		-- Prefixes are split out and stored under a quick lookup key.
 
 		local patterns = {}
 		for i, term in ipairs(terms) do
-			terms[i] = term:lower()
-
-			local parts = path.wildcards(terms[i])
-			parts = parts:explode(" or ")
+			term = term:lower()
+			terms[i] = term
 
 			local pattern = {}
+
+			local n = term:find(":", 1, true)
+			if n then
+				pattern.prefix = term:sub(1, n - 1)
+				term = term:sub(n + 1)
+			end
+
+			local parts = path.wildcards(term)
+			parts = parts:explode(" or ")
+
 			for i, part in ipairs(parts) do
 				if part:startswith("not ") then
 					table.insert(pattern, "not")
@@ -62,57 +72,82 @@
 -- @param context
 --    The list of context terms to test against, provided as a list of
 --    lowercase strings.
--- @param filenamae
---    An optional filename; if provided, at least one pattern matching the
---    name must be present to pass the test.
 -- @return
 --    True if all criteria are satisfied by the context.
 ---
 
-	function criteria.matches(crit, context, filename)
+	function criteria.matches(crit, context)
+		-- If the context specifies a filename, I should only match against
+		-- blocks targeted at that file specifically. This way, files only
+		-- pick up the settings that a different from the main project.
+		local filename = context.files
 		local filematched = false
 
-		function testcontext(part, negated)
-			for i = 1, #context do
-				local value = context[i]
-				if value:match(part) == value then
-					return true
+		-- Test one value from the context against a part of a pattern
+		function testValue(value, part)
+			if type(value) == "table" then
+				for i = 1, #value do
+					if testValue(value[i], part) then
+						return true
+					end
+				end
+			else
+				if value and value:match(part) == value then
+					return true;
 				end
 			end
-
-			if filename and not negated and filename:match(part) == filename then
-				filematched = true
-				return true
-			end
-
 			return false
 		end
 
-		function testparts(pattern)
-			local n = #pattern
-			local i = 1
-			while i <= n do
-				local part = pattern[i]
-
-				if part == "not" then
-					i = i + 1
-					if not testcontext(pattern[i], true) then
-						return true
-					end
-				else
-					if testcontext(part) then
-						return true
-					end
+		-- Test one part of one pattern against the provided context
+		function testContext(prefix, part, assertion)
+			if prefix then
+				local result = testValue(context[prefix], part)
+				if prefix == "files" and result == assertion then
+					filematched = true
+				end
+				if result then
+					return assertion
+				end
+			else
+				if filename and assertion and filename:match(part) == filename then
+					filematched = true
+					return assertion
 				end
 
-				i = i + 1
+				for prefix, value in pairs(context) do
+					if testValue(value, part) then
+						return assertion
+					end
+				end
+			end
+
+			return not assertion
+		end
+
+		-- Test an individual pattern in this criteria's list of patterns
+		function testPattern(pattern)
+			local n = #pattern
+			local assertion = true
+
+			for i = 1, n do
+				local part = pattern[i]
+				if part == "not" then
+					assertion = false
+				else
+					if testContext(pattern.prefix, part, assertion) then
+						return true
+					end
+					assertion = true
+				end
 			end
 		end
 
+		-- Iterate the list of patterns and test each in turn
 		local n = #crit.patterns
 		for i = 1, n do
 			local pattern = crit.patterns[i]
-			if not testparts(pattern) then
+			if not testPattern(pattern) then
 				return false
 			end
 		end
@@ -123,3 +158,5 @@
 
 		return true
 	end
+
+

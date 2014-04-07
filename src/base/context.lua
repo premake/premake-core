@@ -33,11 +33,10 @@
 --    A new context object.
 --
 
-	function context.new(cfgset, environ, filename)
+	function context.new(cfgset, environ)
 		local ctx = {}
 		ctx._cfgset = cfgset
 		ctx.environ = environ or {}
-		ctx._filename = { filename } or {}
 		ctx.terms = {}
 
 		-- This base directory is used when expanding path tokens encountered
@@ -56,24 +55,29 @@
 	end
 
 
---
--- Add additional filtering terms to an existing context.
+
+---
+-- Add a new key-value pair to refine the context filtering.
 --
 -- @param ctx
---    The context to contain the new terms.
--- @param terms
---    One or more new terms to add to the context. May be nil.
---
+--    The context to be filtered.
+-- @param key
+--    The new (or an existing) key value.
+-- @param value
+--    The filtering value for the key.
+---
 
-	function context.addterms(ctx, terms)
-		if terms then
-			terms = table.flatten({terms})
-			for _, term in ipairs(terms) do
-				-- make future tests case-insensitive
-				table.insert(ctx.terms, term:lower())
+	function context.addFilter(ctx, key, value)
+		if type(value) == "table" then
+			for i = 1, #value do
+				value[i] = value[i]:lower()
 			end
+		elseif value then
+			value = value:lower()
 		end
+		ctx.terms[key:lower()] = value
 	end
+
 
 
 --
@@ -85,8 +89,8 @@
 --    The context containing the terms to copy.
 --
 
-	function context.copyterms(ctx, src)
-		ctx.terms = table.arraycopy(src.terms)
+	function context.copyFilters(ctx, src)
+		ctx.terms = table.deepcopy(src.terms)
 	end
 
 
@@ -119,7 +123,7 @@
 --
 
 	function context.compile(ctx)
-		ctx._cfgset = configset.compile(ctx._cfgset, ctx.terms, ctx._filename[1])
+		ctx._cfgset = configset.compile(ctx._cfgset, ctx.terms)
 	end
 
 
@@ -164,7 +168,7 @@
 		-- If there is a matching field, then go fetch the aggregated value
 		-- from my configuration set, and then cache it future lookups.
 
-		local value = configset.fetch(ctx._cfgset, field, ctx.terms, ctx._filename[1])
+		local value = configset.fetch(ctx._cfgset, field, ctx.terms)
 		if value then
 			-- do I need to expand tokens?
 			if field and field.tokens then
