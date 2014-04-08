@@ -35,6 +35,11 @@ extern const char* builtin_scripts[];
 
 
 /* Built-in functions */
+static const luaL_Reg criteria_functions[] = {
+	{ "matches", criteria_matches },
+	{ NULL, NULL }
+};
+
 static const luaL_Reg path_functions[] = {
 	{ "getabsolute", path_getabsolute },
 	{ "getrelative", path_getrelative },
@@ -79,9 +84,10 @@ static const luaL_Reg string_functions[] = {
  */
 int premake_init(lua_State* L)
 {
-	luaL_register(L, "path",   path_functions);
-	luaL_register(L, "os",     os_functions);
-	luaL_register(L, "string", string_functions);
+	luaL_register(L, "criteria", criteria_functions);
+	luaL_register(L, "path",     path_functions);
+	luaL_register(L, "os",       os_functions);
+	luaL_register(L, "string",   string_functions);
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
