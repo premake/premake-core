@@ -101,8 +101,13 @@ static int testContext(lua_State* L, const char* prefix, const char* part,
 	/*
 		if prefix then
 			local result = testValue(context[prefix], part, wildcard)
-			if result == assertion and prefix == "files" then
-				filematched = true
+			if prefix == "files" then
+				if not filename then
+					return false
+				end
+				if result == assertion then
+					filematched = true
+				end
 			end
 			if result then
 				return assertion
@@ -126,8 +131,13 @@ static int testContext(lua_State* L, const char* prefix, const char* part,
 		lua_getfield(L, 2, prefix);
 		result = testValue(L, part, wildcard);
 		lua_pop(L, 1);
-		if (result == assertion && strcmp(prefix, "files") == 0) {
-			(*fileMatched) = 1;
+		if (strcmp(prefix, "files") == 0) {
+			if (filename == NULL) {
+				return 0;
+			}
+			if (result == assertion) {
+				(*fileMatched) = 1;
+			}
 		}
 		if (result) {
 			return assertion;
@@ -229,9 +239,9 @@ int criteria_matches(lua_State* L)
 	/* stack [2] = context */
 
 	const char* filename;
+	int fileMatched;
 	int top = lua_gettop(L);
 	int matched = 1;
-	int fileMatched = 0;
 
 	/*
 		Cache string.match for a quicker lookup in match() above
@@ -246,6 +256,7 @@ int criteria_matches(lua_State* L)
 
 	lua_getfield(L, 2, "files");
 	filename = lua_tostring(L, -1);
+	fileMatched = (filename == NULL);
 
 	/*
 		for i, pattern in pairs(criteria.patterns) do
@@ -273,7 +284,7 @@ int criteria_matches(lua_State* L)
 		return matched
 	*/
 
-	if (matched && filename && !fileMatched) {
+	if (filename != NULL && !fileMatched) {
 		matched = 0;
 	}
 

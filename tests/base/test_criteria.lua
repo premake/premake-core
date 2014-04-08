@@ -214,3 +214,13 @@
 		crit = criteria.new { "files:not **.h" }
 		test.istrue(criteria.matches(crit, { files = "hello.cpp" }))
 	end
+
+	function suite.filesTermFails_onNoValue()
+		crit = criteria.new { "files:Debug**" }
+		test.isfalse(criteria.matches(crit, { configurations = "Debug32" }))
+	end
+
+	function suite.filesTermFails_onNotModifierAndNoMatch()
+		crit = criteria.new { "files:not Debug**" }
+		test.isfalse(criteria.matches(crit, { configurations = "Debug32" }))
+	end
