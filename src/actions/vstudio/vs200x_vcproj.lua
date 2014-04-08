@@ -473,7 +473,9 @@
 				m.treatWChar_tAsBuiltInType,
 				m.usePrecompiledHeader,
 				m.programDataBaseFileName,
-				m.warnings,
+				m.warningLevel,
+				m.warnAsError,
+				m.detect64BitPortabilityProblems,
 				m.debugInformationFormat,
 				m.compileAs,
 				m.forcedIncludeFiles,
@@ -732,38 +734,9 @@
 
 ---------------------------------------------------------------------------
 --
--- EVERYTHING BELOW THIS NEEDS REWORK, which I'm in the process of
--- doing right now. Hold on tight.
---
----------------------------------------------------------------------------
-
-
----------------------------------------------------------------------------
---
 -- Support functions
 --
 ---------------------------------------------------------------------------
-
---
--- Build a list architectures which are used by a project.
---
--- @param prj
---    The project under consideration.
--- @return
---    An array of Visual Studio architectures.
---
-
-	function m.architectures(prj)
-		architectures = {}
-		for cfg in project.eachconfig(prj) do
-			local arch = vstudio.archFromConfig(cfg, true)
-			if not table.contains(architectures, arch) then
-				table.insert(architectures, arch)
-			end
-		end
-		return architectures
-	end
-
 
 --
 -- Return the debugging symbol level for a configuration.
@@ -779,8 +752,7 @@
 			if cfg.flags.NoEditAndContinue or
 				config.isOptimizedBuild(cfg) or
 			    cfg.flags.Managed or
-			    cfg.system == "x64" or
-				cfg.platform == "x64"  -- TODO: remove this when the _ng stuff goes live
+			    cfg.system == "x64"
 			then
 				return 3
 			else
@@ -1081,6 +1053,15 @@
 
 
 
+	function m.detect64BitPortabilityProblems(cfg)
+		local prjcfg, filecfg = config.normalize(cfg)
+		if _ACTION < "vs2008" and not cfg.flags.Managed and cfg.warnings ~= "Off" and not filecfg then
+			p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
+		end
+	end
+
+
+
 	function m.enableCOMDATFolding(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('EnableCOMDATFolding="2"')
@@ -1377,8 +1358,16 @@
 
 
 	function m.platforms(prj)
+		architectures = {}
+		for cfg in project.eachconfig(prj) do
+			local arch = vstudio.archFromConfig(cfg, true)
+			if not table.contains(architectures, arch) then
+				table.insert(architectures, arch)
+			end
+		end
+
 		p.push('<Platforms>')
-		table.foreachi(m.architectures(prj), function(arch)
+		table.foreachi(architectures, function(arch)
 			p.push('<Platform')
 			p.w('Name="%s"', arch)
 			p.pop('/>')
@@ -1426,7 +1415,6 @@
 	function m.projectReferences(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
-
 			-- This is a little odd: Visual Studio wants the "relative path to project"
 			-- to be relative to the *solution*, rather than the project doing the
 			-- referencing. Which, in theory, would break if the project is included
@@ -1610,7 +1598,16 @@
 	end
 
 
-	function m.warnings(cfg)
+
+	function m.warnAsError(cfg)
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
+			p.w('WarnAsError="true"')
+		end
+	end
+
+
+
+	function m.warningLevel(cfg)
 		local prjcfg, filecfg = config.normalize(cfg)
 
 		local level
@@ -1625,15 +1622,8 @@
 		if level then
 			p.w('WarningLevel="%s"', level)
 		end
-
-		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
-			p.w('WarnAsError="true"')
-		end
-
-		if _ACTION < "vs2008" and not cfg.flags.Managed and cfg.warnings ~= "Off" and not filecfg then
-			p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
-		end
 	end
+
 
 
 	function m.wholeProgramOptimization(cfg)
