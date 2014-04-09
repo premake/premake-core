@@ -280,6 +280,10 @@
 --
 
 	function api.callback(field, value)
+		if not value then
+			return
+		end
+
 		if field.deprecated and type(field.deprecated.handler) == "function" then
 			field.deprecated.handler(value)
 			if api._deprecations ~= "off" then
@@ -289,10 +293,6 @@
 		end
 
 		local target = api.gettarget(field.scope)
-		if not value then
-			return configset.fetch(target, field)
-		end
-
 		local status, err = configset.store(target, field, value)
 		if err then
 			error(err, 3)
