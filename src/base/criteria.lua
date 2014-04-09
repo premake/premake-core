@@ -42,19 +42,13 @@
 				term = term:sub(n + 1)
 			end
 
-			local parts = path.wildcards(term)
-			local isWildcard = (parts ~= term)
-			parts = parts:explode(" or ")
-
+			local parts = term:explode(" or ")
 			for i, part in ipairs(parts) do
-				if part:startswith("not ") then
-					table.insert(pattern, "not")
-					part = part:sub(5)
+				local item = path.wildcards(part)
+				if (item ~= part) then
+					item = "%%" .. item
 				end
-				if isWildcard then
-					table.insert(pattern, "%%")
-				end
-				table.insert(pattern, part)
+				table.insert(pattern, item)
 			end
 
 			table.insert(patterns, pattern)

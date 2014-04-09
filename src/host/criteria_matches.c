@@ -8,11 +8,16 @@
 #include <string.h>
 
 
-/*
- * return value:match(pattern) == value
- */
 static int match(lua_State* L, const char* value, const char* pattern, int wildcard)
 {
+	/*
+		if wildcard then
+			return value:match(pattern) == value
+		else
+			return value == pattern
+		end
+	*/
+
 	if (wildcard) {
 		const char* result;
 		int matched = 0;
@@ -179,8 +184,6 @@ static int testPattern(lua_State* L, const char* filename, int* fileMatched)
 	const char* prefix;
 	const char* part;
 	size_t i, n;
-	int assertion = 1;
-	int wildcard = 0;
 	int result = 0;
 
 	/* prefix = pattern.prefix */
@@ -189,38 +192,51 @@ static int testPattern(lua_State* L, const char* filename, int* fileMatched)
 
 	/*
 		for i = 1, #pattern do
+			local assertion = true
+			local wildcard = false
+
 			part = pattern[i]
-			if part == "not" then
+
+			if part:startswith("%%") then
+				part = part:sub(3)
+				wildcard = true
+			end
+
+			if part:startswith("not ") then
+				part = part:sub(5)
 				assertion = false
-			else
-				if testContext(pattern.prefix, part, assertion) then
-					result = true
-					break
-				end
-				assertion = true
+			end
+
+			if testContext(pattern.prefix, part, assertion) then
+				result = true
+				break
 			end
 		end
 	*/
 
 	n = lua_objlen(L, -2);
 	for (i = 1; i <= n; ++i) {
+		int assertion = 1;
+		int wildcard = 0;
+
 		lua_rawgeti(L, -2, i);
+
 		part = lua_tostring(L, -1);
 
-		if (strcmp(part, "not") == 0) {
-			assertion = 0;
-		}
-		else if (part[0] == '%' && part[1] == '%') {
+		if (part[0] == '%' && part[1] == '%') {
+			part += 2;
 			wildcard = 1;
 		}
-		else {
-			if (testContext(L, prefix, part, assertion, wildcard, filename, fileMatched)) {
-				lua_pop(L, 1);
-				result = 1;
-				break;
-			}
-			assertion = 1;
-			wildcard = 0;
+
+		if (strncmp(part, "not ", 4) == 0) {
+			part += 4;
+			assertion = 0;
+		}
+
+		if (testContext(L, prefix, part, assertion, wildcard, filename, fileMatched)) {
+			lua_pop(L, 1);
+			result = 1;
+			break;
 		}
 
 		lua_pop(L, 1);
