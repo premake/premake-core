@@ -624,8 +624,12 @@
 			value = processor(field, nil, value)
 		end
 
-		if type(value) == "table" and #value > 0 then
-			table.foreachi(value, store)
+		if type(value) == "table" then
+			if #value > 0 then
+				table.foreachi(value, store)
+			elseif not table.isempty(value) then
+				store(value)
+			end
 		else
 			store(value)
 		end
