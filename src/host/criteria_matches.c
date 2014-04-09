@@ -100,14 +100,13 @@ static int testContext(lua_State* L, const char* prefix, const char* part,
 {
 	/*
 		if prefix then
+			local isFiles = (prefix == "files")
+			if isFiles and not filename then
+				return false
+			end
 			local result = testValue(context[prefix], part, wildcard)
-			if prefix == "files" then
-				if not filename then
-					return false
-				end
-				if result == assertion then
-					filematched = true
-				end
+			if isFiles and result == assertion then
+				filematched = true
 			end
 			if result then
 				return assertion
@@ -128,16 +127,16 @@ static int testContext(lua_State* L, const char* prefix, const char* part,
 
 	int result;
 	if (prefix) {
+		int isFiles = (strcmp(prefix, "files") == 0);
+		if (isFiles && filename == NULL) {
+			return 0;
+		}
+
 		lua_getfield(L, 2, prefix);
 		result = testValue(L, part, wildcard);
 		lua_pop(L, 1);
-		if (strcmp(prefix, "files") == 0) {
-			if (filename == NULL) {
-				return 0;
-			}
-			if (result == assertion) {
-				(*fileMatched) = 1;
-			}
+		if (isFiles && result == assertion) {
+			(*fileMatched) = 1;
 		}
 		if (result) {
 			return assertion;
