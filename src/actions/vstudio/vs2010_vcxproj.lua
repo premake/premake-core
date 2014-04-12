@@ -547,6 +547,7 @@
 							vc2010.optimization(filecfg, condition)
 							vc2010.forceIncludes(filecfg, condition)
 							vc2010.precompiledHeader(cfg, filecfg, condition)
+							vc2010.enableEnhancedInstructionSet(filecfg, condition)
 							vc2010.additionalCompileOptions(filecfg, condition)
 						end
 					end
@@ -841,7 +842,7 @@
 	end
 
 
-	function vc2010.enableEnhancedInstructionSet(cfg)
+	function vc2010.enableEnhancedInstructionSet(cfg, condition)
 		local value
 
 		local x = cfg.vectorextensions
@@ -854,7 +855,7 @@
 		end
 
 		if value then
-			_p(3,'<EnableEnhancedInstructionSet>%s</EnableEnhancedInstructionSet>', value)
+			vc2010.element(3, 'EnableEnhancedInstructionSet', condition, value)
 		end
 	end
 

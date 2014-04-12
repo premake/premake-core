@@ -470,3 +470,23 @@
 		]]
 	end
 
+
+
+--
+-- Check handling of per-file vector extensions.
+--
+
+	function suite.perFileVectorExtensions()
+		files { "hello.cpp" }
+		configuration "**.cpp"
+			vectorextensions "sse2"
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ClCompile Include="hello.cpp">
+			<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+			<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+		</ClCompile>
+	</ItemGroup>
+		]]
+	end
