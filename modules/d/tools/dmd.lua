@@ -6,9 +6,9 @@
 
 	local tdmd = {}
 
-    local d = premake.extensions.d
 	local project = premake.project
 	local config = premake.config
+    local d = premake.extensions.d
 
 --
 -- Set default tools
@@ -20,149 +20,36 @@
 	tdmd.optlink.dc = "dmd"
 
 
---
--- Translation of Premake flags into dmd flags
---
-
-	local flags =
-	{
-		ExtraWarnings	= "-w",
-		Optimize		= "-O",
-		Symbols			= "-g",
-		SymbolsLikeC	= "-gc",
-		Release			= "-release",
-		Documentation	= "-D",
--- GCC:	PIC				= "-fPIC",
-		Inline			= "-inline",
-		GenerateHeader	= "-H",
-		GenerateMap		= "-map",
-		NoBoundsCheck	= "-noboundscheck",
-		NoFloat			= "-nofloat",
-		RetainPaths		= "-op",
-		Profile			= "-profile",
-		Quiet			= "-quiet",
-		Verbose			= "-v",
-		UnitTest		= "-unittest",
-		GenerateJSON	= "-X",
-		CodeCoverage	= "-cov",
-	}
-
-
 -- /////////////////////////////////////////////////////////////////////////
 -- dmd + GCC toolchain
 -- /////////////////////////////////////////////////////////////////////////
 
 --
--- dmd.gcc flags
+-- Return a list of LDFLAGS for a specific configuration.
 --
 
-	tdmd.gcc.sysflags =
-	{
-		universal = {
-			flags    = "",
-			ldflags  = "",
+	tdmd.gcc.ldflags = {
+		architecture = {
+			x32 = { "-m32", "-L-L/usr/lib" },
+			x64 = { "-m64", "-L-L/usr/lib64" },
 		},
-		x32 = {
-			flags    = "-m32",
-			ldflags  = "-L-L/usr/lib",
-		},
-		x64 = {
-			flags    = "-m64",
-			ldflags  = "-L-L/usr/lib64",
+		kind = {
+			SharedLib = "-shared",
+			StaticLib = "-lib",
 		}
 	}
 
-	function tdmd.gcc.getsysflags(cfg, field)
-		local result = {}
-
-		-- merge in system-level flags
-		local system = tdmd.gcc.sysflags[cfg.system]
-		if system then
-			result = table.join(result, system[field])
-		end
-
-		-- merge in architecture-level flags
-		local arch = tdmd.gcc.sysflags[cfg.architecture]
-		if arch then
-			result = table.join(result, arch[field])
-		end
-
-		return result
-	end
-
-
-
---
--- Returns the target name specific to compiler
---
-
-	function tdmd.gcc.gettarget(name)
-		return "-of" .. name
-	end
-
-
---
--- Returns the object directory name specific to compiler
---
-
-	function tdmd.gcc.getobjdir(name)
-		return "-od" .. name
-	end
-
-
---
--- Returns a list of compiler flags, based on the supplied configuration.
---
-
-	function tdmd.gcc.getflags(cfg)
-		local flags = tdmd.gcc.getsysflags(cfg, 'flags')
-
-		--table.insert( f, "-v" )
-		if cfg.kind == premake.STATICLIB then
-			table.insert( flags, "-lib" )
-		elseif cfg.kind == premake.SHAREDLIB then
-			table.insert( flags, "-shared" )
-			if cfg.system ~= premake.WINDOWS then
-				table.insert( flags, "-fPIC" )
-			end
-		end
-
-		if premake.config.isDebugBuild( cfg ) then
-			table.insert( flags, "-debug" )
-		else
-			table.insert( flags, "-release" )
-		end
-
-		return flags
-	end
-
-
---
--- Returns a list of linker flags, based on the supplied configuration.
---
-
 	function tdmd.gcc.getldflags(cfg)
-		local flags = {}
+		local flags = config.mapFlags(cfg, tdmd.gcc.ldflags)
 
-		local sysflags = tdmd.gcc.getsysflags(cfg, 'ldflags')
-		flags = table.join(flags, sysflags)
-
-		return flags
-	end
-
-
---
--- Return a list of library search paths.
---
-
-	function tdmd.gcc.getlibdirflags(cfg)
-		local result = {}
-
-		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
-			table.insert(result, '-L-L' .. _MAKE.esc(value))
+		-- Scan the list of linked libraries. If any are referenced with
+		-- paths, add those to the list of library search paths
+--		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
+		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
+			table.insert(flags, '-L-L' .. project.getrelative(cfg.project, dir))
 		end
 
-		return result
+		return flags
 	end
 
 
@@ -184,7 +71,7 @@
 						-- Don't use "-l" flag when linking static libraries; instead use
 						-- path/libname.a to avoid linking a shared library of the same
 						-- name if one is present
-						table.insert(result, project.getrelative(cfg.project, link.linktarget.abspath))
+						table.insert(result, "-L" .. project.getrelative(cfg.project, link.linktarget.abspath))
 					else
 						table.insert(result, "-L-l" .. link.linktarget.basename)
 					end
@@ -198,7 +85,7 @@
 			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))
 			elseif path.isobjectfile(link) then
-				table.insert(result, link)
+				table.insert(result, "-L" .. link)
 			else
 				table.insert(result, "-L-l" .. path.getbasename(link))
 			end
@@ -207,116 +94,39 @@
 		return result
 	end
 
---
--- Decorate defines for the tdmd.gcc command line.
---
-
-	function tdmd.gcc.getdefines(defines)
-		local result = { }
-		for _,def in ipairs(defines) do
-			table.insert(result, '-version=' .. def)
-		end
-		return result
-	end
-
-
---
--- Decorate include file search paths for the DMD command line.
---
-
-	function tdmd.gcc.getincludedirs(cfg)
-		local result = {}
-		for _, dir in ipairs(cfg.includedirs) do
-			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
-		end
-		return result
-	end
-
---
--- Returns makefile-specific configuration rules.
---
-
-	function tdmd.gcc.getmakesettings(cfg)
-		local sysflags = tdmd.gcc.sysflags[cfg.architecture] or tdmd.gcc.sysflags[cfg.system] or {}
-		return sysflags.cfgsettings
-	end
-
 
 -- /////////////////////////////////////////////////////////////////////////
 -- tdmd + OPTLINK toolchain
 -- /////////////////////////////////////////////////////////////////////////
 
-	tdmd.optlink.sysflags =
-	{
-		universal = {
-			flags    = "",
-			ldflags  = "",
+--
+-- Return a list of LDFLAGS for a specific configuration.
+--
+
+	tdmd.optlink.ldflags = {
+		architecture = {
+			x32 = { "-m32" },
+			x64 = { "-m64" },
 		},
-		x32 = {
-			flags    = "",
-			ldflags  = "",
-		},
-		x64 = {
-			flags    = "",
-			ldflags  = "",
+		kind = {
+			SharedLib = "-shared",
+			StaticLib = "-lib",
 		}
 	}
 
-	function tdmd.optlink.getsysflags(cfg, field)
-		local result = {}
-
-		-- merge in system-level flags
-		local system = tdmd.optlink.sysflags[cfg.system]
-		if system then
-			result = table.join(result, system[field])
-		end
-
-		-- merge in architecture-level flags
-		local arch = tdmd.optlink.sysflags[cfg.architecture]
-		if arch then
-			result = table.join(result, arch[field])
-		end
-
-		return result
-	end
-
-	-- gettarget is common
-	tdmd.optlink.gettarget = tdmd.gcc.gettarget
-	-- getobjdir is common
-	tdmd.optlink.getobjdir = tdmd.gcc.getobjdir
-	-- getdefines is common
-	tdmd.optlink.getdefines = tdmd.gcc.getdefines
-	-- getflags is common
-	tdmd.optlink.getflags = tdmd.gcc.getflags
-
-
---
--- Returns a list of linker flags, based on the supplied configuration.
---
-
 	function tdmd.optlink.getldflags(cfg)
-		local flags = {}
+		local flags = config.mapFlags(cfg, tdmd.optlink.ldflags)
 
-		local sysflags = tdmd.optlink.getsysflags(cfg, 'ldflags')
-		flags = table.join(flags, sysflags)
+		-- Scan the list of linked libraries. If any are referenced with
+		-- paths, add those to the list of library search paths
+--		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
+		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
+			table.insert(flags, '-Llib "' .. project.getrelative(cfg.project, dir) .. '"')
+		end
 
 		return flags
 	end
 
-
---
--- Return a list of library search paths.
---
-
-	function tdmd.optlink.getlibdirflags(cfg)
-		local result = {}
-
---		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
---			table.insert(result, '-L-L' .. _MAKE.esc(value))
---		end
-
-		return result
-	end
 
 	--
 	-- Returns a list of linker flags for library names.
@@ -351,30 +161,168 @@
 
 	end
 
+
+-- /////////////////////////////////////////////////////////////////////////
+-- common dmd code (either toolchain)
+-- /////////////////////////////////////////////////////////////////////////
+
+	-- if we are compiling on windows, we need to specialise to OPTLINK as the linker
+-- OR!!!			if cfg.system ~= premake.WINDOWS then
+	if string.match( os.getversion().description, "Windows" ) ~= nil then
+		-- TODO: on windows, we may use OPTLINK or MSLINK (for Win64)...
+		premake.tools.dmd = tdmd.optlink
+	else
+		premake.tools.dmd = tdmd.gcc
+	end
+
+	local dmd = premake.tools.dmd
+
+
 --
--- Decorate include file search paths for the GCC command line.
+-- Returns list of D compiler flags for a configuration.
 --
 
-	function tdmd.optlink.getincludedirs(cfg)
+	dmd.dflags = {
+		architecture = {
+			x32 = "-m32",
+			x64 = "-m64",
+		},
+		flags = {
+			CodeCoverage	= "-cov",
+			Deprecated		= "-d",
+			Documentation	= "-D",
+			FatalWarnings	= "-w",
+			GenerateHeader	= "-H",
+			GenerateJSON	= "-X",
+			GenerateMap		= "-map",
+			NoBoundsCheck	= "-noboundscheck",
+			Profile			= "-profile",
+			Quiet			= "-quiet",
+--			Release			= "-release",
+			RetainPaths		= "-op",
+			Symbols			= "-g",
+			SymbolsLikeC	= "-gc",
+			UnitTest		= "-unittest",
+			Verbose			= "-v",
+		},
+		floatingpoint = {
+			None = "-nofloat",
+		},
+		kind = {
+			SharedLib = function(cfg)
+				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
+			end,
+		},
+		optimize = {
+			On = "-O -inline",
+			Full = "-O -inline",
+			Size = "-O -inline",
+			Speed = "-O -inline",
+		},
+		warnings = {
+			Default = "-wi",
+			Extra = "-wi",
+		}
+	}
+
+	function dmd.getdflags(cfg)
+		local flags = config.mapFlags(cfg, dmd.dflags)
+
+		if config.isDebugBuild(cfg) then
+			table.insert(flags, "-debug")
+		else
+			table.insert(flags, "-release")
+		end
+
+		-- TODO: When DMD gets CRT options, map StaticRuntime and DebugRuntime
+
+		if cfg.flags.Documentation then
+			if cfg.docname then
+				table.insert(flags, "-Df" .. premake.quoted(cfg.docname))
+			end
+			if cfg.docdir then
+				table.insert(flags, "-Dd" .. premake.quoted(cfg.docdir))
+			end
+		end
+		if cfg.flags.GenerateHeader then
+			if cfg.headername then
+				table.insert(flags, "-Hf" .. premake.quoted(cfg.headername))
+			end
+			if cfg.headerdir then
+				table.insert(flags, "-Hd" .. premake.quoted(cfg.headerdir))
+			end
+		end
+
+		return flags
+	end
+
+
+--
+-- Decorate versions for the DMD command line.
+--
+
+	function dmd.getversions(versions, level)
 		local result = {}
-		for _, dir in ipairs(cfg.includedirs) do
-			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
+		for _, version in ipairs(versions) do
+			table.insert(result, '-version=' .. version)
+		end
+		if level then
+			table.insert(result, '-version=' .. level)
 		end
 		return result
 	end
 
 
-	-- if we are compiling on windows, we need to specialise to OPTLINK as the linker
--- OR!!!	if cfg.system ~= premake.WINDOWS then
-	if string.match( os.getversion().description, "Windows" ) ~= nil then
-		premake.tools.dmd = tdmd.optlink
-		premake.tools.dmd.sysflags = tdmd.optlink.sysflags
-	else
-		premake.tools.dmd = tdmd.gcc
-		premake.tools.dmd.sysflags = tdmd.gcc.sysflags
+--
+-- Decorate debug constants for the DMD command line.
+--
+
+	function dmd.getdebug(constants, level)
+		local result = {}
+		for _, constant in ipairs(constants) do
+			table.insert(result, '-debug=' .. constant)
+		end
+		if level then
+			table.insert(result, '-debug=' .. level)
+		end
+		return result
 	end
 
-	local dmd = premake.tools.dmd
+
+--
+-- Decorate import file search paths for the DMD command line.
+--
+
+	function dmd.getimportdirs(cfg, dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-I' .. premake.quoted(dir))
+		end
+		return result
+	end
+
+
+--
+-- Returns the target name specific to compiler
+--
+
+	function dmd.gettarget(name)
+		return "-of" .. name
+	end
+
+
+--
+-- Returns makefile-specific configuration rules.
+--
+
+	dmd.makesettings = {
+	}
+
+	function dmd.getmakesettings(cfg)
+		local settings = config.mapFlags(cfg, dmd.makesettings)
+		return table.concat(settings)
+	end
 
 
 --

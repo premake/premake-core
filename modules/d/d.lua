@@ -21,7 +21,7 @@
 	-- Extend the package path to include the directory containing this
 	-- script so we can easily 'require' additional resources from
 	-- subdirectories as necessary
-	local this_dir = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]]; 
+	local this_dir = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]];
 	package.path = this_dir .. "tools/?.lua;" .. this_dir .. "actions/?.lua;".. package.path
 --	d.printf( "Added D tools/actions directories to LUA_PATH: %s", package.path )
 
@@ -34,23 +34,24 @@
 
 	api.addAllowed("language", premake.D)
 	api.addAllowed("toolset", { "dmd", "gdc", "ldc" })
+	api.addAllowed("floatingpoint", "None")
 	api.addAllowed("flags", {
-		"SymbolsLikeC",
+		"CodeCoverage",
 		"Deprecated",
 		"Documentation",
-		"PIC",
-		"NoBoundsCheck",
-		"UnitTest",
-		"GenerateJSON",
-		"Verbose",
-		"Release",
-		"Inline",
 		"GenerateHeader",
+		"GenerateJSON",
 		"GenerateMap",
-		"RetainPaths",
+		"NoBoundsCheck",
+--		"PIC",		// Note: this should be supported elsewhere...
 		"Profile",
 		"Quiet",
-		"CodeCoverage"
+--		"Release",	// Note: We infer this flag from config.isDebugBuild()
+		"RetainPaths",
+		"SeparateCompilation",
+		"SymbolsLikeC",
+		"UnitTest",
+		"Verbose",
 	})
 
 

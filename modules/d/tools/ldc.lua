@@ -6,10 +6,11 @@
 
 	premake.tools.ldc = { }
 
-    local d = premake.extensions.d
 	local ldc = premake.tools.ldc
 	local project = premake.project
 	local config = premake.config
+    local d = premake.extensions.d
+
 
 --
 -- Set default tools
@@ -18,47 +19,140 @@
 	ldc.dc = "ldc2"
 	ldc.namestyle = "posix"
 
---
--- Translation of Premake flags into LDC flags
---
-
-	local flags =
-	{
-		ExtraWarnings	= "-w",
-		Optimize		= "-O2",
-		Symbols			= "-g",
-		SymbolsLikeC	= "-gc",
-		Release			= "-release",
-		Documentation	= "-D",
-		GenerateHeader	= "-H",
-		RetainPaths		= "-op",
-		Verbose			= "-v",
-		UnitTest		= "-unittest",
-	}
-
-
 
 --
--- Map platforms to flags
+-- Returns list of D compiler flags for a configuration.
 --
 
-	ldc.sysflags =
-	{
-		universal = {
-			flags    = "",
-			ldflags  = "",
+
+	ldc.dflags = {
+		architecture = {
+			x32 = "-m32",
+			x64 = "-m64",
+--			arm = "-march=arm",
+--			ppc = "-march=ppc32",
+--			ppc64 = "-march=ppc64",
+--			spu = "-march=cellspu",
+--			mips = "-march=mips",	-- -march=mipsel?
 		},
-		x32 = {
-			flags    = "-m32",
-			ldflags  = "-L-L/usr/lib",
+		flags = {
+			Deprecated		= "-d",
+			Documentation	= "-D",
+			FatalWarnings	= "-w", -- Use LLVM flag? : "-fatal-assembler-warnings",
+			GenerateHeader	= "-H",
+			GenerateJSON	= "-X",
+			NoBoundsCheck	= "-disable-boundscheck",
+--			Release			= "-release",
+			RetainPaths		= "-op",
+			Symbols			= "-g",
+			SymbolsLikeC	= "-gc",
+			UnitTest		= "-unittest",
+			Verbose			= "-v",
 		},
-		x64 = {
-			flags    = "-m64",
-			ldflags  = "-L-L/usr/lib64",
+		floatingpoint = {
+			Fast = "-fp-contract=fast -enable-unsafe-fp-math",
+--			Strict = "-ffloat-store",
+		},
+		kind = {
+			SharedLib = function(cfg)
+				if cfg.system ~= premake.WINDOWS then return "-relocation-model=pic" end
+			end,
+		},
+		optimize = {
+			Off = "-O0",
+			On = "-O2",
+			Debug = "-O0",
+			Full = "-O3",
+			Size = "-Oz",
+			Speed = "-O3",
+		},
+		vectorextensions = {
+			SSE = "-mattr=+sse",
+			SSE2 = "-mattr=+sse2",
+		},
+		warnings = {
+			Default = "-wi",
+			Extra = "-wi",	-- TODO: is there a way to get extra warnings?
 		}
 	}
 
-	local sysflags = ldc.sysflags
+	function ldc.getdflags(cfg)
+		local flags = config.mapFlags(cfg, ldc.dflags)
+
+		if config.isDebugBuild(cfg) then
+			table.insert(flags, "-d-debug")
+		else
+			table.insert(flags, "-release")
+		end
+
+		-- TODO: When DMD gets CRT options, map StaticRuntime and DebugRuntime
+
+		if cfg.flags.Documentation then
+			if cfg.docname then
+				table.insert(flags, "-Df=" .. premake.quoted(cfg.docname))
+			end
+			if cfg.docdir then
+				table.insert(flags, "-Dd=" .. premake.quoted(cfg.docdir))
+			end
+		end
+		if cfg.flags.GenerateHeader then
+			if cfg.headername then
+				table.insert(flags, "-Hf=" .. premake.quoted(cfg.headername))
+			end
+			if cfg.headerdir then
+				table.insert(flags, "-Hd=" .. premake.quoted(cfg.headerdir))
+			end
+		end
+
+		return flags
+	end
+
+
+--
+-- Decorate versions for the DMD command line.
+--
+
+	function ldc.getversions(versions, level)
+		local result = {}
+		for _, version in ipairs(versions) do
+			table.insert(result, '-d-version=' .. version)
+		end
+		if level then
+			table.insert(result, '-d-version=' .. level)
+		end
+		return result
+	end
+
+
+--
+-- Decorate debug constants for the DMD command line.
+--
+
+	function ldc.getdebug(constants, level)
+		local result = {}
+		for _, constant in ipairs(constants) do
+			table.insert(result, '-d-debug=' .. constant)
+		end
+		if level then
+			table.insert(result, '-d-debug=' .. level)
+		end
+		return result
+	end
+
+
+--
+-- Decorate import file search paths for the DMD command line.
+--
+
+	function ldc.getimportdirs(cfg, dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-I=' .. premake.quoted(dir))
+		end
+		return result
+	end
+
 
 --
 -- Returns the target name specific to compiler
@@ -68,155 +162,88 @@
 		return "-of=" .. name
 	end
 
---
--- Returns the object directory name specific to compiler
---
-
-	function ldc.getobjdir(name)
-		return "-od=" .. name
-	end
-
-
-	function ldc.getsysflags(cfg, field)
-		local result = {}
-
-		-- merge in system-level flags
-		local system = sysflags[cfg.system]
-		if system then
-			result = table.join(result, system[field])
-		end
-
-		-- merge in architecture-level flags
-		local arch = sysflags[cfg.architecture]
-		if arch then
-			result = table.join(result, arch[field])
-		end
-
-		return result
-	end
-
 
 --
--- Returns a list of compiler flags, based on the supplied configuration.
+-- Return a list of LDFLAGS for a specific configuration.
 --
 
-	function ldc.getflags(cfg)
-		local f = ldc.getsysflags(cfg, 'flags')
-
-		--table.insert( f, "-v" )
-		if cfg.kind == "StaticLib" then
-			table.insert( f, "-lib" )
-		elseif cfg.kind == "SharedLib" and cfg.system ~= "windows" then
-			table.insert( f, "-relocation-model=pic" )
-		end
-
-		if premake.config.isDebugBuild( cfg ) then
-			table.insert( f, "-d-debug" )
-		else
-			table.insert( f, "-release" )
-		end
-		return f
-	end
-
---
--- Returns a list of linker flags, based on the supplied configuration.
---
+	ldc.ldflags = {
+		architecture = {
+			x32 = { "-m32", "-L=-L/usr/lib" },
+			x64 = { "-m64", "-L=-L/usr/lib64" },
+		},
+		kind = {
+			SharedLib = "-shared",
+			StaticLib = "-lib",
+		},
+	}
 
 	function ldc.getldflags(cfg)
-		local result = {}
+		local flags = config.mapFlags(cfg, ldc.ldflags)
 
-		local sysflags = ldc.getsysflags(cfg, 'ldflags')
-		table.join(result, sysflags)
-
-		return result
-	end
-
-
---
--- Return a list of library search paths.
---
-
-	function ldc.getlibdirflags(cfg)
-		local result = {}
-
-		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
-			table.insert(result, '-L-L' .. _MAKE.esc(value))
+		-- Scan the list of linked libraries. If any are referenced with
+		-- paths, add those to the list of library search paths
+--		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
+		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
+			table.insert(flags, '-L=-L' .. project.getrelative(cfg.project, dir))
 		end
 
-		return result
+		return flags
 	end
 
 
 --
--- Returns a list of linker flags for library names.
+-- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function ldc.getlinks(cfg)
+	function ldc.getlinks(cfg, systemonly)
 		local result = {}
 
-		local links = config.getlinks(cfg, "dependencies", "object")
-		for _, link in ipairs(links) do
-			-- skip external project references, since I have no way
-			-- to know the actual output target path
-			if not link.project.externalname then
-				local linkinfo = config.getlinkinfo(link)
-				if link.kind == premake.STATICLIB then
-					-- Don't use "-l" flag when linking static libraries; instead use
-					-- path/libname.a to avoid linking a shared library of the same
-					-- name if one is present
-					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
-				else
-					table.insert(result, "-L-l" .. linkinfo.basename)
+		local links
+		if not systemonly then
+			links = config.getlinks(cfg, "siblings", "object")
+			for _, link in ipairs(links) do
+				-- skip external project references, since I have no way
+				-- to know the actual output target path
+				if not link.project.external then
+					if link.kind == premake.STATICLIB then
+						-- Don't use "-l" flag when linking static libraries; instead use
+						-- path/libname.a to avoid linking a shared library of the same
+						-- name if one is present
+						table.insert(result, "-L=" .. project.getrelative(cfg.project, link.linktarget.abspath))
+					else
+						table.insert(result, "-L=-l" .. link.linktarget.basename)
+					end
 				end
 			end
 		end
 
 		-- The "-l" flag is fine for system libraries
-		links = config.getlinks(cfg, "system", "basename")
+		links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))
 			elseif path.isobjectfile(link) then
-				table.insert(result, link)
+				table.insert(result, "-L=" .. link)
 			else
-				table.insert(result, "-L-l" .. link)
+				table.insert(result, "-L=-l" .. path.getbasename(link))
 			end
 		end
 
 		return result
-
 	end
 
 
 --
--- Decorate defines for the ldc command line.
+-- Returns makefile-specific configuration rules.
 --
 
-	function ldc.getdefines(defines)
-		local result = { }
-		for _,def in ipairs(defines) do
-			table.insert(result, '-d-version=' .. def)
-		end
-		return result
-	end
-
-
-
---
--- Decorate include file search paths for the ldc command line.
---
-
-	function ldc.getincludedirs(cfg)
-		local result = {}
-		for _, dir in ipairs(cfg.includedirs) do
-			table.insert(result, "-I=" .. project.getrelative(cfg.project, dir))
-		end
-		return result
-	end
+	ldc.makesettings = {
+	}
 
 	function ldc.getmakesettings(cfg)
-		local sysflags = ldc.sysflags[cfg.architecture] or ldc.sysflags[cfg.system] or {}
-		return sysflags.cfgsettings
+		local settings = config.mapFlags(cfg, ldc.makesettings)
+		return table.concat(settings)
 	end
 
 

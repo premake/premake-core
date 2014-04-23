@@ -8,6 +8,7 @@
 
 	local d = premake.extensions.d
 	local make = premake.make
+	local cpp = premake.make.cpp
 	local dmake = d.make
 	local project = premake.project
 	local config = premake.config
@@ -27,6 +28,21 @@
 	gmake.valid_languages = table.join(gmake.valid_languages, { premake.D } )
 	gmake.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
+
+	function dmake.separateCompilation(prj)
+		local some = false
+		local all = true
+		for cfg in project.eachconfig(prj) do
+			if cfg.flags.SeparateCompilation then
+				some = true
+			else
+				all = false
+			end
+		end
+		return iif(all, "all", iif(some, "some", "none"))
+	end
+
+
 --
 -- Override the GMake action 'onproject' funtion to provide
 -- D knowledge...
@@ -38,8 +54,21 @@
 			premake.generate(prj, makefile, dmake.generate)
 			return
 		end
- 		oldfn(prj)
+		oldfn(prj)
 	end)
+
+	premake.override( make, "objdir", function(oldfn, cfg)
+		if cfg.project.language ~= "D" or cfg.flags.SeparateCompilation then
+			oldfn(cfg)
+		end
+	end)
+
+	premake.override( make, "objDirRules", function(oldfn, prj)
+		if prj.language ~= "D" or dmake.separateCompilation(prj) ~= "none" then
+			oldfn(prj)
+		end
+	end)
+
 
 ---
 -- Add namespace for element definition lists for premake.callarray()
@@ -64,7 +93,7 @@
 		"cppCleanRules",	-- D clean code is identical to C/C++
 		"preBuildRules",
 		"preLinkRules",
-		"dFileRules",		-- TODO: there is probably opportunity for sharing here
+		"dFileRules",
 	}
 
 	function dmake.generate(prj)
@@ -77,7 +106,15 @@
 		_p('')
 	end
 
-	function make.dTargetRules(prj)
+	function dmake.buildRule(prj)
+		_p('$(TARGET): $(LDDEPS)')
+		_p('\t@echo Building %s', prj.name)
+		_p('\t$(SILENT) $(BUILDCMD)')
+		_p('\t$(POSTBUILDCMDS)')
+		_p('')
+	end
+
+	function dmake.linkRule(prj)
 		_p('$(TARGET): $(OBJECTS) $(LDDEPS)')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
@@ -85,22 +122,47 @@
 		_p('')
 	end
 
-	function make.dFileRules(prj)
-		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
-			onleaf = function(node, depth)
-				-- check to see if this file has custom rules
-				dmake.standardFileRules(prj, node, toolset)
+	function make.dTargetRules(prj)
+		local separateCompilation = dmake.separateCompilation(prj)
+		if separateCompilation == "all" then
+			dmake.linkRule(prj)
+		elseif separateCompilation == "none" then
+			dmake.buildRule(prj)
+		else
+			for cfg in project.eachconfig(prj) do
+				_x('ifeq ($(config),%s)', cfg.shortname)
+				if cfg.flags.SeparateCompilation then
+					dmake.linkRule(prj)
+				else
+					dmake.buildRule(prj)
+				end
+				_p('endif')
+				_p('')
 			end
-		})
-		_p('')
+		end
 	end
 
-	function dmake.standardFileRules(prj, node, toolset)
-		_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
-		_p('\t@echo $(notdir $<)')
-		_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
+	function make.dFileRules(prj)
+		local separateCompilation = dmake.separateCompilation(prj)
+		if separateCompilation ~= "none" then
+			make.cppFileRules(prj)
+		end
 	end
+
+--
+-- Override the 'standard' file rule to support D source files
+--
+
+	premake.override( cpp, "standardFileRules", function(oldfn, prj, node)
+		-- D file
+		if path.isdfile(node.abspath) then
+			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
+			_p('\t@echo $(notdir $<)')
+			_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
+		else
+	 		oldfn(prj, node)
+	 	end
+	end)
 
 
 --
@@ -112,8 +174,9 @@
 		"target",
 		"dTarget",
 		"objdir",
-		"defines",
-		"includes",
+		"versions",
+		"debug",
+		"imports",
 		"dFlags",
 		"libs",
 		"ldDeps",
@@ -151,48 +214,46 @@
 	end
 
 	function make.dTarget(cfg, toolset)
-		_p('  OUTPUTFLAG = %s', toolset.gettarget("$@"))
+		if cfg.flags.SeparateCompilation then
+			_p('  OUTPUTFLAG = %s', toolset.gettarget('"$@"'))
+		end
+	end
+
+	function make.versions(cfg, toolset)
+		_p('  VERSIONS +=%s', make.list(toolset.getversions(cfg.versionconstants, cfg.versionlevel)))
+	end
+
+	function make.debug(cfg, toolset)
+		_p('  DEBUG +=%s', make.list(toolset.getdebug(cfg.debugconstants, cfg.debuglevel)))
+	end
+
+	function make.imports(cfg, toolset)
+		local includes = premake.esc(toolset.getimportdirs(cfg, cfg.includedirs))
+		_p('  IMPORTS +=%s', make.list(includes))
 	end
 
 	function make.dFlags(cfg, toolset)
-		_p('  ALL_DFLAGS += $(DFLAGS) $(ARCH) $(DEFINES) $(INCLUDES) %s', table.concat(table.join(toolset.getflags(cfg), cfg.buildoptions), " "))
+		_p('  ALL_DFLAGS += $(DFLAGS)%s $(VERSIONS) $(DEBUG) $(IMPORTS) $(ARCH)', make.list(table.join(toolset.getdflags(cfg), cfg.buildoptions)))
 	end
 
--- TODO: These are the C++ flags, dFlags() should probably be more like these...
---	function make.cppFlags(cfg, toolset)
---		_p('  ALL_CPPFLAGS += $(CPPFLAGS)%s $(DEFINES) $(INCLUDES)', make.list(toolset.getcppflags(cfg)))
---	end
---	function make.cFlags(cfg, toolset)
---		_p('  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
---	end
---	function make.cxxFlags(cfg, toolset)
---		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
---	end
-
 	function make.dLinkCmd(cfg, toolset)
-		_p('  LINKCMD   = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
-
--- TODO: this is the C++ version, we should more carefully verify that the D version is correct...
---		if cfg.kind == premake.STATICLIB then
---			if cfg.architecture == premake.UNIVERSAL then
---				_p('  LINKCMD = libtool -o $(TARGET) $(OBJECTS)')
---			else
---				_p('  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)')
---			end
---		else
-			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
-			--   but had trouble linking to certain static libs; $(OBJECTS) moved up
-			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
-			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
+		if cfg.flags.SeparateCompilation then
+			_p('  LINKCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
 
 --			local cc = iif(cfg.language == "C", "CC", "CXX")
 --			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
---		end
+		else
+			_p('  BUILDCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_DFLAGS) $(ALL_LDFLAGS) $(LIBS) $(SOURCEFILES)')
+		end
 	end
 
 	function make.dAllRules(cfg, toolset)
 		-- TODO: The C++ version has some special cases for OSX and Windows... check whether they should be here too?
-		_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+		if cfg.flags.SeparateCompilation then
+			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+		else
+			_p('all: $(TARGETDIR) prebuild prelink $(TARGET)')
+		end
 		_p('\t@:')
 --		_p('')
 	end
@@ -207,10 +268,10 @@
 	function make.dObjects(prj)
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
-		local root = { objects={}, resources={} }
+		local root = { sourcefiles={}, objects={} }
 		local configs = {}
 		for cfg in project.eachconfig(prj) do
-			configs[cfg] = { objects={}, resources={} }
+			configs[cfg] = { sourcefiles={}, objects={} }
 		end
 
 		-- now walk the list of files in the project
@@ -233,38 +294,48 @@
 				end
 
 				if not custom then
-					-- identify the file type
-					local kind
-					if path.isdfile(node.abspath) then
-						kind = "objects"
-					end
-
 					-- skip files that aren't compiled
-					if not custom and not kind then
+					if not path.isdfile(node.abspath) then
 						return
 					end
 
-					-- assign a unique object file name to avoid collisions
+					local sourcename = node.relpath
+
+					-- TODO: assign a unique object file name to avoid collisions
 					local objectname = "$(OBJDIR)/" .. node.objname .. ".o"
 
 					-- if this file exists in all configurations, write it to
 					-- the project's list of files, else add to specific cfgs
 					if inall then
-						table.insert(root[kind], objectname)
+						table.insert(root.sourcefiles, sourcename)
+						table.insert(root.objects, objectname)
 					else
 						for cfg in project.eachconfig(prj) do
 							if incfg[cfg] then
-								table.insert(configs[cfg][kind], objectname)
+								table.insert(configs[cfg].sourcefiles, sourcename)
+								table.insert(configs[cfg].objects, objectname)
 							end
 						end
 					end
 
 				else
-					error("No support for custom build rules in D")
+					for cfg in project.eachconfig(prj) do
+						local filecfg = incfg[cfg]
+						if filecfg then
+							-- if the custom build outputs an object file, add it to
+							-- the link step automatically to match Visual Studio
+							local output = project.getrelative(prj, filecfg.buildoutputs[1])
+							if path.isobjectfile(output) then
+								table.insert(configs[cfg].objects, output)
+							end
+						end
+					end
 				end
 
 			end
 		})
+
+		local separateCompilation = dmake.separateCompilation(prj)
 
 		-- now I can write out the lists, project level first...
 		function listobjects(var, list)
@@ -275,14 +346,22 @@
 			_p('')
 		end
 
-		listobjects('OBJECTS :=', root.objects, 'o')
+		if separateCompilation ~= "all" then
+			listobjects('SOURCEFILES :=', root.sourcefiles)
+		end
+		if separateCompilation ~= "none" then
+			listobjects('OBJECTS :=', root.objects, 'o')
+		end
 
 		-- ...then individual configurations, as needed
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
-			if #files.objects > 0 then
+			if (#files.sourcefiles > 0 and separateCompilation ~= "all") or (#files.objects > 0 and separateCompilation ~= "none") then
 				_x('ifeq ($(config),%s)', cfg.shortname)
-				if #files.objects > 0 then
+				if #files.sourcefiles > 0 and separateCompilation ~= "all" then
+					listobjects('  SOURCEFILES +=', files.sourcefiles)
+				end
+				if #files.objects > 0 and separateCompilation ~= "none" then
 					listobjects('  OBJECTS +=', files.objects)
 				end
 				_p('endif')

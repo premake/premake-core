@@ -6,62 +6,146 @@
 
 	premake.tools.gdc = { }
 
-    local d = premake.extensions.d
 	local gdc = premake.tools.gdc
 	local project = premake.project
 	local config = premake.config
+    local d = premake.extensions.d
 
---
--- Set default tools
---
+	--
+	-- Set default tools
+	--
 
 	gdc.dc = "gdc"
 
 
 --
--- Translation of Premake flags into GDC flags
+-- Returns list of D compiler flags for a configuration.
 --
 
-	local flags =
-	{
-		ExtraWarnings	= "-w",
-		Optimize		= "-O2",
-		Symbols			= "-g -fdebug",
-		SymbolsLikeC	= "-fdebug-c",
-		Deprecated		= "-fdeprecated",
-		Release			= "-frelease",
-		Documentation	= "-fdoc",
-		PIC				= "-fPIC",
-		NoBoundsCheck	= "-fno-bounds-check",
-		NoFloat			= "-nofloat",
-		UnitTest		= "-funittest",
-		GenerateJSON	= "-fXf",
-		Verbose			= "-fd-verbose"
-	}
-
-
-
---
--- Map platforms to flags
---
-
-	gdc.sysflags =
-	{
-		universal = {
-			flags    = "",
-			ldflags  = "",
+	gdc.dflags = {
+		architecture = {
+			x32 = "-m32",
+			x64 = "-m64",
 		},
-		x32 = {
-			flags    = "-m32",
-			ldflags  = "-L-L/usr/lib",
+		flags = {
+			Deprecated		= "-fdeprecated",
+			Documentation	= "-fdoc",
+			FatalWarnings	= "-Werror",
+			GenerateHeader	= "-fintfc",
+			GenerateJSON	= "-fX",
+			NoBoundsCheck	= "-fno-bounds-check",
+--			Release			= "-frelease",
+			RetainPaths		= "-op",
+			Symbols			= "-g",
+			SymbolsLikeC	= "-fdebug-c",
+			UnitTest		= "-funittest",
+			Verbose			= "-fd-verbose",
 		},
-		x64 = {
-			flags    = "-m64",
-			ldflags  = "-L-L/usr/lib64",
+		floatingpoint = {
+			Fast = "-ffast-math",
+			Strict = "-ffloat-store",
+		},
+		kind = {
+			SharedLib = function(cfg)
+				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
+			end,
+		},
+		optimize = {
+			Off = "-O0",
+			On = "-O2 -finline-functions",
+			Debug = "-Og",
+			Full = "-O3 -finline-functions",
+			Size = "-Os -finline-functions",
+			Speed = "-O3 -finline-functions",
+		},
+		vectorextensions = {
+			SSE = "-msse",
+			SSE2 = "-msse2",
+		},
+		warnings = {
+--			Off = "-w",
+--			Default = "-w",	-- TODO: check this...
+			Extra = "-Wall -Wextra",
 		}
 	}
 
-	local sysflags = gdc.sysflags
+	function gdc.getdflags(cfg)
+		local flags = config.mapFlags(cfg, gdc.dflags)
+
+		if config.isDebugBuild(cfg) then
+			table.insert(flags, "-fdebug")
+		else
+			table.insert(flags, "-frelease")
+		end
+
+		-- TODO: When DMD gets CRT options, map StaticRuntime and DebugRuntime
+
+		if cfg.flags.Documentation then
+			if cfg.docname then
+				table.insert(flags, "-fdoc-file=" .. premake.quoted(cfg.docname))
+			end
+			if cfg.docdir then
+				table.insert(flags, "-fdoc-dir=" .. premake.quoted(cfg.docdir))
+			end
+		end
+		if cfg.flags.GenerateHeader then
+			if cfg.headername then
+				table.insert(flags, "-fintfc-file=" .. premake.quoted(cfg.headername))
+			end
+			if cfg.headerdir then
+				table.insert(flags, "-fintfc-dir=" .. premake.quoted(cfg.headerdir))
+			end
+		end
+
+		return flags
+	end
+
+
+--
+-- Decorate versions for the DMD command line.
+--
+
+	function gdc.getversions(versions, level)
+		local result = {}
+		for _, version in ipairs(versions) do
+			table.insert(result, '-fversion=' .. version)
+		end
+		if level then
+			table.insert(result, '-fversion=' .. level)
+		end
+		return result
+	end
+
+
+--
+-- Decorate debug constants for the DMD command line.
+--
+
+	function gdc.getdebug(constants, level)
+		local result = {}
+		for _, constant in ipairs(constants) do
+			table.insert(result, '-fdebug=' .. constant)
+		end
+		if level then
+			table.insert(result, '-fdebug=' .. level)
+		end
+		return result
+	end
+
+
+--
+-- Decorate import file search paths for the DMD command line.
+--
+
+	function gdc.getimportdirs(cfg, dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-I' .. premake.quoted(dir))
+		end
+		return result
+	end
+
 
 --
 -- Returns the target name specific to compiler
@@ -73,158 +157,94 @@
 
 
 --
--- Returns the object directory name specific to compiler
+-- Return a list of LDFLAGS for a specific configuration.
 --
 
-	function gdc.getobjdir(name)
-		return "-fod=" .. name
-	end
-
-	function gdc.getsysflags(cfg, field)
-		local result = {}
-
-		-- merge in system-level flags
-		local system = sysflags[cfg.system]
-		if system then
-			result = table.join(result, system[field])
-		end
-
-		-- merge in architecture-level flags
-		local arch = sysflags[cfg.architecture]
-		if arch then
-			result = table.join(result, arch[field])
-		end
-
-		return result
-	end
-
-
-
---
--- Returns a list of compiler flags, based on the supplied configuration.
---
-	function gdc.getflags(cfg)
-		local f = gdc.getsysflags(cfg, 'flags')
-
-		--table.insert( f, "-v" )
-		if cfg.kind == premake.STATICLIB then
-			table.insert( f, "-static" )
-		elseif cfg.kind == premake.SHAREDLIB then
-			table.insert( f, "-shared" )
-			if cfg.system ~= premake.WINDOWS then
-				table.insert( f, "-fPIC" )
-			end
-		end
-
-		if premake.config.isDebugBuild( cfg ) then
-			table.insert( f, flags.Symbols )
-		else
-			table.insert( f, flags.Release )
-		end
-
-		return f
-	end
-
-
---
--- Returns a list of linker flags, based on the supplied configuration.
---
+	gdc.ldflags = {
+		architecture = {
+			x32 = { "-m32", "-L/usr/lib" },
+			x64 = { "-m64", "-L/usr/lib64" },
+		},
+		kind = {
+			SharedLib = function(cfg)
+				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				if cfg.system == "windows" and not cfg.flags.NoImportLib then
+					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+				end
+				return r
+			end,
+			WindowedApp = function(cfg)
+				if cfg.system == premake.WINDOWS then return "-mwindows" end
+			end,
+		},
+	}
 
 	function gdc.getldflags(cfg)
-		local result = {}
+		local flags = config.mapFlags(cfg, gdc.ldflags)
 
-		local sysflags = gdc.getsysflags(cfg, 'ldflags')
-		table.join(result, sysflags)
-
-		return result
-	end
-
-
---
--- Return a list of library search paths.
---
-
-	function gdc.getlibdirflags(cfg)
-		local result = {}
-
-		for _, value in ipairs(premake.getlinks(cfg, "all", "directory")) do
-			table.insert(result, '-L-L' .. _MAKE.esc(value))
+		-- Scan the list of linked libraries. If any are referenced with
+		-- paths, add those to the list of library search paths
+--		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
+		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
+			table.insert(flags, '-Wl,-L' .. project.getrelative(cfg.project, dir))
 		end
 
-		return result
+		return flags
 	end
 
 
 --
--- Returns a list of linker flags for library names.
+-- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function gdc.getlinks(cfg)
+	function gdc.getlinks(cfg, systemonly)
 		local result = {}
 
-		local links = config.getlinks(cfg, "dependencies", "object")
-		for _, link in ipairs(links) do
-			-- skip external project references, since I have no way
-			-- to know the actual output target path
-			if not link.project.externalname then
-				local linkinfo = config.getlinkinfo(link)
-				if link.kind == premake.STATICLIB then
-					-- Don't use "-l" flag when linking static libraries; instead use
-					-- path/libname.a to avoid linking a shared library of the same
-					-- name if one is present
-					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
-				else
-					table.insert(result, "-Wl,-l" .. linkinfo.basename)
+		local links
+		if not systemonly then
+			links = config.getlinks(cfg, "siblings", "object")
+			for _, link in ipairs(links) do
+				-- skip external project references, since I have no way
+				-- to know the actual output target path
+				if not link.project.external then
+					if link.kind == premake.STATICLIB then
+						-- Don't use "-l" flag when linking static libraries; instead use
+						-- path/libname.a to avoid linking a shared library of the same
+						-- name if one is present
+						table.insert(result, "-Wl," .. project.getrelative(cfg.project, link.linktarget.abspath))
+					else
+						table.insert(result, "-Wl,-l" .. link.linktarget.basename)
+					end
 				end
 			end
 		end
 
 		-- The "-l" flag is fine for system libraries
-		links = config.getlinks(cfg, "system", "basename")
+		links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
 				table.insert(result, "-framework " .. path.getbasename(link))
 			elseif path.isobjectfile(link) then
-				table.insert(result, link)
+				table.insert(result, "-Wl," .. link)
 			else
-				table.insert(result, "-Wl,-l" .. link)
+				table.insert(result, "-Wl,-l" .. path.getbasename(link))
 			end
 		end
 
 		return result
-
 	end
 
 
 --
--- Decorate defines for the gdc command line.
+-- Returns makefile-specific configuration rules.
 --
 
-	function gdc.getdefines(defines)
-		local result = { }
-		for _,def in ipairs(defines) do
-			table.insert(result, '-fversion=' .. def)
-		end
-		return result
-	end
-
-
-
---
--- Decorate include file search paths for the gdc command line.
---
-
-	function gdc.getincludedirs(cfg)
-		local result = {}
-		for _, dir in ipairs(cfg.includedirs) do
-			table.insert(result, "-I" .. project.getrelative(cfg.project, dir))
-		end
-		return result
-	end
+	gdc.makesettings = {
+	}
 
 	function gdc.getmakesettings(cfg)
-		local sysflags = gdc.sysflags[cfg.architecture] or gdc.sysflags[cfg.system] or {}
-		return sysflags.cfgsettings
+		local settings = config.mapFlags(cfg, gdc.makesettings)
+		return table.concat(settings)
 	end
 
 
