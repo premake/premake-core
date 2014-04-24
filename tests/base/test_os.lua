@@ -1,7 +1,7 @@
 --
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("base_os")
@@ -80,6 +80,11 @@
 	function suite.matchfiles_OnLeadingDotSlashWithPath()
 		local result = os.matchfiles("./folder/*.lua")
 		test.istrue(table.contains(result, "folder/ok.lua"))
+	end
+
+	function suite.matchfiles_OnDottedFile()
+		local result = os.matchfiles("../.*")
+		test.istrue(table.contains(result, "../.hgignore"))
 	end
 
 
