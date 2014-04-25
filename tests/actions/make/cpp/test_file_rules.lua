@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_file_rules.lua
 -- Validate the makefile source building rules.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("make_cpp_file_rules")
@@ -69,7 +69,7 @@ $(OBJDIR)/test.o: src/test.cpp
 
 	function suite.customBuildRule()
 		files { "hello.x" }
-		configuration "**.x"
+		filter "files:**.x"
 			buildmessage "Compiling %{file.name}"
 			buildcommands {
 				'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',

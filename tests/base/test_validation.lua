@@ -1,7 +1,7 @@
 --
 -- tests/base/test_validation.lua
 -- Verify the project information sanity checking.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-20124 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("premake_validation")
@@ -100,7 +100,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
+		filter "Debug"
 			startproject "MyProject"
 		premake.validate()
 		test.stderr("'startproject' on config")
@@ -123,7 +123,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
+		filter "Debug"
 			location "MyProject"
 		premake.validate()
 		test.stderr("'location' on config")
@@ -135,7 +135,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
+		filter "Debug"
 			vpaths { ["Headers"] = "**.h" }
 		premake.validate()
 		test.stderr("'vpaths' on config")
@@ -147,7 +147,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
+		filter "Debug"
 			configurations "Deployment"
 		premake.validate()
 		test.stderr("'configurations' on config")

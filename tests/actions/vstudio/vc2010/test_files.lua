@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_files.lua
 -- Validate generation of files block in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	local suite =  test.declare("vstudio_vs2010_files")
@@ -71,7 +71,7 @@
 
 	function suite.customBuild_onBuildRule()
 		files { "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 		prepare()
@@ -91,7 +91,7 @@
 
 	function suite.customBuild_onBuildRuleWithMessage()
 		files { "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildmessage "Compiling shader $(InputFile)"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
@@ -138,7 +138,7 @@
 
 	function suite.excludedFromBuild_onExcludedFile()
 		files { "hello.cpp" }
-		configuration "Debug"
+		filter "Debug"
 		removefiles { "hello.cpp" }
 		prepare()
 		test.capture [[
@@ -152,7 +152,7 @@
 
 	function suite.excludedFromBuild_onExcludeFlag()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
@@ -167,7 +167,7 @@
 
 	function suite.excludedFromBuild_onResourceFile_excludedFile()
 		files { "hello.rc" }
-		configuration "Debug"
+		filter "Debug"
 		removefiles { "hello.rc" }
 		prepare()
 		test.capture [[
@@ -181,7 +181,7 @@
 
 	function suite.excludedFromBuild_onResourceFile_excludeFlag()
 		files { "hello.rc" }
-		configuration "hello.rc"
+		filter "files:hello.rc"
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
@@ -197,7 +197,7 @@
 	function suite.excludedFromBuild_onResourceFile_excludeFlag_nonWindows()
 		files { "hello.rc" }
 		system "PS3"
-		configuration "hello.rc"
+		filter "files:hello.rc"
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
@@ -209,10 +209,10 @@
 
 	function suite.excludedFromBuild_onCustomBuildRule_excludedFile()
 		files { "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
-		configuration "Debug"
+		filter "Debug"
 			removefiles { "hello.cg" }
 		prepare()
 		test.capture [[
@@ -228,7 +228,7 @@
 
 	function suite.excludedFromBuild_onCustomBuildRule_excludeFlag()
 		files { "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 			flags { "ExcludeFromBuild" }
@@ -250,10 +250,10 @@
 
 	function suite.excludedFromBuild_onCustomBuildRule_withNoCommands()
 		files { "hello.cg" }
-		configuration { "**.cg", "Debug" }
+		filter { "files:**.cg", "Debug" }
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
-		configuration { "**.cg" }
+		filter { "files:**.cg" }
 			flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
@@ -295,7 +295,7 @@
 
 	function suite.forcedIncludeFiles()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			forceincludes { "../include/force1.h", "../include/force2.h" }
 
 		prepare()
@@ -316,7 +316,7 @@
 
 	function suite.additionalOptions()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			buildoptions { "/Xc" }
 
 		prepare()
@@ -337,7 +337,7 @@
 
 	function suite.onOptimize()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		optimize "On"
 		prepare()
 		test.capture [[
@@ -350,7 +350,7 @@
 
 	function suite.onOptimizeSize()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		optimize "Size"
 		prepare()
 		test.capture [[
@@ -362,7 +362,7 @@
 
 	function suite.onOptimizeSpeed()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		optimize "Speed"
 		prepare()
 		test.capture [[
@@ -374,7 +374,7 @@
 
 	function suite.onOptimizeFull()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		optimize "Full"
 		prepare()
 		test.capture [[
@@ -386,7 +386,7 @@
 
 	function suite.onOptimizeOff()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		optimize "Off"
 		prepare()
 		test.capture [[
@@ -398,7 +398,7 @@
 
 	function suite.onOptimizeDebug()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		optimize "Debug"
 		prepare()
 		test.capture [[
@@ -415,7 +415,7 @@
 
 	function suite.excludedFromPCH()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 		flags { "NoPCH" }
 		prepare()
 		test.capture [[
@@ -436,7 +436,7 @@
 
 	function suite.perFileDefines()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			defines { "IS_CPP" }
 		prepare()
 		test.capture [[
@@ -478,7 +478,7 @@
 
 	function suite.perFileVectorExtensions()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			vectorextensions "sse2"
 		prepare()
 		test.capture [[

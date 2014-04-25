@@ -13,49 +13,103 @@
 
 
 --
+-- These prefixes correspond to the context information built by the oven
+-- during baking. In theory, any field could be used as a filter, but right
+-- now only these are set.
+--
+
+	criteria.validPrefixes = {
+		_ACTION = true,
+		action = true,
+		architecture = true,
+		configurations = true,
+		files = true,
+		kind = true,
+		language = true,
+		_OPTIONS = true,
+		options = true,
+		platforms = true,
+		system = true,
+	}
+
+
+
+---
 -- Create a new criteria object.
 --
 -- @param terms
 --    A list of criteria terms.
+-- @param unprefixed
+--    If true, use the old style, unprefixed filter terms. This will
+--    eventually be phased out in favor of prefixed terms only.
 -- @return
 --    A new criteria object.
---
+---
 
-	function criteria.new(terms)
+	function criteria.new(terms, unprefixed)
 		terms = table.flatten(terms)
 
-		-- Preprocess the terms list for performance in matches() later.
-		-- Wildcards are replaced with Lua patterns. Terms with "or" and
-		-- "not" modifiers are split into arrays of parts to test.
-		-- Prefixes are split out and stored under a quick lookup key.
+		-- Preprocess the list of terms for better performance in matches().
+		-- Each term is replaced with a pattern, with an implied AND between
+		-- them. Each pattern contains one or more words, with an implied OR
+		-- between them. A word maybe be flagged as negated, or as a wildcard
+		-- pattern, and may have a field prefix associated with it.
 
 		local patterns = {}
+
 		for i, term in ipairs(terms) do
 			term = term:lower()
-			terms[i] = term
 
 			local pattern = {}
+			local prefix = iif(unprefixed, nil, "configurations")
 
-			local n = term:find(":", 1, true)
-			if n then
-				pattern.prefix = term:sub(1, n - 1)
-				term = term:sub(n + 1)
-			end
-
-			local parts = term:explode(" or ")
-			for i, part in ipairs(parts) do
-				local item = path.wildcards(part)
-				if (item ~= part) then
-					item = "%%" .. item
+			local words = term:explode(" or ")
+			for _, word in ipairs(words) do
+				word, prefix = criteria._word(word, prefix)
+				if prefix and not criteria.validPrefixes[prefix] then
+					return nil, string.format("Invalid field prefix '%s'", prefix)
 				end
-				table.insert(pattern, item)
+				table.insert(pattern, word)
 			end
 
 			table.insert(patterns, pattern)
 		end
 
+		-- The matching logic is written in C now for performance; compile
+		-- this collection of patterns to C data structures to make that
+		-- code easier to read and maintain.
+
 		local crit = {}
-		crit.terms = terms
 		crit.patterns = patterns
+		crit.data = criteria._compile(patterns)
 		return crit
+	end
+
+
+
+	function criteria._word(word, prefix)
+		local wildcard
+		local assertion = true
+
+		-- Trim off all "not" and field prefixes and check for wildcards
+		while (true) do
+			if word:startswith("not ") then
+				assertion = not assertion
+				word = word:sub(5)
+			else
+				local i = word:find(":", 1, true)
+				if prefix and i then
+					prefix = word:sub(1, i - 1)
+					word = word:sub(i + 1)
+				else
+					wildcard = (word:find("*", 1, true) ~= nil)
+					if wildcard then
+						word = path.wildcards(word)
+					end
+					break
+				end
+			end
+		end
+
+		return { word, prefix, assertion, wildcard }, prefix
 	end

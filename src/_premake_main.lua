@@ -1,7 +1,7 @@
 --
 -- _premake_main.lua
 -- Script-side entry point for the main program logic.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	local shorthelp     = "Type 'premake5 --help' for help"
@@ -18,7 +18,7 @@
 
 		-- Clear out any configuration scoping left over from initialization
 
-		configuration {}
+		filter {}
 
 		-- Seed the random number generator so actions don't have to do it themselves
 
@@ -28,7 +28,7 @@
 		-- configuration scoping gets cleared before continuing
 
 		dofileopt(_OPTIONS["systemscript"] or { "premake5-system.lua", "premake-system.lua" })
-		configuration {}
+		filter {}
 
 		-- The "next-gen" actions have now replaced their deprecated counterparts.
 		-- Provide a warning for a little while before I remove them entirely.

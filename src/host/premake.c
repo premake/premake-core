@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -36,6 +36,8 @@ extern const char* builtin_scripts[];
 
 /* Built-in functions */
 static const luaL_Reg criteria_functions[] = {
+	{ "_compile", criteria_compile },
+	{ "_delete", criteria_delete },
 	{ "matches", criteria_matches },
 	{ NULL, NULL }
 };

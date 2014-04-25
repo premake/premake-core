@@ -22,6 +22,7 @@
 	end
 
 
+
 --
 -- Make sure that new() returns a valid object.
 --
@@ -31,13 +32,19 @@
 	end
 
 
+
 --
 -- Check the default values for different field types.
 --
 
 	function suite.defaultValue_onString()
-		test.isnil(configset.fetch(cset, field.get("targetextension"), {}))
+		test.isnil(configset.fetch(cset, field.get("targetextension")))
 	end
+
+	function suite.defaultValue_onList()
+		test.isequal({}, configset.fetch(cset, field.get("defines")))
+	end
+
 
 
 --
@@ -50,6 +57,7 @@
 		configset.store(cset, f, ".so")
 		test.isequal(".so", configset.fetch(cset, f, {}))
 	end
+
 
 
 --

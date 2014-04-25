@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
  */
 
 #define lua_c
@@ -62,6 +62,8 @@ void do_translate(char* value, const char sep);
 
 
 /* Built-in functions */
+int criteria_compile(lua_State* L);
+int criteria_delete(lua_State* L);
 int criteria_matches(lua_State* L);
 int path_getabsolute(lua_State* L);
 int path_getrelative(lua_State* L);

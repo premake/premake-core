@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_files.lua
 -- Validate generation of <files/> block in Visual Studio 200x projects.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vstudio_vs200x_files")
@@ -209,7 +209,7 @@
 
 	function suite.excludedFromBuild_onExcludedFile()
 		files { "hello.cpp" }
-		configuration "Debug"
+		filter "Debug"
 		removefiles { "hello.cpp" }
 		prepare()
 		test.capture [[
@@ -231,7 +231,7 @@
 
 	function suite.excludedFromBuild_onExcludeFlag()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
@@ -261,10 +261,10 @@
 
 	function suite.excludedFromBuild_onCustomBuildRule_excludedFile()
 		files { "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
-		configuration "Debug"
+		filter "Debug"
 			removefiles { "hello.cg" }
 		prepare()
 		test.capture [[
@@ -288,7 +288,7 @@
 
 	function suite.excludedFromBuild_onCustomBuildRule_excludeFlag()
 		files { "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 			flags { "ExcludeFromBuild" }
@@ -322,7 +322,7 @@
 
 	function suite.customBuildTool_onBuildRule()
 		files { "hello.x" }
-		configuration "**.x"
+		filter "files:**.x"
 			buildmessage "Compiling $(InputFile)"
 			buildcommands {
 				'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"',
@@ -350,7 +350,7 @@
 	function suite.customBuildTool_onBuildRuleWithTokens()
 		files { "hello.x" }
 		objdir "../tmp/%{cfg.name}"
-		configuration "**.x"
+		filter "files:**.x"
 			buildmessage "Compiling $(InputFile)"
 			buildcommands {
 				'cxc -c %{file.relpath} -o %{cfg.objdir}/%{file.basename}.xo',
@@ -424,7 +424,7 @@
 
 	function suite.forcedIncludeFiles()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			forceincludes { "../include/force1.h", "../include/force2.h" }
 
 		prepare()
@@ -449,7 +449,7 @@
 
 	function suite.additionalOptions()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			buildoptions { "/Xc" }
 
 		prepare()
@@ -474,7 +474,7 @@
 
 	function suite.onOptimize()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			optimize "On"
 		prepare()
 		test.capture [[
@@ -494,7 +494,7 @@
 
 	function suite.onOptimizeSize()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			optimize "Size"
 		prepare()
 		test.capture [[
@@ -513,7 +513,7 @@
 
 	function suite.onOptimizeSpeed()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			optimize "Speed"
 		prepare()
 		test.capture [[
@@ -532,7 +532,7 @@
 
 	function suite.onOptimizeFull()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			optimize "Full"
 		prepare()
 		test.capture [[
@@ -551,7 +551,7 @@
 
 	function suite.onOptimizeOff()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			optimize "Off"
 		prepare()
 		test.capture [[
@@ -570,7 +570,7 @@
 
 	function suite.onOptimizeDebug()
 		files { "hello.cpp" }
-		configuration "**.cpp"
+		filter "files:**.cpp"
 			optimize "Debug"
 		prepare()
 		test.capture [[
@@ -595,7 +595,7 @@
 
 	function suite.defines()
 		files { "hello.cpp" }
-		configuration "hello.cpp"
+		filter "files:hello.cpp"
 			defines { "HELLO" }
 		prepare()
 		test.capture [[

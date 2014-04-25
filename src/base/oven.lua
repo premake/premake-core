@@ -352,15 +352,24 @@
 --
 
 	function oven.bakeConfigMap(ctx, cset, cfgs)
-
 		-- build a query filter that will match any configuration name,
 		-- within the existing constraints of the project
 
-		local terms = table.arraycopy(ctx.terms)
+		local configurations = {}
+		local platforms = {}
+
 		for _, cfg in ipairs(cfgs) do
-			if cfg[1] then table.insert(terms, cfg[1]:lower()) end
-			if cfg[2] then table.insert(terms, cfg[2]:lower()) end
+			if cfg[1] then
+				table.insert(configurations, cfg[1]:lower())
+			end
+			if cfg[2] then
+				table.insert(platforms, cfg[2]:lower())
+			end
 		end
+
+		local terms = table.deepcopy(ctx.terms)
+		terms.configurations = configurations
+		terms.platforms = platforms
 
 		-- assemble all matching configmaps, and then merge their keys
 		-- into the project's configmap

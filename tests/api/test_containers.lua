@@ -1,7 +1,7 @@
 --
 -- tests/api/test_containers.lua
 -- Tests the API's solution() and project() container definitions.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("api_containers")
@@ -76,7 +76,7 @@
 	function suite.solution_onStar()
 		project("MyProject")
 		group("MyGroup")
-		configuration("Debug")
+		filter("Debug")
 		solution "*"
 		test.isnil(api.scope.solution)
 		test.isnil(api.scope.project)
@@ -86,7 +86,7 @@
 	function suite.project_onStar()
 		project("MyProject")
 		group("MyGroup")
-		configuration("Debug")
+		filter("Debug")
 		project "*"
 		test.issame(sln, api.scope.solution)
 		test.isnil(api.scope.project)

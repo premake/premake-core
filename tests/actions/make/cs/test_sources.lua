@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cs/test_sources.lua
 -- Tests source file listings for C# Makefiles.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("make_cs_sources")
@@ -78,7 +78,7 @@ SOURCES += \
 
 	function suite.doesIncludeCompileBuildAction()
 		files { "Hello.txt" }
-		configuration "*.txt"
+		filter "files:*.txt"
 		buildaction "Compile"
 		prepare()
 		test.capture [[

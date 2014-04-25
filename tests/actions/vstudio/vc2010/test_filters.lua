@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_filters.lua
 -- Validate generation of file filter blocks in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
-	T.vs2010_filters = { }
-	local suite = T.vs2010_filters
+	local suite = test.declare("vs2010_filters")
 	local vc2010 = premake.vstudio.vc2010
 
 
@@ -67,7 +66,7 @@
 
 	function suite.itemGroup_onBuildRule()
 		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
-		configuration "**.cg"
+		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 		prepare("CustomBuild")
@@ -80,7 +79,7 @@
 
 	function suite.itemGroup_onSingleConfigBuildRule()
 		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
-		configuration { "Release", "**.cg" }
+		filter { "Release", "files:**.cg" }
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 		prepare("CustomBuild")

@@ -17,22 +17,12 @@
 
 
 --
--- Make sure that new() returns a valid object.
---
-
-	function suite.new_returnsValidObject()
-		crit = criteria.new {}
-		test.isequal("table", type(crit))
-	end
-
-
---
 -- A criteria with no terms should satisfy any context.
 --
 
-	function suite.matches_onEmptyCriteria()
+	function suite.matches_alwaysTrue_onNoFilterTerms()
 		crit = criteria.new {}
-		test.istrue(criteria.matches(crit, { "apple", "orange" }))
+		test.istrue(criteria.matches(crit, { configurations="Debug", system="Windows" }))
 	end
 
 
@@ -40,9 +30,9 @@
 -- Should not match if any term is missing in the context.
 --
 
-	function suite.fails_onMissingContext()
-		crit = criteria.new { "orange", "pear" }
-		test.isfalse(criteria.matches(crit, { "apple", "orange" }))
+	function suite.matches_fails_onMissingContext()
+		crit = criteria.new { "system:Windows", "architecture:x32" }
+		test.isfalse(criteria.matches(crit, { configurations="Debug", system="Windows" }))
 	end
 
 
@@ -50,9 +40,9 @@
 -- Context terms must match the entire criteria term.
 --
 
-	function suite.fails_onIncompleteMatch()
-		crit = criteria.new { "ps3" }
-		test.isfalse(criteria.matches(crit, { "ps3 ppu sn" }))
+	function suite.matches_fails_onIncompleteTermMatch()
+		crit = criteria.new { "platforms:ps3" }
+		test.isfalse(criteria.matches(crit, { platforms="ps3 ppu sn" }))
 	end
 
 
@@ -60,9 +50,9 @@
 -- Wildcard matches should work.
 --
 
-	function suite.passes_onPatternMatch()
-		crit = criteria.new { "vs*" }
-		test.istrue(criteria.matches(crit, { "vs2005" }))
+	function suite.matches_passes_onPatternMatch()
+		crit = criteria.new { "action:vs*" }
+		test.istrue(criteria.matches(crit, { action="vs2005" }))
 	end
 
 
@@ -70,14 +60,29 @@
 -- The "not" modifier should fail the test if the term is matched.
 --
 
-	function suite.fails_onNotMatch()
-		crit = criteria.new { "not windows" }
-		test.isfalse(criteria.matches(crit, { "windows" }))
+	function suite.matches_fails_onMatchWithNotModifier_afterPrefix()
+		crit = criteria.new { "system:not windows" }
+		test.isfalse(criteria.matches(crit, { system="windows" }))
 	end
 
-	function suite.passes_onNotUnmatched()
-		crit = criteria.new { "not windows" }
-		test.istrue(criteria.matches(crit, { "linux" }))
+	function suite.matches_fails_onMatchWithNotModifier_beforePrefix()
+		crit = criteria.new { "not system:windows" }
+		test.isfalse(criteria.matches(crit, { system="windows" }))
+	end
+
+	function suite.matches_passes_onMissWithNotModifier_afterPrefix()
+		crit = criteria.new { "system:not windows" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
+	end
+
+	function suite.matches_passes_onMissWithNotModifier_beforePrefix()
+		crit = criteria.new { "not system:windows" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
+	end
+
+	function suite.matches_passes_onMissWithNotModifier_noPrefix()
+		crit = criteria.new { "not debug" }
+		test.istrue(criteria.matches(crit, { configurations="release" }))
 	end
 
 
@@ -85,24 +90,44 @@
 -- The "or" modifier should pass if either term is present.
 --
 
-	function suite.passes_onFirstOrTermMatched()
-		crit = criteria.new { "windows or linux" }
-		test.istrue(criteria.matches(crit, { "windows" }))
+	function suite.matches_passes_onFirstOrTermMatched()
+		crit = criteria.new { "system:windows or linux" }
+		test.istrue(criteria.matches(crit, { system="windows" }))
 	end
 
-	function suite.passes_onSecondOrTermMatched()
-		crit = criteria.new { "windows or linux" }
-		test.istrue(criteria.matches(crit, { "linux" }))
+	function suite.matches_passes_onSecondOrTermMatched()
+		crit = criteria.new { "system:windows or linux" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
 	end
 
-	function suite.passes_onThirdOrTermMatched()
-		crit = criteria.new { "windows or linux or vs2005" }
-		test.istrue(criteria.matches(crit, { "vs2005" }))
+	function suite.matches_passes_onThirdOrTermMatched()
+		crit = criteria.new { "system:windows or linux or vs2005" }
+		test.istrue(criteria.matches(crit, { system="vs2005" }))
 	end
 
-	function suite.fails_onNoOrTermMatched()
-		crit = criteria.new { "windows or linux" }
-		test.isfalse(criteria.matches(crit, { "vs2005" }))
+	function suite.matches_fails_onNoOrTermMatched()
+		crit = criteria.new { "system:windows or linux" }
+		test.isfalse(criteria.matches(crit, { system="vs2005" }))
+	end
+
+	function suite.matches_passes_onMixedPrefixes_firstTermMatched_projectContext()
+		crit = criteria.new { "system:windows or files:core*" }
+		test.istrue(criteria.matches(crit, { system="windows" }))
+	end
+
+	function suite.matches_fails_onMixedPrefixes_firstTermMatched_fileContext()
+		crit = criteria.new { "system:windows or files:core*" }
+		test.isfalse(criteria.matches(crit, { system="windows", files="hello.cpp" }))
+	end
+
+	function suite.matches_passes_onMixedPrefixes_secondTermMatched()
+		crit = criteria.new { "system:windows or files:core*" }
+		test.istrue(criteria.matches(crit, { system="linux", files="coregraphics.cpp" }))
+	end
+
+	function suite.matches_fails_onMixedPrefixes_noTermMatched()
+		crit = criteria.new { "system:windows or files:core*" }
+		test.isfalse(criteria.matches(crit, { system="linux", files="hello.cpp" }))
 	end
 
 
@@ -110,14 +135,14 @@
 -- The "not" modifier should fail on any match with an "or" modifier.
 --
 
-	function suite.passes_onNotOrMatchesFirst()
-		crit = criteria.new { "not windows or linux" }
-		test.isfalse(criteria.matches(crit, { "windows" }))
+	function suite.matches_passes_onNotOrMatchesFirst()
+		crit = criteria.new { "system:not windows or linux" }
+		test.isfalse(criteria.matches(crit, { system="windows" }))
 	end
 
-	function suite.passes_onNotOrMatchesSecond()
-		crit = criteria.new { "windows or not linux" }
-		test.isfalse(criteria.matches(crit, { "linux" }))
+	function suite.matches_passes_onNotOrMatchesSecond()
+		crit = criteria.new { "system:windows or not linux" }
+		test.isfalse(criteria.matches(crit, { system="linux" }))
 	end
 
 
@@ -125,102 +150,161 @@
 -- The "not" modifier should succeed with "or" if there are no matches.
 --
 
-	function suite.passes_onNoNotMatch()
-		crit = criteria.new { "not windows or linux" }
-		test.istrue(criteria.matches(crit, { "macosx" }))
+	function suite.matches_passes_onNoNotMatch()
+		crit = criteria.new { "system:not windows or linux" }
+		test.istrue(criteria.matches(crit, { system="macosx" }))
 	end
 
 
 --
--- If a filename is provided, it must be matched by at least one pattern.
+-- If the context specifies a filename, the filter must match it explicitly.
 --
 
-	function suite.passes_onFilenameAndMatchingPattern()
-		crit = criteria.new { "**.c", "windows" }
-		test.istrue(criteria.matches(crit, { system = "windows", files = "hello.c" }))
+	function suite.matches_passes_onFilenameAndMatchingPattern()
+		crit = criteria.new { "files:**.c", "system:windows" }
+		test.istrue(criteria.matches(crit, { system="windows", files="hello.c" }))
 	end
 
-	function suite.fails_onFilenameAndNoMatchingPattern()
-		crit = criteria.new { "windows" }
-		test.isfalse(criteria.matches(crit, { "windows", files = "hello.c" }))
-	end
-
-
---
--- "Not" modifiers should not match filenames.
---
-
-	function suite.fails_onFilenameAndNotModifier()
-		crit = criteria.new { "not linux" }
-		test.isfalse(criteria.matches(crit, { "windows", files = "hello.c" }))
+	function suite.matches_fails_onFilenameAndNoMatchingPattern()
+		crit = criteria.new { "system:windows" }
+		test.isfalse(criteria.matches(crit, { system="windows", files="hello.c" }))
 	end
 
 
 --
--- "Open" or non-prefixed terms can match against any scope.
+-- "Not" modifiers can also be used on filenames.
 --
 
-	function suite.openTerm_matchesAnyKeyedScope()
-		crit = criteria.new { "debug" }
-		test.istrue(criteria.matches(crit, { configuration="debug" }))
+	function suite.matches_passes_onFilenameMissAndNotModifier()
+		crit = criteria.new { "files:not **.c", "system:windows" }
+		test.istrue(criteria.matches(crit, { system="windows", files="hello.h" }))
 	end
 
-
---
--- Prefixed terms should only matching against context that
--- uses a matching key.
---
-
-	function suite.prefixedTermMatches_onKeyMatch()
-		crit = criteria.new { "configurations:debug" }
-		test.istrue(criteria.matches(crit, { configurations="debug" }))
+	function suite.matches_fails_onFilenameHitAndNotModifier()
+		crit = criteria.new { "files:not **.c", "system:windows" }
+		test.isfalse(criteria.matches(crit, { system="windows", files="hello.c" }))
 	end
 
-	function suite.prefixedTermFails_onNoKeyMatch()
-		crit = criteria.new { "configurations:debug" }
-		test.isfalse(criteria.matches(crit, { configurations="release", platforms="debug" }))
-	end
-
-	function suite.prefixTermFails_onFilenameMatch()
-		crit = criteria.new { "configurations:hello**" }
-		test.isfalse(criteria.matches(crit, { files = "hello.cpp" }))
-	end
 
 --
 -- If context provides a list of values, match against them.
 --
 
-	function suite.termMatchesList_onNoPrefix()
-		crit = criteria.new { "debug" }
-		test.istrue(criteria.matches(crit, { options={ "debug", "logging" }}))
-	end
-
-	function suite.termMatchesList_onPrefix()
+	function suite.matches_passes_termMatchesList()
 		crit = criteria.new { "options:debug" }
 		test.istrue(criteria.matches(crit, { options={ "debug", "logging" }}))
 	end
 
 
 --
--- Check handling of the files: prefix.
+-- If no prefix is specified, default to "configurations".
 --
 
-	function suite.matchesFilePrefix_onPositiveMatch()
-		crit = criteria.new { "files:**.cpp" }
-		test.istrue(criteria.matches(crit, { files = "hello.cpp" }))
+	function suite.matches_usesDefaultPrefix_onSingleTerm()
+		crit = criteria.new { "debug" }
+		test.istrue(criteria.matches(crit, { configurations="debug" }))
 	end
 
-	function suite.matchesFilePrefix_onNotModifier()
-		crit = criteria.new { "files:not **.h" }
-		test.istrue(criteria.matches(crit, { files = "hello.cpp" }))
+
+
+--
+-- These tests use the older, unprefixed style of filter terms. This
+-- approach will get phased out eventually, but are still included here
+-- for backward compatibility testing.
+--
+
+	function suite.matches_onEmptyCriteria_Unprefixed()
+		crit = criteria.new({}, true)
+		test.istrue(criteria.matches(crit, { "apple", "orange" }))
 	end
 
-	function suite.filesTermFails_onNoValue()
-		crit = criteria.new { "files:Debug**" }
-		test.isfalse(criteria.matches(crit, { configurations = "Debug32" }))
+	function suite.fails_onMissingContext_Unprefixed()
+		crit = criteria.new({ "orange", "pear" }, true)
+		test.isfalse(criteria.matches(crit, { "apple", "orange" }))
 	end
 
-	function suite.filesTermFails_onNotModifierAndNoMatch()
-		crit = criteria.new { "files:not Debug**" }
-		test.isfalse(criteria.matches(crit, { configurations = "Debug32" }))
+	function suite.fails_onIncompleteMatch_Unprefixed()
+		crit = criteria.new({ "ps3" }, true)
+		test.isfalse(criteria.matches(crit, { "ps3 ppu sn" }))
+	end
+
+	function suite.passes_onPatternMatch_Unprefixed()
+		crit = criteria.new({ "vs*" }, true)
+		test.istrue(criteria.matches(crit, { "vs2005" }))
+	end
+
+	function suite.fails_onNotMatch_Unprefixed()
+		crit = criteria.new({ "not windows" }, true)
+		test.isfalse(criteria.matches(crit, { "windows" }))
+	end
+
+	function suite.passes_onNotUnmatched_Unprefixed()
+		crit = criteria.new({ "not windows" }, true)
+		test.istrue(criteria.matches(crit, { "linux" }))
+	end
+
+	function suite.passes_onFirstOrTermMatched_Unprefixed()
+		crit = criteria.new({ "windows or linux" }, true)
+		test.istrue(criteria.matches(crit, { "windows" }))
+	end
+
+	function suite.passes_onSecondOrTermMatched_Unprefixed()
+		crit = criteria.new({ "windows or linux" }, true)
+		test.istrue(criteria.matches(crit, { "linux" }))
+	end
+
+	function suite.passes_onThirdOrTermMatched_Unprefixed()
+		crit = criteria.new({ "windows or linux or vs2005" }, true)
+		test.istrue(criteria.matches(crit, { "vs2005" }))
+	end
+
+	function suite.fails_onNoOrTermMatched_Unprefixed()
+		crit = criteria.new({ "windows or linux" }, true)
+		test.isfalse(criteria.matches(crit, { "vs2005" }))
+	end
+
+	function suite.passes_onNotOrMatchesFirst_Unprefixed()
+		crit = criteria.new({ "not windows or linux" }, true)
+		test.isfalse(criteria.matches(crit, { "windows" }))
+	end
+
+	function suite.passes_onNotOrMatchesSecond_Unprefixed()
+		crit = criteria.new({ "windows or not linux" }, true)
+		test.isfalse(criteria.matches(crit, { "linux" }))
+	end
+
+	function suite.passes_onNoNotMatch_Unprefixed()
+		crit = criteria.new({ "not windows or linux" }, true)
+		test.istrue(criteria.matches(crit, { "macosx" }))
+	end
+
+	function suite.passes_onFilenameAndMatchingPattern_Unprefixed()
+		crit = criteria.new({ "**.c", "windows" }, true)
+		test.istrue(criteria.matches(crit, { system="windows", files="hello.c" }))
+	end
+
+	function suite.fails_onFilenameAndNoMatchingPattern_Unprefixed()
+		crit = criteria.new({ "windows" }, true)
+		test.isfalse(criteria.matches(crit, { system="windows", files="hello.c" }))
+	end
+
+	function suite.fails_onFilenameAndNotModifier_Unprefixed()
+		crit = criteria.new({ "not linux" }, true)
+		test.isfalse(criteria.matches(crit, { system="windows", files="hello.c" }))
+	end
+
+	function suite.matches_passes_termMatchesList_Unprefixed()
+		crit = criteria.new({ "debug" }, true)
+		test.istrue(criteria.matches(crit, { options={ "debug", "logging" }}))
+	end
+
+
+--
+-- Should return nil and an error message on an invalid prefix.
+--
+
+	function suite.returnsNilAndError_onInvalidPrefix()
+		crit, err = criteria.new { "gibble:Debug" }
+		test.isnil(crit)
+		test.isnotnil(err)
 	end

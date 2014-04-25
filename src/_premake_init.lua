@@ -3,7 +3,7 @@
 --
 -- Prepares the runtime environment for the add-ons and user project scripts.
 --
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
 	local api = premake.api
@@ -876,45 +876,45 @@
 
 	-- Use Posix-style target naming by default, since it is the most common.
 
-	configuration { "SharedLib" }
+	filter { "kind:SharedLib" }
 		targetprefix "lib"
 		targetextension ".so"
 
-	configuration { "StaticLib" }
+	filter { "kind:StaticLib" }
 		targetprefix "lib"
 		targetextension ".a"
 
 	-- Add variations for other Posix-like systems.
 
-	configuration { "MacOSX", "SharedLib" }
+	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
 
 	-- Windows and friends.
 
-	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
+	filter { "system:Windows or language:C#", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
+	filter { "system:Xbox360", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	configuration { "Windows or Xbox360", "SharedLib" }
+	filter { "system:Windows or Xbox360", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".lib"
 
-	configuration { "Windows or Xbox360", "StaticLib" }
+	filter { "system:Windows or Xbox360", "kind:StaticLib" }
 		targetprefix ""
 		targetextension ".lib"
 
-	configuration { "C#", "SharedLib" }
+	filter { "language:C#", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"
 
 	-- PS3 configurations
 
-	configuration { "PS3" }
+	filter { "system:PS3" }
 		toolset "snc"
 
-	configuration { "PS3", "ConsoleApp" }
+	filter { "system:PS3", "kind:ConsoleApp" }
 		targetextension ".elf"

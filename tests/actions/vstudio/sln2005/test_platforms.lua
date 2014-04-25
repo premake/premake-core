@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/sln2005/test_platforms.lua
 -- Test the Visual Studio 2005-2010 platform mapping blocks.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	T.vstudio_sln2005_platforms = { }
-	local suite = T.vstudio_sln2005_platforms
+	local suite = test.declare("vstudio_sln2005_platforms")
 	local sln2005 = premake.vstudio.sln2005
 
 
@@ -360,9 +359,9 @@
 
 	function suite.onSingleCpp_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
-		configuration "DLL32"
+		filter "platforms:DLL32"
 		architecture "x32"
-		configuration "DLL64"
+		filter "platforms:DLL64"
 		architecture "x64"
 
 		project "MyProject"
@@ -389,9 +388,9 @@
 
 	function suite.onSingleCs_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
-		configuration "DLL32"
+		filter "platforms:DLL32"
 		architecture "x32"
-		configuration "DLL64"
+		filter "platforms:DLL64"
 		architecture "x64"
 
 		project "MyProject"
@@ -419,9 +418,9 @@
 
 	function suite.onMixedLanguage_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
-		configuration "DLL32"
+		filter "platforms:DLL32"
 		architecture "x32"
-		configuration "DLL64"
+		filter "platforms:DLL64"
 		architecture "x64"
 
 		project "MyProject1"

@@ -38,6 +38,7 @@
 	end
 
 
+
 ---
 -- Retrieve a value from the configuration set.
 --
@@ -58,9 +59,7 @@
 ---
 
 	function configset.fetch(cset, field, context)
-		if not context then
-			context = cset.current._criteria.terms
-		end
+		context = context or {}
 
 		if premake.field.merges(field) then
 			return configset._fetchMerged(cset, field, context)
@@ -83,7 +82,7 @@
 
 			-- If the filter contains a file path, make it relative to
 			-- this block's basedir
-			if value and abspath and block._basedir ~= basedir and not cset.compiled then
+			if value and abspath and not cset.compiled and block._basedir ~= basedir then
 				basedir = block._basedir
 				filter.files = path.getrelative(basedir, abspath)
 			end
@@ -189,7 +188,7 @@
 			__index = function(tbl, key)
 				local f = premake.field.get(key)
 				if f then
-					return configset.fetch(cset, f, cset.current._criteria.terms)
+					return configset.fetch(cset, f)
 				else
 					return nil
 				end
@@ -199,9 +198,11 @@
 
 
 
---
--- Create a new block of configuration field-value pairs, with the provided
--- set of context terms to control their application.
+---
+-- Create a new block of configuration field-value pairs, using a set of
+-- old-style, non-prefixed context terms to control their application. This
+-- approach will eventually be phased out in favor of prefixed filters;
+-- see addFilter() below.
 --
 -- @param cset
 --    The configuration set to hold the new block.
@@ -213,21 +214,48 @@
 --    relative to this basis before pattern testing.
 -- @return
 --    The new configuration data block.
---
+---
 
 	function configset.addblock(cset, terms, basedir)
+		configset.addFilter(cset, terms, basedir, true)
+		return cset.current
+	end
+
+
+
+---
+-- Create a new block of configuration field-value pairs, using a set
+-- of new-style, prefixed context terms to control their application.
+--
+-- @param cset
+--    The configuration set to hold the new block.
+-- @param terms
+--    A set of terms used to control the application of the values
+--    contained in the block.
+-- @param basedir
+--    An optional base directory. If set, filename filter tests will be
+--    made relative to this base before pattern testing.
+-- @param unprefixed
+--    If true, uses the old, unprefixed style for filter terms. This will
+--    eventually be phased out in favor of prefixed filters.
+---
+
+	function configset.addFilter(cset, terms, basedir, unprefixed)
+		local crit, err = criteria.new(terms, unprefixed)
+		if not crit then
+			return nil, err
+		end
+
 		local block = {}
+		block._criteria = crit
 
 		if basedir then
 			block._basedir = basedir:lower()
 		end
 
-		-- attach a criteria object to the block to control its application
-		block._criteria = criteria.new(terms)
-
 		table.insert(cset.blocks, block)
 		cset.current = block
-		return block
+		return true
 	end
 
 
@@ -287,8 +315,11 @@
 	function configset.remove(cset, field, values)
 		-- removes are always processed first; starting a new block here
 		-- ensures that they will be processed in the proper order
-		local current = cset.current
-		configset.addblock(cset, current._criteria.terms, current._basedir)
+		local block = {}
+		block._basedir = cset.current._basedir
+		block._criteria = cset.current._criteria
+		table.insert(cset.blocks, block)
+		cset.current = block
 
 		-- This needs work; right now it is hardcoded to only work for lists.
 		-- To support removing from keyed collections, I first need to figure

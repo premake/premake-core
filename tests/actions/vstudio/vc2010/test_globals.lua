@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_globals.lua
 -- Validate generation of the Globals property group.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vstudio_vs2010_globals")
@@ -98,9 +98,9 @@
 --
 
 	function suite.includeKeyword_onMixedConfigs()
-		configuration "Debug"
+		filter "Debug"
 			system "Windows"
-		configuration "Release"
+		filter "Release"
 			system "PS3"
 		prepare()
 		test.capture [[

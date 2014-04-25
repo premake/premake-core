@@ -758,9 +758,10 @@
 
 
 
---
--- Start a new block of configuration settings.
---
+---
+-- Start a new block of configuration settings, using the old, "open"
+-- style of matching without field prefixes.
+---
 
 	function configuration(terms)
 		local target = api.gettarget()
@@ -768,14 +769,32 @@
 			if terms == "*" then terms = nil end
 			configset.addblock(target, {terms}, os.getcwd())
 		end
-
 		return target
 	end
 
 
---
+
+---
+-- Start a new block of configuration settings, using the new prefixed
+-- style of pattern matching.
+---
+
+	function filter(terms)
+		local target = api.gettarget()
+		if terms then
+			if terms == "*" then terms = nil end
+			local ok, err = configset.addFilter(target, {terms}, os.getcwd())
+			if not ok then
+				error(err, 2)
+			end
+		end
+	end
+
+
+
+---
 -- Begin a new solution group, which will contain any subsequent projects.
---
+---
 
 	function group(name)
 		if name == "*" then name = nil end

@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/cs2005/test_files.lua
 -- Validate generation of <Files/> block in Visual Studio 2005 .csproj
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_files = { }
-	local suite = T.vstudio_cs2005_files
+	local suite = test.declare("vstudio_cs2005_files")
 	local cs2005 = premake.vstudio.cs2005
 
 
@@ -107,7 +106,7 @@
 
 	function suite.copyAction()
 		files { "Hello.txt" }
-		configuration "**.txt"
+		filter "files:**.txt"
 		buildaction "Copy"
 		prepare()
 		test.capture [[
@@ -119,7 +118,7 @@
 
 	function suite.componentAction()
 		files { "Hello.cs" }
-		configuration "Hello.cs"
+		filter "files:Hello.cs"
 		buildaction "Component"
 		prepare()
 		test.capture [[
@@ -131,7 +130,7 @@
 
 	function suite.embeddedResourceAction()
 		files { "Hello.ico" }
-		configuration "*.ico"
+		filter "files:*.ico"
 		buildaction "Embed"
 		prepare()
 		test.capture [[
@@ -141,7 +140,7 @@
 
 	function suite.formAction()
 		files { "HelloForm.cs" }
-		configuration "HelloForm.cs"
+		filter "files:HelloForm.cs"
 		buildaction "Form"
 		prepare()
 		test.capture [[
@@ -153,7 +152,7 @@
 
 	function suite.userControlAction()
 		files { "Hello.cs" }
-		configuration "Hello.cs"
+		filter "files:Hello.cs"
 		buildaction "UserControl"
 		prepare()
 		test.capture [[
@@ -165,7 +164,7 @@
 
 	function suite.resourceAction()
 		files { "Hello.ico" }
-		configuration "*.ico"
+		filter "files:*.ico"
 		buildaction "Resource"
 		prepare()
 		test.capture [[
@@ -201,7 +200,7 @@
 
 	function suite.usesLinkInFolder_onExternalContent()
 		files { "../Resources/Hello.txt" }
-		configuration "**.txt"
+		filter "files:**.txt"
 		buildaction "Copy"
 		prepare()
 		test.capture [[
@@ -289,7 +288,7 @@
 
 	function suite.xamlApp_onBuildAction()
 		files { "MyApp.xaml", "MyApp.xaml.cs" }
-		configuration "MyApp.xaml"
+		filter "files:MyApp.xaml"
 		buildaction "Application"
 		prepare()
 		test.capture [[
