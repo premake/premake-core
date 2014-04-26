@@ -131,17 +131,25 @@
 		tree.traverse(tr, {
 			onbranch = function(n)
 				local rule = n.path .. ":"
+				local projectTargets = {}
+				local groupTargets = {}
 				for i, c in pairs(n.children)
 				do
 					if type(i) == "string"
 					then
 						if c.project
 						then
-							rule = rule .. " " .. c.name
+							table.insert(projectTargets, c.name)
 						else
-							rule = rule .. " " .. c.path
+							table.insert(groupTargets, c.path)
 						end
 					end
+				end
+				if #groupTargets > 0 then
+					rule = rule .. " " .. table.concat(groupTargets, " ")
+				end
+				if #projectTargets > 0 then
+					rule = rule .. " " .. table.concat(projectTargets, " ")
 				end
 				_p(rule)
 				_p('')
