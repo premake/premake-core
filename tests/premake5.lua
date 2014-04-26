@@ -178,6 +178,7 @@
 	-- Makefile solutions
 	dofile("actions/make/solution/test_config_maps.lua")
 	dofile("actions/make/solution/test_default_config.lua")
+	dofile("actions/make/solution/test_group_rule.lua")
 	dofile("actions/make/solution/test_help_rule.lua")
 	dofile("actions/make/solution/test_project_rule.lua")
 
