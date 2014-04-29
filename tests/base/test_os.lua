@@ -41,6 +41,17 @@
 
 
 --
+-- os.matchdirs() tests
+--
+
+	function suite.matchdirs_skipsDottedDirs()
+		local result = os.matchdirs("*")
+		test.isfalse(table.contains(result, ".."))
+	end
+
+
+
+--
 -- os.matchfiles() tests
 --
 

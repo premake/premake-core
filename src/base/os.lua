@@ -220,7 +220,6 @@
 ---
 
 	function os.match(mask, matchFiles)
-
 		-- Strip any extraneous weirdness from the mask to ensure a good
 		-- match against the paths returned by the OS. I don't know if I've
 		-- caught all the possibilities here yet; will add more as I go.
@@ -256,9 +255,12 @@
 			while os.matchnext(m) do
 				local isfile = os.matchisfile(m)
 				if (matchFiles and isfile) or (not matchFiles and not isfile) then
-					local fname = path.join(basedir, os.matchname(m))
-					if fname:match(mask) == fname then
-						table.insert(result, fname)
+					local fname = os.matchname(m)
+					if isfile or not fname:startswith(".") then
+						fname = path.join(basedir, fname)
+						if fname:match(mask) == fname then
+							table.insert(result, fname)
+						end
 					end
 				end
 			end
