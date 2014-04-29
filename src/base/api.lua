@@ -16,7 +16,6 @@
 --
 
 	configset.root = configset.new()
-	local root = configset.root
 
 
 --
