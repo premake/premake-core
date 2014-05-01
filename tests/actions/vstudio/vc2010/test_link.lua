@@ -425,3 +425,21 @@
 		</Lib>
 		]]
 	end
+
+
+--
+-- Test generating .map files.
+--
+
+	function suite.suite.generateMapFile_onMapsFlag()
+		flags { "Maps" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<GenerateMapFile>true</GenerateMapFile>
+		</Link>
+		]]
+	end

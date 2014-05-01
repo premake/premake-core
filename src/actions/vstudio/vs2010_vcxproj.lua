@@ -351,6 +351,7 @@
 		"additionalLibraryDirectories",
 		"importLibrary",
 		"entryPointSymbol",
+		"generateMapFile",
 		"moduleDefinitionFile",
 		"treatLinkerWarningAsErrors",
 		"additionalLinkOptions",
@@ -921,6 +922,13 @@
 	function vc2010.generateManifest(cfg)
 		if cfg.flags.NoManifest then
 			_p(2,'<GenerateManifest>false</GenerateManifest>')
+		end
+	end
+
+
+	function vc2010.generateMapFile(cfg)
+		if cfg.flags.Maps then
+			_p(3,'<GenerateMapFile>true</GenerateMapFile>')
 		end
 	end
 

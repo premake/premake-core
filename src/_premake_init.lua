@@ -231,6 +231,7 @@
 			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
 			"Managed",
+			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
 			"NativeWChar",         -- DEPRECATED
