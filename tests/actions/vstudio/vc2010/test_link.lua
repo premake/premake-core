@@ -431,7 +431,7 @@
 -- Test generating .map files.
 --
 
-	function suite.suite.generateMapFile_onMapsFlag()
+	function suite.generateMapFile_onMapsFlag()
 		flags { "Maps" }
 		prepare()
 		test.capture [[
