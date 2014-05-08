@@ -212,7 +212,7 @@
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				table.insert(result, "-l" .. path.getbasename(link))
+				table.insert(result, "-l" .. path.getname(link))
 			end
 		end
 
