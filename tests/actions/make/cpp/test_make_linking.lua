@@ -138,4 +138,22 @@
   ALL_LDFLAGS += $(LDFLAGS) -s -L../libs
   LIBS += -lSomeLib
 	]]
+end
+
+
+
+--
+-- When referencing an external library with a period in the
+-- file name make sure it appears correctly in  the LIBS
+-- directive. Currently the period and everything after it
+-- is stripped
+--
+
+ function suite.onExternalLibraryWithPath()
+ 	location "MyProject"
+	links { "libs/SomeLib-1.1" }
+	prepare { "libs", }
+	test.capture [[
+  LIBS += -lSomeLib-1.1
+	]]
  end
