@@ -815,6 +815,12 @@
 
 	newoption
 	{
+		trigger     = "fatal",
+		description = "Treat warnings from project scripts as errors"
+	}
+
+	newoption
+	{
 		trigger     = "file",
 		value       = "FILE",
 		description = "Read FILE as a Premake script; default is 'premake5.lua'"
@@ -846,7 +852,7 @@
 	newoption
 	{
 		trigger     = "scripts",
-		value       = "path",
+		value       = "PATH",
 		description = "Search for additional scripts on the given path"
 	}
 

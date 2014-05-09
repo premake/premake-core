@@ -172,7 +172,12 @@
 --
 
 	function premake.warn(message, ...)
-		io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+		message = string.format(message, ...)
+		if _OPTIONS.fatal then
+			error(message)
+		else
+			io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+		end
 	end
 
 
