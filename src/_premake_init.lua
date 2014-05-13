@@ -834,6 +834,12 @@
 
 	newoption
 	{
+		trigger = "interactive",
+		description = "Interactive command prompt"
+	}
+
+	newoption
+	{
 		trigger     = "os",
 		value       = "VALUE",
 		description = "Generate files for a different operating system",

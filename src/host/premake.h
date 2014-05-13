@@ -65,6 +65,7 @@ void do_translate(char* value, const char sep);
 int criteria_compile(lua_State* L);
 int criteria_delete(lua_State* L);
 int criteria_matches(lua_State* L);
+int debug_prompt(lua_State* L);
 int path_getabsolute(lua_State* L);
 int path_getrelative(lua_State* L);
 int path_isabsolute(lua_State* L);

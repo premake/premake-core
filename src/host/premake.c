@@ -42,6 +42,11 @@ static const luaL_Reg criteria_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg debug_functions[] = {
+	{ "prompt", debug_prompt },
+	{ NULL, NULL }
+};
+
 static const luaL_Reg path_functions[] = {
 	{ "getabsolute", path_getabsolute },
 	{ "getrelative", path_getrelative },
@@ -87,6 +92,7 @@ static const luaL_Reg string_functions[] = {
 int premake_init(lua_State* L)
 {
 	luaL_register(L, "criteria", criteria_functions);
+	luaL_register(L, "debug",    debug_functions);
 	luaL_register(L, "path",     path_functions);
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);

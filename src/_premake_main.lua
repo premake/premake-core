@@ -41,6 +41,7 @@
 		-- can be picked up by the scripts.
 
 		premake.action.set(_ACTION)
+		local action = premake.action.current()
 
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
@@ -59,34 +60,46 @@
 			return 1
 		end
 
-		-- If no action was specified, show a short help message
-
-		if (not _ACTION) then
-			print(shorthelp)
-			return 1
-		end
-
-		-- If there wasn't a project script I've got to bail now
-
-		if not hasScript then
-			error("No Premake script (premake5.lua) found!", 0)
-		end
-
 		-- Validate the command-line arguments. This has to happen after the
 		-- script has run to allow for project-specific options
 
-		action = premake.action.current()
-		if not action then
-			error("Error: no such action '" .. _ACTION .. "'", 0)
+		ok, err = premake.option.validate(_OPTIONS)
+		if not ok then
+			print("Error: " .. err)
+			return 1
 		end
 
-		ok, err = premake.option.validate(_OPTIONS)
-		if not ok then error("Error: " .. err, 0) end
+		-- If no further action is possible, show a short help message
+
+		if not _OPTIONS.interactive then
+			if not _ACTION then
+				print(shorthelp)
+				return 1
+			end
+
+			if not action then
+				print("Error: no such action '" .. _ACTION .. "'")
+				return 1
+			end
+
+			if not hasScript then
+				print("No Premake script (premake5.lua) found!")
+				return 1
+			end
+		end
 
 		-- "Bake" the project information, preparing it for use by the action
 
-		print("Building configurations...")
-		premake.oven.bake()
+		if action then
+			print("Building configurations...")
+			premake.oven.bake()
+		end
+
+		-- Run the interactive prompt, if requested
+
+		if _OPTIONS.interactive then
+			debug.prompt()
+		end
 
 		-- Sanity check the current project setup
 
@@ -99,6 +112,5 @@
 
 		print("Done.")
 		return 0
-
 	end
 
