@@ -41,7 +41,6 @@
 		-- can be picked up by the scripts.
 
 		premake.action.set(_ACTION)
-		local action = premake.action.current()
 
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
@@ -49,6 +48,8 @@
 		local hasScript = dofileopt(_OPTIONS["file"] or { "premake5.lua", "premake4.lua" })
 
 		-- Process special options
+
+		local action = premake.action.current()
 
 		if (_OPTIONS["version"]) then
 			printf(versionhelp, _PREMAKE_VERSION)
