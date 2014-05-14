@@ -59,6 +59,7 @@ static const luaL_Reg path_functions[] = {
 
 static const luaL_Reg os_functions[] = {
 	{ "chdir",       os_chdir       },
+	{ "chmod",       os_chmod       },
 	{ "copyfile",    os_copyfile    },
 	{ "_is64bit",    os_is64bit     },
 	{ "isdir",       os_isdir       },

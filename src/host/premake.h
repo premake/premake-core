@@ -73,6 +73,7 @@ int path_join(lua_State* L);
 int path_normalize(lua_State* L);
 int path_translate(lua_State* L);
 int os_chdir(lua_State* L);
+int os_chmod(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getversion(lua_State* L);
