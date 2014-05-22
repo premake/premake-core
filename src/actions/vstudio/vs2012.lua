@@ -1,12 +1,14 @@
 --
 -- actions/vstudio/vs2012.lua
 -- Extend the existing exporters with support for Visual Studio 2012.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
 	local vstudio = premake.vstudio
 	local cs2005 = vstudio.cs2005
 	local vc2010 = vstudio.vc2010
+
+	local p = premake
 
 
 ---
@@ -57,7 +59,11 @@
 -- Add new elements to the configuration properties block of C++ projects.
 ---
 
-	table.insertafter(vc2010.elements.configurationProperties, "characterSet", "platformToolset")
+	p.override(vc2010.elements, "configurationProperties", function(base, cfg)
+		local calls = base(cfg)
+		table.insertafter(calls, vc2010.characterSet, vc2010.platformToolset)
+		return calls
+	end)
 
 	function vc2010.platformToolset(cfg)
 		if _ACTION > "vs2010" then
