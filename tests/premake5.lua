@@ -188,6 +188,7 @@
 
 	-- Visual Studio 2013
 	dofile("actions/vs2013/test_csproj_project_element.lua")
+	dofile("actions/vs2013/test_globals.lua")
 	dofile("actions/vs2013/test_sln_header.lua")
 	dofile("actions/vs2013/test_vcxproj_config_props.lua")
 

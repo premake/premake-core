@@ -1,12 +1,16 @@
 --
 -- actions/vstudio/vs2013.lua
 -- Extend the existing exporters with support for Visual Studio 2013.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
-	local vstudio = premake.vstudio
-	local cs2005 = vstudio.cs2005
+	premake.vstudio.vc2013 = {}
+
+	local p = premake
+	local vstudio = p.vstudio
 	local vc2010 = vstudio.vc2010
+
+	local m = vstudio.vc2013
 
 
 ---
@@ -54,13 +58,36 @@
 
 
 ---
+-- VS 2013 warns on duplicate file names, even those files are contained in
+-- different, mututally exclusive configurations. See:
+-- http://connect.microsoft.com/VisualStudio/feedback/details/797460/incorrect-warning-msb8027-reported-for-files-excluded-from-build
+--
+-- Premake already adds unique object names to conflicting file names, so just
+-- go ahead and disable that warning.
+---
+
+	premake.override(vc2010.elements, "globals", function(base, prj)
+		local calls = base(prj)
+		table.insertafter(calls, vc2010.projectGuid, m.ignoreWarnDuplicateFilename)
+		return calls
+	end)
+
+	function m.ignoreWarnDuplicateFilename(prj)
+		if _ACTION > "vs2012" then
+			p.w('<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>')
+		end
+	end
+
+
+
+---
 -- Add new elements to the configuration properties block of C++ projects.
 ---
 
-	premake.override(vc2010, "platformToolset", function(orig, cfg)
+	premake.override(vc2010, "platformToolset", function(base, cfg)
 		if _ACTION > "vs2012" then
 			_p(2,'<PlatformToolset>v120</PlatformToolset>')
 		else
-			orig(cfg)
+			base(cfg)
 		end
 	end)

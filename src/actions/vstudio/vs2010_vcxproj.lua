@@ -112,43 +112,23 @@
 		_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 	end
 
+
+
 --
 -- Write out the Globals property group.
 --
 
+	m.elements.globals = function(prj)
+		return {
+			m.projectGuid,
+			m.keyword,
+			m.projectName,
+		}
+	end
+
 	function m.globals(prj)
 		m.propertyGroup(nil, "Globals")
-		m.projectGuid(prj)
-
-		-- try to determine what kind of targets we're building here
-		local isWin, isManaged, isMakefile
-		for cfg in project.eachconfig(prj) do
-			if cfg.system == premake.WINDOWS then
-				isWin = true
-			end
-			if cfg.flags.Managed then
-				isManaged = true
-			end
-			if vstudio.isMakefile(cfg) then
-				isMakefile = true
-			end
-		end
-
-		if isWin then
-			if isMakefile then
-				_p(2,'<Keyword>MakeFileProj</Keyword>')
-			else
-				if isManaged then
-					m.targetFramework(prj)
-					_p(2,'<Keyword>ManagedCProj</Keyword>')
-				else
-					_p(2,'<Keyword>Win32Proj</Keyword>')
-				end
-				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
-			end
-		end
-
-		m.projectName(prj)
+		p.callArray(m.elements.globals, prj)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -1011,6 +991,39 @@
 			_p(3,'<IntrinsicFunctions>true</IntrinsicFunctions>')
 		end
 	end
+
+
+
+	function m.keyword(prj)
+		-- try to determine what kind of targets we're building here
+		local isWin, isManaged, isMakefile
+		for cfg in project.eachconfig(prj) do
+			if cfg.system == premake.WINDOWS then
+				isWin = true
+			end
+			if cfg.flags.Managed then
+				isManaged = true
+			end
+			if vstudio.isMakefile(cfg) then
+				isMakefile = true
+			end
+		end
+
+		if isWin then
+			if isMakefile then
+				_p(2,'<Keyword>MakeFileProj</Keyword>')
+			else
+				if isManaged then
+					m.targetFramework(prj)
+					_p(2,'<Keyword>ManagedCProj</Keyword>')
+				else
+					_p(2,'<Keyword>Win32Proj</Keyword>')
+				end
+				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+			end
+		end
+	end
+
 
 
 	function m.linkIncremental(cfg)
