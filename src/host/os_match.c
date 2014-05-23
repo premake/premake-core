@@ -11,9 +11,6 @@
 
 #if PLATFORM_WINDOWS
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
 typedef struct struct_MatchInfo
 {
 	HANDLE handle;

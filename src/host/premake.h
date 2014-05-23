@@ -38,6 +38,8 @@
 #define PLATFORM_STRING   "windows"
 #endif
 
+#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS)
+
 
 /* Pull in platform-specific headers required by built-in functions */
 #if PLATFORM_WINDOWS
@@ -48,12 +50,19 @@
 #endif
 
 
+/* Fill in any missing bits */
+#ifndef PATH_MAX
+#define PATH_MAX   (4096)
+#endif
+
+
 /* A success return code */
 #define OKAY   (0)
 
 
 /* Bootstrapping helper functions */
 unsigned long do_hash(const char* str, int seed);
+void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
 int do_isfile(const char* filename);
@@ -87,6 +96,7 @@ int os_matchnext(lua_State* L);
 int os_matchstart(lua_State* L);
 int os_mkdir(lua_State* L);
 int os_pathsearch(lua_State* L);
+int os_realpath(lua_State* L);
 int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);

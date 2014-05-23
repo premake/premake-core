@@ -73,6 +73,7 @@ static const luaL_Reg os_functions[] = {
 	{ "matchstart",  os_matchstart  },
 	{ "mkdir",       os_mkdir       },
 	{ "pathsearch",  os_pathsearch  },
+	{ "realpath",    os_realpath    },
 	{ "rmdir",       os_rmdir       },
 	{ "stat",        os_stat        },
 	{ "uuid",        os_uuid        },
@@ -148,10 +149,6 @@ int premake_execute(lua_State* L, int argc, const char** argv)
  */
 int premake_locate(lua_State* L, const char* argv0)
 {
-#if !defined(PATH_MAX)
-#define PATH_MAX  (4096)
-#endif
-
 	char buffer[PATH_MAX];
 	const char* path = NULL;
 
