@@ -168,12 +168,28 @@
 	function msc.getldflags(cfg)
 		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
+		flags = table.join(flags, cfg.linkoptions)
 		table.insert(flags, 1, "/NOLOGO")
+		return flags
+	end
 
-		for _, libdir in ipairs(project.getrelative(cfg.project, cfg.libdirs)) do
-			table.insert(flags, '/LIBPATH:"' .. libdir .. '"')
+
+--
+-- Build a list of additional library directories for a particular
+-- project configuration, decorated for the tool command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of decorated additional library directories.
+--
+
+	function msc.getLibraryDirectories(cfg)
+		local flags = {}
+		for i, dir in ipairs(cfg.libdirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(flags, '/LIBPATH:"' .. dir .. '"')
 		end
-
 		return flags
 	end
 

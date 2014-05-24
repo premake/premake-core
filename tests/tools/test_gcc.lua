@@ -246,7 +246,7 @@
 	function suite.ldflags_onX32()
 		architecture "x32"
 		prepare()
-		test.isequal({ "-s", "-m32", "-L/usr/lib32" }, gcc.getldflags(cfg))
+		test.isequal({ "-s", "-m32" }, gcc.getldflags(cfg))
 	end
 
 	function suite.cflags_onX64()
@@ -258,7 +258,7 @@
 	function suite.ldflags_onX64()
 		architecture "x64"
 		prepare()
-		test.isequal({ "-s", "-m64", "-L/usr/lib64" }, gcc.getldflags(cfg))
+		test.isequal({ "-s", "-m64" }, gcc.getldflags(cfg))
 	end
 
 

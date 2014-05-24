@@ -125,7 +125,7 @@
 	function suite.libdirs_onLibdirs()
 		libdirs { "../libs" }
 		prepare()
-		test.contains('/LIBPATH:"../libs"', msc.getldflags(cfg))
+		test.contains('/LIBPATH:"../libs"', msc.getLibraryDirectories(cfg))
 	end
 
 

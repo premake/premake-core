@@ -149,8 +149,8 @@
 
 	gcc.ldflags = {
 		architecture = {
-			x32 = { "-m32", "-L/usr/lib32" },
-			x64 = { "-m64", "-L/usr/lib64" },
+			x32 = "-m32",
+			x64 = "-m64",
 		},
 		flags = {
 			_Symbols = function(cfg)
@@ -171,12 +171,34 @@
 			end,
 		},
 		system = {
-			wii = { "-L$(LIBOGC_LIB)", "$(MACHDEP)" },
+			wii = "$(MACHDEP)",
 		}
 	}
 
 	function gcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.ldflags)
+		flags = table.join(flags, cfg.linkoptions)
+		return flags
+	end
+
+
+
+--
+-- Return a list of decorated additional libraries directories.
+--
+
+	gcc.libraryDirectories = {
+		architecture = {
+			x32 = "-L/usr/lib32",
+			x64 = "-L/usr/lib64",
+		},
+		system = {
+			wii = "-L$(LIBOGC_LIB)",
+		}
+	}
+
+	function gcc.getLibraryDirectories(cfg)
+		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
@@ -186,6 +208,7 @@
 
 		return flags
 	end
+
 
 
 --

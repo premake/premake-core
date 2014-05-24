@@ -102,6 +102,7 @@
 	snc.getcppflags = gcc.getcppflags
 	snc.getdefines = gcc.getdefines
 	snc.getincludedirs = gcc.getincludedirs
+	snc.getLibraryDirectories = gcc.getLibraryDirectories
 	snc.getlinks = gcc.getlinks
 
 

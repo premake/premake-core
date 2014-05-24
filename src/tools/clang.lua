@@ -151,6 +151,25 @@
 
 
 --
+-- Build a list of additional library directories for a particular
+-- project configuration, decorated for the tool command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of decorated additional library directories.
+--
+
+	function clang.getLibraryDirectories(cfg)
+
+		-- Just pass through to GCC for now
+		local flags = gcc.getLibraryDirectories(cfg)
+		return flags
+
+	end
+
+
+--
 -- Build a list of libraries to be linked for a particular project
 -- configuration, decorated for the linker command line.
 --

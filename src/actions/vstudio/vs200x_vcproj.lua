@@ -854,9 +854,11 @@
 
 
 	function m.additionalLinkerOptions(cfg, toolset)
-		local flags = cfg.linkoptions
+		local flags
 		if toolset then
-			flags = table.join(toolset.getldflags(cfg), flags)
+			flags = toolset.getldflags(cfg)
+		else
+			flags = cfg.linkoptions
 		end
 		if #flags > 0 then
 			p.x('AdditionalOptions="%s"', table.concat(flags, " "))

@@ -390,7 +390,8 @@
 
 
 	function make.ldFlags(cfg, toolset)
-		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
+		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getldflags(cfg))
+		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(flags))
 	end
 
 
