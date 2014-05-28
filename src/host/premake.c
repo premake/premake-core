@@ -66,6 +66,7 @@ static const luaL_Reg os_functions[] = {
 	{ "getcwd",      os_getcwd      },
 	{ "getversion",  os_getversion  },
 	{ "isfile",      os_isfile      },
+	{ "islink",      os_islink      },
 	{ "matchdone",   os_matchdone   },
 	{ "matchisfile", os_matchisfile },
 	{ "matchname",   os_matchname   },

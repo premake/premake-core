@@ -89,6 +89,7 @@ int os_getversion(lua_State* L);
 int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);
+int os_islink(lua_State* L);
 int os_matchdone(lua_State* L);
 int os_matchisfile(lua_State* L);
 int os_matchname(lua_State* L);
