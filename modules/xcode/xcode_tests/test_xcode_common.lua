@@ -19,7 +19,7 @@
 	xcode.used_ids = {}
 	
 	xcode.newid = function(node, usage)
-		local name = node.name
+		local name = node
 		if usage then
 			name = name .. ":" .. usage
 		end

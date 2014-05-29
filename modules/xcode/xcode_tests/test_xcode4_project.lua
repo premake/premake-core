@@ -54,10 +54,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = YES;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end

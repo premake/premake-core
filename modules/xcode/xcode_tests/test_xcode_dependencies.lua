@@ -183,6 +183,14 @@
 			name = "MyProject";
 			sourceTree = "<group>";
 		};
+		[MyProject2.xcodeproj:prodgrp] /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				[libMyProject2-d.a] /* libMyProject2-d.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		[Products] /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,14 +207,7 @@
 			name = "Projects";
 			sourceTree = "<group>";
 		};
-		[MyProject2.xcodeproj:prodgrp] /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				[libMyProject2-d.a] /* libMyProject2-d.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
+		
 /* End PBXGroup section */
 		]]
 	end
@@ -234,9 +235,9 @@
 			dependencies = (
 				[MyProject2.xcodeproj:targdep] /* PBXTargetDependency */,
 			);
-			name = "MyProject";
+			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
-			productName = "MyProject";
+			productName = MyProject;
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};

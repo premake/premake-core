@@ -13,18 +13,20 @@ function xcode4.workspace_head()
 end
 
 function xcode4.workspace_tail()
-	_p('</Workspace>')
+	-- Don't output final newline.  Xcode doesn't.
+	premake.out('</Workspace>')
 end
 
 function xcode4.workspace_file_ref(prj)
-
-		local projpath = path.getrelative(prj.solution.location, prj.location)
-		if projpath == '.' then projpath = '' 
-		else projpath = projpath ..'/' 
-		end
-		_p(1,'<FileRef')
-			_p(2,'location = "group:%s">',projpath .. prj.name .. '.xcodeproj')
-		_p(1,'</FileRef>')
+	local projpath = path.getrelative(prj.solution.location, prj.location)
+	if projpath == '.' then
+		projpath = ''
+	else
+		projpath = projpath ..'/' 
+	end
+	_p(1,'<FileRef')
+	_p(2,'location = "group:%s">', projpath .. prj.name .. '.xcodeproj')
+	_p(1,'</FileRef>')
 end
 
 function xcode4.workspace_generate(sln)

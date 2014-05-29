@@ -107,7 +107,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "MyProject"; path = "MyProject"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -119,7 +119,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject.app:product] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "MyProject.app"; path = "MyProject.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject.app:product] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -131,7 +131,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[libMyProject.a:product] /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libMyProject.a"; path = "libMyProject.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[libMyProject.a:product] /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -143,7 +143,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[libMyProject.dylib:product] /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "libMyProject.dylib"; path = "libMyProject.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[libMyProject.dylib:product] /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -166,8 +166,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[English] /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "English"; path = "English.lproj/MainMenu.xib"; sourceTree = "<group>"; };
-		[French] /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "French"; path = "French.lproj/MainMenu.xib"; sourceTree = "<group>"; };
+		[English] /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		[French] /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -178,8 +178,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[English] /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "English"; path = "English.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		[French] /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "French"; path = "French.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		[English] /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		[French] /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -190,7 +190,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[Cocoa.framework] /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Cocoa.framework"; path = "System/Library/Frameworks/Cocoa.framework"; sourceTree = "SDKROOT"; };
+		[Cocoa.framework] /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		]]
 	end
 	
@@ -229,7 +229,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[Icon.icns] /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "Icon.icns"; path = "Icon.icns"; sourceTree = "<group>"; };
+		[Icon.icns] /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = Icon.icns; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -240,7 +240,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject.app:product] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "MyProject.app"; path = "MyProject.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		[MyProject.app:product] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -325,7 +325,7 @@
 			children = (
 				[Products] /* Products */,
 			);
-			name = "MyProject";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -333,7 +333,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = "Products";
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -353,7 +353,7 @@
 				[source.h] /* source.h */,
 				[Products] /* Products */,
 			);
-			name = "MyProject";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -361,7 +361,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = "Products";
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -381,7 +381,7 @@
 				[include] /* include */,
 				[Products] /* Products */,
 			);
-			name = "MyProject";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		[include] /* include */ = {
@@ -430,7 +430,7 @@
 				[test.h] /* test.h */,
 				[Products] /* Products */,
 			);
-			name = "MyProject";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -438,7 +438,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = "Products";
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -459,7 +459,7 @@
 				[MainMenu.xib] /* MainMenu.xib */,
 				[Products] /* Products */,
 			);
-			name = "MyProject";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		[Products] /* Products */ = {
@@ -467,7 +467,7 @@
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = "Products";
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -481,21 +481,21 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
+		[Frameworks] /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				[Cocoa.framework] /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
 				[Frameworks] /* Frameworks */,
 				[Products] /* Products */,
 			);
-			name = "MyProject";
-			sourceTree = "<group>";
-		};
-		[Frameworks] /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				[Cocoa.framework] /* Cocoa.framework */,
-			);
-			name = "Frameworks";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		]]
@@ -552,9 +552,9 @@
 			);
 			dependencies = (
 			);
-			name = "MyProject";
+			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
-			productName = "MyProject";
+			productName = MyProject;
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
@@ -581,9 +581,9 @@
 			);
 			dependencies = (
 			);
-			name = "MyProject";
+			name = MyProject;
 			productInstallPath = "$(HOME)/Applications";
-			productName = "MyProject";
+			productName = MyProject;
 			productReference = [MyProject.app:product] /* MyProject.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -610,8 +610,8 @@
 			);
 			dependencies = (
 			);
-			name = "MyProject";
-			productName = "MyProject";
+			name = MyProject;
+			productName = MyProject;
 			productReference = [libMyProject.dylib:product] /* libMyProject.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
@@ -643,9 +643,9 @@
 			);
 			dependencies = (
 			);
-			name = "MyProject";
+			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
-			productName = "MyProject";
+			productName = MyProject;
 			productReference = [MyProject:product] /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
@@ -875,9 +875,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -895,10 +895,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = "MyProject";
+				INSTALL_PATH = "\"$(HOME)/Applications\"";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -917,9 +917,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -939,9 +939,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -962,9 +962,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -989,9 +989,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1011,9 +1011,9 @@
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "../../MyProject-Info.plist";
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1031,9 +1031,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1054,7 +1054,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = "MyProject-d";
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1073,9 +1073,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1095,7 +1095,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = "MyProject";
+				PRODUCT_NAME = MyProject;
 			};
 			name = "Debug 32-bit Universal";
 		};
@@ -1121,10 +1121,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1146,10 +1146,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1170,10 +1170,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1194,11 +1194,11 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1220,11 +1220,11 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = "bin";
+				SYMROOT = bin;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1243,16 +1243,16 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"_DEBUG",
-					"DEBUG",
+					_DEBUG,
+					DEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1274,13 +1274,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"../include",
-					"../libs",
+					../include,
+					../libs,
 				);
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1301,14 +1301,14 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"build option 1",
 					"build option 2",
 				);
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1329,13 +1329,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-lldap",
 				);
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1355,14 +1355,14 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"link option 1",
 					"link option 2",
 				);
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1384,11 +1384,11 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				WARNING_CFLAGS = "-Wall";
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1410,10 +1410,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1434,13 +1434,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-ffast-math",
 				);
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1461,13 +1461,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-ffloat-store",
 				);
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end	
@@ -1489,10 +1489,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = YES;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1515,10 +1515,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1539,13 +1539,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 				);
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end	
@@ -1567,10 +1567,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end	
@@ -1592,10 +1592,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1618,10 +1618,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = YES;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1643,13 +1643,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = (
-					"mylibs1",
-					"mylibs2",
+					mylibs1,
+					mylibs2,
 				);
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end	
@@ -1668,14 +1668,14 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MyProject_Prefix.pch";
+				GCC_PREFIX_HEADER = MyProject_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Debug";
+				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end	
@@ -1697,10 +1697,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Universal/Debug";
+				OBJROOT = obj/Universal/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1722,10 +1722,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Universal32/Debug";
+				OBJROOT = obj/Universal32/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1747,10 +1747,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Universal64/Debug";
+				OBJROOT = obj/Universal64/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1772,10 +1772,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Native/Debug";
+				OBJROOT = obj/Native/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1790,17 +1790,17 @@
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "i386";
+				ARCHS = i386;
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/x32/Debug";
+				OBJROOT = obj/x32/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1815,17 +1815,17 @@
 		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "x86_64";
+				ARCHS = x86_64;
 				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/x64/Debug";
+				OBJROOT = obj/x64/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
-			name = "Debug";
+			name = Debug;
 		};
 		]]
 	end
@@ -1846,7 +1846,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = "obj/Universal32/Debug";
+				OBJROOT = obj/Universal32/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = "Debug 32-bit Universal";
@@ -1864,15 +1864,6 @@
 		xcode.XCBuildConfigurationList(tr)
 		test.capture [[
 /* Begin XCConfigurationList section */
-		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				[MyProject:Debug] /* Debug */,
-				[MyProject:Release] /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug";
-		};
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1880,7 +1871,16 @@
 				[MyProject:Release(2)] /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug";
+			defaultConfigurationName = Debug;
+		};
+		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug] /* Debug */,
+				[MyProject:Release] /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 		]]
@@ -1893,15 +1893,6 @@
 		xcode.XCBuildConfigurationList(tr)
 		test.capture [[
 /* Begin XCConfigurationList section */
-		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				[MyProject:Debug] /* Debug */,
-				[MyProject:Release] /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug";
-		};
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1909,7 +1900,16 @@
 				[MyProject:Release(2)] /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug";
+			defaultConfigurationName = Debug;
+		};
+		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug] /* Debug */,
+				[MyProject:Release] /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 		]]
@@ -1923,17 +1923,6 @@
 		xcode.XCBuildConfigurationList(tr)
 		test.capture [[
 /* Begin XCConfigurationList section */
-		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				[MyProject:Debug] /* Debug 32-bit Universal */,
-				[MyProject:Debug(3)] /* Debug 64-bit Universal */,
-				[MyProject:Release] /* Release 32-bit Universal */,
-				[MyProject:Release(3)] /* Release 64-bit Universal */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug 32-bit Universal";
-		};
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1941,6 +1930,17 @@
 				[MyProject:Debug(4)] /* Debug 64-bit Universal */,
 				[MyProject:Release(2)] /* Release 32-bit Universal */,
 				[MyProject:Release(4)] /* Release 64-bit Universal */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug 32-bit Universal";
+		};
+		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				[MyProject:Debug] /* Debug 32-bit Universal */,
+				[MyProject:Debug(3)] /* Debug 64-bit Universal */,
+				[MyProject:Release] /* Release 32-bit Universal */,
+				[MyProject:Release(3)] /* Release 64-bit Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug 32-bit Universal";

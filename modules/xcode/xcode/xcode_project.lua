@@ -8,7 +8,6 @@
 	local fileconfig = premake.fileconfig
 	local xcode = premake.xcode
 	local tree = premake.tree
-
 --
 -- Create a tree corresponding to what is shown in the Xcode project browser
 -- pane, with nodes for files and folders, resources, frameworks, and products.
@@ -24,12 +23,12 @@
 		tr.project = prj
  
 		-- create a list of build configurations and assign IDs
-		 tr.configs = {}
+		tr.configs = {}
 		 
 		for cfg in project.eachconfig(prj) do
 			cfg.xcode = {}
-			cfg.xcode.targetid = xcode.newid(prj.xcode.projectnode, cfg.buildcfg)
-			cfg.xcode.projectid = xcode.newid(tr, cfg.buildcfg)
+			cfg.xcode.targetid = xcode.newid(prj.xcode.projectnode.name, cfg.buildcfg)
+			cfg.xcode.projectid = xcode.newid(tr.name, cfg.buildcfg)
 			table.insert(tr.configs, cfg)		
 		end 
 				
@@ -88,10 +87,10 @@
 		 	local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
 		 	xcnode.path = xcpath
 		 	xcnode.project = dep
-		 	xcnode.productgroupid = xcode.newid(xcnode, "prodgrp")
-		 	xcnode.productproxyid = xcode.newid(xcnode, "prodprox")
-		 	xcnode.targetproxyid  = xcode.newid(xcnode, "targprox")
-		 	xcnode.targetdependid = xcode.newid(xcnode, "targdep")
+		 	xcnode.productgroupid = xcode.newid(xcnode.name, "prodgrp")
+		 	xcnode.productproxyid = xcode.newid(xcnode.name, "prodprox")
+		 	xcnode.targetproxyid  = xcode.newid(xcnode.name, "targprox")
+		 	xcnode.targetdependid = xcode.newid(xcnode.name, "targdep")
 			
 			-- create a grandchild node for the dependency's link target
 		 	local lprj = premake.solution.findproject(prj.solution, dep.name)
@@ -109,13 +108,13 @@
 		 tree.traverse(tr, {
 		 	onnode = function(node)
 		 		-- assign IDs to every node in the tree
-		 		node.id = xcode.newid(node)
+		 		node.id = xcode.newid(node.name, nil, node.path)
 				
 		 		node.isResource = xcode.isItemResource(prj, node)
 				
 		 		-- assign build IDs to buildable files
-		 		if xcode.getbuildcategory(node) then					
-		 			node.buildid = xcode.newid(node, "build")
+		 		if xcode.getbuildcategory(node) then		
+		 			node.buildid = xcode.newid(node.name, "build", node.path)
 		 		end
 
 		 		-- remember key files that are needed elsewhere
@@ -131,10 +130,10 @@
 		node = tree.insert(tr.products, prj.xcode.projectnode)
 		node.kind = "product"
 		node.path = node.cfg.buildtarget.fullpath
-		node.cfgsection = xcode.newid(node, "cfg")
-		node.resstageid = xcode.newid(node, "rez")
-		node.sourcesid  = xcode.newid(node, "src")
-		node.fxstageid  = xcode.newid(node, "fxs")
+		node.cfgsection = xcode.newid(node.name, "cfg")
+		node.resstageid = xcode.newid(node.name, "rez")
+		node.sourcesid  = xcode.newid(node.name, "src")
+		node.fxstageid  = xcode.newid(node.name, "fxs")
 		
 		return tr		
 	end
@@ -162,8 +161,8 @@
 		xcode.PBXResourcesBuildPhase(tr)
 		xcode.PBXShellScriptBuildPhase(tr)
 		xcode.PBXSourcesBuildPhase(tr)
-		xcode.PBXVariantGroup(tr)
 		xcode.PBXTargetDependency(tr)
+		xcode.PBXVariantGroup(tr)			
 		xcode.XCBuildConfiguration(tr)
 		xcode.XCBuildConfigurationList(tr)
 		xcode.Footer(tr)
