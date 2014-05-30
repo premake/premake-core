@@ -444,7 +444,7 @@
 			return value
 		end,
 		compare = function(field, a, b, processor)
-			if #a ~= #b then
+			if a == nil or b == nil or #a ~= #b then
 				return false
 			end
 			for i = 1, #a do
@@ -577,6 +577,9 @@
 		store = storeKeyed,
 		merge = storeKeyed,
 		compare = function(field, a, b, processor)
+			if a == nil or b == nil then
+				return false
+			end
 			for k in pairs(a) do
 				if not processor(field, a[k], b[k]) then
 					return false
@@ -641,7 +644,7 @@
 		remove = storeList,
 		merge = storeList,
 		compare = function(field, a, b, processor)
-			if #a ~= #b then
+			if a == nil or b == nil or #a ~= #b then
 				return false
 			end
 			for i = 1, #a do
