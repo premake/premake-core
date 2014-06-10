@@ -137,6 +137,19 @@
 	}
 
 	api.register {
+		name = "customRule",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
+		name = "customRules",
+		scope = "project",
+		kind = "list:file",
+		tokens = true,
+	}
+
+	api.register {
 		name = "debugargs",
 		scope = "config",
 		kind = "list:string",

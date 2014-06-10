@@ -125,6 +125,8 @@
 				return api.remove(field, value)
 			end
 		end
+
+		return field
 	end
 
 
@@ -924,4 +926,47 @@
 
 	function newoption(opt)
 		premake.option.add(opt)
+	end
+
+
+-----------------------------------------------------------------------------
+--
+-- The custom*() functions act as wrappers that define new ad-hoc fields
+-- on the fly, to support arbitrary custom rule variables. These should be
+-- considered experimental and temporary for now as a more complete rule-
+-- generating solution will certainly be needed, but I will do my best to
+-- deprecate them cleanly when that time comes.
+--
+-----------------------------------------------------------------------------
+
+	function customVar(value)
+		if type(value) ~= "table" or #value ~= 2 then
+			error { msg="invalid value for customVar()" }
+		end
+
+		local name = value[1]
+		local value = value[2]
+
+		local fieldName = "_custom_" .. name
+		local field = premake.field.get(fieldName)
+		if not field then
+			field = api.register {
+				name = fieldName,
+				scope = "config",
+				kind = "string"
+			}
+		end
+
+		_G[fieldName](value)
+	end
+
+
+	function api.getCustomVars()
+		local vars = {}
+		for f in premake.field.each() do
+			if f.name:startswith("_custom_") then
+				table.insert(vars, f.name)
+			end
+		end
+		return vars
 	end

@@ -69,6 +69,11 @@
 		]]
 	end
 
+
+--
+-- Check handling of files with custom build rules.
+--
+
 	function suite.customBuild_onBuildRule()
 		files { "hello.cg" }
 		filter "files:**.cg"
@@ -87,7 +92,6 @@
 	</ItemGroup>
 		]]
 	end
-
 
 	function suite.customBuild_onBuildRuleWithMessage()
 		files { "hello.cg" }
@@ -490,3 +494,56 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- Check handling of files using custom rule definitions.
+--
+
+	function suite.correctlyCategorized_onCustomRule()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+		prepare()
+			test.capture [[
+	<ItemGroup>
+		<Animation Include="hello.dae" />
+	</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onLiteralVars()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customVar { "GenerateDebugInfo", "True" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Animation Include="hello.dae">
+			<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">True</GenerateDebugInfo>
+			<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">True</GenerateDebugInfo>
+		</Animation>
+	</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onPerConfigLiteralVars()
+		files { "hello.dae" }
+		filter { "files:**.dae" }
+			customRule "Animation"
+		filter { "files:**.dae", "configurations:Debug" }
+			customVar { "GenerateDebugInfo", "True" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Animation Include="hello.dae">
+			<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">True</GenerateDebugInfo>
+		</Animation>
+	</ItemGroup>
+		]]
+	end
+
+

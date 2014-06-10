@@ -482,6 +482,43 @@
 		m.simplefilesgroup(prj, "None")
 		m.simplefilesgroup(prj, "ResourceCompile")
 		m.customBuildFilesGroup(prj)
+		m.customRuleFileGroups(prj)
+	end
+
+
+	function m.customRuleFileGroups(prj)
+		local group = m.getfilegroup(prj, "CustomRule")
+		local vars = p.api.getCustomVars()
+
+		for rule, files in pairs(group) do
+			if #files > 0 then
+				_p(1,'<ItemGroup>')
+				for i, file in ipairs(files) do
+
+					local contents = p.capture(function ()
+						for i, var in ipairs(vars) do
+							for cfg in project.eachconfig(prj) do
+								local condition = m.condition(cfg)
+								local fcfg = fileconfig.getconfig(file, cfg)
+								if fcfg and fcfg[var] then
+									local key = var:sub(9)
+									_x(3,'<%s %s>%s</%s>', key, m.condition(fcfg.config), fcfg[var], key)
+								end
+							end
+						end
+					end)
+
+					if #contents > 0 then
+						_p(2,'<%s Include=\"%s\">', rule, path.translate(file.relpath))
+						_p('%s', contents)
+						_p(2,'</%s>', rule)
+					else
+						_p(2,'<%s Include=\"%s\" />', rule, path.translate(file.relpath))
+					end
+				end
+				_p(1,'</ItemGroup>')
+			end
+		end
 	end
 
 
@@ -594,56 +631,115 @@
 
 
 	function m.getfilegroup(prj, group)
-		-- check for a cached copy before creating
-		local groups = prj.vc2010_file_groups
-		if not groups then
-			groups = {
-				ClCompile = {},
-				ClInclude = {},
-				None = {},
-				ResourceCompile = {},
-				CustomBuild = {},
-			}
-			prj.vc2010_file_groups = groups
+		-- Have I already created the groups?
+		local groups = prj._vc2010_file_groups
+		if groups then
+			return groups[group]
+		end
 
-			local tr = project.getsourcetree(prj)
-			tree.traverse(tr, {
-				onleaf = function(node)
-					-- if any configuration of this file uses a custom build rule,
-					-- then they all must be marked as custom build
-					local hasbuildrule = false
-					for cfg in project.eachconfig(prj) do
-						local filecfg = fileconfig.getconfig(node, cfg)
-						if fileconfig.hasCustomBuildRule(filecfg) then
-							hasbuildrule = true
-							break
-						end
-					end
+		groups = {
+			ClCompile = {},
+			ClInclude = {},
+			None = {},
+			ResourceCompile = {},
+			CustomBuild = {},
+			CustomRule = {},
+		}
 
-					if hasbuildrule then
-						table.insert(groups.CustomBuild, node)
-					elseif path.iscppfile(node.name) then
-						table.insert(groups.ClCompile, node)
-					elseif path.iscppheader(node.name) then
-						table.insert(groups.ClInclude, node)
-					elseif path.isresourcefile(node.name) then
-						table.insert(groups.ResourceCompile, node)
-					else
-						table.insert(groups.None, node)
+		local tr = project.getsourcetree(prj)
+		tree.traverse(tr, {
+			onleaf = function(node)
+				-- if any configuration of this file uses a custom build rule,
+				-- then they all must be marked as custom build
+				local customBuild, customRule
+
+				for cfg in project.eachconfig(prj) do
+					local fcfg = fileconfig.getconfig(node, cfg)
+					if fileconfig.hasCustomBuildRule(fcfg) then
+						customBuild = true
+						break
+					elseif fcfg and fcfg.customRule then
+						customRule = fcfg.customRule
+						break
 					end
 				end
-			})
 
-			-- sort by relative to path; otherwise VS will reorder the files
-			for group, files in pairs(groups) do
-				table.sort(files, function (a, b)
-					return a.relpath < b.relpath
-				end)
+				if customBuild then
+					table.insert(groups.CustomBuild, node)
+				elseif customRule then
+					groups.CustomRule[customRule] = groups.CustomRule[customRule] or {}
+					table.insert(groups.CustomRule[customRule], node)
+				elseif path.iscppfile(node.name) then
+					table.insert(groups.ClCompile, node)
+				elseif path.iscppheader(node.name) then
+					table.insert(groups.ClInclude, node)
+				elseif path.isresourcefile(node.name) then
+					table.insert(groups.ResourceCompile, node)
+				else
+					table.insert(groups.None, node)
+				end
+			end
+		})
+
+		-- sort by relative to path; otherwise VS will reorder the files
+		for group, files in pairs(groups) do
+			table.sort(files, function (a, b)
+				return a.relpath < b.relpath
+			end)
+		end
+
+		prj._vc2010_file_groups = groups
+		return groups[group]
+	end
+
+
+	function m.categorize(prj, file)
+		-- If any configuration for this file uses a custom build step or a
+		-- custom, externally defined rule, that's the category to use
+		for cfg in project.eachconfig(prj) do
+			local fcfg = fileconfig.getconfig(file, cfg)
+			if fileconfig.hasCustomBuildRule(fcfg) then
+				return "CustomBuild"
+			elseif fcfg and fcfg.customRule then
+				return fcfg.customRule
 			end
 		end
 
-		return groups[group]
+		-- Otherwise use the file extension to deduce a category
+		if path.iscppfile(node.name) then
+			return "ClCompile"
+		elseif path.iscppheader(node.name) then
+			return "ClInclude"
+		elseif path.isresourcefile(node.name) then
+			return "ResourceCompile"
+		else
+			return "None"
+		end
 	end
+
+
+	function m.categorizeSources(prj)
+		local groups = {}
+
+		local tr = project.getsourcetree(prj)
+		tree.traverse(tr, {
+			onleaf = function(node)
+				local cat = m.categorize(prj, node)
+				groups[cat] = groups[cat] or {}
+				table.insert(groups[cat], node)
+			end
+		})
+
+		-- sort by relative to path; otherwise VS will reorder the files
+		for group, files in pairs(groups) do
+			table.sort(files, function (a, b)
+				return a.relpath < b.relpath
+			end)
+		end
+
+		return groups
+	end
+
 
 
 --
@@ -966,9 +1062,14 @@
 
 
 	function m.importExtensionSettings(prj)
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
-		_p(1,'<ImportGroup Label="ExtensionSettings">')
-		_p(1,'</ImportGroup>')
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
+		p.push('<ImportGroup Label="ExtensionSettings">')
+		table.foreachi(prj.customRules, function(value)
+			value = path.translate(project.getrelative(prj, value))
+			value = path.appendExtension(value, ".props")
+			p.x('<Import Project="%s" />', value)
+		end)
+		p.pop('</ImportGroup>')
 	end
 
 

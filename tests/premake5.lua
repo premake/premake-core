@@ -48,6 +48,12 @@
 	end
 
 
+	test.getproject = function(sln, i)
+		local sln = premake.oven.bakeSolution(sln)
+		return premake.solution.getproject(sln, i or 1)
+	end
+
+
 	test.getconfig = function(prj, buildcfg, platform)
 		local sln = premake.oven.bakeSolution(prj.solution)
 		prj = premake.solution.getproject(sln, prj.name)
@@ -167,6 +173,7 @@
 	dofile("actions/vstudio/vc2010/test_files.lua")
 	dofile("actions/vstudio/vc2010/test_filter_ids.lua")
 	dofile("actions/vstudio/vc2010/test_filters.lua")
+	dofile("actions/vstudio/vc2010/test_import_extensions.lua")
 	dofile("actions/vstudio/vc2010/test_item_def_group.lua")
 	dofile("actions/vstudio/vc2010/test_link.lua")
 	dofile("actions/vstudio/vc2010/test_manifest.lua")
