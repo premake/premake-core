@@ -35,9 +35,9 @@
 		files { "source/test.manifest" }
 		prepare()
 		test.capture [[
-		<Manifest>
-			<AdditionalManifestFiles>source/test.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
-		</Manifest>
+<Manifest>
+	<AdditionalManifestFiles>source/test.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+</Manifest>
 		]]
 	end
 

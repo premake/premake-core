@@ -314,9 +314,9 @@
 
 	function m.resourceCompile(cfg)
 		if cfg.system ~= premake.XBOX360 then
-			_p(2,'<ResourceCompile>')
+			p.push('<ResourceCompile>')
 			p.callArray(m.elements.resourceCompile, cfg)
-			_p(2,'</ResourceCompile>')
+			p.pop('</ResourceCompile>')
 		end
 	end
 
@@ -408,9 +408,9 @@
 			return
 		end
 
-		_p(2,'<Manifest>')
-		m.element(3, "AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
-		_p(2,'</Manifest>')
+		p.push('<Manifest>')
+		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
+		p.pop('</Manifest>')
 	end
 
 
@@ -472,31 +472,132 @@
 	end
 
 
---
+---
 -- Write out the list of source code files, and any associated configuration.
---
+---
+
+	m.elements.fileGroups = {
+		"ClInclude",
+		"ClCompile",
+		"None",
+		"ResourceCompile",
+		"CustomBuild",
+		"CustomRule"
+	}
+
+	m.elements.files = function(prj, groups)
+		local calls = {}
+		for i, group in ipairs(m.elements.fileGroups) do
+			calls[i] = m[group .. "Files"]
+		end
+		return calls
+	end
 
 	function m.files(prj)
-		m.simplefilesgroup(prj, "ClInclude")
-		m.compilerfilesgroup(prj)
-		m.simplefilesgroup(prj, "None")
-		m.simplefilesgroup(prj, "ResourceCompile")
-		m.customBuildFilesGroup(prj)
-		m.customRuleFileGroups(prj)
+		-- Categorize the source files in groups by build rule; each will
+		-- be written to a separate item group by one of the handlers
+		local groups = m.categorizeSources(prj)
+		p.callArray(m.elements.files, prj, groups)
 	end
 
 
-	function m.customRuleFileGroups(prj)
-		local group = m.getfilegroup(prj, "CustomRule")
+	function m.ClCompileFiles(prj, group)
+		local files = group.ClCompile or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
+
+			for _, file in ipairs(files) do
+				local contents = p.capture(function ()
+					p.push()
+					for cfg in project.eachconfig(prj) do
+						local fcfg = fileconfig.getconfig(file, cfg)
+						m.excludedFromBuild(cfg, fcfg)
+						if fcfg then
+							local condition = m.condition(cfg)
+							m.objectFileName(fcfg)
+							m.clCompilePreprocessorDefinitions(fcfg, condition)
+							m.optimization(fcfg, condition)
+							m.forceIncludes(fcfg, condition)
+							m.precompiledHeader(cfg, fcfg, condition)
+							m.enableEnhancedInstructionSet(fcfg, condition)
+							m.additionalCompileOptions(fcfg, condition)
+						end
+					end
+					p.pop()
+				end)
+
+				if #contents > 0 then
+					p.push('<ClCompile Include=\"%s\">', path.translate(file.relpath))
+					p.out(contents)
+					p.pop('</ClCompile>')
+				else
+					p.x('<ClCompile Include=\"%s\" />', path.translate(file.relpath))
+				end
+
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
+
+	function m.ClIncludeFiles(prj, groups)
+		local files = groups.ClInclude or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
+				p.x('<ClInclude Include=\"%s\" />', path.translate(file.relpath))
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
+
+	function m.CustomBuildFiles(prj, groups)
+		local files = groups.CustomBuild or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
+			for _, file in ipairs(files) do
+				p.push('<CustomBuild Include=\"%s\">', path.translate(file.relpath))
+				p.w('<FileType>Document</FileType>')
+
+				for cfg in project.eachconfig(prj) do
+					local condition = m.condition(cfg)
+					local filecfg = fileconfig.getconfig(file, cfg)
+					if fileconfig.hasCustomBuildRule(filecfg) then
+						m.excludedFromBuild(cfg, filecfg)
+
+						local commands = table.concat(filecfg.buildcommands,'\r\n')
+						m.element("Command", condition, '%s', commands)
+
+						local outputs = project.getrelative(prj, filecfg.buildoutputs)
+						m.element("Outputs", condition, '%s', table.concat(outputs, " "))
+
+						if filecfg.buildmessage then
+							m.element("Message", condition, '%s', filecfg.buildmessage)
+						end
+					end
+				end
+
+				p.pop('</CustomBuild>')
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
+
+	function m.CustomRuleFiles(prj, groups)
 		local vars = p.api.getCustomVars()
 
-		for rule, files in pairs(group) do
-			if #files > 0 then
-				_p(1,'<ItemGroup>')
-				for i, file in ipairs(files) do
+		-- Look for rules that aren't in the built-in rule list
+		for rule, files in pairs(groups) do
+			if not table.contains(m.elements.fileGroups, rule) and #files > 0 then
+				p.push('<ItemGroup>')
+				for _, file in ipairs(files) do
 
-					local contents = p.capture(function ()
-						for i, var in ipairs(vars) do
+					-- Capture any rule variables that have been set
+					local contents = p.capture(function()
+						p.push()
+						for _, var in ipairs(vars) do
 							for cfg in project.eachconfig(prj) do
 								local condition = m.condition(cfg)
 								local fcfg = fileconfig.getconfig(file, cfg)
@@ -510,195 +611,69 @@
 									end
 
 									if #value > 0 then
-										_x(3,'<%s %s>%s</%s>', key, m.condition(fcfg.config), value, key)
+										m.element(key, condition, '%s', value)
+										-- p.x('<%s %s>%s</%s>', key, m.condition(fcfg.config), value, key)
 									end
 								end
 							end
 						end
+						p.pop()
 					end)
 
 					if #contents > 0 then
-						_p(2,'<%s Include=\"%s\">', rule, path.translate(file.relpath))
-						_p('%s', contents)
-						_p(2,'</%s>', rule)
+						p.push('<%s Include=\"%s\">', rule, path.translate(file.relpath))
+						p.out(contents)
+						p.pop('</%s>', rule)
 					else
-						_p(2,'<%s Include=\"%s\" />', rule, path.translate(file.relpath))
+						p.x('<%s Include=\"%s\" />', rule, path.translate(file.relpath))
 					end
 				end
-				_p(1,'</ItemGroup>')
+				p.pop('</ItemGroup>')
 			end
 		end
 	end
 
 
-	function m.simplefilesgroup(prj, group)
-		local files = m.getfilegroup(prj, group)
+
+	function m.NoneFiles(prj, groups)
+		local files = groups.None or {}
 		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, file in ipairs(files) do
-
-				-- Capture the contents of the <ClCompile> element, if any, so
-				-- I know which form to use.
-
-				local contents = p.capture(function ()
-					if group == "ResourceCompile" then
-						for cfg in project.eachconfig(prj) do
-							local condition = m.condition(cfg)
-							local filecfg = fileconfig.getconfig(file, cfg)
-							if cfg.system == premake.WINDOWS then
-								m.excludedFromBuild(cfg, filecfg)
-							end
-						end
-					end
-				end)
-
-				if #contents > 0 then
-					_x(2,'<%s Include=\"%s\">', group, path.translate(file.relpath))
-					_p("%s", contents)
-					_p(2,'</%s>', group)
-				else
-					_x(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
-				end
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
+				p.x('<None Include=\"%s\" />', path.translate(file.relpath))
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 
 
-	function m.compilerfilesgroup(prj)
-		local files = m.getfilegroup(prj, "ClCompile")
+	function m.ResourceCompileFiles(prj, groups)
+		local files = groups.ResourceCompile or {}
 		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, file in ipairs(files) do
-
-				-- Capture the contents of the <ClCompile> element, if any, so
-				-- I know which form to use.
-
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
 				local contents = p.capture(function ()
+					p.push()
 					for cfg in project.eachconfig(prj) do
 						local condition = m.condition(cfg)
-
 						local filecfg = fileconfig.getconfig(file, cfg)
-						m.excludedFromBuild(cfg, filecfg)
-						if filecfg then
-							m.objectFileName(filecfg)
-							m.clCompilePreprocessorDefinitions(filecfg, condition)
-							m.optimization(filecfg, condition)
-							m.forceIncludes(filecfg, condition)
-							m.precompiledHeader(cfg, filecfg, condition)
-							m.enableEnhancedInstructionSet(filecfg, condition)
-							m.additionalCompileOptions(filecfg, condition)
+						if cfg.system == premake.WINDOWS then
+							m.excludedFromBuild(cfg, filecfg)
 						end
 					end
+					p.pop()
 				end)
 
 				if #contents > 0 then
-					_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
-					_p("%s", contents)
-					_p(2,'</ClCompile>')
+					p.push('<ResourceCompile Include=\"%s\">', path.translate(file.relpath))
+					p.out(contents)
+					p.pop('</ResourceCompile>')
 				else
-					_x(2,'<ClCompile Include=\"%s\" />', path.translate(file.relpath))
-				end
-
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-
-
-	function m.customBuildFilesGroup(prj)
-		local files = m.getfilegroup(prj, "CustomBuild")
-		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, file in ipairs(files) do
-				_x(2,'<CustomBuild Include=\"%s\">', path.translate(file.relpath))
-				_p(3,'<FileType>Document</FileType>')
-
-				for cfg in project.eachconfig(prj) do
-					local condition = m.condition(cfg)
-					local filecfg = fileconfig.getconfig(file, cfg)
-					if fileconfig.hasCustomBuildRule(filecfg) then
-						m.excludedFromBuild(cfg, filecfg)
-
-						local commands = table.concat(filecfg.buildcommands,'\r\n')
-						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
-
-						local outputs = project.getrelative(prj, filecfg.buildoutputs)
-						m.element(3, "Outputs", condition, '%s', table.concat(outputs, " "))
-
-						if filecfg.buildmessage then
-							m.element(3, "Message", condition, '%s', premake.esc(filecfg.buildmessage))
-						end
-					end
-				end
-
-				_p(2,'</CustomBuild>')
-			end
-			_p(1,'</ItemGroup>')
-		end
-	end
-
-
-	function m.getfilegroup(prj, group)
-		-- Have I already created the groups?
-		local groups = prj._vc2010_file_groups
-		if groups then
-			return groups[group]
-		end
-
-		groups = {
-			ClCompile = {},
-			ClInclude = {},
-			None = {},
-			ResourceCompile = {},
-			CustomBuild = {},
-			CustomRule = {},
-		}
-
-		local tr = project.getsourcetree(prj)
-		tree.traverse(tr, {
-			onleaf = function(node)
-				-- if any configuration of this file uses a custom build rule,
-				-- then they all must be marked as custom build
-				local customBuild, customRule
-
-				for cfg in project.eachconfig(prj) do
-					local fcfg = fileconfig.getconfig(node, cfg)
-					if fileconfig.hasCustomBuildRule(fcfg) then
-						customBuild = true
-						break
-					elseif fcfg and fcfg.customRule then
-						customRule = fcfg.customRule
-						break
-					end
-				end
-
-				if customBuild then
-					table.insert(groups.CustomBuild, node)
-				elseif customRule then
-					groups.CustomRule[customRule] = groups.CustomRule[customRule] or {}
-					table.insert(groups.CustomRule[customRule], node)
-				elseif path.iscppfile(node.name) then
-					table.insert(groups.ClCompile, node)
-				elseif path.iscppheader(node.name) then
-					table.insert(groups.ClInclude, node)
-				elseif path.isresourcefile(node.name) then
-					table.insert(groups.ResourceCompile, node)
-				else
-					table.insert(groups.None, node)
+					p.x('<ResourceCompile Include=\"%s\" />', path.translate(file.relpath))
 				end
 			end
-		})
-
-		-- sort by relative to path; otherwise VS will reorder the files
-		for group, files in pairs(groups) do
-			table.sort(files, function (a, b)
-				return a.relpath < b.relpath
-			end)
+			p.pop('</ItemGroup>')
 		end
-
-		prj._vc2010_file_groups = groups
-		return groups[group]
 	end
 
 
@@ -715,11 +690,11 @@
 		end
 
 		-- Otherwise use the file extension to deduce a category
-		if path.iscppfile(node.name) then
+		if path.iscppfile(file.name) then
 			return "ClCompile"
-		elseif path.iscppheader(node.name) then
+		elseif path.iscppheader(file.name) then
 			return "ClInclude"
-		elseif path.isresourcefile(node.name) then
+		elseif path.isresourcefile(file.name) then
 			return "ResourceCompile"
 		else
 			return "None"
@@ -739,7 +714,7 @@
 			end
 		})
 
-		-- sort by relative to path; otherwise VS will reorder the files
+		-- sort by relative-to path; otherwise VS will reorder the files
 		for group, files in pairs(groups) do
 			table.sort(files, function (a, b)
 				return a.relpath < b.relpath
@@ -748,6 +723,72 @@
 
 		return groups
 	end
+
+
+
+    function m.getfilegroup(prj, group)
+        -- Have I already created the groups?
+        local groups = prj._vc2010_file_groups
+        if groups then
+            return groups[group]
+        end
+
+        groups = {
+            ClCompile = {},
+            ClInclude = {},
+            None = {},
+            ResourceCompile = {},
+            CustomBuild = {},
+            CustomRule = {},
+        }
+
+        local tr = project.getsourcetree(prj)
+        tree.traverse(tr, {
+            onleaf = function(node)
+                -- if any configuration of this file uses a custom build rule,
+                -- then they all must be marked as custom build
+                local customBuild, customRule
+
+                for cfg in project.eachconfig(prj) do
+                    local fcfg = fileconfig.getconfig(node, cfg)
+                    if fileconfig.hasCustomBuildRule(fcfg) then
+                        customBuild = true
+                        break
+                    elseif fcfg and fcfg.customRule then
+                        customRule = fcfg.customRule
+                        break
+                    end
+                end
+
+                if customBuild then
+                    table.insert(groups.CustomBuild, node)
+                elseif customRule then
+                    groups.CustomRule[customRule] = groups.CustomRule[customRule] or {}
+                    table.insert(groups.CustomRule[customRule], node)
+                elseif path.iscppfile(node.name) then
+                    table.insert(groups.ClCompile, node)
+                elseif path.iscppheader(node.name) then
+                    table.insert(groups.ClInclude, node)
+                elseif path.isresourcefile(node.name) then
+                    table.insert(groups.ResourceCompile, node)
+                else
+                    table.insert(groups.None, node)
+                end
+            end
+        })
+
+        -- sort by relative to path; otherwise VS will reorder the files
+        for group, files in pairs(groups) do
+            table.sort(files, function (a, b)
+                return a.relpath < b.relpath
+            end)
+        end
+
+        prj._vc2010_file_groups = groups
+        return groups[group]
+    end
+
+
 
 
 
@@ -801,7 +842,7 @@
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
 			dirs = path.translate(table.concat(dirs, ";"))
-			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+			p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
 		end
 	end
 
@@ -826,7 +867,7 @@
 	function m.additionalCompileOptions(cfg, condition)
 		if #cfg.buildoptions > 0 then
 			local opts = table.concat(cfg.buildoptions, " ")
-			m.element(3, "AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
@@ -903,7 +944,7 @@
 	function m.culture(cfg)
 		local value = vstudio.cultureForLocale(cfg.locale)
 		if value then
-			_p(3,'<Culture>0x%04x</Culture>', value)
+			p.w('<Culture>0x%04x</Culture>', value)
 		end
 	end
 
@@ -953,7 +994,7 @@
 		end
 
 		if value then
-			m.element(3, 'EnableEnhancedInstructionSet', condition, value)
+			m.element('EnableEnhancedInstructionSet', condition, value)
 		end
 	end
 
@@ -980,7 +1021,7 @@
 
 	function m.excludedFromBuild(cfg, filecfg)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
-			_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', m.condition(cfg))
+			p.w('<ExcludedFromBuild %s>true</ExcludedFromBuild>', m.condition(cfg))
 		end
 	end
 
@@ -995,7 +1036,7 @@
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
 			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
-			m.element(3, "ForcedIncludeFiles", condition, table.concat(includes, ';'))
+			m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
 			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
@@ -1201,9 +1242,10 @@
 	end
 
 
-	function m.objectFileName(filecfg)
-		if filecfg.objname ~= filecfg.basename then
-			_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', m.condition(filecfg.config), filecfg.objname)
+
+	function m.objectFileName(fcfg)
+		if fcfg.objname ~= fcfg.basename then
+			p.w('<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', m.condition(fcfg.config), fcfg.objname)
 		end
 	end
 
@@ -1236,7 +1278,7 @@
 		local map = { Off="Disabled", On="Full", Debug="Disabled", Full="Full", Size="MinSpace", Speed="MaxSpeed" }
 		local value = map[cfg.optimize]
 		if value or not condition then
-			m.element(3, 'Optimization', condition, value or "Disabled")
+			m.element('Optimization', condition, value or "Disabled")
 		end
 	end
 
@@ -1257,9 +1299,9 @@
 	function m.precompiledHeader(cfg, filecfg, condition)
 		if filecfg then
 			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
-				m.element(3, 'PrecompiledHeader', condition, 'Create')
+				m.element('PrecompiledHeader', condition, 'Create')
 			elseif filecfg.flags.NoPCH then
-				m.element(3, 'PrecompiledHeader', condition, 'NotUsing')
+				m.element('PrecompiledHeader', condition, 'NotUsing')
 			end
 		else
 			if not cfg.flags.NoPCH and cfg.pchheader then
@@ -1279,7 +1321,7 @@
 				defines = defines:gsub('"', '\\"')
 			end
 			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
-			m.element(3, 'PreprocessorDefinitions', condition, defines)
+			m.element('PreprocessorDefinitions', condition, defines)
 		end
 	end
 
@@ -1453,7 +1495,7 @@
 
 	function m.warningLevel(cfg)
 		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
-		m.element(3, "WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
+		m.element("WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
 	end
 
 
@@ -1494,7 +1536,7 @@
 --    Optional additional arguments to satisfy any tokens in the value.
 --
 
-	function m.element(depth, name, condition, value, ...)
+	function m.element(name, condition, value, ...)
 		if select('#',...) == 0 then
 			value = premake.esc(value)
 		end
@@ -1506,5 +1548,5 @@
 			format = string.format('<%s>%s</%s>', name, value, name)
 		end
 
-		_x(depth, format, ...)
+		p.x(format, ...)
 	end
