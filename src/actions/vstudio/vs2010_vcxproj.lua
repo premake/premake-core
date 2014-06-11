@@ -501,8 +501,17 @@
 								local condition = m.condition(cfg)
 								local fcfg = fileconfig.getconfig(file, cfg)
 								if fcfg and fcfg[var] then
-									local key = var:sub(9)
-									_x(3,'<%s %s>%s</%s>', key, m.condition(fcfg.config), fcfg[var], key)
+									local key = p.api.getCustomVarKey(var)
+									local value = fcfg[var]
+
+									if type(value) == "table" then
+										local fmt = p.api.getCustomListFormat(var)
+										value = table.concat(value, fmt[1])
+									end
+
+									if #value > 0 then
+										_x(3,'<%s %s>%s</%s>', key, m.condition(fcfg.config), value, key)
+									end
 								end
 							end
 						end

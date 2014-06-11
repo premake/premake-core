@@ -428,6 +428,26 @@
 
 
 
+---
+-- Reset the API system, clearing out any temporary or cached values.
+-- Used by the automated testing framework to clear state between
+-- individual test runs.
+---
+
+	function api.reset()
+		-- Remove all custom variables
+		local vars = api.getCustomVars()
+		for i, var in ipairs(vars) do
+			local f = premake.field.get(var)
+			api.unregister(f)
+		end
+
+		-- Remove all custom list variable formats
+		api._customVarFormats = {}
+	end
+
+
+
 --
 -- Arrays are integer indexed tables; unlike lists, a new array value
 -- will replace the old one, rather than merging both.
@@ -939,27 +959,7 @@
 --
 -----------------------------------------------------------------------------
 
-	function customVar(value)
-		if type(value) ~= "table" or #value ~= 2 then
-			error { msg="invalid value for customVar()" }
-		end
-
-		local name = value[1]
-		local value = value[2]
-
-		local fieldName = "_custom_" .. name
-		local field = premake.field.get(fieldName)
-		if not field then
-			field = api.register {
-				name = fieldName,
-				scope = "config",
-				kind = "string"
-			}
-		end
-
-		_G[fieldName](value)
-	end
-
+	api._customVarFormats = {}
 
 	function api.getCustomVars()
 		local vars = {}
@@ -969,4 +969,59 @@
 			end
 		end
 		return vars
+	end
+
+
+	function api.getCustomVarKey(var)
+		return var:sub(9)
+	end
+
+
+	function api.getCustomListFormat(var)
+		local key = api.getCustomVarKey(var)
+		return api._customVarFormats[key] or { " " }
+	end
+
+
+	function api.setCustomVar(name, kind, value)
+		local fieldName = "_custom_" .. name
+		local field = premake.field.get(fieldName)
+		if not field then
+			api.register {
+				name = fieldName,
+				scope = "config",
+				kind = kind
+			}
+		end
+		_G[fieldName](value)
+	end
+
+
+	function customVar(value)
+		if type(value) ~= "table" or #value ~= 2 then
+			error { msg="invalid value for customVar()" }
+		end
+		api.setCustomVar(value[1], "string", value[2])
+	end
+
+
+	function customList(value)
+		if type(value) ~= "table" or #value < 2 then
+			error { msg="invalid value for customList()" }
+		end
+
+		local name = value[1]
+		table.remove(value, 1)
+		api.setCustomVar(name, "list:string", value)
+	end
+
+
+	function customListFormat(value)
+		if type(value) ~= "table" or #value < 2 then
+			error { msg="invalid value for customListFormat()" }
+		end
+
+		local name = value[1]
+		table.remove(value, 1)
+		api._customVarFormats[name] = value
 	end

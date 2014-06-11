@@ -547,3 +547,55 @@
 	end
 
 
+	function suite.customRule_onListVars()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customList { "ExtraDependencies", "File1", "File2" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Animation Include="hello.dae">
+			<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1 File2</ExtraDependencies>
+			<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1 File2</ExtraDependencies>
+		</Animation>
+	</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onPerConfigListVars()
+		files { "hello.dae" }
+		filter { "files:**.dae" }
+			customRule "Animation"
+			customList { "ExtraDependencies", "File1", "File2" }
+		filter { "files:**.dae", "configurations:Release" }
+			customList { "ExtraDependencies", "File3" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Animation Include="hello.dae">
+			<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1 File2</ExtraDependencies>
+			<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1 File2 File3</ExtraDependencies>
+		</Animation>
+	</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onListVarsWithCustomFormat()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customListFormat { "ExtraDependencies", ";" }
+			customList { "ExtraDependencies", "File1", "File2" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Animation Include="hello.dae">
+			<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1;File2</ExtraDependencies>
+			<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1;File2</ExtraDependencies>
+		</Animation>
+	</ItemGroup>
+		]]
+	end

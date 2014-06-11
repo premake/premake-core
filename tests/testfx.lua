@@ -288,6 +288,7 @@
 		premake.eol("\n")
 		premake.escaper(nil)
 		premake.indent("\t")
+		premake.api.reset()
 
 		-- reset captured I/O values
 		test.value_openedfilename = nil
