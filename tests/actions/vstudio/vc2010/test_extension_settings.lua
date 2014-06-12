@@ -1,10 +1,10 @@
 --
--- tests/actions/vstudio/vc2010/test_import_extensions.lua
+-- tests/actions/vstudio/vc2010/test_extension_settings.lua
 -- Check the import extension settings block of a VS 2010 project.
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("vs2010_import_extensions")
+	local suite = test.declare("vs2010_import_settings")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake.project
 

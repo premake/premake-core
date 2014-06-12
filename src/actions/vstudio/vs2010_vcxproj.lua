@@ -41,7 +41,7 @@
 			m.assemblyReferences,
 			m.files,
 			m.projectReferences,
-			m.import,
+			m.importExtensionTargets,
 		}
 	end
 
@@ -1037,10 +1037,15 @@
 	end
 
 
-	function m.import(prj)
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-		_p(1,'<ImportGroup Label="ExtensionTargets">')
-		_p(1,'</ImportGroup>')
+	function m.importExtensionTargets(prj)
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
+		p.push('<ImportGroup Label="ExtensionTargets">')
+		table.foreachi(prj.customRules, function(value)
+			value = path.translate(project.getrelative(prj, value))
+			value = path.appendExtension(value, ".targets")
+			p.x('<Import Project="%s" />', value)
+		end)
+		p.pop('</ImportGroup>')
 	end
 
 
