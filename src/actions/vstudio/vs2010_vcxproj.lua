@@ -703,7 +703,13 @@
 
 
 	function m.categorizeSources(prj)
-		local groups = {}
+		local groups = prj._vc2010_sources
+		if groups then
+			return groups
+		end
+
+		groups = {}
+		prj._vc2010_sources = groups
 
 		local tr = project.getsourcetree(prj)
 		tree.traverse(tr, {
@@ -723,72 +729,6 @@
 
 		return groups
 	end
-
-
-
-    function m.getfilegroup(prj, group)
-        -- Have I already created the groups?
-        local groups = prj._vc2010_file_groups
-        if groups then
-            return groups[group]
-        end
-
-        groups = {
-            ClCompile = {},
-            ClInclude = {},
-            None = {},
-            ResourceCompile = {},
-            CustomBuild = {},
-            CustomRule = {},
-        }
-
-        local tr = project.getsourcetree(prj)
-        tree.traverse(tr, {
-            onleaf = function(node)
-                -- if any configuration of this file uses a custom build rule,
-                -- then they all must be marked as custom build
-                local customBuild, customRule
-
-                for cfg in project.eachconfig(prj) do
-                    local fcfg = fileconfig.getconfig(node, cfg)
-                    if fileconfig.hasCustomBuildRule(fcfg) then
-                        customBuild = true
-                        break
-                    elseif fcfg and fcfg.customRule then
-                        customRule = fcfg.customRule
-                        break
-                    end
-                end
-
-                if customBuild then
-                    table.insert(groups.CustomBuild, node)
-                elseif customRule then
-                    groups.CustomRule[customRule] = groups.CustomRule[customRule] or {}
-                    table.insert(groups.CustomRule[customRule], node)
-                elseif path.iscppfile(node.name) then
-                    table.insert(groups.ClCompile, node)
-                elseif path.iscppheader(node.name) then
-                    table.insert(groups.ClInclude, node)
-                elseif path.isresourcefile(node.name) then
-                    table.insert(groups.ResourceCompile, node)
-                else
-                    table.insert(groups.None, node)
-                end
-            end
-        })
-
-        -- sort by relative to path; otherwise VS will reorder the files
-        for group, files in pairs(groups) do
-            table.sort(files, function (a, b)
-                return a.relpath < b.relpath
-            end)
-        end
-
-        prj._vc2010_file_groups = groups
-        return groups[group]
-    end
-
-
 
 
 
