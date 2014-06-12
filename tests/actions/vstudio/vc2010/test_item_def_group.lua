@@ -32,7 +32,7 @@
 	function suite.structureIsCorrect_onDefaultValues()
 		prepare()
 		test.capture [[
-	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		]]
 	end
 
@@ -45,8 +45,8 @@
 		kind "Makefile"
 		prepare()
 		test.capture [[
-	<ItemDefinitionGroup>
-	</ItemDefinitionGroup>
+<ItemDefinitionGroup>
+</ItemDefinitionGroup>
 		]]
 	end
 
@@ -54,8 +54,8 @@
 		kind "Makefile"
 		prepare()
 		test.capture [[
-	<ItemDefinitionGroup>
-	</ItemDefinitionGroup>
+<ItemDefinitionGroup>
+</ItemDefinitionGroup>
 		]]
 	end
 

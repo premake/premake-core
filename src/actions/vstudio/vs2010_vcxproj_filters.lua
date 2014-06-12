@@ -73,7 +73,7 @@
 
 		if #contents > 0 then
 			p.push('<ItemGroup>')
-			p.out(contents)
+			p.outln(contents)
 			p.pop('</ItemGroup>')
 		end
 	end

@@ -65,7 +65,7 @@
 			defaultTargets = string.format(' DefaultTargets="%s"', target)
 		end
 
-		_p('<Project%s ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', defaultTargets)
+		p.push('<Project%s ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', defaultTargets)
 	end
 
 
@@ -237,14 +237,14 @@
 
 	function m.itemDefinitionGroup(cfg)
 		if not vstudio.isMakefile(cfg) then
-			_p(1,'<ItemDefinitionGroup %s>', m.condition(cfg))
+			p.push('<ItemDefinitionGroup %s>', m.condition(cfg))
 			p.callArray(m.elements.itemDefinitionGroup, cfg)
-			_p(1,'</ItemDefinitionGroup>')
+			p.pop('</ItemDefinitionGroup>')
 
 		else
 			if cfg == project.getfirstconfig(cfg.project) then
-				_p(1,'<ItemDefinitionGroup>')
-				_p(1,'</ItemDefinitionGroup>')
+				p.w('<ItemDefinitionGroup>')
+				p.w('</ItemDefinitionGroup>')
 			end
 		end
 	end
@@ -294,9 +294,9 @@
 	end
 
 	function m.clCompile(cfg)
-		_p(2,'<ClCompile>')
+		p.push('<ClCompile>')
 		p.callArray(m.elements.clCompile, cfg)
-		_p(2,'</ClCompile>')
+		p.pop('</ClCompile>')
 	end
 
 
@@ -528,7 +528,7 @@
 
 				if #contents > 0 then
 					p.push('<ClCompile Include=\"%s\">', path.translate(file.relpath))
-					p.out(contents)
+					p.outln(contents)
 					p.pop('</ClCompile>')
 				else
 					p.x('<ClCompile Include=\"%s\" />', path.translate(file.relpath))
@@ -622,7 +622,7 @@
 
 					if #contents > 0 then
 						p.push('<%s Include=\"%s\">', rule, path.translate(file.relpath))
-						p.out(contents)
+						p.outln(contents)
 						p.pop('</%s>', rule)
 					else
 						p.x('<%s Include=\"%s\" />', rule, path.translate(file.relpath))
@@ -666,7 +666,7 @@
 
 				if #contents > 0 then
 					p.push('<ResourceCompile Include=\"%s\">', path.translate(file.relpath))
-					p.out(contents)
+					p.outln(contents)
 					p.pop('</ResourceCompile>')
 				else
 					p.x('<ResourceCompile Include=\"%s\" />', path.translate(file.relpath))
@@ -799,7 +799,7 @@
 		if #cfg.usingdirs > 0 then
 			local dirs = project.getrelative(cfg.project, cfg.usingdirs)
 			dirs = path.translate(table.concat(dirs, ";"))
-			_x(3,'<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
+			p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
 		end
 	end
 
@@ -822,7 +822,7 @@
 
 	function m.basicRuntimeChecks(cfg)
 		if cfg.flags.NoRuntimeChecks then
-			_p(3,'<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
+			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
 		end
 	end
 
@@ -905,7 +905,7 @@
 			end
 		end
 		if value then
-			_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>', value)
+			p.w('<DebugInformationFormat>%s</DebugInformationFormat>', value)
 		end
 	end
 
@@ -952,23 +952,23 @@
 
 	function m.exceptionHandling(cfg)
 		if cfg.flags.NoExceptions then
-			_p(3,'<ExceptionHandling>false</ExceptionHandling>')
+			p.w('<ExceptionHandling>false</ExceptionHandling>')
 		elseif cfg.flags.SEH then
-			_p(3,'<ExceptionHandling>Async</ExceptionHandling>')
+			p.w('<ExceptionHandling>Async</ExceptionHandling>')
 		end
 	end
 
 
 	function m.excludedFromBuild(cfg, filecfg)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
-			p.w('<ExcludedFromBuild %s>true</ExcludedFromBuild>', m.condition(cfg))
+			m.element("ExcludedFromBuild", m.condition(cfg), "true")
 		end
 	end
 
 
 	function m.floatingPointModel(cfg)
 		if cfg.floatingpoint then
-			_p(3,'<FloatingPointModel>%s</FloatingPointModel>', cfg.floatingpoint)
+			p.w('<FloatingPointModel>%s</FloatingPointModel>', cfg.floatingpoint)
 		end
 	end
 
@@ -980,14 +980,14 @@
 		end
 		if #cfg.forceusings > 0 then
 			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
-			_x(3,'<ForcedUsingFiles>%s</ForcedUsingFiles>', table.concat(usings, ';'))
+			m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
 		end
 	end
 
 
 	function m.functionLevelLinking(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<FunctionLevelLinking>true</FunctionLevelLinking>')
+			p.w('<FunctionLevelLinking>true</FunctionLevelLinking>')
 		end
 	end
 
@@ -1079,7 +1079,7 @@
 
 	function m.intrinsicFunctions(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<IntrinsicFunctions>true</IntrinsicFunctions>')
+			p.w('<IntrinsicFunctions>true</IntrinsicFunctions>')
 		end
 	end
 
@@ -1142,7 +1142,7 @@
 		   cfg.flags.MultiProcessorCompile or
 		   cfg.debugformat == premake.C7
 		then
-			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
+			p.w('<MinimalRebuild>false</MinimalRebuild>')
 		end
 	end
 
@@ -1157,7 +1157,7 @@
 
 	function m.multiProcessorCompilation(cfg)
 		if cfg.flags.MultiProcessorCompile then
-			_p(3,'<MultiProcessorCompilation>true</MultiProcessorCompilation>')
+			p.w('<MultiProcessorCompilation>true</MultiProcessorCompilation>')
 		end
 	end
 
@@ -1193,7 +1193,7 @@
 
 	function m.omitDefaultLib(cfg)
 		if cfg.flags.OmitDefaultLibrary then
-			_p(3,'<OmitDefaultLibName>true</OmitDefaultLibName>')
+			p.w('<OmitDefaultLibName>true</OmitDefaultLibName>')
 		end
 	end
 
@@ -1201,7 +1201,7 @@
 
 	function m.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
-			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
+			p.w('<OmitFramePointers>true</OmitFramePointers>')
 		end
 	end
 
@@ -1245,10 +1245,10 @@
 			end
 		else
 			if not cfg.flags.NoPCH and cfg.pchheader then
-				_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
-				_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
+				p.w('<PrecompiledHeader>Use</PrecompiledHeader>')
+				p.x('<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
 			else
-				_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+				p.w('<PrecompiledHeader>NotUsing</PrecompiledHeader>')
 			end
 		end
 	end
@@ -1269,7 +1269,7 @@
 	function m.programDataBaseFileName(cfg)
 		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
 			local filename = cfg.buildtarget.basename
-			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
+			p.w('<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
 		end
 	end
 
@@ -1334,7 +1334,7 @@
 		}
 		local runtime = runtimes[config.getruntime(cfg)]
 		if runtime then
-			_p(3,'<RuntimeLibrary>%s</RuntimeLibrary>', runtime)
+			p.w('<RuntimeLibrary>%s</RuntimeLibrary>', runtime)
 		end
 	end
 
@@ -1348,13 +1348,13 @@
 
 	function m.bufferSecurityCheck(cfg)
 		if cfg.flags.NoBufferSecurityCheck then
-			_p(3,'<BufferSecurityCheck>false</BufferSecurityCheck>')
+			p.w('<BufferSecurityCheck>false</BufferSecurityCheck>')
 		end
 	end
 
 	function m.stringPooling(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<StringPooling>true</StringPooling>')
+			p.w('<StringPooling>true</StringPooling>')
 		end
 	end
 
@@ -1395,14 +1395,14 @@
 		local map = { On = "true", Off = "false" }
 		local value = map[cfg.nativewchar]
 		if value then
-			_p(3,'<TreatWChar_tAsBuiltInType>%s</TreatWChar_tAsBuiltInType>', value)
+			p.w('<TreatWChar_tAsBuiltInType>%s</TreatWChar_tAsBuiltInType>', value)
 		end
 	end
 
 
 	function m.treatWarningAsError(cfg)
 		if cfg.flags.FatalLinkWarnings and cfg.warnings ~= "Off" then
-			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end
 
