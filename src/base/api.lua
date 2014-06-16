@@ -632,7 +632,7 @@
 			elseif not table.isempty(value) then
 				store(value)
 			end
-		else
+		elseif value then
 			store(value)
 		end
 
