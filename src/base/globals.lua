@@ -27,7 +27,7 @@
 			end
 
 			-- find it on my paths
-			local dir = os.pathsearch(fname, _OPTIONS["scripts"], os.getenv("PREMAKE_PATH"))
+			local dir = os.pathsearch(fname, _OPTIONS["scripts"], os.getenv("PREMAKE_PATH"), path.getdirectory(_PREMAKE_COMMAND))
 			if dir then
 				return path.join(dir, fname)
 			end
