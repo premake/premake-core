@@ -88,9 +88,8 @@ int path_getabsolute(lua_State* L)
 			do_getabsolute(buffer, value, relative_to);
 			lua_pop(L, 1);
 
-			lua_pushnumber(L, ++i);
 			lua_pushstring(L, buffer);
-			lua_settable(L, -4);
+            lua_rawseti(L, -3, ++i);
 		}
 		return 1;
 	}
