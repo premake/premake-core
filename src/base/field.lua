@@ -103,6 +103,20 @@
 
 
 ---
+-- Returns an iterator for the list of register fields.
+---
+
+	function field.each()
+		local index
+		return function ()
+			index = next(field._list, index)
+			return field._list[index]
+		end
+	end
+
+
+
+---
 -- Register a new kind of data for field storage.
 --
 -- @param tag

@@ -33,8 +33,8 @@
 	function suite.defaultSettings()
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-		</ResourceCompile>
+<ResourceCompile>
+</ResourceCompile>
 		]]
 	end
 
@@ -48,8 +48,8 @@
 		resdefines { "RESOURCES" }
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<PreprocessorDefinitions>DEBUG;RESOURCES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+<ResourceCompile>
+	<PreprocessorDefinitions>DEBUG;RESOURCES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
 	end
 
@@ -63,8 +63,8 @@
 		resincludedirs { "include/zlib" }
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+<ResourceCompile>
+	<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 		]]
 	end
 
@@ -88,8 +88,8 @@
 		defines { 'VERSION_STRING="1.0.0 (testing)"' }
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<PreprocessorDefinitions>VERSION_STRING=\"1.0.0 (testing)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+<ResourceCompile>
+	<PreprocessorDefinitions>VERSION_STRING=\"1.0.0 (testing)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
 	end
 
@@ -102,7 +102,7 @@
 		locale "en-US"
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<Culture>0x0409</Culture>
+<ResourceCompile>
+	<Culture>0x0409</Culture>
 		]]
 	end

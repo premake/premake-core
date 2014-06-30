@@ -33,9 +33,9 @@
 		files { "include/hello.h" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClInclude Include="include\hello.h" />
-	</ItemGroup>
+<ItemGroup>
+	<ClInclude Include="include\hello.h" />
+</ItemGroup>
 		]]
 	end
 
@@ -43,9 +43,9 @@
 		files { "hello.c" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.c" />
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.c" />
+</ItemGroup>
 		]]
 	end
 
@@ -53,9 +53,9 @@
 		files { "resources/hello.rc" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ResourceCompile Include="resources\hello.rc" />
-	</ItemGroup>
+<ItemGroup>
+	<ResourceCompile Include="resources\hello.rc" />
+</ItemGroup>
 		]]
 	end
 
@@ -63,11 +63,16 @@
 		files { "docs/hello.txt" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<None Include="docs\hello.txt" />
-	</ItemGroup>
+<ItemGroup>
+	<None Include="docs\hello.txt" />
+</ItemGroup>
 		]]
 	end
+
+
+--
+-- Check handling of files with custom build rules.
+--
 
 	function suite.customBuild_onBuildRule()
 		files { "hello.cg" }
@@ -76,18 +81,17 @@
 			buildoutputs { "$(InputName).obj" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg">
-			<FileType>Document</FileType>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		</CustomBuild>
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
 		]]
 	end
-
 
 	function suite.customBuild_onBuildRuleWithMessage()
 		files { "hello.cg" }
@@ -97,17 +101,17 @@
 			buildoutputs { "$(InputName).obj" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg">
-			<FileType>Document</FileType>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-			<Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling shader $(InputFile)</Message>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-			<Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling shader $(InputFile)</Message>
-		</CustomBuild>
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling shader $(InputFile)</Message>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling shader $(InputFile)</Message>
+	</CustomBuild>
+</ItemGroup>
 		]]
 	end
 
@@ -122,12 +126,12 @@
 		pchsource "afxwin.cpp"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="afxwin.cpp">
-			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="afxwin.cpp">
+		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -142,11 +146,11 @@
 		removefiles { "hello.cpp" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -156,12 +160,12 @@
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -171,11 +175,11 @@
 		removefiles { "hello.rc" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ResourceCompile Include="hello.rc">
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-		</ResourceCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ResourceCompile Include="hello.rc">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ResourceCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -185,12 +189,12 @@
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ResourceCompile Include="hello.rc">
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-		</ResourceCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ResourceCompile Include="hello.rc">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ResourceCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -201,9 +205,9 @@
 		flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ResourceCompile Include="hello.rc" />
-	</ItemGroup>
+<ItemGroup>
+	<ResourceCompile Include="hello.rc" />
+</ItemGroup>
 		]]
 	end
 
@@ -216,13 +220,13 @@
 			removefiles { "hello.cg" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg">
-			<FileType>Document</FileType>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		</CustomBuild>
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
 		]]
 	end
 
@@ -234,17 +238,17 @@
 			flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg">
-			<FileType>Document</FileType>
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		</CustomBuild>
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
 		]]
 	end
 
@@ -257,14 +261,14 @@
 			flags { "ExcludeFromBuild" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg">
-			<FileType>Document</FileType>
-			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		</CustomBuild>
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
 		]]
 	end
 
@@ -278,13 +282,13 @@
 		files { "hello.cpp", "greetings/hello.cpp" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="greetings\hello.cpp" />
-		<ClCompile Include="hello.cpp">
-			<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
-			<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="greetings\hello.cpp" />
+	<ClCompile Include="hello.cpp">
+		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -300,12 +304,12 @@
 
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
-			<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
+		<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -321,12 +325,12 @@
 
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
-			<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
+		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -341,9 +345,9 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
 		]]
 	end
 
@@ -354,9 +358,9 @@
 		optimize "Size"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MinSpace</Optimization>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MinSpace</Optimization>
 		]]
 	end
 
@@ -366,9 +370,9 @@
 		optimize "Speed"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MaxSpeed</Optimization>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MaxSpeed</Optimization>
 		]]
 	end
 
@@ -378,9 +382,9 @@
 		optimize "Full"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
 		]]
 	end
 
@@ -390,9 +394,9 @@
 		optimize "Off"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
 		]]
 	end
 
@@ -402,9 +406,9 @@
 		optimize "Debug"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
 		]]
 	end
 
@@ -419,12 +423,12 @@
 		flags { "NoPCH" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-			<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -440,12 +444,12 @@
 			defines { "IS_CPP" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-			<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -463,10 +467,10 @@
 		}
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClInclude Include="PrefsWriter.h" />
-		<ClInclude Include="SystemTray.h" />
-	</ItemGroup>
+<ItemGroup>
+	<ClInclude Include="PrefsWriter.h" />
+	<ClInclude Include="SystemTray.h" />
+</ItemGroup>
 		]]
 	end
 
@@ -482,11 +486,116 @@
 			vectorextensions "sse2"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="hello.cpp">
-			<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-			<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+		<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- Check handling of files using custom rule definitions.
+--
+
+	function suite.correctlyCategorized_onCustomRule()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+		prepare()
+			test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae" />
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onLiteralVars()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customVar { "GenerateDebugInfo", "True" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae">
+		<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">True</GenerateDebugInfo>
+		<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">True</GenerateDebugInfo>
+	</Animation>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onPerConfigLiteralVars()
+		files { "hello.dae" }
+		filter { "files:**.dae" }
+			customRule "Animation"
+		filter { "files:**.dae", "configurations:Debug" }
+			customVar { "GenerateDebugInfo", "True" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae">
+		<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">True</GenerateDebugInfo>
+	</Animation>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onListVars()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customList { "ExtraDependencies", "File1", "File2" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae">
+		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1 File2</ExtraDependencies>
+		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1 File2</ExtraDependencies>
+	</Animation>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onPerConfigListVars()
+		files { "hello.dae" }
+		filter { "files:**.dae" }
+			customRule "Animation"
+			customList { "ExtraDependencies", "File1", "File2" }
+		filter { "files:**.dae", "configurations:Release" }
+			customList { "ExtraDependencies", "File3" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae">
+		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1 File2</ExtraDependencies>
+		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1 File2 File3</ExtraDependencies>
+	</Animation>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.customRule_onListVarsWithCustomFormat()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customListFormat { "ExtraDependencies", ";" }
+			customList { "ExtraDependencies", "File1", "File2" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae">
+		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1;File2</ExtraDependencies>
+		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1;File2</ExtraDependencies>
+	</Animation>
+</ItemGroup>
 		]]
 	end

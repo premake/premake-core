@@ -20,8 +20,8 @@
 	end
 
 	local function prepare(group)
-		prj = premake.solution.getproject(sln, 1)
-		vc2010.filters_filegroup(prj, group)
+		prj = test.getproject(sln)
+		vc2010.filterGroups(prj)
 	end
 
 
@@ -30,32 +30,51 @@
 --
 
 	function suite.itemGroup_onClInclude()
-		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
-		prepare("ClInclude")
+		files { "hello.h" }
+		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClInclude Include="hello.h" />
-	</ItemGroup>
+<ItemGroup>
+	<ClInclude Include="hello.h" />
+</ItemGroup>
 		]]
 	end
 
 	function suite.itemGroup_onResourceSection()
-		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
-		prepare("ResourceCompile")
+		files { "hello.rc" }
+		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ResourceCompile Include="hello.rc" />
-	</ItemGroup>
+<ItemGroup>
+	<ResourceCompile Include="hello.rc" />
+</ItemGroup>
 		]]
 	end
 
 	function suite.itemGroup_onNoneSection()
-		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
-		prepare("None")
+		files { "hello.txt" }
+		prepare()
 		test.capture [[
-	<ItemGroup>
-		<None Include="hello.txt" />
-	</ItemGroup>
+<ItemGroup>
+	<None Include="hello.txt" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.itemGroup_onMixed()
+		files { "hello.c", "hello.h", "hello.rc", "hello.txt" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<None Include="hello.txt" />
+</ItemGroup>
+<ItemGroup>
+	<ClInclude Include="hello.h" />
+</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="hello.c" />
+</ItemGroup>
+<ItemGroup>
+	<ResourceCompile Include="hello.rc" />
+</ItemGroup>
 		]]
 	end
 
@@ -65,28 +84,28 @@
 --
 
 	function suite.itemGroup_onBuildRule()
-		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
+		files { "hello.cg" }
 		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 		prepare("CustomBuild")
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg" />
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg" />
+</ItemGroup>
 		]]
 	end
 
 	function suite.itemGroup_onSingleConfigBuildRule()
-		files { "hello.c", "hello.h", "hello.rc", "hello.cg" }
+		files { "hello.cg" }
 		filter { "Release", "files:**.cg" }
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 		prepare("CustomBuild")
 		test.capture [[
-	<ItemGroup>
-		<CustomBuild Include="hello.cg" />
-	</ItemGroup>
+<ItemGroup>
+	<CustomBuild Include="hello.cg" />
+</ItemGroup>
 		]]
 	end
 
@@ -98,12 +117,12 @@
 
 	function suite.noFilter_onRootFiles()
 		files { "hello.c", "goodbye.c" }
-		prepare("ClCompile")
+		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="goodbye.c" />
-		<ClCompile Include="hello.c" />
-	</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="goodbye.c" />
+	<ClCompile Include="hello.c" />
+</ItemGroup>
 		]]
 	end
 
@@ -113,13 +132,16 @@
 
 	function suite.filter_onRealPath()
 		files { "src/hello.c", "hello.h" }
-		prepare("ClCompile")
+		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="src\hello.c">
-			<Filter>src</Filter>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClInclude Include="hello.h" />
+</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="src\hello.c">
+		<Filter>src</Filter>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -130,12 +152,32 @@
 	function suite.filter_onVpath()
 		files { "src/hello.c", "hello.h" }
 		vpaths { ["Source Files"] = "**.c" }
-		prepare("ClCompile")
+		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ClCompile Include="src\hello.c">
-			<Filter>Source Files</Filter>
-		</ClCompile>
-	</ItemGroup>
+<ItemGroup>
+	<ClInclude Include="hello.h" />
+</ItemGroup>
+<ItemGroup>
+	<ClCompile Include="src\hello.c">
+		<Filter>Source Files</Filter>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- Check handling of files using custom rules.
+--
+
+	function suite.filter_onCustomRule()
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae" />
+</ItemGroup>
 		]]
 	end

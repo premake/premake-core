@@ -29,6 +29,6 @@
 		vectorextensions "avx"
 		vc2010.enableEnhancedInstructionSet(test.getconfig(prj, "Debug"))
 		test.capture [[
-			<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+<EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
 		]]
 	end
