@@ -226,6 +226,7 @@
 	dofile("actions/make/cs/test_embed_files.lua")
 	dofile("actions/make/cs/test_flags.lua")
 	dofile("actions/make/cs/test_links.lua")
+	dofile("actions/make/cs/test_response.lua")
 	dofile("actions/make/cs/test_sources.lua")
 
 

@@ -31,10 +31,12 @@
 		"csSources",
 		"csEmbedFiles",
 		"csCopyFiles",
+		"csResponseFile",
 		"shellType",
 		"csAllRules",
 		"csTargetRules",
 		"targetDirRules",
+		"csResponseRules",
 		"objDirRules",
 		"csCleanRules",
 		"preBuildRules",
@@ -169,6 +171,43 @@
 	end
 
 
+	function make.cs.getresponsefilename(prj)
+		return '$(OBJDIR)/' .. prj.filename .. '.rsp'
+	end
+
+
+	function make.csResponseFile(prj, toolset)
+		_x('RESPONSE += ' .. make.cs.getresponsefilename(prj))
+	end
+
+
+	function make.csResponseRules(prj)
+		local toolset = premake.tools.dotnet
+		local ext = make.getmakefilename(prj, true)
+		local makefile = path.getname(premake.project.getfilename(prj, ext))
+		local response = path.translate(make.cs.getresponsefilename(prj))
+
+		_p('$(RESPONSE): %s', makefile)
+		_p('\t@echo Generating response file', prj.name)
+
+		_p('ifeq (posix,$(SHELLTYPE))')
+			_x('\t$(SILENT) rm -f $(RESPONSE)')
+		_p('else')
+			_x('\t$(SILENT) if exist $(RESPONSE) del %s', response)
+		_p('endif')
+
+		local tr = project.getsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if toolset.fileinfo(node).action == "Compile" then
+					_x('\t@echo %s >> $(RESPONSE)', path.translate(node.relpath))
+				end
+			end
+		})
+		_p('')
+	end
+
+
 	function make.csEmbedFiles(prj, toolset)
 		local cfg = project.getfirstconfig(prj)
 
@@ -257,8 +296,8 @@
 
 
 	function make.csTargetRules(prj, toolset)
-		_p('$(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS)')
-		_p('\t$(SILENT) $(CSC) /nologo /out:$@ $(FLAGS) $(REFERENCES) $(SOURCES) $(patsubst %%,/resource:%%,$(EMBEDFILES))')
+		_p('$(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS) $(RESPONSE)')
+		_p('\t$(SILENT) $(CSC) /nologo /out:$@ $(FLAGS) $(REFERENCES) @$(RESPONSE) $(patsubst %%,/resource:%%,$(EMBEDFILES))')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 	end
