@@ -266,13 +266,18 @@
 	api._deprecations = "on"
 
 
---
--- Find the right target object for a given scope.
---
 
-	function api.gettarget(scope)
+---
+-- Find the currently active configuration scope.
+--
+-- @return
+--    The currently active configuration set object.
+---
+
+	function api.gettarget()
 		return api.scope.project or api.scope.solution or api.scope.root
 	end
+
 
 
 --
@@ -293,7 +298,7 @@
 			end
 		end
 
-		local target = api.gettarget(field.scope)
+		local target = api.gettarget()
 		local status, err = configset.store(target, field, value)
 		if err then
 			error(err, 3)
@@ -313,7 +318,7 @@
 		-- return the current baked value
 		if not value then return end
 
-		local target = api.gettarget(field.scope)
+		local target = api.gettarget()
 		local hasDeprecatedValues = (type(field.deprecated) == "table")
 
 		-- Build a list of values to be removed. If this field has deprecated
