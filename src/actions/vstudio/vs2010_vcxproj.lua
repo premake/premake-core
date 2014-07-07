@@ -610,9 +610,8 @@
 										value = table.concat(value, fmt[1])
 									end
 
-									if #value > 0 then
+									if value and #value > 0 then
 										m.element(key, condition, '%s', value)
-										-- p.x('<%s %s>%s</%s>', key, m.condition(fcfg.config), value, key)
 									end
 								end
 							end

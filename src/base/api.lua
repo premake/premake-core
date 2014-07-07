@@ -1004,7 +1004,7 @@
 
 	function customVar(value)
 		if type(value) ~= "table" or #value ~= 2 then
-			error { msg="invalid value for customVar()" }
+			error("invalid value for customVar()")
 		end
 		api.setCustomVar(value[1], "string", value[2])
 	end
@@ -1012,7 +1012,7 @@
 
 	function customList(value)
 		if type(value) ~= "table" or #value < 2 then
-			error { msg="invalid value for customList()" }
+			error("invalid value for customList()")
 		end
 
 		local name = value[1]
@@ -1023,7 +1023,7 @@
 
 	function customListFormat(value)
 		if type(value) ~= "table" or #value < 2 then
-			error { msg="invalid value for customListFormat()" }
+			error("invalid value for customListFormat()")
 		end
 
 		local name = value[1]
