@@ -137,7 +137,6 @@ int os_matchname(lua_State* L)
 
 int os_matchisfile(lua_State* L)
 {
-	struct stat info;
 	const char* fname;
 
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
@@ -145,13 +144,8 @@ int os_matchisfile(lua_State* L)
 	fname = lua_tostring(L, -1);
 	lua_pop(L, 1);
 
-	if (stat(fname, &info) == 0)
-	{
-		lua_pushboolean(L, S_ISREG(info.st_mode));
-		return 1;
-	}
-
-	return 0;
+	lua_pushboolean(L, do_isfile(fname));
+	return 1;
 }
 
 int os_matchnext(lua_State* L)
