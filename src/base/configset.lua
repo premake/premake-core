@@ -332,7 +332,9 @@
 
 		values = premake.field.remove(field, {}, values)
 		for i, value in ipairs(values) do
-			values[i] = path.wildcards(value):lower()
+			if type(value) == "string" then
+				values[i] = path.wildcards(value):lower()
+			end
 		end
 
 		-- add a list of removed values to the block

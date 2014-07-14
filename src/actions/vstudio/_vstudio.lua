@@ -291,8 +291,8 @@
 --
 
 	function vstudio.archFromPlatform(platform)
-		local system = premake.api.checkvalue(platform, premake.fields.system)
-		local arch = premake.api.checkvalue(platform, premake.fields.architecture)
+		local system = premake.api.checkValue(premake.fields.system, platform)
+		local arch = premake.api.checkValue(premake.fields.architecture, platform)
 		return architecture(system, arch)
 	end
 

@@ -441,8 +441,8 @@
 		local architecture = nil
 
 		if platform then
-			system = premake.api.checkvalue(platform, premake.fields.system) or system
-			architecture = premake.api.checkvalue(platform, premake.fields.architecture) or architecture
+			system = premake.api.checkValue(premake.fields.system, platform) or system
+			architecture = premake.api.checkValue(premake.fields.architecture, platform) or architecture
 		end
 
 		-- Wrap the projects's configuration set (which contains all of the information

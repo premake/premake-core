@@ -91,7 +91,11 @@
 		end
 
 		-- add this new field to my master list
-		field = premake.field.new(field)
+		field, err = premake.field.new(field)
+		if not field then
+			error(err)
+		end
+
 
 		-- Flag fields which contain filesystem paths. The context object will
 		-- use this information when expanding tokens, to ensure that the paths
@@ -357,7 +361,7 @@
 				table.insert(removes, value)
 
 			else
-				local value, err, additional = api.checkvalue(value, field)
+				local value, err, additional = api.checkValue(field, value)
 				if err then
 					error { msg=err }
 				end
@@ -382,17 +386,21 @@
 --
 -- Check to see if a value is valid for a particular field.
 --
--- @param value
---    The value to check.
 -- @param field
 --    The field to check against.
+-- @param value
+--    The value to check.
+-- @param kind
+--    The kind of data currently being checked, corresponding to
+--    one segment of the field's kind string (e.g. "string"). If
+--    not set, defaults to "string".
 -- @return
 --    If the value is valid for this field, the canonical version
 --    of that value is returned. If the value is not valid two
 --    values are returned: nil, and an error message.
 --
 
-	function api.checkvalue(value, field)
+	function api.checkValue(field, value, kind)
 		if not field.allowed then
 			return value
 		end
@@ -406,7 +414,7 @@
 
 		if not canonical then
 			if type(field.allowed) == "function" then
-				canonical = field.allowed(value)
+				canonical = field.allowed(value, kind or "string")
 			else
 				canonical = field.allowed[lowerValue]
 			end
@@ -754,7 +762,7 @@
 
 			if value ~= nil then
 				local err
-				value, err = api.checkvalue(value, field)
+				value, err = api.checkValue(field, value)
 				if err then
 					error { msg=err }
 				end
