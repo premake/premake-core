@@ -237,8 +237,6 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 		<ConfigurationType>Utility</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CharacterSet>MultiByte</CharacterSet>
 	</PropertyGroup>
 		]]
 	end

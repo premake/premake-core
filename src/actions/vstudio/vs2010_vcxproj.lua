@@ -139,16 +139,22 @@
 --
 
 	m.elements.configurationProperties = function(cfg)
-		return {
-			m.configurationType,
-			m.useDebugLibraries,
-			m.useOfMfc,
-			m.useOfAtl,
-			m.clrSupport,
-			m.characterSet,
-			m.wholeProgramOptimization,
-			m.nmakeOutDirs,
-		}
+		if cfg.kind == p.UTILITY then
+			return {
+				m.configurationType,
+			}
+		else
+			return {
+				m.configurationType,
+				m.useDebugLibraries,
+				m.useOfMfc,
+				m.useOfAtl,
+				m.clrSupport,
+				m.characterSet,
+				m.wholeProgramOptimization,
+				m.nmakeOutDirs,
+			}
+		end
 	end
 
 	function m.configurationProperties(cfg)
@@ -171,18 +177,26 @@
 --
 
 	m.elements.outputProperties = function(cfg)
-		return {
-			m.propertyGroup,
-			m.linkIncremental,
-			m.ignoreImportLibrary,
-			m.outDir,
-			m.outputFile,
-			m.intDir,
-			m.targetName,
-			m.targetExt,
-			m.imageXexOutput,
-			m.generateManifest,
-		}
+		if cfg.kind == p.UTILITY then
+			return {
+				m.propertyGroup,
+				m.outDir,
+				m.intDir,
+			}
+		else
+			return {
+				m.propertyGroup,
+				m.linkIncremental,
+				m.ignoreImportLibrary,
+				m.outDir,
+				m.outputFile,
+				m.intDir,
+				m.targetName,
+				m.targetExt,
+				m.imageXexOutput,
+				m.generateManifest,
+			}
+		end
 	end
 
 	function m.outputProperties(cfg)
@@ -224,15 +238,21 @@
 --
 
 	m.elements.itemDefinitionGroup = function(cfg)
-		return {
-			m.clCompile,
-			m.resourceCompile,
-			m.link,
-			m.manifest,
-			m.buildEvents,
-			m.imageXex,
-			m.deploy,
-		}
+		if cfg.kind == p.UTILITY then
+			return {
+
+			}
+		else
+			return {
+				m.clCompile,
+				m.resourceCompile,
+				m.link,
+				m.manifest,
+				m.buildEvents,
+				m.imageXex,
+				m.deploy,
+			}
+		end
 	end
 
 	function m.itemDefinitionGroup(cfg)
