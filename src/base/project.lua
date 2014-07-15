@@ -167,7 +167,8 @@
 	end
 
 
---
+
+---
 -- Returns a list of sibling projects on which the specified project depends.
 -- This is used to list dependencies within a solution or workspace. Must
 -- consider all configurations because Visual Studio does not support per-config
@@ -175,11 +176,14 @@
 --
 -- @param prj
 --    The project to query.
+-- @param linkOnly
+--    If set, returns only siblings which are linked against (links) and skips
+--    siblings which are not (dependson).
 -- @return
 --    A list of dependent projects, as an array of project objects.
---
+---
 
-	function project.getdependencies(prj)
+	function project.getdependencies(prj, linkOnly)
 		if not prj.dependencies then
 			local result = {}
 			local function add_to_project_list(cfg, depproj, result)
@@ -193,14 +197,17 @@
 				for _, link in ipairs(cfg.links) do
 					add_to_project_list(cfg, link, result)
 				end
-				for _, depproj in ipairs(cfg.dependson) do
-					add_to_project_list(cfg, depproj, result)
+				if not linkOnly then
+					for _, depproj in ipairs(cfg.dependson) do
+						add_to_project_list(cfg, depproj, result)
+					end
 				end
 			end
 			prj.dependencies = result
 		end
 		return prj.dependencies
 	end
+
 
 
 --
