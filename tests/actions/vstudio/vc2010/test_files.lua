@@ -530,6 +530,24 @@
 	end
 
 
+	function suite.customRule_onLiteralPath()
+		targetdir "../bin/%{cfg.buildcfg}"
+		files { "hello.dae" }
+		filter "files:**.dae"
+			customRule "Animation"
+			customVar { "OutputDirectory", "%{cfg.targetdir}/anim" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Animation Include="hello.dae">
+		<OutputDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../bin/Debug/anim</OutputDirectory>
+		<OutputDirectory Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../bin/Release/anim</OutputDirectory>
+	</Animation>
+</ItemGroup>
+		]]
+	end
+
+
 	function suite.customRule_onPerConfigLiteralVars()
 		files { "hello.dae" }
 		filter { "files:**.dae" }

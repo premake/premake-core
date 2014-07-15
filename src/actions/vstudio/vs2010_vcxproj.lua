@@ -240,7 +240,7 @@
 	m.elements.itemDefinitionGroup = function(cfg)
 		if cfg.kind == p.UTILITY then
 			return {
-
+				m.customRuleVars,
 			}
 		else
 			return {
@@ -251,6 +251,7 @@
 				m.buildEvents,
 				m.imageXex,
 				m.deploy,
+				m.customRuleVars,
 			}
 		end
 	end
@@ -460,6 +461,44 @@
 		write("PreLink")
 		write("PostBuild")
 	end
+
+
+
+---
+-- Write out project-level custom rule variables.
+---
+
+	function m.customRuleVars(cfg)
+		local vars = p.api.getCustomVars()
+		table.foreachi(cfg.project._customRules, function(rule)
+			local contents = p.capture(function ()
+				p.push()
+				for _, var in ipairs(vars) do
+					if cfg[var] then
+						local key = p.api.getCustomVarKey(var)
+						local value = cfg[var]
+
+						if type(value) == "table" then
+							local fmt = p.api.getCustomListFormat(var)
+							value = table.concat(value, fmt[1])
+						end
+
+						if value and #value > 0 then
+							m.element(key, nil, '%s', value)
+						end
+					end
+				end
+				p.pop()
+			end)
+
+			if #contents > 0 then
+				p.push('<%s>', rule)
+				p.outln(contents)
+				p.pop('</%s>', rule)
+			end
+		end)
+	end
+
 
 
 --
@@ -703,8 +742,8 @@
 			local fcfg = fileconfig.getconfig(file, cfg)
 			if fileconfig.hasCustomBuildRule(fcfg) then
 				return "CustomBuild"
-			elseif fcfg and fcfg.customRule then
-				return fcfg.customRule
+			elseif fcfg and fcfg._customRule then
+				return fcfg._customRule
 			end
 		end
 

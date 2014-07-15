@@ -992,13 +992,14 @@
 		local fieldName = "_custom_" .. name
 		local field = premake.field.get(fieldName)
 		if not field then
-			api.register {
+			field = premake.field.new {
 				name = fieldName,
 				scope = "config",
-				kind = kind
+				kind = kind,
+				tokens = true,
 			}
 		end
-		_G[fieldName](value)
+		api.callback(field, value)
 	end
 
 
@@ -1029,4 +1030,42 @@
 		local name = value[1]
 		table.remove(value, 1)
 		api._customVarFormats[name] = value
+	end
+
+
+	function customRule(value)
+		-- Store the rule name in the current configuration, like a
+		-- normal set-field operation would
+		local fieldName = "_customRule"
+		local field = premake.field.get(fieldName)
+		if not field then
+			field = premake.field.new {
+				name = fieldName,
+				scope = "config",
+				kind = "string",
+			}
+		end
+		api.callback(field, value)
+
+		-- Wild hack: I need a way to get all of the custom rule names that are
+		-- in use within a project. The rule names are currently only associated
+		-- with individual files. Rather than iterating over all the files after
+		-- the fact, keep a master list of rule names in the first configuration
+		-- block of the project. This way it will come out of the baking system
+		-- looking like a normal list:string field.
+		fieldName = "_customRules"
+		field = premake.field.get(fieldName)
+		if not field then
+			field = premake.field.new {
+				name = fieldName,
+				scope = "config",
+				kind = "list:string"
+			}
+		end
+
+		local cset = api.gettarget()
+		local current = cset.current
+		cset.current = cset.blocks[1]
+		api.callback(field, value)
+		cset.current = current
 	end

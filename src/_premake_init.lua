@@ -137,12 +137,6 @@
 	}
 
 	api.register {
-		name = "customRule",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
 		name = "customRules",
 		scope = "project",
 		kind = "list:file",
