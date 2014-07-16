@@ -72,7 +72,7 @@
 -- but until I know the conditions, put everything here to be safe.
 --
 
-	function suite.nothingOutput_onVs2010()
+	function suite.dependency_onCSharpProjectsVs2010()
 		_ACTION = "vs2010"
 		prepare("C#")
 		test.capture [[
@@ -83,3 +83,19 @@
 		]]
 	end
 
+
+
+--
+-- Verify dependencies between projects C# are listed for VS2012.
+--
+
+	function suite.dependency_onCSharpProjectsVs2012()
+		_ACTION = "vs2012"
+		prepare("C#")
+		test.capture [[
+	ProjectSection(ProjectDependencies) = postProject
+		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
+		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
+	EndProjectSection
+		]]
+	end

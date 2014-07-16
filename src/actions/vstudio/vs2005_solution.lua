@@ -109,9 +109,7 @@
 				prjpath = prjpath:gsub("$%((.-)%)", "%%%1%%")
 
 				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
-				if _ACTION < "vs2012" then
-					sln2005.projectdependencies(prj)
-				end
+				sln2005.projectdependencies(prj)
 				_p('EndProject')
 			end,
 

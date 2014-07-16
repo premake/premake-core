@@ -83,7 +83,7 @@
 
 		-- All fields must have a valid store() function
 		if not field.accessor(f, "store") then
-			error("invalid field kind '" .. f._kind .. "'")
+			return nil, "invalid field kind '" .. f._kind .. "'"
 		end
 
 		field._list[f.name] = f
@@ -186,8 +186,8 @@
 			end
 
 			-- Split off the first piece from the rest of the kind. If the
-			-- incoming kind is "list:key:string", thisKind will "list" and
-			-- nextKind will be "key:string".
+			-- incoming kind is "list:key:string", thisKind will be "list"
+			-- and nextKind will be "key:string".
 
 			local thisKind = kind:match('(.-):') or kind
 			local nextKind = kind:sub(#thisKind + 2)
@@ -197,7 +197,7 @@
 
 			local functions = field._kinds[thisKind]
 			if not functions then
-				error("Invalid field kind '" .. thisKind .. "'")
+				return nil, "Invalid field kind '" .. thisKind .. "'"
 			end
 
 			local processor = functions[method]
