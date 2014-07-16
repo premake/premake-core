@@ -118,6 +118,12 @@
 	}
 
 	api.register {
+		name = "cleanExtensions",
+		scope = "config",
+		kind = "list:string",
+	}
+
+	api.register {
 		name = "configmap",
 		scope = "config",
 		kind = "keyed:array:string",

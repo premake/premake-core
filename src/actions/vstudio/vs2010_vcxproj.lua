@@ -182,6 +182,7 @@
 				m.propertyGroup,
 				m.outDir,
 				m.intDir,
+				m.extensionsToDeleteOnClean,
 			}
 		else
 			return {
@@ -195,6 +196,7 @@
 				m.targetExt,
 				m.imageXexOutput,
 				m.generateManifest,
+				m.extensionsToDeleteOnClean,
 			}
 		end
 	end
@@ -1020,6 +1022,14 @@
 	function m.excludedFromBuild(cfg, filecfg)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
 			m.element("ExcludedFromBuild", m.condition(cfg), "true")
+		end
+	end
+
+
+	function m.extensionsToDeleteOnClean(cfg)
+		if #cfg.cleanExtensions > 0 then
+			local value = table.implode(cfg.cleanExtensions, "*", ";", "")
+			m.element("ExtensionsToDeleteOnClean", nil, value .. "$(ExtensionsToDeleteOnClean)")
 		end
 	end
 
