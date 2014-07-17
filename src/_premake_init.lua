@@ -187,6 +187,12 @@
 	}
 
 	api.register {
+		name = "defaultplatform",
+		scope = "project",
+		kind = "string",
+	}
+
+	api.register {
 		name = "defines",
 		scope = "config",
 		kind = "list:string",

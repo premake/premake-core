@@ -170,9 +170,22 @@
 
 		-- Now I can output the sorted list of solution configuration descriptors
 
+		-- Visual Studio assumes the first configurations as the defaults.
+		if sln.defaultplatform then
+			_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+			table.foreachi(sorted, function (cfg)
+				if cfg.platform == sln.defaultplatform then
+					_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+				end
+			end)
+			_p(1,"EndGlobalSection")
+		end
+
 		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		table.foreachi(sorted, function (cfg)
-			_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+			if not sln.defaultplatform or cfg.platform ~= sln.defaultplatform then
+				_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+			end
 		end)
 		_p(1,"EndGlobalSection")
 
