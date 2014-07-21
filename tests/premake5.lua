@@ -63,6 +63,7 @@
 
 	-- Baking tests
 	dofile("oven/test_filtering.lua")
+	dofile("oven/test_objdirs.lua")
 
 	-- API tests
 	dofile("api/test_containers.lua")

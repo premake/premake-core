@@ -219,7 +219,7 @@
 -- Some helper functions
 --
 
-	test.createsolution = function()
+	function test.createsolution()
 		local sln = solution "MySolution"
 		configurations { "Debug", "Release" }
 
@@ -231,7 +231,7 @@
 	end
 
 
-	test.createproject = function(sln)
+	function test.createproject(sln)
 		local n = #sln.projects + 1
 		if n == 1 then n = "" end
 
@@ -242,13 +242,13 @@
 	end
 
 
-	test.getproject = function(sln, i)
+	function test.getproject(sln, i)
 		local sln = premake.oven.bakeSolution(sln)
 		return premake.solution.getproject(sln, i or 1)
 	end
 
 
-	test.getconfig = function(prj, buildcfg, platform)
+	function test.getconfig(prj, buildcfg, platform)
 		local sln = premake.oven.bakeSolution(prj.solution)
 		prj = premake.solution.getproject(sln, prj.name)
 		return premake.project.getconfig(prj, buildcfg, platform)

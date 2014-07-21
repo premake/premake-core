@@ -259,9 +259,17 @@
 	function oven.bakeObjDirs(sln)
 		-- function to compute the four options for a specific configuration
 		local function getobjdirs(cfg)
+			-- the "!" prefix indicates the directory is not to be touched
+			local objdir = cfg.objdir or "obj"
+			local i = objdir:find("!", 1, true)
+			if i then
+				cfg.objdir = objdir:sub(1, i - 1) .. objdir:sub(i + 1)
+				return nil
+			end
+
 			local dirs = {}
 
-			local dir = path.getabsolute(path.join(cfg.project.location, cfg.objdir or "obj"))
+			local dir = path.getabsolute(path.join(cfg.project.location, objdir))
 			table.insert(dirs, dir)
 
 			if cfg.platform then
@@ -285,12 +293,14 @@
 
 		for prj in solution.eachproject(sln) do
 			for cfg in project.eachconfig(prj) do
-				-- get the dirs for this config, and remember the association
+				-- get the dirs for this config, and associate them together,
+				-- and increment a counter for each one discovered
 				local dirs = getobjdirs(cfg)
-				configs[cfg] = dirs
-
-				for _, dir in ipairs(dirs) do
-					counts[dir] = (counts[dir] or 0) + 1
+				if dirs then
+					configs[cfg] = dirs
+					for _, dir in ipairs(dirs or {}) do
+						counts[dir] = (counts[dir] or 0) + 1
+					end
 				end
 			end
 		end
