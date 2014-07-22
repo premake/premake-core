@@ -179,14 +179,12 @@
 	m.elements.outputProperties = function(cfg)
 		if cfg.kind == p.UTILITY then
 			return {
-				m.propertyGroup,
 				m.outDir,
 				m.intDir,
 				m.extensionsToDeleteOnClean,
 			}
 		else
 			return {
-				m.propertyGroup,
 				m.linkIncremental,
 				m.ignoreImportLibrary,
 				m.outDir,
@@ -203,6 +201,7 @@
 
 	function m.outputProperties(cfg)
 		if not vstudio.isMakefile(cfg) then
+			m.propertyGroup(cfg)
 			p.callArray(m.elements.outputProperties, cfg)
 			_p(1,'</PropertyGroup>')
 		end
