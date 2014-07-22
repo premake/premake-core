@@ -107,7 +107,7 @@
 	end
 
 	function dmake.buildRule(prj)
-		_p('$(TARGET): $(LDDEPS)')
+		_p('$(TARGET): $(SOURCEFILES) $(LDDEPS)')
 		_p('\t@echo Building %s', prj.name)
 		_p('\t$(SILENT) $(BUILDCMD)')
 		_p('\t$(POSTBUILDCMDS)')
