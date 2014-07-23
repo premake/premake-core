@@ -53,6 +53,17 @@
 	}
 
 	api.register {
+		name = "atl",
+		scope = "config",
+		kind  = "string",
+		allowed = {
+			"Off",
+			"Dynamic",
+			"Static",
+		},
+	}
+
+	api.register {
 		name = "basedir",
 		scope = "project",
 		kind = "path"
@@ -99,7 +110,7 @@
 	api.register {
 		name = "buildoutputs",
 		scope = "config",
-		kind = "list:file",
+		kind = "list:path",
 		tokens = true,
 	}
 
@@ -288,17 +299,6 @@
 			Optimise = 'Optimize',
 			OptimiseSize = 'OptimizeSize',
 			OptimiseSpeed = 'OptimizeSpeed',
-		},
-	}
-
-	api.register {
-		name = "atl",
-		scope = "config",
-		kind  = "string",
-		allowed = {
-			"Off",
-			"Dynamic",
-			"Static",
 		},
 	}
 
