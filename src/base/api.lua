@@ -141,6 +141,9 @@
 ---
 
 	function api.unregister(field)
+		if type(field) == "string" then
+			field = premake.field.get(field)
+		end
 		premake.field.unregister(field)
 		_G[field.name] = nil
 		_G["remove" .. field.name] = nil
@@ -189,6 +192,31 @@
 			field.allowed = field.allowed or {}
 			table.insert(field.allowed, value)
 			field.allowed[value:lower()] = value
+		end
+	end
+
+
+
+--
+-- Add a new value to a field's list of allowed values.
+--
+-- @param fieldName
+--    The name of the field to which to add the value.
+-- @param value
+--    The value to add. May be a single string value, or an array
+--    of values.
+--
+
+	function api.addAliases(fieldName, value)
+		local field = premake.field.get(fieldName)
+		if not field then
+			error("No such field: " .. fieldName, 2)
+		end
+
+		field.aliases = field.aliases or {}
+		for k, v in pairs(value) do
+			field.aliases[k] = v
+			field.aliases[k:lower()] = v
 		end
 	end
 
