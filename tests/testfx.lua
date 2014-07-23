@@ -65,9 +65,13 @@
 	end
 
 
-	function test.contains(value, actual)
-		if not table.contains(actual, value) then
-			test.fail("expected value %s not found", value)
+	function test.contains(expected, actual)
+		if type(expected) == "table" then
+			for i, v in ipairs(expected) do
+				test.contains(v, actual)
+			end
+		elseif not table.contains(actual, expected) then
+			test.fail("expected value %s not found", expected)
 		end
 	end
 
@@ -409,7 +413,7 @@
 		function runsuite(suitename, suitetests, testname)
 			if testname then
 				runtest(suitename, suitetests, testname, suitetests[testname])
-			else
+			elseif suitetests then
 				for testname, testfunc in pairs(suitetests) do
 					runtest(suitename, suitetests, testname, testfunc)
 				end
