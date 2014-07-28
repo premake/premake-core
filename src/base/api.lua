@@ -46,14 +46,6 @@
 --     allowed  An array of valid values for this field, or a function which
 --              accepts a value as input and returns the canonical value as a
 --              result, or nil if the input value is invalid. (optional)
---     list     A boolean indicating whether this field can hold multiple
---              values. If true, multiple calls to this field will concatonate
---              the values; if false or unset multiple calls will replace the
---              preceding value.
---     keyed    A boolean indicating whether the field uses an associative
---              table for values. If true, associative tables will be expected
---              as input; the values of the table will handled according the
---              setting of `kind`, above. (optional)
 --     tokens   A boolean indicating whether token expansion should be
 --              performed on this field.
 --
@@ -619,9 +611,9 @@
 
 
 
---
+---
 -- Key-value data kind definition. Merges key domains; values may be any kind.
---
+---
 
 	local function storeKeyed(field, current, value, processor)
 		current = current or {}
@@ -636,9 +628,19 @@
 		return current
 	end
 
+
+	local function mergeKeyed(field, current, value, processor)
+		value = value or {}
+		for k, v in pairs(value) do
+			current[k] = v
+		end
+		return current
+	end
+
+
 	premake.field.kind("keyed", {
 		store = storeKeyed,
-		merge = storeKeyed,
+		merge = mergeKeyed,
 		compare = function(field, a, b, processor)
 			if a == nil or b == nil then
 				return false
@@ -653,19 +655,28 @@
 	})
 
 
---
+---
 -- List data kind definition. Actually a misnomer, lists are more like sets in
 -- that duplicate values are weeded out; each will only appear once. Can
 -- contain any other kind of data.
---
+---
+
+	local function storeListItem(current, item)
+		if current[item] then
+			table.remove(current, table.indexof(current, item))
+		end
+		table.insert(current, item)
+		current[item] = item
+	end
+
 
 	local function storeList(field, current, value, processor)
 		if type(value) == "table" then
 			-- Flatten out incoming arrays of values
 			if #value > 0 then
-				table.foreachi(value, function(item)
-					current = storeList(field, current, item, processor)
-				end)
+				for i = 1, #value do
+					current = storeList(field, current, value[i], processor)
+				end
 				return current
 			end
 
@@ -673,14 +684,6 @@
 			if table.isempty(value) then
 				return current
 			end
-		end
-
-		local function store(item)
-			if current[item] then
-				table.remove(current, table.indexof(current, item))
-			end
-			table.insert(current, item)
-			current[item] = item
 		end
 
 		current = current or {}
@@ -691,21 +694,33 @@
 
 		if type(value) == "table" then
 			if #value > 0 then
-				table.foreachi(value, store)
+				for i = 1, #value do
+					storeListItem(current, value[i])
+				end
 			elseif not table.isempty(value) then
-				store(value)
+				storeListItem(current, value)
 			end
 		elseif value then
-			store(value)
+			storeListItem(current, value)
 		end
 
 		return current
 	end
 
+
+	local function mergeList(field, current, value, processor)
+		value = value or {}
+		for i = 1, #value do
+			storeListItem(current, value[i])
+		end
+		return current
+	end
+
+
 	premake.field.kind("list", {
 		store = storeList,
 		remove = storeList,
-		merge = storeList,
+		merge = mergeList,
 		compare = function(field, a, b, processor)
 			if a == nil or b == nil or #a ~= #b then
 				return false
