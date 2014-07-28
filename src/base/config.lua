@@ -284,7 +284,8 @@
 		-- Iterate all of the links listed in the configuration and boil
 		-- them down to the requested data set
 
-		table.foreachi(cfg.links, function(link)
+		for i = 1, #cfg.links do
+			local link = cfg.links[i]
 			local item
 
 			-- Sort the links into "sibling" (is another project in this same
@@ -300,15 +301,9 @@
 				if prjcfg and (kind == "dependencies" or config.canLink(cfg, prjcfg)) then
 
 					-- Yes; does the caller want the whole project config or only part?
-
 					if part == "object" then
 						item = prjcfg
-
-					-- Just some part of the path. Grab the whole thing now, split it up
-					-- below. Skip external projects, because I have no way to know their
-					-- target file (without parsing the project, which I'm not doing)
-
-					elseif not prj.external then
+					else
 						item = project.getrelative(cfg.project, prjcfg.linktarget.fullpath)
 					end
 
@@ -348,7 +343,7 @@
 				table.insert(result, item)
 			end
 
-		end)
+		end
 
 		return result
 	end
