@@ -341,7 +341,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-	<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
 	<Optimization>Disabled</Optimization>
 	<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
 		]]
@@ -376,7 +375,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-	<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
 	<Optimization>Disabled</Optimization>
 </ClCompile>
 		]]
@@ -694,7 +692,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-	<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
 	<Optimization>Disabled</Optimization>
 	<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
 		]]

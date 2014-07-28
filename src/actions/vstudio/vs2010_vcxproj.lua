@@ -1339,10 +1339,7 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
-			local filename = cfg.buildtarget.basename
-			p.w('<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
-		end
+		-- just a placeholder for overriding; will use the default VS name
 	end
 
 
