@@ -211,7 +211,7 @@
 					local prjCfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 					local excluded = (prjCfg == nil or prjCfg.flags.ExcludeFromBuild)
 
-					if excluded then
+					if prjCfg == nil then
 						prjCfg = project.findClosestMatch(prj, cfg.buildcfg, cfg.platform)
 					end
 
