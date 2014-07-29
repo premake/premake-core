@@ -411,11 +411,13 @@
 		end
 
 		function runsuite(suitename, suitetests, testname)
-			if testname then
-				runtest(suitename, suitetests, testname, suitetests[testname])
-			elseif suitetests then
-				for testname, testfunc in pairs(suitetests) do
-					runtest(suitename, suitetests, testname, testfunc)
+			if suitetests then
+				if testname then
+					runtest(suitename, suitetests, testname, suitetests[testname])
+				else
+					for testname, testfunc in pairs(suitetests) do
+						runtest(suitename, suitetests, testname, testfunc)
+					end
 				end
 			end
 		end
