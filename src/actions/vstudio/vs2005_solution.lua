@@ -209,7 +209,7 @@
 					-- to closest available project configuration instead.
 
 					local prjCfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-					local excluded = (prjCfg == nil)
+					local excluded = (prjCfg == nil or prjCfg.flags.ExcludeFromBuild)
 
 					if excluded then
 						prjCfg = project.findClosestMatch(prj, cfg.buildcfg, cfg.platform)

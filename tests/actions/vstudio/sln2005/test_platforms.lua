@@ -22,6 +22,7 @@
 	end
 
 	local function prepare(lang)
+		filter {}
 		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
 		sln = premake.oven.bakeSolution(sln)
 		sln2005.configurationPlatforms(sln)
@@ -696,6 +697,32 @@
 		]]
 	end
 
+
+	function suite.onBuildCfgExcludedByFlag()
+		platforms { "DLL", "Static" }
+		project "MyProject"
+		filter "configurations:Debug"
+		flags "ExcludeFromBuild"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|DLL = Debug|DLL
+		Debug|Static = Debug|Static
+		Release|DLL = Release|DLL
+		Release|Static = Release|Static
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.ActiveCfg = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Debug Static|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Release Static|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.Build.0 = Release Static|Win32
+	EndGlobalSection
+		]]
+	end
+
+
 	function suite.onExcludedPlatform()
 		platforms { "DLL", "Static" }
 		project "MyProject"
@@ -719,6 +746,31 @@
 		]]
 	end
 
+
+	function suite.onPlatformExcludedByFlag()
+		platforms { "DLL", "Static" }
+		project "MyProject"
+		filter "platforms:Static"
+		flags "ExcludeFromBuild"
+		prepare()
+		test.capture [[
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|DLL = Debug|DLL
+		Debug|Static = Debug|Static
+		Release|DLL = Release|DLL
+		Release|Static = Release|Static
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.ActiveCfg = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.Build.0 = Debug DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Debug Static|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Release Static|Win32
+	EndGlobalSection
+		]]
+	end
+
 	function suite.onExcludedBuildCfg_noPlatforms()
 		project "MyProject"
 		removeconfigurations { "Debug" }
@@ -736,8 +788,11 @@
 		]]
 	end
 
+
+---
 -- Check that when a default platform is specified it is written in a separate
 -- configuration block so that Visual Studio picks it up as default.
+---
 
 	function suite.onDefaultPlatforms()
 		platforms { "x32", "x64" }
