@@ -130,15 +130,15 @@
 -- itself included via an -l flag.
 --
 
- function suite.onExternalLibraryWithPath()
- 	location "MyProject"
-	links { "libs/SomeLib" }
-	prepare { "ldFlags", "libs" }
-	test.capture [[
+	function suite.onExternalLibraryWithPath()
+		location "MyProject"
+		links { "libs/SomeLib" }
+		prepare { "ldFlags", "libs" }
+		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
   LIBS += -lSomeLib
-	]]
-end
+		]]
+	end
 
 
 
@@ -149,11 +149,11 @@ end
 -- is stripped
 --
 
- function suite.onExternalLibraryWithPath()
- 	location "MyProject"
-	links { "libs/SomeLib-1.1" }
-	prepare { "libs", }
-	test.capture [[
+	function suite.onExternalLibraryWithPath()
+		location "MyProject"
+		links { "libs/SomeLib-1.1" }
+		prepare { "libs", }
+		test.capture [[
   LIBS += -lSomeLib-1.1
-	]]
- end
+		]]
+	end
