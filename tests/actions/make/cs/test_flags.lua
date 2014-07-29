@@ -37,6 +37,7 @@
   		]]
   	end
 
+
 --
 -- If the Unsafe flag has been set, it should be specified.
 --
@@ -45,7 +46,7 @@
 		flags { "Unsafe" }
 		prepare()
 		test.capture [[
-  FLAGS = /noconfig /unsafe
+  FLAGS = /unsafe /noconfig
   		]]
   	end
 
