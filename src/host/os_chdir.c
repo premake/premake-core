@@ -1,16 +1,15 @@
 /**
  * \file   os_chdir.c
  * \brief  Change the current working directory.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
 
 
-int os_chdir(lua_State* L)
+int do_chdir(const char* path)
 {
 	int z;
-	const char* path = luaL_checkstring(L, 1);
 
 #if PLATFORM_WINDOWS
 	z = SetCurrentDirectory(path);
@@ -18,6 +17,16 @@ int os_chdir(lua_State* L)
 	z = !chdir(path);
 #endif
 
+	return z;
+}
+
+
+
+int os_chdir(lua_State* L)
+{
+	const char* path = luaL_checkstring(L, 1);
+
+	int z = do_chdir(path);
 	if (!z)
 	{
 		lua_pushnil(L);

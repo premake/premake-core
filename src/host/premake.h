@@ -61,6 +61,7 @@
 
 
 /* Bootstrapping helper functions */
+int do_chdir(const char* path);
 unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
