@@ -247,7 +247,7 @@
 			return {
 				m.clCompile,
 				m.resourceCompile,
-				m.link,
+				m.linker,
 				m.manifest,
 				m.buildEvents,
 				m.imageXex,
@@ -347,64 +347,85 @@
 -- Write out the linker tool block.
 --
 
-	m.elements.link = function(cfg, explicit)
+	m.elements.linker = function(cfg, explicit)
 		return {
-			m.subSystem,
-			m.generateDebugInformation,
-			m.optimizeReferences,
-			m.linkDynamic,
+			m.link,
+			m.lib,
+			m.linkLibraryDependencies,
 		}
 	end
 
-	m.elements.linkDynamic = function(cfg, explicit)
-		return {
-			m.additionalDependencies,
-			m.additionalLibraryDirectories,
-			m.importLibrary,
-			m.entryPointSymbol,
-			m.generateMapFile,
-			m.moduleDefinitionFile,
-			m.treatLinkerWarningAsErrors,
-			m.additionalLinkOptions,
-		}
-	end
-
-	m.elements.linkStatic = function(cfg, explicit)
-		return {
-			m.treatLinkerWarningAsErrors,
-			m.additionalLinkOptions,
-		}
-	end
-
-	function m.link(cfg)
-		_p(2,'<Link>')
+	function m.linker(cfg)
 		local explicit = vstudio.needsExplicitLink(cfg)
-		p.callArray(m.elements.link, cfg, explicit)
-		_p(2,'</Link>')
-
-		if cfg.kind == premake.STATICLIB then
-			m.linkStatic(cfg, explicit)
-		end
-
-		m.linkLibraryDependencies(cfg, explicit)
+		p.callArray(m.elements.linker, cfg, explicit)
 	end
 
-	function m.linkDynamic(cfg, explicit)
-		if cfg.kind ~= premake.STATICLIB then
-			p.callArray(m.elements.linkDynamic, cfg, explicit)
+
+
+	m.elements.link = function(cfg, explicit)
+		if cfg.kind == p.STATICLIB then
+			return {
+				m.subSystem,
+				m.generateDebugInformation,
+				m.optimizeReferences,
+			}
+		else
+			return {
+				m.subSystem,
+				m.generateDebugInformation,
+				m.optimizeReferences,
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
+				m.importLibrary,
+				m.entryPointSymbol,
+				m.generateMapFile,
+				m.moduleDefinitionFile,
+				m.treatLinkerWarningAsErrors,
+				m.additionalLinkOptions,
+			}
 		end
 	end
 
-	function m.linkStatic(cfg, explicit)
+	function m.link(cfg, explicit)
 		local contents = p.capture(function ()
-			p.callArray(m.elements.linkStatic, cfg, explicit)
+			p.push()
+			p.callArray(m.elements.link, cfg, explicit)
+			p.pop()
 		end)
 		if #contents > 0 then
-			_p(2,'<Lib>')
-			_p("%s", contents)
-			_p(2,'</Lib>')
+			p.push('<Link>')
+			p.outln(contents)
+			p.pop('</Link>')
 		end
 	end
+
+
+
+	m.elements.lib = function(cfg, explicit)
+		if cfg.kind == p.STATICLIB then
+			return {
+				m.treatLinkerWarningAsErrors,
+				m.additionalLinkOptions,
+			}
+		else
+			return {
+			}
+		end
+	end
+
+	function m.lib(cfg, explicit)
+		local contents = p.capture(function ()
+			p.push()
+			p.callArray(m.elements.lib, cfg, explicit)
+			p.pop()
+		end)
+		if #contents > 0 then
+			p.push('<Lib>')
+			p.outln(contents)
+			p.pop('</Lib>')
+		end
+	end
+
 
 
 --
@@ -832,7 +853,7 @@
 
 		if #links > 0 then
 			links = path.translate(table.concat(links, ";"))
-			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
 		end
 	end
 

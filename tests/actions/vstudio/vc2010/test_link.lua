@@ -23,7 +23,7 @@
 
 	local function prepare(platform)
 		local cfg = test.getconfig(prj, "Debug", platform)
-		vc2010.link(cfg)
+		vc2010.linker(cfg)
 	end
 
 
