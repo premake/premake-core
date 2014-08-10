@@ -11,7 +11,7 @@
 int string_hash(lua_State* L)
 {
 	const char* str = luaL_checkstring(L, 1);
-	lua_pushnumber(L, do_hash(str, 0));
+	lua_pushnumber(L, (lua_Number)do_hash(str, 0));
 	return 1;	
 }
 
