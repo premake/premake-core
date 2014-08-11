@@ -135,7 +135,7 @@
 -- Used by the actions to generate solution and project files.
 --
 -- @param obj
---    A solution or project object; will be based to the callback function.
+--    A solution or project object; will be passed to the callback function.
 -- @param ext
 --    An optional extension for the generated file, with the leading dot.
 -- @param callback

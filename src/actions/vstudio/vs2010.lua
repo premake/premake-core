@@ -39,6 +39,22 @@
 
 
 
+---
+-- Generate the .props, .targets, and .xml files for custom rules.
+---
+
+	function vs2010.generateRule(rule)
+		p.eol("\r\n")
+		p.indent("  ")
+		p.escaper(vs2010.esc)
+
+		p.generate(rule, ".props", vstudio.rules.generateRuleProps)
+		p.generate(rule, ".targets", vstudio.rules.generateRuleTargets)
+		p.generate(rule, ".xml", vstudio.rules.generateRuleXml)
+	end
+
+
+
 --
 -- The VS 2010 standard for XML escaping in generated project files.
 --
@@ -80,6 +96,7 @@
 
 		onsolution = vstudio.vs2005.generateSolution,
 		onproject  = vstudio.vs2010.generateProject,
+		onrule = vstudio.vs2010.generateRule,
 
 		oncleansolution = vstudio.cleanSolution,
 		oncleanproject  = vstudio.cleanProject,

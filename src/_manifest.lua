@@ -31,6 +31,7 @@
 		"base/solution.lua",
 		"base/config.lua",
 		"base/fileconfig.lua",
+		"base/rules.lua",
 
 		-- runtime switches
 		"base/option.lua",
@@ -70,6 +71,9 @@
 		"actions/vstudio/vs2010_vcxproj.lua",
 		"actions/vstudio/vs2010_vcxproj_user.lua",
 		"actions/vstudio/vs2010_vcxproj_filters.lua",
+		"actions/vstudio/vs2010_rules_props.lua",
+		"actions/vstudio/vs2010_rules_targets.lua",
+		"actions/vstudio/vs2010_rules_xml.lua",
 		"actions/vstudio/vs2012.lua",
 		"actions/vstudio/vs2013.lua",
 

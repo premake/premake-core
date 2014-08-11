@@ -1,8 +1,8 @@
---
+---
 -- action.lua
 -- Work with the list of registered actions.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
---
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+---
 
 	premake.action = {}
 
@@ -73,12 +73,6 @@
 	function premake.action.call(name)
 		local a = premake.action.list[name]
 
-		-- TODO: remove this once everyone's had a chance to see
-		-- the deprecation warning
-		if _ACTION:endswith("ng") then
-			_ACTION = _ACTION:sub(1, -3)
-		end
-
 		for sln in premake.solution.each() do
 			if a.onsolution then
 				a.onsolution(sln)
@@ -87,6 +81,12 @@
 				if a.onproject and not prj.external then
 					a.onproject(prj)
 				end
+			end
+		end
+
+		for rule in premake.rules.each() do
+			if a.onrule then
+				a.onrule(rule)
 			end
 		end
 

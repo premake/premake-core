@@ -6,7 +6,9 @@
 
 	premake.api = {}
 	local api = premake.api
-	local configset = premake.configset
+
+	local p = premake
+	local configset = p.configset
 
 
 --
@@ -943,6 +945,39 @@
 		prj.external = true;
 		return prj
 	end
+
+
+
+---
+-- Set the current configuration scope to a rule set.
+--
+-- @param name
+--    The name of the rule set. If a rule set with this name already exists,
+--    it is made current, otherwise a new rule set is created with this name.
+--    If no name is provided, the most recently defined rule set is made
+--    active.
+-- @return
+--    The active rule set object.
+---
+
+	function rule(name)
+		if not name then
+			if api.scope.rules then
+				name = api.scope.rules.name
+			else
+				return nil
+			end
+		end
+
+		local rule = api.scope.rules
+		if name ~= "*" then
+			rule = p.rules.get(name) or p.rules.new(name)
+		end
+
+		api.scope.rules = rule
+		return rule
+	end
+
 
 
 --
