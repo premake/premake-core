@@ -157,20 +157,6 @@
 	end
 
 
---
--- Returns the file name for this solution.
---
--- @param sln
---    The solution object to query.
--- @param ext
---    An optional file extension to add, with the leading dot.
--- @return
---    The absolute path to the solution's file.
---
-
-
-	solution.getfilename = project.getfilename
-
 
 --
 -- Retrieve the tree of project groups.

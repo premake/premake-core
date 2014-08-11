@@ -1,13 +1,13 @@
 --
--- tests/project/test_filename.lua
--- Verify generation of project (and solution) filenames.
--- Copyright (c) 2008-2012 Jason Perkins and the Premake project
+-- tests/base/test_filename.lua
+-- Verify generation of project/solution/rule filenames.
+-- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
-	T.project_filename = {}
-	local suite = T.project_filename
+	local suite = test.declare("project_filename")
 
-	local project = premake.project
+	local p = premake
+
 
 
 --
@@ -17,11 +17,11 @@
 	local sln
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(sln, 1)
 	end
 
 
@@ -31,7 +31,7 @@
 
 	function suite.isAbsolutePath()
 		prepare()
-		test.isequal(os.getcwd(), path.getdirectory(project.getfilename(prj)))
+		test.isequal(os.getcwd(), path.getdirectory(p.filename(prj)))
 	end
 
 
@@ -41,7 +41,7 @@
 
 	function suite.isProjectName_onNoFilename()
 		prepare()
-		test.isequal("MyProject", path.getname(project.getfilename(prj)))
+		test.isequal("MyProject", path.getname(p.filename(prj)))
 	end
 
 
@@ -52,7 +52,7 @@
 	function suite.doesUseFilename()
 		filename "Howdy"
 		prepare()
-		test.isequal("Howdy", path.getname(project.getfilename(prj)))
+		test.isequal("Howdy", path.getname(p.filename(prj)))
 	end
 
 
@@ -62,7 +62,7 @@
 
 	function suite.doesUseExtension()
 		prepare()
-		test.isequal(".xc", path.getextension(project.getfilename(prj, ".xc")))
+		test.isequal(".xc", path.getextension(p.filename(prj, ".xc")))
 	end
 
 
@@ -72,7 +72,7 @@
 
 	function suite.worksWithSolution()
 		prepare()
-		test.isequal("MySolution", path.getname(project.getfilename(sln)))
+		test.isequal("MySolution", path.getname(p.filename(sln)))
 	end
 
 
@@ -84,7 +84,7 @@
 		solution ("MySolution")
 		filename ("Howdy")
 		prepare()
-		test.isequal("MyProject", path.getname(project.getfilename(prj)))
+		test.isequal("MyProject", path.getname(p.filename(prj)))
 	end
 
 
@@ -95,6 +95,5 @@
 
 	function suite.canOverrideFilename()
 		prepare()
-		test.isequal("Makefile", path.getname(project.getfilename(prj, "Makefile")))
+		test.isequal("Makefile", path.getname(p.filename(prj, "Makefile")))
 	end
-

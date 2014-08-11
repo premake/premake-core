@@ -386,7 +386,7 @@
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
-		return project.getfilename(prj, extension)
+		return premake.filename(prj, extension)
 	end
 
 

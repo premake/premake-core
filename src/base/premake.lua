@@ -144,7 +144,7 @@
 --
 
 	function premake.generate(obj, ext, callback)
-		local fn = premake.project.getfilename(obj, ext)
+		local fn = premake.filename(obj, ext)
 		printf("Generating %s...", path.getrelative(os.getcwd(), fn))
 
 		local f, err = io.open(fn, "wb")
@@ -156,6 +156,34 @@
 		callback(obj)
 		f:close()
 	end
+
+
+
+---
+-- Returns the full path a file generated from any of the project
+-- objects (project, solution, rule).
+--
+-- @param obj
+--    The project object being generated.
+-- @param ext
+--    An optional extension for the generated file, with the leading dot.
+-- @param callback
+--    The function responsible for writing the file; will receive the
+--    project object as its only argument.
+---
+
+function premake.filename(obj, ext)
+	local fname = obj.location
+	if ext and not ext:startswith(".") then
+		fname = path.join(fname, ext)
+	else
+		fname = path.join(fname, obj.filename)
+		if ext then
+			fname = fname .. ext
+		end
+	end
+	return fname
+end
 
 
 

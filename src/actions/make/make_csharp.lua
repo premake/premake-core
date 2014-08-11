@@ -184,7 +184,7 @@
 	function make.csResponseRules(prj)
 		local toolset = premake.tools.dotnet
 		local ext = make.getmakefilename(prj, true)
-		local makefile = path.getname(premake.project.getfilename(prj, ext))
+		local makefile = path.getname(premake.filename(prj, ext))
 		local response = path.translate(make.cs.getresponsefilename(prj))
 
 		_p('$(RESPONSE): %s', makefile)

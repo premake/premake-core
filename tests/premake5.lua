@@ -33,6 +33,7 @@
 	dofile("base/test_context.lua")
 	dofile("base/test_criteria.lua")
 	dofile("base/test_detoken.lua")
+	dofile("base/test_filename.lua")
 	dofile("base/test_include.lua")
 	dofile("base/test_option.lua")
 	dofile("base/test_os.lua")
@@ -51,7 +52,6 @@
 	-- Project object tests
 	dofile("project/test_config_maps.lua")
 	dofile("project/test_eachconfig.lua")
-	dofile("project/test_filename.lua")
 	dofile("project/test_getconfig.lua")
 	dofile("project/test_location.lua")
 	dofile("project/test_vpaths.lua")

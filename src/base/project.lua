@@ -210,30 +210,15 @@
 
 
 
---
+---
 -- Returns the file name for this project. Also works with solutions.
---
--- @param prj
---    The project object to query.
--- @param ext
---    An optional file extension to add, with the leading dot. If provided
---    without a leading dot, it will treated as a file name.
--- @return
---    The absolute path to the project's file.
---
+-- Deprecated 11 Aug 2014
+---
 
 	function project.getfilename(prj, ext)
-		local fn = prj.location
-		if ext and not ext:startswith(".") then
-			fn = path.join(fn, ext)
-		else
-			fn = path.join(fn, prj.filename)
-			if ext then
-				fn = fn .. ext
-			end
-		end
-		return fn
+		return premake.filename(prj, ext)
 	end
+
 
 
 --
