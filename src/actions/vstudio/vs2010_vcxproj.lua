@@ -47,7 +47,7 @@
 
 	function m.generate(prj)
 		io.utf8()
-		m.xmlDeclaration()
+		p.xmlUtf8()
 		m.project("Build")
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
@@ -1526,11 +1526,6 @@
 	function m.warningLevel(cfg)
 		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
 		m.element("WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
-	end
-
-
-	function m.xmlDeclaration()
-		_p('<?xml version="1.0" encoding="utf-8"?>')
 	end
 
 

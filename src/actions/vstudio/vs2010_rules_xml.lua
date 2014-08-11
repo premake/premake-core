@@ -4,13 +4,19 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
+	local m = premake.vstudio.rules
+
 	local p = premake
 	local project = p.project
 	local tree = p.tree
 
-	local m = premake.vstudio.rules
 
-
+	m.elements.ruleXml = function(rule)
+		return {
+			p.xmlUtf8,
+		}
+	end
 
 	function m.generateRuleXml(rule)
+		p.callArray(m.elements.ruleXml, rule)
 	end

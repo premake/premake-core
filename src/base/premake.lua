@@ -462,6 +462,18 @@ end
 
 
 
+---
+-- Write a opening XML element for a UTF-8 encoded file. Used by
+-- several different files for different actions, so makes sense
+-- to have a common call for it.
+---
+
+	function premake.xmlUtf8()
+		premake.w('<?xml version="1.0" encoding="utf-8"?>')
+	end
+
+
+
 --
 -- These are the output shortcuts that I used before switching to the
 -- indentation-aware calls above. They are still in use all over the
