@@ -5,11 +5,12 @@
 --
 
 	premake.vstudio.rules = {}
-	local m = premake.vstudio.rules
+	premake.vstudio.rules.props = {}
+	local m = premake.vstudio.rules.props
+	m.elements = {}
 
 	local p = premake
 
-	m.elements = {}
 
 
 
@@ -17,7 +18,7 @@
 -- Entry point; generate the root <Project> element.
 ---
 
-	m.elements.ruleProps = function(r)
+	m.elements.project = function(r)
 		return {
 			p.xmlUtf8,
 			p.vstudio.projectElement,
@@ -27,8 +28,8 @@
 		}
 	end
 
-	function m.generateRuleProps(r)
-		p.callArray(m.elements.ruleProps, r)
+	function m.generate(r)
+		p.callArray(m.elements.project, r)
 		p.pop()
 		p.out('</Project>')
 	end

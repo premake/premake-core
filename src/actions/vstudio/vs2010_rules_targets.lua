@@ -4,7 +4,10 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
-	local m = premake.vstudio.rules
+	premake.vstudio.rules.targets = {}
+
+	local m = premake.vstudio.rules.targets
+	m.elements = {}
 
 	local p = premake
 
@@ -13,7 +16,7 @@
 -- Entry point; generate the root <Project> element.
 ---
 
-	m.elements.ruleTargets = function(r)
+	m.elements.project = function(r)
 		return {
 			p.xmlUtf8,
 			p.vstudio.projectElement,
@@ -24,8 +27,8 @@
 		}
 	end
 
-	function m.generateRuleTargets(r)
-		p.callArray(m.elements.ruleTargets, r)
+	function m.generate(r)
+		p.callArray(m.elements.project, r)
 		p.pop()
 		p.out('</Project>')
 	end

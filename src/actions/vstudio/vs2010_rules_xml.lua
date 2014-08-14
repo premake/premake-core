@@ -4,7 +4,9 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
-	local m = premake.vstudio.rules
+	premake.vstudio.rules.xml = {}
+	local m = premake.vstudio.rules.xml
+	m.elements = {}
 
 	local p = premake
 
@@ -13,7 +15,7 @@
 -- Entry point; generate the root <ProjectSchemaDefinitions> element.
 ---
 
-	m.elements.ruleXml = function(r)
+	m.elements.project = function(r)
 		return {
 			p.xmlUtf8,
 			m.projectSchemaDefinitions,
@@ -24,8 +26,8 @@
 		}
 	end
 
-	function m.generateRuleXml(r)
-		p.callArray(m.elements.ruleXml, r)
+	function m.generate(r)
+		p.callArray(m.elements.project, r)
 		p.pop('</ProjectSchemaDefinitions>')
 	end
 

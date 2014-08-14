@@ -48,9 +48,9 @@
 		p.indent("  ")
 		p.escaper(vs2010.esc)
 
-		p.generate(rule, ".props", vstudio.rules.generateRuleProps)
-		p.generate(rule, ".targets", vstudio.rules.generateRuleTargets)
-		p.generate(rule, ".xml", vstudio.rules.generateRuleXml)
+		p.generate(rule, ".props", vstudio.rules.props.generate)
+		p.generate(rule, ".targets", vstudio.rules.targets.generate)
+		p.generate(rule, ".xml", vstudio.rules.xml.generate)
 	end
 
 
