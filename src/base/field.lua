@@ -250,6 +250,26 @@
 	end
 
 
+
+---
+-- Check to see if a field supports a given project scope.
+--
+-- @param f
+--    The field to test.
+-- @param scope
+--    The scope to look for (e.g. "config", "project", "rule").
+-- @return
+--    The scope value if found, nil otherwise.
+---
+
+	function field.hasScope(f, scope)
+		if f.scope == scope or f.scope:find(scope, 1, true) then
+			return scope
+		end
+	end
+
+
+
 	function field.merge(f, current, value)
 		local processor = field.accessor(f, "merge")
 		if processor then

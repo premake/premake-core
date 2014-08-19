@@ -10,6 +10,7 @@
 	local rules = premake.rules
 
 	local p = premake
+	local configset = p.configset
 
 
 	rules._list = {}
@@ -26,7 +27,9 @@
 ---
 
 	function rules.new(name)
-		local rule = {}
+		local rule = configset.new(configset.root)
+		setmetatable(rule, configset.metatable(rule))
+
 		rule.name = name
 		rule.script = _SCRIPT
 		rule.basedir = os.getcwd()

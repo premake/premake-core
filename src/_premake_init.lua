@@ -231,7 +231,7 @@
 
 	api.register {
 		name = "filename",
-		scope = "project",
+		scope = "project;rule",
 		kind = "string",
 		tokens = true,
 	}
@@ -452,7 +452,7 @@
 
 	api.register {
 		name = "location",
-		scope = "project",
+		scope = "project;rule",
 		kind = "path",
 		tokens = true,
 	}

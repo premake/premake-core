@@ -6,9 +6,10 @@
 
 	premake.fileconfig = {}
 
-	local fileconfig = premake.fileconfig
-	local context = premake.context
-	local project = premake.project
+	local p = premake
+	local fileconfig = p.fileconfig
+	local context = p.context
+	local project = p.project
 
 
 --
@@ -171,7 +172,7 @@
 
 	function fileconfig.hasFileSettings(fcfg)
 		for key, field in pairs(premake.fields) do
-			if field.scope == "config" then
+			if p.field.hasScope(field, "config") then
 				local value = fcfg[field.name]
 				if value then
 					if type(value) == "table" then

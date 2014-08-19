@@ -296,12 +296,20 @@
 ---
 -- Find the currently active configuration scope.
 --
+-- @param fld
+--    The field being set or fetched.
 -- @return
 --    The currently active configuration set object.
 ---
 
-	function api.gettarget()
-		return api.scope.project or api.scope.solution or api.scope.root
+	function api.target(fld)
+		if api.scope.rules and p.field.hasScope(fld, "rule") then
+			return api.scope.rules
+		elseif fld.scope ~= "rule" then
+			return api.scope.project or api.scope.solution or api.scope.root
+		else
+			return api.scope.root
+		end
 	end
 
 
@@ -324,7 +332,7 @@
 			end
 		end
 
-		local target = api.gettarget()
+		local target = api.target(field)
 		local status, err = configset.store(target, field, value)
 		if err then
 			error(err, 3)
@@ -344,7 +352,7 @@
 		-- return the current baked value
 		if not value then return end
 
-		local target = api.gettarget()
+		local target = api.target(field)
 		local hasDeprecatedValues = (type(field.deprecated) == "table")
 
 		-- Build a list of values to be removed. If this field has deprecated
@@ -846,7 +854,7 @@
 ---
 
 	function configuration(terms)
-		local target = api.gettarget()
+		local target = api.scope.project or api.scope.solution or api.scope.root
 		if terms then
 			if terms == "*" then terms = nil end
 			configset.addblock(target, {terms}, os.getcwd())
@@ -862,7 +870,7 @@
 ---
 
 	function filter(terms)
-		local target = api.gettarget()
+		local target = api.scope.project or api.scope.solution or api.scope.root
 		if terms then
 			if terms == "*" then terms = nil end
 			local ok, err = configset.addFilter(target, {terms}, os.getcwd())
@@ -1149,7 +1157,7 @@
 			}
 		end
 
-		local cset = api.gettarget()
+		local cset = api.target(field)
 		local current = cset.current
 		cset.current = cset.blocks[1]
 		api.callback(field, value)

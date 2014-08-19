@@ -7,6 +7,8 @@
 	local solution = premake.solution
 	local project = premake.project
 	local config = premake.config
+	local field = premake.field
+
 
 
 -- Store captured output text for later testing
@@ -407,23 +409,24 @@ end
 --
 
 	function premake.validateScopes(cfg, expected, ctx)
-		for name, field in pairs(premake.fields) do
-			local okay = false
+		for f in field.each() do
+			-- Pull out the project level scope
+			local scope = field.hasScope(f, "config") or field.hasScope(f, "project") or field.hasScope(f, "solution")
 
-			-- skip fields that are at or below the expected scope
-			if field.scope == "config" or field.scope == expected then
-				okay = true
-			end
+			-- Skip fields that are at or below the expected scope. Config-
+			-- level fields are the most general (can be applied to projects
+			-- or solutions) and so can never be out of scope.
+			local okay = (not scope or scope == "config" or scope == expected)
 
 			-- this one needs to checked
 			if not okay then
-				okay = premake.field.compare(field, cfg[field.scope][name], cfg[name])
+				okay = field.compare(f, cfg[scope][f.name], cfg[f.name])
 			end
 
 			-- found a problem?
 			if not okay then
-				local key = "validate." .. field.name
-				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", name, expected, cfg.name, field.scope, cfg[field.scope].name)
+				local key = "validate." .. f.name
+				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", f.name, expected, cfg.name, scope, cfg[scope].name)
 			end
 
 		end
