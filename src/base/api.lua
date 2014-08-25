@@ -11,6 +11,16 @@
 	local configset = p.configset
 
 
+
+--
+-- A place to store the current active objects in each configuration scope
+-- (e.g. solutions, projects, groups, and configurations).
+-- TODO: this really ought to be internal
+--
+
+	api.scope = {}
+
+
 --
 -- Create a "root" configuration set, to hold the global configuration. Values
 -- that are added to this set become available for all add-ons, solution, projects,
@@ -18,14 +28,107 @@
 --
 
 	configset.root = configset.new()
+	api.scope.root = configset.root
+	api.scope._root = p.containerClass.define("_root"):new("root")
 
 
+
+---
+-- Register a new class of configuration container. A configuration container
+-- can hold configuration settings, as well as child configuration containers.
+-- Solutions, projects, and rules are all examples of containers.
 --
--- A place to store the current active objects in each configuration scope
--- (e.g. solutions, projects, groups, and configurations).
---
+-- @param def
+--    The container definition; see premake.container.define().
+-- @returns
+--    The newly defined container class.
+---
 
-	api.scope = { root = configset.root }
+	function api.container(def)
+		-- for now, everything inherits the root configuration
+		if not def.parent then
+			def.parent = "_root"
+		end
+
+		-- register the new class; validation checks may cause a failure
+		local cc, err = p.containerClass.define(def)
+		if not cc then
+			error(err, 2)
+		end
+
+		-- create a global function to create new instances, e.g project()
+		_G[cc.name] = function(name)
+			return api._setScope(cc, name)
+		end
+
+		return cc
+	end
+
+
+
+---
+-- Return the root container, which contains the global configuration and
+-- all of the child containers (solutions, rules).
+---
+
+	function api.rootScope()
+		return api.scope._root
+	end
+
+
+
+---
+-- Activate a new configuration container, making it the target for all
+-- subsequent configuration settings.
+--
+-- @param cc
+--    The container class being activated, e.g. a project or solution.
+-- @param name
+--    The name of the container instance to be activated. If a container
+--    (e.g. project) with this name does not already exist it will be
+--    created.
+-- @return
+--    The container instance.
+---
+
+	function api._setScope(cc, name)
+		local instance
+
+		-- << handle (name == nil) >>
+
+		-- << handle "*" >>
+
+		-- Fetch (creating if necessary) the container
+		local parentContainer = api._target(cc.parent)
+		local container = parentContainer:fetchContainer(cc, name)
+
+		-- << start a new settings block >>
+
+		-- Activate the container
+		api.scope[cc.name] = container
+		return container
+	end
+
+
+
+---
+-- Find the closest active scope with the given container class. If no
+-- exact instance of this container class is in scope, searches up the
+-- class hierarchy to find the closest match.
+--
+-- @param cc
+--    The container class to target.
+-- @return
+--    The closest available active container instance.
+---
+
+	function api._target(cc)
+		while not api.scope[cc.name] do
+			cc = cc.parent
+		end
+		return api.scope[cc.name]
+	end
+
 
 
 ---
@@ -952,38 +1055,6 @@
 		local prj = project(name)
 		prj.external = true;
 		return prj
-	end
-
-
-
----
--- Set the current configuration scope to a rule set.
---
--- @param name
---    The name of the rule set. If a rule set with this name already exists,
---    it is made current, otherwise a new rule set is created with this name.
---    If no name is provided, the most recently defined rule set is made
---    active.
--- @return
---    The active rule set object.
----
-
-	function rule(name)
-		if not name then
-			if api.scope.rules then
-				name = api.scope.rules.name
-			else
-				return nil
-			end
-		end
-
-		local rule = api.scope.rules
-		if name ~= "*" then
-			rule = p.rules.get(name) or p.rules.new(name)
-		end
-
-		api.scope.rules = rule
-		return rule
 	end
 
 

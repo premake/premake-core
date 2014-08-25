@@ -61,3 +61,13 @@
 		end
 		return n
 	end
+
+
+
+---
+-- Return a plural version of a string.
+---
+
+	function string:plural()
+		return self .. "s"
+	end

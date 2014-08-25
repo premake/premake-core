@@ -10,37 +10,16 @@
 	local rules = premake.rules
 
 	local p = premake
-	local configset = p.configset
 
-
-	rules._list = {}
 
 
 ---
--- Register a new rule set.
---
--- @param name
---    The name of the rule set. This will be used as a base file name for
---    generated rule files, and should avoid special characters.
--- @return
---    A new rule set object.
+-- Register a new container class to hold the rules.
 ---
 
-	function rules.new(name)
-		local rule = configset.new(configset.root)
-		setmetatable(rule, configset.metatable(rule))
-
-		rule.name = name
-		rule.script = _SCRIPT
-		rule.basedir = os.getcwd()
-		rule.filename = name
-
-		-- Add to master list keyed by both name and index
-		table.insert(rules._list, rule)
-		rules._list[name] = rule
-
-		return rule
-	end
+	local _ruleContainerClass = p.api.container {
+		name = "rule",
+	}
 
 
 
@@ -52,13 +31,8 @@
 ---
 
 	function rules.each()
-		local i = 0
-		return function ()
-			i = i + 1
-			if i <= #rules._list then
-				return rules._list[i]
-			end
-		end
+		local rootContainer = p.api.rootScope()
+		return rootContainer:eachContainer(_ruleContainerClass)
 	end
 
 
@@ -67,11 +41,12 @@
 -- Retrieve a rule set by name or numeric index.
 --
 -- @param key
---    The solution key, either a string name or integer index.
+--    The rule key, either a string name or integer index.
 -- @returns
 --    The rule set with the provided key.
 ---
 
-	function rules.get(key)
-		return rules._list[key]
+	function rules.fetch(key)
+		local rootContainer = p.api.rootScope()
+		return rootContainer:fetchContainer(_ruleContainerClass, key)
 	end
