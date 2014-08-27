@@ -4,13 +4,14 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.rules = {}
-	premake.vstudio.rules.props = {}
-	local m = premake.vstudio.rules.props
+
+	premake.vstudio.vs2010.rules = {}
+	premake.vstudio.vs2010.rules.props = {}
+
+	local m = premake.vstudio.vs2010.rules.props
 	m.elements = {}
 
 	local p = premake
-
 
 
 
@@ -81,15 +82,36 @@
 
 	m.elements.ruleGroup = function(r)
 		return {
+			m.propertyDefaults,
 		}
 	end
 
 	function m.ruleGroup(r)
 		p.push('<ItemDefinitionGroup>')
 		p.push('<%s>', r.name)
-		p.callArray(m.elements.ruleGroup)
+		p.callArray(m.elements.ruleGroup, r)
 		p.pop('</%s>', r.name)
 		p.pop('</ItemDefinitionGroup>')
+	end
+
+
+
+---
+-- Output the default values for all of the property definitions.
+---
+
+	function m.propertyDefaults(r)
+		local defs = r.propertyDefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			local value = def.defaultValue
+			if value then
+				if def.kind == "path" then
+					value = path.translate(value)
+				end
+				p.w('<%s>%s</%s>', def.name, value, def.name)
+			end
+		end
 	end
 
 

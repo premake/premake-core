@@ -4,8 +4,9 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.rules.xml = {}
-	local m = premake.vstudio.rules.xml
+	premake.vstudio.vs2010.rules.xml = {}
+
+	local m = premake.vstudio.vs2010.rules.xml
 	m.elements = {}
 
 	local p = premake

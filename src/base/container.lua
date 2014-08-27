@@ -18,8 +18,40 @@
 
 
 
+---
+-- The metatable allows container functions to be called with the ":" syntax,
+-- and also allows API field values to be get and set as if they were direct
+-- properties.
+--
+-- TODO: I think I'd like to get away from treating the fields as direct
+-- properties on the containers (fine on the baked contexts later) and require
+-- explicit fetch() and store() calls instead.
+---
+
 	p.containerClass.__index = p.containerClass
-	p.container.__index = p.container
+
+	p.container.__index = function(c, key)
+		local f = p.field.get(key)
+		if f then
+			return p.configset.fetch(c, f)
+		else
+			return p.container[key]
+		end
+	end
+
+
+	p.container.__newindex = function(c, key, value)
+		local f = p.field.get(key)
+		if f then
+			local status, err = p.configset.store(c, f, value)
+			if err then
+				error(err, 2)
+			end
+		else
+			rawset(c, key, value)
+			return value
+		end
+	end
 
 
 
@@ -89,8 +121,9 @@
 --    A new instance of the container class.
 ---
 
-	function p.containerClass:new(name)
-		local c = p.configset.new(self.parent)
+	function p.containerClass:new(name, parent)
+		local c = p.configset.new(parent)
+		setmetatable(c, p.container)
 
 		c.class = self
 		c.name = name
@@ -98,7 +131,6 @@
 		c.basedir = os.getcwd()
 		c.filename = name
 
-		setmetatable(c, p.container)
 		return c
 	end
 
@@ -144,7 +176,7 @@
 		local c = children[key]
 
 		if not c and type(key) == "string" then
-			c = cc:new(key)
+			c = cc:new(key, parent)
 			table.insert(children, c)
 			children[key] = c
 		end

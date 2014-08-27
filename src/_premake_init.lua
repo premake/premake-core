@@ -566,6 +566,12 @@
 	}
 
 	api.register {
+		name = "propertyDefinition",
+		scope = "rule",
+		kind = "list:table",
+	}
+
+	api.register {
 		name = "rebuildcommands",
 		scope = "config",
 		kind = "list:string",

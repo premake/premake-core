@@ -406,8 +406,8 @@
 ---
 
 	function api.target(fld)
-		if api.scope.rules and p.field.hasScope(fld, "rule") then
-			return api.scope.rules
+		if api.scope.rule and p.field.hasScope(fld, "rule") then
+			return api.scope.rule
 		elseif fld.scope ~= "rule" then
 			return api.scope.project or api.scope.solution or api.scope.root
 		else

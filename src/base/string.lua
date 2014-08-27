@@ -69,5 +69,9 @@
 ---
 
 	function string:plural()
-		return self .. "s"
+		if self:endswith("y") then
+			return self:sub(1, #self - 1) .. "ies"
+		else
+			return self .. "s"
+		end
 	end
