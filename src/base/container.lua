@@ -98,16 +98,36 @@
 			return nil, "parent class does not exist"
 		end
 
-		-- Fill in some calculated properties
+		-- Looks good, set myself up and add to master list
+
+		def.children = {}
+		def.listKey = def.name:plural()
+		setmetatable(def, p.containerClass)
+		container._classes[def.name] = def
+
+		-- Wire myself to my parent class
 
 		def.parent = container._classes[def.parent]
-		def.listKey = def.name:plural()
+		if def.parent then
+			table.insert(def.parent.children, def)
+		end
 
-		-- Finish: add to master list, enable calling with ":" syntax
-
-		container._classes[def.name] = def
-		setmetatable(def, p.containerClass)
 		return def
+	end
+
+
+
+---
+-- Retrieve a container class by name.
+--
+-- @param name
+--    The class name.
+-- @return
+--    The corresponding container class if found, nil otherwise.
+---
+
+	function p.containerClass.get(name)
+		return container._classes[name]
 	end
 
 

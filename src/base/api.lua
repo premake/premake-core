@@ -34,6 +34,16 @@
 
 
 ---
+-- Return the currently active configuration container instance.
+---
+
+	function api.activeScope()
+		return api.scope.current or api.scope.root
+	end
+
+
+
+---
 -- Register a new class of configuration container. A configuration container
 -- can hold configuration settings, as well as child configuration containers.
 -- Solutions, projects, and rules are all examples of containers.
@@ -105,7 +115,8 @@
 		-- << start a new settings block >>
 
 		-- Activate the container
-		api.scope[cc.name] = container
+		api.scope[cc.name] = container  -- TODO: do I still need this?
+		api.scope.current = container
 		return container
 	end
 
@@ -397,22 +408,47 @@
 
 
 ---
--- Find the currently active configuration scope.
+-- Return the target container instance for a field.
 --
--- @param fld
+-- @param field
 --    The field being set or fetched.
 -- @return
---    The currently active configuration set object.
+--    The currently active container instance if one is available, or nil if
+--    active container is of the wrong class.
 ---
 
-	function api.target(fld)
-		if api.scope.rule and p.field.hasScope(fld, "rule") then
-			return api.scope.rule
-		elseif fld.scope ~= "rule" then
-			return api.scope.project or api.scope.solution or api.scope.root
-		else
+	function api.target(field)
+		-- if nothing is in scope, use the global root scope
+
+		if not api.scope.current then
 			return api.scope.root
 		end
+
+		-- use the current scope if it falls within the container hierarchy
+		-- of one of this field's target scopes; it is okay to set a value of
+		-- the parent of container (e.g. a project-level value can be set on a
+		-- solution, since it will be inherited).
+
+		local currentClass = api.scope.current.class
+		for i = 1, #field.scopes do
+			-- temporary: map config scope to the desired container class; will
+			-- go away once everything is ported to containers
+			local targetScope = field.scopes[i]
+			if targetScope == "config" then
+				targetScope = "project"
+			end
+
+			local targetClass = p.containerClass.get(targetScope)
+			repeat
+				if currentClass == targetClass then
+					return api.scope.current
+				end
+				targetClass = targetClass.parent
+			until not targetClass
+		end
+
+		-- this field's scope isn't available
+		return nil
 	end
 
 
@@ -436,6 +472,11 @@
 		end
 
 		local target = api.target(field)
+		if not target then
+			local err = string.format("unable to set %s in %s scope, should be %s", field.name, api.scope.current.class.name, table.concat(field.scopes, ", "))
+			error(err, 3)
+		end
+
 		local status, err = configset.store(target, field, value)
 		if err then
 			error(err, 3)
@@ -456,6 +497,11 @@
 		if not value then return end
 
 		local target = api.target(field)
+		if not target then
+			local err = string.format("unable to remove %s from %s scope, should be %s", field.name, api.scope.current.class.name, table.concat(field.scopes, ", "))
+			error(err, 3)
+		end
+
 		local hasDeprecatedValues = (type(field.deprecated) == "table")
 
 		-- Build a list of values to be removed. If this field has deprecated
@@ -957,7 +1003,7 @@
 ---
 
 	function configuration(terms)
-		local target = api.scope.project or api.scope.solution or api.scope.root
+		local target = api.activeScope()
 		if terms then
 			if terms == "*" then terms = nil end
 			configset.addblock(target, {terms}, os.getcwd())
@@ -973,7 +1019,7 @@
 ---
 
 	function filter(terms)
-		local target = api.scope.project or api.scope.solution or api.scope.root
+		local target = api.activeScope()
 		if terms then
 			if terms == "*" then terms = nil end
 			local ok, err = configset.addFilter(target, {terms}, os.getcwd())
@@ -1007,6 +1053,15 @@
 --    The active project object.
 --
 
+	api.container {
+		name = "solution",
+	}
+
+	api.container {
+		name = "project",
+		parent = "solution",
+	}
+
   	function project(name)
 		if not name then
 			if api.scope.project then
@@ -1026,12 +1081,15 @@
 			prj = sln.projects[name]
 			if not prj then
 				prj = premake.project.new(sln, name)
+				prj.class = p.containerClass.get("project")
 				prj.group = api.scope.group or ""
 				premake.solution.addproject(sln, prj)
 			end
 		end
 
+		api.scope.solution = sln
 		api.scope.project = prj
+		api.scope.current = prj
 
 		configuration {}
 
@@ -1083,11 +1141,13 @@
 		local sln
 		if name ~= "*" then
 			sln = premake.solution.get(name) or premake.solution.new(name)
+			sln.class = p.containerClass.get("solution")
 		end
 
 		api.scope.solution = sln
 		api.scope.project = nil
 		api.scope.group = nil
+		api.scope.current = sln
 
 		configuration {}
 
@@ -1229,6 +1289,11 @@
 		end
 
 		local cset = api.target(field)
+		if not cset then
+			local err = string.format("unable to set rule in %s scope, should be project", api.scope.current.class.name)
+			error(err, 2)
+		end
+
 		local current = cset.current
 		cset.current = cset.blocks[1]
 		api.callback(field, value)

@@ -410,8 +410,12 @@ end
 
 	function premake.validateScopes(cfg, expected, ctx)
 		for f in field.each() do
-			-- Pull out the project level scope
-			local scope = field.hasScope(f, "config") or field.hasScope(f, "project") or field.hasScope(f, "solution")
+			-- Pull out the project level scope (this will get cleaned up when
+			-- the project objects move to the new container API)
+			local scope
+			if f.scopes[1] ~= "rule" then
+				scope = f.scopes[1]
+			end
 
 			-- Skip fields that are at or below the expected scope. Config-
 			-- level fields are the most general (can be applied to projects

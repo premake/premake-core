@@ -9,6 +9,9 @@
 
 	_WORKING_DIR        = os.getcwd()
 
+	local p = premake
+
+
 
 --
 -- Script-side program entry point.
@@ -93,7 +96,7 @@
 
 		if action then
 			print("Building configurations...")
-			premake.oven.bake()
+			p.oven.bake(p.api.rootScope())
 		end
 
 		-- Run the interactive prompt, if requested

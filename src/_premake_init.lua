@@ -95,10 +95,12 @@
 
 	api.register {
 		name = "buildcommands",
-		scope = "config",
+		scope = { "config", "rule" },
 		kind = "list:string",
 		tokens = true,
 	}
+
+	api.alias("buildcommands", "buildCommands")
 
 	api.register {
 		name = "buildoptions",
@@ -231,7 +233,7 @@
 
 	api.register {
 		name = "filename",
-		scope = "project;rule",
+		scope = { "project", "rule" },
 		kind = "string",
 		tokens = true,
 	}
@@ -452,7 +454,7 @@
 
 	api.register {
 		name = "location",
-		scope = "project;rule",
+		scope = { "project", "rule" },
 		kind = "path",
 		tokens = true,
 	}

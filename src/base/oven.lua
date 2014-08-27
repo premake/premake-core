@@ -20,19 +20,29 @@
 	local context = premake.context
 
 
+---
+-- Traverses the entire container hierarchy built up by the project scripts,
+-- filters, merges, and munges the project settings based on the current
+-- runtime environment, and returns a new container hierarchy with the end
+-- result. This result will then get handed off to the current action to
+-- do whatever it is it needs to do, like generate project files.
 --
--- Iterates through all of the current solutions, bakes down their contents,
--- and then replaces the original solution object with the baked result.
--- This is the entry point to the whole baking process, which happens after
--- the scripts have run, but before the project files are generated.
---
+-- @param root
+--    The top level or root container to be baked.
+-- @return
+--    ???
+---
 
-	function oven.bake()
+	function oven.bake(root)
+		-- I haven't yet ported the project objects to containers
 		local result = {}
 		for i, sln in ipairs(solution.list) do
 			result[i] = oven.bakeSolution(sln)
 		end
 		solution.list = result
+
+		-- Start container implementation
+
 	end
 
 

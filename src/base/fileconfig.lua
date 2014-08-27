@@ -172,7 +172,7 @@
 
 	function fileconfig.hasFileSettings(fcfg)
 		for key, field in pairs(premake.fields) do
-			if p.field.hasScope(field, "config") then
+			if field.scopes[1] == "config" then
 				local value = fcfg[field.name]
 				if value then
 					if type(value) == "table" then

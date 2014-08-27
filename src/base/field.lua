@@ -81,6 +81,13 @@
 
 		f._kind = kind
 
+		-- Make sure scope is always an array; don't overwrite old value
+		if type(f.scope) == "table" then
+			f.scopes = f.scope
+		else
+			f.scopes = { f.scope }
+		end
+
 		-- All fields must have a valid store() function
 		if not field.accessor(f, "store") then
 			return nil, "invalid field kind '" .. f._kind .. "'"
@@ -247,25 +254,6 @@
 
 	function field.get(name)
 		return field._list[name]
-	end
-
-
-
----
--- Check to see if a field supports a given project scope.
---
--- @param f
---    The field to test.
--- @param scope
---    The scope to look for (e.g. "config", "project", "rule").
--- @return
---    The scope value if found, nil otherwise.
----
-
-	function field.hasScope(f, scope)
-		if f.scope == scope or f.scope:find(scope, 1, true) then
-			return scope
-		end
 	end
 
 
