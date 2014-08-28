@@ -210,7 +210,7 @@
 		configset.addblock(cset, { "windows" })
 		configset.store(cset, f, { Profile="Profile" })
 		local x = configset.fetch(cset, f, {"windows"})
-		test.istrue(x.Debug and x.Release and x.Profile)
+		test.istrue(x[1].Debug and x[1].Release and x[2].Profile)
 	end
 
 
@@ -223,7 +223,7 @@
 		configset.store(cset, f, { Debug="Debug", Release="Release" })
 		configset.store(cset, f, { Profile="Profile" })
 		local x = configset.fetch(cset, f, {"windows"})
-		test.istrue(x.Debug and x.Release and x.Profile)
+		test.istrue(x[1].Debug and x[1].Release and x[2].Profile)
 	end
 
 
@@ -237,7 +237,7 @@
 		configset.addblock(cset, { "windows" })
 		configset.store(cset, f, { Debug="Development" })
 		local x = configset.fetch(cset, f, {"windows"})
-		test.isequal({"Development"}, x.Debug)
+		test.isequal({"Development"}, x[2].Debug)
 	end
 
 	function suite.keyed_overwritesValues_onNonMergeAdd()
@@ -245,5 +245,5 @@
 		configset.store(cset, f, { Debug="Debug" })
 		configset.store(cset, f, { Debug="Development" })
 		local x = configset.fetch(cset, f, {"windows"})
-		test.isequal({"Development"}, x.Debug)
+		test.isequal({"Development"}, x[2].Debug)
 	end

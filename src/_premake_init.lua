@@ -137,7 +137,7 @@
 	api.register {
 		name = "configmap",
 		scope = "config",
-		kind = "keyed:array:string",
+		kind = "list:keyed:array:string",
 	}
 
 	api.register {
