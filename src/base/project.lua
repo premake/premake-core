@@ -195,7 +195,9 @@
 
 			for cfg in project.eachconfig(prj) do
 				for _, link in ipairs(cfg.links) do
-					add_to_project_list(cfg, link, result)
+				    if link ~= prj.name then
+				    	add_to_project_list(cfg, link, result)
+				    end
 				end
 				if not linkOnly then
 					for _, depproj in ipairs(cfg.dependson) do
