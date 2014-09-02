@@ -7,8 +7,6 @@
 	local shorthelp     = "Type 'premake5 --help' for help"
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 
-	_WORKING_DIR        = os.getcwd()
-
 
 --
 -- Script-side program entry point.

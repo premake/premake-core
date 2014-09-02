@@ -117,6 +117,10 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, PLATFORM_STRING);
 	lua_setglobal(L, "_OS");
 
+	/* publish the initial working directory */
+	os_getcwd(L);
+	lua_setglobal(L, "_WORKING_DIR");
+
 	return OKAY;
 }
 
