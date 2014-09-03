@@ -83,6 +83,10 @@
 	m.elements.ruleGroup = function(r)
 		return {
 			m.propertyDefaults,
+			m.commandLineTemplates,
+			m.outputs,
+			m.executionDescription,
+			m.additionalDependencies,
 		}
 	end
 
@@ -120,6 +124,13 @@
 -- Implementations of individual elements.
 ---
 
+	function m.additionalDependencies(r)
+		local deps = table.concat(r.buildDependencies, ";")
+		p.x('<AdditionalDependencies>%s</AdditionalDependencies>', deps)
+	end
+
+
+
 	function m.afterTargets(r)
 		p.w('<%sAfterTargets>CustomBuild</%sAfterTargets>', r.name, r.name)
 	end
@@ -131,9 +142,35 @@
 	end
 
 
+
+	function m.commandLineTemplates(r)
+		if #r.buildcommands then
+			local cmds = table.concat(r.buildcommands, p.eol())
+			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
+		end
+	end
+
+
+
 	function m.dependsOn(r)
     	p.w('<%sDependsOn', r.name)
     	p.w('  Condition="\'$(ConfigurationType)\' != \'Makefile\'">_SelectedFiles;$(%sDependsOn)</%sDependsOn>',
     		r.name, r.name, r.name)
 	end
 
+
+
+	function m.executionDescription(r)
+		if r.buildmessage then
+			p.x('<ExecutionDescription>%s</ExecutionDescription>', r.buildmessage)
+		end
+	end
+
+
+
+	function m.outputs(r)
+		if #r.buildoutputs then
+			local outputs = table.concat(r.buildoutputs, ";")
+			p.x('<Outputs>%s</Outputs>', path.translate(outputs))
+		end
+	end

@@ -86,12 +86,6 @@
 		},
 	}
 
-	api.register {
-		name = "buildmessage",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
 
 	api.register {
 		name = "buildcommands",
@@ -102,6 +96,25 @@
 
 	api.alias("buildcommands", "buildCommands")
 
+
+	api.register {
+		name = "buildDependencies",
+		scope = { "rule" },
+		kind = "list:string",
+		tokens = true,
+	}
+
+
+	api.register {
+		name = "buildmessage",
+		scope = { "config", "rule" },
+		kind = "string",
+		tokens = true
+	}
+
+	api.alias("buildmessage", "buildMessage")
+
+
 	api.register {
 		name = "buildoptions",
 		scope = "config",
@@ -109,12 +122,16 @@
 		tokens = true,
 	}
 
+
 	api.register {
 		name = "buildoutputs",
-		scope = "config",
+		scope = { "config", "rule" },
 		kind = "list:path",
 		tokens = true,
 	}
+
+	api.alias("buildoutputs", "buildOutputs")
+
 
 	api.register {
 		name = "buildrule",     -- DEPRECATED
