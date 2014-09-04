@@ -123,6 +123,7 @@
 		return {
 			m.ruleCondition,
 			m.commandLineTemplate,
+			m.properties,
 			m.ruleInputs,
 		}
 	end
@@ -162,12 +163,6 @@
 ---
 -- Implementations of individual elements.
 ---
-
-	function m.ruleCondition(r)
-		p.w('Condition="\'@(%s)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-	end
-
-
 
 	function m.commandLineTemplate(r)
 		p.w('CommandLineTemplate="%%(%s.CommandLineTemplate)"', r.name)
@@ -233,9 +228,25 @@
 
 
 
+ 	function m.properties(r)
+		local defs = r.propertyDefinition
+		for i = 1, #defs do
+			local name = defs[i].name
+			p.w('%s="%%(%s.%s)"', name, r.name, name)
+		end
+ 	end
+
+
+
 	function m.propertyPageSchema(r)
 		p.w('<PropertyPageSchema')
 		p.w('  Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />')
+	end
+
+
+
+	function m.ruleCondition(r)
+		p.w('Condition="\'@(%s)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
 	end
 
 
@@ -255,7 +266,16 @@
 
 
 	function m.targetInputs(r)
-		p.w('Inputs="%%(%s.Identity);%%(%s.AdditionalDependencies);$(MSBuildProjectFile)"', r.name, r.name)
+		local extra = {}
+		local defs = r.propertyDefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.dependency then
+				table.insert(extra, string.format("%%(%s.%s);", r.name, def.name))
+			end
+		end
+		extra = table.concat(extra)
+		p.w('Inputs="%%(%s.Identity);%%(%s.AdditionalDependencies);%s$(MSBuildProjectFile)"', r.name, r.name, extra)
 	end
 
 
