@@ -2,7 +2,7 @@
 -- vs2010_rules_targets.lua
 -- Generate a Visual Studio 201x custom rules targets file.
 -- Copyright (c) 2014 Jason Perkins and the Premake project
---
+---
 
 	premake.vstudio.vs2010.rules.targets = {}
 
@@ -24,6 +24,7 @@
 			m.computeInputsGroup,
 			m.usingTask,
 			m.ruleTarget,
+			m.computeOutput,
 		}
 	end
 
@@ -94,9 +95,9 @@
 			m.selectedFiles,
 			m.tlog,
 			m.message,
-			m.writeLinesToFile,
+			m.tlogWrite,
+			m.tlogRead,
 			m.rule,
-			m.computeOutput,
 		}
 	end
 
@@ -116,6 +117,32 @@
 
 
 ---
+-- Write out the tlog entries. I've extended this with an input
+-- dependencies fix as described here:
+-- http://www.virtualdub.org/blog/pivot/entry.php?id=334
+---
+
+	m.elements.tlog = function(r)
+		return {
+			m.tlogSource,
+			m.tlogInputs,
+			m.tlogProperties,
+		}
+	end
+
+	function m.tlog(r)
+		p.push('<ItemGroup>')
+		p.push('<%s_tlog', r.name)
+		p.w('Include="%%(%s.Outputs)"', r.name)
+		p.w('Condition="\'%%(%s.Outputs)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'">', r.name, r.name)
+		p.callArray(m.elements.tlog, r)
+		p.pop('</%s_tlog>', r.name)
+		p.pop('</ItemGroup>')
+	end
+
+
+
+---
 -- Write out the rule element.
 ---
 
@@ -124,7 +151,8 @@
 			m.ruleCondition,
 			m.commandLineTemplate,
 			m.properties,
-			m.ruleInputs,
+			m.inputs,
+			m.standardOutputImportance,
 		}
 	end
 
@@ -147,6 +175,8 @@
 
 	m.elements.computeOutput = function(r)
 		return {
+			m.dirsToMake,
+			m.makeDir,
 		}
 	end
 
@@ -154,7 +184,7 @@
 		p.push('<Target')
 		p.w('Name="Compute%sOutput"', r.name)
 		p.w('Condition="\'@(%s)\' != \'\'">', r.name)
-
+		p.callArray(m.elements.computeOutput, r)
 		p.pop('</Target>')
 	end
 
@@ -166,12 +196,6 @@
 
 	function m.commandLineTemplate(r)
 		p.w('CommandLineTemplate="%%(%s.CommandLineTemplate)"', r.name)
-	end
-
-
-
-	function m.ruleInputs(r)
-		p.w('Inputs="%%(%s.Identity)"', r.name)
 	end
 
 
@@ -215,7 +239,29 @@
 
 
 	function m.dependsOnTargets(r)
-		p.w('DependsOnTargets="$(%sDependsOn)"', r.name)
+		p.w('DependsOnTargets="$(%sDependsOn);Compute%sOutput"', r.name, r.name)
+	end
+
+
+
+	function m.dirsToMake(r)
+		p.push('<ItemGroup>')
+		p.w('<%sDirsToMake', r.name)
+		p.w('  Condition="\'@(%s)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
+        p.w('  Include="%%(%s.Outputs)" />', r.name)
+        p.pop('</ItemGroup>')
+	end
+
+
+
+	function m.inputs(r)
+		p.w('Inputs="%%(%s.Identity)"', r.name)
+	end
+
+
+
+	function m.makeDir(r)
+		p.w('<MakeDir Directories="@(%sDirsToMake-&gt;\'%%(RootDir)%%(Directory)\')" />', r.name)
 	end
 
 
@@ -259,6 +305,13 @@
 
 
 
+	function m.standardOutputImportance(r)
+		p.w('StandardOutputImportance="High"')
+		p.w('StandardErrorImportance="High"')
+	end
+
+
+
 	function m.targetCondition(r)
 		p.w('Condition="\'@(%s)\' != \'\'"', r.name)
 	end
@@ -292,13 +345,54 @@
 
 
 
-	function m.tlog(r)
-		p.push('<ItemGroup>')
-		p.push('<%s_tlog Include="%%(%s.Outputs)" Condition="\'%%(%s.Outputs)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'">',
-			r.name, r.name, r.name, r.name)
-		p.w('<Source>@(%s, \'|\')</Source>', r.name)
-		p.pop('</%s_tlog>', r.name)
-		p.pop('</ItemGroup>')
+	function m.tlogInputs(r)
+		p.w("<Inputs>@(%s, ';')</Inputs>", r.name)
+	end
+
+
+
+	function m.tlogProperties(r)
+		local defs = r.propertyDefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.dependency then
+				p.w('<%s>%%(%s.%s)</%s>', def.name, r.name, def.name, def.name)
+			end
+		end
+	end
+
+
+
+	function m.tlogRead(r)
+		local extra = {}
+		local defs = r.propertyDefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.dependency then
+				table.insert(extra, string.format("%%(%s_tlog.%s);", r.name, def.name))
+			end
+		end
+		extra = table.concat(extra)
+
+		p.w('<WriteLinesToFile')
+		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
+		p.w('  File="$(IntDir)$(ProjectName).read.1.tlog"')
+		p.w('  Lines="^%%(%s_tlog.Inputs);%s$(MSBuildProjectFullPath);%%(%s_tlog.Fullpath)" />', r.name, extra, r.name)
+	end
+
+
+
+	function m.tlogWrite(r)
+		p.w('<WriteLinesToFile')
+		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
+		p.w('  File="$(IntDir)$(ProjectName).write.1.tlog"')
+		p.w('  Lines="^%%(%s_tlog.Source);%%(%s_tlog.Fullpath)" />', r.name, r.name)
+	end
+
+
+
+	function m.tlogSource(r)
+		p.w("<Source>@(%s, '|')</Source>", r.name)
 	end
 
 
@@ -310,15 +404,6 @@
 		p.w('AssemblyName="Microsoft.Build.Tasks.v4.0">')
 		p.w('<Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>')
 		p.pop('</UsingTask>')
-	end
-
-
-
-	function m.writeLinesToFile(r)
-		p.w('<WriteLinesToFile')
-		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(IntDir)$(ProjectName).write.1.tlog"')
-		p.w('  Lines="^%%(%s_tlog.Source);@(%s_tlog-&gt;\'%%(Fullpath)\')" />', r.name, r.name)
 	end
 
 

@@ -49,7 +49,7 @@
 		p.push('<Rule')
 		p.w('Name="%s"', r.name)
 		p.w('PageTemplate="tool"')
-		p.w('DisplayName="%s"', r.name)
+		p.w('DisplayName="%s"', r.description or r.name)
 		p.w('Order="200">')
 		p.callArray(m.elements.rule, r)
 		p.pop('</Rule>')
@@ -70,7 +70,7 @@
 		for i = 1, #categories do
 			m.category(categories[i])
 		end
-		p.pop('</<Rule.Categories>')
+		p.pop('</Rule.Categories>')
 	end
 
 

@@ -243,6 +243,14 @@
 		tokens = true,
 	}
 
+
+	api.register {
+		name = "displayName",
+		scope = "rule",
+		kind = "string",
+	}
+
+
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
