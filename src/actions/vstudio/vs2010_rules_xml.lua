@@ -51,7 +51,7 @@
 		p.push('<Rule')
 		p.w('Name="%s"', r.name)
 		p.w('PageTemplate="tool"')
-		p.w('DisplayName="%s"', r.description or r.name)
+		p.w('DisplayName="%s"', r.display or r.name)
 		p.w('Order="200">')
 		p.callArray(m.elements.rule, r)
 		p.pop('</Rule>')
@@ -106,7 +106,9 @@
 		local defs = r.propertyDefinition
 		for i = 1, #defs do
 			local def = defs[i]
-			if def.kind == "list" then
+			if def.kind == "boolean" then
+				m.boolProperty(def)
+			elseif def.kind == "list" then
 				m.stringListProperty(def)
 			elseif type(def.values) == "table" then
 				m.enumProperty(def)
@@ -117,17 +119,27 @@
 	end
 
 
-	function m.baseProperty(def)
+	function m.baseProperty(def, close)
 		p.w('Name="%s"', def.name)
 		p.w('HelpContext="0"')
 		p.w('DisplayName="%s"', def.display or def.name)
-		p.w('Description="%s"', def.description or def.display or def.name)
+		p.w('Description="%s"%s', def.description or def.display or def.name, iif(close, ">", ""))
+	end
+
+
+	function m.boolProperty(def)
+		p.push('<BoolProperty')
+		m.baseProperty(def)
+		if def.switch then
+			p.w('Switch="%s" />', def.switch)
+		end
+		p.pop()
 	end
 
 
 	function m.enumProperty(def)
 		p.push('<EnumProperty')
-		m.baseProperty(def)
+		m.baseProperty(def, true)
 
 		local values = def.values
 		local switches = def.switch or {}
@@ -138,8 +150,12 @@
 		for _, key in pairs(keys) do
 			p.push('<EnumValue')
 			p.w('Name="%d"', key)
-			p.w('DisplayName="%s"', values[key])
-			p.w('Switch="%s" />', switches[key] or values[key])
+			if switches[key] then
+				p.w('DisplayName="%s"', values[key])
+				p.w('Switch="%s" />', switches[key])
+			else
+				p.w('DisplayName="%s" />', values[key])
+			end
 			p.pop()
 		end
 
@@ -158,6 +174,9 @@
 	function m.stringListProperty(def)
 		p.push('<StringListProperty')
 		m.baseProperty(def)
+		if def.separator then
+			p.w('Separator="%s"', def.separator)
+		end
 		p.w('Switch="[value]" />')
 		p.pop()
 	end
