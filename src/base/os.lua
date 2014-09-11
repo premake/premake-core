@@ -208,6 +208,43 @@
 
 
 ---
+-- Locate a file on one of Premake's search paths: 1) the --script command
+-- line argument, 2) the PREMAKE_PATH environment variable, 3) relative to
+-- the Premake executable.
+--
+-- @param ...
+--    A list of file names for which to search. The first one discovered
+--    is the one that will be returned.
+-- @return
+--    The path to file if found, or nil if not.
+---
+
+	function os.locate(...)
+		local function find(fname)
+			-- is this a direct path to a file?
+			if os.isfile(fname) then
+				return fname
+			end
+
+			-- find it on my paths
+			local dir = os.pathsearch(fname, _OPTIONS["scripts"], os.getenv("PREMAKE_PATH"), path.getdirectory(_PREMAKE_COMMAND))
+			if dir then
+				return path.join(dir, fname)
+			end
+		end
+
+		for i = 1, select("#",...) do
+			local fname = select(i, ...)
+			local result = find(fname)
+			if result then
+				return result
+			end
+		end
+	end
+
+
+
+---
 -- Perform a wildcard search for files or directories.
 --
 -- @param mask

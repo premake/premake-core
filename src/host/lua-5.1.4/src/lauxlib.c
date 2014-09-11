@@ -83,6 +83,9 @@ LUALIB_API void luaL_where (lua_State *L, int level) {
 }
 
 
+#ifdef _MANAGED
+	#pragma managed(push, off)
+#endif
 LUALIB_API int luaL_error (lua_State *L, const char *fmt, ...) {
   va_list argp;
   va_start(argp, fmt);
@@ -92,6 +95,9 @@ LUALIB_API int luaL_error (lua_State *L, const char *fmt, ...) {
   lua_concat(L, 2);
   return lua_error(L);
 }
+#ifdef _MANAGED
+	#pragma managed(pop)
+#endif
 
 /* }====================================================== */
 
@@ -567,14 +573,14 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   c = getc(lf.f);
   if (c == '#') {  /* Unix exec. file? */
     lf.extraline = 1;
-    while ((c = getc(lf.f)) != EOF && c != '\n') ;  /* skip first line */
+    while ((c = getc(lf.f)) != EOF && c != '\n') {};  /* skip first line */
     if (c == '\n') c = getc(lf.f);
   }
   if (c == LUA_SIGNATURE[0] && filename) {  /* binary file? */
     lf.f = freopen(filename, "rb", lf.f);  /* reopen in binary mode */
     if (lf.f == NULL) return errfile(L, "reopen", fnameindex);
     /* skip eventual `#!...' */
-   while ((c = getc(lf.f)) != EOF && c != LUA_SIGNATURE[0]) {};
+    while ((c = getc(lf.f)) != EOF && c != LUA_SIGNATURE[0]) {};
     lf.extraline = 0;
   }
   ungetc(c, lf.f);

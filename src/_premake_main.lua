@@ -7,11 +7,6 @@
 	local shorthelp     = "Type 'premake5 --help' for help"
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 
-	_WORKING_DIR        = os.getcwd()
-
-	local p = premake
-
-
 
 --
 -- Script-side program entry point.
@@ -26,6 +21,20 @@
 		-- Seed the random number generator so actions don't have to do it themselves
 
 		math.randomseed(os.time())
+
+		-- Set some global to describe the runtime environment, building on
+		-- what was already set by the native code host
+
+		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
+
+		local file = _OPTIONS["file"] or "premake5.lua"
+		local script  = os.locate(file, file .. ".lua", "premake4.lua")
+		if script then
+			_MAIN_SCRIPT = path.getabsolute(script)
+			_MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
+		else
+			_MAIN_SCRIPT_DIR = _WORKING_DIR
+		end
 
 		-- Look for and run the system-wide configuration script; make sure any
 		-- configuration scoping gets cleared before continuing
@@ -48,7 +57,9 @@
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
 
-		local hasScript = dofileopt(_OPTIONS["file"] or { "premake5.lua", "premake4.lua" })
+		if _MAIN_SCRIPT then
+			dofile(_MAIN_SCRIPT)
+		end
 
 		-- Process special options
 
@@ -86,7 +97,7 @@
 				return 1
 			end
 
-			if not hasScript then
+			if not _MAIN_SCRIPT then
 				print("No Premake script (premake5.lua) found!")
 				return 1
 			end
@@ -96,7 +107,7 @@
 
 		if action then
 			print("Building configurations...")
-			p.oven.bake(p.api.rootScope())
+			premake.oven.bake()
 		end
 
 		-- Run the interactive prompt, if requested

@@ -495,19 +495,22 @@
 			return true
 		end
 
-		for pattern, replacements in pairs(prj.configmap or {}) do
-			if type(pattern) ~= "table" then
-				pattern = { pattern }
-			end
+		local maps = prj.configmap or {}
+		for mi = 1, #maps do
+			for pattern, replacements in pairs(maps[mi]) do
+				if type(pattern) ~= "table" then
+					pattern = { pattern }
+				end
 
-			-- does this pattern match any part of the pair? If so,
-			-- replace it with the corresponding values
-			for i = 1, #pairing do
-				if testpattern(pattern, pairing, i) then
-					if #pattern == 1 and #replacements == 1 then
-						pairing[i] = replacements[1]
-					else
-						pairing = { replacements[1], replacements[2] }
+				-- does this pattern match any part of the pair? If so,
+				-- replace it with the corresponding values
+				for i = 1, #pairing do
+					if testpattern(pattern, pairing, i) then
+						if #pattern == 1 and #replacements == 1 then
+							pairing[i] = replacements[1]
+						else
+							pairing = { replacements[1], replacements[2] }
+						end
 					end
 				end
 			end
