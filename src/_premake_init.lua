@@ -245,7 +245,7 @@
 
 
 	api.register {
-		name = "displayName",
+		name = "display",
 		scope = "rule",
 		kind = "string",
 	}

@@ -42,6 +42,8 @@
 		return {
 			m.dataSource,
 			m.categories,
+			m.inputs,
+			m.properties,
 		}
 	end
 
@@ -97,40 +99,130 @@
 
 
 ---
+-- Generate the list of property definitions.
+---
+
+	function m.properties(r)
+		local defs = r.propertyDefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.kind == "list" then
+				m.stringListProperty(def)
+			elseif type(def.values) == "table" then
+				m.enumProperty(def)
+			else
+				m.stringProperty(def)
+			end
+		end
+	end
+
+
+	function m.baseProperty(def)
+		p.w('Name="%s"', def.name)
+		p.w('HelpContext="0"')
+		p.w('DisplayName="%s"', def.display or def.name)
+		p.w('Description="%s"', def.description or def.display or def.name)
+	end
+
+
+	function m.enumProperty(def)
+		p.push('<EnumProperty')
+		m.baseProperty(def)
+
+		local values = def.values
+		local switches = def.switch or {}
+
+		local keys = table.keys(def.values)
+		table.sort(keys)
+
+		for _, key in pairs(keys) do
+			p.push('<EnumValue')
+			p.w('Name="%d"', key)
+			p.w('DisplayName="%s"', values[key])
+			p.w('Switch="%s" />', switches[key] or values[key])
+			p.pop()
+		end
+
+		p.pop('</EnumProperty>')
+	end
+
+
+	function m.stringProperty(def)
+		p.push('<StringProperty')
+		m.baseProperty(def)
+		p.w('Switch="[value]" />')
+		p.pop()
+	end
+
+
+	function m.stringListProperty(def)
+		p.push('<StringListProperty')
+		m.baseProperty(def)
+		p.w('Switch="[value]" />')
+		p.pop()
+	end
+
+
+
+---
 -- Implementations of individual elements.
 ---
 
 	function m.contentType(r)
-		p.w('<ContentType')
-		p.w('  Name="%s"', r.name)
-		p.w('  DisplayName="%s"', r.name)
-		p.w('  ItemType="%s" />', r.name)
+		p.push('<ContentType')
+		p.w('Name="%s"', r.name)
+		p.w('DisplayName="%s"', r.name)
+		p.w('ItemType="%s" />', r.name)
+		p.pop()
 	end
 
 
 
 	function m.dataSource(r)
 		p.push('<Rule.DataSource>')
-		p.w('<DataSource')
-		p.w('  Persistence="ProjectFile"')
-		p.w('  ItemType="%s" />', r.name)
+		p.push('<DataSource')
+		p.w('Persistence="ProjectFile"')
+		p.w('ItemType="%s" />', r.name)
+		p.pop()
 		p.pop('</Rule.DataSource>')
 	end
 
 
 
 	function m.fileExtension(r)
-		p.w('<FileExtension')
-		p.w('  Name="*.XYZ"')
-		p.w('  ContentType="%s" />', r.name)
+		p.push('<FileExtension')
+		p.w('Name="*.XYZ"')
+		p.w('ContentType="%s" />', r.name)
+		p.pop()
+	end
+
+
+
+	function m.inputs(r)
+		p.push('<StringListProperty')
+		p.w('Name="Inputs"')
+		p.w('Category="Command Line"')
+		p.w('IsRequired="true"')
+		p.w('Switch=" ">')
+
+		p.push('<StringListProperty.DataSource>')
+		p.push('<DataSource')
+		p.w('Persistence="ProjectFile"')
+		p.w('ItemType="%s"', r.name)
+		p.w('SourceType="Item" />')
+		p.pop()
+
+		p.pop('</StringListProperty.DataSource>')
+		p.pop('</StringListProperty>')
 	end
 
 
 
 	function m.ruleItem(r)
-		p.w('<ItemType')
-		p.w('  Name="%s"', r.name)
-		p.w('  DisplayName="%s" />', r.name)
+		p.push('<ItemType')
+		p.w('Name="%s"', r.name)
+		p.w('DisplayName="%s" />', r.name)
+		p.pop()
 	end
 
 

@@ -108,7 +108,7 @@
 		local defs = r.propertyDefinition
 		for i = 1, #defs do
 			local def = defs[i]
-			local value = def.defaultValue
+			local value = def.value
 			if value then
 				if def.kind == "path" then
 					value = path.translate(value)
