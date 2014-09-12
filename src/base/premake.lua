@@ -476,7 +476,7 @@ end
 ---
 
 	function premake.xmlUtf8()
-		premake.w('<?xml version="1.0" encoding="utf-8"?>')
+		premake.outln('<?xml version="1.0" encoding="utf-8"?>')
 	end
 
 
