@@ -6,6 +6,17 @@
 
 	local suite = test.declare("base_os")
 
+	local cwd
+
+	function suite.setup()
+		cwd = os.getcwd()
+		os.chdir(_TESTS_DIR)
+	end
+
+	function suite.teardown()
+		os.chdir(cwd)
+	end
+
 
 --
 -- os.findlib() tests

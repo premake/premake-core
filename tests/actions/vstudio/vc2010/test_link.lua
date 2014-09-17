@@ -312,23 +312,6 @@
 
 
 --
--- On the PS3, system libraries must be prefixed with the "-l" flag.
---
-
-	function suite.additionalDependencies_onPS3SystemLinks()
-		system "PS3"
-		links { "fs_stub", "net_stub" }
-		prepare()
-		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>-lfs_stub;-lnet_stub;%(AdditionalDependencies)</AdditionalDependencies>
-		]]
-	end
-
-
---
 -- Correctly handle module definition (.def) files.
 --
 

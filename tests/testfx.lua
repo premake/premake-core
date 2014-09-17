@@ -10,6 +10,7 @@
 --
 
 	test = {}
+	test.suppressed = {}
 
 
 --
@@ -72,6 +73,17 @@
 			end
 		elseif not table.contains(actual, expected) then
 			test.fail("expected value %s not found", expected)
+		end
+	end
+
+
+	function test.excludes(expected, actual)
+		if type(expected) == "table" then
+			for i, v in ipairs(expected) do
+				test.excludes(v, actual)
+			end
+		elseif table.contains(actual, expected) then
+			test.fail("excluded value %s found", expected)
 		end
 	end
 
@@ -365,13 +377,30 @@
 	end
 
 
+
 	function test.declare(id)
 		if T[id] then
 			error("Duplicate test suite " .. id)
 		end
-		T[id] = {}
+		T[id] = {
+			_TESTS_DIR = _TESTS_DIR,
+			_SCRIPT_DIR = _SCRIPT_DIR,
+		}
 		return T[id]
 	end
+
+
+
+	function test.suppress(id)
+		if type(id) == "table" then
+			for i = 1, #id do
+				test.suppress(id[i])
+			end
+		else
+			test.suppressed[id] = true
+		end
+	end
+
 
 
 	function test.runall(suitename, testname)
@@ -387,10 +416,13 @@
 
 		local numpassed = 0
 		local numfailed = 0
-		local start_time = os.clock()
+
 
 		function runtest(suitename, suitetests, testname, testfunc)
-			if suitetests.setup ~= testfunc and suitetests.teardown ~= testfunc then
+			if suitetests.setup ~= testfunc and
+				suitetests.teardown ~= testfunc and
+				not test.suppressed[suitename .. "." .. testname]
+			then
 				local ok, err = test_setup(suitetests, testfunc)
 
 				if ok then
@@ -410,17 +442,24 @@
 			end
 		end
 
+
 		function runsuite(suitename, suitetests, testname)
-			if suitetests then
+			if suitetests and not test.suppressed[suitename] then
+				_TESTS_DIR = suitetests._TESTS_DIR
+				_SCRIPT_DIR = suitetests._SCRIPT_DIR
+
 				if testname then
 					runtest(suitename, suitetests, testname, suitetests[testname])
 				else
 					for testname, testfunc in pairs(suitetests) do
-						runtest(suitename, suitetests, testname, testfunc)
+						if type(testfunc) == "function" then
+							runtest(suitename, suitetests, testname, testfunc)
+						end
 					end
 				end
 			end
 		end
+
 
 		if suitename then
 			runsuite(suitename, T[suitename], testname)
@@ -429,8 +468,6 @@
 				runsuite(suitename, suitetests, testname)
 			end
 		end
-
-        io.write('running time : ',  os.clock() - start_time,'\n')
 
 		print = real_print
 		io.open = real_open

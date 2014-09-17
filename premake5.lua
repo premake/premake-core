@@ -1,19 +1,56 @@
+---
+-- Premake 5.x core configuration script
 --
--- Premake 5.x build configuration script
--- Use this script to configure the project with Premake5.
+-- You can generate from here if you only want to build Premake's core
+-- component, but you probably want to be one level up in order to get
+-- the extra modules too.
 --
+-- If you've been working from premake-dev, you will need to pull a new
+-- working copy using premake-main to get the extras.
+---
+
+--
+-- Remember my location; I will need it to locate sub-scripts later.
+--
+
+	local corePath = _SCRIPT_DIR
+
 
 --
 -- Disable deprecation warnings for myself, so that older development
--- versions will still be able to regenerate the scripts.
+-- versions of Premake can be used to bootstrap new builds.
 --
 
 	premake.api.deprecations "off"
+
+
+
+--
+-- Register supporting actions and options.
+--
+
+	newaction {
+		trigger = "test",
+		description = "Run the automated test suite",
+		execute = function ()
+			include (path.join(corePath, "scripts/test.lua"))
+		end
+	}
+
+
+	newoption {
+		trigger     = "test",
+		description = "When testing, run only the specified suite or test"
+	}
+
+
 
 --
 -- Define the project. Put the release configuration first so it will be the
 -- default when folks build using the makefile. That way they don't have to
 -- worry about the /scripts argument and all that.
+--
+-- TODO: defaultConfiguration "Release"
 --
 
 	solution "Premake5"
@@ -86,6 +123,7 @@
 		configuration "aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
+
 
 
 --

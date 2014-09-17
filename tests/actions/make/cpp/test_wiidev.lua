@@ -18,6 +18,7 @@
 	function suite.setup()
 		local sln, prj = test.createsolution()
 		system "wii"
+		flags "Symbols"
 		cfg = test.getconfig(prj, "Debug")
 	end
 
@@ -36,7 +37,7 @@
 	function suite.writesCorrectLinkerFlags()
 		make.ldFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -L$(LIBOGC_LIB) -s $(MACHDEP)
+  ALL_LDFLAGS += $(LDFLAGS) -L$(LIBOGC_LIB) $(MACHDEP)
 		]]
 	end
 
