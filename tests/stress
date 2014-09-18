@@ -1,2 +1,0 @@
-#!/bin/sh
-../bin/debug/premake5 /scripts=../src /file=test_stress.lua stress

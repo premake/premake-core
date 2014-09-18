@@ -194,30 +194,6 @@
 
 
 --
--- Name should use ".elf" for PS3 executables.
---
-
-	function suite.nameUsesElf_onPS3ConsoleApp()
-		kind "ConsoleApp"
-		system "PS3"
-		i = prepare()
-		test.isequal("MyProject.elf", i.name)
-	end
-
-
---
--- Name should use "lib" and ".a" for PS3 static libraries.
---
-
-	function suite.nameUsesLib_onPS3StaticLib()
-		kind "StaticLib"
-		system "PS3"
-		i = prepare()
-		test.isequal("libMyProject.a", i.name)
-	end
-
-
---
 -- Name should use ".exe" for Xbox360 executables.
 --
 

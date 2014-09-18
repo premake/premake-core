@@ -55,18 +55,6 @@
 		]]
 	end
 
-	function suite.normalLink_onIncludedConfig_externalTool()
-		solution("MySolution")
-		system "PS3"
-		prepare("Zeus")
-		test.capture [[
-<Tool
-	Name="VCLinkerTool"
-	AdditionalOptions="-s"
-	OutputFile="$(OutDir)\MyProject.elf"
-		]]
-	end
-
 
 --
 -- If a sibling is included in one configuration and excluded from
@@ -81,17 +69,5 @@
 	Name="VCLinkerTool"
 	LinkLibraryDependencies="false"
 	AdditionalDependencies="MyProject2.lib"
-		]]
-	end
-
-	function suite.explicitLink_onExcludedConfig_externalTool()
-		solution("MySolution")
-		system "PS3"
-		prepare("Ares")
-		test.capture [[
-<Tool
-	Name="VCLinkerTool"
-	AdditionalOptions="-s"
-	AdditionalDependencies="libMyProject2.a"
 		]]
 	end

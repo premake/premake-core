@@ -49,6 +49,8 @@ static int chunk_wrapper(lua_State* L)
 
 	ptr = strrchr(script, '/');
 	if (ptr) *ptr = '\0';
+	lua_pushstring(L, script);
+	lua_setglobal(L, "_SCRIPT_DIR");
 	do_chdir(script);
 	if (ptr) *ptr = '/';
 
