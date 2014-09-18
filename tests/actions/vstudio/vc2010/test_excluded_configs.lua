@@ -57,18 +57,6 @@
 		]]
 	end
 
-	function suite.normalLink_onIncludedConfig_externalTool()
-		solution("MySolution")
-		system "PS3"
-		prepare("Zeus")
-		test.capture [[
-		<Link>
-			<SubSystem>Console</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-		</Link>
-		]]
-	end
 
 
 --
@@ -84,23 +72,6 @@
 			<SubSystem>Console</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<AdditionalDependencies>MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-		</Link>
-		<ProjectReference>
-			<LinkLibraryDependencies>false</LinkLibraryDependencies>
-		</ProjectReference>
-		]]
-	end
-
-	function suite.explicitLink_onExcludedConfig_externalTool()
-		solution("MySolution")
-		system "PS3"
-		prepare("Ares")
-		test.capture [[
-		<Link>
-			<SubSystem>Console</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>libMyProject2.a;%(AdditionalDependencies)</AdditionalDependencies>
 			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		</Link>
 		<ProjectReference>
