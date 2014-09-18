@@ -1,2 +1,2 @@
 #!/bin/sh
-cd `dirname $0` && ../bin/debug/premake5 /scripts=../src $1 $2 $3 test
+cd `dirname $0` && ../bin/debug/premake5 /file=../premake5.lua /scripts=../src $1 $2 $3 test

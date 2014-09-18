@@ -1,3 +1,4 @@
-
-CALL ..\\bin\\debug\\premake5 /scripts=..\\src test
-::CALL ..\\bin\\release\\premake5 /scripts=..\\src test
+@echo off
+pushd "%~dp0"
+..\bin\debug\premake5.exe /scripts=..\src /file=..\premake5.lua %* test
+popd

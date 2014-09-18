@@ -42,7 +42,7 @@
 --
 
 	function suite.isfile_ReturnsTrue_OnExistingFile()
-		test.istrue(os.isfile("premake5.lua"))
+		test.istrue(os.isfile("_manifest.lua"))
 	end
 
 	function suite.isfile_ReturnsFalse_OnNonexistantFile()
@@ -116,17 +116,17 @@
 --
 
 	function suite.pathsearch_ReturnsNil_OnNotFound()
-		test.istrue( os.pathsearch("nosuchfile", "aaa;bbb;ccc") == nil )
+		test.istrue(os.pathsearch("nosuchfile", "aaa;bbb;ccc") == nil)
 	end
 
 	function suite.pathsearch_ReturnsPath_OnFound()
-		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", os.getcwd()))
+		test.isequal(_TESTS_DIR, os.pathsearch("_manifest.lua", _TESTS_DIR))
 	end
 
 	function suite.pathsearch_FindsFile_OnComplexPath()
-		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", "aaa;"..os.getcwd()..";bbb"))
+		test.isequal(_TESTS_DIR, os.pathsearch("_manifest.lua", "aaa;" .. _TESTS_DIR .. ";bbb"))
 	end
 
 	function suite.pathsearch_NilPathsAllowed()
-		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", nil, os.getcwd(), nil))
+		test.isequal(_TESTS_DIR, os.pathsearch("_manifest.lua", nil, _TESTS_DIR, nil))
 	end
