@@ -155,6 +155,7 @@
 		end
 
 		io.output(f)
+		_indentLevel = 0
 		callback(obj)
 		f:close()
 	end
