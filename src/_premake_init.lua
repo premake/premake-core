@@ -256,6 +256,14 @@
 		removefiles(value)
 	end
 
+
+	api.register {
+		name = "fileExtension",
+		scope = "rule",
+		kind = "string",
+	}
+
+
 	api.register {
 		name = "filename",
 		scope = { "project", "rule" },

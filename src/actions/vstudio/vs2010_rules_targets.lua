@@ -151,6 +151,7 @@
 			m.ruleCondition,
 			m.commandLineTemplate,
 			m.properties,
+			m.additionalOptions,
 			m.inputs,
 			m.standardOutputImportance,
 		}
@@ -193,6 +194,12 @@
 ---
 -- Implementations of individual elements.
 ---
+
+	function m.additionalOptions(r)
+		p.w('AdditionalOptions="%%(%s.AdditionalOptions)"', r.name)
+	end
+
+
 
 	function m.commandLineTemplate(r)
 		p.w('CommandLineTemplate="%%(%s.CommandLineTemplate)"', r.name)
