@@ -138,6 +138,7 @@ return {
 	-- Makefile solutions
 	"actions/make/solution/test_config_maps.lua",
 	"actions/make/solution/test_default_config.lua",
+	"actions/make/solution/test_group_rule.lua",
 	"actions/make/solution/test_help_rule.lua",
 	"actions/make/solution/test_project_rule.lua",
 
