@@ -105,6 +105,7 @@ return {
 	"actions/vstudio/vc2010/test_files.lua",
 	"actions/vstudio/vc2010/test_filter_ids.lua",
 	"actions/vstudio/vc2010/test_filters.lua",
+	"actions/vstudio/vc2010/test_imagexex_settings.lua",
 	"actions/vstudio/vc2010/test_item_def_group.lua",
 	"actions/vstudio/vc2010/test_link.lua",
 	"actions/vstudio/vc2010/test_manifest.lua",

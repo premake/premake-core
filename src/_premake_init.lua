@@ -141,6 +141,13 @@
 	}
 
 	api.register {
+		name = "configFile",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "configurations",
 		scope = "project",
 		kind = "list:string",
@@ -722,6 +729,7 @@
 			"Extra",
 		}
 	}
+
 
 
 -----------------------------------------------------------------------------

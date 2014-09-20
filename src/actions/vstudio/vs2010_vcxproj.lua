@@ -1109,8 +1109,12 @@
 	function m.imageXex(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<ImageXex>')
-			_p(3,'<ConfigurationFile>')
-			_p(3,'</ConfigurationFile>')
+			if cfg.configFile then
+				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configFile)
+			else
+				_p(3,'<ConfigurationFile>')
+				_p(3,'</ConfigurationFile>')
+			end
 			_p(3,'<AdditionalSections>')
 			_p(3,'</AdditionalSections>')
 			_p(2,'</ImageXex>')
