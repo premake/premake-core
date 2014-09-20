@@ -1491,7 +1491,7 @@
 
 
 	function m.treatWarningAsError(cfg)
-		if cfg.flags.FatalLinkWarnings and cfg.warnings ~= "Off" then
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
 			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end
