@@ -397,7 +397,17 @@
 			end
 		end
 
-		recurse(value)
+		local ok, err = pcall(function ()
+			recurse(value)
+		end)
+
+		if not ok then
+			if type(err) == "table" then
+				err = err.msg
+			end
+			error(err, 3)
+		end
+
 		configset.remove(target, field, removes)
 	end
 
