@@ -105,6 +105,7 @@ return {
 	"actions/vstudio/vc2010/test_files.lua",
 	"actions/vstudio/vc2010/test_filter_ids.lua",
 	"actions/vstudio/vc2010/test_filters.lua",
+	"actions/vstudio/vc2010/test_imagexex_settings.lua",
 	"actions/vstudio/vc2010/test_item_def_group.lua",
 	"actions/vstudio/vc2010/test_link.lua",
 	"actions/vstudio/vc2010/test_manifest.lua",
@@ -137,6 +138,7 @@ return {
 	-- Makefile solutions
 	"actions/make/solution/test_config_maps.lua",
 	"actions/make/solution/test_default_config.lua",
+	"actions/make/solution/test_group_rule.lua",
 	"actions/make/solution/test_help_rule.lua",
 	"actions/make/solution/test_project_rule.lua",
 

@@ -6,6 +6,7 @@
 
 	local make = premake.make
 	local solution = premake.solution
+	local tree = premake.tree
 	local project = premake.project
 
 
@@ -21,10 +22,8 @@
 		make.configmap(sln)
 		make.projects(sln)
 
-		_p('.PHONY: all clean help $(PROJECTS)')
-		_p('')
-		_p('all: $(PROJECTS)')
-		_p('')
+		make.solutionPhonyRule(sln)
+		make.groupRules(sln)
 
 		make.projectrules(sln)
 		make.cleanrules(sln)
@@ -106,6 +105,59 @@
 		_p('')
 	end
 
+--
+-- Write out the solution PHONY rule
+--
+
+	function make.solutionPhonyRule(sln)
+		local groups = {}
+		local tr = solution.grouptree(sln)
+		tree.traverse(tr, {
+			onbranch = function(n)
+				table.insert(groups, n.path)
+			end
+		})
+
+		_p('.PHONY: all clean help $(PROJECTS) ' .. table.implode(groups, '', '', ' '))
+		_p('')
+		_p('all: $(PROJECTS)')
+		_p('')
+	end
+
+--
+-- Write out the phony rules representing project groups
+--
+	function make.groupRules(sln)
+		-- Transform solution groups into target aggregate
+		local tr = solution.grouptree(sln)
+		tree.traverse(tr, {
+			onbranch = function(n)
+				local rule = n.path .. ":"
+				local projectTargets = {}
+				local groupTargets = {}
+				for i, c in pairs(n.children)
+				do
+					if type(i) == "string"
+					then
+						if c.project
+						then
+							table.insert(projectTargets, c.name)
+						else
+							table.insert(groupTargets, c.path)
+						end
+					end
+				end
+				if #groupTargets > 0 then
+					rule = rule .. " " .. table.concat(groupTargets, " ")
+				end
+				if #projectTargets > 0 then
+					rule = rule .. " " .. table.concat(projectTargets, " ")
+				end
+				_p(rule)
+				_p('')
+			end
+		})
+	end
 
 --
 -- Write out the rules to build each of the solution's projects.

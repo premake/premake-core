@@ -352,7 +352,7 @@
 --
 
 	function suite.treatWarningsAsError_onFatalWarnings()
-		flags { "FatalWarnings" }
+		flags { "FatalCompileWarnings" }
 		prepare()
 		test.capture [[
 <ClCompile>
