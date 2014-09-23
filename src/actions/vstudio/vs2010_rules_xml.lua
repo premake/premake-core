@@ -126,27 +126,33 @@
 	end
 
 
-	function m.baseProperty(def, close)
-		p.w('Name="%s"', def.name)
-		p.w('HelpContext="0"')
-		p.w('DisplayName="%s"', def.display or def.name)
-		p.w('Description="%s"%s', def.description or def.display or def.name, iif(close, ">", ""))
+	function m.baseProperty(def, suffix)
+		local c = p.capture(function ()
+			p.w('Name="%s"', def.name)
+			p.w('HelpContext="0"')
+			p.w('DisplayName="%s"', def.display or def.name)
+			if def.description then
+				p.w('Description="%s"', def.description)
+			end
+		end)
+		if suffix then
+			c = c .. suffix
+		end
+		p.outln(c)
 	end
 
 
 	function m.boolProperty(def)
 		p.push('<BoolProperty')
 		m.baseProperty(def)
-		if def.switch then
-			p.w('Switch="%s" />', def.switch)
-		end
+		p.w('Switch="%s" />', def.switch or "[value]")
 		p.pop()
 	end
 
 
 	function m.enumProperty(def)
 		p.push('<EnumProperty')
-		m.baseProperty(def, true)
+		m.baseProperty(def, '>')
 
 		local values = def.values
 		local switches = def.switch or {}
@@ -173,7 +179,7 @@
 	function m.stringProperty(def)
 		p.push('<StringProperty')
 		m.baseProperty(def)
-		p.w('Switch="[value]" />')
+		p.w('Switch="%s" />', def.switch or "[value]")
 		p.pop()
 	end
 
@@ -181,10 +187,8 @@
 	function m.stringListProperty(def)
 		p.push('<StringListProperty')
 		m.baseProperty(def)
-		if def.separator then
-			p.w('Separator="%s"', def.separator)
-		end
-		p.w('Switch="[value]" />')
+		p.w('Separator="%s"', def.separator or " ")
+		p.w('Switch="%s" />', def.switch or "[value]")
 		p.pop()
 	end
 
