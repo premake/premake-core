@@ -24,7 +24,7 @@
 			m.computeInputsGroup,
 			m.usingTask,
 			m.ruleTarget,
-			m.computeOutput,
+			m.computeOutputTarget,
 		}
 	end
 
@@ -174,18 +174,27 @@
 -- Generate the rule's computed output element.
 ---
 
-	m.elements.computeOutput = function(r)
+	m.elements.computeOutputItems = function(r)
 		return {
-			m.dirsToMake,
+			m.outputs,
+			m.linkLib,
+		}
+	end
+
+	m.elements.computeOutputTarget = function(r)
+		return {
 			m.makeDir,
 		}
 	end
 
-	function m.computeOutput(r)
+	function m.computeOutputTarget(r)
 		p.push('<Target')
 		p.w('Name="Compute%sOutput"', r.name)
 		p.w('Condition="\'@(%s)\' != \'\'">', r.name)
-		p.callArray(m.elements.computeOutput, r)
+		p.push('<ItemGroup>')
+		p.callArray(m.elements.computeOutputItems, r)
+		p.pop('</ItemGroup>')
+		p.callArray(m.elements.computeOutputTarget, r)
 		p.pop('</Target>')
 	end
 
@@ -251,24 +260,33 @@
 
 
 
-	function m.dirsToMake(r)
-		p.push('<ItemGroup>')
-		p.w('<%sDirsToMake', r.name)
-		p.w('  Condition="\'@(%s)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-        p.w('  Include="%%(%s.Outputs)" />', r.name)
-        p.pop('</ItemGroup>')
-	end
-
-
-
 	function m.inputs(r)
 		p.w('Inputs="%%(%s.Identity)"', r.name)
 	end
 
 
 
+	function m.linkLib(r)
+		local linkable
+		for i = 1, #r.buildoutputs do
+			if (path.islinkable(r.buildoutputs[i])) then
+				linkable = true
+			end
+		end
+		if linkable then
+			for i, el in pairs { 'Link', 'Lib', 'ImpLib' } do
+				p.push('<%s', el)
+				p.w('Include="%%(%sOutputs.Identity)"', r.name)
+				p.w('Condition="\'%%(Extension)\'==\'.obj\' or \'%%(Extension)\'==\'.res\' or \'%%(Extension)\'==\'.rsc\' or \'%%(Extension)\'==\'.lib\'" />')
+				p.pop()
+			end
+		end
+	end
+
+
+
 	function m.makeDir(r)
-		p.w('<MakeDir Directories="@(%sDirsToMake-&gt;\'%%(RootDir)%%(Directory)\')" />', r.name)
+		p.w('<MakeDir Directories="@(%sOutputs->\'%%(RootDir)%%(Directory)\')" />', r.name)
 	end
 
 
@@ -278,6 +296,14 @@
 		p.w('  Importance="High"')
 		p.w('  Text="%%(%s.ExecutionDescription)" />', r.name)
  	end
+
+
+
+	function m.outputs(r)
+		p.w('<%sOutputs', r.name)
+		p.w('  Condition="\'@(%s)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
+        p.w('  Include="%%(%s.Outputs)" />', r.name)
+	end
 
 
 

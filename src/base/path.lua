@@ -169,6 +169,16 @@
 	end
 
 
+---
+-- Is this a type of file that can be linked?
+---
+
+	function path.islinkable(fname)
+		return path.hasextension(fname, { ".o", ".obj", ".a", ".lib", ".so" })
+	end
+
+
+
 --
 -- Returns true if the filename represents an object file.
 --
