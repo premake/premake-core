@@ -656,6 +656,11 @@
 						if filecfg.buildmessage then
 							m.element("Message", condition, '%s', filecfg.buildmessage)
 						end
+
+						if filecfg.buildinputs and #filecfg.buildinputs > 0 then
+							local inputs = project.getrelative(prj, filecfg.buildinputs)
+							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, " "))
+						end
 					end
 				end
 

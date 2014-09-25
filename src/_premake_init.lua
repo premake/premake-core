@@ -115,6 +115,13 @@
 	}
 
 	api.register {
+		name = "buildinputs",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	api.register {
 		name = "buildrule",     -- DEPRECATED
 		scope = "config",
 		kind = "table",
