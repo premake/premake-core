@@ -384,7 +384,7 @@
 				'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
 			}
 			buildoutputs { "$(IntDir)/$(InputName).obj" }
-			buildinputs { "common.x.inc" }
+			buildinputs { "common.x.inc", "common.x.inc2" }
 		prepare()
 		test.capture [[
 <Files>
@@ -398,7 +398,7 @@
 				Name="VCCustomBuildTool"
 				CommandLine="cxc -c &quot;$(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
 				Outputs="$(IntDir)/$(InputName).obj"
-				AdditionalDependencies="common.x.inc"
+				AdditionalDependencies="common.x.inc;common.x.inc2"
 			/>
 		</FileConfiguration>
 		]]
