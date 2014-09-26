@@ -154,7 +154,12 @@
 				_x('ifeq ($(config),%s)', cfg.shortname)
 
 				local output = project.getrelative(prj, filecfg.buildoutputs[1])
-				_x('%s: %s', output, filecfg.relpath)
+				local dependencies = filecfg.relpath
+				if filecfg.buildinputs and #filecfg.buildinputs > 0 then
+					local inputs = project.getrelative(prj, filecfg.buildinputs)
+					dependencies = dependencies .. " " .. table.concat(inputs, " ")
+				end
+				_x('%s: %s', output, dependencies)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
 				for _, cmd in ipairs(filecfg.buildcommands) do
 					_p('\t$(SILENT) %s', cmd)
