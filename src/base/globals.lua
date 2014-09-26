@@ -5,22 +5,6 @@
 --
 
 
----
--- A replacement for Lua's built-in dofile() function that knows how to
--- search for script files. Note that I've also modified luaL_loadfile()
--- in src/host/lua_auxlib.c to set the _SCRIPT variable and adjust the
--- working directory.
----
-
-	local builtin_dofile = dofile
-
-	function dofile(fname)
-		fname = os.locate(fname) or fname
-		return builtin_dofile(fname)
-	end
-
-
-
 --
 -- Find and execute a Lua source file present on the filesystem, but
 -- continue without error if the file is not present. This is used to

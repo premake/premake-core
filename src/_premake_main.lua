@@ -8,6 +8,14 @@
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 
 
+-- Load the collection of core scripts, required for everything else to work
+
+	local manifest = dofile("_manifest.lua")
+	for i = 1, #manifest do
+		dofile(manifest[i])
+	end
+
+
 --
 -- Script-side program entry point.
 --
