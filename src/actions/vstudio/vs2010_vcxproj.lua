@@ -659,7 +659,7 @@
 
 						if filecfg.buildinputs and #filecfg.buildinputs > 0 then
 							local inputs = project.getrelative(prj, filecfg.buildinputs)
-							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, " "))
+							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
 						end
 					end
 				end
