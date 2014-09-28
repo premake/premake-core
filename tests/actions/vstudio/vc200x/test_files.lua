@@ -375,6 +375,35 @@
 		]]
 	end
 
+	function suite.customBuildTool_onBuildRuleWithAdditionalInputs()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildmessage "Compiling $(InputFile)"
+			buildcommands {
+				'cxc -c "$(InputFile)" -o "$(IntDir)/$(InputName).xo"',
+				'c2o -c "$(IntDir)/$(InputName).xo" -o "$(IntDir)/$(InputName).obj"'
+			}
+			buildoutputs { "$(IntDir)/$(InputName).obj" }
+			buildinputs { "common.x.inc", "common.x.inc2" }
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.x"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine="cxc -c &quot;$(InputFile)&quot; -o &quot;$(IntDir)/$(InputName).xo&quot;&#x0D;&#x0A;c2o -c &quot;$(IntDir)/$(InputName).xo&quot; -o &quot;$(IntDir)/$(InputName).obj&quot;"
+				Outputs="$(IntDir)/$(InputName).obj"
+				AdditionalDependencies="common.x.inc;common.x.inc2"
+			/>
+		</FileConfiguration>
+		]]
+	end
+
 
 --
 -- If two files at different folder levels have the same name, a different
