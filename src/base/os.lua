@@ -79,8 +79,13 @@
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
 
-				for _, v in ipairs(parse_ld_so_conf("/etc/ld.so.conf")) do
-					path = path .. ":" .. v
+				for _, prefix in ipairs({"", "/opt"}) do
+					local conf_file = prefix .. "/etc/ld.so.conf"
+					if os.isfile(conf_file) then
+						for _, v in ipairs(parse_ld_so_conf(conf_file)) do
+							path = path .. ":" .. v
+						end
+					end
 				end
 			end
 
