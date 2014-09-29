@@ -121,6 +121,8 @@ int premake_init(lua_State* L)
 
 int premake_execute(lua_State* L, int argc, const char** argv)
 {
+	int iErrFunc;
+
 	/* push the absolute path to the Premake executable */
 	lua_pushcfunction(L, path_getabsolute);
 	premake_locate(L, argv[0]);
@@ -138,9 +140,18 @@ int premake_execute(lua_State* L, int argc, const char** argv)
 		return !OKAY;
 	}
 
+	/* in debug mode, show full traceback on all errors */
+#if defined(NDEBUG)
+	iErrFunc = 0;
+#else
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
+	iErrFunc = -2;
+#endif
+
 	/* and call the main entry point */
 	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, 0) != OKAY) {
+	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
 	}
@@ -281,6 +292,8 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 
 int premake_load_embedded_script(lua_State* L, const char* filename)
 {
+	static int warned = 0;
+
 	/* locate a record matching the filename */
 	int i;
 	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
@@ -288,6 +301,14 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 			break;
 		}
 	}
+
+	/* debug builds probably want to be loading scripts from the disk */
+#if !defined(NDEBUG)
+	if (!warned) {
+		warned = 1;
+		printf("** warning: using embedded scripts; use /scripts argument to load from files\n");
+	}
+#endif
 
 	/* load its script */
 	if (builtin_scripts_index[i] != NULL) {

@@ -16,15 +16,49 @@
 	end
 
 
+-- Create namespaces for myself
+
+	local p = premake
+	p.main = {}
+
+
 --
 -- Script-side program entry point.
 --
+
+	p.main.elements = function()
+		return {
+			p.main.installModuleLoader,
+		}
+	end
 
 	function _premake_main()
 
 		-- Clear out any configuration scoping left over from initialization
 
 		filter {}
+
+		-- Seed the random number generator so actions don't have to do it themselves
+
+		math.randomseed(os.time())
+
+		-- Set some global to describe the runtime environment, building on
+		-- what was already set by the native code host
+
+		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
+
+		local file = _OPTIONS["file"] or "premake5.lua"
+		local script  = os.locate(file, file .. ".lua", "premake4.lua")
+		if script then
+			_MAIN_SCRIPT = path.getabsolute(script)
+			_MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
+		else
+			_MAIN_SCRIPT_DIR = _WORKING_DIR
+		end
+
+		_USER_HOME_DIR = os.getenv("HOME") or os.getenv("USERPROFILE")
+
+		p.callArray(p.main.elements)
 
 		-- Look for and run the system-wide configuration script; make sure any
 		-- configuration scoping gets cleared before continuing
@@ -119,3 +153,23 @@
 		return 0
 	end
 
+
+
+---
+-- Add a new module loader that knows how to use the Premake paths like
+-- PREMAKE_PATH and the --scripts option, and follows the module/module.lua
+-- naming convention.
+---
+
+	function p.main.moduleLoader(name)
+		local moduleName = name .. "/" .. name .. ".lua"
+		local filename = os.locate(name, "modules/" .. moduleName)
+		if filename then
+			return assert(loadfile(filename))
+		end
+		return "module " .. name .. "not found"
+	end
+
+	function p.main.installModuleLoader()
+		table.insert(package.loaders, 2, p.main.moduleLoader)
+	end
