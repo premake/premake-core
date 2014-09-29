@@ -26,24 +26,6 @@
 
 		filter {}
 
-		-- Seed the random number generator so actions don't have to do it themselves
-
-		math.randomseed(os.time())
-
-		-- Set some global to describe the runtime environment, building on
-		-- what was already set by the native code host
-
-		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
-
-		local file = _OPTIONS["file"] or "premake5.lua"
-		local script  = os.locate(file, file .. ".lua", "premake4.lua")
-		if script then
-			_MAIN_SCRIPT = path.getabsolute(script)
-			_MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
-		else
-			_MAIN_SCRIPT_DIR = _WORKING_DIR
-		end
-
 		-- Look for and run the system-wide configuration script; make sure any
 		-- configuration scoping gets cleared before continuing
 
