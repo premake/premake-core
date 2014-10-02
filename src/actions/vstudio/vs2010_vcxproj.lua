@@ -822,9 +822,20 @@
 --
 
 	m.elements.projectReferences = function(prj, ref)
-		return {
-			m.projectReferenceProject,
-		}
+		if prj.flags.Managed then
+			return {
+				m.referenceProject,
+				m.referencePrivate,
+				m.referenceOutputAssembly,
+				m.referenceCopyLocalSatelliteAssemblies,
+				m.referenceLinkLibraryDependencies,
+				m.referenceUseLibraryDependences,
+			}
+		else
+			return {
+				m.referenceProject,
+			}
+		end
 	end
 
 	function m.projectReferences(prj)
@@ -1391,11 +1402,6 @@
 	end
 
 
-	function m.projectReferenceProject(prj, ref)
-		p.w('<Project>{%s}</Project>', ref.uuid)
-	end
-
-
 	function m.propertyGroup(cfg, label)
 		local cond
 		if cfg then
@@ -1418,13 +1424,41 @@
 	end
 
 
-
 	function m.propertySheetGroup(prj)
 		for cfg in project.eachconfig(prj) do
 			m.propertySheets(cfg)
 		end
 	end
 
+
+	function m.referenceCopyLocalSatelliteAssemblies(prj, ref)
+		p.w('<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>')
+	end
+
+
+	function m.referenceLinkLibraryDependencies(prj, ref)
+		p.w('<LinkLibraryDependencies>true</LinkLibraryDependencies>')
+	end
+
+
+	function m.referenceOutputAssembly(prj, ref)
+		p.w('<ReferenceOutputAssembly>true</ReferenceOutputAssembly>')
+	end
+
+
+	function m.referencePrivate(prj, ref)
+		p.w('<Private>true</Private>')
+	end
+
+
+	function m.referenceProject(prj, ref)
+		p.w('<Project>{%s}</Project>', ref.uuid)
+	end
+
+
+	function m.referenceUseLibraryDependences(prj, ref)
+		p.w('<UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>')
+	end
 
 
 	function m.resourceAdditionalIncludeDirectories(cfg)
