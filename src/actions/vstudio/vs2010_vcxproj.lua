@@ -821,17 +821,23 @@
 -- Generate the list of project dependencies.
 --
 
+	m.elements.projectReferences = function(prj, ref)
+		return {
+			m.projectReferenceProject,
+		}
+	end
+
 	function m.projectReferences(prj)
-		local deps = project.getdependencies(prj)
-		if #deps > 0 then
-			_p(1,'<ItemGroup>')
-			for _, dep in ipairs(deps) do
-				local relpath = project.getrelative(prj, vstudio.projectfile(dep))
-				_x(2,'<ProjectReference Include=\"%s\">', path.translate(relpath))
-				_p(3,'<Project>{%s}</Project>', dep.uuid)
-				_p(2,'</ProjectReference>')
+		local refs = project.getdependencies(prj)
+		if #refs > 0 then
+			p.push('<ItemGroup>')
+			for _, ref in ipairs(refs) do
+				local relpath = project.getrelative(prj, vstudio.projectfile(ref))
+				p.push('<ProjectReference Include=\"%s\">', path.translate(relpath))
+				p.callArray(m.elements.projectReferences, prj, ref)
+				p.pop('</ProjectReference>')
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 
@@ -1382,6 +1388,11 @@
 		if prj.name ~= prj.filename then
 			_x(2,'<ProjectName>%s</ProjectName>', prj.name)
 		end
+	end
+
+
+	function m.projectReferenceProject(prj, ref)
+		p.w('<Project>{%s}</Project>', ref.uuid)
 	end
 
 

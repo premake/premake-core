@@ -47,11 +47,11 @@
 		links { "MyProject" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ProjectReference Include="MyProject.vcxproj">
-			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
-		</ProjectReference>
-	</ItemGroup>
+<ItemGroup>
+	<ProjectReference Include="MyProject.vcxproj">
+		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+	</ProjectReference>
+</ItemGroup>
 		]]
 	end
 
@@ -67,11 +67,11 @@
 		location "build/MyProject"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ProjectReference Include="..\MyProject\MyProject.vcxproj">
-			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
-		</ProjectReference>
-	</ItemGroup>
+<ItemGroup>
+	<ProjectReference Include="..\MyProject\MyProject.vcxproj">
+		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+	</ProjectReference>
+</ItemGroup>
 		]]
 	end
 
