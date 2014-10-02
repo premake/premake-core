@@ -47,11 +47,11 @@
 		links { "MyProject" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ProjectReference Include="MyProject.vcxproj">
-			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
-		</ProjectReference>
-	</ItemGroup>
+<ItemGroup>
+	<ProjectReference Include="MyProject.vcxproj">
+		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+	</ProjectReference>
+</ItemGroup>
 		]]
 	end
 
@@ -67,11 +67,33 @@
 		location "build/MyProject"
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<ProjectReference Include="..\MyProject\MyProject.vcxproj">
-			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
-		</ProjectReference>
-	</ItemGroup>
+<ItemGroup>
+	<ProjectReference Include="..\MyProject\MyProject.vcxproj">
+		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+	</ProjectReference>
+</ItemGroup>
 		]]
 	end
 
+
+--
+-- Managed C++ projects write out references a little differently.
+--
+
+	function suite.referencesAreRelative_onDifferentProjectLocation()
+		links { "MyProject" }
+		flags { "Managed" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ProjectReference Include="MyProject.vcxproj">
+		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+		<Private>true</Private>
+		<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+		<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+		<LinkLibraryDependencies>true</LinkLibraryDependencies>
+		<UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+	</ProjectReference>
+</ItemGroup>
+		]]
+	end
