@@ -115,6 +115,28 @@
 		]]
 	end
 
+	function suite.customBuild_onBuildRuleWithAdditionalInputs()
+		files { "hello.cg" }
+		filter "files:**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+			buildinputs { "common.cg.inc", "common.cg.inc2" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">common.cg.inc;common.cg.inc2</AdditionalInputs>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">common.cg.inc;common.cg.inc2</AdditionalInputs>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
 
 --
 -- If a PCH source is specified, ensure it is included in the file configuration.

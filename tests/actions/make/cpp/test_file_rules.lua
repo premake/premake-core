@@ -92,3 +92,30 @@ obj/Release/hello.obj: hello.x
 endif
 		]]
 	end
+
+	function suite.customBuildRuleWithAdditionalInputs()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildmessage "Compiling %{file.name}"
+			buildcommands {
+				'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
+				'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
+			}
+			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
+			buildinputs { "%{file.path}.inc", "%{file.path}.inc2" }
+		prepare()
+		test.capture [[
+ifeq ($(config),debug)
+obj/Debug/hello.obj: hello.x hello.x.inc hello.x.inc2
+	@echo "Compiling hello.x"
+	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
+	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
+endif
+ifeq ($(config),release)
+obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
+	@echo "Compiling hello.x"
+	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
+	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+endif
+		]]
+	end

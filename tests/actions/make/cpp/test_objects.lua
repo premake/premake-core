@@ -71,6 +71,8 @@ OBJECTS := \
 
 RESOURCES := \
 
+CUSTOMFILES := \
+
 ifeq ($(config),debug)
   OBJECTS += \
 	$(OBJDIR)/hello_debug.o \
@@ -123,6 +125,8 @@ OBJECTS := \
 
 RESOURCES := \
 
+CUSTOMFILES := \
+
 ifeq ($(config),debug)
   OBJECTS += \
 	obj/Debug/hello.obj \
@@ -147,6 +151,8 @@ OBJECTS := \
 
 RESOURCES := \
 
+CUSTOMFILES := \
+
 ifeq ($(config),release)
   OBJECTS += \
 	$(OBJDIR)/hello.o \
@@ -165,6 +171,8 @@ endif
 OBJECTS := \
 
 RESOURCES := \
+
+CUSTOMFILES := \
 
 ifeq ($(config),release)
   OBJECTS += \

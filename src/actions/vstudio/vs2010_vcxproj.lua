@@ -656,6 +656,11 @@
 						if filecfg.buildmessage then
 							m.element("Message", condition, '%s', filecfg.buildmessage)
 						end
+
+						if filecfg.buildinputs and #filecfg.buildinputs > 0 then
+							local inputs = project.getrelative(prj, filecfg.buildinputs)
+							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
+						end
 					end
 				end
 
@@ -816,17 +821,34 @@
 -- Generate the list of project dependencies.
 --
 
+	m.elements.projectReferences = function(prj, ref)
+		if prj.flags.Managed then
+			return {
+				m.referenceProject,
+				m.referencePrivate,
+				m.referenceOutputAssembly,
+				m.referenceCopyLocalSatelliteAssemblies,
+				m.referenceLinkLibraryDependencies,
+				m.referenceUseLibraryDependences,
+			}
+		else
+			return {
+				m.referenceProject,
+			}
+		end
+	end
+
 	function m.projectReferences(prj)
-		local deps = project.getdependencies(prj)
-		if #deps > 0 then
-			_p(1,'<ItemGroup>')
-			for _, dep in ipairs(deps) do
-				local relpath = project.getrelative(prj, vstudio.projectfile(dep))
-				_x(2,'<ProjectReference Include=\"%s\">', path.translate(relpath))
-				_p(3,'<Project>{%s}</Project>', dep.uuid)
-				_p(2,'</ProjectReference>')
+		local refs = project.getdependencies(prj)
+		if #refs > 0 then
+			p.push('<ItemGroup>')
+			for _, ref in ipairs(refs) do
+				local relpath = project.getrelative(prj, vstudio.projectfile(ref))
+				p.push('<ProjectReference Include=\"%s\">', path.translate(relpath))
+				p.callArray(m.elements.projectReferences, prj, ref)
+				p.pop('</ProjectReference>')
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 
@@ -1402,13 +1424,41 @@
 	end
 
 
-
 	function m.propertySheetGroup(prj)
 		for cfg in project.eachconfig(prj) do
 			m.propertySheets(cfg)
 		end
 	end
 
+
+	function m.referenceCopyLocalSatelliteAssemblies(prj, ref)
+		p.w('<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>')
+	end
+
+
+	function m.referenceLinkLibraryDependencies(prj, ref)
+		p.w('<LinkLibraryDependencies>true</LinkLibraryDependencies>')
+	end
+
+
+	function m.referenceOutputAssembly(prj, ref)
+		p.w('<ReferenceOutputAssembly>true</ReferenceOutputAssembly>')
+	end
+
+
+	function m.referencePrivate(prj, ref)
+		p.w('<Private>true</Private>')
+	end
+
+
+	function m.referenceProject(prj, ref)
+		p.w('<Project>{%s}</Project>', ref.uuid)
+	end
+
+
+	function m.referenceUseLibraryDependences(prj, ref)
+		p.w('<UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>')
+	end
 
 
 	function m.resourceAdditionalIncludeDirectories(cfg)

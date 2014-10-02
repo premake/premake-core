@@ -154,7 +154,12 @@
 				_x('ifeq ($(config),%s)', cfg.shortname)
 
 				local output = project.getrelative(prj, filecfg.buildoutputs[1])
-				_x('%s: %s', output, filecfg.relpath)
+				local dependencies = filecfg.relpath
+				if filecfg.buildinputs and #filecfg.buildinputs > 0 then
+					local inputs = project.getrelative(prj, filecfg.buildinputs)
+					dependencies = dependencies .. " " .. table.concat(inputs, " ")
+				end
+				_x('%s: %s', output, dependencies)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
 				for _, cmd in ipairs(filecfg.buildcommands) do
 					_p('\t$(SILENT) %s', cmd)
@@ -172,10 +177,10 @@
 	function make.cppObjects(prj)
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
-		local root = { objects={}, resources={} }
+		local root = { objects={}, resources={}, customfiles={} }
 		local configs = {}
 		for cfg in project.eachconfig(prj) do
-			configs[cfg] = { objects={}, resources={} }
+			configs[cfg] = { objects={}, resources={}, customfiles={} }
 		end
 
 		-- now walk the list of files in the project
@@ -235,6 +240,8 @@
 							local output = project.getrelative(prj, filecfg.buildoutputs[1])
 							if path.isobjectfile(output) then
 								table.insert(configs[cfg].objects, output)
+							else
+								table.insert(configs[cfg].customfiles, output)
 							end
 						end
 					end
@@ -254,17 +261,21 @@
 
 		listobjects('OBJECTS :=', root.objects, 'o')
 		listobjects('RESOURCES :=', root.resources, 'res')
+		listobjects('CUSTOMFILES :=', root.customfiles)
 
 		-- ...then individual configurations, as needed
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
-			if #files.objects > 0 or #files.resources > 0 then
+			if #files.objects > 0 or #files.resources > 0 or #files.customfiles > 0 then
 				_x('ifeq ($(config),%s)', cfg.shortname)
 				if #files.objects > 0 then
 					listobjects('  OBJECTS +=', files.objects)
 				end
 				if #files.resources > 0 then
 					listobjects('  RESOURCES +=', files.resources)
+				end
+				if #files.customfiles > 0 then
+					listobjects('  CUSTOMFILES +=', files.customfiles)
 				end
 				_p('endif')
 				_p('')
@@ -332,7 +343,7 @@
 
 
 	function make.cppTargetRules(prj)
-		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
+		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES) ${CUSTOMFILES}')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
