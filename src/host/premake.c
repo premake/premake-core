@@ -17,21 +17,14 @@
 #define VERSION        "HEAD"
 #define COPYRIGHT      "Copyright (C) 2002-2014 Jason Perkins and the Premake Project"
 #define PROJECT_URL    "https://bitbucket.org/premake/premake-dev/wiki"
-#define ERROR_MESSAGE  "%s\n"
+#define ERROR_MESSAGE  "Error: %s\n"
 
 
 static int process_arguments(lua_State* L, int argc, const char** argv);
-static int load_builtin_scripts(lua_State* L);
-
-int premake_locate(lua_State* L, const char* argv0);
 
 
 /* A search path for script files */
-static const char* scripts_path = NULL;
-
-
-/* precompiled bytecode buffer; in bytecode.c */
-extern const char* builtin_scripts[];
+const char* scripts_path = NULL;
 
 
 /* Built-in functions */
@@ -67,6 +60,7 @@ static const luaL_Reg os_functions[] = {
 	{ "getversion",  os_getversion  },
 	{ "isfile",      os_isfile      },
 	{ "islink",      os_islink      },
+	{ "locate",      os_locate      },
 	{ "matchdone",   os_matchdone   },
 	{ "matchisfile", os_matchisfile },
 	{ "matchname",   os_matchname   },
@@ -127,7 +121,7 @@ int premake_init(lua_State* L)
 
 int premake_execute(lua_State* L, int argc, const char** argv)
 {
-	int z;
+	int iErrFunc;
 
 	/* push the absolute path to the Premake executable */
 	lua_pushcfunction(L, path_getabsolute);
@@ -136,13 +130,36 @@ int premake_execute(lua_State* L, int argc, const char** argv)
 	lua_setglobal(L, "_PREMAKE_COMMAND");
 
 	/* Parse the command line arguments */
-	z = process_arguments(L, argc, argv);
+	if (process_arguments(L, argc, argv) != OKAY) {
+		return !OKAY;
+	}
 
-	/* Run the built-in Premake scripts */
-	if (z == OKAY)  z = load_builtin_scripts(L);
+	/* load the main script */
+	if (luaL_dofile(L, "_premake_main.lua") != OKAY) {
+		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		return !OKAY;
+	}
 
-	return z;
+	/* in debug mode, show full traceback on all errors */
+#if defined(NDEBUG)
+	iErrFunc = 0;
+#else
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
+	iErrFunc = -2;
+#endif
+
+	/* and call the main entry point */
+	lua_getglobal(L, "_premake_main");
+	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
+		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		return !OKAY;
+	}
+	else {
+		return (int)lua_tonumber(L, -1);
+	}
 }
+
 
 
 /**
@@ -264,112 +281,52 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 
 
 
-#if !defined(NDEBUG)
 /**
- * When running in debug mode, the scripts are loaded from the disk. The path to
- * the scripts must be provided via either the /scripts command line option or
- * the PREMAKE_PATH environment variable.
+ * Load a script that was previously embedded into the executable. If
+ * successful, a function containing the new script chunk is pushed to
+ * the stack, just like luaL_loadfile would do had the chunk been loaded
+ * from a file.
  */
-int load_builtin_scripts(lua_State* L)
-{
-	const char* filename;
 
-	/* call os.pathsearch() to locate _premake_main.lua */
-	lua_pushcfunction(L, os_pathsearch);
-	lua_pushstring(L, "_premake_main.lua");
-	lua_pushstring(L, scripts_path);
-	lua_pushstring(L, getenv("PREMAKE_PATH"));
-	lua_call(L, 3, 1);
-
-	if (lua_isnil(L, -1))
-	{
-		printf(ERROR_MESSAGE,
-			"Unable to find _premake_main.lua; use /scripts option when in debug mode!\n"
-			"Please refer to the documentation (or build in release mode instead)."
-		);
-		return !OKAY;
-	}
-
-	/* set the _SCRIPTS variable for the manifest, so it can locate everything */
-	scripts_path = lua_tostring(L, -1);
-	filename = lua_pushfstring(L, "%s/_manifest.lua", scripts_path);
-	lua_pushvalue(L, -1);
-	lua_setglobal(L, "_SCRIPT");
-
-	/* load the manifest, which includes all the required scripts */
-	if (luaL_dofile(L, filename))
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		return !OKAY;
-	}
-
-	lua_pushnil(L);
-	while (lua_next(L, -2))
-	{
-		filename = lua_pushfstring(L, "%s/%s", scripts_path, lua_tostring(L, -1));
-		if (luaL_dofile(L, filename)) {
-			printf(ERROR_MESSAGE, lua_tostring(L, -1));
-			return !OKAY;
-		}
-		lua_pop(L, 2);
-	}
-	lua_pop(L, 1);
-
-	/* run the bootstrapping script */
-	filename = lua_pushfstring(L, "%s/_premake_main.lua", scripts_path);
-	if (luaL_dofile(L, filename))
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		return !OKAY;
-	}
-
-	/* in debug mode, show full traceback on all errors */
-	lua_getglobal(L, "debug");
-	lua_getfield(L, -1, "traceback");
-
-	/* hand off control to the scripts */
-	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, -2) != OKAY)
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		return !OKAY;
-	}
-	else
-	{
-		return (int)lua_tonumber(L, -1);
-	}
-}
-#endif
-
-
-#if defined(NDEBUG)
-/**
- * When running in release mode, the scripts are loaded from a static data
- * buffer, where they were stored by a preprocess. To update these embedded
- * scripts, run `premake5 embed` then rebuild.
- */
-int load_builtin_scripts(lua_State* L)
+int premake_load_embedded_script(lua_State* L, const char* filename)
 {
 	int i;
-	for (i = 0; builtin_scripts[i]; ++i)
-	{
-		if (luaL_dostring(L, builtin_scripts[i]) != OKAY)
-		{
-			printf(ERROR_MESSAGE, lua_tostring(L, -1));
-			return !OKAY;
+	const char* chunk = NULL;
+#if !defined(NDEBUG)
+	static int warned = 0;
+#endif
+
+	/* Try to locate a record matching the filename */
+	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
+		if (strcmp(builtin_scripts_index[i], filename) == 0) {
+			chunk = builtin_scripts[i];
+			break;
 		}
 	}
 
-	/* hand off control to the scripts */
-	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, 0) != OKAY)
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+	if (chunk == NULL) {
 		return !OKAY;
 	}
-	else
-	{
-		return (int)lua_tonumber(L, -1);
+
+	/* Debug builds probably want to be loading scripts from the disk */
+#if !defined(NDEBUG)
+	if (!warned) {
+		warned = 1;
+		printf("** warning: using embedded scripts; use /scripts argument to load from files\n");
 	}
-}
 #endif
+
+	/* "Fully qualify" the filename by turning it into the form $/filename */
+	lua_pushstring(L, "$/");
+	lua_pushstring(L, filename);
+	lua_concat(L, 2);
+
+	/* Load the chunk */
+	i = luaL_loadbuffer(L, chunk, strlen(chunk), filename);
+	if (i != OKAY) {
+		lua_pop(L, 1);
+		printf("Failed to load embedded script '%s': %s\n", filename, lua_tostring(L, -1));
+	}
+
+	return i;
+}

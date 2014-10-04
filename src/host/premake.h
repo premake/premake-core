@@ -60,6 +60,10 @@
 #define OKAY   (0)
 
 
+/* If a /scripts argument is present, its value */
+extern const char* scripts_path;
+
+
 /* Bootstrapping helper functions */
 int do_chdir(const char* path);
 unsigned long do_hash(const char* str, int seed);
@@ -91,6 +95,7 @@ int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);
 int os_islink(lua_State* L);
+int os_locate(lua_State* L);
 int os_matchdone(lua_State* L);
 int os_matchisfile(lua_State* L);
 int os_matchname(lua_State* L);
@@ -110,3 +115,9 @@ int string_startswith(lua_State* L);
 int premake_init(lua_State* L);
 int premake_locate(lua_State* L, const char* argv0);
 int premake_execute(lua_State* L, int argc, const char** argv);
+int premake_find_exe(lua_State* L, const char* argv0);
+int premake_load_embedded_script(lua_State* L, const char* filename);
+
+
+extern const char* builtin_scripts_index[];
+extern const char* builtin_scripts[];

@@ -42,7 +42,7 @@
 --
 
 	function suite.isfile_ReturnsTrue_OnExistingFile()
-		test.istrue(os.isfile("_manifest.lua"))
+		test.istrue(os.isfile("_tests.lua"))
 	end
 
 	function suite.isfile_ReturnsFalse_OnNonexistantFile()
@@ -120,13 +120,13 @@
 	end
 
 	function suite.pathsearch_ReturnsPath_OnFound()
-		test.isequal(_TESTS_DIR, os.pathsearch("_manifest.lua", _TESTS_DIR))
+		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", _TESTS_DIR))
 	end
 
 	function suite.pathsearch_FindsFile_OnComplexPath()
-		test.isequal(_TESTS_DIR, os.pathsearch("_manifest.lua", "aaa;" .. _TESTS_DIR .. ";bbb"))
+		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", "aaa;" .. _TESTS_DIR .. ";bbb"))
 	end
 
 	function suite.pathsearch_NilPathsAllowed()
-		test.isequal(_TESTS_DIR, os.pathsearch("_manifest.lua", nil, _TESTS_DIR, nil))
+		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", nil, _TESTS_DIR, nil))
 	end
