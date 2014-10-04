@@ -15,11 +15,11 @@
 -- Find and load all of the test file manifests
 --
 
-	local mask = path.join(_MAIN_SCRIPT_DIR, "**/tests/_manifest.lua")
+	local mask = path.join(_MAIN_SCRIPT_DIR, "**/tests/_tests.lua")
 	local manifests = os.matchfiles(mask)
 
 	-- Hmm, "**" should probably also match against "."?
-	local top = path.join(_MAIN_SCRIPT_DIR, "tests/_manifest.lua")
+	local top = path.join(_MAIN_SCRIPT_DIR, "tests/_tests.lua")
 	if os.isfile(top) then
 		table.insert(manifests, 1, top)
 	end

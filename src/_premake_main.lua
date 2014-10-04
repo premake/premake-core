@@ -8,9 +8,29 @@
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 
 
+-- Load the collection of core scripts, required for everything else to work
+
+	local manifest = dofile("_manifest.lua")
+	for i = 1, #manifest do
+		dofile(manifest[i])
+	end
+
+
+-- Create namespaces for myself
+
+	local p = premake
+	p.main = {}
+
+
 --
 -- Script-side program entry point.
 --
+
+	p.main.elements = function()
+		return {
+			p.main.installModuleLoader,
+		}
+	end
 
 	function _premake_main()
 
@@ -35,6 +55,10 @@
 		else
 			_MAIN_SCRIPT_DIR = _WORKING_DIR
 		end
+
+		_USER_HOME_DIR = os.getenv("HOME") or os.getenv("USERPROFILE")
+
+		p.callArray(p.main.elements)
 
 		-- Look for and run the system-wide configuration script; make sure any
 		-- configuration scoping gets cleared before continuing
@@ -129,3 +153,25 @@
 		return 0
 	end
 
+
+
+---
+-- Add a new module loader that knows how to use the Premake paths like
+-- PREMAKE_PATH and the --scripts option, and follows the module/module.lua
+-- naming convention.
+---
+
+	function p.main.moduleLoader(name)
+		local shortName = name .. "/" .. name .. ".lua"
+		local longName = "modules/" .. shortName
+		local chunk = loadfile(shortName) or loadfile(longName)
+		if chunk then
+			return chunk
+		else
+			return "\n\tno file " .. shortName .. " on module paths"
+		end
+	end
+
+	function p.main.installModuleLoader()
+		table.insert(package.loaders, 2, p.main.moduleLoader)
+	end

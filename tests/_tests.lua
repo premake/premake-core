@@ -1,6 +1,5 @@
 return {
 	-- Base API tests
-	"test_dofile.lua",
 	"test_string.lua",
 	"base/test_configset.lua",
 	"base/test_context.lua",

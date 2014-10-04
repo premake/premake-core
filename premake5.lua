@@ -30,6 +30,24 @@
 --
 
 	newaction {
+		trigger = "embed",
+		description = "Embed scripts in scripts.c; required before release builds",
+		execute = function ()
+			include (path.join(corePath, "scripts/embed.lua"))
+		end
+	}
+
+
+	newaction {
+		trigger = "release",
+		description = "Prepare a new release (incomplete)",
+		execute = function ()
+			include (path.join(corePath, "scripts/release.lua"))
+		end
+	}
+
+
+	newaction {
 		trigger = "test",
 		description = "Run the automated test suite",
 		execute = function ()
@@ -41,6 +59,13 @@
 	newoption {
 		trigger     = "test",
 		description = "When testing, run only the specified suite or test"
+	}
+
+
+	newoption {
+		trigger = "to",
+		value   = "path",
+		description = "Set the output location for the generated files"
 	}
 
 
@@ -134,48 +159,3 @@
 		os.rmdir("bin")
 		os.rmdir("build")
 	end
-
-
-
---
--- Use the --to=path option to control where the project files get generated. I use
--- this to create project files for each supported toolset, each in their own folder,
--- in preparation for deployment.
---
-
-	newoption {
-		trigger = "to",
-		value   = "path",
-		description = "Set the output location for the generated files"
-	}
-
-
-
---
--- Use the embed action to convert all of the Lua scripts into C strings, which
--- can then be built into the executable. Always embed the scripts before creating
--- a release build.
---
-
-	dofile("scripts/embed.lua")
-
-	newaction {
-		trigger     = "embed",
-		description = "Embed scripts in scripts.c; required before release builds",
-		execute     = doembed
-	}
-
-
---
--- Use the release action to prepare source and binary packages for a new release.
--- This action isn't complete yet; a release still requires some manual work.
---
-
-
-	dofile("scripts/release.lua")
-
-	newaction {
-		trigger     = "release",
-		description = "Prepare a new release (incomplete)",
-		execute     = dorelease
-	}

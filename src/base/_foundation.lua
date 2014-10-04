@@ -62,9 +62,7 @@
 		if type(funcs) == "function" then
 			funcs = funcs(...)
 		end
-
-		local n = #funcs
-		for i = 1, n do
+		for i = 1, #funcs do
 			funcs[i](...)
 		end
 	end
