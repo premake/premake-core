@@ -48,10 +48,8 @@
 	io._includedFiles = {}
 
 	function include(fname)
-		local found = os.locate(fname, fname .. ".lua", path.join(fname, "premake5.lua"), path.join(fname, "premake4.lua"))
-
-		-- only include each file once
-		fname = path.getabsolute(found or fname)
+		local fullPath = os.locate(fname, fname .. ".lua", path.join(fname, "premake5.lua"), path.join(fname, "premake4.lua"))
+		fname = fullPath or fname
 		if not io._includedFiles[fname] then
 			io._includedFiles[fname] = true
 			dofile(fname)

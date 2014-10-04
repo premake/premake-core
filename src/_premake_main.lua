@@ -162,12 +162,14 @@
 ---
 
 	function p.main.moduleLoader(name)
-		local moduleName = name .. "/" .. name .. ".lua"
-		local filename = os.locate(name, "modules/" .. moduleName)
-		if filename then
-			return assert(loadfile(filename))
+		local shortName = name .. "/" .. name .. ".lua"
+		local longName = "modules/" .. shortName
+		local chunk = loadfile(shortName) or loadfile(longName)
+		if chunk then
+			return chunk
+		else
+			return "\n\tno file " .. moduleName .. " on module paths"
 		end
-		return "module " .. name .. "not found"
 	end
 
 	function p.main.installModuleLoader()

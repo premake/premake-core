@@ -292,17 +292,25 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 
 int premake_load_embedded_script(lua_State* L, const char* filename)
 {
-	static int warned = 0;
-
-	/* locate a record matching the filename */
 	int i;
+	const char* chunk = NULL;
+#if !defined(NDEBUG)
+	static int warned = 0;
+#endif
+
+	/* Try to locate a record matching the filename */
 	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
 		if (strcmp(builtin_scripts_index[i], filename) == 0) {
+			chunk = builtin_scripts[i];
 			break;
 		}
 	}
 
-	/* debug builds probably want to be loading scripts from the disk */
+	if (chunk == NULL) {
+		return !OKAY;
+	}
+
+	/* Debug builds probably want to be loading scripts from the disk */
 #if !defined(NDEBUG)
 	if (!warned) {
 		warned = 1;
@@ -310,17 +318,17 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 	}
 #endif
 
-	/* load its script */
-	if (builtin_scripts_index[i] != NULL) {
-		const char* chunk = builtin_scripts[i];
-		if (luaL_loadbuffer(L, chunk, strlen(chunk), filename) == OKAY) {
-			return OKAY;
-		}
-		else {
-			printf(ERROR_MESSAGE, lua_tostring(L, -1));
-			return !OKAY;
-		}
+	/* "Fully qualify" the filename by turning it into the form $/filename */
+	lua_pushstring(L, "$/");
+	lua_pushstring(L, filename);
+	lua_concat(L, 2);
+
+	/* Load the chunk */
+	i = luaL_loadbuffer(L, chunk, strlen(chunk), filename);
+	if (i != OKAY) {
+		lua_pop(L, 1);
+		printf("Failed to load embedded script '%s': %s\n", filename, lua_tostring(L, -1));
 	}
 
-	return !OKAY;
+	return i;
 }
