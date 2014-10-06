@@ -12,24 +12,15 @@
 
 
 
---
--- A place to store the current active objects in each configuration scope
--- (e.g. solutions, projects, groups, and configurations).
--- TODO: this really ought to be internal
---
+---
+-- Set up a place to store the current active objects in each configuration
+-- scope (e.g. solutions, projects, groups, and configurations). Initialize
+-- it with a "root" container to contain the other containers, as well as the
+-- global configuration settings which should apply to all of them.
+---
 
 	api.scope = {}
-
-
---
--- Create a "root" configuration set, to hold the global configuration. Values
--- that are added to this set become available for all add-ons, solution, projects,
--- and on down the line.
---
-
-	configset.root = configset.new()
-	api.scope.root = configset.root
-	api.scope._root = p.containerClass.define("_root"):new("root")
+	api.scope.root = p.containerClass.define("root"):new("root")
 
 
 
@@ -57,7 +48,7 @@
 	function api.container(def)
 		-- for now, everything inherits the root configuration
 		if not def.parent then
-			def.parent = "_root"
+			def.parent = "root"
 		end
 
 		-- register the new class; validation checks may cause a failure
@@ -82,14 +73,16 @@
 ---
 
 	function api.rootScope()
-		return api.scope._root
+		return api.scope.root
 	end
 
 
 
 ---
 -- Activate a new configuration container, making it the target for all
--- subsequent configuration settings.
+-- subsequent configuration settings. When you call solution() or project()
+-- to active a container, that call comes here (see api.container() for the
+-- details on how that happens).
 --
 -- @param cc
 --    The container class being activated, e.g. a project or solution.
@@ -123,9 +116,9 @@
 
 
 ---
--- Find the closest active scope with the given container class. If no
+-- Find the closest active scope for the given container class. If no
 -- exact instance of this container class is in scope, searches up the
--- class hierarchy to find the closest match.
+-- class hierarchy to find the closest parent that is in scope.
 --
 -- @param cc
 --    The container class to target.

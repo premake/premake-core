@@ -58,7 +58,7 @@
 ---
 -- A container class holds and operates on the metadata about a particular
 -- type of container, including its name, parent container, and any child
--- containers. The container class is responsible for create new instances
+-- containers. The container class is responsible for creating new instances
 -- of its kind of containers.
 --
 -- @param def
@@ -67,6 +67,8 @@
 --
 --     name (required)
 --       The name of the new container class (e.g. "solution").
+--     parent (optional)
+--       The name of the parent container class (e.g. "solution").
 --     init (optional)
 --       An initializer function to call for new instances of this class.
 --       Should accept the new instance object as its only argument.

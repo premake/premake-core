@@ -27,7 +27,7 @@
 --
 
 	function solution.new(name)
-		sln = configset.new(configset.root)
+		sln = configset.new(premake.api.rootScope())
 		setmetatable(sln, configset.metatable(sln))
 
 		sln.name = name
