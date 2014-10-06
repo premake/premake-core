@@ -25,16 +25,6 @@
 
 
 ---
--- Return the currently active configuration container instance.
----
-
-	function api.activeScope()
-		return api.scope.current or api.scope.root
-	end
-
-
-
----
 -- Register a new class of configuration container. A configuration container
 -- can hold configuration settings, as well as child configuration containers.
 -- Solutions, projects, and rules are all examples of containers.
@@ -68,11 +58,21 @@
 
 
 ---
+-- Return the currently active configuration container instance.
+---
+
+	function api.currentContainer()
+		return api.scope.current or api.scope.root
+	end
+
+
+
+---
 -- Return the root container, which contains the global configuration and
 -- all of the child containers (solutions, rules).
 ---
 
-	function api.rootScope()
+	function api.rootContainer()
 		return api.scope.root
 	end
 
@@ -1006,7 +1006,7 @@
 ---
 
 	function configuration(terms)
-		local target = api.activeScope()
+		local target = api.currentContainer()
 		if terms then
 			if terms == "*" then terms = nil end
 			configset.addblock(target, {terms}, os.getcwd())
@@ -1022,7 +1022,7 @@
 ---
 
 	function filter(terms)
-		local target = api.activeScope()
+		local target = api.currentContainer()
 		if terms then
 			if terms == "*" then terms = nil end
 			local ok, err = configset.addFilter(target, {terms}, os.getcwd())

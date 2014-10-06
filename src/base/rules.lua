@@ -31,8 +31,7 @@
 ---
 
 	function rules.each()
-		local rootContainer = p.api.rootScope()
-		return rootContainer:eachContainer(_ruleContainerClass)
+		return p.api.rootContainer():eachContainer(_ruleContainerClass)
 	end
 
 
@@ -47,6 +46,5 @@
 ---
 
 	function rules.fetch(key)
-		local rootContainer = p.api.rootScope()
-		return rootContainer:fetchContainer(_ruleContainerClass, key)
+		return p.api.rootContaiiner():fetchContainer(_ruleContainerClass, key)
 	end
