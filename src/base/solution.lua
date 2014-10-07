@@ -8,9 +8,22 @@
 	local solution = premake.solution
 
 	local p = premake
-	local project = p.project
-	local context = p.context
 	local tree = p.tree
+
+
+
+---
+-- Register a new container class to represent solutions.
+---
+
+	local _slnClass = p.api.container {
+		name = "solution",
+	}
+
+	p.api.container {
+		name = "group",
+		parent = "solution",
+	}
 
 
 
@@ -199,7 +212,7 @@
 
 	function solution.hascppproject(sln)
 		for prj in solution.eachproject(sln) do
-			if project.iscpp(prj) then
+			if p.project.iscpp(prj) then
 				return true
 			end
 		end
@@ -220,7 +233,7 @@
 
 	function solution.hasdotnetproject(sln)
 		for prj in solution.eachproject(sln) do
-			if project.isdotnet(prj) then
+			if p.project.isdotnet(prj) then
 				return true
 			end
 		end

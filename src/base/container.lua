@@ -172,6 +172,10 @@
 		c.basedir = os.getcwd()
 		c.filename = name
 
+		if type(self.init) == "function" then
+			self.init(c)
+		end
+
 		return c
 	end
 
@@ -195,9 +199,10 @@
 		local list = self[cc._listKey]
 
 		local child = cc:new(key, parent)
+		child[parent.class.name] = parent  -- i.e. child.solution = sln
+
 		table.insert(list, child)
 		list[key] = child
-
 		return child
 	end
 

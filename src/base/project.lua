@@ -6,35 +6,29 @@
 
 	premake.project = {}
 	local project = premake.project
-	local configset = premake.configset
-	local context = premake.context
-	local tree = premake.tree
+
+	local p = premake
+	local tree = p.tree
 
 
---
--- Create a new project object.
---
--- @param sln
---    The solution object to contain the new project.
--- @param name
---    The new project's name.
--- @return
---    A new project object, contained by the specified solution.
---
 
-	function project.new(sln, name)
-		local prj = configset.new(sln)
-		setmetatable(prj, configset.metatable(prj))
+---
+-- Register a new container class to represent projects.
+---
 
-		prj.name = name
-		prj.solution = sln
-		prj.script = _SCRIPT
-		prj.basedir = os.getcwd()
-		prj.filename = name
-		prj.uuid = os.uuid(name)
+	local _prjClass = p.api.container {
+		name = "project",
+		parent = "solution",
+		init = function(prj)
+			prj.uuid = os.uuid(prj.name)
+			if p.api.scope.group then
+				prj.group = p.api.scope.group.name
+			else
+				prj.group = ""
+			end
+		end
+	}
 
-		return prj
-	end
 
 
 --
