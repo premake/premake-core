@@ -10,14 +10,16 @@
 --
 
 	premake.oven = {}
-
 	local oven = premake.oven
-	local solution = premake.solution
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local configset = premake.configset
-	local context = premake.context
+
+	local p = premake
+	local solution = p.solution
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local configset = p.configset
+	local context = p.context
+
 
 
 ---
@@ -34,15 +36,15 @@
 ---
 
 	function oven.bake(root)
-		-- I haven't yet ported the project objects to containers
 		local result = {}
-		for i, sln in ipairs(solution.list) do
+
+		local root = p.api.rootContainer()
+		root.solutions = root.solutions or {}
+		for i, sln in ipairs(root.solutions) do
 			result[i] = oven.bakeSolution(sln)
 		end
-		solution.list = result
 
-		-- Start container implementation
-
+		root.solutions = result
 	end
 
 
@@ -104,6 +106,7 @@
 		-- store that for future reference
 
 		local projects = {}
+		sln.projects = sln.projects or {}
 		for i, prj in ipairs(sln.projects) do
 			projects[i] = oven.bakeProject(prj, ctx)
 			projects[prj.name] = projects[i]

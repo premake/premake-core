@@ -6,41 +6,12 @@
 
 	premake.solution = {}
 	local solution = premake.solution
-	local project = premake.project
-	local configset = premake.configset
-	local context = premake.context
-	local tree = premake.tree
 
+	local p = premake
+	local project = p.project
+	local context = p.context
+	local tree = p.tree
 
--- The list of defined solutions (which contain projects, etc.)
-
-	solution.list = {}
-
-
---
--- Create a new solution and add it to the session.
---
--- @param name
---    The new solution's name.
--- @return
---    A new solution object.
---
-
-	function solution.new(name)
-		sln = configset.new(premake.api.rootContainer())
-		setmetatable(sln, configset.metatable(sln))
-
-		sln.name = name
-		sln.projects = {}
-		sln.basedir = os.getcwd()
-		sln.filename = name
-
-		-- Add to master list keyed by both name and index
-		table.insert(premake.solution.list, sln)
-		premake.solution.list[name] = sln
-
-		return sln
-	end
 
 
 --
@@ -67,11 +38,13 @@
 --
 
 	function solution.each()
+		local root = p.api.rootContainer()
+
 		local i = 0
 		return function ()
 			i = i + 1
-			if i <= #premake.solution.list then
-				return premake.solution.list[i]
+			if i <= #root.solutions then
+				return root.solutions[i]
 			end
 		end
 	end
@@ -153,7 +126,10 @@
 --
 
 	function solution.get(key)
-		return premake.solution.list[key]
+		local root = p.api.rootContainer()
+		if root.solutions then
+			return root.solutions[key]
+		end
 	end
 
 

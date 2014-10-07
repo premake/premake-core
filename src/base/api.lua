@@ -17,6 +17,9 @@
 -- scope (e.g. solutions, projects, groups, and configurations). Initialize
 -- it with a "root" container to contain the other containers, as well as the
 -- global configuration settings which should apply to all of them.
+--
+-- TODO: this should be hidden, with a perhaps a read-only accessor to fetch
+-- individual scopes for testing.
 ---
 
 	api.scope = {}
@@ -79,6 +82,22 @@
 
 
 ---
+-- Recursively clear any child scopes for a container class. For example,
+-- if a solution is being activated, clear the project and group scopes,
+-- as those are children of solutions. If the root scope is made active,
+-- all child scopes will be cleared.
+---
+
+	function api._clearChildScopes(cc)
+		for ch in cc:eachChildClass() do
+			api.scope[ch.name] = nil
+			api._clearChildScopes(ch)
+		end
+	end
+
+
+
+---
 -- Activate a new configuration container, making it the target for all
 -- subsequent configuration settings. When you call solution() or project()
 -- to active a container, that call comes here (see api.container() for the
@@ -89,28 +108,54 @@
 -- @param name
 --    The name of the container instance to be activated. If a container
 --    (e.g. project) with this name does not already exist it will be
---    created.
+--    created. If name is not set, the last activated container of this
+--    class will be made current again.
 -- @return
 --    The container instance.
 ---
 
 	function api._setScope(cc, name)
-		local instance
+		-- for backward compatibility, "*" activates the parent container
+		if name == "*" then
+			return api._setScope(cc.parent)
+		end
 
-		-- << handle (name == nil) >>
+		-- if name is not set, use whatever was last made current
+		local container
+		if not name then
+			container = api.scope[cc.name]
+			if not container then
+				error("no " .. cc.name .. " in scope", 3)
+			end
+		end
 
-		-- << handle "*" >>
+		if not container then
+			-- all containers should be contained within a parent
+			local parent = api.scope[cc.parent.name]
+			if not parent then
+				error("no active " .. cc.parent.name, 3)
+			end
 
-		-- Fetch (creating if necessary) the container
-		local parentContainer = api._target(cc.parent)
-		local container = parentContainer:fetchContainer(cc, name)
+			-- fetch (creating if necessary) the container
+			container = parent:fetchChild(cc, name)
+			if not container then
+				container = parent:createChild(cc, name, parent)
+			else
+				configset.addFilter(container, {}, os.getcwd())
+			end
+		end
 
-		-- << start a new settings block >>
+		-- clear out any active child container types
+		api._clearChildScopes(cc)
 
-		-- Activate the container
-		api.scope[cc.name] = container  -- TODO: do I still need this?
+		-- activate the container, as well as its ancestors
 		api.scope.current = container
-		return container
+		while container.parent do
+			api.scope[container.class.name] = container
+			container = container.parent
+		end
+
+		return api.scope.current
 	end
 
 
@@ -630,6 +675,9 @@
 ---
 
 	function api.reset()
+		-- Clear out all top level objects
+		api.scope.root.solutions = {}
+
 		-- Remove all custom variables
 		local vars = api.getCustomVars()
 		for i, var in ipairs(vars) do
@@ -1034,6 +1082,23 @@
 
 
 
+
+	local _slnContainerClass = api.container {
+		name = "solution",
+	}
+
+	api.container {
+		name = "group",
+		parent = "solution",
+	}
+
+	api.container {
+		name = "project",
+		parent = "solution",
+	}
+
+
+
 ---
 -- Begin a new solution group, which will contain any subsequent projects.
 ---
@@ -1056,15 +1121,6 @@
 --    The active project object.
 --
 
-	api.container {
-		name = "solution",
-	}
-
-	api.container {
-		name = "project",
-		parent = "solution",
-	}
-
   	function project(name)
 		if not name then
 			if api.scope.project then
@@ -1081,6 +1137,7 @@
 
 		local prj
 		if name ~= "*" then
+			sln.projects = sln.projects or {}
 			prj = sln.projects[name]
 			if not prj then
 				prj = premake.project.new(sln, name)
@@ -1118,44 +1175,6 @@
 		return prj
 	end
 
-
-
---
--- Set the current configuration scope to a solution.
---
--- @param name
---    The name of the solution. If a solution with this name already
---    exists, it is made current, otherwise a new solution is created
---    with this name. If no name is provided, the most recently defined
---    solution is made active.
--- @return
---    The active solution object.
---
-
-	function solution(name)
-		if not name then
-			if api.scope.solution then
-				name = api.scope.solution.name
-			else
-				return nil
-			end
-		end
-
-		local sln
-		if name ~= "*" then
-			sln = premake.solution.get(name) or premake.solution.new(name)
-			sln.class = p.containerClass.get("solution")
-		end
-
-		api.scope.solution = sln
-		api.scope.project = nil
-		api.scope.group = nil
-		api.scope.current = sln
-
-		configuration {}
-
-		return sln
-	end
 
 
 --

@@ -73,6 +73,8 @@
 --       An initializer function to call for new instances of this class.
 --       Should accept the new instance object as its only argument.
 --
+--    Other keys are allowed and will be left intact.
+--
 -- @return
 --    A new container class object if successful, else nil and an
 --    error message.
@@ -102,8 +104,8 @@
 
 		-- Looks good, set myself up and add to master list
 
-		def.children = {}
-		def.listKey = def.name:plural()
+		def._children = {}
+		def._listKey = def.name:plural()
 		setmetatable(def, p.containerClass)
 		container._classes[def.name] = def
 
@@ -111,10 +113,27 @@
 
 		def.parent = container._classes[def.parent]
 		if def.parent then
-			table.insert(def.parent.children, def)
+			table.insert(def.parent._children, def)
 		end
 
 		return def
+	end
+
+
+
+---
+-- Enumerate the child container class of a given class.
+---
+
+	function p.containerClass:eachChildClass()
+		local children = self._children
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= #children then
+				return children[i]
+			end
+		end
 	end
 
 
@@ -159,14 +178,40 @@
 
 
 ---
+-- Create a new child container of the given class, with the specified name.
+--
+-- @param cc
+--    The class of child container to be fetched.
+-- @param key
+--    A string key or array index for the container.
+-- @param parent
+--    The parent container instance.
+-- @return
+--    The child container instance.
+---
+
+	function container:createChild(cc, key, parent)
+		self[cc._listKey] = self[cc._listKey] or {}
+		local list = self[cc._listKey]
+
+		local child = cc:new(key, parent)
+		table.insert(list, child)
+		list[key] = child
+
+		return child
+	end
+
+
+
+---
 -- Return an iterator for the child containers of a particular class.
 --
 -- @param cc
 --    The class of child container to be enumerated.
 ---
 
-	function container:eachContainer(cc)
-		local children = self[cc.listKey] or {}
+	function container:eachChild(cc)
+		local children = self[cc._listKey] or {}
 		local i = 0
 		return function ()
 			i = i + 1
@@ -180,28 +225,16 @@
 
 ---
 -- Fetch the child container with the given container class and instance name.
--- If it doesn't exist, a new container is created.
 --
 -- @param cc
 --    The class of child container to be fetched.
 -- @param key
---    A string key or array index for the container. If a string key is
---    provided, the container will be created if it doesn't exist. If an
---    array index is provided, nil will be returned if it does not exist.
+--    A string key or array index for the container.
 -- @return
 --    The child container instance.
 ---
 
-	function container:fetchContainer(cc, key)
-		self[cc.listKey] = self[cc.listKey] or {}
-		local children = self[cc.listKey]
-		local c = children[key]
-
-		if not c and type(key) == "string" then
-			c = cc:new(key, parent)
-			table.insert(children, c)
-			children[key] = c
-		end
-
-		return c
+	function container:fetchChild(cc, key)
+		self[cc._listKey] = self[cc._listKey] or {}
+		return self[cc._listKey][key]
 	end

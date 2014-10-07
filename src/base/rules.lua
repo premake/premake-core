@@ -31,7 +31,7 @@
 ---
 
 	function rules.each()
-		return p.api.rootContainer():eachContainer(_ruleContainerClass)
+		return p.api.rootContainer():eachChild(_ruleContainerClass)
 	end
 
 
@@ -46,5 +46,5 @@
 ---
 
 	function rules.fetch(key)
-		return p.api.rootContaiiner():fetchContainer(_ruleContainerClass, key)
+		return p.api.rootContainer():fetchChild(_ruleContainerClass, key)
 	end
