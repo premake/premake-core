@@ -149,7 +149,9 @@
 		api._clearChildScopes(cc)
 
 		-- activate the container, as well as its ancestors
-		api.scope.current = container
+		if not cc.placeholder then
+			api.scope.current = container
+		end
 		while container.parent do
 			api.scope[container.class.name] = container
 			container = container.parent

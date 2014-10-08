@@ -23,6 +23,7 @@
 	p.api.container {
 		name = "group",
 		parent = "solution",
+		placeholder = true,
 	}
 
 
