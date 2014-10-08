@@ -83,38 +83,16 @@
 -- Warn if a configuration value is set in the wrong scope.
 --
 
-	function suite.warns_onSolutionStringField_inProject()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-			language "C++"
-			startproject "MyProject"
-		premake.validate()
-		test.stderr("'startproject' on project")
-	end
-
 	function suite.warns_onSolutionStringField_inConfig()
 		solution "MySolution"
 			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-			language "C++"
 		filter "Debug"
 			startproject "MyProject"
-		premake.validate()
-		test.stderr("'startproject' on config")
-	end
-
-	function suite.warns_onSolutionStringField_onlyWarnOnce()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-			startproject "MyProject"
 		premake.validate()
-		test.notstderr("'startproject' on config")
+		test.stderr("'startproject' on config")
 	end
 
 	function suite.warns_onProjectStringField_inConfig()

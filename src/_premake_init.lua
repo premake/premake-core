@@ -62,19 +62,34 @@
 		},
 	}
 
-	api.register {
-		name = "buildmessage",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
 
 	api.register {
 		name = "buildcommands",
-		scope = "config",
+		scope = { "config", "rule" },
 		kind = "list:string",
 		tokens = true,
 	}
+
+	api.alias("buildcommands", "buildCommands")
+
+
+	api.register {
+		name = "buildDependencies",
+		scope = { "rule" },
+		kind = "list:string",
+		tokens = true,
+	}
+
+
+	api.register {
+		name = "buildmessage",
+		scope = { "config", "rule" },
+		kind = "string",
+		tokens = true
+	}
+
+	api.alias("buildmessage", "buildMessage")
+
 
 	api.register {
 		name = "buildoptions",
@@ -83,12 +98,16 @@
 		tokens = true,
 	}
 
+
 	api.register {
 		name = "buildoutputs",
-		scope = "config",
+		scope = { "config", "rule" },
 		kind = "list:path",
 		tokens = true,
 	}
+
+	api.alias("buildoutputs", "buildOutputs")
+
 
 	api.register {
 		name = "buildinputs",
@@ -214,14 +233,30 @@
 		tokens = true,
 	}
 
+
+	api.register {
+		name = "display",
+		scope = "rule",
+		kind = "string",
+	}
+
+
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
 	end
 
+
+	api.register {
+		name = "fileExtension",
+		scope = "rule",
+		kind = "string",
+	}
+
+
 	api.register {
 		name = "filename",
-		scope = "project",
+		scope = { "project", "rule" },
 		kind = "string",
 		tokens = true,
 	}
@@ -442,7 +477,7 @@
 
 	api.register {
 		name = "location",
-		scope = "project",
+		scope = { "project", "rule" },
 		kind = "path",
 		tokens = true,
 	}
@@ -553,6 +588,12 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+	}
+
+	api.register {
+		name = "propertyDefinition",
+		scope = "rule",
+		kind = "list:table",
 	}
 
 	api.register {

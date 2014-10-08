@@ -14,7 +14,7 @@
 --
 
 	function cs2005.generate_user(prj)
-		_p('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		p.vstudio.projectElement()
 		_p(1,'<PropertyGroup>')
 
 		-- Per-configuration reference paths aren't supported (are they?) so just

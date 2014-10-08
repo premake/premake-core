@@ -7,6 +7,8 @@
 	local solution = premake.solution
 	local project = premake.project
 	local config = premake.config
+	local field = premake.field
+
 
 
 -- Store captured output text for later testing
@@ -135,7 +137,7 @@
 -- Used by the actions to generate solution and project files.
 --
 -- @param obj
---    A solution or project object; will be based to the callback function.
+--    A solution or project object; will be passed to the callback function.
 -- @param ext
 --    An optional extension for the generated file, with the leading dot.
 -- @param callback
@@ -144,7 +146,7 @@
 --
 
 	function premake.generate(obj, ext, callback)
-		local fn = premake.project.getfilename(obj, ext)
+		local fn = premake.filename(obj, ext)
 		printf("Generating %s...", path.getrelative(os.getcwd(), fn))
 
 		local f, err = io.open(fn, "wb")
@@ -157,6 +159,34 @@
 		callback(obj)
 		f:close()
 	end
+
+
+
+---
+-- Returns the full path a file generated from any of the project
+-- objects (project, solution, rule).
+--
+-- @param obj
+--    The project object being generated.
+-- @param ext
+--    An optional extension for the generated file, with the leading dot.
+-- @param callback
+--    The function responsible for writing the file; will receive the
+--    project object as its only argument.
+---
+
+function premake.filename(obj, ext)
+	local fname = obj.location
+	if ext and not ext:startswith(".") then
+		fname = path.join(fname, ext)
+	else
+		fname = path.join(fname, obj.filename)
+		if ext then
+			fname = fname .. ext
+		end
+	end
+	return fname
+end
 
 
 
@@ -380,23 +410,28 @@
 --
 
 	function premake.validateScopes(cfg, expected, ctx)
-		for name, field in pairs(premake.fields) do
-			local okay = false
-
-			-- skip fields that are at or below the expected scope
-			if field.scope == "config" or field.scope == expected then
-				okay = true
+		for f in field.each() do
+			-- Pull out the project level scope (this will get cleaned up when
+			-- the project objects move to the new container API)
+			local scope
+			if f.scopes[1] ~= "rule" then
+				scope = f.scopes[1]
 			end
+
+			-- Skip fields that are at or below the expected scope. Config-
+			-- level fields are the most general (can be applied to projects
+			-- or solutions) and so can never be out of scope.
+			local okay = (not scope or scope == "config" or scope == expected)
 
 			-- this one needs to checked
 			if not okay then
-				okay = premake.field.compare(field, cfg[field.scope][name], cfg[name])
+				okay = field.compare(f, cfg[scope][f.name], cfg[f.name])
 			end
 
 			-- found a problem?
 			if not okay then
-				local key = "validate." .. field.name
-				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", name, expected, cfg.name, field.scope, cfg[field.scope].name)
+				local key = "validate." .. f.name
+				premake.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", f.name, expected, cfg.name, scope, cfg[scope].name)
 			end
 
 		end
@@ -431,6 +466,18 @@
 			arg[i] = premake.esc(arg[i])
 		end
 		premake.w(msg, unpack(arg))
+	end
+
+
+
+---
+-- Write a opening XML element for a UTF-8 encoded file. Used by
+-- several different files for different actions, so makes sense
+-- to have a common call for it.
+---
+
+	function premake.xmlUtf8()
+		premake.outln('<?xml version="1.0" encoding="utf-8"?>')
 	end
 
 

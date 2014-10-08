@@ -81,6 +81,13 @@
 
 		f._kind = kind
 
+		-- Make sure scope is always an array; don't overwrite old value
+		if type(f.scope) == "table" then
+			f.scopes = f.scope
+		else
+			f.scopes = { f.scope }
+		end
+
 		-- All fields must have a valid store() function
 		if not field.accessor(f, "store") then
 			return nil, "invalid field kind '" .. f._kind .. "'"
@@ -248,6 +255,7 @@
 	function field.get(name)
 		return field._list[name]
 	end
+
 
 
 	function field.merge(f, current, value)

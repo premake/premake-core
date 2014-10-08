@@ -6,9 +6,11 @@
 
 	premake.vstudio = {}
 	local vstudio = premake.vstudio
-	local solution = premake.solution
-	local project = premake.project
-	local config = premake.config
+
+	local p = premake
+	local solution = p.solution
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -368,6 +370,16 @@
 	end
 
 
+---
+-- Generates a Visual Studio project element for the current action.
+---
+
+	function vstudio.projectElement()
+		p.push('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+	end
+
+
+
 --
 -- Returns the full, absolute path to the Visual Studio project file
 -- corresponding to a particular project object.
@@ -386,7 +398,7 @@
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
-		return project.getfilename(prj, extension)
+		return premake.filename(prj, extension)
 	end
 
 
@@ -562,4 +574,5 @@
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 		end
 	end
+
 

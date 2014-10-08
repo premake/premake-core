@@ -467,7 +467,7 @@
 
 	function cs2005.xmlDeclaration()
 		if _ACTION > "vs2008" then
-			_p('<?xml version="1.0" encoding="utf-8"?>')
+			p.xmlUtf8()
 		end
 	end
 

@@ -61,3 +61,17 @@
 		end
 		return n
 	end
+
+
+
+---
+-- Return a plural version of a string.
+---
+
+	function string:plural()
+		if self:endswith("y") then
+			return self:sub(1, #self - 1) .. "ies"
+		else
+			return self .. "s"
+		end
+	end

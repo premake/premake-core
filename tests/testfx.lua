@@ -339,7 +339,6 @@
 
 		stderr_capture = nil
 
-		premake.solution.list = { }
 		premake.clearWarnings()
 		premake.eol("\n")
 		premake.escaper(nil)

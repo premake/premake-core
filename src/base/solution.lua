@@ -6,41 +6,26 @@
 
 	premake.solution = {}
 	local solution = premake.solution
-	local project = premake.project
-	local configset = premake.configset
-	local context = premake.context
-	local tree = premake.tree
+
+	local p = premake
+	local tree = p.tree
 
 
--- The list of defined solutions (which contain projects, etc.)
 
-	solution.list = {}
+---
+-- Register a new container class to represent solutions.
+---
 
+	local _slnClass = p.api.container {
+		name = "solution",
+	}
 
---
--- Create a new solution and add it to the session.
---
--- @param name
---    The new solution's name.
--- @return
---    A new solution object.
---
+	p.api.container {
+		name = "group",
+		parent = "solution",
+		placeholder = true,
+	}
 
-	function solution.new(name)
-		sln = configset.new(configset.root)
-		setmetatable(sln, configset.metatable(sln))
-
-		sln.name = name
-		sln.projects = {}
-		sln.basedir = os.getcwd()
-		sln.filename = name
-
-		-- Add to master list keyed by both name and index
-		table.insert(premake.solution.list, sln)
-		premake.solution.list[name] = sln
-
-		return sln
-	end
 
 
 --
@@ -67,11 +52,13 @@
 --
 
 	function solution.each()
+		local root = p.api.rootContainer()
+
 		local i = 0
 		return function ()
 			i = i + 1
-			if i <= #premake.solution.list then
-				return premake.solution.list[i]
+			if i <= #root.solutions then
+				return root.solutions[i]
 			end
 		end
 	end
@@ -153,23 +140,12 @@
 --
 
 	function solution.get(key)
-		return premake.solution.list[key]
+		local root = p.api.rootContainer()
+		if root.solutions then
+			return root.solutions[key]
+		end
 	end
 
-
---
--- Returns the file name for this solution.
---
--- @param sln
---    The solution object to query.
--- @param ext
---    An optional file extension to add, with the leading dot.
--- @return
---    The absolute path to the solution's file.
---
-
-
-	solution.getfilename = project.getfilename
 
 
 --
@@ -237,7 +213,7 @@
 
 	function solution.hascppproject(sln)
 		for prj in solution.eachproject(sln) do
-			if project.iscpp(prj) then
+			if p.project.iscpp(prj) then
 				return true
 			end
 		end
@@ -258,7 +234,7 @@
 
 	function solution.hasdotnetproject(sln)
 		for prj in solution.eachproject(sln) do
-			if project.isdotnet(prj) then
+			if p.project.isdotnet(prj) then
 				return true
 			end
 		end

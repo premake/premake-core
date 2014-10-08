@@ -20,17 +20,12 @@
 		"base/globals.lua",
 
 		-- configuration data
+		"base/container.lua",
 		"base/field.lua",
 		"base/criteria.lua",
 		"base/detoken.lua",
 		"base/configset.lua",
 		"base/context.lua",
-
-		-- project objects
-		"base/project.lua",
-		"base/solution.lua",
-		"base/config.lua",
-		"base/fileconfig.lua",
 
 		-- runtime switches
 		"base/option.lua",
@@ -38,6 +33,13 @@
 
 		-- project script setup
 		"base/api.lua",
+
+		-- project objects
+		"base/solution.lua",
+		"base/project.lua",
+		"base/config.lua",
+		"base/fileconfig.lua",
+		"base/rules.lua",
 
 		-- project script processing
 		"base/oven.lua",
@@ -70,6 +72,9 @@
 		"actions/vstudio/vs2010_vcxproj.lua",
 		"actions/vstudio/vs2010_vcxproj_user.lua",
 		"actions/vstudio/vs2010_vcxproj_filters.lua",
+		"actions/vstudio/vs2010_rules_props.lua",
+		"actions/vstudio/vs2010_rules_targets.lua",
+		"actions/vstudio/vs2010_rules_xml.lua",
 		"actions/vstudio/vs2012.lua",
 		"actions/vstudio/vs2013.lua",
 

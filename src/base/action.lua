@@ -1,10 +1,14 @@
---
+---
 -- action.lua
 -- Work with the list of registered actions.
--- Copyright (c) 2002-2009 Jason Perkins and the Premake project
---
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+---
 
 	premake.action = {}
+	local action = premake.action
+
+	local p = premake
+
 
 
 --
@@ -32,32 +36,32 @@
 -- new entries here.
 --
 
-	premake.action.list = {}
+	action._list = {}
 
 
 --
 -- Register a new action.
 --
--- @param a
+-- @param act
 --    The new action object.
 --
 
-	function premake.action.add(a)
+	function action.add(act)
 		-- validate the action object, at least a little bit
 		local missing
 		for _, field in ipairs({"description", "trigger"}) do
-			if not a[field] then
+			if not act[field] then
 				missing = field
 			end
 		end
 
 		if missing then
-			local name = a.trigger or ""
+			local name = act.trigger or ""
 			error(string.format('action "%s" needs a  %s', name, missing), 3)
 		end
 
 		-- add it to the master list
-		premake.action.list[a.trigger] = a
+		action._list[act.trigger] = act
 	end
 
 
@@ -70,28 +74,28 @@
 --    None.
 --
 
-	function premake.action.call(name)
-		local a = premake.action.list[name]
+	function action.call(name)
+		local act = action._list[name]
 
-		-- TODO: remove this once everyone's had a chance to see
-		-- the deprecation warning
-		if _ACTION:endswith("ng") then
-			_ACTION = _ACTION:sub(1, -3)
-		end
-
-		for sln in premake.solution.each() do
-			if a.onsolution then
-				a.onsolution(sln)
+		for sln in p.solution.each() do
+			if act.onsolution then
+				act.onsolution(sln)
 			end
-			for prj in premake.solution.eachproject(sln) do
-				if a.onproject and not prj.external then
-					a.onproject(prj)
+			for prj in p.solution.eachproject(sln) do
+				if act.onproject and not prj.external then
+					act.onproject(prj)
 				end
 			end
 		end
 
-		if a.execute then
-			a.execute()
+		for rule in p.rules.each() do
+			if act.onrule then
+				act.onrule(rule)
+			end
+		end
+
+		if act.execute then
+			act.execute()
 		end
 	end
 
@@ -103,8 +107,8 @@
 --    The current action, or nil if _ACTION is nil or does not match any action.
 --
 
-	function premake.action.current()
-		return premake.action.get(_ACTION)
+	function action.current()
+		return action.get(_ACTION)
 	end
 
 
@@ -117,13 +121,12 @@
 --    The requested action, or nil if the action does not exist.
 --
 
-	function premake.action.get(name)
+	function action.get(name)
 		-- "Next-gen" actions are deprecated
 		if name and name:endswith("ng") then
 			name = name:sub(1, -3)
 		end
-
-		return premake.action.list[name]
+		return action._list[name]
 	end
 
 
@@ -131,18 +134,18 @@
 -- Iterator for the list of actions.
 --
 
-	function premake.action.each()
+	function action.each()
 		-- sort the list by trigger
 		local keys = { }
-		for _, action in pairs(premake.action.list) do
-			table.insert(keys, action.trigger)
+		for _, act in pairs(action._list) do
+			table.insert(keys, act.trigger)
 		end
 		table.sort(keys)
 
 		local i = 0
 		return function()
 			i = i + 1
-			return premake.action.list[keys[i]]
+			return act._list[keys[i]]
 		end
 	end
 
@@ -154,13 +157,13 @@
 --    The name of the action to activate.
 --
 
-	function premake.action.set(name)
+	function action.set(name)
 		_ACTION = name
 
 		-- Some actions imply a particular operating system
-		local action = premake.action.get(name)
-		if action then
-			_OS = action.os or _OS
+		local act = action.get(name)
+		if act then
+			_OS = act.os or _OS
 		end
 	end
 
@@ -168,7 +171,7 @@
 --
 -- Determines if an action supports a particular language or target type.
 --
--- @param action
+-- @param act
 --    The action to test.
 -- @param feature
 --    The feature to check, either a programming language or a target type.
@@ -176,22 +179,23 @@
 --    True if the feature is supported, false otherwise.
 --
 
-	function premake.action.supports(action, feature)
-		if not action then
+	function action.supports(act, feature)
+		if not act then
 			return false
 		end
-		if action.valid_languages then
-			if table.contains(action.valid_languages, feature) then
+		if act.valid_languages then
+			if table.contains(act.valid_languages, feature) then
 				return true
 			end
 		end
-		if action.valid_kinds then
-			if table.contains(action.valid_kinds, feature) then
+		if act.valid_kinds then
+			if table.contains(act.valid_kinds, feature) then
 				return true
 			end
 		end
 		return false
 	end
+
 
 
 --
@@ -200,13 +204,13 @@
 --    True if the configuration is supported, false otherwise.
 --
 
-	function premake.action.supportsconfig(action, cfg)
-		if not action then
+	function action.supportsconfig(act, cfg)
+		if not act then
 			return false
 		end
 
-		if action.supportsconfig then
-			return action.supportsconfig(cfg)
+		if act.supportsconfig then
+			return act.supportsconfig(cfg)
 		end
 
 		return true

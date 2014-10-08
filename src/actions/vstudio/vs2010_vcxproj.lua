@@ -47,7 +47,7 @@
 
 	function m.generate(prj)
 		io.utf8()
-		m.xmlDeclaration()
+        m.xmlDeclaration()
 		m.project("Build")
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
@@ -1583,8 +1583,9 @@
 	end
 
 
+
 	function m.xmlDeclaration()
-		_p('<?xml version="1.0" encoding="utf-8"?>')
+		p.xmlUtf8()
 	end
 
 

@@ -58,7 +58,7 @@
 	function make.cleanrules(sln)
 		_p('clean:')
 		for prj in solution.eachproject(sln) do
-			local prjpath = project.getfilename(prj, make.getmakefilename(prj, true))
+			local prjpath = premake.filename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(sln.location, prjpath))
 			local prjname = path.getname(prjpath)
 			_x(1,'@${MAKE} --no-print-directory -C %s -f %s clean', prjdir, prjname)
@@ -174,7 +174,7 @@
 
 			_p(1,'@echo "==== Building %s ($(%s_config)) ===="', prj.name, cfgvar)
 
-			local prjpath = project.getfilename(prj, make.getmakefilename(prj, true))
+			local prjpath = premake.filename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(sln.location, prjpath))
 			local prjname = path.getname(prjpath)
 

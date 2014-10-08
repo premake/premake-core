@@ -10,29 +10,41 @@
 --
 
 	premake.oven = {}
-
 	local oven = premake.oven
-	local solution = premake.solution
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local configset = premake.configset
-	local context = premake.context
+
+	local p = premake
+	local solution = p.solution
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local configset = p.configset
+	local context = p.context
 
 
+
+---
+-- Traverses the entire container hierarchy built up by the project scripts,
+-- filters, merges, and munges the project settings based on the current
+-- runtime environment, and returns a new container hierarchy with the end
+-- result. This result will then get handed off to the current action to
+-- do whatever it is it needs to do, like generate project files.
 --
--- Iterates through all of the current solutions, bakes down their contents,
--- and then replaces the original solution object with the baked result.
--- This is the entry point to the whole baking process, which happens after
--- the scripts have run, but before the project files are generated.
---
+-- @param root
+--    The top level or root container to be baked.
+-- @return
+--    ???
+---
 
-	function oven.bake()
+	function oven.bake(root)
 		local result = {}
-		for i, sln in ipairs(solution.list) do
+
+		local root = p.api.rootContainer()
+		root.solutions = root.solutions or {}
+		for i, sln in ipairs(root.solutions) do
 			result[i] = oven.bakeSolution(sln)
 		end
-		solution.list = result
+
+		root.solutions = result
 	end
 
 
@@ -94,6 +106,7 @@
 		-- store that for future reference
 
 		local projects = {}
+		sln.projects = sln.projects or {}
 		for i, prj in ipairs(sln.projects) do
 			projects[i] = oven.bakeProject(prj, ctx)
 			projects[prj.name] = projects[i]

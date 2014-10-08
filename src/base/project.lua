@@ -6,35 +6,29 @@
 
 	premake.project = {}
 	local project = premake.project
-	local configset = premake.configset
-	local context = premake.context
-	local tree = premake.tree
+
+	local p = premake
+	local tree = p.tree
 
 
---
--- Create a new project object.
---
--- @param sln
---    The solution object to contain the new project.
--- @param name
---    The new project's name.
--- @return
---    A new project object, contained by the specified solution.
---
 
-	function project.new(sln, name)
-		local prj = configset.new(sln)
-		setmetatable(prj, configset.metatable(prj))
+---
+-- Register a new container class to represent projects.
+---
 
-		prj.name = name
-		prj.solution = sln
-		prj.script = _SCRIPT
-		prj.basedir = os.getcwd()
-		prj.filename = name
-		prj.uuid = os.uuid(name)
+	local _prjClass = p.api.container {
+		name = "project",
+		parent = "solution",
+		init = function(prj)
+			prj.uuid = os.uuid(prj.name)
+			if p.api.scope.group then
+				prj.group = p.api.scope.group.name
+			else
+				prj.group = ""
+			end
+		end
+	}
 
-		return prj
-	end
 
 
 --
@@ -210,30 +204,15 @@
 
 
 
---
+---
 -- Returns the file name for this project. Also works with solutions.
---
--- @param prj
---    The project object to query.
--- @param ext
---    An optional file extension to add, with the leading dot. If provided
---    without a leading dot, it will treated as a file name.
--- @return
---    The absolute path to the project's file.
---
+-- Deprecated 11 Aug 2014
+---
 
 	function project.getfilename(prj, ext)
-		local fn = prj.location
-		if ext and not ext:startswith(".") then
-			fn = path.join(fn, ext)
-		else
-			fn = path.join(fn, prj.filename)
-			if ext then
-				fn = fn .. ext
-			end
-		end
-		return fn
+		return premake.filename(prj, ext)
 	end
+
 
 
 --
