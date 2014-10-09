@@ -109,27 +109,6 @@
 
 
 
---
--- Locate a project by name; case insensitive.
---
--- @param name
---    The name of the project for which to search.
--- @return
---    The corresponding project, or nil if no matching project could be found.
---
-
-	function project.findproject(name)
-		for sln in premake.solution.each() do
-			for _, prj in ipairs(sln.projects) do
-				if (prj.name == name) then
-					return  prj
-				end
-			end
-		end
-	end
-
-
---
 -- Retrieve the project's configuration information for a particular build
 -- configuration/platform pair.
 --
@@ -141,7 +120,6 @@
 --    Optional; the name of the platform on which to filter.
 -- @return
 --    A configuration object.
---
 
 	function project.getconfig(prj, buildcfg, platform)
 		-- if no build configuration is specified, return the "root" project
@@ -201,17 +179,6 @@
 			prj.dependencies = result
 		end
 		return prj.dependencies
-	end
-
-
-
----
--- Returns the file name for this project. Also works with solutions.
--- Deprecated 11 Aug 2014
----
-
-	function project.getfilename(prj, ext)
-		return premake.filename(prj, ext)
 	end
 
 

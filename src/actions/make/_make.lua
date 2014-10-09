@@ -99,7 +99,7 @@
 
 	function make.getmakefilename(this, searchprjs)
 		local count = 0
-		for sln in premake.solution.each() do
+		for sln in premake.global.eachSolution() do
 			if sln.location == this.location then
 				count = count + 1
 			end
