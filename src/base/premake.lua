@@ -25,6 +25,10 @@
 	local _indentString = "\t"
 	local _indentLevel = 0
 
+-- Set up the global configuration scope. There can be only one.
+
+	global("root")
+
 
 
 ---

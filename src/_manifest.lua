@@ -35,7 +35,9 @@
 		"base/api.lua",
 
 		-- project objects
+		"base/global.lua",
 		"base/solution.lua",
+		"base/group.lua",
 		"base/project.lua",
 		"base/config.lua",
 		"base/fileconfig.lua",

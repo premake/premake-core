@@ -1,33 +1,34 @@
---
+---
 -- project.lua
 -- Premake project object API
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
---
-
-	premake.project = {}
-	local project = premake.project
+---
 
 	local p = premake
+	p.project = p.api.container("project", p.solution)
+
+	local project = p.project
 	local tree = p.tree
 
 
 
 ---
--- Register a new container class to represent projects.
+-- Create a new project container instance.
 ---
 
-	local _prjClass = p.api.container {
-		name = "project",
-		parent = "solution",
-		init = function(prj)
-			prj.uuid = os.uuid(prj.name)
-			if p.api.scope.group then
-				prj.group = p.api.scope.group.name
-			else
-				prj.group = ""
-			end
+	function project.new(name)
+		local prj = p.container.new(project, name)
+		prj.uuid = os.uuid(name)
+		prj.filename = name
+
+		if p.api.scope.group then
+			prj.group = p.api.scope.group.name
+		else
+			prj.group = ""
 		end
-	}
+
+		return prj
+	end
 
 
 

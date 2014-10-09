@@ -5,218 +5,114 @@
 ---
 
 	local p = premake
-	p.containerClass = {}
 	p.container = {}
 
 	local container = p.container
 
 
 
--- The master list of registered container classes
+---
+-- Keep a master dictionary of container class, so they can be easily looked
+-- up by name (technically you could look at premake["name"] but that is just
+-- a coding convention and I don't want to count on it)
+---
 
-	container._classes = {}
+	container.classes = {}
 
 
 
 ---
--- The metatable allows container functions to be called with the ":" syntax,
--- and also allows API field values to be get and set as if they were direct
--- properties.
---
--- TODO: I think I'd like to get away from treating the fields as direct
--- properties on the containers (fine on the baked contexts later) and require
--- explicit fetch() and store() calls instead.
----
-
-	p.containerClass.__index = p.containerClass
-
-	p.container.__index = function(c, key)
-		local f = p.field.get(key)
-		if f then
-			return p.configset.fetch(c, f)
-		else
-			return p.container[key]
-		end
-	end
-
-
-	p.container.__newindex = function(c, key, value)
-		local f = p.field.get(key)
-		if f then
-			local status, err = p.configset.store(c, f, value)
-			if err then
-				error(err, 2)
-			end
-		else
-			rawset(c, key, value)
-			return value
-		end
-	end
-
-
-
----
--- A container class holds and operates on the metadata about a particular
--- type of container, including its name, parent container, and any child
--- containers. The container class is responsible for creating new instances
--- of its kind of containers.
---
--- @param def
---    A table containing metadata about the container class being created.
---    Supported keys are:
---
---     name (required)
---       The name of the new container class (e.g. "solution").
---     parent (optional)
---       The name of the parent container class (e.g. "solution").
---     init (optional)
---       An initializer function to call for new instances of this class.
---       Should accept the new instance object as its only argument.
---
---    Other keys are allowed and will be left intact.
---
--- @return
---    A new container class object if successful, else nil and an
---    error message.
----
-
-	function p.containerClass.define(def)
-		-- If the class has no special properties, allow it to be set using
-		-- just the class name instead of the whole key-value list.
-
-		if type(def) == "string" then
-			def = { name = def }
-		end
-
-		-- Sanity check my inputs
-
-		if not def.name then
-			return nil, "name is required"
-		end
-
-		if container._classes[def.name] then
-			return nil, "container class name already in use"
-		end
-
-		if def.parent and not container._classes[def.parent] then
-			return nil, "parent class does not exist"
-		end
-
-		-- Looks good, set myself up and add to master list
-
-		def._children = {}
-		def._listKey = def.name:plural()
-		setmetatable(def, p.containerClass)
-		container._classes[def.name] = def
-
-		-- Wire myself to my parent class
-
-		def.parent = container._classes[def.parent]
-		if def.parent then
-			table.insert(def.parent._children, def)
-		end
-
-		return def
-	end
-
-
-
----
--- Enumerate the child container class of a given class.
----
-
-	function p.containerClass:eachChildClass()
-		local children = self._children
-		local i = 0
-		return function ()
-			i = i + 1
-			if i <= #children then
-				return children[i]
-			end
-		end
-	end
-
-
-
----
--- Retrieve a container class by name.
+-- Define a new class of containers.
 --
 -- @param name
---    The class name.
+--    The name of the new container class. Used wherever the class needs to
+--    be shown to the end user in a readable way.
+-- @param parent (optional)
+--    If this class of container is intended to be contained within another,
+--    the containing class object.
 -- @return
---    The corresponding container class if found, nil otherwise.
+--    If successful, the new class descriptor object (a table). Otherwise,
+--    returns nil and an error message.
 ---
 
-	function p.containerClass.get(name)
-		return container._classes[name]
-	end
+	function container.newClass(name, parent)
+		local class = p.configset.new(parent)
+		class.name = name
+		class.pluralName = name:plural()
+		class.containedClasses = {}
 
-
-
----
--- Create a new instance of a container class.
---
--- @param name
---    The name for the container instance.
--- @return
---    A new instance of the container class.
----
-
-	function p.containerClass:new(name, parent)
-		local c = p.configset.new(parent)
-		setmetatable(c, p.container)
-
-		c.class = self
-		c.name = name
-		c.script = _SCRIPT
-		c.basedir = os.getcwd()
-		c.filename = name
-
-		if type(self.init) == "function" then
-			self.init(c)
+		if parent then
+			table.insert(parent.containedClasses, class)
 		end
 
-		return c
+		container.classes[name] = class
+		return class
 	end
 
 
 
 ---
--- Create a new child container of the given class, with the specified name.
+-- Create a new instance of a configuration container. This is just the
+-- generic base implementation, each container class will define their
+-- own version.
 --
--- @param cc
---    The class of child container to be fetched.
--- @param key
---    A string key or array index for the container.
 -- @param parent
---    The parent container instance.
+--    The class of container being instantiated.
+-- @param name
+--    The name for the new container instance.
 -- @return
---    The child container instance.
+--    A new container instance.
 ---
 
-	function container:createChild(cc, key, parent)
-		self[cc._listKey] = self[cc._listKey] or {}
-		local list = self[cc._listKey]
+	function container.new(class, name)
+		local self = p.configset.new()
+		setmetatable(self, p.configset.metatable(self))
 
-		local child = cc:new(key, parent)
-		child[parent.class.name] = parent  -- i.e. child.solution = sln
+		self.class = class
+		self.name = name
+		self.script = _SCRIPT
+		self.basedir = os.getcwd()
 
-		table.insert(list, child)
-		list[key] = child
-		return child
+		for childClass in container.eachChildClass(class) do
+			self[childClass.pluralName] = {}
+		end
+
+		return self
 	end
 
 
 
 ---
--- Return an iterator for the child containers of a particular class.
+-- Add a new child to an existing container instance.
 --
--- @param cc
---    The class of child container to be enumerated.
+-- @param self
+--    The container instance to hold the child.
+-- @param child
+--    The child container instance.
 ---
 
-	function container:eachChild(cc)
-		local children = self[cc._listKey] or {}
+	function container.addChild(self, child)
+		local children = self[child.class.pluralName]
+		table.insert(children, child)
+		children[child.name] = child
+
+		child.parent = self
+		child[self.class.name] = self
+	end
+
+
+
+---
+-- Enumerate all of the registered child classes of a specific container class.
+--
+-- @param class
+--    The container class to be enumerated.
+-- @return
+--    An iterator function for the container's child classes.
+---
+
+	function container.eachChildClass(class)
+		local children = class.containedClasses
 		local i = 0
 		return function ()
 			i = i + 1
@@ -229,17 +125,59 @@
 
 
 ---
--- Fetch the child container with the given container class and instance name.
+-- Enumerate all of the registered child instances of a specific container.
 --
--- @param cc
---    The class of child container to be fetched.
--- @param key
---    A string key or array index for the container.
+-- @param self
+--    The container to be queried.
+-- @param class
+--    The class of child containers to be enumerated.
 -- @return
---    The child container instance.
+--    An iterator function for the container's child classes.
 ---
 
-	function container:fetchChild(cc, key)
-		self[cc._listKey] = self[cc._listKey] or {}
-		return self[cc._listKey][key]
+	function container.eachChild(self, class)
+		local children = self[class.pluralName]
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= #children then
+				return children[i]
+			end
+		end
 	end
+
+
+
+---
+-- Retrieve the child container with the specified class and name.
+--
+-- @param self
+--    The container instance to query.
+-- @param class
+--    The class of the child container to be fetched.
+-- @param name
+--    The name of the child container to be fetched.
+-- @return
+--    The child instance if it exists, nil otherwise.
+---
+
+	function container.getChild(self, class, name)
+		local children = self[class.pluralName]
+		return children[name]
+	end
+
+
+
+---
+-- Retrieve a container class object.
+--
+-- @param name
+--    The name of the container class to retrieve.
+-- @return
+--    The container class object if it exists, nil otherwise.
+---
+
+	function container.getClass(name)
+		return container.classes[name]
+	end
+

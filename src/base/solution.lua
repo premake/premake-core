@@ -1,30 +1,26 @@
---
+---
 -- solution.lua
 -- Work with the list of solutions loaded from the script.
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
---
-
-	premake.solution = {}
-	local solution = premake.solution
+---
 
 	local p = premake
+	p.solution = p.api.container("solution", p.global)
+
+	local solution = p.solution
 	local tree = p.tree
 
 
 
 ---
--- Register a new container class to represent solutions.
+-- Create a new solution container instance.
 ---
 
-	local _slnClass = p.api.container {
-		name = "solution",
-	}
-
-	p.api.container {
-		name = "group",
-		parent = "solution",
-		placeholder = true,
-	}
+	function solution.new(name)
+		local sln = p.container.new(solution, name)
+		sln.filename = name
+		return sln
+	end
 
 
 

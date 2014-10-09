@@ -88,7 +88,7 @@
 			end
 		end
 
-		for rule in p.rules.each() do
+		for rule in p.rule.each() do
 			if act.onrule then
 				act.onrule(rule)
 			end

@@ -1,25 +1,24 @@
 ---
 -- base/rules.lua
---
 -- Defines rule sets for generated custom rule files.
---
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 ---
 
-	premake.rules = {}
-	local rules = premake.rules
-
 	local p = premake
+	p.rule = p.api.container("rule", p.global)
+
+	local rule = p.rule
 
 
 
 ---
--- Register a new container class to hold the rules.
+-- Create a new rule container instance.
 ---
 
-	local _ruleContainerClass = p.api.container {
-		name = "rule",
-	}
+	function rule.new(name)
+		return p.container.new(rule, name)
+	end
+
 
 
 
@@ -30,21 +29,7 @@
 --    An iterator function.
 ---
 
-	function rules.each()
-		return p.api.rootContainer():eachChild(_ruleContainerClass)
-	end
-
-
-
----
--- Retrieve a rule set by name or numeric index.
---
--- @param key
---    The rule key, either a string name or integer index.
--- @returns
---    The rule set with the provided key.
----
-
-	function rules.fetch(key)
-		return p.api.rootContainer():fetchChild(_ruleContainerClass, key)
+	function rule.each()
+		local root = p.api.rootContainer()
+		return p.container.eachChild(root, rule)
 	end
