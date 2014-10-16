@@ -103,6 +103,55 @@
 
 
 ---
+-- Process the contents of a container, which were populated by the project
+-- script, in preparation for doing work on the results, such as exporting
+-- project files.
+---
+
+	function container.bake(self)
+		if self._isBaked then
+			return self
+		end
+		self._isBaked = true
+
+		local ctx = p.context.new(self)
+
+		for key, value in pairs(self) do
+			ctx[key] = value
+		end
+
+		local parent = self.parent
+		ctx[parent.class.name] = parent
+
+		for class in container.eachChildClass(self.class) do
+			for child in container.eachChild(self, class) do
+				child.parent = ctx
+				child[self.class.name] = ctx
+			end
+		end
+
+		if type(self.class.bake) == "function" then
+			self.class.bake(ctx)
+		end
+
+		return ctx
+	end
+
+
+	function container.bakeChildren(self)
+		for class in container.eachChildClass(self.class) do
+			local children = self[class.pluralName]
+			for i = 1, #children do
+				local ctx = container.bake(children[i])
+				children[i] = ctx
+				children[ctx.name] = ctx
+			end
+		end
+	end
+
+
+
+---
 -- Enumerate all of the registered child classes of a specific container class.
 --
 -- @param class
