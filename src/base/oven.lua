@@ -9,15 +9,11 @@
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.oven = {}
-	local oven = premake.oven
-
 	local p = premake
-	local solution = p.solution
-	local project = p.project
-	local config = p.config
-	local fileconfig = p.fileconfig
-	local configset = p.configset
+
+	p.oven = {}
+
+	local oven = p.oven
 	local context = p.context
 
 
@@ -173,7 +169,7 @@
 			-- Check to make sure this configuration is supported by the current
 			-- action; add it to the project's configuration cache if so.
 
-			if premake.action.supportsconfig(cfg) then
+			if p.action.supportsconfig(cfg) then
 				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
 
@@ -191,7 +187,7 @@
 		-- to do this up front to make sure the sequence numbers are the same for
 		-- all the tools, even they reorder the source file list.
 
-		if project.iscpp(self) then
+		if p.project.iscpp(self) then
 			oven.assignObjectSequences(self)
 		end
 	end
@@ -248,8 +244,8 @@
 		local counts = {}
 		local configs = {}
 
-		for prj in solution.eachproject(sln) do
-			for cfg in project.eachconfig(prj) do
+		for prj in p.solution.eachproject(sln) do
+			for cfg in p.project.eachconfig(prj) do
 				-- get the dirs for this config, and associate them together,
 				-- and increment a counter for each one discovered
 				local dirs = getobjdirs(cfg)
@@ -337,7 +333,7 @@
 		local terms = table.deepcopy(ctx.terms)
 		terms.configurations = configurations
 		terms.platforms = platforms
-		ctx.configmap = configset.fetch(cset, premake.field.get("configmap"), terms)
+		ctx.configmap = p.configset.fetch(cset, p.field.get("configmap"), terms)
 	end
 
 
@@ -357,7 +353,7 @@
 	function oven.bakeConfigList(ctx, cfgs)
 		-- run them all through the project's config map
 		for i, cfg in ipairs(cfgs) do
-			cfgs[i] = project.mapconfig(ctx, cfg[1], cfg[2])
+			cfgs[i] = p.project.mapconfig(ctx, cfg[1], cfg[2])
 		end
 
 		-- walk through the result and remove any duplicates
@@ -394,12 +390,12 @@
 		-- More than a convenience; this is required to work properly with
 		-- external Visual Studio project files.
 
-		local system = premake.action.current().os or os.get()
+		local system = p.action.current().os or os.get()
 		local architecture = nil
 
 		if platform then
-			system = premake.api.checkValue(premake.fields.system, platform) or system
-			architecture = premake.api.checkValue(premake.fields.architecture, platform) or architecture
+			system = p.api.checkValue(p.fields.system, platform) or system
+			architecture = p.api.checkValue(p.fields.architecture, platform) or architecture
 		end
 
 		-- Wrap the projects's configuration set (which contains all of the information
@@ -481,7 +477,7 @@
 		-- project. Some files may only be included in a subset of configurations so
 		-- I need to look at them all.
 
-		for cfg in project.eachconfig(prj) do
+		for cfg in p.project.eachconfig(prj) do
 			table.foreachi(cfg.files, function(fname)
 
 				-- If this is the first time I've seen this file, start a new
@@ -489,12 +485,12 @@
 				-- and indexed for ordered iteration.
 
 				if not files[fname] then
-					local fcfg = fileconfig.new(fname, prj)
+					local fcfg = p.fileconfig.new(fname, prj)
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end
 
-				fileconfig.addconfig(files[fname], cfg)
+				p.fileconfig.addconfig(files[fname], cfg)
 
 			end)
 		end
@@ -540,8 +536,8 @@
 
 			local sequences = bases[file.basename]
 
-			for cfg in project.eachconfig(prj) do
-				local fcfg = premake.fileconfig.getconfig(file, cfg)
+			for cfg in p.project.eachconfig(prj) do
+				local fcfg = p.fileconfig.getconfig(file, cfg)
 				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
 					fcfg.sequence = sequences[cfg] or 0
 					sequences[cfg] = fcfg.sequence + 1
@@ -573,10 +569,10 @@
 
 		-- compute build and link targets
 		if cfg.project and cfg.kind then
-			cfg.buildtarget = config.gettargetinfo(cfg)
-			cfg.buildtarget.relpath = project.getrelative(cfg.project, cfg.buildtarget.abspath)
+			cfg.buildtarget = p.config.gettargetinfo(cfg)
+			cfg.buildtarget.relpath = p.project.getrelative(cfg.project, cfg.buildtarget.abspath)
 
-			cfg.linktarget = config.getlinkinfo(cfg)
-			cfg.linktarget.relpath = project.getrelative(cfg.project, cfg.linktarget.abspath)
+			cfg.linktarget = p.config.getlinkinfo(cfg)
+			cfg.linktarget.relpath = p.project.getrelative(cfg.project, cfg.linktarget.abspath)
 		end
 	end
