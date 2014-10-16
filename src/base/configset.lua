@@ -1,5 +1,5 @@
 --
--- configset.lua
+-- base/configset.lua
 --
 -- A configuration set manages a collection of fields, which are organized
 -- into "blocks". Each block stores a set of field-value pairs, along with
@@ -10,12 +10,19 @@
 -- and the corresponding value types for those fields. Only fields that have
 -- been registered via field.new() can be stored.
 --
+-- TODO: I may roll this functionality up into the container API at some
+-- point. If you find yourself using or extending this code for your own
+-- work give me a shout before you go too far with it so we can coordinate.
+--
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	premake.configset = {}
-	local configset = premake.configset
-	local criteria = premake.criteria
+	local p = premake
+
+	p.configset = {}
+
+	local configset = p.configset
+	local criteria = p.criteria
 
 
 --
@@ -61,7 +68,7 @@
 	function configset.fetch(cset, field, context)
 		context = context or {}
 
-		if premake.field.merges(field) then
+		if p.field.merges(field) then
 			return configset._fetchMerged(cset, field, context)
 		else
 			return configset._fetchDirect(cset, field, context)
@@ -153,7 +160,7 @@
 
 				local value = block[key]
 				if value then
-					result = premake.field.merge(field, result, value)
+					result = p.field.merge(field, result, value)
 				end
 			end
 		end
@@ -174,7 +181,7 @@
 	function configset.metatable(cset)
 		return {
 			__newindex = function(tbl, key, value)
-				local f = premake.field.get(key)
+				local f = p.field.get(key)
 				if f then
 					local status, err = configset.store(cset, f, value)
 					if err then
@@ -186,7 +193,7 @@
 				end
 			end,
 			__index = function(tbl, key)
-				local f = premake.field.get(key)
+				local f = p.field.get(key)
 				if f then
 					return configset.fetch(cset, f)
 				else
@@ -286,7 +293,7 @@
 		local current = cset.current
 
 		local status, result = pcall(function ()
-			current[key] = premake.field.store(field, current[key], value)
+			current[key] = p.field.store(field, current[key], value)
 		end)
 
 		if not status then
@@ -330,7 +337,7 @@
 		-- hardcoded inside of _fetchMerged(). Oh, and some of the logic in
 		-- api.remove() needs to get pushed down to here (or field).
 
-		values = premake.field.remove(field, {}, values)
+		values = p.field.remove(field, {}, values)
 		for i, value in ipairs(values) do
 			if type(value) == "string" then
 				values[i] = path.wildcards(value):lower()

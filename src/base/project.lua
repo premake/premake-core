@@ -1,33 +1,34 @@
---
+---
 -- project.lua
 -- Premake project object API
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
---
-
-	premake.project = {}
-	local project = premake.project
+---
 
 	local p = premake
+	p.project = p.api.container("project", p.solution)
+
+	local project = p.project
 	local tree = p.tree
 
 
 
 ---
--- Register a new container class to represent projects.
+-- Create a new project container instance.
 ---
 
-	local _prjClass = p.api.container {
-		name = "project",
-		parent = "solution",
-		init = function(prj)
-			prj.uuid = os.uuid(prj.name)
-			if p.api.scope.group then
-				prj.group = p.api.scope.group.name
-			else
-				prj.group = ""
-			end
+	function project.new(name)
+		local prj = p.container.new(project, name)
+		prj.uuid = os.uuid(name)
+		prj.filename = name
+
+		if p.api.scope.group then
+			prj.group = p.api.scope.group.name
+		else
+			prj.group = ""
 		end
-	}
+
+		return prj
+	end
 
 
 
@@ -108,27 +109,6 @@
 
 
 
---
--- Locate a project by name; case insensitive.
---
--- @param name
---    The name of the project for which to search.
--- @return
---    The corresponding project, or nil if no matching project could be found.
---
-
-	function project.findproject(name)
-		for sln in premake.solution.each() do
-			for _, prj in ipairs(sln.projects) do
-				if (prj.name == name) then
-					return  prj
-				end
-			end
-		end
-	end
-
-
---
 -- Retrieve the project's configuration information for a particular build
 -- configuration/platform pair.
 --
@@ -140,7 +120,6 @@
 --    Optional; the name of the platform on which to filter.
 -- @return
 --    A configuration object.
---
 
 	function project.getconfig(prj, buildcfg, platform)
 		-- if no build configuration is specified, return the "root" project
@@ -200,17 +179,6 @@
 			prj.dependencies = result
 		end
 		return prj.dependencies
-	end
-
-
-
----
--- Returns the file name for this project. Also works with solutions.
--- Deprecated 11 Aug 2014
----
-
-	function project.getfilename(prj, ext)
-		return premake.filename(prj, ext)
 	end
 
 

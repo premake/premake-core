@@ -4,10 +4,10 @@
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 ---
 
-	premake.action = {}
-	local action = premake.action
-
 	local p = premake
+	p.action = {}
+
+	local action = premake.action
 
 
 
@@ -77,7 +77,7 @@
 	function action.call(name)
 		local act = action._list[name]
 
-		for sln in p.solution.each() do
+		for sln in p.global.eachSolution() do
 			if act.onsolution then
 				act.onsolution(sln)
 			end
@@ -88,7 +88,7 @@
 			end
 		end
 
-		for rule in p.rules.each() do
+		for rule in p.global.eachRule() do
 			if act.onrule then
 				act.onrule(rule)
 			end
