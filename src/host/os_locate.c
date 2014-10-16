@@ -41,16 +41,16 @@ int os_locate(lua_State* L)
 		/* ...relative to the CWD */
 		lua_pushstring(L, ".");
 
+		/* ...on the paths specified by --scripts, if set */
+		if (scripts_path) {
+			lua_pushstring(L, scripts_path);
+		}
+
 		/* ... relative to ~/.premake */
 		if (vars) {
 			lua_getglobal(L, "_USER_HOME_DIR");
 			lua_pushstring(L, "/.premake");
 			lua_concat(L, 2);
-		}
-
-		/* ...on the paths specified by --scripts, if set */
-		if (scripts_path) {
-			lua_pushstring(L, scripts_path);
 		}
 
 		/* ...on the PREMAKE_PATH environment variable, if set */
