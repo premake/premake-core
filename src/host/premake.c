@@ -246,6 +246,16 @@ int premake_locate(lua_State* L, const char* argv0)
 
 
 
+const char* set_scripts_path(const char* relativePath)
+{
+	char* path = (char*)malloc(PATH_MAX);
+	do_getabsolute(path, relativePath, NULL);
+	scripts_path = path;
+	return scripts_path;
+}
+
+
+
 /**
  * Copy all command line arguments into the script-side _ARGV global, and
  * check for the presence of a /scripts=<path> argument to help locate
@@ -267,11 +277,11 @@ int process_arguments(lua_State* L, int argc, const char** argv)
 		 * manifest and scripts later if necessary */
 		if (strncmp(argv[i], "/scripts=", 9) == 0)
 		{
-			scripts_path = argv[i] + 9;
+			argv[i] = set_scripts_path(argv[i] + 9);
 		}
 		else if (strncmp(argv[i], "--scripts=", 10) == 0)
 		{
-			scripts_path = argv[i] + 10;
+			argv[i] = set_scripts_path(argv[i] + 10);
 		}
 	}
 	lua_setglobal(L, "_ARGV");
