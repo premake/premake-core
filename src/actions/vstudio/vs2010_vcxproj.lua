@@ -242,6 +242,7 @@
 		if cfg.kind == p.UTILITY then
 			return {
 				m.customRuleVars,
+				m.buildEvents,
 			}
 		else
 			return {
