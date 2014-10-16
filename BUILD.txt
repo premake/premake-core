@@ -74,17 +74,14 @@ RUNTIME SCRIPT LOADING
  removes the build from the change-build-test cycle and really speeds up
  development.
 
- Assuming you have already built an executable, you just need to tell
- Premake where to look for the scripts. If, for example, you wanted to
- run from the top-level Premake folder, you could do this:
+ If you are running Premake from the top of its own source tree (where its
+ premake5.lua is located) you will get this behavior automatically. If you
+ are running Premake from some other location, use the --scripts option to
+ provide the path to that top-level folder:
 
-    $ bin/release/premake5 --scripts=src test
-
- If you are running from a different location, adjust value for the scripts
- argument accordingly.
+    $ bin/release/premake5 --scripts=../path/to/premake test
 
  If you find yourself doing this repeatedly, or if you want Premake to be
  able to find other, custom scripts, you can also set a search path with the
  PREMAKE_PATH environment variable. Set it just like you would set your
  system PATH variable.
-
