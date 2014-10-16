@@ -90,9 +90,7 @@
 -- Generate an index of the script file names. Script names are stored
 -- relative to the directory containing the manifest, i.e. the main
 -- Xcode script, which is at $/modules/xcode/xcode.lua is stored as
--- "xcode/xcode.lua". Core scripts currently get special treatment and
--- are stored as "base/os.lua" instead of "core/base/os.lua"; I would
--- like to treat core like just another module eventually.
+-- "xcode/xcode.lua".
 
 	table.insert(result, "const char* builtin_scripts_index[] = {")
 
@@ -105,18 +103,12 @@
 		for fi = 1, #files do
 			local filename = path.join(manifestDir, files[fi])
 			filename = path.getrelative(baseDir, filename)
-
-			-- core files fix-up for backward compatibility
-			if filename:startswith("src/") then
-				filename = filename:sub(5)
-			end
-
 			table.insert(result, '\t"' .. filename .. '",')
 		end
 	end
 
-	table.insert(result, '\t"_premake_main.lua",')
-	table.insert(result, '\t"_manifest.lua",')
+	table.insert(result, '\t"src/_premake_main.lua",')
+	table.insert(result, '\t"src/_manifest.lua",')
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")
 	table.insert(result, "")

@@ -135,7 +135,7 @@ int premake_execute(lua_State* L, int argc, const char** argv)
 	}
 
 	/* load the main script */
-	if (luaL_dofile(L, "_premake_main.lua") != OKAY) {
+	if (luaL_dofile(L, "src/_premake_main.lua") != OKAY) {
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
 	}
@@ -312,7 +312,7 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 #if !defined(NDEBUG)
 	if (!warned) {
 		warned = 1;
-		printf("** warning: using embedded scripts; use /scripts argument to load from files\n");
+		printf("** warning: using embedded script '%s'; use /scripts argument to load from files\n", filename);
 	}
 #endif
 
