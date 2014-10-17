@@ -1,67 +1,27 @@
---
+---
 -- solution.lua
 -- Work with the list of solutions loaded from the script.
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
---
-
-	premake.solution = {}
-	local solution = premake.solution
+---
 
 	local p = premake
+	p.solution = p.api.container("solution", p.global)
+
+	local solution = p.solution
 	local tree = p.tree
 
 
 
 ---
--- Register a new container class to represent solutions.
+-- Create a new solution container instance.
 ---
 
-	local _slnClass = p.api.container {
-		name = "solution",
-	}
-
-	p.api.container {
-		name = "group",
-		parent = "solution",
-		placeholder = true,
-	}
-
-
-
---
--- Add a new project to the solution.
---
--- @param sln
---    The solution to contain the project.
--- @param prj
---    The new project object.
---
-
-	function solution.addproject(sln, prj)
-		-- add keyed by array index AND name
-		table.insert(sln.projects, prj)
-		sln.projects[prj.name] = prj
+	function solution.new(name)
+		local sln = p.container.new(solution, name)
+		sln.filename = name
+		return sln
 	end
 
-
---
--- Iterate over the collection of solutions in a session.
---
--- @returns
---    An iterator function.
---
-
-	function solution.each()
-		local root = p.api.rootContainer()
-
-		local i = 0
-		return function ()
-			i = i + 1
-			if i <= #root.solutions then
-				return root.solutions[i]
-			end
-		end
-	end
 
 
 --
@@ -131,24 +91,6 @@
 
 
 --
--- Retrieve a solution by name or index.
---
--- @param key
---    The solution key, either a string name or integer index.
--- @returns
---    The solution with the provided key.
---
-
-	function solution.get(key)
-		local root = p.api.rootContainer()
-		if root.solutions then
-			return root.solutions[key]
-		end
-	end
-
-
-
---
 -- Retrieve the tree of project groups.
 --
 -- @param sln
@@ -199,46 +141,3 @@
 		sln = premake.oven.bakeSolution(sln)
 		return sln.projects[idx]
 	end
-
-
---
--- Checks to see if any projects contained by a solution use
--- a C or C++ as their language.
---
--- @param sln
---    The solution to query.
--- @return
---    True if at least one project in the solution uses C or C++.
---
-
-	function solution.hascppproject(sln)
-		for prj in solution.eachproject(sln) do
-			if p.project.iscpp(prj) then
-				return true
-			end
-		end
-		return false
-	end
-
-
---
--- Checks to see if any projects contained by a solution use
--- a .NET language.
---
--- @param sln
---    The solution to query.
--- @return
---    True if at least one project in the solution uses a
---    .NET language
---
-
-	function solution.hasdotnetproject(sln)
-		for prj in solution.eachproject(sln) do
-			if p.project.isdotnet(prj) then
-				return true
-			end
-		end
-		return false
-	end
-
-

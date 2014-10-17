@@ -4,94 +4,72 @@
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.api = {}
-	local api = premake.api
-
 	local p = premake
+	p.api = {}
+
+	local api = premake.api
 	local configset = p.configset
 
 
 
 ---
 -- Set up a place to store the current active objects in each configuration
--- scope (e.g. solutions, projects, groups, and configurations). Initialize
--- it with a "root" container to contain the other containers, as well as the
--- global configuration settings which should apply to all of them.
---
--- TODO: this should be hidden, with a perhaps a read-only accessor to fetch
--- individual scopes for testing.
+-- scope (e.g. solutions, projects, groups, and configurations). This likely
+-- ought to be internal scope, but it is useful for testing.
 ---
 
 	api.scope = {}
-	api.scope.root = p.containerClass.define("root"):new("root")
 
 
 
 ---
--- Register a new class of configuration container. A configuration container
--- can hold configuration settings, as well as child configuration containers.
--- Solutions, projects, and rules are all examples of containers.
+-- Define a new class of configuration container. A container can receive and
+-- store configuration blocks, which are what hold the individial settings
+-- from the scripts. A container can also hold one or more kinds of child
+-- containers; a solution can contain projects, for instance.
 --
--- @param def
---    The container definition; see premake.container.define().
+-- @param containerName
+--    The name of the new container type, e.g. "solution". Used to define a
+--    corresponding global function, e.g. solution() to create new instances
+--    of the container.
+-- @param parentContainer (optional)
+--    The container that can contain this one. For a project, this would be
+--    the solution container class.
 -- @returns
 --    The newly defined container class.
 ---
 
-	function api.container(def)
-		-- for now, everything inherits the root configuration
-		if not def.parent then
-			def.parent = "root"
-		end
-
-		-- register the new class; validation checks may cause a failure
-		local cc, err = p.containerClass.define(def)
-		if not cc then
+	function api.container(containerName, parentContainer)
+		local class, err = p.container.newClass(containerName, parentContainer)
+		if not class then
 			error(err, 2)
 		end
 
-		-- create a global function to create new instances, e.g project()
-		_G[cc.name] = function(name)
-			return api._setScope(cc, name)
+		_G[containerName] = function(name)
+			return api._setContainer(class, name)
 		end
 
-		return cc
+		return class
 	end
 
 
 
 ---
--- Return the currently active configuration container instance.
----
-
-	function api.currentContainer()
-		return api.scope.current or api.scope.root
-	end
-
-
-
----
--- Return the root container, which contains the global configuration and
--- all of the child containers (solutions, rules).
+-- Return the global configuration container. You could just call global()
+-- too, but this is much faster.
 ---
 
 	function api.rootContainer()
-		return api.scope.root
+		return api.scope.global
 	end
 
 
 
----
--- Recursively clear any child scopes for a container class. For example,
--- if a solution is being activated, clear the project and group scopes,
--- as those are children of solutions. If the root scope is made active,
--- all child scopes will be cleared.
----
 
-	function api._clearChildScopes(cc)
-		for ch in cc:eachChildClass() do
-			api.scope[ch.name] = nil
-			api._clearChildScopes(ch)
+	function api._clearContainerChildren(class)
+		for childClass in p.container.eachChildClass(class) do
+			api.scope[childClass.name] = nil
+			api._clearContainerChildren(childClass)
 		end
 	end
 
@@ -103,7 +81,7 @@
 -- to active a container, that call comes here (see api.container() for the
 -- details on how that happens).
 --
--- @param cc
+-- @param class
 --    The container class being activated, e.g. a project or solution.
 -- @param name
 --    The name of the container instance to be activated. If a container
@@ -114,70 +92,61 @@
 --    The container instance.
 ---
 
-	function api._setScope(cc, name)
+	function api._setContainer(class, name)
+		local instance
+
 		-- for backward compatibility, "*" activates the parent container
 		if name == "*" then
-			return api._setScope(cc.parent)
+			return api._setContainer(class.parent)
 		end
 
 		-- if name is not set, use whatever was last made current
-		local container
 		if not name then
-			container = api.scope[cc.name]
-			if not container then
-				error("no " .. cc.name .. " in scope", 3)
+			instance = api.scope[class.name]
+			if not instance then
+				error("no " .. class.name .. " in scope", 3)
 			end
 		end
 
-		if not container then
-			-- all containers should be contained within a parent
-			local parent = api.scope[cc.parent.name]
+		-- otherwise, look up the instance by name
+		local parent
+		if not instance and class.parent then
+			parent = api.scope[class.parent.name]
 			if not parent then
-				error("no active " .. cc.parent.name, 3)
+				error("no " .. class.parent.name .. " in scope", 3)
 			end
+			instance = p.container.getChild(parent, class, name)
+		end
 
-			-- fetch (creating if necessary) the container
-			container = parent:fetchChild(cc, name)
-			if not container then
-				container = parent:createChild(cc, name, parent)
-			else
-				configset.addFilter(container, {}, os.getcwd())
+		-- if I have an existing instance, create a new configuration
+		-- block for it so I don't pick up an old filter
+		if instance then
+			configset.addFilter(instance, {}, os.getcwd())
+		end
+
+		-- otherwise, a new instance
+		if not instance then
+			instance = class.new(name)
+			if parent then
+				p.container.addChild(parent, instance)
 			end
 		end
 
-		-- clear out any active child container types
-		api._clearChildScopes(cc)
+		-- clear out any active child containers that might be active
+		-- (recursive call, so needs to be its own function)
+		api._clearContainerChildren(class)
 
-		-- activate the container, as well as its ancestors
-		if not cc.placeholder then
-			api.scope.current = container
+		-- active this container, as well as it ancestors
+		if not class.placeholder then
+			api.scope.current = instance
 		end
-		while container.parent do
-			api.scope[container.class.name] = container
-			container = container.parent
+
+		while instance do
+			api.scope[instance.class.name] = instance
+			instance = instance.parent
 		end
 
 		return api.scope.current
-	end
-
-
-
----
--- Find the closest active scope for the given container class. If no
--- exact instance of this container class is in scope, searches up the
--- class hierarchy to find the closest parent that is in scope.
---
--- @param cc
---    The container class to target.
--- @return
---    The closest available active container instance.
----
-
-	function api._target(cc)
-		while not api.scope[cc.name] do
-			cc = cc.parent
-		end
-		return api.scope[cc.name]
 	end
 
 
@@ -458,36 +427,29 @@
 ---
 
 	function api.target(field)
-		-- if nothing is in scope, use the global root scope
+		local scopes = field.scopes
+		for i = 1, #scopes do
+			local scope = scopes[i]
 
-		if not api.scope.current then
-			return api.scope.root
-		end
-
-		-- use the current scope if it falls within the container hierarchy
-		-- of one of this field's target scopes; it is okay to set a value of
-		-- the parent of container (e.g. a project-level value can be set on a
-		-- solution, since it will be inherited).
-
-		local currentClass = api.scope.current.class
-		for i = 1, #field.scopes do
-			-- temporary: map config scope to the desired container class; will
-			-- go away once everything is ported to containers
-			local targetScope = field.scopes[i]
-			if targetScope == "config" then
-				targetScope = "project"
+			-- TODO: rules should be able to contain filter blocks too, but
+			-- to all the existing code expects the "config" scope to mean
+			-- project settings. Will revisit.
+			if scope == "config" then
+				scope = "project"
 			end
 
-			local targetClass = p.containerClass.get(targetScope)
-			repeat
-				if currentClass == targetClass then
+			-- If anything in the currently active container's hierarchy is
+			-- compatibile with this scope, then I can use it.
+			local currentClass = api.scope.current.class
+			local targetClass = p.container.getClass(scope)
+			while targetClass do
+				if targetClass.name == currentClass.name then
 					return api.scope.current
 				end
 				targetClass = targetClass.parent
-			until not targetClass
+			end
 		end
 
-		-- this field's scope isn't available
 		return nil
 	end
 
@@ -678,7 +640,7 @@
 
 	function api.reset()
 		-- Clear out all top level objects
-		api.scope.root.solutions = {}
+		api.scope.global.solutions = {}
 
 		-- Remove all custom variables
 		local vars = api.getCustomVars()
@@ -1056,12 +1018,11 @@
 ---
 
 	function configuration(terms)
-		local target = api.currentContainer()
 		if terms then
 			if terms == "*" then terms = nil end
-			configset.addblock(target, {terms}, os.getcwd())
+			configset.addblock(api.scope.current, {terms}, os.getcwd())
 		end
-		return target
+		return api.scope.current
 	end
 
 
@@ -1072,10 +1033,9 @@
 ---
 
 	function filter(terms)
-		local target = api.currentContainer()
 		if terms then
 			if terms == "*" then terms = nil end
-			local ok, err = configset.addFilter(target, {terms}, os.getcwd())
+			local ok, err = configset.addFilter(api.scope.current, {terms}, os.getcwd())
 			if not ok then
 				error(err, 2)
 			end

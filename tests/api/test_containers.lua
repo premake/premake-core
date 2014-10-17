@@ -24,7 +24,7 @@
 --
 
 	function suite.solution_createsOnFirstUse()
-		test.isnotnil(premake.solution.get("MySolution"))
+		test.isnotnil(premake.global.getSolution("MySolution"))
 	end
 
 	function suite.project_createsOnFirstUse()

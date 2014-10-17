@@ -16,11 +16,11 @@
 	local sln, prj
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(sln, 1)
 	end
 
 

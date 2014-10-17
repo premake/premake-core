@@ -20,12 +20,12 @@
 		"base/globals.lua",
 
 		-- configuration data
-		"base/container.lua",
 		"base/field.lua",
 		"base/criteria.lua",
 		"base/detoken.lua",
 		"base/configset.lua",
 		"base/context.lua",
+		"base/container.lua",
 
 		-- runtime switches
 		"base/option.lua",
@@ -35,7 +35,9 @@
 		"base/api.lua",
 
 		-- project objects
+		"base/global.lua",
 		"base/solution.lua",
+		"base/group.lua",
 		"base/project.lua",
 		"base/config.lua",
 		"base/fileconfig.lua",
