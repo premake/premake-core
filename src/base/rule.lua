@@ -1,5 +1,5 @@
 ---
--- base/rules.lua
+-- base/rule.lua
 -- Defines rule sets for generated custom rule files.
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 ---
