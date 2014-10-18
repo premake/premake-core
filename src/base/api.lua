@@ -49,6 +49,12 @@
 			return api._setContainer(class, name)
 		end
 
+		_G["external" .. containerName:capitalized()] = function(name)
+			local c = _G[containerName](name)
+			c.external = true
+			return c
+		end
+
 		return class
 	end
 
@@ -1081,26 +1087,6 @@
 				error(err, 2)
 			end
 		end
-	end
-
-
-
---
--- Activates a reference to an external, non-Premake generated project.
---
--- @param name
---    The name of the project. If a project with this name already
---    exists, it is made current, otherwise a new project is created
---    with this name. If no name is provided, the most recently defined
---    project is made active.
--- @return
---    The active project object.
---
-
-	function external(name)
-		local prj = project(name)
-		prj.external = true;
-		return prj
 	end
 
 

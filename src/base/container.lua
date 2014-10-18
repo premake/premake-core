@@ -72,6 +72,7 @@
 		self.name = name
 		self.script = _SCRIPT
 		self.basedir = os.getcwd()
+		self.external = false
 
 		for childClass in container.eachChildClass(class) do
 			self[childClass.pluralName] = {}

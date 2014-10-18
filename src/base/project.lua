@@ -13,6 +13,15 @@
 
 
 ---
+-- Alias the old external() call to the new externalProject(), to distinguish
+-- between it and externalRule().
+---
+
+	external = externalProject
+
+
+
+---
 -- Create a new project container instance.
 ---
 
