@@ -37,6 +37,7 @@ return {
 	"oven/test_objdirs.lua",
 
 	-- API tests
+	"api/test_boolean_kind.lua",
 	"api/test_containers.lua",
 	"api/test_directory_kind.lua",
 	"api/test_list_kind.lua",

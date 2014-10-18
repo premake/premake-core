@@ -687,6 +687,47 @@
 
 
 
+---
+-- Boolean field kind; converts common yes/no strings into true/false values.
+---
+
+	premake.field.kind("boolean", {
+		store = function(field, current, value, processor)
+			local mapping = {
+				["false"] = false,
+				["no"] = false,
+				["off"] = false,
+				["on"] = true,
+				["true"] = true,
+				["yes"] = true,
+			}
+
+			if type(value) == "string" then
+				value = mapping[value:lower()]
+				if value == nil then
+					error { msg="expected boolean; got " .. value }
+				end
+				return value
+			end
+
+			if type(value) == "boolean" then
+				return value
+			end
+
+			if type(value) == "number" then
+				return (value ~= 0)
+			end
+
+			return (value ~= nil)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
+
+
+
 --
 -- Directory data kind; performs wildcard directory searches, converts
 -- results to absolute paths.
