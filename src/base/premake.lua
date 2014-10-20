@@ -25,6 +25,10 @@
 	local _indentString = "\t"
 	local _indentLevel = 0
 
+-- Set up the global configuration scope. There can be only one.
+
+	global("root")
+
 
 
 ---
@@ -306,7 +310,7 @@ end
 	function premake.validate()
 		local ctx = {}
 
-		for sln in solution.each() do
+		for sln in premake.global.eachSolution() do
 			premake.validateSolution(sln, ctx)
 
 			for prj in solution.eachproject(sln) do

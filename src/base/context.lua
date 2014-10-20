@@ -1,8 +1,5 @@
 --
--- context.lua
---
--- DO NOT USE THIS YET! I am just getting started here; please wait until
--- I've had a chance to build it out more before using.
+-- base/context.lua
 --
 -- Provide a context for pulling out values from a configuration set. Each
 -- context has an associated list of terms which constrain the values that
@@ -10,12 +7,19 @@
 --
 -- The context also provides caching for the values returned from the set.
 --
+-- TODO: I may roll this functionality up into the container API at some
+-- point. If you find yourself using or extending this code for your own
+-- work give me a shout before you go too far with it so we can coordinate.
+--
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	premake.context = {}
-	local context = premake.context
-	local configset = premake.configset
+	local p = premake
+
+	p.context = {}
+
+	local context = p.context
+	local configset = p.configset
 
 
 --
@@ -160,7 +164,7 @@
 		-- If the requested key doesn't have a corresponding field, it is just
 		-- a regular value to be stored and fetched from the table.
 
-		local field = premake.field.get(key)
+		local field = p.field.get(key)
 		if not field then
 			return rawget(ctx, key)
 		end
@@ -172,7 +176,7 @@
 		if value then
 			-- do I need to expand tokens?
 			if field and field.tokens then
-				value = premake.detoken.expand(value, ctx.environ, field.paths, ctx._basedir)
+				value = p.detoken.expand(value, ctx.environ, field.paths, ctx._basedir)
 			end
 
 			-- store the result for later lookups
