@@ -244,7 +244,7 @@
 
 		-- create a setter function for it
 		_G[name] = function(value)
-			return api.callback(field, value)
+			return api.storeField(field, value)
 		end
 
 		if premake.field.removes(field) then
@@ -466,7 +466,7 @@
 -- gets parceled out to the individual set...() functions.
 --
 
-	function api.callback(field, value)
+	function api.storeField(field, value)
 		if not value then
 			return
 		end
@@ -490,6 +490,7 @@
 			error(err, 3)
 		end
 	end
+
 
 
 --
@@ -648,16 +649,6 @@
 		-- Clear out all top level objects, but keep the root config
 		api.scope.global.rules = {}
 		api.scope.global.solutions = {}
-
-		-- Remove all custom variables
-		local vars = api.getCustomVars()
-		for i, var in ipairs(vars) do
-			local f = premake.field.get(var)
-			api.unregister(f)
-		end
-
-		-- Remove all custom list variable formats
-		api._customVarFormats = {}
 	end
 
 
@@ -1113,83 +1104,4 @@
 
 	function newoption(opt)
 		premake.option.add(opt)
-	end
-
-
------------------------------------------------------------------------------
---
--- The custom*() functions act as wrappers that define new ad-hoc fields
--- on the fly, to support arbitrary custom rule variables. These should be
--- considered experimental and temporary for now as a more complete rule-
--- generating solution will certainly be needed, but I will do my best to
--- deprecate them cleanly when that time comes.
---
------------------------------------------------------------------------------
-
-	api._customVarFormats = {}
-
-	function api.getCustomVars()
-		local vars = {}
-		for f in premake.field.each() do
-			if f.name:startswith("_custom_") then
-				table.insert(vars, f.name)
-			end
-		end
-		return vars
-	end
-
-
-	function api.getCustomVarKey(var)
-		return var:sub(9)
-	end
-
-
-	function api.getCustomListFormat(var)
-		local key = api.getCustomVarKey(var)
-		return api._customVarFormats[key] or { " " }
-	end
-
-
-	function api.setCustomVar(name, kind, value)
-		local fieldName = "_custom_" .. name
-		local field = premake.field.get(fieldName)
-		if not field then
-			field = premake.field.new {
-				name = fieldName,
-				scope = "config",
-				kind = kind,
-				tokens = true,
-			}
-		end
-		api.callback(field, value)
-	end
-
-
-	function customVar(value)
-		if type(value) ~= "table" or #value ~= 2 then
-			error("invalid value for customVar()")
-		end
-		api.setCustomVar(value[1], "string", value[2])
-	end
-
-
-	function customList(value)
-		if type(value) ~= "table" or #value < 2 then
-			error("invalid value for customList()")
-		end
-
-		local name = value[1]
-		table.remove(value, 1)
-		api.setCustomVar(name, "list:string", value)
-	end
-
-
-	function customListFormat(value)
-		if type(value) ~= "table" or #value < 2 then
-			error("invalid value for customListFormat()")
-		end
-
-		local name = value[1]
-		table.remove(value, 1)
-		api._customVarFormats[name] = value
 	end

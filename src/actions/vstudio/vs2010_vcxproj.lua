@@ -492,22 +492,16 @@
 ---
 
 	function m.ruleVars(cfg)
-		local vars = p.api.getCustomVars()
 		for rule in p.global.eachRule() do
 			local contents = p.capture(function ()
 				p.push()
-				for _, var in ipairs(vars) do
-					if cfg[var] then
-						local key = p.api.getCustomVarKey(var)
-						local value = cfg[var]
-
-						if type(value) == "table" then
-							local fmt = p.api.getCustomListFormat(var)
-							value = table.concat(value, fmt[1])
-						end
-
+				for prop in p.rule.eachProperty(rule) do
+					local fld = p.rule.getPropertyField(rule, prop)
+					local value = cfg[fld.name]
+					if value then
+						value = p.rule.getPropertyString(rule, prop, value)
 						if value and #value > 0 then
-							m.element(key, nil, '%s', value)
+							m.element(prop.name, nil, '%s', value)
 						end
 					end
 				end
@@ -559,12 +553,12 @@
 ---
 
 	m.elements.fileGroups = {
-		"ClInclude",
-		"ClCompile",
-		"None",
-		"ResourceCompile",
-		"CustomBuild",
-		"CustomRule"
+		"clInclude",
+		"clCompile",
+		"none",
+		"resourceCompile",
+		"customBuild",
+		"customRule"
 	}
 
 	m.elements.files = function(prj, groups)
@@ -583,7 +577,7 @@
 	end
 
 
-	function m.ClCompileFiles(prj, group)
+	function m.clCompileFiles(prj, group)
 		local files = group.ClCompile or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -622,7 +616,7 @@
 	end
 
 
-	function m.ClIncludeFiles(prj, groups)
+	function m.clIncludeFiles(prj, groups)
 		local files = groups.ClInclude or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -634,7 +628,7 @@
 	end
 
 
-	function m.CustomBuildFiles(prj, groups)
+	function m.customBuildFiles(prj, groups)
 		local files = groups.CustomBuild or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -672,48 +666,41 @@
 	end
 
 
-	function m.CustomRuleFiles(prj, groups)
-		local vars = p.api.getCustomVars()
-
-		-- Look for rules that aren't in the built-in rule list
-		for rule, files in pairs(groups) do
-			if not table.contains(m.elements.fileGroups, rule) and #files > 0 then
+	function m.customRuleFiles(prj, groups)
+		for rule in p.global.eachRule() do
+			local files = groups[rule.name]
+			if files and #files > 0 then
 				p.push('<ItemGroup>')
-				for _, file in ipairs(files) do
 
-					-- Capture any rule variables that have been set
+				for _, file in ipairs(files) do
 					local contents = p.capture(function()
 						p.push()
-						for _, var in ipairs(vars) do
+						for prop in p.rule.eachProperty(rule) do
+							local fld = p.rule.getPropertyField(rule, prop)
+
 							for cfg in project.eachconfig(prj) do
-								local condition = m.condition(cfg)
 								local fcfg = fileconfig.getconfig(file, cfg)
-								if fcfg and fcfg[var] then
-									local key = p.api.getCustomVarKey(var)
-									local value = fcfg[var]
-
-									if type(value) == "table" then
-										local fmt = p.api.getCustomListFormat(var)
-										value = table.concat(value, fmt[1])
-									end
-
+								if fcfg and fcfg[fld.name] then
+									local value = p.rule.getPropertyString(rule, prop, fcfg[fld.name])
 									if value and #value > 0 then
-										m.element(key, condition, '%s', value)
+										m.element(prop.name, m.condition(cfg), '%s', value)
 									end
 								end
 							end
+
 						end
 						p.pop()
 					end)
 
 					if #contents > 0 then
-						p.push('<%s Include=\"%s\">', rule, path.translate(file.relpath))
+						p.push('<%s Include=\"%s\">', rule.name, path.translate(file.relpath))
 						p.outln(contents)
-						p.pop('</%s>', rule)
+						p.pop('</%s>', rule.name)
 					else
-						p.x('<%s Include=\"%s\" />', rule, path.translate(file.relpath))
+						p.x('<%s Include=\"%s\" />', rule.name, path.translate(file.relpath))
 					end
 				end
+
 				p.pop('</ItemGroup>')
 			end
 		end
@@ -721,7 +708,7 @@
 
 
 
-	function m.NoneFiles(prj, groups)
+	function m.noneFiles(prj, groups)
 		local files = groups.None or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -733,7 +720,7 @@
 	end
 
 
-	function m.ResourceCompileFiles(prj, groups)
+	function m.resourceCompileFiles(prj, groups)
 		local files = groups.ResourceCompile or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
