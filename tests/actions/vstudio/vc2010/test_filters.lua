@@ -172,8 +172,10 @@
 
 	function suite.filter_onCustomRule()
 		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>

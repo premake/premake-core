@@ -524,10 +524,12 @@
 
 	function suite.correctlyCategorized_onCustomRule()
 		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
-			test.capture [[
+		test.capture [[
 <ItemGroup>
 	<Animation Include="hello.dae" />
 </ItemGroup>
@@ -535,11 +537,14 @@
 	end
 
 
-	function suite.customRule_onLiteralVars()
+	function suite.rule_onLiteralVars()
 		files { "hello.dae" }
 		filter "files:**.dae"
-			customRule "Animation"
 			customVar { "GenerateDebugInfo", "True" }
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>
@@ -552,12 +557,15 @@
 	end
 
 
-	function suite.customRule_onLiteralPath()
+	function suite.rule_onLiteralPath()
 		targetdir "../bin/%{cfg.buildcfg}"
 		files { "hello.dae" }
 		filter "files:**.dae"
-			customRule "Animation"
 			customVar { "OutputDirectory", "%{cfg.targetdir}/anim" }
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>
@@ -570,12 +578,14 @@
 	end
 
 
-	function suite.customRule_onPerConfigLiteralVars()
+	function suite.rule_onPerConfigLiteralVars()
 		files { "hello.dae" }
-		filter { "files:**.dae" }
-			customRule "Animation"
 		filter { "files:**.dae", "configurations:Debug" }
 			customVar { "GenerateDebugInfo", "True" }
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>
@@ -587,11 +597,14 @@
 	end
 
 
-	function suite.customRule_onListVars()
+	function suite.rule_onListVars()
 		files { "hello.dae" }
 		filter "files:**.dae"
-			customRule "Animation"
 			customList { "ExtraDependencies", "File1", "File2" }
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>
@@ -604,13 +617,16 @@
 	end
 
 
-	function suite.customRule_onPerConfigListVars()
+	function suite.rule_onPerConfigListVars()
 		files { "hello.dae" }
 		filter { "files:**.dae" }
-			customRule "Animation"
 			customList { "ExtraDependencies", "File1", "File2" }
 		filter { "files:**.dae", "configurations:Release" }
 			customList { "ExtraDependencies", "File3" }
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>
@@ -623,12 +639,15 @@
 	end
 
 
-	function suite.customRule_onListVarsWithCustomFormat()
+	function suite.rule_onListVarsWithCustomFormat()
 		files { "hello.dae" }
 		filter "files:**.dae"
-			customRule "Animation"
 			customListFormat { "ExtraDependencies", ";" }
 			customList { "ExtraDependencies", "File1", "File2" }
+
+		rule "Animation"
+		fileExtension ".dae"
+
 		prepare()
 		test.capture [[
 <ItemGroup>

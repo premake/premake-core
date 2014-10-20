@@ -94,7 +94,6 @@
 		-- to project configurations.
 
 		self.configs = oven.bakeConfigs(self)
-
 	end
 
 

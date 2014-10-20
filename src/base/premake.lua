@@ -4,10 +4,12 @@
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	local solution = premake.solution
-	local project = premake.project
-	local config = premake.config
-	local field = premake.field
+	local p = premake
+
+	local solution = p.solution
+	local project = p.project
+	local config = p.config
+	local field = p.field
 
 
 
@@ -180,7 +182,7 @@
 ---
 
 function premake.filename(obj, ext)
-	local fname = obj.location
+	local fname = obj.location or obj.basedir
 	if ext and not ext:startswith(".") then
 		fname = path.join(fname, ext)
 	else
@@ -365,6 +367,14 @@ end
 		-- must have a language
 		if not prj.language then
 			premake.error("project '%s' does not have a language", prj.name)
+		end
+
+		-- all rules must exist
+		for i = 1, #prj.rules do
+			local rule = prj.rules[i]
+			if not p.global.getRule(rule) then
+				premake.error("project '%s' uses missing rule '%s'", prj.name, rule)
+			end
 		end
 
 		-- check for out of scope fields

@@ -70,6 +70,7 @@
 
 		self.class = class
 		self.name = name
+		self.filename = name
 		self.script = _SCRIPT
 		self.basedir = os.getcwd()
 		self.external = false
