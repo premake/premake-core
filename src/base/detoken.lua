@@ -30,10 +30,6 @@
 --
 
 	function detoken.expand(value, environ, ispath, basedir)
-		if type(value) ~= "string" then
-			return value
-		end
-
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
@@ -83,6 +79,10 @@
 		end
 
 		function expandvalue(value)
+			if type(value) ~= "string" then
+				return
+			end
+
 			local count
 			repeat
 				value, count = value:gsub("%%{(.-)}", function(token)
