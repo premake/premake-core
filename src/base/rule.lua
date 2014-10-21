@@ -19,7 +19,7 @@
 		local self = p.container.new(rule, name)
 
 		-- create a variable setting function
-		name =  name:gsub("^%u", string.lower)
+		name =  name:gsub("^%u+", string.lower)
 		_G[name .. "Vars"] = function(vars)
 			rule.setVars(self, vars)
 		end

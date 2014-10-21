@@ -30,6 +30,10 @@
 --
 
 	function detoken.expand(value, environ, ispath, basedir)
+		if type(value) ~= "string" then
+			return value
+		end
+
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
