@@ -114,11 +114,19 @@
 ---
 
 	function rule.getPropertyString(self, prop, value)
+		-- list?
 		if type(value) == "table" then
 			local sep = prop.separator or " "
 			return table.concat(value, sep)
 		end
 
+		-- enum?
+		if prop.values then
+			local i = table.indexof(prop.values, value)
+			return tostring(i)
+		end
+
+		-- primitive
 		value = tostring(value)
 		if #value > 0 then
 			return value
