@@ -193,6 +193,14 @@
 
 
 
+	function p.rule.bake(r)
+		table.sort(r.propertyDefinition, function (a, b)
+			return a.name < b.name
+		end)
+	end
+
+
+
 --
 -- Assigns a unique objects directory to every configuration of every project
 -- in the solution, taking any objdir settings into account, to ensure builds
