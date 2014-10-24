@@ -532,6 +532,7 @@
 --
 
 	function suite.isCategorizedByRule()
+		rules "Animation"
 		files { "hello.dae" }
 		prepare()
 		test.capture [[
@@ -543,6 +544,7 @@
 
 
 	function suite.listsPerConfigRuleVars()
+		rules "Animation"
 		files { "hello.dae" }
 		filter { "files:hello.*", "configurations:Debug" }
 			animationVars { AdditionalOptions = { "File1", "File2" }}

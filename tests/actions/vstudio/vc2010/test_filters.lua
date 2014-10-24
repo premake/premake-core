@@ -171,6 +171,7 @@
 --
 
 	function suite.filter_onCustomRule()
+		rules "Animation"
 		files { "hello.dae" }
 
 		rule "Animation"

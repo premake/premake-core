@@ -492,15 +492,17 @@
 ---
 
 	function m.ruleVars(cfg)
-		for rule in p.global.eachRule() do
+		for i = 1, #cfg.rules do
+			local rule = p.global.getRule(cfg.rules[i])
+
 			local contents = p.capture(function ()
 				p.push()
 				for prop in p.rule.eachProperty(rule) do
 					local fld = p.rule.getPropertyField(rule, prop)
 					local value = cfg[fld.name]
-					if value then
+					if value ~= nil then
 						value = p.rule.getPropertyString(rule, prop, value)
-						if value and #value > 0 then
+						if value ~= nil and #value > 0 then
 							m.element(prop.name, nil, '%s', value)
 						end
 					end
@@ -667,7 +669,8 @@
 
 
 	function m.customRuleFiles(prj, groups)
-		for rule in p.global.eachRule() do
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
 			local files = groups[rule.name]
 			if files and #files > 0 then
 				p.push('<ItemGroup>')
@@ -761,7 +764,7 @@
 		end
 
 		-- If there is a custom rule associated with it, use that
-		local rule = p.global.getRuleForFile(file.name)
+		local rule = p.global.getRuleForFile(file.name, prj.rules)
 		if rule then
 			return rule.name
 		end

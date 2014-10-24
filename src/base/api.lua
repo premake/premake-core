@@ -467,7 +467,7 @@
 --
 
 	function api.storeField(field, value)
-		if not value then
+		if value == nil then
 			return
 		end
 
@@ -503,7 +503,7 @@
 	function api.remove(field, value)
 		-- right now, ignore calls with no value; later might want to
 		-- return the current baked value
-		if not value then return end
+		if value == nil then return end
 
 		local target = api.target(field)
 		if not target then

@@ -69,15 +69,20 @@
 --
 -- @param fname
 --    The name of the file.
+-- @param rules
+--    A list of rule names to be included in the search. If not specified,
+--    all rules will be checked.
 -- @returns
 --    The rule, is one has been registered, or nil.
 ---
 
-	function global.getRuleForFile(fname)
+	function global.getRuleForFile(fname, rules)
 		local ext = path.getextension(fname):lower()
 		for rule in global.eachRule() do
-			if rule.fileExtension == ext then
-				return rule
+			if not rules or table.contains(rules, rule.name) then
+				if rule.fileExtension == ext then
+					return rule
+				end
 			end
 		end
 	end

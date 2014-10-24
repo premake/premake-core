@@ -148,7 +148,7 @@
 		for key, value in pairs(vars) do
 			local prop = rule.getProperty(self, key)
 			if not prop then
-				error { msg=string.format("rule '%s' does not have property '%s'", self.name, key)}
+				error (string.format("rule '%s' does not have property '%s'", self.name, key))
 			end
 
 			local fld = rule.getPropertyField(self, prop)
