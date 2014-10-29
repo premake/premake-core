@@ -18,11 +18,15 @@
 	function rule.new(name)
 		local self = p.container.new(rule, name)
 
-		-- create a variable setting function
-		name =  name:gsub("^%u+", string.lower)
+		-- create a variable setting function. Do a version with lowercased
+		-- first letter(s) to match Premake's naming style for other calls
+
 		_G[name .. "Vars"] = function(vars)
 			rule.setVars(self, vars)
 		end
+
+		local lowerName =  name:gsub("^%u+", string.lower)
+		_G[lowerName .. "Vars"] = _G[name .. "Vars"]
 
 		return self
 	end
