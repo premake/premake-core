@@ -191,7 +191,7 @@ function premake.filename(obj, ext)
 			fname = fname .. ext
 		end
 	end
-	return fname
+	return path.getabsolute(fname)
 end
 
 
