@@ -130,3 +130,17 @@
 		premake.validate()
 		test.stderr("'configurations' on config")
 	end
+
+
+--
+-- If a rule is specified for inclusion, it must have been defined.
+--
+
+	function suite.fails_onNoSuchRule()
+		solution "MySolution"
+			configurations { "Debug", "Release" }
+		project "MyProject"
+			rules { "NoSuchRule" }
+		test.isfalse(pcall(premake.validate))
+	end
+

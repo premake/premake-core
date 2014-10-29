@@ -79,6 +79,10 @@
 		end
 
 		function expandvalue(value)
+			if type(value) ~= "string" then
+				return
+			end
+
 			local count
 			repeat
 				value, count = value:gsub("%%{(.-)}", function(token)

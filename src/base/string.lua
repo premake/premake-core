@@ -6,6 +6,16 @@
 
 
 --
+-- Capitalize the first letter of the string.
+--
+
+	function string.capitalized(self)
+		return self:gsub("^%l", string.upper)
+	end
+
+
+
+--
 -- Returns true if the string has a match for the plain specified pattern
 --
 

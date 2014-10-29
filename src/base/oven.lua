@@ -94,7 +94,6 @@
 		-- to project configurations.
 
 		self.configs = oven.bakeConfigs(self)
-
 	end
 
 
@@ -190,6 +189,14 @@
 		if p.project.iscpp(self) then
 			oven.assignObjectSequences(self)
 		end
+	end
+
+
+
+	function p.rule.bake(r)
+		table.sort(r.propertyDefinition, function (a, b)
+			return a.name < b.name
+		end)
 	end
 
 

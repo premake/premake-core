@@ -184,7 +184,7 @@ EndProject
 --
 
 	function suite.translatesEnvironmentVars()
-		external "MyProject"
+		externalProject "MyProject"
 		location "$(SDK_LOCATION)/MyProject"
 		uuid "30A1B994-C2C6-485F-911B-FB4674366DA8"
 		kind "SharedLib"

@@ -163,13 +163,6 @@
 	}
 
 	api.register {
-		name = "customRules",
-		scope = "project",
-		kind = "list:file",
-		tokens = true,
-	}
-
-	api.register {
 		name = "debugargs",
 		scope = "config",
 		kind = "list:string",
@@ -622,6 +615,12 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+	}
+
+	api.register {
+		name = "rules",
+		scope = "project",
+		kind = "list:string",
 	}
 
 	api.register {

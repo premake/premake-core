@@ -48,6 +48,48 @@
 
 
 ---
+-- Retrieve a rule by name or index.
+--
+-- @param key
+--    The rule key, either a string name or integer index.
+-- @returns
+--    The rule with the provided key.
+---
+
+	function global.getRule(key)
+		local root = p.api.rootContainer()
+		return root.rules[key]
+	end
+
+
+
+---
+-- Retrieve the rule to applies to the provided file name, if any such
+-- rule exists.
+--
+-- @param fname
+--    The name of the file.
+-- @param rules
+--    A list of rule names to be included in the search. If not specified,
+--    all rules will be checked.
+-- @returns
+--    The rule, is one has been registered, or nil.
+---
+
+	function global.getRuleForFile(fname, rules)
+		local ext = path.getextension(fname):lower()
+		for rule in global.eachRule() do
+			if not rules or table.contains(rules, rule.name) then
+				if rule.fileExtension == ext then
+					return rule
+				end
+			end
+		end
+	end
+
+
+
+---
 -- Retrieve a solution by name or index.
 --
 -- @param key
@@ -58,7 +100,5 @@
 
 	function global.getSolution(key)
 		local root = p.api.rootContainer()
-		if root.solutions then
-			return root.solutions[key]
-		end
+		return root.solutions[key]
 	end

@@ -16,6 +16,15 @@
 
 	function suite.setup()
 		_ACTION = "vs2010"
+
+		rule "Animation"
+		fileExtension ".dae"
+		propertyDefinition {
+			name = "AdditionalOptions",
+			kind = "list",
+			separator = ";"
+		}
+
 		sln = test.createsolution()
 	end
 
@@ -522,12 +531,11 @@
 -- Check handling of files using custom rule definitions.
 --
 
-	function suite.correctlyCategorized_onCustomRule()
+	function suite.isCategorizedByRule()
+		rules "Animation"
 		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
 		prepare()
-			test.capture [[
+		test.capture [[
 <ItemGroup>
 	<Animation Include="hello.dae" />
 </ItemGroup>
@@ -535,106 +543,19 @@
 	end
 
 
-	function suite.customRule_onLiteralVars()
+	function suite.listsPerConfigRuleVars()
+		rules "Animation"
 		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
-			customVar { "GenerateDebugInfo", "True" }
+		filter { "files:hello.*", "configurations:Debug" }
+			animationVars { AdditionalOptions = { "File1", "File2" }}
+		filter { "files:hello.*", "configurations:Release" }
+			animationVars { AdditionalOptions = { "File3" }}
 		prepare()
 		test.capture [[
 <ItemGroup>
 	<Animation Include="hello.dae">
-		<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">True</GenerateDebugInfo>
-		<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">True</GenerateDebugInfo>
-	</Animation>
-</ItemGroup>
-		]]
-	end
-
-
-	function suite.customRule_onLiteralPath()
-		targetdir "../bin/%{cfg.buildcfg}"
-		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
-			customVar { "OutputDirectory", "%{cfg.targetdir}/anim" }
-		prepare()
-		test.capture [[
-<ItemGroup>
-	<Animation Include="hello.dae">
-		<OutputDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../bin/Debug/anim</OutputDirectory>
-		<OutputDirectory Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../bin/Release/anim</OutputDirectory>
-	</Animation>
-</ItemGroup>
-		]]
-	end
-
-
-	function suite.customRule_onPerConfigLiteralVars()
-		files { "hello.dae" }
-		filter { "files:**.dae" }
-			customRule "Animation"
-		filter { "files:**.dae", "configurations:Debug" }
-			customVar { "GenerateDebugInfo", "True" }
-		prepare()
-		test.capture [[
-<ItemGroup>
-	<Animation Include="hello.dae">
-		<GenerateDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">True</GenerateDebugInfo>
-	</Animation>
-</ItemGroup>
-		]]
-	end
-
-
-	function suite.customRule_onListVars()
-		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
-			customList { "ExtraDependencies", "File1", "File2" }
-		prepare()
-		test.capture [[
-<ItemGroup>
-	<Animation Include="hello.dae">
-		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1 File2</ExtraDependencies>
-		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1 File2</ExtraDependencies>
-	</Animation>
-</ItemGroup>
-		]]
-	end
-
-
-	function suite.customRule_onPerConfigListVars()
-		files { "hello.dae" }
-		filter { "files:**.dae" }
-			customRule "Animation"
-			customList { "ExtraDependencies", "File1", "File2" }
-		filter { "files:**.dae", "configurations:Release" }
-			customList { "ExtraDependencies", "File3" }
-		prepare()
-		test.capture [[
-<ItemGroup>
-	<Animation Include="hello.dae">
-		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1 File2</ExtraDependencies>
-		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1 File2 File3</ExtraDependencies>
-	</Animation>
-</ItemGroup>
-		]]
-	end
-
-
-	function suite.customRule_onListVarsWithCustomFormat()
-		files { "hello.dae" }
-		filter "files:**.dae"
-			customRule "Animation"
-			customListFormat { "ExtraDependencies", ";" }
-			customList { "ExtraDependencies", "File1", "File2" }
-		prepare()
-		test.capture [[
-<ItemGroup>
-	<Animation Include="hello.dae">
-		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1;File2</ExtraDependencies>
-		<ExtraDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File1;File2</ExtraDependencies>
+		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1;File2</AdditionalOptions>
+		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File3</AdditionalOptions>
 	</Animation>
 </ItemGroup>
 		]]
