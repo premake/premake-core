@@ -47,7 +47,9 @@
 
 		_G[containerName] = function(name)
 			local c = api._setContainer(class, name)
-			c.external = api._isIncludingExternal
+			if api._isIncludingExternal then
+				c.external = true
+			end
 			return c
 		end
 
