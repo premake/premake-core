@@ -46,7 +46,9 @@
 		end
 
 		_G[containerName] = function(name)
-			return api._setContainer(class, name)
+			local c = api._setContainer(class, name)
+			c.external = api._isIncludingExternal
+			return c
 		end
 
 		_G["external" .. containerName:capitalized()] = function(name)
@@ -56,6 +58,20 @@
 		end
 
 		return class
+	end
+
+
+
+---
+-- Register a general-purpose includeExternal() call which works just like
+-- include(), but marks any containers created while evaluating the included
+-- scripts as external.
+---
+
+	function includeExternal(fname)
+		api._isIncludingExternal = true
+		include(fname)
+		api._isIncludingExternal = nil
 	end
 
 
