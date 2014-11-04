@@ -51,6 +51,12 @@
 				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
 			end,
 		},
+		strictaliasing = {
+			Off = "-fno-strict-aliasing",
+			Level1 = { "-fstrict-aliasing", "-Wstrict-aliasing=1" },
+			Level2 = { "-fstrict-aliasing", "-Wstrict-aliasing=2" },
+			Level3 = { "-fstrict-aliasing", "-Wstrict-aliasing=3" },
+		},
 		optimize = {
 			Off = "-O0",
 			On = "-O2",

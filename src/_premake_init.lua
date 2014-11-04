@@ -631,6 +631,18 @@
 	}
 
 	api.register {
+		name = "strictaliasing",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"Level1",
+			"Level2",
+			"Level3",
+		}
+	}
+
+	api.register {
 		name = "system",
 		scope = "config",
 		kind = "string",
