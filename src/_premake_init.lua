@@ -305,8 +305,10 @@
 			"OptimizeSpeed",       -- DEPRECATED
 			"ReleaseRuntime",
 			"SEH",
+			"ShadowedVariables",
 			"StaticRuntime",
 			"Symbols",
+			"UndefinedIdentifiers",
 			"Unicode",
 			"Unsafe",
 			"WinMain",
