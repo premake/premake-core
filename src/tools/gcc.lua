@@ -40,7 +40,6 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			NoFramePointer = "-fomit-frame-pointer",
-			Symbols = "-g"
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
@@ -183,7 +182,6 @@
 
 	function gcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.ldflags)
-		flags = table.join(flags, cfg.linkoptions)
 		return flags
 	end
 

@@ -856,7 +856,7 @@
 	function m.additionalLinkerOptions(cfg, toolset)
 		local flags
 		if toolset then
-			flags = toolset.getldflags(cfg)
+			flags = table.join(toolset.getldflags(cfg), cfg.linkoptions)
 		else
 			flags = cfg.linkoptions
 		end
