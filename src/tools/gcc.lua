@@ -40,9 +40,9 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			NoFramePointer = "-fomit-frame-pointer",
-            ShadowedVariables = "-Wshadow",
-            Symbols = "-g",
-            UndefinedIdentifiers = "-Wundef",
+			ShadowedVariables = "-Wshadow",
+			Symbols = "-g",
+			UndefinedIdentifiers = "-Wundef",
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
