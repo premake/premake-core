@@ -49,7 +49,7 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 			const char* script_dir;
 			lua_getglobal(L, "_SCRIPT_DIR");
 			script_dir = lua_tostring(L, -1);
-			if (script_dir[0] == '$') {
+			if (script_dir && script_dir[0] == '$') {
 				/* call path.getabsolute() to handle ".." if present */
 				lua_pushcfunction(L, path_getabsolute);
 				lua_pushstring(L, filename);
