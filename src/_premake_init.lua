@@ -234,6 +234,13 @@
 	}
 
 
+	api.register {
+		name = "editAndContinue",
+		scope = "config",
+		kind = "boolean",
+	}
+
+
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
@@ -285,7 +292,7 @@
 			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoEditAndContinue",
+			"NoEditAndContinue",   -- DEPRECATED
 			"NoExceptions",
 			"NoFramePointer",
 			"NoImplicitLink",
@@ -847,6 +854,17 @@
 		warnings "Default"
 	end)
 
+	-- 10 Nov 2014
+
+	api.deprecateValue("flags", "NoEditAndContinue", nil,
+	function(value)
+		editAndContinue "Off"
+	end,
+	function(value)
+		editAndContinue "On"
+	end)
+
+
 
 -----------------------------------------------------------------------------
 --
@@ -946,6 +964,8 @@
 -- to see at least some if not all of this moved into add-ons in the future.
 --
 -----------------------------------------------------------------------------
+
+	editAndContinue "On"
 
 	-- Setting a default language makes some validation easier later
 

@@ -749,7 +749,7 @@
 			return 1
 		else
 			-- Edit-and-continue doesn't work for some configurations
-			if cfg.flags.NoEditAndContinue or
+			if not cfg.editAndContinue or
 				config.isOptimizedBuild(cfg) or
 			    cfg.flags.Managed or
 			    cfg.system == "x64"

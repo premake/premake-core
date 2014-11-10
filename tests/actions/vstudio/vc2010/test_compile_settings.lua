@@ -569,11 +569,12 @@
 
 
 --
--- Check the handling of the NoEditAndContinue flag.
+-- Check the handling of the editAndContinue flag.
 --
 
-	function suite.debugFormat_onNoEditAndContinue()
-		flags { "Symbols", "NoEditAndContinue" }
+	function suite.debugFormat_onEditAndContinueOff()
+		flags { "Symbols" }
+		editAndContinue "Off"
 		prepare()
 		test.capture [[
 <ClCompile>

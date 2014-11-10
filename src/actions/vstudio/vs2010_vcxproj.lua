@@ -994,7 +994,7 @@
 			elseif cfg.architecture == "x64" or
 			       cfg.flags.Managed or
 				   config.isOptimizedBuild(cfg) or
-				   cfg.flags.NoEditAndContinue
+				   not cfg.editAndContinue
 			then
 				value = "ProgramDatabase"
 			else
