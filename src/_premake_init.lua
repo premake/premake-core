@@ -777,7 +777,7 @@
 
 	-- 09 Apr 2013
 
-	api.deprecateField("buildrule", DOC_URL ..  "Custom_Build_Commands",
+	api.deprecateField("buildrule", nil,
 	function(value)
 		if value.description then
 			buildmessage(value.description)
@@ -788,14 +788,14 @@
 
 	-- 17 Jun 2013
 
-	api.deprecateValue("flags", "Component", DOC_URL .. "buildaction",
+	api.deprecateValue("flags", "Component", nil,
 	function(value)
 		buildaction "Component"
 	end)
 
 	-- 26 Sep 2013
 
-	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, DOC_URL .. "vectorextensions",
+	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, nil,
 	function(value)
 		vectorextensions(value:sub(7))
 	end,
@@ -803,7 +803,7 @@
 		vectorextension "Default"
 	end)
 
-	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, DOC_URL ..  "floatingpoint",
+	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, nil,
 	function(value)
 		floatingpoint(value:sub(6))
 	end,
@@ -811,7 +811,7 @@
 		floatingpoint "Default"
 	end)
 
-	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, DOC_URL .. "nativewchar",
+	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, nil,
 	function(value)
 		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
 		nativewchar(map[value] or "Default")
@@ -820,7 +820,7 @@
 		nativewchar "Default"
 	end)
 
-	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, DOC_URL .. "optimize",
+	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, nil,
 	function(value)
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
 		optimize (map[value] or "Off")
@@ -829,7 +829,7 @@
 		optimize "Off"
 	end)
 
-	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, DOC_URL .. "optimize",
+	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
 	function(value)
 		local map = { Optimise = "On", OptimiseSize = "Size", OptimiseSpeed = "Speed" }
 		optimize (map[value] or "Off")
@@ -838,7 +838,7 @@
 		optimize "Off"
 	end)
 
-	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, DOC_URL .. "warnings",
+	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, nil,
 	function(value)
 		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
 		warnings (map[value] or "Default")
