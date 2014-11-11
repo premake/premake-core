@@ -75,7 +75,7 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 	if (z == OKAY) {
 		lua_pushcclosure(L, chunk_wrapper, 2);
 	}
-	else {
+	else if (z == LUA_YIELD) {
 		lua_pushstring(L, "cannot open ");
 		lua_pushstring(L, filename);
 		lua_pushstring(L, ": No such file or directory");

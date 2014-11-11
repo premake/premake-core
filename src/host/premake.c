@@ -332,11 +332,5 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 	lua_concat(L, 2);
 
 	/* Load the chunk */
-	i = luaL_loadbuffer(L, chunk, strlen(chunk), filename);
-	if (i != OKAY) {
-		lua_pop(L, 1);
-		printf("Failed to load embedded script '%s': %s\n", filename, lua_tostring(L, -1));
-	}
-
-	return i;
+	return luaL_loadbuffer(L, chunk, strlen(chunk), filename);
 }
