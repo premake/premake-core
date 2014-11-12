@@ -4,9 +4,12 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake.config = {}
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.config = {}
+
+	local project = p.project
+	local config = p.config
 
 
 ---
@@ -91,8 +94,8 @@
 
 			-- Can't link managed and unmanaged projects
 
-			local cfgManaged = project.isdotnet(cfg.project) or (cfg.flags.Managed ~= nil)
-			local tgtManaged = project.isdotnet(target.project) or (target.flags.Managed ~= nil)
+			local cfgManaged = project.isdotnet(cfg.project) or (cfg.clr ~= p.OFF)
+			local tgtManaged = project.isdotnet(target.project) or (target.clr ~= p.OFF)
 			return (cfgManaged == tgtManaged)
 
 		end
@@ -111,7 +114,7 @@
 
 		-- Unmanaged projects can never link managed assemblies
 
-		if isManaged and not cfg.flags.Managed then
+		if isManaged and cfg.clr == p.OFF then
 			return false
 		end
 
@@ -438,7 +441,7 @@
 --
 
 	function config.isOptimizedBuild(cfg)
-		return cfg.optimize ~= nil and cfg.optimize ~= "Off" and cfg.optimize ~= "Debug"
+		return cfg.optimize ~= nil and cfg.optimize ~= p.OFF and cfg.optimize ~= "Debug"
 	end
 
 

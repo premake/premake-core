@@ -111,7 +111,7 @@
 
 	function suite.skipsAssemblies_onManagedCpp()
 		system "windows"
-		flags { "Managed" }
+		clr "On"
 		links { "user32", "System.dll" }
 		local r = prepare("all", "fullpath")
 		test.isequal({ "user32.lib" }, r)
@@ -125,7 +125,7 @@
 
 	function suite.skipsUnmanagedLibs_onManagedLinkage()
 		system "windows"
-		flags { "Managed" }
+		clr "On"
 		links { "user32", "System.dll" }
 		local r = prepare("all", "fullpath", "managed")
 		test.isequal({ "System.dll" }, r)
@@ -161,20 +161,20 @@
 	end
 
 	function suite.canLink_ManagedCppAndManagedCpp()
-		flags { "Managed" }
+		clr "On"
 		links { "MyProject2" }
 
 		project "MyProject2"
 		kind "StaticLib"
 		language "C++"
-		flags { "Managed" }
+		clr "On"
 
 		local r = prepare("all", "fullpath")
 		test.isequal({ "MyProject2.lib" }, r)
 	end
 
 	function suite.canLink_ManagedCppAndCs()
-		flags { "Managed" }
+		clr "On"
 		links { "MyProject2" }
 
 		project "MyProject2"

@@ -751,7 +751,7 @@
 			-- Edit-and-continue doesn't work for some configurations
 			if not cfg.editAndContinue or
 				config.isOptimizedBuild(cfg) or
-			    cfg.flags.Managed or
+			    cfg.clr ~= p.OFF or
 			    cfg.system == "x64"
 			then
 				return 3
@@ -922,7 +922,7 @@
 		local cfg, filecfg = config.normalize(cfg)
 		if not filecfg
 			and not config.isOptimizedBuild(cfg)
-			and not cfg.flags.Managed
+			and cfg.clr == p.OFF
 			and not cfg.flags.NoRuntimeChecks
 		then
 			p.w('BasicRuntimeChecks="3"')
@@ -1062,7 +1062,7 @@
 
 	function m.detect64BitPortabilityProblems(cfg)
 		local prjcfg, filecfg = config.normalize(cfg)
-		if _ACTION < "vs2008" and not cfg.flags.Managed and cfg.warnings ~= "Off" and not filecfg then
+		if _ACTION < "vs2008" and cfg.clr == p.OFF and cfg.warnings ~= p.OFF and not filecfg then
 			p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
 		end
 	end
@@ -1164,7 +1164,7 @@
 		local windows, managed, makefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == p.WINDOWS then windows = true end
-			if cfg.flags.Managed then managed = true end
+			if cfg.clr ~= p.OFF then managed = true end
 			if vstudio.isMakefile(cfg) then makefile = true end
 		end
 
@@ -1261,7 +1261,7 @@
 
 
 	function m.managedExtensions(cfg)
-		if cfg.flags.Managed then
+		if cfg.clr ~= p.OFF then
 			p.w('ManagedExtensions="1"')
 		end
 	end
@@ -1272,7 +1272,7 @@
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
 		   not cfg.flags.NoMinimalRebuild and
-		   not cfg.flags.Managed and
+		   cfg.clr == p.OFF and
 		   not cfg.flags.MultiProcessorCompile
 		then
 			p.w('MinimalRebuild="true"')
@@ -1500,7 +1500,7 @@
 
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and not cfg.flags.Managed then
+		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
 			p.w('RuntimeTypeInfo="false"')
 		end
 	end
@@ -1607,7 +1607,7 @@
 
 
 	function m.warnAsError(cfg)
-		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
 			p.w('WarnAsError="true"')
 		end
 	end
@@ -1618,7 +1618,7 @@
 		local prjcfg, filecfg = config.normalize(cfg)
 
 		local level
-		if cfg.warnings == "Off" then
+		if cfg.warnings == p.OFF then
 			level = "0"
 		elseif cfg.warnings == "Extra" then
 			level = "4"

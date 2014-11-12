@@ -43,7 +43,7 @@
 --
 
 	function suite.onUnsafe()
-		flags { "Unsafe" }
+		clr "Unsafe"
 		prepare()
 		test.capture [[
   FLAGS = /unsafe /noconfig

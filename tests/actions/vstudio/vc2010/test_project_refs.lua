@@ -82,7 +82,7 @@
 
 	function suite.referencesAreRelative_onDifferentProjectLocation()
 		links { "MyProject" }
-		flags { "Managed" }
+		clr "On"
 		prepare()
 		test.capture [[
 <ItemGroup>
