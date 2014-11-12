@@ -115,7 +115,7 @@
 --
 
 	function suite.clrSupport_onManaged()
-		flags "Managed"
+		clr "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

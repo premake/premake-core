@@ -364,7 +364,7 @@
 -- Verify the correct Detect64BitPortabilityProblems settings are used when _ACTION < "VS2008".
 --
 
-	function suite.runtimeLibraryIsDebug_onVS2005()
+	function suite._64BitPortabilityOn_onVS2005()
 		_ACTION = "vs2005"
 		prepare()
 		test.capture [[
@@ -377,6 +377,23 @@
 	UsePrecompiledHeader="0"
 	WarningLevel="3"
 	Detect64BitPortabilityProblems="true"
+	DebugInformationFormat="0"
+/>
+		]]
+	end
+
+	function suite._64BitPortabilityOff_onVS2005_andCLR()
+		_ACTION = "vs2005"
+		clr "On"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
 	DebugInformationFormat="0"
 />
 		]]

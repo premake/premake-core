@@ -751,7 +751,7 @@
 			-- Edit-and-continue doesn't work for some configurations
 			if not cfg.editAndContinue or
 				config.isOptimizedBuild(cfg) or
-			    cfg.flags.Managed or
+			    cfg.clr ~= "Off" or
 			    cfg.system == "x64"
 			then
 				return 3
@@ -922,7 +922,7 @@
 		local cfg, filecfg = config.normalize(cfg)
 		if not filecfg
 			and not config.isOptimizedBuild(cfg)
-			and not cfg.flags.Managed
+			and cfg.clr == "Off"
 			and not cfg.flags.NoRuntimeChecks
 		then
 			p.w('BasicRuntimeChecks="3"')
@@ -1062,7 +1062,7 @@
 
 	function m.detect64BitPortabilityProblems(cfg)
 		local prjcfg, filecfg = config.normalize(cfg)
-		if _ACTION < "vs2008" and not cfg.flags.Managed and cfg.warnings ~= "Off" and not filecfg then
+		if _ACTION < "vs2008" and cfg.clr == "Off" and cfg.warnings ~= "Off" and not filecfg then
 			p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
 		end
 	end
@@ -1164,7 +1164,7 @@
 		local windows, managed, makefile
 		for cfg in project.eachconfig(prj) do
 			if cfg.system == p.WINDOWS then windows = true end
-			if cfg.flags.Managed then managed = true end
+			if cfg.clr ~= "Off" then managed = true end
 			if vstudio.isMakefile(cfg) then makefile = true end
 		end
 
@@ -1261,7 +1261,7 @@
 
 
 	function m.managedExtensions(cfg)
-		if cfg.flags.Managed then
+		if cfg.clr ~= "Off" then
 			p.w('ManagedExtensions="1"')
 		end
 	end
@@ -1272,7 +1272,7 @@
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
 		   not cfg.flags.NoMinimalRebuild and
-		   not cfg.flags.Managed and
+		   cfg.clr == "Off" and
 		   not cfg.flags.MultiProcessorCompile
 		then
 			p.w('MinimalRebuild="true"')
@@ -1500,7 +1500,7 @@
 
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and not cfg.flags.Managed then
+		if cfg.flags.NoRTTI and cfg.clr == "Off" then
 			p.w('RuntimeTypeInfo="false"')
 		end
 	end

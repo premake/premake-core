@@ -607,7 +607,8 @@
 --
 
 	function suite.debugFormat_onManagedCode()
-		flags { "Symbols", "Managed" }
+		flags "Symbols"
+		clr "On"
 		prepare()
 		test.capture [[
 <ClCompile>

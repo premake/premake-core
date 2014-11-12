@@ -76,7 +76,7 @@
 --
 
 	function suite.keywordIsCorrect_onManagedC()
-		flags { "Managed" }
+		clr "On"
 		prepare()
 		test.capture [[
 <VisualStudioProject

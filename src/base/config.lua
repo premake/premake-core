@@ -91,8 +91,8 @@
 
 			-- Can't link managed and unmanaged projects
 
-			local cfgManaged = project.isdotnet(cfg.project) or (cfg.flags.Managed ~= nil)
-			local tgtManaged = project.isdotnet(target.project) or (target.flags.Managed ~= nil)
+			local cfgManaged = project.isdotnet(cfg.project) or (cfg.clr ~= "Off")
+			local tgtManaged = project.isdotnet(target.project) or (target.clr ~= "Off")
 			return (cfgManaged == tgtManaged)
 
 		end
@@ -111,7 +111,7 @@
 
 		-- Unmanaged projects can never link managed assemblies
 
-		if isManaged and not cfg.flags.Managed then
+		if isManaged and cfg.clr == "Off" then
 			return false
 		end
 
