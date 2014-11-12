@@ -130,17 +130,34 @@
 		tokens = true,
 	}
 
+
 	api.register {
 		name = "cleanExtensions",
 		scope = "config",
 		kind = "list:string",
 	}
 
+
+	api.register {
+		name = "clr",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+			"Pure",
+			"Safe",
+			"Unsafe",
+		}
+	}
+
+
 	api.register {
 		name = "configmap",
 		scope = "config",
 		kind = "list:keyed:array:string",
 	}
+
 
 	api.register {
 		name = "configFile",
@@ -285,7 +302,7 @@
 			"FloatFast",           -- DEPRECATED
 			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
-			"Managed",
+			"Managed",             -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
@@ -317,7 +334,7 @@
 			"Symbols",
 			"UndefinedIdentifiers",
 			"Unicode",
-			"Unsafe",
+			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
 		},
@@ -793,12 +810,14 @@
 		buildoutputs(value.outputs)
 	end)
 
+
 	-- 17 Jun 2013
 
 	api.deprecateValue("flags", "Component", nil,
 	function(value)
 		buildaction "Component"
 	end)
+
 
 	-- 26 Sep 2013
 
@@ -810,6 +829,7 @@
 		vectorextension "Default"
 	end)
 
+
 	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, nil,
 	function(value)
 		floatingpoint(value:sub(6))
@@ -817,6 +837,7 @@
 	function(value)
 		floatingpoint "Default"
 	end)
+
 
 	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, nil,
 	function(value)
@@ -827,6 +848,7 @@
 		nativewchar "Default"
 	end)
 
+
 	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, nil,
 	function(value)
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
@@ -835,6 +857,7 @@
 	function(value)
 		optimize "Off"
 	end)
+
 
 	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
 	function(value)
@@ -845,6 +868,7 @@
 		optimize "Off"
 	end)
 
+
 	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, nil,
 	function(value)
 		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
@@ -854,7 +878,17 @@
 		warnings "Default"
 	end)
 
+
 	-- 10 Nov 2014
+
+	api.deprecateValue("flags", "Managed", nil,
+	function(value)
+		clr "On"
+	end,
+	function(value)
+		clr "Off"
+	end)
+
 
 	api.deprecateValue("flags", "NoEditAndContinue", nil,
 	function(value)
@@ -862,6 +896,15 @@
 	end,
 	function(value)
 		editAndContinue "On"
+	end)
+
+
+	api.deprecateValue("flags", "Unsafe", nil,
+	function(value)
+		clr "Unsafe"
+	end,
+	function(value)
+		clr "On"
 	end)
 
 
@@ -965,6 +1008,7 @@
 --
 -----------------------------------------------------------------------------
 
+	clr "Off"
 	editAndContinue "On"
 
 	-- Setting a default language makes some validation easier later
