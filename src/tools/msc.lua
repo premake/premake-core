@@ -25,6 +25,12 @@
 --
 
 	msc.cflags = {
+		clr = {
+			On = "/clr",
+			Unsafe = "/clr",
+			Pure = "/clr:pure",
+			Safe = "/clr:safe",
+		},
 		flags = {
 			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",

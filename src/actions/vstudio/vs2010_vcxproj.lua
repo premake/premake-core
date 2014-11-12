@@ -951,8 +951,14 @@
 
 
 	function m.clrSupport(cfg)
-		if cfg.clr ~= p.OFF then
-			_p(2,'<CLRSupport>true</CLRSupport>')
+		local value
+		if cfg.clr == "On" or cfg.clr == "Unsafe" then
+			value = "true"
+		elseif cfg.clr ~= p.OFF then
+			value = cfg.clr
+		end
+		if value then
+			p.w('<CLRSupport>%s</CLRSupport>', value)
 		end
 	end
 

@@ -235,3 +235,33 @@
 		prepare()
 		test.contains("/DLL", msc.getldflags(cfg))
 	end
+
+
+
+--
+-- Check handling of CLR settings.
+--
+
+	function suite.cflags_onClrOn()
+		clr "On"
+		prepare()
+		test.contains("/clr", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onClrUnsafe()
+		clr "Unsafe"
+		prepare()
+		test.contains("/clr", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onClrSafe()
+		clr "Safe"
+		prepare()
+		test.contains("/clr:safe", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onClrPure()
+		clr "Pure"
+		prepare()
+		test.contains("/clr:pure", msc.getcflags(cfg))
+	end
