@@ -817,7 +817,7 @@
 --
 
 	m.elements.projectReferences = function(prj, ref)
-		if prj.clr ~= "Off" then
+		if prj.clr ~= p.OFF then
 			return {
 				m.referenceProject,
 				m.referencePrivate,
@@ -951,7 +951,7 @@
 
 
 	function m.clrSupport(cfg)
-		if cfg.clr ~= "Off" then
+		if cfg.clr ~= p.OFF then
 			_p(2,'<CLRSupport>true</CLRSupport>')
 		end
 	end
@@ -992,7 +992,7 @@
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x64" or
-				   cfg.clr ~= "Off" or
+				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
 				   not cfg.editAndContinue
 			then
@@ -1039,7 +1039,7 @@
 	function m.entryPointSymbol(cfg)
 		if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
 		   not cfg.flags.WinMain and
-		   cfg.clr == "Off" and
+		   cfg.clr == p.OFF and
 		   cfg.system ~= premake.XBOX360
 		then
 			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
@@ -1210,7 +1210,7 @@
 			if cfg.system == premake.WINDOWS then
 				isWin = true
 			end
-			if cfg.clr ~= "Off" then
+			if cfg.clr ~= p.OFF then
 				isManaged = true
 			end
 			if vstudio.isMakefile(cfg) then
@@ -1484,7 +1484,7 @@
 
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and cfg.clr == "Off" then
+		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
 			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
 		end
 	end
@@ -1544,7 +1544,7 @@
 
 
 	function m.treatWarningAsError(cfg)
-		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
 			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end
