@@ -1077,8 +1077,9 @@
 	function configuration(terms)
 		if terms then
 			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or
-				(terms == "*") then 
-				terms = nil 
+			   (terms == "*")
+			then
+				terms = nil
 			end
 			configset.addblock(api.scope.current, {terms}, os.getcwd())
 		end
@@ -1094,7 +1095,11 @@
 
 	function filter(terms)
 		if terms then
-			if terms == "*" then terms = nil end
+			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or
+			   (terms == "*")
+			then
+				terms = nil
+			end
 			local ok, err = configset.addFilter(api.scope.current, {terms}, os.getcwd())
 			if not ok then
 				error(err, 2)
