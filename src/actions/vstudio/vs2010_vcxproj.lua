@@ -241,7 +241,7 @@
 	m.elements.itemDefinitionGroup = function(cfg)
 		if cfg.kind == p.UTILITY then
 			return {
-				m.customRuleVars,
+				m.ruleVars,
 				m.buildEvents,
 			}
 		else
@@ -253,7 +253,7 @@
 				m.buildEvents,
 				m.imageXex,
 				m.deploy,
-				m.customRuleVars,
+				m.ruleVars,
 			}
 		end
 	end
@@ -491,23 +491,19 @@
 -- Write out project-level custom rule variables.
 ---
 
-	function m.customRuleVars(cfg)
-		local vars = p.api.getCustomVars()
-		table.foreachi(cfg.project._customRules, function(rule)
+	function m.ruleVars(cfg)
+		for i = 1, #cfg.rules do
+			local rule = p.global.getRule(cfg.rules[i])
+
 			local contents = p.capture(function ()
 				p.push()
-				for _, var in ipairs(vars) do
-					if cfg[var] then
-						local key = p.api.getCustomVarKey(var)
-						local value = cfg[var]
-
-						if type(value) == "table" then
-							local fmt = p.api.getCustomListFormat(var)
-							value = table.concat(value, fmt[1])
-						end
-
-						if value and #value > 0 then
-							m.element(key, nil, '%s', value)
+				for prop in p.rule.eachProperty(rule) do
+					local fld = p.rule.getPropertyField(rule, prop)
+					local value = cfg[fld.name]
+					if value ~= nil then
+						value = p.rule.getPropertyString(rule, prop, value)
+						if value ~= nil and #value > 0 then
+							m.element(prop.name, nil, '%s', value)
 						end
 					end
 				end
@@ -515,11 +511,11 @@
 			end)
 
 			if #contents > 0 then
-				p.push('<%s>', rule)
+				p.push('<%s>', rule.name)
 				p.outln(contents)
-				p.pop('</%s>', rule)
+				p.pop('</%s>', rule.name)
 			end
-		end)
+		end
 	end
 
 
@@ -559,12 +555,12 @@
 ---
 
 	m.elements.fileGroups = {
-		"ClInclude",
-		"ClCompile",
-		"None",
-		"ResourceCompile",
-		"CustomBuild",
-		"CustomRule"
+		"clInclude",
+		"clCompile",
+		"none",
+		"resourceCompile",
+		"customBuild",
+		"customRule"
 	}
 
 	m.elements.files = function(prj, groups)
@@ -583,7 +579,7 @@
 	end
 
 
-	function m.ClCompileFiles(prj, group)
+	function m.clCompileFiles(prj, group)
 		local files = group.ClCompile or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -622,7 +618,7 @@
 	end
 
 
-	function m.ClIncludeFiles(prj, groups)
+	function m.clIncludeFiles(prj, groups)
 		local files = groups.ClInclude or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -634,7 +630,7 @@
 	end
 
 
-	function m.CustomBuildFiles(prj, groups)
+	function m.customBuildFiles(prj, groups)
 		local files = groups.CustomBuild or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -672,48 +668,42 @@
 	end
 
 
-	function m.CustomRuleFiles(prj, groups)
-		local vars = p.api.getCustomVars()
-
-		-- Look for rules that aren't in the built-in rule list
-		for rule, files in pairs(groups) do
-			if not table.contains(m.elements.fileGroups, rule) and #files > 0 then
+	function m.customRuleFiles(prj, groups)
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
+			local files = groups[rule.name]
+			if files and #files > 0 then
 				p.push('<ItemGroup>')
-				for _, file in ipairs(files) do
 
-					-- Capture any rule variables that have been set
+				for _, file in ipairs(files) do
 					local contents = p.capture(function()
 						p.push()
-						for _, var in ipairs(vars) do
+						for prop in p.rule.eachProperty(rule) do
+							local fld = p.rule.getPropertyField(rule, prop)
+
 							for cfg in project.eachconfig(prj) do
-								local condition = m.condition(cfg)
 								local fcfg = fileconfig.getconfig(file, cfg)
-								if fcfg and fcfg[var] then
-									local key = p.api.getCustomVarKey(var)
-									local value = fcfg[var]
-
-									if type(value) == "table" then
-										local fmt = p.api.getCustomListFormat(var)
-										value = table.concat(value, fmt[1])
-									end
-
+								if fcfg and fcfg[fld.name] then
+									local value = p.rule.getPropertyString(rule, prop, fcfg[fld.name])
 									if value and #value > 0 then
-										m.element(key, condition, '%s', value)
+										m.element(prop.name, m.condition(cfg), '%s', value)
 									end
 								end
 							end
+
 						end
 						p.pop()
 					end)
 
 					if #contents > 0 then
-						p.push('<%s Include=\"%s\">', rule, path.translate(file.relpath))
+						p.push('<%s Include=\"%s\">', rule.name, path.translate(file.relpath))
 						p.outln(contents)
-						p.pop('</%s>', rule)
+						p.pop('</%s>', rule.name)
 					else
-						p.x('<%s Include=\"%s\" />', rule, path.translate(file.relpath))
+						p.x('<%s Include=\"%s\" />', rule.name, path.translate(file.relpath))
 					end
 				end
+
 				p.pop('</ItemGroup>')
 			end
 		end
@@ -721,7 +711,7 @@
 
 
 
-	function m.NoneFiles(prj, groups)
+	function m.noneFiles(prj, groups)
 		local files = groups.None or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -733,7 +723,7 @@
 	end
 
 
-	function m.ResourceCompileFiles(prj, groups)
+	function m.resourceCompileFiles(prj, groups)
 		local files = groups.ResourceCompile or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
@@ -764,15 +754,19 @@
 
 
 	function m.categorize(prj, file)
-		-- If any configuration for this file uses a custom build step or a
-		-- custom, externally defined rule, that's the category to use
+		-- If any configuration for this file uses a custom build step,
+		-- that's the category to use
 		for cfg in project.eachconfig(prj) do
 			local fcfg = fileconfig.getconfig(file, cfg)
 			if fileconfig.hasCustomBuildRule(fcfg) then
 				return "CustomBuild"
-			elseif fcfg and fcfg._customRule then
-				return fcfg._customRule
 			end
+		end
+
+		-- If there is a custom rule associated with it, use that
+		local rule = p.global.getRuleForFile(file.name, prj.rules)
+		if rule then
+			return rule.name
 		end
 
 		-- Otherwise use the file extension to deduce a category
@@ -823,7 +817,7 @@
 --
 
 	m.elements.projectReferences = function(prj, ref)
-		if prj.flags.Managed then
+		if prj.clr ~= p.OFF then
 			return {
 				m.referenceProject,
 				m.referencePrivate,
@@ -957,8 +951,14 @@
 
 
 	function m.clrSupport(cfg)
-		if cfg.flags.Managed then
-			_p(2,'<CLRSupport>true</CLRSupport>')
+		local value
+		if cfg.clr == "On" or cfg.clr == "Unsafe" then
+			value = "true"
+		elseif cfg.clr ~= p.OFF then
+			value = cfg.clr
+		end
+		if value then
+			p.w('<CLRSupport>%s</CLRSupport>', value)
 		end
 	end
 
@@ -998,9 +998,9 @@
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x64" or
-			       cfg.flags.Managed or
+				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   cfg.flags.NoEditAndContinue
+				   not cfg.editAndContinue
 			then
 				value = "ProgramDatabase"
 			else
@@ -1045,7 +1045,7 @@
 	function m.entryPointSymbol(cfg)
 		if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
 		   not cfg.flags.WinMain and
-		   not cfg.flags.Managed and
+		   cfg.clr == p.OFF and
 		   cfg.system ~= premake.XBOX360
 		then
 			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
@@ -1155,11 +1155,13 @@
 	function m.importExtensionTargets(prj)
 		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
 		p.push('<ImportGroup Label="ExtensionTargets">')
-		table.foreachi(prj.customRules, function(value)
-			value = path.translate(project.getrelative(prj, value))
-			value = path.appendExtension(value, ".targets")
-			p.x('<Import Project="%s" />', value)
-		end)
+
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
+			local loc = project.getrelative(prj, premake.filename(rule, ".targets"))
+			p.x('<Import Project="%s" />', path.translate(loc))
+		end
+
 		p.pop('</ImportGroup>')
 	end
 
@@ -1174,11 +1176,13 @@
 	function m.importExtensionSettings(prj)
 		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
 		p.push('<ImportGroup Label="ExtensionSettings">')
-		table.foreachi(prj.customRules, function(value)
-			value = path.translate(project.getrelative(prj, value))
-			value = path.appendExtension(value, ".props")
-			p.x('<Import Project="%s" />', value)
-		end)
+
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
+			local loc = project.getrelative(prj, premake.filename(rule, ".props"))
+			p.x('<Import Project="%s" />', path.translate(loc))
+		end
+
 		p.pop('</ImportGroup>')
 	end
 
@@ -1212,7 +1216,7 @@
 			if cfg.system == premake.WINDOWS then
 				isWin = true
 			end
-			if cfg.flags.Managed then
+			if cfg.clr ~= p.OFF then
 				isManaged = true
 			end
 			if vstudio.isMakefile(cfg) then
@@ -1486,7 +1490,7 @@
 
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and not cfg.flags.Managed then
+		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
 			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
 		end
 	end
@@ -1546,7 +1550,7 @@
 
 
 	function m.treatWarningAsError(cfg)
-		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
 			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end

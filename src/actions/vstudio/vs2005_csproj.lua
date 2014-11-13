@@ -222,7 +222,7 @@
 		_p(2,'<ErrorReport>prompt</ErrorReport>')
 		_p(2,'<WarningLevel>4</WarningLevel>')
 
-		if cfg.flags.Unsafe then
+		if cfg.clr == "Unsafe" then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 		end
 

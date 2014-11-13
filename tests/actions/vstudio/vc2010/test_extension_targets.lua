@@ -16,6 +16,8 @@
 	local sln
 
 	function suite.setup()
+		rule "MyRules"
+		rule "MyOtherRules"
 		sln = test.createsolution()
 	end
 
@@ -45,8 +47,7 @@
 --
 
 	function suite.addsImport_onEachRulesFile()
-		customRules "MyRules"
-		customRules "MyOtherRules"
+		rules { "MyRules", "MyOtherRules" }
 		prepare()
 		test.capture [[
 <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -63,13 +64,13 @@
 --
 
 	function suite.usesProjectRelativePaths()
-		customRules "path/to/MyRules"
+		rules { "MyRules" }
 		location "build"
 		prepare()
 		test.capture [[
 <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 <ImportGroup Label="ExtensionTargets">
-	<Import Project="..\path\to\MyRules.targets" />
+	<Import Project="..\MyRules.targets" />
 </ImportGroup>
 		]]
 	end

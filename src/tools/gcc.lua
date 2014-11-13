@@ -40,7 +40,9 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			NoFramePointer = "-fomit-frame-pointer",
-			Symbols = "-g"
+			ShadowedVariables = "-Wshadow",
+			Symbols = "-g",
+			UndefinedIdentifiers = "-Wundef",
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
@@ -50,6 +52,12 @@
 			SharedLib = function(cfg)
 				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
 			end,
+		},
+		strictaliasing = {
+			Off = "-fno-strict-aliasing",
+			Level1 = { "-fstrict-aliasing", "-Wstrict-aliasing=1" },
+			Level2 = { "-fstrict-aliasing", "-Wstrict-aliasing=2" },
+			Level3 = { "-fstrict-aliasing", "-Wstrict-aliasing=3" },
 		},
 		optimize = {
 			Off = "-O0",
@@ -177,7 +185,6 @@
 
 	function gcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.ldflags)
-		flags = table.join(flags, cfg.linkoptions)
 		return flags
 	end
 

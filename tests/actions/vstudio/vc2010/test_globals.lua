@@ -46,7 +46,7 @@
 --
 
 	function suite.keywordIsCorrect_onManagedC()
-		flags { "Managed" }
+		clr "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
@@ -64,7 +64,7 @@
 --
 
 	function suite.frameworkVersionIsCorrect_onManagedC()
-		flags { "Managed" }
+		clr "On"
 		framework "4.5"
 		prepare()
 		test.capture [[

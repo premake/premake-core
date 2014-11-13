@@ -16,7 +16,7 @@
 
 	function suite.setup()
 		sln = test.createsolution()
-		flags { "Managed" }
+		clr "On"
 	end
 
 	local function prepare(platform)

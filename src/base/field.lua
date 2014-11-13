@@ -290,7 +290,7 @@
 		local kinds = string.explode(f._kind, ":", true)
 		for i, kind in ipairs(kinds) do
 			local value = field._kinds[kind][tag]
-			if value then
+			if value ~= nil then
 				return value
 			end
 		end

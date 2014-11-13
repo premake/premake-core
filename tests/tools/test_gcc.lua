@@ -402,3 +402,32 @@
 		test.isequal({ '-I"$(IntDir)/includes"' }, gcc.getincludedirs(cfg, cfg.includedirs))
 	end
 
+
+
+--
+-- Check handling of strict aliasing flags.
+--
+
+	function suite.cflags_onNoStrictAliasing()
+		strictaliasing "Off"
+		prepare()
+		test.contains("-fno-strict-aliasing", gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLevel1Aliasing()
+		strictaliasing "Level1"
+		prepare()
+		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=1" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLevel2Aliasing()
+		strictaliasing "Level2"
+		prepare()
+		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=2" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLevel3Aliasing()
+		strictaliasing "Level3"
+		prepare()
+		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=3" }, gcc.getcflags(cfg))
+	end

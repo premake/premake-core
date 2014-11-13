@@ -110,12 +110,13 @@
 		]]
 	end
 
+
 --
 -- Check the support for Managed C++.
 --
 
-	function suite.clrSupport_onManaged()
-		flags "Managed"
+	function suite.clrSupport_onClrOn()
+		clr "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -124,6 +125,50 @@
 		<CLRSupport>true</CLRSupport>
 		]]
 	end
+
+	function suite.clrSupport_onClrOff()
+		clr "Off"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		]]
+	end
+
+	function suite.clrSupport_onClrUnsafe()
+		clr "Unsafe"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CLRSupport>true</CLRSupport>
+		]]
+	end
+
+	function suite.clrSupport_onClrSafe()
+		clr "Safe"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CLRSupport>Safe</CLRSupport>
+		]]
+	end
+
+	function suite.clrSupport_onClrPure()
+		clr "Pure"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CLRSupport>Pure</CLRSupport>
+		]]
+	end
+
 
 --
 -- Check the support for building with MFC.

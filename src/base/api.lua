@@ -46,10 +46,34 @@
 		end
 
 		_G[containerName] = function(name)
-			return api._setContainer(class, name)
+			local c = api._setContainer(class, name)
+			if api._isIncludingExternal then
+				c.external = true
+			end
+			return c
+		end
+
+		_G["external" .. containerName:capitalized()] = function(name)
+			local c = _G[containerName](name)
+			c.external = true
+			return c
 		end
 
 		return class
+	end
+
+
+
+---
+-- Register a general-purpose includeExternal() call which works just like
+-- include(), but marks any containers created while evaluating the included
+-- scripts as external.
+---
+
+	function includeExternal(fname)
+		api._isIncludingExternal = true
+		include(fname)
+		api._isIncludingExternal = nil
 	end
 
 
@@ -238,7 +262,7 @@
 
 		-- create a setter function for it
 		_G[name] = function(value)
-			return api.callback(field, value)
+			return api.storeField(field, value)
 		end
 
 		if premake.field.removes(field) then
@@ -460,15 +484,15 @@
 -- gets parceled out to the individual set...() functions.
 --
 
-	function api.callback(field, value)
-		if not value then
+	function api.storeField(field, value)
+		if value == nil then
 			return
 		end
 
 		if field.deprecated and type(field.deprecated.handler) == "function" then
 			field.deprecated.handler(value)
-			if api._deprecations ~= "off" then
-				premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message or "")
+			if field.deprecated.message and api._deprecations ~= "off" then
+				premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message)
 				if api._deprecations == "error" then error("deprecation errors enabled", 3) end
 			end
 		end
@@ -486,6 +510,7 @@
 	end
 
 
+
 --
 -- The remover: adds values to be removed to the "removes" field on
 -- current configuration. Removes are keyed by the associated field,
@@ -496,7 +521,7 @@
 	function api.remove(field, value)
 		-- right now, ignore calls with no value; later might want to
 		-- return the current baked value
-		if not value then return end
+		if value == nil then return end
 
 		local target = api.target(field)
 		if not target then
@@ -517,9 +542,9 @@
 			if field.deprecated[value] then
 				local handler = field.deprecated[value]
 				if handler.remove then handler.remove(value) end
-				if api._deprecations ~= "off" then
+				if handler.message and api._deprecations ~= "off" then
 					local key = field.name .. "_" .. value
-					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
+					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message)
 					if api._deprecations == "error" then
 						error { msg="deprecation errors enabled" }
 					end
@@ -618,9 +643,9 @@
 		if field.deprecated and field.deprecated[canonical] then
 			local handler = field.deprecated[canonical]
 			handler.add(canonical)
-			if api._deprecations ~= "off" then
+			if handler.message and api._deprecations ~= "off" then
 				local key = field.name .. "_" .. value
-				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, canonical, handler.message or "")
+				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, canonical, handler.message)
 				if api._deprecations == "error" then
 					return nil, "deprecation errors enabled"
 				end
@@ -639,18 +664,9 @@
 ---
 
 	function api.reset()
-		-- Clear out all top level objects
+		-- Clear out all top level objects, but keep the root config
+		api.scope.global.rules = {}
 		api.scope.global.solutions = {}
-
-		-- Remove all custom variables
-		local vars = api.getCustomVars()
-		for i, var in ipairs(vars) do
-			local f = premake.field.get(var)
-			api.unregister(f)
-		end
-
-		-- Remove all custom list variable formats
-		api._customVarFormats = {}
 	end
 
 
@@ -684,6 +700,47 @@
 			return true
 		end
 	})
+
+
+
+---
+-- Boolean field kind; converts common yes/no strings into true/false values.
+---
+
+	premake.field.kind("boolean", {
+		store = function(field, current, value, processor)
+			local mapping = {
+				["false"] = false,
+				["no"] = false,
+				["off"] = false,
+				["on"] = true,
+				["true"] = true,
+				["yes"] = true,
+			}
+
+			if type(value) == "string" then
+				value = mapping[value:lower()]
+				if value == nil then
+					error { msg="expected boolean; got " .. value }
+				end
+				return value
+			end
+
+			if type(value) == "boolean" then
+				return value
+			end
+
+			if type(value) == "number" then
+				return (value ~= 0)
+			end
+
+			return (value ~= nil)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
 
 
 
@@ -1045,26 +1102,6 @@
 
 
 --
--- Activates a reference to an external, non-Premake generated project.
---
--- @param name
---    The name of the project. If a project with this name already
---    exists, it is made current, otherwise a new project is created
---    with this name. If no name is provided, the most recently defined
---    project is made active.
--- @return
---    The active project object.
---
-
-	function external(name)
-		local prj = project(name)
-		prj.external = true;
-		return prj
-	end
-
-
-
---
 -- Define a new action.
 --
 -- @param a
@@ -1085,126 +1122,4 @@
 
 	function newoption(opt)
 		premake.option.add(opt)
-	end
-
-
------------------------------------------------------------------------------
---
--- The custom*() functions act as wrappers that define new ad-hoc fields
--- on the fly, to support arbitrary custom rule variables. These should be
--- considered experimental and temporary for now as a more complete rule-
--- generating solution will certainly be needed, but I will do my best to
--- deprecate them cleanly when that time comes.
---
------------------------------------------------------------------------------
-
-	api._customVarFormats = {}
-
-	function api.getCustomVars()
-		local vars = {}
-		for f in premake.field.each() do
-			if f.name:startswith("_custom_") then
-				table.insert(vars, f.name)
-			end
-		end
-		return vars
-	end
-
-
-	function api.getCustomVarKey(var)
-		return var:sub(9)
-	end
-
-
-	function api.getCustomListFormat(var)
-		local key = api.getCustomVarKey(var)
-		return api._customVarFormats[key] or { " " }
-	end
-
-
-	function api.setCustomVar(name, kind, value)
-		local fieldName = "_custom_" .. name
-		local field = premake.field.get(fieldName)
-		if not field then
-			field = premake.field.new {
-				name = fieldName,
-				scope = "config",
-				kind = kind,
-				tokens = true,
-			}
-		end
-		api.callback(field, value)
-	end
-
-
-	function customVar(value)
-		if type(value) ~= "table" or #value ~= 2 then
-			error("invalid value for customVar()")
-		end
-		api.setCustomVar(value[1], "string", value[2])
-	end
-
-
-	function customList(value)
-		if type(value) ~= "table" or #value < 2 then
-			error("invalid value for customList()")
-		end
-
-		local name = value[1]
-		table.remove(value, 1)
-		api.setCustomVar(name, "list:string", value)
-	end
-
-
-	function customListFormat(value)
-		if type(value) ~= "table" or #value < 2 then
-			error("invalid value for customListFormat()")
-		end
-
-		local name = value[1]
-		table.remove(value, 1)
-		api._customVarFormats[name] = value
-	end
-
-
-	function customRule(value)
-		-- Store the rule name in the current configuration, like a
-		-- normal set-field operation would
-		local fieldName = "_customRule"
-		local field = premake.field.get(fieldName)
-		if not field then
-			field = premake.field.new {
-				name = fieldName,
-				scope = "config",
-				kind = "string",
-			}
-		end
-		api.callback(field, value)
-
-		-- Wild hack: I need a way to get all of the custom rule names that are
-		-- in use within a project. The rule names are currently only associated
-		-- with individual files. Rather than iterating over all the files after
-		-- the fact, keep a master list of rule names in the first configuration
-		-- block of the project. This way it will come out of the baking system
-		-- looking like a normal list:string field.
-		fieldName = "_customRules"
-		field = premake.field.get(fieldName)
-		if not field then
-			field = premake.field.new {
-				name = fieldName,
-				scope = "config",
-				kind = "list:string"
-			}
-		end
-
-		local cset = api.target(field)
-		if not cset then
-			local err = string.format("unable to set rule in %s scope, should be project", api.scope.current.class.name)
-			error(err, 2)
-		end
-
-		local current = cset.current
-		cset.current = cset.blocks[1]
-		api.callback(field, value)
-		cset.current = current
 	end

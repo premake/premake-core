@@ -130,17 +130,34 @@
 		tokens = true,
 	}
 
+
 	api.register {
 		name = "cleanExtensions",
 		scope = "config",
 		kind = "list:string",
 	}
 
+
+	api.register {
+		name = "clr",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+			"Pure",
+			"Safe",
+			"Unsafe",
+		}
+	}
+
+
 	api.register {
 		name = "configmap",
 		scope = "config",
 		kind = "list:keyed:array:string",
 	}
+
 
 	api.register {
 		name = "configFile",
@@ -159,13 +176,6 @@
 		name = "copylocal",
 		scope = "config",
 		kind = "list:mixed",
-		tokens = true,
-	}
-
-	api.register {
-		name = "customRules",
-		scope = "project",
-		kind = "list:file",
 		tokens = true,
 	}
 
@@ -241,6 +251,13 @@
 	}
 
 
+	api.register {
+		name = "editAndContinue",
+		scope = "config",
+		kind = "boolean",
+	}
+
+
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
@@ -285,14 +302,14 @@
 			"FloatFast",           -- DEPRECATED
 			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
-			"Managed",
+			"Managed",             -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
 			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoEditAndContinue",
+			"NoEditAndContinue",   -- DEPRECATED
 			"NoExceptions",
 			"NoFramePointer",
 			"NoImplicitLink",
@@ -312,10 +329,12 @@
 			"OptimizeSpeed",       -- DEPRECATED
 			"ReleaseRuntime",
 			"SEH",
+			"ShadowedVariables",
 			"StaticRuntime",
 			"Symbols",
+			"UndefinedIdentifiers",
 			"Unicode",
-			"Unsafe",
+			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
 		},
@@ -625,10 +644,28 @@
 	}
 
 	api.register {
+		name = "rules",
+		scope = "project",
+		kind = "list:string",
+	}
+
+	api.register {
 		name = "startproject",
 		scope = "solution",
 		kind = "string",
 		tokens = true,
+	}
+
+	api.register {
+		name = "strictaliasing",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"Level1",
+			"Level2",
+			"Level3",
+		}
 	}
 
 	api.register {
@@ -764,7 +801,7 @@
 
 	-- 09 Apr 2013
 
-	api.deprecateField("buildrule", DOC_URL ..  "Custom_Build_Commands",
+	api.deprecateField("buildrule", nil,
 	function(value)
 		if value.description then
 			buildmessage(value.description)
@@ -773,16 +810,18 @@
 		buildoutputs(value.outputs)
 	end)
 
+
 	-- 17 Jun 2013
 
-	api.deprecateValue("flags", "Component", DOC_URL .. "buildaction",
+	api.deprecateValue("flags", "Component", nil,
 	function(value)
 		buildaction "Component"
 	end)
 
+
 	-- 26 Sep 2013
 
-	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, DOC_URL .. "vectorextensions",
+	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, nil,
 	function(value)
 		vectorextensions(value:sub(7))
 	end,
@@ -790,7 +829,8 @@
 		vectorextension "Default"
 	end)
 
-	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, DOC_URL ..  "floatingpoint",
+
+	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, nil,
 	function(value)
 		floatingpoint(value:sub(6))
 	end,
@@ -798,7 +838,8 @@
 		floatingpoint "Default"
 	end)
 
-	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, DOC_URL .. "nativewchar",
+
+	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, nil,
 	function(value)
 		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
 		nativewchar(map[value] or "Default")
@@ -807,7 +848,8 @@
 		nativewchar "Default"
 	end)
 
-	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, DOC_URL .. "optimize",
+
+	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, nil,
 	function(value)
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
 		optimize (map[value] or "Off")
@@ -816,7 +858,8 @@
 		optimize "Off"
 	end)
 
-	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, DOC_URL .. "optimize",
+
+	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
 	function(value)
 		local map = { Optimise = "On", OptimiseSize = "Size", OptimiseSpeed = "Speed" }
 		optimize (map[value] or "Off")
@@ -825,7 +868,8 @@
 		optimize "Off"
 	end)
 
-	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, DOC_URL .. "warnings",
+
+	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, nil,
 	function(value)
 		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
 		warnings (map[value] or "Default")
@@ -833,6 +877,36 @@
 	function(value)
 		warnings "Default"
 	end)
+
+
+	-- 10 Nov 2014
+
+	api.deprecateValue("flags", "Managed", nil,
+	function(value)
+		clr "On"
+	end,
+	function(value)
+		clr "Off"
+	end)
+
+
+	api.deprecateValue("flags", "NoEditAndContinue", nil,
+	function(value)
+		editAndContinue "Off"
+	end,
+	function(value)
+		editAndContinue "On"
+	end)
+
+
+	api.deprecateValue("flags", "Unsafe", nil,
+	function(value)
+		clr "Unsafe"
+	end,
+	function(value)
+		clr "On"
+	end)
+
 
 
 -----------------------------------------------------------------------------
@@ -933,6 +1007,9 @@
 -- to see at least some if not all of this moved into add-ons in the future.
 --
 -----------------------------------------------------------------------------
+
+	clr "Off"
+	editAndContinue "On"
 
 	-- Setting a default language makes some validation easier later
 

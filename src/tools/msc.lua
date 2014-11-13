@@ -25,6 +25,12 @@
 --
 
 	msc.cflags = {
+		clr = {
+			On = "/clr",
+			Unsafe = "/clr",
+			Pure = "/clr:pure",
+			Safe = "/clr:safe",
+		},
 		flags = {
 			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
@@ -168,7 +174,6 @@
 	function msc.getldflags(cfg)
 		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
-		flags = table.join(flags, cfg.linkoptions)
 		table.insert(flags, 1, "/NOLOGO")
 		return flags
 	end

@@ -166,7 +166,6 @@
 
 	function clang.getldflags(cfg)
 		local flags = config.mapFlags(cfg, clang.ldflags)
-		flags = table.join(flags, cfg.linkoptions)
 		return flags
 	end
 

@@ -89,12 +89,12 @@
 
 			-- If the filter contains a file path, make it relative to
 			-- this block's basedir
-			if value and abspath and not cset.compiled and block._basedir ~= basedir then
+			if value ~= nil and abspath and not cset.compiled and block._basedir ~= basedir then
 				basedir = block._basedir
 				filter.files = path.getrelative(basedir, abspath)
 			end
 
-			if value and (cset.compiled or criteria.matches(block._criteria, filter)) then
+			if value ~= nil and (cset.compiled or criteria.matches(block._criteria, filter)) then
 				-- If value is an object, return a copy of it so that any
 				-- changes later made to it by the caller won't alter the
 				-- original value (that was a tough bug to find)

@@ -44,7 +44,7 @@
 --
 
 	function suite.allowUnsafeBlocks_onUnsafeFlag()
-		flags { "Unsafe" }
+		clr "Unsafe"
 		prepare()
 		test.capture [[
 		<DefineConstants></DefineConstants>

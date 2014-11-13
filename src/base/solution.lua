@@ -18,7 +18,6 @@
 
 	function solution.new(name)
 		local sln = p.container.new(solution, name)
-		sln.filename = name
 		return sln
 	end
 

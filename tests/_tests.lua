@@ -37,6 +37,7 @@ return {
 	"oven/test_objdirs.lua",
 
 	-- API tests
+	"api/test_boolean_kind.lua",
 	"api/test_containers.lua",
 	"api/test_directory_kind.lua",
 	"api/test_list_kind.lua",
@@ -114,6 +115,7 @@ return {
 	"actions/vstudio/vc2010/test_project_refs.lua",
 	"actions/vstudio/vc2010/test_prop_sheet.lua",
 	"actions/vstudio/vc2010/test_resource_compile.lua",
+	"actions/vstudio/vc2010/test_rule_vars.lua",
 
 	-- Visual Studio 2012
 	"actions/vs2012/test_csproj_common_props.lua",

@@ -13,13 +13,21 @@
 
 
 ---
+-- Alias the old external() call to the new externalProject(), to distinguish
+-- between it and externalRule().
+---
+
+	external = externalProject
+
+
+
+---
 -- Create a new project container instance.
 ---
 
 	function project.new(name)
 		local prj = p.container.new(project, name)
 		prj.uuid = os.uuid(name)
-		prj.filename = name
 
 		if p.api.scope.group then
 			prj.group = p.api.scope.group.name
