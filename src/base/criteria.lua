@@ -18,7 +18,7 @@
 -- now only these are set.
 --
 
-	criteria.validPrefixes = {
+	criteria._validPrefixes = {
 		_ACTION = true,
 		action = true,
 		architecture = true,
@@ -66,7 +66,7 @@
 			local words = term:explode(" or ")
 			for _, word in ipairs(words) do
 				word, prefix = criteria._word(word, prefix)
-				if prefix and not criteria.validPrefixes[prefix] then
+				if prefix and not criteria._validPrefixes[prefix] then
 					return nil, string.format("Invalid field prefix '%s'", prefix)
 				end
 				table.insert(pattern, word)
@@ -113,3 +113,18 @@
 
 		return { word, prefix, assertion, wildcard }, prefix
 	end
+
+
+---
+-- Add a new prefix to the list of allowed values for filters. Note
+-- setting a prefix on its own has no effect on the output; a filter
+-- term must also be set on the corresponding context during baking.
+--
+-- @param prefix
+--    The new prefix to be allowed.
+---
+
+	function criteria.allowPrefix(prefix)
+		criteria._validPrefixes[prefix:lower()] = true
+	end
+

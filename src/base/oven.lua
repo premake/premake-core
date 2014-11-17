@@ -385,12 +385,22 @@
 	end
 
 
---
+---
 -- Flattens out the build settings for a particular build configuration and
 -- platform pairing, and returns the result.
 --
+-- @param prj
+--    The project which contains the configuration data.
+-- @param buildcfg
+--    The target build configuration, a value from configurations().
+-- @param platform
+--    The target platform, a value from platforms().
+-- @param extraFilters
+--    Optional. Any extra filter terms to use when retrieving the data for
+--    this configuration
+---
 
-	function oven.bakeConfig(prj, buildcfg, platform)
+	function oven.bakeConfig(prj, buildcfg, platform, extraFilters)
 
 		-- Set the default system and architecture values; if the platform's
 		-- name matches a known system or architecture, use that as the default.
@@ -450,6 +460,13 @@
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
+
+		-- if any extra filters were specified, can include them now
+		if extraFilters then
+			for k, v in pairs(extraFilters) do
+				context.addFilter(ctx, k, v)
+			end
+		end
 
 		context.compile(ctx)
 
