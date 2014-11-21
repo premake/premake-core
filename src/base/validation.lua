@@ -64,7 +64,7 @@
 		end
 
 		-- check for out of scope fields
-		p.config.validateScopes(self, "project")
+		p.config.validateScopes(self, self, "project")
 
 		for cfg in p.project.eachconfig(self) do
 			p.config.validate(cfg)
@@ -90,7 +90,7 @@
 		end
 
 		-- check for out of scope fields
-		p.config.validateScopes(self, "config")
+		p.config.validateScopes(self, self.project, "config")
 	end
 
 
@@ -99,37 +99,45 @@
 -- Check the values stored in a configuration for values that might have
 -- been set out of scope.
 --
--- @param expected
---    The expected scope of values in this object; one of "project" or "config".
+-- @param container
+--    The container being validated; will only check fields which are
+--    scoped to this container's class hierarchy.
+-- @param expectedScope
+--    The expected scope of values in this object, i.e. "project", "config".
+--    Values that appear unexpectedly get checked to be sure they match up
+--    with the values in the expected scope, and an error is raised if they
+--    are not the same.
 ---
 
-	function p.config.validateScopes(self, expected)
+	function p.config.validateScopes(self, container, expected)
 		for f in p.field.each() do
-			-- Get the field's scope
-			-- TODO: This whole scope validation needs to be generalized
-			-- now that containers are in place. For now, ignore rule
-			-- containers until I can make things work properly.
+			-- If this field scoped to the target container class? If not
+			-- I can skip over it (config scope applies to everything).
 			local scope
-			if f.scopes[1] ~= "rule" then
-				scope = f.scopes[1]
+			for i = 1, #f.scopes do
+				if f.scopes[i] == "config" or p.container.hasClass(container, f.scopes[i]) then
+					scope = f.scopes[i]
+					break
+				end
 			end
 
-			-- Skip fields that are at or below the expected scope. Config-
-			-- level fields are the most general (can be applied to projects
-			-- or solutions) and so can never be out of scope.
-			local okay = (not scope or scope == "config" or scope == expected or p.oven.bubbledFields[f.name])
+			local okay = (not scope or scope == "config")
+
+			-- Skip over fields that are at or below my expected scope.
+			okay = okay or scope == expected
+
+			-- Skip over fields that bubble up to their parent containers anyway;
+			-- these can't be out of scope for that reason
+			okay = okay or p.oven.bubbledFields[f.name]
 
 			-- this one needs to checked
-			if not okay then
-				okay = p.field.compare(f, self[scope][f.name], self[f.name])
-			end
+			okay = okay or p.field.compare(f, self[scope][f.name], self[f.name])
 
 			-- found a problem?
 			if not okay then
 				local key = "validate." .. f.name
 				p.warnOnce(key, "'%s' on %s '%s' differs from %s '%s'; may be set out of scope", f.name, expected, self.name, scope, self[scope].name)
 			end
-
 		end
 	end
 

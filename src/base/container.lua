@@ -235,6 +235,25 @@
 
 
 ---
+-- Return true if the container is or inherits from specified class.
+--
+-- @param className
+--    The name of the class to check against.
+---
+
+	function container.hasClass(self, className)
+		local class = self.class
+		while class.parent do
+			if class.name == className then
+				return true
+			end
+			class = class.parent
+		end
+	end
+
+
+
+---
 -- Call out to the container validation to make sure everything
 -- is as it should be before handing off to the actions.
 ---
