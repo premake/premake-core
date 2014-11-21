@@ -17,6 +17,19 @@
 	local context = p.context
 
 
+--
+-- These fields get special treatment, "bubbling up" from the configurations
+-- to the project. This allows you to express, for example: "use this config
+-- map if this configuration is present in the project", and saves the step
+-- of clearing the current configuration filter before creating the map.
+--
+
+	p.oven.bubbledFields = {
+		configmap = true,
+		vpaths = true
+	}
+
+
 
 ---
 -- Traverses the container hierarchy built up by the project scripts and
@@ -147,7 +160,7 @@
 		-- This works, but it could probably be simplified.
 
 		local cfgs = table.fold(self.configurations or {}, self.platforms or {})
-		oven.bakeConfigMap(self, self, cfgs)
+		oven.bubbleFields(self, self, cfgs)
 		self._cfglist = oven.bakeConfigList(self, cfgs)
 
 		-- Don't allow a project-level system setting to influence the configurations
@@ -321,7 +334,7 @@
 --    The list of the project's build cfg/platform pairs.
 --
 
-	function oven.bakeConfigMap(ctx, cset, cfgs)
+	function oven.bubbleFields(ctx, cset, cfgs)
 		-- build a query filter that will match any configuration name,
 		-- within the existing constraints of the project
 
@@ -340,7 +353,10 @@
 		local terms = table.deepcopy(ctx.terms)
 		terms.configurations = configurations
 		terms.platforms = platforms
-		ctx.configmap = p.configset.fetch(cset, p.field.get("configmap"), terms)
+
+		for key in pairs(oven.bubbledFields) do
+			ctx[key] = p.configset.fetch(cset, p.field.get(key), terms)
+		end
 	end
 
 

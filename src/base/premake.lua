@@ -425,8 +425,10 @@ end
 
 	function premake.validateScopes(cfg, expected, ctx)
 		for f in field.each() do
-			-- Pull out the project level scope (this will get cleaned up when
-			-- the project objects move to the new container API)
+			-- Get the field's scope
+			-- TODO: This whole scope validation needs to be generalized
+			-- now that containers are in place. For now, ignore rule
+			-- containers until I can make things work properly.
 			local scope
 			if f.scopes[1] ~= "rule" then
 				scope = f.scopes[1]
@@ -435,7 +437,7 @@ end
 			-- Skip fields that are at or below the expected scope. Config-
 			-- level fields are the most general (can be applied to projects
 			-- or solutions) and so can never be out of scope.
-			local okay = (not scope or scope == "config" or scope == expected)
+			local okay = (not scope or scope == "config" or scope == expected or p.oven.bubbledFields[f.name])
 
 			-- this one needs to checked
 			if not okay then

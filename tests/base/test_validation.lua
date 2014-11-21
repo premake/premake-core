@@ -107,18 +107,6 @@
 		test.stderr("'location' on config")
 	end
 
-	function suite.warns_onProjectKeyedField_inConfig()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-			language "C++"
-		filter "Debug"
-			vpaths { ["Headers"] = "**.h" }
-		premake.validate()
-		test.stderr("'vpaths' on config")
-	end
-
 	function suite.warns_onProjectListField_inConfig()
 		solution "MySolution"
 			configurations { "Debug", "Release" }

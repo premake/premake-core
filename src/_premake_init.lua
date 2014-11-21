@@ -154,7 +154,7 @@
 
 	api.register {
 		name = "configmap",
-		scope = "config",
+		scope = "project",
 		kind = "list:keyed:array:string",
 	}
 
