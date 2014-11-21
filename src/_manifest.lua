@@ -45,6 +45,7 @@
 
 		-- project script processing
 		"base/oven.lua",
+		"base/validation.lua",
 		"base/premake.lua",
 		"base/help.lua",
 

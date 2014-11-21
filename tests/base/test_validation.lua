@@ -6,14 +6,15 @@
 
 	local suite = test.declare("premake_validation")
 
+	local p = premake
+
 
 --
 -- Setup
 --
 
-	local function verify()
-		ok, err = pcall(premake.validate)
-		return ok and not test.stderr()
+	local function validate()
+		return pcall(function() p.container.validate(p.api.rootContainer()) end)
 	end
 
 
@@ -27,9 +28,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-
-		test.istrue(pcall(premake.validate))
-		test.stderr()
+		test.istrue(validate())
 	end
 
 
@@ -42,8 +41,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 
 
@@ -60,8 +58,7 @@
 			uuid "D4110D7D-FB18-4A1C-A75B-CA432F4FE770"
 		project "MyProject2"
 			uuid "D4110D7D-FB18-4A1C-A75B-CA432F4FE770"
-
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 
 
@@ -74,8 +71,7 @@
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			language "C++"
-
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 
 
@@ -91,7 +87,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		premake.validate()
+		validate()
 		test.stderr("'startproject' on config")
 	end
 
@@ -103,7 +99,7 @@
 			language "C++"
 		filter "Debug"
 			location "MyProject"
-		premake.validate()
+		validate()
 		test.stderr("'location' on config")
 	end
 
@@ -115,7 +111,7 @@
 			language "C++"
 		filter "Debug"
 			configurations "Deployment"
-		premake.validate()
+		validate()
 		test.stderr("'configurations' on config")
 	end
 
@@ -129,6 +125,6 @@
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			rules { "NoSuchRule" }
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 

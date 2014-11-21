@@ -232,3 +232,25 @@
 		return container.classes[name]
 	end
 
+
+
+---
+-- Call out to the container validation to make sure everything
+-- is as it should be before handing off to the actions.
+---
+
+	function container.validate(self)
+		if type(self.class.validate) == "function" then
+			self.class.validate(self)
+		end
+	end
+
+
+	function container.validateChildren(self)
+		for class in container.eachChildClass(self.class) do
+			local children = self[class.pluralName]
+			for i = 1, #children do
+				container.validate(children[i])
+			end
+		end
+	end
