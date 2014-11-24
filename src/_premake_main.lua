@@ -142,7 +142,7 @@
 
 		-- Sanity check the current project setup
 
-		premake.validate()
+		p.container.validate(p.api.rootContainer())
 
 		-- Hand over control to the action
 

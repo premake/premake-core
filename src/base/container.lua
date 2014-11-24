@@ -232,3 +232,51 @@
 		return container.classes[name]
 	end
 
+
+
+---
+-- Return true if a container class is or inherits from the
+-- specified class.
+--
+-- @param class
+--    The container class to be tested.
+-- @param scope
+--    The name of the class to be checked against. If the container
+--    class matches this scope (i.e. class is a project and the
+--    scope is "project"), or if it is a parent object of it (i.e.
+--    class is a solution and scope is "project"), then returns
+--    true.
+---
+
+	function container.classIsA(class, scope)
+		while class do
+			if class.name == scope then
+				return true
+			end
+			class = class.parent
+		end
+		return false
+	end
+
+
+
+---
+-- Call out to the container validation to make sure everything
+-- is as it should be before handing off to the actions.
+---
+
+	function container.validate(self)
+		if type(self.class.validate) == "function" then
+			self.class.validate(self)
+		end
+	end
+
+
+	function container.validateChildren(self)
+		for class in container.eachChildClass(self.class) do
+			local children = self[class.pluralName]
+			for i = 1, #children do
+				container.validate(children[i])
+			end
+		end
+	end
