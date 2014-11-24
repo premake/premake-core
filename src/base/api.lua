@@ -466,11 +466,8 @@
 			-- compatibile with this scope, then I can use it.
 			local currentClass = api.scope.current.class
 			local targetClass = p.container.getClass(scope)
-			while targetClass do
-				if targetClass.name == currentClass.name then
-					return api.scope.current
-				end
-				targetClass = targetClass.parent
+			if p.container.classIsA(targetClass, currentClass.name) then
+				return api.scope.current
 			end
 		end
 

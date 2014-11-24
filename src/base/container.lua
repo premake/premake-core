@@ -235,20 +235,27 @@
 
 
 ---
--- Return true if the container is or inherits from specified class.
+-- Return true if a container class is or inherits from the
+-- specified class.
 --
--- @param className
---    The name of the class to check against.
+-- @param class
+--    The container class to be tested.
+-- @param scope
+--    The name of the class to be checked against. If the container
+--    class matches this scope (i.e. class is a project and the
+--    scope is "project"), or if it is a parent object of it (i.e.
+--    class is a solution and scope is "project"), then returns
+--    true.
 ---
 
-	function container.hasClass(self, className)
-		local class = self.class
-		while class.parent do
-			if class.name == className then
+	function container.classIsA(class, scope)
+		while class do
+			if class.name == scope then
 				return true
 			end
 			class = class.parent
 		end
+		return false
 	end
 
 

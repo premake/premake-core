@@ -115,7 +115,7 @@
 			-- I can skip over it (config scope applies to everything).
 			local scope
 			for i = 1, #f.scopes do
-				if f.scopes[i] == "config" or p.container.hasClass(container, f.scopes[i]) then
+				if f.scopes[i] == "config" or p.container.classIsA(container.class, f.scopes[i]) then
 					scope = f.scopes[i]
 					break
 				end
