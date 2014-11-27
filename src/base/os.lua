@@ -435,6 +435,47 @@
 
 
 
+---
+-- Translate command tokens into their OS or action specific equivalents.
+---
+
+	os.commandTokens = {
+		copy = {
+			_ = function(v)
+				return "cp -r " .. v
+			end,
+			windows = function(v)
+				return "xcopy /S " .. v
+			end,
+		}
+	}
+
+	function os.translateCommand(cmd)
+		if type(cmd) == "table" then
+			local result = {}
+			for i = 1, #cmd do
+				result[i] = os.translateCommand(cmd[i])
+			end
+			return result
+		end
+
+		local token = cmd:match("^{.+}")
+		if token then
+			local value = cmd:sub(#token + 2)
+
+			token = token:sub(2, #token - 1):lower()
+			local processors = os.commandTokens[token]
+			local processor = processors[_ACTION] or processors[_OS] or processors["_"]
+			if processor then
+				return processor(value)
+			end
+		end
+
+		return cmd
+	end
+
+
+
 --
 -- Generate a UUID.
 --
