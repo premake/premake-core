@@ -5,20 +5,22 @@
 --
 
 
---
--- Add a path normalization step to the execution command to
--- replace special symbols and any scripted weirdness.
+---
+-- Extend Lua's built-in os.execute() with token expansion and
+-- path normalization.
 --
 
 	premake.override(os, "execute", function(base, cmd)
 		cmd = path.normalize(cmd)
+		cmd = os.translateCommand(cmd)
 		return base(cmd)
 	end)
 
 
---
+
+---
 -- Same as os.execute(), but accepts string formatting arguments.
---
+---
 
 	function os.executef(cmd, ...)
 		cmd = string.format(cmd, unpack(arg))
