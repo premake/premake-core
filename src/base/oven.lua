@@ -489,6 +489,13 @@
 		ctx.location = ctx.location or prj.location
 		context.basedir(ctx, ctx.location)
 
+		-- Translate any tokens in command line fields
+		for f in p.field.each() do
+			if f.commands then
+				ctx[f.name] = os.translateCommand(ctx[f.name])
+			end
+		end
+
 		-- Fill in a few calculated for the configuration, including the long
 		-- and short names and the build and link target.
 

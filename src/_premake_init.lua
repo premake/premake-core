@@ -68,6 +68,7 @@
 		scope = { "config", "rule" },
 		kind = "list:string",
 		tokens = true,
+		commands = true,
 	}
 
 	api.alias("buildcommands", "buildCommands")
@@ -128,6 +129,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		commands = true,
 	}
 
 
@@ -572,6 +574,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		commands = true,
 	}
 
 	api.register {
@@ -586,6 +589,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		commands = true,
 	}
 
 	api.register {
@@ -600,6 +604,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		commands = true,
 	}
 
 	api.register {
@@ -620,6 +625,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		commands = true,
 	}
 
 	api.register {
