@@ -798,6 +798,7 @@
 			end
 
 			if #commands > 0 then
+				commands = os.translateCommands(commands, p.MACOSX)
 				if not wrapperWritten then
 					_p('/* Begin PBXShellScriptBuildPhase section */')
 					wrapperWritten = true
