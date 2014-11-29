@@ -447,7 +447,7 @@
 				return "cp -r " .. v
 			end,
 			windows = function(v)
-				return "xcopy /S " .. v
+				return "xcopy /Q /E /Y " .. path.translate(v)
 			end,
 		}
 	}
@@ -467,7 +467,7 @@
 
 			token = token:sub(2, #token - 1):lower()
 			local processors = os.commandTokens[token]
-			local processor = processors[_ACTION] or processors[_OS] or processors["_"]
+			local processor = processors[_ACTION] or processors[os.get()] or processors["_"]
 			if processor then
 				return processor(value)
 			end
