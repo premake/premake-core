@@ -442,38 +442,42 @@
 ---
 
 	os.commandTokens = {
-		copy = {
-			_ = function(v)
-				return "cp -r " .. v
-			end,
-			windows = function(v)
-				return "xcopy /Q /E /Y " .. path.translate(v)
-			end,
+		_ = {
+			copy = function(v) return "cp -r " .. v end,
+		},
+		windows = {
+			copy = function(v) return "xcopy /Q /E /Y " .. path.translate(v) end,
 		}
 	}
 
-	function os.translateCommand(cmd)
+	function os.translateCommands(cmd, map)
+		map = map or os.get()
+		if type(map) == "string" then
+			map = os.commandTokens[map] or os.commandTokens["_"]
+		end
+
+		local processOne = function(cmd)
+			local token = cmd:match("^{.+}")
+			if token then
+				token = token:sub(2, #token - 1):lower()
+				local args = cmd:sub(#token + 4)
+				local func = map[token] or os.commandTokens["_"][token]
+				if func then
+					cmd = func(args)
+				end
+			end
+			return cmd
+		end
+
 		if type(cmd) == "table" then
 			local result = {}
 			for i = 1, #cmd do
-				result[i] = os.translateCommand(cmd[i])
+				result[i] = processOne(cmd[i])
 			end
 			return result
+		else
+			return processOne(cmd)
 		end
-
-		local token = cmd:match("^{.+}")
-		if token then
-			local value = cmd:sub(#token + 2)
-
-			token = token:sub(2, #token - 1):lower()
-			local processors = os.commandTokens[token]
-			local processor = processors[_ACTION] or processors[os.get()] or processors["_"]
-			if processor then
-				return processor(value)
-			end
-		end
-
-		return cmd
 	end
 
 

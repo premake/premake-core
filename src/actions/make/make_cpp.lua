@@ -161,7 +161,9 @@
 				end
 				_x('%s: %s', output, dependencies)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
-				for _, cmd in ipairs(filecfg.buildcommands) do
+
+				local cmds = os.translateCommands(filecfg.buildcommands)
+				for _, cmd in ipairs(cmds) do
 					_p('\t$(SILENT) %s', cmd)
 				end
 				_p('endif')

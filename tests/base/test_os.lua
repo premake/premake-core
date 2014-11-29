@@ -137,12 +137,12 @@
 --
 
 	function suite.translateCommand_onNoToken()
-		test.isequal("cp a b", os.translateCommand("cp a b"))
+		test.isequal("cp a b", os.translateCommands("cp a b"))
 	end
 
 	function suite.translateCommand_callsProcessor()
-		os.commandTokens.copy.test = function(value)
-			return "test " .. value
-		end
-		test.isequal("test a b", os.translateCommand("{COPY} a b"))
+		os.commandTokens.test = {
+			copy = function(value) return "test " .. value end
+		}
+		test.isequal("test a b", os.translateCommands("{COPY} a b", "test"))
 	end
