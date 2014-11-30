@@ -12,7 +12,7 @@
 
 	premake.override(os, "execute", function(base, cmd)
 		cmd = path.normalize(cmd)
-		cmd = os.translateCommand(cmd)
+		cmd = os.translateCommands(cmd)
 		return base(cmd)
 	end)
 
