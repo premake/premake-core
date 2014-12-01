@@ -443,10 +443,51 @@
 
 	os.commandTokens = {
 		_ = {
-			copy = function(v) return "cp -r " .. v end,
+			copy = function(v)
+				return "cp -rf " .. v
+			end,
+			delete = function(v)
+				return "rm -f " .. v
+			end,
+			echo = function(v)
+				return "echo " .. v
+			end,
+			mkdir = function(v)
+				return "mkdir -p " .. v
+			end,
+			move = function(v)
+				return "mv -f " .. v
+			end,
+			rmdir = function(v)
+				return "rm -rf " .. v
+			end,
+			touch = function(v)
+				return "touch " .. v
+			end,
 		},
 		windows = {
-			copy = function(v) return "xcopy /Q /E /Y /I " .. path.translate(v) end,
+			copy = function(v)
+				return "xcopy /Q /E /Y /I " .. path.translate(v)
+			end,
+			delete = function(v)
+				return "del " .. path.translate(v)
+			end,
+			echo = function(v)
+				return "echo " .. v
+			end,
+			mkdir = function(v)
+				return "mkdir " .. path.translate(v)
+			end,
+			move = function(v)
+				return "move /Y " .. path.translate(v)
+			end,
+			rmdir = function(v)
+				return "rmdir /S /Q " .. path.translate(v)
+			end,
+			touch = function(v)
+				v = path.translate(v)
+				return string.format("type nul >> %s && copy /b %s +,,", v, v)
+			end,
 		}
 	}
 
