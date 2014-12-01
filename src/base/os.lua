@@ -446,7 +446,7 @@
 			copy = function(v) return "cp -r " .. v end,
 		},
 		windows = {
-			copy = function(v) return "xcopy /Q /E /Y " .. path.translate(v) end,
+			copy = function(v) return "xcopy /Q /E /Y /I " .. path.translate(v) end,
 		}
 	}
 
