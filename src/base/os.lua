@@ -443,6 +443,9 @@
 
 	os.commandTokens = {
 		_ = {
+			chdir = function(v)
+				return "cd " .. v
+			end,
 			copy = function(v)
 				return "cp -rf " .. v
 			end,
@@ -466,6 +469,9 @@
 			end,
 		},
 		windows = {
+			chdir = function(v)
+				return "chdir " .. path.translate(v)
+			end,
 			copy = function(v)
 				return "xcopy /Q /E /Y /I " .. path.translate(v)
 			end,
