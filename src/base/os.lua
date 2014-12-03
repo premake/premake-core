@@ -492,7 +492,7 @@
 			end,
 			touch = function(v)
 				v = path.translate(v)
-				return string.format("type nul >> %s && copy /b %s +,,", v, v)
+				return string.format("type nul >> %s && copy /b %s+,, %s", v, v, v)
 			end,
 		}
 	}
