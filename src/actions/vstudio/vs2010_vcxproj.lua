@@ -471,6 +471,7 @@
 			local msg = cfg[field .. "message"]
 
 			if #steps > 0 then
+				steps = os.translateCommands(steps, p.WINDOWS)
 				_p(2,'<%s>', name)
 				_x(3,'<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
 				if msg then
@@ -644,7 +645,8 @@
 					if fileconfig.hasCustomBuildRule(filecfg) then
 						m.excludedFromBuild(cfg, filecfg)
 
-						local commands = table.concat(filecfg.buildcommands,'\r\n')
+						local commands = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
+						commands = table.concat(commands,'\r\n')
 						m.element("Command", condition, '%s', commands)
 
 						local outputs = project.getrelative(prj, filecfg.buildoutputs)
@@ -1288,6 +1290,7 @@
 
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
+			commands = os.translateCommands(commands, p.WINDOWS)
 			commands = table.concat(premake.esc(commands), p.eol())
 			_p(2, '<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end

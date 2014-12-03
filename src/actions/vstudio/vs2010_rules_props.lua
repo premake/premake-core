@@ -145,7 +145,8 @@
 
 	function m.commandLineTemplates(r)
 		if #r.buildcommands then
-			local cmds = table.concat(r.buildcommands, p.eol())
+			local cmds = os.translateCommands(r.buildcommands, p.WINDOWS)
+			cmds = table.concat(cmds, p.eol())
 			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
 		end
 	end

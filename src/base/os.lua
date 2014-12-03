@@ -5,20 +5,22 @@
 --
 
 
---
--- Add a path normalization step to the execution command to
--- replace special symbols and any scripted weirdness.
+---
+-- Extend Lua's built-in os.execute() with token expansion and
+-- path normalization.
 --
 
 	premake.override(os, "execute", function(base, cmd)
 		cmd = path.normalize(cmd)
+		cmd = os.translateCommands(cmd)
 		return base(cmd)
 	end)
 
 
---
+
+---
 -- Same as os.execute(), but accepts string formatting arguments.
---
+---
 
 	function os.executef(cmd, ...)
 		cmd = string.format(cmd, unpack(arg))
@@ -432,6 +434,98 @@
 		p = path.normalize(p)
 		return base(p)
 	end)
+
+
+
+---
+-- Translate command tokens into their OS or action specific equivalents.
+---
+
+	os.commandTokens = {
+		_ = {
+			chdir = function(v)
+				return "cd " .. v
+			end,
+			copy = function(v)
+				return "cp -rf " .. v
+			end,
+			delete = function(v)
+				return "rm -f " .. v
+			end,
+			echo = function(v)
+				return "echo " .. v
+			end,
+			mkdir = function(v)
+				return "mkdir -p " .. v
+			end,
+			move = function(v)
+				return "mv -f " .. v
+			end,
+			rmdir = function(v)
+				return "rm -rf " .. v
+			end,
+			touch = function(v)
+				return "touch " .. v
+			end,
+		},
+		windows = {
+			chdir = function(v)
+				return "chdir " .. path.translate(v)
+			end,
+			copy = function(v)
+				return "xcopy /Q /E /Y /I " .. path.translate(v)
+			end,
+			delete = function(v)
+				return "del " .. path.translate(v)
+			end,
+			echo = function(v)
+				return "echo " .. v
+			end,
+			mkdir = function(v)
+				return "mkdir " .. path.translate(v)
+			end,
+			move = function(v)
+				return "move /Y " .. path.translate(v)
+			end,
+			rmdir = function(v)
+				return "rmdir /S /Q " .. path.translate(v)
+			end,
+			touch = function(v)
+				v = path.translate(v)
+				return string.format("type nul >> %s && copy /b %s+,, %s", v, v, v)
+			end,
+		}
+	}
+
+	function os.translateCommands(cmd, map)
+		map = map or os.get()
+		if type(map) == "string" then
+			map = os.commandTokens[map] or os.commandTokens["_"]
+		end
+
+		local processOne = function(cmd)
+			local token = cmd:match("^{.+}")
+			if token then
+				token = token:sub(2, #token - 1):lower()
+				local args = cmd:sub(#token + 4)
+				local func = map[token] or os.commandTokens["_"][token]
+				if func then
+					cmd = func(args)
+				end
+			end
+			return cmd
+		end
+
+		if type(cmd) == "table" then
+			local result = {}
+			for i = 1, #cmd do
+				result[i] = processOne(cmd[i])
+			end
+			return result
+		else
+			return processOne(cmd)
+		end
+	end
 
 
 

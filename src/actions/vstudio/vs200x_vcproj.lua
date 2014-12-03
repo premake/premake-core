@@ -940,8 +940,8 @@
 
 
 	function m.buildCommandLine(cfg)
-		commands = table.concat(cfg.buildcommands, "\r\n")
-		p.x('BuildCommandLine="%s"', commands)
+		local cmds = os.translateCommands(cfg.buildcommands, p.WINDOWS)
+		p.x('BuildCommandLine="%s"', table.concat(cmds, "\r\n"))
 	end
 
 
@@ -955,8 +955,9 @@
 
 
 	function m.cleanCommandLine(cfg)
-		commands = table.concat(cfg.cleancommands, "\r\n")
-		p.x('CleanCommandLine="%s"', commands)
+		local cmds = os.translateCommands(cfg.cleancommands, p.WINDOWS)
+		cmds = table.concat(cmds, "\r\n")
+		p.x('CleanCommandLine="%s"', cmds)
 	end
 
 
@@ -969,6 +970,7 @@
 			if msg then
 				p.x('Description="%s"', msg)
 			end
+			steps = os.translateCommands(steps, p.WINDOWS)
 			p.x('CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
 		end
 	end
@@ -1030,7 +1032,8 @@
 	function m.customBuildTool(cfg)
 		local cfg, filecfg = config.normalize(cfg)
 		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
-			p.x('CommandLine="%s"', table.concat(filecfg.buildcommands,'\r\n'))
+			local cmds = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
+			p.x('CommandLine="%s"', table.concat(cmds,'\r\n'))
 
 			local outputs = project.getrelative(filecfg.project, filecfg.buildoutputs)
 			p.x('Outputs="%s"', table.concat(outputs, ' '))

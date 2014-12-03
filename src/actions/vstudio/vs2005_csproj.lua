@@ -198,15 +198,17 @@
 	function cs2005.buildEvents(prj)
 		local function output(name, steps)
 			if #steps > 0 then
+				steps = os.translateCommands(steps, p.WINDOWS)
 				steps = table.implode(steps, "", "", "\r\n")
 				_x(2,'<%sBuildEvent>%s</%sBuildEvent>', name, steps, name)
 			end
 		end
 
-		if #prj.prebuildcommands > 0 or #prj.postbuildcommands > 0 then
+		local cfg = project.getfirstconfig(prj)
+		if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
 			_p(1,'<PropertyGroup>')
-			output("Pre", prj.prebuildcommands)
-			output("Post", prj.postbuildcommands)
+			output("Pre", cfg.prebuildcommands)
+			output("Post", cfg.postbuildcommands)
 			_p(1,'</PropertyGroup>')
 		end
 	end

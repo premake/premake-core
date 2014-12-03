@@ -130,3 +130,19 @@
 	function suite.pathsearch_NilPathsAllowed()
 		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", nil, _TESTS_DIR, nil))
 	end
+
+
+--
+-- os.translateCommand() tests
+--
+
+	function suite.translateCommand_onNoToken()
+		test.isequal("cp a b", os.translateCommands("cp a b"))
+	end
+
+	function suite.translateCommand_callsProcessor()
+		os.commandTokens.test = {
+			copy = function(value) return "test " .. value end
+		}
+		test.isequal("test a b", os.translateCommands("{COPY} a b", "test"))
+	end
