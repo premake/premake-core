@@ -1,4 +1,4 @@
-	--
+--
 -- make_cpp.lua
 -- Generate a C/C++ project makefile.
 -- Copyright (c) 2002-2013 Jason Perkins and the Premake project
@@ -98,7 +98,7 @@
 	function cpp.buildcommand(prj, objext, node)
 		local iscfile = node and path.iscfile(node.abspath) or false
 		local flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
-		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
+		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
 	end
 
 
