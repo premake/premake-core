@@ -55,39 +55,3 @@
 			toolsVersion    = "12.0",
 		}
 	}
-
-
----
--- VS 2013 warns on duplicate file names, even those files are contained in
--- different, mututally exclusive configurations. See:
--- http://connect.microsoft.com/VisualStudio/feedback/details/797460/incorrect-warning-msb8027-reported-for-files-excluded-from-build
---
--- Premake already adds unique object names to conflicting file names, so just
--- go ahead and disable that warning.
----
-
-	premake.override(vc2010.elements, "globals", function(base, prj)
-		local calls = base(prj)
-		table.insertafter(calls, vc2010.projectGuid, m.ignoreWarnDuplicateFilename)
-		return calls
-	end)
-
-	function m.ignoreWarnDuplicateFilename(prj)
-		if _ACTION > "vs2012" then
-			p.w('<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>')
-		end
-	end
-
-
-
----
--- Add new elements to the configuration properties block of C++ projects.
----
-
-	premake.override(vc2010, "platformToolset", function(base, cfg)
-		if _ACTION > "vs2012" then
-			_p(2,'<PlatformToolset>v120</PlatformToolset>')
-		else
-			base(cfg)
-		end
-	end)

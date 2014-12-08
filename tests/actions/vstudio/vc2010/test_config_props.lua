@@ -16,6 +16,7 @@
 	local sln, prj
 
 	function suite.setup()
+		_ACTION = "vs2010"
 		sln, prj = test.createsolution()
 	end
 
@@ -299,5 +300,54 @@
 		<UseDebugLibraries>false</UseDebugLibraries>
 		<CharacterSet>MultiByte</CharacterSet>
 		<WholeProgramOptimization>true</WholeProgramOptimization>
+		]]
+	end
+
+
+
+---
+-- Visual Studio 2012 adds a new <PlatformToolset> element.
+---
+
+	function suite.addsPlatformToolset_onVS2012()
+		_ACTION = "vs2012"
+		files "hello.cpp"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+		<PlatformToolset>v110</PlatformToolset>
+	</PropertyGroup>
+		]]
+	end
+
+
+	function suite.addsPlatformToolset_onVS2013()
+		_ACTION = "vs2013"
+		files "hello.cpp"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+		]]
+	end
+
+
+	function suite.excludesPlatformToolset_onNoRelevantSources()
+		_ACTION = "vs2012"
+		files "hello.x"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+	</PropertyGroup>
 		]]
 	end

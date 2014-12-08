@@ -157,3 +157,23 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+--
+-- VS 2013 adds the <IgnoreWarnCompileDuplicatedFilename> to get rid
+-- of spurious warnings when the same filename is present in different
+-- configurations.
+--
+
+	function suite.structureIsCorrect_on2013()
+		_ACTION = "vs2013"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>MyProject</RootNamespace>
+	</PropertyGroup>
+		]]
+	end

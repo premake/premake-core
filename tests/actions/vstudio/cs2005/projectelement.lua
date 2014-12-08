@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/cs2005/projectelement.lua
 -- Validate generation of <Project/> element in Visual Studio 2005+ .csproj
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_projectelement = { }
-	local suite = T.vstudio_cs2005_projectelement
+	local suite = test.declare("vstudio_cs2005_projectelement")
 	local cs2005 = premake.vstudio.cs2005
 
 
@@ -29,7 +28,7 @@
 -- Tests
 --
 
-	function suite.On2005()
+	function suite.on2005()
 		_ACTION = "vs2005"
 		prepare()
 		test.capture [[
@@ -37,7 +36,8 @@
 		]]
 	end
 
-	function suite.On2008()
+
+	function suite.on2008()
 		_ACTION = "vs2008"
 		prepare()
 		test.capture [[
@@ -45,11 +45,32 @@
 		]]
 	end
 
-	function suite.On2010()
+
+	function suite.on2010()
 		_ACTION = "vs2010"
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		]]
+	end
+
+
+	function suite.on2012()
+		_ACTION = "vs2012"
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		]]
+	end
+
+
+	function suite.on2013()
+		_ACTION = "vs2013"
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
 	end

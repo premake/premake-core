@@ -58,6 +58,7 @@ return {
 	-- Visual Studio 2005-2010 C# projects
 	"actions/vstudio/cs2005/test_assembly_refs.lua",
 	"actions/vstudio/cs2005/test_build_events.lua",
+	"actions/vstudio/cs2005/test_common_props.lua",
 	"actions/vstudio/cs2005/test_compiler_props.lua",
 	"actions/vstudio/cs2005/test_debug_props.lua",
 	"actions/vstudio/cs2005/test_files.lua",
@@ -67,6 +68,7 @@ return {
 	"actions/vstudio/cs2005/test_platform_groups.lua",
 	"actions/vstudio/cs2005/test_project_refs.lua",
 	"actions/vstudio/cs2005/projectsettings.lua",
+	"actions/vstudio/cs2005/test_targets.lua",
 
 	-- Visual Studio 2005-2010 solutions
 	"actions/vstudio/sln2005/test_dependencies.lua",
@@ -116,21 +118,6 @@ return {
 	"actions/vstudio/vc2010/test_prop_sheet.lua",
 	"actions/vstudio/vc2010/test_resource_compile.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
-
-	-- Visual Studio 2012
-	"actions/vs2012/test_csproj_common_props.lua",
-	"actions/vs2012/test_csproj_project_element.lua",
-	"actions/vs2012/test_csproj_project_props.lua",
-	"actions/vs2012/test_csproj_targets.lua",
-	"actions/vs2012/test_sln_header.lua",
-	"actions/vs2012/test_vcxproj_clcompile.lua",
-	"actions/vs2012/test_vcxproj_config_props.lua",
-
-	-- Visual Studio 2013
-	"actions/vs2013/test_csproj_project_element.lua",
-	"actions/vs2013/test_globals.lua",
-	"actions/vs2013/test_sln_header.lua",
-	"actions/vs2013/test_vcxproj_config_props.lua",
 
 	-- Makefile tests
 	"actions/make/test_make_escaping.lua",

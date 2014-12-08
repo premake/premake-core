@@ -121,6 +121,7 @@
 	m.elements.globals = function(prj)
 		return {
 			m.projectGuid,
+			m.ignoreWarnDuplicateFilename,
 			m.keyword,
 			m.projectName,
 		}
@@ -151,6 +152,7 @@
 				m.useOfAtl,
 				m.clrSupport,
 				m.characterSet,
+				m.platformToolset,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
 			}
@@ -1124,6 +1126,18 @@
 	end
 
 
+	function m.ignoreWarnDuplicateFilename(prj)
+		-- VS 2013 warns on duplicate file names, even those files which are
+		-- contained in different, mututally exclusive configurations. See:
+		-- http://connect.microsoft.com/VisualStudio/feedback/details/797460/incorrect-warning-msb8027-reported-for-files-excluded-from-build
+		-- Premake already adds unique object names to conflicting file names, so
+		-- just go ahead and disable that warning.
+		if _ACTION > "vs2012" then
+			p.w('<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>')
+		end
+	end
+
+
 	function m.ignoreImportLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
 			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
@@ -1359,6 +1373,21 @@
 	function m.outputFile(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
+		end
+	end
+
+
+	function m.platformToolset(cfg)
+		local map = { vs2012 = "v110", vs2013 = "v120" }
+		local value = map[_ACTION]
+		if value then
+			-- should only be written if there is a C/C++ file in the config
+			for i = 1, #cfg.files do
+				if path.iscppfile(cfg.files[i]) then
+					_p(2,'<PlatformToolset>%s</PlatformToolset>', value)
+					return
+				end
+			end
 		end
 	end
 

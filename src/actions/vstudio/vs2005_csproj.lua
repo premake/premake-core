@@ -25,6 +25,7 @@
 	cs2005.elements.project = {
 		"xmlDeclaration",
 		"projectElement",
+		"commonProperties",
 		"projectProperties",
 		"configurations",
 		"applicationIcon",
@@ -380,6 +381,13 @@
 
 	function cs2005.assemblyName(cfg)
 		_p(2,'<AssemblyName>%s</AssemblyName>', cfg.buildtarget.basename)
+	end
+
+
+	function cs2005.commonProperties(prj)
+		if _ACTION > "vs2010" then
+			_p(1,'<Import Project="$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props" Condition="Exists(\'$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\')" />')
+		end
 	end
 
 
