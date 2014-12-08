@@ -1581,7 +1581,7 @@
 		if file then
 			if prj.pchsource == file.abspath and
 			   not prj.flags.NoPCH and
-			   prj.system ~= p.PS3
+			   prj.system == p.WINDOWS
 			then
 				p.w('UsePrecompiledHeader="1"')
 			end

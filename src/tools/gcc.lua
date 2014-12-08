@@ -285,11 +285,6 @@
 --
 
 	gcc.tools = {
-		ps3 = {
-			cc = "ppu-lv2-g++",
-			cxx = "ppu-lv2-g++",
-			ar = "ppu-lv2-ar",
-		},
 	}
 
 	function gcc.gettoolname(cfg, tool)

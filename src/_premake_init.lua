@@ -678,7 +678,6 @@
 			"haiku",
 			"linux",
 			"macosx",
-			"ps3",
 			"solaris",
 			"wii",
 			"windows",
@@ -1051,11 +1050,3 @@
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"
-
-	-- PS3 configurations
-
-	filter { "system:PS3" }
-		toolset "snc"
-
-	filter { "system:PS3", "kind:ConsoleApp" }
-		targetextension ".elf"
