@@ -1,15 +1,18 @@
 --
 -- make_cpp.lua
 -- Generate a C/C++ project makefile.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.make.cpp = {}
-	local make = premake.make
-	local cpp = premake.make.cpp
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
+	local p = premake
+
+	p.make.cpp = {}
+
+	local make = p.make
+	local cpp = p.make.cpp
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
 
 
 ---
@@ -157,9 +160,9 @@
 				local dependencies = filecfg.relpath
 				if filecfg.buildinputs and #filecfg.buildinputs > 0 then
 					local inputs = project.getrelative(prj, filecfg.buildinputs)
-					dependencies = dependencies .. " " .. table.concat(inputs, " ")
+					dependencies = dependencies .. " " .. table.concat(p.esc(inputs), " ")
 				end
-				_x('%s: %s', output, dependencies)
+				_p('%s: %s', output, dependencies)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
 
 				local cmds = os.translateCommands(filecfg.buildcommands)
