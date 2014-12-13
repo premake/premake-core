@@ -35,12 +35,17 @@
 -- @param parentContainer (optional)
 --    The container that can contain this one. For a project, this would be
 --    the solution container class.
+-- @param extraScopes (optional)
+--    Each container can hold fields scoped to itself (by putting the container's
+--    class name into its scope attribute), or any of the container's children.
+--    If a container can hold scopes other than these (i.e. "config"), it can
+--    provide a list of those scopes in this argument.
 -- @returns
 --    The newly defined container class.
 ---
 
-	function api.container(containerName, parentContainer)
-		local class, err = p.container.newClass(containerName, parentContainer)
+	function api.container(containerName, parentContainer, extraScopes)
+		local class, err = p.container.newClass(containerName, parentContainer, extraScopes)
 		if not class then
 			error(err, 2)
 		end
@@ -451,26 +456,9 @@
 ---
 
 	function api.target(field)
-		local scopes = field.scopes
-		for i = 1, #scopes do
-			local scope = scopes[i]
-
-			-- TODO: rules should be able to contain filter blocks too, but
-			-- to all the existing code expects the "config" scope to mean
-			-- project settings. Will revisit.
-			if scope == "config" then
-				scope = "project"
-			end
-
-			-- If anything in the currently active container's hierarchy is
-			-- compatibile with this scope, then I can use it.
-			local currentClass = api.scope.current.class
-			local targetClass = p.container.getClass(scope)
-			if p.container.classIsA(targetClass, currentClass.name) then
-				return api.scope.current
-			end
+		if p.container.classCanContain(api.scope.current.class, field.scope) then
+			return api.scope.current
 		end
-
 		return nil
 	end
 

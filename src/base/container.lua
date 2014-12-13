@@ -30,16 +30,22 @@
 -- @param parent (optional)
 --    If this class of container is intended to be contained within another,
 --    the containing class object.
+-- @param extraScopes (optional)
+--    Each container can hold fields scoped to itself (by putting the container's
+--    class name into its scope attribute), or any of the container's children.
+--    If a container can hold scopes other than these (i.e. "config"), it can
+--    provide a list of those scopes in this argument.
 -- @return
 --    If successful, the new class descriptor object (a table). Otherwise,
 --    returns nil and an error message.
 ---
 
-	function container.newClass(name, parent)
+	function container.newClass(name, parent, extraScopes)
 		local class = p.configset.new(parent)
 		class.name = name
 		class.pluralName = name:plural()
 		class.containedClasses = {}
+		class.extraScopes = extraScopes
 
 		if parent then
 			table.insert(parent.containedClasses, class)
@@ -149,6 +155,49 @@
 				children[ctx.name] = ctx
 			end
 		end
+	end
+
+
+
+---
+-- Returns true if the container can hold any of the specified field scopes.
+--
+-- @param class
+--    The container class to test.
+-- @param scope
+--    A scope string (e.g. "project", "config") or an array of scope strings.
+-- @return
+--    True if this container can hold any of the specified scopes.
+---
+
+	function container.classCanContain(class, scope)
+		if type(scope) == "table" then
+			for i = 1, #scope do
+				if container.classCanContain(class, scope[i]) then
+					return true
+				end
+			end
+			return false
+		end
+
+		-- if I have child classes, check with them first, since scopes
+		-- are usually specified for leaf nodes in the hierarchy
+		for child in container.eachChildClass(class) do
+			if (container.classCanContain(child, scope)) then
+				return true
+			end
+		end
+
+		if class.name == scope then
+			return true
+		end
+
+		-- is it in my extra scopes list?
+		if class.extraScopes and table.contains(class.extraScopes, scope) then
+			return true
+		end
+
+		return false
 	end
 
 
