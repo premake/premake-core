@@ -5,7 +5,7 @@
 ---
 
 	local p = premake
-	p.project = p.api.container("project", p.solution)
+	p.project = p.api.container("project", p.solution, { "config" })
 
 	local project = p.project
 	local tree = p.tree
