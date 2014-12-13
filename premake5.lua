@@ -1,12 +1,6 @@
 ---
--- Premake 5.x core configuration script
---
--- You can generate from here if you only want to build Premake's core
--- component, but you probably want to be one level up in order to get
--- the extra modules too.
---
--- If you've been working from premake-dev, you will need to pull a new
--- working copy using premake-main to get the extras.
+-- Premake 5.x build configuration script
+-- Use this script to configure the project with Premake5.
 ---
 
 --
