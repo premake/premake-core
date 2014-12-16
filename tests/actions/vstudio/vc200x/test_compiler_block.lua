@@ -64,6 +64,23 @@
 
 
 --
+-- Ensure macros are not truncated (see issue #63)
+--
+
+
+	function suite.additionalIncludeDirs_onIncludeDirs_with_vs_macros()
+		includedirs { "$(Macro1)/foo/bar/$(Macro2)/baz" }
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	AdditionalIncludeDirectories="$(Macro1)\foo\bar\$(Macro2)\baz"
+		]]
+	end
+
+
+--
 -- Verify the handling of the Symbols flag. The format must be set, and the
 -- debug runtime library must be selected.
 --
