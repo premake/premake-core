@@ -269,6 +269,24 @@
 	end
 
 
+
+--
+-- Ensure macros are not truncated (see issue #63)
+--
+
+
+	function suite.additionalIncludeDirs_onIncludeDirs_with_vs_macros()
+		includedirs { "$(Macro1)/foo/bar/$(Macro2)/baz" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<AdditionalIncludeDirectories>$(Macro1)\foo\bar\$(Macro2)\baz;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+		]]
+	end
+
+
 --
 -- If include directories are specified, the <AdditionalUsingDirectories> should be added.
 --
