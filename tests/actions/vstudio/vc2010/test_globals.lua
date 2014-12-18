@@ -83,7 +83,7 @@
 --
 
 	function suite.noKeyword_onNotWindows()
-		system "PS3"
+		system "Linux"
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
@@ -101,7 +101,7 @@
 		filter "Debug"
 			system "Windows"
 		filter "Release"
-			system "PS3"
+			system "Linux"
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">

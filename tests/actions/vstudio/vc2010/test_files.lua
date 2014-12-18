@@ -231,7 +231,7 @@
 
 	function suite.excludedFromBuild_onResourceFile_excludeFlag_nonWindows()
 		files { "hello.rc" }
-		system "PS3"
+		system "Linux"
 		filter "files:hello.rc"
 		flags { "ExcludeFromBuild" }
 		prepare()

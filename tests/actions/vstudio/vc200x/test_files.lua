@@ -15,12 +15,13 @@
 	local sln, prj
 
 	function suite.setup()
+		_ACTION = "vs2008"
 		premake.escaper(premake.vstudio.vs2005.esc)
 		sln = test.createsolution()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(sln, 1)
 		vc200x.files(prj)
 	end
 
