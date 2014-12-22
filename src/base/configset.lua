@@ -89,7 +89,7 @@
 
 			-- If the filter contains a file path, make it relative to
 			-- this block's basedir
-			if value ~= nil and abspath and not cset.compiled and block._basedir ~= basedir then
+			if value ~= nil and abspath and not cset.compiled and block._basedir and block._basedir ~= basedir then
 				basedir = block._basedir
 				filter.files = path.getrelative(basedir, abspath)
 			end
@@ -148,7 +148,7 @@
 
 			-- If the filter contains a file path, make it relative to
 			-- this block's basedir
-			if abspath and block._basedir ~= basedir and not cset.compiled then
+			if abspath and block._basedir and block._basedir ~= basedir and not cset.compiled then
 				basedir = block._basedir
 				filter.files = path.getrelative(basedir, abspath)
 			end
@@ -406,7 +406,7 @@
 
 			-- If the filter contains a file path, make it relative to
 			-- this block's basedir
-			if abspath and block._basedir ~= basedir then
+			if abspath and block._basedir and block._basedir ~= basedir then
 				basedir = block._basedir
 				filter.files = path.getrelative(basedir, abspath)
 			end
