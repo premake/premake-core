@@ -27,46 +27,56 @@ static int chunk_wrapper(lua_State* L);
 
 LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 {
-	int z;
+	const char* script_dir;
+	const char* test_name;
 
-	/* Try to locate the script on the filesystem */
-	lua_pushcfunction(L, os_locate);
-	lua_pushstring(L, filename);
-	lua_call(L, 1, 1);
+	int bottom = lua_gettop(L);
+	int z = !OKAY;
 
-	/* If I found it, load it from the file system... */
-	if (!lua_isnil(L, -1)) {
-		z = original_luaL_loadfile(L, lua_tostring(L, -1));
+	/* If the currently running script was embedded, try to load this file
+	 * as it if were embedded too. */
+	lua_getglobal(L, "_SCRIPT_DIR");
+	script_dir = lua_tostring(L, -1);
+
+	if (script_dir && script_dir[0] == '$') {
+		/* Call `path.getabsolute(filename, _SCRIPT_DIR)` to resolve any
+		 * "../" sequences in the filename */
+		lua_pushcfunction(L, path_getabsolute);
+		lua_pushstring(L, filename);
+		lua_pushvalue(L, -3);
+		lua_call(L, 2, 1);
+		test_name = lua_tostring(L, -1); 
+
+		/* if successful, filename and chunk will be on top of stack */
+		z = premake_load_embedded_script(L, test_name + 2); /* Skip over leading "$/" */
+
+		/* remove test_name */
+		lua_remove(L, bottom + 1);
 	}
 
-	/* ...otherwise try to load from embedded scripts */
-	else {
-		lua_pop(L, 1);
-		z = premake_load_embedded_script(L, filename);
+	/* remove _SCRIPT_DIR */
+	lua_remove(L, bottom);
 
-		/* Special case relative loading of embedded scripts */
-		if (z != OKAY) {
-			const char* script_dir;
-			lua_getglobal(L, "_SCRIPT_DIR");
-			script_dir = lua_tostring(L, -1);
-			if (script_dir && script_dir[0] == '$') {
-				/* call path.getabsolute() to handle ".." if present */
-				lua_pushcfunction(L, path_getabsolute);
-				lua_pushstring(L, filename);
-				lua_pushvalue(L, -3);
-				lua_call(L, 2, 1);
+	/* Try to locate the script on the filesystem */
+	if (z != OKAY) {
+		lua_pushcfunction(L, os_locate);
+		lua_pushstring(L, filename);
+		lua_call(L, 1, 1);
+		test_name = lua_tostring(L, -1);
 
-				filename = lua_tostring(L, -1);
-				z = premake_load_embedded_script(L, filename + 2);
-
-				lua_remove(L, -3);
-				lua_remove(L, -3);
-			}
-			else {
-				lua_pop(L, 1);
-			}
+		if (!lua_isnil(L, -1)) {
+			z = original_luaL_loadfile(L, lua_tostring(L, -1));
 		}
 
+		/* on failure, remove test_name */
+		if (z != OKAY) {
+			lua_pop(L, 1);
+		}
+	}
+
+	/* Try to load from embedded scripts */
+	if (z != OKAY) {
+		z = premake_load_embedded_script(L, filename);
 	}
 
 	/* Either way I should have ended up with the file name followed by the
