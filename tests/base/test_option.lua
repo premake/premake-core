@@ -12,13 +12,11 @@
 --
 
 	function suite.setup()
-		_LOGGING = true
 		_OPTIONS["testopt"] = "testopt"
 	end
 
 	function suite.teardown()
 		_OPTIONS["testopt"] = nil
-		_LOGGING = false
 	end
 
 
