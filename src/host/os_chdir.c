@@ -7,7 +7,7 @@
 #include "premake.h"
 
 
-int do_chdir(const char* path)
+int do_chdir(lua_State* L, const char* path)
 {
 	int z;
 
@@ -26,7 +26,7 @@ int os_chdir(lua_State* L)
 {
 	const char* path = luaL_checkstring(L, 1);
 
-	int z = do_chdir(path);
+	int z = do_chdir(L, path);
 	if (!z)
 	{
 		lua_pushnil(L);

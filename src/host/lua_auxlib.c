@@ -126,7 +126,7 @@ static int chunk_wrapper(lua_State* L)
 	/* And make that the CWD (and fix the const cheat) */
 
 	if (filename[0] != '$') {
-		do_chdir(filename);
+		do_chdir(L, filename);
 	}
 	if (ptr) *ptr = '/';
 
@@ -143,7 +143,7 @@ static int chunk_wrapper(lua_State* L)
 	/* Finally, restore the previous _SCRIPT variable and working directory
 	 * before returning control to the previously executing script. */
 
-	do_chdir(cwd);
+	do_chdir(L, cwd);
 	lua_pushvalue(L, args + 1);
 	lua_setglobal(L, "_SCRIPT");
 	lua_pushvalue(L, args + 2);
