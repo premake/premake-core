@@ -153,6 +153,9 @@
 
 	function premake.override(scope, name, repl)
 		local original = scope[name]
+		if not original then
+			error("unable to override '" .. name .. "'; no such function", 2)
+		end
 		scope[name] = function(...)
 			return repl(original, ...)
 		end
