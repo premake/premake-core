@@ -119,7 +119,7 @@ int premake_init(lua_State* L)
 }
 
 
-int premake_execute(lua_State* L, int argc, const char** argv)
+int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
 {
 	int iErrFunc;
 
@@ -135,7 +135,7 @@ int premake_execute(lua_State* L, int argc, const char** argv)
 	}
 
 	/* load the main script */
-	if (luaL_dofile(L, "src/_premake_main.lua") != OKAY) {
+	if (luaL_dofile(L, script) != OKAY) {
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
 	}

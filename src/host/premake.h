@@ -65,7 +65,7 @@ extern const char* scripts_path;
 
 
 /* Bootstrapping helper functions */
-int do_chdir(const char* path);
+int do_chdir(lua_State* L, const char* path);
 unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
@@ -114,7 +114,7 @@ int string_startswith(lua_State* L);
 /* Engine interface */
 int premake_init(lua_State* L);
 int premake_locate(lua_State* L, const char* argv0);
-int premake_execute(lua_State* L, int argc, const char** argv);
+int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
 int premake_find_exe(lua_State* L, const char* argv0);
 int premake_load_embedded_script(lua_State* L, const char* filename);
 
