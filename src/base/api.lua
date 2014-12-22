@@ -622,7 +622,7 @@
 		end
 
 		if not canonical then
-			return nil, "invalid value '" .. value .. "'"
+			return nil, "invalid value '" .. value .. "' for " .. field.name
 		end
 
 		if field.deprecated and field.deprecated[canonical] then
