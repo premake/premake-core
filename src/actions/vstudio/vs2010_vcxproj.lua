@@ -338,10 +338,18 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= premake.XBOX360 then
-			p.push('<ResourceCompile>')
-			p.callArray(m.elements.resourceCompile, cfg)
-			p.pop('</ResourceCompile>')
+		if cfg.system ~= premake.XBOX360 and config.hasResourceFiles(cfg) then
+			local contents = p.capture(function ()
+				p.push()
+				p.callArray(m.elements.resourceCompile, cfg)
+				p.pop()
+			end)
+
+			if #contents > 0 then
+				p.push('<ResourceCompile>')
+				p.outln(contents)
+				p.pop('</ResourceCompile>')
+			end
 		end
 	end
 

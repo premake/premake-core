@@ -394,6 +394,22 @@
 
 
 --
+-- Determine if a configuration contains one or more resource files.
+--
+
+	function config.hasResourceFiles(self)
+		local files = self.files
+		for i = 1, #files do
+			if path.isresourcefile(files[i]) then
+				return true
+			end
+		end
+		return false
+	end
+
+
+
+--
 -- Determine if the specified library or assembly reference should be copied
 -- to the build's target directory. "Copy Local" is the terminology used by
 -- Visual Studio C# projects for this feature.

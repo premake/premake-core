@@ -26,16 +26,27 @@
 	end
 
 
- --
--- Check the basic element structure with default settings.
+--
+-- Should only write the element if it is needed.
 --
 
-	function suite.defaultSettings()
+	function suite.excluded_onNoResourceFiles()
 		prepare()
-		test.capture [[
-<ResourceCompile>
-</ResourceCompile>
-		]]
+		test.isemptycapture()
+	end
+
+	function suite.excluded_onNoSettings()
+		files { "hello.rc" }
+		prepare()
+		test.isemptycapture()
+	end
+
+	function suite.skips_onXbox360()
+		files { "hello.rc" }
+		defines { "DEBUG" }
+		system "Xbox360"
+		prepare()
+		test.isemptycapture()
 	end
 
 
@@ -44,6 +55,7 @@
 --
 
 	function suite.preprocessorDefinitions_onDefines()
+		files { "hello.rc" }
 		defines { "DEBUG" }
 		resdefines { "RESOURCES" }
 		prepare()
@@ -59,6 +71,7 @@
 --
 
 	function suite.additionalIncludeDirs_onIncludeDirs()
+		files { "hello.rc" }
 		includedirs { "include/lua" }
 		resincludedirs { "include/zlib" }
 		prepare()
@@ -70,21 +83,11 @@
 
 
 --
--- Xbox 360 doesn't use the resource compiler.
---
-
-	function suite.skips_onXbox360()
-		system "Xbox360"
-		prepare()
-		test.isemptycapture()
-	end
-
-
---
 -- Test special escaping for preprocessor definition with quotes.
 --
 
 	function suite.preprocessorDefinitions_onDefinesEscaping()
+		files { "hello.rc" }
 		defines { 'VERSION_STRING="1.0.0 (testing)"' }
 		prepare()
 		test.capture [[
@@ -99,6 +102,7 @@
 --
 
 	function suite.culture_en_US()
+		files { "hello.rc" }
 		locale "en-US"
 		prepare()
 		test.capture [[
