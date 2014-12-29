@@ -60,12 +60,15 @@
 --
 
 	function m.project(target)
-		local defaultTargets = ""
+		local default = ""
 		if target then
-			defaultTargets = string.format(' DefaultTargets="%s"', target)
+			default = string.format(' DefaultTargets="%s"', target)
 		end
 
-		p.push('<Project%s ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', defaultTargets)
+		local action = premake.action.current()
+		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
+
+		p.push('<Project%s%s xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', default, tools)
 	end
 
 
@@ -108,7 +111,10 @@
 --
 
 	function m.targetFramework(prj)
-		local framework = prj.framework or "4.0"
+		local action = premake.action.current()
+		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
+
+		local framework = prj.framework or action.vstudio.targetFramework or "4.0"
 		_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 	end
 

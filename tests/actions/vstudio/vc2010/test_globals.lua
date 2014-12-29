@@ -63,7 +63,7 @@
 -- Ensure custom target framework version correct for Managed C++ projects.
 --
 
-	function suite.frameworkVersionIsCorrect_onManagedC()
+	function suite.frameworkVersionIsCorrect_onSpecificVersion()
 		clr "On"
 		framework "4.5"
 		prepare()
@@ -77,6 +77,20 @@
 		]]
 	end
 
+	function suite.frameworkVersionIsCorrect_on2013()
+		_ACTION = "vs2013"
+		clr "On"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+		<Keyword>ManagedCProj</Keyword>
+		<RootNamespace>MyProject</RootNamespace>
+	</PropertyGroup>
+		]]
+	end
 
 --
 -- Omit Keyword and RootNamespace for non-Windows projects.
