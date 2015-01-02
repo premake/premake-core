@@ -232,8 +232,19 @@
 		if cfg.flags.FatalCompileWarnings then
 			_p(2,'<TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 		end
+
+		cs2005.debugCommandParameters(cfg)
 	end
 
+--
+-- Write out the debug start parameters for MonoDevelop/Xamarin Studio.
+--
+
+	function cs2005.debugCommandParameters(cfg)
+		if #cfg.debugargs > 0 then
+			_x(2,'<Commandlineparameters>%s</Commandlineparameters>', table.concat(cfg.debugargs, " "))
+		end
+	end
 
 --
 -- Write out the debugging and optimization flags for a configuration.
@@ -367,6 +378,19 @@
 		end
 	end
 
+---------------------------------------------------------------------------
+--
+-- Support functions
+--
+---------------------------------------------------------------------------
+
+--
+-- Format and return a Visual Studio Condition attribute.
+--
+
+	function cs2005.condition(cfg)
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
+	end
 
 ---------------------------------------------------------------------------
 --

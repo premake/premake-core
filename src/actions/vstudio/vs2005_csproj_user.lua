@@ -25,5 +25,22 @@
 		_p(2,'<ReferencePath>%s</ReferencePath>', table.concat(refpaths, ";"))
 
 		_p('  </PropertyGroup>')
+
+		for cfg in project.eachconfig(prj) do
+			_p(1,'<PropertyGroup %s>', cs2005.condition(cfg))
+			cs2005.debugsettings(cfg)
+			_p(1,'</PropertyGroup>')
+		end
+
 		_p('</Project>')
+	end
+				
+	function cs2005.debugsettings(cfg)
+		cs2005.localDebuggerCommandArguments(cfg)
+	end
+
+	function cs2005.localDebuggerCommandArguments(cfg)
+		if #cfg.debugargs > 0 then
+			_x(2,'<StartArguments>%s</StartArguments>', table.concat(cfg.debugargs, " "))
+		end
 	end
