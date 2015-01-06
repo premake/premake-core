@@ -63,7 +63,10 @@
 		return dirs
 	end
 
-	function os.findlib(libname)
+	function os.findlib(libname, libdirs)
+		-- libname: library name with or without prefix and suffix
+		-- libdirs: (array or string): A set of additional search paths
+				 
 		local path, formats
 
 		-- assemble a search path, depending on the platform
@@ -99,6 +102,18 @@
 			path = path .. ":/lib:/usr/lib:/usr/local/lib"
 		end
 
+		local userpath = ""
+		
+		if type(libdirs) == "string" then
+			userpath = libdirs
+		elseif type(libdirs) == "table" then
+			userpath = table.implode(libdirs, "", "", ":")
+		end
+	
+		if (#userpath > 0) then
+			path = ":" .. userpath .. path
+		end
+		
 		for _, fmt in ipairs(formats) do
 			local name = string.format(fmt, libname)
 			local result = os.pathsearch(name, path)
