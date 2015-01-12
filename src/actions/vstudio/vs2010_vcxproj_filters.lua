@@ -17,10 +17,21 @@
 
 	function m.generateFilters(prj)
 		m.xmlDeclaration()
-		m.project()
+		m.filtersProject()
 		m.uniqueIdentifiers(prj)
 		m.filterGroups(prj)
 		p.out('</Project>')
+	end
+
+
+--
+-- Output the XML declaration and opening <Project> tag.
+--
+
+	function m.filtersProject()
+		local action = premake.action.current()
+		p.push('<Project ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+			action.vstudio.filterToolsVersion or action.vstudio.toolsVersion)
 	end
 
 

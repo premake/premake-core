@@ -48,7 +48,7 @@
 	function m.generate(prj)
 		io.utf8()
         m.xmlDeclaration()
-		m.project("Build")
+		m.project()
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
 	end
@@ -59,16 +59,10 @@
 -- Output the XML declaration and opening <Project> tag.
 --
 
-	function m.project(target)
-		local default = ""
-		if target then
-			default = string.format(' DefaultTargets="%s"', target)
-		end
-
+	function m.project()
 		local action = premake.action.current()
-		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
-
-		p.push('<Project%s%s xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', default, tools)
+		p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+			action.vstudio.toolsVersion)
 	end
 
 

@@ -15,7 +15,7 @@
 
 	function suite.project_on2010()
 		_ACTION = "vs2010"
-		vc2010.project("Build")
+		vc2010.project()
 		test.capture [[
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
@@ -23,7 +23,7 @@
 
 	function suite.project_on2011()
 		_ACTION = "vs2012"
-		vc2010.project("Build")
+		vc2010.project()
 		test.capture [[
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
@@ -31,21 +31,8 @@
 
 	function suite.project_on2013()
 		_ACTION = "vs2013"
-		vc2010.project("Build")
-		test.capture [[
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-		]]
-	end
-
-
---
--- If no build target is specified, the entire attribute should be omitted.
---
-
-	function suite.project_onNoDefaultTarget()
-		_ACTION = "vs2010"
 		vc2010.project()
 		test.capture [[
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
 	end

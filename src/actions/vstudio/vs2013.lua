@@ -53,5 +53,6 @@
 			versionName     = "2013",
 			targetFramework = "4.5",
 			toolsVersion    = "12.0",
+			filterToolsVersion = "4.0",
 		}
 	}

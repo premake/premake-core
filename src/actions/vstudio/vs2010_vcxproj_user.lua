@@ -9,20 +9,34 @@
 	local vc2010 = p.vstudio.vc2010
 	local project = p.project
 
+	local m = p.vstudio.vc2010
+
 
 --
 -- Generate a Visual Studio 201x C++ user file, with support for the new platforms API.
 --
 
-	function vc2010.generateUser(prj)
-		vc2010.xmlDeclaration()
-		vc2010.project()
+	function m.generateUser(prj)
+		m.xmlDeclaration()
+		m.userProject()
 		for cfg in project.eachconfig(prj) do
-			p.push('<PropertyGroup %s>', vc2010.condition(cfg))
-			vc2010.debugSettings(cfg)
+			p.push('<PropertyGroup %s>', m.condition(cfg))
+			m.debugSettings(cfg)
 			p.pop('</PropertyGroup>')
 		end
 		_p('</Project>')
+	end
+
+
+
+--
+-- Output the XML declaration and opening <Project> tag.
+--
+
+	function m.userProject()
+		local action = premake.action.current()
+		p.push('<Project ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+			action.vstudio.toolsVersion)
 	end
 
 
