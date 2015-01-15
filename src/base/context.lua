@@ -176,7 +176,7 @@
 		if value then
 			-- do I need to expand tokens?
 			if field and field.tokens then
-				value = p.detoken.expand(value, ctx.environ, field.paths, ctx._basedir)
+				value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
 			end
 
 			-- store the result for later lookups

@@ -3,11 +3,13 @@
 --
 -- Expands tokens.
 --
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	premake.detoken = {}
-	local detoken = premake.detoken
+
+	local p = premake
+	local detoken = p.detoken
 
 
 --
@@ -16,24 +18,38 @@
 -- @param value
 --    The value containing the tokens to be expanded.
 -- @param environ
---    An execution environment for any token expansion. This is a list of key-
---    value pairs that will be inserted as global variables into the token
---    expansion runtime environment.
--- @param ispath
---    If true, the value treated as a file system path, and checks will be made
---    for nested absolute paths from expanded tokens.
+--    An execution environment for any token expansion. This is a list of
+--    key-value pairs that will be inserted as global variables into the
+--    token expansion runtime environment.
+-- @param field
+--    The definition of the field which stores the value.
 -- @param basedir
---    If provided, path tokens encountered in non-path fields (where the ispath
---    parameter is set to false) will be made relative to this location.
+--    If provided, path tokens encountered in non-path fields (where
+--    field.paths is set to false) will be made relative to this location.
 -- @return
 --    The value with any contained tokens expanded.
 --
 
-	function detoken.expand(value, environ, ispath, basedir)
+	function detoken.expand(value, environ, field, basedir)
+		field = field or {}
+
+		-- fetch the path variable from the action, if needed
+		local varMap = {}
+		if field.pathVars then
+			local action = p.action.current()
+			if action then
+				varMap = action.pathVars or {}
+			end
+		end
+
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
 		function expandtoken(token, environ)
+			if varMap[token] then
+				return varMap[token]
+			end
+
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
@@ -62,7 +78,7 @@
 			--    "/home/user/myprj/obj/Debug"
 
 			local isAbs = path.isabsolute(result)
-			if isAbs and ispath then
+			if isAbs and field.paths then
 				result = "\0" .. result
 			end
 
@@ -71,7 +87,7 @@
 			-- will contain it. Otherwise I ended up with an absolute path in
 			-- the generated project, and it can no longer be moved around.
 
-			if isAbs and not ispath and basedir then
+			if isAbs and not field.paths and basedir then
 				result = path.getrelative(basedir, result)
 			end
 
@@ -95,7 +111,7 @@
 			until count == 0
 
 			-- if a path, look for a split out embedded absolute paths
-			if ispath then
+			if field.paths then
 				local i, j
 				repeat
 					i, j = value:find("\0")

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_detoken.lua
 -- Test suite for the token expansion API.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("detoken")
@@ -13,8 +13,17 @@
 -- Setup
 --
 
-	local x
+	local x, action
 	local environ = {}
+
+	function suite.setup()
+		action = premake.action.get("test")
+	end
+
+	function suite.teardown()
+		action.pathVars = nil
+	end
+
 
 
 --
@@ -66,7 +75,7 @@
 
 	function suite.canExpandToAbsPath()
 		environ.cfg = { basedir = os.getcwd() }
-		x = detoken.expand("bin/debug/%{cfg.basedir}", environ, true)
+		x = detoken.expand("bin/debug/%{cfg.basedir}", environ, {paths=true})
 		test.isequal(os.getcwd(), x)
 	end
 
@@ -79,7 +88,7 @@
 	function suite.canExpandToRelPath()
 		local cwd = os.getcwd()
 		environ.cfg = { basedir = path.getdirectory(cwd) }
-		x = detoken.expand("cd %{cfg.basedir}", environ,  false, cwd)
+		x = detoken.expand("cd %{cfg.basedir}", environ,  {}, cwd)
 		test.isequal("cd ..", x)
 	end
 
@@ -93,3 +102,14 @@
 		test.isequal({ "A1", "B2", "C3" }, x)
 	end
 
+
+--
+-- If the field being expanded supports path variable mapping, and the
+-- action provides a map, replace tokens with the mapped values.
+--
+
+	function suite.replacesToken_onSupportedAndMapped()
+		action.pathVars = { ["cfg.objdir"] = "$(IntDir)" }
+		x = detoken.expand("cmd %{cfg.objdir}/file", environ, {pathVars=true})
+		test.isequal("cmd $(IntDir)/file", x)
+	end

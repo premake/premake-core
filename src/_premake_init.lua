@@ -68,6 +68,7 @@
 		scope = { "config", "rule" },
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.alias("buildcommands", "buildCommands")
@@ -78,6 +79,7 @@
 		scope = { "rule" },
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 
@@ -85,7 +87,8 @@
 		name = "buildmessage",
 		scope = { "config", "rule" },
 		kind = "string",
-		tokens = true
+		tokens = true,
+		pathVars = true,
 	}
 
 	api.alias("buildmessage", "buildMessage")
@@ -96,6 +99,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 
@@ -104,6 +108,7 @@
 		scope = { "config", "rule" },
 		kind = "list:path",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.alias("buildoutputs", "buildOutputs")
@@ -114,6 +119,7 @@
 		scope = "config",
 		kind = "list:path",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -128,6 +134,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 
@@ -184,6 +191,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -191,6 +199,7 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -198,6 +207,7 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -205,6 +215,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -572,6 +583,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -579,6 +591,7 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -586,6 +599,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -593,6 +607,7 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -600,6 +615,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -607,6 +623,7 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -620,6 +637,7 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
