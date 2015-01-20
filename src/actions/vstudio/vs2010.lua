@@ -19,6 +19,11 @@
 
 	vstudio.pathVars = {
 		["cfg.objdir"] = "$(IntDir)",
+		["prj.location"] = "$(ProjectDir)",
+		["sln.location"] = "$(SolutionDir)",
+		["cfg.buildtarget.directory"] = "$(TargetDir)",
+		["cfg.buildtarget.name"] = "$(TargetFileName)",
+		["cfg.buildtarget.basename"] = "$(TargetName)",
 	}
 
 
