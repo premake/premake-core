@@ -77,25 +77,37 @@
 	function action.call(name)
 		local act = action._list[name]
 
+		if act.onStart then
+			act.onStart()
+		end
+
 		for sln in p.global.eachSolution() do
-			if act.onsolution then
-				act.onsolution(sln)
+			local onSolution = act.onSolution or act.onsolution
+			if onSolution then
+				onSolution(sln)
 			end
+
 			for prj in p.solution.eachproject(sln) do
-				if act.onproject and not prj.external then
-					act.onproject(prj)
+				local onProject = act.onProject or act.onproject
+				if onProject and not prj.external then
+					onProject(prj)
 				end
 			end
 		end
 
 		for rule in p.global.eachRule() do
-			if act.onrule then
-				act.onrule(rule)
+			local onRule = act.onRule or act.onrule
+			if onRule then
+				onRule(rule)
 			end
 		end
 
 		if act.execute then
 			act.execute()
+		end
+
+		if act.onEnd then
+			act.onEnd()
 		end
 	end
 
