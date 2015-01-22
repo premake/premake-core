@@ -28,12 +28,12 @@
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 
-		onsolution = function(sln)
+		onSolution = function(sln)
 			premake.escaper(make.esc)
 			premake.generate(sln, make.getmakefilename(sln, false), make.generate_solution)
 		end,
 
-		onproject = function(prj)
+		onProject = function(prj)
 			premake.escaper(make.esc)
 			local makefile = make.getmakefilename(prj, true)
 			if project.isdotnet(prj) then
@@ -43,11 +43,11 @@
 			end
 		end,
 
-		oncleansolution = function(sln)
+		onCleanSolution = function(sln)
 			premake.clean.file(sln, make.getmakefilename(sln, false))
 		end,
 
-		oncleanproject = function(prj)
+		onCleanProject = function(prj)
 			premake.clean.file(prj, make.getmakefilename(prj, true))
 		end
 	}
