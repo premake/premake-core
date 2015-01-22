@@ -1,7 +1,7 @@
 --
 -- actions/vstudio/vs2010.lua
 -- Add support for the Visual Studio 2010 project formats.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vs2010 = {}
@@ -11,6 +11,21 @@
 	local vstudio = p.vstudio
 	local project = p.project
 	local tree = p.tree
+
+
+---
+-- Map Premake tokens to the corresponding Visual Studio variables.
+---
+
+	vstudio.pathVars = {
+		["cfg.objdir"] = "$(IntDir)",
+		["prj.location"] = "$(ProjectDir)",
+		["sln.location"] = "$(SolutionDir)",
+		["cfg.buildtarget.directory"] = "$(TargetDir)",
+		["cfg.buildtarget.name"] = "$(TargetFileName)",
+		["cfg.buildtarget.basename"] = "$(TargetName)",
+	}
+
 
 
 ---
@@ -101,6 +116,8 @@
 		onCleanSolution = vstudio.cleanSolution,
 		onCleanProject  = vstudio.cleanProject,
 		onCleanTarget   = vstudio.cleanTarget,
+
+		pathVars        = vstudio.pathVars,
 
 		-- This stuff is specific to the Visual Studio exporters
 

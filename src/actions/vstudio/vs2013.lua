@@ -46,6 +46,8 @@
 		onCleanProject  = vstudio.cleanProject,
 		onCleanTarget   = vstudio.cleanTarget,
 
+		pathVars        = vstudio.pathVars,
+
 		-- This stuff is specific to the Visual Studio exporters
 
 		vstudio = {
