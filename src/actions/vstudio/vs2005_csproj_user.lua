@@ -27,14 +27,20 @@
 		_p('  </PropertyGroup>')
 
 		for cfg in project.eachconfig(prj) do
-			_p(1,'<PropertyGroup %s>', cs2005.condition(cfg))
-			cs2005.debugsettings(cfg)
-			_p(1,'</PropertyGroup>')
+			local contents = p.capture(function()
+				cs2005.debugsettings(cfg)
+			end)
+
+			if #contents > 0 then
+				_p(1,'<PropertyGroup %s>', cs2005.condition(cfg))
+				p.outln(contents)
+				_p(1,'</PropertyGroup>')
+			end
 		end
 
 		_p('</Project>')
 	end
-				
+
 	function cs2005.debugsettings(cfg)
 		cs2005.localDebuggerCommandArguments(cfg)
 	end
