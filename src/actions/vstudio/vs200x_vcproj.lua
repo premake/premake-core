@@ -1036,7 +1036,7 @@
 			p.x('CommandLine="%s"', table.concat(cmds,'\r\n'))
 
 			local outputs = project.getrelative(filecfg.project, filecfg.buildoutputs)
-			p.x('Outputs="%s"', table.concat(outputs, ' '))
+			p.x('Outputs="%s"', table.concat(outputs, ';'))
 
 			if filecfg.buildinputs and #filecfg.buildinputs > 0 then
 				local inputs = project.getrelative(filecfg.project, filecfg.buildinputs)
