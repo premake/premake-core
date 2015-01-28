@@ -348,6 +348,33 @@
 		]]
 	end
 
+	function suite.customBuildTool_onBuildRuleMultipleBuildOutputs()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildmessage "Compiling $(InputFile)"
+			buildcommands {
+				'cp "$(InputFile)" "$(IntDir)/$(InputName).a"',
+				'cp "$(InputFile)" "$(IntDir)/$(InputName).b"'
+			}
+			buildoutputs { "$(IntDir)/$(InputName).a", "$(IntDir)/$(InputName).b" }
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.x"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine="cp &quot;$(InputFile)&quot; &quot;$(IntDir)/$(InputName).a&quot;&#x0D;&#x0A;cp &quot;$(InputFile)&quot; &quot;$(IntDir)/$(InputName).b&quot;"
+				Outputs="$(IntDir)/$(InputName).a;$(IntDir)/$(InputName).b"
+			/>
+		</FileConfiguration>
+		]]
+	end
+
 	function suite.customBuildTool_onBuildRuleWithTokens()
 		files { "hello.x" }
 		objdir "../tmp/%{cfg.name}"
