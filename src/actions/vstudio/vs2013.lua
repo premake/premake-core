@@ -1,12 +1,16 @@
 --
 -- actions/vstudio/vs2013.lua
 -- Extend the existing exporters with support for Visual Studio 2013.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
-	local vstudio = premake.vstudio
-	local cs2005 = vstudio.cs2005
+	premake.vstudio.vc2013 = {}
+
+	local p = premake
+	local vstudio = p.vstudio
 	local vc2010 = vstudio.vc2010
+
+	local m = vstudio.vc2013
 
 
 ---
@@ -35,12 +39,14 @@
 
 		-- Solution and project generation logic
 
-		onsolution = vstudio.vs2005.generateSolution,
-		onproject  = vstudio.vs2010.generateProject,
+		onSolution = vstudio.vs2005.generateSolution,
+		onProject  = vstudio.vs2010.generateProject,
 
-		oncleansolution = vstudio.cleanSolution,
-		oncleanproject  = vstudio.cleanProject,
-		oncleantarget   = vstudio.cleanTarget,
+		onCleanSolution = vstudio.cleanSolution,
+		onCleanProject  = vstudio.cleanProject,
+		onCleanTarget   = vstudio.cleanTarget,
+
+		pathVars        = vstudio.pathVars,
 
 		-- This stuff is specific to the Visual Studio exporters
 
@@ -49,18 +55,6 @@
 			versionName     = "2013",
 			targetFramework = "4.5",
 			toolsVersion    = "12.0",
+			filterToolsVersion = "4.0",
 		}
 	}
-
-
----
--- Add new elements to the configuration properties block of C++ projects.
----
-
-	premake.override(vc2010, "platformToolset", function(orig, cfg)
-		if _ACTION > "vs2012" then
-			_p(2,'<PlatformToolset>v120</PlatformToolset>')
-		else
-			orig(cfg)
-		end
-	end)

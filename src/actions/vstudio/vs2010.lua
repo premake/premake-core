@@ -1,14 +1,31 @@
 --
 -- actions/vstudio/vs2010.lua
 -- Add support for the Visual Studio 2010 project formats.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vs2010 = {}
-	local vs2010 = premake.vstudio.vs2010
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local tree = premake.tree
+
+	local p = premake
+	local vs2010 = p.vstudio.vs2010
+	local vstudio = p.vstudio
+	local project = p.project
+	local tree = p.tree
+
+
+---
+-- Map Premake tokens to the corresponding Visual Studio variables.
+---
+
+	vstudio.pathVars = {
+		["cfg.objdir"] = "$(IntDir)",
+		["prj.location"] = "$(ProjectDir)",
+		["sln.location"] = "$(SolutionDir)",
+		["cfg.buildtarget.directory"] = "$(TargetDir)",
+		["cfg.buildtarget.name"] = "$(TargetFileName)",
+		["cfg.buildtarget.basename"] = "$(TargetName)",
+	}
+
 
 
 ---
@@ -17,8 +34,9 @@
 ---
 
 	function vs2010.generateProject(prj)
-		io.eol = "\r\n"
-		io.esc = vs2010.esc
+		p.eol("\r\n")
+		p.indent("  ")
+		p.escaper(vs2010.esc)
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
@@ -32,6 +50,22 @@
 				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
 		end
+	end
+
+
+
+---
+-- Generate the .props, .targets, and .xml files for custom rules.
+---
+
+	function vs2010.generateRule(rule)
+		p.eol("\r\n")
+		p.indent("  ")
+		p.escaper(vs2010.esc)
+
+		p.generate(rule, ".props", vs2010.rules.props.generate)
+		p.generate(rule, ".targets", vs2010.rules.targets.generate)
+		p.generate(rule, ".xml", vs2010.rules.xml.generate)
 	end
 
 
@@ -75,12 +109,15 @@
 
 		-- Solution and project generation logic
 
-		onsolution = vstudio.vs2005.generateSolution,
-		onproject  = vstudio.vs2010.generateProject,
+		onSolution = vstudio.vs2005.generateSolution,
+		onProject  = vstudio.vs2010.generateProject,
+		onRule = vstudio.vs2010.generateRule,
 
-		oncleansolution = vstudio.cleanSolution,
-		oncleanproject  = vstudio.cleanProject,
-		oncleantarget   = vstudio.cleanTarget,
+		onCleanSolution = vstudio.cleanSolution,
+		onCleanProject  = vstudio.cleanProject,
+		onCleanTarget   = vstudio.cleanTarget,
+
+		pathVars        = vstudio.pathVars,
 
 		-- This stuff is specific to the Visual Studio exporters
 

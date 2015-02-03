@@ -38,14 +38,6 @@
 		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
-	function suite.tools_onPS3()
-		system "PS3"
-		prepare()
-		test.isequal("ppu-lv2-g++", gcc.gettoolname(cfg, "cc"))
-		test.isequal("ppu-lv2-g++", gcc.gettoolname(cfg, "cxx"))
-		test.isequal("ppu-lv2-ar", gcc.gettoolname(cfg, "ar"))
-	end
-
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.
@@ -53,7 +45,7 @@
 
 	function suite.cppflags_defaultWithMMD()
 		prepare()
-		test.isequal({"-MMD", "-MP"}, gcc.getcppflags(cfg))
+		test.contains({"-MMD", "-MP"}, gcc.getcppflags(cfg))
 	end
 
 
@@ -64,7 +56,7 @@
 	function suite.cppflagsExcludeMP_onHaiku()
 		system "Haiku"
 		prepare()
-		test.isequal({ "-MMD" }, gcc.getcppflags(cfg))
+		test.excludes({ "-MP" }, gcc.getcppflags(cfg))
 	end
 
 
@@ -75,43 +67,43 @@
 	function suite.cflags_onExtraWarnings()
 		warnings "extra"
 		prepare()
-		test.isequal({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+		test.contains({ "-Wall -Wextra" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFatalWarnings()
 		flags { "FatalWarnings" }
 		prepare()
-		test.isequal({ "-Werror" }, gcc.getcflags(cfg))
+		test.contains({ "-Werror" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFloastFast()
 		floatingpoint "Fast"
 		prepare()
-		test.isequal({ "-ffast-math" }, gcc.getcflags(cfg))
+		test.contains({ "-ffast-math" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFloastStrict()
 		floatingpoint "Strict"
 		prepare()
-		test.isequal({ "-ffloat-store" }, gcc.getcflags(cfg))
+		test.contains({ "-ffloat-store" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onNoWarnings()
 		warnings "Off"
 		prepare()
-		test.isequal({ "-w" }, gcc.getcflags(cfg))
+		test.contains({ "-w" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onSSE()
 		vectorextensions "SSE"
 		prepare()
-		test.isequal({ "-msse" }, gcc.getcflags(cfg))
+		test.contains({ "-msse" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onSSE2()
 		vectorextensions "SSE2"
 		prepare()
-		test.isequal({ "-msse2" }, gcc.getcflags(cfg))
+		test.contains({ "-msse2" }, gcc.getcflags(cfg))
 	end
 
 
@@ -122,37 +114,37 @@
 	function suite.cflags_onNoOptimize()
 		optimize "Off"
 		prepare()
-		test.isequal({ "-O0" }, gcc.getcflags(cfg))
+		test.contains({ "-O0" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimize()
 		optimize "On"
 		prepare()
-		test.isequal({ "-O2" }, gcc.getcflags(cfg))
+		test.contains({ "-O2" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeSize()
 		optimize "Size"
 		prepare()
-		test.isequal({ "-Os" }, gcc.getcflags(cfg))
+		test.contains({ "-Os" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeSpeed()
 		optimize "Speed"
 		prepare()
-		test.isequal({ "-O3" }, gcc.getcflags(cfg))
+		test.contains({ "-O3" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeFull()
 		optimize "Full"
 		prepare()
-		test.isequal({ "-O3" }, gcc.getcflags(cfg))
+		test.contains({ "-O3" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOptimizeDebug()
 		optimize "Debug"
 		prepare()
-		test.isequal({ "-Og" }, gcc.getcflags(cfg))
+		test.contains({ "-Og" }, gcc.getcflags(cfg))
 	end
 
 
@@ -163,13 +155,13 @@
 	function suite.cflags_onNoExceptions()
 		flags { "NoExceptions" }
 		prepare()
-		test.isequal({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onNoBufferSecurityCheck()
 		flags { "NoBufferSecurityCheck" }
 		prepare()
-		test.isequal({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
 
 
@@ -177,21 +169,21 @@
 -- Check the basic translation of LDFLAGS for a Posix system.
 --
 
-	function suite.ldflags_defaultOnLinux()
+	function suite.ldflags_onNoSymbols()
 		prepare()
-		test.isequal({ "-s" }, gcc.getldflags(cfg))
+		test.contains({ "-s" }, gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onSymbols()
 		flags { "Symbols" }
 		prepare()
-		test.isequal({}, gcc.getldflags(cfg))
+		test.excludes("-s", gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onSharedLib()
 		kind "SharedLib"
 		prepare()
-		test.isequal({ "-s", "-shared" }, gcc.getldflags(cfg))
+		test.contains({ "-shared" }, gcc.getldflags(cfg))
 	end
 
 
@@ -199,17 +191,17 @@
 -- Check Mac OS X variants on LDFLAGS.
 --
 
-	function suite.ldflags_onMacOSXStrip()
+	function suite.ldflags_onMacOSXNoSymbols()
 		system "MacOSX"
 		prepare()
-		test.isequal({ "-Wl,-x" }, gcc.getldflags(cfg))
+		test.contains({ "-Wl,-x" }, gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onMacOSXSharedLib()
 		system "MacOSX"
 		kind "SharedLib"
 		prepare()
-		test.isequal({ "-Wl,-x", "-dynamiclib" }, gcc.getldflags(cfg))
+		test.contains({ "-dynamiclib" }, gcc.getldflags(cfg))
 	end
 
 
@@ -221,14 +213,14 @@
 		system "Windows"
 		kind "SharedLib"
 		prepare()
-		test.isequal({ "-s", "-shared", '-Wl,--out-implib="MyProject.lib"' }, gcc.getldflags(cfg))
+		test.contains({ "-shared", '-Wl,--out-implib="MyProject.lib"' }, gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onWindowsApp()
 		system "Windows"
 		kind "WindowedApp"
 		prepare()
-		test.isequal({ "-s", "-mwindows" }, gcc.getldflags(cfg))
+		test.contains({ "-mwindows" }, gcc.getldflags(cfg))
 	end
 
 
@@ -240,25 +232,25 @@
 	function suite.cflags_onX32()
 		architecture "x32"
 		prepare()
-		test.isequal({ "-m32" }, gcc.getcflags(cfg))
+		test.contains({ "-m32" }, gcc.getcflags(cfg))
 	end
 
 	function suite.ldflags_onX32()
 		architecture "x32"
 		prepare()
-		test.isequal({ "-s", "-m32", "-L/usr/lib32" }, gcc.getldflags(cfg))
+		test.contains({ "-m32" }, gcc.getldflags(cfg))
 	end
 
 	function suite.cflags_onX64()
 		architecture "x64"
 		prepare()
-		test.isequal({ "-m64" }, gcc.getcflags(cfg))
+		test.contains({ "-m64" }, gcc.getcflags(cfg))
 	end
 
 	function suite.ldflags_onX64()
 		architecture "x64"
 		prepare()
-		test.isequal({ "-s", "-m64", "-L/usr/lib64" }, gcc.getldflags(cfg))
+		test.contains({ "-m64" }, gcc.getldflags(cfg))
 	end
 
 
@@ -270,7 +262,7 @@
 		system "MacOSX"
 		kind "SharedLib"
 		prepare()
-		test.isequal({ "-fPIC" }, gcc.getcflags(cfg))
+		test.contains({ "-fPIC" }, gcc.getcflags(cfg))
 	end
 
 
@@ -281,13 +273,13 @@
 	function suite.links_onSystemLibs()
 		links { "fs_stub", "net_stub" }
 		prepare()
-		test.isequal({ "-lfs_stub", "-lnet_stub" }, gcc.getlinks(cfg))
+		test.contains({ "-lfs_stub", "-lnet_stub" }, gcc.getlinks(cfg))
 	end
 
 	function suite.links_onFramework()
 		links { "Cocoa.framework" }
 		prepare()
-		test.isequal({ "-framework Cocoa" }, gcc.getlinks(cfg))
+		test.contains({ "-framework Cocoa" }, gcc.getlinks(cfg))
 	end
 
 
@@ -375,23 +367,6 @@
 
 
 --
--- Skip external projects when building the list of linked
--- libraries, since I don't know the actual output target.
---
-
-	function suite.skipsExternalProjectRefs()
-		links { "MyProject2" }
-
-		external "MyProject2"
-		kind "StaticLib"
-		language "C++"
-
-		prepare()
-		test.isequal({}, gcc.getlinks(cfg, false))
-	end
-
-
---
 -- Check handling of forced includes.
 --
 
@@ -419,3 +394,32 @@
 		test.isequal({ '-I"$(IntDir)/includes"' }, gcc.getincludedirs(cfg, cfg.includedirs))
 	end
 
+
+
+--
+-- Check handling of strict aliasing flags.
+--
+
+	function suite.cflags_onNoStrictAliasing()
+		strictaliasing "Off"
+		prepare()
+		test.contains("-fno-strict-aliasing", gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLevel1Aliasing()
+		strictaliasing "Level1"
+		prepare()
+		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=1" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLevel2Aliasing()
+		strictaliasing "Level2"
+		prepare()
+		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=2" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLevel3Aliasing()
+		strictaliasing "Level3"
+		prepare()
+		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=3" }, gcc.getcflags(cfg))
+	end

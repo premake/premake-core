@@ -1,71 +1,56 @@
 --
 -- vs2010_vcxproj.lua
 -- Generate a Visual Studio 201x C/C++ project.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc2010 = {}
 
-	local vc2010 = premake.vstudio.vc2010
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local tree = premake.tree
+	local p = premake
+	local vstudio = p.vstudio
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local tree = p.tree
+
+	local m = p.vstudio.vc2010
 
 
 ---
--- Add namespace for element definition lists for premake.callarray()
+-- Add namespace for element definition lists for premake.callArray()
 ---
 
-	vc2010.elements = {}
+	m.elements = {}
 
 
 --
 -- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
 
-	function vc2010.generate(prj)
-		io.indent = "  "
+	m.elements.project = function(prj)
+		return {
+			m.projectConfigurations,
+			m.globals,
+			m.importDefaultProps,
+			m.configurationPropertiesGroup,
+			m.importExtensionSettings,
+			m.propertySheetGroup,
+			m.userMacros,
+			m.outputPropertiesGroup,
+			m.itemDefinitionGroups,
+			m.assemblyReferences,
+			m.files,
+			m.projectReferences,
+			m.importExtensionTargets,
+		}
+	end
+
+	function m.generate(prj)
 		io.utf8()
-
-		vc2010.xmlDeclaration()
-		vc2010.project("Build")
-		vc2010.projectConfigurations(prj)
-		vc2010.globals(prj)
-
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
-
-		for cfg in project.eachconfig(prj) do
-			vc2010.configurationProperties(cfg)
-		end
-
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
-		_p(1,'<ImportGroup Label="ExtensionSettings">')
-		_p(1,'</ImportGroup>')
-
-		for cfg in project.eachconfig(prj) do
-			vc2010.propertySheets(cfg)
-		end
-
-		_p(1,'<PropertyGroup Label="UserMacros" />')
-
-		for cfg in project.eachconfig(prj) do
-			vc2010.outputProperties(cfg)
-			vc2010.nmakeProperties(cfg)
-		end
-
-		for cfg in project.eachconfig(prj) do
-			vc2010.itemDefinitionGroup(cfg)
-		end
-
-		vc2010.assemblyReferences(prj)
-		vc2010.files(prj)
-		vc2010.projectReferences(prj)
-
-		vc2010.import(prj)
-
-		io.printf('</Project>')
+        m.xmlDeclaration()
+		m.project()
+		p.callArray(m.elements.project, prj)
+		p.out('</Project>')
 	end
 
 
@@ -74,13 +59,10 @@
 -- Output the XML declaration and opening <Project> tag.
 --
 
-	function vc2010.project(target)
-		local defaultTargets = ""
-		if target then
-			defaultTargets = string.format(' DefaultTargets="%s"', target)
-		end
-
-		_p('<Project%s ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', defaultTargets)
+	function m.project()
+		local action = premake.action.current()
+		p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+			action.vstudio.toolsVersion)
 	end
 
 
@@ -89,7 +71,7 @@
 -- configurations with architectures.
 --
 
-	function vc2010.projectConfigurations(prj)
+	function m.projectConfigurations(prj)
 
 		-- build a list of all architectures used in this project
 		local platforms = {}
@@ -122,48 +104,32 @@
 -- Write out the TargetFrameworkVersion property.
 --
 
-	function vc2010.targetFramework(prj)
-		local framework = prj.framework or "4.0"
+	function m.targetFramework(prj)
+		local action = premake.action.current()
+		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
+
+		local framework = prj.framework or action.vstudio.targetFramework or "4.0"
 		_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 	end
+
+
 
 --
 -- Write out the Globals property group.
 --
 
-	function vc2010.globals(prj)
-		vc2010.propertyGroup(nil, "Globals")
-		vc2010.projectGuid(prj)
+	m.elements.globals = function(prj)
+		return {
+			m.projectGuid,
+			m.ignoreWarnDuplicateFilename,
+			m.keyword,
+			m.projectName,
+		}
+	end
 
-		-- try to determine what kind of targets we're building here
-		local isWin, isManaged, isMakefile
-		for cfg in project.eachconfig(prj) do
-			if cfg.system == premake.WINDOWS then
-				isWin = true
-			end
-			if cfg.flags.Managed then
-				isManaged = true
-			end
-			if vstudio.isMakefile(cfg) then
-				isMakefile = true
-			end
-		end
-
-		if isWin then
-			if isMakefile then
-				_p(2,'<Keyword>MakeFileProj</Keyword>')
-			else
-				if isManaged then
-					vc2010.targetFramework(prj)
-					_p(2,'<Keyword>ManagedCProj</Keyword>')
-				else
-					_p(2,'<Keyword>Win32Proj</Keyword>')
-				end
-				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
-			end
-		end
-
-		vc2010.projectName(prj)
+	function m.globals(prj)
+		m.propertyGroup(nil, "Globals")
+		p.callArray(m.elements.globals, prj)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -173,32 +139,38 @@
 -- produces, and some global settings.
 --
 
-	vc2010.elements.configurationProperties = {
-		"configurationType",
-		"useDebugLibraries",
-		"useOfMfc",
-		"clrSupport",
-		"characterSet",
-		"wholeProgramOptimization",
-		"nmakeOutDirs",
-	}
+	m.elements.configurationProperties = function(cfg)
+		if cfg.kind == p.UTILITY then
+			return {
+				m.configurationType,
+			}
+		else
+			return {
+				m.configurationType,
+				m.useDebugLibraries,
+				m.useOfMfc,
+				m.useOfAtl,
+				m.clrSupport,
+				m.characterSet,
+				m.platformToolset,
+				m.wholeProgramOptimization,
+				m.nmakeOutDirs,
+			}
+		end
+	end
 
-	function vc2010.configurationProperties(cfg)
-		vc2010.propertyGroup(cfg, "Configuration")
-		premake.callarray(vc2010, vc2010.elements.configurationProperties, cfg)
+	function m.configurationProperties(cfg)
+		m.propertyGroup(cfg, "Configuration")
+		p.callArray(m.elements.configurationProperties, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
-
---
--- Write out the default property sheets for a configuration.
---
-
-	function vc2010.propertySheets(cfg)
-		_p(1,'<ImportGroup Label="PropertySheets" %s>', vc2010.condition(cfg))
-		_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
-		_p(1,'</ImportGroup>')
+	function m.configurationPropertiesGroup(prj)
+		for cfg in project.eachconfig(prj) do
+			m.configurationProperties(cfg)
+		end
 	end
+
 
 
 --
@@ -206,25 +178,44 @@
 -- directories, manifest, etc.
 --
 
-	vc2010.elements.outputProperties = {
-		"propertyGroup",
-		"linkIncremental",
-		"ignoreImportLibrary",
-		"outDir",
-		"outputFile",
-		"intDir",
-		"targetName",
-		"targetExt",
-		"imageXexOutput",
-		"generateManifest",
-	}
+	m.elements.outputProperties = function(cfg)
+		if cfg.kind == p.UTILITY then
+			return {
+				m.outDir,
+				m.intDir,
+				m.extensionsToDeleteOnClean,
+			}
+		else
+			return {
+				m.linkIncremental,
+				m.ignoreImportLibrary,
+				m.outDir,
+				m.outputFile,
+				m.intDir,
+				m.targetName,
+				m.targetExt,
+				m.imageXexOutput,
+				m.generateManifest,
+				m.extensionsToDeleteOnClean,
+			}
+		end
+	end
 
-	function vc2010.outputProperties(cfg)
+	function m.outputProperties(cfg)
 		if not vstudio.isMakefile(cfg) then
-			premake.callarray(vc2010, vc2010.elements.outputProperties, cfg)
+			m.propertyGroup(cfg)
+			p.callArray(m.elements.outputProperties, cfg)
 			_p(1,'</PropertyGroup>')
 		end
 	end
+
+	function m.outputPropertiesGroup(prj)
+		for cfg in project.eachconfig(prj) do
+			m.outputProperties(cfg)
+			m.nmakeProperties(cfg)
+		end
+	end
+
 
 
 --
@@ -232,13 +223,13 @@
 -- build commands, output file location, etc.
 --
 
-	function vc2010.nmakeProperties(cfg)
+	function m.nmakeProperties(cfg)
 		if vstudio.isMakefile(cfg) then
-			vc2010.propertyGroup(cfg)
-			vc2010.nmakeOutput(cfg)
-			vc2010.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-			vc2010.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-			vc2010.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+			m.propertyGroup(cfg)
+			m.nmakeOutput(cfg)
+			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -249,69 +240,88 @@
 -- of the per-configuration compile and link settings.
 --
 
-	vc2010.elements.itemDefinitionGroup = {
-		"clCompile",
-		"resourceCompile",
-		"link",
-		"manifest",
-		"buildEvents",
-		"imageXex",
-		"deploy",
-	}
+	m.elements.itemDefinitionGroup = function(cfg)
+		if cfg.kind == p.UTILITY then
+			return {
+				m.ruleVars,
+				m.buildEvents,
+			}
+		else
+			return {
+				m.clCompile,
+				m.resourceCompile,
+				m.linker,
+				m.manifest,
+				m.buildEvents,
+				m.imageXex,
+				m.deploy,
+				m.ruleVars,
+			}
+		end
+	end
 
-	function vc2010.itemDefinitionGroup(cfg)
+	function m.itemDefinitionGroup(cfg)
 		if not vstudio.isMakefile(cfg) then
-			_p(1,'<ItemDefinitionGroup %s>', vc2010.condition(cfg))
-			premake.callarray(vc2010, vc2010.elements.itemDefinitionGroup, cfg)
-			_p(1,'</ItemDefinitionGroup>')
+			p.push('<ItemDefinitionGroup %s>', m.condition(cfg))
+			p.callArray(m.elements.itemDefinitionGroup, cfg)
+			p.pop('</ItemDefinitionGroup>')
 
 		else
 			if cfg == project.getfirstconfig(cfg.project) then
-				_p(1,'<ItemDefinitionGroup>')
-				_p(1,'</ItemDefinitionGroup>')
+				p.w('<ItemDefinitionGroup>')
+				p.w('</ItemDefinitionGroup>')
 			end
 		end
 	end
+
+	function m.itemDefinitionGroups(prj)
+		for cfg in project.eachconfig(prj) do
+			m.itemDefinitionGroup(cfg)
+		end
+	end
+
 
 
 --
 -- Write the the <ClCompile> compiler settings block.
 --
 
-	vc2010.elements.clCompile = {
-		"precompiledHeader",
-		"warningLevel",
-		"treatWarningAsError",
-		"basicRuntimeChecks",
-		"clCompilePreprocessorDefinitions",
-		"clCompileAdditionalIncludeDirectories",
-		"clCompileAdditionalUsingDirectories",
-		"forceIncludes",
-		"debugInformationFormat",
-		"programDataBaseFileName",
-		"optimization",
-		"functionLevelLinking",
-		"intrinsicFunctions",
-		"minimalRebuild",
-		"omitFramePointers",
-		"stringPooling",
-		"runtimeLibrary",
-		"omitDefaultLib",
-		"exceptionHandling",
-		"runtimeTypeInfo",
-		"bufferSecurityCheck",
-		"treatWChar_tAsBuiltInType",
-		"floatingPointModel",
-		"enableEnhancedInstructionSet",
-		"multiProcessorCompilation",
-		"additionalCompileOptions",
-		"compileAs",
-	}
+	m.elements.clCompile = function(cfg)
+		return {
+			m.precompiledHeader,
+			m.warningLevel,
+			m.treatWarningAsError,
+			m.basicRuntimeChecks,
+			m.clCompilePreprocessorDefinitions,
+			m.clCompileAdditionalIncludeDirectories,
+			m.clCompileAdditionalUsingDirectories,
+			m.forceIncludes,
+			m.debugInformationFormat,
+			m.programDataBaseFileName,
+			m.optimization,
+			m.functionLevelLinking,
+			m.intrinsicFunctions,
+			m.minimalRebuild,
+			m.omitFramePointers,
+			m.stringPooling,
+			m.runtimeLibrary,
+			m.omitDefaultLib,
+			m.exceptionHandling,
+			m.runtimeTypeInfo,
+			m.bufferSecurityCheck,
+			m.treatWChar_tAsBuiltInType,
+			m.floatingPointModel,
+			m.enableEnhancedInstructionSet,
+			m.multiProcessorCompilation,
+			m.additionalCompileOptions,
+			m.compileAs,
+		}
+	end
 
-	function vc2010.clCompile(cfg)
-		_p(2,'<ClCompile>')
-		premake.callarray(vc2010, vc2010.elements.clCompile, cfg)
-		_p(2,'</ClCompile>')
+	function m.clCompile(cfg)
+		p.push('<ClCompile>')
+		p.callArray(m.elements.clCompile, cfg)
+		p.pop('</ClCompile>')
 	end
 
 
@@ -319,16 +329,27 @@
 -- Write out the resource compiler block.
 --
 
-	vc2010.elements.resourceCompile = {
-		"resourcePreprocessorDefinitions",
-		"resourceAdditionalIncludeDirectories",
-	}
+	m.elements.resourceCompile = function(cfg)
+		return {
+			m.resourcePreprocessorDefinitions,
+			m.resourceAdditionalIncludeDirectories,
+			m.culture,
+		}
+	end
 
-	function vc2010.resourceCompile(cfg)
-		if cfg.system ~= premake.XBOX360 then
-			_p(2,'<ResourceCompile>')
-			premake.callarray(vc2010, vc2010.elements.resourceCompile, cfg)
-			_p(2,'</ResourceCompile>')
+	function m.resourceCompile(cfg)
+		if cfg.system ~= premake.XBOX360 and config.hasResourceFiles(cfg) then
+			local contents = p.capture(function ()
+				p.push()
+				p.callArray(m.elements.resourceCompile, cfg)
+				p.pop()
+			end)
+
+			if #contents > 0 then
+				p.push('<ResourceCompile>')
+				p.outln(contents)
+				p.pop('</ResourceCompile>')
+			end
 		end
 	end
 
@@ -337,64 +358,92 @@
 -- Write out the linker tool block.
 --
 
-	vc2010.elements.link = {
-		"subSystem",
-		"generateDebugInformation",
-		"optimizeReferences",
-		"linkDynamic",
-	}
+	m.elements.linker = function(cfg, explicit)
+		return {
+			m.link,
+			m.lib,
+			m.linkLibraryDependencies,
+		}
+	end
 
-	vc2010.elements.linkDynamic = {
-		"additionalDependencies",
-		"additionalLibraryDirectories",
-		"importLibrary",
-		"entryPointSymbol",
-		"moduleDefinitionFile",
-		"treatLinkerWarningAsErrors",
-		"additionalLinkOptions",
-	}
-
-	vc2010.elements.linkStatic = {
-		"treatLinkerWarningAsErrors",
-		"additionalLinkOptions",
-	}
-
-	function vc2010.link(cfg)
-		_p(2,'<Link>')
+	function m.linker(cfg)
 		local explicit = vstudio.needsExplicitLink(cfg)
-		premake.callarray(vc2010, vc2010.elements.link, cfg, explicit)
-		_p(2,'</Link>')
-
-		if cfg.kind == premake.STATICLIB then
-			vc2010.linkStatic(cfg, explicit)
-		end
-
-		vc2010.linkLibraryDependencies(cfg, explicit)
+		p.callArray(m.elements.linker, cfg, explicit)
 	end
 
-	function vc2010.linkDynamic(cfg, explicit)
-		if cfg.kind ~= premake.STATICLIB then
-			premake.callarray(vc2010, vc2010.elements.linkDynamic, cfg, explicit)
+
+
+	m.elements.link = function(cfg, explicit)
+		if cfg.kind == p.STATICLIB then
+			return {
+				m.subSystem,
+				m.generateDebugInformation,
+				m.optimizeReferences,
+			}
+		else
+			return {
+				m.subSystem,
+				m.generateDebugInformation,
+				m.optimizeReferences,
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
+				m.importLibrary,
+				m.entryPointSymbol,
+				m.generateMapFile,
+				m.moduleDefinitionFile,
+				m.treatLinkerWarningAsErrors,
+				m.additionalLinkOptions,
+			}
 		end
 	end
 
-	function vc2010.linkStatic(cfg, explicit)
-		local contents = io.capture(function ()
-			premake.callarray(vc2010, vc2010.elements.linkStatic, cfg, explicit)
+	function m.link(cfg, explicit)
+		local contents = p.capture(function ()
+			p.push()
+			p.callArray(m.elements.link, cfg, explicit)
+			p.pop()
 		end)
 		if #contents > 0 then
-			_p(2,'<Lib>')
-			_p("%s", contents)
-			_p(2,'</Lib>')
+			p.push('<Link>')
+			p.outln(contents)
+			p.pop('</Link>')
 		end
 	end
+
+
+
+	m.elements.lib = function(cfg, explicit)
+		if cfg.kind == p.STATICLIB then
+			return {
+				m.treatLinkerWarningAsErrors,
+				m.additionalLinkOptions,
+			}
+		else
+			return {
+			}
+		end
+	end
+
+	function m.lib(cfg, explicit)
+		local contents = p.capture(function ()
+			p.push()
+			p.callArray(m.elements.lib, cfg, explicit)
+			p.pop()
+		end)
+		if #contents > 0 then
+			p.push('<Lib>')
+			p.outln(contents)
+			p.pop('</Lib>')
+		end
+	end
+
 
 
 --
 -- Write the manifest section.
 --
 
-	function vc2010.manifest(cfg)
+	function m.manifest(cfg)
 		-- no additional manifests in static lib
 		if cfg.kind == premake.STATICLIB then
 			return
@@ -413,9 +462,9 @@
 			return
 		end
 
-		_p(2,'<Manifest>')
-		vc2010.element(3, "AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
-		_p(2,'</Manifest>')
+		p.push('<Manifest>')
+		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
+		p.pop('</Manifest>')
 	end
 
 
@@ -424,7 +473,7 @@
 -- Write out the pre- and post-build event settings.
 ---
 
-	function vc2010.buildEvents(cfg)
+	function m.buildEvents(cfg)
 		local write = function (event)
 			local name = event .. "Event"
 			local field = event:lower()
@@ -432,6 +481,7 @@
 			local msg = cfg[field .. "message"]
 
 			if #steps > 0 then
+				steps = os.translateCommands(steps, p.WINDOWS)
 				_p(2,'<%s>', name)
 				_x(3,'<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
 				if msg then
@@ -447,11 +497,45 @@
 	end
 
 
+
+---
+-- Write out project-level custom rule variables.
+---
+
+	function m.ruleVars(cfg)
+		for i = 1, #cfg.rules do
+			local rule = p.global.getRule(cfg.rules[i])
+
+			local contents = p.capture(function ()
+				p.push()
+				for prop in p.rule.eachProperty(rule) do
+					local fld = p.rule.getPropertyField(rule, prop)
+					local value = cfg[fld.name]
+					if value ~= nil then
+						value = p.rule.getPropertyString(rule, prop, value)
+						if value ~= nil and #value > 0 then
+							m.element(prop.name, nil, '%s', value)
+						end
+					end
+				end
+				p.pop()
+			end)
+
+			if #contents > 0 then
+				p.push('<%s>', rule.name)
+				p.outln(contents)
+				p.pop('</%s>', rule.name)
+			end
+		end
+	end
+
+
+
 --
 -- Reference any managed assemblies listed in the links()
 --
 
-	function vc2010.assemblyReferences(prj)
+	function m.assemblyReferences(prj)
 		-- Visual Studio doesn't support per-config references; use
 		-- whatever is contained in the first configuration
 		local cfg = project.getfirstconfig(prj)
@@ -477,162 +561,301 @@
 	end
 
 
---
+---
 -- Write out the list of source code files, and any associated configuration.
---
+---
 
-	function vc2010.files(prj)
-		vc2010.simplefilesgroup(prj, "ClInclude")
-		vc2010.compilerfilesgroup(prj)
-		vc2010.simplefilesgroup(prj, "None")
-		vc2010.simplefilesgroup(prj, "ResourceCompile")
-		vc2010.customBuildFilesGroup(prj)
-	end
+	m.elements.fileGroups = {
+		"clInclude",
+		"clCompile",
+		"none",
+		"resourceCompile",
+		"customBuild",
+		"customRule"
+	}
 
-
-	function vc2010.simplefilesgroup(prj, group)
-		local files = vc2010.getfilegroup(prj, group)
-		if #files > 0  then
-			_p(1,'<ItemGroup>')
-			for _, file in ipairs(files) do
-				_x(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
-			end
-			_p(1,'</ItemGroup>')
+	m.elements.files = function(prj, groups)
+		local calls = {}
+		for i, group in ipairs(m.elements.fileGroups) do
+			calls[i] = m[group .. "Files"]
 		end
+		return calls
+	end
+
+	function m.files(prj)
+		-- Categorize the source files in groups by build rule; each will
+		-- be written to a separate item group by one of the handlers
+		local groups = m.categorizeSources(prj)
+		p.callArray(m.elements.files, prj, groups)
 	end
 
 
-	function vc2010.compilerfilesgroup(prj)
-		local files = vc2010.getfilegroup(prj, "ClCompile")
+	function m.clCompileFiles(prj, group)
+		local files = group.ClCompile or {}
 		if #files > 0  then
-			_p(1,'<ItemGroup>')
+			p.push('<ItemGroup>')
+
 			for _, file in ipairs(files) do
-
-				-- Capture the contents of the <ClCompile> element, if any, so
-				-- I know which form to use.
-
-				local contents = io.capture(function ()
+				local contents = p.capture(function ()
+					p.push()
 					for cfg in project.eachconfig(prj) do
-						local condition = vc2010.condition(cfg)
-
-						local filecfg = fileconfig.getconfig(file, cfg)
-						vc2010.excludedFromBuild(cfg, filecfg)
-						if filecfg then
-							vc2010.objectFileName(filecfg)
-							vc2010.optimization(filecfg, condition)
-							vc2010.forceIncludes(filecfg, condition)
-							vc2010.precompiledHeader(cfg, filecfg, condition)
-							vc2010.additionalCompileOptions(filecfg, condition)
+						local fcfg = fileconfig.getconfig(file, cfg)
+						m.excludedFromBuild(cfg, fcfg)
+						if fcfg then
+							local condition = m.condition(cfg)
+							m.objectFileName(fcfg)
+							m.clCompilePreprocessorDefinitions(fcfg, condition)
+							m.optimization(fcfg, condition)
+							m.forceIncludes(fcfg, condition)
+							m.precompiledHeader(cfg, fcfg, condition)
+							m.enableEnhancedInstructionSet(fcfg, condition)
+							m.additionalCompileOptions(fcfg, condition)
 						end
 					end
+					p.pop()
 				end)
 
 				if #contents > 0 then
-					_x(2,'<ClCompile Include=\"%s\">', path.translate(file.relpath))
-					_p("%s", contents)
-					_p(2,'</ClCompile>')
+					p.push('<ClCompile Include=\"%s\">', path.translate(file.relpath))
+					p.outln(contents)
+					p.pop('</ClCompile>')
 				else
-					_x(2,'<ClCompile Include=\"%s\" />', path.translate(file.relpath))
+					p.x('<ClCompile Include=\"%s\" />', path.translate(file.relpath))
 				end
 
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 
 
-	function vc2010.customBuildFilesGroup(prj)
-		local files = vc2010.getfilegroup(prj, "CustomBuild")
+	function m.clIncludeFiles(prj, groups)
+		local files = groups.ClInclude or {}
 		if #files > 0  then
-			_p(1,'<ItemGroup>')
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
+				p.x('<ClInclude Include=\"%s\" />', path.translate(file.relpath))
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
+
+	function m.customBuildFiles(prj, groups)
+		local files = groups.CustomBuild or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
 			for _, file in ipairs(files) do
-				_x(2,'<CustomBuild Include=\"%s\">', path.translate(file.relpath))
-				_p(3,'<FileType>Document</FileType>')
+				p.push('<CustomBuild Include=\"%s\">', path.translate(file.relpath))
+				p.w('<FileType>Document</FileType>')
 
 				for cfg in project.eachconfig(prj) do
-					local condition = vc2010.condition(cfg)
+					local condition = m.condition(cfg)
 					local filecfg = fileconfig.getconfig(file, cfg)
 					if fileconfig.hasCustomBuildRule(filecfg) then
-						local commands = table.concat(filecfg.buildcommands,'\r\n')
-						_p(3,'<Command %s>%s</Command>', condition, premake.esc(commands))
+						m.excludedFromBuild(cfg, filecfg)
+
+						local commands = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
+						commands = table.concat(commands,'\r\n')
+						m.element("Command", condition, '%s', commands)
 
 						local outputs = project.getrelative(prj, filecfg.buildoutputs)
-						vc2010.element(3, "Outputs", condition, '%s', table.concat(outputs, " "))
+						m.element("Outputs", condition, '%s', table.concat(outputs, " "))
 
 						if filecfg.buildmessage then
-							vc2010.element(3, "Message", condition, '%s', premake.esc(filecfg.buildmessage))
+							m.element("Message", condition, '%s', filecfg.buildmessage)
+						end
+
+						if filecfg.buildinputs and #filecfg.buildinputs > 0 then
+							local inputs = project.getrelative(prj, filecfg.buildinputs)
+							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
 						end
 					end
 				end
 
-				_p(2,'</CustomBuild>')
+				p.pop('</CustomBuild>')
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 
 
-	function vc2010.getfilegroup(prj, group)
-		-- check for a cached copy before creating
-		local groups = prj.vc2010_file_groups
-		if not groups then
-			groups = {
-				ClCompile = {},
-				ClInclude = {},
-				None = {},
-				ResourceCompile = {},
-				CustomBuild = {},
-			}
-			prj.vc2010_file_groups = groups
+	function m.customRuleFiles(prj, groups)
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
+			local files = groups[rule.name]
+			if files and #files > 0 then
+				p.push('<ItemGroup>')
 
-			local tr = project.getsourcetree(prj)
-			tree.traverse(tr, {
-				onleaf = function(node)
-					-- if any configuration of this file uses a custom build rule,
-					-- then they all must be marked as custom build
-					local hasbuildrule = false
-					for cfg in project.eachconfig(prj) do
-						local filecfg = fileconfig.getconfig(node, cfg)
-						if fileconfig.hasCustomBuildRule(filecfg) then
-							hasbuildrule = true
-							break
+				for _, file in ipairs(files) do
+					local contents = p.capture(function()
+						p.push()
+						for prop in p.rule.eachProperty(rule) do
+							local fld = p.rule.getPropertyField(rule, prop)
+
+							for cfg in project.eachconfig(prj) do
+								local fcfg = fileconfig.getconfig(file, cfg)
+								if fcfg and fcfg[fld.name] then
+									local value = p.rule.getPropertyString(rule, prop, fcfg[fld.name])
+									if value and #value > 0 then
+										m.element(prop.name, m.condition(cfg), '%s', value)
+									end
+								end
+							end
+
 						end
-					end
+						p.pop()
+					end)
 
-					if hasbuildrule then
-						table.insert(groups.CustomBuild, node)
-					elseif path.iscppfile(node.name) then
-						table.insert(groups.ClCompile, node)
-					elseif path.iscppheader(node.name) then
-						table.insert(groups.ClInclude, node)
-					elseif path.isresourcefile(node.name) then
-						table.insert(groups.ResourceCompile, node)
+					if #contents > 0 then
+						p.push('<%s Include=\"%s\">', rule.name, path.translate(file.relpath))
+						p.outln(contents)
+						p.pop('</%s>', rule.name)
 					else
-						table.insert(groups.None, node)
+						p.x('<%s Include=\"%s\" />', rule.name, path.translate(file.relpath))
 					end
 				end
-			})
+
+				p.pop('</ItemGroup>')
+			end
+		end
+	end
+
+
+
+	function m.noneFiles(prj, groups)
+		local files = groups.None or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
+				p.x('<None Include=\"%s\" />', path.translate(file.relpath))
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
+
+	function m.resourceCompileFiles(prj, groups)
+		local files = groups.ResourceCompile or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
+				local contents = p.capture(function ()
+					p.push()
+					for cfg in project.eachconfig(prj) do
+						local condition = m.condition(cfg)
+						local filecfg = fileconfig.getconfig(file, cfg)
+						if cfg.system == premake.WINDOWS then
+							m.excludedFromBuild(cfg, filecfg)
+						end
+					end
+					p.pop()
+				end)
+
+				if #contents > 0 then
+					p.push('<ResourceCompile Include=\"%s\">', path.translate(file.relpath))
+					p.outln(contents)
+					p.pop('</ResourceCompile>')
+				else
+					p.x('<ResourceCompile Include=\"%s\" />', path.translate(file.relpath))
+				end
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
+
+	function m.categorize(prj, file)
+		-- If any configuration for this file uses a custom build step,
+		-- that's the category to use
+		for cfg in project.eachconfig(prj) do
+			local fcfg = fileconfig.getconfig(file, cfg)
+			if fileconfig.hasCustomBuildRule(fcfg) then
+				return "CustomBuild"
+			end
 		end
 
-		return groups[group]
+		-- If there is a custom rule associated with it, use that
+		local rule = p.global.getRuleForFile(file.name, prj.rules)
+		if rule then
+			return rule.name
+		end
+
+		-- Otherwise use the file extension to deduce a category
+		if path.iscppfile(file.name) then
+			return "ClCompile"
+		elseif path.iscppheader(file.name) then
+			return "ClInclude"
+		elseif path.isresourcefile(file.name) then
+			return "ResourceCompile"
+		else
+			return "None"
+		end
 	end
+
+
+	function m.categorizeSources(prj)
+		local groups = prj._vc2010_sources
+		if groups then
+			return groups
+		end
+
+		groups = {}
+		prj._vc2010_sources = groups
+
+		local tr = project.getsourcetree(prj)
+		tree.traverse(tr, {
+			onleaf = function(node)
+				local cat = m.categorize(prj, node)
+				groups[cat] = groups[cat] or {}
+				table.insert(groups[cat], node)
+			end
+		})
+
+		-- sort by relative-to path; otherwise VS will reorder the files
+		for group, files in pairs(groups) do
+			table.sort(files, function (a, b)
+				return a.relpath < b.relpath
+			end)
+		end
+
+		return groups
+	end
+
 
 
 --
 -- Generate the list of project dependencies.
 --
 
-	function vc2010.projectReferences(prj)
-		local deps = project.getdependencies(prj)
-		if #deps > 0 then
-			_p(1,'<ItemGroup>')
-			for _, dep in ipairs(deps) do
-				local relpath = project.getrelative(prj, vstudio.projectfile(dep))
-				_x(2,'<ProjectReference Include=\"%s\">', path.translate(relpath))
-				_p(3,'<Project>{%s}</Project>', dep.uuid)
-				_p(2,'</ProjectReference>')
+	m.elements.projectReferences = function(prj, ref)
+		if prj.clr ~= p.OFF then
+			return {
+				m.referenceProject,
+				m.referencePrivate,
+				m.referenceOutputAssembly,
+				m.referenceCopyLocalSatelliteAssemblies,
+				m.referenceLinkLibraryDependencies,
+				m.referenceUseLibraryDependences,
+			}
+		else
+			return {
+				m.referenceProject,
+			}
+		end
+	end
+
+	function m.projectReferences(prj)
+		local refs = project.getdependencies(prj)
+		if #refs > 0 then
+			p.push('<ItemGroup>')
+			for _, ref in ipairs(refs) do
+				local relpath = project.getrelative(prj, vstudio.projectfile(ref))
+				p.push('<ProjectReference Include=\"%s\">', path.translate(relpath))
+				p.callArray(m.elements.projectReferences, prj, ref)
+				p.pop('</ProjectReference>')
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 
@@ -644,12 +867,12 @@
 --
 ---------------------------------------------------------------------------
 
-	function vc2010.additionalDependencies(cfg, explicit)
+	function m.additionalDependencies(cfg, explicit)
 		local links
 
 		-- check to see if this project uses an external toolset. If so, let the
 		-- toolset define the format of the links
-		local toolset = premake.vstudio.vc200x.toolset(cfg)
+		local toolset = config.toolset(cfg)
 		if toolset then
 			links = toolset.getlinks(cfg, not explicit)
 		else
@@ -659,21 +882,21 @@
 
 		if #links > 0 then
 			links = path.translate(table.concat(links, ";"))
-			_x(3,'<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
 		end
 	end
 
 
-	function vc2010.additionalIncludeDirectories(cfg, includedirs)
+	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
 			dirs = path.translate(table.concat(dirs, ";"))
-			_x(3,'<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+			p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
 		end
 	end
 
 
-	function vc2010.additionalLibraryDirectories(cfg)
+	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = project.getrelative(cfg.project, cfg.libdirs)
 			dirs = path.translate(table.concat(dirs, ";"))
@@ -681,24 +904,24 @@
 		end
 	end
 
-	function vc2010.additionalUsingDirectories(cfg)
+	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
 			local dirs = project.getrelative(cfg.project, cfg.usingdirs)
 			dirs = path.translate(table.concat(dirs, ";"))
-			_x(3,'<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
+			p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
 		end
 	end
 
 
-	function vc2010.additionalCompileOptions(cfg, condition)
+	function m.additionalCompileOptions(cfg, condition)
 		if #cfg.buildoptions > 0 then
 			local opts = table.concat(cfg.buildoptions, " ")
-			vc2010.element(3, "AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
 
-	function vc2010.additionalLinkOptions(cfg)
+	function m.additionalLinkOptions(cfg)
 		if #cfg.linkoptions > 0 then
 			local opts = table.concat(cfg.linkoptions, " ")
 			_x(3, '<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
@@ -706,54 +929,60 @@
 	end
 
 
-	function vc2010.basicRuntimeChecks(cfg)
+	function m.basicRuntimeChecks(cfg)
 		if cfg.flags.NoRuntimeChecks then
-			_p(3,'<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
+			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
 		end
 	end
 
 
-	function vc2010.characterSet(cfg)
+	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
 		end
 	end
 
-	function vc2010.wholeProgramOptimization(cfg)
+	function m.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
 			_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
 		end
 	end
 
-	function vc2010.clCompileAdditionalIncludeDirectories(cfg)
-		vc2010.additionalIncludeDirectories(cfg, cfg.includedirs)
+	function m.clCompileAdditionalIncludeDirectories(cfg)
+		m.additionalIncludeDirectories(cfg, cfg.includedirs)
 	end
 
-	function vc2010.clCompileAdditionalUsingDirectories(cfg)
-		vc2010.additionalUsingDirectories(cfg, cfg.usingdirs)
-	end
-
-
-	function vc2010.clCompilePreprocessorDefinitions(cfg)
-		vc2010.preprocessorDefinitions(cfg, cfg.defines, false)
+	function m.clCompileAdditionalUsingDirectories(cfg)
+		m.additionalUsingDirectories(cfg, cfg.usingdirs)
 	end
 
 
-	function vc2010.clrSupport(cfg)
-		if cfg.flags.Managed then
-			_p(2,'<CLRSupport>true</CLRSupport>')
+	function m.clCompilePreprocessorDefinitions(cfg, condition)
+		m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+	end
+
+
+	function m.clrSupport(cfg)
+		local value
+		if cfg.clr == "On" or cfg.clr == "Unsafe" then
+			value = "true"
+		elseif cfg.clr ~= p.OFF then
+			value = cfg.clr
+		end
+		if value then
+			p.w('<CLRSupport>%s</CLRSupport>', value)
 		end
 	end
 
 
-	function vc2010.compileAs(cfg)
+	function m.compileAs(cfg)
 		if cfg.project.language == "C" then
 			_p(3,'<CompileAs>CompileAsC</CompileAs>')
 		end
 	end
 
 
-	function vc2010.configurationType(cfg)
+	function m.configurationType(cfg)
 		local types = {
 			SharedLib = "DynamicLibrary",
 			StaticLib = "StaticLibrary",
@@ -761,20 +990,29 @@
 			WindowedApp = "Application",
 			Makefile = "Makefile",
 			None = "Makefile",
+			Utility = "Utility",
 		}
 		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
 	end
 
 
-	function vc2010.debugInformationFormat(cfg)
+	function m.culture(cfg)
+		local value = vstudio.cultureForLocale(cfg.locale)
+		if value then
+			p.w('<Culture>0x%04x</Culture>', value)
+		end
+	end
+
+
+	function m.debugInformationFormat(cfg)
 		local value
 		if cfg.flags.Symbols then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x64" or
-			       cfg.flags.Managed or
+				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   cfg.flags.NoEditAndContinue
+				   not cfg.editAndContinue
 			then
 				value = "ProgramDatabase"
 			else
@@ -782,12 +1020,12 @@
 			end
 		end
 		if value then
-			_p(3,'<DebugInformationFormat>%s</DebugInformationFormat>', value)
+			p.w('<DebugInformationFormat>%s</DebugInformationFormat>', value)
 		end
 	end
 
 
-	function vc2010.deploy(cfg)
+	function m.deploy(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<Deploy>')
 			_p(3,'<DeploymentType>CopyToHardDrive</DeploymentType>')
@@ -798,22 +1036,28 @@
 	end
 
 
-	function vc2010.enableEnhancedInstructionSet(cfg)
-		local map = {
-			SSE = "StreamingSIMDExtensions",
-			SSE2 = "StreamingSIMDExtensions2"
-		}
-		local value = map[cfg.vectorextensions]
+	function m.enableEnhancedInstructionSet(cfg, condition)
+		local value
+
+		local x = cfg.vectorextensions
+		if _ACTION > "vc2010" and x == "AVX" then
+			value = "AdvancedVectorExtensions"
+		elseif x == "SSE2" then
+			value = "StreamingSIMDExtensions2"
+		elseif x == "SSE" then
+			value = "StreamingSIMDExtensions"
+		end
+
 		if value then
-			_p(3,'<EnableEnhancedInstructionSet>%s</EnableEnhancedInstructionSet>', value)
+			m.element('EnableEnhancedInstructionSet', condition, value)
 		end
 	end
 
 
-	function vc2010.entryPointSymbol(cfg)
+	function m.entryPointSymbol(cfg)
 		if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
 		   not cfg.flags.WinMain and
-		   not cfg.flags.Managed and
+		   cfg.clr == p.OFF and
 		   cfg.system ~= premake.XBOX360
 		then
 			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
@@ -821,72 +1065,103 @@
 	end
 
 
-	function vc2010.exceptionHandling(cfg)
+	function m.exceptionHandling(cfg)
 		if cfg.flags.NoExceptions then
-			_p(3,'<ExceptionHandling>false</ExceptionHandling>')
+			p.w('<ExceptionHandling>false</ExceptionHandling>')
 		elseif cfg.flags.SEH then
-			_p(3,'<ExceptionHandling>Async</ExceptionHandling>')
+			p.w('<ExceptionHandling>Async</ExceptionHandling>')
 		end
 	end
 
 
-	function vc2010.excludedFromBuild(cfg, filecfg)
+	function m.excludedFromBuild(cfg, filecfg)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
-			_p(3,'<ExcludedFromBuild %s>true</ExcludedFromBuild>', vc2010.condition(cfg))
+			m.element("ExcludedFromBuild", m.condition(cfg), "true")
 		end
 	end
 
 
-	function vc2010.floatingPointModel(cfg)
+	function m.extensionsToDeleteOnClean(cfg)
+		if #cfg.cleanExtensions > 0 then
+			local value = table.implode(cfg.cleanExtensions, "*", ";", "")
+			m.element("ExtensionsToDeleteOnClean", nil, value .. "$(ExtensionsToDeleteOnClean)")
+		end
+	end
+
+
+	function m.floatingPointModel(cfg)
 		if cfg.floatingpoint then
-			_p(3,'<FloatingPointModel>%s</FloatingPointModel>', cfg.floatingpoint)
+			p.w('<FloatingPointModel>%s</FloatingPointModel>', cfg.floatingpoint)
 		end
 	end
 
 
-	function vc2010.forceIncludes(cfg, condition)
+	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
 			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
-			vc2010.element(3, "ForcedIncludeFiles", condition, table.concat(includes, ';'))
+			m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
 			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
-			_x(3,'<ForcedUsingFiles>%s</ForcedUsingFiles>', table.concat(usings, ';'))
+			m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
 		end
 	end
 
 
-	function vc2010.functionLevelLinking(cfg)
+	function m.functionLevelLinking(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<FunctionLevelLinking>true</FunctionLevelLinking>')
+			p.w('<FunctionLevelLinking>true</FunctionLevelLinking>')
 		end
 	end
 
 
-	function vc2010.generateDebugInformation(cfg)
+	function m.generateDebugInformation(cfg)
 		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
 	end
 
 
-	function vc2010.generateManifest(cfg)
+	function m.generateManifest(cfg)
 		if cfg.flags.NoManifest then
 			_p(2,'<GenerateManifest>false</GenerateManifest>')
 		end
 	end
 
 
-	function vc2010.ignoreImportLibrary(cfg)
+	function m.generateMapFile(cfg)
+		if cfg.flags.Maps then
+			_p(3,'<GenerateMapFile>true</GenerateMapFile>')
+		end
+	end
+
+
+	function m.ignoreWarnDuplicateFilename(prj)
+		-- VS 2013 warns on duplicate file names, even those files which are
+		-- contained in different, mututally exclusive configurations. See:
+		-- http://connect.microsoft.com/VisualStudio/feedback/details/797460/incorrect-warning-msb8027-reported-for-files-excluded-from-build
+		-- Premake already adds unique object names to conflicting file names, so
+		-- just go ahead and disable that warning.
+		if _ACTION > "vs2012" then
+			p.w('<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>')
+		end
+	end
+
+
+	function m.ignoreImportLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
 			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
 		end
 	end
 
 
-	function vc2010.imageXex(cfg)
+	function m.imageXex(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<ImageXex>')
-			_p(3,'<ConfigurationFile>')
-			_p(3,'</ConfigurationFile>')
+			if cfg.configFile then
+				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configFile)
+			else
+				_p(3,'<ConfigurationFile>')
+				_p(3,'</ConfigurationFile>')
+			end
 			_p(3,'<AdditionalSections>')
 			_p(3,'</AdditionalSections>')
 			_p(2,'</ImageXex>')
@@ -894,48 +1169,110 @@
 	end
 
 
-	function vc2010.imageXexOutput(cfg)
+	function m.imageXexOutput(cfg)
 		if cfg.system == premake.XBOX360 then
 			_x(2,'<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>')
 		end
 	end
 
 
-	function vc2010.import(prj)
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-		_p(1,'<ImportGroup Label="ExtensionTargets">')
-		_p(1,'</ImportGroup>')
+	function m.importExtensionTargets(prj)
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
+		p.push('<ImportGroup Label="ExtensionTargets">')
+
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
+			local loc = project.getrelative(prj, premake.filename(rule, ".targets"))
+			p.x('<Import Project="%s" />', path.translate(loc))
+		end
+
+		p.pop('</ImportGroup>')
 	end
 
 
-	function vc2010.importLibrary(cfg)
+
+	function m.importDefaultProps(prj)
+		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
+	end
+
+
+
+	function m.importExtensionSettings(prj)
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
+		p.push('<ImportGroup Label="ExtensionSettings">')
+
+		for i = 1, #prj.rules do
+			local rule = p.global.getRule(prj.rules[i])
+			local loc = project.getrelative(prj, premake.filename(rule, ".props"))
+			p.x('<Import Project="%s" />', path.translate(loc))
+		end
+
+		p.pop('</ImportGroup>')
+	end
+
+
+
+	function m.importLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB then
 			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
 		end
 	end
 
 
-	function vc2010.intDir(cfg)
+	function m.intDir(cfg)
 		local objdir = project.getrelative(cfg.project, cfg.objdir)
 		_x(2,'<IntDir>%s\\</IntDir>', path.translate(objdir))
 	end
 
 
-	function vc2010.intrinsicFunctions(cfg)
+	function m.intrinsicFunctions(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<IntrinsicFunctions>true</IntrinsicFunctions>')
+			p.w('<IntrinsicFunctions>true</IntrinsicFunctions>')
 		end
 	end
 
 
-	function vc2010.linkIncremental(cfg)
+
+	function m.keyword(prj)
+		-- try to determine what kind of targets we're building here
+		local isWin, isManaged, isMakefile
+		for cfg in project.eachconfig(prj) do
+			if cfg.system == premake.WINDOWS then
+				isWin = true
+			end
+			if cfg.clr ~= p.OFF then
+				isManaged = true
+			end
+			if vstudio.isMakefile(cfg) then
+				isMakefile = true
+			end
+		end
+
+		if isWin then
+			if isMakefile then
+				_p(2,'<Keyword>MakeFileProj</Keyword>')
+			else
+				if isManaged then
+					m.targetFramework(prj)
+					_p(2,'<Keyword>ManagedCProj</Keyword>')
+				else
+					_p(2,'<Keyword>Win32Proj</Keyword>')
+				end
+				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+			end
+		end
+	end
+
+
+
+	function m.linkIncremental(cfg)
 		if cfg.kind ~= premake.STATICLIB then
 			_p(2,'<LinkIncremental>%s</LinkIncremental>', tostring(config.canLinkIncremental(cfg)))
 		end
 	end
 
 
-	function vc2010.linkLibraryDependencies(cfg, explicit)
+	function m.linkLibraryDependencies(cfg, explicit)
 		-- Left to its own devices, VS will happily link against a project dependency
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
@@ -947,18 +1284,18 @@
 	end
 
 
-	function vc2010.minimalRebuild(cfg)
+	function m.minimalRebuild(cfg)
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
 		   cfg.flags.MultiProcessorCompile or
 		   cfg.debugformat == premake.C7
 		then
-			_p(3,'<MinimalRebuild>false</MinimalRebuild>')
+			p.w('<MinimalRebuild>false</MinimalRebuild>')
 		end
 	end
 
 
-	function vc2010.moduleDefinitionFile(cfg)
+	function m.moduleDefinitionFile(cfg)
 		local df = config.findfile(cfg, ".def")
 		if df then
 			_p(3,'<ModuleDefinitionFile>%s</ModuleDefinitionFile>', df)
@@ -966,48 +1303,59 @@
 	end
 
 
-	function vc2010.multiProcessorCompilation(cfg)
+	function m.multiProcessorCompilation(cfg)
 		if cfg.flags.MultiProcessorCompile then
-			_p(3,'<MultiProcessorCompilation>true</MultiProcessorCompilation>')
+			p.w('<MultiProcessorCompilation>true</MultiProcessorCompilation>')
 		end
 	end
 
 
-	function vc2010.nmakeCommandLine(cfg, commands, phase)
+	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
-			commands = table.concat(premake.esc(commands), io.eol)
+			commands = os.translateCommands(commands, p.WINDOWS)
+			commands = table.concat(premake.esc(commands), p.eol())
 			_p(2, '<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
 	end
 
 
-	function vc2010.nmakeOutDirs(cfg)
+	function m.nmakeOutDirs(cfg)
 		if vstudio.isMakefile(cfg) then
-			vc2010.outDir(cfg)
-			vc2010.intDir(cfg)
+			m.outDir(cfg)
+			m.intDir(cfg)
 		end
 	end
 
-	function vc2010.nmakeOutput(cfg)
+	function m.nmakeOutput(cfg)
 		_p(2,'<NMakeOutput>$(OutDir)%s</NMakeOutput>', cfg.buildtarget.name)
 	end
 
 
-	function vc2010.objectFileName(filecfg)
-		if filecfg.objname ~= filecfg.basename then
-			_p(3,'<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', vc2010.condition(filecfg.config), filecfg.objname)
+
+	function m.objectFileName(fcfg)
+		if fcfg.objname ~= fcfg.basename then
+			p.w('<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', m.condition(fcfg.config), fcfg.objname)
 		end
 	end
 
 
-	function vc2010.omitFramePointers(cfg)
+
+	function m.omitDefaultLib(cfg)
+		if cfg.flags.OmitDefaultLibrary then
+			p.w('<OmitDefaultLibName>true</OmitDefaultLibName>')
+		end
+	end
+
+
+
+	function m.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
-			_p(3,'<OmitFramePointers>true</OmitFramePointers>')
+			p.w('<OmitFramePointers>true</OmitFramePointers>')
 		end
 	end
 
 
-	function vc2010.optimizeReferences(cfg)
+	function m.optimizeReferences(cfg)
 		if config.isOptimizedBuild(cfg) then
 			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
 			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
@@ -1015,81 +1363,94 @@
 	end
 
 
-	function vc2010.optimization(cfg, condition)
+	function m.optimization(cfg, condition)
 		local map = { Off="Disabled", On="Full", Debug="Disabled", Full="Full", Size="MinSpace", Speed="MaxSpeed" }
 		local value = map[cfg.optimize]
 		if value or not condition then
-			vc2010.element(3, 'Optimization', condition, value or "Disabled")
+			m.element('Optimization', condition, value or "Disabled")
 		end
 	end
 
 
-	function vc2010.outDir(cfg)
+	function m.outDir(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		_x(2,'<OutDir>%s\\</OutDir>', path.translate(outdir))
 	end
 
 
-	function vc2010.outputFile(cfg)
+	function m.outputFile(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
 		end
 	end
 
 
-	function vc2010.precompiledHeader(cfg, filecfg, condition)
-		if filecfg then
-			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
-				vc2010.element(3, 'PrecompiledHeader', condition, 'Create')
-			elseif filecfg.flags.NoPCH then
-				vc2010.element(3, 'PrecompiledHeader', condition, 'NotUsing')
-			end
-		else
-			if not cfg.flags.NoPCH and cfg.pchheader then
-				_p(3,'<PrecompiledHeader>Use</PrecompiledHeader>')
-				_x(3,'<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
-			else
-				_p(3,'<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+	function m.platformToolset(cfg)
+		local map = { vs2012 = "v110", vs2013 = "v120" }
+		local value = map[_ACTION]
+		if value then
+			-- should only be written if there is a C/C++ file in the config
+			for i = 1, #cfg.files do
+				if path.iscppfile(cfg.files[i]) then
+					_p(2,'<PlatformToolset>%s</PlatformToolset>', value)
+					return
+				end
 			end
 		end
 	end
 
 
-	function vc2010.preprocessorDefinitions(cfg, defines, escapeQuotes)
+	function m.precompiledHeader(cfg, filecfg, condition)
+		if filecfg then
+			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
+				m.element('PrecompiledHeader', condition, 'Create')
+			elseif filecfg.flags.NoPCH then
+				m.element('PrecompiledHeader', condition, 'NotUsing')
+			end
+		else
+			if not cfg.flags.NoPCH and cfg.pchheader then
+				p.w('<PrecompiledHeader>Use</PrecompiledHeader>')
+				p.x('<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
+			else
+				p.w('<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+			end
+		end
+	end
+
+
+	function m.preprocessorDefinitions(cfg, defines, escapeQuotes, condition)
 		if #defines > 0 then
 			defines = table.concat(defines, ";")
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
 			end
-			_x(3,'<PreprocessorDefinitions>%s;%%(PreprocessorDefinitions)</PreprocessorDefinitions>', defines)
+			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
+			m.element('PreprocessorDefinitions', condition, defines)
 		end
 	end
 
 
-	function vc2010.programDataBaseFileName(cfg)
-		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
-			local filename = cfg.buildtarget.basename
-			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
-		end
+	function m.programDataBaseFileName(cfg)
+		-- just a placeholder for overriding; will use the default VS name
 	end
 
 
-	function vc2010.projectGuid(prj)
+	function m.projectGuid(prj)
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 	end
 
 
-	function vc2010.projectName(prj)
+	function m.projectName(prj)
 		if prj.name ~= prj.filename then
 			_x(2,'<ProjectName>%s</ProjectName>', prj.name)
 		end
 	end
 
 
-	function vc2010.propertyGroup(cfg, label)
+	function m.propertyGroup(cfg, label)
 		local cond
 		if cfg then
-			cond = string.format(' %s', vc2010.condition(cfg))
+			cond = string.format(' %s', m.condition(cfg))
 		end
 
 		if label then
@@ -1100,53 +1461,94 @@
 	end
 
 
-	function vc2010.resourceAdditionalIncludeDirectories(cfg)
-		vc2010.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+
+	function m.propertySheets(cfg)
+		_p(1,'<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
+		_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
+		_p(1,'</ImportGroup>')
 	end
 
 
-	function vc2010.resourcePreprocessorDefinitions(cfg)
-		vc2010.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
+	function m.propertySheetGroup(prj)
+		for cfg in project.eachconfig(prj) do
+			m.propertySheets(cfg)
+		end
 	end
 
 
-	function vc2010.runtimeLibrary(cfg)
+	function m.referenceCopyLocalSatelliteAssemblies(prj, ref)
+		p.w('<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>')
+	end
+
+
+	function m.referenceLinkLibraryDependencies(prj, ref)
+		p.w('<LinkLibraryDependencies>true</LinkLibraryDependencies>')
+	end
+
+
+	function m.referenceOutputAssembly(prj, ref)
+		p.w('<ReferenceOutputAssembly>true</ReferenceOutputAssembly>')
+	end
+
+
+	function m.referencePrivate(prj, ref)
+		p.w('<Private>true</Private>')
+	end
+
+
+	function m.referenceProject(prj, ref)
+		p.w('<Project>{%s}</Project>', ref.uuid)
+	end
+
+
+	function m.referenceUseLibraryDependences(prj, ref)
+		p.w('<UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>')
+	end
+
+
+	function m.resourceAdditionalIncludeDirectories(cfg)
+		m.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+	end
+
+
+	function m.resourcePreprocessorDefinitions(cfg)
+		m.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
+	end
+
+
+	function m.runtimeLibrary(cfg)
 		local runtimes = {
 			StaticDebug = "MultiThreadedDebug",
 			StaticRelease = "MultiThreaded",
 		}
 		local runtime = runtimes[config.getruntime(cfg)]
 		if runtime then
-			_p(3,'<RuntimeLibrary>%s</RuntimeLibrary>', runtime)
+			p.w('<RuntimeLibrary>%s</RuntimeLibrary>', runtime)
 		end
 	end
 
-	function vc2010.omitDefaultLib(cfg)
-		if cfg.flags.OmitDefaultLibrary then
-			_p(3,'<OmitDefaultLibName>true</OmitDefaultLibName>')
-		end
-	end
 
-	function vc2010.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and not cfg.flags.Managed then
+
+	function m.runtimeTypeInfo(cfg)
+		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
 			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
 		end
 	end
 
-	function vc2010.bufferSecurityCheck(cfg)
+	function m.bufferSecurityCheck(cfg)
 		if cfg.flags.NoBufferSecurityCheck then
-			_p(3,'<BufferSecurityCheck>false</BufferSecurityCheck>')
+			p.w('<BufferSecurityCheck>false</BufferSecurityCheck>')
 		end
 	end
 
-	function vc2010.stringPooling(cfg)
+	function m.stringPooling(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<StringPooling>true</StringPooling>')
+			p.w('<StringPooling>true</StringPooling>')
 		end
 	end
 
 
-	function vc2010.subSystem(cfg)
+	function m.subSystem(cfg)
 		if cfg.system ~= premake.XBOX360 then
 			local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
 			_p(3,'<SubSystem>%s</SubSystem>', subsystem)
@@ -1154,7 +1556,7 @@
 	end
 
 
-	function vc2010.targetExt(cfg)
+	function m.targetExt(cfg)
 		local ext = cfg.buildtarget.extension
 		if ext ~= "" then
 			_x(2,'<TargetExt>%s</TargetExt>', ext)
@@ -1165,56 +1567,70 @@
 	end
 
 
-	function vc2010.targetName(cfg)
+	function m.targetName(cfg)
 		_x(2,'<TargetName>%s%s</TargetName>', cfg.buildtarget.prefix, cfg.buildtarget.basename)
 	end
 
 
-	function vc2010.treatLinkerWarningAsErrors(cfg)
-		if cfg.flags.FatalWarnings then
+	function m.treatLinkerWarningAsErrors(cfg)
+		if cfg.flags.FatalLinkWarnings then
 			local el = iif(cfg.kind == premake.STATICLIB, "Lib", "Linker")
 			_p(3,'<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
 		end
 	end
 
 
-	function vc2010.treatWChar_tAsBuiltInType(cfg)
+	function m.treatWChar_tAsBuiltInType(cfg)
 		local map = { On = "true", Off = "false" }
 		local value = map[cfg.nativewchar]
 		if value then
-			_p(3,'<TreatWChar_tAsBuiltInType>%s</TreatWChar_tAsBuiltInType>', value)
+			p.w('<TreatWChar_tAsBuiltInType>%s</TreatWChar_tAsBuiltInType>', value)
 		end
 	end
 
 
-	function vc2010.treatWarningAsError(cfg)
-		if cfg.flags.FatalWarnings and cfg.warnings ~= "Off" then
-			_p(3,'<TreatWarningAsError>true</TreatWarningAsError>')
+	function m.treatWarningAsError(cfg)
+		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
+			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
 		end
 	end
 
 
-	function vc2010.useDebugLibraries(cfg)
+	function m.useDebugLibraries(cfg)
 		local runtime = config.getruntime(cfg)
 		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(runtime:endswith("Debug")))
 	end
 
 
-	function vc2010.useOfMfc(cfg)
+	function m.useOfMfc(cfg)
 		if cfg.flags.MFC then
 			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
 		end
 	end
 
-
-	function vc2010.warningLevel(cfg)
-		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
-		vc2010.element(3, "WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
+	function m.useOfAtl(cfg)
+		if cfg.atl then
+			_p(2,'<UseOfATL>%s</UseOfATL>', cfg.atl)
+		end
 	end
 
 
-	function vc2010.xmlDeclaration()
-		_p('<?xml version="1.0" encoding="utf-8"?>')
+
+	function m.userMacros(cfg)
+		_p(1,'<PropertyGroup Label="UserMacros" />')
+	end
+
+
+
+	function m.warningLevel(cfg)
+		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
+		m.element("WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
+	end
+
+
+
+	function m.xmlDeclaration()
+		p.xmlUtf8()
 	end
 
 
@@ -1229,7 +1645,7 @@
 -- Format and return a Visual Studio Condition attribute.
 --
 
-	function vc2010.condition(cfg)
+	function m.condition(cfg)
 		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
 	end
 
@@ -1250,7 +1666,7 @@
 --    Optional additional arguments to satisfy any tokens in the value.
 --
 
-	function vc2010.element(depth, name, condition, value, ...)
+	function m.element(name, condition, value, ...)
 		if select('#',...) == 0 then
 			value = premake.esc(value)
 		end
@@ -1262,5 +1678,5 @@
 			format = string.format('<%s>%s</%s>', name, value, name)
 		end
 
-		_x(depth, format, ...)
+		p.x(format, ...)
 	end

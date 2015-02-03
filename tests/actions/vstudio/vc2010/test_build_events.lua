@@ -15,7 +15,7 @@
 	local sln, prj, cfg
 
 	function suite.setup()
-		io.esc = premake.vstudio.vs2010.esc
+		premake.escaper(premake.vstudio.vs2010.esc)
 		sln = test.createsolution()
 	end
 

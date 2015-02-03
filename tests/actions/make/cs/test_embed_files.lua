@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cs/test_embed_files.lua
 -- Tests embedded file listings for C# Makefiles.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("make_cs_embed_files")
@@ -63,7 +63,7 @@ EMBEDFILES += \
 
 	function suite.doesIncludeCompileBuildAction()
 		files { "Hello.txt" }
-		configuration "*.txt"
+		filter "files:*.txt"
 		buildaction "Embed"
 		prepare()
 		test.capture [[

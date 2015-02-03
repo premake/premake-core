@@ -1,14 +1,15 @@
 --
 -- fileconfig.lua
 -- The set of configuration information for a specific file.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	premake.fileconfig = {}
 
-	local fileconfig = premake.fileconfig
-	local context = premake.context
-	local project = premake.project
+	local p = premake
+	local fileconfig = p.fileconfig
+	local context = p.context
+	local project = p.project
 
 
 --
@@ -76,14 +77,16 @@
 --
 
 	function fileconfig.addconfig(fcfg, cfg)
+		local prj = cfg.project
 
 		-- Create a new context object for this configuration-file pairing.
 		-- The context has the ability to pull out configuration settings
 		-- specific to the file.
 
 		local environ = {}
-		local fsub = context.new(cfg.project.configset, environ, fcfg.abspath)
-		context.copyterms(fsub, cfg)
+		local fsub = context.new(prj, environ)
+		context.copyFilters(fsub, cfg)
+		context.addFilter(fsub, "files", fcfg.abspath:lower())
 
 		fcfg.configs[cfg] = fsub
 
@@ -105,14 +108,14 @@
 		fsub.abspath = fcfg.abspath
 		fsub.vpath = fcfg.vpath
 		fsub.config = cfg
-		fsub.project = cfg.project
+		fsub.project = prj
 
 		-- Set the context's base directory to the project's file system
 		-- location. Any path tokens which are expanded in non-path fields
 		-- (such as the custom build commands) will be made relative to
 		-- this path, ensuring a portable generated project.
 
-		context.basedir(fsub, cfg.project.location)
+		context.basedir(fsub, prj.location)
 
 		setmetatable(fsub, fileconfig.fsub_mt)
 
@@ -169,7 +172,7 @@
 
 	function fileconfig.hasFileSettings(fcfg)
 		for key, field in pairs(premake.fields) do
-			if field.scope == "config" then
+			if field.scopes[1] == "config" then
 				local value = fcfg[field.name]
 				if value then
 					if type(value) == "table" then

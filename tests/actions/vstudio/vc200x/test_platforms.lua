@@ -10,16 +10,16 @@
 
 
 --
--- Setup 
+-- Setup
 --
 
 	local sln, prj
-	
+
 	function suite.setup()
 		_ACTION = "vs2008"
 		sln = test.createsolution()
 	end
-	
+
 	local function prepare()
 		prj = premake.solution.getproject(sln, 1)
 		vc200x.platforms(prj)
@@ -33,11 +33,11 @@
 	function suite.win32Listed_onNoPlatforms()
 		prepare()
 		test.capture [[
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-	</Platforms>
+<Platforms>
+	<Platform
+		Name="Win32"
+	/>
+</Platforms>
 		]]
 	end
 
@@ -51,11 +51,11 @@
 		platforms { "Static", "Dynamic" }
 		prepare()
 		test.capture [[
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-	</Platforms>
+<Platforms>
+	<Platform
+		Name="Win32"
+	/>
+</Platforms>
 		]]
 	end
 
@@ -68,14 +68,14 @@
 		platforms { "x32", "x64" }
 		prepare()
 		test.capture [[
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-		<Platform
-			Name="x64"
-		/>
-	</Platforms>
+<Platforms>
+	<Platform
+		Name="Win32"
+	/>
+	<Platform
+		Name="x64"
+	/>
+</Platforms>
 		]]
 	end
 
@@ -88,12 +88,12 @@
 		platforms { "PS3" }
 		prepare()
 		test.capture [[
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-	</Platforms>
-		]]		
+<Platforms>
+	<Platform
+		Name="Win32"
+	/>
+</Platforms>
+		]]
 	end
 
 
@@ -105,10 +105,10 @@
 		platforms { "Xbox360" }
 		prepare()
 		test.capture [[
-	<Platforms>
-		<Platform
-			Name="Xbox 360"
-		/>
-	</Platforms>
-		]]		
+<Platforms>
+	<Platform
+		Name="Xbox 360"
+	/>
+</Platforms>
+		]]
 	end

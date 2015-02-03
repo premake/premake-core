@@ -48,6 +48,31 @@
 		]]
 	end
 
+---
+--- Check handling of debug parameters.
+---
+
+	function suite.debugCommandParameters()
+		debugargs "foobar"
+
+		local cfg = test.getconfig(prj, "Debug")
+		cs2005.debugCommandParameters(cfg)
+
+		test.capture [[
+		<Commandlineparameters>foobar</Commandlineparameters>
+		]]
+	end
+
+	function suite.debugStartArguments()
+		debugargs "foobar"
+
+		local cfg = test.getconfig(prj, "Debug")
+		cs2005.debugsettings(cfg)
+
+		test.capture [[
+		<StartArguments>foobar</StartArguments>
+		]]
+	end
 
 --
 -- Check handling of optimization flags.

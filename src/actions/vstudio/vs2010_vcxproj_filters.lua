@@ -1,33 +1,65 @@
 --
 -- vs2010_vcxproj_filters.lua
 -- Generate a Visual Studio 201x C/C++ filters file.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
-	local tree = premake.tree
+	local p = premake
+	local project = p.project
+	local tree = p.tree
+
+	local m = p.vstudio.vc2010
 
 
 --
 -- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
 
-	function vc2010.generateFilters(prj)
-		io.indent = "  "
-
-		vc2010.xmlDeclaration()
-		vc2010.project()
-
-		vc2010.filters_uniqueidentifiers(prj)
-		vc2010.filters_filegroup(prj, "None")
-		vc2010.filters_filegroup(prj, "ClInclude")
-		vc2010.filters_filegroup(prj, "ClCompile")
-		vc2010.filters_filegroup(prj, "ResourceCompile")
-		vc2010.filters_filegroup(prj, "CustomBuild")
-
-		io.printf('</Project>')
+	function m.generateFilters(prj)
+		m.xmlDeclaration()
+		m.filtersProject()
+		m.uniqueIdentifiers(prj)
+		m.filterGroups(prj)
+		p.out('</Project>')
 	end
+
+
+--
+-- Output the XML declaration and opening <Project> tag.
+--
+
+	function m.filtersProject()
+		local action = premake.action.current()
+		p.push('<Project ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+			action.vstudio.filterToolsVersion or action.vstudio.toolsVersion)
+	end
+
+
+
+	m.elements.filterGroups = {
+		"None",
+		"ClInclude",
+		"ClCompile",
+		"ResourceCompile",
+		"CustomBuild",
+		"CustomRule"
+	}
+
+	m.elements.filters = function(prj, groups)
+		local calls = {}
+		for i, group in ipairs(m.elements.filterGroups) do
+			calls[i] = m[group .. "Filters"]
+		end
+		return calls
+	end
+
+	function m.filterGroups(prj)
+		-- Categorize the source files in groups by build rule; each will
+		-- be written to a separate item group by one of the handlers
+		local groups = m.categorizeSources(prj)
+		p.callArray(m.elements.filters, prj, groups)
+	end
+
 
 
 --
@@ -36,25 +68,24 @@
 -- map vpaths like "**.h" to an <Extensions>h</Extensions> element.
 --
 
-	function vc2010.filters_uniqueidentifiers(prj)
-		local opened = false
-
+	function m.uniqueIdentifiers(prj)
 		local tr = project.getsourcetree(prj)
-		tree.traverse(tr, {
-			onbranch = function(node, depth)
-				if not opened then
-					_p(1,'<ItemGroup>')
-					opened = true
+		local contents = p.capture(function()
+			p.push()
+			tree.traverse(tr, {
+				onbranch = function(node, depth)
+					p.push('<Filter Include="%s">', path.translate(node.path))
+					p.w('<UniqueIdentifier>{%s}</UniqueIdentifier>', os.uuid(node.path))
+					p.pop('</Filter>')
 				end
+			}, false)
+			p.pop()
+		end)
 
-				_x(2, '<Filter Include="%s">', path.translate(node.path))
-				_p(3, '<UniqueIdentifier>{%s}</UniqueIdentifier>', os.uuid(node.path))
-				_p(2, '</Filter>')
-			end
-		}, false)
-
-		if opened then
-			_p(1,'</ItemGroup>')
+		if #contents > 0 then
+			p.push('<ItemGroup>')
+			p.outln(contents)
+			p.pop('</ItemGroup>')
 		end
 	end
 
@@ -65,20 +96,48 @@
 -- "ResourceCompile", or "None".
 --
 
-	function vc2010.filters_filegroup(prj, group)
-		local files = vc2010.getfilegroup(prj, group)
+	function m.ClCompileFilters(prj, groups)
+		m.filterGroup(prj, groups, "ClCompile")
+	end
+
+	function m.ClIncludeFilters(prj, groups)
+		m.filterGroup(prj, groups, "ClInclude")
+	end
+
+	function m.CustomBuildFilters(prj, groups)
+		m.filterGroup(prj, groups, "CustomBuild")
+	end
+
+	function m.CustomRuleFilters(prj, groups)
+		for group, files in pairs(groups) do
+			if not table.contains(m.elements.filterGroups, group) then
+				m.filterGroup(prj, groups, group)
+			end
+		end
+	end
+
+	function m.NoneFilters(prj, groups)
+		m.filterGroup(prj, groups, "None")
+	end
+
+	function m.ResourceCompileFilters(prj, groups)
+		m.filterGroup(prj, groups, "ResourceCompile")
+	end
+
+	function m.filterGroup(prj, groups, group)
+		local files = groups[group] or {}
 		if #files > 0 then
-			_p(1,'<ItemGroup>')
+			p.push('<ItemGroup>')
 			for _, file in ipairs(files) do
 				if file.parent.path then
-					_p(2,'<%s Include=\"%s\">', group, path.translate(file.relpath))
-					_p(3,'<Filter>%s</Filter>', path.translate(file.parent.path))
-					_p(2,'</%s>', group)
+					p.push('<%s Include=\"%s\">', group, path.translate(file.relpath))
+					p.w('<Filter>%s</Filter>', path.translate(file.parent.path))
+					p.pop('</%s>', group)
 				else
-					_p(2,'<%s Include=\"%s\" />', group, path.translate(file.relpath))
+					p.w('<%s Include=\"%s\" />', group, path.translate(file.relpath))
 				end
 			end
-			_p(1,'</ItemGroup>')
+			p.pop('</ItemGroup>')
 		end
 	end
 

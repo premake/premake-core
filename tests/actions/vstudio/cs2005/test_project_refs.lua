@@ -59,15 +59,11 @@
 		]]
 	end
 
-	function suite.projectReferenceAdded_onSiblingProjectDependson()
+	function suite.projectReferenceNotAdded_onSiblingProjectDependson()
 		dependson { "MyProject" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
-		<ProjectReference Include="MyProject.vcproj">
-			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
-			<Name>MyProject</Name>
-		</ProjectReference>
 	</ItemGroup>
 		]]
 	end

@@ -48,10 +48,10 @@
 		links { "MyProject" }
 		prepare()
 		test.capture [[
-		<ProjectReference
-			ReferencedProjectIdentifier="{00112233-4455-6677-8888-99AABBCCDDEE}"
-			RelativePathToProject=".\MyProject.vcproj"
-		/>
+<ProjectReference
+	ReferencedProjectIdentifier="{00112233-4455-6677-8888-99AABBCCDDEE}"
+	RelativePathToProject=".\MyProject.vcproj"
+/>
 		]]
 	end
 
@@ -69,10 +69,10 @@
 		location "build/MyProject"
 		prepare()
 		test.capture [[
-		<ProjectReference
-			ReferencedProjectIdentifier="{00112233-4455-6677-8888-99AABBCCDDEE}"
-			RelativePathToProject=".\build\MyProject\MyProject.vcproj"
-		/>
+<ProjectReference
+	ReferencedProjectIdentifier="{00112233-4455-6677-8888-99AABBCCDDEE}"
+	RelativePathToProject=".\build\MyProject\MyProject.vcproj"
+/>
 		]]
 	end
 

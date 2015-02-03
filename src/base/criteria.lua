@@ -1,102 +1,130 @@
 --
 -- criteria.lua
 --
--- DO NOT USE THIS YET! I am just getting started here; please wait until
--- I've had a chance to build it out more before using.
---
 -- Stores a list of criteria terms with support for negation, conjunction,
 -- and wildcard matches. Provides functions match match these criteria
 -- against various contexts.
 --
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	premake.criteria = {}
+	premake.criteria = criteria
 	local criteria = premake.criteria
 
 
 --
+-- These prefixes correspond to the context information built by the oven
+-- during baking. In theory, any field could be used as a filter, but right
+-- now only these are set.
+--
+
+	criteria._validPrefixes = {
+		_ACTION = true,
+		action = true,
+		architecture = true,
+		configurations = true,
+		files = true,
+		kind = true,
+		language = true,
+		_OPTIONS = true,
+		options = true,
+		platforms = true,
+		system = true,
+	}
+
+
+
+---
 -- Create a new criteria object.
 --
 -- @param terms
 --    A list of criteria terms.
+-- @param unprefixed
+--    If true, use the old style, unprefixed filter terms. This will
+--    eventually be phased out in favor of prefixed terms only.
 -- @return
 --    A new criteria object.
---
+---
 
-	function criteria.new(terms)		
+	function criteria.new(terms, unprefixed)
 		terms = table.flatten(terms)
-		
-		-- make the terms case-insensitive by converting to lower
-		for i, term in ipairs(terms) do
-			terms[i] = term:lower()
-		end
 
-		-- convert Premake wildcard symbols into the appropriate Lua patterns; this
-		-- list of patterns is what will actually be tested against
+		-- Preprocess the list of terms for better performance in matches().
+		-- Each term is replaced with a pattern, with an implied AND between
+		-- them. Each pattern contains one or more words, with an implied OR
+		-- between them. A word maybe be flagged as negated, or as a wildcard
+		-- pattern, and may have a field prefix associated with it.
+
 		local patterns = {}
-		for _, term in ipairs(terms) do
-			local pattern = path.wildcards(term)
+
+		for i, term in ipairs(terms) do
+			term = term:lower()
+
+			local pattern = {}
+			local prefix = iif(unprefixed, nil, "configurations")
+
+			local words = term:explode(" or ")
+			for _, word in ipairs(words) do
+				word, prefix = criteria._word(word, prefix)
+				if prefix and not criteria._validPrefixes[prefix] then
+					return nil, string.format("Invalid field prefix '%s'", prefix)
+				end
+				table.insert(pattern, word)
+			end
+
 			table.insert(patterns, pattern)
 		end
 
+		-- The matching logic is written in C now for performance; compile
+		-- this collection of patterns to C data structures to make that
+		-- code easier to read and maintain.
+
 		local crit = {}
-		crit.terms = terms
 		crit.patterns = patterns
+		crit.data = criteria._compile(patterns)
 		return crit
 	end
 
 
---
--- Determine if this criteria is met by the provided list of context terms.
---
--- @param crit
---    The criteria to be tested.
--- @param context
---    The list of context terms to test against, provided as a list of
---    lowercase strings.
--- @param filenamae
---    An optional filename; if provided, at least one pattern matching the
---    name must be present to pass the test.
--- @return
---    True if all criteria are satisfied by the context.
---
 
-	function criteria.matches(crit, context, filename)
-		local filematched = false
-		if filename then
-			filename = filename:lower()
-		end
+	function criteria._word(word, prefix)
+		local wildcard
+		local assertion = true
 
-		function testcontext(pattern, negated)
-			for _, part in ipairs(pattern:explode(" or ")) do
-				if part:startswith("not ") then
-					return not testcontext(part:sub(5), true)
-				end
-	
-				for _, value in ipairs(context) do
-					if value:match(part) == value then
-						return true
+		-- Trim off all "not" and field prefixes and check for wildcards
+		while (true) do
+			if word:startswith("not ") then
+				assertion = not assertion
+				word = word:sub(5)
+			else
+				local i = word:find(":", 1, true)
+				if prefix and i then
+					prefix = word:sub(1, i - 1)
+					word = word:sub(i + 1)
+				else
+					wildcard = (word:find("*", 1, true) ~= nil)
+					if wildcard then
+						word = path.wildcards(word)
 					end
-				end
-				
-				if filename and not negated and filename:match(part) == filename then
-					filematched = true
-					return true
+					break
 				end
 			end
-			return false
-		end
-		
-		for _, pattern in ipairs(crit.patterns) do
-			if not testcontext(pattern) then
-				return false
-			end
-		end
-		
-		if filename and not filematched then
-			return false
 		end
 
-		return true
+		return { word, prefix, assertion, wildcard }, prefix
 	end
+
+
+---
+-- Add a new prefix to the list of allowed values for filters. Note
+-- setting a prefix on its own has no effect on the output; a filter
+-- term must also be set on the corresponding context during baking.
+--
+-- @param prefix
+--    The new prefix to be allowed.
+---
+
+	function criteria.allowPrefix(prefix)
+		criteria._validPrefixes[prefix:lower()] = true
+	end
+

@@ -39,7 +39,7 @@ int os_stat(lua_State* L)
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "size");
-	lua_pushnumber(L, s.st_size);
+	lua_pushnumber(L, (lua_Number)s.st_size);
 	lua_settable(L, -3);
 
 	return 1;

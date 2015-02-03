@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_project.lua
 -- Validate generation of the opening <VisualStudioProject> element.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vstudio_vs200x_project")
@@ -76,7 +76,7 @@
 --
 
 	function suite.keywordIsCorrect_onManagedC()
-		flags { "Managed" }
+		clr "On"
 		prepare()
 		test.capture [[
 <VisualStudioProject
@@ -95,7 +95,7 @@
 --
 
 	function suite.noKeyword_onNotWindows()
-		system "PS3"
+		system "Linux"
 		prepare()
 		test.capture [[
 <VisualStudioProject
@@ -114,10 +114,10 @@
 --
 
 	function suite.includeKeyword_onMixedConfigs()
-		configuration "Debug"
+		filter "Debug"
 			system "Windows"
-		configuration "Release"
-			system "PS3"
+		filter "Release"
+			system "Linux"
 		prepare()
 		test.capture [[
 <VisualStudioProject
@@ -134,7 +134,7 @@
 
 
 --
--- Makefile projects set new keyword. It should also drop the root 
+-- Makefile projects set new keyword. It should also drop the root
 -- namespace, but I need to figure out a better way to test for
 -- empty configurations in the project first.
 --

@@ -32,11 +32,11 @@
 	function suite.defaultSettings()
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-		</ClCompile>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
 		]]
 	end
 
@@ -53,9 +53,9 @@
 		pchheader "include/afxwin.h"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>Use</PrecompiledHeader>
-			<PrecompiledHeaderFile>include/afxwin.h</PrecompiledHeaderFile>
+<ClCompile>
+	<PrecompiledHeader>Use</PrecompiledHeader>
+	<PrecompiledHeaderFile>include/afxwin.h</PrecompiledHeaderFile>
 		]]
 	end
 
@@ -69,8 +69,8 @@
 		flags "NoPCH"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 		]]
 	end
 
@@ -83,9 +83,9 @@
 		warnings "Extra"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level4</WarningLevel>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level4</WarningLevel>
 		]]
 	end
 
@@ -97,9 +97,9 @@
 		warnings "Off"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>TurnOffAllWarnings</WarningLevel>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>TurnOffAllWarnings</WarningLevel>
 		]]
 	end
 
@@ -113,9 +113,9 @@
 		warnings "Off"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>TurnOffAllWarnings</WarningLevel>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>TurnOffAllWarnings</WarningLevel>
 		]]
 	end
 
@@ -127,14 +127,14 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Full</Optimization>
-			<FunctionLevelLinking>true</FunctionLevelLinking>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<MinimalRebuild>false</MinimalRebuild>
-			<StringPooling>true</StringPooling>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
 		]]
 	end
 
@@ -142,14 +142,14 @@
 		optimize "Size"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>MinSpace</Optimization>
-			<FunctionLevelLinking>true</FunctionLevelLinking>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<MinimalRebuild>false</MinimalRebuild>
-			<StringPooling>true</StringPooling>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>MinSpace</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
 		]]
 	end
 
@@ -157,14 +157,14 @@
 		optimize "Speed"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>MaxSpeed</Optimization>
-			<FunctionLevelLinking>true</FunctionLevelLinking>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<MinimalRebuild>false</MinimalRebuild>
-			<StringPooling>true</StringPooling>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>MaxSpeed</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
 		]]
 	end
 
@@ -172,14 +172,14 @@
 		optimize "Full"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Full</Optimization>
-			<FunctionLevelLinking>true</FunctionLevelLinking>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<MinimalRebuild>false</MinimalRebuild>
-			<StringPooling>true</StringPooling>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
 		]]
 	end
 
@@ -187,11 +187,11 @@
 		optimize "Off"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-		</ClCompile>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
 		]]
 	end
 
@@ -199,11 +199,11 @@
 		optimize "Debug"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-		</ClCompile>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
 		]]
 	end
 
@@ -211,11 +211,11 @@
 		flags "NoFramePointer"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<OmitFramePointers>true</OmitFramePointers>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>true</OmitFramePointers>
 		]]
 	end
 
@@ -228,10 +228,10 @@
 		defines { "DEBUG", "_DEBUG" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
 	end
 
@@ -244,11 +244,11 @@
 		buildoptions { "/xyz", "/abc" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<AdditionalOptions>/xyz /abc %(AdditionalOptions)</AdditionalOptions>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/xyz /abc %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
 
@@ -261,10 +261,28 @@
 		includedirs { "include/lua", "include/zlib" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+		]]
+	end
+
+
+
+--
+-- Ensure macros are not truncated (see issue #63)
+--
+
+
+	function suite.additionalIncludeDirs_onIncludeDirs_with_vs_macros()
+		includedirs { "$(Macro1)/foo/bar/$(Macro2)/baz" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<AdditionalIncludeDirectories>$(Macro1)\foo\bar\$(Macro2)\baz;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 		]]
 	end
 
@@ -277,10 +295,10 @@
 		usingdirs { "include/lua", "include/zlib" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<AdditionalUsingDirectories>include\lua;include\zlib;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<AdditionalUsingDirectories>include\lua;include\zlib;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
 		]]
 	end
 
@@ -292,11 +310,11 @@
 		flags "NoMinimalRebuild"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<MinimalRebuild>false</MinimalRebuild>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<MinimalRebuild>false</MinimalRebuild>
 		]]
 	end
 
@@ -308,11 +326,11 @@
 		debugformat "C7"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<MinimalRebuild>false</MinimalRebuild>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<MinimalRebuild>false</MinimalRebuild>
 		]]
 	end
 
@@ -325,11 +343,11 @@
 		flags { "StaticRuntime" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
 		]]
 	end
 
@@ -337,13 +355,12 @@
 		flags { "StaticRuntime", "Symbols" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-			<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
-			<Optimization>Disabled</Optimization>
-			<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
 		]]
 	end
 
@@ -353,13 +370,13 @@
 --
 
 	function suite.treatWarningsAsError_onFatalWarnings()
-		flags { "FatalWarnings" }
+		flags { "FatalCompileWarnings" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<TreatWarningAsError>true</TreatWarningAsError>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<TreatWarningAsError>true</TreatWarningAsError>
 		]]
 	end
 
@@ -372,13 +389,12 @@
 		flags "Symbols"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-			<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
-			<Optimization>Disabled</Optimization>
-		</ClCompile>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
 		]]
 	end
 
@@ -392,11 +408,11 @@
 		debugformat "c7"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>OldStyle</DebugInformationFormat>
-			<Optimization>Disabled</Optimization>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>OldStyle</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
 		]]
 	end
 
@@ -409,11 +425,11 @@
 		vectorextensions "SSE"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
 		]]
 	end
 
@@ -421,11 +437,11 @@
 		vectorextensions "SSE2"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
 		]]
 	end
 
@@ -433,11 +449,11 @@
 		flags "FloatFast"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<FloatingPointModel>Fast</FloatingPointModel>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FloatingPointModel>Fast</FloatingPointModel>
 		]]
 	end
 
@@ -445,11 +461,11 @@
 		flags "FloatStrict"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<FloatingPointModel>Strict</FloatingPointModel>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FloatingPointModel>Strict</FloatingPointModel>
 		]]
 	end
 
@@ -462,11 +478,11 @@
 		flags "NativeWChar"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
 		]]
 	end
 
@@ -474,11 +490,11 @@
 		flags "NoNativeWChar"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
 		]]
 	end
 
@@ -491,11 +507,11 @@
 		flags "NoExceptions"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<ExceptionHandling>false</ExceptionHandling>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>false</ExceptionHandling>
 		]]
 	end
 
@@ -503,11 +519,11 @@
 		flags "SEH"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<ExceptionHandling>Async</ExceptionHandling>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Async</ExceptionHandling>
 		]]
 	end
 
@@ -515,11 +531,11 @@
 		flags "NoRTTI"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<RuntimeTypeInfo>false</RuntimeTypeInfo>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<RuntimeTypeInfo>false</RuntimeTypeInfo>
 		]]
 	end
 
@@ -527,11 +543,11 @@
 		flags "NoBufferSecurityCheck"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<BufferSecurityCheck>false</BufferSecurityCheck>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<BufferSecurityCheck>false</BufferSecurityCheck>
 		]]
 	end
 
@@ -545,10 +561,10 @@
 		architecture "x32"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 		]]
 	end
 
@@ -562,26 +578,27 @@
 		architecture "x64"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
 
 
 --
--- Check the handling of the NoEditAndContinue flag.
+-- Check the handling of the editAndContinue flag.
 --
 
-	function suite.debugFormat_onNoEditAndContinue()
-		flags { "Symbols", "NoEditAndContinue" }
+	function suite.debugFormat_onEditAndContinueOff()
+		flags { "Symbols" }
+		editAndContinue "Off"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
 
@@ -595,10 +612,10 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
 
@@ -608,13 +625,14 @@
 --
 
 	function suite.debugFormat_onManagedCode()
-		flags { "Symbols", "Managed" }
+		flags "Symbols"
+		clr "On"
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
 
@@ -627,10 +645,10 @@
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<ForcedIncludeFiles>stdafx.h;include\sys.h</ForcedIncludeFiles>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<ForcedIncludeFiles>stdafx.h;include\sys.h</ForcedIncludeFiles>
 		]]
 	end
 
@@ -638,10 +656,10 @@
 		forceusings { "stdafx.h", "include/sys.h" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<ForcedUsingFiles>stdafx.h;include\sys.h</ForcedUsingFiles>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<ForcedUsingFiles>stdafx.h;include\sys.h</ForcedUsingFiles>
 		]]
 	end
 
@@ -654,10 +672,10 @@
 		flags { "NoRuntimeChecks" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<BasicRuntimeChecks>Default</BasicRuntimeChecks>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 		]]
 	end
 
@@ -670,12 +688,12 @@
 		flags { "MultiProcessorCompile" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<MinimalRebuild>false</MinimalRebuild>
-			<MultiProcessorCompilation>true</MultiProcessorCompilation>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<MinimalRebuild>false</MinimalRebuild>
+	<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		]]
 	end
 
@@ -690,13 +708,12 @@
 		flags { "Symbols", "ReleaseRuntime", "StaticRuntime" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-			<ProgramDataBaseFileName>$(OutDir)MyProject.pdb</ProgramDataBaseFileName>
-			<Optimization>Disabled</Optimization>
-			<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
 		]]
 	end
 
@@ -709,10 +726,10 @@
 		flags { "OmitDefaultLibrary" }
 		prepare()
 		test.capture [[
-		<ClCompile>
-			<PrecompiledHeader>NotUsing</PrecompiledHeader>
-			<WarningLevel>Level3</WarningLevel>
-			<Optimization>Disabled</Optimization>
-			<OmitDefaultLibName>true</OmitDefaultLibName>
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitDefaultLibName>true</OmitDefaultLibName>
 		]]
 	end

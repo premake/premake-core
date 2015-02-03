@@ -1,7 +1,7 @@
 /**
  * \file   os_match.c
  * \brief  Match files and directories.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -10,9 +10,6 @@
 
 
 #if PLATFORM_WINDOWS
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 
 typedef struct struct_MatchInfo
 {
@@ -57,9 +54,10 @@ int os_matchisfile(lua_State* L)
 int os_matchnext(lua_State* L)
 {
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	if (m->handle == INVALID_HANDLE_VALUE)
+	if (m->handle == INVALID_HANDLE_VALUE) {
 		return 0;
-	
+	}
+
 	while (m)  /* loop forever */
 	{
 		if (!m->is_first)
@@ -69,11 +67,8 @@ int os_matchnext(lua_State* L)
 		}
 
 		m->is_first = 0;
-		if (m->entry.cFileName[0] != '.')
-		{
-			lua_pushboolean(L, 1);
-			return 1;
-		}
+		lua_pushboolean(L, 1);
+		return 1;
 	}
 
 	return 0;
@@ -142,7 +137,6 @@ int os_matchname(lua_State* L)
 
 int os_matchisfile(lua_State* L)
 {
-	struct stat info;
 	const char* fname;
 
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
@@ -150,26 +144,22 @@ int os_matchisfile(lua_State* L)
 	fname = lua_tostring(L, -1);
 	lua_pop(L, 1);
 
-	if (stat(fname, &info) == 0)
-	{
-		lua_pushboolean(L, S_ISREG(info.st_mode));
-		return 1;
-	}
-	
-	return 0;
+	lua_pushboolean(L, do_isfile(fname));
+	return 1;
 }
 
 int os_matchnext(lua_State* L)
 {
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	if (m->handle == NULL)
+	if (m->handle == NULL) {
 		return 0;
-	
+	}
+
 	m->entry = readdir(m->handle);
 	while (m->entry != NULL)
 	{
 		const char* name = m->entry->d_name;
-		if (name[0] != '.' && fnmatch(m->mask, name, 0) == 0)
+		if (fnmatch(m->mask, name, 0) == 0)
 		{
 			lua_pushboolean(L, 1);
 			return 1;

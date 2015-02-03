@@ -36,7 +36,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s -shared
-  LINKCMD = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
+  LINKCMD = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -51,7 +51,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s -shared
-  LINKCMD = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
+  LINKCMD = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -130,12 +130,30 @@
 -- itself included via an -l flag.
 --
 
- function suite.onExternalLibraryWithPath()
- 	location "MyProject"
-	links { "libs/SomeLib" }
-	prepare { "ldFlags", "libs" }
-	test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s -L../libs
+	function suite.onExternalLibraryWithPath()
+		location "MyProject"
+		links { "libs/SomeLib" }
+		prepare { "ldFlags", "libs" }
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
   LIBS += -lSomeLib
-	]]
- end
+		]]
+	end
+
+
+
+--
+-- When referencing an external library with a period in the
+-- file name make sure it appears correctly in  the LIBS
+-- directive. Currently the period and everything after it
+-- is stripped
+--
+
+	function suite.onExternalLibraryWithPath()
+		location "MyProject"
+		links { "libs/SomeLib-1.1" }
+		prepare { "libs", }
+		test.capture [[
+  LIBS += -lSomeLib-1.1
+		]]
+	end

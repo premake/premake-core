@@ -1,7 +1,7 @@
 --
 -- tests/project/test_getconfig.lua
 -- Test the project object configuration accessor.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("project_getconfig")
@@ -31,7 +31,7 @@
 	function suite.usesCurrentOS_onNoSystemSpecified()
 		_OS = "linux"
 		project ("MyProject")
-		configuration { "linux" }
+		filter { "system:linux" }
 		defines { "correct" }
 		prepare()
 		test.isequal("correct", cfg.defines[1])
@@ -48,7 +48,7 @@
 		_OS = "linux"
 		_ACTION = "vs2005"
 		project ("MyProject")
-		configuration { "windows" }
+		filter { "system:windows" }
 		defines { "correct" }
 		prepare()
 		test.isequal("correct", cfg.defines[1])
@@ -65,7 +65,7 @@
 		_ACTION = "vs2005"
 		project ("MyProject")
 		system "macosx"
-		configuration { "macosx" }
+		filter { "system:macosx" }
 		defines { "correct" }
 		prepare()
 		test.isequal("correct", cfg.defines[1])
@@ -79,7 +79,7 @@
 	function suite.appliesActionToFilters()
 		_ACTION = "vs2005"
 		project ("MyProject")
-		configuration { "vs2005" }
+		filter { "action:vs2005" }
 		defines { "correct" }
 		prepare()
 		test.isequal("correct", cfg.defines[1])

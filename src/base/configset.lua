@@ -1,26 +1,28 @@
 --
--- configset.lua
+-- base/configset.lua
 --
--- DO NOT USE THIS YET! I am just getting started here; please wait until
--- I've had a chance to build it out more before using.
+-- A configuration set manages a collection of fields, which are organized
+-- into "blocks". Each block stores a set of field-value pairs, along with
+-- a list of terms which indicate the context in which those field values
+-- should be applied.
 --
--- A configuration set manages a collection of configuration values, which
--- are organized into "blocks". Each block stores a set of field-value pairs, 
--- along with a list of terms which indicate the context in which those
--- values should be applied.
---
--- Configurations use the API definition to know what fields are available,
+-- Configurations use the field definitions to know what fields are available,
 -- and the corresponding value types for those fields. Only fields that have
--- been registered via api.register() can be stored.
+-- been registered via field.new() can be stored.
 --
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- TODO: I may roll this functionality up into the container API at some
+-- point. If you find yourself using or extending this code for your own
+-- work give me a shout before you go too far with it so we can coordinate.
+--
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	premake.configset = {}
-	local configset = premake.configset
-	local criteria = premake.criteria
+	local p = premake
 
-	configset._fields = {}
+	p.configset = {}
+
+	local configset = p.configset
+	local criteria = p.criteria
 
 
 --
@@ -35,41 +37,179 @@
 
 	function configset.new(parent)
 		local cset = {}
-		cset._parent = parent or false
-		cset._blocks = {}
-		cset._current = false
+		cset.parent = parent
+		cset.blocks = {}
+		cset.current = nil
 		cset.compiled = false
-
-		-- enable config sets to be treat like plain old tables; storing
-		-- a value will place it into the current block
-		setmetatable(cset, configset.__mt)
-		
 		return cset
 	end
 
 
---
--- Register a field that requires special handling.
---
--- @param name
---    The name of the field to register.
--- @param behavior
---    A table containing the flags:
---
---     merge - if set, the field will be treated as a list, and multiple
---             values will be merged together when fetched.
---     keys  - if set, the field will be treated an associative array (sets
---             of key-value pairs) instead of an indexed array.
---
 
-	function configset.registerfield(name, behavior)
-		configset._fields[name] = behavior
+---
+-- Retrieve a value from the configuration set.
+--
+-- This and the criteria supporting code are the inner loops of the app. Some
+-- readability has been sacrificed for overall performance.
+--
+-- @param cset
+--    The configuration set to query.
+-- @param field
+--    The definition of field to be queried.
+-- @param context
+--    A list of lowercase context terms to use during the fetch. Only those
+--    blocks with terms fully contained by this list will be considered in
+--    determining the returned value. Terms should be lower case to make
+--    the context filtering case-insensitive.
+-- @return
+--    The requested value.
+---
+
+	function configset.fetch(cset, field, context)
+		context = context or {}
+
+		if p.field.merges(field) then
+			return configset._fetchMerged(cset, field, context)
+		else
+			return configset._fetchDirect(cset, field, context)
+		end
 	end
 
-	
---
--- Create a new block of configuration field-value pairs, with the provided
--- set of context terms to control their application.
+
+	function configset._fetchDirect(cset, field, filter)
+		local abspath = filter.files
+		local basedir
+
+		local key = field.name
+		local blocks = cset.blocks
+		local n = #blocks
+		for i = n, 1, -1 do
+			local block = blocks[i]
+			local value = block[key]
+
+			-- If the filter contains a file path, make it relative to
+			-- this block's basedir
+			if value ~= nil and abspath and not cset.compiled and block._basedir and block._basedir ~= basedir then
+				basedir = block._basedir
+				filter.files = path.getrelative(basedir, abspath)
+			end
+
+			if value ~= nil and (cset.compiled or criteria.matches(block._criteria, filter)) then
+				-- If value is an object, return a copy of it so that any
+				-- changes later made to it by the caller won't alter the
+				-- original value (that was a tough bug to find)
+				if type(value) == "table" then
+					value = table.deepcopy(value)
+				end
+				return value
+			end
+		end
+
+		filter.files = abspath
+
+		if cset.parent then
+			return configset._fetchDirect(cset.parent, field, filter)
+		end
+	end
+
+
+	function configset._fetchMerged(cset, field, filter)
+		local result = {}
+
+		local function remove(patterns)
+			for i = 1, #patterns do
+				local pattern = patterns[i]
+
+				local j = 1
+				while j <= #result do
+					local value = result[j]:lower()
+					if value:match(pattern) == value then
+						result[result[j]] = nil
+						table.remove(result, j)
+					else
+						j = j + 1
+					end
+				end
+			end
+		end
+
+		if cset.parent then
+			result = configset._fetchMerged(cset.parent, field, filter)
+		end
+
+		local abspath = filter.files
+		local basedir
+
+		local key = field.name
+		local blocks = cset.blocks
+		local n = #blocks
+		for i = 1, n do
+			local block = blocks[i]
+
+			-- If the filter contains a file path, make it relative to
+			-- this block's basedir
+			if abspath and block._basedir and block._basedir ~= basedir and not cset.compiled then
+				basedir = block._basedir
+				filter.files = path.getrelative(basedir, abspath)
+			end
+
+			if cset.compiled or criteria.matches(block._criteria, filter) then
+				if block._removes and block._removes[key] then
+					remove(block._removes[key])
+				end
+
+				local value = block[key]
+				if value then
+					result = p.field.merge(field, result, value)
+				end
+			end
+		end
+
+		filter.files = abspath
+		return result
+	end
+
+
+
+---
+-- Create and return a metatable which allows a configuration set to act as a
+-- "backing store" for a regular Lua table. Table operations that access a
+-- registered field will fetch from or store to the configurations set, while
+-- unknown keys are get and set to the table normally.
+---
+
+	function configset.metatable(cset)
+		return {
+			__newindex = function(tbl, key, value)
+				local f = p.field.get(key)
+				if f then
+					local status, err = configset.store(cset, f, value)
+					if err then
+						error(err, 2)
+					end
+				else
+					rawset(tbl, key, value)
+					return value
+				end
+			end,
+			__index = function(tbl, key)
+				local f = p.field.get(key)
+				if f then
+					return configset.fetch(cset, f)
+				else
+					return nil
+				end
+			end
+		}
+	end
+
+
+
+---
+-- Create a new block of configuration field-value pairs, using a set of
+-- old-style, non-prefixed context terms to control their application. This
+-- approach will eventually be phased out in favor of prefixed filters;
+-- see addFilter() below.
 --
 -- @param cset
 --    The configuration set to hold the new block.
@@ -81,22 +221,53 @@
 --    relative to this basis before pattern testing.
 -- @return
 --    The new configuration data block.
---
+---
 
 	function configset.addblock(cset, terms, basedir)
-		local block = {}
-		block._basedir = basedir
-		
-		-- attach a criteria object to the block to control its application
-		block._criteria = criteria.new(terms)
-		
-		table.insert(cset._blocks, block)
-		cset._current = block
-		return block
+		configset.addFilter(cset, terms, basedir, true)
+		return cset.current
 	end
 
 
+
+---
+-- Create a new block of configuration field-value pairs, using a set
+-- of new-style, prefixed context terms to control their application.
 --
+-- @param cset
+--    The configuration set to hold the new block.
+-- @param terms
+--    A set of terms used to control the application of the values
+--    contained in the block.
+-- @param basedir
+--    An optional base directory. If set, filename filter tests will be
+--    made relative to this base before pattern testing.
+-- @param unprefixed
+--    If true, uses the old, unprefixed style for filter terms. This will
+--    eventually be phased out in favor of prefixed filters.
+---
+
+	function configset.addFilter(cset, terms, basedir, unprefixed)
+		local crit, err = criteria.new(terms, unprefixed)
+		if not crit then
+			return nil, err
+		end
+
+		local block = {}
+		block._criteria = crit
+
+		if basedir then
+			block._basedir = basedir:lower()
+		end
+
+		table.insert(cset.blocks, block)
+		cset.current = block
+		return true
+	end
+
+
+
+---
 -- Add a new field-value pair to the current configuration data block. The
 -- data type of the field is taken into account when adding the values:
 -- strings are replaced, arrays are merged, etc.
@@ -108,23 +279,33 @@
 --    defined using the api.register() function.
 -- @param value
 --    The new value for the field.
---
+-- @return
+--    If successful, returns true. If an error occurred, returns nil and
+--    an error message.
+---
 
-	function configset.addvalue(cset, fieldname, value)
-		-- make sure there is an active block
-		if not cset._current then
+	function configset.store(cset, field, value)
+		if not cset.current then
 			configset.addblock(cset, {})
 		end
 
-		local current = cset._current
-		local field = configset._fields[fieldname]
-		if field and (field.keyed or field.merge) then
-			current[fieldname] = current[fieldname] or {}
-			table.insert(current[fieldname], value)
-		else
-			current[fieldname] = value
+		local key = field.name
+		local current = cset.current
+
+		local status, result = pcall(function ()
+			current[key] = p.field.store(field, current[key], value)
+		end)
+
+		if not status then
+			if type(result) == "table" then
+				result = result.msg
+			end
+			return nil, result
 		end
+
+		return true
 	end
+
 
 
 --
@@ -132,28 +313,43 @@
 --
 -- @param cset
 --    The configuration set from which to remove.
--- @param fieldname
---    The name of the field holding the values to be removed.
+-- @param field
+--    The field holding the values to be removed.
 -- @param values
 --    A list of values to be removed.
 --
 
-	function configset.removevalues(cset, fieldname, values)
+	function configset.remove(cset, field, values)
 		-- removes are always processed first; starting a new block here
 		-- ensures that they will be processed in the proper order
-		local current = cset._current
-		configset.addblock(cset, current._criteria.terms, current._basedir)
+		local block = {}
+		block._basedir = cset.current._basedir
+		block._criteria = cset.current._criteria
+		table.insert(cset.blocks, block)
+		cset.current = block
 
-		values = table.flatten(values)
+		-- This needs work; right now it is hardcoded to only work for lists.
+		-- To support removing from keyed collections, I first need to figure
+		-- out how to move the wildcard():lower() bit into the value
+		-- processing call chain (i.e. that should happen somewhere inside of
+		-- the field.remove() call). And then I will probably need to add
+		-- another accessor to actually do the removing, which right now is
+		-- hardcoded inside of _fetchMerged(). Oh, and some of the logic in
+		-- api.remove() needs to get pushed down to here (or field).
+
+		values = p.field.remove(field, {}, values)
 		for i, value in ipairs(values) do
-			values[i] = path.wildcards(value):lower()
+			if type(value) == "string" then
+				values[i] = path.wildcards(value):lower()
+			end
 		end
 
 		-- add a list of removed values to the block
-		current = cset._current
+		current = cset.current
 		current._removes = {}
-		current._removes[fieldname] = values
+		current._removes[field.name] = values
 	end
+
 
 
 --
@@ -167,23 +363,9 @@
 --
 
 	function configset.empty(cset)
-		return (#cset._blocks == 0)
+		return (#cset.blocks == 0)
 	end
 
-
---
--- Check to see if an individual configuration block applies to the
--- given context and filename.
---
-
-	local function testblock(block, context, filename)
-		-- Make file tests relative to the blocks base directory,
-		-- so path relative pattern matches will work.
-		if block._basedir and filename then
-			filename = path.getrelative(block._basedir, filename)
-		end
-		return criteria.matches(block._criteria, context, filename)
-	end
 
 
 --
@@ -194,225 +376,48 @@
 --
 -- @param cset
 --    The configuration set to query.
--- @param context
---    A list of lowercase context terms to use during the fetch. Only those 
---    blocks with terms fully contained by this list will be considered in 
+-- @param filter
+--    A list of lowercase context terms to use during the fetch. Only those
+--    blocks with terms fully contained by this list will be considered in
 --    determining the returned value. Terms should be lower case to make
 --    the context filtering case-insensitive.
--- @param filename
---    An optional filename; if provided, only blocks with pattern that
---    matches the name will be considered.
 -- @return
 --    A new configuration set containing only the selected blocks, and the
 --    "compiled" field set to true.
 --
 
-	function configset.compile(cset, context, filename)
+	function configset.compile(cset, filter)
 		-- always start with the parent
 		local result
-		if cset._parent then
-			result = configset.compile(cset._parent, context, filename)
+		if cset.parent then
+			result = configset.compile(cset.parent, filter)
 		else
 			result = configset.new()
 		end
 
-		-- add in my own blocks
-		for _, block in ipairs(cset._blocks) do
-			if testblock(block, context, filename) then
-				table.insert(result._blocks, block)
+		local blocks = cset.blocks
+		local n = #blocks
+
+		local abspath = filter.files
+		local basedir
+
+		for i = 1, n do
+			local block = blocks[i]
+
+			-- If the filter contains a file path, make it relative to
+			-- this block's basedir
+			if abspath and block._basedir and block._basedir ~= basedir then
+				basedir = block._basedir
+				filter.files = path.getrelative(basedir, abspath)
+			end
+
+			if criteria.matches(block._criteria, filter) then
+				table.insert(result.blocks, block)
 			end
 		end
-		
+
+		filter.files = abspath
+
 		result.compiled = true
 		return result
 	end
-
-
---
--- Merges two lists of values together. The merged list is both indexed
--- and keyed for faster lookups. If duplicate values are encountered,
--- the earlier value is removed.
---
-
-	local function merge(a, b)
-		-- if b is itself a list, flatten it out
-		if type(b) == "table" then
-			for _, v in ipairs(b) do
-				merge(a, v)
-			end
-			
-		-- if b is a simple value, insert it
-		else
-			-- find and remove earlier values
-			if a[b] then
-				table.remove(a, table.indexof(a, b))
-			end
-			
-			table.insert(a, b)
-			a[b] = b
-		end
-	end
-
-
---
--- Retrieve a directly assigned value from the configuration set. No merging
--- takes place; the last value set is the one returned.
---
-
-	local function fetchassign(cset, fieldname, context, filename)
-		-- walk the loop backwards and return on first value encountered
-		local n = #cset._blocks
-		for i = n, 1, -1 do
-			local block = cset._blocks[i]
-			if block[fieldname] and (cset.compiled or testblock(block, context, filename)) then
-				return block[fieldname]
-			end
-		end
-		
-		if cset._parent then
-			return fetchassign(cset._parent, fieldname, context, filename)
-		end
-	end
-
-
---
--- Retrieve a keyed from the configuration set; keys are assembled into
--- a single result; values may optionally be merged too.
---
-
-	local function fetchkeyed(cset, fieldname, context, filename, mergevalues)	
-		local result = {}
-
-		-- grab values from the parent set first
-		if cset._parent then
-			result = fetchkeyed(cset._parent, fieldname, context, filename, merge)
-		end
-		
-		function process(values)
-			for k, v in pairs(values) do
-				if type(k) == "number" then
-					process(v)
-				elseif mergevalues then
-					result[k] = result[k] or {}
-					merge(result[k], v)
-				else
-					result[k] = v
-				end
-			end
-		end
-
-		for _, block in ipairs(cset._blocks) do
-			if cset.compiled or testblock(block, context, filename) then
-				local value = block[fieldname]
-				if value then
-					process(value)
-				end
-			end
-		end
-
-		return result
-	end
-
-
---
--- Retrieve a merged value from the configuration set; all values are
--- assembled together into a single result.
---
-
-	local function fetchmerge(cset, fieldname, context, filename)
-		local result = {}
-
-		-- grab values from the parent set first
-		if cset._parent then
-			result = fetchmerge(cset._parent, fieldname, context, filename)
-		end
-
-		function remove(patterns)
-			for _, pattern in ipairs(patterns) do
-				local i = 1
-				while i <= #result do
-					local value = result[i]:lower()
-					if value:match(pattern) == value then
-						result[result[i]] = nil
-						table.remove(result, i)
-					else
-						i = i + 1
-					end
-				end
-			end
-		end
-
-		for _, block in ipairs(cset._blocks) do
-			if cset.compiled or testblock(block, context, filename) then
-				if block._removes and block._removes[fieldname] then
-					remove(block._removes[fieldname])
-				end
-				
-				local value = block[fieldname]
-				if value then
-					merge(result, value)
-				end
-			end
-		end
-		
-		return result
-	end
-
-
---
--- Retrieve a value from the configuration set.
---
--- @param cset
---    The configuration set to query.
--- @param fieldname
---    The name of the field to query. The field should have already been
---    defined using the api.register() function.
--- @param context
---    A list of lowercase context terms to use during the fetch. Only those 
---    blocks with terms fully contained by this list will be considered in 
---    determining the returned value. Terms should be lower case to make
---    the context filtering case-insensitive.
--- @param filename
---    An optional filename; if provided, only blocks with pattern that
---    matches the name will be considered.
--- @return
---    The requested value.
---
-
-	function configset.fetchvalue(cset, fieldname, context, filename)
-		local value
-
-		-- should this field be merged or assigned?
-		local field = configset._fields[fieldname]
-		local keyed = field and field.keyed
-		local merge = field and field.merge
-		
-		if keyed then
-			value = fetchkeyed(cset, fieldname, context, filename, merge)
-		elseif merge then
-			value = fetchmerge(cset, fieldname, context, filename)
-		else
-			value = fetchassign(cset, fieldname, context, filename)			
-			-- if value is an object, return a copy of it, so that they can
-			-- modified by the caller without altering the source data
-			if type(value) == "table" then
-				value = table.deepcopy(value)
-			end
-		end
-		
-		return value
-	end
-	
-	
---
--- Metatable allows configuration sets to be used like objects in the API.
--- Setting a value adds it to the currently active block. Getting a value
--- retrieves it using the currently active's block list of filter terms.
---
-
-	configset.__mt = {
-		__newindex = configset.addvalue,
-		__index = function(cset, fieldname)
-			return configset.fetchvalue(cset, fieldname, cset._current._criteria.terms)
-		end
-	}

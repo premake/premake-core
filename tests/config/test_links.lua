@@ -105,31 +105,13 @@
 
 
 --
--- References to external projects should not appear in any results that
--- use file paths, since there is no way to know what the actual library
--- path might be. It is okay to return project objects though (right?)
---
-
-	function suite.skipsExternalProjectRefs()
-		links { "MyProject2" }
-
-		external "MyProject2"
-		kind "StaticLib"
-		language "C++"
-
-		local r = prepare("all", "fullpath")
-		test.isequal({}, r)
-	end
-
-
---
 -- Managed C++ projects should ignore links to managed assemblies, which
 -- are designated with an explicit ".dll" extension.
 --
 
 	function suite.skipsAssemblies_onManagedCpp()
 		system "windows"
-		flags { "Managed" }
+		clr "On"
 		links { "user32", "System.dll" }
 		local r = prepare("all", "fullpath")
 		test.isequal({ "user32.lib" }, r)
@@ -143,7 +125,7 @@
 
 	function suite.skipsUnmanagedLibs_onManagedLinkage()
 		system "windows"
-		flags { "Managed" }
+		clr "On"
 		links { "user32", "System.dll" }
 		local r = prepare("all", "fullpath", "managed")
 		test.isequal({ "System.dll" }, r)
@@ -179,20 +161,20 @@
 	end
 
 	function suite.canLink_ManagedCppAndManagedCpp()
-		flags { "Managed" }
+		clr "On"
 		links { "MyProject2" }
 
 		project "MyProject2"
 		kind "StaticLib"
 		language "C++"
-		flags { "Managed" }
+		clr "On"
 
 		local r = prepare("all", "fullpath")
 		test.isequal({ "MyProject2.lib" }, r)
 	end
 
 	function suite.canLink_ManagedCppAndCs()
-		flags { "Managed" }
+		clr "On"
 		links { "MyProject2" }
 
 		project "MyProject2"

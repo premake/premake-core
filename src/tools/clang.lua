@@ -7,6 +7,7 @@
 	premake.tools.clang = {}
 	local clang = premake.tools.clang
 	local gcc = premake.tools.gcc
+	local config = premake.config
 
 
 
@@ -141,10 +142,49 @@
 --    An array of linker flags.
 --
 
+	clang.ldflags = {
+		architecture = {
+			x32 = "-m32",
+			x64 = "-m64",
+		},
+		kind = {
+			SharedLib = function(cfg)
+				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				if cfg.system == "windows" and not cfg.flags.NoImportLib then
+					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+				end
+				return r
+			end,
+			WindowedApp = function(cfg)
+				if cfg.system == premake.WINDOWS then return "-mwindows" end
+			end,
+		},
+		system = {
+			wii = "$(MACHDEP)",
+		}
+	}
+
 	function clang.getldflags(cfg)
+		local flags = config.mapFlags(cfg, clang.ldflags)
+		return flags
+	end
+
+
+
+--
+-- Build a list of additional library directories for a particular
+-- project configuration, decorated for the tool command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of decorated additional library directories.
+--
+
+	function clang.getLibraryDirectories(cfg)
 
 		-- Just pass through to GCC for now
-		local flags = gcc.getldflags(cfg)
+		local flags = gcc.getLibraryDirectories(cfg)
 		return flags
 
 	end

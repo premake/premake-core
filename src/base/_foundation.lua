@@ -12,7 +12,7 @@
 
 -- Keep track of warnings that have been shown, so they don't get shown twice
 
-	local warnings = {}
+	local _warnings = {}
 
 
 --
@@ -37,6 +37,7 @@
 	premake.SHAREDLIB   = "SharedLib"
 	premake.STATICLIB   = "StaticLib"
 	premake.UNIVERSAL   = "universal"
+	premake.UTILITY     = "Utility"
 	premake.WINDOWEDAPP = "WindowedApp"
 	premake.WINDOWS     = "windows"
 	premake.X32         = "x32"
@@ -61,9 +62,7 @@
 		if type(funcs) == "function" then
 			funcs = funcs(...)
 		end
-
-		local n = #funcs
-		for i = 1, n do
+		for i = 1, #funcs do
 			funcs[i](...)
 		end
 	end
@@ -84,14 +83,16 @@
 	end
 
 
+
 ---
 -- Clears the list of already fired warning messages, allowing them
 -- to be fired again.
 ---
 
 	function premake.clearWarnings()
-		warnings = {}
+		_warnings = {}
 	end
+
 
 
 --
@@ -134,6 +135,7 @@
 	end
 
 
+
 ---
 -- Override an existing function with a new implementation; the original
 -- function is passed as the first argument to the replacement when called.
@@ -151,19 +153,14 @@
 
 	function premake.override(scope, name, repl)
 		local original = scope[name]
+		if not original then
+			error("unable to override '" .. name .. "'; no such function", 2)
+		end
 		scope[name] = function(...)
 			return repl(original, ...)
 		end
 	end
 
-
---
--- A shortcut for printing formatted output.
---
-
-	function printf(msg, ...)
-		print(string.format(msg, unpack(arg)))
-	end
 
 
 --
@@ -177,7 +174,12 @@
 --
 
 	function premake.warn(message, ...)
-		io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+		message = string.format(message, ...)
+		if _OPTIONS.fatal then
+			error(message)
+		else
+			io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+		end
 	end
 
 
@@ -194,8 +196,18 @@
 --
 
 	function premake.warnOnce(key, message, ...)
-		if not warnings[key] then
-			warnings[key] = true
+		if not _warnings[key] then
+			_warnings[key] = true
 			premake.warn(message, ...)
 		end
+	end
+
+
+
+--
+-- A shortcut for printing formatted output.
+--
+
+	function printf(msg, ...)
+		print(string.format(msg, unpack(arg)))
 	end

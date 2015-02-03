@@ -16,7 +16,7 @@
 
 	snc.cflags = {
 		flags = {
-			FatalWarnings = "-Xquit=2",
+			FatalCompileWarnings = "-Xquit=2",
 		},
 		optimize = {
 			Off = "-O0",
@@ -102,6 +102,7 @@
 	snc.getcppflags = gcc.getcppflags
 	snc.getdefines = gcc.getdefines
 	snc.getincludedirs = gcc.getincludedirs
+	snc.getLibraryDirectories = gcc.getLibraryDirectories
 	snc.getlinks = gcc.getlinks
 
 

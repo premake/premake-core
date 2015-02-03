@@ -1,12 +1,14 @@
 --
 -- actions/vstudio/vs2012.lua
 -- Extend the existing exporters with support for Visual Studio 2012.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
 	local vstudio = premake.vstudio
 	local cs2005 = vstudio.cs2005
 	local vc2010 = vstudio.vc2010
+
+	local p = premake
 
 
 ---
@@ -35,12 +37,14 @@
 
 		-- Solution and project generation logic
 
-		onsolution = vstudio.vs2005.generateSolution,
-		onproject  = vstudio.vs2010.generateProject,
+		onSolution = vstudio.vs2005.generateSolution,
+		onProject  = vstudio.vs2010.generateProject,
 
-		oncleansolution = vstudio.cleanSolution,
-		oncleanproject  = vstudio.cleanProject,
-		oncleantarget   = vstudio.cleanTarget,
+		onCleanSolution = vstudio.cleanSolution,
+		onCleanProject  = vstudio.cleanProject,
+		onCleanTarget   = vstudio.cleanTarget,
+
+		pathVars        = vstudio.pathVars,
 
 		-- This stuff is specific to the Visual Studio exporters
 
@@ -52,28 +56,3 @@
 		}
 	}
 
-
----
--- Add new elements to the configuration properties block of C++ projects.
----
-
-	table.insertafter(vc2010.elements.configurationProperties, "characterSet", "platformToolset")
-
-	function vc2010.platformToolset(cfg)
-		if _ACTION > "vs2010" then
-			_p(2,'<PlatformToolset>v110</PlatformToolset>')
-		end
-	end
-
-
---
--- Add a common properties import statement to the top of C# projects.
---
-
-	table.insertafter(cs2005.elements.project, "projectElement", "commonProperties")
-
-	function cs2005.commonProperties(prj)
-		if _ACTION > "vs2010" then
-			_p(1,'<Import Project="$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props" Condition="Exists(\'$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\')" />')
-		end
-	end

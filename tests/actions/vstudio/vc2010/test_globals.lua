@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_globals.lua
 -- Validate generation of the Globals property group.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vstudio_vs2010_globals")
@@ -46,7 +46,7 @@
 --
 
 	function suite.keywordIsCorrect_onManagedC()
-		flags { "Managed" }
+		clr "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
@@ -63,8 +63,8 @@
 -- Ensure custom target framework version correct for Managed C++ projects.
 --
 
-	function suite.frameworkVersionIsCorrect_onManagedC()
-		flags { "Managed" }
+	function suite.frameworkVersionIsCorrect_onSpecificVersion()
+		clr "On"
 		framework "4.5"
 		prepare()
 		test.capture [[
@@ -77,13 +77,27 @@
 		]]
 	end
 
+	function suite.frameworkVersionIsCorrect_on2013()
+		_ACTION = "vs2013"
+		clr "On"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+		<Keyword>ManagedCProj</Keyword>
+		<RootNamespace>MyProject</RootNamespace>
+	</PropertyGroup>
+		]]
+	end
 
 --
 -- Omit Keyword and RootNamespace for non-Windows projects.
 --
 
 	function suite.noKeyword_onNotWindows()
-		system "PS3"
+		system "Linux"
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
@@ -98,10 +112,10 @@
 --
 
 	function suite.includeKeyword_onMixedConfigs()
-		configuration "Debug"
+		filter "Debug"
 			system "Windows"
-		configuration "Release"
-			system "PS3"
+		filter "Release"
+			system "Linux"
 		prepare()
 		test.capture [[
 	<PropertyGroup Label="Globals">
@@ -154,6 +168,26 @@
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>MyProject</RootNamespace>
 		<ProjectName>MyProject</ProjectName>
+	</PropertyGroup>
+		]]
+	end
+
+
+--
+-- VS 2013 adds the <IgnoreWarnCompileDuplicatedFilename> to get rid
+-- of spurious warnings when the same filename is present in different
+-- configurations.
+--
+
+	function suite.structureIsCorrect_on2013()
+		_ACTION = "vs2013"
+		prepare()
+		test.capture [[
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+		<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>MyProject</RootNamespace>
 	</PropertyGroup>
 		]]
 	end

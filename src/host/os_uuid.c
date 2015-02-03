@@ -21,7 +21,7 @@ static void add(unsigned char* bytes, int offset, unsigned long value)
 	int i;
 	for (i = 0; i < 4; ++i)
 	{
-		bytes[offset++] = value & 0xff;
+		bytes[offset++] = (unsigned char)(value & 0xff);
 		value >>= 8;
 	}
 }

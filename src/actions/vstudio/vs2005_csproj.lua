@@ -1,17 +1,18 @@
 --
 -- vs2005_csproj.lua
 -- Generate a Visual Studio 2005-2010 C# project.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.cs2005 = {}
 
-	local vstudio = premake.vstudio
-	local cs2005  = premake.vstudio.cs2005
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local dotnet = premake.tools.dotnet
+	local p = premake
+	local vstudio = p.vstudio
+	local cs2005  = p.vstudio.cs2005
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local dotnet = p.tools.dotnet
 
 
 	cs2005.elements = {}
@@ -24,6 +25,7 @@
 	cs2005.elements.project = {
 		"xmlDeclaration",
 		"projectElement",
+		"commonProperties",
 		"projectProperties",
 		"configurations",
 		"applicationIcon",
@@ -31,8 +33,6 @@
 	}
 
 	function cs2005.generate(prj)
-		io.indent = "  "
-		io.eol = "\r\n"
 		io.utf8()
 
 		premake.callarray(cs2005, cs2005.elements.project, prj)
@@ -45,7 +45,7 @@
 		cs2005.targets(prj)
 		cs2005.buildEvents(prj)
 
-		io.printf('</Project>')
+		p.out('</Project>')
 	end
 
 
@@ -165,7 +165,7 @@
 				-- Process any sub-elements required by this file; choose the write
 				-- element form to use based on the results.
 
-				local contents = io.capture(function ()
+				local contents = premake.capture(function ()
 					for _, el in ipairs(elements) do
 						local value = info[el]
 						if value then
@@ -199,15 +199,17 @@
 	function cs2005.buildEvents(prj)
 		local function output(name, steps)
 			if #steps > 0 then
+				steps = os.translateCommands(steps, p.WINDOWS)
 				steps = table.implode(steps, "", "", "\r\n")
 				_x(2,'<%sBuildEvent>%s</%sBuildEvent>', name, steps, name)
 			end
 		end
 
-		if #prj.prebuildcommands > 0 or #prj.postbuildcommands > 0 then
+		local cfg = project.getfirstconfig(prj)
+		if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
 			_p(1,'<PropertyGroup>')
-			output("Pre", prj.prebuildcommands)
-			output("Post", prj.postbuildcommands)
+			output("Pre", cfg.prebuildcommands)
+			output("Post", cfg.postbuildcommands)
 			_p(1,'</PropertyGroup>')
 		end
 	end
@@ -223,15 +225,26 @@
 		_p(2,'<ErrorReport>prompt</ErrorReport>')
 		_p(2,'<WarningLevel>4</WarningLevel>')
 
-		if cfg.flags.Unsafe then
+		if cfg.clr == "Unsafe" then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 		end
 
-		if cfg.flags.FatalWarnings then
+		if cfg.flags.FatalCompileWarnings then
 			_p(2,'<TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 		end
+
+		cs2005.debugCommandParameters(cfg)
 	end
 
+--
+-- Write out the debug start parameters for MonoDevelop/Xamarin Studio.
+--
+
+	function cs2005.debugCommandParameters(cfg)
+		if #cfg.debugargs > 0 then
+			_x(2,'<Commandlineparameters>%s</Commandlineparameters>', table.concat(cfg.debugargs, " "))
+		end
+	end
 
 --
 -- Write out the debugging and optimization flags for a configuration.
@@ -304,7 +317,7 @@
 	function cs2005.projectReferences(prj)
 		_p(1,'<ItemGroup>')
 
-		local deps = project.getdependencies(prj)
+		local deps = project.getdependencies(prj, true)
 		if #deps > 0 then
 			for _, dep in ipairs(deps) do
 				local relpath = project.getrelative(prj, vstudio.projectfile(dep))
@@ -365,6 +378,19 @@
 		end
 	end
 
+---------------------------------------------------------------------------
+--
+-- Support functions
+--
+---------------------------------------------------------------------------
+
+--
+-- Format and return a Visual Studio Condition attribute.
+--
+
+	function cs2005.condition(cfg)
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
+	end
 
 ---------------------------------------------------------------------------
 --
@@ -379,6 +405,13 @@
 
 	function cs2005.assemblyName(cfg)
 		_p(2,'<AssemblyName>%s</AssemblyName>', cfg.buildtarget.basename)
+	end
+
+
+	function cs2005.commonProperties(prj)
+		if _ACTION > "vs2010" then
+			_p(1,'<Import Project="$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props" Condition="Exists(\'$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\')" />')
+		end
 	end
 
 
@@ -468,7 +501,7 @@
 
 	function cs2005.xmlDeclaration()
 		if _ACTION > "vs2008" then
-			_p('<?xml version="1.0" encoding="utf-8"?>')
+			p.xmlUtf8()
 		end
 	end
 

@@ -200,10 +200,12 @@
 --
 
 	dotnet.flags = {
+		clr = {
+			Unsafe = "/unsafe",
+		},
 		flags = {
 			FatalWarning = "/warnaserror",
 			Symbols = "/debug",
-			Unsafe = "/unsafe"
 		},
 		optimize = {
 			On = "/optimize",

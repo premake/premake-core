@@ -21,7 +21,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug")
-		vc2010.debugsettings(cfg)
+		vc2010.debugSettings(cfg)
 	end
 
 
@@ -42,8 +42,8 @@
 		debugcommand "bin/emulator.exe"
 		prepare()
 		test.capture [[
-		<LocalDebuggerCommand>bin\emulator.exe</LocalDebuggerCommand>
-		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+<LocalDebuggerCommand>bin\emulator.exe</LocalDebuggerCommand>
+<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
 		]]
 	end
 
@@ -56,8 +56,8 @@
 		debugdir "bin/debug"
 		prepare()
 		test.capture [[
-		<LocalDebuggerWorkingDirectory>bin\debug</LocalDebuggerWorkingDirectory>
-		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+<LocalDebuggerWorkingDirectory>bin\debug</LocalDebuggerWorkingDirectory>
+<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
 		]]
 	end
 
@@ -69,7 +69,7 @@
 		debugargs { "arg1", "arg2" }
 		prepare()
 		test.capture [[
-		<LocalDebuggerCommandArguments>arg1 arg2</LocalDebuggerCommandArguments>
+<LocalDebuggerCommandArguments>arg1 arg2</LocalDebuggerCommandArguments>
 		]]
 	end
 
@@ -81,7 +81,7 @@
 		debugenvs { "key=value" }
 		prepare()
 		test.capture [[
-		<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>
+<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>
 		]]
 	end
 
@@ -93,7 +93,7 @@
 		debugenvs { "key=value", "foo=bar" }
 		prepare()
 		test.capture [[
-		<LocalDebuggerEnvironment>key=value
+<LocalDebuggerEnvironment>key=value
 foo=bar</LocalDebuggerEnvironment>
 		]]
 	end

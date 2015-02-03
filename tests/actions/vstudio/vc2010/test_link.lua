@@ -23,7 +23,7 @@
 
 	local function prepare(platform)
 		local cfg = test.getconfig(prj, "Debug", platform)
-		vc2010.link(cfg)
+		vc2010.linker(cfg)
 	end
 
 
@@ -312,23 +312,6 @@
 
 
 --
--- On the PS3, system libraries must be prefixed with the "-l" flag.
---
-
-	function suite.additionalDependencies_onPS3SystemLinks()
-		system "PS3"
-		links { "fs_stub", "net_stub" }
-		prepare()
-		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>-lfs_stub;-lnet_stub;%(AdditionalDependencies)</AdditionalDependencies>
-		]]
-	end
-
-
---
 -- Correctly handle module definition (.def) files.
 --
 
@@ -400,7 +383,7 @@
 
 	function suite.fatalWarnings_onDynamicLink()
 		kind "ConsoleApp"
-		flags { "FatalWarnings" }
+		flags { "FatalLinkWarnings" }
 		prepare()
 		test.capture [[
 		<Link>
@@ -413,7 +396,7 @@
 
 	function suite.fatalWarnings_onStaticLink()
 		kind "StaticLib"
-		flags { "FatalWarnings" }
+		flags { "FatalLinkWarnings" }
 		prepare()
 		test.capture [[
 		<Link>
@@ -423,5 +406,23 @@
 		<Lib>
 			<TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
 		</Lib>
+		]]
+	end
+
+
+--
+-- Test generating .map files.
+--
+
+	function suite.generateMapFile_onMapsFlag()
+		flags { "Maps" }
+		prepare()
+		test.capture [[
+		<Link>
+			<SubSystem>Windows</SubSystem>
+			<GenerateDebugInformation>false</GenerateDebugInformation>
+			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<GenerateMapFile>true</GenerateMapFile>
+		</Link>
 		]]
 	end

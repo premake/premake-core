@@ -1,37 +1,229 @@
 --
 -- api.lua
 -- Implementation of the solution, project, and configuration APIs.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.api = {}
+	local p = premake
+	p.api = {}
+
 	local api = premake.api
-	local configset = premake.configset
-
-	premake.fields = {}
+	local configset = p.configset
 
 
---
--- A place to store the current active objects in each project scope.
---
+
+---
+-- Set up a place to store the current active objects in each configuration
+-- scope (e.g. solutions, projects, groups, and configurations). This likely
+-- ought to be internal scope, but it is useful for testing.
+---
 
 	api.scope = {}
 
 
---
--- Create a "root" configuration set, to hold the global configuration. Values
--- that are added to this set become available for all add-ons, solution, projects,
--- and on down the line.
---
 
-	configset.root = configset.new()
-	local root = configset.root
+---
+-- Define a new class of configuration container. A container can receive and
+-- store configuration blocks, which are what hold the individial settings
+-- from the scripts. A container can also hold one or more kinds of child
+-- containers; a solution can contain projects, for instance.
+--
+-- @param containerName
+--    The name of the new container type, e.g. "solution". Used to define a
+--    corresponding global function, e.g. solution() to create new instances
+--    of the container.
+-- @param parentContainer (optional)
+--    The container that can contain this one. For a project, this would be
+--    the solution container class.
+-- @param extraScopes (optional)
+--    Each container can hold fields scoped to itself (by putting the container's
+--    class name into its scope attribute), or any of the container's children.
+--    If a container can hold scopes other than these (i.e. "config"), it can
+--    provide a list of those scopes in this argument.
+-- @returns
+--    The newly defined container class.
+---
+
+	function api.container(containerName, parentContainer, extraScopes)
+		local class, err = p.container.newClass(containerName, parentContainer, extraScopes)
+		if not class then
+			error(err, 2)
+		end
+
+		_G[containerName] = function(name)
+			local c = api._setContainer(class, name)
+			if api._isIncludingExternal then
+				c.external = true
+			end
+			return c
+		end
+
+		_G["external" .. containerName:capitalized()] = function(name)
+			local c = _G[containerName](name)
+			c.external = true
+			return c
+		end
+
+		return class
+	end
 
 
+
+---
+-- Register a general-purpose includeExternal() call which works just like
+-- include(), but marks any containers created while evaluating the included
+-- scripts as external.
+---
+
+	function includeExternal(fname)
+		api._isIncludingExternal = true
+		include(fname)
+		api._isIncludingExternal = nil
+	end
+
+
+
+---
+-- Return the global configuration container. You could just call global()
+-- too, but this is much faster.
+---
+
+	function api.rootContainer()
+		return api.scope.global
+	end
+
+
+
+
+	function api._clearContainerChildren(class)
+		for childClass in p.container.eachChildClass(class) do
+			api.scope[childClass.name] = nil
+			api._clearContainerChildren(childClass)
+		end
+	end
+
+
+
+---
+-- Activate a new configuration container, making it the target for all
+-- subsequent configuration settings. When you call solution() or project()
+-- to active a container, that call comes here (see api.container() for the
+-- details on how that happens).
 --
--- Register a new API function. See the built-in API definitions below
--- for usage examples.
+-- @param class
+--    The container class being activated, e.g. a project or solution.
+-- @param name
+--    The name of the container instance to be activated. If a container
+--    (e.g. project) with this name does not already exist it will be
+--    created. If name is not set, the last activated container of this
+--    class will be made current again.
+-- @return
+--    The container instance.
+---
+
+	function api._setContainer(class, name)
+		local instance
+
+		-- for backward compatibility, "*" activates the parent container
+		if name == "*" then
+			return api._setContainer(class.parent)
+		end
+
+		-- if name is not set, use whatever was last made current
+		if not name then
+			instance = api.scope[class.name]
+			if not instance then
+				error("no " .. class.name .. " in scope", 3)
+			end
+		end
+
+		-- otherwise, look up the instance by name
+		local parent
+		if not instance and class.parent then
+			parent = api.scope[class.parent.name]
+			if not parent then
+				error("no " .. class.parent.name .. " in scope", 3)
+			end
+			instance = p.container.getChild(parent, class, name)
+		end
+
+		-- if I have an existing instance, create a new configuration
+		-- block for it so I don't pick up an old filter
+		if instance then
+			configset.addFilter(instance, {}, os.getcwd())
+		end
+
+		-- otherwise, a new instance
+		if not instance then
+			instance = class.new(name)
+			if parent then
+				p.container.addChild(parent, instance)
+			end
+		end
+
+		-- clear out any active child containers that might be active
+		-- (recursive call, so needs to be its own function)
+		api._clearContainerChildren(class)
+
+		-- active this container, as well as it ancestors
+		if not class.placeholder then
+			api.scope.current = instance
+		end
+
+		while instance do
+			api.scope[instance.class.name] = instance
+			instance = instance.parent
+		end
+
+		return api.scope.current
+	end
+
+
+
+---
+-- Register a new API function. See the built-in API definitions in
+-- _premake_init.lua for lots of usage examples.
 --
+-- A new global function will be created to receive values for the field.
+-- List fields will also receive a `remove...()` function to remove values.
+--
+-- @param field
+--    A table describing the new field, with these keys:
+--
+--     name     The API name of the new field. This is used to create a global
+--              function with the same name, and so should follow Lua symbol
+--              naming conventions. (required)
+--     scope    The scoping level at which this value can be used; see list
+--              below. (required)
+--     kind     The type of values that can be stored into this field; see
+--              list below. (required)
+--     allowed  An array of valid values for this field, or a function which
+--              accepts a value as input and returns the canonical value as a
+--              result, or nil if the input value is invalid. (optional)
+--     tokens   A boolean indicating whether token expansion should be
+--              performed on this field.
+--
+--   The available field scopes are:
+--
+--     project  The field applies to solutions and projects.
+--     config   The field applies to solutions, projects, and individual build
+--              configurations.
+--
+--   The available field kinds are:
+--
+--     string     A simple string value.
+--     path       A file system path. The value will be made into an absolute
+--                path, but no wildcard expansion will be performed.
+--     file       One or more file names. Wilcard expansion will be performed,
+--                and the results made absolute. Implies a list.
+--     directory  One of more directory names. Wildcard expansion will be
+--                performed, and the results made absolute. Implies a list.
+--     mixed      A mix of simple string values and file system paths. Values
+--                which contain a directory separator ("/") will be made
+--                absolute; other values will be left intact.
+--     table      A table of values. If the input value is not a table, it is
+--                wrapped in one.
+---
 
 	function api.register(field)
 		-- verify the name
@@ -44,45 +236,63 @@
 			error("name '" .. name .. "' in use", 2)
 		end
 
-		-- Translate the old "key-" and "-list" field kind modifiers to the
-		-- new boolean values (13 Jan 2014; should deprecate eventually)
-
-		if field.kind:startswith("key-") then
-			field.kind = field.kind:sub(5)
-			field.keyed = true
-		end
-
-		if field.kind:endswith("-list") then
-			field.kind = field.kind:sub(1, -6)
-			field.list = true
-		end
-
-		-- make sure there is a handler available for this kind of value
-		if not api.getsetter(field) then
-			error("invalid kind '" .. field.kind .. "'", 2)
-		end
-
 		-- add this new field to my master list
-		premake.fields[field.name] = field
+		field, err = premake.field.new(field)
+		if not field then
+			error(err)
+		end
+
+
+		-- Flag fields which contain filesystem paths. The context object will
+		-- use this information when expanding tokens, to ensure that the paths
+		-- are still well-formed after replacements.
+
+		field.paths = premake.field.property(field, "paths")
+
+		-- Add preprocessed, lowercase keys to the allowed and aliased value
+		-- lists to speed up value checking later on.
+
+		if type(field.allowed) == "table" then
+			for i, item in ipairs(field.allowed) do
+				field.allowed[item:lower()] = item
+			end
+		end
+
+		if type(field.aliases) == "table" then
+			local keys = table.keys(field.aliases)
+			for i, key in ipairs(keys) do
+				field.aliases[key:lower()] = field.aliases[key]
+			end
+		end
 
 		-- create a setter function for it
 		_G[name] = function(value)
-			return api.callback(field, value)
+			return api.storeField(field, value)
 		end
 
-		-- list values also get a removal function
-		if api.isListField(field) and not api.isKeyedField(field) then
+		if premake.field.removes(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
 		end
 
-		-- if the field needs special handling, tell the config
-		-- set system about it
-		configset.registerfield(field.name, {
-			keyed = api.isKeyedField(field),
-			merge = api.isListField(field),
-		})
+		return field
+	end
+
+
+
+---
+-- Unregister a field definition, removing its functions and field
+-- list entries.
+---
+
+	function api.unregister(field)
+		if type(field) == "string" then
+			field = premake.field.get(field)
+		end
+		premake.field.unregister(field)
+		_G[field.name] = nil
+		_G["remove" .. field.name] = nil
 	end
 
 
@@ -98,10 +308,8 @@
 ---
 
      function api.alias(original, alias)
-          _G[alias] = _G[original]
-          if api.isListField(premake.fields[original]) then
-               _G["remove" .. alias] = _G["remove" .. original]
-          end
+		_G[alias] = _G[original]
+		_G["remove" .. alias] = _G["remove" .. original]
      end
 
 
@@ -117,23 +325,47 @@
 --
 
 	function api.addAllowed(fieldName, value)
-		local field = premake.fields[fieldName]
+		local field = premake.field.get(fieldName)
 		if not field then
 			error("No such field: " .. fieldName, 2)
 		end
 
-		if not field.allowed then
-			field.allowed = {}
-		end
-
 		if type(value) == "table" then
-			field.allowed = table.join(field.allowed, value)
+			for i, item in ipairs(value) do
+				api.addAllowed(fieldName, item)
+			end
 		else
+			field.allowed = field.allowed or {}
 			table.insert(field.allowed, value)
+			field.allowed[value:lower()] = value
+		end
+	end
+
+
+
+--
+-- Add a new value to a field's list of allowed values.
+--
+-- @param fieldName
+--    The name of the field to which to add the value.
+-- @param value
+--    The value to add. May be a single string value, or an array
+--    of values.
+--
+
+	function api.addAliases(fieldName, value)
+		local field = premake.field.get(fieldName)
+		if not field then
+			error("No such field: " .. fieldName, 2)
 		end
 
-		table.sort(field.allowed)
+		field.aliases = field.aliases or {}
+		for k, v in pairs(value) do
+			field.aliases[k] = v
+			field.aliases[k:lower()] = v
+		end
 	end
+
 
 
 --
@@ -212,20 +444,24 @@
 	api._deprecations = "on"
 
 
---
--- Find the right target object for a given scope.
---
 
-	function api.gettarget(scope)
-		local target
-		if scope == "project" then
-			target = api.scope.project or api.scope.solution or api.scope.root
-		else
-			target = api.scope.configuration or api.scope.root
+---
+-- Return the target container instance for a field.
+--
+-- @param field
+--    The field being set or fetched.
+-- @return
+--    The currently active container instance if one is available, or nil if
+--    active container is of the wrong class.
+---
+
+	function api.target(field)
+		if p.container.classCanContain(api.scope.current.class, field.scope) then
+			return api.scope.current
 		end
-
-		return target
+		return nil
 	end
+
 
 
 --
@@ -233,37 +469,31 @@
 -- gets parceled out to the individual set...() functions.
 --
 
-	function api.callback(field, value)
+	function api.storeField(field, value)
+		if value == nil then
+			return
+		end
+
 		if field.deprecated and type(field.deprecated.handler) == "function" then
 			field.deprecated.handler(value)
-			if api._deprecations ~= "off" then
-				premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message or "")
+			if field.deprecated.message and api._deprecations ~= "off" then
+				premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message)
 				if api._deprecations == "error" then error("deprecation errors enabled", 3) end
 			end
 		end
 
-		local target = api.gettarget(field.scope)
-
-		if not value then
-			return target.configset[field.name]
+		local target = api.target(field)
+		if not target then
+			local err = string.format("unable to set %s in %s scope, should be %s", field.name, api.scope.current.class.name, table.concat(field.scopes, ", "))
+			error(err, 3)
 		end
 
-		local status, result = pcall(function ()
-			if api.isKeyedField(field) then
-				api.setkeyvalue(target, field, value)
-			else
-				local setter = api.getsetter(field, true)
-				setter(target, field.name, field, value)
-			end
-		end)
-
-		if not status then
-			if type(result) == "table" then
-				result = result.msg
-			end
-			error(result, 3)
+		local status, err = configset.store(target, field, value)
+		if err then
+			error(err, 3)
 		end
 	end
+
 
 
 --
@@ -276,10 +506,15 @@
 	function api.remove(field, value)
 		-- right now, ignore calls with no value; later might want to
 		-- return the current baked value
-		if not value then return end
+		if value == nil then return end
 
-		local target = api.gettarget(field.scope)
-		local kind = field.kind
+		local target = api.target(field)
+		if not target then
+			local err = string.format("unable to remove %s from %s scope, should be %s", field.name, api.scope.current.class.name, table.concat(field.scopes, ", "))
+			error(err, 3)
+		end
+
+		local hasDeprecatedValues = (type(field.deprecated) == "table")
 
 		-- Build a list of values to be removed. If this field has deprecated
 		-- values, check to see if any of those are going to be removed by this
@@ -287,50 +522,64 @@
 		-- the appropriate logic for removing that value.
 
 		local removes = {}
-		local remover = api["remove" .. kind] or table.insert
 
 		function check(value)
 			if field.deprecated[value] then
 				local handler = field.deprecated[value]
 				if handler.remove then handler.remove(value) end
-				if api._deprecations ~= "off" then
+				if handler.message and api._deprecations ~= "off" then
 					local key = field.name .. "_" .. value
-					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-					if api._deprecations == "error" then error("deprecation errors enabled", 8) end
+					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message)
+					if api._deprecations == "error" then
+						error { msg="deprecation errors enabled" }
+					end
 				end
 			end
 		end
 
 		local function recurse(value)
 			if type(value) == "table" then
-				table.foreachi(value, function(v)
-					recurse(v)
-				end)
-			else
-				if field.deprecated then
-					if value:contains("*") then
-						local current = target.configset[field.name]
-						local mask = path.wildcards(value)
-						for _, item in ipairs(current) do
-							if item:match(mask) == item then
-								check(item)
-							end
-						end
-					else
-						value, err = api.checkvalue(value, field)
-						if err then error(err, 4) end
-						check(value)
+				table.foreachi(value, recurse)
+
+			elseif hasDeprecatedValues and value:contains("*") then
+				local current = configset.fetch(target, field)
+				local mask = path.wildcards(value)
+				for _, item in ipairs(current) do
+					if item:match(mask) == item then
+						recurse(item)
 					end
 				end
-				remover(removes, value)
+				table.insert(removes, value)
+
+			else
+				local value, err, additional = api.checkValue(field, value)
+				if err then
+					error { msg=err }
+				end
+
+				if field.deprecated then
+					check(value)
+				end
+
+				table.insert(removes, value)
+				if additional then
+					table.insert(removes, additional)
+				end
 			end
 		end
 
-		recurse(value)
+		local ok, err = pcall(function ()
+			recurse(value)
+		end)
 
-		-- Tell the config set to remove these values from future queries
+		if not ok then
+			if type(err) == "table" then
+				err = err.msg
+			end
+			error(err, 3)
+		end
 
-		configset.removevalues(target.configset, field.name, removes)
+		configset.remove(target, field, removes)
 	end
 
 
@@ -338,497 +587,511 @@
 --
 -- Check to see if a value is valid for a particular field.
 --
--- @param value
---    The value to check.
 -- @param field
 --    The field to check against.
+-- @param value
+--    The value to check.
+-- @param kind
+--    The kind of data currently being checked, corresponding to
+--    one segment of the field's kind string (e.g. "string"). If
+--    not set, defaults to "string".
 -- @return
 --    If the value is valid for this field, the canonical version
 --    of that value is returned. If the value is not valid two
 --    values are returned: nil, and an error message.
 --
 
-	function api.checkvalue(value, field)
-		if field.aliases then
-			for k,v in pairs(field.aliases) do
-				if value:lower() == k:lower() then
-					value = v
-					break
-				end
-			end
-		end
-
-		if field.allowed then
-			if type(field.allowed) == "function" then
-				return field.allowed(value)
-			else
-				local n = #field.allowed
-				for i = 1, n do
-					local v = field.allowed[i]
-					if value:lower() == v:lower() then
-						return v
-					end
-				end
-				return nil, "invalid value '" .. value .. "'"
-			end
-		else
+	function api.checkValue(field, value, kind)
+		if not field.allowed then
 			return value
 		end
-	end
 
+		local canonical, result
+		local lowerValue = value:lower()
 
---
--- Compare two values of a field to see if they are (roughly) equivalent.
--- Real high-level checking right now for performance; can make it more
--- exact later if there is a need.
---
--- @param field
---    The description of the field being checked.
--- @param value1
---    The first value to be compared.
--- @param value2
---    The second value to be compared.
--- @return
---    True if the values are (roughly) equivalent; false otherwise.
---
-
-	function api.comparevalues(field, value1, value2)
-		-- both nil?
-		if not value1 and not value2 then
-			return true
+		if field.aliases then
+			canonical = field.aliases[lowerValue]
 		end
 
-		-- one nil, but not the other?
-		if not value1 or not value2 then
-			return false
+		if not canonical then
+			if type(field.allowed) == "function" then
+				canonical = field.allowed(value, kind or "string")
+			else
+				canonical = field.allowed[lowerValue]
+			end
 		end
 
-		-- for keyed list, I just make sure all keys are present,
-		-- no checking of values is done (yet)
-		if api.isKeyedField(field) then
-			for k,v in pairs(value1) do
-				if not value2[k] then
-					return false
+		if not canonical then
+			return nil, "invalid value '" .. value .. "' for " .. field.name
+		end
+
+		if field.deprecated and field.deprecated[canonical] then
+			local handler = field.deprecated[canonical]
+			handler.add(canonical)
+			if handler.message and api._deprecations ~= "off" then
+				local key = field.name .. "_" .. value
+				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, canonical, handler.message)
+				if api._deprecations == "error" then
+					return nil, "deprecation errors enabled"
 				end
 			end
-			for k,v in pairs(value2) do
-				if not value1[k] then
-					return false
-				end
-			end
-			return true
-
-		-- for arrays, just see if the lengths match, for now
-		elseif api.isListField(field) then
-			return #value1 == #value2
-
-		-- everything else can use a simple compare
-		else
-			return value1 == value2
 		end
+
+		return canonical
 	end
 
 
---
--- Check the collection properties of a field.
---
 
-	function api.isKeyedField(field)
-		return field.keyed
-	end
-
-	function api.isListField(field)
-		return field.list
-	end
-
-
---
--- Retrieve the "set" function for a field.
---
--- @param field
---    The field to query.
--- @param lists
---    If true, will return the list setter for list fields (i.e. string-list);
---    else returns base type setter (i.e. string).
--- @return
---    The setter for the field.
---
-
-	function api.getsetter(field, lists)
-		if lists and api.isListField(field) then
-			return api.setlist
-		else
-			return api["set" .. field.kind]
-		end
-	end
-
-
---
--- Clears all active API objects; resets to root configuration block.
---
+---
+-- Reset the API system, clearing out any temporary or cached values.
+-- Used by the automated testing framework to clear state between
+-- individual test runs.
+---
 
 	function api.reset()
-		api.scope = {
-			root = {
-				configset = configset.root,
-				blocks = {}  -- TODO: remove this when switch-over to new APIs is done
+		-- Clear out all top level objects, but keep the root config
+		api.scope.global.rules = {}
+		api.scope.global.solutions = {}
+	end
+
+
+
+--
+-- Arrays are integer indexed tables; unlike lists, a new array value
+-- will replace the old one, rather than merging both.
+--
+
+	premake.field.kind("array", {
+		store = function(field, current, value, processor)
+			if type(value) ~= "table" then
+				value = { value }
+			end
+
+			for i, item in ipairs(value) do
+				value[i] = processor(field, nil, value[i])
+			end
+
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			if a == nil or b == nil or #a ~= #b then
+				return false
+			end
+			for i = 1, #a do
+				if not processor(field, a[i], b[i]) then
+					return false
+				end
+			end
+			return true
+		end
+	})
+
+
+
+---
+-- Boolean field kind; converts common yes/no strings into true/false values.
+---
+
+	premake.field.kind("boolean", {
+		store = function(field, current, value, processor)
+			local mapping = {
+				["false"] = false,
+				["no"] = false,
+				["off"] = false,
+				["on"] = true,
+				["true"] = true,
+				["yes"] = true,
 			}
-		}
-	end
 
-	api.reset()
+			if type(value) == "string" then
+				value = mapping[value:lower()]
+				if value == nil then
+					error { msg="expected boolean; got " .. value }
+				end
+				return value
+			end
 
+			if type(value) == "boolean" then
+				return value
+			end
 
---
--- Set a new array value. Arrays are lists of values stored by "value",
--- in that new values overwrite old ones, rather than merging like lists.
---
+			if type(value) == "number" then
+				return (value ~= 0)
+			end
 
-	function api.setarray(target, name, field, value)
-		-- if the target is the project, configset will be set and I can push
-		-- the value there. Otherwise I was called to store into some other kind
-		-- of object (i.e. an array or list)
-		target = target.configset or target
-
-		-- put simple values in an array
-		if type(value) ~= "table" then
-			value = { value }
+			return (value ~= nil)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
-
-		-- store it, overwriting any existing value
-		target[name] = value
-	end
+	})
 
 
---
--- Set a new file value on an API field. Unlike paths, file value can
--- use wildcards (and so must always be a list).
---
-
-	function api.setfile(target, name, field, value)
-		if value:find("*") then
-			local values = os.matchfiles(value)
-			table.foreachi(values, function(v)
-				api.setfile(target, name, field, v)
-				name = name + 1
-			end)
-		else
-			target[name] = path.getabsolute(value)
-		end
-	end
-
-	function api.setdirectory(target, name, field, value)
-		if value:find("*") then
-			local values = os.matchdirs(value)
-			table.foreachi(values, function(v)
-				api.setdirectory(target, name, field, v)
-				name = name + 1
-			end)
-		else
-			target[name] = path.getabsolute(value)
-		end
-	end
-
-	function api.removefile(target, value)
-		table.insert(target, path.getabsolute(value))
-	end
-
-	api.removedirectory = api.removefile
 
 
 --
--- Update a keyed value. Iterate over the keys in the new value, and use
--- the corresponding values to update the target object.
+-- Directory data kind; performs wildcard directory searches, converts
+-- results to absolute paths.
 --
 
-	function api.setkeyvalue(target, field, values)
-		if type(values) ~= "table" then
-			error({ msg="value must be a table of key-value pairs" })
-		end
-
-		local newval = {}
-
-		local setter = api.getsetter(field, true)
-		for key, value in pairs(values) do
-			setter(newval, key, field, value)
-		end
-
-		configset.addvalue(target.configset, field.name, newval)
-	end
-
-
---
--- Set a new list value. Lists are arrays of values, with new values
--- appended to any previous values.
---
-
-	function api.setlist(target, name, field, value)
-		local setter = api.getsetter(field)
-
-		-- If this target is just a wrapper for a configuration set,
-		-- apply the new values to that set instead. The current
-		-- solution and project objects act this way.
-		if target.configset then
-			target = target.configset
-		end
-
-		-- process all of the values, according to the data type
-		local result = {}
-		local function recurse(value)
-			if type(value) == "table" then
-				table.foreachi(value, function (value)
-					recurse(value)
-				end)
+	premake.field.kind("directory", {
+		paths = true,
+		store = function(field, current, value, processor)
+			if value:find("*") then
+				value = os.matchdirs(value)
+				for i, file in ipairs(value) do
+					value[i] = path.getabsolute(value[i])
+				end
 			else
-				setter(result, #result + 1, field, value)
+				value = path.getabsolute(value)
 			end
+			return value
+		end,
+		remove = function(field, current, value, processor)
+			return path.getabsolute(value)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
-		recurse(value)
+	})
 
-		target[name] = result
-	end
 
 
 --
--- Set a new value into a mixed value field, which contain both
--- simple strings and paths.
+-- File data kind; performs wildcard file searches, converts results
+-- to absolute paths.
 --
 
-	function api.setmixed(target, name, field, value)
-		-- if the value contains a '/' treat it as a path
-		if type(value) == "string" and value:find('/', nil, true) then
-			value = path.getabsolute(value)
+	premake.field.kind("file", {
+		paths = true,
+		store = function(field, current, value, processor)
+			if value:find("*") then
+				value = os.matchfiles(value)
+				for i, file in ipairs(value) do
+					value[i] = path.getabsolute(value[i])
+				end
+			else
+				value = path.getabsolute(value)
+			end
+			return value
+		end,
+		remove = function(field, current, value, processor)
+			return path.getabsolute(value)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
-		return api.setstring(target, name, field, value)
+	})
+
+
+
+--
+-- Function data kind; this isn't terribly useful right now, but makes
+-- a nice extension point for modules to build on.
+--
+
+	premake.field.kind("function", {
+		store = function(field, current, value, processor)
+			local t = type(value)
+			if t ~= "function" then
+				error { msg="expected function; got " .. t }
+			end
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
+
+
+--
+-- Integer data kind; validates inputs.
+--
+
+	premake.field.kind("integer", {
+		store = function(field, current, value, processor)
+			local t = type(value)
+			if t ~= "number" then
+				error { msg="expected number; got " .. t }
+			end
+			if math.floor(value) ~= value then
+				error { msg="expected integer; got " .. tostring(value) }
+			end
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
+
+
+---
+-- Key-value data kind definition. Merges key domains; values may be any kind.
+---
+
+	local function storeKeyed(field, current, value, processor)
+		current = current or {}
+
+		for k, v in pairs(value) do
+			if processor then
+				v = processor(field, current[k], v)
+			end
+			current[k] = v
+		end
+
+		return current
 	end
 
 
---
--- Set a new object value on an API field.
---
-
-	function api.setobject(target, name, field, value)
-		target = target.configset or target
-		target[name] = value
+	local function mergeKeyed(field, current, value, processor)
+		value = value or {}
+		for k, v in pairs(value) do
+			current[k] = v
+		end
+		return current
 	end
 
 
---
--- Set a new path value on an API field.
---
+	premake.field.kind("keyed", {
+		store = storeKeyed,
+		merge = mergeKeyed,
+		compare = function(field, a, b, processor)
+			if a == nil or b == nil then
+				return false
+			end
+			for k in pairs(a) do
+				if not processor(field, a[k], b[k]) then
+					return false
+				end
+			end
+			return true
+		end
+	})
 
-	function api.setpath(target, name, field, value)
-		api.setstring(target, name, field, path.getabsolute(value))
+
+---
+-- List data kind definition. Actually a misnomer, lists are more like sets in
+-- that duplicate values are weeded out; each will only appear once. Can
+-- contain any other kind of data.
+---
+
+	local function storeListItem(current, item)
+		if current[item] then
+			table.remove(current, table.indexof(current, item))
+		end
+		table.insert(current, item)
+		current[item] = item
 	end
 
 
---
--- Set a new string value on an API field.
---
-
-	function api.setstring(target, name, field, value)
+	local function storeList(field, current, value, processor)
 		if type(value) == "table" then
-			error({ msg="expected string; got table" })
-		end
+			-- Flatten out incoming arrays of values
+			if #value > 0 then
+				for i = 1, #value do
+					current = storeList(field, current, value[i], processor)
+				end
+				return current
+			end
 
-		local value, err = api.checkvalue(value, field)
-		if err then error({ msg=err }) end
-
-		if field.deprecated and field.deprecated[value] then
-			local handler = field.deprecated[value]
-			handler.add(value)
-			if api._deprecations ~= "off" then
-				local key = field.name .. "_" .. value
-				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message or "")
-				if api._deprecations == "error" then error({ msg="deprecation errors enabled" }) end
+			-- Ignore empty lists
+			if table.isempty(value) then
+				return current
 			end
 		end
 
-		-- if the target is the project, configset will be set and I can push
-		-- the value there. Otherwise I was called to store into some other kind
-		-- of object (i.e. an array or list)
-		target = target.configset or target
-		target[name] = value
+		current = current or {}
+
+		if processor then
+			value = processor(field, nil, value)
+		end
+
+		if type(value) == "table" then
+			if #value > 0 then
+				for i = 1, #value do
+					storeListItem(current, value[i])
+				end
+			elseif not table.isempty(value) then
+				storeListItem(current, value)
+			end
+		elseif value then
+			storeListItem(current, value)
+		end
+
+		return current
 	end
 
 
---
--- Set a number value on an API field.
---
-
-	function api.setnumber(target, name, field, value)
-		local t = type(value)
-		if t ~= "number" then
-			error({ msg="expected number; got " .. t })
+	local function mergeList(field, current, value, processor)
+		value = value or {}
+		for i = 1, #value do
+			storeListItem(current, value[i])
 		end
-
-		target = target.configset or target
-		target[name] = value
+		return current
 	end
 
 
---
--- Set a integer value on an API field.
---
-
-	function api.setinteger(target, name, field, value)
-		local t = type(value)
-		if t ~= "number" then
-			error({ msg="expected number; got " .. t })
+	premake.field.kind("list", {
+		store = storeList,
+		remove = storeList,
+		merge = mergeList,
+		compare = function(field, a, b, processor)
+			if a == nil or b == nil or #a ~= #b then
+				return false
+			end
+			for i = 1, #a do
+				if not processor(field, a[i], b[i]) then
+					return false
+				end
+			end
+			return true
 		end
-		if math.floor(value) ~= value then
-			error({ msg="expected integer; got " .. tostring(value) })
+	})
+
+
+
+--
+-- Mixed data kind; values containing a directory separator "/" are converted
+-- to absolute paths, other values left as-is. Used for links, where system
+-- libraries and local library paths can be mixed into a single list.
+--
+
+	premake.field.kind("mixed", {
+		paths = true,
+		store = function(field, current, value, processor)
+			if type(value) == "string" and value:find('/', nil, true) then
+				value = path.getabsolute(value)
+			end
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
+	})
 
-		target = target.configset or target
-		target[name] = value
-	end
 
 
 --
--- Set a boolean value on an API field.
+-- Number data kind; validates inputs.
 --
 
-	function api.setboolean(target, name, field, value)
-		local t = type(value)
-		if t ~= "boolean" then
-			error({ msg="expected boolean; got " .. t })
+	premake.field.kind("number", {
+		store = function(field, current, value, processor)
+			local t = type(value)
+			if t ~= "number" then
+				error { msg="expected number; got " .. t }
+			end
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
 		end
+	})
 
-		target = target.configset or target
-		target[name] = value
-	end
 
 
 --
--- Start a new block of configuration settings.
+-- Path data kind; converts all inputs to absolute paths.
 --
+
+	premake.field.kind("path", {
+		paths = true,
+		store = function(field, current, value, processor)
+			return path.getabsolute(value)
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
+
+
+--
+-- String data kind; performs validation against allowed fields, checks for
+-- value deprecations.
+--
+
+	premake.field.kind("string", {
+		store = function(field, current, value, processor)
+			if type(value) == "table" then
+				error { msg="expected string; got table" }
+			end
+
+			if value ~= nil then
+				local err
+				value, err = api.checkValue(field, value)
+				if err then
+					error { msg=err }
+				end
+			end
+
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			return (a == b)
+		end
+	})
+
+
+--
+-- Table data kind; wraps simple values into a table, returns others as-is.
+--
+
+	premake.field.kind("table", {
+		store = function(field, current, value, processor)
+			if type(value) ~= "table" then
+				value = { value }
+			end
+			return value
+		end,
+		compare = function(field, a, b, processor)
+			-- TODO: is there a reliable way to check this?
+			return true
+		end
+	})
+
+
+
+---
+-- Start a new block of configuration settings, using the old, "open"
+-- style of matching without field prefixes.
+---
 
 	function configuration(terms)
-		if not terms then
-			return api.scope.configuration
+		if terms then
+			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or
+			   (terms == "*")
+			then
+				terms = nil
+			end
+			configset.addblock(api.scope.current, {terms}, os.getcwd())
 		end
-
-		if terms == "*" then terms = nil end
-
-		local container = api.scope.project or api.scope.solution or api.scope.root
-		configset.addblock(container.configset, {terms}, os.getcwd())
-
-		local cfg = {}
-		cfg.configset = container.configset
-		api.scope.configuration = cfg
-
-		return cfg
+		return api.scope.current
 	end
 
 
---
--- Begin a new solution group, which will contain any subsequent projects.
---
 
-	function group(name)
-		if name == "*" then name = nil end
-		api.scope.group = name
-	end
+---
+-- Start a new block of configuration settings, using the new prefixed
+-- style of pattern matching.
+---
 
-
---
--- Set the current configuration scope to a project.
---
--- @param name
---    The name of the project. If a project with this name already
---    exists, it is made current, otherwise a new project is created
---    with this name. If no name is provided, the most recently defined
---    project is made active.
--- @return
---    The active project object.
---
-
-  	function project(name)
-		if not name then
-			if api.scope.project then
-				name = api.scope.project.name
-			else
-				return nil
+	function filter(terms)
+		if terms then
+			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or
+			   (terms == "*")
+			then
+				terms = nil
+			end
+			local ok, err = configset.addFilter(api.scope.current, {terms}, os.getcwd())
+			if not ok then
+				error(err, 2)
 			end
 		end
-
-		local sln = api.scope.solution
-		if not sln then
-			error("no active solution", 2)
-		end
-
-		local prj
-		if name ~= "*" then
-			prj = sln.projects[name]
-			if not prj then
-				prj = premake.project.new(sln, name)
-				prj.group = api.scope.group or ""
-				premake.solution.addproject(sln, prj)
-			end
-		end
-
-		api.scope.project = prj
-
-		configuration {}
-
-		return prj
 	end
 
-
---
--- Activates a reference to an external, non-Premake generated project.
---
--- @param name
---    The name of the project. If a project with this name already
---    exists, it is made current, otherwise a new project is created
---    with this name. If no name is provided, the most recently defined
---    project is made active.
--- @return
---    The active project object.
---
-
-	function external(name)
-		local prj = project(name)
-		prj.external = true;
-		return prj
-	end
-
-
---
--- Set the current configuration scope to a solution.
---
--- @param name
---    The name of the solution. If a solution with this name already
---    exists, it is made current, otherwise a new solution is created
---    with this name. If no name is provided, the most recently defined
---    solution is made active.
--- @return
---    The active solution object.
---
-
-	function solution(name)
-		if not name then
-			if api.scope.solution then
-				name = api.scope.solution.name
-			else
-				return nil
-			end
-		end
-
-		local sln
-		if name ~= "*" then
-			sln = premake.solution.get(name) or premake.solution.new(name)
-		end
-
-		api.scope.solution = sln
-		api.scope.project = nil
-		api.scope.group = nil
-
-		configuration {}
-
-		return sln
-	end
 
 
 --

@@ -32,17 +32,16 @@
 	function suite.looksGood_onDefaultSettings()
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -56,10 +55,27 @@
 		includedirs { "include/lua", "include/zlib" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="include\lua;include\zlib"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	AdditionalIncludeDirectories="include\lua;include\zlib"
+		]]
+	end
+
+
+--
+-- Ensure macros are not truncated (see issue #63)
+--
+
+
+	function suite.additionalIncludeDirs_onIncludeDirs_with_vs_macros()
+		includedirs { "$(Macro1)/foo/bar/$(Macro2)/baz" }
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	AdditionalIncludeDirectories="$(Macro1)\foo\bar\$(Macro2)\baz"
 		]]
 	end
 
@@ -73,18 +89,17 @@
 		flags "Symbols"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	MinimalRebuild="true"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="3"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="4"
+/>
 		]]
 	end
 
@@ -99,17 +114,16 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				StringPooling="true"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="3"
+	StringPooling="true"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="3"
+/>
 		]]
 	end
 
@@ -123,17 +137,16 @@
 		debugformat "C7"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="1"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="3"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="1"
+/>
 		]]
 	end
 
@@ -151,18 +164,17 @@
 		pchsource "source/common.cpp"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="include/common.h"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="2"
+	PrecompiledHeaderThrough="include/common.h"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -175,18 +187,17 @@
 		floatingpoint "Fast"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				FloatingPointModel="2"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	FloatingPointModel="2"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -194,41 +205,17 @@
 		floatingpoint "Strict"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				FloatingPointModel="1"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
-		]]
-	end
-
-
---
--- Verify that the PDB file uses the target name if specified.
---
-
-	function suite.pdbUsesTargetName_onTargetName()
-		targetname "foob"
-		prepare()
-		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\foob.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	FloatingPointModel="1"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -241,17 +228,16 @@
 		flags { "Symbols", "NoMinimalRebuild" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="3"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="4"
+/>
 		]]
 	end
 
@@ -263,18 +249,17 @@
 		flags { "NoBufferSecurityCheck" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				BufferSecurityCheck="false"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	BufferSecurityCheck="false"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -286,18 +271,17 @@
 		language "C"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-				CompileAs="1"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+	CompileAs="1"
+/>
 		]]
 	end
 
@@ -310,18 +294,17 @@
 		flags { "Symbols" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	MinimalRebuild="true"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="3"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="4"
+/>
 		]]
 	end
 
@@ -334,17 +317,16 @@
 		warnings "Extra"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="4"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="4"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -357,18 +339,17 @@
 		flags { "FatalWarnings" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	WarnAsError="true"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -382,17 +363,16 @@
 		warnings "Off"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="0"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="0"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -401,22 +381,38 @@
 -- Verify the correct Detect64BitPortabilityProblems settings are used when _ACTION < "VS2008".
 --
 
-	function suite.runtimeLibraryIsDebug_onVS2005()
+	function suite._64BitPortabilityOn_onVS2005()
 		_ACTION = "vs2005"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	Detect64BitPortabilityProblems="true"
+	DebugInformationFormat="0"
+/>
+		]]
+	end
+
+	function suite._64BitPortabilityOff_onVS2005_andCLR()
+		_ACTION = "vs2005"
+		clr "On"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -430,17 +426,16 @@
 		warnings "Off"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="0"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="0"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -453,17 +448,16 @@
 		system "Xbox360"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLX360CompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-			/>
+<Tool
+	Name="VCCLX360CompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
 		]]
 	end
 
@@ -476,17 +470,16 @@
 		forceincludes { "stdafx.h", "include/sys.h" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-				ForcedIncludeFiles="stdafx.h;include\sys.h"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+	ForcedIncludeFiles="stdafx.h;include\sys.h"
 		]]
 	end
 
@@ -494,17 +487,16 @@
 		forceusings { "stdafx.h", "include/sys.h" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-				ForcedUsingFiles="stdafx.h;include\sys.h"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+	ForcedUsingFiles="stdafx.h;include\sys.h"
 		]]
 	end
 
@@ -517,10 +509,10 @@
 		flags { "NoRuntimeChecks" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				RuntimeLibrary="2"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	RuntimeLibrary="2"
 		]]
 	end
 
@@ -534,11 +526,11 @@
 		flags { "MultiProcessorCompile" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
-				Optimization="0"
-				BasicRuntimeChecks="3"
+<Tool
+	Name="VCCLCompilerTool"
+	AdditionalOptions="/MP"
+	Optimization="0"
+	BasicRuntimeChecks="3"
 		]]
 	end
 
@@ -553,12 +545,12 @@
 		flags { "Symbols", "ReleaseRuntime" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	MinimalRebuild="true"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
 		]]
 	end
 
@@ -566,12 +558,12 @@
 		flags { "Symbols", "ReleaseRuntime", "StaticRuntime" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="0"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	MinimalRebuild="true"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="0"
 		]]
 	end
 
@@ -583,10 +575,10 @@
 		flags { "LinkTimeOptimization" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				WholeProgramOptimization="true"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	WholeProgramOptimization="true"
 		]]
 
 	end
@@ -600,10 +592,10 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				StringPooling="true"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="3"
+	StringPooling="true"
 		]]
 	end
 
@@ -611,10 +603,10 @@
 		optimize "Size"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="1"
-				StringPooling="true"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="1"
+	StringPooling="true"
 		]]
 	end
 
@@ -622,10 +614,10 @@
 		optimize "Speed"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="true"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="2"
+	StringPooling="true"
 		]]
 	end
 
@@ -633,10 +625,10 @@
 		optimize "Full"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				StringPooling="true"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="3"
+	StringPooling="true"
 		]]
 	end
 
@@ -644,10 +636,10 @@
 		optimize "Off"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
 		]]
 	end
 
@@ -655,10 +647,10 @@
 		optimize "Debug"
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
 		]]
 	end
 
@@ -671,16 +663,15 @@
 		flags { "OmitDefaultLibrary" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\MyProject.pdb"
-				WarningLevel="3"
-				DebugInformationFormat="0"
-				OmitDefaultLibName="true"
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+	OmitDefaultLibName="true"
 		]]
 	end

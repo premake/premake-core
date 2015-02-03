@@ -1,49 +1,43 @@
---
+---
 -- project.lua
 -- Premake project object API
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
---
+-- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+---
 
-	premake.project = {}
-	local project = premake.project
-	local configset = premake.configset
-	local context = premake.context
-	local tree = premake.tree
+	local p = premake
+	p.project = p.api.container("project", p.solution, { "config" })
+
+	local project = p.project
+	local tree = p.tree
 
 
---
--- Create a new project object.
---
--- @param sln
---    The solution object to contain the new project.
--- @param name
---    The new project's name.
--- @return
---    A new project object, contained by the specified solution.
---
 
-	function project.new(sln, name)
-		local prj = {}
+---
+-- Alias the old external() call to the new externalProject(), to distinguish
+-- between it and externalRule().
+---
 
-		prj.name = name
-		prj.solution = sln
-		prj.script = _SCRIPT
+	external = externalProject
 
-		local cset = configset.new(sln.configset)
-		cset.basedir = os.getcwd()
-		cset.filename = name
-		cset.uuid = os.uuid(name)
-		prj.configset = cset
 
-		-- attach a type descriptor
-		setmetatable(prj, {
-			__index = function(prj, key)
-				return prj.configset[key]
-			end,
-		})
+
+---
+-- Create a new project container instance.
+---
+
+	function project.new(name)
+		local prj = p.container.new(project, name)
+		prj.uuid = os.uuid(name)
+
+		if p.api.scope.group then
+			prj.group = p.api.scope.group.name
+		else
+			prj.group = ""
+		end
 
 		return prj
 	end
+
 
 
 --
@@ -61,11 +55,21 @@
 		local configs = prj._cfglist
 		local count = #configs
 
+		-- Once the configurations are mapped into the solution I could get
+		-- the same one multiple times. Make sure that doesn't happen.
+		local seen = {}
+
 		local i = 0
 		return function ()
 			i = i + 1
 			if i <= count then
-				return project.getconfig(prj, configs[i][1], configs[i][2])
+				local cfg = project.getconfig(prj, configs[i][1], configs[i][2])
+				if not seen[cfg] then
+					seen[cfg] = true
+					return cfg
+				else
+					i = i + 1
+				end
 			end
 		end
 	end
@@ -113,27 +117,6 @@
 
 
 
---
--- Locate a project by name; case insensitive.
---
--- @param name
---    The name of the project for which to search.
--- @return
---    The corresponding project, or nil if no matching project could be found.
---
-
-	function project.findproject(name)
-		for sln in premake.solution.each() do
-			for _, prj in ipairs(sln.projects) do
-				if (prj.name == name) then
-					return  prj
-				end
-			end
-		end
-	end
-
-
---
 -- Retrieve the project's configuration information for a particular build
 -- configuration/platform pair.
 --
@@ -145,7 +128,6 @@
 --    Optional; the name of the platform on which to filter.
 -- @return
 --    A configuration object.
---
 
 	function project.getconfig(prj, buildcfg, platform)
 		-- if no build configuration is specified, return the "root" project
@@ -166,7 +148,8 @@
 	end
 
 
---
+
+---
 -- Returns a list of sibling projects on which the specified project depends.
 -- This is used to list dependencies within a solution or workspace. Must
 -- consider all configurations because Visual Studio does not support per-config
@@ -174,11 +157,14 @@
 --
 -- @param prj
 --    The project to query.
+-- @param linkOnly
+--    If set, returns only siblings which are linked against (links) and skips
+--    siblings which are not (dependson).
 -- @return
 --    A list of dependent projects, as an array of project objects.
---
+---
 
-	function project.getdependencies(prj)
+	function project.getdependencies(prj, linkOnly)
 		if not prj.dependencies then
 			local result = {}
 			local function add_to_project_list(cfg, depproj, result)
@@ -192,8 +178,10 @@
 				for _, link in ipairs(cfg.links) do
 					add_to_project_list(cfg, link, result)
 				end
-				for _, depproj in ipairs(cfg.dependson) do
-					add_to_project_list(cfg, depproj, result)
+				if not linkOnly then
+					for _, depproj in ipairs(cfg.dependson) do
+						add_to_project_list(cfg, depproj, result)
+					end
 				end
 			end
 			prj.dependencies = result
@@ -201,31 +189,6 @@
 		return prj.dependencies
 	end
 
-
---
--- Returns the file name for this project. Also works with solutions.
---
--- @param prj
---    The project object to query.
--- @param ext
---    An optional file extension to add, with the leading dot. If provided
---    without a leading dot, it will treated as a file name.
--- @return
---    The absolute path to the project's file.
---
-
-	function project.getfilename(prj, ext)
-		local fn = prj.location
-		if ext and not ext:startswith(".") then
-			fn = path.join(fn, ext)
-		else
-			fn = path.join(fn, prj.filename)
-			if ext then
-				fn = fn .. ext
-			end
-		end
-		return fn
-	end
 
 
 --
@@ -344,53 +307,58 @@
 		local fname = path.getname(abspath)
 		local max = abspath:len() - fname:len()
 
-		-- Look for matching patterns
-		for replacement, patterns in pairs(prj.vpaths or {}) do
-			for _, pattern in ipairs(patterns) do
-				local i = abspath:find(path.wildcards(pattern))
-				if i == 1 then
+		-- Look for matching patterns. Virtual paths are stored as an array
+		-- for tables, each table continuing the path key, which looks up the
+		-- array of paths with should match against that path.
 
-					-- Trim out the part of the name that matched the pattern; what's
-					-- left is the part that gets appended to the replacement to make
-					-- the virtual path. So a pattern like "src/**.h" matching the
-					-- file src/include/hello.h, I want to trim out the src/ part,
-					-- leaving include/hello.h.
+		for _, vpaths in ipairs(prj.vpaths) do
+			for replacement, patterns in pairs(vpaths) do
+				for _, pattern in ipairs(patterns) do
+					local i = abspath:find(path.wildcards(pattern))
+					if i == 1 then
 
-					-- Find out where the wildcard appears in the match. If there is
-					-- no wildcard, the match includes the entire pattern
+						-- Trim out the part of the name that matched the pattern; what's
+						-- left is the part that gets appended to the replacement to make
+						-- the virtual path. So a pattern like "src/**.h" matching the
+						-- file src/include/hello.h, I want to trim out the src/ part,
+						-- leaving include/hello.h.
 
-					i = pattern:find("*", 1, true) or (pattern:len() + 1)
+						-- Find out where the wildcard appears in the match. If there is
+						-- no wildcard, the match includes the entire pattern
 
-					-- Trim, taking care to keep the actual file name intact.
+						i = pattern:find("*", 1, true) or (pattern:len() + 1)
 
-					local leaf
-					if i < max then
-						leaf = abspath:sub(i)
-					else
-						leaf = fname
-					end
+						-- Trim, taking care to keep the actual file name intact.
 
-					if leaf:startswith("/") then
-						leaf = leaf:sub(2)
-					end
+						local leaf
+						if i < max then
+							leaf = abspath:sub(i)
+						else
+							leaf = fname
+						end
 
-					-- check for (and remove) stars in the replacement pattern.
-					-- If there are none, then trim all path info from the leaf
-					-- and use just the filename in the replacement (stars should
-					-- really only appear at the end; I'm cheating here)
+						if leaf:startswith("/") then
+							leaf = leaf:sub(2)
+						end
 
-					local stem = ""
-					if replacement:len() > 0 then
-						stem, stars = replacement:gsub("%*", "")
-						if stars == 0 then
+						-- check for (and remove) stars in the replacement pattern.
+						-- If there are none, then trim all path info from the leaf
+						-- and use just the filename in the replacement (stars should
+						-- really only appear at the end; I'm cheating here)
+
+						local stem = ""
+						if replacement:len() > 0 then
+							stem, stars = replacement:gsub("%*", "")
+							if stars == 0 then
+								leaf = path.getname(leaf)
+							end
+						else
 							leaf = path.getname(leaf)
 						end
-					else
-						leaf = path.getname(leaf)
+
+						vpath = path.join(stem, leaf)
+						return vpath
 					end
-
-					vpath = path.join(stem, leaf)
-
 				end
 			end
 		end
@@ -497,19 +465,22 @@
 			return true
 		end
 
-		for pattern, replacements in pairs(prj.configmap or {}) do
-			if type(pattern) ~= "table" then
-				pattern = { pattern }
-			end
+		local maps = prj.configmap or {}
+		for mi = 1, #maps do
+			for pattern, replacements in pairs(maps[mi]) do
+				if type(pattern) ~= "table" then
+					pattern = { pattern }
+				end
 
-			-- does this pattern match any part of the pair? If so,
-			-- replace it with the corresponding values
-			for i = 1, #pairing do
-				if testpattern(pattern, pairing, i) then
-					if #pattern == 1 and #replacements == 1 then
-						pairing[i] = replacements[1]
-					else
-						pairing = { replacements[1], replacements[2] }
+				-- does this pattern match any part of the pair? If so,
+				-- replace it with the corresponding values
+				for i = 1, #pairing do
+					if testpattern(pattern, pairing, i) then
+						if #pattern == 1 and #replacements == 1 then
+							pairing[i] = replacements[1]
+						else
+							pairing = { replacements[1], replacements[2] }
+						end
 					end
 				end
 			end

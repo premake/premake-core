@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -17,20 +17,15 @@
 		"base/os.lua",
 		"base/io.lua",
 		"base/tree.lua",
-
 		"base/globals.lua",
 
 		-- configuration data
+		"base/field.lua",
 		"base/criteria.lua",
 		"base/detoken.lua",
 		"base/configset.lua",
 		"base/context.lua",
-
-		-- project objects
-		"base/project.lua",
-		"base/solution.lua",
-		"base/config.lua",
-		"base/fileconfig.lua",
+		"base/container.lua",
 
 		-- runtime switches
 		"base/option.lua",
@@ -38,10 +33,19 @@
 
 		-- project script setup
 		"base/api.lua",
-		"_premake_init.lua",
+
+		-- project objects
+		"base/global.lua",
+		"base/solution.lua",
+		"base/group.lua",
+		"base/project.lua",
+		"base/config.lua",
+		"base/fileconfig.lua",
+		"base/rule.lua",
 
 		-- project script processing
 		"base/oven.lua",
+		"base/validation.lua",
 		"base/premake.lua",
 		"base/help.lua",
 
@@ -71,9 +75,14 @@
 		"actions/vstudio/vs2010_vcxproj.lua",
 		"actions/vstudio/vs2010_vcxproj_user.lua",
 		"actions/vstudio/vs2010_vcxproj_filters.lua",
+		"actions/vstudio/vs2010_rules_props.lua",
+		"actions/vstudio/vs2010_rules_targets.lua",
+		"actions/vstudio/vs2010_rules_xml.lua",
 		"actions/vstudio/vs2012.lua",
 		"actions/vstudio/vs2013.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",
+
+		"_premake_init.lua",
 	}

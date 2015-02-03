@@ -16,7 +16,7 @@
 	local sln, prj
 
 	function suite.setup()
-		io.esc = premake.vstudio.vs2010.esc
+		premake.escaper(premake.vstudio.vs2010.esc)
 		sln, prj = test.createsolution()
 	end
 
@@ -26,16 +26,27 @@
 	end
 
 
- --
--- Check the basic element structure with default settings.
+--
+-- Should only write the element if it is needed.
 --
 
-	function suite.defaultSettings()
+	function suite.excluded_onNoResourceFiles()
 		prepare()
-		test.capture [[
-		<ResourceCompile>
-		</ResourceCompile>
-		]]
+		test.isemptycapture()
+	end
+
+	function suite.excluded_onNoSettings()
+		files { "hello.rc" }
+		prepare()
+		test.isemptycapture()
+	end
+
+	function suite.skips_onXbox360()
+		files { "hello.rc" }
+		defines { "DEBUG" }
+		system "Xbox360"
+		prepare()
+		test.isemptycapture()
 	end
 
 
@@ -44,12 +55,13 @@
 --
 
 	function suite.preprocessorDefinitions_onDefines()
+		files { "hello.rc" }
 		defines { "DEBUG" }
 		resdefines { "RESOURCES" }
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<PreprocessorDefinitions>DEBUG;RESOURCES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+<ResourceCompile>
+	<PreprocessorDefinitions>DEBUG;RESOURCES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
 	end
 
@@ -59,24 +71,14 @@
 --
 
 	function suite.additionalIncludeDirs_onIncludeDirs()
+		files { "hello.rc" }
 		includedirs { "include/lua" }
 		resincludedirs { "include/zlib" }
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+<ResourceCompile>
+	<AdditionalIncludeDirectories>include\lua;include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 		]]
-	end
-
-
---
--- Xbox 360 doesn't use the resource compiler.
---
-
-	function suite.skips_onXbox360()
-		system "Xbox360"
-		prepare()
-		test.isemptycapture()
 	end
 
 
@@ -85,10 +87,26 @@
 --
 
 	function suite.preprocessorDefinitions_onDefinesEscaping()
+		files { "hello.rc" }
 		defines { 'VERSION_STRING="1.0.0 (testing)"' }
 		prepare()
 		test.capture [[
-		<ResourceCompile>
-			<PreprocessorDefinitions>VERSION_STRING=\"1.0.0 (testing)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+<ResourceCompile>
+	<PreprocessorDefinitions>VERSION_STRING=\"1.0.0 (testing)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+	end
+
+
+--
+-- Test locale conversion to culture codes.
+--
+
+	function suite.culture_en_US()
+		files { "hello.rc" }
+		locale "en-US"
+		prepare()
+		test.capture [[
+<ResourceCompile>
+	<Culture>0x0409</Culture>
 		]]
 	end

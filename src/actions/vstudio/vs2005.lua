@@ -1,12 +1,14 @@
 --
 -- actions/vstudio/vs2005.lua
 -- Add support for the  Visual Studio 2005 project formats.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vs2005 = {}
-	local vs2005 = premake.vstudio.vs2005
-	local vstudio = premake.vstudio
+
+	local p = premake
+	local vs2005 = p.vstudio.vs2005
+	local vstudio = p.vstudio
 
 
 ---
@@ -14,16 +16,18 @@
 ---
 
 	function vs2005.generateSolution(sln)
-		io.eol = "\r\n"
-		io.esc = vs2005.esc
+		p.indent("\t")
+		p.eol("\r\n")
+		p.escaper(vs2005.esc)
 
 		premake.generate(sln, ".sln", vstudio.sln2005.generate)
 	end
 
 
 	function vs2005.generateProject(prj)
-		io.eol = "\r\n"
-		io.esc = vs2005.esc
+		p.indent("  ")
+		p.eol("\r\n")
+		p.escaper(vs2005.esc)
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
@@ -80,12 +84,12 @@
 
 		-- Solution and project generation logic
 
-		onsolution = vstudio.vs2005.generateSolution,
-		onproject  = vstudio.vs2005.generateProject,
+		onSolution = vstudio.vs2005.generateSolution,
+		onProject  = vstudio.vs2005.generateProject,
 
-		oncleansolution = vstudio.cleanSolution,
-		oncleanproject  = vstudio.cleanProject,
-		oncleantarget   = vstudio.cleanTarget,
+		onCleanSolution = vstudio.cleanSolution,
+		onCleanProject  = vstudio.cleanProject,
+		onCleanTarget   = vstudio.cleanTarget,
 
 		-- This stuff is specific to the Visual Studio exporters
 

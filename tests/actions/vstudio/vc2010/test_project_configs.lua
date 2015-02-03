@@ -1,11 +1,10 @@
 --
 -- tests/actions/vstudio/vc2010/test_project_configs.lua
 -- Test the Visual Studio 2010 project configurations item group.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vc2010_project_configs = { }
-	local suite = T.vstudio_vc2010_project_configs
+	local suite = test.declare("vstudio_vc2010_project_configs")
 	local vc2010 = premake.vstudio.vc2010
 
 
@@ -55,9 +54,9 @@
 
 	function suite.allArchitecturesListed_onMultipleArchitectures()
 		platforms { "32b", "64b" }
-		configuration "32b"
+		filter "platforms:32b"
 			architecture "x32"
-		configuration "64b"
+		filter "platforms:64b"
 			architecture "x64"
 		prepare()
 		test.capture [[

@@ -43,6 +43,6 @@
 --
 
 	function suite.expandsWildcards()
-		testapi "./*"
-		test.istrue(table.contains(api.scope.project.testapi, os.getcwd() .. "/api"))
+		testapi (_TESTS_DIR .. "/*")
+		test.istrue(table.contains(api.scope.project.testapi, _TESTS_DIR .. "/api"))
 	end

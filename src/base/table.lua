@@ -168,13 +168,13 @@
 --
 
 	function table.indexof(tbl, obj)
-		local count = #tbl
-		for i = 1, count do
-			if tbl[i] == obj then
-				return i
+		for k, v in pairs(tbl) do
+			if v == obj then
+				return k
 			end
 		end
 	end
+
 
 
 ---

@@ -27,15 +27,15 @@ int os_getversion(lua_State* L)
 	lua_newtable(L);
 
 	lua_pushstring(L, "majorversion");
-	lua_pushnumber(L, info.majorversion);
+	lua_pushnumber(L, (lua_Number)info.majorversion);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "minorversion");
-	lua_pushnumber(L, info.minorversion);
+	lua_pushnumber(L, (lua_Number)info.minorversion);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "revision");
-	lua_pushnumber(L, info.revision);
+	lua_pushnumber(L, (lua_Number)info.revision);
 	lua_settable(L, -3);
 
 	lua_pushstring(L, "description");
@@ -146,6 +146,17 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Windows 8";
 		}
 	}
+	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 3 )
+	{
+		if (versionInfo.wProductType != VER_NT_WORKSTATION)
+		{
+			info->description = "Windows Server 2012 R2";
+		}
+		else
+		{
+			info->description = "Windows 8.1";
+		}
+	}
 	else
 	{
 		info->description = "Windows";
@@ -208,6 +219,18 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Mac OS X Mountain Lion";
 			info->majorversion = 10;
 			info->minorversion = 8;
+			info->revision = kern_minor;
+			break;
+		case 13:
+			info->description = "Mac OS X Mavericks";
+			info->majorversion = 10;
+			info->minorversion = 9;
+			info->revision = kern_minor;
+			break;
+		case 14:
+			info->description = "Mac OS X Yosemite";
+			info->majorversion = 10;
+			info->minorversion = 10;
 			info->revision = kern_minor;
 			break;
 		default:

@@ -4,9 +4,12 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
-	premake.config = {}
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.config = {}
+
+	local project = p.project
+	local config = p.config
 
 
 ---
@@ -91,8 +94,8 @@
 
 			-- Can't link managed and unmanaged projects
 
-			local cfgManaged = project.isdotnet(cfg.project) or (cfg.flags.Managed ~= nil)
-			local tgtManaged = project.isdotnet(target.project) or (target.flags.Managed ~= nil)
+			local cfgManaged = project.isdotnet(cfg.project) or (cfg.clr ~= p.OFF)
+			local tgtManaged = project.isdotnet(target.project) or (target.clr ~= p.OFF)
 			return (cfgManaged == tgtManaged)
 
 		end
@@ -111,7 +114,7 @@
 
 		-- Unmanaged projects can never link managed assemblies
 
-		if isManaged and not cfg.flags.Managed then
+		if isManaged and cfg.clr == p.OFF then
 			return false
 		end
 
@@ -284,7 +287,8 @@
 		-- Iterate all of the links listed in the configuration and boil
 		-- them down to the requested data set
 
-		table.foreachi(cfg.links, function(link)
+		for i = 1, #cfg.links do
+			local link = cfg.links[i]
 			local item
 
 			-- Sort the links into "sibling" (is another project in this same
@@ -300,15 +304,9 @@
 				if prjcfg and (kind == "dependencies" or config.canLink(cfg, prjcfg)) then
 
 					-- Yes; does the caller want the whole project config or only part?
-
 					if part == "object" then
 						item = prjcfg
-
-					-- Just some part of the path. Grab the whole thing now, split it up
-					-- below. Skip external projects, because I have no way to know their
-					-- target file (without parsing the project, which I'm not doing)
-
-					elseif not prj.external then
+					else
 						item = project.getrelative(cfg.project, prjcfg.linktarget.fullpath)
 					end
 
@@ -348,7 +346,7 @@
 				table.insert(result, item)
 			end
 
-		end)
+		end
 
 		return result
 	end
@@ -391,6 +389,22 @@
 
 	function config.gettargetinfo(cfg)
 		return config.buildtargetinfo(cfg, cfg.kind, "target")
+	end
+
+
+
+--
+-- Determine if a configuration contains one or more resource files.
+--
+
+	function config.hasResourceFiles(self)
+		local files = self.files
+		for i = 1, #files do
+			if path.isresourcefile(files[i]) then
+				return true
+			end
+		end
+		return false
 	end
 
 
@@ -443,7 +457,7 @@
 --
 
 	function config.isOptimizedBuild(cfg)
-		return cfg.optimize ~= nil and cfg.optimize ~= "Off" and cfg.optimize ~= "Debug"
+		return cfg.optimize ~= nil and cfg.optimize ~= p.OFF and cfg.optimize ~= "Debug"
 	end
 
 
@@ -539,4 +553,36 @@
 		end
 
 		return flags
+	end
+
+
+---
+-- Returns both a project configuration and a file configuration from a
+-- configuration argument that could be either.
+--
+-- @param cfg
+--    A project or file configuration object.
+-- @return
+--    Both a project configuration and a file configuration. If the input
+--    argument is a project configuration, the file configuration value is
+--    returned as nil.
+---
+
+	function config.normalize(cfg)
+		if cfg and cfg.config ~= nil then
+			return cfg.config, cfg
+		else
+			return cfg, nil
+		end
+	end
+
+
+
+---
+-- Return the appropriate toolset adapter for the provided configuration,
+-- or nil if no toolset is specified.
+---
+
+	function config.toolset(cfg)
+		return premake.tools[cfg.toolset]
 	end

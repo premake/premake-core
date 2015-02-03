@@ -39,6 +39,19 @@
 
 
 --
+-- If the Unsafe flag has been set, it should be specified.
+--
+
+	function suite.onUnsafe()
+		clr "Unsafe"
+		prepare()
+		test.capture [[
+  FLAGS = /unsafe /noconfig
+  		]]
+  	end
+
+
+--
 -- If an application icon has been set, it should be specified.
 --
 

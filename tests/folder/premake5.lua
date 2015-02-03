@@ -1,0 +1,1 @@
+premake.out("ok")

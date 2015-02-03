@@ -20,8 +20,8 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		vc2010.filters_uniqueidentifiers(prj)
+		prj = test.getproject(sln)
+		vc2010.uniqueIdentifiers(prj)
 	end
 
 
@@ -44,11 +44,11 @@
 		files { "src/hello.c", "src/goodbye.c", "so_long.h" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Filter Include="src">
-			<UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
+<ItemGroup>
+	<Filter Include="src">
+		<UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+	</Filter>
+</ItemGroup>
 		]]
 	end
 
@@ -61,14 +61,14 @@
 		files { "src/hello.c", "src/departures/goodbye.c", "so_long.h" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Filter Include="src">
-			<UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="src\departures">
-			<UniqueIdentifier>{BB36ED8F-A704-E195-9098-51BC7C05BDFA}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
+<ItemGroup>
+	<Filter Include="src">
+		<UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="src\departures">
+		<UniqueIdentifier>{BB36ED8F-A704-E195-9098-51BC7C05BDFA}</UniqueIdentifier>
+	</Filter>
+</ItemGroup>
 		]]
 	end
 
@@ -82,11 +82,11 @@
 		vpaths { ["Source Files"] = "**.c" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Filter Include="Source Files">
-			<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
+<ItemGroup>
+	<Filter Include="Source Files">
+		<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
+	</Filter>
+</ItemGroup>
 		]]
 	end
 
@@ -95,13 +95,13 @@
 		vpaths { ["Source Files"] = "*.c", ["Header Files"] = "*.h" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Filter Include="Header Files">
-			<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="Source Files">
-			<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
+<ItemGroup>
+	<Filter Include="Header Files">
+		<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="Source Files">
+		<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
+	</Filter>
+</ItemGroup>
 		]]
 	end

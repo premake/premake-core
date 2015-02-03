@@ -1,15 +1,18 @@
 --
 -- make_cpp.lua
 -- Generate a C/C++ project makefile.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.make.cpp = {}
-	local make = premake.make
-	local cpp = premake.make.cpp
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
+	local p = premake
+
+	p.make.cpp = {}
+
+	local make = p.make
+	local cpp = p.make.cpp
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
 
 
 ---
@@ -41,6 +44,7 @@
 	}
 
 	function make.cpp.generate(prj)
+		premake.eol("\n")
 		premake.callarray(make, cpp.elements.makefile, prj)
 	end
 
@@ -97,7 +101,7 @@
 	function cpp.buildcommand(prj, objext, node)
 		local iscfile = node and path.iscfile(node.abspath) or false
 		local flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
-		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF $(@:%%.%s=%%.d) -c "$<"', flags, objext)
+		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
 	end
 
 
@@ -153,9 +157,16 @@
 				_x('ifeq ($(config),%s)', cfg.shortname)
 
 				local output = project.getrelative(prj, filecfg.buildoutputs[1])
-				_x('%s: %s', output, filecfg.relpath)
+				local dependencies = filecfg.relpath
+				if filecfg.buildinputs and #filecfg.buildinputs > 0 then
+					local inputs = project.getrelative(prj, filecfg.buildinputs)
+					dependencies = dependencies .. " " .. table.concat(p.esc(inputs), " ")
+				end
+				_p('%s: %s', output, dependencies)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
-				for _, cmd in ipairs(filecfg.buildcommands) do
+
+				local cmds = os.translateCommands(filecfg.buildcommands)
+				for _, cmd in ipairs(cmds) do
 					_p('\t$(SILENT) %s', cmd)
 				end
 				_p('endif')
@@ -171,10 +182,10 @@
 	function make.cppObjects(prj)
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
-		local root = { objects={}, resources={} }
+		local root = { objects={}, resources={}, customfiles={} }
 		local configs = {}
 		for cfg in project.eachconfig(prj) do
-			configs[cfg] = { objects={}, resources={} }
+			configs[cfg] = { objects={}, resources={}, customfiles={} }
 		end
 
 		-- now walk the list of files in the project
@@ -234,6 +245,8 @@
 							local output = project.getrelative(prj, filecfg.buildoutputs[1])
 							if path.isobjectfile(output) then
 								table.insert(configs[cfg].objects, output)
+							else
+								table.insert(configs[cfg].customfiles, output)
 							end
 						end
 					end
@@ -253,17 +266,21 @@
 
 		listobjects('OBJECTS :=', root.objects, 'o')
 		listobjects('RESOURCES :=', root.resources, 'res')
+		listobjects('CUSTOMFILES :=', root.customfiles)
 
 		-- ...then individual configurations, as needed
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
-			if #files.objects > 0 or #files.resources > 0 then
+			if #files.objects > 0 or #files.resources > 0 or #files.customfiles > 0 then
 				_x('ifeq ($(config),%s)', cfg.shortname)
 				if #files.objects > 0 then
 					listobjects('  OBJECTS +=', files.objects)
 				end
 				if #files.resources > 0 then
 					listobjects('  RESOURCES +=', files.resources)
+				end
+				if #files.customfiles > 0 then
+					listobjects('  CUSTOMFILES +=', files.customfiles)
 				end
 				_p('endif')
 				_p('')
@@ -279,7 +296,7 @@
 ---------------------------------------------------------------------------
 
 	function make.cFlags(cfg, toolset)
-		_p('  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
+		_p('  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
 	end
 
 
@@ -331,7 +348,7 @@
 
 
 	function make.cppTargetRules(prj)
-		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
+		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES) ${CUSTOMFILES}')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
@@ -389,7 +406,8 @@
 
 
 	function make.ldFlags(cfg, toolset)
-		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(table.join(toolset.getldflags(cfg), cfg.linkoptions)))
+		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getldflags(cfg), cfg.linkoptions)
+		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(flags))
 	end
 
 
@@ -413,7 +431,7 @@
 			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
 
 			local cc = iif(cfg.language == "C", "CC", "CXX")
-			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
+			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)', cc)
 		end
 	end
 
@@ -451,11 +469,12 @@
 
 	function make.pchRules(prj)
 		_p('ifneq (,$(PCH))')
+		_p('$(OBJECTS): $(GCH) $(PCH)')
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
 
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
-		_p('\t$(SILENT) %s -MMD -MP $(DEFINES) $(INCLUDES) -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
 
 		_p('endif')
 		_p('')

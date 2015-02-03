@@ -1,7 +1,7 @@
 --
 -- path.lua
 -- Path manipulation functions.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 
@@ -10,7 +10,7 @@
 -- isn't already present, and adjusts quotes as necessary.
 --
 
-	function path.appendextension(p, ext)
+	function path.appendExtension(p, ext)
 		-- if the extension is nil or empty, do nothing
 		if not ext or ext == "" then
 			return p
@@ -35,6 +35,9 @@
 
 		return p
 	end
+
+	path.appendextension = path.appendExtension
+
 
 
 --
@@ -164,6 +167,16 @@
 	function path.isframework(fname)
 		return path.hasextension(fname, ".framework")
 	end
+
+
+---
+-- Is this a type of file that can be linked?
+---
+
+	function path.islinkable(fname)
+		return path.hasextension(fname, { ".o", ".obj", ".a", ".lib", ".so" })
+	end
+
 
 
 --

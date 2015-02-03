@@ -32,9 +32,9 @@
 	function suite.looksGood_onDefaultSettings()
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
+<Tool
+	Name="VCResourceCompilerTool"
+/>
 		]]
 	end
 
@@ -48,9 +48,25 @@
 		resincludedirs { "../res/include" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\include;..\res\include"
-			/>
+<Tool
+	Name="VCResourceCompilerTool"
+	AdditionalIncludeDirectories="..\include;..\res\include"
+/>
+		]]
+	end
+
+
+--
+-- Test locale conversion to culture codes.
+--
+
+	function suite.culture_en_NZ()
+		locale "en-NZ"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCResourceCompilerTool"
+	Culture="5129"
+/>
 		]]
 	end

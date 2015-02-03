@@ -1,7 +1,7 @@
 --
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
 	premake.tools.gcc = {}
@@ -38,9 +38,11 @@
 			x64 = "-m64",
 		},
 		flags = {
-			FatalWarnings = "-Werror",
+			FatalCompileWarnings = "-Werror",
 			NoFramePointer = "-fomit-frame-pointer",
-			Symbols = "-g"
+			ShadowedVariables = "-Wshadow",
+			Symbols = "-g",
+			UndefinedIdentifiers = "-Wundef",
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
@@ -51,6 +53,12 @@
 				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
 			end,
 		},
+		strictaliasing = {
+			Off = "-fno-strict-aliasing",
+			Level1 = { "-fstrict-aliasing", "-Wstrict-aliasing=1" },
+			Level2 = { "-fstrict-aliasing", "-Wstrict-aliasing=2" },
+			Level3 = { "-fstrict-aliasing", "-Wstrict-aliasing=3" },
+		},
 		optimize = {
 			Off = "-O0",
 			On = "-O2",
@@ -60,6 +68,7 @@
 			Speed = "-O3",
 		},
 		vectorextensions = {
+			AVX = "-mavx",
 			SSE = "-msse",
 			SSE2 = "-msse2",
 		},
@@ -148,8 +157,8 @@
 
 	gcc.ldflags = {
 		architecture = {
-			x32 = { "-m32", "-L/usr/lib32" },
-			x64 = { "-m64", "-L/usr/lib64" },
+			x32 = "-m32",
+			x64 = "-m64",
 		},
 		flags = {
 			_Symbols = function(cfg)
@@ -170,12 +179,33 @@
 			end,
 		},
 		system = {
-			wii = { "-L$(LIBOGC_LIB)", "$(MACHDEP)" },
+			wii = "$(MACHDEP)",
 		}
 	}
 
 	function gcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.ldflags)
+		return flags
+	end
+
+
+
+--
+-- Return a list of decorated additional libraries directories.
+--
+
+	gcc.libraryDirectories = {
+		architecture = {
+			x32 = "-L/usr/lib32",
+			x64 = "-L/usr/lib64",
+		},
+		system = {
+			wii = "-L$(LIBOGC_LIB)",
+		}
+	}
+
+	function gcc.getLibraryDirectories(cfg)
+		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
@@ -185,6 +215,7 @@
 
 		return flags
 	end
+
 
 
 --
@@ -211,7 +242,7 @@
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				table.insert(result, "-l" .. path.getbasename(link))
+				table.insert(result, "-l" .. path.getname(link))
 			end
 		end
 
@@ -254,11 +285,6 @@
 --
 
 	gcc.tools = {
-		ps3 = {
-			cc = "ppu-lv2-g++",
-			cxx = "ppu-lv2-g++",
-			ar = "ppu-lv2-ar",
-		},
 	}
 
 	function gcc.gettoolname(cfg, tool)

@@ -16,7 +16,7 @@ int main(int argc, const char** argv)
 
 	z = premake_init(L);
 	if (z == OKAY) {
-		z = premake_execute(L, argc, argv);
+		z = premake_execute(L, argc, argv, "src/_premake_main.lua");
 	}
 
 	lua_close(L);

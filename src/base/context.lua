@@ -1,8 +1,5 @@
 --
--- context.lua
---
--- DO NOT USE THIS YET! I am just getting started here; please wait until
--- I've had a chance to build it out more before using.
+-- base/context.lua
 --
 -- Provide a context for pulling out values from a configuration set. Each
 -- context has an associated list of terms which constrain the values that
@@ -10,12 +7,19 @@
 --
 -- The context also provides caching for the values returned from the set.
 --
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- TODO: I may roll this functionality up into the container API at some
+-- point. If you find yourself using or extending this code for your own
+-- work give me a shout before you go too far with it so we can coordinate.
+--
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	premake.context = {}
-	local context = premake.context
-	local configset = premake.configset
+	local p = premake
+
+	p.context = {}
+
+	local context = p.context
+	local configset = p.configset
 
 
 --
@@ -33,11 +37,10 @@
 --    A new context object.
 --
 
-	function context.new(cfgset, environ, filename)
+	function context.new(cfgset, environ)
 		local ctx = {}
 		ctx._cfgset = cfgset
 		ctx.environ = environ or {}
-		ctx._filename = { filename } or {}
 		ctx.terms = {}
 
 		-- This base directory is used when expanding path tokens encountered
@@ -56,24 +59,29 @@
 	end
 
 
---
--- Add additional filtering terms to an existing context.
+
+---
+-- Add a new key-value pair to refine the context filtering.
 --
 -- @param ctx
---    The context to contain the new terms.
--- @param terms
---    One or more new terms to add to the context. May be nil.
---
+--    The context to be filtered.
+-- @param key
+--    The new (or an existing) key value.
+-- @param value
+--    The filtering value for the key.
+---
 
-	function context.addterms(ctx, terms)
-		if terms then
-			terms = table.flatten({terms})
-			for _, term in ipairs(terms) do
-				-- make future tests case-insensitive
-				table.insert(ctx.terms, term:lower())
+	function context.addFilter(ctx, key, value)
+		if type(value) == "table" then
+			for i = 1, #value do
+				value[i] = value[i]:lower()
 			end
+		elseif value then
+			value = value:lower()
 		end
+		ctx.terms[key:lower()] = value
 	end
+
 
 
 --
@@ -85,8 +93,8 @@
 --    The context containing the terms to copy.
 --
 
-	function context.copyterms(ctx, src)
-		ctx.terms = table.arraycopy(src.terms)
+	function context.copyFilters(ctx, src)
+		ctx.terms = table.deepcopy(src.terms)
 	end
 
 
@@ -119,7 +127,7 @@
 --
 
 	function context.compile(ctx)
-		ctx._cfgset = configset.compile(ctx._cfgset, ctx.terms, ctx._filename[1])
+		ctx._cfgset = configset.compile(ctx._cfgset, ctx.terms)
 	end
 
 
@@ -152,14 +160,23 @@
 --
 
 	function context.fetchvalue(ctx, key)
-		local value = configset.fetchvalue(ctx._cfgset, key, ctx.terms, ctx._filename[1])
+		-- The underlying configuration set will only hold registered fields.
+		-- If the requested key doesn't have a corresponding field, it is just
+		-- a regular value to be stored and fetched from the table.
+
+		local field = p.field.get(key)
+		if not field then
+			return rawget(ctx, key)
+		end
+
+		-- If there is a matching field, then go fetch the aggregated value
+		-- from my configuration set, and then cache it future lookups.
+
+		local value = configset.fetch(ctx._cfgset, field, ctx.terms)
 		if value then
 			-- do I need to expand tokens?
-			local field = premake.fields[key]
 			if field and field.tokens then
-				local kind = field.kind
-				local ispath = kind:startswith("path") or kind:startswith("file") or kind:startswith("mixed")
-				value = premake.detoken.expand(value, ctx.environ, ispath, ctx._basedir)
+				value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
 			end
 
 			-- store the result for later lookups

@@ -20,7 +20,8 @@
 	end
 
 	local function prepare()
-		sln = premake.oven.bakeSolution(sln)
+		premake.oven.bake()
+		sln = premake.global.getSolution(sln.name)
 		make.projectrules(sln)
 	end
 

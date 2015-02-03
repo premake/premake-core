@@ -109,9 +109,7 @@
 				prjpath = prjpath:gsub("$%((.-)%)", "%%%1%%")
 
 				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
-				if _ACTION < "vs2012" then
-					sln2005.projectdependencies(prj)
-				end
+				sln2005.projectdependencies(prj)
 				_p('EndProject')
 			end,
 
@@ -172,9 +170,22 @@
 
 		-- Now I can output the sorted list of solution configuration descriptors
 
+		-- Visual Studio assumes the first configurations as the defaults.
+		if sln.defaultplatform then
+			_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+			table.foreachi(sorted, function (cfg)
+				if cfg.platform == sln.defaultplatform then
+					_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+				end
+			end)
+			_p(1,"EndGlobalSection")
+		end
+
 		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		table.foreachi(sorted, function (cfg)
-			_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+			if not sln.defaultplatform or cfg.platform ~= sln.defaultplatform then
+				_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+			end
 		end)
 		_p(1,"EndGlobalSection")
 
@@ -198,9 +209,9 @@
 					-- to closest available project configuration instead.
 
 					local prjCfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-					local excluded = (prjCfg == nil)
+					local excluded = (prjCfg == nil or prjCfg.flags.ExcludeFromBuild)
 
-					if excluded then
+					if prjCfg == nil then
 						prjCfg = project.findClosestMatch(prj, cfg.buildcfg, cfg.platform)
 					end
 

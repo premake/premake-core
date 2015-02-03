@@ -232,3 +232,24 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+
+--
+-- Check the handling of extra cleaning extensions.
+--
+
+	function suite.extensionsToDeleteOnClean()
+		cleanExtensions { ".temp1", ".temp2" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<LinkIncremental>true</LinkIncremental>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>.exe</TargetExt>
+		<ExtensionsToDeleteOnClean>*.temp1;*.temp2;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+	</PropertyGroup>
+		]]
+	end

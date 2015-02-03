@@ -33,9 +33,9 @@
 		files { "hello.c" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCManifestTool"
-			/>
+<Tool
+	Name="VCManifestTool"
+/>
 		]]
 	end
 
@@ -48,9 +48,9 @@
 		files { "hello.c", "project1.manifest", "goodbye.c", "project2.manifest" }
 		prepare()
 		test.capture [[
-			<Tool
-				Name="VCManifestTool"
-				AdditionalManifestFiles="project1.manifest;project2.manifest"
-			/>
+<Tool
+	Name="VCManifestTool"
+	AdditionalManifestFiles="project1.manifest;project2.manifest"
+/>
 		]]
 	end

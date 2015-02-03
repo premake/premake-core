@@ -5,6 +5,7 @@
 --
 
 	local suite = test.declare("vstudio_vc200x_configuration")
+	local vstudio = premake.vstudio
 	local vc200x = premake.vstudio.vc200x
 	local project = premake.project
 
@@ -22,7 +23,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug", (prj.platforms or sln.platforms or {})[1])
-		vc200x.configuration(cfg)
+		vc200x.configuration(cfg, vstudio.projectConfig(cfg))
 	end
 
 
@@ -34,13 +35,13 @@
 	function suite.defaultSettings()
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
-			ConfigurationType="1"
-			CharacterSet="2"
-			>
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="."
+	IntermediateDirectory="obj\Debug"
+	ConfigurationType="1"
+	CharacterSet="2"
+	>
 		]]
 	end
 
@@ -54,8 +55,8 @@
 		platforms { "x32" }
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
+<Configuration
+	Name="Debug|Win32"
 		]]
 	end
 
@@ -68,8 +69,8 @@
 		platforms { "x64" }
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|x64"
+<Configuration
+	Name="Debug|x64"
 		]]
 	end
 
@@ -82,9 +83,9 @@
 		targetdir("../bin")
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="..\bin"
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="..\bin"
 		]]
 	end
 
@@ -98,12 +99,12 @@
 		kind "Makefile"
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
-			ConfigurationType="0"
-			>
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="."
+	IntermediateDirectory="obj\Debug"
+	ConfigurationType="0"
+	>
 		]]
 	end
 
@@ -111,11 +112,11 @@
 		kind "None"
 		prepare()
 		test.capture [[
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="."
-			IntermediateDirectory="obj\Debug"
-			ConfigurationType="0"
-			>
+<Configuration
+	Name="Debug|Win32"
+	OutputDirectory="."
+	IntermediateDirectory="obj\Debug"
+	ConfigurationType="0"
+	>
 		]]
 	end

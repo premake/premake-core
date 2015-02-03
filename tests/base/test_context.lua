@@ -1,25 +1,25 @@
 --
 -- tests/base/test_context.lua
 -- Test suite for the configuration context API.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
-	T.context = {}
-	local suite = T.context
+	local suite = test.declare("context")
 
 	local context = premake.context
 	local configset = premake.configset
+	local field = premake.field
 
 
 --
 -- Setup and teardown
 --
 
-	local ctx, cfgset
+	local ctx, cset
 
 	function suite.setup()
-		cfgset = configset.new()
-		ctx = context.new(cfgset)
+		cset = configset.new()
+		ctx = context.new(cset)
 	end
 
 
@@ -38,7 +38,7 @@
 --
 
 	function suite.returnsConfigValue_onExistingValue()
-		cfgset.targetextension = ".so"
+		configset.store(cset, field.get("targetextension"), ".so")
 		test.isequal(".so", ctx.targetextension)
 	end
 
@@ -48,6 +48,6 @@
 --
 
 	function suite.doesExpandTokens()
-		cfgset.targetname = "MyProject%{1 + 1}"
+		configset.store(cset, field.get("targetname"), "MyProject%{1 + 1}")
 		test.isequal("MyProject2", ctx.targetname)
 	end

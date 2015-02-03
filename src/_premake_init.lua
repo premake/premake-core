@@ -3,36 +3,12 @@
 --
 -- Prepares the runtime environment for the add-ons and user project scripts.
 --
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
 	local api = premake.api
 
 	local DOC_URL = "See https://bitbucket.org/premake/premake-dev/wiki/"
-
-
------------------------------------------------------------------------------
---
--- Prepare the global environment.
---
------------------------------------------------------------------------------
-
-	-- Set the default module search paths. Modules will generally live in
-	-- a folder of the same name: ninja/ninja.lua. The search order is the
-	-- same as what is specified here.
-
-	local home = os.getenv("HOME") or os.getenv("USERPROFILE")
-
-	local packagePaths = {
-		path.join(home, ".premake/?/?.lua"),
-		"./modules/?/?.lua",
-		path.join(path.getdirectory(_PREMAKE_COMMAND), "modules/?/?.lua"),
-		path.join(home, "Library/Application Support/Premake/?/?.lua"),
-		"/usr/local/share/premake/?/?.lua",
-		"/usr/share/premake/?/?.lua",
-	}
-
-	package.path = table.concat(packagePaths, ";")
 
 
 -----------------------------------------------------------------------------
@@ -49,6 +25,17 @@
 			"universal",
 			"x32",
 			"x64",
+		},
+	}
+
+	api.register {
+		name = "atl",
+		scope = "config",
+		kind  = "string",
+		allowed = {
+			"Off",
+			"Dynamic",
+			"Static",
 		},
 	}
 
@@ -75,80 +62,136 @@
 		},
 	}
 
-	api.register {
-		name = "buildmessage",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
 
 	api.register {
 		name = "buildcommands",
-		scope = "config",
-		kind = "string",
-		list = true,
+		scope = { "config", "rule" },
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
+
+	api.alias("buildcommands", "buildCommands")
+
+
+	api.register {
+		name = "buildDependencies",
+		scope = { "rule" },
+		kind = "list:string",
+		tokens = true,
+		pathVars = true,
+	}
+
+
+	api.register {
+		name = "buildmessage",
+		scope = { "config", "rule" },
+		kind = "string",
+		tokens = true,
+		pathVars = true,
+	}
+
+	api.alias("buildmessage", "buildMessage")
+
 
 	api.register {
 		name = "buildoptions",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
+
 
 	api.register {
 		name = "buildoutputs",
-		scope = "config",
-		kind = "file",
-		list = true,
+		scope = { "config", "rule" },
+		kind = "list:path",
 		tokens = true,
+		pathVars = true,
+	}
+
+	api.alias("buildoutputs", "buildOutputs")
+
+
+	api.register {
+		name = "buildinputs",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
 		name = "buildrule",     -- DEPRECATED
 		scope = "config",
-		kind = "object",
+		kind = "table",
 		tokens = true,
 	}
 
 	api.register {
 		name = "cleancommands",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
+
+
+	api.register {
+		name = "cleanExtensions",
+		scope = "config",
+		kind = "list:string",
+	}
+
+
+	api.register {
+		name = "clr",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+			"Pure",
+			"Safe",
+			"Unsafe",
+		}
+	}
+
 
 	api.register {
 		name = "configmap",
+		scope = "project",
+		kind = "list:keyed:array:string",
+	}
+
+
+	api.register {
+		name = "configFile",
 		scope = "config",
-		kind = "array",
-		keyed = true,
+		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
 		name = "configurations",
 		scope = "project",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 	}
 
 	api.register {
 		name = "copylocal",
 		scope = "config",
-		kind = "mixed",
-		list = true,
+		kind = "list:mixed",
 		tokens = true,
 	}
 
 	api.register {
 		name = "debugargs",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -156,6 +199,7 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -163,14 +207,15 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
 		name = "debugenvs",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -183,37 +228,63 @@
 	}
 
 	api.register {
+		name = "defaultplatform",
+		scope = "project",
+		kind = "string",
+	}
+
+	api.register {
 		name = "defines",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
 
 	api.register {
 		name = "dependson",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
 
 	api.register {
 		name = "deploymentoptions",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
+
+
+	api.register {
+		name = "display",
+		scope = "rule",
+		kind = "string",
+	}
+
+
+	api.register {
+		name = "editAndContinue",
+		scope = "config",
+		kind = "boolean",
+	}
+
 
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
 	end
 
+
+	api.register {
+		name = "fileExtension",
+		scope = "rule",
+		kind = "string",
+	}
+
+
 	api.register {
 		name = "filename",
-		scope = "project",
+		scope = { "project", "rule" },
 		kind = "string",
 		tokens = true,
 	}
@@ -221,16 +292,14 @@
 	api.register {
 		name = "files",
 		scope = "config",
-		kind = "file",
-		list = true,
+		kind = "list:file",
 		tokens = true,
 	}
 
 	api.register {
 		name = "flags",
 		scope = "config",
-		kind  = "string",
-		list = true,
+		kind  = "list:string",
 		allowed = {
 			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
@@ -239,17 +308,19 @@
 			"EnableSSE2",          -- DEPRECATED
 			"ExcludeFromBuild",
 			"ExtraWarnings",       -- DEPRECATED
-			"FatalWarnings",
+			"FatalCompileWarnings",
+			"FatalLinkWarnings",
 			"FloatFast",           -- DEPRECATED
 			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
-			"Managed",
+			"Managed",             -- DEPRECATED
+			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
 			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoEditAndContinue",
+			"NoEditAndContinue",   -- DEPRECATED
 			"NoExceptions",
 			"NoFramePointer",
 			"NoImplicitLink",
@@ -269,14 +340,17 @@
 			"OptimizeSpeed",       -- DEPRECATED
 			"ReleaseRuntime",
 			"SEH",
+			"ShadowedVariables",
 			"StaticRuntime",
 			"Symbols",
+			"UndefinedIdentifiers",
 			"Unicode",
-			"Unsafe",
+			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
 		},
 		aliases = {
+			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
 			Optimise = 'Optimize',
 			OptimiseSize = 'OptimizeSize',
 			OptimiseSpeed = 'OptimizeSpeed',
@@ -297,32 +371,21 @@
 	api.register {
 		name = "forceincludes",
 		scope = "config",
-		kind = "mixed",
-		list = true,
+		kind = "list:mixed",
 		tokens = true,
 	}
 
 	api.register {
 		name = "forceusings",
 		scope = "config",
-		kind = "file",
-		list = true,
+		kind = "list:file",
 		tokens = true,
 	}
 
 	api.register {
 		name = "framework",
-		scope = "project",
+		scope = "config",
 		kind = "string",
-		allowed = {
-			"1.0",
-			"1.1",
-			"2.0",
-			"3.0",
-			"3.5",
-			"4.0",
-			"4.5",
-		},
 	}
 
 	api.register {
@@ -335,8 +398,7 @@
 	api.register {
 		name = "imageoptions",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
 
@@ -385,8 +447,7 @@
 	api.register {
 		name = "includedirs",
 		scope = "config",
-		kind = "directory",
-		list = true,
+		kind = "list:directory",
 		tokens = true,
 	}
 
@@ -401,6 +462,7 @@
 			"SharedLib",
 			"StaticLib",
 			"WindowedApp",
+			"Utility",
 		},
 	}
 
@@ -418,30 +480,34 @@
 	api.register {
 		name = "libdirs",
 		scope = "config",
-		kind = "directory",
-		list = true,
+		kind = "list:directory",
 		tokens = true,
 	}
 
 	api.register {
 		name = "linkoptions",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
 
 	api.register {
 		name = "links",
 		scope = "config",
-		kind = "mixed",
-		list = true,
+		kind = "list:mixed",
 		tokens = true,
 	}
 
 	api.register {
+		name = "locale",
+		scope = "config",
+		kind = "string",
+		tokens = false,
+	}
+
+	api.register {
 		name = "location",
-		scope = "project",
+		scope = { "project", "rule" },
 		kind = "path",
 		tokens = true,
 	}
@@ -449,8 +515,7 @@
 	api.register {
 		name = "makesettings",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
 
@@ -510,16 +575,15 @@
 	api.register {
 		name = "platforms",
 		scope = "project",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 	}
 
 	api.register {
 		name = "postbuildcommands",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -527,14 +591,15 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
 		name = "prebuildcommands",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -542,14 +607,15 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
 		name = "prelinkcommands",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -557,38 +623,48 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
+		pathVars = true,
+	}
+
+	api.register {
+		name = "propertyDefinition",
+		scope = "rule",
+		kind = "list:table",
 	}
 
 	api.register {
 		name = "rebuildcommands",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
 		name = "resdefines",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
 	}
 
 	api.register {
 		name = "resincludedirs",
 		scope = "config",
-		kind = "directory",
-		list = true,
+		kind = "list:directory",
 		tokens = true,
 	}
 
 	api.register {
 		name = "resoptions",
 		scope = "config",
-		kind = "string",
-		list = true,
+		kind = "list:string",
 		tokens = true,
+	}
+
+	api.register {
+		name = "rules",
+		scope = "project",
+		kind = "list:string",
 	}
 
 	api.register {
@@ -596,6 +672,18 @@
 		scope = "solution",
 		kind = "string",
 		tokens = true,
+	}
+
+	api.register {
+		name = "strictaliasing",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"Level1",
+			"Level2",
+			"Level3",
+		}
 	}
 
 	api.register {
@@ -608,7 +696,6 @@
 			"haiku",
 			"linux",
 			"macosx",
-			"ps3",
 			"solaris",
 			"wii",
 			"windows",
@@ -655,19 +742,18 @@
 		name = "toolset",
 		scope = "config",
 		kind = "string",
-		allowed = {
-			"clang",
-			"gcc",
-			"msc",
-			"snc",
-		},
+		allowed = function(value)
+			local key = value:lower()
+			if premake.tools[key] ~= nil then
+				return key
+			end
+		end,
 	}
 
  	api.register {
 		name = "usingdirs",
 		scope = "config",
-		kind = "directory",
-		list = true,
+		kind = "list:directory",
 		tokens = true,
 	}
 
@@ -699,6 +785,7 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"AVX",
 			"SSE",
 			"SSE2",
 		}
@@ -707,9 +794,7 @@
 	api.register {
 		name = "vpaths",
 		scope = "project",
-		kind = "path",
-		keyed = true,
-		list = true,
+		kind = "list:keyed:list:path",
 	}
 
 	api.register {
@@ -724,6 +809,7 @@
 	}
 
 
+
 -----------------------------------------------------------------------------
 --
 -- Handlers for deprecated fields and values.
@@ -732,7 +818,7 @@
 
 	-- 09 Apr 2013
 
-	api.deprecateField("buildrule", DOC_URL ..  "Custom_Build_Commands",
+	api.deprecateField("buildrule", nil,
 	function(value)
 		if value.description then
 			buildmessage(value.description)
@@ -741,16 +827,18 @@
 		buildoutputs(value.outputs)
 	end)
 
+
 	-- 17 Jun 2013
 
-	api.deprecateValue("flags", "Component", DOC_URL .. "buildaction",
+	api.deprecateValue("flags", "Component", nil,
 	function(value)
 		buildaction "Component"
 	end)
 
+
 	-- 26 Sep 2013
 
-	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, DOC_URL .. "vectorextensions",
+	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, nil,
 	function(value)
 		vectorextensions(value:sub(7))
 	end,
@@ -758,7 +846,8 @@
 		vectorextension "Default"
 	end)
 
-	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, DOC_URL ..  "floatingpoint",
+
+	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, nil,
 	function(value)
 		floatingpoint(value:sub(6))
 	end,
@@ -766,7 +855,8 @@
 		floatingpoint "Default"
 	end)
 
-	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, DOC_URL .. "nativewchar",
+
+	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, nil,
 	function(value)
 		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
 		nativewchar(map[value] or "Default")
@@ -775,7 +865,8 @@
 		nativewchar "Default"
 	end)
 
-	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, DOC_URL .. "optimize",
+
+	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, nil,
 	function(value)
 		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
 		optimize (map[value] or "Off")
@@ -784,7 +875,18 @@
 		optimize "Off"
 	end)
 
-	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, DOC_URL .. "warnings",
+
+	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
+	function(value)
+		local map = { Optimise = "On", OptimiseSize = "Size", OptimiseSpeed = "Speed" }
+		optimize (map[value] or "Off")
+	end,
+	function(value)
+		optimize "Off"
+	end)
+
+
+	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, nil,
 	function(value)
 		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
 		warnings (map[value] or "Default")
@@ -792,6 +894,36 @@
 	function(value)
 		warnings "Default"
 	end)
+
+
+	-- 10 Nov 2014
+
+	api.deprecateValue("flags", "Managed", nil,
+	function(value)
+		clr "On"
+	end,
+	function(value)
+		clr "Off"
+	end)
+
+
+	api.deprecateValue("flags", "NoEditAndContinue", nil,
+	function(value)
+		editAndContinue "Off"
+	end,
+	function(value)
+		editAndContinue "On"
+	end)
+
+
+	api.deprecateValue("flags", "Unsafe", nil,
+	function(value)
+		clr "Unsafe"
+	end,
+	function(value)
+		clr "On"
+	end)
+
 
 
 -----------------------------------------------------------------------------
@@ -825,6 +957,12 @@
 
 	newoption
 	{
+		trigger     = "fatal",
+		description = "Treat warnings from project scripts as errors"
+	}
+
+	newoption
+	{
 		trigger     = "file",
 		value       = "FILE",
 		description = "Read FILE as a Premake script; default is 'premake5.lua'"
@@ -834,6 +972,12 @@
 	{
 		trigger     = "help",
 		description = "Display this information"
+	}
+
+	newoption
+	{
+		trigger = "interactive",
+		description = "Interactive command prompt"
 	}
 
 	newoption
@@ -856,7 +1000,7 @@
 	newoption
 	{
 		trigger     = "scripts",
-		value       = "path",
+		value       = "PATH",
 		description = "Search for additional scripts on the given path"
 	}
 
@@ -881,46 +1025,46 @@
 --
 -----------------------------------------------------------------------------
 
+	clr "Off"
+	editAndContinue "On"
+
 	-- Setting a default language makes some validation easier later
 
 	language "C++"
 
 	-- Use Posix-style target naming by default, since it is the most common.
 
-	configuration { "SharedLib" }
+	filter { "kind:SharedLib" }
 		targetprefix "lib"
 		targetextension ".so"
 
-	configuration { "StaticLib" }
+	filter { "kind:StaticLib" }
 		targetprefix "lib"
 		targetextension ".a"
 
 	-- Add variations for other Posix-like systems.
 
-	configuration { "MacOSX", "SharedLib" }
+	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
-
-	configuration { "PS3", "ConsoleApp" }
-		targetextension ".elf"
 
 	-- Windows and friends.
 
-	configuration { "Windows or C#", "ConsoleApp or WindowedApp" }
+	filter { "system:Windows or language:C#", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	configuration { "Xbox360", "ConsoleApp or WindowedApp" }
+	filter { "system:Xbox360", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	configuration { "Windows or Xbox360", "SharedLib" }
+	filter { "system:Windows or Xbox360", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".lib"
 
-	configuration { "Windows or Xbox360", "StaticLib" }
+	filter { "system:Windows or Xbox360", "kind:StaticLib" }
 		targetprefix ""
 		targetextension ".lib"
 
-	configuration { "C#", "SharedLib" }
+	filter { "language:C#", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"

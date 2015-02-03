@@ -1,19 +1,20 @@
 --
 -- tests/base/test_validation.lua
 -- Verify the project information sanity checking.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-20124 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("premake_validation")
+
+	local p = premake
 
 
 --
 -- Setup
 --
 
-	local function verify()
-		ok, err = pcall(premake.validate)
-		return ok and not test.stderr()
+	local function validate()
+		return pcall(function() p.container.validate(p.api.rootContainer()) end)
 	end
 
 
@@ -27,9 +28,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-
-		test.istrue(pcall(premake.validate))
-		test.stderr()
+		test.istrue(validate())
 	end
 
 
@@ -42,8 +41,7 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 
 
@@ -60,8 +58,7 @@
 			uuid "D4110D7D-FB18-4A1C-A75B-CA432F4FE770"
 		project "MyProject2"
 			uuid "D4110D7D-FB18-4A1C-A75B-CA432F4FE770"
-
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 
 
@@ -74,8 +71,7 @@
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			language "C++"
-
-		test.isfalse(pcall(premake.validate))
+		test.isfalse(validate())
 	end
 
 
@@ -83,38 +79,16 @@
 -- Warn if a configuration value is set in the wrong scope.
 --
 
-	function suite.warns_onSolutionStringField_inProject()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-			language "C++"
-			startproject "MyProject"
-		premake.validate()
-		test.stderr("'startproject' on project")
-	end
-
 	function suite.warns_onSolutionStringField_inConfig()
 		solution "MySolution"
 			configurations { "Debug", "Release" }
+		filter "Debug"
+			startproject "MyProject"
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
-			startproject "MyProject"
-		premake.validate()
+		validate()
 		test.stderr("'startproject' on config")
-	end
-
-	function suite.warns_onSolutionStringField_onlyWarnOnce()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-			language "C++"
-			startproject "MyProject"
-		premake.validate()
-		test.notstderr("'startproject' on config")
 	end
 
 	function suite.warns_onProjectStringField_inConfig()
@@ -123,22 +97,10 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
+		filter "Debug"
 			location "MyProject"
-		premake.validate()
+		validate()
 		test.stderr("'location' on config")
-	end
-
-	function suite.warns_onProjectKeyedField_inConfig()
-		solution "MySolution"
-			configurations { "Debug", "Release" }
-		project "MyProject"
-			kind "ConsoleApp"
-			language "C++"
-		configuration "Debug"
-			vpaths { ["Headers"] = "**.h" }
-		premake.validate()
-		test.stderr("'vpaths' on config")
 	end
 
 	function suite.warns_onProjectListField_inConfig()
@@ -147,8 +109,22 @@
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
-		configuration "Debug"
+		filter "Debug"
 			configurations "Deployment"
-		premake.validate()
+		validate()
 		test.stderr("'configurations' on config")
 	end
+
+
+--
+-- If a rule is specified for inclusion, it must have been defined.
+--
+
+	function suite.fails_onNoSuchRule()
+		solution "MySolution"
+			configurations { "Debug", "Release" }
+		project "MyProject"
+			rules { "NoSuchRule" }
+		test.isfalse(validate())
+	end
+

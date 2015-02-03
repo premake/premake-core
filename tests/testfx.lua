@@ -1,7 +1,7 @@
 --
 -- tests/testfx.lua
 -- Automated test framework for Premake.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
 
@@ -10,6 +10,7 @@
 --
 
 	test = {}
+	test.suppressed = {}
 
 
 --
@@ -34,11 +35,10 @@
 --
 
 	function test.capture(expected)
-
-		local actual = io.captured() .. io.eol
+		local actual = premake.captured() .. premake.eol()
 
 		-- create line-by-line iterators for both values
-		local ait = actual:gfind("(.-)" .. io.eol)
+		local ait = actual:gfind("(.-)" .. premake.eol())
 		local eit = expected:gfind("(.-)\n")
 
 		-- compare each value line by line
@@ -66,9 +66,24 @@
 	end
 
 
-	function test.contains(value, actual)
-		if not table.contains(actual, value) then
-			test.fail("expected value %s not found", value)
+	function test.contains(expected, actual)
+		if type(expected) == "table" then
+			for i, v in ipairs(expected) do
+				test.contains(v, actual)
+			end
+		elseif not table.contains(actual, expected) then
+			test.fail("expected value %s not found", expected)
+		end
+	end
+
+
+	function test.excludes(expected, actual)
+		if type(expected) == "table" then
+			for i, v in ipairs(expected) do
+				test.excludes(v, actual)
+			end
+		elseif table.contains(actual, expected) then
+			test.fail("excluded value %s found", expected)
 		end
 	end
 
@@ -107,7 +122,7 @@
 
 
 	function test.isemptycapture()
-		local actual = io.captured()
+		local actual = premake.captured()
 		if actual ~= "" then
 			test.fail("expected empty capture, but was %s", actual);
 		end
@@ -217,6 +232,48 @@
 
 
 --
+-- Some helper functions
+--
+
+	function test.createsolution()
+		local sln = solution "MySolution"
+		configurations { "Debug", "Release" }
+
+		local prj = project "MyProject"
+		language "C++"
+		kind "ConsoleApp"
+
+		return sln, prj
+	end
+
+
+	function test.createproject(sln)
+		local n = #sln.projects + 1
+		if n == 1 then n = "" end
+
+		local prj = project ("MyProject" .. n)
+		language "C++"
+		kind "ConsoleApp"
+		return prj
+	end
+
+
+	function test.getproject(sln, i)
+		premake.oven.bake()
+		sln = premake.global.getSolution(sln.name)
+		return premake.solution.getproject(sln, i or 1)
+	end
+
+
+	function test.getconfig(prj, buildcfg, platform)
+		premake.oven.bake()
+		local sln = premake.global.getSolution(prj.solution.name)
+		prj = premake.solution.getproject(sln, prj.name)
+		return premake.project.getconfig(prj, buildcfg, platform)
+	end
+
+
+--
 -- Test stubs
 --
 
@@ -249,6 +306,7 @@
 -- Test execution function
 --
 	local _OS_host = _OS
+	local _OPTIONS_host = _OPTIONS
 
 	local function error_handler(err)
 		local msg = err
@@ -276,19 +334,18 @@
 
 	local function test_setup(suite, fn)
 		_ACTION = "test"
-		_ARGS = { }
-		_OPTIONS = { }
 		_OS = _OS_host
+
+		_OPTIONS = {}
+		setmetatable(_OPTIONS, getmetatable(_OPTIONS_host))
 
 		stderr_capture = nil
 
-		premake.solution.list = { }
-		premake.api.reset()
 		premake.clearWarnings()
-
-		io.indent = nil
-		io.eol = "\n"
-		io.esc = nil
+		premake.eol("\n")
+		premake.escaper(nil)
+		premake.indent("\t")
+		premake.api.reset()
 
 		-- reset captured I/O values
 		test.value_openedfilename = nil
@@ -305,7 +362,7 @@
 
 	local function test_run(suite, fn)
 		local result, err
-		io.capture(function()
+		premake.capture(function()
 			result, err = xpcall(fn, error_handler)
 		end)
 		return result, err
@@ -321,28 +378,52 @@
 	end
 
 
+
 	function test.declare(id)
 		if T[id] then
 			error("Duplicate test suite " .. id)
 		end
-		T[id] = {}
+		T[id] = {
+			_TESTS_DIR = _TESTS_DIR,
+			_SCRIPT_DIR = _SCRIPT_DIR,
+		}
 		return T[id]
 	end
+
+
+
+	function test.suppress(id)
+		if type(id) == "table" then
+			for i = 1, #id do
+				test.suppress(id[i])
+			end
+		else
+			test.suppressed[id] = true
+		end
+	end
+
 
 
 	function test.runall(suitename, testname)
 		test.print = print
 
-		print      = stub_print
-		io.open    = stub_io_open
-		io.output  = stub_io_output
+		local real_print = print
+		local real_open = io.open
+		local real_output = io.output
+
+		print = stub_print
+		io.open = stub_io_open
+		io.output = stub_io_output
 
 		local numpassed = 0
 		local numfailed = 0
-		local start_time = os.clock()
+
 
 		function runtest(suitename, suitetests, testname, testfunc)
-			if suitetests.setup ~= testfunc and suitetests.teardown ~= testfunc then
+			if suitetests.setup ~= testfunc and
+				suitetests.teardown ~= testfunc and
+				not test.suppressed[suitename .. "." .. testname]
+			then
 				local ok, err = test_setup(suitetests, testfunc)
 
 				if ok then
@@ -362,15 +443,24 @@
 			end
 		end
 
+
 		function runsuite(suitename, suitetests, testname)
-			if testname then
-				runtest(suitename, suitetests, testname, suitetests[testname])
-			else
-				for testname, testfunc in pairs(suitetests) do
-					runtest(suitename, suitetests, testname, testfunc)
+			if suitetests and not test.suppressed[suitename] then
+				_TESTS_DIR = suitetests._TESTS_DIR
+				_SCRIPT_DIR = suitetests._SCRIPT_DIR
+
+				if testname then
+					runtest(suitename, suitetests, testname, suitetests[testname])
+				else
+					for testname, testfunc in pairs(suitetests) do
+						if type(testfunc) == "function" then
+							runtest(suitename, suitetests, testname, testfunc)
+						end
+					end
 				end
 			end
 		end
+
 
 		if suitename then
 			runsuite(suitename, T[suitename], testname)
@@ -380,8 +470,10 @@
 			end
 		end
 
-        io.write('running time : ',  os.clock() - start_time,'\n')
-		print = test.print
+		print = real_print
+		io.open = real_open
+		io.output = real_output
+
 		return numpassed, numfailed
 	end
 

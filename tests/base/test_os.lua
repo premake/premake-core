@@ -1,10 +1,21 @@
 --
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("base_os")
+
+	local cwd
+
+	function suite.setup()
+		cwd = os.getcwd()
+		os.chdir(_TESTS_DIR)
+	end
+
+	function suite.teardown()
+		os.chdir(cwd)
+	end
 
 
 --
@@ -31,11 +42,22 @@
 --
 
 	function suite.isfile_ReturnsTrue_OnExistingFile()
-		test.istrue(os.isfile("premake5.lua"))
+		test.istrue(os.isfile("_tests.lua"))
 	end
 
 	function suite.isfile_ReturnsFalse_OnNonexistantFile()
 		test.isfalse(os.isfile("no_such_file.lua"))
+	end
+
+
+
+--
+-- os.matchdirs() tests
+--
+
+	function suite.matchdirs_skipsDottedDirs()
+		local result = os.matchdirs("*")
+		test.isfalse(table.contains(result, ".."))
 	end
 
 
@@ -82,6 +104,11 @@
 		test.istrue(table.contains(result, "folder/ok.lua"))
 	end
 
+	function suite.matchfiles_OnDottedFile()
+		local result = os.matchfiles("../.*")
+		test.istrue(table.contains(result, "../.hgignore"))
+	end
+
 
 
 --
@@ -89,24 +116,26 @@
 --
 
 	function suite.pathsearch_ReturnsNil_OnNotFound()
-		test.istrue( os.pathsearch("nosuchfile", "aaa;bbb;ccc") == nil )
+		test.istrue(os.pathsearch("nosuchfile", "aaa;bbb;ccc") == nil)
 	end
 
 	function suite.pathsearch_ReturnsPath_OnFound()
-		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", os.getcwd()))
+		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", _TESTS_DIR))
 	end
 
 	function suite.pathsearch_FindsFile_OnComplexPath()
-		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", "aaa;"..os.getcwd()..";bbb"))
+		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", "aaa;" .. _TESTS_DIR .. ";bbb"))
 	end
 
 	function suite.pathsearch_NilPathsAllowed()
-		test.isequal(os.getcwd(), os.pathsearch("premake5.lua", nil, os.getcwd(), nil))
+		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", nil, _TESTS_DIR, nil))
 	end
+
 
 --
 -- os.outputof() tests
 --
+
 	-- Check if outputof returns the command exit code 
 	-- in addition of the command output
 	function suite.outputof_commandExitCode()
@@ -126,4 +155,17 @@
 				test.isequal(e, exitcode)
 			end
 		end
+--
+-- os.translateCommand() tests
+--
+
+	function suite.translateCommand_onNoToken()
+		test.isequal("cp a b", os.translateCommands("cp a b"))
+	end
+
+	function suite.translateCommand_callsProcessor()
+		os.commandTokens.test = {
+			copy = function(value) return "test " .. value end
+		}
+		test.isequal("test a b", os.translateCommands("{COPY} a b", "test"))
 	end

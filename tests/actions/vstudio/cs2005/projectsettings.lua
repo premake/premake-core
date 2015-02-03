@@ -92,6 +92,25 @@
 	end
 
 
+	function suite.onVs2012()
+		_ACTION = "vs2012"
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>MyProject</RootNamespace>
+		<AssemblyName>MyProject</AssemblyName>
+		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+		<FileAlignment>512</FileAlignment>
+	</PropertyGroup>
+		]]
+	end
+
+
 --
 -- Framework Tests
 --

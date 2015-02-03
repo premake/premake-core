@@ -1,7 +1,7 @@
 --
 -- msc.lua
 -- Interface for the MS C/C++ compiler.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
 
@@ -25,8 +25,14 @@
 --
 
 	msc.cflags = {
+		clr = {
+			On = "/clr",
+			Unsafe = "/clr",
+			Pure = "/clr:pure",
+			Safe = "/clr:safe",
+		},
 		flags = {
-			FatalWarnings = "/WX",
+			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
@@ -47,6 +53,7 @@
 			Speed = "/O2",
 		},
 		vectorextensions = {
+			AVX = "/arch:AVX",
 			SSE = "/arch:sse",
 			SSE2 = "/arch:sse2",
 		},
@@ -146,7 +153,7 @@
 
 	msc.linkerFlags = {
 		flags = {
-			FatalWarnings = "/WX",
+			FatalLinkWarnings = "/WX",
 			LinkTimeOptimization = "/GL",
 			NoIncrementalLink = "/INCREMENTAL:NO",
 			NoManifest = "/MANIFEST:NO",
@@ -160,7 +167,7 @@
 
 	msc.librarianFlags = {
 		flags = {
-			FatalWarnings = "/WX",
+			FatalLinkWarnings = "/WX",
 		}
 	}
 
@@ -168,11 +175,26 @@
 		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
 		table.insert(flags, 1, "/NOLOGO")
+		return flags
+	end
 
-		for _, libdir in ipairs(project.getrelative(cfg.project, cfg.libdirs)) do
-			table.insert(flags, '/LIBPATH:"' .. libdir .. '"')
+
+--
+-- Build a list of additional library directories for a particular
+-- project configuration, decorated for the tool command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    An array of decorated additional library directories.
+--
+
+	function msc.getLibraryDirectories(cfg)
+		local flags = {}
+		for i, dir in ipairs(cfg.libdirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(flags, '/LIBPATH:"' .. dir .. '"')
 		end
-
 		return flags
 	end
 

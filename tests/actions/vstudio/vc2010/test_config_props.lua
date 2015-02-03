@@ -16,6 +16,7 @@
 	local sln, prj
 
 	function suite.setup()
+		_ACTION = "vs2010"
 		sln, prj = test.createsolution()
 	end
 
@@ -110,12 +111,13 @@
 		]]
 	end
 
+
 --
 -- Check the support for Managed C++.
 --
 
-	function suite.clrSupport_onManaged()
-		flags "Managed"
+	function suite.clrSupport_onClrOn()
+		clr "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -124,6 +126,50 @@
 		<CLRSupport>true</CLRSupport>
 		]]
 	end
+
+	function suite.clrSupport_onClrOff()
+		clr "Off"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		]]
+	end
+
+	function suite.clrSupport_onClrUnsafe()
+		clr "Unsafe"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CLRSupport>true</CLRSupport>
+		]]
+	end
+
+	function suite.clrSupport_onClrSafe()
+		clr "Safe"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CLRSupport>Safe</CLRSupport>
+		]]
+	end
+
+	function suite.clrSupport_onClrPure()
+		clr "Pure"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CLRSupport>Pure</CLRSupport>
+		]]
+	end
+
 
 --
 -- Check the support for building with MFC.
@@ -151,6 +197,31 @@
 		]]
 	end
 
+--
+-- Check the support for building with ATL.
+--
+
+	function suite.useOfAtl_onDynamicRuntime()
+		atl "Dynamic"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<UseOfATL>Dynamic</UseOfATL>
+		]]
+	end
+
+	function suite.useOfAtl_onStaticRuntime()
+		atl "Static"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<UseOfATL>Static</UseOfATL>
+		]]
+	end
 
 --
 -- Check handling of the ReleaseRuntime flag; should override the
@@ -202,6 +273,19 @@
 		]]
 	end
 
+--
+-- Same as above but for Utility
+--
+
+	function suite.structureIsCorrect_onUtility()
+		kind "Utility"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Utility</ConfigurationType>
+	</PropertyGroup>
+		]]
+	end
 
 --
 -- Check the LinkTimeOptimization flag
@@ -216,5 +300,54 @@
 		<UseDebugLibraries>false</UseDebugLibraries>
 		<CharacterSet>MultiByte</CharacterSet>
 		<WholeProgramOptimization>true</WholeProgramOptimization>
+		]]
+	end
+
+
+
+---
+-- Visual Studio 2012 adds a new <PlatformToolset> element.
+---
+
+	function suite.addsPlatformToolset_onVS2012()
+		_ACTION = "vs2012"
+		files "hello.cpp"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+		<PlatformToolset>v110</PlatformToolset>
+	</PropertyGroup>
+		]]
+	end
+
+
+	function suite.addsPlatformToolset_onVS2013()
+		_ACTION = "vs2013"
+		files "hello.cpp"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+		]]
+	end
+
+
+	function suite.excludesPlatformToolset_onNoRelevantSources()
+		_ACTION = "vs2012"
+		files "hello.x"
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<CharacterSet>MultiByte</CharacterSet>
+	</PropertyGroup>
 		]]
 	end

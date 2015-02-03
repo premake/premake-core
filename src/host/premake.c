@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -15,27 +15,31 @@
 
 
 #define VERSION        "HEAD"
-#define COPYRIGHT      "Copyright (C) 2002-2013 Jason Perkins and the Premake Project"
-#define PROJECT_URL    "https://bitbucket.org/premake/premake-stable/wiki"
-#define ERROR_MESSAGE  "%s\n"
+#define COPYRIGHT      "Copyright (C) 2002-2014 Jason Perkins and the Premake Project"
+#define PROJECT_URL    "https://bitbucket.org/premake/premake-dev/wiki"
+#define ERROR_MESSAGE  "Error: %s\n"
 
 
 static int process_arguments(lua_State* L, int argc, const char** argv);
-static int process_option(lua_State* L, const char* arg);
-static int load_builtin_scripts(lua_State* L);
-
-int premake_locate(lua_State* L, const char* argv0);
 
 
 /* A search path for script files */
-static const char* scripts_path = NULL;
-
-
-/* precompiled bytecode buffer; in bytecode.c */
-extern const char* builtin_scripts[];
+const char* scripts_path = NULL;
 
 
 /* Built-in functions */
+static const luaL_Reg criteria_functions[] = {
+	{ "_compile", criteria_compile },
+	{ "_delete", criteria_delete },
+	{ "matches", criteria_matches },
+	{ NULL, NULL }
+};
+
+static const luaL_Reg debug_functions[] = {
+	{ "prompt", debug_prompt },
+	{ NULL, NULL }
+};
+
 static const luaL_Reg path_functions[] = {
 	{ "getabsolute", path_getabsolute },
 	{ "getrelative", path_getrelative },
@@ -48,12 +52,15 @@ static const luaL_Reg path_functions[] = {
 
 static const luaL_Reg os_functions[] = {
 	{ "chdir",       os_chdir       },
+	{ "chmod",       os_chmod       },
 	{ "copyfile",    os_copyfile    },
 	{ "_is64bit",    os_is64bit     },
 	{ "isdir",       os_isdir       },
 	{ "getcwd",      os_getcwd      },
 	{ "getversion",  os_getversion  },
 	{ "isfile",      os_isfile      },
+	{ "islink",      os_islink      },
+	{ "locate",      os_locate      },
 	{ "matchdone",   os_matchdone   },
 	{ "matchisfile", os_matchisfile },
 	{ "matchname",   os_matchname   },
@@ -61,6 +68,7 @@ static const luaL_Reg os_functions[] = {
 	{ "matchstart",  os_matchstart  },
 	{ "mkdir",       os_mkdir       },
 	{ "pathsearch",  os_pathsearch  },
+	{ "realpath",    os_realpath    },
 	{ "rmdir",       os_rmdir       },
 	{ "stat",        os_stat        },
 	{ "uuid",        os_uuid        },
@@ -80,9 +88,11 @@ static const luaL_Reg string_functions[] = {
  */
 int premake_init(lua_State* L)
 {
-	luaL_register(L, "path",   path_functions);
-	luaL_register(L, "os",     os_functions);
-	luaL_register(L, "string", string_functions);
+	luaL_register(L, "criteria", criteria_functions);
+	luaL_register(L, "debug",    debug_functions);
+	luaL_register(L, "path",     path_functions);
+	luaL_register(L, "os",       os_functions);
+	luaL_register(L, "string",   string_functions);
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
@@ -101,13 +111,17 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, PLATFORM_STRING);
 	lua_setglobal(L, "_OS");
 
+	/* publish the initial working directory */
+	os_getcwd(L);
+	lua_setglobal(L, "_WORKING_DIR");
+
 	return OKAY;
 }
 
 
-int premake_execute(lua_State* L, int argc, const char** argv)
+int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
 {
-	int z;
+	int iErrFunc;
 
 	/* push the absolute path to the Premake executable */
 	lua_pushcfunction(L, path_getabsolute);
@@ -116,13 +130,36 @@ int premake_execute(lua_State* L, int argc, const char** argv)
 	lua_setglobal(L, "_PREMAKE_COMMAND");
 
 	/* Parse the command line arguments */
-	z = process_arguments(L, argc, argv);
+	if (process_arguments(L, argc, argv) != OKAY) {
+		return !OKAY;
+	}
 
-	/* Run the built-in Premake scripts */
-	if (z == OKAY)  z = load_builtin_scripts(L);
+	/* load the main script */
+	if (luaL_dofile(L, script) != OKAY) {
+		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		return !OKAY;
+	}
 
-	return z;
+	/* in debug mode, show full traceback on all errors */
+#if defined(NDEBUG)
+	iErrFunc = 0;
+#else
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
+	iErrFunc = -2;
+#endif
+
+	/* and call the main entry point */
+	lua_getglobal(L, "_premake_main");
+	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
+		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		return !OKAY;
+	}
+	else {
+		return (int)lua_tonumber(L, -1);
+	}
 }
+
 
 
 /**
@@ -134,10 +171,6 @@ int premake_execute(lua_State* L, int argc, const char** argv)
  */
 int premake_locate(lua_State* L, const char* argv0)
 {
-#if !defined(PATH_MAX)
-#define PATH_MAX  (4096)
-#endif
-
 	char buffer[PATH_MAX];
 	const char* path = NULL;
 
@@ -213,208 +246,91 @@ int premake_locate(lua_State* L, const char* argv0)
 
 
 
+const char* set_scripts_path(const char* relativePath)
+{
+	char* path = (char*)malloc(PATH_MAX);
+	do_getabsolute(path, relativePath, NULL);
+	scripts_path = path;
+	return scripts_path;
+}
+
+
+
 /**
- * Process the command line arguments, splitting them into options, the
- * target action, and any arguments to that action. The results are pushed
- * into the session for later use. I could have done this in the scripts,
- * but I need the value of the /scripts option to find them.
+ * Copy all command line arguments into the script-side _ARGV global, and
+ * check for the presence of a /scripts=<path> argument to help locate
+ * the manifest if needed.
  * \returns OKAY if successful.
  */
 int process_arguments(lua_State* L, int argc, const char** argv)
 {
 	int i;
-	int found = 0;
 
-	/* Create empty lists for _ARGV, _OPTIONS, and _ARGS */
+	/* Copy all arguments in the _ARGV global */
 	lua_newtable(L);
-	lua_newtable(L);
-	lua_newtable(L);
-
 	for (i = 1; i < argc; ++i)
 	{
-		/* Everything goes into the _ARGV list */
 		lua_pushstring(L, argv[i]);
-		lua_rawseti(L, -4, luaL_getn(L, -4) + 1);
+		lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
 
-		/* Options start with '/' or '--' */
-		if (argv[i][0] == '/')
+		/* The /scripts option gets picked up here; used later to find the
+		 * manifest and scripts later if necessary */
+		if (strncmp(argv[i], "/scripts=", 9) == 0)
 		{
-			process_option(L, argv[i] + 1);
+			argv[i] = set_scripts_path(argv[i] + 9);
 		}
-		else if (argv[i][0] == '-' && argv[i][1] == '-')
+		else if (strncmp(argv[i], "--scripts=", 10) == 0)
 		{
-			process_option(L, argv[i] + 2);
-		}
-		else
-		{
-			/* The first non-option is the action */
-			if (!found) {
-				found = 1;
-				lua_pushstring(L, argv[i]);
-				lua_setglobal(L, "_ACTION");
-			}
-			/* everything else is an argument */
-			else {
-				lua_pushstring(L, argv[i]);
-				lua_rawseti(L, -2, luaL_getn(L, -2) + 1);
-			}
+			argv[i] = set_scripts_path(argv[i] + 10);
 		}
 	}
-
-	/* push the Options and Args lists */
-	lua_setglobal(L, "_ARGS");
-	lua_setglobal(L, "_OPTIONS");
 	lua_setglobal(L, "_ARGV");
-	return OKAY;
-}
-
-
-
-/**
- * Parse an individual command-line option.
- * \returns OKAY if successful.
- */
-int process_option(lua_State* L, const char* arg)
-{
-	char key[512];
-	const char* value;
-
-	/* If a value is specified, split the option into a key/value pair */
-	char* ptr = strchr(arg, '=');
-	if (ptr)
-	{
-		int len = ptr - arg;
-		if (len > 511) len = 511;
-		strncpy(key, arg, len);
-		key[len] = '\0';
-		value = ptr + 1;
-	}
-	else
-	{
-		strcpy(key, arg);
-		value = "";
-	}
-
-	/* Make keys lowercase to avoid case issues */
-	for (ptr = key; *ptr; ++ptr) { *ptr = (char)tolower(*ptr); }
-
-	/* Store it in the Options table, which is already on the stack */
-	lua_pushstring(L, value);
-	lua_setfield(L, -3, key);
-
-	/* The /scripts option gets picked up here to find the built-in scripts */
-	if (strcmp(key, "scripts") == 0 && strlen(value) > 0)
-	{
-		scripts_path = value;
-	}
 
 	return OKAY;
 }
 
 
 
-#if !defined(NDEBUG)
 /**
- * When running in debug mode, the scripts are loaded from the disk. The path to
- * the scripts must be provided via either the /scripts command line option or
- * the PREMAKE_PATH environment variable.
+ * Load a script that was previously embedded into the executable. If
+ * successful, a function containing the new script chunk is pushed to
+ * the stack, just like luaL_loadfile would do had the chunk been loaded
+ * from a file.
  */
-int load_builtin_scripts(lua_State* L)
-{
-	const char* filename;
 
-	/* call os.pathsearch() to locate _premake_main.lua */
-	lua_pushcfunction(L, os_pathsearch);
-	lua_pushstring(L, "_premake_main.lua");
-	lua_pushstring(L, scripts_path);
-	lua_pushstring(L, getenv("PREMAKE_PATH"));
-	lua_call(L, 3, 1);
-
-	if (lua_isnil(L, -1))
-	{
-		printf(ERROR_MESSAGE,
-			"Unable to find _premake_main.lua; use /scripts option when in debug mode!\n"
-			"Please refer to the documentation (or build in release mode instead)."
-		);
-		return !OKAY;
-	}
-
-	/* load the manifest, which includes all the required scripts */
-	scripts_path = lua_tostring(L, -1);
-	filename = lua_pushfstring(L, "%s/_manifest.lua", scripts_path);
-	if (luaL_dofile(L, filename))
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		return !OKAY;
-	}
-
-	lua_pushnil(L);
-	while (lua_next(L, -2))
-	{
-		filename = lua_pushfstring(L, "%s/%s", scripts_path, lua_tostring(L, -1));
-		if (luaL_dofile(L, filename)) {
-			printf(ERROR_MESSAGE, lua_tostring(L, -1));
-			return !OKAY;
-		}
-		lua_pop(L, 2);
-	}
-	lua_pop(L, 1);
-
-	/* run the bootstrapping script */
-	filename = lua_pushfstring(L, "%s/_premake_main.lua", scripts_path);
-	if (luaL_dofile(L, filename))
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		return !OKAY;
-	}
-
-	/* in debug mode, show full traceback on all errors */
-	lua_getglobal(L, "debug");
-	lua_getfield(L, -1, "traceback");
-
-	/* hand off control to the scripts */
-	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, -2) != OKAY)
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		return !OKAY;
-	}
-	else
-	{
-		return (int)lua_tonumber(L, -1);
-	}
-}
-#endif
-
-
-#if defined(NDEBUG)
-/**
- * When running in release mode, the scripts are loaded from a static data
- * buffer, where they were stored by a preprocess. To update these embedded
- * scripts, run `premake5 embed` then rebuild.
- */
-int load_builtin_scripts(lua_State* L)
+int premake_load_embedded_script(lua_State* L, const char* filename)
 {
 	int i;
-	for (i = 0; builtin_scripts[i]; ++i)
-	{
-		if (luaL_dostring(L, builtin_scripts[i]) != OKAY)
-		{
-			printf(ERROR_MESSAGE, lua_tostring(L, -1));
-			return !OKAY;
+	const char* chunk = NULL;
+#if !defined(NDEBUG)
+	static int warned = 0;
+#endif
+
+	/* Try to locate a record matching the filename */
+	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
+		if (strcmp(builtin_scripts_index[i], filename) == 0) {
+			chunk = builtin_scripts[i];
+			break;
 		}
 	}
 
-	/* hand off control to the scripts */
-	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, 0) != OKAY)
-	{
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+	if (chunk == NULL) {
 		return !OKAY;
 	}
-	else
-	{
-		return (int)lua_tonumber(L, -1);
+
+	/* Debug builds probably want to be loading scripts from the disk */
+#if !defined(NDEBUG)
+	if (!warned) {
+		warned = 1;
+		printf("** warning: using embedded script '%s'; use /scripts argument to load from files\n", filename);
 	}
-}
 #endif
+
+	/* "Fully qualify" the filename by turning it into the form $/filename */
+	lua_pushstring(L, "$/");
+	lua_pushstring(L, filename);
+	lua_concat(L, 2);
+
+	/* Load the chunk */
+	return luaL_loadbuffer(L, chunk, strlen(chunk), filename);
+}
