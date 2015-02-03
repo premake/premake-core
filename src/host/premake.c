@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -114,6 +114,10 @@ int premake_init(lua_State* L)
 	/* publish the initial working directory */
 	os_getcwd(L);
 	lua_setglobal(L, "_WORKING_DIR");
+
+	/* start the premake namespace */
+	lua_newtable(L);
+	lua_setglobal(L, "premake");
 
 	return OKAY;
 }
