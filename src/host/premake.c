@@ -300,6 +300,21 @@ static void build_premake_path(lua_State* L)
 		lua_pushstring(L, value);
 	}
 
+	/* Then in ~/.premake */
+	lua_pushstring(L, ";");
+	lua_getglobal(L, "_USER_HOME_DIR");
+	lua_pushstring(L, "/.premake");
+
+	/* In the user's Application Support folder */
+#if defined(PLATFORM_MACOSX)
+	lua_pushstring(L, ";");
+	lua_getglobal(L, "_USER_HOME_DIR");
+	lua_pushstring(L, "/Library/Application Support/Premake");
+#endif
+
+	/* In the /usr tree */
+	lua_pushstring(L, ";/usr/local/share/premake;/usr/share/premake");
+
 	/* Put it all together */
 	lua_concat(L, lua_gettop(L) - top);
 
