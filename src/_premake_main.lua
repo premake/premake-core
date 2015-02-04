@@ -56,8 +56,6 @@
 			_MAIN_SCRIPT_DIR = _WORKING_DIR
 		end
 
-		_USER_HOME_DIR = os.getenv("HOME") or os.getenv("USERPROFILE")
-
 		p.callArray(p.main.elements)
 
 		-- Look for and run the system-wide configuration script; make sure any

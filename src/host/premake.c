@@ -89,6 +89,8 @@ static const luaL_Reg string_functions[] = {
  */
 int premake_init(lua_State* L)
 {
+	const char* value;
+
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
 	luaL_register(L, "path",     path_functions);
@@ -111,6 +113,12 @@ int premake_init(lua_State* L)
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);
 	lua_setglobal(L, "_OS");
+
+	/* find the user's home directory */
+	value = getenv("HOME");
+	if (!value) value = getenv("USERPROFILE");
+	lua_pushstring(L, value);
+	lua_setglobal(L, "_USER_HOME_DIR");
 
 	/* publish the initial working directory */
 	os_getcwd(L);
