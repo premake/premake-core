@@ -271,6 +271,7 @@ static const char* set_scripts_path(const char* relativePath)
 static void build_premake_path(lua_State* L)
 {
 	int top;
+	const char* value;
 
 	lua_getglobal(L, "premake");
 	top = lua_gettop(L);
@@ -284,8 +285,31 @@ static void build_premake_path(lua_State* L)
 		lua_pushstring(L, scripts_path);
 	}
 
-	/* Put it all together and set the path variable */
+	/* Then the PREMAKE_PATH environment variable */
+	value = getenv("PREMAKE_PATH");
+	if (value) {
+		lua_pushstring(L, ";");
+		lua_pushstring(L, value);
+	}
+
+	/* Put it all together */
 	lua_concat(L, lua_gettop(L) - top);
+
+	/* Match Lua's package.path; use semicolon separators */
+#if !defined(PLATFORM_WINDOWS)
+	lua_getglobal(L, "string");
+	lua_getfield(L, -1, "gsub");
+	lua_pushvalue(L, -3);
+	lua_pushstring(L, ":");
+	lua_pushstring(L, ";");
+	lua_call(L, 3, 1);
+	/* remove the string global table */
+	lua_remove(L, -2);
+	/* remove the previously concatonated result */
+	lua_remove(L, -2);
+#endif
+
+	/* Store it in premake.path */
 	lua_setfield(L, -2, "path");
 
 	/* Remove the premake namespace table */
