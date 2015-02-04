@@ -1,7 +1,7 @@
 /**
  * \file   os_pathsearch.c
  * \brief  Locates a file, given a set of search paths.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
  *
  * \note This function is required by the bootstrapping code; it must be
  *       implemented here in the host and not scripted.
@@ -66,10 +66,13 @@ int os_pathsearch(lua_State* L)
 			lua_pushvalue(L, 1);
 			lua_concat(L, 3);
 
-			/* test it - if it exists return the path */
+			/* test it - if it exists, return the absolute path */
 			if (do_isfile(lua_tostring(L, -1)))
 			{
 				lua_pop(L, 1);
+				lua_pushcfunction(L, path_getabsolute);
+				lua_pushvalue(L, -2);
+				lua_call(L, 1, 1);
 				return 1;
 			}
 

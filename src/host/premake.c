@@ -20,6 +20,7 @@
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
+static void build_premake_path(lua_State* L);
 static int process_arguments(lua_State* L, int argc, const char** argv);
 
 
@@ -138,6 +139,9 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 		return !OKAY;
 	}
 
+	/* Use --scripts and PREMAKE_PATH to populate premake.path */
+	build_premake_path(L);
+
 	/* load the main script */
 	if (luaL_dofile(L, script) != OKAY) {
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
@@ -250,7 +254,7 @@ int premake_locate(lua_State* L, const char* argv0)
 
 
 
-const char* set_scripts_path(const char* relativePath)
+static const char* set_scripts_path(const char* relativePath)
 {
 	char* path = (char*)malloc(PATH_MAX);
 	do_getabsolute(path, relativePath, NULL);
@@ -261,12 +265,42 @@ const char* set_scripts_path(const char* relativePath)
 
 
 /**
+ * Set the premake.path variable, pulling from the --scripts argument
+ * and PREMAKE_PATH environment variable if present.
+ */
+static void build_premake_path(lua_State* L)
+{
+	int top;
+
+	lua_getglobal(L, "premake");
+	top = lua_gettop(L);
+
+	/* Start by searching the current working directory */
+	lua_pushstring(L, ".");
+
+	/* The --scripts argument goes next, if present */
+	if (scripts_path) {
+		lua_pushstring(L, ";");
+		lua_pushstring(L, scripts_path);
+	}
+
+	/* Put it all together and set the path variable */
+	lua_concat(L, lua_gettop(L) - top);
+	lua_setfield(L, -2, "path");
+
+	/* Remove the premake namespace table */
+	lua_pop(L, 1);
+}
+
+
+
+/**
  * Copy all command line arguments into the script-side _ARGV global, and
  * check for the presence of a /scripts=<path> argument to help locate
  * the manifest if needed.
  * \returns OKAY if successful.
  */
-int process_arguments(lua_State* L, int argc, const char** argv)
+static int process_arguments(lua_State* L, int argc, const char** argv)
 {
 	int i;
 
