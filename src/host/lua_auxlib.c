@@ -45,7 +45,7 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 		lua_pushstring(L, filename);
 		lua_pushvalue(L, -3);
 		lua_call(L, 2, 1);
-		test_name = lua_tostring(L, -1); 
+		test_name = lua_tostring(L, -1);
 
 		/* if successful, filename and chunk will be on top of stack */
 		z = premake_load_embedded_script(L, test_name + 2); /* Skip over leading "$/" */
@@ -62,15 +62,21 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 		lua_pushcfunction(L, os_locate);
 		lua_pushstring(L, filename);
 		lua_call(L, 1, 1);
-		test_name = lua_tostring(L, -1);
 
-		if (!lua_isnil(L, -1)) {
-			z = original_luaL_loadfile(L, lua_tostring(L, -1));
+		test_name = lua_tostring(L, -1);
+		if (test_name) {
+			z = original_luaL_loadfile(L, test_name);
 		}
 
-		/* on failure, remove test_name */
+		/* If the file exists but errors, pass that through */
+		if (z != OKAY && z != LUA_ERRFILE) {
+			return z;
+		}
+
+		/* If the file didn't exist, remove the result and the test
+		 * name from the stack before checking embedded scripts */
 		if (z != OKAY) {
-			lua_pop(L, 1);
+			lua_pop(L, 2);
 		}
 	}
 

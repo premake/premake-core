@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -20,6 +20,7 @@
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
+static void build_premake_path(lua_State* L);
 static int process_arguments(lua_State* L, int argc, const char** argv);
 
 
@@ -88,6 +89,8 @@ static const luaL_Reg string_functions[] = {
  */
 int premake_init(lua_State* L)
 {
+	const char* value;
+
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
 	luaL_register(L, "path",     path_functions);
@@ -111,9 +114,19 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, PLATFORM_STRING);
 	lua_setglobal(L, "_OS");
 
+	/* find the user's home directory */
+	value = getenv("HOME");
+	if (!value) value = getenv("USERPROFILE");
+	lua_pushstring(L, value);
+	lua_setglobal(L, "_USER_HOME_DIR");
+
 	/* publish the initial working directory */
 	os_getcwd(L);
 	lua_setglobal(L, "_WORKING_DIR");
+
+	/* start the premake namespace */
+	lua_newtable(L);
+	lua_setglobal(L, "premake");
 
 	return OKAY;
 }
@@ -133,6 +146,9 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 	if (process_arguments(L, argc, argv) != OKAY) {
 		return !OKAY;
 	}
+
+	/* Use --scripts and PREMAKE_PATH to populate premake.path */
+	build_premake_path(L);
 
 	/* load the main script */
 	if (luaL_dofile(L, script) != OKAY) {
@@ -246,7 +262,7 @@ int premake_locate(lua_State* L, const char* argv0)
 
 
 
-const char* set_scripts_path(const char* relativePath)
+static const char* set_scripts_path(const char* relativePath)
 {
 	char* path = (char*)malloc(PATH_MAX);
 	do_getabsolute(path, relativePath, NULL);
@@ -257,12 +273,81 @@ const char* set_scripts_path(const char* relativePath)
 
 
 /**
+ * Set the premake.path variable, pulling from the --scripts argument
+ * and PREMAKE_PATH environment variable if present.
+ */
+static void build_premake_path(lua_State* L)
+{
+	int top;
+	const char* value;
+
+	lua_getglobal(L, "premake");
+	top = lua_gettop(L);
+
+	/* Start by searching the current working directory */
+	lua_pushstring(L, ".");
+
+	/* The --scripts argument goes next, if present */
+	if (scripts_path) {
+		lua_pushstring(L, ";");
+		lua_pushstring(L, scripts_path);
+	}
+
+	/* Then the PREMAKE_PATH environment variable */
+	value = getenv("PREMAKE_PATH");
+	if (value) {
+		lua_pushstring(L, ";");
+		lua_pushstring(L, value);
+	}
+
+	/* Then in ~/.premake */
+	lua_pushstring(L, ";");
+	lua_getglobal(L, "_USER_HOME_DIR");
+	lua_pushstring(L, "/.premake");
+
+	/* In the user's Application Support folder */
+#if defined(PLATFORM_MACOSX)
+	lua_pushstring(L, ";");
+	lua_getglobal(L, "_USER_HOME_DIR");
+	lua_pushstring(L, "/Library/Application Support/Premake");
+#endif
+
+	/* In the /usr tree */
+	lua_pushstring(L, ";/usr/local/share/premake;/usr/share/premake");
+
+	/* Put it all together */
+	lua_concat(L, lua_gettop(L) - top);
+
+	/* Match Lua's package.path; use semicolon separators */
+#if !defined(PLATFORM_WINDOWS)
+	lua_getglobal(L, "string");
+	lua_getfield(L, -1, "gsub");
+	lua_pushvalue(L, -3);
+	lua_pushstring(L, ":");
+	lua_pushstring(L, ";");
+	lua_call(L, 3, 1);
+	/* remove the string global table */
+	lua_remove(L, -2);
+	/* remove the previously concatonated result */
+	lua_remove(L, -2);
+#endif
+
+	/* Store it in premake.path */
+	lua_setfield(L, -2, "path");
+
+	/* Remove the premake namespace table */
+	lua_pop(L, 1);
+}
+
+
+
+/**
  * Copy all command line arguments into the script-side _ARGV global, and
  * check for the presence of a /scripts=<path> argument to help locate
  * the manifest if needed.
  * \returns OKAY if successful.
  */
-int process_arguments(lua_State* L, int argc, const char** argv)
+static int process_arguments(lua_State* L, int argc, const char** argv)
 {
 	int i;
 

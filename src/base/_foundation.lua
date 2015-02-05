@@ -1,9 +1,9 @@
 ---
 -- Base definitions required by all the other scripts.
--- @copyright 2002-2013 Jason Perkins and the Premake project
+-- @copyright 2002-2015 Jason Perkins and the Premake project
 ---
 
-	premake = {}
+	premake = premake or {}
 	premake.modules = {}
 	premake.tools = {}
 
