@@ -75,6 +75,9 @@
 
 			if varMap[token] then
 				result = varMap[token]
+				if type(result) == "function" then
+					result = result(environ)
+				end
 			end
 
 			-- If the result is an absolute path, and it is being inserted into
