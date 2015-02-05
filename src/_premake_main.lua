@@ -1,7 +1,7 @@
 --
 -- _premake_main.lua
 -- Script-side entry point for the main program logic.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 	local shorthelp     = "Type 'premake5 --help' for help"
@@ -48,9 +48,8 @@
 		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
 
 		local file = _OPTIONS["file"] or "premake5.lua"
-		local script  = os.locate(file, file .. ".lua", "premake4.lua")
-		if script then
-			_MAIN_SCRIPT = path.getabsolute(script)
+		_MAIN_SCRIPT = os.locate(file, file .. ".lua", "premake4.lua")
+		if _MAIN_SCRIPT then
 			_MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
 		else
 			_MAIN_SCRIPT_DIR = _WORKING_DIR
