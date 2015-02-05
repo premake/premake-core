@@ -3,6 +3,7 @@
 -- @copyright 2002-2015 Jason Perkins and the Premake project
 ---
 
+	premake = premake or {}
 	premake.modules = {}
 	premake.tools = {}
 
