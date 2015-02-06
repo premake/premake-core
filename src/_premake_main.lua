@@ -46,6 +46,7 @@
 		-- what was already set by the native code host
 
 		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
+		premake.path = premake.path .. ";" .. _PREMAKE_DIR
 
 		local file = _OPTIONS["file"] or "premake5.lua"
 		_MAIN_SCRIPT = os.locate(file, file .. ".lua", "premake4.lua")
