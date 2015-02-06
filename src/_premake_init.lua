@@ -338,6 +338,7 @@
 			"Optimize",            -- DEPRECATED
 			"OptimizeSize",        -- DEPRECATED
 			"OptimizeSpeed",       -- DEPRECATED
+			"RelativeLinks",
 			"ReleaseRuntime",
 			"SEH",
 			"ShadowedVariables",

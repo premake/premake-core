@@ -213,6 +213,15 @@
 			table.insert(flags, '-L' .. project.getrelative(cfg.project, dir))
 		end
 
+		if cfg.flags.RelativeLinks then
+			for _, dir in ipairs(premake.config.getlinks(cfg, "siblings", "directory")) do
+				local libFlag = "-L" .. premake.project.getrelative(cfg.project, dir)
+				if not table.contains(flags, libFlag) then
+					table.insert(flags, libFlag)
+				end
+			end
+		end
+
 		return flags
 	end
 
@@ -225,12 +234,21 @@
 	function gcc.getlinks(cfg, systemonly)
 		local result = {}
 
-		-- Don't use the -l form for sibling libraries, since they may have
-		-- custom prefixes or extensions that will confuse the linker. Instead
-		-- just list out the full relative path to the library.
-
 		if not systemonly then
-			result = config.getlinks(cfg, "siblings", "fullpath")
+			if cfg.flags.RelativeLinks then
+				local libFiles = premake.config.getlinks(cfg, "siblings", "basename")
+				for _, link in ipairs(libFiles) do
+					if string.find(link, "lib") == 1 then
+						link = link:sub(4)
+					end
+					table.insert(result, "-l" .. link)
+				end
+			else
+				-- Don't use the -l form for sibling libraries, since they may have
+				-- custom prefixes or extensions that will confuse the linker. Instead
+				-- just list out the full relative path to the library.
+				result = config.getlinks(cfg, "siblings", "fullpath")
+			end
 		end
 
 		-- The "-l" flag is fine for system libraries
