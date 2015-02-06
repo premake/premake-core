@@ -159,8 +159,18 @@
 ---
 
 	function p.main.moduleLoader(name)
-		local shortName = name .. "/" .. name .. ".lua"
+		local dir = path.getdirectory(name)
+		local name = path.getname(name)
+
+		if dir ~= "." then
+			dir = dir .. "/" .. name
+		else
+			dir = name
+		end
+
+		local shortName = dir .. "/" .. name .. ".lua"
 		local longName = "modules/" .. shortName
+
 		local chunk = loadfile(longName) or loadfile(shortName)
 		if chunk then
 			return chunk
