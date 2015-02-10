@@ -69,7 +69,7 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 		}
 
 		/* If the file exists but errors, pass that through */
-		if (z != OKAY && z != LUA_ERRFILE) {
+		if (test_name && z != OKAY && z != LUA_ERRFILE) {
 			return z;
 		}
 
