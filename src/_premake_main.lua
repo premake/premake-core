@@ -160,25 +160,24 @@
 ---
 
 	function p.main.moduleLoader(name)
-		local chunk = loadfile(name .. ".lua")
+		local dir = path.getdirectory(name)
+		local base = path.getname(name)
 
-		-- try the Premake standard name/name.lua
-		if not chunk then
-			local dir = path.getdirectory(name)
-			local name = path.getname(name)
-
-			if dir ~= "." then
-				dir = dir .. "/" .. name
-			else
-				dir = name
-			end
-
-			name = dir .. "/" .. name .. ".lua"
-			chunk = loadfile(name)
+		if dir ~= "." then
+			dir = dir .. "/" .. base
+		else
+			dir = base
 		end
 
+		-- Premake standard is moduleName/moduleName.lua
+		local relPath = dir .. "/" .. base .. ".lua"
+
+		local chunk = loadfile("modules/" .. relPath)
 		if not chunk then
-			chunk = loadfile("modules/" .. name)
+			chunk = loadfile(relPath)
+		end
+		if not chunk then
+			chunk = loadfile(name .. ".lua")
 		end
 
 		if not chunk then
