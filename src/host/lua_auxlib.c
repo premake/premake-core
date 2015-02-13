@@ -76,7 +76,7 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 		/* If the file didn't exist, remove the result and the test
 		 * name from the stack before checking embedded scripts */
 		if (z != OKAY) {
-			lua_pop(L, 2);
+			lua_pop(L, 1);
 		}
 	}
 
