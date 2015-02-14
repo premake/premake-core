@@ -141,55 +141,6 @@
 
 
 --
--- Given a raw link target filename, properly format it for the given
--- configuration. Adds file decorations, and handles relative path
--- conversions.
---
--- @param cfg
---    The configuration that is linking.
--- @param target
---    The file name of the library being linked.
--- @param linkage
---    Optional. For languages or environments that support different kinds of
---    linking (i.e. Managed/CLR C++, which can link both managed and unmanaged
---    libs), which one to return. One of "unmanaged", "managed". If not
---    specified, the default for the configuration will be used.
--- @return
---    The decorated library file name.
---
-
-	function config.decoratelink(cfg, target, linkage)
-
-		-- Determine if a file extension is required, and append if so
-
-		local ext
-		if cfg.system == premake.WINDOWS then
-			if project.isdotnet(cfg.project) or linkage == "managed" then
-				ext = ".dll"
-			elseif project.iscpp(cfg.project) then
-				ext = ".lib"
-			end
-		elseif cfg.system == premake.XBOX360 then
-			if project.iscpp(cfg.project) then
-				ext = ".lib"
-			end
-		end
-
-		target = path.appendextension(target, ext)
-
-		-- if the target is listed via an explicit path (i.e. not a
-		-- system library or assembly), make it project-relative
-
-		if target:find("/", nil, true) then
-			target = project.getrelative(cfg.project, target)
-		end
-
-		return target
-
-	end
-
-
---
 -- Check a configuration for a source code file with the specified
 -- extension. Used for locating special files, such as Windows
 -- ".def" module definition files.
@@ -318,7 +269,12 @@
 				-- link managed .DLLs into unmanaged code, etc.
 
 				if config.canLink(cfg, link, linkage) then
-					item = config.decoratelink(cfg, link, linkage)
+					-- if the target is listed via an explicit path (i.e. not a
+					-- system library or assembly), make it project-relative
+					item = link
+					if item:find("/", nil, true) then
+						item = project.getrelative(cfg.project, item)
+					end
 				end
 
 			end

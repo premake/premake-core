@@ -293,9 +293,14 @@
 		local cfg = project.getfirstconfig(prj)
 
 		config.getlinks(cfg, "system", function(original, decorated)
+			local name = path.getname(decorated)
+			if path.getextension(name) == ".dll" then
+				name = name.sub(name, 1, -5)
+			end
+
 			if decorated:find("/", nil, true) then
-				_x(2,'<Reference Include="%s">', path.getbasename(decorated))
-				_x(3,'<HintPath>%s</HintPath>', path.translate(decorated))
+				_x(2,'<Reference Include="%s">', name)
+				_x(3,'<HintPath>%s</HintPath>', path.appendextension(path.translate(decorated), ".dll"))
 
 				if not config.isCopyLocal(prj, original, true) then
 					_p(3,"<Private>False</Private>")
@@ -303,7 +308,7 @@
 
 				_p(2,'</Reference>')
 			else
-				_x(2,'<Reference Include="%s" />', path.getbasename(decorated))
+				_x(2,'<Reference Include="%s" />', name)
 			end
 		end)
 

@@ -876,8 +876,7 @@
 		if toolset then
 			links = toolset.getlinks(cfg, not explicit)
 		else
-			local scope = iif(explicit, "all", "system")
-			links = config.getlinks(cfg, scope, "fullpath")
+			links = vstudio.getLinks(cfg, explicit)
 		end
 
 		if #links > 0 then
