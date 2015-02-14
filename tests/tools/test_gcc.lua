@@ -283,10 +283,10 @@
 	end
 
 	function suite.links_onSystemLibs_onWindows()
-		_OS = "windows"
-		links { "user32", "ole32" }
+		system "windows"
+		links { "ole32" }
 		prepare()
-		test.contains({ "-luser32", "-lole32" }, gcc.getlinks(cfg))
+		test.contains({ "-lole32" }, gcc.getlinks(cfg))
 	end
 
 

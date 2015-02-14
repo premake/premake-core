@@ -314,6 +314,39 @@
 	end
 
 
+
+---
+-- Assemble the list of links just the way Visual Studio likes them.
+--
+-- @param cfg
+--    The active configuration.
+-- @param explicit
+--    True to explicitly include sibling project libraries; if false Visual
+--    Studio's default implicit linking will be used.
+-- @return
+--    The list of linked libraries, ready to be used in Visual Studio's
+--    AdditionalDependencies element.
+---
+
+	function vstudio.getLinks(cfg, explicit)
+		local links = {}
+
+		-- If we need sibling projects to be listed explicitly, grab them first
+		if explicit then
+			links = config.getlinks(cfg, "siblings", "fullpath")
+		end
+
+		-- Then the system libraries, which come undecorated
+		local system = config.getlinks(cfg, "system", "fullpath")
+		for i = 1, #system do
+			table.insert(links, path.appendextension(system[i], ".lib"))
+		end
+
+		return links
+	end
+
+
+
 --
 -- Return true if the configuration kind is one of "Makefile" or "None". The
 -- latter is generated like a Makefile project and excluded from the solution.

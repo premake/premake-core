@@ -789,8 +789,7 @@
 
 		local links
 		if not toolset then
-			local scope = iif(ex, "all", "system")
-			links = config.getlinks(cfg, scope, "fullpath")
+			links = vstudio.getLinks(cfg, ex)
 			for i, link in ipairs(links) do
 				if link:find(" ", 1, true) then
 					link = '"' .. link .. '"'

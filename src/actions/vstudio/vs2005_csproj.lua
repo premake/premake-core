@@ -294,8 +294,8 @@
 
 		config.getlinks(cfg, "system", function(original, decorated)
 			if decorated:find("/", nil, true) then
-				_x(2,'<Reference Include="%s">', path.getbasename(decorated))
-				_x(3,'<HintPath>%s</HintPath>', path.translate(decorated))
+				_x(2,'<Reference Include="%s">', path.getname(decorated))
+				_x(3,'<HintPath>%s</HintPath>', path.appendextension(path.translate(decorated), ".dll"))
 
 				if not config.isCopyLocal(prj, original, true) then
 					_p(3,"<Private>False</Private>")
@@ -303,7 +303,7 @@
 
 				_p(2,'</Reference>')
 			else
-				_x(2,'<Reference Include="%s" />', path.getbasename(decorated))
+				_x(2,'<Reference Include="%s" />', path.getname(decorated))
 			end
 		end)
 

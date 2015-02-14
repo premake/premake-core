@@ -44,19 +44,9 @@
 		location "build"
 		links { "../libs/z" }
 		local r = prepare("all", "fullpath")
-		test.isequal({ "../../libs/z.lib" }, r)
+		test.isequal({ "../../libs/z" }, r)
 	end
 
-
---
--- On Windows, system libraries get the ".lib" file extensions.
---
-
-	function suite.libAdded_onWindowsSystemLibs()
-		links { "user32" }
-		local r = prepare("all", "fullpath")
-		test.isequal({ "user32.lib" }, r)
-	end
 
 
 --
@@ -81,7 +71,7 @@
 		location "build"
 		links { "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI" }
 		local r = prepare("all", "fullpath")
-		test.isequal({ "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib" }, r)
+		test.isequal({ "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI" }, r)
 	end
 
 	function suite.variableMaintained_onQuotedVariable()
@@ -114,7 +104,7 @@
 		clr "On"
 		links { "user32", "System.dll" }
 		local r = prepare("all", "fullpath")
-		test.isequal({ "user32.lib" }, r)
+		test.isequal({ "user32" }, r)
 	end
 
 
