@@ -205,6 +205,9 @@
 
 	function msc.getlinks(cfg)
 		local links = config.getlinks(cfg, "system", "fullpath")
+		for i = 1, #links do
+			links[i] = path.appendextension(links[i], ".lib")
+		end
 		return links
 	end
 
