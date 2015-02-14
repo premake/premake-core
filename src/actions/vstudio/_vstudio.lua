@@ -329,17 +329,16 @@
 ---
 
 	function vstudio.getLinks(cfg, explicit)
-		local links = {}
-
-		-- If we need sibling projects to be listed explicitly, grab them first
-		if explicit then
-			links = config.getlinks(cfg, "siblings", "fullpath")
+		-- System libraries are undecorated, add the required extension
+		local links = config.getlinks(cfg, "system", "fullpath")
+		for i = 1, #links do
+			links[i] = path.appendextension(links[i], ".lib")
 		end
 
-		-- Then the system libraries, which come undecorated
-		local system = config.getlinks(cfg, "system", "fullpath")
-		for i = 1, #system do
-			table.insert(links, path.appendextension(system[i], ".lib"))
+		-- If we need sibling projects to be listed explicitly, add them on
+		if explicit then
+			local siblings = config.getlinks(cfg, "siblings", "fullpath")
+			links = table.join(links, siblings)
 		end
 
 		return links
