@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
  */
 
 #define lua_c
@@ -60,6 +60,13 @@
 #define OKAY   (0)
 
 
+/* Bitmasks for the different script file search locations */
+#define TEST_LOCAL     (0x01)
+#define TEST_SCRIPTS   (0x02)
+#define TEST_PATH      (0x04)
+#define TEST_EMBEDDED  (0x08)
+
+
 /* If a /scripts argument is present, its value */
 extern const char* scripts_path;
 
@@ -71,7 +78,9 @@ void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
 int do_isfile(const char* filename);
+int do_locate(lua_State* L, const char* filename, const char* path);
 void do_normalize(lua_State* L, char* buffer, const char* path);
+int do_pathsearch(lua_State* L, const char* filename, const char* path);
 void do_translate(char* value, const char sep);
 
 
@@ -113,10 +122,10 @@ int string_startswith(lua_State* L);
 
 /* Engine interface */
 int premake_init(lua_State* L);
-int premake_locate(lua_State* L, const char* argv0);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
-int premake_find_exe(lua_State* L, const char* argv0);
 int premake_load_embedded_script(lua_State* L, const char* filename);
+int premake_locate_executable(lua_State* L, const char* argv0);
+int premake_test_file(lua_State* L, const char* filename, int searchMask);
 
 
 extern const char* builtin_scripts_index[];

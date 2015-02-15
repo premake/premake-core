@@ -22,6 +22,7 @@
 
 static void build_premake_path(lua_State* L);
 static int process_arguments(lua_State* L, int argc, const char** argv);
+static int run_premake_main(lua_State* L, const char* script);
 
 
 /* A search path for script files */
@@ -132,13 +133,14 @@ int premake_init(lua_State* L)
 }
 
 
+
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
 {
 	int iErrFunc;
 
 	/* push the absolute path to the Premake executable */
 	lua_pushcfunction(L, path_getabsolute);
-	premake_locate(L, argv[0]);
+	premake_locate_executable(L, argv[0]);
 	lua_call(L, 1, 1);
 	lua_setglobal(L, "_PREMAKE_COMMAND");
 
@@ -150,8 +152,8 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 	/* Use --scripts and PREMAKE_PATH to populate premake.path */
 	build_premake_path(L);
 
-	/* load the main script */
-	if (luaL_dofile(L, script) != OKAY) {
+	/* Find and run the main Premake bootstrapping script */
+	if (run_premake_main(L, script) != OKAY) {
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
 	}
@@ -185,7 +187,7 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
  * http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
  * http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
  */
-int premake_locate(lua_State* L, const char* argv0)
+int premake_locate_executable(lua_State* L, const char* argv0)
 {
 	char buffer[PATH_MAX];
 	const char* path = NULL;
@@ -258,6 +260,50 @@ int premake_locate(lua_State* L, const char* argv0)
 
 	lua_pushstring(L, path);
 	return 1;
+}
+
+
+
+/**
+ * Checks one or more of the standard script search locations to locate the
+ * specified file. If found, returns the discovered path to the script on
+ * the top of the Lua stack.
+ */
+int premake_test_file(lua_State* L, const char* filename, int searchMask)
+{
+	int i;
+
+	if (searchMask & TEST_LOCAL) {
+		if (do_isfile(filename)) {
+			lua_pushcfunction(L, path_getabsolute);
+			lua_pushstring(L, filename);
+			lua_call(L, 1, 1);
+			return OKAY;
+		}
+	}
+
+	if (scripts_path && (searchMask & TEST_SCRIPTS)) {
+		if (do_locate(L, filename, scripts_path)) return OKAY;
+	}
+
+	if (searchMask & TEST_PATH) {
+		const char* path = getenv("PREMAKE_PATH");
+		if (path && do_locate(L, filename, path)) return OKAY;
+	}
+
+	if ((searchMask & TEST_EMBEDDED) != 0) {
+		/* Try to locate a record matching the filename */
+		for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
+			if (strcmp(builtin_scripts_index[i], filename) == 0) {
+				lua_pushstring(L, "$/");
+				lua_pushstring(L, filename);
+				lua_concat(L, 2);
+				return OKAY;
+			}
+		}
+	}
+
+	return !OKAY;
 }
 
 
@@ -372,6 +418,41 @@ static int process_arguments(lua_State* L, int argc, const char** argv)
 	lua_setglobal(L, "_ARGV");
 
 	return OKAY;
+}
+
+
+
+/**
+ * Find and run the main Premake bootstrapping script. The loading of the
+ * bootstrap and the other core scripts use a limited set of search paths
+ * to avoid mismatches between the native host code and the scripts
+ * themselves.
+ */
+static int run_premake_main(lua_State* L, const char* script)
+{
+	/* Release builds want to load the embedded scripts, with --scripts
+	 * argument allowed as an override. Debug builds will look at the
+	 * local file system first, then fall back to embedded. */
+#if defined(NDEBUG)
+	 int z = premake_test_file(L, script,
+	 	TEST_SCRIPTS | TEST_EMBEDDED);
+#else
+	int z = premake_test_file(L, script,
+		TEST_LOCAL | TEST_SCRIPTS | TEST_PATH | TEST_EMBEDDED);
+#endif
+
+	/* If no embedded script can be found, release builds will then
+	 * try to fall back to the local file system, just in case */
+#if defined(NDEBUG)
+	if (z != OKAY) {
+		z = premake_test_file(L, script, TEST_LOCAL | TEST_PATH);
+	}
+#endif
+
+	if (z == OKAY) {
+		z = luaL_dofile(L, lua_tostring(L, -1));
+	}
+	return z;
 }
 
 
