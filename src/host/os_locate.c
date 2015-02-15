@@ -8,6 +8,20 @@
 #include "premake.h"
 
 
+int do_locate(lua_State* L, const char* filename, const char* path)
+{
+	if (do_pathsearch(L, filename, path)) {
+		lua_pushstring(L, "/");
+		lua_pushstring(L, filename);
+		lua_concat(L, 3);
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
 int os_locate(lua_State* L)
 {
 	int i;
@@ -26,22 +40,10 @@ int os_locate(lua_State* L)
 			return 1;
 		}
 
-		/* Call os.pathsearch(arg[i], premake.path) */
-		lua_pushcfunction(L, os_pathsearch);
-		lua_pushvalue(L, i);
-		lua_pushvalue(L, -3);
-		lua_call(L, 2, 1);
-
-		/* os.pathsearch() returns the directory containing the file;
-		 * append the filename to complete the path */
-		if (!lua_isnil(L, -1)) {
-			lua_pushstring(L, "/");
-			lua_pushvalue(L, 1);
-			lua_concat(L, 3);
+		/* do_locate(arg[i], premake.path) */
+		if (do_locate(L, lua_tostring(L, i), lua_tostring(L, -1))) {
 			return 1;
 		}
-
-		lua_pop(L, 1);
 	}
 
 	return 0;

@@ -28,6 +28,7 @@
 
 	p.main.elements = function()
 		return {
+			p.main.locateUserScript,
 			p.main.installModuleLoader,
 		}
 	end
@@ -47,14 +48,6 @@
 
 		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
 		premake.path = premake.path .. ";" .. _PREMAKE_DIR
-
-		local file = _OPTIONS["file"] or "premake5.lua"
-		_MAIN_SCRIPT = os.locate(file, file .. ".lua", "premake4.lua")
-		if _MAIN_SCRIPT then
-			_MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
-		else
-			_MAIN_SCRIPT_DIR = _WORKING_DIR
-		end
 
 		p.callArray(p.main.elements)
 
@@ -79,7 +72,7 @@
 		-- If there is a project script available, run it to get the
 		-- project information, available options and actions, etc.
 
-		if _MAIN_SCRIPT then
+		if os.isfile(_MAIN_SCRIPT) then
 			dofile(_MAIN_SCRIPT)
 		end
 
@@ -119,8 +112,8 @@
 				return 1
 			end
 
-			if not _MAIN_SCRIPT then
-				print("No Premake script (premake5.lua) found!")
+			if not os.isfile(_MAIN_SCRIPT) then
+				print(string.format("No Premake script (%s) found!", path.getname(_MAIN_SCRIPT)))
 				return 1
 			end
 		end
@@ -149,6 +142,34 @@
 
 		print("Done.")
 		return 0
+	end
+
+
+
+---
+-- Look for a user project script, and set up the related global
+-- variables if I can find one.
+---
+
+	function p.main.locateUserScript()
+		local defaults = { "premake5.lua", "premake4.lua" }
+		for i = 1, #defaults do
+			if os.isfile(defaults[i]) then
+				_MAIN_SCRIPT = defaults[i]
+				break
+			end
+		end
+
+		if not _MAIN_SCRIPT then
+			_MAIN_SCRIPT = defaults[1]
+		end
+
+		if _OPTIONS.file then
+			_MAIN_SCRIPT = _OPTIONS.file
+		end
+
+		_MAIN_SCRIPT = path.getabsolute(_MAIN_SCRIPT)
+		_MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
 	end
 
 

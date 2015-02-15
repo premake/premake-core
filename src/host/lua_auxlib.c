@@ -1,7 +1,7 @@
 /**
  * \file   lua_auxlib.c
  * \brief  Modifications and extensions to Lua's library functions.
- * \author Copyright (c) 2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014-2015 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
@@ -33,29 +33,38 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 	int bottom = lua_gettop(L);
 	int z = !OKAY;
 
-	/* If the currently running script was embedded, try to load this file
-	 * as it if were embedded too. */
-	lua_getglobal(L, "_SCRIPT_DIR");
-	script_dir = lua_tostring(L, -1);
-
-	if (script_dir && script_dir[0] == '$') {
-		/* Call `path.getabsolute(filename, _SCRIPT_DIR)` to resolve any
-		 * "../" sequences in the filename */
-		lua_pushcfunction(L, path_getabsolute);
-		lua_pushstring(L, filename);
-		lua_pushvalue(L, -3);
-		lua_call(L, 2, 1);
-		test_name = lua_tostring(L, -1);
-
-		/* if successful, filename and chunk will be on top of stack */
-		z = premake_load_embedded_script(L, test_name + 2); /* Skip over leading "$/" */
-
-		/* remove test_name */
-		lua_remove(L, bottom + 1);
+	/* If filename is starts with "$/" then we want to load the version that
+	 * was embedded into the executable and skip the local file system */
+	if (filename[0] == '$') {
+		z = premake_load_embedded_script(L, filename + 2); /* Skip over leading "$/" */
+		if (z != OKAY) return z;
 	}
 
-	/* remove _SCRIPT_DIR */
-	lua_remove(L, bottom);
+	/* If the currently running script was embedded, try to load this file
+	 * as it if were embedded too. */
+	if (z != OKAY) {
+		lua_getglobal(L, "_SCRIPT_DIR");
+		script_dir = lua_tostring(L, -1);
+
+		if (script_dir && script_dir[0] == '$') {
+			/* Call `path.getabsolute(filename, _SCRIPT_DIR)` to resolve any
+			 * "../" sequences in the filename */
+			lua_pushcfunction(L, path_getabsolute);
+			lua_pushstring(L, filename);
+			lua_pushvalue(L, -3);
+			lua_call(L, 2, 1);
+			test_name = lua_tostring(L, -1);
+
+			/* if successful, filename and chunk will be on top of stack */
+			z = premake_load_embedded_script(L, test_name + 2); /* Skip over leading "$/" */
+
+			/* remove test_name */
+			lua_remove(L, bottom + 1);
+		}
+
+		/* remove _SCRIPT_DIR */
+		lua_remove(L, bottom);
+	}
 
 	/* Try to locate the script on the filesystem */
 	if (z != OKAY) {
