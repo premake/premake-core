@@ -660,7 +660,7 @@
 						m.element("Command", condition, '%s', commands)
 
 						local outputs = project.getrelative(prj, filecfg.buildoutputs)
-						m.element("Outputs", condition, '%s', table.concat(outputs, " "))
+						m.element("Outputs", condition, '%s', table.concat(outputs, ";"))
 
 						if filecfg.buildmessage then
 							m.element("Message", condition, '%s', filecfg.buildmessage)
