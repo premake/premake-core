@@ -102,6 +102,25 @@
 		]]
 	end
 
+	function suite.customBuild_onBuildRuleMultipleBuildOutputs()
+		files { "hello.cg" }
+		filter "files:**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).a", "$(InputName).b" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).a;$(InputName).b</Outputs>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).a;$(InputName).b</Outputs>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
 	function suite.customBuild_onBuildRuleWithMessage()
 		files { "hello.cg" }
 		filter "files:**.cg"
