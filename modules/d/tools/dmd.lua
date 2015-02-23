@@ -1,7 +1,7 @@
 --
 -- d/tools/dmd.lua
 -- Provides dmd-specific configuration strings.
--- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
+-- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	local tdmd = {}
@@ -30,8 +30,8 @@
 
 	tdmd.gcc.ldflags = {
 		architecture = {
-			x32 = { "-m32", "-L-L/usr/lib" },
-			x64 = { "-m64", "-L-L/usr/lib64" },
+			x32 = { "-m32" },
+			x64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = "-shared",
@@ -41,10 +41,26 @@
 
 	function tdmd.gcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, tdmd.gcc.ldflags)
+		return flags
+	end
+
+
+--
+-- Return a list of decorated additional libraries directories.
+--
+
+	tdmd.gcc.libraryDirectories = {
+		architecture = {
+			x32 = "-L-L/usr/lib",
+			x64 = "-L-L/usr/lib64",
+		}
+	}
+
+	function tdmd.gcc.getLibraryDirectories(cfg)
+		local flags = config.mapFlags(cfg, tdmd.gcc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
---		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-L-L' .. project.getrelative(cfg.project, dir))
 		end
@@ -116,10 +132,19 @@
 
 	function tdmd.optlink.getldflags(cfg)
 		local flags = config.mapFlags(cfg, tdmd.optlink.ldflags)
+		return flags
+	end
+
+
+--
+-- Return a list of decorated additional libraries directories.
+--
+
+	function tdmd.optlink.getLibraryDirectories(cfg)
+		local flags = {}
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
---		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-Llib "' .. project.getrelative(cfg.project, dir) .. '"')
 		end
@@ -128,9 +153,9 @@
 	end
 
 
-	--
-	-- Returns a list of linker flags for library names.
-	--
+--
+-- Returns a list of linker flags for library names.
+--
 
 	function tdmd.optlink.getlinks(cfg)
 		local result = {}
@@ -170,6 +195,8 @@
 -- OR!!!			if cfg.system ~= premake.WINDOWS then
 	if string.match( os.getversion().description, "Windows" ) ~= nil then
 		-- TODO: on windows, we may use OPTLINK or MSLINK (for Win64)...
+		d.printf("TODO: select proper linker for 32/64 bit code")
+
 		premake.tools.dmd = tdmd.optlink
 	else
 		premake.tools.dmd = tdmd.gcc

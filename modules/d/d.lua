@@ -1,7 +1,7 @@
 --
 -- d/d.lua
 -- Define the D makefile action(s).
--- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
+-- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	premake.extensions.d = {}
@@ -33,7 +33,6 @@
 	premake.D = "D"
 
 	api.addAllowed("language", premake.D)
-	api.addAllowed("toolset", { "dmd", "gdc", "ldc" })
 	api.addAllowed("floatingpoint", "None")
 	api.addAllowed("flags", {
 		"CodeCoverage",
@@ -62,7 +61,7 @@
 	api.register {
 		name = "versionconstants",
 		scope = "config",
-		kind = "string-list",
+		kind = "list:string",
 		tokens = true,
 	}
 
@@ -75,7 +74,7 @@
 	api.register {
 		name = "debugconstants",
 		scope = "config",
-		kind = "string-list",
+		kind = "list:string",
 		tokens = true,
 	}
 
@@ -132,7 +131,7 @@
 
 --
 -- Patch the project structure to allow the determination of project type
--- This is then used in the override of gmake.onproject() in the
+-- This is then used in the override of gmake.onProject() in the
 -- extension files
 --
 

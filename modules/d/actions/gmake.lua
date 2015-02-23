@@ -1,23 +1,24 @@
 --
 -- d/actions/gmake.lua
 -- Define the D makefile action(s).
--- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
+-- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	premake.extensions.d.make = { }
 
-	local d = premake.extensions.d
-	local make = premake.make
-	local cpp = premake.make.cpp
+	local p = premake
+	local d = p.extensions.d
+	local make = p.make
+	local cpp = p.make.cpp
 	local dmake = d.make
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
 
 -- This check may be unnecessary as we only 'require' this file from d.lua
 -- IFF the action already exists, however this may help if this file is
 -- directly required, rather than d.lua itself.
-	local gmake = premake.action.get( 'gmake' )
+	local gmake = p.action.get( 'gmake' )
 	if gmake == nil then
 		error( "Failed to locate prequisite action 'gmake'" )
 	end
@@ -25,7 +26,7 @@
 --
 -- Patch the gmake action with the allowed tools...
 --
-	gmake.valid_languages = table.join(gmake.valid_languages, { premake.D } )
+	gmake.valid_languages = table.join(gmake.valid_languages, { p.D } )
 	gmake.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
 
@@ -44,26 +45,26 @@
 
 
 --
--- Override the GMake action 'onproject' funtion to provide
+-- Override the GMake action 'onProject' funtion to provide
 -- D knowledge...
 --
-	premake.override( gmake, "onproject", function(oldfn, prj)
-		io.esc = make.esc
+	p.override( gmake, "onProject", function(oldfn, prj)
+		p.escaper(make.esc)
 		if project.isd(prj) then
 			local makefile = make.getmakefilename(prj, true)
-			premake.generate(prj, makefile, dmake.generate)
+			p.generate(prj, makefile, dmake.generate)
 			return
 		end
 		oldfn(prj)
 	end)
 
-	premake.override( make, "objdir", function(oldfn, cfg)
+	p.override( make, "objdir", function(oldfn, cfg)
 		if cfg.project.language ~= "D" or cfg.flags.SeparateCompilation then
 			oldfn(cfg)
 		end
 	end)
 
-	premake.override( make, "objDirRules", function(oldfn, prj)
+	p.override( make, "objDirRules", function(oldfn, prj)
 		if prj.language ~= "D" or dmake.separateCompilation(prj) ~= "none" then
 			oldfn(prj)
 		end
@@ -71,7 +72,7 @@
 
 
 ---
--- Add namespace for element definition lists for premake.callarray()
+-- Add namespace for element definition lists for p.callarray()
 ---
 
 	dmake.elements = {}
@@ -97,7 +98,7 @@
 	}
 
 	function dmake.generate(prj)
-		premake.callarray(make, dmake.elements.makefile, prj)
+		p.callarray(make, dmake.elements.makefile, prj)
 	end
 
 
@@ -153,7 +154,7 @@
 -- Override the 'standard' file rule to support D source files
 --
 
-	premake.override( cpp, "standardFileRules", function(oldfn, prj, node)
+	p.override( cpp, "standardFileRules", function(oldfn, prj, node)
 		-- D file
 		if path.isdfile(node.abspath) then
 			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
@@ -194,13 +195,13 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = premake.tools[_OPTIONS.dc or cfg.toolset or "dmd"]
+			local toolset = p.tools[_OPTIONS.dc or cfg.toolset or "dmd"]
 			if not toolset then
 				error("Invalid toolset '" + (_OPTIONS.dc or cfg.toolset) + "'")
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callarray(make, dmake.elements.configuration, cfg, toolset)
+			p.callarray(make, dmake.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end
@@ -228,7 +229,7 @@
 	end
 
 	function make.imports(cfg, toolset)
-		local includes = premake.esc(toolset.getimportdirs(cfg, cfg.includedirs))
+		local includes = p.esc(toolset.getimportdirs(cfg, cfg.includedirs))
 		_p('  IMPORTS +=%s', make.list(includes))
 	end
 
@@ -276,7 +277,7 @@
 
 		-- now walk the list of files in the project
 		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
+		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- figure out what configurations contain this file, and
 				-- if it uses custom build rules

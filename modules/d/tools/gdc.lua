@@ -1,7 +1,7 @@
 --
 -- d/tools/gdc.lua
 -- Provides GDC-specific configuration strings.
--- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
+-- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	premake.tools.gdc = { }
@@ -59,6 +59,7 @@
 			Speed = "-O3 -finline-functions",
 		},
 		vectorextensions = {
+			AVX = "-mavx",
 			SSE = "-msse",
 			SSE2 = "-msse2",
 		},
@@ -162,8 +163,8 @@
 
 	gdc.ldflags = {
 		architecture = {
-			x32 = { "-m32", "-L/usr/lib" },
-			x64 = { "-m64", "-L/usr/lib64" },
+			x32 = { "-m32" },
+			x64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = function(cfg)
@@ -181,10 +182,26 @@
 
 	function gdc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, gdc.ldflags)
+		return flags
+	end
+
+
+--
+-- Return a list of decorated additional libraries directories.
+--
+
+	gdc.libraryDirectories = {
+		architecture = {
+			x32 = "-L/usr/lib",
+			x64 = "-L/usr/lib64",
+		}
+	}
+
+	function gdc.getLibraryDirectories(cfg)
+		local flags = config.mapFlags(cfg, gdc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
---		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-Wl,-L' .. project.getrelative(cfg.project, dir))
 		end

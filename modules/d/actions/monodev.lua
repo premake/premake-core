@@ -1,29 +1,30 @@
 --
 -- d/actions/monodev.lua
 -- Generate a Mono-D .dproj project.
--- Copyright (c) 2012-2014 Manu Evans and the Premake project
+-- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	local monodevelop = premake.extensions.monodevelop
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local tree = premake.tree
+	local p = premake
+	local monodevelop = p.extensions.monodevelop
+	local vstudio = p.vstudio
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local tree = p.tree
 
 --
 -- Patch the monodevelop action with D support...
 --
 
-	local md = premake.action.list["monodevelop"]
+	local md = p.action.get("monodevelop")
 	if md ~= nil then
-		table.insert( md.valid_languages, premake.D )
+		table.insert( md.valid_languages, p.D )
 		md.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
-		premake.override(md, "onproject", function(oldfn, prj)
+		p.override(md, "onProject", function(oldfn, prj)
 			oldfn(prj)
-			if premake.project.isd(prj) then
-				premake.generate(prj, ".dproj", monodevelop.generate)
+			if project.isd(prj) then
+				p.generate(prj, ".dproj", monodevelop.generate)
 			end
 		end)
 	end
@@ -33,17 +34,17 @@
 -- Patch a bunch of functions
 --
 
-	premake.override(vstudio, "projectfile", function(oldfn, prj)
+	p.override(vstudio, "projectfile", function(oldfn, prj)
 		if _ACTION == "monodevelop" then
 			if project.isd(prj) then
-				return project.getfilename(prj, ".dproj")
+				return p.filename(prj, ".dproj")
 			end
 		end
 		return oldfn(prj)
 	end)
 
 
-	premake.override(vstudio, "tool", function(oldfn, prj)
+	p.override(vstudio, "tool", function(oldfn, prj)
 		if _ACTION == "monodevelop" then
 			if project.isd(prj) then
 				return "3947E667-4C90-4C3A-BEB9-7148D6FE0D7C"
@@ -53,7 +54,7 @@
 	end)
 
 
-	premake.override(monodevelop, "getTargetGroup", function(oldfn, node, prj, groups)
+	p.override(monodevelop, "getTargetGroup", function(oldfn, node, prj, groups)
 		if project.isd(prj) then
 			-- if any configuration of this file uses a custom build rule,
 			-- then they all must be marked as custom build
@@ -87,7 +88,7 @@
 -- Override projectProperties element functions.
 --
 
-	premake.override(monodevelop.elements, "projectProperties", function(oldfn, prj)
+	p.override(monodevelop.elements, "projectProperties", function(oldfn, prj)
 		if project.isd(prj) then
 			return {
 				"productVersion",
@@ -132,7 +133,7 @@
 -- Override configurationProperties element functions.
 --
 
-	premake.override(monodevelop.elements, "configurationProperties", function(oldfn, cfg)
+	p.override(monodevelop.elements, "configurationProperties", function(oldfn, cfg)
 		if project.isd(cfg.project) then
 			return {
 				"debuginfo", -- from .cproj

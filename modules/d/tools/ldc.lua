@@ -1,7 +1,7 @@
 --
 -- d/tools/ldc.lua
 -- Provides LDC-specific configuration strings.
--- Copyright (c) 2013-2014 Andrew Gough, Manu Evans, and the Premake project
+-- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
 	premake.tools.ldc = { }
@@ -67,6 +67,7 @@
 			Speed = "-O3",
 		},
 		vectorextensions = {
+			AVX = "-mattr=+avx",
 			SSE = "-mattr=+sse",
 			SSE2 = "-mattr=+sse2",
 		},
@@ -169,8 +170,8 @@
 
 	ldc.ldflags = {
 		architecture = {
-			x32 = { "-m32", "-L=-L/usr/lib" },
-			x64 = { "-m64", "-L=-L/usr/lib64" },
+			x32 = { "-m32" },
+			x64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = "-shared",
@@ -180,10 +181,26 @@
 
 	function ldc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, ldc.ldflags)
+		return flags
+	end
+
+
+--
+-- Return a list of decorated additional libraries directories.
+--
+
+	ldc.libraryDirectories = {
+		architecture = {
+			x32 = "-L=-L/usr/lib",
+			x64 = "-L=-L/usr/lib64",
+		}
+	}
+
+	function ldc.getLibraryDirectories(cfg)
+		local flags = config.mapFlags(cfg, ldc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
---		for _, dir in ipairs(config.getlinks(cfg, "all", "directory")) do  -- TODO: why use 'all'?
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-L=-L' .. project.getrelative(cfg.project, dir))
 		end

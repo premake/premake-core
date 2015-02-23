@@ -1,33 +1,34 @@
 --
 -- d/actions/vstudio.lua
 -- Generate a VisualD .visualdproj project.
--- Copyright (c) 2012-2014 Manu Evans and the Premake project
+-- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
 	premake.extensions.d.visuald = { }
 
-	local d = premake.extensions.d
+	local p = premake
+	local d = p.extensions.d
 	local visuald = d.visuald
-	local vstudio = premake.vstudio
-	local solution = premake.solution
-	local project = premake.project
-	local config = premake.config
-	local tree = premake.tree
+	local vstudio = p.vstudio
+	local solution = p.solution
+	local project = p.project
+	local config = p.config
+	local tree = p.tree
 
 --
 -- Patch the vstudio actions with D support...
 --
 
 	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013" }) do
-		local vs = premake.action.list[v]
+		local vs = p.action.get(v)
 		if vs ~= nil then
-			table.insert( vs.valid_languages, premake.D )
+			table.insert( vs.valid_languages, p.D )
 			vs.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
-			premake.override(vs, "onproject", function(oldfn, prj)
+			p.override(vs, "onProject", function(oldfn, prj)
 				oldfn(prj)
 				if project.isd(prj) then
-					premake.generate(prj, ".visualdproj", visuald.generate)
+					p.generate(prj, ".visualdproj", visuald.generate)
 				end
 			end)
 		end
@@ -38,18 +39,18 @@
 -- Patch a bunch of other functions
 --
 
-	premake.override(project, "isnative", function(oldfn, prj)
+	p.override(project, "isnative", function(oldfn, prj)
 		return project.isd(prj) or oldfn(prj)
 	end)
 
-	premake.override(vstudio, "projectfile", function(oldfn, prj)
+	p.override(vstudio, "projectfile", function(oldfn, prj)
 		if project.isd(prj) then
-			return project.getfilename(prj, ".visualdproj")
+			return p.filename(prj, ".visualdproj")
 		end
 		return oldfn(prj)
 	end)
 
-	premake.override(vstudio, "tool", function(oldfn, prj)
+	p.override(vstudio, "tool", function(oldfn, prj)
 		if project.isd(prj) then
 			return "002A2DE9-8BB6-484D-9802-7E4AD4084715"
 		end
@@ -62,8 +63,8 @@
 --
 
 	function visuald.generate(prj)
-		io.eol = "\r\n"
-		io.indent = " "
+		p.eol("\r\n")
+		p.indent(" ")
 
 		-- for some reason Visual D projects don't seem to have an xml header
 		--_p('<?xml version="1.0" encoding="utf-8"?>')
@@ -95,7 +96,7 @@
 		-- build a list of all architectures used in this project
 
 		for cfg in project.eachconfig(prj) do
-			local prjPlatform = premake.esc(vstudio.projectPlatform(cfg))
+			local prjPlatform = p.esc(vstudio.projectPlatform(cfg))
 			local slnPlatform = vstudio.solutionPlatform(cfg)
 			local is64bit = slnPlatform == "x64" -- TODO: this seems like a hack
 
@@ -106,15 +107,15 @@
 
 			local isWindows = false
 			local isDebug = string.find(cfg.buildcfg, 'Debug') ~= nil
-			local isOptimised = premake.config.isOptimizedBuild(cfg)
+			local isOptimised = config.isOptimizedBuild(cfg)
 
-			if cfg.kind == premake.CONSOLEAPP then
+			if cfg.kind == p.CONSOLEAPP then
 				_p(2,'<lib>0</lib>')
 				_p(2,'<subsystem>1</subsystem>')
-			elseif cfg.kind == premake.STATICLIB then
+			elseif cfg.kind == p.STATICLIB then
 				_p(2,'<lib>1</lib>')
 				_p(2,'<subsystem>0</subsystem>')
-			elseif cfg.kind == premake.SHAREDLIB then
+			elseif cfg.kind == p.SHAREDLIB then
 				_p(2,'<lib>2</lib>')
 				_p(2,'<subsystem>0</subsystem>') -- SHOULD THIS BE '2' (windows)??
 			else
@@ -199,7 +200,7 @@
 
 			_p(2,'<dump_source>0</dump_source>')
 			_p(2,'<mapverbosity>0</mapverbosity>')
-			_p(2,'<createImplib>%s</createImplib>', iif(cfg.kind ~= premake.SHAREDLIB or cfg.flags.NoImportLib, '0', '1'))
+			_p(2,'<createImplib>%s</createImplib>', iif(cfg.kind ~= p.SHAREDLIB or cfg.flags.NoImportLib, '0', '1'))
 			_p(2,'<defaultlibname />')
 			_p(2,'<debuglibname />')
 			_p(2,'<moduleDepsFile />')
@@ -222,7 +223,7 @@
 			local explicit = vstudio.needsExplicitLink(cfg)
 			-- check to see if this project uses an external toolset. If so, let the
 			-- toolset define the format of the links
-			local toolset = vstudio.vc200x.toolset(cfg)
+			local toolset = config.toolset(cfg)
 			if toolset then
 				links = toolset.getlinks(cfg, not explicit)
 			else
@@ -265,13 +266,13 @@
 			visuald.element(2, "additionalOptions", additionalOptions)
 
 			if #cfg.prebuildcommands > 0 then
-				_p(2,'<preBuildCommand>%s</preBuildCommand>',premake.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")))
+				_p(2,'<preBuildCommand>%s</preBuildCommand>',p.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")))
 			else
 				_p(2,'<preBuildCommand />')
 			end
 
 			if #cfg.postbuildcommands > 0 then
-				_p(2,'<postBuildCommand>%s</postBuildCommand>',premake.esc(table.implode(cfg.postbuildcommands, "", "", "\r\n")))
+				_p(2,'<postBuildCommand>%s</postBuildCommand>',p.esc(table.implode(cfg.postbuildcommands, "", "", "\r\n")))
 			else
 				_p(2,'<postBuildCommand />')
 			end
@@ -328,11 +329,11 @@
 			_p(depth, '<%s />', name)
 		else
 			if isTable then
-				value = premake.esc(table.implode(value, "", "", ";"))
+				value = p.esc(table.implode(value, "", "", ";"))
 				_p(depth, '<%s>%s</%s>', name, value, name)
 			else
 				if select('#',...) == 0 then
-					value = premake.esc(value)
+					value = p.esc(value)
 				end
 				_x(depth, string.format('<%s>%s</%s>', name, value, name), ...)
 			end
