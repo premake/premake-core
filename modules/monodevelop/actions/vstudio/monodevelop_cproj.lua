@@ -1,15 +1,16 @@
 --
 -- actions/vstudio/monodevelop_cproj.lua
 -- Generate a MonoDevelop C/C++ cproj project.
--- Copyright (c) 2012-2013 Manu Evans and the Premake project
+-- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	local monodevelop = premake.extensions.monodevelop
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
-	local tree = premake.tree
+	local p = premake
+	local monodevelop = p.extensions.monodevelop
+	local vstudio = p.vstudio
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
+	local tree = p.tree
 
 	monodevelop.elements = {}
 
@@ -18,9 +19,6 @@
 --
 
 	function monodevelop.generate(prj)
-		io.eol = "\r\n"
-		io.indent = "  "
-
 		monodevelop.header("Build")
 		
 		monodevelop.projectProperties(prj)
@@ -80,7 +78,7 @@
 		_p(2,'<Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', 'Debug')
 		_p(2,'<Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', 'AnyCPU')
 
-		premake.callarray(monodevelop.elements, monodevelop.elements.projectProperties(prj), prj)
+		p.callarray(monodevelop.elements, monodevelop.elements.projectProperties(prj), prj)
 
 		-- packages ...?
 
@@ -117,7 +115,7 @@
 
 	function monodevelop.configurationProperties(cfg)
 		_p(1,'<PropertyGroup %s>', monodevelop.condition(cfg))
-		premake.callarray(monodevelop.elements, monodevelop.elements.configurationProperties(cfg), cfg)
+		p.callarray(monodevelop.elements, monodevelop.elements.configurationProperties(cfg), cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -127,7 +125,7 @@
 --
 
 	function monodevelop.condition(cfg)
-		return string.format('Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' "', premake.esc(vstudio.projectPlatform(cfg)))
+		return string.format('Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' "', p.esc(vstudio.projectPlatform(cfg)))
 	end
 
 
@@ -176,7 +174,7 @@
 --				local filecfg = config.getfileconfig(cfg, file.abspath)
 --				if filecfg and filecfg.buildrule then
 --					local commands = table.concat(filecfg.buildrule.commands,'\r\n')
---					_p(3,'<Generator %s>%s</Generator>', condition, premake.esc(commands))
+--					_p(3,'<Generator %s>%s</Generator>', condition, p.esc(commands))
 --				end
 --			end
 
@@ -263,10 +261,12 @@
 --
 
 	function monodevelop.elements.productVersion(prj)
+		local action = p.action.current()
 		_p(2,'<ProductVersion>%s</ProductVersion>', action.vstudio.productVersion)
 	end
 
 	function monodevelop.elements.schemaVersion(prj)
+		local action = p.action.current()
 		_p(2,'<SchemaVersion>%s</SchemaVersion>', action.vstudio.csprojSchemaVersion)
 	end
 
@@ -448,7 +448,7 @@
 
 		-- check to see if this project uses an external toolset. If so, let the
 		-- toolset define the format of the links
-		local toolset = premake.vstudio.vc200x.toolset(cfg)
+		local toolset = config.toolset(cfg)
 		if toolset then
 			links = toolset.getlinks(cfg, false)
 		else
@@ -461,11 +461,9 @@
 		if #links > 0 then
 			_x(2,'<Libs>')
 			_x(3,'<Libs>')
-
 			for _, lib in ipairs(links) do
 				_x(4,'<Lib>%s</Lib>', path.translate(lib))
 			end
-
 			_x(3,'</Libs>')
 			_x(2,'</Libs>')
 		end
