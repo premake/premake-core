@@ -33,8 +33,17 @@
 
 
 	newaction {
+		trigger = "package",
+		description = "Creates source and binary packages",
+		execute = function ()
+			include (path.join(corePath, "scripts/package.lua"))
+		end
+	}
+
+
+	newaction {
 		trigger = "release",
-		description = "Prepare a new release (incomplete)",
+		description = "Merges current branch to release; updates version and tags",
 		execute = function ()
 			include (path.join(corePath, "scripts/release.lua"))
 		end

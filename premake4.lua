@@ -103,34 +103,3 @@
 		value   = "path",
 		description = "Set the output location for the generated files"
 	}
-
-
-
---
--- Use the embed action to convert all of the Lua scripts into C strings, which
--- can then be built into the executable. Always embed the scripts before creating
--- a release build.
---
-
-	dofile("scripts/embed.lua")
-
-	newaction {
-		trigger     = "embed",
-		description = "Embed scripts in scripts.c; required before release builds",
-		execute     = doembed
-	}
-
-
---
--- Use the release action to prepare source and binary packages for a new release.
--- This action isn't complete yet; a release still requires some manual work.
---
-
-
-	dofile("scripts/release.lua")
-
-	newaction {
-		trigger     = "release",
-		description = "Prepare a new release (incomplete)",
-		execute     = dorelease
-	}

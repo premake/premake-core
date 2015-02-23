@@ -82,7 +82,7 @@
 
 		if (_OPTIONS["version"]) then
 			printf(versionhelp, _PREMAKE_VERSION)
-			return 1
+			return 0
 		end
 
 		if (_OPTIONS["help"]) then
