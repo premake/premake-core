@@ -1,42 +1,38 @@
 PREMAKE RELEASE CHECKLIST
 -------------------------
 
-VERSION NUMBERS
-
- 4.0
- 4.0-beta1
- 4.0-rc1
- 4.0.1
-
 PREP
 
- * Make sure all tests pass on Windows and POSIX
+ * Create working branch for release prep
+
+ * Update the version number in src/host/premake.c and commit
+
+ * Make sure branch passes all tests on all platforms
 
  * Update CHANGELOG.txt as needed
 
  * Prep release announcement for forums
 
- * Run `premake5 embed`
-
- * Commit all changes to premake-stable
-
- * Tag premake-stable with the version number and push
-
- * Pull changes to premake-dev
-
-
-BUILD
-
- * On each platform, run `premake5 release {version} binary`
-
- * On one platform, run `premake5 release {version} source`
-
- * If desired, copy binary to local path
-
- * Upload packages (in release/) to SourceForge
-
 
 RELEASE
+
+ * Merge working branch to release branch
+
+ * Merge working branch to development branches
+
+ * Close working branch
+
+
+PACKAGE
+
+ * Run `premake5 package release source` (from Posix ideally)
+
+ * On each platform, run `premake5 package release binary`
+
+
+PUBLISH
+
+ * Upload packages to SourceForge
 
  * On SourceForge, set package properties (platform, etc.)
 
