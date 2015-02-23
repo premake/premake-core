@@ -40,7 +40,7 @@
 -- Make sure I've got what I've need to be happy.
 --
 
-	local required = { "hg", "make", "gcc", "premake5" }
+	local required = { "hg", "make", "gcc", "premake5", "zip" }
 	for _, value in ipairs(required) do
 		local z = execQuiet("%s --version", value)
 		if z ~= 0 then
@@ -179,8 +179,3 @@ end
 --
 
 	os.rmdir(pkgName)
-
-
-	-- print("")
-	-- print( "Finished.")
-

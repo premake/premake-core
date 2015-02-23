@@ -5,8 +5,6 @@ PREP
 
  * Create working branch for release prep
 
- * Update the version number in src/host/premake.c and commit
-
  * Make sure branch passes all tests on all platforms
 
  * Update CHANGELOG.txt as needed
@@ -16,7 +14,9 @@ PREP
 
 RELEASE
 
- * Merge working branch to release branch
+ * Merge working branch with release branch
+
+ * Update the version number in src/host/premake.c and commit
 
  * Merge working branch to development branches
 

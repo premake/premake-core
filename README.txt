@@ -2,7 +2,7 @@ PREMAKE
 A build configuration tool
 Core module
 
- Copyright (C) 2002-2014 by Jason Perkins
+ Copyright (C) 2002-2015 by Jason Perkins
  Distributed under the terms of the BSD License, see LICENSE.txt
 
  The Lua language and runtime library is (C) TeCGraf, PUC-Rio.
