@@ -4,3 +4,7 @@
 
 See https://bitbucket.org/premake/premake-dev/wiki/What's_New_in_5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-alpha1:
+
+* filter() now accepts field value aliases in the conditions

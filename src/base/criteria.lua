@@ -5,11 +5,13 @@
 -- and wildcard matches. Provides functions match match these criteria
 -- against various contexts.
 --
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	premake.criteria = criteria
-	local criteria = premake.criteria
+	local p = premake
+
+	p.criteria = criteria  -- criteria namespace is defined in C host
+	local criteria = p.criteria
 
 
 --
@@ -69,6 +71,15 @@
 				if prefix and not criteria._validPrefixes[prefix] then
 					return nil, string.format("Invalid field prefix '%s'", prefix)
 				end
+
+				-- check for field value aliases
+				if prefix then
+					local fld = p.field.get(prefix)
+					if fld and fld.aliases then
+						word[1] = fld.aliases[word[1]] or word[1]
+					end
+				end
+
 				table.insert(pattern, word)
 			end
 
