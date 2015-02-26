@@ -8,3 +8,4 @@ for the complete list of changes from the Premake 4.x series.
 Since 5.0-alpha1:
 
 * filter() now accepts field value aliases in the conditions
+* Fixed _ACTION and _OPTIONS filter prefixes

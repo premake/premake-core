@@ -21,14 +21,14 @@
 --
 
 	criteria._validPrefixes = {
-		_ACTION = true,
+		_action = true,
 		action = true,
 		architecture = true,
 		configurations = true,
 		files = true,
 		kind = true,
 		language = true,
-		_OPTIONS = true,
+		_options = true,
 		options = true,
 		platforms = true,
 		system = true,
