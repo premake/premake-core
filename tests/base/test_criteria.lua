@@ -1,7 +1,7 @@
 --
 -- tests/base/test_criteria.lua
 -- Test suite for the criteria matching API.
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("criteria")
@@ -308,3 +308,21 @@
 		test.isnil(crit)
 		test.isnotnil(err)
 	end
+
+
+--
+-- Should respect field value aliases, if present.
+--
+
+	function suite.passes_onAliasedValue()
+		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		crit = criteria.new { "system:gnu-linux" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
+	end
+
+	function suite.passes_onAliasedValue_withMixedCase()
+		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		crit = criteria.new { "System:GNU-Linux" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
+	end
+

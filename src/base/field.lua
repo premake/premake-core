@@ -19,6 +19,7 @@
 -- Lists to hold all of the registered fields and data kinds
 
 	field._list = {}
+	field._loweredList = {}
 	field._kinds = {}
 
 	-- For historical reasons
@@ -94,6 +95,8 @@
 		end
 
 		field._list[f.name] = f
+		field._loweredList[f.name:lower()] = f
+
 		return f
 	end
 
@@ -105,6 +108,7 @@
 
 	function field.unregister(f)
 		field._list[f.name] = nil
+		field._loweredList[f.name:lower()] = nil
 	end
 
 
@@ -253,7 +257,7 @@
 ---
 
 	function field.get(name)
-		return field._list[name]
+		return field._list[name] or field._loweredList[name:lower()]
 	end
 
 
