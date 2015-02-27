@@ -9,3 +9,4 @@ Since 5.0-alpha1:
 
 * filter() now accepts field value aliases in the conditions
 * Fixed _ACTION and _OPTIONS filter prefixes
+* Main application logic can now be extended by modules
