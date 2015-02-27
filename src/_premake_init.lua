@@ -1068,3 +1068,5 @@
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"
+
+	filter {}
