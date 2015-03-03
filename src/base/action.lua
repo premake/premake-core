@@ -40,12 +40,12 @@
 	action._list = {}
 
 
---
+---
 -- Register a new action.
 --
 -- @param act
 --    The new action object.
---
+---
 
 	function action.add(act)
 		-- validate the action object, at least a little bit
@@ -61,19 +61,16 @@
 			error(string.format('action "%s" needs a  %s', name, missing), 3)
 		end
 
-		-- add it to the master list
 		action._list[act.trigger] = act
 	end
 
 
---
+---
 -- Trigger an action.
 --
 -- @param name
 --    The name of the action to be triggered.
--- @returns
---    None.
---
+---
 
 	function action.call(name)
 		local act = action._list[name]
@@ -113,26 +110,26 @@
 	end
 
 
---
+---
 -- Retrieve the current action, as determined by _ACTION.
 --
 -- @return
 --    The current action, or nil if _ACTION is nil or does not match any action.
---
+---
 
 	function action.current()
 		return action.get(_ACTION)
 	end
 
 
---
+---
 -- Retrieve an action by name.
 --
 -- @param name
 --    The name of the action to retrieve.
 -- @returns
 --    The requested action, or nil if the action does not exist.
---
+---
 
 	function action.get(name)
 		-- "Next-gen" actions are deprecated
@@ -143,9 +140,9 @@
 	end
 
 
---
+---
 -- Iterator for the list of actions.
---
+---
 
 	function action.each()
 		-- sort the list by trigger
@@ -163,12 +160,12 @@
 	end
 
 
---
+---
 -- Activates a particular action.
 --
 -- @param name
 --    The name of the action to activate.
---
+---
 
 	function action.set(name)
 		_ACTION = name
@@ -181,28 +178,26 @@
 	end
 
 
---
+---
 -- Determines if an action supports a particular language or target type.
 --
--- @param act
---    The action to test.
 -- @param feature
 --    The feature to check, either a programming language or a target type.
 -- @returns
 --    True if the feature is supported, false otherwise.
---
+---
 
-	function action.supports(act, feature)
-		if not act then
+	function action.supports(self, feature)
+		if not self then
 			return false
 		end
-		if act.valid_languages then
-			if table.contains(act.valid_languages, feature) then
+		if self.valid_languages then
+			if table.contains(self.valid_languages, feature) then
 				return true
 			end
 		end
-		if act.valid_kinds then
-			if table.contains(act.valid_kinds, feature) then
+		if self.valid_kinds then
+			if table.contains(self.valid_kinds, feature) then
 				return true
 			end
 		end
