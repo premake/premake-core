@@ -203,24 +203,3 @@
 		end
 		return false
 	end
-
-
-
---
--- Determines if an action supports a particular configuration.
--- @return
---    True if the configuration is supported, false otherwise.
---
-
-	function action.supportsconfig(act, cfg)
-		if not act then
-			return false
-		end
-
-		if act.supportsconfig then
-			return act.supportsconfig(cfg)
-		end
-
-		return true
-	end
-
