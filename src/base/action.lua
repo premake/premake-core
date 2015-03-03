@@ -161,6 +161,28 @@
 
 
 ---
+-- Determines if an action makes use of the configuration information
+-- provided by the project scripts (i.e. it is an exporter) or if it
+-- simply performs an action irregardless of configuration, in which
+-- case the baking and validation phases can be skipped.
+---
+
+	function action.isConfigurable(self)
+		if not self then
+			self = action.current() or {}
+		end
+		if self.onSolution or self.onsolution then
+			return true
+		end
+		if self.onProject or self.onproject then
+			return true
+		end
+		return false
+	end
+
+
+
+---
 -- Activates a particular action.
 --
 -- @param name

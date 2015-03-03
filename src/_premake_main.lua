@@ -217,7 +217,7 @@
 				os.exit(1)
 			end
 
-			if not os.isfile(_MAIN_SCRIPT) then
+			if p.action.isConfigurable() and not os.isfile(_MAIN_SCRIPT) then
 				print(string.format("No Premake script (%s) found!", path.getname(_MAIN_SCRIPT)))
 				os.exit(1)
 			end
@@ -230,7 +230,9 @@
 ---
 
 	function m.preBake()
-		print("Building configurations...")
+		if p.action.isConfigurable() then
+			print("Building configurations...")
+		end
 	end
 
 
@@ -239,7 +241,9 @@
 ---
 
 	function m.bake()
-		premake.oven.bake()
+		if p.action.isConfigurable() then
+			premake.oven.bake()
+		end
 	end
 
 
@@ -257,7 +261,9 @@
 ---
 
 	function m.validate()
-		p.container.validate(p.api.rootContainer())
+		if p.action.isConfigurable() then
+			p.container.validate(p.api.rootContainer())
+		end
 	end
 
 
@@ -287,5 +293,7 @@
 ---
 
 	function m.postAction()
-		print("Done.")
+		if p.action.isConfigurable() then
+			print("Done.")
+		end
 	end
