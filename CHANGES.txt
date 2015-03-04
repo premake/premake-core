@@ -11,3 +11,4 @@ Since 5.0-alpha1:
 * Fixed _ACTION and _OPTIONS filter prefixes
 * Main application logic can now be extended by modules
 * Action arguments (_ARGS) are now keyed by both index and value
+* Configuration baking and validation now skipped for execute only actions
