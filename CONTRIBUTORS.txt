@@ -1,0 +1,17 @@
+This file contains a list of people who've made non-trivial contributions
+to Premake 5.  People who commit code to the project are encouraged to
+add their names here. And many thanks to those who contributed fixes and
+improvements to earlier versions of Premake (feel free to add your name
+in here too)!
+
+Original design and implementation:
+  Jason Perkins <starkos@industriousone.com>
+
+Builds and Infrastructure:
+  Mihai Sebea <http://twitter.com/mihai_sebea>
+    * Nightly binary packages
+    * Nightly Jenkins builds and error reports
+
+Patch contributors:
+  noresources <https://bitbucket.org/noresources>
+    * add library search paths argument to os.findlib()
