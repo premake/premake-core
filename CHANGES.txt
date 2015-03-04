@@ -12,3 +12,4 @@ Since 5.0-alpha1:
 * Main application logic can now be extended by modules
 * Action arguments (_ARGS) are now keyed by both index and value
 * Configuration baking and validation now skipped for execute only actions
+* os.findlib() now accepts paths to search as argument
