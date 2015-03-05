@@ -4,14 +4,17 @@
 -- Author:      Ryan Pusztai
 -- Modified by: Andrea Zanellato (new v5 API)
 --				Andrew Gough (added as extension)
+--              Manu Evans (kept it alive and up to date)
 -- Created:     2013/05/06
--- Copyright:   (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright:   (c) 2008-2015 Jason Perkins and the Premake project
 --
 
 	premake.extensions.codelite = {}
-	local project = premake5.project
 
-	local codelite = premake.extensions.codelite
+	local p = premake
+	local project = p.project
+	local codelite = p.extensions.codelite
+
 	codelite.support_url = "https://bitbucket.org/premakeext/codelite/wiki/Home"
 
 	codelite.printf = function( msg, ... )
@@ -26,119 +29,86 @@
 	local this_dir = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]]; 
 	package.path = this_dir .. "actions/?.lua;".. package.path
 
-	codelite.compiler  = {}
-	codelite.platforms = {}
-	codelite.project   = {}
-	codelite.solution  = {}
 
-	io.indent = "  " -- 2 spaces indent, UTF8 XML file
---
--- Default compiler
---
-	local function set_compiler()
-		if not _OPTIONS.cc then
-			_OPTIONS.cc       = "gcc"
-			codelite.compiler = premake.tools.gcc
-		else
-			codelite.compiler = premake.tools.clang
+	function codelite.cfgname(cfg)
+		local cfgname = cfg.buildcfg
+		if codelite.solution.multiplePlatforms then 
+			cfgname = string.format("%s|%s", cfg.platform, cfg.buildcfg)
+		end
+		return cfgname
+	end
+
+	function codelite.esc(value)
+		return value
+	end
+
+	function codelite.generateSolution(sln)
+		p.eol("\r\n")
+		p.indent("  ")
+		p.escaper(codelite.esc)
+
+		p.generate(sln, ".workspace", codelite.solution.generate)
+	end
+
+	function codelite.generateProject(prj)
+		p.eol("\r\n")
+		p.indent("  ")
+		p.escaper(codelite.esc)
+
+		if project.iscpp(prj) then
+			p.generate(prj, ".project", codelite.project.generate)
 		end
 	end
---
--- Build a list of supported target platforms; I don't support cross-compiling yet
---
-	local function set_platforms(sln)
 
-		for i, platform in ipairs(sln.platforms) do
-
-			if premake.platforms[platform] then
-				if premake.platforms[platform].iscrosscompiler then
-					local msg = "%s ignored: cross-compilation not supported."
-					premake.warn(msg, platform)
-				else
-					table.insert(codelite.platforms, platform)
-				end
-			else
-				premake.warn("%s ignored: not a valid platform.", platform)
-			end
-		end
+	function codelite.cleanSolution(sln)
+		p.clean.file(sln, sln.name .. ".workspace")
+		p.clean.file(sln, sln.name .. "_wsp.mk")
+		p.clean.file(sln, sln.name .. ".tags")
+		p.clean.file(sln, ".clang")
 	end
+
+	function codelite.cleanProject(prj)
+		p.clean.file(prj, prj.name .. ".project")
+		p.clean.file(prj, prj.name .. ".mk")
+		p.clean.file(prj, prj.name .. ".list")
+		p.clean.file(prj, prj.name .. ".out")
+	end
+
+	function codelite.cleanTarget(prj)
+		-- TODO..
+	end
+
+
 --
 --  Supported platforms: Native, x32, x64, Universal, Universal32, Universal64
 --
 	newaction
 	{
+		-- Metadata for the command line and help system
+
 		trigger         = "codelite",
 		shortname       = "CodeLite",
 		description     = "Generate CodeLite project files",
-		valid_kinds     = {"ConsoleApp", "Makefile", "SharedLib", "StaticLib", "WindowedApp"},
-		valid_languages = {"C", "C++"},
+
+		-- The capabilities of this action
+
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "Makefile", "SharedLib", "StaticLib" },
+		valid_languages = { "C", "C++" },
 		valid_tools     = {
-		    cc          = {"gcc", "clang"}
+		    cc = { "gcc", "clang", "msc" }
 		},
 
-		onsolution = function(sln)
-			set_compiler()
-			set_platforms(sln)
-			premake.generate(sln, sln.name .. ".workspace", codelite.solution.generate)
-		end,
+		-- Solution and project generation logic
 
-		onproject = function(prj)
-			premake.generate(prj, prj.name .. ".project", codelite.project.generate)
-		end,
+		onSolution = codelite.generateSolution,
+		onProject  = codelite.generateProject,
 
-		oncleansolution = function(sln)
-			premake.clean.file(sln, sln.name .. ".workspace")
-			premake.clean.file(sln, sln.name .. "_wsp.mk")
-			premake.clean.file(sln, sln.name .. ".tags")
-			premake.clean.file(sln, ".clang")
-		end,
-
-		oncleanproject = function(prj)
-			premake.clean.file(prj, prj.name .. ".project")
-			premake.clean.file(prj, prj.name .. ".mk")
-			premake.clean.file(prj, prj.name .. ".list")
-			premake.clean.file(prj, prj.name .. ".out")
-		end
+		onCleanSolution = codelite.cleanSolution,
+		onCleanProject  = codelite.cleanProject,
+		onCleanTarget   = codelite.cleanTarget
 	}
---
--- Return an IDE friendly name, e.g. Debug, DebugUniv32, Release64
---
-	function codelite.getconfigname(cfg)
 
-		if cfg.name then
-			confName = cfg.name
 
-			if cfg.platform then
-				local confName = string.sub(cfg.name, 0, string.find(cfg.name, "|") -1)
-				local platName = string.sub(cfg.name, string.find(cfg.name, "|") +1, string.len(cfg.name))
-
-				platName = platName:gsub("ersal", "")
-				platName = platName:gsub("Native", "")
-				platName = platName:gsub("x", "")
-
-				return confName .. platName
-			end
-
-			return confName
-		end
-	end
---
--- Return true if the platform is ok or no platforms at all in the table,
--- false otherwise.
---
--- An empty table means that the current configuration is native.
---
-	function codelite.platforms.isok(platform)
-
-		if #codelite.platforms == 0 or
-			table.contains(codelite.platforms, platform) then
-				return true
-		end
-
-		return false
-	end
-
-	
 --
 -- For each registered premake <action>, we can simply add a file to the
 -- 'actions/' extension subdirectory
