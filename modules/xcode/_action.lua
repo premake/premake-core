@@ -6,6 +6,28 @@
 
 	local p = premake
 
+
+--
+-- Register new Xcode-specific project fields.
+--
+
+	p.api.register {
+		name = "xcodebuildsettings",
+		scope = "config",
+		kind = "key-array",
+	}
+
+	p.api.register {
+		name = "xcodebuildresources",
+		scope = "config",
+		kind = "list",
+	}
+
+
+--
+-- Register the Xcode exporters.
+--
+
 	newaction {
 		trigger     = "xcode4",
 		shortname   = "Apple Xcode 4",
@@ -33,4 +55,16 @@
 		onProject = function(prj)
 			p.generate(prj, ".xcodeproj/project.pbxproj", p.modules.xcode.generateProject)
 		end,
+
+
+		-- For backward compatibility; needs to be phased out
+		valid_platforms =
+		{
+			Native = "Native",
+			x32 = "Native 32-bit",
+			x64 = "Native 64-bit",
+			Universal32 = "32-bit Universal",
+			Universal64 = "64-bit Universal",
+			Universal = "Universal",
+		},
 	}

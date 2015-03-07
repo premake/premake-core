@@ -1,11 +1,13 @@
---
+---
 -- tests/actions/xcode/test_xcode4_project.lua
 -- Automated test suite for Xcode project generation.
--- Copyright (c) 2011 Jason Perkins and the Premake project
---
-	
-	local suite = test.declare("xcode4_proj") 
-	local xcode = premake.xcode
+-- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+---
+
+
+	local suite = test.declare("xcode4_proj")
+	local xcode = premake.modules.xcode
+
 
 
 ---------------------------------------------------------------------------
@@ -13,11 +15,11 @@
 ---------------------------------------------------------------------------
 
 	local tr, sln
-		
-	function suite.teardown()		
+
+	function suite.teardown()
 		tr = nil
 	end
-	
+
 	function suite.setup()
 		_OS = "macosx"
 		_ACTION = "xcode4"
@@ -26,8 +28,8 @@
 		sln = test.createsolution()
 	end
 
-	local function prepare()		
-		sln = premake.oven.bakeSolution(sln)		
+	local function prepare()
+		sln = premake.oven.bakeSolution(sln)
 		xcode.preparesolution(sln)
 		local prj = premake.solution.getproject(sln, 1)
 		tr = xcode.buildprjtree(prj)

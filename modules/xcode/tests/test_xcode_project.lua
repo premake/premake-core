@@ -2,10 +2,10 @@
 -- tests/actions/xcode/test_xcode_project.lua
 -- Automated test suite for Xcode project generation.
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
---	
-	local suite = test.declare("xcode_project")  
-	local xcode = premake.xcode
-	
+--
+	local suite = test.declare("xcode_project")
+	local xcode = premake.modules.xcode
+
 
 
 ---------------------------------------------------------------------------
@@ -13,8 +13,8 @@
 ---------------------------------------------------------------------------
 
 	local tr, sln
-	
-	function suite.teardown()		
+
+	function suite.teardown()
 		tr = nil
 	end
 
@@ -23,7 +23,7 @@
 		_ACTION = "xcode4"
 		premake.eol("\n")
 		xcode.used_ids = { } -- reset the list of generated IDs
-		sln = test.createsolution()			
+		sln = test.createsolution()
 	end
 
 	local function prepare()
@@ -193,28 +193,28 @@
 		[Cocoa.framework] /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		]]
 	end
-	
-	
+
+
 	function suite.PBXFileReference_leavesFrameworkLocationsAsIsWhenSupplied_pathIsSetToInput()
 		local inputFrameWork = 'somedir/Foo.framework'
 		links(inputFrameWork)
 		prepare()
-		
+
 		--io.capture()
 		xcode.PBXFileReference(tr)
-		--local str = io.captured() 
+		--local str = io.captured()
 		--test.istrue(str:find('path = "'..inputFrameWork..'"'))
-		
-		--ms check 
+
+		--ms check
 	end
-	
-	
+
+
 	function suite.PBXFileReference_relativeFrameworkPathSupplied_callsError()
 		local inputFrameWork = '../somedir/Foo.framework'
 		links(inputFrameWork)
 		prepare()
-		-- ms no longer and error 
-		-- valid case for linking relative frameworks 
+		-- ms no longer and error
+		-- valid case for linking relative frameworks
 		--local error_called = false
 		--local old_error = error
 		--error = function( ... )error_called = true end
@@ -410,12 +410,12 @@
 		files { "RequiresQuoting++/h.h" }
 		prepare()
 		xcode.PBXGroup(tr)
-		
+
 		local str = premake.captured()
 		--test.istrue(str:find('path = "RequiresQuoting%+%+";'))
-				
+
 	end
-	
+
 	function suite.PBXGroup_SortsFiles()
 		files { "test.h", "source.h", "source.cpp" }
 		prepare()
@@ -975,10 +975,10 @@
 		targetextension ".xyz"
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
-		
-		--ms removed for now 
+
+		--ms removed for now
 		--EXECUTABLE_EXTENSION = xyz;
-				
+
 		test.capture [[
 		[libMyProject.xyz:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1470,7 +1470,7 @@
 			name = Debug;
 		};
 		]]
-	end	
+	end
 
 
 	function suite.XCBuildConfigurationProject_OnNoEditAndContinue()
@@ -1548,7 +1548,7 @@
 			name = Debug;
 		};
 		]]
-	end	
+	end
 
 
 	function suite.XCBuildConfigurationProject_OnNoPCH()
@@ -1573,7 +1573,7 @@
 			name = Debug;
 		};
 		]]
-	end	
+	end
 
 
 	function suite.XCBuildConfigurationProject_OnNoRTTI()
@@ -1652,7 +1652,7 @@
 			name = Debug;
 		};
 		]]
-	end	
+	end
 
 
 	function suite.XCBuildConfigurationProject_OnPCH()
@@ -1678,7 +1678,7 @@
 			name = Debug;
 		};
 		]]
-	end	
+	end
 
 
 	function suite.XCBuildConfigurationProject_OnUniversal()
@@ -1976,7 +1976,7 @@ function suite.debugBuild_onlyDefaultArch_equalsYes()
 	flags { "Symbols" }
 	prepare()
 	xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
-	
+
 	local str = premake.captured()
 	test.istrue(str:find('ONLY_ACTIVE_ARCH = YES;'))
 end

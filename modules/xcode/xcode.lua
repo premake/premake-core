@@ -9,17 +9,8 @@
 	p.modules.xcode = {}
 	local m = p.modules.xcode
 
-
-	function m.generateWorkspace(sln)
-		print("Generating Xcode workspace...")
-	end
-
-
-	function m.generateProject(prj)
-		print("Generating Xcode project...")
-	end
-
-
-	print("Here is the Xcode module")
+	dofile("xcode_common.lua")
+	dofile("xcode4_workspace.lua")
+	dofile("xcode_project.lua")
 
 	return m

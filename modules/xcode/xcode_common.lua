@@ -1,15 +1,16 @@
 --
 -- xcode_common.lua
 -- Functions to generate the different sections of an Xcode project.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
-	local xcode = premake.xcode
-	local tree  = premake.tree
-    local solution = premake.solution
-	local project = premake.project
-    local config = premake.config
-	local fileconfig = premake.fileconfig
+	local p = premake
+	local xcode = p.modules.xcode
+	local tree  = p.tree
+    local solution = p.solution
+	local project = p.project
+    local config = p.config
+	local fileconfig = p.fileconfig
 
 
 --
@@ -364,8 +365,8 @@
 			local node = premake.tree.new(path.getname(bundlepath))
 
 			node.cfg = cfg
-			node.id = premake.xcode.newid(node.name, "product")
-			node.targetid = premake.xcode.newid(node.name, "target")
+			node.id = xcode.newid(node.name, "product")
+			node.targetid = xcode.newid(node.name, "target")
 
 			-- attach it to the project
 			prj.xcode = {}

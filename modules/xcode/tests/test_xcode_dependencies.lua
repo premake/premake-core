@@ -3,9 +3,9 @@
 -- Automated test suite for Xcode project dependencies.
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
-	
-	local suite = test.declare("xcode_deps")  
-	local xcode = premake.xcode
+
+	local suite = test.declare("xcode_deps")
+	local xcode = premake.modules.xcode
 
 
 ---------------------------------------------------------------------------
@@ -13,18 +13,18 @@
 ---------------------------------------------------------------------------
 
 	local sln, prj, prj2, tr
-		
+
 	function suite.teardown()
 		sln = nil
 		prj = nil
 		prj2 = nil
 		tr = nil
 	end
-		
+
 	function suite.setup()
 		_ACTION = "xcode4"
 		xcode.used_ids = { } -- reset the list of generated IDs
-	
+
 		sln, prj = test.createsolution()
 		links { "MyProject2" }
 
@@ -34,7 +34,7 @@
 		targetsuffix "-d"
 	end
 
-	local function prepare()		
+	local function prepare()
 		sln = premake.oven.bakeSolution(sln)
 		xcode.preparesolution(sln)
 		local prj3 = premake.solution.getproject(sln, 1)
@@ -93,7 +93,7 @@
 			remoteInfo = "libMyProject2-d.a";
 		};
 /* End PBXContainerItemProxy section */
-		]]		
+		]]
 	end
 
 
@@ -207,7 +207,7 @@
 			name = "Projects";
 			sourceTree = "<group>";
 		};
-		
+
 /* End PBXGroup section */
 		]]
 	end
