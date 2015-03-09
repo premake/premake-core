@@ -89,6 +89,14 @@
 
 	end
 
+	function clang.ungetdefines(undefines)
+
+		-- Just pass through to GCC for now
+		local flags = gcc.getundefines(undefines)
+		return flags
+
+	end
+
 
 
 --

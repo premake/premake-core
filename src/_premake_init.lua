@@ -808,6 +808,12 @@
 		}
 	}
 
+	api.register {
+		name = "undefines",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
 
 
 -----------------------------------------------------------------------------

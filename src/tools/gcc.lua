@@ -114,6 +114,14 @@
 		return result
 	end
 
+	function gcc.getundefines(undefines)
+		local result = {}
+		for _, undefine in ipairs(undefines) do
+			table.insert(result, '-U' .. undefine)
+		end
+		return result
+	end
+
 
 --
 -- Returns a list of forced include files, decorated for the compiler

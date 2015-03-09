@@ -293,6 +293,7 @@
 			m.treatWarningAsError,
 			m.basicRuntimeChecks,
 			m.clCompilePreprocessorDefinitions,
+			m.clCompileUndefinePreprocessorDefinitions,
 			m.clCompileAdditionalIncludeDirectories,
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
@@ -605,6 +606,7 @@
 							local condition = m.condition(cfg)
 							m.objectFileName(fcfg)
 							m.clCompilePreprocessorDefinitions(fcfg, condition)
+							m.clCompileUndefinePreprocessorDefinitions(fcfg, condition)
 							m.optimization(fcfg, condition)
 							m.forceIncludes(fcfg, condition)
 							m.precompiledHeader(cfg, fcfg, condition)
@@ -958,6 +960,11 @@
 
 	function m.clCompilePreprocessorDefinitions(cfg, condition)
 		m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+	end
+
+
+	function m.clCompileUndefinePreprocessorDefinitions(cfg, condition)
+		m.undefinePreprocessorDefinitions(cfg, cfg.undefines, false, condition)
 	end
 
 
@@ -1425,6 +1432,18 @@
 			end
 			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
 			m.element('PreprocessorDefinitions', condition, defines)
+		end
+	end
+
+
+	function m.undefinePreprocessorDefinitions(cfg, undefines, escapeQuotes, condition)
+		if #undefines > 0 then
+			undefines = table.concat(undefines, ";")
+			if escapeQuotes then
+				undefines = undefines:gsub('"', '\\"')
+			end
+			undefines = premake.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			m.element('UndefinePreprocessorDefinitions', condition, undefines)
 		end
 	end
 
