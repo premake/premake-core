@@ -88,5 +88,5 @@
 
 		-- Built-in action modules. The action is registered, but the actual
 		-- implementation is not loaded unless the action is used.
-		"modules/xcode/_action.lua",
+		"../modules/xcode/_action.lua",
 	}
