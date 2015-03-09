@@ -155,7 +155,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[source.c] /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "source.c"; path = "source.c"; sourceTree = "<group>"; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[source.c] /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -266,7 +267,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[source.c] /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "source.c"; path = "src/source.c"; sourceTree = "<group>"; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		[source.c] /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = source.c; path = src/source.c; sourceTree = "<group>"; };
 		]]
 	end
 
@@ -378,30 +380,21 @@
 		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				[include] /* include */,
+				[source.h] /* source.h */,
 				[Products] /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		[include] /* include */ = {
+		[Products] /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				[premake] /* premake */,
+				[MyProject:product] /* MyProject */,
 			);
-			name = "include";
-			path = "include";
+			name = Products;
 			sourceTree = "<group>";
 		};
-		[premake] /* premake */ = {
-			isa = PBXGroup;
-			children = (
-				[source.h] /* source.h */,
-			);
-			name = "premake";
-			path = "premake";
-			sourceTree = "<group>";
-		};
+/* End PBXGroup section */
 		]]
 	end
 
@@ -509,22 +502,21 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
+		[Headers] /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				[source.h] /* source.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
 		[MyProject] /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
 				[Headers] /* Headers */,
 				[Products] /* Products */,
 			);
-			name = "MyProject";
-			sourceTree = "<group>";
-		};
-		[Headers] /* Headers */ = {
-			isa = PBXGroup;
-			children = (
-				[source.h] /* source.h */,
-			);
-			name = "Headers";
-			path = "Headers";
+			name = MyProject;
 			sourceTree = "<group>";
 		};
 		]]

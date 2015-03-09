@@ -106,8 +106,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "MyProject"; path = "MyProject"; sourceTree = BUILT_PRODUCTS_DIR; };
-		[MyProject2.xcodeproj] /* MyProject2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = "MyProject2.xcodeproj"; sourceTree = SOURCE_ROOT; };
+		[MyProject2.xcodeproj] /* libMyProject2-d.a */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = MyProject2.xcodeproj; sourceTree = SOURCE_ROOT; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -119,8 +119,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "MyProject"; path = "MyProject"; sourceTree = BUILT_PRODUCTS_DIR; };
-		[MyProject2.xcodeproj] /* MyProject2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = "../MyProject2/MyProject2.xcodeproj"; sourceTree = SOURCE_ROOT; };
+		[MyProject2.xcodeproj] /* libMyProject2-d.a */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = ../MyProject2.xcodeproj; sourceTree = SOURCE_ROOT; };
+		[MyProject:product] /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -174,15 +174,6 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		[MyProject] /* MyProject */ = {
-			isa = PBXGroup;
-			children = (
-				[Products] /* Products */,
-				[Projects] /* Projects */,
-			);
-			name = "MyProject";
-			sourceTree = "<group>";
-		};
 		[MyProject2.xcodeproj:prodgrp] /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,12 +182,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		[MyProject] /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				[Products] /* Products */,
+				[Projects] /* Projects */,
+			);
+			name = MyProject;
+			sourceTree = "<group>";
+		};
 		[Products] /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				[MyProject:product] /* MyProject */,
 			);
-			name = "Products";
+			name = Products;
 			sourceTree = "<group>";
 		};
 		[Projects] /* Projects */ = {
@@ -204,10 +204,9 @@
 			children = (
 				[MyProject2.xcodeproj] /* MyProject2.xcodeproj */,
 			);
-			name = "Projects";
+			name = Projects;
 			sourceTree = "<group>";
 		};
-
 /* End PBXGroup section */
 		]]
 	end
