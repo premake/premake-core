@@ -80,7 +80,22 @@
 
 	function gcc.getcflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cflags)
+		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
+	end
+
+	function gcc.getwarnings(cfg)
+		local result = {}
+		for _, enable in ipairs(cfg.enablewarnings) do
+			table.insert(result, '-W' .. enable)
+		end
+		for _, disable in ipairs(cfg.disablewarnings) do
+			table.insert(result, '-Wno-' .. disable)
+		end
+		for _, fatal in ipairs(cfg.fatalwarnings) do
+			table.insert(result, '-Werror=' .. fatal)
+		end
+		return result
 	end
 
 

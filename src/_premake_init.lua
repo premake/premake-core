@@ -808,6 +808,26 @@
 		}
 	}
 
+	api.register {
+		name = "enablewarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "disablewarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "fatalwarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
 
 
 -----------------------------------------------------------------------------
