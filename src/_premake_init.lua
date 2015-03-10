@@ -256,6 +256,14 @@
 
 
 	api.register {
+		name = "disablewarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+
+	api.register {
 		name = "display",
 		scope = "rule",
 		kind = "string",
@@ -269,10 +277,26 @@
 	}
 
 
+	api.register {
+		name = "enablewarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
 	end
+
+
+	api.register {
+		name = "fatalwarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
 
 
 	api.register {
@@ -806,27 +830,6 @@
 			"Default",
 			"Extra",
 		}
-	}
-
-	api.register {
-		name = "enablewarnings",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "disablewarnings",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "fatalwarnings",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
 	}
 
 

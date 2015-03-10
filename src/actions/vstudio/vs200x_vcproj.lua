@@ -1003,7 +1003,7 @@
 
 
 	function m.disableSpecificWarnings(cfg)
-		if #cfg.disablewarnings > 0 or vstudio.isMakefile(cfg) then
+		if #cfg.disablewarnings > 0 then
 			p.x('DisableSpecificWarnings="%s"', table.concat(cfg.disablewarnings, ";"))
 		end
 	end
