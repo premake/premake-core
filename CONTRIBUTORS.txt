@@ -17,3 +17,4 @@ Patch contributors:
     * new APIs for debugging, controlling warnings, undefining symbols
   noresources <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
+    * return command exit code from os.outputof()
