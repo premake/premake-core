@@ -460,6 +460,7 @@
 				m.additionalIncludeDirectories,
 				m.wholeProgramOptimization,
 				m.preprocessorDefinitions,
+				m.undefinePreprocessorDefinitions,
 				m.minimalRebuild,
 				m.basicRuntimeChecks,
 				m.bufferSecurityCheck,
@@ -487,6 +488,7 @@
 				m.additionalExternalCompilerOptions,
 				m.additionalIncludeDirectories,
 				m.preprocessorDefinitions,
+				m.undefinePreprocessorDefinitions,
 				m.usePrecompiledHeader,
 				m.programDataBaseFileName,
 				m.debugInformationFormat,
@@ -623,6 +625,7 @@
 			m.cleanCommandLine,
 			m.output,
 			m.preprocessorDefinitions,
+			m.undefinePreprocessorDefinitions,
 			m.includeSearchPath,
 			m.forcedIncludes,
 			m.assemblySearchPath,
@@ -1392,6 +1395,12 @@
 		end
 	end
 
+
+	function m.undefinePreprocessorDefinitions(cfg)
+		if #cfg.undefines > 0 then
+			p.x('UndefinePreprocessorDefinitions="%s"', table.concat(cfg.undefines, ";"))
+		end
+	end
 
 
 	function m.programDatabaseFile(cfg, toolset)

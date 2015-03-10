@@ -104,7 +104,15 @@
 	function msc.getdefines(defines)
 		local result = {}
 		for _, define in ipairs(defines) do
-			table.insert(result, '-D' .. define)
+			table.insert(result, '/D"' .. define .. '"')
+		end
+		return result
+	end
+
+	function msc.getundefines(undefines)
+		local result = {}
+		for _, undefine in ipairs(undefines) do
+			table.insert(result, '/U"' .. undefine .. '"')
 		end
 		return result
 	end

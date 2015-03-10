@@ -790,6 +790,13 @@
 		end,
 	}
 
+	api.register {
+		name = "undefines",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
  	api.register {
 		name = "usingdirs",
 		scope = "config",
@@ -847,7 +854,6 @@
 			"Extra",
 		}
 	}
-
 
 
 -----------------------------------------------------------------------------

@@ -170,6 +170,23 @@
 
 
 --
+-- Check the defines and undefines.
+--
+
+	function suite.defines()
+		defines "DEF"
+		prepare()
+		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines))
+	end
+
+	function suite.undefines()
+		undefines "UNDEF"
+		prepare()
+		test.contains({ '/U"UNDEF"' }, msc.getundefines(cfg.undefines))
+	end
+
+
+--
 -- Check compilation options.
 --
 
