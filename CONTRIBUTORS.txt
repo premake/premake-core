@@ -13,5 +13,7 @@ Builds and Infrastructure:
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
+  Mihai Sebea <http://twitter.com/mihai_sebea>
+    * Xcode exporter fixes and improvements
   noresources <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
