@@ -76,6 +76,14 @@
 		test.contains({ "-Werror" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSpecificWarnings()
+		enablewarnings { "enable" }
+		disablewarnings { "disable" }
+		fatalwarnings { "fatal" }
+		prepare()
+		test.contains({ "-Wenable", "-Wno-disable", "-Werror=fatal" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onFloastFast()
 		floatingpoint "Fast"
 		prepare()

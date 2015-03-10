@@ -111,6 +111,14 @@
 		test.contains("/WX", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSpecificWarnings()
+		enablewarnings { "enable" }
+		disablewarnings { "disable" }
+		fatalwarnings { "fatal" }
+		prepare()
+		test.contains({ '/wd"disable"', '/we"fatal"' }, msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_OnFatalWarnings()
 		flags "FatalWarnings"
 		prepare()

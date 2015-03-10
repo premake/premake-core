@@ -479,6 +479,7 @@
 				m.detect64BitPortabilityProblems,
 				m.debugInformationFormat,
 				m.compileAs,
+				m.disableSpecificWarnings,
 				m.forcedIncludeFiles,
 				m.omitDefaultLib,
 			}
@@ -999,6 +1000,14 @@
 			if compileAs then
 				p.w('CompileAs="%s"', compileAs)
 			end
+		end
+	end
+
+
+
+	function m.disableSpecificWarnings(cfg)
+		if #cfg.disablewarnings > 0 then
+			p.x('DisableSpecificWarnings="%s"', table.concat(cfg.disablewarnings, ";"))
 		end
 	end
 
