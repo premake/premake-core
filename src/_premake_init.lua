@@ -389,6 +389,13 @@
 	}
 
 	api.register {
+		name = "gccprefix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",
