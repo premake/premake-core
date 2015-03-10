@@ -7,6 +7,7 @@
 
 
 	local function loadScript(fname)
+		fname = path.getabsolute(fname)
 		local f = io.open(fname)
 		local s = assert(f:read("*a"))
 		f:close()

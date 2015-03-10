@@ -15,6 +15,8 @@ Builds and Infrastructure:
 Patch contributors:
   Manu Evans <https://bitbucket.org/TurkeyMan>
     * new APIs for debugging, controlling warnings, undefining symbols
-  noresources <https://bitbucket.org/noresources>
+  Mihai Sebea <http://twitter.com/mihai_sebea>
+    * Xcode exporter fixes and improvements
+  Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
