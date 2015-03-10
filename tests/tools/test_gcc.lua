@@ -108,6 +108,23 @@
 
 
 --
+-- Check the defines and undefines.
+--
+
+	function suite.defines()
+		defines "DEF"
+		prepare()
+		test.contains({ "-DDEF" }, gcc.getdefines(cfg.defines))
+	end
+
+	function suite.undefines()
+		undefines "UNDEF"
+		prepare()
+		test.contains({ "-UUNDEF" }, gcc.getundefines(cfg.undefines))
+	end
+
+
+--
 -- Check the optimization flags.
 --
 

@@ -237,6 +237,22 @@
 
 
 --
+-- If undefines are specified, the <UndefinePreprocessorDefinitions> element should be added.
+--
+
+	function suite.preprocessorDefinitions_onUnDefines()
+		undefines { "DEBUG", "_DEBUG" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<UndefinePreprocessorDefinitions>DEBUG;_DEBUG;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+		]]
+	end
+
+
+--
 -- If build options are specified, the <AdditionalOptions> element should be specified.
 --
 

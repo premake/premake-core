@@ -1397,7 +1397,7 @@
 
 
 	function m.undefinePreprocessorDefinitions(cfg)
-		if #cfg.undefines > 0 or vstudio.isMakefile(cfg) then
+		if #cfg.undefines > 0 then
 			p.x('UndefinePreprocessorDefinitions="%s"', table.concat(cfg.undefines, ";"))
 		end
 	end
