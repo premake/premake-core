@@ -66,6 +66,8 @@
 	function msc.getcflags(cfg)
 		local flags = config.mapFlags(cfg, msc.cflags)
 
+		flags = table.join(flags, msc.getwarnings(cfg))
+
 		local runtime = iif(cfg.flags.StaticRuntime, "/MT", "/MD")
 		if config.isDebugBuild(cfg) then
 			runtime = runtime .. "d"
@@ -73,6 +75,18 @@
 		table.insert(flags, runtime)
 
 		return flags
+	end
+
+	function msc.getwarnings(cfg)
+		local result = {}
+		-- NOTE: VStudio can't enable specific warnings (workaround?)
+		for _, disable in ipairs(cfg.disablewarnings) do
+			table.insert(result, '/wd"' .. disable .. '"')
+		end
+		for _, fatal in ipairs(cfg.fatalwarnings) do
+			table.insert(result, '/we"' .. fatal .. '"')
+		end
+		return result
 	end
 
 
@@ -104,7 +118,15 @@
 	function msc.getdefines(defines)
 		local result = {}
 		for _, define in ipairs(defines) do
-			table.insert(result, '-D' .. define)
+			table.insert(result, '/D"' .. define .. '"')
+		end
+		return result
+	end
+
+	function msc.getundefines(undefines)
+		local result = {}
+		for _, undefine in ipairs(undefines) do
+			table.insert(result, '/U"' .. undefine .. '"')
 		end
 		return result
 	end

@@ -13,5 +13,10 @@ Builds and Infrastructure:
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
-  noresources <https://bitbucket.org/noresources>
+  Manu Evans <https://bitbucket.org/TurkeyMan>
+    * new APIs for debugging, controlling warnings, undefining symbols
+  Mihai Sebea <http://twitter.com/mihai_sebea>
+    * Xcode exporter fixes and improvements
+  Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
+    * return command exit code from os.outputof()

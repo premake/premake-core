@@ -36,18 +36,18 @@
 --
 
 	function suite.groupRule_groupAsPhony()
-		prepare()	
+		prepare()
 		make.solutionPhonyRule(sln)
 		test.capture [[
 .PHONY: all clean help $(PROJECTS) MainGroup MainGroup/SubGroup1 MainGroup/SubGroup2
 		]]
 	end
-	
+
 --
 -- Transform solution groups into target aggregate
 --
 	function suite.groupRule_groupRules()
-		prepare()	
+		prepare()
 		make.groupRules(sln)
 		test.capture [[
 MainGroup: MainGroup/SubGroup1 MainGroup/SubGroup2 MyProject2

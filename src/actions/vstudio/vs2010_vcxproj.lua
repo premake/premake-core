@@ -291,8 +291,11 @@
 			m.precompiledHeader,
 			m.warningLevel,
 			m.treatWarningAsError,
+			m.disableSpecificWarnings,
+			m.treatSpecificWarningsAsErrors,
 			m.basicRuntimeChecks,
 			m.clCompilePreprocessorDefinitions,
+			m.clCompileUndefinePreprocessorDefinitions,
 			m.clCompileAdditionalIncludeDirectories,
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
@@ -605,11 +608,14 @@
 							local condition = m.condition(cfg)
 							m.objectFileName(fcfg)
 							m.clCompilePreprocessorDefinitions(fcfg, condition)
+							m.clCompileUndefinePreprocessorDefinitions(fcfg, condition)
 							m.optimization(fcfg, condition)
 							m.forceIncludes(fcfg, condition)
 							m.precompiledHeader(cfg, fcfg, condition)
 							m.enableEnhancedInstructionSet(fcfg, condition)
 							m.additionalCompileOptions(fcfg, condition)
+							m.disableSpecificWarnings(fcfg, condition)
+							m.treatSpecificWarningsAsErrors(fcfg, condition)
 						end
 					end
 					p.pop()
@@ -958,6 +964,11 @@
 
 	function m.clCompilePreprocessorDefinitions(cfg, condition)
 		m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+	end
+
+
+	function m.clCompileUndefinePreprocessorDefinitions(cfg, condition)
+		m.undefinePreprocessorDefinitions(cfg, cfg.undefines, false, condition)
 	end
 
 
@@ -1429,6 +1440,18 @@
 	end
 
 
+	function m.undefinePreprocessorDefinitions(cfg, undefines, escapeQuotes, condition)
+		if #undefines > 0 then
+			undefines = table.concat(undefines, ";")
+			if escapeQuotes then
+				undefines = undefines:gsub('"', '\\"')
+			end
+			undefines = premake.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			m.element('UndefinePreprocessorDefinitions', condition, undefines)
+		end
+	end
+
+
 	function m.programDataBaseFileName(cfg)
 		-- just a placeholder for overriding; will use the default VS name
 	end
@@ -1591,6 +1614,24 @@
 	function m.treatWarningAsError(cfg)
 		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
 			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
+		end
+	end
+
+
+	function m.disableSpecificWarnings(cfg, condition)
+		if #cfg.disablewarnings > 0 then
+			local warnings = table.concat(cfg.disablewarnings, ";")
+			warnings = premake.esc(warnings) .. ";%%(DisableSpecificWarnings)"
+			m.element('DisableSpecificWarnings', condition, warnings)
+		end
+	end
+
+	
+	function m.treatSpecificWarningsAsErrors(cfg, condition)
+		if #cfg.fatalwarnings > 0 then
+			local fatal = table.concat(cfg.fatalwarnings, ";")
+			fatal = premake.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
+			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end
 	end
 

@@ -85,4 +85,8 @@
 		"actions/clean/_clean.lua",
 
 		"_premake_init.lua",
+
+		-- Built-in action modules. The action is registered, but the actual
+		-- implementation is not loaded unless the action is used.
+		"../modules/xcode/_action.lua",
 	}

@@ -380,7 +380,7 @@
 
 
 	function make.defines(cfg, toolset)
-		_p('  DEFINES +=%s', make.list(toolset.getdefines(cfg.defines)))
+		_p('  DEFINES +=%s', make.list(table.join(toolset.getdefines(cfg.defines), toolset.getundefines(cfg.undefines))))
 	end
 
 

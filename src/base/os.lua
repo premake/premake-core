@@ -387,9 +387,12 @@
 
 		local pipe = io.popen(cmd)
 		local result = pipe:read('*a')
-		pipe:close()
+		local b, exitcode = pipe:close()
+		if not b then
+			exitcode = -1
+		end
 
-		return result
+		return result, exitcode
 	end
 
 

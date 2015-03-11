@@ -120,6 +120,36 @@
 	end
 
 --
+-- Disable specific warnings.
+--
+
+	function suite.disableSpecificWarnings()
+		disablewarnings { "disable" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DisableSpecificWarnings>disable;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		]]
+	end
+
+--
+-- Specific warnings as errors.
+--
+
+	function suite.specificWarningsAsErrors()
+		fatalwarnings { "fatal" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<TreatSpecificWarningsAsErrors>fatal;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
+		]]
+	end
+
+--
 -- Check the optimization flags.
 --
 
@@ -232,6 +262,22 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+	end
+
+
+--
+-- If undefines are specified, the <UndefinePreprocessorDefinitions> element should be added.
+--
+
+	function suite.preprocessorDefinitions_onUnDefines()
+		undefines { "DEBUG", "_DEBUG" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<UndefinePreprocessorDefinitions>DEBUG;_DEBUG;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
 		]]
 	end
 

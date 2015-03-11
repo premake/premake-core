@@ -80,7 +80,22 @@
 
 	function gcc.getcflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cflags)
+		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
+	end
+
+	function gcc.getwarnings(cfg)
+		local result = {}
+		for _, enable in ipairs(cfg.enablewarnings) do
+			table.insert(result, '-W' .. enable)
+		end
+		for _, disable in ipairs(cfg.disablewarnings) do
+			table.insert(result, '-Wno-' .. disable)
+		end
+		for _, fatal in ipairs(cfg.fatalwarnings) do
+			table.insert(result, '-Werror=' .. fatal)
+		end
+		return result
 	end
 
 
@@ -110,6 +125,14 @@
 		local result = {}
 		for _, define in ipairs(defines) do
 			table.insert(result, '-D' .. define)
+		end
+		return result
+	end
+
+	function gcc.getundefines(undefines)
+		local result = {}
+		for _, undefine in ipairs(undefines) do
+			table.insert(result, '-U' .. undefine)
 		end
 		return result
 	end
@@ -285,14 +308,18 @@
 --
 
 	gcc.tools = {
+		cc = "gcc",
+		cxx = "g++",
+		ar = "ar",
+		rc = "windres"
 	}
 
 	function gcc.gettoolname(cfg, tool)
 		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
 		local name = names[tool]
 
-		if tool == "rc" then
-			name = name or "windres"
+		if not name and (tool == "rc" or cfg.gccprefix) and gcc.tools[tool] then
+			name = (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
 
 		return name

@@ -111,6 +111,14 @@
 		test.contains("/WX", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSpecificWarnings()
+		enablewarnings { "enable" }
+		disablewarnings { "disable" }
+		fatalwarnings { "fatal" }
+		prepare()
+		test.contains({ '/wd"disable"', '/we"fatal"' }, msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_OnFatalWarnings()
 		flags "FatalWarnings"
 		prepare()
@@ -166,6 +174,23 @@
 		vectorextensions "SSE2"
 		prepare()
 		test.contains("/arch:sse2", msc.getcflags(cfg))
+	end
+
+
+--
+-- Check the defines and undefines.
+--
+
+	function suite.defines()
+		defines "DEF"
+		prepare()
+		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines))
+	end
+
+	function suite.undefines()
+		undefines "UNDEF"
+		prepare()
+		test.contains({ '/U"UNDEF"' }, msc.getundefines(cfg.undefines))
 	end
 
 

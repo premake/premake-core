@@ -197,6 +197,11 @@
 		if act then
 			_OS = act.os or _OS
 		end
+
+		-- Some are implemented in standalone modules
+		if act and act.module then
+			require(act.module)
+		end
 	end
 
 
