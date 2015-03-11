@@ -38,6 +38,15 @@
 		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_withPrefix()
+		gccprefix "test-prefix-"
+		prepare()
+		test.isequal("test-prefix-gcc", gcc.gettoolname(cfg, "cc"))
+		test.isequal("test-prefix-g++", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("test-prefix-ar", gcc.gettoolname(cfg, "ar"))
+		test.isequal("test-prefix-windres", gcc.gettoolname(cfg, "rc"))
+	end
+
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.

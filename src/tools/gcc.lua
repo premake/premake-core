@@ -308,14 +308,18 @@
 --
 
 	gcc.tools = {
+		cc = "gcc",
+		cxx = "g++",
+		ar = "ar",
+		rc = "windres"
 	}
 
 	function gcc.gettoolname(cfg, tool)
 		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
 		local name = names[tool]
 
-		if tool == "rc" then
-			name = name or "windres"
+		if not name and (tool == "rc" or cfg.gccprefix) and gcc.tools[tool] then
+			name = (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
 
 		return name
