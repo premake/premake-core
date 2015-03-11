@@ -65,10 +65,8 @@
 
 	function suite.debugStartArguments()
 		debugargs "foobar"
-
 		local cfg = test.getconfig(prj, "Debug")
-		cs2005.debugsettings(cfg)
-
+		cs2005.localDebuggerCommandArguments(cfg)
 		test.capture [[
 <StartArguments>foobar</StartArguments>
 		]]

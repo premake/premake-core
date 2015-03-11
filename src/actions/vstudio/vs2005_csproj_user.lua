@@ -12,41 +12,76 @@
 -- Generate a Visual Studio 200x C# user file.
 --
 
-	function m.generateUser(prj)
-		p.vstudio.projectElement()
-		p.push('<PropertyGroup>')
+	m.elements.userProjectPropertyGroup = function()
+		return {
+			m.referencePath,
+		}
+	end
 
+	m.elements.userConfigPropertyGroup = function()
+		return {
+			m.localDebuggerCommandArguments,
+		}
+	end
+
+	function m.generateUser(prj)
+		-- Only want output if there is something to configure
+		local prjGroup = p.capture(function()
+			p.push(2)
+			p.callArray(m.elements.userProjectPropertyGroup, prj)
+			p.pop(2)
+		end)
+
+		local contents = {}
+		local size = 0
+
+		for cfg in p.project.eachconfig(prj) do
+			contents[cfg] = p.capture(function()
+				p.push(2)
+				p.callArray(m.elements.userConfigPropertyGroup, cfg)
+				p.pop(2)
+			end)
+			size = size + #contents[cfg]
+		end
+
+		if #prjGroup > 0 or size > 0 then
+			p.vstudio.projectElement()
+
+			if #prjGroup > 0 then
+				p.push('<PropertyGroup>')
+				p.outln(prjGroup)
+				p.pop('</PropertyGroup>')
+			end
+
+			for cfg in p.project.eachconfig(prj) do
+				if #contents[cfg] > 0 then
+					p.push('<PropertyGroup %s>', m.condition(cfg))
+					p.outln(contents[cfg])
+					p.pop('</PropertyGroup>')
+				end
+			end
+
+			p.outln('</Project>')
+		end
+	end
+
+
+
+---
+-- Output any reference paths required by the project.
+---
+
+	function m.referencePath(prj)
 		-- Per-configuration reference paths aren't supported (are they?) so just
 		-- use the first configuration in the project
 		local cfg = p.project.getfirstconfig(prj)
-
-		local refpaths = path.translate(p.project.getrelative(prj, cfg.libdirs))
-		p.w('<ReferencePath>%s</ReferencePath>', table.concat(refpaths, ";"))
-
-		p.pop('</PropertyGroup>')
-
-		for cfg in p.project.eachconfig(prj) do
-			local contents = p.capture(function()
-				p.push()
-				m.debugsettings(cfg)
-				p.pop()
-			end)
-
-			if #contents > 0 then
-				p.push('<PropertyGroup %s>', m.condition(cfg))
-				p.outln(contents)
-				p.pop('</PropertyGroup>')
-			end
+		local paths = path.translate(p.project.getrelative(prj, cfg.libdirs))
+		if #paths > 0 then
+			p.w('<ReferencePath>%s</ReferencePath>', table.concat(paths, ";"))
 		end
-
-		p.outln('</Project>')
 	end
 
 
-
-	function m.debugsettings(cfg)
-		m.localDebuggerCommandArguments(cfg)
-	end
 
 	function m.localDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then

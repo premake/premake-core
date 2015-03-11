@@ -21,7 +21,7 @@
 	function m.generateUser(prj)
 		-- Only want output if there is something to configure
 		local contents = {}
-		local generate = false
+		local size = 0
 
 		for cfg in p.project.eachconfig(prj) do
 			contents[cfg] = p.capture(function()
@@ -29,12 +29,10 @@
 				p.callArray(m.elements.user, cfg)
 				p.pop(2)
 			end)
-			if #contents[cfg] > 0 then
-				generate = true
-			end
+			size = size + #contents[cfg]
 		end
 
-		if generate then
+		if size > 0 then
 			m.xmlDeclaration()
 			m.userProject()
 			for cfg in p.project.eachconfig(prj) do

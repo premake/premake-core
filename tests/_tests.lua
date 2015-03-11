@@ -55,7 +55,7 @@ return {
 	"tools/test_gcc.lua",
 	"tools/test_msc.lua",
 
-	-- Visual Studio 2005-2010 C# projects
+	-- Visual Studio 2005-2013 C# projects
 	"actions/vstudio/cs2005/test_assembly_refs.lua",
 	"actions/vstudio/cs2005/test_build_events.lua",
 	"actions/vstudio/cs2005/test_common_props.lua",
@@ -69,8 +69,9 @@ return {
 	"actions/vstudio/cs2005/test_project_refs.lua",
 	"actions/vstudio/cs2005/projectsettings.lua",
 	"actions/vstudio/cs2005/test_targets.lua",
+	"actions/vstudio/cs2005/test_user_file.lua",
 
-	-- Visual Studio 2005-2010 solutions
+	-- Visual Studio 2005-2013 solutions
 	"actions/vstudio/sln2005/test_dependencies.lua",
 	"actions/vstudio/sln2005/test_header.lua",
 	"actions/vstudio/sln2005/test_nested_projects.lua",
@@ -94,7 +95,7 @@ return {
 	"actions/vstudio/vc200x/test_resource_compiler.lua",
 	"actions/vstudio/vc200x/test_user_file.lua",
 
-	-- Visual Studio 2010 C/C++ projects
+	-- Visual Studio 2010-2013 C/C++ projects
 	"actions/vstudio/vc2010/test_assembly_refs.lua",
 	"actions/vstudio/vc2010/test_build_events.lua",
 	"actions/vstudio/vc2010/test_compile_settings.lua",
