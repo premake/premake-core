@@ -5,10 +5,6 @@
 --
 
 	local p = premake
-	local vstudio = p.vstudio
-	local vc2010 = p.vstudio.vc2010
-	local project = p.project
-
 	local m = p.vstudio.vc2010
 
 
@@ -27,7 +23,7 @@
 		local contents = {}
 		local generate = false
 
-		for cfg in project.eachconfig(prj) do
+		for cfg in p.project.eachconfig(prj) do
 			contents[cfg] = p.capture(function()
 				p.push(2)
 				p.callArray(m.elements.user, cfg)
@@ -41,7 +37,7 @@
 		if generate then
 			m.xmlDeclaration()
 			m.userProject()
-			for cfg in project.eachconfig(prj) do
+			for cfg in p.project.eachconfig(prj) do
 				p.push('<PropertyGroup %s>', m.condition(cfg))
 				if #contents[cfg] > 0 then
 					p.outln(contents[cfg])
@@ -55,7 +51,7 @@
 
 
 --
--- Output the XML declaration and opening <Project> tag.
+-- Output the opening <Project> tag.
 --
 
 	function m.userProject()
@@ -66,24 +62,24 @@
 
 
 
-	vc2010.elements.debugSettings = function(cfg)
+	m.elements.debugSettings = function(cfg)
 		return {
-			vc2010.localDebuggerCommand,
-			vc2010.localDebuggerWorkingDirectory,
-			vc2010.debuggerFlavor,
-			vc2010.localDebuggerCommandArguments,
-			vc2010.localDebuggerEnvironment,
-			vc2010.localDebuggerMergeEnvironment,
+			m.localDebuggerCommand,
+			m.localDebuggerWorkingDirectory,
+			m.debuggerFlavor,
+			m.localDebuggerCommandArguments,
+			m.localDebuggerEnvironment,
+			m.localDebuggerMergeEnvironment,
 		}
 	end
 
-	function vc2010.debugSettings(cfg)
-		p.callArray(vc2010.elements.debugSettings, cfg)
+	function m.debugSettings(cfg)
+		p.callArray(m.elements.debugSettings, cfg)
 	end
 
 
 
-	function vc2010.debuggerFlavor(cfg)
+	function m.debuggerFlavor(cfg)
 		if cfg.debugdir or cfg.debugcommand then
 			p.w('<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')
 		end
@@ -91,16 +87,16 @@
 
 
 
-	function vc2010.localDebuggerCommand(cfg)
+	function m.localDebuggerCommand(cfg)
 		if cfg.debugcommand then
-			local dir = project.getrelative(cfg.project, cfg.debugcommand)
+			local dir = p.project.getrelative(cfg.project, cfg.debugcommand)
 			p.w('<LocalDebuggerCommand>%s</LocalDebuggerCommand>', path.translate(dir))
 		end
 	end
 
 
 
-	function vc2010.localDebuggerCommandArguments(cfg)
+	function m.localDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then
 			p.x('<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
 		end
@@ -108,16 +104,16 @@
 
 
 
-	function vc2010.localDebuggerWorkingDirectory(cfg)
+	function m.localDebuggerWorkingDirectory(cfg)
 		if cfg.debugdir then
-			local dir = project.getrelative(cfg.project, cfg.debugdir)
+			local dir = p.project.getrelative(cfg.project, cfg.debugdir)
 			p.x('<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
 		end
 	end
 
 
 
-	function vc2010.localDebuggerEnvironment(cfg)
+	function m.localDebuggerEnvironment(cfg)
 		if #cfg.debugenvs > 0 then
 			local envs = table.concat(cfg.debugenvs, "\n")
 			if cfg.flags.DebugEnvsInherit then
@@ -133,7 +129,7 @@
 
 
 
-	function vc2010.localDebuggerMergeEnvironment(cfg)
+	function m.localDebuggerMergeEnvironment(cfg)
 		if #cfg.debugenvs > 0 and cfg.flags.DebugEnvsDontMerge then
 			p.w(2,'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
 		end

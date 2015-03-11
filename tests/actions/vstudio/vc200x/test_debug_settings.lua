@@ -22,7 +22,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug")
-		vc200x.debugdir(cfg)
+		vc200x.debugSettings(cfg)
 	end
 
 
