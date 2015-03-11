@@ -1,7 +1,7 @@
 --
 -- vs2010_vcxproj_user.lua
 -- Generate a Visual Studio 201x C/C++ project .user file
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -13,18 +13,43 @@
 
 
 --
--- Generate a Visual Studio 201x C++ user file, with support for the new platforms API.
+-- Generate a Visual Studio 201x C++ user file.
 --
 
+	m.elements.user = function(cfg)
+		return {
+			m.debugSettings,
+		}
+	end
+
 	function m.generateUser(prj)
-		m.xmlDeclaration()
-		m.userProject()
+		-- Only want output if there is something to configure
+		local contents = {}
+		local generate = false
+
 		for cfg in project.eachconfig(prj) do
-			p.push('<PropertyGroup %s>', m.condition(cfg))
-			m.debugSettings(cfg)
-			p.pop('</PropertyGroup>')
+			contents[cfg] = p.capture(function()
+				p.push(2)
+				p.callArray(m.elements.user, cfg)
+				p.pop(2)
+			end)
+			if #contents[cfg] > 0 then
+				generate = true
+			end
 		end
-		_p('</Project>')
+
+		if generate then
+			m.xmlDeclaration()
+			m.userProject()
+			for cfg in project.eachconfig(prj) do
+				p.push('<PropertyGroup %s>', m.condition(cfg))
+				if #contents[cfg] > 0 then
+					p.outln(contents[cfg])
+				end
+				p.pop('</PropertyGroup>')
+			end
+			p.out('</Project>')
+		end
 	end
 
 
