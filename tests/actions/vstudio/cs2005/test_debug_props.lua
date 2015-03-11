@@ -70,7 +70,7 @@
 		cs2005.debugsettings(cfg)
 
 		test.capture [[
-		<StartArguments>foobar</StartArguments>
+<StartArguments>foobar</StartArguments>
 		]]
 	end
 

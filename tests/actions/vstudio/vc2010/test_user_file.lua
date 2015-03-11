@@ -6,7 +6,6 @@
 
 	local suite = test.declare("vstudio_vs2010_user_file")
 	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
 
 
 --

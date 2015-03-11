@@ -6,7 +6,6 @@
 
 	local suite = test.declare("vstudio_vs200x_user_file")
 	local vc200x = premake.vstudio.vc200x
-	local project = premake.project
 
 
 --
