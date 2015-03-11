@@ -69,17 +69,17 @@
 	function suite.variableMaintained_onLeadingVariable()
 		system "windows"
 		location "build"
-		links { "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI" }
+		links { "$(LOCAL_DEV_PATH)/sdk/lib/DEVMAPI" }
 		local r = prepare("all", "fullpath")
-		test.isequal({ "$(SN_PS3_PATH)/sdk/lib/PS3TMAPI" }, r)
+		test.isequal({ "$(LOCAL_DEV_PATH)/sdk/lib/DEVMAPI" }, r)
 	end
 
 	function suite.variableMaintained_onQuotedVariable()
 		system "windows"
 		location "build"
-		links { '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib"' }
+		links { '"$(LOCAL_DEV_PATH)/sdk/lib/DEVMAPI.lib"' }
 		local r = prepare("all", "fullpath")
-		test.isequal({ '"$(SN_PS3_PATH)/sdk/lib/PS3TMAPI.lib"' }, r)
+		test.isequal({ '"$(LOCAL_DEV_PATH)/sdk/lib/DEVMAPI.lib"' }, r)
 	end
 
 

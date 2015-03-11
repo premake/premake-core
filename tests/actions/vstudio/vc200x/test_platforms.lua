@@ -81,23 +81,6 @@
 
 
 --
--- Verify the PS3 platform.
---
-
-	function suite.platformIsCorrect_onPS3()
-		platforms { "PS3" }
-		prepare()
-		test.capture [[
-<Platforms>
-	<Platform
-		Name="Win32"
-	/>
-</Platforms>
-		]]
-	end
-
-
---
 -- Verify the Xbox360 platform.
 --
 

@@ -41,8 +41,8 @@
 --
 
 	function suite.matches_fails_onIncompleteTermMatch()
-		crit = criteria.new { "platforms:ps3" }
-		test.isfalse(criteria.matches(crit, { platforms="ps3 ppu sn" }))
+		crit = criteria.new { "platforms:win64" }
+		test.isfalse(criteria.matches(crit, { platforms="win64 dll dcrt" }))
 	end
 
 
@@ -224,8 +224,8 @@
 	end
 
 	function suite.fails_onIncompleteMatch_Unprefixed()
-		crit = criteria.new({ "ps3" }, true)
-		test.isfalse(criteria.matches(crit, { "ps3 ppu sn" }))
+		crit = criteria.new({ "win64" }, true)
+		test.isfalse(criteria.matches(crit, { "win64 dll dcrt" }))
 	end
 
 	function suite.passes_onPatternMatch_Unprefixed()

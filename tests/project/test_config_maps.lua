@@ -106,19 +106,19 @@
 --
 
 	function suite.canMap_tupleToSingle()
-		platforms { "Win32", "PS3" }
+		platforms { "Win32", "Linux" }
 		project ("MyProject")
 		removeconfigurations "*"
 		removeplatforms "*"
-		configurations { "Debug Win32", "Release Win32", "Debug PS3", "Release PS3" }
+		configurations { "Debug Win32", "Release Win32", "Debug Linux", "Release Linux" }
 		configmap {
 			[{"Debug", "Win32"}] = "Debug Win32",
-			[{"Debug", "PS3"}] = "Debug PS3",
+			[{"Debug", "Linux"}] = "Debug Linux",
 			[{"Release", "Win32"}] = "Release Win32",
-			[{"Release", "PS3"}] = "Release PS3"
+			[{"Release", "Linux"}] = "Release Linux"
 		}
-		prepare("Debug", "PS3")
-		test.isequal("Debug PS3", cfg.buildcfg)
+		prepare("Debug", "Linux")
+		test.isequal("Debug Linux", cfg.buildcfg)
 	end
 
 
@@ -128,7 +128,7 @@
 --
 
 	function suite.canMap_tupleToTuple()
-		platforms { "Win32", "PS3" }
+		platforms { "Win32", "Linux" }
 		project ("MyProject")
 		removeconfigurations "*"
 		removeplatforms "*"
@@ -137,11 +137,11 @@
 
 		configmap {
 			[{"Debug", "Win32"}] = { "Development", "x32" },
-			[{"Debug", "PS3"}] = { "Development", "x64" },
+			[{"Debug", "Linux"}] = { "Development", "x64" },
 			[{"Release", "Win32"}] = { "Production", "x32" },
-			[{"Release", "PS3"}] = { "Production", "x64" },
+			[{"Release", "Linux"}] = { "Production", "x64" },
 		}
-		prepare("Debug", "PS3")
+		prepare("Debug", "Linux")
 		test.isequal({ "Development", "x64" }, { cfg.buildcfg, cfg.platform })
 	end
 
