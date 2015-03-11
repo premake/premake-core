@@ -31,15 +31,22 @@
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
-			premake.generate(prj, ".csproj.user", vstudio.cs2005.generateUser)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.cs2005.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".csproj.user", function() p.outln(user) end)
+			end
+
 		elseif premake.project.iscpp(prj) then
 			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.vc200x.generateUser(prj) end)
 			if #user > 0 then
-				p.generate(prj, ".vcproj.user", function() p.out(user) end)
+				p.generate(prj, ".vcproj.user", function() p.outln(user) end)
 			end
+
 		end
 	end
 

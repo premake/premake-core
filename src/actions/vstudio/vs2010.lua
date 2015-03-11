@@ -47,7 +47,7 @@
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
 			if #user > 0 then
-				p.generate(prj, ".vcxproj.user", function() p.out(user) end)
+				p.generate(prj, ".vcxproj.user", function() p.outln(user) end)
 			end
 
 			-- Only generate a filters file if the source tree actually has subfolders

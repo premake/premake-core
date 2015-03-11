@@ -164,6 +164,7 @@
 		_indentLevel = 0
 		callback(obj)
 		f:close()
+		_indentLevel = 0
 	end
 
 

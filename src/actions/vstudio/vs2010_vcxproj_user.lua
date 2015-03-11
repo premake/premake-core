@@ -42,7 +42,7 @@
 				end
 				p.pop('</PropertyGroup>')
 			end
-			p.out('</Project>')
+			p.pop('</Project>')
 		end
 	end
 
