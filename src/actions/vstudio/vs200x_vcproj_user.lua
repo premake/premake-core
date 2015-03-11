@@ -21,18 +21,38 @@
 
 	function m.generateUser(prj)
 		p.indent("\t")
-		m.xmlElement()
-		m.visualStudioUserFile()
 
-		p.push('<Configurations>')
+		-- Only want output if there is something to configure
+		local contents = {}
+		local generate = false
+
 		for cfg in p.project.eachconfig(prj) do
-			m.userConfiguration(cfg)
-			p.callArray(m.elements.user, cfg)
-			p.pop('</Configuration>')
+			contents[cfg] = p.capture(function()
+				p.push(4)
+				p.callArray(m.elements.user, cfg)
+				p.pop(4)
+			end)
+			if #contents[cfg] > 0 then
+				generate = true
+			end
 		end
-		p.pop('</Configurations>')
 
-		p.pop('</VisualStudioUserFile>')
+		if generate then
+			m.xmlElement()
+			m.visualStudioUserFile()
+			p.push('<Configurations>')
+			for cfg in p.project.eachconfig(prj) do
+				m.userConfiguration(cfg)
+				p.push('<DebugSettings')
+				if #contents[cfg] > 0 then
+					p.outln(contents[cfg])
+				end
+				p.pop('/>')
+				p.pop('</Configuration>')
+			end
+			p.pop('</Configurations>')
+			p.pop('</VisualStudioUserFile>')
+		end
 	end
 
 
@@ -78,9 +98,7 @@
 	end
 
 	function m.debugSettings(cfg)
-		p.push('<DebugSettings')
 		p.callArray(m.elements.debugSettings, cfg)
-		p.pop('/>')
 	end
 
 

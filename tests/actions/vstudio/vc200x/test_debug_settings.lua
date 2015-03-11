@@ -32,10 +32,7 @@
 
 	function suite.emptyBlock_onNoSettings()
 		prepare()
-		test.capture [[
-<DebugSettings
-/>
-		]]
+		test.isemptycapture()
 	end
 
 
@@ -49,9 +46,7 @@
 		debugcommand "bin/emulator.exe"
 		prepare()
 		test.capture [[
-<DebugSettings
-	Command="..\bin\emulator.exe"
-/>
+Command="..\bin\emulator.exe"
 		]]
 	end
 
@@ -66,9 +61,7 @@
 		debugdir "bin/debug"
 		prepare()
 		test.capture [[
-<DebugSettings
-	WorkingDirectory="..\bin\debug"
-/>
+WorkingDirectory="..\bin\debug"
 		]]
 	end
 
@@ -81,9 +74,7 @@
 		debugargs { "arg1", "arg2" }
 		prepare()
 		test.capture [[
-<DebugSettings
-	CommandArguments="arg1 arg2"
-/>
+CommandArguments="arg1 arg2"
 		]]
 	end
 
@@ -96,9 +87,7 @@
 		debugenvs { "key=value" }
 		prepare()
 		test.capture [[
-<DebugSettings
-	Environment="key=value"
-/>
+Environment="key=value"
 		]]
 	end
 
@@ -111,9 +100,7 @@
 		debugenvs { 'key="value"' }
 		prepare()
 		test.capture [[
-<DebugSettings
-	Environment="key=&quot;value&quot;"
-/>
+Environment="key=&quot;value&quot;"
 		]]
 	end
 
@@ -127,9 +114,7 @@
 		debugenvs { "key=value", "foo=bar" }
 		prepare()
 		test.capture [[
-<DebugSettings
-	Environment="key=value&#x0A;foo=bar"
-/>
+Environment="key=value&#x0A;foo=bar"
 		]]
 	end
 
@@ -144,9 +129,7 @@
 		flags { "DebugEnvsDontMerge" }
 		prepare()
 		test.capture [[
-<DebugSettings
-	Environment="key=value"
-	EnvironmentMerge="false"
-/>
+Environment="key=value"
+EnvironmentMerge="false"
 		]]
 	end

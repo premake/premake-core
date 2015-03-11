@@ -34,7 +34,12 @@
 			premake.generate(prj, ".csproj.user", vstudio.cs2005.generateUser)
 		elseif premake.project.iscpp(prj) then
 			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
-			premake.generate(prj, ".vcproj.user", vstudio.vc200x.generateUser)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.vc200x.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".vcproj.user", function() p.out(user) end)
+			end
 		end
 	end
 

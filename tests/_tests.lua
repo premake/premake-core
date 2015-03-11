@@ -92,6 +92,7 @@ return {
 	"actions/vstudio/vc200x/test_project.lua",
 	"actions/vstudio/vc200x/test_project_refs.lua",
 	"actions/vstudio/vc200x/test_resource_compiler.lua",
+	"actions/vstudio/vc200x/test_user_file.lua",
 
 	-- Visual Studio 2010 C/C++ projects
 	"actions/vstudio/vc2010/test_assembly_refs.lua",
@@ -116,9 +117,9 @@ return {
 	"actions/vstudio/vc2010/test_project_configs.lua",
 	"actions/vstudio/vc2010/test_project_refs.lua",
 	"actions/vstudio/vc2010/test_prop_sheet.lua",
-	"actions/vstudio/vc2010/test_user_file.lua",
 	"actions/vstudio/vc2010/test_resource_compile.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
+	"actions/vstudio/vc2010/test_user_file.lua",
 
 	-- Makefile tests
 	"actions/make/test_make_escaping.lua",
