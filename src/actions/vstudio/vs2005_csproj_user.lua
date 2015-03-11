@@ -13,7 +13,7 @@
 -- Generate a Visual Studio 200x C# user file, with support for the new platforms API.
 --
 
-	function cs2005.generate_user(prj)
+	function cs2005.generateUser(prj)
 		p.vstudio.projectElement()
 		_p(1,'<PropertyGroup>')
 
