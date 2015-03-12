@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -85,8 +85,4 @@
 		"actions/clean/_clean.lua",
 
 		"_premake_init.lua",
-
-		-- Built-in action modules. The action is registered, but the actual
-		-- implementation is not loaded unless the action is used.
-		"../modules/xcode/_action.lua",
 	}
