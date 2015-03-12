@@ -623,23 +623,23 @@
 ---
 
 	function suite.sortsByBuildCfgAndPlatform()
-		platforms { "Windows", "PS3" }
+		platforms { "Windows", "Linux" }
 		project "MyProject"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|PS3 = Debug|PS3
+		Debug|Linux = Debug|Linux
 		Debug|Windows = Debug|Windows
-		Release|PS3 = Release|PS3
+		Release|Linux = Release|Linux
 		Release|Windows = Release|Windows
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|PS3.ActiveCfg = Debug PS3|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|PS3.Build.0 = Debug PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Linux.ActiveCfg = Debug Linux|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Linux.Build.0 = Debug Linux|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Windows.ActiveCfg = Debug Windows|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Windows.Build.0 = Debug Windows|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|PS3.ActiveCfg = Release PS3|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|PS3.Build.0 = Release PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Linux.ActiveCfg = Release Linux|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Linux.Build.0 = Release Linux|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Windows.ActiveCfg = Release Windows|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Windows.Build.0 = Release Windows|Win32
 	EndGlobalSection

@@ -62,6 +62,9 @@
 
 	function m.installModuleLoader()
 		table.insert(package.loaders, 2, m.moduleLoader)
+
+		-- TEMPORARY: I'm working on a different solution for this
+		require("xcode")
 	end
 
 	function m.moduleLoader(name)
