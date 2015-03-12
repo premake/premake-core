@@ -9,6 +9,7 @@
 	p.modules.xcode = {}
 	local m = p.modules.xcode
 
+	dofile("_action.lua")
 	dofile("xcode_common.lua")
 	dofile("xcode4_workspace.lua")
 	dofile("xcode_project.lua")
