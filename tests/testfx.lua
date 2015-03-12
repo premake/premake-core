@@ -121,6 +121,14 @@
 	end
 
 
+	function test.hasoutput()
+		local actual = premake.captured()
+		if actual == "" then
+			test.fail("expected output, received none");
+		end
+	end
+
+
 	function test.isemptycapture()
 		local actual = premake.captured()
 		if actual ~= "" then

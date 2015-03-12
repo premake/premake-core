@@ -1,7 +1,7 @@
 --
 -- actions/vstudio/vs2005.lua
 -- Add support for the  Visual Studio 2005 project formats.
--- Copyright (c) 2008-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2015 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vs2005 = {}
@@ -31,10 +31,22 @@
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
-			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.cs2005.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".csproj.user", function() p.outln(user) end)
+			end
+
 		elseif premake.project.iscpp(prj) then
 			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
-			premake.generate(prj, ".vcproj.user", vstudio.vc200x.generate_user)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.vc200x.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".vcproj.user", function() p.outln(user) end)
+			end
+
 		end
 	end
 

@@ -1,52 +1,90 @@
 --
 -- vs2005_csproj_user.lua
 -- Generate a Visual Studio 2005/2008 C# .user file.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
-	local cs2005 = p.vstudio.cs2005
-	local project = p.project
+	local m = p.vstudio.cs2005
 
 
 --
--- Generate a Visual Studio 200x C# user file, with support for the new platforms API.
+-- Generate a Visual Studio 200x C# user file.
 --
 
-	function cs2005.generate_user(prj)
-		p.vstudio.projectElement()
-		_p(1,'<PropertyGroup>')
+	m.elements.userProjectPropertyGroup = function()
+		return {
+			m.referencePath,
+		}
+	end
 
-		-- Per-configuration reference paths aren't supported (are they?) so just
-		-- use the first configuration in the project
-		local cfg = project.getfirstconfig(prj)
+	m.elements.userConfigPropertyGroup = function()
+		return {
+			m.localDebuggerCommandArguments,
+		}
+	end
 
-		local refpaths = path.translate(project.getrelative(prj, cfg.libdirs))
-		_p(2,'<ReferencePath>%s</ReferencePath>', table.concat(refpaths, ";"))
+	function m.generateUser(prj)
+		-- Only want output if there is something to configure
+		local prjGroup = p.capture(function()
+			p.push(2)
+			p.callArray(m.elements.userProjectPropertyGroup, prj)
+			p.pop(2)
+		end)
 
-		_p('  </PropertyGroup>')
+		local contents = {}
+		local size = 0
 
-		for cfg in project.eachconfig(prj) do
-			local contents = p.capture(function()
-				cs2005.debugsettings(cfg)
+		for cfg in p.project.eachconfig(prj) do
+			contents[cfg] = p.capture(function()
+				p.push(2)
+				p.callArray(m.elements.userConfigPropertyGroup, cfg)
+				p.pop(2)
 			end)
-
-			if #contents > 0 then
-				_p(1,'<PropertyGroup %s>', cs2005.condition(cfg))
-				p.outln(contents)
-				_p(1,'</PropertyGroup>')
-			end
+			size = size + #contents[cfg]
 		end
 
-		_p('</Project>')
+		if #prjGroup > 0 or size > 0 then
+			p.vstudio.projectElement()
+
+			if #prjGroup > 0 then
+				p.push('<PropertyGroup>')
+				p.outln(prjGroup)
+				p.pop('</PropertyGroup>')
+			end
+
+			for cfg in p.project.eachconfig(prj) do
+				if #contents[cfg] > 0 then
+					p.push('<PropertyGroup %s>', m.condition(cfg))
+					p.outln(contents[cfg])
+					p.pop('</PropertyGroup>')
+				end
+			end
+
+			p.pop('</Project>')
+		end
 	end
 
-	function cs2005.debugsettings(cfg)
-		cs2005.localDebuggerCommandArguments(cfg)
+
+
+---
+-- Output any reference paths required by the project.
+---
+
+	function m.referencePath(prj)
+		-- Per-configuration reference paths aren't supported (are they?) so just
+		-- use the first configuration in the project
+		local cfg = p.project.getfirstconfig(prj)
+		local paths = path.translate(p.project.getrelative(prj, cfg.libdirs))
+		if #paths > 0 then
+			p.w('<ReferencePath>%s</ReferencePath>', table.concat(paths, ";"))
+		end
 	end
 
-	function cs2005.localDebuggerCommandArguments(cfg)
+
+
+	function m.localDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then
-			_x(2,'<StartArguments>%s</StartArguments>', table.concat(cfg.debugargs, " "))
+			p.x('<StartArguments>%s</StartArguments>', table.concat(cfg.debugargs, " "))
 		end
 	end

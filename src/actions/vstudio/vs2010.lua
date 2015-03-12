@@ -1,7 +1,7 @@
 --
 -- actions/vstudio/vs2010.lua
 -- Add support for the Visual Studio 2010 project formats.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vs2010 = {}
@@ -40,15 +40,27 @@
 
 		if premake.project.isdotnet(prj) then
 			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
-			premake.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.cs2005.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".csproj.user", function() p.outln(user) end)
+			end
+
 		elseif premake.project.iscpp(prj) then
 			premake.generate(prj, ".vcxproj", vstudio.vc2010.generate)
-			premake.generate(prj, ".vcxproj.user", vstudio.vc2010.generateUser)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".vcxproj.user", function() p.outln(user) end)
+			end
 
 			-- Only generate a filters file if the source tree actually has subfolders
 			if tree.hasbranches(project.getsourcetree(prj)) then
 				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
+
 		end
 	end
 

@@ -13,3 +13,4 @@ Since 5.0-alpha1:
 * Action arguments (_ARGS) are now keyed by both index and value
 * Configuration baking and validation now skipped for execute only actions
 * os.findlib() now accepts paths to search as argument
+* Visual Studio .user files are now only generated if not empty
