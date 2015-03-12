@@ -61,7 +61,7 @@
 				end
 			end
 
-			p.outln('</Project>')
+			p.pop('</Project>')
 		end
 	end
 
