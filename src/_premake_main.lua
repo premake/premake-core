@@ -77,15 +77,22 @@
 			dir = base
 		end
 
+		local function tryLoad(filename)
+			local chunk, err = loadfile(filename)
+			if not chunk and not err:startswith("No such file") then
+				error(err, 0)
+			end
+			return chunk
+		end
+
 		-- Premake standard is moduleName/moduleName.lua
 		local relPath = dir .. "/" .. base .. ".lua"
-
-		local chunk = loadfile("modules/" .. relPath)
+		local chunk = tryLoad("modules/" .. relPath)
 		if not chunk then
-			chunk = loadfile(relPath)
+			chunk = tryLoad(relPath)
 		end
 		if not chunk then
-			chunk = loadfile(name .. ".lua")
+			chunk = tryLoad(name .. ".lua")
 		end
 
 		if not chunk then
