@@ -266,16 +266,20 @@
 	end
 
 
-	function test.getproject(sln, i)
+	function test.getsolution(sln)
 		premake.oven.bake()
-		sln = premake.global.getSolution(sln.name)
+		return premake.global.getSolution(sln.name)
+	end
+
+
+	function test.getproject(sln, i)
+		sln = test.getsolution(sln)
 		return premake.solution.getproject(sln, i or 1)
 	end
 
 
 	function test.getconfig(prj, buildcfg, platform)
-		premake.oven.bake()
-		local sln = premake.global.getSolution(prj.solution.name)
+		sln = test.getsolution(prj.solution)
 		prj = premake.solution.getproject(sln, prj.name)
 		return premake.project.getconfig(prj, buildcfg, platform)
 	end
