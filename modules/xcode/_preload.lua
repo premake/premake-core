@@ -1,6 +1,6 @@
 ---
--- xcode/_action.lua
--- Define the Apple XCode actions.
+-- xcode/_preload.lua
+-- Define the Apple XCode actions and new APIs.
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 ---
 

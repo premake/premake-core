@@ -1,5 +1,5 @@
 return {
-	"_action.lua",
+	"_preload.lua",
 	"xcode.lua",
 	"xcode4_workspace.lua",
 	"xcode_common.lua",

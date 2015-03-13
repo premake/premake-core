@@ -11,9 +11,9 @@
 	local m = p.modules.xcode
 	m.elements = {}
 
-	dofile("_action.lua")
-	dofile("xcode_common.lua")
-	dofile("xcode4_workspace.lua")
-	dofile("xcode_project.lua")
+	include("_preload.lua")
+	include("xcode_common.lua")
+	include("xcode4_workspace.lua")
+	include("xcode_project.lua")
 
 	return m
