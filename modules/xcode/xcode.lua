@@ -7,7 +7,9 @@
 	local p = premake
 
 	p.modules.xcode = {}
+
 	local m = p.modules.xcode
+	m.elements = {}
 
 	dofile("_action.lua")
 	dofile("xcode_common.lua")

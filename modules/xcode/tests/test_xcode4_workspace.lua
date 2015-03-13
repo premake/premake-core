@@ -1,55 +1,109 @@
---
--- tests/actions/xcode/xcode4_workspace.lua
--- Copyright (c) 2013 Jason Perkins and the Premake project
---
+---
+-- xcode/tests/test_xcode4_workspace.lua
+-- Validate generation for Xcode workspaces.
+-- Author Mihai Sebea
+-- Modified by Jason Perkins
+-- Copyright (c) 2014-2015 Jason Perkins and the Premake project
+---
+
 	local suite = test.declare("xcode4_workspace")
 	local xcode = premake.modules.xcode
+
+
 --
 -- Setup
 --
+
 	local sln, prj
-	function suite.teardown()
-		prj = nil
-	end
 
 	function suite.setup()
 		_ACTION = "xcode4"
-		sln, prj = test.createsolution()
+		sln = test.createsolution()
 	end
 
 	local function prepare()
-		sln = premake.oven.bakeSolution(sln)
-		xcode.preparesolution(sln)
-		local prj1 = premake.solution.getproject(sln, 1)
-	    xcode.workspace_file_ref(prj1)
+		sln = test.getsolution(sln)
+		xcode.generateWorkspace(sln)
 	end
 
-	function suite.xmlDeclarationPresent()
-		xcode.workspace_head()
-		xcode.workspace_tail()
+
+--
+-- Check the basic structure of a workspace.
+--
+
+	function suite.onEmptySolution()
+		sln.projects = {}
+		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
 	version = "1.0">
 </Workspace>
-	]]
-	end
-
-	function suite.workspace_addsProjectInFileRefTags()
-	    prepare()
-	    test.capture [[
-	<FileRef
-		location = "group:MyProject.xcodeproj">
-	</FileRef>
 		]]
 	end
 
-	function suite.pathPrefixAndProjectName_pathIsPathIsDifferentDir_pathPostfixSlashAdded()
-		prj.location = "foo"
+
+	function suite.onDefaultSolution()
 		prepare()
-	   test.capture [[
+		test.capture [[
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+	version = "1.0">
 	<FileRef
-		location = "group:foo/MyProject.xcodeproj">
+		location = "group:MyProject.xcodeproj">
 	</FileRef>
+</Workspace>
+		]]
+	end
+
+
+	function suite.onMultipleProjects()
+		test.createproject(sln)
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+	version = "1.0">
+	<FileRef
+		location = "group:MyProject.xcodeproj">
+	</FileRef>
+	<FileRef
+		location = "group:MyProject2.xcodeproj">
+	</FileRef>
+</Workspace>
+		]]
+	end
+
+
+
+--
+-- Projects should include relative path from workspace.
+--
+
+	function suite.onNestedProjectPath()
+		location "MyProject"
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+	version = "1.0">
+	<FileRef
+		location = "group:MyProject/MyProject.xcodeproj">
+	</FileRef>
+</Workspace>
+		]]
+	end
+
+	function suite.onExternalProjectPath()
+		location "../MyProject"
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+	version = "1.0">
+	<FileRef
+		location = "group:../MyProject/MyProject.xcodeproj">
+	</FileRef>
+</Workspace>
 		]]
 	end

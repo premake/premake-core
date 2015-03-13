@@ -1,37 +1,84 @@
-local p = premake
-local xcode = p.modules.xcode
+---
+-- xcode/xcode4_workspace.lua
+-- Generate an Xcode workspace.
+-- Author Mihai Sebea
+-- Modified by Jason Perkins
+-- Copyright (c) 2014-2015 Jason Perkins and the Premake project
+---
 
-function xcode.workspace_head()
-	_p('<?xml version="1.0" encoding="UTF-8"?>')
-	_p('<Workspace')
-		_p(1,'version = "1.0">')
+	local p = premake
+	local m = p.modules.xcode
 
-end
 
-function xcode.workspace_tail()
-	-- Don't output final newline.  Xcode doesn't.
-	premake.out('</Workspace>')
-end
 
-function xcode.workspace_file_ref(prj)
-	local projpath = path.getrelative(prj.solution.location, prj.location)
-	if projpath == '.' then
-		projpath = ''
-	else
-		projpath = projpath ..'/'
-	end
-	_p(1,'<FileRef')
-	_p(2,'location = "group:%s">', projpath .. prj.name .. '.xcodeproj')
-	_p(1,'</FileRef>')
-end
+---
+-- Generate an Xcode contents.xcworkspacedata file.
+---
 
-function xcode.generateWorkspace(sln)
-	xcode.preparesolution(sln)
-	xcode.workspace_head()
-
-	for prj in premake.solution.eachproject(sln) do
-		xcode.workspace_file_ref(prj)
+	m.elements.workspace = function(sln)
+		return {
+			m.xmlDeclaration,
+			m.workspace,
+			m.workspaceFileRefs,
+			m.workspaceTail,
+		}
 	end
 
-    xcode.workspace_tail()
-end
+	function m.generateWorkspace(sln)
+		m.preparesolution(sln)
+		p.callArray(m.elements.workspace, sln)
+	end
+
+
+	function m.workspace()
+		p.push('<Workspace')
+		p.w('version = "1.0">')
+	end
+
+
+	function m.workspaceTail()
+		-- Don't output final newline.  Xcode doesn't.
+		premake.out('</Workspace>')
+	end
+
+
+---
+-- Generate the list of project references.
+---
+
+	m.elements.workspaceFileRef = function(prj)
+		return {
+			m.workspaceLocation,
+		}
+	end
+
+	function m.workspaceFileRefs(sln)
+		for prj in p.solution.eachproject(sln) do
+			p.push('<FileRef')
+			local contents = p.capture(function()
+				p.callArray(m.elements.workspaceFileRef, prj)
+			end)
+			p.out(contents .. ">")
+			p.pop('</FileRef>')
+		end
+	end
+
+
+
+---------------------------------------------------------------------------
+--
+-- Handlers for individual project elements
+--
+---------------------------------------------------------------------------
+
+
+	function m.workspaceLocation(prj)
+		local fname = p.filename(prj, ".xcodeproj")
+		fname = path.getrelative(prj.solution.location, fname)
+		p.w('location = "group:%s"', fname)
+	end
+
+
+	function m.xmlDeclaration()
+		p.xmlUtf8(true)
+	end
