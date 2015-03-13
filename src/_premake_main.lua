@@ -10,6 +10,7 @@
 
 -- Load the collection of core scripts, required for everything else to work
 
+	local modules = dofile("_modules.lua")
 	local manifest = dofile("_manifest.lua")
 	for i = 1, #manifest do
 		dofile(manifest[i])
@@ -32,6 +33,7 @@
 		return {
 			m.installModuleLoader,
 			m.prepareEnvironment,
+			m.loadCoreModules,
 			m.runSystemScript,
 			m.locateUserScript,
 			m.prepareAction,
@@ -62,9 +64,6 @@
 
 	function m.installModuleLoader()
 		table.insert(package.loaders, 2, m.moduleLoader)
-
-		-- TEMPORARY: I'm working on a different solution for this
-		require("xcode")
 	end
 
 	function m.moduleLoader(name)
@@ -77,9 +76,9 @@
 			dir = base
 		end
 
-		local function tryLoad(filename)
-			local chunk, err = loadfile(filename)
-			if not chunk and not err:startswith("No such file") then
+		local function try(name)
+			local chunk, err = loadfile(name)
+			if not chunk and not err:startswith("cannot open") then
 				error(err, 0)
 			end
 			return chunk
@@ -87,13 +86,9 @@
 
 		-- Premake standard is moduleName/moduleName.lua
 		local relPath = dir .. "/" .. base .. ".lua"
-		local chunk = tryLoad("modules/" .. relPath)
-		if not chunk then
-			chunk = tryLoad(relPath)
-		end
-		if not chunk then
-			chunk = tryLoad(name .. ".lua")
-		end
+		local chunk = try("modules/" .. relPath) or
+		              try(relPath) or
+		              try(name .. ".lua")
 
 		if not chunk then
 			return "\n\tno file " .. name .. " on module paths"
@@ -112,6 +107,26 @@
 		math.randomseed(os.time())
 		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
 		premake.path = premake.path .. ";" .. _PREMAKE_DIR
+	end
+
+
+---
+-- Load the required core modules that are shipped as part of Premake
+-- and expected to be present at startup.
+---
+
+	function m.loadCoreModules()
+		for i = 1, #modules do
+			local name = modules[i]
+			local preload = name .. "/_preload.lua"
+			local fn = os.locate("modules/" .. preload) or os.locate(preload)
+
+			if fn then
+				include(fn)
+			else
+				require(name)
+			end
+		end
 	end
 
 

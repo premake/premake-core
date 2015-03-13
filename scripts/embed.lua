@@ -110,6 +110,7 @@
 
 	table.insert(result, '\t"src/_premake_main.lua",')
 	table.insert(result, '\t"src/_manifest.lua",')
+	table.insert(result, '\t"src/_modules.lua",')
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")
 	table.insert(result, "")
@@ -134,6 +135,7 @@
 
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_premake_main.lua")))
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_manifest.lua")))
+	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_modules.lua")))
 
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")
