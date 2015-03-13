@@ -1,10 +1,14 @@
---
--- xcode_project.lua
--- Generate an Xcode C/C++ project.
+---
+-- xcode/xcode4_project.lua
+-- Generate an Xcode project file.
+-- Author Jason Perkins
+-- Modified by Mihai Sebea
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
---
+---
 
 	local p = premake
+	local m = p.modules.xcode
+
 	local xcode = p.modules.xcode
     local project = p.project
     local config = p.config
@@ -142,16 +146,19 @@
 	end
 
 
---
+---
 -- Generate an Xcode .xcodeproj for a Premake project.
---
--- @param prj
---    The Premake project to generate.
---
+---
 
-	function xcode.generateProject(prj)
+	m.elements.project = function(prj)
+		return {
+			m.header,
+		}
+	end
+
+	function m.generateProject(prj)
 		local tr = xcode.buildprjtree(prj)
-		xcode.Header(tr)
+		p.callArray(m.elements.project, prj)
 		xcode.PBXBuildFile(tr)
 		xcode.PBXContainerItemProxy(tr)
 		xcode.PBXFileReference(tr)
@@ -167,5 +174,27 @@
 		xcode.PBXVariantGroup(tr)
 		xcode.XCBuildConfiguration(tr)
 		xcode.XCBuildConfigurationList(tr)
-		xcode.Footer(tr)
+		xcode.footer(prj)
 	end
+
+
+
+	function m.header(prj)
+		p.w('// !$*UTF8*$!')
+		p.push('{')
+		p.w('archiveVersion = 1;')
+		p.w('classes = {')
+		p.w('};')
+		p.w('objectVersion = 46;')
+		p.push('objects = {')
+		p.w()
+	end
+
+
+
+	function xcode.footer(prj)
+		p.pop('};')
+		p.w('rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
+		p.pop('}')
+	end
+

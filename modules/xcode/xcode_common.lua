@@ -380,18 +380,6 @@
 -- in the .pbxproj file
 ---------------------------------------------------------------------------
 
-	function xcode.Header()
-		_p('// !$*UTF8*$!')
-		_p('{')
-		_p(1,'archiveVersion = 1;')
-		_p(1,'classes = {')
-		_p(1,'};')
-		_p(1,'objectVersion = 46;')
-		_p(1,'objects = {')
-		_p('')
-	end
-
-
 	function xcode.PBXBuildFile(tr)
 		local settings = {};
 		tree.traverse(tr, {
@@ -1199,11 +1187,4 @@
 		_p('/* Begin XCConfigurationList section */')
 		printSettingsTable(2, settings)
 		_p('/* End XCConfigurationList section */')
-	end
-
-
-	function xcode.Footer()
-		_p(1,'};')
-		_p('\trootObject = 08FB7793FE84155DC02AAC07 /* Project object */;')
-		_p('}')
 	end

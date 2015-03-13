@@ -9,6 +9,33 @@
 	local xcode = premake.modules.xcode
 
 
+--
+-- Replacement for xcode.newid(). Creates a synthetic ID based on the node name,
+-- its intended usage (file ID, build ID, etc.) and its place in the tree. This
+-- makes it easier to tell if the right ID is being used in the right places.
+--
+
+	xcode.used_ids = {}
+
+	xcode.newid = function(node, usage)
+		local name = node
+		if usage then
+			name = name .. ":" .. usage
+		end
+
+		if xcode.used_ids[name] then
+			local count = xcode.used_ids[name] + 1
+			xcode.used_ids[name] = count
+			name = name .. "(" .. count .. ")"
+		else
+			xcode.used_ids[name] = 1
+		end
+
+		return "[" .. name .. "]"
+	end
+
+
+
 
 ---------------------------------------------------------------------------
 -- Setup/Teardown
