@@ -1,18 +1,18 @@
 --
--- Name:        actions/codelite_project.lua
+-- Name:        codelite/codelite_project.lua
 -- Purpose:     Generate a CodeLite C/C++ project file.
 -- Author:      Ryan Pusztai
--- Modified by: Andrea Zanellato (new v5 API)
---              Manu Evans (kept it alive and up to date)
+-- Modified by: Andrea Zanellato
+--              Manu Evans
 -- Created:     2013/05/06
 -- Copyright:   (c) 2008-2015 Jason Perkins and the Premake project
 --
 
-	local p        = premake
-	local tree     = p.tree
-	local project  = p.project
-	local config   = p.config
-	local codelite = p.extensions.codelite
+	local p = premake
+	local tree = p.tree
+	local project = p.project
+	local config = p.config
+	local codelite = p.modules.codelite
 
 	codelite.project = {}
 	local m = codelite.project

@@ -1,9 +1,9 @@
 --
--- Name:        actions/codelite_solution.lua
+-- Name:        codelite/codelite_solution.lua
 -- Purpose:     Generate a CodeLite solution.
 -- Author:      Ryan Pusztai
--- Modified by: Andrea Zanellato (new v5 API)
---              Manu Evans (kept it alive and up to date)
+-- Modified by: Andrea Zanellato
+--              Manu Evans
 -- Created:     2013/05/06
 -- Copyright:   (c) 2008-2015 Jason Perkins and the Premake project
 --
@@ -12,7 +12,7 @@
 	local project = p.project
 	local solution = p.solution
 	local tree = p.tree
-	local codelite = p.extensions.codelite
+	local codelite = p.modules.codelite
 
 	codelite.solution = {}
 	local m = codelite.solution
