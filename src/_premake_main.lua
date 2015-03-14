@@ -33,7 +33,7 @@
 		return {
 			m.installModuleLoader,
 			m.prepareEnvironment,
-			m.loadCoreModules,
+			m.preloadModules,
 			m.runSystemScript,
 			m.locateUserScript,
 			m.prepareAction,
@@ -76,22 +76,18 @@
 			dir = base
 		end
 
-		local function try(name)
-			local chunk, err = loadfile(name)
-			if not chunk and not err:startswith("cannot open") then
-				error(err, 0)
-			end
-			return chunk
+		local full = dir .. "/" .. base .. ".lua"
+		local p = os.locate("modules/" .. full) or
+		          os.locate(full) or
+		          os.locate(name .. ".lua")
+
+		if not p then
+			return "\n\tno file " .. name .. " on module paths"
 		end
 
-		-- Premake standard is moduleName/moduleName.lua
-		local relPath = dir .. "/" .. base .. ".lua"
-		local chunk = try("modules/" .. relPath) or
-		              try(relPath) or
-		              try(name .. ".lua")
-
+		local chunk, err = loadfile(p)
 		if not chunk then
-			return "\n\tno file " .. name .. " on module paths"
+			error(err, 0)
 		end
 
 		return chunk
@@ -115,7 +111,7 @@
 -- and expected to be present at startup.
 ---
 
-	function m.loadCoreModules()
+	function m.preloadModules()
 		for i = 1, #modules do
 			local name = modules[i]
 			local preload = name .. "/_preload.lua"
