@@ -6,35 +6,18 @@
 -- Copyright:   (c) 2013-2015 Manu Evans and the Premake project
 --
 
--- TODO:
--- Xamarin Studio has 'workspaces', which are collections of 'solution's.
--- If premake supports multiple solutions, we should write out a workspace file...
-
-
-	premake.extensions.monodevelop = {}
-
 	local p = premake
+
+	p.modules.monodevelop = {}
+
+	local monodevelop = p.modules.monodevelop
+
 	local vs2010 = p.vstudio.vs2010
 	local vstudio = p.vstudio
 	local sln2005 = p.vstudio.sln2005
 	local solution = p.solution
 	local project = p.project
 	local config = p.config
-	local monodevelop = p.extensions.monodevelop
-
-	monodevelop.support_url = "https://bitbucket.org/premakeext/monodevelop/wiki/Home"
-
-	monodevelop.printf = function( msg, ... )
-		printf( "[monodevelop] " .. msg, ...)
-	end
-
-	monodevelop.printf( "Premake MonoDevelop Extension (" .. monodevelop.support_url .. ")" )
-
-	-- Extend the package path to include the directory containing this
-	-- script so we can easily 'require' additional resources from
-	-- subdirectories as necessary
-	local this_dir = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]]; 
-	package.path = this_dir .. "actions/vstudio/?.lua;".. package.path
 
 
 --
@@ -137,50 +120,7 @@
 	end
 
 
---
--- Define the MonoDevelop export action.
---
+	dofile("_action.lua")
+	dofile("monodevelop_cproj.lua")
 
-	newaction {
-		-- Metadata for the command line and help system
-
-		trigger         = "monodevelop",
-		shortname       = "MonoDevelop",
-		description     = "Generate MonoDevelop project files",
-
-		-- The capabilities of this action
-
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
-		valid_languages = { "C", "C++", "C#" },
-		valid_tools     = {
-			cc     = { "gcc"   },
-			dotnet = { "mono", "msnet" },
-		},
-
-		-- Solution and project generation logic
-
-		onSolution = vstudio.vs2005.generateSolution,
-		onProject  = monodevelop.generateProject,
-
-		onCleanSolution = vstudio.cleanSolution,
-		onCleanProject  = vstudio.cleanProject,
-		onCleanTarget   = vstudio.cleanTarget,
-
-		-- This stuff is specific to the Visual Studio exporters
-
-		vstudio = {
-			csprojSchemaVersion = "2.0",
-			productVersion      = "10.0.0",
-			solutionVersion     = "11",
-			versionName         = "2010",
-			targetFramework     = "4.0",
-			toolsVersion        = "4.0",
-		}
-	}
-
-
---
--- 'require' code to produce the C/C++ .cproj files.
---
-	require( "monodevelop_cproj" )
-	monodevelop.printf( "Loaded MonoDevelop C/C++ support 'monodevelop_cproj.lua'", v )
+	return monodevelop

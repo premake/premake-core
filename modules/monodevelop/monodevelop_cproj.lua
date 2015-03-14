@@ -5,7 +5,7 @@
 --
 
 	local p = premake
-	local monodevelop = p.extensions.monodevelop
+	local monodevelop = p.modules.monodevelop
 	local vstudio = p.vstudio
 	local project = p.project
 	local config = p.config
