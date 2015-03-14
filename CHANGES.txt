@@ -16,3 +16,11 @@ Since 5.0-alpha1:
 * Visual Studio .user files are now only generated if not empty
 * Xcode4 exporter is now available
 * Modules may now be loaded on demand where feasible
+* New API: gccprefix()
+* New API: undefines()
+* New API: disablewarnings(), enablewarnings(), fatalwarnings()
+* New API: debugconnectcommands(), debugstartupcommands()
+* New API: debugremotehost(), debugport(), debugremoteprotocol()
+* New API: debugsearchpaths()
+* os.outputof() now returns command exit code as second value
+

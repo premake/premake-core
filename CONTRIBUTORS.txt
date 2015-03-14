@@ -14,7 +14,9 @@ Builds and Infrastructure:
 
 Patch contributors:
   Manu Evans <https://bitbucket.org/TurkeyMan>
-    * new APIs for debugging, controlling warnings, undefining symbols
+    * new APIs for specifying remote debugging parameters
+    * new APIs for enabling and disabling specific warnings
+    * new API for undefining symbols
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Xcode exporter fixes and improvements
   Renaud Guillard <https://bitbucket.org/noresources>
