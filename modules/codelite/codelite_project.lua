@@ -18,17 +18,14 @@
 	local m = codelite.project
 
 
-	function codelite.getLinks(cfg, explicit)
+	function codelite.getLinks(cfg)
 		-- System libraries are undecorated, add the required extension
-		local links = config.getlinks(cfg, "system", "fullpath")
+		return config.getlinks(cfg, "system", "fullpath")
+	end
 
+	function codelite.getSiblingLinks(cfg)
 		-- If we need sibling projects to be listed explicitly, add them on
-		if explicit then
-			local siblings = config.getlinks(cfg, "siblings", "fullpath")
-			links = table.join(links, siblings)
-		end
-
-		return links
+		return config.getlinks(cfg, "siblings", "fullpath")
 	end
 
 
@@ -194,7 +191,9 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local ldflags = table.concat(table.join(toolset.getldflags(cfg), cfg.linkoptions), ";")
+		local flags = table.join(toolset.getldflags(cfg), cfg.linkoptions)
+		local withdeps = table.join(flags, codelite.getSiblingLinks(cfg))
+		local ldflags = table.concat(withdeps, ";")
 
 		_x(3, '<Linker Required="yes" Options="%s">', ldflags)
 
@@ -205,7 +204,7 @@
 			end
 		end
 
-		local links = codelite.getLinks(cfg, true)
+		local links = codelite.getLinks(cfg)
 		for _, libname in ipairs(links) do
 			_x(4, '<Library Value="%s" />', libname)
 		end
@@ -237,19 +236,21 @@
 
 		local prj = cfg.project
 
+		local isExe = prj.kind == "WindowedApp" or prj.kind == "ConsoleApp"
 		local targetpath = project.getrelative(prj, cfg.buildtarget.directory)
 		local objdir     = project.getrelative(prj, cfg.objdir)
-		local targetname = iif(prj.kind ~= "StaticLib", project.getrelative(prj, cfg.buildtarget.name), "")
-		local cmdargs    = table.concat(cfg.debugargs, " ") or "" -- TODO: should this be debugargs instead?
+		local targetname = project.getrelative(prj, cfg.buildtarget.abspath)
+		local command    = iif(isExe, targetname, "")
+		local cmdargs    = iif(isExe, table.concat(cfg.debugargs, " "), "") -- TODO: should this be debugargs instead?
 		local useseparatedebugargs = "no"
 		local debugargs  = ""
-		local workingdir = iif(prj.kind ~= "StaticLib", targetpath, "")
-		local pauseexec  = iif(prj.kind == "WindowedApp" or prj.kind == "StaticLib", "no", "yes")
+		local workingdir = iif(isExe, targetpath, "")
+		local pauseexec  = iif(prj.kind == "ConsoleApp", "yes", "no")
 		local isguiprogram = iif(prj.kind == "WindowedApp", "yes", "no")
 		local isenabled  = iif(cfg.flags.ExcludeFromBuild, "no", "yes")
 
 		_x(3, '<General OutputFile="%s" IntermediateDirectory="%s" Command="%s" CommandArguments="%s" UseSeparateDebugArgs="%s" DebugArguments="%s" WorkingDirectory="%s" PauseExecWhenProcTerminates="%s" IsGUIProgram="%s" IsEnabled="%s"/>',
-			targetpath, objdir, targetname, cmdargs, useseparatedebugargs, debugargs, workingdir, pauseexec, isguiprogram, isenabled)
+			targetname, objdir, command, cmdargs, useseparatedebugargs, debugargs, workingdir, pauseexec, isguiprogram, isenabled)
 	end
 
 	function m.environment(cfg)
