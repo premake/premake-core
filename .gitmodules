@@ -1,0 +1,3 @@
+[submodule "modules/xcode"]
+	path = modules/xcode
+	url = git@github.com:premake/premake-xcode.git
