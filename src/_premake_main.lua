@@ -32,10 +32,10 @@
 	m.elements = function()
 		return {
 			m.installModuleLoader,
+			m.locateUserScript,
 			m.prepareEnvironment,
 			m.preloadModules,
 			m.runSystemScript,
-			m.locateUserScript,
 			m.prepareAction,
 			m.runUserScript,
 			m.checkInteractive,
@@ -102,7 +102,7 @@
 	function m.prepareEnvironment()
 		math.randomseed(os.time())
 		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
-		premake.path = premake.path .. ";" .. _PREMAKE_DIR
+		premake.path = premake.path .. ";" .. _PREMAKE_DIR .. ";" .. _MAIN_SCRIPT_DIR
 	end
 
 
