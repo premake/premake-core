@@ -7,7 +7,7 @@
 #include "premake.h"
 
 #if PLATFORM_WINDOWS
-#include <Objbase.h>
+#include <objbase.h>
 #endif
 
 

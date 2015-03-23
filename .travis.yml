@@ -1,12 +1,14 @@
+env:
+ - BUILD="linux" RUN_TESTS=1
+ - BUILD="windows" EXTRA_PACKAGES="" PREMAKE_OPTS="--os=windows" CC="i686-w64-mingw32-gcc" RUN_TESTS=0
 
 before_install:
  - sudo add-apt-repository -y ppa:codegear/release
  - sudo apt-get -qq update
- - sudo apt-get install premake4
- 
+ - sudo apt-get install premake4 $EXTRA_PACKAGES
+
 script:
  - premake4 embed
- - premake4 gmake
+ - premake4 $PREMAKE_OPTS gmake
  - make -j8
- - bin/release/premake5 test
-
+ - if [ $RUN_TESTS == 1 ]; then bin/release/premake5 test; fi
