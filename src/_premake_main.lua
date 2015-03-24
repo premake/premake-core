@@ -82,7 +82,8 @@
 		          os.locate(name .. ".lua")
 
 		if not p then
-			return "\n\tno file " .. name .. " on module paths"
+			-- try to load from the embedded script
+			p = "$/" .. full
 		end
 
 		local chunk, err = loadfile(p)
