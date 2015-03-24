@@ -9,7 +9,6 @@
 
 	local corePath = _SCRIPT_DIR
 
-
 --
 -- Disable deprecation warnings for myself, so that older development
 -- versions of Premake can be used to bootstrap new builds.
@@ -71,6 +70,10 @@
 --
 -- TODO: defaultConfiguration "Release"
 --
+
+	if not _OPTIONS["to"] then
+	    _OPTIONS["to"] = "build"
+	end
 
 	solution "Premake5"
 		configurations { "Release", "Debug" }
