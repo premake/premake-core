@@ -209,5 +209,5 @@
 --
 
 	function printf(msg, ...)
-		print(string.format(msg, unpack(arg)))
+		print(string.format(msg, ...))
 	end

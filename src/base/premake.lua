@@ -311,7 +311,7 @@ end
 ---
 
 	function premake.w(...)
-		if select("#",...) > 0 then
+		if select("#", ...) > 0 then
 			premake.outln(string.rep(_indentString or "\t", _indentLevel) .. string.format(...))
 		else
 			premake.outln('');
@@ -327,6 +327,7 @@ end
 ---
 
 	function premake.x(msg, ...)
+		local arg = {...}
 		for i = 1, #arg do
 			arg[i] = premake.esc(arg[i])
 		end
@@ -376,6 +377,7 @@ end
 	end
 
 	function _x(i, ...)
+		local arg = {...}
 		for i = 2, #arg do
 			arg[i] = premake.esc(arg[i])
 		end
