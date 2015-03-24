@@ -25,36 +25,6 @@
 	local m = p.main
 
 
---
--- Script-side program entry point.
---
-
-	m.elements = function()
-		return {
-			m.installModuleLoader,
-			m.locateUserScript,
-			m.prepareEnvironment,
-			m.preloadModules,
-			m.runSystemScript,
-			m.prepareAction,
-			m.runUserScript,
-			m.checkInteractive,
-			m.processCommandLine,
-			m.preBake,
-			m.bake,
-			m.postBake,
-			m.validate,
-			m.preAction,
-			m.callAction,
-			m.postAction,
-		}
-	end
-
-	function _premake_main()
-		p.callArray(p.main.elements)
-		return 0
-	end
-
 
 ---
 -- Add a new module loader that knows how to use the Premake paths like
@@ -318,4 +288,35 @@
 		if p.action.isConfigurable() then
 			print("Done.")
 		end
+	end
+
+
+
+
+--
+-- Script-side program entry point.
+--
+
+	m.elements = {
+		m.installModuleLoader,
+		m.locateUserScript,
+		m.prepareEnvironment,
+		m.preloadModules,
+		m.runSystemScript,
+		m.prepareAction,
+		m.runUserScript,
+		m.checkInteractive,
+		m.processCommandLine,
+		m.preBake,
+		m.bake,
+		m.postBake,
+		m.validate,
+		m.preAction,
+		m.callAction,
+		m.postAction,
+	}
+
+	function _premake_main()
+		p.callArray(m.elements)
+		return 0
 	end
