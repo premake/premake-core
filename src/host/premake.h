@@ -116,6 +116,7 @@ int os_realpath(lua_State* L);
 int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
+int os_writefile_ifnotequal(lua_State* L);
 int string_endswith(lua_State* L);
 int string_hash(lua_State* L);
 int string_sha1(lua_State* L);
