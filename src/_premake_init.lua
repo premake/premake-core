@@ -413,6 +413,8 @@
 			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
+			"C++11",
+			"C++14",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
