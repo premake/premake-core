@@ -76,6 +76,7 @@
 	end
 
 	solution "Premake5"
+		platforms { 'x64' }
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
@@ -84,7 +85,7 @@
 		language    "C"
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "src/host/lua-5.1.4/src" }
+		includedirs { "src/host/lua-5.2.3/src" }
 
 		files
 		{
@@ -95,12 +96,12 @@
 
 		excludes
 		{
-			"src/host/lua-5.1.4/src/lauxlib.c",
-			"src/host/lua-5.1.4/src/lua.c",
-			"src/host/lua-5.1.4/src/luac.c",
-			"src/host/lua-5.1.4/src/print.c",
-			"src/host/lua-5.1.4/**.lua",
-			"src/host/lua-5.1.4/etc/*.c"
+			"src/host/lua-5.2.3/src/lauxlib.c",
+			"src/host/lua-5.2.3/src/lua.c",
+			"src/host/lua-5.2.3/src/luac.c",
+			"src/host/lua-5.2.3/src/print.c",
+			"src/host/lua-5.2.3/**.lua",
+			"src/host/lua-5.2.3/etc/*.c"
 		}
 
 		configuration "Debug"
@@ -114,13 +115,13 @@
 			flags       { "OptimizeSize" }
 
 		configuration "vs*"
-			defines     { "_CRT_SECURE_NO_WARNINGS" }
+			defines     { "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 		configuration "vs2005"
-			defines	{"_CRT_SECURE_NO_DEPRECATE" }
+			defines	    {"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "windows"
-			links { "ole32" }
+			links       { "ole32" }
 
 		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
@@ -132,7 +133,7 @@
 
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
-			links       { "CoreServices.framework" }
+			links       { "CoreServices.framework", "readline" }
 
 		configuration { "macosx", "gmake" }
 			toolset "clang"

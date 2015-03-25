@@ -37,7 +37,7 @@
 	function suite.writesCorrectLinkerFlags()
 		make.ldFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -L$(LIBOGC_LIB) $(MACHDEP)
+  ALL_LDFLAGS += $(LDFLAGS) $(MACHDEP) -L$(LIBOGC_LIB)
 		]]
 	end
 

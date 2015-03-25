@@ -407,6 +407,7 @@
 
 	function make.ldFlags(cfg, toolset)
 		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getldflags(cfg), cfg.linkoptions)
+		table.sort(flags)
 		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(flags))
 	end
 

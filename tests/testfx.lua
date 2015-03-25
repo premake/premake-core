@@ -38,8 +38,8 @@
 		local actual = premake.captured() .. premake.eol()
 
 		-- create line-by-line iterators for both values
-		local ait = actual:gfind("(.-)" .. premake.eol())
-		local eit = expected:gfind("(.-)\n")
+		local ait = actual:gmatch("(.-)" .. premake.eol())
+		local eit = expected:gmatch("(.-)\n")
 
 		-- compare each value line by line
 		local linenum = 1
@@ -107,7 +107,7 @@
 			end
 		end
 
-		local msg = string.format(format, unpack(arg))
+		local msg = string.format(format, table.unpack(arg))
 		error(debug.traceback(msg, depth), depth)
 	end
 

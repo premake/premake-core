@@ -8,7 +8,7 @@
 
 /* Build on the REPL built into Lua already */
 #define main lua_main
-#include "lua-5.1.4/src/lua.c"
+#include "lua-5.2.3/src/lua.c"
 
 
 /* Based on dotty() in lua.c */

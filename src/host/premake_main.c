@@ -16,7 +16,7 @@ int main(int argc, const char** argv)
 
 	start_t = clock();
 
-	L = lua_open();
+	L = luaL_newstate();
 	luaL_openlibs(L);
 
 	z = premake_init(L);
