@@ -1055,6 +1055,12 @@
 
 	newoption
 	{
+		trigger     = "verbose",
+		description = "Generate extra debug text output"
+	}
+
+	newoption
+	{
 		trigger = "interactive",
 		description = "Interactive command prompt"
 	}
