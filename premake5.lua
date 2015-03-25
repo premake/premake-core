@@ -90,7 +90,9 @@
 		language    "C"
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "src/host/lua-5.1.4/src" }
+		includedirs { "src/host/lua-5.1.4/src", "contrib/zlib", "contrib/libzip", "contrib/curl/include" }
+        defines     { "CURL_STATICLIB" }
+		links       { "zip-lib", "zlib-lib", "curl-lib" }
 
 		files
 		{
@@ -120,13 +122,13 @@
 			flags       { "OptimizeSize" }
 
 		configuration "vs*"
-			defines     { "_CRT_SECURE_NO_WARNINGS" }
+			defines     { "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 		configuration "vs2005"
 			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "windows"
-			links { "ole32" }
+			links       { "ole32", "ws2_32" }
 
 		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
@@ -153,7 +155,10 @@
 			links       { "m" }
 
 
-
+	group 'contrib'
+		include 'contrib/zlib'
+		include 'contrib/libzip'
+		include 'contrib/curl'
 --
 -- A more thorough cleanup.
 --
