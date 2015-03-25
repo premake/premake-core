@@ -40,20 +40,24 @@
 		local max = 4096
 		local start = 1
 		local len = contents:len()
-		while start <= len do
-			local n = len - start
-			if n > max then n = max end
-			local finish = start + n
+		if len > 0 then
+			while start <= len do
+				local n = len - start
+				if n > max then n = max end
+				local finish = start + n
 
-			-- make sure I don't cut an escape sequence
-			while contents:sub(finish, finish) == "\\" do
-				finish = finish - 1
+				-- make sure I don't cut an escape sequence
+				while contents:sub(finish, finish) == "\\" do
+					finish = finish - 1
+				end
+
+				local s = contents:sub(start, finish)
+				table.insert(result, "\t\"" .. s .. iif(finish < len, '"', '",'))
+
+				start = finish + 1
 			end
-
-			local s = contents:sub(start, finish)
-			table.insert(result, "\t\"" .. s .. iif(finish < len, '"', '",'))
-
-			start = finish + 1
+		else
+			table.insert(result, "\t\"\",")
 		end
 
 		table.insert(result, "")
