@@ -926,18 +926,67 @@
 	end
 
 
+	function m.filterKnownOption(input, condition, option, modifier)
+		local result = {}
+		local warnings = {}
+
+		for i, fn in ipairs(input) do
+			if fn:match(option) then
+				table.insert(warnings, modifier(fn))
+			else
+				table.insert(result, fn)
+			end
+		end
+
+		return warnings, result
+	end
+
+
 	function m.additionalCompileOptions(cfg, condition)
-		if #cfg.buildoptions > 0 then
-			local opts = table.concat(cfg.buildoptions, " ")
+		-- process known option '/wd'
+		local w, options = m.filterKnownOption(cfg.buildoptions, condition, '%/wd', function(fn)
+			return string.sub(fn, 4)
+		end)
+		if #w > 0 then
+			m.element("DisableSpecificWarnings", condition, '%s;%%(DisableSpecificWarnings)', table.concat(w, ";"))
+		end
+
+		if #options > 0 then
+			local opts = table.concat(options, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
 
 	function m.additionalLinkOptions(cfg)
-		if #cfg.linkoptions > 0 then
-			local opts = table.concat(cfg.linkoptions, " ")
-			_x(3, '<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
+		-- process known option '/NODEFAULTLIB:'
+		local w, options = m.filterKnownOption(cfg.linkoptions, condition, '%/NODEFAULTLIB:', function(fn)
+			return string.sub(fn, 15)
+		end)
+		if #w > 0 then
+			m.element("IgnoreSpecificDefaultLibraries", condition, '%s;%%(IgnoreSpecificDefaultLibraries)', table.concat(w, ";"))
+		end
+
+		-- process known option '/MACHINE:'
+		w, options = m.filterKnownOption(options, condition, '%/MACHINE:', function(fn)
+			return 'Machine' .. string.sub(fn, 10)
+		end)
+		if #w > 0 then
+			m.element("TargetMachine", condition, '%s', table.concat(w, ";"))
+		end
+
+		-- process known option '/LARGEADDRESSAWARE:'
+		w, options = m.filterKnownOption(options, condition, '%/LARGEADDRESSAWARE', function(fn)
+			return "true"
+		end)
+		if #w > 0 then
+			m.element("LargeAddressAware", condition, 'true')
+		end
+
+		-- if there are any linkoptions left, add those.
+		if #options > 0 then
+			local opts = table.concat(options, " ")
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
