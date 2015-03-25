@@ -13,6 +13,7 @@ int path_normalize(lua_State* L)
 	char buffer[0x4000];
 	char* src;
 	char* dst;
+	char* ptr;
 	char last;
 
 	const char* path = luaL_checkstring(L, 1);
@@ -28,6 +29,24 @@ int path_normalize(lua_State* L)
 		/* make sure we're using '/' for all separators */
 		if (ch == '\\') {
 			ch = '/';
+		}
+
+		/* filter out .. */
+		if (ch == '.' && last == '.') {
+			ptr = dst - 3;
+			while (ptr >= buffer) {
+				if (*ptr != '/') {
+					--ptr;
+				}
+				else {
+					dst = ptr;
+					break;
+				}
+			}
+			if (ptr >= buffer) {
+				++src;
+				continue;
+			}
 		}
 
 		/* add to the result, filtering out duplicate slashes */
