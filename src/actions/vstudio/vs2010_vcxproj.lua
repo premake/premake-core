@@ -935,7 +935,7 @@
 
 
 	function m.basicRuntimeChecks(cfg)
-		if cfg.flags.NoRuntimeChecks then
+		if cfg.flags.NoRuntimeChecks or config.isOptimizedBuild(cfg) then
 			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
 		end
 	end
