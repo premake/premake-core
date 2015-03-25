@@ -403,7 +403,7 @@
 			"OptimizeSize",        -- DEPRECATED
 			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
-			"ReleaseRuntime",
+			"ReleaseRuntime",      -- DEPRECATED
 			"SEH",
 			"ShadowedVariables",
 			"StaticRuntime",
@@ -627,6 +627,16 @@
 			"Size",
 			"Speed",
 			"Full",
+		}
+	}
+
+	api.register {
+		name = "runtime",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Debug",
+			"Release",
 		}
 	}
 
@@ -954,6 +964,12 @@
 		optimize "Off"
 	end)
 
+	api.deprecateValue("flags", { "ReleaseRuntime" }, nil,
+	function(value)
+		runtime 'Release'
+	end,
+	function(value)
+	end)
 
 	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
 	function(value)
