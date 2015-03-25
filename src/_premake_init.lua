@@ -939,6 +939,8 @@
 		name = "vpaths",
 		scope = "project",
 		kind = "list:keyed:list:path",
+		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {

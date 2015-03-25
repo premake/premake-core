@@ -743,15 +743,17 @@
 	premake.field.kind("directory", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if value:find("*") then
+			if string.sub(value, 1, 2) == "%{" then
+				return value
+			elseif value:find("*") then
 				value = os.matchdirs(value)
 				for i, file in ipairs(value) do
 					value[i] = path.getabsolute(value[i])
 				end
+				return value
 			else
-				value = path.getabsolute(value)
+				return path.getabsolute(value)
 			end
-			return value
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
@@ -771,15 +773,17 @@
 	premake.field.kind("file", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if value:find("*") then
+			if string.sub(value, 1, 2) == "%{" then
+				return value
+			elseif value:find("*") then
 				value = os.matchfiles(value)
 				for i, file in ipairs(value) do
 					value[i] = path.getabsolute(value[i])
 				end
+				return value
 			else
-				value = path.getabsolute(value)
+				return path.getabsolute(value)
 			end
-			return value
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
@@ -968,7 +972,9 @@
 		paths = true,
 		store = function(field, current, value, processor)
 			if type(value) == "string" and value:find('/', nil, true) then
-				value = path.getabsolute(value)
+				if string.sub(value, 1, 2) ~= "%{" then
+					value = path.getabsolute(value)
+				end
 			end
 			return value
 		end,
@@ -1005,6 +1011,9 @@
 	premake.field.kind("path", {
 		paths = true,
 		store = function(field, current, value, processor)
+			if string.sub(value, 1, 2) == "%{" then
+				return value
+			end
 			return path.getabsolute(value)
 		end,
 		compare = function(field, a, b, processor)
