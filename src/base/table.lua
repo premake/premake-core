@@ -398,6 +398,7 @@
 		return res
 	end
 
+
 --
 -- Filters a table for empty entries. primarly useful for lists of string.
 --
@@ -409,4 +410,22 @@
 				return nil
 			end
 		end)
+	end
+
+
+--
+-- Create a shallow copy of a table.
+--
+	function table.shallowcopy(orig)
+		local orig_type = type(orig)
+		local copy
+		if orig_type == 'table' then
+			copy = {}
+			for orig_key, orig_value in pairs(orig) do
+				copy[orig_key] = orig_value
+			end
+		else -- number, string, boolean, etc
+			copy = orig
+		end
+		return copy
 	end
