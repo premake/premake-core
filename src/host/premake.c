@@ -86,6 +86,14 @@ static const luaL_Reg string_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg buffered_functions[] = {
+	{ "new", buffered_new },
+	{ "write", buffered_write },
+	{ "writeln", buffered_writeln },
+	{ "tostring", buffered_tostring },
+	{ "close", buffered_close },
+	{ NULL, NULL }
+};
 
 static const char *luaL_findtable(lua_State *L, int idx, const char *fname, int szhint)
 {
@@ -155,6 +163,7 @@ int premake_init(lua_State* L)
 	luaL_register(L, "path",     path_functions);
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
+	luaL_register(L, "buffered", buffered_functions);
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);

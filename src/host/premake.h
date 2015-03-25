@@ -121,6 +121,11 @@ int string_endswith(lua_State* L);
 int string_hash(lua_State* L);
 int string_sha1(lua_State* L);
 int string_startswith(lua_State* L);
+int buffered_new(lua_State* L);
+int buffered_write(lua_State* L);
+int buffered_writeln(lua_State* L);
+int buffered_close(lua_State* L);
+int buffered_tostring(lua_State* L);
 
 /* Engine interface */
 int premake_init(lua_State* L);

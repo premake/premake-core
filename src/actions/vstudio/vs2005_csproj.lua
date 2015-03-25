@@ -33,7 +33,7 @@
 	}
 
 	function cs2005.generate(prj)
-		io.utf8()
+		p.utf8()
 
 		premake.callarray(cs2005, cs2005.elements.project, prj)
 
