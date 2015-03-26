@@ -54,8 +54,9 @@
 		},
 		vectorextensions = {
 			AVX = "/arch:AVX",
-			SSE = "/arch:sse",
-			SSE2 = "/arch:sse2",
+			AVX2 = "/arch:AVX2",
+			SSE = "/arch:SSE",
+			SSE2 = "/arch:SSE2",
 		},
 		warnings = {
 			Extra = "/W4",

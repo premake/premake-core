@@ -167,13 +167,25 @@
 	function suite.cflags_onSSE()
 		vectorextensions "SSE"
 		prepare()
-		test.contains("/arch:sse", msc.getcflags(cfg))
+		test.contains("/arch:SSE", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onSSE2()
 		vectorextensions "SSE2"
 		prepare()
-		test.contains("/arch:sse2", msc.getcflags(cfg))
+		test.contains("/arch:SSE2", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX()
+		vectorextensions "AVX"
+		prepare()
+		test.contains("/arch:AVX", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX2()
+		vectorextensions "AVX2"
+		prepare()
+		test.contains("/arch:AVX2", msc.getcflags(cfg))
 	end
 
 

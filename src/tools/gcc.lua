@@ -69,6 +69,7 @@
 		},
 		vectorextensions = {
 			AVX = "-mavx",
+			AVX2 = "-mavx2",
 			SSE = "-msse",
 			SSE2 = "-msse2",
 		},

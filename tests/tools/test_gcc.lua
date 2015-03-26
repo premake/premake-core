@@ -123,6 +123,18 @@
 		test.contains({ "-msse2" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onAVX()
+		vectorextensions "AVX"
+		prepare()
+		test.contains({ "-mavx" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX()
+		vectorextensions "AVX2"
+		prepare()
+		test.contains({ "-mavx2" }, gcc.getcflags(cfg))
+	end
+
 
 --
 -- Check the defines and undefines.
