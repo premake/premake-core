@@ -129,7 +129,7 @@
 		test.contains({ "-mavx" }, gcc.getcflags(cfg))
 	end
 
-	function suite.cflags_onAVX()
+	function suite.cflags_onAVX2()
 		vectorextensions "AVX2"
 		prepare()
 		test.contains({ "-mavx2" }, gcc.getcflags(cfg))
