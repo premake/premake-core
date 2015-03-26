@@ -864,6 +864,7 @@
 		allowed = {
 			"Default",
 			"AVX",
+			"AVX2",
 			"SSE",
 			"SSE2",
 		}

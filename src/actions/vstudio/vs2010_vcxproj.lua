@@ -1047,19 +1047,19 @@
 
 
 	function m.enableEnhancedInstructionSet(cfg, condition)
-		local value
-
+		local v
 		local x = cfg.vectorextensions
-		if _ACTION > "vc2010" and x == "AVX" then
-			value = "AdvancedVectorExtensions"
+		if x == "AVX" and _ACTION > "vs2010" then
+			v = "AdvancedVectorExtensions"
+		elseif x == "AVX2" and _ACTION > "vs2012" then
+			v = "AdvancedVectorExtensions2"
 		elseif x == "SSE2" then
-			value = "StreamingSIMDExtensions2"
+			v = "StreamingSIMDExtensions2"
 		elseif x == "SSE" then
-			value = "StreamingSIMDExtensions"
+			v = "StreamingSIMDExtensions"
 		end
-
-		if value then
-			m.element('EnableEnhancedInstructionSet', condition, value)
+		if v then
+			m.element('EnableEnhancedInstructionSet', condition, v)
 		end
 	end
 
@@ -1626,7 +1626,7 @@
 		end
 	end
 
-	
+
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		if #cfg.fatalwarnings > 0 then
 			local fatal = table.concat(cfg.fatalwarnings, ";")

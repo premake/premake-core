@@ -104,6 +104,7 @@ return {
 	"actions/vstudio/vc2010/test_excluded_configs.lua",
 	"actions/vstudio/vc2010/test_extension_settings.lua",
 	"actions/vstudio/vc2010/test_extension_targets.lua",
+	"actions/vstudio/vc2010/test_floatingpoint.lua",
 	"actions/vstudio/vc2010/test_globals.lua",
 	"actions/vstudio/vc2010/test_header.lua",
 	"actions/vstudio/vc2010/test_files.lua",
@@ -121,6 +122,7 @@ return {
 	"actions/vstudio/vc2010/test_resource_compile.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
 	"actions/vstudio/vc2010/test_user_file.lua",
+	"actions/vstudio/vc2010/test_vectorextensions.lua",
 
 	-- Makefile tests
 	"actions/make/test_make_escaping.lua",
