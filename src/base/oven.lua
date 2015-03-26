@@ -348,7 +348,20 @@
 		terms.platforms = platforms
 
 		for key in pairs(oven.bubbledFields) do
-			ctx[key] = p.configset.fetch(cset, p.field.get(key), terms)
+			local field = p.field.get(key)
+			if not field then
+				ctx[key] = rawget(ctx, key)
+			else
+				local value = p.configset.fetch(cset, field, terms)
+				if value then
+					-- do I need to expand tokens?
+					if field and field.tokens then
+						value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
+					end
+
+					ctx[key] = value
+				end
+			end
 		end
 	end
 
