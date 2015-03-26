@@ -57,10 +57,6 @@
 		end
 
 		local chunk, err = loadfile(p)
-		if not chunk then
-			error(err, 0)
-		end
-
 		return chunk
 	end
 
