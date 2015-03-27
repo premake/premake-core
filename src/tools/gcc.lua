@@ -239,14 +239,22 @@
 		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
-		-- paths, add those to the list of library search paths. The call
-		-- config.getlinks() all includes cfg.libdirs.
-		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
-			table.insert(flags, '-L' .. premake.quoted(dir))
+		-- paths, add those to the list of library search paths
+		local done = {}
+		for _, link in ipairs(config.getlinks(cfg, "system", "fullpath")) do
+			local dir = path.getdirectory(link)
+			if #dir > 1 and not done[dir] then
+ 				done[dir] = true
+				if path.isframework(link) then
+					table.insert(flags, '-F' .. premake.quoted(dir))
+				else
+					table.insert(flags, '-L' .. premake.quoted(dir))
+				end
+			end
 		end
 
 		if cfg.flags.RelativeLinks then
-			for _, dir in ipairs(config.getlinks(cfg, "siblings", "directory")) do
+			for _, dir in ipairs(premake.config.getlinks(cfg, "siblings", "directory")) do
 				local libFlag = "-L" .. premake.project.getrelative(cfg.project, dir)
 				if not table.contains(flags, libFlag) then
 					table.insert(flags, libFlag)
