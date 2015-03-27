@@ -177,7 +177,10 @@
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(self, buildcfg, platform)
-			self.configs[(buildcfg or "*") .. (platform or "")] = cfg
+
+			if premake.action.supportsconfig(premake.action.current(), cfg) then
+				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
+			end
 		end
 
 		-- Process the sub-objects that are contained by this project. The
@@ -295,10 +298,16 @@
 		for _, buildcfg in ipairs(buildcfgs) do
 			if #platforms > 0 then
 				for _, platform in ipairs(platforms) do
-					table.insert(configs, { ["buildcfg"] = buildcfg, ["platform"] = platform })
+					local cfg = { ["buildcfg"] = buildcfg, ["platform"] = platform }
+					if premake.action.supportsconfig(premake.action.current(), cfg) then
+						table.insert(configs, cfg)
+					end
 				end
 			else
-				table.insert(configs, { ["buildcfg"] = buildcfg })
+				local cfg = { ["buildcfg"] = buildcfg }
+				if premake.action.supportsconfig(premake.action.current(), cfg) then
+					table.insert(configs, cfg)
+				end
 			end
 		end
 
