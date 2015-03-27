@@ -24,7 +24,7 @@
 		end
 
 		-- add the extension if it isn't there already
-		if not p:endswith(ext) then
+		if not path.hasextension(p, ext) then
 			p = p .. ext
 		end
 
