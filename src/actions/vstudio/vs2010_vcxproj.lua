@@ -1053,10 +1053,12 @@
 			v = "AdvancedVectorExtensions"
 		elseif x == "AVX2" and _ACTION > "vs2012" then
 			v = "AdvancedVectorExtensions2"
-		elseif x == "SSE2" then
-			v = "StreamingSIMDExtensions2"
-		elseif x == "SSE" then
-			v = "StreamingSIMDExtensions"
+		elseif cfg.architecture ~= "x64" then
+			if x == "SSE2" then
+				v = "StreamingSIMDExtensions2"
+			elseif x == "SSE" then
+				v = "StreamingSIMDExtensions"
+			end
 		end
 		if v then
 			m.element('EnableEnhancedInstructionSet', condition, v)
