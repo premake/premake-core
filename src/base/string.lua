@@ -85,3 +85,10 @@
 			return self .. "s"
 		end
 	end
+
+---
+-- Check if string s starts with string y
+---
+	function string.startswith(s, y)
+		return string.sub(s, 1, string.len(y)) == y
+	end
