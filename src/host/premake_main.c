@@ -5,11 +5,16 @@
  */
 
 #include "premake.h"
+#include <time.h>
 
 int main(int argc, const char** argv)
 {
+	double duration;
+	clock_t start_t, end_t;
 	lua_State* L;
 	int z;
+
+	start_t = clock();
 
 	L = lua_open();
 	luaL_openlibs(L);
@@ -20,5 +25,9 @@ int main(int argc, const char** argv)
 	}
 
 	lua_close(L);
+
+	end_t = clock();
+	duration = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+	printf("%dms.\n", (int)(duration * 1000.0));
 	return z;
 }
