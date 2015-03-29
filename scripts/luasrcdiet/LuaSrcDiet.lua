@@ -4097,6 +4097,8 @@ local EOLTYPES = {                      -- EOL names for token dump
 ------------------------------------------------------------------------
 -- read source code from file
 ------------------------------------------------------------------------
+local loaded_file_contents = ""
+local saved_file_contents = ""
 
 local function load_file(fname)
   local INF = io.open(fname, "rb")
@@ -4104,6 +4106,7 @@ local function load_file(fname)
   local dat = INF:read("*a")
   if not dat then die('cannot read from "'..fname..'"') end
   INF:close()
+  loaded_file_contents = dat
   return dat
 end
 
@@ -4112,11 +4115,14 @@ end
 ------------------------------------------------------------------------
 
 local function save_file(fname, dat)
+  saved_file_contents = dat
+--[[
   local OUTF = io.open(fname, "wb")
   if not OUTF then die('cannot open "'..fname..'" for writing') end
   local status = OUTF:write(dat)
   if not status then die('cannot write to "'..fname..'"') end
   OUTF:close()
+]]
 end
 
 ------------------------------------------------------------------------
@@ -4457,6 +4463,7 @@ end
 -- main functions
 ----------------------------------------------------------------------]]
 
+--[[
 local arg = {...}  -- program arguments
 local fspec = {}
 set_options(DEFAULT_CONFIG)     -- set to default options at beginning
@@ -4594,5 +4601,15 @@ end
 if not main() then
   die("Please run with option -h or --help for usage information")
 end
-
+]]
 -- end of script
+
+-- Start of premake4 customizations
+function get_slim_luasrc(fname)
+  set_options(DEFAULT_CONFIG)
+  set_options(MAXIMUM_CONFIG)
+  option.OUTPUT_FILE = "-"
+  option.QUIET = true
+  process_file(fname, "-")
+  return saved_file_contents or "", loaded_file_contents
+end

@@ -7,40 +7,10 @@
 
 
 	local function loadScript(fname)
+		dofile("scripts/luasrcdiet/LuaSrcDiet.lua")
 		fname = path.getabsolute(fname)
-		local f = io.open(fname)
-		local s = assert(f:read("*a"))
-		f:close()
-
-		-- strip tabs
-		s = s:gsub("[\t]", "")
-
-		-- strip any CRs
-		s = s:gsub("[\r]", "")
-
-		-- strip out block comments
-		s = s:gsub("[^\"']%-%-%[%[.-%]%]", "")
-		s = s:gsub("[^\"']%-%-%[=%[.-%]=%]", "")
-		s = s:gsub("[^\"']%-%-%[==%[.-%]==%]", "")
-
-		-- strip out inline comments
-		s = s:gsub("\n%-%-[^\n]*", "\n")
-
-		-- escape backslashes
-		s = s:gsub("\\", "\\\\")
-
-		-- strip duplicate line feeds
-		s = s:gsub("\n+", "\n")
-
-		-- strip out leading comments
-		s = s:gsub("^%-%-[^\n]*\n", "")
-
-		-- escape line feeds
-		s = s:gsub("\n", "\\n")
-
-		-- escape double quote marks
-		s = s:gsub("\"", "\\\"")
-
+		local s,l = get_slim_luasrc(fname)
+		print("\ttrimmed size: ", s:len(), " down from: ", l:len())
 		return s
 	end
 
