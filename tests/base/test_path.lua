@@ -299,6 +299,32 @@
 
 
 --
+-- path.replaceextension() tests
+--
+
+	function suite.getabsolute_replaceExtension()
+		test.isequal("/AB.foo", path.replaceextension("/AB.exe","foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionWithDot()
+		test.isequal("/AB.foo", path.replaceextension("/AB.exe",".foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionWithDotMultipleDots()
+			test.isequal("/nunit.framework.foo", path.replaceextension("/nunit.framework.dll",".foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionCompletePath()
+			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main.cpp",".foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionWithoutExtension()
+			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main",".foo"))
+	end
+
+
+
+--
 -- path.translate() tests
 --
 
