@@ -66,8 +66,8 @@
 	end
 
 
-	dofile("_action.lua")
-	dofile("codelite_workspace.lua")
-	dofile("codelite_project.lua")
+	include("_preload.lua")
+	include("codelite_workspace.lua")
+	include("codelite_project.lua")
 
 	return codelite

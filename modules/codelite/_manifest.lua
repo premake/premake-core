@@ -1,5 +1,5 @@
 return {
-	"_action.lua",
+	"_preload.lua",
 	"codelite.lua",
 	"codelite_workspace.lua",
 	"codelite_project.lua",

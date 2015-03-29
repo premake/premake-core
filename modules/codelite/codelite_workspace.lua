@@ -1,5 +1,5 @@
 --
--- Name:        codelite/codelite_solution.lua
+-- Name:        codelite/codelite_workspace.lua
 -- Purpose:     Generate a CodeLite solution.
 -- Author:      Ryan Pusztai
 -- Modified by: Andrea Zanellato

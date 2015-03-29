@@ -1,5 +1,5 @@
 --
--- Name:        codelite/_action.lua
+-- Name:        codelite/_preload.lua
 -- Purpose:     Define the CodeLite action.
 -- Author:      Ryan Pusztai
 -- Modified by: Andrea Zanellato
