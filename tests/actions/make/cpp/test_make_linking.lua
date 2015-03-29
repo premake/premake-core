@@ -125,6 +125,26 @@
 	end
 
 --
+-- Check a linking to a sibling shared library using -l and -L.
+--
+
+    function suite.links_onSiblingSharedLib()
+        links "MyProject2"
+        flags { "RelativeLinks" }
+
+        test.createproject(sln)
+        kind "SharedLib"
+        location "build"
+
+        prepare { "ldFlags", "libs", "ldDeps" }
+        test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -Lbuild -s
+  LIBS += -lMyProject2
+  LDDEPS += build/libMyProject2.so
+        ]]
+    end
+
+--
 -- When referencing an external library via a path, the directory
 -- should be added to the library search paths, and the library
 -- itself included via an -l flag.
