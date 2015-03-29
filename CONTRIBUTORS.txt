@@ -13,6 +13,8 @@ Builds and Infrastructure:
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
+  Alexey Orlov <https://bitbucket.org/domu>
+    * add exclude arguments to os.match()
   Manu Evans <https://bitbucket.org/TurkeyMan>
     * new APIs for specifying remote debugging parameters
     * new APIs for enabling and disabling specific warnings
@@ -22,7 +24,7 @@ Patch contributors:
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Xcode exporter fixes and improvements
   Oliver Schneider
-    * Compress embedded scripts with LuaSrcDiet
+    * compress embedded scripts with LuaSrcDiet
   Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
