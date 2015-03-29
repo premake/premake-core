@@ -19,6 +19,8 @@ Patch contributors:
     * new API for undefining symbols
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Xcode exporter fixes and improvements
+  Oliver Schneider
+    * Compress embedded scripts with LuaSrcDiet
   Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()

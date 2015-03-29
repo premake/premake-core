@@ -1,0 +1,140 @@
+
+  LuaSrcDiet
+  Compresses Lua source code by removing unnecessary characters.
+
+  Copyright (c) 2005-2008,2011,2012 Kein-Hong Man <keinhong@gmail.com>
+  The COPYRIGHT file describes the conditions
+  under which this software may be distributed.
+
+  http://code.google.com/p/luasrcdiet/
+
+========================================================================
+
+WHAT'S NEW IN VERSION 0.12.1
+----------------------------
+
+* Fixed a long comment glitch when using the --keep option. (Two
+  extra characters were duplicated before the ending brackets.)
+
+* Faster function call syntax sugar optimization using a one-pass
+  token deletion loop.
+
+WHAT'S NEW IN VERSION 0.12.0
+----------------------------
+
+* Added single-file versions of LuaSrcDiet in various sizes. First
+  done by some other projects that packaged LuaSrcDiet, e.g. eLua.
+
+* BUG FIX: String optimization of "\ddd" type escape mechanism,
+  "\00101" was incorrectly optimized to "\101".
+
+* --opt-srcequiv: Source equivalence checking. Tries hard to compare
+  'before' and 'after' lexer token streams for equivalence.
+
+* --opt-binequiv: Binary chunk equivalence checking. Tries hard to
+  compare 'before' and 'after' binary chunks for equivalence.
+
+* When using --opt-eols, the last EOL character is now removed.
+
+* --opt-experimental: Turns on a few experimental optimizations:
+  (a) ';' operator removal (deleted or turned into whitespace).
+  (b) f("string") f('string') f([[string]]) calls are turned
+      into their syntactic sugar equivalents, e.g. f"string"
+
+* Plugins are now embedded into single-file versions.
+
+* First release of completed documentation files.
+
+* New Makefile and numerous minor updates.
+
+* Old code for Lua 5.0 removed.
+
+BUGS
+----
+
+* Nothing in my list. See below for limitations...
+
+INCOMPLETE SUPPORT
+------------------
+
+* Locals optimization does NOT understand implicit 'arg' locals in
+  vararg functions (see option LUA_COMPAT_VARARG in the Lua sources).
+
+* NO support in lexer for decimal points other than '.'.
+
+* NO support in lexer for Lua 5.0.x nested long strings.
+
+EXPERIMENTAL SOFTWARE
+---------------------
+
+LuaSrcDiet is "experimental software". For LuaSrcDiet, this means that
+it was coded for one user -- the coder. Although I may be able to help
+LuaSrcDiet users, there should not be any expectation of 'support'.
+
+Don't hook this thing up to nuclear missiles.
+
+I don't have the time for steady maintenance or for building up and
+cultivating a user base, so developers are welcome to fork LuaSrcDiet or
+incorporate it into their own software, as long as authorship
+attribution for LuaSrcDiet source code is maintained. Say if LuaSrcDiet
+is called as a separate program, then it is simply an aggregation of
+separate software and each program should stick to its own license.
+
+Programs you process using LuaSrcDiet are of course not affected at all
+by LuaSrcDiet's license; it's just a text filter. See COPYRIGHT. If you
+insist on extreme COPYRIGHT views, then better delete this whole thing
+right away, then gouge your eyes out. :-p
+
+OLDER STUFF
+-----------
+
+There has been some slash-and-burn going on. I'm inclined to move
+forward, and not spend time maintaining older stuff forever. If you
+still need the older stuff, they can be found in:
+
+* Lua 5.0.x old versions: last seen in version 0.11.2.
+
+* Lua 5.1.x old codebase: last seen in version 0.11.2.
+
+FUTURE PLANS
+------------
+
+Lua 5.1.x releases for LuaSrcDiet will pretty much stagnate at 0.12.1
+after implementation of a couple more experimental optimizations, and
+effort will be shifted towards something for Lua 5.2.x. The timeline for
+this is indeterminate.
+
+========================================================================
+
+USING LUASRCDIET
+
+Now is a good time to take a look at the documentation. Start with
+LuaSrcDiet.html in the doc directory.
+
+LuaSrcDiet is now packaged as a single-file Lua script for maximum
+convenience. Just drop it in and splice something into your Makefile.
+
+New source stream and binary chunk equivalence checking minimizes the
+possibility of LuaSrcDiet borking your stuff.
+
+========================================================================
+
+ACKNOWLEDGEMENTS
+
+Coded using SciTE. Developed mostly under Cygwin with a generic Lua
+5.1.4 binary.
+
+========================================================================
+
+FEEDBACK
+
+Feedback and contributions are welcome. Your name will be acknowledged,
+as long as you are willing to comply with COPYRIGHT. If your material is
+self-contained, you can retain a copyright notice for those material in
+your own name, as long as you use the same Lua 5/MIT-style copyright.
+
+Enjoy!
+
+Kein-Hong Man (esq.)
+Kuala Lumpur
+Malaysia 20120407
