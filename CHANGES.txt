@@ -24,3 +24,4 @@ Since 5.0-alpha1:
 * New API: debugsearchpaths()
 * os.outputof() now returns command exit code as second value
 * Added AVX2 to vectorextensions()
+* Embedded scripts now compressed with LuaSrcDiet (Oliver Schneider)
