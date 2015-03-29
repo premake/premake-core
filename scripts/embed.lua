@@ -8,9 +8,24 @@
 
 	local function loadScript(fname)
 		dofile("scripts/luasrcdiet/LuaSrcDiet.lua")
+		-- Let LuaSrcDiet do its job
 		fname = path.getabsolute(fname)
 		local s,l = get_slim_luasrc(fname)
-		print("\ttrimmed size: ", s:len(), " down from: ", l:len())
+
+		-- Now do some cleanup so we can write these out as C strings
+		-- strip any CRs
+		s = s:gsub("[\r]", "")
+
+		print("\ttrimmed size: ", s:len(), " down from: ", l:len()) -- we report the "raw" length
+
+		-- escape backslashes
+		s = s:gsub("\\", "\\\\")
+
+		-- escape line feeds
+		s = s:gsub("\n", "\\n")
+
+		-- escape double quote marks
+		s = s:gsub("\"", "\\\"")
 		return s
 	end
 
