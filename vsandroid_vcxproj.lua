@@ -1,17 +1,20 @@
 --
--- vsandroid_vcxproj.lua
+-- android/vsandroid_vcxproj.lua
 -- vs-android integration for vstudio.
--- Copyright (c) 2012 Manu Evans and the Premake project
+-- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	premake.extensions.vsandroid = { }
-	local android = premake.extensions.android
-	local vsandroid = premake.extensions.vsandroid
-	local sln2005 = premake.vstudio.sln2005
-	local vc2010 = premake.vstudio.vc2010
-	local vstudio = premake.vstudio
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.modules.vsandroid = { }
+
+	local android = p.modules.android
+	local vsandroid = p.modules.vsandroid
+	local sln2005 = p.vstudio.sln2005
+	local vc2010 = p.vstudio.vc2010
+	local vstudio = p.vstudio
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -31,16 +34,49 @@
 -- Extend configurationProperties.
 --
 
-	table.insertafter(vc2010.elements.configurationProperties, "platformToolset", "androidAPILevel")
-	table.insertafter(vc2010.elements.configurationProperties, "androidAPILevel", "androidStlType")
+	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
+		local elements = oldfn(cfg)
+		if cfg.kind ~= p.UTILITY and cfg.system == premake.ANDROID then
+			elements = table.join(elements, {
+				android.androidAPILevel,
+				android.androidStlType,
+			})
+		end
+		return elements
+	end)
+
+	function android.androidAPILevel(cfg)
+		if cfg.androidapilevel ~= nil then
+			_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
+		end
+	end
+
+	function android.androidStlType(cfg)
+		if cfg.stl ~= nil then
+			local static = {
+				none       = "none",
+				minimal    = "system",
+				["stdc++"] = "gnustl_static",
+				stlport    = "stlport_static",
+			}
+			local dynamic = {
+				none       = "none",
+				minimal    = "system",
+				["stdc++"] = "gnustl_dynamic",
+				stlport    = "stlport_dynamic",
+			}
+			local stl = iif(cfg.flags.StaticRuntime, static, dynamic);
+			_p(2,'<AndroidStlType>%s</AndroidStlType>', stl[cfg.stl])
+		end
+	end
 
 	-- Note: this function is already patched in by vs2012...
 	premake.override(vc2010, "platformToolset", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
 			local archMap = {
 				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
-				armv5 = "armv5te",
-				armv7 = "armv7-a",
+				arm5 = "armv5te",
+				arm7 = "armv7-a",
 				mips = "mips",
 				x86 = "x86",
 			}
@@ -51,8 +87,11 @@
 					arm = "arm-linux-androideabi-",
 					armv5 = "arm-linux-androideabi-",
 					armv7 = "arm-linux-androideabi-",
+					aarch64 = "aarch64-linux-android-",
 					mips = "mipsel-linux-android-",
+					mips64 = "mips64el-linux-android-",
 					x86 = "x86-",
+					x86_64 = "x86_64-",
 				}
 				local toolset = defaultToolsetMap[arch]
 
@@ -63,7 +102,7 @@
 					error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
 				end
 
-				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.3", "4.6")
+				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
 
 				_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
 				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
@@ -72,21 +111,6 @@
 			oldfn(cfg)
 		end
 	end)
-
-	function vc2010.androidAPILevel(cfg)
-		if cfg.system == premake.ANDROID then
-			if cfg.androidapilevel ~= nil then
-				_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
-			end
-		end
-	end
-
-	function vc2010.androidStlType(cfg)
-		if cfg.system == premake.ANDROID then
-			-- TODO: do something about this?
---			_p(2,'<AndroidStlType>stlport_static</AndroidStlType>')
-		end
-	end
 
 
 --
@@ -109,12 +133,53 @@
 -- Extend clCompile.
 --
 
-	table.insert(vc2010.elements.clCompile, "androidDebugInformation")
-	table.insert(vc2010.elements.clCompile, "thumbMode")
---	table.insert(vc2010.elements.clCompile, "StrictAliasing")
---	table.insert(vc2010.elements.clCompile, "SoftFloat")
---	table.insert(vc2010.elements.clCompile, "ShortEnums")
---	table.insert(vc2010.elements.clCompile, "PositionIndependentCode")
+	premake.override(vc2010.elements, "clCompile", function(oldfn, cfg)
+		local elements = oldfn(cfg)
+		if cfg.system == premake.ANDROID then
+			elements = table.join(elements, {
+				android.androidDebugInformation,
+				android.strictAliasing,
+				android.thumbMode,
+				android.fpu,
+				android.pic,
+--				android.StrictAliasing,
+--				android.ShortEnums,
+			})
+		end
+		return elements
+	end)
+
+	function android.androidDebugInformation(cfg)
+		if cfg.flags.Symbols then
+			_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
+		end
+	end
+
+	function android.strictAliasing(cfg)
+		if cfg.strictaliasing ~= nil then
+			_p(3,'<StrictAliasing>%s</StrictAliasing>', iif(cfg.strictaliasing == "Off", "false", "true"))
+		end
+	end
+
+	function android.thumbMode(cfg)
+		if cfg.flags.Thumb then
+			_p(3,'<ThumbMode>true</ThumbMode>')
+		end
+	end
+
+	function android.fpu(cfg)
+		if cfg.fpu == "Software" then
+			_p(3,'<SoftFloat>true</SoftFloat>')
+		end
+	end
+
+	function android.pic(cfg)
+		-- TODO: We only have a flag to turn it on, but android is on by default
+		--       it seems we would rather have a flag to turn it off...
+--		if cfg.flags.PIC then
+--			_p(3,'<PositionIndependentCode>%s</PositionIndependentCode>', iif(cfg.flags.PIC, "true", "false"))
+--		end
+	end
 
 	premake.override(vc2010, "warningLevel", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
@@ -129,7 +194,7 @@
 
 	premake.override(vc2010, "treatWarningAsError", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
-			if cfg.flags.FatalWarnings and cfg.warnings ~= "Off" then
+			if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
 				_p(3,'<WarningsAsErrors>true</WarningsAsErrors>')
 			end
 		else
@@ -138,12 +203,11 @@
 	end)
 
 	premake.override(vc2010, "optimization", function(oldfn, cfg, condition)
-		local config = cfg.config or cfg
-		if config.system == premake.ANDROID then
+		if cfg.system == premake.ANDROID then
 			local map = { Off="O0", On="O2", Debug="O0", Full="O3", Size="Os", Speed="O3" }
 			local value = map[cfg.optimize]
 			if value or not condition then
-				vc2010.element(3, 'OptimizationLevel', condition, value or "O0")
+				vc2010.element('OptimizationLevel', condition, value or "O0")
 			end
 		else
 			oldfn(cfg, condition)
@@ -172,22 +236,6 @@
 		end
 	end)
 
-	function vc2010.androidDebugInformation(cfg)
-		if cfg.system == premake.ANDROID then
-			if cfg.flags.Symbols then
-				_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
-			end
-		end
-	end
-
-	function vc2010.thumbMode(cfg)
-		if cfg.system == premake.ANDROID then
-			if cfg.flags.EnableThumb then
-				_p(3,'<ThumbMode>true</ThumbMode>')
-			end
-		end
-	end
-
 
 --
 -- Extend Link.
@@ -205,28 +253,29 @@
 -- Add android tools to vstudio actions.
 --
 
-	table.insertafter(vc2010.elements.itemDefinitionGroup, "imageXex", "antBuild")
-
-	function vc2010.antBuild(cfg)
+	premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
+		local elements = oldfn(cfg)
 		if cfg.system == premake.ANDROID then
-			if cfg.kind == premake.STATICLIB or cfg.kind == premake.SHAREDLIB then
-				return
-			end
-
-			_p(2,'<AntBuild>')
-			if premake.config.isDebugBuild(cfg) then
-				_p(3,'<AntBuildType>Debug</AntBuildType>')
-			else
-				_p(3,'<AntBuildType>Release</AntBuildType>')
-			end
-			_p(2,'</AntBuild>')
+			elements = table.join(elements, {
+				android.antBuild,
+			})
 		end
+		return elements
+	end)
+
+	function android.antBuild(cfg)
+		if cfg.kind == premake.STATICLIB or cfg.kind == premake.SHAREDLIB then
+			return
+		end
+
+		_p(2,'<AntBuild>')
+		_p(3,'<AntBuildType>%s</AntBuildType>', iif(premake.config.isDebugBuild(cfg), "Debug", "Release"))
+		_p(2,'</AntBuild>')
 	end
 
 	premake.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
-		local config = cfg.config or cfg
-		if config.system == premake.ANDROID then
-			vsandroid.additionalOptions(cfg)
+		if cfg.system == premake.ANDROID then
+			vsandroid.additionalOptions(cfg, condition)
 		end
 		return oldfn(cfg, condition)
 	end)
@@ -246,9 +295,6 @@
 			return false
 		end
 
-
-		-- Flags that are not supported by the vs-android UI may be added manually here...
-
 		if not cfg.architecture or string.startswith(cfg.architecture, "arm") then
 			-- we might want to define the arch to generate better code
 --			if not alreadyHas(cfg.buildoptions, "-march=") then
@@ -260,7 +306,7 @@
 --			end
 
 			-- ARM has a comprehensive set of floating point options
-			if not cfg.flags.SoftwareFloat and cfg.floatabi ~= "soft" then
+			if cfg.fpu ~= "Software" and cfg.floatabi ~= "soft" then
 
 				if cfg.architecture == "armv7" then
 
@@ -269,7 +315,7 @@
 					if not alreadyHas(cfg.buildoptions, "-mfpu=") then
 						if cfg.vectorextensions == "NEON" then
 							table.insert(cfg.buildoptions, "-mfpu=neon")
-						elseif cfg.flags.HardwareFloat or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+						elseif cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
 							table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
 						end
 					end
@@ -288,7 +334,7 @@
 					-- armv5/6 may not have VFP
 
 					if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-						if cfg.flags.HardwareFloat or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+						if cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
 							table.insert(cfg.buildoptions, "-mfpu=vfp")
 						end
 					end
@@ -309,11 +355,11 @@
 
 			end
 
---			if cfg.flags.LittleEndian then
---				table.insert(cfg.buildoptions, "-mlittle-endian")
---			elseif cfg.flags.BigEndian then
---				table.insert(cfg.buildoptions, "-mbig-endian")
---			end
+			if cfg.endian == "Little" then
+				table.insert(cfg.buildoptions, "-mlittle-endian")
+			elseif cfg.endian == "Big" then
+				table.insert(cfg.buildoptions, "-mbig-endian")
+			end
 
 		elseif cfg.architecture == "mips" then
 
