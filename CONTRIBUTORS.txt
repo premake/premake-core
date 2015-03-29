@@ -17,6 +17,8 @@ Patch contributors:
     * new APIs for specifying remote debugging parameters
     * new APIs for enabling and disabling specific warnings
     * new API for undefining symbols
+  Mark Chandler <https://bitbucket.org/mchandler_blizzard>
+    * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Xcode exporter fixes and improvements
   Oliver Schneider
