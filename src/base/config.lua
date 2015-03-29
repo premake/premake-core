@@ -280,8 +280,8 @@
 			end
 
 			-- If this is something I can link against, pull out the requested part
-
-			if item then
+			-- dont link against my self
+			if item and item ~= cfg then
 				if part == "directory" then
 					item = path.getdirectory(item)
 					if item == "." then
