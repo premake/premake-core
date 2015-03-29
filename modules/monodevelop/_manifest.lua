@@ -1,5 +1,5 @@
 return {
-	"_action.lua",
+	"_preload.lua",
 	"monodevelop.lua",
 	"monodevelop_cproj.lua",
 }

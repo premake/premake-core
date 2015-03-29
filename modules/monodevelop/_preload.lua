@@ -1,5 +1,5 @@
 --
--- Name:        monodevelop/_action.lua
+-- Name:        monodevelop/_preload.lua
 -- Purpose:     Define the MonoDevelop action.
 -- Author:      Manu Evans
 -- Created:     2013/10/28
@@ -26,7 +26,7 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
 		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
-			cc     = { "gcc"   },
+			cc     = { "gcc" },
 			dotnet = { "mono", "msnet" },
 		},
 
@@ -54,9 +54,9 @@
 		vstudio = {
 			csprojSchemaVersion = "2.0",
 			productVersion      = "10.0.0",
-			solutionVersion     = "11",
-			versionName         = "2010",
-			targetFramework     = "4.0",
+			solutionVersion     = "12",
+			versionName         = "2012",
+			targetFramework     = "4.5",
 			toolsVersion        = "4.0",
 		},
 	}

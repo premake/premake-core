@@ -1,5 +1,5 @@
 --
--- Name:        monodevelop.lua
+-- Name:        monodevelop/monodevelop.lua
 -- Purpose:     Define the MonoDevelop action.
 -- Author:      Manu Evans
 -- Created:     2013/10/28
@@ -120,7 +120,7 @@
 	end
 
 
-	dofile("_action.lua")
-	dofile("monodevelop_cproj.lua")
+	include("_preload.lua")
+	include("monodevelop_cproj.lua")
 
 	return monodevelop

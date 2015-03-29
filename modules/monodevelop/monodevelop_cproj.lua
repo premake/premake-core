@@ -1,5 +1,5 @@
 --
--- actions/vstudio/monodevelop_cproj.lua
+-- monodevelop/monodevelop_cproj.lua
 -- Generate a MonoDevelop C/C++ cproj project.
 -- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
