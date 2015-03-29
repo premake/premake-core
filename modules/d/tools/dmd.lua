@@ -8,7 +8,7 @@
 
 	local project = premake.project
 	local config = premake.config
-    local d = premake.extensions.d
+    local d = premake.modules.d
 
 --
 -- Set default tools
@@ -195,7 +195,7 @@
 -- OR!!!			if cfg.system ~= premake.WINDOWS then
 	if string.match( os.getversion().description, "Windows" ) ~= nil then
 		-- TODO: on windows, we may use OPTLINK or MSLINK (for Win64)...
-		d.printf("TODO: select proper linker for 32/64 bit code")
+		printf("TODO: select proper linker for 32/64 bit code")
 
 		premake.tools.dmd = tdmd.optlink
 	else

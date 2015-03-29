@@ -4,10 +4,11 @@
 -- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
-	premake.extensions.d.make = { }
-
 	local p = premake
-	local d = p.extensions.d
+	local d = p.modules.d
+
+	d.make = { }
+
 	local make = p.make
 	local cpp = p.make.cpp
 	local dmake = d.make
@@ -82,7 +83,6 @@
 --
 
 	dmake.elements.makefile = {
-		"dHeaderMessage",
 		"header",
 		"phonyRules",
 		"dConfigs",
@@ -101,11 +101,6 @@
 		p.callarray(make, dmake.elements.makefile, prj)
 	end
 
-
-	function make.dHeaderMessage(prj)
-		_p( "# Premake D extension generated file. See %s", d.support_url )
-		_p('')
-	end
 
 	function dmake.buildRule(prj)
 		_p('$(TARGET): $(SOURCEFILES) $(LDDEPS)')

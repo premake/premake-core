@@ -9,14 +9,13 @@
 	local ldc = premake.tools.ldc
 	local project = premake.project
 	local config = premake.config
-    local d = premake.extensions.d
+    local d = premake.modules.d
 
 
 --
 -- Set default tools
 --
 
-	ldc.dc = "ldc2"
 	ldc.namestyle = "posix"
 
 
@@ -278,11 +277,10 @@
 --
 
 	ldc.tools = {
-		-- I think this is pointless; LDC uses compile flags to choose target architecture no?
+		dc = "ldc2",
+		ar = "ar",
 	}
 
 	function ldc.gettoolname(cfg, tool)
-		local names = ldc.tools[cfg.architecture] or ldc.tools[cfg.system] or {}
-		local name = names[tool]
-		return name or ldc[tool]
+		return ldc.tools[tool]
 	end

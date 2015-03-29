@@ -5,7 +5,7 @@
 --
 
 	local p = premake
-	local monodevelop = p.extensions.monodevelop
+	local monodevelop = p.modules.monodevelop
 	local vstudio = p.vstudio
 	local project = p.project
 	local config = p.config
@@ -91,8 +91,6 @@
 	p.override(monodevelop.elements, "projectProperties", function(oldfn, prj)
 		if project.isd(prj) then
 			return {
-				"productVersion",
-				"schemaVersion",
 				"projectGuid",
 				"useDefaultCompiler",
 				"incrementalLinking",
@@ -143,6 +141,7 @@
 				"debugLevel",
 				"externalconsole", -- from .cproj
 				"target",
+				"thirdParty",
 				"outputName", -- from .cproj
 				"dAdditionalOptions",
 				"dDocDirectory",
@@ -179,7 +178,13 @@
 			ConsoleApp = "Executable",
 			WindowedApp = "Executable"
 		}
-		_p(2,'<CompileTarget>%s</CompileTarget>', map[cfg.kind])
+		_p(2,'<Target>%s</Target>', map[cfg.kind])
+	end
+
+	function monodevelop.elements.thirdParty(cfg)
+		-- TODO: what is this for?
+		local linkThirdParty = "false"
+		_p(2,'<LinkinThirdPartyLibraries>%s</LinkinThirdPartyLibraries>', linkThirdParty)
 	end
 
 	function monodevelop.elements.dAdditionalOptions(cfg)

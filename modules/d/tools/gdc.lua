@@ -9,7 +9,7 @@
 	local gdc = premake.tools.gdc
 	local project = premake.project
 	local config = premake.config
-    local d = premake.extensions.d
+    local d = premake.modules.d
 
 	--
 	-- Set default tools
