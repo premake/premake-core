@@ -5,6 +5,8 @@
 -- issues in Mac OS X Universal builds.
 --
 
+	local raw_sum = 0
+	local trim_sum = 0
 
 	local function loadScript(fname)
 		dofile("scripts/luasrcdiet/LuaSrcDiet.lua")
@@ -16,8 +18,6 @@
 		-- strip any CRs
 		s = s:gsub("[\r]", "")
 
-		print("\ttrimmed size: ", s:len(), " down from: ", l:len()) -- we report the "raw" length
-
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
 
@@ -26,7 +26,12 @@
 
 		-- escape double quote marks
 		s = s:gsub("\"", "\\\"")
-		return s
+
+		-- overall counters
+		raw_sum = raw_sum + l:len()
+		trim_sum = trim_sum + s:len()
+
+ 		return s
 	end
 
 
@@ -142,7 +147,7 @@
 	end
 
 	if oldVersion ~= result then
-		print("Writing scripts.c")
+		printf("Writing scripts.c (compressed %2.1f%%)", (trim_sum / raw_sum) * 100)
 		file = io.open(scriptsFile, "w+b")
 		file:write(result)
 		file:close()
