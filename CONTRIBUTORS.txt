@@ -23,6 +23,8 @@ Patch contributors:
     * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Xcode exporter fixes and improvements
+  M Skibbe
+    * path.replaceextension()
   Oliver Schneider
     * compress embedded scripts with LuaSrcDiet
   Renaud Guillard <https://bitbucket.org/noresources>

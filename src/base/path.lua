@@ -210,6 +210,27 @@
 	end
 
 
+
+--
+-- Replace the file extension.
+--
+
+	function path.replaceextension(p, newext)
+		local ext = path.getextension(p)
+
+		if not ext then
+			return p
+		end
+
+		if not newext:findlast(".", true) then
+			newext = "."..newext
+		end
+
+		return p:match("^(.*)"..ext.."$")..newext
+	end
+
+
+
 --
 -- Converts from a simple wildcard syntax, where * is "match any"
 -- and ** is "match recursive", to the corresponding Lua pattern.
