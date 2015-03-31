@@ -645,6 +645,16 @@
 	}
 
 	api.register {
+		name = "pic",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+		}
+	}
+
+	api.register {
 		name = "platforms",
 		scope = "project",
 		kind = "list:string",
@@ -1147,5 +1157,8 @@
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"
+
+	filter { "kind:SharedLib", "system:not Windows" }
+		pic "On"
 
 	filter {}
