@@ -156,7 +156,7 @@
 			_p(2,'<release>%s</release>', iif(cfg.flags.Release or not isDebug, '1', '0'))
 			_p(2,'<preservePaths>0</preservePaths>')
 
-			_p(2,'<warnings>%s</warnings>', iif(cfg.flags.FatalWarnings, '1', '0'))
+			_p(2,'<warnings>%s</warnings>', iif(cfg.flags.FatalCompileWarnings, '1', '0'))
 			_p(2,'<infowarnings>%s</infowarnings>', iif(cfg.warnings and cfg.warnings ~= "Off", '1', '0'))
 
 			_p(2,'<checkProperty>0</checkProperty>')
