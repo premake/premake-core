@@ -27,6 +27,8 @@
 		trigger = "embed",
 		description = "Embed scripts in scripts.c; required before release builds",
 		execute = function ()
+			_MAIN_SCRIPT_DIR = os.getcwd()
+			_SCRIPT_DIR = path.join(_MAIN_SCRIPT_DIR, "scripts")
 			include (path.join(corePath, "scripts/embed.lua"))
 		end
 	}

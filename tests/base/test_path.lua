@@ -364,3 +364,28 @@
 	function suite.wildcards_escapeStarStar()
 		test.isequal("Images/.*%.bmp", path.wildcards("Images/**.bmp"))
 	end
+
+
+
+--
+-- path.normalize tests
+--
+	function suite.normalize_Test1()
+		local p = path.normalize("d:/game/../test")
+		test.isequal("d:/test", p)
+	end
+
+	function suite.normalize_Test2()
+		local p = path.normalize("d:/game/../../test")
+		test.isequal("d:/../test", p)
+	end
+
+	function suite.normalize_Test3()
+		local p = path.normalize("../../test")
+		test.isequal("../../test", p)
+	end
+
+	function suite.normalize()
+		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
+		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))
+	end

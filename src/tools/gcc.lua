@@ -108,7 +108,9 @@
 		flags = {
 			NoExceptions = "-fno-exceptions",
 			NoRTTI = "-fno-rtti",
-			NoBufferSecurityCheck = "-fno-stack-protector"
+			NoBufferSecurityCheck = "-fno-stack-protector",
+			["C++11"] = "-std=c++11",
+			["C++14"] = "-std=c++14",
 		}
 	}
 

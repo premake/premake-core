@@ -403,7 +403,7 @@
 			"OptimizeSize",        -- DEPRECATED
 			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
-			"ReleaseRuntime",
+			"ReleaseRuntime",      -- DEPRECATED
 			"SEH",
 			"ShadowedVariables",
 			"StaticRuntime",
@@ -413,6 +413,8 @@
 			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
+			"C++11",
+			"C++14",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -627,6 +629,16 @@
 			"Size",
 			"Speed",
 			"Full",
+		}
+	}
+
+	api.register {
+		name = "runtime",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Debug",
+			"Release",
 		}
 	}
 
@@ -954,6 +966,12 @@
 		optimize "Off"
 	end)
 
+	api.deprecateValue("flags", { "ReleaseRuntime" }, nil,
+	function(value)
+		runtime 'Release'
+	end,
+	function(value)
+	end)
 
 	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
 	function(value)
@@ -1051,6 +1069,12 @@
 	{
 		trigger     = "help",
 		description = "Display this information"
+	}
+
+	newoption
+	{
+		trigger     = "verbose",
+		description = "Generate extra debug text output"
 	}
 
 	newoption

@@ -209,5 +209,14 @@
 --
 
 	function printf(msg, ...)
-		print(string.format(msg, unpack(arg)))
+		print(string.format(msg, ...))
+	end
+
+--
+-- A shortcut for printing formatted output in verbose mode.
+--
+	function verbosef(msg, ...)
+		if _OPTIONS.verbose then
+			print(string.format(msg, ...))
+		end
 	end

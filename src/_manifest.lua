@@ -80,6 +80,7 @@
 		"actions/vstudio/vs2010_rules_xml.lua",
 		"actions/vstudio/vs2012.lua",
 		"actions/vstudio/vs2013.lua",
+		"actions/vstudio/vs2015.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",

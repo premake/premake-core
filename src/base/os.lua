@@ -23,7 +23,7 @@
 ---
 
 	function os.executef(cmd, ...)
-		cmd = string.format(cmd, unpack(arg))
+		cmd = string.format(cmd, ...)
 		return os.execute(cmd)
 	end
 

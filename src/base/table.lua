@@ -240,6 +240,7 @@
 
 	function table.join(...)
 		local result = { }
+		local arg = {...}
 		for _,t in ipairs(arg) do
 			if type(t) == "table" then
 				for _,v in ipairs(t) do
@@ -273,6 +274,7 @@
 
 	function table.merge(...)
 		local result = {}
+		local arg = {...}
 		for _,t in ipairs(arg) do
 
 			if type(t) == "table" then

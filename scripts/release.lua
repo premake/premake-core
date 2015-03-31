@@ -9,7 +9,7 @@
 --
 
 	local function execQuiet(cmd, ...)
-		cmd = string.format(cmd, unpack(arg)) .. " > _output_.log 2> _error_.log"
+		cmd = string.format(cmd, ...) .. " > _output_.log 2> _error_.log"
 		local z = os.execute(cmd)
 		os.remove("_output_.log")
 		os.remove("_error_.log")
