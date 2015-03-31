@@ -324,6 +324,16 @@
 		tokens = true,
 	}
 
+	api.register {
+		name = "endian",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Little",
+			"Big",
+		},
+	}
 
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
