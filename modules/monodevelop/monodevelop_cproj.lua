@@ -352,8 +352,8 @@
 		end
 
 		-- other warning blocks only when warnings are not disabled
-		if cfg.warnings ~= "Off" and cfg.flags.FatalWarnings then
-			_p(2,'<WarningsAsErrors>%s</WarningsAsErrors>', iif(cfg.flags.FatalWarnings, 'true', 'false'))
+		if cfg.warnings ~= "Off" and cfg.flags.FatalCompileWarnings then
+			_p(2,'<WarningsAsErrors>%s</WarningsAsErrors>', iif(cfg.flags.FatalCompileWarnings, 'true', 'false'))
 		end
 	end
 
