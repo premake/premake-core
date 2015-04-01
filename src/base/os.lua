@@ -252,24 +252,11 @@
 --    directory name, "**" to recurse into subdirectories.
 -- @param matchFiles
 --    True to match against files, false to match directories.
--- @param excludeDirs
---    Lua Pattern.
---    If any encountered dir matches this pattern, it will be discarded (both from results and from recursive decent).
---    If it is nil, it will be set to "%..*", to keep backward compatibility.
---    To make it match all dirs, you need to pass un-matchable pattern; we use "a^" for this internally.
--- @param excludeFiles
---    Lua Pattern.
---    If any encountered file matches this pattern, it will be discarded from results.
---    If it is nil, it will be set to "a^" to match no files.
 -- @return
 --    A table containing the matched file or directory names.
 ---
 
-	function os.match(mask, matchFiles, excludeDirs, excludeFiles)
-		-- patch up exclude masks to default values
-		excludeDirs  = excludeDirs  and excludeDirs  or "%..*"
-		excludeFiles = excludeFiles and excludeFiles or "a^"
-
+	function os.match(mask, matchFiles)
 		-- Strip any extraneous weirdness from the mask to ensure a good
 		-- match against the paths returned by the OS. I don't know if I've
 		-- caught all the possibilities here yet; will add more as I go.
@@ -306,7 +293,7 @@
 				local isfile = os.matchisfile(m)
 				if (matchFiles and isfile) or (not matchFiles and not isfile) then
 					local fname = os.matchname(m)
-					if (isfile and not fname:match(excludeFiles)) or (not isfile and not fname:match(excludeDirs)) then
+					if isfile or not fname:startswith(".") then
 						fname = path.join(basedir, fname)
 						if fname:match(mask) == fname then
 							table.insert(result, fname)
@@ -322,8 +309,7 @@
 				while os.matchnext(m) do
 					if not os.matchisfile(m) then
 						local dirname = os.matchname(m)
-						-- always exclude phony dirs: . and ..
-						if not (dirname == "." or dirname == ".." or dirname:match(excludeDirs)) then
+						if (not dirname:startswith(".")) then
 							matchwalker(path.join(basedir, dirname))
 						end
 					end
@@ -348,7 +334,7 @@
 ---
 
 	function os.matchdirs(mask)
-		return os.match(mask, false, "%..*", nil)
+		return os.match(mask, false)
 	end
 
 
@@ -363,7 +349,7 @@
 ---
 
 	function os.matchfiles(mask)
-		return os.match(mask, true, "%..*", nil)
+		return os.match(mask, true)
 	end
 
 
@@ -453,12 +439,10 @@
 
 	local builtin_rmdir = os.rmdir
 	function os.rmdir(p)
-		-- recursively remove subdirectories: exclude no dirs apart builtin . and ..
-		local dirs = os.match(p .. "/*", false, "a^", nil)
+		-- recursively remove subdirectories
+		local dirs = os.matchdirs(p .. "/*")
 		for _, dname in ipairs(dirs) do
-			if not (dname:endswith("/.") or dname:endswith("/..")) then
-				os.rmdir(dname)
-			end
+			os.rmdir(dname)
 		end
 
 		-- remove any files
