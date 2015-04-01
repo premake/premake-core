@@ -78,9 +78,8 @@
 	end
 
 	function suite.matchfiles_SkipsDotDirs_OnRecursive()
-		local result = os.matchfiles("../**.lua*")
-		test.istrue(table.contains(result, "../src/_manifest.lua"))
-		test.isfalse(table.contains(result, "../.hg/store/data/scripts/test.lua.i"))
+		local result = os.matchfiles("**.lua")
+		test.isfalse(table.contains(result, ".svn/text-base/testfx.lua.svn-base"))
 	end
 
 	function suite.matchfiles_OnSubfolderMatch()
@@ -108,31 +107,6 @@
 	function suite.matchfiles_OnDottedFile()
 		local result = os.matchfiles("../.*")
 		test.istrue(table.contains(result, "../.hgignore"))
-	end
-
-
-
---
--- os.match() tests for exclude patterns
---
-
-	function suite.match_DirsCustomExcludeDirs()
-		local result = os.match("*", false, "a.*")
-		test.istrue(table.contains(result, ".."))
-		test.isfalse(table.contains(result, "actions"))
-		test.isfalse(table.contains(result, "api"))
-	end
-
-	function suite.match_FilesCustomExcludeDirs()
-		local result = os.match("../**.lua*", true, "src")
-		test.isfalse(table.contains(result, "../src/_manifest.lua"))
-		test.istrue(table.contains(result, "../.hg/store/data/scripts/test.lua.i"))
-	end
-
-	function suite.match_FilesCustomExcludeFiles()
-		local result = os.match("**.lua", true, nil, "ok.*")
-		test.istrue(table.contains(result, "folder/premake5.lua"))
-		test.isfalse(table.contains(result, "folder/ok.lua"))
 	end
 
 
@@ -197,19 +171,4 @@
 			copy = function(value) return "test " .. value end
 		}
 		test.isequal("test a b", os.translateCommands("{COPY} a b", "test"))
-	end
-
-
-
---
--- os.mkdir() and os.rmdir() tests
---
-
-	function suite.mkdirrmdir_WorksWithDottesDirs()
-		os.mkdir("__TEST/.TEST")
-		test.istrue(table.contains(os.matchdirs("*"), "__TEST"))
-		test.istrue(table.contains(os.match("**", false, "a^"), "__TEST/.TEST"))
-		os.rmdir("__TEST")
-		test.isfalse(table.contains(os.matchdirs("*"), "__TEST"))
-		test.isfalse(table.contains(os.match("**", false, "a^"), "__TEST/.TEST"))
 	end
