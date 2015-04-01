@@ -5,31 +5,40 @@
 -- issues in Mac OS X Universal builds.
 --
 
-	local raw_sum = 0
-	local trim_sum = 0
-
 	local function loadScript(fname)
-		dofile("scripts/luasrcdiet/LuaSrcDiet.lua")
-		-- Let LuaSrcDiet do its job
 		fname = path.getabsolute(fname)
-		local s,l = get_slim_luasrc(fname)
+		local f = io.open(fname)
+		local s = assert(f:read("*a"))
+		f:close()
 
-		-- Now do some cleanup so we can write these out as C strings
+		-- strip tabs
+		s = s:gsub("[\t]", "")
+
 		-- strip any CRs
 		s = s:gsub("[\r]", "")
 
+		-- strip out block comments
+		s = s:gsub("[^\"']%-%-%[%[.-%]%]", "")
+		s = s:gsub("[^\"']%-%-%[=%[.-%]=%]", "")
+		s = s:gsub("[^\"']%-%-%[==%[.-%]==%]", "")
+
+		-- strip out inline comments
+		s = s:gsub("\n%-%-[^\n]*", "\n")
+
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
+
+		-- strip duplicate line feeds
+		s = s:gsub("\n+", "\n")
+
+		-- strip out leading comments
+		s = s:gsub("^%-%-[^\n]*\n", "")
 
 		-- escape line feeds
 		s = s:gsub("\n", "\\n")
 
 		-- escape double quote marks
 		s = s:gsub("\"", "\\\"")
-
-		-- overall counters
-		raw_sum = raw_sum + l:len()
-		trim_sum = trim_sum + s:len()
 
  		return s
 	end
@@ -147,7 +156,7 @@
 	end
 
 	if oldVersion ~= result then
-		printf("Writing scripts.c (compressed %2.1f%%)", (trim_sum / raw_sum) * 100)
+		print("Writing scripts.c")
 		file = io.open(scriptsFile, "w+b")
 		file:write(result)
 		file:close()

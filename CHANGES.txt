@@ -24,7 +24,5 @@ Since 5.0-alpha1:
 * New API: debugsearchpaths()
 * os.outputof() now returns command exit code as second value
 * Added AVX2 to vectorextensions()
-* Embedded scripts now compressed with LuaSrcDiet (Oliver Schneider)
 * Checks to prevent self-linking (Mark Chandler)
-* os.rmdir() can now removes dotted subdirectories (Alexey Orlov)
 * Added path.replaceextension() (M Skibbe)
