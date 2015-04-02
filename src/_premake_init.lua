@@ -3,12 +3,12 @@
 --
 -- Prepares the runtime environment for the add-ons and user project scripts.
 --
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
 	local api = premake.api
 
-	local DOC_URL = "See https://bitbucket.org/premake/premake-dev/wiki/"
+	local DOC_URL = "See https://github.com/premake/premake-core/wiki/"
 
 
 -----------------------------------------------------------------------------

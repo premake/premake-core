@@ -2,7 +2,7 @@
   5.0 (in progress)
 --------------------
 
-See https://bitbucket.org/premake/premake-dev/wiki/What's_New_in_5.0
+See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
 Since 5.0-alpha1:

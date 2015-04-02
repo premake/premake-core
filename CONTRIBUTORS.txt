@@ -13,7 +13,7 @@ Builds and Infrastructure:
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
-  Manu Evans <https://bitbucket.org/TurkeyMan>
+  Manu Evans <https://github.com/TurkeyMan>
     * new APIs for specifying remote debugging parameters
     * new APIs for enabling and disabling specific warnings
     * new API for undefining symbols
