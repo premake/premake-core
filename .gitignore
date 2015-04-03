@@ -29,6 +29,7 @@ Makefile
 *.workspace
 *.project
 *.tags
+*.sublime-*
 
 *.bbprojectsettings
 Scratchpad.txt
