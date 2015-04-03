@@ -118,7 +118,7 @@
 		for _, name in ipairs { ".git" } do
 			os.rmdir(path.join(module, name))
 		end
-		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml" } do
+		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig" } do
 			os.remove(path.join(module, name))
 		end
 	end
