@@ -115,10 +115,10 @@
 
 	local modules = table.join(".", os.matchdirs("modules/*"))
 	for _, module in ipairs(modules) do
-		for _, name in ipairs { ".hg", ".hgcheck" } do
+		for _, name in ipairs { ".git" } do
 			os.rmdir(path.join(module, name))
 		end
-		for _, name in ipairs { ".DS_Store", ".gitignore", ".hgignore", ".hgsub*", ".hgtags" } do
+		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml" } do
 			os.remove(path.join(module, name))
 		end
 	end

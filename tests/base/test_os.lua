@@ -106,7 +106,7 @@
 
 	function suite.matchfiles_OnDottedFile()
 		local result = os.matchfiles("../.*")
-		test.istrue(table.contains(result, "../.hgignore"))
+		test.istrue(table.contains(result, "../.gitignore"))
 	end
 
 
