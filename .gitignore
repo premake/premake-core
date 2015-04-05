@@ -8,6 +8,7 @@ syntax: glob
 
 build
 bin
+modules
 obj
 release
 ipch
