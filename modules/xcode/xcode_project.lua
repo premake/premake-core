@@ -10,8 +10,8 @@
 	local m = p.modules.xcode
 
 	local xcode = p.modules.xcode
-    local project = p.project
-    local config = p.config
+	local project = p.project
+	local config = p.config
 	local fileconfig = p.fileconfig
 	local tree = p.tree
 
@@ -34,7 +34,7 @@
 
 		for cfg in project.eachconfig(prj) do
 			cfg.xcode = {}
-			cfg.xcode.targetid = xcode.newid(prj.xcode.projectnode.name, cfg.buildcfg)
+			cfg.xcode.targetid = xcode.newid(prj.xcode.projectnode.name, cfg.buildcfg, "target")
 			cfg.xcode.projectid = xcode.newid(tr.name, cfg.buildcfg)
 			table.insert(tr.configs, cfg)
 		end
