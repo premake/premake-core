@@ -1396,8 +1396,8 @@
 
 
 	function m.platformToolset(cfg)
-		local map = { vs2012 = "v110", vs2013 = "v120" }
-		local value = map[_ACTION]
+		local action = premake.action.current()
+		local value = action.vstudio.platformToolset
 		if value then
 			-- should only be written if there is a C/C++ file in the config
 			for i = 1, #cfg.files do
