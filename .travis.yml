@@ -7,5 +7,6 @@ before_install:
 script:
  - premake4 embed
  - premake4 gmake
+ - make -j8
  - bin/release/premake5 test
 
