@@ -21,7 +21,7 @@ int os_chmod(lua_State* L)
 
 	int mode = (int)strtol(modeStr, &endPtr, 8);
 
-#if PLATFORM_WINDOWS
+#if PLATFORM_WINDOWS && !defined(PLATFORM_CYGWIN)
 	/* DOS-mode permissions only support the low word */
 	mode = mode & 0x0000ffff;
 	rv = _chmod(path, mode);

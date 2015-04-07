@@ -17,7 +17,7 @@ int os_realpath(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 
-#if PLATFORM_POSIX
+#if PLATFORM_POSIX || defined(PLATFORM_CYGWIN)
 	ok = (realpath(path, result) != NULL);
 #elif PLATFORM_WINDOWS
 	ok = (_fullpath(result, path, PATH_MAX) != NULL);

@@ -33,6 +33,9 @@
 #elif defined (__GNU__)
 #define PLATFORM_HURD  (1)
 #define PLATFORM_STRING  "hurd"
+#elif defined (__CYGWIN__)
+#define PLATFORM_CYGWIN  (1)
+#define PLATFORM_STRING  "cygwin"
 #else
 #define PLATFORM_WINDOWS  (1)
 #define PLATFORM_STRING   "windows"
