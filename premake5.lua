@@ -168,9 +168,11 @@
 			links       { "CoreServices.framework" }
 
 		configuration { "solaris" }
+			includedirs ( "/usr/include/uuid" )
 			linkoptions { "-Wl,--export-dynamic" }
 
 		configuration "aix"
+			includedirs ( "/usr/include/uuid" )
 			links       { "m" }
 
 		configuration {}

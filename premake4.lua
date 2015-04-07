@@ -58,7 +58,8 @@
 
 		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
-			links       { "m" }
+			includedirs ( "/usr/include/uuid" )
+			links       { "m", "uuid" }
 			linkoptions { "-rdynamic" }
 
 		configuration "linux or hurd"
