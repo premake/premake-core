@@ -7,6 +7,8 @@ before_install:
 script:
  - premake4 embed
  - premake4 gmake
- - make -j8
+ - pkg-config uuid --libs
+ - pkg-config uuid --cflags
+ - make verbose=1 -j8
  - bin/release/premake5 test
 
