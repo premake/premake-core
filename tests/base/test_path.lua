@@ -385,6 +385,21 @@
 		test.isequal("../../test", p)
 	end
 
+	function suite.normalize_Test4()
+		local p = path.normalize("../../../test/*.h")
+		test.isequal("../../../test/*.h", p)
+	end
+
+	function suite.normalize_trailingDots1()
+		local p = path.normalize("../game/test/..")
+		test.isequal("../game", p)
+	end
+
+	function suite.normalize_trailingDots2()
+		local p = path.normalize("../game/..")
+		test.isequal("..", p)
+	end
+
 	function suite.normalize()
 		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
 		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))

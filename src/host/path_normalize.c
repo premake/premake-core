@@ -35,13 +35,11 @@ int path_normalize(lua_State* L)
 		if (ch == '.' && last == '.') {
 			ptr = dst - 3;
 			while (ptr >= buffer) {
-				if (*ptr != '/') {
-					--ptr;
-				}
-				else {
+				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
 					dst = ptr;
 					break;
 				}
+				--ptr;
 			}
 			if (ptr >= buffer) {
 				++src;
