@@ -52,11 +52,6 @@
 			Fast = "-fp-contract=fast -enable-unsafe-fp-math",
 --			Strict = "-ffloat-store",
 		},
-		kind = {
-			SharedLib = function(cfg)
-				if cfg.system ~= premake.WINDOWS then return "-relocation-model=pic" end
-			end,
-		},
 		optimize = {
 			Off = "-O0",
 			On = "-O2",
@@ -64,6 +59,9 @@
 			Full = "-O3",
 			Size = "-Oz",
 			Speed = "-O3",
+		},
+		pic = {
+			On = "-relocation-model=pic",
 		},
 		vectorextensions = {
 			AVX = "-mattr=+avx",

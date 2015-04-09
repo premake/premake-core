@@ -45,11 +45,6 @@
 			Fast = "-ffast-math",
 			Strict = "-ffloat-store",
 		},
-		kind = {
-			SharedLib = function(cfg)
-				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
-			end,
-		},
 		optimize = {
 			Off = "-O0",
 			On = "-O2 -finline-functions",
@@ -57,6 +52,9 @@
 			Full = "-O3 -finline-functions",
 			Size = "-Os -finline-functions",
 			Speed = "-O3 -finline-functions",
+		},
+		pic = {
+			On = "-fPIC",
 		},
 		vectorextensions = {
 			AVX = "-mavx",

@@ -235,16 +235,14 @@
 		floatingpoint = {
 			None = "-nofloat",
 		},
-		kind = {
-			SharedLib = function(cfg)
-				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
-			end,
-		},
 		optimize = {
 			On = "-O -inline",
 			Full = "-O -inline",
 			Size = "-O -inline",
 			Speed = "-O -inline",
+		},
+		pic = {
+			On = "-fPIC",
 		},
 		warnings = {
 			Default = "-wi",
