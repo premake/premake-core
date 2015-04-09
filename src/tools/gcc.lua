@@ -48,11 +48,6 @@
 			Fast = "-ffast-math",
 			Strict = "-ffloat-store",
 		},
-		kind = {
-			SharedLib = function(cfg)
-				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
-			end,
-		},
 		strictaliasing = {
 			Off = "-fno-strict-aliasing",
 			Level1 = { "-fstrict-aliasing", "-Wstrict-aliasing=1" },
@@ -66,6 +61,9 @@
 			Full = "-O3",
 			Size = "-Os",
 			Speed = "-O3",
+		},
+		pic = {
+			On = "-fPIC",
 		},
 		vectorextensions = {
 			AVX = "-mavx",
