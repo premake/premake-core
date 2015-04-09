@@ -121,8 +121,13 @@
 
 		-- Solution and project generation logic
 
-		onSolution = vstudio.vs2005.generateSolution,
-		onProject  = vstudio.vs2010.generateProject,
+		onSolution = function(sln)
+			vstudio.vs2005.generateSolution(sln)
+		end,
+		onProject = function(prj)
+			vstudio.vs2010.generateProject(prj)
+		end,
+
 		onRule = vstudio.vs2010.generateRule,
 
 		onCleanSolution = vstudio.cleanSolution,
