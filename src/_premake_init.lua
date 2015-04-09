@@ -450,6 +450,17 @@
 	}
 
 	api.register {
+		name = "fpu",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Software",
+			"Hardware",
+		}
+	}
+
+
+	api.register {
 		name = "framework",
 		scope = "config",
 		kind = "string",
