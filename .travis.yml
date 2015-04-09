@@ -2,7 +2,7 @@
 before_install:
  - sudo add-apt-repository -y ppa:codegear/release
  - sudo apt-get -qq update
- - sudo apt-get install premake4
+ - sudo apt-get install premake4 uuid-dev
  
 script:
  - premake4 embed

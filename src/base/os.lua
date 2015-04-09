@@ -80,6 +80,9 @@
 			if os.is("macosx") then
 				formats = { "lib%s.dylib", "%s.dylib" }
 				path = os.getenv("DYLD_LIBRARY_PATH") or ""
+			elseif os.is("cygwin") then
+				formats = { "lib%s.a", "%s.a", "lib%s.dll.a", "%s.dll.a" }
+				path = os.getenv("LD_LIBRARY_PATH") or ""
 			else
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""

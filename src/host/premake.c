@@ -13,6 +13,10 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 
+#if PLATFORM_CYGWIN
+#include <sys/cygwin.h>
+#endif
+
 
 #define VERSION        "HEAD"
 #define COPYRIGHT      "Copyright (C) 2002-2015 Jason Perkins and the Premake Project"
@@ -206,10 +210,13 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 		path = buffer;
 #endif
 
-#if PLATFORM_LINUX
+#if defined(PLATFORM_LINUX) || defined(PLATFORM_CYGWIN)
 	int len = readlink("/proc/self/exe", buffer, PATH_MAX);
 	if (len > 0)
+	{
+		buffer[len] = 0;	// cygwin did not set the terminating 0, is it the desired operation ???
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_BSD

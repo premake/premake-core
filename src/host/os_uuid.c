@@ -6,8 +6,12 @@
 
 #include "premake.h"
 
-#if PLATFORM_WINDOWS
+
+#if PLATFORM_WINDOWS && !defined(PLATFORM_CYGWIN)
 #include <Objbase.h>
+#else
+#include <string.h>
+#include <uuid.h>
 #endif
 
 
@@ -47,19 +51,12 @@ int os_uuid(lua_State* L)
 	/* If no name is supplied, try to build one properly */	
 	else
 	{
-#if PLATFORM_WINDOWS
+#if PLATFORM_WINDOWS && !defined(PLATFORM_CYGWIN)
 		CoCreateGuid((GUID*)bytes);
 #else
-		int result;
-
-		/* not sure how to get a UUID here, so I fake it */
-		FILE* rnd = fopen("/dev/urandom", "rb");
-		result = fread(bytes, 16, 1, rnd);
-		fclose(rnd);
-		if (!result)
-		{
-			return 0;
-		}
+	uuid_t uu;
+	uuid_generate(uu);
+	memcpy( &uu[0], bytes, 16 );	// todo: it is valid for all platforms ???
 #endif
 	}
 

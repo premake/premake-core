@@ -84,6 +84,40 @@
 	solution "Premake5"
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
+		
+		configuration "Debug"
+			defines     "_DEBUG"
+			flags       { "Symbols" }
+
+		configuration "Release"
+			defines     "NDEBUG"
+			flags       { "OptimizeSize" }
+
+		configuration "vs*"
+			defines     { "_CRT_SECURE_NO_WARNINGS" }
+
+		configuration "vs2005"
+			defines   {"_CRT_SECURE_NO_DEPRECATE" }
+			
+		configuration "cygwin"
+			--gccprefix "i686-pc-cygwin-"
+			defines   { "LUA_USE_POSIX" }
+
+		configuration "linux or bsd or hurd"
+			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
+
+		configuration "macosx"
+			defines     { "LUA_USE_MACOSX" }
+
+		configuration { "macosx", "gmake" }
+			toolset "clang"
+			buildoptions { "-mmacosx-version-min=10.4" }
+			linkoptions  { "-mmacosx-version-min=10.4" }
+
+		configuration "aix"
+			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
+
+		configuration {}
 
 	project "Premake5"
 		targetname  "premake5"
@@ -111,48 +145,37 @@
 
 		configuration "Debug"
 			targetdir   "bin/debug"
-			defines     "_DEBUG"
-			flags       { "Symbols" }
 
 		configuration "Release"
 			targetdir   "bin/release"
-			defines     "NDEBUG"
-			flags       { "OptimizeSize" }
-
-		configuration "vs*"
-			defines     { "_CRT_SECURE_NO_WARNINGS" }
-
-		configuration "vs2005"
-			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "windows"
 			links { "ole32" }
+			
+		configuration "cygwin"
+			includedirs ( "/usr/include/uuid" )
+			links       { "uuid" }
 
 		configuration "linux or bsd or hurd"
-			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
-			links       { "m" }
+			includedirs ( "/usr/include/uuid" ) -- pkg-config uuid --cflags --libs 
+			links       { "m", "uuid" }
 			linkoptions { "-rdynamic" }
 
 		configuration "linux or hurd"
 			links       { "dl" }
 
 		configuration "macosx"
-			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
 
-		configuration { "macosx", "gmake" }
-			toolset "clang"
-			buildoptions { "-mmacosx-version-min=10.4" }
-			linkoptions  { "-mmacosx-version-min=10.4" }
-
 		configuration { "solaris" }
+			includedirs ( "/usr/include/uuid" )
 			linkoptions { "-Wl,--export-dynamic" }
 
 		configuration "aix"
-			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
+			includedirs ( "/usr/include/uuid" )
 			links       { "m" }
 
-
+		configuration {}
 
 --
 -- A more thorough cleanup.
