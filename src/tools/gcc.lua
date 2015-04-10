@@ -34,8 +34,8 @@
 
 	gcc.cflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		flags = {
 			FatalCompileWarnings = "-Werror",
@@ -181,8 +181,8 @@
 
 	gcc.ldflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		flags = {
 			_Symbols = function(cfg)
@@ -220,8 +220,8 @@
 
 	gcc.libraryDirectories = {
 		architecture = {
-			x32 = "-L/usr/lib32",
-			x64 = "-L/usr/lib64",
+			x86 = "-L/usr/lib32",
+			x86_64 = "-L/usr/lib64",
 		},
 		system = {
 			wii = "-L$(LIBOGC_LIB)",

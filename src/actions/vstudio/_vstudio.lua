@@ -21,8 +21,8 @@
 
 	vstudio.vs200x_architectures =
 	{
-		x32     = "x86",
-		x64     = "x64",
+		x86     = "x86",
+		x86_64  = "x64",
 		xbox360 = "Xbox 360",
 	}
 

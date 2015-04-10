@@ -152,8 +152,8 @@
 
 	clang.ldflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		kind = {
 			SharedLib = function(cfg)

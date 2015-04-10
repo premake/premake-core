@@ -1094,7 +1094,7 @@
 	function m.enableEnhancedInstructionSet(cfg)
 		local map = { SSE = "1", SSE2 = "2" }
 		local value = map[cfg.vectorextensions]
-		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x64" then
+		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x86_64" then
 			p.w('EnableEnhancedInstructionSet="%d"', value)
 		end
 	end
@@ -1541,7 +1541,7 @@
 
 
 	function m.targetEnvironment(cfg)
-		if cfg.architecture == "x64" then
+		if cfg.architecture == "x86_64" then
 			p.w('TargetEnvironment="3"')
 		end
 	end
@@ -1564,7 +1564,7 @@
 
 	function m.targetMachine(cfg, toolset)
 		if not toolset then
-			p.w('TargetMachine="%d"', iif(cfg.architecture == "x64", 17, 1))
+			p.w('TargetMachine="%d"', iif(cfg.architecture == "x86_64", 17, 1))
 		end
 	end
 

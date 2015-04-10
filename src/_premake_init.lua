@@ -23,8 +23,14 @@
 		kind = "string",
 		allowed = {
 			"universal",
-			"x32",
-			"x64",
+			"x86",
+			"x86_64",
+		},
+		aliases = {
+			i386 = "x86",
+			amd64 = "x86_64",
+			x32 = "x86",	-- these should be DEPRECATED
+			x64 = "x86_64",
 		},
 	}
 

@@ -192,7 +192,7 @@
 
 	function suite.onSingleCpp_noPlatforms_singleArch()
 		project "MyProject"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -210,7 +210,7 @@
 
 	function suite.onSingleCs_noPlatforms_singleArch()
 		project "MyProject"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -227,7 +227,7 @@
 	end
 
 	function suite.onMixedLanguage_noPlatforms_singleArch()
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject1"
 		language "C#"
@@ -264,7 +264,7 @@
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
 
 		project "MyProject2"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -290,7 +290,7 @@
 --
 
 	function suite.onSingleCpp_noPlatforms_x32()
-		architecture "x32"
+		architecture "x86"
 		project "MyProject"
 		prepare()
 		test.capture [[
@@ -308,7 +308,7 @@
 	end
 
 	function suite.onSingleCs_noPlatforms_x32()
-		architecture "x32"
+		architecture "x86"
 		project "MyProject"
 		language "C#"
 		prepare()
@@ -327,7 +327,7 @@
 	end
 
 	function suite.onMixedLanguage_noPlatforms_x32()
-		architecture "x32"
+		architecture "x86"
 
 		project "MyProject1"
 		language "C#"
@@ -361,9 +361,9 @@
 	function suite.onSingleCpp_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
 		filter "platforms:DLL32"
-		architecture "x32"
+		architecture "x86"
 		filter "platforms:DLL64"
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject"
 		prepare()
@@ -390,9 +390,9 @@
 	function suite.onSingleCs_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
 		filter "platforms:DLL32"
-		architecture "x32"
+		architecture "x86"
 		filter "platforms:DLL64"
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject"
 		language "C#"
@@ -420,9 +420,9 @@
 	function suite.onMixedLanguage_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
 		filter "platforms:DLL32"
-		architecture "x32"
+		architecture "x86"
 		filter "platforms:DLL64"
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject1"
 		language "C#"
