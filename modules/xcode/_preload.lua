@@ -61,8 +61,8 @@
 		valid_platforms =
 		{
 			Native = "Native",
-			x32 = "Native 32-bit",
-			x64 = "Native 64-bit",
+			x86 = "Native 32-bit",
+			x86_64 = "Native 64-bit",
 			Universal32 = "32-bit Universal",
 			Universal64 = "64-bit Universal",
 			Universal = "Universal",
