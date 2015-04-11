@@ -26,8 +26,8 @@
 
 	ldc.dflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 --			arm = "-march=arm",
 --			ppc = "-march=ppc32",
 --			ppc64 = "-march=ppc64",
@@ -167,8 +167,8 @@
 
 	ldc.ldflags = {
 		architecture = {
-			x32 = { "-m32" },
-			x64 = { "-m64" },
+			x86 = { "-m32" },
+			x86_64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = "-shared",
@@ -188,8 +188,8 @@
 
 	ldc.libraryDirectories = {
 		architecture = {
-			x32 = "-L=-L/usr/lib",
-			x64 = "-L=-L/usr/lib64",
+			x86 = "-L=-L/usr/lib",
+			x86_64 = "-L=-L/usr/lib64",
 		}
 	}
 

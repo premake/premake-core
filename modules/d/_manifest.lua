@@ -1,4 +1,5 @@
 return {
+	"_preload.lua",
 	"d.lua",
 	"actions/gmake.lua",
 	"actions/monodev.lua",

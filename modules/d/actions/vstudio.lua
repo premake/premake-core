@@ -20,7 +20,7 @@
 -- Patch the vstudio actions with D support...
 --
 
-	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013" }) do
+	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015" }) do
 		local vs = p.action.get(v)
 		if vs ~= nil then
 			table.insert( vs.valid_languages, p.D )
@@ -161,7 +161,7 @@
 
 			_p(2,'<checkProperty>0</checkProperty>')
 			_p(2,'<genStackFrame>0</genStackFrame>')
-			_p(2,'<pic>%s</pic>', iif(cfg.flags.PIC, '1', '0'))
+			_p(2,'<pic>%s</pic>', iif(cfg.pic == "On", '1', '0'))
 			_p(2,'<cov>%s</cov>', iif(cfg.flags.CodeCoverage, '1', '0'))
 			_p(2,'<nofloat>%s</nofloat>', iif(cfg.floatingpoint and cfg.floatingpoint == "None", '1', '0'))
 			_p(2,'<Dversion>2</Dversion>')

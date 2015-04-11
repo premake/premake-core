@@ -24,8 +24,8 @@
 
 	gdc.dflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		flags = {
 			Deprecated		= "-fdeprecated",
@@ -161,8 +161,8 @@
 
 	gdc.ldflags = {
 		architecture = {
-			x32 = { "-m32" },
-			x64 = { "-m64" },
+			x86 = { "-m32" },
+			x86_64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = function(cfg)
@@ -190,8 +190,8 @@
 
 	gdc.libraryDirectories = {
 		architecture = {
-			x32 = "-L/usr/lib",
-			x64 = "-L/usr/lib64",
+			x86 = "-L/usr/lib",
+			x86_64 = "-L/usr/lib64",
 		}
 	}
 

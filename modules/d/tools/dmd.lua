@@ -30,8 +30,8 @@
 
 	tdmd.gcc.ldflags = {
 		architecture = {
-			x32 = { "-m32" },
-			x64 = { "-m64" },
+			x86 = { "-m32" },
+			x86_64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = "-shared",
@@ -51,8 +51,8 @@
 
 	tdmd.gcc.libraryDirectories = {
 		architecture = {
-			x32 = "-L-L/usr/lib",
-			x64 = "-L-L/usr/lib64",
+			x86 = "-L-L/usr/lib",
+			x86_64 = "-L-L/usr/lib64",
 		}
 	}
 
@@ -121,8 +121,8 @@
 
 	tdmd.optlink.ldflags = {
 		architecture = {
-			x32 = { "-m32" },
-			x64 = { "-m64" },
+			x86 = { "-m32" },
+			x86_64 = { "-m64" },
 		},
 		kind = {
 			SharedLib = "-shared",
@@ -211,8 +211,8 @@
 
 	dmd.dflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		flags = {
 			CodeCoverage	= "-cov",
