@@ -8,13 +8,13 @@ syntax: glob
 
 build
 bin
-modules
 obj
 release
 ipch
 src/host/scripts.c
 **.lnt
 **.vlstatus
+modules/xcode
 
 Makefile
 *.make
