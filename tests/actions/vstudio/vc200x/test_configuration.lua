@@ -50,9 +50,9 @@
 -- If a platform is specified, it should be included in the platform name.
 --
 
-	function suite.usesWin32_onX32()
+	function suite.usesWin32_onX86()
 		solution "MySolution"
-		platforms { "x32" }
+		platforms { "x86" }
 		prepare()
 		test.capture [[
 <Configuration
@@ -65,8 +65,8 @@
 -- Check the x64 architecture handling.
 --
 
-	function suite.usesX64Architecture_onX64Platform()
-		platforms { "x64" }
+	function suite.usesX64Architecture_onX86_64Platform()
+		platforms { "x86_64" }
 		prepare()
 		test.capture [[
 <Configuration

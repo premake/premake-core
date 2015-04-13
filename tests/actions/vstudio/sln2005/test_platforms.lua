@@ -289,7 +289,7 @@
 -- Use the right variant for 32-bit architectures.
 --
 
-	function suite.onSingleCpp_noPlatforms_x32()
+	function suite.onSingleCpp_noPlatforms_x86()
 		architecture "x86"
 		project "MyProject"
 		prepare()
@@ -307,7 +307,7 @@
 		]]
 	end
 
-	function suite.onSingleCs_noPlatforms_x32()
+	function suite.onSingleCs_noPlatforms_x86()
 		architecture "x86"
 		project "MyProject"
 		language "C#"
@@ -326,7 +326,7 @@
 		]]
 	end
 
-	function suite.onMixedLanguage_noPlatforms_x32()
+	function suite.onMixedLanguage_noPlatforms_x86()
 		architecture "x86"
 
 		project "MyProject1"
@@ -465,7 +465,7 @@
 --
 
 	function suite.onSingleCpp_withPlatformsMatchingArch_noArchs()
-		platforms { "x32", "Xbox360" }
+		platforms { "x86", "Xbox360" }
 		project "MyProject"
 		prepare()
 		test.capture [[
@@ -489,7 +489,7 @@
 	end
 
 	function suite.onSingleCs_withPlatformsMatchingArch_noArchs()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		project "MyProject"
 		language "C#"
 		prepare()
@@ -514,7 +514,7 @@
 	end
 
 	function suite.onMixedLanguage_withPlatformsMatchingArch_noArchs()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
@@ -795,8 +795,8 @@
 ---
 
 	function suite.onDefaultPlatforms()
-		platforms { "x32", "x64" }
-		defaultplatform "x64"
+		platforms { "x86", "x86_64" }
+		defaultplatform "x86_64"
 		project "MyProject"
 		prepare()
 		test.capture [[

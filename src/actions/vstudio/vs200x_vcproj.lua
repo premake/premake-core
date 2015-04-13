@@ -756,7 +756,7 @@
 			if not cfg.editAndContinue or
 				config.isOptimizedBuild(cfg) or
 			    cfg.clr ~= p.OFF or
-			    cfg.system == "x64"
+			    cfg.architecture == p.X86_64
 			then
 				return 3
 			else

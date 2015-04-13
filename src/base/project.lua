@@ -43,7 +43,7 @@
 --
 -- Returns an iterator function for the configuration objects contained by
 -- the project. Each configuration corresponds to a build configuration/
--- platform pair (i.e. "Debug|x32") as specified in the solution.
+-- platform pair (i.e. "Debug|x86") as specified in the solution.
 --
 -- @param prj
 --    The project object to query.

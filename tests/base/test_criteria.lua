@@ -31,7 +31,7 @@
 --
 
 	function suite.matches_fails_onMissingContext()
-		crit = criteria.new { "system:Windows", "architecture:x32" }
+		crit = criteria.new { "system:Windows", "architecture:x86" }
 		test.isfalse(criteria.matches(crit, { configurations="Debug", system="Windows" }))
 	end
 

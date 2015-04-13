@@ -47,7 +47,7 @@
 --
 
 	function suite.returnsNoValues_onNoConfigurationsButPlatforms()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prepare()
 		test.isemptycapture()
 	end
@@ -77,13 +77,13 @@
 
 	function suite.pairsConfigsAndPlatformsInOrder()
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prepare()
 		test.capture [[
-		Debug:x32
-		Debug:x64
-		Release:x32
-		Release:x64
+		Debug:x86
+		Debug:x86_64
+		Release:x86
+		Release:x86_64
 		]]
 	end
 
@@ -110,11 +110,11 @@
 	function suite.mapsPlatform_toPlatform()
 		configurations { "Debug", "Release" }
 		platforms { "Win32" }
-		configmap { ["Win32"] = "x64" }
+		configmap { ["Win32"] = "x86_64" }
 		prepare()
 		test.capture [[
-		Debug:x64
-		Release:x64
+		Debug:x86_64
+		Release:x86_64
 		]]
 	end
 
@@ -128,12 +128,12 @@
 	function suite.mapsBuildCfg_toBuildCfgAndPlatform()
 		configurations { "Debug", "Release" }
 		platforms { "Win32" }
-		configmap { ["Debug"] = { "ProjectDebug", "x64" } }
+		configmap { ["Debug"] = { "ProjectDebug", "x86_64" } }
 		prepare()
 		test.capture [[
-		ProjectDebug:x64
+		ProjectDebug:x86_64
 		ProjectDebug:Win32
-		Release:x64
+		Release:x86_64
 		Release:Win32
 		]]
 	end

@@ -275,25 +275,25 @@
 -- Make sure system or architecture flags are added properly.
 --
 
-	function suite.cflags_onX32()
+	function suite.cflags_onX86()
 		architecture "x86"
 		prepare()
 		test.contains({ "-m32" }, gcc.getcflags(cfg))
 	end
 
-	function suite.ldflags_onX32()
+	function suite.ldflags_onX86()
 		architecture "x86"
 		prepare()
 		test.contains({ "-m32" }, gcc.getldflags(cfg))
 	end
 
-	function suite.cflags_onX64()
+	function suite.cflags_onX86_64()
 		architecture "x86_64"
 		prepare()
 		test.contains({ "-m64" }, gcc.getcflags(cfg))
 	end
 
-	function suite.ldflags_onX64()
+	function suite.ldflags_onX86_64()
 		architecture "x86_64"
 		prepare()
 		test.contains({ "-m64" }, gcc.getldflags(cfg))
