@@ -1773,9 +1773,9 @@
 	end
 
 
-	function suite.XCBuildConfigurationProject_OnX32()
+	function suite.XCBuildConfigurationProject_OnX86()
 		solution("MySolution")
-		platforms { "x32" }
+		platforms { "x86" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1789,7 +1789,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/x32/Debug;
+				OBJROOT = obj/x86/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = Debug;
@@ -1798,9 +1798,9 @@
 	end
 
 
-	function suite.XCBuildConfigurationProject_OnX64()
+	function suite.XCBuildConfigurationProject_OnX86_64()
 		solution("MySolution")
-		platforms { "x64" }
+		platforms { "x86_64" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1814,7 +1814,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/x64/Debug;
+				OBJROOT = obj/x86_64/Debug;
 				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = Debug;
