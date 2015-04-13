@@ -1773,7 +1773,7 @@
 	end
 
 
-	function suite.XCBuildConfigurationProject_OnX32()
+	function suite.XCBuildConfigurationProject_OnX86()
 		solution("MySolution")
 		platforms { "x86" }
 		prepare()
@@ -1798,7 +1798,7 @@
 	end
 
 
-	function suite.XCBuildConfigurationProject_OnX64()
+	function suite.XCBuildConfigurationProject_OnX86_64()
 		solution("MySolution")
 		platforms { "x86_64" }
 		prepare()
