@@ -551,7 +551,7 @@
 
 	function suite.debugFormat_onWin32()
 		flags "Symbols"
-		architecture "x32"
+		architecture "x86"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -568,7 +568,7 @@
 
 	function suite.debugFormat_onWin64()
 		flags "Symbols"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 <ClCompile>

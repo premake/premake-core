@@ -55,9 +55,9 @@
 	function suite.allArchitecturesListed_onMultipleArchitectures()
 		platforms { "32b", "64b" }
 		filter "platforms:32b"
-			architecture "x32"
+			architecture "x86"
 		filter "platforms:64b"
-			architecture "x64"
+			architecture "x86_64"
 		prepare()
 		test.capture [[
 	<ItemGroup Label="ProjectConfigurations">

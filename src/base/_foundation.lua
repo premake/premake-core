@@ -40,8 +40,8 @@
 	premake.UTILITY     = "Utility"
 	premake.WINDOWEDAPP = "WindowedApp"
 	premake.WINDOWS     = "windows"
-	premake.X32         = "x32"
-	premake.X64         = "x64"
+	premake.X86         = "x86"
+	premake.X86_64      = "x86_64"
 	premake.XBOX360     = "xbox360"
 
 

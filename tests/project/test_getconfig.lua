@@ -92,10 +92,10 @@
 --
 
 	function suite.setsArchitecture_onMatchingPlatform()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x64" }
 		project ("MyProject")
-		prepare("Debug", "x32")
-		test.isequal("x32", cfg.architecture)
+		prepare("Debug", "x86")
+		test.isequal("x86", cfg.architecture)
 	end
 
 
@@ -105,9 +105,9 @@
 --
 
 	function suite.doesNotOverride_onMatchingPlatform()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x64" }
 		project ("MyProject")
-		architecture "x64"
-		prepare("Debug", "x32")
-		test.isequal("x64", cfg.architecture)
+		architecture "x86_64"
+		prepare("Debug", "x86")
+		test.isequal("x86_64", cfg.architecture)
 	end
