@@ -44,8 +44,8 @@
 
 	function suite.directoryIncludesPlatform_onPlatformConflict()
 		configurations { "Debug" }
-		platforms { "x32", "x64" }
-		test.isequal("obj/x32",  result())
+		platforms { "x86", "x86_64" }
+		test.isequal("obj/x86",  result())
 	end
 
 
@@ -67,8 +67,8 @@
 
 	function suite.directoryIncludesBuildCfg_onPlatformAndBuildCfgConflict()
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
-		test.isequal("obj/x32/Debug",  result())
+		platforms { "x86", "x86_64" }
+		test.isequal("obj/x86/Debug",  result())
 	end
 
 

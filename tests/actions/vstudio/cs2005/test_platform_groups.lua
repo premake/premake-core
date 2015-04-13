@@ -71,7 +71,7 @@
 		]]
 	end
 
-	function suite.onX32()
+	function suite.onX86()
 		prepare("x86")
 		test.capture [[
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -80,7 +80,7 @@
 	end
 
 
-	function suite.onX64()
+	function suite.onX86_64()
 		prepare("x86_64")
 		test.capture [[
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">

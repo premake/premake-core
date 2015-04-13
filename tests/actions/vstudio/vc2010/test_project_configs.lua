@@ -88,7 +88,7 @@
 --
 
 	function suite.allArchitecturesListed_onImplicitArchitectures()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prepare()
 		test.capture [[
 	<ItemGroup Label="ProjectConfigurations">

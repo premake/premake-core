@@ -47,10 +47,10 @@
 	function suite.singleProject_withPlatforms()
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
 
-		test.isequal("obj/x32/Debug", result("Debug", "x32"))
+		test.isequal("obj/x86/Debug", result("Debug", "x86"))
 	end
 
 
@@ -67,20 +67,20 @@
 	function suite.singleProject_uniqueByTokens_withPlatforms()
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
 		objdir "obj/%{cfg.buildcfg}_%{cfg.platform}"
 
-		test.isequal("obj/Debug_x32", result("Debug", "x32"))
+		test.isequal("obj/Debug_x86", result("Debug", "x86"))
 	end
 
 
 	function suite.allowOverlap_onPrefixCode()
 		sln = solution "MySolution"
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
 		objdir "!obj/%{cfg.buildcfg}"
 
-		test.isequal("obj/Debug", result("Debug", "x32"))
+		test.isequal("obj/Debug", result("Debug", "x86"))
 	end

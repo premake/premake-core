@@ -92,7 +92,7 @@
 --
 
 	function suite.setsArchitecture_onMatchingPlatform()
-		platforms { "x86", "x64" }
+		platforms { "x86", "x86_64" }
 		project ("MyProject")
 		prepare("Debug", "x86")
 		test.isequal("x86", cfg.architecture)
