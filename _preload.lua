@@ -15,7 +15,7 @@
 	p.ANDROID = "android"
 
 	api.addAllowed("system", p.ANDROID)
-	api.addAllowed("architecture", { "x86", "x86_64", "arm", "armv5", "armv7", "aarach64", "mips", "mips64" })
+	api.addAllowed("architecture", { "armv5", "armv7", "aarach64", "mips", "mips64" })
 	api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	api.addAllowed("flags", { "Thumb" })
 

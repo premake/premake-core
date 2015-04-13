@@ -21,10 +21,6 @@
 -- Add android tools to vstudio actions.
 --
 
-	if vstudio.vs200x_architectures ~= nil then
-		vstudio.vs200x_architectures.x86 = "x86"
-	end
-
 	if vstudio.vs2010_architectures ~= nil then
 		vstudio.vs2010_architectures.android = "Android"
 	end
@@ -114,22 +110,6 @@
 
 
 --
--- Extend outputProperties.
---
-
-	premake.override(vc2010, "targetExt", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
-			local ext = cfg.buildtarget.extension
-			if ext ~= "" then
-				_x(2,'<TargetExt>%s</TargetExt>', ext)
-			end
-		else
-			oldfn(cfg)
-		end
-	end)
-
-
---
 -- Extend clCompile.
 --
 
@@ -137,19 +117,18 @@
 		local elements = oldfn(cfg)
 		if cfg.system == premake.ANDROID then
 			elements = table.join(elements, {
-				android.androidDebugInformation,
+				android.debugInformation,
 				android.strictAliasing,
 				android.thumbMode,
 				android.fpu,
 				android.pic,
---				android.StrictAliasing,
 --				android.ShortEnums,
 			})
 		end
 		return elements
 	end)
 
-	function android.androidDebugInformation(cfg)
+	function android.debugInformation(cfg)
 		if cfg.flags.Symbols then
 			_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
 		end
@@ -168,51 +147,18 @@
 	end
 
 	function android.fpu(cfg)
-		if cfg.fpu == "Software" then
-			_p(3,'<SoftFloat>true</SoftFloat>')
+		if cfg.fpu ~= nil then
+			_p(3,'<SoftFloat>true</SoftFloat>', iif(cfg.fpu == "Software", "true", "false"))
 		end
 	end
 
 	function android.pic(cfg)
 		-- TODO: We only have a flag to turn it on, but android is on by default
 		--       it seems we would rather have a flag to turn it off...
---		if cfg.flags.PIC then
---			_p(3,'<PositionIndependentCode>%s</PositionIndependentCode>', iif(cfg.flags.PIC, "true", "false"))
+--		if cfg.pic ~= nil then
+--			_p(3,'<PositionIndependentCode>%s</PositionIndependentCode>', iif(cfg.pic == "On", "true", "false"))
 --		end
 	end
-
-	premake.override(vc2010, "warningLevel", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
-			local map = { Off = "DisableAllWarnings", Extra = "AllWarnings" }
-			if map[cfg.warnings] ~= nil then
-				_p(3,'<Warnings>%s</Warnings>', map[cfg.warnings])
-			end
-		else
-			oldfn(cfg)
-		end
-	end)
-
-	premake.override(vc2010, "treatWarningAsError", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
-			if cfg.flags.FatalCompileWarnings and cfg.warnings ~= "Off" then
-				_p(3,'<WarningsAsErrors>true</WarningsAsErrors>')
-			end
-		else
-			oldfn(cfg)
-		end
-	end)
-
-	premake.override(vc2010, "optimization", function(oldfn, cfg, condition)
-		if cfg.system == premake.ANDROID then
-			local map = { Off="O0", On="O2", Debug="O0", Full="O3", Size="Os", Speed="O3" }
-			local value = map[cfg.optimize]
-			if value or not condition then
-				vc2010.element('OptimizationLevel', condition, value or "O0")
-			end
-		else
-			oldfn(cfg, condition)
-		end
-	end)
 
 	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
