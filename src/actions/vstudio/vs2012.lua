@@ -44,9 +44,15 @@
 			vstudio.vs2010.generateProject(prj)
 		end,
 
-		onCleanSolution = vstudio.cleanSolution,
-		onCleanProject  = vstudio.cleanProject,
-		onCleanTarget   = vstudio.cleanTarget,
+		onCleanSolution = function(sln)
+			vstudio.cleanSolution(sln)
+		end,
+		onCleanProject = function(prj)
+			vstudio.cleanProject(prj)
+		end,
+		onCleanTarget = function(prj)
+			vstudio.cleanTarget(prj)
+		end,
 
 		pathVars        = vstudio.pathVars,
 

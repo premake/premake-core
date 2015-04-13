@@ -127,12 +127,19 @@
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)
 		end,
+		onRule = function(rule)
+			vstudio.vs2010.generateRule(rule)
+		end,
 
-		onRule = vstudio.vs2010.generateRule,
-
-		onCleanSolution = vstudio.cleanSolution,
-		onCleanProject  = vstudio.cleanProject,
-		onCleanTarget   = vstudio.cleanTarget,
+		onCleanSolution = function(sln)
+			vstudio.cleanSolution(sln)
+		end,
+		onCleanProject = function(prj)
+			vstudio.cleanProject(prj)
+		end,
+		onCleanTarget = function(prj)
+			vstudio.cleanTarget(prj)
+		end,
 
 		pathVars        = vstudio.pathVars,
 
