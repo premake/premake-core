@@ -120,7 +120,7 @@
 		}
 
 		if ENABLE_CURL then
-			CurlConfigure()
+			CurlSetup()
 		end
 
 		configuration "Debug"

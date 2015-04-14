@@ -3,7 +3,7 @@
 
 -- Run configure for curl
 
-function CurlConfigure()
+function CurlSetup()
 
 	local curlversion="curl-7.41.0"
 
@@ -25,6 +25,8 @@ function CurlConfigure()
 		"BUILDING_LIBCURL",
 		"CURL_HTTP",
 	}
+
+	links { "idn" }
 
 	configuration "windows"
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
