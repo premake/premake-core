@@ -23,7 +23,7 @@
 -- may also allow for ftp and other communications in the future
 --
 
-	local ENABLE_CURL = true
+	local ENABLE_CURL = false
 
 	if ENABLE_CURL then
 		dofile "modules/curl/curl_setup.lua"
