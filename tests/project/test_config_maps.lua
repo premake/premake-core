@@ -133,16 +133,16 @@
 		removeconfigurations "*"
 		removeplatforms "*"
 		configurations { "Development", "Production" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 
 		configmap {
-			[{"Debug", "Win32"}] = { "Development", "x32" },
-			[{"Debug", "Linux"}] = { "Development", "x64" },
-			[{"Release", "Win32"}] = { "Production", "x32" },
-			[{"Release", "Linux"}] = { "Production", "x64" },
+			[{"Debug", "Win32"}] = { "Development", "x86" },
+			[{"Debug", "Linux"}] = { "Development", "x86_64" },
+			[{"Release", "Win32"}] = { "Production", "x86" },
+			[{"Release", "Linux"}] = { "Production", "x86_64" },
 		}
 		prepare("Debug", "Linux")
-		test.isequal({ "Development", "x64" }, { cfg.buildcfg, cfg.platform })
+		test.isequal({ "Development", "x86_64" }, { cfg.buildcfg, cfg.platform })
 	end
 
 
