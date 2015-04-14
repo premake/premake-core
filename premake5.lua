@@ -17,7 +17,17 @@
 
 	premake.api.deprecations "off"
 
+--
+-- Enable libCurl Support
+-- Can be used for http / https downloads
+-- may also allow for ftp and other communications in the future
+--
 
+	local ENABLE_CURL = false
+
+	if ENABLE_CURL then
+		dofile "modules/curl/curl_setup.lua"
+	end
 
 --
 -- Register supporting actions and options.
@@ -108,6 +118,10 @@
 			"src/host/lua-5.1.4/**.lua",
 			"src/host/lua-5.1.4/etc/*.c"
 		}
+
+		if ENABLE_CURL then
+			CurlSetup()
+		end
 
 		configuration "Debug"
 			targetdir   "bin/debug"

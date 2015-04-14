@@ -85,6 +85,13 @@ static const luaL_Reg string_functions[] = {
 	{ NULL, NULL }
 };
 
+#ifdef CURL_HTTP
+static const luaL_Reg http_functions[] = {
+	{ "get",  http_get },
+	{ "download",  http_download },
+	{ NULL, NULL }
+};
+#endif
 
 /**
  * Initialize the Premake Lua environment.
@@ -98,6 +105,10 @@ int premake_init(lua_State* L)
 	luaL_register(L, "path",     path_functions);
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
+
+#ifdef CURL_HTTP
+	luaL_register(L, "http",     http_functions);
+#endif
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
