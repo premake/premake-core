@@ -47,17 +47,32 @@
 		end
 
 		local full = dir .. "/" .. base .. ".lua"
-		local p = os.locate("modules/" .. full) or
-		          os.locate(full) or
-		          os.locate(name .. ".lua")
 
-		if not p then
-			-- try to load from the embedded script
-			p = "$/" .. full
+		-- list of paths where to look for the module
+		local paths = {
+			"modules/" .. full,
+			full,
+			name .. ".lua"
+		}
+
+		-- try to locate the module
+		for _, p in ipairs(paths) do
+			local file = os.locate(p)
+			if file then
+				local chunk, err = loadfile(file)
+				if chunk then
+					return chunk
+				end
+			end
 		end
 
-		local chunk, err = loadfile(p)
-		return chunk
+		-- didn't find the module in supported paths, try the embedded scripts
+		for _, p in ipairs(paths) do
+			local chunk, err = loadfile("$/" .. p)
+			if chunk then
+				return chunk
+			end
+		end
 	end
 
 
