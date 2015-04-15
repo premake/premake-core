@@ -4,6 +4,7 @@ project "curl-lib"
 	includedirs {"include", "lib"}
 	defines     {"BUILDING_LIBCURL", "CURL_STATICLIB", "CURL_HTTP_ONLY", "CURL_DISABLE_LDAP" }
 	flags       { "StaticRuntime" }
+	location    "build"
 
 	files 
 	{

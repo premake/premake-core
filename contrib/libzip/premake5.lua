@@ -4,6 +4,7 @@ project "zip-lib"
 	includedirs "include"
 	defines     {"N_FSEEKO", "_CRT_SECURE_NO_DEPRECATE"}
 	flags       { "StaticRuntime" }
+	location    "build"
 
 	files 
 	{
