@@ -40,7 +40,7 @@
 -- Make sure I've got what I've need to be happy.
 --
 
-	local required = { "hg", "make", "gcc", "premake5", "zip" }
+	local required = { "git", "make", "gcc", "premake5", "zip" }
 	for _, value in ipairs(required) do
 		local z = execQuiet("%s --version", value)
 		if z ~= 0 then
@@ -54,7 +54,7 @@
 --
 
 	os.chdir("..")
-	local text = os.outputof(string.format('hg cat -r %s src/host/premake.c', branch))
+	local text = os.outputof(string.format('git show %s:src/host/premake.c', branch))
 	local _, _, version = text:find('VERSION%s*"([%w%p]+)"')
 
 	local pkgName = "premake-" .. version
@@ -88,9 +88,16 @@
 	os.rmdir(pkgName)
 
 	print("Cloning source code")
-	z = os.executef("hg clone .. -r %s %s", branch, pkgName)
+	z = os.executef("git clone .. %s", pkgName)
 	if z ~= 0 then
 		error("clone failed", 0)
+	end
+
+	os.chdir(pkgName)
+
+	z = os.executef("git checkout %s", branch)
+	if z ~= 0 then
+		error("unable to checkout branch " .. branch, 0)
 	end
 
 
@@ -99,7 +106,6 @@
 --
 
 	print("Updating embedded scripts...")
-	os.chdir(pkgName)
 	z = execQuiet("premake5 embed")
 	if z ~= 0 then
 		error("failed to update the embedded scripts", 0)

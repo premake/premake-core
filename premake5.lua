@@ -42,15 +42,6 @@
 
 
 	newaction {
-		trigger = "release",
-		description = "Merges current branch to release; updates version and tags",
-		execute = function ()
-			include (path.join(corePath, "scripts/release.lua"))
-		end
-	}
-
-
-	newaction {
 		trigger = "test",
 		description = "Run the automated test suite",
 		execute = function ()
