@@ -90,6 +90,15 @@
 
 
 	api.register {
+		name = "buildlog",
+		scope = { "config" },
+		kind = "path",
+		tokens = true,
+		pathVars = true,
+	}
+
+
+	api.register {
 		name = "buildmessage",
 		scope = { "config", "rule" },
 		kind = "string",
@@ -952,6 +961,18 @@
 			"SSE",
 			"SSE2",
 		}
+	}
+
+	api.register {
+		name = "vsplatformtools",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"v90",
+			"v100",
+			"v110",
+			"v120",
+		},
 	}
 
 	api.register {

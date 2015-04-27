@@ -256,6 +256,7 @@
 				m.imageXex,
 				m.deploy,
 				m.ruleVars,
+				m.buildLog,
 			}
 		end
 	end
@@ -941,6 +942,16 @@
 	end
 
 
+	function m.buildLog(cfg)
+		if cfg.buildlog and #cfg.buildlog > 0 then
+			local relpath = project.getrelative(cfg.project, cfg.buildlog)
+			p.push('<BuildLog>')
+			p.x('<Path>%s</Path>', path.translate(relpath))
+			p.pop('</BuildLog>')
+		end
+	end
+
+
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
@@ -1397,12 +1408,12 @@
 
 	function m.platformToolset(cfg)
 		local action = premake.action.current()
-		local value = action.vstudio.platformToolset
+		local value = cfg.vsplatformtools or action.vstudio.platformToolset
 		if value then
 			-- should only be written if there is a C/C++ file in the config
 			for i = 1, #cfg.files do
 				if path.iscppfile(cfg.files[i]) then
-					_p(2,'<PlatformToolset>%s</PlatformToolset>', value)
+					p.w('<PlatformToolset>%s</PlatformToolset>', value)
 					return
 				end
 			end
