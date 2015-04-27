@@ -106,7 +106,7 @@
 
 	function suite.matchfiles_OnDottedFile()
 		local result = os.matchfiles("../.*")
-		test.istrue(table.contains(result, "../.hgignore"))
+		test.istrue(table.contains(result, "../.gitignore"))
 	end
 
 
@@ -129,6 +129,32 @@
 
 	function suite.pathsearch_NilPathsAllowed()
 		test.isequal(_TESTS_DIR, os.pathsearch("_tests.lua", nil, _TESTS_DIR, nil))
+	end
+
+
+--
+-- os.outputof() tests
+--
+
+	-- Check if outputof returns the command exit code
+	-- in addition of the command output
+	function suite.outputof_commandExitCode()
+		if os.is("macosx")
+			or os.is("linux")
+			or os.is("solaris")
+			or os.is("bsd")
+		then
+			-- Assumes 'true' and 'false' commands exist
+			-- which should be the case on all *nix platforms
+			for cmd, exitcode in pairs ({
+				["true"] = 0,
+				["false"] = 1
+			})
+			do
+				local o, e = os.outputof(cmd)
+				test.isequal(e, exitcode)
+			end
+		end
 	end
 
 

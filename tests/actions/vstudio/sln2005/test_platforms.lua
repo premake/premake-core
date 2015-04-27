@@ -192,7 +192,7 @@
 
 	function suite.onSingleCpp_noPlatforms_singleArch()
 		project "MyProject"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -210,7 +210,7 @@
 
 	function suite.onSingleCs_noPlatforms_singleArch()
 		project "MyProject"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -227,7 +227,7 @@
 	end
 
 	function suite.onMixedLanguage_noPlatforms_singleArch()
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject1"
 		language "C#"
@@ -264,7 +264,7 @@
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
 
 		project "MyProject2"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -289,8 +289,8 @@
 -- Use the right variant for 32-bit architectures.
 --
 
-	function suite.onSingleCpp_noPlatforms_x32()
-		architecture "x32"
+	function suite.onSingleCpp_noPlatforms_x86()
+		architecture "x86"
 		project "MyProject"
 		prepare()
 		test.capture [[
@@ -307,8 +307,8 @@
 		]]
 	end
 
-	function suite.onSingleCs_noPlatforms_x32()
-		architecture "x32"
+	function suite.onSingleCs_noPlatforms_x86()
+		architecture "x86"
 		project "MyProject"
 		language "C#"
 		prepare()
@@ -326,8 +326,8 @@
 		]]
 	end
 
-	function suite.onMixedLanguage_noPlatforms_x32()
-		architecture "x32"
+	function suite.onMixedLanguage_noPlatforms_x86()
+		architecture "x86"
 
 		project "MyProject1"
 		language "C#"
@@ -361,9 +361,9 @@
 	function suite.onSingleCpp_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
 		filter "platforms:DLL32"
-		architecture "x32"
+		architecture "x86"
 		filter "platforms:DLL64"
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject"
 		prepare()
@@ -390,9 +390,9 @@
 	function suite.onSingleCs_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
 		filter "platforms:DLL32"
-		architecture "x32"
+		architecture "x86"
 		filter "platforms:DLL64"
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject"
 		language "C#"
@@ -420,9 +420,9 @@
 	function suite.onMixedLanguage_withPlatforms_withArchs()
 		platforms { "DLL32", "DLL64" }
 		filter "platforms:DLL32"
-		architecture "x32"
+		architecture "x86"
 		filter "platforms:DLL64"
-		architecture "x64"
+		architecture "x86_64"
 
 		project "MyProject1"
 		language "C#"
@@ -465,7 +465,7 @@
 --
 
 	function suite.onSingleCpp_withPlatformsMatchingArch_noArchs()
-		platforms { "x32", "Xbox360" }
+		platforms { "x86", "Xbox360" }
 		project "MyProject"
 		prepare()
 		test.capture [[
@@ -489,7 +489,7 @@
 	end
 
 	function suite.onSingleCs_withPlatformsMatchingArch_noArchs()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		project "MyProject"
 		language "C#"
 		prepare()
@@ -514,7 +514,7 @@
 	end
 
 	function suite.onMixedLanguage_withPlatformsMatchingArch_noArchs()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		project "MyProject1"
 		language "C#"
 		uuid "52AD9329-0D74-4F66-A213-E649D8CCD737"
@@ -623,23 +623,23 @@
 ---
 
 	function suite.sortsByBuildCfgAndPlatform()
-		platforms { "Windows", "PS3" }
+		platforms { "Windows", "Linux" }
 		project "MyProject"
 		prepare()
 		test.capture [[
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|PS3 = Debug|PS3
+		Debug|Linux = Debug|Linux
 		Debug|Windows = Debug|Windows
-		Release|PS3 = Release|PS3
+		Release|Linux = Release|Linux
 		Release|Windows = Release|Windows
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|PS3.ActiveCfg = Debug PS3|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|PS3.Build.0 = Debug PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Linux.ActiveCfg = Debug Linux|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Linux.Build.0 = Debug Linux|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Windows.ActiveCfg = Debug Windows|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Windows.Build.0 = Debug Windows|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|PS3.ActiveCfg = Release PS3|Win32
-		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|PS3.Build.0 = Release PS3|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Linux.ActiveCfg = Release Linux|Win32
+		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Linux.Build.0 = Release Linux|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Windows.ActiveCfg = Release Windows|Win32
 		{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Windows.Build.0 = Release Windows|Win32
 	EndGlobalSection
@@ -795,8 +795,8 @@
 ---
 
 	function suite.onDefaultPlatforms()
-		platforms { "x32", "x64" }
-		defaultplatform "x64"
+		platforms { "x86", "x86_64" }
+		defaultplatform "x86_64"
 		project "MyProject"
 		prepare()
 		test.capture [[

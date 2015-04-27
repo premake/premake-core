@@ -164,6 +164,7 @@
 		_indentLevel = 0
 		callback(obj)
 		f:close()
+		_indentLevel = 0
 	end
 
 
@@ -338,10 +339,14 @@ end
 -- Write a opening XML element for a UTF-8 encoded file. Used by
 -- several different files for different actions, so makes sense
 -- to have a common call for it.
+--
+-- @param upper
+--    If true, the encoding is written in uppercase.
 ---
 
-	function premake.xmlUtf8()
-		premake.outln('<?xml version="1.0" encoding="utf-8"?>')
+	function premake.xmlUtf8(upper)
+		local encoding = iif(upper, "UTF-8", "utf-8")
+		premake.w('<?xml version="1.0" encoding="%s"?>', encoding)
 	end
 
 

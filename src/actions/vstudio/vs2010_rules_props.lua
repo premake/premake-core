@@ -21,7 +21,6 @@
 
 	m.elements.project = function(r)
 		return {
-			p.xmlUtf8,
 			p.vstudio.projectElement,
 			m.targetsGroup,
 			m.dependsOnGroup,
@@ -30,6 +29,7 @@
 	end
 
 	function m.generate(r)
+		p.xmlUtf8()
 		p.callArray(m.elements.project, r)
 		p.pop()
 		p.out('</Project>')

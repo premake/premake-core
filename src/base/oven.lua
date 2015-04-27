@@ -177,14 +177,7 @@
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(self, buildcfg, platform)
-
-			-- Check to make sure this configuration is supported by the current
-			-- action; add it to the project's configuration cache if so.
-
-			if p.action.supportsconfig(cfg) then
-				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
-			end
-
+			self.configs[(buildcfg or "*") .. (platform or "")] = cfg
 		end
 
 		-- Process the sub-objects that are contained by this project. The

@@ -1,28 +1,28 @@
 --
--- actions/vstudio/vs2013.lua
--- Extend the existing exporters with support for Visual Studio 2013.
--- Copyright (c) 2013-2014 Jason Perkins and the Premake project
+-- actions/vstudio/vs2015.lua
+-- Extend the existing exporters with support for Visual Studio 2015.
+-- Copyright (c) 2015-2015 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc2013 = {}
+	premake.vstudio.vc2015 = {}
 
 	local p = premake
 	local vstudio = p.vstudio
 	local vc2010 = vstudio.vc2010
 
-	local m = vstudio.vc2013
+	local m = vstudio.vc2015
 
 
 ---
--- Define the Visual Studio 2013 export action.
+-- Define the Visual Studio 2015 export action.
 ---
 
 	newaction {
 		-- Metadata for the command line and help system
 
-		trigger     = "vs2013",
-		shortname   = "Visual Studio 2013",
-		description = "Generate Visual Studio 2013 project files",
+		trigger     = "vs2015",
+		shortname   = "Visual Studio 2015",
+		description = "Generate Visual Studio 2015 project files",
 
 		-- Visual Studio always uses Windows path and naming conventions
 
@@ -62,10 +62,10 @@
 
 		vstudio = {
 			solutionVersion = "12",
-			versionName     = "2013",
+			versionName     = "2015",
 			targetFramework = "4.5",
-			toolsVersion    = "12.0",
+			toolsVersion    = "14.0",
 			filterToolsVersion = "4.0",
-			platformToolset = "v120"
+			platformToolset = "v140"
 		}
 	}

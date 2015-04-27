@@ -299,6 +299,32 @@
 
 
 --
+-- path.replaceextension() tests
+--
+
+	function suite.getabsolute_replaceExtension()
+		test.isequal("/AB.foo", path.replaceextension("/AB.exe","foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionWithDot()
+		test.isequal("/AB.foo", path.replaceextension("/AB.exe",".foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionWithDotMultipleDots()
+			test.isequal("/nunit.framework.foo", path.replaceextension("/nunit.framework.dll",".foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionCompletePath()
+			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main.cpp",".foo"))
+	end
+
+	function suite.getabsolute_replaceExtensionWithoutExtension()
+			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main",".foo"))
+	end
+
+
+
+--
 -- path.translate() tests
 --
 
@@ -337,4 +363,44 @@
 
 	function suite.wildcards_escapeStarStar()
 		test.isequal("Images/.*%.bmp", path.wildcards("Images/**.bmp"))
+	end
+
+
+
+--
+-- path.normalize tests
+--
+	function suite.normalize_Test1()
+		local p = path.normalize("d:/game/../test")
+		test.isequal("d:/test", p)
+	end
+
+	function suite.normalize_Test2()
+		local p = path.normalize("d:/game/../../test")
+		test.isequal("d:/../test", p)
+	end
+
+	function suite.normalize_Test3()
+		local p = path.normalize("../../test")
+		test.isequal("../../test", p)
+	end
+
+	function suite.normalize_Test4()
+		local p = path.normalize("../../../test/*.h")
+		test.isequal("../../../test/*.h", p)
+	end
+
+	function suite.normalize_trailingDots1()
+		local p = path.normalize("../game/test/..")
+		test.isequal("../game", p)
+	end
+
+	function suite.normalize_trailingDots2()
+		local p = path.normalize("../game/..")
+		test.isequal("..", p)
+	end
+
+	function suite.normalize()
+		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
+		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))
 	end

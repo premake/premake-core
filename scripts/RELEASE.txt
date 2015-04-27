@@ -3,11 +3,11 @@ PREMAKE RELEASE CHECKLIST
 
 PREP
 
+ * Make sure CHANGES.txt and CONTRIBUTORS.txt is up to date
+
  * Create working branch for release prep
 
  * Make sure branch passes all tests on all platforms
-
- * Update CHANGELOG.txt as needed
 
  * Prep release announcement for forums
 

@@ -103,3 +103,20 @@
 		value   = "path",
 		description = "Set the output location for the generated files"
 	}
+
+
+
+--
+-- This new embed action is slightly hardcoded for the 4.x executable, and is
+-- really only intended to get folks bootstrapped on to 5.x
+--
+
+	newaction {
+		trigger = "embed",
+		description = "Embed scripts in scripts.c; required before release builds",
+		execute = function ()
+			_MAIN_SCRIPT_DIR = os.getcwd()
+			_SCRIPT_DIR = path.join(_MAIN_SCRIPT_DIR, "scripts")
+			dofile("scripts/embed.lua")
+		end
+	}

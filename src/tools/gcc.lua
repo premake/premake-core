@@ -34,8 +34,8 @@
 
 	gcc.cflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		flags = {
 			FatalCompileWarnings = "-Werror",
@@ -47,11 +47,6 @@
 		floatingpoint = {
 			Fast = "-ffast-math",
 			Strict = "-ffloat-store",
-		},
-		kind = {
-			SharedLib = function(cfg)
-				if cfg.system ~= premake.WINDOWS then return "-fPIC" end
-			end,
 		},
 		strictaliasing = {
 			Off = "-fno-strict-aliasing",
@@ -67,8 +62,12 @@
 			Size = "-Os",
 			Speed = "-O3",
 		},
+		pic = {
+			On = "-fPIC",
+		},
 		vectorextensions = {
 			AVX = "-mavx",
+			AVX2 = "-mavx2",
 			SSE = "-msse",
 			SSE2 = "-msse2",
 		},
@@ -80,7 +79,22 @@
 
 	function gcc.getcflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cflags)
+		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
+	end
+
+	function gcc.getwarnings(cfg)
+		local result = {}
+		for _, enable in ipairs(cfg.enablewarnings) do
+			table.insert(result, '-W' .. enable)
+		end
+		for _, disable in ipairs(cfg.disablewarnings) do
+			table.insert(result, '-Wno-' .. disable)
+		end
+		for _, fatal in ipairs(cfg.fatalwarnings) do
+			table.insert(result, '-Werror=' .. fatal)
+		end
+		return result
 	end
 
 
@@ -92,7 +106,9 @@
 		flags = {
 			NoExceptions = "-fno-exceptions",
 			NoRTTI = "-fno-rtti",
-			NoBufferSecurityCheck = "-fno-stack-protector"
+			NoBufferSecurityCheck = "-fno-stack-protector",
+			["C++11"] = "-std=c++11",
+			["C++14"] = "-std=c++14",
 		}
 	}
 
@@ -110,6 +126,14 @@
 		local result = {}
 		for _, define in ipairs(defines) do
 			table.insert(result, '-D' .. define)
+		end
+		return result
+	end
+
+	function gcc.getundefines(undefines)
+		local result = {}
+		for _, undefine in ipairs(undefines) do
+			table.insert(result, '-U' .. undefine)
 		end
 		return result
 	end
@@ -157,8 +181,8 @@
 
 	gcc.ldflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		flags = {
 			_Symbols = function(cfg)
@@ -196,8 +220,8 @@
 
 	gcc.libraryDirectories = {
 		architecture = {
-			x32 = "-L/usr/lib32",
-			x64 = "-L/usr/lib64",
+			x86 = "-L/usr/lib32",
+			x86_64 = "-L/usr/lib64",
 		},
 		system = {
 			wii = "-L$(LIBOGC_LIB)",
@@ -213,6 +237,15 @@
 			table.insert(flags, '-L' .. project.getrelative(cfg.project, dir))
 		end
 
+		if cfg.flags.RelativeLinks then
+			for _, dir in ipairs(premake.config.getlinks(cfg, "siblings", "directory")) do
+				local libFlag = "-L" .. premake.project.getrelative(cfg.project, dir)
+				if not table.contains(flags, libFlag) then
+					table.insert(flags, libFlag)
+				end
+			end
+		end
+
 		return flags
 	end
 
@@ -225,12 +258,21 @@
 	function gcc.getlinks(cfg, systemonly)
 		local result = {}
 
-		-- Don't use the -l form for sibling libraries, since they may have
-		-- custom prefixes or extensions that will confuse the linker. Instead
-		-- just list out the full relative path to the library.
-
 		if not systemonly then
-			result = config.getlinks(cfg, "siblings", "fullpath")
+			if cfg.flags.RelativeLinks then
+				local libFiles = premake.config.getlinks(cfg, "siblings", "basename")
+				for _, link in ipairs(libFiles) do
+					if string.find(link, "lib") == 1 then
+						link = link:sub(4)
+					end
+					table.insert(result, "-l" .. link)
+				end
+			else
+				-- Don't use the -l form for sibling libraries, since they may have
+				-- custom prefixes or extensions that will confuse the linker. Instead
+				-- just list out the full relative path to the library.
+				result = config.getlinks(cfg, "siblings", "fullpath")
+			end
 		end
 
 		-- The "-l" flag is fine for system libraries
@@ -285,14 +327,18 @@
 --
 
 	gcc.tools = {
+		cc = "gcc",
+		cxx = "g++",
+		ar = "ar",
+		rc = "windres"
 	}
 
 	function gcc.gettoolname(cfg, tool)
 		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
 		local name = names[tool]
 
-		if tool == "rc" then
-			name = name or "windres"
+		if not name and (tool == "rc" or cfg.gccprefix) and gcc.tools[tool] then
+			name = (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
 
 		return name

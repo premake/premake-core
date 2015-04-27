@@ -89,6 +89,14 @@
 
 	end
 
+	function clang.getundefines(undefines)
+
+		-- Just pass through to GCC for now
+		local flags = gcc.getundefines(undefines)
+		return flags
+
+	end
+
 
 
 --
@@ -144,8 +152,8 @@
 
 	clang.ldflags = {
 		architecture = {
-			x32 = "-m32",
-			x64 = "-m64",
+			x86 = "-m32",
+			x86_64 = "-m64",
 		},
 		kind = {
 			SharedLib = function(cfg)

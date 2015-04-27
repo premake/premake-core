@@ -38,6 +38,15 @@
 		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_withPrefix()
+		gccprefix "test-prefix-"
+		prepare()
+		test.isequal("test-prefix-gcc", gcc.gettoolname(cfg, "cc"))
+		test.isequal("test-prefix-g++", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("test-prefix-ar", gcc.gettoolname(cfg, "ar"))
+		test.isequal("test-prefix-windres", gcc.gettoolname(cfg, "rc"))
+	end
+
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.
@@ -76,6 +85,14 @@
 		test.contains({ "-Werror" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSpecificWarnings()
+		enablewarnings { "enable" }
+		disablewarnings { "disable" }
+		fatalwarnings { "fatal" }
+		prepare()
+		test.contains({ "-Wenable", "-Wno-disable", "-Werror=fatal" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onFloastFast()
 		floatingpoint "Fast"
 		prepare()
@@ -104,6 +121,35 @@
 		vectorextensions "SSE2"
 		prepare()
 		test.contains({ "-msse2" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX()
+		vectorextensions "AVX"
+		prepare()
+		test.contains({ "-mavx" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX2()
+		vectorextensions "AVX2"
+		prepare()
+		test.contains({ "-mavx2" }, gcc.getcflags(cfg))
+	end
+
+
+--
+-- Check the defines and undefines.
+--
+
+	function suite.defines()
+		defines "DEF"
+		prepare()
+		test.contains({ "-DDEF" }, gcc.getdefines(cfg.defines))
+	end
+
+	function suite.undefines()
+		undefines "UNDEF"
+		prepare()
+		test.contains({ "-UUNDEF" }, gcc.getundefines(cfg.undefines))
 	end
 
 
@@ -229,26 +275,26 @@
 -- Make sure system or architecture flags are added properly.
 --
 
-	function suite.cflags_onX32()
-		architecture "x32"
+	function suite.cflags_onX86()
+		architecture "x86"
 		prepare()
 		test.contains({ "-m32" }, gcc.getcflags(cfg))
 	end
 
-	function suite.ldflags_onX32()
-		architecture "x32"
+	function suite.ldflags_onX86()
+		architecture "x86"
 		prepare()
 		test.contains({ "-m32" }, gcc.getldflags(cfg))
 	end
 
-	function suite.cflags_onX64()
-		architecture "x64"
+	function suite.cflags_onX86_64()
+		architecture "x86_64"
 		prepare()
 		test.contains({ "-m64" }, gcc.getcflags(cfg))
 	end
 
-	function suite.ldflags_onX64()
-		architecture "x64"
+	function suite.ldflags_onX86_64()
+		architecture "x86_64"
 		prepare()
 		test.contains({ "-m64" }, gcc.getldflags(cfg))
 	end

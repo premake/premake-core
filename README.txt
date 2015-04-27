@@ -11,4 +11,4 @@ Core module
  See the file BUILD.txt for instructions on building Premake.
 
  For questions, comments, or more information, visit the project
- website at https://bitbucket.org/premake/premake-main
+ website at https://github.com/premake/premake-core

@@ -280,8 +280,8 @@
 			end
 
 			-- If this is something I can link against, pull out the requested part
-
-			if item then
+			-- dont link against my self
+			if item and item ~= cfg then
 				if part == "directory" then
 					item = path.getdirectory(item)
 					if item == "." then
@@ -320,8 +320,11 @@
 
 	function config.getruntime(cfg)
 		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
-		local mode = iif(config.isDebugBuild(cfg) and not cfg.flags.ReleaseRuntime, "Debug", "Release")
-		return linkage .. mode
+		if (cfg.runtime == nil) then
+			return linkage .. iif(config.isDebugBuild(cfg), "Debug", "Release")
+		else
+			return linkage .. cfg.runtime
+		end
 	end
 
 

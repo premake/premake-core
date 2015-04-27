@@ -14,9 +14,9 @@
 #endif
 
 
-#define VERSION        "5.0-alpha1"
-#define COPYRIGHT      "Copyright (C) 2002-2014 Jason Perkins and the Premake Project"
-#define PROJECT_URL    "https://bitbucket.org/premake/premake-dev/wiki"
+#define VERSION        "5.0-alpha2"
+#define COPYRIGHT      "Copyright (C) 2002-2015 Jason Perkins and the Premake Project"
+#define PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
@@ -80,6 +80,7 @@ static const luaL_Reg os_functions[] = {
 static const luaL_Reg string_functions[] = {
 	{ "endswith",  string_endswith },
 	{ "hash", string_hash },
+	{ "sha1", string_sha1 },
 	{ "startswith", string_startswith },
 	{ NULL, NULL }
 };

@@ -8,6 +8,7 @@ syntax: glob
 
 build
 bin
+modules
 obj
 release
 ipch
@@ -29,6 +30,7 @@ Makefile
 *.workspace
 *.project
 *.tags
+*.sublime-*
 
 *.bbprojectsettings
 Scratchpad.txt

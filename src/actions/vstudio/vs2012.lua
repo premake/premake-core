@@ -37,12 +37,22 @@
 
 		-- Solution and project generation logic
 
-		onSolution = vstudio.vs2005.generateSolution,
-		onProject  = vstudio.vs2010.generateProject,
+		onSolution = function(sln)
+			vstudio.vs2005.generateSolution(sln)
+		end,
+		onProject = function(prj)
+			vstudio.vs2010.generateProject(prj)
+		end,
 
-		onCleanSolution = vstudio.cleanSolution,
-		onCleanProject  = vstudio.cleanProject,
-		onCleanTarget   = vstudio.cleanTarget,
+		onCleanSolution = function(sln)
+			vstudio.cleanSolution(sln)
+		end,
+		onCleanProject = function(prj)
+			vstudio.cleanProject(prj)
+		end,
+		onCleanTarget = function(prj)
+			vstudio.cleanTarget(prj)
+		end,
 
 		pathVars        = vstudio.pathVars,
 
@@ -53,6 +63,7 @@
 			versionName     = "2012",
 			targetFramework = "4.5",
 			toolsVersion    = "4.0",
+			platformToolset = "v110"
 		}
 	}
 

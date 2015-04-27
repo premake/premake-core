@@ -65,7 +65,7 @@
 --
 
 	function suite.allArchitecturesListed_onMultipleArchitectures()
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prepare()
 		test.capture [[
 <Platforms>
@@ -74,23 +74,6 @@
 	/>
 	<Platform
 		Name="x64"
-	/>
-</Platforms>
-		]]
-	end
-
-
---
--- Verify the PS3 platform.
---
-
-	function suite.platformIsCorrect_onPS3()
-		platforms { "PS3" }
-		prepare()
-		test.capture [[
-<Platforms>
-	<Platform
-		Name="Win32"
 	/>
 </Platforms>
 		]]

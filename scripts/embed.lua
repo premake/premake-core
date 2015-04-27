@@ -5,8 +5,8 @@
 -- issues in Mac OS X Universal builds.
 --
 
-
 	local function loadScript(fname)
+		fname = path.getabsolute(fname)
 		local f = io.open(fname)
 		local s = assert(f:read("*a"))
 		f:close()
@@ -40,7 +40,7 @@
 		-- escape double quote marks
 		s = s:gsub("\"", "\\\"")
 
-		return s
+ 		return s
 	end
 
 
@@ -109,6 +109,7 @@
 
 	table.insert(result, '\t"src/_premake_main.lua",')
 	table.insert(result, '\t"src/_manifest.lua",')
+	table.insert(result, '\t"src/_modules.lua",')
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")
 	table.insert(result, "")
@@ -133,6 +134,7 @@
 
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_premake_main.lua")))
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_manifest.lua")))
+	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_modules.lua")))
 
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")

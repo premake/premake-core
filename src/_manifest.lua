@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to
@@ -80,6 +80,7 @@
 		"actions/vstudio/vs2010_rules_xml.lua",
 		"actions/vstudio/vs2012.lua",
 		"actions/vstudio/vs2013.lua",
+		"actions/vstudio/vs2015.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",

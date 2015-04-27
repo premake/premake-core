@@ -317,3 +317,62 @@
 	end
 
 
+-- 
+-- Dumps a table to a string
+-- 
+	function table.tostring(tab, recurse, indent)
+		local res = ''
+	
+		if not indent then 
+			indent = 0 
+		end
+
+		local format_value = function(k, v, i)
+			formatting = string.rep("\t", i)
+			
+			if k then
+				if type(k) == "table" then
+					k = '[table]'
+				end
+				formatting = formatting .. k .. ": "
+			end
+		
+			if not v then
+				return formatting .. '(nil)'
+			elseif type(v) == "table" then
+				if recurse then
+					return formatting .. '\n' .. table.tostring(v, recurse, i+1)
+				else
+					return formatting .. "<table>"
+				end
+			elseif type(v) == "function" then
+				return formatting .. tostring(v)
+			elseif type(v) == "userdata" then
+				return formatting .. "<userdata>"
+			elseif type(v) == "boolean" then
+				if v then
+					return formatting .. 'true'
+				else
+					return formatting .. 'false'
+				end
+			else
+				return formatting .. v
+			end
+		end
+		
+		if type(tab) == "table" then
+			local first = true
+			for k, v in pairs(tab) do
+				if not first then
+					res = res .. '\n'
+				end
+			
+				res = res .. format_value(k, v, indent)
+				first = false
+			end 
+		else
+			res = res .. format_value(nil, tab, indent)
+		end
+		
+		return res
+	end

@@ -3,12 +3,12 @@
 --
 -- Prepares the runtime environment for the add-ons and user project scripts.
 --
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
 	local api = premake.api
 
-	local DOC_URL = "See https://bitbucket.org/premake/premake-dev/wiki/"
+	local DOC_URL = "See https://github.com/premake/premake-core/wiki/"
 
 
 -----------------------------------------------------------------------------
@@ -23,8 +23,14 @@
 		kind = "string",
 		allowed = {
 			"universal",
-			"x32",
-			"x64",
+			"x86",
+			"x86_64",
+		},
+		aliases = {
+			i386 = "x86",
+			amd64 = "x86_64",
+			x32 = "x86",	-- these should be DEPRECATED
+			x64 = "x86_64",
 		},
 	}
 
@@ -203,6 +209,13 @@
 	}
 
 	api.register {
+		name = "debugconnectcommands",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "debugdir",
 		scope = "config",
 		kind = "path",
@@ -219,12 +232,79 @@
 	}
 
 	api.register {
+		name = "debugextendedprotocol",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
 		name = "debugformat",
 		scope = "config",
 		kind = "string",
 		allowed = {
 			"c7",
 		},
+	}
+
+	api.register {
+		name = "debugger",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"GDB",
+			"LLDB",
+		}
+	}
+
+	api.register {
+		name = "debugpathmap",
+		scope = "config",
+		kind = "list:keyed:path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugport",
+		scope = "config",
+		kind = "integer",
+	}
+
+	api.register {
+		name = "debugremotehost",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugsearchpaths",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugstartupcommands",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debugtoolargs",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+		pathVars = true,
+	}
+
+	api.register {
+		name = "debugtoolcommand",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -256,6 +336,14 @@
 
 
 	api.register {
+		name = "disablewarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+
+	api.register {
 		name = "display",
 		scope = "rule",
 		kind = "string",
@@ -269,10 +357,36 @@
 	}
 
 
+	api.register {
+		name = "enablewarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "endian",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Little",
+			"Big",
+		},
+	}
+
 	-- For backward compatibility, excludes() is now an alias for removefiles()
 	function excludes(value)
 		removefiles(value)
 	end
+
+
+	api.register {
+		name = "fatalwarnings",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
 
 
 	api.register {
@@ -338,7 +452,8 @@
 			"Optimize",            -- DEPRECATED
 			"OptimizeSize",        -- DEPRECATED
 			"OptimizeSpeed",       -- DEPRECATED
-			"ReleaseRuntime",
+			"RelativeLinks",
+			"ReleaseRuntime",      -- DEPRECATED
 			"SEH",
 			"ShadowedVariables",
 			"StaticRuntime",
@@ -348,6 +463,8 @@
 			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
+			"C++11",
+			"C++14",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -383,9 +500,27 @@
 	}
 
 	api.register {
+		name = "fpu",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Software",
+			"Hardware",
+		}
+	}
+
+
+	api.register {
 		name = "framework",
 		scope = "config",
 		kind = "string",
+	}
+
+	api.register {
+		name = "gccprefix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
 	}
 
 	api.register {
@@ -559,6 +694,16 @@
 	}
 
 	api.register {
+		name = "runtime",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Debug",
+			"Release",
+		}
+	}
+
+	api.register {
 		name = "pchheader",
 		scope = "config",
 		kind = "string",
@@ -570,6 +715,16 @@
 		scope = "config",
 		kind = "path",
 		tokens = true,
+	}
+
+	api.register {
+		name = "pic",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+		}
 	}
 
 	api.register {
@@ -750,6 +905,13 @@
 		end,
 	}
 
+	api.register {
+		name = "undefines",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
  	api.register {
 		name = "usingdirs",
 		scope = "config",
@@ -786,6 +948,7 @@
 		allowed = {
 			"Default",
 			"AVX",
+			"AVX2",
 			"SSE",
 			"SSE2",
 		}
@@ -807,7 +970,6 @@
 			"Extra",
 		}
 	}
-
 
 
 -----------------------------------------------------------------------------
@@ -875,6 +1037,12 @@
 		optimize "Off"
 	end)
 
+	api.deprecateValue("flags", { "ReleaseRuntime" }, nil,
+	function(value)
+		runtime 'Release'
+	end,
+	function(value)
+	end)
 
 	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
 	function(value)
@@ -976,6 +1144,12 @@
 
 	newoption
 	{
+		trigger     = "verbose",
+		description = "Generate extra debug text output"
+	}
+
+	newoption
+	{
 		trigger = "interactive",
 		description = "Interactive command prompt"
 	}
@@ -1068,3 +1242,8 @@
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"
+
+	filter { "kind:SharedLib", "system:not Windows" }
+		pic "On"
+
+	filter {}

@@ -14,7 +14,7 @@
 
 	local sln
 	function suite.setup()
-		sln = solution("MySolution") 
+		sln = solution("MySolution")
 	end
 
 	local function prepare()
@@ -49,15 +49,15 @@
 
 	function suite.listsInOrder_onBuildConfigsAndPlatforms()
 		configurations { "Debug", "Release" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		project("MyProject")
 		prepare()
 		test.capture [[
 		-
-		Debug:x32
-		Debug:x64
-		Release:x32
-		Release:x64
+		Debug:x86
+		Debug:x86_64
+		Release:x86
+		Release:x86_64
 		-
 		]]
 	end
@@ -72,7 +72,7 @@
 		configurations { "Debug", "Release" }
 		project ("MyProject")
 		configurations { "PrjDebug", "PrjRelease" }
-		platforms { "x32", "x64" }
+		platforms { "x86", "x86_64" }
 		prepare()
 		test.capture [[
 		-

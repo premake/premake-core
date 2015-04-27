@@ -105,11 +105,27 @@ static int io_noclose (lua_State *L) {
 /*
 ** function to close 'popen' files
 */
+/*
+ * PREMAKE change: return both output and exit code
+ */
 static int io_pclose (lua_State *L) {
   FILE **p = tofilep(L);
-  int ok = lua_pclose(L, *p);
+  int result = lua_pclose(L, *p);
   *p = NULL;
-  return pushresult(L, ok, NULL);
+  if (result == -1) {
+	  /*
+	   * pclose call failure
+	   */
+	  return pushresult(L, 0, NULL);
+  }
+  lua_pushboolean(L, 1);
+  /**
+   * On success, pcluse returns a 2 byte length integer
+   * where the higher byte contains the command exit code
+   */
+  result /= 255;
+  lua_pushinteger(L, result);
+  return 2;
 }
 
 

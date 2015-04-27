@@ -63,20 +63,23 @@
 		return dirs
 	end
 
-	function os.findlib(libname)
+	function os.findlib(libname, libdirs)
+		-- libname: library name with or without prefix and suffix
+		-- libdirs: (array or string): A set of additional search paths
+				 
 		local path, formats
 
 		-- assemble a search path, depending on the platform
 		if os.is("windows") then
 			formats = { "%s.dll", "%s" }
-			path = os.getenv("PATH")
+			path = os.getenv("PATH") or ""
 		elseif os.is("haiku") then
 			formats = { "lib%s.so", "%s.so" }
-			path = os.getenv("LIBRARY_PATH")
+			path = os.getenv("LIBRARY_PATH") or ""
 		else
 			if os.is("macosx") then
 				formats = { "lib%s.dylib", "%s.dylib" }
-				path = os.getenv("DYLD_LIBRARY_PATH")
+				path = os.getenv("DYLD_LIBRARY_PATH") or ""
 			else
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
@@ -85,7 +88,11 @@
 					local conf_file = prefix .. "/etc/ld.so.conf"
 					if os.isfile(conf_file) then
 						for _, v in ipairs(parse_ld_so_conf(conf_file)) do
-							path = path .. ":" .. v
+							if (#path > 0) then 
+								path = path .. ":" .. v
+							else
+								path = v
+							end
 						end
 					end
 				end
@@ -93,12 +100,33 @@
 
 			table.insert(formats, "%s")
 			path = path or ""
+			local archpath = "/lib:/usr/lib:/usr/local/lib"
 			if os.is64bit() then
-				path = path .. ":/lib64:/usr/lib64/:usr/local/lib64"
+				archpath = "/lib64:/usr/lib64/:usr/local/lib64" .. ":" .. archpath
 			end
-			path = path .. ":/lib:/usr/lib:/usr/local/lib"
+			if (#path > 0) then
+				path = path .. ":" .. archpath
+			else
+				path = archpath
+			end
 		end
 
+		local userpath = ""
+		
+		if type(libdirs) == "string" then
+			userpath = libdirs
+		elseif type(libdirs) == "table" then
+			userpath = table.implode(libdirs, "", "", ":")
+		end
+	
+		if (#userpath > 0) then
+			if (#path > 0) then
+				path = userpath .. ":" .. path
+			else
+				path = userpath
+			end
+		end
+		
 		for _, fmt in ipairs(formats) do
 			local name = string.format(fmt, libname)
 			local result = os.pathsearch(name, path)
@@ -359,9 +387,12 @@
 
 		local pipe = io.popen(cmd)
 		local result = pipe:read('*a')
-		pipe:close()
+		local b, exitcode = pipe:close()
+		if not b then
+			exitcode = -1
+		end
 
-		return result
+		return result, exitcode
 	end
 
 

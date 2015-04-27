@@ -111,6 +111,14 @@
 		test.contains("/WX", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSpecificWarnings()
+		enablewarnings { "enable" }
+		disablewarnings { "disable" }
+		fatalwarnings { "fatal" }
+		prepare()
+		test.contains({ '/wd"disable"', '/we"fatal"' }, msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_OnFatalWarnings()
 		flags "FatalWarnings"
 		prepare()
@@ -159,13 +167,42 @@
 	function suite.cflags_onSSE()
 		vectorextensions "SSE"
 		prepare()
-		test.contains("/arch:sse", msc.getcflags(cfg))
+		test.contains("/arch:SSE", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onSSE2()
 		vectorextensions "SSE2"
 		prepare()
-		test.contains("/arch:sse2", msc.getcflags(cfg))
+		test.contains("/arch:SSE2", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX()
+		vectorextensions "AVX"
+		prepare()
+		test.contains("/arch:AVX", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAVX2()
+		vectorextensions "AVX2"
+		prepare()
+		test.contains("/arch:AVX2", msc.getcflags(cfg))
+	end
+
+
+--
+-- Check the defines and undefines.
+--
+
+	function suite.defines()
+		defines "DEF"
+		prepare()
+		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines))
+	end
+
+	function suite.undefines()
+		undefines "UNDEF"
+		prepare()
+		test.contains({ '/U"UNDEF"' }, msc.getundefines(cfg.undefines))
 	end
 
 

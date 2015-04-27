@@ -1,7 +1,7 @@
 --
 -- tests/base/test_criteria.lua
 -- Test suite for the criteria matching API.
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("criteria")
@@ -31,7 +31,7 @@
 --
 
 	function suite.matches_fails_onMissingContext()
-		crit = criteria.new { "system:Windows", "architecture:x32" }
+		crit = criteria.new { "system:Windows", "architecture:x86" }
 		test.isfalse(criteria.matches(crit, { configurations="Debug", system="Windows" }))
 	end
 
@@ -41,8 +41,8 @@
 --
 
 	function suite.matches_fails_onIncompleteTermMatch()
-		crit = criteria.new { "platforms:ps3" }
-		test.isfalse(criteria.matches(crit, { platforms="ps3 ppu sn" }))
+		crit = criteria.new { "platforms:win64" }
+		test.isfalse(criteria.matches(crit, { platforms="win64 dll dcrt" }))
 	end
 
 
@@ -224,8 +224,8 @@
 	end
 
 	function suite.fails_onIncompleteMatch_Unprefixed()
-		crit = criteria.new({ "ps3" }, true)
-		test.isfalse(criteria.matches(crit, { "ps3 ppu sn" }))
+		crit = criteria.new({ "win64" }, true)
+		test.isfalse(criteria.matches(crit, { "win64 dll dcrt" }))
 	end
 
 	function suite.passes_onPatternMatch_Unprefixed()
@@ -308,3 +308,21 @@
 		test.isnil(crit)
 		test.isnotnil(err)
 	end
+
+
+--
+-- Should respect field value aliases, if present.
+--
+
+	function suite.passes_onAliasedValue()
+		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		crit = criteria.new { "system:gnu-linux" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
+	end
+
+	function suite.passes_onAliasedValue_withMixedCase()
+		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		crit = criteria.new { "System:GNU-Linux" }
+		test.istrue(criteria.matches(crit, { system="linux" }))
+	end
+

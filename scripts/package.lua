@@ -53,9 +53,8 @@
 -- Figure out what I'm making.
 --
 
-	local f = io.open("../src/host/premake.c", "r")
-	local text = f:read("*a")
-	f:close()
+	os.chdir("..")
+	local text = os.outputof(string.format('hg cat -r %s src/host/premake.c', branch))
 	local _, _, version = text:find('VERSION%s*"([%w%p]+)"')
 
 	local pkgName = "premake-" .. version
@@ -84,13 +83,12 @@
 --
 
 	print("Preparing release folder")
-	os.chdir("..")
 	os.mkdir("release")
 	os.chdir("release")
 	os.rmdir(pkgName)
 
 	print("Cloning source code")
-	local z = os.executef("hg clone .. -r %s %s", branch, pkgName)
+	z = os.executef("hg clone .. -r %s %s", branch, pkgName)
 	if z ~= 0 then
 		error("clone failed", 0)
 	end
@@ -109,23 +107,28 @@
 
 
 --
--- Generate a source package.
+-- Clear out files I don't want included in any packages.
 --
-
-if kind == "source" then
 
 	print("Cleaning up the source tree...")
 	os.rmdir("packages")
 
 	local modules = table.join(".", os.matchdirs("modules/*"))
 	for _, module in ipairs(modules) do
-		for _, name in ipairs { ".hg", ".hgcheck" } do
+		for _, name in ipairs { ".git" } do
 			os.rmdir(path.join(module, name))
 		end
-		for _, name in ipairs { ".DS_Store", ".gitignore", ".hgignore", ".hgsub*", ".hgtags" } do
+		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig" } do
 			os.remove(path.join(module, name))
 		end
 	end
+
+
+--
+-- Generate a source package.
+--
+
+if kind == "source" then
 
 	print("Generating project files...")
 	execQuiet("premake5 /to=build/vs2005 vs2005")

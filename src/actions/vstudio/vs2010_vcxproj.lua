@@ -291,8 +291,11 @@
 			m.precompiledHeader,
 			m.warningLevel,
 			m.treatWarningAsError,
+			m.disableSpecificWarnings,
+			m.treatSpecificWarningsAsErrors,
 			m.basicRuntimeChecks,
 			m.clCompilePreprocessorDefinitions,
+			m.clCompileUndefinePreprocessorDefinitions,
 			m.clCompileAdditionalIncludeDirectories,
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
@@ -605,11 +608,14 @@
 							local condition = m.condition(cfg)
 							m.objectFileName(fcfg)
 							m.clCompilePreprocessorDefinitions(fcfg, condition)
+							m.clCompileUndefinePreprocessorDefinitions(fcfg, condition)
 							m.optimization(fcfg, condition)
 							m.forceIncludes(fcfg, condition)
 							m.precompiledHeader(cfg, fcfg, condition)
 							m.enableEnhancedInstructionSet(fcfg, condition)
 							m.additionalCompileOptions(fcfg, condition)
+							m.disableSpecificWarnings(fcfg, condition)
+							m.treatSpecificWarningsAsErrors(fcfg, condition)
 						end
 					end
 					p.pop()
@@ -961,6 +967,11 @@
 	end
 
 
+	function m.clCompileUndefinePreprocessorDefinitions(cfg, condition)
+		m.undefinePreprocessorDefinitions(cfg, cfg.undefines, false, condition)
+	end
+
+
 	function m.clrSupport(cfg)
 		local value
 		if cfg.clr == "On" or cfg.clr == "Unsafe" then
@@ -1008,7 +1019,7 @@
 		if cfg.flags.Symbols then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
-			elseif cfg.architecture == "x64" or
+			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
 				   not cfg.editAndContinue
@@ -1036,19 +1047,19 @@
 
 
 	function m.enableEnhancedInstructionSet(cfg, condition)
-		local value
-
+		local v
 		local x = cfg.vectorextensions
-		if _ACTION > "vc2010" and x == "AVX" then
-			value = "AdvancedVectorExtensions"
+		if x == "AVX" and _ACTION > "vs2010" then
+			v = "AdvancedVectorExtensions"
+		elseif x == "AVX2" and _ACTION > "vs2012" then
+			v = "AdvancedVectorExtensions2"
 		elseif x == "SSE2" then
-			value = "StreamingSIMDExtensions2"
+			v = "StreamingSIMDExtensions2"
 		elseif x == "SSE" then
-			value = "StreamingSIMDExtensions"
+			v = "StreamingSIMDExtensions"
 		end
-
-		if value then
-			m.element('EnableEnhancedInstructionSet', condition, value)
+		if v then
+			m.element('EnableEnhancedInstructionSet', condition, v)
 		end
 	end
 
@@ -1385,8 +1396,8 @@
 
 
 	function m.platformToolset(cfg)
-		local map = { vs2012 = "v110", vs2013 = "v120" }
-		local value = map[_ACTION]
+		local action = premake.action.current()
+		local value = action.vstudio.platformToolset
 		if value then
 			-- should only be written if there is a C/C++ file in the config
 			for i = 1, #cfg.files do
@@ -1425,6 +1436,18 @@
 			end
 			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
 			m.element('PreprocessorDefinitions', condition, defines)
+		end
+	end
+
+
+	function m.undefinePreprocessorDefinitions(cfg, undefines, escapeQuotes, condition)
+		if #undefines > 0 then
+			undefines = table.concat(undefines, ";")
+			if escapeQuotes then
+				undefines = undefines:gsub('"', '\\"')
+			end
+			undefines = premake.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			m.element('UndefinePreprocessorDefinitions', condition, undefines)
 		end
 	end
 
@@ -1591,6 +1614,24 @@
 	function m.treatWarningAsError(cfg)
 		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
 			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
+		end
+	end
+
+
+	function m.disableSpecificWarnings(cfg, condition)
+		if #cfg.disablewarnings > 0 then
+			local warnings = table.concat(cfg.disablewarnings, ";")
+			warnings = premake.esc(warnings) .. ";%%(DisableSpecificWarnings)"
+			m.element('DisableSpecificWarnings', condition, warnings)
+		end
+	end
+
+
+	function m.treatSpecificWarningsAsErrors(cfg, condition)
+		if #cfg.fatalwarnings > 0 then
+			local fatal = table.concat(cfg.fatalwarnings, ";")
+			fatal = premake.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
+			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end
 	end
 

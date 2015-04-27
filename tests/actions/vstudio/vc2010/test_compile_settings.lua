@@ -120,6 +120,36 @@
 	end
 
 --
+-- Disable specific warnings.
+--
+
+	function suite.disableSpecificWarnings()
+		disablewarnings { "disable" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DisableSpecificWarnings>disable;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		]]
+	end
+
+--
+-- Specific warnings as errors.
+--
+
+	function suite.specificWarningsAsErrors()
+		fatalwarnings { "fatal" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<TreatSpecificWarningsAsErrors>fatal;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
+		]]
+	end
+
+--
 -- Check the optimization flags.
 --
 
@@ -232,6 +262,22 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+	end
+
+
+--
+-- If undefines are specified, the <UndefinePreprocessorDefinitions> element should be added.
+--
+
+	function suite.preprocessorDefinitions_onUnDefines()
+		undefines { "DEBUG", "_DEBUG" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<UndefinePreprocessorDefinitions>DEBUG;_DEBUG;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
 		]]
 	end
 
@@ -418,59 +464,6 @@
 
 
 --
--- Check handling of floating point and SSE flags.
---
-
-	function suite.instructionSet_onSSE()
-		vectorextensions "SSE"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
-		]]
-	end
-
-	function suite.instructionSet_onSSE2()
-		vectorextensions "SSE2"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-		]]
-	end
-
-	function suite.floatingPoint_onFloatFast()
-		flags "FloatFast"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<FloatingPointModel>Fast</FloatingPointModel>
-		]]
-	end
-
-	function suite.floatingPoint_onFloatStrict()
-		flags "FloatStrict"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<FloatingPointModel>Strict</FloatingPointModel>
-		]]
-	end
-
-
---
 -- Verify character handling.
 --
 
@@ -558,7 +551,7 @@
 
 	function suite.debugFormat_onWin32()
 		flags "Symbols"
-		architecture "x32"
+		architecture "x86"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -575,7 +568,7 @@
 
 	function suite.debugFormat_onWin64()
 		flags "Symbols"
-		architecture "x64"
+		architecture "x86_64"
 		prepare()
 		test.capture [[
 <ClCompile>
