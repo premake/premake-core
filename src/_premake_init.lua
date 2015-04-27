@@ -964,6 +964,18 @@
 	}
 
 	api.register {
+		name = "vsplatformtools",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"v90",
+			"v100",
+			"v110",
+			"v120",
+		},
+	}
+
+	api.register {
 		name = "vpaths",
 		scope = "project",
 		kind = "list:keyed:list:path",
