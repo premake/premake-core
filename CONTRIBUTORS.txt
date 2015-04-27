@@ -7,16 +7,15 @@ in here too)!
 Original design and implementation:
   Jason Perkins <starkos@industriousone.com>
 
+Main Contributors
+  Manu Evans <https://github.com/TurkeyMan>
+
 Builds and Infrastructure:
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Nightly binary packages
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
-  Manu Evans <https://github.com/TurkeyMan>
-    * new APIs for specifying remote debugging parameters
-    * new APIs for enabling and disabling specific warnings
-    * new API for undefining symbols
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
     * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
@@ -26,3 +25,9 @@ Patch contributors:
   Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
+  Tom van Dijck <tvandijck@blizzard.com>
+    * additional string and table functions
+    * path.normalize() improvements
+    * Visual Studio 2015 support
+    * runtime()
+    * verbosef()
