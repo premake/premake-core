@@ -5,6 +5,10 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha2:
+
+* New API: buildlog()
+
 Since 5.0-alpha1:
 
 * filter() now accepts field value aliases in the conditions
