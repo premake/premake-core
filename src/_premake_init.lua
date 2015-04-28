@@ -90,6 +90,15 @@
 
 
 	api.register {
+		name = "buildlog",
+		scope = { "config" },
+		kind = "path",
+		tokens = true,
+		pathVars = true,
+	}
+
+
+	api.register {
 		name = "buildmessage",
 		scope = { "config", "rule" },
 		kind = "string",
