@@ -117,6 +117,7 @@ return {
 	"actions/vstudio/vc2010/test_manifest.lua",
 	"actions/vstudio/vc2010/test_nmake_props.lua",
 	"actions/vstudio/vc2010/test_output_props.lua",
+	"actions/vstudio/vc2010/test_platform_toolset.lua",
 	"actions/vstudio/vc2010/test_project_configs.lua",
 	"actions/vstudio/vc2010/test_project_refs.lua",
 	"actions/vstudio/vc2010/test_prop_sheet.lua",

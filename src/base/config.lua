@@ -1,7 +1,7 @@
 --
 -- config.lua
 -- Premake configuration object API
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -539,9 +539,12 @@
 
 ---
 -- Return the appropriate toolset adapter for the provided configuration,
--- or nil if no toolset is specified.
+-- or nil if no toolset is specified. If a specific version was provided,
+-- returns that as a second argument.
 ---
 
 	function config.toolset(cfg)
-		return premake.tools[cfg.toolset]
+		if cfg.toolset then
+			return p.tools.canonical(cfg.toolset)
+		end
 	end

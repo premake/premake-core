@@ -5,7 +5,6 @@
 
 	premake = premake or {}
 	premake.modules = {}
-	premake.tools = {}
 
 	premake.extensions = premake.modules
 

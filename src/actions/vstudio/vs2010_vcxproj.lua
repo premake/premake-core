@@ -1396,14 +1396,19 @@
 
 
 	function m.platformToolset(cfg)
-		local action = premake.action.current()
-		local value = action.vstudio.platformToolset
-		if value then
+		local tool, version = p.config.toolset(cfg)
+		if version then
+			version = "v" .. version
+		else
+			local action = premake.action.current()
+			version = action.vstudio.platformToolset
+		end
+		if version then
 			-- should only be written if there is a C/C++ file in the config
 			for i = 1, #cfg.files do
 				if path.iscppfile(cfg.files[i]) then
-					_p(2,'<PlatformToolset>%s</PlatformToolset>', value)
-					return
+					p.w('<PlatformToolset>%s</PlatformToolset>', version)
+					break
 				end
 			end
 		end

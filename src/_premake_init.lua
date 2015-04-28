@@ -6,7 +6,8 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	local api = premake.api
+	local p = premake
+	local api = p.api
 
 	local DOC_URL = "See https://github.com/premake/premake-core/wiki/"
 
@@ -898,9 +899,10 @@
 		scope = "config",
 		kind = "string",
 		allowed = function(value)
-			local key = value:lower()
-			if premake.tools[key] ~= nil then
-				return key
+			value = value:lower()
+			local tool, version = p.tools.canonical(value)
+			if tool then
+				return value
 			end
 		end,
 	}
