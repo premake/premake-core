@@ -256,6 +256,7 @@
 				m.imageXex,
 				m.deploy,
 				m.ruleVars,
+				m.buildLog,
 			}
 		end
 	end
@@ -937,6 +938,16 @@
 	function m.basicRuntimeChecks(cfg)
 		if cfg.flags.NoRuntimeChecks then
 			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
+		end
+	end
+
+
+	function m.buildLog(cfg)
+		if cfg.buildlog and #cfg.buildlog > 0 then
+			local relpath = project.getrelative(cfg.project, cfg.buildlog)
+			p.push('<BuildLog>')
+			p.x('<Path>%s</Path>', path.translate(relpath))
+			p.pop('</BuildLog>')
 		end
 	end
 
