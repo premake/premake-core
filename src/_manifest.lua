@@ -16,6 +16,7 @@
 		"base/path.lua",
 		"base/os.lua",
 		"base/io.lua",
+		"base/tools.lua",
 		"base/tree.lua",
 		"base/globals.lua",
 
