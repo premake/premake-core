@@ -293,6 +293,25 @@
 	end
 
 
+---
+-- Replace all instances of `value` with `replacement` in an array. Array
+-- elements are modified in place.
+--
+-- @param value
+--    The value to be replaced.
+-- @param replacement
+--    The new value.
+---
+
+	function table.replace(self, value, replacement)
+		for i = 1, #self do
+			if self[i] == value then
+				self[i] = replacement
+			end
+		end
+	end
+
+
 --
 -- Translates the values contained in array, using the specified
 -- translation table, and returns the results in a new array.
@@ -317,26 +336,26 @@
 	end
 
 
--- 
+--
 -- Dumps a table to a string
--- 
+--
 	function table.tostring(tab, recurse, indent)
 		local res = ''
-	
-		if not indent then 
-			indent = 0 
+
+		if not indent then
+			indent = 0
 		end
 
 		local format_value = function(k, v, i)
 			formatting = string.rep("\t", i)
-			
+
 			if k then
 				if type(k) == "table" then
 					k = '[table]'
 				end
 				formatting = formatting .. k .. ": "
 			end
-		
+
 			if not v then
 				return formatting .. '(nil)'
 			elseif type(v) == "table" then
@@ -359,20 +378,20 @@
 				return formatting .. v
 			end
 		end
-		
+
 		if type(tab) == "table" then
 			local first = true
 			for k, v in pairs(tab) do
 				if not first then
 					res = res .. '\n'
 				end
-			
+
 				res = res .. format_value(k, v, indent)
 				first = false
-			end 
+			end
 		else
 			res = res .. format_value(nil, tab, indent)
 		end
-		
+
 		return res
 	end

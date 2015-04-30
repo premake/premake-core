@@ -158,6 +158,18 @@
 		scope[name] = function(...)
 			return repl(original, ...)
 		end
+
+		-- Functions from premake.main are special in that they are fetched
+		-- from an array, which can be modified by system and project scripts,
+		-- instead of a function which would have already been called before
+		-- those scripts could have run. Since the array will have already
+		-- been evaluated by the time override() is called, the new value
+		-- won't be picked up as it would with the function-fetched call
+		-- lists. Special case the workaround for that here so everyone else
+		-- can just override without having to think about the difference.
+		if scope == premake.main then
+			table.replace(premake.main.elements, original, scope[name])
+		end
 	end
 
 
