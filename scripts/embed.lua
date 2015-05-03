@@ -23,13 +23,13 @@
 		s = s:gsub("[^\"']%-%-%[==%[.-%]==%]", "")
 
 		-- strip out inline comments
-		s = s:gsub("\n%-%-[^\n]*", "\n")
+		s = s:gsub("\n%s*%-%-[^\n]*", "\n")
 
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
 
-		-- strip duplicate line feeds
-		s = s:gsub("\n+", "\n")
+		-- strip duplicate line feeds and blank lines
+		s = s:gsub("\n%s*\n+", "\n")
 
 		-- strip out leading comments
 		s = s:gsub("^%-%-[^\n]*\n", "")
@@ -89,6 +89,7 @@
 
 	local mask = path.join(_MAIN_SCRIPT_DIR, "**/_manifest.lua")
 	local manifests = os.matchfiles(mask)
+	table.sort(manifests)
 
 
 -- Generate an index of the script file names. Script names are stored
