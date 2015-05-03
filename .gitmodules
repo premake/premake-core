@@ -1,3 +1,6 @@
 [submodule "modules/xcode"]
 	path = modules/xcode
 	url = https://github.com/premake/premake-xcode.git
+[submodule "modules/codelite"]
+	path = modules/codelite
+	url = https://github.com/premake/premake-codelite.git
