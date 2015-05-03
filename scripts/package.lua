@@ -100,6 +100,11 @@
 		error("unable to checkout branch " .. branch, 0)
 	end
 
+	z = os.executef("git submodule update --init")
+	if z ~= 0 then
+		error("unable to clone submodules", 0)
+	end
+
 
 --
 -- Make absolutely sure the embedded scripts have been updated
