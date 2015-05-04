@@ -23,12 +23,12 @@
 
 	local function prepareVars()
 		local cfg = test.getconfig(prj, "Debug")
-		make.pch(cfg)
+		make.cpp.pch(cfg)
 	end
 
 	local function prepareRules()
 		local cfg = test.getconfig(prj, "Debug")
-		make.pchRules(cfg.project)
+		make.cpp.pchRules(cfg.project)
 	end
 
 
@@ -64,8 +64,9 @@
 		pchheader "include/myproject.h"
 		prepareVars()
 		test.capture [[
-  PCH = include/myproject.h
-  GCH = $(OBJDIR)/$(notdir $(PCH)).gch
+PCH = include/myproject.h
+PCH_PLACEHOLDER = $(OBJDIR)/$(notdir $(PCH))
+GCH = $(PCH_PLACEHOLDER).gch
 		]]
 	end
 
@@ -79,7 +80,7 @@
 		includedirs { "../src/host" }
 		prepareVars()
 		test.capture [[
-  PCH = ../src/host/premake.h
+PCH = ../src/host/premake.h
 		]]
 	end
 
@@ -93,10 +94,14 @@
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH)
-$(GCH): $(PCH)
+$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | $(OBJDIR)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+$(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
+	$(SILENT) touch "$@"
+else
+$(OBJECTS): | $(OBJDIR)
 endif
 		]]
 	end
@@ -112,10 +117,14 @@ endif
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH)
-$(GCH): $(PCH)
+$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | $(OBJDIR)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+$(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
+	$(SILENT) touch "$@"
+else
+$(OBJECTS): | $(OBJDIR)
 endif
 		]]
 	end
@@ -133,6 +142,6 @@ endif
 			includedirs { "../src/host" }
 			prepareVars()
 			test.capture [[
-  PCH = ../../src/host/premake.h
+PCH = ../../src/host/premake.h
 			]]
 		end
