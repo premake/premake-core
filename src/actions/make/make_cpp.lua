@@ -31,6 +31,7 @@
 		"phonyRules",
 		"cppConfigs",
 		"cppObjects",
+		"customBuildDepends",
 		"shellType",
 		"cppTargetRules",
 		"targetDirRules",
@@ -106,11 +107,71 @@
 
 
 --
+-- Output the custom build dependencies.
+--
+
+	function make.getStandardFiles(prj, cfg)
+		local res = {}
+
+		local tr = project.getsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if string.match(node.relpath, "%.h") then
+					return
+				end
+
+				local filecfg = fileconfig.getconfig(node, cfg)
+				if filecfg and not fileconfig.hasCustomBuildRule(filecfg) then
+					table.insert(res, node.relpath)
+				end
+			end
+		})
+
+		return res
+	end
+
+
+	function make.customBuildDepends(prj)
+
+		-- now I can write out the lists, project level first...
+		function listFiles(var, list)
+			_p('%s \\', var)
+			for _, objectname in ipairs(list) do
+				_x('\t%s \\', objectname)
+			end
+			_p('')
+		end
+
+		for cfg in project.eachconfig(prj) do
+			_x('ifeq ($(config),%s)', cfg.shortname)
+			listFiles('CUSTOMBUILDOUTPUTS :=', make.getStandardFiles(prj, cfg))
+			_p('endif')
+			_p('')
+		end
+	end
+
+
+--
 -- Output the list of file building rules.
 --
 
 	function make.cppFileRules(prj)
 		local tr = project.getsourcetree(prj)
+
+		local dependedOnAllFiles = false
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				for cfg in project.eachconfig(prj) do
+					local filecfg = fileconfig.getconfig(node, cfg)
+
+					if filecfg and filecfg.buildoutputsasinputs then
+						dependedOnAllFiles = true
+						break
+					end
+				end
+			end
+		})
+
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- check to see if this file has custom rules
@@ -128,17 +189,21 @@
 				if rules then
 					cpp.customFileRules(prj, node)
 				else
-					cpp.standardFileRules(prj, node)
+					cpp.standardFileRules(prj, node, dependedOnAllFiles)
 				end
 			end
 		})
 		_p('')
 	end
 
-	function cpp.standardFileRules(prj, node)
+	function cpp.standardFileRules(prj, node, dependedOnAllFiles)
 		-- C/C++ file
 		if path.iscppfile(node.abspath) then
-			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
+			if dependedOnAllFiles then
+				_x('$(OBJDIR)/%s.o: %s $(CUSTOMBUILDOUTPUTS)', node.objname, node.relpath)
+			else
+				_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
+			end
 			_p('\t@echo $(notdir $<)')
 			cpp.buildcommand(prj, "o", node)
 

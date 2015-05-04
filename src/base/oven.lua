@@ -524,9 +524,18 @@
 --    path and an alpha-sorted index.
 --
 
-	function oven.bakeFiles(prj)
 
+	function oven.bakeFiles(prj)
 		local files = {}
+
+		local addFile = function(cfg, fname)
+			if not files[fname] then
+				local fcfg = p.fileconfig.new(fname, prj)
+				files[fname] = fcfg
+				table.insert(files, fcfg)
+			end
+			p.fileconfig.addconfig(files[fname], cfg)
+		end
 
 		-- Start by building a comprehensive list of all the files contained by the
 		-- project. Some files may only be included in a subset of configurations so
@@ -539,13 +548,14 @@
 				-- file configuration for it. Track both by key for quick lookups
 				-- and indexed for ordered iteration.
 
-				if not files[fname] then
-					local fcfg = p.fileconfig.new(fname, prj)
-					files[fname] = fcfg
-					table.insert(files, fcfg)
-				end
+				addFile(cfg, fname)
 
-				p.fileconfig.addconfig(files[fname], cfg)
+				local t = files[fname].configs[cfg]
+				if t.buildoutputsasinputs and #t.buildoutputs > 0 then
+					for _, bo in ipairs(t.buildoutputs) do
+						addFile(cfg, bo)
+					end
+				end
 
 			end)
 		end
