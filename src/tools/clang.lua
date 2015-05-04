@@ -139,6 +139,20 @@
 
 	end
 
+--
+-- get the right output flag.
+--
+	function clang.getsharedlibarg(cfg)
+		if cfg.system == premake.MACOSX then
+			if cfg.flags.MacOSXBundle then
+				return "-bundle"
+			else
+				return "-dynamiclib"
+			end
+		else
+			return "-shared"
+		end
+	end
 
 --
 -- Build a list of linker flags corresponding to the settings in
@@ -157,7 +171,7 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				local r = { clang.getsharedlibarg(cfg) }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				end
