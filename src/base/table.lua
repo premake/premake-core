@@ -532,3 +532,30 @@
 		end
 		return true
 	end
+
+
+--
+-- Intersect two arrays and return a new array
+--
+	function table.intersect(a, b)
+		local result = {}
+		for _, v in ipairs(b) do
+			if table.indexof(a, v) then
+				table.insert(result, v)
+			end
+		end
+		return result
+	end
+
+--
+-- The difference of A and B is the set containing those elements that are in A but not in B
+--
+	function table.difference(a, b)
+		local result = {}
+		for _, v in ipairs(a) do
+			if not table.indexof(b, v) then
+				table.insert(result, v)
+			end
+		end
+		return result
+	end

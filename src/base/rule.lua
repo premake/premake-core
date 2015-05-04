@@ -142,6 +142,44 @@
 
 
 ---
+-- Given the value for a particular property, returns a expanded string with switches embedded.
+--
+-- @param prop
+--    The property definition.
+-- @param value
+--    The value of the property to be formatted.
+-- @returns
+--    A string value.
+---
+
+	function rule.expandString(self, prop, value)
+		if not prop.switch then
+			return rule.getPropertyString(self, prop, value)
+		end
+
+		-- list?
+		if type(value) == "table" then
+			return prop.switch .. table.concat(value, " " .. prop.switch)
+		end
+
+		-- enum?
+		if prop.values then
+			local i = table.indexof(prop.values, value)
+			return prop.switch .. tostring(i)
+		end
+
+		-- primitive
+		value = tostring(value)
+		if #value > 0 then
+			return prop.switch .. value
+		else
+			return nil
+		end
+	end
+
+
+
+---
 -- Set one or more rule variables in the current configuration scope.
 --
 -- @param vars

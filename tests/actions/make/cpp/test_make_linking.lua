@@ -23,7 +23,7 @@
 	local function prepare(calls)
 		local cfg = test.getconfig(prj, "Debug")
 		local toolset = premake.tools.gcc
-		premake.callarray(make, calls, cfg, toolset)
+		premake.callarray(make.cpp, calls, cfg, toolset)
 	end
 
 
@@ -35,8 +35,8 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
-  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
+LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -45,8 +45,8 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -dynamiclib -Wl,-install_name,@rpath/libMyProject.dylib -Wl,-x
-  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+ALL_LDFLAGS += $(LDFLAGS) -dynamiclib -Wl,-install_name,@rpath/libMyProject.dylib -Wl,-x
+LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -59,8 +59,8 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
+LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -73,8 +73,8 @@
 		kind "StaticLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
+ALL_LDFLAGS += $(LDFLAGS) -s
+LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 		]]
 	end
 
@@ -89,7 +89,7 @@
 		kind "Utility"
 		prepare { "linkCmd" }
 		test.capture [[
-  LINKCMD =
+LINKCMD =
 		]]
 	end
 
@@ -103,8 +103,8 @@
 		kind "StaticLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = libtool -o "$@" $(OBJECTS)
+ALL_LDFLAGS += $(LDFLAGS) -s
+LINKCMD = libtool -o "$@" $(OBJECTS)
 		]]
 	end
 
@@ -122,9 +122,9 @@
 
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += build/bin/Debug/libMyProject2.a
-  LDDEPS += build/bin/Debug/libMyProject2.a
+ALL_LDFLAGS += $(LDFLAGS) -s
+LIBS += build/bin/Debug/libMyProject2.a
+LDDEPS += build/bin/Debug/libMyProject2.a
 		]]
 	end
 
@@ -142,9 +142,9 @@
 
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += build/bin/Debug/libMyProject2.so
-  LDDEPS += build/bin/Debug/libMyProject2.so
+ALL_LDFLAGS += $(LDFLAGS) -s
+LIBS += build/bin/Debug/libMyProject2.so
+LDDEPS += build/bin/Debug/libMyProject2.so
 		]]
 	end
 
@@ -162,9 +162,9 @@
 
         prepare { "ldFlags", "libs", "ldDeps" }
         test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
-  LIBS += -lMyProject2
-  LDDEPS += build/bin/Debug/libMyProject2.so
+ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
+LIBS += -lMyProject2
+LDDEPS += build/bin/Debug/libMyProject2.so
         ]]
     end
 
@@ -179,9 +179,9 @@
 
         prepare { "ldFlags", "libs", "ldDeps" }
         test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'@loader_path/../../build/bin/Debug' -Wl,-x
-  LIBS += -lMyProject2
-  LDDEPS += build/bin/Debug/libMyProject2.dylib
+ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'@loader_path/../../build/bin/Debug' -Wl,-x
+LIBS += -lMyProject2
+LDDEPS += build/bin/Debug/libMyProject2.dylib
         ]]
     end
 
@@ -203,9 +203,9 @@
 
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
-  LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+ALL_LDFLAGS += $(LDFLAGS) -s
+LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		]]
 	end
 
@@ -228,9 +228,9 @@
 
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
-  LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+ALL_LDFLAGS += $(LDFLAGS) -s
+LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
+LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		]]
 	end
 
@@ -245,8 +245,8 @@
 		links { "libs/SomeLib" }
 		prepare { "ldFlags", "libs" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
-  LIBS += -lSomeLib
+ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
+LIBS += -lSomeLib
 		]]
 	end
 
@@ -264,6 +264,6 @@
 		links { "libs/SomeLib-1.1" }
 		prepare { "libs", }
 		test.capture [[
-  LIBS += -lSomeLib-1.1
+LIBS += -lSomeLib-1.1
 		]]
 	end

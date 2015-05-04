@@ -27,8 +27,8 @@
 --
 
 	function suite.usesCorrectTools()
-		make.cppTools(cfg, premake.tools.gcc)
+		make.cpp.tools(cfg, premake.tools.gcc)
 		test.capture [[
-  RESCOMP = windres
-  		]]
+RESCOMP = windres
+		]]
 	end
