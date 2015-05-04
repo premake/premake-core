@@ -255,10 +255,25 @@
 		test.contains({ "-shared" }, gcc.getldflags(cfg))
 	end
 
-
 --
 -- Check Mac OS X variants on LDFLAGS.
 --
+
+	function suite.ldflags_onMacOSXBundle()
+		system "MacOSX"
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		prepare()
+		test.contains({ "-Wl,-x", "-bundle" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onMacOSXFramework()
+		system "MacOSX"
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		prepare()
+		test.contains({ "-Wl,-x", "-framework" }, gcc.getldflags(cfg))
+	end
 
 	function suite.ldflags_onMacOSXNoSymbols()
 		system "MacOSX"
