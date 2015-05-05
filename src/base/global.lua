@@ -80,7 +80,7 @@
 		local ext = path.getextension(fname):lower()
 		for rule in global.eachRule() do
 			if not rules or table.contains(rules, rule.name) then
-				if rule.fileExtension == ext then
+				if rule.fileextension == ext then
 					return rule
 				end
 			end

@@ -175,7 +175,7 @@
 		files { "hello.dae" }
 
 		rule "Animation"
-		fileExtension ".dae"
+		fileextension ".dae"
 
 		prepare()
 		test.capture [[

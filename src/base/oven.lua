@@ -200,7 +200,7 @@
 
 
 	function p.rule.bake(r)
-		table.sort(r.propertyDefinition, function (a, b)
+		table.sort(r.propertydefinition, function (a, b)
 			return a.name < b.name
 		end)
 	end
