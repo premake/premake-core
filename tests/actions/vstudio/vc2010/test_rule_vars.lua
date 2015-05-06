@@ -24,7 +24,7 @@
 
 	local function createVar(def)
 		rule "MyRule"
-		propertyDefinition(def)
+		propertydefinition(def)
 		project "MyProject"
 	end
 

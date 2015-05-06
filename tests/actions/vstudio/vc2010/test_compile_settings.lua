@@ -580,12 +580,12 @@
 
 
 --
--- Check the handling of the editAndContinue flag.
+-- Check the handling of the editandcontinue flag.
 --
 
 	function suite.debugFormat_onEditAndContinueOff()
 		flags { "Symbols" }
-		editAndContinue "Off"
+		editandcontinue "Off"
 		prepare()
 		test.capture [[
 <ClCompile>

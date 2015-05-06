@@ -18,8 +18,8 @@
 		_ACTION = "vs2010"
 
 		rule "Animation"
-		fileExtension ".dae"
-		propertyDefinition {
+		fileextension ".dae"
+		propertydefinition {
 			name = "AdditionalOptions",
 			kind = "list",
 			separator = ";"

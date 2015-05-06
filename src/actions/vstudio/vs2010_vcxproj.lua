@@ -1033,7 +1033,7 @@
 			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   not cfg.editAndContinue
+				   not cfg.editandcontinue
 			then
 				value = "ProgramDatabase"
 			else
@@ -1103,8 +1103,8 @@
 
 
 	function m.extensionsToDeleteOnClean(cfg)
-		if #cfg.cleanExtensions > 0 then
-			local value = table.implode(cfg.cleanExtensions, "*", ";", "")
+		if #cfg.cleanextensions > 0 then
+			local value = table.implode(cfg.cleanextensions, "*", ";", "")
 			m.element("ExtensionsToDeleteOnClean", nil, value .. "$(ExtensionsToDeleteOnClean)")
 		end
 	end
@@ -1177,8 +1177,8 @@
 	function m.imageXex(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<ImageXex>')
-			if cfg.configFile then
-				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configFile)
+			if cfg.configfile then
+				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configfile)
 			else
 				_p(3,'<ConfigurationFile>')
 				_p(3,'</ConfigurationFile>')

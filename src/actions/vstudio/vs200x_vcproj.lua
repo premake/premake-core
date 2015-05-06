@@ -753,7 +753,7 @@
 			return 1
 		else
 			-- Edit-and-continue doesn't work for some configurations
-			if not cfg.editAndContinue or
+			if not cfg.editandcontinue or
 				config.isOptimizedBuild(cfg) or
 			    cfg.clr ~= p.OFF or
 			    cfg.architecture == p.X86_64
