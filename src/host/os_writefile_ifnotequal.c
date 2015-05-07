@@ -1,7 +1,8 @@
 /**
  * \file   os_writefile_ifnotequal.c
  * \brief  Writes a file only if it differs with its current contents.
- * \author Copyright (c) 2015 Tom van Dijck and the Premake project
+ * \author Blizzard Entertainment (contact tvandijck@blizzard.com)
+ * \author Copyright (c) 2015 Jason Perkins and the Premake project
  */
 
 #include <stdio.h>

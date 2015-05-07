@@ -16,6 +16,12 @@ Builds and Infrastructure:
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
+  Blizzard Entertainment (contact tvandijck@blizzard.com)
+    * additional os, string, and table functions
+    * path.normalize() improvements
+    * Visual Studio 2015 support
+    * runtime()
+    * verbosef()
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
     * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
@@ -25,9 +31,3 @@ Patch contributors:
   Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
-  Tom van Dijck <tvandijck@blizzard.com>
-    * additional os, string, and table functions
-    * path.normalize() improvements
-    * Visual Studio 2015 support
-    * runtime()
-    * verbosef()
