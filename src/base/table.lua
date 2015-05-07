@@ -395,3 +395,16 @@
 
 		return res
 	end
+
+--
+-- Filters a table for empty entries. primarly useful for lists of string.
+--
+	function table.filterempty(dirs)
+		return table.translate(dirs, function(val)
+			if val and #val > 0 then
+				return val
+			else
+				return nil
+			end
+		end)
+	end

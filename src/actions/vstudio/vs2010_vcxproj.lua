@@ -894,25 +894,14 @@
 	end
 
 
-	function m.filterEmpty(dirs)
-		return table.translate(dirs, function(val)
-			if val and #val > 0 then
-				return val
-			else
-				return nil
-			end
-		end)
-	end
-
-
 	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
 			local dirs = project.getrelative(cfg.project, includedirs)
-			dirs = m.filterEmpty(dirs)
+			dirs = table.filterempty(dirs)
 
 			if #dirs > 0 then
 				table.sort(dirs)
-				p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', table.concat(dirs, ";"))
+				p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', path.translate(table.concat(dirs, ";")))
 			end
 		end
 	end
@@ -1424,10 +1413,10 @@
 
 	function m.executablePath(cfg)
 		local dirs = project.getrelative(cfg.project, cfg.bindirs)
-		dirs = m.filterEmpty(dirs)
+		dirs = table.filterempty(dirs)
 
 		if #dirs > 0 then
-			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', table.concat(dirs, ";"))
+			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
 		end
 	end
 
