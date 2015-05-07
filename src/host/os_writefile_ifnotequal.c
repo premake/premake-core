@@ -1,7 +1,7 @@
 /**
- * \file   os_copyfile.c
- * \brief  Copy a file from one location to another.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \file   os_writefile_ifnotequal.c
+ * \brief  Writes a file only if it differs with its current contents.
+ * \author Copyright (c) 2015 Tom van Dijck and the Premake project
  */
 
 #include <stdio.h>

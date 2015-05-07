@@ -8,6 +8,7 @@ for the complete list of changes from the Premake 4.x series.
 Since 5.0-alpha2:
 
 * New API: buildlog()
+* New API: os.writefile_ifnotequal()
 
 Since 5.0-alpha1:
 

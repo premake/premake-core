@@ -26,7 +26,7 @@ Patch contributors:
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
   Tom van Dijck <tvandijck@blizzard.com>
-    * additional string and table functions
+    * additional os, string, and table functions
     * path.normalize() improvements
     * Visual Studio 2015 support
     * runtime()
