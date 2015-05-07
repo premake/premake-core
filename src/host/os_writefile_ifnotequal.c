@@ -19,7 +19,7 @@
 static int compare_file(const char* content, size_t length, const char* dst)
 {
 	FILE* file = fopen(dst, "rb");
-	long size;
+	size_t size;
 	char buffer[4096];
 	int num;
 
