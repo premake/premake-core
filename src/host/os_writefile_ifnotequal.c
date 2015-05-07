@@ -1,7 +1,8 @@
 /**
- * \file   os_copyfile.c
- * \brief  Copy a file from one location to another.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \file   os_writefile_ifnotequal.c
+ * \brief  Writes a file only if it differs with its current contents.
+ * \author Blizzard Entertainment (contact tvandijck@blizzard.com)
+ * \author Copyright (c) 2015 Jason Perkins and the Premake project
  */
 
 #include <stdio.h>
@@ -19,7 +20,7 @@
 static int compare_file(const char* content, size_t length, const char* dst)
 {
 	FILE* file = fopen(dst, "rb");
-	long size;
+	size_t size;
 	char buffer[4096];
 	int num;
 
