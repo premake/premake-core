@@ -442,20 +442,7 @@
 --
 
 	function vstudio.projectPlatform(cfg)
-		local platform = cfg.platform
-		if platform then
-			local pltarch = vstudio.archFromPlatform(cfg.platform) or platform
-			local cfgarch = vstudio.archFromConfig(cfg)
-			if pltarch == cfgarch then
-				platform = nil
-			end
-		end
-
-		if platform then
-			return cfg.buildcfg .. " " .. platform
-		else
-			return cfg.buildcfg
-		end
+		return cfg.buildcfg
 	end
 
 
@@ -477,12 +464,7 @@
 		local platarch
 		if platform then
 			platform = vstudio.archFromPlatform(platform) or platform
-
-			-- Value for 32-bit arch is different depending on whether this solution
-			-- contains C++ or C# projects or both
-			if platform ~= "x86" then
-				return platform
-			end
+			return platform
 		end
 
 		-- scan the contained projects to identify the platform
@@ -512,7 +494,7 @@
 		if platform then
 			return iif(hasnet, "x86", "Win32")
 		elseif slnarch then
-			return iif(slnarch == "x86" and not hasnet, "Win32", slnarch)
+			return slnarch
 		elseif hasnet and hasnative then
 			return "Mixed Platforms"
 		elseif hasnet then
