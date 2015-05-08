@@ -517,7 +517,7 @@
 					local value = cfg[fld.name]
 					if value ~= nil then
 						if fld.kind == "path" then
-							value = path.translate(project.getrelative(cfg.project, value))
+							value = vstudio.path(cfg, value)
 						else
 							value = p.rule.getPropertyString(rule, prop, value)
 						end
@@ -861,8 +861,8 @@
 		if #refs > 0 then
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
-				local relpath = project.getrelative(prj, vstudio.projectfile(ref))
-				p.push('<ProjectReference Include=\"%s\">', path.translate(relpath))
+				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
+				p.push('<ProjectReference Include=\"%s\">', relpath)
 				p.callArray(m.elements.projectReferences, prj, ref)
 				p.pop('</ProjectReference>')
 			end
@@ -899,8 +899,7 @@
 
 	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
-			local dirs = project.getrelative(cfg.project, includedirs)
-			dirs = path.translate(table.concat(dirs, ";"))
+			local dirs = table.concat(vstudio.path(cfg, includedirs), ";")
 			p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
 		end
 	end
@@ -908,16 +907,14 @@
 
 	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.libdirs)
-			dirs = path.translate(table.concat(dirs, ";"))
+			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
 			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
 		end
 	end
 
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.usingdirs)
-			dirs = path.translate(table.concat(dirs, ";"))
+			local dirs = table.concat(vstudio.path(cfg, cfg.usingdirs), ";")
 			p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
 		end
 	end
@@ -948,9 +945,8 @@
 
 	function m.buildLog(cfg)
 		if cfg.buildlog and #cfg.buildlog > 0 then
-			local relpath = project.getrelative(cfg.project, cfg.buildlog)
 			p.push('<BuildLog>')
-			p.x('<Path>%s</Path>', path.translate(relpath))
+			p.x('<Path>%s</Path>', vstudio.path(cfg, cfg.buildlog))
 			p.pop('</BuildLog>')
 		end
 	end
@@ -1123,11 +1119,11 @@
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
-			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
+			local includes = vstudio.path(cfg, cfg.forceincludes)
 			m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
-			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
+			local usings = vstudio.path(cfg, cfg.forceusings)
 			m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
 		end
 	end
@@ -1207,8 +1203,8 @@
 
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
-			local loc = project.getrelative(prj, premake.filename(rule, ".targets"))
-			p.x('<Import Project="%s" />', path.translate(loc))
+			local loc = vstudio.path(prj, p.filename(rule, ".targets"))
+			p.x('<Import Project="%s" />', loc)
 		end
 
 		p.pop('</ImportGroup>')
@@ -1228,8 +1224,8 @@
 
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
-			local loc = project.getrelative(prj, premake.filename(rule, ".props"))
-			p.x('<Import Project="%s" />', path.translate(loc))
+			local loc = vstudio.path(prj, p.filename(rule, ".props"))
+			p.x('<Import Project="%s" />', loc)
 		end
 
 		p.pop('</ImportGroup>')
@@ -1245,8 +1241,8 @@
 
 
 	function m.intDir(cfg)
-		local objdir = project.getrelative(cfg.project, cfg.objdir)
-		_x(2,'<IntDir>%s\\</IntDir>', path.translate(objdir))
+		local objdir = vstudio.path(cfg, cfg.objdir)
+		_x(2,'<IntDir>%s\\</IntDir>', objdir)
 	end
 
 
@@ -1398,8 +1394,8 @@
 
 
 	function m.outDir(cfg)
-		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
-		_x(2,'<OutDir>%s\\</OutDir>', path.translate(outdir))
+		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
+		_x(2,'<OutDir>%s\\</OutDir>', outdir)
 	end
 
 

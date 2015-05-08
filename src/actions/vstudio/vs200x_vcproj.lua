@@ -841,16 +841,16 @@
 
 	function m.additionalIncludeDirectories(cfg)
 		if #cfg.includedirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.includedirs)
-			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+			local dirs = vstudio.path(cfg, cfg.includedirs)
+			p.x('AdditionalIncludeDirectories="%s"', table.concat(dirs, ";"))
 		end
 	end
 
 
 	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
-			local dirs = table.concat(project.getrelative(cfg.project, cfg.libdirs), ";")
-			p.x('AdditionalLibraryDirectories="%s"', path.translate(dirs))
+			local dirs = vstudio.path(cfg, cfg.libdirs)
+			p.x('AdditionalLibraryDirectories="%s"', table.concat(dirs, ";"))
 		end
 	end
 
@@ -887,8 +887,8 @@
 	function m.additionalResourceIncludeDirectories(cfg)
 		local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
 		if #dirs > 0 then
-			dirs = project.getrelative(cfg.project, dirs)
-			p.x('AdditionalIncludeDirectories="%s"', path.translate(table.concat(dirs, ";")))
+			dirs = vstudio.path(cfg, dirs)
+			p.x('AdditionalIncludeDirectories="%s"', table.concat(dirs, ";"))
 		end
 	end
 
@@ -1151,11 +1151,11 @@
 
 	function m.forcedIncludeFiles(cfg)
 		if #cfg.forceincludes > 0 then
-			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
+			local includes = vstudio.path(cfg, cfg.forceincludes)
 			p.w('ForcedIncludeFiles="%s"', table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
-			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
+			local usings = vstudio.path(cfg, cfg.forceusings)
 			p.w('ForcedUsingFiles="%s"', table.concat(usings, ';'))
 		end
 	end
@@ -1229,8 +1229,8 @@
 				implibdir = path.join(cfg.objdir, path.getname(implibdir))
 			end
 
-			implibdir = project.getrelative(cfg.project, implibdir)
-			p.x('ImportLibrary="%s"', path.translate(implibdir))
+			implibdir = vstudio.path(cfg, implibdir)
+			p.x('ImportLibrary="%s"', implibdir)
 		end
 	end
 
@@ -1245,11 +1245,11 @@
 	function m.intermediateDirectory(cfg)
 		local objdir
 		if not cfg.fake then
-			objdir = project.getrelative(cfg.project, cfg.objdir)
+			objdir = vstudio.path(cfg, cfg.objdir)
 		else
-			objdir = "$(PlatformName)/$(ConfigurationName)"
+			objdir = "$(PlatformName)\\$(ConfigurationName)"
 		end
-		p.x('IntermediateDirectory="%s"', path.translate(objdir))
+		p.x('IntermediateDirectory="%s"', objdir)
 	end
 
 
@@ -1448,17 +1448,16 @@
 			-- in more than one solution. But that's how they do it.
 
 			for i, dep in ipairs(deps) do
-
-				local relpath = path.getrelative(prj.solution.location, vstudio.projectfile(dep))
+				local relpath = vstudio.path(prj.solution, vstudio.projectfile(dep))
 
 				-- Visual Studio wants the path to start with ./ or ../
 				if not relpath:startswith(".") then
-					relpath = "./" .. relpath
+					relpath = ".\\" .. relpath
 				end
 
 				p.push('<ProjectReference')
 				p.w('ReferencedProjectIdentifier="{%s}"', dep.uuid)
-				p.w('RelativePathToProject="%s"', path.translate(relpath))
+				p.w('RelativePathToProject="%s"', relpath)
 				p.pop('/>')
 			end
 		end
