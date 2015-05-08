@@ -87,11 +87,6 @@
 
 	function m.localDebuggerCommand(cfg)
 		if cfg.debugcommand then
-			if not path.isabsolute(cfg.debugcommand) then
-				print("Error: debugcommand must be an absolute path")
-				os.exit(1)
-			end
-			
 			local dir = cfg.debugcommand
 			p.w('<LocalDebuggerCommand>%s</LocalDebuggerCommand>', path.translate(dir))
 		end
