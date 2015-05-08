@@ -516,7 +516,11 @@
 					local fld = p.rule.getPropertyField(rule, prop)
 					local value = cfg[fld.name]
 					if value ~= nil then
-						value = p.rule.getPropertyString(rule, prop, value)
+						if fld.kind == "path" then
+							value = path.translate(project.getrelative(cfg.project, value))
+						else
+							value = p.rule.getPropertyString(rule, prop, value)
+						end
 						if value ~= nil and #value > 0 then
 							m.element(prop.name, nil, '%s', value)
 						end
