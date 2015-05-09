@@ -383,6 +383,24 @@
 	end
 
 
+---
+-- Prepare a path value for output in a Visual Studio project or solution.
+-- Converts path separators to backslashes, and makes relative to the project.
+--
+-- @param cfg
+--    The project or configuration which contains the path.
+-- @param value
+--    The path to be prepared.
+-- @return
+--    The prepared path.
+---
+
+	function vstudio.path(cfg, value)
+		cfg = cfg.project or cfg
+		return path.translate(project.getrelative(cfg, value))
+	end
+
+
 --
 -- Returns the Visual Studio project configuration identifier corresponding
 -- to the given Premake configuration.

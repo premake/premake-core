@@ -75,7 +75,7 @@
 		-- Per-configuration reference paths aren't supported (are they?) so just
 		-- use the first configuration in the project
 		local cfg = p.project.getfirstconfig(prj)
-		local paths = path.translate(p.project.getrelative(prj, cfg.libdirs))
+		local paths = p.vstudio.path(prj, cfg.libdirs)
 		if #paths > 0 then
 			p.w('<ReferencePath>%s</ReferencePath>', table.concat(paths, ";"))
 		end
