@@ -1111,7 +1111,7 @@
 		end
 
 		if cfg.warnings == "Extra" then
-			settings['WARNING_CFLAGS'] = '-Wall'
+			settings['WARNING_CFLAGS'] = '-Wall -Wextra'
 		end
 
 		overrideSettings(settings, cfg.xcodebuildsettings)
