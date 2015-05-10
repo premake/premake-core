@@ -11,7 +11,7 @@
 --
 
 	premake.override(io, "open", function(base, fname, mode)
-		if mode and mode:find("w") then
+		if mode and (mode:find("w") or mode:find("a"))  then
 			local dir = path.getdirectory(fname)
 			ok, err = os.mkdir(dir)
 			if not ok then
