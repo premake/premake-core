@@ -234,7 +234,7 @@
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
-			table.insert(flags, '-L' .. project.getrelative(cfg.project, dir))
+			table.insert(flags, '-L' .. premake.quoted(dir))
 		end
 
 		if cfg.flags.RelativeLinks then
