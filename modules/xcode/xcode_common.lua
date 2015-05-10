@@ -1043,9 +1043,9 @@
 		settings['GCC_WARN_UNUSED_VARIABLE'] = 'YES'
 
 		for i,v in ipairs(cfg.includedirs) do
-			cfg.includedirs[i] = premake.project.getrelative(cfg.project, cfg.includedirs[i])
+			cfg.includedirs[i] = "\""..premake.project.getrelative(cfg.project, cfg.includedirs[i]).."\""
 		end
-		settings['HEADER_SEARCH_PATHS'] = cfg.includedirs
+		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 
 		for i,v in ipairs(cfg.libdirs) do
 			cfg.libdirs[i] = premake.project.getrelative(cfg.project, cfg.libdirs[i])
