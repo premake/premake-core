@@ -69,7 +69,6 @@
 		},
 	}
 
-
 	api.register {
 		name = "buildcommands",
 		scope = { "config", "rule" },
@@ -78,17 +77,13 @@
 		pathVars = true,
 	}
 
-	api.alias("buildcommands", "buildCommands")
-
-
 	api.register {
-		name = "buildDependencies",
+		name = "builddependencies",
 		scope = { "rule" },
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
 	}
-
 
 	api.register {
 		name = "buildlog",
@@ -98,7 +93,6 @@
 		pathVars = true,
 	}
 
-
 	api.register {
 		name = "buildmessage",
 		scope = { "config", "rule" },
@@ -106,9 +100,6 @@
 		tokens = true,
 		pathVars = true,
 	}
-
-	api.alias("buildmessage", "buildMessage")
-
 
 	api.register {
 		name = "buildoptions",
@@ -118,7 +109,6 @@
 		pathVars = true,
 	}
 
-
 	api.register {
 		name = "buildoutputs",
 		scope = { "config", "rule" },
@@ -126,9 +116,6 @@
 		tokens = true,
 		pathVars = true,
 	}
-
-	api.alias("buildoutputs", "buildOutputs")
-
 
 	api.register {
 		name = "buildinputs",
@@ -153,13 +140,11 @@
 		pathVars = true,
 	}
 
-
 	api.register {
-		name = "cleanExtensions",
+		name = "cleanextensions",
 		scope = "config",
 		kind = "list:string",
 	}
-
 
 	api.register {
 		name = "clr",
@@ -174,16 +159,14 @@
 		}
 	}
 
-
 	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
 	}
 
-
 	api.register {
-		name = "configFile",
+		name = "configfile",
 		scope = "config",
 		kind = "string",
 		tokens = true,
@@ -344,7 +327,6 @@
 		tokens = true,
 	}
 
-
 	api.register {
 		name = "disablewarnings",
 		scope = "config",
@@ -352,20 +334,17 @@
 		tokens = true,
 	}
 
-
 	api.register {
 		name = "display",
 		scope = "rule",
 		kind = "string",
 	}
 
-
 	api.register {
-		name = "editAndContinue",
+		name = "editandcontinue",
 		scope = "config",
 		kind = "boolean",
 	}
-
 
 	api.register {
 		name = "enablewarnings",
@@ -385,12 +364,6 @@
 		},
 	}
 
-	-- For backward compatibility, excludes() is now an alias for removefiles()
-	function excludes(value)
-		removefiles(value)
-	end
-
-
 	api.register {
 		name = "fatalwarnings",
 		scope = "config",
@@ -398,13 +371,11 @@
 		tokens = true,
 	}
 
-
 	api.register {
-		name = "fileExtension",
+		name = "fileextension",
 		scope = "rule",
 		kind = "string",
 	}
-
 
 	api.register {
 		name = "filename",
@@ -518,7 +489,6 @@
 			"Hardware",
 		}
 	}
-
 
 	api.register {
 		name = "framework",
@@ -792,7 +762,7 @@
 	}
 
 	api.register {
-		name = "propertyDefinition",
+		name = "propertydefinition",
 		scope = "rule",
 		kind = "list:table",
 	}
@@ -985,6 +955,24 @@
 
 -----------------------------------------------------------------------------
 --
+-- Field name aliases for backward compatibility
+--
+-----------------------------------------------------------------------------
+
+	api.alias("buildcommands", "buildCommands")
+	api.alias("builddependencies", "buildDependencies")
+	api.alias("buildmessage", "buildMessage")
+	api.alias("buildoutputs", "buildOutputs")
+	api.alias("cleanextensions", "cleanExtensions")
+	api.alias("configfile", "configFile")
+	api.alias("editandcontinue", "editAndContinue")
+	api.alias("fileextension", "fileExtension")
+	api.alias("propertydefinition", "propertyDefinition")
+	api.alias("removefiles", "excludes")
+
+
+-----------------------------------------------------------------------------
+--
 -- Handlers for deprecated fields and values.
 --
 -----------------------------------------------------------------------------
@@ -1088,10 +1076,10 @@
 
 	api.deprecateValue("flags", "NoEditAndContinue", nil,
 	function(value)
-		editAndContinue "Off"
+		editandcontinue "Off"
 	end,
 	function(value)
-		editAndContinue "On"
+		editandcontinue "On"
 	end)
 
 
@@ -1211,7 +1199,7 @@
 -----------------------------------------------------------------------------
 
 	clr "Off"
-	editAndContinue "On"
+	editandcontinue "On"
 
 	-- Setting a default language makes some validation easier later
 

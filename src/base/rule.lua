@@ -38,7 +38,7 @@
 ---
 
 	function rule.eachProperty(self)
-		local props = self.propertyDefinition
+		local props = self.propertydefinition
 		local i = 0
 		return function ()
 			i = i + 1
@@ -60,7 +60,7 @@
 ---
 
 	function rule.getProperty(self, name)
-		local props = self.propertyDefinition
+		local props = self.propertydefinition
 		for i = 1, #props do
 			local prop = props[i]
 			if prop.name == name then

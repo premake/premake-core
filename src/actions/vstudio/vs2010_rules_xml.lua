@@ -110,7 +110,7 @@
 ---
 
 	function m.properties(r)
-		local defs = r.propertyDefinition
+		local defs = r.propertydefinition
 		for i = 1, #defs do
 			local def = defs[i]
 			if def.kind == "boolean" then
@@ -339,7 +339,7 @@
 
 	function m.fileExtension(r)
 		p.push('<FileExtension')
-		p.w('Name="*%s"', r.fileExtension)
+		p.w('Name="*%s"', r.fileextension)
 		p.w('ContentType="%s" />', r.name)
 		p.pop()
 	end

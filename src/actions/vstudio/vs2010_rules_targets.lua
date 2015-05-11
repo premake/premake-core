@@ -308,7 +308,7 @@
 
 
  	function m.properties(r)
-		local defs = r.propertyDefinition
+		local defs = r.propertydefinition
 		for i = 1, #defs do
 			local name = defs[i].name
 			p.w('%s="%%(%s.%s)"', name, r.name, name)
@@ -353,7 +353,7 @@
 
 	function m.targetInputs(r)
 		local extra = {}
-		local defs = r.propertyDefinition
+		local defs = r.propertydefinition
 		for i = 1, #defs do
 			local def = defs[i]
 			if def.dependency then
@@ -385,7 +385,7 @@
 
 
 	function m.tlogProperties(r)
-		local defs = r.propertyDefinition
+		local defs = r.propertydefinition
 		for i = 1, #defs do
 			local def = defs[i]
 			if def.dependency then
@@ -398,7 +398,7 @@
 
 	function m.tlogRead(r)
 		local extra = {}
-		local defs = r.propertyDefinition
+		local defs = r.propertydefinition
 		for i = 1, #defs do
 			local def = defs[i]
 			if def.dependency then

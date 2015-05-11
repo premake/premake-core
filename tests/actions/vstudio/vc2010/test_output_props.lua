@@ -240,7 +240,7 @@
 --
 
 	function suite.extensionsToDeleteOnClean()
-		cleanExtensions { ".temp1", ".temp2" }
+		cleanextensions { ".temp1", ".temp2" }
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

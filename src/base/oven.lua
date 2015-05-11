@@ -177,7 +177,10 @@
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(self, buildcfg, platform)
-			self.configs[(buildcfg or "*") .. (platform or "")] = cfg
+
+			if premake.action.supportsconfig(premake.action.current(), cfg) then
+				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
+			end
 		end
 
 		-- Process the sub-objects that are contained by this project. The
@@ -200,7 +203,7 @@
 
 
 	function p.rule.bake(r)
-		table.sort(r.propertyDefinition, function (a, b)
+		table.sort(r.propertydefinition, function (a, b)
 			return a.name < b.name
 		end)
 	end
@@ -295,10 +298,16 @@
 		for _, buildcfg in ipairs(buildcfgs) do
 			if #platforms > 0 then
 				for _, platform in ipairs(platforms) do
-					table.insert(configs, { ["buildcfg"] = buildcfg, ["platform"] = platform })
+					local cfg = { ["buildcfg"] = buildcfg, ["platform"] = platform }
+					if premake.action.supportsconfig(premake.action.current(), cfg) then
+						table.insert(configs, cfg)
+					end
 				end
 			else
-				table.insert(configs, { ["buildcfg"] = buildcfg })
+				local cfg = { ["buildcfg"] = buildcfg }
+				if premake.action.supportsconfig(premake.action.current(), cfg) then
+					table.insert(configs, cfg)
+				end
 			end
 		end
 
@@ -348,7 +357,20 @@
 		terms.platforms = platforms
 
 		for key in pairs(oven.bubbledFields) do
-			ctx[key] = p.configset.fetch(cset, p.field.get(key), terms)
+			local field = p.field.get(key)
+			if not field then
+				ctx[key] = rawget(ctx, key)
+			else
+				local value = p.configset.fetch(cset, field, terms)
+				if value then
+					-- do I need to expand tokens?
+					if field and field.tokens then
+						value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
+					end
+
+					ctx[key] = value
+				end
+			end
 		end
 	end
 

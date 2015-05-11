@@ -1,7 +1,8 @@
 --
 -- api.lua
 -- Implementation of the solution, project, and configuration APIs.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Author Jason Perkins
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -58,11 +59,14 @@
 			return c
 		end
 
-		_G["external" .. containerName:capitalized()] = function(name)
+		_G["external" .. containerName] = function(name)
 			local c = _G[containerName](name)
 			c.external = true
 			return c
 		end
+
+		-- for backward compatibility
+		_G["external" .. containerName:capitalized()] = _G["external" .. containerName]
 
 		return class
 	end
@@ -75,11 +79,13 @@
 -- scripts as external.
 ---
 
-	function includeExternal(fname)
+	function includeexternal(fname)
 		api._isIncludingExternal = true
 		include(fname)
 		api._isIncludingExternal = nil
 	end
+
+	includeExternal = includeexternal
 
 
 

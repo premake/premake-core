@@ -1,7 +1,8 @@
 --
 -- tests/actions/vstudio/vc2010/test_rule_vars.lua
 -- Validate generation of custom rule variables at the project level.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Author Jason Perkins
+-- Copyright (c) 2014-2015 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("vstudio_vs2010_rule_vars")
@@ -24,7 +25,7 @@
 
 	local function createVar(def)
 		rule "MyRule"
-		propertyDefinition(def)
+		propertydefinition(def)
 		project "MyProject"
 	end
 
@@ -49,18 +50,6 @@
 -- Test setting the various property kinds.
 --
 
-	function suite.onStringVar()
-		createVar { name="MyVar", kind="string" }
-		myRuleVars { MyVar = "hello" }
-		prepare()
-		test.capture [[
-<MyRule>
-	<MyVar>hello</MyVar>
-</MyRule>
-		]]
-	end
-
-
 	function suite.onBooleanVar()
 		createVar { name="MyVar", kind="boolean" }
 		myRuleVars { MyVar = false }
@@ -68,18 +57,6 @@
 		test.capture [[
 <MyRule>
 	<MyVar>false</MyVar>
-</MyRule>
-		]]
-	end
-
-
-	function suite.onListVar()
-		createVar { name="MyVar", kind="list" }
-		myRuleVars { MyVar = { "a", "b", "c" } }
-		prepare()
-		test.capture [[
-<MyRule>
-	<MyVar>a b c</MyVar>
 </MyRule>
 		]]
 	end
@@ -106,3 +83,40 @@
 </MyRule>
 		]]
 	end
+
+
+	function suite.onListVar()
+		createVar { name="MyVar", kind="list" }
+		myRuleVars { MyVar = { "a", "b", "c" } }
+		prepare()
+		test.capture [[
+<MyRule>
+	<MyVar>a b c</MyVar>
+</MyRule>
+		]]
+	end
+
+
+	function suite.onPathVar()
+		createVar { name="MyVar", kind="path" }
+		myRuleVars { MyVar = "../../path/to/file" }
+		prepare()
+		test.capture [[
+<MyRule>
+	<MyVar>..\..\path\to\file</MyVar>
+</MyRule>
+		]]
+	end
+
+
+	function suite.onStringVar()
+		createVar { name="MyVar", kind="string" }
+		myRuleVars { MyVar = "hello" }
+		prepare()
+		test.capture [[
+<MyRule>
+	<MyVar>hello</MyVar>
+</MyRule>
+		]]
+	end
+

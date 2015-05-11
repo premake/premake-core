@@ -109,16 +109,14 @@
 
 	function m.debugCommand(cfg)
 		if cfg.debugcommand then
-			local command = p.project.getrelative(cfg.project, cfg.debugcommand)
-			p.x('Command="%s"', path.translate(command))
+			p.x('Command="%s"', p.vstudio.path(cfg, cfg.debugcommand))
 		end
 	end
 
 
 	function m.debugDir(cfg)
 		if cfg.debugdir then
-			local debugdir = p.project.getrelative(cfg.project, cfg.debugdir)
-			p.x('WorkingDirectory="%s"', path.translate(debugdir))
+			p.x('WorkingDirectory="%s"', p.vstudio.path(cfg, cfg.debugdir))
 		end
 	end
 

@@ -266,12 +266,12 @@
 --
 
 	function cs2005.outputProps(cfg)
-		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
-		_x(2,'<OutputPath>%s\\</OutputPath>', path.translate(outdir))
+		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
+		_x(2,'<OutputPath>%s\\</OutputPath>', outdir)
 
 		-- Want to set BaseIntermediateOutputPath because otherwise VS will create obj/
 		-- anyway. But VS2008 throws up ominous warning if present.
-		local objdir = path.translate(project.getrelative(cfg.project, cfg.objdir))
+		local objdir = vstudio.path(cfg, cfg.objdir)
 		if _ACTION > "vs2008" then
 			_x(2,'<BaseIntermediateOutputPath>%s\\</BaseIntermediateOutputPath>', objdir)
 			_p(2,'<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>')
@@ -325,8 +325,8 @@
 		local deps = project.getdependencies(prj, true)
 		if #deps > 0 then
 			for _, dep in ipairs(deps) do
-				local relpath = project.getrelative(prj, vstudio.projectfile(dep))
-				_x(2,'<ProjectReference Include="%s">', path.translate(relpath))
+				local relpath = vstudio.path(prj, vstudio.projectfile(dep))
+				_x(2,'<ProjectReference Include="%s">', relpath)
 				_p(3,'<Project>{%s}</Project>', dep.uuid)
 				_x(3,'<Name>%s</Name>', dep.name)
 
@@ -376,7 +376,7 @@
 
 	function cs2005.applicationIcon(prj)
 		if prj.icon then
-			local icon = path.translate(project.getrelative(prj, prj.icon))
+			local icon = vstudio.path(prj, prj.icon)
 			_p(1,'<PropertyGroup>')
 			_x(2,'<ApplicationIcon>%s</ApplicationIcon>', icon)
 			_p(1,'</PropertyGroup>')
