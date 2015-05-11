@@ -11,7 +11,6 @@
 --
 
 	premake.override(os, "execute", function(base, cmd)
-		cmd = path.normalize(cmd)
 		cmd = os.translateCommands(cmd)
 		return base(cmd)
 	end)
@@ -504,7 +503,7 @@
 				return "chdir " .. path.translate(v)
 			end,
 			copy = function(v)
-				return "xcopy /Q /E /Y /I " .. path.translate(v)
+				return "xcopy /Q /E /Y /I " .. path.translate(v) .. " > nul"
 			end,
 			delete = function(v)
 				return "del " .. path.translate(v)
