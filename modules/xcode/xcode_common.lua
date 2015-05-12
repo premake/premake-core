@@ -79,25 +79,6 @@
 		return false
 	end
 --
--- Return the displayed name for a build configuration, taking into account the
--- configuration and platform, i.e. "Debug 32-bit Universal".
---
--- @param cfg
---    The configuration being identified.
--- @returns
---    A build configuration name.
---
-
-	function xcode.getconfigname(cfg)
-		local name = cfg.buildcfg
-		if #cfg.project.solution.platforms > 1 then
-			name = name .. " " .. premake.action.current().valid_platforms[cfg.platform]
-		end
-		return name
-	end
-
-
---
 -- Return the Xcode type for a given file, based on the file extension.
 --
 -- @param fname
@@ -778,7 +759,7 @@
 			for _, cfg in ipairs(tr.configs) do
 				local cfgcmds = cfg[which]
 				if #cfgcmds > #prjcmds then
-					table.insert(commands, 'if [ "${CONFIGURATION}" = "' .. xcode.getconfigname(cfg) .. '" ]; then')
+					table.insert(commands, 'if [ "${CONFIGURATION}" = "' .. cfg.buildcfg .. '" ]; then')
 					for i = #prjcmds + 1, #cfgcmds do
 						table.insert(commands, cfgcmds[i])
 					end
@@ -965,13 +946,12 @@
 
 		overrideSettings(settings, cfg.xcodebuildsettings)
 
-		local cfgname = xcode.getconfigname(cfg)
-		_p(2,'%s /* %s */ = {', cfg.xcode.targetid, cfgname)
+		_p(2,'%s /* %s */ = {', cfg.xcode.targetid, cfg.buildcfg)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		printSettingsTable(4, settings)
 		_p(3,'};')
-		printSetting(3, 'name', cfgname);
+		printSetting(3, 'name', cfg.buildcfg);
 		_p(2,'};')
 	end
 
@@ -1116,13 +1096,12 @@
 
 		overrideSettings(settings, cfg.xcodebuildsettings)
 
-		local cfgname = xcode.getconfigname(cfg)
-		_p(2,'%s /* %s */ = {', cfg.xcode.projectid, cfgname)
+		_p(2,'%s /* %s */ = {', cfg.xcode.projectid, cfg.buildcfg)
 		_p(3,'isa = XCBuildConfiguration;')
 		_p(3,'buildSettings = {')
 		printSettingsTable(4, settings)
 		_p(3,'};')
-		printSetting(3, 'name', cfgname);
+		printSetting(3, 'name', cfg.buildcfg);
 		_p(2,'};')
 	end
 
@@ -1154,7 +1133,7 @@
 
 	function xcode.XCBuildConfigurationList(tr)
 		local sln = tr.project.solution
-		local defaultCfgName = stringifySetting(xcode.getconfigname(tr.configs[1]))
+		local defaultCfgName = stringifySetting(tr.configs[1].buildcfg)
 		local settings = {}
 
 		for _, target in ipairs(tr.products.children) do
@@ -1163,7 +1142,7 @@
 				_p(3,'isa = XCConfigurationList;')
 				_p(3,'buildConfigurations = (')
 				for _, cfg in ipairs(tr.configs) do
-					_p(4,'%s /* %s */,', cfg.xcode.targetid, xcode.getconfigname(cfg))
+					_p(4,'%s /* %s */,', cfg.xcode.targetid, cfg.buildcfg)
 				end
 				_p(3,');')
 				_p(3,'defaultConfigurationIsVisible = 0;')
@@ -1176,7 +1155,7 @@
 			_p(3,'isa = XCConfigurationList;')
 			_p(3,'buildConfigurations = (')
 			for _, cfg in ipairs(tr.configs) do
-				_p(4,'%s /* %s */,', cfg.xcode.projectid, xcode.getconfigname(cfg))
+				_p(4,'%s /* %s */,', cfg.xcode.projectid, cfg.buildcfg)
 			end
 			_p(3,');')
 			_p(3,'defaultConfigurationIsVisible = 0;')
