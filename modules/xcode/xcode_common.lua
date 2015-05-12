@@ -1042,8 +1042,9 @@
 		settings['GCC_WARN_ABOUT_RETURN_TYPE'] = 'YES'
 		settings['GCC_WARN_UNUSED_VARIABLE'] = 'YES'
 
-		for i,v in ipairs(cfg.includedirs) do
-			cfg.includedirs[i] = "\""..premake.project.getrelative(cfg.project, cfg.includedirs[i]).."\""
+		local includedirs = project.getrelative(cfg.project, cfg.includedirs)
+		for i,v in ipairs(includedirs) do
+			cfg.includedirs[i] = premake.quoted(v)
 		end
 		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 

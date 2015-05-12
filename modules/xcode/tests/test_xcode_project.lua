@@ -1251,7 +1251,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnIncludeDirs()
-		includedirs { "../include", "../libs" }
+		includedirs { "../include", "../libs", "../name with spaces" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1265,12 +1265,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
 				USER_HEADER_SEARCH_PATHS = (
 					../include,
 					../libs,
+					"\"../name with spaces\"",
 				);
-				OBJROOT = obj/Debug;
-				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = Debug;
 		};
