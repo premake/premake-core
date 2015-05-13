@@ -920,7 +920,6 @@
 		end
 
 		settings['GCC_DYNAMIC_NO_PIC'] = 'NO'
-		settings['GCC_MODEL_TUNING'] = 'G5'
 
 		if tr.infoplist then
 			settings['INFOPLIST_FILE'] = config.findfile(cfg, path.getextension(tr.infoplist.name))
