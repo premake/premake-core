@@ -194,6 +194,7 @@
 				m.intDir,
 				m.targetName,
 				m.targetExt,
+				m.includePath,
 				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
@@ -1238,6 +1239,14 @@
 	function m.importLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB then
 			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
+		end
+	end
+
+
+	function m.includePath(cfg)
+		local dirs = vstudio.path(cfg, cfg.sysincludedirs)
+		if #dirs > 0 then
+			p.x('<IncludePath>%s;$(IncludePath)</IncludePath>', table.concat(dirs, ";"))
 		end
 	end
 

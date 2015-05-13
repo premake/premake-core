@@ -822,6 +822,13 @@
 	}
 
 	api.register {
+		name = "sysincludedirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
 		name = "system",
 		scope = "config",
 		kind = "string",

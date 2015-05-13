@@ -253,3 +253,23 @@
 	</PropertyGroup>
 		]]
 	end
+
+
+--
+-- Check the handling of the VC++ Directories.
+--
+
+	function suite.onSystemIncludeDirs()
+		sysincludedirs { "$(DXSDK_DIR)/Include" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<LinkIncremental>true</LinkIncremental>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>.exe</TargetExt>
+		<IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+	</PropertyGroup>
+		]]
+	end
