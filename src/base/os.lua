@@ -241,83 +241,60 @@
 	end
 
 
-
 ---
--- Perform a wildcard search for files or directories.
+-- Perform a wildcard search for files and directories.
 --
 -- @param mask
 --    The file search pattern. Use "*" to match any part of a file or
 --    directory name, "**" to recurse into subdirectories.
--- @param matchFiles
---    True to match against files, false to match directories.
 -- @return
 --    A table containing the matched file or directory names.
 ---
 
-	function os.match(mask, matchFiles)
-		-- Strip any extraneous weirdness from the mask to ensure a good
-		-- match against the paths returned by the OS. I don't know if I've
-		-- caught all the possibilities here yet; will add more as I go.
-
+	function os.match(mask)
 		mask = path.normalize(mask)
-
-		-- strip off any leading directory information to find out
-		-- where the search should take place
-
-		local basedir = mask
 		local starpos = mask:find("%*")
-		if starpos then
-			basedir = basedir:sub(1, starpos - 1)
-		end
-		basedir = path.getdirectory(basedir)
-		if basedir == "." then
-			basedir = ""
-		end
+		local before = path.getdirectory(starpos and mask:sub(1, starpos - 1) or mask)
+		local slashpos = starpos and mask:find("/", starpos)
+		local after = slashpos and mask:sub(slashpos + 1)
 
-		-- recurse into subdirectories?
-		local recurse = mask:find("**", nil, true)
+		-- Only recurse for path components starting with '**':
+		local recurse = starpos and
+			mask:sub(starpos + 1, starpos + 1) == '*' and
+			(starpos == 1 or mask:sub(starpos - 1, starpos - 1) == '/')
 
-		-- convert mask to a Lua pattern
-		mask = path.wildcards(mask)
+		local results = { }
 
-		local result = {}
+		if recurse then
+			local submask = mask:sub(1, starpos) .. mask:sub(starpos + 2)
+			results = os.match(submask)
 
-		local function matchwalker(basedir)
-			local wildcard = path.join(basedir, "*")
-
-			-- retrieve files from OS and test against mask
-			local m = os.matchstart(wildcard)
+			local pattern = mask:sub(1, starpos)
+			local m = os.matchstart(pattern)
 			while os.matchnext(m) do
-				local isfile = os.matchisfile(m)
-				if (matchFiles and isfile) or (not matchFiles and not isfile) then
-					local fname = os.matchname(m)
-					if isfile or not fname:startswith(".") then
-						fname = path.join(basedir, fname)
-						if fname:match(mask) == fname then
-							table.insert(result, fname)
-						end
-					end
+				if not os.matchisfile(m) then
+					local matchpath = path.join(before, os.matchname(m), mask:sub(starpos))
+					results = table.join(results, os.match(matchpath, after))
 				end
 			end
 			os.matchdone(m)
-
-			-- check subdirectories
-			if recurse then
-				m = os.matchstart(wildcard)
+		else
+			local pattern = mask:sub(1, slashpos and slashpos - 1)
+			local m = os.matchstart(pattern)
 				while os.matchnext(m) do
-					if not os.matchisfile(m) then
-						local dirname = os.matchname(m)
-						if (not dirname:startswith(".")) then
-							matchwalker(path.join(basedir, dirname))
+				if not (slashpos and os.matchisfile(m)) then
+					local matchpath = path.join(before, matchpath, os.matchname(m))
+					if after then
+						results = table.join(results, os.match(path.join(matchpath, after)))
+					else
+						table.insert(results, matchpath)
 						end
 					end
 				end
 				os.matchdone(m)
 			end
-		end
 
-		matchwalker(basedir)
-		return result
+		return results
 	end
 
 
@@ -332,7 +309,13 @@
 ---
 
 	function os.matchdirs(mask)
-		return os.match(mask, false)
+		local results = os.match(mask)
+		for i = #results, 1, -1 do
+			if not os.isdir(results[i]) then
+				table.remove(results, i)
+			end
+		end
+		return results
 	end
 
 
@@ -347,9 +330,14 @@
 ---
 
 	function os.matchfiles(mask)
-		return os.match(mask, true)
+		local results = os.match(mask)
+		for i = #results, 1, -1 do
+			if not os.isfile(results[i]) then
+				table.remove(results, i)
+			end
+		end
+		return results
 	end
-
 
 --
 -- An overload of the os.mkdir() function, which will create any missing
