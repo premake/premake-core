@@ -64,6 +64,9 @@
 		context.addFilter(self, "_ACTION", _ACTION)
 		context.addFilter(self, "action", _ACTION)
 
+		self.system = self.system or p.action.current().os or os.get()
+		context.addFilter(self, "system", self.system)
+
 		-- Add command line options to the filtering options
 
 		local options = {}
