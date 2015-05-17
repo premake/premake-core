@@ -92,13 +92,14 @@
 
 		-- if format is a number then it is the stack depth
 		local depth = 3
+		local arg = {...}
 		if type(format) == "number" then
 			depth = depth + format
 			format = table.remove(arg, 1)
 		end
 
 		-- convert nils into something more usefuls
-		for i = 1, arg.n do
+		for i = 1, #arg do
 			if (arg[i] == nil) then
 				arg[i] = "(nil)"
 			elseif (type(arg[i]) == "table") then
@@ -210,7 +211,7 @@
 
 
 	function test.success(fn, ...)
-		local ok, err = pcall(fn, unpack(arg))
+		local ok, err = pcall(fn, ...)
 		if not ok then
 			test.fail("call failed: " .. err)
 		end
