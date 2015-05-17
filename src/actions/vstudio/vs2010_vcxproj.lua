@@ -195,6 +195,7 @@
 				m.targetName,
 				m.targetExt,
 				m.includePath,
+				m.libraryPath,
 				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
@@ -1292,6 +1293,14 @@
 				end
 				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 			end
+		end
+	end
+
+
+	function m.libraryPath(cfg)
+		local dirs = vstudio.path(cfg, cfg.syslibdirs)
+		if #dirs > 0 then
+			p.x('<LibraryPath>%s;$(LibraryPath)</LibraryPath>', table.concat(dirs, ";"))
 		end
 	end
 

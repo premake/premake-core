@@ -829,6 +829,13 @@
 	}
 
 	api.register {
+		name = "syslibdirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
 		name = "system",
 		scope = "config",
 		kind = "string",
