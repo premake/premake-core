@@ -197,6 +197,7 @@
 				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
+				m.executablePath,
 			}
 		end
 	end
@@ -899,8 +900,13 @@
 
 	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
-			local dirs = table.concat(vstudio.path(cfg, includedirs), ";")
-			p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+			local dirs = project.getrelative(cfg.project, includedirs)
+			dirs = table.filterempty(dirs)
+
+			if #dirs > 0 then
+				table.sort(dirs)
+				p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', path.translate(table.concat(dirs, ";")))
+			end
 		end
 	end
 
@@ -1404,6 +1410,16 @@
 	function m.outputFile(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
+		end
+	end
+
+
+	function m.executablePath(cfg)
+		local dirs = project.getrelative(cfg.project, cfg.bindirs)
+		dirs = table.filterempty(dirs)
+
+		if #dirs > 0 then
+			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
 		end
 	end
 
