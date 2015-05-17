@@ -41,10 +41,11 @@
 	function suite.debugCommand_isProjectRelative()
 		debugcommand "bin/emulator.exe"
 		prepare()
-		test.capture [[
-<LocalDebuggerCommand>bin\emulator.exe</LocalDebuggerCommand>
-<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-		]]
+
+		expectedPath = path.translate(path.getabsolute(os.getcwd())) .. "\\bin\\emulator.exe"
+		expected = "<LocalDebuggerCommand>" .. expectedPath .. "</LocalDebuggerCommand>"
+		expected = expected .. "\n<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>"
+		test.capture (expected)
 	end
 
 
