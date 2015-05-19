@@ -1070,7 +1070,7 @@
 			v = "AdvancedVectorExtensions"
 		elseif x == "AVX2" and _ACTION > "vs2012" then
 			v = "AdvancedVectorExtensions2"
-		elseif cfg.architecture ~= "x64" then
+		elseif cfg.architecture ~= "x86_64" then
 			if x == "SSE2" then
 				v = "StreamingSIMDExtensions2"
 			elseif x == "SSE" then
