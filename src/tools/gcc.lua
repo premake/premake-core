@@ -174,6 +174,10 @@
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-I' .. premake.quoted(dir))
 		end
+		for _, dir in ipairs(sysdirs or {}) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-isystem ' .. premake.quoted(dir))
+		end
 		return result
 	end
 
@@ -235,7 +239,8 @@
 		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
 
 		-- Scan the list of linked libraries. If any are referenced with
-		-- paths, add those to the list of library search paths
+		-- paths, add those to the list of library search paths. The call
+		-- config.getlinks() all includes cfg.libdirs.
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-L' .. premake.quoted(dir))
 		end
@@ -247,6 +252,10 @@
 					table.insert(flags, libFlag)
 				end
 			end
+		end
+
+		for _, dir in ipairs(cfg.syslibdirs) do
+			table.insert(flags, '-L' .. premake.quoted(dir))
 		end
 
 		return flags

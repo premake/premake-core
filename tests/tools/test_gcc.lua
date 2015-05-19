@@ -476,3 +476,20 @@
 		prepare()
 		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=3" }, gcc.getcflags(cfg))
 	end
+
+
+--
+-- Check handling of system search paths.
+--
+
+	function suite.includeDirs_onSysIncludeDirs()
+		sysincludedirs { "/usr/local/include" }
+		prepare()
+		test.contains("-isystem /usr/local/include", gcc.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs))
+	end
+
+	function suite.libDirs_onSysLibDirs()
+		syslibdirs { "/usr/local/lib" }
+		prepare()
+		test.contains("-L/usr/local/lib", gcc.getLibraryDirectories(cfg))
+	end
