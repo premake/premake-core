@@ -87,7 +87,7 @@
 
 	function m.localDebuggerCommand(cfg)
 		if cfg.debugcommand then
-			local dir = p.vstudio.path(cfg, cfg.debugcommand)
+			local dir = path.translate(cfg.debugcommand)
 			p.w('<LocalDebuggerCommand>%s</LocalDebuggerCommand>', dir)
 		end
 	end

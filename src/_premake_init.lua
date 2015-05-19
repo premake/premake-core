@@ -567,6 +567,13 @@
 	}
 
 	api.register {
+		name = "bindirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
 		name = "kind",
 		scope = "config",
 		kind = "string",
@@ -953,6 +960,8 @@
 		name = "vpaths",
 		scope = "project",
 		kind = "list:keyed:list:path",
+		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
