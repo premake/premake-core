@@ -887,20 +887,23 @@
 ---------------------------------------------------------------------------
 
 	function m.additionalDependencies(cfg, explicit)
-		local links
+		local links = {}
 
-		-- check to see if this project uses an external toolset. If so, let the
-		-- toolset define the format of the links
-		local toolset = config.toolset(cfg)
-		if toolset then
-			links = toolset.getlinks(cfg, not explicit)
-		else
-			links = vstudio.getLinks(cfg, explicit)
+		-- If we need sibling projects to be listed explicitly, grab them first
+		if explicit then
+			links = config.getlinks(cfg, "siblings", "fullpath")
+		end
+
+		-- Then the system libraries, which come undecorated.
+		local system = config.getlinks(cfg, "system", "name")
+		for i = 1, #system do
+			local name = path.appendextension(system[i], ".lib")
+			table.insert(links, name)
 		end
 
 		if #links > 0 then
-			links = path.translate(table.concat(links, ";"))
-			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+			table.sort(links)
+			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', table.concat(links, ";"))
 		end
 	end
 
@@ -1563,7 +1566,10 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
+		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
+			local filename = cfg.buildtarget.basename
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
+		end
 	end
 
 
