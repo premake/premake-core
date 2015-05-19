@@ -447,7 +447,8 @@
 			"C++11",
 			"C++14",
 
-			"MacOSXBundle"
+			"MacOSXBundle",
+			"NoLibSysDir"         -- disable adding /usr/lib on linux
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },

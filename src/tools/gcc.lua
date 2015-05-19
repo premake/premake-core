@@ -252,7 +252,11 @@
 	}
 
 	function gcc.getLibraryDirectories(cfg)
-		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
+		local flags = {}
+
+		if not cfg.flags.NoLibSysDir then
+			flags = config.mapFlags(cfg, gcc.libraryDirectories)
+		end
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
