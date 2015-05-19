@@ -1,4 +1,6 @@
 PREMAKE
+<a href="https://travis-ci.org/premake/premake-core"><img src="https://travis-ci.org/premake/premake-core.svg?branch=master" /></a>
+
 A build configuration tool
 Core module
 
