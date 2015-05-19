@@ -1,13 +1,16 @@
---
+---
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
---
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+---
 
-	premake.tools.gcc = {}
-	local gcc = premake.tools.gcc
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.tools.gcc = {}
+	local gcc = p.tools.gcc
+
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -165,7 +168,7 @@
 -- Decorate include file search paths for the GCC command line.
 --
 
-	function gcc.getincludedirs(cfg, dirs)
+	function gcc.getincludedirs(cfg, dirs, sysdirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
@@ -238,7 +241,7 @@
 		end
 
 		if cfg.flags.RelativeLinks then
-			for _, dir in ipairs(premake.config.getlinks(cfg, "siblings", "directory")) do
+			for _, dir in ipairs(config.getlinks(cfg, "siblings", "directory")) do
 				local libFlag = "-L" .. premake.project.getrelative(cfg.project, dir)
 				if not table.contains(flags, libFlag) then
 					table.insert(flags, libFlag)
@@ -260,7 +263,7 @@
 
 		if not systemonly then
 			if cfg.flags.RelativeLinks then
-				local libFiles = premake.config.getlinks(cfg, "siblings", "basename")
+				local libFiles = config.getlinks(cfg, "siblings", "basename")
 				for _, link in ipairs(libFiles) do
 					if string.find(link, "lib") == 1 then
 						link = link:sub(4)
