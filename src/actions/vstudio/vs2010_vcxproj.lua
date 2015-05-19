@@ -860,7 +860,7 @@
 	end
 
 	function m.projectReferences(prj)
-		local refs = project.getdependencies(prj)
+		local refs = project.getdependencies(prj, 'linkOnly')
 		if #refs > 0 then
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
@@ -912,9 +912,9 @@
 
 
 	function m.additionalLibraryDirectories(cfg)
-		if #cfg.libdirs > 0 then
-			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
-			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
+		local dirs = table.filterempty(config.getlinks(cfg, "system", "directory"))
+		if #dirs > 0 then
+			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', table.concat(dirs, ";"))
 		end
 	end
 
