@@ -302,3 +302,20 @@
 		prepare()
 		test.contains("/clr:pure", msc.getcflags(cfg))
 	end
+
+
+--
+-- Check handling of system search paths.
+--
+
+	function suite.includeDirs_onSysIncludeDirs()
+		sysincludedirs { "/usr/local/include" }
+		prepare()
+		test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs))
+	end
+
+	function suite.libDirs_onSysLibDirs()
+		syslibdirs { "/usr/local/lib" }
+		prepare()
+		test.contains('/LIBPATH:"/usr/local/lib"', msc.getLibraryDirectories(cfg))
+	end

@@ -194,6 +194,8 @@
 				m.intDir,
 				m.targetName,
 				m.targetExt,
+				m.includePath,
+				m.libraryPath,
 				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
@@ -1248,6 +1250,14 @@
 	end
 
 
+	function m.includePath(cfg)
+		local dirs = vstudio.path(cfg, cfg.sysincludedirs)
+		if #dirs > 0 then
+			p.x('<IncludePath>%s;$(IncludePath)</IncludePath>', table.concat(dirs, ";"))
+		end
+	end
+
+
 	function m.intDir(cfg)
 		local objdir = vstudio.path(cfg, cfg.objdir)
 		_x(2,'<IntDir>%s\\</IntDir>', objdir)
@@ -1289,6 +1299,14 @@
 				end
 				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 			end
+		end
+	end
+
+
+	function m.libraryPath(cfg)
+		local dirs = vstudio.path(cfg, cfg.syslibdirs)
+		if #dirs > 0 then
+			p.x('<LibraryPath>%s;$(LibraryPath)</LibraryPath>', table.concat(dirs, ";"))
 		end
 	end
 
