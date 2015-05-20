@@ -176,6 +176,22 @@
 
 
 --
+-- get the right output flag.
+--
+	function gcc.getsharedlibarg(cfg)
+		if cfg.system == premake.MACOSX then
+			if cfg.flags.MacOSXBundle then
+				return "-bundle"
+			else
+				return "-dynamiclib"
+			end
+		else
+			return "-shared"
+		end
+	end
+
+
+--
 -- Return a list of LDFLAGS for a specific configuration.
 --
 
@@ -192,7 +208,7 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				local r = { gcc.getsharedlibarg(cfg) }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				end
@@ -233,8 +249,17 @@
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths
-		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
-			table.insert(flags, '-L' .. premake.quoted(dir))
+		local done = {}
+		for _, link in ipairs(config.getlinks(cfg, "system", "fullpath")) do
+			local dir = path.getdirectory(link)
+			if #dir > 1 and not done[dir] then
+ 				done[dir] = true
+				if path.isframework(link) then
+					table.insert(flags, '-F' .. premake.quoted(dir))
+				else
+					table.insert(flags, '-L' .. premake.quoted(dir))
+				end
+			end
 		end
 
 		if cfg.flags.RelativeLinks then
