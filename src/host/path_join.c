@@ -43,11 +43,6 @@ int path_join(lua_State* L)
 			ptr = buffer;
 		}
 
-		/* if the path is already started, split parts */
-		if (ptr != buffer && *(ptr - 1) != '/') {
-			*(ptr++) = '/';
-		}
-
 		/* if source has a .. prefix then take off last dest path part
 		   note that this doesn't guarantee a normalized result as this
 		   code doesn't check for .. in the mid path, however .. occurring
@@ -56,14 +51,26 @@ int path_join(lua_State* L)
 		   substrings from the middle of the string. */
 
 		while (ptr != buffer && len >= 2 && part[0] == '.' && part[1] == '.') {
-			*(--ptr) = '\0';
-			ptr = strrchr(buffer, '/');
-			if (!ptr) {
-				ptr = buffer;
-			} else {
-				++ptr;
-				*ptr = '\0';
+			/* locate start of previous segment */
+			char* start = strrchr(buffer, '/');
+			if (!start) {
+				start = buffer;
 			}
+			else {
+				++start;
+			}
+
+			/* if I hit a segment I can't trim, bail out */
+			if (*start == '$') {
+				break;
+			}
+
+			/* otherwise trim segment and the ".." sequence */
+			if (start != buffer) {
+				--start;
+			}
+			*start = '\0';
+			ptr = start;
 			part += 2;
 			len -= 2;
 			if (len > 0 && part[0] == '/') {
@@ -72,13 +79,17 @@ int path_join(lua_State* L)
 			}
 		}
 
+		/* if the path is already started, split parts */
+		if (ptr != buffer && *(ptr - 1) != '/') {
+			*(ptr++) = '/';
+		}
 
 		/* append new part */
-		strcpy(ptr, part);
+		strncpy(ptr, part, len);
 		ptr += len;
+		*ptr = '\0';
 	}
 
-	*ptr = '\0';
 	lua_pushstring(L, buffer);
 	return 1;
 }
