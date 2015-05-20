@@ -10,7 +10,8 @@
 
 int path_join(lua_State* L)
 {
-	int i, len;
+	int i;
+	size_t len;
 	const char* part;
 	char buffer[0x4000];
 	char* ptr = buffer;
@@ -46,6 +47,31 @@ int path_join(lua_State* L)
 		if (ptr != buffer && *(ptr - 1) != '/') {
 			*(ptr++) = '/';
 		}
+
+		/* if source has a .. prefix then take off last dest path part
+		   note that this doesn't guarantee a normalized result as this
+		   code doesn't check for .. in the mid path, however .. occurring
+		   mid path are much more likely to occur during path joins
+		   and its faster if we handle here as we don't have to remove
+		   substrings from the middle of the string. */
+
+		while (ptr != buffer && len >= 2 && part[0] == '.' && part[1] == '.') {
+			*(--ptr) = '\0';
+			ptr = strrchr(buffer, '/');
+			if (!ptr) {
+				ptr = buffer;
+			} else {
+				++ptr;
+				*ptr = '\0';
+			}
+			part += 2;
+			len -= 2;
+			if (len > 0 && part[0] == '/') {
+				++part;
+				--len;
+			}
+		}
+
 
 		/* append new part */
 		strcpy(ptr, part);
