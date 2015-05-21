@@ -7,3 +7,6 @@
 [submodule "modules/codelite"]
 	path = modules/codelite
 	url = https://github.com/premake/premake-codelite.git
+[submodule "modules/d"]
+	path = modules/d
+	url = https://github.com/premake/premake-dlang.git
