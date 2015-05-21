@@ -214,7 +214,11 @@
 --    True if the feature is supported, false otherwise.
 ---
 
-	function action.supports(self, feature)
+	function action.supports(feature)
+		if not feature then
+			return true
+		end
+		local self = action.current()
 		if not self then
 			return false
 		end
@@ -232,11 +236,11 @@
 	end
 
 
--- 
+--
 -- Determines if an action supports a particular configuration.
 -- @return
 -- True if the configuration is supported, false otherwise.
--- 
+--
 	function premake.action.supportsconfig(action, cfg)
 		if not action then
 			return false
