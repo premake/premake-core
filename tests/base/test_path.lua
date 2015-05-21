@@ -307,6 +307,15 @@
 		test.isequal("/Users", path.join("/", "Users"))
 	end
 
+	function suite.join_keepsLeadingEnvVar()
+		test.isequal("$(ProjectDir)/../../Bin", path.join("$(ProjectDir)", "../../Bin"))
+	end
+
+	function suite.join_keepsInternalEnvVar()
+		test.isequal("$(ProjectDir)/$(TargetName)/../../Bin", path.join("$(ProjectDir)/$(TargetName)", "../../Bin"))
+	end
+
+
 
 --
 -- path.rebase() tests
