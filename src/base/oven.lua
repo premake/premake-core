@@ -117,6 +117,14 @@
 	function p.project.bake(self)
 		local sln = self.solution
 
+		if not premake.action.supports(premake.action.current(), self.language) then
+			printf("    Unsupported language '%s' used for '%s'.", self.language, self.name)
+		end
+
+		if not premake.action.supports(premake.action.current(), self.kind) then
+			printf("    Unsupported kind '%s' used for '%s'.", self.kind, self.name)
+		end
+
 		-- Add filtering terms to the context to make it as specific as I can.
 		-- Start with the same filtering that was applied at the solution level.
 
