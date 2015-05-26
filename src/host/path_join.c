@@ -28,6 +28,12 @@ int path_join(lua_State* L)
 		part = luaL_checkstring(L, i);
 		len = strlen(part);
 
+		/* remove leading "./" */
+		while (strncmp(part, "./", 2) == 0) {
+			part += 2;
+			len -= 2;
+		}
+
 		/* remove trailing slashes */
 		while (len > 1 && part[len - 1] == '/') {
 			--len;
