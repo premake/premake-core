@@ -275,6 +275,10 @@
 		test.isequal("foo", path.join("p1/p2/p3", "../../../foo"))
 	end
 
+	function suite.join_ignoreLeadingDots()
+		test.isequal("p1/p2/foo", path.join("p1/p2", "././foo"))
+	end	
+
 	function suite.join_OnUptoParentOfBase()
 		test.isequal("../../p1", path.join("p1/p2/p3/p4/p5/p6/p7/", "../../../../../../../../../p1"))
 	end
@@ -427,6 +431,11 @@
 	function suite.normalize_trailingDots2()
 		local p = path.normalize("../game/..")
 		test.isequal("..", p)
+	end
+
+	function suite.normalize_singleDot()
+		local p = path.normalize("../../generated/Protocol/External/BattlePay/./asterion.pb.cc")
+		test.isequal("../../generated/Protocol/External/BattlePay/asterion.pb.cc", p)
 	end
 
 	function suite.normalize()
