@@ -32,7 +32,11 @@ int path_translate(lua_State* L)
 	char buffer[0x4000];
 
 	if (lua_gettop(L) == 1) {
+#if PLATFORM_WINDOWS
 		sep = "\\";
+#else
+		sep = "/";
+#endif
 	}
 	else {
 		sep = luaL_checkstring(L, 2);
