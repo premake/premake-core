@@ -467,6 +467,18 @@
 	}
 
 	api.register {
+		name = "callingconvention",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Cdecl",
+			"FastCall",
+			"StdCall",
+			"VectorCall",
+		}
+	}
+
+	api.register {
 		name = "forceincludes",
 		scope = "config",
 		kind = "list:mixed",

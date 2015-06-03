@@ -46,6 +46,12 @@
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
 		},
+		callingconvention = {
+			Cdecl = "/Gd",
+			FastCall = "/Gr",
+			StdCall = "/Gz",
+			VectorCall = "/Gv",
+		},
 		optimize = {
 			Off = "/Od",
 			On = "/Ot",
