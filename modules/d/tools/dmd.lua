@@ -195,7 +195,7 @@
 -- OR!!!			if cfg.system ~= premake.WINDOWS then
 	if string.match( os.getversion().description, "Windows" ) ~= nil then
 		-- TODO: on windows, we may use OPTLINK or MSLINK (for Win64)...
-		printf("TODO: select proper linker for 32/64 bit code")
+--		printf("TODO: select proper linker for 32/64 bit code")
 
 		premake.tools.dmd = tdmd.optlink
 	else

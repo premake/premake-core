@@ -9,6 +9,7 @@
 	p.modules.d = {}
 
 	local d = p.modules.d
+	local api = p.api
 
 
 --
@@ -26,8 +27,112 @@
 	end
 
 
-	include("_preload.lua")
+--
+-- Register the D extension
+--
 
+	p.D = "D"
+
+	api.addAllowed("language", p.D)
+	api.addAllowed("floatingpoint", "None")
+	api.addAllowed("flags", {
+		"CodeCoverage",
+		"Deprecated",
+		"Documentation",
+		"GenerateHeader",
+		"GenerateJSON",
+		"GenerateMap",
+		"NoBoundsCheck",
+--		"PIC",		// Note: this should be supported elsewhere...
+		"Profile",
+		"Quiet",
+--		"Release",	// Note: We infer this flag from config.isDebugBuild()
+		"RetainPaths",
+		"SeparateCompilation",
+		"SymbolsLikeC",
+		"UnitTest",
+		"Verbose",
+	})
+
+
+--
+-- Register some D specific properties
+--
+
+	api.register {
+		name = "versionconstants",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "versionlevel",
+		scope = "config",
+		kind = "integer",
+	}
+
+	api.register {
+		name = "debugconstants",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "debuglevel",
+		scope = "config",
+		kind = "integer",
+	}
+
+	api.register {
+		name = "docdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "docname",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
+		name = "headerdir",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "headername",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+
+--
+-- Provide information for the help output
+--
+	newoption
+	{
+		trigger		= "dc",
+		value		= "VALUE",
+		description	= "Choose a D compiler",
+		allowed = {
+			{ "dmd", "Digital Mars (dmd)" },
+			{ "gdc", "GNU GDC (gdc)" },
+			{ "ldc", "LLVM LDC (ldc2)" },
+		}
+	}
+
+
+--
+-- Patch actions
+--
 	include( "tools/dmd.lua" )
 	include( "tools/gdc.lua" )
 	include( "tools/ldc.lua" )
