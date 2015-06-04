@@ -16,7 +16,7 @@ to your project definition and populate with .d files.
 
 ### APIs ###
 
-* flags
+* [flags](https://github.com/premake/premake-dlang/wiki/flags)
   * CodeCoverage
   * Deprecated
   * Documentation
@@ -31,14 +31,14 @@ to your project definition and populate with .d files.
   * SymbolsLikeC
   * UnitTest
   * Verbose
-* versionconstants
-* versionlevel
-* debugconstants
-* debuglevel
-* docdir
-* docname
-* headerdir
-* headername
+* [versionconstants](https://github.com/premake/premake-dlang/wiki/versionconstants)
+* [versionlevel](https://github.com/premake/premake-dlang/wiki/versionlevel)
+* [debugconstants](https://github.com/premake/premake-dlang/wiki/debugconstants)
+* [debuglevel](https://github.com/premake/premake-dlang/wiki/debuglevel)
+* [docdir](https://github.com/premake/premake-dlang/wiki/docdir)
+* [docname](https://github.com/premake/premake-dlang/wiki/docname)
+* [headerdir](https://github.com/premake/premake-dlang/wiki/headerdir)
+* [headername](https://github.com/premake/premake-dlang/wiki/headername)
 
 ### Example ###
 
