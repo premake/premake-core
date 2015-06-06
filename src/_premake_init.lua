@@ -446,6 +446,7 @@
 			"WPF",
 			"C++11",
 			"C++14",
+			"NoLibSysDir",         -- disable adding /usr/lib on linux
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
