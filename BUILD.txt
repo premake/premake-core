@@ -26,7 +26,15 @@ BUILDING FROM A SOURCE PACKAGE
 
 BUILDING FROM THE REPOSITORY
 
- If you have pulled sources from the Premake source repository, you will need
+ If you have pulled sources from the Premake source repository, you can run
+ the `bootstrap.sh` or `bootstrap.bat` script to generate your first premake
+ executable.
+
+    $ git submodule init
+    $ git submodule update
+    $ ./bootstrap.sh
+
+ If your toolset is not supported by the bootstrap script, you will need
  to embed the scripts into a C source file so they may be built into the
  executable, and also generate the project files for your chosen toolset. In
  order do either of these things, you will need a working Premake executable.
