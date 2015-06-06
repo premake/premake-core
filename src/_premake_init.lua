@@ -126,6 +126,12 @@
 	}
 
 	api.register {
+		name = "buildoutputsasinputs",
+		scope = "config",
+		kind = "string"
+	}
+
+	api.register {
 		name = "buildrule",     -- DEPRECATED
 		scope = "config",
 		kind = "table",
