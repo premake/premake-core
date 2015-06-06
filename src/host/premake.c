@@ -293,6 +293,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 		if (path && do_locate(L, filename, path)) return OKAY;
 	}
 
+	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	if ((searchMask & TEST_EMBEDDED) != 0) {
 		/* Try to locate a record matching the filename */
 		for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
@@ -304,6 +305,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 			}
 		}
 	}
+	#endif
 
 	return !OKAY;
 }
@@ -475,12 +477,14 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 #endif
 
 	/* Try to locate a record matching the filename */
+	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
 		if (strcmp(builtin_scripts_index[i], filename) == 0) {
 			chunk = builtin_scripts[i];
 			break;
 		}
 	}
+	#endif
 
 	if (chunk == NULL) {
 		return !OKAY;
