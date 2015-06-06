@@ -20,7 +20,7 @@
 		for option in premake.option.each() do
 			local cat = "OPTIONS - General"
 			if option.category then
-				cat = "OPTIONS - " .. options.category;
+				cat = "OPTIONS - " .. option.category;
 			end
 
 			if categories[cat] then
