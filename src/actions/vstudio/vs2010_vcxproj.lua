@@ -322,6 +322,7 @@
 			m.multiProcessorCompilation,
 			m.additionalCompileOptions,
 			m.compileAs,
+			m.callingConvention,
 		}
 	end
 
@@ -1599,7 +1600,11 @@
 		end
 	end
 
-
+	function m.callingConvention(cfg)
+		if cfg.callingconvention then
+			p.w('<CallingConvention>%s</CallingConvention>', cfg.callingconvention)
+		end
+	end
 
 	function m.runtimeTypeInfo(cfg)
 		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
