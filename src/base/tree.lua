@@ -222,7 +222,10 @@
 			end
 
 			if fn.onnode then
-				fn.onnode(node, depth)
+				local _break = fn.onnode(node, depth)
+				if _break then
+					return
+				end
 			end
 
 			if #node.children > 0 then

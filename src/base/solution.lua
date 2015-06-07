@@ -140,3 +140,28 @@
 		sln = premake.oven.bakeSolution(sln)
 		return sln.projects[idx]
 	end
+
+--
+-- Return the relative path from the solution to the specified file.
+--
+-- @param prj
+--    The solution object to query.
+-- @param filename
+--    The file path, or an array of file paths, to convert.
+-- @return
+--    The relative path, or array of paths, from the solution to the file.
+--
+
+	function solution.getrelative(sln, filename)
+		if type(filename) == "table" then
+			local result = {}
+			for i, name in ipairs(filename) do
+				result[i] = solution.getrelative(sln, name)
+			end
+			return result
+		else
+			if filename then
+				return path.getrelative(sln.location, filename)
+			end
+		end
+	end

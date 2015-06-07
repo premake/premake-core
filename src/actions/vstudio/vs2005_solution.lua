@@ -31,7 +31,7 @@
 
 	function sln2005.generate(sln)
 		-- Mark the file as Unicode
-		_p('\239\187\191')
+		premake.utf8()
 
 		sln2005.reorderProjects(sln)
 
@@ -126,7 +126,7 @@
 --
 
 	function sln2005.projectdependencies(prj)
-		local deps = project.getdependencies(prj)
+		local deps = project.getdependencies(prj, 'dependOnly')
 		if #deps > 0 then
 			_p(1,'ProjectSection(ProjectDependencies) = postProject')
 			for _, dep in ipairs(deps) do

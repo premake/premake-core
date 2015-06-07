@@ -158,38 +158,52 @@
 --
 -- @param prj
 --    The project to query.
--- @param linkOnly
---    If set, returns only siblings which are linked against (links) and skips
---    siblings which are not (dependson).
+-- @param mode
+--    if mode == 'linkOnly', returns only siblings which are linked against (links) and skips siblings which are not (dependson).
+--    if mode == 'dependOnly' returns only siblings which are depended on (dependson) and skips siblings which are not (links).
 -- @return
 --    A list of dependent projects, as an array of project objects.
 ---
 
-	function project.getdependencies(prj, linkOnly)
+	function project.getdependencies(prj, mode)
 		if not prj.dependencies then
-			local result = {}
-			local function add_to_project_list(cfg, depproj, result)
-				local dep = premake.solution.findproject(cfg.solution, depproj)
-					if dep and not table.contains(result, dep) then
-						table.insert(result, dep)
-					end
-			end
+			prj.dependencies = {}
+		end
 
-			for cfg in project.eachconfig(prj) do
+		local m = mode or 'all'
+		local result = prj.dependencies[m]
+		if result then
+			return result
+		end
+
+		local function add_to_project_list(cfg, depproj, result)
+			local dep = premake.solution.findproject(cfg.solution, depproj)
+				if dep and not table.contains(result, dep) then
+					table.insert(result, dep)
+				end
+		end
+
+		local linkOnly = m == 'linkOnly'
+		local depsOnly = m == 'dependOnly'
+
+		result = {}
+		for cfg in project.eachconfig(prj) do
+			if not depsOnly then
 				for _, link in ipairs(cfg.links) do
 				    if link ~= prj.name then
 				    	add_to_project_list(cfg, link, result)
 				    end
 				end
-				if not linkOnly then
-					for _, depproj in ipairs(cfg.dependson) do
-						add_to_project_list(cfg, depproj, result)
-					end
+			end
+			if not linkOnly then
+				for _, depproj in ipairs(cfg.dependson) do
+					add_to_project_list(cfg, depproj, result)
 				end
 			end
-			prj.dependencies = result
 		end
-		return prj.dependencies
+		prj.dependencies[m] = result
+
+		return result
 	end
 
 
@@ -314,54 +328,69 @@
 		-- for tables, each table continuing the path key, which looks up the
 		-- array of paths with should match against that path.
 
-		for _, vpaths in ipairs(prj.vpaths) do
-			for replacement, patterns in pairs(vpaths) do
-				for _, pattern in ipairs(patterns) do
-					local i = abspath:find(path.wildcards(pattern))
-					if i == 1 then
+		function sort_by_length(t, a, b)
+			return string.len(a) > string.len(b)
+		end
+		
+		local vpaths = {}
 
-						-- Trim out the part of the name that matched the pattern; what's
-						-- left is the part that gets appended to the replacement to make
-						-- the virtual path. So a pattern like "src/**.h" matching the
-						-- file src/include/hello.h, I want to trim out the src/ part,
-						-- leaving include/hello.h.
+		for _, v in ipairs(prj.vpaths) do
+			for replacement, patterns in pairs(v) do
+				if vpaths[replacement] == nil then
+					vpaths[replacement] = patterns
+				else
+					table.merge(vpaths[replacement], patterns)
+				end
+			end
+		end
+		
+		-- so we want the longest most unique paths first
+		for replacement, patterns in spairs(vpaths, sort_by_length) do
+			for _, pattern in ipairs(patterns) do
+				local i = abspath:find(path.wildcards(pattern))
+				if i == 1 then
 
-						-- Find out where the wildcard appears in the match. If there is
-						-- no wildcard, the match includes the entire pattern
+					-- Trim out the part of the name that matched the pattern; what's
+					-- left is the part that gets appended to the replacement to make
+					-- the virtual path. So a pattern like "src/**.h" matching the
+					-- file src/include/hello.h, I want to trim out the src/ part,
+					-- leaving include/hello.h.
 
-						i = pattern:find("*", 1, true) or (pattern:len() + 1)
+					-- Find out where the wildcard appears in the match. If there is
+					-- no wildcard, the match includes the entire pattern
 
-						-- Trim, taking care to keep the actual file name intact.
+					i = pattern:find("*", 1, true) or (pattern:len() + 1)
 
-						local leaf
-						if i < max then
-							leaf = abspath:sub(i)
-						else
-							leaf = fname
-						end
+					-- Trim, taking care to keep the actual file name intact.
 
-						if leaf:startswith("/") then
-							leaf = leaf:sub(2)
-						end
+					local leaf
+					if i < max then
+						leaf = abspath:sub(i)
+					else
+						leaf = fname
+					end
 
-						-- check for (and remove) stars in the replacement pattern.
-						-- If there are none, then trim all path info from the leaf
-						-- and use just the filename in the replacement (stars should
-						-- really only appear at the end; I'm cheating here)
+					if leaf:startswith("/") then
+						leaf = leaf:sub(2)
+					end
 
-						local stem = ""
-						if replacement:len() > 0 then
-							stem, stars = replacement:gsub("%*", "")
-							if stars == 0 then
-								leaf = path.getname(leaf)
-							end
-						else
+					-- check for (and remove) stars in the replacement pattern.
+					-- If there are none, then trim all path info from the leaf
+					-- and use just the filename in the replacement (stars should
+					-- really only appear at the end; I'm cheating here)
+
+					local stem = ""
+					if replacement:len() > 0 then
+						stem, stars = replacement:gsub("%*", "")
+						if stars == 0 then
 							leaf = path.getname(leaf)
 						end
-
-						vpath = path.join(stem, leaf)
-						return vpath
+					else
+						leaf = path.getname(leaf)
 					end
+
+					vpath = path.join(stem, leaf)
+					return vpath
 				end
 			end
 		end

@@ -183,6 +183,22 @@
 
 
 --
+-- get the right output flag.
+--
+	function gcc.getsharedlibarg(cfg)
+		if cfg.system == premake.MACOSX then
+			if cfg.flags.MacOSXBundle then
+				return "-bundle"
+			else
+				return "-dynamiclib"
+			end
+		else
+			return "-shared"
+		end
+	end
+
+
+--
 -- Return a list of LDFLAGS for a specific configuration.
 --
 
@@ -199,7 +215,7 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				local r = { gcc.getsharedlibarg(cfg) }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				end
@@ -236,17 +252,29 @@
 	}
 
 	function gcc.getLibraryDirectories(cfg)
-		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
+		local flags = {}
+
+		if not cfg.flags.NoLibSysDir then
+			flags = config.mapFlags(cfg, gcc.libraryDirectories)
+		end
 
 		-- Scan the list of linked libraries. If any are referenced with
-		-- paths, add those to the list of library search paths. The call
-		-- config.getlinks() all includes cfg.libdirs.
-		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
-			table.insert(flags, '-L' .. premake.quoted(dir))
+		-- paths, add those to the list of library search paths
+		local done = {}
+		for _, link in ipairs(config.getlinks(cfg, "system", "fullpath")) do
+			local dir = path.getdirectory(link)
+			if #dir > 1 and not done[dir] then
+ 				done[dir] = true
+				if path.isframework(link) then
+					table.insert(flags, '-F' .. premake.quoted(dir))
+				else
+					table.insert(flags, '-L' .. premake.quoted(dir))
+				end
+			end
 		end
 
 		if cfg.flags.RelativeLinks then
-			for _, dir in ipairs(config.getlinks(cfg, "siblings", "directory")) do
+			for _, dir in ipairs(premake.config.getlinks(cfg, "siblings", "directory")) do
 				local libFlag = "-L" .. premake.project.getrelative(cfg.project, dir)
 				if not table.contains(flags, libFlag) then
 					table.insert(flags, libFlag)

@@ -46,8 +46,8 @@
 	end
 
 	function m.generate(prj)
-		io.utf8()
-        m.xmlDeclaration()
+		p.utf8()
+		m.xmlDeclaration()
 		m.project()
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
@@ -861,8 +861,13 @@
 	end
 
 	function m.projectReferences(prj)
-		local refs = project.getdependencies(prj)
+		local refs = project.getdependencies(prj, 'linkOnly')
 		if #refs > 0 then
+			-- sort dependencies by uuid.
+			table.sort(refs, function(a,b)
+				return a.uuid < b.uuid
+			end)
+
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
@@ -883,20 +888,23 @@
 ---------------------------------------------------------------------------
 
 	function m.additionalDependencies(cfg, explicit)
-		local links
+		local links = {}
 
-		-- check to see if this project uses an external toolset. If so, let the
-		-- toolset define the format of the links
-		local toolset = config.toolset(cfg)
-		if toolset then
-			links = toolset.getlinks(cfg, not explicit)
-		else
-			links = vstudio.getLinks(cfg, explicit)
+		-- If we need sibling projects to be listed explicitly, grab them first
+		if explicit then
+			links = config.getlinks(cfg, "siblings", "fullpath")
+		end
+
+		-- Then the system libraries, which come undecorated.
+		local system = config.getlinks(cfg, "system", "name")
+		for i = 1, #system do
+			local name = path.appendextension(system[i], ".lib")
+			table.insert(links, name)
 		end
 
 		if #links > 0 then
-			links = path.translate(table.concat(links, ";"))
-			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+			table.sort(links)
+			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', table.concat(links, ";"))
 		end
 	end
 
@@ -913,32 +921,84 @@
 
 
 	function m.additionalLibraryDirectories(cfg)
-		if #cfg.libdirs > 0 then
-			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
-			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
+		local dirs = table.filterempty(config.getlinks(cfg, "system", "directory"))
+		if #dirs > 0 then
+			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', table.concat(dirs, ";"))
 		end
 	end
 
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
-			local dirs = table.concat(vstudio.path(cfg, cfg.usingdirs), ";")
-			p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
+			local dirs = vstudio.path(cfg, cfg.usingdirs)
+			if #dirs > 0 then
+				table.sort(dirs)
+				p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', table.concat(dirs, ";"))
+			end
 		end
 	end
 
 
+	function m.filterKnownOption(input, condition, option, modifier)
+		local result = {}
+		local warnings = {}
+
+		for i, fn in ipairs(input) do
+			if fn:match(option) then
+				table.insert(warnings, modifier(fn))
+			else
+				table.insert(result, fn)
+			end
+		end
+
+		return warnings, result
+	end
+
+
 	function m.additionalCompileOptions(cfg, condition)
-		if #cfg.buildoptions > 0 then
-			local opts = table.concat(cfg.buildoptions, " ")
+		-- process known option '/wd'
+		local w, options = m.filterKnownOption(cfg.buildoptions, condition, '%/wd', function(fn)
+			return string.sub(fn, 4)
+		end)
+		if #w > 0 then
+			m.element("DisableSpecificWarnings", condition, '%s;%%(DisableSpecificWarnings)', table.concat(w, ";"))
+		end
+
+		if #options > 0 then
+			local opts = table.concat(options, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
 
 	function m.additionalLinkOptions(cfg)
-		if #cfg.linkoptions > 0 then
-			local opts = table.concat(cfg.linkoptions, " ")
-			_x(3, '<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
+		-- process known option '/NODEFAULTLIB:'
+		local w, options = m.filterKnownOption(cfg.linkoptions, condition, '%/NODEFAULTLIB:', function(fn)
+			return string.sub(fn, 15)
+		end)
+		if #w > 0 then
+			m.element("IgnoreSpecificDefaultLibraries", condition, '%s;%%(IgnoreSpecificDefaultLibraries)', table.concat(w, ";"))
+		end
+
+		-- process known option '/MACHINE:'
+		w, options = m.filterKnownOption(options, condition, '%/MACHINE:', function(fn)
+			return 'Machine' .. string.sub(fn, 10)
+		end)
+		if #w > 0 then
+			m.element("TargetMachine", condition, '%s', table.concat(w, ";"))
+		end
+
+		-- process known option '/LARGEADDRESSAWARE:'
+		w, options = m.filterKnownOption(options, condition, '%/LARGEADDRESSAWARE', function(fn)
+			return "true"
+		end)
+		if #w > 0 then
+			m.element("LargeAddressAware", condition, 'true')
+		end
+
+		-- if there are any linkoptions left, add those.
+		if #options > 0 then
+			local opts = table.concat(options, " ")
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
@@ -1436,6 +1496,7 @@
 		dirs = table.filterempty(dirs)
 
 		if #dirs > 0 then
+			table.sort(dirs)
 			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
 		end
 	end
@@ -1446,7 +1507,7 @@
 		if version then
 			version = "v" .. version
 		else
-			local action = premake.action.current()
+		local action = premake.action.current()
 			version = action.vstudio.platformToolset
 		end
 		if version then
@@ -1481,6 +1542,7 @@
 
 	function m.preprocessorDefinitions(cfg, defines, escapeQuotes, condition)
 		if #defines > 0 then
+			table.sort(defines)
 			defines = table.concat(defines, ";")
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
@@ -1493,6 +1555,7 @@
 
 	function m.undefinePreprocessorDefinitions(cfg, undefines, escapeQuotes, condition)
 		if #undefines > 0 then
+			table.sort(undefines)
 			undefines = table.concat(undefines, ";")
 			if escapeQuotes then
 				undefines = undefines:gsub('"', '\\"')
@@ -1504,7 +1567,10 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
+		if cfg.flags.Symbols and cfg.debugformat ~= "c7" then
+			local filename = cfg.buildtarget.basename
+			_p(3,'<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', filename)
+		end
 	end
 
 

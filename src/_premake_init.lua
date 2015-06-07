@@ -126,6 +126,12 @@
 	}
 
 	api.register {
+		name = "buildoutputsasinputs",
+		scope = "config",
+		kind = "string"
+	}
+
+	api.register {
 		name = "buildrule",     -- DEPRECATED
 		scope = "config",
 		kind = "table",
@@ -446,6 +452,9 @@
 			"WPF",
 			"C++11",
 			"C++14",
+
+			"MacOSXBundle",
+			"NoLibSysDir"         -- disable adding /usr/lib on linux
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },

@@ -398,6 +398,7 @@
 		return res
 	end
 
+
 --
 -- Filters a table for empty entries. primarly useful for lists of string.
 --
@@ -409,4 +410,49 @@
 				return nil
 			end
 		end)
+	end
+
+
+--
+-- Create a shallow copy of a table.
+--
+	function table.shallowcopy(orig)
+		local orig_type = type(orig)
+		local copy
+		if orig_type == 'table' then
+			copy = {}
+			for orig_key, orig_value in pairs(orig) do
+				copy[orig_key] = orig_value
+			end
+		else -- number, string, boolean, etc
+			copy = orig
+		end
+		return copy
+	end
+
+
+--
+-- foreach sorted
+--
+	function spairs(t, order)
+		-- collect the keys
+		local keys = {}
+		for k in pairs(t) do keys[#keys+1] = k end
+
+		-- if order function given, sort by it by passing the table and keys a, b,
+		-- otherwise just sort the keys 
+		if order then
+			table.sort(keys, function(a,b) return order(t, a, b) end)
+		else
+			table.sort(keys)
+		end
+
+		-- return the iterator function
+		local i = 0
+		return function()
+			i = i + 1
+			if keys[i] then
+				return keys[i], t[keys[i]]
+			end
+		end
 	end

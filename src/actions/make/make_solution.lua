@@ -148,9 +148,11 @@
 					end
 				end
 				if #groupTargets > 0 then
+					table.sort(groupTargets)
 					rule = rule .. " " .. table.concat(groupTargets, " ")
 				end
 				if #projectTargets > 0 then
+					table.sort(projectTargets)
 					rule = rule .. " " .. table.concat(projectTargets, " ")
 				end
 				_p(rule)

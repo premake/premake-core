@@ -14,9 +14,9 @@ static int chunk_wrapper(lua_State* L);
 /* Pull in Lua's aux lib implementation, but rename luaL_loadfile() so I
  * can replace it with my own implementation. */
 
-#define luaL_loadfile  original_luaL_loadfile
-#include "lua-5.1.4/src/lauxlib.c"
-#undef luaL_loadfile
+#define luaL_loadfilex original_luaL_loadfilex
+#include "lua-5.2.3/src/lauxlib.c"
+#undef luaL_loadfilex
 
 
 
@@ -25,7 +25,7 @@ static int chunk_wrapper(lua_State* L);
  * wrapper, above, before executing any scripts loaded from a file.
  */
 
-LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
+LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char *mode)
 {
 	const char* script_dir;
 	const char* test_name;
@@ -74,7 +74,7 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 
 		test_name = lua_tostring(L, -1);
 		if (test_name) {
-			z = original_luaL_loadfile(L, test_name);
+			z = original_luaL_loadfilex(L, test_name, mode);
 		}
 
 		/* If the file exists but errors, pass that through */
