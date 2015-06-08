@@ -467,6 +467,18 @@
 	}
 
 	api.register {
+		name = "inlining",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Disabled",
+			"Explicit",
+			"Implicit"
+		}
+	}
+
+	api.register {
 		name = "callingconvention",
 		scope = "config",
 		kind = "string",
