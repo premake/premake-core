@@ -1097,10 +1097,14 @@
 
 
 	function m.exceptionHandling(cfg)
-		if cfg.flags.NoExceptions then
+		if cfg.exceptionhandling == false then
 			p.w('<ExceptionHandling>false</ExceptionHandling>')
-		elseif cfg.flags.SEH then
-			p.w('<ExceptionHandling>Async</ExceptionHandling>')
+		elseif cfg.exceptionhandling == true then
+			if cfg.flags.SEH then
+				p.w('<ExceptionHandling>Async</ExceptionHandling>')
+			else
+				p.w('<ExceptionHandling>Sync</ExceptionHandling>')
+			end
 		end
 	end
 
@@ -1621,8 +1625,10 @@
 	end
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
-			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
+		if cfg.rtti == false and cfg.clr == p.OFF then
+			p.w('<RuntimeTypeInfo>false</RuntimeTypeInfo>')
+		elseif cfg.rtti == true then
+			p.w('<RuntimeTypeInfo>true</RuntimeTypeInfo>')
 		end
 	end
 

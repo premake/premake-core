@@ -347,6 +347,18 @@
 	}
 
 	api.register {
+		name = "exceptionhandling",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
+		name = "rtti",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
 		name = "enablewarnings",
 		scope = "config",
 		kind = "list:string",
@@ -416,7 +428,7 @@
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",   -- DEPRECATED
-			"NoExceptions",
+			"NoExceptions",        -- DEPRECATED
 			"NoFramePointer",
 			"NoImplicitLink",
 			"NoImportLib",
@@ -426,7 +438,7 @@
 			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
-			"NoRTTI",
+			"NoRTTI",              -- DEPRECATED
 			"NoBufferSecurityCheck",
 			"NoWarnings",          -- DEPRECATED
 			"OmitDefaultLibrary",
@@ -1130,6 +1142,24 @@
 	end)
 
 
+	api.deprecateValue("flags", "NoExceptions", nil,
+	function(value)
+		exceptionhandling "Off"
+	end,
+	function(value)
+		exceptionhandling "On"
+	end)
+
+
+	api.deprecateValue("flags", "NoRTTI", nil,
+	function(value)
+		rtti "Off"
+	end,
+	function(value)
+		rtti "On"
+	end)
+
+
 	api.deprecateValue("flags", "Unsafe", nil,
 	function(value)
 		clr "Unsafe"
@@ -1247,6 +1277,8 @@
 
 	clr "Off"
 	editandcontinue "On"
+	exceptionhandling "On"
+	rtti "On"
 
 	-- Setting a default language makes some validation easier later
 
