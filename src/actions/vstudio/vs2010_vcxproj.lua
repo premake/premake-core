@@ -903,8 +903,7 @@
 
 	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
-			local dirs = vstudio.path(cfg.project, includedirs)
-			dirs = table.filterempty(dirs)
+			local dirs = vstudio.path(cfg, includedirs)
 			if #dirs > 0 then
 				p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', table.concat(dirs, ";"))
 			end
@@ -1129,11 +1128,15 @@
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
 			local includes = vstudio.path(cfg, cfg.forceincludes)
-			m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
+			if #includes > 0 then
+				m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
+			end
 		end
 		if #cfg.forceusings > 0 then
 			local usings = vstudio.path(cfg, cfg.forceusings)
-			m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
+			if #usings > 0 then
+				m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
+			end
 		end
 	end
 
@@ -1432,9 +1435,7 @@
 
 
 	function m.executablePath(cfg)
-		local dirs = project.getrelative(cfg.project, cfg.bindirs)
-		dirs = table.filterempty(dirs)
-
+		local dirs = vstudio.path(cfg, cfg.bindirs)
 		if #dirs > 0 then
 			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
 		end
