@@ -36,6 +36,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 </ClCompile>
 		]]
 	end
@@ -221,6 +223,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 </ClCompile>
 		]]
 	end
@@ -233,6 +237,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 </ClCompile>
 		]]
 	end
@@ -294,6 +300,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<AdditionalOptions>/xyz /abc %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
@@ -440,6 +448,8 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 </ClCompile>
 		]]
 	end
@@ -475,6 +485,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
 		]]
 	end
@@ -487,6 +499,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
 		]]
 	end
@@ -528,11 +542,12 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
 	<RuntimeTypeInfo>false</RuntimeTypeInfo>
 		]]
 	end
 
-	function suite.runtimeTypeInfo_onNoRTTI()
+	function suite.runtimeTypeInfo_onNoBufferSecurityCheck()
 		flags "NoBufferSecurityCheck"
 		prepare()
 		test.capture [[
@@ -540,6 +555,8 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<BufferSecurityCheck>false</BufferSecurityCheck>
 		]]
 	end
@@ -686,6 +703,8 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<MinimalRebuild>false</MinimalRebuild>
+	<ExceptionHandling>Sync</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		]]
 	end

@@ -103,16 +103,13 @@
 -- Returns list of C++ compiler flags for a configuration.
 --
 
-	msc.cxxflags = {
-		flags = {
-			NoRTTI = "/GR-",
-		}
-	}
-
 	function msc.getcxxflags(cfg)
-		local flags = config.mapFlags(cfg, msc.cxxflags)
+		local flags = {}
 
-		if not cfg.flags.SEH and not cfg.flags.NoExceptions then
+		if cfg.rtti == false then
+			table.insert(flags, "/GR-")
+		end
+		if not cfg.flags.SEH and cfg.exceptionhandling then
 			table.insert(flags, "/EHsc")
 		end
 

@@ -41,20 +41,20 @@
 -- Retrieve the CXXFLAGS for a specific configuration.
 --
 
-	snc.cxxflags = {
-		NoExceptions   = "-Xc-=exceptions",
-		NoRTTI         = "-Xc-=rtti",
-	}
-
 	function snc.getcxxflags(cfg)
-		local flags = table.translate(cfg.flags, snc.cxxflags)
+		local flags = {}
 
 		-- turn on exceptions and RTTI by default, to match other toolsets
-		if not cfg.flags.NoExceptions then
+		if cfg.exceptionhandling then
 			table.insert(flags, "-Xc+=exceptions")
+		else 
+			table.insert(flags, "-Xc-=exceptions")
 		end
-		if not cfg.flags.NoRTTI then
+
+		if cfg.rtti then
 			table.insert(flags, "-Xc+=rtti")
+		else
+			table.insert(flags, "-Xc-=rtti")
 		end
 
 		return flags

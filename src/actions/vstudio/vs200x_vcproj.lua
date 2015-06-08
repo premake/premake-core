@@ -1122,7 +1122,7 @@
 
 
 	function m.exceptionHandling(cfg)
-		if cfg.flags.NoExceptions then
+		if cfg.exceptionhandling == false then
 			p.w('ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
 		elseif cfg.flags.SEH and _ACTION > "vs2003" then
 			p.w('ExceptionHandling="2"')
@@ -1519,7 +1519,7 @@
 
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
+		if cfg.rtti == false and cfg.clr == p.OFF then
 			p.w('RuntimeTypeInfo="false"')
 		end
 	end
