@@ -160,7 +160,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
-	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 	<Optimization>Full</Optimization>
 	<FunctionLevelLinking>true</FunctionLevelLinking>
 	<IntrinsicFunctions>true</IntrinsicFunctions>
@@ -176,7 +175,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
-	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 	<Optimization>MinSpace</Optimization>
 	<FunctionLevelLinking>true</FunctionLevelLinking>
 	<IntrinsicFunctions>true</IntrinsicFunctions>
@@ -192,7 +190,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
-	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 	<Optimization>MaxSpeed</Optimization>
 	<FunctionLevelLinking>true</FunctionLevelLinking>
 	<IntrinsicFunctions>true</IntrinsicFunctions>
@@ -208,7 +205,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
-	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 	<Optimization>Full</Optimization>
 	<FunctionLevelLinking>true</FunctionLevelLinking>
 	<IntrinsicFunctions>true</IntrinsicFunctions>
@@ -612,7 +608,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
-	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
