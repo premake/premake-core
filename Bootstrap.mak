@@ -37,9 +37,18 @@ none:
 	@echo "Please do"
 	@echo "   nmake -f Bootstrap.mak windows"
 	@echo "or"
-	@echo "   make -f Bootstrap.mak PLATFORM"
-	@echo "where PLATFORM is one of these:"
+	@echo "   CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw"
+	@echo "or"
+	@echo "   make -f Bootstrap.mak HOST_PLATFORM"
+	@echo "where HOST_PLATFORM is one of these:"
 	@echo "   osx linux"
+
+mingw: $(SRC)
+	mkdir -p build/bootstrap
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" $? -lole32
+	./build/bootstrap/premake_bootstrap embed
+	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake
+	$(MAKE) -C build/bootstrap
 
 osx: $(SRC)
 	mkdir -p build/bootstrap

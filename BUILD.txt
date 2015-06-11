@@ -33,9 +33,14 @@ BUILDING FROM THE REPOSITORY
     $ git submodule update
     $ make -f Bootstrap.mak PLATFORM
 
- Where PLATFORM can be osx or linux. On Windows use nmake:
+ Where PLATFORM can be osx or linux.
+ On Windows with Visual Studio use nmake:
 
     $ nmake -f Bootstrap.mak windows
+
+ Or on Windows with MinGW use mingw32-make:
+
+    $ CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw
 
  If your toolset is not supported by the bootstrap Makefile, you will need
  to embed the scripts into a C source file so they may be built into the
