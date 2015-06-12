@@ -944,7 +944,8 @@
 
 
 	function m.basicRuntimeChecks(cfg)
-		if cfg.flags.NoRuntimeChecks or config.isOptimizedBuild(cfg) then
+		local runtime = config.getruntime(cfg)
+		if cfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(cfg) and runtime:endswith("Debug")) then
 			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
 		end
 	end
@@ -1591,7 +1592,7 @@
 
 	function m.runtimeLibrary(cfg)
 		local runtimes = {
-			StaticDebug = "MultiThreadedDebug",
+			StaticDebug   = "MultiThreadedDebug",
 			StaticRelease = "MultiThreaded",
 		}
 		local runtime = runtimes[config.getruntime(cfg)]
