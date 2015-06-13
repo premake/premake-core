@@ -31,9 +31,15 @@
 		make.cppConfigs(prj)
 		test.capture [[
 ifeq ($(config),debug)
-  CC = clang
-  CXX = clang++
-  AR = ar
+  ifeq ($(origin CC), default)
+    CC = clang
+  endif
+  ifeq ($(origin CXX), default)
+    CXX = clang++
+  endif
+  ifeq ($(origin AR), default)
+    AR = ar
+  endif
   		]]
 	end
 

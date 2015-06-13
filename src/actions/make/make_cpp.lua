@@ -359,17 +359,23 @@
 	function make.cppTools(cfg, toolset)
 		local tool = toolset.gettoolname(cfg, "cc")
 		if tool then
-			_p('  CC = %s', tool)
+			_p('  ifeq ($(origin CC), default)')
+			_p('    CC = %s', tool)
+			_p('  endif' )
 		end
 
 		tool = toolset.gettoolname(cfg, "cxx")
 		if tool then
-			_p('  CXX = %s', tool)
+			_p('  ifeq ($(origin CXX), default)')
+			_p('    CXX = %s', tool)
+			_p('  endif' )
 		end
 
 		tool = toolset.gettoolname(cfg, "ar")
 		if tool then
-			_p('  AR = %s', tool)
+			_p('  ifeq ($(origin AR), default)')
+			_p('    AR = %s', tool)
+			_p('  endif' )
 		end
 
 		tool = toolset.gettoolname(cfg, "rc")
