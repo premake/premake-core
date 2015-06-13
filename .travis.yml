@@ -1,12 +1,23 @@
+matrix:
+ include:
+# - os: linux                        # test linux32 later...
+#   env: BUILD="linux32" RUN_TESTS=1
+ - os: linux
+   env: BUILD="linux64" RUN_TESTS=1
+# - os: linux                        # arm build? (most distros have an arm archive)
+#   env: BUILD="linuxarm" RUN_TESTS=0
+ - os: linux
+   env: BUILD="windows" EXTRA_PACKAGES="" PREMAKE_OPTS="--os=windows" CC="i686-w64-mingw32-gcc" RUN_TESTS=0 LD_FLAGS=$LD_FLAGS src/lib/libole32.a
+# - os: osx
+#   env: BUILD="osx" RUN_TESTS=1     # we need to bootstrap osx somehow...
 
 before_install:
  - sudo add-apt-repository -y ppa:codegear/release
  - sudo apt-get -qq update
- - sudo apt-get install premake4
- 
+ - sudo apt-get install premake4 $EXTRA_PACKAGES
+
 script:
  - premake4 embed
- - premake4 gmake
+ - premake4 $PREMAKE_OPTS gmake
  - make -j8
- - bin/release/premake5 test
-
+ - if [ $RUN_TESTS == 1 ]; then bin/release/premake5 test; fi
