@@ -20,6 +20,7 @@
 
 	field._list = {}
 	field._loweredList = {}
+	field._sortedList = nil
 	field._kinds = {}
 
 	-- For historical reasons
@@ -96,6 +97,7 @@
 
 		field._list[f.name] = f
 		field._loweredList[f.name:lower()] = f
+		field._sortedList = nil
 
 		return f
 	end
@@ -109,12 +111,14 @@
 	function field.unregister(f)
 		field._list[f.name] = nil
 		field._loweredList[f.name:lower()] = nil
+		field._sortedList = nil
 	end
 
 
 
 ---
--- Returns an iterator for the list of register fields.
+-- Returns an iterator for the list of registered fields; the
+-- ordering of returned results is arbitrary.
 ---
 
 	function field.each()
@@ -125,6 +129,31 @@
 		end
 	end
 
+
+
+---
+-- Returns an iterator for the list of registered fields; the
+-- results are in a prioritized order, then alphabetized.
+---
+
+	function field.eachOrdered()
+		if not field._sortedList then
+			-- no priorities yet, just alpha sort
+			local keys = table.keys(field._list)
+			table.sort(keys)
+
+			field._sortedList = {}
+			for i = 1, #keys do
+				field._sortedList[i] = field._list[keys[i]]
+			end
+		end
+
+		local i = 0
+		return function ()
+			i = i + 1
+			return field._sortedList[i]
+		end
+	end
 
 
 ---
