@@ -236,6 +236,11 @@
 	end
 
 
+	function fcfg_mt.directory(fcfg)
+		return path.getdirectory(fcfg.abspath)
+	end
+
+
 	function fcfg_mt.name(fcfg)
 		return path.getname(fcfg.abspath)
 	end
