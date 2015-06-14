@@ -21,6 +21,7 @@
 
 	vstudio.vs200x_architectures =
 	{
+		win32   = "x86",
 		x86     = "x86",
 		x86_64  = "x64",
 		xbox360 = "Xbox 360",
@@ -28,6 +29,7 @@
 
 	vstudio.vs2010_architectures =
 	{
+		win32   = "x86",
 	}
 
 
@@ -295,7 +297,7 @@
 	function vstudio.archFromPlatform(platform)
 		local system = premake.api.checkValue(premake.fields.system, platform)
 		local arch = premake.api.checkValue(premake.fields.architecture, platform)
-		return architecture(system, arch)
+		return architecture(system, arch or platform:lower())
 	end
 
 
