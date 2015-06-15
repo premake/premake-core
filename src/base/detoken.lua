@@ -139,7 +139,8 @@
 				end
 				return value
 			else
-				return expandvalue(value)
+				-- escape backslashes: they will break loadstring
+				return expandvalue(value:gsub("\\", "\\\\"))
 			end
 		end
 

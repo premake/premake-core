@@ -119,3 +119,13 @@
 		x = detoken.expand(os.getcwd() .. "/%{cfg.objdir}/file", environ, {paths=true,pathVars=true})
 		test.isequal("$(IntDir)/file", x)
 	end
+
+--
+-- Escapes backslashes correctly.
+--
+
+	function suite.escapesBackslashes()
+		environ.foo = "some/path"
+		x = detoken.expand("%{foo:gsub('/', '\\')}", environ)
+		test.isequal("some\\path", x)
+	end
