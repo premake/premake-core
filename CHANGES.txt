@@ -23,7 +23,7 @@ Since 5.0-alpha2:
 * Fix: Allow tokens in vpaths()
 * Fix: Silence xcopy output from {COPY} command token (StiX)
 * Fix: Remove ".." sequences in path.join()
-* Fix: Allow CC and CXX overrides from command line (Time Wharton)
+* Fix: Allow CC and CXX overrides from command line (Tim Wharton)
 * Fix: Enable solution level filtering on system values
 * Fix: Make configuration flag mapping order deterministic
 * Fix: Map "Win32" to x86 architecture for Visual Studio
