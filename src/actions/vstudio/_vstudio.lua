@@ -21,6 +21,7 @@
 
 	vstudio.vs200x_architectures =
 	{
+		win32   = "x86",
 		x86     = "x86",
 		x86_64  = "x64",
 		xbox360 = "Xbox 360",
@@ -28,6 +29,7 @@
 
 	vstudio.vs2010_architectures =
 	{
+		win32   = "x86",
 	}
 
 
@@ -295,7 +297,7 @@
 	function vstudio.archFromPlatform(platform)
 		local system = premake.api.checkValue(premake.fields.system, platform)
 		local arch = premake.api.checkValue(premake.fields.architecture, platform)
-		return architecture(system, arch)
+		return architecture(system, arch or platform:lower())
 	end
 
 
@@ -380,6 +382,24 @@
 			cfg._needsExplicitLink = ex
 		end
 		return cfg._needsExplicitLink
+	end
+
+
+---
+-- Prepare a path value for output in a Visual Studio project or solution.
+-- Converts path separators to backslashes, and makes relative to the project.
+--
+-- @param cfg
+--    The project or configuration which contains the path.
+-- @param value
+--    The path to be prepared.
+-- @return
+--    The prepared path.
+---
+
+	function vstudio.path(cfg, value)
+		cfg = cfg.project or cfg
+		return path.translate(project.getrelative(cfg, value))
 	end
 
 

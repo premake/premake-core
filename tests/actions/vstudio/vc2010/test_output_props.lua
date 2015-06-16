@@ -240,7 +240,7 @@
 --
 
 	function suite.extensionsToDeleteOnClean()
-		cleanExtensions { ".temp1", ".temp2" }
+		cleanextensions { ".temp1", ".temp2" }
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -250,6 +250,41 @@
 		<TargetName>MyProject</TargetName>
 		<TargetExt>.exe</TargetExt>
 		<ExtensionsToDeleteOnClean>*.temp1;*.temp2;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+	</PropertyGroup>
+		]]
+	end
+
+
+--
+-- Check the handling of the VC++ Directories.
+--
+
+	function suite.onSystemIncludeDirs()
+		sysincludedirs { "$(DXSDK_DIR)/Include" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<LinkIncremental>true</LinkIncremental>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>.exe</TargetExt>
+		<IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+	</PropertyGroup>
+		]]
+	end
+
+	function suite.onSystemLibraryDirs()
+		syslibdirs { "$(DXSDK_DIR)/lib/x86" }
+		prepare()
+		test.capture [[
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<LinkIncremental>true</LinkIncremental>
+		<OutDir>.\</OutDir>
+		<IntDir>obj\Debug\</IntDir>
+		<TargetName>MyProject</TargetName>
+		<TargetExt>.exe</TargetExt>
+		<LibraryPath>$(DXSDK_DIR)\lib\x86;$(LibraryPath)</LibraryPath>
 	</PropertyGroup>
 		]]
 	end

@@ -87,8 +87,8 @@
 
 	function m.localDebuggerCommand(cfg)
 		if cfg.debugcommand then
-			local dir = p.project.getrelative(cfg.project, cfg.debugcommand)
-			p.w('<LocalDebuggerCommand>%s</LocalDebuggerCommand>', path.translate(dir))
+			local dir = path.translate(cfg.debugcommand)
+			p.w('<LocalDebuggerCommand>%s</LocalDebuggerCommand>', dir)
 		end
 	end
 
@@ -104,8 +104,8 @@
 
 	function m.localDebuggerWorkingDirectory(cfg)
 		if cfg.debugdir then
-			local dir = p.project.getrelative(cfg.project, cfg.debugdir)
-			p.x('<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', path.translate(dir))
+			local dir = p.vstudio.path(cfg, cfg.debugdir)
+			p.x('<LocalDebuggerWorkingDirectory>%s</LocalDebuggerWorkingDirectory>', dir)
 		end
 	end
 

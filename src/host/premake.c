@@ -14,7 +14,7 @@
 #endif
 
 
-#define VERSION        "5.0-alpha3"
+#define VERSION        "5.0.0.alpha4"
 #define COPYRIGHT      "Copyright (C) 2002-2015 Jason Perkins and the Premake Project"
 #define PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 #define ERROR_MESSAGE  "Error: %s\n"
@@ -53,27 +53,28 @@ static const luaL_Reg path_functions[] = {
 };
 
 static const luaL_Reg os_functions[] = {
-	{ "chdir",       os_chdir       },
-	{ "chmod",       os_chmod       },
-	{ "copyfile",    os_copyfile    },
-	{ "_is64bit",    os_is64bit     },
-	{ "isdir",       os_isdir       },
-	{ "getcwd",      os_getcwd      },
-	{ "getversion",  os_getversion  },
-	{ "isfile",      os_isfile      },
-	{ "islink",      os_islink      },
-	{ "locate",      os_locate      },
-	{ "matchdone",   os_matchdone   },
-	{ "matchisfile", os_matchisfile },
-	{ "matchname",   os_matchname   },
-	{ "matchnext",   os_matchnext   },
-	{ "matchstart",  os_matchstart  },
-	{ "mkdir",       os_mkdir       },
-	{ "pathsearch",  os_pathsearch  },
-	{ "realpath",    os_realpath    },
-	{ "rmdir",       os_rmdir       },
-	{ "stat",        os_stat        },
-	{ "uuid",        os_uuid        },
+	{ "chdir",                  os_chdir                },
+	{ "chmod",                  os_chmod                },
+	{ "copyfile",               os_copyfile             },
+	{ "_is64bit",               os_is64bit              },
+	{ "isdir",                  os_isdir                },
+	{ "getcwd",                 os_getcwd               },
+	{ "getversion",             os_getversion           },
+	{ "isfile",                 os_isfile               },
+	{ "islink",                 os_islink               },
+	{ "locate",                 os_locate               },
+	{ "matchdone",              os_matchdone            },
+	{ "matchisfile",            os_matchisfile          },
+	{ "matchname",              os_matchname            },
+	{ "matchnext",              os_matchnext            },
+	{ "matchstart",             os_matchstart           },
+	{ "mkdir",                  os_mkdir                },
+	{ "pathsearch",             os_pathsearch           },
+	{ "realpath",               os_realpath             },
+	{ "rmdir",                  os_rmdir                },
+	{ "stat",                   os_stat                 },
+	{ "uuid",                   os_uuid                 },
+	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
 	{ NULL, NULL }
 };
 
@@ -292,6 +293,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 		if (path && do_locate(L, filename, path)) return OKAY;
 	}
 
+	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	if ((searchMask & TEST_EMBEDDED) != 0) {
 		/* Try to locate a record matching the filename */
 		for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
@@ -303,6 +305,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 			}
 		}
 	}
+	#endif
 
 	return !OKAY;
 }
@@ -474,12 +477,14 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 #endif
 
 	/* Try to locate a record matching the filename */
+	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
 		if (strcmp(builtin_scripts_index[i], filename) == 0) {
 			chunk = builtin_scripts[i];
 			break;
 		}
 	}
+	#endif
 
 	if (chunk == NULL) {
 		return !OKAY;

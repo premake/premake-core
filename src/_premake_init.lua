@@ -6,7 +6,8 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	local api = premake.api
+	local p = premake
+	local api = p.api
 
 	local DOC_URL = "See https://github.com/premake/premake-core/wiki/"
 
@@ -68,7 +69,6 @@
 		},
 	}
 
-
 	api.register {
 		name = "buildcommands",
 		scope = { "config", "rule" },
@@ -77,17 +77,21 @@
 		pathVars = true,
 	}
 
-	api.alias("buildcommands", "buildCommands")
-
-
 	api.register {
-		name = "buildDependencies",
+		name = "builddependencies",
 		scope = { "rule" },
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
 	}
 
+	api.register {
+		name = "buildlog",
+		scope = { "config" },
+		kind = "path",
+		tokens = true,
+		pathVars = true,
+	}
 
 	api.register {
 		name = "buildmessage",
@@ -97,9 +101,6 @@
 		pathVars = true,
 	}
 
-	api.alias("buildmessage", "buildMessage")
-
-
 	api.register {
 		name = "buildoptions",
 		scope = "config",
@@ -108,7 +109,6 @@
 		pathVars = true,
 	}
 
-
 	api.register {
 		name = "buildoutputs",
 		scope = { "config", "rule" },
@@ -116,9 +116,6 @@
 		tokens = true,
 		pathVars = true,
 	}
-
-	api.alias("buildoutputs", "buildOutputs")
-
 
 	api.register {
 		name = "buildinputs",
@@ -143,13 +140,11 @@
 		pathVars = true,
 	}
 
-
 	api.register {
-		name = "cleanExtensions",
+		name = "cleanextensions",
 		scope = "config",
 		kind = "list:string",
 	}
-
 
 	api.register {
 		name = "clr",
@@ -164,16 +159,14 @@
 		}
 	}
 
-
 	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
 	}
 
-
 	api.register {
-		name = "configFile",
+		name = "configfile",
 		scope = "config",
 		kind = "string",
 		tokens = true,
@@ -334,7 +327,6 @@
 		tokens = true,
 	}
 
-
 	api.register {
 		name = "disablewarnings",
 		scope = "config",
@@ -342,20 +334,17 @@
 		tokens = true,
 	}
 
-
 	api.register {
 		name = "display",
 		scope = "rule",
 		kind = "string",
 	}
 
-
 	api.register {
-		name = "editAndContinue",
+		name = "editandcontinue",
 		scope = "config",
 		kind = "boolean",
 	}
-
 
 	api.register {
 		name = "enablewarnings",
@@ -375,12 +364,6 @@
 		},
 	}
 
-	-- For backward compatibility, excludes() is now an alias for removefiles()
-	function excludes(value)
-		removefiles(value)
-	end
-
-
 	api.register {
 		name = "fatalwarnings",
 		scope = "config",
@@ -388,13 +371,11 @@
 		tokens = true,
 	}
 
-
 	api.register {
-		name = "fileExtension",
+		name = "fileextension",
 		scope = "rule",
 		kind = "string",
 	}
-
 
 	api.register {
 		name = "filename",
@@ -486,6 +467,18 @@
 	}
 
 	api.register {
+		name = "callingconvention",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Cdecl",
+			"FastCall",
+			"StdCall",
+			"VectorCall",
+		}
+	}
+
+	api.register {
 		name = "forceincludes",
 		scope = "config",
 		kind = "list:mixed",
@@ -508,7 +501,6 @@
 			"Hardware",
 		}
 	}
-
 
 	api.register {
 		name = "framework",
@@ -581,6 +573,13 @@
 
 	api.register {
 		name = "includedirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
+		name = "bindirs",
 		scope = "config",
 		kind = "list:directory",
 		tokens = true,
@@ -782,7 +781,7 @@
 	}
 
 	api.register {
-		name = "propertyDefinition",
+		name = "propertydefinition",
 		scope = "rule",
 		kind = "list:table",
 	}
@@ -842,6 +841,20 @@
 	}
 
 	api.register {
+		name = "sysincludedirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
+		name = "syslibdirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
 		name = "system",
 		scope = "config",
 		kind = "string",
@@ -898,9 +911,10 @@
 		scope = "config",
 		kind = "string",
 		allowed = function(value)
-			local key = value:lower()
-			if premake.tools[key] ~= nil then
-				return key
+			value = value:lower()
+			local tool, version = p.tools.canonical(value)
+			if tool then
+				return value
 			end
 		end,
 	}
@@ -958,6 +972,8 @@
 		name = "vpaths",
 		scope = "project",
 		kind = "list:keyed:list:path",
+		tokens = true,
+		pathVars = true,
 	}
 
 	api.register {
@@ -970,6 +986,24 @@
 			"Extra",
 		}
 	}
+
+
+-----------------------------------------------------------------------------
+--
+-- Field name aliases for backward compatibility
+--
+-----------------------------------------------------------------------------
+
+	api.alias("buildcommands", "buildCommands")
+	api.alias("builddependencies", "buildDependencies")
+	api.alias("buildmessage", "buildMessage")
+	api.alias("buildoutputs", "buildOutputs")
+	api.alias("cleanextensions", "cleanExtensions")
+	api.alias("configfile", "configFile")
+	api.alias("editandcontinue", "editAndContinue")
+	api.alias("fileextension", "fileExtension")
+	api.alias("propertydefinition", "propertyDefinition")
+	api.alias("removefiles", "excludes")
 
 
 -----------------------------------------------------------------------------
@@ -1077,10 +1111,10 @@
 
 	api.deprecateValue("flags", "NoEditAndContinue", nil,
 	function(value)
-		editAndContinue "Off"
+		editandcontinue "Off"
 	end,
 	function(value)
-		editAndContinue "On"
+		editandcontinue "On"
 	end)
 
 
@@ -1200,7 +1234,7 @@
 -----------------------------------------------------------------------------
 
 	clr "Off"
-	editAndContinue "On"
+	editandcontinue "On"
 
 	-- Setting a default language makes some validation easier later
 

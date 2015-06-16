@@ -259,6 +259,26 @@
 		test.isequal("p2", path.join(".", "p2"))
 	end
 
+	function suite.join_OnBackToBasePath()
+		test.isequal("", path.join("p1/p2/", "../../"))
+	end
+
+	function suite.join_OnBackToBasePathWithoutFinalSlash()
+		test.isequal("", path.join("p1/p2/", "../.."))
+	end
+
+	function suite.join_OnUptwoFolders()
+		test.isequal("p1/foo", path.join("p1/p2/p3", "../../foo"))
+	end
+
+	function suite.join_OnUptoBase()
+		test.isequal("foo", path.join("p1/p2/p3", "../../../foo"))
+	end
+
+	function suite.join_OnUptoParentOfBase()
+		test.isequal("../../p1", path.join("p1/p2/p3/p4/p5/p6/p7/", "../../../../../../../../../p1"))
+	end
+
 	function suite.join_OnNilSecondPart()
 		test.isequal("p1", path.join("p1", nil))
 	end
@@ -286,6 +306,15 @@
 	function suite.join_canJoinBareSlash()
 		test.isequal("/Users", path.join("/", "Users"))
 	end
+
+	function suite.join_keepsLeadingEnvVar()
+		test.isequal("$(ProjectDir)/../../Bin", path.join("$(ProjectDir)", "../../Bin"))
+	end
+
+	function suite.join_keepsInternalEnvVar()
+		test.isequal("$(ProjectDir)/$(TargetName)/../../Bin", path.join("$(ProjectDir)/$(TargetName)", "../../Bin"))
+	end
+
 
 
 --

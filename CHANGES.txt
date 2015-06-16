@@ -5,6 +5,33 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha2:
+
+* New: CodeLite support
+* New: D language support
+* New: MonoDevelop support
+* New API: buildlog()
+* New API: callingconvention() (Tim Wharton)
+* New API: os.writefile_ifnotequal()
+* New API: sysincludedirs()
+* New API: syslibdirs()
+* New: toolset() can now specify a version number
+* New: Default values and categories for command line options
+* New: Add bootstrapping script for Git repository (Tim Wharton)
+* Fix: Modules are now loaded correctly in all situations (Damien Courtois)
+* Fix: Make Visual Studio debug commands absolute (amc522)
+* Fix: Allow tokens in vpaths()
+* Fix: Silence xcopy output from {COPY} command token (StiX)
+* Fix: Remove ".." sequences in path.join()
+* Fix: Allow CC and CXX overrides from command line (Time Wharton)
+* Fix: Enable solution level filtering on system values
+* Fix: Make configuration flag mapping order deterministic
+* Fix: Map "Win32" to x86 architecture for Visual Studio
+* Fix: Correct formatting for Visual Studio rule paths
+* Fix: Make project APIs consistently lowercase
+* Fix: Disable SSE/SSE2 flags for Visual Studio 64-bit builds
+* Fix: io.open() now creates directory append ("a") mode
+
 Since 5.0-alpha1:
 
 * Many new debugger APIs

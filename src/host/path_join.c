@@ -10,7 +10,8 @@
 
 int path_join(lua_State* L)
 {
-	int i, len;
+	int i;
+	size_t len;
 	const char* part;
 	char buffer[0x4000];
 	char* ptr = buffer;
@@ -42,17 +43,53 @@ int path_join(lua_State* L)
 			ptr = buffer;
 		}
 
+		/* if source has a .. prefix then take off last dest path part
+		   note that this doesn't guarantee a normalized result as this
+		   code doesn't check for .. in the mid path, however .. occurring
+		   mid path are much more likely to occur during path joins
+		   and its faster if we handle here as we don't have to remove
+		   substrings from the middle of the string. */
+
+		while (ptr != buffer && len >= 2 && part[0] == '.' && part[1] == '.') {
+			/* locate start of previous segment */
+			char* start = strrchr(buffer, '/');
+			if (!start) {
+				start = buffer;
+			}
+			else {
+				++start;
+			}
+
+			/* if I hit a segment I can't trim, bail out */
+			if (*start == '$') {
+				break;
+			}
+
+			/* otherwise trim segment and the ".." sequence */
+			if (start != buffer) {
+				--start;
+			}
+			*start = '\0';
+			ptr = start;
+			part += 2;
+			len -= 2;
+			if (len > 0 && part[0] == '/') {
+				++part;
+				--len;
+			}
+		}
+
 		/* if the path is already started, split parts */
 		if (ptr != buffer && *(ptr - 1) != '/') {
 			*(ptr++) = '/';
 		}
 
 		/* append new part */
-		strcpy(ptr, part);
+		strncpy(ptr, part, len);
 		ptr += len;
+		*ptr = '\0';
 	}
 
-	*ptr = '\0';
 	lua_pushstring(L, buffer);
 	return 1;
 }

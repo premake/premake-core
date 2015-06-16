@@ -99,6 +99,7 @@ return {
 	-- Visual Studio 2010-2013 C/C++ projects
 	"actions/vstudio/vc2010/test_assembly_refs.lua",
 	"actions/vstudio/vc2010/test_build_events.lua",
+	"actions/vstudio/vc2010/test_build_log.lua",
 	"actions/vstudio/vc2010/test_compile_settings.lua",
 	"actions/vstudio/vc2010/test_config_props.lua",
 	"actions/vstudio/vc2010/test_debug_settings.lua",
@@ -117,6 +118,7 @@ return {
 	"actions/vstudio/vc2010/test_manifest.lua",
 	"actions/vstudio/vc2010/test_nmake_props.lua",
 	"actions/vstudio/vc2010/test_output_props.lua",
+	"actions/vstudio/vc2010/test_platform_toolset.lua",
 	"actions/vstudio/vc2010/test_project_configs.lua",
 	"actions/vstudio/vc2010/test_project_refs.lua",
 	"actions/vstudio/vc2010/test_prop_sheet.lua",

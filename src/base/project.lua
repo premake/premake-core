@@ -1,7 +1,8 @@
 ---
 -- project.lua
 -- Premake project object API
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Author Jason Perkins
+-- Copyright (c) 2011-2015 Jason Perkins and the Premake project
 ---
 
 	local p = premake
@@ -13,11 +14,11 @@
 
 
 ---
--- Alias the old external() call to the new externalProject(), to distinguish
--- between it and externalRule().
+-- Alias the old external() call to the new externalproject(), to distinguish
+-- between it and externalrule().
 ---
 
-	external = externalProject
+	external = externalproject
 
 
 

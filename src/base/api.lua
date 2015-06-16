@@ -1,7 +1,8 @@
 --
 -- api.lua
 -- Implementation of the solution, project, and configuration APIs.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Author Jason Perkins
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -58,11 +59,14 @@
 			return c
 		end
 
-		_G["external" .. containerName:capitalized()] = function(name)
+		_G["external" .. containerName] = function(name)
 			local c = _G[containerName](name)
 			c.external = true
 			return c
 		end
+
+		-- for backward compatibility
+		_G["external" .. containerName:capitalized()] = _G["external" .. containerName]
 
 		return class
 	end
@@ -75,11 +79,13 @@
 -- scripts as external.
 ---
 
-	function includeExternal(fname)
+	function includeexternal(fname)
 		api._isIncludingExternal = true
 		include(fname)
 		api._isIncludingExternal = nil
 	end
+
+	includeExternal = includeexternal
 
 
 
@@ -737,15 +743,17 @@
 	premake.field.kind("directory", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if value:find("*") then
+			if string.sub(value, 1, 2) == "%{" then
+				return value
+			elseif value:find("*") then
 				value = os.matchdirs(value)
 				for i, file in ipairs(value) do
 					value[i] = path.getabsolute(value[i])
 				end
+				return value
 			else
-				value = path.getabsolute(value)
+				return path.getabsolute(value)
 			end
-			return value
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
@@ -765,15 +773,17 @@
 	premake.field.kind("file", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if value:find("*") then
+			if string.sub(value, 1, 2) == "%{" then
+				return value
+			elseif value:find("*") then
 				value = os.matchfiles(value)
 				for i, file in ipairs(value) do
 					value[i] = path.getabsolute(value[i])
 				end
+				return value
 			else
-				value = path.getabsolute(value)
+				return path.getabsolute(value)
 			end
-			return value
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
@@ -962,7 +972,9 @@
 		paths = true,
 		store = function(field, current, value, processor)
 			if type(value) == "string" and value:find('/', nil, true) then
-				value = path.getabsolute(value)
+				if string.sub(value, 1, 2) ~= "%{" then
+					value = path.getabsolute(value)
+				end
 			end
 			return value
 		end,
@@ -999,6 +1011,9 @@
 	premake.field.kind("path", {
 		paths = true,
 		store = function(field, current, value, processor)
+			if string.sub(value, 1, 2) == "%{" then
+				return value
+			end
 			return path.getabsolute(value)
 		end,
 		compare = function(field, a, b, processor)

@@ -8,7 +8,7 @@
 ---
 
 	local function execQuiet(cmd, ...)
-		cmd = string.format(cmd, unpack(arg)) .. " > _output_.log 2> _error_.log"
+		cmd = string.format(cmd, ...) .. " > _output_.log 2> _error_.log"
 		local z = os.execute(cmd)
 		os.remove("_output_.log")
 		os.remove("_error_.log")
@@ -129,7 +129,7 @@
 		for _, name in ipairs { ".git" } do
 			os.rmdir(path.join(module, name))
 		end
-		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig" } do
+		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig", "Bootstrap.mak" } do
 			os.remove(path.join(module, name))
 		end
 	end

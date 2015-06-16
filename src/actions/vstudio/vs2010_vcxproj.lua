@@ -194,9 +194,12 @@
 				m.intDir,
 				m.targetName,
 				m.targetExt,
+				m.includePath,
+				m.libraryPath,
 				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
+				m.executablePath,
 			}
 		end
 	end
@@ -256,6 +259,7 @@
 				m.imageXex,
 				m.deploy,
 				m.ruleVars,
+				m.buildLog,
 			}
 		end
 	end
@@ -318,6 +322,7 @@
 			m.multiProcessorCompilation,
 			m.additionalCompileOptions,
 			m.compileAs,
+			m.callingConvention,
 		}
 	end
 
@@ -515,7 +520,11 @@
 					local fld = p.rule.getPropertyField(rule, prop)
 					local value = cfg[fld.name]
 					if value ~= nil then
-						value = p.rule.getPropertyString(rule, prop, value)
+						if fld.kind == "path" then
+							value = vstudio.path(cfg, value)
+						else
+							value = p.rule.getPropertyString(rule, prop, value)
+						end
 						if value ~= nil and #value > 0 then
 							m.element(prop.name, nil, '%s', value)
 						end
@@ -856,8 +865,8 @@
 		if #refs > 0 then
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
-				local relpath = project.getrelative(prj, vstudio.projectfile(ref))
-				p.push('<ProjectReference Include=\"%s\">', path.translate(relpath))
+				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
+				p.push('<ProjectReference Include=\"%s\">', relpath)
 				p.callArray(m.elements.projectReferences, prj, ref)
 				p.pop('</ProjectReference>')
 			end
@@ -894,25 +903,25 @@
 
 	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
-			local dirs = project.getrelative(cfg.project, includedirs)
-			dirs = path.translate(table.concat(dirs, ";"))
-			p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', dirs)
+			local dirs = vstudio.path(cfg.project, includedirs)
+			dirs = table.filterempty(dirs)
+			if #dirs > 0 then
+				p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', table.concat(dirs, ";"))
+			end
 		end
 	end
 
 
 	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.libdirs)
-			dirs = path.translate(table.concat(dirs, ";"))
+			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
 			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
 		end
 	end
 
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
-			local dirs = project.getrelative(cfg.project, cfg.usingdirs)
-			dirs = path.translate(table.concat(dirs, ";"))
+			local dirs = table.concat(vstudio.path(cfg, cfg.usingdirs), ";")
 			p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
 		end
 	end
@@ -935,8 +944,18 @@
 
 
 	function m.basicRuntimeChecks(cfg)
-		if cfg.flags.NoRuntimeChecks then
+		local runtime = config.getruntime(cfg)
+		if cfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(cfg) and runtime:endswith("Debug")) then
 			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
+		end
+	end
+
+
+	function m.buildLog(cfg)
+		if cfg.buildlog and #cfg.buildlog > 0 then
+			p.push('<BuildLog>')
+			p.x('<Path>%s</Path>', vstudio.path(cfg, cfg.buildlog))
+			p.pop('</BuildLog>')
 		end
 	end
 
@@ -1022,7 +1041,7 @@
 			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   not cfg.editAndContinue
+				   not cfg.editandcontinue
 			then
 				value = "ProgramDatabase"
 			else
@@ -1053,10 +1072,12 @@
 			v = "AdvancedVectorExtensions"
 		elseif x == "AVX2" and _ACTION > "vs2012" then
 			v = "AdvancedVectorExtensions2"
-		elseif x == "SSE2" then
-			v = "StreamingSIMDExtensions2"
-		elseif x == "SSE" then
-			v = "StreamingSIMDExtensions"
+		elseif cfg.architecture ~= "x86_64" then
+			if x == "SSE2" then
+				v = "StreamingSIMDExtensions2"
+			elseif x == "SSE" then
+				v = "StreamingSIMDExtensions"
+			end
 		end
 		if v then
 			m.element('EnableEnhancedInstructionSet', condition, v)
@@ -1092,8 +1113,8 @@
 
 
 	function m.extensionsToDeleteOnClean(cfg)
-		if #cfg.cleanExtensions > 0 then
-			local value = table.implode(cfg.cleanExtensions, "*", ";", "")
+		if #cfg.cleanextensions > 0 then
+			local value = table.implode(cfg.cleanextensions, "*", ";", "")
 			m.element("ExtensionsToDeleteOnClean", nil, value .. "$(ExtensionsToDeleteOnClean)")
 		end
 	end
@@ -1108,11 +1129,11 @@
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
-			local includes = path.translate(project.getrelative(cfg.project, cfg.forceincludes))
+			local includes = vstudio.path(cfg, cfg.forceincludes)
 			m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
 		end
 		if #cfg.forceusings > 0 then
-			local usings = path.translate(project.getrelative(cfg.project, cfg.forceusings))
+			local usings = vstudio.path(cfg, cfg.forceusings)
 			m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
 		end
 	end
@@ -1166,8 +1187,8 @@
 	function m.imageXex(cfg)
 		if cfg.system == premake.XBOX360 then
 			_p(2,'<ImageXex>')
-			if cfg.configFile then
-				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configFile)
+			if cfg.configfile then
+				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configfile)
 			else
 				_p(3,'<ConfigurationFile>')
 				_p(3,'</ConfigurationFile>')
@@ -1192,8 +1213,8 @@
 
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
-			local loc = project.getrelative(prj, premake.filename(rule, ".targets"))
-			p.x('<Import Project="%s" />', path.translate(loc))
+			local loc = vstudio.path(prj, p.filename(rule, ".targets"))
+			p.x('<Import Project="%s" />', loc)
 		end
 
 		p.pop('</ImportGroup>')
@@ -1213,8 +1234,8 @@
 
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
-			local loc = project.getrelative(prj, premake.filename(rule, ".props"))
-			p.x('<Import Project="%s" />', path.translate(loc))
+			local loc = vstudio.path(prj, p.filename(rule, ".props"))
+			p.x('<Import Project="%s" />', loc)
 		end
 
 		p.pop('</ImportGroup>')
@@ -1229,9 +1250,17 @@
 	end
 
 
+	function m.includePath(cfg)
+		local dirs = vstudio.path(cfg, cfg.sysincludedirs)
+		if #dirs > 0 then
+			p.x('<IncludePath>%s;$(IncludePath)</IncludePath>', table.concat(dirs, ";"))
+		end
+	end
+
+
 	function m.intDir(cfg)
-		local objdir = project.getrelative(cfg.project, cfg.objdir)
-		_x(2,'<IntDir>%s\\</IntDir>', path.translate(objdir))
+		local objdir = vstudio.path(cfg, cfg.objdir)
+		_x(2,'<IntDir>%s\\</IntDir>', objdir)
 	end
 
 
@@ -1270,6 +1299,14 @@
 				end
 				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
 			end
+		end
+	end
+
+
+	function m.libraryPath(cfg)
+		local dirs = vstudio.path(cfg, cfg.syslibdirs)
+		if #dirs > 0 then
+			p.x('<LibraryPath>%s;$(LibraryPath)</LibraryPath>', table.concat(dirs, ";"))
 		end
 	end
 
@@ -1383,8 +1420,8 @@
 
 
 	function m.outDir(cfg)
-		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
-		_x(2,'<OutDir>%s\\</OutDir>', path.translate(outdir))
+		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
+		_x(2,'<OutDir>%s\\</OutDir>', outdir)
 	end
 
 
@@ -1395,15 +1432,30 @@
 	end
 
 
+	function m.executablePath(cfg)
+		local dirs = project.getrelative(cfg.project, cfg.bindirs)
+		dirs = table.filterempty(dirs)
+
+		if #dirs > 0 then
+			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
+		end
+	end
+
+
 	function m.platformToolset(cfg)
-		local action = premake.action.current()
-		local value = action.vstudio.platformToolset
-		if value then
+		local tool, version = p.config.toolset(cfg)
+		if version then
+			version = "v" .. version
+		else
+			local action = premake.action.current()
+			version = action.vstudio.platformToolset
+		end
+		if version then
 			-- should only be written if there is a C/C++ file in the config
 			for i = 1, #cfg.files do
 				if path.iscppfile(cfg.files[i]) then
-					_p(2,'<PlatformToolset>%s</PlatformToolset>', value)
-					return
+					p.w('<PlatformToolset>%s</PlatformToolset>', version)
+					break
 				end
 			end
 		end
@@ -1540,7 +1592,7 @@
 
 	function m.runtimeLibrary(cfg)
 		local runtimes = {
-			StaticDebug = "MultiThreadedDebug",
+			StaticDebug   = "MultiThreadedDebug",
 			StaticRelease = "MultiThreaded",
 		}
 		local runtime = runtimes[config.getruntime(cfg)]
@@ -1549,7 +1601,11 @@
 		end
 	end
 
-
+	function m.callingConvention(cfg)
+		if cfg.callingconvention then
+			p.w('<CallingConvention>%s</CallingConvention>', cfg.callingconvention)
+		end
+	end
 
 	function m.runtimeTypeInfo(cfg)
 		if cfg.flags.NoRTTI and cfg.clr == p.OFF then

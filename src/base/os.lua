@@ -23,7 +23,7 @@
 ---
 
 	function os.executef(cmd, ...)
-		cmd = string.format(cmd, unpack(arg))
+		cmd = string.format(cmd, ...)
 		return os.execute(cmd)
 	end
 
@@ -504,7 +504,7 @@
 				return "chdir " .. path.translate(v)
 			end,
 			copy = function(v)
-				return "xcopy /Q /E /Y /I " .. path.translate(v)
+				return "xcopy /Q /E /Y /I " .. path.translate(v) .. " > nul"
 			end,
 			delete = function(v)
 				return "del " .. path.translate(v)

@@ -1,7 +1,7 @@
 --
 -- config.lua
 -- Premake configuration object API
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -469,46 +469,52 @@
 			table.insertflat(flags, replacement)
 		end
 
-		-- For each configuration field provided in the mapping, pull the
-		-- corresponding list of values from the configuration
+		-- To ensure we get deterministic results that don't change as more keys
+		-- are added to the map, and to open the possibility to controlling the
+		-- application order of flags, use a prioritized list of fields to order
+		-- the mapping, even though it takes a little longer.
 
-		for field, map in pairs(mappings) do
-			local values = cfg[field]
-			if type(values) ~= "table" then
-				values = { values }
-			end
+		for field in p.field.eachOrdered() do
+			local map = mappings[field.name]
+			if map then
 
-			-- Pass each value in the list through the map and append the
-			-- replacement, if any, to the result
+				-- Pass each cfg value in the list through the map and append the
+				-- replacement, if any, to the result
 
-			local foundValue = false
-			table.foreachi(values, function(value)
-				local replacement = map[value]
-				if replacement ~= nil then
-					foundValue = true
-					add(replacement)
+				local values = cfg[field.name]
+				if type(values) ~= "table" then
+					values = { values }
 				end
-			end)
 
-			-- If no value was mapped, check to see if the map specifies a
-			-- default value and, if so, push that into the result
-
-			if not foundValue then
-				add(map._)
-			end
-
-			-- Finally, check for "not values", which should be added to the
-			-- result if the corresponding value is not present
-
-			for key, replacement in pairs(map) do
-				if #key > 1 and key:startswith("_") then
-					key = key:sub(2)
-					if values[key] == nil then
+				local foundValue = false
+				table.foreachi(values, function(value)
+					local replacement = map[value]
+					if replacement ~= nil then
+						foundValue = true
 						add(replacement)
 					end
-				end
-			end
+				end)
 
+				-- If no value was mapped, check to see if the map specifies a
+				-- default value and, if so, push that into the result
+
+				if not foundValue then
+					add(map._)
+				end
+
+				-- Finally, check for "not values", which should be added to the
+				-- result if the corresponding value is not present
+
+				for key, replacement in pairs(map) do
+					if #key > 1 and key:startswith("_") then
+						key = key:sub(2)
+						if values[key] == nil then
+							add(replacement)
+						end
+					end
+				end
+
+			end
 		end
 
 		return flags
@@ -539,9 +545,12 @@
 
 ---
 -- Return the appropriate toolset adapter for the provided configuration,
--- or nil if no toolset is specified.
+-- or nil if no toolset is specified. If a specific version was provided,
+-- returns that as a second argument.
 ---
 
 	function config.toolset(cfg)
-		return premake.tools[cfg.toolset]
+		if cfg.toolset then
+			return p.tools.canonical(cfg.toolset)
+		end
 	end

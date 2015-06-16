@@ -44,7 +44,7 @@
 -- Ensure configuration file is output in ImageXex block
 --
 	function suite.defaultSettings()
-		configFile "testconfig.xml"
+		configfile "testconfig.xml"
 		prepare()
 		test.capture [[
 		<ImageXex>

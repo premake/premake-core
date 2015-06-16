@@ -1,8 +1,10 @@
---
+---
 -- msc.lua
 -- Interface for the MS C/C++ compiler.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
---
+-- Author Jason Perkins
+-- Modified by Manu Evans
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+---
 
 
 	premake.tools.msc = {}
@@ -43,6 +45,12 @@
 		floatingpoint = {
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
+		},
+		callingconvention = {
+			Cdecl = "/Gd",
+			FastCall = "/Gr",
+			StdCall = "/Gz",
+			VectorCall = "/Gv",
 		},
 		optimize = {
 			Off = "/Od",
@@ -160,8 +168,9 @@
 -- Decorate include file search paths for the MSVC command line.
 --
 
-	function msc.getincludedirs(cfg, dirs)
+	function msc.getincludedirs(cfg, dirs, sysdirs)
 		local result = {}
+		dirs = table.join(dirs, sysdirs)
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-I' ..  premake.quoted(dir))
@@ -214,7 +223,8 @@
 
 	function msc.getLibraryDirectories(cfg)
 		local flags = {}
-		for i, dir in ipairs(cfg.libdirs) do
+		local dirs = table.join(cfg.libdirs, cfg.syslibdirs)
+		for i, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(flags, '/LIBPATH:"' .. dir .. '"')
 		end

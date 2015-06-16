@@ -105,7 +105,7 @@
 ---
 
 	function m.propertyDefaults(r)
-		local defs = r.propertyDefinition
+		local defs = r.propertydefinition
 		for i = 1, #defs do
 			local def = defs[i]
 			local value = def.value
@@ -125,7 +125,7 @@
 ---
 
 	function m.additionalDependencies(r)
-		local deps = table.concat(r.buildDependencies, ";")
+		local deps = table.concat(r.builddependencies, ";")
 		p.x('<AdditionalDependencies>%s</AdditionalDependencies>', deps)
 	end
 

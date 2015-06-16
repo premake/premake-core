@@ -26,7 +26,23 @@ BUILDING FROM A SOURCE PACKAGE
 
 BUILDING FROM THE REPOSITORY
 
- If you have pulled sources from the Premake source repository, you will need
+ If you have pulled sources from the Premake source repository, you can
+ use `Bootstrap.mak` to generate your first premake executable:
+
+    $ git submodule init
+    $ git submodule update
+    $ make -f Bootstrap.mak PLATFORM
+
+ Where PLATFORM can be osx or linux.
+ On Windows with Visual Studio use nmake:
+
+    $ nmake -f Bootstrap.mak windows
+
+ Or on Windows with MinGW use mingw32-make:
+
+    $ CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw
+
+ If your toolset is not supported by the bootstrap Makefile, you will need
  to embed the scripts into a C source file so they may be built into the
  executable, and also generate the project files for your chosen toolset. In
  order do either of these things, you will need a working Premake executable.
