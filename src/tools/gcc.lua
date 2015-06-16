@@ -115,10 +115,10 @@
 
 	function gcc.getcxxflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cxxflags)
-		if not cfg.exceptionhandling then
+		if cfg.exceptionhandling == p.OFF then
 			table.insert(flags, '-fno-exceptions')
 		end
-		if not cfg.rtti then
+		if cfg.rtti == p.OFF then
 			table.insert(flags, '-fno-rtti')
 		end
 		return flags

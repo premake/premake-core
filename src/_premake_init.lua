@@ -24,14 +24,14 @@
 		kind = "string",
 		allowed = {
 			"universal",
-			"x86",
-			"x86_64",
+			p.X86,
+			p.X86_64,
 		},
 		aliases = {
-			i386 = "x86",
-			amd64 = "x86_64",
-			x32 = "x86",	-- these should be DEPRECATED
-			x64 = "x86_64",
+			i386  = p.X86,
+			amd64 = p.X86_64,
+			x32   = p.X86,	-- these should be DEPRECATED
+			x64   = p.X86_64,
 		},
 	}
 
@@ -343,19 +343,34 @@
 	api.register {
 		name = "editandcontinue",
 		scope = "config",
-		kind = "boolean",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
 	}
 
 	api.register {
 		name = "exceptionhandling",
 		scope = "config",
-		kind = "boolean",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
 	}
 
 	api.register {
 		name = "rtti",
 		scope = "config",
-		kind = "boolean",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
 	}
 
 	api.register {
@@ -1264,9 +1279,6 @@
 -----------------------------------------------------------------------------
 
 	clr "Off"
-	editandcontinue "On"
-	exceptionhandling "On"
-	rtti "On"
 
 	-- Setting a default language makes some validation easier later
 

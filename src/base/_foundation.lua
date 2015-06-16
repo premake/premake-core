@@ -30,6 +30,8 @@
 	premake.MACOSX      = "macosx"
 	premake.MAKEFILE    = "Makefile"
 	premake.NONE        = "None"
+	premake.DEFAULT     = "Default"
+	premake.ON          = "On"
 	premake.OFF         = "Off"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"
