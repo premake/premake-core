@@ -32,22 +32,13 @@ PACKAGE
 
 PUBLISH
 
- * Upload packages to SourceForge
+ * Create new release on GitHub from CHANGES.txt; upload files
 
- * On SourceForge, set package properties (platform, etc.)
-
- * Update the download page
-   http://industriousone.com/premake/download
+ * Update the download page on github.io
 
  * Post release announcement to the forums
 
- * Update the Latest News on the project home page
-
  * Post annoucement to @industrious on Twitter
-
- * Post announcement to email list
-
- * Post announcement to Industrious Facebook group
 
  * Add release to Freshmeat
    http://freshmeat.net/projects/premake
