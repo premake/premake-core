@@ -228,8 +228,15 @@
 --
 
 	function suite.cflags_onExceptions()
+		exceptionhandling "on"
 		prepare()
 		test.contains("/EHsc", msc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onSEH()
+		flags "SEH"
+		prepare()
+		test.contains("/EHa", msc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onNoExceptions()

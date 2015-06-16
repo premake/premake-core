@@ -106,11 +106,16 @@
 	function msc.getcxxflags(cfg)
 		local flags = {}
 
-		if cfg.rtti == false then
+		if cfg.rtti == premake.OFF then
 			table.insert(flags, "/GR-")
 		end
-		if not cfg.flags.SEH and cfg.exceptionhandling then
-			table.insert(flags, "/EHsc")
+
+		if cfg.exceptionhandling == premake.ON or cfg.flags.SEH then
+			if cfg.flags.SEH then
+				table.insert(flags, "/EHa")
+			else
+				table.insert(flags, "/EHsc")
+			end
 		end
 
 		return flags

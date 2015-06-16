@@ -45,15 +45,15 @@
 		local flags = {}
 
 		-- turn on exceptions and RTTI by default, to match other toolsets
-		if cfg.exceptionhandling then
+		if cfg.exceptionhandling == p.ON then
 			table.insert(flags, "-Xc+=exceptions")
-		else 
+		elseif cfg.exceptionhandling == p.OFF then
 			table.insert(flags, "-Xc-=exceptions")
 		end
 
-		if cfg.rtti then
+		if cfg.rtti == p.ON then
 			table.insert(flags, "-Xc+=rtti")
-		else
+		elseif cfg.rtti == p.OFF then
 			table.insert(flags, "-Xc-=rtti")
 		end
 

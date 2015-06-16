@@ -320,7 +320,7 @@
 
 	function config.getruntime(cfg)
 		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
-		if (cfg.runtime == nil) then
+		if not cfg.runtime then
 			return linkage .. iif(config.isDebugBuild(cfg), "Debug", "Release")
 		else
 			return linkage .. cfg.runtime
