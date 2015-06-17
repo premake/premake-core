@@ -52,6 +52,6 @@
 		fname = fullPath or fname
 		if not io._includedFiles[fname] then
 			io._includedFiles[fname] = true
-			dofile(fname)
+			return dofile(fname)
 		end
 	end
