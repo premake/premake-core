@@ -114,3 +114,12 @@
 			{ "ldc", "LLVM LDC (ldc2)" },
 		}
 	}
+
+
+--
+-- Decide when to load the full module
+--
+
+	return function (cfg)
+		return (cfg.language == p.D)
+	end
