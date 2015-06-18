@@ -25,6 +25,11 @@
 	local m = p.main
 
 
+-- Keep a table of modules that have been preloaded, and their associated
+-- "should load" test functions.
+
+	m._preloaded = {}
+
 
 ---
 -- Add a new module loader that knows how to use the Premake paths like
@@ -89,18 +94,24 @@
 
 
 ---
--- Load the required core modules that are shipped as part of Premake
--- and expected to be present at startup.
+-- Load the required core modules that are shipped as part of Premake and
+-- expected to be present at startup. If a _preload.lua script is present,
+-- that script is run and the return value (a "should load" test) is cached
+-- to be called after baking is complete. Otherwise the module's main script
+-- is run immediately.
 ---
 
 	function m.preloadModules()
 		for i = 1, #modules do
 			local name = modules[i]
-			local preload = name .. "/_preload.lua"
-			local fn = os.locate("modules/" .. preload) or os.locate(preload)
-
-			if fn then
-				include(fn)
+			local preloader = name .. "/_preload.lua"
+			preloader = os.locate("modules/" .. preloader) or os.locate(preloader)
+			if preloader then
+				m._preloaded[name] = include(preloader)
+				-- leave off until existing core modules can catch up
+				-- if not m._preloaded[name] then
+				-- 	p.warn("module '%s' should return function from _preload.lua", name)
+				-- end
 			else
 				require(name)
 			end
@@ -256,6 +267,24 @@
 ---
 
 	function m.postBake()
+		local function shouldLoad(func)
+			for sln in p.global.eachSolution() do
+				for prj in p.solution.eachproject(sln) do
+					for cfg in p.project.eachconfig(prj) do
+						if func(cfg) then
+							return true
+						end
+					end
+				end
+			end
+		end
+
+		-- any modules need to load to support this project?
+		for module, func in pairs(m._preloaded) do
+			if not package.loaded[module] and shouldLoad(func) then
+				require(module)
+			end
+		end
 	end
 
 
@@ -300,7 +329,6 @@
 			print("Done.")
 		end
 	end
-
 
 
 
