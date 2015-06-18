@@ -32,7 +32,6 @@
 		trigger     = "xcode4",
 		shortname   = "Apple Xcode 4",
 		description = "Generate Apple Xcode 4 project files",
-		module      = "xcode",
 
 		-- Xcode always uses Mac OS X path and naming conventions
 
@@ -68,3 +67,12 @@
 			Universal = "Universal",
 		},
 	}
+
+
+--
+-- Decide when the full module should be loaded.
+--
+
+	return function(cfg)
+		return (_ACTION == "xcode4")
+	end
