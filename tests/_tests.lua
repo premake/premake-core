@@ -15,6 +15,7 @@ return {
 	"base/test_table.lua",
 	"base/test_tree.lua",
 	"base/test_uuid.lua",
+	"base/test_versions.lua",
 
 	-- Solution object tests
 	"solution/test_eachconfig.lua",
