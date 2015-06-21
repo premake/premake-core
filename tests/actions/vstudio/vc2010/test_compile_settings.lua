@@ -532,7 +532,7 @@
 		]]
 	end
 
-	function suite.runtimeTypeInfo_onNoRTTI()
+	function suite.runtimeTypeInfo_onNoBufferSecurityCheck()
 		flags "NoBufferSecurityCheck"
 		prepare()
 		test.capture [[

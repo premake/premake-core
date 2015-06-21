@@ -24,14 +24,14 @@
 		kind = "string",
 		allowed = {
 			"universal",
-			"x86",
-			"x86_64",
+			p.X86,
+			p.X86_64,
 		},
 		aliases = {
-			i386 = "x86",
-			amd64 = "x86_64",
-			x32 = "x86",	-- these should be DEPRECATED
-			x64 = "x86_64",
+			i386  = p.X86,
+			amd64 = p.X86_64,
+			x32   = p.X86,	-- these should be DEPRECATED
+			x64   = p.X86_64,
 		},
 	}
 
@@ -343,7 +343,34 @@
 	api.register {
 		name = "editandcontinue",
 		scope = "config",
-		kind = "boolean",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
+	}
+
+	api.register {
+		name = "exceptionhandling",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
+	}
+
+	api.register {
+		name = "rtti",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
 	}
 
 	api.register {
@@ -416,7 +443,7 @@
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",   -- DEPRECATED
-			"NoExceptions",
+			"NoExceptions",        -- DEPRECATED
 			"NoFramePointer",
 			"NoImplicitLink",
 			"NoImportLib",
@@ -426,7 +453,7 @@
 			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
-			"NoRTTI",
+			"NoRTTI",              -- DEPRECATED
 			"NoBufferSecurityCheck",
 			"NoWarnings",          -- DEPRECATED
 			"OmitDefaultLibrary",
@@ -1118,6 +1145,24 @@
 	end)
 
 
+	api.deprecateValue("flags", "NoExceptions", nil,
+	function(value)
+		exceptionhandling "Off"
+	end,
+	function(value)
+		exceptionhandling "On"
+	end)
+
+
+	api.deprecateValue("flags", "NoRTTI", nil,
+	function(value)
+		rtti "Off"
+	end,
+	function(value)
+		rtti "On"
+	end)
+
+
 	api.deprecateValue("flags", "Unsafe", nil,
 	function(value)
 		clr "Unsafe"
@@ -1234,7 +1279,6 @@
 -----------------------------------------------------------------------------
 
 	clr "Off"
-	editandcontinue "On"
 
 	-- Setting a default language makes some validation easier later
 

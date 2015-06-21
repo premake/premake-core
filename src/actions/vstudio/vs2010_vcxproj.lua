@@ -919,6 +919,7 @@
 		end
 	end
 
+
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
 			local dirs = table.concat(vstudio.path(cfg, cfg.usingdirs), ";")
@@ -1041,7 +1042,7 @@
 			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   not cfg.editandcontinue
+				   cfg.editandcontinue == p.OFF
 			then
 				value = "ProgramDatabase"
 			else
@@ -1097,10 +1098,14 @@
 
 
 	function m.exceptionHandling(cfg)
-		if cfg.flags.NoExceptions then
+		if cfg.exceptionhandling == p.OFF then
 			p.w('<ExceptionHandling>false</ExceptionHandling>')
-		elseif cfg.flags.SEH then
-			p.w('<ExceptionHandling>Async</ExceptionHandling>')
+		elseif cfg.exceptionhandling == p.ON or cfg.flags.SEH then
+			if cfg.flags.SEH then
+				p.w('<ExceptionHandling>Async</ExceptionHandling>')
+			else
+				p.w('<ExceptionHandling>Sync</ExceptionHandling>')
+			end
 		end
 	end
 
@@ -1608,8 +1613,10 @@
 	end
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
-			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
+		if cfg.rtti == p.OFF and cfg.clr == p.OFF then
+			p.w('<RuntimeTypeInfo>false</RuntimeTypeInfo>')
+		elseif cfg.rtti == p.ON then
+			p.w('<RuntimeTypeInfo>true</RuntimeTypeInfo>')
 		end
 	end
 
