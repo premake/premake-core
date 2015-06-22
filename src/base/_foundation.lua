@@ -4,6 +4,9 @@
 ---
 
 	premake = premake or {}
+	premake._VERSION = _PREMAKE_VERSION
+	package.loaded["premake"] = premake
+
 	premake.modules = {}
 	premake.extensions = premake.modules
 
@@ -101,6 +104,10 @@
 ---
 
 	function p.checkVersion(version, checks)
+		if not version then
+			return false
+		end
+
 		local function parse(str)
 			local major, minor, patch, dev = str:match("^(%d+)%.?(%d*)%.?(%d*)(.-)$")
 			major = tonumber(major) or 0
@@ -141,6 +148,9 @@
 				check = check:sub(3)
 			elseif check:startswith("<") then
 				func = lt
+				check = check:sub(2)
+			elseif check:startswith("=") then
+				func = eq
 				check = check:sub(2)
 			else
 				func = ge
