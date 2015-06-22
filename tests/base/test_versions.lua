@@ -169,3 +169,11 @@
 		test.isfalse(p.checkVersion("2.2.0.0", ">=1.0 <2.0"))
 	end
 
+
+--
+-- If there is no version information, fails.
+--
+
+	function suite.fail_onNoVersion()
+		test.isfalse(p.checkVersion(nil, "1.0"))
+	end
