@@ -1137,7 +1137,7 @@
 				Default = "Default",
 				Disabled = "Disabled",
 				Explicit = "OnlyExplicitInline",
-				Implicit = "AnySuitable",
+				Auto = "AnySuitable",
 			}
 			p.w('<InlineFunctionExpansion>%s</InlineFunctionExpansion>', types[cfg.inlining])
 		end
