@@ -7,6 +7,8 @@ PREP
 
  * Create working branch for release prep
 
+ * Update version in src/host/premake.c and commit
+
  * Make sure branch passes all tests on all platforms
 
  * Prep release announcement for forums
@@ -16,21 +18,9 @@ RELEASE
 
  * Merge working branch with release branch
 
- * Update the version number in src/host/premake.c and commit
-
- * Merge working branch to development branches
-
- * Close working branch
-
-
-PACKAGE
-
  * Run `premake5 package release source` (from Posix ideally)
 
  * On each platform, run `premake5 package release binary`
-
-
-PUBLISH
 
  * Create new release on GitHub from CHANGES.txt; upload files
 
@@ -42,3 +32,12 @@ PUBLISH
 
  * Add release to Freshmeat
    http://freshmeat.net/projects/premake
+
+
+CYCLE
+
+ * Update version in src/host/premake.c and commit
+
+ * Merge working branch to development branch
+
+ * Close working branch
