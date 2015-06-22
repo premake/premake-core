@@ -474,7 +474,7 @@
 			"Default",
 			"Disabled",
 			"Explicit",
-			"Implicit"
+			"Auto"
 		}
 	}
 
