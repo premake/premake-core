@@ -497,7 +497,7 @@
 --
 
 	function suite.exceptions_onNoExceptions()
-		flags "NoExceptions"
+		exceptionhandling "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -521,7 +521,7 @@
 	end
 
 	function suite.runtimeTypeInfo_onNoRTTI()
-		flags "NoRTTI"
+		rtti "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
