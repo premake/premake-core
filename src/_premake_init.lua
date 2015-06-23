@@ -1158,7 +1158,7 @@
 	end)
 
 
-	api.deprecateValue("flags", "NoExceptions", nil,
+	api.deprecateValue("flags", "NoExceptions", 'Use `exceptionhandling "Off"` instead',
 	function(value)
 		exceptionhandling "Off"
 	end,
@@ -1167,7 +1167,7 @@
 	end)
 
 
-	api.deprecateValue("flags", "NoRTTI", nil,
+	api.deprecateValue("flags", "NoRTTI", 'Use `rtti "Off"` instead',
 	function(value)
 		rtti "Off"
 	end,
