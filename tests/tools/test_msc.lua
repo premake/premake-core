@@ -240,13 +240,13 @@
 	end
 
 	function suite.cflags_onNoExceptions()
-		flags "NoExceptions"
+		exceptionhandling "Off"
 		prepare()
 		test.missing("/EHsc", msc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onNoRTTI()
-		flags "NoRTTI"
+		rtti "Off"
 		prepare()
 		test.contains("/GR-", msc.getcxxflags(cfg))
 	end
