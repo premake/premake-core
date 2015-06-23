@@ -7,6 +7,7 @@
 	local p = premake
 
 	p.modules.d = {}
+	p.modules.d._VERSION = p._VERSION
 
 	local d = p.modules.d
 	local api = p.api
