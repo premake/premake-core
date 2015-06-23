@@ -1098,14 +1098,11 @@
 
 
 	function m.exceptionHandling(cfg)
+		local value
 		if cfg.exceptionhandling == p.OFF then
 			p.w('<ExceptionHandling>false</ExceptionHandling>')
-		elseif cfg.exceptionhandling == p.ON or cfg.flags.SEH then
-			if cfg.flags.SEH then
-				p.w('<ExceptionHandling>Async</ExceptionHandling>')
-			else
-				p.w('<ExceptionHandling>Sync</ExceptionHandling>')
-			end
+		elseif cfg.exceptionhandling == "SEH" then
+			p.w('<ExceptionHandling>Async</ExceptionHandling>')
 		end
 	end
 

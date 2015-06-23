@@ -359,17 +359,7 @@
 			"Default",
 			"On",
 			"Off",
-		},
-	}
-
-	api.register {
-		name = "rtti",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"On",
-			"Off",
+			"SEH"
 		},
 	}
 
@@ -462,7 +452,7 @@
 			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
 			"ReleaseRuntime",      -- DEPRECATED
-			"SEH",
+			"SEH",                 -- DEPRECATED
 			"ShadowedVariables",
 			"StaticRuntime",
 			"Symbols",
@@ -855,6 +845,17 @@
 	}
 
 	api.register {
+		name = "rtti",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
+	}
+
+	api.register {
 		name = "rules",
 		scope = "project",
 		kind = "list:string",
@@ -1174,6 +1175,13 @@
 		rtti "On"
 	end)
 
+	api.deprecateValue("flags", "SEH", 'Use `exceptionhandling "SEH"` instead',
+	function(value)
+		exceptionhandling "SEH"
+	end,
+	function(value)
+		exceptionhandling "Default"
+	end)
 
 	api.deprecateValue("flags", "Unsafe", nil,
 	function(value)
@@ -1291,6 +1299,8 @@
 -----------------------------------------------------------------------------
 
 	clr "Off"
+	exceptionhandling "Default"
+	rtti "Default"
 
 	-- Setting a default language makes some validation easier later
 

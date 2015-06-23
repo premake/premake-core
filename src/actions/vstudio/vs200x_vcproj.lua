@@ -1124,7 +1124,7 @@
 	function m.exceptionHandling(cfg)
 		if cfg.exceptionhandling == p.OFF then
 			p.w('ExceptionHandling="%s"', iif(_ACTION < "vs2005", "FALSE", 0))
-		elseif cfg.flags.SEH and _ACTION > "vs2003" then
+		elseif cfg.exceptionhandling == "SEH" and _ACTION > "vs2003" then
 			p.w('ExceptionHandling="2"')
 		end
 	end
