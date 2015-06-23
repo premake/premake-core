@@ -7,10 +7,12 @@
 ---
 
 
-	premake.tools.msc = {}
-	local msc = premake.tools.msc
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.tools.msc = {}
+	local msc = p.tools.msc
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -103,19 +105,17 @@
 -- Returns list of C++ compiler flags for a configuration.
 --
 
+	msc.cxxflags = {
+		rtti = {
+			Off = "/GR-"
+		}
+	}
+
 	function msc.getcxxflags(cfg)
-		local flags = {}
+		local flags = config.mapFlags(cfg, msc.cxxflags)
 
-		if cfg.rtti == premake.OFF then
-			table.insert(flags, "/GR-")
-		end
-
-		if cfg.exceptionhandling == premake.ON or cfg.flags.SEH then
-			if cfg.flags.SEH then
-				table.insert(flags, "/EHa")
-			else
-				table.insert(flags, "/EHsc")
-			end
+        if not cfg.flags.SEH and cfg.exceptionhandling ~= p.OFF then
+			table.insert(flags, "/EHsc")
 		end
 
 		return flags
