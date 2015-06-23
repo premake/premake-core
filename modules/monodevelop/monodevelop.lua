@@ -9,6 +9,7 @@
 	local p = premake
 
 	p.modules.monodevelop = {}
+	p.modules.monodevelop._VERSION = p._VERSION
 
 	local monodevelop = p.modules.monodevelop
 
