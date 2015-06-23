@@ -509,7 +509,7 @@
 	end
 
 	function suite.exceptions_onSEH()
-		flags "SEH"
+		exceptionhandling "SEH"
 		prepare()
 		test.capture [[
 <ClCompile>

@@ -40,7 +40,6 @@
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
-			SEH = "/EHa",
 			Symbols = "/Z7",
 			OmitDefaultLibrary = "/Zl",
 		},
@@ -106,6 +105,11 @@
 --
 
 	msc.cxxflags = {
+		exceptionhandling = {
+			Default = "/EHsc",
+			On = "/EHsc",
+			SEH = "/EHa",
+		},
 		rtti = {
 			Off = "/GR-"
 		}
@@ -113,11 +117,6 @@
 
 	function msc.getcxxflags(cfg)
 		local flags = config.mapFlags(cfg, msc.cxxflags)
-
-        if not cfg.flags.SEH and cfg.exceptionhandling ~= p.OFF then
-			table.insert(flags, "/EHsc")
-		end
-
 		return flags
 	end
 
