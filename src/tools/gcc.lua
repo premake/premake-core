@@ -106,21 +106,21 @@
 --
 
 	gcc.cxxflags = {
+		exceptionhandling = {
+			Off = "-fno-exceptions"
+		},
 		flags = {
 			NoBufferSecurityCheck = "-fno-stack-protector",
 			["C++11"] = "-std=c++11",
 			["C++14"] = "-std=c++14",
+		},
+		rtti = {
+			Off = "-fno-rtti"
 		}
 	}
 
 	function gcc.getcxxflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cxxflags)
-		if cfg.exceptionhandling == p.OFF then
-			table.insert(flags, '-fno-exceptions')
-		end
-		if cfg.rtti == p.OFF then
-			table.insert(flags, '-fno-rtti')
-		end
 		return flags
 	end
 
