@@ -426,9 +426,9 @@
 	function make.linkCmd(cfg, toolset)
 		if cfg.kind == premake.STATICLIB then
 			if cfg.architecture == premake.UNIVERSAL then
-				_p('  LINKCMD = libtool -o $(TARGET) $(OBJECTS)')
+				_p('  LINKCMD = libtool -o "$@" $(OBJECTS)')
 			else
-				_p('  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)')
+				_p('  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)')
 			end
 		else
 			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
@@ -437,7 +437,7 @@
 			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
 
 			local cc = iif(cfg.language == "C", "CC", "CXX")
-			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)', cc)
+			_p('  LINKCMD = $(%s) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)', cc)
 		end
 	end
 

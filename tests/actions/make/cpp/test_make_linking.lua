@@ -36,7 +36,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s -shared
-  LINKCMD = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -51,7 +51,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s -shared
-  LINKCMD = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -65,7 +65,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)
+  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 		]]
 	end
 
@@ -80,7 +80,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = libtool -o $(TARGET) $(OBJECTS)
+  LINKCMD = libtool -o "$@" $(OBJECTS)
 		]]
 	end
 
