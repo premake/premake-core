@@ -4,9 +4,13 @@
 ---
 
 	premake = premake or {}
-	premake.modules = {}
+	premake._VERSION = _PREMAKE_VERSION
+	package.loaded["premake"] = premake
 
+	premake.modules = {}
 	premake.extensions = premake.modules
+
+	local p = premake
 
 
 -- Keep track of warnings that have been shown, so they don't get shown twice
@@ -86,9 +90,82 @@
 
 
 ---
--- Clears the list of already fired warning messages, allowing them
--- to be fired again.
+-- Compare a version string of the form "major.minor.patch.dev" against a
+-- version comparision string. Comparisions take the form of ">=5.0" (5.0 or
+-- later), "5.0" (5.0 or later), ">=5.0 <6.0" (5.0 or later but not 6.0 or
+-- later).
+--
+-- @param version
+--    The version to be tested.
+-- @param checks
+--    The comparision string to be evaluated.
+-- @return
+--    True if the comparisions pass, false if any fail.
 ---
+
+	function p.checkVersion(version, checks)
+		if not version then
+			return false
+		end
+
+		local function parse(str)
+			local major, minor, patch, dev = str:match("^(%d+)%.?(%d*)%.?(%d*)(.-)$")
+			major = tonumber(major) or 0
+			minor = tonumber(minor) or 0
+			patch = tonumber(patch) or 0
+			dev = dev or ""
+			return { major, minor, patch, dev }
+		end
+
+		local function compare(a, b)
+			for i=1,4 do
+				if a[i] > b[i] then return 1 end
+				if a[i] < b[i] then return -1 end
+			end
+			return 0
+		end
+
+		local function eq(r) return r == 0 end
+		local function le(r) return r <= 0 end
+		local function lt(r) return r < 0  end
+		local function ge(r) return r >= 0 end
+		local function gt(r) return r > 0  end
+
+		version = parse(version)
+
+		checks = string.explode(checks, " ", true)
+		for i = 1, #checks do
+			local check = checks[i]
+			local func
+			if check:startswith(">=") then
+				func = ge
+				check = check:sub(3)
+			elseif check:startswith(">") then
+				func = gt
+				check = check:sub(2)
+			elseif check:startswith("<=") then
+				func = le
+				check = check:sub(3)
+			elseif check:startswith("<") then
+				func = lt
+				check = check:sub(2)
+			elseif check:startswith("=") then
+				func = eq
+				check = check:sub(2)
+			else
+				func = ge
+			end
+
+			check = parse(check)
+			if not func(compare(version, check)) then
+				return false
+			end
+		end
+
+		return true
+	end
+
+
 
 	function premake.clearWarnings()
 		_warnings = {}
