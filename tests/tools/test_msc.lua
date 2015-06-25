@@ -227,26 +227,26 @@
 -- Check handling of C++ language features.
 --
 
-	function suite.cflags_onExceptions()
+	function suite.cxxflags_onExceptions()
 		exceptionhandling "on"
 		prepare()
 		test.contains("/EHsc", msc.getcxxflags(cfg))
 	end
 
-	function suite.cflags_onSEH()
-		flags "SEH"
+	function suite.cxxflags_onSEH()
+		exceptionhandling "SEH"
 		prepare()
 		test.contains("/EHa", msc.getcxxflags(cfg))
 	end
 
-	function suite.cflags_onNoExceptions()
-		flags "NoExceptions"
+	function suite.cxxflags_onNoExceptions()
+		exceptionhandling "Off"
 		prepare()
 		test.missing("/EHsc", msc.getcxxflags(cfg))
 	end
 
-	function suite.cflags_onNoRTTI()
-		flags "NoRTTI"
+	function suite.cxxflags_onNoRTTI()
+		rtti "Off"
 		prepare()
 		test.contains("/GR-", msc.getcxxflags(cfg))
 	end

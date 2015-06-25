@@ -199,7 +199,7 @@
 --
 
 	function suite.cflags_onNoExceptions()
-		flags { "NoExceptions" }
+		exceptionhandling "Off"
 		prepare()
 		test.contains({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
 	end

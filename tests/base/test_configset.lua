@@ -175,15 +175,15 @@
 
 	function suite.remove_onExactValueMatch()
 		local f = field.get("flags")
-		configset.store(cset, f, { "Symbols", "WinMain", "NoRTTI" })
+		configset.store(cset, f, { "Symbols", "WinMain", "MFC" })
 		configset.remove(cset, f, { "WinMain" })
-		test.isequal({ "Symbols", "NoRTTI" }, configset.fetch(cset, f, {}))
+		test.isequal({ "Symbols", "MFC" }, configset.fetch(cset, f, {}))
 	end
 
 	function suite.remove_onMultipleValues()
 		local f = field.get("flags")
-		configset.store(cset, f, { "Symbols", "NoExceptions", "WinMain", "NoRTTI" })
-		configset.remove(cset, f, { "NoExceptions", "NoRTTI" })
+		configset.store(cset, f, { "Symbols", "Maps", "WinMain", "MFC" })
+		configset.remove(cset, f, { "Maps", "MFC" })
 		test.isequal({ "Symbols", "WinMain" }, configset.fetch(cset, f, {}))
 	end
 

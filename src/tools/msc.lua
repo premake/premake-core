@@ -7,10 +7,12 @@
 ---
 
 
-	premake.tools.msc = {}
-	local msc = premake.tools.msc
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.tools.msc = {}
+	local msc = p.tools.msc
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -38,7 +40,6 @@
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
-			SEH = "/EHa",
 			Symbols = "/Z7",
 			OmitDefaultLibrary = "/Zl",
 		},
@@ -103,21 +104,19 @@
 -- Returns list of C++ compiler flags for a configuration.
 --
 
+	msc.cxxflags = {
+		exceptionhandling = {
+			Default = "/EHsc",
+			On = "/EHsc",
+			SEH = "/EHa",
+		},
+		rtti = {
+			Off = "/GR-"
+		}
+	}
+
 	function msc.getcxxflags(cfg)
-		local flags = {}
-
-		if cfg.rtti == premake.OFF then
-			table.insert(flags, "/GR-")
-		end
-
-		if cfg.exceptionhandling == premake.ON or cfg.flags.SEH then
-			if cfg.flags.SEH then
-				table.insert(flags, "/EHa")
-			else
-				table.insert(flags, "/EHsc")
-			end
-		end
-
+		local flags = config.mapFlags(cfg, msc.cxxflags)
 		return flags
 	end
 
