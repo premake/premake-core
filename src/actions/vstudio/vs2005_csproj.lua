@@ -182,6 +182,9 @@
 					if #contents > 0 then
 						_p("%s", contents)
 					end
+					if info.action == "EmbeddedResource" and cfg.customtoolnamespace then
+						_p(3,"<CustomToolNamespace>%s</CustomToolNamespace>", cfg.customtoolnamespace)
+					end
 					_p(2,'</%s>', info.action)
 				else
 					_p(2,'<%s Include="%s" />', info.action, fname)
