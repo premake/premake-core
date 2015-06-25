@@ -373,10 +373,10 @@
 		local opts = { }
 
 		if cfg.project.language == 'C++' then
-			if cfg.flags.NoExceptions then
+			if cfg.exceptionhandling == p.OFF then
 				table.insert(opts, "-fno-exceptions")
 			end
-			if cfg.flags.NoRTTI then
+			if cfg.rtti == p.OFF then
 				table.insert(opts, "-fno-rtti")
 			end
 		end
