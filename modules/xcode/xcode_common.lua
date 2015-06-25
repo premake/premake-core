@@ -1006,11 +1006,11 @@
 
 		settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
 
-		if cfg.flags.NoExceptions then
+		if cfg.exceptionhandling == p.OFF then
 			settings['GCC_ENABLE_CPP_EXCEPTIONS'] = 'NO'
 		end
 
-		if cfg.flags.NoRTTI then
+		if cfg.rtti == p.OFF then
 			settings['GCC_ENABLE_CPP_RTTI'] = 'NO'
 		end
 
@@ -1018,7 +1018,7 @@
 			settings['GCC_ENABLE_FIX_AND_CONTINUE'] = 'YES'
 		end
 
-		if cfg.flags.NoExceptions then
+		if cfg.exceptionhandling == p.OFF then
 			settings['GCC_ENABLE_OBJC_EXCEPTIONS'] = 'NO'
 		end
 

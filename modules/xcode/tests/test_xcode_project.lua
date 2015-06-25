@@ -1481,7 +1481,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnNoExceptions()
-		flags { "NoExceptions" }
+		exceptionhandling "Off"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1559,7 +1559,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnNoRTTI()
-		flags { "NoRTTI" }
+		rtti "Off"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
