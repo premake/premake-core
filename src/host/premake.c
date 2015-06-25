@@ -462,6 +462,26 @@ static int run_premake_main(lua_State* L, const char* script)
 
 
 /**
+ * Locate a file in the embedded script index. If found, returns the
+ * contents of the file's script.
+ */
+
+ const char* premake_find_embedded_script(const char* filename)
+ {
+#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
+ 	int i;
+	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
+		if (strcmp(builtin_scripts_index[i], filename) == 0) {
+			return builtin_scripts[i];
+		}
+	}
+#endif
+	return NULL;
+ }
+
+
+
+/**
  * Load a script that was previously embedded into the executable. If
  * successful, a function containing the new script chunk is pushed to
  * the stack, just like luaL_loadfile would do had the chunk been loaded
@@ -470,22 +490,11 @@ static int run_premake_main(lua_State* L, const char* script)
 
 int premake_load_embedded_script(lua_State* L, const char* filename)
 {
-	int i;
-	const char* chunk = NULL;
 #if !defined(NDEBUG)
 	static int warned = 0;
 #endif
 
-	/* Try to locate a record matching the filename */
-	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
-	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
-		if (strcmp(builtin_scripts_index[i], filename) == 0) {
-			chunk = builtin_scripts[i];
-			break;
-		}
-	}
-	#endif
-
+	const char* chunk = premake_find_embedded_script(filename);
 	if (chunk == NULL) {
 		return !OKAY;
 	}
