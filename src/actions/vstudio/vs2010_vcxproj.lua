@@ -843,7 +843,7 @@
 -- Generate the list of project dependencies.
 --
 
-	m.elements.projectReferences = function(prj, ref)
+	m.elements.projectReferences = function(prj, ref, linkit)
 		if prj.clr ~= p.OFF then
 			return {
 				m.referenceProject,
@@ -854,24 +854,42 @@
 				m.referenceUseLibraryDependences,
 			}
 		else
-			return {
-				m.referenceProject,
-			}
+			if linkit then
+				return {
+					m.referenceProject,
+					m.referenceLinkLibraryDependencies,
+				}
+			else
+				return {
+					m.referenceProject,
+				}
+			end
 		end
 	end
 
 	function m.projectReferences(prj)
-		local refs = project.getdependencies(prj)
-		if #refs > 0 then
-			p.push('<ItemGroup>')
-			for _, ref in ipairs(refs) do
-				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
-				p.push('<ProjectReference Include=\"%s\">', relpath)
-				p.callArray(m.elements.projectReferences, prj, ref)
-				p.pop('</ProjectReference>')
+		local isItemGroupSet = false
+		
+		local function makeProjectReference(f,linkit)
+			local refs = f(prj)
+			if refs and #refs > 0 then
+				p.push('<ItemGroup>')
+
+				for _, ref in ipairs(refs) do
+					local relpath = vstudio.path(prj, vstudio.projectfile(ref))
+					p.push('<ProjectReference Include=\"%s\">', relpath)
+					p.callArray(m.elements.projectReferences, prj, ref, linkit)
+					p.pop('</ProjectReference>')
+				end
+				
+				p.pop('</ItemGroup>')
 			end
-			p.pop('</ItemGroup>')
+
+			return true
 		end
+
+		makeProjectReference(project.getlinkdependencies,true)
+		makeProjectReference(project.getdependdependencies)
 	end
 
 

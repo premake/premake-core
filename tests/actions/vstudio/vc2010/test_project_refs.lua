@@ -50,11 +50,23 @@
 <ItemGroup>
 	<ProjectReference Include="MyProject.vcxproj">
 		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+		<LinkLibraryDependencies>true</LinkLibraryDependencies>
 	</ProjectReference>
 </ItemGroup>
 		]]
 	end
 
+	function suite.projectReferenceAdded_onSiblingProjectDependency()
+		dependson { "MyProject" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ProjectReference Include="MyProject.vcxproj">
+		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+	</ProjectReference>
+</ItemGroup>
+		]]
+	end
 --
 -- Project references should always be specified relative to the
 -- project doing the referencing.
@@ -70,6 +82,7 @@
 <ItemGroup>
 	<ProjectReference Include="..\MyProject\MyProject.vcxproj">
 		<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+		<LinkLibraryDependencies>true</LinkLibraryDependencies>
 	</ProjectReference>
 </ItemGroup>
 		]]
