@@ -251,6 +251,17 @@
 	}
 
 	api.register {
+		name = "debuggertype",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Mixed",
+			"NativeOnly",
+			"ManagedOnly",
+		}
+	}
+
+	api.register {
 		name = "debugpathmap",
 		scope = "config",
 		kind = "list:keyed:path",
