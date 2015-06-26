@@ -12,6 +12,7 @@
 	local p = premake
 
 	p.modules.codelite = {}
+	p.modules.codelite._VERSION = p._VERSION
 
 	local codelite = p.modules.codelite
 	local project = p.project
