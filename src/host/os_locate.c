@@ -24,16 +24,20 @@ int do_locate(lua_State* L, const char* filename, const char* path)
 
 int os_locate(lua_State* L)
 {
+	const char* path;
 	int i;
 	int nArgs = lua_gettop(L);
 
 	/* Fetch premake.path */
 	lua_getglobal(L, "premake");
 	lua_getfield(L, -1, "path");
+	path = lua_tostring(L, -1);
 
 	for (i = 1; i <= nArgs; ++i) {
+		const char* name = lua_tostring(L, i);
+
 		/* Direct path to file? Return as absolute path */
-		if (do_isfile(lua_tostring(L, i))) {
+		if (do_isfile(name)) {
 			lua_pushcfunction(L, path_getabsolute);
 			lua_pushvalue(L, i);
 			lua_call(L, 1, 1);
@@ -41,7 +45,15 @@ int os_locate(lua_State* L)
 		}
 
 		/* do_locate(arg[i], premake.path) */
-		if (do_locate(L, lua_tostring(L, i), lua_tostring(L, -1))) {
+		if (do_locate(L, name, path)) {
+			return 1;
+		}
+
+		/* embedded in the executable? */
+		if (premake_find_embedded_script(name)) {
+			lua_pushstring(L, "$/");
+			lua_pushvalue(L, i);
+			lua_concat(L, 2);
 			return 1;
 		}
 	}
