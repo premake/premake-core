@@ -583,7 +583,8 @@
 		"none",
 		"resourceCompile",
 		"customBuild",
-		"customRule"
+		"customRule",
+		"midlCompile"
 	}
 
 	m.elements.files = function(prj, groups)
@@ -779,6 +780,35 @@
 		end
 	end
 
+	function m.midlCompileFiles(prj, groups)
+		local files = groups.MidlCompile or {}
+		if #files > 0  then
+			p.push('<ItemGroup>')
+			for i, file in ipairs(files) do
+				local contents = p.capture(function ()
+					p.push()
+					for cfg in project.eachconfig(prj) do
+						local condition = m.condition(cfg)
+						local filecfg = fileconfig.getconfig(file, cfg)
+						if cfg.system == premake.WINDOWS then
+							m.excludedFromBuild(cfg, filecfg)
+						end
+					end
+					p.pop()
+				end)
+
+				if #contents > 0 then
+					p.push('<Midl Include=\"%s\">', path.translate(file.relpath))
+					p.outln(contents)
+					p.pop('</Midl>')
+				else
+					p.x('<Midl Include=\"%s\" />', path.translate(file.relpath))
+				end
+			end
+			p.pop('</ItemGroup>')
+		end
+	end
+
 
 	function m.categorize(prj, file)
 		-- If any configuration for this file uses a custom build step,
@@ -803,6 +833,8 @@
 			return "ClInclude"
 		elseif path.isresourcefile(file.name) then
 			return "ResourceCompile"
+		elseif path.isidlfile(file.name) then
+			return "MidlCompile"
 		else
 			return "None"
 		end
