@@ -197,6 +197,14 @@
 		return path.hasextension(fname, ".rc")
 	end
 
+--
+-- Returns true if the filename represents a Windows idl file.
+--
+
+	function path.isidlfile(fname)
+		return path.hasextension(fname, ".idl")
+	end
+
 
 --
 -- Takes a path which is relative to one location and makes it relative
