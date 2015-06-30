@@ -493,3 +493,20 @@
 		prepare()
 		test.contains("-L/usr/local/lib", gcc.getLibraryDirectories(cfg))
 	end
+
+
+--
+-- Check handling of link time optimization flag.
+--
+
+	function suite.cflags_onLinkTimeOptimization()
+		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("-flto", gcc.getcflags(cfg))
+	end
+
+	function suite.ldflags_onLinkTimeOptimization()
+		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("-flto", gcc.getldflags(cfg))
+	end

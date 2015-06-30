@@ -155,6 +155,9 @@
 			x86 = "-m32",
 			x86_64 = "-m64",
 		},
+		flags = {
+			LinkTimeOptimization = "-flto",
+		},
 		kind = {
 			SharedLib = function(cfg)
 				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
