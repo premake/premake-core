@@ -68,6 +68,16 @@
 		]]
 	end
 
+	function suite.midlCompile_onIDLFile()
+		files { "idl/interfaces.idl" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Midl Include="idl\interfaces.idl" />
+</ItemGroup>
+		]]
+	end
+
 	function suite.none_onTxtFile()
 		files { "docs/hello.txt" }
 		prepare()
