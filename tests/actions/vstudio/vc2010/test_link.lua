@@ -38,7 +38,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
@@ -57,7 +57,7 @@
 			<GenerateDebugInformation>false</GenerateDebugInformation>
 			<EnableCOMDATFolding>true</EnableCOMDATFolding>
 			<OptimizeReferences>true</OptimizeReferences>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
@@ -96,7 +96,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
@@ -124,7 +124,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		<ProjectReference>
 			<LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -194,7 +194,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		]]
 	end
@@ -214,8 +214,8 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<AdditionalDependencies>bin/Debug/MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		<ProjectReference>
 			<LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -273,7 +273,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 			<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
@@ -322,7 +322,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 			<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
 		</Link>
 		]]
@@ -421,7 +421,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
+			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 			<GenerateMapFile>true</GenerateMapFile>
 		</Link>
 		]]

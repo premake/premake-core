@@ -71,7 +71,7 @@
 		<Link>
 			<SubSystem>Console</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>bin/Ares/Debug/MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
 			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		</Link>
 		<ProjectReference>
