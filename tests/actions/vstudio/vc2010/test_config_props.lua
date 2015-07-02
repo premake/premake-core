@@ -254,7 +254,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 		<ConfigurationType>Makefile</ConfigurationType>
 		<UseDebugLibraries>false</UseDebugLibraries>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 	</PropertyGroup>
 		]]
@@ -267,7 +267,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 		<ConfigurationType>Makefile</ConfigurationType>
 		<UseDebugLibraries>false</UseDebugLibraries>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 	</PropertyGroup>
 		]]

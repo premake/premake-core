@@ -34,7 +34,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
 		<TargetExt>.exe</TargetExt>
@@ -70,7 +70,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<OutputFile>$(OutDir)MyProject.exe</OutputFile>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
@@ -86,7 +86,7 @@
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<OutputFile>$(OutDir)MyProject.lib</OutputFile>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
@@ -106,7 +106,7 @@
 		prepare()
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		]]
 	end
 
@@ -147,7 +147,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>..\tmp\Debug\</IntDir>
 		]]
 	end
@@ -162,7 +162,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyTarget</TargetName>
 		]]
@@ -190,7 +190,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		]]
 	end
 
@@ -205,7 +205,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
 		<TargetExt>.exe</TargetExt>
@@ -224,7 +224,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
 		<TargetExt>
@@ -245,7 +245,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
 		<TargetExt>.exe</TargetExt>
@@ -265,7 +265,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
 		<TargetExt>.exe</TargetExt>
@@ -280,7 +280,7 @@
 		test.capture [[
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+		<OutDir>bin\Debug\</OutDir>
 		<IntDir>obj\Debug\</IntDir>
 		<TargetName>MyProject</TargetName>
 		<TargetExt>.exe</TargetExt>

@@ -27,16 +27,6 @@
 
 
 --
--- Directory should be current (".") by default.
---
-
-	function suite.directoryIsDot_onNoTargetDir()
-		i = prepare()
-		test.isequal(".", path.getrelative(os.getcwd(), i.directory))
-	end
-
-
---
 -- Directory uses targetdir() value if present.
 --
 
@@ -242,7 +232,7 @@
 		kind "WindowedApp"
 		system "MacOSX"
 		i = prepare()
-		test.isequal("MyProject.app/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+		test.isequal("bin/Debug/MyProject.app/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
 	end
 
 
