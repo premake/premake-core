@@ -135,7 +135,7 @@
 		language "C++"
 
 		local r = prepare("all", "fullpath")
-		test.isequal({ "MyProject2.lib" }, r)
+		test.isequal({ "bin/Debug/MyProject2.lib" }, r)
 	end
 
 	function suite.canLink_CsAndCs()
@@ -147,7 +147,7 @@
 		language "C#"
 
 		local r = prepare("all", "fullpath")
-		test.isequal({ "MyProject2.dll" }, r)
+		test.isequal({ "bin/Debug/MyProject2.dll" }, r)
 	end
 
 	function suite.canLink_ManagedCppAndManagedCpp()
@@ -160,7 +160,7 @@
 		clr "On"
 
 		local r = prepare("all", "fullpath")
-		test.isequal({ "MyProject2.lib" }, r)
+		test.isequal({ "bin/Debug/MyProject2.lib" }, r)
 	end
 
 	function suite.canLink_ManagedCppAndCs()
@@ -172,7 +172,7 @@
 		language "C#"
 
 		local r = prepare("all", "fullpath")
-		test.isequal({ "MyProject2.dll" }, r)
+		test.isequal({ "bin/Debug/MyProject2.dll" }, r)
 	end
 
 

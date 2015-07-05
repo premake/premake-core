@@ -82,7 +82,7 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="false"
 	SubSystem="2"
-	ImportLibrary="MyProject.lib"
+	ImportLibrary="bin\Debug\MyProject.lib"
 	TargetMachine="1"
 />
 		]]
@@ -245,7 +245,7 @@
 <Tool
 	Name="VCLinkerTool"
 	LinkLibraryDependencies="false"
-	AdditionalDependencies="MyProject2.lib"
+	AdditionalDependencies="bin\Debug\MyProject2.lib"
 		]]
 	end
 

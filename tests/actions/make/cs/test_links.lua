@@ -54,6 +54,6 @@
 
         prepare ()
         test.capture [[
-  DEPENDS = MyProject2.dll MyProject3.dll
+  DEPENDS = bin/Debug/MyProject2.dll bin/Debug/MyProject3.dll
         ]]
     end

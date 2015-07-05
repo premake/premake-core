@@ -68,6 +68,6 @@
 <Tool
 	Name="VCLinkerTool"
 	LinkLibraryDependencies="false"
-	AdditionalDependencies="MyProject2.lib"
+	AdditionalDependencies="bin\Ares\Debug\MyProject2.lib"
 		]]
 	end
