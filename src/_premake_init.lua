@@ -959,6 +959,12 @@
 		end,
 	}
 
+  api.register {
+    name = "customtoolnamespace",
+    scope = "config",
+    kind = "string",
+  }
+
 	api.register {
 		name = "undefines",
 		scope = "config",
