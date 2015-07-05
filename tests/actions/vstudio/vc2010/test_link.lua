@@ -214,7 +214,7 @@
 		<Link>
 			<SubSystem>Windows</SubSystem>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>bin/Debug/MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
 			<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 		</Link>
 		<ProjectReference>
