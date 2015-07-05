@@ -318,6 +318,7 @@
 			m.bufferSecurityCheck,
 			m.treatWChar_tAsBuiltInType,
 			m.floatingPointModel,
+			m.inlineFunctionExpansion,
 			m.enableEnhancedInstructionSet,
 			m.multiProcessorCompilation,
 			m.additionalCompileOptions,
@@ -1159,6 +1160,17 @@
 		end
 	end
 
+	function m.inlineFunctionExpansion(cfg)
+		if cfg.inlining then
+			local types = {
+				Default = "Default",
+				Disabled = "Disabled",
+				Explicit = "OnlyExplicitInline",
+				Auto = "AnySuitable",
+			}
+			p.w('<InlineFunctionExpansion>%s</InlineFunctionExpansion>', types[cfg.inlining])
+		end
+	end
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
