@@ -29,6 +29,8 @@
 
 	m.elements.project = function(prj)
 		return {
+    	    m.xmlDeclaration,
+			m.project,
 			m.projectConfigurations,
 			m.globals,
 			m.importDefaultProps,
@@ -47,8 +49,6 @@
 
 	function m.generate(prj)
 		io.utf8()
-        m.xmlDeclaration()
-		m.project()
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
 	end
@@ -59,7 +59,7 @@
 -- Output the XML declaration and opening <Project> tag.
 --
 
-	function m.project()
+	function m.project(prj)
 		local action = premake.action.current()
 		p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
 			action.vstudio.toolsVersion)
@@ -556,7 +556,8 @@
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
 		 if #refs > 0 then
 		 	_p(1,'<ItemGroup>')
-		 	table.foreachi(refs, function(value)
+		 	for i = 1, #refs do
+		 		local value = refs[i]
 
 				-- If the link contains a '/' then it is a relative path to
 				-- a local assembly. Otherwise treat it as a system assembly.
@@ -567,8 +568,7 @@
 				else
 					_x(2,'<Reference Include="%s" />', path.getbasename(value))
 				end
-
-		 	end)
+		 	end
 		 	_p(1,'</ItemGroup>')
 		 end
 	end
@@ -596,6 +596,28 @@
 		return calls
 	end
 
+	m.elements.fileconfigs = function(fcfg, condition)
+		if fcfg then
+			return {
+				m.excludedFromBuild,
+				m.objectFileName,
+				m.clCompilePreprocessorDefinitions,
+				m.clCompileUndefinePreprocessorDefinitions,
+				m.optimization,
+				m.forceIncludes,
+				m.precompiledHeader,
+				m.enableEnhancedInstructionSet,
+				m.additionalCompileOptions,
+				m.disableSpecificWarnings,
+				m.treatSpecificWarningsAsErrors
+			}
+		else
+			return {
+				m.excludedFromBuild
+			}
+		end
+	end
+
 	function m.files(prj)
 		-- Categorize the source files in groups by build rule; each will
 		-- be written to a separate item group by one of the handlers
@@ -613,21 +635,9 @@
 				local contents = p.capture(function ()
 					p.push()
 					for cfg in project.eachconfig(prj) do
+						local condition = m.condition(cfg)
 						local fcfg = fileconfig.getconfig(file, cfg)
-						m.excludedFromBuild(cfg, fcfg)
-						if fcfg then
-							local condition = m.condition(cfg)
-							m.objectFileName(fcfg)
-							m.clCompilePreprocessorDefinitions(fcfg, condition)
-							m.clCompileUndefinePreprocessorDefinitions(fcfg, condition)
-							m.optimization(fcfg, condition)
-							m.forceIncludes(fcfg, condition)
-							m.precompiledHeader(cfg, fcfg, condition)
-							m.enableEnhancedInstructionSet(fcfg, condition)
-							m.additionalCompileOptions(fcfg, condition)
-							m.disableSpecificWarnings(fcfg, condition)
-							m.treatSpecificWarningsAsErrors(fcfg, condition)
-						end
+						p.callArray(m.elements.fileconfigs, fcfg, condition)
 					end
 					p.pop()
 				end)
@@ -670,7 +680,7 @@
 					local condition = m.condition(cfg)
 					local filecfg = fileconfig.getconfig(file, cfg)
 					if fileconfig.hasCustomBuildRule(filecfg) then
-						m.excludedFromBuild(cfg, filecfg)
+						m.excludedFromBuild(filecfg, condition)
 
 						local commands = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
 						commands = table.concat(commands,'\r\n')
@@ -763,7 +773,7 @@
 						local condition = m.condition(cfg)
 						local filecfg = fileconfig.getconfig(file, cfg)
 						if cfg.system == premake.WINDOWS then
-							m.excludedFromBuild(cfg, filecfg)
+							m.excludedFromBuild(filecfg, condition)
 						end
 					end
 					p.pop()
@@ -792,7 +802,7 @@
 						local condition = m.condition(cfg)
 						local filecfg = fileconfig.getconfig(file, cfg)
 						if cfg.system == premake.WINDOWS then
-							m.excludedFromBuild(cfg, filecfg)
+							m.excludedFromBuild(filecfg, condition)
 						end
 					end
 					p.pop()
@@ -1139,9 +1149,9 @@
 	end
 
 
-	function m.excludedFromBuild(cfg, filecfg)
+	function m.excludedFromBuild(filecfg, condition)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
-			m.element("ExcludedFromBuild", m.condition(cfg), "true")
+			m.element("ExcludedFromBuild", condition, "true")
 		end
 	end
 
@@ -1509,17 +1519,18 @@
 	end
 
 
-	function m.precompiledHeader(cfg, filecfg, condition)
+	function m.precompiledHeader(cfg, condition)
+		prjcfg, filecfg = p.config.normalize(cfg)
 		if filecfg then
-			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
+			if prjcfg.pchsource == filecfg.abspath and not prjcfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'Create')
 			elseif filecfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'NotUsing')
 			end
 		else
-			if not cfg.flags.NoPCH and cfg.pchheader then
+			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
 				p.w('<PrecompiledHeader>Use</PrecompiledHeader>')
-				p.x('<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
+				p.x('<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', prjcfg.pchheader)
 			else
 				p.w('<PrecompiledHeader>NotUsing</PrecompiledHeader>')
 			end
