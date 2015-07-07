@@ -129,3 +129,13 @@
 		x = detoken.expand("%{foo:gsub('/', '\\')}", environ)
 		test.isequal("some\\path", x)
 	end
+
+--
+-- Escapes backslashes correctly, but not outside tokens.
+--
+
+	function suite.escapesBackslashes2()
+		environ.foo = "some/path"
+		x = detoken.expand("%{foo:gsub('/', '\\')}\\already\\escaped", environ)
+		test.isequal("some\\path\\already\\escaped", x)
+	end
