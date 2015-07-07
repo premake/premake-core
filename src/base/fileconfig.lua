@@ -55,9 +55,10 @@
 		environ.file = fcfg
 		context.compile(fcfg)
 
-		fcfg.project = prj
-		fcfg.configs = {}
-		fcfg.abspath = fname
+		fcfg.project   = prj
+		fcfg.workspace = prj.workspace
+		fcfg.configs   = {}
+		fcfg.abspath   = fname
 
 		context.basedir(fcfg, prj.location)
 
@@ -91,6 +92,7 @@
 
 	function fileconfig.addconfig(fcfg, cfg)
 		local prj = cfg.project
+		local wks = cfg.workspace
 
 		-- Create a new context object for this configuration-file pairing.
 		-- The context has the ability to pull out configuration settings
@@ -122,6 +124,7 @@
 		fsub.vpath = fcfg.vpath
 		fsub.config = cfg
 		fsub.project = prj
+		fsub.workspace = wks
 
 		-- Set the context's base directory to the project's file system
 		-- location. Any path tokens which are expanded in non-path fields
