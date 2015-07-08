@@ -596,7 +596,16 @@
 		return calls
 	end
 
-	m.elements.fileconfigs = function(fcfg, condition)
+	function m.files(prj)
+		-- Categorize the source files in groups by build rule; each will
+		-- be written to a separate item group by one of the handlers
+		local groups = m.categorizeSources(prj)
+		p.callArray(m.elements.files, prj, groups)
+	end
+
+
+
+	m.elements.clCompileFiles = function(fcfg, condition)
 		if fcfg then
 			return {
 				m.excludedFromBuild,
@@ -618,26 +627,18 @@
 		end
 	end
 
-	function m.files(prj)
-		-- Categorize the source files in groups by build rule; each will
-		-- be written to a separate item group by one of the handlers
-		local groups = m.categorizeSources(prj)
-		p.callArray(m.elements.files, prj, groups)
-	end
-
-
 	function m.clCompileFiles(prj, group)
 		local files = group.ClCompile or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
-
 			for _, file in ipairs(files) do
+
 				local contents = p.capture(function ()
 					p.push()
 					for cfg in project.eachconfig(prj) do
 						local condition = m.condition(cfg)
 						local fcfg = fileconfig.getconfig(file, cfg)
-						p.callArray(m.elements.fileconfigs, fcfg, condition)
+						p.callArray(m.elements.clCompileFiles, fcfg, condition)
 					end
 					p.pop()
 				end)
@@ -668,43 +669,39 @@
 	end
 
 
+
+	m.elements.customBuildFiles = function(fcfg, condition)
+		return {
+			m.excludedFromBuild,
+			m.buildCommands,
+			m.buildOutputs,
+			m.buildMessage,
+			m.buildAdditionalInputs
+		}
+	end
+
 	function m.customBuildFiles(prj, groups)
 		local files = groups.CustomBuild or {}
 		if #files > 0  then
 			p.push('<ItemGroup>')
 			for _, file in ipairs(files) do
+
 				p.push('<CustomBuild Include=\"%s\">', path.translate(file.relpath))
 				p.w('<FileType>Document</FileType>')
-
 				for cfg in project.eachconfig(prj) do
 					local condition = m.condition(cfg)
-					local filecfg = fileconfig.getconfig(file, cfg)
-					if fileconfig.hasCustomBuildRule(filecfg) then
-						m.excludedFromBuild(filecfg, condition)
-
-						local commands = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
-						commands = table.concat(commands,'\r\n')
-						m.element("Command", condition, '%s', commands)
-
-						local outputs = project.getrelative(prj, filecfg.buildoutputs)
-						m.element("Outputs", condition, '%s', table.concat(outputs, ";"))
-
-						if filecfg.buildmessage then
-							m.element("Message", condition, '%s', filecfg.buildmessage)
-						end
-
-						if filecfg.buildinputs and #filecfg.buildinputs > 0 then
-							local inputs = project.getrelative(prj, filecfg.buildinputs)
-							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
-						end
+					local fcfg = fileconfig.getconfig(file, cfg)
+					if fileconfig.hasCustomBuildRule(fcfg) then
+						p.callArray(m.elements.customBuildFiles, fcfg, condition)
 					end
 				end
-
 				p.pop('</CustomBuild>')
+
 			end
 			p.pop('</ItemGroup>')
 		end
 	end
+
 
 
 	function m.customRuleFiles(prj, groups)
@@ -994,6 +991,21 @@
 	end
 
 
+	function m.buildAdditionalInputs(fcfg, condition)
+		if fcfg.buildinputs and #fcfg.buildinputs > 0 then
+			local inputs = project.getrelative(fcfg.project, fcfg.buildinputs)
+			m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
+		end
+	end
+
+
+	function m.buildCommands(fcfg, condition)
+		local commands = os.translateCommands(fcfg.buildcommands, p.WINDOWS)
+		commands = table.concat(commands,'\r\n')
+		m.element("Command", condition, '%s', commands)
+	end
+
+
 	function m.buildLog(cfg)
 		if cfg.buildlog and #cfg.buildlog > 0 then
 			p.push('<BuildLog>')
@@ -1003,11 +1015,25 @@
 	end
 
 
+	function m.buildMessage(fcfg, condition)
+		if fcfg.buildmessage then
+			m.element("Message", condition, '%s', fcfg.buildmessage)
+		end
+	end
+
+
+	function m.buildOutputs(fcfg, condition)
+		local outputs = project.getrelative(fcfg.project, fcfg.buildoutputs)
+		m.element("Outputs", condition, '%s', table.concat(outputs, ";"))
+	end
+
+
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
 		end
 	end
+
 
 	function m.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
