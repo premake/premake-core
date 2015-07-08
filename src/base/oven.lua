@@ -364,13 +364,8 @@
 			if not field then
 				ctx[key] = rawget(ctx, key)
 			else
-				local value = p.configset.fetch(cset, field, terms)
+				local value = p.configset.fetch(cset, field, terms, ctx)
 				if value then
-					-- do I need to expand tokens?
-					if field and field.tokens then
-						value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
-					end
-
 					ctx[key] = value
 				end
 			end

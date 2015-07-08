@@ -172,13 +172,8 @@
 		-- If there is a matching field, then go fetch the aggregated value
 		-- from my configuration set, and then cache it future lookups.
 
-		local value = configset.fetch(ctx._cfgset, field, ctx.terms)
+		local value = configset.fetch(ctx._cfgset, field, ctx.terms, ctx)
 		if value then
-			-- do I need to expand tokens?
-			if field and field.tokens then
-				value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
-			end
-
 			-- store the result for later lookups
 			ctx[key] = value
 		end
