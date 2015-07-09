@@ -32,11 +32,11 @@
 	function suite.structureIsCorrect_onDefaultValues()
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<Keyword>Win32Proj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
 		]]
 	end
 
@@ -49,12 +49,12 @@
 		clr "On"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-		<Keyword>ManagedCProj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<Keyword>ManagedCProj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
 		]]
 	end
 
@@ -68,12 +68,12 @@
 		framework "4.5"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-		<Keyword>ManagedCProj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+	<Keyword>ManagedCProj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
 		]]
 	end
 
@@ -82,13 +82,13 @@
 		clr "On"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
-		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-		<Keyword>ManagedCProj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+	<Keyword>ManagedCProj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
 		]]
 	end
 
@@ -100,9 +100,9 @@
 		system "Linux"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+</PropertyGroup>
 		]]
 	end
 
@@ -118,11 +118,11 @@
 			system "Linux"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<Keyword>Win32Proj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
 		]]
 	end
 
@@ -135,10 +135,10 @@
 		kind "Makefile"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<Keyword>MakeFileProj</Keyword>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>MakeFileProj</Keyword>
+</PropertyGroup>
 		]]
 	end
 
@@ -146,10 +146,10 @@
 		kind "None"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<Keyword>MakeFileProj</Keyword>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>MakeFileProj</Keyword>
+</PropertyGroup>
 		]]
 	end
 
@@ -163,12 +163,12 @@
 		filename "MyProject_2012"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<Keyword>Win32Proj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-		<ProjectName>MyProject</ProjectName>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<ProjectName>MyProject</ProjectName>
+</PropertyGroup>
 		]]
 	end
 
@@ -183,11 +183,11 @@
 		_ACTION = "vs2013"
 		prepare()
 		test.capture [[
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-		<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
-		<Keyword>Win32Proj</Keyword>
-		<RootNamespace>MyProject</RootNamespace>
-	</PropertyGroup>
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
 		]]
 	end

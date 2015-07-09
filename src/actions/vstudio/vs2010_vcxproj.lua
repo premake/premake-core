@@ -83,20 +83,20 @@
 		end
 
 		local configs = {}
-		_p(1,'<ItemGroup Label="ProjectConfigurations">')
+		p.push('<ItemGroup Label="ProjectConfigurations">')
 		for cfg in project.eachconfig(prj) do
 			for _, arch in ipairs(platforms) do
 				local prjcfg = vstudio.projectConfig(cfg, arch)
 				if not configs[prjcfg] then
 					configs[prjcfg] = prjcfg
-					_x(2,'<ProjectConfiguration Include="%s">', vstudio.projectConfig(cfg, arch))
-					_x(3,'<Configuration>%s</Configuration>', vstudio.projectPlatform(cfg))
-					_p(3,'<Platform>%s</Platform>', arch)
-					_p(2,'</ProjectConfiguration>')
+					p.push('<ProjectConfiguration Include="%s">', vstudio.projectConfig(cfg, arch))
+					p.x('<Configuration>%s</Configuration>', vstudio.projectPlatform(cfg))
+					p.w('<Platform>%s</Platform>', arch)
+					p.pop('</ProjectConfiguration>')
 				end
 			end
 		end
-		_p(1,'</ItemGroup>')
+		p.pop('</ItemGroup>')
 	end
 
 
@@ -109,7 +109,7 @@
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
 		local framework = prj.framework or action.vstudio.targetFramework or "4.0"
-		_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 	end
 
 
@@ -130,7 +130,7 @@
 	function m.globals(prj)
 		m.propertyGroup(nil, "Globals")
 		p.callArray(m.elements.globals, prj)
-		_p(1,'</PropertyGroup>')
+		p.pop('</PropertyGroup>')
 	end
 
 
@@ -162,7 +162,7 @@
 	function m.configurationProperties(cfg)
 		m.propertyGroup(cfg, "Configuration")
 		p.callArray(m.elements.configurationProperties, cfg)
-		_p(1,'</PropertyGroup>')
+		p.pop('</PropertyGroup>')
 	end
 
 	function m.configurationPropertiesGroup(prj)
@@ -208,7 +208,7 @@
 		if not vstudio.isMakefile(cfg) then
 			m.propertyGroup(cfg)
 			p.callArray(m.elements.outputProperties, cfg)
-			_p(1,'</PropertyGroup>')
+			p.pop('</PropertyGroup>')
 		end
 	end
 
@@ -233,7 +233,7 @@
 			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
 			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
 			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-			_p(1,'</PropertyGroup>')
+			p.pop('</PropertyGroup>')
 		end
 	end
 
@@ -428,8 +428,7 @@
 				m.additionalLinkOptions,
 			}
 		else
-			return {
-			}
+			return {}
 		end
 	end
 
@@ -453,27 +452,21 @@
 --
 
 	function m.manifest(cfg)
-		-- no additional manifests in static lib
-		if cfg.kind == premake.STATICLIB then
-			return
-		end
+		if cfg.kind ~= p.STATICLIB then
+			-- get the manifests files
+			local manifests = {}
+			for _, fname in ipairs(cfg.files) do
+				if path.getextension(fname) == ".manifest" then
+					table.insert(manifests, project.getrelative(cfg.project, fname))
+				end
+			end
 
-		-- get the manifests files
-		local manifests = {}
-		for _, fname in ipairs(cfg.files) do
-			if path.getextension(fname) == ".manifest" then
-				table.insert(manifests, project.getrelative(cfg.project, fname))
+			if #manifests > 0 then
+				p.push('<Manifest>')
+				m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
+				p.pop('</Manifest>')
 			end
 		end
-
-		-- when a project is not using manifest files, visual studio doesn't write the section.
-		if #manifests == 0 then
-			return
-		end
-
-		p.push('<Manifest>')
-		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
-		p.pop('</Manifest>')
 	end
 
 
@@ -491,12 +484,12 @@
 
 			if #steps > 0 then
 				steps = os.translateCommands(steps, p.WINDOWS)
-				_p(2,'<%s>', name)
-				_x(3,'<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
+				p.push('<%s>', name)
+				p.x('<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
 				if msg then
-					_x(3,'<Message>%s</Message>', msg)
+					p.x('<Message>%s</Message>', msg)
 				end
-				_p(2,'</%s>', name)
+				p.pop('</%s>', name)
 			end
 		end
 
@@ -555,21 +548,21 @@
 
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
 		 if #refs > 0 then
-		 	_p(1,'<ItemGroup>')
+		 	p.push('<ItemGroup>')
 		 	for i = 1, #refs do
 		 		local value = refs[i]
 
 				-- If the link contains a '/' then it is a relative path to
 				-- a local assembly. Otherwise treat it as a system assembly.
 				if value:find('/', 1, true) then
-					_x(2,'<Reference Include="%s">', path.getbasename(value))
-					_x(3,'<HintPath>%s</HintPath>', path.translate(value))
-					_p(2,'</Reference>')
+					p.push('<Reference Include="%s">', path.getbasename(value))
+					p.x('<HintPath>%s</HintPath>', path.translate(value))
+					p.pop('</Reference>')
 				else
-					_x(2,'<Reference Include="%s" />', path.getbasename(value))
+					p.x('<Reference Include="%s" />', path.getbasename(value))
 				end
 		 	end
-		 	_p(1,'</ItemGroup>')
+		 	p.pop('</ItemGroup>')
 		 end
 	end
 
@@ -929,7 +922,7 @@
 	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
-			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
+			p.x('<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
 		end
 	end
 
@@ -953,7 +946,7 @@
 	function m.additionalLinkOptions(cfg)
 		if #cfg.linkoptions > 0 then
 			local opts = table.concat(cfg.linkoptions, " ")
-			_x(3, '<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
+			p.x('<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
 		end
 	end
 
@@ -1005,14 +998,14 @@
 
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
-			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+			p.w('<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
 		end
 	end
 
 
 	function m.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
-			_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
+			p.w('<WholeProgramOptimization>true</WholeProgramOptimization>')
 		end
 	end
 
@@ -1050,7 +1043,7 @@
 
 	function m.compileAs(cfg)
 		if cfg.project.language == "C" then
-			_p(3,'<CompileAs>CompileAsC</CompileAs>')
+			p.w('<CompileAs>CompileAsC</CompileAs>')
 		end
 	end
 
@@ -1065,7 +1058,7 @@
 			None = "Makefile",
 			Utility = "Utility",
 		}
-		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
+		p.w('<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
 	end
 
 
@@ -1100,11 +1093,11 @@
 
 	function m.deploy(cfg)
 		if cfg.system == premake.XBOX360 then
-			_p(2,'<Deploy>')
-			_p(3,'<DeploymentType>CopyToHardDrive</DeploymentType>')
-			_p(3,'<DvdEmulationType>ZeroSeekTimes</DvdEmulationType>')
-			_p(3,'<DeploymentFiles>$(RemoteRoot)=$(ImagePath);</DeploymentFiles>')
-			_p(2,'</Deploy>')
+			p.push('<Deploy>')
+			p.w('<DeploymentType>CopyToHardDrive</DeploymentType>')
+			p.w('<DvdEmulationType>ZeroSeekTimes</DvdEmulationType>')
+			p.w('<DeploymentFiles>$(RemoteRoot)=$(ImagePath);</DeploymentFiles>')
+			p.pop('</Deploy>')
 		end
 	end
 
@@ -1135,7 +1128,7 @@
 		   cfg.clr == p.OFF and
 		   cfg.system ~= premake.XBOX360
 		then
-			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
+			p.w('<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 		end
 	end
 
@@ -1212,20 +1205,20 @@
 
 
 	function m.generateDebugInformation(cfg)
-		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
+		p.w('<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
 	end
 
 
 	function m.generateManifest(cfg)
 		if cfg.flags.NoManifest then
-			_p(2,'<GenerateManifest>false</GenerateManifest>')
+			p.w('<GenerateManifest>false</GenerateManifest>')
 		end
 	end
 
 
 	function m.generateMapFile(cfg)
 		if cfg.flags.Maps then
-			_p(3,'<GenerateMapFile>true</GenerateMapFile>')
+			p.w('<GenerateMapFile>true</GenerateMapFile>')
 		end
 	end
 
@@ -1244,30 +1237,30 @@
 
 	function m.ignoreImportLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
-			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
+			p.w('<IgnoreImportLibrary>true</IgnoreImportLibrary>');
 		end
 	end
 
 
 	function m.imageXex(cfg)
 		if cfg.system == premake.XBOX360 then
-			_p(2,'<ImageXex>')
+			p.push('<ImageXex>')
 			if cfg.configfile then
-				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configfile)
+				p.w('<ConfigurationFile>%s</ConfigurationFile>', cfg.configfile)
 			else
-				_p(3,'<ConfigurationFile>')
-				_p(3,'</ConfigurationFile>')
+				p.w('<ConfigurationFile>')
+				p.w('</ConfigurationFile>')
 			end
-			_p(3,'<AdditionalSections>')
-			_p(3,'</AdditionalSections>')
-			_p(2,'</ImageXex>')
+			p.w('<AdditionalSections>')
+			p.w('</AdditionalSections>')
+			p.pop('</ImageXex>')
 		end
 	end
 
 
 	function m.imageXexOutput(cfg)
 		if cfg.system == premake.XBOX360 then
-			_x(2,'<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>')
+			p.x('<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>')
 		end
 	end
 
@@ -1288,7 +1281,7 @@
 
 
 	function m.importDefaultProps(prj)
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
 	end
 
 
@@ -1310,7 +1303,7 @@
 
 	function m.importLibrary(cfg)
 		if cfg.kind == premake.SHAREDLIB then
-			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
+			p.x('<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
 		end
 	end
 
@@ -1325,7 +1318,7 @@
 
 	function m.intDir(cfg)
 		local objdir = vstudio.path(cfg, cfg.objdir)
-		_x(2,'<IntDir>%s\\</IntDir>', objdir)
+		p.x('<IntDir>%s\\</IntDir>', objdir)
 	end
 
 
@@ -1354,15 +1347,15 @@
 
 		if isWin then
 			if isMakefile then
-				_p(2,'<Keyword>MakeFileProj</Keyword>')
+				p.w('<Keyword>MakeFileProj</Keyword>')
 			else
 				if isManaged then
 					m.targetFramework(prj)
-					_p(2,'<Keyword>ManagedCProj</Keyword>')
+					p.w('<Keyword>ManagedCProj</Keyword>')
 				else
-					_p(2,'<Keyword>Win32Proj</Keyword>')
+					p.w('<Keyword>Win32Proj</Keyword>')
 				end
-				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+				p.w('<RootNamespace>%s</RootNamespace>', prj.name)
 			end
 		end
 	end
@@ -1379,7 +1372,7 @@
 
 	function m.linkIncremental(cfg)
 		if cfg.kind ~= premake.STATICLIB then
-			_p(2,'<LinkIncremental>%s</LinkIncremental>', tostring(config.canLinkIncremental(cfg)))
+			p.w('<LinkIncremental>%s</LinkIncremental>', tostring(config.canLinkIncremental(cfg)))
 		end
 	end
 
@@ -1389,9 +1382,9 @@
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
 		if explicit then
-			_p(2,'<ProjectReference>')
-			_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
-			_p(2,'</ProjectReference>')
+			p.push('<ProjectReference>')
+			p.w('<LinkLibraryDependencies>false</LinkLibraryDependencies>')
+			p.pop('</ProjectReference>')
 		end
 	end
 
@@ -1410,7 +1403,7 @@
 	function m.moduleDefinitionFile(cfg)
 		local df = config.findfile(cfg, ".def")
 		if df then
-			_p(3,'<ModuleDefinitionFile>%s</ModuleDefinitionFile>', df)
+			p.w('<ModuleDefinitionFile>%s</ModuleDefinitionFile>', df)
 		end
 	end
 
@@ -1426,7 +1419,7 @@
 		if #commands > 0 then
 			commands = os.translateCommands(commands, p.WINDOWS)
 			commands = table.concat(premake.esc(commands), p.eol())
-			_p(2, '<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
+			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
 	end
 
@@ -1439,7 +1432,7 @@
 	end
 
 	function m.nmakeOutput(cfg)
-		_p(2,'<NMakeOutput>$(OutDir)%s</NMakeOutput>', cfg.buildtarget.name)
+		p.w('<NMakeOutput>$(OutDir)%s</NMakeOutput>', cfg.buildtarget.name)
 	end
 
 
@@ -1469,8 +1462,8 @@
 
 	function m.optimizeReferences(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
-			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
+			p.w('<EnableCOMDATFolding>true</EnableCOMDATFolding>')
+			p.w('<OptimizeReferences>true</OptimizeReferences>')
 		end
 	end
 
@@ -1486,13 +1479,13 @@
 
 	function m.outDir(cfg)
 		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
-		_x(2,'<OutDir>%s\\</OutDir>', outdir)
+		p.x('<OutDir>%s\\</OutDir>', outdir)
 	end
 
 
 	function m.outputFile(cfg)
 		if cfg.system == premake.XBOX360 then
-			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
+			p.w('<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
 		end
 	end
 
@@ -1500,7 +1493,7 @@
 	function m.executablePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.bindirs)
 		if #dirs > 0 then
-			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
+			p.x('<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
 		end
 	end
 
@@ -1574,13 +1567,13 @@
 
 
 	function m.projectGuid(prj)
-		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
+		p.w('<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 	end
 
 
 	function m.projectName(prj)
 		if prj.name ~= prj.filename then
-			_x(2,'<ProjectName>%s</ProjectName>', prj.name)
+			p.x('<ProjectName>%s</ProjectName>', prj.name)
 		end
 	end
 
@@ -1595,15 +1588,15 @@
 			label = string.format(' Label="%s"', label)
 		end
 
-		_p(1,'<PropertyGroup%s%s>', cond or "", label or "")
+		p.push('<PropertyGroup%s%s>', cond or "", label or "")
 	end
 
 
 
 	function m.propertySheets(cfg)
-		_p(1,'<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
-		_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
-		_p(1,'</ImportGroup>')
+		p.push('<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
+		p.w('<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
+		p.pop('</ImportGroup>')
 	end
 
 
@@ -1695,7 +1688,7 @@
 	function m.subSystem(cfg)
 		if cfg.system ~= premake.XBOX360 then
 			local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
-			_p(3,'<SubSystem>%s</SubSystem>', subsystem)
+			p.w('<SubSystem>%s</SubSystem>', subsystem)
 		end
 	end
 
@@ -1703,23 +1696,23 @@
 	function m.targetExt(cfg)
 		local ext = cfg.buildtarget.extension
 		if ext ~= "" then
-			_x(2,'<TargetExt>%s</TargetExt>', ext)
+			p.x('<TargetExt>%s</TargetExt>', ext)
 		else
-			_p(2,'<TargetExt>')
-			_p(2,'</TargetExt>')
+			p.w('<TargetExt>')
+			p.w('</TargetExt>')
 		end
 	end
 
 
 	function m.targetName(cfg)
-		_x(2,'<TargetName>%s%s</TargetName>', cfg.buildtarget.prefix, cfg.buildtarget.basename)
+		p.x('<TargetName>%s%s</TargetName>', cfg.buildtarget.prefix, cfg.buildtarget.basename)
 	end
 
 
 	function m.treatLinkerWarningAsErrors(cfg)
 		if cfg.flags.FatalLinkWarnings then
 			local el = iif(cfg.kind == premake.STATICLIB, "Lib", "Linker")
-			_p(3,'<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
+			p.w('<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
 		end
 	end
 
@@ -1760,26 +1753,26 @@
 
 	function m.useDebugLibraries(cfg)
 		local runtime = config.getruntime(cfg)
-		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(runtime:endswith("Debug")))
+		p.w('<UseDebugLibraries>%s</UseDebugLibraries>', tostring(runtime:endswith("Debug")))
 	end
 
 
 	function m.useOfMfc(cfg)
 		if cfg.flags.MFC then
-			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
+			p.w('<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
 		end
 	end
 
 	function m.useOfAtl(cfg)
 		if cfg.atl then
-			_p(2,'<UseOfATL>%s</UseOfATL>', cfg.atl)
+			p.w('<UseOfATL>%s</UseOfATL>', cfg.atl)
 		end
 	end
 
 
 
 	function m.userMacros(cfg)
-		_p(1,'<PropertyGroup Label="UserMacros" />')
+		p.w('<PropertyGroup Label="UserMacros" />')
 	end
 
 
