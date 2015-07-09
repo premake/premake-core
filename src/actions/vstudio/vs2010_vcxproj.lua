@@ -578,34 +578,30 @@
 -- Write out the list of source code files, and any associated configuration.
 ---
 
-	m.elements.fileGroups = {
-		"clInclude",
-		"clCompile",
-		"none",
-		"resourceCompile",
-		"customBuild",
-		"customRule",
-		"midlCompile"
-	}
-
 	m.elements.files = function(prj, groups)
-		local calls = {}
-		for i, group in ipairs(m.elements.fileGroups) do
-			calls[i] = m[group .. "Files"]
-		end
-		return calls
+		return {
+			m.clIncludeFiles,
+			m.clCompileFiles,
+			m.noneFiles,
+			m.resourceCompileFiles,
+			m.customBuildFiles,
+			m.customRuleFiles,
+			m.midlFiles
+		}
 	end
 
 	function m.files(prj)
-		-- Categorize the source files in groups by build rule; each will
-		-- be written to a separate item group by one of the handlers
 		local groups = m.categorizeSources(prj)
 		p.callArray(m.elements.files, prj, groups)
 	end
 
 
 
-	m.elements.clCompileFiles = function(fcfg, condition)
+	m.elements.ClCompileFile = function(cfg, file)
+		return {}
+	end
+
+	m.elements.ClCompileFileCfg = function(fcfg, condition)
 		if fcfg then
 			return {
 				m.excludedFromBuild,
@@ -627,50 +623,33 @@
 		end
 	end
 
-	function m.clCompileFiles(prj, group)
-		local files = group.ClCompile or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for _, file in ipairs(files) do
-
-				local contents = p.capture(function ()
-					p.push()
-					for cfg in project.eachconfig(prj) do
-						local condition = m.condition(cfg)
-						local fcfg = fileconfig.getconfig(file, cfg)
-						p.callArray(m.elements.clCompileFiles, fcfg, condition)
-					end
-					p.pop()
-				end)
-
-				if #contents > 0 then
-					p.push('<ClCompile Include=\"%s\">', path.translate(file.relpath))
-					p.outln(contents)
-					p.pop('</ClCompile>')
-				else
-					p.x('<ClCompile Include=\"%s\" />', path.translate(file.relpath))
-				end
-
-			end
-			p.pop('</ItemGroup>')
-		end
+	function m.clCompileFiles(prj, groups)
+		m.emitFiles(prj, groups, "ClCompile")
 	end
 
+
+
+	m.elements.ClIncludeFile = function(cfg, file)
+		return {}
+	end
+
+	m.elements.ClIncludeFileCfg = function(fcfg, condition)
+		return {}
+	end
 
 	function m.clIncludeFiles(prj, groups)
-		local files = groups.ClInclude or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				p.x('<ClInclude Include=\"%s\" />', path.translate(file.relpath))
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "ClInclude")
 	end
 
 
 
-	m.elements.customBuildFiles = function(fcfg, condition)
+	m.elements.CustomBuildFile = function(cfg, file)
+		return {
+			m.fileType
+		}
+	end
+
+	m.elements.CustomBuildFileCfg = function(fcfg, condition)
 		return {
 			m.excludedFromBuild,
 			m.buildCommands,
@@ -681,25 +660,9 @@
 	end
 
 	function m.customBuildFiles(prj, groups)
-		local files = groups.CustomBuild or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for _, file in ipairs(files) do
-
-				p.push('<CustomBuild Include=\"%s\">', path.translate(file.relpath))
-				p.w('<FileType>Document</FileType>')
-				for cfg in project.eachconfig(prj) do
-					local condition = m.condition(cfg)
-					local fcfg = fileconfig.getconfig(file, cfg)
-					if fileconfig.hasCustomBuildRule(fcfg) then
-						p.callArray(m.elements.customBuildFiles, fcfg, condition)
-					end
-				end
-				p.pop('</CustomBuild>')
-
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "CustomBuild", function (cfg, fcfg)
+			return fileconfig.hasCustomBuildRule(fcfg)
+		end)
 	end
 
 
@@ -747,78 +710,86 @@
 
 
 
-	function m.noneFiles(prj, groups)
-		local files = groups.None or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				p.x('<None Include=\"%s\" />', path.translate(file.relpath))
-			end
-			p.pop('</ItemGroup>')
-		end
+	m.elements.NoneFile = function(cfg, file)
+		return {}
 	end
 
+	m.elements.NoneFileCfg = function(fcfg, condition)
+		return {}
+	end
+
+	function m.noneFiles(prj, groups)
+		m.emitFiles(prj, groups, "None")
+	end
+
+
+
+	m.elements.ResourceCompileFile = function(cfg, file)
+		return {}
+	end
+
+	m.elements.ResourceCompileFileCfg = function(fcfg, condition)
+		return {
+			m.excludedFromBuild
+		}
+	end
 
 	function m.resourceCompileFiles(prj, groups)
-		local files = groups.ResourceCompile or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				local contents = p.capture(function ()
-					p.push()
-					for cfg in project.eachconfig(prj) do
-						local condition = m.condition(cfg)
-						local filecfg = fileconfig.getconfig(file, cfg)
-						if cfg.system == premake.WINDOWS then
-							m.excludedFromBuild(filecfg, condition)
-						end
-					end
-					p.pop()
-				end)
-
-				if #contents > 0 then
-					p.push('<ResourceCompile Include=\"%s\">', path.translate(file.relpath))
-					p.outln(contents)
-					p.pop('</ResourceCompile>')
-				else
-					p.x('<ResourceCompile Include=\"%s\" />', path.translate(file.relpath))
-				end
-			end
-			p.pop('</ItemGroup>')
-		end
-	end
-
-	function m.midlCompileFiles(prj, groups)
-		local files = groups.MidlCompile or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				local contents = p.capture(function ()
-					p.push()
-					for cfg in project.eachconfig(prj) do
-						local condition = m.condition(cfg)
-						local filecfg = fileconfig.getconfig(file, cfg)
-						if cfg.system == premake.WINDOWS then
-							m.excludedFromBuild(filecfg, condition)
-						end
-					end
-					p.pop()
-				end)
-
-				if #contents > 0 then
-					p.push('<Midl Include=\"%s\">', path.translate(file.relpath))
-					p.outln(contents)
-					p.pop('</Midl>')
-				else
-					p.x('<Midl Include=\"%s\" />', path.translate(file.relpath))
-				end
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "ResourceCompile", function(cfg)
+			return cfg.system == p.WINDOWS
+		end)
 	end
 
 
-	function m.categorize(prj, file)
+
+	m.elements.MidlFile = function(cfg, file)
+		return {}
+	end
+
+	m.elements.MidlFileCfg = function(fcfg, condition)
+		return {
+			m.excludedFromBuild
+		}
+	end
+
+	function m.midlFiles(prj, groups)
+		m.emitFiles(prj, groups, "Midl", function(cfg)
+			return cfg.system == p.WINDOWS
+		end)
+	end
+
+
+
+	function m.categorizeSources(prj)
+		local groups = prj._vc2010_sources
+		if groups then
+			return groups
+		end
+
+		groups = {}
+		prj._vc2010_sources = groups
+
+		local tr = project.getsourcetree(prj)
+		tree.traverse(tr, {
+			onleaf = function(node)
+				local cat = m.categorizeFile(prj, node)
+				groups[cat] = groups[cat] or {}
+				table.insert(groups[cat], node)
+			end
+		})
+
+		-- sort by relative-to path; otherwise VS will reorder the files
+		for group, files in pairs(groups) do
+			table.sort(files, function (a, b)
+				return a.relpath < b.relpath
+			end)
+		end
+
+		return groups
+	end
+
+
+	function m.categorizeFile(prj, file)
 		-- If any configuration for this file uses a custom build step,
 		-- that's the category to use
 		for cfg in project.eachconfig(prj) do
@@ -842,39 +813,43 @@
 		elseif path.isresourcefile(file.name) then
 			return "ResourceCompile"
 		elseif path.isidlfile(file.name) then
-			return "MidlCompile"
+			return "Midl"
 		else
 			return "None"
 		end
 	end
 
 
-	function m.categorizeSources(prj)
-		local groups = prj._vc2010_sources
-		if groups then
-			return groups
-		end
+	function m.emitFiles(prj, groups, group, check)
+		local files = groups[group]
+		if files and #files > 0 then
+			p.push('<ItemGroup>')
+			for _, file in ipairs(files) do
 
-		groups = {}
-		prj._vc2010_sources = groups
+				local contents = p.capture(function ()
+					p.push()
+					p.callArray(m.elements[group .. "File"], cfg, file)
+					for cfg in project.eachconfig(prj) do
+						local fcfg = fileconfig.getconfig(file, cfg)
+						if not check or check(cfg, fcfg) then
+							p.callArray(m.elements[group .. "FileCfg"], fcfg, m.condition(cfg))
+						end
+					end
+					p.pop()
+				end)
 
-		local tr = project.getsourcetree(prj)
-		tree.traverse(tr, {
-			onleaf = function(node)
-				local cat = m.categorize(prj, node)
-				groups[cat] = groups[cat] or {}
-				table.insert(groups[cat], node)
+				local rel = path.translate(file.relpath)
+				if #contents > 0 then
+					p.push('<%s Include="%s">', group, rel)
+					p.outln(contents)
+					p.pop('</%s>', group)
+				else
+					p.x('<%s Include="%s" />', group, rel)
+				end
+
 			end
-		})
-
-		-- sort by relative-to path; otherwise VS will reorder the files
-		for group, files in pairs(groups) do
-			table.sort(files, function (a, b)
-				return a.relpath < b.relpath
-			end)
+			p.pop('</ItemGroup>')
 		end
-
-		return groups
 	end
 
 
@@ -1187,6 +1162,11 @@
 			local value = table.implode(cfg.cleanextensions, "*", ";", "")
 			m.element("ExtensionsToDeleteOnClean", nil, value .. "$(ExtensionsToDeleteOnClean)")
 		end
+	end
+
+
+	function m.fileType(cfg, file)
+		p.w('<FileType>Document</FileType>')
 	end
 
 
