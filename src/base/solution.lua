@@ -1,7 +1,7 @@
 ---
 -- solution.lua
 -- Work with the list of solutions loaded from the script.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 ---
 
 	local p = premake
@@ -139,4 +139,22 @@
 	function solution.getproject(sln, idx)
 		sln = premake.oven.bakeSolution(sln)
 		return sln.projects[idx]
+	end
+
+
+
+---
+-- Determines if the solution contains a project that meets certain criteria.
+--
+-- @param self
+--    The solution.
+-- @param func
+--    A test function. Receives a project as its only argument and returns a
+--    boolean indicating whether it meets to matching criteria.
+-- @return
+--    True if the test function returned true.
+---
+
+	function solution.hasProject(self, func)
+		return p.container.hasChild(self, p.project, func)
 	end
