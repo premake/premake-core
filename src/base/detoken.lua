@@ -110,7 +110,7 @@
 			local count
 			repeat
 				value, count = value:gsub("%%{(.-)}", function(token)
-					local result, err = expandtoken(token, environ)
+					local result, err = expandtoken(token:gsub("\\", "\\\\"), environ)
 					if not result then
 						error(err, 0)
 					end
