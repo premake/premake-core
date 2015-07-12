@@ -17,7 +17,13 @@
 
 	premake.api.deprecations "off"
 
+--
+-- Enable contrib support for 3rd party libraries
+-- Curl includes support for http / https downloads
+-- Compression will eventually include support for ZLib / Zip
 
+	local ENABLE_CURL = false
+	local ENABLE_COMPRESSION = true
 
 --
 -- Register supporting actions and options.
@@ -82,6 +88,16 @@
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
 		includedirs { "src/host/lua-5.1.4/src" }
+		if ENABLE_COMPRESSION then
+			includedirs { "contrib/zlib", "contrib/libzip" }
+			defines { "PREMAKE_COMPRESSION" }
+			links { "zip-lib", "zlib-lib" }
+		end
+		if ENABLE_CURL then
+			includedirs { "contrib/curl/include" }
+			defines { "CURL_STATICLIB", "PREMAKE_CURL" }
+			links { "curl-lib" }
+		end
 
 		files
 		{
@@ -113,13 +129,13 @@
 			flags       { "OptimizeSize" }
 
 		configuration "vs*"
-			defines     { "_CRT_SECURE_NO_WARNINGS" }
+			defines     { "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 		configuration "vs2005"
 			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "windows"
-			links { "ole32" }
+			links       { "ole32", "ws2_32" }
 
 		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
@@ -146,7 +162,14 @@
 			links       { "m" }
 
 
-
+	group 'contrib'
+		if ENABLE_COMPRESSION then
+			include 'contrib/zlib'
+			include 'contrib/libzip'
+		end
+		if ENABLE_CURL then
+			include 'contrib/curl'
+		end
 --
 -- A more thorough cleanup.
 --
