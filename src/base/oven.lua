@@ -118,6 +118,8 @@
 
 
 	function p.project.bake(self)
+		verbosef('    Baking %s...', self.name)
+
 		self.solution = self.workspace
 		local wks = self.workspace
 
