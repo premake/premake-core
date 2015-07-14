@@ -120,13 +120,13 @@
 		-- check if the language for this project is supported by the action.
 
 		if not p.action.supports(self.language) then
-			printf("    Unsupported language '%s' used for '%s'.", self.language, self.name)
+			p.warn("    Unsupported language '%s' used for '%s'.", self.language, self.name)
 		end
 
 		-- check if the kind for this project is supported by the action.
 
 		if not p.action.supports(self.kind) then
-			printf("    Unsupported kind '%s' used for '%s'.", self.kind, self.name)
+			p.warn("    Unsupported kind '%s' used for '%s'.", self.kind, self.name)
 		end
 
 		-- Add filtering terms to the context to make it as specific as I can.
