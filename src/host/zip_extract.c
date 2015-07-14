@@ -86,27 +86,7 @@ static int write_link(const char* filename, const char* bytes, size_t count)
 #endif
 }
 
-static void r_mkdir(const char* full_path)
-{
-	size_t path_length = strlen(full_path);
-	size_t i;
-	for (i = 0; i < path_length; ++i)
-	{
-		if (full_path[i] == '/' || full_path[i] == '\\')
-		{
-			char* sub_path = (char*)malloc(i + 1);
-			memcpy(sub_path, full_path, i);
-			sub_path[i] = 0;
-#if PLATFORM_WINDOWS
-			_mkdir(sub_path);
-#else
-			mkdir(sub_path, 0755);
-#endif
-			free(sub_path);
-		}
-	}
-}
-
+extern int do_mkdir(const char* path);
 
 static void parse_path(const char* full_name, char* filename, char* directory)
 {
@@ -171,7 +151,7 @@ static int extract(const char* src, const char* destination)
 
 		sprintf(appended_full_name, "%s/%s", destination, full_name);
 		parse_path(appended_full_name, filename, directory);
-		r_mkdir(directory);
+		do_mkdir(directory);
 
 		// is this a symbolic link?
 		if (is_symlink(opsys, attrib))

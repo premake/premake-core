@@ -8,26 +8,49 @@
 #include "premake.h"
 
 
-int os_mkdir(lua_State* L)
+int do_mkdir(const char* path)
 {
-	int z;
-	const char* path = luaL_checkstring(L, 1);
+	char sub_path[2048];
+	int i, z;
+
+	size_t path_length = strlen(path);
+	for (i = 0; i < path_length; ++i)
+	{
+		if (path[i] == '/' || path[i] == '\\')
+		{
+			memcpy(sub_path, path, i);
+			sub_path[i] = '\0';
 
 #if PLATFORM_WINDOWS
-	z = CreateDirectory(path, NULL);
+			z = CreateDirectory(sub_path, NULL);
 #else
-	z = (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0);
+			z =  (mkdir(sub_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0);
 #endif
 
+			if (!z)
+			{
+				return FALSE;
+			}
+		}
+	}
+
+	return TRUE;
+}
+
+
+int os_mkdir(lua_State* L)
+{
+	const char* path = luaL_checkstring(L, 1);
+
+	int z = do_mkdir(path);
 	if (!z)
 	{
 		lua_pushnil(L);
 		lua_pushfstring(L, "unable to create directory '%s'", path);
 		return 2;
 	}
-	else
-	{
-		lua_pushboolean(L, 1);
-		return 1;
-	}
+
+	lua_pushboolean(L, 1);
+	return 1;
 }
+
