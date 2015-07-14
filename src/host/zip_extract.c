@@ -5,6 +5,9 @@
 */
 
 #include "premake.h"
+
+#ifdef PREMAKE_COMPRESSION
+
 #include <zip.h>
 
 #ifdef WIN32
@@ -188,7 +191,7 @@ static int extract(const char* src, const char* destination)
 					if (result != (size_t)bytes_read)
 					{
 						printf("  Writing data to %s failed\n   %d bytes were written\n    %d bytes were attempted to be written\n    File may be corrupt\n",
-							appended_full_name, result, bytes_read);
+							appended_full_name, (int)result, (int)bytes_read);
 						return -1;
 					}
 				}
@@ -222,3 +225,5 @@ int zip_extract(lua_State* L)
 	lua_pushnumber(L, res);
 	return 1;
 }
+
+#endif
