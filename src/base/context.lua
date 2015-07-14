@@ -98,6 +98,21 @@
 	end
 
 
+
+--
+-- Merges the list of terms from an existing context.
+--
+-- @param ctx
+--    The context to receive the copied terms.
+-- @param src
+--    The context containing the terms to copy.
+--
+
+	function context.mergeFilters(ctx, src)
+		ctx.terms = table.merge(ctx.terms, table.deepcopy(src.terms))
+	end
+
+
 --
 -- Sets the base directory for path token expansion in non-path fields; such
 -- values will be made relative to this path.
