@@ -60,7 +60,7 @@
 --
 
 	function m.project(prj)
-		local action = premake.action.current()
+		local action = p.action.current()
 		p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
 			action.vstudio.toolsVersion)
 	end
@@ -105,7 +105,7 @@
 --
 
 	function m.targetFramework(prj)
-		local action = premake.action.current()
+		local action = p.action.current()
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
 		local framework = prj.framework or action.vstudio.targetFramework or "4.0"
@@ -347,7 +347,7 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= premake.XBOX360 and config.hasResourceFiles(cfg) then
+		if cfg.system ~= p.XBOX360 and config.hasResourceFiles(cfg) then
 			local contents = p.capture(function ()
 				p.push()
 				p.callArray(m.elements.resourceCompile, cfg)
@@ -1092,7 +1092,7 @@
 
 
 	function m.deploy(cfg)
-		if cfg.system == premake.XBOX360 then
+		if cfg.system == p.XBOX360 then
 			p.push('<Deploy>')
 			p.w('<DeploymentType>CopyToHardDrive</DeploymentType>')
 			p.w('<DvdEmulationType>ZeroSeekTimes</DvdEmulationType>')
@@ -1123,10 +1123,10 @@
 
 
 	function m.entryPointSymbol(cfg)
-		if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
+		if (cfg.kind == p.CONSOLEAPP or cfg.kind == p.WINDOWEDAPP) and
 		   not cfg.flags.WinMain and
 		   cfg.clr == p.OFF and
-		   cfg.system ~= premake.XBOX360
+		   cfg.system ~= p.XBOX360
 		then
 			p.w('<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
 		end
@@ -1236,14 +1236,14 @@
 
 
 	function m.ignoreImportLibrary(cfg)
-		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
+		if cfg.kind == p.SHAREDLIB and cfg.flags.NoImportLib then
 			p.w('<IgnoreImportLibrary>true</IgnoreImportLibrary>');
 		end
 	end
 
 
 	function m.imageXex(cfg)
-		if cfg.system == premake.XBOX360 then
+		if cfg.system == p.XBOX360 then
 			p.push('<ImageXex>')
 			if cfg.configfile then
 				p.w('<ConfigurationFile>%s</ConfigurationFile>', cfg.configfile)
@@ -1259,7 +1259,7 @@
 
 
 	function m.imageXexOutput(cfg)
-		if cfg.system == premake.XBOX360 then
+		if cfg.system == p.XBOX360 then
 			p.x('<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>')
 		end
 	end
@@ -1302,7 +1302,7 @@
 
 
 	function m.importLibrary(cfg)
-		if cfg.kind == premake.SHAREDLIB then
+		if cfg.kind == p.SHAREDLIB then
 			p.x('<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
 		end
 	end
@@ -1334,7 +1334,7 @@
 		-- try to determine what kind of targets we're building here
 		local isWin, isManaged, isMakefile
 		for cfg in project.eachconfig(prj) do
-			if cfg.system == premake.WINDOWS then
+			if cfg.system == p.WINDOWS then
 				isWin = true
 			end
 			if cfg.clr ~= p.OFF then
@@ -1371,7 +1371,7 @@
 
 
 	function m.linkIncremental(cfg)
-		if cfg.kind ~= premake.STATICLIB then
+		if cfg.kind ~= p.STATICLIB then
 			p.w('<LinkIncremental>%s</LinkIncremental>', tostring(config.canLinkIncremental(cfg)))
 		end
 	end
@@ -1393,7 +1393,7 @@
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
 		   cfg.flags.MultiProcessorCompile or
-		   cfg.debugformat == premake.C7
+		   cfg.debugformat == p.C7
 		then
 			p.w('<MinimalRebuild>false</MinimalRebuild>')
 		end
@@ -1418,7 +1418,7 @@
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
 			commands = os.translateCommands(commands, p.WINDOWS)
-			commands = table.concat(premake.esc(commands), p.eol())
+			commands = table.concat(p.esc(commands), p.eol())
 			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
 	end
@@ -1484,7 +1484,7 @@
 
 
 	function m.outputFile(cfg)
-		if cfg.system == premake.XBOX360 then
+		if cfg.system == p.XBOX360 then
 			p.w('<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
 		end
 	end
@@ -1503,7 +1503,7 @@
 		if version then
 			version = "v" .. version
 		else
-			local action = premake.action.current()
+			local action = p.action.current()
 			version = action.vstudio.platformToolset
 		end
 		if version then
@@ -1543,7 +1543,7 @@
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
 			end
-			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
+			defines = p.esc(defines) .. ";%%(PreprocessorDefinitions)"
 			m.element('PreprocessorDefinitions', condition, defines)
 		end
 	end
@@ -1555,7 +1555,7 @@
 			if escapeQuotes then
 				undefines = undefines:gsub('"', '\\"')
 			end
-			undefines = premake.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			undefines = p.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
 			m.element('UndefinePreprocessorDefinitions', condition, undefines)
 		end
 	end
@@ -1686,8 +1686,8 @@
 
 
 	function m.subSystem(cfg)
-		if cfg.system ~= premake.XBOX360 then
-			local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
+		if cfg.system ~= p.XBOX360 then
+			local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
 			p.w('<SubSystem>%s</SubSystem>', subsystem)
 		end
 	end
@@ -1711,7 +1711,7 @@
 
 	function m.treatLinkerWarningAsErrors(cfg)
 		if cfg.flags.FatalLinkWarnings then
-			local el = iif(cfg.kind == premake.STATICLIB, "Lib", "Linker")
+			local el = iif(cfg.kind == p.STATICLIB, "Lib", "Linker")
 			p.w('<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
 		end
 	end
@@ -1736,7 +1736,7 @@
 	function m.disableSpecificWarnings(cfg, condition)
 		if #cfg.disablewarnings > 0 then
 			local warnings = table.concat(cfg.disablewarnings, ";")
-			warnings = premake.esc(warnings) .. ";%%(DisableSpecificWarnings)"
+			warnings = p.esc(warnings) .. ";%%(DisableSpecificWarnings)"
 			m.element('DisableSpecificWarnings', condition, warnings)
 		end
 	end
@@ -1745,7 +1745,7 @@
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		if #cfg.fatalwarnings > 0 then
 			local fatal = table.concat(cfg.fatalwarnings, ";")
-			fatal = premake.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
+			fatal = p.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end
 	end
@@ -1801,7 +1801,7 @@
 --
 
 	function m.condition(cfg)
-		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', p.esc(vstudio.projectConfig(cfg)))
 	end
 
 
@@ -1823,7 +1823,7 @@
 
 	function m.element(name, condition, value, ...)
 		if select('#',...) == 0 then
-			value = premake.esc(value)
+			value = p.esc(value)
 		end
 
 		local format
