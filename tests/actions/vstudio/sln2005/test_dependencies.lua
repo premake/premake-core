@@ -45,7 +45,6 @@
 		prepare("C++")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]
@@ -60,7 +59,6 @@
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]
@@ -77,7 +75,6 @@
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]
@@ -94,7 +91,6 @@
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]

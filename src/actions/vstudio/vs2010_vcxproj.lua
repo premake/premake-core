@@ -874,7 +874,7 @@
 	end
 
 	function m.projectReferences(prj)
-		local refs = project.getdependencies(prj)
+		local refs = project.getdependencies(prj, 'linkOnly')
 		if #refs > 0 then
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
