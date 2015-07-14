@@ -876,6 +876,11 @@
 	function m.projectReferences(prj)
 		local refs = project.getdependencies(prj)
 		if #refs > 0 then
+			-- sort dependencies by uuid.
+			table.sort(refs, function(a,b)
+				return a.uuid < b.uuid
+			end)
+
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
