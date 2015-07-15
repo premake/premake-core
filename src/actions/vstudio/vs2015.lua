@@ -45,6 +45,9 @@
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)
 		end,
+		onRule = function(rule)
+			vstudio.vs2010.generateRule(rule)
+		end,
 
 		onCleanSolution = function(sln)
 			vstudio.cleanSolution(sln)

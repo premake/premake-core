@@ -81,7 +81,7 @@
 
 		for sln in p.global.eachSolution() do
 			local onSolution = act.onSolution or act.onsolution
-			if onSolution then
+			if onSolution and not sln.external then
 				onSolution(sln)
 			end
 
@@ -95,7 +95,7 @@
 
 		for rule in p.global.eachRule() do
 			local onRule = act.onRule or act.onrule
-			if onRule then
+			if onRule and not rule.external then
 				onRule(rule)
 			end
 		end
@@ -232,11 +232,11 @@
 	end
 
 
--- 
+--
 -- Determines if an action supports a particular configuration.
 -- @return
 -- True if the configuration is supported, false otherwise.
--- 
+--
 	function premake.action.supportsconfig(action, cfg)
 		if not action then
 			return false
