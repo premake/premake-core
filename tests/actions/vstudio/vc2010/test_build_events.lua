@@ -43,9 +43,9 @@
 		prebuildcommands { "command1" }
 		prepare()
 		test.capture [[
-		<PreBuildEvent>
-			<Command>command1</Command>
-		</PreBuildEvent>
+<PreBuildEvent>
+	<Command>command1</Command>
+</PreBuildEvent>
 		]]
 	end
 
@@ -53,9 +53,9 @@
 		postbuildcommands { "command1" }
 		prepare()
 		test.capture [[
-		<PostBuildEvent>
-			<Command>command1</Command>
-		</PostBuildEvent>
+<PostBuildEvent>
+	<Command>command1</Command>
+</PostBuildEvent>
 		]]
 	end
 
@@ -64,12 +64,12 @@
 		postbuildcommands { "command2" }
 		prepare()
 		test.capture [[
-		<PreBuildEvent>
-			<Command>command1</Command>
-		</PreBuildEvent>
-		<PostBuildEvent>
-			<Command>command2</Command>
-		</PostBuildEvent>
+<PreBuildEvent>
+	<Command>command1</Command>
+</PreBuildEvent>
+<PostBuildEvent>
+	<Command>command2</Command>
+</PostBuildEvent>
 		]]
 	end
 
@@ -81,7 +81,7 @@
 	function suite.splits_onMultipleCommands()
 		postbuildcommands { "command1", "command2" }
 		prepare()
-		test.capture ("\t\t<PostBuildEvent>\n\t\t\t<Command>command1\r\ncommand2</Command>\n\t\t</PostBuildEvent>\n")
+		test.capture ("<PostBuildEvent>\n\t<Command>command1\r\ncommand2</Command>\n</PostBuildEvent>\n")
 	end
 
 
@@ -94,9 +94,9 @@
 		postbuildcommands { '\' " < > &' }
 		prepare()
 		test.capture [[
-		<PostBuildEvent>
-			<Command>' " &lt; &gt; &amp;</Command>
-		</PostBuildEvent>
+<PostBuildEvent>
+	<Command>' " &lt; &gt; &amp;</Command>
+</PostBuildEvent>
 		]]
 	end
 
@@ -110,9 +110,9 @@
 		postbuildmessage "Post-building..."
 		prepare()
 		test.capture [[
-		<PostBuildEvent>
-			<Command>command1</Command>
-			<Message>Post-building...</Message>
-		</PostBuildEvent>
+<PostBuildEvent>
+	<Command>command1</Command>
+	<Message>Post-building...</Message>
+</PostBuildEvent>
 		]]
 	end
