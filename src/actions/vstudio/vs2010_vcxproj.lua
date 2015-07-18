@@ -1552,7 +1552,7 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
+		p.w('<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', cfg.buildtarget.basename)
 	end
 
 
