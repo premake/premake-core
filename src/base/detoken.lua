@@ -78,6 +78,7 @@
 				if type(result) == "function" then
 					result = result(environ)
 				end
+				isAbs = path.isabsolute(result)
 			end
 
 			-- If the result is an absolute path, and it is being inserted into
@@ -134,10 +135,18 @@
 
 		function recurse(value)
 			if type(value) == "table" then
+				local res_table = {}
+
 				for k, v in pairs(value) do
-					value[k] = recurse(v)
+					if tonumber(k) ~= nil then
+						res_table[k] = recurse(v, e)
+					else
+						local nk = recurse(k, e);
+						res_table[nk] = recurse(v, e)
+					end
 				end
-				return value
+
+				return res_table
 			else
 				return expandvalue(value)
 			end
