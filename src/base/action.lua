@@ -214,7 +214,11 @@
 --    True if the feature is supported, false otherwise.
 ---
 
-	function action.supports(self, feature)
+	function action.supports(feature)
+		if not feature then
+			return true
+		end
+		local self = action.current()
 		if not self then
 			return false
 		end
