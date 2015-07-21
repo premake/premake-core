@@ -18,7 +18,6 @@
 		trigger         = "codelite",
 		shortname       = "CodeLite",
 		description     = "Generate CodeLite project files",
-		module          = "codelite",
 
 		-- The capabilities of this action
 
@@ -47,3 +46,12 @@
 			p.modules.codelite.cleanTarget(prj)
 		end,
 	}
+
+
+--
+-- Decide when the full module should be loaded.
+--
+
+	return function(cfg)
+		return (_ACTION == "codelite")
+	end

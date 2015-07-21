@@ -81,6 +81,20 @@
 	end
 
 
+	m.internalTypeMap = {
+		ConsoleApp = "Console",
+		WindowedApp = "Console",
+		Makefile = "",
+		SharedLib = "Library",
+		StaticLib = "Library"
+	}
+
+	function m.header(prj)
+		_p('<?xml version="1.0" encoding="UTF-8"?>')
+
+		local type = m.internalTypeMap[prj.kind] or ""
+		_x('<CodeLite_Project Name="%s" InternalType="%s">', prj.name, type)
+	end
 
 	function m.plugins(prj)
 --		_p(1, '<Plugins>')
@@ -223,7 +237,7 @@
 
 		_x(3, '<ResourceCompiler Options="%s%s" Required="yes">', defines, options)
 		for _, includepath in ipairs(table.join(cfg.includedirs, cfg.resincludedirs)) do
-			_x(4, '<IncludePath Value="%s"/>', includepath)
+			_x(4, '<IncludePath Value="%s"/>', project.getrelative(cfg.project, includepath))
 		end
 		_p(3, '</ResourceCompiler>')
 	end
@@ -264,7 +278,7 @@
 
 		_p(3, '<Debugger IsRemote="%s" RemoteHostName="%s" RemoteHostPort="%s" DebuggerPath="" IsExtended="%s">', iif(cfg.debugremotehost, "yes", "no"), cfg.debugremotehost or "", iif(cfg.debugport, tostring(cfg.debugport), ""), iif(cfg.debugextendedprotocol, "yes", "no"))
 		if #cfg.debugsearchpaths > 0 then
-			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(premake.esc(cfg.debugsearchpaths), "\n"))
+			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(premake.esc(project.getrelative(cfg.project, cfg.debugsearchpaths)), "\n"))
 		else
 			_p(4, '<DebuggerSearchPaths/>')
 		end
@@ -338,7 +352,7 @@
 	end
 
 	function m.completion(cfg)
-		_p(3, '<Completion EnableCpp11="no">')
+		_p(3, '<Completion EnableCpp11="%s" EnableCpp14="%s">', iif(cfg.flags["C++11"], "yes", "no"), iif(cfg.flags["C++14"], "yes", "no"))
 		_p(4, '<ClangCmpFlagsC/>')
 		_p(4, '<ClangCmpFlags/>')
 		_p(4, '<ClangPP/>') -- TODO: we might want to set special code completion macros...?
@@ -371,6 +385,13 @@
 		WindowedApp = "Executable"
 	}
 
+	m.debuggers =
+	{
+		Default = "GNU gdb debugger",
+		GDB = "GNU gdb debugger",
+		LLDB = "LLDB Debugger",
+	}
+
 	function m.settings(prj)
 		_p(1, '<Settings Type="%s">', m.types[prj.kind] or "")
 
@@ -382,8 +403,7 @@
 
 			local cfgname  = codelite.cfgname(cfg)
 			local compiler = m.getcompilername(cfg)
-			-- TODO: LLDB is supported... do we have an option to select debug engine?
-			local debugger = "GNU gdb debugger" -- "LLDB Debugger"
+			local debugger = m.debuggers[cfg.debugger] or m.debuggers.Default
 			local type = m.types[cfg.kind]
 
 			_x(2, '<Configuration Name="%s" CompilerType="%s" DebuggerType="%s" Type="%s" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">', cfgname, compiler, debugger, type)
@@ -399,6 +419,7 @@
 
 	m.elements.project = function(prj)
 		return {
+			m.header,
 			m.plugins,
 			m.description,
 			m.files,
@@ -407,24 +428,11 @@
 		}
 	end
 
-	m.internalTypeMap = {
-		ConsoleApp = "Console",
-		WindowedApp = "Console",
-		Makefile = "",
-		SharedLib = "Library",
-		StaticLib = "Library"
-	}
-
 --
 -- Project: Generate the CodeLite project file.
 --
 	function m.generate(prj)
 		io.utf8()
-
-		_p('<?xml version="1.0" encoding="UTF-8"?>')
-
-		local type = m.internalTypeMap[prj.kind] or ""
-		_x('<CodeLite_Project Name="%s" InternalType="%s">', prj.name, type)
 
 		p.callArray(m.elements.project, prj)
 

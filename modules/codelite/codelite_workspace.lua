@@ -30,7 +30,7 @@
 
 		local tagsdb = ""
 --		local tagsdb = "./" .. sln.name .. ".tags"
-		_p('<CodeLite_Workspace Name="%s" Database="%s">', sln.name, tagsdb)
+		_p('<CodeLite_Workspace Name="%s" Database="%s" SWTLW="No">', sln.name, tagsdb)
 
 		--
 		-- Project list
@@ -50,7 +50,7 @@
 
 			onbranch = function(n)
 				-- TODO: not sure what situation this appears...?
-				error("TODO: solution tree branches not supported...?")
+				-- premake5.lua emit's one of these for 'contrib', which is a top-level folder with the zip projects
 			end,
 		})
 
