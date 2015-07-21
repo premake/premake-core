@@ -420,7 +420,7 @@
 			_x(2,'<Includes>')
 			_x(3,'<Includes>')
 
-			for _, i in ipairs(cfg.includedirs) do
+			for _, i in ipairs(project.getrelative(cfg.project, cfg.includedirs)) do
 				_x(4,'<Include>%s</Include>', path.translate(i))
 			end
 
@@ -434,7 +434,7 @@
 			_x(2,'<LibPaths>')
 			_x(3,'<LibPaths>')
 
-			for _, l in ipairs(cfg.libdirs) do
+			for _, l in ipairs(project.getrelative(cfg.project, cfg.libdirs)) do
 				_x(4,'<LibPath>%s</LibPath>', path.translate(l))
 			end
 

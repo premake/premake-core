@@ -19,7 +19,6 @@
 		trigger         = "monodevelop", -- TODO: I'd kinda like an alias 'xamarinstudio' aswell...
 		shortname       = "MonoDevelop",
 		description     = "Generate MonoDevelop/Xamarin Studio project files",
-		module          = "monodevelop",
 
 		-- The capabilities of this action
 
@@ -60,3 +59,12 @@
 			toolsVersion        = "4.0",
 		},
 	}
+
+
+--
+-- Decide when the full module should be loaded.
+--
+
+	return function(cfg)
+		return (_ACTION == "monodevelop")
+	end
