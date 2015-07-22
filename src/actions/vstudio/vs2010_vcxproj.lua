@@ -1552,7 +1552,9 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
+		if cfg.flags.Symbols then
+			p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
+		end -- end if
 	end
 
 
