@@ -1552,7 +1552,7 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		p.w('<ProgramDataBaseFileName>$(OutDir)%s.pdb</ProgramDataBaseFileName>', cfg.buildtarget.basename)
+		p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
 	end
 
 
