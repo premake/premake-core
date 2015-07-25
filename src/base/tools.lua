@@ -33,8 +33,15 @@
 		local parts
 		if identifier:startswith("v") then
 			parts = { "msc", identifier:sub(2) }
+		elseif identifier:startswith("llvm-vs") then -- support LLVM toolset in VS
+			parts = { "msc", "LLVM-vs" .. identifier:sub(8) }
 		else
 			parts = identifier:explode("-")
+
+			-- hack to check for LLVM toolsets, which would be corrupted by the previous line
+			if parts[1] == "msc" and parts[2] == "llvm" and parts[3]:startswith("vs") then
+				parts = { parts[1], "LLVM-" .. parts[3] }
+			end
 		end
 		return p.tools[parts[1]], parts[2]
 	end
