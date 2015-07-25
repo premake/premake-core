@@ -1501,7 +1501,9 @@
 	function m.platformToolset(cfg)
 		local tool, version = p.config.toolset(cfg)
 		if version then
-			version = "v" .. version
+			if tonumber(version) ~= nil then
+				version = "v" .. version
+			end
 		else
 			local action = p.action.current()
 			version = action.vstudio.platformToolset

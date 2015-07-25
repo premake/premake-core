@@ -86,3 +86,27 @@
 <PlatformToolset>v100</PlatformToolset>
 		]]
 	end
+
+	function suite.canOverrideFromScript_withV()
+		toolset "v120_xp"
+		prepare()
+		test.capture [[
+<PlatformToolset>v120_xp</PlatformToolset>
+		]]
+	end
+
+	function suite.canOverrideFromScript_withV()
+		toolset "LLVM-vs2010"
+		prepare()
+		test.capture [[
+<PlatformToolset>LLVM-vs2010</PlatformToolset>
+		]]
+	end
+
+	function suite.canOverrideFromScript_withMsc()
+		toolset "msc-llvm-vs2014_xp"
+		prepare()
+		test.capture [[
+<PlatformToolset>LLVM-vs2014_xp</PlatformToolset>
+		]]
+	end
