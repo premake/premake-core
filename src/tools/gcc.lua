@@ -74,6 +74,9 @@
 			AVX2 = "-mavx2",
 			SSE = "-msse",
 			SSE2 = "-msse2",
+			SSE3 = "-msse3",
+			SSSE3 = "-mssse3",
+			["SSE4.1"] = "-msse4.1",
 		},
 		warnings = {
 			Extra = "-Wall -Wextra",
