@@ -5,6 +5,10 @@
 --
 
 	local p = premake
+	local m = p.modules.d
+
+	m.monod = {}
+
 	local monodevelop = p.modules.monodevelop
 	local vstudio = p.vstudio
 	local project = p.project
@@ -59,7 +63,7 @@
 			-- if any configuration of this file uses a custom build rule,
 			-- then they all must be marked as custom build
 			local hasbuildrule = false
-			for cfg in project.eachconfig(prj) do				
+			for cfg in project.eachconfig(prj) do
 				local filecfg = fileconfig.getconfig(node, cfg)
 				if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
 					hasbuildrule = true
@@ -91,38 +95,40 @@
 	p.override(monodevelop.elements, "projectProperties", function(oldfn, prj)
 		if project.isd(prj) then
 			return {
-				"projectGuid",
-				"useDefaultCompiler",
-				"incrementalLinking",
-				"preferOneStepBuild",
---				"baseDirectory",
-				"dCompiler",
-				"version",
-				"synchSlnVersion",
-				"description",
+				monodevelop.cproj.projectGuid,
+				m.monod.useDefaultCompiler,
+				m.monod.incrementalLinking,
+				m.monod.preferOneStepBuild,
+--				m.monod.baseDirectory,
+				m.monod.compiler,
+				monodevelop.cproj.version,
+				monodevelop.cproj.synchSlnVersion,
+				monodevelop.cproj.description,
 			}
 		end
 		return oldfn(prj)
 	end)
 
-	function monodevelop.elements.useDefaultCompiler(prj)
+	function m.monod.useDefaultCompiler(prj)
 		_p(2,'<UseDefaultCompiler>%s</UseDefaultCompiler>', iif(_OPTIONS.dc, 'false', 'true'))
 	end
 
-	function monodevelop.elements.incrementalLinking(prj)
+	function m.monod.incrementalLinking(prj)
 		_p(2,'<IncrementalLinking>true</IncrementalLinking>')
 	end
 
-	function monodevelop.elements.preferOneStepBuild(prj)
+	function m.monod.preferOneStepBuild(prj)
 		_p(2,'<PreferOneStepBuild>true</PreferOneStepBuild>')
 	end
 
-	function monodevelop.elements.baseDirectory(prj)
+	function m.monod.baseDirectory(prj)
 		_p(2,'<BaseDirectory>.</BaseDirectory>')
 	end
 
-	function monodevelop.elements.dCompiler(prj)
+	function m.monod.compiler(prj)
 		local compiler = { dmd="DMD2", gdc="GDC", ldc="ldc2" }
+		-- TODO: support compiler selection from 'toolset' declaration
+		--       problem; toolset is at config, this is project level
 		_p(2,'<Compiler>%s</Compiler>', compiler[_OPTIONS.dc or "dmd"])
 	end
 
@@ -134,44 +140,44 @@
 	p.override(monodevelop.elements, "configurationProperties", function(oldfn, cfg)
 		if project.isd(cfg.project) then
 			return {
-				"debuginfo", -- from .cproj
-				"outputPath", -- from .cproj
-				"unittestMode",
-				"objectsDirectory", -- TODO: should this be moved into the .cproj options?
-				"debugLevel",
-				"externalconsole", -- from .cproj
-				"target",
-				"thirdParty",
-				"outputName", -- from .cproj
-				"dAdditionalOptions",
-				"dDocDirectory",
-				"versionIds",
-				"debugIds",
-				"additionalLinkOptions", -- from .cproj
-				"additionalDependencies", -- from .cproj
-				"buildEvents", -- from .cproj
+				monodevelop.cproj.debuginfo,
+				monodevelop.cproj.outputPath,
+				m.monod.unittestMode,
+				m.monod.objectsDirectory, -- TODO: should this be moved into the .cproj options?
+				m.monod.debugLevel,
+				monodevelop.cproj.externalconsole,
+				m.monod.target,
+				m.monod.thirdParty,
+				monodevelop.cproj.outputName,
+				m.monod.additionalOptions,
+				m.monod.dDocDirectory,
+				m.monod.versionIds,
+				m.monod.debugIds,
+				monodevelop.cproj.additionalLinkOptions,
+				monodevelop.cproj.additionalDependencies,
+				monodevelop.cproj.buildEvents,
 
---				"sourceDirectory", -- not used by D?
+--				sourceDirectory, -- not used by D?
 			}
 		end
 		return oldfn(cfg)
 	end)
 
-	function monodevelop.elements.unittestMode(cfg)
+	function m.monod.unittestMode(cfg)
 		-- should this be present if it's set to default?
 		_p(2,'<UnittestMode>%s</UnittestMode>', iif(cfg.flags.UnitTest, 'true', 'false'))
 	end
 
-	function monodevelop.elements.objectsDirectory(cfg)
+	function m.monod.objectsDirectory(cfg)
 		local objdir = project.getrelative(cfg.project, cfg.objdir)
 		_p(2,'<ObjectsDirectory>%s</ObjectsDirectory>', path.translate(objdir))
 	end
 
-	function monodevelop.elements.debugLevel(cfg)
+	function m.monod.debugLevel(cfg)
 		_p(2,'<DebugLevel>%d</DebugLevel>', iif(cfg.debuglevel, cfg.debuglevel, 0))
 	end
 
-	function monodevelop.elements.target(cfg)
+	function m.monod.target(cfg)
 		local map = {
 			SharedLib = "SharedLibrary",
 			StaticLib = "StaticLibrary",
@@ -181,13 +187,13 @@
 		_p(2,'<Target>%s</Target>', map[cfg.kind])
 	end
 
-	function monodevelop.elements.thirdParty(cfg)
+	function m.monod.thirdParty(cfg)
 		-- TODO: what is this for?
 		local linkThirdParty = "false"
 		_p(2,'<LinkinThirdPartyLibraries>%s</LinkinThirdPartyLibraries>', linkThirdParty)
 	end
 
-	function monodevelop.elements.dAdditionalOptions(cfg)
+	function m.monod.additionalOptions(cfg)
 		local opts = { }
 
 		-- TODO: handle all those options, and they also need to be compiler-specific!
@@ -203,7 +209,7 @@
 		end
 		if #cfg.buildoptions > 0 then
 			local buildOpts = table.concat(cfg.buildoptions, " ")
-			options = iif(options, options .. " " .. buildOpts, buildOpts)
+			options = (options and options .. " " .. buildOpts) or buildOpts
 		end
 
 		if options then
@@ -211,14 +217,14 @@
 		end
 	end
 
-	function monodevelop.elements.dDocDirectory(cfg)
+	function m.monod.dDocDirectory(cfg)
 		if cfg.docdir then
 			local docdir = project.getrelative(cfg.project, cfg.docdir)
 			_x(2,'<DDocDirectory>%s</DDocDirectory>', path.translate(docdir))
 		end
 	end
 
-	function monodevelop.elements.versionIds(cfg)
+	function m.monod.versionIds(cfg)
 		if #cfg.versionconstants > 0 then
 			_x(2,'<VersionIds>')
 			_x(3,'<VersionIds>')
@@ -232,7 +238,7 @@
 		end
 	end
 
-	function monodevelop.elements.debugIds(cfg)
+	function m.monod.debugIds(cfg)
 		if #cfg.debugconstants > 0 then
 			_x(2,'<DebugIds>')
 			_x(3,'<DebugIds>')

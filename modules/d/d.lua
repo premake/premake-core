@@ -7,9 +7,12 @@
 	local p = premake
 
 	p.modules.d = {}
-	p.modules.d._VERSION = p._VERSION
 
-	local d = p.modules.d
+	local m = p.modules.d
+
+	m._VERSION = p._VERSION
+	m.elements = {}
+
 	local api = p.api
 
 
@@ -42,4 +45,4 @@
 		include( "actions/monodev.lua" )
 	end
 
-	return d
+	return m

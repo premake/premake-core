@@ -5,11 +5,10 @@
 --
 
 	local p = premake
-	local d = p.modules.d
+	local m = p.modules.d
 
-	d.visuald = { }
+	m.visuald = {}
 
-	local visuald = d.visuald
 	local vstudio = p.vstudio
 	local solution = p.solution
 	local project = p.project
@@ -29,7 +28,7 @@
 			p.override(vs, "onProject", function(oldfn, prj)
 				oldfn(prj)
 				if project.isd(prj) then
-					p.generate(prj, ".visualdproj", visuald.generate)
+					p.generate(prj, ".visualdproj", m.visuald.generate)
 				end
 			end)
 		end
@@ -63,27 +62,33 @@
 -- Generate a Visual D project.
 --
 
-	function visuald.generate(prj)
+	m.elements.project = function(prj)
+		return {
+			m.visuald.header,
+			m.visuald.globals,
+			m.visuald.projectConfigurations,
+			m.visuald.files,
+		}
+
+	end
+
+	function m.visuald.generate(prj)
 		p.eol("\r\n")
 		p.indent(" ")
 
-		-- for some reason Visual D projects don't seem to have an xml header
-		--_p('<?xml version="1.0" encoding="utf-8"?>')
-		_p('<DProject>')
-
-		visuald.globals(prj)
-		visuald.projectConfigurations(prj)
-		visuald.files(prj)
+		p.callArray(m.elements.project, prj)
 
 		_p('</DProject>')
 	end
 
 
---
--- Write out the Globals property group.
---
+	function m.visuald.header(prj)
+		-- for some reason Visual D projects don't seem to have an xml header
+		--_p('<?xml version="1.0" encoding="utf-8"?>')
+		_p('<DProject>')
+	end
 
-	function visuald.globals(prj)
+	function m.visuald.globals(prj)
 		_p(1,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 	end
 
@@ -93,7 +98,7 @@
 -- configurations with architectures.
 --
 
-	function visuald.projectConfigurations(prj)
+	function m.visuald.projectConfigurations(prj)
 		-- build a list of all architectures used in this project
 
 		for cfg in project.eachconfig(prj) do
@@ -168,36 +173,36 @@
 			_p(2,'<ignoreUnsupportedPragmas>0</ignoreUnsupportedPragmas>')
 
 			local compiler = { dmd="0", gdc="1", ldc="2" }
-			visuald.element(2, "compiler", compiler[_OPTIONS.dc or cfg.toolset or "dmd"])
+			m.visuald.element(2, "compiler", compiler[_OPTIONS.dc or cfg.toolset or "dmd"])
 
-			visuald.element(2, "otherDMD", '0')
-			visuald.element(2, "program", '$(DMDInstallDir)windows\\bin\\dmd.exe')
+			m.visuald.element(2, "otherDMD", '0')
+			m.visuald.element(2, "program", '$(DMDInstallDir)windows\\bin\\dmd.exe')
 
-			visuald.element(2, "imppath", cfg.includedirs)
+			m.visuald.element(2, "imppath", cfg.includedirs)
 
-			visuald.element(2, "fileImppath")
-			visuald.element(2, "outdir", path.translate(project.getrelative(cfg.project, cfg.buildtarget.directory)))
-			visuald.element(2, "objdir", path.translate(project.getrelative(cfg.project, cfg.objdir)))
-			visuald.element(2, "objname")
-			visuald.element(2, "libname")
+			m.visuald.element(2, "fileImppath")
+			m.visuald.element(2, "outdir", path.translate(project.getrelative(cfg.project, cfg.buildtarget.directory)))
+			m.visuald.element(2, "objdir", path.translate(project.getrelative(cfg.project, cfg.objdir)))
+			m.visuald.element(2, "objname")
+			m.visuald.element(2, "libname")
 
-			visuald.element(2, "doDocComments", iif(cfg.flags.Documentation, '1', '0'))
-			visuald.element(2, "docdir", cfg.docdir)
-			visuald.element(2, "docname", cfg.docname)
-			visuald.element(2, "modules_ddoc")
-			visuald.element(2, "ddocfiles")
+			m.visuald.element(2, "doDocComments", iif(cfg.flags.Documentation, '1', '0'))
+			m.visuald.element(2, "docdir", cfg.docdir)
+			m.visuald.element(2, "docname", cfg.docname)
+			m.visuald.element(2, "modules_ddoc")
+			m.visuald.element(2, "ddocfiles")
 
-			visuald.element(2, "doHdrGeneration", iif(cfg.flags.GenerateHeader, '1', '0'))
-			visuald.element(2, "hdrdir", cfg.headerdir)
-			visuald.element(2, "hdrname", cfg.headername)
+			m.visuald.element(2, "doHdrGeneration", iif(cfg.flags.GenerateHeader, '1', '0'))
+			m.visuald.element(2, "hdrdir", cfg.headerdir)
+			m.visuald.element(2, "hdrname", cfg.headername)
 
-			visuald.element(2, "doXGeneration", iif(cfg.flags.GenerateJSON, '1', '0'))
-			visuald.element(2, "xfilename", '$(IntDir)\\$(TargetName).json')
+			m.visuald.element(2, "doXGeneration", iif(cfg.flags.GenerateJSON, '1', '0'))
+			m.visuald.element(2, "xfilename", '$(IntDir)\\$(TargetName).json')
 
-			visuald.element(2, "debuglevel", iif(cfg.debuglevel, tostring(cfg.debuglevel), '0'))
-			visuald.element(2, "debugids", cfg.debugconstants)
-			visuald.element(2, "versionlevel", iif(cfg.versionlevel, tostring(cfg.versionlevel), '0'))
-			visuald.element(2, "versionids", cfg.versionconstants)
+			m.visuald.element(2, "debuglevel", iif(cfg.debuglevel, tostring(cfg.debuglevel), '0'))
+			m.visuald.element(2, "debugids", cfg.debugconstants)
+			m.visuald.element(2, "versionlevel", iif(cfg.versionlevel, tostring(cfg.versionlevel), '0'))
+			m.visuald.element(2, "versionids", cfg.versionconstants)
 
 			_p(2,'<dump_source>0</dump_source>')
 			_p(2,'<mapverbosity>0</mapverbosity>')
@@ -231,9 +236,9 @@
 				local scope = iif(explicit, "all", "system")
 				links = config.getlinks(cfg, scope, "fullpath")
 			end
-			visuald.element(2, "libfiles", table.concat(links, " "))
+			m.visuald.element(2, "libfiles", table.concat(links, " "))
 
-			visuald.element(2, "libpaths", cfg.libdirs)
+			m.visuald.element(2, "libpaths", cfg.libdirs)
 			_p(2,'<deffile />')
 			_p(2,'<resfile />')
 
@@ -250,7 +255,7 @@
 					runtime = iif(cfg.flags.StaticRuntime, "1", "3")
 				end
 			end
-			visuald.element(2, "cRuntime", runtime)
+			m.visuald.element(2, "cRuntime", runtime)
 
 			local additionalOptions
 			if #cfg.buildoptions > 0 then
@@ -264,7 +269,7 @@
 					additionalOptions = linkOpts
 				end
 			end
-			visuald.element(2, "additionalOptions", additionalOptions)
+			m.visuald.element(2, "additionalOptions", additionalOptions)
 
 			if #cfg.prebuildcommands > 0 then
 				_p(2,'<preBuildCommand>%s</preBuildCommand>',p.esc(table.implode(cfg.prebuildcommands, "", "", "\r\n")))
@@ -289,7 +294,7 @@
 -- Write out the source file tree.
 --
 
-	function visuald.files(prj)
+	function m.visuald.files(prj)
 		_p(1,'<Folder name="%s">', prj.name)
 
 		local tr = project.getsourcetree(prj)
@@ -310,7 +315,7 @@
 				_p(depth, '<File path="%s" />', path.translate(node.relpath))
 
 --				_p(depth, '<File path="%s">', path.translate(node.relpath))
---				visuald.fileConfiguration(prj, node, depth + 1)
+--				m.visuald.fileConfiguration(prj, node, depth + 1)
 --				_p(depth, '</File>')
 			end
 
@@ -319,12 +324,18 @@
 		_p(1,'</Folder>')
 	end
 
+	function m.visuald.fileConfiguration(prj, node, depth)
+
+		-- maybe we'll need this in the future...
+
+	end
+
 
 --
 -- Output an individual project XML element.
 --
 
-	function visuald.element(depth, name, value, ...)
+	function m.visuald.element(depth, name, value, ...)
 		local isTable = type(value) == "table"
 		if not value or (isTable and #value == 0) then
 			_p(depth, '<%s />', name)
@@ -340,15 +351,3 @@
 			end
 		end
 	end
-
-
---
--- Write out the file configuration for a given file.
---
-
-	function visuald.fileConfiguration(prj, node, depth)
-
-		-- maybe we'll need this in the future...
-
-	end
-
