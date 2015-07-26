@@ -1072,13 +1072,15 @@
 
 	function m.debugInformationFormat(cfg)
 		local value
+		local tool, toolVersion = p.config.toolset(cfg)
 		if cfg.flags.Symbols then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   cfg.editandcontinue == p.OFF
+				   cfg.editandcontinue == p.OFF or
+				   (toolVersion and toolVersion:startswith("LLVM-vs"))
 			then
 				value = "ProgramDatabase"
 			else
@@ -1501,7 +1503,7 @@
 	function m.platformToolset(cfg)
 		local tool, version = p.config.toolset(cfg)
 		if version then
-			if tonumber(version) ~= nil then
+			if tonumber(version:sub(1,3)) ~= nil then
 				version = "v" .. version
 			end
 		else
@@ -1675,7 +1677,8 @@
 	end
 
 	function m.bufferSecurityCheck(cfg)
-		if cfg.flags.NoBufferSecurityCheck then
+		local tool, toolVersion = p.config.toolset(cfg)
+		if cfg.flags.NoBufferSecurityCheck or (toolVersion and toolVersion:startswith("LLVM-vs")) then
 			m.element("BufferSecurityCheck", nil, "false")
 		end
 	end
