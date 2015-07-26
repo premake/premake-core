@@ -117,18 +117,6 @@
 	function p.project.bake(self)
 		local sln = self.solution
 
-		-- check if the language for this project is supported by the action.
-
-		if not p.action.supports(self.language) then
-			p.warn("    Unsupported language '%s' used for '%s'.", self.language, self.name)
-		end
-
-		-- check if the kind for this project is supported by the action.
-
-		if not p.action.supports(self.kind) then
-			p.warn("    Unsupported kind '%s' used for '%s'.", self.kind, self.name)
-		end
-
 		-- Add filtering terms to the context to make it as specific as I can.
 		-- Start with the same filtering that was applied at the solution level.
 
