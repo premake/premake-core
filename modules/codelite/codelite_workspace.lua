@@ -21,7 +21,7 @@
 -- Generate a CodeLite workspace
 --
 	function m.generate(sln)
-		io.utf8()
+		p.utf8()
 
 		--
 		-- Header
