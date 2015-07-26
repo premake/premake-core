@@ -5,30 +5,31 @@
 --
 
 	local p = premake
-	local monodevelop = p.modules.monodevelop
+	local m = p.modules.monodevelop
+
+	m.cproj = {}
+
 	local vstudio = p.vstudio
 	local project = p.project
 	local config = p.config
 	local fileconfig = p.fileconfig
 	local tree = p.tree
 
-	monodevelop.elements = {}
-
 --
 -- Generate a MonoDevelop C/C++ project.
 --
 
-	function monodevelop.generate(prj)
-		monodevelop.header("Build")
+	function m.generate(prj)
+		m.header("Build")
 		
-		monodevelop.projectProperties(prj)
+		m.projectProperties(prj)
 
 		for cfg in project.eachconfig(prj) do
-			monodevelop.configurationProperties(cfg)
+			m.configurationProperties(cfg)
 		end
 
-		monodevelop.files(prj)
---		monodevelop.projectReferences(prj)
+		m.files(prj)
+--		m.projectReferences(prj)
 
 		_p('</Project>')
 	end
@@ -39,7 +40,7 @@
 -- Output the XML declaration and opening <Project> tag.
 --
 
-	function monodevelop.header(target)
+	function m.header(target)
 		_p('<?xml version="1.0" encoding="utf-8"?>')
 
 		local defaultTargets = ""
@@ -56,29 +57,29 @@
 -- produces, and some global settings.
 --
 
-	function monodevelop.elements.projectProperties(prj)
+	m.elements.projectProperties = function(prj)
 		if project.iscpp(prj) then
 			return {
-				"productVersion",
-				"schemaVersion",
-				"projectGuid",
-				"compiler",
-				"language",
-				"target",
-				"version",
-				"synchSlnVersion",
-				"description",
+				m.cproj.productVersion,
+				m.cproj.schemaVersion,
+				m.cproj.projectGuid,
+				m.cproj.compiler,
+				m.cproj.language,
+				m.cproj.target,
+				m.cproj.version,
+				m.cproj.synchSlnVersion,
+				m.cproj.description,
 			}
 		end
 	end
 
-	function monodevelop.projectProperties(prj)
+	function m.projectProperties(prj)
 		_p(1,'<PropertyGroup>')
 
 		_p(2,'<Configuration Condition=" \'$(Configuration)\' == \'\' ">%s</Configuration>', 'Debug')
 		_p(2,'<Platform Condition=" \'$(Platform)\' == \'\' ">%s</Platform>', 'AnyCPU')
 
-		p.callarray(monodevelop.elements, monodevelop.elements.projectProperties(prj), prj)
+		p.callArray(m.elements.projectProperties, prj)
 
 		-- packages ...?
 
@@ -91,31 +92,31 @@
 -- produces, and some global settings.
 --
 
-	function monodevelop.elements.configurationProperties(cfg)
+	m.elements.configurationProperties = function(cfg)
 		if project.iscpp(cfg.project) then
 			return {
-				"debuginfo",
-				"outputPath",
-				"outputName",
-				"config_type",
-				"preprocessorDefinitions",
-				"sourceDirectory",
-				"warnings",
-				"optimization",
-				"externalconsole",
-				"additionalOptions",
-				"additionalLinkOptions",
-				"additionalIncludeDirectories",
-				"additionalLibraryDirectories",
-				"additionalDependencies",
-				"buildEvents",
+				m.cproj.debuginfo,
+				m.cproj.outputPath,
+				m.cproj.outputName,
+				m.cproj.config_type,
+				m.cproj.preprocessorDefinitions,
+				m.cproj.sourceDirectory,
+				m.cproj.warnings,
+				m.cproj.optimization,
+				m.cproj.externalconsole,
+				m.cproj.additionalOptions,
+				m.cproj.additionalLinkOptions,
+				m.cproj.additionalIncludeDirectories,
+				m.cproj.additionalLibraryDirectories,
+				m.cproj.additionalDependencies,
+				m.cproj.buildEvents,
 			}
 		end
 	end
 
-	function monodevelop.configurationProperties(cfg)
-		_p(1,'<PropertyGroup %s>', monodevelop.condition(cfg))
-		p.callarray(monodevelop.elements, monodevelop.elements.configurationProperties(cfg), cfg)
+	function m.configurationProperties(cfg)
+		_p(1,'<PropertyGroup %s>', m.condition(cfg))
+		p.callArray(m.elements.configurationProperties, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -124,7 +125,7 @@
 -- Format and return a MonoDevelop Condition attribute.
 --
 
-	function monodevelop.condition(cfg)
+	function m.condition(cfg)
 		return string.format('Condition=" \'$(Configuration)|$(Platform)\' == \'%s|AnyCPU\' "', p.esc(vstudio.projectPlatform(cfg)))
 	end
 
@@ -133,27 +134,27 @@
 -- Write out the list of source code files, and any associated configuration.
 --
 
-	function monodevelop.files(prj)
-		monodevelop.filegroup(prj, "Include", "None")
-		monodevelop.filegroup(prj, "Compile", "Compile")
-		monodevelop.filegroup(prj, "Folder", "None")
-		monodevelop.filegroup(prj, "None", "None")
-		monodevelop.filegroup(prj, "ResourceCompile", "None")
-		monodevelop.filegroup(prj, "CustomBuild", "None")
+	function m.files(prj)
+		m.filegroup(prj, "Include", "None")
+		m.filegroup(prj, "Compile", "Compile")
+		m.filegroup(prj, "Folder", "None")
+		m.filegroup(prj, "None", "None")
+		m.filegroup(prj, "ResourceCompile", "None")
+		m.filegroup(prj, "CustomBuild", "None")
 	end
 
-	function monodevelop.filegroup(prj, group, action)
-		local files = monodevelop.getfilegroup(prj, group)
+	function m.filegroup(prj, group, action)
+		local files = m.getfilegroup(prj, group)
 		if #files > 0  then
 			_p(1,'<ItemGroup>')
 			for _, file in ipairs(files) do
-				monodevelop.putfile(action, file)
+				m.putfile(action, file)
 			end
 			_p(1,'</ItemGroup>')
 		end
 	end
 
-	function monodevelop.putfile(action, file)
+	function m.putfile(action, file)
 		local filename = file.relpath
 
 		if not string.startswith(filename, '..') then
@@ -170,7 +171,7 @@
 
 -- TODO: MonoDevelop really doesn't handle custom build tools very well (yet)
 --			for cfg in project.eachconfig(prj) do
---				local condition = monodevelop.condition(cfg)					
+--				local condition = m.condition(cfg)					
 --				local filecfg = config.getfileconfig(cfg, file.abspath)
 --				if filecfg and filecfg.buildrule then
 --					local commands = table.concat(filecfg.buildrule.commands,'\r\n')
@@ -183,7 +184,7 @@
 	end
 
 
-	function monodevelop.getTargetGroup(node, prj, groups)
+	function m.getTargetGroup(node, prj, groups)
 		-- if any configuration of this file uses a custom build rule,
 		-- then they all must be marked as custom build
 		local hasbuildrule = false
@@ -209,7 +210,7 @@
 	end
 
 
-	function monodevelop.getfilegroup(prj, group)
+	function m.getfilegroup(prj, group)
 		-- check for a cached copy before creating
 		local groups = prj.monodevelop_file_groups
 		if not groups then
@@ -226,7 +227,7 @@
 			local tr = project.getsourcetree(prj)
 			tree.traverse(tr, {
 				onleaf = function(node)
-					table.insert(monodevelop.getTargetGroup(node, prj, groups), node)
+					table.insert(m.getTargetGroup(node, prj, groups), node)
 				end
 			})
 		end
@@ -239,7 +240,7 @@
 -- Generate the list of project dependencies.
 --
 
-	function monodevelop.projectReferences(prj)
+	function m.projectReferences(prj)
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 			local prjpath = project.getlocation(prj)
@@ -260,45 +261,45 @@
 -- projectProperties element functions.
 --
 
-	function monodevelop.elements.productVersion(prj)
+	function m.cproj.productVersion(prj)
 		local action = p.action.current()
 		_p(2,'<ProductVersion>%s</ProductVersion>', action.vstudio.productVersion)
 	end
 
-	function monodevelop.elements.schemaVersion(prj)
+	function m.cproj.schemaVersion(prj)
 		local action = p.action.current()
 		_p(2,'<SchemaVersion>%s</SchemaVersion>', action.vstudio.csprojSchemaVersion)
 	end
 
-	function monodevelop.elements.projectGuid(prj)
+	function m.cproj.projectGuid(prj)
 		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
 	end
 
-	function monodevelop.elements.compiler(prj)
+	function m.cproj.compiler(prj)
 		_p(2,'<Compiler>')
 		_p(3,'<Compiler ctype="%s" />', iif(prj.language == 'C', 'GccCompiler', 'GppCompiler'))
 		_p(2,'</Compiler>')
 	end
 
-	function monodevelop.elements.language(prj)
+	function m.cproj.language(prj)
 		_p(2,'<Language>%s</Language>', iif(prj.language == 'C', 'C', 'CPP'))
 	end
 
-	function monodevelop.elements.target(prj)
+	function m.cproj.target(prj)
 		_p(2,'<Target>%s</Target>', 'Bin')
 	end
 
-	function monodevelop.elements.version(prj)
+	function m.cproj.version(prj)
 		-- TODO: write a project version number into the project
 --		_p(2,'<ReleaseVersion>%s</ReleaseVersion>', '0.1')
 	end
 
-	function monodevelop.elements.synchSlnVersion(prj)
+	function m.cproj.synchSlnVersion(prj)
 		-- TODO: true = use solution version
 --		_p(2,'<SynchReleaseVersion>%s</SynchReleaseVersion>', 'false')
 	end
 
-	function monodevelop.elements.description(prj)
+	function m.cproj.description(prj)
 		-- TODO: project description
 --		_p(2,'<Description>%s</Description>', 'project description')
 	end
@@ -308,22 +309,22 @@
 -- configurationProperties element functions.
 --
 
-	function monodevelop.elements.debuginfo(cfg)
+	function m.cproj.debuginfo(cfg)
 		if cfg.flags.Symbols then
 			_p(2,'<DebugSymbols>%s</DebugSymbols>', iif(cfg.flags.Symbols, 'true', 'false'))
 		end
 	end
 
-	function monodevelop.elements.outputPath(cfg)
+	function m.cproj.outputPath(cfg)
 		local outdir = project.getrelative(cfg.project, cfg.buildtarget.directory)
 		_x(2,'<OutputPath>%s</OutputPath>', path.translate(outdir))
 	end
 
-	function monodevelop.elements.outputName(cfg)
+	function m.cproj.outputName(cfg)
 		_x(2,'<OutputName>%s</OutputName>', cfg.buildtarget.name)
 	end
 
-	function monodevelop.elements.config_type(cfg)
+	function m.cproj.config_type(cfg)
 		local map = {
 			SharedLib = "SharedLibrary",
 			StaticLib = "StaticLibrary",
@@ -333,7 +334,7 @@
 		_p(2,'<CompileTarget>%s</CompileTarget>', map[cfg.kind])
 	end
 
-	function monodevelop.elements.preprocessorDefinitions(cfg)
+	function m.cproj.preprocessorDefinitions(cfg)
 		local defines = cfg.defines
 		if #defines > 0 then
 			defines = table.concat(defines, ' ')
@@ -341,11 +342,11 @@
 		end
 	end
 
-	function monodevelop.elements.sourceDirectory(cfg)
+	function m.cproj.sourceDirectory(cfg)
 		_x(2,'<SourceDirectory>%s</SourceDirectory>', '.')
 	end
 
-	function monodevelop.elements.warnings(cfg)
+	function m.cproj.warnings(cfg)
 		local map = { Off = "None", Extra = "All" }
 		if cfg.warnings ~= nil and map[cfg.warnings] ~= nil then
 			_p(2,'<WarningLevel>%s</WarningLevel>', map[cfg.warnings])
@@ -357,7 +358,7 @@
 		end
 	end
 
-	function monodevelop.elements.optimization(cfg)
+	function m.cproj.optimization(cfg)
 		-- TODO: 'size' should be Os, but this option just seems to be a numeric value
 		local map = { Off = "0", On = "2", Debug = "0", Size = "2", Speed = "3", Full = "3" }
 		if cfg.optimize ~= nil and map[cfg.optimize] then
@@ -365,11 +366,11 @@
 		end
 	end
 
-	function monodevelop.elements.externalconsole(cfg)
+	function m.cproj.externalconsole(cfg)
 		_x(2,'<Externalconsole>%s</Externalconsole>', 'true')
 	end
 
-	function monodevelop.elements.additionalOptions(cfg)
+	function m.cproj.additionalOptions(cfg)
 		local opts = { }
 
 		if cfg.project.language == 'C++' then
@@ -408,14 +409,14 @@
 		end
 	end
 
-	function monodevelop.elements.additionalLinkOptions(cfg)
+	function m.cproj.additionalLinkOptions(cfg)
 		if #cfg.linkoptions > 0 then
 			local opts = table.concat(cfg.linkoptions, " ")
 			_x(2, '<ExtraLinkerArguments>%s</ExtraLinkerArguments>', opts)
 		end
 	end
 
-	function monodevelop.elements.additionalIncludeDirectories(cfg)
+	function m.cproj.additionalIncludeDirectories(cfg)
 		if #cfg.includedirs > 0 then
 			_x(2,'<Includes>')
 			_x(3,'<Includes>')
@@ -429,7 +430,7 @@
 		end
 	end
 
-	function monodevelop.elements.additionalLibraryDirectories(cfg)
+	function m.cproj.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			_x(2,'<LibPaths>')
 			_x(3,'<LibPaths>')
@@ -443,7 +444,7 @@
 		end
 	end
 
-	function monodevelop.elements.additionalDependencies(cfg)
+	function m.cproj.additionalDependencies(cfg)
 		local links
 
 		-- check to see if this project uses an external toolset. If so, let the
@@ -469,7 +470,7 @@
 		end
 	end
 
-	function monodevelop.elements.buildEvents(cfg)
+	function m.cproj.buildEvents(cfg)
 
 		-- TODO: handle cfg.prelinkcommands...
 

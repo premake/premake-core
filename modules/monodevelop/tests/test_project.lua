@@ -47,7 +47,7 @@
 
 	function suite.OnProject_ProductVersion()
 		prepare()
-		monodevelop.elements.productVersion(prj)
+		monodevelop.cproj.productVersion(prj)
 		test.capture [[
     <ProductVersion>10.0.0</ProductVersion>
 		]]
@@ -55,7 +55,7 @@
 
 	function suite.OnProject_SchemaVersion()
 		prepare()
-		monodevelop.elements.schemaVersion(prj)
+		monodevelop.cproj.schemaVersion(prj)
 		test.capture [[
     <SchemaVersion>2.0</SchemaVersion>
 		]]
@@ -67,7 +67,7 @@
 	function suite.OnProject_Compiler_C()
 		language "C"
 		prepare()
-		monodevelop.elements.compiler(prj)
+		monodevelop.cproj.compiler(prj)
 		test.capture [[
     <Compiler>
       <Compiler ctype="GccCompiler" />
@@ -76,7 +76,7 @@
 	end
 	function suite.OnProject_Compiler_CPP()
 		prepare()
-		monodevelop.elements.compiler(prj)
+		monodevelop.cproj.compiler(prj)
 		test.capture [[
     <Compiler>
       <Compiler ctype="GppCompiler" />
@@ -87,7 +87,7 @@
 	function suite.OnProject_Language_C()
 		language "C"
 		prepare()
-		monodevelop.elements.language(prj)
+		monodevelop.cproj.language(prj)
 		test.capture [[
     <Language>C</Language>
 		]]
@@ -95,7 +95,7 @@
 	function suite.OnProject_Language_CPP()
 		language "C++"
 		prepare()
-		monodevelop.elements.language(prj)
+		monodevelop.cproj.language(prj)
 		test.capture [[
     <Language>CPP</Language>
 		]]
@@ -103,7 +103,7 @@
 
 	function suite.OnProject_Target()
 		prepare()
-		monodevelop.elements.target(prj)
+		monodevelop.cproj.target(prj)
 		test.capture [[
     <Target>Bin</Target>
 		]]

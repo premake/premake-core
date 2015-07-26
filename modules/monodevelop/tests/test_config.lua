@@ -12,7 +12,7 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj
+	local sln, prj, cfg
 
 	function suite.setup()
 		_ACTION = "monodevelop"
@@ -36,7 +36,7 @@
 	function suite.OnProject_DebugInfo()
 		flags { "Symbols" }
 		prepare()
-		monodevelop.elements.debuginfo(cfg)
+		monodevelop.cproj.debuginfo(cfg)
 		test.capture [[
     <DebugSymbols>true</DebugSymbols>
 		]]
@@ -44,7 +44,7 @@
 
 	function suite.OnProject_OutputPath()
 		prepare()
-		monodevelop.elements.outputPath(cfg)
+		monodevelop.cproj.outputPath(cfg)
 		test.capture [[
     <OutputPath>bin\Debug</OutputPath>
 		]]
@@ -53,7 +53,7 @@
 	function suite.OnProject_OutputName()
 		system "Windows"
 		prepare()
-		monodevelop.elements.outputName(cfg)
+		monodevelop.cproj.outputName(cfg)
 		test.capture [[
     <OutputName>MyProject.exe</OutputName>
 		]]
@@ -62,7 +62,7 @@
 	function suite.OnProject_ConfigType_Bin()
 		kind "WindowedApp"
 		prepare()
-		monodevelop.elements.config_type(cfg)
+		monodevelop.cproj.config_type(cfg)
 		test.capture [[
     <CompileTarget>Bin</CompileTarget>
 		]]
@@ -70,7 +70,7 @@
 	function suite.OnProject_ConfigType_Lib()
 		kind "StaticLib"
 		prepare()
-		monodevelop.elements.config_type(cfg)
+		monodevelop.cproj.config_type(cfg)
 		test.capture [[
     <CompileTarget>StaticLibrary</CompileTarget>
 		]]
@@ -78,7 +78,7 @@
 	function suite.OnProject_ConfigType_SO()
 		kind "SharedLib"
 		prepare()
-		monodevelop.elements.config_type(cfg)
+		monodevelop.cproj.config_type(cfg)
 		test.capture [[
     <CompileTarget>SharedLibrary</CompileTarget>
 		]]
@@ -87,7 +87,7 @@
 	function suite.OnProject_Defines()
 		defines { "DEF1", "DEF2" }
 		prepare()
-		monodevelop.elements.preprocessorDefinitions(cfg)
+		monodevelop.cproj.preprocessorDefinitions(cfg)
 		test.capture [[
     <DefineSymbols>DEF1 DEF2</DefineSymbols>
 		]]
@@ -97,7 +97,7 @@
 		warnings "Extra"
 		flags { "FatalCompileWarnings" }
 		prepare()
-		monodevelop.elements.warnings(cfg)
+		monodevelop.cproj.warnings(cfg)
 		test.capture [[
     <WarningLevel>All</WarningLevel>
     <WarningsAsErrors>true</WarningsAsErrors>
@@ -107,7 +107,7 @@
 	function suite.OnProject_Optimization()
 		optimize "Debug"
 		prepare()
-		monodevelop.elements.optimization(cfg)
+		monodevelop.cproj.optimization(cfg)
 		test.capture [[
     <OptimizationLevel>0</OptimizationLevel>
 		]]
@@ -119,7 +119,7 @@
 		vectorextensions "SSE2"
 		buildoptions { "-opt1", "-opt2" }
 		prepare()
-		monodevelop.elements.additionalOptions(cfg)
+		monodevelop.cproj.additionalOptions(cfg)
 		test.capture [[
     <ExtraCompilerArguments>-fno-exceptions -fno-rtti -msse2 -opt1 -opt2</ExtraCompilerArguments>
 		]]
@@ -128,7 +128,7 @@
 	function suite.OnProject_AdditionalLinkOptions()
 		linkoptions { "-opt1", "-opt2" }
 		prepare()
-		monodevelop.elements.additionalLinkOptions(cfg)
+		monodevelop.cproj.additionalLinkOptions(cfg)
 		test.capture [[
     <ExtraLinkerArguments>-opt1 -opt2</ExtraLinkerArguments>
 		]]
@@ -137,7 +137,7 @@
 	function suite.OnProject_IncludeDirs()
 		includedirs { "path/", "inc" }
 		prepare()
-		monodevelop.elements.additionalIncludeDirectories(cfg)
+		monodevelop.cproj.additionalIncludeDirectories(cfg)
 		test.capture [[
     <Includes>
       <Includes>
@@ -151,7 +151,7 @@
 	function suite.OnProject_LibDirs()
 		libdirs { "path/", "lib" }
 		prepare()
-		monodevelop.elements.additionalLibraryDirectories(cfg)
+		monodevelop.cproj.additionalLibraryDirectories(cfg)
 		test.capture [[
     <LibPaths>
       <LibPaths>
@@ -165,7 +165,7 @@
 	function suite.OnProject_Libs()
 		links { "lib1", "lib2" }
 		prepare()
-		monodevelop.elements.additionalDependencies(cfg)
+		monodevelop.cproj.additionalDependencies(cfg)
 		test.capture [[
     <Libs>
       <Libs>
@@ -183,7 +183,7 @@
 		prebuildcommands { "pre1", "pre2" }
 		postbuildcommands { "post1", "post2" }
 		prepare()
-		monodevelop.elements.buildEvents(cfg)
+		monodevelop.cproj.buildEvents(cfg)
 		test.capture [[
     <CustomCommands>
       <CustomCommands>

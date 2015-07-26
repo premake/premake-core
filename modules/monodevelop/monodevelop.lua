@@ -9,9 +9,11 @@
 	local p = premake
 
 	p.modules.monodevelop = {}
-	p.modules.monodevelop._VERSION = p._VERSION
 
-	local monodevelop = p.modules.monodevelop
+	local m = p.modules.monodevelop
+
+	m._VERSION = p._VERSION
+	m.elements = {}
 
 	local vs2010 = p.vstudio.vs2010
 	local vstudio = p.vstudio
@@ -25,7 +27,7 @@
 -- Write out contents of the SolutionProperties section; currently unused.
 --
 
-	function monodevelop.MonoDevelopProperties(sln)
+	function m.MonoDevelopProperties(sln)
 		_p('\tGlobalSection(MonoDevelopProperties) = preSolution')
 		if sln.startproject then
 			for prj in solution.eachproject(sln) do
@@ -81,7 +83,7 @@
 		return oldfn(prj)
 	end)
 
-	sln2005.sectionmap.MonoDevelopProperties = monodevelop.MonoDevelopProperties
+	sln2005.sectionmap.MonoDevelopProperties = m.MonoDevelopProperties
 
 	p.override(vstudio, "projectfile", function(oldfn, prj)
 		if _ACTION == "monodevelop" then
@@ -107,7 +109,7 @@
 -- the right generator.
 ---
 
-	function monodevelop.generateProject(prj)
+	function m.generateProject(prj)
 		p.eol("\r\n")
 		p.indent("  ")
 		p.escaper(vs2010.esc)
@@ -116,7 +118,7 @@
 			p.generate(prj, ".csproj", vstudio.cs2005.generate)
 			p.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
 		elseif project.iscpp(prj) then
-			p.generate(prj, ".cproj", monodevelop.generate)
+			p.generate(prj, ".cproj", m.generate)
 		end
 	end
 
@@ -124,4 +126,4 @@
 	include("_preload.lua")
 	include("monodevelop_cproj.lua")
 
-	return monodevelop
+	return m
