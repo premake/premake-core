@@ -20,12 +20,3 @@
 		end
 		return base(fname, mode)
 	end)
-
-
---
--- Output a UTF-8 signature.
---
-
-	function io.utf8()
-		io.write('\239\187\191')
-	end
