@@ -87,7 +87,7 @@
 		]]
 	end
 
-	function suite.canOverrideFromScript_withV()
+	function suite.canOverrideFromScript_withXP()
 		toolset "v120_xp"
 		prepare()
 		test.capture [[
@@ -95,7 +95,7 @@
 		]]
 	end
 
-	function suite.canOverrideFromScript_withV()
+	function suite.canOverrideFromScript_withLLVM()
 		toolset "LLVM-vs2010"
 		prepare()
 		test.capture [[
@@ -103,7 +103,7 @@
 		]]
 	end
 
-	function suite.canOverrideFromScript_withMsc()
+	function suite.canOverrideFromScript_withMscAndLLVM()
 		toolset "msc-llvm-vs2014_xp"
 		prepare()
 		test.capture [[
