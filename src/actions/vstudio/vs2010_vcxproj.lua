@@ -48,7 +48,7 @@
 	end
 
 	function m.generate(prj)
-		io.utf8()
+		p.utf8()
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
 	end
