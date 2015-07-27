@@ -55,6 +55,14 @@
 			p.error("project '%s' does not have a language", self.name)
 		end
 
+		if not p.action.supports(self.language) then
+			p.warn("unsupported language '%s' used for project '%s'", self.language, self.name)
+		end
+
+		if not p.action.supports(self.kind) then
+			p.warn("unsupported kind '%s' used for project '%s'", self.kind, self.name)
+		end
+
 		-- all rules must exist
 		for i = 1, #self.rules do
 			local rule = self.rules[i]
