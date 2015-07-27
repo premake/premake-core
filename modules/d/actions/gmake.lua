@@ -5,13 +5,14 @@
 --
 
 	local p = premake
-	local d = p.modules.d
+	local m = p.modules.d
 
-	d.make = { }
+	m.make = {}
+
+	local dmake = m.make
 
 	local make = p.make
 	local cpp = p.make.cpp
-	local dmake = d.make
 	local project = p.project
 	local config = p.config
 	local fileconfig = p.fileconfig
@@ -31,7 +32,7 @@
 	gmake.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
 
-	function dmake.separateCompilation(prj)
+	function m.make.separateCompilation(prj)
 		local some = false
 		local all = true
 		for cfg in project.eachconfig(prj) do
@@ -53,7 +54,7 @@
 		p.escaper(make.esc)
 		if project.isd(prj) then
 			local makefile = make.getmakefilename(prj, true)
-			p.generate(prj, makefile, dmake.generate)
+			p.generate(prj, makefile, m.make.generate)
 			return
 		end
 		oldfn(prj)
@@ -66,7 +67,7 @@
 	end)
 
 	p.override( make, "objDirRules", function(oldfn, prj)
-		if prj.language ~= "D" or dmake.separateCompilation(prj) ~= "none" then
+		if prj.language ~= "D" or m.make.separateCompilation(prj) ~= "none" then
 			oldfn(prj)
 		end
 	end)
@@ -76,70 +77,70 @@
 -- Add namespace for element definition lists for p.callarray()
 ---
 
-	dmake.elements = {}
+	m.elements = {}
 
 --
 -- Generate a GNU make C++ project makefile, with support for the new platforms API.
 --
 
-	dmake.elements.makefile = {
-		"header",
-		"phonyRules",
-		"dConfigs",
-		"dObjects",			-- TODO: This is basically identical to make.cppObjects(), and should ideally be merged/shared
-		"shellType",
-		"dTargetRules",
-		"targetDirRules",
-		"objDirRules",
-		"cppCleanRules",	-- D clean code is identical to C/C++
-		"preBuildRules",
-		"preLinkRules",
-		"dFileRules",
-	}
+	m.elements.makefile = function(prj)
+		return {
+			make.header,
+			make.phonyRules,
+			m.make.configs,
+			m.make.objects,		-- TODO: This is basically identical to make.cppObjects(), and should ideally be merged/shared
+			make.shellType,
+			m.make.targetRules,
+			make.targetDirRules,
+			make.objDirRules,
+			make.cppCleanRules,	-- D clean code is identical to C/C++
+			make.preBuildRules,
+			make.preLinkRules,
+			m.make.dFileRules,
+		}
+	end
 
-	function dmake.generate(prj)
-		p.callarray(make, dmake.elements.makefile, prj)
+	function m.make.generate(prj)
+		p.callArray(m.elements.makefile, prj)
 	end
 
 
-	function dmake.buildRule(prj)
+	function m.make.buildRule(prj)
 		_p('$(TARGET): $(SOURCEFILES) $(LDDEPS)')
 		_p('\t@echo Building %s', prj.name)
 		_p('\t$(SILENT) $(BUILDCMD)')
 		_p('\t$(POSTBUILDCMDS)')
-		_p('')
 	end
 
-	function dmake.linkRule(prj)
+	function m.make.linkRule(prj)
 		_p('$(TARGET): $(OBJECTS) $(LDDEPS)')
 		_p('\t@echo Linking %s', prj.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
-		_p('')
 	end
 
-	function make.dTargetRules(prj)
-		local separateCompilation = dmake.separateCompilation(prj)
+	function m.make.targetRules(prj)
+		local separateCompilation = m.make.separateCompilation(prj)
 		if separateCompilation == "all" then
-			dmake.linkRule(prj)
+			m.make.linkRule(prj)
 		elseif separateCompilation == "none" then
-			dmake.buildRule(prj)
+			m.make.buildRule(prj)
 		else
 			for cfg in project.eachconfig(prj) do
 				_x('ifeq ($(config),%s)', cfg.shortname)
 				if cfg.flags.SeparateCompilation then
-					dmake.linkRule(prj)
+					m.make.linkRule(prj)
 				else
-					dmake.buildRule(prj)
+					m.make.buildRule(prj)
 				end
 				_p('endif')
-				_p('')
 			end
 		end
+		_p('')
 	end
 
-	function make.dFileRules(prj)
-		local separateCompilation = dmake.separateCompilation(prj)
+	function m.make.dFileRules(prj)
+		local separateCompilation = m.make.separateCompilation(prj)
 		if separateCompilation ~= "none" then
 			make.cppFileRules(prj)
 		end
@@ -149,7 +150,7 @@
 -- Override the 'standard' file rule to support D source files
 --
 
-	p.override( cpp, "standardFileRules", function(oldfn, prj, node)
+	p.override(cpp, "standardFileRules", function(oldfn, prj, node)
 		-- D file
 		if path.isdfile(node.abspath) then
 			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
@@ -165,27 +166,29 @@
 -- Write out the settings for a particular configuration.
 --
 
-	dmake.elements.configuration = {
-		"dTools",
-		"target",
-		"dTarget",
-		"objdir",
-		"versions",
-		"debug",
-		"imports",
-		"dFlags",
-		"libs",
-		"ldDeps",
-		"ldFlags",
-		"dLinkCmd",
-		"preBuildCmds",
-		"preLinkCmds",
-		"postBuildCmds",
-		"dAllRules",
-		"settings",
-	}
+	m.elements.makeconfig = function(cfg)
+		return {
+			m.make.dTools,
+			make.target,
+			m.make.target,
+			make.objdir,
+			m.make.versions,
+			m.make.debug,
+			m.make.imports,
+			m.make.dFlags,
+			make.libs,
+			make.ldDeps,
+			make.ldFlags,
+			m.make.linkCmd,
+			make.preBuildCmds,
+			make.preLinkCmds,
+			make.postBuildCmds,
+			m.make.allRules,
+			make.settings,
+		}
+	end
 
-	function make.dConfigs(prj)
+	function m.make.configs(prj)
 		for cfg in project.eachconfig(prj) do
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
@@ -196,43 +199,43 @@
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			p.callarray(make, dmake.elements.configuration, cfg, toolset)
+			p.callArray(m.elements.makeconfig, cfg, toolset)
 			_p('endif')
 			_p('')
 		end
 	end
 
-	function make.dTools(cfg, toolset)
+	function m.make.dTools(cfg, toolset)
 		local tool = toolset.gettoolname(cfg, "dc")
 		if tool then
 			_p('  DC = %s', tool)
 		end
 	end
 
-	function make.dTarget(cfg, toolset)
+	function m.make.target(cfg, toolset)
 		if cfg.flags.SeparateCompilation then
 			_p('  OUTPUTFLAG = %s', toolset.gettarget('"$@"'))
 		end
 	end
 
-	function make.versions(cfg, toolset)
+	function m.make.versions(cfg, toolset)
 		_p('  VERSIONS +=%s', make.list(toolset.getversions(cfg.versionconstants, cfg.versionlevel)))
 	end
 
-	function make.debug(cfg, toolset)
+	function m.make.debug(cfg, toolset)
 		_p('  DEBUG +=%s', make.list(toolset.getdebug(cfg.debugconstants, cfg.debuglevel)))
 	end
 
-	function make.imports(cfg, toolset)
+	function m.make.imports(cfg, toolset)
 		local includes = p.esc(toolset.getimportdirs(cfg, cfg.includedirs))
 		_p('  IMPORTS +=%s', make.list(includes))
 	end
 
-	function make.dFlags(cfg, toolset)
+	function m.make.dFlags(cfg, toolset)
 		_p('  ALL_DFLAGS += $(DFLAGS)%s $(VERSIONS) $(DEBUG) $(IMPORTS) $(ARCH)', make.list(table.join(toolset.getdflags(cfg), cfg.buildoptions)))
 	end
 
-	function make.dLinkCmd(cfg, toolset)
+	function m.make.linkCmd(cfg, toolset)
 		if cfg.flags.SeparateCompilation then
 			_p('  LINKCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
 
@@ -243,7 +246,7 @@
 		end
 	end
 
-	function make.dAllRules(cfg, toolset)
+	function m.make.allRules(cfg, toolset)
 		-- TODO: The C++ version has some special cases for OSX and Windows... check whether they should be here too?
 		if cfg.flags.SeparateCompilation then
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
@@ -261,7 +264,7 @@
 
 -- TODO: This is basically identical to make.cppObjects(), and should ideally be merged/shared
 
-	function make.dObjects(prj)
+	function m.make.objects(prj)
 		-- create lists for intermediate files, at the project level and
 		-- for each configuration
 		local root = { sourcefiles={}, objects={} }
@@ -331,7 +334,7 @@
 			end
 		})
 
-		local separateCompilation = dmake.separateCompilation(prj)
+		local separateCompilation = m.make.separateCompilation(prj)
 
 		-- now I can write out the lists, project level first...
 		function listobjects(var, list)
@@ -361,7 +364,7 @@
 					listobjects('  OBJECTS +=', files.objects)
 				end
 				_p('endif')
-				_p('')
 			end
 		end
+		_p('')
 	end
