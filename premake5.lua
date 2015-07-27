@@ -63,14 +63,14 @@
 
 
 	newoption {
-		trigger = "withcurl",
-		description = "Enable Curl 3rd party lib"
+		trigger = "no-curl",
+		description = "Disable Curl 3rd party lib"
 	}
 
 
 	newoption {
-		trigger = "withzip",
-		description = "Enable Zlib/Zip 3rd party lib"
+		trigger = "no-zlib",
+		description = "Disable Zlib/Zip 3rd party lib"
 	}
 
 
@@ -95,12 +95,12 @@
 		includedirs { "src/host/lua-5.1.4/src" }
 
 		-- optional 3rd party libraries
-		if _OPTIONS.withzip then
+		if not _OPTIONS["no-zlib"] then
 			includedirs { "contrib/zlib", "contrib/libzip" }
 			defines { "PREMAKE_COMPRESSION" }
 			links { "zip-lib", "zlib-lib" }
 		end
-		if _OPTIONS.withcurl then
+		if not _OPTIONS["no-curl"] then
 			includedirs { "contrib/curl/include" }
 			defines { "CURL_STATICLIB", "PREMAKE_CURL" }
 			links { "curl-lib" }
@@ -169,13 +169,13 @@
 			links       { "m" }
 
 	-- optional 3rd party libraries
-	group 'contrib'
-		if _OPTIONS.withzip then
-			include 'contrib/zlib'
-			include 'contrib/libzip'
+	group "contrib"
+		if not _OPTIONS["no-zlib"] then
+			include "contrib/zlib"
+			include "contrib/libzip"
 		end
-		if _OPTIONS.withcurl then
-			include 'contrib/curl'
+		if not _OPTIONS["no-curl"] then
+			include "contrib/curl"
 		end
 
 
