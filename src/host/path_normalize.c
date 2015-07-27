@@ -5,6 +5,7 @@
  */
 
 #include "premake.h"
+#include <ctype.h>
 #include <string.h>
 
 
@@ -33,17 +34,26 @@ int path_normalize(lua_State* L)
 
 		/* filter out .. */
 		if (ch == '.' && last == '.') {
-			ptr = dst - 3;
-			while (ptr >= buffer) {
-				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
-					dst = ptr;
-					break;
+			// it checks the array bounds, and if they are OK, it checks, whether the symbol before '..' is a whitespace
+			// it should jump out of this condition if path starts with ".." or if it has space before '..' i.e. "{COPY} ../Smthng"
+			if ((src - 2) > buffer && !isspace(*(src - 2))) {
+				ptr = dst - 3;
+				while (ptr >= buffer) {
+					// if there is whitespace anywhere before '..' we should quit from this loop and from outer condition as well
+					// but we need to omit the condition after the loop, so we set ptr's value to buffer - 1 (something that wouldn't pass condition's test
+					if (isspace(*ptr)) {
+						ptr = buffer - 1;
+						break;
+					} else if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
+						dst = ptr;
+						break;
+					}
+					--ptr;
 				}
-				--ptr;
-			}
-			if (ptr >= buffer) {
-				++src;
-				continue;
+				if (ptr >= buffer) {
+					++src;
+					continue;
+				}
 			}
 		}
 
