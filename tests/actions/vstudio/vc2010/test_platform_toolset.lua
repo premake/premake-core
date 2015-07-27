@@ -80,7 +80,7 @@
 	end
 
 	function suite.canOverrideFromScript_withMsc()
-		toolset "msc-100"
+		toolset "msc-v100"
 		prepare()
 		test.capture [[
 <PlatformToolset>v100</PlatformToolset>

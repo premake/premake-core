@@ -32,7 +32,7 @@
 	function p.tools.canonical(identifier)
 		local parts
 		if identifier:startswith("v") then
-			parts = { "msc", identifier:sub(2) }
+			parts = { "msc", identifier }
 		elseif identifier:startswith("llvm-vs") then -- support LLVM toolset in VS
 			parts = { "msc", "LLVM-vs" .. identifier:sub(8) }
 		else
