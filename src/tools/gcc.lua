@@ -352,13 +352,9 @@
 	}
 
 	function gcc.gettoolname(cfg, tool)
-		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
-		local name = names[tool]
-
-		if not name and (tool == "rc" or cfg.gccprefix) and gcc.tools[tool] then
-			name = (cfg.gccprefix or "") .. gcc.tools[tool]
+		if (cfg.gccprefix and gcc.tools[tool]) or tool == "rc" then
+			return (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
-
-		return name
+		return nil
 	end
 
