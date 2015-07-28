@@ -11,13 +11,24 @@
 	local tree = p.tree
 
 
+---
+-- Begin the switch from solution() to workspace()
+---
+
+	p.workspace = p.solution
+	local workspace = p.solution
+
+	p.alias(_G, "solution", "workspace")
+	p.alias(_G, "externalsolution", "externalworkspace")
+
+
 
 ---
 -- Create a new solution container instance.
 ---
 
-	function solution.new(name)
-		local sln = p.container.new(solution, name)
+	function workspace.new(name)
+		local sln = p.container.new(workspace, name)
 		return sln
 	end
 
@@ -32,7 +43,7 @@
 --    A configuration iteration function.
 --
 
-	function solution.eachconfig(sln)
+	function workspace.eachconfig(sln)
 		sln = premake.oven.bakeSolution(sln)
 
 		local i = 0
@@ -56,12 +67,12 @@
 --    An iterator function, returning project configurations.
 --
 
-	function solution.eachproject(sln)
+	function workspace.eachproject(sln)
 		local i = 0
 		return function ()
 			i = i + 1
 			if i <= #sln.projects then
-				return premake.solution.getproject(sln, i)
+				return p.workspace.getproject(sln, i)
 			end
 		end
 	end
@@ -78,7 +89,7 @@
 --    The project object, or nil if a matching project could not be found.
 --
 
-	function solution.findproject(sln, name)
+	function workspace.findproject(sln, name)
 		name = name:lower()
 		for _, prj in ipairs(sln.projects) do
 			if name == prj.name:lower() then
@@ -98,7 +109,7 @@
 --    The tree of project groups defined for the solution.
 --
 
-	function solution.grouptree(sln)
+	function workspace.grouptree(sln)
 		-- check for a previously cached tree
 		if sln.grouptree then
 			return sln.grouptree
@@ -107,7 +118,7 @@
 		-- build the tree of groups
 
 		local tr = tree.new()
-		for prj in solution.eachproject(sln) do
+		for prj in workspace.eachproject(sln) do
 			local prjpath = path.join(prj.group, prj.name)
 			local node = tree.add(tr, prjpath)
 			node.project = prj
@@ -136,8 +147,8 @@
 --    The project configuration at the given index.
 --
 
-	function solution.getproject(sln, idx)
-		sln = premake.oven.bakeSolution(sln)
+	function workspace.getproject(sln, idx)
+		sln = p.oven.bakeSolution(sln)
 		return sln.projects[idx]
 	end
 
