@@ -17,7 +17,8 @@ Find out in detail [what Premake is](https://github.com/premake/premake-core/wik
 ### News and Community
 
 * Check the official [Github project](https://github.com/premake/premake-core) for the latest developments
-* Check the official [Google Group](https://groups.google.com/forum/m/#!forum/premake-development) if you need help.
+* For questions about using Premake and authoring project scripts, please ask on [StackOverflow, adding the #premake tag to your question](http://stackoverflow.com/questions/tagged/premake).
+* For discussions about developing, customizing, or extending Premake and add-on modules, please use the [Premake Developers Google Groups forum](https://groups.google.com/forum/m/#!forum/premake-development).
 
 ### Report isssues
 
@@ -26,8 +27,6 @@ Something not working quite as expected? Do you need a feature that has not been
 ### Contribute
 
 Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/premake/premake-core/tree/master/tests) are passing before submitting and add new ones in case you introduced new features.
-
-See the file BUILD.txt for instructions on building Premake.
 
 ### Copyright & License
 
