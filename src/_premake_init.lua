@@ -393,6 +393,12 @@
 	}
 
 	api.register {
+		name = "entrypoint",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
 		name = "fatalwarnings",
 		scope = "config",
 		kind = "list:string",

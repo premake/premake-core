@@ -29,7 +29,7 @@
 
 	m.elements.project = function(prj)
 		return {
-    	    m.xmlDeclaration,
+			m.xmlDeclaration,
 			m.project,
 			m.projectConfigurations,
 			m.globals,
@@ -453,19 +453,19 @@
 
 	function m.manifest(cfg)
 		if cfg.kind ~= p.STATICLIB then
-			-- get the manifests files
-			local manifests = {}
-			for _, fname in ipairs(cfg.files) do
-				if path.getextension(fname) == ".manifest" then
-					table.insert(manifests, project.getrelative(cfg.project, fname))
-				end
+		-- get the manifests files
+		local manifests = {}
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, project.getrelative(cfg.project, fname))
 			end
+		end
 
 			if #manifests > 0 then
-				p.push('<Manifest>')
-				m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
-				p.pop('</Manifest>')
-			end
+		p.push('<Manifest>')
+		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
+		p.pop('</Manifest>')
+	end
 		end
 	end
 
@@ -536,7 +536,6 @@
 	end
 
 
-
 --
 -- Reference any managed assemblies listed in the links()
 --
@@ -547,10 +546,10 @@
 		local cfg = project.getfirstconfig(prj)
 
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
-		 if #refs > 0 then
-		 	p.push('<ItemGroup>')
-		 	for i = 1, #refs do
-		 		local value = refs[i]
+		if #refs > 0 then
+			p.push('<ItemGroup>')
+			for i = 1, #refs do
+				local value = refs[i]
 
 				-- If the link contains a '/' then it is a relative path to
 				-- a local assembly. Otherwise treat it as a system assembly.
@@ -561,9 +560,9 @@
 				else
 					p.x('<Reference Include="%s" />', path.getbasename(value))
 				end
-		 	end
-		 	p.pop('</ItemGroup>')
-		 end
+			end
+			p.pop('</ItemGroup>')
+		end
 	end
 
 
@@ -580,8 +579,9 @@
 			m.customBuildFiles,
 			m.customRuleFiles,
 			m.midlFiles
-		}
+	}
 	end
+
 
 	function m.files(prj)
 		local groups = m.categorizeSources(prj)
@@ -589,10 +589,10 @@
 	end
 
 
-
 	m.elements.ClCompileFile = function(cfg, file)
 		return {}
 	end
+
 
 	m.elements.ClCompileFileCfg = function(fcfg, condition)
 		if fcfg then
@@ -616,24 +616,25 @@
 		end
 	end
 
+
 	function m.clCompileFiles(prj, groups)
 		m.emitFiles(prj, groups, "ClCompile")
 	end
-
 
 
 	m.elements.ClIncludeFile = function(cfg, file)
 		return {}
 	end
 
+
 	m.elements.ClIncludeFileCfg = function(fcfg, condition)
 		return {}
 	end
 
+
 	function m.clIncludeFiles(prj, groups)
 		m.emitFiles(prj, groups, "ClInclude")
 	end
-
 
 
 	m.elements.CustomBuildFile = function(cfg, file)
@@ -707,25 +708,27 @@
 		return {}
 	end
 
+
 	m.elements.NoneFileCfg = function(fcfg, condition)
 		return {}
 	end
+
 
 	function m.noneFiles(prj, groups)
 		m.emitFiles(prj, groups, "None")
 	end
 
 
-
 	m.elements.ResourceCompileFile = function(cfg, file)
 		return {}
-	end
+						end
 
 	m.elements.ResourceCompileFileCfg = function(fcfg, condition)
 		return {
 			m.excludedFromBuild
 		}
 	end
+
 
 	function m.resourceCompileFiles(prj, groups)
 		m.emitFiles(prj, groups, "ResourceCompile", function(cfg)
@@ -738,6 +741,7 @@
 	m.elements.MidlFile = function(cfg, file)
 		return {}
 	end
+
 
 	m.elements.MidlFileCfg = function(fcfg, condition)
 		return {
@@ -1123,12 +1127,16 @@
 
 
 	function m.entryPointSymbol(cfg)
-		if (cfg.kind == p.CONSOLEAPP or cfg.kind == p.WINDOWEDAPP) and
-		   not cfg.flags.WinMain and
-		   cfg.clr == p.OFF and
-		   cfg.system ~= p.XBOX360
-		then
-			m.element("EntryPointSymbol", nil, "mainCRTStartup")
+		if cfg.entrypoint then
+			m.element("EntryPointSymbol", nil, cfg.entrypoint)
+		else
+			if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
+				not cfg.flags.WinMain and
+				cfg.clr == p.OFF and
+				cfg.system ~= p.XBOX360
+			then
+				m.element("EntryPointSymbol", nil, "mainCRTStartup")
+			end
 		end
 	end
 
