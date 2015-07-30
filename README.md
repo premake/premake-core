@@ -26,7 +26,7 @@ Something not working quite as expected? Do you need a feature that has not been
 
 ### Contribute
 
-Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/premake/premake-core/tree/master/tests) are passing before submitting and add new ones in case you introduced new features.
+Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/premake/premake-core/wiki/Unit-Tests) are passing before submitting and add new ones in case you introduced new features.
 
 ### Copyright & License
 
