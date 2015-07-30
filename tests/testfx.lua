@@ -1,8 +1,10 @@
 --
 -- tests/testfx.lua
 -- Automated test framework for Premake.
--- Copyright (c) 2008-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2015 Jason Perkins and the Premake project
 --
+
+	local p = premake
 
 
 --
@@ -244,16 +246,18 @@
 -- Some helper functions
 --
 
-	function test.createsolution()
-		local sln = solution "MySolution"
+	function test.createWorkspace()
+		local wks = workspace("MySolution")
 		configurations { "Debug", "Release" }
 
-		local prj = project "MyProject"
-		language "C++"
-		kind "ConsoleApp"
+		local prj = project("MyProject")
+		language("C++")
+		kind("ConsoleApp")
 
-		return sln, prj
+		return wks, prj
 	end
+
+	p.alias(test, "createWorkspace", "createsolution")
 
 
 	function test.createproject(sln)

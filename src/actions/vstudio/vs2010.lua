@@ -121,8 +121,8 @@
 
 		-- Solution and project generation logic
 
-		onSolution = function(sln)
-			vstudio.vs2005.generateSolution(sln)
+		onWorkspace = function(wks)
+			vstudio.vs2005.generateSolution(wks)
 		end,
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)
@@ -131,8 +131,8 @@
 			vstudio.vs2010.generateRule(rule)
 		end,
 
-		onCleanSolution = function(sln)
-			vstudio.cleanSolution(sln)
+		onCleanWorkspace = function(wks)
+			vstudio.cleanSolution(wks)
 		end,
 		onCleanProject = function(prj)
 			vstudio.cleanProject(prj)
