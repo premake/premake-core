@@ -84,6 +84,7 @@
 
 		self.environ = {
 			sln = self,
+			wks = self,
 		}
 
 		context.compile(self)
@@ -142,6 +143,7 @@
 
 		self.environ = {
 			sln = sln,
+			wks = sln,
 			prj = self,
 		}
 
@@ -316,7 +318,8 @@
 
 		-- fill in any calculated values
 		for _, cfg in ipairs(configs) do
-			cfg.solution = sln
+			cfg.solution = sln  -- confused: doesn't happen automatically already?
+			cfg.workspace = sln
 			oven.finishConfig(cfg)
 		end
 
@@ -456,6 +459,7 @@
 
 		local environ = {
 			sln = prj.solution,
+			wks = prj.solution,
 			prj = prj,
 		}
 
