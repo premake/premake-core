@@ -28,9 +28,9 @@
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 
-		onWorkspace = function(wrk)
+		onWorkspace = function(wks)
 			premake.escaper(make.esc)
-			premake.generate(wrk, make.getmakefilename(wrk, false), make.generate_solution)
+			premake.generate(wks, make.getmakefilename(wks, false), make.generate_solution)
 		end,
 
 		onProject = function(prj)
@@ -43,8 +43,8 @@
 			end
 		end,
 
-		onCleanWorkspace = function(wrk)
-			premake.clean.file(wrk, make.getmakefilename(wrk, false))
+		onCleanWorkspace = function(wks)
+			premake.clean.file(wks, make.getmakefilename(wks, false))
 		end,
 
 		onCleanProject = function(prj)

@@ -39,8 +39,8 @@
 
 		-- Solution and project generation logic
 
-		onWorkspace = function(wrk)
-			vstudio.vs2005.generateSolution(wrk)
+		onWorkspace = function(wks)
+			vstudio.vs2005.generateSolution(wks)
 		end,
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)
@@ -49,8 +49,8 @@
 			vstudio.vs2010.generateRule(rule)
 		end,
 
-		onCleanWorkspace = function(wrk)
-			vstudio.cleanSolution(wrk)
+		onCleanWorkspace = function(wks)
+			vstudio.cleanSolution(wks)
 		end,
 		onCleanProject = function(prj)
 			vstudio.cleanProject(prj)

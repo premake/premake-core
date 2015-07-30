@@ -247,14 +247,14 @@
 --
 
 	function test.createWorkspace()
-		local wrk = workspace("MySolution")
+		local wks = workspace("MySolution")
 		configurations { "Debug", "Release" }
 
 		local prj = project("MyProject")
 		language("C++")
 		kind("ConsoleApp")
 
-		return wrk, prj
+		return wks, prj
 	end
 
 	p.alias(test, "createWorkspace", "createsolution")

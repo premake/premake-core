@@ -25,8 +25,8 @@
 ---
 
 	function workspace.new(name)
-		local wrk = p.container.new(workspace, name)
-		return wrk
+		local wks = p.container.new(workspace, name)
+		return wks
 	end
 
 
