@@ -86,6 +86,15 @@ static const luaL_Reg string_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg buffered_functions[] = {
+	{ "new", buffered_new },
+	{ "write", buffered_write },
+	{ "writeln", buffered_writeln },
+	{ "tostring", buffered_tostring },
+	{ "close", buffered_close },
+	{ NULL, NULL }
+};
+
 #ifdef PREMAKE_CURL
 static const luaL_Reg http_functions[] = {
 	{ "get",  http_get },
@@ -106,6 +115,7 @@ int premake_init(lua_State* L)
 	luaL_register(L, "path",     path_functions);
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
+	luaL_register(L, "buffered", buffered_functions);
 
 #ifdef PREMAKE_CURL
 	luaL_register(L, "http",     http_functions);
