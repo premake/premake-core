@@ -93,7 +93,7 @@ extern int do_mkdir(const char* path);
 
 static void parse_path(const char* full_name, char* filename, char* directory)
 {
-	char *ssc;
+	const char *ssc;
 	size_t orig_length = strlen(full_name);
 	size_t l = 0;
 	size_t dir_size;
@@ -142,15 +142,17 @@ static int extract(const char* src, const char* destination)
 
 	for (i = 0, entries = zip_get_num_entries(z_archive, 0); i < entries; ++i)
 	{
+		zip_uint8_t opsys;
+		zip_uint32_t attrib;
+		const char* full_name;
+
 		struct zip_file* zf = zip_fopen_index(z_archive, i, 0);
 		if (!zf)
 			continue;
 
-		zip_uint8_t opsys;
-		zip_uint32_t attrib;
 		zip_file_get_external_attributes(z_archive, i, 0, &opsys, &attrib);
 
-		const char* full_name = zip_get_name(z_archive, i, 0);
+		full_name = zip_get_name(z_archive, i, 0);
 
 		sprintf(appended_full_name, "%s/%s", destination, full_name);
 		parse_path(appended_full_name, filename, directory);
@@ -161,7 +163,7 @@ static int extract(const char* src, const char* destination)
 		{
 			bytes_read = zip_fread(zf, buffer, sizeof(buffer));
 			buffer[bytes_read] = '\0';
-			if (write_link(appended_full_name, buffer, bytes_read) != 0)
+			if (write_link(appended_full_name, buffer, (size_t)bytes_read) != 0)
 			{
 				printf("  Failed to create symbolic link [%s->%s]\n", appended_full_name, buffer);
 				return -1;
@@ -222,7 +224,7 @@ int zip_extract(lua_State* L)
 
 	int res = extract(src, dst);
 
-	lua_pushnumber(L, res);
+	lua_pushnumber(L, (lua_Number)res);
 	return 1;
 }
 

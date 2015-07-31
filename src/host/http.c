@@ -47,8 +47,8 @@ static int curl_progress_cb(void* userdata, double dltotal, double dlnow,
 
 	/* retrieve the lua progress callback we saved before */
 	lua_rawgeti(L, LUA_REGISTRYINDEX, state->RefIndex);
-	lua_pushnumber(L, dltotal);
-	lua_pushnumber(L, dlnow);
+	lua_pushnumber(L, (lua_Number)dltotal);
+	lua_pushnumber(L, (lua_Number)dlnow);
 	lua_pcall(L, 2, LUA_MULTRET, 0);
 
 	return 0;
