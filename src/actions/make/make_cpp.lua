@@ -26,26 +26,28 @@
 -- Generate a GNU make C++ project makefile, with support for the new platforms API.
 --
 
-	cpp.elements.makefile = {
-		"header",
-		"phonyRules",
-		"cppConfigs",
-		"cppObjects",
-		"shellType",
-		"cppTargetRules",
-		"targetDirRules",
-		"objDirRules",
-		"cppCleanRules",
-		"preBuildRules",
-		"preLinkRules",
-		"pchRules",
-		"cppFileRules",
-		"cppDependencies",
-	}
+	cpp.elements.makefile = function(prj)
+		return {
+			make.header,
+			make.phonyRules,
+			make.cppConfigs,
+			make.cppObjects,
+			make.shellType,
+			make.cppTargetRules,
+			make.targetDirRules,
+			make.objDirRules,
+			make.cppCleanRules,
+			make.preBuildRules,
+			make.preLinkRules,
+			make.pchRules,
+			make.cppFileRules,
+			make.cppDependencies,
+		}
+	end
 
 	function make.cpp.generate(prj)
 		premake.eol("\n")
-		premake.callarray(make, cpp.elements.makefile, prj)
+		premake.callArray(cpp.elements.makefile, prj)
 	end
 
 
@@ -53,28 +55,30 @@
 -- Write out the settings for a particular configuration.
 --
 
-	cpp.elements.configuration = {
-		"cppTools",
-		"target",
-		"objdir",
-		"pch",
-		"defines",
-		"includes",
-		"forceInclude",
-		"cppFlags",
-		"cFlags",
-		"cxxFlags",
-		"resFlags",
-		"libs",
-		"ldDeps",
-		"ldFlags",
-		"linkCmd",
-		"preBuildCmds",
-		"preLinkCmds",
-		"postBuildCmds",
-		"cppAllRules",
-		"settings",
-	}
+	cpp.elements.configuration = function(cfg)
+		return {
+			make.cppTools,
+			make.target,
+			make.objdir,
+			make.pch,
+			make.defines,
+			make.includes,
+			make.forceInclude,
+			make.cppFlags,
+			make.cFlags,
+			make.cxxFlags,
+			make.resFlags,
+			make.libs,
+			make.ldDeps,
+			make.ldFlags,
+			make.linkCmd,
+			make.preBuildCmds,
+			make.preLinkCmds,
+			make.postBuildCmds,
+			make.cppAllRules,
+			make.settings,
+		}
+	end
 
 	function make.cppConfigs(prj)
 		for cfg in project.eachconfig(prj) do
@@ -87,7 +91,7 @@
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callarray(make, cpp.elements.configuration, cfg, toolset)
+			premake.callArray(cpp.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end
