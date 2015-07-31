@@ -371,3 +371,20 @@
 			return value
 		end
 	end
+
+
+
+	function field.translate(f, value)
+		local processor = field.accessor(f, "translate")
+		if processor then
+			return processor(f, value, nil)[1]
+		else
+			return value
+		end
+	end
+
+
+	function field.translates(f)
+		return (field.accessor(f, "translate") ~= nil)
+	end
+

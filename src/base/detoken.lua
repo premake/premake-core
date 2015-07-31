@@ -105,7 +105,7 @@
 
 		function expandvalue(value)
 			if type(value) ~= "string" then
-				return
+				return value
 			end
 
 			local count

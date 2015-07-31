@@ -28,6 +28,7 @@ return {
 	"project/test_eachconfig.lua",
 	"project/test_getconfig.lua",
 	"project/test_location.lua",
+	"project/test_sources.lua",
 	"project/test_vpaths.lua",
 
 	-- Configuration object tests
