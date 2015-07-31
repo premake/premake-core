@@ -94,6 +94,13 @@ static const luaL_Reg http_functions[] = {
 };
 #endif
 
+#ifdef PREMAKE_COMPRESSION
+static const luaL_Reg zip_functions[] = {
+	{ "extract",  zip_extract },
+	{ NULL, NULL }
+};
+#endif
+
 /**
  * Initialize the Premake Lua environment.
  */
@@ -109,6 +116,10 @@ int premake_init(lua_State* L)
 
 #ifdef PREMAKE_CURL
 	luaL_register(L, "http",     http_functions);
+#endif
+
+#ifdef PREMAKE_COMPRESSION
+	luaL_register(L, "zip",     zip_functions);
 #endif
 
 	/* push the application metadata */
