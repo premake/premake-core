@@ -17,6 +17,9 @@
 
 	local _warnings = {}
 
+-- Keep track of aliased functions, so I can resolve to canonical names
+
+	local _aliases = {}
 
 --
 -- Define some commonly used symbols, for future-proofing.
@@ -48,6 +51,36 @@
 	premake.X86         = "x86"
 	premake.X86_64      = "x86_64"
 	premake.XBOX360     = "xbox360"
+
+
+
+---
+-- Provide an alias for a function in a namespace. Calls to the alias will
+-- invoke the canonical function, and attempts to override the alias will
+-- instead override the canonical call.
+--
+-- @param scope
+--    The table containing the function to be overridden. Use _G for
+--    global functions.
+-- @param canonical
+--    The name of the function to be aliased (a string value)
+-- @param alias
+--    The new alias for the function (another string value).
+---
+
+	function p.alias(scope, canonical, alias)
+		scope, canonical = p.resolveAlias(scope, canonical)
+		if not scope[canonical] then
+			error("unable to alias '" .. canonical .. "'; no such function", 2)
+		end
+
+		_aliases[scope] = _aliases[scope] or {}
+		_aliases[scope][alias] = canonical
+
+		scope[alias] = function(...)
+			return scope[canonical](...)
+		end
+	end
 
 
 
@@ -230,10 +263,13 @@
 ---
 
 	function premake.override(scope, name, repl)
+		scope, name = p.resolveAlias(scope, name)
+
 		local original = scope[name]
 		if not original then
 			error("unable to override '" .. name .. "'; no such function", 2)
 		end
+
 		scope[name] = function(...)
 			return repl(original, ...)
 		end
@@ -249,6 +285,30 @@
 		if scope == premake.main then
 			table.replace(premake.main.elements, original, scope[name])
 		end
+	end
+
+
+
+---
+-- Find the canonical name and scope of a function, resolving any aliases.
+--
+-- @param scope
+--    The table containing the function to be overridden. Use _G for
+--    global functions.
+-- @param name
+--    The name of the function to resolve.
+-- @return
+--    The canonical scope and function name (a string value).
+---
+
+	function p.resolveAlias(scope, name)
+		local aliases = _aliases[scope]
+		if aliases then
+			while aliases[name] do
+				name = aliases[name]
+			end
+		end
+		return scope, name
 	end
 
 

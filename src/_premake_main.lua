@@ -108,10 +108,9 @@
 			preloader = os.locate("modules/" .. preloader) or os.locate(preloader)
 			if preloader then
 				m._preloaded[name] = include(preloader)
-				-- leave off until existing core modules can catch up
-				-- if not m._preloaded[name] then
-				-- 	p.warn("module '%s' should return function from _preload.lua", name)
-				-- end
+				if not m._preloaded[name] then
+					p.warn("module '%s' should return function from _preload.lua", name)
+				end
 			else
 				require(name)
 			end

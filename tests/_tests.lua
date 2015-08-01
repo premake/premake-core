@@ -1,6 +1,7 @@
 return {
 	-- Base API tests
 	"test_string.lua",
+	"base/test_aliasing.lua",
 	"base/test_configset.lua",
 	"base/test_context.lua",
 	"base/test_criteria.lua",
@@ -27,6 +28,7 @@ return {
 	"project/test_eachconfig.lua",
 	"project/test_getconfig.lua",
 	"project/test_location.lua",
+	"project/test_sources.lua",
 	"project/test_vpaths.lua",
 
 	-- Configuration object tests

@@ -56,27 +56,30 @@
 --    The configuration set to query.
 -- @param field
 --    The definition of field to be queried.
--- @param context
+-- @param filter
 --    A list of lowercase context terms to use during the fetch. Only those
 --    blocks with terms fully contained by this list will be considered in
 --    determining the returned value. Terms should be lower case to make
 --    the context filtering case-insensitive.
+-- @param ctx
+--    The context that will be used for detoken.expand
 -- @return
 --    The requested value.
 ---
 
-	function configset.fetch(cset, field, context)
-		context = context or {}
+	function configset.fetch(cset, field, filter, ctx)
+		filter = filter or {}
+		ctx = ctx or {}
 
 		if p.field.merges(field) then
-			return configset._fetchMerged(cset, field, context)
+			return configset._fetchMerged(cset, field, filter, ctx)
 		else
-			return configset._fetchDirect(cset, field, context)
+			return configset._fetchDirect(cset, field, filter, ctx)
 		end
 	end
 
 
-	function configset._fetchDirect(cset, field, filter)
+	function configset._fetchDirect(cset, field, filter, ctx)
 		local abspath = filter.files
 		local basedir
 
@@ -101,6 +104,11 @@
 				if type(value) == "table" then
 					value = table.deepcopy(value)
 				end
+				-- Detoken
+				if field.tokens and ctx.environ then
+					value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
+				end
+
 				return value
 			end
 		end
@@ -108,17 +116,21 @@
 		filter.files = abspath
 
 		if cset.parent then
-			return configset._fetchDirect(cset.parent, field, filter)
+			return configset._fetchDirect(cset.parent, field, filter, ctx)
 		end
 	end
 
 
-	function configset._fetchMerged(cset, field, filter)
+	function configset._fetchMerged(cset, field, filter, ctx)
 		local result = {}
 
 		local function remove(patterns)
-			for i = 1, #patterns do
-				local pattern = patterns[i]
+			for _, pattern in ipairs(patterns) do
+				-- Detoken
+				if field.tokens and ctx.environ then
+					pattern = p.detoken.expand(pattern, ctx.environ, field, ctx._basedir)
+				end
+				pattern = path.wildcards(pattern):lower()
 
 				local j = 1
 				while j <= #result do
@@ -134,7 +146,7 @@
 		end
 
 		if cset.parent then
-			result = configset._fetchMerged(cset.parent, field, filter)
+			result = configset._fetchMerged(cset.parent, field, filter, ctx)
 		end
 
 		local abspath = filter.files
@@ -159,7 +171,23 @@
 				end
 
 				local value = block[key]
+				-- If value is an object, return a copy of it so that any
+				-- changes later made to it by the caller won't alter the
+				-- original value (that was a tough bug to find)
+				if type(value) == "table" then
+					value = table.deepcopy(value)
+				end
+
 				if value then
+					-- Detoken
+					if field.tokens and ctx.environ then
+						value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
+					end
+					-- Translate
+					if field and p.field.translates(field) then
+						value = p.field.translate(field, value)
+					end
+
 					result = p.field.merge(field, result, value)
 				end
 			end
@@ -328,6 +356,7 @@
 		table.insert(cset.blocks, block)
 		cset.current = block
 
+		-- TODO This comment is not completely valid anymore
 		-- This needs work; right now it is hardcoded to only work for lists.
 		-- To support removing from keyed collections, I first need to figure
 		-- out how to move the wildcard():lower() bit into the value
@@ -338,11 +367,6 @@
 		-- api.remove() needs to get pushed down to here (or field).
 
 		values = p.field.remove(field, {}, values)
-		for i, value in ipairs(values) do
-			if type(value) == "string" then
-				values[i] = path.wildcards(value):lower()
-			end
-		end
 
 		-- add a list of removed values to the block
 		current = cset.current

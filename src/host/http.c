@@ -5,7 +5,7 @@
  */
 
 #include "premake.h"
-#include "stdlib.h"
+#include <stdlib.h>
 
 #ifdef PREMAKE_CURL
 
@@ -47,8 +47,8 @@ static int curl_progress_cb(void* userdata, double dltotal, double dlnow,
 
 	/* retrieve the lua progress callback we saved before */
 	lua_rawgeti(L, LUA_REGISTRYINDEX, state->RefIndex);
-	lua_pushnumber(L, dltotal);
-	lua_pushnumber(L, dlnow);
+	lua_pushnumber(L, (lua_Number)dltotal);
+	lua_pushnumber(L, (lua_Number)dlnow);
 	lua_pcall(L, 2, LUA_MULTRET, 0);
 
 	return 0;
@@ -75,6 +75,13 @@ static size_t curl_write_cb(char *ptr, size_t size, size_t nmemb, void *userdata
 	return size * nmemb;
 }
 
+
+static size_t curl_file_cb(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	return fwrite(ptr, size, nmemb, stream);
+}
+
+
 static void curl_init()
 {
 	static int initializedHTTP = 0;
@@ -87,9 +94,35 @@ static void curl_init()
 	initializedHTTP = 1;
 }
 
-CURL * curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progressFnIndex)
+
+static void get_headers(lua_State* L, struct curl_slist** headers)
+{
+	int i;
+	int argc = lua_gettop(L);
+	// Headers are optional so loop through them if they exist(also indexed 1 -> N instead of 0 -> N-1 in lua)
+	for (i = 3; i <= argc; ++i)
+	{
+		if (lua_istable(L, -1))
+		{
+			lua_pushnil(L);
+
+			while (lua_next(L, -2) != 0)
+			{
+				const char *item = luaL_checkstring(L, -1);
+				lua_pop(L, 1);
+				*headers = curl_slist_append(*headers, item);
+			}
+			// Only expect a single table as a parameter so break after reading it
+			break;
+		}
+	}
+}
+
+
+static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progressFnIndex)
 {
 	CURL* curl;
+	struct curl_slist* headers = NULL;
 	const char* url = luaL_checkstring(L, 1);
 
 	/* if the second argument is a lua function, then we save it
@@ -110,6 +143,10 @@ CURL * curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progre
 	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
+	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+
+	get_headers(L, &headers);
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, state);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_cb);
@@ -117,7 +154,7 @@ CURL * curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progre
 	if (fp)
 	{
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_file_cb);
 	}
 
 	if (state->L != 0)
@@ -129,6 +166,7 @@ CURL * curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progre
 
 	return curl;
 }
+
 
 int http_get(lua_State* L)
 {
@@ -163,14 +201,13 @@ int http_get(lua_State* L)
 	return 1;
 }
 
+
 int http_download(lua_State* L)
 {
 	CurlCallbackState state = { 0, 0 };
 
 	CURL* curl;
-	CURLcode code;
-
-	const char* err;
+	CURLcode code = CURLE_FAILED_INIT;
 
 	FILE* fp;
 	const char* file = luaL_checkstring(L, 2);
@@ -178,32 +215,23 @@ int http_download(lua_State* L)
 	fp = fopen(file, "wb");
 	if (!fp)
 	{
-		lua_pushnil(L);
-		lua_pushfstring(L, "could not open file");
+		lua_pushstring(L, "Unable to open file.");
+		lua_pushnumber(L, -1);
 		return 2;
 	}
 
 	curl = curl_request(L, &state, fp, /*progressFnIndex=*/3);
-
-	if (!curl)
+	if (curl)
 	{
-		lua_pushnil(L);
-		return 1;
+		code = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
 	}
 
-	code = curl_easy_perform(curl);
-	if (code != CURLE_OK)
-	{
-		err = curl_easy_strerror(code);
+	fclose(fp);
 
-		lua_pushnil(L);
-		lua_pushfstring(L, err);
-		return 2;
-	}
-
-	curl_easy_cleanup(curl);
-
-	return 0;
+	lua_pushstring(L, curl_easy_strerror(code));
+	lua_pushnumber(L, code);
+	return 2;
 }
 
 #endif

@@ -66,6 +66,9 @@
 			AVX2 = "/arch:AVX2",
 			SSE = "/arch:SSE",
 			SSE2 = "/arch:SSE2",
+			SSE3 = "/arch:SSE2",
+			SSSE3 = "/arch:SSE2",
+			["SSE4.1"] = "/arch:SSE2",
 		},
 		warnings = {
 			Extra = "/W4",

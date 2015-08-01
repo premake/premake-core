@@ -127,6 +127,10 @@ int http_get(lua_State* L);
 int http_download(lua_State* L);
 #endif
 
+#ifdef PREMAKE_COMPRESSION
+int zip_extract(lua_State* L);
+#endif
+
 /* Engine interface */
 int premake_init(lua_State* L);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);

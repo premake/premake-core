@@ -35,12 +35,12 @@
 
 		-- Solution and project generation logic
 
-		onSolution = vstudio.vs2005.generateSolution,
-		onProject  = vstudio.vs2005.generateProject,
+		onWorkspace = vstudio.vs2005.generateSolution,
+		onProject   = vstudio.vs2005.generateProject,
 
-		onCleanSolution = vstudio.cleanSolution,
-		onCleanProject  = vstudio.cleanProject,
-		onCleanTarget   = vstudio.cleanTarget,
+		onCleanWorkspace = vstudio.cleanSolution,
+		onCleanProject   = vstudio.cleanProject,
+		onCleanTarget    = vstudio.cleanTarget,
 
 		-- This stuff is specific to the Visual Studio exporters
 

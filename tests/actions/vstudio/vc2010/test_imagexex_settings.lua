@@ -31,12 +31,12 @@
 	function suite.defaultSettings()
 		prepare()
 		test.capture [[
-		<ImageXex>
-			<ConfigurationFile>
-			</ConfigurationFile>
-			<AdditionalSections>
-			</AdditionalSections>
-		</ImageXex>
+<ImageXex>
+	<ConfigurationFile>
+	</ConfigurationFile>
+	<AdditionalSections>
+	</AdditionalSections>
+</ImageXex>
 		]]
 	end
 
@@ -47,10 +47,10 @@
 		configfile "testconfig.xml"
 		prepare()
 		test.capture [[
-		<ImageXex>
-			<ConfigurationFile>testconfig.xml</ConfigurationFile>
-			<AdditionalSections>
-			</AdditionalSections>
-		</ImageXex>
+<ImageXex>
+	<ConfigurationFile>testconfig.xml</ConfigurationFile>
+	<AdditionalSections>
+	</AdditionalSections>
+</ImageXex>
 		]]
 	end

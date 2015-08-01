@@ -74,6 +74,9 @@
 			AVX2 = "-mavx2",
 			SSE = "-msse",
 			SSE2 = "-msse2",
+			SSE3 = "-msse3",
+			SSSE3 = "-mssse3",
+			["SSE4.1"] = "-msse4.1",
 		},
 		warnings = {
 			Extra = "-Wall -Wextra",
@@ -352,13 +355,9 @@
 	}
 
 	function gcc.gettoolname(cfg, tool)
-		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
-		local name = names[tool]
-
-		if not name and (tool == "rc" or cfg.gccprefix) and gcc.tools[tool] then
-			name = (cfg.gccprefix or "") .. gcc.tools[tool]
+		if (cfg.gccprefix and gcc.tools[tool]) or tool == "rc" then
+			return (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
-
-		return name
+		return nil
 	end
 

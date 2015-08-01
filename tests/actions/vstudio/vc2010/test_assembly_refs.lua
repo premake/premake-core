@@ -44,10 +44,10 @@
 		links { "System.dll", "System.Data.dll" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="System.Data" />
-	</ItemGroup>
+<ItemGroup>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+</ItemGroup>
 		]]
 	end
 
@@ -60,9 +60,9 @@
 		links { "m", "System.dll" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Reference Include="System" />
-	</ItemGroup>
+<ItemGroup>
+	<Reference Include="System" />
+</ItemGroup>
 		]]
 	end
 
@@ -75,10 +75,10 @@
 		links { "../nunit.framework.dll" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-		<Reference Include="nunit.framework">
-			<HintPath>..\nunit.framework.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+<ItemGroup>
+	<Reference Include="nunit.framework">
+		<HintPath>..\nunit.framework.dll</HintPath>
+	</Reference>
+</ItemGroup>
 		]]
 	end

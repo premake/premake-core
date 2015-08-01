@@ -251,6 +251,17 @@
 	}
 
 	api.register {
+		name = "debuggertype",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Mixed",
+			"NativeOnly",
+			"ManagedOnly",
+		}
+	}
+
+	api.register {
 		name = "debugpathmap",
 		scope = "config",
 		kind = "list:keyed:path",
@@ -379,6 +390,12 @@
 			"Little",
 			"Big",
 		},
+	}
+
+	api.register {
+		name = "entrypoint",
+		scope = "config",
+		kind = "string",
 	}
 
 	api.register {
@@ -1011,6 +1028,9 @@
 			"AVX2",
 			"SSE",
 			"SSE2",
+			"SSE3",
+			"SSSE3",
+			"SSE4.1",
 		}
 	}
 

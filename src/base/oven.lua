@@ -84,6 +84,7 @@
 
 		self.environ = {
 			sln = self,
+			wks = self,
 		}
 
 		context.compile(self)
@@ -142,6 +143,7 @@
 
 		self.environ = {
 			sln = sln,
+			wks = sln,
 			prj = self,
 		}
 
@@ -316,7 +318,8 @@
 
 		-- fill in any calculated values
 		for _, cfg in ipairs(configs) do
-			cfg.solution = sln
+			cfg.solution = sln  -- confused: doesn't happen automatically already?
+			cfg.workspace = sln
 			oven.finishConfig(cfg)
 		end
 
@@ -364,13 +367,8 @@
 			if not field then
 				ctx[key] = rawget(ctx, key)
 			else
-				local value = p.configset.fetch(cset, field, terms)
+				local value = p.configset.fetch(cset, field, terms, ctx)
 				if value then
-					-- do I need to expand tokens?
-					if field and field.tokens then
-						value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
-					end
-
 					ctx[key] = value
 				end
 			end
@@ -456,6 +454,7 @@
 
 		local environ = {
 			sln = prj.solution,
+			wks = prj.solution,
 			prj = prj,
 		}
 

@@ -112,7 +112,7 @@
 
 		-- The capabilities of this action
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None", "Utility" },
 		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "msc"   },
@@ -121,8 +121,8 @@
 
 		-- Solution and project generation logic
 
-		onSolution = function(sln)
-			vstudio.vs2005.generateSolution(sln)
+		onWorkspace = function(wks)
+			vstudio.vs2005.generateSolution(wks)
 		end,
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)
@@ -131,8 +131,8 @@
 			vstudio.vs2010.generateRule(rule)
 		end,
 
-		onCleanSolution = function(sln)
-			vstudio.cleanSolution(sln)
+		onCleanWorkspace = function(wks)
+			vstudio.cleanSolution(wks)
 		end,
 		onCleanProject = function(prj)
 			vstudio.cleanProject(prj)
