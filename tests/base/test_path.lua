@@ -267,6 +267,10 @@
 		test.isequal("", path.join("p1/p2/", "../.."))
 	end
 
+	function suite.join_OnBothUpTwoFolders()
+		test.isequal("../../../../foo", path.join("../../", "../../foo"))
+	end
+
 	function suite.join_OnUptwoFolders()
 		test.isequal("p1/foo", path.join("p1/p2/p3", "../../foo"))
 	end
