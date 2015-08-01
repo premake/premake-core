@@ -1552,7 +1552,7 @@
 
 
 	function m.programDataBaseFileName(cfg)
-        if cfg.debugformat ~= "c7" and cfg.flags.Symbols then
+		if cfg.debugformat ~= "c7" and cfg.flags.Symbols then
 			p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
 		end -- end if
 	end
