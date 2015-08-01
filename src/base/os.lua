@@ -392,6 +392,11 @@
 			exitcode = -1
 		end
 
+		-- chomp trailing newlines
+		if result then
+			result = string.gsub(result, "[\r\n]+$", "")
+		end
+
 		return result, exitcode
 	end
 
