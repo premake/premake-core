@@ -68,6 +68,9 @@
 				if chunk then
 					return chunk
 				end
+				if err then
+					return "\n\tload error " .. err
+				end
 			end
 		end
 
