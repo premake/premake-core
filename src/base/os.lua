@@ -582,3 +582,74 @@
 		end
 		return id
 	end
+
+--
+-- Call system pkg-config to populate build and link fields.
+-- Does nothing on Windows.
+--
+-- @param packages
+--    String or table of packages to configure
+-- @param extra_flags
+--    Optional extra flags to pass to pkg-config
+-- @paths
+--    Optional table of paths for PKG_CONFIG_PATH
+-- @return
+--    None
+-- @example
+--    os.pkgconfig( { "zlib", "openssl" }, "--static", "./vendor/stage"  )
+
+	function os.pkgconfig(packages, extra_flags, paths)
+
+		if os.get() == "windows" then
+			return
+		end
+
+		if type(packages) == "table" then
+			packages = table.concat(packages, " ")
+		end
+
+		local flags = extra_flags or ""
+
+		if type(paths) == "table" then
+			paths = table.concat(paths,":")
+		end
+
+		local function execute_pkg_config( flags, prefix )
+
+			local cmd = "pkg-config "
+
+			if paths then
+				cmd = "PKG_CONFIG_PATH=" .. paths .. " " .. cmd
+			end
+
+			cmd  = cmd .. flags .. " " .. packages
+
+			local pipe = assert(io.popen(cmd, 'r'))
+			local result = assert(pipe:read('*a'))
+			local b, exitcode = pipe:close()
+			if not b then
+				exitcode = -1
+			end
+			if exitcode ~= 0 then
+				error("pkg-config command failed: '" .. cmd .. "'", 3)
+			end
+			result = string.gsub(result, "[ \n]+$", "")
+
+			if prefix then
+				local a = string.explode(result, " ")
+				result = {}
+				for i,v in ipairs(a) do
+					result[i] = string.gsub(v, prefix, "")
+				end
+			end
+
+			return result
+		end
+
+		includedirs  ( execute_pkg_config( flags .. " --cflags-only-I", "-I" ) )
+		buildoptions ( execute_pkg_config( flags .. " --cflags-only-other" ) )
+		links        ( execute_pkg_config( flags .. " --libs-only-l", "-l" ) )
+		libdirs      ( execute_pkg_config( flags .. " --libs-only-L", "-L" ) )
+		linkoptions  ( execute_pkg_config( flags .. " --libs-only-other" ) )
+	end
+
