@@ -26,6 +26,11 @@ Patch contributors:
     * other fixes and improvements
   Damien Courtois <https://github.com/dcourtois>
     * module loading fixes
+  João Matos (joao@tritao.eu)
+    * HTTP download support
+    * C# / C++/CLI language support improvements and bugfixes
+    * Visual Studio and Make improvements and bugfixes
+    * Response files support for Make backend
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
     * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
