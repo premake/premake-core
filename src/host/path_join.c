@@ -71,6 +71,10 @@ int path_join(lua_State* L)
 				break;
 			}
 
+			if (start[0] == '.' && start[1] == '.' && start[2] == '\0'){
+				break;
+			}
+
 			/* otherwise trim segment and the ".." sequence */
 			if (start != buffer) {
 				--start;
