@@ -185,9 +185,16 @@
 			pnet = "cscc",
 		}
 
+		local buildtool = {
+			msnet = "msbuild",
+			mono = "xbuild",
+		}		
+
+		local toolset = _OPTIONS.dotnet or iif(os.is(premake.WINDOWS), "msnet", "mono")
 		if tool == "csc" then
-			local toolset = _OPTIONS.dotnet or iif(os.is(premake.WINDOWS), "msnet", "mono")
 			return compilers[toolset]
+		elseif tool == "msbuild" then
+			return buildtool[toolset]
 		else
 			return "resgen"
 		end

@@ -310,4 +310,5 @@
 	function make.csTools(cfg, toolset)
 		_p('  CSC = %s', toolset.gettoolname(cfg, "csc"))
 		_p('  RESGEN = %s', toolset.gettoolname(cfg, "resgen"))
+		_p('  MSBUILD = %s', toolset.gettoolname(cfg, "msbuild"))
 	end

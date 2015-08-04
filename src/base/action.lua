@@ -87,7 +87,7 @@
 
 			for prj in p.solution.eachproject(sln) do
 				local onProject = a.onProject or a.onproject
-				if onProject and not prj.external then
+				if onProject then
 					onProject(prj)
 				end
 			end
