@@ -294,6 +294,26 @@
 	end
 
 
+---
+-- Allow calling code to save and restore a filter.  Particularly useful for
+-- modules.
+---
+	function configset.getFilter(cset)
+		return {
+			_criteria = cset.current._criteria,
+			_basedir = cset.current._basedir
+		}
+	end
+
+	function configset.setFilter(cset, filter)
+		local block = {}
+		block._criteria = filter._criteria
+		block._basedir = filter._basedir
+		table.insert(cset.blocks, block)
+		cset.current = block;
+	end
+
+
 
 ---
 -- Add a new field-value pair to the current configuration data block. The
