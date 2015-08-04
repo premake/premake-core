@@ -1570,7 +1570,9 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
+		if cfg.debugformat ~= "c7" and cfg.flags.Symbols then
+			p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
+		end -- end if
 	end
 
 
