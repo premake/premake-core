@@ -25,6 +25,7 @@
 
 
 	function vs2005.generateProject(prj)
+		if prj.external then return end
 		p.indent("  ")
 		p.eol("\r\n")
 		p.escaper(vs2005.esc)

@@ -36,7 +36,9 @@
 		onProject = function(prj)
 			premake.escaper(make.esc)
 			local makefile = make.getmakefilename(prj, true)
-			if project.isdotnet(prj) then
+			if prj.external and make.external.ismsbuildproj(prj) then
+				premake.generate(prj, makefile, make.external.generate)
+			elseif project.isdotnet(prj) then
 				premake.generate(prj, makefile, make.cs.generate)
 			elseif project.iscpp(prj) then
 				premake.generate(prj, makefile, make.cpp.generate)
@@ -291,3 +293,61 @@
 	function make.targetDirRules(prj)
 		make.mkdirRules("$(TARGETDIR)")
 	end
+
+
+---------------------------------------------------------------------------
+--
+-- Handlers for the external project makefile generation.
+--
+---------------------------------------------------------------------------
+
+	make.external = {}
+	make.external.elements = {}
+
+	make.external.elements.makefile = function(prj)
+		return {
+			make.header,
+			make.phonyRules,
+			make.external.allRules,
+			make.csConfigs,
+			make.preBuildRules,
+			make.preLinkRules,
+		}
+	end
+
+	function make.external.ismsbuildproj(prj)
+		-- If there's a Makefile then we use it directly and do not generate one.
+		if premake.filename(prj, "Makefile") then
+			return false
+		end
+
+		local extensions = { ".vcxproj", ".csproj" }
+		-- Check if the project ends with a MSBuild-compatible project extension.
+		local fname = premake.filename(prj)
+		for _,ext in pairs(extensions) do
+			if string.endswith(fname, ext) then
+				return true
+			end
+		end
+		-- Check if MSBuild-compatible project with the name of the project exists.
+		for _,ext in pairs(extensions) do
+			if os.isfile(premake.filename(prj, ext)) then
+				return true
+			end
+		end
+		return false
+	end
+
+	function make.external.generate(prj)
+		premake.eol("\n")
+		local toolset = premake.tools.dotnet
+		premake.callArray(make.external.elements.makefile, prj, toolset)
+	end
+
+	function make.external.allRules(prj, toolset)
+		local fname = project.getrelative(prj, premake.filename(prj))
+		print(fname)
+		_p('all: prebuild prelink')
+		_p('\t$(MSBUILD) /nologo /v:quiet ' .. fname)
+		_p('')
+	end	
