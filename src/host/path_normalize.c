@@ -9,23 +9,13 @@
 #include <string.h>
 
 
-int path_normalize(lua_State* L)
-{
-	char buffer[0x4000];
-	char* src;
-	char* dst;
-	char* ptr;
-	char last;
+static void normalize_sub_string(const char* str, const char* endPtr, char** writePtr) {
+	const char* const source = str;
+	const char* const writeBegin = *writePtr;
+	char last = 0;
 
-	const char* path = luaL_checkstring(L, 1);
-	strcpy(buffer, path);
-
-	src = buffer;
-	dst = buffer;
-	last = '\0';
-
-	while (*src != '\0') {
-		char ch = (*src);
+	while (str != endPtr) {
+		char ch = (*str);
 
 		/* make sure we're using '/' for all separators */
 		if (ch == '\\') {
@@ -34,64 +24,96 @@ int path_normalize(lua_State* L)
 
 		/* filter out .. */
 		if (ch == '.' && last == '.') {
-			// it checks the array bounds, and if they are OK, it checks, whether the symbol before '..' is a whitespace
-			// it should jump out of this condition if path starts with ".." or if it has space before '..' i.e. "{COPY} ../Smthng"
-			if ((src - 2) > buffer && !isspace(*(src - 2))) {
-				ptr = dst - 3;
-				while (ptr >= buffer) {
-					// if there is whitespace anywhere before '..' we should quit from this loop and from outer condition as well
-					// but we need to omit the condition after the loop, so we set ptr's value to buffer - 1 (something that wouldn't pass condition's test
-					if (isspace(*ptr)) {
-						ptr = buffer - 1;
-						break;
-					} else if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
-						dst = ptr;
-						break;
-					}
-					--ptr;
+			last = 0;
+
+			const char* ptr = *writePtr - 3;
+			while (ptr >= writeBegin) {
+				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
+					*writePtr -= *writePtr - ptr;
+					break;
 				}
-				if (ptr >= buffer) {
-					++src;
-					continue;
-				}
+				--ptr;
 			}
+
+			if (ptr < writeBegin) {
+				*((*writePtr)++) = ch;				
+			}
+
+			++str;
+			continue;
 		}
 
 		/* filter out /./ */
 		if (ch == '/' && last == '.') {
-			ptr = dst - 2;
-			if (ptr >= buffer && ptr[0] == '/') {
-				dst = ptr;
+			const char* ptr = str - 2;
+			if (ptr >= source && ptr[0] == '/') {
+				*writePtr -= 1;
+				++str;
 				continue;
 			}
 		}
 
 		/* add to the result, filtering out duplicate slashes */
 		if (ch != '/' || last != '/') {
-			*(dst++) = ch;
+			*((*writePtr)++) = ch;
 		}
 
-		/* ...except at the start of a string, for UNC paths */
-		if (src != buffer) {
-			last = (*src);
-		}
-
-		++src;
+		last = ch;
+		++str;
 	}
 
 	/* remove any trailing slashes */
-    for (--src; src > buffer && *src == '/'; --src) {
-         *src = '\0';
-    }
+	while (*(--endPtr) == '/') {
+		--*writePtr;
+	}
 
-    /* remove any leading "./" sequences */
-    src = buffer;
-    while (strncmp(src, "./", 2) == 0) {
-    	src += 2;
-    }
+	**writePtr = *str;
+}
 
-	*dst = '\0';
-	lua_pushstring(L, src);
+
+int path_normalize(lua_State* L)
+{
+	const char* path = luaL_checkstring(L, 1);
+	const char* readPtr = path;
+	char buffer[0x4000] = { 0 };
+	char* writePtr = buffer;
+
+	// skip leading white spaces
+	while (*readPtr && isspace(*readPtr)) {
+		++readPtr;
+	}
+
+	const char* endPtr = readPtr;
+
+	while (*endPtr) {
+		/* remove any leading "./" sequences */
+		while (strncmp(readPtr, "./", 2) == 0) {
+			readPtr += 2;
+		}
+
+		// find the end of sub path
+		while (*endPtr && !isspace(*endPtr)) {
+			++endPtr;
+		}
+
+		normalize_sub_string(readPtr, endPtr, &writePtr);
+
+		// skip any white spaces between sub paths
+		while (*endPtr && isspace(*endPtr)) {
+			*(writePtr++) = *(endPtr++);
+		}
+
+		readPtr = endPtr;
+	}
+
+	// skip any trailing white spaces
+	while (isspace(*(--endPtr))) {
+		--writePtr;
+	}
+
+	*writePtr = 0;
+
+	lua_pushstring(L, buffer);
 	return 1;
 }
 

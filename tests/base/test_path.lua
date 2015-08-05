@@ -422,6 +422,12 @@
 		local p = path.normalize("../../../test/*.h")
 		test.isequal("../../../test/*.h", p)
 	end
+	
+	function suite.normalize_Test5()
+		test.isequal("d:/", path.normalize("d:/./"))
+		local p = path.normalize("d:/game/..")
+		test.isequal("d:/", p)
+	end
 
 	function suite.normalize_trailingDots1()
 		local p = path.normalize("../game/test/..")
@@ -441,4 +447,18 @@
 	function suite.normalize()
 		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
 		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))
+	end
+	
+	function suite.normalize_leadingWhitespaces()
+		test.isequal("d:/game", path.normalize("\t\n d:/game"))
+	end
+	
+	function suite.normalize_multPath()
+		test.isequal("../a/b ../c/d", path.normalize("../a/b ../c/d"))
+		test.isequal("d:/test ../a/b", path.normalize("d:/game/../test ../a/b"))
+		test.isequal("d:/game/test ../a/b", path.normalize("d:/game/./test ../a/b"))
+		test.isequal("d:/test ../a/b", path.normalize(" d:/game/../test ../a/b"))
+		test.isequal("d:/game ../a/b", path.normalize(" d:/game ../a/./b"))
+		test.isequal("d:/game ../a/b", path.normalize("d:/game/ ../a/b"))
+		test.isequal("d:/game", path.normalize("d:/game/ "))
 	end
