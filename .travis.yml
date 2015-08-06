@@ -1,7 +1,40 @@
-os:
-  - linux
+language: c
+
+matrix:
+ include:
+  - os: linux
+    env: BUILD="linux" RUN_TESTS=1 DEPLOY=binary
+  - os: osx
+    env: BUILD="macosx" RUN_TESTS=1 DEPLOY=binary
+  - os: linux
+    env: BUILD="mingw" BUILDHOST="linux" RUN_TESTS=0 DEPLOY=binary
+    install:
+     - sudo apt-get install mingw32 mingw32-binutils mingw32-runtime
+  - os: linux
+    env: BUILD="linux" RUN_TESTS=1 DEPLOY=source
+    on:
+      tags: true
+# - os: linux
+#   env: BUILD="linux32" RUN_TESTS=1
+# - os: linux
+#   env: BUILD="linuxarm" RUN_TESTS=0
+
 
 script:
- - make -f Bootstrap.mak $TRAVIS_OS_NAME
- - bin/release/premake5 test
+ - ./travis_build.sh
 
+
+# Deploy to Github Releases for tag builds
+
+before_deploy:
+ - ./travis_deploy.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: GDoSA3Q7tw2xSfZTkozxDMVY4QH1EtzMfsi/NIfgN6dDzkzsDF5rhOYHTanYfrhJwk6F56sA5QDNfiA8nMIvcRAxfDbcWMxN4oo+pNTCRTEQNsYFmNOTB70o7czcDE+xCfAHDuydskTUWI5w/hNv0vMYooYisczQnk7J/XJjKkY=
+  file:
+    - "release/$BUILDNAME"
+  skip_cleanup: true
+  on:
+    tags: true

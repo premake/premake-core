@@ -6,25 +6,26 @@ project "zip-lib"
 	flags       { "StaticRuntime" }
 	location    "build"
 
-	files 
+	files
 	{
 		"**.h",
 		"**.c"
 	}
 
 	configuration "linux"
-		defines {"HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H"}
+		defines { "HAVE_CONFIG_H" }
 
 	configuration "windows"
 		defines {"_WINDOWS"}
 
-	configuration "macosx"
-		defines { 'HAVE_SSIZE_T_LIBZIP' }
+	-- HAX: do we have a way to filter on the MSC toolset?
+	filter "action:not vs*"
+		defines { "HAVE_SSIZE_T_LIBZIP" }
 
 	configuration "Release"
 		defines {"NDEBUG"}
 		flags   { "OptimizeSize" }
 
 	configuration "Debug"
-		defines {"_DEBUG"}		
-		flags   { "Symbols" }	
+		defines {"_DEBUG"}
+		flags   { "Symbols" }
