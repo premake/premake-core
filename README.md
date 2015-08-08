@@ -18,7 +18,7 @@ Find out in detail [what Premake is](https://github.com/premake/premake-core/wik
 
 * Check the official [Github project](https://github.com/premake/premake-core) for the latest developments
 * For questions about using Premake and authoring project scripts, please ask on [StackOverflow, adding the #premake tag to your question](http://stackoverflow.com/questions/tagged/premake).
-* For discussions about developing, customizing, or extending Premake and add-on modules, please use the [Premake Developers Google Groups forum](https://groups.google.com/forum/m/#!forum/premake-development).
+* For discussions about developing, customizing, or extending Premake and add-on modules, please use the [Premake Developers Google Groups forum](https://groups.google.com/forum/#!forum/premake-development).
 
 ### Report isssues
 
