@@ -181,7 +181,7 @@
 		for _, pairing in ipairs(self._cfglist) do
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
-			local cfg = oven.bakeConfig(self, buildcfg, platform)
+			local cfg = oven.bakeConfig(sln, self, buildcfg, platform)
 
 			if premake.action.supportsconfig(premake.action.current(), cfg) then
 				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
@@ -300,27 +300,13 @@
 		local platforms = sln.platforms or {}
 
 		local configs = {}
-		for _, buildcfg in ipairs(buildcfgs) do
-			if #platforms > 0 then
-				for _, platform in ipairs(platforms) do
-					local cfg = { ["buildcfg"] = buildcfg, ["platform"] = platform }
-					if premake.action.supportsconfig(premake.action.current(), cfg) then
-						table.insert(configs, cfg)
-					end
-				end
-			else
-				local cfg = { ["buildcfg"] = buildcfg }
-				if premake.action.supportsconfig(premake.action.current(), cfg) then
-					table.insert(configs, cfg)
-				end
-			end
-		end
 
-		-- fill in any calculated values
-		for _, cfg in ipairs(configs) do
-			cfg.solution = sln  -- confused: doesn't happen automatically already?
-			cfg.workspace = sln
-			oven.finishConfig(cfg)
+		local pairings = table.fold(buildcfgs, platforms)
+		for _, pairing in ipairs(pairings) do
+			local cfg = oven.bakeConfig(sln, nil, pairing[1], pairing[2])
+			if premake.action.supportsconfig(premake.action.current(), cfg) then
+				table.insert(configs, cfg)
+			end
 		end
 
 		return configs
@@ -421,8 +407,10 @@
 -- Flattens out the build settings for a particular build configuration and
 -- platform pairing, and returns the result.
 --
+-- @param sln
+--    The solution which contains the configuration data.
 -- @param prj
---    The project which contains the configuration data.
+--    The project which contains the configuration data. Can be nil.
 -- @param buildcfg
 --    The target build configuration, a value from configurations().
 -- @param platform
@@ -432,7 +420,7 @@
 --    this configuration
 ---
 
-	function oven.bakeConfig(prj, buildcfg, platform, extraFilters)
+	function oven.bakeConfig(sln, prj, buildcfg, platform, extraFilters)
 
 		-- Set the default system and architecture values; if the platform's
 		-- name matches a known system or architecture, use that as the default.
@@ -453,15 +441,15 @@
 		-- values are used when expanding tokens.
 
 		local environ = {
-			sln = prj.solution,
-			wks = prj.solution,
+			sln = sln,
+			wks = sln,
 			prj = prj,
 		}
 
-		local ctx = context.new(prj, environ)
+		local ctx = context.new(prj or sln, environ)
 
 		ctx.project = prj
-		ctx.solution = prj.solution
+		ctx.solution = sln
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
@@ -477,11 +465,13 @@
 		-- by copying over the top-level environment from the solution. Don't
 		-- copy the project terms though, so configurations can override those.
 
-		context.copyFilters(ctx, prj.solution)
+		context.copyFilters(ctx, sln)
 
 		context.addFilter(ctx, "configurations", buildcfg)
 		context.addFilter(ctx, "platforms", platform)
-		context.addFilter(ctx, "language", prj.language)
+		if prj then
+			context.addFilter(ctx, "language", prj.language)
+		end
 
 		-- allow the project script to override the default system
 		ctx.system = ctx.system or system
@@ -503,7 +493,7 @@
 
 		context.compile(ctx)
 
-		ctx.location = ctx.location or prj.location
+		ctx.location = ctx.location or prj and prj.location
 		context.basedir(ctx, ctx.location)
 
 		-- Fill in a few calculated for the configuration, including the long
