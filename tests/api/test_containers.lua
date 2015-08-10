@@ -12,10 +12,10 @@
 -- Setup and teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 	end
 
 
@@ -24,12 +24,12 @@
 --
 
 	function suite.solution_createsOnFirstUse()
-		test.isnotnil(premake.global.getSolution("MySolution"))
+		test.isnotnil(premake.global.getWorkspace("MyWorkspace"))
 	end
 
 	function suite.project_createsOnFirstUse()
 		project("MyProject")
-		test.isnotnil(premake.solution.getproject(sln, "MyProject"))
+		test.isnotnil(premake.solution.getproject(wks, "MyProject"))
 	end
 
 
@@ -38,7 +38,7 @@
 --
 
 	function suite.solution_setsActiveScope()
-		test.issame(api.scope.solution, sln)
+		test.issame(api.scope.solution, wks)
 	end
 
 	function suite.project_setsActiveScope()
@@ -56,7 +56,7 @@
 		project("MyProject")
 		group("MyGroup")
 		solution()
-		test.issame(sln, api.scope.solution)
+		test.issame(wks, api.scope.solution)
 		test.isnil(api.scope.project)
 		test.isnil(api.scope.group)
 	end
@@ -88,6 +88,6 @@
 		group("MyGroup")
 		filter("Debug")
 		project "*"
-		test.issame(sln, api.scope.solution)
+		test.issame(wks, api.scope.solution)
 		test.isnil(api.scope.project)
 	end

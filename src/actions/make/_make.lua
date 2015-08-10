@@ -5,9 +5,10 @@
 --
 
 	premake.make = {}
-	local make = premake.make
-	local solution = premake.solution
-	local project = premake.project
+
+	local p = premake
+	local make = p.make
+	local project = p.project
 
 
 ---
@@ -61,7 +62,7 @@
 
 	function make.defaultconfig(target)
 		-- find the right configuration iterator function for this object
-		local eachconfig = iif(target.project, project.eachconfig, solution.eachconfig)
+		local eachconfig = iif(target.project, project.eachconfig, p.workspace.eachconfig)
 		local iter = eachconfig(target)
 
 		-- grab the first configuration and write the block
@@ -99,7 +100,7 @@
 
 	function make.getmakefilename(this, searchprjs)
 		local count = 0
-		for sln in premake.global.eachSolution() do
+		for sln in p.global.eachWorkspace() do
 			if sln.location == this.location then
 				count = count + 1
 			end

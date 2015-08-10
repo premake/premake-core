@@ -1,12 +1,10 @@
 --
 -- tests/actions/make/solution/test_project_rule.lua
 -- Validate generation of project rules in solution makefile.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	T.make_project_rule = {}
-	local suite = T.make_project_rule
-	local make = premake.make
+	local suite = test.declare("make_project_rule")
 
 
 --
@@ -21,8 +19,8 @@
 
 	local function prepare()
 		premake.oven.bake()
-		sln = premake.global.getSolution(sln.name)
-		make.projectrules(sln)
+		sln = test.getsolution(sln)
+		premake.make.projectrules(sln)
 	end
 
 
