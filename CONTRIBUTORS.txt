@@ -8,6 +8,7 @@ Original design and implementation:
   Jason Perkins <starkos@industriousone.com>
 
 Main Contributors
+  Blizzard Entertainment (contact tvandijck@blizzard.com)
   Manu Evans <https://github.com/TurkeyMan>
 
 Builds and Infrastructure:
@@ -16,21 +17,21 @@ Builds and Infrastructure:
     * Nightly Jenkins builds and error reports
 
 Patch contributors:
-  Blizzard Entertainment (contact tvandijck@blizzard.com)
-    * additional os, string, and table functions
-    * path.normalize() improvements
-    * Visual Studio fixes and improvements
-    * runtime()
-    * verbosef()
-    * option default values and categories
-    * other fixes and improvements
+  Bastien Brunnenstein <bastien.brunnenstein@ubisoft.com>
+    * support wildcards in path tokens
   Damien Courtois <https://github.com/dcourtois>
-    * module loading fixes
+    * bug fixes
+  Gabi Davar <gabi.davar@discretix.com>
+    * Added file.directory to token environment
   João Matos (joao@tritao.eu)
     * HTTP download support
     * C# / C++/CLI language support improvements and bugfixes
     * Visual Studio and Make improvements and bugfixes
     * Response files support for Make backend
+  leeonix <real-like@yeah.net>
+    * Bug fixes
+  Lusito <core@roughael.net>
+    * path.join() fixes
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
     * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
@@ -40,7 +41,14 @@ Patch contributors:
   Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
+  rhuvendiek <rhuvendiek@schueco.com>
+    * VC 2010 IDL file support
+  tbasnoopy <tba-snoopy@gmx.de>
+    * customtoolnamespace()
+    * debuggertype()
   Tim Wharton <https://github.com/moomalade>
     * boostrapping scripts
     * callingconvention()
     * makefile environment overrides
+    * module loading improvements
+    * os.outputof() improvements
