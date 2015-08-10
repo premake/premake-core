@@ -424,6 +424,8 @@
 	end
 	
 	function suite.normalize_Test5()
+		test.isequal("test", path.normalize("./test"))
+		test.isequal("d:/", path.normalize("d:/"))
 		test.isequal("d:/", path.normalize("d:/./"))
 		local p = path.normalize("d:/game/..")
 		test.isequal("d:/", p)

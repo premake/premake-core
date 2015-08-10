@@ -9,9 +9,9 @@
 #include <string.h>
 
 
-static void normalize_sub_string(const char* str, const char* endPtr, char** writePtr) {
+static void* normalize_sub_string(const char* str, const char* endPtr, char* writePtr) {
 	const char* const source = str;
-	const char* const writeBegin = *writePtr;
+	const char* const writeBegin = writePtr;
 	char last = 0;
 
 	while (str != endPtr) {
@@ -26,17 +26,23 @@ static void normalize_sub_string(const char* str, const char* endPtr, char** wri
 		if (ch == '.' && last == '.') {
 			last = 0;
 
-			const char* ptr = *writePtr - 3;
+			const char* ptr = writePtr - 3;
 			while (ptr >= writeBegin) {
 				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
-					*writePtr -= *writePtr - ptr;
+					writePtr -= writePtr - ptr;
+
+					/* special fix for cases, when '..' is the last chars in path i.e. d:\game\.., this should be converted into d:\,
+					but without this case, it will be converted into d: */
+					if (writePtr - 1 >= writeBegin && *(writePtr - 1) == ':' && str + 1 == endPtr) {
+						++writePtr;
+					}
 					break;
 				}
 				--ptr;
 			}
 
 			if (ptr < writeBegin) {
-				*((*writePtr)++) = ch;				
+				*(writePtr++) = ch;				
 			}
 
 			++str;
@@ -46,8 +52,11 @@ static void normalize_sub_string(const char* str, const char* endPtr, char** wri
 		/* filter out /./ */
 		if (ch == '/' && last == '.') {
 			const char* ptr = str - 2;
-			if (ptr >= source && ptr[0] == '/') {
-				*writePtr -= 1;
+			if (*ptr == '/') {	// there is no need to check whether ptr >= source since all the leading ./ will be skipped in path_normalize
+				if (ptr - 1 < source || *(ptr - 1) != ':') {
+					--writePtr;
+				}
+
 				++str;
 				continue;
 			}
@@ -55,19 +64,21 @@ static void normalize_sub_string(const char* str, const char* endPtr, char** wri
 
 		/* add to the result, filtering out duplicate slashes */
 		if (ch != '/' || last != '/') {
-			*((*writePtr)++) = ch;
+			*(writePtr++) = ch;
 		}
 
 		last = ch;
 		++str;
 	}
 
-	/* remove any trailing slashes */
-	while (*(--endPtr) == '/') {
-		--*writePtr;
+	/* remove any trailing slashes, except those, that follow the ':', to avoid a path corruption i.e. D:\ -> D: */
+	while (*(--endPtr) == '/' && *(endPtr - 1) != ':') {
+		--writePtr;
 	}
 
-	**writePtr = *str;
+	*writePtr = *str;
+	
+	return writePtr;
 }
 
 
@@ -96,7 +107,7 @@ int path_normalize(lua_State* L)
 			++endPtr;
 		}
 
-		normalize_sub_string(readPtr, endPtr, &writePtr);
+		writePtr = normalize_sub_string(readPtr, endPtr, writePtr);
 
 		// skip any white spaces between sub paths
 		while (*endPtr && isspace(*endPtr)) {
