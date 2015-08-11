@@ -426,6 +426,13 @@
 	}
 
 	api.register {
+		name = "excludefrombuild",
+		scope = "config",
+		kind = "list:file",
+		tokens = true,
+	}
+
+	api.register {
 		name = "flags",
 		scope = "config",
 		kind  = "list:string",
