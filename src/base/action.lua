@@ -222,6 +222,9 @@
 		if not self then
 			return false
 		end
+		if not self.valid_languages and not self.valid_kinds then
+			return true
+		end
 		if self.valid_languages then
 			if table.contains(self.valid_languages, feature) then
 				return true
