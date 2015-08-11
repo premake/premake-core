@@ -10,6 +10,7 @@
 
 	local sln, prj
 
+
 --
 -- Setup
 --
@@ -19,8 +20,8 @@
 	end
 
 	local function prepare()
-		sln = oven.bakeSolution(sln)
-		prj = solution.getproject(sln, 1)
+		sln = test.getsolution(sln)
+		prj = test.getproject(sln, 1)
 	end
 
 

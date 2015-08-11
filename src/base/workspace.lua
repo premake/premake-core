@@ -39,7 +39,7 @@
 --
 
 	function workspace.eachconfig(self)
-		self = premake.oven.bakeSolution(self)
+		self = p.oven.bakeWorkspace(self)
 
 		local i = 0
 		return function()
@@ -135,7 +135,7 @@
 --
 
 	function workspace.getproject(self, idx)
-		self = p.oven.bakeSolution(self)
+		self = p.oven.bakeWorkspace(self)
 		return self.projects[idx]
 	end
 
