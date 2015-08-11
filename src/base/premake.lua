@@ -304,6 +304,18 @@ end
 
 
 
+--
+-- Output a UTF-8 BOM to the exported file.
+--
+
+	function premake.utf8()
+		if not _captured then
+			premake.out('\239\187\191')
+		end
+	end
+
+
+
 ---
 -- Write a formatted string to the exported file, at the current
 -- level of indentation, and appends an end of line sequence.

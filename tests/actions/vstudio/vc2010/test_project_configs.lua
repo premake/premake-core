@@ -32,16 +32,16 @@
 	function suite.win32Listed_onNoPlatforms()
 		prepare()
 		test.capture [[
-	<ItemGroup Label="ProjectConfigurations">
-		<ProjectConfiguration Include="Debug|Win32">
-			<Configuration>Debug</Configuration>
-			<Platform>Win32</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Release|Win32">
-			<Configuration>Release</Configuration>
-			<Platform>Win32</Platform>
-		</ProjectConfiguration>
-	</ItemGroup>
+<ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug|Win32">
+		<Configuration>Debug</Configuration>
+		<Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+		<Configuration>Release</Configuration>
+		<Platform>Win32</Platform>
+	</ProjectConfiguration>
+</ItemGroup>
 		]]
 	end
 
@@ -60,24 +60,24 @@
 			architecture "x86_64"
 		prepare()
 		test.capture [[
-	<ItemGroup Label="ProjectConfigurations">
-		<ProjectConfiguration Include="Debug 32b|Win32">
-			<Configuration>Debug 32b</Configuration>
-			<Platform>Win32</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug 32b|x64">
-			<Configuration>Debug 32b</Configuration>
-			<Platform>x64</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug 64b|Win32">
-			<Configuration>Debug 64b</Configuration>
-			<Platform>Win32</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug 64b|x64">
-			<Configuration>Debug 64b</Configuration>
-			<Platform>x64</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Release 32b|Win32">
+<ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug 32b|Win32">
+		<Configuration>Debug 32b</Configuration>
+		<Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug 32b|x64">
+		<Configuration>Debug 32b</Configuration>
+		<Platform>x64</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug 64b|Win32">
+		<Configuration>Debug 64b</Configuration>
+		<Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug 64b|x64">
+		<Configuration>Debug 64b</Configuration>
+		<Platform>x64</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release 32b|Win32">
 		]]
 	end
 
@@ -91,15 +91,15 @@
 		platforms { "x86", "x86_64" }
 		prepare()
 		test.capture [[
-	<ItemGroup Label="ProjectConfigurations">
-		<ProjectConfiguration Include="Debug|Win32">
-			<Configuration>Debug</Configuration>
-			<Platform>Win32</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Debug|x64">
-			<Configuration>Debug</Configuration>
-			<Platform>x64</Platform>
-		</ProjectConfiguration>
-		<ProjectConfiguration Include="Release|Win32">
+<ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug|Win32">
+		<Configuration>Debug</Configuration>
+		<Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|x64">
+		<Configuration>Debug</Configuration>
+		<Platform>x64</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
 		]]
 	end

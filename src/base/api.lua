@@ -743,23 +743,20 @@
 	premake.field.kind("directory", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if string.sub(value, 1, 2) == "%{" then
-				return value
-			elseif value:find("*") then
-				value = os.matchdirs(value)
-				for i, file in ipairs(value) do
-					value[i] = path.getabsolute(value[i])
-				end
-				return value
-			else
-				return path.getabsolute(value)
-			end
+			return path.getabsolute(value)
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
+		end,
+
+		translate = function(field, current, _, processor)
+			if current:find("*") then
+				return os.matchdirs(current)
+			end
+			return { current }
 		end
 	})
 
@@ -773,23 +770,20 @@
 	premake.field.kind("file", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if string.sub(value, 1, 2) == "%{" then
-				return value
-			elseif value:find("*") then
-				value = os.matchfiles(value)
-				for i, file in ipairs(value) do
-					value[i] = path.getabsolute(value[i])
-				end
-				return value
-			else
-				return path.getabsolute(value)
-			end
+			return path.getabsolute(value)
 		end,
 		remove = function(field, current, value, processor)
 			return path.getabsolute(value)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
+		end,
+
+		translate = function(field, current, _, processor)
+			if current:find("*") then
+				return os.matchfiles(current)
+			end
+			return { current }
 		end
 	})
 
@@ -877,6 +871,16 @@
 				end
 			end
 			return true
+		end,
+
+		translate = function(field, current, _, processor)
+			if not processor then
+				return { current }
+			end
+			for k, v in pairs(current) do
+				current[k] = processor(field, v, nil)[1]
+			end
+			return { current }
 		end
 	})
 
@@ -957,6 +961,19 @@
 				end
 			end
 			return true
+		end,
+
+		translate = function(field, current, _, processor)
+			if not processor then
+				return { current }
+			end
+			local ret = {}
+			for _, value in ipairs(current) do
+				for _, processed in ipairs(processor(field, value, nil)) do
+					table.insert(ret, processed)
+				end
+			end
+			return { ret }
 		end
 	})
 

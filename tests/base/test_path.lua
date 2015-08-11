@@ -267,12 +267,20 @@
 		test.isequal("", path.join("p1/p2/", "../.."))
 	end
 
+	function suite.join_OnBothUpTwoFolders()
+		test.isequal("../../../../foo", path.join("../../", "../../foo"))
+	end
+
 	function suite.join_OnUptwoFolders()
 		test.isequal("p1/foo", path.join("p1/p2/p3", "../../foo"))
 	end
 
 	function suite.join_OnUptoBase()
 		test.isequal("foo", path.join("p1/p2/p3", "../../../foo"))
+	end
+
+	function suite.join_ignoreLeadingDots()
+		test.isequal("p1/p2/foo", path.join("p1/p2", "././foo"))
 	end
 
 	function suite.join_OnUptoParentOfBase()
@@ -427,6 +435,11 @@
 	function suite.normalize_trailingDots2()
 		local p = path.normalize("../game/..")
 		test.isequal("..", p)
+	end
+
+	function suite.normalize_singleDot()
+		local p = path.normalize("../../p1/p2/p3/p4/./a.pb.cc")
+		test.isequal("../../p1/p2/p3/p4/a.pb.cc", p)
 	end
 
 	function suite.normalize()

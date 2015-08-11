@@ -1,7 +1,7 @@
 --
 -- vs2010_vcxproj.lua
 -- Generate a Visual Studio 201x C/C++ project.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.vc2010 = {}
@@ -29,6 +29,8 @@
 
 	m.elements.project = function(prj)
 		return {
+			m.xmlDeclaration,
+			m.project,
 			m.projectConfigurations,
 			m.globals,
 			m.importDefaultProps,
@@ -46,9 +48,7 @@
 	end
 
 	function m.generate(prj)
-		io.utf8()
-        m.xmlDeclaration()
-		m.project()
+		p.utf8()
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
 	end
@@ -59,8 +59,8 @@
 -- Output the XML declaration and opening <Project> tag.
 --
 
-	function m.project()
-		local action = premake.action.current()
+	function m.project(prj)
+		local action = p.action.current()
 		p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
 			action.vstudio.toolsVersion)
 	end
@@ -83,20 +83,20 @@
 		end
 
 		local configs = {}
-		_p(1,'<ItemGroup Label="ProjectConfigurations">')
+		p.push('<ItemGroup Label="ProjectConfigurations">')
 		for cfg in project.eachconfig(prj) do
 			for _, arch in ipairs(platforms) do
 				local prjcfg = vstudio.projectConfig(cfg, arch)
 				if not configs[prjcfg] then
 					configs[prjcfg] = prjcfg
-					_x(2,'<ProjectConfiguration Include="%s">', vstudio.projectConfig(cfg, arch))
-					_x(3,'<Configuration>%s</Configuration>', vstudio.projectPlatform(cfg))
-					_p(3,'<Platform>%s</Platform>', arch)
-					_p(2,'</ProjectConfiguration>')
+					p.push('<ProjectConfiguration Include="%s">', vstudio.projectConfig(cfg, arch))
+					p.x('<Configuration>%s</Configuration>', vstudio.projectPlatform(cfg))
+					p.w('<Platform>%s</Platform>', arch)
+					p.pop('</ProjectConfiguration>')
 				end
 			end
 		end
-		_p(1,'</ItemGroup>')
+		p.pop('</ItemGroup>')
 	end
 
 
@@ -105,11 +105,11 @@
 --
 
 	function m.targetFramework(prj)
-		local action = premake.action.current()
+		local action = p.action.current()
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
 		local framework = prj.framework or action.vstudio.targetFramework or "4.0"
-		_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 	end
 
 
@@ -130,7 +130,7 @@
 	function m.globals(prj)
 		m.propertyGroup(nil, "Globals")
 		p.callArray(m.elements.globals, prj)
-		_p(1,'</PropertyGroup>')
+		p.pop('</PropertyGroup>')
 	end
 
 
@@ -162,7 +162,7 @@
 	function m.configurationProperties(cfg)
 		m.propertyGroup(cfg, "Configuration")
 		p.callArray(m.elements.configurationProperties, cfg)
-		_p(1,'</PropertyGroup>')
+		p.pop('</PropertyGroup>')
 	end
 
 	function m.configurationPropertiesGroup(prj)
@@ -208,7 +208,7 @@
 		if not vstudio.isMakefile(cfg) then
 			m.propertyGroup(cfg)
 			p.callArray(m.elements.outputProperties, cfg)
-			_p(1,'</PropertyGroup>')
+			p.pop('</PropertyGroup>')
 		end
 	end
 
@@ -233,7 +233,7 @@
 			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
 			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
 			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-			_p(1,'</PropertyGroup>')
+			p.pop('</PropertyGroup>')
 		end
 	end
 
@@ -318,6 +318,7 @@
 			m.bufferSecurityCheck,
 			m.treatWChar_tAsBuiltInType,
 			m.floatingPointModel,
+			m.inlineFunctionExpansion,
 			m.enableEnhancedInstructionSet,
 			m.multiProcessorCompilation,
 			m.additionalCompileOptions,
@@ -346,7 +347,7 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= premake.XBOX360 and config.hasResourceFiles(cfg) then
+		if cfg.system ~= p.XBOX360 and config.hasResourceFiles(cfg) then
 			local contents = p.capture(function ()
 				p.push()
 				p.callArray(m.elements.resourceCompile, cfg)
@@ -427,8 +428,7 @@
 				m.additionalLinkOptions,
 			}
 		else
-			return {
-			}
+			return {}
 		end
 	end
 
@@ -452,11 +452,7 @@
 --
 
 	function m.manifest(cfg)
-		-- no additional manifests in static lib
-		if cfg.kind == premake.STATICLIB then
-			return
-		end
-
+		if cfg.kind ~= p.STATICLIB then
 		-- get the manifests files
 		local manifests = {}
 		for _, fname in ipairs(cfg.files) do
@@ -465,14 +461,12 @@
 			end
 		end
 
-		-- when a project is not using manifest files, visual studio doesn't write the section.
-		if #manifests == 0 then
-			return
-		end
-
+			if #manifests > 0 then
 		p.push('<Manifest>')
 		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
 		p.pop('</Manifest>')
+	end
+		end
 	end
 
 
@@ -490,12 +484,12 @@
 
 			if #steps > 0 then
 				steps = os.translateCommands(steps, p.WINDOWS)
-				_p(2,'<%s>', name)
-				_x(3,'<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
+				p.push('<%s>', name)
+				p.x('<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
 				if msg then
-					_x(3,'<Message>%s</Message>', msg)
+					p.x('<Message>%s</Message>', msg)
 				end
-				_p(2,'</%s>', name)
+				p.pop('</%s>', name)
 			end
 		end
 
@@ -542,7 +536,6 @@
 	end
 
 
-
 --
 -- Reference any managed assemblies listed in the links()
 --
@@ -553,23 +546,23 @@
 		local cfg = project.getfirstconfig(prj)
 
 		local refs = config.getlinks(cfg, "system", "fullpath", "managed")
-		 if #refs > 0 then
-		 	_p(1,'<ItemGroup>')
-		 	table.foreachi(refs, function(value)
+		if #refs > 0 then
+			p.push('<ItemGroup>')
+			for i = 1, #refs do
+				local value = refs[i]
 
 				-- If the link contains a '/' then it is a relative path to
 				-- a local assembly. Otherwise treat it as a system assembly.
 				if value:find('/', 1, true) then
-					_x(2,'<Reference Include="%s">', path.getbasename(value))
-					_x(3,'<HintPath>%s</HintPath>', path.translate(value))
-					_p(2,'</Reference>')
+					p.push('<Reference Include="%s">', path.getbasename(value))
+					p.x('<HintPath>%s</HintPath>', path.translate(value))
+					p.pop('</Reference>')
 				else
-					_x(2,'<Reference Include="%s" />', path.getbasename(value))
+					p.x('<Reference Include="%s" />', path.getbasename(value))
 				end
-
-		 	end)
-		 	_p(1,'</ItemGroup>')
-		 end
+			end
+			p.pop('</ItemGroup>')
+		end
 	end
 
 
@@ -577,122 +570,95 @@
 -- Write out the list of source code files, and any associated configuration.
 ---
 
-	m.elements.fileGroups = {
-		"clInclude",
-		"clCompile",
-		"none",
-		"resourceCompile",
-		"customBuild",
-		"customRule"
-	}
-
 	m.elements.files = function(prj, groups)
-		local calls = {}
-		for i, group in ipairs(m.elements.fileGroups) do
-			calls[i] = m[group .. "Files"]
-		end
-		return calls
+		return {
+			m.clIncludeFiles,
+			m.clCompileFiles,
+			m.noneFiles,
+			m.resourceCompileFiles,
+			m.customBuildFiles,
+			m.customRuleFiles,
+			m.midlFiles
+	}
 	end
 
+
 	function m.files(prj)
-		-- Categorize the source files in groups by build rule; each will
-		-- be written to a separate item group by one of the handlers
 		local groups = m.categorizeSources(prj)
 		p.callArray(m.elements.files, prj, groups)
 	end
 
 
-	function m.clCompileFiles(prj, group)
-		local files = group.ClCompile or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
+	m.elements.ClCompileFile = function(cfg, file)
+		return {}
+	end
 
-			for _, file in ipairs(files) do
-				local contents = p.capture(function ()
-					p.push()
-					for cfg in project.eachconfig(prj) do
-						local fcfg = fileconfig.getconfig(file, cfg)
-						m.excludedFromBuild(cfg, fcfg)
-						if fcfg then
-							local condition = m.condition(cfg)
-							m.objectFileName(fcfg)
-							m.clCompilePreprocessorDefinitions(fcfg, condition)
-							m.clCompileUndefinePreprocessorDefinitions(fcfg, condition)
-							m.optimization(fcfg, condition)
-							m.forceIncludes(fcfg, condition)
-							m.precompiledHeader(cfg, fcfg, condition)
-							m.enableEnhancedInstructionSet(fcfg, condition)
-							m.additionalCompileOptions(fcfg, condition)
-							m.disableSpecificWarnings(fcfg, condition)
-							m.treatSpecificWarningsAsErrors(fcfg, condition)
-						end
-					end
-					p.pop()
-				end)
 
-				if #contents > 0 then
-					p.push('<ClCompile Include=\"%s\">', path.translate(file.relpath))
-					p.outln(contents)
-					p.pop('</ClCompile>')
-				else
-					p.x('<ClCompile Include=\"%s\" />', path.translate(file.relpath))
-				end
-
-			end
-			p.pop('</ItemGroup>')
+	m.elements.ClCompileFileCfg = function(fcfg, condition)
+		if fcfg then
+			return {
+				m.excludedFromBuild,
+				m.objectFileName,
+				m.clCompilePreprocessorDefinitions,
+				m.clCompileUndefinePreprocessorDefinitions,
+				m.optimization,
+				m.forceIncludes,
+				m.precompiledHeader,
+				m.enableEnhancedInstructionSet,
+				m.additionalCompileOptions,
+				m.disableSpecificWarnings,
+				m.treatSpecificWarningsAsErrors
+			}
+		else
+			return {
+				m.excludedFromBuild
+			}
 		end
+	end
+
+
+	function m.clCompileFiles(prj, groups)
+		m.emitFiles(prj, groups, "ClCompile")
+	end
+
+
+	m.elements.ClIncludeFile = function(cfg, file)
+		return {}
+	end
+
+
+	m.elements.ClIncludeFileCfg = function(fcfg, condition)
+		return {}
 	end
 
 
 	function m.clIncludeFiles(prj, groups)
-		local files = groups.ClInclude or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				p.x('<ClInclude Include=\"%s\" />', path.translate(file.relpath))
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "ClInclude")
 	end
 
+
+	m.elements.CustomBuildFile = function(cfg, file)
+		return {
+			m.fileType
+		}
+	end
+
+	m.elements.CustomBuildFileCfg = function(fcfg, condition)
+		return {
+			m.excludedFromBuild,
+			m.buildCommands,
+			m.buildOutputs,
+			m.buildMessage,
+			m.buildAdditionalInputs
+		}
+	end
 
 	function m.customBuildFiles(prj, groups)
-		local files = groups.CustomBuild or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for _, file in ipairs(files) do
-				p.push('<CustomBuild Include=\"%s\">', path.translate(file.relpath))
-				p.w('<FileType>Document</FileType>')
-
-				for cfg in project.eachconfig(prj) do
-					local condition = m.condition(cfg)
-					local filecfg = fileconfig.getconfig(file, cfg)
-					if fileconfig.hasCustomBuildRule(filecfg) then
-						m.excludedFromBuild(cfg, filecfg)
-
-						local commands = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
-						commands = table.concat(commands,'\r\n')
-						m.element("Command", condition, '%s', commands)
-
-						local outputs = project.getrelative(prj, filecfg.buildoutputs)
-						m.element("Outputs", condition, '%s', table.concat(outputs, ";"))
-
-						if filecfg.buildmessage then
-							m.element("Message", condition, '%s', filecfg.buildmessage)
-						end
-
-						if filecfg.buildinputs and #filecfg.buildinputs > 0 then
-							local inputs = project.getrelative(prj, filecfg.buildinputs)
-							m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
-						end
-					end
-				end
-
-				p.pop('</CustomBuild>')
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "CustomBuild", function (cfg, fcfg)
+			return fileconfig.hasCustomBuildRule(fcfg)
+		end)
 	end
+
 
 
 	function m.customRuleFiles(prj, groups)
@@ -738,49 +704,89 @@
 
 
 
+	m.elements.NoneFile = function(cfg, file)
+		return {}
+	end
+
+
+	m.elements.NoneFileCfg = function(fcfg, condition)
+		return {}
+	end
+
+
 	function m.noneFiles(prj, groups)
-		local files = groups.None or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				p.x('<None Include=\"%s\" />', path.translate(file.relpath))
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "None")
+	end
+
+
+	m.elements.ResourceCompileFile = function(cfg, file)
+		return {}
+						end
+
+	m.elements.ResourceCompileFileCfg = function(fcfg, condition)
+		return {
+			m.excludedFromBuild
+		}
 	end
 
 
 	function m.resourceCompileFiles(prj, groups)
-		local files = groups.ResourceCompile or {}
-		if #files > 0  then
-			p.push('<ItemGroup>')
-			for i, file in ipairs(files) do
-				local contents = p.capture(function ()
-					p.push()
-					for cfg in project.eachconfig(prj) do
-						local condition = m.condition(cfg)
-						local filecfg = fileconfig.getconfig(file, cfg)
-						if cfg.system == premake.WINDOWS then
-							m.excludedFromBuild(cfg, filecfg)
-						end
-					end
-					p.pop()
-				end)
-
-				if #contents > 0 then
-					p.push('<ResourceCompile Include=\"%s\">', path.translate(file.relpath))
-					p.outln(contents)
-					p.pop('</ResourceCompile>')
-				else
-					p.x('<ResourceCompile Include=\"%s\" />', path.translate(file.relpath))
-				end
-			end
-			p.pop('</ItemGroup>')
-		end
+		m.emitFiles(prj, groups, "ResourceCompile", function(cfg)
+			return cfg.system == p.WINDOWS
+		end)
 	end
 
 
-	function m.categorize(prj, file)
+
+	m.elements.MidlFile = function(cfg, file)
+		return {}
+	end
+
+
+	m.elements.MidlFileCfg = function(fcfg, condition)
+		return {
+			m.excludedFromBuild
+		}
+	end
+
+	function m.midlFiles(prj, groups)
+		m.emitFiles(prj, groups, "Midl", function(cfg)
+			return cfg.system == p.WINDOWS
+		end)
+	end
+
+
+
+	function m.categorizeSources(prj)
+		local groups = prj._vc2010_sources
+		if groups then
+			return groups
+		end
+
+		groups = {}
+		prj._vc2010_sources = groups
+
+		local tr = project.getsourcetree(prj)
+		tree.traverse(tr, {
+			onleaf = function(node)
+				local cat = m.categorizeFile(prj, node)
+				groups[cat] = groups[cat] or {}
+				table.insert(groups[cat], node)
+			end
+		})
+
+		-- sort by relative-to path; otherwise VS will reorder the files
+		for group, files in pairs(groups) do
+			table.sort(files, function (a, b)
+				return a.relpath < b.relpath
+			end)
+		end
+
+		return groups
+	end
+
+
+	function m.categorizeFile(prj, file)
 		-- If any configuration for this file uses a custom build step,
 		-- that's the category to use
 		for cfg in project.eachconfig(prj) do
@@ -803,38 +809,44 @@
 			return "ClInclude"
 		elseif path.isresourcefile(file.name) then
 			return "ResourceCompile"
+		elseif path.isidlfile(file.name) then
+			return "Midl"
 		else
 			return "None"
 		end
 	end
 
 
-	function m.categorizeSources(prj)
-		local groups = prj._vc2010_sources
-		if groups then
-			return groups
-		end
+	function m.emitFiles(prj, groups, group, check)
+		local files = groups[group]
+		if files and #files > 0 then
+			p.push('<ItemGroup>')
+			for _, file in ipairs(files) do
 
-		groups = {}
-		prj._vc2010_sources = groups
+				local contents = p.capture(function ()
+					p.push()
+					p.callArray(m.elements[group .. "File"], cfg, file)
+					for cfg in project.eachconfig(prj) do
+						local fcfg = fileconfig.getconfig(file, cfg)
+						if not check or check(cfg, fcfg) then
+							p.callArray(m.elements[group .. "FileCfg"], fcfg, m.condition(cfg))
+						end
+					end
+					p.pop()
+				end)
 
-		local tr = project.getsourcetree(prj)
-		tree.traverse(tr, {
-			onleaf = function(node)
-				local cat = m.categorize(prj, node)
-				groups[cat] = groups[cat] or {}
-				table.insert(groups[cat], node)
+				local rel = path.translate(file.relpath)
+				if #contents > 0 then
+					p.push('<%s Include="%s">', group, rel)
+					p.outln(contents)
+					p.pop('</%s>', group)
+				else
+					p.x('<%s Include="%s" />', group, rel)
+				end
+
 			end
-		})
-
-		-- sort by relative-to path; otherwise VS will reorder the files
-		for group, files in pairs(groups) do
-			table.sort(files, function (a, b)
-				return a.relpath < b.relpath
-			end)
+			p.pop('</ItemGroup>')
 		end
-
-		return groups
 	end
 
 
@@ -896,17 +908,16 @@
 
 		if #links > 0 then
 			links = path.translate(table.concat(links, ";"))
-			p.x('<AdditionalDependencies>%s;%%(AdditionalDependencies)</AdditionalDependencies>', links)
+			m.element("AdditionalDependencies", nil, "%s;%%(AdditionalDependencies)", links)
 		end
 	end
 
 
 	function m.additionalIncludeDirectories(cfg, includedirs)
 		if #includedirs > 0 then
-			local dirs = vstudio.path(cfg.project, includedirs)
-			dirs = table.filterempty(dirs)
+			local dirs = vstudio.path(cfg, includedirs)
 			if #dirs > 0 then
-				p.x('<AdditionalIncludeDirectories>%s;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>', table.concat(dirs, ";"))
+				m.element("AdditionalIncludeDirectories", nil, "%s;%%(AdditionalIncludeDirectories)", table.concat(dirs, ";"))
 			end
 		end
 	end
@@ -915,14 +926,15 @@
 	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
-			_x(3,'<AdditionalLibraryDirectories>%s;%%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>', dirs)
+			m.element("AdditionalLibraryDirectories", nil, "%s;%%(AdditionalLibraryDirectories)", dirs)
 		end
 	end
+
 
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
 			local dirs = table.concat(vstudio.path(cfg, cfg.usingdirs), ";")
-			p.x('<AdditionalUsingDirectories>%s;%%(AdditionalUsingDirectories)</AdditionalUsingDirectories>', dirs)
+			m.element("AdditionalUsingDirectories", nil, "%s;%%(AdditionalUsingDirectories)", dirs)
 		end
 	end
 
@@ -938,7 +950,7 @@
 	function m.additionalLinkOptions(cfg)
 		if #cfg.linkoptions > 0 then
 			local opts = table.concat(cfg.linkoptions, " ")
-			_x(3, '<AdditionalOptions>%s %%(AdditionalOptions)</AdditionalOptions>', opts)
+			m.element("AdditionalOptions", nil, "%s %%(AdditionalOptions)", opts)
 		end
 	end
 
@@ -946,29 +958,58 @@
 	function m.basicRuntimeChecks(cfg)
 		local runtime = config.getruntime(cfg)
 		if cfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(cfg) and runtime:endswith("Debug")) then
-			p.w('<BasicRuntimeChecks>Default</BasicRuntimeChecks>')
+			m.element("BasicRuntimeChecks", nil, "Default")
 		end
+	end
+
+
+	function m.buildAdditionalInputs(fcfg, condition)
+		if fcfg.buildinputs and #fcfg.buildinputs > 0 then
+			local inputs = project.getrelative(fcfg.project, fcfg.buildinputs)
+			m.element("AdditionalInputs", condition, '%s', table.concat(inputs, ";"))
+		end
+	end
+
+
+	function m.buildCommands(fcfg, condition)
+		local commands = os.translateCommands(fcfg.buildcommands, p.WINDOWS)
+		commands = table.concat(commands,'\r\n')
+		m.element("Command", condition, '%s', commands)
 	end
 
 
 	function m.buildLog(cfg)
 		if cfg.buildlog and #cfg.buildlog > 0 then
 			p.push('<BuildLog>')
-			p.x('<Path>%s</Path>', vstudio.path(cfg, cfg.buildlog))
+			m.element("Path", nil, "%s", vstudio.path(cfg, cfg.buildlog))
 			p.pop('</BuildLog>')
 		end
 	end
 
 
-	function m.characterSet(cfg)
-		if not vstudio.isMakefile(cfg) then
-			_p(2,'<CharacterSet>%s</CharacterSet>', iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+	function m.buildMessage(fcfg, condition)
+		if fcfg.buildmessage then
+			m.element("Message", condition, '%s', fcfg.buildmessage)
 		end
 	end
 
+
+	function m.buildOutputs(fcfg, condition)
+		local outputs = project.getrelative(fcfg.project, fcfg.buildoutputs)
+		m.element("Outputs", condition, '%s', table.concat(outputs, ";"))
+	end
+
+
+	function m.characterSet(cfg)
+		if not vstudio.isMakefile(cfg) then
+			m.element("CharacterSet", nil, iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+		end
+	end
+
+
 	function m.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
-			_p(2,'<WholeProgramOptimization>true</WholeProgramOptimization>')
+			m.element("WholeProgramOptimization", nil, "true")
 		end
 	end
 
@@ -999,14 +1040,14 @@
 			value = cfg.clr
 		end
 		if value then
-			p.w('<CLRSupport>%s</CLRSupport>', value)
+			m.element("CLRSupport", nil, value)
 		end
 	end
 
 
 	function m.compileAs(cfg)
 		if cfg.project.language == "C" then
-			_p(3,'<CompileAs>CompileAsC</CompileAs>')
+			m.element("CompileAs", nil, "CompileAsC")
 		end
 	end
 
@@ -1021,14 +1062,14 @@
 			None = "Makefile",
 			Utility = "Utility",
 		}
-		_p(2,'<ConfigurationType>%s</ConfigurationType>', types[cfg.kind])
+		m.element("ConfigurationType", nil, types[cfg.kind])
 	end
 
 
 	function m.culture(cfg)
 		local value = vstudio.cultureForLocale(cfg.locale)
 		if value then
-			p.w('<Culture>0x%04x</Culture>', value)
+			m.element("Culture", nil, "0x%04x", tostring(value))
 		end
 	end
 
@@ -1041,7 +1082,7 @@
 			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   not cfg.editandcontinue
+				   cfg.editandcontinue == p.OFF
 			then
 				value = "ProgramDatabase"
 			else
@@ -1049,18 +1090,18 @@
 			end
 		end
 		if value then
-			p.w('<DebugInformationFormat>%s</DebugInformationFormat>', value)
+			m.element("DebugInformationFormat", nil, value)
 		end
 	end
 
 
 	function m.deploy(cfg)
-		if cfg.system == premake.XBOX360 then
-			_p(2,'<Deploy>')
-			_p(3,'<DeploymentType>CopyToHardDrive</DeploymentType>')
-			_p(3,'<DvdEmulationType>ZeroSeekTimes</DvdEmulationType>')
-			_p(3,'<DeploymentFiles>$(RemoteRoot)=$(ImagePath);</DeploymentFiles>')
-			_p(2,'</Deploy>')
+		if cfg.system == p.XBOX360 then
+			p.push('<Deploy>')
+			m.element("DeploymentType", nil, "CopyToHardDrive")
+			m.element("DvdEmulationType", nil, "ZeroSeekTimes")
+			m.element("DeploymentFiles", nil, "$(RemoteRoot)=$(ImagePath);")
+			p.pop('</Deploy>')
 		end
 	end
 
@@ -1073,7 +1114,7 @@
 		elseif x == "AVX2" and _ACTION > "vs2012" then
 			v = "AdvancedVectorExtensions2"
 		elseif cfg.architecture ~= "x86_64" then
-			if x == "SSE2" then
+			if x == "SSE2" or x == "SSE3" or x == "SSSE3" or x == "SSE4.1" then
 				v = "StreamingSIMDExtensions2"
 			elseif x == "SSE" then
 				v = "StreamingSIMDExtensions"
@@ -1086,28 +1127,33 @@
 
 
 	function m.entryPointSymbol(cfg)
-		if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
-		   not cfg.flags.WinMain and
-		   cfg.clr == p.OFF and
-		   cfg.system ~= premake.XBOX360
-		then
-			_p(3,'<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>')
+		if cfg.entrypoint then
+			m.element("EntryPointSymbol", nil, cfg.entrypoint)
+		else
+			if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
+				not cfg.flags.WinMain and
+				cfg.clr == p.OFF and
+				cfg.system ~= p.XBOX360
+			then
+				m.element("EntryPointSymbol", nil, "mainCRTStartup")
+			end
 		end
 	end
 
 
 	function m.exceptionHandling(cfg)
-		if cfg.flags.NoExceptions then
-			p.w('<ExceptionHandling>false</ExceptionHandling>')
-		elseif cfg.flags.SEH then
-			p.w('<ExceptionHandling>Async</ExceptionHandling>')
+		local value
+		if cfg.exceptionhandling == p.OFF then
+			m.element("ExceptionHandling", nil, "false")
+		elseif cfg.exceptionhandling == "SEH" then
+			m.element("ExceptionHandling", nil, "Async")
 		end
 	end
 
 
-	function m.excludedFromBuild(cfg, filecfg)
+	function m.excludedFromBuild(filecfg, condition)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
-			m.element("ExcludedFromBuild", m.condition(cfg), "true")
+			m.element("ExcludedFromBuild", condition, "true")
 		end
 	end
 
@@ -1120,47 +1166,67 @@
 	end
 
 
+	function m.fileType(cfg, file)
+		m.element("FileType", nil, "Document")
+	end
+
+
 	function m.floatingPointModel(cfg)
 		if cfg.floatingpoint then
-			p.w('<FloatingPointModel>%s</FloatingPointModel>', cfg.floatingpoint)
+			m.element("FloatingPointModel", nil, cfg.floatingpoint)
 		end
 	end
 
+	function m.inlineFunctionExpansion(cfg)
+		if cfg.inlining then
+			local types = {
+				Default = "Default",
+				Disabled = "Disabled",
+				Explicit = "OnlyExplicitInline",
+				Auto = "AnySuitable",
+			}
+			m.element("InlineFunctionExpansion", nil, types[cfg.inlining])
+		end
+	end
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
 			local includes = vstudio.path(cfg, cfg.forceincludes)
-			m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
+			if #includes > 0 then
+				m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
+			end
 		end
 		if #cfg.forceusings > 0 then
 			local usings = vstudio.path(cfg, cfg.forceusings)
-			m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
+			if #usings > 0 then
+				m.element("ForcedUsingFiles", condition, table.concat(usings, ';'))
+			end
 		end
 	end
 
 
 	function m.functionLevelLinking(cfg)
 		if config.isOptimizedBuild(cfg) then
-			p.w('<FunctionLevelLinking>true</FunctionLevelLinking>')
+			m.element("FunctionLevelLinking", nil, "true")
 		end
 	end
 
 
 	function m.generateDebugInformation(cfg)
-		_p(3,'<GenerateDebugInformation>%s</GenerateDebugInformation>', tostring(cfg.flags.Symbols ~= nil))
+		m.element("GenerateDebugInformation", nil, tostring(cfg.flags.Symbols ~= nil))
 	end
 
 
 	function m.generateManifest(cfg)
 		if cfg.flags.NoManifest then
-			_p(2,'<GenerateManifest>false</GenerateManifest>')
+			m.element("GenerateManifest", nil, "false")
 		end
 	end
 
 
 	function m.generateMapFile(cfg)
 		if cfg.flags.Maps then
-			_p(3,'<GenerateMapFile>true</GenerateMapFile>')
+			m.element("GenerateMapFile", nil, "true")
 		end
 	end
 
@@ -1172,37 +1238,37 @@
 		-- Premake already adds unique object names to conflicting file names, so
 		-- just go ahead and disable that warning.
 		if _ACTION > "vs2012" then
-			p.w('<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>')
+			m.element("IgnoreWarnCompileDuplicatedFilename", nil, "true")
 		end
 	end
 
 
 	function m.ignoreImportLibrary(cfg)
-		if cfg.kind == premake.SHAREDLIB and cfg.flags.NoImportLib then
-			_p(2,'<IgnoreImportLibrary>true</IgnoreImportLibrary>');
+		if cfg.kind == p.SHAREDLIB and cfg.flags.NoImportLib then
+			m.element("IgnoreImportLibrary", nil, "true")
 		end
 	end
 
 
 	function m.imageXex(cfg)
-		if cfg.system == premake.XBOX360 then
-			_p(2,'<ImageXex>')
+		if cfg.system == p.XBOX360 then
+			p.push('<ImageXex>')
 			if cfg.configfile then
-				_p(3,'<ConfigurationFile>%s</ConfigurationFile>', cfg.configfile)
+				m.element("ConfigurationFile", nil, "%s", cfg.configfile)
 			else
-				_p(3,'<ConfigurationFile>')
-				_p(3,'</ConfigurationFile>')
+				p.w('<ConfigurationFile>')
+				p.w('</ConfigurationFile>')
 			end
-			_p(3,'<AdditionalSections>')
-			_p(3,'</AdditionalSections>')
-			_p(2,'</ImageXex>')
+			p.w('<AdditionalSections>')
+			p.w('</AdditionalSections>')
+			p.pop('</ImageXex>')
 		end
 	end
 
 
 	function m.imageXexOutput(cfg)
-		if cfg.system == premake.XBOX360 then
-			_x(2,'<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>')
+		if cfg.system == p.XBOX360 then
+			m.element("ImageXexOutput", nil, "%s", "$(OutDir)$(TargetName).xex")
 		end
 	end
 
@@ -1223,7 +1289,7 @@
 
 
 	function m.importDefaultProps(prj)
-		_p(1,'<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
 	end
 
 
@@ -1244,8 +1310,8 @@
 
 
 	function m.importLibrary(cfg)
-		if cfg.kind == premake.SHAREDLIB then
-			_x(3,'<ImportLibrary>%s</ImportLibrary>', path.translate(cfg.linktarget.relpath))
+		if cfg.kind == p.SHAREDLIB then
+			m.element("ImportLibrary", nil, "%s", path.translate(cfg.linktarget.relpath))
 		end
 	end
 
@@ -1253,20 +1319,20 @@
 	function m.includePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.sysincludedirs)
 		if #dirs > 0 then
-			p.x('<IncludePath>%s;$(IncludePath)</IncludePath>', table.concat(dirs, ";"))
+			m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
 		end
 	end
 
 
 	function m.intDir(cfg)
 		local objdir = vstudio.path(cfg, cfg.objdir)
-		_x(2,'<IntDir>%s\\</IntDir>', objdir)
+		m.element("IntDir", nil, "%s\\", objdir)
 	end
 
 
 	function m.intrinsicFunctions(cfg)
 		if config.isOptimizedBuild(cfg) then
-			p.w('<IntrinsicFunctions>true</IntrinsicFunctions>')
+			m.element("IntrinsicFunctions", nil, "true")
 		end
 	end
 
@@ -1276,7 +1342,7 @@
 		-- try to determine what kind of targets we're building here
 		local isWin, isManaged, isMakefile
 		for cfg in project.eachconfig(prj) do
-			if cfg.system == premake.WINDOWS then
+			if cfg.system == p.WINDOWS then
 				isWin = true
 			end
 			if cfg.clr ~= p.OFF then
@@ -1289,15 +1355,15 @@
 
 		if isWin then
 			if isMakefile then
-				_p(2,'<Keyword>MakeFileProj</Keyword>')
+				m.element("Keyword", nil, "MakeFileProj")
 			else
 				if isManaged then
 					m.targetFramework(prj)
-					_p(2,'<Keyword>ManagedCProj</Keyword>')
+					m.element("Keyword", nil, "ManagedCProj")
 				else
-					_p(2,'<Keyword>Win32Proj</Keyword>')
+					m.element("Keyword", nil, "Win32Proj")
 				end
-				_p(2,'<RootNamespace>%s</RootNamespace>', prj.name)
+				m.element("RootNamespace", nil, "%s", prj.name)
 			end
 		end
 	end
@@ -1306,15 +1372,15 @@
 	function m.libraryPath(cfg)
 		local dirs = vstudio.path(cfg, cfg.syslibdirs)
 		if #dirs > 0 then
-			p.x('<LibraryPath>%s;$(LibraryPath)</LibraryPath>', table.concat(dirs, ";"))
+			m.element("LibraryPath", nil, "%s;$(LibraryPath)", table.concat(dirs, ";"))
 		end
 	end
 
 
 
 	function m.linkIncremental(cfg)
-		if cfg.kind ~= premake.STATICLIB then
-			_p(2,'<LinkIncremental>%s</LinkIncremental>', tostring(config.canLinkIncremental(cfg)))
+		if cfg.kind ~= p.STATICLIB then
+			m.element("LinkIncremental", nil, "%s", tostring(config.canLinkIncremental(cfg)))
 		end
 	end
 
@@ -1324,9 +1390,9 @@
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
 		if explicit then
-			_p(2,'<ProjectReference>')
-			_p(3,'<LinkLibraryDependencies>false</LinkLibraryDependencies>')
-			_p(2,'</ProjectReference>')
+			p.push('<ProjectReference>')
+			m.element("LinkLibraryDependencies", nil, "false")
+			p.pop('</ProjectReference>')
 		end
 	end
 
@@ -1335,9 +1401,9 @@
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
 		   cfg.flags.MultiProcessorCompile or
-		   cfg.debugformat == premake.C7
+		   cfg.debugformat == p.C7
 		then
-			p.w('<MinimalRebuild>false</MinimalRebuild>')
+			m.element("MinimalRebuild", nil, "false")
 		end
 	end
 
@@ -1345,14 +1411,14 @@
 	function m.moduleDefinitionFile(cfg)
 		local df = config.findfile(cfg, ".def")
 		if df then
-			_p(3,'<ModuleDefinitionFile>%s</ModuleDefinitionFile>', df)
+			m.element("ModuleDefinitionFile", nil, "%s", df)
 		end
 	end
 
 
 	function m.multiProcessorCompilation(cfg)
 		if cfg.flags.MultiProcessorCompile then
-			p.w('<MultiProcessorCompilation>true</MultiProcessorCompilation>')
+			m.element("MultiProcessorCompilation", nil, "true")
 		end
 	end
 
@@ -1360,8 +1426,8 @@
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
 			commands = os.translateCommands(commands, p.WINDOWS)
-			commands = table.concat(premake.esc(commands), p.eol())
-			_p(2, '<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
+			commands = table.concat(p.esc(commands), p.eol())
+			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
 	end
 
@@ -1374,14 +1440,14 @@
 	end
 
 	function m.nmakeOutput(cfg)
-		_p(2,'<NMakeOutput>$(OutDir)%s</NMakeOutput>', cfg.buildtarget.name)
+		m.element("NMakeOutput", nil, "$(OutDir)%s", cfg.buildtarget.name)
 	end
 
 
 
 	function m.objectFileName(fcfg)
 		if fcfg.objname ~= fcfg.basename then
-			p.w('<ObjectFileName %s>$(IntDir)\\%s.obj</ObjectFileName>', m.condition(fcfg.config), fcfg.objname)
+			m.element("ObjectFileName", m.condition(fcfg.config), "$(IntDir)\\%s.obj", fcfg.objname)
 		end
 	end
 
@@ -1389,7 +1455,7 @@
 
 	function m.omitDefaultLib(cfg)
 		if cfg.flags.OmitDefaultLibrary then
-			p.w('<OmitDefaultLibName>true</OmitDefaultLibName>')
+			m.element("OmitDefaultLibName", nil, "true")
 		end
 	end
 
@@ -1397,15 +1463,15 @@
 
 	function m.omitFramePointers(cfg)
 		if cfg.flags.NoFramePointer then
-			p.w('<OmitFramePointers>true</OmitFramePointers>')
+			m.element("OmitFramePointers", nil, "true")
 		end
 	end
 
 
 	function m.optimizeReferences(cfg)
 		if config.isOptimizedBuild(cfg) then
-			_p(3,'<EnableCOMDATFolding>true</EnableCOMDATFolding>')
-			_p(3,'<OptimizeReferences>true</OptimizeReferences>')
+			m.element("EnableCOMDATFolding", nil, "true")
+			m.element("OptimizeReferences", nil, "true")
 		end
 	end
 
@@ -1421,23 +1487,21 @@
 
 	function m.outDir(cfg)
 		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
-		_x(2,'<OutDir>%s\\</OutDir>', outdir)
+		m.element("OutDir", nil, "%s\\", outdir)
 	end
 
 
 	function m.outputFile(cfg)
-		if cfg.system == premake.XBOX360 then
-			_p(2,'<OutputFile>$(OutDir)%s</OutputFile>', cfg.buildtarget.name)
+		if cfg.system == p.XBOX360 then
+			m.element("OutputFile", nil, "$(OutDir)%s", cfg.buildtarget.name)
 		end
 	end
 
 
 	function m.executablePath(cfg)
-		local dirs = project.getrelative(cfg.project, cfg.bindirs)
-		dirs = table.filterempty(dirs)
-
+		local dirs = vstudio.path(cfg, cfg.bindirs)
 		if #dirs > 0 then
-			_x(2,'<ExecutablePath>%s;$(ExecutablePath)</ExecutablePath>', path.translate(table.concat(dirs, ";")))
+			m.element("ExecutablePath", nil, "%s;$(ExecutablePath)", table.concat(dirs, ";"))
 		end
 	end
 
@@ -1447,14 +1511,14 @@
 		if version then
 			version = "v" .. version
 		else
-			local action = premake.action.current()
+			local action = p.action.current()
 			version = action.vstudio.platformToolset
 		end
 		if version then
 			-- should only be written if there is a C/C++ file in the config
 			for i = 1, #cfg.files do
 				if path.iscppfile(cfg.files[i]) then
-					p.w('<PlatformToolset>%s</PlatformToolset>', version)
+					m.element("PlatformToolset", nil, version)
 					break
 				end
 			end
@@ -1462,19 +1526,20 @@
 	end
 
 
-	function m.precompiledHeader(cfg, filecfg, condition)
+	function m.precompiledHeader(cfg, condition)
+		prjcfg, filecfg = p.config.normalize(cfg)
 		if filecfg then
-			if cfg.pchsource == filecfg.abspath and not cfg.flags.NoPCH then
+			if prjcfg.pchsource == filecfg.abspath and not prjcfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'Create')
 			elseif filecfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'NotUsing')
 			end
 		else
-			if not cfg.flags.NoPCH and cfg.pchheader then
-				p.w('<PrecompiledHeader>Use</PrecompiledHeader>')
-				p.x('<PrecompiledHeaderFile>%s</PrecompiledHeaderFile>', cfg.pchheader)
+			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
+				m.element("PrecompiledHeader", nil, "Use")
+				m.element("PrecompiledHeaderFile", nil, "%s", prjcfg.pchheader)
 			else
-				p.w('<PrecompiledHeader>NotUsing</PrecompiledHeader>')
+				m.element("PrecompiledHeader", nil, "NotUsing")
 			end
 		end
 	end
@@ -1486,7 +1551,7 @@
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
 			end
-			defines = premake.esc(defines) .. ";%%(PreprocessorDefinitions)"
+			defines = p.esc(defines) .. ";%%(PreprocessorDefinitions)"
 			m.element('PreprocessorDefinitions', condition, defines)
 		end
 	end
@@ -1498,25 +1563,27 @@
 			if escapeQuotes then
 				undefines = undefines:gsub('"', '\\"')
 			end
-			undefines = premake.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			undefines = p.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
 			m.element('UndefinePreprocessorDefinitions', condition, undefines)
 		end
 	end
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
+		if cfg.debugformat ~= "c7" and cfg.flags.Symbols then
+			p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
+		end -- end if
 	end
 
 
 	function m.projectGuid(prj)
-		_p(2,'<ProjectGuid>{%s}</ProjectGuid>', prj.uuid)
+		m.element("ProjectGuid", nil, "{%s}", prj.uuid)
 	end
 
 
 	function m.projectName(prj)
 		if prj.name ~= prj.filename then
-			_x(2,'<ProjectName>%s</ProjectName>', prj.name)
+			m.element("ProjectName", nil, "%s", prj.name)
 		end
 	end
 
@@ -1531,15 +1598,15 @@
 			label = string.format(' Label="%s"', label)
 		end
 
-		_p(1,'<PropertyGroup%s%s>', cond or "", label or "")
+		p.push('<PropertyGroup%s%s>', cond or "", label or "")
 	end
 
 
 
 	function m.propertySheets(cfg)
-		_p(1,'<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
-		_p(2,'<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
-		_p(1,'</ImportGroup>')
+		p.push('<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
+		p.w('<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
+		p.pop('</ImportGroup>')
 	end
 
 
@@ -1551,32 +1618,32 @@
 
 
 	function m.referenceCopyLocalSatelliteAssemblies(prj, ref)
-		p.w('<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>')
+		m.element("CopyLocalSatelliteAssemblies", nil, "false")
 	end
 
 
 	function m.referenceLinkLibraryDependencies(prj, ref)
-		p.w('<LinkLibraryDependencies>true</LinkLibraryDependencies>')
+		m.element("LinkLibraryDependencies", nil, "true")
 	end
 
 
 	function m.referenceOutputAssembly(prj, ref)
-		p.w('<ReferenceOutputAssembly>true</ReferenceOutputAssembly>')
+		m.element("ReferenceOutputAssembly", nil, "true")
 	end
 
 
 	function m.referencePrivate(prj, ref)
-		p.w('<Private>true</Private>')
+		m.element("Private", nil, "true")
 	end
 
 
 	function m.referenceProject(prj, ref)
-		p.w('<Project>{%s}</Project>', ref.uuid)
+		m.element("Project", nil, "{%s}", ref.uuid)
 	end
 
 
 	function m.referenceUseLibraryDependences(prj, ref)
-		p.w('<UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>')
+		m.element("UseLibraryDependencyInputs", nil, "false")
 	end
 
 
@@ -1597,39 +1664,41 @@
 		}
 		local runtime = runtimes[config.getruntime(cfg)]
 		if runtime then
-			p.w('<RuntimeLibrary>%s</RuntimeLibrary>', runtime)
+			m.element("RuntimeLibrary", nil, runtime)
 		end
 	end
 
 	function m.callingConvention(cfg)
 		if cfg.callingconvention then
-			p.w('<CallingConvention>%s</CallingConvention>', cfg.callingconvention)
+			m.element("CallingConvention", nil, cfg.callingconvention)
 		end
 	end
 
 	function m.runtimeTypeInfo(cfg)
-		if cfg.flags.NoRTTI and cfg.clr == p.OFF then
-			_p(3,'<RuntimeTypeInfo>false</RuntimeTypeInfo>')
+		if cfg.rtti == p.OFF and cfg.clr == p.OFF then
+			m.element("RuntimeTypeInfo", nil, "false")
+		elseif cfg.rtti == p.ON then
+			m.element("RuntimeTypeInfo", nil, "true")
 		end
 	end
 
 	function m.bufferSecurityCheck(cfg)
 		if cfg.flags.NoBufferSecurityCheck then
-			p.w('<BufferSecurityCheck>false</BufferSecurityCheck>')
+			m.element("BufferSecurityCheck", nil, "false")
 		end
 	end
 
 	function m.stringPooling(cfg)
 		if config.isOptimizedBuild(cfg) then
-			p.w('<StringPooling>true</StringPooling>')
+			m.element("StringPooling", nil, "true")
 		end
 	end
 
 
 	function m.subSystem(cfg)
-		if cfg.system ~= premake.XBOX360 then
-			local subsystem = iif(cfg.kind == premake.CONSOLEAPP, "Console", "Windows")
-			_p(3,'<SubSystem>%s</SubSystem>', subsystem)
+		if cfg.system ~= p.XBOX360 then
+			local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
+			m.element("SubSystem", nil, subsystem)
 		end
 	end
 
@@ -1637,23 +1706,23 @@
 	function m.targetExt(cfg)
 		local ext = cfg.buildtarget.extension
 		if ext ~= "" then
-			_x(2,'<TargetExt>%s</TargetExt>', ext)
+			m.element("TargetExt", nil, "%s", ext)
 		else
-			_p(2,'<TargetExt>')
-			_p(2,'</TargetExt>')
+			p.w('<TargetExt>')
+			p.w('</TargetExt>')
 		end
 	end
 
 
 	function m.targetName(cfg)
-		_x(2,'<TargetName>%s%s</TargetName>', cfg.buildtarget.prefix, cfg.buildtarget.basename)
+		m.element("TargetName", nil, "%s%s", cfg.buildtarget.prefix, cfg.buildtarget.basename)
 	end
 
 
 	function m.treatLinkerWarningAsErrors(cfg)
 		if cfg.flags.FatalLinkWarnings then
-			local el = iif(cfg.kind == premake.STATICLIB, "Lib", "Linker")
-			_p(3,'<Treat%sWarningAsErrors>true</Treat%sWarningAsErrors>', el, el)
+			local el = iif(cfg.kind == p.STATICLIB, "Lib", "Linker")
+			m.element("Treat" .. el .. "WarningAsErrors", nil, "true")
 		end
 	end
 
@@ -1662,14 +1731,14 @@
 		local map = { On = "true", Off = "false" }
 		local value = map[cfg.nativewchar]
 		if value then
-			p.w('<TreatWChar_tAsBuiltInType>%s</TreatWChar_tAsBuiltInType>', value)
+			m.element("TreatWChar_tAsBuiltInType", nil, value)
 		end
 	end
 
 
 	function m.treatWarningAsError(cfg)
 		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
-			p.w('<TreatWarningAsError>true</TreatWarningAsError>')
+			m.element("TreatWarningAsError", nil, "true")
 		end
 	end
 
@@ -1677,7 +1746,7 @@
 	function m.disableSpecificWarnings(cfg, condition)
 		if #cfg.disablewarnings > 0 then
 			local warnings = table.concat(cfg.disablewarnings, ";")
-			warnings = premake.esc(warnings) .. ";%%(DisableSpecificWarnings)"
+			warnings = p.esc(warnings) .. ";%%(DisableSpecificWarnings)"
 			m.element('DisableSpecificWarnings', condition, warnings)
 		end
 	end
@@ -1686,7 +1755,7 @@
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		if #cfg.fatalwarnings > 0 then
 			local fatal = table.concat(cfg.fatalwarnings, ";")
-			fatal = premake.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
+			fatal = p.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end
 	end
@@ -1694,26 +1763,26 @@
 
 	function m.useDebugLibraries(cfg)
 		local runtime = config.getruntime(cfg)
-		_p(2,'<UseDebugLibraries>%s</UseDebugLibraries>', tostring(runtime:endswith("Debug")))
+		m.element("UseDebugLibraries", nil, tostring(runtime:endswith("Debug")))
 	end
 
 
 	function m.useOfMfc(cfg)
 		if cfg.flags.MFC then
-			_p(2,'<UseOfMfc>%s</UseOfMfc>', iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
+			m.element("UseOfMfc", nil, iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
 		end
 	end
 
 	function m.useOfAtl(cfg)
 		if cfg.atl then
-			_p(2,'<UseOfATL>%s</UseOfATL>', cfg.atl)
+			m.element("UseOfATL", nil, cfg.atl)
 		end
 	end
 
 
 
 	function m.userMacros(cfg)
-		_p(1,'<PropertyGroup Label="UserMacros" />')
+		p.w('<PropertyGroup Label="UserMacros" />')
 	end
 
 
@@ -1742,7 +1811,7 @@
 --
 
 	function m.condition(cfg)
-		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', p.esc(vstudio.projectConfig(cfg)))
 	end
 
 
@@ -1764,7 +1833,7 @@
 
 	function m.element(name, condition, value, ...)
 		if select('#',...) == 0 then
-			value = premake.esc(value)
+			value = p.esc(value)
 		end
 
 		local format

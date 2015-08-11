@@ -32,13 +32,13 @@
 	function suite.structureIsCorrect_onDefaultValues()
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+</PropertyGroup>
 		]]
 	end
 
@@ -68,15 +68,15 @@
 		system "Xbox360"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<OutputFile>$(OutDir)MyProject.exe</OutputFile>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
-		<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<OutputFile>$(OutDir)MyProject.exe</OutputFile>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
+</PropertyGroup>
 		]]
 	end
 
@@ -85,14 +85,14 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-		<OutDir>.\</OutDir>
-		<OutputFile>$(OutDir)MyProject.lib</OutputFile>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.lib</TargetExt>
-		<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+	<OutDir>bin\Debug\</OutDir>
+	<OutputFile>$(OutDir)MyProject.lib</OutputFile>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.lib</TargetExt>
+	<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
+</PropertyGroup>
 		]]
 	end
 
@@ -105,8 +105,8 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<OutDir>.\</OutDir>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<OutDir>bin\Debug\</OutDir>
 		]]
 	end
 
@@ -118,8 +118,8 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>false</LinkIncremental>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>false</LinkIncremental>
 		]]
 	end
 
@@ -131,9 +131,9 @@
 		targetdir "../bin"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>..\bin\</OutDir>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>..\bin\</OutDir>
 		]]
 	end
 
@@ -145,10 +145,10 @@
 		objdir "../tmp"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>..\tmp\Debug\</IntDir>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>..\tmp\Debug\</IntDir>
 		]]
 	end
 
@@ -160,11 +160,11 @@
 		targetname "MyTarget"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyTarget</TargetName>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyTarget</TargetName>
 		]]
 	end
 
@@ -177,9 +177,9 @@
 		flags "NoImportLib"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<IgnoreImportLibrary>true</IgnoreImportLibrary>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<IgnoreImportLibrary>true</IgnoreImportLibrary>
 		]]
 	end
 
@@ -188,9 +188,9 @@
 		flags "NoImportLib"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
 		]]
 	end
 
@@ -203,13 +203,13 @@
 		flags "NoManifest"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
-		<GenerateManifest>false</GenerateManifest>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<GenerateManifest>false</GenerateManifest>
 		]]
 	end
 
@@ -222,14 +222,14 @@
 		targetextension ""
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>
-		</TargetExt>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>
+	</TargetExt>
+</PropertyGroup>
 		]]
 	end
 
@@ -243,14 +243,14 @@
 		cleanextensions { ".temp1", ".temp2" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
-		<ExtensionsToDeleteOnClean>*.temp1;*.temp2;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<ExtensionsToDeleteOnClean>*.temp1;*.temp2;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+</PropertyGroup>
 		]]
 	end
 
@@ -263,14 +263,14 @@
 		sysincludedirs { "$(DXSDK_DIR)/Include" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
-		<IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+</PropertyGroup>
 		]]
 	end
 
@@ -278,13 +278,13 @@
 		syslibdirs { "$(DXSDK_DIR)/lib/x86" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<LinkIncremental>true</LinkIncremental>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-		<TargetName>MyProject</TargetName>
-		<TargetExt>.exe</TargetExt>
-		<LibraryPath>$(DXSDK_DIR)\lib\x86;$(LibraryPath)</LibraryPath>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<LibraryPath>$(DXSDK_DIR)\lib\x86;$(LibraryPath)</LibraryPath>
+</PropertyGroup>
 		]]
 	end

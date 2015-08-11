@@ -42,6 +42,7 @@
 		},
 		flags = {
 			FatalCompileWarnings = "-Werror",
+			LinkTimeOptimization = "-flto",
 			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
 			Symbols = "-g",
@@ -73,6 +74,9 @@
 			AVX2 = "-mavx2",
 			SSE = "-msse",
 			SSE2 = "-msse2",
+			SSE3 = "-msse3",
+			SSSE3 = "-mssse3",
+			["SSE4.1"] = "-msse4.1",
 		},
 		warnings = {
 			Extra = "-Wall -Wextra",
@@ -106,12 +110,16 @@
 --
 
 	gcc.cxxflags = {
+		exceptionhandling = {
+			Off = "-fno-exceptions"
+		},
 		flags = {
-			NoExceptions = "-fno-exceptions",
-			NoRTTI = "-fno-rtti",
 			NoBufferSecurityCheck = "-fno-stack-protector",
 			["C++11"] = "-std=c++11",
 			["C++14"] = "-std=c++14",
+		},
+		rtti = {
+			Off = "-fno-rtti"
 		}
 	}
 
@@ -192,6 +200,7 @@
 			x86_64 = "-m64",
 		},
 		flags = {
+			LinkTimeOptimization = "-flto",
 			_Symbols = function(cfg)
 				-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
 				return iif(cfg.system == premake.MACOSX, "-Wl,-x", "-s")
@@ -346,13 +355,9 @@
 	}
 
 	function gcc.gettoolname(cfg, tool)
-		local names = gcc.tools[cfg.architecture] or gcc.tools[cfg.system] or {}
-		local name = names[tool]
-
-		if not name and (tool == "rc" or cfg.gccprefix) and gcc.tools[tool] then
-			name = (cfg.gccprefix or "") .. gcc.tools[tool]
+		if (cfg.gccprefix and gcc.tools[tool]) or tool == "rc" then
+			return (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
-
-		return name
+		return nil
 	end
 

@@ -36,7 +36,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s -shared
-  LINKCMD = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -51,7 +51,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s -shared
-  LINKCMD = $(CC) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
@@ -65,7 +65,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = $(AR) -rcs $(TARGET) $(OBJECTS)
+  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 		]]
 	end
 
@@ -80,7 +80,7 @@
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = libtool -o $(TARGET) $(OBJECTS)
+  LINKCMD = libtool -o "$@" $(OBJECTS)
 		]]
 	end
 
@@ -99,8 +99,8 @@
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += build/libMyProject2.a
-  LDDEPS += build/libMyProject2.a
+  LIBS += build/bin/Debug/libMyProject2.a
+  LDDEPS += build/bin/Debug/libMyProject2.a
 		]]
 	end
 
@@ -119,8 +119,8 @@
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += build/libMyProject2.so
-  LDDEPS += build/libMyProject2.so
+  LIBS += build/bin/Debug/libMyProject2.so
+  LDDEPS += build/bin/Debug/libMyProject2.so
 		]]
 	end
 
@@ -138,9 +138,9 @@
 
         prepare { "ldFlags", "libs", "ldDeps" }
         test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -Lbuild -s
+  ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -s
   LIBS += -lMyProject2
-  LDDEPS += build/libMyProject2.so
+  LDDEPS += build/bin/Debug/libMyProject2.so
         ]]
     end
 

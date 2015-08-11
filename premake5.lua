@@ -18,7 +18,6 @@
 	premake.api.deprecations "off"
 
 
-
 --
 -- Register supporting actions and options.
 --
@@ -63,6 +62,18 @@
 	}
 
 
+	newoption {
+		trigger = "no-curl",
+		description = "Disable Curl 3rd party lib"
+	}
+
+
+	newoption {
+		trigger = "no-zlib",
+		description = "Disable Zlib/Zip 3rd party lib"
+	}
+
+
 
 --
 -- Define the project. Put the release configuration first so it will be the
@@ -82,6 +93,18 @@
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
 		includedirs { "src/host/lua-5.1.4/src" }
+
+		-- optional 3rd party libraries
+		if not _OPTIONS["no-zlib"] then
+			includedirs { "contrib/zlib", "contrib/libzip" }
+			defines { "PREMAKE_COMPRESSION" }
+			links { "zip-lib", "zlib-lib" }
+		end
+		if not _OPTIONS["no-curl"] then
+			includedirs { "contrib/curl/include" }
+			defines { "CURL_STATICLIB", "PREMAKE_CURL" }
+			links { "curl-lib" }
+		end
 
 		files
 		{
@@ -113,13 +136,13 @@
 			flags       { "OptimizeSize" }
 
 		configuration "vs*"
-			defines     { "_CRT_SECURE_NO_WARNINGS" }
+			defines     { "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 		configuration "vs2005"
 			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "windows"
-			links { "ole32" }
+			links       { "ole32", "ws2_32" }
 
 		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
@@ -127,7 +150,7 @@
 			linkoptions { "-rdynamic" }
 
 		configuration "linux or hurd"
-			links       { "dl" }
+			links       { "dl", "rt" }
 
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
@@ -145,6 +168,15 @@
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 
+	-- optional 3rd party libraries
+	group "contrib"
+		if not _OPTIONS["no-zlib"] then
+			include "contrib/zlib"
+			include "contrib/libzip"
+		end
+		if not _OPTIONS["no-curl"] then
+			include "contrib/curl"
+		end
 
 
 --

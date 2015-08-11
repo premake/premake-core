@@ -37,7 +37,7 @@
 		test.capture [[
 <Configuration
 	Name="Debug|Win32"
-	OutputDirectory="."
+	OutputDirectory="bin\Debug"
 	IntermediateDirectory="obj\Debug"
 	ConfigurationType="1"
 	CharacterSet="2"
@@ -101,7 +101,7 @@
 		test.capture [[
 <Configuration
 	Name="Debug|Win32"
-	OutputDirectory="."
+	OutputDirectory="bin\Debug"
 	IntermediateDirectory="obj\Debug"
 	ConfigurationType="0"
 	>
@@ -114,7 +114,7 @@
 		test.capture [[
 <Configuration
 	Name="Debug|Win32"
-	OutputDirectory="."
+	OutputDirectory="bin\Debug"
 	IntermediateDirectory="obj\Debug"
 	ConfigurationType="0"
 	>

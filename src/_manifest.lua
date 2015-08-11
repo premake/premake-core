@@ -37,7 +37,7 @@
 
 		-- project objects
 		"base/global.lua",
-		"base/solution.lua",
+		"base/workspace.lua",
 		"base/group.lua",
 		"base/project.lua",
 		"base/config.lua",

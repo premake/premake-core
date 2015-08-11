@@ -98,6 +98,21 @@
 	end
 
 
+
+--
+-- Merges the list of terms from an existing context.
+--
+-- @param ctx
+--    The context to receive the copied terms.
+-- @param src
+--    The context containing the terms to copy.
+--
+
+	function context.mergeFilters(ctx, src)
+		ctx.terms = table.merge(ctx.terms, table.deepcopy(src.terms))
+	end
+
+
 --
 -- Sets the base directory for path token expansion in non-path fields; such
 -- values will be made relative to this path.
@@ -172,13 +187,8 @@
 		-- If there is a matching field, then go fetch the aggregated value
 		-- from my configuration set, and then cache it future lookups.
 
-		local value = configset.fetch(ctx._cfgset, field, ctx.terms)
+		local value = configset.fetch(ctx._cfgset, field, ctx.terms, ctx)
 		if value then
-			-- do I need to expand tokens?
-			if field and field.tokens then
-				value = p.detoken.expand(value, ctx.environ, field, ctx._basedir)
-			end
-
 			-- store the result for later lookups
 			ctx[key] = value
 		end

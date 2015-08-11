@@ -66,6 +66,7 @@
 			m.localDebuggerWorkingDirectory,
 			m.debuggerFlavor,
 			m.localDebuggerCommandArguments,
+			m.localDebuggerDebuggerType,
 			m.localDebuggerEnvironment,
 			m.localDebuggerMergeEnvironment,
 		}
@@ -92,6 +93,12 @@
 		end
 	end
 
+
+	function m.localDebuggerDebuggerType(cfg)
+		if cfg.debuggertype then
+			p.w('<LocalDebuggerDebuggerType>%s</LocalDebuggerDebuggerType>', cfg.debuggertype)
+		end
+	end
 
 
 	function m.localDebuggerCommandArguments(cfg)

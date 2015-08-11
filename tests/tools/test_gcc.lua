@@ -199,7 +199,7 @@
 --
 
 	function suite.cflags_onNoExceptions()
-		flags { "NoExceptions" }
+		exceptionhandling "Off"
 		prepare()
 		test.contains({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
 	end
@@ -259,7 +259,7 @@
 		system "Windows"
 		kind "SharedLib"
 		prepare()
-		test.contains({ "-shared", '-Wl,--out-implib="MyProject.lib"' }, gcc.getldflags(cfg))
+		test.contains({ "-shared", '-Wl,--out-implib="bin/Debug/MyProject.lib"' }, gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onWindowsApp()
@@ -492,4 +492,21 @@
 		syslibdirs { "/usr/local/lib" }
 		prepare()
 		test.contains("-L/usr/local/lib", gcc.getLibraryDirectories(cfg))
+	end
+
+
+--
+-- Check handling of link time optimization flag.
+--
+
+	function suite.cflags_onLinkTimeOptimization()
+		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("-flto", gcc.getcflags(cfg))
+	end
+
+	function suite.ldflags_onLinkTimeOptimization()
+		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("-flto", gcc.getldflags(cfg))
 	end

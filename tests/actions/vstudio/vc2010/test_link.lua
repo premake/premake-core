@@ -35,11 +35,11 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
 		]]
 	end
 
@@ -52,13 +52,13 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EnableCOMDATFolding>true</EnableCOMDATFolding>
-			<OptimizeReferences>true</OptimizeReferences>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<EnableCOMDATFolding>true</EnableCOMDATFolding>
+	<OptimizeReferences>true</OptimizeReferences>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
 		]]
 	end
 
@@ -71,10 +71,10 @@
 		kind "ConsoleApp"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Console</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+<Link>
+	<SubSystem>Console</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
 
@@ -82,10 +82,10 @@
 		kind "WindowedApp"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
 
@@ -93,11 +93,11 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
 		]]
 	end
 
@@ -105,10 +105,10 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+</Link>
 		]]
 	end
 
@@ -121,14 +121,14 @@
 		flags "NoImplicitLink"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-		</Link>
-		<ProjectReference>
-			<LinkLibraryDependencies>false</LinkLibraryDependencies>
-		</ProjectReference>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+<ProjectReference>
+	<LinkLibraryDependencies>false</LinkLibraryDependencies>
+</ProjectReference>
 		]]
 	end
 
@@ -140,9 +140,9 @@
 		flags "Symbols"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>true</GenerateDebugInformation>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
 		]]
 	end
 
@@ -156,10 +156,10 @@
 		links { "lua", "zlib" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
 
@@ -172,10 +172,10 @@
 		libdirs { "../lib", "../lib64" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalLibraryDirectories>..\lib;..\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalLibraryDirectories>..\lib;..\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 		]]
 	end
 
@@ -191,11 +191,11 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
 		]]
 	end
 
@@ -211,15 +211,15 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-		</Link>
-		<ProjectReference>
-			<LinkLibraryDependencies>false</LinkLibraryDependencies>
-		</ProjectReference>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+<ProjectReference>
+	<LinkLibraryDependencies>false</LinkLibraryDependencies>
+</ProjectReference>
 		]]
 	end
 
@@ -235,10 +235,10 @@
 		libdirs { "../lib", "../lib64" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+</Link>
 		]]
 	end
 
@@ -251,11 +251,11 @@
 		implibdir "../lib"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>..\lib\MyProject.lib</ImportLibrary>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>..\lib\MyProject.lib</ImportLibrary>
+</Link>
 		]]
 	end
 
@@ -270,11 +270,11 @@
 		linkoptions { "/kupo" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-			<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
 
@@ -283,13 +283,13 @@
 		linkoptions { "/kupo" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-		</Link>
-		<Lib>
-			<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
-		</Lib>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+</Link>
+<Lib>
+	<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
+</Lib>
 		]]
 	end
 
@@ -302,11 +302,11 @@
 		optimize "On"
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EnableCOMDATFolding>true</EnableCOMDATFolding>
-			<OptimizeReferences>true</OptimizeReferences>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<EnableCOMDATFolding>true</EnableCOMDATFolding>
+	<OptimizeReferences>true</OptimizeReferences>
 		]]
 	end
 
@@ -319,12 +319,12 @@
 		files { "hello.cpp", "hello.def" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-			<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
+</Link>
 		]]
 	end
 
@@ -337,10 +337,10 @@
 		links { "kernel32", "System.dll", "System.Data.dll" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
 
@@ -354,9 +354,9 @@
 		system "Xbox360"
 		prepare()
 		test.capture [[
-		<Link>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-		</Link>
+<Link>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+</Link>
 		]]
 	end
 
@@ -369,10 +369,10 @@
 		links { "user32" }
 		prepare()
 		test.capture [[
-		<Link>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-		</Link>
+<Link>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Link>
 		]]
 	end
 
@@ -386,11 +386,11 @@
 		flags { "FatalLinkWarnings" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Console</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-			<TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+<Link>
+	<SubSystem>Console</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+	<TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
 		]]
 	end
 
@@ -399,13 +399,13 @@
 		flags { "FatalLinkWarnings" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-		</Link>
-		<Lib>
-			<TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
-		</Lib>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+</Link>
+<Lib>
+	<TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+</Lib>
 		]]
 	end
 
@@ -418,11 +418,11 @@
 		flags { "Maps" }
 		prepare()
 		test.capture [[
-		<Link>
-			<SubSystem>Windows</SubSystem>
-			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<ImportLibrary>MyProject.lib</ImportLibrary>
-			<GenerateMapFile>true</GenerateMapFile>
-		</Link>
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<GenerateMapFile>true</GenerateMapFile>
+</Link>
 		]]
 	end

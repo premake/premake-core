@@ -33,9 +33,9 @@
 	function suite.structureIsCorrect_onDefaultValues()
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+</PropertyGroup>
 		]]
 	end
 
@@ -59,9 +59,9 @@
 		targetextension ".exe"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<NMakeOutput>$(OutDir)MyProject.exe</NMakeOutput>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject.exe</NMakeOutput>
+</PropertyGroup>
 		]]
 	end
 
@@ -74,10 +74,10 @@
 		buildcommands { "command 1" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
-		<NMakeBuildCommandLine>command 1</NMakeBuildCommandLine>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakeBuildCommandLine>command 1</NMakeBuildCommandLine>
+</PropertyGroup>
 		]]
 	end
 
@@ -85,11 +85,11 @@
 		buildcommands { "command 1", "command 2" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
-		<NMakeBuildCommandLine>command 1
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakeBuildCommandLine>command 1
 command 2</NMakeBuildCommandLine>
-	</PropertyGroup>
+</PropertyGroup>
 		]]
 	end
 
@@ -97,10 +97,10 @@ command 2</NMakeBuildCommandLine>
 		rebuildcommands { "command 1" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
-		<NMakeReBuildCommandLine>command 1</NMakeReBuildCommandLine>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakeReBuildCommandLine>command 1</NMakeReBuildCommandLine>
+</PropertyGroup>
 		]]
 	end
 
@@ -108,9 +108,9 @@ command 2</NMakeBuildCommandLine>
 		cleancommands { "command 1" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-		<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
-		<NMakeCleanCommandLine>command 1</NMakeCleanCommandLine>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakeCleanCommandLine>command 1</NMakeCleanCommandLine>
+</PropertyGroup>
 		]]
 	end

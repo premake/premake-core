@@ -47,6 +47,15 @@ int path_normalize(lua_State* L)
 			}
 		}
 
+		/* filter out /./ */
+		if (ch == '/' && last == '.') {
+			ptr = dst - 2;
+			if (ptr >= buffer && ptr[0] == '/') {
+				dst = ptr;
+				continue;
+			}
+		}
+
 		/* add to the result, filtering out duplicate slashes */
 		if (ch != '/' || last != '/') {
 			*(dst++) = ch;

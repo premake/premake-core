@@ -7,10 +7,12 @@
 ---
 
 
-	premake.tools.msc = {}
-	local msc = premake.tools.msc
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+
+	p.tools.msc = {}
+	local msc = p.tools.msc
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -38,7 +40,6 @@
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
-			SEH = "/EHa",
 			Symbols = "/Z7",
 			OmitDefaultLibrary = "/Zl",
 		},
@@ -65,6 +66,9 @@
 			AVX2 = "/arch:AVX2",
 			SSE = "/arch:SSE",
 			SSE2 = "/arch:SSE2",
+			SSE3 = "/arch:SSE2",
+			SSSE3 = "/arch:SSE2",
+			["SSE4.1"] = "/arch:SSE2",
 		},
 		warnings = {
 			Extra = "/W4",
@@ -104,18 +108,18 @@
 --
 
 	msc.cxxflags = {
-		flags = {
-			NoRTTI = "/GR-",
+		exceptionhandling = {
+			Default = "/EHsc",
+			On = "/EHsc",
+			SEH = "/EHa",
+		},
+		rtti = {
+			Off = "/GR-"
 		}
 	}
 
 	function msc.getcxxflags(cfg)
 		local flags = config.mapFlags(cfg, msc.cxxflags)
-
-		if not cfg.flags.SEH and not cfg.flags.NoExceptions then
-			table.insert(flags, "/EHsc")
-		end
-
 		return flags
 	end
 

@@ -31,7 +31,14 @@
 	function config.buildtargetinfo(cfg, kind, field)
 		local basedir = cfg.project.location
 
-		local directory = cfg[field.."dir"] or cfg.targetdir or basedir
+		local targetdir
+		if cfg.platform then
+			targetdir = path.join(basedir, 'bin', cfg.platform, cfg.buildcfg)
+		else
+			targetdir = path.join(basedir, 'bin', cfg.buildcfg)
+		end
+
+		local directory = cfg[field.."dir"] or cfg.targetdir or targetdir
 		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
 
 		local prefix = cfg[field.."prefix"] or cfg.targetprefix or ""
@@ -320,7 +327,7 @@
 
 	function config.getruntime(cfg)
 		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
-		if (cfg.runtime == nil) then
+		if not cfg.runtime then
 			return linkage .. iif(config.isDebugBuild(cfg), "Debug", "Release")
 		else
 			return linkage .. cfg.runtime

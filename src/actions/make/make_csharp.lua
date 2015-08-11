@@ -23,26 +23,28 @@
 -- Generate a GNU make C++ project makefile, with support for the new platforms API.
 --
 
-	cs.elements.makefile = {
-		"header",
-		"phonyRules",
-		"csConfigs",
-		"csProjectConfig",
-		"csSources",
-		"csEmbedFiles",
-		"csCopyFiles",
-		"csResponseFile",
-		"shellType",
-		"csAllRules",
-		"csTargetRules",
-		"targetDirRules",
-		"csResponseRules",
-		"objDirRules",
-		"csCleanRules",
-		"preBuildRules",
-		"preLinkRules",
-		"csFileRules",
-	}
+	cs.elements.makefile = function(prj)
+		return {
+			make.header,
+			make.phonyRules,
+			make.csConfigs,
+			make.csProjectConfig,
+			make.csSources,
+			make.csEmbedFiles,
+			make.csCopyFiles,
+			make.csResponseFile,
+			make.shellType,
+			make.csAllRules,
+			make.csTargetRules,
+			make.targetDirRules,
+			make.csResponseRules,
+			make.objDirRules,
+			make.csCleanRules,
+			make.preBuildRules,
+			make.preLinkRules,
+			make.csFileRules,
+		}
+	end
 
 
 --
@@ -52,7 +54,7 @@
 	function make.cs.generate(prj)
 		premake.eol("\n")
 		local toolset = premake.tools.dotnet
-		premake.callarray(make, cs.elements.makefile, prj, toolset)
+		premake.callArray(cs.elements.makefile, prj, toolset)
 	end
 
 
@@ -60,22 +62,24 @@
 -- Write out the settings for a particular configuration.
 --
 
-	cs.elements.configuration = {
-		"csTools",
-		"target",
-		"objdir",
-		"csFlags",
-		"csLinkCmd",
-		"preBuildCmds",
-		"preLinkCmds",
-		"postBuildCmds",
-		"settings",
-	}
+	cs.elements.configuration = function(cfg)
+		return {
+			make.csTools,
+			make.target,
+			make.objdir,
+			make.csFlags,
+			make.csLinkCmd,
+			make.preBuildCmds,
+			make.preLinkCmds,
+			make.postBuildCmds,
+			make.settings,
+		}
+	end
 
 	function make.csConfigs(prj, toolset)
 		for cfg in project.eachconfig(prj) do
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callarray(make, cs.elements.configuration, cfg, toolset)
+			premake.callArray(cs.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end

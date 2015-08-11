@@ -33,11 +33,11 @@
 	function suite.structureIsCorrect_onDefaultValues()
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CharacterSet>MultiByte</CharacterSet>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>MultiByte</CharacterSet>
+</PropertyGroup>
 		]]
 	end
 
@@ -50,8 +50,8 @@
 		kind "ConsoleApp"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
 		]]
 	end
 
@@ -59,8 +59,8 @@
 		kind "WindowedApp"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
 		]]
 	end
 
@@ -68,8 +68,8 @@
 		kind "SharedLib"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>DynamicLibrary</ConfigurationType>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
 		]]
 	end
 
@@ -77,8 +77,8 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>StaticLibrary</ConfigurationType>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>StaticLibrary</ConfigurationType>
 		]]
 	end
 
@@ -90,9 +90,9 @@
 		flags "Symbols"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>true</UseDebugLibraries>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>true</UseDebugLibraries>
 		]]
 	end
 
@@ -104,10 +104,10 @@
 		flags "Unicode"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CharacterSet>Unicode</CharacterSet>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
 		]]
 	end
 
@@ -120,10 +120,10 @@
 		clr "On"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CLRSupport>true</CLRSupport>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CLRSupport>true</CLRSupport>
 		]]
 	end
 
@@ -131,9 +131,9 @@
 		clr "Off"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
 		]]
 	end
 
@@ -141,10 +141,10 @@
 		clr "Unsafe"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CLRSupport>true</CLRSupport>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CLRSupport>true</CLRSupport>
 		]]
 	end
 
@@ -152,10 +152,10 @@
 		clr "Safe"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CLRSupport>Safe</CLRSupport>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CLRSupport>Safe</CLRSupport>
 		]]
 	end
 
@@ -163,10 +163,10 @@
 		clr "Pure"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CLRSupport>Pure</CLRSupport>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CLRSupport>Pure</CLRSupport>
 		]]
 	end
 
@@ -179,10 +179,10 @@
 		flags "MFC"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<UseOfMfc>Dynamic</UseOfMfc>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfMfc>Dynamic</UseOfMfc>
 		]]
 	end
 
@@ -190,10 +190,10 @@
 		flags { "MFC", "StaticRuntime" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<UseOfMfc>Static</UseOfMfc>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfMfc>Static</UseOfMfc>
 		]]
 	end
 
@@ -205,10 +205,10 @@
 		atl "Dynamic"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<UseOfATL>Dynamic</UseOfATL>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfATL>Dynamic</UseOfATL>
 		]]
 	end
 
@@ -216,10 +216,10 @@
 		atl "Static"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<UseOfATL>Static</UseOfATL>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfATL>Static</UseOfATL>
 		]]
 	end
 
@@ -233,9 +233,9 @@
 		flags { "Symbols", "ReleaseRuntime" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
 		]]
 	end
 
@@ -251,12 +251,12 @@
 		kind "Makefile"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Makefile</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+</PropertyGroup>
 		]]
 	end
 
@@ -264,12 +264,12 @@
 		kind "None"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Makefile</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<OutDir>.\</OutDir>
-		<IntDir>obj\Debug\</IntDir>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+</PropertyGroup>
 		]]
 	end
 
@@ -281,9 +281,9 @@
 		kind "Utility"
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Utility</ConfigurationType>
-	</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Utility</ConfigurationType>
+</PropertyGroup>
 		]]
 	end
 
@@ -295,10 +295,10 @@
 		flags { "LinkTimeOptimization" }
 		prepare()
 		test.capture [[
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-		<ConfigurationType>Application</ConfigurationType>
-		<UseDebugLibraries>false</UseDebugLibraries>
-		<CharacterSet>MultiByte</CharacterSet>
-		<WholeProgramOptimization>true</WholeProgramOptimization>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>MultiByte</CharacterSet>
+	<WholeProgramOptimization>true</WholeProgramOptimization>
 		]]
 	end

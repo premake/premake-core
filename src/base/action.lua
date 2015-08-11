@@ -73,20 +73,20 @@
 ---
 
 	function action.call(name)
-		local act = action._list[name]
+		local a = action._list[name]
 
-		if act.onStart then
-			act.onStart()
+		if a.onStart then
+			a.onStart()
 		end
 
 		for sln in p.global.eachSolution() do
-			local onSolution = act.onSolution or act.onsolution
-			if onSolution then
+			local onSolution = a.onWorkspace or a.onSolution or a.onsolution
+			if onSolution and not sln.external then
 				onSolution(sln)
 			end
 
 			for prj in p.solution.eachproject(sln) do
-				local onProject = act.onProject or act.onproject
+				local onProject = a.onProject or a.onproject
 				if onProject and not prj.external then
 					onProject(prj)
 				end
@@ -94,18 +94,18 @@
 		end
 
 		for rule in p.global.eachRule() do
-			local onRule = act.onRule or act.onrule
-			if onRule then
+			local onRule = a.onRule or a.onrule
+			if onRule and not rule.external then
 				onRule(rule)
 			end
 		end
 
-		if act.execute then
-			act.execute()
+		if a.execute then
+			a.execute()
 		end
 
-		if act.onEnd then
-			act.onEnd()
+		if a.onEnd then
+			a.onEnd()
 		end
 	end
 
@@ -214,7 +214,11 @@
 --    True if the feature is supported, false otherwise.
 ---
 
-	function action.supports(self, feature)
+	function action.supports(feature)
+		if not feature then
+			return true
+		end
+		local self = action.current()
 		if not self then
 			return false
 		end
@@ -232,11 +236,11 @@
 	end
 
 
--- 
+--
 -- Determines if an action supports a particular configuration.
 -- @return
 -- True if the configuration is supported, false otherwise.
--- 
+--
 	function premake.action.supportsconfig(action, cfg)
 		if not action then
 			return false

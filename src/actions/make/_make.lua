@@ -1,7 +1,7 @@
 --
 -- _make.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 	premake.make = {}
@@ -28,9 +28,9 @@
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 
-		onSolution = function(sln)
+		onWorkspace = function(wks)
 			premake.escaper(make.esc)
-			premake.generate(sln, make.getmakefilename(sln, false), make.generate_solution)
+			premake.generate(wks, make.getmakefilename(wks, false), make.generate_solution)
 		end,
 
 		onProject = function(prj)
@@ -43,8 +43,8 @@
 			end
 		end,
 
-		onCleanSolution = function(sln)
-			premake.clean.file(sln, make.getmakefilename(sln, false))
+		onCleanWorkspace = function(wks)
+			premake.clean.file(wks, make.getmakefilename(wks, false))
 		end,
 
 		onCleanProject = function(prj)

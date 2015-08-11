@@ -28,16 +28,6 @@
 
 
 --
--- Directory should be current (".") by default.
---
-
-	function suite.directoryIsDot_onNoTargetDir()
-		i = prepare()
-		test.isequal(".", path.getrelative(os.getcwd(), i.directory))
-	end
-
-
---
 -- Directory should use targetdir() value if present.
 --
 

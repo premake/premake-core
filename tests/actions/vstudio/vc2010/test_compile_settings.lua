@@ -405,6 +405,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 	<Optimization>Disabled</Optimization>
 	<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
 		]]
@@ -439,6 +440,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 	<Optimization>Disabled</Optimization>
 </ClCompile>
 		]]
@@ -497,7 +499,7 @@
 --
 
 	function suite.exceptions_onNoExceptions()
-		flags "NoExceptions"
+		exceptionhandling "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -509,7 +511,7 @@
 	end
 
 	function suite.exceptions_onSEH()
-		flags "SEH"
+		exceptionhandling "SEH"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -521,7 +523,7 @@
 	end
 
 	function suite.runtimeTypeInfo_onNoRTTI()
-		flags "NoRTTI"
+		rtti "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -532,7 +534,7 @@
 		]]
 	end
 
-	function suite.runtimeTypeInfo_onNoRTTI()
+	function suite.runtimeTypeInfo_onNoBufferSecurityCheck()
 		flags "NoBufferSecurityCheck"
 		prepare()
 		test.capture [[
@@ -558,6 +560,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 		]]
 	end
 
@@ -575,6 +578,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 		]]
 	end
 
@@ -592,6 +596,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 		]]
 	end
 
@@ -609,6 +614,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 		]]
 	end
 
@@ -626,6 +632,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 		]]
 	end
 
@@ -705,6 +712,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 	<Optimization>Disabled</Optimization>
 	<RuntimeLibrary>MultiThreaded</RuntimeLibrary>
 		]]

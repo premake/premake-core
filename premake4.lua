@@ -62,7 +62,7 @@
 			linkoptions { "-rdynamic" }
 
 		configuration "linux or hurd"
-			links       { "dl" }
+			links       { "dl", "rt" }
 
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }

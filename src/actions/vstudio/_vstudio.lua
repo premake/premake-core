@@ -399,7 +399,13 @@
 
 	function vstudio.path(cfg, value)
 		cfg = cfg.project or cfg
-		return path.translate(project.getrelative(cfg, value))
+		local dirs = path.translate(project.getrelative(cfg, value))
+
+		if type(dirs) == 'table' then
+			dirs = table.filterempty(dirs)
+		end
+
+		return dirs
 	end
 
 

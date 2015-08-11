@@ -43,10 +43,23 @@
 --
 
 	function fileconfig.new(fname, prj)
-		local fcfg = {}
+		local environ = { }
+		local fcfg = context.new(prj, environ)
+		context.copyFilters(fcfg, prj)
+		context.addFilter(fcfg, "files", fname:lower())
+
+		for key, value in pairs(prj.environ) do
+			environ[key] = value
+		end
+
+		environ.file = fcfg
+		context.compile(fcfg)
+
 		fcfg.project = prj
 		fcfg.configs = {}
 		fcfg.abspath = fname
+
+		context.basedir(fcfg, prj.location)
 
 		-- Most of the other path properties are computed on demand
 		-- from the file's absolute path.
@@ -86,7 +99,7 @@
 		local environ = {}
 		local fsub = context.new(prj, environ)
 		context.copyFilters(fsub, cfg)
-		context.addFilter(fsub, "files", fcfg.abspath:lower())
+		context.mergeFilters(fsub, fcfg)
 
 		fcfg.configs[cfg] = fsub
 
@@ -98,9 +111,9 @@
 			environ[key] = value
 		end
 
-		-- Make the context being built here accessible to tokens
-
-		environ.file = fsub
+		for key, value in pairs(fcfg.environ) do
+			environ[key] = value
+		end
 
 		-- finish the setup
 
@@ -204,15 +217,16 @@
 
 --
 -- The indexer for the file configurations. If I have a path building function
--- to fulfill the request, call it. Else this is a missing index so return nil.
+-- to fulfill the request, call it. Else fall back to the context's own value lookups.
 --
 
 	local fcfg_mt = fileconfig.fcfg_mt
 
-	fcfg_mt.__index = function(file, key)
+	fcfg_mt.__index = function(fcfg, key)
 		if type(fcfg_mt[key]) == "function" then
-			return fcfg_mt[key](file)
+			return fcfg_mt[key](fcfg)
 		end
+		return context.__mt.__index(fcfg, key)
 	end
 
 
@@ -222,8 +236,11 @@
 -- TODO: Would be great if this didn't require inside knowledge of context.
 --
 
-	fileconfig.fsub_mt.__index = function(fcfg, key)
-		return fcfg_mt.__index(fcfg, key) or context.__mt.__index(fcfg, key)
+	fileconfig.fsub_mt.__index = function(fsub, key)
+		if type(fcfg_mt[key]) == "function" then
+			return fcfg_mt[key](fsub)
+		end
+		return context.__mt.__index(fsub, key)
 	end
 
 
@@ -233,6 +250,11 @@
 
 	function fcfg_mt.basename(fcfg)
 		return path.getbasename(fcfg.abspath)
+	end
+
+
+	function fcfg_mt.directory(fcfg)
+		return path.getdirectory(fcfg.abspath)
 	end
 
 
