@@ -1,30 +1,23 @@
 /**
- * \file   path_normalize.c
- * \brief  Removes any weirdness from a file system path string.
- * \author Copyright (c) 2013 Jason Perkins and the Premake project
- */
+* \file   path_normalize.c
+* \brief  Removes any weirdness from a file system path string.
+* \author Copyright (c) 2013 Jason Perkins and the Premake project
+*/
 
 #include "premake.h"
+#include <ctype.h>
 #include <string.h>
 
 
-int path_normalize(lua_State* L)
-{
-	char buffer[0x4000];
-	char* src;
-	char* dst;
-	char* ptr;
-	char last;
+static void* normalize_substring(const char* str, const char* endPtr, char* writePtr) {
+	const char* const source = str;
+	const char* const writeBegin = writePtr;
+	const char* ptr;
+	char last = 0;
+	char ch;
 
-	const char* path = luaL_checkstring(L, 1);
-	strcpy(buffer, path);
-
-	src = buffer;
-	dst = buffer;
-	last = '\0';
-
-	while (*src != '\0') {
-		char ch = (*src);
+	while (str != endPtr) {
+		ch = (*str);
 
 		/* make sure we're using '/' for all separators */
 		if (ch == '\\') {
@@ -33,55 +26,108 @@ int path_normalize(lua_State* L)
 
 		/* filter out .. */
 		if (ch == '.' && last == '.') {
-			ptr = dst - 3;
-			while (ptr >= buffer) {
+			last = 0;
+
+			ptr = writePtr - 3;
+			while (ptr >= writeBegin) {
 				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
-					dst = ptr;
+					writePtr -= writePtr - ptr;
+
+					/* special fix for cases, when '..' is the last chars in path i.e. d:\game\.., this should be converted into d:\,
+					but without this case, it will be converted into d: */
+					if (writePtr - 1 >= writeBegin && *(writePtr - 1) == ':' && str + 1 == endPtr) {
+						++writePtr;
+					}
 					break;
 				}
 				--ptr;
 			}
-			if (ptr >= buffer) {
-				++src;
-				continue;
+
+			if (ptr < writeBegin) {
+				*(writePtr++) = ch;
 			}
+
+			++str;
+			continue;
 		}
 
 		/* filter out /./ */
 		if (ch == '/' && last == '.') {
-			ptr = dst - 2;
-			if (ptr >= buffer && ptr[0] == '/') {
-				dst = ptr;
+			ptr = str - 2;
+			if (*ptr == '/') {	// there is no need to check whether ptr >= source since all the leading ./ will be skipped in path_normalize
+				if (ptr - 1 < source || *(ptr - 1) != ':') {
+					--writePtr;
+				}
+
+				++str;
 				continue;
 			}
 		}
 
 		/* add to the result, filtering out duplicate slashes */
 		if (ch != '/' || last != '/') {
-			*(dst++) = ch;
+			*(writePtr++) = ch;
 		}
 
-		/* ...except at the start of a string, for UNC paths */
-		if (src != buffer) {
-			last = (*src);
-		}
-
-		++src;
+		last = ch;
+		++str;
 	}
 
-	/* remove any trailing slashes */
-    for (--src; src > buffer && *src == '/'; --src) {
-         *src = '\0';
-    }
+	/* remove any trailing slashes, except those, that follow the ':', to avoid a path corruption i.e. D:\ -> D: */
+	while (*(--endPtr) == '/' && *(endPtr - 1) != ':') {
+		--writePtr;
+	}
 
-    /* remove any leading "./" sequences */
-    src = buffer;
-    while (strncmp(src, "./", 2) == 0) {
-    	src += 2;
-    }
+	*writePtr = *str;
 
-	*dst = '\0';
-	lua_pushstring(L, src);
+	return writePtr;
+}
+
+
+int path_normalize(lua_State* L)
+{
+	const char* path = luaL_checkstring(L, 1);
+	const char* readPtr = path;
+	char buffer[0x4000] = { 0 };
+	char* writePtr = buffer;
+	const char* endPtr;
+
+	// skip leading white spaces
+	while (*readPtr && isspace(*readPtr)) {
+		++readPtr;
+	}
+
+	endPtr = readPtr;
+
+	while (*endPtr) {
+		/* remove any leading "./" sequences */
+		while (strncmp(readPtr, "./", 2) == 0) {
+			readPtr += 2;
+		}
+
+		// find the end of sub path
+		while (*endPtr && !isspace(*endPtr)) {
+			++endPtr;
+		}
+
+		writePtr = normalize_substring(readPtr, endPtr, writePtr);
+
+		// skip any white spaces between sub paths
+		while (*endPtr && isspace(*endPtr)) {
+			*(writePtr++) = *(endPtr++);
+		}
+
+		readPtr = endPtr;
+	}
+
+	// skip any trailing white spaces
+	while (isspace(*(--endPtr))) {
+		--writePtr;
+	}
+
+	*writePtr = 0;
+
+	lua_pushstring(L, buffer);
 	return 1;
 }
 
