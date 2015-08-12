@@ -101,13 +101,13 @@
 
 	function make.getmakefilename(this, searchprjs)
 		local count = 0
-		for sln in p.global.eachWorkspace() do
-			if sln.location == this.location then
+		for wks in p.global.eachWorkspace() do
+			if wks.location == this.location then
 				count = count + 1
 			end
 
 			if searchprjs then
-				for _, prj in ipairs(sln.projects) do
+				for _, prj in ipairs(wks.projects) do
 					if prj.location == this.location then
 						count = count + 1
 					end
