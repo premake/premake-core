@@ -8,7 +8,6 @@
 	local vstudio = premake.vstudio
 
 	local p = premake
-	local solution = p.solution
 	local project = p.project
 	local config = p.config
 
@@ -515,7 +514,7 @@
 		local hasnative = false
 		local hasnet = false
 		local slnarch
-		for prj in solution.eachproject(cfg.solution) do
+		for prj in p.workspace.eachproject(cfg.workspace) do
 			if project.isnative(prj) then
 				hasnative = true
 			elseif project.isdotnet(prj) then
@@ -569,7 +568,7 @@
 		-- if the platform identifier matches a known system or architecture,
 		--
 
-		for prj in solution.eachproject(cfg.solution) do
+		for prj in p.workspace.eachproject(cfg.workspace) do
 			if project.isnative(prj) then
 				hasnative = true
 			elseif project.isdotnet(prj) then

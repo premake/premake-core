@@ -94,7 +94,7 @@
 			dotnet = { "msnet" },
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
 		onWorkspace = vstudio.vs2005.generateSolution,
 		onProject   = vstudio.vs2005.generateProject,

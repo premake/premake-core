@@ -1443,12 +1443,12 @@
 		local deps = project.getdependencies(prj)
 		if #deps > 0 then
 			-- This is a little odd: Visual Studio wants the "relative path to project"
-			-- to be relative to the *solution*, rather than the project doing the
+			-- to be relative to the *workspace*, rather than the project doing the
 			-- referencing. Which, in theory, would break if the project is included
-			-- in more than one solution. But that's how they do it.
+			-- in more than one workspace. But that's how they do it.
 
 			for i, dep in ipairs(deps) do
-				local relpath = vstudio.path(prj.solution, vstudio.projectfile(dep))
+				local relpath = vstudio.path(prj.workspace, vstudio.projectfile(dep))
 
 				-- Visual Studio wants the path to start with ./ or ../
 				if not relpath:startswith(".") then

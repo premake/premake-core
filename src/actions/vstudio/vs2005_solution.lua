@@ -1,15 +1,16 @@
 --
 -- vs2005_solution.lua
 -- Generate a Visual Studio 2005-2012 solution.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
 	premake.vstudio.sln2005 = {}
-	local vstudio = premake.vstudio
-	local sln2005 = premake.vstudio.sln2005
-	local solution = premake.solution
-	local project = premake.project
-	local tree = premake.tree
+
+	local p = premake
+	local vstudio = p.vstudio
+	local sln2005 = p.vstudio.sln2005
+	local project = p.project
+	local tree = p.tree
 
 
 --
@@ -70,7 +71,7 @@
 	function sln2005.reorderProjects(sln)
 		if sln.startproject then
 			local np
-			local tr = solution.grouptree(sln)
+			local tr = p.workspace.grouptree(sln)
 			tree.traverse(tr, {
 				onleaf = function(n)
 					if n.project.name == sln.startproject then
@@ -95,14 +96,14 @@
 --
 
 	function sln2005.projects(sln)
-		local tr = solution.grouptree(sln)
+		local tr = p.workspace.grouptree(sln)
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
 
 				-- Build a relative path from the solution file to the project file
 				local prjpath = vstudio.projectfile(prj)
-				prjpath = vstudio.path(prj.solution, prjpath)
+				prjpath = vstudio.path(prj.workspace, prjpath)
 
 				-- Unlike projects, solutions must use old-school %...% DOS style
 				-- for environment variables.
@@ -146,7 +147,7 @@
 		local descriptors = {}
 		local sorted = {}
 
-		for cfg in solution.eachconfig(sln) do
+		for cfg in p.workspace.eachconfig(sln) do
 
 			-- Create a Visual Studio solution descriptor (i.e. Debug|Win32) for
 			-- this solution configuration. I need to use it in a few different places
@@ -193,7 +194,7 @@
 
 		_p(1,"GlobalSection(ProjectConfigurationPlatforms) = postSolution")
 
-		local tr = solution.grouptree(sln)
+		local tr = p.workspace.grouptree(sln)
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
@@ -253,7 +254,7 @@
 --
 
 	function sln2005.NestedProjects(sln)
-		local tr = solution.grouptree(sln)
+		local tr = p.workspace.grouptree(sln)
 		if tree.hasbranches(tr) then
 			_p(1,'GlobalSection(NestedProjects) = preSolution')
 			tree.traverse(tr, {
@@ -281,7 +282,7 @@
 
 
 --
--- Write out all of the solution sections.
+-- Write out all of the workspace sections.
 --
 
 	function sln2005.sections(sln)

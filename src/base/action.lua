@@ -85,7 +85,7 @@
 				onWorkspace(wks)
 			end
 
-			for prj in p.solution.eachproject(wks) do
+			for prj in p.workspace.eachproject(wks) do
 				local onProject = a.onProject or a.onproject
 				if onProject and not prj.external then
 					onProject(prj)

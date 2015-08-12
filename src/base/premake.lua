@@ -1,15 +1,10 @@
 --
 -- premake.lua
 -- High-level helper functions for the project exporters.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
-
-	local solution = p.solution
-	local project = p.project
-	local config = p.config
-	local field = p.field
 
 
 
@@ -140,14 +135,14 @@
 
 --
 -- Open a file for output, and call a function to actually do the writing.
--- Used by the actions to generate solution and project files.
+-- Used by the actions to generate workspace and project files.
 --
 -- @param obj
---    A solution or project object; will be passed to the callback function.
+--    A workspace or project object; will be passed to the callback function.
 -- @param ext
 --    An optional extension for the generated file, with the leading dot.
 -- @param callback
---    The function responsible for writing the file, should take a solution
+--    The function responsible for writing the file, should take a workspace
 --    or project as a parameters.
 --
 
@@ -171,7 +166,7 @@
 
 ---
 -- Returns the full path a file generated from any of the project
--- objects (project, solution, rule).
+-- objects (project, workspace, rule).
 --
 -- @param obj
 --    The project object being generated.

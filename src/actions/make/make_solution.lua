@@ -1,17 +1,17 @@
 --
--- make_solution.lua
--- Generate a solution-level makefile.
--- Copyright (c) 2002-2012 Jason Perkins and the Premake project
+-- make_workspace.lua
+-- Generate a workspace-level makefile.
+-- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
-	local make = premake.make
-	local solution = premake.solution
-	local tree = premake.tree
-	local project = premake.project
+	local p = premake
+	local make = p.make
+	local tree = p.tree
+	local project = p.project
 
 
 --
--- Generate a GNU make "solution" makefile, with support for the new platforms API.
+-- Generate a GNU make "workspace" makefile, with support for the new platforms API.
 --
 
 	function make.generate_solution(sln)
@@ -32,14 +32,14 @@
 
 
 --
--- Write out the solution's configuration map, which maps solution
+-- Write out the workspace's configuration map, which maps workspace
 -- level configurations to the project level equivalents.
 --
 
 	function make.configmap(sln)
-		for cfg in solution.eachconfig(sln) do
+		for cfg in p.workspace.eachconfig(sln) do
 			_p('ifeq ($(config),%s)', cfg.shortname)
-			for prj in solution.eachproject(sln) do
+			for prj in p.workspace.eachproject(sln) do
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 				if prjcfg then
 					_p('  %s_config = %s', make.tovar(prj.name), prjcfg.shortname)
@@ -57,7 +57,7 @@
 
 	function make.cleanrules(sln)
 		_p('clean:')
-		for prj in solution.eachproject(sln) do
+		for prj in p.workspace.eachproject(sln) do
 			local prjpath = premake.filename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(sln.location, prjpath))
 			local prjname = path.getname(prjpath)
@@ -77,7 +77,7 @@
 		_p(1,'@echo ""')
 		_p(1,'@echo "CONFIGURATIONS:"')
 
-		for cfg in solution.eachconfig(sln) do
+		for cfg in p.workspace.eachconfig(sln) do
 			_x(1, '@echo "  %s"', cfg.shortname)
 		end
 
@@ -87,7 +87,7 @@
 		_p(1,'@echo "   all (default)"')
 		_p(1,'@echo "   clean"')
 
-		for prj in solution.eachproject(sln) do
+		for prj in p.workspace.eachproject(sln) do
 			_p(1,'@echo "   %s"', prj.name)
 		end
 
@@ -97,7 +97,7 @@
 
 
 --
--- Write out the list of projects that comprise the solution.
+-- Write out the list of projects that comprise the workspace.
 --
 
 	function make.projects(sln)
@@ -106,12 +106,12 @@
 	end
 
 --
--- Write out the solution PHONY rule
+-- Write out the workspace PHONY rule
 --
 
 	function make.solutionPhonyRule(sln)
 		local groups = {}
-		local tr = solution.grouptree(sln)
+		local tr = p.workspace.grouptree(sln)
 		tree.traverse(tr, {
 			onbranch = function(n)
 				table.insert(groups, n.path)
@@ -128,8 +128,8 @@
 -- Write out the phony rules representing project groups
 --
 	function make.groupRules(sln)
-		-- Transform solution groups into target aggregate
-		local tr = solution.grouptree(sln)
+		-- Transform workspace groups into target aggregate
+		local tr = p.workspace.grouptree(sln)
 		tree.traverse(tr, {
 			onbranch = function(n)
 				local rule = n.path .. ":"
@@ -160,11 +160,11 @@
 	end
 
 --
--- Write out the rules to build each of the solution's projects.
+-- Write out the rules to build each of the workspace's projects.
 --
 
 	function make.projectrules(sln)
-		for prj in solution.eachproject(sln) do
+		for prj in p.workspace.eachproject(sln) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
 			_p('%s:%s', premake.esc(prj.name), make.list(deps))
