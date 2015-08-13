@@ -122,8 +122,6 @@
 		end
 	end
 
-
-	include("_preload.lua")
 	include("monodevelop_cproj.lua")
 
 	return m
