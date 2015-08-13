@@ -15,12 +15,12 @@
 -- Register a command-line action for Visual Studio 2006.
 ---
 
-	function vs2005.generateSolution(sln)
+	function vs2005.generateSolution(wks)
 		p.indent("\t")
 		p.eol("\r\n")
 		p.escaper(vs2005.esc)
 
-		premake.generate(sln, ".sln", vstudio.sln2005.generate)
+		premake.generate(wks, ".sln", vstudio.sln2005.generate)
 	end
 
 
@@ -94,7 +94,7 @@
 			dotnet = { "msnet" },
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
 		onWorkspace = vstudio.vs2005.generateSolution,
 		onProject   = vstudio.vs2005.generateProject,

@@ -79,13 +79,13 @@
 			a.onStart()
 		end
 
-		for sln in p.global.eachSolution() do
-			local onSolution = a.onWorkspace or a.onSolution or a.onsolution
-			if onSolution and not sln.external then
-				onSolution(sln)
+		for wks in p.global.eachWorkspace() do
+			local onWorkspace = a.onWorkspace or a.onSolution or a.onsolution
+			if onWorkspace and not wks.external then
+				onWorkspace(wks)
 			end
 
-			for prj in p.solution.eachproject(sln) do
+			for prj in p.workspace.eachproject(wks) do
 				local onProject = a.onProject or a.onproject
 				if onProject and not prj.external then
 					onProject(prj)

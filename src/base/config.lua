@@ -250,9 +250,9 @@
 			local item
 
 			-- Sort the links into "sibling" (is another project in this same
-			-- solution) and "system" (is not part of this solution) libraries.
+			-- workspace) and "system" (is not part of this workspace) libraries.
 
-			local prj = premake.solution.findproject(cfg.solution, link)
+			local prj = p.workspace.findproject(cfg.workspace, link)
 			if prj and kind ~= "system" then
 
 				-- Sibling; is there a matching configuration in this project that

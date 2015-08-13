@@ -212,7 +212,7 @@
 --    The name of the class to be checked against. If the container
 --    class matches this scope (i.e. class is a project and the
 --    scope is "project"), or if it is a parent object of it (i.e.
---    class is a solution and scope is "project"), then returns
+--    class is a workspace and scope is "project"), then returns
 --    true.
 ---
 
