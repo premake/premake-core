@@ -106,6 +106,9 @@
 
 		child.parent = self
 		child[self.class.name] = self
+		if self.class.alias then
+			child[self.class.alias] = self
+		end
 	end
 
 
@@ -188,7 +191,7 @@
 			end
 		end
 
-		if class.name == scope then
+		if class.name == scope or class.alias == scope then
 			return true
 		end
 
@@ -218,7 +221,7 @@
 
 	function container.classIsA(class, scope)
 		while class do
-			if class.name == scope then
+			if class.name == scope or class.alias == scope then
 				return true
 			end
 			class = class.parent
