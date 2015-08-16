@@ -17,6 +17,16 @@
 	end
 
 
+-- Adds optional user scripts
+
+	do
+		local chunk, err = loadfile("_embedded_user_modules.lua")
+		if chunk then
+			modules = table.join(modules, chunk())
+		end
+	end
+
+
 -- Create namespaces for myself
 
 	local p = premake

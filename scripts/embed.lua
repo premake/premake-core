@@ -111,6 +111,17 @@
 		end
 	end
 
+-- Try to look for _user_modules.lua files in the _MAIN_SCRIPT_DIR folder
+-- and it subfolders. If we find at least one, add the _embedded_user_modules.lua
+-- entry.
+
+	local userModuleFiles = {}
+	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "**/_user_modules.lua")))
+	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "_user_modules.lua")))
+	if #userModuleFiles > 0 then
+		table.insert(result, '\t"src/_embedded_user_modules.lua",')
+	end
+
 	table.insert(result, '\t"src/_premake_main.lua",')
 	table.insert(result, '\t"src/_manifest.lua",')
 	table.insert(result, '\t"src/_modules.lua",')
@@ -134,6 +145,16 @@
 			local scr = loadScript(filename)
 			appendScript(result, scr)
 		end
+	end
+
+-- Write he user modules.
+
+	if #userModuleFiles > 0 then
+		local userModules = {}
+		for _, userModuleFile in ipairs(userModuleFiles) do
+			userModules = table.join(userModules, dofile(userModuleFile))
+		end
+		appendScript(result, "return {" .. table.implode(userModules, "\\\"", "\\\"", ",\\n") .. "}")
 	end
 
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_premake_main.lua")))
