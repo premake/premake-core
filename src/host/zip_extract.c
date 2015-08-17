@@ -155,6 +155,8 @@ static int extract(const char* src, const char* destination)
 		full_name = zip_get_name(z_archive, i, 0);
 
 		sprintf(appended_full_name, "%s/%s", destination, full_name);
+		do_translate(appended_full_name, '/');
+
 		parse_path(appended_full_name, filename, directory);
 		do_mkdir(directory);
 
@@ -179,7 +181,7 @@ static int extract(const char* src, const char* destination)
 				fp = fopen(appended_full_name, "wb");
 				if (fp == NULL)
 				{
-					printf("Error reading file:\n  %s\n", appended_full_name);
+					printf("Error creating file:\n  %s\n", appended_full_name);
 					return -1;
 				}
 				for(;;)
