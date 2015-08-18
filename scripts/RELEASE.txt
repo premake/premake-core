@@ -18,6 +18,8 @@ RELEASE
 
  * On each platform, run `premake5 package <release branch name> binary`
 
+ * Merge working branch to release and tag
+
  * Create new release on GitHub from CHANGES.txt; upload files
 
  * Update the download page on github.io
@@ -31,8 +33,6 @@ RELEASE
 
 
 CYCLE
-
- * Merge working branch to release and tag
 
  * Update to new dev version in src/host/premake.c and commit
 
