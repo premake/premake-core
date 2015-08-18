@@ -66,8 +66,6 @@
 		-- TODO..
 	end
 
-
-	include("_preload.lua")
 	include("codelite_workspace.lua")
 	include("codelite_project.lua")
 
