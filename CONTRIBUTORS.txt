@@ -20,9 +20,19 @@ Patch contributors:
   Bastien Brunnenstein <bastien.brunnenstein@ubisoft.com>
     * support wildcards in path tokens
   Damien Courtois <https://github.com/dcourtois>
+    * module loading fixes
     * bug fixes
   Gabi Davar <gabi.davar@discretix.com>
     * Added file.directory to token environment
+  João Matos (joao@tritao.eu)
+    * HTTP download support
+    * C# / C++/CLI language support improvements and bugfixes
+    * Visual Studio and Make improvements and bugfixes
+    * Response files support for Make backend
+  leeonix <real-like@yeah.net>
+    * Bug fixes
+  Lusito <core@roughael.net>
+    * path.join() fixes
   João Matos (joao@tritao.eu)
     * HTTP download support
     * C# / C++/CLI language support improvements and bugfixes

@@ -272,8 +272,8 @@
 
 
 	function test.getsolution(sln)
-		premake.oven.bake()
-		return premake.global.getSolution(sln.name)
+		p.oven.bake()
+		return p.global.getWorkspace(sln.name)
 	end
 
 

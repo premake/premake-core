@@ -5,7 +5,7 @@
 ---
 
 	local p = premake
-	p.group = p.api.container("group", p.solution)
+	p.group = p.api.container("group", p.workspace)
 	local group = p.group
 
 

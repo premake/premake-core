@@ -1,6 +1,6 @@
 --
 -- api.lua
--- Implementation of the solution, project, and configuration APIs.
+-- Implementation of the workspace, project, and configuration APIs.
 -- Author Jason Perkins
 -- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
@@ -15,7 +15,7 @@
 
 ---
 -- Set up a place to store the current active objects in each configuration
--- scope (e.g. solutions, projects, groups, and configurations). This likely
+-- scope (e.g. wprkspaces, projects, groups, and configurations). This likely
 -- ought to be internal scope, but it is useful for testing.
 ---
 
@@ -27,15 +27,15 @@
 -- Define a new class of configuration container. A container can receive and
 -- store configuration blocks, which are what hold the individial settings
 -- from the scripts. A container can also hold one or more kinds of child
--- containers; a solution can contain projects, for instance.
+-- containers; a workspace can contain projects, for instance.
 --
 -- @param containerName
---    The name of the new container type, e.g. "solution". Used to define a
---    corresponding global function, e.g. solution() to create new instances
+--    The name of the new container type, e.g. "workspace". Used to define a
+--    corresponding global function, e.g. workspace() to create new instances
 --    of the container.
 -- @param parentContainer (optional)
 --    The container that can contain this one. For a project, this would be
---    the solution container class.
+--    the workspace container class.
 -- @param extraScopes (optional)
 --    Each container can hold fields scoped to itself (by putting the container's
 --    class name into its scope attribute), or any of the container's children.
@@ -112,12 +112,12 @@
 
 ---
 -- Activate a new configuration container, making it the target for all
--- subsequent configuration settings. When you call solution() or project()
+-- subsequent configuration settings. When you call workspace() or project()
 -- to active a container, that call comes here (see api.container() for the
 -- details on how that happens).
 --
 -- @param class
---    The container class being activated, e.g. a project or solution.
+--    The container class being activated, e.g. a project or workspace.
 -- @param name
 --    The name of the container instance to be activated. If a container
 --    (e.g. project) with this name does not already exist it will be
@@ -211,8 +211,8 @@
 --
 --   The available field scopes are:
 --
---     project  The field applies to solutions and projects.
---     config   The field applies to solutions, projects, and individual build
+--     project  The field applies to workspaces and projects.
+--     config   The field applies to workspaces, projects, and individual build
 --              configurations.
 --
 --   The available field kinds are:
