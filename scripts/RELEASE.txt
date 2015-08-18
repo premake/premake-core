@@ -3,24 +3,20 @@ PREMAKE RELEASE CHECKLIST
 
 PREP
 
- * Make sure CHANGES.txt and CONTRIBUTORS.txt is up to date
-
  * Create working branch for release prep
+
+ * Update CHANGES.txt and CONTRIBUTORS.txt
 
  * Update version in src/host/premake.c and commit
 
- * Make sure branch passes all tests on all platforms
-
- * Prep release announcement for forums
+ * Prep release announcement for forums from change log
 
 
 RELEASE
 
- * Merge working branch with release branch
+ * Run `premake5 package <release branch name> source` (from Posix ideally)
 
- * Run `premake5 package release source` (from Posix ideally)
-
- * On each platform, run `premake5 package release binary`
+ * On each platform, run `premake5 package <release branch name> binary`
 
  * Create new release on GitHub from CHANGES.txt; upload files
 
@@ -36,8 +32,10 @@ RELEASE
 
 CYCLE
 
- * Update version in src/host/premake.c and commit
+ * Merge working branch to release and tag
 
- * Merge working branch to development branch
+ * Update to new dev version in src/host/premake.c and commit
+
+ * Merge working branch to master
 
  * Close working branch
