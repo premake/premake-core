@@ -48,7 +48,7 @@ int path_translate(lua_State* L)
 			lua_pop(L, 1);
 
 			lua_pushstring(L, buffer);
-            lua_rawseti(L, -3, ++i);
+			lua_rawseti(L, -3, ++i);
 		}
 		return 1;
 	}

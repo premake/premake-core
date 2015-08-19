@@ -70,15 +70,15 @@ int path_normalize(lua_State* L)
 	}
 
 	/* remove any trailing slashes */
-    for (--src; src > buffer && *src == '/'; --src) {
-         *src = '\0';
-    }
+	for (--src; src > buffer && *src == '/'; --src) {
+		 *src = '\0';
+	}
 
-    /* remove any leading "./" sequences */
-    src = buffer;
-    while (strncmp(src, "./", 2) == 0) {
-    	src += 2;
-    }
+	/* remove any leading "./" sequences */
+	src = buffer;
+	while (strncmp(src, "./", 2) == 0) {
+		src += 2;
+	}
 
 	*dst = '\0';
 	lua_pushstring(L, src);
