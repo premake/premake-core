@@ -1,7 +1,7 @@
 --
 -- tests/solution/test_location.lua
 -- Test handling of the solution's location field.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2015 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("solution_location")
@@ -18,7 +18,7 @@
 	end
 
 	local function prepare()
-		sln = premake.oven.bakeSolution(sln)
+		sln = test.getsolution(sln)
 	end
 
 

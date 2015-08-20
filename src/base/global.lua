@@ -1,7 +1,7 @@
 ---
 -- global.lua
--- The global container holds solutions and rules.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- The global container holds workspaces and rules.
+-- Copyright (c) 2014-2015 Jason Perkins and the Premake project
 ---
 
 	local p = premake
@@ -34,16 +34,18 @@
 
 
 ---
--- Iterate over the collection of solutions in a session.
+-- Iterate over the collection of workspaces in a session.
 --
 -- @returns
---    An iterator function.
+--    A workspace iterator function.
 ---
 
-	function global.eachSolution()
+	function global.eachWorkspace()
 		local root = p.api.rootContainer()
-		return p.container.eachChild(root, p.solution)
+		return p.container.eachChild(root, p.workspace)
 	end
+
+	p.alias(global, "eachWorkspace", "eachSolution")
 
 
 
@@ -90,15 +92,17 @@
 
 
 ---
--- Retrieve a solution by name or index.
+-- Retrieve a workspace by name or index.
 --
 -- @param key
---    The solution key, either a string name or integer index.
+--    The workspace key, either a string name or integer index.
 -- @returns
---    The solution with the provided key.
+--    The workspace with the provided key.
 ---
 
-	function global.getSolution(key)
+	function global.getWorkspace(key)
 		local root = p.api.rootContainer()
 		return root.solutions[key]
 	end
+
+	p.alias(global, "getWorkspace", "getSolution")

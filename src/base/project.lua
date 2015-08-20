@@ -6,7 +6,7 @@
 ---
 
 	local p = premake
-	p.project = p.api.container("project", p.solution, { "config" })
+	p.project = p.api.container("project", p.workspace, { "config" })
 
 	local project = p.project
 	local tree = p.tree
@@ -44,7 +44,7 @@
 --
 -- Returns an iterator function for the configuration objects contained by
 -- the project. Each configuration corresponds to a build configuration/
--- platform pair (i.e. "Debug|x86") as specified in the solution.
+-- platform pair (i.e. "Debug|x86") as specified in the workspace.
 --
 -- @param prj
 --    The project object to query.
@@ -56,7 +56,7 @@
 		local configs = prj._cfglist
 		local count = #configs
 
-		-- Once the configurations are mapped into the solution I could get
+		-- Once the configurations are mapped into the workspace I could get
 		-- the same one multiple times. Make sure that doesn't happen.
 		local seen = {}
 
@@ -152,9 +152,9 @@
 
 ---
 -- Returns a list of sibling projects on which the specified project depends.
--- This is used to list dependencies within a solution or workspace. Must
--- consider all configurations because Visual Studio does not support per-config
--- project dependencies.
+-- This is used to list dependencies within a workspace. Must consider all
+-- configurations because Visual Studio does not support per-config project
+-- dependencies.
 --
 -- @param prj
 --    The project to query.
@@ -169,7 +169,7 @@
 		if not prj.dependencies then
 			local result = {}
 			local function add_to_project_list(cfg, depproj, result)
-				local dep = premake.solution.findproject(cfg.solution, depproj)
+				local dep = p.workspace.findproject(cfg.workspace, depproj)
 					if dep and not table.contains(result, dep) then
 						table.insert(result, dep)
 					end

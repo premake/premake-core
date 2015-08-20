@@ -87,7 +87,7 @@
 
 			local toolset = premake.tools[cfg.toolset or "gcc"]
 			if not toolset then
-				error("Invalid toolset '" + cfg.toolset + "'")
+				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)

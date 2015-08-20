@@ -270,8 +270,8 @@
 
 	function m.postBake()
 		local function shouldLoad(func)
-			for sln in p.global.eachSolution() do
-				for prj in p.solution.eachproject(sln) do
+			for wks in p.global.eachWorkspace() do
+				for prj in p.workspace.eachproject(wks) do
 					for cfg in p.project.eachconfig(prj) do
 						if func(cfg) then
 							return true

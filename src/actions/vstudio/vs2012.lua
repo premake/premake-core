@@ -35,7 +35,7 @@
 			dotnet = { "msnet" },
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
 		onWorkspace = function(wks)
 			vstudio.vs2005.generateSolution(wks)

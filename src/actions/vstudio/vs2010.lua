@@ -21,6 +21,7 @@
 		["cfg.objdir"] = "$(IntDir)",
 		["prj.location"] = "$(ProjectDir)",
 		["sln.location"] = "$(SolutionDir)",
+		["wks.location"] = "$(SolutionDir)",
 		["cfg.buildtarget.directory"] = "$(TargetDir)",
 		["cfg.buildtarget.name"] = "$(TargetFileName)",
 		["cfg.buildtarget.basename"] = "$(TargetName)",
@@ -119,7 +120,7 @@
 			dotnet = { "msnet" },
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
 		onWorkspace = function(wks)
 			vstudio.vs2005.generateSolution(wks)

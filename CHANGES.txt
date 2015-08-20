@@ -5,6 +5,36 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha4:
+
+* New: Rename solution() to workspace()
+* New API: customtoolnamespace() (tbasnoopy)
+* New API: debuggertype() (tbasnoopy)
+* New API: entrypoint() (Blizzard)
+* New API: exceptionhandling() and rtti() (Blizzard)
+* New API: http.get() and http.download() (Blizzard)
+* New API: inlining() (Blizzard)
+* New API: zip.extract() (Blizzard)
+* New: `require()` now accepts optional version ranges
+* New: Preloaded modules now return a "should load" test function
+* New: Added support for IDL files in VC 2010+ (rhuvendiek)
+* New: Added `file.directory` to token environment (Gabi Davar)
+* New: Solution configurations are now fully baked (Blizzard)
+* New: Enabled per-file configuration queries (Blizzard)
+* New: Added more table functions (Blizzard)
+* New: Added more values for floatingpoint()
+* Fix: Enabled link-time optimization for Clang and GCC
+* Fix: Module loader now reports script errors correctly (Tim Wharton)
+* Fix: Wrap makefile targets in quotes (leeonix)
+* Fix: Provide better default target directories (Blizzard)
+* Fix: Escape backslashes in tokens (Damien Courtois)
+* Fix: No longer generates containers marked as external
+* Fix: Re-enable validation of supported action features (Blizzard)
+* Fix: Match Visual C PDB output to target path (leeonix)
+* Fix: Remove "." and ".." when joining paths (multiple contributors)
+* Fix: Remove trailing newlines from os.outputof() (Tim Wharton)
+* Fix: Improve token handling (multiple contributors)
+
 Since 5.0-alpha2:
 
 * New: CodeLite support

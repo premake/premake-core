@@ -1,11 +1,10 @@
 --
 -- tests/actions/make/solution/test_group_rule.lua
 -- Validate generation of group rules
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	T.make_group_rule = {}
-	local suite = T.make_group_rule
+	local suite = test.declare("make_group_rule")
 	local make = premake.make
 
 
@@ -27,7 +26,7 @@
 	end
 
 	local function prepare()
-		sln = premake.oven.bakeSolution(sln)
+		sln = test.getsolution(sln)
 	end
 
 
