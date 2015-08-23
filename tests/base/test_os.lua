@@ -109,6 +109,10 @@
 		test.istrue(table.contains(result, "../.gitignore"))
 	end
 
+	function suite.matchfiles_onComboSearch()
+		local result = os.matchfiles("folder/**/*.txt")
+		test.istrue(table.contains(result, "folder/subfolder/hello.txt"))
+	end
 
 
 --
