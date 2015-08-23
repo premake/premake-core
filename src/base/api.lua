@@ -90,22 +90,11 @@
 
 
 ---
--- Return the global configuration container. You could just call global()
--- too, but this is much faster.
+-- Return the global configuration container.
 ---
 
 	function api.rootContainer()
 		return api.scope.global
-	end
-
-
-
-
-	function api._clearContainerChildren(class)
-		for childClass in p.container.eachChildClass(class) do
-			api.scope[childClass.name] = nil
-			api._clearContainerChildren(childClass)
-		end
 	end
 
 
@@ -178,10 +167,23 @@
 
 		while instance do
 			api.scope[instance.class.name] = instance
+			if instance.class.alias then
+				api.scope[instance.class.alias] = instance
+			end
 			instance = instance.parent
 		end
 
 		return api.scope.current
+	end
+
+	function api._clearContainerChildren(class)
+		for childClass in p.container.eachChildClass(class) do
+			api.scope[childClass.name] = nil
+			if childClass.alias then
+				api.scope[childClass.alias] = nil
+			end
+			api._clearContainerChildren(childClass)
+		end
 	end
 
 
@@ -655,9 +657,9 @@
 ---
 
 	function api.reset()
-		-- Clear out all top level objects, but keep the root config
-		api.scope.global.rules = {}
-		api.scope.global.solutions = {}
+		for containerClass in p.container.eachChildClass(p.global) do
+			api.scope.global[containerClass.pluralName] = {}
+		end
 	end
 
 

@@ -118,7 +118,7 @@
 
 
 	function p.project.bake(self)
-		self.workspace = self.solution
+		self.solution = self.workspace
 		local wks = self.workspace
 
 		-- Add filtering terms to the context to make it as specific as I can.

@@ -102,7 +102,7 @@
 
 	function global.getWorkspace(key)
 		local root = p.api.rootContainer()
-		return root.solutions[key]
+		return root.workspaces[key]
 	end
 
 	p.alias(global, "getWorkspace", "getSolution")
