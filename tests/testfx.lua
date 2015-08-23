@@ -310,6 +310,12 @@
 	local function stub_print(s)
 	end
 
+	local function stub_os_writefile_ifnotequal(content, fname)
+		test.value_openedfilename = fname;
+		test.value_closedfile = true
+		return 0;
+	end
+
 
 --
 -- Define a collection for the test suites
@@ -431,6 +437,7 @@
 		print = stub_print
 		io.open = stub_io_open
 		io.output = stub_io_output
+		os.writefile_ifnotequal = stub_os_writefile_ifnotequal
 
 		local numpassed = 0
 		local numfailed = 0
