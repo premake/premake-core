@@ -58,7 +58,7 @@
 			local contents = p.capture(function()
 				p.callArray(m.elements.workspaceFileRef, prj)
 			end)
-			p.out(contents .. ">")
+			p.outln(contents .. ">")
 			p.pop('</FileRef>')
 		end
 	end
