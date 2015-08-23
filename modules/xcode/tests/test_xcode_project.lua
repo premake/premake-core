@@ -1079,7 +1079,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		[MyProject:Debug] /* Debug 32-bit Universal */ = {
+		[MyProject:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1089,7 +1089,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = MyProject;
 			};
-			name = "Debug 32-bit Universal";
+			name = Debug;
 		};
 		]]
 	end
@@ -1883,7 +1883,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		[MyProject:Debug(2)] /* Debug 32-bit Universal */ = {
+		[MyProject:Debug(2)] /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -1898,7 +1898,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				SYMROOT = bin/Universal32/Debug;
 			};
-			name = "Debug 32-bit Universal";
+			name = Debug;
 		};
 		]]
 	end
@@ -1975,24 +1975,24 @@
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				[MyProject:Debug(2)] /* Debug 32-bit Universal */,
-				[MyProject:Debug(4)] /* Debug 64-bit Universal */,
-				[MyProject:Release(2)] /* Release 32-bit Universal */,
-				[MyProject:Release(4)] /* Release 64-bit Universal */,
+				[MyProject:Debug(2)] /* Debug */,
+				[MyProject:Debug(4)] /* Debug */,
+				[MyProject:Release(2)] /* Release */,
+				[MyProject:Release(4)] /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug 32-bit Universal";
+			defaultConfigurationName = Debug;
 		};
 		[MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				[MyProject:Debug] /* Debug 32-bit Universal */,
-				[MyProject:Debug(3)] /* Debug 64-bit Universal */,
-				[MyProject:Release] /* Release 32-bit Universal */,
-				[MyProject:Release(3)] /* Release 64-bit Universal */,
+				[MyProject:Debug] /* Debug */,
+				[MyProject:Debug(3)] /* Debug */,
+				[MyProject:Release] /* Release */,
+				[MyProject:Release(3)] /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug 32-bit Universal";
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 		]]

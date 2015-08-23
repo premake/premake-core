@@ -54,18 +54,6 @@
 		onProject = function(prj)
 			p.generate(prj, ".xcodeproj/project.pbxproj", p.modules.xcode.generateProject)
 		end,
-
-
-		-- For backward compatibility; needs to be phased out
-		valid_platforms =
-		{
-			Native = "Native",
-			x86 = "Native 32-bit",
-			x86_64 = "Native 64-bit",
-			Universal32 = "32-bit Universal",
-			Universal64 = "64-bit Universal",
-			Universal = "Universal",
-		},
 	}
 
 
