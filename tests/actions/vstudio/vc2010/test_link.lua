@@ -165,6 +165,40 @@
 
 
 --
+-- Any system libraries specified in links() with valid extensions should
+-- be listed with those extensions.
+--
+
+	function suite.additionalDependencies_onSystemLinksExtensions()
+		links { "lua.obj", "zlib.lib" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>lua.obj;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+
+--
+-- Any system libraries specified in links() with multiple dots should
+-- only have .lib appended to the end when no valid extension is found
+--
+
+	function suite.additionalDependencies_onSystemLinksExtensionsMultipleDots()
+		links { "lua.5.3.lib", "lua.5.4" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+
+--
 -- Additional library directories should be specified, relative to the project.
 --
 

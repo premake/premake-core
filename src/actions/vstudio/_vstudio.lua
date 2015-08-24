@@ -340,7 +340,13 @@
 		-- Then the system libraries, which come undecorated
 		local system = config.getlinks(cfg, "system", "fullpath")
 		for i = 1, #system do
-			table.insert(links, path.appendextension(system[i], ".lib"))
+			-- Add extension if required
+			local link = system[i]
+			if not p.tools.msc.getLibraryExtensions()[link:match("[^.]+$")] then
+				link = path.appendextension(link, ".lib")
+			end
+
+			table.insert(links, link)
 		end
 
 		return links
