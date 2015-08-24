@@ -401,7 +401,11 @@
 		end
 		if #cfg.buildoptions > 0 then
 			local buildOpts = table.concat(cfg.buildoptions, " ")
-			options = iif(options, options .. " " .. buildOpts, buildOpts)
+			if options then
+				options = options .. " " .. buildOpts
+			else
+				options = buildOpts
+			end
 		end
 
 		if options then
