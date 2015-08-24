@@ -880,7 +880,7 @@
 
 	api.register {
 		name = "startproject",
-		scope = "solution",
+		scope = "workspace",
 		kind = "string",
 		tokens = true,
 	}
@@ -976,11 +976,11 @@
 		end,
 	}
 
-  api.register {
-    name = "customtoolnamespace",
-    scope = "config",
-    kind = "string",
-  }
+	api.register {
+		name = "customtoolnamespace",
+		scope = "config",
+		kind = "string",
+	}
 
 	api.register {
 		name = "undefines",

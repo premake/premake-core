@@ -11,10 +11,10 @@
 
 
 ---
--- Begin the switch from solution() to workspace().
+-- Switch this container's name from "solution" to "workspace"
 --
--- We changed "solution" to "workspace" on 30 Jul 2015. While it might be
--- nice to leave `solution()` around for VS folks and everyone used to the
+-- We changed these names on 30 Jul 2015. While it might be nice to leave
+-- `solution()` around for Visual Studio folks and everyone still used to the
 -- old system, it would be good to eventually deprecate and remove all of
 -- the other, more internal uses of "solution" and "sln". Probably including
 -- all uses of container class aliases, since we probably aren't going to

@@ -31,7 +31,7 @@
 
 		onWorkspace = function(wks)
 			premake.escaper(make.esc)
-			premake.generate(wks, make.getmakefilename(wks, false), make.generate_solution)
+			premake.generate(wks, make.getmakefilename(wks, false), make.generate_workspace)
 		end,
 
 		onProject = function(prj)
