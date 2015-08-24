@@ -57,17 +57,6 @@
 
 
 --
--- Element should only be written if C++ files are present.
---
-
-	function suite.empty_onNoRelevantSources()
-		removefiles "hello.cpp"
-		prepare()
-		test.isemptycapture()
-	end
-
-
---
 -- Check for overrides from project scripts.
 --
 

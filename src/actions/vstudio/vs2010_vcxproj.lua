@@ -143,6 +143,7 @@
 		if cfg.kind == p.UTILITY then
 			return {
 				m.configurationType,
+				m.platformToolset,
 			}
 		else
 			return {
@@ -1515,12 +1516,15 @@
 			version = action.vstudio.platformToolset
 		end
 		if version then
-			-- should only be written if there is a C/C++ file in the config
-			for i = 1, #cfg.files do
-				if path.iscppfile(cfg.files[i]) then
-					m.element("PlatformToolset", nil, version)
-					break
+			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
+				for i = 1, #cfg.files do
+					if path.iscppfile(cfg.files[i]) then
+						m.element("PlatformToolset", nil, version)
+						break
+					end
 				end
+			else
+				m.element("PlatformToolset", nil, version)
 			end
 		end
 	end
