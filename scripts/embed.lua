@@ -90,6 +90,11 @@
 	local mask = path.join(_MAIN_SCRIPT_DIR, "**/_manifest.lua")
 	local manifests = os.matchfiles(mask)
 
+-- Find all of the _user_modules.lua files within the project
+
+	local userModuleFiles = {}
+	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "**/_user_modules.lua")))
+	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "_user_modules.lua")))
 
 -- Generate an index of the script file names. Script names are stored
 -- relative to the directory containing the manifest, i.e. the main
@@ -109,17 +114,6 @@
 			filename = path.getrelative(baseDir, filename)
 			table.insert(result, '\t"' .. filename .. '",')
 		end
-	end
-
--- Try to look for _user_modules.lua files in the _MAIN_SCRIPT_DIR folder
--- and it subfolders. If we find at least one, add the _embedded_user_modules.lua
--- entry.
-
-	local userModuleFiles = {}
-	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "**/_user_modules.lua")))
-	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "_user_modules.lua")))
-	if #userModuleFiles > 0 then
-		table.insert(result, '\t"src/_embedded_user_modules.lua",')
 	end
 
 	table.insert(result, '\t"src/_premake_main.lua",')
@@ -147,19 +141,16 @@
 		end
 	end
 
--- Write he user modules.
-
-	if #userModuleFiles > 0 then
-		local userModules = {}
-		for _, userModuleFile in ipairs(userModuleFiles) do
-			userModules = table.join(userModules, dofile(userModuleFile))
-		end
-		appendScript(result, "return {" .. table.implode(userModules, "\\\"", "\\\"", ",\\n") .. "}")
-	end
-
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_premake_main.lua")))
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_manifest.lua")))
-	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_modules.lua")))
+
+-- Write the list of modules
+
+	local modules = dofile("../src/_modules.lua")
+	for _, userModules in ipairs(userModuleFiles) do
+		modules = table.join(modules, dofile(userModules))
+	end
+	appendScript(result, "return {" .. table.implode(modules, "\\\"", "\\\"", ",\\n") .. "}")
 
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")
