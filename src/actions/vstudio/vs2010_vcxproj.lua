@@ -401,6 +401,7 @@
 				m.generateMapFile,
 				m.moduleDefinitionFile,
 				m.treatLinkerWarningAsErrors,
+				m.ignoreDefaultLibraries,
 				m.additionalLinkOptions,
 			}
 		end
@@ -1227,6 +1228,21 @@
 	function m.generateMapFile(cfg)
 		if cfg.flags.Maps then
 			m.element("GenerateMapFile", nil, "true")
+		end
+	end
+
+
+	function m.ignoreDefaultLibraries(cfg)
+		if #cfg.ignoredefaultlibraries > 0 then
+			local ignored = cfg.ignoredefaultlibraries
+			for i = 1, #ignored do
+				-- Add extension if required
+				if not p.tools.msc.getLibraryExtensions()[ignored[i]:match("[^.]+$")] then
+					ignored[i] = path.appendextension(ignored[i], ".lib")
+				end
+			end
+
+			m.element("IgnoreSpecificDefaultLibraries", condition, table.concat(ignored, ';'))
 		end
 	end
 

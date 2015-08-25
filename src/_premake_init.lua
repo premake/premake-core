@@ -562,6 +562,13 @@
 	}
 
 	api.register {
+		name = "ignoredefaultlibraries",
+		scope = "project",
+		kind = "list:mixed",
+		tokens = true,
+	}
+
+	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",

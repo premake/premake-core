@@ -211,6 +211,16 @@
 		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
 		table.insert(flags, 1, "/NOLOGO")
+
+		-- Ignore default libraries
+		for i, ignore in ipairs(cfg.ignoredefaultlibraries) do
+			-- Add extension if required
+			if not msc.getLibraryExtensions()[ignore:match("[^.]+$")] then
+				ignore = path.appendextension(ignore, ".lib")
+			end
+			table.insert(flags, '/NODEFAULTLIB:' .. ignore)
+		end
+
 		return flags
 	end
 
@@ -261,7 +271,6 @@
 		end
 		return links
 	end
-
 
 --
 -- Returns makefile-specific configuration rules.

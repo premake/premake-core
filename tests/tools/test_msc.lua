@@ -326,3 +326,19 @@
 		prepare()
 		test.contains('/LIBPATH:"/usr/local/lib"', msc.getLibraryDirectories(cfg))
 	end
+
+--
+-- Check handling of ignore default libraries
+--
+
+	function suite.ignoreDefaultLibraries_WithExtensions()
+		ignoredefaultlibraries { "lib1.lib" }
+		prepare()
+		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
+	end
+
+	function suite.ignoreDefaultLibraries_WithoutExtensions()
+		ignoredefaultlibraries { "lib1" }
+		prepare()
+		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
+	end

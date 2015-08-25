@@ -460,3 +460,37 @@
 </Link>
 		]]
 	end
+
+--
+-- Test ignoring default libraries with extensions specified.
+--
+
+	function suite.ignoreDefaultLibraries_WithExtensions()
+		ignoredefaultlibraries { "lib1.lib", "lib2.obj" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
+</Link>
+		]]
+	end
+
+--
+-- Test ignoring default libraries without extensions specified.
+--
+
+	function suite.ignoreDefaultLibraries_WithExtensions()
+		ignoredefaultlibraries { "lib1", "lib2.obj" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
+</Link>
+		]]
+	end
