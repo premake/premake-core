@@ -1,4 +1,4 @@
-Premake extension to support the [MonoDevelop](http://www.monodevelop.com)/[Xamaron Studio](http://xamarin.com/studio) IDE
+Premake extension to support the [MonoDevelop](http://www.monodevelop.com)/[Xamarin Studio](http://xamarin.com/studio) IDE
 
 ### Features ###
 
