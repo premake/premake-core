@@ -310,6 +310,9 @@
 	local function stub_print(s)
 	end
 
+	local function stub_utf8()
+	end
+
 	local function stub_os_writefile_ifnotequal(content, fname)
 		test.value_openedfilename = fname;
 		test.value_closedfile = true
@@ -438,6 +441,7 @@
 		io.open = stub_io_open
 		io.output = stub_io_output
 		os.writefile_ifnotequal = stub_os_writefile_ifnotequal
+		premake.utf8 = stub_utf8
 
 		local numpassed = 0
 		local numfailed = 0

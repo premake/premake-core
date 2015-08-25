@@ -39,6 +39,7 @@
 		p.indent("\t")
 		p.callArray(m.elements.project, prj)
 		p.pop('</VisualStudioProject>')
+		p.w()
 	end
 
 

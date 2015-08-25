@@ -39,10 +39,10 @@
 		sln2005.header()
 		sln2005.projects(wks)
 
-		_p('Global')
+		p.push('Global')
 		sln2005.sections(wks)
-		_p('EndGlobal')
-
+		p.pop('EndGlobal')
+		p.w()
 	end
 
 

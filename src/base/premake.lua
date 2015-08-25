@@ -245,12 +245,7 @@ end
 		premake.out(_eol or "\n")
 	end
 
---
--- Output a UTF-8 signature.
---
-	function p.utf8()
-		premake.out('\239\187\191')
-	end
+
 
 ---
 -- Write a formatted string to the exported file, after decreasing the
@@ -318,10 +313,8 @@ end
 -- Output a UTF-8 BOM to the exported file.
 --
 
-	function premake.utf8()
-		if not _captured then
-			premake.out('\239\187\191')
-		end
+	function p.utf8()
+		p.out('\239\187\191')
 	end
 
 
