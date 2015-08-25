@@ -184,9 +184,6 @@
 --    The project object being generated.
 -- @param ext
 --    An optional extension for the generated file, with the leading dot.
--- @param callback
---    The function responsible for writing the file; will receive the
---    project object as its only argument.
 ---
 
 function premake.filename(obj, ext)
