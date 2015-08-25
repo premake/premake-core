@@ -746,6 +746,13 @@
 	}
 
 	api.register {
+		name = "runpathdirs",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	api.register {
 		name = "runtime",
 		scope = "config",
 		kind = "string",

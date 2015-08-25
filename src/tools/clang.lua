@@ -139,6 +139,7 @@
 
 	end
 
+	clang.getrunpathdirs = gcc.getrunpathdirs
 
 --
 -- Build a list of linker flags corresponding to the settings in
