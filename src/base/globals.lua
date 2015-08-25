@@ -48,7 +48,7 @@
 	io._includedFiles = {}
 
 	function include(fname)
-		local fullPath = os.locate(fname, fname .. ".lua", path.join(fname, "premake5.lua"), path.join(fname, "premake4.lua"))
+		local fullPath = premake.findProjectScript(fname)
 		fname = fullPath or fname
 		if not io._includedFiles[fname] then
 			io._includedFiles[fname] = true
