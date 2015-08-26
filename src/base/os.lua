@@ -66,7 +66,7 @@
 	function os.findlib(libname, libdirs)
 		-- libname: library name with or without prefix and suffix
 		-- libdirs: (array or string): A set of additional search paths
-				 
+
 		local path, formats
 
 		-- assemble a search path, depending on the platform
@@ -88,7 +88,7 @@
 					local conf_file = prefix .. "/etc/ld.so.conf"
 					if os.isfile(conf_file) then
 						for _, v in ipairs(parse_ld_so_conf(conf_file)) do
-							if (#path > 0) then 
+							if (#path > 0) then
 								path = path .. ":" .. v
 							else
 								path = v
@@ -112,13 +112,13 @@
 		end
 
 		local userpath = ""
-		
+
 		if type(libdirs) == "string" then
 			userpath = libdirs
 		elseif type(libdirs) == "table" then
 			userpath = table.implode(libdirs, "", "", ":")
 		end
-	
+
 		if (#userpath > 0) then
 			if (#path > 0) then
 				path = userpath .. ":" .. path
@@ -126,7 +126,7 @@
 				path = userpath
 			end
 		end
-		
+
 		for _, fmt in ipairs(formats) do
 			local name = string.format(fmt, libname)
 			local result = os.pathsearch(name, path)
@@ -497,7 +497,15 @@
 				return "chdir " .. path.translate(v)
 			end,
 			copy = function(v)
-				return "xcopy /Q /E /Y /I " .. path.translate(v) .. " > nul"
+				v = path.translate(v)
+
+				-- Detect if there's multiple parts to the input, if there is grab the first part else grab the whole thing
+				local src = string.match(v, '^".-"') or string.match(v, '^.- ') or v
+
+				-- Strip the trailing space from the second condition so that we don't have a space between src and '\\NUL'
+				src = string.match(src, '^.*%S')
+
+				return "IF EXIST " .. src .. "\\ (xcopy /Q /E /Y /I " .. v .. " > nul) ELSE (xcopy /Q /Y /I " .. v .. " > nul)"
 			end,
 			delete = function(v)
 				return "del " .. path.translate(v)
