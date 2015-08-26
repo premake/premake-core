@@ -87,7 +87,7 @@
 		end
 
 		-- add it to the master list
-		premake.option.list[opt.trigger] = opt
+		premake.option.list[opt.trigger:lower()] = opt
 
 		-- if it has a default value, set it.
 		if opt.default and not _OPTIONS[opt.trigger] then
