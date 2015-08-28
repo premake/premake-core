@@ -12,15 +12,15 @@
 -- Setup
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		local prj = test.getproject(sln, 1)
+		local prj = test.getproject(wks, 1)
 		vc2010.generateUser(prj)
 	end
 

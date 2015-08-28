@@ -1,23 +1,24 @@
 --
 -- tests/test_premake.lua
 -- Automated test suite for the Premake support functions.
--- Copyright (c) 2008-2009 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2015 Jason Perkins and the Premake project
 --
 
 
-	T.premake = {}
-	local suite = T.premake
+	local suite = test.declare("premake")
+
+	local p = premake
 
 
 --
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		location "MyLocation"
-		prj = premake.solution.getproject(sln, 1)
+		prj = p.workspace.getproject(wks, 1)
 	end
 
 
@@ -26,11 +27,11 @@
 --
 
 	function suite.generate_OpensCorrectFile()
-		premake.generate(prj, ".prj", function () end)
+		p.generate(prj, ".prj", function () end)
 		test.openedfile(path.join(os.getcwd(), "MyLocation/MyProject.prj"))
 	end
 
 	function T.premake.generate_ClosesFile()
-		premake.generate(prj, ".prj", function () end)
+		p.generate(prj, ".prj", function () end)
 		test.closedfile(true)
 	end

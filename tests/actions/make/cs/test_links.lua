@@ -13,10 +13,10 @@
 -- Setup
 --
 
-    local sln, prj
+    local wks, prj
 
     function suite.setup()
-        sln, prj = test.createsolution()
+        wks, prj = test.createWorkspace()
     end
 
     local function prepare()
@@ -44,11 +44,11 @@
     function suite.doesListLinkDependencyFiles()
         links { "MyProject2", "MyProject3" }
 
-        test.createproject(sln)
+        test.createproject(wks)
         kind "SharedLib"
         language "C#"
 
-        test.createproject(sln)
+        test.createproject(wks)
         kind "SharedLib"
         language "C#"
 

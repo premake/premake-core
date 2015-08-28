@@ -13,16 +13,16 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		language "C#"
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.solution.getproject(wks, 1)
 		cs2005.assemblyReferences(prj)
 	end
 

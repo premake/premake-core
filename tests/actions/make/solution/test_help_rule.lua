@@ -11,15 +11,15 @@
 -- Setup/teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
-		premake.make.helprule(sln)
+		wks = test.getWorkspace(wks)
+		premake.make.helprule(wks)
 	end
 
 

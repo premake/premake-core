@@ -13,11 +13,11 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		kind "ConsoleApp"
 	end
 

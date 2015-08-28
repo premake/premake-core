@@ -15,11 +15,11 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		rule "MyRule"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		rules { "MyRule" }
 	end
 

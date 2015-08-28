@@ -13,18 +13,18 @@
 -- Setup
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		language "C++"
 		kind "ConsoleApp"
 	end
 
 	local function prepare()
-		sln2005.NestedProjects(sln)
+		sln2005.NestedProjects(wks)
 	end
 
 

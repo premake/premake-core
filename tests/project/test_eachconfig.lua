@@ -12,10 +12,10 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = solution("MySolution")
 	end
 
 	local function prepare(buildcfgs)
@@ -23,7 +23,7 @@
 		if buildcfgs then
 			configurations ( buildcfgs )
 		end
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.solution.getproject(wks, 1)
 		for cfg in premake.project.eachconfig(prj) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end

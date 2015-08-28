@@ -12,12 +12,12 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "test"
 		_OS = "windows"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 	end
 
 	local function prepare(kind, part, linkage)

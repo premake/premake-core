@@ -11,16 +11,16 @@
 -- Setup and teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		_ACTION = "test"
-		sln = solution("MySolution")
+		wks = solution("MySolution")
 		system "macosx"
 	end
 
 	local function result()
-		local platforms = sln.platforms or {}
+		local platforms = wks.platforms or {}
 		local prj = project("MyProject")
 		local cfg = test.getconfig(prj, "Debug", platforms[1])
 		return premake.project.getrelative(cfg.project, cfg.objdir)

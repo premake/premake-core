@@ -14,14 +14,14 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.workspace.getproject(wks, 1)
 		make.csSources(prj, premake.tools.dotnet)
 	end
 

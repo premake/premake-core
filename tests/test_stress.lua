@@ -15,7 +15,7 @@ profiler = newProfiler()
 profiler:start()
 
 
-solution "MySolution"
+workspace "MyWorkspace"
 	location "build"
 
 	for i = 1, numbuildcfgs do

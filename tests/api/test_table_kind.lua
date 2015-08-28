@@ -14,7 +14,7 @@
 
 	function suite.setup()
 		api.register { name = "testapi", kind = "table", scope = "project" }
-		test.createsolution()
+		test.createWorkspace()
 	end
 
 	function suite.teardown()

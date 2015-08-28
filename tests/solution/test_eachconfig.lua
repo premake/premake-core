@@ -12,14 +12,14 @@
 -- Setup and teardown
 --
 
-	local sln
+	local wks
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = solution("MySolution")
 	end
 
 	local function prepare()
 		_p(2,"-")
-		for cfg in premake.solution.eachconfig(sln) do
+		for cfg in premake.solution.eachconfig(wks) do
 			_p(2, "%s:%s", cfg.buildcfg or "", cfg.platform or "")
 		end
 		_p(2,"-")

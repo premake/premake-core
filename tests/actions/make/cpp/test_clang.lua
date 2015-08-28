@@ -14,12 +14,12 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		toolset "clang"
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.workspace.getproject(wks, 1)
 	end
 
 

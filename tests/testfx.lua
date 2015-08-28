@@ -260,8 +260,8 @@
 	p.alias(test, "createWorkspace", "createsolution")
 
 
-	function test.createproject(sln)
-		local n = #sln.projects + 1
+	function test.createproject(wks)
+		local n = #wks.projects + 1
 		if n == 1 then n = "" end
 
 		local prj = project ("MyProject" .. n)
@@ -271,22 +271,24 @@
 	end
 
 
-	function test.getsolution(sln)
+	function test.getWorkspace(wks)
 		p.oven.bake()
-		return p.global.getWorkspace(sln.name)
+		return p.global.getWorkspace(wks.name)
 	end
 
+	p.alias(test, "getWorkspace", "getsolution")
 
-	function test.getproject(sln, i)
-		sln = test.getsolution(sln)
-		return premake.solution.getproject(sln, i or 1)
+
+	function test.getproject(wks, i)
+		wks = test.getWorkspace(wks)
+		return p.workspace.getproject(wks, i or 1)
 	end
 
 
 	function test.getconfig(prj, buildcfg, platform)
-		sln = test.getsolution(prj.solution)
-		prj = premake.solution.getproject(sln, prj.name)
-		return premake.project.getconfig(prj, buildcfg, platform)
+		local wks = test.getWorkspace(prj.workspace)
+		prj = p.workspace.getproject(wks, prj.name)
+		return p.project.getconfig(prj, buildcfg, platform)
 	end
 
 

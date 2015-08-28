@@ -14,10 +14,10 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		system "Linux"
 	end
 
@@ -345,7 +345,7 @@
 	function suite.links_onStaticSiblingLibrary()
 		links { "MyProject2" }
 
-		test.createproject(sln)
+		test.createproject(wks)
 		system "Linux"
 		kind "StaticLib"
 		targetdir "lib"
@@ -362,7 +362,7 @@
 	function suite.links_onSharedSiblingLibrary()
 		links { "MyProject2" }
 
-		test.createproject(sln)
+		test.createproject(wks)
 		system "Linux"
 		kind "SharedLib"
 		targetdir "lib"
