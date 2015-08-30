@@ -221,6 +221,20 @@
 	end
 
 
+--
+-- Finds the correct premake script filename to be run.
+--
+-- @param fname
+--    The filename of the script to run.
+-- @return
+--    The correct location and filename of the script to run.
+--
+
+	function premake.findProjectScript(fname)
+		return os.locate(fname, fname .. ".lua", path.join(fname, "premake5.lua"), path.join(fname, "premake4.lua"))
+	end
+
+
 ---
 -- "Immediate If" - returns one of the two values depending on the value
 -- of the provided condition. Note that both the true and false expressions

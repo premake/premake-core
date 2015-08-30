@@ -46,3 +46,21 @@
 		include (_TESTS_DIR .. "/../tests/folder/premake5.lua")
 		test.isequal("ok", premake.captured())
 	end
+
+	function suite.includeexternal_runs()
+		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
+		test.isequal("ok", premake.captured())
+	end
+
+	function suite.includeexternal_runsAfterInclude()
+		include (_TESTS_DIR .. "/folder/premake5.lua")
+		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
+		test.isequal("okok", premake.captured())
+	end
+
+	function suite.includeexternal_runsTwiceAfterInclude()
+		include (_TESTS_DIR .. "/folder/premake5.lua")
+		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
+		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
+		test.isequal("okokok", premake.captured())
+	end

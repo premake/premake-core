@@ -76,12 +76,15 @@
 ---
 -- Register a general-purpose includeExternal() call which works just like
 -- include(), but marks any containers created while evaluating the included
--- scripts as external.
+-- scripts as external. It also, loads the file regardless of how many times
+-- it has been loaded already.
 ---
 
 	function includeexternal(fname)
+		local fullPath = premake.findProjectScript(fname)
 		api._isIncludingExternal = true
-		include(fname)
+		fname = fullPath or fname
+		dofile(fname)
 		api._isIncludingExternal = nil
 	end
 
