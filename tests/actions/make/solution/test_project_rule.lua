@@ -11,16 +11,16 @@
 -- Setup/teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
 		premake.oven.bake()
-		sln = test.getsolution(sln)
-		premake.make.projectrules(sln)
+		wks = test.getWorkspace(wks)
+		premake.make.projectrules(wks)
 	end
 
 

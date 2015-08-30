@@ -12,13 +12,13 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	local cwd = os.getcwd()
 	local oldcwd
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 
 		-- We change the directory to get nice relative paths
 		oldcwd = os.getcwd()

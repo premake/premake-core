@@ -13,14 +13,14 @@
 -- Setup/teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		make.configmap(sln)
+		make.configmap(wks)
 	end
 
 

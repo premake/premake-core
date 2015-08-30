@@ -8,7 +8,7 @@
 	local oven = premake.oven
 	local solution = premake.solution
 
-	local sln, prj
+	local wks, prj
 
 
 --
@@ -16,12 +16,12 @@
 --
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
-		prj = test.getproject(sln, 1)
+		wks = test.getsolution(wks)
+		prj = test.getproject(wks, 1)
 	end
 
 

@@ -13,10 +13,10 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		platforms "xbox360"
 	end
 

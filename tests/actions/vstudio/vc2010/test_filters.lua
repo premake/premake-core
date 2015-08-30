@@ -12,15 +12,15 @@
 -- Setup/teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare(group)
-		prj = test.getproject(sln)
+		prj = test.getproject(wks)
 		vc2010.filterGroups(prj)
 	end
 

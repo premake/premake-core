@@ -13,11 +13,11 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		kind "SharedLib"
 	end
 
@@ -221,7 +221,7 @@
 
 	function suite.excludeSiblings()
 		links { "MyProject2" }
-		test.createproject(sln)
+		test.createproject(wks)
 		kind "SharedLib"
 		prepare()
 		test.capture [[
@@ -241,7 +241,7 @@
 	function suite.includeSiblings_onNoImplicitLink()
 		flags { "NoImplicitLink" }
 		links { "MyProject2" }
-		test.createproject(sln)
+		test.createproject(wks)
 		kind "SharedLib"
 		prepare()
 		test.capture [[

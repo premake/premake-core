@@ -18,7 +18,7 @@
 			kind = "boolean",
 			scope = "project",
 		}
-		test.createsolution()
+		test.createWorkspace()
 	end
 
 	function suite.teardown()

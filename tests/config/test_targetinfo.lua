@@ -12,11 +12,11 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "test"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		system "macosx"
 	end
 

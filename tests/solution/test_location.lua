@@ -11,14 +11,14 @@
 -- Setup and teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = solution("MySolution")
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
+		wks = test.getsolution(wks)
 	end
 
 
@@ -29,7 +29,7 @@
 
 	function suite.usesScriptLocation_onNoLocation()
 		prepare()
-		test.isequal(os.getcwd(), sln.location)
+		test.isequal(os.getcwd(), wks.location)
 	end
 
 
@@ -40,5 +40,5 @@
 	function suite.usesLocation_onLocationSet()
 		location "build"
 		prepare()
-		test.isequal(path.join(os.getcwd(), "build"), sln.location)
+		test.isequal(path.join(os.getcwd(), "build"), wks.location)
 	end

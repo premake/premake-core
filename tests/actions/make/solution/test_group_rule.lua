@@ -12,21 +12,21 @@
 -- Setup/teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		group "MainGroup"
-			test.createproject(sln)
+			test.createproject(wks)
 		group "MainGroup/SubGroup1"
-			test.createproject(sln)
+			test.createproject(wks)
 		group "MainGroup/SubGroup2"
-			test.createproject(sln)
-			test.createproject(sln)
+			test.createproject(wks)
+			test.createproject(wks)
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
+		wks = test.getWorkspace(wks)
 	end
 
 
@@ -36,7 +36,7 @@
 
 	function suite.groupRule_groupAsPhony()
 		prepare()
-		make.solutionPhonyRule(sln)
+		make.workspacePhonyRule(wks)
 		test.capture [[
 .PHONY: all clean help $(PROJECTS) MainGroup MainGroup/SubGroup1 MainGroup/SubGroup2
 		]]
@@ -47,7 +47,7 @@
 --
 	function suite.groupRule_groupRules()
 		prepare()
-		make.groupRules(sln)
+		make.groupRules(wks)
 		test.capture [[
 MainGroup: MainGroup/SubGroup1 MainGroup/SubGroup2 MyProject2
 

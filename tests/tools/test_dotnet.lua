@@ -12,10 +12,10 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 	end
 
 	local function prepare()

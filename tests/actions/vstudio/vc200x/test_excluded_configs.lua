@@ -12,12 +12,12 @@
 -- Setup/teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
 
-		sln = solution("MySolution")
+		wks = solution("MySolution")
 		configurations { "Debug", "Release" }
 		platforms { "Zeus", "Ares" }
 		language "C++"

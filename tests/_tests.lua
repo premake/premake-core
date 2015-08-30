@@ -18,7 +18,7 @@ return {
 	"base/test_uuid.lua",
 	"base/test_versions.lua",
 
-	-- Solution object tests
+	-- Workspace object tests
 	"solution/test_eachconfig.lua",
 	"solution/test_location.lua",
 	"solution/test_objdirs.lua",
@@ -134,7 +134,7 @@ return {
 	"actions/make/test_make_escaping.lua",
 	"actions/make/test_make_tovar.lua",
 
-	-- Makefile solutions
+	-- Makefile workspaces
 	"actions/make/solution/test_config_maps.lua",
 	"actions/make/solution/test_default_config.lua",
 	"actions/make/solution/test_group_rule.lua",

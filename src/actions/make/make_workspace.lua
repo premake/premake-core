@@ -14,15 +14,15 @@
 -- Generate a GNU make "workspace" makefile, with support for the new platforms API.
 --
 
-	function make.generate_solution(wks)
-		premake.eol("\n")
+	function make.generate_workspace(wks)
+		p.eol("\n")
 
 		make.header(wks)
 
 		make.configmap(wks)
 		make.projects(wks)
 
-		make.solutionPhonyRule(wks)
+		make.workspacePhonyRule(wks)
 		make.groupRules(wks)
 
 		make.projectrules(wks)
@@ -109,7 +109,7 @@
 -- Write out the workspace PHONY rule
 --
 
-	function make.solutionPhonyRule(wks)
+	function make.workspacePhonyRule(wks)
 		local groups = {}
 		local tr = p.workspace.grouptree(wks)
 		tree.traverse(tr, {

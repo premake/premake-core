@@ -13,14 +13,14 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.solution.getproject(wks, 1)
 		make.cppObjects(prj)
 	end
 

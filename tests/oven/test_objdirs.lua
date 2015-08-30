@@ -7,7 +7,7 @@
 	local suite = test.declare("oven_objdirs")
 	local oven = premake.oven
 
-	local sln, prj
+	local wks, prj
 
 ---
 -- Setup
@@ -24,7 +24,7 @@
 
 
 	function suite.singleProject_noPlatforms()
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
 
@@ -34,18 +34,18 @@
 
 
 	function suite.multipleProjects_noPlatforms()
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
 		project "MyProject2"
 
-		test.createproject(sln)
+		test.createproject(wks)
 		test.isequal("obj/Debug/MyProject", result("Debug"))
 	end
 
 
 	function suite.singleProject_withPlatforms()
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
@@ -55,7 +55,7 @@
 
 
 	function suite.singleProject_uniqueByTokens_noPlatforms()
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
 		objdir "obj/%{cfg.buildcfg}"
@@ -65,7 +65,7 @@
 
 
 	function suite.singleProject_uniqueByTokens_withPlatforms()
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
@@ -76,7 +76,7 @@
 
 
 	function suite.allowOverlap_onPrefixCode()
-		sln = solution "MySolution"
+		wks = solution "MySolution"
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
 		prj = project "MyProject"

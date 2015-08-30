@@ -13,17 +13,17 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2005"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		language "C#"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.solution.getproject(wks, 1)
 		cs2005.projectProperties(prj)
 	end
 

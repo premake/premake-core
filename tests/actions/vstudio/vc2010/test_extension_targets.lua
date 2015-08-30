@@ -13,16 +13,16 @@
 -- Setup
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		rule "MyRules"
 		rule "MyOtherRules"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		local prj = test.getproject(sln)
+		local prj = test.getproject(wks)
 		vc2010.importExtensionTargets(prj)
 	end
 
