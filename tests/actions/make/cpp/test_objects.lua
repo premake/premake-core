@@ -1,12 +1,12 @@
 --
 -- tests/actions/make/cpp/test_objects.lua
 -- Validate the list of objects for a makefile.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("make_cpp_objects")
-	local make = premake.make
-	local project = premake.project
+
+	local p = premake
 
 
 --
@@ -20,8 +20,8 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(wks, 1)
-		make.cppObjects(prj)
+		prj = test.getproject(wks, 1)
+		p.make.cppObjects(prj)
 	end
 
 

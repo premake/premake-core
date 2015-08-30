@@ -51,7 +51,7 @@
 --
 
 	function suite.usesWin32_onX86()
-		solution "MySolution"
+		workspace("MyWorkspace")
 		platforms { "x86" }
 		prepare()
 		test.capture [[

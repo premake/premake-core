@@ -1,6 +1,6 @@
 --
--- tests/actions/make/solution/test_project_rule.lua
--- Validate generation of project rules in solution makefile.
+-- tests/actions/make/workspace/test_project_rule.lua
+-- Validate generation of project rules in workspace makefile.
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 

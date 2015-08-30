@@ -18,7 +18,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(wks, 1)
+		prj = test.getproject(wks, 1)
 	end
 
 
@@ -45,12 +45,12 @@
 
 
 --
--- If the solution sets a location, and the project does not, it should
--- inherit the value from the solution.
+-- If the workspace sets a location, and the project does not, it should
+-- inherit the value from the workspace.
 --
 
-	function suite.inheritsSolutionLocation_onNoProjectLocation()
-		solution ()
+	function suite.inheritsWorkspaceLocation_onNoProjectLocation()
+		workspace ()
 		location "build"
 		prepare()
 		test.isequal(path.join(os.getcwd(), "build"), prj.location)

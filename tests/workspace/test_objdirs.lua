@@ -1,10 +1,10 @@
 --
--- tests/solution/test_objdirs.lua
--- Test the solution unique objects directory building.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- tests/workspace/test_objdirs.lua
+-- Test the workspace unique objects directory building.
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("solution_objdir")
+	local suite = test.declare("workspace_objdir")
 
 
 --
@@ -15,7 +15,7 @@
 
 	function suite.setup()
 		_ACTION = "test"
-		wks = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		system "macosx"
 	end
 

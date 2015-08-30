@@ -17,7 +17,7 @@
 	function suite.setup()
 		_ACTION = "vs2010"
 
-		wks = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		platforms { "Zeus", "Ares" }
 		language "C++"

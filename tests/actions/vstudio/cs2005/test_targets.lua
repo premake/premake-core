@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(wks, 1)
+		prj = test.getproject(wks, 1)
 		cs2005.targets(prj)
 	end
 

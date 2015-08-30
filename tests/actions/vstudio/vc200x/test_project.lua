@@ -21,7 +21,7 @@
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(wks, 1)
+		prj = test.getproject(wks, 1)
 		vc200x.visualStudioProject(prj)
 	end
 

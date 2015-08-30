@@ -1,6 +1,6 @@
 --
 -- tests/base/test_filename.lua
--- Verify generation of project/solution/rule filenames.
+-- Verify generation of project/workspace/rule filenames.
 -- Copyright (c) 2008-2014 Jason Perkins and the Premake project
 --
 
@@ -67,10 +67,10 @@
 
 
 --
--- Should also work with solutions.
+-- Should also work with workspaces.
 --
 
-	function suite.worksWithSolution()
+	function suite.worksWithWorkspace()
 		prepare()
 		test.isequal("MySolution", path.getname(p.filename(wks)))
 	end
@@ -81,7 +81,7 @@
 --
 
 	function suite.doesNotPropagate()
-		solution ("MySolution")
+		workspace ("MyWorkspace")
 		filename ("Howdy")
 		prepare()
 		test.isequal("MyProject", path.getname(p.filename(prj)))

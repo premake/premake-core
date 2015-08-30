@@ -1,5 +1,5 @@
 --
--- tests/actions/make/solution/test_group_rule.lua
+-- tests/actions/make/workspace/test_group_rule.lua
 -- Validate generation of group rules
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
@@ -31,7 +31,7 @@
 
 
 --
--- Groups should be added to solution's PHONY
+-- Groups should be added to workspace's PHONY
 --
 
 	function suite.groupRule_groupAsPhony()
@@ -42,8 +42,10 @@
 		]]
 	end
 
+
+
 --
--- Transform solution groups into target aggregate
+-- Transform workspace groups into target aggregate
 --
 	function suite.groupRule_groupRules()
 		prepare()
