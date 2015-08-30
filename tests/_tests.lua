@@ -19,9 +19,9 @@ return {
 	"base/test_versions.lua",
 
 	-- Workspace object tests
-	"solution/test_eachconfig.lua",
-	"solution/test_location.lua",
-	"solution/test_objdirs.lua",
+	"workspace/test_eachconfig.lua",
+	"workspace/test_location.lua",
+	"workspace/test_objdirs.lua",
 
 	-- Project object tests
 	"project/test_config_maps.lua",
@@ -137,11 +137,11 @@ return {
 	"actions/make/test_make_tovar.lua",
 
 	-- Makefile workspaces
-	"actions/make/solution/test_config_maps.lua",
-	"actions/make/solution/test_default_config.lua",
-	"actions/make/solution/test_group_rule.lua",
-	"actions/make/solution/test_help_rule.lua",
-	"actions/make/solution/test_project_rule.lua",
+	"actions/make/workspace/test_config_maps.lua",
+	"actions/make/workspace/test_default_config.lua",
+	"actions/make/workspace/test_group_rule.lua",
+	"actions/make/workspace/test_help_rule.lua",
+	"actions/make/workspace/test_project_rule.lua",
 
 	-- Makefile C/C++ projects
 	"actions/make/cpp/test_clang.lua",
