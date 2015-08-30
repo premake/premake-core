@@ -90,6 +90,11 @@
 	local mask = path.join(_MAIN_SCRIPT_DIR, "**/_manifest.lua")
 	local manifests = os.matchfiles(mask)
 
+-- Find all of the _user_modules.lua files within the project
+
+	local userModuleFiles = {}
+	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "**/_user_modules.lua")))
+	userModuleFiles = table.join(userModuleFiles, os.matchfiles(path.join(_MAIN_SCRIPT_DIR, "_user_modules.lua")))
 
 -- Generate an index of the script file names. Script names are stored
 -- relative to the directory containing the manifest, i.e. the main
@@ -138,7 +143,14 @@
 
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_premake_main.lua")))
 	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_manifest.lua")))
-	appendScript(result, loadScript(path.join(_SCRIPT_DIR, "../src/_modules.lua")))
+
+-- Write the list of modules
+
+	local modules = dofile("../src/_modules.lua")
+	for _, userModules in ipairs(userModuleFiles) do
+		modules = table.join(modules, dofile(userModules))
+	end
+	appendScript(result, "return {" .. table.implode(modules, "\\\"", "\\\"", ",\\n") .. "}")
 
 	table.insert(result, "\tNULL")
 	table.insert(result, "};")
