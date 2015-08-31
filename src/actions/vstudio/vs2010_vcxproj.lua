@@ -35,6 +35,7 @@
 			m.globals,
 			m.importDefaultProps,
 			m.configurationPropertiesGroup,
+			m.importLanguageSettings,
 			m.importExtensionSettings,
 			m.propertySheetGroup,
 			m.userMacros,
@@ -1322,17 +1323,28 @@
 
 
 
-	function m.importExtensionSettings(prj)
+	function m.importLanguageSettings(prj)
 		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
-		p.push('<ImportGroup Label="ExtensionSettings">')
+	end
 
+	m.elements.importExtensionSettings = function(prj)
+		return {
+			m.importRuleSettings,
+		}
+	end
+
+	function m.importExtensionSettings(prj)
+		p.push('<ImportGroup Label="ExtensionSettings">')
+		p.callArray(m.elements.importExtensionSettings, prj)
+		p.pop('</ImportGroup>')
+	end
+
+	function m.importRuleSettings(prj)
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
 			local loc = vstudio.path(prj, p.filename(rule, ".props"))
 			p.x('<Import Project="%s" />', loc)
 		end
-
-		p.pop('</ImportGroup>')
 	end
 
 
