@@ -43,6 +43,7 @@
 			m.assemblyReferences,
 			m.files,
 			m.projectReferences,
+			m.importLanguageTargets,
 			m.importExtensionTargets,
 		}
 	end
@@ -1289,17 +1290,28 @@
 	end
 
 
-	function m.importExtensionTargets(prj)
+	function m.importLanguageTargets(prj)
 		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-		p.push('<ImportGroup Label="ExtensionTargets">')
+	end
 
+	m.elements.importExtensionTargets = function(prj)
+		return {
+			m.importRuleTargets,
+		}
+	end
+
+	function m.importExtensionTargets(prj)
+		p.push('<ImportGroup Label="ExtensionTargets">')
+		p.callArray(m.elements.importExtensionTargets, prj)
+		p.pop('</ImportGroup>')
+	end
+
+	function m.importRuleTargets(prj)
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
 			local loc = vstudio.path(prj, p.filename(rule, ".targets"))
 			p.x('<Import Project="%s" />', loc)
 		end
-
-		p.pop('</ImportGroup>')
 	end
 
 
