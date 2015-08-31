@@ -109,6 +109,7 @@ return {
 	"actions/vstudio/vc2010/test_excluded_configs.lua",
 	"actions/vstudio/vc2010/test_extension_settings.lua",
 	"actions/vstudio/vc2010/test_extension_targets.lua",
+	"actions/vstudio/vc2010/test_language_targets.lua",
 	"actions/vstudio/vc2010/test_floatingpoint.lua",
 	"actions/vstudio/vc2010/test_globals.lua",
 	"actions/vstudio/vc2010/test_header.lua",
