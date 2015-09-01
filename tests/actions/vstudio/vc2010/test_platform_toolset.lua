@@ -96,14 +96,6 @@
 	end
 
 	function suite.canOverrideFromScript_withLLVM()
-		toolset "LLVM-vs2010"
-		prepare()
-		test.capture [[
-<PlatformToolset>LLVM-vs2010</PlatformToolset>
-		]]
-	end
-
-	function suite.canOverrideFromScript_withMscAndLLVM()
 		toolset "msc-llvm-vs2014_xp"
 		prepare()
 		test.capture [[
