@@ -11,7 +11,7 @@ int main(int argc, const char** argv)
 	lua_State* L;
 	int z;
 
-	L = lua_open();
+	L = luaL_newstate();
 	luaL_openlibs(L);
 
 	z = premake_init(L);
