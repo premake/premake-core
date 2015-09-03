@@ -72,7 +72,7 @@
 
 	function suite.worksWithWorkspace()
 		prepare()
-		test.isequal("MySolution", path.getname(p.filename(wks)))
+		test.isequal("MyWorkspace", path.getname(p.filename(wks)))
 	end
 
 
