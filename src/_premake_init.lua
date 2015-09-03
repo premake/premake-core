@@ -563,7 +563,7 @@
 
 	api.register {
 		name = "ignoredefaultlibraries",
-		scope = "project",
+		scope = "config",
 		kind = "list:mixed",
 		tokens = true,
 	}
