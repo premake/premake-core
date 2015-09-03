@@ -338,7 +338,7 @@
 		end
 
 		-- Then the system libraries, which come undecorated
-		local system = config.getlinks(cfg, "system", "fullpath")
+		local system = config.getlinks(cfg, "system", "name")
 		for i = 1, #system do
 			-- Add extension if required
 			local link = system[i]
@@ -352,6 +352,18 @@
 		return links
 	end
 
+---
+-- Assemble the list of library directories.
+--
+-- @param cfg
+--    The active configuration.
+-- @return
+--    The list of library directories, ready to be used in Visual Studio's
+--    AdditionalLibraryDirectories element.
+---
+	function vstudio.getLibraryDirectories(cfg)
+		return table.filterempty(config.getlinks(cfg, "system", "directory"))
+	end
 
 
 --
