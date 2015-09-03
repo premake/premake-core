@@ -84,8 +84,14 @@
 		for cfg in project.eachconfig(prj) do
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
+			local default
+			if cfg.system == premake.MACOSX then
+				default = "clang"
+			else
+				default = "gcc"
+			end
 
-			local toolset = premake.tools[cfg.toolset or "gcc"]
+			local toolset = premake.tools[cfg.toolset or default]
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
