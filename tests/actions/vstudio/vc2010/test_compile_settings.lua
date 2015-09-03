@@ -753,3 +753,19 @@
 	<OmitDefaultLibName>true</OmitDefaultLibName>
 		]]
 	end
+
+
+--
+-- Check handling of the explicitly disabling symbols.
+--
+	function suite.onNoSymbols()
+		symbols 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>None</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+		]]
+	end

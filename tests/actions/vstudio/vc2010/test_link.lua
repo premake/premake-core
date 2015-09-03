@@ -37,7 +37,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
@@ -54,7 +53,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<EnableCOMDATFolding>true</EnableCOMDATFolding>
 	<OptimizeReferences>true</OptimizeReferences>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
@@ -73,7 +71,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
@@ -84,7 +81,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
@@ -95,7 +91,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
@@ -107,7 +102,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 </Link>
 		]]
 	end
@@ -123,7 +117,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 <ProjectReference>
@@ -158,7 +151,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
@@ -175,7 +167,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>lua.obj;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
@@ -192,7 +183,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
@@ -208,7 +198,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalLibraryDirectories>..\lib;..\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 		]]
 	end
@@ -227,7 +216,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
@@ -247,7 +235,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
@@ -271,7 +258,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 </Link>
 		]]
 	end
@@ -287,7 +273,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>..\lib\MyProject.lib</ImportLibrary>
 </Link>
 		]]
@@ -306,7 +291,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
 		]]
@@ -319,7 +303,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 </Link>
 <Lib>
 	<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
@@ -338,7 +321,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<EnableCOMDATFolding>true</EnableCOMDATFolding>
 	<OptimizeReferences>true</OptimizeReferences>
 		]]
@@ -355,7 +337,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
 </Link>
@@ -373,7 +354,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		]]
 	end
@@ -388,9 +368,6 @@
 		system "Xbox360"
 		prepare()
 		test.capture [[
-<Link>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
-</Link>
 		]]
 	end
 
@@ -404,7 +381,6 @@
 		prepare()
 		test.capture [[
 <Link>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 </Link>
 		]]
@@ -422,7 +398,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 	<TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
 		]]
@@ -435,7 +410,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 </Link>
 <Lib>
 	<TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
@@ -454,7 +428,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<GenerateMapFile>true</GenerateMapFile>
 </Link>
@@ -471,7 +444,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
 </Link>
@@ -488,7 +460,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
 </Link>
