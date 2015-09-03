@@ -12,10 +12,10 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, prj2, tr
+	local wks, prj, prj2, tr
 
 	function suite.teardown()
-		sln = nil
+		wks = nil
 		prj = nil
 		prj2 = nil
 		tr = nil
@@ -25,20 +25,20 @@
 		_ACTION = "xcode4"
 		xcode.used_ids = { } -- reset the list of generated IDs
 
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		links { "MyProject2" }
 
-		prj2 = test.createproject(sln)
+		prj2 = test.createproject(wks)
 		kind "StaticLib"
 		configuration "Debug"
 		targetsuffix "-d"
 	end
 
 	local function prepare()
-		sln = premake.oven.bakeSolution(sln)
-		xcode.preparesolution(sln)
-		local prj3 = premake.solution.getproject(sln, 1)
-		--prj2 = premake.solution.getproject(sln, 2)
+		wks = premake.oven.bakeWorkspace(wks)
+		xcode.prepareWorkspace(wks)
+		local prj3 = premake.workspace.getproject(wks, 1)
+		--prj2 = test.getproject(wks, 2)
 		tr = xcode.buildprjtree(prj3)
 	end
 

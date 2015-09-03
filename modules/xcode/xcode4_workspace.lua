@@ -15,7 +15,7 @@
 -- Generate an Xcode contents.xcworkspacedata file.
 ---
 
-	m.elements.workspace = function(sln)
+	m.elements.workspace = function(wks)
 		return {
 			m.xmlDeclaration,
 			m.workspace,
@@ -24,9 +24,9 @@
 		}
 	end
 
-	function m.generateWorkspace(sln)
-		m.preparesolution(sln)
-		p.callArray(m.elements.workspace, sln)
+	function m.generateWorkspace(wks)
+		m.prepareWorkspace(wks)
+		p.callArray(m.elements.workspace, wks)
 	end
 
 
@@ -52,8 +52,8 @@
 		}
 	end
 
-	function m.workspaceFileRefs(sln)
-		for prj in p.solution.eachproject(sln) do
+	function m.workspaceFileRefs(wks)
+		for prj in p.workspace.eachproject(wks) do
 			p.push('<FileRef')
 			local contents = p.capture(function()
 				p.callArray(m.elements.workspaceFileRef, prj)
@@ -74,7 +74,7 @@
 
 	function m.workspaceLocation(prj)
 		local fname = p.filename(prj, ".xcodeproj")
-		fname = path.getrelative(prj.solution.location, fname)
+		fname = path.getrelative(prj.workspace.location, fname)
 		p.w('location = "group:%s"', fname)
 	end
 

@@ -45,10 +45,10 @@
 			cc = { "gcc", "clang" },
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
-		onSolution = function(sln)
-			p.generate(sln, ".xcworkspace/contents.xcworkspacedata", p.modules.xcode.generateWorkspace)
+		onWorkspace = function(wks)
+			p.generate(wks, ".xcworkspace/contents.xcworkspacedata", p.modules.xcode.generateWorkspace)
 		end,
 
 		onProject = function(prj)
