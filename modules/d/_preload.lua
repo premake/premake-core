@@ -7,8 +7,9 @@
 --
 
 -- TODO:
--- MonoDevelop/Xamarin Studio has 'workspaces', which are collections of 'solution's.
--- If premake supports multiple solutions, we should write out a workspace file...
+-- MonoDevelop/Xamarin Studio has 'workspaces', which correspond to collections
+-- of Premake workspaces. If premake supports multiple workspaces, we should
+-- write out a workspace file...
 
 	local p = premake
 	local api = p.api

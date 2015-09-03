@@ -102,7 +102,7 @@
 --				m.monod.baseDirectory,
 				m.monod.compiler,
 				monodevelop.cproj.version,
-				monodevelop.cproj.synchSlnVersion,
+				monodevelop.cproj.synchWksVersion,
 				monodevelop.cproj.description,
 			}
 		end

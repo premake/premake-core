@@ -12,12 +12,12 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
 		_ACTION = "monodevelop"
 		premake.indent("  ")
-		sln = solution "MySolution"
+		wks = workspace "MyWorkspace"
 		configurations { "Debug", "Release" }
 		language "D"
 		kind "ConsoleApp"
@@ -39,8 +39,8 @@
 
 	function suite.slnProj()
 		project "MyProject"
-		premake.vstudio.sln2005.reorderProjects(sln)
-		premake.vstudio.sln2005.projects(sln)
+		premake.vstudio.sln2005.reorderProjects(wks)
+		premake.vstudio.sln2005.projects(wks)
 		test.capture [[
 Project("{3947E667-4C90-4C3A-BEB9-7148D6FE0D7C}") = "MyProject", "MyProject.dproj", "{42B5DBC6-AE1F-903D-F75D-41E363076E92}"
 EndProject

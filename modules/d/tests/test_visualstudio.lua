@@ -12,13 +12,13 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
 		_ACTION = "vs2010"
 --		premake.escaper(premake.vstudio.vs2005.esc)
 		premake.indent(" ")
-		sln = solution "MySolution"
+		wks = workspace "MyWorkspace"
 		configurations { "Debug", "Release" }
 		language "D"
 		kind "ConsoleApp"
@@ -41,8 +41,8 @@
 	function suite.slnProj()
 		project "MyProject"
 		language "D"
-		premake.vstudio.sln2005.reorderProjects(sln)
-		premake.vstudio.sln2005.projects(sln)
+		premake.vstudio.sln2005.reorderProjects(wks)
+		premake.vstudio.sln2005.projects(wks)
 		test.capture [[
 Project("{002A2DE9-8BB6-484D-9802-7E4AD4084715}") = "MyProject", "MyProject.visualdproj", "{42B5DBC6-AE1F-903D-F75D-41E363076E92}"
 EndProject
