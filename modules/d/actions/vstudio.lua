@@ -10,7 +10,7 @@
 	m.visuald = {}
 
 	local vstudio = p.vstudio
-	local solution = p.solution
+	local workspace = p.workspace
 	local project = p.project
 	local config = p.config
 	local tree = p.tree

@@ -15,15 +15,15 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
 		premake.escaper(make.esc)
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare_cfg(calls)
-		prj = premake.solution.getproject(sln, 1)
+		prj = premake.workspace.getproject(wks, 1)
 		local cfg = test.getconfig(prj, "Debug")
 		local toolset = premake.tools.gdc
 		premake.callArray(calls, cfg, toolset)
