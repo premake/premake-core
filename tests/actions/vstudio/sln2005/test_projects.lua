@@ -16,7 +16,7 @@
 
 	function suite.setup()
 		premake.escaper(premake.vstudio.vs2005.esc)
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
 		kind "ConsoleApp"

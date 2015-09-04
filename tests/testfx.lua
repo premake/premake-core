@@ -247,7 +247,7 @@
 --
 
 	function test.createWorkspace()
-		local wks = workspace("MySolution")
+		local wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 
 		local prj = project("MyProject")

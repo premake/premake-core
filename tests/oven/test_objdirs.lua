@@ -1,17 +1,17 @@
 ---
 -- tests/oven/test_objdirs.lua
 -- Test the per-configuration object directory assignments.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) 2014-2015 Jason Perkins and the Premake project
 ---
 
 	local suite = test.declare("oven_objdirs")
 	local oven = premake.oven
 
-	local wks, prj
-
 ---
 -- Setup
 ---
+
+	local wks, prj
 
 	function suite.setup()
 	end
@@ -24,7 +24,7 @@
 
 
 	function suite.singleProject_noPlatforms()
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
 
@@ -34,7 +34,7 @@
 
 
 	function suite.multipleProjects_noPlatforms()
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
 		project "MyProject2"
@@ -45,7 +45,7 @@
 
 
 	function suite.singleProject_withPlatforms()
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
@@ -55,7 +55,7 @@
 
 
 	function suite.singleProject_uniqueByTokens_noPlatforms()
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
 		objdir "obj/%{cfg.buildcfg}"
@@ -65,7 +65,7 @@
 
 
 	function suite.singleProject_uniqueByTokens_withPlatforms()
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
 		prj = project "MyProject"
@@ -76,7 +76,7 @@
 
 
 	function suite.allowOverlap_onPrefixCode()
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
 		prj = project "MyProject"

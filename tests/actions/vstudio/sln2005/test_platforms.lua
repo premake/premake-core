@@ -16,7 +16,7 @@
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		wks = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
 	end

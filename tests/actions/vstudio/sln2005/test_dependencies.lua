@@ -30,10 +30,10 @@
 	local function prepare(language)
 		prj1.language = language
 		prj2.language = language
-		prj2 = premake.solution.getproject(wks, 2)
+		prj2 = test.getproject(wks, 2)
 		sln2005.projectdependencies(prj2)
 		prj3.language = language
-		prj3 = premake.solution.getproject(wks, 3)
+		prj3 = test.getproject(wks, 3)
 		sln2005.projectdependencies(prj3)
 	end
 

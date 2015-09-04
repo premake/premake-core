@@ -23,7 +23,7 @@
 --
 
 	function suite.passes_onSane()
-		solution "MySolution"
+		workspace("MyWorkspace")
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			kind "ConsoleApp"
@@ -33,11 +33,11 @@
 
 
 --
--- Fail if no configurations are present on the solution.
+-- Fail if no configurations are present on the workspace.
 --
 
-	function suite.fails_onNoSolutionConfigs()
-		solution "MySolution"
+	function suite.fails_onNoWorkspaceConfigs()
+		workspace "MyWorkspace"
 		project "MyProject"
 			kind "ConsoleApp"
 			language "C++"
@@ -50,7 +50,7 @@
 --
 
 	function suite.fails_onDuplicateProjectIDs()
-		solution "MySolution"
+		workspace "MyWorkspace"
 			configurations { "Debug", "Release" }
 			kind "ConsoleApp"
 			language "C++"
@@ -67,7 +67,7 @@
 --
 
 	function suite.fails_onNoConfigKind()
-		solution "MySolution"
+		workspace "MyWorkspace"
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			language "C++"
@@ -79,8 +79,8 @@
 -- Warn if a configuration value is set in the wrong scope.
 --
 
-	function suite.warns_onSolutionStringField_inConfig()
-		solution "MySolution"
+	function suite.warns_onWorkspaceStringField_inConfig()
+		workspace "MyWorkspace"
 			configurations { "Debug", "Release" }
 		filter "Debug"
 			startproject "MyProject"
@@ -92,7 +92,7 @@
 	end
 
 	function suite.warns_onProjectStringField_inConfig()
-		solution "MySolution"
+		workspace "MyWorkspace"
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			kind "ConsoleApp"
@@ -104,7 +104,7 @@
 	end
 
 	function suite.warns_onProjectListField_inConfig()
-		solution "MySolution"
+		workspace "MyWorkspace"
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			kind "ConsoleApp"
@@ -121,7 +121,7 @@
 --
 
 	function suite.fails_onNoSuchRule()
-		solution "MySolution"
+		workspace "MyWorkspace"
 			configurations { "Debug", "Release" }
 		project "MyProject"
 			rules { "NoSuchRule" }

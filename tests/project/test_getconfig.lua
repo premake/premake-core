@@ -13,7 +13,7 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		wks = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 	end
 

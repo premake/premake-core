@@ -1,11 +1,11 @@
 --
 -- tests/actions/vstudio/sln2005/test_nested_projects.lua
 -- Check Visual Studio 2005+ Nested Projects solution block.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	T.vstudio_sln2005_nested_projects = { }
-	local suite = T.vstudio_sln2005_nested_projects
+	local suite = test.declare("vstudio_sln2005_nested_projects")
+
 	local sln2005 = premake.vstudio.sln2005
 
 
@@ -17,7 +17,7 @@
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		wks = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
 		kind "ConsoleApp"

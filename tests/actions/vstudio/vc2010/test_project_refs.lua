@@ -23,7 +23,7 @@
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(wks, 2)
+		prj = test.getproject(wks, 2)
 		vc2010.projectReferences(prj)
 	end
 

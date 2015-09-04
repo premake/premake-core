@@ -20,7 +20,7 @@
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(wks, 1)
+		prj = test.getproject(wks, 1)
 		cs2005.buildEvents(prj)
 	end
 
