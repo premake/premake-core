@@ -66,7 +66,7 @@
 		end
 
 		-- for backward compatibility
-		_G["external" .. containerName:capitalized()] = _G["external" .. containerName]
+		p.alias(_G, "external" .. containerName, "external" .. containerName:capitalized())
 
 		return class
 	end
@@ -88,7 +88,7 @@
 		api._isIncludingExternal = nil
 	end
 
-	includeExternal = includeexternal
+	p.alias(_G, "includeexternal", "includeExternal")
 
 
 
@@ -319,8 +319,10 @@
 ---
 
      function api.alias(original, alias)
-		_G[alias] = _G[original]
-		_G["remove" .. alias] = _G["remove" .. original]
+     	p.alias(_G, original, alias)
+     	if _G["remove" .. original] then
+     		p.alias(_G, "remove" .. original, "remove" .. alias)
+     	end
      end
 
 
