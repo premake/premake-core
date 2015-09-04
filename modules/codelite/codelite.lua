@@ -20,7 +20,7 @@
 
 	function codelite.cfgname(cfg)
 		local cfgname = cfg.buildcfg
-		if codelite.solution.multiplePlatforms then
+		if codelite.workspace.multiplePlatforms then
 			cfgname = string.format("%s|%s", cfg.platform, cfg.buildcfg)
 		end
 		return cfgname
@@ -30,12 +30,12 @@
 		return value
 	end
 
-	function codelite.generateSolution(sln)
+	function codelite.generateWorkspace(wks)
 		p.eol("\r\n")
 		p.indent("  ")
 		p.escaper(codelite.esc)
 
-		p.generate(sln, ".workspace", codelite.solution.generate)
+		p.generate(wks, ".workspace", codelite.workspace.generate)
 	end
 
 	function codelite.generateProject(prj)
@@ -48,11 +48,11 @@
 		end
 	end
 
-	function codelite.cleanSolution(sln)
-		p.clean.file(sln, sln.name .. ".workspace")
-		p.clean.file(sln, sln.name .. "_wsp.mk")
-		p.clean.file(sln, sln.name .. ".tags")
-		p.clean.file(sln, ".clang")
+	function codelite.cleanWorkspace(wks)
+		p.clean.file(wks, wks.name .. ".workspace")
+		p.clean.file(wks, wks.name .. "_wsp.mk")
+		p.clean.file(wks, wks.name .. ".tags")
+		p.clean.file(wks, ".clang")
 	end
 
 	function codelite.cleanProject(prj)

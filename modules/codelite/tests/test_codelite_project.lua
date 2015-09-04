@@ -12,17 +12,17 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "codelite"
 		premake.indent("  ")
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		sln = premake.oven.bakeSolution(sln)
-		prj = premake.solution.getproject(sln, 1)
+		wks = premake.oven.bakeWorkspace(wks)
+		prj = test.getproject(wks, 1)
 	end
 
 

@@ -27,17 +27,17 @@
 		    cc = { "gcc", "clang", "msc" }
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
-		onSolution = function(sln)
-			p.modules.codelite.generateSolution(sln)
+		onWorkspace = function(wks)
+			p.modules.codelite.generateWorkspace(wks)
 		end,
 		onProject = function(prj)
 			p.modules.codelite.generateProject(prj)
 		end,
 
-		onCleanSolution = function(sln)
-			p.modules.codelite.cleanSolution(sln)
+		onCleanWorkspace = function(wks)
+			p.modules.codelite.cleanWorkspace(wks)
 		end,
 		onCleanProject = function(prj)
 			p.modules.codelite.cleanProject(prj)

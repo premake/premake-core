@@ -1,6 +1,6 @@
 --
 -- Name:        codelite/codelite_workspace.lua
--- Purpose:     Generate a CodeLite solution.
+-- Purpose:     Generate a CodeLite workspace.
 -- Author:      Ryan Pusztai
 -- Modified by: Andrea Zanellato
 --              Manu Evans
@@ -10,17 +10,17 @@
 
 	local p = premake
 	local project = p.project
-	local solution = p.solution
+	local workspace = p.workspace
 	local tree = p.tree
 	local codelite = p.modules.codelite
 
-	codelite.solution = {}
-	local m = codelite.solution
+	codelite.workspace = {}
+	local m = codelite.workspace
 
 --
 -- Generate a CodeLite workspace
 --
-	function m.generate(sln)
+	function m.generate(wks)
 		p.utf8()
 
 		--
@@ -29,22 +29,22 @@
 		_p('<?xml version="1.0" encoding="UTF-8"?>')
 
 		local tagsdb = ""
---		local tagsdb = "./" .. sln.name .. ".tags"
-		_p('<CodeLite_Workspace Name="%s" Database="%s" SWTLW="No">', sln.name, tagsdb)
+--		local tagsdb = "./" .. wks.name .. ".tags"
+		_p('<CodeLite_Workspace Name="%s" Database="%s" SWTLW="No">', wks.name, tagsdb)
 
 		--
 		-- Project list
 		--
-		local tr = solution.grouptree(sln)
+		local tr = workspace.grouptree(wks)
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
 
-				-- Build a relative path from the solution file to the project file
+				-- Build a relative path from the workspace file to the project file
 				local prjpath = p.filename(prj, ".project")
-				prjpath = path.translate(path.getrelative(prj.solution.location, prjpath))
+				prjpath = path.translate(path.getrelative(prj.workspace.location, prjpath))
 
-				local active  = iif(prj.name == sln.startproject, ' Active="Yes"', '')
+				local active  = iif(prj.name == wks.startproject, ' Active="Yes"', '')
 				_x(1, '<Project Name="%s" Path="%s"%s/>', prj.name, prjpath, active)
 			end,
 
@@ -62,7 +62,7 @@
 		local platformsPresent = {}
 		local numPlatforms = 0
 
-		for cfg in solution.eachconfig(sln) do
+		for cfg in workspace.eachconfig(wks) do
 			local platform = cfg.platform
 			if platform and not platformsPresent[platform] then
 				numPlatforms = numPlatforms + 1
@@ -71,17 +71,17 @@
 		end
 
 		if numPlatforms >= 2 then
-			codelite.solution.multiplePlatforms = true
+			codelite.workspace.multiplePlatforms = true
 		end
 
-		-- for each solution config
+		-- for each workspace config
 		_p(1, '<BuildMatrix>')
-		for cfg in solution.eachconfig(sln) do
+		for cfg in workspace.eachconfig(wks) do
 
 			local cfgname = codelite.cfgname(cfg)
 			_p(2, '<WorkspaceConfiguration Name="%s" Selected="yes">', cfgname)
 
-			local tr = solution.grouptree(sln)
+			local tr = workspace.grouptree(wks)
 			tree.traverse(tr, {
 				onleaf = function(n)
 					local prj = n.project
