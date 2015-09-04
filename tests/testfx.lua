@@ -249,15 +249,18 @@
 	function test.createWorkspace()
 		local wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
-
-		local prj = project("MyProject")
-		language("C++")
-		kind("ConsoleApp")
-
+		local prj = test.createproject(wks)
 		return wks, prj
 	end
 
-	p.alias(test, "createWorkspace", "createsolution")
+	-- Eventually we'll want to deprecate this one and move everyone
+	-- over to createWorkspace() instead (4 Sep 2015).
+	function test.createsolution()
+		local wks = workspace("MySolution")
+		configurations { "Debug", "Release" }
+		local prj = test.createproject(wks)
+		return wks, prj
+	end
 
 
 	function test.createproject(wks)
