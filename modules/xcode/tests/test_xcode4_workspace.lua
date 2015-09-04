@@ -14,16 +14,16 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "xcode4"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
-		xcode.generateWorkspace(sln)
+		wks = test.getWorkspace(wks)
+		xcode.generateWorkspace(wks)
 	end
 
 
@@ -31,8 +31,8 @@
 -- Check the basic structure of a workspace.
 --
 
-	function suite.onEmptySolution()
-		sln.projects = {}
+	function suite.onEmptyWorkspace()
+		wks.projects = {}
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
@@ -43,7 +43,7 @@
 	end
 
 
-	function suite.onDefaultSolution()
+	function suite.onDefaultWorkspace()
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
@@ -58,7 +58,7 @@
 
 
 	function suite.onMultipleProjects()
-		test.createproject(sln)
+		test.createproject(wks)
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
