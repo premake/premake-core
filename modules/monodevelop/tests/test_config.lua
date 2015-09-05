@@ -12,12 +12,12 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
 		_ACTION = "monodevelop"
 		premake.indent("  ")
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 	end
 
 	local function prepare()

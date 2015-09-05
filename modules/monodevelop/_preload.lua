@@ -7,8 +7,9 @@
 --
 
 -- TODO:
--- MonoDevelop/Xamarin Studio has 'workspaces', which are collections of 'solution's.
--- If premake supports multiple solutions, we should write out a workspace file...
+-- MonoDevelop/Xamarin Studio has 'workspaces', which act like collections of
+-- Premake workspaces. If Premake supports multiple workspaces, we should
+-- write out a workspace file...
 
 	local p = premake
 
@@ -29,17 +30,17 @@
 			dotnet = { "mono", "msnet" },
 		},
 
-		-- Solution and project generation logic
+		-- Workspace and project generation logic
 
-		onSolution = function(sln)
-			p.vstudio.vs2005.generateSolution(sln)
+		onWorkspace = function(wks)
+			p.vstudio.vs2005.generateWorkspace(wks)
 		end,
 		onProject = function(prj)
 			p.modules.monodevelop.generateProject(prj)
 		end,
 
-		onCleanSolution = function(sln)
-			p.vstudio.cleanSolution(sln)
+		onCleanWorkspace = function(wks)
+			p.vstudio.cleanWorkspace(wks)
 		end,
 		onCleanProject = function(prj)
 			p.vstudio.cleanProject(prj)

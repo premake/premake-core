@@ -1,10 +1,10 @@
 ---
 -- monodevelop/tests/test_sln.lua
--- Automated test suite for MonoDevelop solution generation.
+-- Automated test suite for MonoDevelop workspace generation.
 -- Copyright (c) 2011-2015 Manu Evans and the Premake project
 ---
 
-	local suite = test.declare("monodevelop_solution")
+	local suite = test.declare("monodevelop_workspace")
 	local monodevelop = premake.modules.monodevelop
 
 
@@ -12,12 +12,12 @@
 -- Setup/Teardown
 ---------------------------------------------------------------------------
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
 		_ACTION = "monodevelop"
 		premake.indent("  ")
-		sln = solution "MySolution"
+		wks = workspace "MyWorkspace"
 		configurations { "Debug", "Release" }
 		kind "ConsoleApp"
 	end
@@ -25,8 +25,8 @@
 
 	function suite.slnProj()
 		project "MyProject"
-		premake.vstudio.sln2005.reorderProjects(sln)
-		premake.vstudio.sln2005.projects(sln)
+		premake.vstudio.sln2005.reorderProjects(wks)
+		premake.vstudio.sln2005.projects(wks)
 		test.capture [[
 Project("{2857B73E-F847-4B02-9238-064979017E93}") = "MyProject", "MyProject.cproj", "{42B5DBC6-AE1F-903D-F75D-41E363076E92}"
 EndProject
@@ -35,7 +35,7 @@ EndProject
 
 	function suite.monoDevelopProperties()
 		project "MyProject"
-		premake.vstudio.sln2005.sectionmap.MonoDevelopProperties(sln)
+		premake.vstudio.sln2005.sectionmap.MonoDevelopProperties(wks)
 		test.capture [[
 	GlobalSection(MonoDevelopProperties) = preSolution
 	EndGlobalSection
