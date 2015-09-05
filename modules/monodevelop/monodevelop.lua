@@ -18,7 +18,6 @@
 	local vs2010 = p.vstudio.vs2010
 	local vstudio = p.vstudio
 	local sln2005 = p.vstudio.sln2005
-	local solution = p.solution
 	local project = p.project
 	local config = p.config
 
@@ -27,11 +26,11 @@
 -- Write out contents of the SolutionProperties section; currently unused.
 --
 
-	function m.MonoDevelopProperties(sln)
+	function m.MonoDevelopProperties(wks)
 		_p('\tGlobalSection(MonoDevelopProperties) = preSolution')
-		if sln.startproject then
-			for prj in solution.eachproject(sln) do
-				if prj.name == sln.startproject then
+		if wks.startproject then
+			for prj in p.workspace.eachproject(wks) do
+				if prj.name == wks.startproject then
 -- TODO: fix me!
 --					local prjpath = vstudio.projectfile_ng(prj)
 --					prjpath = path.translate(path.getrelative(slnpath, prjpath))
@@ -42,7 +41,7 @@
 
 		-- NOTE: multiline descriptions, or descriptions with tab's (/n, /t, etc) need to be escaped with @
 		-- Looks like: description = @descriptopn with\nnewline and\ttab's.
---		_p('\t\tdescription = %s', 'solution description')
+--		_p('\t\tdescription = %s', 'workspace description')
 
 --		_p('\t\tversion = %s', '0.1')
 		_p('\tEndGlobalSection')
@@ -71,7 +70,7 @@
 		return oldfn(cfg, win32)
 	end)
 
-	p.override(sln2005, "solutionSections", function(oldfn, sln)
+	p.override(sln2005, "solutionSections", function(oldfn, wks)
 		if _ACTION == "monodevelop" then
 			return {
 				"ConfigurationPlatforms",
