@@ -209,13 +209,13 @@
 		test.isequal("..", path.getrelative("/a///b/c","/a/b"))
 	end
 
-    function suite.getrelative_ignoresTrailingSlashes()
-         test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
-    end
+	function suite.getrelative_ignoresTrailingSlashes()
+		 test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
+	end
 
-  	function suite.getrelative_returnsAbsPath_onContactWithFileSysRoot()
-  		test.isequal("C:/Boost/Include", path.getrelative("C:/Code/MyApp", "C:/Boost/Include"))
-  	end
+	function suite.getrelative_returnsAbsPath_onContactWithFileSysRoot()
+		test.isequal("C:/Boost/Include", path.getrelative("C:/Code/MyApp", "C:/Boost/Include"))
+	end
 
 
 --
@@ -323,6 +323,17 @@
 		test.isequal("$(ProjectDir)/$(TargetName)/../../Bin", path.join("$(ProjectDir)/$(TargetName)", "../../Bin"))
 	end
 
+	function suite.join_keepsComplexInternalEnvVar()
+		test.isequal("$(ProjectDir)/myobj_$(Arch)/../../Bin", path.join("$(ProjectDir)/myobj_$(Arch)", "../../Bin"))
+	end
+
+	function suite.join_keepsRecursivePattern()
+		test.isequal("p1/**.lproj/../p2", path.join("p1/**.lproj", "../p2"))
+	end
+
+	function suite.join_noCombineSingleDot()
+		test.isequal("p1/./../p2", path.join("p1/.", "../p2"))
+	end
 
 
 --
