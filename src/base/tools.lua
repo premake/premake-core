@@ -31,10 +31,23 @@
 
 	function p.tools.canonical(identifier)
 		local parts
-		if identifier:startswith("v") then
-			parts = { "msc", identifier:sub(2) }
+		if identifier:startswith("v") then -- TODO: this should be deprecated?
+			parts = { "msc", identifier }
 		else
-			parts = identifier:explode("-")
+			parts = identifier:explode("-", true, 1)
+
+			-- couple of little hacks here to fix up version names
+			if parts[2] ~= nil then
+				-- 'msc-100' is accepted, but the code expects 'v100'
+				if parts[1] == "msc" and tonumber(parts[2]:sub(1,3)) ~= nil then
+					parts[2] = "v" .. parts[2]
+				end
+
+				-- perform case-correction of the LLVM toolset
+				if parts[2]:startswith("llvm-vs") then
+					parts[2] = "LLVM-" .. parts[2]:sub(6)
+				end
+			end
 		end
 		return p.tools[parts[1]], parts[2]
 	end
