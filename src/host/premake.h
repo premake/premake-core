@@ -136,6 +136,10 @@ int http_download(lua_State* L);
 int zip_extract(lua_State* L);
 #endif
 
+#ifdef PREMAKE_JSON
+int premake_init_json(lua_State* L);
+#endif
+
 /* Engine interface */
 int premake_init(lua_State* L);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
