@@ -1610,9 +1610,8 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		if cfg.debugformat ~= "c7" and cfg.flags.Symbols then
-			p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
-		end -- end if
+		-- just a placeholder for overriding; will use the default VS name
+		-- for changes, see https://github.com/premake/premake-core/issues/151
 	end
 
 
