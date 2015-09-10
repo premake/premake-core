@@ -2,7 +2,7 @@ project "curl-lib"
 	language    "C"
 	kind        "StaticLib"
 	includedirs {"include", "lib"}
-	defines     {"BUILDING_LIBCURL", "CURL_STATICLIB", "CURL_HTTP_ONLY", "CURL_DISABLE_LDAP" }
+	defines     {"BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY", "CURL_DISABLE_LDAP" }
 	flags       { "StaticRuntime" }
 	location    "build"
 
