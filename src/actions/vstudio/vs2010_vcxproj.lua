@@ -110,7 +110,7 @@
 		local action = p.action.current()
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
-		local framework = prj.framework or action.vstudio.targetFramework or "4.0"
+		local framework = prj.dotnetframework or action.vstudio.targetFramework or "4.0"
 		p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 	end
 
