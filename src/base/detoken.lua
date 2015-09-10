@@ -45,7 +45,7 @@
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
-		function expandtoken(token, environ)
+		function expandtoken(token, e)
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
@@ -53,7 +53,7 @@
 			end
 
 			-- give the function access to the project objects
-			setfenv(func, environ)
+			setfenv(func, e)
 
 			-- run it and get the result
 			local result = func() or ""
@@ -76,7 +76,7 @@
 			if varMap[token] then
 				result = varMap[token]
 				if type(result) == "function" then
-					result = result(environ)
+					result = result(e)
 				end
 				isAbs = path.isabsolute(result)
 			end
@@ -103,7 +103,7 @@
 			return result
 		end
 
-		function expandvalue(value)
+		function expandvalue(value, e)
 			if type(value) ~= "string" then
 				return value
 			end
@@ -111,7 +111,7 @@
 			local count
 			repeat
 				value, count = value:gsub("%%{(.-)}", function(token)
-					local result, err = expandtoken(token:gsub("\\", "\\\\"), environ)
+					local result, err = expandtoken(token:gsub("\\", "\\\\"), e)
 					if not result then
 						error(err, 0)
 					end
@@ -133,7 +133,7 @@
 			return value
 		end
 
-		function recurse(value)
+		function recurse(value, e)
 			if type(value) == "table" then
 				local res_table = {}
 
@@ -148,10 +148,10 @@
 
 				return res_table
 			else
-				return expandvalue(value)
+				return expandvalue(value, e)
 			end
 		end
 
-		return recurse(value)
+		return recurse(value, environ)
 	end
 
