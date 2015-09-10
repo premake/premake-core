@@ -85,3 +85,23 @@
 		prepare()
 		test.isequal({ }, prj.defines)
 	end
+
+--
+-- Test filtering by the selected toolset.
+--
+
+	function suite.onFilterToolset()
+		toolset "msc"
+		filter { "toolset:msc" }
+		defines { "USE_MSC" }
+		prepare()
+		test.isequal({ "USE_MSC" }, prj.defines)
+	end
+
+	function suite.onFilterToolsetMismatch()
+		toolset "clang"
+		filter { "toolset:msc" }
+		defines { "USE_MSC" }
+		prepare()
+		test.isequal({}, prj.defines)
+	end
