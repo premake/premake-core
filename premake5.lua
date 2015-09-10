@@ -74,6 +74,10 @@
 	}
 
 
+	newoption {
+		trigger = "no-jansson",
+		description = "Disable Jansson 3rd party lib"
+	}
 
 --
 -- Define the project. Put the release configuration first so it will be the
@@ -105,6 +109,11 @@
 			defines { "CURL_STATICLIB", "PREMAKE_CURL" }
 			links { "curl-lib" }
 		end
+		if not _OPTIONS["no-jansson"] then
+			includedirs { "contrib/jansson/" }
+			defines { "PREMAKE_JSON" }
+			links { "jansson-lib" }
+		end		
 
 		files
 		{
@@ -177,7 +186,9 @@
 		if not _OPTIONS["no-curl"] then
 			include "contrib/curl"
 		end
-
+		if not _OPTIONS["no-jansson"] then
+			include "contrib/jansson"
+		end
 
 --
 -- A more thorough cleanup.
