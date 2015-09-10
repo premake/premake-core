@@ -14,6 +14,7 @@ project "curl-lib"
 	
 	configuration { 'windows' }
 		defines {"WIN32"}
+		defines {"USE_SSL", "USE_SCHANNEL", "USE_WINDOWS_SSPI"}
 
 	configuration { 'linux' }
 		defines {"HAVE_CONFIG_H", "CURL_HIDDEN_SYMBOLS"}
