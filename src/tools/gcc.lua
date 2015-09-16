@@ -296,6 +296,11 @@
 			end
 		end
 
+		if #result > 0 then
+			table.insert(result, 1, "-Wl,--start-group")
+			table.insert(result, "-Wl,--end-group")
+		end
+
 		-- The "-l" flag is fine for system libraries
 
 		local links = config.getlinks(cfg, "system", "fullpath")
