@@ -74,7 +74,10 @@
 ---
 
 	premake.override(_G, "require", function(base, modname, versions)
-		local result, mod = xpcall(base(modname), debug.traceback)
+		local result, mod = pcall(base,modname)
+		if not result then
+			error( mod, 3 )
+		end
 		if mod and versions and not premake.checkVersion(mod._VERSION, versions) then
 			error(string.format("module %s %s does not meet version criteria %s",
 				modname, mod._VERSION or "(none)", versions), 3)
