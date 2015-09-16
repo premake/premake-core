@@ -296,7 +296,7 @@
 			end
 		end
 
-		if #result > 0 then
+		if #result > 1 then
 			table.insert(result, 1, "-Wl,--start-group")
 			table.insert(result, "-Wl,--end-group")
 		end
