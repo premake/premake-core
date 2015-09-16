@@ -75,3 +75,32 @@
 <PlatformToolset>v100</PlatformToolset>
 		]]
 	end
+
+
+--
+-- Check if platform toolset element is being emitted correctly.
+--
+
+	function suite.output_onConsoleAppAndNoCpp()
+		kind "ConsoleApp"
+		removefiles "hello.cpp"
+		prepare()
+		test.capture [[
+<PlatformToolset>v110</PlatformToolset>
+		]]
+	end
+
+	function suite.skipped_onNoMakefileAndNoCpp()
+		kind "Makefile"
+		removefiles "hello.cpp"
+		prepare()
+		test.isemptycapture()
+	end
+
+	function suite.output_onNoMakefileAndCpp()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+<PlatformToolset>v110</PlatformToolset>
+		]]
+	end
