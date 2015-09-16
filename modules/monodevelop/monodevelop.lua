@@ -115,7 +115,7 @@
 
 		if project.isdotnet(prj) then
 			p.generate(prj, ".csproj", vstudio.cs2005.generate)
-			p.generate(prj, ".csproj.user", vstudio.cs2005.generate_user)
+			p.generate(prj, ".csproj.user", vstudio.cs2005.generateUser)
 		elseif project.iscpp(prj) then
 			p.generate(prj, ".cproj", m.generate)
 		end
