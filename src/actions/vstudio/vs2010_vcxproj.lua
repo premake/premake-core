@@ -145,6 +145,7 @@
 		if cfg.kind == p.UTILITY then
 			return {
 				m.configurationType,
+				m.platformToolset,
 			}
 		else
 			return {
@@ -349,7 +350,7 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= p.XBOX360 and config.hasResourceFiles(cfg) then
+		if cfg.system ~= p.XBOX360 and p.config.hasFile(cfg, path.isresourcefile) then
 			local contents = p.capture(function ()
 				p.push()
 				p.callArray(m.elements.resourceCompile, cfg)
@@ -1560,12 +1561,12 @@
 			version = action.vstudio.platformToolset
 		end
 		if version then
-			-- should only be written if there is a C/C++ file in the config
-			for i = 1, #cfg.files do
-				if path.iscppfile(cfg.files[i]) then
+			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
+				if p.config.hasFile(cfg, path.iscppfile) then
 					m.element("PlatformToolset", nil, version)
-					break
 				end
+			else
+				m.element("PlatformToolset", nil, version)
 			end
 		end
 	end
