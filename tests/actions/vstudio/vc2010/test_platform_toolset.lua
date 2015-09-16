@@ -57,17 +57,6 @@
 
 
 --
--- Element should only be written if C++ files are present.
---
-
-	function suite.empty_onNoRelevantSources()
-		removefiles "hello.cpp"
-		prepare()
-		test.isemptycapture()
-	end
-
-
---
 -- Check for overrides from project scripts.
 --
 
@@ -100,5 +89,33 @@
 		prepare()
 		test.capture [[
 <PlatformToolset>LLVM-vs2014_xp</PlatformToolset>
+		]]
+	end
+
+--
+-- Check if platform toolset element is being emitted correctly.
+--
+
+	function suite.output_onConsoleAppAndNoCpp()
+		kind "ConsoleApp"
+		removefiles "hello.cpp"
+		prepare()
+		test.capture [[
+<PlatformToolset>v110</PlatformToolset>
+		]]
+	end
+
+	function suite.skipped_onNoMakefileAndNoCpp()
+		kind "Makefile"
+		removefiles "hello.cpp"
+		prepare()
+		test.isemptycapture()
+	end
+
+	function suite.output_onNoMakefileAndCpp()
+		kind "Makefile"
+		prepare()
+		test.capture [[
+<PlatformToolset>v110</PlatformToolset>
 		]]
 	end

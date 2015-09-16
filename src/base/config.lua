@@ -359,14 +359,15 @@
 
 
 
---
--- Determine if a configuration contains one or more resource files.
---
+---
+-- Returns true if any of the files in the provided container pass the
+-- provided test function.
+---
 
-	function config.hasResourceFiles(self)
+	function config.hasFile(self, testfn)
 		local files = self.files
 		for i = 1, #files do
-			if path.isresourcefile(files[i]) then
+			if testfn(files[i]) then
 				return true
 			end
 		end
