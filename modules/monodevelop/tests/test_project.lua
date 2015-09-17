@@ -108,3 +108,11 @@
     <Target>Bin</Target>
 		]]
 	end
+
+
+	-- Ensure we don't crash generating the C# project files
+	function suite.OnProject_CS_UserFile()
+		language "C#"
+		prepare()
+		monodevelop.generateProject(prj)
+	end
