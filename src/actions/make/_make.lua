@@ -84,11 +84,11 @@
 	function make.esc(value)
 		result = value:gsub("\\", "\\\\")
 		result = result:gsub(" ", "\\ ")
-		result = result:gsub("%(", "\\%(")
-		result = result:gsub("%)", "\\%)")
+		result = result:gsub("%(", "\\(")
+		result = result:gsub("%)", "\\)")
 
 		-- leave $(...) shell replacement sequences alone
-		result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
+		result = result:gsub("$\\%((.-)\\%)", "$(%1)")
 		return result
 	end
 
