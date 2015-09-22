@@ -32,9 +32,12 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 
 	int bottom = lua_gettop(L);
 	int z = !OKAY;
+	int premake_nil = 0;
 
 	lua_getglobal(L, "premake");
-	if (lua_isnil(L, -1)) {
+	premake_nil = lua_isnil(L, -1);
+	lua_pop(L, 1);
+	if (premake_nil == 1) {
 		return original_luaL_loadfile(L, filename); /* if premake is not initialized use original loadfile */
 	}
 
