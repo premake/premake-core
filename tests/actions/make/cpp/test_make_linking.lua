@@ -145,6 +145,30 @@
     end
 
 --
+-- Check a linking multiple siblings.
+--
+
+	function suite.links_onSiblingStaticLib()
+		links "MyProject2"
+		links "MyProject3"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		prepare { "ldFlags", "libs", "ldDeps" }
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
+  LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+		]]
+	end
+
+--
 -- When referencing an external library via a path, the directory
 -- should be added to the library search paths, and the library
 -- itself included via an -l flag.
