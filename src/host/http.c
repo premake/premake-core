@@ -6,6 +6,7 @@
 
 #include "premake.h"
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef PREMAKE_CURL
 
@@ -170,7 +171,7 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 
 int http_get(lua_State* L)
 {
-	CurlCallbackState state = { 0, 0 };
+	CurlCallbackState state = { 0, 0, {NULL, 0} };
 
 	CURL* curl = curl_request(L, &state, /*fp=*/NULL, /*progressFnIndex=*/2);
 	CURLcode code;
@@ -204,7 +205,7 @@ int http_get(lua_State* L)
 
 int http_download(lua_State* L)
 {
-	CurlCallbackState state = { 0, 0 };
+	CurlCallbackState state = { 0, 0, {NULL, 0} };
 
 	CURL* curl;
 	CURLcode code = CURLE_FAILED_INIT;
