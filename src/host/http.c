@@ -12,6 +12,9 @@
 
 #include <curl/curl.h>
 
+#define _MPRINTF_REPLACE /* use curl functions only */
+#include <curl/mprintf.h>
+
 typedef struct {
 	char* ptr;
 	size_t len;
@@ -29,10 +32,12 @@ void string_init(string* s)
 	s->ptr[0] = '\0';
 }
 
-typedef struct {
+typedef struct
+{
 	lua_State* L;
 	int RefIndex;
 	string S;
+	char errorBuffer[CURL_ERROR_SIZE];
 } CurlCallbackState;
 
 static int curl_progress_cb(void* userdata, double dltotal, double dlnow,
@@ -145,6 +150,7 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, state->errorBuffer);
 
 	get_headers(L, &headers);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -165,6 +171,9 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 		curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, curl_progress_cb);
 	}
 
+	// clear error buffer.
+	state->errorBuffer[0] = 0;
+
 	return curl;
 }
 
@@ -175,8 +184,6 @@ int http_get(lua_State* L)
 
 	CURL* curl = curl_request(L, &state, /*fp=*/NULL, /*progressFnIndex=*/2);
 	CURLcode code;
-
-	const char* err;
 
 	string_init(&state.S);
 
@@ -189,10 +196,11 @@ int http_get(lua_State* L)
 	code = curl_easy_perform(curl);
 	if (code != CURLE_OK)
 	{
-		err = curl_easy_strerror(code);
+		char errorBuf[1024];
+		snprintf(errorBuf, sizeof(errorBuf) - 1, "%s\n%s\n", curl_easy_strerror(code), state.errorBuffer);
 
 		lua_pushnil(L);
-		lua_pushfstring(L, err);
+		lua_pushfstring(L, errorBuf);
 		return 2;
 	}
 
@@ -230,7 +238,17 @@ int http_download(lua_State* L)
 
 	fclose(fp);
 
-	lua_pushstring(L, curl_easy_strerror(code));
+	if (code != CURLE_OK)
+	{
+		char errorBuf[1024];
+		snprintf(errorBuf, sizeof(errorBuf) - 1, "%s\n%s\n", curl_easy_strerror(code), state.errorBuffer);
+		lua_pushstring(L, errorBuf);
+	}
+	else
+	{
+		lua_pushstring(L, "OK");
+	}
+
 	lua_pushnumber(L, code);
 	return 2;
 }
