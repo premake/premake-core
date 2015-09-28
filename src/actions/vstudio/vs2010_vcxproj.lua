@@ -877,7 +877,7 @@
 	end
 
 	function m.projectReferences(prj)
-		local refs = project.getdependencies(prj)
+		local refs = project.getdependencies(prj, 'linkOnly')
 		if #refs > 0 then
 			-- sort dependencies by uuid.
 			table.sort(refs, function(a,b)

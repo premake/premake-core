@@ -158,16 +158,24 @@
 --
 -- @param prj
 --    The project to query.
--- @param linkOnly
---    If set, returns only siblings which are linked against (links) and skips
---    siblings which are not (dependson).
+-- @param mode
+--    if mode == 'linkOnly', returns only siblings which are linked against (links) and skips siblings which are not (dependson).
+--    if mode == 'dependOnly' returns only siblings which are depended on (dependson) and skips siblings which are not (links).
 -- @return
 --    A list of dependent projects, as an array of project objects.
 ---
 
-	function project.getdependencies(prj, linkOnly)
+	function project.getdependencies(prj, mode)
 		if not prj.dependencies then
-			local result = {}
+			prj.dependencies = {}
+		end
+
+		local m = mode or 'all'
+		local result = prj.dependencies[m]
+		if result then
+			return result
+		end
+
 			local function add_to_project_list(cfg, depproj, result)
 				local dep = p.workspace.findproject(cfg.workspace, depproj)
 					if dep and not table.contains(result, dep) then
@@ -175,21 +183,27 @@
 					end
 			end
 
+		local linkOnly = m == 'linkOnly'
+		local depsOnly = m == 'dependOnly'
+
+		result = {}
 			for cfg in project.eachconfig(prj) do
+			if not depsOnly then
 				for _, link in ipairs(cfg.links) do
 				    if link ~= prj.name then
 				    	add_to_project_list(cfg, link, result)
 				    end
 				end
+			end
 				if not linkOnly then
 					for _, depproj in ipairs(cfg.dependson) do
 						add_to_project_list(cfg, depproj, result)
 					end
 				end
 			end
-			prj.dependencies = result
-		end
-		return prj.dependencies
+		prj.dependencies[m] = result
+
+		return result
 	end
 
 

@@ -325,7 +325,7 @@
 	function cs2005.projectReferences(prj)
 		_p(1,'<ItemGroup>')
 
-		local deps = project.getdependencies(prj, true)
+		local deps = project.getdependencies(prj, 'linkOnly')
 		if #deps > 0 then
 			for _, dep in ipairs(deps) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(dep))

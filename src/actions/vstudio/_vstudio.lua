@@ -380,7 +380,7 @@
 		if not cfg._needsExplicitLink then
 			local ex = cfg.flags.NoImplicitLink
 			if not ex then
-				local prjdeps = project.getdependencies(cfg.project)
+				local prjdeps = project.getdependencies(cfg.project, "linkOnly")
 				local cfgdeps = config.getlinks(cfg, "dependencies", "object")
 				ex = #prjdeps ~= #cfgdeps
 			end
