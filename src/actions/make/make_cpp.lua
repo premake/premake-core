@@ -434,6 +434,9 @@
 			else
 				_p('  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)')
 			end
+		elseif cfg.kind == premake.UTILITY then
+			-- Empty LINKCMD for Utility (only custom build rules)
+			_p('  LINKCMD =')
 		else
 			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
 			--   but had trouble linking to certain static libs; $(OBJECTS) moved up
