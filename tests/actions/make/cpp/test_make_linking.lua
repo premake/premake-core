@@ -71,6 +71,21 @@
 
 
 --
+-- Check link command for the Utility kind.
+--
+-- Utility projects should only run custom commands, and perform no linking.
+--
+
+	function suite.links_onUtility()
+		kind "Utility"
+		prepare { "linkCmd" }
+		test.capture [[
+  LINKCMD =
+		]]
+	end
+
+
+--
 -- Check link command for a Mac OS X universal static library.
 --
 
