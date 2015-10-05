@@ -49,6 +49,7 @@ static const luaL_Reg path_functions[] = {
 	{ "join", path_join },
 	{ "normalize", path_normalize },
 	{ "translate", path_translate },
+	{ "wildcards", path_wildcards },
 	{ NULL, NULL }
 };
 
