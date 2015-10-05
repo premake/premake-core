@@ -45,29 +45,34 @@ none:
 
 mingw: $(SRC)
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" $? -lole32
-	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake
+ifeq ($(BUILDHOST),linux)
+	gcc -o build/bootstrap/premake5 -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" $? -lm
+else
+	$(CC) -o build/bootstrap/premake5 -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" $? -lole32
+endif
+	./build/bootstrap/premake5 embed
+	./build/bootstrap/premake5 --os=windows --to=build/bootstrap $(PREMAKE_OPTS) gmake
 	$(MAKE) -C build/bootstrap
 
+macosx: osx
 osx: $(SRC)
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -framework CoreServices $?
-	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
+	$(CC) -o build/bootstrap/premake5 -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -framework CoreServices $?
+	./build/bootstrap/premake5 embed
+	./build/bootstrap/premake5 --to=build/bootstrap $(PREMAKE_OPTS) gmake
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
 
 linux: $(SRC)
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" $? -lm
-	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
+	$(CC) -o build/bootstrap/premake5 -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" $? -lm
+	./build/bootstrap/premake5 embed
+	./build/bootstrap/premake5 --to=build/bootstrap $(PREMAKE_OPTS) gmake
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
 
 windows: $(SRC)
 	if not exist build\bootstrap (mkdir build\bootstrap)
-	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" user32.lib ole32.lib $**
-	.\build\bootstrap\premake_bootstrap.exe embed
-	.\build\bootstrap\premake_bootstrap --to=build/bootstrap vs2012
+	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake5.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" user32.lib ole32.lib $**
+	.\build\bootstrap\premake5.exe embed
+	.\build\bootstrap\premake5 --to=build/bootstrap $(PREMAKE_OPTS) vs2012
 	devenv .\build\bootstrap\Premake5.sln /Upgrade
 	devenv .\build\bootstrap\Premake5.sln /Build Release

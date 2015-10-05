@@ -20,16 +20,18 @@
 -- Check the command line arguments, and show some help if needed.
 ---
 
-	local usage = 'usage is: package <branch> <type>\n' ..
+	local usage = 'usage is: package <branch> <type> [noprompt]\n' ..
 		'       <branch> is the name of the release branch to target\n' ..
-		'       <type> is one of "source" or "binary"\n'
+		'       <type> is one of "source" or "binary"\n' ..
+		'       [noprompt] will skip the confirmation prompt\n'
 
-	if #_ARGS ~= 2 then
+	if #_ARGS < 2 or #_ARGS > 3 then
 		error(usage, 0)
 	end
 
 	local branch = _ARGS[1]
 	local kind = _ARGS[2]
+	local noprompt = _ARGS[3] == "noprompt"
 
 	if kind ~= "source" and kind ~= "binary" then
 		error(usage, 0)
@@ -40,7 +42,7 @@
 -- Make sure I've got what I've need to be happy.
 --
 
-	local required = { "git", "make", "gcc", "premake5", "zip" }
+	local required = { "git", "make", "gcc", "zip" }
 	for _, value in ipairs(required) do
 		local z = execQuiet("%s --version", value)
 		if z ~= 0 then
@@ -74,8 +76,14 @@
 	printf("  ...named release/%s%s", pkgName, pkgExt)
 	printf("  ...from the %s branch", branch)
 	printf("")
-	printf("Does this look right to you? If so, press [Enter] to begin.")
-	io.read()
+	if noprompt then
+		if version ~= branch then
+			error("Branch/tag name '%s' does not match version '%s'!", branch, version)
+		end
+	else
+		printf("Does this look right to you? If so, press [Enter] to begin.")
+		io.read()
+	end
 
 
 --
@@ -147,6 +155,10 @@ if kind == "source" then
 	execQuiet("premake5 /to=build/vs2010 vs2010")
 	execQuiet("premake5 /to=build/vs2012 vs2012")
 	execQuiet("premake5 /to=build/vs2013 vs2013")
+	execQuiet("premake5 /to=build/vs2013 vs2015")
+	execQuiet("premake5 /to=build/xcode4 xcode4")
+	execQuiet("premake5 /to=build/codelite codelite")
+	execQuiet("premake5 /to=build/monodevelop monodevelop")
 	execQuiet("premake5 /to=build/gmake.windows /os=windows gmake")
 	execQuiet("premake5 /to=build/gmake.unix /os=linux gmake")
 	execQuiet("premake5 /to=build/gmake.macosx /os=macosx gmake")
