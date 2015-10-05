@@ -942,8 +942,10 @@
 
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
-			local dirs = table.concat(vstudio.path(cfg, cfg.usingdirs), ";")
-			m.element("AdditionalUsingDirectories", nil, "%s;%%(AdditionalUsingDirectories)", dirs)
+			local dirs = vstudio.path(cfg, cfg.usingdirs)
+			if #dirs > 0 then
+				m.element("AdditionalUsingDirectories", nil, "%s;%%(AdditionalUsingDirectories)", table.concat(dirs, ";"))
+			end
 		end
 	end
 
