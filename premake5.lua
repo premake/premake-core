@@ -74,8 +74,8 @@
 	}
 
 	newoption {
-		trigger     = "bytecode",
-		description = "Embed bytecode instead of stripped souce code."
+		trigger     = "no-bytecode",
+		description = "Don't embed bytecode, but instead use the stripped souce code."
 	}
 
 --

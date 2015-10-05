@@ -67,8 +67,8 @@
 
 	local function addScript(result, filename, name, data)
 		if not data then
-			if _OPTIONS.bytecode then
-				print("Compiling... " .. filename)
+			if not _OPTIONS["no-bytecode"] then
+				verbosef("Compiling... " .. filename)
 				local output = path.replaceextension(filename, ".luac")
 				local res, err = os.compile(filename, output);
 				if res ~= nil then
@@ -117,6 +117,7 @@
 -- Generate table of embedded content.
 	local contentTable = {}
 
+	print("Compiling... ")
 	for mi = 1, #manifests do
 		local manifestName = manifests[mi]
 		local manifestDir  = path.getdirectory(manifestName)
