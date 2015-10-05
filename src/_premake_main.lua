@@ -247,7 +247,10 @@
 
 	function m.preBake()
 		if p.action.isConfigurable() then
-			print("Building configurations...")
+			local action = premake.action.current()
+			if not action.quiet then
+				print("Building configurations...")
+			end
 		end
 	end
 
@@ -308,7 +311,9 @@
 
 	function m.preAction()
 		local action = premake.action.current()
-		printf("Running action '%s'...", action.trigger)
+		if not action.quiet then
+			printf("Running action '%s'...", action.trigger)
+		end
 	end
 
 
@@ -328,7 +333,10 @@
 
 	function m.postAction()
 		if p.action.isConfigurable() then
-			print("Done.")
+			local action = premake.action.current()
+			if not action.quiet then
+				print("Done.")
+			end
 		end
 	end
 
