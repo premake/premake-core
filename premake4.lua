@@ -18,7 +18,7 @@
 		language    "C"
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "src/host/lua-5.1.4/src" }
+		includedirs { "src/host/lua/src" }
 
 		files
 		{
@@ -29,12 +29,12 @@
 
 		excludes
 		{
-			"src/host/lua-5.1.4/src/lauxlib.c",
-			"src/host/lua-5.1.4/src/lua.c",
-			"src/host/lua-5.1.4/src/luac.c",
-			"src/host/lua-5.1.4/src/print.c",
-			"src/host/lua-5.1.4/**.lua",
-			"src/host/lua-5.1.4/etc/*.c"
+			"src/host/lua/src/lauxlib.c",
+			"src/host/lua/src/lua.c",
+			"src/host/lua/src/luac.c",
+			"src/host/lua/src/print.c",
+			"src/host/lua/**.lua",
+			"src/host/lua/etc/*.c"
 		}
 
 		configuration "Debug"
