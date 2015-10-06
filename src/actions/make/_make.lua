@@ -20,7 +20,7 @@
 		shortname       = "GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility" },
 
 		valid_languages = { "C", "C++", "C#" },
 
