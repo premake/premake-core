@@ -66,10 +66,11 @@ int buffered_write(lua_State* L)
 int buffered_writeln(lua_State* L)
 {
 	size_t l;
-	const char *s = luaL_checklstring(L, 2, &l);
+	const char *s = luaL_optlstring(L, 2, NULL, &l);
 	Buffer* b = (Buffer*)lua_touserdata(L, 1);
 
-	do_write(b, s, l);
+	if (s != NULL)
+		do_write(b, s, l);
 	do_write(b, "\r\n", 2);
 	return 0;
 }

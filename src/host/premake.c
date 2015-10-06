@@ -76,6 +76,7 @@ static const luaL_Reg os_functions[] = {
 	{ "stat",                   os_stat                 },
 	{ "uuid",                   os_uuid                 },
 	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
+	{ "compile",                os_compile              },
 	{ NULL, NULL }
 };
 
@@ -306,8 +307,6 @@ int premake_locate_executable(lua_State* L, const char* argv0)
  */
 int premake_test_file(lua_State* L, const char* filename, int searchMask)
 {
-	int i;
-
 	if (searchMask & TEST_LOCAL) {
 		if (do_isfile(filename)) {
 			lua_pushcfunction(L, path_getabsolute);
@@ -329,13 +328,11 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	if ((searchMask & TEST_EMBEDDED) != 0) {
 		/* Try to locate a record matching the filename */
-		for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
-			if (strcmp(builtin_scripts_index[i], filename) == 0) {
-				lua_pushstring(L, "$/");
-				lua_pushstring(L, filename);
-				lua_concat(L, 2);
-				return OKAY;
-			}
+		if (premake_find_embedded_script(filename) != NULL) {
+			lua_pushstring(L, "$/");
+			lua_pushstring(L, filename);
+			lua_concat(L, 2);
+			return OKAY;
 		}
 	}
 	#endif
@@ -499,13 +496,13 @@ static int run_premake_main(lua_State* L, const char* script)
  * contents of the file's script.
  */
 
- const char* premake_find_embedded_script(const char* filename)
+ const buildin_mapping* premake_find_embedded_script(const char* filename)
  {
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
  	int i;
-	for (i = 0; builtin_scripts_index[i] != NULL; ++i) {
-		if (strcmp(builtin_scripts_index[i], filename) == 0) {
-			return builtin_scripts[i];
+	for (i = 0; builtin_scripts[i].name != NULL; ++i) {
+		if (strcmp(builtin_scripts[i].name, filename) == 0) {
+			return builtin_scripts + i;
 		}
 	}
 #endif
@@ -527,7 +524,7 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 	static int warned = 0;
 #endif
 
-	const char* chunk = premake_find_embedded_script(filename);
+	const buildin_mapping* chunk = premake_find_embedded_script(filename);
 	if (chunk == NULL) {
 		return !OKAY;
 	}
@@ -546,5 +543,5 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 	lua_concat(L, 2);
 
 	/* Load the chunk */
-	return luaL_loadbuffer(L, chunk, strlen(chunk), filename);
+	return luaL_loadbuffer(L, (const char*)chunk->bytecode, chunk->length, filename);
 }

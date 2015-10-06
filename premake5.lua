@@ -73,7 +73,10 @@
 		description = "Disable Zlib/Zip 3rd party lib"
 	}
 
-
+	newoption {
+		trigger     = "no-bytecode",
+		description = "Don't embed bytecode, but instead use the stripped souce code."
+	}
 
 --
 -- Define the project. Put the release configuration first so it will be the
