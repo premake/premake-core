@@ -6,7 +6,7 @@
 
 #include "premake.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 /*
 --Converts from a simple wildcard syntax, where * is "match any"
