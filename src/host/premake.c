@@ -13,8 +13,10 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 
+#ifdef PREMAKE_NO_BUILTIN_SCRIPTS
+const char* PREMAKE_VERSION = "bootstrap";
+#endif
 
-#define VERSION        "5.0.0-dev"
 #define COPYRIGHT      "Copyright (C) 2002-2015 Jason Perkins and the Premake Project"
 #define PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 #define ERROR_MESSAGE  "Error: %s\n"
@@ -138,7 +140,7 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, LUA_COPYRIGHT);
 	lua_setglobal(L, "_COPYRIGHT");
 
-	lua_pushstring(L, VERSION);
+	lua_pushstring(L, PREMAKE_VERSION);
 	lua_setglobal(L, "_PREMAKE_VERSION");
 
 	lua_pushstring(L, COPYRIGHT);
