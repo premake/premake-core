@@ -101,7 +101,7 @@
 			table.insert(formats, "%s")
 			path = path or ""
 			local archpath = "/lib:/usr/lib:/usr/local/lib"
-			if os.is64bit() then
+			if os.is64bit() and not os.is("macosx") then
 				archpath = "/lib64:/usr/lib64/:usr/local/lib64" .. ":" .. archpath
 			end
 			if (#path > 0) then
