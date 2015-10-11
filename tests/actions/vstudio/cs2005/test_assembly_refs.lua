@@ -1,11 +1,11 @@
 --
 -- tests/actions/vstudio/cs2005/test_assembly_refs.lua
 -- Test the assembly linking block of a Visual Studio 2005+ C# project.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_assembly_refs = {}
-	local suite = T.vstudio_cs2005_assembly_refs
+	local suite = test.declare("vstudio_cs2005_assembly_refs")
+
 	local cs2005 = premake.vstudio.cs2005
 
 
@@ -13,16 +13,16 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		language "C#"
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		cs2005.assemblyReferences(prj)
 	end
 

@@ -562,6 +562,13 @@
 	}
 
 	api.register {
+		name = "ignoredefaultlibraries",
+		scope = "config",
+		kind = "list:mixed",
+		tokens = true,
+	}
+
+	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",
@@ -880,7 +887,7 @@
 
 	api.register {
 		name = "startproject",
-		scope = "solution",
+		scope = "workspace",
 		kind = "string",
 		tokens = true,
 	}
@@ -976,11 +983,11 @@
 		end,
 	}
 
-  api.register {
-    name = "customtoolnamespace",
-    scope = "config",
-    kind = "string",
-  }
+	api.register {
+		name = "customtoolnamespace",
+		scope = "config",
+		kind = "string",
+	}
 
 	api.register {
 		name = "undefines",

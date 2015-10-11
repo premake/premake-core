@@ -28,3 +28,17 @@
 	function suite.returnsCorrectOption_onMixedCase()
 		test.isnotnil(_OPTIONS["TestOpt"])
 	end
+
+--
+-- Because we can't control how the user will type in options in the
+-- premake script, keys should be stored in lowercase.
+--
+
+	function suite.storesOptionCorrectly_onMixedCase()
+		newoption {
+			trigger = "TestOpt2",
+			description = "Testing",
+		}
+
+		test.isnotnil(premake.option.get("testopt2"))
+	end

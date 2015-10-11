@@ -31,7 +31,7 @@
 
 		onWorkspace = function(wks)
 			premake.escaper(make.esc)
-			premake.generate(wks, make.getmakefilename(wks, false), make.generate_solution)
+			premake.generate(wks, make.getmakefilename(wks, false), make.generate_workspace)
 		end,
 
 		onProject = function(prj)
@@ -84,11 +84,11 @@
 	function make.esc(value)
 		result = value:gsub("\\", "\\\\")
 		result = result:gsub(" ", "\\ ")
-		result = result:gsub("%(", "\\%(")
-		result = result:gsub("%)", "\\%)")
+		result = result:gsub("%(", "\\(")
+		result = result:gsub("%)", "\\)")
 
 		-- leave $(...) shell replacement sequences alone
-		result = result:gsub("$\\%((.-)\\%)", "$%(%1%)")
+		result = result:gsub("$\\%((.-)\\%)", "$(%1)")
 		return result
 	end
 

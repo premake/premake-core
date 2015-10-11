@@ -18,10 +18,10 @@ return {
 	"base/test_uuid.lua",
 	"base/test_versions.lua",
 
-	-- Solution object tests
-	"solution/test_eachconfig.lua",
-	"solution/test_location.lua",
-	"solution/test_objdirs.lua",
+	-- Workspace object tests
+	"workspace/test_eachconfig.lua",
+	"workspace/test_location.lua",
+	"workspace/test_objdirs.lua",
 
 	-- Project object tests
 	"project/test_config_maps.lua",
@@ -109,6 +109,8 @@ return {
 	"actions/vstudio/vc2010/test_excluded_configs.lua",
 	"actions/vstudio/vc2010/test_extension_settings.lua",
 	"actions/vstudio/vc2010/test_extension_targets.lua",
+	"actions/vstudio/vc2010/test_language_settings.lua",
+	"actions/vstudio/vc2010/test_language_targets.lua",
 	"actions/vstudio/vc2010/test_floatingpoint.lua",
 	"actions/vstudio/vc2010/test_globals.lua",
 	"actions/vstudio/vc2010/test_header.lua",
@@ -134,12 +136,12 @@ return {
 	"actions/make/test_make_escaping.lua",
 	"actions/make/test_make_tovar.lua",
 
-	-- Makefile solutions
-	"actions/make/solution/test_config_maps.lua",
-	"actions/make/solution/test_default_config.lua",
-	"actions/make/solution/test_group_rule.lua",
-	"actions/make/solution/test_help_rule.lua",
-	"actions/make/solution/test_project_rule.lua",
+	-- Makefile workspaces
+	"actions/make/workspace/test_config_maps.lua",
+	"actions/make/workspace/test_default_config.lua",
+	"actions/make/workspace/test_group_rule.lua",
+	"actions/make/workspace/test_help_rule.lua",
+	"actions/make/workspace/test_project_rule.lua",
 
 	-- Makefile C/C++ projects
 	"actions/make/cpp/test_clang.lua",

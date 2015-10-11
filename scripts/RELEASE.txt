@@ -9,8 +9,9 @@ PREP
 
  * Update version in src/host/premake.c and commit
 
- * Prep release announcement for forums from change log
+ * Push release branch to GitHub; wait for CI to pass
 
+ * Prep release announcement for forums from change log
 
 RELEASE
 

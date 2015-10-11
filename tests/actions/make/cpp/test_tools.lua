@@ -17,7 +17,7 @@
 	local cfg
 
 	function suite.setup()
-		local sln, prj = test.createsolution()
+		local wks, prj = test.createWorkspace()
 		cfg = test.getconfig(prj, "Debug")
 	end
 

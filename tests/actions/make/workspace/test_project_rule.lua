@@ -1,6 +1,6 @@
 --
--- tests/actions/make/solution/test_project_rule.lua
--- Validate generation of project rules in solution makefile.
+-- tests/actions/make/workspace/test_project_rule.lua
+-- Validate generation of project rules in workspace makefile.
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
@@ -11,16 +11,16 @@
 -- Setup/teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
 		premake.oven.bake()
-		sln = test.getsolution(sln)
-		premake.make.projectrules(sln)
+		wks = test.getWorkspace(wks)
+		premake.make.projectrules(wks)
 	end
 
 

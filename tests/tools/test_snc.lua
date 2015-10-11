@@ -13,10 +13,10 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		system "PS3"
 	end
 
@@ -147,7 +147,7 @@
 	function suite.links_onStaticSiblingLibrary()
 		links { "MyProject2" }
 
-		test.createproject(sln)
+		test.createproject(wks)
 		system "Linux"
 		kind "StaticLib"
 		location "MyProject2"

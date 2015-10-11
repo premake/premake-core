@@ -325,7 +325,7 @@
 	function cs2005.projectReferences(prj)
 		_p(1,'<ItemGroup>')
 
-		local deps = project.getdependencies(prj, true)
+		local deps = project.getdependencies(prj, 'linkOnly')
 		if #deps > 0 then
 			for _, dep in ipairs(deps) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(dep))
@@ -365,10 +365,11 @@
 --
 
 	function cs2005.propertyGroup(cfg)
+		local platform = vstudio.projectPlatform(cfg)
 		local arch = cs2005.arch(cfg)
-		_x(1,'<PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|%s\' ">', cfg.buildcfg, arch)
+		p.push('<PropertyGroup Condition=" \'$(Configuration)|$(Platform)\' == \'%s|%s\' ">', platform, arch)
 		if arch ~= "AnyCPU" or _ACTION > "vs2008" then
-			_x(2,'<PlatformTarget>%s</PlatformTarget>', arch)
+			p.x('<PlatformTarget>%s</PlatformTarget>', arch)
 		end
 	end
 

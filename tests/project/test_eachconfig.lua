@@ -1,21 +1,20 @@
 --
 -- tests/project/test_eachconfig.lua
 -- Test the project object configuration iterator function.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jason Perkins and the Premake project
 --
 
-	T.project_eachconfig = { }
-	local suite = T.project_eachconfig
+	local suite = test.declare("project_eachconfig")
 
 
 --
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 	end
 
 	local function prepare(buildcfgs)
@@ -23,7 +22,7 @@
 		if buildcfgs then
 			configurations ( buildcfgs )
 		end
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		for cfg in premake.project.eachconfig(prj) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end
@@ -89,7 +88,7 @@
 
 
 --
--- Test the mapping of a build configuration from solution to project.
+-- Test the mapping of a build configuration from workspace to project.
 --
 
 	function suite.mapsBuildCfg_toBuildCfg()
@@ -104,7 +103,7 @@
 
 
 --
--- Test mapping a platform from solution to project.
+-- Test mapping a platform from workspace to project.
 --
 
 	function suite.mapsPlatform_toPlatform()
@@ -122,7 +121,7 @@
 --
 -- Test mapping a build configuration to a build config/platform pair.
 -- This will cause a second platform to appear in the project, alongside
--- the one defined by the solution.
+-- the one defined by the workspace.
 --
 
 	function suite.mapsBuildCfg_toBuildCfgAndPlatform()
@@ -155,12 +154,12 @@
 
 
 --
--- If there is overlap in the solution and project configuration lists,
+-- If there is overlap in the workspace and project configuration lists,
 -- the ordering at the project level should be maintained to avoid
 -- unnecessarily dirtying the project file.
 --
 
-	function suite.maintainsProjectOrdering_onSolutionOverlap()
+	function suite.maintainsProjectOrdering_onWorkspaceOverlap()
 		configurations { "Debug", "Release" }
 		prepare { "Debug", "Development", "Profile", "Release" }
 		test.capture [[

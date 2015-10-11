@@ -16,7 +16,7 @@
 	local cfg
 
 	function suite.setup()
-		local sln, prj = test.createsolution()
+		local wks, prj = test.createWorkspace()
 		system "wii"
 		flags "Symbols"
 		cfg = test.getconfig(prj, "Debug")

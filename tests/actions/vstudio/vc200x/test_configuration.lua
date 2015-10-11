@@ -14,15 +14,15 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 	end
 
 	local function prepare()
-		local cfg = test.getconfig(prj, "Debug", (prj.platforms or sln.platforms or {})[1])
+		local cfg = test.getconfig(prj, "Debug", (prj.platforms or wks.platforms or {})[1])
 		vc200x.configuration(cfg, vstudio.projectConfig(cfg))
 	end
 
@@ -51,7 +51,7 @@
 --
 
 	function suite.usesWin32_onX86()
-		solution "MySolution"
+		workspace("MyWorkspace")
 		platforms { "x86" }
 		prepare()
 		test.capture [[

@@ -52,9 +52,9 @@
 --
 
 	function suite.expandsNestedTokens()
-		environ.sln = { name="MySolution%{'X'}" }
-		x = detoken.expand("%{sln.name}", environ)
-		test.isequal("MySolutionX", x)
+		environ.wks = { name="MyWorkspace%{'X'}" }
+		x = detoken.expand("%{wks.name}", environ)
+		test.isequal("MyWorkspaceX", x)
 	end
 
 

@@ -1,27 +1,27 @@
 --
 -- tests/actions/make/test_default_config.lua
 -- Validate generation of default configuration block for makefiles.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	T.make_default_config = {}
-	local suite = T.make_default_config
-	local make = premake.make
+	local suite = test.declare("make_default_config")
+
+	local p = premake
 
 
 --
 -- Setup/teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
-		make.defaultconfig(prj)
+		prj = test.getproject(wks, 1)
+		p.make.defaultconfig(prj)
 	end
 
 
@@ -55,7 +55,7 @@ endif
 
 
 --
--- If the project excludes a solution build cfg, it should be skipped
+-- If the project excludes a workspace build cfg, it should be skipped
 -- over as the default config as well.
 --
 

@@ -14,13 +14,13 @@
 --
 
 	function suite.setup()
-		api.register { 
-			name = "testapi", 
-			kind = "string", 
+		api.register {
+			name = "testapi",
+			kind = "string",
 			scope = "project",
 			allowed = { "One", "Two", "Three" },
 		}
-		test.createsolution()
+		test.createWorkspace()
 	end
 
 	function suite.teardown()
@@ -54,7 +54,7 @@
 --
 
 	function suite.raisesError_onTableValue()
-		ok, err = pcall(function () 
+		ok, err = pcall(function ()
 			testapi { "One", "Two" }
 		end)
 		test.isfalse(ok)
@@ -66,7 +66,7 @@
 --
 
 	function suite.raisesError_onDisallowedValue()
-		ok, err = pcall(function () 
+		ok, err = pcall(function ()
 			testapi "NotAllowed"
 		end)
 		test.isfalse(ok)

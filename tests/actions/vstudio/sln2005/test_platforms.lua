@@ -12,11 +12,11 @@
 -- Setup
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
 	end
@@ -24,8 +24,8 @@
 	local function prepare(lang)
 		filter {}
 		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
-		sln = test.getsolution(sln)
-		sln2005.configurationPlatforms(sln)
+		wks = test.getsolution(wks)
+		sln2005.configurationPlatforms(wks)
 	end
 
 

@@ -66,7 +66,7 @@
 		end
 
 		-- for backward compatibility
-		_G["external" .. containerName:capitalized()] = _G["external" .. containerName]
+		p.alias(_G, "external" .. containerName, "external" .. containerName:capitalized())
 
 		return class
 	end
@@ -76,36 +76,28 @@
 ---
 -- Register a general-purpose includeExternal() call which works just like
 -- include(), but marks any containers created while evaluating the included
--- scripts as external.
+-- scripts as external. It also, loads the file regardless of how many times
+-- it has been loaded already.
 ---
 
 	function includeexternal(fname)
+		local fullPath = premake.findProjectScript(fname)
 		api._isIncludingExternal = true
-		include(fname)
+		fname = fullPath or fname
+		dofile(fname)
 		api._isIncludingExternal = nil
 	end
 
-	includeExternal = includeexternal
+	p.alias(_G, "includeexternal", "includeExternal")
 
 
 
 ---
--- Return the global configuration container. You could just call global()
--- too, but this is much faster.
+-- Return the global configuration container.
 ---
 
 	function api.rootContainer()
 		return api.scope.global
-	end
-
-
-
-
-	function api._clearContainerChildren(class)
-		for childClass in p.container.eachChildClass(class) do
-			api.scope[childClass.name] = nil
-			api._clearContainerChildren(childClass)
-		end
 	end
 
 
@@ -178,10 +170,23 @@
 
 		while instance do
 			api.scope[instance.class.name] = instance
+			if instance.class.alias then
+				api.scope[instance.class.alias] = instance
+			end
 			instance = instance.parent
 		end
 
 		return api.scope.current
+	end
+
+	function api._clearContainerChildren(class)
+		for childClass in p.container.eachChildClass(class) do
+			api.scope[childClass.name] = nil
+			if childClass.alias then
+				api.scope[childClass.alias] = nil
+			end
+			api._clearContainerChildren(childClass)
+		end
 	end
 
 
@@ -314,8 +319,10 @@
 ---
 
      function api.alias(original, alias)
-		_G[alias] = _G[original]
-		_G["remove" .. alias] = _G["remove" .. original]
+     	p.alias(_G, original, alias)
+     	if _G["remove" .. original] then
+     		p.alias(_G, "remove" .. original, "remove" .. alias)
+     	end
      end
 
 
@@ -655,9 +662,9 @@
 ---
 
 	function api.reset()
-		-- Clear out all top level objects, but keep the root config
-		api.scope.global.rules = {}
-		api.scope.global.solutions = {}
+		for containerClass in p.container.eachChildClass(p.global) do
+			api.scope.global[containerClass.pluralName] = {}
+		end
 	end
 
 

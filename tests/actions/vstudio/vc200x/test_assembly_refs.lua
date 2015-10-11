@@ -12,15 +12,15 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		clr "On"
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		vc200x.assemblyReferences(prj)
 	end
 

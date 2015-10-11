@@ -35,6 +35,7 @@
 			m.globals,
 			m.importDefaultProps,
 			m.configurationPropertiesGroup,
+			m.importLanguageSettings,
 			m.importExtensionSettings,
 			m.propertySheetGroup,
 			m.userMacros,
@@ -43,6 +44,7 @@
 			m.assemblyReferences,
 			m.files,
 			m.projectReferences,
+			m.importLanguageTargets,
 			m.importExtensionTargets,
 		}
 	end
@@ -143,6 +145,7 @@
 		if cfg.kind == p.UTILITY then
 			return {
 				m.configurationType,
+				m.platformToolset,
 			}
 		else
 			return {
@@ -347,7 +350,7 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= p.XBOX360 and config.hasResourceFiles(cfg) then
+		if cfg.system ~= p.XBOX360 and p.config.hasFile(cfg, path.isresourcefile) then
 			local contents = p.capture(function ()
 				p.push()
 				p.callArray(m.elements.resourceCompile, cfg)
@@ -401,6 +404,7 @@
 				m.generateMapFile,
 				m.moduleDefinitionFile,
 				m.treatLinkerWarningAsErrors,
+				m.ignoreDefaultLibraries,
 				m.additionalLinkOptions,
 			}
 		end
@@ -873,8 +877,13 @@
 	end
 
 	function m.projectReferences(prj)
-		local refs = project.getdependencies(prj)
+		local refs = project.getdependencies(prj, 'linkOnly')
 		if #refs > 0 then
+			-- sort dependencies by uuid.
+			table.sort(refs, function(a,b)
+				return a.uuid < b.uuid
+			end)
+
 			p.push('<ItemGroup>')
 			for _, ref in ipairs(refs) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
@@ -1076,13 +1085,15 @@
 
 	function m.debugInformationFormat(cfg)
 		local value
+		local tool, toolVersion = p.config.toolset(cfg)
 		if cfg.flags.Symbols then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x86_64" or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
-				   cfg.editandcontinue == p.OFF
+				   cfg.editandcontinue == p.OFF or
+				   (toolVersion and toolVersion:startswith("LLVM-vs"))
 			then
 				value = "ProgramDatabase"
 			else
@@ -1231,6 +1242,21 @@
 	end
 
 
+	function m.ignoreDefaultLibraries(cfg)
+		if #cfg.ignoredefaultlibraries > 0 then
+			local ignored = cfg.ignoredefaultlibraries
+			for i = 1, #ignored do
+				-- Add extension if required
+				if not p.tools.msc.getLibraryExtensions()[ignored[i]:match("[^.]+$")] then
+					ignored[i] = path.appendextension(ignored[i], ".lib")
+				end
+			end
+
+			m.element("IgnoreSpecificDefaultLibraries", condition, table.concat(ignored, ';'))
+		end
+	end
+
+
 	function m.ignoreWarnDuplicateFilename(prj)
 		-- VS 2013 warns on duplicate file names, even those files which are
 		-- contained in different, mututally exclusive configurations. See:
@@ -1273,17 +1299,28 @@
 	end
 
 
-	function m.importExtensionTargets(prj)
+	function m.importLanguageTargets(prj)
 		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-		p.push('<ImportGroup Label="ExtensionTargets">')
+	end
 
+	m.elements.importExtensionTargets = function(prj)
+		return {
+			m.importRuleTargets,
+		}
+	end
+
+	function m.importExtensionTargets(prj)
+		p.push('<ImportGroup Label="ExtensionTargets">')
+		p.callArray(m.elements.importExtensionTargets, prj)
+		p.pop('</ImportGroup>')
+	end
+
+	function m.importRuleTargets(prj)
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
 			local loc = vstudio.path(prj, p.filename(rule, ".targets"))
 			p.x('<Import Project="%s" />', loc)
 		end
-
-		p.pop('</ImportGroup>')
 	end
 
 
@@ -1294,17 +1331,28 @@
 
 
 
-	function m.importExtensionSettings(prj)
+	function m.importLanguageSettings(prj)
 		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
-		p.push('<ImportGroup Label="ExtensionSettings">')
+	end
 
+	m.elements.importExtensionSettings = function(prj)
+		return {
+			m.importRuleSettings,
+		}
+	end
+
+	function m.importExtensionSettings(prj)
+		p.push('<ImportGroup Label="ExtensionSettings">')
+		p.callArray(m.elements.importExtensionSettings, prj)
+		p.pop('</ImportGroup>')
+	end
+
+	function m.importRuleSettings(prj)
 		for i = 1, #prj.rules do
 			local rule = p.global.getRule(prj.rules[i])
 			local loc = vstudio.path(prj, p.filename(rule, ".props"))
 			p.x('<Import Project="%s" />', loc)
 		end
-
-		p.pop('</ImportGroup>')
 	end
 
 
@@ -1508,19 +1556,17 @@
 
 	function m.platformToolset(cfg)
 		local tool, version = p.config.toolset(cfg)
-		if version then
-			version = "v" .. version
-		else
+		if not version then
 			local action = p.action.current()
 			version = action.vstudio.platformToolset
 		end
 		if version then
-			-- should only be written if there is a C/C++ file in the config
-			for i = 1, #cfg.files do
-				if path.iscppfile(cfg.files[i]) then
+			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
+				if p.config.hasFile(cfg, path.iscppfile) then
 					m.element("PlatformToolset", nil, version)
-					break
 				end
+			else
+				m.element("PlatformToolset", nil, version)
 			end
 		end
 	end
@@ -1570,9 +1616,8 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		if cfg.debugformat ~= "c7" and cfg.flags.Symbols then
-			p.w('<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>')
-		end -- end if
+		-- just a placeholder for overriding; will use the default VS name
+		-- for changes, see https://github.com/premake/premake-core/issues/151
 	end
 
 
@@ -1683,7 +1728,8 @@
 	end
 
 	function m.bufferSecurityCheck(cfg)
-		if cfg.flags.NoBufferSecurityCheck then
+		local tool, toolVersion = p.config.toolset(cfg)
+		if cfg.flags.NoBufferSecurityCheck or (toolVersion and toolVersion:startswith("LLVM-vs")) then
 			m.element("BufferSecurityCheck", nil, "false")
 		end
 	end

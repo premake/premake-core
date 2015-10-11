@@ -13,11 +13,11 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_OS = "linux"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 	end
 
 	local function prepare(calls)
@@ -92,7 +92,7 @@
 	function suite.links_onSiblingStaticLib()
 		links "MyProject2"
 
-		test.createproject(sln)
+		test.createproject(wks)
 		kind "StaticLib"
 		location "build"
 
@@ -112,7 +112,7 @@
 	function suite.links_onSiblingSharedLib()
 		links "MyProject2"
 
-		test.createproject(sln)
+		test.createproject(wks)
 		kind "SharedLib"
 		location "build"
 
@@ -132,7 +132,7 @@
         links "MyProject2"
         flags { "RelativeLinks" }
 
-        test.createproject(sln)
+        test.createproject(wks)
         kind "SharedLib"
         location "build"
 
@@ -143,6 +143,30 @@
   LDDEPS += build/bin/Debug/libMyProject2.so
         ]]
     end
+
+--
+-- Check a linking multiple siblings.
+--
+
+	function suite.links_onSiblingStaticLib()
+		links "MyProject2"
+		links "MyProject3"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		prepare { "ldFlags", "libs", "ldDeps" }
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
+  LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+		]]
+	end
 
 --
 -- When referencing an external library via a path, the directory

@@ -12,19 +12,19 @@
 -- Setup
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		premake.escaper(premake.vstudio.vs2005.esc)
-		sln = solution "MySolution"
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
 		kind "ConsoleApp"
 	end
 
 	local function prepare()
-		sln2005.reorderProjects(sln)
-		sln2005.projects(sln)
+		sln2005.reorderProjects(wks)
+		sln2005.projects(wks)
 	end
 
 

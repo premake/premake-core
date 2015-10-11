@@ -12,16 +12,16 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2012"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		language "C#"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		cs2005.targets(prj)
 	end
 

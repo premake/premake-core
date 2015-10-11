@@ -1,6 +1,6 @@
 --
 -- tests/project/test_config_maps.lua
--- Test mapping from solution to project configurations.
+-- Test mapping from workspace to project configurations.
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
@@ -11,25 +11,25 @@
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 	end
 
 	local function prepare(buildcfg, platform)
-		prj = sln.projects[1]
+		prj = wks.projects[1]
 		cfg = test.getconfig(prj, buildcfg or "Debug", platform)
 	end
 
 
 --
--- When no configuration is specified in the project, the solution
+-- When no configuration is specified in the project, the workspace
 -- settings should map directly to a configuration object.
 --
 
-	function suite.solutionConfig_onNoProjectConfigs()
+	function suite.workspaceConfig_onNoProjectConfigs()
 		project ("MyProject")
 		prepare()
 		test.isequal("Debug", cfg.buildcfg)

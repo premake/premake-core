@@ -29,13 +29,19 @@
 -- formed by splitting on boundaries formed by `pattern`.
 --
 
-	function string.explode(s, pattern, plain)
+	function string.explode(s, pattern, plain, maxTokens)
 		if (pattern == '') then return false end
 		local pos = 0
 		local arr = { }
 		for st,sp in function() return s:find(pattern, pos, plain) end do
 			table.insert(arr, s:sub(pos, st-1))
 			pos = sp + 1
+			if maxTokens ~= nil and maxTokens > 0 then
+				maxTokens = maxTokens - 1
+				if maxTokens == 0 then
+					break
+				end
+			end
 		end
 		table.insert(arr, s:sub(pos))
 		return arr

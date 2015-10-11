@@ -106,6 +106,9 @@
 
 		child.parent = self
 		child[self.class.name] = self
+		if self.class.alias then
+			child[self.class.alias] = self
+		end
 	end
 
 
@@ -149,6 +152,12 @@
 	function container.bakeChildren(self)
 		for class in container.eachChildClass(self.class) do
 			local children = self[class.pluralName]
+
+			-- sort children by name.
+			table.sort(children, function(a,b) 
+				return a.name < b.name
+			end)
+
 			for i = 1, #children do
 				local ctx = container.bake(children[i])
 				children[i] = ctx
@@ -188,7 +197,7 @@
 			end
 		end
 
-		if class.name == scope then
+		if class.name == scope or class.alias == scope then
 			return true
 		end
 
@@ -218,7 +227,7 @@
 
 	function container.classIsA(class, scope)
 		while class do
-			if class.name == scope then
+			if class.name == scope or class.alias == scope then
 				return true
 			end
 			class = class.parent

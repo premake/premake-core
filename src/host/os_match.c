@@ -60,15 +60,19 @@ int os_matchnext(lua_State* L)
 
 	while (m)  /* loop forever */
 	{
-		if (!m->is_first)
+		if (m->is_first)
+			m->is_first = 0;
+		else
 		{
 			if (!FindNextFile(m->handle, &m->entry))
 				return 0;
 		}
 
-		m->is_first = 0;
-		lua_pushboolean(L, 1);
-		return 1;
+		if (strcmp(m->entry.cFileName, ".") != 0 && strcmp(m->entry.cFileName, "..") != 0)
+		{
+			lua_pushboolean(L, 1);
+			return 1;
+		}
 	}
 
 	return 0;
@@ -159,10 +163,13 @@ int os_matchnext(lua_State* L)
 	while (m->entry != NULL)
 	{
 		const char* name = m->entry->d_name;
-		if (fnmatch(m->mask, name, 0) == 0)
+		if (strcmp(name, ".") != 0 && strcmp(name, "..") != 0)
 		{
-			lua_pushboolean(L, 1);
-			return 1;
+			if (fnmatch(m->mask, name, 0) == 0)
+			{
+				lua_pushboolean(L, 1);
+				return 1;
+			}
 		}
 		m->entry = readdir(m->handle);
 	}

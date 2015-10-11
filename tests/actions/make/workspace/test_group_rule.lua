@@ -1,5 +1,5 @@
 --
--- tests/actions/make/solution/test_group_rule.lua
+-- tests/actions/make/workspace/test_group_rule.lua
 -- Validate generation of group rules
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
@@ -12,42 +12,44 @@
 -- Setup/teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		group "MainGroup"
-			test.createproject(sln)
+			test.createproject(wks)
 		group "MainGroup/SubGroup1"
-			test.createproject(sln)
+			test.createproject(wks)
 		group "MainGroup/SubGroup2"
-			test.createproject(sln)
-			test.createproject(sln)
+			test.createproject(wks)
+			test.createproject(wks)
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
+		wks = test.getWorkspace(wks)
 	end
 
 
 --
--- Groups should be added to solution's PHONY
+-- Groups should be added to workspace's PHONY
 --
 
 	function suite.groupRule_groupAsPhony()
 		prepare()
-		make.solutionPhonyRule(sln)
+		make.workspacePhonyRule(wks)
 		test.capture [[
 .PHONY: all clean help $(PROJECTS) MainGroup MainGroup/SubGroup1 MainGroup/SubGroup2
 		]]
 	end
 
+
+
 --
--- Transform solution groups into target aggregate
+-- Transform workspace groups into target aggregate
 --
 	function suite.groupRule_groupRules()
 		prepare()
-		make.groupRules(sln)
+		make.groupRules(wks)
 		test.capture [[
 MainGroup: MainGroup/SubGroup1 MainGroup/SubGroup2 MyProject2
 

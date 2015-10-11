@@ -13,11 +13,11 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2010"
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		kind "SharedLib"
 	end
 
@@ -165,6 +165,40 @@
 
 
 --
+-- Any system libraries specified in links() with valid extensions should
+-- be listed with those extensions.
+--
+
+	function suite.additionalDependencies_onSystemLinksExtensions()
+		links { "lua.obj", "zlib.lib" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>lua.obj;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+
+--
+-- Any system libraries specified in links() with multiple dots should
+-- only have .lib appended to the end when no valid extension is found
+--
+
+	function suite.additionalDependencies_onSystemLinksExtensionsMultipleDots()
+		links { "lua.5.3.lib", "lua.5.4" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+
+--
 -- Additional library directories should be specified, relative to the project.
 --
 
@@ -187,7 +221,7 @@
 
 	function suite.excludeSiblings()
 		links { "MyProject2" }
-		test.createproject(sln)
+		test.createproject(wks)
 		kind "SharedLib"
 		prepare()
 		test.capture [[
@@ -207,7 +241,7 @@
 	function suite.includeSiblings_onNoImplicitLink()
 		flags { "NoImplicitLink" }
 		links { "MyProject2" }
-		test.createproject(sln)
+		test.createproject(wks)
 		kind "SharedLib"
 		prepare()
 		test.capture [[
@@ -423,6 +457,40 @@
 	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<GenerateMapFile>true</GenerateMapFile>
+</Link>
+		]]
+	end
+
+--
+-- Test ignoring default libraries with extensions specified.
+--
+
+	function suite.ignoreDefaultLibraries_WithExtensions()
+		ignoredefaultlibraries { "lib1.lib", "lib2.obj" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
+</Link>
+		]]
+	end
+
+--
+-- Test ignoring default libraries without extensions specified.
+--
+
+	function suite.ignoreDefaultLibraries_WithExtensions()
+		ignoredefaultlibraries { "lib1", "lib2.obj" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
 </Link>
 		]]
 	end

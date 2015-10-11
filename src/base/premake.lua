@@ -43,13 +43,16 @@
 	function premake.capture(fn)
 		-- start a new capture without forgetting the old one
 		local old = _captured
-		_captured = {}
+		_captured = buffered.new()
 
 		-- capture
 		fn()
 
 		-- build the result
 		local captured = premake.captured()
+
+		-- free the capture buffer.
+		buffered.close(_captured)
 
 		-- restore the old capture and done
 		_captured = old
@@ -64,7 +67,7 @@
 
 	function premake.captured()
 		if _captured then
-			return table.concat(_captured, _eol)
+			return buffered.tostring(_captured)
 		else
 			return ""
 		end
@@ -147,19 +150,28 @@
 --
 
 	function premake.generate(obj, ext, callback)
-		local fn = premake.filename(obj, ext)
-		printf("Generating %s...", path.getrelative(os.getcwd(), fn))
+		local output = premake.capture(function ()
+			_indentLevel = 0
+			callback(obj)
+			_indentLevel = 0
+		end)
 
-		local f, err = io.open(fn, "wb")
-		if (not f) then
+		local fn = premake.filename(obj, ext)
+
+		-- make sure output folder exists.
+		local dir = path.getdirectory(fn)
+		ok, err = os.mkdir(dir)
+		if not ok then
 			error(err, 0)
 		end
 
-		io.output(f)
-		_indentLevel = 0
-		callback(obj)
-		f:close()
-		_indentLevel = 0
+		local f, err = os.writefile_ifnotequal(output, fn);
+
+		if (f < 0) then
+			error(err, 0)
+		elseif (f > 0) then
+			printf("Generated %s...", path.getrelative(os.getcwd(), fn))
+		end
 	end
 
 
@@ -172,9 +184,6 @@
 --    The project object being generated.
 -- @param ext
 --    An optional extension for the generated file, with the leading dot.
--- @param callback
---    The function responsible for writing the file; will receive the
---    project object as its only argument.
 ---
 
 function premake.filename(obj, ext)
@@ -217,7 +226,7 @@ end
 		if not _captured then
 			io.write(s)
 		else
-			table.insert(_captured, s)
+			buffered.write(_captured, s)
 		end
 	end
 
@@ -230,9 +239,7 @@ end
 
 	function premake.outln(s)
 		premake.out(s)
-		if not _captured then
-			io.write(_eol or "\n")
-		end
+		premake.out(_eol or "\n")
 	end
 
 
@@ -303,10 +310,8 @@ end
 -- Output a UTF-8 BOM to the exported file.
 --
 
-	function premake.utf8()
-		if not _captured then
-			premake.out('\239\187\191')
-		end
+	function p.utf8()
+		p.out('\239\187\191')
 	end
 
 

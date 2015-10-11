@@ -1,44 +1,46 @@
 --
--- tests/solution/test_eachconfig.lua
--- Automated test suite for the solution-level configuration iterator.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- tests/workspace/test_eachconfig.lua
+-- Automated test suite for the workspace-level configuration iterator.
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	T.solution_eachconfig = { }
-	local suite = T.solution_eachconfig
+	local suite = test.declare("workspace_eachconfig")
+
+	local p = premake
 
 
 --
 -- Setup and teardown
 --
 
-	local sln
+	local wks
+
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 	end
 
 	local function prepare()
-		_p(2,"-")
-		for cfg in premake.solution.eachconfig(sln) do
-			_p(2, "%s:%s", cfg.buildcfg or "", cfg.platform or "")
+		p.w("-")
+		for cfg in p.workspace.eachconfig(wks) do
+			p.w("%s:%s", cfg.buildcfg or "", cfg.platform or "")
 		end
-		_p(2,"-")
+		p.w("-")
 	end
 
 
 --
--- All configurations listed at the solution level should be enumerated.
+-- All configurations listed at the workspace level should be enumerated.
 --
 
-	function suite.listsBuildConfigurations_onSolutionLevel()
+	function suite.listsBuildConfigurations_onWorkspaceLevel()
 		configurations { "Debug", "Release" }
 		project("MyProject")
 		prepare()
 		test.capture [[
-		-
-		Debug:
-		Release:
-		-
+-
+Debug:
+Release:
+-
 		]]
 	end
 
@@ -53,19 +55,19 @@
 		project("MyProject")
 		prepare()
 		test.capture [[
-		-
-		Debug:x86
-		Debug:x86_64
-		Release:x86
-		Release:x86_64
-		-
+-
+Debug:x86
+Debug:x86_64
+Release:x86
+Release:x86_64
+-
 		]]
 	end
 
 
 --
 -- Configurations listed at the project level should *not* be included
--- in the solution-level lists.
+-- in the workspace-level lists.
 --
 
 	function suite.excludesProjectLevelConfigs()
@@ -75,9 +77,9 @@
 		platforms { "x86", "x86_64" }
 		prepare()
 		test.capture [[
-		-
-		Debug:
-		Release:
-		-
+-
+Debug:
+Release:
+-
 		]]
 	end

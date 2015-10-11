@@ -15,11 +15,11 @@
 
 	function suite.setup()
 		api.register {
-			name = "testapi", 
-			kind = "path", 
+			name = "testapi",
+			kind = "path",
 			scope = "project"
 		}
-		test.createsolution()
+		test.createWorkspace()
 	end
 
 	function suite.teardown()

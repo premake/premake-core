@@ -13,17 +13,17 @@
 -- Setup and teardown
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		uuid "00112233-4455-6677-8888-99AABBCCDDEE"
-		test.createproject(sln)
+		test.createproject(wks)
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(sln, 2)
+		prj = test.getproject(wks, 2)
 		cs2005.projectReferences(prj)
 	end
 

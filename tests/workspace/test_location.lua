@@ -1,35 +1,35 @@
 --
--- tests/solution/test_location.lua
--- Test handling of the solution's location field.
+-- tests/workspace/test_location.lua
+-- Test handling of the workspace's location field.
 -- Copyright (c) 2013-2015 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("solution_location")
+	local suite = test.declare("workspace_location")
 
 
 --
 -- Setup and teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 	end
 
 	local function prepare()
-		sln = test.getsolution(sln)
+		wks = test.getWorkspace(wks)
 	end
 
 
 --
 -- If no explicit location is set, the location should be set to the
--- directory containing the script which defined the solution.
+-- directory containing the script which defined the workspace.
 --
 
 	function suite.usesScriptLocation_onNoLocation()
 		prepare()
-		test.isequal(os.getcwd(), sln.location)
+		test.isequal(os.getcwd(), wks.location)
 	end
 
 
@@ -40,5 +40,5 @@
 	function suite.usesLocation_onLocationSet()
 		location "build"
 		prepare()
-		test.isequal(path.join(os.getcwd(), "build"), sln.location)
+		test.isequal(path.join(os.getcwd(), "build"), wks.location)
 	end

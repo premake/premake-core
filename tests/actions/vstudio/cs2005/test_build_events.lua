@@ -12,15 +12,15 @@
 -- Setup
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
 		premake.escaper(premake.vstudio.vs2010.esc)
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare(platform)
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		cs2005.buildEvents(prj)
 	end
 

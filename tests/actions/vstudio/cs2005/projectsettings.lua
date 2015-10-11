@@ -1,11 +1,11 @@
 --
 -- tests/actions/vstudio/cs2005/projectsettings.lua
 -- Validate generation of root <PropertyGroup/> in Visual Studio 2005+ .csproj
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_projectsettings = { }
-	local suite = T.vstudio_cs2005_projectsettings
+	local suite = test.declare("vstudio_cs2005_projectsettings")
+
 	local cs2005 = premake.vstudio.cs2005
 
 
@@ -13,17 +13,17 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2005"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 		language "C#"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 	end
 
 	local function prepare()
-		prj = premake.solution.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		cs2005.projectProperties(prj)
 	end
 

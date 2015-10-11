@@ -12,16 +12,16 @@
 -- Setup
 --
 
-	local sln, prj
+	local wks, prj
 
 	function suite.setup()
 		_ACTION = "vs2008"
 		premake.escaper(premake.vstudio.vs2005.esc)
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = test.getproject(sln, 1)
+		prj = test.getproject(wks, 1)
 		vc200x.files(prj)
 	end
 

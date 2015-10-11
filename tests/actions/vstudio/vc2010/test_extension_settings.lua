@@ -4,7 +4,7 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("vs2010_import_settings")
+	local suite = test.declare("vs2010_extension_settings")
 	local vc2010 = premake.vstudio.vc2010
 	local project = premake.project
 
@@ -13,16 +13,16 @@
 -- Setup
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		rule "MyRules"
 		rule "MyOtherRules"
-		sln = test.createsolution()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		local prj = test.getproject(sln)
+		local prj = test.getproject(wks)
 		vc2010.importExtensionSettings(prj)
 	end
 
@@ -34,7 +34,6 @@
 	function suite.structureIsCorrect_onDefaultValues()
 		prepare()
 		test.capture [[
-<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 <ImportGroup Label="ExtensionSettings">
 </ImportGroup>
 		]]
@@ -50,7 +49,6 @@
 		rules { "MyRules", "MyOtherRules" }
 		prepare()
 		test.capture [[
-<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 <ImportGroup Label="ExtensionSettings">
 	<Import Project="MyRules.props" />
 	<Import Project="MyOtherRules.props" />
@@ -68,7 +66,6 @@
 		location "build"
 		prepare()
 		test.capture [[
-<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 <ImportGroup Label="ExtensionSettings">
 	<Import Project="..\MyRules.props" />
 </ImportGroup>

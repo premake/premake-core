@@ -1,26 +1,26 @@
 --
--- tests/solution/test_objdirs.lua
--- Test the solution unique objects directory building.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- tests/workspace/test_objdirs.lua
+-- Test the workspace unique objects directory building.
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("solution_objdir")
+	local suite = test.declare("workspace_objdir")
 
 
 --
 -- Setup and teardown
 --
 
-	local sln
+	local wks
 
 	function suite.setup()
 		_ACTION = "test"
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		system "macosx"
 	end
 
 	local function result()
-		local platforms = sln.platforms or {}
+		local platforms = wks.platforms or {}
 		local prj = project("MyProject")
 		local cfg = test.getconfig(prj, "Debug", platforms[1])
 		return premake.project.getrelative(cfg.project, cfg.objdir)

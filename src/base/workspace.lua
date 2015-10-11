@@ -5,18 +5,27 @@
 ---
 
 	local p = premake
-	p.solution = p.api.container("solution", p.global)
+	p.workspace = p.api.container("workspace", p.global)
+
+	local workspace = p.workspace
 
 
 ---
--- Begin the switch from solution() to workspace()
+-- Switch this container's name from "solution" to "workspace"
+--
+-- We changed these names on 30 Jul 2015. While it might be nice to leave
+-- `solution()` around for Visual Studio folks and everyone still used to the
+-- old system, it would be good to eventually deprecate and remove all of
+-- the other, more internal uses of "solution" and "sln". Probably including
+-- all uses of container class aliases, since we probably aren't going to
+-- need those again (right?).
 ---
 
-	p.workspace = p.solution
-	local workspace = p.solution
+	p.solution = workspace
+	workspace.alias = "solution"
 
-	p.alias(_G, "solution", "workspace")
-	p.alias(_G, "externalsolution", "externalworkspace")
+	p.alias(_G, "workspace", "solution")
+	p.alias(_G, "externalworkspace", "externalsolution")
 
 
 

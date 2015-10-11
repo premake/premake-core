@@ -10,15 +10,15 @@
 -- Setup and teardown
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln = solution("MySolution")
+		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 	end
 
 	local function prepare(buildcfg, platform)
-		prj = sln.projects[1]
+		prj = wks.projects[1]
 		cfg = test.getconfig(prj, buildcfg or "Debug", platform)
 	end
 

@@ -13,15 +13,15 @@
 -- Setup
 --
 
-	local sln, prj1, prj2
+	local wks, prj1, prj2
 
 	function suite.setup()
 		_ACTION = "vs2005"
-		sln, prj1 = test.createsolution()
+		wks, prj1 = test.createWorkspace()
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
-		prj2 = test.createproject(sln)
+		prj2 = test.createproject(wks)
 		uuid "2151E83B-997F-4A9D-955D-380157E88C31"
-		prj3 = test.createproject(sln)
+		prj3 = test.createproject(wks)
 		uuid "CAA68162-8B96-11E1-8D5E-5885BBE59B18"
 		links "MyProject"
 		dependson "MyProject2"
@@ -30,10 +30,10 @@
 	local function prepare(language)
 		prj1.language = language
 		prj2.language = language
-		prj2 = premake.solution.getproject(sln, 2)
+		prj2 = test.getproject(wks, 2)
 		sln2005.projectdependencies(prj2)
 		prj3.language = language
-		prj3 = premake.solution.getproject(sln, 3)
+		prj3 = test.getproject(wks, 3)
 		sln2005.projectdependencies(prj3)
 	end
 
@@ -45,7 +45,6 @@
 		prepare("C++")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]
@@ -60,7 +59,6 @@
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]
@@ -77,7 +75,6 @@
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]
@@ -94,7 +91,6 @@
 		prepare("C#")
 		test.capture [[
 	ProjectSection(ProjectDependencies) = postProject
-		{AE61726D-187C-E440-BD07-2556188A6565} = {AE61726D-187C-E440-BD07-2556188A6565}
 		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
 	EndProjectSection
 		]]

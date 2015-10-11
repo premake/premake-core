@@ -13,10 +13,10 @@
 -- Setup/teardown
 --
 
-	local sln, prj, cfg
+	local wks, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createsolution()
+		wks, prj = test.createWorkspace()
 		kind "SharedLib"
 	end
 
@@ -325,4 +325,20 @@
 		syslibdirs { "/usr/local/lib" }
 		prepare()
 		test.contains('/LIBPATH:"/usr/local/lib"', msc.getLibraryDirectories(cfg))
+	end
+
+--
+-- Check handling of ignore default libraries
+--
+
+	function suite.ignoreDefaultLibraries_WithExtensions()
+		ignoredefaultlibraries { "lib1.lib" }
+		prepare()
+		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
+	end
+
+	function suite.ignoreDefaultLibraries_WithoutExtensions()
+		ignoredefaultlibraries { "lib1" }
+		prepare()
+		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
 	end

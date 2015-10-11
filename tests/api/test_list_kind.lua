@@ -21,7 +21,7 @@
 			scope = "project",
 			allowed = { "first", "second", "third" }
 		}
-		test.createsolution()
+		test.createWorkspace()
 	end
 
 	function suite.teardown()
