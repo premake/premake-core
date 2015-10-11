@@ -10,6 +10,7 @@ Original design and implementation:
 Main Contributors
   Blizzard Entertainment (contact tvandijck@blizzard.com)
   Manu Evans <https://github.com/TurkeyMan>
+  Sam Surtees <s.surtees@lorgames.com>
 
 Builds and Infrastructure:
   Mihai Sebea <http://twitter.com/mihai_sebea>

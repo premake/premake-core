@@ -9,8 +9,9 @@ PREP
 
  * Update version in src/host/premake.c and commit
 
- * Prep release announcement for forums from change log
+ * Push release branch to GitHub; wait for CI to pass
 
+ * Prep release announcement for forums from change log
 
 RELEASE
 
@@ -18,7 +19,7 @@ RELEASE
 
  * On each platform, run `premake5 package <release branch name> binary`
 
- * Merge working branch to release and tag
+ * Merge working branch to release and tag; push with tags
 
  * Create new release on GitHub from CHANGES.txt; upload files
 
@@ -27,9 +28,6 @@ RELEASE
  * Post release announcement to the forums
 
  * Post annoucement to @industrious on Twitter
-
- * Add release to Freshmeat
-   http://freshmeat.net/projects/premake
 
 
 CYCLE

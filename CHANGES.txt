@@ -5,6 +5,23 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha5:
+
+* New API: ignoredefaultlibraries()
+* New: Support LLVM platform toolset in Visual Studio
+* New: Add framework folder path support
+* Fix: Improved path.normalize() handling of DOS drive letters (StiX)
+* Fix: os.match...() now supports more complex patterns
+* Fix: Only generate project files if changed
+* Fix: Improve handling of user platform names in Visual Studio
+* Fix: Duplicate ".lib" extensions in Visual Studio
+* Fix: Improve handling of mixed case command line options
+* Fix: Remove `/E` option from Windows copy operations
+* Fix: Multiple externalproject() calls to same project
+* Fix: Improved determinism of generated project elements
+* Fix: Set platform toolset for emtpty Visual Studio projects
+* Fix: Better ".." handling for path.join()
+
 Since 5.0-alpha4:
 
 * New: Rename solution() to workspace()
