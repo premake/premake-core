@@ -1030,6 +1030,15 @@
 		end
 		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 
+		local sysincludedirs = project.getrelative(cfg.project, cfg.sysincludedirs)
+		for i,v in ipairs(sysincludedirs) do
+			cfg.sysincludedirs[i] = premake.quoted(v)
+		end
+		if not table.isempty(cfg.sysincludedirs) then
+			table.insert(cfg.sysincludedirs, "$(inherited)")
+		end
+		settings['HEADER_SEARCH_PATHS'] = cfg.sysincludedirs
+
 		for i,v in ipairs(cfg.libdirs) do
 			cfg.libdirs[i] = premake.project.getrelative(cfg.project, cfg.libdirs[i])
 		end
