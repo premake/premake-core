@@ -258,7 +258,7 @@
 		local cmdargs    = iif(isExe, table.concat(cfg.debugargs, " "), "") -- TODO: should this be debugargs instead?
 		local useseparatedebugargs = "no"
 		local debugargs  = ""
-		local workingdir = iif(isExe, targetpath, "")
+		local workingdir = iif(isExe, project.getrelative(prj, cfg.debugdir), "")
 		local pauseexec  = iif(prj.kind == "ConsoleApp", "yes", "no")
 		local isguiprogram = iif(prj.kind == "WindowedApp", "yes", "no")
 		local isenabled  = iif(cfg.flags.ExcludeFromBuild, "no", "yes")
