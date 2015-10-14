@@ -82,7 +82,13 @@
 		return oldfn(prj)
 	end)
 
-	sln2005.sectionmap.MonoDevelopProperties = m.MonoDevelopProperties
+	p.override(sln2005.elements, "sections", function(oldfn, wks)
+		local elements = oldfn(wks)
+		elements = table.join(elements, {
+			m.MonoDevelopProperties,
+		})
+		return elements
+	end)
 
 	p.override(vstudio, "projectfile", function(oldfn, prj)
 		if _ACTION == "monodevelop" then
