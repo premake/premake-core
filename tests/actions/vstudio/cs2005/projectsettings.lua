@@ -16,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2005"
+		premake.action.set("vs2005")
 		wks = test.createWorkspace()
 		language "C#"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
@@ -51,7 +51,7 @@
 
 
 	function suite.OnVs2008()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -70,7 +70,7 @@
 
 
 	function suite.OnVs2010()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -93,7 +93,7 @@
 
 
 	function suite.onVs2012()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -183,7 +183,7 @@
 --
 
 	function suite.projectTypeGuids_onWPF()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		flags { "WPF" }
 		prepare()
 		test.capture [[

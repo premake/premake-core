@@ -16,7 +16,7 @@
 	local wks
 
 	function suite.setup()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"

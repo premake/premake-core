@@ -18,6 +18,7 @@
 	local wks, prj
 
 	function suite.setup()
+		premake.action.set("vs2010")
 		rule "MyRule"
 		wks, prj = test.createWorkspace()
 		rules { "MyRule" }

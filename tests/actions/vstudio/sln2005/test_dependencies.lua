@@ -16,7 +16,7 @@
 	local wks, prj1, prj2
 
 	function suite.setup()
-		_ACTION = "vs2005"
+		premake.action.set("vs2005")
 		wks, prj1 = test.createWorkspace()
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 		prj2 = test.createproject(wks)
@@ -71,7 +71,7 @@ EndProjectSection
 --
 
 	function suite.dependency_onCSharpProjectsVs2010()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		prepare("C#")
 		test.capture [[
 ProjectSection(ProjectDependencies) = postProject
@@ -87,7 +87,7 @@ EndProjectSection
 --
 
 	function suite.dependency_onCSharpProjectsVs2012()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		prepare("C#")
 		test.capture [[
 ProjectSection(ProjectDependencies) = postProject

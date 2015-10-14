@@ -392,13 +392,11 @@
 	function suite.translate_ReturnsTargetOSSeparator_Windows()
 		_OPTIONS["os"] = "windows"
 		test.isequal("dir\\dir\\file", path.translate("dir/dir\\file"))
-		_OPTIONS["os"] = nil
 	end
 
 	function suite.translate_ReturnsTargetOSSeparator_Linux()
 		_OPTIONS["os"] = "linux"
 		test.isequal("dir/dir/file", path.translate("dir/dir\\file"))
-		_OPTIONS["os"] = nil
 	end
 
 

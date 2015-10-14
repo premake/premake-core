@@ -15,6 +15,7 @@
 	local wks
 
 	function suite.setup()
+		premake.action.set("vs2005")
 		premake.escaper(premake.vstudio.vs2005.esc)
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }

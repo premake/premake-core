@@ -16,6 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
+		premake.action.set("vs2005")
 		premake.escaper(premake.vstudio.vs2005.esc)
 		wks, prj = test.createWorkspace()
 	end
