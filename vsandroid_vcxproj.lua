@@ -10,7 +10,6 @@
 
 	local android = p.modules.android
 	local vsandroid = p.modules.vsandroid
-	local sln2005 = p.vstudio.sln2005
 	local vc2010 = p.vstudio.vc2010
 	local vstudio = p.vstudio
 	local project = p.project
@@ -22,9 +21,38 @@
 --
 
 	if vstudio.vs2010_architectures ~= nil then
-		vstudio.vs2010_architectures.android = "Android"
+		if _ACTION >= "vs2015" then
+			vstudio.vs2010_architectures.arm = "ARM"
+		else
+			vstudio.vs2010_architectures.android = "Android"
+		end
 	end
 
+--
+-- Extend global properties
+--
+	premake.override(vc2010.elements, "globals", function (oldfn, cfg)
+		local elements = oldfn(cfg)
+
+		if cfg.system == premake.ANDROID and cfg.kind ~= premake.ANDROIDPROJ then
+			-- Remove "IgnoreWarnCompileDuplicatedFilename".
+			local pos = table.indexof(elements, vc2010.ignoreWarnDuplicateFilename)
+			table.remove(elements, pos)
+			elements = table.join(elements, {
+				android.androidApplicationType
+			})
+		end
+
+		return elements
+	end)
+
+	function android.androidApplicationType(cfg)
+		_p(2, "<Keyword>Android</Keyword>")
+		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
+		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
+		_p(2, "<ApplicationType>Android</ApplicationType>")
+		_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
+	end
 
 --
 -- Extend configurationProperties.
@@ -32,11 +60,17 @@
 
 	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
-		if cfg.kind ~= p.UTILITY and cfg.system == premake.ANDROID then
+		if cfg.kind ~= p.UTILITY and cfg.kind ~= p.ANDROIDPROJ and cfg.system == premake.ANDROID then
 			elements = table.join(elements, {
 				android.androidAPILevel,
 				android.androidStlType,
 			})
+
+			if _ACTION >= "vs2015" then
+				elements = table.join(elements, {
+					android.thumbMode,
+				})
+			end
 		end
 		return elements
 	end)
@@ -49,59 +83,92 @@
 
 	function android.androidStlType(cfg)
 		if cfg.stl ~= nil then
-			local static = {
-				none       = "none",
-				minimal    = "system",
-				["stdc++"] = "gnustl_static",
-				stlport    = "stlport_static",
+			if _ACTION >= "vs2015" then
+				local stlType = {
+					["minimal c++ (system)"] = "system",
+					["c++ static"] = "gabi++_static",
+					["c++ shared"] = "gabi++_shared",
+					["stlport static"] = "stlport_static",
+					["stlport shared"] = "stlport_shared",
+					["gnu stl static"] = "gnustl_static",
+					["gnu stl shared"] = "gnustl_shared",
+					["llvm libc++ static"] = "c++_static",
+					["llvm libc++ shared"] = "c++_shared",
+				}
+				_p(2,'<UseOfStl>%s</UseOfStl>', stlType[cfg.stl])
+			else
+				local static = {
+					none       = "none",
+					minimal    = "system",
+					["stdc++"] = "gnustl_static",
+					stlport    = "stlport_static",
+				}
+				local dynamic = {
+					none       = "none",
+					minimal    = "system",
+					["stdc++"] = "gnustl_dynamic",
+					stlport    = "stlport_dynamic",
+				}
+				local stl = iif(cfg.flags.StaticRuntime, static, dynamic);
+				_p(2,'<AndroidStlType>%s</AndroidStlType>', stl[cfg.stl])
+			end
+		end
+	end
+
+	function android.thumbMode(cfg)
+		if cfg.thumbmode then
+			local thumbMode =
+			{
+				thumb = "Thumb",
+				arm = "ARM",
+				disabled = "Disabled",
 			}
-			local dynamic = {
-				none       = "none",
-				minimal    = "system",
-				["stdc++"] = "gnustl_dynamic",
-				stlport    = "stlport_dynamic",
-			}
-			local stl = iif(cfg.flags.StaticRuntime, static, dynamic);
-			_p(2,'<AndroidStlType>%s</AndroidStlType>', stl[cfg.stl])
+			_p(2,"<ThumbMode>%s</ThumbMode>", thumbMode[cfg.thumbmode])
 		end
 	end
 
 	-- Note: this function is already patched in by vs2012...
 	premake.override(vc2010, "platformToolset", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
-			local archMap = {
-				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
-				arm5 = "armv5te",
-				arm7 = "armv7-a",
-				mips = "mips",
-				x86 = "x86",
-			}
-			local arch = cfg.architecture or "arm"
-
-			if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
-				local defaultToolsetMap = {
-					arm = "arm-linux-androideabi-",
-					armv5 = "arm-linux-androideabi-",
-					armv7 = "arm-linux-androideabi-",
-					aarch64 = "aarch64-linux-android-",
-					mips = "mipsel-linux-android-",
-					mips64 = "mips64el-linux-android-",
-					x86 = "x86-",
-					x86_64 = "x86_64-",
-				}
-				local toolset = defaultToolsetMap[arch]
-
-				if cfg.toolset == "clang" then
-					error("The clang toolset is not yet supported by vs-android", 2)
-					toolset = toolset .. "clang"
-				elseif cfg.toolset and cfg.toolset ~= "gcc" then
-					error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
+			if _ACTION >= "vs2015" then
+				if cfg.toolchainversion ~= nil then
+					_p(2,'<PlatformToolset>%s_%s</PlatformToolset>', iif(cfg.toolset == "clang", "Clang", "GCC"), string.gsub(cfg.toolchainversion, "%.", "_"))
 				end
+			else
+				local archMap = {
+					arm = "armv5te", -- should arm5 be default? vs-android thinks so...
+					arm5 = "armv5te",
+					arm7 = "armv7-a",
+					mips = "mips",
+					x86 = "x86",
+				}
+				local arch = cfg.architecture or "arm"
 
-				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
+				if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
+					local defaultToolsetMap = {
+						arm = "arm-linux-androideabi-",
+						armv5 = "arm-linux-androideabi-",
+						armv7 = "arm-linux-androideabi-",
+						aarch64 = "aarch64-linux-android-",
+						mips = "mipsel-linux-android-",
+						mips64 = "mips64el-linux-android-",
+						x86 = "x86-",
+						x86_64 = "x86_64-",
+					}
+					local toolset = defaultToolsetMap[arch]
 
-				_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
-				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
+					if cfg.toolset == "clang" then
+						error("The clang toolset is not yet supported by vs-android", 2)
+						toolset = toolset .. "clang"
+					elseif cfg.toolset and cfg.toolset ~= "gcc" then
+						error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
+					end
+
+					local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
+
+					_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
+					_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
+				end
 			end
 		else
 			oldfn(cfg)
@@ -124,6 +191,13 @@
 				android.pic,
 --				android.ShortEnums,
 			})
+			if _ACTION >= "vs2015" then
+				table.remove(elements, table.indexof(elements, vc2010.debugInformationFormat))
+				table.remove(elements, table.indexof(elements, android.thumbMode))
+				elements = table.join(elements, {
+					android.cppStandard,
+				})
+			end
 		end
 		return elements
 	end)
@@ -158,6 +232,12 @@
 --		if cfg.pic ~= nil then
 --			_p(3,'<PositionIndependentCode>%s</PositionIndependentCode>', iif(cfg.pic == "On", "true", "false"))
 --		end
+	end
+
+	function android.cppStandard(cfg)
+		if cfg.flags["C++11"] then
+			_p(3, '<CppLanguageStandard>c++11</CppLanguageStandard>')
+		end
 	end
 
 	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg)
@@ -201,13 +281,19 @@
 
 	premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
 		local elements = oldfn(cfg)
-		if cfg.system == premake.ANDROID then
+		if cfg.system == premake.ANDROID and _ACTION < "vs2015" then
 			elements = table.join(elements, {
 				android.antBuild,
 			})
 		end
 		return elements
 	end)
+
+	function android.antPackage(cfg)
+		_p(2,'<AntPackage>')
+		_p(3,'<AndroidAppLibName>$(RootNamespace)</AndroidAppLibName>')
+		_p(2,'</AntPackage>')
+	end
 
 	function android.antBuild(cfg)
 		if cfg.kind == premake.STATICLIB or cfg.kind == premake.SHAREDLIB then
@@ -226,98 +312,108 @@
 		return oldfn(cfg, condition)
 	end)
 
+	premake.override(vc2010.elements, "user", function(oldfn, cfg)
+		if cfg.system == p.ANDROID then
+			return {}
+		else
+			return oldfn(cfg)
+		end
+	end)
 
 --
 -- Add options unsupported by vs-android UI to <AdvancedOptions>.
 --
 	function vsandroid.additionalOptions(cfg)
+		if _ACTION >= "vs2015" then
 
-		local function alreadyHas(t, key)
-			for _, k in ipairs(t) do
-				if string.find(k, key) then
-					return true
+		else
+			local function alreadyHas(t, key)
+				for _, k in ipairs(t) do
+					if string.find(k, key) then
+						return true
+					end
 				end
+				return false
 			end
-			return false
-		end
 
-		if not cfg.architecture or string.startswith(cfg.architecture, "arm") then
-			-- we might want to define the arch to generate better code
---			if not alreadyHas(cfg.buildoptions, "-march=") then
---				if cfg.architecture == "armv6" then
---					table.insert(cfg.buildoptions, "-march=armv6")
---				elseif cfg.architecture == "armv7" then
---					table.insert(cfg.buildoptions, "-march=armv7")
+			if not cfg.architecture or string.startswith(cfg.architecture, "arm") then
+				-- we might want to define the arch to generate better code
+--				if not alreadyHas(cfg.buildoptions, "-march=") then
+--					if cfg.architecture == "armv6" then
+--						table.insert(cfg.buildoptions, "-march=armv6")
+--					elseif cfg.architecture == "armv7" then
+--						table.insert(cfg.buildoptions, "-march=armv7")
+--					end
 --				end
---			end
 
-			-- ARM has a comprehensive set of floating point options
-			if cfg.fpu ~= "Software" and cfg.floatabi ~= "soft" then
+				-- ARM has a comprehensive set of floating point options
+				if cfg.fpu ~= "Software" and cfg.floatabi ~= "soft" then
 
-				if cfg.architecture == "armv7" then
+					if cfg.architecture == "armv7" then
 
-					-- armv7 always has VFP, may not have NEON
+						-- armv7 always has VFP, may not have NEON
 
-					if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-						if cfg.vectorextensions == "NEON" then
-							table.insert(cfg.buildoptions, "-mfpu=neon")
-						elseif cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
-							table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
+						if not alreadyHas(cfg.buildoptions, "-mfpu=") then
+							if cfg.vectorextensions == "NEON" then
+								table.insert(cfg.buildoptions, "-mfpu=neon")
+							elseif cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+								table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
+							end
 						end
+
+						if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
+							if cfg.floatabi == "hard" then
+								table.insert(cfg.buildoptions, "-mfloat-abi=hard")
+							else
+								-- Android should probably use softfp by default for compatibility
+								table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
+							end
+						end
+
+					else
+
+						-- armv5/6 may not have VFP
+
+						if not alreadyHas(cfg.buildoptions, "-mfpu=") then
+							if cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+								table.insert(cfg.buildoptions, "-mfpu=vfp")
+							end
+						end
+
+						if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
+							if cfg.floatabi == "softfp" then
+								table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
+							elseif cfg.floatabi == "hard" then
+								table.insert(cfg.buildoptions, "-mfloat-abi=hard")
+							end
+						end
+
 					end
 
-					if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-						if cfg.floatabi == "hard" then
-							table.insert(cfg.buildoptions, "-mfloat-abi=hard")
-						else
-							-- Android should probably use softfp by default for compatibility
-							table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-						end
-					end
+				elseif cfg.floatabi == "soft" then
 
-				else
-
-					-- armv5/6 may not have VFP
-
-					if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-						if cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
-							table.insert(cfg.buildoptions, "-mfpu=vfp")
-						end
-					end
-
-					if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-						if cfg.floatabi == "softfp" then
-							table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-						elseif cfg.floatabi == "hard" then
-							table.insert(cfg.buildoptions, "-mfloat-abi=hard")
-						end
-					end
+					table.insert(cfg.buildoptions, "-mfloat-abi=soft")
 
 				end
 
-			elseif cfg.floatabi == "soft" then
+				if cfg.endian == "Little" then
+					table.insert(cfg.buildoptions, "-mlittle-endian")
+				elseif cfg.endian == "Big" then
+					table.insert(cfg.buildoptions, "-mbig-endian")
+				end
 
-				table.insert(cfg.buildoptions, "-mfloat-abi=soft")
+			elseif cfg.architecture == "mips" then
+
+				-- TODO...
+
+				if cfg.vectorextensions == "MXU" then
+					table.insert(cfg.buildoptions, "-mmxu")
+				end
+
+			elseif cfg.architecture == "x86" then
+
+				-- TODO...
 
 			end
-
-			if cfg.endian == "Little" then
-				table.insert(cfg.buildoptions, "-mlittle-endian")
-			elseif cfg.endian == "Big" then
-				table.insert(cfg.buildoptions, "-mbig-endian")
-			end
-
-		elseif cfg.architecture == "mips" then
-
-			-- TODO...
-
-			if cfg.vectorextensions == "MXU" then
-				table.insert(cfg.buildoptions, "-mmxu")
-			end
-
-		elseif cfg.architecture == "x86" then
-
-			-- TODO...
-
 		end
 	end
