@@ -35,7 +35,7 @@ EndProject
 
 	function suite.monoDevelopProperties()
 		project "MyProject"
-		premake.vstudio.sln2005.sectionmap.MonoDevelopProperties(wks)
+		monodevelop.MonoDevelopProperties(wks)
 		test.capture [[
 	GlobalSection(MonoDevelopProperties) = preSolution
 	EndGlobalSection
