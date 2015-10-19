@@ -40,6 +40,7 @@
 	function sln2005.generate(wks)
 		-- Mark the file as Unicode
 		premake.utf8()
+		premake.outln('')
 
 		sln2005.reorderProjects(wks)
 
