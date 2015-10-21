@@ -404,7 +404,7 @@
 
 
 	function make.includes(cfg, toolset)
-		local includes = premake.esc(toolset.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs))
+		local includes = toolset.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs)
 		_p('  INCLUDES +=%s', make.list(includes))
 	end
 
