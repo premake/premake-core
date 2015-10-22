@@ -39,6 +39,10 @@ Patch contributors:
     * C# / C++/CLI language support improvements and bugfixes
     * Visual Studio and Make improvements and bugfixes
     * Response files support for Make backend
+  leeonix <real-like@yeah.net>
+    * Bug fixes
+  Lusito <core@roughael.net>
+    * path.join() fixes
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
     * Prevent self-linking
   Mihai Sebea <http://twitter.com/mihai_sebea>
