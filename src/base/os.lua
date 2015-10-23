@@ -11,7 +11,6 @@
 --
 
 	premake.override(os, "execute", function(base, cmd)
-		cmd = path.normalize(cmd)
 		cmd = os.translateCommands(cmd)
 		return base(cmd)
 	end)
@@ -539,7 +538,7 @@
 			local token = cmd:match("^{.+}")
 			if token then
 				token = token:sub(2, #token - 1):lower()
-				local args = cmd:sub(#token + 4)
+				local args = path.normalize(cmd:sub(#token + 4))
 				local func = map[token] or os.commandTokens["_"][token]
 				if func then
 					cmd = func(args)
