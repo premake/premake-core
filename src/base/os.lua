@@ -11,7 +11,6 @@
 --
 
 	premake.override(os, "execute", function(base, cmd)
-		cmd = path.normalize(cmd)
 		cmd = os.translateCommands(cmd)
 		return base(cmd)
 	end)
@@ -468,36 +467,36 @@
 	os.commandTokens = {
 		_ = {
 			chdir = function(v)
-				return "cd " .. v
+				return "cd " .. path.normalize(v)
 			end,
 			copy = function(v)
-				return "cp -rf " .. v
+				return "cp -rf " .. path.normalize(v)
 			end,
 			delete = function(v)
-				return "rm -f " .. v
+				return "rm -f " .. path.normalize(v)
 			end,
 			echo = function(v)
 				return "echo " .. v
 			end,
 			mkdir = function(v)
-				return "mkdir -p " .. v
+				return "mkdir -p " .. path.normalize(v)
 			end,
 			move = function(v)
-				return "mv -f " .. v
+				return "mv -f " .. path.normalize(v)
 			end,
 			rmdir = function(v)
-				return "rm -rf " .. v
+				return "rm -rf " .. path.normalize(v)
 			end,
 			touch = function(v)
-				return "touch " .. v
+				return "touch " .. path.normalize(v)
 			end,
 		},
 		windows = {
 			chdir = function(v)
-				return "chdir " .. path.translate(v)
+				return "chdir " .. path.translate(path.normalize(v))
 			end,
 			copy = function(v)
-				v = path.translate(v)
+				v = path.translate(path.normalize(v))
 
 				-- Detect if there's multiple parts to the input, if there is grab the first part else grab the whole thing
 				local src = string.match(v, '^".-"') or string.match(v, '^.- ') or v
@@ -508,22 +507,22 @@
 				return "IF EXIST " .. src .. "\\ (xcopy /Q /E /Y /I " .. v .. " > nul) ELSE (xcopy /Q /Y /I " .. v .. " > nul)"
 			end,
 			delete = function(v)
-				return "del " .. path.translate(v)
+				return "del " .. path.translate(path.normalize(v))
 			end,
 			echo = function(v)
 				return "echo " .. v
 			end,
 			mkdir = function(v)
-				return "mkdir " .. path.translate(v)
+				return "mkdir " .. path.translate(path.normalize(v))
 			end,
 			move = function(v)
-				return "move /Y " .. path.translate(v)
+				return "move /Y " .. path.translate(path.normalize(v))
 			end,
 			rmdir = function(v)
-				return "rmdir /S /Q " .. path.translate(v)
+				return "rmdir /S /Q " .. path.translate(path.normalize(v))
 			end,
 			touch = function(v)
-				v = path.translate(v)
+				v = path.translate(path.normalize(v))
 				return string.format("type nul >> %s && copy /b %s+,, %s", v, v, v)
 			end,
 		}
