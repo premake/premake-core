@@ -725,7 +725,7 @@
 
 	m.elements.ResourceCompileFile = function(cfg, file)
 		return {}
-						end
+	end
 
 	m.elements.ResourceCompileFileCfg = function(fcfg, condition)
 		return {
@@ -950,18 +950,69 @@
 	end
 
 
+	function m.filterKnownOption(input, condition, option, modifier)
+		local result = {}
+		local warnings = {}
+
+		for i, fn in ipairs(input) do
+			if fn:match(option) then
+				table.insert(warnings, modifier(fn))
+			else
+				table.insert(result, fn)
+			end
+		end
+
+		return warnings, result
+	end
+
+
 	function m.additionalCompileOptions(cfg, condition)
-		if #cfg.buildoptions > 0 then
-			local opts = table.concat(cfg.buildoptions, " ")
+		-- process known option '/wd'
+		local w, options = m.filterKnownOption(cfg.buildoptions, condition, '%/wd', function(fn)
+			return string.sub(fn, 4)
+		end)
+		if #w > 0 then
+			premake.warnOnce("/wd", "/wd buildoption used, you should use the new 'disablewarnings' API instead.")
+			m.element("DisableSpecificWarnings", condition, '%s;%%(DisableSpecificWarnings)', table.concat(w, ";"))
+		end
+
+		if #options > 0 then
+			local opts = table.concat(options, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
 
 	function m.additionalLinkOptions(cfg)
-		if #cfg.linkoptions > 0 then
-			local opts = table.concat(cfg.linkoptions, " ")
-			m.element("AdditionalOptions", nil, "%s %%(AdditionalOptions)", opts)
+		-- process known option '/NODEFAULTLIB:'
+		local w, options = m.filterKnownOption(cfg.linkoptions, nil, '%/NODEFAULTLIB:', function(fn)
+			return string.sub(fn, 15)
+		end)
+		if #w > 0 then
+			premake.warnOnce("/NODEFAULTLIB", "/NODEFAULTLIB buildoption used, you should use the new 'ignoredefaultlibraries' API instead.")
+			m.element("IgnoreSpecificDefaultLibraries", nil, '%s;%%(IgnoreSpecificDefaultLibraries)', table.concat(w, ";"))
+		end
+
+		-- process known option '/MACHINE:'
+		w, options = m.filterKnownOption(options, nil, '%/MACHINE:', function(fn)
+			return 'Machine' .. string.sub(fn, 10)
+		end)
+		if #w > 0 then
+			m.element("TargetMachine", nil, '%s', table.concat(w, ";"))
+		end
+
+		-- process known option '/LARGEADDRESSAWARE:'
+		w, options = m.filterKnownOption(options, nil, '%/LARGEADDRESSAWARE', function(fn)
+			return "true"
+		end)
+		if #w > 0 then
+			m.element("LargeAddressAware", nil, 'true')
+		end
+
+		-- if there are any linkoptions left, add those.
+		if #options > 0 then
+			local opts = table.concat(options, " ")
+			m.element("AdditionalOptions", nil, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
@@ -1155,7 +1206,6 @@
 
 
 	function m.exceptionHandling(cfg)
-		local value
 		if cfg.exceptionhandling == p.OFF then
 			m.element("ExceptionHandling", nil, "false")
 		elseif cfg.exceptionhandling == "SEH" then
