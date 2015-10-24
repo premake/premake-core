@@ -304,9 +304,11 @@
 			end
 		end
 
-		if #result > 1 then
-			table.insert(result, 1, "-Wl,--start-group")
-			table.insert(result, "-Wl,--end-group")
+		if cfg.system ~= premake.MACOSX then
+			if #result > 1 then
+				table.insert(result, 1, "-Wl,--start-group")
+				table.insert(result, "-Wl,--end-group")
+			end
 		end
 
 		-- The "-l" flag is fine for system libraries

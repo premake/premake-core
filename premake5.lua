@@ -90,6 +90,10 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
+		configuration { "macosx", "gmake" }
+			buildoptions { "-mmacosx-version-min=10.4" }
+			linkoptions  { "-mmacosx-version-min=10.4" }
+
 	project "Premake5"
 		targetname  "premake5"
 		language    "C"
@@ -161,8 +165,6 @@
 
 		configuration { "macosx", "gmake" }
 			toolset "clang"
-			buildoptions { "-mmacosx-version-min=10.4" }
-			linkoptions  { "-mmacosx-version-min=10.4" }
 
 		configuration { "solaris" }
 			linkoptions { "-Wl,--export-dynamic" }
