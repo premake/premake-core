@@ -20,7 +20,7 @@ project "curl-lib"
 		defines {"HAVE_CONFIG_H", "CURL_HIDDEN_SYMBOLS"}
 
 	configuration { 'macosx' }
-		defines { 'HAVE_CONFIG_H' }	
+		defines { 'HAVE_CONFIG_H', 'USE_SSL', 'USE_DARWINSSL' }	
 
 	configuration "Release"
 		defines {"NDEBUG"}

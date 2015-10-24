@@ -162,6 +162,9 @@
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
+			if not _OPTIONS["no-curl"] then
+				links   { "Security.framework" }
+			end
 
 		configuration { "macosx", "gmake" }
 			toolset "clang"
