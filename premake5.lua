@@ -159,6 +159,11 @@
 		configuration "linux or hurd"
 			links       { "dl", "rt" }
 
+		configuration "linux"
+			if not _OPTIONS["no-curl"] and os.findlib("ssl") then
+				links       { "ssl", "crypto" }
+			end
+
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
@@ -175,6 +180,7 @@
 		configuration "aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
+
 
 	-- optional 3rd party libraries
 	group "contrib"
