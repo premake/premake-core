@@ -152,12 +152,6 @@
 	function container.bakeChildren(self)
 		for class in container.eachChildClass(self.class) do
 			local children = self[class.pluralName]
-
-			-- sort children by name.
-			table.sort(children, function(a,b) 
-				return a.name < b.name
-			end)
-
 			for i = 1, #children do
 				local ctx = container.bake(children[i])
 				children[i] = ctx
