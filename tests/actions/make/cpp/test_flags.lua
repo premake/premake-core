@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_flags.lua
 -- Tests compiler and linker flags for Makefiles.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
 	local suite = test.declare("make_flags")
