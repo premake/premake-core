@@ -90,6 +90,10 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
+		configuration { "macosx", "gmake" }
+			buildoptions { "-mmacosx-version-min=10.4" }
+			linkoptions  { "-mmacosx-version-min=10.4" }
+
 	project "Premake5"
 		targetname  "premake5"
 		language    "C"
@@ -155,14 +159,20 @@
 		configuration "linux or hurd"
 			links       { "dl", "rt" }
 
+		configuration "linux"
+			if not _OPTIONS["no-curl"] and os.findlib("ssl") then
+				links       { "ssl", "crypto" }
+			end
+
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
+			if not _OPTIONS["no-curl"] then
+				links   { "Security.framework" }
+			end
 
 		configuration { "macosx", "gmake" }
 			toolset "clang"
-			buildoptions { "-mmacosx-version-min=10.4" }
-			linkoptions  { "-mmacosx-version-min=10.4" }
 
 		configuration { "solaris" }
 			linkoptions { "-Wl,--export-dynamic" }
@@ -170,6 +180,7 @@
 		configuration "aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
+
 
 	-- optional 3rd party libraries
 	group "contrib"
