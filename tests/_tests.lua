@@ -147,6 +147,7 @@ return {
 	"actions/make/cpp/test_clang.lua",
 	"actions/make/cpp/test_file_rules.lua",
 	"actions/make/cpp/test_flags.lua",
+	"actions/make/cpp/test_ldflags.lua",
 	"actions/make/cpp/test_make_pch.lua",
 	"actions/make/cpp/test_make_linking.lua",
 	"actions/make/cpp/test_objects.lua",
