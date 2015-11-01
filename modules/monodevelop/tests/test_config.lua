@@ -45,9 +45,9 @@
 	function suite.OnProject_OutputPath()
 		prepare()
 		monodevelop.cproj.outputPath(cfg)
-		test.capture [[
-    <OutputPath>bin\Debug</OutputPath>
-		]]
+		test.capture([[
+    <OutputPath>]] .. path.translate("bin\\Debug") .. [[</OutputPath>
+		]])
 	end
 
 	function suite.OnProject_OutputName()
