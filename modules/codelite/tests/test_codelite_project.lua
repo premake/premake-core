@@ -15,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "codelite"
+		premake.action.set("codelite")
 		premake.indent("  ")
 		wks = test.createWorkspace()
 	end
