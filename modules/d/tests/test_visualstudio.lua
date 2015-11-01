@@ -15,7 +15,7 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 --		premake.escaper(premake.vstudio.vs2005.esc)
 		premake.indent(" ")
 		wks = workspace "MyWorkspace"
