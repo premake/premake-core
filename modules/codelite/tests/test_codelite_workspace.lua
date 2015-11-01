@@ -16,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "codelite"
+		premake.action.set("codelite")
 		premake.indent("  ")
 		wks = test.createWorkspace()
 	end
@@ -95,10 +95,10 @@
 	function suite.onNestedProjectPath()
 		location "MyProject"
 		prepare()
-		test.capture [[
+		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
-  <Project Name="MyProject" Path="MyProject\MyProject.project"/>
+  <Project Name="MyProject" Path="]] .. path.translate("MyProject\\MyProject.project") .. [["/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
@@ -108,16 +108,16 @@
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
-		]]
+		]])
 	end
 
 	function suite.onExternalProjectPath()
 		location "../MyProject"
 		prepare()
-		test.capture [[
+		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
-  <Project Name="MyProject" Path="..\MyProject\MyProject.project"/>
+  <Project Name="MyProject" Path="]] .. path.translate("..\\MyProject\\MyProject.project") .. [["/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
@@ -127,5 +127,5 @@
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
-		]]
+		]])
 	end
