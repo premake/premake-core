@@ -15,7 +15,7 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		_ACTION = "monodevelop"
+		premake.action.set("monodevelop")
 		premake.indent("  ")
 		wks = workspace "MyWorkspace"
 		configurations { "Debug", "Release" }
@@ -103,9 +103,9 @@ EndProject
 	function suite.OnProject_objectsDirectory()
 		prepare_cfg()
 		m.monod.objectsDirectory(cfg)
-		test.capture [[
-    <ObjectsDirectory>obj\Debug</ObjectsDirectory>
-		]]
+		test.capture([[
+    <ObjectsDirectory>]] .. path.translate("obj\\Debug") .. [[</ObjectsDirectory>
+		]])
 	end
 
 	function suite.OnProject_debugLevel()
