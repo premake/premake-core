@@ -49,8 +49,7 @@
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
-				print("load error:", err)
-				return nil, err
+				return nil, "load error: " .. err
 			end
 
 			-- give the function access to the project objects
@@ -91,7 +90,7 @@
 					success, result = pcall(result, e)
 					if not success then
 						return nil, result
-					end					
+					end
 				end
 				isAbs = path.isabsolute(result)
 			end
