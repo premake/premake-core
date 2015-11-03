@@ -405,6 +405,7 @@
 				m.moduleDefinitionFile,
 				m.treatLinkerWarningAsErrors,
 				m.ignoreDefaultLibraries,
+				m.largeAddressAware,
 				m.additionalLinkOptions,
 			}
 		end
@@ -725,7 +726,7 @@
 
 	m.elements.ResourceCompileFile = function(cfg, file)
 		return {}
-						end
+	end
 
 	m.elements.ResourceCompileFileCfg = function(fcfg, condition)
 		return {
@@ -941,6 +942,13 @@
 			if #dirs > 0 then
 				m.element("AdditionalUsingDirectories", nil, "%s;%%(AdditionalUsingDirectories)", table.concat(dirs, ";"))
 			end
+		end
+	end
+
+
+	function m.largeAddressAware(cfg)
+		if (cfg.largeaddressaware == true) then
+			m.element("LargeAddressAware", nil, 'true')
 		end
 	end
 

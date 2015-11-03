@@ -1060,6 +1060,11 @@
 		}
 	}
 
+	api.register {
+		name = "largeaddressaware",
+		scope = "config",
+		kind = "boolean",
+	}
 
 -----------------------------------------------------------------------------
 --
