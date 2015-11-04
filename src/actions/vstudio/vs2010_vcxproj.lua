@@ -406,6 +406,7 @@
 				m.treatLinkerWarningAsErrors,
 				m.ignoreDefaultLibraries,
 				m.largeAddressAware,
+				m.targetMachine,
 				m.additionalLinkOptions,
 			}
 		end
@@ -430,6 +431,7 @@
 		if cfg.kind == p.STATICLIB then
 			return {
 				m.treatLinkerWarningAsErrors,
+				m.targetMachine,
 				m.additionalLinkOptions,
 			}
 		else
@@ -949,6 +951,18 @@
 	function m.largeAddressAware(cfg)
 		if (cfg.largeaddressaware == true) then
 			m.element("LargeAddressAware", nil, 'true')
+		end
+	end
+
+
+	function m.targetMachine(cfg)
+		local targetmachine = {
+			x86 = "MachineX86",
+			x86_64 = "MachineX64",
+		}
+		local value = targetmachine[cfg.architecture]
+		if (value ~= nil) then
+			m.element("TargetMachine", nil, '%s', value)
 		end
 	end
 
