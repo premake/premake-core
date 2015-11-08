@@ -21,8 +21,9 @@ static int compare_file(const char* content, size_t length, const char* dst)
 {
 	FILE* file = fopen(dst, "rb");
 	size_t size;
+	size_t read;
 	char buffer[4096];
-	int num;
+	size_t num;
 
 	if (file == NULL)
 	{
@@ -44,7 +45,12 @@ static int compare_file(const char* content, size_t length, const char* dst)
 	{
 		num = size > 4096 ? 4096 : size;
 
-		fread(buffer, 1, num, file);
+		read = fread(buffer, 1, num, file);
+		if (read != num)
+		{
+			fclose (file);
+			return FALSE;
+		}
 
 		if (memcmp(content, buffer, num) != 0)
 		{
