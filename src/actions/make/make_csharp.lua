@@ -186,10 +186,11 @@
 
 
 	function make.csResponseRules(prj)
+		local seperator = package.config:sub(1,1)
 		local toolset = premake.tools.dotnet
 		local ext = make.getmakefilename(prj, true)
 		local makefile = path.getname(premake.filename(prj, ext))
-		local response = path.translate(make.cs.getresponsefilename(prj))
+		local response = path.translate(make.cs.getresponsefilename(prj), seperator)
 
 		_p('$(RESPONSE): %s', makefile)
 		_p('\t@echo Generating response file', prj.name)
@@ -204,7 +205,7 @@
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				if toolset.fileinfo(node).action == "Compile" then
-					_x('\t@echo %s >> $(RESPONSE)', path.translate(node.relpath))
+					_x('\t@echo %s >> $(RESPONSE)', path.translate(node.relpath, seperator))
 				end
 			end
 		})
