@@ -6,7 +6,6 @@
 
 	local suite = test.declare("make_cs_response")
 	local make = premake.make
-	local project = premake.project
 
 
 --
@@ -49,9 +48,14 @@ $(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS) $(RESPONSE)
 	end
 
 	function suite.listResponseRules()
-		files { "foo.cs", "bar.cs" }
+		files { "foo.cs", "bar.cs", "dir/foo.cs" }
 		prepare()
 		make.csResponseRules(prj)
+	end
+
+	function suite.listResponseRulesPosix()
+		_OS = "linux"
+		suite.listResponseRules()
 		test.capture [[
 $(RESPONSE): MyProject.make
 	@echo Generating response file
@@ -61,6 +65,24 @@ else
 	$(SILENT) if exist $(RESPONSE) del $(OBJDIR)\MyProject.rsp
 endif
 	@echo bar.cs >> $(RESPONSE)
+	@echo dir/foo.cs >> $(RESPONSE)
+	@echo foo.cs >> $(RESPONSE)
+		]]
+	end
+
+	function suite.listResponseRulesWindows()
+		_OS = "windows"
+		suite.listResponseRules()
+		test.capture [[
+$(RESPONSE): MyProject.make
+	@echo Generating response file
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) rm -f $(RESPONSE)
+else
+	$(SILENT) if exist $(RESPONSE) del $(OBJDIR)\MyProject.rsp
+endif
+	@echo bar.cs >> $(RESPONSE)
+	@echo dir\foo.cs >> $(RESPONSE)
 	@echo foo.cs >> $(RESPONSE)
 		]]
 	end

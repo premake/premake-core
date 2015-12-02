@@ -189,7 +189,7 @@
 		local toolset = premake.tools.dotnet
 		local ext = make.getmakefilename(prj, true)
 		local makefile = path.getname(premake.filename(prj, ext))
-		local response = path.translate(make.cs.getresponsefilename(prj))
+		local response = make.cs.getresponsefilename(prj)
 
 		_p('$(RESPONSE): %s', makefile)
 		_p('\t@echo Generating response file', prj.name)
@@ -197,14 +197,15 @@
 		_p('ifeq (posix,$(SHELLTYPE))')
 			_x('\t$(SILENT) rm -f $(RESPONSE)')
 		_p('else')
-			_x('\t$(SILENT) if exist $(RESPONSE) del %s', response)
+			_x('\t$(SILENT) if exist $(RESPONSE) del %s', path.translate(response, '\\'))
 		_p('endif')
 
+		local sep = os.is("windows") and "\\" or "/"
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				if toolset.fileinfo(node).action == "Compile" then
-					_x('\t@echo %s >> $(RESPONSE)', path.translate(node.relpath))
+					_x('\t@echo %s >> $(RESPONSE)', path.translate(node.relpath, sep))
 				end
 			end
 		})
