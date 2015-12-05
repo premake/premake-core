@@ -193,6 +193,7 @@ int http_get(lua_State* L)
 		return 1;
 	}
 
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 	code = curl_easy_perform(curl);
 	if (code != CURLE_OK)
 	{
@@ -232,6 +233,7 @@ int http_download(lua_State* L)
 	curl = curl_request(L, &state, fp, /*progressFnIndex=*/3);
 	if (curl)
 	{
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		code = curl_easy_perform(curl);
 		curl_easy_cleanup(curl);
 	}
