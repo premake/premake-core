@@ -10,3 +10,9 @@
 [submodule "modules/d"]
 	path = modules/d
 	url = https://github.com/premake/premake-dlang.git
+[submodule "modules/pkgconfig"]
+	path = modules/pkgconfig
+	url = https://github.com/tarruda/premake-pkgconfig
+[submodule "modules/platform-test"]
+	path = modules/platform-test
+	url = https://github.com/tarruda/premake-platform-test
