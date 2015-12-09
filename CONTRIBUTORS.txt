@@ -24,23 +24,21 @@ Patch contributors:
     * module loading fixes
     * bug fixes
   Gabi Davar <gabi.davar@discretix.com>
-    * Added file.directory to token environment
+    * added file.directory to token environment
   João Matos (joao@tritao.eu)
     * HTTP download support
     * C# / C++/CLI language support improvements and bugfixes
     * Visual Studio and Make improvements and bugfixes
-    * Response files support for Make backend
+    * response files support for Make backend
+    * numerous bug fixes and smaller features
   leeonix <real-like@yeah.net>
-    * Bug fixes
+    * bug fixes
   Lusito <core@roughael.net>
     * path.join() fixes
-  João Matos (joao@tritao.eu)
-    * HTTP download support
-    * C# / C++/CLI language support improvements and bugfixes
-    * Visual Studio and Make improvements and bugfixes
-    * Response files support for Make backend
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
-    * Prevent self-linking
+    * prevent self-linking
+  Mark Sararu <mark.sararu@gmail.com>
+    * Makefile bug fixes
   Mihai Sebea <http://twitter.com/mihai_sebea>
     * Xcode exporter fixes and improvements
   M Skibbe
@@ -48,8 +46,11 @@ Patch contributors:
   Renaud Guillard <https://bitbucket.org/noresources>
     * add library search paths argument to os.findlib()
     * return command exit code from os.outputof()
+    * bug fixes and smaller improvements
   rhuvendiek <rhuvendiek@schueco.com>
-    * VC 2010 IDL file support
+    * Visual C 2010 IDL file support
+  Sami Kankaristo <sami@indiumgames.fi>
+    * Utility project support for Makefiles
   tbasnoopy <tba-snoopy@gmx.de>
     * customtoolnamespace()
     * debuggertype()

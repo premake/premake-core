@@ -5,6 +5,24 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha6:
+
+* New API: additionalusingdirectories()
+* New API: largeaddressaware()
+* New: Embed bytecode to enable better debugging information
+* New: Display elapsed time at completion
+* New: Utility project support for Makefiles
+* New: Enabled SSL support in HTTP functions
+* Fix: Reduce memory usage during baking
+* Fix: Improve performance of wildcard processing
+* Fix: Preserve environment in recursive token expansion
+* Fix: Added missing defines in bootstrap script
+* Fix: Remove /usr/lib64 directories from Mac builds
+* Fix: Added newline after UTF-8 marker in Visual Studio projects
+* Fix: Duplicate escaping on include directories in Makefiles
+* Fix: os.isdir() now works with Windows symbolic links
+* Fix: Use correct path separators in C# response files
+
 Since 5.0-alpha5:
 
 * New API: ignoredefaultlibraries()
