@@ -146,8 +146,8 @@ typedef struct
 	size_t               length;
 } buildin_mapping;
 
+extern const char* PREMAKE_VERSION;
 extern const buildin_mapping builtin_scripts[];
-
 
 int premake_init(lua_State* L);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);

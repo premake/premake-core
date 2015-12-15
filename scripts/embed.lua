@@ -92,6 +92,19 @@
 	end
 
 
+	local function makeVersion(result)
+		local version = os.outputof('git rev-parse --short HEAD')
+		local branch  = path.getname(os.outputof('git describe --all'))
+
+		buffered.writeln(result, "// Version")
+		buffered.writeln(result, "#ifndef PREMAKE_NO_BUILTIN_SCRIPTS")
+		buffered.writeln(result, "const char* PREMAKE_VERSION = \"" .. branch .. " (" .. version .. ")\";")
+		buffered.writeln(result, "#endif")
+		buffered.writeln(result)
+	end
+
+
+
 -- Prepare the file header
 
 	local result = buffered.new()
@@ -101,6 +114,9 @@
 	buffered.writeln(result, "")
 	buffered.writeln(result, '#include "premake.h"')
 	buffered.writeln(result, "")
+
+-- add current branch version.
+	makeVersion(result)
 
 -- Find all of the _manifest.lua files within the project
 
