@@ -12,7 +12,7 @@ modules
 obj
 release
 ipch
-src/host/scripts.c
+src/scripts.c
 **.lnt
 **.vlstatus
 

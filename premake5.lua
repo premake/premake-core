@@ -117,7 +117,6 @@
 		{
 			"*.txt", "**.lua",
 			"src/**.h", "src/**.c",
-			"src/host/scripts.c"
 		}
 
 		excludes
