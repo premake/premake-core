@@ -33,6 +33,7 @@
 	function suite.emitsOnStaticLibWithX86()
 		kind "StaticLib"
 		architecture "x86"
+		files { "hello.rc" }
 		prepare()
 		test.capture [[
 <TargetMachine>MachineX86</TargetMachine>
@@ -42,6 +43,7 @@
 	function suite.emitsOnStaticLibWithX86_64()
 		kind "StaticLib"
 		architecture "x86_64"
+		files { "hello.rc" }
 		prepare()
 		test.capture [[
 <TargetMachine>MachineX64</TargetMachine>
@@ -54,34 +56,32 @@
 -- Other combinations should NOT emit anything
 --
 
-	function suite.isIgnoredOnConsoleAppNoArch()
-		kind "ConsoleApp"
-		prepare()
-		test.isemptycapture()
-	end
-
-	function suite.isIgnoredOnConsoleAppWithX86()
-		kind "ConsoleApp"
-		architecture "x86"
-		prepare()
-		test.isemptycapture()
-	end
-
 	function suite.isIgnoredOnStaticLibNoArch()
 		kind "StaticLib"
+		files { "hello.rc" }
 		prepare()
 		test.isemptycapture()
 	end
 
-	function suite.isIgnoredOnSharedLibNoArch()
-		kind "SharedLib"
+	function suite.isIgnoredOnStaticLibNoResource()
+		kind "StaticLib"
+		architecture "x86"
 		prepare()
 		test.isemptycapture()
 	end
 
-	function suite.isIgnoredOnSharedLibWithX86()
+	function suite.isIgnoredOnConsoleApp()
+		kind "ConsoleApp"
+		architecture "x86"
+		files { "hello.rc" }
+		prepare()
+		test.isemptycapture()
+	end
+
+	function suite.isIgnoredOnSharedLib()
 		kind "SharedLib"
 		architecture "x86"
+		files { "hello.rc" }
 		prepare()
 		test.isemptycapture()
 	end

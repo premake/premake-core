@@ -1774,7 +1774,7 @@
 			x86 = "MachineX86",
 			x86_64 = "MachineX64",
 		}
-		if cfg.kind == p.STATICLIB then
+		if cfg.kind == p.STATICLIB and config.hasFile(cfg, path.isresourcefile) then
 			local value = targetmachine[cfg.architecture]
 			if value ~= nil then
 				m.element("TargetMachine", nil, '%s', value)
