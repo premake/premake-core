@@ -480,7 +480,7 @@
 
 	function cs2005.targetFrameworkVersion(cfg)
 		local action = premake.action.current()
-		local framework = cfg.framework or action.vstudio.targetFramework
+		local framework = cfg.dotnetframework or action.vstudio.targetFramework
 		if framework then
 			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 		end

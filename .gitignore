@@ -31,6 +31,9 @@ Makefile
 *.project
 *.tags
 *.sublime-*
+.cproject
+.settings
+.buildpath
 
 *.bbprojectsettings
 Scratchpad.txt

@@ -6,7 +6,10 @@
 
 	local shorthelp     = "Type 'premake5 --help' for help"
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
+	local startTime     = os.clock()
 
+-- set a global.
+	_PREMAKE_STARTTIME = startTime
 
 -- Load the collection of core scripts, required for everything else to work
 
@@ -328,7 +331,8 @@
 
 	function m.postAction()
 		if p.action.isConfigurable() then
-			print("Done.")
+			local duration = math.floor((os.clock() - startTime) * 1000);
+			printf("Done (%dms).", duration)
 		end
 	end
 

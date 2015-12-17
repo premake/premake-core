@@ -135,6 +135,26 @@
 	end
 
 
+	function suite.OnDotNetFrameworkVersion()
+		dotnetframework "3.0"
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProductVersion>8.0.50727</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>MyProject</RootNamespace>
+		<AssemblyName>MyProject</AssemblyName>
+		<TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+	</PropertyGroup>
+		]]
+	end
+
+
 --
 -- Make sure the root namespace can be overridden.
 --

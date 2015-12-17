@@ -71,6 +71,21 @@
 
 
 --
+-- Check link command for the Utility kind.
+--
+-- Utility projects should only run custom commands, and perform no linking.
+--
+
+	function suite.links_onUtility()
+		kind "Utility"
+		prepare { "linkCmd" }
+		test.capture [[
+  LINKCMD =
+		]]
+	end
+
+
+--
 -- Check link command for a Mac OS X universal static library.
 --
 
@@ -163,7 +178,7 @@
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
+  LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
   LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		]]
 	end

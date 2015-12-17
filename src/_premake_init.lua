@@ -549,7 +549,7 @@
 	}
 
 	api.register {
-		name = "framework",
+		name = "dotnetframework",
 		scope = "config",
 		kind = "string",
 	}
@@ -1060,6 +1060,11 @@
 		}
 	}
 
+	api.register {
+		name = "largeaddressaware",
+		scope = "config",
+		kind = "boolean",
+	}
 
 -----------------------------------------------------------------------------
 --
@@ -1073,6 +1078,7 @@
 	api.alias("buildoutputs", "buildOutputs")
 	api.alias("cleanextensions", "cleanExtensions")
 	api.alias("configfile", "configFile")
+	api.alias("dotnetframework", "framework")
 	api.alias("editandcontinue", "editAndContinue")
 	api.alias("fileextension", "fileExtension")
 	api.alias("propertydefinition", "propertyDefinition")

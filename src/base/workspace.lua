@@ -163,3 +163,31 @@
 	function workspace.hasProject(self, func)
 		return p.container.hasChild(self, p.project, func)
 	end
+
+
+--
+-- Return the relative path from the solution to the specified file.
+--
+-- @param self
+--    The workspace object to query.
+-- @param filename
+--    The file path, or an array of file paths, to convert.
+-- @return
+--    The relative path, or array of paths, from the workspace to the file.
+--
+
+	function workspace.getrelative(self, filename)
+		if type(filename) == "table" then
+			local result = {}
+			for i, name in ipairs(filename) do
+				if name and #name > 0 then
+					table.insert(result, workspace.getrelative(self, name))
+				end
+			end
+			return result
+		else
+			if filename then
+				return path.getrelative(self.location, filename)
+			end
+		end
+	end

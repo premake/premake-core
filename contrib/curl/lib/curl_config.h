@@ -2,7 +2,7 @@
 /* lib/curl_config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Location of default ca bundle */
-#define CURL_CA_BUNDLE "/etc/pki/tls/certs/ca-bundle.crt"
+/* #undef CURL_CA_BUNDLE */
 
 /* Location of default ca path */
 /* #undef CURL_CA_PATH */

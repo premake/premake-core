@@ -65,7 +65,7 @@
 
 	function suite.frameworkVersionIsCorrect_onSpecificVersion()
 		clr "On"
-		framework "4.5"
+		dotnetframework "4.5"
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">

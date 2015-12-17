@@ -73,7 +73,10 @@
 		description = "Disable Zlib/Zip 3rd party lib"
 	}
 
-
+	newoption {
+		trigger     = "no-bytecode",
+		description = "Don't embed bytecode, but instead use the stripped souce code."
+	}
 
 --
 -- Define the project. Put the release configuration first so it will be the
@@ -87,12 +90,16 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
+		configuration { "macosx", "gmake" }
+			buildoptions { "-mmacosx-version-min=10.4" }
+			linkoptions  { "-mmacosx-version-min=10.4" }
+
 	project "Premake5"
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "src/host/lua-5.1.4/src" }
+		includedirs { "src/host/lua/src" }
 
 		-- optional 3rd party libraries
 		if not _OPTIONS["no-zlib"] then
@@ -115,12 +122,12 @@
 
 		excludes
 		{
-			"src/host/lua-5.1.4/src/lauxlib.c",
-			"src/host/lua-5.1.4/src/lua.c",
-			"src/host/lua-5.1.4/src/luac.c",
-			"src/host/lua-5.1.4/src/print.c",
-			"src/host/lua-5.1.4/**.lua",
-			"src/host/lua-5.1.4/etc/*.c"
+			"src/host/lua/src/lauxlib.c",
+			"src/host/lua/src/lua.c",
+			"src/host/lua/src/luac.c",
+			"src/host/lua/src/print.c",
+			"src/host/lua/**.lua",
+			"src/host/lua/etc/*.c"
 		}
 
 		configuration "Debug"
@@ -152,14 +159,20 @@
 		configuration "linux or hurd"
 			links       { "dl", "rt" }
 
+		configuration "linux"
+			if not _OPTIONS["no-curl"] and os.findlib("ssl") then
+				links       { "ssl", "crypto" }
+			end
+
 		configuration "macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
+			if not _OPTIONS["no-curl"] then
+				links   { "Security.framework" }
+			end
 
 		configuration { "macosx", "gmake" }
 			toolset "clang"
-			buildoptions { "-mmacosx-version-min=10.4" }
-			linkoptions  { "-mmacosx-version-min=10.4" }
 
 		configuration { "solaris" }
 			linkoptions { "-Wl,--export-dynamic" }
@@ -167,6 +180,7 @@
 		configuration "aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
+
 
 	-- optional 3rd party libraries
 	group "contrib"

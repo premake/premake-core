@@ -40,6 +40,7 @@
 	function sln2005.generate(wks)
 		-- Mark the file as Unicode
 		premake.utf8()
+		premake.outln('')
 
 		sln2005.reorderProjects(wks)
 
@@ -296,11 +297,13 @@
 -- be ignored.
 --
 
-	sln2005.sectionmap = {
-		ConfigurationPlatforms = sln2005.configurationPlatforms,
-		SolutionProperties     = sln2005.properties,
-		NestedProjects         = sln2005.NestedProjects
-	}
+	sln2005.elements.sections = function(wks)
+		return {
+			sln2005.configurationPlatforms,
+			sln2005.properties,
+			sln2005.NestedProjects
+		}
+	end
 
 
 --
@@ -308,9 +311,5 @@
 --
 
 	function sln2005.sections(wks)
-		for _, section in ipairs(sln2005.solutionSections(wks)) do
-			if sln2005.sectionmap[section] then
-				sln2005.sectionmap[section](wks)
-			end
-		end
+		p.callArray(sln2005.elements.sections, wks)
 	end

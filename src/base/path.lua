@@ -24,7 +24,7 @@
 		end
 
 		-- add the extension if it isn't there already
-		if not p:endswith(ext) then
+		if not path.hasextension(p, ext) then
 			p = p .. ext
 		end
 
@@ -237,30 +237,3 @@
 		return p:match("^(.*)"..ext.."$")..newext
 	end
 
-
-
---
--- Converts from a simple wildcard syntax, where * is "match any"
--- and ** is "match recursive", to the corresponding Lua pattern.
---
--- @param pattern
---    The wildcard pattern to convert.
--- @returns
---    The corresponding Lua pattern.
---
-
-	function path.wildcards(pattern)
-		-- Escape characters that have special meanings in Lua patterns
-		pattern = pattern:gsub("([%+%.%-%^%$%(%)%%])", "%%%1")
-
-		-- Replace wildcard patterns with special placeholders so I don't
-		-- have competing star replacements to worry about
-		pattern = pattern:gsub("%*%*", "\001")
-		pattern = pattern:gsub("%*", "\002")
-
-		-- Replace the placeholders with their Lua patterns
-		pattern = pattern:gsub("\001", ".*")
-		pattern = pattern:gsub("\002", "[^/]*")
-
-		return pattern
-	end

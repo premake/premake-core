@@ -3,6 +3,8 @@ PREMAKE RELEASE CHECKLIST
 
 PREP
 
+ * Make sure submodules are up to date
+
  * Create working branch for release prep
 
  * Update CHANGES.txt and CONTRIBUTORS.txt
@@ -19,7 +21,7 @@ RELEASE
 
  * On each platform, run `premake5 package <release branch name> binary`
 
- * Merge working branch to release and tag
+ * Merge working branch to release and tag; push with tags
 
  * Create new release on GitHub from CHANGES.txt; upload files
 
@@ -28,9 +30,6 @@ RELEASE
  * Post release announcement to the forums
 
  * Post annoucement to @industrious on Twitter
-
- * Add release to Freshmeat
-   http://freshmeat.net/projects/premake
 
 
 CYCLE
