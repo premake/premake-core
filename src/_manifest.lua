@@ -19,6 +19,7 @@
 		"base/tools.lua",
 		"base/tree.lua",
 		"base/globals.lua",
+		"base/semver.lua",
 
 		-- configuration data
 		"base/field.lua",
