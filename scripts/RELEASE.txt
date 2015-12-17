@@ -3,6 +3,8 @@ PREMAKE RELEASE CHECKLIST
 
 PREP
 
+ * Make sure submodules are up to date
+
  * Create working branch for release prep
 
  * Update CHANGES.txt and CONTRIBUTORS.txt
