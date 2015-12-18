@@ -62,6 +62,8 @@
 		"actions/make/make_workspace.lua",
 		"actions/make/make_cpp.lua",
 		"actions/make/make_csharp.lua",
+		"actions/make/make_utility.lua",
+		"actions/make/make_makefile.lua",
 
 		-- Visual Studio actions
 		"actions/vstudio/_vstudio.lua",

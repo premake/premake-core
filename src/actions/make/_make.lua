@@ -20,7 +20,7 @@
 		shortname       = "GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
 
 		valid_languages = { "C", "C++", "C#" },
 
@@ -37,10 +37,16 @@
 		onProject = function(prj)
 			premake.escaper(make.esc)
 			local makefile = make.getmakefilename(prj, true)
-			if project.isdotnet(prj) then
-				premake.generate(prj, makefile, make.cs.generate)
-			elseif project.iscpp(prj) then
-				premake.generate(prj, makefile, make.cpp.generate)
+			if prj.kind == premake.UTILITY then
+				premake.generate(prj, makefile, make.utility.generate)
+			elseif prj.kind == premake.MAKEFILE then
+				premake.generate(prj, makefile, make.makefile.generate)
+			else
+				if project.isdotnet(prj) then
+					premake.generate(prj, makefile, make.cs.generate)
+				elseif project.iscpp(prj) then
+					premake.generate(prj, makefile, make.cpp.generate)
+				end
 			end
 		end,
 
