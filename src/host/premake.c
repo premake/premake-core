@@ -154,6 +154,7 @@ int premake_init(lua_State* L)
 	/* find the user's home directory */
 	value = getenv("HOME");
 	if (!value) value = getenv("USERPROFILE");
+	if (!value) value = "~";
 	lua_pushstring(L, value);
 	lua_setglobal(L, "_USER_HOME_DIR");
 
