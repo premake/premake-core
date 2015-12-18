@@ -232,7 +232,10 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 #if PLATFORM_WINDOWS
 	DWORD len = GetModuleFileName(NULL, buffer, PATH_MAX);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_MACOSX
@@ -243,23 +246,32 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 #endif
 
 #if PLATFORM_LINUX
-	int len = readlink("/proc/self/exe", buffer, PATH_MAX);
+	int len = readlink("/proc/self/exe", buffer, PATH_MAX - 1);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_BSD
-	int len = readlink("/proc/curproc/file", buffer, PATH_MAX);
+	int len = readlink("/proc/curproc/file", buffer, PATH_MAX - 1);
 	if (len < 0)
-		len = readlink("/proc/curproc/exe", buffer, PATH_MAX);
+		len = readlink("/proc/curproc/exe", buffer, PATH_MAX - 1);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_SOLARIS
-	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX);
+	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX - 1);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 	/* As a fallback, search the PATH with argv[0] */
