@@ -90,9 +90,15 @@
 					success, result = pcall(result, e)
 					if not success then
 						return nil, result
-					end
+					end					
 				end
-				isAbs = path.isabsolute(result)
+
+				if (type(result) == "table") then
+					isAbs  = result.absolute
+					result = result.token
+				else
+					isAbs = path.isabsolute(result)
+				end
 			end
 
 			-- If the result is an absolute path, and it is being inserted into
