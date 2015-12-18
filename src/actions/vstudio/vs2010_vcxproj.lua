@@ -1231,7 +1231,15 @@
 
 
 	function m.generateDebugInformation(cfg)
-		m.element("GenerateDebugInformation", nil, tostring(cfg.flags.Symbols ~= nil))
+		if cfg.flags.Symbols and _ACTION >= "vs2015" then
+			if cfg.flags.FastLink then
+				m.element('GenerateDebugInformation', nil, "DebugFastLink")
+			else
+				m.element('GenerateDebugInformation', nil, "Debug")
+			end
+		else
+			m.element("GenerateDebugInformation", nil, tostring(cfg.flags.Symbols ~= nil))
+		end
 	end
 
 

@@ -491,6 +491,7 @@
 			"WPF",
 			"C++11",
 			"C++14",
+			"FastLink",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
