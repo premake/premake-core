@@ -952,7 +952,7 @@
 
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
-			p.w('CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+			p.w('CharacterSet="%s"', iif(cfg.characterset == p.MBCS, 2, 1))
 		end
 	end
 
