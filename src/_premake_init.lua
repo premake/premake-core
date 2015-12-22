@@ -133,6 +133,17 @@
 	}
 
 	api.register {
+		name = "characterset",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"MBCS",
+			"Unicode",
+		}
+	}
+
+	api.register {
 		name = "cleancommands",
 		scope = "config",
 		kind = "list:string",
@@ -474,7 +485,7 @@
 			"StaticRuntime",
 			"Symbols",
 			"UndefinedIdentifiers",
-			"Unicode",
+			"Unicode",             -- DEPRECATED
 			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
@@ -1228,6 +1239,16 @@
 	end,
 	function(value)
 		clr "On"
+	end)
+
+	-- 18 Dec 2015
+
+	api.deprecateValue("flags", "Unicode", nil,
+	function(value)
+		characterset "Unicode"
+	end,
+	function(value)
+		characterset "Default"
 	end)
 
 

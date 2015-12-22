@@ -1018,7 +1018,7 @@
 
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
-			m.element("CharacterSet", nil, iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+			m.element("CharacterSet", nil, iif(cfg.characterset == p.MBCS, "MultiByte", "Unicode"))
 		end
 	end
 
