@@ -85,7 +85,7 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = premake.tools[cfg.toolset or "gcc"]
+			local toolset = premake.tools[_OPTIONS.cc or cfg.toolset or "gcc"]
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
