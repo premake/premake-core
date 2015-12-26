@@ -467,12 +467,17 @@
 		-- add a conditional configuration to the project script.
 
 		local pch = cfg.pchheader
+		local found = false
 		for _, incdir in ipairs(cfg.includedirs) do
 			local testname = path.join(incdir, pch)
 			if os.isfile(testname) then
 				pch = project.getrelative(cfg.project, testname)
+				found = true
 				break
 			end
+		end
+		if not found then
+			pch = project.getrelative(cfg.project, path.getabsolute(pch))
 		end
 
 		_x('  PCH = %s', pch)
