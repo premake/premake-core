@@ -552,6 +552,7 @@
 				m.generateDebugInformation,
 				m.programDatabaseFile,
 				m.subSystem,
+				m.largeAddressAware,
 				m.optimizeReferences,
 				m.enableCOMDATFolding,
 				m.entryPointSymbol,
@@ -1087,6 +1088,14 @@
 	function m.enableCOMDATFolding(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('EnableCOMDATFolding="2"')
+		end
+	end
+
+
+
+	function m.largeAddressAware(cfg)
+		if (cfg.largeaddressaware == true) then
+			p.w('LargeAddressAware="2"')
 		end
 	end
 
