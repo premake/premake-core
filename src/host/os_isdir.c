@@ -27,7 +27,7 @@ int os_isdir(lua_State* L)
 	}
 #ifdef _WIN32
 	// Use Windows-specific GetFileAttributes since it deals with symbolic links.
-	else if ((attr = GetFileAttributes(path)) != INVALID_FILE_ATTRIBUTES)
+	else if ((attr = GetFileAttributesA(path)) != INVALID_FILE_ATTRIBUTES)
 	{
 		int isdir = (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 		lua_pushboolean(L, isdir);

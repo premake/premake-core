@@ -230,7 +230,7 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	const char* path = NULL;
 
 #if PLATFORM_WINDOWS
-	DWORD len = GetModuleFileName(NULL, buffer, PATH_MAX);
+	DWORD len = GetModuleFileNameA(NULL, buffer, PATH_MAX);
 	if (len > 0)
 	{
 		buffer[len] = 0;

@@ -15,14 +15,14 @@ typedef struct struct_MatchInfo
 {
 	HANDLE handle;
 	int    is_first;
-	WIN32_FIND_DATA entry;
+	WIN32_FIND_DATAA entry;
 } MatchInfo;
 
 int os_matchstart(lua_State* L)
 {
 	const char* mask = luaL_checkstring(L, 1);
 	MatchInfo* m = (MatchInfo*)malloc(sizeof(MatchInfo));
-	m->handle = FindFirstFile(mask, &m->entry);
+	m->handle = FindFirstFileA(mask, &m->entry);
 	m->is_first = 1;
 	lua_pushlightuserdata(L, m);
 	return 1;
@@ -64,7 +64,7 @@ int os_matchnext(lua_State* L)
 			m->is_first = 0;
 		else
 		{
-			if (!FindNextFile(m->handle, &m->entry))
+			if (!FindNextFileA(m->handle, &m->entry))
 				return 0;
 		}
 

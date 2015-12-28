@@ -14,7 +14,7 @@ int os_islink(lua_State* L)
 
 #if PLATFORM_WINDOWS
 	{
-		DWORD attr = GetFileAttributes(path);
+		DWORD attr = GetFileAttributesA(path);
 		if (attr != INVALID_FILE_ATTRIBUTES) {
 			lua_pushboolean(L, (attr & FILE_ATTRIBUTE_REPARSE_POINT) != 0);
 			return 1;

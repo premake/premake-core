@@ -14,7 +14,7 @@ int do_chdir(lua_State* L, const char* path)
 	(void)(L);  /* warning: unused parameter */
 
 #if PLATFORM_WINDOWS
-	z = SetCurrentDirectory(path);
+	z = SetCurrentDirectoryA(path);
 #else
 	z = !chdir(path);
 #endif
