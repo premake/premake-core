@@ -541,7 +541,7 @@ write_cdir(struct zip *za, const struct zip_filelist *filelist, zip_uint64_t sur
 
     /* fix up torrentzip comment */
 
-    if (_zip_filerange_crc(out, cd_start, size, &crc, &za->error) < 0)
+    if (_zip_filerange_crc(out, cd_start, (off_t)size, &crc, &za->error) < 0)
 	return -1;
 
     snprintf(buf, sizeof(buf), "%08lX", (long)crc);
