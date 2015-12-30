@@ -48,7 +48,7 @@ zip_error_to_str(char *buf, zip_uint64_t len, int ze, int se)
     const char *zs, *ss;
 
     if (ze < 0 || ze >= _zip_nerr_str)
-	return snprintf(buf, len, "Unknown error %d", ze);
+	return snprintf(buf, (size_t)len, "Unknown error %d", ze);
 
     zs = _zip_err_str[ze];
 	
@@ -65,6 +65,6 @@ zip_error_to_str(char *buf, zip_uint64_t len, int ze, int se)
 	ss = NULL;
     }
 
-    return snprintf(buf, len, "%s%s%s",
+    return snprintf(buf, (size_t)len, "%s%s%s",
 		    zs, (ss ? ": " : ""), (ss ? ss : ""));
 }
