@@ -18,4 +18,5 @@ project "zlib-lib"
 		flags   { "OptimizeSize" }
 
 	configuration "Debug"
-		defines {"_DEBUG"}		flags   { "Symbols" }
+		defines {"_DEBUG"}
+		symbols 'On'

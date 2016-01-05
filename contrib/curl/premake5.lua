@@ -49,4 +49,4 @@ project 'curl-lib'
 
 	configuration { 'Debug' }
 		defines { '_DEBUG' }
-		flags   { 'Symbols' }
+		symbols 'On'

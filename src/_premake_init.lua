@@ -483,7 +483,7 @@
 			"SEH",                 -- DEPRECATED
 			"ShadowedVariables",
 			"StaticRuntime",
-			"Symbols",
+			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
 			"Unicode",             -- DEPRECATED
 			"Unsafe",              -- DEPRECATED
@@ -491,7 +491,6 @@
 			"WPF",
 			"C++11",
 			"C++14",
-			"FastLink",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -917,6 +916,17 @@
 	}
 
 	api.register {
+		name = "symbols",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off",
+			"FastLink",
+		}
+	}
+
+	api.register {
 		name = "sysincludedirs",
 		scope = "config",
 		kind = "list:directory",
@@ -1252,6 +1262,16 @@
 		characterset "Default"
 	end)
 
+	-- 5 Jan 2016
+
+	api.deprecateValue("flags", { "Symbols" }, nil,
+	function(value)
+		symbols "On"
+	end,
+	function(value)
+		symbols "Off"
+	end)
+
 
 
 -----------------------------------------------------------------------------
@@ -1362,6 +1382,7 @@
 	clr "Off"
 	exceptionhandling "Default"
 	rtti "Default"
+	symbols "Off"
 
 	-- Setting a default language makes some validation easier later
 

@@ -413,7 +413,7 @@
 --
 
 	function config.isDebugBuild(cfg)
-		return cfg.flags.Symbols and not config.isOptimizedBuild(cfg)
+		return cfg.symbols ~= p.OFF and not config.isOptimizedBuild(cfg)
 	end
 
 

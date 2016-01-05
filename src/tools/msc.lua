@@ -40,8 +40,11 @@
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
-			Symbols = "/Z7",
 			OmitDefaultLibrary = "/Zl",
+		},
+		symbols = {
+			On = "/Z7",
+			FastLink = "/Z7",
 		},
 		floatingpoint = {
 			Fast = "/fp:fast",
@@ -194,7 +197,10 @@
 			NoIncrementalLink = "/INCREMENTAL:NO",
 			NoManifest = "/MANIFEST:NO",
 			OmitDefaultLibrary = "/NODEFAULTLIB",
-			Symbols = "/DEBUG",
+		},
+		symbols = {
+			On = "/DEBUG",
+			FastLink = iif(_ACTION >= "vs2015", "/DebugFastLink", "/DEBUG"),
 		},
 		kind = {
 			SharedLib = "/DLL",

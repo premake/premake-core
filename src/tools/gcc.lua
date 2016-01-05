@@ -45,8 +45,11 @@
 			LinkTimeOptimization = "-flto",
 			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
-			Symbols = "-g",
 			UndefinedIdentifiers = "-Wundef",
+		},
+		symbols = {
+			On = "-g",
+			FastLink = "-g",
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",

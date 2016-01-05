@@ -87,7 +87,7 @@
 	function snc.getldflags(cfg)
 		local flags = { }
 
-		if not cfg.flags.Symbols then
+		if cfg.symbols ~= p.OFF then
 			table.insert(flags, "-s")
 		end
 

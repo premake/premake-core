@@ -205,12 +205,15 @@
 		},
 		flags = {
 			FatalWarning = "/warnaserror",
-			Symbols = "/debug",
 		},
 		optimize = {
 			On = "/optimize",
 			Size = "/optimize",
 			Speed = "/optimize",
+		},
+		symbols = {
+			On = "/debug",
+			FastLink = "/debug",
 		},
 	}
 
