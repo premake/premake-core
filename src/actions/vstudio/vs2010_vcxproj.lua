@@ -1091,9 +1091,9 @@
 
 
 	function m.debugInformationFormat(cfg)
-		local value
+		local value = nil
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.flags.Symbols then
+		if cfg.symbols ~= p.OFF then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x86_64" or
@@ -1231,7 +1231,17 @@
 
 
 	function m.generateDebugInformation(cfg)
-		m.element("GenerateDebugInformation", nil, tostring(cfg.flags.Symbols ~= nil))
+		local isVS2015 = (_ACTION >= "vs2015")
+		local tbl = {
+			On       = iif(isVS2015, "Debug", "true"),
+			Off      = "false",
+			FastLink = iif(isVS2015, "DebugFastLink", "true"),
+		}
+
+		local value = tbl[cfg.symbols]
+		if value then
+			m.element('GenerateDebugInformation', nil, value)
+		end
 	end
 
 
