@@ -5,21 +5,20 @@ project 'curl-lib'
 	defines     { 'BUILDING_LIBCURL', 'CURL_STATICLIB', 'HTTP_ONLY', 'CURL_DISABLE_LDAP' }
 	flags       { 'StaticRuntime' }
 	warnings    'off'
-	location    "build"
 
-	files 
+	files
 	{
 		'**.h',
 		'**.c'
 	}
-	
+
 	configuration { 'windows' }
 		defines { 'WIN32' }
 		defines { 'USE_SCHANNEL', 'USE_WINDOWS_SSPI' }
 
 	configuration { 'linux' }
 		defines { 'CURL_HIDDEN_SYMBOLS' }
-		
+
 		if os.findlib('ssl') then
 			defines { 'USE_OPENSSL', 'USE_SSLEAY' }
 
@@ -49,5 +48,5 @@ project 'curl-lib'
 		flags   { 'OptimizeSize' }
 
 	configuration { 'Debug' }
-		defines { '_DEBUG' }		
-		flags   { 'Symbols' }	
+		defines { '_DEBUG' }
+		flags   { 'Symbols' }
