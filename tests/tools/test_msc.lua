@@ -312,6 +312,28 @@
 
 
 --
+-- Check handling of character set switches
+--
+
+	function suite.cflags_onCharSetDefault()
+		prepare()
+		test.contains('/D"_UNICODE"', msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onCharSetUnicode()
+		characterset "Unicode"
+		prepare()
+		test.contains('/D"_UNICODE"', msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onCharSetMBCS()
+		characterset "MBCS"
+		prepare()
+		test.contains('/D"_MBCS"', msc.getcflags(cfg))
+	end
+
+
+--
 -- Check handling of system search paths.
 --
 
@@ -342,3 +364,4 @@
 		prepare()
 		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
 	end
+

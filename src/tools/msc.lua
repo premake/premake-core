@@ -29,6 +29,11 @@
 --
 
 	msc.cflags = {
+		characterset = {
+			Default = { '/D"_UNICODE"', '/D"UNICODE"' },
+			MBCS = '/D"_MBCS"',
+			Unicode = { '/D"_UNICODE"', '/D"UNICODE"' },
+		},
 		clr = {
 			On = "/clr",
 			Unsafe = "/clr",
