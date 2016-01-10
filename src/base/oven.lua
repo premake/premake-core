@@ -43,7 +43,7 @@
 ---
 
 	function oven.bake()
-		p.container.bakeChildren(p.api.rootContainer())
+		p.container.bake(p.api.rootContainer())
 	end
 
 	function oven.bakeWorkspace(wks)
@@ -52,6 +52,12 @@
 
 	p.alias(oven, "bakeWorkspace", "bakeSolution")
 
+---
+-- Bakes the global scope.
+---
+	function p.global.bake(self)
+		p.container.bakeChildren(self)
+	end
 
 
 ---

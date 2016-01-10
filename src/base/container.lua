@@ -132,7 +132,9 @@
 		end
 
 		local parent = self.parent
-		ctx[parent.class.name] = parent
+		if parent then
+			ctx[parent.class.name] = parent
+		end
 
 		for class in container.eachChildClass(self.class) do
 			for child in container.eachChild(self, class) do
