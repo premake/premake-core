@@ -121,6 +121,8 @@
 		verbosef('    Baking %s...', self.name)
 
 		self.solution = self.workspace
+		self.global = self.workspace.global
+
 		local wks = self.workspace
 
 		-- Add filtering terms to the context to make it as specific as I can.
@@ -456,6 +458,7 @@
 		ctx.project = prj
 		ctx.workspace = wks
 		ctx.solution = wks
+		ctx.global = wks.global
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
