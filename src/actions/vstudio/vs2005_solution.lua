@@ -29,6 +29,7 @@
 			"ConfigurationPlatforms",
 			"SolutionProperties",
 			"NestedProjects",
+			"ExtensibilityGlobals"
 		}
 	end
 
@@ -293,6 +294,32 @@
 
 
 --
+-- Write out the ExtensibilityGlobals block, which embeds some data for the
+-- Visual Studio PremakeExtension. In two seperate methods for override-ability.
+--
+	function sln2005.PremakeGlobals(wks)
+		-- we need to filter out the --file argument, since we already output
+		-- the script separately.
+		local args = {}
+		for _, arg in ipairs(_ARGV) do
+			if not (arg:startswith("--file") or arg:startswith("/file")) then
+				table.insert(args, arg);
+			end
+		end
+
+		_p(2, 'PremakeBinary = %s', _PREMAKE_COMMAND)
+		_p(2, 'PremakeScript = %s', p.workspace.getrelative(wks, _MAIN_SCRIPT))
+		_p(2, 'PremakeArguments = %s', table.concat(args, ' '))
+	end
+
+	function sln2005.ExtensibilityGlobals(wks)
+		_p(1, 'GlobalSection(ExtensibilityGlobals) = postSolution')
+		sln2005.PremakeGlobals(wks)
+		_p(1, 'EndGlobalSection')
+	end
+
+
+--
 -- Map solution sections to output functions. Tools that aren't listed will
 -- be ignored.
 --
@@ -301,7 +328,8 @@
 		return {
 			sln2005.configurationPlatforms,
 			sln2005.properties,
-			sln2005.NestedProjects
+			sln2005.NestedProjects,
+			sln2005.ExtensibilityGlobals,
 		}
 	end
 
