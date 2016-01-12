@@ -81,6 +81,7 @@ return {
 	"actions/vstudio/sln2005/test_nested_projects.lua",
 	"actions/vstudio/sln2005/test_projects.lua",
 	"actions/vstudio/sln2005/test_platforms.lua",
+	"actions/vstudio/sln2005/test_sections.lua",
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	"actions/vstudio/vc200x/test_assembly_refs.lua",
