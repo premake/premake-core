@@ -32,6 +32,13 @@ void string_init(string* s)
 	s->ptr[0] = '\0';
 }
 
+void string_free(string* s)
+{
+	free(s->ptr);
+	s->ptr = NULL;
+	s->len = 0;
+}
+
 typedef struct
 {
 	lua_State* L;
@@ -201,12 +208,15 @@ int http_get(lua_State* L)
 
 		lua_pushnil(L);
 		lua_pushfstring(L, errorBuf);
+		string_free(&state.S);
 		return 2;
 	}
 
 	curl_easy_cleanup(curl);
 
 	lua_pushlstring(L, state.S.ptr, state.S.len);
+	string_free(&state.S);
+
 	return 1;
 }
 
