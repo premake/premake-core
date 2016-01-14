@@ -295,27 +295,48 @@
 
 --
 -- Write out the ExtensibilityGlobals block, which embeds some data for the
--- Visual Studio PremakeExtension. In two seperate methods for override-ability.
+-- Visual Studio PremakeExtension.
 --
 	function sln2005.premakeExtensibilityGlobals(wks)
-		-- we need to filter out the 'file' argument, since we already output
-		-- the script separately.
-		local args = {}
-		for _, arg in ipairs(_ARGV) do
-			if not (arg:startswith("--file") or arg:startswith("/file")) then
-				table.insert(args, arg);
+		if wks.editorintegration then
+			-- we need to filter out the 'file' argument, since we already output
+			-- the script separately.
+			local args = {}
+			for _, arg in ipairs(_ARGV) do
+				if not (arg:startswith("--file") or arg:startswith("/file")) then
+					table.insert(args, arg);
+				end
 			end
-		end
 
-		p.w('PremakeBinary = %s', _PREMAKE_COMMAND)
-		p.w('PremakeScript = %s', p.workspace.getrelative(wks, _MAIN_SCRIPT))
-		p.w('PremakeArguments = %s', table.concat(args, ' '))
+			p.w('PremakeBinary = %s', _PREMAKE_COMMAND)
+			p.w('PremakeScript = %s', p.workspace.getrelative(wks, _MAIN_SCRIPT))
+			p.w('PremakeArguments = %s', table.concat(args, ' '))
+		end
 	end
 
+--
+-- Map ExtensibilityGlobals to output functions.
+--
+
+	sln2005.elements.extensibilityGlobals = function(wks)
+		return {
+			sln2005.premakeExtensibilityGlobals,
+		}
+	end
+
+--
+-- Output the ExtensibilityGlobals section.
+--
 	function sln2005.extensibilityGlobals(wks)
-		if wks.editorintegration then
+		local contents = p.capture(function ()
+			p.push()
+			p.callArray(sln2005.elements.extensibilityGlobals, wks)
+			p.pop()
+		end)
+
+		if #contents > 0 then
 			p.push('GlobalSection(ExtensibilityGlobals) = postSolution')
-			sln2005.premakeExtensibilityGlobals(wks)
+			p.outln(contents)
 			p.pop('EndGlobalSection')
 		end
 	end
