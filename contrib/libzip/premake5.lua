@@ -4,9 +4,8 @@ project "zip-lib"
 	includedirs "include"
 	defines     {"N_FSEEKO", "_CRT_SECURE_NO_DEPRECATE"}
 	flags       { "StaticRuntime" }
-	location    "build"
 
-	files 
+	files
 	{
 		"**.h",
 		"**.c"
@@ -26,5 +25,5 @@ project "zip-lib"
 		flags   { "OptimizeSize" }
 
 	configuration "Debug"
-		defines {"_DEBUG"}		
-		flags   { "Symbols" }	
+		defines {"_DEBUG"}
+		flags   { "Symbols" }
