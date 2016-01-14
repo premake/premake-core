@@ -29,6 +29,7 @@
 			"ConfigurationPlatforms",
 			"SolutionProperties",
 			"NestedProjects",
+			"ExtensibilityGlobals"
 		}
 	end
 
@@ -293,6 +294,55 @@
 
 
 --
+-- Write out the ExtensibilityGlobals block, which embeds some data for the
+-- Visual Studio PremakeExtension.
+--
+	function sln2005.premakeExtensibilityGlobals(wks)
+		if wks.editorintegration then
+			-- we need to filter out the 'file' argument, since we already output
+			-- the script separately.
+			local args = {}
+			for _, arg in ipairs(_ARGV) do
+				if not (arg:startswith("--file") or arg:startswith("/file")) then
+					table.insert(args, arg);
+				end
+			end
+
+			p.w('PremakeBinary = %s', _PREMAKE_COMMAND)
+			p.w('PremakeScript = %s', p.workspace.getrelative(wks, _MAIN_SCRIPT))
+			p.w('PremakeArguments = %s', table.concat(args, ' '))
+		end
+	end
+
+--
+-- Map ExtensibilityGlobals to output functions.
+--
+
+	sln2005.elements.extensibilityGlobals = function(wks)
+		return {
+			sln2005.premakeExtensibilityGlobals,
+		}
+	end
+
+--
+-- Output the ExtensibilityGlobals section.
+--
+	function sln2005.extensibilityGlobals(wks)
+		local contents = p.capture(function ()
+			p.push()
+			p.callArray(sln2005.elements.extensibilityGlobals, wks)
+			p.pop()
+		end)
+
+		if #contents > 0 then
+			p.push('GlobalSection(ExtensibilityGlobals) = postSolution')
+			p.outln(contents)
+			p.pop('EndGlobalSection')
+		end
+	end
+
+
+--
 -- Map solution sections to output functions. Tools that aren't listed will
 -- be ignored.
 --
@@ -301,7 +351,8 @@
 		return {
 			sln2005.configurationPlatforms,
 			sln2005.properties,
-			sln2005.NestedProjects
+			sln2005.NestedProjects,
+			sln2005.extensibilityGlobals,
 		}
 	end
 

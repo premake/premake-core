@@ -1077,6 +1077,12 @@
 		kind = "boolean",
 	}
 
+	api.register {
+		name = "editorintegration",
+		scope = "workspace",
+		kind = "boolean",
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
@@ -1361,6 +1367,7 @@
 	clr "Off"
 	exceptionhandling "Default"
 	rtti "Default"
+	editorintegration "On"
 
 	-- Setting a default language makes some validation easier later
 
