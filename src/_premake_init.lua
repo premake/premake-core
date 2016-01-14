@@ -1496,4 +1496,7 @@
 	filter { "kind:SharedLib", "system:not Windows" }
 		pic "On"
 
+	filter { "system:macosx" }
+		toolset "clang"
+
 	filter {}
