@@ -510,3 +510,25 @@
 		prepare()
 		test.contains("-flto", gcc.getldflags(cfg))
 	end
+
+
+--
+-- Check link mode preference for system libraries.
+--
+	function suite.linksModePreference_onAllStatic()
+		links { "fs_stub:static", "net_stub:static" }
+		prepare()
+		test.contains({ "-Wl,-Bstatic -lfs_stub -Wl,-Bdynamic", "-Wl,-Bstatic -lnet_stub -Wl,-Bdynamic" }, gcc.getlinks(cfg))
+	end
+
+	function suite.linksModePreference_onStaticThenShared()
+		links { "fs_stub:static", "net_stub" }
+		prepare()
+		test.contains({ "-Wl,-Bstatic -lfs_stub -Wl,-Bdynamic", "-lnet_stub" }, gcc.getlinks(cfg))
+	end
+
+	function suite.linksModePreference_onSharedThenStatic()
+		links { "fs_stub:shared", "net_stub:static" }
+		prepare()
+		test.contains({ "-Wl,-Bdynamic -lfs_stub", "-Wl,-Bstatic -lnet_stub -Wl,-Bdynamic" }, gcc.getlinks(cfg))
+	end

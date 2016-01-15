@@ -297,7 +297,6 @@
 		end
 
 		-- The "-l" flag is fine for system libraries
-
 		local links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
@@ -305,7 +304,20 @@
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				table.insert(result, "-l" .. path.getname(link))
+				local endswith = function(s, ptrn)
+					 return ptrn == string.sub(s, -string.len(ptrn))
+				end
+				local name = path.getname(link)
+				-- Check link mode preference and set flags for linker accordingly
+				if endswith(name, ":static") then
+					name = string.sub(name, 0, -8)
+					table.insert(result, "-Wl,-Bstatic -l" .. name .. " -Wl,-Bdynamic")
+				elseif endswith(name, ":shared") then
+					name = string.sub(name, 0, -8)
+					table.insert(result, "-Wl,-Bdynamic -l" .. name)
+				else
+					table.insert(result, "-l" .. name)
+				end
 			end
 		end
 
@@ -360,4 +372,3 @@
 		end
 		return nil
 	end
-
