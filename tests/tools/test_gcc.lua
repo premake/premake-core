@@ -518,17 +518,17 @@
 	function suite.linksModePreference_onAllStatic()
 		links { "fs_stub:static", "net_stub:static" }
 		prepare()
-		test.contains({ "-Wl,-Bstatic -lfs_stub -Wl,-Bdynamic", "-Wl,-Bstatic -lnet_stub -Wl,-Bdynamic" }, gcc.getlinks(cfg))
+		test.contains({ "-Wl,-Bstatic", "-lfs_stub", "-Wl,-Bdynamic", "-lnet_stub"}, gcc.getlinks(cfg))
 	end
 
-	function suite.linksModePreference_onStaticThenShared()
+	function suite.linksModePreference_onStaticAndShared()
 		links { "fs_stub:static", "net_stub" }
 		prepare()
-		test.contains({ "-Wl,-Bstatic -lfs_stub -Wl,-Bdynamic", "-lnet_stub" }, gcc.getlinks(cfg))
+		test.contains({ "-Wl,-Bstatic", "-lfs_stub", "-Wl,-Bdynamic", "-lnet_stub"}, gcc.getlinks(cfg))
 	end
 
-	function suite.linksModePreference_onSharedThenStatic()
-		links { "fs_stub:shared", "net_stub:static" }
+	function suite.linksModePreference_onAllShared()
+		links { "fs_stub:shared", "net_stub:shared" }
 		prepare()
-		test.contains({ "-Wl,-Bdynamic -lfs_stub", "-Wl,-Bstatic -lnet_stub -Wl,-Bdynamic" }, gcc.getlinks(cfg))
+		test.excludes({ "-Wl,-Bstatic" }, gcc.getlinks(cfg))
 	end
