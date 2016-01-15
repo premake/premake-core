@@ -331,7 +331,7 @@
 		if #static_syslibs > 1 then
 			table.insert(static_syslibs, "-Wl,-Bdynamic")
 			move(static_syslibs, result)
-	  end
+	    end
 		move(shared_syslibs, result)
 
 		return result
