@@ -1,58 +1,72 @@
---
+---
 -- tests/tests_stress.lua
--- Stress test for Premake.
--- Copyright (c) 2009, 2013 Jason Perkins and the Premake project
+--
+-- Stress test for Premake. Creates a large (tunable, see local variables
+-- at start of file) number of projects, files, and configurations. Then
+-- generates them all while profiling the result.
+--
+-- Run it like normal, i.e. `premake5 --file=test_stress.lua gmake`. The 
+-- profile results will be placed at `build/profile.txt`.
+--
+-- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+---
+
+--
+-- Test parameters
 --
 
-local numprojects  = 10
-local numfiles     = 100
-local numbuildcfgs = 4
-local numplatforms = 6
+	local numProjects  = 15
+	local numFiles     = 100
+	local numBuildCfgs = 6
+	local numPlatforms = 6
+
+	local prjKind      = "ConsoleApp"
+	local prjLanguage  = "C++"
 
 
-dofile("pepperfish_profiler.lua")
-profiler = newProfiler()
-profiler:start()
+--
+-- Generate the workspace and projects
+--
 
+	workspace "MyWorkspace"
+		location "build"
 
-workspace "MyWorkspace"
-	location "build"
-
-	for i = 1, numbuildcfgs do
+	for i = 1, numBuildCfgs do
 		configurations ( "BuildCfg" .. i )
 	end
 
-	for i = 1, numplatforms do
+	for i = 1, numPlatforms do
 		platforms ( "Platform" .. i )
 	end
 
+	for i = 1, numProjects do
+		project ("Project" .. i)
+			location "build"
+			kind     ( prjKind )
+			language ( prjLanguage )
 
-for pi = 1, numprojects do
-
-	project ("Project" .. pi)
-	location "build"
-	kind     "ConsoleApp"
-	language "C++"
-
-	for fi = 1, numfiles do
-		files { "file" .. fi .. ".cpp" }
+		for j = 1, numFiles do
+			files { "file" .. j .. ".cpp" }
+		end
 	end
 
-end
 
+--
+-- Install profiling extensions
+-- TODO: would be nice to build these into the core exe, and could be
+--       triggered with a flag, i.e. `premake5 --profile gmake`
+--
 
-newaction
-{
-	trigger     = "stress",
-	description = "Run a stress test",
-	execute     = function()
-		_ACTION = "vs2008"
-		premake.action.call(_ACTION)
+	dofile("pepperfish_profiler.lua")
+	profiler = newProfiler()
+	profiler:start()
+
+	premake.override(premake.main, "postAction", function(base)
+		base()
 
 		profiler:stop()
 
 		local outfile = io.open("build/profile.txt", "w+" )
 		profiler:report(outfile)
-		outfile:close()
-	end
-}
+		outfile:close()		
+	end)
