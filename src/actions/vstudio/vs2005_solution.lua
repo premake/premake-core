@@ -22,6 +22,7 @@
 
 --
 -- Return the list of sections contained in the solution.
+-- TODO: Get rid of this when the MonoDevelop module no longer needs it
 --
 
 	function sln2005.solutionSections(wks)
@@ -62,8 +63,8 @@
 
 	function sln2005.header()
 		local action = premake.action.current()
-		_p('Microsoft Visual Studio Solution File, Format Version %d.00', action.vstudio.solutionVersion)
-		_p('# Visual Studio %s', action.vstudio.versionName)
+		p.w('Microsoft Visual Studio Solution File, Format Version %d.00', action.vstudio.solutionVersion)
+		p.w('# Visual Studio %s', action.vstudio.versionName)
 	end
 
 
@@ -118,14 +119,14 @@
 				-- for environment variables.
 				prjpath = prjpath:gsub("$%((.-)%)", "%%%1%%")
 
-				_x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
+				p.push('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
 				sln2005.projectdependencies(prj)
-				_p('EndProject')
+				p.pop('EndProject')
 			end,
 
 			onbranch = function(n)
-				_x('Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "%s", "%s", "{%s}"', n.name, n.name, n.uuid)
-				_p('EndProject')
+				p.push('Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "%s", "%s", "{%s}"', n.name, n.name, n.uuid)
+				p.pop('EndProject')
 			end,
 		})
 	end
@@ -138,11 +139,11 @@
 	function sln2005.projectdependencies(prj)
 		local deps = project.getdependencies(prj, 'dependOnly')
 		if #deps > 0 then
-			_p(1,'ProjectSection(ProjectDependencies) = postProject')
+			p.push('ProjectSection(ProjectDependencies) = postProject')
 			for _, dep in ipairs(deps) do
-				_p(2,'{%s} = {%s}', dep.uuid, dep.uuid)
+				p.w('{%s} = {%s}', dep.uuid, dep.uuid)
 			end
-			_p(1,'EndProjectSection')
+			p.pop('EndProjectSection')
 		end
 	end
 
@@ -238,22 +239,22 @@
 
 		-- Visual Studio assumes the first configurations as the defaults.
 		if wks.defaultplatform then
-			_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+			p.push('GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 			table.foreachi(sorted, function (cfg)
 				if cfg.platform == wks.defaultplatform then
-					_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+					p.w('%s = %s', descriptors[cfg], descriptors[cfg])
 				end
 			end)
-			_p(1,"EndGlobalSection")
+			p.pop("EndGlobalSection")
 		end
 
-		_p(1,'GlobalSection(SolutionConfigurationPlatforms) = preSolution')
+		p.push('GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		table.foreachi(sorted, function (cfg)
 			if not wks.defaultplatform or cfg.platform ~= wks.defaultplatform then
-				_p(2,'%s = %s', descriptors[cfg], descriptors[cfg])
+				p.w('%s = %s', descriptors[cfg], descriptors[cfg])
 			end
 		end)
-		_p(1,"EndGlobalSection")
+		p.pop("EndGlobalSection")
 
 		-- For each project in the solution...
 		sln2005.projectConfigurationPlatforms(wks, sorted, descriptors)
@@ -266,9 +267,9 @@
 --
 
 	function sln2005.properties(wks)
-		_p('\tGlobalSection(SolutionProperties) = preSolution')
-		_p('\t\tHideSolutionNode = FALSE')
-		_p('\tEndGlobalSection')
+		p.push('GlobalSection(SolutionProperties) = preSolution')
+		p.w('HideSolutionNode = FALSE')
+		p.pop('EndGlobalSection')
 	end
 
 
@@ -277,18 +278,18 @@
 -- any solution groups.
 --
 
-	function sln2005.NestedProjects(wks)
+	function sln2005.nestedProjects(wks)
 		local tr = p.workspace.grouptree(wks)
 		if tree.hasbranches(tr) then
-			_p(1,'GlobalSection(NestedProjects) = preSolution')
+			p.push('GlobalSection(NestedProjects) = preSolution')
 			tree.traverse(tr, {
 				onnode = function(n)
 					if n.parent.uuid then
-						_p(2,'{%s} = {%s}', (n.project or n).uuid, n.parent.uuid)
+						p.w('{%s} = {%s}', (n.project or n).uuid, n.parent.uuid)
 					end
 				end
 			})
-			_p(1,'EndGlobalSection')
+			p.pop('EndGlobalSection')
 		end
 	end
 
@@ -351,7 +352,7 @@
 		return {
 			sln2005.configurationPlatforms,
 			sln2005.properties,
-			sln2005.NestedProjects,
+			sln2005.nestedProjects,
 			sln2005.extensibilityGlobals,
 		}
 	end
