@@ -44,9 +44,9 @@
 	function suite.dependency_onCppProjects()
 		prepare("C++")
 		test.capture [[
-	ProjectSection(ProjectDependencies) = postProject
-		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
-	EndProjectSection
+ProjectSection(ProjectDependencies) = postProject
+	{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
+EndProjectSection
 		]]
 	end
 
@@ -58,9 +58,9 @@
 	function suite.dependency_onCSharpProjects()
 		prepare("C#")
 		test.capture [[
-	ProjectSection(ProjectDependencies) = postProject
-		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
-	EndProjectSection
+ProjectSection(ProjectDependencies) = postProject
+	{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
+EndProjectSection
 		]]
 	end
 
@@ -74,9 +74,9 @@
 		_ACTION = "vs2010"
 		prepare("C#")
 		test.capture [[
-	ProjectSection(ProjectDependencies) = postProject
-		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
-	EndProjectSection
+ProjectSection(ProjectDependencies) = postProject
+	{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
+EndProjectSection
 		]]
 	end
 
@@ -90,8 +90,8 @@
 		_ACTION = "vs2012"
 		prepare("C#")
 		test.capture [[
-	ProjectSection(ProjectDependencies) = postProject
-		{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
-	EndProjectSection
+ProjectSection(ProjectDependencies) = postProject
+	{2151E83B-997F-4A9D-955D-380157E88C31} = {2151E83B-997F-4A9D-955D-380157E88C31}
+EndProjectSection
 		]]
 	end
