@@ -1,12 +1,12 @@
-# PREMAKE 5 (core) <a href="https://travis-ci.org/premake/premake-core"><img src="https://travis-ci.org/premake/premake-core.svg?branch=master" title="Build Status" alt="Build Status"/></a>
+# PREMAKE 5 (core) 
+* Linux: [![Build Status](https://travis-ci.org/premake/premake-core.svg?branch=master)](https://travis-ci.org/premake/premake-core)
+* Windows: [![Build Status](http://tomvandijck.org:8080/job/premake-core/badge/icon)](http://tomvandijck.org:8080/job/premake-core/)
+
 <img src="http://premake.github.io/premake-logo.png" width="200" height="200" />
 
 Premake is a command line utility which reads a scripted definition of a software project and, most commonly, uses it to generate project files for toolsets like Visual Studio, Xcode, or GNU Make. Built-in and Third-Party [Modules](https://github.com/premake/premake-core/wiki/Modules) add support for even more toolsets.
 
-
 Find out in detail [what Premake is](https://github.com/premake/premake-core/wiki/What_Is_Premake) and how to use it in the [wiki](https://github.com/premake/premake-core/wiki).
-
-
 
 ### Get started
 
