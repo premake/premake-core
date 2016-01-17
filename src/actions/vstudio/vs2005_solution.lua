@@ -119,7 +119,8 @@
 				-- for environment variables.
 				prjpath = prjpath:gsub("$%((.-)%)", "%%%1%%")
 
-				p.push('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
+				p.x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
+				p.push()
 				sln2005.projectdependencies(prj)
 				p.pop('EndProject')
 			end,
