@@ -134,7 +134,7 @@
 		prepare()
 		codelite.project.general(cfg)
 		test.capture [[
-      <General OutputFile="bin/Debug/MyProject.exe" IntermediateDirectory="obj/Debug" Command="bin/Debug/MyProject.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="bin/Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="bin/Debug/MyProject.exe" IntermediateDirectory="obj/Debug" Command="bin/Debug/MyProject.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
 		]]
 	end
 
