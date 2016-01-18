@@ -196,7 +196,7 @@
 	function suite.defines()
 		defines "DEF"
 		prepare()
-		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines))
+		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines, cfg))
 	end
 
 	function suite.undefines()
@@ -317,19 +317,19 @@
 
 	function suite.cflags_onCharSetDefault()
 		prepare()
-		test.contains('/D"_UNICODE"', msc.getcflags(cfg))
+		test.contains('/D"_UNICODE"', msc.getdefines(cfg.defines, cfg))
 	end
 
 	function suite.cflags_onCharSetUnicode()
 		characterset "Unicode"
 		prepare()
-		test.contains('/D"_UNICODE"', msc.getcflags(cfg))
+		test.contains('/D"_UNICODE"', msc.getdefines(cfg.defines, cfg))
 	end
 
 	function suite.cflags_onCharSetMBCS()
 		characterset "MBCS"
 		prepare()
-		test.contains('/D"_MBCS"', msc.getcflags(cfg))
+		test.contains('/D"_MBCS"', msc.getdefines(cfg.defines, cfg))
 	end
 
 
