@@ -30,7 +30,7 @@ Awesome! If you would like to contribute with a new feature or submit a bugfix, 
 
 ### Copyright & License
 
-Copyright &copy; 2002-2015 by Jason Perkins
+Copyright &copy; 2002-2016 by Jason Perkins
 Distributed under the terms of the BSD License, see LICENSE.txt
 
 The Lua language and runtime library is &copy; TeCGraf, PUC-Rio.
