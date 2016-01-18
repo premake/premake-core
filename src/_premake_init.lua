@@ -1365,9 +1365,9 @@
 -----------------------------------------------------------------------------
 
 	clr "Off"
+	editorintegration "Off"
 	exceptionhandling "Default"
 	rtti "Default"
-	editorintegration "On"
 
 	-- Setting a default language makes some validation easier later
 
