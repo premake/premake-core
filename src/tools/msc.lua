@@ -128,8 +128,27 @@
 -- Decorate defines for the MSVC command line.
 --
 
-	function msc.getdefines(defines)
-		local result = {}
+	msc.defines = {
+		characterset = {
+			Default = { '/D"_UNICODE"', '/D"UNICODE"' },
+			MBCS = '/D"_MBCS"',
+			Unicode = { '/D"_UNICODE"', '/D"UNICODE"' },
+		}
+	}
+
+	function msc.getdefines(defines, cfg)
+		local result
+
+		-- HACK: I need the cfg to tell what the character set defines should be. But
+		-- there's lots of legacy code using the old getdefines(defines) signature.
+		-- For now, detect one or two arguments and apply the right behavior; will fix
+		-- it properly when the I roll out the adapter overhaul
+		if cfg and defines then
+			result = config.mapFlags(cfg, msc.defines)
+		else
+			result = {}
+		end
+
 		for _, define in ipairs(defines) do
 			table.insert(result, '/D"' .. define .. '"')
 		end

@@ -1364,6 +1364,7 @@
 --
 -----------------------------------------------------------------------------
 
+	characterset "Default"
 	clr "Off"
 	editorintegration "Off"
 	exceptionhandling "Default"
