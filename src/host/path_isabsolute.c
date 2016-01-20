@@ -21,7 +21,9 @@ int do_isabsolute(const char* path)
 		path[0] == '/' ||
 		path[0] == '\\' ||
 		path[0] == '$' ||
+		path[0] == '%' ||
 		(path[0] == '"' && path[1] == '$') ||
+		(path[0] == '"' && path[1] == '%') ||
 		(path[0] != '\0' && path[1] == ':')
 	);
 }
