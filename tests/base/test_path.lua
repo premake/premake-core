@@ -44,6 +44,10 @@
 		test.isequal("$(HOME)/user", path.getabsolute("$(HOME)/user"))
 	end
 
+	function suite.getabsolute_onLeadingEnvVar_dosStyle()
+		test.isequal("%HOME%/user", path.getabsolute("%HOME%/user"))
+	end
+
 	function suite.getabsolute_onMultipleEnvVar()
 		test.isequal("$(HOME)/$(USER)", path.getabsolute("$(HOME)/$(USER)"))
 	end
@@ -437,7 +441,7 @@
 		local p = path.normalize("../../../test/*.h")
 		test.isequal("../../../test/*.h", p)
 	end
-	
+
 	function suite.normalize_Test5()
 		test.isequal("test", path.normalize("./test"))
 		test.isequal("d:/", path.normalize("d:/"))
@@ -465,11 +469,11 @@
 		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
 		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))
 	end
-	
+
 	function suite.normalize_leadingWhitespaces()
 		test.isequal("d:/game", path.normalize("\t\n d:/game"))
 	end
-	
+
 	function suite.normalize_multPath()
 		test.isequal("../a/b ../c/d", path.normalize("../a/b ../c/d"))
 		test.isequal("d:/test ../a/b", path.normalize("d:/game/../test ../a/b"))
