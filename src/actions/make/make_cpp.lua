@@ -42,7 +42,7 @@
 			make.pchRules,
 			make.cppFileRules,
 			make.cppDependencies,
-		}
+	}
 	end
 
 	function make.cpp.generate(prj)
@@ -72,12 +72,13 @@
 			make.ldDeps,
 			make.ldFlags,
 			make.linkCmd,
+			make.exePaths,
 			make.preBuildCmds,
 			make.preLinkCmds,
 			make.postBuildCmds,
 			make.cppAllRules,
 			make.settings,
-		}
+	}
 	end
 
 	function make.cppConfigs(prj)
@@ -97,6 +98,14 @@
 		end
 	end
 
+
+	function make.exePaths(cfg)
+		local dirs = project.getrelative(cfg.project, cfg.bindirs)
+		if #dirs > 0 then
+			_p('  EXECUTABLE_PATHS = "%s"', table.concat(dirs, ":"))
+			_p('  EXE_PATHS = export PATH=$(EXECUTABLE_PATHS):$$PATH;')
+		end
+	end
 
 --
 -- Build command for a single file.
@@ -171,7 +180,11 @@
 
 				local cmds = os.translateCommands(filecfg.buildcommands)
 				for _, cmd in ipairs(cmds) do
-					_p('\t$(SILENT) %s', cmd)
+					if cfg.bindirs and #cfg.bindirs > 0 then
+						_p('\t$(SILENT) $(EXE_PATHS) %s', cmd)
+					else
+						_p('\t$(SILENT) %s', cmd)
+					end
 				end
 				_p('endif')
 			end
