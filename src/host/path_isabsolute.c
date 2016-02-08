@@ -5,6 +5,8 @@
  */
 
 #include "premake.h"
+#include <ctype.h>
+#include <string.h>
 
 
 int path_isabsolute(lua_State* L)
@@ -18,7 +20,7 @@ int path_isabsolute(lua_State* L)
 int do_isabsolute(const char* path)
 {
 	char c;
-	char* closing;
+	const char* closing;
 
 	if (path[0] == '/' || path[0] == '\\')
 		return 1;
