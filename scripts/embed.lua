@@ -1,8 +1,8 @@
 --
 -- Embed the Lua scripts into src/host/scripts.c as static data buffers.
--- I embed the actual scripts, rather than Lua bytecodes, because the
--- bytecodes are not portable to different architectures, which causes
--- issues in Mac OS X Universal builds.
+-- Embeds minified versions of the actual scripts by default, rather than
+-- bytecode, as bytecodes are not portable to different architectures. Use
+-- the `--bytecode` flag to override.
 --
 
 	local scriptCount = 0
@@ -67,7 +67,7 @@
 
 	local function addScript(result, filename, name, data)
 		if not data then
-			if not _OPTIONS["no-bytecode"] then
+			if _OPTIONS["bytecode"] then
 				verbosef("Compiling... " .. filename)
 				local output = path.replaceextension(filename, ".luac")
 				local res, err = os.compile(filename, output);
