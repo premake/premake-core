@@ -373,7 +373,7 @@
 	function os.outputof(cmd)
 		cmd = path.normalize(cmd)
 
-		local pipe = io.popen(cmd)
+		local pipe = io.popen(cmd .. " 2>&1")
 		local result = pipe:read('*a')
 		local b, exitcode = pipe:close()
 		if not b then
