@@ -5,6 +5,24 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha7:
+
+* New API: characterset()
+* New API: editorintegration()
+* New API: largeaddressaware()
+* New: Visual Studio projects now default to Unicode
+* New: Utility and Makefile project support for GMake exporter
+* New: Updated Curl to 7.45.0
+* Fix: Absolute path handling and error reporting in tokens
+* Fix: Limit use of TargetMachine to static resource library projects
+* Fix: Embed minified scripts by default, rather than bytecode
+* Fix: os.isfile() now detects Windows symbolic links
+* Fix: Correct handling of DOS environment variables in paths
+* Fix: Buffer overflow in buffered writes of large strings
+* Fix: Improved handling of absolute vs. relative path tokens
+* Fix: --cc command line option works again (stream009)
+* Fix: Use relative paths for PCH in Makefiles (stream009)
+
 Since 5.0-alpha6:
 
 * New API: additionalusingdirectories()
