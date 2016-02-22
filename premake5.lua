@@ -136,8 +136,6 @@
 			targetdir   "bin/debug"
 			defines     "_DEBUG"
 			flags       { "Symbols" }
-			debugargs   { "--scripts=" .. path.translate(os.getcwd()) .. " test"}
-			debugdir    ( os.getcwd() )
 
 		configuration "Release"
 			targetdir   "bin/release"
