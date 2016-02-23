@@ -10,6 +10,7 @@
 	premake.modules = {}
 	premake.extensions = premake.modules
 
+	local semver = dofile('semver.lua')
 	local p = premake
 
 
@@ -36,6 +37,7 @@
 	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
 	premake.MAKEFILE    = "Makefile"
+	premake.MBCS        = "MBCS"
 	premake.NONE        = "None"
 	premake.DEFAULT     = "Default"
 	premake.ON          = "On"
@@ -44,6 +46,7 @@
 	premake.PS3         = "ps3"
 	premake.SHAREDLIB   = "SharedLib"
 	premake.STATICLIB   = "StaticLib"
+	premake.UNICODE     = "Unicode"
 	premake.UNIVERSAL   = "universal"
 	premake.UTILITY     = "Utility"
 	premake.WINDOWEDAPP = "WindowedApp"
@@ -113,7 +116,7 @@
 		for i = 1, n do
 			local fn = namespace[array[i]]
 			if not fn then
-                error(string.format("Unable to find function '%s'", array[i]))
+				error(string.format("Unable to find function '%s'", array[i]))
 			end
 			fn(...)
 		end
@@ -123,7 +126,7 @@
 
 
 ---
--- Compare a version string of the form "major.minor.patch.dev" against a
+-- Compare a version string that uses semver semantics against a
 -- version comparision string. Comparisions take the form of ">=5.0" (5.0 or
 -- later), "5.0" (5.0 or later), ">=5.0 <6.0" (5.0 or later but not 6.0 or
 -- later).
@@ -141,31 +144,14 @@
 			return false
 		end
 
-		local function parse(str)
-			local major, minor, patch, dev = str:match("^(%d+)%.?(%d*)%.?(%d*)(.-)$")
-			major = tonumber(major) or 0
-			minor = tonumber(minor) or 0
-			patch = tonumber(patch) or 0
-			dev = dev or ""
-			return { major, minor, patch, dev }
-		end
+		local function eq(a, b) return a == b end
+		local function le(a, b) return a <= b end
+		local function lt(a, b) return a < b  end
+		local function ge(a, b) return a >= b end
+		local function gt(a, b) return a > b  end
+		local function compat(a, b) return a ^ b  end
 
-		local function compare(a, b)
-			for i=1,4 do
-				if a[i] > b[i] then return 1 end
-				if a[i] < b[i] then return -1 end
-			end
-			return 0
-		end
-
-		local function eq(r) return r == 0 end
-		local function le(r) return r <= 0 end
-		local function lt(r) return r < 0  end
-		local function ge(r) return r >= 0 end
-		local function gt(r) return r > 0  end
-
-		version = parse(version)
-
+		version = semver(version)
 		checks = string.explode(checks, " ", true)
 		for i = 1, #checks do
 			local check = checks[i]
@@ -185,12 +171,15 @@
 			elseif check:startswith("=") then
 				func = eq
 				check = check:sub(2)
+			elseif check:startswith("^") then
+				func = compat
+				check = check:sub(2)
 			else
 				func = ge
 			end
 
-			check = parse(check)
-			if not func(compare(version, check)) then
+			check = semver(check)
+			if not func(version, check) then
 				return false
 			end
 		end

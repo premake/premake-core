@@ -27,15 +27,20 @@ int buffered_new(lua_State* L)
 }
 
 
-static void do_write(Buffer* b, const char *s, size_t l)
+static void do_write(Buffer* b, const char *s, size_t len)
 {
 	char* data;
 
-	if (b->length + l > b->capacity)
+	size_t required = b->length + len;
+	if (required > b->capacity)
 	{
-		size_t cap = (b->capacity * 3) / 2;
-		if (cap <= 65536)
-			cap = 65536;
+		size_t cap = b->capacity;
+		while (required > cap)
+		{
+			cap = (cap * 3) / 2;
+			if (cap <= 65536)
+				cap = 65536;
+		}
 
 		data = (char*)calloc(cap, 1);
 		if (b->length > 0)
@@ -47,30 +52,30 @@ static void do_write(Buffer* b, const char *s, size_t l)
 		b->capacity = cap;
 	}
 
-	memcpy(b->data + b->length, s, l);
-	b->length += l;
+	memcpy(b->data + b->length, s, len);
+	b->length += len;
 }
 
 
 int buffered_write(lua_State* L)
 {
-	size_t l;
-	const char *s = luaL_checklstring(L, 2, &l);
+	size_t len;
+	const char *s = luaL_checklstring(L, 2, &len);
 	Buffer* b = (Buffer*)lua_touserdata(L, 1);
 
-	do_write(b, s, l);
+	do_write(b, s, len);
 	return 0;
 }
 
 
 int buffered_writeln(lua_State* L)
 {
-	size_t l;
-	const char *s = luaL_optlstring(L, 2, NULL, &l);
+	size_t len;
+	const char *s = luaL_optlstring(L, 2, NULL, &len);
 	Buffer* b = (Buffer*)lua_touserdata(L, 1);
 
 	if (s != NULL)
-		do_write(b, s, l);
+		do_write(b, s, len);
 	do_write(b, "\r\n", 2);
 	return 0;
 }

@@ -36,7 +36,7 @@
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
-	<CharacterSet>MultiByte</CharacterSet>
+	<CharacterSet>Unicode</CharacterSet>
 </PropertyGroup>
 		]]
 	end
@@ -93,21 +93,6 @@
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>true</UseDebugLibraries>
-		]]
-	end
-
---
--- Check the support for Unicode.
---
-
-	function suite.characterSet_onUnicode()
-		flags "Unicode"
-		prepare()
-		test.capture [[
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-	<ConfigurationType>Application</ConfigurationType>
-	<UseDebugLibraries>false</UseDebugLibraries>
-	<CharacterSet>Unicode</CharacterSet>
 		]]
 	end
 
@@ -298,7 +283,7 @@
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
-	<CharacterSet>MultiByte</CharacterSet>
+	<CharacterSet>Unicode</CharacterSet>
 	<WholeProgramOptimization>true</WholeProgramOptimization>
 		]]
 	end

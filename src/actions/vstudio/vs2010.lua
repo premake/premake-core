@@ -18,13 +18,19 @@
 ---
 
 	vstudio.pathVars = {
-		["cfg.objdir"] = "$(IntDir)",
-		["prj.location"] = "$(ProjectDir)",
-		["sln.location"] = "$(SolutionDir)",
-		["wks.location"] = "$(SolutionDir)",
-		["cfg.buildtarget.directory"] = "$(TargetDir)",
-		["cfg.buildtarget.name"] = "$(TargetFileName)",
-		["cfg.buildtarget.basename"] = "$(TargetName)",
+		["cfg.objdir"]                  = { absolute = true,  token = "$(IntDir)" },
+		["prj.location"]                = { absolute = true,  token = "$(ProjectDir)" },
+		["prj.name"]                    = { absolute = false, token = "$(ProjectName)" },
+		["sln.location"]                = { absolute = true,  token = "$(SolutionDir)" },
+		["sln.name"]                    = { absolute = false, token = "$(SolutionName)" },
+		["wks.location"]                = { absolute = true,  token = "$(SolutionDir)" },
+		["wks.name"]                    = { absolute = false, token = "$(SolutionName)" },
+		["cfg.buildtarget.directory"]   = { absolute = false, token = "$(TargetDir)" },
+		["cfg.buildtarget.name"]        = { absolute = false, token = "$(TargetFileName)" },
+		["cfg.buildtarget.basename"]    = { absolute = false, token = "$(TargetName)" },
+		["file.basename"]               = { absolute = false, token = "%(Filename)" },
+		["file.abspath"]                = { absolute = true,  token = "%(FullPath)" },
+		["file.relpath"]                = { absolute = false, token = "%(Identity)" },
 	}
 
 

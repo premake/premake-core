@@ -1,26 +1,26 @@
-project "curl-lib"
-	language    "C"
-	kind        "StaticLib"
-	includedirs {"include", "lib"}
-	defines     {"BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY", "CURL_DISABLE_LDAP" }
-	flags       { "StaticRuntime" }
-	location    "build"
+project 'curl-lib'
+	language    'C'
+	kind        'StaticLib'
+	includedirs { 'include', 'lib' }
+	defines     { 'BUILDING_LIBCURL', 'CURL_STATICLIB', 'HTTP_ONLY', 'CURL_DISABLE_LDAP' }
+	flags       { 'StaticRuntime' }
+	warnings    'off'
 
-	files 
+	files
 	{
-		"**.h",
-		"**.c"
+		'**.h',
+		'**.c'
 	}
-	
+
 	configuration { 'windows' }
-		defines {"WIN32"}
-		defines {"USE_SSL", "USE_SCHANNEL", "USE_WINDOWS_SSPI"}
+		defines { 'WIN32' }
+		defines { 'USE_SCHANNEL', 'USE_WINDOWS_SSPI' }
 
 	configuration { 'linux' }
-		
-		defines {"HAVE_CONFIG_H", "CURL_HIDDEN_SYMBOLS" }
-		if os.findlib("ssl") then
-			defines { "USE_SSL", "USE_OPENSSL", "USE_SSLEAY" }
+		defines { 'CURL_HIDDEN_SYMBOLS' }
+
+		if os.findlib('ssl') then
+			defines { 'USE_OPENSSL', 'USE_SSLEAY' }
 
 			-- find the location of the ca bundle
 			local ca = nil
@@ -41,12 +41,12 @@ project "curl-lib"
 		end
 
 	configuration { 'macosx' }
-		defines { 'HAVE_CONFIG_H', 'USE_SSL', 'USE_DARWINSSL' }	
+		defines { 'USE_DARWINSSL' }
 
-	configuration "Release"
-		defines {"NDEBUG"}
-		flags   { "OptimizeSize" }
+	configuration { 'Release' }
+		defines { 'NDEBUG' }
+		flags   { 'OptimizeSize' }
 
-	configuration "Debug"
-		defines {"_DEBUG"}		
-		flags   { "Symbols" }	
+	configuration { 'Debug' }
+		defines { '_DEBUG' }
+		flags   { 'Symbols' }

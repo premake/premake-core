@@ -40,7 +40,7 @@
 	OutputDirectory="bin\Debug"
 	IntermediateDirectory="obj\Debug"
 	ConfigurationType="1"
-	CharacterSet="2"
+	CharacterSet="1"
 	>
 		]]
 	end

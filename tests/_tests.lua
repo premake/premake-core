@@ -81,6 +81,7 @@ return {
 	"actions/vstudio/sln2005/test_nested_projects.lua",
 	"actions/vstudio/sln2005/test_projects.lua",
 	"actions/vstudio/sln2005/test_platforms.lua",
+	"actions/vstudio/sln2005/test_sections.lua",
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	"actions/vstudio/vc200x/test_assembly_refs.lua",
@@ -103,6 +104,7 @@ return {
 	"actions/vstudio/vc2010/test_assembly_refs.lua",
 	"actions/vstudio/vc2010/test_build_events.lua",
 	"actions/vstudio/vc2010/test_build_log.lua",
+	"actions/vstudio/vc2010/test_character_set.lua",
 	"actions/vstudio/vc2010/test_compile_settings.lua",
 	"actions/vstudio/vc2010/test_config_props.lua",
 	"actions/vstudio/vc2010/test_debug_settings.lua",
@@ -129,6 +131,7 @@ return {
 	"actions/vstudio/vc2010/test_prop_sheet.lua",
 	"actions/vstudio/vc2010/test_resource_compile.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
+	"actions/vstudio/vc2010/test_target_machine.lua",
 	"actions/vstudio/vc2010/test_user_file.lua",
 	"actions/vstudio/vc2010/test_vectorextensions.lua",
 

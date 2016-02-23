@@ -109,15 +109,21 @@
 --
 
 	function suite.replacesToken_onSupportedAndMapped()
-		action.pathVars = { ["cfg.objdir"] = "$(IntDir)" }
+		action.pathVars = { ["cfg.objdir"] = { absolute = true,  token = "$(IntDir)" }, }
 		x = detoken.expand("cmd %{cfg.objdir}/file", environ, {pathVars=true})
 		test.isequal("cmd $(IntDir)/file", x)
 	end
 
 	function suite.replacesToken_onSupportedAndMapped_inAbsPath()
-		action.pathVars = { ["cfg.objdir"] = "$(IntDir)" }
+		action.pathVars = { ["cfg.objdir"] = { absolute = true,  token = "$(IntDir)" }, }
 		x = detoken.expand(os.getcwd() .. "/%{cfg.objdir}/file", environ, {paths=true,pathVars=true})
 		test.isequal("$(IntDir)/file", x)
+	end
+
+	function suite.replacesToken_onSupportedAndMapped_inRelPath()
+		action.pathVars = { ["cfg.objdir"] = { absolute = false,  token = "$(IntDir)" }, }
+		x = detoken.expand(os.getcwd() .. "/%{cfg.objdir}/file", environ, {paths=true,pathVars=true})
+		test.isequal(os.getcwd() .. "/$(IntDir)/file", x)
 	end
 
 --

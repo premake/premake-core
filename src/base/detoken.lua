@@ -49,23 +49,33 @@
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
-				return nil, err
+				return nil, "load error: " .. err
 			end
 
 			-- give the function access to the project objects
 			setfenv(func, e)
 
 			-- run it and get the result
-			local result = func() or ""
+			local success, result = pcall(func)
+			if not success then
+				err    = result
+				result = nil
+			else
+				err    = nil
+			end
 
 			-- If the result is an absolute path, and it is being inserted into
 			-- a NON-path value, I need to make it relative to the project that
 			-- will contain it. Otherwise I ended up with an absolute path in
 			-- the generated project, and it can no longer be moved around.
 
-			local isAbs = path.isabsolute(result)
-			if isAbs and not field.paths and basedir then
-				result = path.getrelative(basedir, result)
+			local isAbs = false
+
+			if result ~= nil then
+				isAbs = path.isabsolute(result)
+				if isAbs and not field.paths and basedir then
+					result = path.getrelative(basedir, result)
+				end
 			end
 
 			-- If this token is in my path variable mapping table, replace the
@@ -74,11 +84,21 @@
 			-- absolute path handling below.
 
 			if varMap[token] then
+				err    = nil
 				result = varMap[token]
 				if type(result) == "function" then
-					result = result(e)
+					success, result = pcall(result, e)
+					if not success then
+						return nil, result
+					end					
 				end
-				isAbs = path.isabsolute(result)
+
+				if (type(result) == "table") then
+					isAbs  = result.absolute
+					result = result.token
+				else
+					isAbs = path.isabsolute(result)
+				end
 			end
 
 			-- If the result is an absolute path, and it is being inserted into
@@ -96,11 +116,11 @@
 			-- result, which should always be the last absolute path specified:
 			--    "/home/user/myprj/obj/Debug"
 
-			if isAbs and field.paths then
+			if result ~= nil and isAbs and field.paths then
 				result = "\0" .. result
 			end
 
-			return result
+			return result, err
 		end
 
 		function expandvalue(value, e)
@@ -112,8 +132,11 @@
 			repeat
 				value, count = value:gsub("%%{(.-)}", function(token)
 					local result, err = expandtoken(token:gsub("\\", "\\\\"), e)
+					if err then
+						error(err .. " in token: " .. token, 0)
+					end
 					if not result then
-						error(err, 0)
+						error("Token returned nil, it may not exist: " .. token, 0)
 					end
 					return result
 				end)

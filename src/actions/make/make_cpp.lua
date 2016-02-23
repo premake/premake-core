@@ -42,7 +42,7 @@
 			make.pchRules,
 			make.cppFileRules,
 			make.cppDependencies,
-		}
+	}
 	end
 
 	function make.cpp.generate(prj)
@@ -72,12 +72,13 @@
 			make.ldDeps,
 			make.ldFlags,
 			make.linkCmd,
+			make.exePaths,
 			make.preBuildCmds,
 			make.preLinkCmds,
 			make.postBuildCmds,
 			make.cppAllRules,
 			make.settings,
-		}
+	}
 	end
 
 	function make.cppConfigs(prj)
@@ -85,7 +86,7 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = premake.tools[cfg.toolset or "gcc"]
+			local toolset = premake.tools[_OPTIONS.cc or cfg.toolset or "gcc"]
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
@@ -97,6 +98,14 @@
 		end
 	end
 
+
+	function make.exePaths(cfg)
+		local dirs = project.getrelative(cfg.project, cfg.bindirs)
+		if #dirs > 0 then
+			_p('  EXECUTABLE_PATHS = "%s"', table.concat(dirs, ":"))
+			_p('  EXE_PATHS = export PATH=$(EXECUTABLE_PATHS):$$PATH;')
+		end
+	end
 
 --
 -- Build command for a single file.
@@ -171,7 +180,11 @@
 
 				local cmds = os.translateCommands(filecfg.buildcommands)
 				for _, cmd in ipairs(cmds) do
-					_p('\t$(SILENT) %s', cmd)
+					if cfg.bindirs and #cfg.bindirs > 0 then
+						_p('\t$(SILENT) $(EXE_PATHS) %s', cmd)
+					else
+						_p('\t$(SILENT) %s', cmd)
+					end
 				end
 				_p('endif')
 			end
@@ -390,7 +403,7 @@
 
 
 	function make.defines(cfg, toolset)
-		_p('  DEFINES +=%s', make.list(table.join(toolset.getdefines(cfg.defines), toolset.getundefines(cfg.undefines))))
+		_p('  DEFINES +=%s', make.list(table.join(toolset.getdefines(cfg.defines, cfg), toolset.getundefines(cfg.undefines))))
 	end
 
 
@@ -467,12 +480,17 @@
 		-- add a conditional configuration to the project script.
 
 		local pch = cfg.pchheader
+		local found = false
 		for _, incdir in ipairs(cfg.includedirs) do
 			local testname = path.join(incdir, pch)
 			if os.isfile(testname) then
 				pch = project.getrelative(cfg.project, testname)
+				found = true
 				break
 			end
+		end
+		if not found then
+			pch = project.getrelative(cfg.project, path.getabsolute(pch))
 		end
 
 		_x('  PCH = %s', pch)

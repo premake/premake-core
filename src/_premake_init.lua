@@ -133,6 +133,17 @@
 	}
 
 	api.register {
+		name = "characterset",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"MBCS",
+			"Unicode",
+		}
+	}
+
+	api.register {
 		name = "cleancommands",
 		scope = "config",
 		kind = "list:string",
@@ -474,7 +485,7 @@
 			"StaticRuntime",
 			"Symbols",
 			"UndefinedIdentifiers",
-			"Unicode",
+			"Unicode",             -- DEPRECATED
 			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
@@ -1066,6 +1077,12 @@
 		kind = "boolean",
 	}
 
+	api.register {
+		name = "editorintegration",
+		scope = "workspace",
+		kind = "boolean",
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
@@ -1230,6 +1247,16 @@
 		clr "On"
 	end)
 
+	-- 18 Dec 2015
+
+	api.deprecateValue("flags", "Unicode", nil,
+	function(value)
+		characterset "Unicode"
+	end,
+	function(value)
+		characterset "Default"
+	end)
+
 
 
 -----------------------------------------------------------------------------
@@ -1337,7 +1364,9 @@
 --
 -----------------------------------------------------------------------------
 
+	characterset "Default"
 	clr "Off"
+	editorintegration "Off"
 	exceptionhandling "Default"
 	rtti "Default"
 

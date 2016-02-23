@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -76,6 +76,14 @@
 
 #ifdef __VXWORKS__
 #  include "config-vxworks.h"
+#endif
+
+#ifdef __linux__
+#  include "config-linux.h"
+#endif
+
+#ifdef __APPLE__ && __MACH__
+#  include "config-osx.h"
 #endif
 
 #endif /* HAVE_CONFIG_H */
@@ -190,6 +198,9 @@
 #  ifndef CURL_DISABLE_GOPHER
 #    define CURL_DISABLE_GOPHER
 #  endif
+#  ifndef CURL_DISABLE_SMB
+#    define CURL_DISABLE_SMB
+#  endif
 #endif
 
 /*
@@ -246,7 +257,7 @@
 #  ifdef HAVE_WINSOCK2_H
 #    include <winsock2.h>
 #    ifdef HAVE_WS2TCPIP_H
-#       include <ws2tcpip.h>
+#      include <ws2tcpip.h>
 #    endif
 #  else
 #    ifdef HAVE_WINSOCK_H
@@ -601,24 +612,36 @@ int netware_init(void);
 
 #define LIBIDN_REQUIRED_VERSION "0.4.1"
 
-#if defined(USE_GNUTLS) || defined(USE_SSLEAY) || defined(USE_NSS) || \
-    defined(USE_QSOSSL) || defined(USE_POLARSSL) || defined(USE_AXTLS) || \
+#if defined(USE_GNUTLS) || defined(USE_OPENSSL) || defined(USE_NSS) || \
+    defined(USE_POLARSSL) || defined(USE_AXTLS) || \
     defined(USE_CYASSL) || defined(USE_SCHANNEL) || \
     defined(USE_DARWINSSL) || defined(USE_GSKIT)
-//#define USE_SSL    /* SSL support has been enabled */
+#define USE_SSL    /* SSL support has been enabled */
 #endif
 
+/* Single point where USE_SPNEGO definition might be defined */
 #if !defined(CURL_DISABLE_CRYPTO_AUTH) && \
     (defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI))
 #define USE_SPNEGO
 #endif
 
-/* Single point where USE_NTLM definition might be done */
-#if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_NTLM) && \
-    !defined(CURL_DISABLE_CRYPTO_AUTH)
-#if defined(USE_SSLEAY) || defined(USE_WINDOWS_SSPI) || \
-    defined(USE_GNUTLS) || defined(USE_NSS) || defined(USE_DARWINSSL)
+/* Single point where USE_KERBEROS5 definition might be defined */
+#if !defined(CURL_DISABLE_CRYPTO_AUTH) && \
+    (defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI))
+#define USE_KERBEROS5
+#endif
+
+/* Single point where USE_NTLM definition might be defined */
+#if !defined(CURL_DISABLE_NTLM) && !defined(CURL_DISABLE_CRYPTO_AUTH)
+#if defined(USE_OPENSSL) || defined(USE_WINDOWS_SSPI) || \
+    defined(USE_GNUTLS) || defined(USE_NSS) || defined(USE_DARWINSSL) || \
+    defined(USE_OS400CRYPTO) || defined(USE_WIN32_CRYPTO)
+
+#ifdef HAVE_BORINGSSL /* BoringSSL is not NTLM capable */
+#undef USE_NTLM
+#else
 #define USE_NTLM
+#endif
 #endif
 #endif
 
@@ -636,8 +659,10 @@ int netware_init(void);
 #if defined(__GNUC__) && ((__GNUC__ >= 3) || \
   ((__GNUC__ == 2) && defined(__GNUC_MINOR__) && (__GNUC_MINOR__ >= 7)))
 #  define UNUSED_PARAM __attribute__((__unused__))
+#  define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 #else
 #  define UNUSED_PARAM /*NOTHING*/
+#  define WARN_UNUSED_RESULT
 #endif
 
 /*
@@ -688,6 +713,26 @@ int netware_init(void);
 /* Define S_ISDIR if not defined by system headers, f.e. MSVC */
 #if !defined(S_ISDIR) && defined(S_IFMT) && defined(S_IFDIR)
 #define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#endif
+
+/* In Windows the default file mode is text but an application can override it.
+Therefore we specify it explicitly. https://github.com/bagder/curl/pull/258
+*/
+#if defined(WIN32) || defined(MSDOS)
+#define FOPEN_READTEXT "rt"
+#define FOPEN_WRITETEXT "wt"
+#elif defined(__CYGWIN__)
+/* Cygwin has specific behavior we need to address when WIN32 is not defined.
+https://cygwin.com/cygwin-ug-net/using-textbinary.html
+For write we want our output to have line endings of LF and be compatible with
+other Cygwin utilities. For read we want to handle input that may have line
+endings either CRLF or LF so 't' is appropriate.
+*/
+#define FOPEN_READTEXT "rt"
+#define FOPEN_WRITETEXT "w"
+#else
+#define FOPEN_READTEXT "r"
+#define FOPEN_WRITETEXT "w"
 #endif
 
 #endif /* HEADER_CURL_SETUP_H */

@@ -14,7 +14,7 @@ int os_rmdir(lua_State* L)
 	const char* path = luaL_checkstring(L, 1);
 
 #if PLATFORM_WINDOWS
-	z = RemoveDirectory(path);
+	z = RemoveDirectoryA(path);
 #else
 	z = (0 == rmdir(path));
 #endif

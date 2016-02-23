@@ -552,6 +552,7 @@
 				m.generateDebugInformation,
 				m.programDatabaseFile,
 				m.subSystem,
+				m.largeAddressAware,
 				m.optimizeReferences,
 				m.enableCOMDATFolding,
 				m.entryPointSymbol,
@@ -952,7 +953,7 @@
 
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
-			p.w('CharacterSet="%s"', iif(cfg.flags.Unicode, 1, 2))
+			p.w('CharacterSet="%s"', iif(cfg.characterset == p.MBCS, 2, 1))
 		end
 	end
 
@@ -1087,6 +1088,14 @@
 	function m.enableCOMDATFolding(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('EnableCOMDATFolding="2"')
+		end
+	end
+
+
+
+	function m.largeAddressAware(cfg)
+		if (cfg.largeaddressaware == true) then
+			p.w('LargeAddressAware="2"')
 		end
 	end
 

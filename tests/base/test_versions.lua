@@ -29,13 +29,21 @@
 		test.istrue(p.checkVersion("1.0.1", "1"))
 	end
 
-	function suite.pass_majorOnly_alpha()
-		test.istrue(p.checkVersion("1.0.0.alpha1", "1"))
+--
+-- prereleases should be fail against true release.
+--
+
+	function suite.fail_majorOnly_alpha()
+		test.isfalse(p.checkVersion("1.0.0-alpha1", "1"))
 	end
 
-	function suite.pass_majorOnly_dev()
-		test.istrue(p.checkVersion("1.0.0.dev", "1"))
+	function suite.fail_majorOnly_dev()
+		test.isfalse(p.checkVersion("1.0.0-dev", "1"))
 	end
+
+--
+-- ealier versions should be fail against major release.
+--
 
 	function suite.fail_earlierMajor()
 		test.isfalse(p.checkVersion("0.9.0", "1"))
@@ -83,19 +91,19 @@
 --
 
 	function suite.pass_alphaBeforeBeta()
-		test.istrue(p.checkVersion("1.0.0.beta1", "1.0.0.alpha1"))
+		test.istrue(p.checkVersion("1.0.0-beta1", "1.0.0-alpha1"))
 	end
 
 	function suite.fail_alphaBeforeBeta()
-		test.isfalse(p.checkVersion("1.0.0.alpha1", "1.0.0.beta1"))
+		test.isfalse(p.checkVersion("1.0.0-alpha1", "1.0.0-beta1"))
 	end
 
 	function suite.pass_betaBeforeDev()
-		test.istrue(p.checkVersion("1.0.0.dev", "1.0.0.beta1"))
+		test.istrue(p.checkVersion("1.0.0-dev", "1.0.0-beta1"))
 	end
 
 	function suite.fail_betaBeforeDev()
-		test.isfalse(p.checkVersion("1.0.0.beta1", "1.0.0.dev"))
+		test.isfalse(p.checkVersion("1.0.0-beta1", "1.0.0-dev"))
 	end
 
 
@@ -162,11 +170,11 @@
 --
 
 	function suite.pass_onMultipleConditions()
-		test.istrue(p.checkVersion("1.2.0.0", ">=1.0 <2.0"))
+		test.istrue(p.checkVersion("1.2.0", ">=1.0 <2.0"))
 	end
 
 	function suite.fail_onMultipleConditions()
-		test.isfalse(p.checkVersion("2.2.0.0", ">=1.0 <2.0"))
+		test.isfalse(p.checkVersion("2.2.0", ">=1.0 <2.0"))
 	end
 
 

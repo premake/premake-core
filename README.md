@@ -1,12 +1,12 @@
-# PREMAKE 5 (core) <a href="https://travis-ci.org/premake/premake-core"><img src="https://travis-ci.org/premake/premake-core.svg?branch=master" title="Build Status" alt="Build Status"/></a>
+# PREMAKE 5 (core) 
+* Linux: [![Build Status](https://travis-ci.org/premake/premake-core.svg?branch=master)](https://travis-ci.org/premake/premake-core)
+* Windows: [![Build Status](http://tomvandijck.org:8080/job/premake-core/badge/icon)](http://tomvandijck.org:8080/job/premake-core/)
+
 <img src="http://premake.github.io/premake-logo.png" width="200" height="200" />
 
 Premake is a command line utility which reads a scripted definition of a software project and, most commonly, uses it to generate project files for toolsets like Visual Studio, Xcode, or GNU Make. Built-in and Third-Party [Modules](https://github.com/premake/premake-core/wiki/Modules) add support for even more toolsets.
 
-
 Find out in detail [what Premake is](https://github.com/premake/premake-core/wiki/What_Is_Premake) and how to use it in the [wiki](https://github.com/premake/premake-core/wiki).
-
-
 
 ### Get started
 
@@ -30,7 +30,7 @@ Awesome! If you would like to contribute with a new feature or submit a bugfix, 
 
 ### Copyright & License
 
-Copyright &copy; 2002-2015 by Jason Perkins
+Copyright &copy; 2002-2016 by Jason Perkins
 Distributed under the terms of the BSD License, see LICENSE.txt
 
 The Lua language and runtime library is &copy; TeCGraf, PUC-Rio.

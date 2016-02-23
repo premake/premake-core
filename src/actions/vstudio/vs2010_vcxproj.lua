@@ -406,6 +406,7 @@
 				m.treatLinkerWarningAsErrors,
 				m.ignoreDefaultLibraries,
 				m.largeAddressAware,
+				m.targetMachine,
 				m.additionalLinkOptions,
 			}
 		end
@@ -430,6 +431,7 @@
 		if cfg.kind == p.STATICLIB then
 			return {
 				m.treatLinkerWarningAsErrors,
+				m.targetMachine,
 				m.additionalLinkOptions,
 			}
 		else
@@ -1016,7 +1018,7 @@
 
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
-			m.element("CharacterSet", nil, iif(cfg.flags.Unicode, "Unicode", "MultiByte"))
+			m.element("CharacterSet", nil, iif(cfg.characterset == p.MBCS, "MultiByte", "Unicode"))
 		end
 	end
 
@@ -1761,6 +1763,22 @@
 		else
 			p.w('<TargetExt>')
 			p.w('</TargetExt>')
+		end
+	end
+
+
+	function m.targetMachine(cfg)
+		-- If a static library project contains a resource file, VS will choke with
+		-- "LINK : warning LNK4068: /MACHINE not specified; defaulting to X86"
+		local targetmachine = {
+			x86 = "MachineX86",
+			x86_64 = "MachineX64",
+		}
+		if cfg.kind == p.STATICLIB and config.hasFile(cfg, path.isresourcefile) then
+			local value = targetmachine[cfg.architecture]
+			if value ~= nil then
+				m.element("TargetMachine", nil, '%s', value)
+			end
 		end
 	end
 

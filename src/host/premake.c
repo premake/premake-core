@@ -14,8 +14,8 @@
 #endif
 
 
-#define VERSION        "5.0.0-alpha7"
-#define COPYRIGHT      "Copyright (C) 2002-2015 Jason Perkins and the Premake Project"
+#define VERSION        "5.0.0-alpha8"
+#define COPYRIGHT      "Copyright (C) 2002-2016 Jason Perkins and the Premake Project"
 #define PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 #define ERROR_MESSAGE  "Error: %s\n"
 
@@ -154,6 +154,7 @@ int premake_init(lua_State* L)
 	/* find the user's home directory */
 	value = getenv("HOME");
 	if (!value) value = getenv("USERPROFILE");
+	if (!value) value = "~";
 	lua_pushstring(L, value);
 	lua_setglobal(L, "_USER_HOME_DIR");
 
@@ -229,9 +230,12 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	const char* path = NULL;
 
 #if PLATFORM_WINDOWS
-	DWORD len = GetModuleFileName(NULL, buffer, PATH_MAX);
+	DWORD len = GetModuleFileNameA(NULL, buffer, PATH_MAX);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_MACOSX
@@ -242,23 +246,32 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 #endif
 
 #if PLATFORM_LINUX
-	int len = readlink("/proc/self/exe", buffer, PATH_MAX);
+	int len = readlink("/proc/self/exe", buffer, PATH_MAX - 1);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_BSD
-	int len = readlink("/proc/curproc/file", buffer, PATH_MAX);
+	int len = readlink("/proc/curproc/file", buffer, PATH_MAX - 1);
 	if (len < 0)
-		len = readlink("/proc/curproc/exe", buffer, PATH_MAX);
+		len = readlink("/proc/curproc/exe", buffer, PATH_MAX - 1);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 #if PLATFORM_SOLARIS
-	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX);
+	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX - 1);
 	if (len > 0)
+	{
+		buffer[len] = 0;
 		path = buffer;
+	}
 #endif
 
 	/* As a fallback, search the PATH with argv[0] */

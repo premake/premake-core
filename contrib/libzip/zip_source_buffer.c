@@ -103,7 +103,7 @@ read_data(void *state, void *data, zip_uint64_t len, enum zip_source_cmd cmd)
 	    n = len;
 
 	if (n) {
-	    memcpy(buf, z->buf, n);
+	    memcpy(buf, z->buf, (size_t)n);
 	    z->buf += n;
 	}
 

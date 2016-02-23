@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -25,9 +25,7 @@
 #include "urldata.h"
 #include "sendf.h"
 #include "progress.h"
-
-#define _MPRINTF_REPLACE /* use our functions only */
-#include <curl/mprintf.h>
+#include "curl_printf.h"
 
 /* Provide a string that is 2 + 1 + 2 + 1 + 2 = 8 letters long (plus the zero
    byte) */
@@ -159,8 +157,8 @@ void Curl_pgrsResetTimesSizes(struct SessionHandle *data)
   data->progress.t_pretransfer = 0.0;
   data->progress.t_starttransfer = 0.0;
 
-  Curl_pgrsSetDownloadSize(data, 0);
-  Curl_pgrsSetUploadSize(data, 0);
+  Curl_pgrsSetDownloadSize(data, -1);
+  Curl_pgrsSetUploadSize(data, -1);
 }
 
 void Curl_pgrsTime(struct SessionHandle *data, timerid timer)
@@ -234,20 +232,26 @@ void Curl_pgrsSetUploadCounter(struct SessionHandle *data, curl_off_t size)
 
 void Curl_pgrsSetDownloadSize(struct SessionHandle *data, curl_off_t size)
 {
-  data->progress.size_dl = size;
-  if(size >= 0)
+  if(size >= 0) {
+    data->progress.size_dl = size;
     data->progress.flags |= PGRS_DL_SIZE_KNOWN;
-  else
+  }
+  else {
+    data->progress.size_dl = 0;
     data->progress.flags &= ~PGRS_DL_SIZE_KNOWN;
+  }
 }
 
 void Curl_pgrsSetUploadSize(struct SessionHandle *data, curl_off_t size)
 {
-  data->progress.size_ul = size;
-  if(size >= 0)
+  if(size >= 0) {
+    data->progress.size_ul = size;
     data->progress.flags |= PGRS_UL_SIZE_KNOWN;
-  else
+  }
+  else {
+    data->progress.size_ul = 0;
     data->progress.flags &= ~PGRS_UL_SIZE_KNOWN;
+  }
 }
 
 /*

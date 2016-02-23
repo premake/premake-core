@@ -40,7 +40,7 @@ void do_getabsolute(char* result, const char* value, const char* relative_to)
 	ch = strtok(buffer, "/");
 	while (ch) {
 		/* remove ".." where I can */
-		if (strcmp(ch, "..") == 0 && (prev == NULL || (prev[0] != '$' && strcmp(prev, "..") != 0))) {
+		if (strcmp(ch, "..") == 0 && (prev == NULL || (prev[0] != '$' && prev[0] != '%' && strcmp(prev, "..") != 0))) {
 			i = strlen(result) - 2;
 			while (i >= 0 && result[i] != '/') {
 				--i;

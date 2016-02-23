@@ -196,7 +196,7 @@
 	function suite.defines()
 		defines "DEF"
 		prepare()
-		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines))
+		test.contains({ '/D"DEF"' }, msc.getdefines(cfg.defines, cfg))
 	end
 
 	function suite.undefines()
@@ -312,6 +312,28 @@
 
 
 --
+-- Check handling of character set switches
+--
+
+	function suite.cflags_onCharSetDefault()
+		prepare()
+		test.contains('/D"_UNICODE"', msc.getdefines(cfg.defines, cfg))
+	end
+
+	function suite.cflags_onCharSetUnicode()
+		characterset "Unicode"
+		prepare()
+		test.contains('/D"_UNICODE"', msc.getdefines(cfg.defines, cfg))
+	end
+
+	function suite.cflags_onCharSetMBCS()
+		characterset "MBCS"
+		prepare()
+		test.contains('/D"_MBCS"', msc.getdefines(cfg.defines, cfg))
+	end
+
+
+--
 -- Check handling of system search paths.
 --
 
@@ -342,3 +364,4 @@
 		prepare()
 		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
 	end
+
