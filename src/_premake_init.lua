@@ -683,6 +683,13 @@
 	}
 
 	api.register {
+		name = "frameworkdirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
 		name = "linkoptions",
 		scope = "config",
 		kind = "list:string",
