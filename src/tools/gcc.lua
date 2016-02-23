@@ -276,14 +276,14 @@
 -- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function gcc.getlinks(cfg, systemonly)
+	function gcc.getlinksonly(cfg, systemonly)
 		local result = {}
 
 		if not systemonly then
 			if cfg.flags.RelativeLinks then
 				local libFiles = config.getlinks(cfg, "siblings", "basename")
 				for _, link in ipairs(libFiles) do
-					if string.find(link, "lib") == 1 then
+					if string.startswith(link, "lib") then
 						link = link:sub(4)
 					end
 					table.insert(result, "-l" .. link)
@@ -309,6 +309,21 @@
 			end
 		end
 
+		return result
+	end
+
+
+	function gcc.getlinks(cfg, systemonly)
+
+		-- we don't want libraries to be order dependent.
+		local result = gcc.getlinksonly(cfg, systemonly)
+		if #result > 1 then
+			local res = {}
+			table.insert(res, '-Wl,--start-group')
+			table.insertflat(res, result)
+			table.insert(res, '-Wl,--end-group')
+			return res
+		end
 		return result
 	end
 

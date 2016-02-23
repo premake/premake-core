@@ -217,8 +217,7 @@
 	function clang.getlinks(cfg, systemOnly)
 
 		-- Just pass through to GCC for now
-		local flags = gcc.getlinks(cfg, systemOnly)
-		return flags
+		return gcc.getlinksonly(cfg, systemonly)
 
 	end
 

@@ -178,7 +178,7 @@
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
-  LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+  LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
   LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		]]
 	end
