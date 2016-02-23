@@ -78,6 +78,12 @@
 	}
 
 	api.register {
+		name = "buildcustomizations",
+		scope = "project",
+		kind = "list:string",
+	}
+
+	api.register {
 		name = "builddependencies",
 		scope = { "rule" },
 		kind = "list:string",
