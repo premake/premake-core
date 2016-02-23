@@ -1333,7 +1333,7 @@
 
 	function m.importBuildCustomizationsTargets(prj)
 		for i, build in ipairs(prj.buildcustomizations) do
-	      premake.w('<Import Project="$(VCTargetsPath)\\BuildCustomizations\\%s.targets" />', path.translate(build))
+	      premake.w('<Import Project="$(VCTargetsPath)\\%s.targets" />', path.translate(build))
 	   end
 	end
 
@@ -1372,7 +1372,7 @@
 
 	function m.importBuildCustomizationsProps(prj)
 		for i, build in ipairs(prj.buildcustomizations) do
-	      premake.w('<Import Project="$(VCTargetsPath)\\BuildCustomizations\\%s.props" />', path.translate(build))
+	      premake.w('<Import Project="$(VCTargetsPath)\\%s.props" />', path.translate(build))
 	   end
 	end
 
