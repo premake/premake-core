@@ -1043,6 +1043,11 @@
 			cfg.libdirs[i] = premake.project.getrelative(cfg.project, cfg.libdirs[i])
 		end
 		settings['LIBRARY_SEARCH_PATHS'] = cfg.libdirs
+		
+		for i,v in ipairs(cfg.frameworkdirs) do
+			cfg.frameworkdirs[i] = premake.project.getrelative(cfg.project, cfg.frameworkdirs[i])
+		end
+		settings['FRAMEWORK_SEARCH_PATHS'] = cfg.frameworkdirs
 
 		local objDir = path.getrelative(tr.project.location, cfg.objdir)
 		settings['OBJROOT'] = objDir
