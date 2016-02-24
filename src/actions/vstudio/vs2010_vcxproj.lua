@@ -1313,6 +1313,7 @@
 	m.elements.importExtensionTargets = function(prj)
 		return {
 			m.importRuleTargets,
+			m.importBuildCustomizationsTargets
 		}
 	end
 
@@ -1330,6 +1331,12 @@
 		end
 	end
 
+	function m.importBuildCustomizationsTargets(prj)
+		for i, build in ipairs(prj.buildcustomizations) do
+	      premake.w('<Import Project="$(VCTargetsPath)\\%s.targets" />', path.translate(build))
+	   end
+	end
+
 
 
 	function m.importDefaultProps(prj)
@@ -1345,6 +1352,7 @@
 	m.elements.importExtensionSettings = function(prj)
 		return {
 			m.importRuleSettings,
+			m.importBuildCustomizationsProps
 		}
 	end
 
@@ -1360,6 +1368,12 @@
 			local loc = vstudio.path(prj, p.filename(rule, ".props"))
 			p.x('<Import Project="%s" />', loc)
 		end
+	end
+
+	function m.importBuildCustomizationsProps(prj)
+		for i, build in ipairs(prj.buildcustomizations) do
+	      premake.w('<Import Project="$(VCTargetsPath)\\%s.props" />', path.translate(build))
+	   end
 	end
 
 
