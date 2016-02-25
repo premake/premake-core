@@ -152,8 +152,8 @@
 
 		configuration "Debug"
 			targetdir   "bin/debug"
-			debugargs   { "--scripts=$(ProjectDir)/%{premake.project.getrelative(prj, prj.basedir)} test"}
-			debugdir    "%{premake.project.getrelative(prj, prj.basedir)}"
+			debugargs   { "--scripts=%{prj.location} test"}
+			debugdir    "%{prj.location}"
 
 		configuration "Release"
 			targetdir   "bin/release"
