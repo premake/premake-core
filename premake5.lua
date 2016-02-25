@@ -152,6 +152,8 @@
 
 		configuration "Debug"
 			targetdir   "bin/debug"
+			debugargs   { "--scripts=%{prj.location} test"}
+			debugdir    "%{prj.location}"
 
 		configuration "Release"
 			targetdir   "bin/release"
