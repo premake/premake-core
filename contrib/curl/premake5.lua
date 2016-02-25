@@ -3,7 +3,6 @@ project 'curl-lib'
 	kind        'StaticLib'
 	includedirs { 'include', 'lib' }
 	defines     { 'BUILDING_LIBCURL', 'CURL_STATICLIB', 'HTTP_ONLY', 'CURL_DISABLE_LDAP' }
-	flags       { 'StaticRuntime' }
 	warnings    'off'
 
 	files
@@ -42,11 +41,3 @@ project 'curl-lib'
 
 	configuration { 'macosx' }
 		defines { 'USE_DARWINSSL' }
-
-	configuration { 'Release' }
-		defines { 'NDEBUG' }
-		flags   { 'OptimizeSize' }
-
-	configuration { 'Debug' }
-		defines { '_DEBUG' }
-		flags   { 'Symbols' }
