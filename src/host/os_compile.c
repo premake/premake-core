@@ -5,9 +5,8 @@
  */
 
 #include "premake.h"
-#include "lua/src/lundump.h"
-#include "lua/src/lobject.h"
-#include "lua/src/lstate.h"
+#include <lundump.h>
+#include <lstate.h>
 
 extern int original_luaL_loadfile(lua_State* L, const char* filename);
 
