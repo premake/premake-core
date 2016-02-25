@@ -3,6 +3,7 @@ project "zip-lib"
 	kind        "StaticLib"
 	includedirs "include"
 	defines     { "N_FSEEKO" }
+	warnings    "off"
 
 	files
 	{
