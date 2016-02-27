@@ -122,7 +122,8 @@
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
-		includedirs { "src/host/lua/src" }
+		includedirs { "contrib/lua/src" }
+		links       { "lua-lib" }
 
 		-- optional 3rd party libraries
 		if not _OPTIONS["no-zlib"] then
@@ -142,12 +143,7 @@
 
 		excludes
 		{
-			"src/host/lua/src/lauxlib.c",
-			"src/host/lua/src/lua.c",
-			"src/host/lua/src/luac.c",
-			"src/host/lua/src/print.c",
-			"src/host/lua/**.lua",
-			"src/host/lua/etc/*.c"
+			"contrib/**.*"
 		}
 
 		configuration "Debug"
@@ -194,6 +190,7 @@
 
 	-- optional 3rd party libraries
 	group "contrib"
+		include "contrib/lua"
 		if not _OPTIONS["no-zlib"] then
 			include "contrib/zlib"
 			include "contrib/libzip"

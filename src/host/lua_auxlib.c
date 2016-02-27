@@ -15,7 +15,7 @@ static int chunk_wrapper(lua_State* L);
  * can replace it with my own implementation. */
 
 #define luaL_loadfile  original_luaL_loadfile
-#include "lua/src/lauxlib.c"
+#include "lauxlib.c"
 #undef luaL_loadfile
 
 
