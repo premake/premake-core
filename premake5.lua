@@ -148,8 +148,8 @@
 
 		configuration "Debug"
 			targetdir   "bin/debug"
-			debugargs   { "--scripts=%{prj.location} test"}
-			debugdir    "%{prj.location}"
+			debugargs   { "--scripts=%{prj.location}/%{path.getrelative(prj.location, prj.basedir)} test"}
+			debugdir    "%{path.getrelative(prj.location, prj.basedir)}"
 
 		configuration "Release"
 			targetdir   "bin/release"
