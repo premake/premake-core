@@ -82,6 +82,37 @@
 		]]
 	end
 
+	function suite.datasetDesignerDependency()
+		files { "DataSet.xsd", "DataSet.Designer.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="DataSet.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>DataSet.xsd</DependentUpon>
+		</Compile>
+		<None Include="DataSet.xsd">
+			<Generator>MSDataSetGenerator</Generator>
+			<LastGenOutput>DataSet.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
+		</None>
+		]]
+	end
+
+	function suite.datasetDependencies()
+		files { "DataSet.xsd", "DataSet.xsc", "DataSet.xss" }
+		prepare()
+		test.capture [[
+		<None Include="DataSet.xsc">
+			<DependentUpon>DataSet.xsd</DependentUpon>
+		</None>
+		<None Include="DataSet.xsd" />
+		<None Include="DataSet.xss">
+			<DependentUpon>DataSet.xsd</DependentUpon>
+		</None>
+		]]
+	end
+
 
 --
 -- File associations should always be made relative to the file
@@ -96,6 +127,23 @@
 		<EmbeddedResource Include="Forms\TreeListView.resx">
 			<DependentUpon>TreeListView.cs</DependentUpon>
 		</EmbeddedResource>
+		]]
+	end
+
+	function suite.datasetDependency_inSubfolder()
+		files { "DataSets/DataSet.xsd", "DataSets/DataSet.Designer.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="DataSets\DataSet.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>DataSet.xsd</DependentUpon>
+		</Compile>
+		<None Include="DataSets\DataSet.xsd">
+			<Generator>MSDataSetGenerator</Generator>
+			<LastGenOutput>DataSet.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
+		</None>
 		]]
 	end
 
