@@ -105,10 +105,9 @@
 		kind "StaticLib"
 		prepare()
 		test.capture [[
-<Link>
+<Lib>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
-</Link>
+</Lib>
 		]]
 	end
 
@@ -269,13 +268,54 @@
 		libdirs { "../lib", "../lib64" }
 		prepare()
 		test.capture [[
-<Link>
+<Lib>
 	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
-</Link>
+</Lib>
 		]]
 	end
 
+
+--
+-- Shared libraries do not use Lib tags in Visual Studio and
+-- we should not emit any options like this.
+--
+
+	function suite.sharedLibrariesLinkElement()
+		local real_link = premake.vstudio.vc2010.elements.lib
+		premake.vstudio.vc2010.elements.lib = function(cfg, explicit)
+			return { function(cfg) premake.vstudio.vc2010.element("Test", nil, "Testing") end }
+		end
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+		]]
+		premake.vstudio.vc2010.elements.lib = real_link
+	end
+
+
+--
+-- Static libraries do not use Link tags in Visual Studio and
+-- we should not emit any options like this.
+--
+
+	function suite.staticLibrariesLinkElement()
+		kind "StaticLib"
+		local real_link = premake.vstudio.vc2010.elements.link
+		premake.vstudio.vc2010.elements.link = function(cfg, explicit)
+			return { function(cfg) premake.vstudio.vc2010.element("Test", nil, "Testing") end }
+		end
+		prepare()
+		test.capture [[
+<Lib>
+	<SubSystem>Windows</SubSystem>
+</Lib>
+		]]
+		premake.vstudio.vc2010.elements.link = real_link
+	end
 
 --
 -- Check handling of the import library settings.
@@ -317,11 +357,8 @@
 		linkoptions { "/kupo" }
 		prepare()
 		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
-</Link>
 <Lib>
+	<SubSystem>Windows</SubSystem>
 	<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
 </Lib>
 		]]
@@ -433,11 +470,8 @@
 		flags { "FatalLinkWarnings" }
 		prepare()
 		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>false</GenerateDebugInformation>
-</Link>
 <Lib>
+	<SubSystem>Windows</SubSystem>
 	<TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
 </Lib>
 		]]
