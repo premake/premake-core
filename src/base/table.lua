@@ -283,7 +283,7 @@
 			local minindex = 1
 			local maxindex = #tbl + 1
 			while minindex < maxindex do
-				local index = minindex + math.floor((maxindex - minindex) / 2)
+				local index = minindex + ((maxindex - minindex) >> 1)
 				local test = tbl[index]
 				if fn(value, test) then
 					maxindex = index

@@ -41,7 +41,7 @@
 ---
 
 	function m.installModuleLoader()
-		table.insert(package.loaders, 2, m.moduleLoader)
+		table.insert(package.searchers, 2, m.moduleLoader)
 	end
 
 	function m.moduleLoader(name)
