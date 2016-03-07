@@ -242,6 +242,10 @@
 		test.istrue(path.isabsolute("$(SDK_HOME)/include"))
 	end
 
+	function suite.isabsolute_ReturnsTrue_OnDotInDollarToken()
+		test.istrue(path.isabsolute("$(configuration.libs)/include"))
+	end
+
 	function suite.isabsolute_ReturnsTrue_OnJustADollarSign()
 		test.istrue(path.isabsolute("$foo/include"))
 	end

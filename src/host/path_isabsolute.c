@@ -1,7 +1,7 @@
 /**
  * \file   path_isabsolute.c
  * \brief  Determines if a path is absolute or relative.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2016 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
@@ -37,10 +37,10 @@ int do_isabsolute(const char* path)
 		if (closing == NULL)
 			return 0;
 
-		// only alpha, digits and _ allowed inside $()
+		// only alpha, digits, _ and . allowed inside $()
 		while (path < closing) {
 			c = *path++;
-			if (!isalpha(c) && !isdigit(c) && c != '_')
+			if (!isalpha(c) && !isdigit(c) && c != '_' && c != '.')
 				return 0;
 		}
 
