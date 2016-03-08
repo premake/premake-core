@@ -17,6 +17,12 @@
 		return p.container.new(p.global, name)
 	end
 
+---
+-- Bakes the global scope.
+---
+	function global.bake(self)
+		p.container.bakeChildren(self)
+	end
 
 
 ---

@@ -43,7 +43,13 @@
 ---
 
 	function oven.bake()
-		p.container.bakeChildren(p.api.rootContainer())
+		-- reset the root _isBaked state.
+		-- this really only affects the unit-tests, since that is the only place
+		-- where multiple bakes per 'exe run' happen.
+		local root = p.api.rootContainer()
+		root._isBaked = false;
+
+		p.container.bake(root)
 	end
 
 	function oven.bakeWorkspace(wks)
@@ -51,8 +57,6 @@
 	end
 
 	p.alias(oven, "bakeWorkspace", "bakeSolution")
-
-
 
 ---
 -- Bakes a specific workspace object.
@@ -121,6 +125,8 @@
 		verbosef('    Baking %s...', self.name)
 
 		self.solution = self.workspace
+		self.global = self.workspace.global
+
 		local wks = self.workspace
 
 		-- Add filtering terms to the context to make it as specific as I can.
@@ -456,6 +462,7 @@
 		ctx.project = prj
 		ctx.workspace = wks
 		ctx.solution = wks
+		ctx.global = wks.global
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
