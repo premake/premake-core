@@ -426,8 +426,8 @@
 			if not v then
 				return formatting .. '(nil)'
 			elseif type(v) == "table" then
-				if recurse then
-					return formatting .. '\n' .. table.tostring(v, recurse, i+1)
+				if recurse and recurse > 0 then
+					return formatting .. '\n' .. table.tostring(v, recurse-1, i+1) 
 				else
 					return formatting .. "<table>"
 				end
