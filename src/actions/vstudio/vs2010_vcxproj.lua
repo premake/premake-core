@@ -371,17 +371,11 @@
 --
 
 	m.elements.linker = function(cfg, explicit)
-		if cfg.kind == p.STATICLIB then
-			return {
-				m.lib,
-				m.linkLibraryDependencies,
-			}
-		else
-			return {
-				m.link,
-				m.linkLibraryDependencies,
-			}
-		end
+		return {
+			m.link,
+			m.lib,
+			m.linkLibraryDependencies,
+		}
 	end
 
 	function m.linker(cfg)
@@ -392,22 +386,30 @@
 
 
 	m.elements.link = function(cfg, explicit)
-		return {
-			m.subSystem,
-			m.generateDebugInformation,
-			m.optimizeReferences,
-			m.additionalDependencies,
-			m.additionalLibraryDirectories,
-			m.importLibrary,
-			m.entryPointSymbol,
-			m.generateMapFile,
-			m.moduleDefinitionFile,
-			m.treatLinkerWarningAsErrors,
-			m.ignoreDefaultLibraries,
-			m.largeAddressAware,
-			m.targetMachine,
-			m.additionalLinkOptions,
-		}
+		if cfg.kind == p.STATICLIB then
+			return {
+				m.subSystem,
+				m.generateDebugInformation,
+				m.optimizeReferences,
+			}
+		else
+			return {
+				m.subSystem,
+				m.generateDebugInformation,
+				m.optimizeReferences,
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
+				m.importLibrary,
+				m.entryPointSymbol,
+				m.generateMapFile,
+				m.moduleDefinitionFile,
+				m.treatLinkerWarningAsErrors,
+				m.ignoreDefaultLibraries,
+				m.largeAddressAware,
+				m.targetMachine,
+				m.additionalLinkOptions,
+			}
+		end
 	end
 
 	function m.link(cfg, explicit)
@@ -426,13 +428,15 @@
 
 
 	m.elements.lib = function(cfg, explicit)
-		return {
-			m.subSystem,
-			m.optimizeReferences,
-			m.treatLinkerWarningAsErrors,
-			m.targetMachine,
-			m.additionalLinkOptions,
-		}
+		if cfg.kind == p.STATICLIB then
+			return {
+				m.treatLinkerWarningAsErrors,
+				m.targetMachine,
+				m.additionalLinkOptions,
+			}
+		else
+			return {}
+		end
 	end
 
 	function m.lib(cfg, explicit)
