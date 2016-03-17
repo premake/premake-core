@@ -14,7 +14,7 @@
 --
 
 	function suite.project_on2010()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		vc2010.project()
 		test.capture [[
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -22,7 +22,7 @@
 	end
 
 	function suite.project_on2011()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		vc2010.project()
 		test.capture [[
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -30,7 +30,7 @@
 	end
 
 	function suite.project_on2013()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		vc2010.project()
 		test.capture [[
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

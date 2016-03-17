@@ -14,7 +14,7 @@
 	local wks
 
 	function suite.setup()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C#"
@@ -32,7 +32,7 @@
 --
 
 	function suite.vs2008()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		prepare()
 		test.capture [[
 <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -41,7 +41,7 @@
 
 
 	function suite.vs2010()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		prepare()
 		test.capture [[
 <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -55,7 +55,7 @@
 --
 
 	function suite.vs2008_onAnyCpu()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		platforms "Any CPU"
 		prepare("Any CPU")
 		test.capture [[
@@ -65,7 +65,7 @@
 
 
 	function suite.vs2010_onAnyCpu()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		platforms "Any CPU"
 		prepare("Any CPU")
 		test.capture [[

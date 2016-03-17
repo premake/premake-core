@@ -13,7 +13,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -46,7 +46,7 @@
 	end
 
 	function suite.instructionSet_onAVX()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		vectorextensions "AVX"
 		prepare()
 		test.capture [[
@@ -61,7 +61,7 @@
 	end
 
 	function suite.instructionSet_onAVX2()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		vectorextensions "AVX2"
 		prepare()
 		test.capture [[
@@ -70,7 +70,7 @@
 	end
 
 	function suite.instructionSet_onAVX2_onVS2012()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		vectorextensions "AVX2"
 		prepare()
 		test.isemptycapture()

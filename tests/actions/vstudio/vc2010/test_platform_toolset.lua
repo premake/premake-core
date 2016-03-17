@@ -15,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		wks, prj = test.createWorkspace()
 		files "hello.cpp"
 	end
@@ -32,14 +32,14 @@
 --
 
 	function suite.correctDefault_onVS2010()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		prepare()
 		test.isemptycapture()
 	end
 
 
 	function suite.correctDefault_onVS2012()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		prepare()
 		test.capture [[
 <PlatformToolset>v110</PlatformToolset>
@@ -48,7 +48,7 @@
 
 
 	function suite.correctDefault_onVS2013()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		prepare()
 		test.capture [[
 <PlatformToolset>v120</PlatformToolset>

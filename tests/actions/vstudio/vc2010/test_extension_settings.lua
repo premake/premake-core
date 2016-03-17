@@ -16,6 +16,7 @@
 	local wks
 
 	function suite.setup()
+		premake.action.set("vs2010")
 		rule "MyRules"
 		rule "MyOtherRules"
 		wks = test.createWorkspace()

@@ -32,7 +32,20 @@ int path_translate(lua_State* L)
 	char buffer[0x4000];
 
 	if (lua_gettop(L) == 1) {
-		sep = "\\";
+		// Get target OS
+		lua_getglobal(L, "os");
+		lua_getfield(L, -1, "get");
+		lua_call(L, 0, 1);
+		const char* os = luaL_checkstring(L, -1);
+		lua_pop(L, 2);
+
+		// Use target OS separator
+		if (strcmp(os, "windows") == 0) {
+			sep = "\\";
+		}
+		else {
+			sep = "/";
+		}
 	}
 	else {
 		sep = luaL_checkstring(L, 2);

@@ -15,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 
@@ -78,7 +78,7 @@
 	end
 
 	function suite.frameworkVersionIsCorrect_on2013()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		clr "On"
 		prepare()
 		test.capture [[
@@ -180,7 +180,7 @@
 --
 
 	function suite.structureIsCorrect_on2013()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">

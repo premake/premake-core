@@ -28,7 +28,7 @@
 --
 
 	function suite.onAction()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		filter { "action:vs2012" }
 		defines { "USE_VS2012" }
 		prepare()
@@ -36,7 +36,7 @@
 	end
 
 	function suite.onActionMismatch()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		filter { "action:vs2012" }
 		defines { "USE_VS2012" }
 		prepare()

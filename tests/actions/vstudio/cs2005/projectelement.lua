@@ -29,7 +29,7 @@
 --
 
 	function suite.on2005()
-		_ACTION = "vs2005"
+		premake.action.set("vs2005")
 		prepare()
 		test.capture [[
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -38,7 +38,7 @@
 
 
 	function suite.on2008()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		prepare()
 		test.capture [[
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -47,7 +47,7 @@
 
 
 	function suite.on2010()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
@@ -57,7 +57,7 @@
 
 
 	function suite.on2012()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
@@ -67,7 +67,7 @@
 
 
 	function suite.on2013()
-		_ACTION = "vs2013"
+		premake.action.set("vs2013")
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
