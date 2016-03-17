@@ -506,3 +506,14 @@
 		return pairing
 	end
 
+
+--
+-- Given a project, returns requested min and max system versions.
+--
+
+	function project.systemversion(prj)
+		if prj.systemversion ~= nil then
+			local values = string.explode(prj.systemversion, ":", true)
+			return values[1], values[2]
+		end
+	end

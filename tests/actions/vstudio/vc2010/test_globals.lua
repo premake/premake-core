@@ -191,3 +191,64 @@
 </PropertyGroup>
 		]]
 	end
+
+
+--
+-- VS 2015 adds the <WindowsTargetPlatformVersion> to allow developers
+-- to target different versions of the Windows SDK.
+--
+
+	function suite.windowsTargetPlatformVersionMissing_on2013Default()
+		_ACTION = "vs2013"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.windowsTargetPlatformVersionMissing_on2013()
+		_ACTION = "vs2013"
+		systemversion "10.0.10240.0"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.windowsTargetPlatformVersionMissing_on2015Default()
+		_ACTION = "vs2015"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.windowsTargetPlatformVersion_on2015()
+		_ACTION = "vs2015"
+		systemversion "10.0.10240.0"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+</PropertyGroup>
+		]]
+	end

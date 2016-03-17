@@ -967,6 +967,12 @@
 	}
 
 	api.register {
+		name = "systemversion",
+		scope = "project",
+		kind = "string",
+	}
+
+	api.register {
 		name = "targetdir",
 		scope = "config",
 		kind = "path",
