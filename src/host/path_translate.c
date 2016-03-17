@@ -28,6 +28,7 @@ static void translate(char* result, const char* value, const char sep)
 
 int path_translate(lua_State* L)
 {
+	const char* os;
 	const char* sep;
 	char buffer[0x4000];
 
@@ -36,7 +37,7 @@ int path_translate(lua_State* L)
 		lua_getglobal(L, "os");
 		lua_getfield(L, -1, "get");
 		lua_call(L, 0, 1);
-		const char* os = luaL_checkstring(L, -1);
+		os = luaL_checkstring(L, -1);
 		lua_pop(L, 2);
 
 		// Use target OS separator
