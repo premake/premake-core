@@ -1096,6 +1096,13 @@
 		kind = "boolean",
 	}
 
+	api.register {
+		name = "nuget",
+		scope = "project",
+		kind = "list:string",
+		tokens = true,
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility

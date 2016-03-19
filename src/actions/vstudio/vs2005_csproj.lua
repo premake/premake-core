@@ -315,6 +315,45 @@
 			end
 		end)
 
+		if _ACTION >= "vs2010" and prj.nuget then
+			for i = 1, #prj.nuget do
+				local package = prj.nuget[i]
+				_x(2, '<Reference Include="%s">', vstudio.nuget2010.packageId(package))
+
+				local targetFramework = vstudio.nuget2010.packageFramework(prj.solution, package)
+
+				-- Strip off the "net" prefix so we can compare it.
+
+				local targetFrameworkVersion = tonumber(targetFramework:sub(4))
+
+				-- If the package doesn't support the target framework, we
+				-- need to check if it exists in the folders for any of the
+				-- previous framework versions. The last HintPath will
+				-- override any previous HintPaths (if the condition is met
+				-- that is).
+
+				-- This is kind of shit because we will need to add new
+				-- versions of the .NET Framework here.
+
+				local frameworks = {}
+				if targetFrameworkVersion >= 11 then table.insert(frameworks, "net10") end
+				if targetFrameworkVersion >= 20 then table.insert(frameworks, "net11") end
+				if targetFrameworkVersion >= 30 then table.insert(frameworks, "net20") end
+				if targetFrameworkVersion >= 35 then table.insert(frameworks, "net30") end
+				if targetFrameworkVersion >= 40 then table.insert(frameworks, "net35") end
+				if targetFrameworkVersion >= 45 then table.insert(frameworks, "net40") end
+				table.insert(frameworks, targetFramework)
+
+				for _, framework in pairs(frameworks) do
+					local assembly = vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s\\lib\\%s\\%s.dll", vstudio.nuget2010.packageName(package), framework, vstudio.nuget2010.packageId(package))))
+					_x(3, '<HintPath Condition="Exists(\'%s\')">%s</HintPath>', assembly, assembly)
+				end
+
+				_p(3, '<Private>True</Private>')
+				_p(2, '</Reference>')
+			end
+		end
+
 		_p(1,'</ItemGroup>')
 	end
 

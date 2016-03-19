@@ -40,7 +40,7 @@
 		-- Workspace and project generation logic
 
 		onWorkspace = function(wks)
-			vstudio.vs2005.generateSolution(wks)
+			vstudio.vs2010.generateSolution(wks)
 		end,
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)

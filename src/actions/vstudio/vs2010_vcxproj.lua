@@ -46,6 +46,7 @@
 			m.projectReferences,
 			m.importLanguageTargets,
 			m.importExtensionTargets,
+			m.ensureNuGetPackageBuildImports,
 		}
 	end
 
@@ -1313,6 +1314,7 @@
 	m.elements.importExtensionTargets = function(prj)
 		return {
 			m.importRuleTargets,
+			m.importNuGetTargets,
 			m.importBuildCustomizationsTargets
 		}
 	end
@@ -1331,10 +1333,40 @@
 		end
 	end
 
+	local function nuGetTargetsFile(prj, package)
+		return p.vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s\\build\\native\\%s.targets", vstudio.nuget2010.packageName(package), vstudio.nuget2010.packageId(package))))
+	end
+
+	function m.importNuGetTargets(prj)
+		if prj.nuget then
+			for i = 1, #prj.nuget do
+				local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
+				p.x('<Import Project="%s" Condition="Exists(\'%s\')" />', targetsFile, targetsFile)
+			end
+		end
+	end
+
 	function m.importBuildCustomizationsTargets(prj)
 		for i, build in ipairs(prj.buildcustomizations) do
 	      premake.w('<Import Project="$(VCTargetsPath)\\%s.targets" />', path.translate(build))
 	   end
+	end
+
+
+
+	function m.ensureNuGetPackageBuildImports(prj)
+		p.push('<Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">')
+		p.push('<PropertyGroup>')
+		p.x('<ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>')
+		p.pop('</PropertyGroup>')
+
+		if prj.nuget then
+			for i = 1, #prj.nuget do
+				local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
+				p.x('<Error Condition="!Exists(\'%s\')" Text="$([System.String]::Format(\'$(ErrorText)\', \'%s\'))" />', targetsFile, targetsFile)
+			end
+		end
+		p.pop('</Target>')
 	end
 
 
