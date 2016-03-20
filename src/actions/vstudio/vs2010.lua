@@ -35,28 +35,6 @@
 
 
 
---
--- Generate the solution file.
---
-
-	function vs2010.generateSolution(wks)
-		vstudio.vs2005.generateSolution(wks)
-
-		-- Skip generation of empty NuGet packages.config files
-		if p.workspace.hasProject(wks, function(prj) return prj.nuget and #prj.nuget > 0 end) then
-			premake.generate(
-				{
-					location = path.join(wks.location, "packages.config"),
-					workspace = wks
-				},
-				nil,
-				vstudio.nuget2010.generatePackagesConfig
-			)
-		end
-	end
-
-
-
 ---
 -- Identify the type of project being exported and hand it off
 -- the right generator.
@@ -151,7 +129,7 @@
 		-- Workspace and project generation logic
 
 		onWorkspace = function(wks)
-			vstudio.vs2010.generateSolution(wks)
+			vstudio.vs2005.generateSolution(wks)
 		end,
 		onProject = function(prj)
 			vstudio.vs2010.generateProject(prj)
