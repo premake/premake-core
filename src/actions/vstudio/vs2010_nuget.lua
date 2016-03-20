@@ -45,9 +45,9 @@
 	function nuget2010.packageFramework(wks, package)
 		local prj = packageProject(wks, package)
 
-		if prj.language == "C++" then
+		if p.project.iscpp(prj) then
 			return "native"
-		elseif prj.language == "C#" then
+		elseif p.project.isdotnet(prj) then
 			local cfg = p.project.getfirstconfig(prj)
 			local action = premake.action.current()
 			local framework = cfg.dotnetframework or action.vstudio.targetFramework
