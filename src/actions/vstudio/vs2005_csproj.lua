@@ -329,32 +329,41 @@
 
 				local targetFramework = vstudio.nuget2010.packageFramework(prj.solution, package)
 
-				-- Strip off the "net" prefix so we can compare it.
+				-- We need to write HintPaths for all supported framework
+				-- versions. The last HintPath will override any previous
+				-- HintPaths (if the condition is met that is).
 
-				local targetFrameworkVersion = tonumber(targetFramework:sub(4))
+				local function writeHintPath(frameworkVersion)
+					local assembly = vstudio.path(
+						prj,
+						p.filename(
+							prj.solution,
+							string.format(
+								"packages\\%s\\lib\\%s\\%s.dll",
+								vstudio.nuget2010.packageName(package),
+								frameworkVersion,
+								vstudio.nuget2010.packageId(package)
+							)
+						)
+					)
 
-				-- If the package doesn't support the target framework, we
-				-- need to check if it exists in the folders for any of the
-				-- previous framework versions. The last HintPath will
-				-- override any previous HintPaths (if the condition is met
-				-- that is).
-
-				-- This is kind of shit because we will need to add new
-				-- versions of the .NET Framework here.
-
-				local frameworks = {}
-				if targetFrameworkVersion >= 11 then table.insert(frameworks, "net10") end
-				if targetFrameworkVersion >= 20 then table.insert(frameworks, "net11") end
-				if targetFrameworkVersion >= 30 then table.insert(frameworks, "net20") end
-				if targetFrameworkVersion >= 35 then table.insert(frameworks, "net30") end
-				if targetFrameworkVersion >= 40 then table.insert(frameworks, "net35") end
-				if targetFrameworkVersion >= 45 then table.insert(frameworks, "net40") end
-				table.insert(frameworks, targetFramework)
-
-				for _, framework in pairs(frameworks) do
-					local assembly = vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s\\lib\\%s\\%s.dll", vstudio.nuget2010.packageName(package), framework, vstudio.nuget2010.packageId(package))))
 					_x(3, '<HintPath Condition="Exists(\'%s\')">%s</HintPath>', assembly, assembly)
 				end
+
+				for k, frameworkVersion in ipairs(vstudio.frameworkVersions) do
+					if k == #vstudio.frameworkVersions then
+						break
+					end
+
+					local nextFrameworkVersion = vstudio.frameworkVersions[k + 1]
+
+					-- Compare the versions with the "net" prefix stripped.
+					if tonumber(targetFramework:sub(4)) >= tonumber(nextFrameworkVersion:sub(4)) then
+						writeHintPath(frameworkVersion)
+					end
+				end
+
+				writeHintPath(targetFramework)
 
 				_p(3, '<Private>True</Private>')
 				_p(2, '</Reference>')
