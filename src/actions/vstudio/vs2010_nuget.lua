@@ -30,13 +30,11 @@
 
 	local function packageProject(wks, package)
 		for prj in p.workspace.eachproject(wks) do
-			if prj.nuget then
-				for i = 1, #prj.nuget do
-					local projectPackage = prj.nuget[i]
+			for i = 1, #prj.nuget do
+				local projectPackage = prj.nuget[i]
 
-					if projectPackage == package then
-						return prj
-					end
+				if projectPackage == package then
+					return prj
 				end
 			end
 		end
@@ -66,13 +64,11 @@
 
 		local packages = {}
 		for prj in p.workspace.eachproject(wks) do
-			if prj.nuget then
-				for i = 1, #prj.nuget do
-					local package = prj.nuget[i]
+			for i = 1, #prj.nuget do
+				local package = prj.nuget[i]
 
-					if not packages[package] then
-						packages[package] = true
-					end
+				if not packages[package] then
+					packages[package] = true
 				end
 			end
 		end

@@ -322,7 +322,7 @@
 	end
 
 	function cs2005.nuGetReferences(prj)
-		if _ACTION >= "vs2010" and prj.nuget then
+		if _ACTION >= "vs2010" then
 			for i = 1, #prj.nuget do
 				local package = prj.nuget[i]
 				_x(2, '<Reference Include="%s">', vstudio.nuget2010.packageId(package))
