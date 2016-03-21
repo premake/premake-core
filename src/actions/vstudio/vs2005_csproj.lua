@@ -29,7 +29,7 @@
 		"projectProperties",
 		"configurations",
 		"applicationIcon",
-		"assemblyReferences",
+		"references",
 	}
 
 	function cs2005.generate(prj)
@@ -288,9 +288,14 @@
 -- Write the list of assembly (system, or non-sibling) references.
 --
 
-	function cs2005.assemblyReferences(prj)
-		_p(1,'<ItemGroup>')
+	cs2005.elements.references = function(prj)
+		return {
+			cs2005.assemblyReferences,
+			cs2005.nuGetReferences,
+		}
+	end
 
+	function cs2005.assemblyReferences(prj)
 		-- C# doesn't support per-configuration links (does it?) so just use
 		-- the settings from the first available config instead
 		local cfg = project.getfirstconfig(prj)
@@ -314,7 +319,9 @@
 				_x(2,'<Reference Include="%s" />', name)
 			end
 		end)
+	end
 
+	function cs2005.nuGetReferences(prj)
 		if _ACTION >= "vs2010" and prj.nuget then
 			for i = 1, #prj.nuget do
 				local package = prj.nuget[i]
@@ -353,7 +360,11 @@
 				_p(2, '</Reference>')
 			end
 		end
+	end
 
+	function cs2005.references(prj)
+		_p(1,'<ItemGroup>')
+		p.callArray(cs2005.elements.references, prj)
 		_p(1,'</ItemGroup>')
 	end
 

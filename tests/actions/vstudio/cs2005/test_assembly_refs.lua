@@ -23,7 +23,7 @@
 
 	local function prepare(platform)
 		prj = test.getproject(wks, 1)
-		cs2005.assemblyReferences(prj)
+		cs2005.references(prj)
 	end
 
 
