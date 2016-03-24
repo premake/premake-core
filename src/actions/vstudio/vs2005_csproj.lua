@@ -285,7 +285,7 @@
 
 
 --
--- Write the list of assembly (system, or non-sibling) references.
+-- Write out the references item group.
 --
 
 	cs2005.elements.references = function(prj)
@@ -294,6 +294,17 @@
 			cs2005.nuGetReferences,
 		}
 	end
+
+	function cs2005.references(prj)
+		_p(1,'<ItemGroup>')
+		p.callArray(cs2005.elements.references, prj)
+		_p(1,'</ItemGroup>')
+	end
+
+
+--
+-- Write the list of assembly (system, or non-sibling) references.
+--
 
 	function cs2005.assemblyReferences(prj)
 		-- C# doesn't support per-configuration links (does it?) so just use
@@ -321,36 +332,10 @@
 		end)
 	end
 
+
 --
--- Builds a list of all .NET Framework versions up to and including the
--- project's framework version.
+-- Write the list of NuGet references.
 --
-
-	function cs2005.identifyFrameworkVersions(prj)
-		local frameworks = {}
-
-		local cfg = p.project.getfirstconfig(prj)
-		local action = premake.action.current()
-		local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
-		targetFramework = "net" .. targetFramework:gsub("%.", "")
-
-		for k, frameworkVersion in ipairs(vstudio.frameworkVersions) do
-			if k == #vstudio.frameworkVersions then
-				break
-			end
-
-			local nextFrameworkVersion = vstudio.frameworkVersions[k + 1]
-
-			-- Compare the versions with the "net" prefix stripped.
-			if tonumber(targetFramework:sub(4)) >= tonumber(nextFrameworkVersion:sub(4)) then
-				table.insert(frameworks, frameworkVersion)
-			end
-		end
-
-		table.insert(frameworks, targetFramework)
-
-		return frameworks
-	end
 
 	function cs2005.nuGetReferences(prj)
 		if _ACTION >= "vs2010" then
@@ -383,12 +368,6 @@
 				_p(2, '</Reference>')
 			end
 		end
-	end
-
-	function cs2005.references(prj)
-		_p(1,'<ItemGroup>')
-		p.callArray(cs2005.elements.references, prj)
-		_p(1,'</ItemGroup>')
 	end
 
 
@@ -472,6 +451,38 @@
 
 	function cs2005.condition(cfg)
 		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', premake.esc(vstudio.projectConfig(cfg)))
+	end
+
+
+--
+-- Build and return a list of all .NET Framework versions up to and including
+-- the project's framework version.
+--
+
+	function cs2005.identifyFrameworkVersions(prj)
+		local frameworks = {}
+
+		local cfg = p.project.getfirstconfig(prj)
+		local action = premake.action.current()
+		local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
+		targetFramework = "net" .. targetFramework:gsub("%.", "")
+
+		for k, frameworkVersion in ipairs(vstudio.frameworkVersions) do
+			if k == #vstudio.frameworkVersions then
+				break
+			end
+
+			local nextFrameworkVersion = vstudio.frameworkVersions[k + 1]
+
+			-- Compare the versions with the "net" prefix stripped.
+			if tonumber(targetFramework:sub(4)) >= tonumber(nextFrameworkVersion:sub(4)) then
+				table.insert(frameworks, frameworkVersion)
+			end
+		end
+
+		table.insert(frameworks, targetFramework)
+
+		return frameworks
 	end
 
 ---------------------------------------------------------------------------
