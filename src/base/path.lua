@@ -231,7 +231,7 @@
 			return p
 		end
 
-		if not newext:findlast(".", true) then
+		if #newext > 0 and not newext:findlast(".", true) then
 			newext = "."..newext
 		end
 

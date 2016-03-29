@@ -420,6 +420,10 @@
 	function suite.getabsolute_replaceExtensionWithoutExtension()
 			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main",".foo"))
 	end
+    
+    function suite.getabsolute_replaceExtensionWithEmptyString()
+			test.isequal("foo", path.replaceextension("foo.lua",""))
+	end
 
 
 
