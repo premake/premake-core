@@ -146,9 +146,17 @@
 	function suite.getextension_ReturnsEmptyString_OnNoExtension()
 		test.isequal("", path.getextension("filename"))
 	end
+    
+    function suite.getextension_ReturnsEmptyString_OnPathWithDotAndNoExtension()
+		test.isequal("", path.getextension("/.premake/premake"))
+	end
 
 	function suite.getextension_ReturnsExtension()
 		test.isequal(".txt", path.getextension("filename.txt"))
+	end
+    
+    function suite.getextension_ReturnsExtension_OnPathWithDot()
+		test.isequal(".lua", path.getextension("/.premake/premake.lua"))
 	end
 
 	function suite.getextension_OnMultipleDots()
