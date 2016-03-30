@@ -6,7 +6,7 @@
 
 Premake is a command line utility which reads a scripted definition of a software project and, most commonly, uses it to generate project files for toolsets like Visual Studio, Xcode, or GNU Make. Built-in and Third-Party [Modules](https://github.com/premake/premake-core/wiki/Modules) add support for even more toolsets.
 
-Find out in detail [what Premake is](https://github.com/premake/premake-core/wiki/What_Is_Premake) and how to use it in the [wiki](https://github.com/premake/premake-core/wiki).
+Find out in detail [what Premake is](https://github.com/premake/premake-core/wiki/What-Is-Premake) and how to use it in the [wiki](https://github.com/premake/premake-core/wiki).
 
 ### Get started
 
@@ -26,7 +26,7 @@ Something not working quite as expected? Do you need a feature that has not been
 
 ### Contribute
 
-Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/premake/premake-core/wiki/Unit-Tests) are passing before submitting and add new ones in case you introduced new features.
+Awesome! View the [contribution guidelines](https://github.com/premake/premake-core/wiki/Contribution-Guidelines) before you contribute. If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the unit tests are passing before submitting and add new ones in case you introduced new features.
 
 ### Copyright & License
 
