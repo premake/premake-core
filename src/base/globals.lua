@@ -74,13 +74,24 @@
 ---
 
 	premake.override(_G, "require", function(base, modname, versions)
-		local result, mod = pcall(base,modname)
+        local result, resmod = pcall(premake.moduleresolver.resolveModule, modname)
+        
+        if result then
+            modname = resmod
+            resmod = ""
+        end
+        
+        local mod
+        result, mod, versions = pcall(base, modname, versions)
+        
 		if not result then
-			error( mod, 3 )
+			error(mod .. resmod, 3)
 		end
+        
 		if mod and versions and not premake.checkVersion(mod._VERSION, versions) then
 			error(string.format("module %s %s does not meet version criteria %s",
 				modname, mod._VERSION or "(none)", versions), 3)
 		end
+        
 		return mod
 	end)
