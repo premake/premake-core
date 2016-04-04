@@ -99,22 +99,22 @@
 			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
 		end
 
-		configuration "Debug"
+		filter "configurations:Debug"
 			defines     "_DEBUG"
 			flags       { "Symbols" }
 
-		configuration "Release"
+		filter "configurations:Release"
 			defines     "NDEBUG"
 			optimize    "Full"
 			flags       { "NoBufferSecurityCheck", "NoRuntimeChecks" }
 
-		configuration "vs*"
+		filter "action:vs*"
 			defines     { "_CRT_SECURE_NO_DEPRECATE", "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
-		configuration { "windows", "Release" }
+		filter { "system:windows", "configurations:Release" }
 			flags       { "NoIncrementalLink", "LinkTimeOptimization" }
 
-		configuration { "macosx", "gmake" }
+		filter { "system:macosx", "action:gmake" }
 			buildoptions { "-mmacosx-version-min=10.4" }
 			linkoptions  { "-mmacosx-version-min=10.4" }
 
@@ -146,44 +146,44 @@
 			"contrib/**.*"
 		}
 
-		configuration "Debug"
+		filter "configurations:Debug"
 			targetdir   "bin/debug"
 			debugargs   { "--scripts=%{prj.location}/%{path.getrelative(prj.location, prj.basedir)} test"}
 			debugdir    "%{path.getrelative(prj.location, prj.basedir)}"
 
-		configuration "Release"
+		filter "configurations:Release"
 			targetdir   "bin/release"
 
-		configuration "windows"
+		filter "system:windows"
 			links       { "ole32", "ws2_32" }
 
-		configuration "linux or bsd or hurd"
+		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 			linkoptions { "-rdynamic" }
 
-		configuration "linux or hurd"
+		filter "system:linux or hurd"
 			links       { "dl", "rt" }
 
-		configuration "linux"
+		filter "system:linux"
 			if not _OPTIONS["no-curl"] and os.findlib("ssl") then
 				links       { "ssl", "crypto" }
 			end
 
-		configuration "macosx"
+		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
 			if not _OPTIONS["no-curl"] then
 				links   { "Security.framework" }
 			end
 
-		configuration { "macosx", "gmake" }
+		filter { "system:macosx", "action:gmake" }
 			toolset "clang"
 
-		configuration { "solaris" }
+		filter { "system:solaris" }
 			linkoptions { "-Wl,--export-dynamic" }
 
-		configuration "aix"
+		filter "system:aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 

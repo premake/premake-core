@@ -11,11 +11,11 @@ project "zip-lib"
 		"**.c"
 	}
 
-	configuration "linux"
-		defines {"HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H"}
+	filter "system:linux"
+		defines { "HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H" }
 
-	configuration "windows"
-		defines {"_WINDOWS"}
+	filter "system:windows"
+		defines { "_WINDOWS" }
 
-	configuration "macosx"
-		defines { 'HAVE_SSIZE_T_LIBZIP' }
+	filter "system:macosx"
+		defines { "HAVE_SSIZE_T_LIBZIP" }

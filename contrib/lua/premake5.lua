@@ -21,8 +21,8 @@ project "lua-lib"
 		"etc/*.c"
 	}
 
-	configuration "linux or bsd or hurd or aix"
+	filter "system:linux or bsd or hurd or aix"
 		defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 
-	configuration "macosx"
+	filter "system:macosx"
 		defines     { "LUA_USE_MACOSX" }

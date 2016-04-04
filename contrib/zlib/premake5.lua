@@ -10,5 +10,5 @@ project "zlib-lib"
 		"**.c"
 	}
 
-	configuration "windows"
-		defines {"_WINDOWS"}
+	filter "system:windows"
+		defines { "_WINDOWS" }
