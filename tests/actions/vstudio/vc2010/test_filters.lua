@@ -64,13 +64,13 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
-	<None Include="hello.txt" />
-</ItemGroup>
-<ItemGroup>
 	<ClInclude Include="hello.h" />
 </ItemGroup>
 <ItemGroup>
 	<ClCompile Include="hello.c" />
+</ItemGroup>
+<ItemGroup>
+	<None Include="hello.txt" />
 </ItemGroup>
 <ItemGroup>
 	<ResourceCompile Include="hello.rc" />
