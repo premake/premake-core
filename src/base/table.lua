@@ -53,6 +53,7 @@
 				clone[key] = copy(value)
 			end
 
+			setmetatable(clone, getmetatable(object))
 			return clone
 		end
 
