@@ -51,37 +51,41 @@
 ---
 
 	function field.new(f)
-		-- Translate the old approaches to data kind definitions to the new
-		-- one used here. These should probably be deprecated eventually.
+		local function upgradeKind(f)
+			-- Translate the old approaches to data kind definitions to the new
+			-- one used here. These should probably be deprecated eventually.
 
-		if f.kind:startswith("key-") then
-			f.kind = f.kind:sub(5)
-			f.keyed = true
+			if f.kind:startswith("key-") then
+				f.kind = f.kind:sub(5)
+				f.keyed = true
+			end
+
+			if f.kind:endswith("-list") then
+				f.kind = f.kind:sub(1, -6)
+				f.list = true
+			end
+
+			local kind = f.kind
+
+			if kind == "object" or kind == "array" then
+				kind = "table"
+			end
+
+			if f.list then
+				kind = "list:" .. kind
+			end
+
+			if f.keyed then
+				kind = "keyed:" .. kind
+			end
+
+			-- Store the translated kind with a new name, so legacy add-on code
+			-- can continue to work with the old value.
+
+			f._kind = kind
 		end
 
-		if f.kind:endswith("-list") then
-			f.kind = f.kind:sub(1, -6)
-			f.list = true
-		end
-
-		local kind = f.kind
-
-		if kind == "object" or kind == "array" then
-			kind = "table"
-		end
-
-		if f.list then
-			kind = "list:" .. kind
-		end
-
-		if f.keyed then
-			kind = "keyed:" .. kind
-		end
-
-		-- Store the translated kind with a new name, so legacy add-on code
-		-- can continue to work with the old value.
-
-		f._kind = kind
+		upgradeKind(f)
 
 		-- Make sure scope is always an array; don't overwrite old value
 		if type(f.scope) == "table" then
@@ -95,13 +99,24 @@
 			return nil, "invalid field kind '" .. f._kind .. "'"
 		end
 
+		-- setup all nested fields too.
+		if f._kind == 'nested' then
+			for name, fld in pairs(f.fields) do
+				upgradeKind(fld)
+
+				-- All subfields must also have a valid store() function
+				if not field.accessor(fld, "store") then
+					return nil, "invalid subfield '" .. name .. "' kind '" .. fld._kind .. "' in field '" .. f.name .. "'."
+				end
+			end
+		end
+
 		field._list[f.name] = f
 		field._loweredList[f.name:lower()] = f
 		field._sortedList = nil
 
 		return f
 	end
-
 
 
 ---

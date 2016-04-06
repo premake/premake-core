@@ -44,6 +44,7 @@
 		"base/config.lua",
 		"base/fileconfig.lua",
 		"base/rule.lua",
+		"base/nested.lua",
 
 		-- project script processing
 		"base/oven.lua",
