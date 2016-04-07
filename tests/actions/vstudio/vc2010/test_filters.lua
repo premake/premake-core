@@ -184,3 +184,17 @@
 </ItemGroup>
 		]]
 	end
+
+
+--
+-- Check handling of .asm files
+--
+	function suite.itemGroup_onNoneSection()
+		files { "hello.asm" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Masm Include="hello.asm" />
+</ItemGroup>
+		]]
+	end

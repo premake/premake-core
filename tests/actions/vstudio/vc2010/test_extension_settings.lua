@@ -72,3 +72,18 @@
 </ImportGroup>
 		]]
 	end
+
+--
+-- the asm 'file category' should add the right settings.
+--
+
+	function suite.hasAssemblyFiles()
+		files { "test.asm" }
+		location "build"
+		prepare()
+		test.capture [[
+<ImportGroup Label="ExtensionSettings">
+	<Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+</ImportGroup>
+		]]
+	end

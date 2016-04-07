@@ -72,3 +72,19 @@
 </ImportGroup>
 		]]
 	end
+
+
+--
+-- the asm 'file category' should add the right target.
+--
+
+	function suite.hasAssemblyFiles()
+		files { "test.asm" }
+		location "build"
+		prepare()
+		test.capture [[
+<ImportGroup Label="ExtensionTargets">
+	<Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+</ImportGroup>
+		]]
+	end
