@@ -355,7 +355,7 @@
 							string.format(
 								"packages\\%s\\lib\\%s\\%s.dll",
 								vstudio.nuget2010.packageName(package),
-								frameworkVersion,
+								cs2005.formatNuGetFrameworkVersion(frameworkVersion),
 								vstudio.nuget2010.packageId(package)
 							)
 						)
@@ -465,7 +465,6 @@
 		local cfg = p.project.getfirstconfig(prj)
 		local action = premake.action.current()
 		local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
-		targetFramework = "net" .. targetFramework:gsub("%.", "")
 
 		for k, frameworkVersion in ipairs(vstudio.frameworkVersions) do
 			if k == #vstudio.frameworkVersions then
@@ -474,8 +473,8 @@
 
 			local nextFrameworkVersion = vstudio.frameworkVersions[k + 1]
 
-			-- Compare the versions with the "net" prefix stripped.
-			if tonumber(targetFramework:sub(4)) >= tonumber(nextFrameworkVersion:sub(4)) then
+			-- Compare the versions as numbers.
+			if tonumber(targetFramework:gsub("%.", "")) >= tonumber(nextFrameworkVersion:gsub("%.", "")) then
 				table.insert(frameworks, frameworkVersion)
 			end
 		end
@@ -483,6 +482,15 @@
 		table.insert(frameworks, targetFramework)
 
 		return frameworks
+	end
+
+
+--
+-- When given a .NET Framework version, returns it formatted for NuGet.
+--
+
+	function cs2005.formatNuGetFrameworkVersion(framework)
+		return "net" .. framework:gsub("%.", "")
 	end
 
 ---------------------------------------------------------------------------

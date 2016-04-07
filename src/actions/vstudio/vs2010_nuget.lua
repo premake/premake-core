@@ -49,8 +49,7 @@
 			local cfg = p.project.getfirstconfig(prj)
 			local action = premake.action.current()
 			local framework = cfg.dotnetframework or action.vstudio.targetFramework
-			framework = "net" .. framework:gsub("%.", "")
-			return framework
+			return cs2005.formatNuGetFrameworkVersion(framework)
 		end
 	end
 
