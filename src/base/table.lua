@@ -448,6 +448,15 @@
 
 		if type(tab) == "table" then
 			local first = true
+
+			-- add the meta table.
+			local mt = getmetatable(tab)
+			if mt then
+				res = res .. format_value('__mt', mt, indent)
+				first = false
+			end
+
+			-- add all values.
 			for k, v in pairs(tab) do
 				if not first then
 					res = res .. '\n'
