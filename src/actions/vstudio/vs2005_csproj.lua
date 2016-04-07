@@ -466,17 +466,12 @@
 		local action = premake.action.current()
 		local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
 
-		for k, frameworkVersion in ipairs(vstudio.frameworkVersions) do
-			if k == #vstudio.frameworkVersions then
+		for _, frameworkVersion in ipairs(vstudio.frameworkVersions) do
+			if frameworkVersion == targetFramework then
 				break
 			end
 
-			local nextFrameworkVersion = vstudio.frameworkVersions[k + 1]
-
-			-- Compare the versions as numbers.
-			if tonumber(targetFramework:gsub("%.", "")) >= tonumber(nextFrameworkVersion:gsub("%.", "")) then
-				table.insert(frameworks, frameworkVersion)
-			end
+			table.insert(frameworks, frameworkVersion)
 		end
 
 		table.insert(frameworks, targetFramework)
