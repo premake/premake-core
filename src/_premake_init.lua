@@ -749,6 +749,13 @@
 	}
 
 	api.register {
+		name = "nuget",
+		scope = "project",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "objdir",
 		scope = "config",
 		kind = "path",

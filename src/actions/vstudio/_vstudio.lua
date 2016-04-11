@@ -13,6 +13,23 @@
 
 
 --
+-- All valid .NET Framework versions, from oldest to newest.
+--
+
+	vstudio.frameworkVersions =
+	{
+		"1.0",
+		"1.1",
+		"2.0",
+		"3.0",
+		"3.5",
+		"4.0",
+		"4.5",
+		"4.6",
+	}
+
+
+--
 -- Mapping tables from Premake systems and architectures to Visual Studio
 -- identifiers. Broken out as tables so new values can be pushed in by
 -- add-ons.

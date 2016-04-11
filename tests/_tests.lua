@@ -82,6 +82,7 @@ return {
 	"actions/vstudio/sln2005/test_projects.lua",
 	"actions/vstudio/sln2005/test_platforms.lua",
 	"actions/vstudio/sln2005/test_sections.lua",
+	"actions/vstudio/sln2005/test_nuget_packages_config.lua",
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	"actions/vstudio/vc200x/test_assembly_refs.lua",
@@ -134,6 +135,7 @@ return {
 	"actions/vstudio/vc2010/test_target_machine.lua",
 	"actions/vstudio/vc2010/test_user_file.lua",
 	"actions/vstudio/vc2010/test_vectorextensions.lua",
+	"actions/vstudio/vc2010/test_ensure_nuget_imports.lua",
 
 	-- Makefile tests
 	"actions/make/test_make_escaping.lua",
