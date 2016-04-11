@@ -61,13 +61,15 @@
 	function nuget2010.generatePackagesConfig(obj)
 		local wks = obj.workspace
 
+		local done = {}
 		local packages = {}
 		for prj in p.workspace.eachproject(wks) do
 			for i = 1, #prj.nuget do
 				local package = prj.nuget[i]
 
-				if not packages[package] then
-					packages[package] = true
+				if not done[package] then
+					done[package] = true
+					table.insert(packages, package)
 				end
 			end
 		end
@@ -75,7 +77,7 @@
 		p.w('<?xml version="1.0" encoding="utf-8"?>')
 		p.push('<packages>')
 
-		for package in pairs(packages) do
+		for _, package in ipairs(packages) do
 			p.x('<package id="%s" version="%s" targetFramework="%s" />', nuget2010.packageId(package), nuget2010.packageVersion(package), nuget2010.packageFramework(wks, package))
 		end
 
