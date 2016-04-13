@@ -127,6 +127,7 @@
 			m.ignoreWarnDuplicateFilename,
 			m.keyword,
 			m.projectName,
+			m.targetPlatformVersion,
 		}
 	end
 
@@ -1921,6 +1922,14 @@
 
 	function m.targetName(cfg)
 		m.element("TargetName", nil, "%s%s", cfg.buildtarget.prefix, cfg.buildtarget.basename)
+	end
+
+
+	function m.targetPlatformVersion(prj)
+		local min = project.systemversion(prj)
+		if min ~= nil and _ACTION >= "vs2015" then
+			m.element("WindowsTargetPlatformVersion", nil, min)
+		end
 	end
 
 
