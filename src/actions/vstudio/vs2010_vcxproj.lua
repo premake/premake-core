@@ -1435,16 +1435,18 @@
 
 
 	function m.ensureNuGetPackageBuildImports(prj)
-		p.push('<Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">')
-		p.push('<PropertyGroup>')
-		p.x('<ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>')
-		p.pop('</PropertyGroup>')
+		if #prj.nuget > 0 then
+			p.push('<Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">')
+			p.push('<PropertyGroup>')
+			p.x('<ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>')
+			p.pop('</PropertyGroup>')
 
-		for i = 1, #prj.nuget do
-			local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
-			p.x('<Error Condition="!Exists(\'%s\')" Text="$([System.String]::Format(\'$(ErrorText)\', \'%s\'))" />', targetsFile, targetsFile)
+			for i = 1, #prj.nuget do
+				local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
+				p.x('<Error Condition="!Exists(\'%s\')" Text="$([System.String]::Format(\'$(ErrorText)\', \'%s\'))" />', targetsFile, targetsFile)
+			end
+			p.pop('</Target>')
 		end
-		p.pop('</Target>')
 	end
 
 

@@ -27,6 +27,17 @@
 
 
 --
+-- Should not output anything if no packages have been set.
+--
+
+	function suite.noOutputIfNoPackages()
+		prepare()
+		test.isemptycapture()
+	end
+
+
+
+--
 -- Writes the pre-build check that makes sure that all packages are installed.
 --
 
