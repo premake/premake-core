@@ -42,7 +42,7 @@
 
 				-- Build a relative path from the workspace file to the project file
 				local prjpath = p.filename(prj, ".project")
-				prjpath = path.translate(path.getrelative(prj.workspace.location, prjpath))
+				prjpath = path.getrelative(prj.workspace.location, prjpath)
 
 				local active  = iif(prj.name == wks.startproject, ' Active="Yes"', '')
 				_x(1, '<Project Name="%s" Path="%s"%s/>', prj.name, prjpath, active)

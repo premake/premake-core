@@ -98,7 +98,7 @@
 		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
-  <Project Name="MyProject" Path="]] .. path.translate("MyProject\\MyProject.project") .. [["/>
+  <Project Name="MyProject" Path="]] .. path.translate("MyProject/MyProject.project") .. [["/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
@@ -117,7 +117,7 @@
 		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
-  <Project Name="MyProject" Path="]] .. path.translate("..\\MyProject\\MyProject.project") .. [["/>
+  <Project Name="MyProject" Path="]] .. path.translate("../MyProject/MyProject.project") .. [["/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
