@@ -44,7 +44,7 @@
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-g;-Og;-fPIC;-fno-exceptions;-fno-stack-protector;-std=c++11;-fno-rtti;-opt1;-opt2" C_Options="-g;-Og;-fPIC;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-fPIC;-fno-exceptions;-fno-stack-protector;-std=c++11;-fno-rtti;-opt1;-opt2" C_Options="-g;-O0;-fPIC;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
       </Compiler>
 		]]
 	end
