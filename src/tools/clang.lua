@@ -41,11 +41,36 @@
 --    An array of C compiler flags.
 --
 
+	clang.cflags = {
+		architecture = gcc.cflags.architecture,
+		flags = gcc.cflags.flags,
+		floatingpoint = gcc.cflags.floatingpoint,
+		strictaliasing = gcc.cflags.strictaliasing,
+		optimize = {
+			Off = "-O0",
+			On = "-O2",
+			Debug = "-O0",
+			Full = "-O3",
+			Size = "-Os",
+			Speed = "-O3",
+		},
+		pic = gcc.cflags.pic,
+		vectorextensions = gcc.cflags.vectorextensions,
+		warnings = gcc.cflags.warnings
+	}
+
 	function clang.getcflags(cfg)
 
-		-- Just pass through to GCC for now
-		local flags = gcc.getcflags(cfg)
+		local flags = config.mapFlags(cfg, clang.cflags)
+		flags = table.join(flags, clang.getwarnings(cfg))
 		return flags
+
+	end
+
+	function clang.getwarnings(cfg)
+
+		-- Just pass through to GCC for now
+		return gcc.getwarnings(cfg)
 
 	end
 
