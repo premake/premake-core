@@ -1221,7 +1221,7 @@
 		if cfg.entrypoint then
 			m.element("EntryPointSymbol", nil, cfg.entrypoint)
 		else
-			if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
+			if cfg.kind == premake.WINDOWEDAPP and
 				not cfg.flags.WinMain and
 				cfg.clr == p.OFF and
 				cfg.system ~= p.XBOX360
