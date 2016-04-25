@@ -5,6 +5,24 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha8:
+
+* New: buildcustomizations() imports custom .props files for VS
+* New: frameworksdir() for Xcode and Make OS X projects
+* New: nuget() to specify NuGet packages for VS projects
+* New: systemversion() to specify VS target platform
+* New: Support for XSD files in VS C# projects
+* New: MASM file categorization for VS
+* Fix: VS filter ordering is now deterministic
+* Fix: VS projects and groups may now have the same name
+* Fix: May now use '.' within shell variable tokens
+* Fix: path.translate() now defaults to target system separator
+* Fix: getextension() now handles multiple dots
+* Fix: replaceextension() no longer adds leading dot
+* Fix: Improved configuration baking performance
+* Fix: Use -O0 for Clang debug optimization level
+* Fix: CodeLite now uses portable path separators
+
 Since 5.0-alpha7:
 
 * New API: characterset()
