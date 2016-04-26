@@ -95,9 +95,15 @@
 				info.DependentUpon = fname:sub(1, -4)
 
 			else
+				local basename = fname:sub(1, -4)
+
+				-- Is there a matching *.xsd?
+				testname = basename .. ".xsd"
+				if project.hasfile(fcfg.project, testname) then
+					info.DependentUpon = testname
+				end
 
 				-- Is there a matching *.Designer.cs?
-				local basename = fname:sub(1, -4)
 				testname = basename .. ".Designer.cs"
 				if project.hasfile(fcfg.project, testname) then
 					info.SubType = "Form"
