@@ -136,7 +136,7 @@
 	function gcc.getdefines(defines)
 		local result = {}
 		for _, define in ipairs(defines) do
-			table.insert(result, '-D' .. define)
+			table.insert(result, '-D' .. p.esc(define))
 		end
 		return result
 	end
@@ -144,7 +144,7 @@
 	function gcc.getundefines(undefines)
 		local result = {}
 		for _, undefine in ipairs(undefines) do
-			table.insert(result, '-U' .. undefine)
+			table.insert(result, '-U' .. p.esc(undefine))
 		end
 		return result
 	end
