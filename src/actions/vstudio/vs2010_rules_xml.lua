@@ -18,7 +18,6 @@
 
 	m.elements.project = function(r)
 		return {
-			p.xmlUtf8,
 			m.projectSchemaDefinitions,
 			m.rule,
 			m.ruleItem,
@@ -28,6 +27,7 @@
 	end
 
 	function m.generate(r)
+		p.xmlUtf8()
 		p.callArray(m.elements.project, r)
 		p.out('</ProjectSchemaDefinitions>')
 	end
