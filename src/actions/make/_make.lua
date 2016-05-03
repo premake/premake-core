@@ -89,6 +89,7 @@
 
 	function make.esc(value)
 		result = value:gsub("\\", "\\\\")
+		result = result:gsub("\"", "\\\"")
 		result = result:gsub(" ", "\\ ")
 		result = result:gsub("%(", "\\(")
 		result = result:gsub("%)", "\\)")
