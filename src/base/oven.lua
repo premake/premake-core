@@ -497,9 +497,7 @@
 		context.addFilter(ctx, "architecture", ctx.architecture)
 
 		-- allow the project script to override the default toolset
-		print (toolset)
 		ctx.toolset = ctx.toolset or toolset
-		print (ctx.toolset)
 		context.addFilter(ctx, "toolset", ctx.toolset)		
 
 		-- if a kind is set, allow that to influence the configuration
