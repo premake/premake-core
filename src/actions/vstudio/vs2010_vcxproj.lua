@@ -1304,9 +1304,12 @@
 
 
 	function m.generateDebugInformation(cfg)
-		local d = cfg.flags.Symbols ~= nil
-		local v
-		if _ACTION >= "vs2015" then v = d and "Debug" or "No" else v = tostring(d) end
+		local d,v = cfg.flags.Symbols ~= nil
+		if _ACTION >= "vs2015" then
+            v = d and "Debug" or "No"
+        else
+            v = tostring(d)
+        end
 		m.element("GenerateDebugInformation", nil, v)
 	end
 
