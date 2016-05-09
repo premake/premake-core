@@ -481,14 +481,24 @@
 
 		local pch = cfg.pchheader
 		local found = false
-		for _, incdir in ipairs(cfg.includedirs) do
-			local testname = path.join(incdir, pch)
-			if os.isfile(testname) then
-				pch = project.getrelative(cfg.project, testname)
-				found = true
-				break
+
+		-- test locally in the project folder first (this is the most likely location)
+		local testname = path.join(cfg.project.basedir, pch)
+		if os.isfile(testname) then
+			pch = project.getrelative(cfg.project, testname)
+			found = true
+		else
+			-- else scan in all include dirs.
+			for _, incdir in ipairs(cfg.includedirs) do
+				testname = path.join(incdir, pch)
+				if os.isfile(testname) then
+					pch = project.getrelative(cfg.project, testname)
+					found = true
+					break
+				end
 			end
 		end
+
 		if not found then
 			pch = project.getrelative(cfg.project, path.getabsolute(pch))
 		end

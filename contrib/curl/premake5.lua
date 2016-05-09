@@ -35,7 +35,7 @@ project "curl-lib"
 				end
 			end
 			if ca then
-				defines { "CURL_CA_BUNDLE=\\\"" .. ca .. "\\\"" }
+				defines { 'CURL_CA_BUNDLE="' .. ca .. '"' }
 			end
 		end
 
