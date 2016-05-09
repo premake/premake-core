@@ -440,10 +440,12 @@
 
 		local system = p.action.current().os or os.get()
 		local architecture = nil
+		local toolset = nil
 
 		if platform then
 			system = p.api.checkValue(p.fields.system, platform) or system
 			architecture = p.api.checkValue(p.fields.architecture, platform) or architecture
+			toolset = p.api.checkValue(p.fields.toolset, platform) or toolset
 		end
 
 		-- Wrap the projects's configuration set (which contains all of the information
@@ -493,6 +495,10 @@
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
 		context.addFilter(ctx, "architecture", ctx.architecture)
+
+		-- allow the project script to override the default toolset
+		ctx.toolset = ctx.toolset or toolset
+		context.addFilter(ctx, "toolset", ctx.toolset)		
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
