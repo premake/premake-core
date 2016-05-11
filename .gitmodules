@@ -1,6 +1,3 @@
-[submodule "modules/monodevelop"]
-	path = modules/monodevelop
-	url = https://github.com/premake/premake-monodevelop.git
 [submodule "modules/codelite"]
 	path = modules/codelite
 	url = https://github.com/premake/premake-codelite.git
