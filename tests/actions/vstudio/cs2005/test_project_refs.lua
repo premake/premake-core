@@ -4,8 +4,7 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_project_refs = {}
-	local suite = T.vstudio_cs2005_project_refs
+	local suite = test.declare("vstudio_cs2005_project_refs")
 	local cs2005 = premake.vstudio.cs2005
 
 

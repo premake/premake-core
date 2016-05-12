@@ -4,8 +4,7 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.make_tovar = { }
-	local suite = T.make_tovar
+	local suite = test.declare("make_tovar")
 	local make = premake.make
 
 

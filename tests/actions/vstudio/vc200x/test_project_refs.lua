@@ -4,8 +4,7 @@
 -- Copyright (c) 2011-2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vs200x_project_refs = { }
-	local suite = T.vstudio_vs200x_project_refs
+	local suite = test.declare("vstudio_vs200x_project_refs")
 	local vc200x = premake.vstudio.vc200x
 
 

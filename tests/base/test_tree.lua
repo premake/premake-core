@@ -4,8 +4,7 @@
 -- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
-	T.tree = { }
-	local suite = T.tree
+	local suite = test.declare("base_tree")
 	local tree = premake.tree
 
 

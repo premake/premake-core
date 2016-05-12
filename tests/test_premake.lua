@@ -31,7 +31,7 @@
 		test.openedfile(path.join(os.getcwd(), "MyLocation/MyProject.prj"))
 	end
 
-	function T.premake.generate_ClosesFile()
+	function suite.generate_ClosesFile()
 		p.generate(prj, ".prj", function () end)
 		test.closedfile(true)
 	end
