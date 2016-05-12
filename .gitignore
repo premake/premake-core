@@ -19,6 +19,7 @@ src/scripts.c
 Makefile
 *.make
 *.xcodeproj
+*.xcworkspace
 *.swp
 *.sdf
 *.sln
