@@ -4,8 +4,7 @@
 -- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_sln2005_dependencies = { }
-	local suite = T.vstudio_sln2005_dependencies
+	local suite = test.declare("vstudio_sln2005_dependencies")
 	local sln2005 = premake.vstudio.sln2005
 
 

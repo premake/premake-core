@@ -4,8 +4,7 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.api_register = {}
-	local suite = T.api_register
+	local suite = test.declare("api_register")
 	local api = premake.api
 
 

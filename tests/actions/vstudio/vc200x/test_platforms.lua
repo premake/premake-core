@@ -4,8 +4,7 @@
 -- Copyright (c) 2009-2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_vc200x_platforms = { }
-	local suite = T.vstudio_vc200x_platforms
+	local suite = test.declare("vstudio_vc200x_platforms")
 	local vc200x = premake.vstudio.vc200x
 
 

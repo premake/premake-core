@@ -4,8 +4,7 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.make_config_maps = {}
-	local suite = T.make_config_maps
+	local suite = test.declare("make_config_maps")
 	local make = premake.make
 
 
