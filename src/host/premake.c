@@ -57,6 +57,7 @@ static const luaL_Reg os_functions[] = {
 	{ "_is64bit",               os_is64bit              },
 	{ "isdir",                  os_isdir                },
 	{ "getcwd",                 os_getcwd               },
+	{ "getpass",                os_getpass              },
 	{ "getversion",             os_getversion           },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
