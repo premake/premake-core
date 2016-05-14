@@ -157,7 +157,7 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, state->errorBuffer);
-	curl_easy_setopt(curl, CURLOPT_USERAGENT, "premake/5.0");
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Premake/" PREMAKE_VERSION);
 
 	if (lua_type(L, userpwdIndex) == LUA_TSTRING) {
 		curl_easy_setopt(curl, CURLOPT_USERPWD, luaL_checkstring(L, userpwdIndex));
