@@ -131,7 +131,7 @@ static void get_headers(lua_State* L, struct curl_slist** headers)
 	}
 }
 
-static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progressFnIndex, const char* userpwd)
+static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progressFnIndex, int userpwdIndex)
 {
 	CURL* curl;
 	struct curl_slist* headers = NULL;
@@ -157,9 +157,10 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, state->errorBuffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "premake/5.0");
 
-	if (userpwd) {
-		curl_easy_setopt(curl, CURLOPT_USERPWD, userpwd);
+	if (lua_type(L, userpwdIndex) == LUA_TSTRING) {
+		curl_easy_setopt(curl, CURLOPT_USERPWD, luaL_checkstring(L, userpwdIndex));
 	}
 
 	get_headers(L, &headers);
@@ -192,7 +193,7 @@ int http_get(lua_State* L)
 {
 	CurlCallbackState state = { 0, 0, {NULL, 0}, {0} };
 
-	CURL* curl = curl_request(L, &state, /*fp=*/NULL, /*progressFnIndex=*/2, luaL_checkstring(L, 3));
+	CURL* curl = curl_request(L, &state, /*fp=*/NULL, /*progressFnIndex=*/2, /*userpwdIndex*/3);
 	CURLcode code;
 
 	string_init(&state.S);
@@ -242,7 +243,7 @@ int http_download(lua_State* L)
 		return 2;
 	}
 
-	curl = curl_request(L, &state, fp, /*progressFnIndex=*/3, luaL_checkstring(L, 4));
+	curl = curl_request(L, &state, fp, /*progressFnIndex=*/3, /*userpwdIndex*/4);
 	if (curl)
 	{
 		code = curl_easy_perform(curl);
