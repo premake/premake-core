@@ -27,7 +27,7 @@ int os_getpass(lua_State* L)
 
 		WriteConsoleA(hstdout, newline, strlen(newline), &written_chars, NULL);
 
-		StrTrimA(buffer, "\r\n");
+		buffer[strcspn(buffer, "\r\n")] = '\0';
 
 		lua_pushstring(L, buffer);
 		return 1;
