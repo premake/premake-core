@@ -108,15 +108,12 @@ static void curl_init()
 
 static void get_headers(lua_State* L, int headersIndex, struct curl_slist** headers)
 {
-	if (lua_istable(L, headersIndex))
+	lua_pushnil(L);
+	while (lua_next(L, headersIndex) != 0)
 	{
-		lua_pushnil(L);
-		while (lua_next(L, headersIndex) != 0)
-		{
-			const char *item = luaL_checkstring(L, -1);
-			lua_pop(L, 1);
-			*headers = curl_slist_append(*headers, item);
-		}
+		const char *item = luaL_checkstring(L, -1);
+		lua_pop(L, 1);
+		*headers = curl_slist_append(*headers, item);
 	}
 }
 
