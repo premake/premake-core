@@ -6,12 +6,13 @@
 
 	local p = premake
 
+	local test = p.modules.self_test
+
 
 --
 -- Define a namespace for the testing functions
 --
 
-	test = {}
 	test.suppressed = {}
 
 
