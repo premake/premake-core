@@ -14,9 +14,6 @@
 #endif
 
 
-#define VERSION        "5.0.0-dev"
-#define COPYRIGHT      "Copyright (C) 2002-2016 Jason Perkins and the Premake Project"
-#define PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
@@ -60,6 +57,7 @@ static const luaL_Reg os_functions[] = {
 	{ "_is64bit",               os_is64bit              },
 	{ "isdir",                  os_isdir                },
 	{ "getcwd",                 os_getcwd               },
+	{ "getpass",                os_getpass              },
 	{ "getversion",             os_getversion           },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
@@ -138,13 +136,13 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, LUA_COPYRIGHT);
 	lua_setglobal(L, "_COPYRIGHT");
 
-	lua_pushstring(L, VERSION);
+	lua_pushstring(L, PREMAKE_VERSION);
 	lua_setglobal(L, "_PREMAKE_VERSION");
 
-	lua_pushstring(L, COPYRIGHT);
+	lua_pushstring(L, PREMAKE_COPYRIGHT);
 	lua_setglobal(L, "_PREMAKE_COPYRIGHT");
 
-	lua_pushstring(L, PROJECT_URL);
+	lua_pushstring(L, PREMAKE_PROJECT_URL);
 	lua_setglobal(L, "_PREMAKE_URL");
 
 	/* set the OS platform variable */
