@@ -296,43 +296,6 @@
 	end
 
 
---
--- Test stubs
---
-
-	local function stub_io_open(fname, mode)
-		test.value_openedfilename = fname
-		test.value_openedfilemode = mode
-		return {
-			close = function()
-				test.value_closedfile = true
-			end
-		}
-	end
-
-	local function stub_io_output(f)
-	end
-
-	local function stub_print(s)
-	end
-
-	local function stub_utf8()
-	end
-
-	local function stub_os_writefile_ifnotequal(content, fname)
-		test.value_openedfilename = fname;
-		test.value_closedfile = true
-		return 0;
-	end
-
-
---
--- Define a collection for the test suites
---
-
-	T = {}
-
-
 
 --
 -- Test execution function
@@ -411,19 +374,6 @@
 
 
 
-	function test.declare(id)
-		if T[id] then
-			error("Duplicate test suite " .. id)
-		end
-		T[id] = {
-			_TESTS_DIR = _TESTS_DIR,
-			_SCRIPT_DIR = _SCRIPT_DIR,
-		}
-		return T[id]
-	end
-
-
-
 	function test.suppress(id)
 		if type(id) == "table" then
 			for i = 1, #id do
@@ -436,22 +386,15 @@
 
 
 
-	function test.runall(suitename, testname)
+	function test.runTests(suitename, testname)
 		test.print = print
 
-		local real_print = print
-		local real_open = io.open
-		local real_output = io.output
+		local hooks = test.installTestingHooks()
 
-		print = stub_print
-		io.open = stub_io_open
-		io.output = stub_io_output
-		os.writefile_ifnotequal = stub_os_writefile_ifnotequal
-		premake.utf8 = stub_utf8
+		local startTime = os.clock()
 
 		local numpassed = 0
 		local numfailed = 0
-
 
 		function runtest(suitename, suitetests, testname, testfunc)
 			if suitetests.setup ~= testfunc and
@@ -495,7 +438,6 @@
 			end
 		end
 
-
 		if suitename then
 			runsuite(suitename, T[suitename], testname)
 		else
@@ -504,10 +446,15 @@
 			end
 		end
 
-		print = real_print
-		io.open = real_open
-		io.output = real_output
+		local result = {
+			passed = numpassed,
+			failed = numfailed,
+			start = startTime,
+			elapsed = os.clock() - startTime
+		}
 
-		return numpassed, numfailed
+		test.removeTestingHooks(hooks)
+
+		return result
 	end
 

@@ -51,7 +51,7 @@
 
 
 	newoption {
-		trigger     = "test",
+		trigger     = "test-only",
 		description = "When testing, run only the specified suite or test"
 	}
 

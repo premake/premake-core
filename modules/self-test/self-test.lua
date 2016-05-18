@@ -41,17 +41,28 @@
 
 
 	function m.executeSelfTest()
-		local focus = {}
-		if _OPTIONS["test"] then
-			focus = string.explode(_OPTIONS["test"] or "", ".", true)
+		m.loadTestsFromManifests()
+
+		local result, err = m.runTests(_OPTIONS["test-only"])
+		if err then
+			error(err, 0)
 		end
 
+		printf("%d tests passed, %d failed in %0.02f seconds",
+			result.passed, result.failed, result.elapsed)
+
+		if result.failed > 0 then
+			os.exit(5)
+		end
+	end
+
+
+
+	function m.loadTestsFromManifests()
 		local mask = path.join(_MAIN_SCRIPT_DIR, "**/tests/_tests.lua")
-
-		--
-
 		local manifests = os.matchfiles(mask)
 
+		-- TODO: "**" should also match "." but doesn't currently
 		local top = path.join(_MAIN_SCRIPT_DIR, "tests/_tests.lua")
 		if os.isfile(top) then
 			table.insert(manifests, 1, top)
@@ -59,29 +70,22 @@
 
 		for i = 1, #manifests do
 			local manifest = manifests[i]
+
 			_TESTS_DIR = path.getdirectory(manifest)
+	
 			local files = dofile(manifest)
-			for f = 1, #files do
-				dofile(path.join(_TESTS_DIR, files[f]))
+			for i = 1, #files do
+				local filename = path.join(_TESTS_DIR, files[i])
+				dofile(filename)
 			end
 		end
-
-		--
-
-		local startTime = os.clock()
-
-		passed, failed = test.runall(focus[1], focus[2])
-
-	    io.write('running time : ',  os.clock() - startTime,'\n')
-
-		msg = string.format("%d tests passed, %d failed", passed, failed)
-		if (failed > 0) then
-			print(msg)
-			os.exit(5)
-		else
-			print(msg)
-		end
 	end
+
+
+
+	dofile("test_declare.lua")
+	dofile("test_hooks.lua")
+
 
 
 	return m
