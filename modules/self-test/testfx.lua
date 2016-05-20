@@ -6,14 +6,14 @@
 
 	local p = premake
 
-	local test = p.modules.self_test
+	local m = p.modules.self_test
 
 
 --
 -- Define a namespace for the testing functions
 --
 
-	test.suppressed = {}
+	m.suppressed = {}
 
 
 --
@@ -37,7 +37,7 @@
 -- Assertion functions
 --
 
-	function test.capture(expected)
+	function m.capture(expected)
 		local actual = premake.captured() .. premake.eol()
 
 		-- create line-by-line iterators for both values
@@ -50,7 +50,7 @@
 		local etxt = eit()
 		while etxt do
 			if (etxt ~= atxt) then
-				test.fail("(%d) expected:\n%s\n...but was:\n%s", linenum, etxt, atxt)
+				m.fail("(%d) expected:\n%s\n...but was:\n%s", linenum, etxt, atxt)
 			end
 
 			linenum = linenum + 1
@@ -60,38 +60,38 @@
 	end
 
 
-	function test.closedfile(expected)
-		if expected and not test.value_closedfile then
-			test.fail("expected file to be closed")
-		elseif not expected and test.value_closedfile then
-			test.fail("expected file to remain open")
+	function m.closedfile(expected)
+		if expected and not m.value_closedfile then
+			m.fail("expected file to be closed")
+		elseif not expected and m.value_closedfile then
+			m.fail("expected file to remain open")
 		end
 	end
 
 
-	function test.contains(expected, actual)
+	function m.contains(expected, actual)
 		if type(expected) == "table" then
 			for i, v in ipairs(expected) do
-				test.contains(v, actual)
+				m.contains(v, actual)
 			end
 		elseif not table.contains(actual, expected) then
-			test.fail("expected value %s not found", expected)
+			m.fail("expected value %s not found", expected)
 		end
 	end
 
 
-	function test.excludes(expected, actual)
+	function m.excludes(expected, actual)
 		if type(expected) == "table" then
 			for i, v in ipairs(expected) do
-				test.excludes(v, actual)
+				m.excludes(v, actual)
 			end
 		elseif table.contains(actual, expected) then
-			test.fail("excluded value %s found", expected)
+			m.fail("excluded value %s found", expected)
 		end
 	end
 
 
-	function test.fail(format, ...)
+	function m.fail(format, ...)
 
 		-- if format is a number then it is the stack depth
 		local depth = 3
@@ -115,129 +115,129 @@
 	end
 
 
-	function test.filecontains(expected, fn)
+	function m.filecontains(expected, fn)
 		local f = io.open(fn)
 		local actual = f:read("*a")
 		f:close()
 		if (expected ~= actual) then
-			test.fail("expected %s but was %s", expected, actual)
+			m.fail("expected %s but was %s", expected, actual)
 		end
 	end
 
 
-	function test.hasoutput()
+	function m.hasoutput()
 		local actual = premake.captured()
 		if actual == "" then
-			test.fail("expected output, received none");
+			m.fail("expected output, received none");
 		end
 	end
 
 
-	function test.isemptycapture()
+	function m.isemptycapture()
 		local actual = premake.captured()
 		if actual ~= "" then
-			test.fail("expected empty capture, but was %s", actual);
+			m.fail("expected empty capture, but was %s", actual);
 		end
 	end
 
 
-	function test.isequal(expected, actual, depth)
+	function m.isequal(expected, actual, depth)
 		depth = depth or 0
 		if type(expected) == "table" then
 			if expected and not actual then
-				test.fail(depth, "expected table, got nil")
+				m.fail(depth, "expected table, got nil")
 			end
 			if #expected < #actual then
-				test.fail(depth, "expected %d items, got %d", #expected, #actual)
+				m.fail(depth, "expected %d items, got %d", #expected, #actual)
 			end
 			for k,v in pairs(expected) do
-				test.isequal(expected[k], actual[k], depth + 1)
+				m.isequal(expected[k], actual[k], depth + 1)
 			end
 		else
 			if (expected ~= actual) then
-				test.fail(depth, "expected %s but was %s", expected, actual)
+				m.fail(depth, "expected %s but was %s", expected, actual)
 			end
 		end
 		return true
 	end
 
 
-	function test.isfalse(value)
+	function m.isfalse(value)
 		if (value) then
-			test.fail("expected false but was true")
+			m.fail("expected false but was true")
 		end
 	end
 
 
-	function test.isnil(value)
+	function m.isnil(value)
 		if (value ~= nil) then
-			test.fail("expected nil but was " .. tostring(value))
+			m.fail("expected nil but was " .. tostring(value))
 		end
 	end
 
 
-	function test.isnotnil(value)
+	function m.isnotnil(value)
 		if (value == nil) then
-			test.fail("expected not nil")
+			m.fail("expected not nil")
 		end
 	end
 
 
-	function test.issame(expected, action)
+	function m.issame(expected, action)
 		if expected ~= action then
-			test.fail("expected same value")
+			m.fail("expected same value")
 		end
 	end
 
 
-	function test.istrue(value)
+	function m.istrue(value)
 		if (not value) then
-			test.fail("expected true but was false")
+			m.fail("expected true but was false")
 		end
 	end
 
-	function test.missing(value, actual)
+	function m.missing(value, actual)
 		if table.contains(actual, value) then
-			test.fail("unexpected value %s found", value)
+			m.fail("unexpected value %s found", value)
 		end
 	end
 
-	function test.openedfile(fname)
-		if fname ~= test.value_openedfilename then
+	function m.openedfile(fname)
+		if fname ~= m.value_openedfilename then
 			local msg = "expected to open file '" .. fname .. "'"
-			if test.value_openedfilename then
-				msg = msg .. ", got '" .. test.value_openedfilename .. "'"
+			if m.value_openedfilename then
+				msg = msg .. ", got '" .. m.value_openedfilename .. "'"
 			end
-			test.fail(msg)
+			m.fail(msg)
 		end
 	end
 
 
-	function test.success(fn, ...)
+	function m.success(fn, ...)
 		local ok, err = pcall(fn, ...)
 		if not ok then
-			test.fail("call failed: " .. err)
+			m.fail("call failed: " .. err)
 		end
 	end
 
 
-	function test.stderr(expected)
+	function m.stderr(expected)
 		if not expected and stderr_capture then
-			test.fail("Unexpected: " .. stderr_capture)
+			m.fail("Unexpected: " .. stderr_capture)
 		elseif expected then
 			if not stderr_capture or not stderr_capture:find(expected) then
-				test.fail(string.format("expected '%s'; got %s", expected, stderr_capture or "(nil)"))
+				m.fail(string.format("expected '%s'; got %s", expected, stderr_capture or "(nil)"))
 			end
 		end
 	end
 
 
-	function test.notstderr(expected)
+	function m.notstderr(expected)
 		if not expected and not stderr_capture then
-			test.fail("Expected output on stderr; none received")
+			m.fail("Expected output on stderr; none received")
 		elseif expected then
 			if stderr_capture and stderr_capture:find(expected) then
-				test.fail(string.format("stderr contains '%s'; was %s", expected, stderr_capture))
+				m.fail(string.format("stderr contains '%s'; was %s", expected, stderr_capture))
 			end
 		end
 	end
@@ -247,24 +247,24 @@
 -- Some helper functions
 --
 
-	function test.createWorkspace()
+	function m.createWorkspace()
 		local wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
-		local prj = test.createproject(wks)
+		local prj = m.createproject(wks)
 		return wks, prj
 	end
 
 	-- Eventually we'll want to deprecate this one and move everyone
 	-- over to createWorkspace() instead (4 Sep 2015).
-	function test.createsolution()
+	function m.createsolution()
 		local wks = workspace("MySolution")
 		configurations { "Debug", "Release" }
-		local prj = test.createproject(wks)
+		local prj = m.createproject(wks)
 		return wks, prj
 	end
 
 
-	function test.createproject(wks)
+	function m.createproject(wks)
 		local n = #wks.projects + 1
 		if n == 1 then n = "" end
 
@@ -275,22 +275,22 @@
 	end
 
 
-	function test.getWorkspace(wks)
+	function m.getWorkspace(wks)
 		p.oven.bake()
 		return p.global.getWorkspace(wks.name)
 	end
 
-	p.alias(test, "getWorkspace", "getsolution")
+	p.alias(m, "getWorkspace", "getsolution")
 
 
-	function test.getproject(wks, i)
-		wks = test.getWorkspace(wks)
+	function m.getproject(wks, i)
+		wks = m.getWorkspace(wks)
 		return p.workspace.getproject(wks, i or 1)
 	end
 
 
-	function test.getconfig(prj, buildcfg, platform)
-		local wks = test.getWorkspace(prj.workspace)
+	function m.getconfig(prj, buildcfg, platform)
+		local wks = m.getWorkspace(prj.workspace)
 		prj = p.workspace.getproject(wks, prj.name)
 		return p.project.getconfig(prj, buildcfg, platform)
 	end
@@ -343,9 +343,9 @@
 		premake.api.reset()
 
 		-- reset captured I/O values
-		test.value_openedfilename = nil
-		test.value_openedfilemode = nil
-		test.value_closedfile = false
+		m.value_openedfilename = nil
+		m.value_openedfilemode = nil
+		m.value_closedfile = false
 
 		if suite.setup then
 			return xpcall(suite.setup, error_handler)
@@ -374,22 +374,26 @@
 
 
 
-	function test.suppress(id)
+	function m.suppress(id)
 		if type(id) == "table" then
 			for i = 1, #id do
-				test.suppress(id[i])
+				m.suppress(id[i])
 			end
 		else
-			test.suppressed[id] = true
+			m.suppressed[id] = true
 		end
 	end
 
 
 
-	function test.runTests(suitename, testname)
-		test.print = print
+	m.print = print
 
-		local hooks = test.installTestingHooks()
+
+
+	function m.runTests(identifier)
+		local suitename, testname = m.parseTestIdentifier(identifier)
+
+		local hooks = m.installTestingHooks()
 
 		local startTime = os.clock()
 
@@ -399,7 +403,7 @@
 		function runtest(suitename, suitetests, testname, testfunc)
 			if suitetests.setup ~= testfunc and
 				suitetests.teardown ~= testfunc and
-				not test.suppressed[suitename .. "." .. testname]
+				not m.suppressed[suitename .. "." .. testname]
 			then
 				local ok, err = test_setup(suitetests, testfunc)
 
@@ -412,7 +416,7 @@
 				err = err or terr
 
 				if (not ok) then
-					test.print(string.format("%s.%s: %s", suitename, testname, err))
+					m.print(string.format("%s.%s: %s", suitename, testname, err))
 					numfailed = numfailed + 1
 				else
 					numpassed = numpassed + 1
@@ -422,7 +426,7 @@
 
 
 		function runsuite(suitename, suitetests, testname)
-			if suitetests and not test.suppressed[suitename] then
+			if suitetests and not m.suppressed[suitename] then
 				_TESTS_DIR = suitetests._TESTS_DIR
 				_SCRIPT_DIR = suitetests._SCRIPT_DIR
 
@@ -453,7 +457,7 @@
 			elapsed = os.clock() - startTime
 		}
 
-		test.removeTestingHooks(hooks)
+		m.removeTestingHooks(hooks)
 
 		return result
 	end
