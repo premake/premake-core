@@ -8,6 +8,8 @@
 
 	local m = p.modules.self_test
 
+	local _ = {}
+
 
 --
 -- Define a namespace for the testing functions
@@ -391,68 +393,29 @@
 
 
 	function m.runTests(identifier)
-		local suitename, testname = m.parseTestIdentifier(identifier)
+		local test, err = m.getTestWithIdentifier(identifier)
+		if not test then
+			return nil, err
+		end
 
 		local hooks = m.installTestingHooks()
 
+		test.passed = 0
+		test.failed = 0
+
 		local startTime = os.clock()
 
-		local numpassed = 0
-		local numfailed = 0
-
-		function runtest(suitename, suitetests, testname, testfunc)
-			if suitetests.setup ~= testfunc and
-				suitetests.teardown ~= testfunc and
-				not m.suppressed[suitename .. "." .. testname]
-			then
-				local ok, err = test_setup(suitetests, testfunc)
-
-				if ok then
-					ok, err = test_run(suitetests, testfunc)
-				end
-
-				local tok, terr = test_teardown(suitetests, testfunc)
-				ok = ok and tok
-				err = err or terr
-
-				if (not ok) then
-					m.print(string.format("%s.%s: %s", suitename, testname, err))
-					numfailed = numfailed + 1
-				else
-					numpassed = numpassed + 1
-				end
-			end
-		end
-
-
-		function runsuite(suitename, suitetests, testname)
-			if suitetests and not m.suppressed[suitename] then
-				_TESTS_DIR = suitetests._TESTS_DIR
-				_SCRIPT_DIR = suitetests._SCRIPT_DIR
-
-				if testname then
-					runtest(suitename, suitetests, testname, suitetests[testname])
-				else
-					for testname, testfunc in pairs(suitetests) do
-						if type(testfunc) == "function" then
-							runtest(suitename, suitetests, testname, testfunc)
-						end
-					end
-				end
-			end
-		end
-
-		if suitename then
-			runsuite(suitename, T[suitename], testname)
+		if test.testFunction then
+			_.runTest(test)
+		elseif test.suite then
+			_.runSuite(test)
 		else
-			for suitename, suitetests in pairs(T) do
-				runsuite(suitename, suitetests, testname)
-			end
+			_.runAll(test)
 		end
 
 		local result = {
-			passed = numpassed,
-			failed = numfailed,
+			passed = test.passed,
+			failed = test.failed,
 			start = startTime,
 			elapsed = os.clock() - startTime
 		}
@@ -462,3 +425,51 @@
 		return result
 	end
 
+
+
+	function _.runAll(test)
+		local suites = m.getSuites()
+		for suiteName, suite in pairs(suites) do
+			if not m.suppressed[suiteName] then
+				test.suiteName = suiteName
+				test.suite = suite				
+				_.runSuite(test)
+			end
+		end
+	end
+
+
+
+	function _.runSuite(test)
+		for testName, testFunction in pairs(test.suite) do
+			test.testName = testName
+			test.testFunction = testFunction
+			if m.isValid(test) and not m.suppressed[test.suiteName .. "." .. test.testName] then
+				_.runTest(test)
+			end
+		end
+	end
+
+
+
+	function _.runTest(test)
+		_TESTS_DIR = test.suite._TESTS_DIR
+		_SCRIPT_DIR = test.suite._SCRIPT_DIR
+
+		local ok, err = test_setup(test.suite, test.testFunction)
+
+		if ok then
+			ok, err = test_run(test.suite, test.testFunction)
+		end
+
+		local tok, terr = test_teardown(test.suite, test.testFunction)
+		ok = ok and tok
+		err = err or terr
+
+		if not ok then
+			m.print(string.format("%s.%s: %s", test.suiteName, test.testName, err))
+			test.failed = test.failed + 1
+		else
+			test.passed = test.passed + 1
+		end
+	end
