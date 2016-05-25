@@ -1,6 +1,6 @@
 return {
 	"self-test.lua",
 	"test_declare.lua",
-	"test_hooks.lua",
+	"test_runner.lua",
 	"testfx.lua",
 }

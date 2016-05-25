@@ -14,6 +14,7 @@
 
 
 	_.suites = {}
+	_.suppressed = {}
 
 	T = _.suites
 
@@ -44,6 +45,32 @@
 
 		_.suites[suiteName] = suite
 		return suite
+	end
+
+
+
+---
+-- Prevent a particular test or suite of tests from running.
+--
+-- @param identifier
+--    A test or suite identifier, indicating which tests should be suppressed,
+--    in the form "suiteName" or "suiteName.testName".
+---
+
+	function m.suppress(identifier)
+		if type(identifier) == "table" then
+			for i = 1, #identifier do
+				m.suppress(identifier[i])
+			end
+		else
+			_.suppressed[identifier] = true
+		end
+	end
+
+
+
+	function m.isSuppressed(identifier)
+		return _.suppressed[identifier]
 	end
 
 

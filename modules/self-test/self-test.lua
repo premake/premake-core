@@ -43,15 +43,20 @@
 	function m.executeSelfTest()
 		m.loadTestsFromManifests()
 
-		local result, err = m.runTests(_OPTIONS["test-only"])
+		local test, err = m.getTestWithIdentifier(_OPTIONS["test-only"])
 		if err then
 			error(err, 0)
 		end
 
-		printf("%d tests passed, %d failed in %0.02f seconds",
-			result.passed, result.failed, result.elapsed)
+		local startTime = os.clock()
 
-		if result.failed > 0 then
+		local passed, failed = m.runTest(test)
+
+		local elapsed = os.clock() - startTime
+
+		printf("%d tests passed, %d failed in %0.02f seconds", passed, failed, elapsed)
+
+		if failed > 0 then
 			os.exit(5)
 		end
 	end
@@ -84,7 +89,7 @@
 
 
 	dofile("test_declare.lua")
-	dofile("test_hooks.lua")
+	dofile("test_runner.lua")
 
 
 
