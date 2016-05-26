@@ -117,6 +117,10 @@
 		hooks.p_utf8 = p.utf8
 		hooks.print = print
 
+		local mt = getmetatable(io.stderr)
+		_.builtin_write = mt.write
+		mt.write = _.stub_stderr_write
+
 		_OPTIONS = {}
 		setmetatable(_OPTIONS, getmetatable(hooks.options))
 
@@ -134,12 +138,14 @@
 		p.indent("\t")
 		p.api.reset()
 
+		m.stderr_capture = nil
 		m.value_openedfilename = nil
 		m.value_openedfilemode = nil
 		m.value_closedfile = false
 
 		return hooks
 	end
+
 
 
 
@@ -153,6 +159,9 @@
 		os.writefile_ifnotequal = hooks.os_writefile_ifnotequal
 		p.utf8 = hooks.p_utf8
 		print = hooks.print
+
+		local mt = getmetatable(io.stderr)
+		mt.write = _.builtin_write
 	end
 
 
@@ -238,6 +247,17 @@
 
 
 	function _.stub_print(s)
+	end
+
+
+
+
+	function _.stub_stderr_write(...)
+		if select(1, ...) == io.stderr then
+			m.stderr_capture = (m.stderr_capture or "") .. select(2, ...)
+		else
+			return _.builtin_write(...)
+		end
 	end
 
 

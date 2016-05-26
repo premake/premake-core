@@ -1,8 +1,11 @@
+---
+-- test_assertions.lua
 --
--- tests/testfx.lua
--- Automated test framework for Premake.
--- Copyright (c) 2008-2015 Jason Perkins and the Premake project
+-- Assertion functions for unit tests.
 --
+-- Author Jason Perkins
+-- Copyright (c) 2008-2016 Jason Perkins and the Premake project.
+---
 
 	local p = premake
 
@@ -11,27 +14,6 @@
 	local _ = {}
 
 
-
---
--- Capture stderr for testing.
---
-
-	local stderr_capture = nil
-
-	local mt = getmetatable(io.stderr)
-	local builtin_write = mt.write
-	mt.write = function(...)
-		if select(1,...) == io.stderr then
-			stderr_capture = (stderr_capture or "") .. select(2,...)
-		else
-			return builtin_write(...)
-		end
-	end
-
-
---
--- Assertion functions
---
 
 	function m.capture(expected)
 		local actual = premake.captured() .. premake.eol()
@@ -56,6 +38,7 @@
 	end
 
 
+
 	function m.closedfile(expected)
 		if expected and not m.value_closedfile then
 			m.fail("expected file to be closed")
@@ -63,6 +46,7 @@
 			m.fail("expected file to remain open")
 		end
 	end
+
 
 
 	function m.contains(expected, actual)
@@ -76,6 +60,7 @@
 	end
 
 
+
 	function m.excludes(expected, actual)
 		if type(expected) == "table" then
 			for i, v in ipairs(expected) do
@@ -87,8 +72,8 @@
 	end
 
 
-	function m.fail(format, ...)
 
+	function m.fail(format, ...)
 		-- if format is a number then it is the stack depth
 		local depth = 3
 		local arg = {...}
@@ -111,6 +96,7 @@
 	end
 
 
+
 	function m.filecontains(expected, fn)
 		local f = io.open(fn)
 		local actual = f:read("*a")
@@ -121,6 +107,7 @@
 	end
 
 
+
 	function m.hasoutput()
 		local actual = premake.captured()
 		if actual == "" then
@@ -129,12 +116,14 @@
 	end
 
 
+
 	function m.isemptycapture()
 		local actual = premake.captured()
 		if actual ~= "" then
 			m.fail("expected empty capture, but was %s", actual);
 		end
 	end
+
 
 
 	function m.isequal(expected, actual, depth)
@@ -158,11 +147,13 @@
 	end
 
 
+
 	function m.isfalse(value)
 		if (value) then
 			m.fail("expected false but was true")
 		end
 	end
+
 
 
 	function m.isnil(value)
@@ -172,11 +163,13 @@
 	end
 
 
+
 	function m.isnotnil(value)
 		if (value == nil) then
 			m.fail("expected not nil")
 		end
 	end
+
 
 
 	function m.issame(expected, action)
@@ -186,17 +179,22 @@
 	end
 
 
+
 	function m.istrue(value)
 		if (not value) then
 			m.fail("expected true but was false")
 		end
 	end
 
+
+
 	function m.missing(value, actual)
 		if table.contains(actual, value) then
 			m.fail("unexpected value %s found", value)
 		end
 	end
+
+
 
 	function m.openedfile(fname)
 		if fname ~= m.value_openedfilename then
@@ -209,6 +207,7 @@
 	end
 
 
+
 	function m.success(fn, ...)
 		local ok, err = pcall(fn, ...)
 		if not ok then
@@ -217,80 +216,25 @@
 	end
 
 
+
 	function m.stderr(expected)
-		if not expected and stderr_capture then
-			m.fail("Unexpected: " .. stderr_capture)
+		if not expected and m.stderr_capture then
+			m.fail("Unexpected: " .. m.stderr_capture)
 		elseif expected then
-			if not stderr_capture or not stderr_capture:find(expected) then
-				m.fail(string.format("expected '%s'; got %s", expected, stderr_capture or "(nil)"))
+			if not m.stderr_capture or not m.stderr_capture:find(expected) then
+				m.fail(string.format("expected '%s'; got %s", expected, m.stderr_capture or "(nil)"))
 			end
 		end
 	end
+
 
 
 	function m.notstderr(expected)
-		if not expected and not stderr_capture then
+		if not expected and not m.stderr_capture then
 			m.fail("Expected output on stderr; none received")
 		elseif expected then
-			if stderr_capture and stderr_capture:find(expected) then
-				m.fail(string.format("stderr contains '%s'; was %s", expected, stderr_capture))
+			if m.stderr_capture and m.stderr_capture:find(expected) then
+				m.fail(string.format("stderr contains '%s'; was %s", expected, m.stderr_capture))
 			end
 		end
 	end
-
-
---
--- Some helper functions
---
-
-	function m.createWorkspace()
-		local wks = workspace("MyWorkspace")
-		configurations { "Debug", "Release" }
-		local prj = m.createproject(wks)
-		return wks, prj
-	end
-
-	-- Eventually we'll want to deprecate this one and move everyone
-	-- over to createWorkspace() instead (4 Sep 2015).
-	function m.createsolution()
-		local wks = workspace("MySolution")
-		configurations { "Debug", "Release" }
-		local prj = m.createproject(wks)
-		return wks, prj
-	end
-
-
-	function m.createproject(wks)
-		local n = #wks.projects + 1
-		if n == 1 then n = "" end
-
-		local prj = project ("MyProject" .. n)
-		language "C++"
-		kind "ConsoleApp"
-		return prj
-	end
-
-
-	function m.getWorkspace(wks)
-		p.oven.bake()
-		return p.global.getWorkspace(wks.name)
-	end
-
-	p.alias(m, "getWorkspace", "getsolution")
-
-
-	function m.getproject(wks, i)
-		wks = m.getWorkspace(wks)
-		return p.workspace.getproject(wks, i or 1)
-	end
-
-
-	function m.getconfig(prj, buildcfg, platform)
-		local wks = m.getWorkspace(prj.workspace)
-		prj = p.workspace.getproject(wks, prj.name)
-		return p.project.getconfig(prj, buildcfg, platform)
-	end
-
-
-
-	m.print = print

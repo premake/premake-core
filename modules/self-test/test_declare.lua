@@ -16,8 +16,6 @@
 	_.suites = {}
 	_.suppressed = {}
 
-	T = _.suites
-
 
 
 ---

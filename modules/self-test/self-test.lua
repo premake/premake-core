@@ -15,10 +15,6 @@
 
 	m._VERSION = p._VERSION
 
-
-
-	dofile("testfx.lua")
-
 	
 
 	newaction {
@@ -88,7 +84,9 @@
 
 
 
+	dofile("test_assertions.lua")
 	dofile("test_declare.lua")
+	dofile("test_helpers.lua")
 	dofile("test_runner.lua")
 
 
