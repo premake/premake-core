@@ -44,13 +44,14 @@
 		trigger = "test",
 		description = "Run the automated test suite",
 		execute = function ()
-			include (path.join(corePath, "scripts/test.lua"))
+			test = require "self-test"
+			premake.action.call("self-test")
 		end
 	}
 
 
 	newoption {
-		trigger     = "test",
+		trigger     = "test-only",
 		description = "When testing, run only the specified suite or test"
 	}
 
