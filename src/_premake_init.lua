@@ -710,6 +710,16 @@
 	}
 
 	api.register {
+		name = "linkgroups",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"On",
+		}
+	}
+
+	api.register {
 		name = "locale",
 		scope = "config",
 		kind = "string",
