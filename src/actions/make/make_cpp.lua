@@ -445,7 +445,7 @@
 			if cfg.architecture == premake.UNIVERSAL then
 				_p('  LINKCMD = libtool -o "$@" $(OBJECTS)')
 			else
-				_p('  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)')
+				_p('  LINKCMD = $(AR) ' .. (toolset.arargs or '-rcs') ..' "$@" $(OBJECTS)')
 			end
 		elseif cfg.kind == premake.UTILITY then
 			-- Empty LINKCMD for Utility (only custom build rules)
