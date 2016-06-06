@@ -41,7 +41,7 @@
 				local test = {}
 
 				test.suiteName = suiteName
-				test.suite = suite				
+				test.suite = suite
 
 				local suitePassed, suiteFailed = _.runTestSuite(test)
 
@@ -93,13 +93,14 @@
 		ok = ok and tok
 		err = err or terr
 
-		if not ok then
-			m.print(string.format("%s.%s: %s", test.suiteName, test.testName, err))			
-		end
-
 		_.removeTestingHooks(hooks)
 
-		return ok, err
+		if ok then
+			return 1, 0
+		else
+			m.print(string.format("%s.%s: %s", test.suiteName, test.testName, err))
+			return 0, 1
+		end
 	end
 
 

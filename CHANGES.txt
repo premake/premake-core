@@ -7,12 +7,16 @@ for the complete list of changes from the Premake 4.x series.
 
 Since 5.0-alpha8:
 
-* New: buildcustomizations() imports custom .props files for VS
-* New: frameworksdir() for Xcode and Make OS X projects
-* New: nuget() to specify NuGet packages for VS projects
-* New: systemversion() to specify VS target platform
+* New: `buildcustomizations()` imports custom .props files for VS
+* New: `frameworksdir()` for Xcode and Make OS X projects
+* New: `nuget()` to specify NuGet packages for VS projects
+* New: `systemversion()` to specify VS target platform
+* New: `io.readfile()` and `io.writefile()`
+* New: Configurations may now be filtered by toolset
+* New: HTTP calls now support authentication
 * New: Support for XSD files in VS C# projects
 * New: MASM file categorization for VS
+* New: Integrated test framework for Premake module developers
 * Fix: VS filter ordering is now deterministic
 * Fix: VS projects and groups may now have the same name
 * Fix: May now use '.' within shell variable tokens
@@ -22,6 +26,9 @@ Since 5.0-alpha8:
 * Fix: Improved configuration baking performance
 * Fix: Use -O0 for Clang debug optimization level
 * Fix: CodeLite now uses portable path separators
+* Fix: Improved ability to find precompiled headers in Makefiles
+* Fix: Properly escape defines in Makefile projects
+* Fix: Correct casing of UTF8 marker on Visual Studio rule files
 
 Since 5.0-alpha7:
 
