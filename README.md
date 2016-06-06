@@ -1,6 +1,6 @@
-# PREMAKE 5 (core) 
-* Linux: [![Build Status](https://travis-ci.org/premake/premake-core.svg?branch=master)](https://travis-ci.org/premake/premake-core)
-* Windows: [![Build Status](http://jenkins.tomvandijck.com/job/premake-core/badge/icon)](http://jenkins.tomvandijck.com/job/premake-core/)
+# PREMAKE 5 (core)
+* Linux  : [![Build Status](https://travis-ci.org/premake/premake-core.svg?branch=master)](https://travis-ci.org/premake/premake-core)
+* Windows: [![Build status](https://ci.appveyor.com/api/projects/status/j34shfmryvqh1c6x?svg=true)](https://ci.appveyor.com/project/tvandijck/premake-core)
 
 <img src="http://premake.github.io/premake-logo.png" width="200" height="200" />
 
