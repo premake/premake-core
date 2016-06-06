@@ -103,8 +103,10 @@
 		if type(funcs) == "function" then
 			funcs = funcs(...)
 		end
-		for i = 1, #funcs do
-			funcs[i](...)
+		if funcs then
+			for i = 1, #funcs do
+				funcs[i](...)
+			end
 		end
 	end
 

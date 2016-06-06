@@ -36,28 +36,11 @@
 
 
 
-	m.elements.filterGroups = {
-		"None",
-		"ClInclude",
-		"ClCompile",
-		"ResourceCompile",
-		"CustomBuild",
-		"CustomRule"
-	}
-
-	m.elements.filters = function(prj, groups)
-		local calls = {}
-		for i, group in ipairs(m.elements.filterGroups) do
-			calls[i] = m[group .. "Filters"]
-		end
-		return calls
-	end
-
 	function m.filterGroups(prj)
-		-- Categorize the source files in groups by build rule; each will
-		-- be written to a separate item group by one of the handlers
 		local groups = m.categorizeSources(prj)
-		p.callArray(m.elements.filters, prj, groups)
+		for _, group in ipairs(groups) do
+			group.category.emitFilter(prj, group)
+		end
 	end
 
 
@@ -90,51 +73,17 @@
 	end
 
 
---
--- The second portion of the filters file assigns filters to each source
--- code file, as needed. Group is one of "ClCompile", "ClInclude",
--- "ResourceCompile", or "None".
---
-
-	function m.ClCompileFilters(prj, groups)
-		m.filterGroup(prj, groups, "ClCompile")
-	end
-
-	function m.ClIncludeFilters(prj, groups)
-		m.filterGroup(prj, groups, "ClInclude")
-	end
-
-	function m.CustomBuildFilters(prj, groups)
-		m.filterGroup(prj, groups, "CustomBuild")
-	end
-
-	function m.CustomRuleFilters(prj, groups)
-		for group, files in pairs(groups) do
-			if not table.contains(m.elements.filterGroups, group) then
-				m.filterGroup(prj, groups, group)
-			end
-		end
-	end
-
-	function m.NoneFilters(prj, groups)
-		m.filterGroup(prj, groups, "None")
-	end
-
-	function m.ResourceCompileFilters(prj, groups)
-		m.filterGroup(prj, groups, "ResourceCompile")
-	end
-
-	function m.filterGroup(prj, groups, group)
-		local files = groups[group] or {}
-		if #files > 0 then
+	function m.filterGroup(prj, group, tag)
+		local files = group.files
+		if files and #files > 0 then
 			p.push('<ItemGroup>')
 			for _, file in ipairs(files) do
 				if file.parent.path then
-					p.push('<%s Include=\"%s\">', group, path.translate(file.relpath))
+					p.push('<%s Include=\"%s\">', tag, path.translate(file.relpath))
 					p.w('<Filter>%s</Filter>', path.translate(file.parent.path))
-					p.pop('</%s>', group)
+					p.pop('</%s>', tag)
 				else
-					p.w('<%s Include=\"%s\" />', group, path.translate(file.relpath))
+					p.w('<%s Include=\"%s\" />', tag, path.translate(file.relpath))
 				end
 			end
 			p.pop('</ItemGroup>')

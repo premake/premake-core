@@ -21,6 +21,20 @@
 		p.escaper(vs2005.esc)
 
 		premake.generate(wks, ".sln", vstudio.sln2005.generate)
+
+		if _ACTION >= "vs2010" then
+			-- Skip generation of empty NuGet packages.config files
+			if p.workspace.hasProject(wks, function(prj) return #prj.nuget > 0 end) then
+				premake.generate(
+					{
+						location = path.join(wks.location, "packages.config"),
+						workspace = wks
+					},
+					nil,
+					vstudio.nuget2010.generatePackagesConfig
+				)
+			end
+		end
 	end
 
 

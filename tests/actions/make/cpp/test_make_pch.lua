@@ -16,6 +16,7 @@
 
 	local wks, prj
 	function suite.setup()
+		os.chdir(_TESTS_DIR)
 		wks, prj = test.createWorkspace()
 	end
 

@@ -94,7 +94,10 @@
 --
 
 	function context.copyFilters(ctx, src)
-		ctx.terms = table.deepcopy(src.terms)
+		ctx.terms = {}
+		for k,v in pairs(src.terms) do
+			ctx.terms[k] = v
+		end
 	end
 
 
@@ -109,22 +112,9 @@
 --
 
 	function context.mergeFilters(ctx, src)
-
-		local function mergeTable(dest, src)
-			for k,v in pairs(src) do
-				if type(v) == "table" then
-					if type(dest[k]) == "table" then
-						dest[k] = mergeTable(dest[k], v)
-					else
-						dest[k] = table.deepcopy(v)
-					end
-				else
-					dest[k] = v
-				end
-			end
+		for k,v in pairs(src.terms) do
+			ctx.terms[k] = v
 		end
-
-		mergeTable(ctx.terms, src.terms)
 	end
 
 

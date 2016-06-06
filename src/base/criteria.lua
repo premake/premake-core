@@ -32,6 +32,7 @@
 		options = true,
 		platforms = true,
 		system = true,
+		toolset = true,
 	}
 
 

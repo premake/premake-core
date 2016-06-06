@@ -43,7 +43,13 @@
 ---
 
 	function oven.bake()
-		p.container.bakeChildren(p.api.rootContainer())
+		-- reset the root _isBaked state.
+		-- this really only affects the unit-tests, since that is the only place
+		-- where multiple bakes per 'exe run' happen.
+		local root = p.api.rootContainer()
+		root._isBaked = false;
+
+		p.container.bake(root)
 	end
 
 	function oven.bakeWorkspace(wks)
@@ -51,8 +57,6 @@
 	end
 
 	p.alias(oven, "bakeWorkspace", "bakeSolution")
-
-
 
 ---
 -- Bakes a specific workspace object.
@@ -121,6 +125,8 @@
 		verbosef('    Baking %s...', self.name)
 
 		self.solution = self.workspace
+		self.global = self.workspace.global
+
 		local wks = self.workspace
 
 		-- Add filtering terms to the context to make it as specific as I can.
@@ -434,10 +440,12 @@
 
 		local system = p.action.current().os or os.get()
 		local architecture = nil
+		local toolset = nil
 
 		if platform then
 			system = p.api.checkValue(p.fields.system, platform) or system
 			architecture = p.api.checkValue(p.fields.architecture, platform) or architecture
+			toolset = p.api.checkValue(p.fields.toolset, platform) or toolset
 		end
 
 		-- Wrap the projects's configuration set (which contains all of the information
@@ -456,6 +464,7 @@
 		ctx.project = prj
 		ctx.workspace = wks
 		ctx.solution = wks
+		ctx.global = wks.global
 		ctx.buildcfg = buildcfg
 		ctx.platform = platform
 		ctx.action = _ACTION
@@ -486,6 +495,10 @@
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
 		context.addFilter(ctx, "architecture", ctx.architecture)
+
+		-- allow the project script to override the default toolset
+		ctx.toolset = ctx.toolset or toolset
+		context.addFilter(ctx, "toolset", ctx.toolset)		
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)

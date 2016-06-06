@@ -54,7 +54,7 @@
 --
 
 	os.chdir("..")
-	local text = os.outputof(string.format('git show %s:src/host/premake.c', branch))
+	local text = os.outputof(string.format('git show %s:src/host/premake.h', branch))
 	local _, _, version = text:find('VERSION%s*"([%w%p]+)"')
 
 	local pkgName = "premake-" .. version

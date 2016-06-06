@@ -5,8 +5,7 @@
 --
 
 
-	T.premake_override = {}
-	local suite = T.premake_override
+	local suite = test.declare("base_override")
 
 
 --

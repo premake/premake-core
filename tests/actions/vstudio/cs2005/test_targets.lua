@@ -15,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2012"
+		premake.action.set("vs2012")
 		wks = test.createWorkspace()
 		language "C#"
 	end

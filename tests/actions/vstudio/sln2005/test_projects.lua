@@ -15,6 +15,7 @@
 	local wks
 
 	function suite.setup()
+		premake.action.set("vs2005")
 		premake.escaper(premake.vstudio.vs2005.esc)
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
@@ -81,7 +82,7 @@ EndProject
 		project "MyProject"
 		prepare()
 		test.capture [[
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{D2C41116-3E7A-8A0B-C76E-84E23323810F}"
 EndProject
 		]]
 	end
@@ -97,9 +98,9 @@ EndProject
 		project "MyProject"
 		prepare()
 		test.capture [[
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{D2C41116-3E7A-8A0B-C76E-84E23323810F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{96080FE9-82C0-5036-EBC7-2992D79EEB26}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{BD0520A9-A9FE-3EFB-D230-2480BE881E07}"
 EndProject
 		]]
 	end
@@ -140,13 +141,13 @@ EndProject
 		project "MyProject3"
 		prepare()
 		test.capture [[
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zed", "Zed", "{283F880B-9448-887C-1DC4-9E7C89CC937C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zed", "Zed", "{2FCAF67E-9B34-ABF5-E472-5C9B501C894A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject2", "MyProject2.vcproj", "{B45D52A2-A015-94EF-091D-6D4BF5F32EE0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject1", "MyProject1.vcproj", "{B35D52A2-9F15-94EF-081D-6D4BF4F32EE0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{81FD827C-6D34-840D-1621-6A100237000F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{68E9C25D-54A1-04AB-BDA8-DD06A97F9F9B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject3", "MyProject3.vcproj", "{B55D52A2-A115-94EF-0A1D-6D4BF6F32EE0}"
 EndProject
@@ -162,15 +163,15 @@ EndProject
 		project "MyProject2"
 		prepare()
 		test.capture [[
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Alpha", "Alpha", "{D2C41116-3E7A-8A0B-C76E-84E23323810F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{96080FE9-82C0-5036-EBC7-2992D79EEB26}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beta", "Beta", "{BD0520A9-A9FE-3EFB-D230-2480BE881E07}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject2", "MyProject2.vcproj", "{B45D52A2-A015-94EF-091D-6D4BF5F32EE0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject1", "MyProject1.vcproj", "{B35D52A2-9F15-94EF-081D-6D4BF4F32EE0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zed", "Zed", "{283F880B-9448-887C-1DC4-9E7C89CC937C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Zed", "Zed", "{2FCAF67E-9B34-ABF5-E472-5C9B501C894A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject3", "MyProject3.vcproj", "{B55D52A2-A115-94EF-0A1D-6D4BF6F32EE0}"
 EndProject

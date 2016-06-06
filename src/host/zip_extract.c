@@ -75,6 +75,7 @@ static int is_directory(zip_uint8_t opsys, zip_uint32_t attrib)
 static int write_link(const char* filename, const char* bytes, size_t count)
 {
 #if PLATFORM_POSIX
+	(void)(count);
 	return symlink(bytes, filename);
 #else
 	FILE* fp = fopen(filename, "wb");

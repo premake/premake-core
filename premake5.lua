@@ -44,13 +44,14 @@
 		trigger = "test",
 		description = "Run the automated test suite",
 		execute = function ()
-			include (path.join(corePath, "scripts/test.lua"))
+			test = require "self-test"
+			premake.action.call("self-test")
 		end
 	}
 
 
 	newoption {
-		trigger     = "test",
+		trigger     = "test-only",
 		description = "When testing, run only the specified suite or test"
 	}
 
@@ -90,29 +91,48 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
-		configuration { "macosx", "gmake" }
+		flags { "No64BitChecks", "ExtraWarnings", "StaticRuntime", "MultiProcessorCompile" }
+
+		if not _OPTIONS["no-zlib"] then
+			defines { "PREMAKE_COMPRESSION" }
+		end
+		if not _OPTIONS["no-curl"] then
+			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
+		end
+
+		filter "configurations:Debug"
+			defines     "_DEBUG"
+			flags       { "Symbols" }
+
+		filter "configurations:Release"
+			defines     "NDEBUG"
+			optimize    "Full"
+			flags       { "NoBufferSecurityCheck", "NoRuntimeChecks" }
+
+		filter "action:vs*"
+			defines     { "_CRT_SECURE_NO_DEPRECATE", "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
+
+		filter { "system:windows", "configurations:Release" }
+			flags       { "NoIncrementalLink", "LinkTimeOptimization" }
+
+		filter { "system:macosx", "action:gmake" }
 			buildoptions { "-mmacosx-version-min=10.4" }
 			linkoptions  { "-mmacosx-version-min=10.4" }
-
-		configuration "vs*"
-			defines     { "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 	project "Premake5"
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
-		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "src/host/lua/src" }
+		includedirs { "contrib/lua/src" }
+		links       { "lua-lib" }
 
 		-- optional 3rd party libraries
 		if not _OPTIONS["no-zlib"] then
 			includedirs { "contrib/zlib", "contrib/libzip" }
-			defines { "PREMAKE_COMPRESSION" }
 			links { "zip-lib", "zlib-lib" }
 		end
 		if not _OPTIONS["no-curl"] then
 			includedirs { "contrib/curl/include" }
-			defines { "CURL_STATICLIB", "PREMAKE_CURL" }
 			links { "curl-lib" }
 		end
 
@@ -124,63 +144,54 @@
 
 		excludes
 		{
-			"src/host/lua/src/lauxlib.c",
-			"src/host/lua/src/lua.c",
-			"src/host/lua/src/luac.c",
-			"src/host/lua/src/print.c",
-			"src/host/lua/**.lua",
-			"src/host/lua/etc/*.c"
+			"contrib/**.*"
 		}
 
-		configuration "Debug"
+		filter "configurations:Debug"
 			targetdir   "bin/debug"
-			defines     "_DEBUG"
-			flags       { "Symbols" }
+			debugargs   { "--scripts=%{prj.location}/%{path.getrelative(prj.location, prj.basedir)} test"}
+			debugdir    "%{path.getrelative(prj.location, prj.basedir)}"
 
-		configuration "Release"
+		filter "configurations:Release"
 			targetdir   "bin/release"
-			defines     "NDEBUG"
-			flags       { "OptimizeSize" }
 
-		configuration "vs2005"
-			defines	{"_CRT_SECURE_NO_DEPRECATE" }
-
-		configuration "windows"
+		filter "system:windows"
 			links       { "ole32", "ws2_32" }
 
-		configuration "linux or bsd or hurd"
+		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 			linkoptions { "-rdynamic" }
 
-		configuration "linux or hurd"
+		filter "system:linux or hurd"
 			links       { "dl", "rt" }
 
-		configuration "linux"
+		filter "system:linux"
 			if not _OPTIONS["no-curl"] and os.findlib("ssl") then
 				links       { "ssl", "crypto" }
 			end
 
-		configuration "macosx"
+		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
 			if not _OPTIONS["no-curl"] then
 				links   { "Security.framework" }
 			end
 
-		configuration { "macosx", "gmake" }
+		filter { "system:macosx", "action:gmake" }
 			toolset "clang"
 
-		configuration { "solaris" }
+		filter { "system:solaris" }
 			linkoptions { "-Wl,--export-dynamic" }
 
-		configuration "aix"
+		filter "system:aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 
 
 	-- optional 3rd party libraries
 	group "contrib"
+		include "contrib/lua"
 		if not _OPTIONS["no-zlib"] then
 			include "contrib/zlib"
 			include "contrib/libzip"

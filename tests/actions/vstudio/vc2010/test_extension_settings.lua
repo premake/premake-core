@@ -16,6 +16,7 @@
 	local wks
 
 	function suite.setup()
+		premake.action.set("vs2010")
 		rule "MyRules"
 		rule "MyOtherRules"
 		wks = test.createWorkspace()
@@ -68,6 +69,21 @@
 		test.capture [[
 <ImportGroup Label="ExtensionSettings">
 	<Import Project="..\MyRules.props" />
+</ImportGroup>
+		]]
+	end
+
+--
+-- the asm 'file category' should add the right settings.
+--
+
+	function suite.hasAssemblyFiles()
+		files { "test.asm" }
+		location "build"
+		prepare()
+		test.capture [[
+<ImportGroup Label="ExtensionSettings">
+	<Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
 </ImportGroup>
 		]]
 	end

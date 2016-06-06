@@ -15,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2010"
+		premake.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 

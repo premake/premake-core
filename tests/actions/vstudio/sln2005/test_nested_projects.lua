@@ -16,7 +16,7 @@
 	local wks
 
 	function suite.setup()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
@@ -64,7 +64,7 @@ GlobalSection(NestedProjects) = preSolution
 		prepare()
 		test.capture [[
 GlobalSection(NestedProjects) = preSolution
-	{42B5DBC6-AE1F-903D-F75D-41E363076E92} = {0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}
+	{42B5DBC6-AE1F-903D-F75D-41E363076E92} = {D2C41116-3E7A-8A0B-C76E-84E23323810F}
 EndGlobalSection
 		]]
 	end
@@ -80,8 +80,8 @@ EndGlobalSection
 		prepare()
 		test.capture [[
 GlobalSection(NestedProjects) = preSolution
-	{96080FE9-82C0-5036-EBC7-2992D79EEB26} = {0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}
-	{42B5DBC6-AE1F-903D-F75D-41E363076E92} = {96080FE9-82C0-5036-EBC7-2992D79EEB26}
+	{BD0520A9-A9FE-3EFB-D230-2480BE881E07} = {D2C41116-3E7A-8A0B-C76E-84E23323810F}
+	{42B5DBC6-AE1F-903D-F75D-41E363076E92} = {BD0520A9-A9FE-3EFB-D230-2480BE881E07}
 EndGlobalSection
 		]]
 	end
@@ -98,7 +98,7 @@ EndGlobalSection
 		prepare()
 		test.capture [[
 GlobalSection(NestedProjects) = preSolution
-	{42B5DBC6-AE1F-903D-F75D-41E363076E92} = {0B5CD40C-7770-FCBD-40F2-9F1DACC5F8EE}
+	{42B5DBC6-AE1F-903D-F75D-41E363076E92} = {D2C41116-3E7A-8A0B-C76E-84E23323810F}
 EndGlobalSection
 		]]
 	end

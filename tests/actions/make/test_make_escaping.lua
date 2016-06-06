@@ -4,8 +4,7 @@
 -- Copyright (c) 2010-2012 Jason Perkins and the Premake project
 --
 
-	T.make_escaping = { }
-	local suite = T.make_escaping
+	local suite = test.declare("make_escaping")
 	local make = premake.make
 
 

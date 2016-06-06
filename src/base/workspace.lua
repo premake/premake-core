@@ -124,8 +124,8 @@
 
 		-- assign UUIDs to each node in the tree
 		p.tree.traverse(tr, {
-			onnode = function(node)
-				node.uuid = os.uuid(node.path)
+			onbranch = function(node)
+				node.uuid = os.uuid("group:" .. node.path)
 			end
 		})
 

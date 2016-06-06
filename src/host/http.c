@@ -47,8 +47,7 @@ typedef struct
 	char errorBuffer[CURL_ERROR_SIZE];
 } CurlCallbackState;
 
-static int curl_progress_cb(void* userdata, double dltotal, double dlnow,
-	double ultotal, double ulnow)
+static int curl_progress_cb(void* userdata, double dltotal, double dlnow, double ultotal, double ulnow)
 {
 	CurlCallbackState* state = (CurlCallbackState*) userdata;
 	lua_State* L = state->L;
@@ -60,8 +59,8 @@ static int curl_progress_cb(void* userdata, double dltotal, double dlnow,
 
 	/* retrieve the lua progress callback we saved before */
 	lua_rawgeti(L, LUA_REGISTRYINDEX, state->RefIndex);
-	lua_pushnumber(L, (lua_Number)dltotal);
-	lua_pushnumber(L, (lua_Number)dlnow);
+	lua_pushnumber(L, (lua_Number) dltotal);
+	lua_pushnumber(L, (lua_Number) dlnow);
 	lua_pcall(L, 2, LUA_MULTRET, 0);
 
 	return 0;
@@ -107,44 +106,21 @@ static void curl_init()
 	initializedHTTP = 1;
 }
 
-
-static void get_headers(lua_State* L, struct curl_slist** headers)
+static void get_headers(lua_State* L, int headersIndex, struct curl_slist** headers)
 {
-	int i;
-	int argc = lua_gettop(L);
-	// Headers are optional so loop through them if they exist(also indexed 1 -> N instead of 0 -> N-1 in lua)
-	for (i = 3; i <= argc; ++i)
+	lua_pushnil(L);
+	while (lua_next(L, headersIndex) != 0)
 	{
-		if (lua_istable(L, -1))
-		{
-			lua_pushnil(L);
-
-			while (lua_next(L, -2) != 0)
-			{
-				const char *item = luaL_checkstring(L, -1);
-				lua_pop(L, 1);
-				*headers = curl_slist_append(*headers, item);
-			}
-			// Only expect a single table as a parameter so break after reading it
-			break;
-		}
+		const char *item = luaL_checkstring(L, -1);
+		lua_pop(L, 1);
+		*headers = curl_slist_append(*headers, item);
 	}
 }
 
-
-static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int progressFnIndex)
+static CURL* curl_request(lua_State* L, CurlCallbackState* state, const char* url, FILE* fp, int optionsIndex, int progressFnIndex, int headersIndex)
 {
 	CURL* curl;
 	struct curl_slist* headers = NULL;
-	const char* url = luaL_checkstring(L, 1);
-
-	/* if the second argument is a lua function, then we save it
-		to call it later as the http progress callback */
-	if (lua_type(L, progressFnIndex) == LUA_TFUNCTION)
-	{
-		state->L = L;
-		state->RefIndex = luaL_ref(L, LUA_REGISTRYINDEX);
-	}
 
 	curl_init();
 	curl = curl_easy_init();
@@ -158,9 +134,58 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, state->errorBuffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Premake/" PREMAKE_VERSION);
 
-	get_headers(L, &headers);
-	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+	if (optionsIndex && lua_istable(L, optionsIndex))
+	{
+		lua_pushnil(L);
+		while (lua_next(L, optionsIndex) != 0)
+		{
+			const char* key = luaL_checkstring(L, -2);
+
+			if (!strcmp(key, "headers") && lua_istable(L, -1))
+			{
+				get_headers(L, lua_gettop(L), &headers);
+				curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+			}
+			else if (!strcmp(key, "progress") && lua_isfunction(L, -1))
+			{
+				state->L = L;
+				lua_pushvalue(L, -1);
+				state->RefIndex = luaL_ref(L, LUA_REGISTRYINDEX);
+			}
+			else if (!strcmp(key, "userpwd") && lua_isstring(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_USERPWD, luaL_checkstring(L, -1));
+			}
+			else if (!strcmp(key, "username") && lua_isstring(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_USERNAME, luaL_checkstring(L, -1));
+			}
+			else if (!strcmp(key, "password") && lua_isstring(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_PASSWORD, luaL_checkstring(L, -1));
+			}
+
+			// pop the value, leave the key for lua_next
+			lua_pop(L, 1);
+		}
+	}
+	else
+	{
+		if (progressFnIndex && lua_type(L, progressFnIndex) == LUA_TFUNCTION)
+		{
+			state->L = L;
+			lua_pushvalue(L, progressFnIndex);
+			state->RefIndex = luaL_ref(L, LUA_REGISTRYINDEX);
+		}
+
+		if (headersIndex && lua_istable(L, headersIndex))
+		{
+			get_headers(L, headersIndex, &headers);
+			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+		}
+	}
 
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, state);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_cb);
@@ -188,17 +213,28 @@ static CURL* curl_request(lua_State* L, CurlCallbackState* state, FILE* fp, int 
 int http_get(lua_State* L)
 {
 	CurlCallbackState state = { 0, 0, {NULL, 0}, {0} };
-
-	CURL* curl = curl_request(L, &state, /*fp=*/NULL, /*progressFnIndex=*/2);
+	CURL* curl;
 	CURLcode code;
 
-	string_init(&state.S);
+	if (lua_istable(L, 2))
+	{
+		// http.get(source, { options })
+		curl = curl_request(L, &state, luaL_checkstring(L, 1), /*fp=*/NULL, /*optionsIndex=*/2, /*progressFnIndex=*/0, /*headersIndex=*/0);
+	}
+	else
+	{
+		// backward compatible function signature
+		// http.get(source, progressFunction, { headers })
+		curl = curl_request(L, &state, luaL_checkstring(L, 1), /*fp=*/NULL, /*optionsIndex=*/0, /*progressFnIndex=*/2, /*headersIndex=*/3);
+	}
 
 	if (!curl)
 	{
 		lua_pushnil(L);
 		return 1;
 	}
+
+	string_init(&state.S);
 
 	code = curl_easy_perform(curl);
 	if (code != CURLE_OK)
@@ -239,7 +275,18 @@ int http_download(lua_State* L)
 		return 2;
 	}
 
-	curl = curl_request(L, &state, fp, /*progressFnIndex=*/3);
+	if (lua_istable(L, 3))
+	{
+		// http.download(source, destination, { options })
+		curl = curl_request(L, &state, luaL_checkstring(L, 1), fp, /*optionsIndex=*/3, /*progressFnIndex=*/0, /*headersIndex=*/0);
+	}
+	else
+	{
+		// backward compatible function signature
+		// http.download(source, destination, progressFunction, { headers })
+		curl = curl_request(L, &state, luaL_checkstring(L, 1), fp, /*optionsIndex=*/0, /*progressFnIndex=*/3, /*headersIndex=*/4);
+	}
+
 	if (curl)
 	{
 		code = curl_easy_perform(curl);

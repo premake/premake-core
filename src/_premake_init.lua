@@ -78,6 +78,12 @@
 	}
 
 	api.register {
+		name = "buildcustomizations",
+		scope = "project",
+		kind = "list:string",
+	}
+
+	api.register {
 		name = "builddependencies",
 		scope = { "rule" },
 		kind = "list:string",
@@ -683,6 +689,13 @@
 	}
 
 	api.register {
+		name = "frameworkdirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
 		name = "linkoptions",
 		scope = "config",
 		kind = "list:string",
@@ -733,6 +746,13 @@
 			"On",
 			"Off",
 		}
+	}
+
+	api.register {
+		name = "nuget",
+		scope = "project",
+		kind = "list:string",
+		tokens = true,
 	}
 
 	api.register {
@@ -944,6 +964,12 @@
 			"windows",
 			"xbox360",
 		},
+	}
+
+	api.register {
+		name = "systemversion",
+		scope = "project",
+		kind = "string",
 	}
 
 	api.register {

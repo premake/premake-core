@@ -4,8 +4,7 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
-	T.vstudio_cs2005_project_refs = {}
-	local suite = T.vstudio_cs2005_project_refs
+	local suite = test.declare("vstudio_cs2005_project_refs")
 	local cs2005 = premake.vstudio.cs2005
 
 
@@ -16,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		wks = test.createWorkspace()
 		uuid "00112233-4455-6677-8888-99AABBCCDDEE"
 		test.createproject(wks)

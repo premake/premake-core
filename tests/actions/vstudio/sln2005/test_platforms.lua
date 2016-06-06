@@ -15,7 +15,7 @@
 	local wks
 
 	function suite.setup()
-		_ACTION = "vs2008"
+		premake.action.set("vs2008")
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"
@@ -24,7 +24,7 @@
 	local function prepare(lang)
 		filter {}
 		uuid "C9135098-6047-8142-B10E-D27E7F73FCB3"
-		wks = test.getsolution(wks)
+		wks = test.getWorkspace(wks)
 		sln2005.configurationPlatforms(wks)
 	end
 

@@ -15,7 +15,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "test"
+		premake.action.set("test")
 		wks, prj = test.createWorkspace()
 		system "macosx"
 	end

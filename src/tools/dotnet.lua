@@ -62,7 +62,7 @@
 			if fname:endswith(".Designer.cs") then
 				local basename = fname:sub(1, -13)
 
-				-- Look for associated files: .resx, .settings, .cs
+				-- Look for associated files: .resx, .settings, .cs, .xsd
 				local testname = basename .. ".resx"
 				if project.hasfile(fcfg.project, testname) then
 					info.AutoGen = "True"
@@ -83,14 +83,27 @@
 					info.DependentUpon = testname
 				end
 
+				testname = basename .. ".xsd"
+				if project.hasfile(fcfg.project, testname) then
+					info.AutoGen = "True"
+					info.DesignTime = "True"
+					info.DependentUpon = testname
+				end
+
 			elseif fname:endswith(".xaml.cs") then
 				info.SubType = "Code"
 				info.DependentUpon = fname:sub(1, -4)
 
 			else
+				local basename = fname:sub(1, -4)
+
+				-- Is there a matching *.xsd?
+				testname = basename .. ".xsd"
+				if project.hasfile(fcfg.project, testname) then
+					info.DependentUpon = testname
+				end
 
 				-- Is there a matching *.Designer.cs?
-				local basename = fname:sub(1, -4)
 				testname = basename .. ".Designer.cs"
 				if project.hasfile(fcfg.project, testname) then
 					info.SubType = "Form"
@@ -144,6 +157,22 @@
 			if project.hasfile(fcfg.project, testname) then
 				info.Generator = "SettingsSingleFileGenerator"
 				info.LastGenOutput = path.getname(testname)
+			end
+		end
+
+		if info.action == "None" and fname:endswith(".xsd") then
+			local testname = fname:sub(1, -5) .. ".Designer.cs"
+			if project.hasfile(fcfg.project, testname) then
+				info.SubType = "Designer"
+				info.Generator = "MSDataSetGenerator"
+				info.LastGenOutput = path.getname(testname)
+			end
+		end
+
+		if info.action == "None" and (fname:endswith(".xsc") or fname:endswith(".xss")) then
+			local testname = fname:sub(1, -5) .. ".xsd"
+			if project.hasfile(fcfg.project, testname) then
+				info.DependentUpon = testname
 			end
 		end
 

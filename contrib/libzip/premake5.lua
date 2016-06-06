@@ -2,8 +2,8 @@ project "zip-lib"
 	language    "C"
 	kind        "StaticLib"
 	includedirs "include"
-	defines     {"N_FSEEKO", "_CRT_SECURE_NO_DEPRECATE"}
-	flags       { "StaticRuntime" }
+	defines     { "N_FSEEKO" }
+	warnings    "off"
 
 	files
 	{
@@ -11,19 +11,11 @@ project "zip-lib"
 		"**.c"
 	}
 
-	configuration "linux"
-		defines {"HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H"}
+	filter "system:linux"
+		defines { "HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H" }
 
-	configuration "windows"
-		defines {"_WINDOWS"}
+	filter "system:windows"
+		defines { "_WINDOWS" }
 
-	configuration "macosx"
-		defines { 'HAVE_SSIZE_T_LIBZIP' }
-
-	configuration "Release"
-		defines {"NDEBUG"}
-		flags   { "OptimizeSize" }
-
-	configuration "Debug"
-		defines {"_DEBUG"}
-		flags   { "Symbols" }
+	filter "system:macosx"
+		defines { "HAVE_SSIZE_T_LIBZIP" }

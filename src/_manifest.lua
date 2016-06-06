@@ -76,6 +76,7 @@
 		"actions/vstudio/vs2005_csproj.lua",
 		"actions/vstudio/vs2005_csproj_user.lua",
 		"actions/vstudio/vs2010.lua",
+		"actions/vstudio/vs2010_nuget.lua",
 		"actions/vstudio/vs2010_vcxproj.lua",
 		"actions/vstudio/vs2010_vcxproj_user.lua",
 		"actions/vstudio/vs2010_vcxproj_filters.lua",

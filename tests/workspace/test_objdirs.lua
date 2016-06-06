@@ -14,7 +14,7 @@
 	local wks
 
 	function suite.setup()
-		_ACTION = "test"
+		premake.action.set("test")
 		wks = workspace("MyWorkspace")
 		system "macosx"
 	end

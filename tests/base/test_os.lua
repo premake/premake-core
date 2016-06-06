@@ -68,7 +68,7 @@
 
 	function suite.matchfiles_OnNonRecursive()
 		local result = os.matchfiles("*.lua")
-		test.istrue(table.contains(result, "testfx.lua"))
+		test.istrue(table.contains(result, "_tests.lua"))
 		test.isfalse(table.contains(result, "folder/ok.lua"))
 	end
 
