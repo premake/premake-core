@@ -153,7 +153,7 @@
 
 		-- otherwise, a new instance
 		if not instance then
-			instance = class.new(name)
+			instance = class.new(name, parent)
 			if parent then
 				p.container.addChild(parent, instance)
 			end
