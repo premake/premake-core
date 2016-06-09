@@ -20,29 +20,21 @@
 		host_compiler = msc
 	end
 
-	function nvcc.prefixflags(flags, prefix)
+	local function prefixFlags(flags, prefix)
 		for k, v in pairs(flags) do
 			flags[k] = prefix .. " " .. v
 		end
 		return flags
 	end
 
-	function nvcc.prefixcompilerflags(flags)
-		local flags = nvcc.prefixflags(flags, "-Xcompiler")
+	local function prefixCompilerFlags(flags)
+		local flags = prefixFlags(flags, "-Xcompiler")
 		return flags
 	end
 
-	function nvcc.prefixlinkerflags(flags)
-		local flags = nvcc.prefixflags(flags, "-Xlinker")
+	local function prefixLinkerFlags(flags)
+		local flags = prefixFlags(flags, "-Xlinker")
 		return flags
-	end
-
-	function get(tbl, key, fallback)
-		if table.contains(key) then
-			return table[key]
-		else
-			return fallback
-		end
 	end
 
 --
@@ -87,13 +79,13 @@
 
 	function nvcc.getcflags(cfg)
 		local flags = config.mapFlags(cfg, nvcc.cflags)
-		local hflags = nvcc.prefixcompilerflags(host_compiler.getcflags(cfg))
+		local hflags = prefixCompilerFlags(host_compiler.getcflags(cfg))
 		flags = table.join(flags, hflags, nvcc.getwarnings(cfg))
 		return flags
 	end
 
 	function nvcc.getwarnings(cfg)
-		return nvcc.prefixcompilerflags(host_compiler.getwarnings(cfg))
+		return prefixCompilerFlags(host_compiler.getwarnings(cfg))
 	end
 
 
@@ -117,7 +109,7 @@
 
 	function nvcc.getcxxflags(cfg)
 		local flags = config.mapFlags(cfg, nvcc.cxxflags)
-		local hflags = nvcc.prefixcompilerflags(host_compiler.getcxxflags(cfg))
+		local hflags = prefixCompilerFlags(host_compiler.getcxxflags(cfg))
 		flags = table.join(flags, hflags)
 		return flags
 	end
@@ -207,7 +199,7 @@
 
 	function nvcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, nvcc.ldflags)
-		local hflags = nvcc.prefixlinkerflags(host_compiler.getldflags(cfg))
+		local hflags = prefixLinkerFlags(host_compiler.getldflags(cfg))
 		flags = table.join(flags, hflags)
 		return flags
 	end
