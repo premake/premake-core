@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -188,9 +188,6 @@
 #  endif
 #  ifndef CURL_DISABLE_SMTP
 #    define CURL_DISABLE_SMTP
-#  endif
-#  ifndef CURL_DISABLE_RTSP
-#    define CURL_DISABLE_RTSP
 #  endif
 #  ifndef CURL_DISABLE_RTMP
 #    define CURL_DISABLE_RTMP
@@ -484,7 +481,7 @@
 #  endif
 
 #  ifndef fileno /* sunos 4 have this as a macro! */
-     int fileno( FILE *stream);
+     int fileno(FILE *stream);
 #  endif
 
 #endif /* WIN32 */
@@ -492,9 +489,10 @@
 /*
  * msvc 6.0 requires PSDK in order to have INET6_ADDRSTRLEN
  * defined in ws2tcpip.h as well as to provide IPv6 support.
+ * Does not apply if lwIP is used.
  */
 
-#if defined(_MSC_VER) && !defined(__POCC__)
+#if defined(_MSC_VER) && !defined(__POCC__) && !defined(USE_LWIPSOCK)
 #  if !defined(HAVE_WS2TCPIP_H) || \
      ((_MSC_VER < 1300) && !defined(INET6_ADDRSTRLEN))
 #    undef HAVE_GETADDRINFO_THREADSAFE
@@ -538,6 +536,7 @@
 #  define CURLRES_ARES
 /* now undef the stock libc functions just to avoid them being used */
 #  undef HAVE_GETADDRINFO
+#  undef HAVE_FREEADDRINFO
 #  undef HAVE_GETHOSTBYNAME
 #elif defined(USE_THREADS_POSIX) || defined(USE_THREADS_WIN32)
 #  define CURLRES_ASYNCH
@@ -613,7 +612,7 @@ int netware_init(void);
 #define LIBIDN_REQUIRED_VERSION "0.4.1"
 
 #if defined(USE_GNUTLS) || defined(USE_OPENSSL) || defined(USE_NSS) || \
-    defined(USE_POLARSSL) || defined(USE_AXTLS) || \
+    defined(USE_POLARSSL) || defined(USE_AXTLS) || defined(USE_MBEDTLS) || \
     defined(USE_CYASSL) || defined(USE_SCHANNEL) || \
     defined(USE_DARWINSSL) || defined(USE_GSKIT)
 #define USE_SSL    /* SSL support has been enabled */
@@ -637,11 +636,7 @@ int netware_init(void);
     defined(USE_GNUTLS) || defined(USE_NSS) || defined(USE_DARWINSSL) || \
     defined(USE_OS400CRYPTO) || defined(USE_WIN32_CRYPTO)
 
-#ifdef HAVE_BORINGSSL /* BoringSSL is not NTLM capable */
-#undef USE_NTLM
-#else
 #define USE_NTLM
-#endif
 #endif
 #endif
 
@@ -685,7 +680,7 @@ int netware_init(void);
  * Ensure that Winsock and lwIP TCP/IP stacks are not mixed.
  */
 
-#if defined(__LWIP_OPT_H__)
+#if defined(__LWIP_OPT_H__) || defined(LWIP_HDR_OPT_H)
 #  if defined(SOCKET) || \
      defined(USE_WINSOCK) || \
      defined(HAVE_WINSOCK_H) || \
@@ -716,7 +711,7 @@ int netware_init(void);
 #endif
 
 /* In Windows the default file mode is text but an application can override it.
-Therefore we specify it explicitly. https://github.com/bagder/curl/pull/258
+Therefore we specify it explicitly. https://github.com/curl/curl/pull/258
 */
 #if defined(WIN32) || defined(MSDOS)
 #define FOPEN_READTEXT "rt"
@@ -734,5 +729,20 @@ endings either CRLF or LF so 't' is appropriate.
 #define FOPEN_READTEXT "r"
 #define FOPEN_WRITETEXT "w"
 #endif
+
+/* WinSock destroys recv() buffer when send() failed.
+ * Enabled automatically for Windows and for Cygwin as Cygwin sockets are
+ * wrappers for WinSock sockets. https://github.com/curl/curl/issues/657
+ * Define DONT_USE_RECV_BEFORE_SEND_WORKAROUND to force disable workaround.
+ */
+#if !defined(DONT_USE_RECV_BEFORE_SEND_WORKAROUND)
+#  if defined(WIN32) || defined(__CYGWIN__)
+#    define USE_RECV_BEFORE_SEND_WORKAROUND
+#  endif
+#else  /* DONT_USE_RECV_BEFORE_SEND_WORKAROUNDS */
+#  ifdef USE_RECV_BEFORE_SEND_WORKAROUND
+#    undef USE_RECV_BEFORE_SEND_WORKAROUND
+#  endif
+#endif /* DONT_USE_RECV_BEFORE_SEND_WORKAROUNDS */
 
 #endif /* HEADER_CURL_SETUP_H */

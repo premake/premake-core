@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -62,7 +62,7 @@
 
 /*
  Some hackish cast macros based on:
- http://library.gnome.org/devel/glib/unstable/glib-Type-Conversion-Macros.html
+ https://developer.gnome.org/glib/unstable/glib-Type-Conversion-Macros.html
 */
 #ifndef GNUTLS_POINTER_TO_INT_CAST
 #define GNUTLS_POINTER_TO_INT_CAST(p) ((int) (long) (p))
@@ -487,6 +487,14 @@ gtls_connect_step1(struct connectdata *conn,
   }
 #endif
 
+#ifdef CURL_CA_FALLBACK
+  /* use system ca certificate store as fallback */
+  if(data->set.ssl.verifypeer &&
+     !(data->set.ssl.CAfile || data->set.ssl.CApath)) {
+    gnutls_certificate_set_x509_system_trust(conn->ssl[sockindex].cred);
+  }
+#endif
+
   if(data->set.ssl.CRLfile) {
     /* set the CRL list file */
     rc = gnutls_certificate_set_x509_crl_file(conn->ssl[sockindex].cred,
@@ -633,12 +641,12 @@ gtls_connect_step1(struct connectdata *conn,
 #endif
 
 #ifdef HAS_ALPN
-  if(data->set.ssl_enable_alpn) {
+  if(conn->bits.tls_enable_alpn) {
     int cur = 0;
     gnutls_datum_t protocols[2];
 
 #ifdef USE_NGHTTP2
-    if(data->set.httpversion == CURL_HTTP_VERSION_2_0) {
+    if(data->set.httpversion >= CURL_HTTP_VERSION_2) {
       protocols[cur].data = (unsigned char *)NGHTTP2_PROTO_VERSION_ID;
       protocols[cur].size = NGHTTP2_PROTO_VERSION_ID_LEN;
       cur++;
@@ -676,11 +684,11 @@ gtls_connect_step1(struct connectdata *conn,
               "error reading X.509 potentially-encrypted key file: %s",
               gnutls_strerror(rc));
         return CURLE_SSL_CONNECT_ERROR;
-#else
-        failf(data, "gnutls lacks support for encrypted key files");
-        return CURLE_SSL_CONNECT_ERROR;
-#endif
       }
+#else
+      failf(data, "gnutls lacks support for encrypted key files");
+      return CURLE_SSL_CONNECT_ERROR;
+#endif
     }
     else {
       rc = gnutls_certificate_set_x509_key_file(
@@ -1232,7 +1240,7 @@ gtls_connect_step3(struct connectdata *conn,
   infof(data, "\t compression: %s\n", ptr);
 
 #ifdef HAS_ALPN
-  if(data->set.ssl_enable_alpn) {
+  if(conn->bits.tls_enable_alpn) {
     rc = gnutls_alpn_get_selected_protocol(session, &proto);
     if(rc == 0) {
       infof(data, "ALPN, server accepted to use %.*s\n", proto.size,
@@ -1242,7 +1250,7 @@ gtls_connect_step3(struct connectdata *conn,
       if(proto.size == NGHTTP2_PROTO_VERSION_ID_LEN &&
          !memcmp(NGHTTP2_PROTO_VERSION_ID, proto.data,
                  NGHTTP2_PROTO_VERSION_ID_LEN)) {
-        conn->negnpn = CURL_HTTP_VERSION_2_0;
+        conn->negnpn = CURL_HTTP_VERSION_2;
       }
       else
 #endif
@@ -1373,7 +1381,7 @@ static ssize_t gtls_send(struct connectdata *conn,
 {
   ssize_t rc = gnutls_record_send(conn->ssl[sockindex].session, mem, len);
 
-  if(rc < 0 ) {
+  if(rc < 0) {
     *curlcode = (rc == GNUTLS_E_AGAIN)
       ? CURLE_AGAIN
       : CURLE_SEND_ERROR;

@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -50,10 +50,9 @@
 #include "curl_addrinfo.h"
 #include "inet_pton.h"
 #include "warnless.h"
+/* The last 3 #include files should be in this order */
 #include "curl_printf.h"
 #include "curl_memory.h"
-
-/* The last #include file should be: */
 #include "memdebug.h"
 
 /*
@@ -521,7 +520,11 @@ void
 curl_dofreeaddrinfo(struct addrinfo *freethis,
                     int line, const char *source)
 {
+#ifdef USE_LWIPSOCK
+  lwip_freeaddrinfo(freethis);
+#else
   (freeaddrinfo)(freethis);
+#endif
   curl_memlog("ADDR %s:%d freeaddrinfo(%p)\n",
               source, line, (void *)freethis);
 }
@@ -544,7 +547,11 @@ curl_dogetaddrinfo(const char *hostname,
                    struct addrinfo **result,
                    int line, const char *source)
 {
+#ifdef USE_LWIPSOCK
+  int res=lwip_getaddrinfo(hostname, service, hints, result);
+#else
   int res=(getaddrinfo)(hostname, service, hints, result);
+#endif
   if(0 == res)
     /* success */
     curl_memlog("ADDR %s:%d getaddrinfo() = %p\n",

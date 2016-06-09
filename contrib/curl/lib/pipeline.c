@@ -10,7 +10,7 @@
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -323,10 +323,11 @@ CURLMcode Curl_pipeline_set_server_blacklist(char **servers,
 static bool pipe_head(struct SessionHandle *data,
                       struct curl_llist *pipeline)
 {
-  struct curl_llist_element *curr = pipeline->head;
-  if(curr)
-    return (curr->ptr == data) ? TRUE : FALSE;
-
+  if(pipeline) {
+    struct curl_llist_element *curr = pipeline->head;
+    if(curr)
+      return (curr->ptr == data) ? TRUE : FALSE;
+  }
   return FALSE;
 }
 

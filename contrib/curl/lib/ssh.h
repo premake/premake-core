@@ -11,7 +11,7 @@
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -66,6 +66,9 @@ typedef enum {
   SSH_SFTP_QUOTE_RENAME,
   SSH_SFTP_QUOTE_RMDIR,
   SSH_SFTP_QUOTE_UNLINK,
+  SSH_SFTP_QUOTE_STATVFS,
+  SSH_SFTP_GETINFO,
+  SSH_SFTP_FILETIME,
   SSH_SFTP_TRANS_INIT,
   SSH_SFTP_UPLOAD_INIT,
   SSH_SFTP_CREATE_DIRS_INIT,

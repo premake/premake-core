@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -41,7 +41,7 @@
    defines/macros #defined by the lib-specific header files.
 
    "SSL/TLS Strong Encryption: An Introduction"
-   http://httpd.apache.org/docs-2.0/ssl/ssl_intro.html
+   https://httpd.apache.org/docs/2.0/ssl/ssl_intro.html
 */
 
 #include "curl_setup.h"
@@ -363,6 +363,12 @@ bool Curl_ssl_getsessionid(struct connectdata *conn,
       /* not session ID means blank entry */
       continue;
     if(Curl_raw_equal(conn->host.name, check->name) &&
+       ((!conn->bits.conn_to_host && !check->conn_to_host) ||
+         (conn->bits.conn_to_host && check->conn_to_host &&
+           Curl_raw_equal(conn->conn_to_host.name, check->conn_to_host))) &&
+       ((!conn->bits.conn_to_port && check->conn_to_port == -1) ||
+         (conn->bits.conn_to_port && check->conn_to_port != -1 &&
+           conn->conn_to_port == check->conn_to_port)) &&
        (conn->remote_port == check->remote_port) &&
        Curl_ssl_config_matches(&conn->ssl_config, &check->ssl_config)) {
       /* yes, we have a session ID! */
@@ -400,6 +406,7 @@ void Curl_ssl_kill_session(struct curl_ssl_session *session)
     Curl_free_ssl_config(&session->ssl_config);
 
     Curl_safefree(session->name);
+    Curl_safefree(session->conn_to_host);
   }
 }
 
@@ -442,6 +449,8 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   struct curl_ssl_session *store = &data->state.session[0];
   long oldest_age=data->state.session[0].age; /* zero if unused */
   char *clone_host;
+  char *clone_conn_to_host;
+  int conn_to_port;
   long *general_age;
 
   /* Even though session ID re-use might be disabled, that only disables USING
@@ -451,6 +460,21 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   clone_host = strdup(conn->host.name);
   if(!clone_host)
     return CURLE_OUT_OF_MEMORY; /* bail out */
+
+  if(conn->bits.conn_to_host) {
+    clone_conn_to_host = strdup(conn->conn_to_host.name);
+    if(!clone_conn_to_host) {
+      free(clone_host);
+      return CURLE_OUT_OF_MEMORY; /* bail out */
+    }
+  }
+  else
+    clone_conn_to_host = NULL;
+
+  if(conn->bits.conn_to_port)
+    conn_to_port = conn->conn_to_port;
+  else
+    conn_to_port = -1;
 
   /* Now we should add the session ID and the host name to the cache, (remove
      the oldest if necessary) */
@@ -484,9 +508,11 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   store->age = *general_age;    /* set current age */
     /* free it if there's one already present */
   free(store->name);
+  free(store->conn_to_host);
   store->name = clone_host;               /* clone host name */
+  store->conn_to_host = clone_conn_to_host; /* clone connect to host name */
+  store->conn_to_port = conn_to_port; /* connect to port number */
   store->remote_port = conn->remote_port; /* port number */
-
 
   /* Unlock */
   if(SSLSESSION_SHARED(data))
@@ -495,6 +521,7 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   if(!Curl_clone_ssl_config(&conn->ssl_config, &store->ssl_config)) {
     store->sessionid = NULL; /* let caller free sessionid */
     free(clone_host);
+    free(clone_conn_to_host);
     return CURLE_OUT_OF_MEMORY;
   }
 
@@ -788,9 +815,9 @@ CURLcode Curl_pin_peer_pubkey(struct SessionHandle *data,
   if(!pubkey || !pubkeylen)
     return result;
 
-#ifdef curlssl_sha256sum
   /* only do this if pinnedpubkey starts with "sha256//", length 8 */
   if(strncmp(pinnedpubkey, "sha256//", 8) == 0) {
+#ifdef curlssl_sha256sum
     /* compute sha256sum of public key */
     sha256sumdigest = malloc(SHA256_DIGEST_LENGTH);
     if(!sha256sumdigest)
@@ -843,9 +870,12 @@ CURLcode Curl_pin_peer_pubkey(struct SessionHandle *data,
     } while(end_pos && begin_pos);
     Curl_safefree(encoded);
     Curl_safefree(pinkeycopy);
+#else
+    /* without sha256 support, this cannot match */
+    (void)data;
+#endif
     return result;
   }
-#endif
 
   fp = fopen(pinnedpubkey, "rb");
   if(!fp)
