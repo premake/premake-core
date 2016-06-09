@@ -57,6 +57,7 @@
 		"tools/msc.lua",
 		"tools/snc.lua",
 		"tools/clang.lua",
+		"tools/nvcc.lua",
 
 		-- GNU make action
 		"actions/make/_make.lua",

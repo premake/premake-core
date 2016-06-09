@@ -114,7 +114,12 @@
 	function cpp.buildcommand(prj, objext, node)
 		local iscfile = node and path.iscfile(node.abspath) or false
 		local flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
-		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
+		if prj.toolset == "nvcc" then
+			_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$(@:%%.%s=%%.d)" -M "$<"', flags, objext)
+			_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -c "$<"', flags, objext)
+		else
+			_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
+		end
 	end
 
 
@@ -512,8 +517,14 @@
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
 
+
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
-		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+		if prj.toolset == "nvcc" then
+			_p('\t$(SILENT) %s -o "$(@:%%.gch=%%.d)" -M "$<"', cmd)
+			_p('\t$(SILENT) %s -o "$@" -c "$<"', cmd)
+		else
+			_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+		end
 
 		_p('endif')
 		_p('')
