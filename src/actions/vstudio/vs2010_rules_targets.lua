@@ -61,6 +61,7 @@
 
 	m.elements.computeInputsGroup = function(r)
 		return {
+			m.computeCompileInputsTargets,
 			m.computeLinkInputsTargets,
 			m.computeLibInputsTargets,
 		}
@@ -254,6 +255,15 @@
 
 
 
+	function m.computeCompileInputsTargets(r)
+		p.push('<ComputeCompileInputsTargets>')
+		p.w('$(ComputeCompileInputsTargets);')
+		p.w('Compute%sOutput;', r.name)
+		p.pop('</ComputeCompileInputsTargets>')
+	end
+
+
+
 	function m.dependsOnTargets(r)
 		p.w('DependsOnTargets="$(%sDependsOn);Compute%sOutput"', r.name, r.name)
 	end
@@ -267,10 +277,13 @@
 
 
 	function m.linkLib(r)
-		local linkable
+		local linkable, compileable
 		for i = 1, #r.buildoutputs do
 			if (path.islinkable(r.buildoutputs[i])) then
 				linkable = true
+			end
+			if (path.iscppfile(r.buildoutputs[i])) then
+				compileable = true
 			end
 		end
 		if linkable then
@@ -280,6 +293,12 @@
 				p.w('Condition="\'%%(Extension)\'==\'.obj\' or \'%%(Extension)\'==\'.res\' or \'%%(Extension)\'==\'.rsc\' or \'%%(Extension)\'==\'.lib\'" />')
 				p.pop()
 			end
+		end
+		if compileable then
+			p.push('<ClCompile', el)
+			p.w('Include="%%(%sOutputs.Identity)"', r.name)
+			p.w('Condition="\'%%(Extension)\'==\'.cc\' or \'%%(Extension)\'==\'.cpp\' or \'%%(Extension)\'==\'.cxx\' or \'%%(Extension)\'==\'.c\'" />')
+			p.pop()
 		end
 	end
 
@@ -302,7 +321,7 @@
 	function m.outputs(r)
 		p.w('<%sOutputs', r.name)
 		p.w('  Condition="\'@(%s)\' != \'\' and \'%%(%s.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-        p.w('  Include="%%(%s.Outputs)" />', r.name)
+		p.w('  Include="%%(%s.Outputs)" />', r.name)
 	end
 
 
