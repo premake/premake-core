@@ -217,11 +217,50 @@
 	end
 
 
+	function p.rule.bake(self)
+		-- Add filtering terms to the context and then compile the results. These
+		-- terms describe the "operating environment"; only results contained by
+		-- configuration blocks which match these terms will be returned.
 
-	function p.rule.bake(r)
-		table.sort(r.propertydefinition, function (a, b)
+		context.addFilter(self, "_ACTION", _ACTION)
+		context.addFilter(self, "action", _ACTION)
+
+		self.system = self.system or p.action.current().os or os.get()
+		context.addFilter(self, "system", self.system)
+
+		-- Add command line options to the filtering options
+		local options = {}
+		for key, value in pairs(_OPTIONS) do
+			local term = key
+			if value ~= "" then
+				term = term .. "=" .. value
+			end
+			table.insert(options, term)
+		end
+		context.addFilter(self, "_OPTIONS", options)
+		context.addFilter(self, "options", options)
+
+		-- Populate the token expansion environment
+
+		self.environ = {
+			rule = self,
+		}
+
+		-- Go ahead and distill all of that down now; this is my new project object
+
+		context.compile(self)
+
+		-- sort the propertydefinition table.
+		table.sort(self.propertydefinition, function (a, b)
 			return a.name < b.name
 		end)
+
+		-- Set the context's base directory to the project's file system
+		-- location. Any path tokens which are expanded in non-path fields
+		-- are made relative to this, ensuring a portable generated project.
+
+		self.location = self.location or self.basedir
+		context.basedir(self, self.location)
 	end
 
 
