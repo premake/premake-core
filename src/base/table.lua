@@ -270,7 +270,7 @@
 			local minindex = 1
 			local maxindex = #tbl + 1
 			while minindex < maxindex do
-				local index = minindex + bit32.arshift(maxindex - minindex, 1)
+				local index = minindex + math.floor((maxindex - minindex) / 2)
 				local test = tbl[index]
 				if fn(value, test) then
 					maxindex = index
@@ -427,7 +427,7 @@
 				return formatting .. '(nil)'
 			elseif type(v) == "table" then
 				if recurse and recurse > 0 then
-					return formatting .. '\n' .. table.tostring(v, recurse-1, i+1) 
+					return formatting .. '\n' .. table.tostring(v, recurse-1, i+1)
 				else
 					return formatting .. "<table>"
 				end
