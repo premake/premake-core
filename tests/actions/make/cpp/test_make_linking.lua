@@ -178,6 +178,31 @@
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -s
+  LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+  LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+		]]
+	end
+
+--
+-- Check a linking multiple siblings with link groups enabled.
+--
+
+	function suite.links_onSiblingStaticLibWithLinkGroups()
+		links "MyProject2"
+		links "MyProject3"
+		linkgroups "On"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		prepare { "ldFlags", "libs", "ldDeps" }
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -s
   LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
   LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		]]

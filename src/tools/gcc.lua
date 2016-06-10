@@ -314,10 +314,8 @@
 
 
 	function gcc.getlinks(cfg, systemonly)
-
-		-- we don't want libraries to be order dependent.
 		local result = gcc.getlinksonly(cfg, systemonly)
-		if #result > 1 then
+		if (#result > 1) and (cfg.linkgroups == p.ON) then
 			local res = {}
 			table.insert(res, '-Wl,--start-group')
 			table.insertflat(res, result)
