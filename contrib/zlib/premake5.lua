@@ -12,3 +12,6 @@ project "zlib-lib"
 
 	filter "system:windows"
 		defines { "_WINDOWS" }
+
+	filter "system:not windows"
+		defines { 'HAVE_UNISTD_H' }
