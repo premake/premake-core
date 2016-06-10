@@ -33,6 +33,19 @@
 
 
 --
+-- Make a shallow copy of a table
+--
+
+	function table.shallowcopy(object)
+		local copy = {}
+		for k, v in pairs(object) do
+			copy[k] = v
+		end
+		return copy
+	end
+
+
+--
 -- Make a complete copy of a table, including any child tables it contains.
 --
 
