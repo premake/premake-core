@@ -233,7 +233,7 @@
 			rule = self,
 		}
 
-		-- Go ahead and distill all of that down now; this is my new project object
+		-- Go ahead and distill all of that down now; this is my new rule object
 
 		context.compile(self)
 
@@ -242,9 +242,9 @@
 			return a.name < b.name
 		end)
 
-		-- Set the context's base directory to the project's file system
+		-- Set the context's base directory to the rule's file system
 		-- location. Any path tokens which are expanded in non-path fields
-		-- are made relative to this, ensuring a portable generated project.
+		-- are made relative to this, ensuring a portable generated rule.
 
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
