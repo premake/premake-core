@@ -58,15 +58,8 @@
 
 	p.alias(oven, "bakeWorkspace", "bakeSolution")
 
----
--- Bakes a specific workspace object.
----
 
-	function p.workspace.bake(self)
-		-- Add filtering terms to the context and then compile the results. These
-		-- terms describe the "operating environment"; only results contained by
-		-- configuration blocks which match these terms will be returned.
-
+	local function addCommonContextFilters(self)
 		context.addFilter(self, "_ACTION", _ACTION)
 		context.addFilter(self, "action", _ACTION)
 
@@ -74,7 +67,6 @@
 		context.addFilter(self, "system", self.system)
 
 		-- Add command line options to the filtering options
-
 		local options = {}
 		for key, value in pairs(_OPTIONS) do
 			local term = key
@@ -85,6 +77,18 @@
 		end
 		context.addFilter(self, "_OPTIONS", options)
 		context.addFilter(self, "options", options)
+	end
+
+---
+-- Bakes a specific workspace object.
+---
+
+	function p.workspace.bake(self)
+		-- Add filtering terms to the context and then compile the results. These
+		-- terms describe the "operating environment"; only results contained by
+		-- configuration blocks which match these terms will be returned.
+
+		addCommonContextFilters(self)
 
 		-- Set up my token expansion environment
 
@@ -118,7 +122,6 @@
 
 		self.configs = oven.bakeConfigs(self)
 	end
-
 
 
 	function p.project.bake(self)
@@ -217,11 +220,34 @@
 	end
 
 
+	function p.rule.bake(self)
+		-- Add filtering terms to the context and then compile the results. These
+		-- terms describe the "operating environment"; only results contained by
+		-- configuration blocks which match these terms will be returned.
 
-	function p.rule.bake(r)
-		table.sort(r.propertydefinition, function (a, b)
+		addCommonContextFilters(self)
+
+		-- Populate the token expansion environment
+
+		self.environ = {
+			rule = self,
+		}
+
+		-- Go ahead and distill all of that down now; this is my new rule object
+
+		context.compile(self)
+
+		-- sort the propertydefinition table.
+		table.sort(self.propertydefinition, function (a, b)
 			return a.name < b.name
 		end)
+
+		-- Set the context's base directory to the rule's file system
+		-- location. Any path tokens which are expanded in non-path fields
+		-- are made relative to this, ensuring a portable generated rule.
+
+		self.location = self.location or self.basedir
+		context.basedir(self, self.location)
 	end
 
 
@@ -498,7 +524,7 @@
 
 		-- allow the project script to override the default toolset
 		ctx.toolset = ctx.toolset or toolset
-		context.addFilter(ctx, "toolset", ctx.toolset)		
+		context.addFilter(ctx, "toolset", ctx.toolset)
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
