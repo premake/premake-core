@@ -37,6 +37,60 @@
 		return flags
 	end
 
+	local function findCfgKeyVal(cfg, mappings)
+		local keyval = {}
+
+		for field in premake.field.each() do
+			local map = mappings[field.name]
+			if map then
+				local values = cfg[field.name]
+				if type(values) ~= "table" then
+					values = { values }
+				end
+
+				for i, v in ipairs(values) do
+					if map[v] ~= nil then
+						if (type(keyval[field.name]) ~= "table") then
+							keyval[field.name] = {}
+						end
+
+						local posval = keyval[field.name]
+
+						posval[i] = v
+					end
+				end
+			end
+		end
+
+		return keyval
+	end
+
+	local function nilCfgKeyVal(cfg, keyval)
+		for fieldname, posval in pairs(keyval) do
+			for i, v in pairs(posval) do
+				local values = cfg[fieldname]
+				if type(values) ~= "table" then
+					values = nil
+				else
+					values[i] = nil
+				end
+			end
+		end
+	end
+
+	local function restoreCfgKeyVal(cfg, keyval)
+		for fieldname, posval in pairs(keyval) do
+			for i, v in pairs(posval) do
+				local values = cfg[fieldname]
+				if type(values) ~= "table" then
+					values = v
+				else
+					values[i] = v
+				end
+			end
+		end
+	end
+
 --
 -- Build a list of flags for the C preprocessor corresponding to the
 -- settings in a particular project configuration.
@@ -78,8 +132,13 @@
 	}
 
 	function nvcc.getcflags(cfg)
+		local keyval = findCfgKeyVal(cfg, nvcc.cflags)
 		local flags = config.mapFlags(cfg, nvcc.cflags)
+
+		nilCfgKeyVal(cfg, keyval)
 		local hflags = prefixCompilerFlags(host_compiler.getcflags(cfg))
+		restoreCfgKeyVal(cfg, keyval)
+
 		flags = table.join(flags, hflags, nvcc.getwarnings(cfg))
 		return flags
 	end
@@ -108,8 +167,13 @@
 	}
 
 	function nvcc.getcxxflags(cfg)
+		local keyval = findCfgKeyVal(cfg, nvcc.cxxflags)
 		local flags = config.mapFlags(cfg, nvcc.cxxflags)
+
+		nilCfgKeyVal(cfg, keyval)
 		local hflags = prefixCompilerFlags(host_compiler.getcxxflags(cfg))
+		restoreCfgKeyVal(cfg, keyval)
+
 		flags = table.join(flags, hflags)
 		return flags
 	end
@@ -198,8 +262,13 @@
 	}
 
 	function nvcc.getldflags(cfg)
+		local keyval = findCfgKeyVal(cfg, nvcc.ldflags)
 		local flags = config.mapFlags(cfg, nvcc.ldflags)
+
+		nilCfgKeyVal(cfg, keyval)
 		local hflags = prefixLinkerFlags(host_compiler.getldflags(cfg))
+		restoreCfgKeyVal(cfg, keyval)
+
 		flags = table.join(flags, hflags)
 		return flags
 	end
