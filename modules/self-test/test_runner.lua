@@ -64,11 +64,9 @@
 			test.testFunction = testFunction
 
 			if m.isValid(test) and not m.isSuppressed(test.suiteName .. "." .. test.testName) then
-				if _.runTest(test) then
-					passed = passed + 1
-				else
-					failed = failed + 1
-				end
+				local np, nf = _.runTest(test)
+				passed = passed + np
+				failed = failed + nf
 			end
 		end
 
