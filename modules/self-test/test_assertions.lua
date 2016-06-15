@@ -28,7 +28,7 @@
 		local etxt = eit()
 		while etxt do
 			if (etxt ~= atxt) then
-				m.fail("(%d) expected:\n%s\n...but was:\n%s", linenum, etxt, atxt)
+				m.fail("(%d) expected:\n%s\n...but was:\n%s\nfulltext:\n%s", linenum, etxt, atxt, actual)
 			end
 
 			linenum = linenum + 1
