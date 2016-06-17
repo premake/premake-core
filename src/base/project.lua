@@ -274,6 +274,11 @@
 		local tr = tree.new(prj.name)
 
 		table.foreachi(prj._.files, function(fcfg)
+			-- if the file is a generated file, we add those in a second pass.
+			if fcfg.generated then
+				return;
+			end
+
 			-- The tree represents the logical source code tree to be displayed
 			-- in the IDE, not the physical organization of the file system. So
 			-- virtual paths are used when adding nodes.
@@ -294,6 +299,20 @@
 			-- the parent folder node, creating it if necessary.
 
 			local parent = tree.add(tr, path.getdirectory(fcfg.vpath), flags)
+			local node = tree.insert(parent, tree.new(path.getname(fcfg.vpath)))
+
+			-- Pass through value fetches to the file configuration
+			setmetatable(node, { __index = fcfg })
+		end)
+
+
+		table.foreachi(prj._.files, function(fcfg)
+			-- if the file is not a generated file, we already added them
+			if not fcfg.generated then
+				return;
+			end
+
+			local parent = tree.add(tr, path.getdirectory(fcfg.dependsOn.vpath))
 			local node = tree.insert(parent, tree.new(path.getname(fcfg.vpath)))
 
 			-- Pass through value fetches to the file configuration
