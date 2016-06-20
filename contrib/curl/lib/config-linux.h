@@ -4,7 +4,7 @@
 /* #undef BUILDING_LIBCURL */
 
 /* Location of default ca bundle */
-/* #undef CURL_CA_BUNDLE */
+#undef CURL_CA_BUNDLE
 
 /* Location of default ca path */
 /* #undef CURL_CA_PATH */
