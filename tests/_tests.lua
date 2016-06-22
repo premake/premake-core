@@ -132,10 +132,14 @@ return {
 	"actions/vstudio/vc2010/test_prop_sheet.lua",
 	"actions/vstudio/vc2010/test_resource_compile.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
+	"actions/vstudio/vc2010/test_symbols.lua",
 	"actions/vstudio/vc2010/test_target_machine.lua",
 	"actions/vstudio/vc2010/test_user_file.lua",
 	"actions/vstudio/vc2010/test_vectorextensions.lua",
 	"actions/vstudio/vc2010/test_ensure_nuget_imports.lua",
+
+	-- Visual Studio 2015 C/C++ projects
+	"actions/vstudio/vc2015/test_symbols.lua",
 
 	-- Makefile tests
 	"actions/make/test_make_escaping.lua",
