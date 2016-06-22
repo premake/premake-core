@@ -957,6 +957,13 @@
 	}
 
 	api.register {
+		name = "symbolspath",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
 		name = "sysincludedirs",
 		scope = "config",
 		kind = "list:directory",

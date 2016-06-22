@@ -1827,8 +1827,9 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
-		-- for changes, see https://github.com/premake/premake-core/issues/151
+		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
+			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+		end
 	end
 
 
