@@ -489,7 +489,7 @@
 			"SEH",                 -- DEPRECATED
 			"ShadowedVariables",
 			"StaticRuntime",
-			"Symbols",
+			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
 			"Unicode",             -- DEPRECATED
 			"Unsafe",              -- DEPRECATED
@@ -946,6 +946,17 @@
 	}
 
 	api.register {
+		name = "symbols",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		},
+	}
+
+	api.register {
 		name = "sysincludedirs",
 		scope = "config",
 		kind = "list:directory",
@@ -1275,7 +1286,7 @@
 		exceptionhandling "Default"
 	end)
 
-	api.deprecateValue("flags", "Unsafe", nil,
+	api.deprecateValue("flags", "Unsafe", 'Use `clr "Unsafe"` instead',
 	function(value)
 		clr "Unsafe"
 	end,
@@ -1285,12 +1296,22 @@
 
 	-- 18 Dec 2015
 
-	api.deprecateValue("flags", "Unicode", nil,
+	api.deprecateValue("flags", "Unicode", 'Use `characterset "Unicode"` instead',
 	function(value)
 		characterset "Unicode"
 	end,
 	function(value)
 		characterset "Default"
+	end)
+
+	-- 21 June 2016
+
+	api.deprecateValue("flags", "Symbols", 'Use `symbols "On"` instead',
+	function(value)
+		symbols "On"
+	end,
+	function(value)
+		symbols "Default"
 	end)
 
 

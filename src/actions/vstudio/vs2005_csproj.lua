@@ -254,7 +254,7 @@
 --
 
 	function cs2005.debugProps(cfg)
-		if cfg.flags.Symbols then
+		if cfg.symbols == p.ON then
 			_p(2,'<DebugSymbols>true</DebugSymbols>')
 			_p(2,'<DebugType>full</DebugType>')
 		else
