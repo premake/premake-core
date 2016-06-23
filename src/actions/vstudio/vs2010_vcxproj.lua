@@ -523,11 +523,14 @@
 					local fld = p.rule.getPropertyField(rule, prop)
 					local value = cfg[fld.name]
 					if value ~= nil then
-						if fld.kind == "path" then
+						if fld.kind == "list:path" then
+							value = table.concat(vstudio.path(cfg, value), ';')
+						elseif fld.kind == "path" then
 							value = vstudio.path(cfg, value)
 						else
 							value = p.rule.getPropertyString(rule, prop, value)
 						end
+
 						if value ~= nil and #value > 0 then
 							m.element(prop.name, nil, '%s', value)
 						end
