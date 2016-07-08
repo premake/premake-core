@@ -276,7 +276,7 @@
 -- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function gcc.getlinksonly(cfg, systemonly)
+	function gcc.getlinks(cfg, systemonly, nogroups)
 		local result = {}
 
 		if not systemonly then
@@ -296,6 +296,11 @@
 			end
 		end
 
+		if not nogroups and #result > 1 and (cfg.linkgroups == p.ON) then
+			table.insert(result, 1, "-Wl,--start-group")
+			table.insert(result, "-Wl,--end-group")
+		end
+
 		-- The "-l" flag is fine for system libraries
 
 		local links = config.getlinks(cfg, "system", "fullpath")
@@ -309,19 +314,6 @@
 			end
 		end
 
-		return result
-	end
-
-
-	function gcc.getlinks(cfg, systemonly)
-		local result = gcc.getlinksonly(cfg, systemonly)
-		if (#result > 1) and (cfg.linkgroups == p.ON) then
-			local res = {}
-			table.insert(res, '-Wl,--start-group')
-			table.insertflat(res, result)
-			table.insert(res, '-Wl,--end-group')
-			return res
-		end
 		return result
 	end
 

@@ -239,8 +239,8 @@
 --    A list of libraries to link, decorated for the linker.
 --
 
-	function clang.getlinks(cfg, systemonly)
-		return gcc.getlinks(cfg, systemonly)
+	function clang.getlinks(cfg, systemonly, nogroups)
+		return gcc.getlinks(cfg, systemonly, nogroups)
 	end
 
 
