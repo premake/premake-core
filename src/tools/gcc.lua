@@ -364,7 +364,8 @@
 		local links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
-				table.insert(result, "-framework " .. path.getbasename(link))
+				table.insert(result, "-framework")
+				table.insert(result, path.getbasename(link))
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else

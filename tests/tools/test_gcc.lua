@@ -325,7 +325,7 @@
 	function suite.links_onFramework()
 		links { "Cocoa.framework" }
 		prepare()
-		test.contains({ "-framework Cocoa" }, gcc.getlinks(cfg))
+		test.contains({ "-framework Cocoa" }, {table.implode (gcc.getlinks(cfg), '', '', ' ')})
 	end
 
 	function suite.links_onSystemLibs_onWindows()
