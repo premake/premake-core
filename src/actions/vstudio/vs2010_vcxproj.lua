@@ -30,7 +30,6 @@
 	m.elements.project = function(prj)
 		return {
 			m.xmlDeclaration,
-			m.updateFileTable,
 			m.project,
 			m.projectConfigurations,
 			m.globals,
@@ -57,60 +56,6 @@
 		p.out('</Project>')
 	end
 
-
---
--- Update the file table with generated files.
---
-	function m.updateFileTable(prj)
-		local function addGeneratedFile(cfg, source, filename)
-			-- mark that we have generated files.
-			cfg.project.hasGeneratedFiles = true
-
-			-- add generated file to the project.
-			local files = cfg.project._.files
-			local node = files[filename]
-			if not node then
-				node = fileconfig.new(filename, cfg.project)
-				node.vpath = path.join("Generated", node.name)
-				node.dependsOn = source
-				node.generated = true
-
-				files[filename] = node
-				table.insert(files, node)
-			end
-			fileconfig.addconfig(node, cfg)
-		end
-
-		local function addFile(cfg, node)
-			local filecfg = fileconfig.getconfig(node, cfg)
-			if not filecfg or filecfg.flags.ExcludeFromBuild then
-				return
-			end
-
-			if fileconfig.hasCustomBuildRule(filecfg) then
-				local buildoutputs = p.project.getrelative(cfg.project, filecfg.buildoutputs)
-				if buildoutputs and #buildoutputs > 0 then
-					for _, output in ipairs(buildoutputs) do
-						addGeneratedFile(cfg, node, output)
-					end
-				end
-			else
-				--addRuleFile(cfg, node)
-			end
-		end
-
-		local files = table.shallowcopy(prj._.files)
-		for cfg in project.eachconfig(prj) do
-			table.foreachi(files, function(node)
-				addFile(cfg, node)
-			end)
-		end
-
-		-- we need to reassign object sequences if we generated any files.
-		if prj.hasGeneratedFiles and p.project.iscpp(prj) then
-			p.oven.assignObjectSequences(prj)
-		end
-	end
 
 
 --
@@ -630,15 +575,6 @@
 	end
 
 
-	function m.generatedFile(cfg, file)
-		if file.generated then
-			local path = path.translate(file.dependsOn.relpath)
-			m.element("AutoGen", nil, 'true')
-			m.element("DependentUpon", nil, path)
-		end
-	end
-
-
 ---
 -- Write out the list of source code files, and any associated configuration.
 ---
@@ -662,7 +598,7 @@
 		priority   = 1,
 
 		emitFiles = function(prj, group)
-			m.emitFiles(prj, group, "ClInclude", {m.generatedFile})
+			m.emitFiles(prj, group, "ClInclude")
 		end,
 
 		emitFilter = function(prj, group)
@@ -702,7 +638,7 @@
 				end
 			end
 
-			m.emitFiles(prj, group, "ClCompile", {m.generatedFile}, fileCfgFunc)
+			m.emitFiles(prj, group, "ClCompile", nil, fileCfgFunc)
 		end,
 
 		emitFilter = function(prj, group)
@@ -719,7 +655,7 @@
 		priority = 3,
 
 		emitFiles = function(prj, group)
-			m.emitFiles(prj, group, "None", {m.generatedFile})
+			m.emitFiles(prj, group, "None")
 		end,
 
 		emitFilter = function(prj, group)
