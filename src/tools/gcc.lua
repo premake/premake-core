@@ -189,6 +189,52 @@
 		return result
 	end
 
+--
+-- Return a list of decorated rpaths 
+--
+
+	function gcc.getrunpathdirs(cfg, dirs)
+		local result = {}
+
+		if not ((cfg.system == premake.MACOSX)
+				or (cfg.system == premake.LINUX)) then
+			return result
+		end
+
+		local rpaths = {}
+
+		-- User defined runpath search paths
+		for _, fullpath in ipairs(cfg.runpathdirs) do
+			local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
+			if not (table.contains(rpaths, rpath)) then
+				table.insert(rpaths, rpath)
+			end
+		end
+
+		-- Automatically add linked shared libraries path relative to target directory
+		for _, sibling in ipairs(config.getlinks(cfg, "siblings", "object")) do
+			if (sibling.kind == premake.SHAREDLIB) then
+				local fullpath = sibling.linktarget.directory
+				local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
+				if not (table.contains(rpaths, rpath)) then
+					table.insert(rpaths, rpath)
+				end
+			end
+		end
+
+		for _, rpath in ipairs(rpaths) do
+			if (cfg.system == premake.MACOSX) then
+				rpath = "@loader_path/" .. rpath
+			elseif (cfg.system == premake.LINUX) then
+				rpath = iif(rpath == ".", "", "/" .. rpath)
+				rpath = "$$ORIGIN" .. rpath
+			end
+
+			table.insert(result, "-Wl,-rpath,'" .. rpath .. "'")
+		end
+
+		return result
+	end
 
 --
 -- Return a list of LDFLAGS for a specific configuration.
@@ -209,8 +255,12 @@
 		kind = {
 			SharedLib = function(cfg)
 				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
-				if cfg.system == "windows" and not cfg.flags.NoImportLib then
+				if cfg.system == premake.WINDOWS and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+				elseif cfg.system == premake.LINUX then
+					table.insert(r, '-Wl,-soname=' .. premake.quoted(cfg.linktarget.name))
+				elseif cfg.system == premake.MACOSX then
+					table.insert(r, '-Wl,-install_name,' .. premake.quoted('@rpath/' .. cfg.linktarget.name))
 				end
 				return r
 			end,
@@ -306,7 +356,8 @@
 		local links = config.getlinks(cfg, "system", "fullpath")
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
-				table.insert(result, "-framework " .. path.getbasename(link))
+				table.insert(result, "-framework")
+				table.insert(result, path.getbasename(link))
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else

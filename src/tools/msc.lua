@@ -185,7 +185,9 @@
 		return result
 	end
 
-
+	function msc.getrunpathdirs()
+		return {}
+	end
 
 --
 -- Decorate include file search paths for the MSVC command line.
