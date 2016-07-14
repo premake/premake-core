@@ -62,6 +62,7 @@
 				result = nil
 			else
 				err    = nil
+				result = result or ""
 			end
 
 			-- If the result is an absolute path, and it is being inserted into
@@ -90,7 +91,7 @@
 					success, result = pcall(result, e)
 					if not success then
 						return nil, result
-					end					
+					end
 				end
 
 				if (type(result) == "table") then
