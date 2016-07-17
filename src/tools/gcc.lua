@@ -236,8 +236,20 @@
 
 	gcc.libraryDirectories = {
 		architecture = {
-			x86 = "-L/usr/lib32",
-			x86_64 = "-L/usr/lib64",
+			x86 = function (cfg)
+				local r = {}
+				if cfg.system ~= premake.MACOSX then
+					table.insert (r, "-L/usr/lib32")
+				end
+				return r
+			end,
+			x86_64 = function (cfg)
+				local r = {}
+				if cfg.system ~= premake.MACOSX then
+					table.insert (r, "-L/usr/lib64")
+				end
+				return r
+			end,
 		},
 		system = {
 			wii = "-L$(LIBOGC_LIB)",
