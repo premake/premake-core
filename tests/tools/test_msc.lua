@@ -79,11 +79,33 @@
 
 
 --
+-- Check the translation of symbols.
+--
+
+	function suite.cflags_onDefaultSymbols()
+		prepare()
+		test.excludes({ "/Z7" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onNoSymbols()
+		symbols "Off"
+		prepare()
+		test.excludes({ "/Z7" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onSymbols()
+		symbols "On"
+		prepare()
+		test.contains({ "/Z7" }, msc.getcflags(cfg))
+	end
+
+
+--
 -- Check handling of debugging support.
 --
 
 	function suite.ldflags_onSymbols()
-		flags "Symbols"
+		symbols "On"
 		prepare()
 		test.contains("/DEBUG", msc.getldflags(cfg))
 	end

@@ -40,7 +40,6 @@
 			MultiProcessorCompile = "/MP",
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
-			Symbols = "/Z7",
 			OmitDefaultLibrary = "/Zl",
 		},
 		floatingpoint = {
@@ -73,6 +72,9 @@
 		warnings = {
 			Extra = "/W4",
 			Off = "/W0",
+		},
+		symbols = {
+			On = "/Z7"
 		}
 	}
 
@@ -213,10 +215,12 @@
 			NoIncrementalLink = "/INCREMENTAL:NO",
 			NoManifest = "/MANIFEST:NO",
 			OmitDefaultLibrary = "/NODEFAULTLIB",
-			Symbols = "/DEBUG",
 		},
 		kind = {
 			SharedLib = "/DLL",
+		},
+		symbols = {
+			On = "/DEBUG"
 		}
 	}
 

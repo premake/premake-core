@@ -56,7 +56,8 @@
 		},
 		pic = gcc.cflags.pic,
 		vectorextensions = gcc.cflags.vectorextensions,
-		warnings = gcc.cflags.warnings
+		warnings = gcc.cflags.warnings,
+		symbols = gcc.cflags.symbols
 	}
 
 	function clang.getcflags(cfg)

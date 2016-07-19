@@ -137,7 +137,7 @@
 --
 
 	function suite.generateDebugInfo_onSymbols()
-		flags "Symbols"
+		symbols "On"
 		prepare()
 		test.capture [[
 <Link>

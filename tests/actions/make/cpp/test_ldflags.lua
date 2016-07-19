@@ -16,7 +16,7 @@
 
 	function suite.setup()
 		wks, prj = test.createWorkspace()
-		flags("Symbols")
+		symbols "On"
 	end
 
 	local function prepare(calls)
