@@ -1180,9 +1180,9 @@
 				value = "EditAndContinue"
 			end
 
-			if value then
-				m.element("DebugInformationFormat", nil, value)
-			end
+			m.element("DebugInformationFormat", nil, value)
+		elseif cfg.symbols == p.OFF then
+			m.element("DebugInformationFormat", nil, "None")
 		end
 	end
 

@@ -1433,6 +1433,7 @@
 	editorintegration "Off"
 	exceptionhandling "Default"
 	rtti "Default"
+	symbols "Default"
 
 	-- Setting a default language makes some validation easier later
 
