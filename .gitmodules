@@ -10,3 +10,12 @@
 [submodule "modules/d"]
 	path = modules/d
 	url = https://github.com/premake/premake-dlang.git
+[submodule "contrib/zlib"]
+	path = contrib/zlib
+	url = https://github.com/madler/zlib.git
+[submodule "contrib/curl"]
+	path = contrib/curl
+	url = https://github.com/curl/curl.git
+[submodule "contrib/libzip"]
+	path = contrib/libzip
+	url = https://github.com/nih-at/libzip.git
