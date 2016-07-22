@@ -71,13 +71,18 @@
 			local node = files[filename]
 			if not node then
 				node = fileconfig.new(filename, cfg.project)
-				node.vpath = path.join("Generated", node.name)
-				node.dependsOn = source
-				node.generated = true
-
 				files[filename] = node
 				table.insert(files, node)
 			end
+
+			-- always overwrite the vpath and dependency information.
+			if not node.vpath then
+				node.vpath = path.join("Generated", node.name)
+			end
+			node.dependsOn = source
+			node.generated = true
+
+			-- add to config.
 			fileconfig.addconfig(node, cfg)
 		end
 
@@ -88,14 +93,14 @@
 			end
 
 			if fileconfig.hasCustomBuildRule(filecfg) then
-				local buildoutputs = p.project.getrelative(cfg.project, filecfg.buildoutputs)
+				local buildoutputs = filecfg.buildoutputs
 				if buildoutputs and #buildoutputs > 0 then
 					for _, output in ipairs(buildoutputs) do
-						addGeneratedFile(cfg, node, output)
+						if not path.islinkable(output) then
+							addGeneratedFile(cfg, node, output)
+						end
 					end
 				end
-			else
-				--addRuleFile(cfg, node)
 			end
 		end
 
