@@ -8,24 +8,25 @@
    based on ../cmake-zipconf.h.in.
  */
 
-/* #undef HAVE_INTTYPES_H_LIBZIP */
+#define HAVE_INTTYPES_H_LIBZIP
 #define HAVE_STDINT_H_LIBZIP
 #define HAVE_SYS_TYPES_H_LIBZIP
-#define HAVE___INT8_LIBZIP
+/* #undef HAVE___INT8_LIBZIP */
 #define HAVE_INT8_T_LIBZIP
 #define HAVE_UINT8_T_LIBZIP
-#define HAVE___INT16_LIBZIP
+/* #undef HAVE___INT16_LIBZIP */
 #define HAVE_INT16_T_LIBZIP
 #define HAVE_UINT16_T_LIBZIP
-#define HAVE___INT32_LIBZIP
+/* #undef HAVE___INT32_LIBZIP */
 #define HAVE_INT32_T_LIBZIP
 #define HAVE_UINT32_T_LIBZIP
-#define HAVE___INT64_LIBZIP
+/* #undef HAVE___INT64_LIBZIP */
 #define HAVE_INT64_T_LIBZIP
 #define HAVE_UINT64_T_LIBZIP
+#define HAVE_SSIZE_T_LIBZIP
 #define SHORT_LIBZIP 2
 #define INT_LIBZIP 4
-#define LONG_LIBZIP 4
+#define LONG_LIBZIP 8
 #define LONG_LONG_LIBZIP 8
 
 #if defined(HAVE_STDINT_H_LIBZIP)
@@ -113,7 +114,7 @@ typedef unsigned long long zip_uint64_t;
 #define ZIP_INT32_MAX	 0x7fffffffL
 #define ZIP_UINT32_MAX	 0xffffffffLU
 
-#define ZIP_INT64_MIN	-0x8000000000000000LL
+#define ZIP_INT64_MIN	 (-ZIP_INT64_MAX-1LL)
 #define ZIP_INT64_MAX	 0x7fffffffffffffffLL
 #define ZIP_UINT64_MAX	 0xffffffffffffffffULL
 

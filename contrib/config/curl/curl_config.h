@@ -1,6 +1,8 @@
 #ifndef HEADER_CURL_CONFIG_H
 #define HEADER_CURL_CONFIG_H
 
+#include "../common.h"
+
 #ifdef _WIN32_WCE
 #  include "config-win32ce.h"
 #else

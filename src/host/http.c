@@ -175,7 +175,7 @@ static CURL* curl_request(lua_State* L, curl_state* state, const char* url, FILE
 			}
 			else if (!strcmp(key, "timeout") && lua_isnumber(L, -1))
 			{
-				curl_easy_setopt(curl, CURLOPT_TIMEOUT, luaL_checknumber(L, -1));
+				curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long)luaL_checknumber(L, -1));
 			}
 
 			// pop the value, leave the key for lua_next

@@ -862,7 +862,7 @@
 /* #undef SIZEOF_OFF_T */
 
 /* The size of `size_t', as computed by sizeof. */
-#define SIZEOF_SIZE_T 8
+#define SIZEOF_SIZE_T PREMAKE_SIZE_T
 
 /* The size of `time_t', as computed by sizeof. */
 #define SIZEOF_TIME_T 8
