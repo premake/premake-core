@@ -84,7 +84,10 @@
 -- default when folks build using the makefile. That way they don't have to
 -- worry about the /scripts argument and all that.
 --
--- TODO: defaultConfiguration "Release"
+-- TODO: Switch to these new APIs once they've had a chance to land everywhere
+--
+--    defaultConfiguration "Release"
+--    symbols "On"
 --
 
 	solution "Premake5"
@@ -102,7 +105,7 @@
 
 		filter "configurations:Debug"
 			defines     "_DEBUG"
-			symbols     "On"
+			flags       { "Symbols" }
 
 		filter "configurations:Release"
 			defines     "NDEBUG"
