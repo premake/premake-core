@@ -315,3 +315,21 @@
 	function dotnet.getmakesettings(cfg)
 		return nil
 	end
+
+
+
+--
+-- Compile a string of text with the dotnet C# compiler.
+--
+-- @param cfg
+--    The project configuration.
+-- @param text
+--    The source text.
+-- @return
+--    on success the filename of the output object file.
+--    nil on failure.
+--
+
+	function dotnet.try_compile(cfg, text)
+		p.error('dotnet.try_compile not implemented yet.')
+	end

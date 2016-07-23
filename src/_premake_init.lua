@@ -48,6 +48,18 @@
 	}
 
 	api.register {
+		name = "autoconfigure",
+		scope = "config",
+		kind = "table:keyed"
+	}
+
+	api.register {
+		name = "autoconfdir",
+		scope = "config",
+		kind = "path"
+	}
+
+	api.register {
 		name = "basedir",
 		scope = "project",
 		kind = "path"

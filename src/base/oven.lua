@@ -609,6 +609,9 @@
 		ctx.location = ctx.location or prj and prj.location
 		context.basedir(ctx, ctx.location)
 
+		-- run autoconfigure
+		p.autoconf.execute(prj, cfg)
+
 		-- Fill in a few calculated for the configuration, including the long
 		-- and short names and the build and link target.
 

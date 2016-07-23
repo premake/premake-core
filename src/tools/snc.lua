@@ -142,3 +142,21 @@
 		local names = snc.tools[cfg.architecture] or snc.tools[cfg.system] or {}
 		return names[tool]
 	end
+
+
+
+--
+-- Compile a string of text with the snc compiler.
+--
+-- @param cfg
+--    The project configuration.
+-- @param text
+--    The source text.
+-- @return
+--    on success the filename of the output object file.
+--    nil on failure.
+--
+
+	function snc.try_compile(cfg, text)
+		p.error('snc.try_compile not implemented yet.')
+	end

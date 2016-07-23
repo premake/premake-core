@@ -56,6 +56,7 @@
 		"base/validation.lua",
 		"base/premake.lua",
 		"base/help.lua",
+		"base/autoconf.lua",
 
 		-- tool APIs
 		"tools/dotnet.lua",
