@@ -48,3 +48,30 @@
   ALL_LDFLAGS += $(LDFLAGS) -L../libs -Llibs
 		]]
 	end
+	
+	function suite.checkLibDirs_X86_64()
+		architecture ("x86_64")
+		system (premake.LINUX)
+		prepare()
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
+		]]
+	end
+	
+	function suite.checkLibDirs_X86()
+		architecture ("x86")
+		system (premake.LINUX)
+		prepare()
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32
+		]]
+	end
+	
+	function suite.checkLibDirs_X86_64_MacOSX()
+		architecture ("x86_64")
+		system (premake.MACOSX)
+		prepare()
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -m64
+		]]
+	end
