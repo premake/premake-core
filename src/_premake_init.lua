@@ -177,6 +177,12 @@
 	}
 
 	api.register {
+		name = "compilebuildoutputs",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",

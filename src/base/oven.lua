@@ -115,12 +115,74 @@
 
 		oven.bakeObjDirs(self)
 
+		-- now we can post process the projects for 'buildoutputs' files
+		-- that have the 'compilebuildoutputs' flag
+		oven.addGeneratedFiles(self)
+
 		-- Build a master list of configuration/platform pairs from all of the
 		-- projects contained by the workspace; I will need this when generating
 		-- workspace files in order to provide a map from workspace configurations
 		-- to project configurations.
 
 		self.configs = oven.bakeConfigs(self)
+	end
+
+
+	function oven.addGeneratedFiles(wks)
+
+		local function addGeneratedFile(cfg, source, filename)
+			-- mark that we have generated files.
+			cfg.project.hasGeneratedFiles = true
+
+			-- add generated file to the project.
+			local files = cfg.project._.files
+			local node = files[filename]
+			if not node then
+				node = p.fileconfig.new(filename, cfg.project)
+				files[filename] = node
+				table.insert(files, node)
+			end
+
+			-- always overwrite the dependency information.
+			node.dependsOn = source
+			node.generated = true
+
+			-- add to config.
+			p.fileconfig.addconfig(node, cfg)
+		end
+
+		local function addFile(cfg, node)
+			local filecfg = p.fileconfig.getconfig(node, cfg)
+			if not filecfg or filecfg.flags.ExcludeFromBuild or not filecfg.compilebuildoutputs then
+				return
+			end
+
+			if p.fileconfig.hasCustomBuildRule(filecfg) then
+				local buildoutputs = filecfg.buildoutputs
+				if buildoutputs and #buildoutputs > 0 then
+					for _, output in ipairs(buildoutputs) do
+						if not path.islinkable(output) then
+							addGeneratedFile(cfg, node, output)
+						end
+					end
+				end
+			end
+		end
+
+
+		for prj in p.workspace.eachproject(wks) do
+			local files = table.shallowcopy(prj._.files)
+			for cfg in p.project.eachconfig(prj) do
+				table.foreachi(files, function(node)
+					addFile(cfg, node)
+				end)
+			end
+
+			-- generated files might screw up the object sequences.
+			if prj.hasGeneratedFiles and p.project.iscpp(prj) then
+				oven.assignObjectSequences(prj)
+			end
+		end
 	end
 
 

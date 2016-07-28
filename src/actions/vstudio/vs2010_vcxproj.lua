@@ -30,7 +30,6 @@
 	m.elements.project = function(prj)
 		return {
 			m.xmlDeclaration,
-			m.updateFileTable,
 			m.project,
 			m.projectConfigurations,
 			m.globals,
@@ -55,66 +54,6 @@
 		p.utf8()
 		p.callArray(m.elements.project, prj)
 		p.out('</Project>')
-	end
-
-
---
--- Update the file table with generated files.
---
-	function m.updateFileTable(prj)
-		local function addGeneratedFile(cfg, source, filename)
-			-- mark that we have generated files.
-			cfg.project.hasGeneratedFiles = true
-
-			-- add generated file to the project.
-			local files = cfg.project._.files
-			local node = files[filename]
-			if not node then
-				node = fileconfig.new(filename, cfg.project)
-				files[filename] = node
-				table.insert(files, node)
-			end
-
-			-- always overwrite the vpath and dependency information.
-			if not node.vpath then
-				node.vpath = path.join("Generated", node.name)
-			end
-			node.dependsOn = source
-			node.generated = true
-
-			-- add to config.
-			fileconfig.addconfig(node, cfg)
-		end
-
-		local function addFile(cfg, node)
-			local filecfg = fileconfig.getconfig(node, cfg)
-			if not filecfg or filecfg.flags.ExcludeFromBuild then
-				return
-			end
-
-			if fileconfig.hasCustomBuildRule(filecfg) then
-				local buildoutputs = filecfg.buildoutputs
-				if buildoutputs and #buildoutputs > 0 then
-					for _, output in ipairs(buildoutputs) do
-						if not path.islinkable(output) then
-							addGeneratedFile(cfg, node, output)
-						end
-					end
-				end
-			end
-		end
-
-		local files = table.shallowcopy(prj._.files)
-		for cfg in project.eachconfig(prj) do
-			table.foreachi(files, function(node)
-				addFile(cfg, node)
-			end)
-		end
-
-		-- we need to reassign object sequences if we generated any files.
-		if prj.hasGeneratedFiles and p.project.iscpp(prj) then
-			p.oven.assignObjectSequences(prj)
-		end
 	end
 
 
