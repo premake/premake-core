@@ -145,7 +145,15 @@
 
 	function m.commandLineTemplates(r)
 		if #r.buildcommands then
-			local cmds = os.translateCommands(r.buildcommands, p.WINDOWS)
+
+			-- create shadow context.
+			local env = p.rule.createEnvironment(r, "[%s]")
+			local ctx = p.context.extent(r, env)
+
+			-- now use the shadow context to detoken.
+			local cmds = os.translateCommands(ctx.buildcommands, p.WINDOWS)
+
+			-- write out the result.
 			cmds = table.concat(cmds, p.eol())
 			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
 		end
@@ -163,7 +171,12 @@
 
 	function m.executionDescription(r)
 		if r.buildmessage then
-			p.x('<ExecutionDescription>%s</ExecutionDescription>', r.buildmessage)
+			-- create shadow context.
+			local env = p.rule.createEnvironment(r, "[%s]")
+			local ctx = p.context.extent(r, env)
+
+			-- write out the result.
+			p.x('<ExecutionDescription>%s</ExecutionDescription>', ctx.buildmessage)
 		end
 	end
 
@@ -171,7 +184,14 @@
 
 	function m.outputs(r)
 		if #r.buildoutputs then
-			local outputs = table.concat(r.buildoutputs, ";")
+			-- create shadow context.
+			local pathVars = p.rule.createPathVars(r, "%%(%s)")
+			local ctx = p.context.extent(r, { pathVars = pathVars })
+
+			-- now use the shadow context to detoken.
+			local outputs = table.concat(ctx.buildoutputs, ";")
+
+			-- write out the result.
 			p.x('<Outputs>%s</Outputs>', path.translate(outputs))
 		end
 	end
