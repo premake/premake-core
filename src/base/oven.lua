@@ -147,8 +147,10 @@
 			node.dependsOn = source
 			node.generated = true
 
-			-- add to config.
-			p.fileconfig.addconfig(node, cfg)
+			-- add to config if not already added.
+			if not p.fileconfig.getconfig(node, cfg) then
+				p.fileconfig.addconfig(node, cfg)
+			end
 		end
 
 		local function addFile(cfg, node)
