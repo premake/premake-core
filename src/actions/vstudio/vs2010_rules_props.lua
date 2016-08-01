@@ -154,9 +154,9 @@
 
 
 	function m.dependsOn(r)
-    	p.w('<%sDependsOn', r.name)
-    	p.w('  Condition="\'$(ConfigurationType)\' != \'Makefile\'">_SelectedFiles;$(%sDependsOn)</%sDependsOn>',
-    		r.name, r.name, r.name)
+		p.w('<%sDependsOn', r.name)
+		p.w('  Condition="\'$(ConfigurationType)\' != \'Makefile\'">_SelectedFiles;$(%sDependsOn)</%sDependsOn>',
+			r.name, r.name, r.name)
 	end
 
 
