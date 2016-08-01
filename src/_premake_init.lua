@@ -425,7 +425,7 @@
 	api.register {
 		name = "fileextension",
 		scope = "rule",
-		kind = "string",
+		kind = "list:string",
 	}
 
 	api.register {

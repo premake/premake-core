@@ -340,10 +340,12 @@
 
 
 	function m.fileExtension(r)
-		p.push('<FileExtension')
-		p.w('Name="*%s"', r.fileextension)
-		p.w('ContentType="%s" />', r.name)
-		p.pop()
+		for _, v in ipairs(r.fileextension) do
+			p.push('<FileExtension')
+			p.w('Name="*%s"', v)
+			p.w('ContentType="%s" />', r.name)
+			p.pop()
+		end
 	end
 
 
