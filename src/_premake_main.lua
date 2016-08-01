@@ -176,7 +176,9 @@
 
 		-- Allow the action to initialize stuff.
 		local action = premake.action.current()
-		premake.action.initialize(action.trigger)
+		if action then
+			premake.action.initialize(action.trigger)
+		end
 	end
 
 
