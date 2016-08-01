@@ -173,6 +173,12 @@
 			premake.warnOnce(_ACTION, "'%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3))
 		end
 		premake.action.set(_ACTION)
+
+		-- Allow the action to initialize stuff.
+		local action = premake.action.current()
+		if action then
+			premake.action.initialize(action.trigger)
+		end
 	end
 
 
