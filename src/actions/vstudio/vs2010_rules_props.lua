@@ -84,7 +84,6 @@
 		return {
 			m.propertyDefaults,
 			m.commandLineTemplates,
-			m.outputs,
 			m.executionDescription,
 			m.additionalDependencies,
 		}
@@ -144,18 +143,18 @@
 
 
 	function m.commandLineTemplates(r)
-		if #r.buildcommands then
+		-- create shadow context.
+		local env = p.rule.createEnvironment(r, "[%s]")
+		local ctx = p.context.extent(r, env)
 
-			-- create shadow context.
-			local env = p.rule.createEnvironment(r, "[%s]")
-			local ctx = p.context.extent(r, env)
+		-- now use the shadow context to detoken.
+		local buildcommands = ctx.buildcommands
 
-			-- now use the shadow context to detoken.
-			local cmds = os.translateCommands(ctx.buildcommands, p.WINDOWS)
-
-			-- write out the result.
+		-- write out the result.
+		if buildcommands and #buildcommands > 0 then
+			local cmds = os.translateCommands(buildcommands, p.WINDOWS)
 			cmds = table.concat(cmds, p.eol())
-			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
+			p.x('<CommandLineTemplate>@echo off\n%s</CommandLineTemplate>', cmds)
 		end
 	end
 
@@ -170,28 +169,16 @@
 
 
 	function m.executionDescription(r)
-		if r.buildmessage then
-			-- create shadow context.
-			local env = p.rule.createEnvironment(r, "[%s]")
-			local ctx = p.context.extent(r, env)
+		-- create shadow context.
+		local env = p.rule.createEnvironment(r, "%%(%s)")
+		local ctx = p.context.extent(r, env)
 
-			-- write out the result.
-			p.x('<ExecutionDescription>%s</ExecutionDescription>', ctx.buildmessage)
+		-- now use the shadow context to detoken.
+		local buildmessage = ctx.buildmessage
+
+		-- write out the result.
+		if buildmessage and #buildmessage > 0 then
+			p.x('<ExecutionDescription>%s</ExecutionDescription>', buildmessage)
 		end
 	end
 
-
-
-	function m.outputs(r)
-		if #r.buildoutputs then
-			-- create shadow context.
-			local pathVars = p.rule.createPathVars(r, "%%(%s)")
-			local ctx = p.context.extent(r, { pathVars = pathVars })
-
-			-- now use the shadow context to detoken.
-			local outputs = table.concat(ctx.buildoutputs, ";")
-
-			-- write out the result.
-			p.x('<Outputs>%s</Outputs>', path.translate(outputs))
-		end
-	end
