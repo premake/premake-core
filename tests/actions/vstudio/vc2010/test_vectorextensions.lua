@@ -29,6 +29,12 @@
 	end
 
 
+	function suite.instructionSet_onIA32_onVS2010()
+		vectorextensions "IA32"
+		prepare()
+		test.isemptycapture()
+	end
+
 	function suite.instructionSet_onIA32()
 		premake.action.set("vs2012")
 		vectorextensions "IA32"
