@@ -1098,6 +1098,7 @@
 			"Default",
 			"AVX",
 			"AVX2",
+			"IA32",
 			"SSE",
 			"SSE2",
 			"SSE3",
