@@ -1213,6 +1213,8 @@
 				v = "StreamingSIMDExtensions2"
 			elseif x == "SSE" then
 				v = "StreamingSIMDExtensions"
+			elseif x == "IA32" and _ACTION > "vs2010" then
+				v = "NoExtensions"
 			end
 		end
 		if v then
