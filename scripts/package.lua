@@ -151,6 +151,7 @@ if kind == "source" then
 	execQuiet("premake5 /to=build/vs2010 vs2010")
 	execQuiet("premake5 /to=build/vs2012 vs2012")
 	execQuiet("premake5 /to=build/vs2013 vs2013")
+	execQuiet("premake5 /to=build/vs2015 vs2015")
 	execQuiet("premake5 /to=build/gmake.windows /os=windows gmake")
 	execQuiet("premake5 /to=build/gmake.unix /os=linux gmake")
 	execQuiet("premake5 /to=build/gmake.macosx /os=macosx gmake")
