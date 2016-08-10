@@ -305,9 +305,9 @@
 --    A list of libraries to link, decorated for the linker.
 --
 
-	function nvcc.getlinks(cfg, systemOnly)
+	function nvcc.getlinks(cfg, systemonly, nogroups)
 		-- Just pass through to GCC (same interface)
-		return gcc.getlinksonly(cfg, systemOnly)
+		return gcc.getlinks(cfg, systemonly, nogroups)
 	end
 
 
