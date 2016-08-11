@@ -9,6 +9,7 @@
 	local p = premake
 	local vstudio = p.vstudio
 	local nuget2010 = p.vstudio.nuget2010
+	local cs2005 = p.vstudio.cs2005
 
 
 --
