@@ -213,7 +213,7 @@
 			SharedLib = function(cfg)
 				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
-					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+					table.insert(r, '-Wl,--out-implib=\'' .. cfg.linktarget.relpath .. '\'')
 				end
 				return r
 			end,
