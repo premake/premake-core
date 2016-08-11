@@ -281,7 +281,7 @@
 		system "Windows"
 		kind "SharedLib"
 		prepare()
-		test.contains({ "-shared", '-Wl,--out-implib="bin/Debug/MyProject.lib"' }, gcc.getldflags(cfg))
+		test.contains({ "-shared", '-Wl,--out-implib=\'bin/Debug/MyProject.lib\'' }, gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onWindowsApp()
