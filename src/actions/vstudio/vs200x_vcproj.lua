@@ -1121,7 +1121,7 @@
 
 
 	function m.entryPointSymbol(cfg, toolset)
-		if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and
+		if cfg.kind == "WindowedApp" and
 			not cfg.flags.WinMain and
 			not toolset
 		then

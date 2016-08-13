@@ -74,7 +74,6 @@
 <Link>
 	<SubSystem>Console</SubSystem>
 	<GenerateDebugInformation>false</GenerateDebugInformation>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
 
@@ -423,7 +422,6 @@
 <Link>
 	<SubSystem>Console</SubSystem>
 	<GenerateDebugInformation>false</GenerateDebugInformation>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 	<TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
 		]]
 	end

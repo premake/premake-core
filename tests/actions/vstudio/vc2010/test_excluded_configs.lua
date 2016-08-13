@@ -52,7 +52,6 @@
 <Link>
 	<SubSystem>Console</SubSystem>
 	<GenerateDebugInformation>false</GenerateDebugInformation>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 </Link>
 		]]
 	end
@@ -72,7 +71,6 @@
 	<SubSystem>Console</SubSystem>
 	<GenerateDebugInformation>false</GenerateDebugInformation>
 	<AdditionalDependencies>bin\Ares\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>

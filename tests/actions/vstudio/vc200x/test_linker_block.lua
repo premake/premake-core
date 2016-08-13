@@ -40,7 +40,6 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="false"
 	SubSystem="1"
-	EntryPointSymbol="mainCRTStartup"
 	TargetMachine="1"
 />
 		]]
@@ -137,7 +136,6 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="true"
 	SubSystem="1"
-	EntryPointSymbol="mainCRTStartup"
 	TargetMachine="1"
 />
 		]]
