@@ -359,8 +359,10 @@
 		end
 
 		-- The "-l" flag is fine for system libraries
-
 		local links = config.getlinks(cfg, "system", "fullpath")
+		local static_syslibs = {"-Wl,-Bstatic"}
+		local shared_syslibs = {}
+
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
 				table.insert(result, "-framework")
@@ -368,9 +370,32 @@
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				table.insert(result, "-l" .. path.getname(link))
+				local endswith = function(s, ptrn)
+					return ptrn == string.sub(s, -string.len(ptrn))
+				end
+				local name = path.getname(link)
+				-- Check whether link mode decorator is present 
+				if endswith(name, ":static") then
+					name = string.sub(name, 0, -8)
+					table.insert(static_syslibs, "-l" .. name)
+				elseif endswith(name, ":shared") then
+					name = string.sub(name, 0, -8)
+					table.insert(shared_syslibs, "-l" .. name)
+				else
+					table.insert(shared_syslibs, "-l" .. name)
+				end
 			end
 		end
+
+		local move = function(a1, a2)
+			local t = #a2
+			for i = 1, #a1 do a2[t + i] = a1[i] end
+		end
+		if #static_syslibs > 1 then
+			table.insert(static_syslibs, "-Wl,-Bdynamic")
+			move(static_syslibs, result)
+	    end
+		move(shared_syslibs, result)
 
 		return result
 	end
@@ -423,4 +448,3 @@
 		end
 		return nil
 	end
-
