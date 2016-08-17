@@ -1310,7 +1310,25 @@
 
 
 	function m.generateDebugInformation(cfg)
-		m.element("GenerateDebugInformation", nil, tostring(cfg.symbols == p.ON))
+		local lookup = {}
+		if _ACTION >= "vs2015" then
+			lookup[p.ON]       = "Debug"
+			lookup[p.OFF]      = "No"
+			lookup["FastLink"] = "DebugFastLink"
+
+			if cfg.symbols == "FastLink" then
+				m.element("FullProgramDatabaseFile", nil, "true")
+			end
+		else
+			lookup[p.ON]       = "true"
+			lookup[p.OFF]      = "false"
+			lookup["FastLink"] = "true"
+		end
+
+		local value = lookup[cfg.symbols]
+		if value then
+			m.element("GenerateDebugInformation", nil, value)
+		end
 	end
 
 

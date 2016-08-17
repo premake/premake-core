@@ -100,11 +100,11 @@
 
 	function suite.onPathVar()
 		createVar { name="MyVar", kind="path" }
-		myRuleVars { MyVar = "../../path/to/file" }
+		myRuleVars { MyVar = "../path/to/file" }
 		prepare()
 		test.capture [[
 <MyRule>
-	<MyVar>..\..\path\to\file</MyVar>
+	<MyVar>..\path\to\file</MyVar>
 </MyRule>
 		]]
 	end
