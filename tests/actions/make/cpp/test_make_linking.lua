@@ -35,11 +35,20 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -shared -s
+  ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
   LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
 
+	function suite.links_onMacOSXCppSharedLib()
+		_OS = "macosx"
+		kind "SharedLib"
+		prepare { "ldFlags", "linkCmd" }
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -dynamiclib -Wl,-install_name,@rpath/libMyProject.dylib -Wl,-x
+  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+		]]
+	end
 
 --
 -- Check link command for a shared C library.
@@ -50,7 +59,7 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -shared -s
+  ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
@@ -153,9 +162,26 @@
 
         prepare { "ldFlags", "libs", "ldDeps" }
         test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -s
+  ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
   LIBS += -lMyProject2
   LDDEPS += build/bin/Debug/libMyProject2.so
+        ]]
+    end
+
+    function suite.links_onMacOSXSiblingSharedLib()
+    	_OS = "macosx"
+        links "MyProject2"
+		flags { "RelativeLinks" }
+
+        test.createproject(wks)
+        kind "SharedLib"
+        location "build"
+
+        prepare { "ldFlags", "libs", "ldDeps" }
+        test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'@loader_path/../../build/bin/Debug' -Wl,-x
+  LIBS += -lMyProject2
+  LDDEPS += build/bin/Debug/libMyProject2.dylib
         ]]
     end
 

@@ -429,14 +429,14 @@
 
 
 	function make.ldFlags(cfg, toolset)
-		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getldflags(cfg), cfg.linkoptions)
+		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getrunpathdirs(cfg, cfg.runpathdirs), toolset.getldflags(cfg), cfg.linkoptions)
 		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(flags))
 	end
 
 
 	function make.libs(cfg, toolset)
 		local flags = toolset.getlinks(cfg)
-		_p('  LIBS +=%s', make.list(flags))
+		_p('  LIBS +=%s', make.list(flags, true))
 	end
 
 
