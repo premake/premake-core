@@ -53,6 +53,11 @@
 	end
 
 
+	function m.getRule(name)
+		p.oven.bake()
+		return p.global.getRule(name)
+	end
+
 
 	function m.getProject(wks, i)
 		wks = m.getWorkspace(wks)
