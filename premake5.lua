@@ -97,7 +97,7 @@
 		flags { "No64BitChecks", "ExtraWarnings", "StaticRuntime", "MultiProcessorCompile" }
 
 		if not _OPTIONS["no-zlib"] then
-			defines { "PREMAKE_COMPRESSION" }
+			defines { "PREMAKE_COMPRESSION", "ZIP_STATIC" }
 		end
 		if not _OPTIONS["no-curl"] then
 			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
@@ -131,11 +131,11 @@
 
 		-- optional 3rd party libraries
 		if not _OPTIONS["no-zlib"] then
-			includedirs { "contrib/zlib", "contrib/libzip" }
+			includedirs { "contrib/zlib", "contrib/libzip/lib", "contrib/config/libzip" }
 			links { "zip-lib", "zlib-lib" }
 		end
 		if not _OPTIONS["no-curl"] then
-			includedirs { "contrib/curl/include" }
+			includedirs { "contrib/curl/include", "contrib/config/curl" }
 			links { "curl-lib" }
 		end
 
@@ -159,7 +159,7 @@
 			targetdir   "bin/release"
 
 		filter "system:windows"
-			links       { "ole32", "ws2_32" }
+			links       { "ole32", "ws2_32", "crypt32" }
 
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
