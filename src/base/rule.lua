@@ -159,3 +159,51 @@
 			p.api.storeField(fld, value)
 		end
 	end
+
+
+
+---
+-- prepare an environment with the rule properties as global tokens,
+-- according to the format specified.
+--
+-- @param environ
+--    The environment table to fill up
+-- @param format
+--    The formatting to be used, ie "[%s]".
+---
+
+	function rule.prepareEnvironment(self, environ, format)
+		for _, def in ipairs(self.propertydefinition) do
+			environ[def.name] = string.format(format, def.name)
+		end
+	end
+
+	function rule.createEnvironment(self, format)
+		local environ = {}
+		rule.prepareEnvironment(self, environ, format)
+		return environ
+	end
+
+
+
+---
+-- prepare an table of pathVars with the rule properties as global tokens,
+-- according to the format specified.
+--
+-- @param pathVars
+--    The pathVars table to fill up
+-- @param format
+--    The formatting to be used, ie "%%(%s)".
+---
+
+	function rule.preparePathVars(self, pathVars, format)
+		for _, def in ipairs(self.propertydefinition) do
+			pathVars[def.name] = { absolute = true,  token = string.format(format, def.name) }
+		end
+	end
+
+	function rule.createPathVars(self, format)
+		local pathVars = {}
+		rule.preparePathVars(self, pathVars, format)
+		return pathVars
+	end

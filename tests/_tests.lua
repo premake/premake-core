@@ -131,6 +131,8 @@ return {
 	"actions/vstudio/vc2010/test_project_refs.lua",
 	"actions/vstudio/vc2010/test_prop_sheet.lua",
 	"actions/vstudio/vc2010/test_resource_compile.lua",
+	"actions/vstudio/vc2010/test_rule_props.lua",
+	"actions/vstudio/vc2010/test_rule_targets.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
 	"actions/vstudio/vc2010/test_target_machine.lua",
 	"actions/vstudio/vc2010/test_user_file.lua",

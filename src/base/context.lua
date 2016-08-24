@@ -59,6 +59,31 @@
 	end
 
 
+--
+-- Create an extended and uncached context based on another context object.
+--
+-- @param baseContext
+--    The base context to extent
+-- @param newEnvVars
+--    An optional key-value environment table for token expansion; keys and
+--    values provided in this table will be available for tokens to use.
+-- @return
+--    A new context object.
+--
+
+	function context.extent(baseContext, newEnvVars)
+		local ctx = {}
+		ctx._ctx = baseContext
+		ctx.environ = newEnvVars or baseContext.environ
+		ctx.terms = {}
+		ctx._basedir = baseContext._basedir
+
+		setmetatable(ctx, context.__mt_uncached)
+
+		return ctx
+	end
+
+
 
 ---
 -- Add a new key-value pair to refine the context filtering.
@@ -204,7 +229,7 @@
 		local value = configset.fetch(ctx._cfgset, field, ctx.terms, ctx, onlylocal and ctx._cfgset)
 		if value then
 			-- store the result for later lookups
-			ctx[key] = value
+			rawset(ctx, key, value)
 		end
 
 		return value
@@ -212,5 +237,16 @@
 
 	context.__mt = {
 		__index = context.fetchvalue
+	}
+
+	context.__mt_uncached = {
+		__index =  function(ctx, key)
+			local field = p.field.get(key)
+			if not field then
+				return nil
+			end
+			local parent = rawget(ctx, '_ctx')
+			return configset.fetch(parent._cfgset, field, ctx.terms, ctx, nil)
+		end
 	}
 

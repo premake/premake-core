@@ -42,6 +42,9 @@
 			end
 		end
 
+		-- fetch the pathVars from the enviroment.
+		local envMap = environ.pathVars or {}
+
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
@@ -79,14 +82,14 @@
 				end
 			end
 
-			-- If this token is in my path variable mapping table, replace the
+			-- If this token is in my path variable mapping tables, replace the
 			-- value with the one from the map. This needs to go here because
 			-- I don't want to make the result relative, but I don't want the
 			-- absolute path handling below.
-
-			if varMap[token] then
+			local mapped = envMap[token] or varMap[token]
+			if mapped then
 				err    = nil
-				result = varMap[token]
+				result = mapped
 				if type(result) == "function" then
 					success, result = pcall(result, e)
 					if not success then
