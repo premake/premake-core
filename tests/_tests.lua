@@ -17,6 +17,7 @@ return {
 	"base/test_tree.lua",
 	"base/test_uuid.lua",
 	"base/test_versions.lua",
+	"base/test_http.lua",
 
 	-- Workspace object tests
 	"workspace/test_eachconfig.lua",
