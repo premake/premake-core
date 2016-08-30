@@ -97,7 +97,8 @@ static const luaL_Reg buffered_functions[] = {
 
 #ifdef PREMAKE_CURL
 static const luaL_Reg http_functions[] = {
-	{ "get",  http_get },
+	{ "get",       http_get },
+	{ "post",      http_post },
 	{ "download",  http_download },
 	{ NULL, NULL }
 };
