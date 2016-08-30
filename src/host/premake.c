@@ -71,6 +71,7 @@ static const luaL_Reg os_functions[] = {
 	{ "pathsearch",             os_pathsearch           },
 	{ "realpath",               os_realpath             },
 	{ "rmdir",                  os_rmdir                },
+	{ "setcwd",                 os_setcwd               },
 	{ "stat",                   os_stat                 },
 	{ "uuid",                   os_uuid                 },
 	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
