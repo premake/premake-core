@@ -136,7 +136,7 @@
 		end
 		if not _OPTIONS["no-curl"] then
 			includedirs { "contrib/curl/include" }
-			links { "curl-lib" }
+			links { "curl-lib", "mbedtls-lib" }
 		end
 
 		files
@@ -169,17 +169,9 @@
 		filter "system:linux or hurd"
 			links       { "dl", "rt" }
 
-		filter "system:linux"
-			if not _OPTIONS["no-curl"] and os.findlib("ssl") then
-				links       { "ssl", "crypto" }
-			end
-
 		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework" }
-			if not _OPTIONS["no-curl"] then
-				links   { "Security.framework" }
-			end
 
 		filter { "system:macosx", "action:gmake" }
 			toolset "clang"
@@ -200,9 +192,9 @@
 			include "contrib/libzip"
 		end
 		if not _OPTIONS["no-curl"] then
+			include "contrib/mbedtls"
 			include "contrib/curl"
 		end
-
 
 --
 -- A more thorough cleanup.

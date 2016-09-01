@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -31,15 +31,14 @@
 #include "warnless.h"
 #include "non-ascii.h"
 #include "escape.h"
+/* The last 3 #include files should be in this order */
 #include "curl_printf.h"
-
-/* The last #include files should be: */
 #include "curl_memory.h"
 #include "memdebug.h"
 
 /* Portable character check (remember EBCDIC). Do not use isalnum() because
    its behavior is altered by the current locale.
-   See http://tools.ietf.org/html/rfc3986#section-2.3
+   See https://tools.ietf.org/html/rfc3986#section-2.3
 */
 static bool Curl_isunreserved(unsigned char in)
 {
@@ -105,7 +104,7 @@ char *curl_easy_escape(CURL *handle, const char *string, int inlength)
         alloc *= 2;
         testing_ptr = realloc(ns, alloc);
         if(!testing_ptr) {
-          free( ns );
+          free(ns);
           return NULL;
         }
         else {

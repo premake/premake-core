@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -173,8 +173,8 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
       unsigned short ip[4];
       Curl_printable_address(hp, buf, sizeof(buf));
 
-      if(4 == sscanf( buf, "%hu.%hu.%hu.%hu",
-                      &ip[0], &ip[1], &ip[2], &ip[3])) {
+      if(4 == sscanf(buf, "%hu.%hu.%hu.%hu",
+                     &ip[0], &ip[1], &ip[2], &ip[3])) {
         /* Set DSTIP */
         socksreq[4] = (unsigned char)ip[0];
         socksreq[5] = (unsigned char)ip[1];
@@ -300,8 +300,8 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
             ", request rejected or failed.",
             (unsigned char)socksreq[4], (unsigned char)socksreq[5],
             (unsigned char)socksreq[6], (unsigned char)socksreq[7],
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
       return CURLE_COULDNT_CONNECT;
     case 92:
       failf(data,
@@ -310,8 +310,8 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
             "identd on the client.",
             (unsigned char)socksreq[4], (unsigned char)socksreq[5],
             (unsigned char)socksreq[6], (unsigned char)socksreq[7],
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
       return CURLE_COULDNT_CONNECT;
     case 93:
       failf(data,
@@ -320,8 +320,8 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
             "report different user-ids.",
             (unsigned char)socksreq[4], (unsigned char)socksreq[5],
             (unsigned char)socksreq[6], (unsigned char)socksreq[7],
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
       return CURLE_COULDNT_CONNECT;
     default:
       failf(data,
@@ -329,8 +329,8 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
             ", Unknown.",
             (unsigned char)socksreq[4], (unsigned char)socksreq[5],
             (unsigned char)socksreq[6], (unsigned char)socksreq[7],
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
       return CURLE_COULDNT_CONNECT;
     }
   }
@@ -674,15 +674,15 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
             "Can't complete SOCKS5 connection to %d.%d.%d.%d:%d. (%d)",
             (unsigned char)socksreq[4], (unsigned char)socksreq[5],
             (unsigned char)socksreq[6], (unsigned char)socksreq[7],
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
     }
     else if(socksreq[3] == 3) {
       failf(data,
             "Can't complete SOCKS5 connection to %s:%d. (%d)",
             hostname,
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
     }
     else if(socksreq[3] == 4) {
       failf(data,
@@ -696,8 +696,8 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
             (unsigned char)socksreq[14], (unsigned char)socksreq[15],
             (unsigned char)socksreq[16], (unsigned char)socksreq[17],
             (unsigned char)socksreq[18], (unsigned char)socksreq[19],
-            ((socksreq[8] << 8) | socksreq[9]),
-            socksreq[1]);
+            (((unsigned char)socksreq[8] << 8) | (unsigned char)socksreq[9]),
+            (unsigned char)socksreq[1]);
     }
     return CURLE_COULDNT_CONNECT;
   }

@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -26,11 +26,10 @@
 
 #include "urldata.h"
 #include "rawstr.h"
-#include "curl_sasl.h"
+#include "vauth/vauth.h"
 #include "http_digest.h"
+/* The last 3 #include files should be in this order */
 #include "curl_printf.h"
-
-/* The last #include files should be: */
 #include "curl_memory.h"
 #include "memdebug.h"
 
@@ -65,7 +64,7 @@ CURLcode Curl_input_digest(struct connectdata *conn,
   while(*header && ISSPACE(*header))
     header++;
 
-  return Curl_sasl_decode_digest_http_message(header, digest);
+  return Curl_auth_decode_digest_http_message(header, digest);
 }
 
 CURLcode Curl_output_digest(struct connectdata *conn,
@@ -135,7 +134,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
 
      Apache servers can be set to do the Digest IE-style automatically using
      the BrowserMatch feature:
-     http://httpd.apache.org/docs/2.2/mod/mod_auth_digest.html#msie
+     https://httpd.apache.org/docs/2.2/mod/mod_auth_digest.html#msie
 
      Further details on Digest implementation differences:
      http://www.fngtps.com/2006/09/http-authentication
@@ -152,7 +151,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
   if(!path)
     return CURLE_OUT_OF_MEMORY;
 
-  result = Curl_sasl_create_digest_http_message(data, userp, passwdp, request,
+  result = Curl_auth_create_digest_http_message(data, userp, passwdp, request,
                                                 path, digest, &response, &len);
   free(path);
   if(result)
@@ -172,8 +171,8 @@ CURLcode Curl_output_digest(struct connectdata *conn,
 
 void Curl_digest_cleanup(struct SessionHandle *data)
 {
-  Curl_sasl_digest_cleanup(&data->state.digest);
-  Curl_sasl_digest_cleanup(&data->state.proxydigest);
+  Curl_auth_digest_cleanup(&data->state.digest);
+  Curl_auth_digest_cleanup(&data->state.proxydigest);
 }
 
 #endif

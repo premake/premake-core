@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -83,9 +83,9 @@
 #include "curl_sasl.h"
 #include "curl_md5.h"
 #include "warnless.h"
+/* The last 3 #include files should be in this order */
 #include "curl_printf.h"
 #include "curl_memory.h"
-/* The last #include file should be: */
 #include "memdebug.h"
 
 /* Local API functions */
@@ -214,7 +214,7 @@ static const struct Curl_handler Curl_handler_pop3s_proxy = {
 /* SASL parameters for the pop3 protocol */
 static const struct SASLproto saslpop3 = {
   "pop",                      /* The service name */
-  '+',                        /* Code received when continuation is expected */
+  '*',                        /* Code received when continuation is expected */
   '+',                        /* Code to receive upon authentication success */
   255 - 8,                    /* Maximum initial response length (no max) */
   pop3_perform_auth,          /* Send authentication command */
@@ -225,7 +225,11 @@ static const struct SASLproto saslpop3 = {
 #ifdef USE_SSL
 static void pop3_to_pop3s(struct connectdata *conn)
 {
+  /* Change the connection handler */
   conn->handler = &Curl_handler_pop3s;
+
+  /* Set the connection's upgraded to TLS flag */
+  conn->tls_upgraded = TRUE;
 }
 #else
 #define pop3_to_pop3s(x) Curl_nop_stmt
@@ -256,17 +260,25 @@ static bool pop3_endofresp(struct connectdata *conn, char *line, size_t len,
   if(pop3c->state == POP3_CAPA) {
     /* Do we have the terminating line? */
     if(len >= 1 && !memcmp(line, ".", 1))
+      /* Treat the response as a success */
       *resp = '+';
     else
+      /* Treat the response as an untagged continuation */
       *resp = '*';
 
     return TRUE;
   }
 
-  /* Do we have a command or continuation response? */
-  if((len >= 3 && !memcmp("+OK", line, 3)) ||
-     (len >= 1 && !memcmp("+", line, 1))) {
+  /* Do we have a success response? */
+  if(len >= 3 && !memcmp("+OK", line, 3)) {
     *resp = '+';
+
+    return TRUE;
+  }
+
+  /* Do we have a continuation response? */
+  if(len >= 1 && !memcmp("+", line, 1)) {
+    *resp = '*';
 
     return TRUE;
   }
@@ -700,7 +712,7 @@ static CURLcode pop3_state_capa_resp(struct connectdata *conn, int pop3code,
 
   (void)instate; /* no use for this yet */
 
-  /* Do we have a untagged response? */
+  /* Do we have a untagged continuation response? */
   if(pop3code == '*') {
     /* Does the server support the STLS capability? */
     if(len >= 4 && !memcmp(line, "STLS", 4))
@@ -741,8 +753,8 @@ static CURLcode pop3_state_capa_resp(struct connectdata *conn, int pop3code,
           wordlen++;
 
         /* Test the word for a matching authentication mechanism */
-        if((mechbit = Curl_sasl_decode_mech(line, wordlen, &llen)) &&
-           llen == wordlen)
+        mechbit = Curl_sasl_decode_mech(line, wordlen, &llen);
+        if(mechbit && llen == wordlen)
           pop3c->sasl.authmechs |= mechbit;
 
         line += wordlen;
@@ -1154,10 +1166,6 @@ static CURLcode pop3_done(struct connectdata *conn, CURLcode status,
   (void)premature;
 
   if(!pop3)
-    /* When the easy handle is removed from the multi interface while libcurl
-       is still trying to resolve the host name, the POP3 struct is not yet
-       initialized. However, the removal action calls Curl_done() which in
-       turn calls this function, so we simply return success. */
     return CURLE_OK;
 
   if(status) {
@@ -1346,6 +1354,10 @@ static CURLcode pop3_setup_connection(struct connectdata *conn)
   if(result)
     return result;
 
+  /* Clear the TLS upgraded flag */
+  conn->tls_upgraded = FALSE;
+
+  /* Set up the proxy if necessary */
   if(conn->bits.httpproxy && !data->set.tunnel_thru_httpproxy) {
     /* Unless we have asked to tunnel POP3 operations through the proxy, we
        switch and use HTTP operations only */

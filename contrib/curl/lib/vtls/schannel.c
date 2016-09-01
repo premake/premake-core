@@ -5,13 +5,13 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2012 - 2015, Marc Hoersken, <info@marc-hoersken.de>
+ * Copyright (C) 2012 - 2016, Marc Hoersken, <info@marc-hoersken.de>
  * Copyright (C) 2012, Mark Salisbury, <mark.salisbury@hp.com>
- * Copyright (C) 2012 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2012 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -61,6 +61,12 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+/* ALPN requires version 8.1 of the  Windows SDK, which was
+   shipped with Visual Studio 2013, aka _MSC_VER 1800*/
+#if defined(_MSC_VER) && (_MSC_VER >= 1800) && !defined(_USING_V110_SDK71_)
+#  define HAS_ALPN 1
+#endif
+
 /* Uncomment to force verbose output
  * #define infof(x, y, ...) printf(y, __VA_ARGS__)
  * #define failf(x, y, ...) printf(y, __VA_ARGS__)
@@ -97,6 +103,11 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
   SecBuffer outbuf;
   SecBufferDesc outbuf_desc;
+  SecBuffer inbuf;
+  SecBufferDesc inbuf_desc;
+#ifdef HAS_ALPN
+  unsigned char alpn_buffer[128];
+#endif
   SCHANNEL_CRED schannel_cred;
   SECURITY_STATUS sspi_status = SEC_E_OK;
   struct curl_schannel_cred *old_cred = NULL;
@@ -189,7 +200,8 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
     }
     memset(connssl->cred, 0, sizeof(struct curl_schannel_cred));
 
-    /* http://msdn.microsoft.com/en-us/library/windows/desktop/aa374716.aspx */
+    /* https://msdn.microsoft.com/en-us/library/windows/desktop/aa374716.aspx
+       */
     sspi_status =
       s_pSecFn->AcquireCredentialsHandle(NULL, (TCHAR *)UNISP_NAME,
                                          SECPKG_CRED_OUTBOUND, NULL,
@@ -218,6 +230,60 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
     infof(data, "schannel: using IP address, SNI is not supported by OS.\n");
   }
 
+#ifdef HAS_ALPN
+  if(conn->bits.tls_enable_alpn) {
+    int cur = 0;
+    int list_start_index = 0;
+    unsigned int* extension_len = NULL;
+    unsigned short* list_len = NULL;
+
+    /* The first four bytes will be an unsigned int indicating number
+       of bytes of data in the rest of the the buffer. */
+    extension_len = (unsigned int*)(&alpn_buffer[cur]);
+    cur += sizeof(unsigned int);
+
+    /* The next four bytes are an indicator that this buffer will contain
+       ALPN data, as opposed to NPN, for example. */
+    *(unsigned int*)&alpn_buffer[cur] =
+      SecApplicationProtocolNegotiationExt_ALPN;
+    cur += sizeof(unsigned int);
+
+    /* The next two bytes will be an unsigned short indicating the number
+       of bytes used to list the preferred protocols. */
+    list_len = (unsigned short*)(&alpn_buffer[cur]);
+    cur += sizeof(unsigned short);
+
+    list_start_index = cur;
+
+#ifdef USE_NGHTTP2
+    if(data->set.httpversion >= CURL_HTTP_VERSION_2) {
+      memcpy(&alpn_buffer[cur], NGHTTP2_PROTO_ALPN, NGHTTP2_PROTO_ALPN_LEN);
+      cur += NGHTTP2_PROTO_ALPN_LEN;
+      infof(data, "schannel: ALPN, offering %s\n", NGHTTP2_PROTO_VERSION_ID);
+    }
+#endif
+
+    alpn_buffer[cur++] = ALPN_HTTP_1_1_LENGTH;
+    memcpy(&alpn_buffer[cur], ALPN_HTTP_1_1, ALPN_HTTP_1_1_LENGTH);
+    cur += ALPN_HTTP_1_1_LENGTH;
+    infof(data, "schannel: ALPN, offering %s\n", ALPN_HTTP_1_1);
+
+    *list_len = curlx_uitous(cur - list_start_index);
+    *extension_len = *list_len + sizeof(unsigned int) + sizeof(unsigned short);
+
+    InitSecBuffer(&inbuf, SECBUFFER_APPLICATION_PROTOCOLS, alpn_buffer, cur);
+    InitSecBufferDesc(&inbuf_desc, &inbuf, 1);
+  }
+  else
+  {
+    InitSecBuffer(&inbuf, SECBUFFER_EMPTY, NULL, 0);
+    InitSecBufferDesc(&inbuf_desc, &inbuf, 1);
+  }
+#else /* HAS_ALPN */
+  InitSecBuffer(&inbuf, SECBUFFER_EMPTY, NULL, 0);
+  InitSecBufferDesc(&inbuf_desc, &inbuf, 1);
+#endif
+
   /* setup output buffer */
   InitSecBuffer(&outbuf, SECBUFFER_EMPTY, NULL, 0);
   InitSecBufferDesc(&outbuf_desc, &outbuf, 1);
@@ -240,11 +306,11 @@ schannel_connect_step1(struct connectdata *conn, int sockindex)
   if(!host_name)
     return CURLE_OUT_OF_MEMORY;
 
-  /* http://msdn.microsoft.com/en-us/library/windows/desktop/aa375924.aspx */
+  /* https://msdn.microsoft.com/en-us/library/windows/desktop/aa375924.aspx */
 
   sspi_status = s_pSecFn->InitializeSecurityContext(
     &connssl->cred->cred_handle, NULL, host_name,
-    connssl->req_flags, 0, 0, NULL, 0, &connssl->ctxt->ctxt_handle,
+    connssl->req_flags, 0, 0, &inbuf_desc, 0, &connssl->ctxt->ctxt_handle,
     &outbuf_desc, &connssl->ret_flags, &connssl->ctxt->time_stamp);
 
   Curl_unicodefree(host_name);
@@ -407,8 +473,8 @@ schannel_connect_step2(struct connectdata *conn, int sockindex)
     if(!host_name)
       return CURLE_OUT_OF_MEMORY;
 
-    /* http://msdn.microsoft.com/en-us/library/windows/desktop/aa375924.aspx */
-
+    /* https://msdn.microsoft.com/en-us/library/windows/desktop/aa375924.aspx
+       */
     sspi_status = s_pSecFn->InitializeSecurityContext(
       &connssl->cred->cred_handle, &connssl->ctxt->ctxt_handle,
       host_name, connssl->req_flags, 0, 0, &inbuf_desc, 0, NULL,
@@ -534,6 +600,10 @@ schannel_connect_step3(struct connectdata *conn, int sockindex)
   struct SessionHandle *data = conn->data;
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
   struct curl_schannel_cred *old_cred = NULL;
+#ifdef HAS_ALPN
+  SECURITY_STATUS sspi_status = SEC_E_OK;
+  SecPkgContext_ApplicationProtocol alpn_result;
+#endif
   bool incache;
 
   DEBUGASSERT(ssl_connect_3 == connssl->connecting_state);
@@ -558,6 +628,41 @@ schannel_connect_step3(struct connectdata *conn, int sockindex)
       failf(data, "schannel: failed to setup stream orientation");
     return CURLE_SSL_CONNECT_ERROR;
   }
+
+#ifdef HAS_ALPN
+  if(conn->bits.tls_enable_alpn) {
+    sspi_status = s_pSecFn->QueryContextAttributes(&connssl->ctxt->ctxt_handle,
+      SECPKG_ATTR_APPLICATION_PROTOCOL, &alpn_result);
+
+    if(sspi_status != SEC_E_OK) {
+      failf(data, "schannel: failed to retrieve ALPN result");
+      return CURLE_SSL_CONNECT_ERROR;
+    }
+
+    if(alpn_result.ProtoNegoStatus ==
+       SecApplicationProtocolNegotiationStatus_Success) {
+
+      infof(data, "schannel: ALPN, server accepted to use %.*s\n",
+        alpn_result.ProtocolIdSize, alpn_result.ProtocolId);
+
+#ifdef USE_NGHTTP2
+      if(alpn_result.ProtocolIdSize == NGHTTP2_PROTO_VERSION_ID_LEN &&
+         !memcmp(NGHTTP2_PROTO_VERSION_ID, alpn_result.ProtocolId,
+          NGHTTP2_PROTO_VERSION_ID_LEN)) {
+        conn->negnpn = CURL_HTTP_VERSION_2;
+      }
+      else
+#endif
+      if(alpn_result.ProtocolIdSize == ALPN_HTTP_1_1_LENGTH &&
+         !memcmp(ALPN_HTTP_1_1, alpn_result.ProtocolId,
+           ALPN_HTTP_1_1_LENGTH)) {
+        conn->negnpn = CURL_HTTP_VERSION_1_1;
+      }
+    }
+    else
+      infof(data, "ALPN, server did not agree to a protocol\n");
+  }
+#endif
 
   /* increment the reference counter of the credential/session handle */
   if(connssl->cred && connssl->ctxt) {
@@ -759,7 +864,7 @@ schannel_send(struct connectdata *conn, int sockindex,
   /* copy data into output buffer */
   memcpy(outbuf[1].pvBuffer, buf, len);
 
-  /* http://msdn.microsoft.com/en-us/library/windows/desktop/aa375390.aspx */
+  /* https://msdn.microsoft.com/en-us/library/windows/desktop/aa375390.aspx */
   sspi_status = s_pSecFn->EncryptMessage(&connssl->ctxt->ctxt_handle, 0,
                                          &outbuf_desc, 0);
 
@@ -973,7 +1078,8 @@ schannel_recv(struct connectdata *conn, int sockindex,
     InitSecBuffer(&inbuf[3], SECBUFFER_EMPTY, NULL, 0);
     InitSecBufferDesc(&inbuf_desc, inbuf, 4);
 
-    /* http://msdn.microsoft.com/en-us/library/windows/desktop/aa375348.aspx */
+    /* https://msdn.microsoft.com/en-us/library/windows/desktop/aa375348.aspx
+       */
     sspi_status = s_pSecFn->DecryptMessage(&connssl->ctxt->ctxt_handle,
                                            &inbuf_desc, 0, NULL);
 
@@ -1120,7 +1226,22 @@ cleanup:
   */
   if(len && !connssl->decdata_offset && connssl->recv_connection_closed &&
      !connssl->recv_sspi_close_notify) {
-    BOOL isWin2k;
+    bool isWin2k = FALSE;
+
+#if !defined(_WIN32_WINNT) || !defined(_WIN32_WINNT_WIN2K) || \
+    (_WIN32_WINNT < _WIN32_WINNT_WIN2K)
+    OSVERSIONINFO osver;
+
+    memset(&osver, 0, sizeof(osver));
+    osver.dwOSVersionInfoSize = sizeof(osver);
+
+    /* Find out the Windows version */
+    if(GetVersionEx(&osver)) {
+      /* Verify the version number is 5.0 */
+      if(osver.dwMajorVersion == 5 && osver.dwMinorVersion == 0)
+        isWin2k = TRUE;
+    }
+#else
     ULONGLONG cm;
     OSVERSIONINFOEX osver;
 
@@ -1133,10 +1254,11 @@ cleanup:
     cm = VerSetConditionMask(cm, VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
     cm = VerSetConditionMask(cm, VER_SERVICEPACKMINOR, VER_GREATER_EQUAL);
 
-    isWin2k = VerifyVersionInfo(&osver,
-                                (VER_MAJORVERSION | VER_MINORVERSION |
-                                 VER_SERVICEPACKMAJOR | VER_SERVICEPACKMINOR),
-                                cm);
+    if(VerifyVersionInfo(&osver, (VER_MAJORVERSION | VER_MINORVERSION |
+                                  VER_SERVICEPACKMAJOR | VER_SERVICEPACKMINOR),
+                         cm))
+      isWin2k = TRUE;
+#endif
 
     if(isWin2k && sspi_status == SEC_E_OK)
       connssl->recv_sspi_close_notify = true;
@@ -1204,7 +1326,7 @@ bool Curl_schannel_data_pending(const struct connectdata *conn, int sockindex)
 
   if(connssl->use) /* SSL/TLS is in use */
     return (connssl->encdata_offset > 0 ||
-            connssl->decdata_offset > 0 ) ? TRUE : FALSE;
+            connssl->decdata_offset > 0) ? TRUE : FALSE;
   else
     return FALSE;
 }
@@ -1218,7 +1340,7 @@ void Curl_schannel_close(struct connectdata *conn, int sockindex)
 
 int Curl_schannel_shutdown(struct connectdata *conn, int sockindex)
 {
-  /* See http://msdn.microsoft.com/en-us/library/windows/desktop/aa380138.aspx
+  /* See https://msdn.microsoft.com/en-us/library/windows/desktop/aa380138.aspx
    * Shutting Down an Schannel Connection
    */
   struct SessionHandle *data = conn->data;
