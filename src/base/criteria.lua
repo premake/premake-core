@@ -94,6 +94,7 @@
 		local crit = {}
 		crit.patterns = patterns
 		crit.data = criteria._compile(patterns)
+		crit.terms = terms
 		return crit
 	end
 
