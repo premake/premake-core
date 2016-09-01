@@ -46,6 +46,18 @@
 	end
 
 
+	function suite.PerConfigFile()
+		files { "Hello.cs" }
+		configuration { 'debug' }
+			files { "HelloTwo.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="Hello.cs" />
+		<Compile Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' " Include="HelloTwo.cs" />
+		]]
+	end
+
+
 --
 -- Test file dependencies
 --
