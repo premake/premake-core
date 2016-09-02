@@ -240,6 +240,7 @@
 		return flags
 	end
 
+	nvcc.getrunpathdirs = gcc.getrunpathdirs
 
 --
 -- Build a list of linker flags corresponding to the settings in
