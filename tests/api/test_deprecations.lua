@@ -7,47 +7,59 @@
 	local suite = test.declare("api_deprecations")
 	local api = premake.api
 
-	local sln, prj, cfg
 
 	function suite.setup()
-		sln, prj = test.createWorkspace()
+		workspace("MyWorkspace")
+		configurations { "Debug", "Release" }
 	end
-
-	local function prepare(platform)
-		cfg = test.getconfig(prj, "Debug", platform)
-	end
-
 
 	function suite.setsNewValue_whenOldValueIsRemovedViaWildcard_inSubConfig()
-		filter { "configurations:Debug" }
-			flags { "Symbols" }
+		local prj = project "MyProject"
+			filter { "configurations:Debug" }
+				flags { "Symbols" }
 
-		filter { "*" }
-			removeflags { "*" }
+			filter { "*" }
+				removeflags { "*" }
 
-		prepare()
-
+		-- test output.
+		local cfg = test.getconfig(prj, "Debug", platform)
 		test.isequal("Default", cfg.Symbols)
 	end
 
 
 	function suite.setsNewValue_whenOldValueIsRemovedInOtherConfig_inSubConfig()
-		flags { "Symbols" }
+		local prj = project "MyProject"
+			flags { "Symbols" }
 
-		filter { "configurations:Release" }
-			removeflags { "*" }
+			filter { "configurations:Release" }
+				removeflags { "*" }
 
+		-- test output.
 		test.isequal("On",      test.getconfig(prj, "Debug", platform).Symbols)
 		test.isequal("Default", test.getconfig(prj, "Release", platform).Symbols)
 	end
 
 
 	function suite.dontRemoveFlagIfSetThroughNewApi()
-		floatingpoint "Fast"
-		removeflags "*"
+		local prj = project "MyProject"
+			floatingpoint "Fast"
+			removeflags "*"
 
-		prepare()
-
+		-- test output.
+		local cfg = test.getconfig(prj, "Debug", platform)
 		test.isequal("Fast", cfg.floatingpoint)
+	end
+
+
+	function suite.setsNewValue_whenOldValueFromParentIsRemovedInOtherConfig_inSubConfig()
+		flags { "Symbols" }
+
+		local prj = project "MyProject"
+			filter { "configurations:Release" }
+				removeflags { "*" }
+
+		-- test output.
+		test.isequal("On",      test.getconfig(prj, "Debug", platform).Symbols)
+		test.isequal("Default", test.getconfig(prj, "Release", platform).Symbols)
 	end
 
