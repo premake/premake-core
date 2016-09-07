@@ -57,7 +57,6 @@
 	end
 
 
-
 --
 -- Output the XML declaration and opening <Project> tag.
 --
@@ -578,6 +577,15 @@
 	end
 
 
+	function m.generatedFile(cfg, file)
+		if file.generated then
+			local path = path.translate(file.dependsOn.relpath)
+			m.element("AutoGen", nil, 'true')
+			m.element("DependentUpon", nil, path)
+		end
+	end
+
+
 ---
 -- Write out the list of source code files, and any associated configuration.
 ---
@@ -601,7 +609,7 @@
 		priority   = 1,
 
 		emitFiles = function(prj, group)
-			m.emitFiles(prj, group, "ClInclude")
+			m.emitFiles(prj, group, "ClInclude", {m.generatedFile})
 		end,
 
 		emitFilter = function(prj, group)
@@ -641,7 +649,7 @@
 				end
 			end
 
-			m.emitFiles(prj, group, "ClCompile", nil, fileCfgFunc)
+			m.emitFiles(prj, group, "ClCompile", {m.generatedFile}, fileCfgFunc)
 		end,
 
 		emitFilter = function(prj, group)
@@ -658,7 +666,7 @@
 		priority = 3,
 
 		emitFiles = function(prj, group)
-			m.emitFiles(prj, group, "None")
+			m.emitFiles(prj, group, "None", {m.generatedFile})
 		end,
 
 		emitFilter = function(prj, group)
