@@ -555,15 +555,20 @@
 				table.foreachi(value, recurse)
 
 			elseif hasDeprecatedValues and value:contains("*") then
-				local current = configset.fetch(target, field)
+				local current = configset.fetch(target, field, {
+					matcher = function(cset, block, filter)
+						local current = cset.current
+						return criteria.matches(current._criteria, block._criteria.terms or {}) or
+							   criteria.matches(block._criteria, current._criteria.terms or {})
+					end
+				})
+
 				local mask = path.wildcards(value)
 				for _, item in ipairs(current) do
 					if item:match(mask) == item then
 						recurse(item)
 					end
 				end
-				table.insert(removes, value)
-
 			else
 				local value, err, additional = api.checkValue(field, value)
 				if err then
@@ -1100,9 +1105,7 @@
 
 	function configuration(terms)
 		if terms then
-			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or
-			   (terms == "*")
-			then
+			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or (terms == "*") then
 				terms = nil
 			end
 			configset.addblock(api.scope.current, {terms}, os.getcwd())
@@ -1119,9 +1122,7 @@
 
 	function filter(terms)
 		if terms then
-			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or
-			   (terms == "*")
-			then
+			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or (terms == "*") then
 				terms = nil
 			end
 			local ok, err = configset.addFilter(api.scope.current, {terms}, os.getcwd())

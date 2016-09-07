@@ -81,6 +81,15 @@
 	end
 
 
+	function configset._dofilter(cset, block, filter)
+		if not filter.matcher then
+			return (cset.compiled or criteria.matches(block._criteria, filter))
+		else
+			return filter.matcher(cset, block, filter)
+		end
+	end
+
+
 	function configset._fetchDirect(cset, field, filter, ctx, origin)
 		-- If the originating configset hasn't been compiled, then the value will still
 		-- be on that configset.
@@ -107,7 +116,7 @@
 					filter.files = path.getrelative(basedir, abspath)
 				end
 
-				if value ~= nil and (cset.compiled or criteria.matches(block._criteria, filter)) then
+				if value ~= nil and configset._dofilter(cset, block, filter) then
 					-- If value is an object, return a copy of it so that any
 					-- changes later made to it by the caller won't alter the
 					-- original value (that was a tough bug to find)
@@ -181,7 +190,7 @@
 					filter.files = path.getrelative(basedir, abspath)
 				end
 
-				if cset.compiled or criteria.matches(block._criteria, filter) then
+				if configset._dofilter(cset, block, filter) then
 					if block._removes and block._removes[key] then
 						remove(block._removes[key])
 					end
