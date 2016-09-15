@@ -9,5 +9,4 @@
 		"monodevelop",
 		"codelite",
 		"d",
-		"raw",
 	}
