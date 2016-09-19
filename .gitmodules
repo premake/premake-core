@@ -10,3 +10,6 @@
 [submodule "modules/d"]
 	path = modules/d
 	url = https://github.com/premake/premake-dlang.git
+[submodule "modules/raw"]
+	path = modules/raw
+	url = https://github.com/premake/premake-raw.git
