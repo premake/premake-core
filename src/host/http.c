@@ -267,8 +267,9 @@ int http_get(lua_State* L)
 
 	if (code != CURLE_OK)
 	{
-		lua_pushnil(L);
 		char errorBuf[1024];
+
+		lua_pushnil(L);
 		snprintf(errorBuf, sizeof(errorBuf) - 1, "%s\n%s\n", curl_easy_strerror(code), state.errorBuffer);
 		lua_pushstring(L, errorBuf);
 	}
@@ -297,10 +298,10 @@ int http_post(lua_State* L)
 	string_init(&state.S);
 	if (curl)
 	{
-		curl_easy_setopt(curl, CURLOPT_POST, 1);
-
 		size_t dataSize;
 		const char* data = luaL_checklstring(L, 2, &dataSize);
+
+		curl_easy_setopt(curl, CURLOPT_POST, 1);
 		if (data && dataSize > 0)
 		{
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)dataSize);
@@ -314,8 +315,9 @@ int http_post(lua_State* L)
 
 	if (code != CURLE_OK)
 	{
-		lua_pushnil(L);
 		char errorBuf[1024];
+
+		lua_pushnil(L);
 		snprintf(errorBuf, sizeof(errorBuf) - 1, "%s\n%s\n", curl_easy_strerror(code), state.errorBuffer);
 		lua_pushstring(L, errorBuf);
 	}
