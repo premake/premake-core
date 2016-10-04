@@ -5,6 +5,14 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha9:
+
+* New: `symbols()`, replaces and extends flags {"Symbols"}
+* New: `symbolspath()` to specify location of symbol database
+* New: `table.shallowcopy()`
+* New: `vectorextensions` value "IA32"
+* Fix: --start-group/--end-group now only enclose project libraries
+
 Since 5.0-alpha8:
 
 * New: `buildcustomizations()` imports custom .props files for VS
