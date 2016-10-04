@@ -35,7 +35,7 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s -shared
+  ALL_LDFLAGS += $(LDFLAGS) -shared -s
   LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
@@ -50,7 +50,7 @@
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -s -shared
+  ALL_LDFLAGS += $(LDFLAGS) -shared -s
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 		]]
 	end
@@ -163,9 +163,34 @@
 -- Check a linking multiple siblings.
 --
 
-	function suite.links_onSiblingStaticLib()
+	function suite.links_onMultipleSiblingStaticLib()
 		links "MyProject2"
 		links "MyProject3"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		test.createproject(wks)
+		kind "StaticLib"
+		location "build"
+
+		prepare { "ldFlags", "libs", "ldDeps" }
+		test.capture [[
+  ALL_LDFLAGS += $(LDFLAGS) -s
+  LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+  LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+		]]
+	end
+
+--
+-- Check a linking multiple siblings with link groups enabled.
+--
+
+	function suite.links_onSiblingStaticLibWithLinkGroups()
+		links "MyProject2"
+		links "MyProject3"
+		linkgroups "On"
 
 		test.createproject(wks)
 		kind "StaticLib"

@@ -1166,7 +1166,7 @@
 	function m.debugInformationFormat(cfg)
 		local value
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.flags.Symbols then
+		if cfg.symbols == p.ON then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif cfg.architecture == "x86_64" or
@@ -1179,9 +1179,10 @@
 			else
 				value = "EditAndContinue"
 			end
-		end
-		if value then
+
 			m.element("DebugInformationFormat", nil, value)
+		elseif cfg.symbols == p.OFF then
+			m.element("DebugInformationFormat", nil, "None")
 		end
 	end
 
@@ -1304,7 +1305,7 @@
 
 
 	function m.generateDebugInformation(cfg)
-		m.element("GenerateDebugInformation", nil, tostring(cfg.flags.Symbols ~= nil))
+		m.element("GenerateDebugInformation", nil, tostring(cfg.symbols == p.ON))
 	end
 
 
@@ -1762,8 +1763,9 @@
 
 
 	function m.programDataBaseFileName(cfg)
-		-- just a placeholder for overriding; will use the default VS name
-		-- for changes, see https://github.com/premake/premake-core/issues/151
+		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
+			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+		end
 	end
 
 

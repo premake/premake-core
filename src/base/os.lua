@@ -274,7 +274,7 @@
 			while os.matchnext(m) do
 				if not os.matchisfile(m) then
 					local matchpath = path.join(before, os.matchname(m), mask:sub(starpos))
-					results = table.join(results, os.match(matchpath, after))
+					results = table.join(results, os.match(matchpath))
 				end
 			end
 			os.matchdone(m)

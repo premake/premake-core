@@ -749,7 +749,7 @@
 --
 
 	function m.symbols(cfg)
-		if not cfg.flags.Symbols then
+		if not (cfg.symbols == p.ON) then
 			return 0
 		elseif cfg.debugformat == "c7" then
 			return 1

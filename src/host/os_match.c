@@ -141,14 +141,26 @@ int os_matchname(lua_State* L)
 
 int os_matchisfile(lua_State* L)
 {
-	const char* fname;
-
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	lua_pushfstring(L, "%s/%s", m->path, m->entry->d_name);
-	fname = lua_tostring(L, -1);
-	lua_pop(L, 1);
+#if defined(_DIRENT_HAVE_D_TYPE)
+	if (m->entry->d_type == DT_DIR)
+	{
+		lua_pushboolean(L, 0);
+	}
+	else if (m->entry->d_type == DT_REG)
+	{
+		lua_pushboolean(L, 1);
+	}
+	else
+#endif
+	{
+		const char* fname;
+		lua_pushfstring(L, "%s/%s", m->path, m->entry->d_name);
+		fname = lua_tostring(L, -1);
+		lua_pop(L, 1);
 
-	lua_pushboolean(L, do_isfile(fname));
+		lua_pushboolean(L, do_isfile(fname));
+	}
 	return 1;
 }
 

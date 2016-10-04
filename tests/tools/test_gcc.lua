@@ -195,6 +195,28 @@
 
 
 --
+-- Check the translation of symbols.
+--
+
+	function suite.cflags_onDefaultSymbols()
+		prepare()
+		test.excludes({ "-g" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onNoSymbols()
+		symbols "Off"
+		prepare()
+		test.excludes({ "-g" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onSymbols()
+		symbols "On"
+		prepare()
+		test.contains({ "-g" }, gcc.getcflags(cfg))
+	end
+
+
+--
 -- Check the translation of CXXFLAGS.
 --
 
@@ -221,7 +243,7 @@
 	end
 
 	function suite.ldflags_onSymbols()
-		flags { "Symbols" }
+		symbols "On"
 		prepare()
 		test.excludes("-s", gcc.getldflags(cfg))
 	end

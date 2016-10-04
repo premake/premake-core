@@ -74,3 +74,24 @@
 	function suite.isempty_ReturnsFalseOnNotEmptyMapWithFalseKey()
 		test.isfalse(table.isempty({ [false] = 0 }))
 	end
+
+
+--
+-- table.insertsorted() tests
+--
+
+	function suite.insertsorted()
+		local t = {}
+		table.insertsorted(t, 5)
+		table.insertsorted(t, 2)
+		table.insertsorted(t, 8)
+		table.insertsorted(t, 4)
+		table.insertsorted(t, 1)
+
+		test.istrue(#t == 5)
+		test.istrue(t[1] == 1)
+		test.istrue(t[2] == 2)
+		test.istrue(t[3] == 4)
+		test.istrue(t[4] == 5)
+		test.istrue(t[5] == 8)
+	end

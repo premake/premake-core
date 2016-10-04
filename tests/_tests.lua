@@ -49,6 +49,7 @@ return {
 	"api/test_register.lua",
 	"api/test_string_kind.lua",
 	"api/test_table_kind.lua",
+	"api/test_deprecations.lua",
 
 	-- Control system tests
 	"test_premake.lua",

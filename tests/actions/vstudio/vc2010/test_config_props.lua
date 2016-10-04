@@ -87,7 +87,7 @@
 --
 
 	function suite.debugLibraries_onDebugConfig()
-		flags "Symbols"
+		symbols "On"
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -215,7 +215,8 @@
 --
 
 	function suite.releaseRuntime_onFlag()
-		flags { "Symbols", "ReleaseRuntime" }
+		flags { "ReleaseRuntime" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

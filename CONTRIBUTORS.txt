@@ -23,6 +23,8 @@ Patch contributors:
   Damien Courtois <https://github.com/dcourtois>
     * module loading fixes
     * bug fixes
+  David Ely <https://github.com/megaeels>
+    * symbols() API and flag deprecation
   Gabi Davar <gabi.davar@discretix.com>
     * added file.directory to token environment
   João Matos (joao@tritao.eu)
@@ -37,6 +39,8 @@ Patch contributors:
     * path.join() fixes
   Mark Chandler <https://bitbucket.org/mchandler_blizzard>
     * prevent self-linking
+  Matthew Endsley <https://github.com/mendsley>
+    * File matching improvements
   Mark Sararu <mark.sararu@gmail.com>
     * Makefile bug fixes
   Mihai Sebea <http://twitter.com/mihai_sebea>

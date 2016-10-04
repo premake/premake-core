@@ -110,7 +110,7 @@
 --
 
 	function suite.onSymbolsFlag()
-		flags "Symbols"
+		symbols "On"
 		prepare()
 		test.capture [[
 <Tool
@@ -127,7 +127,7 @@
 --
 
 	function suite.onC7DebugFormat()
-		flags "Symbols"
+		symbols "On"
 		debugformat "C7"
 		prepare()
 		test.capture [[

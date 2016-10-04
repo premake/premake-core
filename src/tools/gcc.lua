@@ -45,7 +45,6 @@
 			LinkTimeOptimization = "-flto",
 			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
-			Symbols = "-g",
 			UndefinedIdentifiers = "-Wundef",
 		},
 		floatingpoint = {
@@ -81,6 +80,9 @@
 		warnings = {
 			Extra = "-Wall -Wextra",
 			Off = "-w",
+		},
+		symbols = {
+			On = "-g"
 		}
 	}
 
@@ -194,6 +196,11 @@
 -- Return a list of LDFLAGS for a specific configuration.
 --
 
+	function gcc.ldsymbols(cfg)
+		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
+		return iif(cfg.system == premake.MACOSX, "-Wl,-x", "-s")
+	end
+
 	gcc.ldflags = {
 		architecture = {
 			x86 = "-m32",
@@ -201,10 +208,6 @@
 		},
 		flags = {
 			LinkTimeOptimization = "-flto",
-			_Symbols = function(cfg)
-				-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
-				return iif(cfg.system == premake.MACOSX, "-Wl,-x", "-s")
-			end,
 		},
 		kind = {
 			SharedLib = function(cfg)
@@ -220,6 +223,10 @@
 		},
 		system = {
 			wii = "$(MACHDEP)",
+		},
+		symbols = {
+			Off = gcc.ldsymbols,
+			Default = gcc.ldsymbols,
 		}
 	}
 
@@ -276,7 +283,7 @@
 -- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function gcc.getlinksonly(cfg, systemonly)
+	function gcc.getlinks(cfg, systemonly, nogroups)
 		local result = {}
 
 		if not systemonly then
@@ -296,6 +303,11 @@
 			end
 		end
 
+		if not nogroups and #result > 1 and (cfg.linkgroups == p.ON) then
+			table.insert(result, 1, "-Wl,--start-group")
+			table.insert(result, "-Wl,--end-group")
+		end
+
 		-- The "-l" flag is fine for system libraries
 
 		local links = config.getlinks(cfg, "system", "fullpath")
@@ -309,21 +321,6 @@
 			end
 		end
 
-		return result
-	end
-
-
-	function gcc.getlinks(cfg, systemonly)
-
-		-- we don't want libraries to be order dependent.
-		local result = gcc.getlinksonly(cfg, systemonly)
-		if #result > 1 then
-			local res = {}
-			table.insert(res, '-Wl,--start-group')
-			table.insertflat(res, result)
-			table.insert(res, '-Wl,--end-group')
-			return res
-		end
 		return result
 	end
 

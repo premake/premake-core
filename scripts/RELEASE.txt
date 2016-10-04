@@ -9,7 +9,7 @@ PREP
 
  * Update CHANGES.txt and CONTRIBUTORS.txt
 
- * Update version in src/host/premake.c and commit
+ * Update version in src/host/premake.h and commit
 
  * Push release branch to GitHub; wait for CI to pass
 

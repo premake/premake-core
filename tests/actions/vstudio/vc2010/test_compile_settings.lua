@@ -399,7 +399,8 @@
 	end
 
 	function suite.runtimeLibrary_onStaticRuntimeAndSymbols()
-		flags { "StaticRuntime", "Symbols" }
+		flags { "StaticRuntime" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -432,8 +433,32 @@
 -- Check the handling of the Symbols flag.
 --
 
-	function suite.onSymbolsFlag()
-		flags "Symbols"
+	function suite.onDefaultSymbols()
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onNoSymbols()
+		symbols "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>None</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onSymbols()
+		symbols "On"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -451,7 +476,7 @@
 --
 
 	function suite.onC7DebugFormat()
-		flags "Symbols"
+		symbols "On"
 		debugformat "c7"
 		prepare()
 		test.capture [[
@@ -551,7 +576,7 @@
 --
 
 	function suite.debugFormat_onWin32()
-		flags "Symbols"
+		symbols "On"
 		architecture "x86"
 		prepare()
 		test.capture [[
@@ -568,7 +593,7 @@
 --
 
 	function suite.debugFormat_onWin64()
-		flags "Symbols"
+		symbols "On"
 		architecture "x86_64"
 		prepare()
 		test.capture [[
@@ -585,7 +610,7 @@
 --
 
 	function suite.debugFormat_onEditAndContinueOff()
-		flags { "Symbols" }
+		symbols "On"
 		editandcontinue "Off"
 		prepare()
 		test.capture [[
@@ -602,7 +627,7 @@
 --
 
 	function suite.debugFormat_onOptimizedBuild()
-		flags { "Symbols" }
+		symbols "On"
 		optimize "On"
 		prepare()
 		test.capture [[
@@ -619,7 +644,7 @@
 --
 
 	function suite.debugFormat_onManagedCode()
-		flags "Symbols"
+		symbols "On"
 		clr "On"
 		prepare()
 		test.capture [[
@@ -699,7 +724,8 @@
 --
 
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "Symbols", "ReleaseRuntime", "StaticRuntime" }
+		flags { "ReleaseRuntime", "StaticRuntime" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <ClCompile>

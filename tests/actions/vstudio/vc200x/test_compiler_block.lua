@@ -86,7 +86,7 @@
 --
 
 	function suite.looksGood_onSymbolsFlag()
-		flags "Symbols"
+		symbols "On"
 		prepare()
 		test.capture [[
 <Tool
@@ -110,7 +110,7 @@
 --
 
 	function suite.looksGood_onSymbolsAndOptimizeFlags()
-		flags { "Symbols" }
+		symbols "On"
 		optimize "On"
 		prepare()
 		test.capture [[
@@ -133,7 +133,7 @@
 --
 
 	function suite.looksGood_onC7DebugFormat()
-		flags "Symbols"
+		symbols "On"
 		debugformat "C7"
 		prepare()
 		test.capture [[
@@ -225,7 +225,8 @@
 --
 
 	function suite.minimalRebuildFlagsSet_onMinimalRebuildAndSymbols()
-		flags { "Symbols", "NoMinimalRebuild" }
+		flags { "NoMinimalRebuild" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <Tool
@@ -291,7 +292,7 @@
 --
 
 	function suite.runtimeLibraryIsDebug_onSymbolsNoOptimize()
-		flags { "Symbols" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <Tool
@@ -542,7 +543,8 @@
 --
 
 	function suite.releaseRuntime_onFlag()
-		flags { "Symbols", "ReleaseRuntime" }
+		flags { "ReleaseRuntime" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <Tool
@@ -555,7 +557,8 @@
 	end
 
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "Symbols", "ReleaseRuntime", "StaticRuntime" }
+		flags { "ReleaseRuntime", "StaticRuntime" }
+		symbols "On"
 		prepare()
 		test.capture [[
 <Tool
