@@ -1180,7 +1180,7 @@
 		if cfg.symbols == p.ON then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
-			elseif cfg.architecture == "x86_64" or
+			elseif (cfg.architecture == "x86_64" and _ACTION < "vs2015") or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
 				   cfg.editandcontinue == p.OFF or
