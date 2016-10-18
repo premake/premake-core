@@ -35,6 +35,19 @@
 		},
 	}
 
+    api.register {
+		name = "gpuarchitecture",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Fermi",
+			"Kepler",
+			"Maxwell",
+			"Pascal",
+			"Volta",
+		},
+	}
+
 	api.register {
 		name = "atl",
 		scope = "config",

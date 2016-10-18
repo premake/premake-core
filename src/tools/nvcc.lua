@@ -129,6 +129,13 @@
 			Size = "-Os",
 			Speed = "-O3",
 		},
+		gpuarchitecture = {
+			Fermi = "--gpu-architecture compute_20",
+			Kepler = "--gpu-architecture compute_30",
+			Maxwell = "--gpu-architecture compute_50",
+			Pascal = "--gpu-architecture compute_60",
+			Volta = "--gpu-architecture compute_70",
+		}
 	}
 
 	function nvcc.getcflags(cfg)
@@ -253,10 +260,8 @@
 --
 
 	nvcc.ldflags = {
-		architecture = {
-			x86 = "-m32",
-			x86_64 = "-m64",
-		},
+		architecture = nvcc.cflags.architecture,
+		gpuarchitecture = nvcc.cflags.gpuarchitecture,
 		kind = {
 			SharedLib = "-shared"
 		}
@@ -346,7 +351,7 @@
 	nvcc.tools = {
 		cc = "nvcc",
 		cxx = "nvcc",
-		ar = "nvcc --lib"
+		ar = nil
 	}
 
 	function nvcc.gettoolname(cfg, tool)
