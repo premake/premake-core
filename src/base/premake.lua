@@ -192,7 +192,7 @@ function premake.filename(obj, ext)
 		fname = path.join(fname, ext)
 	else
 		fname = path.join(fname, obj.filename)
-		if ext then
+		if ext and not fname:endswith(ext) then
 			fname = fname .. ext
 		end
 	end
