@@ -410,7 +410,7 @@
 	function make.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(includes, "-include $(OBJDIR)/$(notdir $(PCH))")
+			table.insert(includes, 1, "-include $(OBJDIR)/$(notdir $(PCH))")
 		end
 		_x('  FORCE_INCLUDE +=%s', make.list(includes))
 	end
