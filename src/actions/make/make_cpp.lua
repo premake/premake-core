@@ -410,7 +410,7 @@
 	function make.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(includes, "-include $(OBJDIR)/$(notdir $(PCH))")
+			table.insert(includes, 1, "-include $(OBJDIR)/$(notdir $(PCH))")
 		end
 		_x('  FORCE_INCLUDE +=%s', make.list(includes))
 	end
@@ -445,7 +445,7 @@
 			if cfg.architecture == premake.UNIVERSAL then
 				_p('  LINKCMD = libtool -o "$@" $(OBJECTS)')
 			else
-				_p('  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)')
+				_p('  LINKCMD = $(AR) ' .. (toolset.arargs or '-rcs') ..' "$@" $(OBJECTS)')
 			end
 		elseif cfg.kind == premake.UTILITY then
 			-- Empty LINKCMD for Utility (only custom build rules)

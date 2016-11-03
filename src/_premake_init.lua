@@ -845,6 +845,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
@@ -861,6 +862,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
