@@ -431,6 +431,8 @@
 	m.elements.lib = function(cfg, explicit)
 		if cfg.kind == p.STATICLIB then
 			return {
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
 				m.treatLinkerWarningAsErrors,
 				m.targetMachine,
 				m.additionalLinkOptions,
