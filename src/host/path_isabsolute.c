@@ -26,7 +26,7 @@ int do_isabsolute(const char* path)
 		return 1;
 	if (isalpha(path[0]) && path[1] == ':')
 		return 1;
-	if (path[0] == '"')
+	if (path[0] == '"' || path[0] == '!')
 		return do_isabsolute(path + 1);
 
 	// $(foo) and %(foo)

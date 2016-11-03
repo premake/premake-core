@@ -14,73 +14,70 @@
 	local wks, prj
 
 	function suite.setup()
-	end
-
-	local function result(buildcfg, platform)
-		local cfg = test.getconfig(prj, buildcfg, platform)
-		return path.getrelative(os.getcwd(), cfg.objdir)
-	end
-
-
-
-	function suite.singleProject_noPlatforms()
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
+	end
 
-		test.isequal("obj/Debug", result("Debug"))
-		test.isequal("obj/Release", result("Release"))
+	local function prepare(buildcfg, platform)
+		cfg = test.getconfig(prj, buildcfg, platform)
+	end
+
+	function suite.singleProject_noPlatforms()
+		prepare("Debug")
+		test.isequal(path.getabsolute("obj/Debug"), cfg.objdir)
+
+		prepare("Release")
+		test.isequal(path.getabsolute("obj/Release"), cfg.objdir)
 	end
 
 
 	function suite.multipleProjects_noPlatforms()
-		wks = workspace("MyWorkspace")
-		configurations { "Debug", "Release" }
-		prj = project "MyProject"
 		project "MyProject2"
+		prepare("Debug")
 
 		test.createproject(wks)
-		test.isequal("obj/Debug/MyProject", result("Debug"))
+		test.isequal(path.getabsolute("obj/Debug/MyProject"), cfg.objdir)
 	end
 
 
 	function suite.singleProject_withPlatforms()
-		wks = workspace("MyWorkspace")
-		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
-		prj = project "MyProject"
+		prepare("Debug", "x86")
 
-		test.isequal("obj/x86/Debug", result("Debug", "x86"))
+		test.isequal(path.getabsolute("obj/x86/Debug"), cfg.objdir)
 	end
 
 
 	function suite.singleProject_uniqueByTokens_noPlatforms()
-		wks = workspace("MyWorkspace")
-		configurations { "Debug", "Release" }
-		prj = project "MyProject"
 		objdir "obj/%{cfg.buildcfg}"
+		prepare("Debug")
 
-		test.isequal("obj/Debug", result("Debug"))
+		test.isequal(path.getabsolute("obj/Debug"), cfg.objdir)
 	end
 
 
 	function suite.singleProject_uniqueByTokens_withPlatforms()
-		wks = workspace("MyWorkspace")
-		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
-		prj = project "MyProject"
 		objdir "obj/%{cfg.buildcfg}_%{cfg.platform}"
+		prepare("Debug", "x86")
 
-		test.isequal("obj/Debug_x86", result("Debug", "x86"))
+		test.isequal(path.getabsolute("obj/Debug_x86"), cfg.objdir)
 	end
 
 
 	function suite.allowOverlap_onPrefixCode()
-		wks = workspace("MyWorkspace")
-		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
-		prj = project "MyProject"
 		objdir "!obj/%{cfg.buildcfg}"
+		prepare("Debug", "x86")
 
-		test.isequal("obj/Debug", result("Debug", "x86"))
+		test.isequal(path.getabsolute("obj/Debug"), cfg.objdir)
+	end
+
+	function suite.allowOverlap_onPrefixCode_withEnvironmentVariable()
+		platforms { "x86", "x86_64" }
+		objdir "!$(SolutionDir)/%{cfg.buildcfg}"
+		prepare("Debug", "x86")
+
+		test.isequal("$(SolutionDir)/Debug", cfg.objdir)
 	end
