@@ -310,7 +310,6 @@
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
 			m.debugInformationFormat,
-			m.programDataBaseFileName,
 			m.optimization,
 			m.functionLevelLinking,
 			m.intrinsicFunctions,
@@ -411,6 +410,7 @@
 				m.largeAddressAware,
 				m.targetMachine,
 				m.additionalLinkOptions,
+				m.programDatabaseFile,
 			}
 		end
 	end
@@ -1815,9 +1815,9 @@
 	end
 
 
-	function m.programDataBaseFileName(cfg)
+	function m.programDatabaseFile(cfg)
 		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
-			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
 		end
 	end
 
