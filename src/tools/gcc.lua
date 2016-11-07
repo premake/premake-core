@@ -34,8 +34,7 @@
 --
 -- Returns list of C compiler flags for a configuration.
 --
-
-	gcc.cflags = {
+	gcc.shared = {
 		architecture = {
 			x86 = "-m32",
 			x86_64 = "-m64",
@@ -86,8 +85,17 @@
 		}
 	}
 
+	gcc.cflags = {
+		flags = {
+			["C90"] = "-std=gnu90",
+			["C99"] = "-std=gnu99",
+		},
+	}
+
 	function gcc.getcflags(cfg)
-		local flags = config.mapFlags(cfg, gcc.cflags)
+		local shared_flags = config.mapFlags(cfg, gcc.shared)
+		local cflags = config.mapFlags(cfg, gcc.cflags)
+		local flags = table.join(shared_flags, cflags)
 		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
 	end
@@ -126,7 +134,10 @@
 	}
 
 	function gcc.getcxxflags(cfg)
-		local flags = config.mapFlags(cfg, gcc.cxxflags)
+		local shared_flags = config.mapFlags(cfg, gcc.shared)
+		local cxxflags = config.mapFlags(cfg, gcc.cxxflags)
+		local flags = table.join(shared_flags, cxxflags)
+		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
 	end
 
@@ -192,7 +203,7 @@
 	end
 
 --
--- Return a list of decorated rpaths 
+-- Return a list of decorated rpaths
 --
 
 	function gcc.getrunpathdirs(cfg, dirs)
@@ -386,7 +397,7 @@
 					return ptrn == string.sub(s, -string.len(ptrn))
 				end
 				local name = path.getname(link)
-				-- Check whether link mode decorator is present 
+				-- Check whether link mode decorator is present
 				if endswith(name, ":static") then
 					name = string.sub(name, 0, -8)
 					table.insert(static_syslibs, "-l" .. name)

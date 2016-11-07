@@ -503,6 +503,8 @@
 			"WPF",
 			"C++11",
 			"C++14",
+			"C90",
+			"C99",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
