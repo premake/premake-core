@@ -1181,7 +1181,7 @@
 	function m.debugInformationFormat(cfg)
 		local value
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.symbols == p.ON then
+		if (cfg.symbols == p.ON) or (cfg.symbols == "FastLink") then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
 			elseif (cfg.architecture == "x86_64" and _ACTION < "vs2015") or
