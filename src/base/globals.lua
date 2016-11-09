@@ -4,6 +4,8 @@
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
+
 
 --
 -- Find and execute a Lua source file present on the filesystem, but
@@ -48,7 +50,7 @@
 	io._includedFiles = {}
 
 	function include(fname)
-		local fullPath = premake.findProjectScript(fname)
+		local fullPath = p.findProjectScript(fname)
 		fname = fullPath or fname
 		if not io._includedFiles[fname] then
 			io._includedFiles[fname] = true
@@ -73,14 +75,30 @@
 --    global package.loaded table.
 ---
 
-	premake.override(_G, "require", function(base, modname, versions)
-		local result, mod = pcall(base,modname)
-		if not result then
-			error( mod, 3 )
+	p.override(_G, "require", function(base, modname, versions)
+		local ok, mod = pcall(base, modname)
+		if not ok then
+			error(mod, 3)
 		end
-		if mod and versions and not premake.checkVersion(mod._VERSION, versions) then
+
+		if mod and versions and not p.checkVersion(mod._VERSION, versions) then
 			error(string.format("module %s %s does not meet version criteria %s",
 				modname, mod._VERSION or "(none)", versions), 3)
 		end
+
 		return mod
 	end)
+
+
+---
+-- Returns the specified module if it exists, or `nil` otherwise.
+---
+
+	function softrequire(modname, versions)
+		local ok, mod = pcall(require, modname, versions)
+		if ok then
+			return mod
+		else
+			return nil
+		end
+	end

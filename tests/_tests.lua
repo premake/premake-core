@@ -13,6 +13,7 @@ return {
 	"base/test_override.lua",
 	"base/test_path.lua",
 	"base/test_premake_command.lua",
+	"base/test_softrequire.lua",
 	"base/test_table.lua",
 	"base/test_tree.lua",
 	"base/test_uuid.lua",
