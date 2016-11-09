@@ -155,6 +155,20 @@
 		]]
 	end
 
+	function suite.additionalDependencies_onSystemLinksStatic()
+		kind "StaticLib"
+		links { "lua", "zlib" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+<Lib>
+	<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Lib>
+		]]
+	end
+
 
 --
 -- Any system libraries specified in links() with valid extensions should
@@ -171,6 +185,20 @@
 		]]
 	end
 
+	function suite.additionalDependencies_onSystemLinksExtensionsStatic()
+		kind "StaticLib"
+		links { "lua.obj", "zlib.lib" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+<Lib>
+	<AdditionalDependencies>lua.obj;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Lib>
+		]]
+	end
+
 
 --
 -- Any system libraries specified in links() with multiple dots should
@@ -184,6 +212,20 @@
 <Link>
 	<SubSystem>Windows</SubSystem>
 	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+	function suite.additionalDependencies_onSystemLinksExtensionsMultipleDotsStatic()
+		kind "StaticLib"
+		links { "lua.5.3.lib", "lua.5.4" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+<Lib>
+	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Lib>
 		]]
 	end
 

@@ -114,3 +114,25 @@ command 2</NMakeBuildCommandLine>
 </PropertyGroup>
 		]]
 	end
+
+	function suite.onDefines()
+		defines { "DEBUG", "_DEBUG" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakePreprocessorDefinitions>DEBUG;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.onIncludeDirs()
+		includedirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakeIncludeSearchPath>include\lua;include\zlib</NMakeIncludeSearchPath>
+</PropertyGroup>
+		]]
+	end
