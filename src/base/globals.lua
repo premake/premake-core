@@ -95,10 +95,14 @@
 ---
 
 	function softrequire(modname, versions)
+		local loaded = table.shallowcopy(package.loaded)
+
 		local ok, mod = pcall(require, modname, versions)
+
 		if ok then
 			return mod
 		else
+			package.loaded = loaded
 			return nil
 		end
 	end
