@@ -21,6 +21,8 @@
 	api.addAllowed("flags", { "Thumb" })
 	api.addAllowed("kind", p.ANDROIDPROJ)
 
+	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.ANDROIDPROJ })
+
 	-- TODO: can I api.addAllowed() a key-value pair?
 	local os = p.fields["os"];
 	if os ~= nil then
@@ -48,7 +50,7 @@
 		scope = "config",
 		kind = "integer",
 	}
-	
+
 	if _ACTION >= "vs2015" then
 		api.register {
 			name = "toolchainversion",

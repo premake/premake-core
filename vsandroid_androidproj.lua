@@ -147,6 +147,66 @@
 	end)
 
 
+	vc2010.categories.AndroidManifest = {
+		name = "AndroidManifest",
+		priority = 99,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = {
+				android.manifestSubType,
+			}
+
+			vc2010.emitFiles(prj, group, "AndroidManifest", {vc2010.generatedFile}, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			vc2010.filterGroup(prj, group, "AndroidManifest")
+		end
+	}
+
+	function android.manifestSubType(cfg, file)
+		vc2010.element("SubType", nil, "Designer")
+	end
+
+	vc2010.categories.AntBuildXml = {
+		name = "AntBuildXml",
+		priority = 99,
+
+		emitFiles = function(prj, group)
+			vc2010.emitFiles(prj, group, "AntBuildXml", {vc2010.generatedFile})
+		end,
+
+		emitFilter = function(prj, group)
+			vc2010.filterGroup(prj, group, "AntBuildXml")
+		end
+	}
+
+	vc2010.categories.AntProjectPropertiesFile = {
+		name = "AntProjectPropertiesFile",
+		priority = 99,
+
+		emitFiles = function(prj, group)
+			vc2010.emitFiles(prj, group, "AntProjectPropertiesFile", {vc2010.generatedFile})
+		end,
+
+		emitFilter = function(prj, group)
+			vc2010.filterGroup(prj, group, "AntProjectPropertiesFile")
+		end
+	}
+
+	vc2010.categories.Content = {
+		name = "Content",
+		priority = 99,
+
+		emitFiles = function(prj, group)
+			vc2010.emitFiles(prj, group, "Content", {vc2010.generatedFile})
+		end,
+
+		emitFilter = function(prj, group)
+			vc2010.filterGroup(prj, group, "Content")
+		end
+	}
+
 	premake.override(vc2010, "categorizeFile", function(base, prj, file)
 		if prj.kind ~= p.ANDROIDPROJ then
 			return base(prj, file)
@@ -155,91 +215,12 @@
 		local filename = path.getname(file.name):lower()
 
 		if filename == "androidmanifest.xml" then
-			return "AndroidManifest"
+			return vc2010.categories.AndroidManifest
 		elseif filename == "build.xml" then
-			return "AntBuildXml"
+			return vc2010.categories.AntBuildXml
 		elseif filename == "project.properties" then
-			return "AntProjectPropertiesFile"
+			return vc2010.categories.AntProjectPropertiesFile
 		else
-			return "Content"
+			return vc2010.categories.Content
 		end
 	end)
-
-
-	premake.override(vc2010.elements, "files", function(base, prj, groups)
-		local elements = base(prj, groups)
-		elements = table.join(elements, {
-			android.androidmanifestFiles,
-			android.antbuildxmlFiles,
-			android.antprojectpropertiesfileFiles,
-			android.contentFiles,
-		})
-		return elements
-	end)
-
-
-	function android.androidmanifestFiles(prj, groups)
-		vc2010.emitFiles(prj, groups, "AndroidManifest")
-	end
-
-
-	function vc2010.elements.AndroidManifestFile(cfg, file)
-		return {
-			android.manifestSubType,
-		}
-	end
-
-
-	function vc2010.elements.AndroidManifestFileCfg(fcfg, condition)
-		return {}
-	end
-
-
-	function android.manifestSubType(cfg, file)
-		vc2010.element("SubType", nil, "Designer")
-	end
-
-
-	function android.antbuildxmlFiles(prj, groups)
-		vc2010.emitFiles(prj, groups, "AntBuildXml")
-	end
-
-
-	function vc2010.elements.AntBuildXmlFile(cfg, file)
-		return {}
-	end
-
-
-	function vc2010.elements.AntBuildXmlFileCfg(fcfg, condition)
-		return {}
-	end
-
-
-	function android.antprojectpropertiesfileFiles(prj, groups)
-		vc2010.emitFiles(prj, groups, "AntProjectPropertiesFile")
-	end
-
-
-	function vc2010.elements.AntProjectPropertiesFileFile(cfg, file)
-		return {}
-	end
-
-
-	function vc2010.elements.AntProjectPropertiesFileFileCfg(fcfg, condition)
-		return {}
-	end
-
-
-	function android.contentFiles(prj, groups)
-		vc2010.emitFiles(prj, groups, "Content")
-	end
-
-
-	function vc2010.elements.ContentFile(cfg, file)
-		return {}
-	end
-
-
-	function vc2010.elements.ContentFileCfg(fcfg, condition)
-		return {}
-	end

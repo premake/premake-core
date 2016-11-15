@@ -240,6 +240,14 @@
 		end
 	end
 
+	p.override(p.vstudio.vc2010, "warningLevel", function(oldfn, cfg)
+		if _ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings and cfg.warnings ~= "Off" then
+			p.vstudio.vc2010.element("WarningLevel", nil, "EnableAllWarnings")
+		elseif (_ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings) or not (_ACTION >= "vs2015" and cfg.system == p.ANDROID) then
+			oldfn(cfg)
+		end
+	end)
+
 	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg)
 		if cfg.system == premake.ANDROID then
 			-- Note: Android defaults to 'off'
