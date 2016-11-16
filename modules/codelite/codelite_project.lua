@@ -4,8 +4,9 @@
 -- Author:      Ryan Pusztai
 -- Modified by: Andrea Zanellato
 --              Manu Evans
+--              Tom van Dijck
 -- Created:     2013/05/06
--- Copyright:   (c) 2008-2015 Jason Perkins and the Premake project
+-- Copyright:   (c) 2008-2016 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -219,23 +220,10 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local flags = table.join(toolset.getldflags(cfg), cfg.linkoptions)
-		local withdeps = table.join(flags, codelite.getSiblingLinks(cfg))
-		local ldflags = table.concat(withdeps, ";")
+		local flags   = table.join(toolset.getldflags(cfg), cfg.linkoptions, toolset.getlinks(cfg))
 
-		_x(3, '<Linker Required="yes" Options="%s">', ldflags)
+		_x(3, '<Linker Required="yes" Options="%s">', table.concat(flags, ";"))
 
-		if #cfg.libdirs > 0 then
-			local libdirs = project.getrelative(cfg.project, cfg.libdirs)
-			for _, libpath in ipairs(libdirs) do
-				_x(4, '<LibraryPath Value="%s" />', libpath)
-			end
-		end
-
-		local links = codelite.getLinks(cfg)
-		for _, libname in ipairs(links) do
-			_x(4, '<Library Value="%s" />', libname)
-		end
 		_p(3, '</Linker>')
 	end
 
@@ -268,7 +256,8 @@
 		local targetpath = project.getrelative(prj, cfg.buildtarget.directory)
 		local objdir     = project.getrelative(prj, cfg.objdir)
 		local targetname = project.getrelative(prj, cfg.buildtarget.abspath)
-		local command    = iif(isExe, targetname, "")
+		local workingdir = cfg.debugdir or prj.location
+		local command    = iif(isExe, path.getrelative(workingdir, cfg.buildtarget.abspath), "")
 		local cmdargs    = iif(isExe, table.concat(cfg.debugargs, " "), "") -- TODO: should this be debugargs instead?
 		local useseparatedebugargs = "no"
 		local debugargs  = ""
