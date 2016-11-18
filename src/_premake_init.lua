@@ -478,6 +478,7 @@
 			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
+			"NoLinkObjects",
 			"NoManifest",
 			"NoMinimalRebuild",
 			"NoNativeWChar",       -- DEPRECATED

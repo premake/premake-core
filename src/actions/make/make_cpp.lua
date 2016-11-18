@@ -257,10 +257,12 @@
 					for cfg in project.eachconfig(prj) do
 						local filecfg = incfg[cfg]
 						if filecfg then
-							-- if the custom build outputs an object file, add it to
-							-- the link step automatically to match Visual Studio
+							-- If the custom build outputs an object file, we
+							-- add it to the link step automatically to match
+							-- Visual Studio. This behaviour can be turned off
+							-- by specifying the NoLinkObjects flag.
 							local output = project.getrelative(prj, filecfg.buildoutputs[1])
-							if path.isobjectfile(output) then
+							if path.isobjectfile(output) and not filecfg.flags.NoLinkObjects then
 								table.insert(configs[cfg].objects, output)
 							else
 								table.insert(configs[cfg].customfiles, output)
