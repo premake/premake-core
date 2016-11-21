@@ -280,7 +280,7 @@ int http_get(lua_State* L)
 	}
 
 	string_free(&state.S);
-	lua_pushnumber(L, responseCode);
+	lua_pushnumber(L, (lua_Number)responseCode);
 	return 3;
 }
 
@@ -328,7 +328,7 @@ int http_post(lua_State* L)
 	}
 
 	string_free(&state.S);
-	lua_pushnumber(L, responseCode);
+	lua_pushnumber(L, (lua_Number)responseCode);
 	return 3;
 }
 
@@ -387,7 +387,7 @@ int http_download(lua_State* L)
 		lua_pushstring(L, "OK");
 	}
 
-	lua_pushnumber(L, responseCode);
+	lua_pushnumber(L, (lua_Number)responseCode);
 	return 2;
 }
 
