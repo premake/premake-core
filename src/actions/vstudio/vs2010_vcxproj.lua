@@ -1106,8 +1106,8 @@
 
 
 	function m.linkObjects(fcfg, condition)
-		if fcfg.flags.NoLinkObjects then
-			m.element("LinkObjects", condition, 'false')
+		if fcfg.linkbuildoutputs == false then
+			m.element("LinkObjects", condition, "false")
 		end
 	end
 

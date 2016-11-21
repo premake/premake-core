@@ -478,7 +478,6 @@
 			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
-			"NoLinkObjects",
 			"NoManifest",
 			"NoMinimalRebuild",
 			"NoNativeWChar",       -- DEPRECATED
@@ -700,6 +699,12 @@
 		scope = "config",
 		kind = "list:directory",
 		tokens = true,
+	}
+
+	api.register {
+		name = "linkbuildoutputs",
+		scope = "config",
+		kind = "boolean"
 	}
 
 	api.register {
