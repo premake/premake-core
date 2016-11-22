@@ -136,6 +136,7 @@ return {
 	"actions/vstudio/vc2010/test_rule_props.lua",
 	"actions/vstudio/vc2010/test_rule_targets.lua",
 	"actions/vstudio/vc2010/test_rule_vars.lua",
+	"actions/vstudio/vc2010/test_rule_xml.lua",
 	"actions/vstudio/vc2010/test_target_machine.lua",
 	"actions/vstudio/vc2010/test_user_file.lua",
 	"actions/vstudio/vc2010/test_vectorextensions.lua",
