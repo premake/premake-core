@@ -335,7 +335,7 @@
 
 
 	function make.cxxFlags(cfg, toolset)
-		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
+		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)%s', make.list(table.join(toolset.getcxxflags(cfg), cfg.buildoptions)))
 	end
 
 
