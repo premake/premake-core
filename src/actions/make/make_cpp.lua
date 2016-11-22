@@ -257,10 +257,8 @@
 					for cfg in project.eachconfig(prj) do
 						local filecfg = incfg[cfg]
 						if filecfg then
-							-- if the custom build outputs an object file, add it to
-							-- the link step automatically to match Visual Studio
 							local output = project.getrelative(prj, filecfg.buildoutputs[1])
-							if path.isobjectfile(output) then
+							if path.isobjectfile(output) and (filecfg.linkbuildoutputs == true or filecfg.linkbuildoutputs == nil) then
 								table.insert(configs[cfg].objects, output)
 							else
 								table.insert(configs[cfg].customfiles, output)

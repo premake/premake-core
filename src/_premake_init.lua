@@ -702,6 +702,12 @@
 	}
 
 	api.register {
+		name = "linkbuildoutputs",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "linkoptions",
 		scope = "config",
 		kind = "list:string",

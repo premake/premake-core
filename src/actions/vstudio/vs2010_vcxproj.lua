@@ -719,6 +719,7 @@
 				m.excludedFromBuild,
 				m.buildCommands,
 				m.buildOutputs,
+				m.linkObjects,
 				m.buildMessage,
 				m.buildAdditionalInputs
 			}
@@ -1101,6 +1102,13 @@
 	function m.buildOutputs(fcfg, condition)
 		local outputs = project.getrelative(fcfg.project, fcfg.buildoutputs)
 		m.element("Outputs", condition, '%s', table.concat(outputs, ";"))
+	end
+
+
+	function m.linkObjects(fcfg, condition)
+		if fcfg.linkbuildoutputs ~= nil then
+			m.element("LinkObjects", condition, tostring(fcfg.linkbuildoutputs))
+		end
 	end
 
 
