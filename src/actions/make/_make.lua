@@ -144,8 +144,19 @@
 		_p('')
 
 		if kind == "workspace" then
-			_p('.NOTPARALLEL:')
-			_p('')
+			local haspch = false
+			for _, prj in ipairs(target.projects) do
+				for cfg in project.eachconfig(prj) do
+					if cfg.pchheader then
+						haspch = true
+					end
+				end
+			end
+
+			if haspch then
+				_p('.NOTPARALLEL:')
+				_p('')
+			end
 		end
 
 		make.defaultconfig(target)
