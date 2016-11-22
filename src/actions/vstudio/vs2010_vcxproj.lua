@@ -1106,8 +1106,8 @@
 
 
 	function m.linkObjects(fcfg, condition)
-		if fcfg.linkbuildoutputs == false then
-			m.element("LinkObjects", condition, "false")
+		if fcfg.linkbuildoutputs ~= nil then
+			m.element("LinkObjects", condition, tostring(fcfg.linkbuildoutputs))
 		end
 	end
 
