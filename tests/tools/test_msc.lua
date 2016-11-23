@@ -387,3 +387,19 @@
 		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
 	end
 
+
+--
+-- Check handling of shared C/C++ flags.
+--
+
+	function suite.mixedToolFlags_onCFlags()
+		flags { "FatalCompileWarnings" }
+		prepare()
+		test.isequal({ "/WX", "/MD" }, msc.getcflags(cfg))
+	end
+
+	function suite.mixedToolFlags_onCxxFlags()
+		flags { "FatalCompileWarnings" }
+		prepare()
+		test.isequal({ "/WX", "/MD", "/EHsc" }, msc.getcxxflags(cfg))
+	end
