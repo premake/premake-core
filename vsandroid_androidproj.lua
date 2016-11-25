@@ -75,7 +75,7 @@
 
 	function android.projectVersion(cfg)
 		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
-	   	_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
+		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
 		_p(2, "<ProjectVersion>1.0</ProjectVersion>")
 	end
 
@@ -130,12 +130,17 @@
 	premake.override(vc2010.elements, "outputProperties", function(oldfn, cfg)
 		if cfg.kind == p.ANDROIDPROJ then
 			return {
-				vc2010.outDir,
+				android.outDir,
 			}
 		else
 			return oldfn(cfg)
 		end
 	end)
+
+
+	function android.outDir(cfg)
+		vc2010.element("OutDir", nil, "%s\\", cfg.buildtarget.directory)
+	end
 
 
 	premake.override(vc2010, "importLanguageTargets", function(oldfn, prj)
