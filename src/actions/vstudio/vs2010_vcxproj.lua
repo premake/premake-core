@@ -391,12 +391,14 @@
 		if cfg.kind == p.STATICLIB then
 			return {
 				m.subSystem,
+				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
 			}
 		else
 			return {
 				m.subSystem,
+				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
 				m.additionalDependencies,
@@ -1294,6 +1296,7 @@
 		end
 	end
 
+
 	function m.inlineFunctionExpansion(cfg)
 		if cfg.inlining then
 			local types = {
@@ -1305,6 +1308,7 @@
 			m.element("InlineFunctionExpansion", nil, types[cfg.inlining])
 		end
 	end
+
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
@@ -1322,6 +1326,13 @@
 	end
 
 
+	function m.fullProgramDatabaseFile(cfg)
+		if _ACTION >= "vs2015" and cfg.symbols == "FastLink" then
+			m.element("FullProgramDatabaseFile", nil, "true")
+		end
+	end
+
+
 	function m.functionLevelLinking(cfg)
 		if config.isOptimizedBuild(cfg) then
 			m.element("FunctionLevelLinking", nil, "true")
@@ -1332,13 +1343,9 @@
 	function m.generateDebugInformation(cfg)
 		local lookup = {}
 		if _ACTION >= "vs2015" then
-			lookup[p.ON]       = "Debug"
-			lookup[p.OFF]      = "No"
+			lookup[p.ON]       = "true"
+			lookup[p.OFF]      = "false"
 			lookup["FastLink"] = "DebugFastLink"
-
-			if cfg.symbols == "FastLink" then
-				m.element("FullProgramDatabaseFile", nil, "true")
-			end
 		else
 			lookup[p.ON]       = "true"
 			lookup[p.OFF]      = "false"

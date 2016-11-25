@@ -129,13 +129,48 @@
 -- Test the handling of the Symbols flag.
 --
 
-	function suite.generateDebugInfo_onSymbols()
+	function suite.generateDebugInfo_onSymbolsOn_on2010()
+		premake.action.set("vs2010")
 		symbols "On"
 		prepare()
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
 	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsFastLink_on2010()
+		premake.action.set("vs2010")
+		symbols "FastLink"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2015()
+		premake.action.set("vs2015")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsFastLink_on2015()
+		premake.action.set("vs2015")
+		symbols "FastLink"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+	<GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
 		]]
 	end
 
