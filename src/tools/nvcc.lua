@@ -163,13 +163,6 @@
 		flags = {
 			["C++11"] = "--std=c++11",
 			["C++14"] = "--std=c++14",
-		},
-		gpuarchitecture = {
-			Fermi = "--gpu-architecture compute_20",
-			Kepler = "--gpu-architecture compute_30",
-			Maxwell = "--gpu-architecture compute_50",
-			Pascal = "--gpu-architecture compute_60",
-			Volta = "--gpu-architecture compute_70",
 		}
 	}
 
@@ -260,8 +253,6 @@
 --
 
 	nvcc.ldflags = {
-		architecture = nvcc.cflags.architecture,
-		gpuarchitecture = nvcc.cflags.gpuarchitecture,
 		kind = {
 			SharedLib = "-shared"
 		}
