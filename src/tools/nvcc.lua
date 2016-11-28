@@ -117,29 +117,10 @@
 --    An array of C compiler flags.
 --
 
-	nvcc.cflags = {
-		flags = {
-			RelocatableDeviceCode = "--relocatable-device-code=true",
-		},
-		optimize = {
-			Off = "-O0",
-			On = "-O2",
-			Debug = "-O0",
-			Full = "-O3",
-			Size = "-Os",
-			Speed = "-O3",
-		},
-	}
-
 	function nvcc.getcflags(cfg)
-		local keyval = findCfgKeyVal(cfg, nvcc.cflags)
-		local flags = config.mapFlags(cfg, nvcc.cflags)
+		local flags = prefixCompilerFlags(host_compiler.getcflags(cfg))
 
-		nilCfgKeyVal(cfg, keyval)
-		local hflags = prefixCompilerFlags(host_compiler.getcflags(cfg))
-		restoreCfgKeyVal(cfg, keyval)
-
-		flags = table.join(flags, hflags, nvcc.getwarnings(cfg))
+		flags = table.join(flags, nvcc.getwarnings(cfg))
 		return flags
 	end
 
@@ -160,7 +141,16 @@
 --
 
 	nvcc.cxxflags = {
+		optimize = {
+			Off = "-O0",
+			On = "-O2",
+			Debug = "-O0",
+			Full = "-O3",
+			Size = "-Os",
+			Speed = "-O3",
+		},
 		flags = {
+			RelocatableDeviceCode = "--relocatable-device-code=true",
 			["C++11"] = "--std=c++11",
 			["C++14"] = "--std=c++14",
 		}
@@ -340,7 +330,7 @@
 --
 
 	nvcc.tools = {
-		cc = "nvcc",
+		cc = nil,
 		cxx = "nvcc",
 		ar = nil
 	}
