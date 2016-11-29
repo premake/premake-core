@@ -60,22 +60,21 @@
 		symbols = gcc.shared.symbols
 	}
 
+	clang.cflags = table.merge(gcc.cflags, {
+	})
+
 	function clang.getcflags(cfg)
-		local shared_flags = config.mapFlags(cfg, clang.shared)
+		local shared = config.mapFlags(cfg, clang.shared)
+		local cflags = config.mapFlags(cfg, clang.cflags)
 
-		-- Just pass through to GCC for now
-		local cflags = config.mapFlags(cfg, gcc.cflags)
-
-		local flags = table.join(shared_flags, cflags)
+		local flags = table.join(shared, cflags)
 		flags = table.join(flags, clang.getwarnings(cfg))
+
 		return flags
 	end
 
 	function clang.getwarnings(cfg)
-
-		-- Just pass through to GCC for now
 		return gcc.getwarnings(cfg)
-
 	end
 
 
@@ -90,13 +89,13 @@
 --    An array of C++ compiler flags.
 --
 
+	clang.cxxflags = table.merge(gcc.cxxflags, {
+	})
+
 	function clang.getcxxflags(cfg)
-		local shared_flags = config.mapFlags(cfg, clang.shared)
-
-		-- Just pass through to GCC for now
-		local cxxflags = config.mapFlags(cfg, gcc.cxxflags)
-
-		local flags = table.join(shared_flags, cxxflags)
+		local shared = config.mapFlags(cfg, clang.shared)
+		local cxxflags = config.mapFlags(cfg, clang.cxxflags)
+		local flags = table.join(shared, cxxflags)
 		flags = table.join(flags, clang.getwarnings(cfg))
 		return flags
 	end
