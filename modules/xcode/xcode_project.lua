@@ -88,7 +88,7 @@
 
 		-- the special folder "Projects" lists sibling project dependencies
 		 tr.projects = tree.new("Projects")
-		 for _, dep in ipairs(project.getdependencies(prj, "sibling", "object")) do
+		 for _, dep in ipairs(project.getdependencies(prj)) do
 		 	-- create a child node for the dependency's xcodeproj
 		 	local xcpath = xcode.getxcodeprojname(dep)
 		 	local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
@@ -105,6 +105,14 @@
 		 	node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
 		 	node.path = cfg.linktarget.fullpath
 		 	node.cfg = cfg
+
+			-- don't link the dependency if it's a dependency only
+			for _, deponly in ipairs(project.getdependencies(prj, "dependOnly")) do
+				if dep == deponly then
+					node.nobuild = true
+					break
+				end
+			end
 		end
 
 		 if #tr.projects.children > 0 then
@@ -120,7 +128,7 @@
 		 		node.isResource = xcode.isItemResource(prj, node)
 
 		 		-- assign build IDs to buildable files
-		 		if xcode.getbuildcategory(node) then
+		 		if xcode.getbuildcategory(node) and not node.nobuild then
 		 			node.buildid = xcode.newid(node.name, "build", node.path)
 		 		end
 
