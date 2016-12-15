@@ -216,30 +216,41 @@
 		end
 	end
 
-	function m.outputPropertiesGroup(prj)
-		for cfg in project.eachconfig(prj) do
-			m.outputProperties(cfg)
-			m.nmakeProperties(cfg)
-		end
-	end
-
-
 
 --
 -- Write the NMake property group for Makefile projects, which includes the custom
 -- build commands, output file location, etc.
 --
 
+	m.elements.nmakeProperties = function(cfg)
+		m.nmakeOutput(cfg)
+		m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+		m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+		m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+		if cfg.kind ~= p.NONE then
+			m.nmakePreprocessorDefinitions(cfg, cfg.defines, false, nil)
+			m.nmakeIncludeDirs(cfg, cfg.includedirs)
+		end
+	end
+
 	function m.nmakeProperties(cfg)
 		if vstudio.isMakefile(cfg) then
 			m.propertyGroup(cfg)
-			m.nmakeOutput(cfg)
-			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-			m.nmakePreprocessorDefinitions(cfg, cfg.defines, false, nil)
-			m.nmakeIncludeDirs(cfg, cfg.includedirs)
+			p.callArray(m.elements.nmakeProperties, cfg)
 			p.pop('</PropertyGroup>')
+		end
+	end
+
+
+--
+-- The output and NMake properties should appear side-by-side, paired up
+-- for each configuration.
+--
+
+	function m.outputPropertiesGroup(prj)
+		for cfg in project.eachconfig(prj) do
+			m.outputProperties(cfg)
+			m.nmakeProperties(cfg)
 		end
 	end
 
