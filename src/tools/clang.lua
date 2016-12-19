@@ -41,11 +41,11 @@
 --    An array of C compiler flags.
 --
 
-	clang.cflags = {
-		architecture = gcc.cflags.architecture,
-		flags = gcc.cflags.flags,
-		floatingpoint = gcc.cflags.floatingpoint,
-		strictaliasing = gcc.cflags.strictaliasing,
+	clang.shared = {
+		architecture = gcc.shared.architecture,
+		flags = gcc.shared.flags,
+		floatingpoint = gcc.shared.floatingpoint,
+		strictaliasing = gcc.shared.strictaliasing,
 		optimize = {
 			Off = "-O0",
 			On = "-O2",
@@ -54,25 +54,27 @@
 			Size = "-Os",
 			Speed = "-O3",
 		},
-		pic = gcc.cflags.pic,
-		vectorextensions = gcc.cflags.vectorextensions,
-		warnings = gcc.cflags.warnings,
-		symbols = gcc.cflags.symbols
+		pic = gcc.shared.pic,
+		vectorextensions = gcc.shared.vectorextensions,
+		warnings = gcc.shared.warnings,
+		symbols = gcc.shared.symbols
 	}
 
+	clang.cflags = table.merge(gcc.cflags, {
+	})
+
 	function clang.getcflags(cfg)
+		local shared = config.mapFlags(cfg, clang.shared)
+		local cflags = config.mapFlags(cfg, clang.cflags)
 
-		local flags = config.mapFlags(cfg, clang.cflags)
+		local flags = table.join(shared, cflags)
 		flags = table.join(flags, clang.getwarnings(cfg))
-		return flags
 
+		return flags
 	end
 
 	function clang.getwarnings(cfg)
-
-		-- Just pass through to GCC for now
 		return gcc.getwarnings(cfg)
-
 	end
 
 
@@ -87,12 +89,15 @@
 --    An array of C++ compiler flags.
 --
 
+	clang.cxxflags = table.merge(gcc.cxxflags, {
+	})
+
 	function clang.getcxxflags(cfg)
-
-		-- Just pass through to GCC for now
-		local flags = gcc.getcxxflags(cfg)
+		local shared = config.mapFlags(cfg, clang.shared)
+		local cxxflags = config.mapFlags(cfg, clang.cxxflags)
+		local flags = table.join(shared, cxxflags)
+		flags = table.join(flags, clang.getwarnings(cfg))
 		return flags
-
 	end
 
 

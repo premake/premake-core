@@ -129,13 +129,48 @@
 -- Test the handling of the Symbols flag.
 --
 
-	function suite.generateDebugInfo_onSymbols()
+	function suite.generateDebugInfo_onSymbolsOn_on2010()
+		premake.action.set("vs2010")
 		symbols "On"
 		prepare()
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
 	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsFastLink_on2010()
+		premake.action.set("vs2010")
+		symbols "FastLink"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2015()
+		premake.action.set("vs2015")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsFastLink_on2015()
+		premake.action.set("vs2015")
+		symbols "FastLink"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+	<GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
 		]]
 	end
 
@@ -155,6 +190,20 @@
 		]]
 	end
 
+	function suite.additionalDependencies_onSystemLinksStatic()
+		kind "StaticLib"
+		links { "lua", "zlib" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+<Lib>
+	<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Lib>
+		]]
+	end
+
 
 --
 -- Any system libraries specified in links() with valid extensions should
@@ -171,6 +220,20 @@
 		]]
 	end
 
+	function suite.additionalDependencies_onSystemLinksExtensionsStatic()
+		kind "StaticLib"
+		links { "lua.obj", "zlib.lib" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+<Lib>
+	<AdditionalDependencies>lua.obj;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Lib>
+		]]
+	end
+
 
 --
 -- Any system libraries specified in links() with multiple dots should
@@ -184,6 +247,20 @@
 <Link>
 	<SubSystem>Windows</SubSystem>
 	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+	function suite.additionalDependencies_onSystemLinksExtensionsMultipleDotsStatic()
+		kind "StaticLib"
+		links { "lua.5.3.lib", "lua.5.4" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+<Lib>
+	<AdditionalDependencies>lua.5.3.lib;lua.5.4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+</Lib>
 		]]
 	end
 

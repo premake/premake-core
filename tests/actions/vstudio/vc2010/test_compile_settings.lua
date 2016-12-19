@@ -621,6 +621,22 @@
 		]]
 	end
 
+--
+-- Check the handling of the editandcontinue flag.
+--
+
+	function suite.debugFormat_onFastLinkBuild()
+		symbols "FastLink"
+		editandcontinue "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		]]
+	end
+
 
 --
 -- Edit-and-Continue is not supported for optimized builds.
@@ -637,6 +653,7 @@
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
+
 
 
 --

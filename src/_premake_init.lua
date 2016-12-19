@@ -503,6 +503,8 @@
 			"WPF",
 			"C++11",
 			"C++14",
+			"C90",
+			"C99",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -702,6 +704,12 @@
 	}
 
 	api.register {
+		name = "linkbuildoutputs",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "linkoptions",
 		scope = "config",
 		kind = "list:string",
@@ -845,6 +853,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
@@ -861,6 +870,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
@@ -1493,5 +1503,8 @@
 
 	filter { "kind:SharedLib", "system:not Windows" }
 		pic "On"
+
+	filter { "system:macosx" }
+		toolset "clang"
 
 	filter {}

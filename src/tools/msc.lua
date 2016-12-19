@@ -28,7 +28,7 @@
 -- Returns list of C compiler flags for a configuration.
 --
 
-	msc.cflags = {
+	msc.shared = {
 		clr = {
 			On = "/clr",
 			Unsafe = "/clr",
@@ -41,6 +41,8 @@
 			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
 			OmitDefaultLibrary = "/Zl",
+			StaticRuntime = function(cfg) return iif(config.isDebugBuild(cfg), "/MTd", "/MT") end,
+			_StaticRuntime = function(cfg) return iif(config.isDebugBuild(cfg), "/MDd", "/MD") end
 		},
 		floatingpoint = {
 			Fast = "/fp:fast",
@@ -78,30 +80,14 @@
 		}
 	}
 
+	msc.cflags = {
+	}
+
 	function msc.getcflags(cfg)
-		local flags = config.mapFlags(cfg, msc.cflags)
-
-		flags = table.join(flags, msc.getwarnings(cfg))
-
-		local runtime = iif(cfg.flags.StaticRuntime, "/MT", "/MD")
-		if config.isDebugBuild(cfg) then
-			runtime = runtime .. "d"
-		end
-		table.insert(flags, runtime)
-
+		local shared = config.mapFlags(cfg, msc.shared)
+		local cflags = config.mapFlags(cfg, msc.cflags)
+		local flags = table.join(shared, cflags, msc.getwarnings(cfg))
 		return flags
-	end
-
-	function msc.getwarnings(cfg)
-		local result = {}
-		-- NOTE: VStudio can't enable specific warnings (workaround?)
-		for _, disable in ipairs(cfg.disablewarnings) do
-			table.insert(result, '/wd"' .. disable .. '"')
-		end
-		for _, fatal in ipairs(cfg.fatalwarnings) do
-			table.insert(result, '/we"' .. fatal .. '"')
-		end
-		return result
 	end
 
 
@@ -121,7 +107,9 @@
 	}
 
 	function msc.getcxxflags(cfg)
-		local flags = config.mapFlags(cfg, msc.cxxflags)
+		local shared = config.mapFlags(cfg, msc.shared)
+		local cxxflags = config.mapFlags(cfg, msc.cxxflags)
+		local flags = table.join(shared, cxxflags, msc.getwarnings(cfg))
 		return flags
 	end
 
@@ -322,4 +310,20 @@
 
 	function msc.gettoolname(cfg, tool)
 		return nil
+	end
+
+
+
+	function msc.getwarnings(cfg)
+		local result = {}
+
+		-- NOTE: VStudio can't enable specific warnings (workaround?)
+		for _, disable in ipairs(cfg.disablewarnings) do
+			table.insert(result, '/wd"' .. disable .. '"')
+		end
+		for _, fatal in ipairs(cfg.fatalwarnings) do
+			table.insert(result, '/we"' .. fatal .. '"')
+		end
+
+		return result
 	end

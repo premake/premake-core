@@ -334,6 +334,75 @@
 
 
 --
+-- If a custom rule outputs an object file, it's automatically linked, unless
+-- we explicitly specify that it isn't with linkbuildoutputs.
+--
+
+	function suite.linkBuildOutputs_onNotSpecified()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildcommands { "echo $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.x">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
+	function suite.linkBuildOutputs_onOff()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildcommands { "echo $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+			linkbuildoutputs "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.x">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
+	function suite.linkBuildOutputs_onOn()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildcommands { "echo $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+			linkbuildoutputs "On"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.x">
+		<FileType>Document</FileType>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkObjects>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkObjects>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
+
+--
 -- If two files at different folder levels have the same name, a different
 -- object file name should be used for each.
 --

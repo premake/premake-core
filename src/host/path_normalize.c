@@ -24,8 +24,8 @@ static void* normalize_substring(const char* str, const char* endPtr, char* writ
 			ch = '/';
 		}
 
-		/* filter out .. */
-		if (ch == '.' && last == '.') {
+		/* filter out .. except when it's part of the file or folder name */
+		if (ch == '.' && last == '.' && *(str - 2) == '/' && (*(str + 1) == '/' || str + 1 == endPtr)) {
 			last = 0;
 
 			ptr = writePtr - 3;

@@ -237,6 +237,8 @@
 			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
 			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
 			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+			m.nmakePreprocessorDefinitions(cfg, cfg.defines, false, nil)
+			m.nmakeIncludeDirs(cfg, cfg.includedirs)
 			p.pop('</PropertyGroup>')
 		end
 	end
@@ -308,7 +310,6 @@
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
 			m.debugInformationFormat,
-			m.programDataBaseFileName,
 			m.optimization,
 			m.functionLevelLinking,
 			m.intrinsicFunctions,
@@ -390,12 +391,14 @@
 		if cfg.kind == p.STATICLIB then
 			return {
 				m.subSystem,
+				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
 			}
 		else
 			return {
 				m.subSystem,
+				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
 				m.additionalDependencies,
@@ -409,6 +412,7 @@
 				m.largeAddressAware,
 				m.targetMachine,
 				m.additionalLinkOptions,
+				m.programDatabaseFile,
 			}
 		end
 	end
@@ -431,6 +435,8 @@
 	m.elements.lib = function(cfg, explicit)
 		if cfg.kind == p.STATICLIB then
 			return {
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
 				m.treatLinkerWarningAsErrors,
 				m.targetMachine,
 				m.additionalLinkOptions,
@@ -715,6 +721,7 @@
 				m.excludedFromBuild,
 				m.buildCommands,
 				m.buildOutputs,
+				m.linkObjects,
 				m.buildMessage,
 				m.buildAdditionalInputs
 			}
@@ -1100,6 +1107,13 @@
 	end
 
 
+	function m.linkObjects(fcfg, condition)
+		if fcfg.linkbuildoutputs ~= nil then
+			m.element("LinkObjects", condition, tostring(fcfg.linkbuildoutputs))
+		end
+	end
+
+
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			m.element("CharacterSet", nil, iif(cfg.characterset == p.MBCS, "MultiByte", "Unicode"))
@@ -1177,10 +1191,10 @@
 	function m.debugInformationFormat(cfg)
 		local value
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.symbols == p.ON then
+		if (cfg.symbols == p.ON) or (cfg.symbols == "FastLink") then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
-			elseif cfg.architecture == "x86_64" or
+			elseif (cfg.architecture == "x86_64" and _ACTION < "vs2015") or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
 				   cfg.editandcontinue == p.OFF or
@@ -1282,6 +1296,7 @@
 		end
 	end
 
+
 	function m.inlineFunctionExpansion(cfg)
 		if cfg.inlining then
 			local types = {
@@ -1293,6 +1308,7 @@
 			m.element("InlineFunctionExpansion", nil, types[cfg.inlining])
 		end
 	end
+
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
@@ -1310,6 +1326,13 @@
 	end
 
 
+	function m.fullProgramDatabaseFile(cfg)
+		if _ACTION >= "vs2015" and cfg.symbols == "FastLink" then
+			m.element("FullProgramDatabaseFile", nil, "true")
+		end
+	end
+
+
 	function m.functionLevelLinking(cfg)
 		if config.isOptimizedBuild(cfg) then
 			m.element("FunctionLevelLinking", nil, "true")
@@ -1320,13 +1343,9 @@
 	function m.generateDebugInformation(cfg)
 		local lookup = {}
 		if _ACTION >= "vs2015" then
-			lookup[p.ON]       = "Debug"
-			lookup[p.OFF]      = "No"
+			lookup[p.ON]       = "true"
+			lookup[p.OFF]      = "false"
 			lookup["FastLink"] = "DebugFastLink"
-
-			if cfg.symbols == "FastLink" then
-				m.element("FullProgramDatabaseFile", nil, "true")
-			end
 		else
 			lookup[p.ON]       = "true"
 			lookup[p.OFF]      = "false"
@@ -1669,7 +1688,25 @@
 		m.element("NMakeOutput", nil, "$(OutDir)%s", cfg.buildtarget.name)
 	end
 
+	function m.nmakePreprocessorDefinitions(cfg, defines, escapeQuotes, condition)
+		if #defines > 0 then
+			defines = table.concat(defines, ";")
+			if escapeQuotes then
+				defines = defines:gsub('"', '\\"')
+			end
+			defines = p.esc(defines) .. ";$(NMakePreprocessorDefinitions)"
+			m.element('NMakePreprocessorDefinitions', condition, defines)
+		end
+	end
 
+	function m.nmakeIncludeDirs(cfg, includedirs)
+		if #includedirs > 0 then
+			local dirs = vstudio.path(cfg, includedirs)
+			if #dirs > 0 then
+				m.element("NMakeIncludeSearchPath", nil, "%s", table.concat(dirs, ";"))
+			end
+		end
+	end
 
 	function m.objectFileName(fcfg)
 		if fcfg.objname ~= fcfg.basename then
@@ -1793,9 +1830,9 @@
 	end
 
 
-	function m.programDataBaseFileName(cfg)
+	function m.programDatabaseFile(cfg)
 		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
-			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
 		end
 	end
 
