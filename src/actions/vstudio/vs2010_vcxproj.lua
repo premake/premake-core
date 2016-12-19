@@ -216,6 +216,37 @@
 		end
 	end
 
+
+--
+-- Write the NMake property group for Makefile projects, which includes the custom
+-- build commands, output file location, etc.
+--
+
+	m.elements.nmakeProperties = function(cfg)
+		return {
+			m.nmakeOutput,
+			m.nmakeBuildCommands,
+			m.nmakeRebuildCommands,
+			m.nmakeCleanCommands,
+			m.nmakePreprocessorDefinitions,
+			m.nmakeIncludeDirs
+		}
+	end
+
+	function m.nmakeProperties(cfg)
+		if vstudio.isMakefile(cfg) then
+			m.propertyGroup(cfg)
+			p.callArray(m.elements.nmakeProperties, cfg)
+			p.pop('</PropertyGroup>')
+		end
+	end
+
+
+--
+-- Output properties and NMake properties should appear side-by-side
+-- for each configuration.
+--
+
 	function m.outputPropertiesGroup(prj)
 		for cfg in project.eachconfig(prj) do
 			m.outputProperties(cfg)
@@ -223,25 +254,6 @@
 		end
 	end
 
-
-
---
--- Write the NMake property group for Makefile projects, which includes the custom
--- build commands, output file location, etc.
---
-
-	function m.nmakeProperties(cfg)
-		if vstudio.isMakefile(cfg) then
-			m.propertyGroup(cfg)
-			m.nmakeOutput(cfg)
-			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-			m.nmakePreprocessorDefinitions(cfg, cfg.defines, false, nil)
-			m.nmakeIncludeDirs(cfg, cfg.includedirs)
-			p.pop('</PropertyGroup>')
-		end
-	end
 
 
 --
@@ -1668,11 +1680,31 @@
 	end
 
 
+	function m.nmakeBuildCommands(cfg)
+		m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+	end
+
+
+	function m.nmakeCleanCommands(cfg)
+		m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+	end
+
+
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
 			commands = os.translateCommands(commands, p.WINDOWS)
 			commands = table.concat(p.esc(commands), p.eol())
 			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
+		end
+	end
+
+
+	function m.nmakeIncludeDirs(cfg)
+		if cfg.kind ~= p.NONE and #cfg.includedirs > 0 then
+			local dirs = vstudio.path(cfg, cfg.includedirs)
+			if #dirs > 0 then
+				m.element("NMakeIncludeSearchPath", nil, "%s", table.concat(dirs, ";"))
+			end
 		end
 	end
 
@@ -1684,29 +1716,25 @@
 		end
 	end
 
+
 	function m.nmakeOutput(cfg)
 		m.element("NMakeOutput", nil, "$(OutDir)%s", cfg.buildtarget.name)
 	end
 
-	function m.nmakePreprocessorDefinitions(cfg, defines, escapeQuotes, condition)
-		if #defines > 0 then
-			defines = table.concat(defines, ";")
-			if escapeQuotes then
-				defines = defines:gsub('"', '\\"')
-			end
+
+	function m.nmakePreprocessorDefinitions(cfg)
+		if cfg.kind ~= p.NONE and #cfg.defines > 0 then
+			local defines = table.concat(cfg.defines, ";")
 			defines = p.esc(defines) .. ";$(NMakePreprocessorDefinitions)"
-			m.element('NMakePreprocessorDefinitions', condition, defines)
+			m.element('NMakePreprocessorDefinitions', nil, defines)
 		end
 	end
 
-	function m.nmakeIncludeDirs(cfg, includedirs)
-		if #includedirs > 0 then
-			local dirs = vstudio.path(cfg, includedirs)
-			if #dirs > 0 then
-				m.element("NMakeIncludeSearchPath", nil, "%s", table.concat(dirs, ";"))
-			end
-		end
+
+	function m.nmakeRebuildCommands(cfg)
+		m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
 	end
+
 
 	function m.objectFileName(fcfg)
 		if fcfg.objname ~= fcfg.basename then
