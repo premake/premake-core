@@ -505,6 +505,7 @@
 			"C++14",
 			"C90",
 			"C99",
+			"C11",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
