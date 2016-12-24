@@ -165,5 +165,5 @@
 	function suite.resolvesEnvVars()
 		foo = os.getenv('path')
 		bar = detoken.expand("%{env:path}", environ)
-		test.isequal(bar, foo)
+		test.isequal(foo, bar)
 	end

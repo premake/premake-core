@@ -50,37 +50,19 @@
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
-		function esc(text)
-			text = text:gsub("\a", "\\a")
-			text = text:gsub("\b", "\\b")
-			text = text:gsub("\f", "\\f")
-			text = text:gsub("\t", "\\t")
-			text = text:gsub("\v", "\\v")
-			text = text:gsub("\r", "\\r")
-			text = text:gsub("\n", "\\n")
-			text = text:gsub("\'", "\\'")
-			text = text:gsub('\"', '\\"')
-			text = text:gsub("\\", "\\\\")
-			return text
-		end
 
-		function resolvePrefix(token)
+		function evalprefix(token)
 			local prefix, argument = token:match("(.*):(.*)")
 			if prefix ~= nil then
 				local resolver = prefixMap[prefix]
 				if type(resolver) == "function" then
-					return '"' .. esc(resolver(argument) or "") .. '"'
-				elseif type(resolver) == "string" then
-					return resolver .. '("' .. esc(argument) .. '")'
+					return resolver(argument)
 				end
 			end
-			return token
+			return nil
 		end
 
-		function expandtoken(token, e)
-			-- attempt to resolve prefixed tokens
-			token = resolvePrefix(token)
-
+		function evalobject(token, e)
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
@@ -99,6 +81,20 @@
 				err    = nil
 				result = result or ""
 			end
+			return result, err
+		end
+
+		function evaltoken(token, e)
+			local result = evalprefix(token)
+			if result ~= nil then
+				return result, nil
+			end
+			return evalobject(token, e)
+		end
+
+		function expandtoken(token, e)
+
+			local result, err = evaltoken(token, e)
 
 			-- If the result is an absolute path, and it is being inserted into
 			-- a NON-path value, I need to make it relative to the project that
@@ -231,4 +227,4 @@
 ---
 -- Setup default token prefixes
 ---
-	detoken.addPrefix('env', 'os.getenv')
+	detoken.addPrefix('env', os.getenv)
