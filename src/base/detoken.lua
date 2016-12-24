@@ -56,7 +56,7 @@
 			if prefix ~= nil then
 				local resolver = prefixMap[prefix]
 				if type(resolver) == "function" then
-					return resolver(argument)
+					return resolver(argument) or ""
 				end
 			end
 			return nil
