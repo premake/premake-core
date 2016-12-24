@@ -11,6 +11,8 @@
 	local p = premake
 	local detoken = p.detoken
 
+	detoken.prefixMap = {}
+	local prefixMap = detoken.prefixMap
 
 --
 -- Expand tokens in a value.
@@ -48,7 +50,37 @@
 		-- enable access to the global environment
 		setmetatable(environ, {__index = _G})
 
+		function esc(text)
+			text = text:gsub("\a", "\\a")
+			text = text:gsub("\b", "\\b")
+			text = text:gsub("\f", "\\f")
+			text = text:gsub("\t", "\\t")
+			text = text:gsub("\v", "\\v")
+			text = text:gsub("\r", "\\r")
+			text = text:gsub("\n", "\\n")
+			text = text:gsub("\'", "\\'")
+			text = text:gsub('\"', '\\"')
+			text = text:gsub("\\", "\\\\")
+			return text
+		end
+
+		function resolvePrefix(token)
+			local prefix, argument = token:match("(.*):(.*)")
+			if prefix ~= nil then
+				local resolver = prefixMap[prefix]
+				if type(resolver) == "function" then
+					return '"' .. esc(resolver(argument) or "") .. '"'
+				elseif type(resolver) == "string" then
+					return resolver .. '("' .. esc(argument) .. '")'
+				end
+			end
+			return token
+		end
+
 		function expandtoken(token, e)
+			-- attempt to resolve prefixed tokens
+			token = resolvePrefix(token)
+
 			-- convert the token into a function to execute
 			local func, err = loadstring("return " .. token)
 			if not func then
@@ -182,3 +214,21 @@
 		return recurse(value, environ)
 	end
 
+---
+-- Add a new key-value pair to resolve token prefixes.
+--
+-- @param prefix
+--    The new (or an existing) prefix key.
+-- @param resolver
+--    The argument resolver. Can be either a string containing the name of a
+--    function, or the function itself.
+---
+
+	function detoken.addPrefix(prefix, resolver)
+		prefixMap[prefix] = resolver
+	end
+
+---
+-- Setup default token prefixes
+---
+	detoken.addPrefix('env', 'os.getenv')

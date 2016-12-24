@@ -145,3 +145,25 @@
 		x = detoken.expand("%{foo:gsub('/', '\\')}\\already\\escaped", environ)
 		test.isequal("some\\path\\already\\escaped", x)
 	end
+
+--
+-- Resolves prefixes correctly.
+--
+
+	function suite.resolvesPrefix()
+		detoken.addPrefix('hello', function (argument)
+			return "hello, " .. argument
+		end)
+		x = detoken.expand("%{hello:world}", environ)
+		test.isequal("hello, world", x)
+	end
+
+--
+-- Resolves environmental variables correctly.
+--
+
+	function suite.resolvesEnvVars()
+		foo = os.getenv('path')
+		bar = detoken.expand("%{env:path}", environ)
+		test.isequal(bar, foo)
+	end
