@@ -499,6 +499,7 @@
 			"UndefinedIdentifiers",
 			"Unicode",             -- DEPRECATED
 			"Unsafe",              -- DEPRECATED
+			"WholeArchive",
 			"WinMain",
 			"WPF",
 			"C++11",

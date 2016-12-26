@@ -417,8 +417,14 @@
 		if #static_syslibs > 1 then
 			table.insert(static_syslibs, "-Wl,-Bdynamic")
 			move(static_syslibs, result)
-	    end
+		end
 		move(shared_syslibs, result)
+
+		-- When WholeArchive is specified, it must be disabled following the final library
+		if cfg.flags.WholeArchive then
+			table.insert(result, 1, "-Wl,--whole-archive")
+			table.insert(result, "-Wl,--no-whole-archive")
+		end
 
 		return result
 	end

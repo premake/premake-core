@@ -554,3 +554,15 @@
 		prepare()
 		test.excludes({ "-Wl,-Bstatic" }, gcc.getlinks(cfg))
 	end
+
+
+--
+-- Check whole archive linker flags
+--
+
+	function suite.linksWholeArchive()
+		links { "foo", "bar" }
+		flags "WholeArchive"
+		prepare()
+		test.contains({ "-Wl,--whole-archive", "-lfoo", "-lbar", "-Wl,--no-whole-archive" }, gcc.getlinks(cfg))
+	end
