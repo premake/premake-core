@@ -228,3 +228,12 @@
 -- Setup default token prefixes
 ---
 	detoken.addPrefix('env', os.getenv)
+	detoken.addPrefix('hkcu', function (token)
+		return os.getreg("hkcu:" .. token)
+	end)
+	detoken.addPrefix('hklm', function (token)
+		return os.getreg("hklm:" .. token)
+	end)
+	detoken.addPrefix('hkcr', function (token)
+		return os.getreg("hkcr:" .. token)
+	end)

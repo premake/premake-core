@@ -67,7 +67,7 @@ linux: $(SRC)
 
 windows: $(SRC)
 	if not exist build\bootstrap (mkdir build\bootstrap)
-	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" user32.lib ole32.lib $**
+	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" user32.lib ole32.lib advapi32.lib $**
 	.\build\bootstrap\premake_bootstrap.exe embed
 	.\build\bootstrap\premake_bootstrap --to=build/bootstrap $(MSDEV)
 	devenv .\build\bootstrap\Premake5.sln /Upgrade

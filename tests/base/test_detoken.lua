@@ -167,3 +167,14 @@
 		bar = detoken.expand("%{env:PATH}", environ)
 		test.isequal(foo, bar)
 	end
+
+--
+-- Resolves registry values correctly.
+--
+
+	function suite.resolvesRegValues()
+		if os.is("windows") then
+			local x = detoken.expand("%{hkcu:Environment?PATH}", environ)
+			test.istrue(x ~= nil)
+		end
+	end

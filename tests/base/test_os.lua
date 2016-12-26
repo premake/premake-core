@@ -220,3 +220,21 @@
 	function suite.translateCommand_windowsCopyNoQuotesSrc_ExtraSpace()
 		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b" ', "windows"))
 	end
+
+
+--
+-- os.getreg windows tests
+--
+	function suite.getreg_nonExistentValue()
+		if os.is("windows") then
+			local x = os.getreg("hkcu:Should\\Not\\Exist?AtAll")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.getreg_namedValue()
+		if os.is("windows") then
+			local x = os.getreg("hkcu:Environment?PATH")
+			test.istrue(x ~= nil)
+		end
+	end
