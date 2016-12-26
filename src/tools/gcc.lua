@@ -421,7 +421,7 @@
 		move(shared_syslibs, result)
 
 		-- When WholeArchive is specified, it must be disabled following the final library
-		if cfg.flags.WholeArchive then
+		if cfg.wholearchive == true then
 			table.insert(result, 1, "-Wl,--whole-archive")
 			table.insert(result, "-Wl,--no-whole-archive")
 		end

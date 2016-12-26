@@ -562,7 +562,7 @@
 
 	function suite.linksWholeArchive()
 		links { "foo", "bar" }
-		flags "WholeArchive"
+		wholearchive "On"
 		prepare()
 		test.contains({ "-Wl,--whole-archive", "-lfoo", "-lbar", "-Wl,--no-whole-archive" }, gcc.getlinks(cfg))
 	end

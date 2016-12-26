@@ -499,7 +499,6 @@
 			"UndefinedIdentifiers",
 			"Unicode",             -- DEPRECATED
 			"Unsafe",              -- DEPRECATED
-			"WholeArchive",
 			"WinMain",
 			"WPF",
 			"C++11",
@@ -1149,6 +1148,12 @@
 			"Default",
 			"Extra",
 		}
+	}
+
+	api.register {
+		name = "wholearchive",
+		scope = "config",
+		kind = "boolean"
 	}
 
 	api.register {
