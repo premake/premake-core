@@ -87,32 +87,12 @@
 		 tr.products = tree.insert(tr, tree.new("Products"))
 
 		-- the special folder "Projects" lists sibling project dependencies
-		 tr.projects = tree.new("Projects")
-		 for _, dep in ipairs(project.getdependencies(prj)) do
-		 	-- create a child node for the dependency's xcodeproj
-		 	local xcpath = xcode.getxcodeprojname(dep)
-		 	local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
-		 	xcnode.path = xcpath
-		 	xcnode.project = dep
-		 	xcnode.productgroupid = xcode.newid(xcnode.name, "prodgrp")
-		 	xcnode.productproxyid = xcode.newid(xcnode.name, "prodprox")
-		 	xcnode.targetproxyid  = xcode.newid(xcnode.name, "targprox")
-		 	xcnode.targetdependid = xcode.newid(xcnode.name, "targdep")
-
-			-- create a grandchild node for the dependency's link target
-		 	local lprj = premake.workspace.findproject(prj.workspace, dep.name)
-		 	local cfg = project.findClosestMatch(lprj, prj.configurations[1])
-		 	node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
-		 	node.path = cfg.linktarget.fullpath
-		 	node.cfg = cfg
-
-			-- don't link the dependency if it's a dependency only
-			for _, deponly in ipairs(project.getdependencies(prj, "dependOnly")) do
-				if dep == deponly then
-					node.nobuild = true
-					break
-				end
-			end
+		tr.projects = tree.new("Projects")
+		for _, dep in ipairs(project.getdependencies(prj, "linkOnly")) do
+			xcode.addDependency(prj, tr, dep, true)
+		end
+		for _, dep in ipairs(project.getdependencies(prj, "dependOnly")) do
+			xcode.addDependency(prj, tr, dep, false)
 		end
 
 		 if #tr.projects.children > 0 then
@@ -151,6 +131,30 @@
 		node.fxstageid  = xcode.newid(node.name, "fxs")
 
 		return tr
+	end
+
+	function xcode.addDependency(prj, tr, dep, build)
+		-- create a child node for the dependency's xcodeproj
+		local xcpath = xcode.getxcodeprojname(dep)
+		local xcnode = tree.insert(tr.projects, tree.new(path.getname(xcpath)))
+		xcnode.path = xcpath
+		xcnode.project = dep
+		xcnode.productgroupid = xcode.newid(xcnode.name, "prodgrp")
+		xcnode.productproxyid = xcode.newid(xcnode.name, "prodprox")
+		xcnode.targetproxyid  = xcode.newid(xcnode.name, "targprox")
+		xcnode.targetdependid = xcode.newid(xcnode.name, "targdep")
+
+		-- create a grandchild node for the dependency's link target
+		local lprj = premake.workspace.findproject(prj.workspace, dep.name)
+		local cfg = project.findClosestMatch(lprj, prj.configurations[1])
+		node = tree.insert(xcnode, tree.new(cfg.linktarget.name))
+		node.path = cfg.linktarget.fullpath
+		node.cfg = cfg
+
+		-- don't link the dependency if it's a dependency only
+		if build == false then
+			node.nobuild = true
+		end
 	end
 
 
