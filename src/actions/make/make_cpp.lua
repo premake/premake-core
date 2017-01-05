@@ -153,6 +153,11 @@
 		if path.iscppfile(node.abspath) then
 			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
 			_p('\t@echo $(notdir $<)')
+			_p('ifeq (posix,$(SHELLTYPE))')
+			_p('\t$(SILENT) mkdir -p "$(OBJDIR)"')
+			_p('else')
+			_p('\t$(SILENT) mkdir "$(subst /,\\\\,$(OBJDIR))"')
+			_p('endif')
 			cpp.buildcommand(prj, "o", node)
 
 		-- resource file
@@ -317,13 +322,13 @@
 
 	function make.cppAllRules(cfg, toolset)
 		if cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP then
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
+			_p('all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 			_p('\t@:')
 			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')
 			_p('$(dir $(TARGETDIR))Info.plist:')
 		else
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+			_p('all: prebuild prelink $(TARGET)')
 			_p('\t@:')
 		end
 	end
@@ -365,6 +370,11 @@
 	function make.cppTargetRules(prj)
 		_p('$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)')
 		_p('\t@echo Linking %s', prj.name)
+		_p('ifeq (posix,$(SHELLTYPE))')
+		_p('\t$(SILENT) mkdir -p "$(TARGETDIR)"')
+		_p('else')
+		_p('\t$(SILENT) mkdir "$(subst /,\\\\,$(TARGETDIR))"')
+		_p('endif')
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
