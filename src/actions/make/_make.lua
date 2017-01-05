@@ -173,17 +173,20 @@
 -- it screws up the escaping of spaces and parethesis (anyone know a fix?)
 --
 
-	function make.mkdirRules(dirname)
-		_p('%s:', dirname)
-		_p('\t@echo Creating %s', dirname)
+	function make.mkdir(dirname)
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) mkdir -p %s', dirname)
 		_p('else')
 		_p('\t$(SILENT) mkdir $(subst /,\\\\,%s)', dirname)
 		_p('endif')
-		_p('')
 	end
 
+	function make.mkdirRules(dirname)
+		_p('%s:', dirname)
+		_p('\t@echo Creating %s', dirname)
+		make.mkdir(dirname)
+		_p('')
+	end
 
 --
 -- Format a list of values to be safely written as part of a variable assignment.
