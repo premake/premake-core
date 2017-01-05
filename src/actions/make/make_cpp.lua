@@ -34,8 +34,6 @@
 			make.cppObjects,
 			make.shellType,
 			make.cppTargetRules,
-			make.targetDirRules,
-			make.objDirRules,
 			make.cppCleanRules,
 			make.preBuildRules,
 			make.preLinkRules,
