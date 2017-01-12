@@ -621,6 +621,22 @@
 		]]
 	end
 
+--
+-- Check the handling of the editandcontinue flag.
+--
+
+	function suite.debugFormat_onFastLinkBuild()
+		symbols "FastLink"
+		editandcontinue "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		]]
+	end
+
 
 --
 -- Edit-and-Continue is not supported for optimized builds.
@@ -637,6 +653,7 @@
 	<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 		]]
 	end
+
 
 
 --
@@ -751,5 +768,21 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<OmitDefaultLibName>true</OmitDefaultLibName>
+		]]
+	end
+
+
+--
+-- Check handling of the explicitly disabling symbols.
+--
+	function suite.onNoSymbols()
+		symbols 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>None</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
 		]]
 	end

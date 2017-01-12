@@ -86,6 +86,7 @@
 		"actions/vstudio/vs2012.lua",
 		"actions/vstudio/vs2013.lua",
 		"actions/vstudio/vs2015.lua",
+		"actions/vstudio/vs2017.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",

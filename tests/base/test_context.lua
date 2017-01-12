@@ -51,3 +51,25 @@
 		configset.store(cset, field.get("targetname"), "MyProject%{1 + 1}")
 		test.isequal("MyProject2", ctx.targetname)
 	end
+
+
+--
+-- Token environment in extended context overrides context.
+--
+
+	function suite.extent()
+		-- set in toplevel context.
+		configset.store(cset, field.get("targetname"), "%{value}")
+
+		-- detoken in toplevel context should result in empty string.
+		test.isequal("", ctx.targetname)
+
+		-- create an extended context with a local environ.
+		local environ = {
+			value = "text"
+		}
+		local ext = context.extent(ctx, environ)
+
+		-- detoken in extended context should result in value set in that environ.
+		test.isequal("text", ext.targetname)
+	end

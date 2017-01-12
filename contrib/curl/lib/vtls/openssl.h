@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -88,8 +88,11 @@ bool Curl_ossl_cert_status_request(void);
 /* this backend supports CURLOPT_CERTINFO */
 #define have_curlssl_certinfo 1
 
-/* this backend suppots CURLOPT_SSL_CTX_* */
+/* this backend supports CURLOPT_SSL_CTX_* */
 #define have_curlssl_ssl_ctx 1
+
+/* this backend supports CURLOPT_PINNEDPUBLICKEY */
+#define have_curlssl_pinnedpubkey 1
 
 /* API setup for OpenSSL */
 #define curlssl_init Curl_ossl_init

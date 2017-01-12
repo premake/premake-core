@@ -144,8 +144,19 @@
 		_p('')
 
 		if kind == "workspace" then
-			_p('.NOTPARALLEL:')
-			_p('')
+			local haspch = false
+			for _, prj in ipairs(target.projects) do
+				for cfg in project.eachconfig(prj) do
+					if cfg.pchheader then
+						haspch = true
+					end
+				end
+			end
+
+			if haspch then
+				_p('.NOTPARALLEL:')
+				_p('')
+			end
 		end
 
 		make.defaultconfig(target)
@@ -178,9 +189,21 @@
 -- Format a list of values to be safely written as part of a variable assignment.
 --
 
-	function make.list(value)
+	function make.list(value, quoted)
+		quoted = false
 		if #value > 0 then
-			return " " .. table.concat(value, " ")
+			if quoted then
+				local result = ""
+				for _, v in ipairs (value) do
+					if #result then
+						result = result .. " "
+					end
+					result = result .. premake.quoted(v)
+				end
+				return result
+			else
+				return " " .. table.concat(value, " ")
+			end
 		else
 			return ""
 		end

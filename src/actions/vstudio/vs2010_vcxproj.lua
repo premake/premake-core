@@ -57,7 +57,6 @@
 	end
 
 
-
 --
 -- Output the XML declaration and opening <Project> tag.
 --
@@ -217,6 +216,37 @@
 		end
 	end
 
+
+--
+-- Write the NMake property group for Makefile projects, which includes the custom
+-- build commands, output file location, etc.
+--
+
+	m.elements.nmakeProperties = function(cfg)
+		return {
+			m.nmakeOutput,
+			m.nmakeBuildCommands,
+			m.nmakeRebuildCommands,
+			m.nmakeCleanCommands,
+			m.nmakePreprocessorDefinitions,
+			m.nmakeIncludeDirs
+		}
+	end
+
+	function m.nmakeProperties(cfg)
+		if vstudio.isMakefile(cfg) then
+			m.propertyGroup(cfg)
+			p.callArray(m.elements.nmakeProperties, cfg)
+			p.pop('</PropertyGroup>')
+		end
+	end
+
+
+--
+-- Output properties and NMake properties should appear side-by-side
+-- for each configuration.
+--
+
 	function m.outputPropertiesGroup(prj)
 		for cfg in project.eachconfig(prj) do
 			m.outputProperties(cfg)
@@ -224,23 +254,6 @@
 		end
 	end
 
-
-
---
--- Write the NMake property group for Makefile projects, which includes the custom
--- build commands, output file location, etc.
---
-
-	function m.nmakeProperties(cfg)
-		if vstudio.isMakefile(cfg) then
-			m.propertyGroup(cfg)
-			m.nmakeOutput(cfg)
-			m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
-			m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
-			m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
-			p.pop('</PropertyGroup>')
-		end
-	end
 
 
 --
@@ -309,7 +322,6 @@
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
 			m.debugInformationFormat,
-			m.programDataBaseFileName,
 			m.optimization,
 			m.functionLevelLinking,
 			m.intrinsicFunctions,
@@ -391,12 +403,14 @@
 		if cfg.kind == p.STATICLIB then
 			return {
 				m.subSystem,
+				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
 			}
 		else
 			return {
 				m.subSystem,
+				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
 				m.additionalDependencies,
@@ -410,6 +424,7 @@
 				m.largeAddressAware,
 				m.targetMachine,
 				m.additionalLinkOptions,
+				m.programDatabaseFile,
 			}
 		end
 	end
@@ -432,6 +447,8 @@
 	m.elements.lib = function(cfg, explicit)
 		if cfg.kind == p.STATICLIB then
 			return {
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
 				m.treatLinkerWarningAsErrors,
 				m.targetMachine,
 				m.additionalLinkOptions,
@@ -523,11 +540,14 @@
 					local fld = p.rule.getPropertyField(rule, prop)
 					local value = cfg[fld.name]
 					if value ~= nil then
-						if fld.kind == "path" then
+						if fld.kind == "list:path" then
+							value = table.concat(vstudio.path(cfg, value), ';')
+						elseif fld.kind == "path" then
 							value = vstudio.path(cfg, value)
 						else
 							value = p.rule.getPropertyString(rule, prop, value)
 						end
+
 						if value ~= nil and #value > 0 then
 							m.element(prop.name, nil, '%s', value)
 						end
@@ -575,6 +595,15 @@
 	end
 
 
+	function m.generatedFile(cfg, file)
+		if file.generated then
+			local path = path.translate(file.dependsOn.relpath)
+			m.element("AutoGen", nil, 'true')
+			m.element("DependentUpon", nil, path)
+		end
+	end
+
+
 ---
 -- Write out the list of source code files, and any associated configuration.
 ---
@@ -598,7 +627,7 @@
 		priority   = 1,
 
 		emitFiles = function(prj, group)
-			m.emitFiles(prj, group, "ClInclude")
+			m.emitFiles(prj, group, "ClInclude", {m.generatedFile})
 		end,
 
 		emitFilter = function(prj, group)
@@ -638,7 +667,7 @@
 				end
 			end
 
-			m.emitFiles(prj, group, "ClCompile", nil, fileCfgFunc)
+			m.emitFiles(prj, group, "ClCompile", {m.generatedFile}, fileCfgFunc)
 		end,
 
 		emitFilter = function(prj, group)
@@ -655,7 +684,7 @@
 		priority = 3,
 
 		emitFiles = function(prj, group)
-			m.emitFiles(prj, group, "None")
+			m.emitFiles(prj, group, "None", {m.generatedFile})
 		end,
 
 		emitFilter = function(prj, group)
@@ -704,6 +733,7 @@
 				m.excludedFromBuild,
 				m.buildCommands,
 				m.buildOutputs,
+				m.linkObjects,
 				m.buildMessage,
 				m.buildAdditionalInputs
 			}
@@ -1089,6 +1119,13 @@
 	end
 
 
+	function m.linkObjects(fcfg, condition)
+		if fcfg.linkbuildoutputs ~= nil then
+			m.element("LinkObjects", condition, tostring(fcfg.linkbuildoutputs))
+		end
+	end
+
+
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			m.element("CharacterSet", nil, iif(cfg.characterset == p.MBCS, "MultiByte", "Unicode"))
@@ -1166,10 +1203,10 @@
 	function m.debugInformationFormat(cfg)
 		local value
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.symbols == p.ON then
+		if (cfg.symbols == p.ON) or (cfg.symbols == "FastLink") then
 			if cfg.debugformat == "c7" then
 				value = "OldStyle"
-			elseif cfg.architecture == "x86_64" or
+			elseif (cfg.architecture == "x86_64" and _ACTION < "vs2015") or
 				   cfg.clr ~= p.OFF or
 				   config.isOptimizedBuild(cfg) or
 				   cfg.editandcontinue == p.OFF or
@@ -1210,6 +1247,8 @@
 				v = "StreamingSIMDExtensions2"
 			elseif x == "SSE" then
 				v = "StreamingSIMDExtensions"
+			elseif x == "IA32" and _ACTION > "vs2010" then
+				v = "NoExtensions"
 			end
 		end
 		if v then
@@ -1269,6 +1308,7 @@
 		end
 	end
 
+
 	function m.inlineFunctionExpansion(cfg)
 		if cfg.inlining then
 			local types = {
@@ -1280,6 +1320,7 @@
 			m.element("InlineFunctionExpansion", nil, types[cfg.inlining])
 		end
 	end
+
 
 	function m.forceIncludes(cfg, condition)
 		if #cfg.forceincludes > 0 then
@@ -1297,6 +1338,13 @@
 	end
 
 
+	function m.fullProgramDatabaseFile(cfg)
+		if _ACTION >= "vs2015" and cfg.symbols == "FastLink" then
+			m.element("FullProgramDatabaseFile", nil, "true")
+		end
+	end
+
+
 	function m.functionLevelLinking(cfg)
 		if config.isOptimizedBuild(cfg) then
 			m.element("FunctionLevelLinking", nil, "true")
@@ -1305,7 +1353,21 @@
 
 
 	function m.generateDebugInformation(cfg)
-		m.element("GenerateDebugInformation", nil, tostring(cfg.symbols == p.ON))
+		local lookup = {}
+		if _ACTION >= "vs2015" then
+			lookup[p.ON]       = "true"
+			lookup[p.OFF]      = "false"
+			lookup["FastLink"] = "DebugFastLink"
+		else
+			lookup[p.ON]       = "true"
+			lookup[p.OFF]      = "false"
+			lookup["FastLink"] = "true"
+		end
+
+		local value = lookup[cfg.symbols]
+		if value then
+			m.element("GenerateDebugInformation", nil, value)
+		end
 	end
 
 
@@ -1618,11 +1680,31 @@
 	end
 
 
+	function m.nmakeBuildCommands(cfg)
+		m.nmakeCommandLine(cfg, cfg.buildcommands, "Build")
+	end
+
+
+	function m.nmakeCleanCommands(cfg)
+		m.nmakeCommandLine(cfg, cfg.cleancommands, "Clean")
+	end
+
+
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
 			commands = os.translateCommands(commands, p.WINDOWS)
 			commands = table.concat(p.esc(commands), p.eol())
 			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
+		end
+	end
+
+
+	function m.nmakeIncludeDirs(cfg)
+		if cfg.kind ~= p.NONE and #cfg.includedirs > 0 then
+			local dirs = vstudio.path(cfg, cfg.includedirs)
+			if #dirs > 0 then
+				m.element("NMakeIncludeSearchPath", nil, "%s", table.concat(dirs, ";"))
+			end
 		end
 	end
 
@@ -1634,10 +1716,24 @@
 		end
 	end
 
+
 	function m.nmakeOutput(cfg)
 		m.element("NMakeOutput", nil, "$(OutDir)%s", cfg.buildtarget.name)
 	end
 
+
+	function m.nmakePreprocessorDefinitions(cfg)
+		if cfg.kind ~= p.NONE and #cfg.defines > 0 then
+			local defines = table.concat(cfg.defines, ";")
+			defines = p.esc(defines) .. ";$(NMakePreprocessorDefinitions)"
+			m.element('NMakePreprocessorDefinitions', nil, defines)
+		end
+	end
+
+
+	function m.nmakeRebuildCommands(cfg)
+		m.nmakeCommandLine(cfg, cfg.rebuildcommands, "ReBuild")
+	end
 
 
 	function m.objectFileName(fcfg)
@@ -1762,9 +1858,9 @@
 	end
 
 
-	function m.programDataBaseFileName(cfg)
+	function m.programDatabaseFile(cfg)
 		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
-			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
 		end
 	end
 

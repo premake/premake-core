@@ -177,6 +177,12 @@
 	}
 
 	api.register {
+		name = "compilebuildoutputs",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
@@ -425,7 +431,7 @@
 	api.register {
 		name = "fileextension",
 		scope = "rule",
-		kind = "string",
+		kind = "list:string",
 	}
 
 	api.register {
@@ -497,6 +503,8 @@
 			"WPF",
 			"C++11",
 			"C++14",
+			"C90",
+			"C99",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -696,6 +704,12 @@
 	}
 
 	api.register {
+		name = "linkbuildoutputs",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "linkoptions",
 		scope = "config",
 		kind = "list:string",
@@ -787,6 +801,13 @@
 	}
 
 	api.register {
+		name = "runpathdirs",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	api.register {
 		name = "runtime",
 		scope = "config",
 		kind = "string",
@@ -832,6 +853,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
@@ -848,6 +870,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
@@ -953,6 +976,7 @@
 			"Default",
 			"On",
 			"Off",
+			"FastLink",    -- Visual Studio 2015+ only, considered 'On' for all other cases.
 		},
 	}
 
@@ -1098,6 +1122,7 @@
 			"Default",
 			"AVX",
 			"AVX2",
+			"IA32",
 			"SSE",
 			"SSE2",
 			"SSE3",
@@ -1189,7 +1214,7 @@
 		vectorextensions(value:sub(7))
 	end,
 	function(value)
-		vectorextension "Default"
+		vectorextensions "Default"
 	end)
 
 
@@ -1478,5 +1503,8 @@
 
 	filter { "kind:SharedLib", "system:not Windows" }
 		pic "On"
+
+	filter { "system:macosx" }
+		toolset "clang"
 
 	filter {}

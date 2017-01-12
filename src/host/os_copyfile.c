@@ -16,7 +16,7 @@ int os_copyfile(lua_State* L)
 #if PLATFORM_WINDOWS
 	z = CopyFileA(src, dst, FALSE);
 #else
-	lua_pushfstring(L, "cp %s %s", src, dst);
+	lua_pushfstring(L, "cp \"%s\" \"%s\"", src, dst);
 	z = (system(lua_tostring(L, -1)) == 0);
 #endif
 

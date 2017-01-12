@@ -347,7 +347,7 @@
 	function suite.links_onFramework()
 		links { "Cocoa.framework" }
 		prepare()
-		test.contains({ "-framework Cocoa" }, gcc.getlinks(cfg))
+		test.contains({ "-framework Cocoa" }, {table.implode (gcc.getlinks(cfg), '', '', ' ')})
 	end
 
 	function suite.links_onSystemLibs_onWindows()
@@ -531,4 +531,26 @@
 		flags "LinkTimeOptimization"
 		prepare()
 		test.contains("-flto", gcc.getldflags(cfg))
+	end
+
+
+--
+-- Check link mode preference for system libraries.
+--
+	function suite.linksModePreference_onAllStatic()
+		links { "fs_stub:static", "net_stub:static" }
+		prepare()
+		test.contains({ "-Wl,-Bstatic", "-lfs_stub", "-Wl,-Bdynamic", "-lnet_stub"}, gcc.getlinks(cfg))
+	end
+
+	function suite.linksModePreference_onStaticAndShared()
+		links { "fs_stub:static", "net_stub" }
+		prepare()
+		test.contains({ "-Wl,-Bstatic", "-lfs_stub", "-Wl,-Bdynamic", "-lnet_stub"}, gcc.getlinks(cfg))
+	end
+
+	function suite.linksModePreference_onAllShared()
+		links { "fs_stub:shared", "net_stub:shared" }
+		prepare()
+		test.excludes({ "-Wl,-Bstatic" }, gcc.getlinks(cfg))
 	end

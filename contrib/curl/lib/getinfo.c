@@ -9,7 +9,7 @@
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -281,48 +281,51 @@ static CURLcode getinfo_slist(struct SessionHandle *data, CURLINFO info,
     *param_slistp = ptr.to_slist;
     break;
   case CURLINFO_TLS_SESSION:
+  case CURLINFO_TLS_SSL_PTR:
     {
       struct curl_tlssessioninfo **tsip = (struct curl_tlssessioninfo **)
                                           param_slistp;
       struct curl_tlssessioninfo *tsi = &data->tsi;
       struct connectdata *conn = data->easy_conn;
-      unsigned int sockindex = 0;
-      void *internals = NULL;
 
       *tsip = tsi;
       tsi->backend = Curl_ssl_backend();
       tsi->internals = NULL;
 
-      if(!conn)
-        break;
-
-      /* Find the active ("in use") SSL connection, if any */
-      while((sockindex < sizeof(conn->ssl) / sizeof(conn->ssl[0])) &&
-            (!conn->ssl[sockindex].use))
-        sockindex++;
-
-      if(sockindex == sizeof(conn->ssl) / sizeof(conn->ssl[0]))
-        break; /* no SSL session found */
-
-      /* Return the TLS session information from the relevant backend */
-#ifdef USE_OPENSSL
-      internals = conn->ssl[sockindex].ctx;
+      if(conn && tsi->backend != CURLSSLBACKEND_NONE) {
+        unsigned int i;
+        for(i = 0; i < (sizeof(conn->ssl) / sizeof(conn->ssl[0])); ++i) {
+          if(conn->ssl[i].use) {
+#if defined(USE_AXTLS)
+            tsi->internals = (void *)conn->ssl[i].ssl;
+#elif defined(USE_CYASSL)
+            tsi->internals = (void *)conn->ssl[i].handle;
+#elif defined(USE_DARWINSSL)
+            tsi->internals = (void *)conn->ssl[i].ssl_ctx;
+#elif defined(USE_GNUTLS)
+            tsi->internals = (void *)conn->ssl[i].session;
+#elif defined(USE_GSKIT)
+            tsi->internals = (void *)conn->ssl[i].handle;
+#elif defined(USE_MBEDTLS)
+            tsi->internals = (void *)&conn->ssl[i].ssl;
+#elif defined(USE_NSS)
+            tsi->internals = (void *)conn->ssl[i].handle;
+#elif defined(USE_OPENSSL)
+            /* Legacy: CURLINFO_TLS_SESSION must return an SSL_CTX pointer. */
+            tsi->internals = ((info == CURLINFO_TLS_SESSION) ?
+                              (void *)conn->ssl[i].ctx :
+                              (void *)conn->ssl[i].handle);
+#elif defined(USE_POLARSSL)
+            tsi->internals = (void *)&conn->ssl[i].ssl;
+#elif defined(USE_SCHANNEL)
+            tsi->internals = (void *)&conn->ssl[i].ctxt->ctxt_handle;
+#elif defined(USE_SSL)
+#error "SSL backend specific information missing for CURLINFO_TLS_SSL_PTR"
 #endif
-#ifdef USE_GNUTLS
-      internals = conn->ssl[sockindex].session;
-#endif
-#ifdef USE_NSS
-      internals = conn->ssl[sockindex].handle;
-#endif
-#ifdef USE_GSKIT
-      internals = conn->ssl[sockindex].handle;
-#endif
-      if(internals) {
-        tsi->internals = internals;
+            break;
+          }
+        }
       }
-      /* NOTE: For other SSL backends, it is not immediately clear what data
-         to return from 'struct ssl_connect_data'; thus we keep 'internals' to
-         NULL which should be interpreted as "not supported" */
     }
     break;
   default:
@@ -335,20 +338,9 @@ static CURLcode getinfo_slist(struct SessionHandle *data, CURLINFO info,
 static CURLcode getinfo_socket(struct SessionHandle *data, CURLINFO info,
                                curl_socket_t *param_socketp)
 {
-  curl_socket_t sockfd;
-
   switch(info) {
   case CURLINFO_ACTIVESOCKET:
-    sockfd = Curl_getconnectinfo(data, NULL);
-
-    /* note: this is not a good conversion for systems with 64 bit sockets and
-       32 bit longs */
-    if(sockfd != CURL_SOCKET_BAD)
-      *param_socketp = sockfd;
-    else
-      /* this interface is documented to return -1 in case of badness, which
-         may not be the same as the CURL_SOCKET_BAD value */
-      *param_socketp = -1;
+    *param_socketp = Curl_getconnectinfo(data, NULL);
     break;
   default:
     return CURLE_UNKNOWN_OPTION;

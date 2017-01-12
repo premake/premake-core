@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -21,6 +21,8 @@
  * KIND, either express or implied.
  *
  ***************************************************************************/
+
+void Curl_init_CONNECT(struct SessionHandle *data);
 
 CURLcode Curl_pretransfer(struct SessionHandle *data);
 CURLcode Curl_second_connect(struct connectdata *conn);
@@ -47,7 +49,6 @@ int Curl_single_getsock(const struct connectdata *conn,
                         int numsocks);
 CURLcode Curl_readrewind(struct connectdata *conn);
 CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp);
-CURLcode Curl_reconnect_request(struct connectdata **connp);
 CURLcode Curl_retry_request(struct connectdata *conn, char **url);
 bool Curl_meets_timecondition(struct SessionHandle *data, time_t timeofdoc);
 

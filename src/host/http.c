@@ -118,7 +118,7 @@ static void get_headers(lua_State* L, int headersIndex, struct curl_slist** head
 	}
 }
 
-static CURL* curl_request(lua_State* L, curl_state* state, const char* url, FILE* fp, int optionsIndex, int progressFnIndex, int headersIndex)
+static CURL* curl_request(lua_State* L, curl_state* state, int optionsIndex, int progressFnIndex, int headersIndex)
 {
 	CURL* curl;
 
@@ -135,8 +135,7 @@ static CURL* curl_request(lua_State* L, curl_state* state, const char* url, FILE
 	if (!curl)
 		return NULL;
 
-	curl_easy_setopt(curl, CURLOPT_URL, url);
-	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+	curl_easy_setopt(curl, CURLOPT_URL, luaL_checkstring(L, 1));
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
@@ -175,7 +174,19 @@ static CURL* curl_request(lua_State* L, curl_state* state, const char* url, FILE
 			}
 			else if (!strcmp(key, "timeout") && lua_isnumber(L, -1))
 			{
-				curl_easy_setopt(curl, CURLOPT_TIMEOUT, luaL_checknumber(L, -1));
+				curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long)luaL_checknumber(L, -1));
+			}
+			else if (!strcmp(key, "timeoutms") && lua_isnumber(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, (long)luaL_checknumber(L, -1));
+			}
+			else if (!strcmp(key, "sslverifyhost") && lua_isnumber(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, (long)luaL_checknumber(L, -1));
+			}
+			else if (!strcmp(key, "sslverifypeer") && lua_isnumber(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, (long)luaL_checknumber(L, -1));
 			}
 
 			// pop the value, leave the key for lua_next
@@ -200,12 +211,6 @@ static CURL* curl_request(lua_State* L, curl_state* state, const char* url, FILE
 
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, state);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_cb);
-
-	if (fp)
-	{
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_file_cb);
-	}
 
 	if (state->L != 0)
 	{
@@ -237,23 +242,24 @@ int http_get(lua_State* L)
 	CURL* curl;
 	CURLcode code = CURLE_FAILED_INIT;
 	long responseCode = 0;
- 
+
 	if (lua_istable(L, 2))
 	{
 		// http.get(source, { options })
-		curl = curl_request(L, &state, luaL_checkstring(L, 1), /*fp=*/NULL, /*optionsIndex=*/2, /*progressFnIndex=*/0, /*headersIndex=*/0);
+		curl = curl_request(L, &state, /*optionsIndex=*/2, /*progressFnIndex=*/0, /*headersIndex=*/0);
 	}
 	else
 	{
 		// backward compatible function signature
 		// http.get(source, progressFunction, { headers })
-		curl = curl_request(L, &state, luaL_checkstring(L, 1), /*fp=*/NULL, /*optionsIndex=*/0, /*progressFnIndex=*/2, /*headersIndex=*/3);
+		curl = curl_request(L, &state, /*optionsIndex=*/0, /*progressFnIndex=*/2, /*headersIndex=*/3);
 	}
 
 	string_init(&state.S);
-
 	if (curl)
 	{
+		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+
 		code = curl_easy_perform(curl);
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
 		curl_cleanup(curl, &state);
@@ -261,8 +267,9 @@ int http_get(lua_State* L)
 
 	if (code != CURLE_OK)
 	{
-		lua_pushnil(L);
 		char errorBuf[1024];
+
+		lua_pushnil(L);
 		snprintf(errorBuf, sizeof(errorBuf) - 1, "%s\n%s\n", curl_easy_strerror(code), state.errorBuffer);
 		lua_pushstring(L, errorBuf);
 	}
@@ -273,9 +280,55 @@ int http_get(lua_State* L)
 	}
 
 	string_free(&state.S);
+	lua_pushnumber(L, (lua_Number)responseCode);
+	return 3;
+}
 
-	lua_pushnumber(L, responseCode);
 
+int http_post(lua_State* L)
+{
+	curl_state state;
+	CURL* curl;
+	CURLcode code = CURLE_FAILED_INIT;
+	long responseCode = 0;
+
+	// http.post(source, postdata, { options })
+	curl = curl_request(L, &state, /*optionsIndex=*/3, /*progressFnIndex=*/0, /*headersIndex=*/0);
+
+	string_init(&state.S);
+	if (curl)
+	{
+		size_t dataSize;
+		const char* data = luaL_checklstring(L, 2, &dataSize);
+
+		curl_easy_setopt(curl, CURLOPT_POST, 1);
+		if (data && dataSize > 0)
+		{
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)dataSize);
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+		}
+
+		code = curl_easy_perform(curl);
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+		curl_cleanup(curl, &state);
+	}
+
+	if (code != CURLE_OK)
+	{
+		char errorBuf[1024];
+
+		lua_pushnil(L);
+		snprintf(errorBuf, sizeof(errorBuf) - 1, "%s\n%s\n", curl_easy_strerror(code), state.errorBuffer);
+		lua_pushstring(L, errorBuf);
+	}
+	else
+	{
+		lua_pushlstring(L, state.S.ptr, state.S.len);
+		lua_pushstring(L, "OK");
+	}
+
+	string_free(&state.S);
+	lua_pushnumber(L, (lua_Number)responseCode);
 	return 3;
 }
 
@@ -301,17 +354,21 @@ int http_download(lua_State* L)
 	if (lua_istable(L, 3))
 	{
 		// http.download(source, destination, { options })
-		curl = curl_request(L, &state, luaL_checkstring(L, 1), fp, /*optionsIndex=*/3, /*progressFnIndex=*/0, /*headersIndex=*/0);
+		curl = curl_request(L, &state, /*optionsIndex=*/3, /*progressFnIndex=*/0, /*headersIndex=*/0);
 	}
 	else
 	{
 		// backward compatible function signature
 		// http.download(source, destination, progressFunction, { headers })
-		curl = curl_request(L, &state, luaL_checkstring(L, 1), fp, /*optionsIndex=*/0, /*progressFnIndex=*/3, /*headersIndex=*/4);
+		curl = curl_request(L, &state, /*optionsIndex=*/0, /*progressFnIndex=*/3, /*headersIndex=*/4);
 	}
 
 	if (curl)
 	{
+		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_file_cb);
+
 		code = curl_easy_perform(curl);
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
 		curl_cleanup(curl, &state);
@@ -330,8 +387,7 @@ int http_download(lua_State* L)
 		lua_pushstring(L, "OK");
 	}
 
-	lua_pushnumber(L, responseCode);
-
+	lua_pushnumber(L, (lua_Number)responseCode);
 	return 2;
 }
 

@@ -257,10 +257,8 @@
 					for cfg in project.eachconfig(prj) do
 						local filecfg = incfg[cfg]
 						if filecfg then
-							-- if the custom build outputs an object file, add it to
-							-- the link step automatically to match Visual Studio
 							local output = project.getrelative(prj, filecfg.buildoutputs[1])
-							if path.isobjectfile(output) then
+							if path.isobjectfile(output) and (filecfg.linkbuildoutputs == true or filecfg.linkbuildoutputs == nil) then
 								table.insert(configs[cfg].objects, output)
 							else
 								table.insert(configs[cfg].customfiles, output)
@@ -337,7 +335,7 @@
 
 
 	function make.cxxFlags(cfg, toolset)
-		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
+		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)%s', make.list(table.join(toolset.getcxxflags(cfg), cfg.buildoptions)))
 	end
 
 
@@ -410,7 +408,7 @@
 	function make.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(includes, "-include $(OBJDIR)/$(notdir $(PCH))")
+			table.insert(includes, 1, "-include $(OBJDIR)/$(notdir $(PCH))")
 		end
 		_x('  FORCE_INCLUDE +=%s', make.list(includes))
 	end
@@ -429,14 +427,14 @@
 
 
 	function make.ldFlags(cfg, toolset)
-		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getldflags(cfg), cfg.linkoptions)
+		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getrunpathdirs(cfg, cfg.runpathdirs), toolset.getldflags(cfg), cfg.linkoptions)
 		_p('  ALL_LDFLAGS += $(LDFLAGS)%s', make.list(flags))
 	end
 
 
 	function make.libs(cfg, toolset)
 		local flags = toolset.getlinks(cfg)
-		_p('  LIBS +=%s', make.list(flags))
+		_p('  LIBS +=%s', make.list(flags, true))
 	end
 
 
@@ -445,7 +443,7 @@
 			if cfg.architecture == premake.UNIVERSAL then
 				_p('  LINKCMD = libtool -o "$@" $(OBJECTS)')
 			else
-				_p('  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)')
+				_p('  LINKCMD = $(AR) ' .. (toolset.arargs or '-rcs') ..' "$@" $(OBJECTS)')
 			end
 		elseif cfg.kind == premake.UTILITY then
 			-- Empty LINKCMD for Utility (only custom build rules)

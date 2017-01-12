@@ -84,7 +84,6 @@
 		return {
 			m.propertyDefaults,
 			m.commandLineTemplates,
-			m.outputs,
 			m.executionDescription,
 			m.additionalDependencies,
 		}
@@ -144,34 +143,42 @@
 
 
 	function m.commandLineTemplates(r)
-		if #r.buildcommands then
-			local cmds = os.translateCommands(r.buildcommands, p.WINDOWS)
+		-- create shadow context.
+		local env = p.rule.createEnvironment(r, "[%s]")
+		local ctx = p.context.extent(r, env)
+
+		-- now use the shadow context to detoken.
+		local buildcommands = ctx.buildcommands
+
+		-- write out the result.
+		if buildcommands and #buildcommands > 0 then
+			local cmds = os.translateCommands(buildcommands, p.WINDOWS)
 			cmds = table.concat(cmds, p.eol())
-			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
+			p.x('<CommandLineTemplate>@echo off\n%s</CommandLineTemplate>', cmds)
 		end
 	end
 
 
 
 	function m.dependsOn(r)
-    	p.w('<%sDependsOn', r.name)
-    	p.w('  Condition="\'$(ConfigurationType)\' != \'Makefile\'">_SelectedFiles;$(%sDependsOn)</%sDependsOn>',
-    		r.name, r.name, r.name)
+		p.w('<%sDependsOn', r.name)
+		p.w('  Condition="\'$(ConfigurationType)\' != \'Makefile\'">_SelectedFiles;$(%sDependsOn)</%sDependsOn>',
+			r.name, r.name, r.name)
 	end
 
 
 
 	function m.executionDescription(r)
-		if r.buildmessage then
-			p.x('<ExecutionDescription>%s</ExecutionDescription>', r.buildmessage)
+		-- create shadow context.
+		local env = p.rule.createEnvironment(r, "%%(%s)")
+		local ctx = p.context.extent(r, env)
+
+		-- now use the shadow context to detoken.
+		local buildmessage = ctx.buildmessage
+
+		-- write out the result.
+		if buildmessage and #buildmessage > 0 then
+			p.x('<ExecutionDescription>%s</ExecutionDescription>', buildmessage)
 		end
 	end
 
-
-
-	function m.outputs(r)
-		if #r.buildoutputs then
-			local outputs = table.concat(r.buildoutputs, ";")
-			p.x('<Outputs>%s</Outputs>', path.translate(outputs))
-		end
-	end

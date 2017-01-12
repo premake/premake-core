@@ -65,6 +65,23 @@
 	end
 
 
+
+---
+-- Initialize an action.
+--
+-- @param name
+--    The name of the action to be initialized.
+---
+
+	function action.initialize(name)
+		local a = action._list[name]
+		if (a.onInitialize) then
+			a.onInitialize()
+		end
+	end
+
+
+
 ---
 -- Trigger an action.
 --

@@ -514,3 +514,21 @@
 			end
 		end)
 	end
+
+
+--
+-- Compares two tables.
+--
+	function table.equals(a, b)
+		for k, v in pairs(a) do
+			if b[k] ~= v then
+				return false
+			end
+		end
+		for k, v in pairs(b) do
+			if a[k] ~= v then
+				return false
+			end
+		end
+		return true
+	end

@@ -9,8 +9,8 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#define PREMAKE_VERSION        "5.0.0-alpha10"
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2016 Jason Perkins and the Premake Project"
+#define PREMAKE_VERSION        "5.0.0-alpha11"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2017 Jason Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
 /* Identify the current platform I'm not sure how to reliably detect
@@ -135,11 +135,18 @@ int buffered_tostring(lua_State* L);
 
 #ifdef PREMAKE_CURL
 int http_get(lua_State* L);
+int http_post(lua_State* L);
 int http_download(lua_State* L);
 #endif
 
 #ifdef PREMAKE_COMPRESSION
 int zip_extract(lua_State* L);
+#endif
+
+#ifdef _MSC_VER
+ #ifndef snprintf
+  #define snprintf _snprintf
+ #endif
 #endif
 
 /* Engine interface */

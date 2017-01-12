@@ -34,8 +34,7 @@
 --
 -- Returns list of C compiler flags for a configuration.
 --
-
-	gcc.cflags = {
+	gcc.shared = {
 		architecture = {
 			x86 = "-m32",
 			x86_64 = "-m64",
@@ -86,8 +85,17 @@
 		}
 	}
 
+	gcc.cflags = {
+		flags = {
+			["C90"] = "-std=gnu90",
+			["C99"] = "-std=gnu99",
+		},
+	}
+
 	function gcc.getcflags(cfg)
-		local flags = config.mapFlags(cfg, gcc.cflags)
+		local shared_flags = config.mapFlags(cfg, gcc.shared)
+		local cflags = config.mapFlags(cfg, gcc.cflags)
+		local flags = table.join(shared_flags, cflags)
 		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
 	end
@@ -126,7 +134,10 @@
 	}
 
 	function gcc.getcxxflags(cfg)
-		local flags = config.mapFlags(cfg, gcc.cxxflags)
+		local shared_flags = config.mapFlags(cfg, gcc.shared)
+		local cxxflags = config.mapFlags(cfg, gcc.cxxflags)
+		local flags = table.join(shared_flags, cxxflags)
+		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
 	end
 
@@ -191,6 +202,52 @@
 		return result
 	end
 
+--
+-- Return a list of decorated rpaths
+--
+
+	function gcc.getrunpathdirs(cfg, dirs)
+		local result = {}
+
+		if not ((cfg.system == premake.MACOSX)
+				or (cfg.system == premake.LINUX)) then
+			return result
+		end
+
+		local rpaths = {}
+
+		-- User defined runpath search paths
+		for _, fullpath in ipairs(cfg.runpathdirs) do
+			local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
+			if not (table.contains(rpaths, rpath)) then
+				table.insert(rpaths, rpath)
+			end
+		end
+
+		-- Automatically add linked shared libraries path relative to target directory
+		for _, sibling in ipairs(config.getlinks(cfg, "siblings", "object")) do
+			if (sibling.kind == premake.SHAREDLIB) then
+				local fullpath = sibling.linktarget.directory
+				local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
+				if not (table.contains(rpaths, rpath)) then
+					table.insert(rpaths, rpath)
+				end
+			end
+		end
+
+		for _, rpath in ipairs(rpaths) do
+			if (cfg.system == premake.MACOSX) then
+				rpath = "@loader_path/" .. rpath
+			elseif (cfg.system == premake.LINUX) then
+				rpath = iif(rpath == ".", "", "/" .. rpath)
+				rpath = "$$ORIGIN" .. rpath
+			end
+
+			table.insert(result, "-Wl,-rpath,'" .. rpath .. "'")
+		end
+
+		return result
+	end
 
 --
 -- Return a list of LDFLAGS for a specific configuration.
@@ -212,8 +269,12 @@
 		kind = {
 			SharedLib = function(cfg)
 				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
-				if cfg.system == "windows" and not cfg.flags.NoImportLib then
+				if cfg.system == premake.WINDOWS and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+				elseif cfg.system == premake.LINUX then
+					table.insert(r, '-Wl,-soname=' .. premake.quoted(cfg.linktarget.name))
+				elseif cfg.system == premake.MACOSX then
+					table.insert(r, '-Wl,-install_name,' .. premake.quoted('@rpath/' .. cfg.linktarget.name))
 				end
 				return r
 			end,
@@ -243,8 +304,20 @@
 
 	gcc.libraryDirectories = {
 		architecture = {
-			x86 = "-L/usr/lib32",
-			x86_64 = "-L/usr/lib64",
+			x86 = function (cfg)
+				local r = {}
+				if cfg.system ~= premake.MACOSX then
+					table.insert (r, "-L/usr/lib32")
+				end
+				return r
+			end,
+			x86_64 = function (cfg)
+				local r = {}
+				if cfg.system ~= premake.MACOSX then
+					table.insert (r, "-L/usr/lib64")
+				end
+				return r
+			end,
 		},
 		system = {
 			wii = "-L$(LIBOGC_LIB)",
@@ -309,17 +382,43 @@
 		end
 
 		-- The "-l" flag is fine for system libraries
-
 		local links = config.getlinks(cfg, "system", "fullpath")
+		local static_syslibs = {"-Wl,-Bstatic"}
+		local shared_syslibs = {}
+
 		for _, link in ipairs(links) do
 			if path.isframework(link) then
-				table.insert(result, "-framework " .. path.getbasename(link))
+				table.insert(result, "-framework")
+				table.insert(result, path.getbasename(link))
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				table.insert(result, "-l" .. path.getname(link))
+				local endswith = function(s, ptrn)
+					return ptrn == string.sub(s, -string.len(ptrn))
+				end
+				local name = path.getname(link)
+				-- Check whether link mode decorator is present
+				if endswith(name, ":static") then
+					name = string.sub(name, 0, -8)
+					table.insert(static_syslibs, "-l" .. name)
+				elseif endswith(name, ":shared") then
+					name = string.sub(name, 0, -8)
+					table.insert(shared_syslibs, "-l" .. name)
+				else
+					table.insert(shared_syslibs, "-l" .. name)
+				end
 			end
 		end
+
+		local move = function(a1, a2)
+			local t = #a2
+			for i = 1, #a1 do a2[t + i] = a1[i] end
+		end
+		if #static_syslibs > 1 then
+			table.insert(static_syslibs, "-Wl,-Bdynamic")
+			move(static_syslibs, result)
+	    end
+		move(shared_syslibs, result)
 
 		return result
 	end
@@ -372,4 +471,3 @@
 		end
 		return nil
 	end
-

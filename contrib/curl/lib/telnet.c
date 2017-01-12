@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -51,7 +51,7 @@
 #include "telnet.h"
 #include "connect.h"
 #include "progress.h"
-#include "curl_printf.h"
+#include "system_win32.h"
 
 #define  TELOPTS
 #define  TELCMDS
@@ -62,7 +62,8 @@
 #include "rawstr.h"
 #include "warnless.h"
 
-/* The last #include files should be: */
+/* The last 3 #include files should be in this order */
+#include "curl_printf.h"
 #include "curl_memory.h"
 #include "memdebug.h"
 
@@ -91,7 +92,7 @@
 
 #ifdef USE_WINSOCK
 typedef FARPROC WSOCK2_FUNC;
-static CURLcode check_wsock2 ( struct SessionHandle *data );
+static CURLcode check_wsock2 (struct SessionHandle *data);
 #endif
 
 static
@@ -198,7 +199,7 @@ const struct Curl_handler Curl_handler_telnet = {
 
 #ifdef USE_WINSOCK
 static CURLcode
-check_wsock2 ( struct SessionHandle *data )
+check_wsock2(struct SessionHandle *data)
 {
   int err;
   WORD wVersionRequested;
@@ -1334,7 +1335,7 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
 
   /* OK, so we have WinSock 2.0.  We need to dynamically */
   /* load ws2_32.dll and get the function pointers we need. */
-  wsock2 = LoadLibrary(TEXT("WS2_32.DLL"));
+  wsock2 = Curl_load_library(TEXT("WS2_32.DLL"));
   if(wsock2 == NULL) {
     failf(data, "failed to load WS2_32.DLL (%d)", ERRNO);
     return CURLE_FAILED_INIT;
@@ -1423,8 +1424,8 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
       for(;;) {
         if(data->set.is_fread_set) {
           /* read from user-supplied method */
-          result = (int)data->set.fread_func(buf, 1, BUFSIZE - 1,
-                                             data->set.in);
+          result = (int)data->state.fread_func(buf, 1, BUFSIZE - 1,
+                                               data->state.in);
           if(result == CURL_READFUNC_ABORT) {
             keepon = FALSE;
             result = CURLE_READ_ERROR;
@@ -1563,13 +1564,13 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
   pfd[0].fd = sockfd;
   pfd[0].events = POLLIN;
 
-  if(data->set.fread_func != (curl_read_callback)fread) {
+  if(data->set.is_fread_set) {
     poll_cnt = 1;
     interval_ms = 100; /* poll user-supplied read function */
   }
   else {
     /* really using fread, so infile is a FILE* */
-    pfd[1].fd = fileno((FILE *)data->set.in);
+    pfd[1].fd = fileno((FILE *)data->state.in);
     pfd[1].events = POLLIN;
     poll_cnt = 2;
     interval_ms = 1 * 1000;
@@ -1628,7 +1629,8 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
       }
       else {
         /* read from user-supplied method */
-        nread = (int)data->set.fread_func(buf, 1, BUFSIZE - 1, data->set.in);
+        nread = (int)data->state.fread_func(buf, 1, BUFSIZE - 1,
+                                            data->state.in);
         if(nread == CURL_READFUNC_ABORT) {
           keepon = FALSE;
           break;

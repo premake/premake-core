@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.haxx.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -57,10 +57,10 @@
 #include "url.h"
 #include "rawstr.h"
 #include "speedcheck.h"
-#include "curl_printf.h"
 #include "select.h"
 
-/* The last #include files should be: */
+/* The last 3 #include files should be in this order */
+#include "curl_printf.h"
 #include "curl_memory.h"
 #include "memdebug.h"
 
@@ -312,14 +312,14 @@ static const char *tftp_option_get(const char *buf, size_t len,
 {
   size_t loc;
 
-  loc = Curl_strnlen( buf, len );
+  loc = Curl_strnlen(buf, len);
   loc++; /* NULL term */
 
   if(loc >= len)
     return NULL;
   *option = buf;
 
-  loc += Curl_strnlen( buf+loc, len-loc );
+  loc += Curl_strnlen(buf+loc, len-loc);
   loc++; /* NULL term */
 
   if(loc > len)
@@ -352,7 +352,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
     if(checkprefix(option, TFTP_OPTION_BLKSIZE)) {
       long blksize;
 
-      blksize = strtol( value, NULL, 10 );
+      blksize = strtol(value, NULL, 10);
 
       if(!blksize) {
         failf(data, "invalid blocksize value in OACK packet");
@@ -384,7 +384,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
     else if(checkprefix(option, TFTP_OPTION_TSIZE)) {
       long tsize = 0;
 
-      tsize = strtol( value, NULL, 10 );
+      tsize = strtol(value, NULL, 10);
       infof(data, "%s (%ld)\n", "tsize parsed from OACK", tsize);
 
       /* tsize should be ignored on upload: Who cares about the size of the
@@ -405,7 +405,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
 static size_t tftp_option_add(tftp_state_data_t *state, size_t csize,
                               char *buf, const char *option)
 {
-  if(( strlen(option) + csize + 1 ) > (size_t)state->blksize)
+  if(( strlen(option) + csize + 1) > (size_t)state->blksize)
     return 0;
   strcpy(buf, option);
   return strlen(option) + 1;
@@ -494,33 +494,36 @@ static CURLcode tftp_send_first(tftp_state_data_t *state, tftp_event_t event)
              "%s%c%s%c", filename, '\0',  mode, '\0');
     sbytes = 4 + strlen(filename) + strlen(mode);
 
-    /* add tsize option */
-    if(data->set.upload && (data->state.infilesize != -1))
-      snprintf(buf, sizeof(buf), "%" CURL_FORMAT_CURL_OFF_T,
-               data->state.infilesize);
-    else
-      strcpy(buf, "0"); /* the destination is large enough */
+    /* optional addition of TFTP options */
+    if(!data->set.tftp_no_options) {
+      /* add tsize option */
+      if(data->set.upload && (data->state.infilesize != -1))
+        snprintf(buf, sizeof(buf), "%" CURL_FORMAT_CURL_OFF_T,
+                 data->state.infilesize);
+      else
+        strcpy(buf, "0"); /* the destination is large enough */
 
-    sbytes += tftp_option_add(state, sbytes,
-                              (char *)state->spacket.data+sbytes,
-                              TFTP_OPTION_TSIZE);
-    sbytes += tftp_option_add(state, sbytes,
-                              (char *)state->spacket.data+sbytes, buf);
-    /* add blksize option */
-    snprintf( buf, sizeof(buf), "%d", state->requested_blksize );
-    sbytes += tftp_option_add(state, sbytes,
-                              (char *)state->spacket.data+sbytes,
-                              TFTP_OPTION_BLKSIZE);
-    sbytes += tftp_option_add(state, sbytes,
-                              (char *)state->spacket.data+sbytes, buf );
+      sbytes += tftp_option_add(state, sbytes,
+                                (char *)state->spacket.data+sbytes,
+                                TFTP_OPTION_TSIZE);
+      sbytes += tftp_option_add(state, sbytes,
+                                (char *)state->spacket.data+sbytes, buf);
+      /* add blksize option */
+      snprintf(buf, sizeof(buf), "%d", state->requested_blksize);
+      sbytes += tftp_option_add(state, sbytes,
+                                (char *)state->spacket.data+sbytes,
+                                TFTP_OPTION_BLKSIZE);
+      sbytes += tftp_option_add(state, sbytes,
+                                (char *)state->spacket.data+sbytes, buf);
 
-    /* add timeout option */
-    snprintf( buf, sizeof(buf), "%d", state->retry_time);
-    sbytes += tftp_option_add(state, sbytes,
-                              (char *)state->spacket.data+sbytes,
-                              TFTP_OPTION_INTERVAL);
-    sbytes += tftp_option_add(state, sbytes,
-                              (char *)state->spacket.data+sbytes, buf );
+      /* add timeout option */
+      snprintf(buf, sizeof(buf), "%d", state->retry_time);
+      sbytes += tftp_option_add(state, sbytes,
+                                (char *)state->spacket.data+sbytes,
+                                TFTP_OPTION_INTERVAL);
+      sbytes += tftp_option_add(state, sbytes,
+                                (char *)state->spacket.data+sbytes, buf);
+    }
 
     /* the typecase for the 3rd argument is mostly for systems that do
        not have a size_t argument, like older unixes that want an 'int' */
@@ -957,7 +960,7 @@ static CURLcode tftp_connect(struct connectdata *conn, bool *done)
   /* alloc pkt buffers based on specified blksize */
   if(conn->data->set.tftp_blksize) {
     blksize = (int)conn->data->set.tftp_blksize;
-    if(blksize > TFTP_BLKSIZE_MAX || blksize < TFTP_BLKSIZE_MIN )
+    if(blksize > TFTP_BLKSIZE_MAX || blksize < TFTP_BLKSIZE_MIN)
       return CURLE_TFTP_ILLEGAL;
   }
 
@@ -975,7 +978,7 @@ static CURLcode tftp_connect(struct connectdata *conn, bool *done)
       return CURLE_OUT_OF_MEMORY;
   }
 
-  /* we don't keep TFTP connections up bascially because there's none or very
+  /* we don't keep TFTP connections up basically because there's none or very
    * little gain for UDP */
   connclose(conn, "TFTP");
 
