@@ -34,7 +34,7 @@ RELEASE
 
 CYCLE
 
- * Update to new dev version in src/host/premake.c and commit
+ * Update to new dev version in src/host/premake.h and commit
 
  * Merge working branch to master
 
