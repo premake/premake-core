@@ -5,6 +5,43 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha10:
+
+* PR 523 New API symbols() replaces and extends "Symbols" flag
+* PR 524 New API symbolspath() specifies location of symbol database
+* PR 556 Add initialization hook for actions
+* PR 553 Enable "list of paths" for rule properties
+* PR 555 Allow multiple extensions for custom rules
+* PR 561 Add IA32 to vectorextensions()
+* PR 568 New API runpathdirs() adds rpath support
+* PR 525 Add support for Visual Studio Debug Fast Link setting
+* PR 401 Enable GCC link mode with ":static", ":shared"
+* PR 543 Remove architecture specific include paths on macOS
+* PR 554 Improve token expansion in rules
+* PR 570 Normalize paths to os.execute()
+* PR 546 Switch from openssl to mbedtls
+* PR 545 compilebuildoutputs() adds generated files to build
+* PR 575 New "raw" exporter
+* PR 581 Fix path.normalize() handling of ".." sequences
+* PR 587 Fix os.copyfile() handling of paths with spaces
+* PR 597 Enable edit-and-continue for VS 2015 64-bit builds
+* PR 583 Allow duplicate build commands
+* PR 605 Fix for objdir() forced path operator "!"
+* PR 603 Allow toolset-specific arguments to static linker
+* PR 608 Allow Visual Studio StaticLib projects to link dependencies
+* PR 610 Add defines and include paths to makefile projects
+* PR 611 Prevent force includes from breaking precompiled headers
+* PR 613 Fix os.match() detection of dot files
+* PR 607 Remove support for deprecated MonoDevelop project formats
+* PR 600 Fix VS support for symbolpath()
+* PR 512 Make Clang default toolset for macOS
+* PR 624 GCC support for C90 and C99
+* PR 628 New API linkbuildoutputs() disables automatic linking of *.obj files
+* PR 635 Improved parallelization of Makefile builds
+* PR 619 Per-file configuration support for C# projects
+* PR 649 Fix Visual Studio 2015 solution version identifier
+* PR 645 Add initial Visual Studio 2017 support
+
 Since 5.0-alpha9:
 
 * New: `symbols()`, replaces and extends flags {"Symbols"}
