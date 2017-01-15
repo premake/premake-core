@@ -675,13 +675,35 @@
 		end
 	}
 
+---
+-- Object file group
+---
+	m.categories.Object = {
+		name       = "Object",
+		extensions = ".obj",
+		priority   = 3,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = {
+				m.excludedFromBuild
+			}
+
+			m.emitFiles(prj, group, "Object", nil, fileCfgFunc, function(cfg)
+				return cfg.system == p.WINDOWS
+			end)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "Object")
+		end
+	}
 
 ---
 -- None group
 ---
 	m.categories.None = {
 		name = "None",
-		priority = 3,
+		priority = 4,
 
 		emitFiles = function(prj, group)
 			m.emitFiles(prj, group, "None", {m.generatedFile})
@@ -699,7 +721,7 @@
 	m.categories.ResourceCompile = {
 		name       = "ResourceCompile",
 		extensions = ".rc",
-		priority   = 4,
+		priority   = 5,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -722,7 +744,7 @@
 ---
 	m.categories.CustomBuild = {
 		name = "CustomBuild",
-		priority = 5,
+		priority = 6,
 
 		emitFiles = function(prj, group)
 			local fileFunc = {
@@ -755,7 +777,7 @@
 	m.categories.Midl = {
 		name       = "Midl",
 		extensions = ".idl",
-		priority   = 6,
+		priority   = 7,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -778,7 +800,7 @@
 	m.categories.Masm = {
 		name       = "Masm",
 		extensions = ".asm",
-		priority   = 7,
+		priority   = 8,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
