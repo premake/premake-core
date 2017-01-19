@@ -147,6 +147,15 @@
 			return false
 		end
 
+		-- try to parse semver, if it fails, it's not semver compatible and we cannot compare, in which case
+		-- we're going to ignore the checkVersion entirely, but warn.
+		local sMajor, sMinor, sPatch, sPrereleaseAndBuild = version:match("^(%d+)%.?(%d*)%.?(%d*)(.-)$")
+		if (type(sMajor) ~= 'string') then
+			p.warn("'" .. version .. "' is not semver compatible, and cannot be compared against '" .. checks .. "'.");
+			return true
+		end
+
+		-- now compare the semver against the checks.
 		local function eq(a, b) return a == b end
 		local function le(a, b) return a <= b end
 		local function lt(a, b) return a < b  end
