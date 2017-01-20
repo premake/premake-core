@@ -274,14 +274,26 @@
 -- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function msc.getlinks(cfg)
-		local links = config.getlinks(cfg, "system", "fullpath")
-		for i = 1, #links do
-			-- Add extension if required
-			if not msc.getLibraryExtensions()[links[i]:match("[^.]+$")] then
-				links[i] = path.appendextension(links[i], ".lib")
-			end
+	function msc.getlinks(cfg, systemonly, nogroups)
+		local links = {}
+
+		-- If we need sibling projects to be listed explicitly, grab them first
+		if not systemonly then
+			links = config.getlinks(cfg, "siblings", "fullpath")
 		end
+
+		-- Then the system libraries, which come undecorated
+		local system = config.getlinks(cfg, "system", "fullpath")
+		for i = 1, #system do
+			-- Add extension if required
+			local link = system[i]
+			if not p.tools.msc.getLibraryExtensions()[link:match("[^.]+$")] then
+				link = path.appendextension(link, ".lib")
+			end
+
+			table.insert(links, link)
+		end
+
 		return links
 	end
 
