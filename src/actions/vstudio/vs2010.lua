@@ -31,7 +31,10 @@
 		["file.basename"]               = { absolute = false, token = "%(Filename)" },
 		["file.abspath"]                = { absolute = true,  token = "%(FullPath)" },
 		["file.relpath"]                = { absolute = false, token = "%(Identity)" },
-		["file.path"]                   = { absolute = true,  token = "%(Identity)" },
+		["file.path"]                   = { absolute = false, token = "%(Identity)" },
+		["file.directory"]              = { absolute = true,  token = "%(RootDir)%(Directory)" },
+		["file.reldirectory"]           = { absolute = false, token = "%(RelativeDir)" },
+		["file.extension"]              = { absolute = false, token = "%(Extension)" },
 	}
 
 
