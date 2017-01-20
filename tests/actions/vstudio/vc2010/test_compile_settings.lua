@@ -529,6 +529,7 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 	<Optimization>Disabled</Optimization>
 	<ExceptionHandling>false</ExceptionHandling>
 		]]
