@@ -1,66 +1,8 @@
 --
 -- moduledownloader.lua
 -- Downloads a module from a package server
--- Copyright (c) 2002-2016 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2017 Jason Perkins and the Premake project
 --
-
-
----
--- progress bar.
---
-	local function _http_progress(total, current)
-		local width = 78
-		local progress = math.floor(current * width / total)
-
-		if progress == width then
-			io.write(string.rep(' ', width + 2) .. '\r')
-		else
-			io.write('[' .. string.rep('=', progress) .. string.rep(' ', width - progress) .. ']\r')
-		end
-	end
-
----
--- escape parameters in a url.
---
-	local function escape_url_param(param)
-		local url_encodings = {
-			[' '] = '%%20',
-			['!'] = '%%21',
-			['"'] = '%%22',
-			['#'] = '%%23',
-			['$'] = '%%24',
-			['&'] = '%%26',
-			['\''] = '%%27',
-			['('] = '%%28',
-			[')'] = '%%29',
-			['*'] = '%%2A',
-			['+'] = '%%2B',
-			['-'] = '%%2D',
-			['.'] = '%%2E',
-			['/'] = '%%2F',
-			[':'] = '%%3A',
-			[';'] = '%%3B',
-			['<'] = '%%3C',
-			['='] = '%%3D',
-			['>'] = '%%3E',
-			['?'] = '%%3F',
-			['@'] = '%%40',
-			['['] = '%%5B',
-			['\\'] = '%%5C',
-			[']'] = '%%5D',
-			['^'] = '%%5E',
-			['_'] = '%%5F',
-			['`'] = '%%60'
-		}
-
-		param = param:gsub('%%', '%%25')
-		for k,v in pairs(url_encodings) do
-			param = param:gsub('%' .. k, v)
-		end
-
-		return param
-	end
-
 
 ---
 -- Downloads a module from a package server
@@ -91,9 +33,9 @@
 		local server = package.server or 'http://packagesrv.com';
 
 		-- get the link to the module?
-		local url = 'api/v1/module/' .. escape_url_param(modname)
+		local url = 'api/v1/module/' .. http.escapeUrlParam(modname)
 		if versions then
-			url = url .. '/' .. escape_url_param(versions)
+			url = url .. '/' .. http.escapeUrlParam(versions)
 		end
 		local content, result_str, response_code = http.get(server .. '/' .. url)
 		if content then
@@ -110,7 +52,7 @@
 		os.mkdir(location)
 		local result_str, response_code = http.download(url, destination, {
 			headers  = {'X-Premake-User: ' .. user},
-			progress = _http_progress
+			progress = iif(_OPTIONS.verbose, http.reportProgress, nil)
 		})
 
 		if result_str ~= 'OK' then
