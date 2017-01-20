@@ -850,9 +850,10 @@
 
 
 	function m.additionalLibraryDirectories(cfg)
-		if #cfg.libdirs > 0 then
-			local dirs = vstudio.path(cfg, cfg.libdirs)
-			p.x('AdditionalLibraryDirectories="%s"', table.concat(dirs, ";"))
+		local dirs = vstudio.getLibraryDirectories(cfg)
+		if #dirs > 0 then
+			dirs = path.translate(table.concat(dirs, ";"))
+			p.x('AdditionalLibraryDirectories="%s"', dirs)
 		end
 	end
 
