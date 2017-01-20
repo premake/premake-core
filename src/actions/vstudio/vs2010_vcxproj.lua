@@ -1149,7 +1149,11 @@
 
 
 	function m.clCompilePreprocessorDefinitions(cfg, condition)
-		m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+		local defines = cfg.defines
+		if cfg.exceptionhandling == p.OFF then
+			defines = table.join(defines, "_HAS_EXCEPTIONS=0")
+		end
+		m.preprocessorDefinitions(cfg, defines, false, condition)
 	end
 
 
@@ -1942,7 +1946,11 @@
 
 
 	function m.resourcePreprocessorDefinitions(cfg)
-		m.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
+		local defines = table.join(cfg.defines, cfg.resdefines)
+		if cfg.exceptionhandling == p.OFF then
+			table.insert(defines, "_HAS_EXCEPTIONS=0")
+		end
+		m.preprocessorDefinitions(cfg, defines, true)
 	end
 
 
