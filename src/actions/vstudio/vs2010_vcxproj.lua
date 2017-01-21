@@ -270,6 +270,7 @@
 		else
 			return {
 				m.clCompile,
+				m.masm,
 				m.resourceCompile,
 				m.linker,
 				m.manifest,
@@ -348,6 +349,23 @@
 		p.push('<ClCompile>')
 		p.callArray(m.elements.clCompile, cfg)
 		p.pop('</ClCompile>')
+	end
+
+
+--
+-- Write the the <MASM> compiler settings block.
+--
+
+	m.elements.masm = function(cfg)
+		return {
+			m.masmIncludePaths,
+		}
+	end
+
+	function m.masm(cfg)
+		p.push('<MASM>')
+		p.callArray(m.elements.masm, cfg)
+		p.pop('</MASM>')
 	end
 
 
@@ -1033,6 +1051,16 @@
 	end
 
 
+	function m.includePaths(cfg, includedirs)
+		if #includedirs > 0 then
+			local dirs = vstudio.path(cfg, includedirs)
+			if #dirs > 0 then
+				m.element("IncludePaths", nil, "%s;%%(AdditionalIncludeDirectories)", table.concat(dirs, ";"))
+			end
+		end
+	end
+
+
 	function m.additionalLibraryDirectories(cfg)
 		if #cfg.libdirs > 0 then
 			local dirs = table.concat(vstudio.path(cfg, cfg.libdirs), ";")
@@ -1141,6 +1169,10 @@
 
 	function m.clCompileAdditionalIncludeDirectories(cfg)
 		m.additionalIncludeDirectories(cfg, cfg.includedirs)
+	end
+
+	function m.masmIncludePaths(cfg)
+		m.includePaths(cfg, cfg.includedirs)
 	end
 
 	function m.clCompileAdditionalUsingDirectories(cfg)
