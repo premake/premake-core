@@ -359,6 +359,7 @@
 	m.elements.masm = function(cfg)
 		return {
 			m.masmIncludePaths,
+			m.clCompilePreprocessorDefinitions,
 		}
 	end
 
