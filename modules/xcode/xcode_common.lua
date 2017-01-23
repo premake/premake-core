@@ -1019,7 +1019,11 @@
 			settings['GCC_PREFIX_HEADER'] = cfg.pchheader
 		end
 
-		settings['GCC_PREPROCESSOR_DEFINITIONS'] = cfg.defines
+		local escapedDefines = { }
+		for i,v in ipairs(cfg.defines) do
+			escapedDefines[i] = escapeArg(v)
+		end
+		settings['GCC_PREPROCESSOR_DEFINITIONS'] = escapedDefines
 
 		settings["GCC_SYMBOLS_PRIVATE_EXTERN"] = 'NO'
 
