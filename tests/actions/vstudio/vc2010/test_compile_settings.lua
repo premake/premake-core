@@ -786,3 +786,47 @@
 	<Optimization>Disabled</Optimization>
 		]]
 	end
+
+
+
+--
+-- Check handling of the stringpooling api
+--
+	function suite.onStringPoolingOff()
+		stringpooling 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StringPooling>false</StringPooling>
+		]]
+	end
+
+	function suite.onStringPoolingOn()
+		stringpooling 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StringPooling>true</StringPooling>
+		]]
+	end
+
+	function suite.onStringPoolingNotSpecified()
+		optimize "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
+		]]
+	end
