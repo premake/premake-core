@@ -1358,7 +1358,13 @@
 
 
 	function m.functionLevelLinking(cfg)
-		if config.isOptimizedBuild(cfg) then
+		if cfg.functionlevellinking ~= nil then
+			if cfg.functionlevellinking then
+				m.element("FunctionLevelLinking", nil, "true")
+			else
+				m.element("FunctionLevelLinking", nil, "false")
+			end
+		elseif config.isOptimizedBuild(cfg) then
 			m.element("FunctionLevelLinking", nil, "true")
 		end
 	end

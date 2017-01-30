@@ -870,3 +870,44 @@
 </ClCompile>
 		]]
 	end
+
+
+
+--
+-- Check handling of the functionlevellinking api
+--
+	function suite.onFunctionLevelLinkingOff()
+		functionlevellinking 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FunctionLevelLinking>false</FunctionLevelLinking>
+		]]
+	end
+
+	function suite.onFunctionLevelLinkingOn()
+		functionlevellinking 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+		]]
+	end
+
+	function suite.onFunctionLevelLinkingNotSpecified()
+		optimize "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+		]]
+	end
