@@ -3,9 +3,9 @@ PREMAKE RELEASE CHECKLIST
 
 PREP
 
- * Make sure submodules are up to date
+ * Create a new release branch and push to origin
 
- * Create working branch for release prep
+ * Notify developer list of release branch availability; request testing
 
  * Update CHANGES.txt and CONTRIBUTORS.txt
 
@@ -34,7 +34,7 @@ RELEASE
 
 CYCLE
 
- * Update to new dev version in src/host/premake.c and commit
+ * Update to new dev version in src/host/premake.h and commit
 
  * Merge working branch to master
 

@@ -65,10 +65,15 @@ linux: $(SRC)
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
 
-windows: $(SRC)
+windows-base: $(SRC)
 	if not exist build\bootstrap (mkdir build\bootstrap)
 	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" user32.lib ole32.lib advapi32.lib $**
 	.\build\bootstrap\premake_bootstrap.exe embed
 	.\build\bootstrap\premake_bootstrap --to=build/bootstrap $(MSDEV)
+
+windows: windows-base
 	devenv .\build\bootstrap\Premake5.sln /Upgrade
 	devenv .\build\bootstrap\Premake5.sln /Build Release
+
+windows-msbuild: windows-base
+	msbuild /p:Configuration=Release .\build\bootstrap\Premake5.sln
