@@ -222,45 +222,45 @@
 	end
 
 --
--- os.getreg windows tests
+-- os.getWindowsRegistry windows tests
 --
 	function suite.getreg_nonExistentValue()
 		if os.is("windows") then
-			local x = os.getreg("HKCU:Should\\Not\\Exist\\At\\All")
+			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All")
 			test.isequal(nil, x)
 		end
 	end
 
 	function suite.getreg_nonExistentDefaultValue()
 		if os.is("windows") then
-			local x = os.getreg("HKCU:Should\\Not\\Exist\\At\\All\\")
+			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All\\")
 			test.isequal(nil, x)
 		end
 	end
 
 	function suite.getreg_noSeparators()
 		if os.is("windows") then
-			os.getreg("HKCU:ShouldNotExistAtAll")
+			os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
 		end
 	end
 
 	function suite.getreg_namedValue()
 		if os.is("windows") then
-			local x = os.getreg("HKCU:Environment\\PATH")
+			local x = os.getWindowsRegistry("HKCU:Environment\\PATH")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_namedValueOptSeparator()
 		if os.is("windows") then
-			local x = os.getreg("HKCU:\\Environment\\PATH")
+			local x = os.getWindowsRegistry("HKCU:\\Environment\\PATH")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_defaultValue()
 		if os.is("windows") then
-			local x = os.getreg("HKCU:AppEvents\\EventLabels\\.Default\\")
+			local x = os.getWindowsRegistry("HKCU:AppEvents\\EventLabels\\.Default\\")
 			test.isequal("Default Beep", x)
 		end
 	end

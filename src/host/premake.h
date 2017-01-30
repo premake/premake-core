@@ -105,7 +105,7 @@ int os_chmod(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
-int os_getreg(lua_State* L);
+int os_getWindowsRegistry(lua_State* L);
 int os_getversion(lua_State* L);
 int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);
