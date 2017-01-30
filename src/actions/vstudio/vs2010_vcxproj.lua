@@ -1606,11 +1606,16 @@
 
 
 	function m.intrinsicFunctions(cfg)
-		if config.isOptimizedBuild(cfg) then
+		if cfg.intrinsics ~= nil then
+			if cfg.intrinsics then
+				m.element("IntrinsicFunctions", nil, "true")
+			else
+				m.element("IntrinsicFunctions", nil, "false")
+			end
+		elseif config.isOptimizedBuild(cfg) then
 			m.element("IntrinsicFunctions", nil, "true")
 		end
 	end
-
 
 
 	function m.keyword(prj)
