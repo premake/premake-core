@@ -335,6 +335,7 @@
 			m.bufferSecurityCheck,
 			m.treatWChar_tAsBuiltInType,
 			m.floatingPointModel,
+			m.floatingPointExceptions,
 			m.inlineFunctionExpansion,
 			m.enableEnhancedInstructionSet,
 			m.multiProcessorCompilation,
@@ -1305,6 +1306,17 @@
 	function m.floatingPointModel(cfg)
 		if cfg.floatingpoint then
 			m.element("FloatingPointModel", nil, cfg.floatingpoint)
+		end
+	end
+
+
+	function m.floatingPointExceptions(cfg)
+		if cfg.floatingpointexceptions ~= nil then
+			if cfg.floatingpointexceptions then
+				m.element("FloatingPointExceptions", nil, "true")
+			else
+				m.element("FloatingPointExceptions", nil, "false")
+			end
 		end
 	end
 

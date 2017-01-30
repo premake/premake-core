@@ -830,3 +830,43 @@
 	<StringPooling>true</StringPooling>
 		]]
 	end
+
+
+
+--
+-- Check handling of the floatingpointexceptions api
+--
+	function suite.onFloatingPointExceptionsOff()
+		floatingpointexceptions 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FloatingPointExceptions>false</FloatingPointExceptions>
+		]]
+	end
+
+	function suite.onFloatingPointExceptionsOn()
+		floatingpointexceptions 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FloatingPointExceptions>true</FloatingPointExceptions>
+		]]
+	end
+
+	function suite.onFloatingPointExceptionsNotSpecified()
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
