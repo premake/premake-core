@@ -95,6 +95,24 @@
 		test.excludes("/GF-", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onFloatingPointExceptionsOn()
+		floatingpointexceptions "On"
+		prepare()
+		test.contains("/fp:except", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointExceptionsOff()
+		floatingpointexceptions "Off"
+		prepare()
+		test.contains("/fp:except-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointExceptionsNotSpecified()
+		prepare()
+		test.excludes("/fp:except", msc.getcflags(cfg))
+		test.excludes("/fp:except-", msc.getcflags(cfg))
+	end
+
 --
 -- Check the translation of symbols.
 --

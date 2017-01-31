@@ -48,6 +48,10 @@
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
 		},
+		floatingpointexceptions = {
+			On  = "/fp:except",
+			Off = "/fp:except-",
+		},
 		callingconvention = {
 			Cdecl = "/Gd",
 			FastCall = "/Gr",
