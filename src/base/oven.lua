@@ -181,7 +181,7 @@
 			end
 
 			-- generated files might screw up the object sequences.
-			if prj.hasGeneratedFiles and p.project.iscpp(prj) then
+			if prj.hasGeneratedFiles and p.project.isnative(prj) then
 				oven.assignObjectSequences(prj)
 			end
 		end
@@ -278,7 +278,7 @@
 		-- to do this up front to make sure the sequence numbers are the same for
 		-- all the tools, even they reorder the source file list.
 
-		if p.project.iscpp(self) then
+		if p.project.isnative(self) then
 			oven.assignObjectSequences(self)
 		end
 	end

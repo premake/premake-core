@@ -91,6 +91,16 @@
 			["C99"] = "-std=gnu99",
 			["C11"] = "-std=gnu11",
 		},
+		language = {
+			["C89"] = "-std=c89",
+			["C90"] = "-std=c90",
+			["C99"] = "-std=c99",
+			["C11"] = "-std=c11",
+			["gnu89"] = "-std=gnu89",
+			["gnu90"] = "-std=gnu90",
+			["gnu99"] = "-std=gnu99",
+			["gnu11"] = "-std=gnu11",
+		}
 	}
 
 	function gcc.getcflags(cfg)
@@ -128,6 +138,16 @@
 			NoBufferSecurityCheck = "-fno-stack-protector",
 			["C++11"] = "-std=c++11",
 			["C++14"] = "-std=c++14",
+		},
+		language = {
+			["C++98"] = "-std=c++98",
+			["C++11"] = "-std=c++11",
+			["C++14"] = "-std=c++14",
+			["C++17"] = "-std=c++17",
+			["gnu++98"] = "-std=gnu++98",
+			["gnu++11"] = "-std=gnu++11",
+			["gnu++14"] = "-std=gnu++14",
+			["gnu++17"] = "-std=gnu++17",
 		},
 		rtti = {
 			Off = "-fno-rtti"

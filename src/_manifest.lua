@@ -24,6 +24,7 @@
 		"base/http.lua",
 		"base/json.lua",
 		"base/jsonwrapper.lua",
+		"base/languages.lua",
 
 		-- configuration data
 		"base/field.lua",

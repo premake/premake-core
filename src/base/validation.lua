@@ -163,30 +163,34 @@
 
 	function m.actionSupportsKind(prj)
 		if not p.action.supports(prj.kind) then
-			p.warn("unsupported kind '%s' used for project '%s'", prj.kind, prj.name)
+			p.warn("Unsupported kind '%s' used for project '%s'", prj.kind, prj.name)
 		end
 	end
 
 
 	function m.actionSupportsLanguage(prj)
 		if not p.action.supports(prj.language) then
-			p.warn("unsupported language '%s' used for project '%s'", prj.language, prj.name)
+			p.warn("Unsupported language '%s' used for project '%s'", prj.language, prj.name)
 		end
 	end
 
 
 	function m.configHasKind(cfg)
 		if not cfg.kind then
-			p.error("project '%s' needs a kind in configuration '%s'", cfg.project.name, cfg.name)
+			p.error("Project '%s' needs a kind in configuration '%s'", cfg.project.name, cfg.name)
 		end
 	end
 
 
 	function m.configSupportsKind(cfg)
+		if not p.action.supports(cfg.kind) then
+			p.warn("Unsupported kind '%s' used in configuration '%s'", cfg.kind, cfg.name)
+		end
+
 		-- makefile configuration can only appear in C++ projects; this is the
 		-- default now, so should only be a problem if overridden.
-		if (cfg.kind == p.MAKEFILE or cfg.kind == p.NONE) and not p.project.iscpp(cfg.project) then
-			p.error("project '%s' uses %s kind in configuration '%s'; language must be C++", cfg.project.name, cfg.kind, cfg.name)
+		if (cfg.kind == p.MAKEFILE or cfg.kind == p.NONE) and p.project.isdotnet(cfg.project) then
+			p.error("Project '%s' uses '%s' kind in configuration '%s'; language must not be C#", cfg.project.name, cfg.kind, cfg.name)
 		end
 	end
 

@@ -51,9 +51,9 @@
 			error("Invalid toolset '" + (_OPTIONS.cc or cfg.toolset) + "'")
 		end
 
-		if cfg.language == "C" then
+		if p.languages.isc(cfg.language) then
 			return m.ctools[tool]
-		elseif cfg.language == "C++" then
+		elseif p.languages.iscpp(cfg.language) then
 			return m.cxxtools[tool]
 		end
 	end
@@ -354,8 +354,19 @@
 		_p(3, '</AdditionalRules>')
 	end
 
+	function m.isCpp11(cfg)
+		return (cfg.language == 'gnu++11') or (cfg.language == 'C++11') or cfg.flags["C++11"]
+	end
+
+	function m.isCpp14(cfg)
+		return (cfg.language == 'gnu++14') or (cfg.language == 'C++14') or cfg.flags["C++14"]
+	end
+
 	function m.completion(cfg)
-		_p(3, '<Completion EnableCpp11="%s" EnableCpp14="%s">', iif(cfg.flags["C++11"], "yes", "no"), iif(cfg.flags["C++14"], "yes", "no"))
+		_p(3, '<Completion EnableCpp11="%s" EnableCpp14="%s">',
+			iif(m.isCpp11(cfg), "yes", "no"),
+			iif(m.isCpp14(cfg), "yes", "no")
+		)
 		_p(4, '<ClangCmpFlagsC/>')
 		_p(4, '<ClangCmpFlags/>')
 		_p(4, '<ClangPP/>') -- TODO: we might want to set special code completion macros...?

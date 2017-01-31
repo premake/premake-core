@@ -239,7 +239,7 @@
 		if cfg.flags.SeparateCompilation then
 			_p('  LINKCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
 
---			local cc = iif(cfg.language == "C", "CC", "CXX")
+--			local cc = iif(p.languages.isc(cfg.language), "CC", "CXX")
 --			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
 		else
 			_p('  BUILDCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_DFLAGS) $(ALL_LDFLAGS) $(LIBS) $(SOURCEFILES)')

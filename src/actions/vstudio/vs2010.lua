@@ -49,8 +49,8 @@
 		p.indent("  ")
 		p.escaper(vs2010.esc)
 
-		if premake.project.isdotnet(prj) then
-			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
+		if p.project.isdotnet(prj) then
+			p.generate(prj, ".csproj", vstudio.cs2005.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.cs2005.generateUser(prj) end)
@@ -58,8 +58,8 @@
 				p.generate(prj, ".csproj.user", function() p.outln(user) end)
 			end
 
-		elseif premake.project.iscpp(prj) then
-			premake.generate(prj, ".vcxproj", vstudio.vc2010.generate)
+		elseif p.project.isc(prj) or p.project.iscpp(prj) then
+			p.generate(prj, ".vcxproj", vstudio.vc2010.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
@@ -71,7 +71,6 @@
 			if tree.hasbranches(project.getsourcetree(prj)) then
 				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
-
 		end
 	end
 

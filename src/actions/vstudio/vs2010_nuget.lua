@@ -44,13 +44,13 @@
 	function nuget2010.packageFramework(wks, package)
 		local prj = packageProject(wks, package)
 
-		if p.project.iscpp(prj) then
-			return "native"
-		elseif p.project.isdotnet(prj) then
+		if p.project.isdotnet(prj) then
 			local cfg = p.project.getfirstconfig(prj)
 			local action = premake.action.current()
 			local framework = cfg.dotnetframework or action.vstudio.targetFramework
 			return cs2005.formatNuGetFrameworkVersion(framework)
+		else
+			return "native"
 		end
 	end
 

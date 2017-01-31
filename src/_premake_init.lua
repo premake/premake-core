@@ -508,11 +508,11 @@
 			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
-			"C++11",
-			"C++14",
-			"C90",
-			"C99",
-			"C11",
+			"C++11",               -- DEPRECATED
+			"C++14",               -- DEPRECATED
+			"C90",                 -- DEPRECATED
+			"C99",                 -- DEPRECATED
+			"C11",                 -- DEPRECATED
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -700,13 +700,9 @@
 
 	api.register {
 		name = "language",
-		scope = "project",
+		scope = "config",
 		kind = "string",
-		allowed = {
-			"C",
-			"C++",
-			"C#",
-		},
+		allowed = p.languages.all
 	}
 
 	api.register {
@@ -1374,6 +1370,13 @@
 	end)
 
 
+	-- 31 January 2017
+
+	api.deprecateValue("flags", "C++11", 'Use `language "C++11"` instead', function(value) end, function(value) end)
+	api.deprecateValue("flags", "C++14", 'Use `language "C++14"` instead', function(value) end, function(value) end)
+	api.deprecateValue("flags", "C90",   'Use `language "C90"` instead',   function(value) end, function(value) end)
+	api.deprecateValue("flags", "C99",   'Use `language "C99"` instead',   function(value) end, function(value) end)
+	api.deprecateValue("flags", "C11",   'Use `language "C11"` instead',   function(value) end, function(value) end)
 
 -----------------------------------------------------------------------------
 --
