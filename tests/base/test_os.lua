@@ -264,3 +264,13 @@
 			test.isequal("Default Beep", x)
 		end
 	end
+
+
+-- 
+-- os.getversion tests.
+--
+
+	function suite.getversion()
+		local version = os.getversion();
+		test.istrue(version ~= nil)
+	end
