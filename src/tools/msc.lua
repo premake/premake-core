@@ -75,6 +75,10 @@
 			Extra = "/W4",
 			Off = "/W0",
 		},
+		stringpooling = {
+			On = "/GF",
+			Off = "/GF-",
+		},
 		symbols = {
 			On = "/Z7"
 		}

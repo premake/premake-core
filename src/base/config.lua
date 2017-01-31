@@ -493,6 +493,9 @@
 				-- replacement, if any, to the result
 
 				local values = cfg[field.name]
+				if type(values) == "boolean" then
+					values = iif(values, "On", "Off")
+				end
 				if type(values) ~= "table" then
 					values = { values }
 				end

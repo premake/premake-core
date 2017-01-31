@@ -77,6 +77,23 @@
 		test.contains("/GL", msc.getldflags(cfg))
 	end
 
+	function suite.cflags_onStringPoolingOn()
+		stringpooling "On"
+		prepare()
+		test.contains("/GF", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onStringPoolingOff()
+		stringpooling "Off"
+		prepare()
+		test.contains("/GF-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onStringPoolingNotSpecified()
+		prepare()
+		test.excludes("/GF", msc.getcflags(cfg))
+		test.excludes("/GF-", msc.getcflags(cfg))
+	end
 
 --
 -- Check the translation of symbols.
