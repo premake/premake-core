@@ -449,6 +449,12 @@
 	}
 
 	api.register {
+		name = "functionlevellinking",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "flags",
 		scope = "config",
 		kind  = "list:string",

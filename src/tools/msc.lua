@@ -52,6 +52,10 @@
 			On  = "/fp:except",
 			Off = "/fp:except-",
 		},
+		functionlevellinking = {
+			On = "/Gy",
+			Off = "/Gy-",
+		},
 		callingconvention = {
 			Cdecl = "/Gd",
 			FastCall = "/Gr",

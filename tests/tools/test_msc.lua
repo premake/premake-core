@@ -113,6 +113,25 @@
 		test.excludes("/fp:except-", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onFunctionLevelLinkingOn()
+		functionlevellinking "On"
+		prepare()
+		test.contains("/Gy", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFunctionLevelLinkingOff()
+		functionlevellinking "Off"
+		prepare()
+		test.contains("/Gy-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFunctionLevelLinkingNotSpecified()
+		prepare()
+		test.excludes("/Gy", msc.getcflags(cfg))
+		test.excludes("/Gy-", msc.getcflags(cfg))
+	end
+
+
 --
 -- Check the translation of symbols.
 --
