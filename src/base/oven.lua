@@ -649,7 +649,13 @@
 				p.fileconfig.addconfig(files[fname], cfg)
 
 			end)
+
+			-- process build file exclusions for this configuration
+			oven.processExcludes(cfg, files)
 		end
+
+		-- process build file exclusions for this project
+		oven.processExcludes(prj, files)
 
 		-- Alpha sort the indices, so I will get consistent results in
 		-- the exported project files.
@@ -659,6 +665,27 @@
 		end)
 
 		return files
+	end
+
+
+--
+-- Process the exclude from build files. This assigns the ExcludeFromBuild flag to files
+-- that are listed in the excludefrombuild command.
+--
+
+	function oven.processExcludes(ctx, files)
+		if ctx.excludefrombuild and #ctx.excludefrombuild > 0 then
+			table.foreachi(ctx.excludefrombuild, function(fname)
+				local f = files[fname]
+				if f then
+					if ctx.buildcfg then
+						f.configs[ctx].flags.ExcludeFromBuild = true
+					else
+						f.flags.ExcludeFromBuild = true
+					end
+				end
+			end)
+		end
 	end
 
 
