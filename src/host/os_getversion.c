@@ -148,37 +148,37 @@ int getversion(struct OsVersionInfo* info)
 			info->revision = kern_minor;
 			break;
 		case 11:
-			info->description = "Mac OS X Lion";
+			info->description = "OS X Lion";
 			info->majorversion = 10;
 			info->minorversion = 7;
 			info->revision = kern_minor;
 			break;
 		case 12:
-			info->description = "Mac OS X Mountain Lion";
+			info->description = "OS X Mountain Lion";
 			info->majorversion = 10;
 			info->minorversion = 8;
 			info->revision = kern_minor;
 			break;
 		case 13:
-			info->description = "Mac OS X Mavericks";
+			info->description = "OS X Mavericks";
 			info->majorversion = 10;
 			info->minorversion = 9;
 			info->revision = kern_minor;
 			break;
 		case 14:
-			info->description = "Mac OS X Yosemite";
+			info->description = "OS X Yosemite";
 			info->majorversion = 10;
 			info->minorversion = 10;
 			info->revision = kern_minor;
 			break;
 		case 15:
-			info->description = "Mac OS X El Capitan";
+			info->description = "OS X El Capitan";
 			info->majorversion = 10;
 			info->minorversion = 11;
 			info->revision = kern_minor;
 			break;
 		case 16:
-			info->description = "Mac OS X Sierra";
+			info->description = "macOS Sierra";
 			info->majorversion = 10;
 			info->minorversion = 12;
 			info->revision = kern_minor;
