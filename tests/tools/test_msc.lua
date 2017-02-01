@@ -131,6 +131,11 @@
 		test.excludes("/Gy-", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onIntrinsicsOn()
+		intrinsics "On"
+		prepare()
+		test.contains("/Oi", msc.getcflags(cfg))
+	end
 
 --
 -- Check the translation of symbols.

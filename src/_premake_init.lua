@@ -670,6 +670,12 @@
 	}
 	
 	api.register {
+		name = "intrinsics",
+		scope = "config",
+		kind = "boolean"
+	}
+	
+	api.register {
 		name = "bindirs",
 		scope = "config",
 		kind = "list:directory",

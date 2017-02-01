@@ -911,3 +911,47 @@
 	<FunctionLevelLinking>true</FunctionLevelLinking>
 		]]
 	end
+
+
+
+--
+-- Check handling of the intrinsics api
+--
+	function suite.onIntrinsicsOff()
+		intrinsics 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<IntrinsicFunctions>false</IntrinsicFunctions>
+		]]
+	end
+
+	function suite.onIntrinsicsOn()
+		intrinsics 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+		]]
+	end
+
+	function suite.onIntrinsicsNotSpecified()
+		optimize "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
+		]]
+	end

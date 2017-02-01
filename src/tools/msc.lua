@@ -62,6 +62,9 @@
 			StdCall = "/Gz",
 			VectorCall = "/Gv",
 		},
+		intrinsics = {
+			On = "/Oi",
+		},
 		optimize = {
 			Off = "/Od",
 			On = "/Ot",
