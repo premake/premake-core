@@ -75,10 +75,14 @@ SYSTEM_INFO getsysteminfo()
 
 void getversion(struct OsVersionInfo* info)
 {
-	OSVERSIONINFOEX versionInfo = {0};
+	RTL_OSVERSIONINFOEXW versionInfo = {0};
 
-	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	GetVersionEx((OSVERSIONINFO*)&versionInfo);
+	versionInfo.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOEXW);
+
+	typedef LONG (WINAPI* RtlGetVersionSig)(PRTL_OSVERSIONINFOEXW);
+	RtlGetVersionSig getVersion = (RtlGetVersionSig)
+	GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "RtlGetVersion");
+	if ( getVersion ) getVersion(&versionInfo);
 
 	info->majorversion = versionInfo.dwMajorVersion;
 	info->minorversion = versionInfo.dwMinorVersion;
@@ -124,7 +128,7 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Windows Server 2008";
 		}
 	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 1 )
+	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 1)
 	{
 		if (versionInfo.wProductType != VER_NT_WORKSTATION)
 		{
@@ -135,7 +139,7 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Windows 7";
 		}
 	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 2 )
+	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 2)
 	{
 		if (versionInfo.wProductType != VER_NT_WORKSTATION)
 		{
@@ -146,7 +150,7 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Windows 8";
 		}
 	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 3 )
+	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 3)
 	{
 		if (versionInfo.wProductType != VER_NT_WORKSTATION)
 		{
@@ -155,6 +159,17 @@ void getversion(struct OsVersionInfo* info)
 		else
 		{
 			info->description = "Windows 8.1";
+		}
+	}
+	else if (versionInfo.dwMajorVersion == 10 && versionInfo.dwMinorVersion == 0)
+	{
+		if (versionInfo.wProductType != VER_NT_WORKSTATION)
+		{
+			info->description = "Windows Server 2016";
+		}
+		else
+		{
+			info->description = "Windows 10";
 		}
 	}
 	else
@@ -231,6 +246,18 @@ void getversion(struct OsVersionInfo* info)
 			info->description = "Mac OS X Yosemite";
 			info->majorversion = 10;
 			info->minorversion = 10;
+			info->revision = kern_minor;
+			break;
+		case 15:
+			info->description = "Mac OS X El Capitan";
+			info->majorversion = 10;
+			info->minorversion = 11;
+			info->revision = kern_minor;
+			break;
+		case 16:
+			info->description = "Mac OS X Sierra";
+			info->majorversion = 10;
+			info->minorversion = 12;
 			info->revision = kern_minor;
 			break;
 		default:
