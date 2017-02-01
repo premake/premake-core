@@ -527,6 +527,12 @@
 	}
 
 	api.register {
+		name = "floatingpointexceptions",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "inlining",
 		scope = "config",
 		kind = "string",
@@ -656,7 +662,7 @@
 		kind = "list:directory",
 		tokens = true,
 	}
-
+	
 	api.register {
 		name = "bindirs",
 		scope = "config",
