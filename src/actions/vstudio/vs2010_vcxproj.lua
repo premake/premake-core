@@ -1979,7 +1979,13 @@
 	end
 
 	function m.stringPooling(cfg)
-		if config.isOptimizedBuild(cfg) then
+		if cfg.stringpooling ~= nil then
+			if cfg.stringpooling then
+				m.element("StringPooling", nil, "true")
+			else
+				m.element("StringPooling", nil, "false")
+			end
+		elseif config.isOptimizedBuild(cfg) then
 			m.element("StringPooling", nil, "true")
 		end
 	end

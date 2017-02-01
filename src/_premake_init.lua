@@ -970,6 +970,12 @@
 	}
 
 	api.register {
+		name = "stringpooling",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "symbols",
 		scope = "config",
 		kind = "string",
