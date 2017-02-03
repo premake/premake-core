@@ -157,6 +157,11 @@
 		for _, define in ipairs(defines) do
 			table.insert(result, '/D"' .. define .. '"')
 		end
+
+		if cfg and cfg.exceptionhandling == p.OFF then
+			table.insert(result, "/D_HAS_EXCEPTIONS=0")
+		end
+
 		return result
 	end
 
