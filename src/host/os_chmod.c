@@ -10,6 +10,9 @@
 #include <string.h>
 #include <errno.h>
 
+#if PLATFORM_WINDOWS
+#include <io.h>
+#endif
 
 int os_chmod(lua_State* L)
 {
