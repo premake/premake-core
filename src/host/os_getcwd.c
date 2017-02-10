@@ -24,7 +24,7 @@ int do_getcwd(char* buffer, size_t size)
 	int result;
 
 #if PLATFORM_WINDOWS
-	result = (GetCurrentDirectoryA(size, buffer) != 0);
+	result = (GetCurrentDirectoryA((DWORD)size, buffer) != 0);
 	if (result) {
 		do_translate(buffer, '/');
 	}
