@@ -1002,6 +1002,7 @@
 			"On",
 			"Off",
 			"FastLink",    -- Visual Studio 2015+ only, considered 'On' for all other cases.
+			"Full",        -- Visual Studio 2017+ only, considered 'On' for all other cases.
 		},
 	}
 
