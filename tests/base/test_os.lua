@@ -220,3 +220,57 @@
 	function suite.translateCommand_windowsCopyNoQuotesSrc_ExtraSpace()
 		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b" ', "windows"))
 	end
+
+--
+-- os.getWindowsRegistry windows tests
+--
+	function suite.getreg_nonExistentValue()
+		if os.is("windows") then
+			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.getreg_nonExistentDefaultValue()
+		if os.is("windows") then
+			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All\\")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.getreg_noSeparators()
+		if os.is("windows") then
+			os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
+		end
+	end
+
+	function suite.getreg_namedValue()
+		if os.is("windows") then
+			local x = os.getWindowsRegistry("HKCU:Environment\\PATH")
+			test.istrue(x ~= nil)
+		end
+	end
+
+	function suite.getreg_namedValueOptSeparator()
+		if os.is("windows") then
+			local x = os.getWindowsRegistry("HKCU:\\Environment\\PATH")
+			test.istrue(x ~= nil)
+		end
+	end
+
+	function suite.getreg_defaultValue()
+		if os.is("windows") then
+			local x = os.getWindowsRegistry("HKCU:AppEvents\\EventLabels\\.Default\\")
+			test.isequal("Default Beep", x)
+		end
+	end
+
+
+-- 
+-- os.getversion tests.
+--
+
+	function suite.getversion()
+		local version = os.getversion();
+		test.istrue(version ~= nil)
+	end

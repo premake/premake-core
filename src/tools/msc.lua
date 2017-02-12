@@ -48,11 +48,22 @@
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
 		},
+		floatingpointexceptions = {
+			On  = "/fp:except",
+			Off = "/fp:except-",
+		},
+		functionlevellinking = {
+			On = "/Gy",
+			Off = "/Gy-",
+		},
 		callingconvention = {
 			Cdecl = "/Gd",
 			FastCall = "/Gr",
 			StdCall = "/Gz",
 			VectorCall = "/Gv",
+		},
+		intrinsics = {
+			On = "/Oi",
 		},
 		optimize = {
 			Off = "/Od",
@@ -74,6 +85,10 @@
 		warnings = {
 			Extra = "/W4",
 			Off = "/W0",
+		},
+		stringpooling = {
+			On = "/GF",
+			Off = "/GF-",
 		},
 		symbols = {
 			On = "/Z7"
@@ -142,6 +157,11 @@
 		for _, define in ipairs(defines) do
 			table.insert(result, '/D"' .. define .. '"')
 		end
+
+		if cfg and cfg.exceptionhandling == p.OFF then
+			table.insert(result, "/D_HAS_EXCEPTIONS=0")
+		end
+
 		return result
 	end
 

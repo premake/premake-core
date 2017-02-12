@@ -335,6 +335,7 @@
 			m.bufferSecurityCheck,
 			m.treatWChar_tAsBuiltInType,
 			m.floatingPointModel,
+			m.floatingPointExceptions,
 			m.inlineFunctionExpansion,
 			m.enableEnhancedInstructionSet,
 			m.multiProcessorCompilation,
@@ -1171,7 +1172,11 @@
 
 
 	function m.clCompilePreprocessorDefinitions(cfg, condition)
-		m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+		local defines = cfg.defines
+		if cfg.exceptionhandling == p.OFF and _ACTION >= "vs2013" then
+			defines = table.join(defines, "_HAS_EXCEPTIONS=0")
+		end
+		m.preprocessorDefinitions(cfg, defines, false, condition)
 	end
 
 
@@ -1331,6 +1336,17 @@
 	end
 
 
+	function m.floatingPointExceptions(cfg)
+		if cfg.floatingpointexceptions ~= nil then
+			if cfg.floatingpointexceptions then
+				m.element("FloatingPointExceptions", nil, "true")
+			else
+				m.element("FloatingPointExceptions", nil, "false")
+			end
+		end
+	end
+
+
 	function m.inlineFunctionExpansion(cfg)
 		if cfg.inlining then
 			local types = {
@@ -1368,7 +1384,13 @@
 
 
 	function m.functionLevelLinking(cfg)
-		if config.isOptimizedBuild(cfg) then
+		if cfg.functionlevellinking ~= nil then
+			if cfg.functionlevellinking then
+				m.element("FunctionLevelLinking", nil, "true")
+			else
+				m.element("FunctionLevelLinking", nil, "false")
+			end
+		elseif config.isOptimizedBuild(cfg) then
 			m.element("FunctionLevelLinking", nil, "true")
 		end
 	end
@@ -1610,11 +1632,16 @@
 
 
 	function m.intrinsicFunctions(cfg)
-		if config.isOptimizedBuild(cfg) then
+		if cfg.intrinsics ~= nil then
+			if cfg.intrinsics then
+				m.element("IntrinsicFunctions", nil, "true")
+			else
+				m.element("IntrinsicFunctions", nil, "false")
+			end
+		elseif config.isOptimizedBuild(cfg) then
 			m.element("IntrinsicFunctions", nil, "true")
 		end
 	end
-
 
 
 	function m.keyword(prj)
@@ -1964,7 +1991,11 @@
 
 
 	function m.resourcePreprocessorDefinitions(cfg)
-		m.preprocessorDefinitions(cfg, table.join(cfg.defines, cfg.resdefines), true)
+		local defines = table.join(cfg.defines, cfg.resdefines)
+		if cfg.exceptionhandling == p.OFF and _ACTION >= "vs2013" then
+			table.insert(defines, "_HAS_EXCEPTIONS=0")
+		end
+		m.preprocessorDefinitions(cfg, defines, true)
 	end
 
 
@@ -2001,7 +2032,13 @@
 	end
 
 	function m.stringPooling(cfg)
-		if config.isOptimizedBuild(cfg) then
+		if cfg.stringpooling ~= nil then
+			if cfg.stringpooling then
+				m.element("StringPooling", nil, "true")
+			else
+				m.element("StringPooling", nil, "false")
+			end
+		elseif config.isOptimizedBuild(cfg) then
 			m.element("StringPooling", nil, "true")
 		end
 	end

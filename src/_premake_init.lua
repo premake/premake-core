@@ -449,6 +449,12 @@
 	}
 
 	api.register {
+		name = "functionlevellinking",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "flags",
 		scope = "config",
 		kind  = "list:string",
@@ -524,6 +530,12 @@
 			"Fast",
 			"Strict",
 		}
+	}
+
+	api.register {
+		name = "floatingpointexceptions",
+		scope = "config",
+		kind = "boolean"
 	}
 
 	api.register {
@@ -656,7 +668,13 @@
 		kind = "list:directory",
 		tokens = true,
 	}
-
+	
+	api.register {
+		name = "intrinsics",
+		scope = "config",
+		kind = "boolean"
+	}
+	
 	api.register {
 		name = "bindirs",
 		scope = "config",
@@ -967,6 +985,12 @@
 			"Level2",
 			"Level3",
 		}
+	}
+
+	api.register {
+		name = "stringpooling",
+		scope = "config",
+		kind = "boolean"
 	}
 
 	api.register {
