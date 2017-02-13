@@ -184,6 +184,17 @@
 		]]
 	end
 
+	function suite.generateDebugInfo_onSymbolsFull_on2010()
+		premake.action.set("vs2010")
+		symbols "Full"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
 	function suite.generateDebugInfo_onSymbolsOn_on2015()
 		premake.action.set("vs2015")
 		symbols "On"
