@@ -163,5 +163,12 @@
 			versionName         = "2010",
 			targetFramework     = "4.0",
 			toolsVersion        = "4.0",
+		},
+
+		symbols = {
+			[p.ON]       = "true",
+			[p.OFF]      = "false",
+			["FastLink"] = "true",
+			["Full"]     = "true"
 		}
 	}

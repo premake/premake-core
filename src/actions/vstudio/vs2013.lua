@@ -70,5 +70,12 @@
 			toolsVersion    = "12.0",
 			filterToolsVersion = "4.0",
 			platformToolset = "v120"
+		},
+
+		symbols = {
+			[p.ON]       = "true",
+			[p.OFF]      = "false",
+			["FastLink"] = "true",
+			["Full"]     = "true"
 		}
 	}

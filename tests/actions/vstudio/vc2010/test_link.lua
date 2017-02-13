@@ -129,8 +129,74 @@
 -- Test the handling of the Symbols flag.
 --
 
+	function suite.generateDebugInfo_onSymbolsOn_on2005()
+		premake.action.set("vs2005")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2008()
+		premake.action.set("vs2008")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
 	function suite.generateDebugInfo_onSymbolsOn_on2010()
 		premake.action.set("vs2010")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2012()
+		premake.action.set("vs2012")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2013()
+		premake.action.set("vs2013")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2015()
+		premake.action.set("vs2015")
+		symbols "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsOn_on2017()
+		premake.action.set("vs2017")
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -151,28 +217,6 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsFull_on2010()
-		premake.action.set("vs2010")
-		symbols "Full"
-		prepare()
-		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>true</GenerateDebugInformation>
-		]]
-	end
-
-	function suite.generateDebugInfo_onSymbolsOn_on2015()
-		premake.action.set("vs2015")
-		symbols "On"
-		prepare()
-		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<GenerateDebugInformation>true</GenerateDebugInformation>
-		]]
-	end
-
 	function suite.generateDebugInfo_onSymbolsFastLink_on2015()
 		premake.action.set("vs2015")
 		symbols "FastLink"
@@ -182,6 +226,17 @@
 	<SubSystem>Windows</SubSystem>
 	<FullProgramDatabaseFile>true</FullProgramDatabaseFile>
 	<GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
+		]]
+	end
+
+	function suite.generateDebugInfo_onSymbolsFull_on2010()
+		premake.action.set("vs2010")
+		symbols "Full"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
 		]]
 	end
 

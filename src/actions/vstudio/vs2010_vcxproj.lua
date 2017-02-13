@@ -1375,25 +1375,8 @@
 
 
 	function m.generateDebugInformation(cfg)
-		local lookup = {}
-		if _ACTION >= "vs2017" then
-			lookup[p.ON]       = "true"
-			lookup[p.OFF]      = "false"
-			lookup["FastLink"] = "DebugFastLink"
-			lookup["Full"]     = "DebugFull"
-		elseif _ACTION == "vs2015" then
-			lookup[p.ON]       = "true"
-			lookup[p.OFF]      = "false"
-			lookup["FastLink"] = "DebugFastLink"
-			lookup["Full"]     = "true"
-		else
-			lookup[p.ON]       = "true"
-			lookup[p.OFF]      = "false"
-			lookup["FastLink"] = "true"
-			lookup["Full"]     = "true"
-		end
-
-		local value = lookup[cfg.symbols]
+		local action = p.action.current()
+		local value = action.symbols[cfg.symbols]
 		if value then
 			m.element("GenerateDebugInformation", nil, value)
 		end
