@@ -246,22 +246,22 @@
 
 	function suite.getreg_namedValue()
 		if os.is("windows") then
-			local x = os.getWindowsRegistry("HKCU:Environment\\PATH")
+			local x = os.getWindowsRegistry("HKCU:Environment\\TEMP")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_namedValueOptSeparator()
 		if os.is("windows") then
-			local x = os.getWindowsRegistry("HKCU:\\Environment\\PATH")
+			local x = os.getWindowsRegistry("HKCU:\\Environment\\TEMP")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_defaultValue()
 		if os.is("windows") then
-			local x = os.getWindowsRegistry("HKCU:AppEvents\\EventLabels\\.Default\\")
-			test.isequal("Default Beep", x)
+			local x = os.getWindowsRegistry("HKLM:SYSTEM\\CurrentControlSet\\Control\\SafeBoot\\Minimal\\AppInfo\\")
+			test.isequal("Service", x)
 		end
 	end
 
