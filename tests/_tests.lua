@@ -8,6 +8,7 @@ return {
 	"base/test_detoken.lua",
 	"base/test_include.lua",
 	"base/test_module_loader.lua",
+    "base/test_moduleresolver.lua",
 	"base/test_option.lua",
 	"base/test_os.lua",
 	"base/test_override.lua",

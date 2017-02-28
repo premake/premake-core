@@ -18,6 +18,7 @@
 		"base/io.lua",
 		"base/tools.lua",
 		"base/tree.lua",
+        "base/moduleresolver.lua",
 		"base/globals.lua",
 		"base/semver.lua",
 
