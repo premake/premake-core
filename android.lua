@@ -8,12 +8,17 @@
 
 	include("_preload.lua")
 
-	configuration { "Android" }
-		system "android"
-		toolset "gcc"
+	if _ACTION < "vs2015" then
+		configuration { "Android" }
+			system "android"
+			toolset "gcc"
+	end
 
 	-- TODO: configure Android debug environment...
 
 	include("vsandroid_vcxproj.lua")
+	include("vsandroid_sln2005.lua")
+	include("vsandroid_vstudio.lua")
+	include("vsandroid_androidproj.lua")
 
 	return android
