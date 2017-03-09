@@ -136,7 +136,7 @@
 		end
 		if not _OPTIONS["no-curl"] then
 			includedirs { "contrib/curl/include" }
-			links { "curl-lib", "mbedtls-lib" }
+			links { "curl-lib" }
 		end
 
 		files
@@ -168,6 +168,11 @@
 
 		filter "system:linux or hurd"
 			links       { "dl", "rt" }
+
+		filter { "system:not windows", "system:not macosx" }
+			if not _OPTIONS["no-curl"] then
+				links   { "mbedtls-lib" }
+			end
 
 		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
