@@ -16,5 +16,4 @@ project "mbedtls-lib"
 		"library/*.c"
 	}
 
-	filter { "system:windows or macosx" }
-		flags { "ExcludeFromBuild" }
+
