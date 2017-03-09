@@ -18,8 +18,11 @@ project "curl-lib"
 	
 	filter { "system:windows" }
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
-	
-	filter { "system:not windows" }
+
+	filter { "system:macosx" }
+		defines { "USE_DARWINSSL" }
+
+	filter { "system:not windows", "system:not macosx" }
 		defines { "USE_MBEDTLS" }
 
 	filter { "system:linux" }

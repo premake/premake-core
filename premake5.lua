@@ -171,7 +171,7 @@
 
 		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
-			links       { "CoreServices.framework" }
+			links       { "CoreServices.framework", "Foundation.framework", "Security.framework" }
 
 		filter { "system:macosx", "action:gmake" }
 			toolset "clang"
