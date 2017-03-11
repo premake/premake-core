@@ -624,7 +624,7 @@
 ---
 	m.categories.ClInclude = {
 		name       = "ClInclude",
-		extensions = { ".h", ".hh", ".hpp", ".hxx" },
+		extensions = { ".h", ".hh", ".hpp", ".hxx", ".inl" },
 		priority   = 1,
 
 		emitFiles = function(prj, group)
