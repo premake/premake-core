@@ -2,7 +2,7 @@ project "curl-lib"
 	language    "C"
 	kind        "StaticLib"
 	includedirs { "include", "lib", "../mbedtls/include/" }
-	defines     { "BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY", "USE_MBEDTLS" }
+	defines     { "BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY" }
 	warnings    "off"
 
 	if not _OPTIONS["no-zlib"] then
@@ -15,6 +15,15 @@ project "curl-lib"
 		"**.h",
 		"**.c"
 	}
+	
+	filter { "system:windows" }
+		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
+
+	filter { "system:macosx" }
+		defines { "USE_DARWINSSL" }
+
+	filter { "system:not windows", "system:not macosx" }
+		defines { "USE_MBEDTLS" }
 
 	filter { "system:linux" }
 		defines { "CURL_HIDDEN_SYMBOLS" }

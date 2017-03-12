@@ -53,7 +53,7 @@ mingw: $(SRC)
 
 osx: $(SRC)
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -framework CoreServices $?
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -framework CoreServices -framework Foundation -framework Security $?
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
