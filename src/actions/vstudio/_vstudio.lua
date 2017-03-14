@@ -454,7 +454,9 @@
 
 	function vstudio.projectfile(prj)
 		local extension
-		if project.isdotnet(prj) then
+		if project.isinstaller(prj) then
+			extension = ".vdproj"
+		elseif project.isdotnet(prj) then
 			extension = ".csproj"
 		elseif project.iscpp(prj) then
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
@@ -630,7 +632,9 @@
 --
 
 	function vstudio.tool(prj)
-		if project.isdotnet(prj) then
+		if project.isinstaller(prj) then
+			return "54435603-DBB4-11D2-8724-00A0C9A8B90C"
+		elseif project.isdotnet(prj) then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
 		elseif project.iscpp(prj) then
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"

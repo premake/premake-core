@@ -469,6 +469,15 @@
 
 
 --
+-- Returns true if the project is an installer project.
+--
+
+	function project.isinstaller(prj)
+		return prj.kind == "Installer"
+	end
+
+
+--
 -- Returns true if the project uses a native language.
 --
 
