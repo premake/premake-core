@@ -55,6 +55,11 @@
 		test.isequal("Howdy", path.getname(p.filename(prj)))
 	end
 
+	function suite.doesUseFilenameWithExtension()
+		filename "Howdy.xc"
+		prepare()
+		test.isequal("Howdy.xc", path.getname(p.filename(prj, ".xc")))
+	end
 
 --
 -- Appends file extension, if supplied.
