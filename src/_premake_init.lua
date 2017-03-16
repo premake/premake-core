@@ -214,6 +214,7 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
+		allowDuplicates = true,
 	}
 
 	api.register {
@@ -668,13 +669,13 @@
 		kind = "list:directory",
 		tokens = true,
 	}
-	
+
 	api.register {
 		name = "intrinsics",
 		scope = "config",
 		kind = "boolean"
 	}
-	
+
 	api.register {
 		name = "bindirs",
 		scope = "config",
