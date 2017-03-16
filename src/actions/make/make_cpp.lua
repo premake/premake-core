@@ -533,7 +533,9 @@
 
 	local function makeVarName(prj, value, saltValue)
 		prj._gmake.varlist = prj._gmake.varlist or {}
+		prj._gmake.varlistlength = prj._gmake.varlistlength or 0
 		local cache = prj._gmake.varlist
+		local length = prj._gmake.varlistlength
 
 		local key = value .. saltValue
 
@@ -541,8 +543,11 @@
 			return cache[key], false
 		end
 
-		local var = string.format("PERFILE_FLAGS_%d",  #cache)
+		local var = string.format("PERFILE_FLAGS_%d", length)
 		cache[key] = var
+
+		prj._gmake.varlistlength = length + 1
+
 		return var, true
 	end
 
