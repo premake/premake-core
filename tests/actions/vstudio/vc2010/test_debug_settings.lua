@@ -68,10 +68,10 @@
 --
 
 	function suite.debuggerCommandArgs_onDebugArgs()
-		debugargs { "arg1", "arg2" }
+		debugargs { "arg1", "arg2", "arg1" }
 		prepare()
 		test.capture [[
-<LocalDebuggerCommandArguments>arg1 arg2</LocalDebuggerCommandArguments>
+<LocalDebuggerCommandArguments>arg1 arg2 arg1</LocalDebuggerCommandArguments>
 		]]
 	end
 
