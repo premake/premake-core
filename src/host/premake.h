@@ -77,6 +77,7 @@ extern const char* scripts_path;
 
 /* Bootstrapping helper functions */
 int do_chdir(lua_State* L, const char* path);
+char* do_dirname(char* path);
 unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
@@ -103,6 +104,7 @@ int path_wildcards(lua_State* L);
 int os_chdir(lua_State* L);
 int os_chmod(lua_State* L);
 int os_copyfile(lua_State* L);
+int os_dirname(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
 int os_getWindowsRegistry(lua_State* L);

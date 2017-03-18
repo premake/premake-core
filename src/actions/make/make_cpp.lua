@@ -166,12 +166,14 @@
 		if fileconfig.hasCustomBuildRule(filecfg) then
 			local env = table.shallowcopy(filecfg.environ)
 			env.PathVars = {
-				["file.basename"] = { absolute = false, token = node.basename },
-				["file.abspath"]  = { absolute = true,  token = node.abspath },
-				["file.relpath"]  = { absolute = false, token = node.relpath },
-				["file.name"]     = { absolute = false, token = node.name },
-				["file.objname"]  = { absolute = false, token = node.objname },
-				["file.path"]     = { absolute = true,  token = node.path },
+				["file.basename"]     = { absolute = false, token = node.basename },
+				["file.abspath"]      = { absolute = true,  token = node.abspath },
+				["file.relpath"]      = { absolute = false, token = node.relpath },
+				["file.name"]         = { absolute = false, token = node.name },
+				["file.objname"]      = { absolute = false, token = node.objname },
+				["file.path"]         = { absolute = true,  token = node.path },
+				["file.directory"]    = { absolute = true,  token = os.dirname(node.abspath) },
+				["file.reldirectory"] = { absolute = false, token = os.dirname(node.relpath) },
 			}
 
 			local shadowContext = p.context.extent(filecfg, env)
