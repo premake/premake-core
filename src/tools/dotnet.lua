@@ -50,7 +50,11 @@
 			info.action = "Resource"
 		elseif ext == ".xaml" then
 			if fcfg.buildaction == "Application" or path.getbasename(fname) == "App" then
-				info.action = "ApplicationDefinition"
+				if fcfg.project.kind == premake.SHAREDLIB then
+					info.action = "None"
+				else
+					info.action = "ApplicationDefinition"
+				end
 			else
 				info.action = "Page"
 			end
@@ -281,6 +285,8 @@
 			return "WinExe"
 		elseif (cfg.kind == "SharedLib") then
 			return "Library"
+		else
+			error("invalid dotnet kind " .. cfg.kind .. ". Valid kinds are ConsoleApp, WindowsApp, SharedLib")
 		end
 	end
 
