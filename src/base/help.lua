@@ -31,22 +31,30 @@
 		end
 
 		-- display all options
-		for k, options in pairs(categories) do
+		for k, options in spairs(categories) do
 			printf(k)
 			printf("")
+
+			local length = 0
+			for _, option in ipairs(options) do
+				local trigger = option.trigger
+				if (option.value) then trigger = trigger .. "=" .. option.value end
+				if (#trigger > length) then length = #trigger end
+			end
+
 			for _, option in ipairs(options) do
 				local trigger = option.trigger
 				local description = option.description
 				if (option.value) then trigger = trigger .. "=" .. option.value end
 				if (option.allowed) then description = description .. "; one of:" end
 
-				printf(" --%-15s %s", trigger, description)
+				printf(" --%-" .. length .. "s %s", trigger, description)
 				if (option.allowed) then
 					for _, value in ipairs(option.allowed) do
-						printf("     %-14s %s", value[1], value[2])
+						printf("     %-" .. length-1 .. "s %s", value[1], value[2])
 					end
+					printf("")
 				end
-				printf("")
 			end
 			printf("")
 		end
