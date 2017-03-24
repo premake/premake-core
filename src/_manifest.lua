@@ -19,7 +19,9 @@
 		"base/tools.lua",
 		"base/tree.lua",
 		"base/globals.lua",
+		"base/moduledownloader.lua",
 		"base/semver.lua",
+		"base/http.lua",
 
 		-- configuration data
 		"base/field.lua",
