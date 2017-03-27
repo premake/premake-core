@@ -532,3 +532,25 @@
 		end
 		return true
 	end
+
+
+--
+-- Enumerate a table sorted by its keys.
+--
+	function spairs(t)
+		-- collect the keys
+		local keys = {}
+		for k in pairs(t) do
+			table.insert(keys, k)
+		end
+		table.sort(keys)
+
+		-- return the iterator function
+		local i = 0
+		return function()
+			i = i + 1
+			if keys[i] then
+				return keys[i], t[keys[i]]
+			end
+		end
+	end
