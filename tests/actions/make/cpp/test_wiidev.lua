@@ -28,16 +28,16 @@
 --
 
 	function suite.writesCorrectCppFlags()
-		make.cppFlags(cfg, premake.tools.gcc)
+		make.cpp.cppFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
-  		]]
+ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
+		]]
 	end
 
 	function suite.writesCorrectLinkerFlags()
-		make.ldFlags(cfg, premake.tools.gcc)
+		make.cpp.ldFlags(cfg, premake.tools.gcc)
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -L$(LIBOGC_LIB) $(MACHDEP)
+ALL_LDFLAGS += $(LDFLAGS) -L$(LIBOGC_LIB) $(MACHDEP)
 		]]
 	end
 

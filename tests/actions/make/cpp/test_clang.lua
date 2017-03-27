@@ -28,18 +28,20 @@
 --
 
 	function suite.usesCorrectCompilers()
-		make.cppConfigs(prj)
+		make.cpp.outputConfigurationSection(prj)
 		test.capture [[
-ifeq ($(config),debug)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
-  		]]
+# Configurations
+# #############################################
+
+ifeq ($(origin CC), default)
+  CC = clang
+endif
+ifeq ($(origin CXX), default)
+  CXX = clang++
+endif
+ifeq ($(origin AR), default)
+  AR = ar
+endif
+]]
 	end
 
