@@ -343,7 +343,12 @@
 
 			if decorated:find("/", nil, true) then
 				_x(2,'<Reference Include="%s">', name)
-				_x(3,'<HintPath>%s</HintPath>', path.appendextension(path.translate(decorated), ".dll"))
+				local decPath, decVars = decorated:match("(.-),")
+				if not decPath then
+					decPath = decorated
+				end
+
+				_x(3,'<HintPath>%s</HintPath>', path.appendextension(path.translate(decPath), ".dll"))
 
 				if not config.isCopyLocal(prj, original, true) then
 					_p(3,"<Private>False</Private>")

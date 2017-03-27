@@ -659,7 +659,10 @@
 						m.enableEnhancedInstructionSet,
 						m.additionalCompileOptions,
 						m.disableSpecificWarnings,
-						m.treatSpecificWarningsAsErrors
+						m.treatSpecificWarningsAsErrors,
+						m.basicRuntimeChecks,
+						m.exceptionHandling,
+						m.compileAsManaged,
 					}
 				else
 					return {
@@ -961,13 +964,34 @@
 	end
 
 
+	function m.isClrMixed(prj)
+		-- check to see if any files are marked with clr
+		local isMixed = false
+		if not prj.clr or prj.clr == p.OFF then
+			if prj._isClrMixed ~= nil then
+				isMixed = prj._isClrMixed
+			else
+				table.foreachi(prj._.files, function(file)
+					for cfg in p.project.eachconfig(prj) do
+						local fcfg = p.fileconfig.getconfig(file, cfg)
+						if fcfg and fcfg.clr and fcfg.clr ~= p.OFF then
+							isMixed = true
+						end
+					end
+				end)
+				prj._isClrMixed = isMixed -- cache the results
+			end
+		end
+		return isMixed
+	end
+
 
 --
 -- Generate the list of project dependencies.
 --
 
 	m.elements.projectReferences = function(prj, ref)
-		if prj.clr ~= p.OFF then
+		if prj.clr ~= p.OFF or (m.isClrMixed(prj) and ref and ref.kind ~=p.STATICLIB) then
 			return {
 				m.referenceProject,
 				m.referencePrivate,
@@ -1075,10 +1099,24 @@
 	end
 
 
-	function m.basicRuntimeChecks(cfg)
-		local runtime = config.getruntime(cfg)
-		if cfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(cfg) and runtime:endswith("Debug")) then
-			m.element("BasicRuntimeChecks", nil, "Default")
+	function m.compileAsManaged(fcfg, condition)
+		if fcfg.clr and fcfg ~= p.OFF then
+			m.element("CompileAsManaged", condition, "true")
+		end
+	end
+
+
+	function m.basicRuntimeChecks(cfg, condition)
+		local prjcfg, filecfg = p.config.normalize(cfg)
+		local runtime = config.getruntime(prjcfg)
+		if filecfg then
+			if filecfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(filecfg) and runtime:endswith("Debug")) then
+				m.element("BasicRuntimeChecks", condition, "Default")
+			end
+		else
+			if prjcfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(prjcfg) and runtime:endswith("Debug")) then
+				m.element("BasicRuntimeChecks", nil, "Default")
+			end
 		end
 	end
 
@@ -1277,12 +1315,11 @@
 	end
 
 
-	function m.exceptionHandling(cfg)
-		local value
+	function m.exceptionHandling(cfg, condition)
 		if cfg.exceptionhandling == p.OFF then
-			m.element("ExceptionHandling", nil, "false")
+			m.element("ExceptionHandling", condition, "false")
 		elseif cfg.exceptionhandling == "SEH" then
-			m.element("ExceptionHandling", nil, "Async")
+			m.element("ExceptionHandling", condition, "Async")
 		end
 	end
 
@@ -1648,8 +1685,10 @@
 			if isMakefile then
 				m.element("Keyword", nil, "MakeFileProj")
 			else
-				if isManaged then
+				if isManaged or m.isClrMixed(prj) then
 					m.targetFramework(prj)
+				end
+				if isManaged then
 					m.element("Keyword", nil, "ManagedCProj")
 				else
 					m.element("Keyword", nil, "Win32Proj")
