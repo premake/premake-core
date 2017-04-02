@@ -903,8 +903,8 @@
 -- contain any other kind of data.
 ---
 
-	local function storeListItem(current, item)
-		if current[item] then
+	local function storeListItem(current, item, allowDuplicates)
+		if not allowDuplicates and current[item] then
 			table.remove(current, table.indexof(current, item))
 		end
 		table.insert(current, item)
@@ -937,13 +937,13 @@
 		if type(value) == "table" then
 			if #value > 0 then
 				for i = 1, #value do
-					storeListItem(current, value[i])
+					storeListItem(current, value[i], field.allowDuplicates)
 				end
 			elseif not table.isempty(value) then
-				storeListItem(current, value)
+				storeListItem(current, value, field.allowDuplicates)
 			end
 		elseif value then
-			storeListItem(current, value)
+			storeListItem(current, value, field.allowDuplicates)
 		end
 
 		return current
@@ -953,7 +953,7 @@
 	local function mergeList(field, current, value, processor)
 		value = value or {}
 		for i = 1, #value do
-			storeListItem(current, value[i])
+			storeListItem(current, value[i], field.allowDuplicates)
 		end
 		return current
 	end

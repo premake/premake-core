@@ -85,6 +85,17 @@
 	end
 
 
+--
+-- Multiple of the same command should be emit.
+--
+
+	function suite.onCommandTwice()
+		postbuildcommands { "command", "command" }
+		prepare()
+		test.capture ("<PostBuildEvent>\n\t<Command>command\r\ncommand</Command>\n</PostBuildEvent>\n")
+	end
+
+
 
 --
 -- Quotes should not be escaped, other special characters should.

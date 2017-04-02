@@ -105,8 +105,8 @@
 	end
 
 	function suite.matchfiles_OnDottedFile()
-		local result = os.matchfiles("../.*")
-		test.istrue(table.contains(result, "../.gitignore"))
+		local result = os.matchfiles("base/.*")
+		test.istrue(table.contains(result, "base/.testDotFile"))
 	end
 
 	function suite.matchfiles_onComboSearch()
