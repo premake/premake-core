@@ -28,7 +28,7 @@ int do_getcwd(char* buffer, size_t size)
 	assert(size == 0x4000);
 	wchar_t wbuffer[0x4000];
 	
-	result = (GetCurrentDirectoryW(size, wbuffer) != 0);
+	result = (GetCurrentDirectoryW((DWORD)size, wbuffer) != 0);
 	if (result) {
 		WideCharToMultiByte(CP_UTF8, 0, wbuffer, -1, buffer, size, NULL, NULL);
 

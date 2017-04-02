@@ -32,7 +32,7 @@
 	function suite.defaultRules()
 		prepare()
 		test.capture [[
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
+all: prebuild prelink $(TARGET)
 	@:
   		]]
 	end
@@ -47,7 +47,7 @@ all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
 		kind "WindowedApp"
 		prepare()
 		test.capture [[
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
+all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
 	@:
 
 $(dir $(TARGETDIR))PkgInfo:

@@ -26,7 +26,7 @@ int do_mkdir(const char* path)
 		return 1;
 
 	// find the parent folder name.
-	length = strlen(path);
+	length = (int)strlen(path);
 	for (i = length - 1; i >= 0; --i)
 	{
 		if (path[i] == '/' || path[i] == '\\')

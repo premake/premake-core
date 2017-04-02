@@ -30,6 +30,9 @@
 
 	function dotnet.fileinfo(fcfg)
 		local info = {}
+		if (fcfg == nil) then
+			return info
+		end
 
 		local fname = fcfg.abspath
 		local ext = path.getextension(fname):lower()
@@ -41,13 +44,17 @@
 			info.action = "Compile"
 		elseif fcfg.buildaction == "Embed" or ext == ".resx" then
 			info.action = "EmbeddedResource"
-		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" then
+		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" or ext == ".dll" then
 			info.action = "Content"
 		elseif fcfg.buildaction == "Resource" then
 			info.action = "Resource"
 		elseif ext == ".xaml" then
 			if fcfg.buildaction == "Application" or path.getbasename(fname) == "App" then
-				info.action = "ApplicationDefinition"
+				if fcfg.project.kind == premake.SHAREDLIB then
+					info.action = "None"
+				else
+					info.action = "ApplicationDefinition"
+				end
 			else
 				info.action = "Page"
 			end
@@ -278,6 +285,8 @@
 			return "WinExe"
 		elseif (cfg.kind == "SharedLib") then
 			return "Library"
+		else
+			error("invalid dotnet kind " .. cfg.kind .. ". Valid kinds are ConsoleApp, WindowsApp, SharedLib")
 		end
 	end
 

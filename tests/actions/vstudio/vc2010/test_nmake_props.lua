@@ -136,3 +136,21 @@ command 2</NMakeBuildCommandLine>
 </PropertyGroup>
 		]]
 	end
+
+
+--
+-- Should not emit include dirs or preprocessor definitions if the project
+-- kind is "None", since that project is by definition not buildable.
+---
+
+	function suite.noIncludeDirsOrPreprocessorDefs_onKindNone()
+		kind "None"
+		defines { "DEBUG", "_DEBUG" }
+		includedirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+</PropertyGroup>
+		]]
+	end

@@ -57,7 +57,6 @@
 	end
 
 
-
 ---
 -- Extend require() with a second argument to specify the expected
 -- version of the loaded module. Raises an error if the version criteria
@@ -76,7 +75,12 @@
 	premake.override(_G, "require", function(base, modname, versions)
 		local result, mod = pcall(base,modname)
 		if not result then
-			error( mod, 3 )
+			if (premake.downloadModule(modname, versions)) then
+				result, mod = pcall(base, modname);
+			end
+			if not result then
+				error(mod, 3)
+			end
 		end
 		if mod and versions and not premake.checkVersion(mod._VERSION, versions) then
 			error(string.format("module %s %s does not meet version criteria %s",
