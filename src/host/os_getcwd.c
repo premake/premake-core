@@ -5,6 +5,7 @@
  */
 
 #include "premake.h"
+#include "assert.h"
 
 int os_getcwd(lua_State* L)
 {
@@ -24,8 +25,13 @@ int do_getcwd(char* buffer, size_t size)
 	int result;
 
 #if PLATFORM_WINDOWS
-	result = (GetCurrentDirectoryA(size, buffer) != 0);
+	assert(size == 0x4000);
+	wchar_t wbuffer[0x4000];
+	
+	result = (GetCurrentDirectoryW(size, wbuffer) != 0);
 	if (result) {
+		WideCharToMultiByte(CP_UTF8, 0, wbuffer, -1, buffer, size, NULL, NULL);
+
 		do_translate(buffer, '/');
 	}
 #else

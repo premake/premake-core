@@ -229,9 +229,13 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	const char* path = NULL;
 
 #if PLATFORM_WINDOWS
-	DWORD len = GetModuleFileNameA(NULL, buffer, PATH_MAX);
+	wchar_t widebuffer[PATH_MAX];
+
+	DWORD len = GetModuleFileNameW(NULL, widebuffer, PATH_MAX);
 	if (len > 0)
 	{
+		WideCharToMultiByte(CP_UTF8, 0, widebuffer, len, buffer, PATH_MAX, NULL, NULL);
+
 		buffer[len] = 0;
 		path = buffer;
 	}
@@ -320,7 +324,7 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 int premake_test_file(lua_State* L, const char* filename, int searchMask)
 {
 	if (searchMask & TEST_LOCAL) {
-		if (do_isfile(filename)) {
+		if (do_isfile(L, filename)) {
 			lua_pushcfunction(L, path_getabsolute);
 			lua_pushstring(L, filename);
 			lua_call(L, 1, 1);

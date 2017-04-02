@@ -14,7 +14,8 @@ int do_chdir(lua_State* L, const char* path)
 	(void)(L);  /* warning: unused parameter */
 
 #if PLATFORM_WINDOWS
-	z = SetCurrentDirectoryA(path);
+	z = SetCurrentDirectoryW(utf8_towide(L, path));
+	lua_pop(L, 1);
 #else
 	z = !chdir(path);
 #endif

@@ -18,6 +18,8 @@ int os_isdir(lua_State* L)
 	const char* path = luaL_checkstring(L, 1);
 #ifdef _WIN32
 	int attr;
+	
+	const wchar_t* wide_path = utf8_towide(L, path);
 #endif
 
 	/* empty path is equivalent to ".", must be true */
@@ -27,7 +29,7 @@ int os_isdir(lua_State* L)
 	}
 #ifdef _WIN32
 	// Use Windows-specific GetFileAttributes since it deals with symbolic links.
-	else if ((attr = GetFileAttributesA(path)) != INVALID_FILE_ATTRIBUTES)
+	else if ((attr = GetFileAttributesW(wide_path)) != INVALID_FILE_ATTRIBUTES)
 	{
 		int isdir = (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 		lua_pushboolean(L, isdir);
@@ -42,6 +44,10 @@ int os_isdir(lua_State* L)
 	{
 		lua_pushboolean(L, 0);
 	}
+	
+#ifdef _WIN32
+	lua_pop(L, -2); /* pop wide string */
+#endif
 
 	return 1;
 }

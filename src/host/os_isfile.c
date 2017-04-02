@@ -11,15 +11,19 @@
 int os_isfile(lua_State* L)
 {
 	const char* filename = luaL_checkstring(L, 1);
-	lua_pushboolean(L, do_isfile(filename));
+	lua_pushboolean(L, do_isfile(L, filename));
 	return 1;
 }
 
 
-int do_isfile(const char* filename)
+int do_isfile(lua_State* L, const char* filename)
 {
+	(void)(L);  /* warning: unused parameter */
+
 #if PLATFORM_WINDOWS
-	DWORD attrib = GetFileAttributesA(filename);
+	DWORD attrib = GetFileAttributesW(utf8_towide(L, filename));
+	lua_pop(L, 1);
+
 	if (attrib != INVALID_FILE_ATTRIBUTES)
 	{
 		return (attrib & FILE_ATTRIBUTE_DIRECTORY) == 0;

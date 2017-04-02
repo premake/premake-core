@@ -14,7 +14,8 @@ int os_copyfile(lua_State* L)
 	const char* dst = luaL_checkstring(L, 2);
 
 #if PLATFORM_WINDOWS
-	z = CopyFileA(src, dst, FALSE);
+	z = CopyFileW(utf8_towide(L, src), utf8_towide(L, dst), FALSE);
+	lua_pop(L, 2);
 #else
 	lua_pushfstring(L, "cp \"%s\" \"%s\"", src, dst);
 	z = (system(lua_tostring(L, -1)) == 0);

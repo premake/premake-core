@@ -80,12 +80,17 @@ unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
-int do_isfile(const char* filename);
+int do_isfile(lua_State* L, const char* filename);
 int do_locate(lua_State* L, const char* filename, const char* path);
 void do_normalize(lua_State* L, char* buffer, const char* path);
 int do_pathsearch(lua_State* L, const char* filename, const char* path);
 void do_translate(char* value, const char sep);
 
+/* Unicode conversion helper functions (required for Windows systems) */
+#ifdef PLATFORM_WINDOWS
+const char* utf8_fromwide(lua_State* L, const wchar_t* wstr);
+const wchar_t* utf8_towide(lua_State* L, const char* str);
+#endif
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);

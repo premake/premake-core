@@ -37,7 +37,7 @@ int os_locate(lua_State* L)
 		const char* name = lua_tostring(L, i);
 
 		/* Direct path to file? Return as absolute path */
-		if (do_isfile(name)) {
+		if (do_isfile(L, name)) {
 			lua_pushcfunction(L, path_getabsolute);
 			lua_pushvalue(L, i);
 			lua_call(L, 1, 1);
