@@ -46,7 +46,7 @@ int os_isdir(lua_State* L)
 	}
 	
 #ifdef _WIN32
-	lua_pop(L, -2); /* pop wide string */
+	lua_remove(L, -2); /* pop wide string */
 #endif
 
 	return 1;
