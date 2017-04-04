@@ -26,6 +26,8 @@ Makefile
 *.ncb
 *.vcproj*
 *.vcxproj*
+*.VC.opendb
+*.VC.db
 *.opensdf
 *.workspace
 *.project
