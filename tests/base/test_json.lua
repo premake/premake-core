@@ -19,6 +19,12 @@
 		test.isequal(result, { foo = "bar" })
 	end
 
+	function suite.json_encode_error()
+		local result, err = json.encode({ fubar = function() end })
+		test.isnil(result)
+		test.isequal(type(err), "string")
+	end
+
 	function suite.json_decode_error()
 		local result, err = json.decode("fubar string")
 		test.isnil(result)

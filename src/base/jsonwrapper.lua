@@ -7,27 +7,38 @@
 	json = {}
 
 	local implementation = dofile('json.lua')
-	local encode_implementation = implementation
-	local decode_implementation = implementation:new()
-
 	local err
 
-	function decode_implementation.assert(condition, message)
+	function implementation.assert(condition, message)
 		if not condition then
 			err = message
 		end
+
+		-- The JSON library we're using assumes that encode error handlers will
+		-- abort on error. It doesn't have the same assumption for decode error
+		-- handlers, but we're using this same function for both.
+
+		assert(condition, message)
 	end
 
 	function json.encode(value)
-		return encode_implementation:encode(value)
+		err = nil
+
+		local success, result = pcall(implementation.encode, implementation, value)
+
+		if not success then
+			return nil, err
+		end
+
+		return result
 	end
 
 	function json.decode(value)
 		err = nil
 
-		local result = decode_implementation:decode(value)
+		local success, result = pcall(implementation.decode, implementation, value)
 
-		if err then
+		if not success then
 			return nil, err
 		end
 
