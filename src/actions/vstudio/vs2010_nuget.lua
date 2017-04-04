@@ -29,21 +29,7 @@
 		return package:sub(package:find(":") + 1, -1)
 	end
 
-	local function packageProject(wks, package)
-		for prj in p.workspace.eachproject(wks) do
-			for i = 1, #prj.nuget do
-				local projectPackage = prj.nuget[i]
-
-				if projectPackage == package then
-					return prj
-				end
-			end
-		end
-	end
-
-	function nuget2010.packageFramework(wks, package)
-		local prj = packageProject(wks, package)
-
+	function nuget2010.packageFramework(prj)
 		if p.project.isdotnet(prj) then
 			local cfg = p.project.getfirstconfig(prj)
 			local action = premake.action.current()
@@ -59,28 +45,15 @@
 -- Generates the packages.config file.
 --
 
-	function nuget2010.generatePackagesConfig(obj)
-		local wks = obj.workspace
-
-		local done = {}
-		local packages = {}
-		for prj in p.workspace.eachproject(wks) do
-			for i = 1, #prj.nuget do
-				local package = prj.nuget[i]
-
-				if not done[package] then
-					done[package] = true
-					table.insert(packages, package)
-				end
-			end
-		end
-
+	function nuget2010.generatePackagesConfig(prj)
+		if #prj.nuget > 0 then
 		p.w('<?xml version="1.0" encoding="utf-8"?>')
 		p.push('<packages>')
 
-		for _, package in ipairs(packages) do
-			p.x('<package id="%s" version="%s" targetFramework="%s" />', nuget2010.packageId(package), nuget2010.packageVersion(package), nuget2010.packageFramework(wks, package))
+			for _, package in ipairs(prj.nuget) do
+				p.x('<package id="%s" version="%s" targetFramework="%s" />', nuget2010.packageId(package), nuget2010.packageVersion(package), nuget2010.packageFramework(prj))
 		end
 
 		p.pop('</packages>')
+	end
 	end

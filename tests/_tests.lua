@@ -70,6 +70,7 @@ return {
 	"actions/vstudio/cs2005/test_debug_props.lua",
 	"actions/vstudio/cs2005/test_files.lua",
 	"actions/vstudio/cs2005/test_icon.lua",
+	"actions/vstudio/cs2005/test_nuget_packages_config.lua",
 	"actions/vstudio/cs2005/test_output_props.lua",
 	"actions/vstudio/cs2005/projectelement.lua",
 	"actions/vstudio/cs2005/test_platform_groups.lua",
@@ -85,7 +86,6 @@ return {
 	"actions/vstudio/sln2005/test_projects.lua",
 	"actions/vstudio/sln2005/test_platforms.lua",
 	"actions/vstudio/sln2005/test_sections.lua",
-	"actions/vstudio/sln2005/test_nuget_packages_config.lua",
 
 	-- Visual Studio 2002-2008 C/C++ projects
 	"actions/vstudio/vc200x/test_assembly_refs.lua",
@@ -128,6 +128,7 @@ return {
 	"actions/vstudio/vc2010/test_link.lua",
 	"actions/vstudio/vc2010/test_manifest.lua",
 	"actions/vstudio/vc2010/test_nmake_props.lua",
+	"actions/vstudio/vc2010/test_nuget_packages_config.lua",
 	"actions/vstudio/vc2010/test_output_props.lua",
 	"actions/vstudio/vc2010/test_platform_toolset.lua",
 	"actions/vstudio/vc2010/test_project_configs.lua",

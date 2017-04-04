@@ -72,6 +72,12 @@
 				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
 		end
+
+		-- Skip generation of empty packages.config files
+		local packages = p.capture(function() vstudio.nuget2010.generatePackagesConfig(prj) end)
+		if #packages > 0 then
+			p.generate(prj, "packages.config", function() p.outln(packages) end)
+		end
 	end
 
 
