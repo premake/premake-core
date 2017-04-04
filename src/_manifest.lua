@@ -22,6 +22,8 @@
 		"base/moduledownloader.lua",
 		"base/semver.lua",
 		"base/http.lua",
+		"base/json.lua",
+		"base/jsonwrapper.lua",
 
 		-- configuration data
 		"base/field.lua",
