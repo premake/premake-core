@@ -87,12 +87,6 @@ void do_normalize(lua_State* L, char* buffer, const char* path);
 int do_pathsearch(lua_State* L, const char* filename, const char* path);
 void do_translate(char* value, const char sep);
 
-/* Unicode conversion helper functions (required for Windows systems) */
-#ifdef PLATFORM_WINDOWS
-const char* utf8_fromwide(lua_State* L, const wchar_t* wstr);
-const wchar_t* utf8_towide(lua_State* L, const char* str);
-#endif
-
 /* Built-in functions */
 int criteria_compile(lua_State* L);
 int criteria_delete(lua_State* L);

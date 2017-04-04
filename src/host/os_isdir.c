@@ -18,8 +18,13 @@ int os_isdir(lua_State* L)
 	const char* path = luaL_checkstring(L, 1);
 #ifdef _WIN32
 	int attr;
-	
-	const wchar_t* wide_path = utf8_towide(L, path);
+
+	wchar_t wide_path[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wide_path, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode path");
+		return lua_error(L);
+	}
 #endif
 
 	/* empty path is equivalent to ".", must be true */
@@ -44,10 +49,6 @@ int os_isdir(lua_State* L)
 	{
 		lua_pushboolean(L, 0);
 	}
-	
-#ifdef _WIN32
-	lua_remove(L, -2); /* pop wide string */
-#endif
 
 	return 1;
 }

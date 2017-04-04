@@ -14,9 +14,14 @@ int os_islink(lua_State* L)
 
 #if PLATFORM_WINDOWS
 	{
-		DWORD attr = GetFileAttributesW(utf8_towide(L, path));
-		lua_pop(L, 1);
+		wchar_t wide_path[PATH_MAX];
+		if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wide_path, PATH_MAX) == 0)
+		{
+			lua_pushstring(L, "unable to encode path");
+			return lua_error(L);
+		}
 
+		DWORD attr = GetFileAttributesW(wide_path);
 		if (attr != INVALID_FILE_ATTRIBUTES) {
 			lua_pushboolean(L, (attr & FILE_ATTRIBUTE_REPARSE_POINT) != 0);
 			return 1;

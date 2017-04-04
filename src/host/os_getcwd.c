@@ -24,9 +24,9 @@ int do_getcwd(char* buffer, size_t size)
 	int result;
 
 #if PLATFORM_WINDOWS
-	wchar_t wbuffer[MAX_PATH];
-	
-	result = (GetCurrentDirectoryW(MAX_PATH, wbuffer) != 0);
+	wchar_t wbuffer[PATH_MAX];
+
+	result = (GetCurrentDirectoryW(PATH_MAX, wbuffer) != 0);
 	if (result) {
 		WideCharToMultiByte(CP_UTF8, 0, wbuffer, -1, buffer, size, NULL, NULL);
 
