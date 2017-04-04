@@ -11,15 +11,25 @@
 int os_isfile(lua_State* L)
 {
 	const char* filename = luaL_checkstring(L, 1);
-	lua_pushboolean(L, do_isfile(filename));
+	lua_pushboolean(L, do_isfile(L, filename));
 	return 1;
 }
 
 
-int do_isfile(const char* filename)
+int do_isfile(lua_State* L, const char* filename)
 {
+	(void)(L);  /* warning: unused parameter */
+
 #if PLATFORM_WINDOWS
-	DWORD attrib = GetFileAttributesA(filename);
+	wchar_t wide_path[PATH_MAX];
+
+	if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_path, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode filepath");
+		return lua_error(L);
+	}
+
+	DWORD attrib = GetFileAttributesW(wide_path);
 	if (attrib != INVALID_FILE_ATTRIBUTES)
 	{
 		return (attrib & FILE_ATTRIBUTE_DIRECTORY) == 0;
