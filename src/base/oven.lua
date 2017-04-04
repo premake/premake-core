@@ -634,7 +634,7 @@
 		-- I need to look at them all.
 
 		for cfg in p.project.eachconfig(prj) do
-			table.foreachi(cfg.files, function(fname)
+			local function addFile(fname)
 
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
@@ -648,7 +648,17 @@
 
 				p.fileconfig.addconfig(files[fname], cfg)
 
-			end)
+			end
+
+			table.foreachi(cfg.files, addFile)
+
+			-- If this project uses NuGet, we need to add the generated
+			-- packages.config file to the project. Is there a better place to
+			-- do this?
+
+			if #prj.nuget > 0 then
+				addFile("packages.config")
+			end
 		end
 
 		-- Alpha sort the indices, so I will get consistent results in
