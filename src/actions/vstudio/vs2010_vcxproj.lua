@@ -1262,7 +1262,14 @@
 
 			m.element("DebugInformationFormat", nil, value)
 		elseif cfg.symbols == p.OFF then
-			m.element("DebugInformationFormat", nil, "None")
+			-- leave field blank for vs2013 and older to workaround bug
+			if _ACTION < "vs2015" then
+				value = ""
+			else
+				value = "None"
+			end
+
+			m.element("DebugInformationFormat", nil, value)
 		end
 	end
 
