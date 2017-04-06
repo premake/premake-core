@@ -39,6 +39,7 @@
 		return {
 			m.workspaceHasConfigs,
 			m.uniqueProjectIds,
+			m.uniqueProjectLocationsWithNuGet,
 		}
 	end
 
@@ -229,6 +230,29 @@
 				p.error("projects '%s' and '%s' have the same UUID", uuids[prj.uuid], prj.name)
 			end
 			uuids[prj.uuid] = prj.name
+		end
+	end
+
+
+	function m.uniqueProjectLocationsWithNuGet(wks)
+		local locations = {}
+		for prj in p.workspace.eachproject(wks) do
+			local function fail()
+				p.error("projects '%s' and '%s' cannot have the same location when using NuGet with different packages (packages.config conflict)", locations[prj.location].name, prj.name)
+			end
+
+			if locations[prj.location] and #locations[prj.location].nuget > 0 and #prj.nuget > 0 then
+				if #locations[prj.location].nuget ~= #prj.nuget then
+					fail()
+				end
+
+				for i, package in ipairs(locations[prj.location].nuget) do
+					if prj.nuget[i] ~= package then
+						fail()
+					end
+				end
+			end
+			locations[prj.location] = prj
 		end
 	end
 
