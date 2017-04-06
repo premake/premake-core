@@ -235,7 +235,7 @@
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated project.
 
-		self.location = self.location or wks.location or self.basedir
+		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 
 		-- This bit could use some work: create a canonical set of configurations
