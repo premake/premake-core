@@ -377,13 +377,15 @@
 				-- HintPaths (if the condition is met that is).
 
 				for _, frameworkVersion in ipairs(cs2005.identifyFrameworkVersions(prj)) do
+					local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(package)
 					local assembly = vstudio.path(
 						prj,
 						p.filename(
 							prj.solution,
 							string.format(
-								"packages\\%s\\lib\\%s\\%s.dll",
-								vstudio.nuget2010.packageName(package),
+								"packages\\%s.%s\\lib\\%s\\%s.dll",
+								vstudio.nuget2010.packageId(package),
+								packageAPIInfo.verbatimVersion or packageAPIInfo.version,
 								cs2005.formatNuGetFrameworkVersion(frameworkVersion),
 								vstudio.nuget2010.packageId(package)
 							)

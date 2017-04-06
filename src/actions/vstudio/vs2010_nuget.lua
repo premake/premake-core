@@ -11,15 +11,12 @@
 	local nuget2010 = p.vstudio.nuget2010
 	local cs2005 = p.vstudio.cs2005
 
+	local packageAPIInfos = {}
 
 --
 -- These functions take the package string as an argument and give you
 -- information about it.
 --
-
-	function nuget2010.packageName(package)
-		return package:gsub(":", ".")
-	end
 
 	function nuget2010.packageId(package)
 		return package:sub(0, package:find(":") - 1)
@@ -40,8 +37,10 @@
 		end
 	end
 
+	function nuget2010.packageAPIInfo(package)
+		return packageAPIInfos[package]
+	end
 
-	local validatedPackages = {}
 
 	function nuget2010.validatePackages(prj)
 		if #prj.nuget == 0 then
@@ -52,7 +51,9 @@
 			local id = nuget2010.packageId(package)
 			local version = nuget2010.packageVersion(package)
 
-			if not validatedPackages[id] then
+			if not packageAPIInfos[package] then
+				local packageAPIInfo = {}
+
 				printf("Examining NuGet package '%s'...", id)
 				io.flush()
 
@@ -65,8 +66,86 @@
 						p.error("NuGet API error (%d)\n%s", code, err)
 					end
 				end
+
+				response, err = json.decode(response)
+
+				if not response then
+					p.error("Failed to decode NuGet API response (%s)", err)
+				end
+
+				if not response.items or #response.items == 0 then
+					p.error("Failed to understand NuGet API response (package '%s' contains no root-level items)", id)
+				end
+
+				if not response.items[1].items or #response.items[1].items == 0 then
+					p.error("Failed to understand NuGet API response (root-level item for package '%s' contains no subitems)", id)
+				end
+
+				local subitems = response.items[1].items
+
+				local versions = {}
+
+				for _, item in ipairs(subitems) do
+					if not item.catalogEntry then
+						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry)", id)
+					end
+
+					if not item.catalogEntry.version then
+						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry.version)", id)
+					end
+
+					if not item.catalogEntry["@id"] then
+						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry['@id'])", id)
+					end
+
+					-- Check this URL just in case. We don't want to be making
+					-- requests to anywhere else.
+
+					if item.catalogEntry["@id"]:find("https://api.nuget.org/") ~= 1 then
+						p.error("Failed to understand NuGet API response (catalogEntry['@id'] was not a NuGet API URL)", id)
+					end
+
+					table.insert(versions, item.catalogEntry.version)
+				end
+
+				if not table.contains(versions, version) then
+					local options = table.translate(versions, function(value) return "'" .. value .. "'" end)
+					options = table.concat(options, ", ")
+
+					p.error("'%s' is not a valid version for NuGet package '%s' (options are: %s)", version, id, options)
+				end
+
+				for _, item in ipairs(subitems) do
+					if item.catalogEntry.version == version then
+						local response, err, code = http.get(item.catalogEntry["@id"])
+
+						if err ~= "OK" then
+							if code == 404 then
+								p.error("NuGet package '%s' version '%s' couldn't be found in the repository even though the API reported that it exists", id, prj.name)
+							else
+								p.error("NuGet API error (%d)\n%s", code, err)
+							end
+						end
+
+						response, err = json.decode(response)
+
+						if not response then
+							p.error("Failed to decode NuGet API response (%s)", err)
+						end
+
+						if not response.verbatimVersion and not response.version then
+							p.error("Failed to understand NuGet API response (package '%s' version '%s' has no verbatimVersion or version)", id, version)
+						end
+
+						packageAPIInfo.verbatimVersion = response.verbatimVersion
+						packageAPIInfo.version = response.version
+
+						break
+					end
+				end
+
+				packageAPIInfos[package] = packageAPIInfo
 			end
-			validatedPackages[id] = package
 		end
 	end
 
