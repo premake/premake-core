@@ -790,9 +790,29 @@
 
 --
 -- Check handling of the explicitly disabling symbols.
+-- Note: VS2013 and older have a bug with setting
+-- DebugInformationFormat to None. The workaround
+-- is to leave the field blank.
 --
 	function suite.onNoSymbols()
 		symbols 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat></DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+--
+-- VS2015 and newer can use DebugInformationFormat None.
+--
+	function suite.onNoSymbolsVS2015()
+		symbols 'Off'
+		premake.action.set("vs2015")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -802,7 +822,6 @@
 	<Optimization>Disabled</Optimization>
 		]]
 	end
-
 
 
 --
