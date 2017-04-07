@@ -137,6 +137,7 @@
 
 
 --
+-- Returns a boolean if the file was modified
 -- Open a file for output, and call a function to actually do the writing.
 -- Used by the actions to generate workspace and project files.
 --
@@ -160,20 +161,54 @@
 
 		-- make sure output folder exists.
 		local dir = path.getdirectory(fn)
-		ok, err = os.mkdir(dir)
+		local ok, err = os.mkdir(dir)
 		if not ok then
 			error(err, 0)
 		end
 
 		local f, err = os.writefile_ifnotequal(output, fn);
 
-		if (f < 0) then
+		if (f == 0) then
+			return false -- file not modified
+		elseif (f < 0) then
 			error(err, 0)
 		elseif (f > 0) then
 			printf("Generated %s...", path.getrelative(os.getcwd(), fn))
+			return true -- file modified
 		end
 	end
 
+
+
+--
+-- Marks a file as modified without changing its contents
+--
+-- @param obj
+--    A workspace or project object; will be passed to the callback function.
+-- @param ext
+--    An optional extension for the generated file, with the leading dot.
+--
+
+	function premake.touch(obj, ext)
+		local fn = premake.filename(obj, ext)
+
+		-- make sure output folder exists.
+		local dir = path.getdirectory(fn)
+		local ok, err = os.mkdir(dir)
+		if not ok then
+			error(err, 0)
+		end
+
+		local f, err = os.touchfile(fn);
+
+		if (f == 0) then
+			return false -- file marked as modified
+		elseif (f < 0) then
+			error(err, 0)
+		elseif (f > 0) then
+			return true -- file created
+		end
+	end
 
 
 ---

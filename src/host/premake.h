@@ -140,6 +140,7 @@ int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int os_writefile_ifnotequal(lua_State* L);
+int os_touchfile(lua_State* L);
 int os_compile(lua_State* L);
 int string_endswith(lua_State* L);
 int string_hash(lua_State* L);
