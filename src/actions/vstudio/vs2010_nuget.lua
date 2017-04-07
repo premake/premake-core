@@ -111,7 +111,7 @@
 
 						if err ~= "OK" then
 							if code == 404 then
-								p.error("NuGet package '%s' version '%s' couldn't be found in the repository even though the API reported that it exists", id, prj.name)
+							p.error("NuGet package '%s' version '%s' couldn't be found in the repository even though the API reported that it exists", id, version)
 							else
 								p.error("NuGet API error (%d)\n%s", code, err)
 							end
@@ -136,7 +136,7 @@
 						-- DLLs to reference in the project file.
 
 						if prj.language == "C#" and not response.packageEntries then
-						p.error("NuGet package '%s' has no file listing. This package might be too old to be using this API or it's not a .NET Framework package at all.", id)
+						p.error("NuGet package '%s' version '%s' has no file listing. This package might be too old to be using this API or it might be a C++ package instead of a .NET Framework package.", id, response.version)
 						end
 
 						if prj.language == "C#" then
