@@ -140,6 +140,31 @@
 						packageAPIInfo.verbatimVersion = response.verbatimVersion
 						packageAPIInfo.version = response.version
 
+						-- C++ packages don't have this, but C# packages have a
+						-- packageEntries field that lists all the files in the
+						-- package. We need to look at this to figure out what
+						-- DLLs to reference in the project file.
+
+						if prj.language == "C#" and not response.packageEntries then
+							p.error("NuGet package '%s' has no file listing (are you sure referenced a .NET package and not a native package?)", id)
+						end
+
+						if prj.language == "C#" then
+							packageAPIInfo.packageEntries = {}
+
+							for _, item in ipairs(response.packageEntries) do
+								if not item.fullName then
+									p.error("Failed to understand NuGet API response (package '%s' version '%s' packageEntry has no fullName)", id, version)
+								end
+
+								table.insert(packageAPIInfo.packageEntries, path.translate(item.fullName))
+							end
+
+							if #packageAPIInfo.packageEntries == 0 then
+								p.error("NuGet package '%s' file listing is empty", id)
+							end
+						end
+
 						break
 					end
 				end
