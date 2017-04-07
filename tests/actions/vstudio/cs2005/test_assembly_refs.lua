@@ -174,3 +174,26 @@
 	</ItemGroup>
 		]]
 	end
+
+--
+-- If there are multiple assemblies in the NuGet package, they all should be
+-- referenced.
+--
+
+	function suite.nuGetPackages_multipleAssemblies()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
