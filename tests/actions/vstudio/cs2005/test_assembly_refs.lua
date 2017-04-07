@@ -147,43 +147,28 @@
 -- NuGet packages should get references.
 --
 
-	function suite.nuGetPackages()
+	function suite.nuGetPackages_net45()
 		dotnetframework "4.5"
-		nuget { "Newtonsoft.Json:7.0.1" }
+		nuget { "Newtonsoft.Json:10.0.2" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
 		<Reference Include="Newtonsoft.Json">
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net35\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net35\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+			<HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 	</ItemGroup>
 		]]
 	end
 
-
---
--- NuGet packages shouldn't get HintPaths for .NET Framework
--- versions that the project doesn't support.
---
-
-	function suite.nuGetPackages_olderNET()
+	function suite.nuGetPackages_net30()
 		dotnetframework "3.0"
-		nuget { "Newtonsoft.Json:7.0.1" }
+		nuget { "Newtonsoft.Json:10.0.2" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
 		<Reference Include="Newtonsoft.Json">
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll</HintPath>
+			<HintPath>packages\Newtonsoft.Json.10.0.2\lib\net20\Newtonsoft.Json.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 	</ItemGroup>

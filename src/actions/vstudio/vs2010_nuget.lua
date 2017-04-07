@@ -136,7 +136,7 @@
 						-- DLLs to reference in the project file.
 
 						if prj.language == "C#" and not response.packageEntries then
-							p.error("NuGet package '%s' has no file listing (are you sure referenced a .NET package and not a native package?)", id)
+						p.error("NuGet package '%s' has no file listing. This package might be too old to be using this API or it's not a .NET Framework package at all.", id)
 						end
 
 						if prj.language == "C#" then
