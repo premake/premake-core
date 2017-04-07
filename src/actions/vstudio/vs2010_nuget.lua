@@ -37,17 +37,7 @@
 		end
 	end
 
-	function nuget2010.packageAPIInfo(package)
-		return packageAPIInfos[package]
-	end
-
-
-	function nuget2010.validatePackages(prj)
-		if #prj.nuget == 0 then
-			return
-		end
-
-		for _, package in ipairs(prj.nuget) do
+	function nuget2010.packageAPIInfo(prj, package)
 			local id = nuget2010.packageId(package)
 			local version = nuget2010.packageVersion(package)
 
@@ -171,7 +161,8 @@
 
 				packageAPIInfos[package] = packageAPIInfo
 			end
-		end
+
+		return packageAPIInfos[package]
 	end
 
 

@@ -1552,7 +1552,7 @@
 	end
 
 	local function nuGetTargetsFile(prj, package)
-		local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(package)
+		local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 		return p.vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s.%s\\build\\native\\%s.targets", vstudio.nuget2010.packageId(package), packageAPIInfo.verbatimVersion or packageAPIInfo.version, vstudio.nuget2010.packageId(package))))
 	end
 

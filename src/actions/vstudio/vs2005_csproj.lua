@@ -370,7 +370,7 @@
 		if _ACTION >= "vs2010" then
 			for _, package in ipairs(prj.nuget) do
 				local id = vstudio.nuget2010.packageId(package)
-				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(package)
+				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 
 				local cfg = p.project.getfirstconfig(prj)
 				local action = premake.action.current()

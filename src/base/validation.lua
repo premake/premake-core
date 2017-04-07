@@ -61,7 +61,6 @@
 			m.actionSupportsKind,
 			m.projectRulesExist,
 			m.projectValuesInScope,
-			m.projectNuGetPackages,
 		}
 	end
 
@@ -221,11 +220,6 @@
 
 	function m.projectValuesInScope(prj)
 		p.config.validateScopes(prj, prj, "project")
-	end
-
-
-	function m.projectNuGetPackages(prj)
-		p.vstudio.nuget2010.validatePackages(prj)
 	end
 
 
