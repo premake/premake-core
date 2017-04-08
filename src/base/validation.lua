@@ -61,6 +61,7 @@
 			m.actionSupportsKind,
 			m.projectRulesExist,
 			m.projectValuesInScope,
+			m.NuGetHasHTTP,
 		}
 	end
 
@@ -220,6 +221,13 @@
 
 	function m.projectValuesInScope(prj)
 		p.config.validateScopes(prj, prj, "project")
+	end
+
+
+	function m.NuGetHasHTTP(prj)
+		if not http and #prj.nuget > 0 then
+			p.error("Premake was compiled with --no-curl, but Curl is required for NuGet support (project '%s' is referencing NuGet packages)", prj.name)
+		end
 	end
 
 
