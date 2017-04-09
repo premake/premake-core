@@ -30,7 +30,7 @@
 
 
 	function suite.floatingPoint_onFloatFast()
-		flags "FloatFast"
+		floatingpoint "fast"
 		prepare()
 		test.capture [[
 <FloatingPointModel>Fast</FloatingPointModel>
@@ -38,12 +38,15 @@
 	end
 
 	function suite.floatingPoint_onFloatStrict()
-		flags "FloatStrict"
+		floatingpoint "strict"
 		prepare()
 		test.capture [[
 <FloatingPointModel>Strict</FloatingPointModel>
 		]]
 	end
 
-
-
+	function suite.floatingPoint_onDefault()
+		floatingpoint "Default"
+		prepare()
+		test.isemptycapture()
+	end
