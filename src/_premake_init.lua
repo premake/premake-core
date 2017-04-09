@@ -791,6 +791,13 @@
 	}
 
 	api.register {
+		name = "nugetsource",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "objdir",
 		scope = "config",
 		kind = "path",
@@ -1478,6 +1485,7 @@
 	exceptionhandling "Default"
 	rtti "Default"
 	symbols "Default"
+	nugetsource "https://api.nuget.org/v3/index.json"
 
 	-- Setting a default language makes some validation easier later
 

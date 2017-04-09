@@ -70,6 +70,7 @@ return {
 	"actions/vstudio/cs2005/test_debug_props.lua",
 	"actions/vstudio/cs2005/test_files.lua",
 	"actions/vstudio/cs2005/test_icon.lua",
+	"actions/vstudio/cs2005/test_nuget_config.lua",
 	"actions/vstudio/cs2005/test_nuget_packages_config.lua",
 	"actions/vstudio/cs2005/test_output_props.lua",
 	"actions/vstudio/cs2005/projectelement.lua",

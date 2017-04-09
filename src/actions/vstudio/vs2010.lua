@@ -78,6 +78,12 @@
 		if #packages > 0 then
 			p.generate(prj, "packages.config", function() p.outln(packages) end)
 		end
+
+		-- Skip generation of empty NuGet.Config files
+		local config = p.capture(function() vstudio.nuget2010.generateNuGetConfig(prj) end)
+		if #config > 0 then
+			p.generate(prj, "NuGet.Config", function() p.outln(config) end)
+		end
 	end
 
 

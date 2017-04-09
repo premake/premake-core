@@ -12,6 +12,7 @@
 	local cs2005 = p.vstudio.cs2005
 
 	local packageAPIInfos = {}
+	local packageSourceInfos = {}
 
 --
 -- These functions take the package string as an argument and give you
@@ -41,13 +42,73 @@
 			local id = nuget2010.packageId(package)
 			local version = nuget2010.packageVersion(package)
 
+		if not packageSourceInfos[prj.nugetsource] then
+			local packageSourceInfo = {}
+
+			printf("Examining NuGet package source '%s'...", prj.nugetsource)
+			io.flush()
+
+			local response, err, code = http.get(prj.nugetsource)
+
+			if err ~= "OK" then
+				p.error("NuGet API error (%d)\n%s", code, err)
+			end
+
+			response, err = json.decode(response)
+
+			if not response then
+				p.error("Failed to decode NuGet API response (%s)", err)
+			end
+
+			if not response.resources then
+				p.error("Failed to understand NuGet API response (no resources in response)", id)
+			end
+
+			local packageDisplayMetadataUriTemplate, catalog
+
+			for _, resource in ipairs(response.resources) do
+				if not resource["@id"] then
+					p.error("Failed to understand NuGet API response (no resource['@id'])")
+				end
+
+				if not resource["@type"] then
+					p.error("Failed to understand NuGet API response (no resource['@type'])")
+				end
+
+				if resource["@type"]:find("PackageDisplayMetadataUriTemplate") == 1 then
+					packageDisplayMetadataUriTemplate = resource
+				end
+
+				if resource["@type"]:find("Catalog") == 1 then
+					catalog = resource
+				end
+			end
+
+			if not packageDisplayMetadataUriTemplate then
+				p.error("Failed to understand NuGet API response (no PackageDisplayMetadataUriTemplate resource)")
+			end
+
+			if not catalog then
+				if prj.nugetsource == "https://api.nuget.org/v3/index.json" then
+					p.error("Failed to understand NuGet API response (no Catalog resource)")
+				else
+					p.error("Package source is not a NuGet gallery - non-gallery sources are currently unsupported", prj.nugetsource, prj.name)
+				end
+			end
+
+			packageSourceInfo.packageDisplayMetadataUriTemplate = packageDisplayMetadataUriTemplate
+			packageSourceInfo.catalog = catalog
+
+			packageSourceInfos[prj.nugetsource] = packageSourceInfo
+		end
+
 			if not packageAPIInfos[package] then
 				local packageAPIInfo = {}
 
 				printf("Examining NuGet package '%s'...", id)
 				io.flush()
 
-				local response, err, code = http.get(string.format("https://api.nuget.org/v3/registration1/%s/index.json", id:lower()))
+			local response, err, code = http.get(packageSourceInfos[prj.nugetsource].packageDisplayMetadataUriTemplate["@id"]:gsub("{id%-lower}", id:lower()))
 
 				if err ~= "OK" then
 					if code == 404 then
@@ -86,13 +147,6 @@
 
 					if not item.catalogEntry["@id"] then
 						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry['@id'])", id)
-					end
-
-					-- Check this URL just in case. We don't want to be making
-					-- requests to anywhere else.
-
-					if item.catalogEntry["@id"]:find("https://api.nuget.org/") ~= 1 then
-						p.error("Failed to understand NuGet API response (catalogEntry['@id'] was not a NuGet API URL)", id)
 					end
 
 					table.insert(versions, item.catalogEntry.version)
@@ -181,4 +235,33 @@
 
 		p.pop('</packages>')
 	end
+	end
+
+
+--
+-- Generates the NuGet.Config file.
+--
+
+	function nuget2010.generateNuGetConfig(prj)
+		if #prj.nuget == 0 then
+			return
+		end
+
+		if prj.nugetsource == "https://api.nuget.org/v3/index.json" then
+			return
+		end
+
+		p.w('<?xml version="1.0" encoding="utf-8"?>')
+		p.push('<configuration>')
+		p.push('<packageSources>')
+
+		-- By specifying "<clear />", we ensure that only the source that we
+		-- define below is used. Otherwise it would just get added to the list
+		-- of package sources.
+
+		p.x('<clear />')
+
+		p.x('<add key="%s" value="%s" />', prj.nugetsource, prj.nugetsource)
+		p.pop('</packageSources>')
+		p.pop('</configuration>')
 	end
