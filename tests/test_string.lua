@@ -70,3 +70,31 @@
 	function suite.startswith_OnEmptyNeedle()
 		test.istrue(string.startswith("Abcdef", ""))
 	end
+
+
+
+--
+-- string.escapepattern() tests
+--
+
+	function suite.escapepattern_escapes()
+		test.isequal("boost_filesystem%-vc140%.1%.61%.0%.0", string.escapepattern("boost_filesystem-vc140.1.61.0.0"))
+		test.isequal("footage/down/temp/cars_%[100%]_upper/cars_%[100%]_upper%.exr", string.escapepattern("footage/down/temp/cars_[100]_upper/cars_[100]_upper.exr"))
+	end
+
+	function suite.escapepattern_doesntEscape()
+		local s = '<something foo="bar" />'
+		test.isequal(s, s:escapepattern())
+
+		s = 'lorem ipsum dolor sit amet'
+		test.isequal(s, s:escapepattern())
+
+		s = 'forward/slashes/foo/bar'
+		test.isequal(s, s:escapepattern())
+
+		s = '\\back\\slashes'
+		test.isequal(s, s:escapepattern())
+
+		s = 'new\nlines'
+		test.isequal(s, s:escapepattern())
+	end
