@@ -44,12 +44,12 @@
 
 /* Returns timeout in ms. 0 or negative number means the timeout has already
    triggered */
-long Curl_pp_state_timeout(struct pingpong *pp)
+time_t Curl_pp_state_timeout(struct pingpong *pp)
 {
   struct connectdata *conn = pp->conn;
-  struct SessionHandle *data=conn->data;
-  long timeout_ms; /* in milliseconds */
-  long timeout2_ms; /* in milliseconds */
+  struct Curl_easy *data=conn->data;
+  time_t timeout_ms; /* in milliseconds */
+  time_t timeout2_ms; /* in milliseconds */
   long response_time= (data->set.server_response_timeout)?
     data->set.server_response_timeout: pp->response_time;
 
@@ -83,9 +83,9 @@ CURLcode Curl_pp_statemach(struct pingpong *pp, bool block)
   struct connectdata *conn = pp->conn;
   curl_socket_t sock = conn->sock[FIRSTSOCKET];
   int rc;
-  long interval_ms;
-  long timeout_ms = Curl_pp_state_timeout(pp);
-  struct SessionHandle *data=conn->data;
+  time_t interval_ms;
+  time_t timeout_ms = Curl_pp_state_timeout(pp);
+  struct Curl_easy *data=conn->data;
   CURLcode result = CURLE_OK;
 
   if(timeout_ms <=0) {
@@ -101,14 +101,17 @@ CURLcode Curl_pp_statemach(struct pingpong *pp, bool block)
   else
     interval_ms = 0; /* immediate */
 
-  if(Curl_pp_moredata(pp))
+  if(Curl_ssl_data_pending(conn, FIRSTSOCKET))
+    rc = 1;
+  else if(Curl_pp_moredata(pp))
     /* We are receiving and there is data in the cache so just read it */
     rc = 1;
   else if(!pp->sendleft && Curl_ssl_data_pending(conn, FIRSTSOCKET))
     /* We are receiving and there is data ready in the SSL library */
     rc = 1;
   else
-    rc = Curl_socket_ready(pp->sendleft?CURL_SOCKET_BAD:sock, /* reading */
+    rc = Curl_socket_check(pp->sendleft?CURL_SOCKET_BAD:sock, /* reading */
+                           CURL_SOCKET_BAD,
                            pp->sendleft?sock:CURL_SOCKET_BAD, /* writing */
                            interval_ms);
 
@@ -165,7 +168,7 @@ CURLcode Curl_pp_vsendf(struct pingpong *pp,
   char *s;
   CURLcode result;
   struct connectdata *conn = pp->conn;
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
 
 #ifdef HAVE_GSSAPI
   enum protection_level data_sec = conn->data_prot;
@@ -271,7 +274,7 @@ CURLcode Curl_pp_readresp(curl_socket_t sockfd,
   ssize_t gotbytes;
   char *ptr;
   struct connectdata *conn = pp->conn;
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
   char * const buf = data->state.buffer;
   CURLcode result = CURLE_OK;
 

@@ -26,7 +26,6 @@
 
 #include "urldata.h"
 #include "sendf.h"
-#include "rawstr.h"
 #include "http_negotiate.h"
 #include "vauth/vauth.h"
 
@@ -38,7 +37,8 @@
 CURLcode Curl_input_negotiate(struct connectdata *conn, bool proxy,
                               const char *header)
 {
-  struct SessionHandle *data = conn->data;
+  CURLcode result;
+  struct Curl_easy *data = conn->data;
   size_t len;
 
   /* Point to the username, password, service and host */
@@ -51,11 +51,11 @@ CURLcode Curl_input_negotiate(struct connectdata *conn, bool proxy,
   struct negotiatedata *neg_ctx;
 
   if(proxy) {
-    userp = conn->proxyuser;
-    passwdp = conn->proxypasswd;
+    userp = conn->http_proxy.user;
+    passwdp = conn->http_proxy.passwd;
     service = data->set.str[STRING_PROXY_SERVICE_NAME] ?
               data->set.str[STRING_PROXY_SERVICE_NAME] : "HTTP";
-    host = conn->proxy.name;
+    host = conn->http_proxy.host.name;
     neg_ctx = &data->state.proxyneg;
   }
   else {
@@ -90,8 +90,13 @@ CURLcode Curl_input_negotiate(struct connectdata *conn, bool proxy,
   }
 
   /* Initilise the security context and decode our challenge */
-  return Curl_auth_decode_spnego_message(data, userp, passwdp, service, host,
-                                         header, neg_ctx);
+  result = Curl_auth_decode_spnego_message(data, userp, passwdp, service,
+                                           host, header, neg_ctx);
+
+  if(result)
+    Curl_auth_spnego_cleanup(neg_ctx);
+
+  return result;
 }
 
 CURLcode Curl_output_negotiate(struct connectdata *conn, bool proxy)
@@ -124,7 +129,7 @@ CURLcode Curl_output_negotiate(struct connectdata *conn, bool proxy)
   return (userp == NULL) ? CURLE_OUT_OF_MEMORY : CURLE_OK;
 }
 
-void Curl_cleanup_negotiate(struct SessionHandle *data)
+void Curl_cleanup_negotiate(struct Curl_easy *data)
 {
   Curl_auth_spnego_cleanup(&data->state.negotiate);
   Curl_auth_spnego_cleanup(&data->state.proxyneg);
