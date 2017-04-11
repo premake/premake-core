@@ -232,41 +232,41 @@
 -- os.getWindowsRegistry windows tests
 --
 	function suite.getreg_nonExistentValue()
-		if os.iscurrent("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All")
 			test.isequal(nil, x)
 		end
 	end
 
 	function suite.getreg_nonExistentDefaultValue()
-		if os.iscurrent("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All\\")
 			test.isequal(nil, x)
 		end
 	end
 
 	function suite.getreg_noSeparators()
-		if os.iscurrent("windows") then
+		if os.ishost("windows") then
 			os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
 		end
 	end
 
 	function suite.getreg_namedValue()
-		if os.iscurrent("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:Environment\\TEMP")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_namedValueOptSeparator()
-		if os.iscurrent("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:\\Environment\\TEMP")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_defaultValue()
-		if os.iscurrent("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKLM:SYSTEM\\CurrentControlSet\\Control\\SafeBoot\\Minimal\\AppInfo\\")
 			test.isequal("Service", x)
 		end

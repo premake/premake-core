@@ -180,8 +180,8 @@ if kind == "binary" then
 
 	os.chdir("bin/release")
 
-	local name = string.format("%s-%s%s", pkgName, os.current(), pkgExt)
-	if os.iscurrent("windows") then
+	local name = string.format("%s-%s%s", pkgName, os.host(), pkgExt)
+	if os.ishost("windows") then
 		execQuiet("zip -9 %s premake5.exe", name)
 	else
 		execQuiet("tar czvf %s premake5", name)

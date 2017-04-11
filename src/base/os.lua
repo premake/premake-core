@@ -143,7 +143,7 @@
 	end
 
 	function os.get()
-		premake.warnOnce("os.get", "os.get() is deprecated, use 'os.target()' or 'os.current()'.")
+		premake.warnOnce("os.get", "os.get() is deprecated, use 'os.target()' or 'os.host()'.")
 		return os.target()
 	end
 
@@ -180,17 +180,17 @@
 	end
 
 	function os.is(id)
-		premake.warnOnce("os.is", "os.is() is deprecated, use 'os.istarget()' or 'os.iscurrent()'.")
+		premake.warnOnce("os.is", "os.is() is deprecated, use 'os.istarget()' or 'os.ishost()'.")
 		return os.istarget(id)
 	end
 
 
 --
--- Check the current executing operating system.
+-- Check the current host operating system.
 --
 
-	function os.iscurrent(id)
-		return (os.current():lower() == id:lower())
+	function os.ishost(id)
+		return (os.host():lower() == id:lower())
 	end
 
 
@@ -258,9 +258,9 @@
 		else
 			-- Identify the system
 			local arch
-			if os.iscurrent("windows") then
+			if os.ishost("windows") then
 				arch = os.getenv("PROCESSOR_ARCHITECTURE")
-			elseif os.iscurrent("macosx") then
+			elseif os.ishost("macosx") then
 				arch = os.outputof("echo $HOSTTYPE")
 			else
 				arch = os.outputof("uname -m")
