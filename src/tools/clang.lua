@@ -44,7 +44,9 @@
 	clang.shared = {
 		architecture = gcc.shared.architecture,
 		flags = gcc.shared.flags,
-		floatingpoint = gcc.shared.floatingpoint,
+		floatingpoint = {
+			Fast = "-ffast-math",
+		},
 		strictaliasing = gcc.shared.strictaliasing,
 		optimize = {
 			Off = "-O0",
