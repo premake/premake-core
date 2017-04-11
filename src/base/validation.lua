@@ -62,6 +62,7 @@
 			m.projectRulesExist,
 			m.projectValuesInScope,
 			m.NuGetHasHTTP,
+			m.NuGetPackageStrings,
 		}
 	end
 
@@ -227,6 +228,17 @@
 	function m.NuGetHasHTTP(prj)
 		if not http and #prj.nuget > 0 then
 			p.error("Premake was compiled with --no-curl, but Curl is required for NuGet support (project '%s' is referencing NuGet packages)", prj.name)
+		end
+	end
+
+
+	function m.NuGetPackageStrings(prj)
+		for _, package in ipairs(prj.nuget) do
+			local components = package:explode(":")
+
+			if #components ~= 2 or #components[1] == 0 or #components[2] == 0 then
+				p.error("NuGet package '%s' in project '%s' is invalid - please give packages in the format 'id:version', e.g. 'NUnit:3.6.1'", package, prj.name)
+			end
 		end
 	end
 
