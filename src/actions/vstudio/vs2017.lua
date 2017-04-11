@@ -70,5 +70,12 @@
 			toolsVersion    = "15.0",
 			filterToolsVersion = "4.0",
 			platformToolset = "v141"
+		},
+
+		symbols = {
+			[p.ON]       = "true",
+			[p.OFF]      = "false",
+			["FastLink"] = "DebugFastLink",
+			["Full"]     = "DebugFull"
 		}
 	}

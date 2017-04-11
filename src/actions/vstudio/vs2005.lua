@@ -124,5 +124,12 @@
 			productVersion      = "8.0.50727",
 			solutionVersion     = "9",
 			versionName         = "2005",
+		},
+
+		symbols = {
+			[p.ON]       = "true",
+			[p.OFF]      = "false",
+			["FastLink"] = "true",
+			["Full"]     = "true"
 		}
 	}

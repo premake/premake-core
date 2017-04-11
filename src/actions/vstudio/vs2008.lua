@@ -5,6 +5,8 @@
 --
 
 	premake.vstudio.vs2008 = {}
+
+	local p = premake
 	local vs2008 = premake.vstudio.vs2008
 	local vstudio = premake.vstudio
 
@@ -50,5 +52,12 @@
 			solutionVersion     = "10",
 			versionName         = "2008",
 			toolsVersion        = "3.5",
+		},
+
+		symbols = {
+			[p.ON]       = "true",
+			[p.OFF]      = "false",
+			["FastLink"] = "true",
+			["Full"]     = "true"
 		}
 	}

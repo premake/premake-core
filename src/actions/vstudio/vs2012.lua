@@ -67,6 +67,13 @@
 			targetFramework = "4.5",
 			toolsVersion    = "4.0",
 			platformToolset = "v110"
+		},
+
+		symbols = {
+			[p.ON]       = "true",
+			[p.OFF]      = "false",
+			["FastLink"] = "true",
+			["Full"]     = "true"
 		}
 	}
 
