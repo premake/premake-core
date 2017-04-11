@@ -60,7 +60,7 @@
 	local pkgName = "premake-" .. version
 	local pkgExt = ".zip"
 
-	if not os.is("windows") and kind == "binary" then
+	if not os.istarget("windows") and kind == "binary" then
 		pkgExt = ".tar.gz"
 	end
 
@@ -180,8 +180,8 @@ if kind == "binary" then
 
 	os.chdir("bin/release")
 
-	local name = string.format("%s-%s%s", pkgName, os.get(), pkgExt)
-	if os.is("windows") then
+	local name = string.format("%s-%s%s", pkgName, os.current(), pkgExt)
+	if os.iscurrent("windows") then
 		execQuiet("zip -9 %s premake5.exe", name)
 	else
 		execQuiet("tar czvf %s premake5", name)

@@ -61,6 +61,12 @@
 			error(string.format('action "%s" needs a  %s', name, missing), 3)
 		end
 
+		if act.os ~= nil then
+			premake.warnOnce(act.trigger, "action '" .. act.trigger .. "' sets 'os' field, which is deprecated, use 'targetos' instead.")
+			act.targetos = act.os
+			act.os = nil
+		end
+
 		action._list[act.trigger] = act
 	end
 
@@ -212,7 +218,7 @@
 		-- Some actions imply a particular operating system
 		local act = action.get(name)
 		if act then
-			_OS = act.os or _OS
+			_TARGET_OS = act.targetos or _TARGET_OS
 		end
 
 		-- Some are implemented in standalone modules

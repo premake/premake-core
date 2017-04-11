@@ -26,7 +26,7 @@
 
 		-- Visual Studio always uses Windows path and naming conventions
 
-		os = "windows",
+		targetos = "windows",
 
 		-- The capabilities of this action
 

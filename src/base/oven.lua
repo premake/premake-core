@@ -63,7 +63,7 @@
 		context.addFilter(self, "_ACTION", _ACTION)
 		context.addFilter(self, "action", _ACTION)
 
-		self.system = self.system or p.action.current().os or os.get()
+		self.system = self.system or p.action.current().targetos or os.target()
 		context.addFilter(self, "system", self.system)
 
 		-- Add command line options to the filtering options
@@ -204,7 +204,7 @@
 		-- Now filter on the current system and architecture, allowing the
 		-- values that might already in the context to override my defaults.
 
-		self.system = self.system or p.action.current().os or os.get()
+		self.system = self.system or p.action.current().targetos or os.target()
 		context.addFilter(self, "system", self.system)
 		context.addFilter(self, "architecture", self.architecture)
 
@@ -528,7 +528,7 @@
 		-- More than a convenience; this is required to work properly with
 		-- external Visual Studio project files.
 
-		local system = p.action.current().os or os.get()
+		local system = p.action.current().targetos or os.target()
 		local architecture = nil
 		local toolset = nil
 

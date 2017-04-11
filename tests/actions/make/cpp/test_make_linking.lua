@@ -16,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_OS = "linux"
+		_TARGET_OS = "linux"
 		wks, prj = test.createWorkspace()
 	end
 
@@ -41,7 +41,7 @@
 	end
 
 	function suite.links_onMacOSXCppSharedLib()
-		_OS = "macosx"
+		_TARGET_OS = "macosx"
 		kind "SharedLib"
 		prepare { "ldFlags", "linkCmd" }
 		test.capture [[
@@ -169,7 +169,7 @@
     end
 
     function suite.links_onMacOSXSiblingSharedLib()
-    	_OS = "macosx"
+    	_TARGET_OS = "macosx"
         links "MyProject2"
 		flags { "RelativeLinks" }
 

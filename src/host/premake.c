@@ -58,6 +58,7 @@ static const luaL_Reg os_functions[] = {
 	{ "chdir",                  os_chdir                },
 	{ "chmod",                  os_chmod                },
 	{ "copyfile",               os_copyfile             },
+	{ "current",                os_current              },
 	{ "_is64bit",               os_is64bit              },
 	{ "isdir",                  os_isdir                },
 	{ "getcwd",                 os_getcwd               },
@@ -153,7 +154,7 @@ int premake_init(lua_State* L)
 
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);
-	lua_setglobal(L, "_OS");
+	lua_setglobal(L, "_TARGET_OS");
 
 	/* find the user's home directory */
 	value = getenv("HOME");

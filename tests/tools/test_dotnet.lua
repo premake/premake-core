@@ -28,7 +28,7 @@
 --
 
 	function suite.defaultCompiler_onWindows()
-		_OS = "windows"
+		_TARGET_OS = "windows"
 		prepare()
 		test.isequal("csc", dotnet.gettoolname(cfg, "csc"))
 	end
@@ -39,7 +39,7 @@
 --
 
 	function suite.defaultCompiler_onMacOSX()
-		_OS = "macosx"
+		_TARGET_OS = "macosx"
 		prepare()
 		test.isequal("mcs", dotnet.gettoolname(cfg, "csc"))
 	end
