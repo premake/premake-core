@@ -1352,7 +1352,7 @@
 
 
 	function m.floatingPointModel(cfg)
-		if cfg.floatingpoint then
+		if cfg.floatingpoint and cfg.floatingpoint ~= "Default" then
 			m.element("FloatingPointModel", nil, cfg.floatingpoint)
 		end
 	end
