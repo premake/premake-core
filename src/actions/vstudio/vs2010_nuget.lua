@@ -125,18 +125,24 @@
 				end
 
 				if not response.items or #response.items == 0 then
-					p.error("Failed to understand NuGet API response (package '%s' contains no root-level items)", id)
+				p.error("Failed to understand NuGet API response (no pages for package '%s')", id)
 				end
 
-				if not response.items[1].items or #response.items[1].items == 0 then
-					p.error("Failed to understand NuGet API response (root-level item for package '%s' contains no subitems)", id)
+			local items = {}
+
+			for _, page in ipairs(response.items) do
+				if not page.items or #page.items == 0 then
+					p.error("Failed to understand NuGet API response (got a page with no items for package '%s')", id)
 				end
 
-				local subitems = response.items[1].items
+				for _, item in ipairs(page.items) do
+					table.insert(items, item)
+				end
+			end
 
 				local versions = {}
 
-				for _, item in ipairs(subitems) do
+			for _, item in ipairs(items) do
 					if not item.catalogEntry then
 						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry)", id)
 					end
@@ -159,7 +165,7 @@
 					p.error("'%s' is not a valid version for NuGet package '%s' (options are: %s)", version, id, options)
 				end
 
-				for _, item in ipairs(subitems) do
+			for _, item in ipairs(items) do
 					if item.catalogEntry.version == version then
 						local response, err, code = http.get(item.catalogEntry["@id"])
 
