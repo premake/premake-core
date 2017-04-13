@@ -197,3 +197,65 @@
 	</ItemGroup>
 		]]
 	end
+
+
+--
+-- NuGet packages should respect copylocal() and the NoCopyLocal flag.
+--
+
+	function suite.nugetPackages_onNoCopyLocal()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		flags { "NoCopyLocal" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.nugetPackages_onCopyLocalListExclusion()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		copylocal { "SomeOtherProject" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.nugetPackages_onCopyLocalListInclusion()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		copylocal { "NUnit:3.6.1" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end

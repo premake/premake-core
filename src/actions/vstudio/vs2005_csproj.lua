@@ -448,7 +448,13 @@
 
 					_x(2, '<Reference Include="%s">', path.getbasename(file))
 					_x(3, '<HintPath>%s</HintPath>', vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s.%s\\%s", id, packageAPIInfo.verbatimVersion or packageAPIInfo.version, file))))
-					_p(3, '<Private>True</Private>')
+
+					if config.isCopyLocal(prj, package, true) then
+						_p(3, '<Private>True</Private>')
+					else
+						_p(3, '<Private>False</Private>')
+					end
+
 					_p(2, '</Reference>')
 				end
 			end
