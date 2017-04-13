@@ -1032,7 +1032,7 @@
 			settings['GCC_ENABLE_CPP_RTTI'] = 'NO'
 		end
 
-		if cfg.symbols == p.ON and not cfg.flags.NoEditAndContinue then
+		if cfg.symbols == p.ON and cfg.editandcontinue ~= "Off" then
 			settings['GCC_ENABLE_FIX_AND_CONTINUE'] = 'YES'
 		end
 
@@ -1095,8 +1095,8 @@
 
 		-- build list of "other" C/C++ flags
 		local checks = {
-			["-ffast-math"]          = cfg.flags.FloatFast,
-			["-ffloat-store"]        = cfg.flags.FloatStrict,
+			["-ffast-math"]          = cfg.floatingpoint == "Fast",
+			["-ffloat-store"]        = cfg.floatingpoint == "Strict",
 			["-fomit-frame-pointer"] = cfg.flags.NoFramePointer,
 		}
 

@@ -1125,8 +1125,7 @@
 	end
 
 
-	function suite.XCBuildConfigurationProject_OnOptimize()
-		--flags { "Optimize" }
+	function suite.XCBuildConfigurationProject_OnOptimizeSize()
 		optimize "Size"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1153,7 +1152,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnOptimizeSpeed()
-		flags { "OptimizeSpeed" }
+		optimize "Speed"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1411,7 +1410,6 @@
 
 
 	function suite.XCBuildConfigurationProject_OnExtraWarnings()
-		--flags { "ExtraWarnings" }
 		warnings "Extra"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -1495,7 +1493,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnFloatStrict()
-		flags { "FloatStrict" }
+		floatingpoint "Strict"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -1524,7 +1522,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnNoEditAndContinue()
-		flags { "NoEditAndContinue" }
+		editandcontinue "Off"
 		symbols "On"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
@@ -2046,7 +2044,7 @@ function suite.defaultVisibilitySetting_setToNo()
 end
 
 function suite.releaseBuild_onlyDefaultArch_equalsNo()
-	flags { "Optimize" }
+	optimize "On"
 	prepare()
 	xcode.XCBuildConfiguration_Project(tr, tr.configs[2])
 	local str = premake.captured()
