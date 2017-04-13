@@ -132,13 +132,6 @@
 	}
 
 	api.register {
-		name = "buildrule",     -- DEPRECATED
-		scope = "config",
-		kind = "table",
-		tokens = true,
-	}
-
-	api.register {
 		name = "characterset",
 		scope = "config",
 		kind = "string",
@@ -460,52 +453,33 @@
 		scope = "config",
 		kind  = "list:string",
 		allowed = {
-			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
-			"EnableSSE",           -- DEPRECATED
-			"EnableSSE2",          -- DEPRECATED
 			"ExcludeFromBuild",
-			"ExtraWarnings",       -- DEPRECATED
 			"FatalCompileWarnings",
 			"FatalLinkWarnings",
-			"FloatFast",           -- DEPRECATED
-			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
-			"Managed",             -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
-			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoEditAndContinue",   -- DEPRECATED
-			"NoExceptions",        -- DEPRECATED
 			"NoFramePointer",
 			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",
-			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
-			"NoRTTI",              -- DEPRECATED
 			"NoBufferSecurityCheck",
-			"NoWarnings",          -- DEPRECATED
 			"OmitDefaultLibrary",
-			"Optimize",            -- DEPRECATED
-			"OptimizeSize",        -- DEPRECATED
-			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
-			"ReleaseRuntime",      -- DEPRECATED
-			"SEH",                 -- DEPRECATED
 			"ShadowedVariables",
 			"StaticRuntime",
 			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
 			"Unicode",             -- DEPRECATED
-			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
 			"C++11",               -- DEPRECATED
@@ -516,9 +490,6 @@
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
-			Optimise = 'Optimize',
-			OptimiseSize = 'OptimizeSize',
-			OptimiseSpeed = 'OptimizeSpeed',
 		},
 	}
 
@@ -1209,145 +1180,6 @@
 -- Handlers for deprecated fields and values.
 --
 -----------------------------------------------------------------------------
-
-	-- 09 Apr 2013
-
-	api.deprecateField("buildrule", nil,
-	function(value)
-		if value.description then
-			buildmessage(value.description)
-		end
-		buildcommands(value.commands)
-		buildoutputs(value.outputs)
-	end)
-
-
-	-- 17 Jun 2013
-
-	api.deprecateValue("flags", "Component", nil,
-	function(value)
-		buildaction "Component"
-	end)
-
-
-	-- 26 Sep 2013
-
-	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, nil,
-	function(value)
-		vectorextensions(value:sub(7))
-	end,
-	function(value)
-		vectorextensions "Default"
-	end)
-
-
-	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, nil,
-	function(value)
-		floatingpoint(value:sub(6))
-	end,
-	function(value)
-		floatingpoint "Default"
-	end)
-
-
-	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, nil,
-	function(value)
-		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
-		nativewchar(map[value] or "Default")
-	end,
-	function(value)
-		nativewchar "Default"
-	end)
-
-
-	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, nil,
-	function(value)
-		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
-		optimize (map[value] or "Off")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-	api.deprecateValue("flags", { "ReleaseRuntime" }, nil,
-	function(value)
-		runtime 'Release'
-	end,
-	function(value)
-	end)
-
-	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
-	function(value)
-		local map = { Optimise = "On", OptimiseSize = "Size", OptimiseSpeed = "Speed" }
-		optimize (map[value] or "Off")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, nil,
-	function(value)
-		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
-		warnings (map[value] or "Default")
-	end,
-	function(value)
-		warnings "Default"
-	end)
-
-
-	-- 10 Nov 2014
-
-	api.deprecateValue("flags", "Managed", nil,
-	function(value)
-		clr "On"
-	end,
-	function(value)
-		clr "Off"
-	end)
-
-
-	api.deprecateValue("flags", "NoEditAndContinue", nil,
-	function(value)
-		editandcontinue "Off"
-	end,
-	function(value)
-		editandcontinue "On"
-	end)
-
-
-	api.deprecateValue("flags", "NoExceptions", 'Use `exceptionhandling "Off"` instead',
-	function(value)
-		exceptionhandling "Off"
-	end,
-	function(value)
-		exceptionhandling "On"
-	end)
-
-
-	api.deprecateValue("flags", "NoRTTI", 'Use `rtti "Off"` instead',
-	function(value)
-		rtti "Off"
-	end,
-	function(value)
-		rtti "On"
-	end)
-
-	api.deprecateValue("flags", "SEH", 'Use `exceptionhandling "SEH"` instead',
-	function(value)
-		exceptionhandling "SEH"
-	end,
-	function(value)
-		exceptionhandling "Default"
-	end)
-
-	api.deprecateValue("flags", "Unsafe", 'Use `clr "Unsafe"` instead',
-	function(value)
-		clr "Unsafe"
-	end,
-	function(value)
-		clr "On"
-	end)
 
 	-- 18 Dec 2015
 
