@@ -218,7 +218,7 @@
 			CodeCoverage	= "-cov",
 			Deprecated		= "-d",
 			Documentation	= "-D",
-			FatalWarnings	= "-w",
+--			FatalWarnings	= "-w",
 			GenerateHeader	= "-H",
 			GenerateJSON	= "-X",
 			GenerateMap		= "-map",

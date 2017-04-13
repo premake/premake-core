@@ -494,7 +494,7 @@
 --
 
 	function suite.wchar_onNative()
-		flags "NativeWChar"
+		nativewchar "On"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -506,7 +506,7 @@
 	end
 
 	function suite.wchar_onNoNative()
-		flags "NoNativeWChar"
+		nativewchar "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -751,13 +751,14 @@
 
 
 --
--- Check handling of the ReleaseRuntime flag; should override the
+-- Check handling of the runtime API; should override the
 -- default behavior of linking the debug runtime when symbols are
 -- enabled with no optimizations.
 --
 
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "ReleaseRuntime", "StaticRuntime" }
+		runtime "Release"
+		flags { "StaticRuntime" }
 		symbols "On"
 		prepare()
 		test.capture [[
