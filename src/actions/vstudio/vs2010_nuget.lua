@@ -213,6 +213,14 @@
 							if #packageAPIInfo.packageEntries == 0 then
 								p.error("NuGet package '%s' file listing is empty", id)
 							end
+
+						if response.frameworkAssemblyGroup then
+							p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
+						end
+					end
+
+					if response.dependencyGroups then
+						p.warn("NuGet package '%s' may depend on other packages - package dependencies are currently unimplemented", id)
 						end
 
 						break
