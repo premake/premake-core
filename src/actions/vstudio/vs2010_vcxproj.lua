@@ -1215,7 +1215,7 @@
 
 
 	function m.compileAs(cfg)
-		if cfg.project.language == "C" then
+		if p.languages.isc(cfg.language) then
 			m.element("CompileAs", nil, "CompileAsC")
 		end
 	end

@@ -51,8 +51,7 @@
 			if #user > 0 then
 				p.generate(prj, ".csproj.user", function() p.outln(user) end)
 			end
-
-		elseif premake.project.iscpp(prj) then
+		else
 			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
 
 			-- Skip generation of empty user files
@@ -60,7 +59,6 @@
 			if #user > 0 then
 				p.generate(prj, ".vcproj.user", function() p.outln(user) end)
 			end
-
 		end
 	end
 

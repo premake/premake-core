@@ -40,7 +40,8 @@
 		rtti "Off"
 		pic "On"
 		symbols "On"
-		flags { "NoBufferSecurityCheck", "C++11" }
+		language "C++11"
+		flags { "NoBufferSecurityCheck" }
 		buildoptions { "-opt1", "-opt2" }
 		prepare()
 		codelite.project.compiler(cfg)
@@ -217,7 +218,7 @@ cmd2</StartupCommands>
 	end
 
 	function suite.OnProject_Completion()
-		flags { "C++11" }
+		language "C++11"
 		prepare()
 		codelite.project.completion(prj)
 		test.capture [[

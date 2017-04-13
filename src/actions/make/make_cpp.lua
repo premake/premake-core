@@ -455,7 +455,7 @@
 			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
 			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
 
-			local cc = iif(cfg.language == "C", "CC", "CXX")
+			local cc = iif(p.languages.isc(cfg.language), "CC", "CXX")
 			_p('  LINKCMD = $(%s) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)', cc)
 		end
 	end

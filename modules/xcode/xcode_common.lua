@@ -959,6 +959,40 @@
 	end
 
 
+	function xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)
+		if (p.languages.isc(cfg.language)) then
+			if cfg.language ~= "C" then
+				settings['GCC_C_LANGUAGE_STANDARD'] = cfg.language:lower()
+			else
+				if cfg.flags['C99'] then
+					settings['GCC_C_LANGUAGE_STANDARD'] = 'C99'
+				elseif cfg.flags['C11'] then
+					settings['GCC_C_LANGUAGE_STANDARD'] = 'C11'
+				else
+					settings['GCC_C_LANGUAGE_STANDARD'] = 'C90'
+				end
+			end
+		else
+			settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
+		end
+	end
+
+
+	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
+		if (p.languages.iscpp(cfg.language)) then
+			if cfg.language ~= "C++" then
+				settings['CLANG_CXX_LANGUAGE_STANDARD'] = cfg.language:lower()
+			else
+				if cfg.flags['C++11'] then
+					settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++11'
+				elseif cfg.flags['C++14'] then
+					settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++14'
+				end
+			end
+		end
+	end
+
+
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
 		local settings = {}
 
@@ -987,13 +1021,8 @@
 			settings['COPY_PHASE_STRIP'] = 'NO'
 		end
 
-		settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
-
-		if cfg.flags['C++14'] then
-			settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++14'
-		elseif cfg.flags['C++11'] then
-			settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++0x'
-		end
+		xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)
+		xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
 
 		if cfg.exceptionhandling == p.OFF then
 			settings['GCC_ENABLE_CPP_EXCEPTIONS'] = 'NO'

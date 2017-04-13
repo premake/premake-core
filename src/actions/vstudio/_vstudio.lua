@@ -456,7 +456,7 @@
 		local extension
 		if project.isdotnet(prj) then
 			extension = ".csproj"
-		elseif project.iscpp(prj) then
+		elseif project.isc(prj) or project.iscpp(prj) then
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
@@ -519,11 +519,8 @@
 		local hasnet = false
 		local slnarch
 		for prj in p.workspace.eachproject(cfg.workspace) do
-			if project.isnative(prj) then
-				hasnative = true
-			elseif project.isdotnet(prj) then
-				hasnet = true
-			end
+			hasnative = hasnative or project.isnative(prj)
+			hasnet    = hasnet    or project.isdotnet(prj)
 
 			-- get a VS architecture identifier for this project
 			local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
@@ -573,11 +570,8 @@
 		--
 
 		for prj in p.workspace.eachproject(cfg.workspace) do
-			if project.isnative(prj) then
-				hasnative = true
-			elseif project.isdotnet(prj) then
-				hasdotnet = true
-			end
+			hasnative = hasnative or project.isnative(prj)
+			hasnet    = hasnet    or project.isdotnet(prj)
 
 			if hasnative and hasdotnet then
 				return "Mixed Platforms"
@@ -632,7 +626,7 @@
 	function vstudio.tool(prj)
 		if project.isdotnet(prj) then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
-		elseif project.iscpp(prj) then
+		elseif project.isc(prj) or project.iscpp(prj) then
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 		end
 	end

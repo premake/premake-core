@@ -192,7 +192,7 @@
 		-- if the configuration target is a DLL, and an import library
 		-- is provided, change the kind as import libraries are static.
 		local kind = cfg.kind
-		if project.iscpp(cfg.project) then
+		if project.isnative(cfg.project)  then
 			if cfg.system == premake.WINDOWS and kind == premake.SHAREDLIB and not cfg.flags.NoImportLib then
 				kind = premake.STATICLIB
 			end

@@ -984,7 +984,7 @@
 
 	function m.compileAs(cfg, toolset)
 		local cfg, filecfg = config.normalize(cfg)
-		local c = project.isc(cfg)
+		local c = p.languages.isc(cfg.language)
 		if filecfg then
 			if path.iscfile(filecfg.name) ~= c then
 				if path.iscppfile(filecfg.name) then
