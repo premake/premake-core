@@ -490,7 +490,7 @@
 		if field.deprecated and type(field.deprecated.handler) == "function" then
 			field.deprecated.handler(value)
 			if field.deprecated.message and api._deprecations ~= "off" then
-				premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message)
+				premake.warnOnce(field.name, "the field %s has been deprecated and will be removed.\n   %s", field.name, field.deprecated.message)
 				if api._deprecations == "error" then error("deprecation errors enabled", 3) end
 			end
 		end
@@ -542,7 +542,7 @@
 				if handler.remove then handler.remove(value) end
 				if handler.message and api._deprecations ~= "off" then
 					local key = field.name .. "_" .. value
-					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message)
+					premake.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s", field.name, value, handler.message)
 					if api._deprecations == "error" then
 						error { msg="deprecation errors enabled" }
 					end
@@ -648,7 +648,7 @@
 			handler.add(canonical)
 			if handler.message and api._deprecations ~= "off" then
 				local key = field.name .. "_" .. value
-				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, canonical, handler.message)
+				premake.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s", field.name, canonical, handler.message)
 				if api._deprecations == "error" then
 					return nil, "deprecation errors enabled"
 				end

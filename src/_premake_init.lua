@@ -480,7 +480,6 @@
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",   -- DEPRECATED
-			"NoExceptions",        -- DEPRECATED
 			"NoFramePointer",
 			"NoImplicitLink",
 			"NoImportLib",
@@ -490,7 +489,6 @@
 			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
-			"NoRTTI",              -- DEPRECATED
 			"NoBufferSecurityCheck",
 			"NoWarnings",          -- DEPRECATED
 			"OmitDefaultLibrary",
@@ -499,13 +497,10 @@
 			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
 			"ReleaseRuntime",      -- DEPRECATED
-			"SEH",                 -- DEPRECATED
 			"ShadowedVariables",
 			"StaticRuntime",
 			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
-			"Unicode",             -- DEPRECATED
-			"Unsafe",              -- DEPRECATED
 			"WinMain",
 			"WPF",
 			"C++11",               -- DEPRECATED
@@ -1210,9 +1205,9 @@
 --
 -----------------------------------------------------------------------------
 
-	-- 09 Apr 2013
+	-- 13 Apr 2017
 
-	api.deprecateField("buildrule", nil,
+	api.deprecateField("buildrule", 'Use `buildcommands`, `buildoutputs`, and `buildmessage` instead.',
 	function(value)
 		if value.description then
 			buildmessage(value.description)
@@ -1222,83 +1217,119 @@
 	end)
 
 
-	-- 17 Jun 2013
-
-	api.deprecateValue("flags", "Component", nil,
+	api.deprecateValue("flags", "Component", 'Use `buildaction "Component"` instead.',
 	function(value)
 		buildaction "Component"
 	end)
 
 
-	-- 26 Sep 2013
-
-	api.deprecateValue("flags", { "EnableSSE", "EnableSSE2" }, nil,
+	api.deprecateValue("flags", "EnableSSE", 'Use `vectorextensions "SSE"` instead.',
 	function(value)
-		vectorextensions(value:sub(7))
+		vectorextensions("SSE")
 	end,
 	function(value)
 		vectorextensions "Default"
 	end)
 
 
-	api.deprecateValue("flags", { "FloatFast", "FloatStrict" }, nil,
+	api.deprecateValue("flags", "EnableSSE2", 'Use `vectorextensions "SSE2"` instead.',
 	function(value)
-		floatingpoint(value:sub(6))
+		vectorextensions("SSE2")
+	end,
+	function(value)
+		vectorextensions "Default"
+	end)
+
+
+	api.deprecateValue("flags", "FloatFast", 'Use `floatingpoint "Fast"` instead.',
+	function(value)
+		floatingpoint("Fast")
 	end,
 	function(value)
 		floatingpoint "Default"
 	end)
 
 
-	api.deprecateValue("flags", { "NativeWChar", "NoNativeWChar" }, nil,
+	api.deprecateValue("flags", "FloatStrict", 'Use `floatingpoint "Strict"` instead.',
 	function(value)
-		local map = { NativeWChar = "On", NoNativeWChar = "Off" }
-		nativewchar(map[value] or "Default")
+		floatingpoint("Strict")
+	end,
+	function(value)
+		floatingpoint "Default"
+	end)
+
+
+	api.deprecateValue("flags", "NativeWChar", 'Use `nativewchar "On"` instead."',
+	function(value)
+		nativewchar("On")
 	end,
 	function(value)
 		nativewchar "Default"
 	end)
 
 
-	api.deprecateValue("flags", { "Optimize", "OptimizeSize", "OptimizeSpeed" }, nil,
+	api.deprecateValue("flags", "NoNativeWChar", 'Use `nativewchar "Off"` instead."',
 	function(value)
-		local map = { Optimize = "On", OptimizeSize = "Size", OptimizeSpeed = "Speed" }
-		optimize (map[value] or "Off")
+		nativewchar("Off")
 	end,
 	function(value)
-		optimize "Off"
+		nativewchar "Default"
 	end)
 
-	api.deprecateValue("flags", { "ReleaseRuntime" }, nil,
-	function(value)
-		runtime 'Release'
-	end,
-	function(value)
-	end)
 
-	api.deprecateValue("flags", { "Optimise", "OptimiseSize", "OptimiseSpeed" }, nil,
+	api.deprecateValue("flags", "Optimize", 'Use `optimize "On"` instead.',
 	function(value)
-		local map = { Optimise = "On", OptimiseSize = "Size", OptimiseSpeed = "Speed" }
-		optimize (map[value] or "Off")
+		optimize ("On")
 	end,
 	function(value)
 		optimize "Off"
 	end)
 
 
-	api.deprecateValue("flags", { "ExtraWarnings", "NoWarnings" }, nil,
+	api.deprecateValue("flags", "OptimizeSize", 'Use `optimize "Size"` instead.',
 	function(value)
-		local map = { ExtraWarnings = "Extra", NoWarnings = "Off" }
-		warnings (map[value] or "Default")
+		optimize ("Size")
+	end,
+	function(value)
+		optimize "Off"
+	end)
+
+
+	api.deprecateValue("flags", "OptimizeSpeed", 'Use `optimize "Speed"` instead.',
+	function(value)
+		optimize ("Speed")
+	end,
+	function(value)
+		optimize "Off"
+	end)
+
+
+	api.deprecateValue("flags", "ReleaseRuntime", 'Use `runtime "Release"` instead.',
+	function(value)
+		runtime "Release"
+	end,
+	function(value)
+	end)
+
+
+	api.deprecateValue("flags", "ExtraWarnings", 'Use `warnings "Extra"` instead.',
+	function(value)
+		warnings "Extra"
 	end,
 	function(value)
 		warnings "Default"
 	end)
 
 
-	-- 10 Nov 2014
+	api.deprecateValue("flags", "NoWarnings", 'Use `warnings "Off"` instead.',
+	function(value)
+		warnings "Off"
+	end,
+	function(value)
+		warnings "Default"
+	end)
 
-	api.deprecateValue("flags", "Managed", nil,
+	api.deprecateValue("flags", "Managed", 'Use `clr "On"` instead.',
 	function(value)
 		clr "On"
 	end,
@@ -1307,7 +1338,7 @@
 	end)
 
 
-	api.deprecateValue("flags", "NoEditAndContinue", nil,
+	api.deprecateValue("flags", "NoEditAndContinue", 'Use editandcontinue "Off"` instead.',
 	function(value)
 		editandcontinue "Off"
 	end,
@@ -1315,49 +1346,6 @@
 		editandcontinue "On"
 	end)
 
-
-	api.deprecateValue("flags", "NoExceptions", 'Use `exceptionhandling "Off"` instead',
-	function(value)
-		exceptionhandling "Off"
-	end,
-	function(value)
-		exceptionhandling "On"
-	end)
-
-
-	api.deprecateValue("flags", "NoRTTI", 'Use `rtti "Off"` instead',
-	function(value)
-		rtti "Off"
-	end,
-	function(value)
-		rtti "On"
-	end)
-
-	api.deprecateValue("flags", "SEH", 'Use `exceptionhandling "SEH"` instead',
-	function(value)
-		exceptionhandling "SEH"
-	end,
-	function(value)
-		exceptionhandling "Default"
-	end)
-
-	api.deprecateValue("flags", "Unsafe", 'Use `clr "Unsafe"` instead',
-	function(value)
-		clr "Unsafe"
-	end,
-	function(value)
-		clr "On"
-	end)
-
-	-- 18 Dec 2015
-
-	api.deprecateValue("flags", "Unicode", 'Use `characterset "Unicode"` instead',
-	function(value)
-		characterset "Unicode"
-	end,
-	function(value)
-		characterset "Default"
-	end)
 
 	-- 21 June 2016
 
@@ -1377,6 +1365,7 @@
 	api.deprecateValue("flags", "C90",   'Use `language "C90"` instead',   function(value) end, function(value) end)
 	api.deprecateValue("flags", "C99",   'Use `language "C99"` instead',   function(value) end, function(value) end)
 	api.deprecateValue("flags", "C11",   'Use `language "C11"` instead',   function(value) end, function(value) end)
+
 
 -----------------------------------------------------------------------------
 --
