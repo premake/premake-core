@@ -15,7 +15,7 @@ project "curl-lib"
 		"**.h",
 		"**.c"
 	}
-	
+
 	filter { "system:windows" }
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
 
@@ -25,7 +25,7 @@ project "curl-lib"
 	filter { "system:not windows", "system:not macosx" }
 		defines { "USE_MBEDTLS" }
 
-	filter { "system:linux" }
+	filter { "system:linux or bsd" }
 		defines { "CURL_HIDDEN_SYMBOLS" }
 
 		-- find the location of the ca bundle
@@ -35,6 +35,7 @@ project "curl-lib"
 			"/etc/pki/tls/certs/ca-bundle.crt",
 			"/usr/share/ssl/certs/ca-bundle.crt",
 			"/usr/local/share/certs/ca-root.crt",
+			"/usr/local/share/certs/ca-root-nss.crt",
 			"/etc/ssl/cert.pem" } do
 			if os.isfile(f) then
 				ca = f
