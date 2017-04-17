@@ -225,8 +225,12 @@
 		 test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
 	end
 
-	function suite.getrelative_returnsAbsPath_onContactWithFileSysRoot()
-		test.isequal("C:/Boost/Include", path.getrelative("C:/Code/MyApp", "C:/Boost/Include"))
+	function suite.getrelative_returnsRelativePath_onContactWithFileSysRoot()
+		test.isequal("../../Boost/Include", path.getrelative("C:/Code/MyApp", "C:/Boost/Include"))
+	end
+	
+	function suite.getrelative_returnsAbsPath_onContactWithDifferentFileSysRoot()
+		test.isequal("E:/Boost/Include", path.getrelative("C:/Code/MyApp", "E:/Boost/Include"))
 	end
 
 
