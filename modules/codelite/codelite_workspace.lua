@@ -44,8 +44,11 @@
 				local prjpath = p.filename(prj, ".project")
 				prjpath = path.getrelative(prj.workspace.location, prjpath)
 
-				local active  = iif(prj.name == wks.startproject, ' Active="Yes"', '')
-				_x(1, '<Project Name="%s" Path="%s"%s/>', prj.name, prjpath, active)
+				if (prj.name == wks.startproject) then
+					_x(1, '<Project Name="%s" Path="%s" Active="Yes"/>', prj.name, prjpath)
+				else
+					_x(1, '<Project Name="%s" Path="%s"/>', prj.name, prjpath)
+				end
 			end,
 
 			onbranch = function(n)
