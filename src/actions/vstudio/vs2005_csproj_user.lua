@@ -57,6 +57,7 @@
 				if #contents[cfg] > 0 then
 					p.push('<PropertyGroup %s>', m.condition(cfg))
 					p.outln(contents[cfg])
+                    m.localDebuggerWorkingDirectory(cfg)
 					p.pop('</PropertyGroup>')
 				end
 			end
@@ -65,7 +66,11 @@
 		end
 	end
 
-
+    function m.localDebuggerWorkingDirectory(cfg)
+        if cfg.debugdir then
+            _x(2, '<StartWorkingDirectory>%s</StartWorkingDirectory>', path.translate(path.getrelative(cfg.buildtarget.directory, cfg.debugdir)))
+        end
+    end
 
 ---
 -- Output any reference paths required by the project.

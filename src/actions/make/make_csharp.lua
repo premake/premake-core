@@ -92,11 +92,12 @@
 --
 
 	function cs.getresourcefilename(cfg, fname)
+		local sep = os.is("windows") and "\\" or "/"
 		if path.getextension(fname) == ".resx" then
 		    local name = cfg.buildtarget.basename .. "."
 		    local dir = path.getdirectory(fname)
 		    if dir ~= "." then
-				name = name .. path.translate(dir, ".") .. "."
+				name = name .. path.translate(dir, ".", sep) .. "."
 			end
 			return "$(OBJDIR)/" .. premake.esc(name .. path.getbasename(fname)) .. ".resources"
 		else
@@ -191,16 +192,17 @@
 		local makefile = path.getname(premake.filename(prj, ext))
 		local response = make.cs.getresponsefilename(prj)
 
+		local sep = os.is("windows") and "\\" or "/"
+
 		_p('$(RESPONSE): %s', makefile)
 		_p('\t@echo Generating response file', prj.name)
 
 		_p('ifeq (posix,$(SHELLTYPE))')
 			_x('\t$(SILENT) rm -f $(RESPONSE)')
 		_p('else')
-			_x('\t$(SILENT) if exist $(RESPONSE) del %s', path.translate(response, '\\'))
+			_x('\t$(SILENT) if exist $(RESPONSE) del %s', path.translate(response, sep))
 		_p('endif')
 
-		local sep = os.is("windows") and "\\" or "/"
 		local tr = project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)

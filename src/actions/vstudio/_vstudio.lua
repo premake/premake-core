@@ -288,7 +288,7 @@
 
 		local arch = architecture(cfg.system, cfg.architecture)
 		if not arch then
-			arch = iif(isnative, "x86", "Any CPU")
+			arch = iif(isnative, "x86", "AnyCPU")
 		end
 
 		if win32 and isnative and arch == "x86" then
