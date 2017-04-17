@@ -538,7 +538,7 @@
 			local token = cmd:match("^{.+}")
 			if token then
 				token = token:sub(2, #token - 1):lower()
-				local args = cmd:sub(#token + 4)
+				local args = path.normalize(cmd:sub(#token + 4))
 				local func = map[token] or os.commandTokens["_"][token]
 				if func then
 					cmd = func(args)
