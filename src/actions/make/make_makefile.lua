@@ -72,7 +72,7 @@
 		_p('  define BUILDCMDS')
 		local steps = cfg.buildcommands
 		if #steps > 0 then
-			steps = os.translateCommands(steps)
+			steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 			_p('\t@echo Running build commands')
 			_p('\t%s', table.implode(steps, "", "", "\n\t"))
 		end
@@ -84,7 +84,7 @@
 		_p('  define CLEANCMDS')
 		local steps = cfg.cleancommands
 		if #steps > 0 then
-			steps = os.translateCommands(steps)
+			steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 			_p('\t@echo Running clean commands')
 			_p('\t%s', table.implode(steps, "", "", "\n\t"))
 		end

@@ -610,6 +610,47 @@
 
 
 
+---
+-- Translate decorated command paths into their OS equivalents.
+---
+
+	function os.translateCommandsAndPaths(cmds, basedir, location, map)
+		local translatedBaseDir = path.getrelative(location, basedir)
+
+		map = map or os.target()
+
+		local translateFunction = function(value)
+			local result = path.join(translatedBaseDir, value)
+			if value:endswith('/') or value:endswith('\\') or
+			   value:endswith('/"') or value:endswith('\\"') then
+				result = result .. '/'
+			end
+			if map == 'windows' then
+				result = path.translate(result)
+			end
+			return result
+		end
+
+		local processOne = function(cmd)
+			local replaceFunction = function(value)
+				value = value:sub(3, #value - 1)
+				return '"' .. translateFunction(value) .. '"'
+			end
+			return string.gsub(cmd, "%%%[[^%]\r\n]*%]", replaceFunction)
+		end
+
+		if type(cmds) == "table" then
+			local result = {}
+			for i = 1, #cmds do
+				result[i] = processOne(cmds[i])
+			end
+			return os.translateCommands(result, map)
+		else
+			return os.translateCommands(processOne(cmds), map)
+		end
+	end
+
+
 --
 -- Generate a UUID.
 --

@@ -511,7 +511,7 @@
 			local msg = cfg[field .. "message"]
 
 			if #steps > 0 then
-				steps = os.translateCommands(steps, p.WINDOWS)
+				steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 				p.push('<%s>', name)
 				p.x('<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
 				if msg then
@@ -1131,7 +1131,7 @@
 
 
 	function m.buildCommands(fcfg, condition)
-		local commands = os.translateCommands(fcfg.buildcommands, p.WINDOWS)
+		local commands = os.translateCommandsAndPaths(fcfg.buildcommands, fcfg.project.basedir, fcfg.project.location)
 		commands = table.concat(commands,'\r\n')
 		m.element("Command", condition, '%s', commands)
 	end
@@ -1768,7 +1768,7 @@
 
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
-			commands = os.translateCommands(commands, p.WINDOWS)
+			commands = os.translateCommandsAndPaths(commands, cfg.project.basedir, cfg.project.location)
 			commands = table.concat(p.esc(commands), p.eol())
 			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end

@@ -281,3 +281,18 @@
 		local version = os.getversion();
 		test.istrue(version ~= nil)
 	end
+
+
+
+--
+-- os.translateCommandsAndPaths.
+--
+
+	function suite.translateCommandsAndPaths()
+		test.isequal('cmdtool "../foo/path1"', os.translateCommandsAndPaths("cmdtool %[path1]", '../foo', '.', 'osx'))
+	end
+
+	function suite.translateCommandsAndPaths_PreserveSlash()
+		test.isequal('cmdtool "../foo/path1/"', os.translateCommandsAndPaths("cmdtool %[path1/]", '../foo', '.', 'osx'))
+	end
+

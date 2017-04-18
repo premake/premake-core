@@ -178,7 +178,7 @@
 				_p('%s: %s', output, dependencies)
 				_p('\t@echo "%s"', filecfg.buildmessage or ("Building " .. filecfg.relpath))
 
-				local cmds = os.translateCommands(filecfg.buildcommands)
+				local cmds = os.translateCommandsAndPaths(filecfg.buildcommands, cfg.project.basedir, cfg.project.location)
 				for _, cmd in ipairs(cmds) do
 					if cfg.bindirs and #cfg.bindirs > 0 then
 						_p('\t$(SILENT) $(EXE_PATHS) %s', cmd)
