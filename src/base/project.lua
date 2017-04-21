@@ -176,31 +176,54 @@
 			return result
 		end
 
-			local function add_to_project_list(cfg, depproj, result)
-				local dep = p.workspace.findproject(cfg.workspace, depproj)
-					if dep and not table.contains(result, dep) then
-						table.insert(result, dep)
-					end
+		local function add_to_project_list(cfg, depproj, result)
+			local dep = p.workspace.findproject(cfg.workspace, depproj)
+			if dep and not table.contains(result, dep) then
+				table.insert(result, dep)
 			end
+		end
+
+		local function getExpandedLinkDependencies(cfg, projectName, result)
+			local projectObj = premake.workspace.findproject(cfg.workspace, projectName)
+			if projectObj and projectObj.links then
+				for cfg in project.eachconfig(projectObj) do
+					for _, dependencyName in ipairs(cfg.links) do
+						getExpandedLinkDependencies(cfg, dependencyName, result)
+						table.insertkeyed(result, dependencyName)
+					end
+				end
+			end
+		end
 
 		local linkOnly = m == 'linkOnly'
 		local depsOnly = m == 'dependOnly'
 
 		result = {}
-			for cfg in project.eachconfig(prj) do
-			if not depsOnly then
+		for cfg in project.eachconfig(prj) do
+			-- Don't return link dependencies for a static library project. We don't want them there
+			if not depsOnly and prj.kind ~= 'StaticLib' then
+				-- Traverse the tree of dependencies (presumably all static libs) 
+				-- to get their link dependencies and add them to our own
+				newDependencies = {}
 				for _, link in ipairs(cfg.links) do
-				    if link ~= prj.name then
-				    	add_to_project_list(cfg, link, result)
-				    end
+					if link ~= prj.name then
+						getExpandedLinkDependencies(cfg, link, newDependencies)
+					end
 				end
-			end
-				if not linkOnly then
-					for _, depproj in ipairs(cfg.dependson) do
-						add_to_project_list(cfg, depproj, result)
+				cfg.links = table.merge(cfg.links, newDependencies)
+
+				for _, link in ipairs(cfg.links) do
+					if link ~= prj.name then
+						add_to_project_list(cfg, link, result)
 					end
 				end
 			end
+			if not linkOnly then
+				for _, depproj in ipairs(cfg.dependson) do
+					add_to_project_list(cfg, depproj, result)
+				end
+			end
+		end
 		prj.dependencies[m] = result
 
 		return result
