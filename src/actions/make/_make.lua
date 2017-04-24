@@ -232,7 +232,7 @@
 ---------------------------------------------------------------------------
 
 	function make.objdir(cfg)
-		_x('  OBJDIR = %s', project.getrelative(cfg.project, cfg.objdir))
+		_x('  OBJDIR = %s', premake.esc(project.getrelative(cfg.project, cfg.objdir)))
 	end
 
 
