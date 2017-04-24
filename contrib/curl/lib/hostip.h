@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -50,7 +50,7 @@
 
 struct addrinfo;
 struct hostent;
-struct SessionHandle;
+struct Curl_easy;
 struct connectdata;
 
 /*
@@ -87,7 +87,7 @@ int Curl_resolv(struct connectdata *conn, const char *hostname,
                 int port, struct Curl_dns_entry **dnsentry);
 int Curl_resolv_timeout(struct connectdata *conn, const char *hostname,
                         int port, struct Curl_dns_entry **dnsentry,
-                        long timeoutms);
+                        time_t timeoutms);
 
 #ifdef CURLRES_IPV6
 /*
@@ -118,7 +118,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 
 
 /* unlock a previously resolved dns entry */
-void Curl_resolv_unlock(struct SessionHandle *data,
+void Curl_resolv_unlock(struct Curl_easy *data,
                         struct Curl_dns_entry *dns);
 
 /* for debugging purposes only: */
@@ -128,10 +128,10 @@ void Curl_scan_cache_used(void *user, void *ptr);
 int Curl_mk_dnscache(struct curl_hash *hash);
 
 /* prune old entries from the DNS cache */
-void Curl_hostcache_prune(struct SessionHandle *data);
+void Curl_hostcache_prune(struct Curl_easy *data);
 
 /* Return # of adresses in a Curl_addrinfo struct */
-int Curl_num_addresses (const Curl_addrinfo *addr);
+int Curl_num_addresses(const Curl_addrinfo *addr);
 
 #if defined(CURLDEBUG) && defined(HAVE_GETNAMEINFO)
 int curl_dogetnameinfo(GETNAMEINFO_QUAL_ARG1 GETNAMEINFO_TYPE_ARG1 sa,
@@ -143,7 +143,7 @@ int curl_dogetnameinfo(GETNAMEINFO_QUAL_ARG1 GETNAMEINFO_TYPE_ARG1 sa,
 #endif
 
 /* IPv4 threadsafe resolve function used for synch and asynch builds */
-Curl_addrinfo *Curl_ipv4_resolve_r(const char * hostname, int port);
+Curl_addrinfo *Curl_ipv4_resolve_r(const char *hostname, int port);
 
 CURLcode Curl_async_resolved(struct connectdata *conn,
                              bool *protocol_connect);
@@ -188,7 +188,7 @@ Curl_fetch_addr(struct connectdata *conn,
  * Returns the Curl_dns_entry entry pointer or NULL if the storage failed.
  */
 struct Curl_dns_entry *
-Curl_cache_addr(struct SessionHandle *data, Curl_addrinfo *addr,
+Curl_cache_addr(struct Curl_easy *data, Curl_addrinfo *addr,
                 const char *hostname, int port);
 
 #ifndef INADDR_NONE
@@ -209,42 +209,42 @@ extern sigjmp_buf curl_jmpenv;
 /*
  * Function provided by the resolver backend to set DNS servers to use.
  */
-CURLcode Curl_set_dns_servers(struct SessionHandle *data, char *servers);
+CURLcode Curl_set_dns_servers(struct Curl_easy *data, char *servers);
 
 /*
  * Function provided by the resolver backend to set
  * outgoing interface to use for DNS requests
  */
-CURLcode Curl_set_dns_interface(struct SessionHandle *data,
+CURLcode Curl_set_dns_interface(struct Curl_easy *data,
                                 const char *interf);
 
 /*
  * Function provided by the resolver backend to set
  * local IPv4 address to use as source address for DNS requests
  */
-CURLcode Curl_set_dns_local_ip4(struct SessionHandle *data,
+CURLcode Curl_set_dns_local_ip4(struct Curl_easy *data,
                                 const char *local_ip4);
 
 /*
  * Function provided by the resolver backend to set
  * local IPv6 address to use as source address for DNS requests
  */
-CURLcode Curl_set_dns_local_ip6(struct SessionHandle *data,
+CURLcode Curl_set_dns_local_ip6(struct Curl_easy *data,
                                 const char *local_ip6);
 
 /*
  * Clean off entries from the cache
  */
-void Curl_hostcache_clean(struct SessionHandle *data, struct curl_hash *hash);
+void Curl_hostcache_clean(struct Curl_easy *data, struct curl_hash *hash);
 
 /*
  * Destroy the hostcache of this handle.
  */
-void Curl_hostcache_destroy(struct SessionHandle *data);
+void Curl_hostcache_destroy(struct Curl_easy *data);
 
 /*
  * Populate the cache with specified entries from CURLOPT_RESOLVE.
  */
-CURLcode Curl_loadhostpairs(struct SessionHandle *data);
+CURLcode Curl_loadhostpairs(struct Curl_easy *data);
 
 #endif /* HEADER_CURL_HOSTIP_H */

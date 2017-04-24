@@ -60,9 +60,9 @@
 #include "curl_sec.h"
 #include "ftp.h"
 #include "sendf.h"
-#include "rawstr.h"
+#include "strcase.h"
 #include "warnless.h"
-
+#include "strdup.h"
 /* The last #include file should be: */
 #include "memdebug.h"
 
@@ -88,7 +88,8 @@ name_to_level(const char *name)
 
 /* Convert a protocol |level| to its char representation.
    We take an int to catch programming mistakes. */
-static char level_to_char(int level) {
+static char level_to_char(int level)
+{
   switch(level) {
   case PROT_CLEAR:
     return 'C';
@@ -122,7 +123,7 @@ static int ftp_send_command(struct connectdata *conn, const char *message, ...)
   vsnprintf(print_buffer, sizeof(print_buffer), message, args);
   va_end(args);
 
-  if(Curl_ftpsendf(conn, print_buffer)) {
+  if(Curl_ftpsend(conn, print_buffer)) {
     ftp_code = -1;
   }
   else {
@@ -192,15 +193,18 @@ static CURLcode read_data(struct connectdata *conn,
                           struct krb5buffer *buf)
 {
   int len;
-  void* tmp;
+  void *tmp = NULL;
   CURLcode result;
 
   result = socket_read(fd, &len, sizeof(len));
   if(result)
     return result;
 
-  len = ntohl(len);
-  tmp = realloc(buf->data, len);
+  if(len) {
+    /* only realloc if there was a length */
+    len = ntohl(len);
+    tmp = Curl_saferealloc(buf->data, len);
+  }
   if(tmp == NULL)
     return CURLE_OUT_OF_MEMORY;
 
@@ -219,7 +223,7 @@ buffer_read(struct krb5buffer *buf, void *data, size_t len)
 {
   if(buf->size - buf->index < len)
     len = buf->size - buf->index;
-  memcpy(data, (char*)buf->data + buf->index, len);
+  memcpy(data, (char *)buf->data + buf->index, len);
   buf->index += len;
   return len;
 }
@@ -288,7 +292,7 @@ static void do_sec_send(struct connectdata *conn, curl_socket_t fd,
       prot_level = conn->command_prot;
   }
   bytes = conn->mech->encode(conn->app_data, from, length, prot_level,
-                             (void**)&buffer);
+                             (void **)&buffer);
   if(!buffer || bytes <= 0)
     return; /* error */
 
@@ -363,6 +367,10 @@ int Curl_sec_read_msg(struct connectdata *conn, char *buffer,
   size_t decoded_sz = 0;
   CURLcode error;
 
+  if(!conn->mech)
+    /* not inititalized, return error */
+    return -1;
+
   DEBUGASSERT(level > PROT_NONE && level < PROT_LAST);
 
   error = Curl_base64_decode(buffer + 4, (unsigned char **)&buf, &decoded_sz);
@@ -408,7 +416,7 @@ int Curl_sec_read_msg(struct connectdata *conn, char *buffer,
 static int sec_set_protection_level(struct connectdata *conn)
 {
   int code;
-  char* pbsz;
+  char *pbsz;
   static unsigned int buffer_size = 1 << 20; /* 1048576 */
   enum protection_level level = conn->request_data_prot;
 
@@ -476,7 +484,7 @@ Curl_sec_request_prot(struct connectdata *conn, const char *level)
 static CURLcode choose_mech(struct connectdata *conn)
 {
   int ret;
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
   void *tmp_allocation;
   const struct Curl_sec_client_mech *mech = &Curl_krb5_client_mech;
 

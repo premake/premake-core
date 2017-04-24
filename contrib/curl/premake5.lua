@@ -18,6 +18,7 @@ project "curl-lib"
 
 	filter { "system:windows" }
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
+		links "crypt32"
 
 	filter { "system:macosx" }
 		defines { "USE_DARWINSSL" }

@@ -8,7 +8,7 @@
  *                             \___|\___/|_| \_\_____|
  *
  * Copyright (C) 2012, Marc Hoersken, <info@marc-hoersken.de>, et al.
- * Copyright (C) 2012 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2012 - 2017, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -92,10 +92,13 @@ int Curl_schannel_init(void);
 void Curl_schannel_cleanup(void);
 size_t Curl_schannel_version(char *buffer, size_t size);
 
-int Curl_schannel_random(unsigned char *entropy, size_t length);
+CURLcode Curl_schannel_random(unsigned char *entropy, size_t length);
 
 /* Set the API backend definition to Schannel */
 #define CURL_SSL_BACKEND CURLSSLBACKEND_SCHANNEL
+
+/* this backend supports CURLOPT_CERTINFO */
+#define have_curlssl_certinfo 1
 
 /* API setup for Schannel */
 #define curlssl_init Curl_schannel_init
