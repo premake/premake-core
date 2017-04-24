@@ -245,19 +245,24 @@
 		if not self then
 			return false
 		end
-		if not self.valid_languages and not self.valid_kinds then
+
+		if not self.valid_languages and not self.valid_kinds and not self.supports_language then
 			return true
 		end
-		if self.valid_languages then
-			if table.contains(self.valid_languages, feature) then
-				return true
-			end
+
+		if self.valid_languages and table.contains(self.valid_languages, feature) then
+			return true
 		end
-		if self.valid_kinds then
-			if table.contains(self.valid_kinds, feature) then
-				return true
-			end
+
+		if self.valid_kinds and table.contains(self.valid_kinds, feature) then
+			return true
 		end
+
+		if self.supports_language and self.supports_language(feature) then
+			return true
+		end
+
+
 		return false
 	end
 
