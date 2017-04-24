@@ -11,8 +11,6 @@ int do_chdir(lua_State* L, const char* path)
 {
 	int z;
 
-	(void)(L);  /* warning: unused parameter */
-
 #if PLATFORM_WINDOWS
 	wchar_t wide_buffer[PATH_MAX];
 	if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wide_buffer, PATH_MAX) == 0)
@@ -23,6 +21,8 @@ int do_chdir(lua_State* L, const char* path)
 
 	z = SetCurrentDirectoryW(wide_buffer);
 #else
+	(void)(L);  /* warning: unused parameter */
+
 	z = !chdir(path);
 #endif
 

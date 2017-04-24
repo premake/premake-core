@@ -21,6 +21,7 @@ typedef struct struct_MatchInfo
 int os_matchstart(lua_State* L)
 {
 	const char* mask = luaL_checkstring(L, 1);
+	MatchInfo* m;
 
 	wchar_t wide_mask[PATH_MAX];
 	if (MultiByteToWideChar(CP_UTF8, 0, mask, -1, wide_mask, PATH_MAX) == 0)
@@ -29,7 +30,7 @@ int os_matchstart(lua_State* L)
 		return lua_error(L);
 	}
 
-	MatchInfo* m = (MatchInfo*)malloc(sizeof(MatchInfo));
+	m = (MatchInfo*)malloc(sizeof(MatchInfo));
 
 	m->handle = FindFirstFileW(wide_mask, &m->entry);
 	m->is_first = 1;
