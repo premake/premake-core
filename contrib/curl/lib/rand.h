@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_RAWSTR_H
-#define HEADER_CURL_RAWSTR_H
+#ifndef HEADER_CURL_RAND_H
+#define HEADER_CURL_RAND_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -22,26 +22,22 @@
  *
  ***************************************************************************/
 
-#include <curl/curl.h>
-
 /*
- * Curl_raw_equal() is for doing "raw" case insensitive strings. This is meant
- * to be locale independent and only compare strings we know are safe for
- * this.
+ * Curl_rand() stores 'num' number of random unsigned integers in the buffer
+ * 'rnd' points to.
  *
- * The function is capable of comparing a-z case insensitively even for
- * non-ascii.
+ * If libcurl is built without TLS support or with a TLS backend that lacks a
+ * proper random API (Gskit, PolarSSL or mbedTLS), this function will use
+ * "weak" random.
+ *
+ * When built *with* TLS support and a backend that offers strong random, it
+ * will return error if it cannot provide strong random values.
+ *
+ * NOTE: 'data' may be passed in as NULL when coming from external API without
+ * easy handle!
+ *
  */
-int Curl_raw_equal(const char *first, const char *second);
-int Curl_raw_nequal(const char *first, const char *second, size_t max);
+CURLcode Curl_rand(struct Curl_easy *data, unsigned int *rnd,
+                   unsigned int num);
 
-char Curl_raw_toupper(char in);
-
-/* checkprefix() is a shorter version of the above, used when the first
-   argument is zero-byte terminated */
-#define checkprefix(a,b)    Curl_raw_nequal(a,b,strlen(a))
-
-void Curl_strntoupper(char *dest, const char *src, size_t n);
-
-#endif /* HEADER_CURL_RAWSTR_H */
-
+#endif /* HEADER_CURL_RAND_H */

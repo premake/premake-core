@@ -1121,11 +1121,8 @@
 
 
 	function m.entryPointSymbol(cfg, toolset)
-		if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and
-			not cfg.flags.WinMain and
-			not toolset
-		then
-			p.w('EntryPointSymbol="mainCRTStartup"')
+		if cfg.entrypoint then
+			p.w('EntryPointSymbol="%s"', cfg.entrypoint)
 		end
 	end
 

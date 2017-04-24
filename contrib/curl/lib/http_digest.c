@@ -25,7 +25,7 @@
 #if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_CRYPTO_AUTH)
 
 #include "urldata.h"
-#include "rawstr.h"
+#include "strcase.h"
 #include "vauth/vauth.h"
 #include "http_digest.h"
 /* The last 3 #include files should be in this order */
@@ -45,7 +45,7 @@ CURLcode Curl_input_digest(struct connectdata *conn,
                            const char *header) /* rest of the *-authenticate:
                                                   header */
 {
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
 
   /* Point to the correct struct with this */
   struct digestdata *digest;
@@ -73,9 +73,9 @@ CURLcode Curl_output_digest(struct connectdata *conn,
                             const unsigned char *uripath)
 {
   CURLcode result;
-  struct SessionHandle *data = conn->data;
-  unsigned char *path;
-  char *tmp;
+  struct Curl_easy *data = conn->data;
+  unsigned char *path = NULL;
+  char *tmp = NULL;
   char *response;
   size_t len;
   bool have_chlg;
@@ -95,8 +95,8 @@ CURLcode Curl_output_digest(struct connectdata *conn,
   if(proxy) {
     digest = &data->state.proxydigest;
     allocuserpwd = &conn->allocptr.proxyuserpwd;
-    userp = conn->proxyuser;
-    passwdp = conn->proxypasswd;
+    userp = conn->http_proxy.user;
+    passwdp = conn->http_proxy.passwd;
     authp = &data->state.authproxy;
   }
   else {
@@ -140,12 +140,14 @@ CURLcode Curl_output_digest(struct connectdata *conn,
      http://www.fngtps.com/2006/09/http-authentication
   */
 
-  if(authp->iestyle && ((tmp = strchr((char *)uripath, '?')) != NULL)) {
-    size_t urilen = tmp - (char *)uripath;
-
-    path = (unsigned char *) aprintf("%.*s", urilen, uripath);
+  if(authp->iestyle) {
+    tmp = strchr((char *)uripath, '?');
+    if(tmp) {
+      size_t urilen = tmp - (char *)uripath;
+      path = (unsigned char *) aprintf("%.*s", urilen, uripath);
+    }
   }
-  else
+  if(!tmp)
     path = (unsigned char *) strdup((char *) uripath);
 
   if(!path)
@@ -169,7 +171,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
   return CURLE_OK;
 }
 
-void Curl_digest_cleanup(struct SessionHandle *data)
+void Curl_digest_cleanup(struct Curl_easy *data)
 {
   Curl_auth_digest_cleanup(&data->state.digest);
   Curl_auth_digest_cleanup(&data->state.proxydigest);

@@ -67,7 +67,7 @@ int getKernelVersion(struct OsVersionInfo* info)
 		{
 			void* fixedInfoPtr;
 			UINT fixedInfoSize;
-			if (VerQueryValueA(data, "\\", &fixedInfoPtr, &fixedInfoSize)) 
+			if (VerQueryValueA(data, "\\", &fixedInfoPtr, &fixedInfoSize))
 			{
 				VS_FIXEDFILEINFO* fileInfo = (VS_FIXEDFILEINFO*)fixedInfoPtr;
 				info->majorversion = HIWORD(fileInfo->dwProductVersionMS);
@@ -82,10 +82,10 @@ int getKernelVersion(struct OsVersionInfo* info)
 
 int getversion(struct OsVersionInfo* info)
 {
+	HKEY key;
 	info->description = "Windows";
 
 	// First get a friendly product name from the registry.
-	HKEY key;
 	if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &key) == ERROR_SUCCESS)
 	{
 		char value[512];

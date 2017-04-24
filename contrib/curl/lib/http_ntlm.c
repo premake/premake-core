@@ -27,7 +27,7 @@
 /*
  * NTLM details:
  *
- * http://davenport.sourceforge.net/ntlm.html
+ * https://davenport.sourceforge.io/ntlm.html
  * https://www.innovation.ch/java/ntlm.html
  */
 
@@ -35,7 +35,7 @@
 
 #include "urldata.h"
 #include "sendf.h"
-#include "rawstr.h"
+#include "strcase.h"
 #include "http_ntlm.h"
 #include "curl_ntlm_wb.h"
 #include "vauth/vauth.h"
@@ -136,8 +136,8 @@ CURLcode Curl_output_ntlm(struct connectdata *conn, bool proxy)
 
   if(proxy) {
     allocuserpwd = &conn->allocptr.proxyuserpwd;
-    userp = conn->proxyuser;
-    passwdp = conn->proxypasswd;
+    userp = conn->http_proxy.user;
+    passwdp = conn->http_proxy.passwd;
     ntlm = &conn->proxyntlm;
     authp = &conn->data->state.authproxy;
   }

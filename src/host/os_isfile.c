@@ -18,10 +18,9 @@ int os_isfile(lua_State* L)
 
 int do_isfile(lua_State* L, const char* filename)
 {
-	(void)(L);  /* warning: unused parameter */
-
 #if PLATFORM_WINDOWS
 	wchar_t wide_path[PATH_MAX];
+	DWORD attrib;
 
 	if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_path, PATH_MAX) == 0)
 	{
@@ -29,13 +28,16 @@ int do_isfile(lua_State* L, const char* filename)
 		return lua_error(L);
 	}
 
-	DWORD attrib = GetFileAttributesW(wide_path);
+	attrib = GetFileAttributesW(wide_path);
 	if (attrib != INVALID_FILE_ATTRIBUTES)
 	{
 		return (attrib & FILE_ATTRIBUTE_DIRECTORY) == 0;
 	}
 #else
 	struct stat buf;
+
+	(void)(L);  /* warning: unused parameter */
+
 	if (stat(filename, &buf) == 0)
 	{
 		return ((buf.st_mode & S_IFDIR) == 0);

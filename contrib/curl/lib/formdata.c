@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2017, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -30,12 +30,13 @@
 #include <libgen.h>
 #endif
 
-#include "urldata.h" /* for struct SessionHandle */
+#include "urldata.h" /* for struct Curl_easy */
 #include "formdata.h"
 #include "vtls/vtls.h"
-#include "strequal.h"
+#include "strcase.h"
 #include "sendf.h"
 #include "strdup.h"
+#include "rand.h"
 /* The last 3 #include files should be in this order */
 #include "curl_printf.h"
 #include "curl_memory.h"
@@ -47,7 +48,7 @@ static char *Curl_basename(char *path);
 #endif
 
 static size_t readfromfile(struct Form *form, char *buffer, size_t size);
-static char *formboundary(struct SessionHandle *data);
+static char *formboundary(struct Curl_easy *data);
 
 /* What kind of Content-Type to use on un-specified files with unrecognized
    extensions. */
@@ -80,7 +81,7 @@ AddHttpPost(char *name, size_t namelength,
             char *buffer, size_t bufferlength,
             char *contenttype,
             long flags,
-            struct curl_slist* contentHeader,
+            struct curl_slist *contentHeader,
             char *showfilename, char *userp,
             struct curl_httppost *parent_post,
             struct curl_httppost **httppost,
@@ -201,9 +202,9 @@ static const char *ContentTypeForFilename(const char *filename,
   if(filename) { /* in case a NULL was passed in */
     for(i=0; i<sizeof(ctts)/sizeof(ctts[0]); i++) {
       if(strlen(filename) >= strlen(ctts[i].extension)) {
-        if(strequal(filename +
-                    strlen(filename) - strlen(ctts[i].extension),
-                    ctts[i].extension)) {
+        if(strcasecompare(filename +
+                          strlen(filename) - strlen(ctts[i].extension),
+                          ctts[i].extension)) {
           contenttype = ctts[i].type;
           break;
         }
@@ -315,7 +316,7 @@ CURLFORMcode FormAdd(struct curl_httppost **httppost,
         break;
     }
 
-    switch (option) {
+    switch(option) {
     case CURLFORM_ARRAY:
       if(array_state)
         /* we don't support an array from within an array */
@@ -547,9 +548,9 @@ CURLFORMcode FormAdd(struct curl_httppost **httppost,
       {
         /* this "cast increases required alignment of target type" but
            we consider it OK anyway */
-        struct curl_slist* list = array_state?
-          (struct curl_slist*)(void*)array_value:
-          va_arg(params, struct curl_slist*);
+        struct curl_slist *list = array_state?
+          (struct curl_slist *)(void *)array_value:
+          va_arg(params, struct curl_slist *);
 
         if(current_form->contentheader)
           return_value = CURL_FORMADD_OPTION_TWICE;
@@ -761,8 +762,8 @@ CURLFORMcode curl_formadd(struct curl_httppost **httppost,
  * and CD/DVD images should be either a STREAM_LF format or a fixed format.
  *
  */
-curl_off_t VmsRealFileSize(const char * name,
-                           const struct_stat * stat_buf)
+curl_off_t VmsRealFileSize(const char *name,
+                           const struct_stat *stat_buf)
 {
   char buffer[8192];
   curl_off_t count;
@@ -791,8 +792,8 @@ curl_off_t VmsRealFileSize(const char * name,
  *  if not to call a routine to get the correct size.
  *
  */
-static curl_off_t VmsSpecialSize(const char * name,
-                                 const struct_stat * stat_buf)
+static curl_off_t VmsSpecialSize(const char *name,
+                                 const struct_stat *stat_buf)
 {
   switch(stat_buf->st_fab_rfm) {
   case FAB$C_VAR:
@@ -845,16 +846,23 @@ static CURLcode AddFormData(struct FormData **formp,
       goto error;
     }
 #endif
+    if(type != FORM_DATAMEM) {
+      newform->line = malloc((size_t)length+1);
+      if(!newform->line) {
+        result = CURLE_OUT_OF_MEMORY;
+        goto error;
+      }
+      alloc2 = newform->line;
+      memcpy(newform->line, line, (size_t)length);
 
-    newform->line = malloc((size_t)length+1);
-    if(!newform->line) {
-      result = CURLE_OUT_OF_MEMORY;
-      goto error;
+      /* zero terminate for easier debugging */
+      newform->line[(size_t)length]=0;
     }
-    alloc2 = newform->line;
-    memcpy(newform->line, line, (size_t)length);
+    else {
+      newform->line = (char *)line;
+      type = FORM_DATA; /* in all other aspects this is just FORM_DATA */
+    }
     newform->length = (size_t)length;
-    newform->line[(size_t)length]=0; /* zero terminate for easier debugging */
   }
   else
     /* For callbacks and files we don't have any actual data so we just keep a
@@ -862,13 +870,6 @@ static CURLcode AddFormData(struct FormData **formp,
     newform->line = (char *)line;
 
   newform->type = type;
-
-  if(*formp) {
-    (*formp)->next = newform;
-    *formp = newform;
-  }
-  else
-    *formp = newform;
 
   if(size) {
     if(type != FORM_FILE)
@@ -878,7 +879,7 @@ static CURLcode AddFormData(struct FormData **formp,
     else {
       /* Since this is a file to be uploaded here, add the size of the actual
          file */
-      if(!strequal("-", newform->line)) {
+      if(strcmp("-", newform->line)) {
         struct_stat file;
         if(!stat(newform->line, &file) && !S_ISDIR(file.st_mode))
           *size += filesize(newform->line, file);
@@ -889,6 +890,14 @@ static CURLcode AddFormData(struct FormData **formp,
       }
     }
   }
+
+  if(*formp) {
+    (*formp)->next = newform;
+    *formp = newform;
+  }
+  else
+    *formp = newform;
+
   return CURLE_OK;
   error:
   if(newform)
@@ -906,13 +915,21 @@ static CURLcode AddFormDataf(struct FormData **formp,
                              curl_off_t *size,
                              const char *fmt, ...)
 {
-  char s[4096];
+  char *s;
+  CURLcode result;
   va_list ap;
   va_start(ap, fmt);
-  vsnprintf(s, sizeof(s), fmt, ap);
+  s = curl_mvaprintf(fmt, ap);
   va_end(ap);
 
-  return AddFormData(formp, FORM_DATA, s, 0, size);
+  if(!s)
+    return CURLE_OUT_OF_MEMORY;
+
+  result = AddFormData(formp, FORM_DATAMEM, s, 0, size);
+  if(result)
+    free(s);
+
+  return result;
 }
 
 /*
@@ -932,8 +949,8 @@ void Curl_formclean(struct FormData **form_ptr)
     if(form->type <= FORM_CONTENT)
       free(form->line); /* free the line */
     free(form);       /* free the struct */
-
-  } while((form = next) != NULL); /* continue */
+    form = next;
+  } while(form); /* continue */
 
   *form_ptr = NULL;
 }
@@ -1014,8 +1031,8 @@ void curl_formfree(struct curl_httppost *form)
     free(form->contenttype); /* free the content type */
     free(form->showfilename); /* free the faked file name */
     free(form);       /* free the struct */
-
-  } while((form = next) != NULL); /* continue */
+    form = next;
+  } while(form); /* continue */
 }
 
 #ifndef HAVE_BASENAME
@@ -1136,7 +1153,7 @@ static CURLcode formdata_add_filename(const struct curl_httppost *file,
  * a NULL pointer in the 'data' argument.
  */
 
-CURLcode Curl_getformdata(struct SessionHandle *data,
+CURLcode Curl_getformdata(struct Curl_easy *data,
                           struct FormData **finalform,
                           struct curl_httppost *post,
                           const char *custom_content_type,
@@ -1150,7 +1167,7 @@ CURLcode Curl_getformdata(struct SessionHandle *data,
   curl_off_t size = 0; /* support potentially ENORMOUS formposts */
   char *boundary;
   char *fileboundary = NULL;
-  struct curl_slist* curList;
+  struct curl_slist *curList;
 
   *finalform = NULL; /* default form is empty */
 
@@ -1289,7 +1306,7 @@ CURLcode Curl_getformdata(struct SessionHandle *data,
         /* we should include the contents from the specified file */
         FILE *fileread;
 
-        fileread = strequal("-", file->contents)?
+        fileread = !strcmp("-", file->contents)?
           stdin:fopen(file->contents, "rb"); /* binary read for win32  */
 
         /*
@@ -1315,7 +1332,7 @@ CURLcode Curl_getformdata(struct SessionHandle *data,
             char buffer[512];
             while((nread = fread(buffer, 1, sizeof(buffer), fileread)) != 0) {
               result = AddFormData(&form, FORM_CONTENT, buffer, nread, &size);
-              if(result)
+              if(result || feof(fileread) || ferror(fileread))
                 break;
             }
           }
@@ -1357,8 +1374,8 @@ CURLcode Curl_getformdata(struct SessionHandle *data,
       if(result)
         break;
     }
-
-  } while((post = post->next) != NULL); /* for each field */
+    post = post->next;
+  } while(post); /* for each field */
 
   /* end-boundary for everything */
   if(!result)
@@ -1410,13 +1427,14 @@ int Curl_FormInit(struct Form *form, struct FormData *formdata)
    *
    */
 # define fopen_read vmsfopenread
-static FILE * vmsfopenread(const char *file, const char *mode) {
+static FILE * vmsfopenread(const char *file, const char *mode)
+{
   struct_stat statbuf;
   int result;
 
   result = stat(file, &statbuf);
 
-  switch (statbuf.st_fab_rfm) {
+  switch(statbuf.st_fab_rfm) {
   case FAB$C_VAR:
   case FAB$C_VFC:
   case FAB$C_STMCR:
@@ -1535,7 +1553,7 @@ char *Curl_formpostheader(void *formp, size_t *len)
   struct Form *form=(struct Form *)formp;
 
   if(!form->data)
-    return 0; /* nothing, ERROR! */
+    return NULL; /* nothing, ERROR! */
 
   header = form->data->line;
   *len = form->data->length;
@@ -1549,12 +1567,16 @@ char *Curl_formpostheader(void *formp, size_t *len)
  * formboundary() creates a suitable boundary string and returns an allocated
  * one.
  */
-static char *formboundary(struct SessionHandle *data)
+static char *formboundary(struct Curl_easy *data)
 {
   /* 24 dashes and 16 hexadecimal digits makes 64 bit (18446744073709551615)
      combinations */
-  return aprintf("------------------------%08x%08x",
-                 Curl_rand(data), Curl_rand(data));
+  unsigned int rnd[2];
+  CURLcode result = Curl_rand(data, &rnd[0], 2);
+  if(result)
+    return NULL;
+
+  return aprintf("------------------------%08x%08x", rnd[0], rnd[1]);
 }
 
 #else  /* CURL_DISABLE_HTTP */

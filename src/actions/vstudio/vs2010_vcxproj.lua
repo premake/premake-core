@@ -1217,6 +1217,8 @@
 	function m.compileAs(cfg)
 		if p.languages.isc(cfg.language) then
 			m.element("CompileAs", nil, "CompileAsC")
+		elseif p.languages.iscpp(cfg.language) then
+			m.element("CompileAs", nil, "CompileAsCpp")
 		end
 	end
 
@@ -1310,14 +1312,6 @@
 	function m.entryPointSymbol(cfg)
 		if cfg.entrypoint then
 			m.element("EntryPointSymbol", nil, cfg.entrypoint)
-		else
-			if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
-				not cfg.flags.WinMain and
-				cfg.clr == p.OFF and
-				cfg.system ~= p.XBOX360
-			then
-				m.element("EntryPointSymbol", nil, "mainCRTStartup")
-			end
 		end
 	end
 
@@ -1806,7 +1800,7 @@
 	function m.nmakePreprocessorDefinitions(cfg)
 		if cfg.kind ~= p.NONE and #cfg.defines > 0 then
 			local defines = table.concat(cfg.defines, ";")
-			defines = p.esc(defines) .. ";$(NMakePreprocessorDefinitions)"
+			defines = defines .. ";$(NMakePreprocessorDefinitions)"
 			m.element('NMakePreprocessorDefinitions', nil, defines)
 		end
 	end
@@ -1921,7 +1915,7 @@
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
 			end
-			defines = p.esc(defines) .. ";%%(PreprocessorDefinitions)"
+			defines = defines .. ";%%(PreprocessorDefinitions)"
 			m.element('PreprocessorDefinitions', condition, defines)
 		end
 	end
@@ -1933,7 +1927,7 @@
 			if escapeQuotes then
 				undefines = undefines:gsub('"', '\\"')
 			end
-			undefines = p.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			undefines = undefines .. ";%%(UndefinePreprocessorDefinitions)"
 			m.element('UndefinePreprocessorDefinitions', condition, undefines)
 		end
 	end
@@ -2151,7 +2145,7 @@
 	function m.disableSpecificWarnings(cfg, condition)
 		if #cfg.disablewarnings > 0 then
 			local warnings = table.concat(cfg.disablewarnings, ";")
-			warnings = p.esc(warnings) .. ";%%(DisableSpecificWarnings)"
+			warnings = warnings .. ";%%(DisableSpecificWarnings)"
 			m.element('DisableSpecificWarnings', condition, warnings)
 		end
 	end
@@ -2160,7 +2154,7 @@
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		if #cfg.fatalwarnings > 0 then
 			local fatal = table.concat(cfg.fatalwarnings, ";")
-			fatal = p.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
+			fatal = fatal .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end
 	end

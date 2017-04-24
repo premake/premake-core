@@ -501,7 +501,7 @@
 			"StaticRuntime",
 			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
-			"WinMain",
+			"WinMain",             -- DEPRECATED
 			"WPF",
 			"C++11",               -- DEPRECATED
 			"C++14",               -- DEPRECATED
@@ -1374,6 +1374,16 @@
 	api.deprecateValue("flags", "C11",   'Use `language "C11"` instead',   function(value) end, function(value) end)
 
 
+	-- 13 April 2017
+
+	api.deprecateValue("flags", "WinMain", 'Use `entrypoint "WinMainCRTStartup"` instead',
+	function(value)
+		entrypoint "WinMainCRTStartup"
+	end,
+	function(value)
+		entrypoint "mainCRTStartup"
+	end)
+
 -----------------------------------------------------------------------------
 --
 -- Install Premake's default set of command line arguments.
@@ -1533,5 +1543,8 @@
 
 	filter { "system:macosx" }
 		toolset "clang"
+
+	filter { "system:windows", "kind:WindowedApp or ConsoleApp" }
+		entrypoint "mainCRTStartup"
 
 	filter {}

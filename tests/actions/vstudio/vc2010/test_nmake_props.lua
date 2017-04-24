@@ -126,6 +126,19 @@ command 2</NMakeBuildCommandLine>
 		]]
 	end
 
+	function suite.onEscapedDefines()
+		premake.escaper(premake.vstudio.vs2010.esc)
+		defines { "&", "<", ">" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<NMakePreprocessorDefinitions>&amp;;&lt;;&gt;;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+</PropertyGroup>
+		]]
+		premake.escaper(nil)
+	end
+
 	function suite.onIncludeDirs()
 		includedirs { "include/lua", "include/zlib" }
 		prepare()
