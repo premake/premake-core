@@ -37,6 +37,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -222,6 +223,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -234,6 +236,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -458,6 +461,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -471,6 +475,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>None</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -484,6 +489,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -920,6 +926,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -1006,5 +1013,36 @@
 	<IntrinsicFunctions>true</IntrinsicFunctions>
 	<MinimalRebuild>false</MinimalRebuild>
 	<StringPooling>true</StringPooling>
+		]]
+	end
+
+
+
+--
+-- Check handling of the language api
+--
+	function suite.onLanguageC()
+		language 'C'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsC</CompileAs>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguageCpp()
+		language 'C++'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
+</ClCompile>
 		]]
 	end

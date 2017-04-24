@@ -1217,6 +1217,8 @@
 	function m.compileAs(cfg)
 		if p.languages.isc(cfg.language) then
 			m.element("CompileAs", nil, "CompileAsC")
+		elseif p.languages.iscpp(cfg.language) then
+			m.element("CompileAs", nil, "CompileAsCpp")
 		end
 	end
 
