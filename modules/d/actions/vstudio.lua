@@ -22,7 +22,9 @@
 	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015" }) do
 		local vs = p.action.get(v)
 		if vs ~= nil then
-			table.insert( vs.valid_languages, p.D )
+			p.override(vs, "supports_language", function(oldfn, lang)
+				return oldfn(lang) or lang == p.D;
+			end)
 			vs.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
 			p.override(vs, "onProject", function(oldfn, prj)

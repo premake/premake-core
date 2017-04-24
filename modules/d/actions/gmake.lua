@@ -28,9 +28,11 @@
 --
 -- Patch the gmake action with the allowed tools...
 --
-	gmake.valid_languages = table.join(gmake.valid_languages, { p.D } )
 	gmake.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
+	p.override(gmake, "supports_language", function(oldfn, lang)
+		return oldfn(lang) or lang == p.D;
+	end)
 
 	function m.make.separateCompilation(prj)
 		local some = false
