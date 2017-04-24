@@ -16,7 +16,7 @@ void buffer_init(Buffer* b)
 	b->data = NULL;
 }
 
-void buffer_destroy(Buffer* b) 
+void buffer_destroy(Buffer* b)
 {
 	free(b->data);
 	b->capacity = 0;
@@ -53,12 +53,13 @@ void buffer_puts(Buffer* b, const void* ptr, size_t len)
 	b->length += len;
 }
 
-void buffer_printf(Buffer* b, const char *fmt, ...) 
+void buffer_printf(Buffer* b, const char *fmt, ...)
 {
 	char text[2048];
+	int len;
 	va_list args;
 	va_start(args, fmt);
-	int len = vsnprintf(text, sizeof(text) - 1, fmt, args);
+	len = vsnprintf(text, sizeof(text) - 1, fmt, args);
 	va_end(args);
 	buffer_puts(b, text, len);
 }
