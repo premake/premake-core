@@ -106,6 +106,7 @@ int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
 int os_getWindowsRegistry(lua_State* L);
 int os_getversion(lua_State* L);
+int os_host(lua_State* L);
 int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);

@@ -64,6 +64,7 @@ static const luaL_Reg os_functions[] = {
 	{ "getpass",                os_getpass              },
 	{ "getWindowsRegistry",     os_getWindowsRegistry   },
 	{ "getversion",             os_getversion           },
+	{ "host",                   os_host                 },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
 	{ "locate",                 os_locate               },
@@ -153,7 +154,7 @@ int premake_init(lua_State* L)
 
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);
-	lua_setglobal(L, "_OS");
+	lua_setglobal(L, "_TARGET_OS");
 
 	/* find the user's home directory */
 	value = getenv("HOME");

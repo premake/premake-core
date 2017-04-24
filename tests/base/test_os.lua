@@ -23,9 +23,9 @@
 --
 
 	function suite.findlib_FindSystemLib()
-		if os.is("windows") then
+		if os.istarget("windows") then
 			test.istrue(os.findlib("user32"))
-		elseif os.is("haiku") then
+		elseif os.istarget("haiku") then
 			test.istrue(os.findlib("root"))
 		else
 			test.istrue(os.findlib("m"))
@@ -143,10 +143,10 @@
 	-- Check if outputof returns the command exit code
 	-- in addition of the command output
 	function suite.outputof_commandExitCode()
-		if os.is("macosx")
-			or os.is("linux")
-			or os.is("solaris")
-			or os.is("bsd")
+		if os.istarget("macosx")
+			or os.istarget("linux")
+			or os.istarget("solaris")
+			or os.istarget("bsd")
 		then
 			-- Assumes 'true' and 'false' commands exist
 			-- which should be the case on all *nix platforms
@@ -232,48 +232,48 @@
 -- os.getWindowsRegistry windows tests
 --
 	function suite.getreg_nonExistentValue()
-		if os.is("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All")
 			test.isequal(nil, x)
 		end
 	end
 
 	function suite.getreg_nonExistentDefaultValue()
-		if os.is("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All\\")
 			test.isequal(nil, x)
 		end
 	end
 
 	function suite.getreg_noSeparators()
-		if os.is("windows") then
+		if os.ishost("windows") then
 			os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
 		end
 	end
 
 	function suite.getreg_namedValue()
-		if os.is("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:Environment\\TEMP")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_namedValueOptSeparator()
-		if os.is("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKCU:\\Environment\\TEMP")
 			test.istrue(x ~= nil)
 		end
 	end
 
 	function suite.getreg_defaultValue()
-		if os.is("windows") then
+		if os.ishost("windows") then
 			local x = os.getWindowsRegistry("HKLM:SYSTEM\\CurrentControlSet\\Control\\SafeBoot\\Minimal\\AppInfo\\")
 			test.isequal("Service", x)
 		end
 	end
 
 
--- 
+--
 -- os.getversion tests.
 --
 

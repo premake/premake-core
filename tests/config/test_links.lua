@@ -16,7 +16,7 @@
 
 	function suite.setup()
 		premake.action.set("test")
-		_OS = "windows"
+		_TARGET_OS = "windows"
 		wks, prj = test.createWorkspace()
 	end
 

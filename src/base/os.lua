@@ -69,14 +69,14 @@
 		local path, formats
 
 		-- assemble a search path, depending on the platform
-		if os.is("windows") then
+		if os.istarget("windows") then
 			formats = { "%s.dll", "%s" }
 			path = os.getenv("PATH") or ""
-		elseif os.is("haiku") then
+		elseif os.istarget("haiku") then
 			formats = { "lib%s.so", "%s.so" }
 			path = os.getenv("LIBRARY_PATH") or ""
 		else
-			if os.is("macosx") then
+			if os.istarget("macosx") then
 				formats = { "lib%s.dylib", "%s.dylib" }
 				path = os.getenv("DYLD_LIBRARY_PATH") or ""
 			else
@@ -100,7 +100,7 @@
 			table.insert(formats, "%s")
 			path = path or ""
 			local archpath = "/lib:/usr/lib:/usr/local/lib"
-			if os.is64bit() and not os.is("macosx") then
+			if os.is64bit() and not os.istarget("macosx") then
 				archpath = "/lib64:/usr/lib64/:usr/local/lib64" .. ":" .. archpath
 			end
 			if (#path > 0) then
@@ -134,25 +134,64 @@
 	end
 
 
+--
+-- Retrieve the current target operating system ID string.
+--
 
---
--- Retrieve the current operating system ID string.
---
+	function os.target()
+		return _OPTIONS.os or _TARGET_OS
+	end
 
 	function os.get()
-		return _OPTIONS.os or _OS
+		premake.warnOnce("os.get", "os.get() is deprecated, use 'os.target()' or 'os.host()'.")
+		return os.target()
 	end
 
+	-- deprecate _OS
+	_G_metatable = {
+		__index = function(t, k)
+			if (k == '_OS') then
+				premake.warnOnce("_OS+get", "_OS is deprecated, use '_TARGET_OS'.")
+				return rawget(t, "_TARGET_OS")
+			else
+				return rawget(t, k)
+			end
+		end,
+
+		__newindex = function(t, k, v)
+			if (k == '_OS') then
+				premake.warnOnce("_OS+set", "_OS is deprecated, use '_TARGET_OS'.")
+				rawset(t, "_TARGET_OS", v)
+			else
+				rawset(t, k, v)
+			end
+		end
+	}
+	setmetatable(_G, _G_metatable)
+
 
 
 --
--- Check the current operating system; may be set with the /os command line flag.
+-- Check the current target operating system; may be set with the /os command line flag.
 --
+
+	function os.istarget(id)
+		return (os.target():lower() == id:lower())
+	end
 
 	function os.is(id)
-		return (os.get():lower() == id:lower())
+		premake.warnOnce("os.is", "os.is() is deprecated, use 'os.istarget()' or 'os.ishost()'.")
+		return os.istarget(id)
 	end
 
+
+--
+-- Check the current host operating system.
+--
+
+	function os.ishost(id)
+		return (os.host():lower() == id:lower())
+	end
 
 
 ---
@@ -219,9 +258,9 @@
 		else
 			-- Identify the system
 			local arch
-			if _OS == "windows" then
+			if os.ishost("windows") then
 				arch = os.getenv("PROCESSOR_ARCHITECTURE")
-			elseif _OS == "macosx" then
+			elseif os.ishost("macosx") then
 				arch = os.outputof("echo $HOSTTYPE")
 			else
 				arch = os.outputof("uname -m")
@@ -529,7 +568,7 @@
 	}
 
 	function os.translateCommands(cmd, map)
-		map = map or os.get()
+		map = map or os.target()
 		if type(map) == "string" then
 			map = os.commandTokens[map] or os.commandTokens["_"]
 		end

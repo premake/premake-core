@@ -55,7 +55,7 @@ $(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS) $(RESPONSE)
 	end
 
 	function suite.listResponseRulesPosix()
-		_OS = "linux"
+		_TARGET_OS = "linux"
 		suite.listResponseRules()
 		test.capture [[
 $(RESPONSE): MyProject.make
@@ -72,7 +72,7 @@ endif
 	end
 
 	function suite.listResponseRulesWindows()
-		_OS = "windows"
+		_TARGET_OS = "windows"
 		suite.listResponseRules()
 		test.capture [[
 $(RESPONSE): MyProject.make
