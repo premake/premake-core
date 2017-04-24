@@ -271,6 +271,24 @@
 
 
 --
+--	If defines are specified with escapable characters, they should be escaped.
+--
+
+	function suite.preprocessorDefinitions_onDefines()
+		premake.escaper(premake.vstudio.vs2010.esc)
+		defines { "&", "<", ">" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>&amp;;&lt;;&gt;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+		premake.escaper(nil)
+	end
+
+
+--
 -- If undefines are specified, the <UndefinePreprocessorDefinitions> element should be added.
 --
 
