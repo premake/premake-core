@@ -535,15 +535,24 @@
 		end
 
 		local processOne = function(cmd)
-			local token = cmd:match("^{.+}")
-			if token then
-				token = token:sub(2, #token - 1):lower()
-				local args = cmd:sub(#token + 4)
-				local func = map[token] or os.commandTokens["_"][token]
-				if func then
-					cmd = func(args)
+			local i, j, prev
+			repeat
+				i, j = cmd:find("{.-}")
+				if i then
+					if i == prev then
+						break
+					end
+
+					local token = cmd:sub(i + 1, j - 1):lower()
+					local args = cmd:sub(j + 2)
+					local func = map[token] or os.commandTokens["_"][token]
+					if func then
+						cmd = cmd:sub(1, i -1) .. func(args)
+					end
+
+					prev = i
 				end
-			end
+			until i == nil
 			return cmd
 		end
 

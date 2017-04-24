@@ -177,6 +177,13 @@
 		test.isequal("test a b", os.translateCommands("{COPY} a b", "test"))
 	end
 
+	function suite.translateCommand_callsProcessor_multipleTokens()
+		os.commandTokens.test = {
+			copy = function(value) return "test " .. value end
+		}
+		test.isequal("test a b; test c d; test e f;", os.translateCommands("{COPY} a b; {COPY} c d; {COPY} e f;", "test"))
+	end
+
 --
 -- os.translateCommand() windows COPY tests
 --
