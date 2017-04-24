@@ -368,33 +368,95 @@
 
 	function cs2005.nuGetReferences(prj)
 		if _ACTION >= "vs2010" then
-			for i = 1, #prj.nuget do
-				local package = prj.nuget[i]
-				_x(2, '<Reference Include="%s">', vstudio.nuget2010.packageId(package))
+			for _, package in ipairs(prj.nuget) do
+				local id = vstudio.nuget2010.packageId(package)
+				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 
-				-- We need to write HintPaths for all supported framework
-				-- versions. The last HintPath will override any previous
-				-- HintPaths (if the condition is met that is).
+				local cfg = p.project.getfirstconfig(prj)
+				local action = premake.action.current()
+				local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
 
-				for _, frameworkVersion in ipairs(cs2005.identifyFrameworkVersions(prj)) do
-					local assembly = vstudio.path(
-						prj,
-						p.filename(
-							prj.solution,
-							string.format(
-								"packages\\%s\\lib\\%s\\%s.dll",
-								vstudio.nuget2010.packageName(package),
-								cs2005.formatNuGetFrameworkVersion(frameworkVersion),
-								vstudio.nuget2010.packageId(package)
-							)
-						)
-					)
+				-- This is a bit janky. To compare versions, we extract all
+				-- numbers from the given string and right-pad the result with
+				-- zeros. Then we can just do a lexicographical compare on the
+				-- resulting strings.
+				--
+				-- This is so that we can compare version strings such as
+				-- "4.6" and "net451" with each other.
 
-					_x(3, '<HintPath Condition="Exists(\'%s\')">%s</HintPath>', assembly, assembly)
+				local function makeVersionComparable(a)
+					local numbers = ""
+
+					for number in a:gmatch("%d") do
+						numbers = numbers .. number
+					end
+
+					return string.format("%-10d", numbers):gsub(" ", "0")
 				end
 
-				_p(3, '<Private>True</Private>')
-				_p(2, '</Reference>')
+				local targetVersion = makeVersionComparable(targetFramework)
+
+				-- Figure out what folder contains the files for the nearest
+				-- supported .NET Framework version.
+
+				local files = {}
+
+				local bestVersion, bestFolder
+
+				for _, file in ipairs(packageAPIInfo.packageEntries) do
+					-- If this exporter ever supports frameworks such as
+					-- "netstandard1.3", "sl4", "sl5", "uap10", "wp8" or
+					-- "wp71", this code will need changing to match the right
+					-- folders.
+
+					local folder = file:match("^lib\\net(%d+)\\")
+
+					if folder and path.hasextension(file, ".dll") then
+						files[folder] = files[folder] or {}
+						table.insert(files[folder], file)
+
+						local version = makeVersionComparable(file:match("lib\\net(%d+)\\"))
+
+						if version <= targetVersion and (not bestVersion or version > bestVersion) then
+							bestVersion = version
+							bestFolder = folder
+						end
+					end
+				end
+
+				if not bestVersion then
+					p.error("NuGet package '%s' is not compatible with project '%s' .NET Framework version '%s'", id, prj.name, targetFramework)
+				end
+
+				-- Now, add references for all DLLs in that folder.
+
+				for _, file in ipairs(files[bestFolder]) do
+					-- There's some stuff missing from this include that we
+					-- can't get from the API and would need to download and
+					-- extract the package to figure out. It looks like we can
+					-- just omit it though.
+					--
+					-- So, for example, instead of:
+					--
+					-- <Reference Include="nunit.framework, Version=3.6.1.0,
+					-- <Culture=neutral, PublicKeyToken=2638cd05610744eb,
+					-- <processorArchitecture=MSIL">
+					--
+					-- We're just outputting:
+					--
+					-- <Reference Include="nunit.framework">
+
+					_x(2, '<Reference Include="%s">', path.getbasename(file))
+					_x(3, '<HintPath>%s</HintPath>', vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s.%s\\%s", id, packageAPIInfo.verbatimVersion or packageAPIInfo.version, file))))
+
+					if config.isCopyLocal(prj, package, true) then
+						_p(3, '<Private>True</Private>')
+					else
+						_p(3, '<Private>False</Private>')
+					end
+
+					_p(2, '</Reference>')
+				end
 			end
 		end
 	end
@@ -482,32 +544,6 @@
 		local platform = vstudio.projectPlatform(cfg)
 		local arch = cs2005.arch(cfg)
 		return string.format('Condition=" \'$(Configuration)|$(Platform)\' == \'%s|%s\' "', platform, arch)
-	end
-
-
---
--- Build and return a list of all .NET Framework versions up to and including
--- the project's framework version.
---
-
-	function cs2005.identifyFrameworkVersions(prj)
-		local frameworks = {}
-
-		local cfg = p.project.getfirstconfig(prj)
-		local action = premake.action.current()
-		local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
-
-		for _, frameworkVersion in ipairs(vstudio.frameworkVersions) do
-			if frameworkVersion == targetFramework then
-				break
-			end
-
-			table.insert(frameworks, frameworkVersion)
-		end
-
-		table.insert(frameworks, targetFramework)
-
-		return frameworks
 	end
 
 
