@@ -1,5 +1,6 @@
-premake.raw = { }
-local raw = premake.raw
+local p = premake
+p.raw = { }
+local raw = p.raw
 local gvisited = { }
 
 function raw.solution(sln)

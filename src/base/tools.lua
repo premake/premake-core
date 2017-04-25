@@ -16,7 +16,7 @@
 -- @param identifier
 --    A toolset identifier composed of two parts: the toolset name,
 --    which should match of the name of the adapter object ("gcc",
---    "clang", etc.) in the premake.tools namespace, and and optional
+--    "clang", etc.) in the p.tools namespace, and and optional
 --    version number, separated by a dash.
 --
 --     To make things more intuitive for Visual Studio users, supports

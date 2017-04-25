@@ -4,9 +4,10 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_resource_compiler")
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -16,8 +17,8 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
-		premake.escaper(premake.vstudio.vs2010.esc)
+		p.action.set("vs2010")
+		p.escaper(p.vstudio.vs2010.esc)
 		wks, prj = test.createWorkspace()
 	end
 

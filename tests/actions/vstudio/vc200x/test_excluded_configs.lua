@@ -4,9 +4,10 @@
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs200x_excluded_configs")
-	local vc200x = premake.vstudio.vc200x
-	local config = premake.config
+	local vc200x = p.vstudio.vc200x
+	local config = p.config
 
 --
 -- Setup/teardown
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }

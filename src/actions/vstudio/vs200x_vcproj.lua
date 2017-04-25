@@ -4,10 +4,10 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc200x = {}
-	local m = premake.vstudio.vc200x
-
 	local p = premake
+	p.vstudio.vc200x = {}
+	local m = p.vstudio.vc200x
+
 	local vstudio = p.vstudio
 	local context = p.context
 	local project = p.project
@@ -219,7 +219,7 @@
 	end
 
 	function m.tools(cfg)
-		premake.callArray(m.elements.tools, cfg, config.toolset(cfg))
+		p.callArray(m.elements.tools, cfg, config.toolset(cfg))
 	end
 
 

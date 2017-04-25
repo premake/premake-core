@@ -5,10 +5,10 @@
 -- Copyright (c) 2016 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_rule_targets")
-
-	local vc2010 = premake.vstudio.vc2010
-	local m = premake.vstudio.vs2010.rules.targets
+	local vc2010 = p.vstudio.vc2010
+	local m = p.vstudio.vs2010.rules.targets
 
 
 
@@ -19,7 +19,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		rule 'example'
 			display 'Example compiler'
 			fileExtension '.example'

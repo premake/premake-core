@@ -4,8 +4,9 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_nmake_props")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 		kind "Makefile"
 	end
@@ -127,7 +128,7 @@ command 2</NMakeBuildCommandLine>
 	end
 
 	function suite.onEscapedDefines()
-		premake.escaper(premake.vstudio.vs2010.esc)
+		p.escaper(p.vstudio.vs2010.esc)
 		defines { "&", "<", ">" }
 		prepare()
 		test.capture [[
@@ -136,7 +137,7 @@ command 2</NMakeBuildCommandLine>
 	<NMakePreprocessorDefinitions>&amp;;&lt;;&gt;;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
 </PropertyGroup>
 		]]
-		premake.escaper(nil)
+		p.escaper(nil)
 	end
 
 	function suite.onIncludeDirs()

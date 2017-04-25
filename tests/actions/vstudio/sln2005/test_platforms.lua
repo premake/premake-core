@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_sln2005_platforms")
-	local sln2005 = premake.vstudio.sln2005
+	local sln2005 = p.vstudio.sln2005
 
 
 --
@@ -15,7 +16,7 @@
 	local wks
 
 	function suite.setup()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C++"

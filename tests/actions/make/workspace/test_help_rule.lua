@@ -4,6 +4,7 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_help_rule")
 
 
@@ -19,7 +20,7 @@
 
 	local function prepare()
 		wks = test.getWorkspace(wks)
-		premake.make.helprule(wks)
+		p.make.helprule(wks)
 	end
 
 

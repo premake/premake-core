@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_sln2005_sections")
-	local sln2005 = premake.vstudio.sln2005
+	local sln2005 = p.vstudio.sln2005
 
 
 --
@@ -17,7 +18,7 @@
 	function suite.setup()
 		_MAIN_SCRIPT = "c:\\test\\premake5.lua"
 
-		premake.escaper(premake.vstudio.vs2005.esc)
+		p.escaper(p.vstudio.vs2005.esc)
 		wks = workspace("MyWorkspace")
 		wks.location = "c:\\test\\build"
 
@@ -46,7 +47,7 @@ GlobalSection(ExtensibilityGlobals) = postSolution
 		project "MyProject"
 		sln2005.extensibilityGlobals(wks)
 
-		local res = premake.captured()
+		local res = p.captured()
 		if (#res > 0) then
 			test.fail("no editorintegration output was expected");
 		end

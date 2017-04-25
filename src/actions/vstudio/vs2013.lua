@@ -4,9 +4,9 @@
 -- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc2013 = {}
-
 	local p = premake
+	p.vstudio.vc2013 = {}
+
 	local vstudio = p.vstudio
 	local vc2010 = vstudio.vc2010
 

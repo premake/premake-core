@@ -6,7 +6,8 @@
 ---
 
 	local suite = test.declare("codelite_workspace")
-	local codelite = premake.modules.codelite
+	local p = premake
+	local codelite = p.modules.codelite
 
 
 --
@@ -16,8 +17,8 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("codelite")
-		premake.indent("  ")
+		p.action.set("codelite")
+		p.indent("  ")
 		wks = test.createWorkspace()
 	end
 

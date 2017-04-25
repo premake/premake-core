@@ -4,6 +4,7 @@
 -- Copyright (c) 2011-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("project_eachconfig")
 
 
@@ -23,7 +24,7 @@
 			configurations ( buildcfgs )
 		end
 		prj = test.getproject(wks, 1)
-		for cfg in premake.project.eachconfig(prj) do
+		for cfg in p.project.eachconfig(prj) do
 			_p(2,'%s:%s', cfg.buildcfg or "", cfg.platform or "")
 		end
 	end

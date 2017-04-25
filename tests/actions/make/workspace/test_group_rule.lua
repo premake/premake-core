@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_group_rule")
-	local make = premake.make
+	local make = p.make
 
 
 --

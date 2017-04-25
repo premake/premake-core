@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_cs2005_build_events")
-	local cs2005 = premake.vstudio.cs2005
+	local cs2005 = p.vstudio.cs2005
 
 
 --
@@ -15,8 +16,8 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		premake.action.set("vs2005")
-		premake.escaper(premake.vstudio.vs2010.esc)
+		p.action.set("vs2005")
+		p.escaper(p.vstudio.vs2010.esc)
 		wks = test.createWorkspace()
 	end
 

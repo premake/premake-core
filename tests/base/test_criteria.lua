@@ -4,9 +4,9 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("criteria")
-
-	local criteria = premake.criteria
+	local criteria = p.criteria
 
 
 --
@@ -315,13 +315,13 @@
 --
 
 	function suite.passes_onAliasedValue()
-		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		p.api.addAliases("system", { ["gnu-linux"] = "linux" })
 		crit = criteria.new { "system:gnu-linux" }
 		test.istrue(criteria.matches(crit, { system="linux" }))
 	end
 
 	function suite.passes_onAliasedValue_withMixedCase()
-		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		p.api.addAliases("system", { ["gnu-linux"] = "linux" })
 		crit = criteria.new { "System:GNU-Linux" }
 		test.istrue(criteria.matches(crit, { system="linux" }))
 	end

@@ -4,9 +4,10 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_cs2005_output_props")
-	local cs2005 = premake.vstudio.cs2005
-	local project = premake.project
+	local cs2005 = p.vstudio.cs2005
+	local project = p.project
 
 
 --
@@ -16,7 +17,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		wks, prj = test.createWorkspace()
 		language "C#"
 	end
@@ -45,7 +46,7 @@
 --
 
 	function suite.intermediateDirectory_onVs2008()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		prepare()
 		test.capture [[
 		<OutputPath>bin\Debug\</OutputPath>
@@ -54,7 +55,7 @@
 	end
 
 	function suite.intermediateDirectory_onVs2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		prepare()
 		test.capture [[
 		<OutputPath>bin\Debug\</OutputPath>

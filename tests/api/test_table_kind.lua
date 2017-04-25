@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("api_table_kind")
-	local api = premake.api
+	local api = p.api
 
 
 --

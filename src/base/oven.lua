@@ -261,7 +261,7 @@
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(wks, self, buildcfg, platform)
 
-			if premake.action.supportsconfig(premake.action.current(), cfg) then
+			if p.action.supportsconfig(p.action.current(), cfg) then
 				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
 		end
@@ -405,7 +405,7 @@
 		local pairings = table.fold(buildcfgs, platforms)
 		for _, pairing in ipairs(pairings) do
 			local cfg = oven.bakeConfig(wks, nil, pairing[1], pairing[2])
-			if premake.action.supportsconfig(premake.action.current(), cfg) then
+			if p.action.supportsconfig(p.action.current(), cfg) then
 				table.insert(configs, cfg)
 			end
 		end

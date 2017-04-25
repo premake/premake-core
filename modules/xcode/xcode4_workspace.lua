@@ -38,7 +38,7 @@
 
 	function m.workspaceTail()
 		-- Don't output final newline.  Xcode doesn't.
-		premake.out('</Workspace>')
+		p.out('</Workspace>')
 	end
 
 

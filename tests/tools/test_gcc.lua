@@ -4,10 +4,11 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("tools_gcc")
 
-	local gcc = premake.tools.gcc
-	local project = premake.project
+	local gcc = p.tools.gcc
+	local project = p.project
 
 
 --

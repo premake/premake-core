@@ -58,7 +58,7 @@
 	function make.cleanrules(wks)
 		_p('clean:')
 		for prj in p.workspace.eachproject(wks) do
-			local prjpath = premake.filename(prj, make.getmakefilename(prj, true))
+			local prjpath = p.filename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(wks.location, prjpath))
 			local prjname = path.getname(prjpath)
 			_x(1,'@${MAKE} --no-print-directory -C %s -f %s clean', prjdir, prjname)
@@ -101,7 +101,7 @@
 --
 
 	function make.projects(wks)
-		_p('PROJECTS := %s', table.concat(premake.esc(table.extract(wks.projects, "name")), " "))
+		_p('PROJECTS := %s', table.concat(p.esc(table.extract(wks.projects, "name")), " "))
 		_p('')
 	end
 
@@ -167,14 +167,14 @@
 		for prj in p.workspace.eachproject(wks) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
-			_p('%s:%s', premake.esc(prj.name), make.list(deps))
+			_p('%s:%s', p.esc(prj.name), make.list(deps))
 
 			local cfgvar = make.tovar(prj.name)
 			_p('ifneq (,$(%s_config))', cfgvar)
 
 			_p(1,'@echo "==== Building %s ($(%s_config)) ===="', prj.name, cfgvar)
 
-			local prjpath = premake.filename(prj, make.getmakefilename(prj, true))
+			local prjpath = p.filename(prj, make.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(wks.location, prjpath))
 			local prjname = path.getname(prjpath)
 

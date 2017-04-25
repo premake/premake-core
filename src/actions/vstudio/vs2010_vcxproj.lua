@@ -4,9 +4,9 @@
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc2010 = {}
-
 	local p = premake
+	p.vstudio.vc2010 = {}
+
 	local vstudio = p.vstudio
 	local project = p.project
 	local config = p.config
@@ -17,7 +17,7 @@
 
 
 ---
--- Add namespace for element definition lists for premake.callArray()
+-- Add namespace for element definition lists for p.callArray()
 ---
 
 	m.elements = {}

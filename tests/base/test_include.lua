@@ -5,6 +5,7 @@
 --
 
 
+	local p = premake
 	local suite = test.declare("include")
 
 
@@ -24,43 +25,43 @@
 
 	function suite.include_findsPremakeFile_onFolderNameOnly()
 		include (_TESTS_DIR .. "/folder")
-		test.isequal("ok", premake.captured())
+		test.isequal("ok", p.captured())
 	end
 
 
 	function suite.include_onExactFilename()
 		include (_TESTS_DIR .. "/folder/premake5.lua")
-		test.isequal("ok", premake.captured())
+		test.isequal("ok", p.captured())
 	end
 
 
 	function suite.include_runsOnlyOnce_onMultipleIncludes()
 		include (_TESTS_DIR .. "/folder/premake5.lua")
 		include (_TESTS_DIR .. "/folder/premake5.lua")
-		test.isequal("ok", premake.captured())
+		test.isequal("ok", p.captured())
 	end
 
 
 	function suite.include_runsOnlyOnce_onMultipleIncludesWithDifferentPaths()
 		include (_TESTS_DIR .. "/folder/premake5.lua")
 		include (_TESTS_DIR .. "/../tests/folder/premake5.lua")
-		test.isequal("ok", premake.captured())
+		test.isequal("ok", p.captured())
 	end
 
 	function suite.includeexternal_runs()
 		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
-		test.isequal("ok", premake.captured())
+		test.isequal("ok", p.captured())
 	end
 
 	function suite.includeexternal_runsAfterInclude()
 		include (_TESTS_DIR .. "/folder/premake5.lua")
 		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
-		test.isequal("okok", premake.captured())
+		test.isequal("okok", p.captured())
 	end
 
 	function suite.includeexternal_runsTwiceAfterInclude()
 		include (_TESTS_DIR .. "/folder/premake5.lua")
 		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
 		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
-		test.isequal("okokok", premake.captured())
+		test.isequal("okokok", p.captured())
 	end

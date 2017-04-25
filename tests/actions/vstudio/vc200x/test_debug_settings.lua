@@ -4,9 +4,10 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs200x_debugdir")
-	local vc200x = premake.vstudio.vc200x
-	local project = premake.project
+	local vc200x = p.vstudio.vc200x
+	local project = p.project
 
 
 --
@@ -16,8 +17,8 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2005")
-		premake.escaper(premake.vstudio.vs2005.esc)
+		p.action.set("vs2005")
+		p.escaper(p.vstudio.vs2005.esc)
 		wks, prj = test.createWorkspace()
 	end
 

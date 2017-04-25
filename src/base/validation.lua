@@ -7,10 +7,9 @@
 -- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 ---
 
-	premake.validation = {}
-	local m = premake.validation
-
 	local p = premake
+	p.validation = {}
+	local m = p.validation
 
 	m.elements = {}
 

@@ -20,7 +20,7 @@
 -- Patch the project table to provide knowledge of D projects
 --
 	function p.project.isd(prj)
-		return prj.language == premake.D
+		return prj.language == p.D
 	end
 
 --
