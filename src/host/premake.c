@@ -501,8 +501,8 @@ static int run_premake_main(lua_State* L, const char* script)
 	 * argument allowed as an override. Debug builds will look at the
 	 * local file system first, then fall back to embedded. */
 #if defined(NDEBUG)
-	 int z = premake_test_file(L, script,
-	 	TEST_SCRIPTS | TEST_EMBEDDED);
+	int z = premake_test_file(L, script,
+		TEST_SCRIPTS | TEST_EMBEDDED);
 #else
 	int z = premake_test_file(L, script,
 		TEST_LOCAL | TEST_SCRIPTS | TEST_PATH | TEST_EMBEDDED);
@@ -529,10 +529,10 @@ static int run_premake_main(lua_State* L, const char* script)
  * contents of the file's script.
  */
 
- const buildin_mapping* premake_find_embedded_script(const char* filename)
- {
+const buildin_mapping* premake_find_embedded_script(const char* filename)
+{
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
- 	int i;
+	int i;
 	for (i = 0; builtin_scripts[i].name != NULL; ++i) {
 		if (strcmp(builtin_scripts[i].name, filename) == 0) {
 			return builtin_scripts + i;
@@ -540,7 +540,7 @@ static int run_premake_main(lua_State* L, const char* script)
 	}
 #endif
 	return NULL;
- }
+}
 
 
 

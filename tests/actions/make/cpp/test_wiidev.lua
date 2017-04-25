@@ -32,7 +32,7 @@
 		make.cppFlags(cfg, p.tools.gcc)
 		test.capture [[
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP -I$(LIBOGC_INC) $(MACHDEP) $(DEFINES) $(INCLUDES)
-  		]]
+		]]
 	end
 
 	function suite.writesCorrectLinkerFlags()

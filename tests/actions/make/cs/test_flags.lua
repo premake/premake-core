@@ -35,8 +35,8 @@
 		prepare()
 		test.capture [[
   FLAGS = /noconfig
-  		]]
-  	end
+		]]
+	end
 
 
 --
@@ -48,8 +48,8 @@
 		prepare()
 		test.capture [[
   FLAGS = /unsafe /noconfig
-  		]]
-  	end
+		]]
+	end
 
 
 --
@@ -61,5 +61,5 @@
 		prepare()
 		test.capture [[
   FLAGS = /noconfig /win32icon:"MyProject.ico"
-  		]]
-  	end
+		]]
+	end

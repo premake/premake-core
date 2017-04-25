@@ -123,7 +123,7 @@
 			if fcfg.buildaction == "Component" or
 			   fcfg.buildaction == "Form" or
 			   fcfg.buildaction == "UserControl"
-		   then
+			then
 				info.SubType = fcfg.buildaction
 			end
 

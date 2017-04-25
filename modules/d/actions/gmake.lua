@@ -159,8 +159,8 @@
 			_p('\t@echo $(notdir $<)')
 			_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
 		else
-	 		oldfn(prj, node)
-	 	end
+			oldfn(prj, node)
+		end
 	end)
 
 

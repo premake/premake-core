@@ -41,6 +41,6 @@ ifeq ($(config),debug)
   ifeq ($(origin AR), default)
     AR = ar
   endif
-  		]]
+		]]
 	end
 

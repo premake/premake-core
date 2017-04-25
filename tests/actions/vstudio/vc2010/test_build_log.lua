@@ -44,7 +44,7 @@
 	function suite.writesPathIfSet()
 		buildlog "logs/MyCustomLogFile.log"
 		prepare()
- 		test.capture [[
+		test.capture [[
 <BuildLog>
 	<Path>logs\MyCustomLogFile.log</Path>
 </BuildLog>

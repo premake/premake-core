@@ -35,7 +35,7 @@
 		test.capture [[
 all: prebuild prelink $(TARGET)
 	@:
-  		]]
+		]]
 	end
 
 
@@ -53,5 +53,5 @@ all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))In
 
 $(dir $(TARGETDIR))PkgInfo:
 $(dir $(TARGETDIR))Info.plist:
-  		]]
+		]]
 	end

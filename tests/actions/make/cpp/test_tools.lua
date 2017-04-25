@@ -31,5 +31,5 @@
 		make.cppTools(cfg, p.tools.gcc)
 		test.capture [[
   RESCOMP = windres
-  		]]
+		]]
 	end

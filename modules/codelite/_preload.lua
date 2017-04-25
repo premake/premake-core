@@ -23,7 +23,7 @@
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "Makefile", "SharedLib", "StaticLib", "Utility" },
 		valid_tools     = {
-		    cc = { "gcc", "clang", "msc" }
+			cc = { "gcc", "clang", "msc" }
 		},
 		supports_language = function(lang)
 			return p.languages.isc(lang) or

@@ -318,12 +318,12 @@
 --    The alias name (another string value).
 ---
 
-     function api.alias(original, alias)
-     	p.alias(_G, original, alias)
-     	if _G["remove" .. original] then
-     		p.alias(_G, "remove" .. original, "remove" .. alias)
-     	end
-     end
+	function api.alias(original, alias)
+		p.alias(_G, original, alias)
+		if _G["remove" .. original] then
+			p.alias(_G, "remove" .. original, "remove" .. alias)
+		end
+	end
 
 
 

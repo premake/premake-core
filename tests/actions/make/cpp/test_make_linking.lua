@@ -153,38 +153,38 @@
 -- Check a linking to a sibling shared library using -l and -L.
 --
 
-    function suite.links_onSiblingSharedLib()
-        links "MyProject2"
-        flags { "RelativeLinks" }
+	function suite.links_onSiblingSharedLib()
+		links "MyProject2"
+		flags { "RelativeLinks" }
 
-        test.createproject(wks)
-        kind "SharedLib"
-        location "build"
+		test.createproject(wks)
+		kind "SharedLib"
+		location "build"
 
-        prepare { "ldFlags", "libs", "ldDeps" }
-        test.capture [[
+		prepare { "ldFlags", "libs", "ldDeps" }
+		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
   LIBS += -lMyProject2
   LDDEPS += build/bin/Debug/libMyProject2.so
-        ]]
-    end
+		]]
+	end
 
-    function suite.links_onMacOSXSiblingSharedLib()
-    	_TARGET_OS = "macosx"
-        links "MyProject2"
+	function suite.links_onMacOSXSiblingSharedLib()
+		_TARGET_OS = "macosx"
+		links "MyProject2"
 		flags { "RelativeLinks" }
 
-        test.createproject(wks)
-        kind "SharedLib"
-        location "build"
+		test.createproject(wks)
+		kind "SharedLib"
+		location "build"
 
-        prepare { "ldFlags", "libs", "ldDeps" }
-        test.capture [[
+		prepare { "ldFlags", "libs", "ldDeps" }
+		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'@loader_path/../../build/bin/Debug' -Wl,-x
   LIBS += -lMyProject2
   LDDEPS += build/bin/Debug/libMyProject2.dylib
-        ]]
-    end
+		]]
+	end
 
 --
 -- Check a linking multiple siblings.
