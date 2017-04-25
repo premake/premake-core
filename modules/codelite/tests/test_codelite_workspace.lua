@@ -129,3 +129,24 @@
 </CodeLite_Workspace>
 		]])
 	end
+
+
+	function suite.onActiveProject()
+		workspace("MyWorkspace")
+		startproject "MyProject"
+		prepare()
+		test.capture([[
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+  <Project Name="MyProject" Path="MyProject.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Project Name="MyProject" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="MyProject" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
+		]])
+	end
