@@ -52,7 +52,7 @@ else
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
-  		]]
+		]]
 	end
 
 
@@ -81,7 +81,7 @@ else
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
-  		]]
+		]]
 	end
 
 

@@ -38,8 +38,8 @@
 EMBEDFILES += \
 	$(OBJDIR)/MyProject.Hello.resources \
 
-  		]]
-  	end
+		]]
+	end
 
 
 --
@@ -53,8 +53,8 @@ EMBEDFILES += \
 EMBEDFILES += \
 	$(OBJDIR)/MyProject.Hello.resources \
 
-  		]]
-  	end
+		]]
+	end
 
 
 --
@@ -71,5 +71,5 @@ EMBEDFILES += \
 EMBEDFILES += \
 	Hello.txt \
 
-  		]]
-  	end
+		]]
+	end

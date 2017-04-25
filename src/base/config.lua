@@ -231,7 +231,7 @@
 --    An array containing the requested link target information.
 --
 
- 	function config.getlinks(cfg, kind, part, linkage)
+	function config.getlinks(cfg, kind, part, linkage)
 		local result = {}
 
 		-- If I'm building a list of link directories, include libdirs

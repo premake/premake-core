@@ -147,7 +147,7 @@
 		test.isequal("", path.getextension("filename"))
 	end
 
-    function suite.getextension_ReturnsEmptyString_OnPathWithDotAndNoExtension()
+	function suite.getextension_ReturnsEmptyString_OnPathWithDotAndNoExtension()
 		test.isequal("", path.getextension("/.premake/premake"))
 	end
 
@@ -155,7 +155,7 @@
 		test.isequal(".txt", path.getextension("filename.txt"))
 	end
 
-    function suite.getextension_ReturnsExtension_OnPathWithDot()
+	function suite.getextension_ReturnsExtension_OnPathWithDot()
 		test.isequal(".lua", path.getextension("/.premake/premake.lua"))
 	end
 
@@ -222,7 +222,7 @@
 	end
 
 	function suite.getrelative_ignoresTrailingSlashes()
-		 test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
+		test.isequal("c", path.getrelative("/a/b/","/a/b/c"))
 	end
 
 	function suite.getrelative_returnsAbsPath_onContactWithFileSysRoot()
@@ -410,19 +410,19 @@
 	end
 
 	function suite.getabsolute_replaceExtensionWithDotMultipleDots()
-			test.isequal("/nunit.framework.foo", path.replaceextension("/nunit.framework.dll",".foo"))
+		test.isequal("/nunit.framework.foo", path.replaceextension("/nunit.framework.dll",".foo"))
 	end
 
 	function suite.getabsolute_replaceExtensionCompletePath()
-			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main.cpp",".foo"))
+		test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main.cpp",".foo"))
 	end
 
 	function suite.getabsolute_replaceExtensionWithoutExtension()
-			test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main",".foo"))
+		test.isequal("/nunit/framework/main.foo", path.replaceextension("/nunit/framework/main",".foo"))
 	end
 
-    function suite.getabsolute_replaceExtensionWithEmptyString()
-			test.isequal("foo", path.replaceextension("foo.lua",""))
+	function suite.getabsolute_replaceExtensionWithEmptyString()
+		test.isequal("foo", path.replaceextension("foo.lua",""))
 	end
 
 

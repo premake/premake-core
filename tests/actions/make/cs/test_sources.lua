@@ -38,8 +38,8 @@
 SOURCES += \
 	Hello.cs \
 
-  		]]
-  	end
+		]]
+	end
 
 --
 -- Path delimiter uses slash instead of backslash
@@ -68,8 +68,8 @@ SOURCES += \
 SOURCES += \
 	Hello.cs \
 
-  		]]
-  	end
+		]]
+	end
 
 
 --
@@ -86,5 +86,5 @@ SOURCES += \
 SOURCES += \
 	Hello.txt \
 
-  		]]
-  	end
+		]]
+	end

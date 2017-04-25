@@ -31,10 +31,10 @@ int os_islink(lua_State* L)
 #else
 	{
 		struct stat buf;
-	    if (lstat(path, &buf) == 0) {
-	    	lua_pushboolean(L, S_ISLNK(buf.st_mode));
-	    	return 1;
-	    }
+		if (lstat(path, &buf) == 0) {
+			lua_pushboolean(L, S_ISLNK(buf.st_mode));
+			return 1;
+		}
 	}
 #endif
 

@@ -1110,7 +1110,7 @@
 		tokens = true,
 	}
 
- 	api.register {
+	api.register {
 		name = "usingdirs",
 		scope = "config",
 		kind = "list:directory",

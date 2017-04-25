@@ -7,9 +7,9 @@
 	local p = premake
 	local xcode = p.modules.xcode
 	local tree  = p.tree
-    local workspace = p.workspace
+	local workspace = p.workspace
 	local project = p.project
-    local config = p.config
+	local config = p.config
 	local fileconfig = p.fileconfig
 
 

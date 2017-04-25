@@ -10,7 +10,7 @@
 	local ldc = p.tools.ldc
 	local project = p.project
 	local config = p.config
-    local d = p.modules.d
+	local d = p.modules.d
 
 
 --

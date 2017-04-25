@@ -10,7 +10,7 @@
 	local gdc = p.tools.gdc
 	local project = p.project
 	local config = p.config
-    local d = p.modules.d
+	local d = p.modules.d
 
 	--
 	-- Set default tools

@@ -127,9 +127,9 @@
 -- List fields should return an empty list of not set.
 --
 
-     function suite.lists_returnsEmptyTable_onNotSet()
-          test.isequal({}, configset.fetch(cset, field.get("buildoptions"), {}))
-     end
+	function suite.lists_returnsEmptyTable_onNotSet()
+		test.isequal({}, configset.fetch(cset, field.get("buildoptions"), {}))
+	end
 
 
 --

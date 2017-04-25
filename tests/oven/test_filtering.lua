@@ -21,7 +21,7 @@
 	local function prepare()
 		wks = test.getWorkspace(wks)
 		prj = test.getproject(wks, 1)
-        cfg = test.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 

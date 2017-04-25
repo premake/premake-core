@@ -190,9 +190,9 @@
 			for cfg in project.eachconfig(prj) do
 			if not depsOnly then
 				for _, link in ipairs(cfg.links) do
-				    if link ~= prj.name then
-				    	add_to_project_list(cfg, link, result)
-				    end
+					if link ~= prj.name then
+						add_to_project_list(cfg, link, result)
+					end
 				end
 			end
 				if not linkOnly then

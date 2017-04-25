@@ -37,7 +37,7 @@
 OBJECTS := \
 	$(OBJDIR)/hello.o \
 
-  		]]
+		]]
 	end
 
 
@@ -52,7 +52,7 @@ OBJECTS := \
 OBJECTS := \
 	$(OBJDIR)/hello.o \
 
-  		]]
+		]]
 	end
 
 
@@ -85,7 +85,7 @@ ifeq ($(config),release)
 
 endif
 
-  		]]
+		]]
 	end
 
 
@@ -101,7 +101,7 @@ OBJECTS := \
 	$(OBJDIR)/hello.o \
 	$(OBJDIR)/hello1.o \
 
-  		]]
+		]]
 	end
 
 

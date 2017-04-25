@@ -90,7 +90,7 @@
 --
 
 	function path.getextension(p)
-        p = path.getname(p)
+		p = path.getname(p)
 		local i = p:findlast(".", true)
 		if (i) then
 			return p:sub(i)
