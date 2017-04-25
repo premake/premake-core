@@ -281,17 +281,17 @@
 
 		_p(3, '<Debugger IsRemote="%s" RemoteHostName="%s" RemoteHostPort="%s" DebuggerPath="" IsExtended="%s">', iif(cfg.debugremotehost, "yes", "no"), cfg.debugremotehost or "", iif(cfg.debugport, tostring(cfg.debugport), ""), iif(cfg.debugextendedprotocol, "yes", "no"))
 		if #cfg.debugsearchpaths > 0 then
-			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(premake.esc(project.getrelative(cfg.project, cfg.debugsearchpaths)), "\n"))
+			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(p.esc(project.getrelative(cfg.project, cfg.debugsearchpaths)), "\n"))
 		else
 			_p(4, '<DebuggerSearchPaths/>')
 		end
 		if #cfg.debugconnectcommands > 0 then
-			_p(4, '<PostConnectCommands>%s</PostConnectCommands>', table.concat(premake.esc(cfg.debugconnectcommands), "\n"))
+			_p(4, '<PostConnectCommands>%s</PostConnectCommands>', table.concat(p.esc(cfg.debugconnectcommands), "\n"))
 		else
 			_p(4, '<PostConnectCommands/>')
 		end
 		if #cfg.debugstartupcommands > 0 then
-			_p(4, '<StartupCommands>%s</StartupCommands>', table.concat(premake.esc(cfg.debugstartupcommands), "\n"))
+			_p(4, '<StartupCommands>%s</StartupCommands>', table.concat(p.esc(cfg.debugstartupcommands), "\n"))
 		else
 			_p(4, '<StartupCommands/>')
 		end

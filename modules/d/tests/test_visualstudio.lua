@@ -5,7 +5,8 @@
 ---
 
 	local suite = test.declare("visual_d")
-	local m = premake.modules.d
+	local p = premake
+	local m = p.modules.d
 
 
 ---------------------------------------------------------------------------
@@ -15,9 +16,9 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		premake.action.set("vs2010")
---		premake.escaper(premake.vstudio.vs2005.esc)
-		premake.indent(" ")
+		p.action.set("vs2010")
+--		p.escaper(p.vstudio.vs2005.esc)
+		p.indent(" ")
 		wks = workspace "MyWorkspace"
 		configurations { "Debug", "Release" }
 		language "D"
@@ -41,8 +42,8 @@
 	function suite.slnProj()
 		project "MyProject"
 		language "D"
-		premake.vstudio.sln2005.reorderProjects(wks)
-		premake.vstudio.sln2005.projects(wks)
+		p.vstudio.sln2005.reorderProjects(wks)
+		p.vstudio.sln2005.projects(wks)
 		test.capture [[
 Project("{002A2DE9-8BB6-484D-9802-7E4AD4084715}") = "MyProject", "MyProject.visualdproj", "{42B5DBC6-AE1F-903D-F75D-41E363076E92}"
 EndProject

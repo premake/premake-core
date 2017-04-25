@@ -4,9 +4,10 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("tools_snc")
 
-	local snc = premake.tools.snc
+	local snc = p.tools.snc
 
 
 --

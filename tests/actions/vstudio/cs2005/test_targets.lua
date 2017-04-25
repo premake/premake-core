@@ -4,8 +4,9 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2012_csproj_targets")
-	local cs2005 = premake.vstudio.cs2005
+	local cs2005 = p.vstudio.cs2005
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		wks = test.createWorkspace()
 		language "C#"
 	end

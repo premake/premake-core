@@ -4,9 +4,10 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_extension_settings")
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -16,7 +17,7 @@
 	local wks
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		rule "MyRules"
 		rule "MyOtherRules"
 		wks = test.createWorkspace()

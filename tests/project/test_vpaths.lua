@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("project_vpaths")
-	local project = premake.project
+	local project = p.project
 
 
 --

@@ -4,9 +4,9 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.cs2005 = {}
-
 	local p = premake
+	p.vstudio.cs2005 = {}
+
 	local vstudio = p.vstudio
 	local cs2005  = p.vstudio.cs2005
 	local project = p.project
@@ -35,7 +35,7 @@
 	function cs2005.generate(prj)
 		p.utf8()
 
-		premake.callarray(cs2005, cs2005.elements.project, prj)
+		p.callarray(cs2005, cs2005.elements.project, prj)
 
 		_p(1,'<ItemGroup>')
 		cs2005.files(prj)
@@ -55,7 +55,7 @@
 
 	function cs2005.projectElement(prj)
 		local ver = ''
-		local action = premake.action.current()
+		local action = p.action.current()
 		if action.vstudio.toolsVersion then
 			ver = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 		end
@@ -86,7 +86,7 @@
 	function cs2005.projectProperties(prj)
 		_p(1,'<PropertyGroup>')
 		local cfg = project.getfirstconfig(prj)
-		premake.callarray(cs2005, cs2005.elements.projectProperties, cfg)
+		p.callarray(cs2005, cs2005.elements.projectProperties, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -109,7 +109,7 @@
 	end
 
 	function cs2005.configuration(cfg)
-		premake.callarray(cs2005, cs2005.elements.configuration, cfg)
+		p.callarray(cs2005, cs2005.elements.configuration, cfg)
 		_p(1,'</PropertyGroup>')
 	end
 
@@ -142,7 +142,7 @@
 			-- Process any sub-elements required by this file; choose the write
 			-- element form to use based on the results.
 
-			local contents = premake.capture(function ()
+			local contents = p.capture(function ()
 				-- Try to write file-level elements in the same order as Visual Studio
 				local elements = {
 					"AutoGen",
@@ -190,7 +190,7 @@
 		local firstcfg = project.getfirstconfig(prj)
 
 		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
+		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- test if all fileinfo's are going to be the same for each config.
 				local allsame = true
@@ -373,7 +373,7 @@
 				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 
 				local cfg = p.project.getfirstconfig(prj)
-				local action = premake.action.current()
+				local action = p.action.current()
 				local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
 
 				-- This is a bit janky. To compare versions, we extract all
@@ -601,7 +601,7 @@
 
 
 	function cs2005.productVersion(cfg)
-		local action = premake.action.current()
+		local action = p.action.current()
 		if action.vstudio.productVersion then
 			_p(2,'<ProductVersion>%s</ProductVersion>', action.vstudio.productVersion)
 		end
@@ -625,7 +625,7 @@
 
 
 	function cs2005.schemaVersion(cfg)
-		local action = premake.action.current()
+		local action = p.action.current()
 		if action.vstudio.csprojSchemaVersion then
 			_p(2,'<SchemaVersion>%s</SchemaVersion>', action.vstudio.csprojSchemaVersion)
 		end
@@ -633,7 +633,7 @@
 
 
 	function cs2005.targetFrameworkVersion(cfg)
-		local action = premake.action.current()
+		local action = p.action.current()
 		local framework = cfg.dotnetframework or action.vstudio.targetFramework
 		if framework then
 			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)

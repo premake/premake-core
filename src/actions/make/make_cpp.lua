@@ -16,7 +16,7 @@
 
 
 ---
--- Add namespace for element definition lists for premake.callarray()
+-- Add namespace for element definition lists for p.callarray()
 ---
 
 	cpp.elements = {}
@@ -44,8 +44,8 @@
 	end
 
 	function make.cpp.generate(prj)
-		premake.eol("\n")
-		premake.callArray(cpp.elements.makefile, prj)
+		p.eol("\n")
+		p.callArray(cpp.elements.makefile, prj)
 	end
 
 
@@ -84,13 +84,13 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = premake.tools[_OPTIONS.cc or cfg.toolset or "gcc"]
+			local toolset = p.tools[_OPTIONS.cc or cfg.toolset or "gcc"]
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callArray(cpp.elements.configuration, cfg, toolset)
+			p.callArray(cpp.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end
@@ -122,7 +122,7 @@
 
 	function make.cppFileRules(prj)
 		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
+		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- check to see if this file has custom rules
 				local rules
@@ -207,7 +207,7 @@
 
 		-- now walk the list of files in the project
 		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
+		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				-- figure out what configurations contain this file, and
 				-- if it uses custom build rules
@@ -316,7 +316,7 @@
 
 
 	function make.cppAllRules(cfg, toolset)
-		if cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP then
+		if cfg.system == p.MACOSX and cfg.kind == p.WINDOWEDAPP then
 			_p('all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 			_p('\t@:')
 			_p('')
@@ -423,7 +423,7 @@
 
 	function make.ldDeps(cfg, toolset)
 		local deps = config.getlinks(cfg, "siblings", "fullpath")
-		_p('  LDDEPS +=%s', make.list(premake.esc(deps)))
+		_p('  LDDEPS +=%s', make.list(p.esc(deps)))
 	end
 
 
@@ -440,13 +440,13 @@
 
 
 	function make.linkCmd(cfg, toolset)
-		if cfg.kind == premake.STATICLIB then
-			if cfg.architecture == premake.UNIVERSAL then
+		if cfg.kind == p.STATICLIB then
+			if cfg.architecture == p.UNIVERSAL then
 				_p('  LINKCMD = libtool -o "$@" $(OBJECTS)')
 			else
 				_p('  LINKCMD = $(AR) ' .. (toolset.arargs or '-rcs') ..' "$@" $(OBJECTS)')
 			end
-		elseif cfg.kind == premake.UTILITY then
+		elseif cfg.kind == p.UTILITY then
 			-- Empty LINKCMD for Utility (only custom build rules)
 			_p('  LINKCMD =')
 		else

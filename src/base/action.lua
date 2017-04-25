@@ -7,7 +7,7 @@
 	local p = premake
 	p.action = {}
 
-	local action = premake.action
+	local action = p.action
 
 
 
@@ -62,7 +62,7 @@
 		end
 
 		if act.os ~= nil then
-			premake.warnOnce(act.trigger, "action '" .. act.trigger .. "' sets 'os' field, which is deprecated, use 'targetos' instead.")
+			p.warnOnce(act.trigger, "action '" .. act.trigger .. "' sets 'os' field, which is deprecated, use 'targetos' instead.")
 			act.targetos = act.os
 			act.os = nil
 		end
@@ -272,7 +272,7 @@
 -- @return
 -- True if the configuration is supported, false otherwise.
 --
-	function premake.action.supportsconfig(action, cfg)
+	function p.action.supportsconfig(action, cfg)
 		if not action then
 			return false
 		end

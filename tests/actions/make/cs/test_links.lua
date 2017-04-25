@@ -4,10 +4,11 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
     local suite = test.declare("make_cs_links")
-    local make = premake.make
-    local cs = premake.make.cs
-    local project = premake.project
+    local make = p.make
+    local cs = p.make.cs
+    local project = p.project
 
 --
 -- Setup
@@ -21,7 +22,7 @@
 
     local function prepare()
         local cfg = test.getconfig(prj, "Debug")
-        make.csLinkCmd(cfg, premake.tools.dotnet)
+        make.csLinkCmd(cfg, p.tools.dotnet)
     end
 
 

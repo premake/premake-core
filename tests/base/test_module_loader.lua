@@ -4,6 +4,7 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("module_loader")
 
 --
@@ -14,7 +15,7 @@
 
 	function suite.setup()
 		table.insert(package.loaders, function (name)
-			premake.out(name)
+			p.out(name)
 			return loadstring("")
 		end)
 		loaderIndex = #package.loaders

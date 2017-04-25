@@ -4,9 +4,10 @@
 -- Copyright (c) 2016 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_ensure_nuget_imports")
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -16,12 +17,12 @@
 	local wks
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject(wks, 1)
+		local prj = p.solution.getproject(wks, 1)
 		vc2010.ensureNuGetPackageBuildImports(prj)
 	end
 

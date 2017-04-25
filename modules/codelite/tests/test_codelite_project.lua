@@ -6,7 +6,8 @@
 
 
 	local suite = test.declare("codelite_cproj")
-	local codelite = premake.modules.codelite
+	local p = premake
+	local codelite = p.modules.codelite
 
 ---------------------------------------------------------------------------
 -- Setup/Teardown
@@ -15,13 +16,13 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("codelite")
-		premake.indent("  ")
+		p.action.set("codelite")
+		p.indent("  ")
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		wks = premake.oven.bakeWorkspace(wks)
+		wks = p.oven.bakeWorkspace(wks)
 		prj = test.getproject(wks, 1)
 	end
 

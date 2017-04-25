@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_cs2005_platform_groups")
-	local cs2005 = premake.vstudio.cs2005
+	local cs2005 = p.vstudio.cs2005
 
 --
 -- Setup
@@ -14,7 +15,7 @@
 	local wks
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		language "C#"
@@ -32,7 +33,7 @@
 --
 
 	function suite.vs2008()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		prepare()
 		test.capture [[
 <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -41,7 +42,7 @@
 
 
 	function suite.vs2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		prepare()
 		test.capture [[
 <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -55,7 +56,7 @@
 --
 
 	function suite.vs2008_onAnyCpu()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		platforms "Any CPU"
 		prepare("Any CPU")
 		test.capture [[
@@ -65,7 +66,7 @@
 
 
 	function suite.vs2010_onAnyCpu()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		platforms "Any CPU"
 		prepare("Any CPU")
 		test.capture [[

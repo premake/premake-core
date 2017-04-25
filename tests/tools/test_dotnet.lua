@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("tools_dotnet")
-	local dotnet = premake.tools.dotnet
+	local dotnet = p.tools.dotnet
 
 
 --

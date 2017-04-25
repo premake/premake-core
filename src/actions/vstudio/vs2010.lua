@@ -4,9 +4,9 @@
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vs2010 = {}
-
 	local p = premake
+	p.vstudio.vs2010 = {}
+
 	local vs2010 = p.vstudio.vs2010
 	local vstudio = p.vstudio
 	local project = p.project
@@ -69,7 +69,7 @@
 
 			-- Only generate a filters file if the source tree actually has subfolders
 			if tree.hasbranches(project.getsourcetree(prj)) then
-				premake.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
+				p.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
 			end
 		end
 

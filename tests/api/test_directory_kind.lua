@@ -4,8 +4,9 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("api_directory_kind")
-	local api = premake.api
+	local api = p.api
 
 
 --

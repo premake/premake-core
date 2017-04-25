@@ -4,8 +4,8 @@
 -- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 ---
 
-	premake.languages = {}
 	local p = premake
+	p.languages = {}
 	local languages = p.languages
 
 
@@ -62,7 +62,7 @@
 -- Combined list of all supported languages.
 ---
 	languages.all = table.join(
-		languages.c, 
-		languages.cpp, 
+		languages.c,
+		languages.cpp,
 		languages.dotnet
 	)

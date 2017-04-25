@@ -4,10 +4,11 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vc200x_configuration")
-	local vstudio = premake.vstudio
-	local vc200x = premake.vstudio.vc200x
-	local project = premake.project
+	local vstudio = p.vstudio
+	local vc200x = p.vstudio.vc200x
+	local project = p.project
 
 
 --
@@ -17,7 +18,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		wks, prj = test.createWorkspace()
 	end
 

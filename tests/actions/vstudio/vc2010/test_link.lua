@@ -4,9 +4,10 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_link")
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -16,7 +17,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 		kind "SharedLib"
 	end
@@ -130,7 +131,7 @@
 --
 
 	function suite.generateDebugInfo_onSymbolsOn_on2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -141,7 +142,7 @@
 	end
 
 	function suite.generateDebugInfo_onSymbolsFastLink_on2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		symbols "FastLink"
 		prepare()
 		test.capture [[
@@ -152,7 +153,7 @@
 	end
 
 	function suite.generateDebugInfo_onSymbolsFull_on2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		symbols "Full"
 		prepare()
 		test.capture [[
@@ -163,7 +164,7 @@
 	end
 
 	function suite.generateDebugInfo_onSymbolsOn_on2015()
-		premake.action.set("vs2015")
+		p.action.set("vs2015")
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -174,7 +175,7 @@
 	end
 
 	function suite.generateDebugInfo_onSymbolsFastLink_on2015()
-		premake.action.set("vs2015")
+		p.action.set("vs2015")
 		symbols "FastLink"
 		prepare()
 		test.capture [[
@@ -186,7 +187,7 @@
 	end
 
 	function suite.generateDebugInfo_onSymbolsFull_on2015()
-		premake.action.set("vs2015")
+		p.action.set("vs2015")
 		symbols "Full"
 		prepare()
 		test.capture [[
@@ -197,7 +198,7 @@
 	end
 
 	function suite.generateDebugInfo_onSymbolsFull_on2017()
-		premake.action.set("vs2017")
+		p.action.set("vs2017")
 		symbols "Full"
 		prepare()
 		test.capture [[

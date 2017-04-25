@@ -4,7 +4,8 @@
 -- Copyright (c) 2009-2011 Jason Perkins and the Premake project
 --
 	local suite = test.declare("xcode_project")
-	local xcode = premake.modules.xcode
+	local p = premake
+	local xcode = p.modules.xcode
 
 
 
@@ -21,13 +22,13 @@
 	function suite.setup()
 		_TARGET_OS = "macosx"
 		_ACTION = "xcode4"
-		premake.eol("\n")
+		p.eol("\n")
 		xcode.used_ids = { } -- reset the list of generated IDs
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		wks = premake.oven.bakeWorkspace(wks)
+		wks = p.oven.bakeWorkspace(wks)
 		xcode.prepareWorkspace(wks)
 		local prj = test.getproject(wks, 1)
 		tr = xcode.buildprjtree(prj)
@@ -404,7 +405,7 @@
 		prepare()
 		xcode.PBXGroup(tr)
 
-		local str = premake.captured()
+		local str = p.captured()
 		--test.istrue(str:find('path = "RequiresQuoting%+%+";'))
 
 	end
@@ -2031,7 +2032,7 @@
 function suite.defaultVisibility_settingIsFound()
 	prepare()
 	xcode.XCBuildConfiguration(tr)
-	local str = premake.captured()
+	local str = p.captured()
 	test.istrue(str:find('GCC_SYMBOLS_PRIVATE_EXTERN'))
 end
 
@@ -2039,7 +2040,7 @@ end
 function suite.defaultVisibilitySetting_setToNo()
 	prepare()
 	xcode.XCBuildConfiguration(tr)
-	local str = premake.captured()
+	local str = p.captured()
 	test.istrue(str:find('GCC_SYMBOLS_PRIVATE_EXTERN = NO;'))
 end
 
@@ -2047,7 +2048,7 @@ function suite.releaseBuild_onlyDefaultArch_equalsNo()
 	optimize "On"
 	prepare()
 	xcode.XCBuildConfiguration_Project(tr, tr.configs[2])
-	local str = premake.captured()
+	local str = p.captured()
 	test.istrue(str:find('ONLY_ACTIVE_ARCH = NO;'))
 end
 
@@ -2056,6 +2057,6 @@ function suite.debugBuild_onlyDefaultArch_equalsYes()
 	prepare()
 	xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 
-	local str = premake.captured()
+	local str = p.captured()
 	test.istrue(str:find('ONLY_ACTIVE_ARCH = YES;'))
 end

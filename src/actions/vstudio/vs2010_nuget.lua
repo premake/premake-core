@@ -4,9 +4,9 @@
 -- Copyright (c) 2016 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.nuget2010 = {}
-
 	local p = premake
+	p.vstudio.nuget2010 = {}
+
 	local vstudio = p.vstudio
 	local nuget2010 = p.vstudio.nuget2010
 	local cs2005 = p.vstudio.cs2005
@@ -30,7 +30,7 @@
 	function nuget2010.packageFramework(prj)
 		if p.project.isdotnet(prj) then
 			local cfg = p.project.getfirstconfig(prj)
-			local action = premake.action.current()
+			local action = p.action.current()
 			local framework = cfg.dotnetframework or action.vstudio.targetFramework
 			return cs2005.formatNuGetFrameworkVersion(framework)
 		else

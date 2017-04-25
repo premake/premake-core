@@ -4,9 +4,10 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_cpp_file_rules")
-	local make = premake.make
-	local project = premake.project
+	local make = p.make
+	local project = p.project
 
 
 --
@@ -16,12 +17,12 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.escaper(make.esc)
+		p.escaper(make.esc)
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = premake.workspace.getproject(wks, 1)
+		prj = p.workspace.getproject(wks, 1)
 		make.cppFileRules(prj)
 	end
 

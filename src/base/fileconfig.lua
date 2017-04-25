@@ -4,9 +4,9 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
-	premake.fileconfig = {}
-
 	local p = premake
+	p.fileconfig = {}
+
 	local fileconfig = p.fileconfig
 	local context = p.context
 	local project = p.project
@@ -184,7 +184,7 @@
 --
 
 	function fileconfig.hasFileSettings(fcfg)
-		for key, field in pairs(premake.fields) do
+		for key, field in pairs(p.fields) do
 			if field.scopes[1] == "config" then
 				local value = fcfg[field.name]
 				if value then

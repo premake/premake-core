@@ -4,8 +4,9 @@
 -- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("api_containers")
-	local api = premake.api
+	local api = p.api
 
 
 --
@@ -24,7 +25,7 @@
 --
 
 	function suite.workspace_createsOnFirstUse()
-		test.isnotnil(premake.global.getWorkspace("MyWorkspace"))
+		test.isnotnil(p.global.getWorkspace("MyWorkspace"))
 	end
 
 	function suite.project_createsOnFirstUse()

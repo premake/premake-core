@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("config_links")
-	local config = premake.config
+	local config = p.config
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("test")
+		p.action.set("test")
 		_TARGET_OS = "windows"
 		wks, prj = test.createWorkspace()
 	end

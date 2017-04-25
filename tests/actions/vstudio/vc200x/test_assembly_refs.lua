@@ -4,8 +4,9 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs200x_assembly_refs")
-	local vc200x = premake.vstudio.vc200x
+	local vc200x = p.vstudio.vc200x
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		wks = test.createWorkspace()
 		clr "On"
 	end

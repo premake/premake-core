@@ -53,7 +53,7 @@
 --
 
 	function m.userProject()
-		local action = premake.action.current()
+		local action = p.action.current()
 		p.push('<Project ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
 			action.vstudio.toolsVersion)
 	end

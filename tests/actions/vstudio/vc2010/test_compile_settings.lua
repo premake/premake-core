@@ -4,9 +4,10 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_compile_settings")
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -16,7 +17,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -275,7 +276,7 @@
 --
 
 	function suite.preprocessorDefinitions_onDefines()
-		premake.escaper(premake.vstudio.vs2010.esc)
+		p.escaper(p.vstudio.vs2010.esc)
 		defines { "&", "<", ">" }
 		prepare()
 		test.capture [[
@@ -284,7 +285,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<PreprocessorDefinitions>&amp;;&lt;;&gt;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
-		premake.escaper(nil)
+		p.escaper(nil)
 	end
 
 
@@ -561,7 +562,7 @@
 
 	function suite.exceptions_onNoExceptionsVS2013()
 		exceptionhandling "Off"
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -836,7 +837,7 @@
 --
 	function suite.onNoSymbolsVS2015()
 		symbols 'Off'
-		premake.action.set("vs2015")
+		p.action.set("vs2015")
 		prepare()
 		test.capture [[
 <ClCompile>

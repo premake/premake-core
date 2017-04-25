@@ -5,6 +5,7 @@
 --
 
 
+	local p = premake
 	local suite = test.declare("base_override")
 
 
@@ -26,7 +27,7 @@
 --
 
 	function suite.canOverride()
-		premake.override(X, "testfunc", function()
+		p.override(X, "testfunc", function()
 			return "canOverride"
 		end)
 		test.isequal("canOverride", X.testfunc())
@@ -38,7 +39,7 @@
 --
 
 	function suite.canCallOriginal()
-		premake.override(X, "testfunc", function(base)
+		p.override(X, "testfunc", function(base)
 			return "canOverride > " .. base()
 		end)
 		test.isequal("canOverride > testfunc", X.testfunc())
@@ -50,7 +51,7 @@
 --
 
 	function suite.canPassThroughArguments()
-		premake.override(X, "testfunc", function(base, value)
+		p.override(X, "testfunc", function(base, value)
 			return value .. " > " .. base()
 		end)
 		test.isequal("testval > testfunc", X.testfunc("testval"))
@@ -62,11 +63,11 @@
 --
 
 	function suite.canOverrideMultipleTimes()
-		premake.override(X, "testfunc", function(base, value)
+		p.override(X, "testfunc", function(base, value)
 			return string.format("[%s > %s]", value, base("base1"))
 		end)
 
-		premake.override(X, "testfunc", function(base, value)
+		p.override(X, "testfunc", function(base, value)
 			return string.format("{%s > %s}", value, base("base2"))
 		end)
 

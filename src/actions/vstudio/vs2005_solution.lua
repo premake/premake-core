@@ -4,9 +4,9 @@
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.sln2005 = {}
-
 	local p = premake
+	p.vstudio.sln2005 = {}
+
 	local vstudio = p.vstudio
 	local sln2005 = p.vstudio.sln2005
 	local project = p.project
@@ -14,7 +14,7 @@
 
 
 ---
--- Add namespace for element definition lists for premake.callArray()
+-- Add namespace for element definition lists for p.callArray()
 ---
 
 	sln2005.elements = {}
@@ -41,8 +41,8 @@
 
 	function sln2005.generate(wks)
 		-- Mark the file as Unicode
-		premake.utf8()
-		premake.outln('')
+		p.utf8()
+		p.outln('')
 
 		sln2005.reorderProjects(wks)
 
@@ -62,7 +62,7 @@
 --
 
 	function sln2005.header()
-		local action = premake.action.current()
+		local action = p.action.current()
 		p.w('Microsoft Visual Studio Solution File, Format Version %d.00', action.vstudio.solutionVersion)
 		p.w('# Visual Studio %s', action.vstudio.versionName)
 	end
@@ -200,7 +200,7 @@
 
 
 	function sln2005.build0(cfg, context)
-		if not context.excluded and context.prjCfg.kind ~= premake.NONE then
+		if not context.excluded and context.prjCfg.kind ~= p.NONE then
 			p.w('{%s}.%s.Build.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
 		end
 	end

@@ -4,8 +4,9 @@
 -- Copyright (c) 2010-2012 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_escaping")
-	local make = premake.make
+	local make = p.make
 
 
 	function suite.Escapes_Spaces()

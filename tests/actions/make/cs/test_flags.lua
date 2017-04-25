@@ -4,10 +4,11 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_cs_flags")
-	local make = premake.make
-	local cs = premake.make.cs
-	local project = premake.project
+	local make = p.make
+	local cs = p.make.cs
+	local project = p.project
 
 
 --
@@ -22,7 +23,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug")
-		make.csFlags(cfg, premake.tools.dotnet)
+		make.csFlags(cfg, p.tools.dotnet)
 	end
 
 

@@ -4,9 +4,10 @@
 -- Copyright (c) 2010-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_linking")
-	local make = premake.make
-	local project = premake.project
+	local make = p.make
+	local project = p.project
 
 
 --
@@ -22,8 +23,8 @@
 
 	local function prepare(calls)
 		local cfg = test.getconfig(prj, "Debug")
-		local toolset = premake.tools.gcc
-		premake.callarray(make, calls, cfg, toolset)
+		local toolset = p.tools.gcc
+		p.callarray(make, calls, cfg, toolset)
 	end
 
 

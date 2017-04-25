@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
-	premake.tree = {}
-	local tree = premake.tree
+	local p = premake
+	p.tree = {}
+	local tree = p.tree
 
 
 --

@@ -4,12 +4,11 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 ---
 
-	premake.vstudio.vs2010.rules.targets = {}
-
-	local m = premake.vstudio.vs2010.rules.targets
-	m.elements = {}
-
 	local p = premake
+	p.vstudio.vs2010.rules.targets = {}
+
+	local m = p.vstudio.vs2010.rules.targets
+	m.elements = {}
 
 
 ---

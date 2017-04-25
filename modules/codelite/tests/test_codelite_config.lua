@@ -6,7 +6,8 @@
 
 
 	local suite = test.declare("codelite_cproj_config")
-	local codelite = premake.modules.codelite
+	local p = premake
+	local codelite = p.modules.codelite
 
 ---------------------------------------------------------------------------
 -- Setup/Teardown
@@ -15,8 +16,8 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		premake.action.set("codelite")
-		premake.indent("  ")
+		p.action.set("codelite")
+		p.indent("  ")
 		wks, prj = test.createWorkspace()
 	end
 

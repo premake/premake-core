@@ -5,14 +5,12 @@
 --
 
 
-	premake.vstudio.vs2010.rules = {}
-	premake.vstudio.vs2010.rules.props = {}
-
-	local m = premake.vstudio.vs2010.rules.props
-	m.elements = {}
-
 	local p = premake
+	p.vstudio.vs2010.rules = {}
+	p.vstudio.vs2010.rules.props = {}
 
+	local m = p.vstudio.vs2010.rules.props
+	m.elements = {}
 
 
 ---

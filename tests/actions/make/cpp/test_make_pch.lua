@@ -4,9 +4,10 @@
 -- Copyright (c) 2010-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_pch")
-	local make = premake.make
-	local project = premake.project
+	local make = p.make
+	local project = p.project
 
 
 

@@ -4,9 +4,9 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("detoken")
-
-	local detoken = premake.detoken
+	local detoken = p.detoken
 
 
 --
@@ -17,7 +17,7 @@
 	local environ = {}
 
 	function suite.setup()
-		action = premake.action.get("test")
+		action = p.action.get("test")
 	end
 
 	function suite.teardown()

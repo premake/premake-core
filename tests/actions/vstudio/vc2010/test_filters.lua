@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_filters")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 

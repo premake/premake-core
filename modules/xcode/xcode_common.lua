@@ -287,7 +287,7 @@
 	function xcode.getxcodeprojname(prj)
 		-- if there is a workspace with matching name, then use "projectname1.xcodeproj"
 		-- just get something working for now
-		local fname = premake.filename(prj, ".xcodeproj")
+		local fname = p.filename(prj, ".xcodeproj")
 		return fname
 	end
 
@@ -336,7 +336,7 @@
 		-- create and cache a list of supported platforms
 		wks.xcode = { }
 
-		for prj in premake.workspace.eachproject(wks) do
+		for prj in p.workspace.eachproject(wks) do
 			-- need a configuration to get the target information
 			local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])
 
@@ -346,7 +346,7 @@
 				bundlepath = cfg.project.name
 			end
 
-			local node = premake.tree.new(path.getname(bundlepath))
+			local node = p.tree.new(path.getname(bundlepath))
 
 			node.cfg = cfg
 			node.id = xcode.newid(node.name, "product")
@@ -1065,13 +1065,13 @@
 
 		local includedirs = project.getrelative(cfg.project, cfg.includedirs)
 		for i,v in ipairs(includedirs) do
-			cfg.includedirs[i] = premake.quoted(v)
+			cfg.includedirs[i] = p.quoted(v)
 		end
 		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 
 		local sysincludedirs = project.getrelative(cfg.project, cfg.sysincludedirs)
 		for i,v in ipairs(sysincludedirs) do
-			cfg.sysincludedirs[i] = premake.quoted(v)
+			cfg.sysincludedirs[i] = p.quoted(v)
 		end
 		if not table.isempty(cfg.sysincludedirs) then
 			table.insert(cfg.sysincludedirs, "$(inherited)")
@@ -1079,19 +1079,19 @@
 		settings['HEADER_SEARCH_PATHS'] = cfg.sysincludedirs
 
 		for i,v in ipairs(cfg.libdirs) do
-			cfg.libdirs[i] = premake.project.getrelative(cfg.project, cfg.libdirs[i])
+			cfg.libdirs[i] = p.project.getrelative(cfg.project, cfg.libdirs[i])
 		end
 		settings['LIBRARY_SEARCH_PATHS'] = cfg.libdirs
 
 		for i,v in ipairs(cfg.frameworkdirs) do
-			cfg.frameworkdirs[i] = premake.project.getrelative(cfg.project, cfg.frameworkdirs[i])
+			cfg.frameworkdirs[i] = p.project.getrelative(cfg.project, cfg.frameworkdirs[i])
 		end
 		settings['FRAMEWORK_SEARCH_PATHS'] = cfg.frameworkdirs
 
 		local objDir = path.getrelative(tr.project.location, cfg.objdir)
 		settings['OBJROOT'] = objDir
 
-		settings['ONLY_ACTIVE_ARCH'] = iif(premake.config.isDebugBuild(cfg), 'YES', 'NO')
+		settings['ONLY_ACTIVE_ARCH'] = iif(p.config.isDebugBuild(cfg), 'YES', 'NO')
 
 		-- build list of "other" C/C++ flags
 		local checks = {

@@ -16,10 +16,10 @@
 
 
 	function m.capture(expected)
-		local actual = premake.captured() .. premake.eol()
+		local actual = p.captured() .. p.eol()
 
 		-- create line-by-line iterators for both values
-		local ait = actual:gmatch("(.-)" .. premake.eol())
+		local ait = actual:gmatch("(.-)" .. p.eol())
 		local eit = expected:gmatch("(.-)\n")
 
 		-- compare each value line by line
@@ -109,7 +109,7 @@
 
 
 	function m.hasoutput()
-		local actual = premake.captured()
+		local actual = p.captured()
 		if actual == "" then
 			m.fail("expected output, received none");
 		end
@@ -118,7 +118,7 @@
 
 
 	function m.isemptycapture()
-		local actual = premake.captured()
+		local actual = p.captured()
 		if actual ~= "" then
 			m.fail("expected empty capture, but was %s", actual);
 		end

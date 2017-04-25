@@ -4,10 +4,10 @@
 -- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
-	premake.vstudio = {}
-	local vstudio = premake.vstudio
-
 	local p = premake
+	p.vstudio = {}
+	local vstudio = p.vstudio
+
 	local project = p.project
 	local config = p.config
 
@@ -294,8 +294,8 @@
 --
 
 	function vstudio.archFromPlatform(platform)
-		local system = premake.api.checkValue(premake.fields.system, platform)
-		local arch = premake.api.checkValue(premake.fields.architecture, platform)
+		local system = p.api.checkValue(p.fields.system, platform)
+		local arch = p.api.checkValue(p.fields.architecture, platform)
 		return architecture(system, arch or platform:lower())
 	end
 
@@ -308,7 +308,7 @@
 		if locale then
 			local culture = vstudio._cultures[locale]
 			if not culture then
-				premake.warnOnce("Locale" .. locale, 'Unsupported locale "%s"', locale)
+				p.warnOnce("Locale" .. locale, 'Unsupported locale "%s"', locale)
 			end
 			return culture
 		end
@@ -341,7 +341,7 @@
 --
 
 	function vstudio.isMakefile(cfg)
-		return (cfg.kind == premake.MAKEFILE or cfg.kind == premake.NONE)
+		return (cfg.kind == p.MAKEFILE or cfg.kind == p.NONE)
 	end
 
 
@@ -443,7 +443,7 @@
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
-		return premake.filename(prj, extension)
+		return p.filename(prj, extension)
 	end
 
 
