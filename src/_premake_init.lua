@@ -26,6 +26,7 @@
 			"universal",
 			p.X86,
 			p.X86_64,
+			p.ARM,
 		},
 		aliases = {
 			i386  = p.X86,
