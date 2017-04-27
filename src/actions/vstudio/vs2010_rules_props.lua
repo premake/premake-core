@@ -152,7 +152,7 @@
 		if buildcommands and #buildcommands > 0 then
 			local cmds = os.translateCommands(buildcommands, p.WINDOWS)
 			cmds = table.concat(cmds, p.eol())
-			p.x('<CommandLineTemplate>@echo off\n%s</CommandLineTemplate>', cmds)
+			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
 		end
 	end
 

@@ -51,8 +51,7 @@
 		m.commandLineTemplates(r)
 
 		test.capture [[
-<CommandLineTemplate>@echo off
-package-example-compiler.exe [output_path] "%(Identity)"</CommandLineTemplate>
+<CommandLineTemplate>package-example-compiler.exe [output_path] "%(Identity)"</CommandLineTemplate>
 		]]
 	end
 
