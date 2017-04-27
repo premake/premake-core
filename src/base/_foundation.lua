@@ -376,3 +376,19 @@
 			print(string.format(msg, ...))
 		end
 	end
+
+
+--
+-- make a string from debug.getinfo information.
+--
+	function filelineinfo(level)
+		local info = debug.getinfo(level+1, "Sl")
+		if info == nil then
+			return nil
+		end
+		if info.what == "C" then
+			return "C function"
+		else
+			return string.format("%s(%d)", info.short_src, info.currentline)
+		end
+	end

@@ -143,7 +143,8 @@
 	end
 
 	function os.get()
-		premake.warnOnce("os.get", "os.get() is deprecated, use 'os.target()' or 'os.host()'.")
+		local caller = filelineinfo(2)
+		premake.warnOnce(caller, "os.get() is deprecated, use 'os.target()' or 'os.host()'.\n   @%s\n", caller)
 		return os.target()
 	end
 
@@ -180,7 +181,8 @@
 	end
 
 	function os.is(id)
-		premake.warnOnce("os.is", "os.is() is deprecated, use 'os.istarget()' or 'os.ishost()'.")
+		local caller = filelineinfo(2)
+		premake.warnOnce(caller, "os.is() is deprecated, use 'os.istarget()' or 'os.ishost()'.\n   @%s\n", caller)
 		return os.istarget(id)
 	end
 

@@ -490,8 +490,12 @@
 		if field.deprecated and type(field.deprecated.handler) == "function" then
 			field.deprecated.handler(value)
 			if field.deprecated.message and api._deprecations ~= "off" then
-				p.warnOnce(field.name, "the field %s has been deprecated and will be removed.\n   %s", field.name, field.deprecated.message)
-				if api._deprecations == "error" then error("deprecation errors enabled", 3) end
+				local caller = filelineinfo(2)
+				local key = field.name .. "_" .. caller
+				p.warnOnce(key, "the field %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, field.deprecated.message, caller)
+				if api._deprecations == "error" then
+					error("deprecation errors enabled", 3)
+				end
 			end
 		end
 
@@ -536,13 +540,14 @@
 
 		local removes = {}
 
-		function check(value)
+		local function check(value)
 			if field.deprecated[value] then
 				local handler = field.deprecated[value]
 				if handler.remove then handler.remove(value) end
 				if handler.message and api._deprecations ~= "off" then
-					local key = field.name .. "_" .. value
-					p.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s", field.name, value, handler.message)
+					local caller = filelineinfo(8)
+					local key = field.name .. "_" .. value .. "_" .. caller
+					p.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, value, handler.message, caller)
 					if api._deprecations == "error" then
 						error { msg="deprecation errors enabled" }
 					end
@@ -647,8 +652,9 @@
 			local handler = field.deprecated[canonical]
 			handler.add(canonical)
 			if handler.message and api._deprecations ~= "off" then
-				local key = field.name .. "_" .. value
-				p.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s", field.name, canonical, handler.message)
+				local caller =  filelineinfo(9)
+				local key = field.name .. "_" .. value .. "_" .. caller
+				p.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, canonical, handler.message, caller)
 				if api._deprecations == "error" then
 					return nil, "deprecation errors enabled"
 				end
