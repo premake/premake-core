@@ -101,6 +101,12 @@ static const luaL_Reg buffered_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg term_functions[] = {
+	{ "getTextColor",  term_getTextColor },
+	{ "setTextColor",  term_setTextColor },
+	{ NULL, NULL }
+};
+
 #ifdef PREMAKE_CURL
 static const luaL_Reg http_functions[] = {
 	{ "get",       http_get },
@@ -130,6 +136,7 @@ int premake_init(lua_State* L)
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
 	luaL_register(L, "buffered", buffered_functions);
+	luaL_register(L, "term",     term_functions);
 
 #ifdef PREMAKE_CURL
 	luaL_register(L, "http",     http_functions);

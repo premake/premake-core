@@ -334,7 +334,10 @@
 		if _OPTIONS.fatal then
 			error(message)
 		else
+			local color = term.getTextColor();
+			term.setTextColor(13);
 			io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+			term.setTextColor(color);
 		end
 	end
 
