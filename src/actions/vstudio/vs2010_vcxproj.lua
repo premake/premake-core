@@ -159,6 +159,7 @@
 				m.platformToolset,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
+				m.windowsSDKDesktopARMSupport,
 			}
 		end
 	end
@@ -1788,6 +1789,13 @@
 		if vstudio.isMakefile(cfg) then
 			m.outDir(cfg)
 			m.intDir(cfg)
+		end
+	end
+
+
+	function m.windowsSDKDesktopARMSupport(cfg)
+		if cfg.architecture == p.ARM then
+			p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
 		end
 	end
 

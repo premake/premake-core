@@ -53,6 +53,7 @@
 	premake.WINDOWS     = "windows"
 	premake.X86         = "x86"
 	premake.X86_64      = "x86_64"
+	premake.ARM         = "ARM"
 	premake.XBOX360     = "xbox360"
 
 
