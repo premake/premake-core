@@ -184,6 +184,17 @@
 	}
 
 	api.register {
+		name = "compileas",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"C",
+			"C++",
+		}
+	}
+
+	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
