@@ -86,6 +86,7 @@ int do_locate(lua_State* L, const char* filename, const char* path);
 void do_normalize(lua_State* L, char* buffer, const char* path);
 int do_pathsearch(lua_State* L, const char* filename, const char* path);
 void do_translate(char* value, const char sep);
+int do_setcwd(const char* path);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
@@ -121,6 +122,7 @@ int os_mkdir(lua_State* L);
 int os_pathsearch(lua_State* L);
 int os_realpath(lua_State* L);
 int os_rmdir(lua_State* L);
+int os_setcwd(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int os_writefile_ifnotequal(lua_State* L);
