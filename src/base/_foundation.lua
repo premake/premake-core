@@ -334,7 +334,9 @@
 		if _OPTIONS.fatal then
 			error(message)
 		else
+			term.pushColor(term.warningColor)
 			io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+			term.popColor();
 		end
 	end
 

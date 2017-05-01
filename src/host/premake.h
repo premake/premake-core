@@ -134,6 +134,8 @@ int buffered_write(lua_State* L);
 int buffered_writeln(lua_State* L);
 int buffered_close(lua_State* L);
 int buffered_tostring(lua_State* L);
+int term_getTextColor(lua_State* L);
+int term_setTextColor(lua_State* L);
 
 #ifdef PREMAKE_CURL
 int http_get(lua_State* L);
