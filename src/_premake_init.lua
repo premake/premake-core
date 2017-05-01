@@ -1545,7 +1545,4 @@
 	filter { "system:macosx" }
 		toolset "clang"
 
-	filter { "system:windows", "kind:WindowedApp or ConsoleApp" }
-		entrypoint "mainCRTStartup"
-
 	filter {}

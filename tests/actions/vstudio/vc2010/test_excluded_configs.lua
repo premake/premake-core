@@ -52,7 +52,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 </Link>
 		]]
 	end
@@ -71,7 +70,6 @@
 <Link>
 	<SubSystem>Console</SubSystem>
 	<AdditionalDependencies>bin\Ares\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>
