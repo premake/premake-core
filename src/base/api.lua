@@ -1097,6 +1097,31 @@
 	})
 
 
+--
+-- nested data kind; wraps simple values into a table, returns others as-is.
+--
+	premake.field.kind("nested", {
+		store = function(field, current, value, processor)
+			-- create meta-table.
+			if not current then
+				current = p.nested.create(field)
+			end
+
+			-- copy values.
+			for name, v in pairs(value) do
+				current[name] = v
+			end
+
+			-- return result.
+			return current
+		end,
+		compare = function(field, a, b, processor)
+			-- TODO: is there a reliable way to check this?
+			return true
+		end
+	})
+
+
 
 ---
 -- Start a new block of configuration settings, using the old, "open"
