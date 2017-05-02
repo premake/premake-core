@@ -19,8 +19,12 @@
 --
 -- Patch the project table to provide knowledge of D projects
 --
+	function p.languages.isd(value)
+		return value == p.D
+	end
+
 	function p.project.isd(prj)
-		return prj.language == p.D
+		return p.languages.isd(prj.language)
 	end
 
 --
@@ -29,7 +33,6 @@
 	function path.isdfile(fname)
 		return path.hasextension(fname, { ".d", ".di" })
 	end
-
 
 --
 -- Patch actions

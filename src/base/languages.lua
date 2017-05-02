@@ -8,7 +8,6 @@
 	p.languages = {}
 	local languages = p.languages
 
-
 ---
 -- List of supported C languages.
 ---
@@ -66,3 +65,26 @@
 		languages.cpp,
 		languages.dotnet
 	)
+
+	function languages.isvalid(value)
+		return table.contains(languages.all, value)
+	end
+
+---
+-- get the type of language.
+---
+
+	languages.types = {
+		["C"]   = languages.c,
+		["C++"] = languages.cpp,
+		["C#"]  = languages.dotnet,
+	}
+
+	function languages.gettype(value)
+		for key, tbl in pairs(languages.types) do
+			if table.contains(tbl, value) then
+				return key
+			end
+		end
+		return nil
+	end
