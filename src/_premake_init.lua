@@ -697,8 +697,22 @@
 	api.register {
 		name = "language",
 		scope = "config",
-		kind = "string",
-		allowed = p.languages.all
+		kind = "processed:string",
+		allowed = p.languages.all,
+		process = function(current, value)
+			-- if we try setting a completely different language, allow it.
+			if p.languages.gettype(current) ~= p.languages.gettype(value) then
+				return value
+			end
+
+			-- if we try to set a specific version of the language, allow it.
+			if p.languages.gettype(current) ~= value then
+				return value
+			end
+
+			-- otherwise, stick with the old value.
+			return current
+		end
 	}
 
 	api.register {

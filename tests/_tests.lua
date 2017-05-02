@@ -38,6 +38,7 @@ return {
 	"config/test_linkinfo.lua",
 	"config/test_links.lua",
 	"config/test_targetinfo.lua",
+	"config/test_language.lua",
 
 	-- Baking tests
 	"oven/test_filtering.lua",
