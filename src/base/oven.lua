@@ -531,7 +531,7 @@
 
 		local system = p.action.current().targetos or os.target()
 		local architecture = nil
-		local toolset = nil
+		local toolset = p.action.current().toolset
 
 		if platform then
 			system = p.api.checkValue(p.fields.system, platform) or system

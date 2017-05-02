@@ -35,7 +35,9 @@
 	function suite.correctDefault_onVS2010()
 		p.action.set("vs2010")
 		prepare()
-		test.isemptycapture()
+		test.capture [[
+<PlatformToolset>v100</PlatformToolset>
+		]]
 	end
 
 

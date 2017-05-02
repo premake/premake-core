@@ -1929,8 +1929,8 @@
 	function m.platformToolset(cfg)
 		local tool, version = p.config.toolset(cfg)
 		if not version then
-			local action = p.action.current()
-			version = action.vstudio.platformToolset
+			local value = p.action.current().toolset
+			tool, version = p.tools.canonical(value)
 		end
 		if version then
 			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then

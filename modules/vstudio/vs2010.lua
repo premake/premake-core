@@ -131,6 +131,7 @@
 		-- Visual Studio always uses Windows path and naming conventions
 
 		targetos = "windows",
+		toolset  = "msc-v100",
 
 		-- The capabilities of this action
 
