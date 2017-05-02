@@ -72,7 +72,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
 
@@ -82,7 +81,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 		]]
 	end
 
@@ -103,6 +101,22 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
+</Link>
+		]]
+	end
+
+
+--
+-- Test the handling of the entrypoint API.
+--
+	function suite.onEntryPoint()
+		kind "ConsoleApp"
+		entrypoint "foobar"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Console</SubSystem>
+	<EntryPointSymbol>foobar</EntryPointSymbol>
 </Link>
 		]]
 	end
@@ -508,7 +522,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 	<TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
 		]]
 	end
