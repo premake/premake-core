@@ -296,3 +296,7 @@
 		test.isequal('cmdtool "../foo/path1/"', os.translateCommandsAndPaths("cmdtool %[path1/]", '../foo', '.', 'osx'))
 	end
 
+	function suite.translateCommandsAndPaths_MultipleTokens()
+		test.isequal('cmdtool "../foo/path1" "../foo/path2/"', os.translateCommandsAndPaths("cmdtool %[path1] %[path2/]", '../foo', '.', 'osx'))
+	end
+
