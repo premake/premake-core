@@ -289,3 +289,37 @@
 </PropertyGroup>
 		]]
 	end
+
+--
+-- Check the handling of the VC++ ExecutablePath.
+--
+
+	function suite.onBinDirsRelative()
+		bindirs { "../Include" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<ExecutablePath>$(ProjectDir)..\Include;$(ExecutablePath)</ExecutablePath>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.onBinDirsAbsolute()
+		bindirs { "C:\\Include" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<ExecutablePath>C:\Include;$(ExecutablePath)</ExecutablePath>
+</PropertyGroup>
+		]]
+	end
