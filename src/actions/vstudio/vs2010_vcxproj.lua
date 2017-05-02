@@ -1875,6 +1875,12 @@
 	function m.executablePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.bindirs)
 		if #dirs > 0 then
+			dirs = table.translate(dirs, function(dir)
+				if path.isabsolute(dir) then
+					return dir
+				end
+				return "$(ProjectDir)" .. dir
+			end)
 			m.element("ExecutablePath", nil, "%s;$(ExecutablePath)", table.concat(dirs, ";"))
 		end
 	end
