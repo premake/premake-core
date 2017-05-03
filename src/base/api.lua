@@ -1091,26 +1091,24 @@
 --
 	premake.field.kind("processed", {
 		store = function(field, current, value, processor)
-			if current == nil then
-				return value
+			if processor then
+				value = processor(field, current, value)
 			end
-			return field.process(current, value)
-		end,
-		remove = function(field, current, value, processor)
 			if current == nil then
 				return value
 			end
 			return field.process(current, value)
 		end,
 		merge = function(field, current, value, processor)
+			if processor then
+				value = processor(field, current, value)
+			end
 			if type(value) == "table" then
 				return value
 			end
-
 			if current == nil then
 				return value
 			end
-
 			return field.process(current, value)
 		end
 	})
