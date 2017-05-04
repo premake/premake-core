@@ -226,7 +226,7 @@
 	function cs2005.buildEvents(prj)
 		local function output(name, steps)
 			if #steps > 0 then
-				steps = os.translateCommands(steps, p.WINDOWS)
+				steps = os.translateCommandsAndPaths(steps, prj.basedir, prj.location)
 				steps = table.implode(steps, "", "", "\r\n")
 				_x(2,'<%sBuildEvent>%s</%sBuildEvent>', name, steps, name)
 			end
