@@ -7,5 +7,4 @@
 	return {
 		"xcode",
 		"codelite",
-		"d",
 	}

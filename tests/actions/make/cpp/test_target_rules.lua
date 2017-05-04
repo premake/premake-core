@@ -22,7 +22,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug")
-		make.cppAllRules(cfg)
+		make.cpp.allRules(cfg)
 	end
 
 
@@ -33,7 +33,7 @@
 	function suite.defaultRules()
 		prepare()
 		test.capture [[
-all: prebuild prelink $(TARGET)
+all: $(TARGET) | $(TARGETDIR) $(OBJDIR) prebuild prelink
 	@:
 		]]
 	end
@@ -48,7 +48,7 @@ all: prebuild prelink $(TARGET)
 		kind "WindowedApp"
 		prepare()
 		test.capture [[
-all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist
+all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist | $(TARGETDIR) $(OBJDIR) prebuild prelink
 	@:
 
 $(dir $(TARGETDIR))PkgInfo:

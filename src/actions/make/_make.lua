@@ -4,9 +4,9 @@
 -- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
-	local p = premake
-	p.make = {}
+	premake.make = {}
 
+	local p = premake
 	local make = p.make
 	local project = p.project
 
@@ -22,15 +22,15 @@
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
 
+		valid_languages = { "C", "C++", "C#" },
+
 		valid_tools     = {
 			cc     = { "clang", "gcc" },
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 
-		supports_language = function(lang)
-			return p.languages.isc(lang) or
-				   p.languages.iscpp(lang) or
-				   p.languages.isdotnet(lang)
+		onInitialize = function()
+			p.make.cpp.initialize()
 		end,
 
 		onWorkspace = function(wks)
@@ -48,7 +48,7 @@
 			else
 				if project.isdotnet(prj) then
 					p.generate(prj, makefile, make.cs.generate)
-				elseif project.isc(prj) or project.iscpp(prj) then
+				elseif project.iscpp(prj) then
 					p.generate(prj, makefile, make.cpp.generate)
 				end
 			end
@@ -205,7 +205,7 @@
 					if #result then
 						result = result .. " "
 					end
-					result = result .. p.quoted(v)
+					result = result .. premake.quoted(v)
 				end
 				return result
 			else
@@ -228,6 +228,79 @@
 	end
 
 
+
+	function make.path(cfg, value)
+		cfg = cfg.project or cfg
+		local dirs = path.translate(project.getrelative(cfg, value))
+
+		if type(dirs) == 'table' then
+			dirs = table.filterempty(dirs)
+		end
+
+		return dirs
+	end
+
+
+	function make.getToolSet(cfg)
+		local default = iif(cfg.system == premake.MACOSX, "clang", "gcc")
+		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		if not toolset then
+			error("Invalid toolset '" .. cfg.toolset .. "'")
+		end
+		return toolset
+	end
+
+
+	function make.outputSection(prj, callback)
+		local root = {}
+
+		for cfg in project.eachconfig(prj) do
+			-- identify the toolset used by this configurations (would be nicer if
+			-- this were computed and stored with the configuration up front)
+
+			local toolset = make.getToolSet(cfg)
+
+			local settings = {}
+			local funcs = callback(cfg)
+			for i = 1, #funcs do
+				local c = p.capture(function ()
+					funcs[i](cfg, toolset)
+				end)
+				if #c > 0 then
+					table.insert(settings, c)
+				end
+			end
+
+			if not root.settings then
+				root.settings = table.arraycopy(settings)
+			else
+				root.settings = table.intersect(root.settings, settings)
+			end
+
+			root[cfg] = settings
+		end
+
+		if #root.settings > 0 then
+			for _, v in ipairs(root.settings) do
+				p.outln(v)
+			end
+			p.outln('')
+		end
+
+		for cfg in project.eachconfig(prj) do
+			local settings = table.difference(root[cfg], root.settings)
+			if #settings > 0 then
+				_x('ifeq ($(config),%s)', cfg.shortname)
+				for k, v in ipairs(settings) do
+					p.outln(v)
+				end
+				p.outln('endif')
+				p.outln('')
+			end
+		end
+	end
+
+
 ---------------------------------------------------------------------------
 --
 -- Handlers for the individual makefile elements that can be shared
@@ -235,76 +308,9 @@
 --
 ---------------------------------------------------------------------------
 
-	function make.objdir(cfg)
-		_x('  OBJDIR = %s', p.esc(project.getrelative(cfg.project, cfg.objdir)))
-	end
-
-
-	function make.objDirRules(prj)
-		make.mkdirRules("$(OBJDIR)")
-	end
-
-
 	function make.phonyRules(prj)
 		_p('.PHONY: clean prebuild prelink')
 		_p('')
-	end
-
-
-	function make.buildCmds(cfg, event)
-		_p('  define %sCMDS', event:upper())
-		local steps = cfg[event .. "commands"]
-		local msg = cfg[event .. "message"]
-		if #steps > 0 then
-			steps = os.translateCommands(steps)
-			msg = msg or string.format("Running %s commands", event)
-			_p('\t@echo %s', msg)
-			_p('\t%s', table.implode(steps, "", "", "\n\t"))
-		end
-		_p('  endef')
-	end
-
-
-	function make.preBuildCmds(cfg, toolset)
-		make.buildCmds(cfg, "prebuild")
-	end
-
-
-	function make.preBuildRules(prj)
-		_p('prebuild:')
-		_p('\t$(PREBUILDCMDS)')
-		_p('')
-	end
-
-
-	function make.preLinkCmds(cfg, toolset)
-		make.buildCmds(cfg, "prelink")
-	end
-
-
-	function make.preLinkRules(prj)
-		_p('prelink:')
-		_p('\t$(PRELINKCMDS)')
-		_p('')
-	end
-
-
-	function make.postBuildCmds(cfg, toolset)
-		make.buildCmds(cfg, "postbuild")
-	end
-
-
-	function make.settings(cfg, toolset)
-		if #cfg.makesettings > 0 then
-			for _, value in ipairs(cfg.makesettings) do
-				_p(value)
-			end
-		end
-
-		local value = toolset.getmakesettings(cfg)
-		if value then
-			_p(value)
-		end
 	end
 
 
@@ -320,12 +326,79 @@
 	end
 
 
-	function make.target(cfg)
-		_x('  TARGETDIR = %s', project.getrelative(cfg.project, cfg.buildtarget.directory))
-		_x('  TARGET = $(TARGETDIR)/%s', cfg.buildtarget.name)
+	function make.target(cfg, toolset)
+		p.outln('TARGETDIR = ' .. project.getrelative(cfg.project, cfg.buildtarget.directory))
+		p.outln('TARGET = $(TARGETDIR)/' .. cfg.buildtarget.name)
 	end
 
 
-	function make.targetDirRules(prj)
+	function make.objdir(cfg, toolset)
+		p.outln('OBJDIR = ' .. project.getrelative(cfg.project, cfg.objdir))
+	end
+
+
+	function make.settings(cfg, toolset)
+		if #cfg.makesettings > 0 then
+			for _, value in ipairs(cfg.makesettings) do
+				p.outln(value)
+			end
+		end
+
+		local value = toolset.getmakesettings(cfg)
+		if value then
+			p.outln(value)
+		end
+	end
+
+
+	function make.buildCmds(cfg, event)
+		_p('define %sCMDS', event:upper())
+		local steps = cfg[event .. "commands"]
+		local msg = cfg[event .. "message"]
+		if #steps > 0 then
+			steps = os.translateCommands(steps)
+			msg = msg or string.format("Running %s commands", event)
+			_p('\t@echo %s', msg)
+			_p('\t%s', table.implode(steps, "", "", "\n\t"))
+		end
+		_p('endef')
+	end
+
+
+	function make.preBuildCmds(cfg, toolset)
+		make.buildCmds(cfg, "prebuild")
+	end
+
+
+	function make.preLinkCmds(cfg, toolset)
+		make.buildCmds(cfg, "prelink")
+	end
+
+
+	function make.postBuildCmds(cfg, toolset)
+		make.buildCmds(cfg, "postbuild")
+	end
+
+
+	function make.targetDirRules(cfg, toolset)
 		make.mkdirRules("$(TARGETDIR)")
+	end
+
+
+	function make.objDirRules(cfg, toolset)
+		make.mkdirRules("$(OBJDIR)")
+	end
+
+
+	function make.preBuildRules(cfg, toolset)
+		_p('prebuild:')
+		_p('\t$(PREBUILDCMDS)')
+		_p('')
+	end
+
+
+	function make.preLinkRules(cfg, toolset)
+		_p('prelink:')
+		_p('\t$(PRELINKCMDS)')
+		_p('')
 	end

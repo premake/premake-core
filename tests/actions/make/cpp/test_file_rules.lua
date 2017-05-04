@@ -4,10 +4,9 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	local p = premake
 	local suite = test.declare("make_cpp_file_rules")
-	local make = p.make
-	local project = p.project
+	local make = premake.make
+	local project = premake.project
 
 
 --
@@ -17,13 +16,18 @@
 	local wks, prj
 
 	function suite.setup()
-		p.escaper(make.esc)
+		premake.escaper(make.esc)
+		make.cpp.initialize()
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = p.workspace.getproject(wks, 1)
-		make.cppFileRules(prj)
+		prj = premake.workspace.getproject(wks, 1)
+		premake.oven.bake()
+
+		make.cpp.createRuleTable(prj)
+		make.cpp.createFileTable(prj)
+		make.cpp.outputFileRuleSection(prj)
 	end
 
 
@@ -35,6 +39,9 @@
 		files { "src/hello.cpp", "src/greetings/hello.cpp" }
 		prepare()
 		test.capture [[
+# File Rules
+# #############################################
+
 $(OBJDIR)/hello.o: src/greetings/hello.cpp
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
@@ -64,6 +71,9 @@ endif
 		files { "src/hello.c", "src/test.cpp" }
 		prepare()
 		test.capture [[
+# File Rules
+# #############################################
+
 $(OBJDIR)/hello.o: src/hello.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
@@ -100,15 +110,19 @@ endif
 			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
 		prepare()
 		test.capture [[
+# File Rules
+# #############################################
+
 ifeq ($(config),debug)
 obj/Debug/hello.obj: hello.x
-	@echo "Compiling hello.x"
+	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
 endif
+
 ifeq ($(config),release)
 obj/Release/hello.obj: hello.x
-	@echo "Compiling hello.x"
+	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 endif
@@ -127,15 +141,19 @@ endif
 			buildinputs { "%{file.path}.inc", "%{file.path}.inc2" }
 		prepare()
 		test.capture [[
+# File Rules
+# #############################################
+
 ifeq ($(config),debug)
 obj/Debug/hello.obj: hello.x hello.x.inc hello.x.inc2
-	@echo "Compiling hello.x"
+	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
 endif
+
 ifeq ($(config),release)
 obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
-	@echo "Compiling hello.x"
+	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 endif

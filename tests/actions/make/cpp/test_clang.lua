@@ -4,11 +4,10 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
-	local p = premake
 	local suite = test.declare("make_clang")
-	local make = p.make
-	local cpp = p.make.cpp
-	local project = p.project
+	local make = premake.make
+	local cpp = premake.make.cpp
+	local project = premake.project
 
 
 --
@@ -20,7 +19,7 @@
 	function suite.setup()
 		wks = test.createWorkspace()
 		toolset "clang"
-		prj = p.workspace.getproject(wks, 1)
+		prj = premake.workspace.getproject(wks, 1)
 	end
 
 
@@ -29,18 +28,20 @@
 --
 
 	function suite.usesCorrectCompilers()
-		make.cppConfigs(prj)
+		make.cpp.outputConfigurationSection(prj)
 		test.capture [[
-ifeq ($(config),debug)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
-		]]
+# Configurations
+# #############################################
+
+ifeq ($(origin CC), default)
+  CC = clang
+endif
+ifeq ($(origin CXX), default)
+  CXX = clang++
+endif
+ifeq ($(origin AR), default)
+  AR = ar
+endif
+]]
 	end
 
