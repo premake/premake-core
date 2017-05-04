@@ -696,9 +696,47 @@
 
 	api.register {
 		name = "language",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"C",
+			"C++",
+			"C#"
+		}
+	}
+
+	api.register {
+		name = "cdialect",
 		scope = "config",
 		kind = "string",
-		allowed = p.languages.all
+		allowed = {
+			"Default",
+			"C89",
+			"C90",
+			"C99",
+			"C11",
+			"gnu89",
+			"gnu90",
+			"gnu99",
+			"gnu11",
+		}
+	}
+
+	api.register {
+		name = "cppdialect",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"C++98",
+			"C++11",
+			"C++14",
+			"C++17",
+			"gnu++98",
+			"gnu++11",
+			"gnu++14",
+			"gnu++17",
+		}
 	}
 
 	api.register {
@@ -1368,11 +1406,45 @@
 
 	-- 31 January 2017
 
-	api.deprecateValue("flags", "C++11", 'Use `language "C++11"` instead', function(value) end, function(value) end)
-	api.deprecateValue("flags", "C++14", 'Use `language "C++14"` instead', function(value) end, function(value) end)
-	api.deprecateValue("flags", "C90",   'Use `language "C90"` instead',   function(value) end, function(value) end)
-	api.deprecateValue("flags", "C99",   'Use `language "C99"` instead',   function(value) end, function(value) end)
-	api.deprecateValue("flags", "C11",   'Use `language "C11"` instead',   function(value) end, function(value) end)
+	api.deprecateValue("flags", "C++11", 'Use `cppdialect "C++11"` instead',
+	function(value)
+		cppdialect "C++11"
+	end,
+	function(value)
+		cppdialect "Default"
+	end)
+
+	api.deprecateValue("flags", "C++14", 'Use `cppdialect "C++14"` instead',
+	function(value)
+		cppdialect "C++14"
+	end,
+	function(value)
+		cppdialect "Default"
+	end)
+
+	api.deprecateValue("flags", "C90",   'Use `cdialect "gnu90"` instead',
+	function(value)
+		cdialect "gnu90"
+	end,
+	function(value)
+		cdialect "Default"
+	end)
+
+	api.deprecateValue("flags", "C99",   'Use `cdialect "gnu99"` instead',
+	function(value)
+		cdialect "gnu99"
+	end,
+	function(value)
+		cdialect "Default"
+	end)
+
+	api.deprecateValue("flags", "C11",   'Use `cdialect "gnu11"` instead',
+	function(value)
+		cdialect "gnu11"
+	end,
+	function(value)
+		cdialect "Default"
+	end)
 
 
 	-- 13 April 2017

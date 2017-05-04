@@ -41,13 +41,14 @@
 		rtti "Off"
 		pic "On"
 		symbols "On"
-		language "C++11"
+		language "C++"
+		cppdialect "C++11"
 		flags { "NoBufferSecurityCheck" }
 		buildoptions { "-opt1", "-opt2" }
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-O0;-fPIC;-g;-fno-exceptions;-fno-stack-protector;-std=c++11;-fno-rtti;-opt1;-opt2" C_Options="-O0;-fPIC;-g;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O0;-fPIC;-g;-std=c++11;-fno-exceptions;-fno-stack-protector;-fno-rtti;-opt1;-opt2" C_Options="-O0;-fPIC;-g;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
       </Compiler>
 		]]
 	end
@@ -219,7 +220,8 @@ cmd2</StartupCommands>
 	end
 
 	function suite.OnProject_Completion()
-		language "C++11"
+		language "C++"
+		cppdialect "C++11"
 		prepare()
 		codelite.project.completion(prj)
 		test.capture [[

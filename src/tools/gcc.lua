@@ -86,12 +86,7 @@
 	}
 
 	gcc.cflags = {
-		flags = {
-			["C90"] = "-std=gnu90",
-			["C99"] = "-std=gnu99",
-			["C11"] = "-std=gnu11",
-		},
-		language = {
+		cdialect = {
 			["C89"] = "-std=c89",
 			["C90"] = "-std=c90",
 			["C99"] = "-std=c99",
@@ -136,10 +131,8 @@
 		},
 		flags = {
 			NoBufferSecurityCheck = "-fno-stack-protector",
-			["C++11"] = "-std=c++11",
-			["C++14"] = "-std=c++14",
 		},
-		language = {
+		cppdialect = {
 			["C++98"] = "-std=c++98",
 			["C++11"] = "-std=c++11",
 			["C++14"] = "-std=c++14",

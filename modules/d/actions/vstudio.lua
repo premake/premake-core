@@ -19,12 +19,10 @@
 -- Patch the vstudio actions with D support...
 --
 
-	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015" }) do
+	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015", "vs2017" }) do
 		local vs = p.action.get(v)
 		if vs ~= nil then
-			p.override(vs, "supports_language", function(oldfn, lang)
-				return oldfn(lang) or lang == p.D;
-			end)
+			table.insert( vs.valid_languages, p.D )
 			vs.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
 			p.override(vs, "onProject", function(oldfn, prj)

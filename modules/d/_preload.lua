@@ -19,8 +19,6 @@
 --
 
 	p.D = "D"
-
-	table.insert(p.languages.all, p.D)
 	api.addAllowed("language", p.D)
 
 	api.addAllowed("floatingpoint", "None")

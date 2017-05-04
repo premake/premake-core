@@ -40,13 +40,11 @@
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib", "Makefile", "None" },
+		valid_languages = { "C", "C++" },
 		valid_tools     = {
 			cc = { "gcc", "clang" },
 		},
-		supports_language = function(lang)
-			return p.languages.isc(lang) or
-				   p.languages.iscpp(lang)
-		end,
+
 
 		-- Workspace and project generation logic
 

@@ -21,17 +21,11 @@
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
-
+		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "clang", "gcc" },
 			dotnet = { "mono", "msnet", "pnet" }
 		},
-
-		supports_language = function(lang)
-			return p.languages.isc(lang) or
-				   p.languages.iscpp(lang) or
-				   p.languages.isdotnet(lang)
-		end,
 
 		onWorkspace = function(wks)
 			p.escaper(make.esc)
