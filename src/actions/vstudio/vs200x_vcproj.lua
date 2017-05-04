@@ -1609,6 +1609,8 @@
 			   prj.system == p.WINDOWS
 			then
 				p.w('UsePrecompiledHeader="1"')
+			elseif file.flags.NoPCH then
+				p.w('UsePrecompiledHeader="0"')
 			end
 		else
 			if not prj.flags.NoPCH and prj.pchheader then
