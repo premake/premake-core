@@ -206,6 +206,30 @@
 
 
 --
+-- A file flagged with NoPCH should be marked as such.
+--
+
+	function suite.useNoPCHFlag()
+		files { "test.cpp" }
+		filter { "files:test.cpp" }
+			flags { "NoPCH" }
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="test.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				UsePrecompiledHeader="0"
+		]]
+	end
+
+
+--
 -- A file excluded from a specific configuration should be marked as such.
 --
 
