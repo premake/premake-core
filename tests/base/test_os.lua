@@ -37,7 +37,9 @@
 	end
 	
 	function suite.findheader_stdheaders()
-		test.istrue(os.findheader("stdlib.h"))
+		if not (os.istarget("windows")) then
+			test.istrue(os.findheader("stdlib.h"))
+		end
 	end
 	
 	function suite.findheader_failure()
