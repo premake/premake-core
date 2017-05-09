@@ -127,6 +127,7 @@
 			m.keyword,
 			m.projectName,
 			m.targetPlatformVersion,
+			m.preferredToolArchitecture
 		}
 	end
 
@@ -2168,6 +2169,15 @@
 		local min = project.systemversion(prj)
 		if min ~= nil and _ACTION >= "vs2015" then
 			m.element("WindowsTargetPlatformVersion", nil, min)
+		end
+	end
+
+
+	function m.preferredToolArchitecture(prj)
+		if prj.preferredtoolarchitecture == p.X86_64 then
+			m.element("PreferredToolArchitecture", nil, 'x64')
+		elseif prj.preferredtoolarchitecture == p.X86 then
+			m.element("PreferredToolArchitecture", nil, 'x86')
 		end
 	end
 
