@@ -416,7 +416,8 @@
 		if info.what == "C" then
 			return "C function"
 		else
-			return string.format("%s(%d)", info.short_src, info.currentline)
+			local sep = iif(os.ishost('windows'), '\\', '/')
+			return string.format("%s(%d)", path.translate(info.short_src, sep), info.currentline)
 		end
 	end
 
