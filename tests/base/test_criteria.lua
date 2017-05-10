@@ -172,6 +172,40 @@
 
 
 --
+-- Test criteria creation through a table.
+--
+
+	function suite.createCriteriaWithTable()
+		crit = criteria.new {
+			files  = { "**.c" },
+			system = "windows"
+		}
+		test.istrue(criteria.matches(crit, { system="windows", files="hello.c" }))
+	end
+
+	function suite.createCriteriaWithTable2()
+		crit = criteria.new {
+			system = "not windows"
+		}
+		test.isfalse(criteria.matches(crit, { system="windows" }))
+	end
+
+	function suite.createCriteriaWithTable3()
+		crit = criteria.new {
+			system = "not windows or linux"
+		}
+		test.istrue(criteria.matches(crit, { system="macosx" }))
+	end
+
+	function suite.createCriteriaWithTable4()
+		crit = criteria.new {
+			system = "windows or linux"
+		}
+		test.istrue(criteria.matches(crit, { system="windows" }))
+	end
+
+
+--
 -- "Not" modifiers can also be used on filenames.
 --
 
