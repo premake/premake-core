@@ -668,3 +668,22 @@
 		end
 		return id
 	end
+
+
+--
+-- Get a set of tags for different 'platforms'
+--
+
+	function os.getSystemTags(name)
+		local tags =
+		{
+			["aix"]      = { "aix",     "posix" },
+			["bsd"]      = { "bsd",     "posix" },
+			["haiku"]    = { "haiku",   "posix" },
+			["linux"]    = { "linux",   "posix" },
+			["macosx"]   = { "macosx",  "darwin", "posix" },
+			["solaris"]  = { "solaris", "posix" },
+			["windows"]  = { "windows", "win32" },
+		}
+		return tags[name] or name
+	end
