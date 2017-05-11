@@ -273,6 +273,8 @@
 
 		local tr = tree.new(prj.name)
 
+		local addscript = (prj.script ~= nil)
+
 		table.foreachi(prj._.files, function(fcfg)
 			-- if the file is a generated file, we add those in a second pass.
 			if fcfg.generated then
@@ -290,6 +292,11 @@
 			local flags
 			if fcfg.vpath ~= fcfg.relpath then
 				flags = { trim = false }
+			end
+
+			-- if it is already added as a file, don't add it later.
+			if addscript and (fcfg.abspath == prj.script) then
+				addscript = false
 			end
 
 			-- Virtual paths can overlap, potentially putting files with the same
@@ -320,6 +327,16 @@
 		end)
 
 		tree.trimroot(tr)
+
+		if addscript and not test then
+			local scriptName = path.getname(prj.script)
+			local parent = tree.add(tr, "Build Scripts", nil)
+			local node   = tree.insert(parent, tree.new(scriptName))
+
+			local fcfg = premake.fileconfig.new(prj.script, prj);
+			setmetatable(node, { __index = fcfg })
+		end
+
 		tree.sort(tr, sorter)
 
 		prj._.sourcetree = tr
