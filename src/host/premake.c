@@ -43,6 +43,13 @@ static const luaL_Reg debug_functions[] = {
 	{ NULL, NULL }
 };
 
+#if PLATFORM_WINDOWS
+static const luaL_Reg io_functions[] = {
+	{"open", io_open},
+	{NULL, NULL}
+};
+#endif
+
 static const luaL_Reg path_functions[] = {
 	{ "getabsolute", path_getabsolute },
 	{ "getrelative", path_getrelative },
@@ -74,6 +81,11 @@ static const luaL_Reg os_functions[] = {
 	{ "matchnext",              os_matchnext            },
 	{ "matchstart",             os_matchstart           },
 	{ "mkdir",                  os_mkdir                },
+#if PLATFORM_WINDOWS
+	// utf8 functions for Windows (assuming posix already handle utf8)
+	{"remove",                  os_remove               },
+	{"rename",                  os_rename               },
+#endif
 	{ "pathsearch",             os_pathsearch           },
 	{ "realpath",               os_realpath             },
 	{ "rmdir",                  os_rmdir                },
@@ -133,6 +145,9 @@ int premake_init(lua_State* L)
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
 	luaL_register(L, "path",     path_functions);
+#if PLATFORM_WINDOWS
+	luaL_register(L, "io",       io_functions);
+#endif
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
 	luaL_register(L, "buffered", buffered_functions);

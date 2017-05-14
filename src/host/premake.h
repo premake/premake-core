@@ -99,6 +99,10 @@ int path_join(lua_State* L);
 int path_normalize(lua_State* L);
 int path_translate(lua_State* L);
 int path_wildcards(lua_State* L);
+#if PLATFORM_WINDOWS
+// utf8 version
+int io_open(lua_State* L);
+#endif
 int os_chdir(lua_State* L);
 int os_chmod(lua_State* L);
 int os_copyfile(lua_State* L);
@@ -120,6 +124,11 @@ int os_matchstart(lua_State* L);
 int os_mkdir(lua_State* L);
 int os_pathsearch(lua_State* L);
 int os_realpath(lua_State* L);
+#if PLATFORM_WINDOWS
+// utf8 versions
+int os_remove(lua_State* L);
+int os_rename(lua_State* L);
+#endif
 int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
