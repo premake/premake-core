@@ -4,9 +4,9 @@
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_cs2005_projectsettings")
-
-	local cs2005 = premake.vstudio.cs2005
+	local cs2005 = p.vstudio.cs2005
 
 
 --
@@ -16,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		wks = test.createWorkspace()
 		language "C#"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
@@ -51,7 +51,7 @@
 
 
 	function suite.OnVs2008()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -70,7 +70,7 @@
 
 
 	function suite.OnVs2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -93,7 +93,7 @@
 
 
 	function suite.onVs2012()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
@@ -183,7 +183,7 @@
 --
 
 	function suite.projectTypeGuids_onWPF()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		flags { "WPF" }
 		prepare()
 		test.capture [[

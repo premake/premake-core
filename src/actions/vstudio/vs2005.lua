@@ -4,9 +4,9 @@
 -- Copyright (c) 2008-2015 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vs2005 = {}
-
 	local p = premake
+	p.vstudio.vs2005 = {}
+
 	local vs2005 = p.vstudio.vs2005
 	local vstudio = p.vstudio
 
@@ -20,21 +20,7 @@
 		p.eol("\r\n")
 		p.escaper(vs2005.esc)
 
-		premake.generate(wks, ".sln", vstudio.sln2005.generate)
-
-		if _ACTION >= "vs2010" then
-			-- Skip generation of empty NuGet packages.config files
-			if p.workspace.hasProject(wks, function(prj) return #prj.nuget > 0 end) then
-				premake.generate(
-					{
-						location = path.join(wks.location, "packages.config"),
-						workspace = wks
-					},
-					nil,
-					vstudio.nuget2010.generatePackagesConfig
-				)
-			end
-		end
+		p.generate(wks, ".sln", vstudio.sln2005.generate)
 	end
 
 
@@ -43,24 +29,22 @@
 		p.eol("\r\n")
 		p.escaper(vs2005.esc)
 
-		if premake.project.isdotnet(prj) then
-			premake.generate(prj, ".csproj", vstudio.cs2005.generate)
+		if p.project.isdotnet(prj) then
+			p.generate(prj, ".csproj", vstudio.cs2005.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.cs2005.generateUser(prj) end)
 			if #user > 0 then
 				p.generate(prj, ".csproj.user", function() p.outln(user) end)
 			end
-
-		elseif premake.project.iscpp(prj) then
-			premake.generate(prj, ".vcproj", vstudio.vc200x.generate)
+		else
+			p.generate(prj, ".vcproj", vstudio.vc200x.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.vc200x.generateUser(prj) end)
 			if #user > 0 then
 				p.generate(prj, ".vcproj.user", function() p.outln(user) end)
 			end
-
 		end
 	end
 
@@ -97,16 +81,20 @@
 
 		-- Visual Studio always uses Windows path and naming conventions
 
-		os = "windows",
+		targetos = "windows",
 
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },
-		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },
 		},
+		supports_language = function(lang)
+			return p.languages.isc(lang) or
+				   p.languages.iscpp(lang) or
+				   p.languages.isdotnet(lang)
+		end,
 
 		-- Workspace and project generation logic
 

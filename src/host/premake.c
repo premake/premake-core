@@ -13,6 +13,10 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 
+#if PLATFORM_BSD
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#endif
 
 #define ERROR_MESSAGE  "Error: %s\n"
 
@@ -60,6 +64,7 @@ static const luaL_Reg os_functions[] = {
 	{ "getpass",                os_getpass              },
 	{ "getWindowsRegistry",     os_getWindowsRegistry   },
 	{ "getversion",             os_getversion           },
+	{ "host",                   os_host                 },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
 	{ "locate",                 os_locate               },
@@ -96,6 +101,12 @@ static const luaL_Reg buffered_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg term_functions[] = {
+	{ "getTextColor",  term_getTextColor },
+	{ "setTextColor",  term_setTextColor },
+	{ NULL, NULL }
+};
+
 #ifdef PREMAKE_CURL
 static const luaL_Reg http_functions[] = {
 	{ "get",       http_get },
@@ -125,6 +136,7 @@ int premake_init(lua_State* L)
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
 	luaL_register(L, "buffered", buffered_functions);
+	luaL_register(L, "term",     term_functions);
 
 #ifdef PREMAKE_CURL
 	luaL_register(L, "http",     http_functions);
@@ -149,7 +161,7 @@ int premake_init(lua_State* L)
 
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);
-	lua_setglobal(L, "_OS");
+	lua_setglobal(L, "_TARGET_OS");
 
 	/* find the user's home directory */
 	value = getenv("HOME");
@@ -230,9 +242,13 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	const char* path = NULL;
 
 #if PLATFORM_WINDOWS
-	DWORD len = GetModuleFileNameA(NULL, buffer, PATH_MAX);
+	wchar_t widebuffer[PATH_MAX];
+
+	DWORD len = GetModuleFileNameW(NULL, widebuffer, PATH_MAX);
 	if (len > 0)
 	{
+		WideCharToMultiByte(CP_UTF8, 0, widebuffer, len, buffer, PATH_MAX, NULL, NULL);
+
 		buffer[len] = 0;
 		path = buffer;
 	}
@@ -258,6 +274,17 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	int len = readlink("/proc/curproc/file", buffer, PATH_MAX - 1);
 	if (len < 0)
 		len = readlink("/proc/curproc/exe", buffer, PATH_MAX - 1);
+	if (len < 0)
+	{
+		int mib[4];
+		mib[0] = CTL_KERN;
+		mib[1] = KERN_PROC;
+		mib[2] = KERN_PROC_PATHNAME;
+		mib[3] = -1;
+		size_t cb = sizeof(buffer);
+		sysctl(mib, 4, buffer, &cb, NULL, 0);
+		len = (int)cb;
+	}
 	if (len > 0)
 	{
 		buffer[len] = 0;
@@ -321,7 +348,7 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 int premake_test_file(lua_State* L, const char* filename, int searchMask)
 {
 	if (searchMask & TEST_LOCAL) {
-		if (do_isfile(filename)) {
+		if (do_isfile(L, filename)) {
 			lua_pushcfunction(L, path_getabsolute);
 			lua_pushstring(L, filename);
 			lua_call(L, 1, 1);
@@ -481,8 +508,8 @@ static int run_premake_main(lua_State* L, const char* script)
 	 * argument allowed as an override. Debug builds will look at the
 	 * local file system first, then fall back to embedded. */
 #if defined(NDEBUG)
-	 int z = premake_test_file(L, script,
-	 	TEST_SCRIPTS | TEST_EMBEDDED);
+	int z = premake_test_file(L, script,
+		TEST_SCRIPTS | TEST_EMBEDDED);
 #else
 	int z = premake_test_file(L, script,
 		TEST_LOCAL | TEST_SCRIPTS | TEST_PATH | TEST_EMBEDDED);
@@ -509,10 +536,10 @@ static int run_premake_main(lua_State* L, const char* script)
  * contents of the file's script.
  */
 
- const buildin_mapping* premake_find_embedded_script(const char* filename)
- {
+const buildin_mapping* premake_find_embedded_script(const char* filename)
+{
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
- 	int i;
+	int i;
 	for (i = 0; builtin_scripts[i].name != NULL; ++i) {
 		if (strcmp(builtin_scripts[i].name, filename) == 0) {
 			return builtin_scripts + i;
@@ -520,7 +547,7 @@ static int run_premake_main(lua_State* L, const char* script)
 	}
 #endif
 	return NULL;
- }
+}
 
 
 

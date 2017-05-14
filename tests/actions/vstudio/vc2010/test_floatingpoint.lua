@@ -6,14 +6,15 @@
 -- Copyright (c) 2015 Jason Perkins and the Premake project
 ---
 
+	local p = premake
 	local suite = test.declare("vs2010_vc_floatingpoint")
-	local m = premake.vstudio.vc2010
+	local m = p.vstudio.vc2010
 
 
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -30,7 +31,7 @@
 
 
 	function suite.floatingPoint_onFloatFast()
-		flags "FloatFast"
+		floatingpoint "fast"
 		prepare()
 		test.capture [[
 <FloatingPointModel>Fast</FloatingPointModel>
@@ -38,12 +39,15 @@
 	end
 
 	function suite.floatingPoint_onFloatStrict()
-		flags "FloatStrict"
+		floatingpoint "strict"
 		prepare()
 		test.capture [[
 <FloatingPointModel>Strict</FloatingPointModel>
 		]]
 	end
 
-
-
+	function suite.floatingPoint_onDefault()
+		floatingpoint "Default"
+		prepare()
+		test.isemptycapture()
+	end

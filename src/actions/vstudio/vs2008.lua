@@ -4,9 +4,10 @@
 -- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vs2008 = {}
-	local vs2008 = premake.vstudio.vs2008
-	local vstudio = premake.vstudio
+	local p = premake
+	p.vstudio.vs2008 = {}
+	local vs2008 = p.vstudio.vs2008
+	local vstudio = p.vstudio
 
 
 ---
@@ -22,16 +23,20 @@
 
 		-- Visual Studio always uses Windows path and naming conventions
 
-		os = "windows",
+		targetos = "windows",
 
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },
-		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },
 		},
+		supports_language = function(lang)
+			return p.languages.isc(lang) or
+				   p.languages.iscpp(lang) or
+				   p.languages.isdotnet(lang)
+		end,
 
 		-- Workspace and project generation logic
 

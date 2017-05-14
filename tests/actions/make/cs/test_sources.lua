@@ -4,10 +4,11 @@
 -- Copyright (c) 2013-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_cs_sources")
-	local make = premake.make
-	local cs = premake.make.cs
-	local project = premake.project
+	local make = p.make
+	local cs = p.make.cs
+	local project = p.project
 
 
 --
@@ -21,8 +22,8 @@
 	end
 
 	local function prepare()
-		prj = premake.workspace.getproject(wks, 1)
-		make.csSources(prj, premake.tools.dotnet)
+		prj = p.workspace.getproject(wks, 1)
+		make.csSources(prj, p.tools.dotnet)
 	end
 
 
@@ -37,8 +38,8 @@
 SOURCES += \
 	Hello.cs \
 
-  		]]
-  	end
+		]]
+	end
 
 --
 -- Path delimiter uses slash instead of backslash
@@ -67,8 +68,8 @@ SOURCES += \
 SOURCES += \
 	Hello.cs \
 
-  		]]
-  	end
+		]]
+	end
 
 
 --
@@ -85,5 +86,5 @@ SOURCES += \
 SOURCES += \
 	Hello.txt \
 
-  		]]
-  	end
+		]]
+	end

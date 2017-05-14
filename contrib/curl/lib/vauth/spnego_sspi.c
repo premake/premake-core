@@ -40,6 +40,28 @@
 #include "memdebug.h"
 
 /*
+ * Curl_auth_is_spnego_supported()
+ *
+ * This is used to evaluate if SPNEGO (Negotiate) is supported.
+ *
+ * Parameters: None
+ *
+ * Returns TRUE if Negotiate is supported by Windows SSPI.
+ */
+bool Curl_auth_is_spnego_supported(void)
+{
+  PSecPkgInfo SecurityPackage;
+  SECURITY_STATUS status;
+
+  /* Query the security package for Negotiate */
+  status = s_pSecFn->QuerySecurityPackageInfo((TCHAR *)
+                                              TEXT(SP_NAME_NEGOTIATE),
+                                              &SecurityPackage);
+
+  return (status == SEC_E_OK ? TRUE : FALSE);
+}
+
+/*
  * Curl_auth_decode_spnego_message()
  *
  * This is used to decode an already encoded SPNEGO (Negotiate) challenge
@@ -57,7 +79,7 @@
  *
  * Returns CURLE_OK on success.
  */
-CURLcode Curl_auth_decode_spnego_message(struct SessionHandle *data,
+CURLcode Curl_auth_decode_spnego_message(struct Curl_easy *data,
                                          const char *user,
                                          const char *password,
                                          const char *service,
@@ -234,7 +256,7 @@ CURLcode Curl_auth_decode_spnego_message(struct SessionHandle *data,
  *
  * Returns CURLE_OK on success.
  */
-CURLcode Curl_auth_create_spnego_message(struct SessionHandle *data,
+CURLcode Curl_auth_create_spnego_message(struct Curl_easy *data,
                                          struct negotiatedata *nego,
                                          char **outptr, size_t *outlen)
 {
@@ -242,15 +264,17 @@ CURLcode Curl_auth_create_spnego_message(struct SessionHandle *data,
 
   /* Base64 encode the already generated response */
   result = Curl_base64_encode(data,
-                              (const char*) nego->output_token,
+                              (const char *) nego->output_token,
                               nego->output_token_length,
                               outptr, outlen);
 
   if(result)
     return result;
 
-  if(!*outptr || !*outlen)
+  if(!*outptr || !*outlen) {
+    free(*outptr);
     return CURLE_REMOTE_ACCESS_DENIED;
+  }
 
   return CURLE_OK;
 }
@@ -265,7 +289,7 @@ CURLcode Curl_auth_create_spnego_message(struct SessionHandle *data,
  * nego     [in/out] - The Negotiate data struct being cleaned up.
  *
  */
-void Curl_auth_spnego_cleanup(struct negotiatedata* nego)
+void Curl_auth_spnego_cleanup(struct negotiatedata *nego)
 {
   /* Free our security context */
   if(nego->context) {

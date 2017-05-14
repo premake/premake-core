@@ -63,7 +63,7 @@
 		context.addFilter(self, "_ACTION", _ACTION)
 		context.addFilter(self, "action", _ACTION)
 
-		self.system = self.system or p.action.current().os or os.get()
+		self.system = self.system or p.action.current().targetos or os.target()
 		context.addFilter(self, "system", self.system)
 
 		-- Add command line options to the filtering options
@@ -181,7 +181,7 @@
 			end
 
 			-- generated files might screw up the object sequences.
-			if prj.hasGeneratedFiles and p.project.iscpp(prj) then
+			if prj.hasGeneratedFiles and p.project.isnative(prj) then
 				oven.assignObjectSequences(prj)
 			end
 		end
@@ -204,7 +204,7 @@
 		-- Now filter on the current system and architecture, allowing the
 		-- values that might already in the context to override my defaults.
 
-		self.system = self.system or p.action.current().os or os.get()
+		self.system = self.system or p.action.current().targetos or os.target()
 		context.addFilter(self, "system", self.system)
 		context.addFilter(self, "architecture", self.architecture)
 
@@ -235,7 +235,7 @@
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated project.
 
-		self.location = self.location or wks.location or self.basedir
+		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 
 		-- This bit could use some work: create a canonical set of configurations
@@ -261,7 +261,7 @@
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(wks, self, buildcfg, platform)
 
-			if premake.action.supportsconfig(premake.action.current(), cfg) then
+			if p.action.supportsconfig(p.action.current(), cfg) then
 				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
 		end
@@ -278,7 +278,7 @@
 		-- to do this up front to make sure the sequence numbers are the same for
 		-- all the tools, even they reorder the source file list.
 
-		if p.project.iscpp(self) then
+		if p.project.isnative(self) then
 			oven.assignObjectSequences(self)
 		end
 	end
@@ -405,7 +405,7 @@
 		local pairings = table.fold(buildcfgs, platforms)
 		for _, pairing in ipairs(pairings) do
 			local cfg = oven.bakeConfig(wks, nil, pairing[1], pairing[2])
-			if premake.action.supportsconfig(premake.action.current(), cfg) then
+			if p.action.supportsconfig(p.action.current(), cfg) then
 				table.insert(configs, cfg)
 			end
 		end
@@ -528,7 +528,7 @@
 		-- More than a convenience; this is required to work properly with
 		-- external Visual Studio project files.
 
-		local system = p.action.current().os or os.get()
+		local system = p.action.current().targetos or os.target()
 		local architecture = nil
 		local toolset = nil
 
@@ -634,7 +634,7 @@
 		-- I need to look at them all.
 
 		for cfg in p.project.eachconfig(prj) do
-			table.foreachi(cfg.files, function(fname)
+			local function addFile(fname)
 
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
@@ -648,7 +648,17 @@
 
 				p.fileconfig.addconfig(files[fname], cfg)
 
-			end)
+			end
+
+			table.foreachi(cfg.files, addFile)
+
+			-- If this project uses NuGet, we need to add the generated
+			-- packages.config file to the project. Is there a better place to
+			-- do this?
+
+			if #prj.nuget > 0 then
+				addFile("packages.config")
+			end
 		end
 
 		-- Alpha sort the indices, so I will get consistent results in

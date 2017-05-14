@@ -4,9 +4,9 @@
 -- Copyright (c) 2009-2015 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc2010 = {}
-
 	local p = premake
+	p.vstudio.vc2010 = {}
+
 	local vstudio = p.vstudio
 	local project = p.project
 	local config = p.config
@@ -17,7 +17,7 @@
 
 
 ---
--- Add namespace for element definition lists for premake.callArray()
+-- Add namespace for element definition lists for p.callArray()
 ---
 
 	m.elements = {}
@@ -159,6 +159,7 @@
 				m.platformToolset,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
+				m.windowsSDKDesktopARMSupport,
 			}
 		end
 	end
@@ -510,7 +511,7 @@
 			local msg = cfg[field .. "message"]
 
 			if #steps > 0 then
-				steps = os.translateCommands(steps, p.WINDOWS)
+				steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 				p.push('<%s>', name)
 				p.x('<Command>%s</Command>', table.implode(steps, "", "", "\r\n"))
 				if msg then
@@ -1130,7 +1131,7 @@
 
 
 	function m.buildCommands(fcfg, condition)
-		local commands = os.translateCommands(fcfg.buildcommands, p.WINDOWS)
+		local commands = os.translateCommandsAndPaths(fcfg.buildcommands, fcfg.project.basedir, fcfg.project.location)
 		commands = table.concat(commands,'\r\n')
 		m.element("Command", condition, '%s', commands)
 	end
@@ -1215,8 +1216,10 @@
 
 
 	function m.compileAs(cfg)
-		if cfg.project.language == "C" then
+		if p.languages.isc(cfg.language) then
 			m.element("CompileAs", nil, "CompileAsC")
+		elseif p.languages.iscpp(cfg.language) then
+			m.element("CompileAs", nil, "CompileAsCpp")
 		end
 	end
 
@@ -1262,7 +1265,14 @@
 
 			m.element("DebugInformationFormat", nil, value)
 		elseif cfg.symbols == p.OFF then
-			m.element("DebugInformationFormat", nil, "None")
+			-- leave field blank for vs2013 and older to workaround bug
+			if _ACTION < "vs2015" then
+				value = ""
+			else
+				value = "None"
+			end
+
+			m.element("DebugInformationFormat", nil, value)
 		end
 	end
 
@@ -1303,14 +1313,6 @@
 	function m.entryPointSymbol(cfg)
 		if cfg.entrypoint then
 			m.element("EntryPointSymbol", nil, cfg.entrypoint)
-		else
-			if (cfg.kind == premake.CONSOLEAPP or cfg.kind == premake.WINDOWEDAPP) and
-				not cfg.flags.WinMain and
-				cfg.clr == p.OFF and
-				cfg.system ~= p.XBOX360
-			then
-				m.element("EntryPointSymbol", nil, "mainCRTStartup")
-			end
 		end
 	end
 
@@ -1345,7 +1347,7 @@
 
 
 	function m.floatingPointModel(cfg)
-		if cfg.floatingpoint then
+		if cfg.floatingpoint and cfg.floatingpoint ~= "Default" then
 			m.element("FloatingPointModel", nil, cfg.floatingpoint)
 		end
 	end
@@ -1545,7 +1547,8 @@
 	end
 
 	local function nuGetTargetsFile(prj, package)
-		return p.vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s\\build\\native\\%s.targets", vstudio.nuget2010.packageName(package), vstudio.nuget2010.packageId(package))))
+		local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
+		return p.vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s.%s\\build\\native\\%s.targets", vstudio.nuget2010.packageId(package), packageAPIInfo.verbatimVersion or packageAPIInfo.version, vstudio.nuget2010.packageId(package))))
 	end
 
 	function m.importNuGetTargets(prj)
@@ -1765,7 +1768,7 @@
 
 	function m.nmakeCommandLine(cfg, commands, phase)
 		if #commands > 0 then
-			commands = os.translateCommands(commands, p.WINDOWS)
+			commands = os.translateCommandsAndPaths(commands, cfg.project.basedir, cfg.project.location)
 			commands = table.concat(p.esc(commands), p.eol())
 			p.w('<NMake%sCommandLine>%s</NMake%sCommandLine>', phase, commands, phase)
 		end
@@ -1790,6 +1793,13 @@
 	end
 
 
+	function m.windowsSDKDesktopARMSupport(cfg)
+		if cfg.architecture == p.ARM then
+			p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
+		end
+	end
+
+
 	function m.nmakeOutput(cfg)
 		m.element("NMakeOutput", nil, "$(OutDir)%s", cfg.buildtarget.name)
 	end
@@ -1798,7 +1808,7 @@
 	function m.nmakePreprocessorDefinitions(cfg)
 		if cfg.kind ~= p.NONE and #cfg.defines > 0 then
 			local defines = table.concat(cfg.defines, ";")
-			defines = p.esc(defines) .. ";$(NMakePreprocessorDefinitions)"
+			defines = defines .. ";$(NMakePreprocessorDefinitions)"
 			m.element('NMakePreprocessorDefinitions', nil, defines)
 		end
 	end
@@ -1865,6 +1875,12 @@
 	function m.executablePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.bindirs)
 		if #dirs > 0 then
+			dirs = table.translate(dirs, function(dir)
+				if path.isabsolute(dir) then
+					return dir
+				end
+				return "$(ProjectDir)" .. dir
+			end)
 			m.element("ExecutablePath", nil, "%s;$(ExecutablePath)", table.concat(dirs, ";"))
 		end
 	end
@@ -1913,7 +1929,7 @@
 			if escapeQuotes then
 				defines = defines:gsub('"', '\\"')
 			end
-			defines = p.esc(defines) .. ";%%(PreprocessorDefinitions)"
+			defines = defines .. ";%%(PreprocessorDefinitions)"
 			m.element('PreprocessorDefinitions', condition, defines)
 		end
 	end
@@ -1925,7 +1941,7 @@
 			if escapeQuotes then
 				undefines = undefines:gsub('"', '\\"')
 			end
-			undefines = p.esc(undefines) .. ";%%(UndefinePreprocessorDefinitions)"
+			undefines = undefines .. ";%%(UndefinePreprocessorDefinitions)"
 			m.element('UndefinePreprocessorDefinitions', condition, undefines)
 		end
 	end
@@ -2143,7 +2159,7 @@
 	function m.disableSpecificWarnings(cfg, condition)
 		if #cfg.disablewarnings > 0 then
 			local warnings = table.concat(cfg.disablewarnings, ";")
-			warnings = p.esc(warnings) .. ";%%(DisableSpecificWarnings)"
+			warnings = warnings .. ";%%(DisableSpecificWarnings)"
 			m.element('DisableSpecificWarnings', condition, warnings)
 		end
 	end
@@ -2152,7 +2168,7 @@
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		if #cfg.fatalwarnings > 0 then
 			local fatal = table.concat(cfg.fatalwarnings, ";")
-			fatal = p.esc(fatal) .. ";%%(TreatSpecificWarningsAsErrors)"
+			fatal = fatal .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end
 	end

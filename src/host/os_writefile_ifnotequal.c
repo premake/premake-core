@@ -75,7 +75,7 @@ int os_writefile_ifnotequal(lua_State* L)
 	const char* dst     = luaL_checkstring(L, 2);
 
 	// if destination exist, and they are the same, no need to copy.
-	if (do_isfile(dst) && compare_file(content, length, dst))
+	if (do_isfile(L, dst) && compare_file(content, length, dst))
 	{
 		lua_pushinteger(L, 0);
 		return 1;

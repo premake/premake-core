@@ -4,29 +4,12 @@
 -- Copyright (c) 2008-2013 Jason Perkins and the Premake project
 --
 
-	premake.vstudio = {}
-	local vstudio = premake.vstudio
-
 	local p = premake
+	p.vstudio = {}
+	local vstudio = p.vstudio
+
 	local project = p.project
 	local config = p.config
-
-
---
--- All valid .NET Framework versions, from oldest to newest.
---
-
-	vstudio.frameworkVersions =
-	{
-		"1.0",
-		"1.1",
-		"2.0",
-		"3.0",
-		"3.5",
-		"4.0",
-		"4.5",
-		"4.6",
-	}
 
 
 --
@@ -41,6 +24,7 @@
 		x86     = "x86",
 		x86_64  = "x64",
 		xbox360 = "Xbox 360",
+		ARM     = "ARM",
 	}
 
 	vstudio.vs2010_architectures =
@@ -311,8 +295,8 @@
 --
 
 	function vstudio.archFromPlatform(platform)
-		local system = premake.api.checkValue(premake.fields.system, platform)
-		local arch = premake.api.checkValue(premake.fields.architecture, platform)
+		local system = p.api.checkValue(p.fields.system, platform)
+		local arch = p.api.checkValue(p.fields.architecture, platform)
 		return architecture(system, arch or platform:lower())
 	end
 
@@ -325,7 +309,7 @@
 		if locale then
 			local culture = vstudio._cultures[locale]
 			if not culture then
-				premake.warnOnce("Locale" .. locale, 'Unsupported locale "%s"', locale)
+				p.warnOnce("Locale" .. locale, 'Unsupported locale "%s"', locale)
 			end
 			return culture
 		end
@@ -358,7 +342,7 @@
 --
 
 	function vstudio.isMakefile(cfg)
-		return (cfg.kind == premake.MAKEFILE or cfg.kind == premake.NONE)
+		return (cfg.kind == p.MAKEFILE or cfg.kind == p.NONE)
 	end
 
 
@@ -456,11 +440,11 @@
 		local extension
 		if project.isdotnet(prj) then
 			extension = ".csproj"
-		elseif project.iscpp(prj) then
+		elseif project.isc(prj) or project.iscpp(prj) then
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
 
-		return premake.filename(prj, extension)
+		return p.filename(prj, extension)
 	end
 
 
@@ -519,11 +503,8 @@
 		local hasnet = false
 		local slnarch
 		for prj in p.workspace.eachproject(cfg.workspace) do
-			if project.isnative(prj) then
-				hasnative = true
-			elseif project.isdotnet(prj) then
-				hasnet = true
-			end
+			hasnative = hasnative or project.isnative(prj)
+			hasnet    = hasnet    or project.isdotnet(prj)
 
 			-- get a VS architecture identifier for this project
 			local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
@@ -573,11 +554,8 @@
 		--
 
 		for prj in p.workspace.eachproject(cfg.workspace) do
-			if project.isnative(prj) then
-				hasnative = true
-			elseif project.isdotnet(prj) then
-				hasdotnet = true
-			end
+			hasnative = hasnative or project.isnative(prj)
+			hasnet    = hasnet    or project.isdotnet(prj)
 
 			if hasnative and hasdotnet then
 				return "Mixed Platforms"
@@ -632,7 +610,7 @@
 	function vstudio.tool(prj)
 		if project.isdotnet(prj) then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
-		elseif project.iscpp(prj) then
+		elseif project.isc(prj) or project.iscpp(prj) then
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 		end
 	end

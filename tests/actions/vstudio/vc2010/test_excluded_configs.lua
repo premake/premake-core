@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs2010_excluded_configs")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
@@ -51,7 +52,6 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 </Link>
 		]]
 	end
@@ -70,7 +70,6 @@
 <Link>
 	<SubSystem>Console</SubSystem>
 	<AdditionalDependencies>bin\Ares\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	<EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>

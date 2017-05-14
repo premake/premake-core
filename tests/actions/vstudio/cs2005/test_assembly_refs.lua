@@ -4,9 +4,9 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_cs2005_assembly_refs")
-
-	local cs2005 = premake.vstudio.cs2005
+	local cs2005 = p.vstudio.cs2005
 
 
 --
@@ -16,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = test.createWorkspace()
 		language "C#"
 	end
@@ -147,20 +147,51 @@
 -- NuGet packages should get references.
 --
 
-	function suite.nuGetPackages()
+	function suite.nuGetPackages_net45()
 		dotnetframework "4.5"
-		nuget { "Newtonsoft.Json:7.0.1" }
+		nuget { "Newtonsoft.Json:10.0.2" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
 		<Reference Include="Newtonsoft.Json">
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net35\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net35\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+			<HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.nuGetPackages_net30()
+		dotnetframework "3.0"
+		nuget { "Newtonsoft.Json:10.0.2" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>packages\Newtonsoft.Json.10.0.2\lib\net20\Newtonsoft.Json.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+--
+-- If there are multiple assemblies in the NuGet package, they all should be
+-- referenced.
+--
+
+	function suite.nuGetPackages_multipleAssemblies()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 	</ItemGroup>
@@ -169,21 +200,60 @@
 
 
 --
--- NuGet packages shouldn't get HintPaths for .NET Framework
--- versions that the project doesn't support.
+-- NuGet packages should respect copylocal() and the NoCopyLocal flag.
 --
 
-	function suite.nuGetPackages_olderNET()
-		dotnetframework "3.0"
-		nuget { "Newtonsoft.Json:7.0.1" }
+	function suite.nugetPackages_onNoCopyLocal()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		flags { "NoCopyLocal" }
 		prepare()
 		test.capture [[
 	<ItemGroup>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net10\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net11\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll</HintPath>
-			<HintPath Condition="Exists('packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll')">packages\Newtonsoft.Json.7.0.1\lib\net30\Newtonsoft.Json.dll</HintPath>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.nugetPackages_onCopyLocalListExclusion()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		copylocal { "SomeOtherProject" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.nugetPackages_onCopyLocalListInclusion()
+		dotnetframework "2.0"
+		nuget { "NUnit:3.6.1" }
+		copylocal { "NUnit:3.6.1" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<Reference Include="nunit.framework">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\nunit.framework.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="NUnit.System.Linq">
+			<HintPath>packages\NUnit.3.6.1\lib\net20\NUnit.System.Linq.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 	</ItemGroup>

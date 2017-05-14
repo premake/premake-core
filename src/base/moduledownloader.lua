@@ -23,7 +23,7 @@
 
 		-- get current user.
 		local user = 'UNKNOWN'
-		if os.get() == 'windows' then
+		if os.ishost('windows') then
 			user = os.getenv('USERNAME') or user
 		else
 			user = os.getenv('LOGNAME') or user

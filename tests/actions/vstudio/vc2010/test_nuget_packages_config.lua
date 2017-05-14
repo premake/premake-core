@@ -1,11 +1,14 @@
 --
--- tests/actions/vstudio/sln2005/test_nuget_packages_config.lua
+-- tests/actions/vstudio/vc2010/test_nuget_packages_config.lua
 -- Validate generation of NuGet packages.config file for Visual Studio 2010 and newer.
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Copyright (c) 2017 Jason Perkins and the Premake project
 --
 
-	local suite = test.declare("vstudio_sln2005_nuget_packages_config")
-	local nuget2010 = premake.vstudio.nuget2010
+	local p = premake
+	local suite = test.declare("vs2010_nuget_packages_config")
+	local vc2010 = p.vstudio.vc2010
+	local nuget2010 = p.vstudio.nuget2010
+	local project = p.project
 
 
 --
@@ -15,14 +18,25 @@
 	local wks
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		local prj = premake.solution.getproject(wks, 1)
-		nuget2010.generatePackagesConfig({ workspace = wks })
+		local prj = p.solution.getproject(wks, 1)
+		nuget2010.generatePackagesConfig(prj)
 	end
+
+
+--
+-- Should not output anything if no packages have been set.
+--
+
+	function suite.noOutputIfNoPackages()
+		prepare()
+		test.isemptycapture()
+	end
+
 
 
 --

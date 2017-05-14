@@ -7,9 +7,9 @@
 	local p = premake
 	local xcode = p.modules.xcode
 	local tree  = p.tree
-    local workspace = p.workspace
+	local workspace = p.workspace
 	local project = p.project
-    local config = p.config
+	local config = p.config
 	local fileconfig = p.fileconfig
 
 
@@ -287,7 +287,7 @@
 	function xcode.getxcodeprojname(prj)
 		-- if there is a workspace with matching name, then use "projectname1.xcodeproj"
 		-- just get something working for now
-		local fname = premake.filename(prj, ".xcodeproj")
+		local fname = p.filename(prj, ".xcodeproj")
 		return fname
 	end
 
@@ -336,7 +336,7 @@
 		-- create and cache a list of supported platforms
 		wks.xcode = { }
 
-		for prj in premake.workspace.eachproject(wks) do
+		for prj in p.workspace.eachproject(wks) do
 			-- need a configuration to get the target information
 			local cfg = project.getconfig(prj, prj.configurations[1], prj.platforms[1])
 
@@ -346,7 +346,7 @@
 				bundlepath = cfg.project.name
 			end
 
-			local node = premake.tree.new(path.getname(bundlepath))
+			local node = p.tree.new(path.getname(bundlepath))
 
 			node.cfg = cfg
 			node.id = xcode.newid(node.name, "product")
@@ -959,6 +959,40 @@
 	end
 
 
+	function xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)
+		if (p.languages.isc(cfg.language)) then
+			if cfg.language ~= "C" then
+				settings['GCC_C_LANGUAGE_STANDARD'] = cfg.language:lower()
+			else
+				if cfg.flags['C99'] then
+					settings['GCC_C_LANGUAGE_STANDARD'] = 'C99'
+				elseif cfg.flags['C11'] then
+					settings['GCC_C_LANGUAGE_STANDARD'] = 'C11'
+				else
+					settings['GCC_C_LANGUAGE_STANDARD'] = 'C90'
+				end
+			end
+		else
+			settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
+		end
+	end
+
+
+	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
+		if (p.languages.iscpp(cfg.language)) then
+			if cfg.language ~= "C++" then
+				settings['CLANG_CXX_LANGUAGE_STANDARD'] = cfg.language:lower()
+			else
+				if cfg.flags['C++11'] then
+					settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++11'
+				elseif cfg.flags['C++14'] then
+					settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++14'
+				end
+			end
+		end
+	end
+
+
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
 		local settings = {}
 
@@ -987,13 +1021,8 @@
 			settings['COPY_PHASE_STRIP'] = 'NO'
 		end
 
-		settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
-
-		if cfg.flags['C++14'] then
-			settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++14'
-		elseif cfg.flags['C++11'] then
-			settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++0x'
-		end
+		xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)
+		xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
 
 		if cfg.exceptionhandling == p.OFF then
 			settings['GCC_ENABLE_CPP_EXCEPTIONS'] = 'NO'
@@ -1003,7 +1032,7 @@
 			settings['GCC_ENABLE_CPP_RTTI'] = 'NO'
 		end
 
-		if cfg.symbols == p.ON and not cfg.flags.NoEditAndContinue then
+		if cfg.symbols == p.ON and cfg.editandcontinue ~= "Off" then
 			settings['GCC_ENABLE_FIX_AND_CONTINUE'] = 'YES'
 		end
 
@@ -1036,13 +1065,13 @@
 
 		local includedirs = project.getrelative(cfg.project, cfg.includedirs)
 		for i,v in ipairs(includedirs) do
-			cfg.includedirs[i] = premake.quoted(v)
+			cfg.includedirs[i] = p.quoted(v)
 		end
 		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 
 		local sysincludedirs = project.getrelative(cfg.project, cfg.sysincludedirs)
 		for i,v in ipairs(sysincludedirs) do
-			cfg.sysincludedirs[i] = premake.quoted(v)
+			cfg.sysincludedirs[i] = p.quoted(v)
 		end
 		if not table.isempty(cfg.sysincludedirs) then
 			table.insert(cfg.sysincludedirs, "$(inherited)")
@@ -1050,24 +1079,24 @@
 		settings['HEADER_SEARCH_PATHS'] = cfg.sysincludedirs
 
 		for i,v in ipairs(cfg.libdirs) do
-			cfg.libdirs[i] = premake.project.getrelative(cfg.project, cfg.libdirs[i])
+			cfg.libdirs[i] = p.project.getrelative(cfg.project, cfg.libdirs[i])
 		end
 		settings['LIBRARY_SEARCH_PATHS'] = cfg.libdirs
 
 		for i,v in ipairs(cfg.frameworkdirs) do
-			cfg.frameworkdirs[i] = premake.project.getrelative(cfg.project, cfg.frameworkdirs[i])
+			cfg.frameworkdirs[i] = p.project.getrelative(cfg.project, cfg.frameworkdirs[i])
 		end
 		settings['FRAMEWORK_SEARCH_PATHS'] = cfg.frameworkdirs
 
 		local objDir = path.getrelative(tr.project.location, cfg.objdir)
 		settings['OBJROOT'] = objDir
 
-		settings['ONLY_ACTIVE_ARCH'] = iif(premake.config.isDebugBuild(cfg), 'YES', 'NO')
+		settings['ONLY_ACTIVE_ARCH'] = iif(p.config.isDebugBuild(cfg), 'YES', 'NO')
 
 		-- build list of "other" C/C++ flags
 		local checks = {
-			["-ffast-math"]          = cfg.flags.FloatFast,
-			["-ffloat-store"]        = cfg.flags.FloatStrict,
+			["-ffast-math"]          = cfg.floatingpoint == "Fast",
+			["-ffloat-store"]        = cfg.floatingpoint == "Strict",
 			["-fomit-frame-pointer"] = cfg.flags.NoFramePointer,
 		}
 

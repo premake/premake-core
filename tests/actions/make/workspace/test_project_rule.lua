@@ -4,6 +4,7 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_project_rule")
 
 
@@ -18,9 +19,9 @@
 	end
 
 	local function prepare()
-		premake.oven.bake()
+		p.oven.bake()
 		wks = test.getWorkspace(wks)
-		premake.make.projectrules(wks)
+		p.make.projectrules(wks)
 	end
 
 

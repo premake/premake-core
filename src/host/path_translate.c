@@ -35,7 +35,7 @@ int path_translate(lua_State* L)
 	if (lua_gettop(L) == 1) {
 		// Get target OS
 		lua_getglobal(L, "os");
-		lua_getfield(L, -1, "get");
+		lua_getfield(L, -1, "target");
 		lua_call(L, 0, 1);
 		os = luaL_checkstring(L, -1);
 		lua_pop(L, 2);

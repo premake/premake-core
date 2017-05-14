@@ -4,10 +4,10 @@
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("configset")
-
-	local configset = premake.configset
-	local field = premake.field
+	local configset = p.configset
+	local field = p.field
 
 
 --
@@ -127,9 +127,9 @@
 -- List fields should return an empty list of not set.
 --
 
-     function suite.lists_returnsEmptyTable_onNotSet()
-          test.isequal({}, configset.fetch(cset, field.get("buildoptions"), {}))
-     end
+	function suite.lists_returnsEmptyTable_onNotSet()
+		test.isequal({}, configset.fetch(cset, field.get("buildoptions"), {}))
+	end
 
 
 --

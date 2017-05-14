@@ -5,10 +5,11 @@
 ---
 
 	local suite = test.declare("d_make")
-	local m = premake.modules.d
+	local p = premake
+	local m = p.modules.d
 
-	local make = premake.make
-	local project = premake.project
+	local make = p.make
+	local project = p.project
 
 
 ---------------------------------------------------------------------------
@@ -18,19 +19,19 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		premake.escaper(make.esc)
+		p.escaper(make.esc)
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
-		prj = premake.workspace.getproject(wks, 1)
+		prj = p.workspace.getproject(wks, 1)
 	end
 
 	local function prepare_cfg(calls)
-		prj = premake.workspace.getproject(wks, 1)
+		prj = p.workspace.getproject(wks, 1)
 		local cfg = test.getconfig(prj, "Debug")
-		local toolset = premake.tools.dmd
-		premake.callArray(calls, cfg, toolset)
+		local toolset = p.tools.dmd
+		p.callArray(calls, cfg, toolset)
 	end
 
 

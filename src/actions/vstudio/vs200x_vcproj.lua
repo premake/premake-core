@@ -4,10 +4,10 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
-	premake.vstudio.vc200x = {}
-	local m = premake.vstudio.vc200x
-
 	local p = premake
+	p.vstudio.vc200x = {}
+	local m = p.vstudio.vc200x
+
 	local vstudio = p.vstudio
 	local context = p.context
 	local project = p.project
@@ -219,7 +219,7 @@
 	end
 
 	function m.tools(cfg)
-		premake.callArray(m.elements.tools, cfg, config.toolset(cfg))
+		p.callArray(m.elements.tools, cfg, config.toolset(cfg))
 	end
 
 
@@ -945,7 +945,7 @@
 
 
 	function m.buildCommandLine(cfg)
-		local cmds = os.translateCommands(cfg.buildcommands, p.WINDOWS)
+		local cmds = os.translateCommandsAndPaths(cfg.buildcommands, cfg.project.basedir, cfg.project.location)
 		p.x('BuildCommandLine="%s"', table.concat(cmds, "\r\n"))
 	end
 
@@ -960,7 +960,7 @@
 
 
 	function m.cleanCommandLine(cfg)
-		local cmds = os.translateCommands(cfg.cleancommands, p.WINDOWS)
+		local cmds = os.translateCommandsAndPaths(cfg.cleancommands, cfg.project.basedir, cfg.project.location)
 		cmds = table.concat(cmds, "\r\n")
 		p.x('CleanCommandLine="%s"', cmds)
 	end
@@ -975,7 +975,7 @@
 			if msg then
 				p.x('Description="%s"', msg)
 			end
-			steps = os.translateCommands(steps, p.WINDOWS)
+			steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 			p.x('CommandLine="%s"', table.implode(steps, "", "", "\r\n"))
 		end
 	end
@@ -984,7 +984,7 @@
 
 	function m.compileAs(cfg, toolset)
 		local cfg, filecfg = config.normalize(cfg)
-		local c = project.isc(cfg)
+		local c = p.languages.isc(cfg.language)
 		if filecfg then
 			if path.iscfile(filecfg.name) ~= c then
 				if path.iscppfile(filecfg.name) then
@@ -1045,7 +1045,7 @@
 	function m.customBuildTool(cfg)
 		local cfg, filecfg = config.normalize(cfg)
 		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
-			local cmds = os.translateCommands(filecfg.buildcommands, p.WINDOWS)
+			local cmds = os.translateCommandsAndPaths(filecfg.buildcommands, filecfg.project.basedir, filecfg.project.location)
 			p.x('CommandLine="%s"', table.concat(cmds,'\r\n'))
 
 			local outputs = project.getrelative(filecfg.project, filecfg.buildoutputs)
@@ -1121,11 +1121,8 @@
 
 
 	function m.entryPointSymbol(cfg, toolset)
-		if (cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp") and
-			not cfg.flags.WinMain and
-			not toolset
-		then
-			p.w('EntryPointSymbol="mainCRTStartup"')
+		if cfg.entrypoint then
+			p.w('EntryPointSymbol="%s"', cfg.entrypoint)
 		end
 	end
 
@@ -1612,6 +1609,8 @@
 			   prj.system == p.WINDOWS
 			then
 				p.w('UsePrecompiledHeader="1"')
+			elseif file.flags.NoPCH then
+				p.w('UsePrecompiledHeader="0"')
 			end
 		else
 			if not prj.flags.NoPCH and prj.pchheader then

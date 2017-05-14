@@ -4,16 +4,17 @@
 -- Copyright (c) 2002-2013 Jason Perkins and the Premake project
 --
 
-	premake.make.cs = {}
-	local make = premake.make
-	local cs = premake.make.cs
-	local project = premake.project
-	local config = premake.config
-	local fileconfig = premake.fileconfig
+	local p = premake
+	p.make.cs = {}
+	local make = p.make
+	local cs = p.make.cs
+	local project = p.project
+	local config = p.config
+	local fileconfig = p.fileconfig
 
 
 --
--- Add namespace for element definition lists for premake.callarray()
+-- Add namespace for element definition lists for p.callarray()
 --
 
 	cs.elements = {}
@@ -52,9 +53,9 @@
 --
 
 	function make.cs.generate(prj)
-		premake.eol("\n")
-		local toolset = premake.tools.dotnet
-		premake.callArray(cs.elements.makefile, prj, toolset)
+		p.eol("\n")
+		local toolset = p.tools.dotnet
+		p.callArray(cs.elements.makefile, prj, toolset)
 	end
 
 
@@ -79,7 +80,7 @@
 	function make.csConfigs(prj, toolset)
 		for cfg in project.eachconfig(prj) do
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callArray(cs.elements.configuration, cfg, toolset)
+			p.callArray(cs.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end
@@ -93,12 +94,12 @@
 
 	function cs.getresourcefilename(cfg, fname)
 		if path.getextension(fname) == ".resx" then
-		    local name = cfg.buildtarget.basename .. "."
-		    local dir = path.getdirectory(fname)
-		    if dir ~= "." then
+			local name = cfg.buildtarget.basename .. "."
+			local dir = path.getdirectory(fname)
+			if dir ~= "." then
 				name = name .. path.translate(dir, ".") .. "."
 			end
-			return "$(OBJDIR)/" .. premake.esc(name .. path.getbasename(fname)) .. ".resources"
+			return "$(OBJDIR)/" .. p.esc(name .. path.getbasename(fname)) .. ".resources"
 		else
 			return fname
 		end
@@ -111,7 +112,7 @@
 
 	function cs.listsources(prj, selector)
 		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
+		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				local value = selector(node)
 				if value then
@@ -186,9 +187,9 @@
 
 
 	function make.csResponseRules(prj)
-		local toolset = premake.tools.dotnet
+		local toolset = p.tools.dotnet
 		local ext = make.getmakefilename(prj, true)
-		local makefile = path.getname(premake.filename(prj, ext))
+		local makefile = path.getname(p.filename(prj, ext))
 		local response = make.cs.getresponsefilename(prj)
 
 		_p('$(RESPONSE): %s', makefile)
@@ -200,9 +201,9 @@
 			_x('\t$(SILENT) if exist $(RESPONSE) del %s', path.translate(response, '\\'))
 		_p('endif')
 
-		local sep = os.is("windows") and "\\" or "/"
+		local sep = os.istarget("windows") and "\\" or "/"
 		local tr = project.getsourcetree(prj)
-		premake.tree.traverse(tr, {
+		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				if toolset.fileinfo(node).action == "Compile" then
 					_x('\t@echo %s >> $(RESPONSE)', path.translate(node.relpath, sep))
@@ -232,10 +233,10 @@
 		--[[
 		-- porting from 4.x
 		_p('# Per-configuration copied file rules')
-		for cfg in premake.eachconfig(prj) do
+		for cfg in p.eachconfig(prj) do
 			_x('ifneq (,$(findstring %s,$(config)))', cfg.name:lower())
 			for target, source in pairs(cfgpairs[cfg]) do
-				premake.make_copyrule(source, target)
+				p.make_copyrule(source, target)
 			end
 			_p('endif')
 			_p('')
@@ -243,7 +244,7 @@
 
 		_p('# Copied file rules')
 		for target, source in pairs(copypairs) do
-			premake.make_copyrule(source, target)
+			p.make_copyrule(source, target)
 		end
 
 		_p('# Embedded file rules')
@@ -264,7 +265,7 @@
 
 
 	function make.csLinkCmd(cfg, toolset)
-		local deps = premake.esc(config.getlinks(cfg, "dependencies", "fullpath"))
+		local deps = p.esc(config.getlinks(cfg, "dependencies", "fullpath"))
 		_p('  DEPENDS =%s', make.list(deps))
 		_p('  REFERENCES = %s', table.implode(deps, "/r:", "", " "))
 	end
@@ -276,10 +277,10 @@
 		local cfg = project.getfirstconfig(prj)
 
 		local kindflag = "/t:" .. toolset.getkind(cfg):lower()
-		local libdirs = table.implode(premake.esc(cfg.libdirs), "/lib:", "", " ")
+		local libdirs = table.implode(p.esc(cfg.libdirs), "/lib:", "", " ")
 		_p('FLAGS += %s', table.concat(table.join(kindflag, libdirs), " "))
 
-		local refs = premake.esc(config.getlinks(cfg, "system", "fullpath"))
+		local refs = p.esc(config.getlinks(cfg, "system", "fullpath"))
 		_p('REFERENCES += %s', table.implode(refs, "/r:", "", " "))
 		_p('')
 	end

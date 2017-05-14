@@ -4,8 +4,9 @@
 -- Copyright (c) 2002-2014 Jason Perkins and the Premake project
 --
 
-	premake.option = {}
-	local m = premake.option
+	local p = premake
+	p.option = {}
+	local m = p.option
 
 
 --
@@ -87,7 +88,7 @@
 		end
 
 		-- add it to the master list
-		premake.option.list[opt.trigger:lower()] = opt
+		p.option.list[opt.trigger:lower()] = opt
 
 		-- if it has a default value, set it.
 		if opt.default and not _OPTIONS[opt.trigger] then
@@ -107,7 +108,7 @@
 --
 
 	function m.get(name)
-		return premake.option.list[name]
+		return p.option.list[name]
 	end
 
 
@@ -119,7 +120,7 @@
 	function m.each()
 		-- sort the list by trigger
 		local keys = { }
-		for _, option in pairs(premake.option.list) do
+		for _, option in pairs(p.option.list) do
 			table.insert(keys, option.trigger)
 		end
 		table.sort(keys)
@@ -127,7 +128,7 @@
 		local i = 0
 		return function()
 			i = i + 1
-			return premake.option.list[keys[i]]
+			return p.option.list[keys[i]]
 		end
 	end
 
@@ -145,7 +146,7 @@
 	function m.validate(values)
 		for key, value in pairs(values) do
 			-- does this option exist
-			local opt = premake.option.get(key)
+			local opt = p.option.get(key)
 			if (not opt) then
 				return false, "invalid option '" .. key .. "'"
 			end

@@ -5,10 +5,11 @@
 --
 
 
-	premake.tools.dotnet = {}
-	local dotnet = premake.tools.dotnet
-	local project = premake.project
-	local config = premake.config
+	local p = premake
+	p.tools.dotnet = {}
+	local dotnet = p.tools.dotnet
+	local project = p.project
+	local config = p.config
 
 
 --
@@ -50,7 +51,7 @@
 			info.action = "Resource"
 		elseif ext == ".xaml" then
 			if fcfg.buildaction == "Application" or path.getbasename(fname) == "App" then
-				if fcfg.project.kind == premake.SHAREDLIB then
+				if fcfg.project.kind == p.SHAREDLIB then
 					info.action = "None"
 				else
 					info.action = "ApplicationDefinition"
@@ -122,7 +123,7 @@
 			if fcfg.buildaction == "Component" or
 			   fcfg.buildaction == "Form" or
 			   fcfg.buildaction == "UserControl"
-		   then
+			then
 				info.SubType = fcfg.buildaction
 			end
 
@@ -222,7 +223,7 @@
 		}
 
 		if tool == "csc" then
-			local toolset = _OPTIONS.dotnet or iif(os.is(premake.WINDOWS), "msnet", "mono")
+			local toolset = _OPTIONS.dotnet or iif(os.istarget("windows"), "msnet", "mono")
 			return compilers[toolset]
 		else
 			return "resgen"

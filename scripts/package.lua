@@ -60,7 +60,7 @@
 	local pkgName = "premake-" .. version
 	local pkgExt = ".zip"
 
-	if not os.is("windows") and kind == "binary" then
+	if not os.istarget("windows") and kind == "binary" then
 		pkgExt = ".tar.gz"
 	end
 
@@ -127,17 +127,15 @@
 
 	print("Cleaning up the source tree...")
 	os.rmdir("packages")
+	os.rmdir(".git")
 
-	local modules = table.join(".", os.matchdirs("modules/*"))
-	for _, module in ipairs(modules) do
-		for _, name in ipairs { ".git" } do
-			os.rmdir(path.join(module, name))
-		end
-		for _, name in ipairs { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig", "Bootstrap.mak" } do
-			os.remove(path.join(module, name))
+	local removelist = { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig", "appveyor.yml", "Bootstrap.mak" }
+	for _, removeitem in ipairs(removelist) do
+		local founditems = os.matchfiles("**" .. removeitem)
+		for _, item in ipairs(founditems) do
+			os.remove(item)
 		end
 	end
-
 
 --
 -- Generate a source package.
@@ -152,9 +150,11 @@ if kind == "source" then
 	execQuiet("premake5 /to=build/vs2012 vs2012")
 	execQuiet("premake5 /to=build/vs2013 vs2013")
 	execQuiet("premake5 /to=build/vs2015 vs2015")
+	execQuiet("premake5 /to=build/vs2017 vs2017")
 	execQuiet("premake5 /to=build/gmake.windows /os=windows gmake")
 	execQuiet("premake5 /to=build/gmake.unix /os=linux gmake")
 	execQuiet("premake5 /to=build/gmake.macosx /os=macosx gmake")
+	execQuiet("premake5 /to=build/gmake.bsd /os=bsd gmake")
 
 	print("Creating source code package...")
 	os.chdir("..")
@@ -180,8 +180,8 @@ if kind == "binary" then
 
 	os.chdir("bin/release")
 
-	local name = string.format("%s-%s%s", pkgName, os.get(), pkgExt)
-	if os.is("windows") then
+	local name = string.format("%s-%s%s", pkgName, os.host(), pkgExt)
+	if os.ishost("windows") then
 		execQuiet("zip -9 %s premake5.exe", name)
 	else
 		execQuiet("tar czvf %s premake5", name)

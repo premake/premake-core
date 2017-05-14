@@ -4,11 +4,11 @@
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("context")
-
-	local context = premake.context
-	local configset = premake.configset
-	local field = premake.field
+	local context = p.context
+	local configset = p.configset
+	local field = p.field
 
 
 --

@@ -189,7 +189,7 @@
 
 		table.foreachi(cfg.forceincludes, function(value)
 			local fn = project.getrelative(cfg.project, value)
-			table.insert(result, "/FI" .. premake.quoted(fn))
+			table.insert(result, "/FI" .. p.quoted(fn))
 		end)
 
 		return result
@@ -208,7 +208,7 @@
 		dirs = table.join(dirs, sysdirs)
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
-			table.insert(result, '-I' ..  premake.quoted(dir))
+			table.insert(result, '-I' ..  p.quoted(dir))
 		end
 		return result
 	end
@@ -241,7 +241,7 @@
 	}
 
 	function msc.getldflags(cfg)
-		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
+		local map = iif(cfg.kind ~= p.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
 		table.insert(flags, 1, "/NOLOGO")
 

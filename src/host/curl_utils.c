@@ -134,6 +134,10 @@ CURL* curlRequest(lua_State* L, curl_state* state, int optionsIndex, int progres
 			{
 				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, (long)luaL_checknumber(L, -1));
 			}
+			else if (!strcmp(key, "proxyurl") && lua_isstring(L, -1))
+			{
+				curl_easy_setopt(curl, CURLOPT_PROXY, luaL_checkstring(L, -1));
+			}
 
 			// pop the value, leave the key for lua_next
 			lua_pop(L, 1);

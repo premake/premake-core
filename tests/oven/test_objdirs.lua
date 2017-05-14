@@ -4,8 +4,9 @@
 -- Copyright (c) 2014-2015 Jason Perkins and the Premake project
 ---
 
+	local p = premake
 	local suite = test.declare("oven_objdirs")
-	local oven = premake.oven
+	local oven = p.oven
 
 ---
 -- Setup

@@ -6,9 +6,9 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
-	premake.detoken = {}
-
 	local p = premake
+	p.detoken = {}
+
 	local detoken = p.detoken
 
 

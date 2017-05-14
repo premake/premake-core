@@ -108,7 +108,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
                               ssize_t *wrotep)
 {
   CURLcode result=CURLE_OK;
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
   struct Curl_chunker *ch = &conn->chunk;
   struct SingleRequest *k = &data->req;
   size_t piece;
@@ -190,8 +190,8 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
 
       /* Write the data portion available */
 #ifdef HAVE_LIBZ
-      switch (conn->data->set.http_ce_skip?
-              IDENTITY : data->req.auto_decoding) {
+      switch(conn->data->set.http_ce_skip?
+             IDENTITY : data->req.auto_decoding) {
       case IDENTITY:
 #endif
         if(!k->ignorebody) {
@@ -219,10 +219,10 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
         break;
 
       default:
-        failf (conn->data,
-               "Unrecognized content encoding type. "
-               "libcurl understands `identity', `deflate' and `gzip' "
-               "content encodings.");
+        failf(conn->data,
+              "Unrecognized content encoding type. "
+              "libcurl understands `identity', `deflate' and `gzip' "
+              "content encodings.");
         return CHUNKE_BAD_ENCODING;
       }
 #endif
@@ -360,7 +360,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
 
 const char *Curl_chunked_strerror(CHUNKcode code)
 {
-  switch (code) {
+  switch(code) {
   default:
     return "OK";
   case CHUNKE_TOO_LONG_HEX:

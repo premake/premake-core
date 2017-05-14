@@ -4,10 +4,11 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_tools")
-	local make = premake.make
-	local cpp = premake.make.cpp
-	local project = premake.project
+	local make = p.make
+	local cpp = p.make.cpp
+	local project = p.project
 
 
 --
@@ -27,8 +28,8 @@
 --
 
 	function suite.usesCorrectTools()
-		make.cppTools(cfg, premake.tools.gcc)
+		make.cppTools(cfg, p.tools.gcc)
 		test.capture [[
   RESCOMP = windres
-  		]]
+		]]
 	end

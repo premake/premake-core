@@ -28,9 +28,11 @@
 --
 -- Patch the gmake action with the allowed tools...
 --
-	gmake.valid_languages = table.join(gmake.valid_languages, { p.D } )
 	gmake.valid_tools.dc = { "dmd", "gdc", "ldc" }
 
+	p.override(gmake, "supports_language", function(oldfn, lang)
+		return oldfn(lang) or lang == p.D;
+	end)
 
 	function m.make.separateCompilation(prj)
 		local some = false
@@ -157,8 +159,8 @@
 			_p('\t@echo $(notdir $<)')
 			_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
 		else
-	 		oldfn(prj, node)
-	 	end
+			oldfn(prj, node)
+		end
 	end)
 
 
@@ -239,7 +241,7 @@
 		if cfg.flags.SeparateCompilation then
 			_p('  LINKCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
 
---			local cc = iif(cfg.language == "C", "CC", "CXX")
+--			local cc = iif(p.languages.isc(cfg.language), "CC", "CXX")
 --			_p('  LINKCMD = $(%s) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)', cc)
 		else
 			_p('  BUILDCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_DFLAGS) $(ALL_LDFLAGS) $(LIBS) $(SOURCEFILES)')

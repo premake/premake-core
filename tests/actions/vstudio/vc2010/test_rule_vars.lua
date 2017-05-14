@@ -5,9 +5,9 @@
 -- Copyright (c) 2014-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_rule_vars")
-
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 
@@ -18,7 +18,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		rule "MyRule"
 		wks, prj = test.createWorkspace()
 		rules { "MyRule" }

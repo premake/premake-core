@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("config_targetinfo")
-	local config = premake.config
+	local config = p.config
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("test")
+		p.action.set("test")
 		wks, prj = test.createWorkspace()
 		system "macosx"
 	end
@@ -252,7 +253,7 @@
 --
 
 	function suite.appUsesExe_onDotNet()
-		_OS = "macosx"
+		_TARGET_OS = "macosx"
 		language "C#"
 		i = prepare()
 		test.isequal("MyProject.exe", i.name)
@@ -265,7 +266,7 @@
 --
 
 	function suite.appUsesExe_onDotNet()
-		_OS = "macosx"
+		_TARGET_OS = "macosx"
 		language "C#"
 		kind "SharedLib"
 		i = prepare()

@@ -4,8 +4,9 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs200x_nmake_settings")
-	local vc200x = premake.vstudio.vc200x
+	local vc200x = p.vstudio.vc200x
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.escaper(premake.vstudio.vs2005.esc)
+		p.escaper(p.vstudio.vs2005.esc)
 		wks, prj = test.createWorkspace()
 		kind "Makefile"
 	end

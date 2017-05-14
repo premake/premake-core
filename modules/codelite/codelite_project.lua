@@ -51,9 +51,9 @@
 			error("Invalid toolset '" + (_OPTIONS.cc or cfg.toolset) + "'")
 		end
 
-		if cfg.language == "C" then
+		if p.languages.isc(cfg.language) then
 			return m.ctools[tool]
-		elseif cfg.language == "C++" then
+		elseif p.languages.iscpp(cfg.language) then
 			return m.cxxtools[tool]
 		end
 	end
@@ -281,17 +281,17 @@
 
 		_p(3, '<Debugger IsRemote="%s" RemoteHostName="%s" RemoteHostPort="%s" DebuggerPath="" IsExtended="%s">', iif(cfg.debugremotehost, "yes", "no"), cfg.debugremotehost or "", iif(cfg.debugport, tostring(cfg.debugport), ""), iif(cfg.debugextendedprotocol, "yes", "no"))
 		if #cfg.debugsearchpaths > 0 then
-			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(premake.esc(project.getrelative(cfg.project, cfg.debugsearchpaths)), "\n"))
+			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(p.esc(project.getrelative(cfg.project, cfg.debugsearchpaths)), "\n"))
 		else
 			_p(4, '<DebuggerSearchPaths/>')
 		end
 		if #cfg.debugconnectcommands > 0 then
-			_p(4, '<PostConnectCommands>%s</PostConnectCommands>', table.concat(premake.esc(cfg.debugconnectcommands), "\n"))
+			_p(4, '<PostConnectCommands>%s</PostConnectCommands>', table.concat(p.esc(cfg.debugconnectcommands), "\n"))
 		else
 			_p(4, '<PostConnectCommands/>')
 		end
 		if #cfg.debugstartupcommands > 0 then
-			_p(4, '<StartupCommands>%s</StartupCommands>', table.concat(premake.esc(cfg.debugstartupcommands), "\n"))
+			_p(4, '<StartupCommands>%s</StartupCommands>', table.concat(p.esc(cfg.debugstartupcommands), "\n"))
 		else
 			_p(4, '<StartupCommands/>')
 		end
@@ -354,8 +354,19 @@
 		_p(3, '</AdditionalRules>')
 	end
 
+	function m.isCpp11(cfg)
+		return (cfg.language == 'gnu++11') or (cfg.language == 'C++11') or cfg.flags["C++11"]
+	end
+
+	function m.isCpp14(cfg)
+		return (cfg.language == 'gnu++14') or (cfg.language == 'C++14') or cfg.flags["C++14"]
+	end
+
 	function m.completion(cfg)
-		_p(3, '<Completion EnableCpp11="%s" EnableCpp14="%s">', iif(cfg.flags["C++11"], "yes", "no"), iif(cfg.flags["C++14"], "yes", "no"))
+		_p(3, '<Completion EnableCpp11="%s" EnableCpp14="%s">',
+			iif(m.isCpp11(cfg), "yes", "no"),
+			iif(m.isCpp14(cfg), "yes", "no")
+		)
 		_p(4, '<ClangCmpFlagsC/>')
 		_p(4, '<ClangCmpFlags/>')
 		_p(4, '<ClangPP/>') -- TODO: we might want to set special code completion macros...?

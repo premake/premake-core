@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_ldflags")
-	local make = premake.make
+	local make = p.make
 
 
 --
@@ -21,7 +22,7 @@
 
 	local function prepare(calls)
 		local cfg = test.getconfig(prj, "Debug")
-		local toolset = premake.tools.gcc
+		local toolset = p.tools.gcc
 		make.ldFlags(cfg, toolset)
 	end
 
@@ -48,28 +49,28 @@
   ALL_LDFLAGS += $(LDFLAGS) -L../libs -Llibs
 		]]
 	end
-	
+
 	function suite.checkLibDirs_X86_64()
 		architecture ("x86_64")
-		system (premake.LINUX)
+		system (p.LINUX)
 		prepare()
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 		]]
 	end
-	
+
 	function suite.checkLibDirs_X86()
 		architecture ("x86")
-		system (premake.LINUX)
+		system (p.LINUX)
 		prepare()
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32
 		]]
 	end
-	
+
 	function suite.checkLibDirs_X86_64_MacOSX()
 		architecture ("x86_64")
-		system (premake.MACOSX)
+		system (p.MACOSX)
 		prepare()
 		test.capture [[
   ALL_LDFLAGS += $(LDFLAGS) -m64

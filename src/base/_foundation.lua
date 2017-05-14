@@ -53,6 +53,7 @@
 	premake.WINDOWS     = "windows"
 	premake.X86         = "x86"
 	premake.X86_64      = "x86_64"
+	premake.ARM         = "ARM"
 	premake.XBOX360     = "xbox360"
 
 
@@ -333,7 +334,9 @@
 		if _OPTIONS.fatal then
 			error(message)
 		else
+			term.pushColor(term.warningColor)
 			io.stderr:write(string.format("** Warning: " .. message .. "\n", ...))
+			term.popColor();
 		end
 	end
 
@@ -373,5 +376,21 @@
 	function verbosef(msg, ...)
 		if _OPTIONS.verbose then
 			print(string.format(msg, ...))
+		end
+	end
+
+
+--
+-- make a string from debug.getinfo information.
+--
+	function filelineinfo(level)
+		local info = debug.getinfo(level+1, "Sl")
+		if info == nil then
+			return nil
+		end
+		if info.what == "C" then
+			return "C function"
+		else
+			return string.format("%s(%d)", info.short_src, info.currentline)
 		end
 	end

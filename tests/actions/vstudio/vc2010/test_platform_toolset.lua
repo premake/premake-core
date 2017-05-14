@@ -4,8 +4,9 @@
 -- Copyright (c) 2013-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_platform_toolset")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		wks, prj = test.createWorkspace()
 		files "hello.cpp"
 	end
@@ -32,14 +33,14 @@
 --
 
 	function suite.correctDefault_onVS2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		prepare()
 		test.isemptycapture()
 	end
 
 
 	function suite.correctDefault_onVS2012()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		prepare()
 		test.capture [[
 <PlatformToolset>v110</PlatformToolset>
@@ -48,7 +49,7 @@
 
 
 	function suite.correctDefault_onVS2013()
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 <PlatformToolset>v120</PlatformToolset>

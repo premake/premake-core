@@ -6,14 +6,15 @@
 -- Copyright (c) 2015 Jason Perkins and the Premake project
 ---
 
+	local p = premake
 	local suite = test.declare("vs2010_vc_vectorextensions")
-	local m = premake.vstudio.vc2010
+	local m = p.vstudio.vc2010
 
 
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -36,7 +37,7 @@
 	end
 
 	function suite.instructionSet_onIA32()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		vectorextensions "IA32"
 		prepare()
 		test.capture [[
@@ -61,7 +62,7 @@
 	end
 
 	function suite.instructionSet_onAVX()
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		vectorextensions "AVX"
 		prepare()
 		test.capture [[
@@ -76,7 +77,7 @@
 	end
 
 	function suite.instructionSet_onAVX2()
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		vectorextensions "AVX2"
 		prepare()
 		test.capture [[
@@ -85,7 +86,7 @@
 	end
 
 	function suite.instructionSet_onAVX2_onVS2012()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		vectorextensions "AVX2"
 		prepare()
 		test.isemptycapture()

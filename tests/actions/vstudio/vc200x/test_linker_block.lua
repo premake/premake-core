@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs200x_linker_block")
-	local vc200x = premake.vstudio.vc200x
+	local vc200x = p.vstudio.vc200x
 
 
 --
@@ -15,8 +16,8 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2008")
-		premake.escaper(premake.vstudio.vs2005.esc)
+		p.action.set("vs2008")
+		p.escaper(p.vstudio.vs2005.esc)
 		wks, prj = test.createWorkspace()
 	end
 
@@ -40,7 +41,6 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="false"
 	SubSystem="1"
-	EntryPointSymbol="mainCRTStartup"
 	TargetMachine="1"
 />
 		]]
@@ -61,7 +61,6 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="false"
 	SubSystem="2"
-	EntryPointSymbol="mainCRTStartup"
 	TargetMachine="1"
 />
 		]]
@@ -137,7 +136,6 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="true"
 	SubSystem="1"
-	EntryPointSymbol="mainCRTStartup"
 	TargetMachine="1"
 />
 		]]

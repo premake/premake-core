@@ -4,8 +4,9 @@
 -- Copyright (c) 2015 Jason Perkins and the Premake project
 ---
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_target_machine")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --

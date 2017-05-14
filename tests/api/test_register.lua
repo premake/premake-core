@@ -4,8 +4,9 @@
 -- Copyright (c) 2012 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("api_register")
-	local api = premake.api
+	local api = p.api
 
 
 --
@@ -23,7 +24,7 @@
 --
 
 	function suite.registerFunctionExists()
-		test.isequal("function", type(premake.api.register))
+		test.isequal("function", type(p.api.register))
 	end
 
 

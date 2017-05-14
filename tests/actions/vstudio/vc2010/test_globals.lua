@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_globals")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 
@@ -78,7 +79,7 @@
 	end
 
 	function suite.frameworkVersionIsCorrect_on2013()
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		clr "On"
 		prepare()
 		test.capture [[
@@ -180,7 +181,7 @@
 --
 
 	function suite.structureIsCorrect_on2013()
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">

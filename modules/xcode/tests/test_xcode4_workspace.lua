@@ -7,7 +7,8 @@
 ---
 
 	local suite = test.declare("xcode4_workspace")
-	local xcode = premake.modules.xcode
+	local p = premake
+	local xcode = p.modules.xcode
 
 
 --

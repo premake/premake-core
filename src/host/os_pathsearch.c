@@ -58,7 +58,7 @@ int do_pathsearch(lua_State* L, const char* filename, const char* path)
 		lua_concat(L, 3);
 
 		/* test it - if it exists, return the absolute path */
-		if (do_isfile(lua_tostring(L, -1)))
+		if (do_isfile(L, lua_tostring(L, -1)))
 		{
 			lua_pop(L, 1);
 			lua_pushcfunction(L, path_getabsolute);

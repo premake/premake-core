@@ -4,9 +4,10 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_cpp_target_rules")
-	local make = premake.make
-	local project = premake.project
+	local make = p.make
+	local project = p.project
 
 
 --
@@ -34,7 +35,7 @@
 		test.capture [[
 all: prebuild prelink $(TARGET)
 	@:
-  		]]
+		]]
 	end
 
 
@@ -52,5 +53,5 @@ all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))In
 
 $(dir $(TARGETDIR))PkgInfo:
 $(dir $(TARGETDIR))Info.plist:
-  		]]
+		]]
 	end

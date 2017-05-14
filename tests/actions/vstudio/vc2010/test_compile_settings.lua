@@ -4,9 +4,10 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_compile_settings")
-	local vc2010 = premake.vstudio.vc2010
-	local project = premake.project
+	local vc2010 = p.vstudio.vc2010
+	local project = p.project
 
 
 --
@@ -16,7 +17,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -37,6 +38,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -222,6 +224,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -234,6 +237,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -264,6 +268,24 @@
 	<WarningLevel>Level3</WarningLevel>
 	<PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		]]
+	end
+
+
+--
+--	If defines are specified with escapable characters, they should be escaped.
+--
+
+	function suite.preprocessorDefinitions_onDefines()
+		p.escaper(p.vstudio.vs2010.esc)
+		defines { "&", "<", ">" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>&amp;;&lt;;&gt;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+		p.escaper(nil)
 	end
 
 
@@ -440,6 +462,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -453,6 +476,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>None</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -466,6 +490,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -537,7 +562,7 @@
 
 	function suite.exceptions_onNoExceptionsVS2013()
 		exceptionhandling "Off"
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -790,9 +815,29 @@
 
 --
 -- Check handling of the explicitly disabling symbols.
+-- Note: VS2013 and older have a bug with setting
+-- DebugInformationFormat to None. The workaround
+-- is to leave the field blank.
 --
 	function suite.onNoSymbols()
 		symbols 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat></DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+--
+-- VS2015 and newer can use DebugInformationFormat None.
+--
+	function suite.onNoSymbolsVS2015()
+		symbols 'Off'
+		p.action.set("vs2015")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -802,7 +847,6 @@
 	<Optimization>Disabled</Optimization>
 		]]
 	end
-
 
 
 --
@@ -883,6 +927,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -969,5 +1014,36 @@
 	<IntrinsicFunctions>true</IntrinsicFunctions>
 	<MinimalRebuild>false</MinimalRebuild>
 	<StringPooling>true</StringPooling>
+		]]
+	end
+
+
+
+--
+-- Check handling of the language api
+--
+	function suite.onLanguageC()
+		language 'C'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsC</CompileAs>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguageCpp()
+		language 'C++'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCpp</CompileAs>
+</ClCompile>
 		]]
 	end

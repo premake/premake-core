@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_sln2005_header")
-	local sln2005 = premake.vstudio.sln2005
+	local sln2005 = p.vstudio.sln2005
 
 
 --
@@ -28,7 +29,7 @@
 --
 
 	function suite.on2005()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		prepare()
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 9.00
@@ -38,7 +39,7 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 
 
 	function suite.on2008()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		prepare()
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 10.00
@@ -48,7 +49,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 
 
 	function suite.on2010()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		prepare()
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 11.00
@@ -58,7 +59,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 
 	function suite.on2012()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		prepare()
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 12.00
@@ -68,7 +69,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 
 
 	function suite.on2013()
-		premake.action.set("vs2013")
+		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 Microsoft Visual Studio Solution File, Format Version 12.00

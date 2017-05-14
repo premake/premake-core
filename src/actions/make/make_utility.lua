@@ -14,7 +14,7 @@
 	local fileconfig = p.fileconfig
 
 ---
--- Add namespace for element definition lists for premake.callarray()
+-- Add namespace for element definition lists for p.callarray()
 ---
 	utility.elements = {}
 
@@ -30,8 +30,8 @@
 	}
 
 	function make.utility.generate(prj)
-		premake.eol("\n")
-		premake.callarray(make, utility.elements.makefile, prj)
+		p.eol("\n")
+		p.callarray(make, utility.elements.makefile, prj)
 	end
 
 
@@ -46,13 +46,13 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = premake.tools[cfg.toolset or "gcc"]
+			local toolset = p.tools[cfg.toolset or "gcc"]
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callarray(make, utility.elements.configuration, cfg, toolset)
+			p.callarray(make, utility.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end

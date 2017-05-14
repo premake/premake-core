@@ -49,7 +49,7 @@
 		fn()
 
 		-- build the result
-		local captured = premake.captured()
+		local captured = p.captured()
 
 		-- free the capture buffer.
 		buffered.close(_captured)
@@ -108,7 +108,7 @@
 			local result = {}
 			local n = #value
 			for i = 1, n do
-				table.insert(result, premake.esc(value[i]))
+				table.insert(result, p.esc(value[i]))
 			end
 			return result
 		end
@@ -150,13 +150,13 @@
 --
 
 	function premake.generate(obj, ext, callback)
-		local output = premake.capture(function ()
+		local output = p.capture(function ()
 			_indentLevel = 0
 			callback(obj)
 			_indentLevel = 0
 		end)
 
-		local fn = premake.filename(obj, ext)
+		local fn = p.filename(obj, ext)
 
 		-- make sure output folder exists.
 		local dir = path.getdirectory(fn)
@@ -238,8 +238,8 @@ end
 ---
 
 	function premake.outln(s)
-		premake.out(s)
-		premake.out(_eol or "\n")
+		p.out(s)
+		p.out(_eol or "\n")
 	end
 
 
@@ -260,7 +260,7 @@ end
 			_indentLevel = _indentLevel - (i or 1)
 		else
 			_indentLevel = _indentLevel - 1
-			premake.w(i, ...)
+			p.w(i, ...)
 		end
 	end
 
@@ -281,7 +281,7 @@ end
 		if i == nil or type(i) == "number" then
 			_indentLevel = _indentLevel + (i or 1)
 		else
-			premake.w(i, ...)
+			p.w(i, ...)
 			_indentLevel = _indentLevel + 1
 		end
 	end
@@ -324,9 +324,9 @@ end
 
 	function premake.w(...)
 		if select("#", ...) > 0 then
-			premake.outln(string.rep(_indentString or "\t", _indentLevel) .. string.format(...))
+			p.outln(string.rep(_indentString or "\t", _indentLevel) .. string.format(...))
 		else
-			premake.outln('');
+			p.outln('');
 		end
 	end
 
@@ -341,9 +341,9 @@ end
 	function premake.x(msg, ...)
 		local arg = {...}
 		for i = 1, #arg do
-			arg[i] = premake.esc(arg[i])
+			arg[i] = p.esc(arg[i])
 		end
-		premake.w(msg, unpack(arg))
+		p.w(msg, unpack(arg))
 	end
 
 
@@ -359,7 +359,7 @@ end
 
 	function premake.xmlUtf8(upper)
 		local encoding = iif(upper, "UTF-8", "utf-8")
-		premake.w('<?xml version="1.0" encoding="%s"?>', encoding)
+		p.w('<?xml version="1.0" encoding="%s"?>', encoding)
 	end
 
 
@@ -381,17 +381,17 @@ end
 	function _p(i, ...)
 		if type(i) == "number" then
 			_indentLevel = i
-			premake.w(...)
+			p.w(...)
 		else
 			_indentLevel = 0
-			premake.w(i, ...)
+			p.w(i, ...)
 		end
 	end
 
 	function _x(i, ...)
 		local arg = {...}
 		for i = 2, #arg do
-			arg[i] = premake.esc(arg[i])
+			arg[i] = p.esc(arg[i])
 		end
 		_p(i, unpack(arg))
 	end

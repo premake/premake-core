@@ -4,8 +4,9 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_cs_response")
-	local make = premake.make
+	local make = p.make
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	end
 
@@ -55,7 +56,7 @@ $(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS) $(RESPONSE)
 	end
 
 	function suite.listResponseRulesPosix()
-		_OS = "linux"
+		_TARGET_OS = "linux"
 		suite.listResponseRules()
 		test.capture [[
 $(RESPONSE): MyProject.make
@@ -72,7 +73,7 @@ endif
 	end
 
 	function suite.listResponseRulesWindows()
-		_OS = "windows"
+		_TARGET_OS = "windows"
 		suite.listResponseRules()
 		test.capture [[
 $(RESPONSE): MyProject.make

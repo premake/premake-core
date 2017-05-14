@@ -4,9 +4,10 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vstudio_cs2005_compiler_props")
-	local cs2005 = premake.vstudio.cs2005
-	local project = premake.project
+	local cs2005 = p.vstudio.cs2005
+	local project = p.project
 
 
 --
@@ -16,7 +17,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		wks, prj = test.createWorkspace()
 	end
 

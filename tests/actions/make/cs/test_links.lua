@@ -4,56 +4,57 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
-    local suite = test.declare("make_cs_links")
-    local make = premake.make
-    local cs = premake.make.cs
-    local project = premake.project
+	local p = premake
+	local suite = test.declare("make_cs_links")
+	local make = p.make
+	local cs = p.make.cs
+	local project = p.project
 
 --
 -- Setup
 --
 
-    local wks, prj
+	local wks, prj
 
-    function suite.setup()
-        wks, prj = test.createWorkspace()
-    end
+	function suite.setup()
+		wks, prj = test.createWorkspace()
+	end
 
-    local function prepare()
-        local cfg = test.getconfig(prj, "Debug")
-        make.csLinkCmd(cfg, premake.tools.dotnet)
-    end
+	local function prepare()
+		local cfg = test.getconfig(prj, "Debug")
+		make.csLinkCmd(cfg, p.tools.dotnet)
+	end
 
 
 --
 -- Should return an empty assignment if nothing has been specified.
 --
 
-    function suite.isEmptyAssignment_onNoSettings()
-        prepare()
-        test.capture [[
+	function suite.isEmptyAssignment_onNoSettings()
+		prepare()
+		test.capture [[
   DEPENDS =
-        ]]
-    end
+		]]
+	end
 
 
 --
 -- Files that can be compiled should be listed here.
 --
 
-    function suite.doesListLinkDependencyFiles()
-        links { "MyProject2", "MyProject3" }
+	function suite.doesListLinkDependencyFiles()
+		links { "MyProject2", "MyProject3" }
 
-        test.createproject(wks)
-        kind "SharedLib"
-        language "C#"
+		test.createproject(wks)
+		kind "SharedLib"
+		language "C#"
 
-        test.createproject(wks)
-        kind "SharedLib"
-        language "C#"
+		test.createproject(wks)
+		kind "SharedLib"
+		language "C#"
 
-        prepare ()
-        test.capture [[
+		prepare ()
+		test.capture [[
   DEPENDS = bin/Debug/MyProject2.dll bin/Debug/MyProject3.dll
-        ]]
-    end
+		]]
+	end

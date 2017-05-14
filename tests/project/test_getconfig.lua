@@ -29,7 +29,7 @@
 --
 
 	function suite.usesCurrentOS_onNoSystemSpecified()
-		_OS = "linux"
+		_TARGET_OS = "linux"
 		project ("MyProject")
 		filter { "system:linux" }
 		defines { "correct" }
@@ -45,7 +45,7 @@
 --
 
 	function suite.actionOverridesOS()
-		_OS = "linux"
+		_TARGET_OS = "linux"
 		_ACTION = "vs2005"
 		project ("MyProject")
 		filter { "system:windows" }
@@ -61,7 +61,7 @@
 --
 
 	function suite.usesCfgSystem()
-		_OS = "linux"
+		_TARGET_OS = "linux"
 		_ACTION = "vs2005"
 		project ("MyProject")
 		system "macosx"

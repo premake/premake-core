@@ -91,3 +91,13 @@
 			return self .. "s"
 		end
 	end
+
+
+
+---
+-- Returns the string escaped for Lua patterns.
+---
+
+	function string.escapepattern(s)
+		return s:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%0")
+	end

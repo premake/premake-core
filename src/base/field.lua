@@ -12,8 +12,9 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 ---
 
-	premake.field = {}
-	local field = premake.field
+	local p = premake
+	p.field = {}
+	local field = p.field
 
 
 -- Lists to hold all of the registered fields and data kinds
@@ -334,14 +335,14 @@
 
 ---
 -- Override one of the field kind accessor functions. This works just like
--- premake.override(), but applies the new function to the internal field
+-- p.override(), but applies the new function to the internal field
 -- description and clears the accessor caches to make sure the change gets
 -- picked up by future operations.
 ---
 
 	function field.override(fieldName, accessorName, func)
 		local kind = field.kind(fieldName)
-		premake.override(kind, accessorName, func)
+		p.override(kind, accessorName, func)
 		field._accessors = {}
 	end
 

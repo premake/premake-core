@@ -13,7 +13,7 @@ int os_stat(lua_State* L)
 	struct stat s;
 	
 	const char* filename = luaL_checkstring(L, 1);
-    if (stat(filename, &s) != 0)
+	if (stat(filename, &s) != 0)
 	{
 		lua_pushnil(L);
 		switch (errno)

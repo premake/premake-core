@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("vs200x_compiler_block")
-	local vc200x = premake.vstudio.vc200x
+	local vc200x = p.vstudio.vc200x
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2008")
+		p.action.set("vs2008")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -383,7 +384,7 @@
 --
 
 	function suite._64BitPortabilityOn_onVS2005()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		prepare()
 		test.capture [[
 <Tool
@@ -401,7 +402,7 @@
 	end
 
 	function suite._64BitPortabilityOff_onVS2005_andCLR()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		clr "On"
 		prepare()
 		test.capture [[
@@ -423,7 +424,7 @@
 --
 
 	function suite.runtimeLibraryIsDebug_onVS2005_NoWarnings()
-		premake.action.set("vs2005")
+		p.action.set("vs2005")
 		warnings "Off"
 		prepare()
 		test.capture [[

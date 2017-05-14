@@ -4,10 +4,11 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("make_clang")
-	local make = premake.make
-	local cpp = premake.make.cpp
-	local project = premake.project
+	local make = p.make
+	local cpp = p.make.cpp
+	local project = p.project
 
 
 --
@@ -19,7 +20,7 @@
 	function suite.setup()
 		wks = test.createWorkspace()
 		toolset "clang"
-		prj = premake.workspace.getproject(wks, 1)
+		prj = p.workspace.getproject(wks, 1)
 	end
 
 
@@ -40,6 +41,6 @@ ifeq ($(config),debug)
   ifeq ($(origin AR), default)
     AR = ar
   endif
-  		]]
+		]]
 	end
 

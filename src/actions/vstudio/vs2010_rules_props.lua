@@ -5,14 +5,12 @@
 --
 
 
-	premake.vstudio.vs2010.rules = {}
-	premake.vstudio.vs2010.rules.props = {}
-
-	local m = premake.vstudio.vs2010.rules.props
-	m.elements = {}
-
 	local p = premake
+	p.vstudio.vs2010.rules = {}
+	p.vstudio.vs2010.rules.props = {}
 
+	local m = p.vstudio.vs2010.rules.props
+	m.elements = {}
 
 
 ---
@@ -154,7 +152,7 @@
 		if buildcommands and #buildcommands > 0 then
 			local cmds = os.translateCommands(buildcommands, p.WINDOWS)
 			cmds = table.concat(cmds, p.eol())
-			p.x('<CommandLineTemplate>@echo off\n%s</CommandLineTemplate>', cmds)
+			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
 		end
 	end
 

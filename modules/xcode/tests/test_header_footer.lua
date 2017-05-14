@@ -6,7 +6,8 @@
 ---
 
 	local suite = test.declare("xcode_header")
-	local xcode = premake.modules.xcode
+	local p = premake
+	local xcode = p.modules.xcode
 
 
 --

@@ -11,11 +11,18 @@ int do_chdir(lua_State* L, const char* path)
 {
 	int z;
 
+#if PLATFORM_WINDOWS
+	wchar_t wide_buffer[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wide_buffer, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode path");
+		return lua_error(L);
+	}
+
+	z = SetCurrentDirectoryW(wide_buffer);
+#else
 	(void)(L);  /* warning: unused parameter */
 
-#if PLATFORM_WINDOWS
-	z = SetCurrentDirectoryA(path);
-#else
 	z = !chdir(path);
 #endif
 

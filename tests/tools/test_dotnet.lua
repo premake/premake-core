@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("tools_dotnet")
-	local dotnet = premake.tools.dotnet
+	local dotnet = p.tools.dotnet
 
 
 --
@@ -28,7 +29,7 @@
 --
 
 	function suite.defaultCompiler_onWindows()
-		_OS = "windows"
+		_TARGET_OS = "windows"
 		prepare()
 		test.isequal("csc", dotnet.gettoolname(cfg, "csc"))
 	end
@@ -39,7 +40,7 @@
 --
 
 	function suite.defaultCompiler_onMacOSX()
-		_OS = "macosx"
+		_TARGET_OS = "macosx"
 		prepare()
 		test.isequal("mcs", dotnet.gettoolname(cfg, "csc"))
 	end

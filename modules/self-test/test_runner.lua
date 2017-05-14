@@ -108,7 +108,7 @@
 
 		hooks.action = _ACTION
 		hooks.options = _OPTIONS
-		hooks.os = _OS
+		hooks.targetOs = _TARGET_OS
 
 		hooks.io_open = io.open
 		hooks.io_output = io.output
@@ -151,7 +151,7 @@
 	function _.removeTestingHooks(hooks)
 		_ACTION = hooks.action
 		_OPTIONS = hooks.options
-		_OS = hooks.os
+		_TARGET_OS = hooks.targetOs
 
 		io.open = hooks.io_open
 		io.output = hooks.io_output

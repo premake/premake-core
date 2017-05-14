@@ -4,12 +4,13 @@
 -- Copyright (c) 2013-2015 Andrew Gough, Manu Evans, and the Premake project
 --
 
-	premake.tools.gdc = { }
+	local p = premake
+	p.tools.gdc = { }
 
-	local gdc = premake.tools.gdc
-	local project = premake.project
-	local config = premake.config
-    local d = premake.modules.d
+	local gdc = p.tools.gdc
+	local project = p.project
+	local config = p.config
+	local d = p.modules.d
 
 	--
 	-- Set default tools
@@ -83,18 +84,18 @@
 
 		if cfg.flags.Documentation then
 			if cfg.docname then
-				table.insert(flags, "-fdoc-file=" .. premake.quoted(cfg.docname))
+				table.insert(flags, "-fdoc-file=" .. p.quoted(cfg.docname))
 			end
 			if cfg.docdir then
-				table.insert(flags, "-fdoc-dir=" .. premake.quoted(cfg.docdir))
+				table.insert(flags, "-fdoc-dir=" .. p.quoted(cfg.docdir))
 			end
 		end
 		if cfg.flags.GenerateHeader then
 			if cfg.headername then
-				table.insert(flags, "-fintfc-file=" .. premake.quoted(cfg.headername))
+				table.insert(flags, "-fintfc-file=" .. p.quoted(cfg.headername))
 			end
 			if cfg.headerdir then
-				table.insert(flags, "-fintfc-dir=" .. premake.quoted(cfg.headerdir))
+				table.insert(flags, "-fintfc-dir=" .. p.quoted(cfg.headerdir))
 			end
 		end
 
@@ -142,7 +143,7 @@
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
-			table.insert(result, '-I' .. premake.quoted(dir))
+			table.insert(result, '-I' .. p.quoted(dir))
 		end
 		return result
 	end
@@ -168,14 +169,14 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				local r = { iif(cfg.system == p.MACOSX, "-dynamiclib", "-shared") }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				end
 				return r
 			end,
 			WindowedApp = function(cfg)
-				if cfg.system == premake.WINDOWS then return "-mwindows" end
+				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
 	}
@@ -224,7 +225,7 @@
 				-- skip external project references, since I have no way
 				-- to know the actual output target path
 				if not link.project.external then
-					if link.kind == premake.STATICLIB then
+					if link.kind == p.STATICLIB then
 						-- Don't use "-l" flag when linking static libraries; instead use
 						-- path/libname.a to avoid linking a shared library of the same
 						-- name if one is present

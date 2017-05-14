@@ -34,6 +34,7 @@
 #include "curl_sspi.h"
 #include "curl_multibyte.h"
 #include "warnless.h"
+#include "strdup.h"
 /* The last 3 #include files should be in this order */
 #include "curl_printf.h"
 #include "curl_memory.h"
@@ -44,7 +45,7 @@
  */
 static int check_sspi_err(struct connectdata *conn,
                           SECURITY_STATUS status,
-                          const char* function)
+                          const char *function)
 {
   if(status != SEC_E_OK &&
      status != SEC_I_COMPLETE_AND_CONTINUE &&
@@ -61,7 +62,7 @@ static int check_sspi_err(struct connectdata *conn,
 CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
                                       struct connectdata *conn)
 {
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
   curl_socket_t sock = conn->sock[sockindex];
   CURLcode code;
   ssize_t actualread;
@@ -85,6 +86,7 @@ CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
   unsigned char socksreq[4]; /* room for GSS-API exchange header only */
   const char *service = data->set.str[STRING_PROXY_SERVICE_NAME] ?
                         data->set.str[STRING_PROXY_SERVICE_NAME]  : "rcmd";
+  const size_t service_length = strlen(service);
 
   /*   GSS-API request looks like
    * +----+------+-----+----------------+
@@ -96,17 +98,18 @@ CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
 
   /* prepare service name */
   if(strchr(service, '/')) {
-    service_name = malloc(strlen(service));
+    service_name = strdup(service);
     if(!service_name)
       return CURLE_OUT_OF_MEMORY;
-    memcpy(service_name, service, strlen(service));
   }
   else {
-    service_name = malloc(strlen(service) + strlen(conn->proxy.name) + 2);
+    service_name = malloc(service_length +
+                          strlen(conn->socks_proxy.host.name) + 2);
     if(!service_name)
       return CURLE_OUT_OF_MEMORY;
-    snprintf(service_name, strlen(service) +strlen(conn->proxy.name)+2,
-             "%s/%s", service, conn->proxy.name);
+    snprintf(service_name, service_length +
+             strlen(conn->socks_proxy.host.name)+2, "%s/%s",
+             service, conn->socks_proxy.host.name);
   }
 
   input_desc.cBuffers = 1;

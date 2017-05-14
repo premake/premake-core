@@ -8,7 +8,7 @@
 	local p = premake
 	p.api = {}
 
-	local api = premake.api
+	local api = p.api
 	local configset = p.configset
 
 
@@ -81,7 +81,7 @@
 ---
 
 	function includeexternal(fname)
-		local fullPath = premake.findProjectScript(fname)
+		local fullPath = p.findProjectScript(fname)
 		api._isIncludingExternal = true
 		fname = fullPath or fname
 		dofile(fname)
@@ -248,7 +248,7 @@
 		end
 
 		-- add this new field to my master list
-		field, err = premake.field.new(field)
+		field, err = p.field.new(field)
 		if not field then
 			error(err)
 		end
@@ -258,7 +258,7 @@
 		-- use this information when expanding tokens, to ensure that the paths
 		-- are still well-formed after replacements.
 
-		field.paths = premake.field.property(field, "paths")
+		field.paths = p.field.property(field, "paths")
 
 		-- Add preprocessed, lowercase keys to the allowed and aliased value
 		-- lists to speed up value checking later on.
@@ -281,7 +281,7 @@
 			return api.storeField(field, value)
 		end
 
-		if premake.field.removes(field) then
+		if p.field.removes(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)
 			end
@@ -299,9 +299,9 @@
 
 	function api.unregister(field)
 		if type(field) == "string" then
-			field = premake.field.get(field)
+			field = p.field.get(field)
 		end
-		premake.field.unregister(field)
+		p.field.unregister(field)
 		_G[field.name] = nil
 		_G["remove" .. field.name] = nil
 	end
@@ -318,12 +318,12 @@
 --    The alias name (another string value).
 ---
 
-     function api.alias(original, alias)
-     	p.alias(_G, original, alias)
-     	if _G["remove" .. original] then
-     		p.alias(_G, "remove" .. original, "remove" .. alias)
-     	end
-     end
+	function api.alias(original, alias)
+		p.alias(_G, original, alias)
+		if _G["remove" .. original] then
+			p.alias(_G, "remove" .. original, "remove" .. alias)
+		end
+	end
 
 
 
@@ -338,7 +338,7 @@
 --
 
 	function api.addAllowed(fieldName, value)
-		local field = premake.field.get(fieldName)
+		local field = p.field.get(fieldName)
 		if not field then
 			error("No such field: " .. fieldName, 2)
 		end
@@ -367,7 +367,7 @@
 --
 
 	function api.addAliases(fieldName, value)
-		local field = premake.field.get(fieldName)
+		local field = p.field.get(fieldName)
 		if not field then
 			error("No such field: " .. fieldName, 2)
 		end
@@ -395,7 +395,7 @@
 --
 
 	function api.deprecateField(name, message, handler)
-		premake.fields[name].deprecated = {
+		p.fields[name].deprecated = {
 			handler = handler,
 			message = message
 		}
@@ -427,7 +427,7 @@
 				api.deprecateValue(name, v, message, addHandler, removeHandler)
 			end
 		else
-			local field = premake.fields[name]
+			local field = p.fields[name]
 			field.deprecated = field.deprecated or {}
 			field.deprecated[value] = {
 				add = addHandler,
@@ -490,8 +490,12 @@
 		if field.deprecated and type(field.deprecated.handler) == "function" then
 			field.deprecated.handler(value)
 			if field.deprecated.message and api._deprecations ~= "off" then
-				premake.warnOnce(field.name, "the field %s has been deprecated.\n   %s", field.name, field.deprecated.message)
-				if api._deprecations == "error" then error("deprecation errors enabled", 3) end
+				local caller = filelineinfo(2)
+				local key = field.name .. "_" .. caller
+				p.warnOnce(key, "the field %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, field.deprecated.message, caller)
+				if api._deprecations == "error" then
+					error("deprecation errors enabled", 3)
+				end
 			end
 		end
 
@@ -536,13 +540,14 @@
 
 		local removes = {}
 
-		function check(value)
+		local function check(value)
 			if field.deprecated[value] then
 				local handler = field.deprecated[value]
 				if handler.remove then handler.remove(value) end
 				if handler.message and api._deprecations ~= "off" then
-					local key = field.name .. "_" .. value
-					premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, value, handler.message)
+					local caller = filelineinfo(8)
+					local key = field.name .. "_" .. value .. "_" .. caller
+					p.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, value, handler.message, caller)
 					if api._deprecations == "error" then
 						error { msg="deprecation errors enabled" }
 					end
@@ -647,8 +652,9 @@
 			local handler = field.deprecated[canonical]
 			handler.add(canonical)
 			if handler.message and api._deprecations ~= "off" then
-				local key = field.name .. "_" .. value
-				premake.warnOnce(key, "the %s value %s has been deprecated.\n   %s", field.name, canonical, handler.message)
+				local caller =  filelineinfo(9)
+				local key = field.name .. "_" .. value .. "_" .. caller
+				p.warnOnce(key, "the %s value %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, canonical, handler.message, caller)
 				if api._deprecations == "error" then
 					return nil, "deprecation errors enabled"
 				end
@@ -1142,7 +1148,7 @@
 --
 
 	function newaction(a)
-		premake.action.add(a)
+		p.action.add(a)
 	end
 
 
@@ -1154,5 +1160,5 @@
 --
 
 	function newoption(opt)
-		premake.option.add(opt)
+		p.option.add(opt)
 	end

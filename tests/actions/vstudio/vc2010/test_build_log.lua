@@ -4,8 +4,9 @@
 -- Copyright (c) 2015 Jason Perkins and the Premake project
 ---
 
+	local p = premake
 	local suite = test.declare("vstudio_vs2010_build_log")
-	local vc2010 = premake.vstudio.vc2010
+	local vc2010 = p.vstudio.vc2010
 
 
 --
@@ -15,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -43,7 +44,7 @@
 	function suite.writesPathIfSet()
 		buildlog "logs/MyCustomLogFile.log"
 		prepare()
- 		test.capture [[
+		test.capture [[
 <BuildLog>
 	<Path>logs\MyCustomLogFile.log</Path>
 </BuildLog>

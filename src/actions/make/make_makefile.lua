@@ -14,7 +14,7 @@
 	local fileconfig = p.fileconfig
 
 ---
--- Add namespace for element definition lists for premake.callarray()
+-- Add namespace for element definition lists for p.callarray()
 ---
 	makefile.elements = {}
 
@@ -30,8 +30,8 @@
 	}
 
 	function make.makefile.generate(prj)
-		premake.eol("\n")
-		premake.callarray(make, makefile.elements.makefile, prj)
+		p.eol("\n")
+		p.callarray(make, makefile.elements.makefile, prj)
 	end
 
 
@@ -46,13 +46,13 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = premake.tools[cfg.toolset or "gcc"]
+			local toolset = p.tools[cfg.toolset or "gcc"]
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
 
 			_x('ifeq ($(config),%s)', cfg.shortname)
-			premake.callarray(make, makefile.elements.configuration, cfg, toolset)
+			p.callarray(make, makefile.elements.configuration, cfg, toolset)
 			_p('endif')
 			_p('')
 		end
@@ -72,7 +72,7 @@
 		_p('  define BUILDCMDS')
 		local steps = cfg.buildcommands
 		if #steps > 0 then
-			steps = os.translateCommands(steps)
+			steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 			_p('\t@echo Running build commands')
 			_p('\t%s', table.implode(steps, "", "", "\n\t"))
 		end
@@ -84,7 +84,7 @@
 		_p('  define CLEANCMDS')
 		local steps = cfg.cleancommands
 		if #steps > 0 then
-			steps = os.translateCommands(steps)
+			steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 			_p('\t@echo Running clean commands')
 			_p('\t%s', table.implode(steps, "", "", "\n\t"))
 		end
