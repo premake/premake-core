@@ -18,14 +18,14 @@ int os_getpass(lua_State* L)
 		char buffer[1024];
 		const char* newline = "\n";
 
-		WriteConsoleA(hstdout, prompt, strlen(prompt), &written_chars, NULL);
+		WriteConsoleA(hstdout, prompt, (DWORD)strlen(prompt), &written_chars, NULL);
 
 		GetConsoleMode(hstdin, &mode);
 		SetConsoleMode(hstdin, ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT);
 		ReadConsoleA(hstdin, buffer, sizeof (buffer), &read_chars, NULL);
 		SetConsoleMode(hstdin, mode);
 
-		WriteConsoleA(hstdout, newline, strlen(newline), &written_chars, NULL);
+		WriteConsoleA(hstdout, newline, (DWORD)strlen(newline), &written_chars, NULL);
 
 		buffer[strcspn(buffer, "\r\n")] = '\0';
 

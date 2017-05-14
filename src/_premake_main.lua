@@ -58,6 +58,7 @@
 
 		-- list of paths where to look for the module
 		local paths = {
+			".modules/" .. full,
 			"modules/" .. full,
 			full,
 			name .. ".lua"

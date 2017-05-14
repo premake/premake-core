@@ -1,20 +1,21 @@
 --
 -- snc.lua
 -- Provides Sony SNC-specific configuration strings.
--- Copyright (c) 2010-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2016 Jason Perkins and the Premake project
 --
 
-	premake.tools.snc = {}
-	local snc = premake.tools.snc
-	local gcc = premake.tools.gcc
-	local config = premake.config
+	local p = premake
+
+	p.tools.snc = {}
+	local snc = p.tools.snc
+	local gcc = p.tools.gcc
 
 
 --
 -- Retrieve the CFLAGS for a specific configuration.
 --
 
-	snc.cflags = {
+	snc.shared = {
 		flags = {
 			FatalCompileWarnings = "-Xquit=2",
 		},
@@ -31,8 +32,13 @@
 		}
 	}
 
+	snc.cflags = {
+	}
+
 	function snc.getcflags(cfg)
-		local flags = config.mapFlags(cfg, snc.cflags)
+		local shared = p.config.mapFlags(cfg, snc.shared)
+		local cflags = p.config.mapFlags(cfg, snc.cflags)
+		local flags = table.join(shared, cflags, snc.getwarnings(cfg))
 		return flags
 	end
 
@@ -41,22 +47,23 @@
 -- Retrieve the CXXFLAGS for a specific configuration.
 --
 
+	snc.cxxflags = {
+		exceptionhandling = {
+			Default = "-Xc+=exceptions",
+			On = "-Xc+=exceptions",
+			SEH = "-Xc-=exceptions",
+		},
+		rtti = {
+			Default = "-Xc+=rtti",
+			On = "-Xc+=rtti",
+			SEH = "-Xc-=rtti",
+		}
+	}
+
 	function snc.getcxxflags(cfg)
-		local flags = {}
-
-		-- turn on exceptions and RTTI by default, to match other toolsets
-		if cfg.exceptionhandling == p.ON then
-			table.insert(flags, "-Xc+=exceptions")
-		elseif cfg.exceptionhandling == p.OFF then
-			table.insert(flags, "-Xc-=exceptions")
-		end
-
-		if cfg.rtti == p.ON then
-			table.insert(flags, "-Xc+=rtti")
-		elseif cfg.rtti == p.OFF then
-			table.insert(flags, "-Xc-=rtti")
-		end
-
+		local shared = config.mapFlags(cfg, snc.shared)
+		local cxxflags = config.mapFlags(cfg, snc.cxxflags)
+		local flags = table.join(shared, cxxflags, snc.getwarnings(cfg))
 		return flags
 	end
 
@@ -72,11 +79,9 @@
 --
 
 	function snc.getforceincludes(cfg)
-
 		-- Just pass through to GCC for now
 		local flags = gcc.getforceincludes(cfg)
 		return flags
-
 	end
 
 

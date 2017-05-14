@@ -77,6 +77,65 @@
 		test.contains("/GL", msc.getldflags(cfg))
 	end
 
+	function suite.cflags_onStringPoolingOn()
+		stringpooling "On"
+		prepare()
+		test.contains("/GF", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onStringPoolingOff()
+		stringpooling "Off"
+		prepare()
+		test.contains("/GF-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onStringPoolingNotSpecified()
+		prepare()
+		test.excludes("/GF", msc.getcflags(cfg))
+		test.excludes("/GF-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointExceptionsOn()
+		floatingpointexceptions "On"
+		prepare()
+		test.contains("/fp:except", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointExceptionsOff()
+		floatingpointexceptions "Off"
+		prepare()
+		test.contains("/fp:except-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointExceptionsNotSpecified()
+		prepare()
+		test.excludes("/fp:except", msc.getcflags(cfg))
+		test.excludes("/fp:except-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFunctionLevelLinkingOn()
+		functionlevellinking "On"
+		prepare()
+		test.contains("/Gy", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFunctionLevelLinkingOff()
+		functionlevellinking "Off"
+		prepare()
+		test.contains("/Gy-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFunctionLevelLinkingNotSpecified()
+		prepare()
+		test.excludes("/Gy", msc.getcflags(cfg))
+		test.excludes("/Gy-", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onIntrinsicsOn()
+		intrinsics "On"
+		prepare()
+		test.contains("/Oi", msc.getcflags(cfg))
+	end
 
 --
 -- Check the translation of symbols.
@@ -387,3 +446,19 @@
 		test.contains('/NODEFAULTLIB:lib1.lib', msc.getldflags(cfg))
 	end
 
+
+--
+-- Check handling of shared C/C++ flags.
+--
+
+	function suite.mixedToolFlags_onCFlags()
+		flags { "FatalCompileWarnings" }
+		prepare()
+		test.isequal({ "/WX", "/MD" }, msc.getcflags(cfg))
+	end
+
+	function suite.mixedToolFlags_onCxxFlags()
+		flags { "FatalCompileWarnings" }
+		prepare()
+		test.isequal({ "/WX", "/MD", "/EHsc" }, msc.getcxxflags(cfg))
+	end

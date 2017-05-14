@@ -413,7 +413,10 @@
 --
 
 	function config.isDebugBuild(cfg)
-		return cfg.symbols == p.ON and not config.isOptimizedBuild(cfg)
+		return cfg.symbols ~= nil and
+				cfg.symbols ~= p.OFF and
+				cfg.symbols ~= "Default" and
+				not config.isOptimizedBuild(cfg)
 	end
 
 
@@ -490,6 +493,9 @@
 				-- replacement, if any, to the result
 
 				local values = cfg[field.name]
+				if type(values) == "boolean" then
+					values = iif(values, "On", "Off")
+				end
 				if type(values) ~= "table" then
 					values = { values }
 				end

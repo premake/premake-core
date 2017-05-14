@@ -119,7 +119,7 @@
 				m.stringListProperty(def)
 			elseif type(def.values) == "table" then
 				m.enumProperty(def)
-			elseif def.kind:startswith("list:") then
+			elseif def.kind and def.kind:startswith("list:") then
 				m.stringListProperty(def)
 			else
 				m.stringProperty(def)

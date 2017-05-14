@@ -34,8 +34,6 @@
 			make.cppObjects,
 			make.shellType,
 			make.cppTargetRules,
-			make.targetDirRules,
-			make.objDirRules,
 			make.cppCleanRules,
 			make.preBuildRules,
 			make.preLinkRules,
@@ -153,12 +151,14 @@
 		if path.iscppfile(node.abspath) then
 			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
 			_p('\t@echo $(notdir $<)')
+			make.mkdir('$(OBJDIR)')
 			cpp.buildcommand(prj, "o", node)
 
 		-- resource file
 		elseif path.isresourcefile(node.abspath) then
 			_x('$(OBJDIR)/%s.res: %s', node.objname, node.relpath)
 			_p('\t@echo $(notdir $<)')
+			make.mkdir('$(OBJDIR)')
 			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)')
 		end
 	end
@@ -257,10 +257,8 @@
 					for cfg in project.eachconfig(prj) do
 						local filecfg = incfg[cfg]
 						if filecfg then
-							-- if the custom build outputs an object file, add it to
-							-- the link step automatically to match Visual Studio
 							local output = project.getrelative(prj, filecfg.buildoutputs[1])
-							if path.isobjectfile(output) then
+							if path.isobjectfile(output) and (filecfg.linkbuildoutputs == true or filecfg.linkbuildoutputs == nil) then
 								table.insert(configs[cfg].objects, output)
 							else
 								table.insert(configs[cfg].customfiles, output)
@@ -319,13 +317,13 @@
 
 	function make.cppAllRules(cfg, toolset)
 		if cfg.system == premake.MACOSX and cfg.kind == premake.WINDOWEDAPP then
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
+			_p('all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 			_p('\t@:')
 			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')
 			_p('$(dir $(TARGETDIR))Info.plist:')
 		else
-			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
+			_p('all: prebuild prelink $(TARGET)')
 			_p('\t@:')
 		end
 	end
@@ -337,7 +335,7 @@
 
 
 	function make.cxxFlags(cfg, toolset)
-		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)%s', make.list(toolset.getcxxflags(cfg)))
+		_p('  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)%s', make.list(table.join(toolset.getcxxflags(cfg), cfg.buildoptions)))
 	end
 
 
@@ -367,6 +365,7 @@
 	function make.cppTargetRules(prj)
 		_p('$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)')
 		_p('\t@echo Linking %s', prj.name)
+		make.mkdir('$(TARGETDIR)')
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')

@@ -17,24 +17,25 @@
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
+		defines     { "PREMAKE_NO_BUILTIN_SCRIPTS" }
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "src/host/lua/src" }
+		includedirs { "contrib/lua/src" }
 
 		files
 		{
 			"*.txt", "**.lua",
-			"src/**.h", "src/**.c",
-			"src/host/scripts.c"
+			"contrib/lua/src/*.c", "contrib/lua/src/*.h",
+			"src/host/*.c"
 		}
 
 		excludes
 		{
-			"src/host/lua/src/lauxlib.c",
-			"src/host/lua/src/lua.c",
-			"src/host/lua/src/luac.c",
-			"src/host/lua/src/print.c",
-			"src/host/lua/**.lua",
-			"src/host/lua/etc/*.c"
+			"contrib/lua/src/lauxlib.c",
+			"contrib/lua/src/lua.c",
+			"contrib/lua/src/luac.c",
+			"contrib/lua/src/print.c",
+			"contrib/lua/**.lua",
+			"contrib/lua/etc/*.c"
 		}
 
 		configuration "Debug"
@@ -54,7 +55,7 @@
 			defines	{"_CRT_SECURE_NO_DEPRECATE" }
 
 		configuration "windows"
-			links { "ole32" }
+			links { "ole32", "advapi32" }
 
 		configuration "linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }

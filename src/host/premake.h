@@ -10,7 +10,7 @@
 #include "lualib.h"
 
 #define PREMAKE_VERSION        "5.0.0-dev"
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2016 Jason Perkins and the Premake Project"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2017 Jason Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
 /* Identify the current platform I'm not sure how to reliably detect
@@ -48,6 +48,7 @@
 #if PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <stdlib.h>
 #else
 #include <unistd.h>
 #endif
@@ -104,6 +105,7 @@ int os_chmod(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
+int os_getWindowsRegistry(lua_State* L);
 int os_getversion(lua_State* L);
 int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);

@@ -534,6 +534,22 @@
 		]]
 	end
 
+
+	function suite.exceptions_onNoExceptionsVS2013()
+		exceptionhandling "Off"
+		premake.action.set("vs2013")
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>false</ExceptionHandling>
+		]]
+	end
+
+
 	function suite.exceptions_onSEH()
 		exceptionhandling "SEH"
 		prepare()
@@ -784,5 +800,174 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>None</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+
+--
+-- Check handling of the stringpooling api
+--
+	function suite.onStringPoolingOff()
+		stringpooling 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StringPooling>false</StringPooling>
+		]]
+	end
+
+	function suite.onStringPoolingOn()
+		stringpooling 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StringPooling>true</StringPooling>
+		]]
+	end
+
+	function suite.onStringPoolingNotSpecified()
+		optimize "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
+		]]
+	end
+
+
+
+--
+-- Check handling of the floatingpointexceptions api
+--
+	function suite.onFloatingPointExceptionsOff()
+		floatingpointexceptions 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FloatingPointExceptions>false</FloatingPointExceptions>
+		]]
+	end
+
+	function suite.onFloatingPointExceptionsOn()
+		floatingpointexceptions 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FloatingPointExceptions>true</FloatingPointExceptions>
+		]]
+	end
+
+	function suite.onFloatingPointExceptionsNotSpecified()
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+
+
+--
+-- Check handling of the functionlevellinking api
+--
+	function suite.onFunctionLevelLinkingOff()
+		functionlevellinking 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FunctionLevelLinking>false</FunctionLevelLinking>
+		]]
+	end
+
+	function suite.onFunctionLevelLinkingOn()
+		functionlevellinking 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+		]]
+	end
+
+	function suite.onFunctionLevelLinkingNotSpecified()
+		optimize "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+		]]
+	end
+
+
+
+--
+-- Check handling of the intrinsics api
+--
+	function suite.onIntrinsicsOff()
+		intrinsics 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<IntrinsicFunctions>false</IntrinsicFunctions>
+		]]
+	end
+
+	function suite.onIntrinsicsOn()
+		intrinsics 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+		]]
+	end
+
+	function suite.onIntrinsicsNotSpecified()
+		optimize "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Full</Optimization>
+	<FunctionLevelLinking>true</FunctionLevelLinking>
+	<IntrinsicFunctions>true</IntrinsicFunctions>
+	<MinimalRebuild>false</MinimalRebuild>
+	<StringPooling>true</StringPooling>
 		]]
 	end

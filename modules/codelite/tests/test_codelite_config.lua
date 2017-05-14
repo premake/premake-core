@@ -89,20 +89,16 @@
 		codelite.project.linker(cfg)
 		test.capture [[
       <Linker Required="yes" Options="">
-        <LibraryPath Value="test" />
-        <LibraryPath Value="test2" />
       </Linker>
 		]]
 	end
 
 	function suite.OnProjectCfg_Libs()
-		links { "lib", "lib2" }
+		links { "a", "b" }
 		prepare()
 		codelite.project.linker(cfg)
 		test.capture [[
-      <Linker Required="yes" Options="">
-        <Library Value="lib" />
-        <Library Value="lib2" />
+      <Linker Required="yes" Options="-la;-lb">
       </Linker>
 		]]
 	end

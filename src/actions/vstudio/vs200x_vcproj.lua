@@ -822,7 +822,7 @@
 
 
 	function m.additionalExternalCompilerOptions(cfg, toolset)
-		local buildoptions = table.join(toolset.getcflags(cfg), toolset.getcxxflags(cfg), cfg.buildoptions)
+		local buildoptions = table.join(toolset.getcxxflags(cfg), cfg.buildoptions)
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
 		end

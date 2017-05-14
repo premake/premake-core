@@ -243,7 +243,6 @@
 		return context.__mt.__index(fsub, key)
 	end
 
-
 --
 -- And here are the path building functions.
 --
@@ -257,6 +256,9 @@
 		return path.getdirectory(fcfg.abspath)
 	end
 
+	function fcfg_mt.reldirectory(fcfg)
+		return path.getdirectory(fcfg.relpath)
+	end
 
 	function fcfg_mt.name(fcfg)
 		return path.getname(fcfg.abspath)
@@ -285,4 +287,9 @@
 	function fcfg_mt.vpath(fcfg)
 		-- This only gets called if no explicit virtual path was set
 		return fcfg.relpath
+	end
+
+
+	function fcfg_mt.extension(fcfg)
+		return path.getextension(fcfg.abspath)
 	end
