@@ -26,7 +26,7 @@
 		-- strip out block comments
 		result = result:gsub("[^\"']%-%-%[%[.-%]%]", "")
 		result = result:gsub("[^\"']%-%-%[=%[.-%]=%]", "")
-		sresult = result:gsub("[^\"']%-%-%[==%[.-%]==%]", "")
+		result = result:gsub("[^\"']%-%-%[==%[.-%]==%]", "")
 
 		-- strip out inline comments
 		result = result:gsub("\n%-%-[^\n]*", "\n")
