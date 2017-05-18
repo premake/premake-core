@@ -207,6 +207,7 @@
 		self.system = self.system or p.action.current().targetos or os.target()
 		context.addFilter(self, "system", self.system)
 		context.addFilter(self, "architecture", self.architecture)
+		context.addFilter(self, "tags", self.tags)
 
 		-- The kind is a configuration level value, but if it has been set at the
 		-- project level allow that to influence the other project-level results.
@@ -592,6 +593,9 @@
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
+
+		-- if tags are set, allow that to influence the configuration
+		context.addFilter(ctx, "tags", ctx.tags)
 
 		-- if any extra filters were specified, can include them now
 		if extraFilters then
