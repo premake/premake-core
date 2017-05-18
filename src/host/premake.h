@@ -99,10 +99,6 @@ int path_join(lua_State* L);
 int path_normalize(lua_State* L);
 int path_translate(lua_State* L);
 int path_wildcards(lua_State* L);
-#if PLATFORM_WINDOWS
-// utf8 version
-int io_open(lua_State* L);
-#endif
 int os_chdir(lua_State* L);
 int os_chmod(lua_State* L);
 int os_copyfile(lua_State* L);
