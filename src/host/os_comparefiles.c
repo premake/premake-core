@@ -46,6 +46,25 @@ int os_comparefiles(lua_State* L)
 	secondFile = fopen(secondPath, "rb");
 	#endif
 
+	if (!firstFile)
+	{
+		if (secondFile)
+			fclose(secondFile);
+
+		lua_pushnil(L);
+		lua_pushstring(L, "failed to open first file");
+		return 2;
+	}
+
+
+	if (!secondFile)
+	{
+		fclose(firstFile);
+
+		lua_pushnil(L);
+		lua_pushstring(L, "failed to open second file");
+		return 2;
+	}
 
 	// check sizes.
 	fseek(firstFile, 0, SEEK_END);
