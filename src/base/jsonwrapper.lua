@@ -33,6 +33,18 @@
 		return result
 	end
 
+	function json.encode_pretty(value)
+		err = nil
+
+		local success, result = pcall(implementation.encode_pretty, implementation, value)
+
+		if not success then
+			return nil, err
+		end
+
+		return result
+	end
+
 	function json.decode(value)
 		err = nil
 
