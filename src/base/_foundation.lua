@@ -149,8 +149,7 @@
 
 		-- try to parse semver, if it fails, it's not semver compatible and we cannot compare, in which case
 		-- we're going to ignore the checkVersion entirely, but warn.
-		local sMajor, sMinor, sPatch, sPrereleaseAndBuild = version:match("^(%d+)%.?(%d*)%.?(%d*)(.-)$")
-		if (type(sMajor) ~= 'string') then
+		if not premake.isSemVer(version) then
 			p.warn("'" .. version .. "' is not semver compatible, and cannot be compared against '" .. checks .. "'.");
 			return true
 		end
@@ -402,4 +401,14 @@
 		else
 			return string.format("%s(%d)", info.short_src, info.currentline)
 		end
+	end
+
+
+---
+-- check if version is semver.
+---
+
+	function premake.isSemVer(version)
+		local sMajor, sMinor, sPatch, sPrereleaseAndBuild = version:match("^(%d+)%.?(%d*)%.?(%d*)(.-)$")
+		return (type(sMajor) == 'string')
 	end
