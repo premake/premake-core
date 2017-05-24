@@ -19,6 +19,7 @@ return {
 	"base/test_versions.lua",
 	"base/test_http.lua",
 	"base/test_json.lua",
+	"base/test_language.lua",
 
 	-- Workspace object tests
 	"workspace/test_eachconfig.lua",
@@ -37,6 +38,7 @@ return {
 	"config/test_linkinfo.lua",
 	"config/test_links.lua",
 	"config/test_targetinfo.lua",
+	"config/test_language.lua",
 
 	-- Baking tests
 	"oven/test_filtering.lua",

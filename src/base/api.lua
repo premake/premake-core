@@ -1086,6 +1086,35 @@
 
 
 --
+-- Allow a field to process and compare current vs new value to
+-- disallow overriding specific values.
+--
+	premake.field.kind("processed", {
+		store = function(field, current, value, processor)
+			if processor then
+				value = processor(field, current, value)
+			end
+			if current == nil then
+				return value
+			end
+			return field.process(current, value)
+		end,
+		merge = function(field, current, value, processor)
+			if processor then
+				value = processor(field, current, value)
+			end
+			if type(value) == "table" then
+				return value
+			end
+			if current == nil then
+				return value
+			end
+			return field.process(current, value)
+		end
+	})
+
+
+--
 -- Table data kind; wraps simple values into a table, returns others as-is.
 --
 

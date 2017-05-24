@@ -20,6 +20,8 @@
 
 	p.D = "D"
 
+
+	p.languages.types[p.D] = { p.D }
 	table.insert(p.languages.all, p.D)
 	api.addAllowed("language", p.D)
 
@@ -42,7 +44,6 @@
 		"UnitTest",
 		"Verbose",
 	})
-
 
 --
 -- Register some D specific properties
