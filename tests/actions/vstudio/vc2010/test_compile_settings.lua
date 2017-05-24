@@ -1068,3 +1068,92 @@
 </ClCompile>
 		]]
 	end
+
+
+--
+-- Check handling of the C++14 & C++17 api
+--
+
+	function suite.onLanguage_Cpp14_VS2010()
+		cppdialect 'C++14'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp14_VS2015()
+		p.action.set("vs2015")
+
+		cppdialect 'C++14'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/std:c++14 %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp14_VS2017()
+		p.action.set("vs2017")
+
+		cppdialect 'C++14'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpp14</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp17_VS2010()
+		cppdialect 'C++17'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp17_VS2015()
+		p.action.set("vs2015")
+
+		cppdialect 'C++17'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp17_VS2017()
+		p.action.set("vs2017")
+
+		cppdialect 'C++17'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
+</ClCompile>
+		]]
+	end
