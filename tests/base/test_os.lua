@@ -35,6 +35,16 @@
 	function suite.findlib_FailsOnBadLibName()
 		test.isfalse(os.findlib("NoSuchLibraryAsThisOneHere"))
 	end
+	
+	function suite.findheader_stdheaders()
+		if not (os.istarget("windows")) then
+			test.istrue(os.findheader("stdlib.h"))
+		end
+	end
+	
+	function suite.findheader_failure()
+		test.isfalse(os.findheader("Knights/who/say/Ni.hpp"))
+	end
 
 
 --

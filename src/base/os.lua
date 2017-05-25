@@ -61,26 +61,17 @@
 		end
 		return dirs
 	end
-
-	function os.findlib(libname, libdirs)
-		-- libname: library name with or without prefix and suffix
-		-- libdirs: (array or string): A set of additional search paths
-
-		local path, formats
-
-		-- assemble a search path, depending on the platform
+	
+	local function get_library_search_path()
+		local path
 		if os.istarget("windows") then
-			formats = { "%s.dll", "%s" }
 			path = os.getenv("PATH") or ""
 		elseif os.istarget("haiku") then
-			formats = { "lib%s.so", "%s.so" }
 			path = os.getenv("LIBRARY_PATH") or ""
 		else
 			if os.istarget("macosx") then
-				formats = { "lib%s.dylib", "%s.dylib" }
 				path = os.getenv("DYLD_LIBRARY_PATH") or ""
 			else
-				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
 
 				for _, prefix in ipairs({"", "/opt"}) do
@@ -97,7 +88,6 @@
 				end
 			end
 
-			table.insert(formats, "%s")
 			path = path or ""
 			local archpath = "/lib:/usr/lib:/usr/local/lib"
 			if os.is64bit() and not os.istarget("macosx") then
@@ -108,6 +98,31 @@
 			else
 				path = archpath
 			end
+		end
+
+		return path
+	end
+
+	function os.findlib(libname, libdirs)
+		-- libname: library name with or without prefix and suffix
+		-- libdirs: (array or string): A set of additional search paths
+
+		local path = get_library_search_path()
+		local formats
+
+		-- assemble a search path, depending on the platform
+		if os.istarget("windows") then
+			formats = { "%s.dll", "%s" }
+		elseif os.istarget("haiku") then
+			formats = { "lib%s.so", "%s.so" }
+		else
+			if os.istarget("macosx") then
+				formats = { "lib%s.dylib", "%s.dylib" }
+			else
+				formats = { "lib%s.so", "%s.so" }
+			end
+
+			table.insert(formats, "%s")
 		end
 
 		local userpath = ""
@@ -133,6 +148,36 @@
 		end
 	end
 
+	function os.findheader(headerpath, headerdirs)
+		-- headerpath: a partial header file path
+		-- headerdirs: additional header search paths
+		
+		local path = get_library_search_path()
+		
+		-- replace all /lib by /include
+		path = path .. ':'
+		path = path:gsub ('/lib[0-9]*([:/])', '/include%1') 
+		path = path:sub (1, #path - 1)
+		
+		local userpath = ""
+
+		if type(headerdirs) == "string" then
+			userpath = headerdirs
+		elseif type(headerdirs) == "table" then
+			userpath = table.implode(headerdirs, "", "", ":")
+		end
+
+		if (#userpath > 0) then
+			if (#path > 0) then
+				path = userpath .. ":" .. path
+			else
+				path = userpath
+			end
+		end
+		
+		local result = os.pathsearch (headerpath, path)
+		return result
+	end
 
 --
 -- Retrieve the current target operating system ID string.
