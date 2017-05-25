@@ -33,6 +33,7 @@
 		platforms = true,
 		system = true,
 		toolset = true,
+		tags = true,
 	}
 
 

@@ -1051,6 +1051,12 @@
 	}
 
 	api.register {
+		name = "tags",
+		scope = "config",
+		kind = "list:string",
+	}
+
+	api.register {
 		name = "targetdir",
 		scope = "config",
 		kind = "path",
