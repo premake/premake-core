@@ -38,7 +38,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -224,7 +223,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -237,7 +235,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -462,7 +459,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -476,7 +472,6 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>None</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -490,7 +485,6 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -927,7 +921,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsCpp</CompileAs>
 </ClCompile>
 		]]
 	end
@@ -1030,13 +1023,41 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<CompileAs>CompileAsC</CompileAs>
 </ClCompile>
 		]]
 	end
 
 	function suite.onLanguageCpp()
 		language 'C++'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+
+--
+-- Check handling of the compileAs api
+--
+	function suite.onCompileAsC()
+		compileas 'C'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsC</CompileAs>
+</ClCompile>
+		]]
+	end
+
+	function suite.onCompileAsCpp()
+		compileas 'C++'
 		prepare()
 		test.capture [[
 <ClCompile>
