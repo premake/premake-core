@@ -86,15 +86,11 @@
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },
+		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },
 		},
-		supports_language = function(lang)
-			return p.languages.isc(lang) or
-				   p.languages.iscpp(lang) or
-				   p.languages.isdotnet(lang)
-		end,
 
 		-- Workspace and project generation logic
 

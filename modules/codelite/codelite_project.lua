@@ -355,11 +355,11 @@
 	end
 
 	function m.isCpp11(cfg)
-		return (cfg.language == 'gnu++11') or (cfg.language == 'C++11') or cfg.flags["C++11"]
+		return (cfg.cppdialect == 'gnu++11') or (cfg.cppdialect == 'C++11')
 	end
 
 	function m.isCpp14(cfg)
-		return (cfg.language == 'gnu++14') or (cfg.language == 'C++14') or cfg.flags["C++14"]
+		return (cfg.cppdialect == 'gnu++14') or (cfg.cppdialect == 'C++14')
 	end
 
 	function m.completion(cfg)
