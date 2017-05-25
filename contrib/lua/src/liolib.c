@@ -18,6 +18,9 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#if defined(LUA_WIN)
+#include <windows.h>
+#endif
 
 
 #define IO_INPUT	1
@@ -177,8 +180,29 @@ static int io_tostring (lua_State *L) {
 static int io_open (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
+
+#if defined(LUA_WIN)
+  wchar_t wide_path[4096];
+  if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_path, 4096) == 0)
+  {
+    lua_pushstring(L, "unable to encode path");
+    return lua_error(L);
+  }
+
+  wchar_t wide_mode[64];
+  if (MultiByteToWideChar(CP_UTF8, 0, mode, -1, wide_mode, 64) == 0)
+  {
+    lua_pushstring(L, "unable to encode open mode");
+    return lua_error(L);
+  }
+#endif
+
   FILE **pf = newfile(L);
+#if defined(LUA_WIN)
+  *pf = _wfopen(wide_path, wide_mode);
+#else
   *pf = fopen(filename, mode);
+#endif
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
 }
 

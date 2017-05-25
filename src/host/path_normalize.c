@@ -8,6 +8,11 @@
 #include <ctype.h>
 #include <string.h>
 
+// isspace custom version (visual c++'s one doesn't like utf8 characters)
+static int is_space(char c)
+{
+	return  (c >= 9 && c <= 13) || c == 32;
+}
 
 static void* normalize_substring(const char* str, const char* endPtr, char* writePtr) {
 	const char* const source = str;
@@ -93,7 +98,7 @@ int path_normalize(lua_State* L)
 	const char* endPtr;
 
 	// skip leading white spaces
-	while (*readPtr && isspace(*readPtr)) {
+	while (*readPtr && is_space(*readPtr)) {
 		++readPtr;
 	}
 
@@ -106,14 +111,14 @@ int path_normalize(lua_State* L)
 		}
 
 		// find the end of sub path
-		while (*endPtr && !isspace(*endPtr)) {
+		while (*endPtr && !is_space(*endPtr)) {
 			++endPtr;
 		}
 
 		writePtr = normalize_substring(readPtr, endPtr, writePtr);
 
 		// skip any white spaces between sub paths
-		while (*endPtr && isspace(*endPtr)) {
+		while (*endPtr && is_space(*endPtr)) {
 			*(writePtr++) = *(endPtr++);
 		}
 
@@ -121,7 +126,7 @@ int path_normalize(lua_State* L)
 	}
 
 	// skip any trailing white spaces
-	while (isspace(*(--endPtr))) {
+	while (is_space(*(--endPtr))) {
 		--writePtr;
 	}
 

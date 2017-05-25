@@ -74,6 +74,11 @@ static const luaL_Reg os_functions[] = {
 	{ "matchnext",              os_matchnext            },
 	{ "matchstart",             os_matchstart           },
 	{ "mkdir",                  os_mkdir                },
+#if PLATFORM_WINDOWS
+	// utf8 functions for Windows (assuming posix already handle utf8)
+	{"remove",                  os_remove               },
+	{"rename",                  os_rename               },
+#endif
 	{ "pathsearch",             os_pathsearch           },
 	{ "realpath",               os_realpath             },
 	{ "rmdir",                  os_rmdir                },

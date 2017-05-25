@@ -19,11 +19,21 @@
 
 static int compare_file(const char* content, size_t length, const char* dst)
 {
-	FILE* file = fopen(dst, "rb");
+	FILE* file;
 	size_t size;
 	size_t read;
 	char buffer[4096];
 	size_t num;
+
+	#if PLATFORM_WINDOWS
+	wchar_t wide_path[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
+		return FALSE;
+
+	file = _wfopen(wide_path, L"rb");
+	#else
+	file = fopen(dst, "rb");
+	#endif
 
 	if (file == NULL)
 	{
@@ -81,8 +91,16 @@ int os_writefile_ifnotequal(lua_State* L)
 		return 1;
 	}
 
+	#if PLATFORM_WINDOWS
+	wchar_t wide_path[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
+		return FALSE;
 
+	file = _wfopen(wide_path, L"wb");
+	#else
 	file = fopen(dst, "wb");
+	#endif
+
 	if (file != NULL)
 	{
 		fwrite(content, 1, length, file);
