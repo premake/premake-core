@@ -71,7 +71,7 @@
 		for key, value in pairs(_OPTIONS) do
 			local term = key
 			if value ~= "" then
-				term = term .. "=" .. value
+				term = term .. "=" .. tostring(value)
 			end
 			table.insert(options, term)
 		end
