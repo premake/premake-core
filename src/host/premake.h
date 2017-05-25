@@ -101,6 +101,7 @@ int path_translate(lua_State* L);
 int path_wildcards(lua_State* L);
 int os_chdir(lua_State* L);
 int os_chmod(lua_State* L);
+int os_comparefiles(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
