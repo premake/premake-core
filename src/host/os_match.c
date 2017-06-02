@@ -104,8 +104,10 @@ int os_matchnext(lua_State* L)
 
 typedef struct struct_MatchInfo
 {
-	DIR* handle;
+	struct dirent** namelist;
 	struct dirent* entry;
+	int n;
+	int i;
 	char* path;
 	char* mask;
 } MatchInfo;
@@ -134,7 +136,8 @@ int os_matchstart(lua_State* L)
 		strcpy(m->mask, mask);
 	}
 
-	m->handle = opendir(m->path);
+	m->n = scandir(m->path, &(m->namelist), NULL, alphasort);
+	m->i = 0;
 	lua_pushlightuserdata(L, m);
 	return 1;
 }
@@ -142,8 +145,11 @@ int os_matchstart(lua_State* L)
 int os_matchdone(lua_State* L)
 {
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	if (m->handle != NULL)
-		closedir(m->handle);
+	if (m->n != -1) {
+		for(int i=0; i < m->n; i++)
+			free(m->namelist[i]);
+		free(m->namelist);
+	}
 	free(m->path);
 	free(m->mask);
 	free(m);
@@ -185,12 +191,11 @@ int os_matchisfile(lua_State* L)
 int os_matchnext(lua_State* L)
 {
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	if (m->handle == NULL) {
+	if (m->n == -1)
 		return 0;
-	}
 
-	m->entry = readdir(m->handle);
-	while (m->entry != NULL)
+	m->entry = m->namelist[m->i];
+	while (m->i++ < m->n)
 	{
 		const char* name = m->entry->d_name;
 		if (strcmp(name, ".") != 0 && strcmp(name, "..") != 0)
@@ -201,7 +206,7 @@ int os_matchnext(lua_State* L)
 				return 1;
 			}
 		}
-		m->entry = readdir(m->handle);
+		m->entry = m->namelist[m->i];
 	}
 
 	return 0;
