@@ -361,6 +361,23 @@
 	end
 
 
+--
+-- Display information in the term.infoColor color.
+--
+-- @param message
+--    The info message, which may contain string formatting tokens.
+-- @param ...
+--    Values to fill in the string formatting tokens.
+--
+
+	function premake.info(message, ...)
+		message = string.format(message, ...)
+		term.pushColor(term.infoColor)
+		io.stdout:write(string.format("** Info: " .. message .. "\n", ...))
+		term.popColor();
+	end
+
+
 
 --
 -- A shortcut for printing formatted output.
