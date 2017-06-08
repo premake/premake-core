@@ -44,7 +44,10 @@
 		return prj
 	end
 
-
+	function m.createGroup(wks)		
+		local prj = group ("MyGroup" .. (#wks.groups + 1))
+		return prj
+	end
 
 
 	function m.getWorkspace(wks)
