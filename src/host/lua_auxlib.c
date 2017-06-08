@@ -32,6 +32,14 @@ LUALIB_API int luaL_loadfile (lua_State* L, const char* filename)
 
 	int bottom = lua_gettop(L);
 	int z = !OKAY;
+	int premake_nil = 0;
+
+	lua_getglobal(L, "premake");
+	premake_nil = lua_isnil(L, -1);
+	lua_pop(L, 1);
+	if (premake_nil == 1) {
+		return original_luaL_loadfile(L, filename); /* if premake is not initialized use original loadfile */
+	}
 
 	/* If filename is starts with "$/" then we want to load the version that
 	 * was embedded into the executable and skip the local file system */
