@@ -512,6 +512,7 @@
 		_p('$(OBJECTS): $(GCH) $(PCH)')
 		_p('$(GCH): $(PCH)')
 		_p('\t@echo $(notdir $<)')
+		make.mkdir('$(OBJDIR)')
 
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
 		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
