@@ -120,7 +120,7 @@
 		_.builtin_write = mt.write
 		mt.write = _.stub_stderr_write
 
-		_OPTIONS = {}
+		_OPTIONS = table.shallowcopy(_OPTIONS) or {}
 		setmetatable(_OPTIONS, getmetatable(hooks.options))
 
 		io.open = _.stub_io_open

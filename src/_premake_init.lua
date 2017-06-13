@@ -1571,6 +1571,13 @@
 		description = "Display version information"
 	}
 
+	if http ~= nil then
+		newoption {
+			trigger = "insecure",
+			description = "forfit SSH certification checks."
+		}
+	end
+
 
 -----------------------------------------------------------------------------
 --
