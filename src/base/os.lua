@@ -599,7 +599,8 @@
 				return "echo " .. v
 			end,
 			mkdir = function(v)
-				return "mkdir " .. path.translate(path.normalize(v))
+				v = path.translate(path.normalize(v))
+				return "IF NOT EXIST " .. v .. " (mkdir " .. v .. ")"
 			end,
 			move = function(v)
 				return "move /Y " .. path.translate(path.normalize(v))
