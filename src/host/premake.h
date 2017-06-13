@@ -53,6 +53,13 @@
 #include <unistd.h>
 #endif
 
+/* not all platforms define this */
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef TRUE
+#define TRUE 1
+#endif
 
 /* Fill in any missing bits */
 #ifndef PATH_MAX

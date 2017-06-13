@@ -10,13 +10,6 @@
 #include <string.h>
 #include "premake.h"
 
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
-
 static int compare_file(const char* content, size_t length, const char* dst)
 {
 	FILE* file;
