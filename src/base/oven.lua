@@ -64,7 +64,7 @@
 		context.addFilter(self, "action", _ACTION)
 
 		self.system = self.system or p.action.current().targetos or os.target()
-		context.addFilter(self, "system", self.system)
+		context.addFilter(self, "system", os.getSystemTags(self.system))
 
 		-- Add command line options to the filtering options
 		local options = {}
@@ -205,7 +205,7 @@
 		-- values that might already in the context to override my defaults.
 
 		self.system = self.system or p.action.current().targetos or os.target()
-		context.addFilter(self, "system", self.system)
+		context.addFilter(self, "system", os.getSystemTags(self.system))
 		context.addFilter(self, "architecture", self.architecture)
 		context.addFilter(self, "tags", self.tags)
 
@@ -581,7 +581,7 @@
 
 		-- allow the project script to override the default system
 		ctx.system = ctx.system or system
-		context.addFilter(ctx, "system", ctx.system)
+		context.addFilter(ctx, "system", os.getSystemTags(ctx.system))
 
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
