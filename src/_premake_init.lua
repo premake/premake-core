@@ -145,6 +145,7 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"ASCII",
 			"MBCS",
 			"Unicode",
 		}

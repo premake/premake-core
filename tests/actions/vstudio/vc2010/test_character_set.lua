@@ -46,3 +46,12 @@
 <CharacterSet>MultiByte</CharacterSet>
 		]]
 	end
+
+	function suite.onASCII()
+		characterset "ASCII"
+		prepare()
+		test.capture [[
+<CharacterSet>NotSet</CharacterSet>
+		]]
+	end
+
