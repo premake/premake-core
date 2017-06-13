@@ -414,6 +414,12 @@
 		test.contains('/D"_MBCS"', msc.getdefines(cfg.defines, cfg))
 	end
 
+	function suite.cflags_onCharSetASCII()
+		characterset "ASCII"
+		prepare()
+		test.excludes({'/D"_MBCS"', '/D"_UNICODE"'}, msc.getdefines(cfg.defines, cfg))
+	end
+
 
 --
 -- Check handling of system search paths.

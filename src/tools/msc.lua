@@ -138,7 +138,7 @@
 			Default = { '/D"_UNICODE"', '/D"UNICODE"' },
 			MBCS = '/D"_MBCS"',
 			Unicode = { '/D"_UNICODE"', '/D"UNICODE"' },
-			NotSet = { },
+			ASCII = { },
 		}
 	}
 

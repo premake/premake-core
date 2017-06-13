@@ -1116,9 +1116,9 @@
 			end
 		else
 			if prjcfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(prjcfg) and runtime:endswith("Debug")) then
-			m.element("BasicRuntimeChecks", nil, "Default")
+				m.element("BasicRuntimeChecks", nil, "Default")
+			end
 		end
-	end
 	end
 
 
@@ -1169,7 +1169,7 @@
 	function m.characterSet(cfg)
 		if not vstudio.isMakefile(cfg) then
 			local charactersets = {
-				NotSet = "NotSet",
+				ASCII = "NotSet",
 				MBCS = "MultiByte",
 				Unicode = "Unicode",
 				Default = "Unicode"

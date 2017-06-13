@@ -144,8 +144,8 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
-			"NotSet",
 			"Default",
+			"ASCII",
 			"MBCS",
 			"Unicode",
 		}
