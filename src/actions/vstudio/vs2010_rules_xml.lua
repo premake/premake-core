@@ -149,7 +149,7 @@
 		if def.switch then
 			p.w('Switch="%s"', def.switch)
 		end
-		p.w(' />')
+		p.w('/>')
 		p.pop()
 	end
 
@@ -173,9 +173,9 @@
 					p.w('Switch="%s"', switches[key])
 				end
 			else
-				p.w('DisplayName="%s" />', values[key])
+				p.w('DisplayName="%s"', values[key])
 			end
-			p.w(' />')
+			p.w('/>')
 			p.pop()
 		end
 
@@ -189,7 +189,7 @@
 		if def.switch then
 			p.w('Switch="%s"', def.switch)
 		end
-		p.w(' />')
+		p.w('/>')
 		p.pop()
 	end
 
@@ -203,7 +203,7 @@
 		if def.switch then
 			p.w('Switch="%s"', def.switch)
 		end
-		p.w(' />')
+		p.w('/>')
 		p.pop()
 	end
 

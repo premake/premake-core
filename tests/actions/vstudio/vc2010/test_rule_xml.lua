@@ -34,7 +34,7 @@
 -- Property definitions
 ---
 
-	function suite.properties_onString()
+	function suite.properties_onStringNoSwitch()
 		createVar { name="MyVar", kind="string" }
 		local r = test.getRule("MyRule")
 		m.properties(r)
@@ -43,7 +43,21 @@
 	Name="MyVar"
 	HelpContext="0"
 	DisplayName="MyVar"
-	Switch="[value]" />
+	/>
+		]]
+	end
+
+	function suite.properties_onString()
+		createVar { name="MyVar", kind="string", switch="[value]" }
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<StringProperty
+	Name="MyVar"
+	HelpContext="0"
+	DisplayName="MyVar"
+	Switch="[value]"
+	/>
 		]]
 	end
 
@@ -56,6 +70,112 @@
 	Name="MyVar"
 	HelpContext="0"
 	DisplayName="MyVar"
-	Switch="[value]" />
+	/>
+		]]
+	end
+
+
+	function suite.properties_onBooleanNoSwitch()
+		createVar { name="MyVar", kind="boolean" }
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<BoolProperty
+	Name="MyVar"
+	HelpContext="0"
+	DisplayName="MyVar"
+	/>
+		]]
+	end
+
+	function suite.properties_onBoolean()
+		createVar { name="MyVar", kind="boolean", switch="[value]" }
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<BoolProperty
+	Name="MyVar"
+	HelpContext="0"
+	DisplayName="MyVar"
+	Switch="[value]"
+	/>
+		]]
+	end
+
+	function suite.properties_onEnum()
+		createVar {
+			name = "OptimizationLevel",
+			display = "Optimization Level",
+			values = {
+				[0] = "None",
+				[1] = "Size",
+				[2] = "Speed",
+			},
+			switch = {
+				[0] = "-O0",
+				[1] = "-O1",
+				[2] = "-O3",
+			},
+			value = 2,
+		}
+
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<EnumProperty
+	Name="OptimizationLevel"
+	HelpContext="0"
+	DisplayName="Optimization Level">
+	<EnumValue
+		Name="0"
+		DisplayName="None"
+		Switch="-O0"
+		/>
+	<EnumValue
+		Name="1"
+		DisplayName="Size"
+		Switch="-O1"
+		/>
+	<EnumValue
+		Name="2"
+		DisplayName="Speed"
+		Switch="-O3"
+		/>
+</EnumProperty>
+		]]
+	end
+
+	function suite.properties_onEnumNoSwitches()
+		createVar {
+			name = "OptimizationLevel",
+			display = "Optimization Level",
+			values = {
+				[0] = "None",
+				[1] = "Size",
+				[2] = "Speed",
+			},
+			value = 2,
+		}
+
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<EnumProperty
+	Name="OptimizationLevel"
+	HelpContext="0"
+	DisplayName="Optimization Level">
+	<EnumValue
+		Name="0"
+		DisplayName="None"
+		/>
+	<EnumValue
+		Name="1"
+		DisplayName="Size"
+		/>
+	<EnumValue
+		Name="2"
+		DisplayName="Speed"
+		/>
+</EnumProperty>
 		]]
 	end
