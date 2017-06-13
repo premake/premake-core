@@ -22,6 +22,12 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+/*
+* PREMAKE change: UTF-8 character support on windows.
+*/
+#if defined(LUA_WIN)
+#include <windows.h>
+#endif
 
 
 
@@ -254,7 +260,30 @@ static int io_open (lua_State *L) {
   LStream *p = newfile(L);
   const char *md = mode;  /* to traverse/check mode */
   luaL_argcheck(L, l_checkmode(md), 2, "invalid mode");
+
+  /*
+   * PREMAKE change: UTF-8 character support on windows.
+   */
+#if defined(LUA_WIN)
+  wchar_t wide_path[4096];
+  if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_path, 4096) == 0)
+  {
+    lua_pushstring(L, "unable to encode path");
+    return lua_error(L);
+  }
+
+  wchar_t wide_mode[64];
+  if (MultiByteToWideChar(CP_UTF8, 0, mode, -1, wide_mode, 64) == 0)
+  {
+    lua_pushstring(L, "unable to encode open mode");
+    return lua_error(L);
+  }
+
+  p->f = _wfopen(wide_path, wide_mode);
+#else
   p->f = fopen(filename, mode);
+#endif
+
   return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
 }
 
