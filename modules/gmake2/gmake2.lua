@@ -151,7 +151,7 @@
 					if #result then
 						result = result .. " "
 					end
-					result = result .. pregmake2.quoted(v)
+					result = result .. p.quoted(v)
 				end
 				return result
 			else
@@ -302,7 +302,7 @@
 		local steps = cfg[event .. "commands"]
 		local msg = cfg[event .. "message"]
 		if #steps > 0 then
-			steps = os.translateCommands(steps)
+			steps = os.translateCommandsAndPaths(steps, cfg.project.basedir, cfg.project.location)
 			msg = msg or string.format("Running %s commands", event)
 			_p('\t@echo %s', msg)
 			_p('\t%s', table.implode(steps, "", "", "\n\t"))

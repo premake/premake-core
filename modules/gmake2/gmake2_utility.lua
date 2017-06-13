@@ -372,7 +372,7 @@
 		end
 
 		if file.buildcommands then
-			local cmds = os.translateCommands(file.buildcommands)
+			local cmds = os.translateCommandsAndPaths(file.buildcommands, cfg.project.basedir, cfg.project.location)
 			for _, cmd in ipairs(cmds) do
 				_p('\t$(SILENT) %s', cmd)
 			end

@@ -469,7 +469,7 @@
 			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
 			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
 
-			local cc = iif(cfg.language == "C", "CC", "CXX")
+			local cc = iif(p.languages.isc(cfg.language), "CC", "CXX")
 			p.outln('LINKCMD = $(' .. cc .. ') -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)')
 		end
 	end
@@ -659,13 +659,13 @@
 
 	function cpp.allRules(cfg, toolset)
 		if cfg.system == p.MACOSX and cfg.kind == p.WINDOWEDAPP then
-			_p('all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist | $(TARGETDIR) $(OBJDIR) prebuild prelink')
+			_p('all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist | $(TARGETDIR) $(OBJDIR)')
 			_p('\t@:')
 			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')
 			_p('$(dir $(TARGETDIR))Info.plist:')
 		else
-			_p('all: $(TARGET) | $(TARGETDIR) $(OBJDIR) prebuild prelink')
+			_p('all: prebuild prelink $(TARGET) | $(TARGETDIR) $(OBJDIR)')
 			_p('\t@:')
 		end
 		_p('')
@@ -713,7 +713,7 @@
 		_p('$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)')
 		_p('$(GCH): $(PCH) | $(OBJDIR)')
 		_p('\t@echo $(notdir $<)')
-		local cmd = iif(cfg.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
+		local cmd = iif(p.languages.isc(cfg.language), "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
 		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
 		_p('$(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)')
 		_p('\t$(SILENT) touch "$@"')
@@ -761,7 +761,7 @@
 		end
 
 		if file.buildcommands then
-			local cmds = os.translateCommands(file.buildcommands)
+			local cmds = os.translateCommandsAndPaths(file.buildcommands, cfg.project.basedir, cfg.project.location)
 			for _, cmd in ipairs(cmds) do
 				if cfg.bindirs and #cfg.bindirs > 0 then
 					_p('\t$(SILENT) $(EXE_PATHS) %s', cmd)

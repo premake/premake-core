@@ -54,7 +54,7 @@
 -- Generate a GNU make C# project makefile, with support for the new platforms API.
 --
 
-	function gmake2.cs.generate(prj)
+	function cs.generate(prj)
 		p.eol("\n")
 		local toolset = p.tools.dotnet
 		p.callArray(cs.elements.makefile, prj, toolset)
@@ -178,7 +178,7 @@
 	end
 
 
-	function gmake2.cs.getresponsefilename(prj)
+	function cs.getresponsefilename(prj)
 		return '$(OBJDIR)/' .. prj.filename .. '.rsp'
 	end
 
