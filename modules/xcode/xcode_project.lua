@@ -108,7 +108,7 @@
 				node.isResource = xcode.isItemResource(prj, node)
 
 				-- assign build IDs to buildable files
-				if xcode.getbuildcategory(node) and not node.excludefrombuild then
+				if xcode.getbuildcategory(node) and not node._excludefrombuild then
 					node.buildid = xcode.newid(node.name, "build", node.path)
 				end
 
@@ -153,7 +153,7 @@
 
 		-- don't link the dependency if it's a dependency only
 		if build == false then
-			node.excludefrombuild = true
+			node._excludefrombuild = true
 		end
 	end
 
