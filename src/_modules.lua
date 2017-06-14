@@ -5,6 +5,7 @@
 --
 
 	return {
+		"gmake",
 		"xcode",
 		"codelite",
 		"gmake2",

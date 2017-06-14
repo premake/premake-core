@@ -11,6 +11,8 @@
 
 	local dmake = m.make
 
+	require ("gmake")
+
 	local make = p.make
 	local cpp = p.make.cpp
 	local project = p.project

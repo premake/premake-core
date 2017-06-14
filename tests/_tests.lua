@@ -144,35 +144,4 @@ return {
 	"actions/vstudio/vc2010/test_user_file.lua",
 	"actions/vstudio/vc2010/test_vectorextensions.lua",
 	"actions/vstudio/vc2010/test_ensure_nuget_imports.lua",
-
-	-- Makefile tests
-	"actions/make/test_make_escaping.lua",
-	"actions/make/test_make_tovar.lua",
-
-	-- Makefile workspaces
-	"actions/make/workspace/test_config_maps.lua",
-	"actions/make/workspace/test_default_config.lua",
-	"actions/make/workspace/test_group_rule.lua",
-	"actions/make/workspace/test_help_rule.lua",
-	"actions/make/workspace/test_project_rule.lua",
-
-	-- Makefile C/C++ projects
-	"actions/make/cpp/test_clang.lua",
-	"actions/make/cpp/test_file_rules.lua",
-	"actions/make/cpp/test_flags.lua",
-	"actions/make/cpp/test_ldflags.lua",
-	"actions/make/cpp/test_make_pch.lua",
-	"actions/make/cpp/test_make_linking.lua",
-	"actions/make/cpp/test_objects.lua",
-	"actions/make/cpp/test_target_rules.lua",
-	"actions/make/cpp/test_tools.lua",
-	"actions/make/cpp/test_wiidev.lua",
-
-	-- Makefile C# projects
-	"actions/make/cs/test_embed_files.lua",
-	"actions/make/cs/test_flags.lua",
-	"actions/make/cs/test_links.lua",
-	"actions/make/cs/test_response.lua",
-	"actions/make/cs/test_sources.lua",
-
 }
