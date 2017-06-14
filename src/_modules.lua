@@ -7,5 +7,6 @@
 	return {
 		"xcode",
 		"codelite",
+		"gmake2",
 		"d",
 	}
