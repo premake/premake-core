@@ -9,6 +9,7 @@
 --
 
 	local p = premake
+	local project = p.project
 
 	newaction {
 		trigger         = "gmake2",
@@ -25,6 +26,7 @@
 		},
 
 		onInitialize = function()
+			require("gmake2")
 			p.modules.gmake2.cpp.initialize()
 		end,
 
@@ -43,7 +45,7 @@
 			else
 				if project.isdotnet(prj) then
 					p.generate(prj, makefile, p.modules.gmake2.cs.generate)
-				elseif project.iscpp(prj) then
+				elseif project.isc(prj) or project.iscpp(prj) then
 					p.generate(prj, makefile, p.modules.gmake2.cpp.generate)
 				end
 			end
