@@ -2064,7 +2064,7 @@
 	end
 
 	function m.runtimeTypeInfo(cfg, condition)
-		if cfg.rtti == p.OFF and cfg.clr == p.OFF then
+		if cfg.rtti == p.OFF and ((not cfg.clr) or cfg.clr == p.OFF) then
 			m.element("RuntimeTypeInfo", condition, "false")
 		elseif cfg.rtti == p.ON then
 			m.element("RuntimeTypeInfo", condition, "true")
