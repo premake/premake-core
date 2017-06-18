@@ -25,6 +25,7 @@ term.white       = 15
 -- colors for specific purpose.
 term.warningColor = term.magenta
 term.errorColor   = term.lightRed
+term.infoColor    = term.lightCyan
 
 -- color stack implementation.
 term._colorStack = {}
