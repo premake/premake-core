@@ -45,7 +45,7 @@
 			info.action = "Compile"
 		elseif fcfg.buildaction == "Embed" or ext == ".resx" then
 			info.action = "EmbeddedResource"
-		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" or ext == ".dll" then
+		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" or ext == ".dll" or ext == ".tt" then
 			info.action = "Content"
 		elseif fcfg.buildaction == "Resource" then
 			info.action = "Resource"
@@ -117,6 +117,13 @@
 					info.SubType = "Form"
 				end
 
+				testname = basename .. ".tt"
+				if project.hasfile(fcfg.project, testname) then
+					info.AutoGen = "True"
+					info.DesignTime = "True"
+					info.DependentUpon = testname
+				end
+
 			end
 
 			-- Allow C# object type build actions to override the default
@@ -165,6 +172,15 @@
 			if project.hasfile(fcfg.project, testname) then
 				info.Generator = "SettingsSingleFileGenerator"
 				info.LastGenOutput = path.getname(testname)
+			end
+		end
+
+		if info.action == "Content" and fname:endswith(".tt") then
+			local testname = fname:sub(1, -4) .. ".cs"
+			if project.hasfile(fcfg.project, testname) then
+				info.Generator = "TextTemplatingFileGenerator"
+				info.LastGenOutput = path.getname(testname)
+				info.CopyToOutputDirectory = nil
 			end
 		end
 
