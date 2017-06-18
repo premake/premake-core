@@ -665,6 +665,7 @@
 						m.basicRuntimeChecks,
 						m.exceptionHandling,
 						m.compileAsManaged,
+						m.runtimeTypeInfo,
 					}
 				else
 					return {
@@ -2095,11 +2096,11 @@
 		end
 	end
 
-	function m.runtimeTypeInfo(cfg)
-		if cfg.rtti == p.OFF and cfg.clr == p.OFF then
-			m.element("RuntimeTypeInfo", nil, "false")
+	function m.runtimeTypeInfo(cfg, condition)
+		if cfg.rtti == p.OFF and ((not cfg.clr) or cfg.clr == p.OFF) then
+			m.element("RuntimeTypeInfo", condition, "false")
 		elseif cfg.rtti == p.ON then
-			m.element("RuntimeTypeInfo", nil, "true")
+			m.element("RuntimeTypeInfo", condition, "true")
 		end
 	end
 

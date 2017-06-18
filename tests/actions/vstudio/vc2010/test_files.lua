@@ -543,6 +543,35 @@
 	end
 
 
+
+--
+-- Check handling of per-file optimization levels.
+--
+
+	function suite.onPerFileRttiOn()
+		files { "hello.cpp" }
+		filter "files:hello.cpp"
+		rtti "On"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<RuntimeTypeInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</RuntimeTypeInfo>
+		]]
+	end
+
+	function suite.onPerFileRttiOff()
+		files { "hello.cpp" }
+		filter "files:hello.cpp"
+		rtti "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<RuntimeTypeInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</RuntimeTypeInfo>
+		]]
+	end
+
 --
 -- Check handling of per-file no PCH build options.
 --
