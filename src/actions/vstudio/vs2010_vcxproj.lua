@@ -343,6 +343,7 @@
 			m.additionalCompileOptions,
 			m.compileAs,
 			m.callingConvention,
+			m.languageStandard,
 		}
 	end
 
@@ -1084,9 +1085,28 @@
 	end
 
 
+	function m.languageStandard(cfg)
+		if _ACTION >= "vs2017" then
+			if (cfg.cppdialect == "C++14") then
+				m.element("LanguageStandard", nil, 'stdcpp14')
+			elseif (cfg.cppdialect == "C++17") then
+				m.element("LanguageStandard", nil, 'stdcpplatest')
+			end
+		end
+	end
+
+
 	function m.additionalCompileOptions(cfg, condition)
-		if #cfg.buildoptions > 0 then
-			local opts = table.concat(cfg.buildoptions, " ")
+		local opts = cfg.buildoptions
+		if _ACTION == "vs2015" then
+			if (cfg.cppdialect == "C++14") then
+				table.insert(opts, "/std:c++14")
+			elseif (cfg.cppdialect == "C++17") then
+				table.insert(opts, "/std:c++latest")
+			end
+		end
+		if #opts > 0 then
+			opts = table.concat(opts, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
