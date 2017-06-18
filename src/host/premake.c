@@ -188,6 +188,19 @@ int premake_init(lua_State* L)
 }
 
 
+static int getErrorColor(lua_State* L)
+{
+	int color; 
+
+	lua_getglobal(L, "term");
+	lua_pushstring(L, "errorColor");
+	lua_gettable(L, -2);
+	color = luaL_checkinteger(L, -1);
+	lua_pop(L, 2);
+
+	return color;
+}
+
 
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
 {
@@ -209,7 +222,10 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 
 	/* Find and run the main Premake bootstrapping script */
 	if (run_premake_main(L, script) != OKAY) {
+		int color = term_doGetTextColor();
+		term_dosetTextColor(getErrorColor(L));
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		term_dosetTextColor(color);
 		return !OKAY;
 	}
 
@@ -225,7 +241,10 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 	/* and call the main entry point */
 	lua_getglobal(L, "_premake_main");
 	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
+		int color = term_doGetTextColor();
+		term_dosetTextColor(getErrorColor(L));
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		term_dosetTextColor(color);
 		return !OKAY;
 	}
 	else {

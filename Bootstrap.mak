@@ -98,4 +98,4 @@ windows: windows-base
 	devenv .\build\bootstrap\Premake5.sln /Build Release
 
 windows-msbuild: windows-base
-	msbuild /p:Configuration=Release .\build\bootstrap\Premake5.sln
+	msbuild /p:Configuration=Release /p:Platform=Win32 .\build\bootstrap\Premake5.sln
