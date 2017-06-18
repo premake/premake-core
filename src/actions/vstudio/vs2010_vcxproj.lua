@@ -787,13 +787,19 @@
 		priority   = 7,
 
 		emitFiles = function(prj, group)
-			local fileCfgFunc = {
-				m.excludedFromBuild
-			}
-
-			m.emitFiles(prj, group, "Masm", nil, fileCfgFunc, function(cfg)
-				return cfg.system == p.WINDOWS
-			end)
+			local fileCfgFunc = function(fcfg, condition)
+				if fcfg then
+					return {
+						m.excludedFromBuild,
+						m.exceptionHandlingSEH,
+					}
+				else
+					return {
+						m.excludedFromBuild
+					}
+				end
+			end
+			m.emitFiles(prj, group, "Masm", nil, fileCfgFunc)
 		end,
 
 		emitFilter = function(prj, group)
@@ -1355,6 +1361,13 @@
 	function m.excludedFromBuild(filecfg, condition)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
 			m.element("ExcludedFromBuild", condition, "true")
+		end
+	end
+
+
+	function m.exceptionHandlingSEH(filecfg, condition)
+		if not filecfg or filecfg.exceptionhandling == "SEH" then
+			m.element("UseSafeExceptionHandlers", condition, "true")
 		end
 	end
 

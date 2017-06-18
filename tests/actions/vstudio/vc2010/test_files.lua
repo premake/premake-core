@@ -584,6 +584,30 @@
 	end
 
 
+
+
+--
+-- Check handling of per-file command line build options.
+--
+
+	function suite.perFileSEH()
+		files { "hello.asm", "hello.cpp" }
+		filter "files:**.asm"
+			exceptionhandling 'SEH'
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp" />
+</ItemGroup>
+<ItemGroup>
+	<Masm Include="hello.asm">
+		<UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</UseSafeExceptionHandlers>
+		<UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</UseSafeExceptionHandlers>
+	</Masm>
+</ItemGroup>
+		]]
+	end
+
 --
 -- Make sure that the sort order of the source files is maintained even
 -- when virtual paths are used to organize them.
