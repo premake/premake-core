@@ -127,6 +127,21 @@
 		]]
 	end
 
+	function suite.textTemplatingDependency()
+		files { "foobar.tt", "foobar.cs" }
+		prepare()
+		test.capture [[
+		<Compile Include="foobar.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>foobar.tt</DependentUpon>
+		</Compile>
+		<Content Include="foobar.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>foobar.cs</LastGenOutput>
+		</Content>
+		]]
+	end
 
 --
 -- File associations should always be made relative to the file
