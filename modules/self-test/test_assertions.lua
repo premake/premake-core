@@ -91,7 +91,7 @@
 			end
 		end
 
-		local msg = string.format(format, unpack(arg))
+		local msg = string.format(format, table.unpack(arg))
 		error(debug.traceback(msg, depth), depth)
 	end
 

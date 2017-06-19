@@ -52,7 +52,7 @@ int criteria_compile(lua_State* L)
 	lua_setmetatable(L, -2);
 
 	/* create array to hold the incoming list of patterns */
-	n = lua_objlen(L, 1);
+	n = lua_rawlen(L, 1);
 	patterns->n = n;
 	patterns->pattern = (struct Pattern*)malloc(sizeof(struct Pattern) * n);
 
@@ -82,7 +82,7 @@ int criteria_compilePattern(lua_State* L, struct Pattern* pattern)
 	int i, n;
 
 	/* create array to hold the incoming list of words */
-	n = lua_objlen(L, -1);
+	n = lua_rawlen(L, -1);
 	pattern->n = n;
 	pattern->word = (struct Word*)malloc(sizeof(struct Word) * n);
 	pattern->matchesFiles = 0;
@@ -178,7 +178,7 @@ static int testValue(lua_State* L, struct Word* word)
 	int result;
 
 	if (lua_istable(L, -1)) {
-		n = lua_objlen(L, -1);
+		n = lua_rawlen(L, -1);
 		for (i = 1; i <= n; ++i) {
 			lua_rawgeti(L, -1, i);
 			result = testValue(L, word);

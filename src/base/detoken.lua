@@ -50,13 +50,10 @@
 
 		function expandtoken(token, e)
 			-- convert the token into a function to execute
-			local func, err = loadstring("return " .. token)
+			local func, err = load("return " .. token, nil, 't', e)
 			if not func then
 				return nil, "load error: " .. err
 			end
-
-			-- give the function access to the project objects
-			setfenv(func, e)
 
 			-- run it and get the result
 			local success, result = pcall(func)

@@ -343,7 +343,7 @@ end
 		for i = 1, #arg do
 			arg[i] = p.esc(arg[i])
 		end
-		p.w(msg, unpack(arg))
+		p.w(msg, table.unpack(arg))
 	end
 
 
@@ -393,5 +393,5 @@ end
 		for i = 2, #arg do
 			arg[i] = p.esc(arg[i])
 		end
-		_p(i, unpack(arg))
+		_p(i, table.unpack(arg))
 	end
