@@ -35,13 +35,13 @@
 	function suite.findlib_FailsOnBadLibName()
 		test.isfalse(os.findlib("NoSuchLibraryAsThisOneHere"))
 	end
-	
+
 	function suite.findheader_stdheaders()
 		if not (os.istarget("windows")) then
 			test.istrue(os.findheader("stdlib.h"))
 		end
 	end
-	
+
 	function suite.findheader_failure()
 		test.isfalse(os.findheader("Knights/who/say/Ni.hpp"))
 	end
@@ -93,8 +93,8 @@
 	end
 
 	function suite.matchfiles_OnSubfolderMatch()
-		local result = os.matchfiles("**/vc2010/*")
-		test.istrue(table.contains(result, "actions/vstudio/vc2010/test_globals.lua"))
+		local result = os.matchfiles("**/subfolder/*")
+		test.istrue(table.contains(result, "folder/subfolder/hello.txt"))
 		test.isfalse(table.contains(result, "premake4.lua"))
 	end
 

@@ -9,6 +9,8 @@
 
 	m.visuald = {}
 
+	require ("vstudio")
+
 	local vstudio = p.vstudio
 	local workspace = p.workspace
 	local project = p.project
