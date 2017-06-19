@@ -88,6 +88,18 @@ CURL* curlRequest(lua_State* L, curl_state* state, int optionsIndex, int progres
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, state->errorBuffer);
 	curl_easy_setopt(curl, CURLOPT_USERAGENT, agent);
 
+	// check if the --insecure option was specified on the commandline.
+	lua_getglobal(L, "_OPTIONS");
+	lua_pushstring(L, "insecure");
+	lua_gettable(L, -2);
+	if (!lua_isnil(L, -1))
+	{
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+	}
+	lua_pop(L, 2);
+
+	// apply all other options.
 	if (optionsIndex && lua_istable(L, optionsIndex))
 	{
 		lua_pushnil(L);
