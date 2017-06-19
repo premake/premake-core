@@ -84,9 +84,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
 	version = "1.0">
-	<FileRef
-		location = "group:MyProject.xcodeproj">
-	</FileRef>
 	<Group
 		location = "container:"
 		name = "MyGroup1">
@@ -94,6 +91,9 @@
 			location = "group:MyProject2.xcodeproj">
 		</FileRef>
 	</Group>
+	<FileRef
+		location = "group:MyProject.xcodeproj">
+	</FileRef>
 </Workspace>
 		]]
 	end

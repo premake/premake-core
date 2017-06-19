@@ -129,6 +129,11 @@
 			end
 		})
 
+		-- sort by uuid for determinism.
+		p.tree.sort(tr, function(a,b)
+			return a.name < b.name
+		end)
+
 		self.grouptree = tr
 		return tr
 	end
