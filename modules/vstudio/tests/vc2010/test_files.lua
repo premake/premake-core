@@ -104,10 +104,8 @@
 <ItemGroup>
 	<CustomBuild Include="hello.cg">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<Command>cgc $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -123,10 +121,8 @@
 <ItemGroup>
 	<CustomBuild Include="hello.cg">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).a;$(InputName).b</Outputs>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).a;$(InputName).b</Outputs>
+		<Command>cgc $(InputFile)</Command>
+		<Outputs>$(InputName).a;$(InputName).b</Outputs>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -143,12 +139,9 @@
 <ItemGroup>
 	<CustomBuild Include="hello.cg">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling shader $(InputFile)</Message>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		<Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling shader $(InputFile)</Message>
+		<Command>cgc $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
+		<Message>Compiling shader $(InputFile)</Message>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -165,12 +158,9 @@
 <ItemGroup>
 	<CustomBuild Include="hello.cg">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">common.cg.inc;common.cg.inc2</AdditionalInputs>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		<AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">common.cg.inc;common.cg.inc2</AdditionalInputs>
+		<Command>cgc $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
+		<AdditionalInputs>common.cg.inc;common.cg.inc2</AdditionalInputs>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -189,8 +179,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="afxwin.cpp">
-		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+		<PrecompiledHeader>Create</PrecompiledHeader>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -223,8 +212,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+		<ExcludedFromBuild>true</ExcludedFromBuild>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -252,8 +240,7 @@
 		test.capture [[
 <ItemGroup>
 	<ResourceCompile Include="hello.rc">
-		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+		<ExcludedFromBuild>true</ExcludedFromBuild>
 	</ResourceCompile>
 </ItemGroup>
 		]]
@@ -302,12 +289,9 @@
 <ItemGroup>
 	<CustomBuild Include="hello.cg">
 		<FileType>Document</FileType>
-		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cgc $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<ExcludedFromBuild>true</ExcludedFromBuild>
+		<Command>cgc $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -349,10 +333,8 @@
 <ItemGroup>
 	<CustomBuild Include="hello.x">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
+		<Command>echo $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -369,12 +351,9 @@
 <ItemGroup>
 	<CustomBuild Include="hello.x">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+		<Command>echo $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
+		<LinkObjects>false</LinkObjects>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -391,12 +370,9 @@
 <ItemGroup>
 	<CustomBuild Include="hello.x">
 		<FileType>Document</FileType>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
-		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkObjects>
-		<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo $(InputFile)</Command>
-		<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName).obj</Outputs>
-		<LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkObjects>
+		<Command>echo $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
+		<LinkObjects>true</LinkObjects>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -415,8 +391,7 @@
 <ItemGroup>
 	<ClCompile Include="greetings\hello.cpp" />
 	<ClCompile Include="hello.cpp">
-		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
-		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+		<ObjectFileName>$(IntDir)\hello1.obj</ObjectFileName>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -436,8 +411,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
-		<ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
+		<ForcedIncludeFiles>..\include\force1.h;..\include\force2.h</ForcedIncludeFiles>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -457,8 +431,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
-		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Xc %(AdditionalOptions)</AdditionalOptions>
+		<AdditionalOptions>/Xc %(AdditionalOptions)</AdditionalOptions>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -477,7 +450,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+		<Optimization>Full</Optimization>
 		]]
 	end
 
@@ -490,7 +463,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MinSpace</Optimization>
+		<Optimization>MinSpace</Optimization>
 		]]
 	end
 
@@ -502,7 +475,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MaxSpeed</Optimization>
+		<Optimization>MaxSpeed</Optimization>
 		]]
 	end
 
@@ -514,7 +487,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Full</Optimization>
+		<Optimization>Full</Optimization>
 		]]
 	end
 
@@ -526,7 +499,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+		<Optimization>Disabled</Optimization>
 		]]
 	end
 
@@ -538,7 +511,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+		<Optimization>Disabled</Optimization>
 		]]
 	end
 
@@ -556,7 +529,9 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<RuntimeTypeInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</RuntimeTypeInfo>
+		<RuntimeTypeInfo>true</RuntimeTypeInfo>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -568,7 +543,9 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<RuntimeTypeInfo Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</RuntimeTypeInfo>
+		<RuntimeTypeInfo>false</RuntimeTypeInfo>
+	</ClCompile>
+</ItemGroup>
 		]]
 	end
 
@@ -584,8 +561,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-		<PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+		<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -605,8 +581,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		<PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		<PreprocessorDefinitions>IS_CPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -630,8 +605,7 @@
 </ItemGroup>
 <ItemGroup>
 	<Masm Include="hello.asm">
-		<UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</UseSafeExceptionHandlers>
-		<UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</UseSafeExceptionHandlers>
+		<UseSafeExceptionHandlers>true</UseSafeExceptionHandlers>
 	</Masm>
 </ItemGroup>
 		]]
@@ -671,8 +645,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-		<EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+		<EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
 	</ClCompile>
 </ItemGroup>
 		]]

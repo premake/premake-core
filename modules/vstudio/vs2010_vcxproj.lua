@@ -21,7 +21,7 @@
 ---
 
 	m.elements = {}
-
+	m.conditionalElements = {}
 
 --
 -- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
@@ -901,6 +901,95 @@
 	end
 
 
+	function m.configPair(cfg)
+		return vstudio.projectPlatform(cfg) .. "|" .. vstudio.archFromConfig(cfg, true)
+	end
+
+
+	function m.getTotalCfgCount(prj)
+		if prj._totalCfgCount then
+			return prj._totalCfgCount
+		else
+			local result = 0
+			for _ in p.project.eachconfig(prj) do
+				result = result + 1
+			end
+			-- cache result
+			prj._totalCfgCount = result
+			return result
+		end
+	end
+
+
+	function m.indexConditionalElements()
+		local nameMap, nameList, settingList
+		nameMap = {}
+		nameList = {} -- to preserve ordering
+		settingList = {} -- to preserve ordering
+		for _, element in ipairs(m.conditionalElements) do
+			local settingMap = nameMap[element.name]
+			if not settingMap then
+				settingMap = {}
+				nameMap[element.name] = settingMap
+				if not table.contains(nameList, element.name) then
+					table.insert(nameList, element.name)
+				end
+			end
+			--setting will either be value or args
+			local elementSet = settingMap[element.setting]
+			if elementSet then
+				table.insert(elementSet, element)
+			else
+				elementSet = {element}
+				settingMap[element.setting] = elementSet
+				if not table.contains(settingList, element.setting) then
+					table.insert(settingList, element.setting)
+				end
+			end
+		end
+		return nameMap, nameList, settingList
+	end
+
+
+	function m.emitConditionalElements(prj)
+		local keyCount = function(tbl)
+			local count = 0
+			for _ in pairs(tbl) do count = count + 1 end
+			return count
+		end
+
+		local nameMap, nameList, settingList
+		nameMap, nameList, settingList = m.indexConditionalElements()
+
+		local totalCfgCount = m.getTotalCfgCount(prj)
+		for _, name in ipairs(nameList) do
+			local settingMap = nameMap[name]
+			local done = false
+			if keyCount(settingMap)==1 then
+				for _, setting in ipairs(settingList) do
+					local elements = settingMap[setting]
+					if elements~=nil and #elements==totalCfgCount then
+						local element = elements[1]
+						local format = string.format('<%s>%s</%s>', name, element.value, name)
+						p.w(format, table.unpack(element.args))
+						done = true
+					end
+				end
+			end
+			if not done then
+				for _, setting in ipairs(settingList) do
+					local elements = settingMap[setting]
+					if elements then
+						for _, element in ipairs(elements) do
+							local format = string.format('<%s %s>%s</%s>', name, m.conditionFromConfigText(element.condition), element.value, name)
+							p.w(format, table.unpack(element.args))
+						end
+					end
+				end
+			end
+		end
+	end
+
 	function m.emitFiles(prj, group, tag, fileFunc, fileCfgFunc, checkFunc)
 		local files = group.files
 		if files and #files > 0 then
@@ -910,11 +999,15 @@
 				local contents = p.capture(function ()
 					p.push()
 					p.callArray(fileFunc, cfg, file)
+					m.conditionalElements = {}
 					for cfg in project.eachconfig(prj) do
 						local fcfg = fileconfig.getconfig(file, cfg)
 						if not checkFunc or checkFunc(cfg, fcfg) then
-							p.callArray(fileCfgFunc, fcfg, m.condition(cfg))
+							p.callArray(fileCfgFunc, fcfg, m.configPair(cfg))
 						end
+						end
+					if #m.conditionalElements > 0 then
+						m.emitConditionalElements(prj)
 					end
 					p.pop()
 				end)
@@ -945,17 +1038,19 @@
 					p.push()
 					for prop in p.rule.eachProperty(rule) do
 						local fld = p.rule.getPropertyField(rule, prop)
-
+						m.conditionalElements = {}
 						for cfg in project.eachconfig(prj) do
 							local fcfg = fileconfig.getconfig(file, cfg)
 							if fcfg and fcfg[fld.name] then
 								local value = p.rule.getPropertyString(rule, prop, fcfg[fld.name])
 								if value and #value > 0 then
-									m.element(prop.name, m.condition(cfg), '%s', value)
+									m.element(prop.name, m.configPair(cfg), '%s', value)
+								end
 								end
 							end
+						if #m.conditionalElements > 0 then
+							m.emitConditionalElements(prj)
 						end
-
 					end
 					p.pop()
 				end)
@@ -1862,10 +1957,9 @@
 
 	function m.objectFileName(fcfg)
 		if fcfg.objname ~= fcfg.basename then
-			m.element("ObjectFileName", m.condition(fcfg.config), "$(IntDir)\\%s.obj", fcfg.objname)
+			m.element("ObjectFileName", m.configPair(fcfg.config), "$(IntDir)\\%s.obj", fcfg.objname)
 		end
 	end
-
 
 
 	function m.omitDefaultLib(cfg)
@@ -1873,7 +1967,6 @@
 			m.element("OmitDefaultLibName", nil, "true")
 		end
 	end
-
 
 
 	function m.omitFramePointers(cfg)
@@ -2279,9 +2372,14 @@
 -- Format and return a Visual Studio Condition attribute.
 --
 
-	function m.condition(cfg)
-		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', p.esc(vstudio.projectConfig(cfg)))
+	function m.conditionFromConfigText(cfgText)
+		return string.format('Condition="\'$(Configuration)|$(Platform)\'==\'%s\'"', p.esc(cfgText))
 	end
+
+	function m.condition(cfg)
+		return m.conditionFromConfigText(vstudio.projectConfig(cfg))
+	end
+
 
 
 --
@@ -2301,16 +2399,34 @@
 --
 
 	function m.element(name, condition, value, ...)
+		local arg = {...}
 		if select('#',...) == 0 then
 			value = p.esc(value)
-		end
-
-		local format
-		if condition then
-			format = string.format('<%s %s>%s</%s>', name, condition, value, name)
 		else
-			format = string.format('<%s>%s</%s>', name, value, name)
+			for i = 1, #arg do
+				arg[i] = p.esc(arg[i])
+			end
 		end
 
-		p.x(format, ...)
+		if condition then
+			--defer output
+			local element = {}
+			element.name = name
+			element.condition = condition
+			element.value = value
+			element.args = arg
+			if ... then
+				if value == '%s' then
+					element.setting = table.concat(arg)
+				else
+					element.setting = value .. table.concat(arg)
+				end
+		else
+				element.setting = element.value
+			end
+			table.insert(m.conditionalElements, element)
+		else
+			local format = string.format('<%s>%s</%s>', name, value, name)
+			p.w(format, table.unpack(arg))
+		end
 	end
