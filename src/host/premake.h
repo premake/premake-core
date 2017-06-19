@@ -95,7 +95,7 @@ int do_pathsearch(lua_State* L, const char* filename, const char* path);
 void do_translate(char* value, const char sep);
 
 int term_doGetTextColor();
-void term_dosetTextColor(int color);
+void term_doSetTextColor(int color);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
