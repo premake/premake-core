@@ -76,10 +76,10 @@
 
 	function suite.pch_searchesIncludeDirs()
 		pchheader "premake.h"
-		includedirs { "../src/host" }
+		includedirs { "../../../src/host" }
 		prepareVars()
 		test.capture [[
-  PCH = ../src/host/premake.h
+  PCH = ../../../src/host/premake.h
 		]]
 	end
 
@@ -140,9 +140,9 @@ endif
 		function suite.findsPCH_onIncludeDirs()
 			location "MyProject"
 			pchheader "premake.h"
-			includedirs { "../src/host" }
+			includedirs { "../../../src/host" }
 			prepareVars()
 			test.capture [[
-  PCH = ../../src/host/premake.h
+  PCH = ../../../../src/host/premake.h
 			]]
 		end

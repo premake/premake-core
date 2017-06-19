@@ -64,14 +64,6 @@
 		"tools/snc.lua",
 		"tools/clang.lua",
 
-		-- GNU make action
-		"actions/make/_make.lua",
-		"actions/make/make_workspace.lua",
-		"actions/make/make_cpp.lua",
-		"actions/make/make_csharp.lua",
-		"actions/make/make_utility.lua",
-		"actions/make/make_makefile.lua",
-
 		-- Visual Studio actions
 		"actions/vstudio/_vstudio.lua",
 		"actions/vstudio/vs2005.lua",

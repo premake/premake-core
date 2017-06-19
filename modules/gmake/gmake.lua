@@ -1,62 +1,19 @@
 --
--- _make.lua
+-- gmake.lua
 -- Define the makefile action(s).
 -- Copyright (c) 2002-2015 Jason Perkins and the Premake project
 --
 
 	local p = premake
-	p.make = {}
+
+	p.modules.gmake = {}
+	p.modules.gmake._VERSION = p._VERSION
+
+	-- for backwards compatibility.
+	p.make = p.modules.gmake
 
 	local make = p.make
 	local project = p.project
-
-
----
--- The GNU make action, with support for the new platforms API
----
-
-	newaction {
-		trigger         = "gmake",
-		shortname       = "GNU Make",
-		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
-
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
-		valid_languages = { "C", "C++", "C#" },
-		valid_tools     = {
-			cc     = { "clang", "gcc" },
-			dotnet = { "mono", "msnet", "pnet" }
-		},
-
-		onWorkspace = function(wks)
-			p.escaper(make.esc)
-			p.generate(wks, make.getmakefilename(wks, false), make.generate_workspace)
-		end,
-
-		onProject = function(prj)
-			p.escaper(make.esc)
-			local makefile = make.getmakefilename(prj, true)
-			if prj.kind == p.UTILITY then
-				p.generate(prj, makefile, make.utility.generate)
-			elseif prj.kind == p.MAKEFILE then
-				p.generate(prj, makefile, make.makefile.generate)
-			else
-				if project.isdotnet(prj) then
-					p.generate(prj, makefile, make.cs.generate)
-				elseif project.isc(prj) or project.iscpp(prj) then
-					p.generate(prj, makefile, make.cpp.generate)
-				end
-			end
-		end,
-
-		onCleanWorkspace = function(wks)
-			p.clean.file(wks, make.getmakefilename(wks, false))
-		end,
-
-		onCleanProject = function(prj)
-			p.clean.file(prj, make.getmakefilename(prj, true))
-		end
-	}
-
 
 --
 -- Write out the default configuration rule for a workspace or project.
@@ -323,3 +280,12 @@
 	function make.targetDirRules(prj)
 		make.mkdirRules("$(TARGETDIR)")
 	end
+
+
+	include("gmake_cpp.lua")
+	include("gmake_csharp.lua")
+	include("gmake_makefile.lua")
+	include("gmake_utility.lua")
+	include("gmake_workspace.lua")
+
+	return p.modules.gmake
