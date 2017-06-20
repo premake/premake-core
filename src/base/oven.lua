@@ -692,7 +692,7 @@
 
 			-- Only consider sources that actually generate object files
 
-			if not path.iscppfile(file.abspath) then
+			if not path.isnativefile(file.abspath) then
 				return
 			end
 
