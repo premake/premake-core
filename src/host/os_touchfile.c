@@ -66,7 +66,7 @@ int os_touchfile(lua_State* L)
 	const char* dst     = luaL_checkstring(L, 1);
 
 	// if destination exist, mark the file as modified
-	if (do_isfile(dst))
+	if (do_isfile(L, dst))
 	{
 		if (truncate_file(dst))
 		{
