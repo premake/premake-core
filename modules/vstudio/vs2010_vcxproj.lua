@@ -2174,10 +2174,16 @@
 
 
 	function m.preferredToolArchitecture(prj)
-		if prj.preferredtoolarchitecture == p.X86_64 then
-			m.element("PreferredToolArchitecture", nil, 'x64')
-		elseif prj.preferredtoolarchitecture == p.X86 then
-			m.element("PreferredToolArchitecture", nil, 'x86')
+		if _ACTION >= "vs2013" then
+			if prj.preferredtoolarchitecture == p.X86_64 then
+				m.element("PreferredToolArchitecture", nil, 'x64')
+			elseif prj.preferredtoolarchitecture == p.X86 then
+				m.element("PreferredToolArchitecture", nil, 'x86')
+			end
+		else
+			if prj.preferredtoolarchitecture == p.X86_64 then
+				m.element("UseNativeEnvironment", nil, 'true')
+			end
 		end
 	end
 
