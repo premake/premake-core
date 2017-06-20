@@ -86,6 +86,7 @@ static const luaL_Reg os_functions[] = {
 	{ "stat",                   os_stat                 },
 	{ "uuid",                   os_uuid                 },
 	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
+	{ "touchfile",              os_touchfile            },
 	{ "compile",                os_compile              },
 	{ NULL, NULL }
 };

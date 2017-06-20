@@ -59,7 +59,7 @@
 			end
 
 		elseif p.project.isc(prj) or p.project.iscpp(prj) then
-			p.generate(prj, ".vcxproj", vstudio.vc2010.generate)
+			local projFileModified = p.generate(prj, ".vcxproj", vstudio.vc2010.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
@@ -69,7 +69,10 @@
 
 			-- Only generate a filters file if the source tree actually has subfolders
 			if tree.hasbranches(project.getsourcetree(prj)) then
-				p.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters)
+				if p.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters) == true and projFileModified == false then
+					-- vs workaround for issue where if only the .filters file is modified, VS doesn't automaticly trigger a reload
+					p.touch(prj, ".vcxproj")
+				end
 			end
 		end
 
