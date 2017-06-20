@@ -79,7 +79,20 @@ int os_touchfile(lua_State* L)
 		}
 	}
 
+#if PLATFORM_WINDOWS
+	wchar_t wide_path[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
+	{
+		lua_pushinteger(L, -1);
+		lua_pushstring(L, "unable to encode path");
+		return 2;
+	}
+
+	file = _wfopen(wide_path, L"wb");
+#else
 	file = fopen(dst, "wb");
+#endif
+
 	if (file != NULL)
 	{
 		fclose(file);
@@ -89,6 +102,6 @@ int os_touchfile(lua_State* L)
 	}
 
 	lua_pushinteger(L, -1);
-	lua_pushfstring(L, "unable to create file to '%s'", dst);
+	lua_pushfstring(L, "unable to open file to '%s'", dst);
 	return 2;
 }
