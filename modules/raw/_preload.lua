@@ -7,7 +7,7 @@ newaction
 	onsolution = function(sln)
 		require('raw')
 
-		premake.generate(sln, ".raw", premake.raw.solution)
+		premake.generate(sln, ".raw", premake.raw.workspace)
 	end,
 }
 

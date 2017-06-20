@@ -447,7 +447,7 @@
 					-- <Reference Include="nunit.framework">
 
 					_x(2, '<Reference Include="%s">', path.getbasename(file))
-					_x(3, '<HintPath>%s</HintPath>', vstudio.path(prj, p.filename(prj.solution, string.format("packages\\%s.%s\\%s", id, packageAPIInfo.verbatimVersion or packageAPIInfo.version, file))))
+					_x(3, '<HintPath>%s</HintPath>', vstudio.path(prj, p.filename(prj.workspace, string.format("packages\\%s.%s\\%s", id, packageAPIInfo.verbatimVersion or packageAPIInfo.version, file))))
 
 					if config.isCopyLocal(prj, package, true) then
 						_p(3, '<Private>True</Private>')
