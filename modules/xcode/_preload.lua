@@ -36,6 +36,7 @@
 		-- Xcode always uses Mac OS X path and naming conventions
 
 		targetos = "macosx",
+		toolset  = "clang",
 
 		-- The capabilities of this action
 

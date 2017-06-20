@@ -18,6 +18,7 @@
 		trigger         = "codelite",
 		shortname       = "CodeLite",
 		description     = "Generate CodeLite project files",
+		toolset         = "clang",
 
 		-- The capabilities of this action
 

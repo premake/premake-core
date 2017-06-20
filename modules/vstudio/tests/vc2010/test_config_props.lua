@@ -38,6 +38,7 @@
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
 </PropertyGroup>
 		]]
 	end
@@ -270,6 +271,7 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Utility</ConfigurationType>
+	<PlatformToolset>v100</PlatformToolset>
 </PropertyGroup>
 		]]
 	end
@@ -286,6 +288,7 @@
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
 	<WholeProgramOptimization>true</WholeProgramOptimization>
 		]]
 	end
