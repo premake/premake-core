@@ -120,14 +120,22 @@
 	function rule.getPropertyString(self, prop, value)
 		-- list?
 		if type(value) == "table" then
-			local sep = prop.separator or " "
-			return table.concat(value, sep)
+			if #value > 0 then
+				local sep = prop.separator or " "
+				return table.concat(value, sep)
+			else
+				return nil
+			end
 		end
 
 		-- enum?
 		if prop.values then
 			local i = table.indexof(prop.values, value)
-			return tostring(i)
+			if i ~= nil then
+				return tostring(i)
+			else
+				return nil
+			end
 		end
 
 		-- primitive
@@ -159,13 +167,21 @@
 
 		-- list?
 		if type(value) == "table" then
-			return prop.switch .. table.concat(value, " " .. prop.switch)
+			if #value > 0 then
+				return prop.switch .. table.concat(value, " " .. prop.switch)
+			else
+				return nil
+			end
 		end
 
 		-- enum?
 		if prop.values then
 			local i = table.indexof(prop.values, value)
-			return prop.switch .. tostring(i)
+			if i ~= nil then
+				return prop.switch .. tostring(i)
+			else
+				return nil
+			end
 		end
 
 		-- primitive
