@@ -707,6 +707,16 @@
 	}
 
 	api.register {
+		name = "sharedlibtype",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"OSXBundle",
+			"OSXFramework",
+		},
+	}
+
+	api.register {
 		name = "language",
 		scope = "project",
 		kind = "string",

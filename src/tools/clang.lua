@@ -176,6 +176,13 @@
 	clang.getrunpathdirs = gcc.getrunpathdirs
 
 --
+-- get the right output flag.
+--
+	function clang.getsharedlibarg(cfg)
+		return gcc.getsharedlibarg(cfg)
+	end
+
+--
 -- Build a list of linker flags corresponding to the settings in
 -- a particular project configuration.
 --
@@ -195,7 +202,7 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == p.MACOSX, "-dynamiclib", "-shared") }
+				local r = { clang.getsharedlibarg(cfg) }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				elseif cfg.system == p.LINUX then
