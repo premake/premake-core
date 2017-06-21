@@ -116,17 +116,28 @@
 
 -- Generate table of embedded content.
 	local contentTable = {}
+	local nativeTable = {}
 
 	print("Compiling... ")
 	for mi = 1, #manifests do
 		local manifestName = manifests[mi]
 		local manifestDir  = path.getdirectory(manifestName)
+		local moduleName   = path.getbasename(manifestDir)
 		local baseDir      = path.getdirectory(manifestDir)
 
 		local files = dofile(manifests[mi])
 		for fi = 1, #files do
 			local filename = path.join(manifestDir, files[fi])
 			addScript(contentTable, filename, path.getrelative(baseDir, filename))
+		end
+
+		-- find native code in modules.
+		if moduleName ~= "src" then
+			local nativeFile = path.join(manifestDir, 'native', moduleName .. '.c')
+			if os.isfile(nativeFile) then
+				local pretty_name = moduleName:gsub("^%l", string.upper)
+				table.insert(nativeTable, pretty_name)
+			end
 		end
 	end
 
@@ -165,6 +176,20 @@
 
 	buffered.writeln(result, "\t{NULL, NULL, 0}")
 	buffered.writeln(result, "};")
+	buffered.writeln(result, "")
+
+-- write out the registerModules method.
+
+	for _, name in ipairs(nativeTable) do
+		buffered.writeln(result, string.format("extern void register%s(lua_State* L);", name))
+	end
+	buffered.writeln(result, "")
+	buffered.writeln(result, "void registerModules(lua_State* L)")
+	buffered.writeln(result, "{")
+	for _, name in ipairs(nativeTable) do
+		buffered.writeln(result, string.format("\tregister%s(L);", name))
+	end
+	buffered.writeln(result, "}")
 	buffered.writeln(result, "")
 
 -- Write it all out. Check against the current contents of scripts.c first,
