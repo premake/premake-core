@@ -115,6 +115,7 @@
 		hooks.os_writefile_ifnotequal = os.writefile_ifnotequal
 		hooks.p_utf8 = p.utf8
 		hooks.print = print
+		hooks.setTextColor = term.setTextColor
 
 		local mt = getmetatable(io.stderr)
 		_.builtin_write = mt.write
@@ -128,6 +129,7 @@
 		os.writefile_ifnotequal = _.stub_os_writefile_ifnotequal
 		print = _.stub_print
 		p.utf8 = _.stub_utf8
+		term.setTextColor = _.stub_setTextColor
 
 		stderr_capture = nil
 
@@ -158,6 +160,7 @@
 		os.writefile_ifnotequal = hooks.os_writefile_ifnotequal
 		p.utf8 = hooks.p_utf8
 		print = hooks.print
+		term.setTextColor = hooks.setTextColor
 
 		local mt = getmetatable(io.stderr)
 		mt.write = _.builtin_write
@@ -262,4 +265,8 @@
 
 
 	function _.stub_utf8()
+	end
+
+
+	function _.stub_setTextColor()
 	end
