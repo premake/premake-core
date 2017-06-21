@@ -160,7 +160,15 @@
 				testname = basename .. ".Designer.cs"
 				if project.hasfile(fcfg.project, testname) then
 					info.SubType = "Designer"
-					info.Generator = "ResXFileCodeGenerator"
+
+					local resourceAccessGenerator = "ResXFileCodeGenerator"
+					if fcfg.project.resourcegenerator then
+						if fcfg.project.resourcegenerator == "public" then
+							resourceAccessGenerator = "PublicResXFileCodeGenerator"
+						end
+					end
+
+					info.Generator = resourceAccessGenerator
 					info.LastGenOutput = path.getname(testname)
 				end
 			end

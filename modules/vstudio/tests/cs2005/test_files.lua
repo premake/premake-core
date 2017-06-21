@@ -80,6 +80,25 @@
 	end
 
 
+	function suite.publicResourceDesignerDependency()
+		files { "Resources.resx", "Resources.Designer.cs" }
+		resourcegenerator 'public'
+
+		prepare()
+		test.capture [[
+		<Compile Include="Resources.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<EmbeddedResource Include="Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		]]
+	end
+
+
 	function suite.settingsDesignerDependency()
 		files { "Properties/Settings.settings", "Properties/Settings.Designer.cs" }
 		prepare()
