@@ -28,7 +28,7 @@ int do_getcwd(char* buffer, size_t size)
 
 	result = (GetCurrentDirectoryW(PATH_MAX, wbuffer) != 0);
 	if (result) {
-		WideCharToMultiByte(CP_UTF8, 0, wbuffer, -1, buffer, size, NULL, NULL);
+		WideCharToMultiByte(CP_UTF8, 0, wbuffer, -1, buffer, (int)size, NULL, NULL);
 
 		do_translate(buffer, '/');
 	}
