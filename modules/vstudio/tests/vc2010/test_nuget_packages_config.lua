@@ -23,7 +23,7 @@
 	end
 
 	local function prepare()
-		local prj = p.solution.getproject(wks, 1)
+		local prj = p.workspace.getproject(wks, 1)
 		nuget2010.generatePackagesConfig(prj)
 	end
 

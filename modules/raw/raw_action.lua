@@ -3,10 +3,10 @@ p.raw = { }
 local raw = p.raw
 local gvisited = { }
 
-function raw.solution(sln)
-	if not gvisited[sln.global] then
-		gvisited[sln.global] = true
-		raw.printTable({ global = sln.global })
+function raw.workspace(wks)
+	if not gvisited[wks.global] then
+		gvisited[wks.global] = true
+		raw.printTable({ global = wks.global })
 	end
 end
 
