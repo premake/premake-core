@@ -194,7 +194,7 @@
 		if not self then
 			self = action.current() or {}
 		end
-		if self.onSolution or self.onsolution then
+		if self.onWorkspace or self.onSolution or self.onsolution then
 			return true
 		end
 		if self.onProject or self.onproject then
