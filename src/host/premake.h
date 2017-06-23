@@ -181,7 +181,7 @@ typedef struct
 } buildin_mapping;
 
 extern const buildin_mapping builtin_scripts[];
-
+extern void  registerModules(lua_State* L);
 
 int premake_init(lua_State* L);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);

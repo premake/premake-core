@@ -215,13 +215,18 @@ int premake_init(lua_State* L)
 	lua_newtable(L);
 	lua_setglobal(L, "premake");
 
+#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
+	/* let native modules initialize themselves */
+	registerModules(L);
+#endif
+
 	return OKAY;
 }
 
 
 static int getErrorColor(lua_State* L)
 {
-	int color; 
+	int color;
 
 	lua_getglobal(L, "term");
 	lua_pushstring(L, "errorColor");
@@ -421,7 +426,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 		if (path && do_locate(L, filename, path)) return OKAY;
 	}
 
-	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
+#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	if ((searchMask & TEST_EMBEDDED) != 0) {
 		/* Try to locate a record matching the filename */
 		if (premake_find_embedded_script(filename) != NULL) {
@@ -431,7 +436,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 			return OKAY;
 		}
 	}
-	#endif
+#endif
 
 	return !OKAY;
 }
