@@ -18,10 +18,11 @@
 	function suite.setup()
 		p.action.set("codelite")
 		p.indent("  ")
-		wks, prj = test.createWorkspace()
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
+		prj = test.getproject(wks,1)
 		cfg = test.getconfig(prj, "Debug")
 	end
 
