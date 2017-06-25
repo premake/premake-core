@@ -8,6 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "premake.h"
+#include "lua_shimtable.h"
 
 #if PLATFORM_MACOSX
 #include <CoreFoundation/CFBundle.h>
@@ -152,7 +153,7 @@ static void lua_getorcreate_table(lua_State *L, const char *modname)
 }
 
 
-static void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
+void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
 {
 	lua_getorcreate_table(L, libname);
 	luaL_setfuncs(L, l, 0);
@@ -182,6 +183,9 @@ int premake_init(lua_State* L)
 #ifdef PREMAKE_COMPRESSION
 	luaL_register(L, "zip",     zip_functions);
 #endif
+
+	lua_pushlightuserdata(L, &s_shimTable);
+	lua_rawseti(L, LUA_REGISTRYINDEX, 'SHIM');
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
@@ -231,7 +235,7 @@ static int getErrorColor(lua_State* L)
 	lua_getglobal(L, "term");
 	lua_pushstring(L, "errorColor");
 	lua_gettable(L, -2);
-	color = luaL_checkinteger(L, -1);
+	color = (int)luaL_checkinteger(L, -1);
 	lua_pop(L, 2);
 
 	return color;
