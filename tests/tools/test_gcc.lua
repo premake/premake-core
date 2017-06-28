@@ -80,6 +80,12 @@
 		test.contains({ "-Wall -Wextra" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onHighWarnings()
+		warnings "high"
+		prepare()
+		test.contains({ "-Wall" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onFatalWarnings()
 		flags { "FatalWarnings" }
 		prepare()
