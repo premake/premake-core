@@ -46,7 +46,7 @@ none:
 	@echo "or"
 	@echo "   make -f Bootstrap.mak HOST_PLATFORM"
 	@echo "where HOST_PLATFORM is one of these:"
-	@echo "   osx linux"
+	@echo "   osx linux bsd"
 
 mingw: $(SRC)
 	$(SILENT) rm -rf ./bin
