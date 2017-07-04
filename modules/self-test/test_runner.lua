@@ -76,6 +76,7 @@
 
 
 	function _.runTest(test)
+		local cwd = os.getcwd()
 		local hooks = _.installTestingHooks()
 
 		_TESTS_DIR = test.suite._TESTS_DIR
@@ -92,6 +93,7 @@
 		err = err or terr
 
 		_.removeTestingHooks(hooks)
+		os.chdir(cwd)
 
 		if ok then
 			return 1, 0
