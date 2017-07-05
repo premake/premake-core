@@ -256,7 +256,7 @@
 		if cfg.system == premake.ANDROID then
 			-- Note: Android defaults to 'off'
 			if not cfg.flags.NoExceptions then
-				_p(3,'<GccExceptionHandling>true</GccExceptionHandling>')
+				vc2010.element("GccExceptionHandling", nil, "true")
 			end
 		else
 			oldfn(cfg)
