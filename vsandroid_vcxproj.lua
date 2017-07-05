@@ -51,7 +51,11 @@
 		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
 		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
 		_p(2, "<ApplicationType>Android</ApplicationType>")
-		_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
+		if _ACTION >= "vs2017" then
+			_p(2, "<ApplicationTypeRevision>3.0</ApplicationTypeRevision>")
+		else
+			_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
+		end
 	end
 
 --

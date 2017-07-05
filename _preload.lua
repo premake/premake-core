@@ -22,6 +22,7 @@
 	api.addAllowed("kind", p.ANDROIDPROJ)
 
 	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.ANDROIDPROJ })
+	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.ANDROIDPROJ })
 
 	-- TODO: can I api.addAllowed() a key-value pair?
 	local os = p.fields["os"];
