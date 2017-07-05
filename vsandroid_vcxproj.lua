@@ -429,3 +429,44 @@
 			end
 		end
 	end
+
+--
+-- Disable subsystem.
+--
+
+	p.override(vc2010, "subSystem", function(oldfn, cfg)
+		if cfg.system ~= p.ANDROID then
+			return oldfn(cfg)
+		end
+	end)
+
+--
+-- Remove .lib and list in LibraryDependencies instead of AdditionalDependencies.
+--
+
+	p.override(vc2010, "additionalDependencies", function(oldfn, cfg, explicit)
+		if cfg.system == p.ANDROID then
+			local links = {}
+
+			-- If we need sibling projects to be listed explicitly, grab them first
+			if explicit then
+				links = config.getlinks(cfg, "siblings", "fullpath")
+			end
+
+			-- Then the system libraries, which come undecorated
+			local system = config.getlinks(cfg, "system", "name")
+			for i = 1, #system do
+				local link = system[i]
+				table.insert(links, link)
+			end
+
+			-- TODO: When to use LibraryDependencies vs AdditionalDependencies
+
+			if #links > 0 then
+				links = path.translate(table.concat(links, ";"))
+				vc2010.element("LibraryDependencies", nil, "%%(LibraryDependencies);%s", links)
+			end
+		else
+			return oldfn(cfg, explicit)
+		end
+	end)
