@@ -186,6 +186,7 @@
 	buffered.writeln(result, "")
 	buffered.writeln(result, "void registerModules(lua_State* L)")
 	buffered.writeln(result, "{")
+	buffered.writeln(result, "\t(void)(L);")
 	for _, name in ipairs(nativeTable) do
 		buffered.writeln(result, string.format("\tregister%s(L);", name))
 	end
