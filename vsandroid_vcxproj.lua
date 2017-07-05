@@ -263,14 +263,14 @@
 		end
 	end)
 
-	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg)
+	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg, condition)
 		if cfg.system == premake.ANDROID then
 			-- Note: Android defaults to 'off'
-			if not cfg.flags.NoRTTI then
-				_p(3,'<RuntimeTypeInfo>true</RuntimeTypeInfo>')
+			if cfg.rtti then
+				vc2010.element("RuntimeTypeInfo", condition, "true")
 			end
 		else
-			oldfn(cfg)
+			oldfn(cfg, condition)
 		end
 	end)
 
