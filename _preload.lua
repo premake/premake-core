@@ -59,7 +59,7 @@
 			kind = "string",
 			allowed = {
 				"4.9", -- NDK GCC versions
-				"3.6", -- NDK clang versions
+				"3.8", -- NDK clang versions
 			},
 		}
 	else
