@@ -304,9 +304,13 @@
 	end)
 
 	function android.antPackage(cfg)
-		_p(2,'<AntPackage>')
-		_p(3,'<AndroidAppLibName>$(RootNamespace)</AndroidAppLibName>')
-		_p(2,'</AntPackage>')
+		p.push('<AntPackage>')
+		if cfg.androidapplibname ~= nil then
+			vc2010.element("AndroidAppLibName", nil, cfg.androidapplibname)
+		else
+			vc2010.element("AndroidAppLibName", nil, "$(RootNamespace)")
+		end
+		p.pop('</AntPackage>')
 	end
 
 	function android.antBuild(cfg)

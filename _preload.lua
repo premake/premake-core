@@ -120,6 +120,12 @@
 		},
 	}
 
+	api.register {
+		name = "androidapplibname",
+		scope = "config",
+		kind = "string"
+	}
+
 	return function(cfg)
 		return true
 	end
