@@ -53,6 +53,8 @@
 		_p(2, "<ApplicationType>Android</ApplicationType>")
 		if _ACTION >= "vs2017" then
 			_p(2, "<ApplicationTypeRevision>3.0</ApplicationTypeRevision>")
+		elseif _ACTION >= "vs2015" then
+			_p(2, "<ApplicationTypeRevision>2.0</ApplicationTypeRevision>")
 		else
 			_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
 		end
