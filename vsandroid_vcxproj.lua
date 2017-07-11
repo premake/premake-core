@@ -476,3 +476,13 @@
 			return oldfn(cfg, explicit)
 		end
 	end)
+
+--
+-- Disable override of OutDir.  This is breaking deployment.
+--
+
+	p.override(vc2010, "outDir", function(oldfn, cfg)
+		if cfg.system ~= p.ANDROID then
+			return oldfn(cfg)
+		end
+	end)
