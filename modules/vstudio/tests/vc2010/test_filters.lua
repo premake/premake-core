@@ -199,3 +199,16 @@
 </ItemGroup>
 		]]
 	end
+
+--
+-- Check handling of image files
+--
+	function suite.filerImage()
+		files { "hello.png" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Image Include="hello.png" />
+</ItemGroup>
+		]]
+	end
