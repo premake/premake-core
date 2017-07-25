@@ -284,14 +284,26 @@
 		end
 	end)
 
-	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
+	premake.override(vc2010, "clCompilePreprocessorDefinitions", function(oldfn, cfg, condition)
+		if cfg.system == p.ANDROID then
+			vc2010.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+		else
+			oldfn(cfg, condition)
+		end
+	end)
+
+	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg, condition)
+		if cfg.system == p.ANDROID then
 			-- Note: Android defaults to 'off'
-			if not cfg.flags.NoExceptions then
-				vc2010.element("GccExceptionHandling", nil, "true")
+			if cfg.exceptionhandling then
+				if _ACTION >= "vs2015" then
+					vc2010.element("ExceptionHandling", condition, "Enabled")
+				else
+					vc2010.element("GccExceptionHandling", condition, "true")
+				end
 			end
 		else
-			oldfn(cfg)
+			oldfn(cfg, condition)
 		end
 	end)
 

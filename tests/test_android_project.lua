@@ -20,6 +20,15 @@
 		vc2010.clCompile(cfg)
 	end
 
+	function suite.noOptions()
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<Optimization>Disabled</Optimization>
+</ClCompile>]]
+	end
+
 	function suite.rttiOff()
 		rtti "Off"
 		prepare()
@@ -27,7 +36,7 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<GccExceptionHandling>true</GccExceptionHandling>
+	<ExceptionHandling>Enabled</ExceptionHandling>
 </ClCompile>]]
 	end
 
@@ -38,7 +47,29 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<GccExceptionHandling>true</GccExceptionHandling>
+	<ExceptionHandling>Enabled</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
+]]
+	end
+
+	function suite.exceptionHandlingOff()
+		exceptionhandling "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<Optimization>Disabled</Optimization>
+</ClCompile>]]
+	end
+
+	function suite.exceptionHandlingOn()
+		exceptionhandling "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Enabled</ExceptionHandling>
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 ]]
 	end
@@ -50,7 +81,7 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<GccExceptionHandling>true</GccExceptionHandling>
+	<ExceptionHandling>Enabled</ExceptionHandling>
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<CppLanguageStandard>c++11</CppLanguageStandard>
 ]]
@@ -63,7 +94,7 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<GccExceptionHandling>true</GccExceptionHandling>
+	<ExceptionHandling>Enabled</ExceptionHandling>
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<CppLanguageStandard>c++1y</CppLanguageStandard>
 ]]
@@ -76,7 +107,7 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<GccExceptionHandling>true</GccExceptionHandling>
+	<ExceptionHandling>Enabled</ExceptionHandling>
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<AdditionalOptions>-std=c++1z %(AdditionalOptions)</AdditionalOptions>
 ]]
