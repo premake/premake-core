@@ -79,3 +79,19 @@
 		prepare("Release")
 		test.isemptycapture()
 	end
+
+--
+-- Utility projects include buildlog
+--
+	function suite.utilityIncludesPath()
+		kind "Utility"
+		buildlog "MyCustomLogFile.log"
+		prepare()
+		test.capture [[
+<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<BuildLog>
+		<Path>MyCustomLogFile.log</Path>
+	</BuildLog>
+</ItemDefinitionGroup>
+		]]
+	end

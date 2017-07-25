@@ -268,6 +268,7 @@
 			return {
 				m.ruleVars,
 				m.buildEvents,
+				m.buildLog,
 			}
 		else
 			return {
