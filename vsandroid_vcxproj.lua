@@ -247,7 +247,7 @@
 				["gnu++11"] = "gnu++11",
 				["gnu++14"] = "gnu++1y",
 			}
-			if cfg.cppdialect ~= nil and cpp_langmap[cfg.cppdialect] ~= nil then
+			if cpp_langmap[cfg.cppdialect] ~= nil then
 				vc2010.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
 			end
 		else
@@ -258,15 +258,15 @@
 	p.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			local opts = cfg.buildoptions
-			if cfg.cppdialect ~= nil then
-				local cpp_langmap = {
-					["C++17"]   = "-std=c++1z",
-					["gnu++17"] = "-std=gnu++1z",
-				}
-				if cpp_langmap[cfg.cppdialect] ~= nil then
-					table.insert(opts, cpp_langmap[cfg.cppdialect])
-				end
+
+			local cpp_langmap = {
+				["C++17"]   = "-std=c++1z",
+				["gnu++17"] = "-std=gnu++1z",
+			}
+			if cpp_langmap[cfg.cppdialect] ~= nil then
+				table.insert(opts, cpp_langmap[cfg.cppdialect])
 			end
+
 			if #opts > 0 then
 				opts = table.concat(opts, " ")
 				vc2010.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
