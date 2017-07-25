@@ -200,9 +200,6 @@
 			if _ACTION >= "vs2015" then
 				table.remove(elements, table.indexof(elements, vc2010.debugInformationFormat))
 				table.remove(elements, table.indexof(elements, android.thumbMode))
-				elements = table.join(elements, {
-					android.cppStandard,
-				})
 			end
 		end
 		return elements
@@ -240,11 +237,44 @@
 --		end
 	end
 
-	function android.cppStandard(cfg)
-		if cfg.flags["C++11"] then
-			_p(3, '<CppLanguageStandard>c++11</CppLanguageStandard>')
+	p.override(vc2010, "languageStandard", function(oldfn, cfg)
+		if cfg.system == p.ANDROID then
+			local cpp_langmap = {
+				["C++98"]   = "c++98",
+				["C++11"]   = "c++11",
+				["C++14"]   = "c++1y",
+				["gnu++98"] = "gnu++98",
+				["gnu++11"] = "gnu++11",
+				["gnu++14"] = "gnu++1y",
+			}
+			if cpp_langmap[cfg.cppdialect] ~= nil then
+				vc2010.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
+			end
+		else
+			oldfn(cfg)
 		end
-	end
+	end)
+
+	p.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
+		if cfg.system == p.ANDROID then
+			local opts = cfg.buildoptions
+
+			local cpp_langmap = {
+				["C++17"]   = "-std=c++1z",
+				["gnu++17"] = "-std=gnu++1z",
+			}
+			if cpp_langmap[cfg.cppdialect] ~= nil then
+				table.insert(opts, cpp_langmap[cfg.cppdialect])
+			end
+
+			if #opts > 0 then
+				opts = table.concat(opts, " ")
+				vc2010.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+			end
+		else
+			oldfn(cfg, condition)
+		end
+	end)
 
 	p.override(p.vstudio.vc2010, "warningLevel", function(oldfn, cfg)
 		if _ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings and cfg.warnings ~= "Off" then

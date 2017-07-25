@@ -42,3 +42,42 @@
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 ]]
 	end
+
+	function suite.cppdialect_cpp11()
+		cppdialect "C++11"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<Optimization>Disabled</Optimization>
+	<GccExceptionHandling>true</GccExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
+	<CppLanguageStandard>c++11</CppLanguageStandard>
+]]
+	end
+
+	function suite.cppdialect_cpp14()
+		cppdialect "C++14"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<Optimization>Disabled</Optimization>
+	<GccExceptionHandling>true</GccExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
+	<CppLanguageStandard>c++1y</CppLanguageStandard>
+]]
+	end
+
+	function suite.cppdialect_cpp17()
+		cppdialect "C++17"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<Optimization>Disabled</Optimization>
+	<GccExceptionHandling>true</GccExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
+	<AdditionalOptions>-std=c++1z %(AdditionalOptions)</AdditionalOptions>
+]]
+	end
