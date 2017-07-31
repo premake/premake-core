@@ -10,6 +10,7 @@ return {
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
 	"cs2005/test_nuget_config.lua",
+	"cs2005/test_nuget_framework_folders.lua",
 	"cs2005/test_nuget_packages_config.lua",
 	"cs2005/test_output_props.lua",
 	"cs2005/projectelement.lua",
