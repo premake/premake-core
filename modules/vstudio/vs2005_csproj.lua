@@ -363,6 +363,45 @@
 
 
 --
+-- This is a bit janky. To compare versions, we extract all numbers from the
+-- given string and right-pad the result with zeros. Then we can just do a
+-- lexicographical compare on the resulting strings.
+--
+-- This is so that we can compare version strings such as "4.6" and "net451"
+-- with each other.
+--
+
+	function cs2005.makeVersionComparable(version)
+		local numbers = ""
+
+		for number in version:gmatch("%d") do
+			numbers = numbers .. number
+		end
+
+		return string.format("%-10d", numbers):gsub(" ", "0")
+	end
+
+
+--
+-- https://github.com/NuGet/NuGet.Client/blob/dev/test/NuGet.Core.Tests/NuGet.Frameworks.Test/NuGetFrameworkParseTests.cs
+--
+
+	function cs2005.frameworkVersionForFolder(folder)
+		-- If this exporter ever supports frameworks such as "netstandard1.3",
+		-- "sl4", "sl5", "uap10", "wp8" or "wp71", this code will need changing
+		-- to match the right folders, depending on the current framework.
+
+		-- Right now this only matches folders for the .NET Framework.
+
+		if folder:match("^net%d+$") or folder:match("^[0-9%.]+$") then
+			return cs2005.makeVersionComparable(folder)
+		elseif folder == "net" then
+			return cs2005.makeVersionComparable("0")
+		end
+	end
+
+
+--
 -- Write the list of NuGet references.
 --
 
@@ -376,25 +415,7 @@
 				local action = p.action.current()
 				local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
 
-				-- This is a bit janky. To compare versions, we extract all
-				-- numbers from the given string and right-pad the result with
-				-- zeros. Then we can just do a lexicographical compare on the
-				-- resulting strings.
-				--
-				-- This is so that we can compare version strings such as
-				-- "4.6" and "net451" with each other.
-
-				local function makeVersionComparable(a)
-					local numbers = ""
-
-					for number in a:gmatch("%d") do
-						numbers = numbers .. number
-					end
-
-					return string.format("%-10d", numbers):gsub(" ", "0")
-				end
-
-				local targetVersion = makeVersionComparable(targetFramework)
+				local targetVersion = cs2005.makeVersionComparable(targetFramework)
 
 				-- Figure out what folder contains the files for the nearest
 				-- supported .NET Framework version.
@@ -404,22 +425,19 @@
 				local bestVersion, bestFolder
 
 				for _, file in ipairs(packageAPIInfo.packageEntries) do
-					-- If this exporter ever supports frameworks such as
-					-- "netstandard1.3", "sl4", "sl5", "uap10", "wp8" or
-					-- "wp71", this code will need changing to match the right
-					-- folders.
-
-					local folder = file:match("^lib\\net(%d+)\\")
+					local folder = file:match("^lib\\(.+)\\")
 
 					if folder and path.hasextension(file, ".dll") then
-						files[folder] = files[folder] or {}
-						table.insert(files[folder], file)
+						local version = cs2005.frameworkVersionForFolder(folder)
 
-						local version = makeVersionComparable(file:match("lib\\net(%d+)\\"))
+						if version then
+							files[folder] = files[folder] or {}
+							table.insert(files[folder], file)
 
-						if version <= targetVersion and (not bestVersion or version > bestVersion) then
-							bestVersion = version
-							bestFolder = folder
+							if version <= targetVersion and (not bestVersion or version > bestVersion) then
+								bestVersion = version
+								bestFolder = folder
+							end
 						end
 					end
 				end
