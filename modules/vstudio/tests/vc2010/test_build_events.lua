@@ -16,6 +16,7 @@
 	local wks, prj, cfg
 
 	function suite.setup()
+		p.action.set("vs2010")
 		p.escaper(p.vstudio.vs2010.esc)
 		wks = test.createWorkspace()
 	end

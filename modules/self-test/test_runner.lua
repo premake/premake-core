@@ -82,6 +82,9 @@
 		_TESTS_DIR = test.suite._TESTS_DIR
 		_SCRIPT_DIR = test.suite._SCRIPT_DIR
 
+		m.suiteName = test.suiteName
+		m.testName = test.testName
+
 		local ok, err = _.setupTest(test)
 
 		if ok then
@@ -153,7 +156,7 @@
 
 
 	function _.removeTestingHooks(hooks)
-		_ACTION = hooks.action
+		p.action.set(hooks.action)
 		_OPTIONS = hooks.options
 		_TARGET_OS = hooks.targetOs
 

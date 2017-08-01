@@ -12,7 +12,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "vs2010"
+		p.action.set("vs2010")
 		wks, prj = test.createWorkspace()
 	end
 

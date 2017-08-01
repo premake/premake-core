@@ -16,7 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = 'vs2008'
+		p.action.set("vs2008")
 		wks = test.createWorkspace()
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 	end
@@ -32,7 +32,7 @@
 --
 
 	function suite.hasCorrectVersion_on2005()
-		_ACTION = 'vs2005'
+		p.action.set("vs2005")
 		prepare()
 		test.capture [[
 <VisualStudioProject
@@ -42,7 +42,7 @@
 	end
 
 	function suite.hasCorrectVersion_on2008()
-		_ACTION = 'vs2008'
+		p.action.set("vs2008")
 		prepare()
 		test.capture [[
 <VisualStudioProject

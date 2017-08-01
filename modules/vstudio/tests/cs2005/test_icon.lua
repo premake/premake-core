@@ -16,6 +16,7 @@
 	local wks
 
 	function suite.setup()
+		p.action.set("vs2005")
 		wks, prj = test.createWorkspace()
 	end
 
