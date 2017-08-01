@@ -425,7 +425,7 @@
 				local bestVersion, bestFolder
 
 				for _, file in ipairs(packageAPIInfo.packageEntries) do
-					local folder = file:match("^lib\\(.+)\\")
+					local folder = file:match("^lib[\\/](.+)[\\/]")
 
 					if folder and path.hasextension(file, ".dll") then
 						local version = cs2005.frameworkVersionForFolder(folder)
