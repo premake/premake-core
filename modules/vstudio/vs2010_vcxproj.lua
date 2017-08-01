@@ -818,6 +818,27 @@
 		end
 	}
 
+---
+-- Image group
+---
+	m.categories.Image = {
+		name       = "Image",
+		extensions = { ".gif", ".jpg", ".jpe", ".png", ".bmp", ".dib", "*.tif", "*.wmf", "*.ras", "*.eps", "*.pcx", "*.pcd", "*.tga", "*.dds" },
+		priority   = 8,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = function(fcfg, condition)
+				return {
+					m.excludedFromBuild
+				}
+			end
+			m.emitFiles(prj, group, "Image", nil, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "Image")
+		end
+	}
 
 ---
 -- Categorize files into groups.
