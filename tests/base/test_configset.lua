@@ -177,14 +177,20 @@
 		local f = field.get("flags")
 		configset.store(cset, f, { "Symbols", "WinMain", "MFC" })
 		configset.remove(cset, f, { "WinMain" })
-		test.isequal({ "Symbols", "MFC" }, configset.fetch(cset, f, {}))
+
+		local result = configset.fetch(cset, f, {})
+		test.print(table.tostring(result))
+		test.isequal({ "Symbols", "MFC" }, result)
 	end
 
 	function suite.remove_onMultipleValues()
 		local f = field.get("flags")
 		configset.store(cset, f, { "Symbols", "Maps", "WinMain", "MFC" })
 		configset.remove(cset, f, { "Maps", "MFC" })
-		test.isequal({ "Symbols", "WinMain" }, configset.fetch(cset, f, {}))
+
+		local result = configset.fetch(cset, f, {})
+		test.print(table.tostring(result))
+		test.isequal({ "Symbols", "WinMain" }, result)
 	end
 
 

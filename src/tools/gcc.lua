@@ -78,6 +78,7 @@
 		},
 		warnings = {
 			Extra = "-Wall -Wextra",
+			High = "-Wall",
 			Off = "-w",
 		},
 		symbols = {

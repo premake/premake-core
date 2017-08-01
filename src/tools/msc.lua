@@ -84,6 +84,7 @@
 		},
 		warnings = {
 			Extra = "/W4",
+			High = "/W4",
 			Off = "/W0",
 		},
 		stringpooling = {

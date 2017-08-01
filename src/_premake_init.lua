@@ -1250,6 +1250,7 @@
 		allowed = {
 			"Off",
 			"Default",
+			"High",
 			"Extra",
 		}
 	}
