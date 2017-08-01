@@ -17,6 +17,7 @@
 	local wks
 
 	function suite.setup()
+		p.action.set('xcode4')
 		wks = test.createWorkspace()
 	end
 
