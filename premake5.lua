@@ -127,7 +127,7 @@
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
-		includedirs { "contrib/lua/src" }
+		includedirs { "contrib/lua/src", "contrib/luashim" }
 		links       { "lua-lib" }
 
 		-- optional 3rd party libraries
@@ -149,7 +149,8 @@
 
 		excludes
 		{
-			"contrib/**.*"
+			"contrib/**.*",
+			"binmodules/**.*"
 		}
 
 		filter "configurations:Debug"
@@ -194,6 +195,7 @@
 	-- optional 3rd party libraries
 	group "contrib"
 		include "contrib/lua"
+		include "contrib/luashim"
 		if not _OPTIONS["no-zlib"] then
 			include "contrib/zlib"
 			include "contrib/libzip"
@@ -202,6 +204,9 @@
 			include "contrib/mbedtls"
 			include "contrib/curl"
 		end
+
+	group "Binary Modules"
+		include "binmodules/example"
 
 --
 -- A more thorough cleanup.
