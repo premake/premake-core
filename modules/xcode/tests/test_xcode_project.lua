@@ -20,8 +20,7 @@
 	end
 
 	function suite.setup()
-		_TARGET_OS = "macosx"
-		_ACTION = "xcode4"
+		p.action.set('xcode4')
 		p.eol("\n")
 		xcode.used_ids = { } -- reset the list of generated IDs
 		wks = test.createWorkspace()

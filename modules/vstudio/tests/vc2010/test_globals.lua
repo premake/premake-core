@@ -200,7 +200,7 @@
 --
 
 	function suite.windowsTargetPlatformVersionMissing_on2013Default()
-		_ACTION = "vs2013"
+		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">
@@ -213,7 +213,7 @@
 	end
 
 	function suite.windowsTargetPlatformVersionMissing_on2013()
-		_ACTION = "vs2013"
+		p.action.set("vs2013")
 		systemversion "10.0.10240.0"
 		prepare()
 		test.capture [[
@@ -227,7 +227,7 @@
 	end
 
 	function suite.windowsTargetPlatformVersionMissing_on2015Default()
-		_ACTION = "vs2015"
+		p.action.set("vs2015")
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">
@@ -240,7 +240,7 @@
 	end
 
 	function suite.windowsTargetPlatformVersion_on2015()
-		_ACTION = "vs2015"
+		p.action.set("vs2015")
 		systemversion "10.0.10240.0"
 		prepare()
 		test.capture [[

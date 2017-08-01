@@ -16,6 +16,7 @@
 	local wks, prj
 
 	function suite.setup()
+		p.action.set("vs2005")
 		p.escaper(p.vstudio.vs2005.esc)
 		wks, prj = test.createWorkspace()
 	end

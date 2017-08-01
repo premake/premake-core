@@ -4,6 +4,7 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("project_getconfig")
 
 --
@@ -46,7 +47,7 @@
 
 	function suite.actionOverridesOS()
 		_TARGET_OS = "linux"
-		_ACTION = "vs2005"
+		p.action.set("vs2005")
 		project ("MyProject")
 		filter { "system:windows" }
 		defines { "correct" }
@@ -62,7 +63,7 @@
 
 	function suite.usesCfgSystem()
 		_TARGET_OS = "linux"
-		_ACTION = "vs2005"
+		p.action.set("vs2005")
 		project ("MyProject")
 		system "macosx"
 		filter { "system:macosx" }
@@ -77,7 +78,7 @@
 --
 
 	function suite.appliesActionToFilters()
-		_ACTION = "vs2005"
+		p.action.set("vs2005")
 		project ("MyProject")
 		filter { "action:vs2005" }
 		defines { "correct" }
