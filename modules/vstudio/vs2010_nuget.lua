@@ -39,8 +39,8 @@
 	end
 
 	function nuget2010.packageAPIInfo(prj, package)
-			local id = nuget2010.packageId(package)
-			local version = nuget2010.packageVersion(package)
+		local id = nuget2010.packageId(package)
+		local version = nuget2010.packageVersion(package)
 
 		if not packageSourceInfos[prj.nugetsource] then
 			local packageSourceInfo = {}
@@ -102,31 +102,31 @@
 			packageSourceInfos[prj.nugetsource] = packageSourceInfo
 		end
 
-			if not packageAPIInfos[package] then
-				local packageAPIInfo = {}
+		if not packageAPIInfos[package] then
+			local packageAPIInfo = {}
 
-				printf("Examining NuGet package '%s'...", id)
-				io.flush()
+			printf("Examining NuGet package '%s'...", id)
+			io.flush()
 
 			local response, err, code = http.get(packageSourceInfos[prj.nugetsource].packageDisplayMetadataUriTemplate["@id"]:gsub("{id%-lower}", id:lower()))
 
-				if err ~= "OK" then
-					if code == 404 then
-						p.error("NuGet package '%s' for project '%s' couldn't be found in the repository", id, prj.name)
-					else
-						p.error("NuGet API error (%d)\n%s", code, err)
-					end
+			if err ~= "OK" then
+				if code == 404 then
+					p.error("NuGet package '%s' for project '%s' couldn't be found in the repository", id, prj.name)
+				else
+					p.error("NuGet API error (%d)\n%s", code, err)
 				end
+			end
 
-				response, err = json.decode(response)
+			response, err = json.decode(response)
 
-				if not response then
-					p.error("Failed to decode NuGet API response (%s)", err)
-				end
+			if not response then
+				p.error("Failed to decode NuGet API response (%s)", err)
+			end
 
-				if not response.items or #response.items == 0 then
+			if not response.items or #response.items == 0 then
 				p.error("Failed to understand NuGet API response (no pages for package '%s')", id)
-				end
+			end
 
 			local items = {}
 
@@ -140,79 +140,79 @@
 				end
 			end
 
-				local versions = {}
+			local versions = {}
 
 			for _, item in ipairs(items) do
-					if not item.catalogEntry then
-						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry)", id)
-					end
-
-					if not item.catalogEntry.version then
-						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry.version)", id)
-					end
-
-					if not item.catalogEntry["@id"] then
-						p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry['@id'])", id)
-					end
-
-					table.insert(versions, item.catalogEntry.version)
+				if not item.catalogEntry then
+					p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry)", id)
 				end
 
-				if not table.contains(versions, version) then
-					local options = table.translate(versions, function(value) return "'" .. value .. "'" end)
-					options = table.concat(options, ", ")
-
-					p.error("'%s' is not a valid version for NuGet package '%s' (options are: %s)", version, id, options)
+				if not item.catalogEntry.version then
+					p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry.version)", id)
 				end
+
+				if not item.catalogEntry["@id"] then
+					p.error("Failed to understand NuGet API response (subitem of package '%s' has no catalogEntry['@id'])", id)
+				end
+
+				table.insert(versions, item.catalogEntry.version)
+			end
+
+			if not table.contains(versions, version) then
+				local options = table.translate(versions, function(value) return "'" .. value .. "'" end)
+				options = table.concat(options, ", ")
+
+				p.error("'%s' is not a valid version for NuGet package '%s' (options are: %s)", version, id, options)
+			end
 
 			for _, item in ipairs(items) do
-					if item.catalogEntry.version == version then
-						local response, err, code = http.get(item.catalogEntry["@id"])
+				if item.catalogEntry.version == version then
+					local response, err, code = http.get(item.catalogEntry["@id"])
 
-						if err ~= "OK" then
-							if code == 404 then
+					if err ~= "OK" then
+						if code == 404 then
 							p.error("NuGet package '%s' version '%s' couldn't be found in the repository even though the API reported that it exists", id, version)
-							else
-								p.error("NuGet API error (%d)\n%s", code, err)
-							end
+						else
+							p.error("NuGet API error (%d)\n%s", code, err)
 						end
+					end
 
-						response, err = json.decode(response)
+					response, err = json.decode(response)
 
-						if not response then
-							p.error("Failed to decode NuGet API response (%s)", err)
-						end
+					if not response then
+						p.error("Failed to decode NuGet API response (%s)", err)
+					end
 
-						if not response.verbatimVersion and not response.version then
-							p.error("Failed to understand NuGet API response (package '%s' version '%s' has no verbatimVersion or version)", id, version)
-						end
+					if not response.verbatimVersion and not response.version then
+						p.error("Failed to understand NuGet API response (package '%s' version '%s' has no verbatimVersion or version)", id, version)
+					end
 
-						packageAPIInfo.verbatimVersion = response.verbatimVersion
-						packageAPIInfo.version = response.version
+					packageAPIInfo.verbatimVersion = response.verbatimVersion
+					packageAPIInfo.version = response.version
 
-						-- C++ packages don't have this, but C# packages have a
-						-- packageEntries field that lists all the files in the
-						-- package. We need to look at this to figure out what
-						-- DLLs to reference in the project file.
+					-- C++ packages don't have this, but C# packages have a
+					-- packageEntries field that lists all the files in the
+					-- package. We need to look at this to figure out what
+					-- DLLs to reference in the project file.
 
-						if prj.language == "C#" and not response.packageEntries then
+					if prj.language == "C#" and not response.packageEntries then
 						p.error("NuGet package '%s' version '%s' has no file listing. This package might be too old to be using this API or it might be a C++ package instead of a .NET Framework package.", id, response.version)
+					end
+
+					if prj.language == "C#" then
+						packageAPIInfo.packageEntries = {}
+
+						for _, item in ipairs(response.packageEntries) do
+							if not item.fullName then
+								p.error("Failed to understand NuGet API response (package '%s' version '%s' packageEntry has no fullName)", id, version)
+							end
+
+							table.insert(packageAPIInfo.packageEntries, path.translate(item.fullName))
 						end
 
-						if prj.language == "C#" then
-							packageAPIInfo.packageEntries = {}
-
-							for _, item in ipairs(response.packageEntries) do
-								if not item.fullName then
-									p.error("Failed to understand NuGet API response (package '%s' version '%s' packageEntry has no fullName)", id, version)
-								end
-
-								table.insert(packageAPIInfo.packageEntries, path.translate(item.fullName))
-							end
-
-							if #packageAPIInfo.packageEntries == 0 then
-								p.error("NuGet package '%s' file listing is empty", id)
-							end
+						if #packageAPIInfo.packageEntries == 0 then
+							p.error("NuGet package '%s' file listing is empty", id)
+						end
 
 						if response.frameworkAssemblyGroup then
 							p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
@@ -221,14 +221,14 @@
 
 					if response.dependencyGroups then
 						p.warn("NuGet package '%s' may depend on other packages - package dependencies are currently unimplemented", id)
-						end
-
-						break
 					end
-				end
 
-				packageAPIInfos[package] = packageAPIInfo
+					break
+				end
 			end
+
+			packageAPIInfos[package] = packageAPIInfo
+		end
 
 		return packageAPIInfos[package]
 	end
@@ -240,15 +240,15 @@
 
 	function nuget2010.generatePackagesConfig(prj)
 		if #prj.nuget > 0 then
-		p.w('<?xml version="1.0" encoding="utf-8"?>')
-		p.push('<packages>')
+			p.w('<?xml version="1.0" encoding="utf-8"?>')
+			p.push('<packages>')
 
 			for _, package in ipairs(prj.nuget) do
 				p.x('<package id="%s" version="%s" targetFramework="%s" />', nuget2010.packageId(package), nuget2010.packageVersion(package), nuget2010.packageFramework(prj))
-		end
+			end
 
-		p.pop('</packages>')
-	end
+			p.pop('</packages>')
+		end
 	end
 
 
