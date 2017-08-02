@@ -38,71 +38,160 @@
 		end
 	end
 
+
+--
+-- Given a package string, returns a table containing "verbatimVersion",
+-- "version" and for C# packages, "packageEntries".
+--
+
 	function nuget2010.packageAPIInfo(prj, package)
 		local id = nuget2010.packageId(package)
 		local version = nuget2010.packageVersion(package)
 
-		if not packageSourceInfos[prj.nugetsource] then
-			local packageSourceInfo = {}
+		-- It's possible that NuGet already has this package in its cache. In
+		-- that case we can examine the nuspec file and the file listing
+		-- locally.
 
-			printf("Examining NuGet package source '%s'...", prj.nugetsource)
-			io.flush()
+		local function examinePackageFromCache()
+			-- It should be possible to implement this for platforms other than
+			-- Windows, but we'll need to figure out where the NuGet cache is on
+			-- these platforms (or if they even have one).
 
-			local response, err, code = http.get(prj.nugetsource)
-
-			if err ~= "OK" then
-				p.error("NuGet API error (%d)\n%s", code, err)
+			if not os.ishost("windows") then
+				return
 			end
 
-			response, err = json.decode(response)
+			local cachePath = path.translate(path.join(os.getenv("userprofile"), ".nuget/packages", id))
 
-			if not response then
-				p.error("Failed to decode NuGet API response (%s)", err)
-			end
+			if os.isdir(cachePath) then
+				local packageAPIInfo = {}
 
-			if not response.resources then
-				p.error("Failed to understand NuGet API response (no resources in response)", id)
-			end
+				printf("Examining cached NuGet package '%s'...", id)
+				io.flush()
 
-			local packageDisplayMetadataUriTemplate, catalog
+				local versionPath = path.translate(path.join(cachePath, version))
 
-			for _, resource in ipairs(response.resources) do
-				if not resource["@id"] then
-					p.error("Failed to understand NuGet API response (no resource['@id'])")
+				local nuspecPath = path.translate(path.join(versionPath, id .. ".nuspec"))
+
+				if not os.isfile(nuspecPath) then
+					return
 				end
 
-				if not resource["@type"] then
-					p.error("Failed to understand NuGet API response (no resource['@type'])")
+				local nuspec = io.readfile(nuspecPath)
+
+				if not nuspec then
+					return
 				end
 
-				if resource["@type"]:find("PackageDisplayMetadataUriTemplate") == 1 then
-					packageDisplayMetadataUriTemplate = resource
+				packageAPIInfo.verbatimVersion = nuspec:match("<version>(.+)</version>")
+				packageAPIInfo.version = version
+
+				if not packageAPIInfo.verbatimVersion then
+					return
 				end
 
-				if resource["@type"]:find("Catalog") == 1 then
-					catalog = resource
+				if p.project.isdotnet(prj) then
+					-- Using the local file listing for "packageEntries" might
+					-- not exactly match what we would get from the API but this
+					-- doesn't matter. At the moment of writing, we're only
+					-- interested in knowing what DLL files the package
+					-- contains.
+
+					packageAPIInfo.packageEntries = {}
+
+					for _, file in ipairs(os.matchfiles(path.translate(path.join(versionPath, "**")))) do
+						local extension = path.getextension(file)
+
+						if extension ~= ".nupkg" and extension ~= ".sha512" then
+							table.insert(packageAPIInfo.packageEntries, path.translate(path.getrelative(versionPath, file)))
+						end
+					end
+
+					if #packageAPIInfo.packageEntries == 0 then
+						return
+					end
+
+					if nuspec:match("<frameworkAssemblies>(.+)</frameworkAssemblies>") then
+						p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
+					end
 				end
+
+				if nuspec:match("<dependencies>(.+)</dependencies>") then
+					p.warn("NuGet package '%s' may depend on other packages - package dependencies are currently unimplemented", id)
+				end
+
+				packageAPIInfos[package] = packageAPIInfo
 			end
-
-			if not packageDisplayMetadataUriTemplate then
-				p.error("Failed to understand NuGet API response (no PackageDisplayMetadataUriTemplate resource)")
-			end
-
-			if not catalog then
-				if prj.nugetsource == "https://api.nuget.org/v3/index.json" then
-					p.error("Failed to understand NuGet API response (no Catalog resource)")
-				else
-					p.error("Package source is not a NuGet gallery - non-gallery sources are currently unsupported", prj.nugetsource, prj.name)
-				end
-			end
-
-			packageSourceInfo.packageDisplayMetadataUriTemplate = packageDisplayMetadataUriTemplate
-			packageSourceInfo.catalog = catalog
-
-			packageSourceInfos[prj.nugetsource] = packageSourceInfo
 		end
 
 		if not packageAPIInfos[package] then
+			examinePackageFromCache()
+		end
+
+		-- If we didn't find the package from the cache, use the NuGet API
+		-- instead.
+
+		if not packageAPIInfos[package] then
+			if not packageSourceInfos[prj.nugetsource] then
+				local packageSourceInfo = {}
+
+				printf("Examining NuGet package source '%s'...", prj.nugetsource)
+				io.flush()
+
+				local response, err, code = http.get(prj.nugetsource)
+
+				if err ~= "OK" then
+					p.error("NuGet API error (%d)\n%s", code, err)
+				end
+
+				response, err = json.decode(response)
+
+				if not response then
+					p.error("Failed to decode NuGet API response (%s)", err)
+				end
+
+				if not response.resources then
+					p.error("Failed to understand NuGet API response (no resources in response)", id)
+				end
+
+				local packageDisplayMetadataUriTemplate, catalog
+
+				for _, resource in ipairs(response.resources) do
+					if not resource["@id"] then
+						p.error("Failed to understand NuGet API response (no resource['@id'])")
+					end
+
+					if not resource["@type"] then
+						p.error("Failed to understand NuGet API response (no resource['@type'])")
+					end
+
+					if resource["@type"]:find("PackageDisplayMetadataUriTemplate") == 1 then
+						packageDisplayMetadataUriTemplate = resource
+					end
+
+					if resource["@type"]:find("Catalog") == 1 then
+						catalog = resource
+					end
+				end
+
+				if not packageDisplayMetadataUriTemplate then
+					p.error("Failed to understand NuGet API response (no PackageDisplayMetadataUriTemplate resource)")
+				end
+
+				if not catalog then
+					if prj.nugetsource == "https://api.nuget.org/v3/index.json" then
+						p.error("Failed to understand NuGet API response (no Catalog resource)")
+					else
+						p.error("Package source is not a NuGet gallery - non-gallery sources are currently unsupported", prj.nugetsource, prj.name)
+					end
+				end
+
+				packageSourceInfo.packageDisplayMetadataUriTemplate = packageDisplayMetadataUriTemplate
+				packageSourceInfo.catalog = catalog
+
+				packageSourceInfos[prj.nugetsource] = packageSourceInfo
+			end
+
 			local packageAPIInfo = {}
 
 			printf("Examining NuGet package '%s'...", id)
