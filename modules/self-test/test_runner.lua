@@ -232,6 +232,8 @@
 		m.value_openedfilename = fname
 		m.value_openedfilemode = mode
 		return {
+			read = function()
+			end,
 			close = function()
 				m.value_closedfile = true
 			end
