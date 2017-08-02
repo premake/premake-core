@@ -643,15 +643,14 @@
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
 				-- and indexed for ordered iteration.
-
-				if not files[fname] then
-					local fcfg = p.fileconfig.new(fname, prj)
+				local fcfg = files[fname]
+				if not fcfg then
+					fcfg = p.fileconfig.new(fname, prj)
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end
 
-				p.fileconfig.addconfig(files[fname], cfg)
-
+				p.fileconfig.addconfig(fcfg, cfg)
 			end
 
 			table.foreachi(cfg.files, addFile)
