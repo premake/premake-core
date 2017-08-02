@@ -828,12 +828,12 @@ char* luaL_buffinitsize(lua_State* L, luaL_Buffer* B, size_t sz)
 	return g_shimTable->shimL_buffinitsize(L, B, sz);
 }
 
-inline const Node* hashpow2(const Table* t, int n) {
+static const Node* hashpow2(const Table* t, int n) {
 	int i = lmod(n, sizenode(t));
 	return &t->node[i];
 }
 
-inline const Node* findNode(const Table* t, int key) {
+static const Node* findNode(const Table* t, int key) {
 	const Node* n = hashpow2(t, key);
 	while (n->i_key.tvk.value_.i != key)
 	{
