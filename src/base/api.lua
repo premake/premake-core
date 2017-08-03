@@ -349,8 +349,10 @@
 			end
 		else
 			field.allowed = field.allowed or {}
-			table.insert(field.allowed, value)
-			field.allowed[value:lower()] = value
+			if field.allowed[value:lower()] == nil then
+				table.insert(field.allowed, value)
+				field.allowed[value:lower()] = value
+			end
 		end
 	end
 
