@@ -24,9 +24,9 @@
 	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.ANDROIDPROJ })
 	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.ANDROIDPROJ })
 
-	local os = p.option.get("os")
-	if os ~= nil then
-		table.insert(os.allowed, { "android",  "Android" })
+	local osoption = p.option.get("os")
+	if osoption ~= nil then
+		table.insert(osoption.allowed, { "android",  "Android" })
 	end
 
 	-- add system tags for android.
