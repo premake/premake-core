@@ -24,12 +24,13 @@
 	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.ANDROIDPROJ })
 	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.ANDROIDPROJ })
 
-	-- TODO: can I api.addAllowed() a key-value pair?
 	local os = p.option.get("os")
 	if os ~= nil then
 		table.insert(os.allowed, { "android",  "Android" })
 	end
 
+	-- add system tags for android.
+	os.systemTags[p.ANDROID] = { "android", "mobile" }
 
 --
 -- Register Android properties
