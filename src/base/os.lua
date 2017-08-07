@@ -720,16 +720,17 @@
 -- Get a set of tags for different 'platforms'
 --
 
+	os.systemTags =
+	{
+		["aix"]      = { "aix",     "posix" },
+		["bsd"]      = { "bsd",     "posix" },
+		["haiku"]    = { "haiku",   "posix" },
+		["linux"]    = { "linux",   "posix" },
+		["macosx"]   = { "macosx",  "darwin", "posix" },
+		["solaris"]  = { "solaris", "posix" },
+		["windows"]  = { "windows", "win32" },
+	}
+
 	function os.getSystemTags(name)
-		local tags =
-		{
-			["aix"]      = { "aix",     "posix" },
-			["bsd"]      = { "bsd",     "posix" },
-			["haiku"]    = { "haiku",   "posix" },
-			["linux"]    = { "linux",   "posix" },
-			["macosx"]   = { "macosx",  "darwin", "posix" },
-			["solaris"]  = { "solaris", "posix" },
-			["windows"]  = { "windows", "win32" },
-		}
-		return tags[name] or name
+		return os.systemTags[name] or name
 	end
