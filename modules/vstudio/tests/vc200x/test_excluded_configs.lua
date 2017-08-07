@@ -52,6 +52,7 @@
 		test.capture [[
 <Tool
 	Name="VCLinkerTool"
+	AdditionalOptions="/NOLOGO"
 	OutputFile="$(OutDir)\MyProject.exe"
 		]]
 	end
@@ -68,7 +69,7 @@
 		test.capture [[
 <Tool
 	Name="VCLinkerTool"
-	LinkLibraryDependencies="false"
+	AdditionalOptions="/NOLOGO"
 	AdditionalDependencies="bin\Ares\Debug\MyProject2.lib"
 		]]
 	end
