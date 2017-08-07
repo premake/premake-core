@@ -69,22 +69,20 @@
 		if not data then
 			if not path.hasextension(filename, ".lua") then
 				data = loadScript(filename)
-			else
-				if _OPTIONS["bytecode"] then
-					verbosef("Compiling... " .. filename)
-					local output = path.replaceextension(filename, ".luac")
-					local res, err = os.compile(filename, output);
-					if res ~= nil then
-						data = loadScript(output)
-						os.remove(output)
-					else
-						print(err)
-						print("Embedding source instead.")
-						data = stripScript(loadScript(filename))
-					end
+			elseif _OPTIONS["bytecode"] then
+				verbosef("Compiling... " .. filename)
+				local output = path.replaceextension(filename, ".luac")
+				local res, err = os.compile(filename, output);
+				if res ~= nil then
+					data = loadScript(output)
+					os.remove(output)
 				else
+					print(err)
+					print("Embedding source instead.")
 					data = stripScript(loadScript(filename))
 				end
+			else
+				data = stripScript(loadScript(filename))
 			end
 		end
 
