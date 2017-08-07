@@ -92,6 +92,11 @@ static const luaL_Reg os_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg premake_functions[] = {
+	{ "getEmbeddedResource", premake_getEmbeddedResource },
+	{ NULL, NULL }
+};
+
 static const luaL_Reg string_functions[] = {
 	{ "endswith",  string_endswith },
 	{ "hash", string_hash },
@@ -168,6 +173,7 @@ int premake_init(lua_State* L)
 {
 	const char* value;
 
+	luaL_register(L, "premake",  premake_functions);
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
 	luaL_register(L, "path",     path_functions);
@@ -214,10 +220,6 @@ int premake_init(lua_State* L)
 	/* publish the initial working directory */
 	os_getcwd(L);
 	lua_setglobal(L, "_WORKING_DIR");
-
-	/* start the premake namespace */
-	lua_newtable(L);
-	lua_setglobal(L, "premake");
 
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	/* let native modules initialize themselves */
@@ -649,4 +651,21 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 
 	/* Load the chunk */
 	return luaL_loadbuffer(L, (const char*)chunk->bytecode, chunk->length, filename);
+}
+
+
+/**
+ * Give the lua runtime raw access to embedded files.
+ */
+int premake_getEmbeddedResource(lua_State* L)
+{
+	const char* filename = luaL_checkstring(L, 1);
+	const buildin_mapping* chunk = premake_find_embedded_script(filename);
+	if (chunk == NULL)
+	{
+		return 0;
+	}
+
+	lua_pushlstring(L, (const char*)chunk->bytecode, chunk->length);
+	return 1;
 }

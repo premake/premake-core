@@ -67,7 +67,9 @@
 
 	local function addScript(result, filename, name, data)
 		if not data then
-			if _OPTIONS["bytecode"] then
+			if not path.hasextension(filename, ".lua") then
+				data = loadScript(filename)
+			elseif _OPTIONS["bytecode"] then
 				verbosef("Compiling... " .. filename)
 				local output = path.replaceextension(filename, ".luac")
 				local res, err = os.compile(filename, output);
