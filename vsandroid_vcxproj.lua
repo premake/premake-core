@@ -31,10 +31,10 @@
 --
 -- Extend global properties
 --
-	premake.override(vc2010.elements, "globals", function (oldfn, cfg)
-		local elements = oldfn(cfg)
+	premake.override(vc2010.elements, "globals", function (oldfn, prj)
+		local elements = oldfn(prj)
 
-		if cfg.system == premake.ANDROID and cfg.kind ~= premake.ANDROIDPROJ then
+		if prj.system == premake.ANDROID and prj.kind ~= premake.ANDROIDPROJ then
 			-- Remove "IgnoreWarnCompileDuplicatedFilename".
 			local pos = table.indexof(elements, vc2010.ignoreWarnDuplicateFilename)
 			table.remove(elements, pos)
