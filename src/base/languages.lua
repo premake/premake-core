@@ -15,6 +15,10 @@
 		return value == "C++";
 	end
 
-	function p.languages.isdotnet(value)
+	function p.languages.iscsharp(value)
 		return value == "C#";
+	end
+
+	function p.languages.isfsharp(value)
+		return value == "F#";
 	end

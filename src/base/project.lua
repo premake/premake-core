@@ -445,7 +445,27 @@
 --
 
 	function project.isdotnet(prj)
-		return p.languages.isdotnet(prj.language)
+		return
+			p.languages.iscsharp(prj.language) or
+			p.languages.isfsharp(prj.language)
+	end
+
+
+--
+-- Returns true if the project uses a C# language.
+--
+
+	function project.iscsharp(prj)
+		return p.languages.iscsharp(prj.language)
+	end
+
+
+--
+-- Returns true if the project uses a F# language.
+--
+
+	function project.isfsharp(prj)
+		return p.languages.isfsharp(prj.language)
 	end
 
 

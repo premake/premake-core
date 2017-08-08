@@ -6,7 +6,7 @@
 
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_compiler_props")
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 	local project = p.project
 
 
@@ -23,7 +23,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug")
-		cs2005.compilerProps(cfg)
+		dn2005.compilerProps(cfg)
 	end
 
 

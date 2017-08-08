@@ -723,7 +723,8 @@
 		allowed = {
 			"C",
 			"C++",
-			"C#"
+			"C#",
+			"F#"
 		}
 	}
 
@@ -1650,7 +1651,7 @@
 
 	-- Windows and friends.
 
-	filter { "system:Windows or language:C#", "kind:ConsoleApp or WindowedApp" }
+	filter { "system:Windows or language:C# or language:F#", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
 	filter { "system:Xbox360", "kind:ConsoleApp or WindowedApp" }
@@ -1665,7 +1666,7 @@
 		targetprefix ""
 		targetextension ".lib"
 
-	filter { "language:C#", "kind:SharedLib" }
+	filter { "language:C# or language:F#", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".dll"

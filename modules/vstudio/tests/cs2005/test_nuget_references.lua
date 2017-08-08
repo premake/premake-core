@@ -6,7 +6,7 @@
 
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_nuget_references")
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 	local nuget2010 = p.vstudio.nuget2010
 
 
@@ -25,7 +25,7 @@
 
 	local function prepare(platform)
 		prj = test.getproject(wks, 1)
-		cs2005.nuGetReferences(prj)
+		dn2005.nuGetReferences(prj)
 	end
 
 --

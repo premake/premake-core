@@ -6,6 +6,7 @@
 
 	local p = premake
 	local m = p.vstudio.cs2005
+	local dn = p.vstudio.dotnetbase
 
 
 --
@@ -55,7 +56,7 @@
 
 			for cfg in p.project.eachconfig(prj) do
 				if #contents[cfg] > 0 then
-					p.push('<PropertyGroup %s>', m.condition(cfg))
+					p.push('<PropertyGroup %s>', dn.condition(cfg))
 					p.outln(contents[cfg])
 					p.pop('</PropertyGroup>')
 				end

@@ -49,13 +49,22 @@
 		p.indent("  ")
 		p.escaper(vs2010.esc)
 
-		if p.project.isdotnet(prj) then
+		if p.project.iscsharp(prj) then
 			p.generate(prj, ".csproj", vstudio.cs2005.generate)
 
 			-- Skip generation of empty user files
 			local user = p.capture(function() vstudio.cs2005.generateUser(prj) end)
 			if #user > 0 then
 				p.generate(prj, ".csproj.user", function() p.outln(user) end)
+			end
+
+		elseif p.project.isfsharp(prj) then
+			p.generate(prj, ".fsproj", vstudio.fs2005.generate)
+
+			-- Skip generation of empty user files
+			local user = p.capture(function() vstudio.fs2005.generateUser(prj) end)
+			if #user > 0 then
+				p.generate(prj, ".fsproj.user", function() p.outln(user) end)
 			end
 
 		elseif p.project.isc(prj) or p.project.iscpp(prj) then
@@ -139,7 +148,7 @@
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None", "Utility" },
-		valid_languages = { "C", "C++", "C#" },
+		valid_languages = { "C", "C++", "C#", "F#" },
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },

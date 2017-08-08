@@ -19,7 +19,7 @@
 	function suite.setup()
 		p.action.set("vs2005")
 		wks = test.createWorkspace()
-		language "C#"
+		language "F#"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 	end
 
@@ -127,6 +127,27 @@
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
 		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+		<FileAlignment>512</FileAlignment>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	</PropertyGroup>
+		]]
+	end
+
+
+	function suite.onVs2015_462()
+		p.action.set("vs2015")
+		framework "4.6.2"
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>MyProject</RootNamespace>
+		<AssemblyName>MyProject</AssemblyName>
+		<TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
 		<FileAlignment>512</FileAlignment>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	</PropertyGroup>

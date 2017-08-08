@@ -29,7 +29,7 @@
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },
-		valid_languages = { "C", "C++", "C#" },
+		valid_languages = { "C", "C++", "C#", "F#" },
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },
