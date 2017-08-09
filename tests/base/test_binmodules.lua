@@ -9,11 +9,6 @@
 
 
 	function suite.setup()
-		test.print('-------')
-		test.print(package.path)
-		test.print('-------')
-		test.print(package.cpath)
-		test.print('-------')
 		require("example")
 	end
 
