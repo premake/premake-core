@@ -803,7 +803,7 @@
 				links[i] = path.translate(link)
 			end
 		else
-			links = toolset.getlinks(cfg, not ex)
+			links = path.translate(toolset.getlinks(cfg, not ex))
 		end
 
 		if #links > 0 then
