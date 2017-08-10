@@ -222,7 +222,8 @@
 --
 
 	function os.istarget(id)
-		return (os.target():lower() == id:lower())
+		local tags = os.getSystemTags(os.target())
+		return table.contains(tags, id:lower())
 	end
 
 	function os.is(id)
@@ -237,7 +238,8 @@
 --
 
 	function os.ishost(id)
-		return (os.host():lower() == id:lower())
+		local tags = os.getSystemTags(os.host())
+		return table.contains(tags, id:lower())
 	end
 
 
@@ -732,5 +734,5 @@
 	}
 
 	function os.getSystemTags(name)
-		return os.systemTags[name] or name
+		return os.systemTags[name:lower()] or { name:lower() }
 	end
