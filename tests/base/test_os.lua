@@ -1,8 +1,8 @@
---
+---
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2014 Jason Perkins and the Premake project
---
+-- Copyright (c) 2008-2017 Jason Perkins and the Premake project
+---
 
 	local suite = test.declare("base_os")
 
@@ -37,7 +37,7 @@
 	end
 
 	function suite.findheader_stdheaders()
-		if not (os.istarget("windows")) then
+		if not os.istarget("windows") and not os.istarget("macosx") then
 			test.istrue(os.findheader("stdlib.h"))
 		end
 	end
