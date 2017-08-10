@@ -267,3 +267,14 @@
 		return p:match("^(.*)"..ext.."$")..newext
 	end
 
+--
+-- Get the default seperator for path.translate
+--
+
+	function path.getDefaultSeparator()
+		if os.istarget('windows') then
+			return '\\'
+		else
+			return '/'
+		end
+	end
