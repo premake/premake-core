@@ -249,6 +249,7 @@
 
 		-- Don't allow a project-level system setting to influence the configurations
 
+		local projectSystem = self.system
 		self.system = nil
 
 		-- Finally, step through the list of configurations I built above and
@@ -282,6 +283,9 @@
 		if p.project.isnative(self) then
 			oven.assignObjectSequences(self)
 		end
+
+		-- at the end, restore the system, so it's usable elsewhere.
+		self.system = projectSystem
 	end
 
 
