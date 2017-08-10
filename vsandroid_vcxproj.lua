@@ -89,34 +89,23 @@
 
 	function android.androidStlType(cfg)
 		if cfg.stl ~= nil then
+			local stlType = {
+				["none"] = "none",
+				["minimal c++ (system)"] = "system",
+				["c++ static"] = "gabi++_static",
+				["c++ shared"] = "gabi++_shared",
+				["stlport static"] = "stlport_static",
+				["stlport shared"] = "stlport_shared",
+				["gnu stl static"] = "gnustl_static",
+				["gnu stl shared"] = "gnustl_shared",
+				["llvm libc++ static"] = "c++_static",
+				["llvm libc++ shared"] = "c++_shared",
+			}
+
 			if _ACTION >= "vs2015" then
-				local stlType = {
-					["minimal c++ (system)"] = "system",
-					["c++ static"] = "gabi++_static",
-					["c++ shared"] = "gabi++_shared",
-					["stlport static"] = "stlport_static",
-					["stlport shared"] = "stlport_shared",
-					["gnu stl static"] = "gnustl_static",
-					["gnu stl shared"] = "gnustl_shared",
-					["llvm libc++ static"] = "c++_static",
-					["llvm libc++ shared"] = "c++_shared",
-				}
 				_p(2,'<UseOfStl>%s</UseOfStl>', stlType[cfg.stl])
 			else
-				local static = {
-					none       = "none",
-					minimal    = "system",
-					["stdc++"] = "gnustl_static",
-					stlport    = "stlport_static",
-				}
-				local dynamic = {
-					none       = "none",
-					minimal    = "system",
-					["stdc++"] = "gnustl_dynamic",
-					stlport    = "stlport_dynamic",
-				}
-				local stl = iif(cfg.flags.StaticRuntime, static, dynamic);
-				_p(2,'<AndroidStlType>%s</AndroidStlType>', stl[cfg.stl])
+				_p(2,'<AndroidStlType>%s</AndroidStlType>', stlType[cfg.stl])
 			end
 		end
 	end
