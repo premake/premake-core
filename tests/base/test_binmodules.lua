@@ -14,5 +14,6 @@
 
 
 	function suite.testExample()
-		test.istrue(example.test("hello world"));
+		local result = example.test("world")
+		test.isequal("hello world", result)
 	end
