@@ -3,9 +3,9 @@
 
 static int example_test(lua_State* L)
 {
-	const char* text = luaL_checkstring(L, 1);
-	printf("%s\n", text);
-	lua_pushboolean(L, 1);
+	lua_pushstring(L, "hello ");
+	lua_pushvalue(L, 1);
+	lua_concat(L, 2);
 	return 1;
 }
 
