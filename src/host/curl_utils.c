@@ -22,7 +22,14 @@ int curlProgressCallback(curl_state* state, double dltotal, double dlnow, double
 	lua_rawgeti(L, LUA_REGISTRYINDEX, state->RefIndex);
 	lua_pushnumber(L, (lua_Number)dltotal);
 	lua_pushnumber(L, (lua_Number)dlnow);
-	lua_pcall(L, 2, LUA_MULTRET, 0);
+	int ret = lua_pcall(L, 2, LUA_MULTRET, 0);
+	if (ret != LUA_OK) {
+		int color = term_doGetTextColor();
+		term_doSetTextColor(12); // term.lightRed
+		printf("Error: %s\n", lua_tostring(L, -1));
+		term_doSetTextColor(color);
+		return -1;
+	}
 
 	return 0;
 }
