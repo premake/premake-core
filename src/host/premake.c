@@ -1,7 +1,7 @@
 /**
  * \file   premake.c
  * \brief  Program entry point.
- * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2017 Jason Perkins and the Premake project
  */
 
 #include <stdlib.h>
@@ -230,18 +230,33 @@ int premake_init(lua_State* L)
 }
 
 
-static int getErrorColor(lua_State* L)
+static void setErrorColor(lua_State* L)
 {
-	int color;
+	int errorColor = 12;
 
 	lua_getglobal(L, "term");
 	lua_pushstring(L, "errorColor");
 	lua_gettable(L, -2);
-	color = (int)luaL_checkinteger(L, -1);
-	lua_pop(L, 2);
 
-	return color;
+	if (!lua_isnil(L, -1))
+		errorColor = (int)luaL_checkinteger(L, -1);
+
+	term_doSetTextColor(errorColor);
+
+	lua_pop(L, 2);
 }
+
+
+
+static void printLastError(lua_State* L)
+{
+	const char* message = lua_tostring(L, -1);
+	int oldColor = term_doGetTextColor();
+	setErrorColor(L);
+	printf(ERROR_MESSAGE, message);
+	term_doSetTextColor(oldColor);
+}
+
 
 
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
@@ -264,10 +279,7 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 
 	/* Find and run the main Premake bootstrapping script */
 	if (run_premake_main(L, script) != OKAY) {
-		int color = term_doGetTextColor();
-		term_doSetTextColor(getErrorColor(L));
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		term_doSetTextColor(color);
+		printLastError(L);
 		return !OKAY;
 	}
 
@@ -283,14 +295,12 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 	/* and call the main entry point */
 	lua_getglobal(L, "_premake_main");
 	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
-		int color = term_doGetTextColor();
-		term_doSetTextColor(getErrorColor(L));
-		printf(ERROR_MESSAGE, lua_tostring(L, -1));
-		term_doSetTextColor(color);
+		printLastError(L);
 		return !OKAY;
 	}
 	else {
-		return (int)lua_tonumber(L, -1);
+		int exitCode = (int)lua_tonumber(L, -1);
+		return exitCode;
 	}
 }
 
@@ -591,8 +601,10 @@ static int run_premake_main(lua_State* L, const char* script)
 #endif
 
 	if (z == OKAY) {
-		z = luaL_dofile(L, lua_tostring(L, -1));
+		const char* filename = lua_tostring(L, -1);
+		z = luaL_dofile(L, filename);
 	}
+
 	return z;
 }
 
@@ -633,7 +645,7 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 
 	const buildin_mapping* chunk = premake_find_embedded_script(filename);
 	if (chunk == NULL) {
-		return !OKAY;
+		return LUA_ERRFILE;
 	}
 
 	/* Debug builds probably want to be loading scripts from the disk */
