@@ -32,7 +32,7 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 	int bottom = lua_gettop(L);
 	int z = !OKAY;
 
-	/* If filename istarts with "$/" then we want to load the version that
+	/* If filename starts with "$/" then we want to load the version that
 	 * was embedded into the executable and skip the local file system */
 	if (filename[0] == '$') {
 		z = premake_load_embedded_script(L, filename + 2); /* Skip over leading "$/" */
