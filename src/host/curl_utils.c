@@ -1,7 +1,7 @@
 ﻿/**
 * \file   curl_utils.c
 * \brief  curl utilities for the http library.
-* \author Copyright (c) 2017 Tom van Dijck, Joăo Matos and the Premake project
+* \author Copyright (c) 2017 Tom van Dijck, João Matos and the Premake project
 */
 #ifdef PREMAKE_CURL
 
