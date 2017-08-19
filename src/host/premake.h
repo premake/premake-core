@@ -1,4 +1,4 @@
-/**
+﻿/**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
  * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
@@ -97,6 +97,7 @@ void do_translate(char* value, const char sep);
 
 int term_doGetTextColor();
 void term_doSetTextColor(int color);
+void printLastError(lua_State* L);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
@@ -185,6 +186,7 @@ extern const buildin_mapping builtin_scripts[];
 extern void  registerModules(lua_State* L);
 
 int premake_init(lua_State* L);
+int premake_pcall(lua_State* L, int nargs, int nresults);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
 int premake_load_embedded_script(lua_State* L, const char* filename);
 const buildin_mapping* premake_find_embedded_script(const char* filename);
