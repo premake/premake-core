@@ -276,7 +276,7 @@ int premake_pcall(lua_State* L, int nargs, int nresults)
 {
 	lua_pushcfunction(L, lua_error_handler);
 
-	int error_handler_index = -(nargs + 2);
+	int error_handler_index = lua_gettop(L) - nargs - 1;
 	lua_insert(L, error_handler_index); // insert lua_error_handler before call parameters
 	int result = lua_pcall(L, nargs, nresults, error_handler_index);
 	lua_remove(L, error_handler_index); // remove lua_error_handler from stack
