@@ -7,7 +7,7 @@ PREP
 
  * Notify developer list of release branch availability; request testing
 
- * Update CHANGES.txt and CONTRIBUTORS.txt
+ * Update CHANGES.txt (`git log release-branch-name ^release --merges`)
 
  * Update version in src/host/premake.h and commit
 
