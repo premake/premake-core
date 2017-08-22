@@ -703,12 +703,34 @@
 
 
 ---
+-- Object group
+---
+	m.categories.Object = {
+		name       = "Object",
+		extensions = {".obj", ".o" },
+		priority   = 4,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = {
+				m.excludedFromBuild
+			}
+
+			m.emitFiles(prj, group, "Object", nil, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "Object")
+		end
+	}
+
+
+---
 -- ResourceCompile group
 ---
 	m.categories.ResourceCompile = {
 		name       = "ResourceCompile",
 		extensions = ".rc",
-		priority   = 4,
+		priority   = 5,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -731,7 +753,7 @@
 ---
 	m.categories.CustomBuild = {
 		name = "CustomBuild",
-		priority = 5,
+		priority = 6,
 
 		emitFiles = function(prj, group)
 			local fileFunc = {
@@ -764,7 +786,7 @@
 	m.categories.Midl = {
 		name       = "Midl",
 		extensions = ".idl",
-		priority   = 6,
+		priority   = 7,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -787,7 +809,7 @@
 	m.categories.Masm = {
 		name       = "Masm",
 		extensions = ".asm",
-		priority   = 7,
+		priority   = 8,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
@@ -824,7 +846,7 @@
 	m.categories.Image = {
 		name       = "Image",
 		extensions = { ".gif", ".jpg", ".jpe", ".png", ".bmp", ".dib", "*.tif", "*.wmf", "*.ras", "*.eps", "*.pcx", "*.pcd", "*.tga", "*.dds" },
-		priority   = 8,
+		priority   = 9,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
