@@ -43,7 +43,7 @@
 	local required = { "git", "make", "gcc", "premake5", "zip" }
 	for _, value in ipairs(required) do
 		local z = execQuiet("%s --version", value)
-		if z ~= 0 then
+		if not z then
 			error("required tool '" .. value .. "' not found", 0)
 		end
 	end
@@ -89,19 +89,19 @@
 
 	print("Cloning source code")
 	z = os.executef("git clone .. %s", pkgName)
-	if z ~= 0 then
+	if not z then
 		error("clone failed", 0)
 	end
 
 	os.chdir(pkgName)
 
 	z = os.executef("git checkout %s", branch)
-	if z ~= 0 then
+	if not z then
 		error("unable to checkout branch " .. branch, 0)
 	end
 
 	z = os.executef("git submodule update --init")
-	if z ~= 0 then
+	if not z then
 		error("unable to clone submodules", 0)
 	end
 
@@ -116,7 +116,7 @@
 	else
 		z = execQuiet("premake5 --bytecode embed")
 	end
-	if z ~= 0 then
+	if not z then
 		error("failed to update the embedded scripts", 0)
 	end
 
@@ -174,7 +174,7 @@ if kind == "binary" then
 	print("Building binary...")
 	execQuiet("premake5 gmake")
 	z = execQuiet("make config=release")
-	if z ~= 0 then
+	if not z then
 		error("build failed")
 	end
 
