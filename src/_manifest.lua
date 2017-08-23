@@ -19,7 +19,13 @@
 		"base/tools.lua",
 		"base/tree.lua",
 		"base/globals.lua",
+		"base/moduledownloader.lua",
 		"base/semver.lua",
+		"base/http.lua",
+		"base/json.lua",
+		"base/jsonwrapper.lua",
+		"base/languages.lua",
+		"base/term.lua",
 
 		-- configuration data
 		"base/field.lua",
@@ -57,36 +63,6 @@
 		"tools/msc.lua",
 		"tools/snc.lua",
 		"tools/clang.lua",
-
-		-- GNU make action
-		"actions/make/_make.lua",
-		"actions/make/make_workspace.lua",
-		"actions/make/make_cpp.lua",
-		"actions/make/make_csharp.lua",
-		"actions/make/make_utility.lua",
-		"actions/make/make_makefile.lua",
-
-		-- Visual Studio actions
-		"actions/vstudio/_vstudio.lua",
-		"actions/vstudio/vs2005.lua",
-		"actions/vstudio/vs2008.lua",
-		"actions/vstudio/vs200x_vcproj.lua",
-		"actions/vstudio/vs200x_vcproj_user.lua",
-		"actions/vstudio/vs2005_solution.lua",
-		"actions/vstudio/vs2005_csproj.lua",
-		"actions/vstudio/vs2005_csproj_user.lua",
-		"actions/vstudio/vs2010.lua",
-		"actions/vstudio/vs2010_nuget.lua",
-		"actions/vstudio/vs2010_vcxproj.lua",
-		"actions/vstudio/vs2010_vcxproj_user.lua",
-		"actions/vstudio/vs2010_vcxproj_filters.lua",
-		"actions/vstudio/vs2010_rules_props.lua",
-		"actions/vstudio/vs2010_rules_targets.lua",
-		"actions/vstudio/vs2010_rules_xml.lua",
-		"actions/vstudio/vs2012.lua",
-		"actions/vstudio/vs2013.lua",
-		"actions/vstudio/vs2015.lua",
-		"actions/vstudio/vs2017.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",

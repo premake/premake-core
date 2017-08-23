@@ -11,8 +11,8 @@
 int string_hash(lua_State* L)
 {
 	const char* str = luaL_checkstring(L, 1);
-	unsigned long seed = luaL_optint(L, 2, 0);
-	lua_pushnumber(L, (lua_Number)do_hash(str, seed));
+	int seed = (int)luaL_optinteger(L, 2, 0);
+	lua_pushinteger(L, do_hash(str, seed));
 	return 1;
 }
 

@@ -6,9 +6,10 @@
 
 	local tdmd = {}
 
-	local project = premake.project
-	local config = premake.config
-    local d = premake.modules.d
+	local p = premake
+	local project = p.project
+	local config = p.config
+	local d = p.modules.d
 
 --
 -- Set default tools
@@ -83,7 +84,7 @@
 				-- skip external project references, since I have no way
 				-- to know the actual output target path
 				if not link.project.external then
-					if link.kind == premake.STATICLIB then
+					if link.kind == p.STATICLIB then
 						-- Don't use "-l" flag when linking static libraries; instead use
 						-- path/libname.a to avoid linking a shared library of the same
 						-- name if one is present
@@ -166,7 +167,7 @@
 			-- to know the actual output target path
 			if not link.project.externalname then
 				local linkinfo = config.getlinkinfo(link)
-				if link.kind == premake.STATICLIB then
+				if link.kind == p.STATICLIB then
 					table.insert(result, project.getrelative(cfg.project, linkinfo.abspath))
 				end
 			end
@@ -177,7 +178,7 @@
 		for _, link in ipairs(links) do
 			if path.isobjectfile(link) then
 				table.insert(result, link)
-			elseif path.hasextension(link, premake.systems[cfg.system].staticlib.extension) then
+			elseif path.hasextension(link, p.systems[cfg.system].staticlib.extension) then
 				table.insert(result, link)
 			end
 		end
@@ -192,17 +193,17 @@
 -- /////////////////////////////////////////////////////////////////////////
 
 	-- if we are compiling on windows, we need to specialise to OPTLINK as the linker
--- OR!!!			if cfg.system ~= premake.WINDOWS then
+-- OR!!!			if cfg.system ~= p.WINDOWS then
 	if string.match( os.getversion().description, "Windows" ) ~= nil then
 		-- TODO: on windows, we may use OPTLINK or MSLINK (for Win64)...
 --		printf("TODO: select proper linker for 32/64 bit code")
 
-		premake.tools.dmd = tdmd.optlink
+		p.tools.dmd = tdmd.optlink
 	else
-		premake.tools.dmd = tdmd.gcc
+		p.tools.dmd = tdmd.gcc
 	end
 
-	local dmd = premake.tools.dmd
+	local dmd = p.tools.dmd
 
 
 --
@@ -265,18 +266,18 @@
 
 		if cfg.flags.Documentation then
 			if cfg.docname then
-				table.insert(flags, "-Df" .. premake.quoted(cfg.docname))
+				table.insert(flags, "-Df" .. p.quoted(cfg.docname))
 			end
 			if cfg.docdir then
-				table.insert(flags, "-Dd" .. premake.quoted(cfg.docdir))
+				table.insert(flags, "-Dd" .. p.quoted(cfg.docdir))
 			end
 		end
 		if cfg.flags.GenerateHeader then
 			if cfg.headername then
-				table.insert(flags, "-Hf" .. premake.quoted(cfg.headername))
+				table.insert(flags, "-Hf" .. p.quoted(cfg.headername))
 			end
 			if cfg.headerdir then
-				table.insert(flags, "-Hd" .. premake.quoted(cfg.headerdir))
+				table.insert(flags, "-Hd" .. p.quoted(cfg.headerdir))
 			end
 		end
 
@@ -324,7 +325,7 @@
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
-			table.insert(result, '-I' .. premake.quoted(dir))
+			table.insert(result, '-I' .. p.quoted(dir))
 		end
 		return result
 	end

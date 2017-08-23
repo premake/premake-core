@@ -33,9 +33,43 @@
 		platforms = true,
 		system = true,
 		toolset = true,
+		tags = true,
 	}
 
 
+--
+-- Flattens a hierarchy of criteria terms into a single array containing all
+-- of the values as strings in the form of "term:value1 or value2" etc.
+--
+	function criteria.flatten(terms)
+		local result = {}
+
+		local function flatten(terms)
+			for key, value in pairs(terms) do
+				if type(key) == "number" then
+					if type(value) == "table" then
+						flatten(value)
+					elseif value then
+						table.insert(result, value)
+					end
+				elseif type(key) == "string" then
+					local word = key .. ":"
+					if type(value) == "table" then
+						local values = table.flatten(value)
+						word = word .. table.concat(values, " or ")
+					else
+						word = word .. value
+					end
+					table.insert(result, word)
+				else
+					error("Unknown key type in terms.")
+				end
+			end
+		end
+
+		flatten(terms)
+		return result
+	end
 
 ---
 -- Create a new criteria object.
@@ -50,7 +84,7 @@
 ---
 
 	function criteria.new(terms, unprefixed)
-		terms = table.flatten(terms)
+		terms = criteria.flatten(terms)
 
 		-- Preprocess the list of terms for better performance in matches().
 		-- Each term is replaced with a pattern, with an implied AND between

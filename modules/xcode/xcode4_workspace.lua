@@ -8,7 +8,7 @@
 
 	local p = premake
 	local m = p.modules.xcode
-
+	local tree = p.tree
 
 
 ---
@@ -38,7 +38,7 @@
 
 	function m.workspaceTail()
 		-- Don't output final newline.  Xcode doesn't.
-		premake.out('</Workspace>')
+		p.out('</Workspace>')
 	end
 
 
@@ -53,17 +53,32 @@
 	end
 
 	function m.workspaceFileRefs(wks)
-		for prj in p.workspace.eachproject(wks) do
-			p.push('<FileRef')
-			local contents = p.capture(function()
-				p.callArray(m.elements.workspaceFileRef, prj)
-			end)
-			p.outln(contents .. ">")
-			p.pop('</FileRef>')
-		end
+		local tr = p.workspace.grouptree(wks)
+		tree.traverse(tr, {
+			onleaf = function(n)
+				local prj = n.project
+
+				p.push('<FileRef')
+				local contents = p.capture(function()
+					p.callArray(m.elements.workspaceFileRef, prj)
+				end)
+				p.outln(contents .. ">")
+				p.pop('</FileRef>')
+			end,
+
+			onbranchenter = function(n)
+				local prj = n.project
+
+				p.push('<Group')
+				p.w('location = "container:"')
+				p.w('name = "%s">', n.name)
+			end,
+			
+			onbranchexit = function(n)
+				p.pop('</Group>')
+			end,
+		})
 	end
-
-
 
 ---------------------------------------------------------------------------
 --

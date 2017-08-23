@@ -23,6 +23,7 @@
  ***************************************************************************/
 
 enum formtype {
+  FORM_DATAMEM, /* already allocated FORM_DATA memory */
   FORM_DATA,    /* form metadata (convert to network encoding if necessary) */
   FORM_CONTENT, /* form content  (never convert) */
   FORM_CALLBACK, /* 'line' points to the custom pointer we pass to the callback
@@ -64,13 +65,13 @@ typedef struct FormInfo {
                          file name will be used */
   bool showfilename_alloc;
   char *userp;        /* pointer for the read callback */
-  struct curl_slist* contentheader;
+  struct curl_slist *contentheader;
   struct FormInfo *more;
 } FormInfo;
 
 int Curl_FormInit(struct Form *form, struct FormData *formdata);
 
-CURLcode Curl_getformdata(struct SessionHandle *data,
+CURLcode Curl_getformdata(struct Curl_easy *data,
                           struct FormData **,
                           struct curl_httppost *post,
                           const char *custom_contenttype,
@@ -93,6 +94,6 @@ char *Curl_FormBoundary(void);
 
 void Curl_formclean(struct FormData **);
 
-CURLcode Curl_formconvert(struct SessionHandle *, struct FormData *);
+CURLcode Curl_formconvert(struct Curl_easy *, struct FormData *);
 
 #endif /* HEADER_CURL_FORMDATA_H */

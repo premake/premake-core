@@ -1,3 +1,12 @@
+As the number of Premake contributors has grown, this list has become more
+difficult to manage in a meaningful way. I'm leaving it here as part of the
+historical records. If you find yourself in need of a list of contributors,
+consider running:
+
+     git shortlog -sn
+
+--------------------------------------------------------------------------
+
 This file contains a list of people who've made non-trivial contributions
 to Premake 5.  People who commit code to the project are encouraged to
 add their names here. And many thanks to those who contributed fixes and

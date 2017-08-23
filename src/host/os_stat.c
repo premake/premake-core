@@ -10,10 +10,24 @@
 
 int os_stat(lua_State* L)
 {
-	struct stat s;
-	
 	const char* filename = luaL_checkstring(L, 1);
-    if (stat(filename, &s) != 0)
+
+#if PLATFORM_WINDOWS
+	struct _stat64i32 s;
+
+	wchar_t wide_filename[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_filename, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode source path");
+		return lua_error(L);
+	}
+
+	if (_wstat(wide_filename, &s) != 0)
+#else
+	struct stat s;
+
+	if (stat(filename, &s) != 0)
+#endif
 	{
 		lua_pushnil(L);
 		switch (errno)
@@ -24,14 +38,14 @@ int os_stat(lua_State* L)
 		case ENOENT:
 			lua_pushfstring(L, "'%s' was not found", filename);
 			break;
-		default:	
+		default:
 			lua_pushfstring(L, "An  unknown error %d occured while accessing '%s'", errno, filename);
 			break;
 		}
 		return 2;
 	}
-	
-	
+
+
 	lua_newtable(L);
 
 	lua_pushstring(L, "mtime");

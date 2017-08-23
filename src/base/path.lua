@@ -90,7 +90,7 @@
 --
 
 	function path.getextension(p)
-        p = path.getname(p)
+		p = path.getname(p)
 		local i = p:findlast(".", true)
 		if (i) then
 			return p:sub(i)
@@ -142,23 +142,52 @@
 
 
 --
--- Returns true if the filename represents a C/C++ source code file. This check
--- is used to prevent passing non-code files to the compiler in makefiles. It is
--- not foolproof, but it has held up well. I'm open to better suggestions.
+-- Returns true if the filename represents various source languages.
 --
 
+	function path.isasmfile(fname)
+		return path.hasextension(fname, { ".s" })
+	end
+
 	function path.iscfile(fname)
-		return path.hasextension(fname, { ".c", ".s", ".m" })
+		return path.hasextension(fname, { ".c" })
+			or path.isasmfile(fname)	-- is this really right?
+			or path.isobjcfile(fname)	-- there is code that depends on this behaviour, which would need to change
 	end
 
 	function path.iscppfile(fname)
-		return path.hasextension(fname, { ".cc", ".cpp", ".cxx", ".c", ".s", ".m", ".mm" })
+		return path.hasextension(fname, { ".cc", ".cpp", ".cxx" })
+			or path.isobjcppfile(fname)	-- is this really right?
+			or path.iscfile(fname)
+	end
+
+	function path.isobjcfile(fname)
+		return path.hasextension(fname, { ".m" })
+	end
+
+	function path.isobjcppfile(fname)
+		return path.hasextension(fname, { ".mm" })
 	end
 
 	function path.iscppheader(fname)
 		return path.hasextension(fname, { ".h", ".hh", ".hpp", ".hxx" })
 	end
 
+
+--
+-- Returns true if the filename represents a native language source file.
+-- These checks are used to prevent passing non-code files to the compiler
+-- in makefiles. It is not foolproof, but it has held up well. I'm open to
+-- better suggestions.
+--
+
+	function path.isnativefile(fname)
+		return path.iscfile(fname)
+			or path.iscppfile(fname)
+			or path.isasmfile(fname)
+			or path.isobjcfile(fname)
+			or path.isobjcppfile(fname)
+	end
 
 
 --
@@ -238,3 +267,14 @@
 		return p:match("^(.*)"..ext.."$")..newext
 	end
 
+--
+-- Get the default seperator for path.translate
+--
+
+	function path.getDefaultSeparator()
+		if os.istarget('windows') then
+			return '\\'
+		else
+			return '/'
+		end
+	end

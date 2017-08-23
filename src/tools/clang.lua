@@ -4,10 +4,11 @@
 -- Copyright (c) 2013 Jason Perkins and the Premake project
 --
 
-	premake.tools.clang = {}
-	local clang = premake.tools.clang
-	local gcc = premake.tools.gcc
-	local config = premake.config
+	local p = premake
+	p.tools.clang = {}
+	local clang = p.tools.clang
+	local gcc = p.tools.gcc
+	local config = p.config
 
 
 
@@ -44,7 +45,9 @@
 	clang.shared = {
 		architecture = gcc.shared.architecture,
 		flags = gcc.shared.flags,
-		floatingpoint = gcc.shared.floatingpoint,
+		floatingpoint = {
+			Fast = "-ffast-math",
+		},
 		strictaliasing = gcc.shared.strictaliasing,
 		optimize = {
 			Off = "-O0",
@@ -173,6 +176,13 @@
 	clang.getrunpathdirs = gcc.getrunpathdirs
 
 --
+-- get the right output flag.
+--
+	function clang.getsharedlibarg(cfg)
+		return gcc.getsharedlibarg(cfg)
+	end
+
+--
 -- Build a list of linker flags corresponding to the settings in
 -- a particular project configuration.
 --
@@ -192,18 +202,18 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
+				local r = { clang.getsharedlibarg(cfg) }
 				if cfg.system == "windows" and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
-				elseif cfg.system == premake.LINUX then
-					table.insert(r, '-Wl,-soname=' .. premake.quoted(cfg.linktarget.name))
-				elseif cfg.system == premake.MACOSX then
-					table.insert(r, '-Wl,-install_name,' .. premake.quoted('@rpath/' .. cfg.linktarget.name))
+				elseif cfg.system == p.LINUX then
+					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))
+				elseif cfg.system == p.MACOSX then
+					table.insert(r, '-Wl,-install_name,' .. p.quoted('@rpath/' .. cfg.linktarget.name))
 				end
 				return r
 			end,
 			WindowedApp = function(cfg)
-				if cfg.system == premake.WINDOWS then return "-mwindows" end
+				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
 		system = {

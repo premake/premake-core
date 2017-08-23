@@ -7,7 +7,7 @@ PREP
 
  * Notify developer list of release branch availability; request testing
 
- * Update CHANGES.txt and CONTRIBUTORS.txt
+ * Update CHANGES.txt (`git log release-branch-name ^release --merges`)
 
  * Update version in src/host/premake.h and commit
 
@@ -34,7 +34,7 @@ RELEASE
 
 CYCLE
 
- * Update to new dev version in src/host/premake.c and commit
+ * Update to new dev version in src/host/premake.h and commit
 
  * Merge working branch to master
 

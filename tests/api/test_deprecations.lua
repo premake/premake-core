@@ -4,8 +4,9 @@
 -- Copyright (c) 2012-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("api_deprecations")
-	local api = premake.api
+	local api = p.api
 
 
 	function suite.setup()

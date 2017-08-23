@@ -4,9 +4,9 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("criteria")
-
-	local criteria = premake.criteria
+	local criteria = p.criteria
 
 
 --
@@ -172,6 +172,40 @@
 
 
 --
+-- Test criteria creation through a table.
+--
+
+	function suite.createCriteriaWithTable()
+		crit = criteria.new {
+			files  = { "**.c" },
+			system = "windows"
+		}
+		test.istrue(criteria.matches(crit, { system="windows", files="hello.c" }))
+	end
+
+	function suite.createCriteriaWithTable2()
+		crit = criteria.new {
+			system = "not windows"
+		}
+		test.isfalse(criteria.matches(crit, { system="windows" }))
+	end
+
+	function suite.createCriteriaWithTable3()
+		crit = criteria.new {
+			system = "not windows or linux"
+		}
+		test.istrue(criteria.matches(crit, { system="macosx" }))
+	end
+
+	function suite.createCriteriaWithTable4()
+		crit = criteria.new {
+			system = "windows or linux"
+		}
+		test.istrue(criteria.matches(crit, { system="windows" }))
+	end
+
+
+--
 -- "Not" modifiers can also be used on filenames.
 --
 
@@ -315,13 +349,13 @@
 --
 
 	function suite.passes_onAliasedValue()
-		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		p.api.addAliases("system", { ["gnu-linux"] = "linux" })
 		crit = criteria.new { "system:gnu-linux" }
 		test.istrue(criteria.matches(crit, { system="linux" }))
 	end
 
 	function suite.passes_onAliasedValue_withMixedCase()
-		premake.api.addAliases("system", { ["gnu-linux"] = "linux" })
+		p.api.addAliases("system", { ["gnu-linux"] = "linux" })
 		crit = criteria.new { "System:GNU-Linux" }
 		test.istrue(criteria.matches(crit, { system="linux" }))
 	end

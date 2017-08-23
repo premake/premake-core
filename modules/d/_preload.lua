@@ -19,8 +19,8 @@
 --
 
 	p.D = "D"
-
 	api.addAllowed("language", p.D)
+
 	api.addAllowed("floatingpoint", "None")
 	api.addAllowed("flags", {
 		"CodeCoverage",

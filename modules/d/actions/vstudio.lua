@@ -9,6 +9,8 @@
 
 	m.visuald = {}
 
+	require ("vstudio")
+
 	local vstudio = p.vstudio
 	local workspace = p.workspace
 	local project = p.project
@@ -19,7 +21,7 @@
 -- Patch the vstudio actions with D support...
 --
 
-	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015" }) do
+	for k,v in pairs({ "vs2005", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015", "vs2017" }) do
 		local vs = p.action.get(v)
 		if vs ~= nil then
 			table.insert( vs.valid_languages, p.D )

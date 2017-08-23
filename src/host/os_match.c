@@ -15,14 +15,24 @@ typedef struct struct_MatchInfo
 {
 	HANDLE handle;
 	int    is_first;
-	WIN32_FIND_DATAA entry;
+	WIN32_FIND_DATAW entry;
 } MatchInfo;
 
 int os_matchstart(lua_State* L)
 {
 	const char* mask = luaL_checkstring(L, 1);
-	MatchInfo* m = (MatchInfo*)malloc(sizeof(MatchInfo));
-	m->handle = FindFirstFileA(mask, &m->entry);
+	MatchInfo* m;
+
+	wchar_t wide_mask[PATH_MAX];
+	if (MultiByteToWideChar(CP_UTF8, 0, mask, -1, wide_mask, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode mask");
+		return lua_error(L);
+	}
+
+	m = (MatchInfo*)malloc(sizeof(MatchInfo));
+
+	m->handle = FindFirstFileW(wide_mask, &m->entry);
 	m->is_first = 1;
 	lua_pushlightuserdata(L, m);
 	return 1;
@@ -40,7 +50,15 @@ int os_matchdone(lua_State* L)
 int os_matchname(lua_State* L)
 {
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	lua_pushstring(L, m->entry.cFileName);
+
+	char filename[PATH_MAX];
+	if (WideCharToMultiByte(CP_UTF8, 0, m->entry.cFileName, -1, filename, PATH_MAX, NULL, NULL) == 0)
+	{
+		lua_pushstring(L, "unable to decode filename");
+		return lua_error(L);
+	}
+
+	lua_pushstring(L, filename);
 	return 1;
 }
 
@@ -64,11 +82,11 @@ int os_matchnext(lua_State* L)
 			m->is_first = 0;
 		else
 		{
-			if (!FindNextFileA(m->handle, &m->entry))
+			if (!FindNextFileW(m->handle, &m->entry))
 				return 0;
 		}
 
-		if (strcmp(m->entry.cFileName, ".") != 0 && strcmp(m->entry.cFileName, "..") != 0)
+		if (wcscmp(m->entry.cFileName, L".") != 0 && wcscmp(m->entry.cFileName, L"..") != 0)
 		{
 			lua_pushboolean(L, 1);
 			return 1;
@@ -159,7 +177,7 @@ int os_matchisfile(lua_State* L)
 		fname = lua_tostring(L, -1);
 		lua_pop(L, 1);
 
-		lua_pushboolean(L, do_isfile(fname));
+		lua_pushboolean(L, do_isfile(L, fname));
 	}
 	return 1;
 }

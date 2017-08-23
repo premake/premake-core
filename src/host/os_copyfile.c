@@ -14,7 +14,22 @@ int os_copyfile(lua_State* L)
 	const char* dst = luaL_checkstring(L, 2);
 
 #if PLATFORM_WINDOWS
-	z = CopyFileA(src, dst, FALSE);
+	wchar_t wide_src[PATH_MAX];
+	wchar_t wide_dst[PATH_MAX];
+
+	if (MultiByteToWideChar(CP_UTF8, 0, src, -1, wide_src, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode source path");
+		return lua_error(L);
+	}
+
+	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_dst, PATH_MAX) == 0)
+	{
+		lua_pushstring(L, "unable to encode source path");
+		return lua_error(L);
+	}
+
+	z = CopyFileW(wide_src, wide_dst, FALSE);
 #else
 	lua_pushfstring(L, "cp \"%s\" \"%s\"", src, dst);
 	z = (system(lua_tostring(L, -1)) == 0);

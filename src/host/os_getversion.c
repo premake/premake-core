@@ -16,13 +16,15 @@ struct OsVersionInfo
 	int isalloc;
 };
 
-static void getversion(struct OsVersionInfo* info);
-
+static int getversion(struct OsVersionInfo* info);
 
 int os_getversion(lua_State* L)
 {
 	struct OsVersionInfo info = {0, 0, 0, NULL, 0};
-	getversion(&info);
+	if (!getversion(&info))
+	{
+		return 0;
+	}
 
 	lua_newtable(L);
 
@@ -53,114 +55,53 @@ int os_getversion(lua_State* L)
 
 #if defined(PLATFORM_WINDOWS)
 
-#if !defined(VER_SUITE_WH_SERVER)
-#define VER_SUITE_WH_SERVER   (0x00008000)
-#endif
+#pragma comment(lib, "version.lib")
 
-#ifndef SM_SERVERR2
-#	define SM_SERVERR2 89
-#endif
-
-SYSTEM_INFO getsysteminfo()
+int getKernelVersion(struct OsVersionInfo* info)
 {
-	typedef void (WINAPI *GetNativeSystemInfoSig)(LPSYSTEM_INFO);
-	GetNativeSystemInfoSig nativeSystemInfo = (GetNativeSystemInfoSig)
-	GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetNativeSystemInfo");
-
-	SYSTEM_INFO systemInfo = {{0}};
-	if ( nativeSystemInfo ) nativeSystemInfo(&systemInfo);
-	else GetSystemInfo(&systemInfo);
-	return systemInfo;
+	DWORD size = GetFileVersionInfoSizeA("kernel32.dll", NULL);
+	if (size > 0)
+	{
+		void* data = malloc(size);
+		if (GetFileVersionInfoA("kernel32.dll", 0, size, data))
+		{
+			void* fixedInfoPtr;
+			UINT fixedInfoSize;
+			if (VerQueryValueA(data, "\\", &fixedInfoPtr, &fixedInfoSize))
+			{
+				VS_FIXEDFILEINFO* fileInfo = (VS_FIXEDFILEINFO*)fixedInfoPtr;
+				info->majorversion = HIWORD(fileInfo->dwProductVersionMS);
+				info->minorversion = LOWORD(fileInfo->dwProductVersionMS);
+				info->revision = HIWORD(fileInfo->dwProductVersionLS);
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
 }
 
-void getversion(struct OsVersionInfo* info)
+int getversion(struct OsVersionInfo* info)
 {
-	OSVERSIONINFOEX versionInfo = {0};
+	HKEY key;
+	info->description = "Windows";
 
-	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	GetVersionEx((OSVERSIONINFO*)&versionInfo);
+	// First get a friendly product name from the registry.
+	if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &key) == ERROR_SUCCESS)
+	{
+		char value[512];
+		DWORD value_length = sizeof(value);
+		DWORD type;
+		RegQueryValueExA(key, "productName", NULL, &type, (LPBYTE)value, &value_length);
+		RegCloseKey(key);
+		if (type == REG_SZ)
+		{
+			info->description = strdup(value);
+			info->isalloc = 1;
+		}
+	}
 
-	info->majorversion = versionInfo.dwMajorVersion;
-	info->minorversion = versionInfo.dwMinorVersion;
-	info->revision = versionInfo.wServicePackMajor;
-
-	if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0)
-	{
-		info->description = "Windows 2000";
-	}
-	else if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 1)
-	{
-		info->description = "Windows XP";
-	}
-	else if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 2)
-	{
-		SYSTEM_INFO systemInfo = getsysteminfo();
-		if (versionInfo.wProductType == VER_NT_WORKSTATION &&
-			systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-		{
-			info->description = "Windows XP Professional x64";
-		}
-		else if (versionInfo.wSuiteMask & VER_SUITE_WH_SERVER)
-		{
-			info->description = "Windows Home Server";
-		}
-		else if (GetSystemMetrics(SM_SERVERR2) == 0)
-		{
-			info->description = "Windows Server 2003";
-		}
-		else
-		{
-			info->description = "Windows Server 2003 R2";
-		}
-	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 0)
-	{
-		if (versionInfo.wProductType == VER_NT_WORKSTATION)
-		{
-			info->description = "Windows Vista";
-		}
-		else
-		{
-			info->description = "Windows Server 2008";
-		}
-	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 1 )
-	{
-		if (versionInfo.wProductType != VER_NT_WORKSTATION)
-		{
-			info->description = "Windows Server 2008 R2";
-		}
-		else
-		{
-			info->description = "Windows 7";
-		}
-	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 2 )
-	{
-		if (versionInfo.wProductType != VER_NT_WORKSTATION)
-		{
-			info->description = "Windows Server 2012";
-		}
-		else
-		{
-			info->description = "Windows 8";
-		}
-	}
-	else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 3 )
-	{
-		if (versionInfo.wProductType != VER_NT_WORKSTATION)
-		{
-			info->description = "Windows Server 2012 R2";
-		}
-		else
-		{
-			info->description = "Windows 8.1";
-		}
-	}
-	else
-	{
-		info->description = "Windows";
-	}
+	// See if we can get a product version number from kernel32.dll
+	return getKernelVersion(info);
 }
 
 /*************************************************************/
@@ -172,23 +113,20 @@ void getversion(struct OsVersionInfo* info)
 #include <string.h>
 #include <stdio.h>
 
-void getversion(struct OsVersionInfo* info)
+int getversion(struct OsVersionInfo* info)
 {
 	info->description = "Mac OS";
-	info->majorversion=0;
-	info->minorversion=0;
-	info->revision=0;
 
-    int mib[] = {CTL_KERN, KERN_OSRELEASE};
-    size_t len;
-    sysctl(mib, sizeof(mib)/sizeof(mib[0]), NULL, &len, NULL, 0);
+	int mib[] = { CTL_KERN, KERN_OSRELEASE };
+	size_t len;
+	sysctl(mib, sizeof(mib) / sizeof(mib[0]), NULL, &len, NULL, 0);
 
 	char kernel_version[len];
-    sysctl(mib, sizeof(mib)/sizeof(mib[0]), kernel_version, &len, NULL, 0);
+	sysctl(mib, sizeof(mib) / sizeof(mib[0]), kernel_version, &len, NULL, 0);
 
 	int kern_major;
 	int kern_minor;
-	sscanf(kernel_version, "%d.%d.%*d",&kern_major,&kern_minor);
+	sscanf(kernel_version, "%d.%d.%*d", &kern_major, &kern_minor);
 	switch (kern_major)
 	{
 		case 8:
@@ -210,32 +148,46 @@ void getversion(struct OsVersionInfo* info)
 			info->revision = kern_minor;
 			break;
 		case 11:
-			info->description = "Mac OS X Lion";
+			info->description = "OS X Lion";
 			info->majorversion = 10;
 			info->minorversion = 7;
 			info->revision = kern_minor;
 			break;
 		case 12:
-			info->description = "Mac OS X Mountain Lion";
+			info->description = "OS X Mountain Lion";
 			info->majorversion = 10;
 			info->minorversion = 8;
 			info->revision = kern_minor;
 			break;
 		case 13:
-			info->description = "Mac OS X Mavericks";
+			info->description = "OS X Mavericks";
 			info->majorversion = 10;
 			info->minorversion = 9;
 			info->revision = kern_minor;
 			break;
 		case 14:
-			info->description = "Mac OS X Yosemite";
+			info->description = "OS X Yosemite";
 			info->majorversion = 10;
 			info->minorversion = 10;
+			info->revision = kern_minor;
+			break;
+		case 15:
+			info->description = "OS X El Capitan";
+			info->majorversion = 10;
+			info->minorversion = 11;
+			info->revision = kern_minor;
+			break;
+		case 16:
+			info->description = "macOS Sierra";
+			info->majorversion = 10;
+			info->minorversion = 12;
 			info->revision = kern_minor;
 			break;
 		default:
 			break;
 	}
+
+	return 1;
 }
 
 
@@ -246,7 +198,7 @@ void getversion(struct OsVersionInfo* info)
 #include <string.h>
 #include <sys/utsname.h>
 
-void getversion(struct OsVersionInfo* info)
+int getversion(struct OsVersionInfo* info)
 {
 	struct utsname u;
 	char* ver;
@@ -259,7 +211,7 @@ void getversion(struct OsVersionInfo* info)
 	{
 		// error
 		info->description = PLATFORM_STRING;
-		return;
+		return 0;
 	}
 
 #if __GLIBC__
@@ -284,18 +236,17 @@ void getversion(struct OsVersionInfo* info)
 				info->revision = atoi(ver);
 		}
 	}
+
+	return 1;
 }
 
 /*************************************************************/
 
 #else
 
-void getversion(struct OsVersionInfo* info)
+int getversion(struct OsVersionInfo* info)
 {
-	info->majorversion = 0;
-	info->minorversion = 0;
-	info->revision = 0;
-	info->description = PLATFORM_STRING;
+	return 0;
 }
 
 #endif

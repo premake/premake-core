@@ -6,7 +6,8 @@
 
 
 	local suite = test.declare("codelite_cproj_config")
-	local codelite = premake.modules.codelite
+	local p = premake
+	local codelite = p.modules.codelite
 
 ---------------------------------------------------------------------------
 -- Setup/Teardown
@@ -15,12 +16,13 @@
 	local wks, prj, cfg
 
 	function suite.setup()
-		premake.action.set("codelite")
-		premake.indent("  ")
-		wks, prj = test.createWorkspace()
+		p.action.set("codelite")
+		p.indent("  ")
+		wks = test.createWorkspace()
 	end
 
 	local function prepare()
+		prj = test.getproject(wks,1)
 		cfg = test.getconfig(prj, "Debug")
 	end
 
@@ -40,12 +42,14 @@
 		rtti "Off"
 		pic "On"
 		symbols "On"
-		flags { "NoBufferSecurityCheck", "C++11" }
+		language "C++"
+		cppdialect "C++11"
+		flags { "NoBufferSecurityCheck" }
 		buildoptions { "-opt1", "-opt2" }
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-O0;-fPIC;-g;-fno-exceptions;-fno-stack-protector;-std=c++11;-fno-rtti;-opt1;-opt2" C_Options="-O0;-fPIC;-g;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O0;-fPIC;-g;-std=c++11;-fno-exceptions;-fno-stack-protector;-fno-rtti;-opt1;-opt2" C_Options="-O0;-fPIC;-g;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
       </Compiler>
 		]]
 	end
@@ -89,20 +93,16 @@
 		codelite.project.linker(cfg)
 		test.capture [[
       <Linker Required="yes" Options="">
-        <LibraryPath Value="test" />
-        <LibraryPath Value="test2" />
       </Linker>
 		]]
 	end
 
 	function suite.OnProjectCfg_Libs()
-		links { "lib", "lib2" }
+		links { "a", "b" }
 		prepare()
 		codelite.project.linker(cfg)
 		test.capture [[
-      <Linker Required="yes" Options="">
-        <Library Value="lib" />
-        <Library Value="lib2" />
+      <Linker Required="yes" Options="-la;-lb">
       </Linker>
 		]]
 	end
@@ -221,7 +221,8 @@ cmd2</StartupCommands>
 	end
 
 	function suite.OnProject_Completion()
-		flags { "C++11" }
+		language "C++"
+		cppdialect "C++11"
 		prepare()
 		codelite.project.completion(prj)
 		test.capture [[

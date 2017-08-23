@@ -18,13 +18,14 @@
 		trigger         = "codelite",
 		shortname       = "CodeLite",
 		description     = "Generate CodeLite project files",
+		toolset         = "clang",
 
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "Makefile", "SharedLib", "StaticLib", "Utility" },
 		valid_languages = { "C", "C++" },
 		valid_tools     = {
-		    cc = { "gcc", "clang", "msc" }
+			cc = { "gcc", "clang", "msc" }
 		},
 
 		-- Workspace and project generation logic

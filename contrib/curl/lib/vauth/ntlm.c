@@ -27,7 +27,7 @@
 /*
  * NTLM details:
  *
- * http://davenport.sourceforge.net/ntlm.html
+ * https://davenport.sourceforge.io/ntlm.html
  * https://www.innovation.ch/java/ntlm.html
  */
 
@@ -41,7 +41,7 @@
 #include "curl_gethostname.h"
 #include "curl_multibyte.h"
 #include "warnless.h"
-
+#include "rand.h"
 #include "vtls/vtls.h"
 
 #ifdef USE_NSS
@@ -164,7 +164,7 @@ static void ntlm_print_hex(FILE *handle, const char *buf, size_t len)
  *
  * Returns CURLE_OK on success.
  */
-static CURLcode ntlm_decode_type2_target(struct SessionHandle *data,
+static CURLcode ntlm_decode_type2_target(struct Curl_easy *data,
                                          unsigned char *buffer,
                                          size_t size,
                                          struct ntlmdata *ntlm)
@@ -217,6 +217,20 @@ static CURLcode ntlm_decode_type2_target(struct SessionHandle *data,
 */
 
 /*
+ * Curl_auth_is_ntlm_supported()
+ *
+ * This is used to evaluate if NTLM is supported.
+ *
+ * Parameters: None
+ *
+ * Returns TRUE as NTLM as handled by libcurl.
+ */
+bool Curl_auth_is_ntlm_supported(void)
+{
+  return TRUE;
+}
+
+/*
  * Curl_auth_decode_ntlm_type2_message()
  *
  * This is used to decode an already encoded NTLM type-2 message. The message
@@ -232,7 +246,7 @@ static CURLcode ntlm_decode_type2_target(struct SessionHandle *data,
  *
  * Returns CURLE_OK on success.
  */
-CURLcode Curl_auth_decode_ntlm_type2_message(struct SessionHandle *data,
+CURLcode Curl_auth_decode_ntlm_type2_message(struct Curl_easy *data,
                                              const char *type2msg,
                                              struct ntlmdata *ntlm)
 {
@@ -465,7 +479,7 @@ CURLcode Curl_auth_create_ntlm_type1_message(const char *userp,
  *
  * Returns CURLE_OK on success.
  */
-CURLcode Curl_auth_create_ntlm_type3_message(struct SessionHandle *data,
+CURLcode Curl_auth_create_ntlm_type3_message(struct Curl_easy *data,
                                              const char *userp,
                                              const char *passwdp,
                                              struct ntlmdata *ntlm,
@@ -544,8 +558,9 @@ CURLcode Curl_auth_create_ntlm_type3_message(struct SessionHandle *data,
     unsigned int entropy[2];
     unsigned char ntlmv2hash[0x18];
 
-    entropy[0] = Curl_rand(data);
-    entropy[1] = Curl_rand(data);
+    result = Curl_rand(data, &entropy[0], 2);
+    if(result)
+      return result;
 
     result = Curl_ntlm_core_mk_nt_hash(data, passwdp, ntbuffer);
     if(result)
@@ -584,8 +599,9 @@ CURLcode Curl_auth_create_ntlm_type3_message(struct SessionHandle *data,
     unsigned int entropy[2];
 
     /* Need to create 8 bytes random data */
-    entropy[0] = Curl_rand(data);
-    entropy[1] = Curl_rand(data);
+    result = Curl_rand(data, &entropy[0], 2);
+    if(result)
+      return result;
 
     /* 8 bytes random data as challenge in lmresp */
     memcpy(lmresp, entropy, 8);
@@ -635,7 +651,7 @@ CURLcode Curl_auth_create_ntlm_type3_message(struct SessionHandle *data,
 
     /* A safer but less compatible alternative is:
      *   Curl_ntlm_core_lm_resp(ntbuffer, &ntlm->nonce[0], lmresp);
-     * See http://davenport.sourceforge.net/ntlm.html#ntlmVersion2 */
+     * See https://davenport.sourceforge.io/ntlm.html#ntlmVersion2 */
   }
 
   if(unicode) {

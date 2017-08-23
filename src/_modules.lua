@@ -5,7 +5,10 @@
 --
 
 	return {
+		"gmake",
+		"vstudio",
 		"xcode",
 		"codelite",
+		"gmake2",
 		"d",
 	}

@@ -4,10 +4,11 @@
 -- Copyright (c) 2009-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("tools_gcc")
 
-	local gcc = premake.tools.gcc
-	local project = premake.project
+	local gcc = p.tools.gcc
+	local project = p.project
 
 
 --
@@ -77,6 +78,12 @@
 		warnings "extra"
 		prepare()
 		test.contains({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onHighWarnings()
+		warnings "high"
+		prepare()
+		test.contains({ "-Wall" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFatalWarnings()
@@ -254,10 +261,25 @@
 		test.contains({ "-shared" }, gcc.getldflags(cfg))
 	end
 
-
 --
 -- Check Mac OS X variants on LDFLAGS.
 --
+
+	function suite.ldflags_onMacOSXBundle()
+		system "MacOSX"
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		prepare()
+		test.contains({ "-Wl,-x", "-bundle" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onMacOSXFramework()
+		system "MacOSX"
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		prepare()
+		test.contains({ "-Wl,-x", "-framework" }, gcc.getldflags(cfg))
+	end
 
 	function suite.ldflags_onMacOSXNoSymbols()
 		system "MacOSX"
@@ -553,4 +575,135 @@
 		links { "fs_stub:shared", "net_stub:shared" }
 		prepare()
 		test.excludes({ "-Wl,-Bstatic" }, gcc.getlinks(cfg))
+	end
+
+
+--
+-- Test language flags are added properly.
+--
+
+	function suite.cflags_onCDefault()
+		cdialect "Default"
+		prepare()
+		test.contains({ }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onC89()
+		cdialect "C89"
+		prepare()
+		test.contains({ "-std=c89" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onC90()
+		cdialect "C90"
+		prepare()
+		test.contains({ "-std=c90" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onC99()
+		cdialect "C99"
+		prepare()
+		test.contains({ "-std=c99" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_onC11()
+		cdialect "C11"
+		prepare()
+		test.contains({ "-std=c11" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_ongnu89()
+		cdialect "gnu89"
+		prepare()
+		test.contains({ "-std=gnu89" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_ongnu90()
+		cdialect "gnu90"
+		prepare()
+		test.contains({ "-std=gnu90" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_ongnu99()
+		cdialect "gnu99"
+		prepare()
+		test.contains({ "-std=gnu99" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_ongnu11()
+		cdialect "gnu11"
+		prepare()
+		test.contains({ "-std=gnu11" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onCppDefault()
+		cppdialect "Default"
+		prepare()
+		test.contains({ }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp98()
+		cppdialect "C++98"
+		prepare()
+		test.contains({ "-std=c++98" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp11()
+		cppdialect "C++11"
+		prepare()
+		test.contains({ "-std=c++11" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp14()
+		cppdialect "C++14"
+		prepare()
+		test.contains({ "-std=c++14" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp17()
+		cppdialect "C++17"
+		prepare()
+		test.contains({ "-std=c++1z" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu98()
+		cppdialect "gnu++98"
+		prepare()
+		test.contains({ "-std=gnu++98" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu11()
+		cppdialect "gnu++11"
+		prepare()
+		test.contains({ "-std=gnu++11" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu14()
+		cppdialect "gnu++14"
+		prepare()
+		test.contains({ "-std=gnu++14" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu17()
+		cppdialect "gnu++17"
+		prepare()
+		test.contains({ "-std=gnu++1z" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
 	end

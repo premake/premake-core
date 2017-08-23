@@ -4,6 +4,7 @@
 -- Copyright (c) 2011-2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("oven_filtering")
 
 
@@ -20,7 +21,7 @@
 	local function prepare()
 		wks = test.getWorkspace(wks)
 		prj = test.getproject(wks, 1)
-        cfg = test.getconfig(prj, "Debug")
+		cfg = test.getconfig(prj, "Debug")
 	end
 
 
@@ -29,7 +30,7 @@
 --
 
 	function suite.onAction()
-		premake.action.set("vs2012")
+		p.action.set("vs2012")
 		filter { "action:vs2012" }
 		defines { "USE_VS2012" }
 		prepare()
@@ -37,7 +38,7 @@
 	end
 
 	function suite.onActionMismatch()
-		premake.action.set("vs2010")
+		p.action.set("vs2010")
 		filter { "action:vs2012" }
 		defines { "USE_VS2012" }
 		prepare()
@@ -105,4 +106,37 @@
 		defines { "USE_MSC" }
 		prepare()
 		test.isequal({}, cfg.defines)
+	end
+
+	function suite.onFilterToolsetNormalization()
+		toolset "v140"
+		filter { "toolset:msc-v140" }
+		defines { "USE_MSC" }
+		prepare()
+		test.isequal({ "USE_MSC" }, cfg.defines)
+	end
+
+
+--
+-- Test filtering on system.
+--
+
+	function suite.onFilterLinuxIsPosix()
+		system "linux"
+		filter { "system:posix" }
+			defines { "POSIX" }
+		filter { "system:not posix" }
+			defines { "NOTPOSIX" }
+		prepare()
+		test.isequal({ "POSIX" }, cfg.defines)
+	end
+
+	function suite.onFilterWindowsIsNotPosix()
+		system "windows"
+		filter { "system:posix" }
+			defines { "POSIX" }
+		filter { "system:not posix" }
+			defines { "NOTPOSIX" }
+		prepare()
+		test.isequal({ "NOTPOSIX" }, cfg.defines)
 	end

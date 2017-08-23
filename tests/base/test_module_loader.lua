@@ -4,6 +4,7 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("module_loader")
 
 --
@@ -13,15 +14,15 @@
 	local loaderIndex
 
 	function suite.setup()
-		table.insert(package.loaders, function (name)
-			premake.out(name)
-			return loadstring("")
+		table.insert(package.searchers, function (name)
+			p.out(name)
+			return load("")
 		end)
-		loaderIndex = #package.loaders
+		loaderIndex = #package.searchers
 	end
 
 	function suite.teardown()
-		table.remove(package.loaders, loaderIndex)
+		table.remove(package.searchers, loaderIndex)
 	end
 
 --

@@ -41,7 +41,11 @@
 ---
 
 	function m.installModuleLoader()
-		table.insert(package.loaders, 2, m.moduleLoader)
+		if not os.ishost('windows') then
+			local premakeDir = path.getdirectory(_PREMAKE_COMMAND)
+			package.cpath = package.cpath .. ';' .. premakeDir .. '/?.so'
+		end
+		table.insert(package.searchers, 2, m.moduleLoader)
 	end
 
 	function m.moduleLoader(name)
@@ -58,6 +62,7 @@
 
 		-- list of paths where to look for the module
 		local paths = {
+			".modules/" .. full,
 			"modules/" .. full,
 			full,
 			name .. ".lua"
@@ -95,7 +100,7 @@
 	function m.prepareEnvironment()
 		math.randomseed(os.time())
 		_PREMAKE_DIR = path.getdirectory(_PREMAKE_COMMAND)
-		premake.path = premake.path .. ";" .. _PREMAKE_DIR .. ";" .. _MAIN_SCRIPT_DIR
+		p.path = p.path .. ";" .. _PREMAKE_DIR .. ";" .. _MAIN_SCRIPT_DIR
 	end
 
 
@@ -170,14 +175,14 @@
 		-- The "next-gen" actions have now replaced their deprecated counterparts.
 		-- Provide a warning for a little while before I remove them entirely.
 		if _ACTION and _ACTION:endswith("ng") then
-			premake.warnOnce(_ACTION, "'%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3))
+			p.warnOnce(_ACTION, "'%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3))
 		end
-		premake.action.set(_ACTION)
+		p.action.set(_ACTION)
 
 		-- Allow the action to initialize stuff.
-		local action = premake.action.current()
+		local action = p.action.current()
 		if action then
-			premake.action.initialize(action.trigger)
+			p.action.initialize(action.trigger)
 		end
 	end
 
@@ -217,13 +222,13 @@
 		end
 
 		if (_OPTIONS["help"]) then
-			premake.showhelp()
+			p.showhelp()
 			os.exit(1)
 		end
 
 		-- Validate the command-line arguments. This has to happen after the
 		-- script has run to allow for project-specific options
-		ok, err = premake.option.validate(_OPTIONS)
+		ok, err = p.option.validate(_OPTIONS)
 		if not ok then
 			print("Error: " .. err)
 			os.exit(1)
@@ -236,7 +241,7 @@
 				os.exit(1)
 			end
 
-			local action = premake.action.current()
+			local action = p.action.current()
 			if not action then
 				print("Error: no such action '" .. _ACTION .. "'")
 				os.exit(1)
@@ -267,7 +272,7 @@
 
 	function m.bake()
 		if p.action.isConfigurable() then
-			premake.oven.bake()
+			p.oven.bake()
 		end
 	end
 
@@ -316,7 +321,7 @@
 ---
 
 	function m.preAction()
-		local action = premake.action.current()
+		local action = p.action.current()
 		printf("Running action '%s'...", action.trigger)
 	end
 
@@ -326,8 +331,8 @@
 ---
 
 	function m.callAction()
-		local action = premake.action.current()
-		premake.action.call(action.trigger)
+		local action = p.action.current()
+		p.action.call(action.trigger)
 	end
 
 

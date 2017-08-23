@@ -4,5 +4,6 @@ os:
 
 script:
  - make -f Bootstrap.mak $TRAVIS_OS_NAME
+ - make -C build/bootstrap -j config=debug
  - bin/release/premake5 test
 

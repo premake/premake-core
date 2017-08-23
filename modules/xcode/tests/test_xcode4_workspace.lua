@@ -7,7 +7,8 @@
 ---
 
 	local suite = test.declare("xcode4_workspace")
-	local xcode = premake.modules.xcode
+	local p = premake
+	local xcode = p.modules.xcode
 
 
 --
@@ -17,7 +18,7 @@
 	local wks, prj
 
 	function suite.setup()
-		_ACTION = "xcode4"
+		p.action.set('xcode4')
 		wks = test.createWorkspace()
 	end
 
@@ -70,6 +71,28 @@
 	<FileRef
 		location = "group:MyProject2.xcodeproj">
 	</FileRef>
+</Workspace>
+		]]
+	end
+
+	function suite.onMultipleProjectsGrouped()
+		test.createGroup(wks)
+		test.createproject(wks)
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+	version = "1.0">
+	<FileRef
+		location = "group:MyProject.xcodeproj">
+	</FileRef>
+	<Group
+		location = "container:"
+		name = "MyGroup1">
+		<FileRef
+			location = "group:MyProject2.xcodeproj">
+		</FileRef>
+	</Group>
 </Workspace>
 		]]
 	end

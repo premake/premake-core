@@ -48,11 +48,22 @@
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
 		},
+		floatingpointexceptions = {
+			On  = "/fp:except",
+			Off = "/fp:except-",
+		},
+		functionlevellinking = {
+			On = "/Gy",
+			Off = "/Gy-",
+		},
 		callingconvention = {
 			Cdecl = "/Gd",
 			FastCall = "/Gr",
 			StdCall = "/Gz",
 			VectorCall = "/Gv",
+		},
+		intrinsics = {
+			On = "/Oi",
 		},
 		optimize = {
 			Off = "/Od",
@@ -73,7 +84,12 @@
 		},
 		warnings = {
 			Extra = "/W4",
+			High = "/W4",
 			Off = "/W0",
+		},
+		stringpooling = {
+			On = "/GF",
+			Off = "/GF-",
 		},
 		symbols = {
 			On = "/Z7"
@@ -123,6 +139,7 @@
 			Default = { '/D"_UNICODE"', '/D"UNICODE"' },
 			MBCS = '/D"_MBCS"',
 			Unicode = { '/D"_UNICODE"', '/D"UNICODE"' },
+			ASCII = { },
 		}
 	}
 
@@ -142,6 +159,11 @@
 		for _, define in ipairs(defines) do
 			table.insert(result, '/D"' .. define .. '"')
 		end
+
+		if cfg and cfg.exceptionhandling == p.OFF then
+			table.insert(result, "/D_HAS_EXCEPTIONS=0")
+		end
+
 		return result
 	end
 
@@ -169,7 +191,7 @@
 
 		table.foreachi(cfg.forceincludes, function(value)
 			local fn = project.getrelative(cfg.project, value)
-			table.insert(result, "/FI" .. premake.quoted(fn))
+			table.insert(result, "/FI" .. p.quoted(fn))
 		end)
 
 		return result
@@ -188,7 +210,7 @@
 		dirs = table.join(dirs, sysdirs)
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
-			table.insert(result, '-I' ..  premake.quoted(dir))
+			table.insert(result, '-I' ..  p.quoted(dir))
 		end
 		return result
 	end
@@ -221,7 +243,7 @@
 	}
 
 	function msc.getldflags(cfg)
-		local map = iif(cfg.kind ~= premake.STATICLIB, msc.linkerFlags, msc.librarianFlags)
+		local map = iif(cfg.kind ~= p.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
 		table.insert(flags, 1, "/NOLOGO")
 
@@ -274,14 +296,26 @@
 -- Return the list of libraries to link, decorated with flags as needed.
 --
 
-	function msc.getlinks(cfg)
-		local links = config.getlinks(cfg, "system", "fullpath")
-		for i = 1, #links do
-			-- Add extension if required
-			if not msc.getLibraryExtensions()[links[i]:match("[^.]+$")] then
-				links[i] = path.appendextension(links[i], ".lib")
-			end
+	function msc.getlinks(cfg, systemonly, nogroups)
+		local links = {}
+
+		-- If we need sibling projects to be listed explicitly, grab them first
+		if not systemonly then
+			links = config.getlinks(cfg, "siblings", "fullpath")
 		end
+
+		-- Then the system libraries, which come undecorated
+		local system = config.getlinks(cfg, "system", "fullpath")
+		for i = 1, #system do
+			-- Add extension if required
+			local link = system[i]
+			if not p.tools.msc.getLibraryExtensions()[link:match("[^.]+$")] then
+				link = path.appendextension(link, ".lib")
+			end
+
+			table.insert(links, link)
+		end
+
 		return links
 	end
 

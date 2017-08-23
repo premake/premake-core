@@ -2,7 +2,7 @@ project "curl-lib"
 	language    "C"
 	kind        "StaticLib"
 	includedirs { "include", "lib", "../mbedtls/include/" }
-	defines     { "BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY", "USE_MBEDTLS" }
+	defines     { "BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY" }
 	warnings    "off"
 
 	if not _OPTIONS["no-zlib"] then
@@ -16,7 +16,17 @@ project "curl-lib"
 		"**.c"
 	}
 
-	filter { "system:linux" }
+	filter { "system:windows" }
+		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
+		links "crypt32"
+
+	filter { "system:macosx" }
+		defines { "USE_DARWINSSL" }
+
+	filter { "system:not windows", "system:not macosx" }
+		defines { "USE_MBEDTLS" }
+
+	filter { "system:linux or bsd" }
 		defines { "CURL_HIDDEN_SYMBOLS" }
 
 		-- find the location of the ca bundle
@@ -26,6 +36,7 @@ project "curl-lib"
 			"/etc/pki/tls/certs/ca-bundle.crt",
 			"/usr/share/ssl/certs/ca-bundle.crt",
 			"/usr/local/share/certs/ca-root.crt",
+			"/usr/local/share/certs/ca-root-nss.crt",
 			"/etc/ssl/cert.pem" } do
 			if os.isfile(f) then
 				ca = f

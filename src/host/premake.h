@@ -9,7 +9,9 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#define PREMAKE_VERSION        "5.0.0-alpha11"
+#include <stdlib.h>
+
+#define PREMAKE_VERSION        "5.0.0-alpha12"
 #define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2017 Jason Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
@@ -52,6 +54,13 @@
 #include <unistd.h>
 #endif
 
+/* not all platforms define this */
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef TRUE
+#define TRUE 1
+#endif
 
 /* Fill in any missing bits */
 #ifndef PATH_MAX
@@ -80,12 +89,14 @@ unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
-int do_isfile(const char* filename);
+int do_isfile(lua_State* L, const char* filename);
 int do_locate(lua_State* L, const char* filename, const char* path);
 void do_normalize(lua_State* L, char* buffer, const char* path);
 int do_pathsearch(lua_State* L, const char* filename, const char* path);
 void do_translate(char* value, const char sep);
 
+int term_doGetTextColor();
+void term_doSetTextColor(int color);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
@@ -101,10 +112,13 @@ int path_translate(lua_State* L);
 int path_wildcards(lua_State* L);
 int os_chdir(lua_State* L);
 int os_chmod(lua_State* L);
+int os_comparefiles(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
+int os_getWindowsRegistry(lua_State* L);
 int os_getversion(lua_State* L);
+int os_host(lua_State* L);
 int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);
@@ -118,11 +132,18 @@ int os_matchstart(lua_State* L);
 int os_mkdir(lua_State* L);
 int os_pathsearch(lua_State* L);
 int os_realpath(lua_State* L);
+#if PLATFORM_WINDOWS
+// utf8 versions
+int os_remove(lua_State* L);
+int os_rename(lua_State* L);
+#endif
 int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int os_writefile_ifnotequal(lua_State* L);
+int os_touchfile(lua_State* L);
 int os_compile(lua_State* L);
+int premake_getEmbeddedResource(lua_State* L);
 int string_endswith(lua_State* L);
 int string_hash(lua_State* L);
 int string_sha1(lua_State* L);
@@ -132,6 +153,8 @@ int buffered_write(lua_State* L);
 int buffered_writeln(lua_State* L);
 int buffered_close(lua_State* L);
 int buffered_tostring(lua_State* L);
+int term_getTextColor(lua_State* L);
+int term_setTextColor(lua_State* L);
 
 #ifdef PREMAKE_CURL
 int http_get(lua_State* L);
@@ -159,7 +182,7 @@ typedef struct
 } buildin_mapping;
 
 extern const buildin_mapping builtin_scripts[];
-
+extern void  registerModules(lua_State* L);
 
 int premake_init(lua_State* L);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);

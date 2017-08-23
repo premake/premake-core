@@ -6,7 +6,8 @@
 ---
 
 	local suite = test.declare("xcode_header")
-	local xcode = premake.modules.xcode
+	local p = premake
+	local xcode = p.modules.xcode
 
 
 --
@@ -16,6 +17,7 @@
 	local wks
 
 	function suite.setup()
+		p.action.set('xcode4')
 		wks = test.createWorkspace()
 	end
 

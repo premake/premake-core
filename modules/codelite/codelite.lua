@@ -30,6 +30,7 @@
 		local result = value:gsub('"', '\\&quot;')
 		result = result:gsub('<', '&lt;')
 		result = result:gsub('>', '&gt;')
+	    result = result:gsub('&', '&amp;')
 		return result
 	end
 
@@ -46,7 +47,7 @@
 		p.indent("  ")
 		p.escaper(codelite.esc)
 
-		if project.iscpp(prj) then
+		if project.isc(prj) or project.iscpp(prj) then
 			p.generate(prj, ".project", codelite.project.generate)
 		end
 	end

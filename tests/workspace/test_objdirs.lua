@@ -4,6 +4,7 @@
 -- Copyright (c) 2012-2015 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("workspace_objdir")
 
 
@@ -14,7 +15,7 @@
 	local wks
 
 	function suite.setup()
-		premake.action.set("test")
+		p.action.set("test")
 		wks = workspace("MyWorkspace")
 		system "macosx"
 	end
@@ -23,7 +24,7 @@
 		local platforms = wks.platforms or {}
 		local prj = project("MyProject")
 		local cfg = test.getconfig(prj, "Debug", platforms[1])
-		return premake.project.getrelative(cfg.project, cfg.objdir)
+		return p.project.getrelative(cfg.project, cfg.objdir)
 	end
 
 

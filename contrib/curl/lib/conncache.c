@@ -30,7 +30,6 @@
 #include "progress.h"
 #include "multiif.h"
 #include "sendf.h"
-#include "rawstr.h"
 #include "conncache.h"
 /* The last 3 #include files should be in this order */
 #include "curl_printf.h"
@@ -45,7 +44,7 @@ static void conn_llist_dtor(void *user, void *element)
   data->bundle = NULL;
 }
 
-static CURLcode bundle_create(struct SessionHandle *data,
+static CURLcode bundle_create(struct Curl_easy *data,
                               struct connectbundle **cb_ptr)
 {
   (void)data;
@@ -133,14 +132,16 @@ static char *hashkey(struct connectdata *conn)
 {
   const char *hostname;
 
-  if(conn->bits.proxy)
-    hostname = conn->proxy.name;
+  if(conn->bits.socksproxy)
+    hostname = conn->socks_proxy.host.name;
+  else if(conn->bits.httpproxy)
+    hostname = conn->http_proxy.host.name;
   else if(conn->bits.conn_to_host)
     hostname = conn->conn_to_host.name;
   else
     hostname = conn->host.name;
 
-  return aprintf("%s:%d", hostname, conn->port);
+  return aprintf("%s:%ld", hostname, conn->port);
 }
 
 /* Look up the bundle with all the connections to the same host this
@@ -199,7 +200,7 @@ CURLcode Curl_conncache_add_conn(struct conncache *connc,
   CURLcode result;
   struct connectbundle *bundle;
   struct connectbundle *new_bundle = NULL;
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
 
   bundle = Curl_conncache_find_bundle(conn, data->state.conn_cache);
   if(!bundle) {

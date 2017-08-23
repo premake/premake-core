@@ -8,11 +8,16 @@
 #include <string.h>
 #include <ctype.h>
 #include "premake.h"
+#include "lua_shimtable.h"
 
 #if PLATFORM_MACOSX
 #include <CoreFoundation/CFBundle.h>
 #endif
 
+#if PLATFORM_BSD
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#endif
 
 #define ERROR_MESSAGE  "Error: %s\n"
 
@@ -53,12 +58,15 @@ static const luaL_Reg path_functions[] = {
 static const luaL_Reg os_functions[] = {
 	{ "chdir",                  os_chdir                },
 	{ "chmod",                  os_chmod                },
+	{ "comparefiles",           os_comparefiles         },
 	{ "copyfile",               os_copyfile             },
 	{ "_is64bit",               os_is64bit              },
 	{ "isdir",                  os_isdir                },
 	{ "getcwd",                 os_getcwd               },
 	{ "getpass",                os_getpass              },
+	{ "getWindowsRegistry",     os_getWindowsRegistry   },
 	{ "getversion",             os_getversion           },
+	{ "host",                   os_host                 },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
 	{ "locate",                 os_locate               },
@@ -68,13 +76,24 @@ static const luaL_Reg os_functions[] = {
 	{ "matchnext",              os_matchnext            },
 	{ "matchstart",             os_matchstart           },
 	{ "mkdir",                  os_mkdir                },
+#if PLATFORM_WINDOWS
+	// utf8 functions for Windows (assuming posix already handle utf8)
+	{"remove",                  os_remove               },
+	{"rename",                  os_rename               },
+#endif
 	{ "pathsearch",             os_pathsearch           },
 	{ "realpath",               os_realpath             },
 	{ "rmdir",                  os_rmdir                },
 	{ "stat",                   os_stat                 },
 	{ "uuid",                   os_uuid                 },
 	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
+	{ "touchfile",              os_touchfile            },
 	{ "compile",                os_compile              },
+	{ NULL, NULL }
+};
+
+static const luaL_Reg premake_functions[] = {
+	{ "getEmbeddedResource", premake_getEmbeddedResource },
 	{ NULL, NULL }
 };
 
@@ -95,6 +114,12 @@ static const luaL_Reg buffered_functions[] = {
 	{ NULL, NULL }
 };
 
+static const luaL_Reg term_functions[] = {
+	{ "getTextColor",  term_getTextColor },
+	{ "setTextColor",  term_setTextColor },
+	{ NULL, NULL }
+};
+
 #ifdef PREMAKE_CURL
 static const luaL_Reg http_functions[] = {
 	{ "get",       http_get },
@@ -111,6 +136,36 @@ static const luaL_Reg zip_functions[] = {
 };
 #endif
 
+
+static void lua_getorcreate_table(lua_State *L, const char *modname)
+{
+	luaL_getsubtable(L, LUA_REGISTRYINDEX, "_LOADED");      // get _LOADED table            stack = {_LOADED}
+	lua_getfield(L, -1, modname);                           // get _LOADED[modname]         stack = { _LOADED, result }
+	if (!lua_istable(L, -1))                                // not found?                   stack = { _LOADED, result }
+	{
+		lua_pop(L, 1);                                      // remove previous result       stack = { _LOADED }
+		lua_pushglobaltable(L);                             // push _G onto stack           stack = { _LOADED, _G }
+		lua_createtable(L, 0, 0);                           // new table for field          stack = { _LOADED, _G, result }
+		lua_pushlstring(L, modname, strlen(modname));       //                              stack = { _LOADED, _G, result, modname }
+		lua_pushvalue(L, -2);                               //                              stack = { _LOADED, _G, result, modname, result }
+		lua_settable(L, -4);                                // _G[modname] = result         stack = { _LOADED, _G, result }
+		lua_remove(L, -2);                                  // remove _G from stack         stack = { _LOADED, result }
+		lua_pushvalue(L, -1);                               // duplicate result             stack = { _LOADED, result, result }
+		lua_setfield(L, -3, modname);                       // _LOADED[modname] = result    stack = { _LOADED, result }
+	}
+
+	lua_remove(L, -2);                                      // remove _LOADED from stack    stack = { result }
+}
+
+
+void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
+{
+	lua_getorcreate_table(L, libname);
+	luaL_setfuncs(L, l, 0);
+	lua_pop(L, 1);
+}
+
+
 /**
  * Initialize the Premake Lua environment.
  */
@@ -118,12 +173,14 @@ int premake_init(lua_State* L)
 {
 	const char* value;
 
+	luaL_register(L, "premake",  premake_functions);
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
 	luaL_register(L, "path",     path_functions);
 	luaL_register(L, "os",       os_functions);
 	luaL_register(L, "string",   string_functions);
 	luaL_register(L, "buffered", buffered_functions);
+	luaL_register(L, "term",     term_functions);
 
 #ifdef PREMAKE_CURL
 	luaL_register(L, "http",     http_functions);
@@ -132,6 +189,9 @@ int premake_init(lua_State* L)
 #ifdef PREMAKE_COMPRESSION
 	luaL_register(L, "zip",     zip_functions);
 #endif
+
+	lua_pushlightuserdata(L, &s_shimTable);
+	lua_rawseti(L, LUA_REGISTRYINDEX, 'SHIM');
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
@@ -148,7 +208,7 @@ int premake_init(lua_State* L)
 
 	/* set the OS platform variable */
 	lua_pushstring(L, PLATFORM_STRING);
-	lua_setglobal(L, "_OS");
+	lua_setglobal(L, "_TARGET_OS");
 
 	/* find the user's home directory */
 	value = getenv("HOME");
@@ -161,13 +221,27 @@ int premake_init(lua_State* L)
 	os_getcwd(L);
 	lua_setglobal(L, "_WORKING_DIR");
 
-	/* start the premake namespace */
-	lua_newtable(L);
-	lua_setglobal(L, "premake");
+#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
+	/* let native modules initialize themselves */
+	registerModules(L);
+#endif
 
 	return OKAY;
 }
 
+
+static int getErrorColor(lua_State* L)
+{
+	int color;
+
+	lua_getglobal(L, "term");
+	lua_pushstring(L, "errorColor");
+	lua_gettable(L, -2);
+	color = (int)luaL_checkinteger(L, -1);
+	lua_pop(L, 2);
+
+	return color;
+}
 
 
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
@@ -190,7 +264,10 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 
 	/* Find and run the main Premake bootstrapping script */
 	if (run_premake_main(L, script) != OKAY) {
+		int color = term_doGetTextColor();
+		term_doSetTextColor(getErrorColor(L));
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		term_doSetTextColor(color);
 		return !OKAY;
 	}
 
@@ -206,7 +283,10 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 	/* and call the main entry point */
 	lua_getglobal(L, "_premake_main");
 	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
+		int color = term_doGetTextColor();
+		term_doSetTextColor(getErrorColor(L));
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
+		term_doSetTextColor(color);
 		return !OKAY;
 	}
 	else {
@@ -229,9 +309,13 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	const char* path = NULL;
 
 #if PLATFORM_WINDOWS
-	DWORD len = GetModuleFileNameA(NULL, buffer, PATH_MAX);
+	wchar_t widebuffer[PATH_MAX];
+
+	DWORD len = GetModuleFileNameW(NULL, widebuffer, PATH_MAX);
 	if (len > 0)
 	{
+		WideCharToMultiByte(CP_UTF8, 0, widebuffer, len, buffer, PATH_MAX, NULL, NULL);
+
 		buffer[len] = 0;
 		path = buffer;
 	}
@@ -257,6 +341,17 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	int len = readlink("/proc/curproc/file", buffer, PATH_MAX - 1);
 	if (len < 0)
 		len = readlink("/proc/curproc/exe", buffer, PATH_MAX - 1);
+	if (len < 0)
+	{
+		int mib[4];
+		mib[0] = CTL_KERN;
+		mib[1] = KERN_PROC;
+		mib[2] = KERN_PROC_PATHNAME;
+		mib[3] = -1;
+		size_t cb = sizeof(buffer);
+		sysctl(mib, 4, buffer, &cb, NULL, 0);
+		len = (int)cb;
+	}
 	if (len > 0)
 	{
 		buffer[len] = 0;
@@ -320,7 +415,7 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 int premake_test_file(lua_State* L, const char* filename, int searchMask)
 {
 	if (searchMask & TEST_LOCAL) {
-		if (do_isfile(filename)) {
+		if (do_isfile(L, filename)) {
 			lua_pushcfunction(L, path_getabsolute);
 			lua_pushstring(L, filename);
 			lua_call(L, 1, 1);
@@ -337,7 +432,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 		if (path && do_locate(L, filename, path)) return OKAY;
 	}
 
-	#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
+#if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
 	if ((searchMask & TEST_EMBEDDED) != 0) {
 		/* Try to locate a record matching the filename */
 		if (premake_find_embedded_script(filename) != NULL) {
@@ -347,7 +442,7 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 			return OKAY;
 		}
 	}
-	#endif
+#endif
 
 	return !OKAY;
 }
@@ -448,7 +543,7 @@ static int process_arguments(lua_State* L, int argc, const char** argv)
 	for (i = 1; i < argc; ++i)
 	{
 		lua_pushstring(L, argv[i]);
-		lua_rawseti(L, -2, lua_objlen(L, -2) + 1);
+		lua_rawseti(L, -2, luaL_len(L, -2) + 1);
 
 		/* The /scripts option gets picked up here; used later to find the
 		 * manifest and scripts later if necessary */
@@ -480,8 +575,8 @@ static int run_premake_main(lua_State* L, const char* script)
 	 * argument allowed as an override. Debug builds will look at the
 	 * local file system first, then fall back to embedded. */
 #if defined(NDEBUG)
-	 int z = premake_test_file(L, script,
-	 	TEST_SCRIPTS | TEST_EMBEDDED);
+	int z = premake_test_file(L, script,
+		TEST_SCRIPTS | TEST_EMBEDDED);
 #else
 	int z = premake_test_file(L, script,
 		TEST_LOCAL | TEST_SCRIPTS | TEST_PATH | TEST_EMBEDDED);
@@ -508,10 +603,10 @@ static int run_premake_main(lua_State* L, const char* script)
  * contents of the file's script.
  */
 
- const buildin_mapping* premake_find_embedded_script(const char* filename)
- {
+const buildin_mapping* premake_find_embedded_script(const char* filename)
+{
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
- 	int i;
+	int i;
 	for (i = 0; builtin_scripts[i].name != NULL; ++i) {
 		if (strcmp(builtin_scripts[i].name, filename) == 0) {
 			return builtin_scripts + i;
@@ -519,7 +614,7 @@ static int run_premake_main(lua_State* L, const char* script)
 	}
 #endif
 	return NULL;
- }
+}
 
 
 
@@ -556,4 +651,21 @@ int premake_load_embedded_script(lua_State* L, const char* filename)
 
 	/* Load the chunk */
 	return luaL_loadbuffer(L, (const char*)chunk->bytecode, chunk->length, filename);
+}
+
+
+/**
+ * Give the lua runtime raw access to embedded files.
+ */
+int premake_getEmbeddedResource(lua_State* L)
+{
+	const char* filename = luaL_checkstring(L, 1);
+	const buildin_mapping* chunk = premake_find_embedded_script(filename);
+	if (chunk == NULL)
+	{
+		return 0;
+	}
+
+	lua_pushlstring(L, (const char*)chunk->bytecode, chunk->length);
+	return 1;
 }

@@ -4,8 +4,9 @@
 -- Copyright (c) 2011-2013 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("project_sources")
-	local project = premake.project
+	local project = p.project
 
 
 --
@@ -25,7 +26,7 @@
 		os.chdir(cwd)
 
 		-- Create a token to be used in search paths
-		premake.api.register { name = "mytoken", kind = "string", scope = "config" }
+		p.api.register { name = "mytoken", kind = "string", scope = "config" }
 		mytoken "test"
 	end
 

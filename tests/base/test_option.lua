@@ -4,6 +4,7 @@
 -- Copyright (c) 2014 Jason Perkins and the Premake project
 --
 
+	local p = premake
 	local suite = test.declare("base_option")
 
 
@@ -40,5 +41,5 @@
 			description = "Testing",
 		}
 
-		test.isnotnil(premake.option.get("testopt2"))
+		test.isnotnil(p.option.get("testopt2"))
 	end

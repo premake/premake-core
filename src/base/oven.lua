@@ -63,15 +63,15 @@
 		context.addFilter(self, "_ACTION", _ACTION)
 		context.addFilter(self, "action", _ACTION)
 
-		self.system = self.system or p.action.current().os or os.get()
-		context.addFilter(self, "system", self.system)
+		self.system = self.system or os.target()
+		context.addFilter(self, "system", os.getSystemTags(self.system))
 
 		-- Add command line options to the filtering options
 		local options = {}
 		for key, value in pairs(_OPTIONS) do
 			local term = key
 			if value ~= "" then
-				term = term .. "=" .. value
+				term = term .. "=" .. tostring(value)
 			end
 			table.insert(options, term)
 		end
@@ -181,7 +181,7 @@
 			end
 
 			-- generated files might screw up the object sequences.
-			if prj.hasGeneratedFiles and p.project.iscpp(prj) then
+			if prj.hasGeneratedFiles and p.project.isnative(prj) then
 				oven.assignObjectSequences(prj)
 			end
 		end
@@ -204,9 +204,10 @@
 		-- Now filter on the current system and architecture, allowing the
 		-- values that might already in the context to override my defaults.
 
-		self.system = self.system or p.action.current().os or os.get()
-		context.addFilter(self, "system", self.system)
+		self.system = self.system or os.target()
+		context.addFilter(self, "system", os.getSystemTags(self.system))
 		context.addFilter(self, "architecture", self.architecture)
+		context.addFilter(self, "tags", self.tags)
 
 		-- The kind is a configuration level value, but if it has been set at the
 		-- project level allow that to influence the other project-level results.
@@ -235,7 +236,7 @@
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated project.
 
-		self.location = self.location or wks.location or self.basedir
+		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 
 		-- This bit could use some work: create a canonical set of configurations
@@ -248,6 +249,7 @@
 
 		-- Don't allow a project-level system setting to influence the configurations
 
+		local projectSystem = self.system
 		self.system = nil
 
 		-- Finally, step through the list of configurations I built above and
@@ -261,7 +263,7 @@
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(wks, self, buildcfg, platform)
 
-			if premake.action.supportsconfig(premake.action.current(), cfg) then
+			if p.action.supportsconfig(p.action.current(), cfg) then
 				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
 			end
 		end
@@ -278,9 +280,12 @@
 		-- to do this up front to make sure the sequence numbers are the same for
 		-- all the tools, even they reorder the source file list.
 
-		if p.project.iscpp(self) then
+		if p.project.isnative(self) then
 			oven.assignObjectSequences(self)
 		end
+
+		-- at the end, restore the system, so it's usable elsewhere.
+		self.system = projectSystem
 	end
 
 
@@ -405,7 +410,7 @@
 		local pairings = table.fold(buildcfgs, platforms)
 		for _, pairing in ipairs(pairings) do
 			local cfg = oven.bakeConfig(wks, nil, pairing[1], pairing[2])
-			if premake.action.supportsconfig(premake.action.current(), cfg) then
+			if p.action.supportsconfig(p.action.current(), cfg) then
 				table.insert(configs, cfg)
 			end
 		end
@@ -528,9 +533,9 @@
 		-- More than a convenience; this is required to work properly with
 		-- external Visual Studio project files.
 
-		local system = p.action.current().os or os.get()
+		local system = os.target()
 		local architecture = nil
-		local toolset = nil
+		local toolset = p.action.current().toolset
 
 		if platform then
 			system = p.api.checkValue(p.fields.system, platform) or system
@@ -580,18 +585,21 @@
 
 		-- allow the project script to override the default system
 		ctx.system = ctx.system or system
-		context.addFilter(ctx, "system", ctx.system)
+		context.addFilter(ctx, "system", os.getSystemTags(ctx.system))
 
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
 		context.addFilter(ctx, "architecture", ctx.architecture)
 
 		-- allow the project script to override the default toolset
-		ctx.toolset = ctx.toolset or toolset
+		ctx.toolset = _OPTIONS.cc or ctx.toolset or toolset
 		context.addFilter(ctx, "toolset", ctx.toolset)
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
+
+		-- if tags are set, allow that to influence the configuration
+		context.addFilter(ctx, "tags", ctx.tags)
 
 		-- if any extra filters were specified, can include them now
 		if extraFilters then
@@ -634,21 +642,30 @@
 		-- I need to look at them all.
 
 		for cfg in p.project.eachconfig(prj) do
-			table.foreachi(cfg.files, function(fname)
+			local function addFile(fname)
 
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
 				-- and indexed for ordered iteration.
-
-				if not files[fname] then
-					local fcfg = p.fileconfig.new(fname, prj)
+				local fcfg = files[fname]
+				if not fcfg then
+					fcfg = p.fileconfig.new(fname, prj)
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end
 
-				p.fileconfig.addconfig(files[fname], cfg)
+				p.fileconfig.addconfig(fcfg, cfg)
+			end
 
-			end)
+			table.foreachi(cfg.files, addFile)
+
+			-- If this project uses NuGet, we need to add the generated
+			-- packages.config file to the project. Is there a better place to
+			-- do this?
+
+			if #prj.nuget > 0 then
+				addFile("packages.config")
+			end
 		end
 
 		-- Alpha sort the indices, so I will get consistent results in
@@ -678,7 +695,7 @@
 
 			-- Only consider sources that actually generate object files
 
-			if not path.iscppfile(file.abspath) then
+			if not path.isnativefile(file.abspath) then
 				return
 			end
 

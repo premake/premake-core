@@ -46,7 +46,7 @@
  * blocks of data.  Remaining, bare CRs are changed to LFs.  The possibly new
  * size of the data is returned.
  */
-static size_t convert_lineends(struct SessionHandle *data,
+static size_t convert_lineends(struct Curl_easy *data,
                                char *startPtr, size_t size)
 {
   char *inPtr, *outPtr;
@@ -122,6 +122,13 @@ static size_t convert_lineends(struct SessionHandle *data,
 #endif /* CURL_DO_LINEEND_CONV */
 
 #ifdef USE_RECV_BEFORE_SEND_WORKAROUND
+bool Curl_recv_has_postponed_data(struct connectdata *conn, int sockindex)
+{
+  struct postponed_data * const psnd = &(conn->postponed[sockindex]);
+  return psnd->buffer && psnd->allocated_size &&
+         psnd->recv_size > psnd->recv_processed;
+}
+
 static void pre_receive_plain(struct connectdata *conn, int num)
 {
   const curl_socket_t sockfd = conn->sock[num];
@@ -201,13 +208,19 @@ static ssize_t get_pre_recved(struct connectdata *conn, int num, char *buf,
 }
 #else  /* ! USE_RECV_BEFORE_SEND_WORKAROUND */
 /* Use "do-nothing" macros instead of functions when workaround not used */
+bool Curl_recv_has_postponed_data(struct connectdata *conn, int sockindex)
+{
+  (void)conn;
+  (void)sockindex;
+  return false;
+}
 #define pre_receive_plain(c,n) do {} WHILE_FALSE
 #define get_pre_recved(c,n,b,l) 0
 #endif /* ! USE_RECV_BEFORE_SEND_WORKAROUND */
 
 /* Curl_infof() is for info message along the way */
 
-void Curl_infof(struct SessionHandle *data, const char *fmt, ...)
+void Curl_infof(struct Curl_easy *data, const char *fmt, ...)
 {
   if(data && data->set.verbose) {
     va_list ap;
@@ -225,7 +238,7 @@ void Curl_infof(struct SessionHandle *data, const char *fmt, ...)
  * The message SHALL NOT include any LF or CR.
  */
 
-void Curl_failf(struct SessionHandle *data, const char *fmt, ...)
+void Curl_failf(struct Curl_easy *data, const char *fmt, ...)
 {
   va_list ap;
   size_t len;
@@ -253,7 +266,7 @@ void Curl_failf(struct SessionHandle *data, const char *fmt, ...)
 CURLcode Curl_sendf(curl_socket_t sockfd, struct connectdata *conn,
                     const char *fmt, ...)
 {
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
   ssize_t bytes_written;
   size_t write_len;
   CURLcode result = CURLE_OK;
@@ -452,7 +465,7 @@ ssize_t Curl_recv_plain(struct connectdata *conn, int num, char *buf,
   return nread;
 }
 
-static CURLcode pausewrite(struct SessionHandle *data,
+static CURLcode pausewrite(struct Curl_easy *data,
                            int type, /* what type of data */
                            const char *ptr,
                            size_t len)
@@ -488,10 +501,10 @@ static CURLcode pausewrite(struct SessionHandle *data,
  */
 CURLcode Curl_client_chop_write(struct connectdata *conn,
                                 int type,
-                                char * ptr,
+                                char *ptr,
                                 size_t len)
 {
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
   curl_write_callback writeheader = NULL;
   curl_write_callback writebody = NULL;
 
@@ -571,7 +584,7 @@ CURLcode Curl_client_chop_write(struct connectdata *conn,
         return pausewrite(data, CLIENTWRITE_HEADER, ptr, len);
 
       if(wrote != chunklen) {
-        failf (data, "Failed writing header");
+        failf(data, "Failed writing header");
         return CURLE_WRITE_ERROR;
       }
     }
@@ -598,7 +611,7 @@ CURLcode Curl_client_write(struct connectdata *conn,
                            char *ptr,
                            size_t len)
 {
-  struct SessionHandle *data = conn->data;
+  struct Curl_easy *data = conn->data;
 
   if(0 == len)
     len = strlen(ptr);
@@ -692,7 +705,7 @@ CURLcode Curl_read(struct connectdata *conn, /* connection data */
     }
     /* If we come here, it means that there is no data to read from the buffer,
      * so we read from the socket */
-    bytesfromsocket = CURLMIN(sizerequested, BUFSIZE * sizeof (char));
+    bytesfromsocket = CURLMIN(sizerequested, BUFSIZE * sizeof(char));
     buffertofill = conn->master_buffer;
   }
   else {
@@ -718,7 +731,7 @@ CURLcode Curl_read(struct connectdata *conn, /* connection data */
 }
 
 /* return 0 on success */
-static int showit(struct SessionHandle *data, curl_infotype type,
+static int showit(struct Curl_easy *data, curl_infotype type,
                   char *ptr, size_t size)
 {
   static const char s_infotype[CURLINFO_END][3] = {
@@ -787,7 +800,7 @@ static int showit(struct SessionHandle *data, curl_infotype type,
   return 0;
 }
 
-int Curl_debug(struct SessionHandle *data, curl_infotype type,
+int Curl_debug(struct Curl_easy *data, curl_infotype type,
                char *ptr, size_t size,
                struct connectdata *conn)
 {
@@ -796,7 +809,7 @@ int Curl_debug(struct SessionHandle *data, curl_infotype type,
     char buffer[160];
     const char *t=NULL;
     const char *w="Data";
-    switch (type) {
+    switch(type) {
     case CURLINFO_HEADER_IN:
       w = "Header";
       /* FALLTHROUGH */

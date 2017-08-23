@@ -120,20 +120,74 @@
 	function rule.getPropertyString(self, prop, value)
 		-- list?
 		if type(value) == "table" then
-			local sep = prop.separator or " "
-			return table.concat(value, sep)
+			if #value > 0 then
+				local sep = prop.separator or " "
+				return table.concat(value, sep)
+			else
+				return nil
+			end
 		end
 
 		-- enum?
 		if prop.values then
 			local i = table.indexof(prop.values, value)
-			return tostring(i)
+			if i ~= nil then
+				return tostring(i)
+			else
+				return nil
+			end
 		end
 
 		-- primitive
 		value = tostring(value)
 		if #value > 0 then
 			return value
+		else
+			return nil
+		end
+	end
+
+
+
+---
+-- Given the value for a particular property, returns a expanded string with switches embedded.
+--
+-- @param prop
+--    The property definition.
+-- @param value
+--    The value of the property to be formatted.
+-- @returns
+--    A string value.
+---
+
+	function rule.expandString(self, prop, value)
+		if not prop.switch then
+			return rule.getPropertyString(self, prop, value)
+		end
+
+		-- list?
+		if type(value) == "table" then
+			if #value > 0 then
+				return prop.switch .. table.concat(value, " " .. prop.switch)
+			else
+				return nil
+			end
+		end
+
+		-- enum?
+		if prop.values then
+			local i = table.indexof(prop.values, value)
+			if i ~= nil then
+				return prop.switch .. tostring(i)
+			else
+				return nil
+			end
+		end
+
+		-- primitive
+		value = tostring(value)
+		if #value > 0 then
+			return prop.switch .. value
 		else
 			return nil
 		end

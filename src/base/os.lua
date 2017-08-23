@@ -62,25 +62,16 @@
 		return dirs
 	end
 
-	function os.findlib(libname, libdirs)
-		-- libname: library name with or without prefix and suffix
-		-- libdirs: (array or string): A set of additional search paths
-
-		local path, formats
-
-		-- assemble a search path, depending on the platform
-		if os.is("windows") then
-			formats = { "%s.dll", "%s" }
+	local function get_library_search_path()
+		local path
+		if os.istarget("windows") then
 			path = os.getenv("PATH") or ""
-		elseif os.is("haiku") then
-			formats = { "lib%s.so", "%s.so" }
+		elseif os.istarget("haiku") then
 			path = os.getenv("LIBRARY_PATH") or ""
 		else
-			if os.is("macosx") then
-				formats = { "lib%s.dylib", "%s.dylib" }
+			if os.istarget("macosx") then
 				path = os.getenv("DYLD_LIBRARY_PATH") or ""
 			else
-				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
 
 				for _, prefix in ipairs({"", "/opt"}) do
@@ -97,10 +88,9 @@
 				end
 			end
 
-			table.insert(formats, "%s")
 			path = path or ""
 			local archpath = "/lib:/usr/lib:/usr/local/lib"
-			if os.is64bit() and not os.is("macosx") then
+			if os.is64bit() and not os.istarget("macosx") then
 				archpath = "/lib64:/usr/lib64/:usr/local/lib64" .. ":" .. archpath
 			end
 			if (#path > 0) then
@@ -108,6 +98,31 @@
 			else
 				path = archpath
 			end
+		end
+
+		return path
+	end
+
+	function os.findlib(libname, libdirs)
+		-- libname: library name with or without prefix and suffix
+		-- libdirs: (array or string): A set of additional search paths
+
+		local path = get_library_search_path()
+		local formats
+
+		-- assemble a search path, depending on the platform
+		if os.istarget("windows") then
+			formats = { "%s.dll", "%s" }
+		elseif os.istarget("haiku") then
+			formats = { "lib%s.so", "%s.so" }
+		else
+			if os.istarget("macosx") then
+				formats = { "lib%s.dylib", "%s.dylib" }
+			else
+				formats = { "lib%s.so", "%s.so" }
+			end
+
+			table.insert(formats, "%s")
 		end
 
 		local userpath = ""
@@ -133,26 +148,99 @@
 		end
 	end
 
+	function os.findheader(headerpath, headerdirs)
+		-- headerpath: a partial header file path
+		-- headerdirs: additional header search paths
 
+		local path = get_library_search_path()
+
+		-- replace all /lib by /include
+		path = path .. ':'
+		path = path:gsub ('/lib[0-9]*([:/])', '/include%1')
+		path = path:sub (1, #path - 1)
+
+		local userpath = ""
+
+		if type(headerdirs) == "string" then
+			userpath = headerdirs
+		elseif type(headerdirs) == "table" then
+			userpath = table.implode(headerdirs, "", "", ":")
+		end
+
+		if (#userpath > 0) then
+			if (#path > 0) then
+				path = userpath .. ":" .. path
+			else
+				path = userpath
+			end
+		end
+
+		local result = os.pathsearch (headerpath, path)
+		return result
+	end
 
 --
--- Retrieve the current operating system ID string.
+-- Retrieve the current target operating system ID string.
 --
+
+	function os.target()
+		return _OPTIONS.os or _TARGET_OS
+	end
 
 	function os.get()
-		return _OPTIONS.os or _OS
+		local caller = filelineinfo(2)
+		premake.warnOnce(caller, "os.get() is deprecated, use 'os.target()' or 'os.host()'.\n   @%s\n", caller)
+		return os.target()
 	end
 
+	-- deprecate _OS
+	_G_metatable = {
+		__index = function(t, k)
+			if (k == '_OS') then
+				premake.warnOnce("_OS+get", "_OS is deprecated, use '_TARGET_OS'.")
+				return rawget(t, "_TARGET_OS")
+			else
+				return rawget(t, k)
+			end
+		end,
+
+		__newindex = function(t, k, v)
+			if (k == '_OS') then
+				premake.warnOnce("_OS+set", "_OS is deprecated, use '_TARGET_OS'.")
+				rawset(t, "_TARGET_OS", v)
+			else
+				rawset(t, k, v)
+			end
+		end
+	}
+	setmetatable(_G, _G_metatable)
+
 
 
 --
--- Check the current operating system; may be set with the /os command line flag.
+-- Check the current target operating system; may be set with the /os command line flag.
 --
+
+	function os.istarget(id)
+		local tags = os.getSystemTags(os.target())
+		return table.contains(tags, id:lower())
+	end
 
 	function os.is(id)
-		return (os.get():lower() == id:lower())
+		local caller = filelineinfo(2)
+		premake.warnOnce(caller, "os.is() is deprecated, use 'os.istarget()' or 'os.ishost()'.\n   @%s\n", caller)
+		return os.istarget(id)
 	end
 
+
+--
+-- Check the current host operating system.
+--
+
+	function os.ishost(id)
+		local tags = os.getSystemTags(os.host())
+		return table.contains(tags, id:lower())
+	end
 
 
 ---
@@ -219,9 +307,9 @@
 		else
 			-- Identify the system
 			local arch
-			if _OS == "windows" then
+			if os.ishost("windows") then
 				arch = os.getenv("PROCESSOR_ARCHITECTURE")
-			elseif _OS == "macosx" then
+			elseif os.ishost("macosx") then
 				arch = os.outputof("echo $HOSTTYPE")
 			else
 				arch = os.outputof("uname -m")
@@ -374,17 +462,17 @@
 
 		local pipe = io.popen(cmd .. " 2>&1")
 		local result = pipe:read('*a')
-		local b, exitcode = pipe:close()
-		if not b then
-			exitcode = -1
-		end
+		local success, what, code = pipe:close()
+		if success then
+			-- chomp trailing newlines
+			if result then
+				result = string.gsub(result, "[\r\n]+$", "")
+			end
 
-		-- chomp trailing newlines
-		if result then
-			result = string.gsub(result, "[\r\n]+$", "")
+			return result, code, what
+		else
+			return nil, code, what
 		end
-
-		return result, exitcode
 	end
 
 
@@ -513,7 +601,8 @@
 				return "echo " .. v
 			end,
 			mkdir = function(v)
-				return "mkdir " .. path.translate(path.normalize(v))
+				v = path.translate(path.normalize(v))
+				return "IF NOT EXIST " .. v .. " (mkdir " .. v .. ")"
 			end,
 			move = function(v)
 				return "move /Y " .. path.translate(path.normalize(v))
@@ -529,21 +618,30 @@
 	}
 
 	function os.translateCommands(cmd, map)
-		map = map or os.get()
+		map = map or os.target()
 		if type(map) == "string" then
 			map = os.commandTokens[map] or os.commandTokens["_"]
 		end
 
 		local processOne = function(cmd)
-			local token = cmd:match("^{.+}")
-			if token then
-				token = token:sub(2, #token - 1):lower()
-				local args = cmd:sub(#token + 4)
-				local func = map[token] or os.commandTokens["_"][token]
-				if func then
-					cmd = func(args)
+			local i, j, prev
+			repeat
+				i, j = cmd:find("{.-}")
+				if i then
+					if i == prev then
+						break
+					end
+
+					local token = cmd:sub(i + 1, j - 1):lower()
+					local args = cmd:sub(j + 2)
+					local func = map[token] or os.commandTokens["_"][token]
+					if func then
+						cmd = cmd:sub(1, i -1) .. func(args)
+					end
+
+					prev = i
 				end
-			end
+			until i == nil
 			return cmd
 		end
 
@@ -558,6 +656,47 @@
 		end
 	end
 
+
+
+---
+-- Translate decorated command paths into their OS equivalents.
+---
+
+	function os.translateCommandsAndPaths(cmds, basedir, location, map)
+		local translatedBaseDir = path.getrelative(location, basedir)
+
+		map = map or os.target()
+
+		local translateFunction = function(value)
+			local result = path.join(translatedBaseDir, value)
+			if value:endswith('/') or value:endswith('\\') or
+			   value:endswith('/"') or value:endswith('\\"') then
+				result = result .. '/'
+			end
+			if map == 'windows' then
+				result = path.translate(result)
+			end
+			return result
+		end
+
+		local processOne = function(cmd)
+			local replaceFunction = function(value)
+				value = value:sub(3, #value - 1)
+				return '"' .. translateFunction(value) .. '"'
+			end
+			return string.gsub(cmd, "%%%[[^%]\r\n]*%]", replaceFunction)
+		end
+
+		if type(cmds) == "table" then
+			local result = {}
+			for i = 1, #cmds do
+				result[i] = processOne(cmds[i])
+			end
+			return os.translateCommands(result, map)
+		else
+			return os.translateCommands(processOne(cmds), map)
+		end
+	end
 
 
 --
@@ -576,4 +715,24 @@
 			os._uuids[id] = name
 		end
 		return id
+	end
+
+
+--
+-- Get a set of tags for different 'platforms'
+--
+
+	os.systemTags =
+	{
+		["aix"]      = { "aix",     "posix" },
+		["bsd"]      = { "bsd",     "posix" },
+		["haiku"]    = { "haiku",   "posix" },
+		["linux"]    = { "linux",   "posix" },
+		["macosx"]   = { "macosx",  "darwin", "posix" },
+		["solaris"]  = { "solaris", "posix" },
+		["windows"]  = { "windows", "win32" },
+	}
+
+	function os.getSystemTags(name)
+		return os.systemTags[name:lower()] or { name:lower() }
 	end

@@ -1,8 +1,8 @@
---
+---
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2014 Jason Perkins and the Premake project
---
+-- Copyright (c) 2008-2017 Jason Perkins and the Premake project
+---
 
 	local suite = test.declare("base_os")
 
@@ -23,9 +23,9 @@
 --
 
 	function suite.findlib_FindSystemLib()
-		if os.is("windows") then
+		if os.istarget("windows") then
 			test.istrue(os.findlib("user32"))
-		elseif os.is("haiku") then
+		elseif os.istarget("haiku") then
 			test.istrue(os.findlib("root"))
 		else
 			test.istrue(os.findlib("m"))
@@ -34,6 +34,16 @@
 
 	function suite.findlib_FailsOnBadLibName()
 		test.isfalse(os.findlib("NoSuchLibraryAsThisOneHere"))
+	end
+
+	function suite.findheader_stdheaders()
+		if not os.istarget("windows") and not os.istarget("macosx") then
+			test.istrue(os.findheader("stdlib.h"))
+		end
+	end
+
+	function suite.findheader_failure()
+		test.isfalse(os.findheader("Knights/who/say/Ni.hpp"))
 	end
 
 
@@ -83,8 +93,8 @@
 	end
 
 	function suite.matchfiles_OnSubfolderMatch()
-		local result = os.matchfiles("**/vc2010/*")
-		test.istrue(table.contains(result, "actions/vstudio/vc2010/test_globals.lua"))
+		local result = os.matchfiles("**/subfolder/*")
+		test.istrue(table.contains(result, "folder/subfolder/hello.txt"))
 		test.isfalse(table.contains(result, "premake4.lua"))
 	end
 
@@ -143,10 +153,10 @@
 	-- Check if outputof returns the command exit code
 	-- in addition of the command output
 	function suite.outputof_commandExitCode()
-		if os.is("macosx")
-			or os.is("linux")
-			or os.is("solaris")
-			or os.is("bsd")
+		if os.istarget("macosx")
+			or os.istarget("linux")
+			or os.istarget("solaris")
+			or os.istarget("bsd")
 		then
 			-- Assumes 'true' and 'false' commands exist
 			-- which should be the case on all *nix platforms
@@ -175,6 +185,13 @@
 			copy = function(value) return "test " .. value end
 		}
 		test.isequal("test a b", os.translateCommands("{COPY} a b", "test"))
+	end
+
+	function suite.translateCommand_callsProcessor_multipleTokens()
+		os.commandTokens.test = {
+			copy = function(value) return "test " .. value end
+		}
+		test.isequal("test a b; test c d; test e f;", os.translateCommands("{COPY} a b; {COPY} c d; {COPY} e f;", "test"))
 	end
 
 --
@@ -220,3 +237,76 @@
 	function suite.translateCommand_windowsCopyNoQuotesSrc_ExtraSpace()
 		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b" ', "windows"))
 	end
+
+--
+-- os.getWindowsRegistry windows tests
+--
+	function suite.getreg_nonExistentValue()
+		if os.ishost("windows") then
+			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.getreg_nonExistentDefaultValue()
+		if os.ishost("windows") then
+			local x = os.getWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All\\")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.getreg_noSeparators()
+		if os.ishost("windows") then
+			os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
+		end
+	end
+
+	function suite.getreg_namedValue()
+		if os.ishost("windows") then
+			local x = os.getWindowsRegistry("HKCU:Environment\\TEMP")
+			test.istrue(x ~= nil)
+		end
+	end
+
+	function suite.getreg_namedValueOptSeparator()
+		if os.ishost("windows") then
+			local x = os.getWindowsRegistry("HKCU:\\Environment\\TEMP")
+			test.istrue(x ~= nil)
+		end
+	end
+
+	function suite.getreg_defaultValue()
+		if os.ishost("windows") then
+			local x = os.getWindowsRegistry("HKLM:SYSTEM\\CurrentControlSet\\Control\\SafeBoot\\Minimal\\AppInfo\\")
+			test.isequal("Service", x)
+		end
+	end
+
+
+--
+-- os.getversion tests.
+--
+
+	function suite.getversion()
+		local version = os.getversion();
+		test.istrue(version ~= nil)
+	end
+
+
+
+--
+-- os.translateCommandsAndPaths.
+--
+
+	function suite.translateCommandsAndPaths()
+		test.isequal('cmdtool "../foo/path1"', os.translateCommandsAndPaths("cmdtool %[path1]", '../foo', '.', 'osx'))
+	end
+
+	function suite.translateCommandsAndPaths_PreserveSlash()
+		test.isequal('cmdtool "../foo/path1/"', os.translateCommandsAndPaths("cmdtool %[path1/]", '../foo', '.', 'osx'))
+	end
+
+	function suite.translateCommandsAndPaths_MultipleTokens()
+		test.isequal('cmdtool "../foo/path1" "../foo/path2/"', os.translateCommandsAndPaths("cmdtool %[path1] %[path2/]", '../foo', '.', 'osx'))
+	end
+

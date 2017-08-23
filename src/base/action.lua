@@ -7,7 +7,7 @@
 	local p = premake
 	p.action = {}
 
-	local action = premake.action
+	local action = p.action
 
 
 
@@ -59,6 +59,12 @@
 		if missing then
 			local name = act.trigger or ""
 			error(string.format('action "%s" needs a  %s', name, missing), 3)
+		end
+
+		if act.os ~= nil then
+			p.warnOnce(act.trigger, "action '" .. act.trigger .. "' sets 'os' field, which is deprecated, use 'targetos' instead.")
+			act.targetos = act.os
+			act.os = nil
 		end
 
 		action._list[act.trigger] = act
@@ -188,7 +194,7 @@
 		if not self then
 			self = action.current() or {}
 		end
-		if self.onSolution or self.onsolution then
+		if self.onWorkspace or self.onSolution or self.onsolution then
 			return true
 		end
 		if self.onProject or self.onproject then
@@ -212,7 +218,7 @@
 		-- Some actions imply a particular operating system
 		local act = action.get(name)
 		if act then
-			_OS = act.os or _OS
+			_TARGET_OS = act.targetos or _TARGET_OS
 		end
 
 		-- Some are implemented in standalone modules
@@ -239,19 +245,19 @@
 		if not self then
 			return false
 		end
+
 		if not self.valid_languages and not self.valid_kinds then
 			return true
 		end
-		if self.valid_languages then
-			if table.contains(self.valid_languages, feature) then
-				return true
-			end
+
+		if self.valid_languages and table.contains(self.valid_languages, feature) then
+			return true
 		end
-		if self.valid_kinds then
-			if table.contains(self.valid_kinds, feature) then
-				return true
-			end
+
+		if self.valid_kinds and table.contains(self.valid_kinds, feature) then
+			return true
 		end
+
 		return false
 	end
 
@@ -261,7 +267,7 @@
 -- @return
 -- True if the configuration is supported, false otherwise.
 --
-	function premake.action.supportsconfig(action, cfg)
+	function p.action.supportsconfig(action, cfg)
 		if not action then
 			return false
 		end

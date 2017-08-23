@@ -78,6 +78,7 @@
 		},
 		warnings = {
 			Extra = "-Wall -Wextra",
+			High = "-Wall",
 			Off = "-w",
 		},
 		symbols = {
@@ -86,10 +87,16 @@
 	}
 
 	gcc.cflags = {
-		flags = {
-			["C90"] = "-std=gnu90",
-			["C99"] = "-std=gnu99",
-		},
+		cdialect = {
+			["C89"] = "-std=c89",
+			["C90"] = "-std=c90",
+			["C99"] = "-std=c99",
+			["C11"] = "-std=c11",
+			["gnu89"] = "-std=gnu89",
+			["gnu90"] = "-std=gnu90",
+			["gnu99"] = "-std=gnu99",
+			["gnu11"] = "-std=gnu11",
+		}
 	}
 
 	function gcc.getcflags(cfg)
@@ -125,8 +132,16 @@
 		},
 		flags = {
 			NoBufferSecurityCheck = "-fno-stack-protector",
+		},
+		cppdialect = {
+			["C++98"] = "-std=c++98",
 			["C++11"] = "-std=c++11",
 			["C++14"] = "-std=c++14",
+			["C++17"] = "-std=c++1z",
+			["gnu++98"] = "-std=gnu++98",
+			["gnu++11"] = "-std=gnu++11",
+			["gnu++14"] = "-std=gnu++14",
+			["gnu++17"] = "-std=gnu++1z",
 		},
 		rtti = {
 			Off = "-fno-rtti"
@@ -178,7 +193,7 @@
 
 		table.foreachi(cfg.forceincludes, function(value)
 			local fn = project.getrelative(cfg.project, value)
-			table.insert(result, string.format('-include %s', premake.quoted(fn)))
+			table.insert(result, string.format('-include %s', p.quoted(fn)))
 		end)
 
 		return result
@@ -193,11 +208,11 @@
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
-			table.insert(result, '-I' .. premake.quoted(dir))
+			table.insert(result, '-I' .. p.quoted(dir))
 		end
 		for _, dir in ipairs(sysdirs or {}) do
 			dir = project.getrelative(cfg.project, dir)
-			table.insert(result, '-isystem ' .. premake.quoted(dir))
+			table.insert(result, '-isystem ' .. p.quoted(dir))
 		end
 		return result
 	end
@@ -209,8 +224,8 @@
 	function gcc.getrunpathdirs(cfg, dirs)
 		local result = {}
 
-		if not ((cfg.system == premake.MACOSX)
-				or (cfg.system == premake.LINUX)) then
+		if not ((cfg.system == p.MACOSX)
+				or (cfg.system == p.LINUX)) then
 			return result
 		end
 
@@ -226,7 +241,7 @@
 
 		-- Automatically add linked shared libraries path relative to target directory
 		for _, sibling in ipairs(config.getlinks(cfg, "siblings", "object")) do
-			if (sibling.kind == premake.SHAREDLIB) then
+			if (sibling.kind == p.SHAREDLIB) then
 				local fullpath = sibling.linktarget.directory
 				local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
 				if not (table.contains(rpaths, rpath)) then
@@ -236,9 +251,9 @@
 		end
 
 		for _, rpath in ipairs(rpaths) do
-			if (cfg.system == premake.MACOSX) then
+			if (cfg.system == p.MACOSX) then
 				rpath = "@loader_path/" .. rpath
-			elseif (cfg.system == premake.LINUX) then
+			elseif (cfg.system == p.LINUX) then
 				rpath = iif(rpath == ".", "", "/" .. rpath)
 				rpath = "$$ORIGIN" .. rpath
 			end
@@ -250,12 +265,30 @@
 	end
 
 --
+-- get the right output flag.
+--
+	function gcc.getsharedlibarg(cfg)
+		if cfg.system == p.MACOSX then
+			if cfg.sharedlibtype == "OSXBundle" then
+				return "-bundle"
+			elseif cfg.sharedlibtype == "OSXFramework" then
+				return "-framework"
+			else
+				return "-dynamiclib"
+			end
+		else
+			return "-shared"
+		end
+	end
+
+
+--
 -- Return a list of LDFLAGS for a specific configuration.
 --
 
 	function gcc.ldsymbols(cfg)
 		-- OS X has a bug, see http://lists.apple.com/archives/Darwin-dev/2006/Sep/msg00084.html
-		return iif(cfg.system == premake.MACOSX, "-Wl,-x", "-s")
+		return iif(cfg.system == p.MACOSX, "-Wl,-x", "-s")
 	end
 
 	gcc.ldflags = {
@@ -268,18 +301,18 @@
 		},
 		kind = {
 			SharedLib = function(cfg)
-				local r = { iif(cfg.system == premake.MACOSX, "-dynamiclib", "-shared") }
-				if cfg.system == premake.WINDOWS and not cfg.flags.NoImportLib then
+				local r = { gcc.getsharedlibarg(cfg) }
+				if cfg.system == p.WINDOWS and not cfg.flags.NoImportLib then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
-				elseif cfg.system == premake.LINUX then
-					table.insert(r, '-Wl,-soname=' .. premake.quoted(cfg.linktarget.name))
-				elseif cfg.system == premake.MACOSX then
-					table.insert(r, '-Wl,-install_name,' .. premake.quoted('@rpath/' .. cfg.linktarget.name))
+				elseif cfg.system == p.LINUX then
+					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))
+				elseif cfg.system == p.MACOSX then
+					table.insert(r, '-Wl,-install_name,' .. p.quoted('@rpath/' .. cfg.linktarget.name))
 				end
 				return r
 			end,
 			WindowedApp = function(cfg)
-				if cfg.system == premake.WINDOWS then return "-mwindows" end
+				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
 		system = {
@@ -306,14 +339,14 @@
 		architecture = {
 			x86 = function (cfg)
 				local r = {}
-				if cfg.system ~= premake.MACOSX then
+				if cfg.system ~= p.MACOSX then
 					table.insert (r, "-L/usr/lib32")
 				end
 				return r
 			end,
 			x86_64 = function (cfg)
 				local r = {}
-				if cfg.system ~= premake.MACOSX then
+				if cfg.system ~= p.MACOSX then
 					table.insert (r, "-L/usr/lib64")
 				end
 				return r
@@ -331,12 +364,12 @@
 		-- paths, add those to the list of library search paths. The call
 		-- config.getlinks() all includes cfg.libdirs.
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
-			table.insert(flags, '-L' .. premake.quoted(dir))
+			table.insert(flags, '-L' .. p.quoted(dir))
 		end
 
 		if cfg.flags.RelativeLinks then
 			for _, dir in ipairs(config.getlinks(cfg, "siblings", "directory")) do
-				local libFlag = "-L" .. premake.project.getrelative(cfg.project, dir)
+				local libFlag = "-L" .. p.project.getrelative(cfg.project, dir)
 				if not table.contains(flags, libFlag) then
 					table.insert(flags, libFlag)
 				end
@@ -344,7 +377,7 @@
 		end
 
 		for _, dir in ipairs(cfg.syslibdirs) do
-			table.insert(flags, '-L' .. premake.quoted(dir))
+			table.insert(flags, '-L' .. p.quoted(dir))
 		end
 
 		return flags
@@ -417,7 +450,7 @@
 		if #static_syslibs > 1 then
 			table.insert(static_syslibs, "-Wl,-Bdynamic")
 			move(static_syslibs, result)
-	    end
+		end
 		move(shared_syslibs, result)
 
 		return result
