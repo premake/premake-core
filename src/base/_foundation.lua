@@ -404,6 +404,13 @@
 		end
 	end
 
+--
+-- A shortcut for printing formatted output to stderr
+--
+
+	function eprintf(msg, ...)
+		io.stderr:write(string.format(msg, ...))
+	end
 
 --
 -- make a string from debug.getinfo information.

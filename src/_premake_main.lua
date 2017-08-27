@@ -230,7 +230,7 @@
 		-- script has run to allow for project-specific options
 		ok, err = p.option.validate(_OPTIONS)
 		if not ok then
-			print("Error: " .. err)
+			eprint("Error: " .. err)
 			os.exit(1)
 		end
 
@@ -243,12 +243,12 @@
 
 			local action = p.action.current()
 			if not action then
-				print("Error: no such action '" .. _ACTION .. "'")
+				eprint("Error: no such action '" .. _ACTION .. "'")
 				os.exit(1)
 			end
 
 			if p.action.isConfigurable() and not os.isfile(_MAIN_SCRIPT) then
-				print(string.format("No Premake script (%s) found!", path.getname(_MAIN_SCRIPT)))
+				eprint(string.format("No Premake script (%s) found!", path.getname(_MAIN_SCRIPT)))
 				os.exit(1)
 			end
 		end
