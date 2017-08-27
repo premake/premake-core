@@ -204,6 +204,21 @@
 	end
 
 
+---
+-- Determines if an action is headless or not.
+-- Headless actions prevent various built-in messages from printing.
+---
+
+	function action.isHeadless(self)
+		if not self then
+			self = action.current() or {}
+		end
+		if self.headless == true then
+			return true
+		end
+		return false
+	end
+
 
 ---
 -- Activates a particular action.

@@ -260,7 +260,7 @@
 ---
 
 	function m.preBake()
-		if p.action.isConfigurable() then
+		if p.action.isConfigurable() and not p.action.isHeadless() then
 			print("Building configurations...")
 		end
 	end
@@ -321,8 +321,10 @@
 ---
 
 	function m.preAction()
-		local action = p.action.current()
-		printf("Running action '%s'...", action.trigger)
+		if p.action.isHeadless() then
+			local action = p.action.current()
+			printf("Running action '%s'...", action.trigger)
+		end
 	end
 
 
@@ -341,7 +343,7 @@
 ---
 
 	function m.postAction()
-		if p.action.isConfigurable() then
+		if p.action.isConfigurable() and not p.action.isHeadless() then
 			local duration = math.floor((os.clock() - startTime) * 1000);
 			printf("Done (%dms).", duration)
 		end

@@ -189,7 +189,9 @@
 
 
 	function p.project.bake(self)
-		verbosef('    Baking %s...', self.name)
+		if not p.action.isHeadless() then
+			verbosef('    Baking %s...', self.name)
+		end
 
 		self.solution = self.workspace
 		self.global = self.workspace.global

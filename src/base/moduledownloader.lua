@@ -60,7 +60,9 @@
 		end
 
 		-- Unzip the module, and delete the temporary zip file.
-		verbosef(' UNZIP   : %s', destination)
+		if not p.action.isHeadless() then
+			verbosef(' UNZIP   : %s', destination)
+		end
 		zip.extract(destination, location)
 		os.remove(destination)
 		return true;
