@@ -1,4 +1,4 @@
-/**
+﻿/**
  * \file   premake.c
  * \brief  Program entry point.
  * \author Copyright (c) 2002-2017 Jason Perkins and the Premake project
@@ -248,7 +248,7 @@ static void setErrorColor(lua_State* L)
 
 
 
-static void printLastError(lua_State* L)
+void printLastError(lua_State* L)
 {
 	const char* message = lua_tostring(L, -1);
 	int oldColor = term_doGetTextColor();
@@ -257,12 +257,34 @@ static void printLastError(lua_State* L)
 	term_doSetTextColor(oldColor);
 }
 
+static int lua_error_handler(lua_State* L)
+{
+	// in debug mode, show full traceback on all errors
+#if !defined(NDEBUG)
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
+	lua_remove(L, -2);     // remove debug table
+	lua_insert(L, -2);     // insert traceback function before error message
+	lua_pushinteger(L, 3); // push level
+	lua_call(L, 2, 1);     // call traceback
+#endif
 
+	return 1;
+}
+
+int premake_pcall(lua_State* L, int nargs, int nresults)
+{
+	lua_pushcfunction(L, lua_error_handler);
+
+	int error_handler_index = lua_gettop(L) - nargs - 1;
+	lua_insert(L, error_handler_index); // insert lua_error_handler before call parameters
+	int result = lua_pcall(L, nargs, nresults, error_handler_index);
+	lua_remove(L, error_handler_index); // remove lua_error_handler from stack
+	return result;
+}
 
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
 {
-	int iErrFunc;
-
 	/* push the absolute path to the Premake executable */
 	lua_pushcfunction(L, path_getabsolute);
 	premake_locate_executable(L, argv[0]);
@@ -283,18 +305,9 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 		return !OKAY;
 	}
 
-	/* in debug mode, show full traceback on all errors */
-#if defined(NDEBUG)
-	iErrFunc = 0;
-#else
-	lua_getglobal(L, "debug");
-	lua_getfield(L, -1, "traceback");
-	iErrFunc = -2;
-#endif
-
 	/* and call the main entry point */
 	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, iErrFunc) != OKAY) {
+	if (premake_pcall(L, 0, 1) != OKAY) {
 		printLastError(L);
 		return !OKAY;
 	}
