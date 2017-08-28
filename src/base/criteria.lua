@@ -34,6 +34,7 @@
 		system = true,
 		toolset = true,
 		tags = true,
+		host = true,
 	}
 
 
