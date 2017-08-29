@@ -49,34 +49,15 @@
 		setmetatable(environ, {__index = _G})
 
 		function expandtoken(token, e)
-			-- convert the token into a function to execute
-			local func, err = load("return " .. token, nil, 't', e)
-			if not func then
-				return nil, "load error: " .. err
-			end
-
-			-- run it and get the result
-			local success, result = pcall(func)
-			if not success then
-				err    = result
-				result = nil
-			else
-				err    = nil
-				result = result or ""
-			end
-
-			-- If the result is an absolute path, and it is being inserted into
-			-- a NON-path value, I need to make it relative to the project that
-			-- will contain it. Otherwise I ended up with an absolute path in
-			-- the generated project, and it can no longer be moved around.
-
 			local isAbs = false
+			local err
+			local result
+			local success
 
-			if result ~= nil then
-				isAbs = path.isabsolute(result)
-				if isAbs and not field.paths and basedir then
-					result = path.getrelative(basedir, result)
-				end
+			-- if the token starts with a !, don't try making it relative.
+			local dontMakeRelative = token:startswith('!')
+			if dontMakeRelative then
+				token = token:sub(2, -1)
 			end
 
 			-- If this token is in my path variable mapping tables, replace the
@@ -99,6 +80,37 @@
 					result = result.token
 				else
 					isAbs = path.isabsolute(result)
+				end
+			else
+				-- convert the token into a function to execute
+				local func
+				func, err = load("return " .. token, nil, 't', e)
+				if not func then
+					return nil, "load error: " .. err
+				end
+
+				-- run it and get the result
+				success, result = pcall(func)
+				if not success then
+					err    = result
+					result = nil
+				else
+					err    = nil
+					result = result or ""
+				end
+
+				if result ~= nil then
+					-- ensure we got a string.
+					result = tostring(result)
+
+					-- If the result is an absolute path, and it is being inserted into
+					-- a NON-path value, I need to make it relative to the project that
+					-- will contain it. Otherwise I ended up with an absolute path in
+					-- the generated project, and it can no longer be moved around.
+					isAbs = path.isabsolute(result)
+					if isAbs and not field.paths and basedir and not dontMakeRelative then
+						result = path.getrelative(basedir, result)
+					end
 				end
 			end
 

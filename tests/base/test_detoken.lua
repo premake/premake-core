@@ -92,6 +92,17 @@
 		test.isequal("cd ..", x)
 	end
 
+--
+-- but not if it is prefixed with a !
+--
+
+	function suite.canExpandWithExclamationMark()
+		local cwd = os.getcwd()
+		environ.cfg = { basedir = path.getdirectory(cwd) }
+		x = detoken.expand("%{!cfg.basedir}", environ,  {}, cwd)
+		test.isequal(path.getdirectory(os.getcwd()), x)
+	end
+
 
 --
 -- If the value being expanded is a table, iterate over all of its values.
