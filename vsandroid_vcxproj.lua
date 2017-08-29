@@ -124,49 +124,67 @@
 
 	-- Note: this function is already patched in by vs2012...
 	premake.override(vc2010, "platformToolset", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
-			if _ACTION >= "vs2015" then
-				if cfg.toolchainversion ~= nil then
-					_p(2,'<PlatformToolset>%s_%s</PlatformToolset>', iif(cfg.toolset == "clang", "Clang", "GCC"), string.gsub(cfg.toolchainversion, "%.", "_"))
-				end
-			else
-				local archMap = {
-					arm = "armv5te", -- should arm5 be default? vs-android thinks so...
-					arm5 = "armv5te",
-					arm7 = "armv7-a",
-					mips = "mips",
-					x86 = "x86",
-				}
-				local arch = cfg.architecture or "arm"
+		if cfg.system ~= premake.ANDROID then
+			return oldfn(cfg)
+		end
 
-				if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
-					local defaultToolsetMap = {
-						arm = "arm-linux-androideabi-",
-						armv5 = "arm-linux-androideabi-",
-						armv7 = "arm-linux-androideabi-",
-						aarch64 = "aarch64-linux-android-",
-						mips = "mipsel-linux-android-",
-						mips64 = "mips64el-linux-android-",
-						x86 = "x86-",
-						x86_64 = "x86_64-",
-					}
-					local toolset = defaultToolsetMap[arch]
+		if _ACTION >= "vs2015" then
+			local gcc_map = {
+				["_"]   = "GCC_4_9", -- default
+				["4.6"] = "GCC_4_6",
+				["4.8"] = "GCC_4_8",
+				["4.9"] = "GCC_4_9",
+			}
+			local clang_map = {
+				["_"]   = "Clang_3_8", -- default
+				["3.4"] = "Clang_3_4",
+				["3.5"] = "Clang_3_5",
+				["3.6"] = "Clang_3_6",
+				["3.8"] = "Clang_3_8",
+			}
 
-					if cfg.toolset == "clang" then
-						error("The clang toolset is not yet supported by vs-android", 2)
-						toolset = toolset .. "clang"
-					elseif cfg.toolset and cfg.toolset ~= "gcc" then
-						error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
-					end
-
-					local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
-
-					_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
-					_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
-				end
+			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+			local ts  = map[cfg.toolchainversion or "_"]
+			if ts == nil then
+				p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
 			end
+
+			_p(2, "<PlatformToolset>%s</PlatformToolset>", ts)
 		else
-			oldfn(cfg)
+			local archMap = {
+				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
+				arm5 = "armv5te",
+				arm7 = "armv7-a",
+				mips = "mips",
+				x86 = "x86",
+			}
+			local arch = cfg.architecture or "arm"
+
+			if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
+				local defaultToolsetMap = {
+					arm = "arm-linux-androideabi-",
+					armv5 = "arm-linux-androideabi-",
+					armv7 = "arm-linux-androideabi-",
+					aarch64 = "aarch64-linux-android-",
+					mips = "mipsel-linux-android-",
+					mips64 = "mips64el-linux-android-",
+					x86 = "x86-",
+					x86_64 = "x86_64-",
+				}
+				local toolset = defaultToolsetMap[arch]
+
+				if cfg.toolset == "clang" then
+					error("The clang toolset is not yet supported by vs-android", 2)
+					toolset = toolset .. "clang"
+				elseif cfg.toolset and cfg.toolset ~= "gcc" then
+					error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
+				end
+
+				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
+
+				_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
+				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
+			end
 		end
 	end)
 
