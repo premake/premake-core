@@ -1,7 +1,7 @@
 --
--- actions/vstudio/vs2005.lua
+-- vs2005.lua
 -- Add support for the  Visual Studio 2005 project formats.
--- Copyright (c) 2008-2015 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

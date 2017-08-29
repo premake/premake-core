@@ -1,7 +1,7 @@
 --
--- tests/actions/vstudio/dn2005/projectelement.lua
+-- tests/actions/vstudio/dotnet2005/projectelement.lua
 -- Validate generation of <Project/> element in Visual Studio 2005+ .csproj
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2017 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -82,5 +82,14 @@
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		]]
+	end
+
+	function suite.on2017()
+		p.action.set("vs2017")
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
 	end

@@ -1128,6 +1128,12 @@
 	}
 
 	api.register {
+		name = "tailcalls",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "targetdir",
 		scope = "config",
 		kind = "path",

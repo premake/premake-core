@@ -1,10 +1,10 @@
 require ("vstudio")
 
 return {
-	-- Visual Studio 2005-2015 Dot net projects
+	-- Visual Studio .Net projects
 	"dotnet2005/projectelement.lua",
 
-	-- Visual Studio 2005-2013 C# projects
+	-- Visual Studio 2005+ C# projects
 	"cs2005/test_assembly_refs.lua",
 	"cs2005/test_build_events.lua",
 	"cs2005/test_common_props.lua",
@@ -23,7 +23,7 @@ return {
 	"cs2005/test_targets.lua",
 	"cs2005/test_user_file.lua",
 
-	-- Visual Studio 2005-2013 solutions
+	-- Visual Studio 2005+ solutions
 	"sln2005/test_dependencies.lua",
 	"sln2005/test_header.lua",
 	"sln2005/test_nested_projects.lua",
@@ -48,7 +48,7 @@ return {
 	"vc200x/test_resource_compiler.lua",
 	"vc200x/test_user_file.lua",
 
-	-- Visual Studio 2010-2013 C/C++ projects
+	-- Visual Studio 2010+ C/C++ projects
 	"vc2010/test_assembly_refs.lua",
 	"vc2010/test_build_events.lua",
 	"vc2010/test_build_log.lua",

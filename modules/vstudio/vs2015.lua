@@ -1,7 +1,7 @@
 --
--- actions/vstudio/vs2015.lua
+-- vs2015.lua
 -- Extend the existing exporters with support for Visual Studio 2015.
--- Copyright (c) 2015-2015 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

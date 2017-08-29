@@ -1,7 +1,7 @@
 ---
 -- vs2010_rules_props.lua
 -- Generate a Visual Studio 201x custom rules properties file.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 

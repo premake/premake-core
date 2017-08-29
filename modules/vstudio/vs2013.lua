@@ -1,7 +1,7 @@
 --
--- actions/vstudio/vs2013.lua
+-- vs2013.lua
 -- Extend the existing exporters with support for Visual Studio 2013.
--- Copyright (c) 2013-2014 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

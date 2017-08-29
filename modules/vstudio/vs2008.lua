@@ -1,7 +1,7 @@
 --
--- actions/vstudio/vs2008.lua
+-- vs2008.lua
 -- Add support for the Visual Studio 2008 project formats.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

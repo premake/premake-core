@@ -1,7 +1,7 @@
 --
 -- vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2002-2017 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

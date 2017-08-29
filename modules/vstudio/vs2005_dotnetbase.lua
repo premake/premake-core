@@ -1,7 +1,7 @@
 --
--- vs2005_csproj.lua
--- Generate a Visual Studio 2005-2010 C# project.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- vs2005_dotnetbase.lua
+-- Generate a Visual Studio 2005+ .NET project.
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
     local p = premake
@@ -199,7 +199,7 @@
                 return a.order < b.order
             end
 
-            table.sort(prj._.files, sorter)   
+            table.sort(prj._.files, sorter)
             table.foreachi(prj._.files, processfcfg)
         else
             local tr = project.getsourcetree(prj)

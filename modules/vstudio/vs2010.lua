@@ -1,7 +1,7 @@
 --
--- actions/vstudio/vs2010.lua
+-- vs2010.lua
 -- Add support for the Visual Studio 2010 project formats.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

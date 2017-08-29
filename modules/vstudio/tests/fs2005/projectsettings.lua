@@ -1,7 +1,7 @@
 --
--- tests/actions/vstudio/cs2005/projectsettings.lua
--- Validate generation of root <PropertyGroup/> in Visual Studio 2005+ .csproj
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- tests/actions/vstudio/fs2005/projectsettings.lua
+-- Validate generation of root <PropertyGroup/> in Visual Studio 2005+ .fsproj
+-- Copyright (c) 2009-2017 Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -116,6 +116,26 @@
 
 	function suite.onVs2015()
 		p.action.set("vs2015")
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{AE61726D-187C-E440-BD07-2556188A6565}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>MyProject</RootNamespace>
+		<AssemblyName>MyProject</AssemblyName>
+		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+		<FileAlignment>512</FileAlignment>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	</PropertyGroup>
+		]]
+	end
+
+
+	function suite.onVs2017()
+		p.action.set("vs2017")
 		prepare()
 		test.capture [[
 	<PropertyGroup>
