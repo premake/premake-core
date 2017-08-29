@@ -65,6 +65,7 @@
 
 		self.system = self.system or os.target()
 		context.addFilter(self, "system", os.getSystemTags(self.system))
+		context.addFilter(self, "host", os.getSystemTags(os.host()))
 
 		-- Add command line options to the filtering options
 		local options = {}
@@ -206,6 +207,7 @@
 
 		self.system = self.system or os.target()
 		context.addFilter(self, "system", os.getSystemTags(self.system))
+		context.addFilter(self, "host", os.getSystemTags(os.host()))
 		context.addFilter(self, "architecture", self.architecture)
 		context.addFilter(self, "tags", self.tags)
 
@@ -586,6 +588,7 @@
 		-- allow the project script to override the default system
 		ctx.system = ctx.system or system
 		context.addFilter(ctx, "system", os.getSystemTags(ctx.system))
+		context.addFilter(ctx, "host", os.getSystemTags(os.host()))
 
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
