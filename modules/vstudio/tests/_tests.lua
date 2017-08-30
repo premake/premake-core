@@ -3,6 +3,7 @@ require ("vstudio")
 return {
 	-- Visual Studio .Net projects
 	"dotnet2005/projectelement.lua",
+	"dotnet2005/test_nuget_framework_folders.lua",
 
 	-- Visual Studio 2005+ C# projects
 	"cs2005/test_assembly_refs.lua",
@@ -13,7 +14,6 @@ return {
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
 	"cs2005/test_nuget_config.lua",
-	"cs2005/test_nuget_framework_folders.lua",
 	"cs2005/test_nuget_packages_config.lua",
 	"cs2005/test_nuget_references.lua",
 	"cs2005/test_output_props.lua",
