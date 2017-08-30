@@ -23,6 +23,22 @@
 		kind = "list",
 	}
 
+	p.api.register {
+		name = "xcodecodesigningidentity",
+		scope = "config",
+		kind = "string",
+	}
+
+	p.api.register {
+		name = "iosfamily",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"iPhone/iPod touch",
+			"iPad",
+			"Universal",
+		}
+	}
 
 --
 -- Register the Xcode exporters.
@@ -35,7 +51,6 @@
 
 		-- Xcode always uses Mac OS X path and naming conventions
 
-		targetos = "macosx",
 		toolset  = "clang",
 
 		-- The capabilities of this action
