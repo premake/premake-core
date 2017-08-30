@@ -6,7 +6,7 @@
 
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_platform_groups")
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 
 --
 -- Setup
@@ -24,7 +24,7 @@
 	local function prepare(platform)
 		local prj = project("MyProject")
 		local cfg = test.getconfig(prj, "Debug", platform)
-		cs2005.propertyGroup(cfg)
+		dn2005.propertyGroup(cfg)
 	end
 
 

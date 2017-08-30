@@ -1,7 +1,7 @@
 --
 -- vs2010_nuget.lua
 -- Generate a NuGet packages.config file.
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -9,7 +9,7 @@
 
 	local vstudio = p.vstudio
 	local nuget2010 = p.vstudio.nuget2010
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 
 	local packageAPIInfos = {}
 	local packageSourceInfos = {}
@@ -32,7 +32,7 @@
 			local cfg = p.project.getfirstconfig(prj)
 			local action = p.action.current()
 			local framework = cfg.dotnetframework or action.vstudio.targetFramework
-			return cs2005.formatNuGetFrameworkVersion(framework)
+			return dn2005.formatNuGetFrameworkVersion(framework)
 		else
 			return "native"
 		end

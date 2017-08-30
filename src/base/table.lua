@@ -147,7 +147,7 @@
 			for i = 1, n do
 				local v = arr[i]
 				if v then
-					func(v)
+					func(v, i)
 				end
 			end
 		end

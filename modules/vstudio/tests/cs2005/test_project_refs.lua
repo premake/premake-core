@@ -6,7 +6,7 @@
 
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_project_refs")
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 
 
 --
@@ -24,7 +24,7 @@
 
 	local function prepare(platform)
 		prj = test.getproject(wks, 2)
-		cs2005.projectReferences(prj)
+		dn2005.projectReferences(prj)
 	end
 
 
