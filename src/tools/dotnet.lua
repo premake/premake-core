@@ -41,7 +41,7 @@
 		-- Determine the build action for the file, falling back to the file
 		-- extension if no explicit action is available.
 
-		if fcfg.buildaction == "Compile" or ext == ".cs" then
+		if fcfg.buildaction == "Compile" or ext == ".cs" or ext == ".fs" then
 			info.action = "Compile"
 		elseif fcfg.buildaction == "Embed" or ext == ".resx" then
 			info.action = "EmbeddedResource"
