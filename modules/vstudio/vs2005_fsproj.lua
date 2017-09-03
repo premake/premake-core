@@ -84,4 +84,5 @@
 		_p(2, '</PropertyGroup>')
 		_p(2, '</Otherwise>')
 		_p(1, '</Choose>')
+		_p(1, '<Import Project="$(FSharpTargetsPath)" />')
 	end
