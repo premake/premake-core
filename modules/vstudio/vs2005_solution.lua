@@ -1,7 +1,7 @@
 --
 -- vs2005_solution.lua
--- Generate a Visual Studio 2005-2012 solution.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Generate a Visual Studio 2005+ solution.
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake

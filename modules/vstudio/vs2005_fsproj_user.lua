@@ -1,11 +1,11 @@
 --
--- vs2005_csproj_user.lua
--- Generate a Visual Studio 2005+ C# .user file.
+-- vs2005_fsproj_user.lua
+-- Generate a Visual Studio 2005+ F# .user file.
 -- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
-	local m = p.vstudio.cs2005
+	local m = p.vstudio.fs2005
 	local dn = p.vstudio.dotnetbase
 
 

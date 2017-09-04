@@ -645,7 +645,7 @@
 		-- I need to look at them all.
 
 		for cfg in p.project.eachconfig(prj) do
-			local function addFile(fname)
+			local function addFile(fname, i)
 
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
@@ -653,6 +653,7 @@
 				local fcfg = files[fname]
 				if not fcfg then
 					fcfg = p.fileconfig.new(fname, prj)
+					fcfg.order = i
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end

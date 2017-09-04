@@ -1,7 +1,7 @@
 --
--- actions/vstudio/vs2008.lua
+-- vs2008.lua
 -- Add support for the Visual Studio 2008 project formats.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -29,7 +29,7 @@
 		-- The capabilities of this action
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None" },
-		valid_languages = { "C", "C++", "C#" },
+		valid_languages = { "C", "C++", "C#", "F#" },
 		valid_tools     = {
 			cc     = { "msc"   },
 			dotnet = { "msnet" },

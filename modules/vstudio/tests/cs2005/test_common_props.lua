@@ -6,7 +6,7 @@
 
 	local p = premake
 	local suite = test.declare("vs2012_csproj_common_props")
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 
 
 --
@@ -23,7 +23,7 @@
 
 	local function prepare()
 		prj = test.getproject(wks, 1)
-		cs2005.commonProperties(prj)
+		dn2005.commonProperties(prj)
 	end
 
 
