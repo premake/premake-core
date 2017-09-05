@@ -20,6 +20,7 @@
 	end
 
 	function suite.setup()
+		_TARGET_OS = "macosx"
 		p.action.set('xcode4')
 		p.eol("\n")
 		xcode.used_ids = { } -- reset the list of generated IDs
@@ -1089,6 +1090,123 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationTarget_OnIOS()
+		_TARGET_OS = "ios"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = MyProject;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationTarget_OnIOSMinVersion()
+		_TARGET_OS = "ios"
+		systemversion "8.3"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				PRODUCT_NAME = MyProject;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationTarget_OnIOSMinMaxVersion()
+		_TARGET_OS = "ios"
+		systemversion "8.3:9.1"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				PRODUCT_NAME = MyProject;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationTarget_OnIOSCodeSigningIdentity()
+		_TARGET_OS = "ios"
+		xcodecodesigningidentity "Premake Developers"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Premake Developers";
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = MyProject;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationTarget_OnIOSFamily()
+		_TARGET_OS = "ios"
+		iosfamily "Universal"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = MyProject;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};

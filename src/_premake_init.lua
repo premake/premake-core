@@ -1106,6 +1106,7 @@
 			"aix",
 			"bsd",
 			"haiku",
+			"ios",
 			"linux",
 			"macosx",
 			"solaris",
