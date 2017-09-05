@@ -522,7 +522,7 @@
 		_p('# #############################################')
 		_p('')
 		for cfg in project.eachconfig(prj) do
-			table.foreachi(cfg.project._.files, function(node)
+			table.foreachi(prj._.files, function(node)
 				local fcfg = fileconfig.getconfig(node, cfg)
 				if fcfg then
 					cpp.perFileFlags(cfg, fcfg)
@@ -533,6 +533,7 @@
 	end
 
 	local function makeVarName(prj, value, saltValue)
+		prj._gmake = prj._gmake or {}
 		prj._gmake.varlist = prj._gmake.varlist or {}
 		prj._gmake.varlistlength = prj._gmake.varlistlength or 0
 		local cache = prj._gmake.varlist
