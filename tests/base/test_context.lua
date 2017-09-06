@@ -73,3 +73,41 @@
 		-- detoken in extended context should result in value set in that environ.
 		test.isequal("text", ext.targetname)
 	end
+
+--
+-- mergeFilters should behave as expected for tags
+--
+
+	function suite.mergeFilters()
+
+		ctx = { terms = { tags = { "ctxtags" } } }
+		src = { terms = { tags = { "srctags" } } }
+
+		context.mergeFilters(ctx, src)
+
+		result = { terms = { tags = { "ctxtags", "srctags" } } }
+
+		test.isequal(result, ctx)
+	end
+
+	function suite.mergeFilters_keeptype()
+
+		ctx = { terms = { kind = "ConsoleApp" } }
+		src = { terms = { kind = "ConsoleApp" } }
+
+		context.mergeFilters(ctx, src)
+
+		test.isequal("string", type(ctx.terms.kind))
+	end
+
+	function suite.mergeFilters_createtable()
+
+		ctx = { terms = { tags = "ctxtags" } }
+		src = { terms = { tags = "srctags" } }
+
+		context.mergeFilters(ctx, src)
+
+		result = { terms = { tags = { "ctxtags", "srctags" } } }
+
+		test.isequal(result, ctx)
+	end

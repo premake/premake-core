@@ -137,8 +137,14 @@
 --
 
 	function context.mergeFilters(ctx, src)
-		for k,v in pairs(src.terms) do
-			ctx.terms[k] = v
+		if src.terms ~= nil then
+			for k, v in pairs(src.terms) do
+				ctx.terms[k] = table.joinunique(ctx.terms[k] or {}, src.terms[k])
+
+				if #ctx.terms[k] == 1 then
+					ctx.terms[k] = ctx.terms[k][1]
+				end
+			end
 		end
 	end
 
