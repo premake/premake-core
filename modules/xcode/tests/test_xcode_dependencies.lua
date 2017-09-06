@@ -23,6 +23,7 @@
 	end
 
 	function suite.setup()
+		_TARGET_OS = "macosx"
 		p.action.set('xcode4')
 		xcode.used_ids = { } -- reset the list of generated IDs
 

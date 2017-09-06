@@ -943,6 +943,27 @@
 			settings['EXCLUDED_SOURCE_FILE_NAMES'] = fileNameList
 		end
 		settings['PRODUCT_NAME'] = cfg.buildtarget.basename
+		
+		if os.istarget(p.IOS) then
+			settings['SDKROOT'] = 'iphoneos'
+
+			settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = cfg.xcodecodesigningidentity or 'iPhone Developer'
+
+			local minOSVersion = project.systemversion(cfg)
+			if minOSVersion ~= nil then
+				settings['IPHONEOS_DEPLOYMENT_TARGET'] = minOSVersion
+			end
+
+			local families = {
+				['iPhone/iPod touch'] = '1',
+				['iPad'] = '2',
+				['Universal'] = '1,2',
+			}
+			local family = families[cfg.iosfamily]
+			if family then
+				settings['TARGETED_DEVICE_FAMILY'] = family
+			end
+		end
 
 		--ms not by default ...add it manually if you need it
 		--settings['COMBINE_HIDPI_IMAGES'] = 'YES'

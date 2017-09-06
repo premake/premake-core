@@ -34,6 +34,7 @@
 	premake.CSHARP      = "C#"
 	premake.GCC         = "gcc"
 	premake.HAIKU       = "haiku"
+	premake.IOS         = "ios"
 	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
 	premake.MAKEFILE    = "Makefile"
