@@ -53,7 +53,8 @@
 			dotnetbase.propertyGroup,
 			dotnetbase.debugProps,
 			dotnetbase.outputProps,
-			dotnetbase.compilerProps
+			dotnetbase.compilerProps,
+			dotnetbase.NoWarn
 		}
 	end
 
