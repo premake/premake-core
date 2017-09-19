@@ -685,3 +685,23 @@
 </ItemGroup>
 		]]
 	end
+
+--
+-- test warning level set for a single file
+--
+
+	function suite.warningLevelPerFile()
+		warnings 'Off'
+		files { "hello.cpp", "hello2.cpp" }
+		filter { "files:hello.cpp" }
+			warnings 'Extra'
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<WarningLevel>Level4</WarningLevel>
+	</ClCompile>
+	<ClCompile Include="hello2.cpp" />
+</ItemGroup>
+		]]
+	end
