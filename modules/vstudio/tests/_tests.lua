@@ -10,6 +10,7 @@ return {
 	"cs2005/test_build_events.lua",
 	"cs2005/test_common_props.lua",
 	"cs2005/test_compiler_props.lua",
+	"cs2005/test_no_warn.lua",
 	"cs2005/test_debug_props.lua",
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
