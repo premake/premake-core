@@ -37,7 +37,7 @@
 		prepare()
 		test.capture [[
 <Manifest>
-	<AdditionalManifestFiles>source/test.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+	<AdditionalManifestFiles>source/test.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
 </Manifest>
 		]]
 	end
