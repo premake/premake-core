@@ -668,6 +668,7 @@
 						m.exceptionHandling,
 						m.compileAsManaged,
 						m.runtimeTypeInfo,
+						m.warningLevelFile,
 					}
 				else
 					return {
@@ -2370,10 +2371,17 @@
 	end
 
 
-
 	function m.warningLevel(cfg)
 		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
-		m.element("WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
+		m.element("WarningLevel", nil, map[cfg.warnings] or "Level3")
+	end
+
+
+	function m.warningLevelFile(cfg, condition)
+		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
+		if cfg.warnings then
+			m.element("WarningLevel", condition, map[cfg.warnings] or "Level3")
+		end
 	end
 
 
