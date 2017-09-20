@@ -246,7 +246,11 @@
 			return result
 		else
 			if filename then
-				return path.getrelative(prj.location, filename)
+				local result = filename
+				if path.hasdeferredjoin(result) then
+					result = path.resolvedeferredjoin(result)
+				end
+				return path.getrelative(prj.location, result)
 			end
 		end
 	end

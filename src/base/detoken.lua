@@ -107,6 +107,9 @@
 					-- a NON-path value, I need to make it relative to the project that
 					-- will contain it. Otherwise I ended up with an absolute path in
 					-- the generated project, and it can no longer be moved around.
+					if path.hasdeferredjoin(result) then
+						result = path.resolvedeferredjoin(result)
+					end
 					isAbs = path.isabsolute(result)
 					if isAbs and not field.paths and basedir and not dontMakeRelative then
 						result = path.getrelative(basedir, result)

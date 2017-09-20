@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
  * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
@@ -89,6 +89,7 @@ unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
+int do_absolutetype(const char* path);
 int do_isfile(lua_State* L, const char* filename);
 int do_locate(lua_State* L, const char* filename, const char* path);
 void do_normalize(lua_State* L, char* buffer, const char* path);
@@ -108,6 +109,9 @@ int path_getabsolute(lua_State* L);
 int path_getrelative(lua_State* L);
 int path_isabsolute(lua_State* L);
 int path_join(lua_State* L);
+int path_deferred_join(lua_State* L);
+int path_has_deferred_join(lua_State* L);
+int path_resolve_deferred_join(lua_State* L);
 int path_normalize(lua_State* L);
 int path_translate(lua_State* L);
 int path_wildcards(lua_State* L);
