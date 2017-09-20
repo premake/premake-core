@@ -2199,6 +2199,8 @@
 		local runtimes = {
 			StaticDebug   = "MultiThreadedDebug",
 			StaticRelease = "MultiThreaded",
+			StaticDLLDebug = "MultiThreadedDebugDLL",
+			StaticDLLRelease = "MultiThreadedDLL"
 		}
 		local runtime = runtimes[config.getruntime(cfg)]
 		if runtime then

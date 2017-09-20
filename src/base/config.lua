@@ -327,6 +327,10 @@
 
 	function config.getruntime(cfg)
 		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
+
+		if cfg.clr == "On" and cfg.flags.StaticRuntime then
+			linkage = linkage .. "DLL"
+		end
 		if not cfg.runtime then
 			return linkage .. iif(config.isDebugBuild(cfg), "Debug", "Release")
 		else
