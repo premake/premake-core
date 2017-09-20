@@ -648,6 +648,14 @@
     end
 
 
+    function dotnetbase.NoWarn(cfg)
+        if #cfg.disablewarnings > 0 then
+            local warnings = table.concat(cfg.disablewarnings, ";")
+            _p(2,'<NoWarn>%s</NoWarn>', warnings)
+        end
+    end
+
+
     function dotnetbase.targetFrameworkVersion(cfg)
         local action = p.action.current()
         local framework = cfg.dotnetframework or action.vstudio.targetFramework
