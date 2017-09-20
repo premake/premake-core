@@ -943,7 +943,7 @@
 			settings['EXCLUDED_SOURCE_FILE_NAMES'] = fileNameList
 		end
 		settings['PRODUCT_NAME'] = cfg.buildtarget.basename
-		
+
 		if os.istarget(p.IOS) then
 			settings['SDKROOT'] = 'iphoneos'
 
@@ -981,17 +981,53 @@
 
 
 	function xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)
-		if cfg.cdialect and cfg.cdialect ~= "Default" then
-			settings['GCC_C_LANGUAGE_STANDARD'] = cfg.cdialect
-		else
-			settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
+		-- if no cppdialect is provided, don't set C dialect
+		-- projects without C dialect set will use compiler default
+		if not cfg.cdialect then
+			return
+		end
+
+		local cLanguageStandards = {
+			["Default"] = "compiler-default",  -- explicit compiler default
+			["C89"] = "c89",
+			["C90"] = "c90",
+			["C99"] = "c99",
+			["C11"] = "c11",
+			["gnu89"] = "gnu89",
+			["gnu90"] = "gnu90",
+			["gnu99"] = "gnu99",
+			["gnu11"] = "gnu11"
+		}
+
+		local cLanguageStandard = cLanguageStandards[cfg.cdialect]
+		if cLanguageStandard then
+			settings['GCC_C_LANGUAGE_STANDARD'] = cLanguageStandard
 		end
 	end
 
 
 	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
-		if cfg.cppdialect and cfg.cppdialect ~= "Default" then
-			settings['CLANG_CXX_LANGUAGE_STANDARD'] = cfg.cppdialect
+		-- if no cppdialect is provided, don't set C++ dialect
+		-- projects without C++ dialect set will use compiler default
+		if not cfg.cppdialect then
+			return
+		end
+
+		local cppLanguageStandards = {
+			["Default"] = "compiler-default",  -- explicit compiler default
+			["C++98"] = "c++98",
+			["C++11"] = "c++0x",      -- Xcode project GUI uses c++0x, but c++11 also works
+			["C++14"] = "c++14",
+			["C++17"] = "c++1z",
+			["gnu++98"] = "gnu++98",
+			["gnu++11"] = "gnu++0x",  -- Xcode project GUI uses gnu++0x, but c++11 also works
+			["gnu++14"] = "gnu++14",
+			["gnu++17"] = "gnu++1z"
+		}
+
+		local cppLanguageStandard = cppLanguageStandards[cfg.cppdialect]
+		if cppLanguageStandard then
+			settings['CLANG_CXX_LANGUAGE_STANDARD'] = cppLanguageStandard
 		end
 	end
 
