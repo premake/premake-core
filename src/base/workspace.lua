@@ -187,7 +187,11 @@
 			return result
 		else
 			if filename then
-				return path.getrelative(self.location, filename)
+				local result = filename
+				if path.hasdeferredjoin(result) then
+					result = path.resolvedeferredjoin(result)
+				end
+				return path.getrelative(self.location, result)
 			end
 		end
 	end

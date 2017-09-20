@@ -1048,10 +1048,7 @@
 	premake.field.kind("path", {
 		paths = true,
 		store = function(field, current, value, processor)
-			if string.sub(value, 1, 2) == "%{" then
-				return value
-			end
-			return path.getabsolute(value)
+			return path.deferredjoin(os.getcwd(), value)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
