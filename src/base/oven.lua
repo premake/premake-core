@@ -667,7 +667,7 @@
 			-- packages.config file to the project. Is there a better place to
 			-- do this?
 
-			if #prj.nuget > 0 then
+			if #prj.nuget > 0 and (_ACTION < "vs2017" or p.project.iscpp(prj)) then
 				addFile("packages.config")
 			end
 		end

@@ -38,7 +38,6 @@
 		return {
 			m.workspaceHasConfigs,
 			m.uniqueProjectIds,
-			m.uniqueProjectLocationsWithNuGet,
 		}
 	end
 
@@ -60,8 +59,6 @@
 			m.actionSupportsKind,
 			m.projectRulesExist,
 			m.projectValuesInScope,
-			m.NuGetHasHTTP,
-			m.NuGetPackageStrings,
 		}
 	end
 
@@ -224,24 +221,6 @@
 	end
 
 
-	function m.NuGetHasHTTP(prj)
-		if not http and #prj.nuget > 0 then
-			p.error("Premake was compiled with --no-curl, but Curl is required for NuGet support (project '%s' is referencing NuGet packages)", prj.name)
-		end
-	end
-
-
-	function m.NuGetPackageStrings(prj)
-		for _, package in ipairs(prj.nuget) do
-			local components = package:explode(":")
-
-			if #components ~= 2 or #components[1] == 0 or #components[2] == 0 then
-				p.error("NuGet package '%s' in project '%s' is invalid - please give packages in the format 'id:version', e.g. 'NUnit:3.6.1'", package, prj.name)
-			end
-		end
-	end
-
-
 	function m.uniqueProjectIds(wks)
 		local uuids = {}
 		for prj in p.workspace.eachproject(wks) do
@@ -249,29 +228,6 @@
 				p.error("projects '%s' and '%s' have the same UUID", uuids[prj.uuid], prj.name)
 			end
 			uuids[prj.uuid] = prj.name
-		end
-	end
-
-
-	function m.uniqueProjectLocationsWithNuGet(wks)
-		local locations = {}
-		for prj in p.workspace.eachproject(wks) do
-			local function fail()
-				p.error("projects '%s' and '%s' cannot have the same location when using NuGet with different packages (packages.config conflict)", locations[prj.location].name, prj.name)
-			end
-
-			if locations[prj.location] and #locations[prj.location].nuget > 0 and #prj.nuget > 0 then
-				if #locations[prj.location].nuget ~= #prj.nuget then
-					fail()
-				end
-
-				for i, package in ipairs(locations[prj.location].nuget) do
-					if prj.nuget[i] ~= package then
-						fail()
-					end
-				end
-			end
-			locations[prj.location] = prj
 		end
 	end
 

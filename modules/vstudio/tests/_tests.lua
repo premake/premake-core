@@ -74,6 +74,7 @@ return {
 	"vc2010/test_manifest.lua",
 	"vc2010/test_nmake_props.lua",
 	"vc2010/test_nuget_packages_config.lua",
+	"vc2010/test_nuget_package_references.lua",
 	"vc2010/test_output_props.lua",
 	"vc2010/test_platform_toolset.lua",
 	"vc2010/test_project_configs.lua",

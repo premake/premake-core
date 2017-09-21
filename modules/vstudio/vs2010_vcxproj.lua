@@ -1711,9 +1711,11 @@
 	end
 
 	function m.importNuGetTargets(prj)
-		for i = 1, #prj.nuget do
-			local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
-			p.x('<Import Project="%s" Condition="Exists(\'%s\')" />', targetsFile, targetsFile)
+		if not vstudio.nuget2010.supportsPackageReferences(prj) then
+			for i = 1, #prj.nuget do
+				local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
+				p.x('<Import Project="%s" Condition="Exists(\'%s\')" />', targetsFile, targetsFile)
+			end
 		end
 	end
 
