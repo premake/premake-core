@@ -847,7 +847,7 @@
 
 	api.register {
 		name = "nuget",
-		scope = "project",
+		scope = "config",
 		kind = "list:string",
 		tokens = true,
 	}

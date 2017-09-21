@@ -85,16 +85,18 @@
 			end
 		end
 
-		-- Skip generation of empty packages.config files
-		local packages = p.capture(function() vstudio.nuget2010.generatePackagesConfig(prj) end)
-		if #packages > 0 then
-			p.generate(prj, "packages.config", function() p.outln(packages) end)
-		end
+		if not vstudio.nuget2010.supportsPackageReferences(prj) then
+			-- Skip generation of empty packages.config files
+			local packages = p.capture(function() vstudio.nuget2010.generatePackagesConfig(prj) end)
+			if #packages > 0 then
+				p.generate(prj, "packages.config", function() p.outln(packages) end)
+			end
 
-		-- Skip generation of empty NuGet.Config files
-		local config = p.capture(function() vstudio.nuget2010.generateNuGetConfig(prj) end)
-		if #config > 0 then
-			p.generate(prj, "NuGet.Config", function() p.outln(config) end)
+			-- Skip generation of empty NuGet.Config files
+			local config = p.capture(function() vstudio.nuget2010.generateNuGetConfig(prj) end)
+			if #config > 0 then
+				p.generate(prj, "NuGet.Config", function() p.outln(config) end)
+			end
 		end
 	end
 
