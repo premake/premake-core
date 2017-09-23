@@ -2050,7 +2050,7 @@
 		end
 		if version then
 			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
-				if p.config.hasFile(cfg, path.iscppfile) then
+				if p.config.hasFile(cfg, path.iscppfile) or _ACTION >= "vs2015" then
 					m.element("PlatformToolset", nil, version)
 				end
 			else
