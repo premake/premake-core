@@ -84,6 +84,7 @@ return {
 	"vc2010/test_rule_targets.lua",
 	"vc2010/test_rule_vars.lua",
 	"vc2010/test_rule_xml.lua",
+	"vc2010/test_tokens.lua",
 	"vc2010/test_target_machine.lua",
 	"vc2010/test_user_file.lua",
 	"vc2010/test_vectorextensions.lua",
