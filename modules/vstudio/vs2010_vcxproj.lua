@@ -494,7 +494,7 @@
 
 			if #manifests > 0 then
 		p.push('<Manifest>')
-		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
+		m.element("AdditionalManifestFiles", nil, "%s;%%(AdditionalManifestFiles)", table.concat(manifests, ";"))
 		p.pop('</Manifest>')
 	end
 		end
