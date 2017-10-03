@@ -4,24 +4,14 @@
  * \author Copyright (c) 2002-2016 Jason Perkins and the Premake project
  */
 
- /**
- * \file   path_isabsolute.c
- * \brief  Determines if a path is absolute or relative.
- * \author Copyright (c) 2002-2016 Jason Perkins and the Premake project
- */
-
 #include "premake.h"
 #include <ctype.h>
 #include <string.h>
-
+#include "path_isabsolute.h"
 
 #if PLATFORM_WINDOWS
 #define strncasecmp _strnicmp
 #endif
-
-#define JOIN_RELATIVE 0
-#define JOIN_ABSOLUTE 1
-#define JOIN_MAYBE_ABSOLUTE 2
 
 int do_absolutetype(const char* path)
 {
@@ -84,9 +74,7 @@ int do_absolutetype(const char* path)
 		{
 			closing = strchr(path + 2, '}');
 			if (closing != NULL)
-			{
 				return JOIN_MAYBE_ABSOLUTE;
-			}
 		}
 		// find the second closing %
 		path += 1;

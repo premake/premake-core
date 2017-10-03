@@ -6,10 +6,8 @@
 
 #include "premake.h"
 #include <string.h>
+#include "path_isabsolute.h"
 
-#define JOIN_RELATIVE 0
-#define JOIN_ABSOLUTE 1
-#define JOIN_MAYBE_ABSOLUTE 2
 #define DEFERRED_JOIN_DELIMITER '|'
 
 char* path_join_single(char* buffer, char* ptr, const char* part, int allowDeferredJoin)
