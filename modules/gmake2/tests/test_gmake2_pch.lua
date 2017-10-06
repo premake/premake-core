@@ -102,7 +102,11 @@ $(GCH): $(PCH) | $(OBJDIR)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
-	$(SILENT) touch "$@"
+	ifeq (posix,$(SHELLTYPE))
+		$(SILENT) touch "$@"
+	else
+		$(SILENT) echo $null >> "$@"
+	endif
 else
 $(OBJECTS): | $(OBJDIR)
 endif
@@ -125,7 +129,11 @@ $(GCH): $(PCH) | $(OBJDIR)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
-	$(SILENT) touch "$@"
+	ifeq (posix,$(SHELLTYPE))
+		$(SILENT) touch "$@"
+	else
+		$(SILENT) echo $null >> "$@"
+	endif
 else
 $(OBJECTS): | $(OBJDIR)
 endif
