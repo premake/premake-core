@@ -398,76 +398,76 @@
 --
 
 	function dotnetbase.nuGetReferences(prj)
-		if _ACTION >= "vs2010" and _ACTION < "vs2017" then
-	  for _, package in ipairs(prj.nuget) do
-		local id = vstudio.nuget2010.packageId(package)
-		local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
+		if _ACTION >= "vs2010" and not vstudio.nuget2010.supportsPackageReferences(prj) then
+			for _, package in ipairs(prj.nuget) do
+				local id = vstudio.nuget2010.packageId(package)
+				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 
-		local cfg = p.project.getfirstconfig(prj)
-		local action = p.action.current()
-		local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
+				local cfg = p.project.getfirstconfig(prj)
+				local action = p.action.current()
+				local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
 
-		local targetVersion = dotnetbase.makeVersionComparable(targetFramework)
+				local targetVersion = dotnetbase.makeVersionComparable(targetFramework)
 
-		-- Figure out what folder contains the files for the nearest
-		-- supported .NET Framework version.
+				-- Figure out what folder contains the files for the nearest
+				-- supported .NET Framework version.
 
-		local files = {}
+				local files = {}
 
-		local bestVersion, bestFolder
+				local bestVersion, bestFolder
 
-		for _, file in ipairs(packageAPIInfo.packageEntries) do
-		  local folder = file:match("^lib[\\/](.+)[\\/]")
+				for _, file in ipairs(packageAPIInfo.packageEntries) do
+					local folder = file:match("^lib[\\/](.+)[\\/]")
 
-		  if folder and path.hasextension(file, ".dll") then
-			local version = dotnetbase.frameworkVersionForFolder(folder)
+					if folder and path.hasextension(file, ".dll") then
+						local version = dotnetbase.frameworkVersionForFolder(folder)
 
-			if version then
-			  files[folder] = files[folder] or {}
-			  table.insert(files[folder], file)
+						if version then
+							files[folder] = files[folder] or {}
+							table.insert(files[folder], file)
 
-			  if version <= targetVersion and (not bestVersion or version > bestVersion) then
-				bestVersion = version
-				bestFolder = folder
-			  end
+							if version <= targetVersion and (not bestVersion or version > bestVersion) then
+								bestVersion = version
+								bestFolder = folder
+							end
+						end
+					end
+				end
+
+				if not bestVersion then
+					p.error("NuGet package '%s' is not compatible with project '%s' .NET Framework version '%s'", id, prj.name, targetFramework)
+				end
+
+				-- Now, add references for all DLLs in that folder.
+
+				for _, file in ipairs(files[bestFolder]) do
+					-- There's some stuff missing from this include that we
+					-- can't get from the API and would need to download and
+					-- extract the package to figure out. It looks like we can
+					-- just omit it though.
+					--
+					-- So, for example, instead of:
+					--
+					-- <Reference Include="nunit.framework, Version=3.6.1.0,
+					-- <Culture=neutral, PublicKeyToken=2638cd05610744eb,
+					-- <processorArchitecture=MSIL">
+					--
+					-- We're just outputting:
+					--
+					-- <Reference Include="nunit.framework">
+
+					_x(2, '<Reference Include="%s">', path.getbasename(file))
+					_x(3, '<HintPath>%s</HintPath>', vstudio.path(prj, p.filename(prj.workspace, string.format("packages\\%s.%s\\%s", id, packageAPIInfo.verbatimVersion or packageAPIInfo.version, file))))
+
+					if config.isCopyLocal(prj, package, true) then
+						_p(3, '<Private>True</Private>')
+					else
+						_p(3, '<Private>False</Private>')
+					end
+
+					_p(2, '</Reference>')
+				end
 			end
-		  end
-		end
-
-		if not bestVersion then
-		  p.error("NuGet package '%s' is not compatible with project '%s' .NET Framework version '%s'", id, prj.name, targetFramework)
-		end
-
-		-- Now, add references for all DLLs in that folder.
-
-		for _, file in ipairs(files[bestFolder]) do
-		  -- There's some stuff missing from this include that we
-		  -- can't get from the API and would need to download and
-		  -- extract the package to figure out. It looks like we can
-		  -- just omit it though.
-		  --
-		  -- So, for example, instead of:
-		  --
-		  -- <Reference Include="nunit.framework, Version=3.6.1.0,
-		  -- <Culture=neutral, PublicKeyToken=2638cd05610744eb,
-		  -- <processorArchitecture=MSIL">
-		  --
-		  -- We're just outputting:
-		  --
-		  -- <Reference Include="nunit.framework">
-
-		  _x(2, '<Reference Include="%s">', path.getbasename(file))
-		  _x(3, '<HintPath>%s</HintPath>', vstudio.path(prj, p.filename(prj.workspace, string.format("packages\\%s.%s\\%s", id, packageAPIInfo.verbatimVersion or packageAPIInfo.version, file))))
-
-		  if config.isCopyLocal(prj, package, true) then
-			_p(3, '<Private>True</Private>')
-		  else
-			_p(3, '<Private>False</Private>')
-		  end
-
-		  _p(2, '</Reference>')
-		end
-	  end
 		end
 	end
 
@@ -501,33 +501,33 @@
 -- Write the list of package dependencies.
 --
 	function dotnetbase.packageReferences(prj)
-	if _ACTION >= "vs2017" then
-	  local hasNuget = prj.nuget and #prj.nuget>0
-	  for cfg in project.eachconfig(prj) do
-		if cfg.nuget and #cfg.nuget>0 then
-		  hasNuget = true
-		end
-	  end
-	  if hasNuget then
-		_p(1,'<ItemGroup>')
-		if prj.nuget and #prj.nuget>0 then
-		  for _, package in ipairs(prj.nuget) do
-			_p(2,'<PackageReference Include="%s" Version="%s"/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package))
-		  end
-		end
-		for cfg in project.eachconfig(prj) do
-		  if cfg.nuget and #cfg.nuget>0 then
-			for _, package in ipairs(cfg.nuget) do
-			  if prj.nuget[package]==nil then
-				_p(2,'<PackageReference Include="%s" Version="%s" %s/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package), dotnetbase.condition(cfg))
-			  end
+		if vstudio.nuget2010.supportsPackageReferences(prj) then
+			local hasNuget = prj.nuget and #prj.nuget>0
+			for cfg in project.eachconfig(prj) do
+				if cfg.nuget and #cfg.nuget>0 then
+					hasNuget = true
+				end
 			end
-		  end
+			if hasNuget then
+				_p(1,'<ItemGroup>')
+				if prj.nuget and #prj.nuget>0 then
+					for _, package in ipairs(prj.nuget) do
+						_p(2,'<PackageReference Include="%s" Version="%s"/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package))
+					end
+				end
+				for cfg in project.eachconfig(prj) do
+					if cfg.nuget and #cfg.nuget>0 then
+						for _, package in ipairs(cfg.nuget) do
+							if prj.nuget[package]==nil then
+								_p(2,'<PackageReference Include="%s" Version="%s" %s/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package), dotnetbase.condition(cfg))
+							end
+						end
+					end
+				end
+				_p(1,'</ItemGroup>')
+			end
 		end
-		_p(1,'</ItemGroup>')
-	  end
 	end
-  end
 
 --
 -- Return the Visual Studio architecture identification string. The logic
