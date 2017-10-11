@@ -794,7 +794,7 @@
 			local fileCfgFunc = function(fcfg, condition)
 				if fcfg then
 					return {
-						m.additionalASMOptions,
+						m.MasmPreprocessorDefinitions,
 						m.excludedFromBuild,
 						m.exceptionHandlingSEH,
 					}
@@ -1219,18 +1219,6 @@
 			elseif (cfg.cppdialect == "C++17") then
 				m.element("LanguageStandard", nil, 'stdcpplatest')
 			end
-		end
-	end
-
-
-	function m.additionalASMOptions(cfg, condition)
-		print("Additional ASM Options")
-		print(tostring(#cfg.buildoptions).."/"..tostring(#cfg.asmoptions))
-		local opts = cfg.asmoptions
-		if #opts > 0 then
-			opts = table.concat(opts, " ")
---			print("There are additional ASM options: "..opts)
-			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
@@ -1900,6 +1888,13 @@
 			p.push('<ProjectReference>')
 			m.element("LinkLibraryDependencies", nil, "false")
 			p.pop('</ProjectReference>')
+		end
+	end
+
+
+	function m.MasmPreprocessorDefinitions(cfg, condition)
+		if cfg.defines then
+			m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
 		end
 	end
 
