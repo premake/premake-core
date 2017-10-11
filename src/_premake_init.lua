@@ -37,6 +37,14 @@
 	}
 
 	api.register {
+		name = "asmoptions",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+		pathVars = true,
+	}
+
+	api.register {
 		name = "atl",
 		scope = "config",
 		kind  = "string",

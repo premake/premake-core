@@ -794,6 +794,7 @@
 			local fileCfgFunc = function(fcfg, condition)
 				if fcfg then
 					return {
+						m.additionalASMOptions,
 						m.excludedFromBuild,
 						m.exceptionHandlingSEH,
 					}
@@ -1028,7 +1029,7 @@
 						if not checkFunc or checkFunc(cfg, fcfg) then
 							p.callArray(fileCfgFunc, fcfg, m.configPair(cfg))
 						end
-						end
+					end
 					if #m.conditionalElements > 0 then
 						m.emitConditionalElements(prj)
 					end
@@ -1218,6 +1219,18 @@
 			elseif (cfg.cppdialect == "C++17") then
 				m.element("LanguageStandard", nil, 'stdcpplatest')
 			end
+		end
+	end
+
+
+	function m.additionalASMOptions(cfg, condition)
+		print("Additional ASM Options")
+		print(tostring(#cfg.buildoptions).."/"..tostring(#cfg.asmoptions))
+		local opts = cfg.asmoptions
+		if #opts > 0 then
+			opts = table.concat(opts, " ")
+--			print("There are additional ASM options: "..opts)
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
 
@@ -2455,7 +2468,7 @@
 				else
 					element.setting = value .. table.concat(arg)
 				end
-		else
+			else
 				element.setting = element.value
 			end
 			table.insert(m.conditionalElements, element)
