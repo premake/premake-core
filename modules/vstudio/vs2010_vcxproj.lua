@@ -794,6 +794,7 @@
 			local fileCfgFunc = function(fcfg, condition)
 				if fcfg then
 					return {
+						m.MasmPreprocessorDefinitions,
 						m.excludedFromBuild,
 						m.exceptionHandlingSEH,
 					}
@@ -1028,7 +1029,7 @@
 						if not checkFunc or checkFunc(cfg, fcfg) then
 							p.callArray(fileCfgFunc, fcfg, m.configPair(cfg))
 						end
-						end
+					end
 					if #m.conditionalElements > 0 then
 						m.emitConditionalElements(prj)
 					end
@@ -1891,6 +1892,13 @@
 	end
 
 
+	function m.MasmPreprocessorDefinitions(cfg, condition)
+		if cfg.defines then
+			m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+		end
+	end
+
+
 	function m.minimalRebuild(cfg)
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
@@ -2455,7 +2463,7 @@
 				else
 					element.setting = value .. table.concat(arg)
 				end
-		else
+			else
 				element.setting = element.value
 			end
 			table.insert(m.conditionalElements, element)
