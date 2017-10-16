@@ -661,11 +661,11 @@
 ---
 -- Apply os slashes for decorated command paths.
 ---
-	function os.translateCommandAndPath(path, map)
+	function os.translateCommandAndPath(dir, map)
 		if map == 'windows' then
-			return path.translate(result)
+			return path.translate(dir)
 		end
-		return path
+		return dir
 	end
 
 ---

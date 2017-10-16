@@ -155,8 +155,8 @@
 
 		filter "configurations:Debug"
 			targetdir   "bin/debug"
-			debugargs   { "--scripts=%{prj.location}/%{path.getrelative(prj.location, prj.basedir)} test"}
-			debugdir    "%{path.getrelative(prj.location, prj.basedir)}"
+			debugargs   { "--scripts=%{prj.location}/%{path.getrelative(prj.location, prj.basedir)}", "test" }
+			debugdir    "."
 
 		filter "configurations:Release"
 			targetdir   "bin/release"
