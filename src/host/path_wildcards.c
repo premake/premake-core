@@ -70,7 +70,6 @@ int path_wildcards(lua_State* L)
 		{
 			lua_pushstring(L, "Wildcards expansion too big.");
 			lua_error(L);
-			return 0;
 		}
 	}
 

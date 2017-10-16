@@ -270,6 +270,8 @@ static int lua_error_handler(lua_State* L)
 	lua_insert(L, -2);     // insert traceback function before error message
 	lua_pushinteger(L, 3); // push level
 	lua_call(L, 2, 1);     // call traceback
+#else
+	(void) L;
 #endif
 
 	return 1;

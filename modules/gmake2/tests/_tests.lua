@@ -8,6 +8,7 @@ return {
 	"test_gmake2_linking.lua",
 	"test_gmake2_objects.lua",
 	"test_gmake2_pch.lua",
+	"test_gmake2_perfile_flags.lua",
 	"test_gmake2_target_rules.lua",
 	"test_gmake2_tools.lua",
 }

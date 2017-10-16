@@ -59,14 +59,16 @@
 		local passed = 0
 		local failed = 0
 
-		for testName, testFunction in pairs(test.suite) do
-			test.testName = testName
-			test.testFunction = testFunction
+		if test.suite ~= nil then
+			for testName, testFunction in pairs(test.suite) do
+				test.testName = testName
+				test.testFunction = testFunction
 
-			if m.isValid(test) and not m.isSuppressed(test.suiteName .. "." .. test.testName) then
-				local np, nf = _.runTest(test)
-				passed = passed + np
-				failed = failed + nf
+				if m.isValid(test) and not m.isSuppressed(test.suiteName .. "." .. test.testName) then
+					local np, nf = _.runTest(test)
+					passed = passed + np
+					failed = failed + nf
+				end
 			end
 		end
 
