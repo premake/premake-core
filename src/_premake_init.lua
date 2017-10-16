@@ -407,7 +407,8 @@
 			"Default",
 			"On",
 			"Off",
-			"SEH"
+			"SEH",
+			"CThrow",
 		},
 	}
 
