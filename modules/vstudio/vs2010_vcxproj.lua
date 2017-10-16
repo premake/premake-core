@@ -1966,6 +1966,9 @@
 		if cfg.architecture == p.ARM then
 			p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
 		end
+		if cfg.architecture == p.ARM64 then
+			p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
+		end
 	end
 
 

@@ -29,6 +29,7 @@
 		x86_64  = "x64",
 		xbox360 = "Xbox 360",
 		ARM     = "ARM",
+		ARM64   = "ARM64",
 	}
 
 	vstudio.vs2010_architectures =
