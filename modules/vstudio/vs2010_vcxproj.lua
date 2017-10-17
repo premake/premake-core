@@ -1477,8 +1477,6 @@
 			m.element("ExceptionHandling", condition, "Async")
 		elseif cfg.exceptionhandling == "On" then
 			m.element("ExceptionHandling", condition, "Sync")
-		elseif cfg.exceptionhandling == "Default" then
-			m.element("ExceptionHandling", condition, "Sync")
 		elseif cfg.exceptionhandling == "CThrow" then
 			m.element("ExceptionHandling", condition, "SyncCThrow")
 		end
