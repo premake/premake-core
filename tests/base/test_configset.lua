@@ -17,6 +17,7 @@
 	local cset, parentset
 
 	function suite.setup()
+		local wks = test.createWorkspace()
 		parentset = configset.new()
 		cset = configset.new(parentset)
 	end
