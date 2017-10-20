@@ -102,6 +102,21 @@
 
 
 --
+-- Remove extension from path.
+--
+
+	function path.removeextension(p)
+		local i = p:findlast(".", true)
+		if (i) then
+		if i > 1 then i = i - 1 end
+			return p:sub(1, i)
+		else
+			return ""
+		end
+	end
+
+
+--
 -- Retrieve the filename portion of a path.
 --
 

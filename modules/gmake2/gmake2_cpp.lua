@@ -124,6 +124,7 @@
 			cfg._gmake = cfg._gmake or {}
 			cfg._gmake.filesets = {}
 			cfg._gmake.fileRules = {}
+			cfg._gmake.bases = {}
 
 			local files = table.shallowcopy(prj._.files)
 			table.foreachi(files, function(node)
@@ -177,7 +178,7 @@
 
 			local shadowContext = p.context.extent(filecfg, env)
 
-			local buildoutputs = p.project.getrelative(cfg.project, shadowContext.buildoutputs)
+			local buildoutputs = cpp.makeUnique(cfg, p.project.getrelative(cfg.project, shadowContext.buildoutputs))
 			if buildoutputs and #buildoutputs > 0 then
 				local file = {
 					buildoutputs  = buildoutputs,
@@ -277,7 +278,7 @@
 			local buildcommands = shadowContext.buildcommands
 			local buildinputs   = shadowContext.buildinputs
 
-			buildoutputs = p.project.getrelative(cfg.project, buildoutputs)
+			buildoutputs = cpp.makeUnique(cfg, p.project.getrelative(cfg.project, buildoutputs))
 			if buildoutputs and #buildoutputs > 0 then
 				local file = {
 					buildoutputs  = buildoutputs,
@@ -728,6 +729,27 @@
 --
 -- Output the file compile targets.
 --
+
+	function cpp.makeUnique(cfg, files)
+		local result = {}
+
+		local cache = cfg._gmake.bases
+		for _, file in ipairs(files) do
+			local ext = path.getextension(file)
+			local f   = path.removeextension(file)
+
+			local seq = cache[f]
+			if seq == nil then
+				cache[f] = 1
+				table.insert(result, file)
+			else
+				table.insert(result, f .. tostring(seq) .. ext)
+				cache[f] = seq + 1
+			end
+		end
+
+		return result
+	end
 
 	cpp.elements.fileRules = function(cfg)
 		local funcs = {}
