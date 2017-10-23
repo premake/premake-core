@@ -310,6 +310,7 @@
 		local block = {}
 		block._criteria = crit
 		block._origin = cset
+		block._export = {}
 
 		if basedir then
 			block._basedir = basedir:lower()
@@ -360,16 +361,29 @@
 --    an error message.
 ---
 
-	function configset.store(cset, field, value)
+	function configset.store(cset, field, value, visibility)
 		if not cset.current then
 			configset.addblock(cset, {})
 		end
 
 		local key = field.name
 		local current = cset.current
+		local vis = visibility or 'private' -- private is the default behavior.
 
 		local status, result = pcall(function ()
-			current[key] = p.field.store(field, current[key], value)
+			if vis == 'public' then
+				-- public means both for outselfs and for those who use me.
+				current._export[key] = p.field.store(field, current._export[key], value)
+				current[key]         = p.field.store(field, current[key], value)
+			elseif vis == 'interface' then
+				-- interface means, only for those who use me.
+				current._export[key] = p.field.store(field, current._export[key], value)
+			elseif vis == 'private' then
+				-- private means just for me.
+				current[key] = p.field.store(field, current[key], value)
+			else
+				p.error('invalid visibility '%s', options are `private`, `public` & `interface`.', vis)
+			end
 		end)
 
 		if not status then

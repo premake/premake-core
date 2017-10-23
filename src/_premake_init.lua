@@ -1229,6 +1229,13 @@
 	}
 
 	api.register {
+		name = "using",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "usingdirs",
 		scope = "config",
 		kind = "list:directory",

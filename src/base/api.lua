@@ -277,8 +277,8 @@
 		end
 
 		-- create a setter function for it
-		_G[name] = function(value)
-			return api.storeField(field, value)
+		_G[name] = function(value, visibility)
+			return api.storeField(field, value, visibility)
 		end
 
 		if p.field.removes(field) then
@@ -484,7 +484,7 @@
 -- gets parceled out to the individual set...() functions.
 --
 
-	function api.storeField(field, value)
+	function api.storeField(field, value, visibility)
 		if value == nil then
 			return
 		end
@@ -507,7 +507,7 @@
 			error(err, 3)
 		end
 
-		local status, err = configset.store(target, field, value)
+		local status, err = configset.store(target, field, value, visibility)
 		if err then
 			error(err, 3)
 		end
