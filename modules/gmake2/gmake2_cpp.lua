@@ -57,20 +57,20 @@
 
 	function cpp.initialize()
 		rule 'cpp'
-			fileExtension {".cc", ".cpp", ".cxx", ".mm"}
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.o'}
+			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CXX) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.o'}
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CC) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.res'}
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.res" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)'}
 
@@ -178,7 +178,7 @@
 
 			local shadowContext = p.context.extent(filecfg, env)
 
-			local buildoutputs = cpp.makeUnique(cfg, p.project.getrelative(cfg.project, shadowContext.buildoutputs))
+			local buildoutputs = p.project.getrelative(cfg.project, shadowContext.buildoutputs)
 			if buildoutputs and #buildoutputs > 0 then
 				local file = {
 					buildoutputs  = buildoutputs,
@@ -278,7 +278,7 @@
 			local buildcommands = shadowContext.buildcommands
 			local buildinputs   = shadowContext.buildinputs
 
-			buildoutputs = cpp.makeUnique(cfg, p.project.getrelative(cfg.project, buildoutputs))
+			buildoutputs = p.project.getrelative(cfg.project, buildoutputs)
 			if buildoutputs and #buildoutputs > 0 then
 				local file = {
 					buildoutputs  = buildoutputs,
@@ -730,25 +730,16 @@
 -- Output the file compile targets.
 --
 
-	function cpp.makeUnique(cfg, files)
-		local result = {}
-
+	function cpp.makeUnique(cfg, f)
 		local cache = cfg._gmake.bases
-		for _, file in ipairs(files) do
-			local ext = path.getextension(file)
-			local f   = path.removeextension(file)
-
-			local seq = cache[f]
-			if seq == nil then
-				cache[f] = 1
-				table.insert(result, file)
-			else
-				table.insert(result, f .. tostring(seq) .. ext)
-				cache[f] = seq + 1
-			end
+		local seq = cache[f]
+		if seq == nil then
+			cache[f] = 1
+			return f
+		else
+			cache[f] = seq + 1
+			return f .. tostring(seq)
 		end
-
-		return result
 	end
 
 	cpp.elements.fileRules = function(cfg)
