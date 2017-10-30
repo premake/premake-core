@@ -373,6 +373,25 @@
 	end
 
 
+--
+-- Combines multiple tables by adding the key-value associations from one table to another
+-- then adding indexed values (essentially a combined table.merge() & table.join()
+-- Returns the resulting merged table
+--
+
+	function table.combine(...)
+	    -- Merge the keyed values
+	    local result = table.merge(...)
+	    -- Append the indexed values
+	    local joined = table.join(...)
+	    for i, v in ipairs(joined) do
+	        result[i] = v
+	    end
+
+	    return result
+	end
+
+
 ---
 -- Replace all instances of `value` with `replacement` in an array. Array
 -- elements are modified in place.
