@@ -231,16 +231,30 @@
 			p.outln('')
 		end
 
+		local first = true
 		for cfg in project.eachconfig(prj) do
 			local settings = table.difference(root[cfg], root.settings)
 			if #settings > 0 then
-				_x('ifeq ($(config),%s)', cfg.shortname)
+				if first then
+					_x('ifeq ($(config),%s)', cfg.shortname)
+					first = false
+				else
+					_x('else ifeq ($(config),%s)', cfg.shortname)
+				end
+
 				for k, v in ipairs(settings) do
 					p.outln(v)
 				end
-				p.outln('endif')
-				p.outln('')
+
+				_p('')
 			end
+		end
+
+		if not first then
+			p.outln('else')
+			p.outln('  $(error "invalid configuration $(config)")')
+			p.outln('endif')
+			p.outln('')
 		end
 	end
 

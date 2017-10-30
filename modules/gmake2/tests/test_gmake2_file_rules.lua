@@ -121,13 +121,15 @@ obj/Debug/hello.obj: hello.x
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -152,13 +154,15 @@ obj/Debug/hello.obj: hello.x hello.x.inc hello.x.inc2
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
