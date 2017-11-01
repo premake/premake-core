@@ -237,6 +237,26 @@
 		cpp.addRuleFile(cfg, node)
 	end
 
+	function cpp.prepareEnvironment(rule, environ, cfg)
+		for _, prop in ipairs(rule.propertydefinition) do
+			local fld = p.rule.getPropertyField(rule, prop)
+			local value = cfg[fld.name]
+			if value ~= nil then
+
+				if fld.kind == "path" then
+					value = gmake2.path(cfg, value)
+				elseif fld.kind == "list:path" then
+					value = gmake2.path(cfg, value)
+				end
+
+				value = p.rule.expandString(rule, prop, value)
+				if value ~= nil and #value > 0 then
+					environ[prop.name] = p.esc(value)
+				end
+			end
+		end
+	end
+
 	function cpp.addRuleFile(cfg, node)
 		local rules = cfg.project._gmake.rules
 		local rule = rules[path.getextension(node.abspath):lower()]
@@ -246,7 +266,8 @@
 			local environ = table.shallowcopy(filecfg.environ)
 
 			if rule.propertydefinition then
-				p.rule.prepareEnvironment(rule, environ, "$(%s)")
+				cpp.prepareEnvironment(rule, environ, cfg)
+				cpp.prepareEnvironment(rule, environ, filecfg)
 			end
 
 			local shadowContext = p.context.extent(rule, environ)
@@ -298,7 +319,6 @@
 			cpp.linkCmd,
 			cpp.bindirs,
 			cpp.exepaths,
-			cpp.ruleProperties,
 			gmake2.settings,
 			gmake2.preBuildCmds,
 			gmake2.preLinkCmds,
@@ -490,29 +510,6 @@
 		end
 	end
 
-
-	function cpp.ruleProperties(cfg, toolset)
-		for i = 1, #cfg.rules do
-			local rule = p.global.getRule(cfg.rules[i])
-
-			for prop in p.rule.eachProperty(rule) do
-				local fld = p.rule.getPropertyField(rule, prop)
-				local value = cfg[fld.name]
-				if value ~= nil then
-					if fld.kind == "path" then
-						value = gmake2.path(cfg, value)
-					elseif fld.kind == "list:path" then
-						value = gmake2.path(cfg, value)
-					end
-
-					value = p.rule.expandString(rule, prop, value)
-					if value ~= nil and #value > 0 then
-						p.outln(prop.name .. ' = ' .. p.esc(value))
-					end
-				end
-			end
-		end
-	end
 
 --
 -- Write out the per file configurations.
