@@ -151,17 +151,35 @@
 		end
 	end)
 
+	function android.link(cfg, file)
+		local fname = path.translate(file.relpath)
+
+		-- Files that live outside of the project tree need to be "linked"
+		-- and provided with a project relative pseudo-path. Check for any
+		-- leading "../" sequences and, if found, remove them and mark this
+		-- path as external.
+		local link, count = fname:gsub("%.%.%/", "")
+		local external = (count > 0)
+
+		-- Try to provide a little bit of flexibility by allowing virtual
+		-- paths for external files. Would be great to support them for all
+		-- files but Visual Studio chokes if file is already in project area.
+		if external and file.vpath ~= file.relpath then
+			link = file.vpath
+		end
+
+		if external then
+			vc2010.element("Link", nil, path.translate(link))
+		end
+	end
+
 
 	vc2010.categories.AndroidManifest = {
 		name = "AndroidManifest",
 		priority = 99,
 
 		emitFiles = function(prj, group)
-			local fileCfgFunc = {
-				android.manifestSubType,
-			}
-
-			vc2010.emitFiles(prj, group, "AndroidManifest", {vc2010.generatedFile}, fileCfgFunc)
+			vc2010.emitFiles(prj, group, "AndroidManifest", {vc2010.generatedFile, android.link, android.manifestSubType})
 		end,
 
 		emitFilter = function(prj, group)
@@ -178,7 +196,7 @@
 		priority = 99,
 
 		emitFiles = function(prj, group)
-			vc2010.emitFiles(prj, group, "AntBuildXml", {vc2010.generatedFile})
+			vc2010.emitFiles(prj, group, "AntBuildXml", {vc2010.generatedFile, android.link})
 		end,
 
 		emitFilter = function(prj, group)
@@ -191,7 +209,7 @@
 		priority = 99,
 
 		emitFiles = function(prj, group)
-			vc2010.emitFiles(prj, group, "AntProjectPropertiesFile", {vc2010.generatedFile})
+			vc2010.emitFiles(prj, group, "AntProjectPropertiesFile", {vc2010.generatedFile, android.link})
 		end,
 
 		emitFilter = function(prj, group)
@@ -204,7 +222,7 @@
 		priority = 99,
 
 		emitFiles = function(prj, group)
-			vc2010.emitFiles(prj, group, "Content", {vc2010.generatedFile})
+			vc2010.emitFiles(prj, group, "Content", {vc2010.generatedFile, android.link})
 		end,
 
 		emitFilter = function(prj, group)
