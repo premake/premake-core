@@ -1519,7 +1519,14 @@
 				SharedRelease = 2,
 				SharedDebug = 3,
 			}
-			p.w('RuntimeLibrary="%s"', runtimes[config.getruntime(cfg)])
+			local runtime = config.getruntime(cfg)
+			if runtime then
+				p.w('RuntimeLibrary="%s"', runtimes[runtime])
+			else
+				-- TODO: this path should probably be omitted and left for default
+				--       ...but I can't really test this, so I'm a leave it how I found it
+				p.w('RuntimeLibrary="%s"', iif(config.isDebugBuild(cfg), 3, 2))
+			end
 		end
 	end
 
@@ -1596,7 +1603,7 @@
 
 	function m.useOfMFC(cfg)
 		if (cfg.flags.MFC) then
-			p.w('UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
+			p.w('UseOfMFC="%d"', iif(cfg.staticruntime == "On", 1, 2))
 		end
 	end
 

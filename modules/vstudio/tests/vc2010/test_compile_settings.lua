@@ -402,11 +402,23 @@
 
 
 --
--- If the StaticRuntime flag is specified, add the <RuntimeLibrary> element.
+-- If staticruntime is specified, add the <RuntimeLibrary> element.
 --
 
+	function suite.runtimeLibrary_onDynamicRuntime()
+		staticruntime "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+		]]
+	end
+
 	function suite.runtimeLibrary_onStaticRuntime()
-		flags { "StaticRuntime" }
+		staticruntime "On"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -417,8 +429,22 @@
 		]]
 	end
 
+	function suite.runtimeLibrary_onDynamicRuntimeAndSymbols()
+		staticruntime "Off"
+		symbols "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+		]]
+	end
+
 	function suite.runtimeLibrary_onStaticRuntimeAndSymbols()
-		flags { "StaticRuntime" }
+		staticruntime "On"
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -770,13 +796,43 @@
 
 
 --
--- Check handling of the ReleaseRuntime flag; should override the
+-- Check handling of the `runtime` API; should override the
 -- default behavior of linking the debug runtime when symbols are
 -- enabled with no optimizations.
 --
 
+	function suite.releaseRuntime_onReleaseRuntime()
+		runtime "Release"
+		symbols "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+		]]
+	end
+
+	function suite.releaseRuntime_onDynamicAndReleaseRuntime()
+		runtime "Release"
+		staticruntime "Off"
+		symbols "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+		]]
+	end
+
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "ReleaseRuntime", "StaticRuntime" }
+		runtime "Release"
+		staticruntime "On"
 		symbols "On"
 		prepare()
 		test.capture [[

@@ -513,7 +513,7 @@
 			"RelativeLinks",
 			"ReleaseRuntime",      -- DEPRECATED
 			"ShadowedVariables",
-			"StaticRuntime",
+			"StaticRuntime",       -- DEPRECATED
 			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
 			"WinMain",             -- DEPRECATED
@@ -1049,6 +1049,17 @@
 	}
 
 	api.register {
+		name = "staticruntime",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.register {
 		name = "strictaliasing",
 		scope = "config",
 		kind = "string",
@@ -1517,6 +1528,16 @@
 	end,
 	function(value)
 		entrypoint "mainCRTStartup"
+	end)
+
+	-- 31 October 2017
+
+	api.deprecateValue("flags", "StaticRuntime", 'Use `staticruntime "On"` instead',
+	function(value)
+		staticruntime "On"
+	end,
+	function(value)
+		staticruntime "Default"
 	end)
 
 -----------------------------------------------------------------------------

@@ -1256,7 +1256,7 @@
 
 	function m.basicRuntimeChecks(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
-		local runtime = config.getruntime(prjcfg)
+		local runtime = config.getruntime(prjcfg) or iif(config.isDebugBuild(cfg), "Debug", "Release")
 		if filecfg then
 			if filecfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(filecfg) and runtime:endswith("Debug")) then
 				m.element("BasicRuntimeChecks", condition, "Default")
@@ -2217,12 +2217,12 @@
 		local runtimes = {
 			StaticDebug   = "MultiThreadedDebug",
 			StaticRelease = "MultiThreaded",
-			StaticDLLDebug = "MultiThreadedDebugDLL",
-			StaticDLLRelease = "MultiThreadedDLL"
+			SharedDebug = "MultiThreadedDebugDLL",
+			SharedRelease = "MultiThreadedDLL"
 		}
-		local runtime = runtimes[config.getruntime(cfg)]
+		local runtime = config.getruntime(cfg)
 		if runtime then
-			m.element("RuntimeLibrary", nil, runtime)
+			m.element("RuntimeLibrary", nil, runtimes[runtime])
 		end
 	end
 
@@ -2366,14 +2366,14 @@
 
 
 	function m.useDebugLibraries(cfg)
-		local runtime = config.getruntime(cfg)
+		local runtime = config.getruntime(cfg) or iif(config.isDebugBuild(cfg), "Debug", "Release")
 		m.element("UseDebugLibraries", nil, tostring(runtime:endswith("Debug")))
 	end
 
 
 	function m.useOfMfc(cfg)
 		if cfg.flags.MFC then
-			m.element("UseOfMfc", nil, iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
+			m.element("UseOfMfc", nil, iif(cfg.staticruntime == "On", "Static", "Dynamic"))
 		end
 	end
 

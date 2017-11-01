@@ -174,7 +174,8 @@
 	end
 
 	function suite.useOfMfc_onStaticRuntime()
-		flags { "MFC", "StaticRuntime" }
+		flags { "MFC" }
+		staticruntime "On"
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -217,7 +218,7 @@
 --
 
 	function suite.releaseRuntime_onFlag()
-		flags { "ReleaseRuntime" }
+		runtime "Release"
 		symbols "On"
 		prepare()
 		test.capture [[
