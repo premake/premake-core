@@ -782,6 +782,7 @@
 		end
 	}
 
+
 ---
 -- Masm group
 ---
@@ -820,6 +821,7 @@
 		end
 	}
 
+
 ---
 -- Image group
 ---
@@ -841,6 +843,25 @@
 			m.filterGroup(prj, group, "Image")
 		end
 	}
+
+
+---
+-- Natvis group
+---
+	m.categories.Natvis = {
+		name       = "Natvis",
+		extensions = { ".natvis" },
+		priority   = 9,
+
+		emitFiles = function(prj, group)
+			m.emitFiles(prj, group, "Natvis", {m.generatedFile})
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "Natvis")
+		end
+	}
+
 
 ---
 -- Categorize files into groups.
