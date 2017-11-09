@@ -135,13 +135,19 @@
 		},
 		cppdialect = {
 			["C++98"] = "-std=c++98",
+			["C++0x"] = "-std=c++0x",
 			["C++11"] = "-std=c++11",
+			["C++1y"] = "-std=c++1y",
 			["C++14"] = "-std=c++14",
-			["C++17"] = "-std=c++1z",
+			["C++1z"] = "-std=c++1z",
+			["C++17"] = "-std=c++17",
 			["gnu++98"] = "-std=gnu++98",
+			["gnu++0x"] = "-std=gnu++0x",
 			["gnu++11"] = "-std=gnu++11",
+			["gnu++1y"] = "-std=gnu++1y",
 			["gnu++14"] = "-std=gnu++14",
-			["gnu++17"] = "-std=gnu++1z",
+			["gnu++1z"] = "-std=gnu++1z",
+			["gnu++17"] = "-std=gnu++17",
 		},
 		rtti = {
 			Off = "-fno-rtti"

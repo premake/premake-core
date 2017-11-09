@@ -676,7 +676,7 @@
 	function suite.cxxflags_onCpp17()
 		cppdialect "C++17"
 		prepare()
-		test.contains({ "-std=c++1z" }, gcc.getcxxflags(cfg))
+		test.contains({ "-std=c++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
 	end
 
@@ -704,6 +704,6 @@
 	function suite.cxxflags_onCppGnu17()
 		cppdialect "gnu++17"
 		prepare()
-		test.contains({ "-std=gnu++1z" }, gcc.getcxxflags(cfg))
+		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
 	end
