@@ -159,7 +159,7 @@
 		-- leading "../" sequences and, if found, remove them and mark this
 		-- path as external.
 		local link, count = fname:gsub("%.%.%/", "")
-		local external = (count > 0)
+		local external = (count > 0) or fname:find(':', 1, true)
 
 		-- Try to provide a little bit of flexibility by allowing virtual
 		-- paths for external files. Would be great to support them for all
