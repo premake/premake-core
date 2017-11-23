@@ -69,3 +69,19 @@ ifndef config
 endif
 		]]
 	end
+
+
+--
+-- Verify handling of defaultplatform
+--
+
+	function suite.defaultsToSpecifiedPlatform()
+		platforms { "Win32", "Win64" }
+		defaultplatform "Win64"
+		prepare()
+		test.capture [[
+ifndef config
+  config=debug_win64
+endif
+		]]
+	end
