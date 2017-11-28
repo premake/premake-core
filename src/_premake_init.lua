@@ -1655,6 +1655,9 @@
 
 	-- Add variations for other Posix-like systems.
 
+	filter { "system:MacOSX", "kind:WindowedApp" }
+		targetextension ".app"
+
 	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
 

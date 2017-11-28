@@ -968,10 +968,6 @@
 		targetextension ".xyz"
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
-
-		--ms removed for now
-		--EXECUTABLE_EXTENSION = xyz;
-
 		test.capture [[
 		[libMyProject.xyz:Debug] /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -979,6 +975,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = bin/Debug;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_EXTENSION = xyz;
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/lib;
