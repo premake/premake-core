@@ -482,21 +482,25 @@
 -- Write the manifest section.
 --
 
+	m.elements.manifest = function(cfg)
+		return {
+			m.enableDpiAwareness,
+			m.additionalManifestFiles,
+		}
+	end
+
 	function m.manifest(cfg)
 		if cfg.kind ~= p.STATICLIB then
-		-- get the manifests files
-		local manifests = {}
-		for _, fname in ipairs(cfg.files) do
-			if path.getextension(fname) == ".manifest" then
-				table.insert(manifests, project.getrelative(cfg.project, fname))
+			local contents = p.capture(function ()
+				p.push()
+				p.callArray(m.elements.manifest, cfg)
+				p.pop()
+			end)
+			if #contents > 0 then
+				p.push('<Manifest>')
+				p.outln(contents)
+				p.pop('</Manifest>')
 			end
-		end
-
-			if #manifests > 0 then
-		p.push('<Manifest>')
-		m.element("AdditionalManifestFiles", nil, "%s;%%(AdditionalManifestFiles)", table.concat(manifests, ";"))
-		p.pop('</Manifest>')
-	end
 		end
 	end
 
@@ -1216,6 +1220,21 @@
 	end
 
 
+	function m.additionalManifestFiles(cfg)
+		-- get the manifests files
+		local manifests = {}
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, project.getrelative(cfg.project, fname))
+			end
+		end
+
+		if #manifests > 0 then
+			m.element("AdditionalManifestFiles", nil, "%s;%%(AdditionalManifestFiles)", table.concat(manifests, ";"))
+		end
+	end
+
+
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
 			local dirs = vstudio.path(cfg, cfg.usingdirs)
@@ -1458,6 +1477,20 @@
 			m.element("DvdEmulationType", nil, "ZeroSeekTimes")
 			m.element("DeploymentFiles", nil, "$(RemoteRoot)=$(ImagePath);")
 			p.pop('</Deploy>')
+		end
+	end
+
+
+	function m.enableDpiAwareness(cfg)
+		local awareness = {
+			None = "false",
+			High = "true",
+			HighPerMonitor = "PerMonitorHighDPIAware",
+		}
+		local value = awareness[cfg.dpiawareness]
+
+		if value then
+			m.element("EnableDpiAwareness", nil, value)
 		end
 	end
 
