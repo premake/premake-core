@@ -892,11 +892,15 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		--[[if cfg.targetextension then
+		if cfg.kind ~= "ConsoleApp" and cfg.targetextension then
 			local ext = cfg.targetextension
 			ext = iif(ext:startswith('.'), ext:sub(2), ext)
-			settings['EXECUTABLE_EXTENSION'] = ext
-		end]]
+			if cfg.kind == "WindowedApp" and ext ~= "app" then
+				settings['WRAPPER_EXTENSION'] = ext
+			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
+				settings['EXECUTABLE_EXTENSION'] = ext
+			end
+		end
 
 		local outdir = path.getrelative(tr.project.location, path.getdirectory(cfg.buildtarget.relpath))
 		if outdir ~= "." then

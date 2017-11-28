@@ -49,8 +49,12 @@
 		local bundlepath = ""
 
 		if cfg.system == p.MACOSX and kind == p.WINDOWEDAPP then
-			bundlename = basename .. ".app"
+			bundlename = basename .. extension
 			bundlepath = path.join(bundlename, "Contents/MacOS")
+		end
+
+		if cfg.system == p.MACOSX and kind == p.CONSOLEAPP then
+			extension = ""
 		end
 
 		local info = {}
