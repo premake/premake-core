@@ -70,6 +70,6 @@
 <Tool
 	Name="VCLinkerTool"
 	AdditionalOptions="/NOLOGO"
-	AdditionalDependencies="bin\Ares\Debug\MyProject2.lib"
+	AdditionalDependencies="lib\windows-ares-vc90-debug\MyProject2.lib"
 		]]
 	end

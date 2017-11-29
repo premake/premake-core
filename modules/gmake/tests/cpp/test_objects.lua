@@ -16,6 +16,8 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		wks = test.createWorkspace()
 	end
 
@@ -129,10 +131,15 @@ CUSTOMFILES := \
 
 ifeq ($(config),debug)
   OBJECTS += \
-	obj/Debug/hello.obj \
+	obj/linux-debug/hello.obj \
 
 endif
 
+ifeq ($(config),release)
+  OBJECTS += \
+	obj/linux-release/hello.obj \
+
+endif
 		]]
 	end
 
@@ -162,10 +169,15 @@ CUSTOMFILES := \
 
 ifeq ($(config),debug)
   OBJECTS += \
-	obj/Debug/hello.obj \
+	obj/linux-debug/hello.obj \
 
 endif
 
+ifeq ($(config),release)
+  OBJECTS += \
+	obj/linux-release/hello.obj \
+
+endif
 		]]
 	end
 
@@ -195,10 +207,15 @@ CUSTOMFILES := \
 
 ifeq ($(config),debug)
   CUSTOMFILES += \
-	obj/Debug/hello.obj \
+	obj/linux-debug/hello.obj \
 
 endif
 
+ifeq ($(config),release)
+  CUSTOMFILES += \
+	obj/linux-release/hello.obj \
+
+endif
 		]]
 	end
 

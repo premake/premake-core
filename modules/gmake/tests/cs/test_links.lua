@@ -17,6 +17,7 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = 'windows'
 		wks, prj = test.createWorkspace()
 	end
 
@@ -55,6 +56,7 @@
 
 		prepare ()
 		test.capture [[
-  DEPENDS = bin/Debug/MyProject2.dll bin/Debug/MyProject3.dll
+  DEPENDS = bin/windows-debug/MyProject2.dll bin/windows-debug/MyProject3.dll
+  REFERENCES = /r:bin/windows-debug/MyProject2.dll /r:bin/windows-debug/MyProject3.dll
 		]]
 	end

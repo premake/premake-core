@@ -81,7 +81,7 @@
 	LinkIncremental="2"
 	GenerateDebugInformation="false"
 	SubSystem="2"
-	ImportLibrary="bin\Debug\MyProject.lib"
+	ImportLibrary="lib\windows-vc90-debug\MyProject.lib"
 	TargetMachine="1"
 />
 		]]
@@ -243,7 +243,7 @@
 <Tool
 	Name="VCLinkerTool"
 	LinkLibraryDependencies="false"
-	AdditionalDependencies="bin\Debug\MyProject2.lib"
+	AdditionalDependencies="lib\windows-vc90-debug\MyProject2.lib"
 		]]
 	end
 

@@ -46,7 +46,7 @@
 	function suite.directoryIncludesPlatform_onPlatformConflict()
 		configurations { "Debug" }
 		platforms { "x86", "x86_64" }
-		test.isequal("obj/x86",  result())
+		test.isequal("obj/macosx-x86-clang-debug",  result())
 	end
 
 
@@ -57,7 +57,7 @@
 
 	function suite.directoryIncludesBuildCfg_onBuildCfgConflict()
 		configurations { "Debug", "Release" }
-		test.isequal("obj/Debug",  result())
+		test.isequal("obj/macosx-clang-debug",  result())
 	end
 
 
@@ -69,7 +69,7 @@
 	function suite.directoryIncludesBuildCfg_onPlatformAndBuildCfgConflict()
 		configurations { "Debug", "Release" }
 		platforms { "x86", "x86_64" }
-		test.isequal("obj/x86/Debug",  result())
+		test.isequal("obj/macosx-x86-clang-debug", result())
 	end
 
 
@@ -81,6 +81,6 @@
 	function suite.directoryIncludesBuildCfg_onProjectConflict()
 		configurations { "Debug", "Release" }
 		project "MyProject2"
-		test.isequal("obj/Debug/MyProject",  result())
+		test.isequal("obj/macosx-clang-debug/MyProject", result())
 	end
 

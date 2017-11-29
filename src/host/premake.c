@@ -194,7 +194,7 @@ int premake_init(lua_State* L)
 #endif
 
 	lua_pushlightuserdata(L, &s_shimTable);
-	lua_rawseti(L, LUA_REGISTRYINDEX, 'SHIM');
+	lua_rawseti(L, LUA_REGISTRYINDEX, 0x5348494D /* 'SHIM' */);
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);

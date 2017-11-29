@@ -243,8 +243,8 @@
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Makefile</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 </PropertyGroup>
 		]]
 	end
@@ -256,8 +256,8 @@
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Makefile</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 </PropertyGroup>
 		]]
 	end

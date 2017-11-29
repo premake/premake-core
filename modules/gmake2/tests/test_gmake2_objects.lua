@@ -17,6 +17,8 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		gmake2.cpp.initialize()
 		wks = test.createWorkspace()
 	end
@@ -137,11 +139,11 @@ OBJECTS += $(OBJDIR)/hello1.o
 CUSTOM :=
 
 ifeq ($(config),debug)
-CUSTOM += obj/Debug/hello.luac
+CUSTOM += obj/linux-debug/hello.luac
 endif
 
 ifeq ($(config),release)
-CUSTOM += obj/Release/hello.luac
+CUSTOM += obj/linux-release/hello.luac
 endif
 		]]
 	end
@@ -169,11 +171,11 @@ endif
 OBJECTS :=
 
 ifeq ($(config),debug)
-OBJECTS += obj/Debug/hello.obj
+OBJECTS += obj/linux-debug/hello.obj
 endif
 
 ifeq ($(config),release)
-OBJECTS += obj/Release/hello.obj
+OBJECTS += obj/linux-release/hello.obj
 endif
 		]]
 	end
@@ -202,11 +204,11 @@ endif
 OBJECTS :=
 
 ifeq ($(config),debug)
-OBJECTS += obj/Debug/hello.obj
+OBJECTS += obj/linux-debug/hello.obj
 endif
 
 ifeq ($(config),release)
-OBJECTS += obj/Release/hello.obj
+OBJECTS += obj/linux-release/hello.obj
 endif
 		]]
 	end
@@ -235,11 +237,11 @@ endif
 CUSTOM :=
 
 ifeq ($(config),debug)
-CUSTOM += obj/Debug/hello.obj
+CUSTOM += obj/linux-debug/hello.obj
 endif
 
 ifeq ($(config),release)
-CUSTOM += obj/Release/hello.obj
+CUSTOM += obj/linux-release/hello.obj
 endif
 		]]
 	end

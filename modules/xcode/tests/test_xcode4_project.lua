@@ -84,9 +84,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = YES;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};

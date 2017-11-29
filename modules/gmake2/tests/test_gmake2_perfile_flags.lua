@@ -18,6 +18,8 @@
 	local wks
 
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		wks = test.createWorkspace()
 	end
 
