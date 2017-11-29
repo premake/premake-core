@@ -405,7 +405,7 @@
 	function cpp.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(includes, "-include $(PCH_PLACEHOLDER)")
+			table.insert(includes, 1, "-include $(PCH_PLACEHOLDER)")
 		end
 		p.outln('FORCE_INCLUDE +=' .. gmake2.list(includes))
 	end
