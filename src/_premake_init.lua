@@ -390,6 +390,18 @@
 	}
 
 	api.register {
+		name = "dpiawareness",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"None",
+			"High",
+			"HighPerMonitor",
+		}
+	}
+
+	api.register {
 		name = "editandcontinue",
 		scope = "config",
 		kind = "string",
