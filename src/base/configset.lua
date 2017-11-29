@@ -493,6 +493,7 @@
 
 		local abspath = filter.files
 		local basedir
+		local kind
 
 		for i = 1, n do
 			local block = blocks[i]
@@ -511,7 +512,10 @@
 				table.insert(result.blocks, block)
 
 				if cset.workspace then
-					configset.processUsing(result, cset.workspace, block, filter)
+					if block.kind then
+						kind = block.kind
+					end
+					configset.processUsing(result, cset.workspace, block, filter, kind)
 				end
 			end
 		end
@@ -522,15 +526,15 @@
 		return result
 	end
 
-	function configset.processUsing(result, wks, block, filter)
+	function configset.processUsing(result, wks, block, filter, kind)
 		if block.using and #block.using > 0 then
 			for _, name in ipairs(block.using) do
-				configset.useExportsFromProject(result, wks, name, filter)
+				configset.useExportsFromProject(result, wks, name, filter, kind)
 			end
 		end
 	end
 
-	function configset.useExportsFromProject(result, wks, name, filter)
+	function configset.useExportsFromProject(result, wks, name, filter, kind)
 		local prj = p.workspace.findproject(wks, name)
 		if not prj then
 			p.error("Project '%s' is not in the solution '%s'.", name, wks.name)
@@ -551,11 +555,16 @@
 				newBlock._basedir = block._basedir
 				newBlock._origin  = result
 
+				-- links don't propagate onto static libraries.
+				if kind ~= p.STATICLIB then
+					newBlock.links = nil
+				end
+
 				-- insert resulting block
 				table.insert(result.blocks, newBlock)
 
 				-- recurse
-				configset.processUsing(result, wks, newBlock, filter)
+				configset.processUsing(result, wks, newBlock, filter, kind)
 			end
 		end
 	end
