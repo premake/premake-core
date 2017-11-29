@@ -482,6 +482,12 @@
 			result = configset.new()
 		end
 
+		-- tag ourselves as used.
+		result._imports = result._imports or {}
+		result._imports[cset] = true
+
+		-- now iterator through all blocks and extract only those
+		-- that apply to the current filter.
 		local blocks = cset.blocks
 		local n = #blocks
 
@@ -503,6 +509,10 @@
 
 			if criteria.matches(block._criteria, filter) then
 				table.insert(result.blocks, block)
+
+				if cset.workspace then
+					configset.processUsing(result, cset.workspace, block, filter)
+				end
 			end
 		end
 
@@ -510,4 +520,42 @@
 
 		result.compiled = true
 		return result
+	end
+
+	function configset.processUsing(result, wks, block, filter)
+		if block.using and #block.using > 0 then
+			for _, name in ipairs(block.using) do
+				configset.useExportsFromProject(result, wks, name, filter)
+			end
+		end
+	end
+
+	function configset.useExportsFromProject(result, wks, name, filter)
+		local prj = p.workspace.findproject(wks, name)
+		if not prj then
+			p.error("Project '%s' is not in the solution '%s'.", name, wks.name)
+		end
+
+		-- if it was already imported, skip.
+		if result._imports[prj] then
+			return
+		end
+
+		-- mark us as done.
+		result._imports[prj] = true
+
+		for _, block in ipairs(prj.blocks) do
+			if criteria.matches(block._criteria, filter) then
+				-- copy the block entirely.
+				local newBlock = table.shallowcopy(block._export)
+				newBlock._basedir = block._basedir
+				newBlock._origin  = result
+
+				-- insert resulting block
+				table.insert(result.blocks, newBlock)
+
+				-- recurse
+				configset.processUsing(result, wks, newBlock, filter)
+			end
+		end
 	end
