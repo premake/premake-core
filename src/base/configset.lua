@@ -556,7 +556,7 @@
 				newBlock._origin  = result
 
 				-- links don't propagate onto static libraries.
-				if kind ~= p.STATICLIB then
+				if kind == p.STATICLIB then
 					newBlock.links = nil
 				end
 

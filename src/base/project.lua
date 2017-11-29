@@ -36,6 +36,11 @@
 			prj.group = ""
 		end
 
+		-- projects using me, should link against me.
+		local f = p.field.get("links")
+		p.configset.store(prj, f, prj.name, 'interface')
+
+		-- return new project.
 		return prj
 	end
 
