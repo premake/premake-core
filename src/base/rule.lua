@@ -174,6 +174,15 @@
 			end
 		end
 
+		-- bool just emits the switch
+		if type(value) == "boolean" then
+			if value then
+				return prop.switch
+			else
+				return nil
+			end
+		end
+
 		-- enum?
 		if prop.values then
 			local i = table.indexof(prop.values, value)
