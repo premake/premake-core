@@ -13,6 +13,59 @@
 
 
 ---
+-- Helper function to create a unique 'variant' name based on a configuration.
+---
+
+	function config.computeSystem(cfg)
+		return cfg.system
+	end
+
+	function config.computePlatform(cfg)
+		return cfg.platform
+	end
+
+	function config.computeToolset(cfg)
+		local map = {
+			["msc-v90"]      = 'vc90',
+			["msc-v100"]     = 'vc100',
+			["msc-v110"]     = 'vc110',
+			["msc-v120"]     = 'vc120',
+			["msc-v140"]     = 'vc140',
+			["msc-v140_xp"]  = 'vc140_xp',
+			["msc-v141"]     = 'vc141',
+			["msc-v141_xp"]  = 'vc141_xp',
+		}
+		return map[cfg.toolset or '?'] or cfg.toolset
+	end
+
+	function config.computeArchitecture(cfg)
+		return cfg.architecture
+	end
+
+	function config.computeConfig(cfg)
+		return cfg.buildcfg
+	end
+
+	function config.computeVariant(cfg)
+		local function __concat(...)
+			tbl = table.translate({...}, function(val)
+				if val and #val > 0 then
+					return val:lower()
+				end
+			end)
+			return table.concat(table.unique(tbl), '-')
+		end
+
+		local system     = config.computeSystem(cfg)
+		local platform   = config.computePlatform(cfg)
+		local arch       = config.computeArchitecture(cfg)
+		local toolset    = config.computeToolset(cfg)
+		local config     = config.computeConfig(cfg)
+		return __concat(system, platform, arch, toolset, config)
+	end
+
+
+---
 -- Helper function for getlinkinfo() and gettargetinfo(); builds the
 -- name parts for a configuration, for building or linking.
 --
@@ -32,17 +85,17 @@
 		local basedir = cfg.project.location
 
 		local targetdir
-		if cfg.platform then
-			targetdir = path.join(basedir, 'bin', cfg.platform, cfg.buildcfg)
+		if kind == p.STATICLIB then
+			targetdir = path.join(basedir, 'lib', config.computeVariant(cfg))
 		else
-			targetdir = path.join(basedir, 'bin', cfg.buildcfg)
+			targetdir = path.join(basedir, 'bin', config.computeVariant(cfg))
 		end
 
 		local directory = cfg[field.."dir"] or cfg.targetdir or targetdir
-		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
+		local basename  = cfg[field.."name"] or cfg.targetname or cfg.project.name
 
-		local prefix = cfg[field.."prefix"] or cfg.targetprefix or ""
-		local suffix = cfg[field.."suffix"] or cfg.targetsuffix or ""
+		local prefix    = cfg[field.."prefix"] or cfg.targetprefix or ""
+		local suffix    = cfg[field.."suffix"] or cfg.targetsuffix or ""
 		local extension = cfg[field.."extension"] or cfg.targetextension or ""
 
 		local bundlename = ""

@@ -330,44 +330,14 @@
 -- The path is built from these choices, in order:
 --
 --   [1] -> the objects directory as set in the config
---   [2] -> [1] + the platform name
---   [3] -> [2] + the build configuration name
---   [4] -> [3] + the project name
+--   [2] -> [1] + the computed variant name.
+--   [3] -> [2] + the project name
 --
 -- @param wks
 --    The workspace to process. The directories are modified inline.
 --
 
 	function oven.bakeObjDirs(wks)
-		-- function to compute the four options for a specific configuration
-		local function getobjdirs(cfg)
-			-- the "!" prefix indicates the directory is not to be touched
-			local objdir = cfg.objdir or "obj"
-			local i = objdir:find("!", 1, true)
-			if i then
-				cfg.objdir = objdir:sub(1, i - 1) .. objdir:sub(i + 1)
-				return nil
-			end
-
-			local dirs = {}
-
-			local dir = path.getabsolute(path.join(cfg.project.location, objdir))
-			table.insert(dirs, dir)
-
-			if cfg.platform then
-				dir = path.join(dir, cfg.platform)
-				table.insert(dirs, dir)
-			end
-
-			dir = path.join(dir, cfg.buildcfg)
-			table.insert(dirs, dir)
-
-			dir = path.join(dir, cfg.project.name)
-			table.insert(dirs, dir)
-
-			return dirs
-		end
-
 		-- walk all of the configs in the workspace, and count the number of
 		-- times each obj dir gets used
 		local counts = {}
@@ -377,7 +347,7 @@
 			for cfg in p.project.eachconfig(prj) do
 				-- get the dirs for this config, and associate them together,
 				-- and increment a counter for each one discovered
-				local dirs = getobjdirs(cfg)
+				local dirs = oven.computeObjDirs(cfg)
 				if dirs then
 					configs[cfg] = dirs
 					for _, dir in ipairs(dirs or {}) do
@@ -752,4 +722,36 @@
 			cfg.linktarget = p.config.getlinkinfo(cfg)
 			cfg.linktarget.relpath = p.project.getrelative(cfg.project, cfg.linktarget.abspath)
 		end
+	end
+
+
+--
+-- Compute the objdirs from a configuration.
+--
+
+	function oven.computeObjDirs(cfg)
+		local objdir = cfg.objdir or "obj"
+		if objdir then
+			local i = objdir:find("!", 1, true)
+			if i then
+				cfg.objdir = objdir:sub(1, i - 1) .. objdir:sub(i + 1)
+				return nil
+			end
+		end
+
+		local dirs = {}
+
+		-- [1] -> the objects directory as set in the config
+		local dir = path.getabsolute(path.join(cfg.project.location, objdir))
+		table.insert(dirs, dir)
+
+		-- [2] -> [1] + the computed variant name.
+		dir = path.join(dir, p.config.computeVariant(cfg))
+		table.insert(dirs, dir)
+
+		-- [3] -> [2] + the project name
+		dir = path.join(dir, cfg.project.name)
+		table.insert(dirs, dir)
+
+		return dirs
 	end
