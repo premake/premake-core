@@ -19,7 +19,8 @@
 	local wks, prj
 
 	function suite.setup()
-		_OS = "linux"
+		_TARGET_OS = "linux"
+
 		wks, prj = test.createWorkspace()
 	end
 
@@ -126,8 +127,8 @@ LINKCMD = libtool -o "$@" $(OBJECTS)
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
-LIBS += build/bin/Debug/libMyProject2.a
-LDDEPS += build/bin/Debug/libMyProject2.a
+LIBS += build/lib/linux-debug/libMyProject2.a
+LDDEPS += build/lib/linux-debug/libMyProject2.a
 		]]
 	end
 
@@ -147,7 +148,7 @@ LDDEPS += build/bin/Debug/libMyProject2.a
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
 LIBS += build/bin/Debug/libMyProject2.so
-LDDEPS += build/bin/Debug/libMyProject2.so
+LDDEPS += build/bin/linux-debug/libMyProject2.so
 		]]
 	end
 
@@ -165,16 +166,16 @@ LDDEPS += build/bin/Debug/libMyProject2.so
 
         prepare { "ldFlags", "libs", "ldDeps" }
         test.capture [[
-ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
+ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/linux-debug -Wl,-rpath,'$$ORIGIN/../../build/bin/linux-debug' -s
 LIBS += -lMyProject2
-LDDEPS += build/bin/Debug/libMyProject2.so
+LDDEPS += build/bin/linux-debug/libMyProject2.so
         ]]
     end
 
     function suite.links_onMacOSXSiblingSharedLib()
-    	_OS = "macosx"
+        _OS = "macosx"
         links "MyProject2"
-		flags { "RelativeLinks" }
+        flags { "RelativeLinks" }
 
         test.createproject(wks)
         kind "SharedLib"
@@ -182,9 +183,9 @@ LDDEPS += build/bin/Debug/libMyProject2.so
 
         prepare { "ldFlags", "libs", "ldDeps" }
         test.capture [[
-ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'@loader_path/../../build/bin/Debug' -Wl,-x
+ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/macosx-clang-debug -Wl,-rpath,'@loader_path/../../build/bin/macosx-clang-debug' -Wl,-x
 LIBS += -lMyProject2
-LDDEPS += build/bin/Debug/libMyProject2.dylib
+LDDEPS += build/bin/macosx-clang-debug/libMyProject2.dylib
         ]]
     end
 
@@ -207,8 +208,8 @@ LDDEPS += build/bin/Debug/libMyProject2.dylib
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
-LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
-LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+LIBS += build/lib/linux-debug/libMyProject2.a build/lib/linux-debug/libMyProject3.a
+LDDEPS += build/lib/linux-debug/libMyProject2.a build/lib/linux-debug/libMyProject3.a
 		]]
 	end
 
@@ -232,8 +233,8 @@ LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
-LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
-LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
+LIBS += -Wl,--start-group build/lib/linux-debug/libMyProject2.a build/lib/linux-debug/libMyProject3.a -Wl,--end-group
+LDDEPS += build/lib/linux-debug/libMyProject2.a build/lib/linux-debug/libMyProject3.a
 		]]
 	end
 

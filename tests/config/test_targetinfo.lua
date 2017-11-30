@@ -233,7 +233,7 @@
 		kind "WindowedApp"
 		system "MacOSX"
 		i = prepare()
-		test.isequal("bin/Debug/MyProject.app/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+		test.isequal("bin/macosx-clang-debug/MyProject.app/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
 	end
 
 

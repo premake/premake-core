@@ -16,6 +16,8 @@
 	local wks, prj, cfg
 
 	function suite.setup()
+		_TARGET_OS="linux"
+
 		p.action.set("codelite")
 		p.indent("  ")
 		wks = test.createWorkspace()
@@ -135,7 +137,7 @@
 		prepare()
 		codelite.project.general(cfg)
 		test.capture [[
-      <General OutputFile="bin/Debug/MyProject.exe" IntermediateDirectory="obj/Debug" Command="bin/Debug/MyProject.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="bin/windows-clang-debug/MyProject.exe" IntermediateDirectory="obj/windows-clang-debug" Command="bin/windows-clang-debug/MyProject.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
 		]]
 	end
 

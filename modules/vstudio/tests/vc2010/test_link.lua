@@ -38,7 +38,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
 	end
@@ -56,7 +56,7 @@
 	<SubSystem>Windows</SubSystem>
 	<EnableCOMDATFolding>true</EnableCOMDATFolding>
 	<OptimizeReferences>true</OptimizeReferences>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
 	end
@@ -90,7 +90,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
 	end
@@ -132,7 +132,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -340,7 +340,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
 	end
@@ -359,8 +359,8 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<AdditionalDependencies>bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<AdditionalDependencies>lib\windows-vc100-debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -415,7 +415,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 	<AdditionalOptions>/kupo %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
@@ -461,7 +461,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 	<ModuleDefinitionFile>hello.def</ModuleDefinitionFile>
 </Link>
 		]]
@@ -551,7 +551,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 	<GenerateMapFile>true</GenerateMapFile>
 </Link>
 		]]
@@ -567,7 +567,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
 </Link>
 		]]
@@ -583,7 +583,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ImportLibrary>lib\windows-vc100-debug\MyProject.lib</ImportLibrary>
 	<IgnoreSpecificDefaultLibraries>lib1.lib;lib2.obj</IgnoreSpecificDefaultLibraries>
 </Link>
 		]]

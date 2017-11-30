@@ -16,6 +16,8 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		p.escaper(gmake2.esc)
 		gmake2.cpp.initialize()
 
@@ -117,17 +119,17 @@ $(OBJDIR)/test.o: src/test.cpp
 # #############################################
 
 ifeq ($(config),debug)
-obj/Debug/hello.obj: hello.x
+obj/linux-debug/hello.obj: hello.x
 	@echo Compiling hello.x
-	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
-	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
+	$(SILENT) cxc -c "hello.x" -o "obj/linux-debug/hello.xo"
+	$(SILENT) c2o -c "obj/linux-debug/hello.xo" -o "obj/linux-debug/hello.obj"
 endif
 
 ifeq ($(config),release)
-obj/Release/hello.obj: hello.x
+obj/linux-release/hello.obj: hello.x
 	@echo Compiling hello.x
-	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
-	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+	$(SILENT) cxc -c "hello.x" -o "obj/linux-release/hello.xo"
+	$(SILENT) c2o -c "obj/linux-release/hello.xo" -o "obj/linux-release/hello.obj"
 endif
 		]]
 	end
@@ -148,17 +150,17 @@ endif
 # #############################################
 
 ifeq ($(config),debug)
-obj/Debug/hello.obj: hello.x hello.x.inc hello.x.inc2
+obj/linux-debug/hello.obj: hello.x hello.x.inc hello.x.inc2
 	@echo Compiling hello.x
-	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
-	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
+	$(SILENT) cxc -c "hello.x" -o "obj/linux-debug/hello.xo"
+	$(SILENT) c2o -c "obj/linux-debug/hello.xo" -o "obj/linux-debug/hello.obj"
 endif
 
 ifeq ($(config),release)
-obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
+obj/linux-release/hello.obj: hello.x hello.x.inc hello.x.inc2
 	@echo Compiling hello.x
-	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
-	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+	$(SILENT) cxc -c "hello.x" -o "obj/linux-release/hello.xo"
+	$(SILENT) c2o -c "obj/linux-release/hello.xo" -o "obj/linux-release/hello.obj"
 endif
 		]]
 	end

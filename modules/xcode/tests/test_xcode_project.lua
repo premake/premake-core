@@ -864,7 +864,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -885,7 +885,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = "\"$(HOME)/Applications\"";
@@ -906,7 +906,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "lib/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/lib;
@@ -927,7 +927,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -950,7 +950,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = xyz;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -977,7 +977,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -999,7 +999,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INFOPLIST_FILE = "a/b/c/MyProject-Info.plist";
@@ -1021,7 +1021,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1042,7 +1042,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1063,7 +1063,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Universal32/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-universal32-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1085,7 +1085,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CONFIGURATION_BUILD_DIR = bin/Universal32/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/macosx-universal32-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1106,7 +1106,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/ios-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1129,7 +1129,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/ios-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1153,7 +1153,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/ios-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1177,7 +1177,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Premake Developers";
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/ios-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1200,7 +1200,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = bin/Debug;
+				CONFIGURATION_BUILD_DIR = "bin/ios-clang-debug";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -1232,9 +1232,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1257,9 +1257,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1282,9 +1282,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1307,10 +1307,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1333,7 +1333,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				SYMROOT = bin;
 			};
@@ -1362,9 +1362,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1387,9 +1387,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 				USER_HEADER_SEARCH_PATHS = (
 					../include,
 					../libs,
@@ -1422,9 +1422,9 @@
 					"\"../name with spaces\"",
 					"$(inherited)",
 				);
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1446,13 +1446,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"build option 1",
 					"build option 2",
 				);
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1475,12 +1475,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-lldap",
 				);
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1502,13 +1502,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"link option 1",
 					"link option 2",
 				);
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1531,9 +1531,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 				WARNING_CFLAGS = "-Wall -Wextra";
 			};
 			name = Debug;
@@ -1558,9 +1558,9 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1583,12 +1583,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-ffast-math",
 				);
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1611,12 +1611,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-ffloat-store",
 				);
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1641,9 +1641,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = YES;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1668,9 +1668,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1693,12 +1693,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 				);
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1722,9 +1722,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1748,9 +1748,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1775,9 +1775,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = YES;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1804,9 +1804,9 @@
 					mylibs1,
 					mylibs2,
 				);
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1831,9 +1831,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1857,9 +1857,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Universal/Debug;
+				OBJROOT = "obj/macosx-universal-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Universal/Debug;
+				SYMROOT = "bin/macosx-universal-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1883,9 +1883,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Universal32/Debug;
+				OBJROOT = "obj/macosx-universal32-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Universal32/Debug;
+				SYMROOT = "bin/macosx-universal32-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1909,9 +1909,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Universal64/Debug;
+				OBJROOT = "obj/macosx-universal64-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Universal64/Debug;
+				SYMROOT = "bin/macosx-universal64-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1935,9 +1935,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Native/Debug;
+				OBJROOT = "obj/macosx-native-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Native/Debug;
+				SYMROOT = "bin/macosx-native-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1961,9 +1961,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/x86/Debug;
+				OBJROOT = "obj/macosx-x86-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/x86/Debug;
+				SYMROOT = "bin/macosx-x86-clang-debug";
 			};
 			name = Debug;
 		};
@@ -1987,9 +1987,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/x86_64/Debug;
+				OBJROOT = "obj/macosx-x86_64-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/x86_64/Debug;
+				SYMROOT = "bin/macosx-x86_64-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2012,9 +2012,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Universal32/Debug;
+				OBJROOT = "obj/macosx-universal32-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Universal32/Debug;
+				SYMROOT = "bin/macosx-universal32-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2038,9 +2038,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2064,9 +2064,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2090,9 +2090,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2116,9 +2116,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2142,9 +2142,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2168,9 +2168,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2194,9 +2194,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2220,9 +2220,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2246,9 +2246,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2272,9 +2272,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2298,9 +2298,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2324,9 +2324,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2350,9 +2350,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2376,9 +2376,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2402,9 +2402,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2428,9 +2428,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2454,9 +2454,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};
@@ -2480,9 +2480,9 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OBJROOT = obj/Debug;
+				OBJROOT = "obj/macosx-clang-debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
+				SYMROOT = "bin/macosx-clang-debug";
 			};
 			name = Debug;
 		};

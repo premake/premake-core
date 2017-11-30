@@ -15,6 +15,8 @@ premake.api.register {
 local wks, prj, cfg
 
 function suite.setup()
+	_TARGET_OS = "linux"
+
 	wks = workspace("MyWorkspace")
 	test_libdir   (path.join(_MAIN_SCRIPT_DIR, 'lib'))
 	configurations { "Debug", "Release" }

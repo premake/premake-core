@@ -35,8 +35,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 </PropertyGroup>
@@ -71,9 +71,9 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
+	<OutDir>bin\xbox360-vc100-debug\</OutDir>
 	<OutputFile>$(OutDir)MyProject.exe</OutputFile>
-	<IntDir>obj\Debug\</IntDir>
+	<IntDir>obj\xbox360-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
@@ -87,9 +87,9 @@
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-	<OutDir>bin\Debug\</OutDir>
+	<OutDir>lib\xbox360-vc100-debug\</OutDir>
 	<OutputFile>$(OutDir)MyProject.lib</OutputFile>
-	<IntDir>obj\Debug\</IntDir>
+	<IntDir>obj\xbox360-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.lib</TargetExt>
 	<ImageXexOutput>$(OutDir)$(TargetName).xex</ImageXexOutput>
@@ -107,7 +107,7 @@
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-	<OutDir>bin\Debug\</OutDir>
+	<OutDir>lib\windows-vc100-debug\</OutDir>
 		]]
 	end
 
@@ -148,8 +148,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>..\tmp\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>..\tmp\windows-vc100-debug\</IntDir>
 		]]
 	end
 
@@ -163,8 +163,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyTarget</TargetName>
 		]]
 	end
@@ -191,7 +191,7 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
 		]]
 	end
 
@@ -206,8 +206,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<GenerateManifest>false</GenerateManifest>
@@ -225,8 +225,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>
 	</TargetExt>
@@ -246,8 +246,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<ExtensionsToDeleteOnClean>*.temp1;*.temp2;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
@@ -266,8 +266,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
@@ -281,8 +281,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<LibraryPath>$(DXSDK_DIR)\lib\x86;$(LibraryPath)</LibraryPath>
@@ -300,8 +300,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<ExecutablePath>$(ProjectDir)..\Include;$(ExecutablePath)</ExecutablePath>
@@ -315,8 +315,8 @@
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>bin\windows-vc100-debug\</OutDir>
+	<IntDir>obj\windows-vc100-debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<ExecutablePath>C:\Include;$(ExecutablePath)</ExecutablePath>

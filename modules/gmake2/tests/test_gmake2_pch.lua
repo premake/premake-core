@@ -20,6 +20,8 @@
 
 	local wks, prj
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		os.chdir(_TESTS_DIR)
 		wks, prj = test.createWorkspace()
 	end

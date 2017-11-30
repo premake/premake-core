@@ -17,6 +17,8 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		wks, prj = test.createWorkspace()
 		symbols "On"
 	end

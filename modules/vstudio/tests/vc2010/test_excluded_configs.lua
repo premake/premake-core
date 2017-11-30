@@ -69,7 +69,7 @@
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<AdditionalDependencies>bin\Ares\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<AdditionalDependencies>lib\windows-ares-vc100-debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>

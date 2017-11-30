@@ -15,6 +15,8 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = 'windows'
+
 		wks = workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
 		prj = project "MyProject"
@@ -26,10 +28,10 @@
 
 	function suite.singleProject_noPlatforms()
 		prepare("Debug")
-		test.isequal(path.getabsolute("obj/Debug"), cfg.objdir)
+		test.isequal(path.getabsolute("obj/windows-debug"), cfg.objdir)
 
 		prepare("Release")
-		test.isequal(path.getabsolute("obj/Release"), cfg.objdir)
+		test.isequal(path.getabsolute("obj/windows-release"), cfg.objdir)
 	end
 
 
@@ -38,7 +40,7 @@
 		prepare("Debug")
 
 		test.createproject(wks)
-		test.isequal(path.getabsolute("obj/Debug/MyProject"), cfg.objdir)
+		test.isequal(path.getabsolute("obj/windows-debug/MyProject"), cfg.objdir)
 	end
 
 
@@ -46,7 +48,7 @@
 		platforms { "x86", "x86_64" }
 		prepare("Debug", "x86")
 
-		test.isequal(path.getabsolute("obj/x86/Debug"), cfg.objdir)
+		test.isequal(path.getabsolute("obj/windows-x86-debug"), cfg.objdir)
 	end
 
 

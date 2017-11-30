@@ -38,8 +38,8 @@
 		test.capture [[
 <Configuration
 	Name="Debug|Win32"
-	OutputDirectory="bin\Debug"
-	IntermediateDirectory="obj\Debug"
+	OutputDirectory="bin\windows-vc90-debug"
+	IntermediateDirectory="obj\windows-vc90-debug"
 	ConfigurationType="1"
 	CharacterSet="1"
 	>
@@ -102,8 +102,8 @@
 		test.capture [[
 <Configuration
 	Name="Debug|Win32"
-	OutputDirectory="bin\Debug"
-	IntermediateDirectory="obj\Debug"
+	OutputDirectory="bin\windows-vc90-debug"
+	IntermediateDirectory="obj\windows-vc90-debug"
 	ConfigurationType="0"
 	>
 		]]
@@ -115,8 +115,8 @@
 		test.capture [[
 <Configuration
 	Name="Debug|Win32"
-	OutputDirectory="bin\Debug"
-	IntermediateDirectory="obj\Debug"
+	OutputDirectory="bin\windows-vc90-debug"
+	IntermediateDirectory="obj\windows-vc90-debug"
 	ConfigurationType="0"
 	>
 		]]

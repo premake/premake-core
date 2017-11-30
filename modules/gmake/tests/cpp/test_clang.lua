@@ -18,6 +18,8 @@
 	local wks, prj
 
 	function suite.setup()
+		_TARGET_OS = "linux"
+
 		wks = test.createWorkspace()
 		toolset "clang"
 		prj = p.workspace.getproject(wks, 1)

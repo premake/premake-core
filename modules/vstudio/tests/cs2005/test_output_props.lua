@@ -49,8 +49,8 @@
 		p.action.set("vs2008")
 		prepare()
 		test.capture [[
-		<OutputPath>bin\Debug\</OutputPath>
-		<IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
+		<OutputPath>bin\windows-vc90-debug\</OutputPath>
+		<IntermediateOutputPath>obj\windows-vc90-debug\</IntermediateOutputPath>
 		]]
 	end
 
@@ -58,8 +58,8 @@
 		p.action.set("vs2010")
 		prepare()
 		test.capture [[
-		<OutputPath>bin\Debug\</OutputPath>
-		<BaseIntermediateOutputPath>obj\Debug\</BaseIntermediateOutputPath>
+		<OutputPath>bin\windows-vc100-debug\</OutputPath>
+		<BaseIntermediateOutputPath>obj\windows-vc100-debug\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
 		]]
 	end
