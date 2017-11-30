@@ -103,7 +103,8 @@
 
 	function m.localDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then
-			p.x('<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(cfg.debugargs, " "))
+			local args = os.translateCommandsAndPaths(cfg.debugargs, cfg.project.basedir, cfg.project.location)
+			p.x('<LocalDebuggerCommandArguments>%s</LocalDebuggerCommandArguments>', table.concat(args, " "))
 		end
 	end
 
