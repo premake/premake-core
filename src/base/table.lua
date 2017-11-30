@@ -255,7 +255,7 @@
 
 --
 -- Inserts a value into a table as both a list item and a key-value pair.
--- Useful for set operations.
+-- Useful for set operations. Returns false if the value already exists, true otherwise.
 --
 
 	function table.insertkeyed(tbl, pos, value)
@@ -263,8 +263,14 @@
 			value = pos
 			pos = #tbl + 1
 		end
+
+		if tbl[value] ~= nil then
+			return false
+		end
+
 		table.insert(tbl, pos, value)
 		tbl[value] = value
+		return true
 	end
 
 
