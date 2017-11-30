@@ -32,6 +32,7 @@
 			gmake2.shellType,
 			utility.initialize,
 			utility.createFileTable,
+			utility.outputConfigurationSection,
 			utility.outputFilesSection,
 			utility.outputRulesSection,
 			utility.outputFileRuleSection,
@@ -235,6 +236,14 @@
 			gmake2.preLinkCmds,
 			gmake2.postBuildCmds,
 		}
+	end
+
+
+	function utility.outputConfigurationSection(prj)
+		_p('# Configurations')
+		_p('# #############################################')
+		_p('')
+		gmake2.outputSection(prj, utility.elements.configuration)
 	end
 
 
