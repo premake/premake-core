@@ -57,20 +57,20 @@
 
 	function cpp.initialize()
 		rule 'cpp'
-			fileExtension {".cc", ".cpp", ".cxx", ".mm"}
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.o'}
+			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CXX) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.o'}
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CC) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.res'}
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.res" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)'}
 
@@ -124,6 +124,7 @@
 			cfg._gmake = cfg._gmake or {}
 			cfg._gmake.filesets = {}
 			cfg._gmake.fileRules = {}
+			cfg._gmake.bases = {}
 
 			local files = table.shallowcopy(prj._.files)
 			table.foreachi(files, function(node)
@@ -728,6 +729,18 @@
 --
 -- Output the file compile targets.
 --
+
+	function cpp.makeUnique(cfg, f)
+		local cache = cfg._gmake.bases
+		local seq = cache[f]
+		if seq == nil then
+			cache[f] = 1
+			return f
+		else
+			cache[f] = seq + 1
+			return f .. tostring(seq)
+		end
+	end
 
 	cpp.elements.fileRules = function(cfg)
 		local funcs = {}
