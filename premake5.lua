@@ -94,7 +94,7 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
-		flags { "No64BitChecks", "StaticRuntime", "MultiProcessorCompile" }
+		flags { "StaticRuntime", "MultiProcessorCompile" }
 		warnings "Extra"
 
 		if not _OPTIONS["no-zlib"] then
@@ -103,6 +103,9 @@
 		if not _OPTIONS["no-curl"] then
 			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
 		end
+
+		filter { 'system:windows' }
+			platforms   { 'x86', 'x64' }
 
 		filter "configurations:Debug"
 			defines     "_DEBUG"
@@ -118,10 +121,6 @@
 
 		filter { "system:windows", "configurations:Release" }
 			flags       { "NoIncrementalLink", "LinkTimeOptimization" }
-
-		filter { "system:macosx", "action:gmake" }
-			buildoptions { "-mmacosx-version-min=10.4" }
-			linkoptions  { "-mmacosx-version-min=10.4" }
 
 	project "Premake5"
 		targetname  "premake5"
