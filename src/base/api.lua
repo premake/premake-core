@@ -11,11 +11,15 @@
 	local api = p.api
 	local configset = p.configset
 
-
+---
+-- Create the public&interface namespaces for the api.register functions.
+---
+	public = {}
+	interface = {}
 
 ---
 -- Set up a place to store the current active objects in each configuration
--- scope (e.g. wprkspaces, projects, groups, and configurations). This likely
+-- scope (e.g. workspaces, projects, groups, and configurations). This likely
 -- ought to be internal scope, but it is useful for testing.
 ---
 
@@ -277,10 +281,19 @@
 		end
 
 		-- create a setter function for it
-		_G[name] = function(value, visibility)
-			return api.storeField(field, value, visibility)
+		_G[name] = function(value)
+			return api.storeField(field, value)
 		end
 
+		public[name] = function(value)
+			return api.storeField(field, value, 'public')
+		end
+
+		interface[name] = function(value)
+			return api.storeField(field, value, 'interface')
+		end
+
+		-- TODO, do we need the ability to remove things from public&interface?
 		if p.field.removes(field) then
 			_G["remove" .. name] = function(value)
 				return api.remove(field, value)

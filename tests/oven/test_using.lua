@@ -22,7 +22,7 @@
 		local prj1 = project "MyProject1"
 			kind 'StaticLib'
 			includedirs {"private"}
-			includedirs ({"public"}, "public")
+			public.includedirs {"public"}
 
 		local prj2 = project "MyProject2"
 			kind 'ConsoleApp'
