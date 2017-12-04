@@ -516,7 +516,8 @@
 		local testpattern = function(pattern, pairing, i)
 			local j = 1
 			while i <= #pairing and j <= #pattern do
-				if pairing[i] ~= pattern[j] then
+				local wd = path.wildcards(pattern[j])
+				if pairing[i]:match(wd) ~= pairing[i] then
 					return false
 				end
 				i = i + 1
