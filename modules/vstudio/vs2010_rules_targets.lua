@@ -60,7 +60,7 @@
 	function m.computedProperties(r)
 		-- create shadow context.
 		local pathVars = p.rule.createPathVars(r, "%%(%s)")
-		local ctx = p.context.extent(r, { pathVars = pathVars })
+		local ctx = p.context.extent(r, { pathVars = pathVars, overridePathVars = true })
 
 		-- now use the shadow context to detoken.
 		local buildoutputs = ctx.buildoutputs
@@ -302,7 +302,7 @@
 	function m.linkLib(r)
 		-- create shadow context.
 		local pathVars = p.rule.createPathVars(r, "%%(%s)")
-		local ctx = p.context.extent(r, { pathVars = pathVars })
+		local ctx = p.context.extent(r, { pathVars = pathVars, overridePathVars=true })
 
 		-- now use the shadow context to detoken.
 		local buildoutputs = ctx.buildoutputs

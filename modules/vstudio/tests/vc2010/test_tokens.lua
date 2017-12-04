@@ -42,7 +42,7 @@
 	<CustomBuild Include="..\hello.cg">
 		<FileType>Document</FileType>
 		<Command>cgc %(Identity)</Command>
-		<Outputs>../%(Filename).a;../%(Filename).b</Outputs>
+		<Outputs>../hello.a;../hello.b</Outputs>
 	</CustomBuild>
 </ItemGroup>
 		]]
@@ -61,7 +61,7 @@
 	<CustomBuild Include="..\hello.cg">
 		<FileType>Document</FileType>
 		<Command>cgc %(Identity)</Command>
-		<Outputs>../%(Filename).obj</Outputs>
+		<Outputs>../hello.obj</Outputs>
 		<Message>Compiling shader %(Identity)</Message>
 	</CustomBuild>
 </ItemGroup>
@@ -81,7 +81,7 @@
 	<CustomBuild Include="..\hello.cg">
 		<FileType>Document</FileType>
 		<Command>cgc %(Identity)</Command>
-		<Outputs>../%(Filename).obj</Outputs>
+		<Outputs>../hello.obj</Outputs>
 		<AdditionalInputs>../common.cg.inc;../common.cg.inc2</AdditionalInputs>
 	</CustomBuild>
 </ItemGroup>
