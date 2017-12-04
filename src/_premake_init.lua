@@ -122,7 +122,7 @@
 		scope = { "config", "rule" },
 		kind = "list:path",
 		tokens = true,
-		pathVars = true,
+		pathVars = false,
 	}
 
 	api.register {
@@ -130,7 +130,7 @@
 		scope = "config",
 		kind = "list:path",
 		tokens = true,
-		pathVars = true,
+		pathVars = false,
 	}
 
 	api.register {
