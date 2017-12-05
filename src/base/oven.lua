@@ -105,6 +105,13 @@
 
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
+	
+		-- Build a master list of configuration/platform pairs from all of the
+		-- projects contained by the workspace; I will need this when generating
+		-- workspace files in order to provide a map from workspace configurations
+		-- to project configurations.
+
+		self.configs = oven.bakeConfigs(self)	
 
 		-- Now bake down all of the projects contained in the workspace, and
 		-- store that for future reference
@@ -119,13 +126,6 @@
 		-- now we can post process the projects for 'buildoutputs' files
 		-- that have the 'compilebuildoutputs' flag
 		oven.addGeneratedFiles(self)
-
-		-- Build a master list of configuration/platform pairs from all of the
-		-- projects contained by the workspace; I will need this when generating
-		-- workspace files in order to provide a map from workspace configurations
-		-- to project configurations.
-
-		self.configs = oven.bakeConfigs(self)
 	end
 
 
