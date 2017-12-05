@@ -186,6 +186,12 @@
 	}
 
 	api.register {
+		name = "compilebuildoutputstarget",
+		scope = "config",
+		kind = "string"
+	}
+
+	api.register {
 		name = "compileas",
 		scope = "config",
 		kind = "string",

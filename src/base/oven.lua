@@ -122,70 +122,6 @@
 		-- to each project configuration in the workspace.
 
 		oven.bakeObjDirs(self)
-
-		-- now we can post process the projects for 'buildoutputs' files
-		-- that have the 'compilebuildoutputs' flag
-		oven.addGeneratedFiles(self)
-	end
-
-
-	function oven.addGeneratedFiles(wks)
-
-		local function addGeneratedFile(cfg, source, filename)
-			-- mark that we have generated files.
-			cfg.project.hasGeneratedFiles = true
-
-			-- add generated file to the project.
-			local files = cfg.project._.files
-			local node = files[filename]
-			if not node then
-				node = p.fileconfig.new(filename, cfg.project)
-				files[filename] = node
-				table.insert(files, node)
-			end
-
-			-- always overwrite the dependency information.
-			node.dependsOn = source
-			node.generated = true
-
-			-- add to config if not already added.
-			if not p.fileconfig.getconfig(node, cfg) then
-				p.fileconfig.addconfig(node, cfg)
-			end
-		end
-
-		local function addFile(cfg, node)
-			local filecfg = p.fileconfig.getconfig(node, cfg)
-			if not filecfg or filecfg.flags.ExcludeFromBuild or not filecfg.compilebuildoutputs then
-				return
-			end
-
-			if p.fileconfig.hasCustomBuildRule(filecfg) then
-				local buildoutputs = filecfg.buildoutputs
-				if buildoutputs and #buildoutputs > 0 then
-					for _, output in ipairs(buildoutputs) do
-						if not path.islinkable(output) then
-							addGeneratedFile(cfg, node, output)
-						end
-					end
-				end
-			end
-		end
-
-
-		for prj in p.workspace.eachproject(wks) do
-			local files = table.shallowcopy(prj._.files)
-			for cfg in p.project.eachconfig(prj) do
-				table.foreachi(files, function(node)
-					addFile(cfg, node)
-				end)
-			end
-
-			-- generated files might screw up the object sequences.
-			if prj.hasGeneratedFiles and p.project.isnative(prj) then
-				oven.assignObjectSequences(prj)
-			end
-		end
 	end
 
 
@@ -645,20 +581,102 @@
 		-- I need to look at them all.
 
 		for cfg in p.project.eachconfig(prj) do
-			local function addFile(fname, i)
 
+			local function addBuildOutputs(target, buildoutputs)
+				-- add ourself as a dependency to the other project
+				p.configset.store(target, p.field.get("dependson"), prj.name)
+
+				-- add all generated files to the other project.
+				local field = p.field.get("files")
+				for _, output in ipairs(buildoutputs) do
+					if path.hasdeferredjoin(output) then
+						output = path.resolvedeferredjoin(output)
+					end
+					p.configset.store(target, field, output)
+				end
+			end
+
+			local function addToProject(target, buildoutputs)
+				-- we can't modify already baked projects, so the 'codegen' project must
+				-- be defined before the target project.
+				if target._isBaked then
+					p.error("project '%s' must be defined before project '%s'.", target.name, prj.name)
+				end
+
+				-- we need to go through each workspace config and try to find
+				-- the corresponding config to both our source and target.
+				if (#prj._cfglist == 1) then
+					-- reset filter.
+					p.configset.addFilter(target, {}, os.getcwd())
+
+					addBuildOutputs(target, buildoutputs)
+				else
+					-- we need to map from config to target config, and only add the files to the appropriate target config.
+					for wks_cfg in p.workspace.eachconfig(prj.workspace) do
+						local source_cfg = p.project.getconfig(prj, wks_cfg.buildcfg, wks_cfg.platform)
+						if source_cfg == cfg then
+							local pairing = p.project.mapconfig(target, wks_cfg.buildcfg, wks_cfg.platform)
+
+							-- set filter to current configuration.
+							local ok, err = p.configset.addFilter(target, {'configurations:'..pairing[1], 'platforms:' .. pairing[2]}, os.getcwd())
+							if not ok then
+								error(err, 2)
+							end
+
+							addBuildOutputs(target, buildoutputs)
+						end
+					end
+
+					-- reset filter.
+					p.configset.addFilter(target, {}, os.getcwd())
+				end
+			end
+
+			local function addFile(fname, i)
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
 				-- and indexed for ordered iteration.
-				local fcfg = files[fname]
-				if not fcfg then
-					fcfg = p.fileconfig.new(fname, prj)
-					fcfg.order = i
-					files[fname] = fcfg
-					table.insert(files, fcfg)
+				local node = files[fname]
+				if not node then
+					node = p.fileconfig.new(fname, prj)
+					node.order = i
+					files[fname] = node
+					table.insert(files, node)
 				end
 
-				p.fileconfig.addconfig(fcfg, cfg)
+				-- create full file config.
+				local filecfg = p.fileconfig.addconfig(node, cfg)
+
+				if not p.fileconfig.hasCustomBuildRule(filecfg)
+				   or not filecfg.compilebuildoutputs
+				   or filecfg.flags.ExcludeFromBuild then
+					return node
+				end
+
+				-- at this point we have a custom build rules that we wants to compile its outputs for.
+				local buildoutputs = filecfg.buildoutputs
+				if buildoutputs and #buildoutputs > 0 then
+					if filecfg.compilebuildoutputstarget ~= nil then
+						local targetprj = p.workspace.findproject(prj.workspace, filecfg.compilebuildoutputstarget)
+						if targetprj ~= nil then
+							addToProject(targetprj, buildoutputs)
+						end
+					else
+						for _, output in ipairs(buildoutputs) do
+							if path.hasdeferredjoin(output) then
+								output = path.resolvedeferredjoin(output)
+							end
+
+							if not path.islinkable(output) then
+								local generated = addFile(output, i)
+								generated.dependsOn = node
+								generated.generated = true
+							end
+						end
+					end
+				end
+
+				return node
 			end
 
 			table.foreachi(cfg.files, addFile)
