@@ -190,6 +190,7 @@
 				m.outDir,
 				m.intDir,
 				m.extensionsToDeleteOnClean,
+				m.executablePath,
 			}
 		else
 			return {
