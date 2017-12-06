@@ -151,14 +151,25 @@
 	end
 
 
+	function cpp.addFileToFileset(cfg, source, filename)
+		-- add file to the fileset.
+		local filesets = cfg.project._gmake.filesets
+		local kind     = filesets[path.getextension(filename):lower()] or "CUSTOM"
+
+		-- don't link generated object files automatically if it's explicitly disabled.
+		if path.isobjectfile(filename) and source.linkbuildoutputs == false then
+			kind = "CUSTOM"
+		end
+
+		local fileset = cfg._gmake.filesets[kind] or {}
+		table.insert(fileset, filename)
+		cfg._gmake.filesets[kind] = fileset
+	end
+
+
 	function cpp.addFile(cfg, node)
 		local filecfg = fileconfig.getconfig(node, cfg)
 		if not filecfg or filecfg.flags.ExcludeFromBuild then
-			return
-		end
-
-		-- skip generated files, since we try to figure it out manually below.
-		if node.generated then
 			return
 		end
 
@@ -190,7 +201,7 @@
 				table.insert(cfg._gmake.fileRules, file)
 
 				for _, output in ipairs(buildoutputs) do
-					cpp.addGeneratedFile(cfg, node, output)
+					cpp.addFileToFileset(cfg, node, output)
 				end
 			end
 		else
@@ -221,18 +232,7 @@
 		end
 
 		-- add file to the fileset.
-		local filesets = cfg.project._gmake.filesets
-		local kind     = filesets[path.getextension(filename):lower()] or "CUSTOM"
-
-		-- don't link generated object files automatically if it's explicitly
-		-- disabled.
-		if path.isobjectfile(filename) and source.linkbuildoutputs == false then
-			kind = "CUSTOM"
-		end
-
-		local fileset = cfg._gmake.filesets[kind] or {}
-		table.insert(fileset, filename)
-		cfg._gmake.filesets[kind] = fileset
+		cpp.addFileToFileset(cfg, node, filename)
 
 		-- recursively setup rules.
 		cpp.addRuleFile(cfg, node)
