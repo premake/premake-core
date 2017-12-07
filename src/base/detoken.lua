@@ -34,12 +34,13 @@
 		function expandtoken(token, e, f)
 			-- fetch the path variable from the action, if needed
 			local varMap = {}
-			if f.pathVars then
+			if f.pathVars or e.overridePathVars then
 				local action = p.action.current()
 				if action then
 					varMap = action.pathVars or {}
 				end
 			end
+
 			-- fetch the pathVars from the enviroment.
 			local envMap = e.pathVars or {}
 
