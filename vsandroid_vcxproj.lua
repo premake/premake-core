@@ -31,10 +31,10 @@
 --
 -- Extend global properties
 --
-	premake.override(vc2010.elements, "globals", function (oldfn, cfg)
-		local elements = oldfn(cfg)
+	premake.override(vc2010.elements, "globals", function (oldfn, prj)
+		local elements = oldfn(prj)
 
-		if cfg.system == premake.ANDROID and cfg.kind ~= premake.ANDROIDPROJ then
+		if prj.system == premake.ANDROID and prj.kind ~= premake.ANDROIDPROJ then
 			-- Remove "IgnoreWarnCompileDuplicatedFilename".
 			local pos = table.indexof(elements, vc2010.ignoreWarnDuplicateFilename)
 			table.remove(elements, pos)
@@ -51,7 +51,13 @@
 		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
 		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
 		_p(2, "<ApplicationType>Android</ApplicationType>")
-		_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
+		if _ACTION >= "vs2017" then
+			_p(2, "<ApplicationTypeRevision>3.0</ApplicationTypeRevision>")
+		elseif _ACTION >= "vs2015" then
+			_p(2, "<ApplicationTypeRevision>2.0</ApplicationTypeRevision>")
+		else
+			_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
+		end
 	end
 
 --
@@ -83,34 +89,23 @@
 
 	function android.androidStlType(cfg)
 		if cfg.stl ~= nil then
+			local stlType = {
+				["none"] = "none",
+				["minimal c++ (system)"] = "system",
+				["c++ static"] = "gabi++_static",
+				["c++ shared"] = "gabi++_shared",
+				["stlport static"] = "stlport_static",
+				["stlport shared"] = "stlport_shared",
+				["gnu stl static"] = "gnustl_static",
+				["gnu stl shared"] = "gnustl_shared",
+				["llvm libc++ static"] = "c++_static",
+				["llvm libc++ shared"] = "c++_shared",
+			}
+
 			if _ACTION >= "vs2015" then
-				local stlType = {
-					["minimal c++ (system)"] = "system",
-					["c++ static"] = "gabi++_static",
-					["c++ shared"] = "gabi++_shared",
-					["stlport static"] = "stlport_static",
-					["stlport shared"] = "stlport_shared",
-					["gnu stl static"] = "gnustl_static",
-					["gnu stl shared"] = "gnustl_shared",
-					["llvm libc++ static"] = "c++_static",
-					["llvm libc++ shared"] = "c++_shared",
-				}
 				_p(2,'<UseOfStl>%s</UseOfStl>', stlType[cfg.stl])
 			else
-				local static = {
-					none       = "none",
-					minimal    = "system",
-					["stdc++"] = "gnustl_static",
-					stlport    = "stlport_static",
-				}
-				local dynamic = {
-					none       = "none",
-					minimal    = "system",
-					["stdc++"] = "gnustl_dynamic",
-					stlport    = "stlport_dynamic",
-				}
-				local stl = iif(cfg.flags.StaticRuntime, static, dynamic);
-				_p(2,'<AndroidStlType>%s</AndroidStlType>', stl[cfg.stl])
+				_p(2,'<AndroidStlType>%s</AndroidStlType>', stlType[cfg.stl])
 			end
 		end
 	end
@@ -129,49 +124,67 @@
 
 	-- Note: this function is already patched in by vs2012...
 	premake.override(vc2010, "platformToolset", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
-			if _ACTION >= "vs2015" then
-				if cfg.toolchainversion ~= nil then
-					_p(2,'<PlatformToolset>%s_%s</PlatformToolset>', iif(cfg.toolset == "clang", "Clang", "GCC"), string.gsub(cfg.toolchainversion, "%.", "_"))
-				end
-			else
-				local archMap = {
-					arm = "armv5te", -- should arm5 be default? vs-android thinks so...
-					arm5 = "armv5te",
-					arm7 = "armv7-a",
-					mips = "mips",
-					x86 = "x86",
-				}
-				local arch = cfg.architecture or "arm"
+		if cfg.system ~= premake.ANDROID then
+			return oldfn(cfg)
+		end
 
-				if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
-					local defaultToolsetMap = {
-						arm = "arm-linux-androideabi-",
-						armv5 = "arm-linux-androideabi-",
-						armv7 = "arm-linux-androideabi-",
-						aarch64 = "aarch64-linux-android-",
-						mips = "mipsel-linux-android-",
-						mips64 = "mips64el-linux-android-",
-						x86 = "x86-",
-						x86_64 = "x86_64-",
-					}
-					local toolset = defaultToolsetMap[arch]
+		if _ACTION >= "vs2015" then
+			local gcc_map = {
+				["_"]   = "GCC_4_9", -- default
+				["4.6"] = "GCC_4_6",
+				["4.8"] = "GCC_4_8",
+				["4.9"] = "GCC_4_9",
+			}
+			local clang_map = {
+				["_"]   = "Clang_3_8", -- default
+				["3.4"] = "Clang_3_4",
+				["3.5"] = "Clang_3_5",
+				["3.6"] = "Clang_3_6",
+				["3.8"] = "Clang_3_8",
+			}
 
-					if cfg.toolset == "clang" then
-						error("The clang toolset is not yet supported by vs-android", 2)
-						toolset = toolset .. "clang"
-					elseif cfg.toolset and cfg.toolset ~= "gcc" then
-						error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
-					end
-
-					local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
-
-					_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
-					_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
-				end
+			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+			local ts  = map[cfg.toolchainversion or "_"]
+			if ts == nil then
+				p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
 			end
+
+			_p(2, "<PlatformToolset>%s</PlatformToolset>", ts)
 		else
-			oldfn(cfg)
+			local archMap = {
+				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
+				arm5 = "armv5te",
+				arm7 = "armv7-a",
+				mips = "mips",
+				x86 = "x86",
+			}
+			local arch = cfg.architecture or "arm"
+
+			if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
+				local defaultToolsetMap = {
+					arm = "arm-linux-androideabi-",
+					armv5 = "arm-linux-androideabi-",
+					armv7 = "arm-linux-androideabi-",
+					aarch64 = "aarch64-linux-android-",
+					mips = "mipsel-linux-android-",
+					mips64 = "mips64el-linux-android-",
+					x86 = "x86-",
+					x86_64 = "x86_64-",
+				}
+				local toolset = defaultToolsetMap[arch]
+
+				if cfg.toolset == "clang" then
+					error("The clang toolset is not yet supported by vs-android", 2)
+					toolset = toolset .. "clang"
+				elseif cfg.toolset and cfg.toolset ~= "gcc" then
+					error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
+				end
+
+				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
+
+				_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
+				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
+			end
 		end
 	end)
 
@@ -194,9 +207,6 @@
 			if _ACTION >= "vs2015" then
 				table.remove(elements, table.indexof(elements, vc2010.debugInformationFormat))
 				table.remove(elements, table.indexof(elements, android.thumbMode))
-				elements = table.join(elements, {
-					android.cppStandard,
-				})
 			end
 		end
 		return elements
@@ -234,11 +244,44 @@
 --		end
 	end
 
-	function android.cppStandard(cfg)
-		if cfg.flags["C++11"] then
-			_p(3, '<CppLanguageStandard>c++11</CppLanguageStandard>')
+	p.override(vc2010, "languageStandard", function(oldfn, cfg)
+		if cfg.system == p.ANDROID then
+			local cpp_langmap = {
+				["C++98"]   = "c++98",
+				["C++11"]   = "c++11",
+				["C++14"]   = "c++1y",
+				["gnu++98"] = "gnu++98",
+				["gnu++11"] = "gnu++11",
+				["gnu++14"] = "gnu++1y",
+			}
+			if cpp_langmap[cfg.cppdialect] ~= nil then
+				vc2010.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
+			end
+		else
+			oldfn(cfg)
 		end
-	end
+	end)
+
+	p.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
+		if cfg.system == p.ANDROID then
+			local opts = cfg.buildoptions
+
+			local cpp_langmap = {
+				["C++17"]   = "-std=c++1z",
+				["gnu++17"] = "-std=gnu++1z",
+			}
+			if cpp_langmap[cfg.cppdialect] ~= nil then
+				table.insert(opts, cpp_langmap[cfg.cppdialect])
+			end
+
+			if #opts > 0 then
+				opts = table.concat(opts, " ")
+				vc2010.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+			end
+		else
+			oldfn(cfg, condition)
+		end
+	end)
 
 	p.override(p.vstudio.vc2010, "warningLevel", function(oldfn, cfg)
 		if _ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings and cfg.warnings ~= "Off" then
@@ -248,25 +291,37 @@
 		end
 	end)
 
-	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
-			-- Note: Android defaults to 'off'
-			if not cfg.flags.NoExceptions then
-				_p(3,'<GccExceptionHandling>true</GccExceptionHandling>')
-			end
+	premake.override(vc2010, "clCompilePreprocessorDefinitions", function(oldfn, cfg, condition)
+		if cfg.system == p.ANDROID then
+			vc2010.preprocessorDefinitions(cfg, cfg.defines, false, condition)
 		else
-			oldfn(cfg)
+			oldfn(cfg, condition)
 		end
 	end)
 
-	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg)
-		if cfg.system == premake.ANDROID then
+	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg, condition)
+		if cfg.system == p.ANDROID then
 			-- Note: Android defaults to 'off'
-			if not cfg.flags.NoRTTI then
-				_p(3,'<RuntimeTypeInfo>true</RuntimeTypeInfo>')
+			if cfg.exceptionhandling then
+				if _ACTION >= "vs2015" then
+					vc2010.element("ExceptionHandling", condition, "Enabled")
+				else
+					vc2010.element("GccExceptionHandling", condition, "true")
+				end
 			end
 		else
-			oldfn(cfg)
+			oldfn(cfg, condition)
+		end
+	end)
+
+	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg, condition)
+		if cfg.system == premake.ANDROID then
+			-- Note: Android defaults to 'off'
+			if cfg.rtti then
+				vc2010.element("RuntimeTypeInfo", condition, "true")
+			end
+		else
+			oldfn(cfg, condition)
 		end
 	end)
 
@@ -298,9 +353,13 @@
 	end)
 
 	function android.antPackage(cfg)
-		_p(2,'<AntPackage>')
-		_p(3,'<AndroidAppLibName>$(RootNamespace)</AndroidAppLibName>')
-		_p(2,'</AntPackage>')
+		p.push('<AntPackage>')
+		if cfg.androidapplibname ~= nil then
+			vc2010.element("AndroidAppLibName", nil, cfg.androidapplibname)
+		else
+			vc2010.element("AndroidAppLibName", nil, "$(RootNamespace)")
+		end
+		p.pop('</AntPackage>')
 	end
 
 	function android.antBuild(cfg)
@@ -425,3 +484,54 @@
 			end
 		end
 	end
+
+--
+-- Disable subsystem.
+--
+
+	p.override(vc2010, "subSystem", function(oldfn, cfg)
+		if cfg.system ~= p.ANDROID then
+			return oldfn(cfg)
+		end
+	end)
+
+--
+-- Remove .lib and list in LibraryDependencies instead of AdditionalDependencies.
+--
+
+	p.override(vc2010, "additionalDependencies", function(oldfn, cfg, explicit)
+		if cfg.system == p.ANDROID then
+			local links = {}
+
+			-- If we need sibling projects to be listed explicitly, grab them first
+			if explicit then
+				links = config.getlinks(cfg, "siblings", "fullpath")
+			end
+
+			-- Then the system libraries, which come undecorated
+			local system = config.getlinks(cfg, "system", "name")
+			for i = 1, #system do
+				local link = system[i]
+				table.insert(links, link)
+			end
+
+			-- TODO: When to use LibraryDependencies vs AdditionalDependencies
+
+			if #links > 0 then
+				links = path.translate(table.concat(links, ";"))
+				vc2010.element("LibraryDependencies", nil, "%%(LibraryDependencies);%s", links)
+			end
+		else
+			return oldfn(cfg, explicit)
+		end
+	end)
+
+--
+-- Disable override of OutDir.  This is breaking deployment.
+--
+
+	p.override(vc2010, "outDir", function(oldfn, cfg)
+		if cfg.system ~= p.ANDROID then
+			return oldfn(cfg)
+		end
+	end)

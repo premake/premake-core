@@ -22,13 +22,15 @@
 	api.addAllowed("kind", p.ANDROIDPROJ)
 
 	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.ANDROIDPROJ })
+	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.ANDROIDPROJ })
 
-	-- TODO: can I api.addAllowed() a key-value pair?
-	local os = p.fields["os"];
-	if os ~= nil then
-		table.insert(sys.allowed, { "android",  "Android" })
+	local osoption = p.option.get("os")
+	if osoption ~= nil then
+		table.insert(osoption.allowed, { "android",  "Android" })
 	end
 
+	-- add system tags for android.
+	os.systemTags[p.ANDROID] = { "android", "mobile" }
 
 --
 -- Register Android properties
@@ -51,62 +53,38 @@
 		kind = "integer",
 	}
 
-	if _ACTION >= "vs2015" then
-		api.register {
-			name = "toolchainversion",
-			scope = "config",
-			kind = "string",
-			allowed = {
-				"4.9", -- NDK GCC versions
-				"3.6", -- NDK clang versions
-			},
-		}
-	else
-		api.register {
-			name = "toolchainversion",
-			scope = "config",
-			kind = "string",
-			allowed = {
-				"4.6", -- NDK GCC versions
-				"4.8",
-				"4.9",
-				"3.4", -- NDK clang versions
-				"3.5",
-				"3.6",
-			},
-		}
-	end
+	api.register {
+		name = "toolchainversion",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"4.6", -- NDK GCC versions
+			"4.8",
+			"4.9",
+			"3.4", -- NDK clang versions
+			"3.5",
+			"3.6",
+			"3.8",
+		},
+	}
 
-	if _ACTION >= "vs2015" then
-		api.register {
-			name = "stl",
-			scope = "config",
-			kind = "string",
-			allowed = {
-				"minimal c++ (system)",
-				"c++ static",
-				"c++ shared",
-				"stlport static",
-				"stlport shared",
-				"gnu stl static",
-				"gnu stl shared",
-				"llvm libc++ static",
-				"llvm libc++ shared",
-			},
-		}
-	else
-		api.register {
-			name = "stl",
-			scope = "config",
-			kind = "string",
-			allowed = {
-				"none",
-				"minimal",
-				"stdc++",
-				"stlport",
-			},
-		}
-	end
+	api.register {
+		name = "stl",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"none",
+			"minimal c++ (system)",
+			"c++ static",
+			"c++ shared",
+			"stlport static",
+			"stlport shared",
+			"gnu stl static",
+			"gnu stl shared",
+			"llvm libc++ static",
+			"llvm libc++ shared",
+		},
+	}
 
 	api.register {
 		name = "thumbmode",
@@ -118,3 +96,13 @@
 			"disabled",
 		},
 	}
+
+	api.register {
+		name = "androidapplibname",
+		scope = "config",
+		kind = "string"
+	}
+
+	return function(cfg)
+		return true
+	end

@@ -2,11 +2,10 @@
 --
 -- Create an android namespace to isolate the additions
 --
-	premake.modules.android = {}
+local p = premake
 
-	local android = premake.modules.android
-
-	include("_preload.lua")
+if not p.modules.android then
+	p.modules.android = {}
 
 	if _ACTION < "vs2015" then
 		configuration { "Android" }
@@ -20,5 +19,6 @@
 	include("vsandroid_sln2005.lua")
 	include("vsandroid_vstudio.lua")
 	include("vsandroid_androidproj.lua")
+end
 
-	return android
+return p.modules.android
