@@ -197,13 +197,26 @@
 --
 
 	function table.indexof(tbl, obj)
-		for k, v in pairs(tbl) do
+		for k, v in ipairs(tbl) do
 			if v == obj then
 				return k
 			end
 		end
 	end
 
+
+--
+-- Looks for an object within a table. Returns the key if found,
+-- or nil if the object could not be found.
+--
+
+	function table.findKeyByValue(tbl, obj)
+		for k, v in pairs(tbl) do
+			if v == obj then
+				return k
+			end
+		end
+	end
 
 
 ---
