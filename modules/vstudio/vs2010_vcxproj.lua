@@ -1384,7 +1384,7 @@
 
 	function m.clCompilePreprocessorDefinitions(cfg, condition)
 		local defines = cfg.defines
-		if cfg.exceptionhandling == p.OFF and _ACTION >= "vs2013" then
+		if cfg.exceptionhandling == p.OFF then
 			defines = table.join(defines, "_HAS_EXCEPTIONS=0")
 		end
 		m.preprocessorDefinitions(cfg, defines, false, condition)
@@ -2261,7 +2261,7 @@
 
 	function m.resourcePreprocessorDefinitions(cfg)
 		local defines = table.join(cfg.defines, cfg.resdefines)
-		if cfg.exceptionhandling == p.OFF and _ACTION >= "vs2013" then
+		if cfg.exceptionhandling == p.OFF then
 			table.insert(defines, "_HAS_EXCEPTIONS=0")
 		end
 		m.preprocessorDefinitions(cfg, defines, true)
