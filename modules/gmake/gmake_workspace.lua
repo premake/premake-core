@@ -92,7 +92,7 @@
 		end
 
 		_p(1,'@echo ""')
-		_p(1,'@echo "For more information, see http://industriousone.com/premake/quick-start"')
+		_p(1,'@echo "For more information, see https://github.com/premake/premake-core/wiki"')
 	end
 
 
