@@ -574,20 +574,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>false</ExceptionHandling>
-		]]
-	end
-
-
-	function suite.exceptions_onNoExceptionsVS2013()
-		exceptionhandling "Off"
-		p.action.set("vs2013")
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
 	<PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 	<Optimization>Disabled</Optimization>
 	<ExceptionHandling>false</ExceptionHandling>
