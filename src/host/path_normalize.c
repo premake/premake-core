@@ -35,7 +35,8 @@ static void* normalize_substring(const char* str, const char* endPtr, char* writ
 
 			ptr = writePtr - 3;
 			while (ptr >= writeBegin) {
-				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
+				/* break on '/' except when it's '/../' */
+				if (ptr[0] == '/' && !(ptr[1] == '.' && ptr[2] == '.' && ptr[3] == '/')) {
 					writePtr -= writePtr - ptr;
 
 					/* special fix for cases, when '..' is the last chars in path i.e. d:\game\.., this should be converted into d:\,
