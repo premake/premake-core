@@ -1283,7 +1283,7 @@
 			"POPCNT",
 			"PCLMUL",
 			"LZCNT",
-			"BMI1",
+			"BMI",
 			"BMI2",
 			"F16C",
 			"AES",
