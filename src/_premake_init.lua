@@ -1275,6 +1275,25 @@
 	}
 
 	api.register {
+		name = "isaextensions",
+		scope = "config",
+		kind = "list:string",
+		allowed = {
+			"MOVBE",
+			"POPCNT",
+			"PCLMUL",
+			"LZCNT",
+			"BMI1",
+			"BMI2",
+			"F16C",
+			"AES",
+			"FMA",
+			"FMA4",
+			"RDRND",
+		}
+	}
+
+	api.register {
 		name = "vpaths",
 		scope = "project",
 		kind = "list:keyed:list:path",
