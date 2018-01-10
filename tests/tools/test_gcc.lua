@@ -142,6 +142,87 @@
 		test.contains({ "-mavx2" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onMOVBE()
+		isaextensions "MOVBE"
+		prepare()
+		test.contains({ "-mmovbe" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onPOPCNT()
+		isaextensions "POPCNT"
+		prepare()
+		test.contains({ "-mpopcnt" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onPCLMUL()
+		isaextensions "PCLMUL"
+		prepare()
+		test.contains({ "-mpclmul" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLZCNT()
+		isaextensions "LZCNT"
+		prepare()
+		test.contains({ "-mlzcnt" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onBMI()
+		isaextensions "BMI"
+		prepare()
+		test.contains({ "-mbmi" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onBMI2()
+		isaextensions "BMI2"
+		prepare()
+		test.contains({ "-mbmi2" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onF16C()
+		isaextensions "F16C"
+		prepare()
+		test.contains({ "-mf16c" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAES()
+		isaextensions "AES"
+		prepare()
+		test.contains({ "-maes" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFMA()
+		isaextensions "FMA"
+		prepare()
+		test.contains({ "-mfma" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFMA4()
+		isaextensions "FMA4"
+		prepare()
+		test.contains({ "-mfma4" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onRDRND()
+		isaextensions "RDRND"
+		prepare()
+		test.contains({ "-mrdrnd" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onMultipleISA()
+		isaextensions {
+			"RDRND",
+			"FMA4"
+		}
+		prepare()
+		test.contains({ "-mrdrnd", "-mfma4" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAdditionalISA()
+		isaextensions "RDRND"
+		isaextensions "FMA4"
+		prepare()
+		test.contains({ "-mrdrnd", "-mfma4" }, gcc.getcflags(cfg))
+	end
 
 --
 -- Check the defines and undefines.

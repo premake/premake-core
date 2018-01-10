@@ -59,6 +59,7 @@
 		},
 		pic = gcc.shared.pic,
 		vectorextensions = gcc.shared.vectorextensions,
+		isaextensions = gcc.shared.isaextensions,
 		warnings = gcc.shared.warnings,
 		symbols = gcc.shared.symbols
 	}
