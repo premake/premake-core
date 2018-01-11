@@ -377,7 +377,7 @@
 	}
 
 	function gcc.getLibraryDirectories(cfg)
-		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
+		local flags = {}
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths. The call
@@ -398,6 +398,9 @@
 		for _, dir in ipairs(cfg.syslibdirs) do
 			table.insert(flags, '-L' .. p.quoted(dir))
 		end
+
+		local gccFlags = config.mapFlags(cfg, gcc.libraryDirectories)
+		flags = table.join(flags, gccFlags)
 
 		return flags
 	end
