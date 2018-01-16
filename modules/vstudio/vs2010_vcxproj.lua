@@ -2356,9 +2356,16 @@
 
 
 	function m.targetPlatformVersion(prj)
-		local min = project.systemversion(prj)
-		if min ~= nil and _ACTION >= "vs2015" then
-			m.element("WindowsTargetPlatformVersion", nil, min)
+		if _ACTION >= "vs2015" then
+			local min = project.systemversion(prj)
+			-- handle special "latest" version
+			if min == "latest" then
+				-- vs2015 and lower can't build against SDK 10
+				min = iif(_ACTION >= "vs2017", m.latestSDK10Version(), nil)
+			end
+			if min ~= nil then
+				m.element("WindowsTargetPlatformVersion", nil, min)
+			end
 		end
 	end
 
@@ -2484,6 +2491,15 @@
 		return m.conditionFromConfigText(vstudio.projectConfig(cfg))
 	end
 
+--
+-- Get the latest installed SDK 10 version from the registry.
+--
+
+	function m.latestSDK10Version()
+		local arch = iif(os.is64bit(), "\\WOW6432Node\\", "\\")
+		local version = os.getWindowsRegistry("HKLM:SOFTWARE" .. arch .."Microsoft\\Microsoft SDKs\\Windows\\v10.0\\ProductVersion")
+		return iif(version ~= nil, version .. ".0", nil)
+	end
 
 
 --

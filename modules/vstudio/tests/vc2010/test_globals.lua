@@ -253,3 +253,48 @@
 </PropertyGroup>
 		]]
 	end
+
+--
+-- Check that the "latest" systemversion works.
+-- note: we override the os.getWindowsRegistry method for reliable tests.
+--
+
+	function suite.windowsTargetPlatformVersionLatest_on2017()
+		p.action.set("vs2017")
+		systemversion "latest"
+		prepare()
+		local oldRegistry = os.getWindowsRegistry
+		os.getWindowsRegistry = function (key)
+			return "10.0.11111"
+		end
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<WindowsTargetPlatformVersion>10.0.11111.0</WindowsTargetPlatformVersion>
+</PropertyGroup>
+		]]
+		-- restore the registry function
+		os.getWindowsRegistry = oldRegistry
+	end
+
+--
+-- Check that the "latest" systemversion will not add <WindowsTargetPlatformVersion>
+-- when the action is less than 2017
+--
+
+	function suite.windowsTargetPlatformVersionLatest_on2015()
+		p.action.set("vs2015")
+		systemversion "10.0.10240.0"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+		]]
+	end
