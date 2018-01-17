@@ -287,7 +287,7 @@
 
 	function suite.windowsTargetPlatformVersionLatest_on2015()
 		p.action.set("vs2015")
-		systemversion "10.0.10240.0"
+		systemversion "latest"
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">
