@@ -161,7 +161,7 @@
 				p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
 			end
 
-			_p(2, "<PlatformToolset>%s</PlatformToolset>", ts)
+			vc2010.element("PlatformToolset", nil, ts)
 		else
 			local archMap = {
 				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
