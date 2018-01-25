@@ -2159,11 +2159,13 @@
 
 
 	function m.windowsSDKDesktopARMSupport(cfg)
-		if cfg.architecture == p.ARM then
-			p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
-		end
-		if cfg.architecture == p.ARM64 then
-			p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
+		if cfg.system == p.WINDOWS then
+			if cfg.architecture == p.ARM then
+				p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
+			end
+			if cfg.architecture == p.ARM64 then
+				p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
+			end
 		end
 	end
 
