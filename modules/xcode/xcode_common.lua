@@ -963,6 +963,11 @@
 			if family then
 				settings['TARGETED_DEVICE_FAMILY'] = family
 			end
+		else
+			local minOSVersion = project.systemversion(cfg)
+			if minOSVersion ~= nil then
+				settings['MACOSX_DEPLOYMENT_TARGET'] = minOSVersion
+			end
 		end
 
 		--ms not by default ...add it manually if you need it
