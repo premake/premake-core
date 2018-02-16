@@ -294,8 +294,6 @@
 			utility.targetRules,
 			gmake2.targetDirRules,
 			utility.cleanRules,
-			gmake2.preBuildRules,
-			gmake2.preLinkRules,
 		}
 	end
 
@@ -309,7 +307,7 @@
 
 
 	function utility.allRules(cfg, toolset)
-		local allTargets = 'all: $(TARGETDIR) prebuild prelink $(TARGET)'
+		local allTargets = 'all: $(TARGETDIR) $(TARGET)'
 		for _, kind in ipairs(cfg._gmake.kinds) do
 			allTargets = allTargets .. ' $(' .. kind .. ')'
 		end
@@ -327,6 +325,8 @@
 		end
 
 		_p('$(TARGET): %s', targets)
+		_p('\t$(PREBUILDCMDS)')
+		_p('\t$(PRELINKCMDS)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 	end
