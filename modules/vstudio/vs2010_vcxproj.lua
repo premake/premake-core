@@ -1258,7 +1258,7 @@
 			if (cfg.cppdialect == "C++14") then
 				m.element("LanguageStandard", nil, 'stdcpp14')
 			elseif (cfg.cppdialect == "C++17") then
-				m.element("LanguageStandard", nil, 'stdcpplatest')
+				m.element("LanguageStandard", nil, 'stdcpp17')
 			end
 		end
 	end
@@ -1270,7 +1270,7 @@
 			if (cfg.cppdialect == "C++14") then
 				table.insert(opts, "/std:c++14")
 			elseif (cfg.cppdialect == "C++17") then
-				table.insert(opts, "/std:c++latest")
+				table.insert(opts, "/std:c++17")
 			end
 		end
 		if #opts > 0 then
