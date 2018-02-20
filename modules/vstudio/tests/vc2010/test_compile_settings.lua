@@ -1195,7 +1195,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<LanguageStandard>stdcpp17</LanguageStandard>
 </ClCompile>
 		]]
 	end
