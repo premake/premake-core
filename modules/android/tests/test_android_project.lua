@@ -112,3 +112,18 @@
 	<AdditionalOptions>-std=c++1z %(AdditionalOptions)</AdditionalOptions>
 ]]
 	end
+
+
+	function suite.precompiledHeader()
+		location "build"
+		pchheader "include/foo.h"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>Use</PrecompiledHeader>
+	<PrecompiledHeaderFile>../include/foo.h</PrecompiledHeaderFile>
+	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Enabled</ExceptionHandling>
+	<RuntimeTypeInfo>true</RuntimeTypeInfo>
+]]
+	end

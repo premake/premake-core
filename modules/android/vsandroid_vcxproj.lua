@@ -279,6 +279,12 @@
 		if cfg.system == p.ANDROID then
 			local opts = cfg.buildoptions
 
+			if cfg.disablewarnings and #cfg.disablewarnings > 0 then
+				for _, warning in ipairs(cfg.disablewarnings) do
+					table.insert(opts, '-Wno-'..warning)
+				end
+			end
+
 			local cpp_langmap = {
 				["C++17"]   = "-std=c++1z",
 				["gnu++17"] = "-std=gnu++1z",
@@ -315,7 +321,7 @@
 	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			-- Note: Android defaults to 'off'
-			if cfg.exceptionhandling then
+			if cfg.exceptionhandling and cfg.exceptionhandling ~= premake.OFF then
 				if _ACTION >= "vs2015" then
 					vc2010.element("ExceptionHandling", condition, "Enabled")
 				else
@@ -330,7 +336,7 @@
 	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg, condition)
 		if cfg.system == premake.ANDROID then
 			-- Note: Android defaults to 'off'
-			if cfg.rtti then
+			if cfg.rtti and cfg.rtti ~= premake.OFF then
 				vc2010.element("RuntimeTypeInfo", condition, "true")
 			end
 		else
@@ -338,6 +344,13 @@
 		end
 	end)
 
+	premake.override(vc2010, "precompiledHeaderFile", function(oldfn, fileName, cfg)
+		if cfg.system == premake.ANDROID then
+			vc2010.element("PrecompiledHeaderFile", nil, "%s", path.rebase(fileName, cfg.basedir, cfg.location))
+		else
+			oldfn(fileName, cfg)
+		end
+	end)
 
 --
 -- Extend Link.
