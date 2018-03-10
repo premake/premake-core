@@ -33,7 +33,6 @@
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
-	<PlatformToolset>Clang_3_8</PlatformToolset>
 </PropertyGroup>
 		]]
 	end
@@ -51,7 +50,23 @@
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
-	<PlatformToolset>Clang_3_8</PlatformToolset>
+</PropertyGroup>
+		]]
+	end
+
+--
+-- Check toolchainversion
+--
+
+	function suite.toolchainversion_clang_5_0()
+		toolchainversion '5.0'
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>Clang_5_0</PlatformToolset>
 </PropertyGroup>
 		]]
 	end

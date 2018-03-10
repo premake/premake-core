@@ -142,13 +142,11 @@
 
 		if _ACTION >= "vs2015" then
 			local gcc_map = {
-				["_"]   = "GCC_4_9", -- default
 				["4.6"] = "GCC_4_6",
 				["4.8"] = "GCC_4_8",
 				["4.9"] = "GCC_4_9",
 			}
 			local clang_map = {
-				["_"]   = "Clang_3_8", -- default
 				["3.4"] = "Clang_3_4",
 				["3.5"] = "Clang_3_5",
 				["3.6"] = "Clang_3_6",
@@ -156,13 +154,15 @@
 				["5.0"] = "Clang_5_0",
 			}
 
-			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
-			local ts  = map[cfg.toolchainversion or "_"]
-			if ts == nil then
-				p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
-			end
+			if cfg.toolchainversion ~= nil then
+				local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+				local ts  = map[cfg.toolchainversion]
+				if ts == nil then
+					p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
+				end
 
-			vc2010.element("PlatformToolset", nil, ts)
+				vc2010.element("PlatformToolset", nil, ts)
+			end
 		else
 			local archMap = {
 				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
