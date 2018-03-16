@@ -29,8 +29,6 @@ BUILDING FROM THE REPOSITORY
  If you have pulled sources from the Premake source repository, you can
  use `Bootstrap.mak` to generate your first premake executable:
 
-    $ git submodule init
-    $ git submodule update
     $ make -f Bootstrap.mak PLATFORM
 
  Where PLATFORM can be osx or linux.
