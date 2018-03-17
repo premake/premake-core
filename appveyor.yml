@@ -5,8 +5,6 @@ platform:
 
 before_build:
   - cmd: git clean -ffxd
-  - cmd: git submodule sync
-  - cmd: git submodule update --init
 
 build_script:
   - cmd: call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat"
