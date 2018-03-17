@@ -23,7 +23,7 @@ project "luasocket-lib"
 			"src/usocket.*",
 		}
 	
-	filter "system: not windows"
+	filter "system:not windows"
 		removefiles
 		{
 			"src/wsocket.*",
