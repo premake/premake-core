@@ -193,6 +193,11 @@ int premake_init(lua_State* L)
 	luaL_register(L, "zip",     zip_functions);
 #endif
 
+#ifdef PREMAKE_LUASOCKET
+	luaL_requiref(L, "socket", luaopen_socket_core, 1);
+	lua_pop(L, 1);
+#endif
+
 	lua_pushlightuserdata(L, &s_shimTable);
 	lua_rawseti(L, LUA_REGISTRYINDEX, 'SHIM');
 

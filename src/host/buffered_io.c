@@ -9,7 +9,7 @@
 #include "premake.h"
 #include "buffered_io.h"
 
-void buffer_init(Buffer* b)
+void buffer_initialize(Buffer* b)
 {
 	b->capacity = 0;
 	b->length = 0;
@@ -69,7 +69,7 @@ void buffer_printf(Buffer* b, const char *fmt, ...)
 int buffered_new(lua_State* L)
 {
 	Buffer* b = (Buffer*)malloc(sizeof(Buffer));
-	buffer_init(b);
+	buffer_initialize(b);
 	lua_pushlightuserdata(L, b);
 	return 1;
 }
