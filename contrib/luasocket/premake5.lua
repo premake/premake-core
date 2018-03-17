@@ -28,3 +28,5 @@ project "luasocket-lib"
 		{
 			"src/wsocket.*",
 		}
+		
+		defines { "LUASOCKET_API=__attribute__((visibility(\"default\")))" }
