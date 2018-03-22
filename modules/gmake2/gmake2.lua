@@ -267,7 +267,7 @@
 ---------------------------------------------------------------------------
 
 	function gmake2.phonyRules(prj)
-		_p('.PHONY: clean prebuild prelink')
+		_p('.PHONY: clean prebuild')
 		_p('')
 	end
 
@@ -349,15 +349,8 @@
 
 
 	function gmake2.preBuildRules(cfg, toolset)
-		_p('prebuild:')
+		_p('prebuild: | $(OBJDIR)')
 		_p('\t$(PREBUILDCMDS)')
-		_p('')
-	end
-
-
-	function gmake2.preLinkRules(cfg, toolset)
-		_p('prelink:')
-		_p('\t$(PRELINKCMDS)')
 		_p('')
 	end
 
