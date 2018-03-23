@@ -97,8 +97,8 @@ PCH = ../../../src/host/premake.h
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)
-$(GCH): $(PCH) | $(OBJDIR)
+$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
@@ -108,7 +108,7 @@ else
 	$(SILENT) echo $null >> "$@"
 endif
 else
-$(OBJECTS): | $(OBJDIR)
+$(OBJECTS): | prebuild
 endif
 		]]
 	end
@@ -124,8 +124,8 @@ endif
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)
-$(GCH): $(PCH) | $(OBJDIR)
+$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
 	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
@@ -135,7 +135,7 @@ else
 	$(SILENT) echo $null >> "$@"
 endif
 else
-$(OBJECTS): | $(OBJDIR)
+$(OBJECTS): | prebuild
 endif
 		]]
 	end

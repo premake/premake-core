@@ -44,7 +44,6 @@
 			gmake2.objDirRules,
 			gmake2.csCleanRules,
 			gmake2.preBuildRules,
-			gmake2.preLinkRules,
 			gmake2.csFileRules,
 		}
 	end
@@ -135,7 +134,7 @@
 ---------------------------------------------------------------------------
 
 	function gmake2.csAllRules(prj, toolset)
-		_p('all: $(TARGETDIR) $(OBJDIR) prebuild $(EMBEDFILES) $(COPYFILES) prelink $(TARGET)')
+		_p('all: prebuild $(EMBEDFILES) $(COPYFILES) $(TARGET)')
 		_p('')
 	end
 
@@ -304,7 +303,8 @@
 
 
 	function gmake2.csTargetRules(prj, toolset)
-		_p('$(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS) $(RESPONSE)')
+		_p('$(TARGET): $(SOURCES) $(EMBEDFILES) $(DEPENDS) $(RESPONSE) | $(TARGETDIR)')
+		_p('\t$(PRELINKCMDS)')
 		_p('\t$(SILENT) $(CSC) /nologo /out:$@ $(FLAGS) $(REFERENCES) @$(RESPONSE) $(patsubst %%,/resource:%%,$(EMBEDFILES))')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
