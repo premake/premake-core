@@ -431,9 +431,10 @@
 
 				-- is this the product node, describing the output target?
 				if node.kind == "product" then
+					local name = iif(tr.project.kind ~= "ConsoleApp", node.name, node.cfg.buildtarget.prefix .. node.cfg.buildtarget.basename)
 					settings[node.id] = function(level)
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-							node.id, node.name, xcode.gettargettype(node), stringifySetting(node.name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
+							node.id, node.name, xcode.gettargettype(node), stringifySetting(name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
 					end
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
@@ -892,11 +893,15 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		--[[if cfg.targetextension then
+		if cfg.kind ~= "ConsoleApp" and cfg.targetextension then
 			local ext = cfg.targetextension
 			ext = iif(ext:startswith('.'), ext:sub(2), ext)
-			settings['EXECUTABLE_EXTENSION'] = ext
-		end]]
+			if cfg.kind == "WindowedApp" and ext ~= "app" then
+				settings['WRAPPER_EXTENSION'] = ext
+			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
+				settings['EXECUTABLE_EXTENSION'] = ext
+			end
+		end
 
 		local outdir = path.getrelative(tr.project.location, path.getdirectory(cfg.buildtarget.relpath))
 		if outdir ~= "." then
