@@ -642,7 +642,7 @@
 			gmake2.objDirRules,
 			cpp.cleanRules,
 			gmake2.preBuildRules,
-			gmake2.preLinkRules,
+			cpp.customDeps,
 			cpp.pchRules,
 		}
 	end
@@ -658,13 +658,13 @@
 
 	function cpp.allRules(cfg, toolset)
 		if cfg.system == p.MACOSX and cfg.kind == p.WINDOWEDAPP then
-			_p('all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist | $(TARGETDIR) $(OBJDIR)')
+			_p('all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 			_p('\t@:')
 			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')
 			_p('$(dir $(TARGETDIR))Info.plist:')
 		else
-			_p('all: prebuild prelink $(TARGET) | $(TARGETDIR) $(OBJDIR)')
+			_p('all: $(TARGET)')
 			_p('\t@:')
 		end
 		_p('')
@@ -672,7 +672,7 @@
 
 
 	function cpp.targetRules(cfg, toolset)
-		local targets = '$(GCH) '
+		local targets = ''
 
 		for _, kind in ipairs(cfg._gmake.kinds) do
 			if kind ~= 'OBJECTS' and kind ~= 'RESOURCES' then
@@ -686,10 +686,20 @@
 		end
 
 		_p('$(TARGET): %s | $(TARGETDIR)', targets)
+		_p('\t$(PRELINKCMDS)')
 		_p('\t@echo Linking %s', cfg.project.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
+	end
+
+
+	function cpp.customDeps(cfg, toolset)
+		for _, kind in ipairs(cfg._gmake.kinds) do
+			if kind == 'CUSTOM' or kind == 'SOURCES' then
+				_p('$(%s): | prebuild', kind)
+			end
+		end
 	end
 
 
@@ -709,8 +719,8 @@
 
 	function cpp.pchRules(cfg, toolset)
 		_p('ifneq (,$(PCH))')
-		_p('$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)')
-		_p('$(GCH): $(PCH) | $(OBJDIR)')
+		_p('$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)')
+		_p('$(GCH): $(PCH) | prebuild')
 		_p('\t@echo $(notdir $<)')
 		local cmd = iif(p.languages.isc(cfg.language), "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
 		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
@@ -721,7 +731,7 @@
 		_p('\t$(SILENT) echo $null >> "$@"')
 		_p('endif')
 		_p('else')
-		_p('$(OBJECTS): | $(OBJDIR)')
+		_p('$(OBJECTS): | prebuild')
 		_p('endif')
 		_p('')
 	end
