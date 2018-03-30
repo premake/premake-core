@@ -171,10 +171,6 @@ int http_download(lua_State* L);
 int zip_extract(lua_State* L);
 #endif
 
-#ifdef PREMAKE_LUASOCKET
-int luaopen_socket_core(lua_State* L);
-#endif
-
 #ifdef _MSC_VER
  #ifndef snprintf
   #define snprintf _snprintf

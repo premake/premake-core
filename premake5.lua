@@ -109,10 +109,6 @@
 		if not _OPTIONS["no-curl"] then
 			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
 		end
-		
-		if not _OPTIONS["no-luasocket"] then
-			defines { "PREMAKE_LUASOCKET"}
-		end
 
 		filter { 'system:windows' }
 			platforms   { 'x86', 'x64' }
@@ -148,11 +144,6 @@
 		if not _OPTIONS["no-curl"] then
 			includedirs { "contrib/curl/include" }
 			links { "curl-lib" }
-		end
-		
-		if not _OPTIONS["no-luasocket"] then
-			includedirs { "contrib/luasocket/src" }
-			links { "luasocket-lib" }
 		end
 
 		files
@@ -220,14 +211,14 @@
 		if not _OPTIONS["no-curl"] then
 			include "contrib/mbedtls"
 			include "contrib/curl"
-		end
-		
-		if not _OPTIONS["no-luasocket"] then
-			include "contrib/luasocket"
-		end
+		end		
 
 	group "Binary Modules"
 		include "binmodules/example"
+		
+		if not _OPTIONS["no-luasocket"] then
+			include "binmodules/luasocket"
+		end
 
 --
 -- A more thorough cleanup.

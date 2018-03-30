@@ -74,7 +74,7 @@ CURL* curlRequest(lua_State* L, curl_state* state, int optionsIndex, int progres
 	state->RefIndex = 0;
 	state->errorBuffer[0] = '\0';
 	state->headers = NULL;
-	buffer_initialize(&state->S);
+	buffer_init(&state->S);
 
 	curl_init();
 	curl = curl_easy_init();

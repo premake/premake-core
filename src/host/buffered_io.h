@@ -15,7 +15,7 @@ typedef struct struct_Buffer
 	char*  data;
 } Buffer;
 
-void buffer_initialize(Buffer* b);
+void buffer_init(Buffer* b);
 void buffer_destroy(Buffer* b);
 
 void buffer_puts(Buffer* b, const void* ptr, size_t len);

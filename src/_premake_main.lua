@@ -261,7 +261,8 @@
 	function m.tryHookDebugger()
 
 		if (_OPTIONS["debugger"]) then
-
+			print("Loading luasocket...")
+			require('luasocket')
 			print("Starting debugger...")
 			local mobdebug = require('mobdebug')
 			mobdebug.start()
