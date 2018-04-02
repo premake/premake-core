@@ -21,12 +21,12 @@
 
   function suite.setup()
     wks, prj = test.createWorkspace()
+    kind "Makefile"
   end
 
   local function prepare()
-    local cfg = test.getconfig(prj, "Debug")
-    kind "Makefile"
-    gmake2.cpp.allRules(cfg)
+    prj = test.getproject(wks, 1)
+    gmake2.makefile.configs(prj)
   end
 
 
@@ -35,10 +35,7 @@
 --
 
   function suite.makefile_configs_empty()
-    kind "Makefile"
-
-    prj = test.getproject(wks, 1)
-    gmake2.makefile.configs(prj)
+    prepare()
     test.capture [[
 ifeq ($(config),debug)
 TARGETDIR = bin/Debug
@@ -63,10 +60,6 @@ endif
   end
 
   function suite.makefile_configs_commands()
-    kind "Makefile"
-
-    prj = test.getproject(wks, 1)
-
     buildcommands {
       "touch source"
     }
@@ -75,8 +68,7 @@ endif
       "rm -f source"
     }
 
-
-    gmake2.makefile.configs(prj)
+    prepare()
     test.capture [[
 ifeq ($(config),debug)
 TARGETDIR = bin/Debug
