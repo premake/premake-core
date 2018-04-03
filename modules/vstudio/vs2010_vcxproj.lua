@@ -2177,7 +2177,7 @@
 
 
 	function m.programDatabaseFile(cfg)
-		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
+		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
 			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
 		end
 	end
