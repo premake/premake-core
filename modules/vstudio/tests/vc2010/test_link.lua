@@ -226,7 +226,7 @@
 -- Test the handling of the SymbolsPath flag.
 --
 
-	function suite.generateProgramDataBaseFileName_onStaticLib()
+	function suite.generateProgramDataBaseFile_onStaticLib()
 		kind "StaticLib"
 
 		symbols "On"
@@ -240,7 +240,7 @@
 		]]
 	end
 
-	function suite.generateProgramDataBaseFileName_onSharedLib()
+	function suite.generateProgramDataBaseFile_onSharedLib()
 		kind "SharedLib"
 
 		symbols "On"
@@ -256,7 +256,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsOn_on2010()
+	function suite.generateProgramDatabaseFile_onSymbolsOn_on2010()
 		p.action.set("vs2010")
 		symbols "On"
 		symbolspath "$(IntDir)$(TargetName).pdb"
@@ -271,7 +271,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsFastLink_on2010()
+	function suite.generateProgramDatabaseFile_onSymbolsFastLink_on2010()
 		p.action.set("vs2010")
 		symbols "Off"
 		symbolspath "$(IntDir)$(TargetName).pdb"
@@ -285,7 +285,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsFull_on2010()
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2010()
 		p.action.set("vs2010")
 		symbols "Full"
 		symbolspath "$(IntDir)$(TargetName).pdb"
@@ -300,7 +300,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsOn_on2015()
+	function suite.generateProgramDatabaseFile_onSymbolsOn_on2015()
 		p.action.set("vs2015")
 		symbols "On"
 		symbolspath "$(IntDir)$(TargetName).pdb"
@@ -315,7 +315,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsFastLink_on2015()
+	function suite.generateProgramDatabaseFile_onSymbolsFastLink_on2015()
 		p.action.set("vs2015")
 		symbols "FastLink"
 		symbolspath "$(IntDir)$(TargetName).pdb"
@@ -331,7 +331,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsFull_on2015()
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2015()
 		p.action.set("vs2015")
 		symbols "Full"
 		symbolspath "$(IntDir)$(TargetName).pdb"
@@ -346,7 +346,7 @@
 		]]
 	end
 
-	function suite.generateDebugInfo_onSymbolsFull_on2017()
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2017()
 		p.action.set("vs2017")
 		symbols "Full"
 		symbolspath "$(IntDir)$(TargetName).pdb"
