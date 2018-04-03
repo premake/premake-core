@@ -226,6 +226,36 @@
 -- Test the handling of the SymbolsPath flag.
 --
 
+	function suite.generateProgramDataBaseFileName_onStaticLib()
+		kind "StaticLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDataBaseFileName_onSharedLib()
+		kind "SharedLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
 	function suite.generateDebugInfo_onSymbolsOn_on2010()
 		p.action.set("vs2010")
 		symbols "On"
