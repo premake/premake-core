@@ -313,7 +313,7 @@
 --
 
 	m.elements.clCompile = function(cfg)
-		return {
+		local calls = {
 			m.precompiledHeader,
 			m.warningLevel,
 			m.treatWarningAsError,
@@ -348,6 +348,12 @@
 			m.callingConvention,
 			m.languageStandard,
 		}
+
+		if cfg.kind == p.STATICLIB then
+			table.insert(calls, m.programDatabaseFile)
+		end
+
+		return calls
 	end
 
 	function m.clCompile(cfg)
@@ -2175,13 +2181,14 @@
 		end
 	end
 
-
 	function m.programDatabaseFile(cfg)
 		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
-			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+
+			local key = iif(cfg.kind == p.STATICLIB, "ProgramDataBaseFileName", "ProgramDatabaseFile")
+
+			m.element(key, nil, p.project.getrelative(cfg.project, cfg.symbolspath))
 		end
 	end
-
 
 	function m.projectGuid(prj)
 		m.element("ProjectGuid", nil, "{%s}", prj.uuid)
