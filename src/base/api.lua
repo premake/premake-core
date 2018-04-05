@@ -674,10 +674,25 @@
 -- individual test runs.
 ---
 
+	local numBuiltInGlobalBlocks
+
 	function api.reset()
+		if numBuiltInGlobalBlocks == nil then
+			numBuiltInGlobalBlocks = #api.scope.global.blocks
+		end
+
 		for containerClass in p.container.eachChildClass(p.global) do
 			api.scope.global[containerClass.pluralName] = {}
 		end
+
+		api.scope.current = api.scope.global
+
+		local currentGlobalBlockCount = #api.scope.global.blocks
+		for i = currentGlobalBlockCount, numBuiltInGlobalBlocks, -1 do
+			table.remove(api.scope.global.blocks, i)
+		end
+
+		configset.addFilter(api.scope.current, {}, os.getcwd())
 	end
 
 
