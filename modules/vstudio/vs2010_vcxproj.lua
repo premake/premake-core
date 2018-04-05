@@ -350,7 +350,7 @@
 		}
 
 		if cfg.kind == p.STATICLIB then
-			table.insert(calls, m.programDatabaseFile)
+			table.insert(calls, m.programDatabaseFileName)
 		end
 
 		return calls
@@ -2183,10 +2183,13 @@
 
 	function m.programDatabaseFile(cfg)
 		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
+			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+		end
+	end
 
-			local key = iif(cfg.kind == p.STATICLIB, "ProgramDataBaseFileName", "ProgramDatabaseFile")
-
-			m.element(key, nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+	function m.programDatabaseFileName(cfg)
+		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
+			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
 		end
 	end
 
