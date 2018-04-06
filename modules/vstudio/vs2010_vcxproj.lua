@@ -2181,15 +2181,27 @@
 		end
 	end
 
-	function m.programDatabaseFile(cfg)
+	local function getSymbolsPathRelative(cfg)
 		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
-			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+			return p.project.getrelative(cfg.project, cfg.symbolspath)
+		else
+			return nil
+		end
+	end
+
+	function m.programDatabaseFile(cfg)
+		local value = getSymbolsPathRelative(cfg)
+
+		if value then
+			m.element("ProgramDatabaseFile", nil, value)
 		end
 	end
 
 	function m.programDatabaseFileName(cfg)
-		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
-			m.element("ProgramDataBaseFileName", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+		local value = getSymbolsPathRelative(cfg)
+
+		if value then
+			m.element("ProgramDataBaseFileName", nil, value)
 		end
 	end
 
