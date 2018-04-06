@@ -688,9 +688,11 @@
 		api.scope.current = api.scope.global
 
 		local currentGlobalBlockCount = #api.scope.global.blocks
-		for i = currentGlobalBlockCount, numBuiltInGlobalBlocks + 1, -1 do
+		for i = currentGlobalBlockCount, numBuiltInGlobalBlocks, -1 do
 			table.remove(api.scope.global.blocks, i)
 		end
+
+		configset.addFilter(api.scope.current, {}, os.getcwd())
 	end
 
 
