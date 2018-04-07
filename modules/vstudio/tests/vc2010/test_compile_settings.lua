@@ -1199,3 +1199,42 @@
 </ClCompile>
 		]]
 	end
+
+--
+-- Check StaticLib SymbolsPath
+--
+
+	function suite.generateProgramDataBaseFileName_onStaticLib()
+		kind "StaticLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+</ClCompile>
+		]]
+	end
+
+	function suite.generateNotProgramDataBaseFileName_onSharedLib()
+		kind "SharedLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
