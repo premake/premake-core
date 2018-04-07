@@ -524,5 +524,5 @@
 		if (cfg.gccprefix and gcc.tools[tool]) or tool == "rc" then
 			return (cfg.gccprefix or "") .. gcc.tools[tool]
 		end
-		return nil
+		return gcc.tools[tool]
 	end
