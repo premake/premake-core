@@ -1,0 +1,16 @@
+*.o
+*.so
+*.so.*
+*.obj
+*.lib
+*.dll*
+*.user
+*.sdf
+Lua.props
+Debug
+Release
+*.manifest
+*.swp
+*.suo
+x64
+
