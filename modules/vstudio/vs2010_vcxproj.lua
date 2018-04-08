@@ -744,6 +744,7 @@
 						m.basicRuntimeChecks,
 						m.exceptionHandling,
 						m.compileAsManaged,
+						m.compileAs,
 						m.runtimeTypeInfo,
 						m.warningLevelFile,
 					}
@@ -1545,11 +1546,11 @@
 	end
 
 
-	function m.compileAs(cfg)
+	function m.compileAs(cfg, condition)
 		if p.languages.isc(cfg.compileas) then
-			m.element("CompileAs", nil, "CompileAsC")
+			m.element("CompileAs", condition, "CompileAsC")
 		elseif p.languages.iscpp(cfg.compileas) then
-			m.element("CompileAs", nil, "CompileAsCpp")
+			m.element("CompileAs", condition, "CompileAsCpp")
 		end
 	end
 

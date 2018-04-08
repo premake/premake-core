@@ -84,6 +84,73 @@ endif
 		]]
 	end
 
+--
+-- C files in C++ projects can be compiled as C++ with 'compileas'
+--
+
+	function suite.cFilesGetsCompiledWithCXXWithCompileas()
+		files { "src/hello.c", "src/test.c" }
+		filter { "files:src/hello.c" }
+			compileas "C++"
+		prepare()
+		test.capture [[
+$(OBJDIR)/hello.o: src/hello.c
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+ifeq ($(config),debug)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+endif
+ifeq ($(config),release)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+endif
+$(OBJDIR)/test.o: src/test.c
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+		]]
+	end
+
+--
+-- C files in C++ projects can be compiled as C++ with 'compileas' on a configuration basis
+--
+
+	function suite.cFilesGetsCompiledWithCXXWithCompileasDebugOnly()
+		files { "src/test.c", "src/hello.c" }
+		filter { "configurations:Debug", "files:src/hello.c" }
+			compileas "C++"
+		prepare()
+		test.capture [[
+$(OBJDIR)/hello.o: src/hello.c
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+ifeq ($(config),debug)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+endif
+ifeq ($(config),release)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+endif
+$(OBJDIR)/test.o: src/test.c
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+		]]
+	end
 
 --
 -- If a custom build rule is supplied, it should be used.
