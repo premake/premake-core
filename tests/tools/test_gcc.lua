@@ -813,7 +813,7 @@
 -- Test omit-frame-pointer flags.
 --
 
-	function suite.sharedflags_onUnsignedChar()
+	function suite.sharedflags_onOmitFramePointer()
 		omitframepointer "On"
 
 		prepare()
@@ -821,7 +821,7 @@
 		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
 	end
 
-	function suite.sharedflags_onNoUnsignedChar()
+	function suite.sharedflags_onNoOmitFramePointer()
 		omitframepointer "Off"
 
 		prepare()
