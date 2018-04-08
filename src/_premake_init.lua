@@ -1366,6 +1366,19 @@
 		}
 	}
 
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"1Byte",
+			"2Bytes",
+			"4Bytes",
+			"8Bytes",
+			"16Bytes",
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
