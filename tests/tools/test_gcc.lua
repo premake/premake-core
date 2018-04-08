@@ -320,6 +320,12 @@
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
 
+	function suite.cxxflags_onVisibilityHidden()
+		flags { "VisibilityHidden" }
+		prepare()
+		test.excludes({ "-fvisibility=hidden", "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden", "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
+	end
 
 --
 -- Check the basic translation of LDFLAGS for a Posix system.
@@ -787,4 +793,44 @@
 		prepare()
 		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test unsigned-char flags.
+--
+
+	function suite.sharedflags_onUnsignedChar()
+		unsignedchar "On"
+
+		prepare()
+		test.contains({ "-funsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-funsigned-char" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoUnsignedChar()
+		unsignedchar "Off"
+
+		prepare()
+		test.contains({ "-fno-unsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-unsigned-char" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test omit-frame-pointer flags.
+--
+
+	function suite.sharedflags_onOmitFramePointer()
+		omitframepointer "On"
+
+		prepare()
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoOmitFramePointer()
+		omitframepointer "Off"
+
+		prepare()
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
 	end

@@ -42,7 +42,6 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			LinkTimeOptimization = "-flto",
-			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
 			UndefinedIdentifiers = "-Wundef",
 		},
@@ -96,6 +95,14 @@
 		},
 		symbols = {
 			On = "-g"
+		},
+		unsignedchar = {
+			On = "-funsigned-char",
+			Off = "-fno-unsigned-char"
+		},
+		omitframepointer = {
+			On = "-fomit-frame-pointer",
+			Off = "-fno-omit-frame-pointer"
 		}
 	}
 
@@ -145,6 +152,7 @@
 		},
 		flags = {
 			NoBufferSecurityCheck = "-fno-stack-protector",
+			VisibilityHidden = { "-fvisibility=hidden", "-fvisibility-inlines-hidden" },
 		},
 		cppdialect = {
 			["C++98"] = "-std=c++98",

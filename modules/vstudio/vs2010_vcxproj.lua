@@ -347,6 +347,7 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
+			m.structMemberAlignment,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1269,6 +1270,11 @@
 		end
 	end
 
+	function m.structMemberAlignment(cfg)
+		if cfg.structmemberalign then
+			m.element("StructMemberAlignment", nil, cfg.structmemberalign)
+		end
+	end
 
 	function m.additionalCompileOptions(cfg, condition)
 		local opts = cfg.buildoptions
@@ -2071,8 +2077,9 @@
 
 
 	function m.omitFramePointers(cfg)
-		if cfg.flags.NoFramePointer then
-			m.element("OmitFramePointers", nil, "true")
+		if cfg.omitframepointer then
+			local map = { Off = "false", On = "true" }
+			m.element("OmitFramePointers", nil, map[cfg.omitframepointer])
 		end
 	end
 

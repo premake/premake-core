@@ -507,7 +507,7 @@
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",   -- DEPRECATED
-			"NoFramePointer",
+			"NoFramePointer",      -- DEPRECATED
 			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
@@ -535,6 +535,7 @@
 			"C90",                 -- DEPRECATED
 			"C99",                 -- DEPRECATED
 			"C11",                 -- DEPRECATED
+			"VisibilityHidden",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -1336,6 +1337,48 @@
 		}
 	}
 
+	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
+		name = "omitframepointer",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.register {
+		name = "debuggerflavor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"WindowsLocalDebugger",
+			"WindowsRemoteDebugger",
+			"WebBrowserDebugger",
+			"WebServiceDebugger"
+		}
+	}
+
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"1Byte",
+			"2Bytes",
+			"4Bytes",
+			"8Bytes",
+			"16Bytes",
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
@@ -1575,6 +1618,13 @@
 	end,
 	function(value)
 		staticruntime "Default"
+	end)
+
+	-- 08 April 2018
+
+	api.deprecateValue("flags", "NoFramePointer", 'Use `framepointer "Off"` instead.',
+	function(value)
+			omitframepointer("On")
 	end)
 
 -----------------------------------------------------------------------------
