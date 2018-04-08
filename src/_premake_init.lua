@@ -1354,6 +1354,17 @@
 		}
 	}
 
+	p.api.register {
+		name = "debuggerflavor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"WindowsLocalDebugger",
+			"WindowsRemoteDebugger",
+			"WebBrowserDebugger",
+			"WebServiceDebugger"
+		}
+	}
 
 -----------------------------------------------------------------------------
 --
