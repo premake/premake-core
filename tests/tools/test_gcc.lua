@@ -790,7 +790,7 @@
 	end
 
 --
--- Test language flags are added properly.
+-- Test unsigned-char flags.
 --
 
 	function suite.sharedflags_onUnsignedChar()
@@ -807,4 +807,24 @@
 		prepare()
 		test.contains({ "-fno-unsigned-char" }, gcc.getcxxflags(cfg))
 		test.contains({ "-fno-unsigned-char" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test omit-frame-pointer flags.
+--
+
+	function suite.sharedflags_onUnsignedChar()
+		omitframepointer "On"
+
+		prepare()
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoUnsignedChar()
+		omitframepointer "Off"
+
+		prepare()
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
 	end
