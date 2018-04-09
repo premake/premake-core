@@ -535,6 +535,7 @@
 			"C90",                 -- DEPRECATED
 			"C99",                 -- DEPRECATED
 			"C11",                 -- DEPRECATED
+			"VisibilityHidden",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },

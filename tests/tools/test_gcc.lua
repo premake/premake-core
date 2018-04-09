@@ -320,6 +320,12 @@
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
 
+	function suite.cxxflags_onVisibilityHidden()
+		flags { "VisibilityHidden" }
+		prepare()
+		test.excludes({ "-fvisibility=hidden", "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden", "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
+	end
 
 --
 -- Check the basic translation of LDFLAGS for a Posix system.

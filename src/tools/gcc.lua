@@ -145,6 +145,7 @@
 		},
 		flags = {
 			NoBufferSecurityCheck = "-fno-stack-protector",
+			VisibilityHidden = { "-fvisibility=hidden", "-fvisibility-inlines-hidden" },
 		},
 		cppdialect = {
 			["C++98"] = "-std=c++98",
