@@ -788,3 +788,23 @@
 		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
 	end
+
+--
+-- Test omit-frame-pointer flags.
+--
+
+	function suite.sharedflags_onOmitFramePointer()
+		omitframepointer "On"
+
+		prepare()
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoOmitFramePointer()
+		omitframepointer "Off"
+
+		prepare()
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end

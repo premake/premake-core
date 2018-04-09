@@ -42,7 +42,6 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			LinkTimeOptimization = "-flto",
-			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
 			UndefinedIdentifiers = "-Wundef",
 		},
@@ -96,6 +95,10 @@
 		},
 		symbols = {
 			On = "-g"
+		},
+		omitframepointer = {
+			On = "-fomit-frame-pointer",
+			Off = "-fno-omit-frame-pointer"
 		}
 	}
 

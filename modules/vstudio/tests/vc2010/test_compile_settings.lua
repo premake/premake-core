@@ -239,18 +239,6 @@
 		]]
 	end
 
-	function suite.omitFrames_onNoFramePointer()
-		flags "NoFramePointer"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<OmitFramePointers>true</OmitFramePointers>
-		]]
-	end
-
 
 --
 -- If defines are specified, the <PreprocessorDefinitions> element should be added.
@@ -1235,6 +1223,50 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check OmitFramePointer
+--
+
+	function suite.omitFramePointer_On()
+		omitframepointer "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>true</OmitFramePointers>
+</ClCompile>
+		]]
+	end
+
+	function suite.omitFramePointer_Off()
+		omitframepointer "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>false</OmitFramePointers>
+</ClCompile>
+		]]
+	end
+
+
+	function suite.omitFramePointer_DeprecationFlag()
+		flags "NoFramePointer"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>true</OmitFramePointers>
 </ClCompile>
 		]]
 	end
