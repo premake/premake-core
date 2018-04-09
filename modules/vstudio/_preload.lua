@@ -21,6 +21,19 @@
 	include("vs2015.lua")
 	include("vs2017.lua")
 
+
+	p.api.register {
+		name = "debuggerflavor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"WindowsLocalDebugger",
+			"WindowsRemoteDebugger",
+			"WebBrowserDebugger",
+			"WebServiceDebugger"
+		}
+	}
+
 --
 -- Decide when the full module should be loaded.
 --

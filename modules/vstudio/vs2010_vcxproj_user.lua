@@ -79,7 +79,9 @@
 
 
 	function m.debuggerFlavor(cfg)
-		if cfg.debugdir or cfg.debugcommand then
+		if cfg.debuggerflavor then
+			p.w('<DebuggerFlavor>%s</DebuggerFlavor>', cfg.debuggerflavor)
+		elseif cfg.debugdir or cfg.debugcommand then
 			p.w('<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>')
 		end
 	end
