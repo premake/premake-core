@@ -63,6 +63,7 @@ return {
 	"vc2010/test_language_settings.lua",
 	"vc2010/test_language_targets.lua",
 	"vc2010/test_floatingpoint.lua",
+	"vc2010/test_fxcompile_settings.lua",
 	"vc2010/test_globals.lua",
 	"vc2010/test_header.lua",
 	"vc2010/test_files.lua",
