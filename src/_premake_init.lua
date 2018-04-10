@@ -1339,13 +1339,13 @@
 	p.api.register {
 		name = "structmemberalign",
 		scope = "config",
-		kind = "string",
+		kind = "integer",
 		allowed = {
-			"1Byte",
-			"2Bytes",
-			"4Bytes",
-			"8Bytes",
-			"16Bytes",
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
 		}
 	}
 

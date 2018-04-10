@@ -1347,8 +1347,17 @@
 	end
 
 	function m.structMemberAlignment(cfg)
-		if cfg.structmemberalign then
-			m.element("StructMemberAlignment", nil, cfg.structmemberalign)
+		local map = {
+			[1] = "1Byte",
+			[2] = "2Bytes",
+			[4] = "4Bytes",
+			[8] = "8Bytes",
+			[16] = "16Bytes"
+		}
+
+		local value = map[cfg.structmemberalign]
+		if value then
+			m.element("StructMemberAlignment", nil, value)
 		end
 	end
 

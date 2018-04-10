@@ -1244,7 +1244,7 @@
 --
 
 	function suite.structMemberAlignment()
-		structmemberalign "1Byte"
+		structmemberalign(1)
 		prepare()
 		test.capture [[
 <ClCompile>
