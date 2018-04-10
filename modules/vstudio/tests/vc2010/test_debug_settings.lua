@@ -106,7 +106,7 @@ foo=bar</LocalDebuggerEnvironment>
 --
 
 	function suite.debuggerFlavor_OnWindowsLocal()
-		debuggerflavor "WindowsLocalDebugger"
+		debuggerflavor "Local"
 		prepare()
 		test.capture [[
 <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
@@ -114,7 +114,7 @@ foo=bar</LocalDebuggerEnvironment>
 	end
 
 	function suite.debuggerFlavor_OnWindowsRemote()
-		debuggerflavor "WindowsRemoteDebugger"
+		debuggerflavor "Remote"
 		prepare()
 		test.capture [[
 <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>

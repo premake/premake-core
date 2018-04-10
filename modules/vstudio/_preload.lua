@@ -121,10 +121,10 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
-			"WindowsLocalDebugger",
-			"WindowsRemoteDebugger",
-			"WebBrowserDebugger",
-			"WebServiceDebugger"
+			"Local",
+			"Remote",
+			"WebBrowser",
+			"WebService"
 		}
 	}
 
