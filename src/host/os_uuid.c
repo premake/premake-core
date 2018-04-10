@@ -16,7 +16,7 @@
  * without the help of the determinately sized C99 data types that
  * are not yet universally supported.
  */
-static void add(unsigned char* bytes, int offset, unsigned long value)
+static void add(unsigned char* bytes, int offset, uint32_t value)
 {
 	int i;
 	for (i = 0; i < 4; ++i)

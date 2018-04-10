@@ -53,6 +53,7 @@
 #else
 #include <unistd.h>
 #endif
+#include <stdint.h>
 
 /* not all platforms define this */
 #ifndef FALSE
@@ -85,7 +86,7 @@ extern const char* scripts_path;
 
 /* Bootstrapping helper functions */
 int do_chdir(lua_State* L, const char* path);
-unsigned long do_hash(const char* str, int seed);
+uint32_t do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);

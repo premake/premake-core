@@ -17,11 +17,11 @@ int string_hash(lua_State* L)
 }
 
 
-unsigned long do_hash(const char* str, int seed)
+uint32_t do_hash(const char* str, int seed)
 {
 	/* DJB2 hashing; see http://www.cse.yorku.ca/~oz/hash.html */
 
-	unsigned long hash = 5381;
+	uint32_t hash = 5381;
 
 	if (seed != 0) {
 		hash = hash * 33 + seed;
