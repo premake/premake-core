@@ -1336,6 +1336,12 @@
 		}
 	}
 
+	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
