@@ -274,6 +274,7 @@
 		else
 			return {
 				m.clCompile,
+				m.fxCompile,
 				m.resourceCompile,
 				m.linker,
 				m.manifest,
@@ -360,6 +361,42 @@
 		p.push('<ClCompile>')
 		p.callArray(m.elements.clCompile, cfg)
 		p.pop('</ClCompile>')
+	end
+
+
+--
+-- Write the <FxCompile> settings block.
+--
+
+	m.elements.fxCompile = function(cfg)
+		return {
+			m.fxCompilePreprocessorDefinition,
+			m.fxCompileShaderType,
+			m.fxCompileShaderModel,
+			m.fxCompileShaderEntry,
+			m.fxCompileShaderVariableName,
+			m.fxCompileShaderHeaderOutput,
+			m.fxCompileShaderObjectOutput,
+			m.fxCompileShaderAssembler,
+			m.fxCompileShaderAssemblerOutput,
+			m.fxCompileShaderAdditionalOptions,
+		}
+	end
+
+	function m.fxCompile(cfg)
+		if p.config.hasFile(cfg, path.ishlslfile) then
+			local contents = p.capture(function ()
+				p.push()
+				p.callArray(m.elements.fxCompile, cfg)
+				p.pop()
+			end)
+
+			if #contents > 0 then
+				p.push('<FxCompile>')
+				p.outln(contents)
+				p.pop('</FxCompile>')
+			end
+		end
 	end
 
 
@@ -696,13 +733,52 @@
 		end
 	}
 
+---
+-- ClCompile group
+---
+	m.categories.FxCompile = {
+		name	   = "FxCompile",
+		extensions = { ".hlsl" },
+		priority   = 3,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = function(fcfg, condition)
+				if fcfg then
+					return {
+						m.excludedFromBuild,
+						m.fxCompilePreprocessorDefinition,
+						m.fxCompileShaderType,
+						m.fxCompileShaderModel,
+						m.fxCompileShaderEntry,
+						m.fxCompileShaderVariableName,
+						m.fxCompileShaderHeaderOutput,
+						m.fxCompileShaderObjectOutput,
+						m.fxCompileShaderAssembler,
+						m.fxCompileShaderAssemblerOutput,
+						m.fxCompileShaderAdditionalOptions,
+					}
+				else
+					return {
+						m.excludedFromBuild
+					}
+				end
+			end
+
+			m.emitFiles(prj, group, "FxCompile", nil, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "FxCompile")
+		end
+	}
+
 
 ---
 -- None group
 ---
 	m.categories.None = {
 		name = "None",
-		priority = 3,
+		priority = 4,
 
 		emitFiles = function(prj, group)
 			m.emitFiles(prj, group, "None", {m.generatedFile})
@@ -720,7 +796,7 @@
 	m.categories.ResourceCompile = {
 		name       = "ResourceCompile",
 		extensions = ".rc",
-		priority   = 4,
+		priority   = 5,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -743,7 +819,7 @@
 ---
 	m.categories.CustomBuild = {
 		name = "CustomBuild",
-		priority = 5,
+		priority = 6,
 
 		emitFiles = function(prj, group)
 			local fileFunc = {
@@ -776,7 +852,7 @@
 	m.categories.Midl = {
 		name       = "Midl",
 		extensions = ".idl",
-		priority   = 6,
+		priority   = 7,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -800,7 +876,7 @@
 	m.categories.Masm = {
 		name       = "Masm",
 		extensions = ".asm",
-		priority   = 7,
+		priority   = 8,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
@@ -839,7 +915,7 @@
 	m.categories.Image = {
 		name       = "Image",
 		extensions = { ".gif", ".jpg", ".jpe", ".png", ".bmp", ".dib", "*.tif", "*.wmf", "*.ras", "*.eps", "*.pcx", "*.pcd", "*.tga", "*.dds" },
-		priority   = 8,
+		priority   = 9,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
@@ -862,7 +938,7 @@
 	m.categories.Natvis = {
 		name       = "Natvis",
 		extensions = { ".natvis" },
-		priority   = 9,
+		priority   = 10,
 
 		emitFiles = function(prj, group)
 			m.emitFiles(prj, group, "Natvis", {m.generatedFile})
@@ -2488,11 +2564,84 @@
 	end
 
 
-
 	function m.xmlDeclaration()
 		p.xmlUtf8()
 	end
 
+
+	function m.fxCompilePreprocessorDefinition(cfg, condition)
+		if cfg.shaderdefines and #cfg.shaderdefines > 0 then
+			local shaderdefines = table.concat(cfg.shaderdefines, ";")
+
+			shaderdefines = shaderdefines .. ";%%(PreprocessorDefinitions)"
+			m.element('PreprocessorDefinitions', condition, shaderdefines)
+		end
+	end
+
+
+	function m.fxCompileShaderType(cfg, condition)
+		if cfg.shadertype then
+			m.element("ShaderType", condition, cfg.shadertype)
+		end
+	end
+
+
+	function m.fxCompileShaderModel(cfg, condition)
+		if cfg.shadermodel then
+			m.element("ShaderModel", condition, cfg.shadermodel)
+		end
+	end
+
+
+	function m.fxCompileShaderEntry(cfg, condition)
+		if cfg.shaderentry then
+			m.element("EntryPointName", condition, cfg.shaderentry)
+		end
+	end
+
+
+	function m.fxCompileShaderVariableName(cfg, condition)
+		if cfg.shadervariablename then
+			m.element("VariableName", condition, cfg.shadervariablename)
+		end
+	end
+
+
+	function m.fxCompileShaderHeaderOutput(cfg, condition)
+		if cfg.shaderheaderfileoutput then
+			m.element("HeaderFileOutput", condition, cfg.shaderheaderfileoutput)
+		end
+	end
+
+
+	function m.fxCompileShaderObjectOutput(cfg, condition)
+		if cfg.shaderobjectfileoutput then
+			m.element("ObjectFileOutput", condition, cfg.shaderobjectfileoutput)
+		end
+	end
+
+
+	function m.fxCompileShaderAssembler(cfg, condition)
+		if cfg.shaderassembler then
+			m.element("AssemblerOutput", condition, cfg.shaderassembler)
+		end
+	end
+
+
+	function m.fxCompileShaderAssemblerOutput(cfg, condition)
+		if cfg.shaderassembleroutput then
+			m.element("AssemblerOutputFile", condition, cfg.shaderassembleroutput)
+		end
+	end
+
+
+	function m.fxCompileShaderAdditionalOptions(cfg, condition)
+		local opts = cfg.shaderoptions
+		if #opts > 0 then
+			opts = table.concat(opts, " ")
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+		end
+	end
 
 
 ---------------------------------------------------------------------------
