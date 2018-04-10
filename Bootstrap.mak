@@ -1,4 +1,6 @@
 MSDEV       = vs2012
+CONFIG      = release
+PLATFORM    = x86
 LUA_DIR     = contrib/lua/src
 LUASHIM_DIR = contrib/luashim
 
@@ -36,8 +38,8 @@ SRC		= src/host/*.c			\
 		$(LUA_DIR)/lvm.c		\
 		$(LUA_DIR)/lzio.c		\
 
-PLATFORM= none
-default: $(PLATFORM)
+HOST_PLATFORM= none
+default: $(HOST_PLATFORM)
 
 none:
 	@echo "Please do"
@@ -57,7 +59,7 @@ mingw: $(SRC)
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lole32
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake
-	$(MAKE) -C build/bootstrap
+	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
 
 osx: $(SRC)
 	$(SILENT) rm -rf ./bin
@@ -67,7 +69,7 @@ osx: $(SRC)
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" -framework CoreServices -framework Foundation -framework Security -lreadline $?
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
-	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
+	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 linux: $(SRC)
 	$(SILENT) rm -rf ./bin
@@ -77,7 +79,7 @@ linux: $(SRC)
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm -ldl -lrt
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
-	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
+	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 bsd: $(SRC)
 	$(SILENT) rm -rf ./bin
@@ -87,7 +89,7 @@ bsd: $(SRC)
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
-	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN`
+	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 windows-base: $(SRC)
 	$(SILENT) if exist .\bin rmdir /s /q .\bin
@@ -100,7 +102,7 @@ windows-base: $(SRC)
 
 windows: windows-base
 	devenv .\build\bootstrap\Premake5.sln /Upgrade
-	devenv .\build\bootstrap\Premake5.sln /Build Release
+	devenv .\build\bootstrap\Premake5.sln /Build "$(CONFIG)|$(PLATFORM:x86=win32)"
 
 windows-msbuild: windows-base
-	msbuild /p:Configuration=Release /p:Platform=Win32 .\build\bootstrap\Premake5.sln
+	msbuild /p:Configuration=$(CONFIG) /p:Platform=$(PLATFORM:x86=win32) .\build\bootstrap\Premake5.sln
