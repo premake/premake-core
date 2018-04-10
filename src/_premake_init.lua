@@ -535,7 +535,6 @@
 			"C90",                 -- DEPRECATED
 			"C99",                 -- DEPRECATED
 			"C11",                 -- DEPRECATED
-			"VisibilityHidden",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -1334,6 +1333,18 @@
 			"Default",
 			p.X86,
 			p.X86_64,
+		}
+	}
+
+	api.register {
+		name = "visibility",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Hidden",
+			"Internal",
+			"Protected"
 		}
 	}
 

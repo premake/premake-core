@@ -145,7 +145,6 @@
 		},
 		flags = {
 			NoBufferSecurityCheck = "-fno-stack-protector",
-			VisibilityHidden = { "-fvisibility=hidden", "-fvisibility-inlines-hidden" },
 		},
 		cppdialect = {
 			["C++98"] = "-std=c++98",
@@ -165,6 +164,12 @@
 		},
 		rtti = {
 			Off = "-fno-rtti"
+		},
+		visibility = {
+			Default = "-fvisibility=default",
+			Hidden = { "-fvisibility=hidden", "-fvisibility-inlines-hidden" },
+			Internal = "-fvisibility=internal",
+			Protected = "-fvisibility=protected",
 		}
 	}
 
