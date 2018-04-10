@@ -1149,7 +1149,7 @@
 
 	api.register {
 		name = "systemversion",
-		scope = "project",
+		scope = "config",
 		kind = "string",
 	}
 

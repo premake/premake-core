@@ -126,7 +126,6 @@
 			m.ignoreWarnDuplicateFilename,
 			m.keyword,
 			m.projectName,
-			m.targetPlatformVersion,
 			m.preferredToolArchitecture
 		}
 	end
@@ -161,6 +160,7 @@
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
 				m.windowsSDKDesktopARMSupport,
+				m.targetPlatformVersion,
 			}
 		end
 	end
