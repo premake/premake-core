@@ -1370,6 +1370,12 @@
 				table.insert(opts, "/std:c++latest")
 			end
 		end
+
+		if cfg.toolset and cfg.toolset:startswith("msc") then
+			local value = iif(cfg.unsignedchar, "On", "Off")
+			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+		end
+
 		if #opts > 0 then
 			opts = table.concat(opts, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
