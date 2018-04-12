@@ -813,6 +813,14 @@
 -- Test omit-frame-pointer flags.
 --
 
+	function suite.sharedflags_onOmitFramePointerDefault()
+		omitframepointer "Default"
+
+		prepare()
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
 	function suite.sharedflags_onOmitFramePointer()
 		omitframepointer "On"
 
