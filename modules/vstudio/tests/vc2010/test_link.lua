@@ -223,6 +223,145 @@
 	end
 
 --
+-- Test the handling of the SymbolsPath flag.
+--
+
+	function suite.generateProgramDataBaseFile_onStaticLib()
+		kind "StaticLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDataBaseFile_onSharedLib()
+		kind "SharedLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsOn_on2010()
+		p.action.set("vs2010")
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsFastLink_on2010()
+		p.action.set("vs2010")
+		symbols "Off"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>false</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2010()
+		p.action.set("vs2010")
+		symbols "Full"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsOn_on2015()
+		p.action.set("vs2015")
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsFastLink_on2015()
+		p.action.set("vs2015")
+		symbols "FastLink"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+	<GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2015()
+		p.action.set("vs2015")
+		symbols "Full"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>true</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2017()
+		p.action.set("vs2017")
+		symbols "Full"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
+
+--
 -- Any system libraries specified in links() should be listed as
 -- additional dependencies.
 --

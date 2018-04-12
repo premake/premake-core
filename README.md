@@ -1,6 +1,9 @@
 # PREMAKE 5 (core)
 <img src="https://github.com/premake/premake-core/wiki/linux-widget.jpeg" width="24" height="24"/> [![Build Status](https://travis-ci.org/premake/premake-core.svg?branch=master)](https://travis-ci.org/premake/premake-core)
  <img src="https://github.com/premake/premake-core/wiki/windows-widget.jpeg" width="24" height="24"/> [![Build status](https://ci.appveyor.com/api/projects/status/lc9g332y2lqvel8h?svg=true)](https://ci.appveyor.com/project/PremakeOrganization/premake-core)
+ [![Latest release](https://img.shields.io/github/release/premake/premake-core/all.svg)]()
+ [![Release date of last release](https://img.shields.io/github/release-date-pre/premake/premake-core.svg)]()
+ [![Commits since last release](https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-alpha12.svg)]()
 
 <img src="http://premake.github.io/premake-logo.png" width="200" height="200" />
 

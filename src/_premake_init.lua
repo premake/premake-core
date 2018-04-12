@@ -1336,6 +1336,25 @@
 		}
 	}
 
+	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "integer",
+		allowed = {
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
@@ -1612,6 +1631,12 @@
 		description = "Treat warnings from project scripts as errors"
 	}
 
+    newoption
+	{
+		trigger     = "debugger",
+		description = "Start MobDebug remote debugger. Works with ZeroBrane Studio"
+	}
+
 	newoption
 	{
 		trigger     = "file",
@@ -1712,6 +1737,9 @@
 		targetextension ".a"
 
 	-- Add variations for other Posix-like systems.
+
+	filter { "system:MacOSX", "kind:WindowedApp" }
+		targetextension ".app"
 
 	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
