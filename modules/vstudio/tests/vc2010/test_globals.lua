@@ -296,10 +296,12 @@
 		]]
 	end
 	
-	function suite.windowsTargetPlatformVersionConditional_on2015Default()
+	function suite.windowsTargetPlatformVersionMultipleConditional_on2015Default()
 		p.action.set("vs2015")
 		filter "Debug"
 			systemversion "10.0.10240.0"
+		filter "Release"
+			systemversion "10.0.10240.1"
 		prepare()
 		test.capture [[
 <PropertyGroup Label="Globals">
@@ -310,6 +312,34 @@
 </PropertyGroup>
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
 	<WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<WindowsTargetPlatformVersion>10.0.10240.1</WindowsTargetPlatformVersion>
+</PropertyGroup>
+		]]
+	end
+	
+	function suite.windowsTargetPlatformVersionGlobalMultipleConditional_on2015Default()
+		p.action.set("vs2015")
+		systemversion "8.1"
+		filter "Debug"
+			systemversion "10.0.10240.0"
+		filter "Release"
+			systemversion "10.0.10240.1"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<WindowsTargetPlatformVersion>10.0.10240.1</WindowsTargetPlatformVersion>
 </PropertyGroup>
 		]]
 	end

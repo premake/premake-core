@@ -146,9 +146,21 @@
 
 		-- Write out the configurable globals
 		for cfg in project.eachconfig(prj) do
-			m.propertyGroup(cfg, "Globals")
-			p.callArray(m.elements.globalsCondition, prj, cfg)
-			p.pop('</PropertyGroup>')
+		
+			-- Find out whether we're going to actually write a property out
+			local captured = p.capture(	function()
+										p.push()
+										p.callArray(m.elements.globalsCondition, prj, cfg)
+										p.pop()
+										end)
+
+			-- If we do have something, create the entry, skip otherwise
+			if captured ~= '' then
+				m.propertyGroup(cfg, "Globals")
+				p.callArray(m.elements.globalsCondition, prj, cfg)
+				p.pop('</PropertyGroup>')
+			end
+			
 		end
 
 	end
