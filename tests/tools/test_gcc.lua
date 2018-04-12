@@ -822,8 +822,8 @@
 	function suite.cxxflags_onVisibilityHidden()
 		visibility "Hidden"
 		prepare()
-		test.excludes({ "-fvisibility=hidden", "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
-		test.contains({ "-fvisibility=hidden", "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
+		test.excludes({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityInternal()

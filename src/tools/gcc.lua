@@ -171,7 +171,7 @@
 		},
 		visibility = {
 			Default = "-fvisibility=default",
-			Hidden = { "-fvisibility=hidden", "-fvisibility-inlines-hidden" },
+			Hidden = "-fvisibility=hidden",
 			Internal = "-fvisibility=internal",
 			Protected = "-fvisibility=protected",
 		}
