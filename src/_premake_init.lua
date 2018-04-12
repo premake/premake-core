@@ -1596,9 +1596,12 @@
 
 	-- 08 April 2018
 
-	api.deprecateValue("flags", "NoFramePointer", 'Use `framepointer "Off"` instead.',
+	api.deprecateValue("flags", "NoFramePointer", 'Use `omitframepointer "On"` instead.',
 	function(value)
-			omitframepointer("On")
+		omitframepointer("On")
+	end,
+	function(value)
+		omitframepointer("Default")
 	end)
 
 -----------------------------------------------------------------------------
