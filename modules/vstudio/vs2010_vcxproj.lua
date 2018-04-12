@@ -2153,9 +2153,11 @@
 
 
 	function m.omitFramePointers(cfg)
-		if cfg.omitframepointer then
-			local map = { Off = "false", On = "true" }
-			m.element("OmitFramePointers", nil, map[cfg.omitframepointer])
+		local map = { Off = "false", On = "true" }
+		local value = map[cfg.omitframepointer]
+
+		if value then
+			m.element("OmitFramePointers", nil, value)
 		end
 	end
 

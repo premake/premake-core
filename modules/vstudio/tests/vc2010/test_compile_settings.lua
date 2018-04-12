@@ -1260,6 +1260,18 @@
 -- Check OmitFramePointer
 --
 
+	function suite.omitFramePointer_Default()
+		omitframepointer "Default"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
 	function suite.omitFramePointer_On()
 		omitframepointer "On"
 		prepare()
