@@ -137,13 +137,11 @@
 --
 
 	function context.mergeFilters(ctx, src)
-		if src.terms ~= nil then
-			for k, v in pairs(src.terms) do
-				ctx.terms[k] = table.joinunique(ctx.terms[k] or {}, src.terms[k])
-
-				if #ctx.terms[k] == 1 then
-					ctx.terms[k] = ctx.terms[k][1]
-				end
+		for k, v in pairs(src.terms) do
+			if k == "tags" then
+				ctx.terms[k] = table.join(ctx.terms[k], v)
+			else
+				ctx.terms[k] = v
 			end
 		end
 	end
