@@ -376,6 +376,7 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
+			m.structMemberAlignment,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1373,6 +1374,20 @@
 		end
 	end
 
+	function m.structMemberAlignment(cfg)
+		local map = {
+			[1] = "1Byte",
+			[2] = "2Bytes",
+			[4] = "4Bytes",
+			[8] = "8Bytes",
+			[16] = "16Bytes"
+		}
+
+		local value = map[cfg.structmemberalign]
+		if value then
+			m.element("StructMemberAlignment", nil, value)
+		end
+	end
 
 	function m.additionalCompileOptions(cfg, condition)
 		local opts = cfg.buildoptions
@@ -1383,6 +1398,12 @@
 				table.insert(opts, "/std:c++latest")
 			end
 		end
+
+		if cfg.toolset and cfg.toolset:startswith("msc") then
+			local value = iif(cfg.unsignedchar, "On", "Off")
+			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+		end
+
 		if #opts > 0 then
 			opts = table.concat(opts, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)

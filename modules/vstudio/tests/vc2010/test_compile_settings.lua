@@ -1238,3 +1238,49 @@
 </ClCompile>
 		]]
 	end
+
+--
+-- Check UnsignedChar.
+--
+
+	function suite.unsignedChar_On()
+		unsignedchar "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/J %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.unsignedChar_Off()
+		unsignedchar "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check StructMemberAlignment
+--
+
+	function suite.structMemberAlignment()
+		structmemberalign(1)
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StructMemberAlignment>1Byte</StructMemberAlignment>
+</ClCompile>
+		]]
+	end

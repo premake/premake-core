@@ -116,6 +116,17 @@
 		tokens = true,
 	}
 
+	p.api.register {
+		name = "debuggerflavor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Local",
+			"Remote",
+			"WebBrowser",
+			"WebService"
+		}
+	}
 
 --
 -- Decide when the full module should be loaded.
