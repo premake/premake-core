@@ -234,3 +234,29 @@ cmd2</StartupCommands>
       </Completion>
 		]]
 	end
+
+
+---------------------------------------------------------------------------
+-- Setup/Teardown
+---------------------------------------------------------------------------
+
+	function suite.OnProjectCfg_UnsignedCharOn()
+		unsignedchar "On"
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-funsigned-char" C_Options="-funsigned-char" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
+		]]
+	end
+
+
+	function suite.OnProjectCfg_UnsignedCharOff()
+		unsignedchar "Off"
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-fno-unsigned-char" C_Options="-fno-unsigned-char" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
+		]]
+	end

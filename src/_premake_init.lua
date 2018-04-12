@@ -1336,6 +1336,25 @@
 		}
 	}
 
+	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "integer",
+		allowed = {
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
