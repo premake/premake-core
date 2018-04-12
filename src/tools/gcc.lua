@@ -177,6 +177,9 @@
 			Hidden = "-fvisibility=hidden",
 			Internal = "-fvisibility=internal",
 			Protected = "-fvisibility=protected",
+		},
+		inlinesvisibility = {
+			Hidden = "-fvisibility-inlines-hidden"
 		}
 	}
 
