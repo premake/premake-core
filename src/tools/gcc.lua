@@ -96,6 +96,10 @@
 		},
 		symbols = {
 			On = "-g"
+		},
+		unsignedchar = {
+			On = "-funsigned-char",
+			Off = "-fno-unsigned-char"
 		}
 	}
 

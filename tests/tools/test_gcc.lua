@@ -789,6 +789,26 @@
 	end
 
 --
+-- Test unsigned-char flags.
+--
+
+	function suite.sharedflags_onUnsignedChar()
+		unsignedchar "On"
+
+		prepare()
+		test.contains({ "-funsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-funsigned-char" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoUnsignedChar()
+		unsignedchar "Off"
+
+		prepare()
+		test.contains({ "-fno-unsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-unsigned-char" }, gcc.getcflags(cfg))
+	end
+
+--
 -- Test visibility.
 --
 

@@ -1337,6 +1337,12 @@
 	}
 
 	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
 		name = "visibility",
 		scope = "config",
 		kind = "string",
