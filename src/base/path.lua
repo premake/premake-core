@@ -102,6 +102,21 @@
 
 
 --
+-- Remove extension from path.
+--
+
+	function path.removeextension(p)
+		local i = p:findlast(".", true)
+		if (i) then
+		if i > 1 then i = i - 1 end
+			return p:sub(1, i)
+		else
+			return ""
+		end
+	end
+
+
+--
 -- Retrieve the filename portion of a path.
 --
 
@@ -233,6 +248,15 @@
 
 	function path.isidlfile(fname)
 		return path.hasextension(fname, ".idl")
+	end
+
+
+--
+-- Returns true if the filename represents a hlsl shader file.
+--
+
+	function path.ishlslfile(fname)
+		return path.hasextension(fname, ".hlsl")
 	end
 
 

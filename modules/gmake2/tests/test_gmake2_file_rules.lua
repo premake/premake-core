@@ -18,6 +18,29 @@
 	function suite.setup()
 		p.escaper(gmake2.esc)
 		gmake2.cpp.initialize()
+
+		rule "TestRule"
+		display "Test Rule"
+		fileextension ".rule"
+
+		propertydefinition {
+			name = "TestProperty",
+			kind = "boolean",
+			value = false,
+			switch = "-p"
+		}
+
+		propertydefinition {
+			name = "TestProperty2",
+			kind = "boolean",
+			value = false,
+			switch = "-p2"
+		}
+
+		buildmessage 'Rule-ing %{file.name}'
+		buildcommands 'dorule %{TestProperty} %{TestProperty2} "%{file.path}"'
+		buildoutputs { "%{file.basename}.obj" }
+
 		wks = test.createWorkspace()
 	end
 
@@ -98,13 +121,15 @@ obj/Debug/hello.obj: hello.x
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -129,13 +154,44 @@ obj/Debug/hello.obj: hello.x hello.x.inc hello.x.inc2
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
 	@echo Compiling hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+
+else
+  $(error "invalid configuration $(config)")
 endif
+		]]
+	end
+
+	function suite.customRuleWithProps()
+
+		rules { "TestRule" }
+
+		files { "test.rule", "test2.rule" }
+
+		testRuleVars {
+			TestProperty = true
+		}
+
+		filter "files:test2.rule"
+			testRuleVars {
+				TestProperty2 = true
+			}
+
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+test.obj: test.rule
+	@echo Rule-ing test.rule
+	$(SILENT) dorule -p  "test.rule"
+test2.obj: test2.rule
+	@echo Rule-ing test2.rule
+	$(SILENT) dorule -p -p2 "test2.rule"
 		]]
 	end

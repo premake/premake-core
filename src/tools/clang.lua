@@ -59,8 +59,10 @@
 		},
 		pic = gcc.shared.pic,
 		vectorextensions = gcc.shared.vectorextensions,
+		isaextensions = gcc.shared.isaextensions,
 		warnings = gcc.shared.warnings,
-		symbols = gcc.shared.symbols
+		symbols = gcc.shared.symbols,
+		unsignedchar = gcc.shared.unsignedchar
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {

@@ -49,7 +49,7 @@
 		local bundlepath = ""
 
 		if cfg.system == p.MACOSX and kind == p.WINDOWEDAPP then
-			bundlename = basename .. ".app"
+			bundlename = basename .. extension
 			bundlepath = path.join(bundlename, "Contents/MacOS")
 		end
 
@@ -326,7 +326,12 @@
 --
 
 	function config.getruntime(cfg)
-		local linkage = iif(cfg.flags.StaticRuntime, "Static", "Shared")
+		if (not cfg.staticruntime or cfg.staticruntime == "Default") and not cfg.runtime then
+			return nil -- indicate that no runtime was explicitly selected
+		end
+
+		local linkage = iif(cfg.staticruntime == "On", "Static", "Shared") -- assume 'Shared' is default?
+
 		if not cfg.runtime then
 			return linkage .. iif(config.isDebugBuild(cfg), "Debug", "Release")
 		else

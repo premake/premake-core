@@ -133,8 +133,7 @@
 
 		context.basedir(fsub, prj.location)
 
-		setmetatable(fsub, fileconfig.fsub_mt)
-
+		return setmetatable(fsub, fileconfig.fsub_mt)
 	end
 
 

@@ -402,11 +402,23 @@
 
 
 --
--- If the StaticRuntime flag is specified, add the <RuntimeLibrary> element.
+-- If staticruntime is specified, add the <RuntimeLibrary> element.
 --
 
+	function suite.runtimeLibrary_onDynamicRuntime()
+		staticruntime "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+		]]
+	end
+
 	function suite.runtimeLibrary_onStaticRuntime()
-		flags { "StaticRuntime" }
+		staticruntime "On"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -417,8 +429,22 @@
 		]]
 	end
 
+	function suite.runtimeLibrary_onDynamicRuntimeAndSymbols()
+		staticruntime "Off"
+		symbols "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+		]]
+	end
+
 	function suite.runtimeLibrary_onStaticRuntimeAndSymbols()
-		flags { "StaticRuntime" }
+		staticruntime "On"
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -543,20 +569,6 @@
 
 	function suite.exceptions_onNoExceptions()
 		exceptionhandling "Off"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>false</ExceptionHandling>
-		]]
-	end
-
-
-	function suite.exceptions_onNoExceptionsVS2013()
-		exceptionhandling "Off"
-		p.action.set("vs2013")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -770,13 +782,43 @@
 
 
 --
--- Check handling of the ReleaseRuntime flag; should override the
+-- Check handling of the `runtime` API; should override the
 -- default behavior of linking the debug runtime when symbols are
 -- enabled with no optimizations.
 --
 
+	function suite.releaseRuntime_onReleaseRuntime()
+		runtime "Release"
+		symbols "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+		]]
+	end
+
+	function suite.releaseRuntime_onDynamicAndReleaseRuntime()
+		runtime "Release"
+		staticruntime "Off"
+		symbols "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+		]]
+	end
+
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "ReleaseRuntime", "StaticRuntime" }
+		runtime "Release"
+		staticruntime "On"
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -1154,6 +1196,91 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpplatest</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check StaticLib SymbolsPath
+--
+
+	function suite.generateProgramDataBaseFileName_onStaticLib()
+		kind "StaticLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+</ClCompile>
+		]]
+	end
+
+	function suite.generateNotProgramDataBaseFileName_onSharedLib()
+		kind "SharedLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check UnsignedChar.
+--
+
+	function suite.unsignedChar_On()
+		unsignedchar "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/J %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.unsignedChar_Off()
+		unsignedchar "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check StructMemberAlignment
+--
+
+	function suite.structMemberAlignment()
+		structmemberalign(1)
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StructMemberAlignment>1Byte</StructMemberAlignment>
 </ClCompile>
 		]]
 	end

@@ -99,10 +99,10 @@
 	function context.addFilter(ctx, key, value)
 		if type(value) == "table" then
 			for i = 1, #value do
-				value[i] = value[i]:lower()
+				value[i] = tostring(value[i]):lower()
 			end
-		elseif value then
-			value = value:lower()
+		elseif value ~= nil then
+			value = tostring(value):lower()
 		end
 		ctx.terms[key:lower()] = value
 	end

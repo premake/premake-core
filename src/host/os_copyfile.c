@@ -38,7 +38,18 @@ int os_copyfile(lua_State* L)
 	if (!z)
 	{
 		lua_pushnil(L);
+#if PLATFORM_WINDOWS
+		wchar_t buf[256];
+		FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL);
+
+		char bufA[256];
+		WideCharToMultiByte(CP_UTF8, 0, buf, 256, bufA, 256, 0, 0);
+
+		lua_pushfstring(L, "unable to copy file to '%s', reason: '%s'", dst, bufA);
+#else
 		lua_pushfstring(L, "unable to copy file to '%s'", dst);
+#endif
 		return 2;
 	}
 	else

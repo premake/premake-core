@@ -27,6 +27,7 @@
 			p.X86,
 			p.X86_64,
 			p.ARM,
+			p.ARM64,
 		},
 		aliases = {
 			i386  = p.X86,
@@ -121,7 +122,7 @@
 		scope = { "config", "rule" },
 		kind = "list:path",
 		tokens = true,
-		pathVars = true,
+		pathVars = false,
 	}
 
 	api.register {
@@ -129,7 +130,7 @@
 		scope = "config",
 		kind = "list:path",
 		tokens = true,
-		pathVars = true,
+		pathVars = false,
 	}
 
 	api.register {
@@ -389,6 +390,18 @@
 	}
 
 	api.register {
+		name = "dpiawareness",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"None",
+			"High",
+			"HighPerMonitor",
+		}
+	}
+
+	api.register {
 		name = "editandcontinue",
 		scope = "config",
 		kind = "string",
@@ -407,7 +420,8 @@
 			"Default",
 			"On",
 			"Off",
-			"SEH"
+			"SEH",
+			"CThrow",
 		},
 	}
 
@@ -511,7 +525,7 @@
 			"RelativeLinks",
 			"ReleaseRuntime",      -- DEPRECATED
 			"ShadowedVariables",
-			"StaticRuntime",
+			"StaticRuntime",       -- DEPRECATED
 			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
 			"WinMain",             -- DEPRECATED
@@ -752,12 +766,18 @@
 		allowed = {
 			"Default",
 			"C++98",
+			"C++0x",
 			"C++11",
+			"C++1y",
 			"C++14",
+			"C++1z",
 			"C++17",
 			"gnu++98",
+			"gnu++0x",
 			"gnu++11",
+			"gnu++1y",
 			"gnu++14",
+			"gnu++1z",
 			"gnu++17",
 		}
 	}
@@ -847,7 +867,7 @@
 
 	api.register {
 		name = "nuget",
-		scope = "project",
+		scope = "config",
 		kind = "list:string",
 		tokens = true,
 	}
@@ -1044,6 +1064,17 @@
 		scope = "workspace",
 		kind = "string",
 		tokens = true,
+	}
+
+	api.register {
+		name = "staticruntime",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
 	}
 
 	api.register {
@@ -1244,6 +1275,25 @@
 	}
 
 	api.register {
+		name = "isaextensions",
+		scope = "config",
+		kind = "list:string",
+		allowed = {
+			"MOVBE",
+			"POPCNT",
+			"PCLMUL",
+			"LZCNT",
+			"BMI",
+			"BMI2",
+			"F16C",
+			"AES",
+			"FMA",
+			"FMA4",
+			"RDRND",
+		}
+	}
+
+	api.register {
 		name = "vpaths",
 		scope = "project",
 		kind = "list:keyed:list:path",
@@ -1283,6 +1333,25 @@
 			"Default",
 			p.X86,
 			p.X86_64,
+		}
+	}
+
+	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "integer",
+		allowed = {
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
 		}
 	}
 
@@ -1517,6 +1586,16 @@
 		entrypoint "mainCRTStartup"
 	end)
 
+	-- 31 October 2017
+
+	api.deprecateValue("flags", "StaticRuntime", 'Use `staticruntime "On"` instead',
+	function(value)
+		staticruntime "On"
+	end,
+	function(value)
+		staticruntime "Default"
+	end)
+
 -----------------------------------------------------------------------------
 --
 -- Install Premake's default set of command line arguments.
@@ -1550,6 +1629,12 @@
 	{
 		trigger     = "fatal",
 		description = "Treat warnings from project scripts as errors"
+	}
+
+    newoption
+	{
+		trigger     = "debugger",
+		description = "Start MobDebug remote debugger. Works with ZeroBrane Studio"
 	}
 
 	newoption
@@ -1652,6 +1737,9 @@
 		targetextension ".a"
 
 	-- Add variations for other Posix-like systems.
+
+	filter { "system:MacOSX", "kind:WindowedApp" }
+		targetextension ".app"
 
 	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"

@@ -190,6 +190,7 @@
 				m.outDir,
 				m.intDir,
 				m.extensionsToDeleteOnClean,
+				m.executablePath,
 			}
 		else
 			return {
@@ -273,6 +274,7 @@
 		else
 			return {
 				m.clCompile,
+				m.fxCompile,
 				m.resourceCompile,
 				m.linker,
 				m.manifest,
@@ -312,7 +314,7 @@
 --
 
 	m.elements.clCompile = function(cfg)
-		return {
+		local calls = {
 			m.precompiledHeader,
 			m.warningLevel,
 			m.treatWarningAsError,
@@ -346,13 +348,56 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
+			m.structMemberAlignment,
 		}
+
+		if cfg.kind == p.STATICLIB then
+			table.insert(calls, m.programDatabaseFileName)
+		end
+
+		return calls
 	end
 
 	function m.clCompile(cfg)
 		p.push('<ClCompile>')
 		p.callArray(m.elements.clCompile, cfg)
 		p.pop('</ClCompile>')
+	end
+
+
+--
+-- Write the <FxCompile> settings block.
+--
+
+	m.elements.fxCompile = function(cfg)
+		return {
+			m.fxCompilePreprocessorDefinition,
+			m.fxCompileShaderType,
+			m.fxCompileShaderModel,
+			m.fxCompileShaderEntry,
+			m.fxCompileShaderVariableName,
+			m.fxCompileShaderHeaderOutput,
+			m.fxCompileShaderObjectOutput,
+			m.fxCompileShaderAssembler,
+			m.fxCompileShaderAssemblerOutput,
+			m.fxCompileShaderAdditionalOptions,
+		}
+	end
+
+	function m.fxCompile(cfg)
+		if p.config.hasFile(cfg, path.ishlslfile) then
+			local contents = p.capture(function ()
+				p.push()
+				p.callArray(m.elements.fxCompile, cfg)
+				p.pop()
+			end)
+
+			if #contents > 0 then
+				p.push('<FxCompile>')
+				p.outln(contents)
+				p.pop('</FxCompile>')
+			end
+		end
 	end
 
 
@@ -482,21 +527,25 @@
 -- Write the manifest section.
 --
 
+	m.elements.manifest = function(cfg)
+		return {
+			m.enableDpiAwareness,
+			m.additionalManifestFiles,
+		}
+	end
+
 	function m.manifest(cfg)
 		if cfg.kind ~= p.STATICLIB then
-		-- get the manifests files
-		local manifests = {}
-		for _, fname in ipairs(cfg.files) do
-			if path.getextension(fname) == ".manifest" then
-				table.insert(manifests, project.getrelative(cfg.project, fname))
+			local contents = p.capture(function ()
+				p.push()
+				p.callArray(m.elements.manifest, cfg)
+				p.pop()
+			end)
+			if #contents > 0 then
+				p.push('<Manifest>')
+				p.outln(contents)
+				p.pop('</Manifest>')
 			end
-		end
-
-			if #manifests > 0 then
-		p.push('<Manifest>')
-		m.element("AdditionalManifestFiles", nil, "%s %%(AdditionalManifestFiles)", table.concat(manifests, " "))
-		p.pop('</Manifest>')
-	end
 		end
 	end
 
@@ -668,6 +717,7 @@
 						m.exceptionHandling,
 						m.compileAsManaged,
 						m.runtimeTypeInfo,
+						m.warningLevelFile,
 					}
 				else
 					return {
@@ -684,13 +734,52 @@
 		end
 	}
 
+---
+-- ClCompile group
+---
+	m.categories.FxCompile = {
+		name	   = "FxCompile",
+		extensions = { ".hlsl" },
+		priority   = 3,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = function(fcfg, condition)
+				if fcfg then
+					return {
+						m.excludedFromBuild,
+						m.fxCompilePreprocessorDefinition,
+						m.fxCompileShaderType,
+						m.fxCompileShaderModel,
+						m.fxCompileShaderEntry,
+						m.fxCompileShaderVariableName,
+						m.fxCompileShaderHeaderOutput,
+						m.fxCompileShaderObjectOutput,
+						m.fxCompileShaderAssembler,
+						m.fxCompileShaderAssemblerOutput,
+						m.fxCompileShaderAdditionalOptions,
+					}
+				else
+					return {
+						m.excludedFromBuild
+					}
+				end
+			end
+
+			m.emitFiles(prj, group, "FxCompile", nil, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "FxCompile")
+		end
+	}
+
 
 ---
 -- None group
 ---
 	m.categories.None = {
 		name = "None",
-		priority = 3,
+		priority = 4,
 
 		emitFiles = function(prj, group)
 			m.emitFiles(prj, group, "None", {m.generatedFile})
@@ -708,7 +797,7 @@
 	m.categories.ResourceCompile = {
 		name       = "ResourceCompile",
 		extensions = ".rc",
-		priority   = 4,
+		priority   = 5,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -731,7 +820,7 @@
 ---
 	m.categories.CustomBuild = {
 		name = "CustomBuild",
-		priority = 5,
+		priority = 6,
 
 		emitFiles = function(prj, group)
 			local fileFunc = {
@@ -764,7 +853,7 @@
 	m.categories.Midl = {
 		name       = "Midl",
 		extensions = ".idl",
-		priority   = 6,
+		priority   = 7,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
@@ -781,18 +870,20 @@
 		end
 	}
 
+
 ---
 -- Masm group
 ---
 	m.categories.Masm = {
 		name       = "Masm",
 		extensions = ".asm",
-		priority   = 7,
+		priority   = 8,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
 				if fcfg then
 					return {
+						m.MasmPreprocessorDefinitions,
 						m.excludedFromBuild,
 						m.exceptionHandlingSEH,
 					}
@@ -818,13 +909,14 @@
 		end
 	}
 
+
 ---
 -- Image group
 ---
 	m.categories.Image = {
 		name       = "Image",
 		extensions = { ".gif", ".jpg", ".jpe", ".png", ".bmp", ".dib", "*.tif", "*.wmf", "*.ras", "*.eps", "*.pcx", "*.pcd", "*.tga", "*.dds" },
-		priority   = 8,
+		priority   = 9,
 
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
@@ -839,6 +931,25 @@
 			m.filterGroup(prj, group, "Image")
 		end
 	}
+
+
+---
+-- Natvis group
+---
+	m.categories.Natvis = {
+		name       = "Natvis",
+		extensions = { ".natvis" },
+		priority   = 10,
+
+		emitFiles = function(prj, group)
+			m.emitFiles(prj, group, "Natvis", {m.generatedFile})
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "Natvis")
+		end
+	}
+
 
 ---
 -- Categorize files into groups.
@@ -1027,7 +1138,7 @@
 						if not checkFunc or checkFunc(cfg, fcfg) then
 							p.callArray(fileCfgFunc, fcfg, m.configPair(cfg))
 						end
-						end
+					end
 					if #m.conditionalElements > 0 then
 						m.emitConditionalElements(prj)
 					end
@@ -1193,6 +1304,21 @@
 	end
 
 
+	function m.additionalManifestFiles(cfg)
+		-- get the manifests files
+		local manifests = {}
+		for _, fname in ipairs(cfg.files) do
+			if path.getextension(fname) == ".manifest" then
+				table.insert(manifests, project.getrelative(cfg.project, fname))
+			end
+		end
+
+		if #manifests > 0 then
+			m.element("AdditionalManifestFiles", nil, "%s;%%(AdditionalManifestFiles)", table.concat(manifests, ";"))
+		end
+	end
+
+
 	function m.additionalUsingDirectories(cfg)
 		if #cfg.usingdirs > 0 then
 			local dirs = vstudio.path(cfg, cfg.usingdirs)
@@ -1220,6 +1346,20 @@
 		end
 	end
 
+	function m.structMemberAlignment(cfg)
+		local map = {
+			[1] = "1Byte",
+			[2] = "2Bytes",
+			[4] = "4Bytes",
+			[8] = "8Bytes",
+			[16] = "16Bytes"
+		}
+
+		local value = map[cfg.structmemberalign]
+		if value then
+			m.element("StructMemberAlignment", nil, value)
+		end
+	end
 
 	function m.additionalCompileOptions(cfg, condition)
 		local opts = cfg.buildoptions
@@ -1230,6 +1370,12 @@
 				table.insert(opts, "/std:c++latest")
 			end
 		end
+
+		if cfg.toolset and cfg.toolset:startswith("msc") then
+			local value = iif(cfg.unsignedchar, "On", "Off")
+			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+		end
+
 		if #opts > 0 then
 			opts = table.concat(opts, " ")
 			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
@@ -1254,7 +1400,7 @@
 
 	function m.basicRuntimeChecks(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
-		local runtime = config.getruntime(prjcfg)
+		local runtime = config.getruntime(prjcfg) or iif(config.isDebugBuild(cfg), "Debug", "Release")
 		if filecfg then
 			if filecfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(filecfg) and runtime:endswith("Debug")) then
 				m.element("BasicRuntimeChecks", condition, "Default")
@@ -1341,7 +1487,7 @@
 
 	function m.clCompilePreprocessorDefinitions(cfg, condition)
 		local defines = cfg.defines
-		if cfg.exceptionhandling == p.OFF and _ACTION >= "vs2013" then
+		if cfg.exceptionhandling == p.OFF then
 			defines = table.join(defines, "_HAS_EXCEPTIONS=0")
 		end
 		m.preprocessorDefinitions(cfg, defines, false, condition)
@@ -1439,6 +1585,20 @@
 	end
 
 
+	function m.enableDpiAwareness(cfg)
+		local awareness = {
+			None = "false",
+			High = "true",
+			HighPerMonitor = "PerMonitorHighDPIAware",
+		}
+		local value = awareness[cfg.dpiawareness]
+
+		if value then
+			m.element("EnableDpiAwareness", nil, value)
+		end
+	end
+
+
 	function m.enableEnhancedInstructionSet(cfg, condition)
 		local v
 		local x = cfg.vectorextensions
@@ -1473,6 +1633,10 @@
 			m.element("ExceptionHandling", condition, "false")
 		elseif cfg.exceptionhandling == "SEH" then
 			m.element("ExceptionHandling", condition, "Async")
+		elseif cfg.exceptionhandling == "On" then
+			m.element("ExceptionHandling", condition, "Sync")
+		elseif cfg.exceptionhandling == "CThrow" then
+			m.element("ExceptionHandling", condition, "SyncCThrow")
 		end
 	end
 
@@ -1710,9 +1874,11 @@
 	end
 
 	function m.importNuGetTargets(prj)
-		for i = 1, #prj.nuget do
-			local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
-			p.x('<Import Project="%s" Condition="Exists(\'%s\')" />', targetsFile, targetsFile)
+		if not vstudio.nuget2010.supportsPackageReferences(prj) then
+			for i = 1, #prj.nuget do
+				local targetsFile = nuGetTargetsFile(prj, prj.nuget[i])
+				p.x('<Import Project="%s" Condition="Exists(\'%s\')" />', targetsFile, targetsFile)
+			end
 		end
 	end
 
@@ -1888,6 +2054,13 @@
 	end
 
 
+	function m.MasmPreprocessorDefinitions(cfg, condition)
+		if cfg.defines then
+			m.preprocessorDefinitions(cfg, cfg.defines, false, condition)
+		end
+	end
+
+
 	function m.minimalRebuild(cfg)
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
@@ -1954,6 +2127,9 @@
 	function m.windowsSDKDesktopARMSupport(cfg)
 		if cfg.architecture == p.ARM then
 			p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
+		end
+		if cfg.architecture == p.ARM64 then
+			p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
 		end
 	end
 
@@ -2050,7 +2226,7 @@
 		end
 		if version then
 			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
-				if p.config.hasFile(cfg, path.iscppfile) then
+				if p.config.hasFile(cfg, path.iscppfile) or _ACTION >= "vs2015" then
 					m.element("PlatformToolset", nil, version)
 				end
 			else
@@ -2102,13 +2278,29 @@
 		end
 	end
 
-
-	function m.programDatabaseFile(cfg)
-		if cfg.symbolspath and cfg.symbols == p.ON and cfg.debugformat ~= "c7" then
-			m.element("ProgramDatabaseFile", nil, p.project.getrelative(cfg.project, cfg.symbolspath))
+	local function getSymbolsPathRelative(cfg)
+		if cfg.symbolspath and cfg.symbols ~= p.OFF and cfg.debugformat ~= "c7" then
+			return p.project.getrelative(cfg.project, cfg.symbolspath)
+		else
+			return nil
 		end
 	end
 
+	function m.programDatabaseFile(cfg)
+		local value = getSymbolsPathRelative(cfg)
+
+		if value then
+			m.element("ProgramDatabaseFile", nil, value)
+		end
+	end
+
+	function m.programDatabaseFileName(cfg)
+		local value = getSymbolsPathRelative(cfg)
+
+		if value then
+			m.element("ProgramDataBaseFileName", nil, value)
+		end
+	end
 
 	function m.projectGuid(prj)
 		m.element("ProjectGuid", nil, "{%s}", prj.uuid)
@@ -2188,7 +2380,7 @@
 
 	function m.resourcePreprocessorDefinitions(cfg)
 		local defines = table.join(cfg.defines, cfg.resdefines)
-		if cfg.exceptionhandling == p.OFF and _ACTION >= "vs2013" then
+		if cfg.exceptionhandling == p.OFF then
 			table.insert(defines, "_HAS_EXCEPTIONS=0")
 		end
 		m.preprocessorDefinitions(cfg, defines, true)
@@ -2199,10 +2391,12 @@
 		local runtimes = {
 			StaticDebug   = "MultiThreadedDebug",
 			StaticRelease = "MultiThreaded",
+			SharedDebug = "MultiThreadedDebugDLL",
+			SharedRelease = "MultiThreadedDLL"
 		}
-		local runtime = runtimes[config.getruntime(cfg)]
+		local runtime = config.getruntime(cfg)
 		if runtime then
-			m.element("RuntimeLibrary", nil, runtime)
+			m.element("RuntimeLibrary", nil, runtimes[runtime])
 		end
 	end
 
@@ -2281,9 +2475,16 @@
 
 
 	function m.targetPlatformVersion(prj)
-		local min = project.systemversion(prj)
-		if min ~= nil and _ACTION >= "vs2015" then
-			m.element("WindowsTargetPlatformVersion", nil, min)
+		if _ACTION >= "vs2015" then
+			local min = project.systemversion(prj)
+			-- handle special "latest" version
+			if min == "latest" then
+				-- vs2015 and lower can't build against SDK 10
+				min = iif(_ACTION >= "vs2017", m.latestSDK10Version(), nil)
+			end
+			if min ~= nil then
+				m.element("WindowsTargetPlatformVersion", nil, min)
+			end
 		end
 	end
 
@@ -2346,14 +2547,14 @@
 
 
 	function m.useDebugLibraries(cfg)
-		local runtime = config.getruntime(cfg)
+		local runtime = config.getruntime(cfg) or iif(config.isDebugBuild(cfg), "Debug", "Release")
 		m.element("UseDebugLibraries", nil, tostring(runtime:endswith("Debug")))
 	end
 
 
 	function m.useOfMfc(cfg)
 		if cfg.flags.MFC then
-			m.element("UseOfMfc", nil, iif(cfg.flags.StaticRuntime, "Static", "Dynamic"))
+			m.element("UseOfMfc", nil, iif(cfg.staticruntime == "On", "Static", "Dynamic"))
 		end
 	end
 
@@ -2370,18 +2571,98 @@
 	end
 
 
-
 	function m.warningLevel(cfg)
 		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
-		m.element("WarningLevel", nil, "%s", map[cfg.warnings] or "Level3")
+		m.element("WarningLevel", nil, map[cfg.warnings] or "Level3")
 	end
 
+
+	function m.warningLevelFile(cfg, condition)
+		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
+		if cfg.warnings then
+			m.element("WarningLevel", condition, map[cfg.warnings] or "Level3")
+		end
+	end
 
 
 	function m.xmlDeclaration()
 		p.xmlUtf8()
 	end
 
+
+	function m.fxCompilePreprocessorDefinition(cfg, condition)
+		if cfg.shaderdefines and #cfg.shaderdefines > 0 then
+			local shaderdefines = table.concat(cfg.shaderdefines, ";")
+
+			shaderdefines = shaderdefines .. ";%%(PreprocessorDefinitions)"
+			m.element('PreprocessorDefinitions', condition, shaderdefines)
+		end
+	end
+
+
+	function m.fxCompileShaderType(cfg, condition)
+		if cfg.shadertype then
+			m.element("ShaderType", condition, cfg.shadertype)
+		end
+	end
+
+
+	function m.fxCompileShaderModel(cfg, condition)
+		if cfg.shadermodel then
+			m.element("ShaderModel", condition, cfg.shadermodel)
+		end
+	end
+
+
+	function m.fxCompileShaderEntry(cfg, condition)
+		if cfg.shaderentry then
+			m.element("EntryPointName", condition, cfg.shaderentry)
+		end
+	end
+
+
+	function m.fxCompileShaderVariableName(cfg, condition)
+		if cfg.shadervariablename then
+			m.element("VariableName", condition, cfg.shadervariablename)
+		end
+	end
+
+
+	function m.fxCompileShaderHeaderOutput(cfg, condition)
+		if cfg.shaderheaderfileoutput then
+			m.element("HeaderFileOutput", condition, cfg.shaderheaderfileoutput)
+		end
+	end
+
+
+	function m.fxCompileShaderObjectOutput(cfg, condition)
+		if cfg.shaderobjectfileoutput then
+			m.element("ObjectFileOutput", condition, cfg.shaderobjectfileoutput)
+		end
+	end
+
+
+	function m.fxCompileShaderAssembler(cfg, condition)
+		if cfg.shaderassembler then
+			m.element("AssemblerOutput", condition, cfg.shaderassembler)
+		end
+	end
+
+
+	function m.fxCompileShaderAssemblerOutput(cfg, condition)
+		if cfg.shaderassembleroutput then
+			m.element("AssemblerOutputFile", condition, cfg.shaderassembleroutput)
+		end
+	end
+
+
+	function m.fxCompileShaderAdditionalOptions(cfg, condition)
+		local opts = cfg.shaderoptions
+		if #opts > 0 then
+			opts = table.concat(opts, " ")
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
+		end
+	end
 
 
 ---------------------------------------------------------------------------
@@ -2402,6 +2683,19 @@
 		return m.conditionFromConfigText(vstudio.projectConfig(cfg))
 	end
 
+--
+-- Get the latest installed SDK 10 version from the registry.
+--
+
+	function m.latestSDK10Version()
+		local arch = iif(os.is64bit(), "\\WOW6432Node\\", "\\")
+		local version = os.getWindowsRegistry("HKLM:SOFTWARE" .. arch .."Microsoft\\Microsoft SDKs\\Windows\\v10.0\\ProductVersion")
+		if version ~= nil then
+			return version .. ".0"
+		else
+			return nil
+		end
+	end
 
 
 --
@@ -2443,7 +2737,7 @@
 				else
 					element.setting = value .. table.concat(arg)
 				end
-		else
+			else
 				element.setting = element.value
 			end
 			table.insert(m.conditionalElements, element)

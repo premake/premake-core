@@ -129,6 +129,11 @@
 			end
 		})
 
+		-- sort by uuid for determinism.
+		p.tree.sort(tr, function(a,b)
+			return a.name < b.name
+		end)
+
 		self.grouptree = tr
 		return tr
 	end
@@ -187,7 +192,11 @@
 			return result
 		else
 			if filename then
-				return path.getrelative(self.location, filename)
+				local result = filename
+				if path.hasdeferredjoin(result) then
+					result = path.resolvedeferredjoin(result)
+				end
+				return path.getrelative(self.location, result)
 			end
 		end
 	end

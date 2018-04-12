@@ -69,7 +69,7 @@
 
 
 		-- see more
-		printf("For additional information, see http://industriousone.com/premake")
+		printf("For additional information, see https://premake.github.io")
 
 	end
 

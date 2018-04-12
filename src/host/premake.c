@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file   premake.c
  * \brief  Program entry point.
  * \author Copyright (c) 2002-2017 Jason Perkins and the Premake project
@@ -49,6 +49,9 @@ static const luaL_Reg path_functions[] = {
 	{ "getrelative", path_getrelative },
 	{ "isabsolute",  path_isabsolute },
 	{ "join", path_join },
+	{ "deferredjoin", path_deferred_join },
+	{ "hasdeferredjoin", path_has_deferred_join },
+	{ "resolvedeferredjoin", path_resolve_deferred_join },
 	{ "normalize", path_normalize },
 	{ "translate", path_translate },
 	{ "wildcards", path_wildcards },
@@ -267,6 +270,8 @@ static int lua_error_handler(lua_State* L)
 	lua_insert(L, -2);     // insert traceback function before error message
 	lua_pushinteger(L, 3); // push level
 	lua_call(L, 2, 1);     // call traceback
+#else
+	(void) L;
 #endif
 
 	return 1;

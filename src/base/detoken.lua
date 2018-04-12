@@ -31,24 +31,22 @@
 --
 
 	function detoken.expand(value, environ, field, basedir)
-		field = field or {}
-
-		-- fetch the path variable from the action, if needed
-		local varMap = {}
-		if field.pathVars then
-			local action = p.action.current()
-			if action then
-				varMap = action.pathVars or {}
+		function expandtoken(token, e, f)
+			-- fetch the path variable from the action, if needed
+			local varMap = {}
+			if f.pathVars or e.overridePathVars then
+				local action = p.action.current()
+				if action then
+					varMap = action.pathVars or {}
+				end
 			end
-		end
 
-		-- fetch the pathVars from the enviroment.
-		local envMap = environ.pathVars or {}
+			-- fetch the pathVars from the enviroment.
+			local envMap = e.pathVars or {}
 
-		-- enable access to the global environment
-		setmetatable(environ, {__index = _G})
+			-- enable access to the global environment
+			setmetatable(e, {__index = _G})
 
-		function expandtoken(token, e)
 			local isAbs = false
 			local err
 			local result
@@ -107,8 +105,11 @@
 					-- a NON-path value, I need to make it relative to the project that
 					-- will contain it. Otherwise I ended up with an absolute path in
 					-- the generated project, and it can no longer be moved around.
+					if path.hasdeferredjoin(result) then
+						result = path.resolvedeferredjoin(result)
+					end
 					isAbs = path.isabsolute(result)
-					if isAbs and not field.paths and basedir and not dontMakeRelative then
+					if isAbs and not f.paths and basedir and not dontMakeRelative then
 						result = path.getrelative(basedir, result)
 					end
 				end
@@ -129,14 +130,13 @@
 			-- result, which should always be the last absolute path specified:
 			--    "/home/user/myprj/obj/Debug"
 
-			if result ~= nil and isAbs and field.paths then
+			if result ~= nil and isAbs and f.paths then
 				result = "\0" .. result
 			end
-
 			return result, err
 		end
 
-		function expandvalue(value, e)
+		function expandvalue(value, e, f)
 			if type(value) ~= "string" then
 				return value
 			end
@@ -144,7 +144,7 @@
 			local count
 			repeat
 				value, count = value:gsub("%%{(.-)}", function(token)
-					local result, err = expandtoken(token:gsub("\\", "\\\\"), e)
+					local result, err = expandtoken(token:gsub("\\", "\\\\"), e, f)
 					if err then
 						error(err .. " in token: " .. token, 0)
 					end
@@ -156,7 +156,7 @@
 			until count == 0
 
 			-- if a path, look for a split out embedded absolute paths
-			if field.paths then
+			if f.paths then
 				local i, j
 				repeat
 					i, j = value:find("\0")
@@ -165,29 +165,35 @@
 					end
 				until not i
 			end
-
 			return value
 		end
 
-		function recurse(value, e)
+		local expand_cache = {}
+
+		function recurse(value, e, f)
 			if type(value) == "table" then
 				local res_table = {}
 
 				for k, v in pairs(value) do
 					if tonumber(k) ~= nil then
-						res_table[k] = recurse(v, e)
+						res_table[k] = recurse(v, e, f)
 					else
-						local nk = recurse(k, e);
-						res_table[nk] = recurse(v, e)
+						local nk = recurse(k, e, f)
+						res_table[nk] = recurse(v, e, f)
 					end
 				end
 
 				return res_table
 			else
-				return expandvalue(value, e)
+				local res = expand_cache[value]
+				if res == nil then
+					res = expandvalue(value, e, f)
+					expand_cache[value] = res
+				end
+				return res
 			end
 		end
 
-		return recurse(value, environ)
+		return recurse(value, environ, field or {})
 	end
 

@@ -130,7 +130,7 @@
 
 		-- enum?
 		if prop.values then
-			local i = table.indexof(prop.values, value)
+			local i = table.findKeyByValue(prop.values, value)
 			if i ~= nil then
 				return tostring(i)
 			else
@@ -174,9 +174,18 @@
 			end
 		end
 
+		-- bool just emits the switch
+		if type(value) == "boolean" then
+			if value then
+				return prop.switch
+			else
+				return nil
+			end
+		end
+
 		-- enum?
 		if prop.values then
-			local i = table.indexof(prop.values, value)
+			local i = table.findKeyByValue(prop.values, value)
 			if i ~= nil then
 				return prop.switch .. tostring(i)
 			else

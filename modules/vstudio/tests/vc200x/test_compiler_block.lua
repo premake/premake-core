@@ -538,13 +538,13 @@
 
 
 --
--- Check handling of the ReleaseRuntime flag; should override the
+-- Check handling of the runtime API; should override the
 -- default behavior of linking the debug runtime when symbols are
 -- enabled with no optimizations.
 --
 
 	function suite.releaseRuntime_onFlag()
-		flags { "ReleaseRuntime" }
+		runtime "Release"
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -558,7 +558,8 @@
 	end
 
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "ReleaseRuntime", "StaticRuntime" }
+		runtime "Release"
+		staticruntime "On"
 		symbols "On"
 		prepare()
 		test.capture [[

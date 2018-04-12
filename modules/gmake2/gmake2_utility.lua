@@ -32,6 +32,7 @@
 			gmake2.shellType,
 			utility.initialize,
 			utility.createFileTable,
+			utility.outputConfigurationSection,
 			utility.outputFilesSection,
 			utility.outputRulesSection,
 			utility.outputFileRuleSection,
@@ -165,6 +166,26 @@
 	end
 
 
+	function utility.prepareEnvironment(rule, environ, cfg)
+		for _, prop in ipairs(rule.propertydefinition) do
+			local fld = p.rule.getPropertyField(rule, prop)
+			local value = cfg[fld.name]
+			if value ~= nil then
+
+				if fld.kind == "path" then
+					value = gmake2.path(cfg, value)
+				elseif fld.kind == "list:path" then
+					value = gmake2.path(cfg, value)
+				end
+
+				value = p.rule.expandString(rule, prop, value)
+				if value ~= nil and #value > 0 then
+					environ[prop.name] = p.esc(value)
+				end
+			end
+		end
+	end
+
 	function utility.addRuleFile(cfg, node)
 		local rules = cfg.project._gmake.rules
 		local rule = rules[path.getextension(node.abspath):lower()]
@@ -174,7 +195,8 @@
 			local environ = table.shallowcopy(filecfg.environ)
 
 			if rule.propertydefinition then
-				p.rule.prepareEnvironment(rule, environ, "$(%s)")
+				utility.prepareEnvironment(rule, environ, cfg)
+				utility.prepareEnvironment(rule, environ, filecfg)
 			end
 
 			local shadowContext = p.context.extent(rule, environ)
@@ -209,7 +231,6 @@
 
 	utility.elements.configuration = function(cfg)
 		return {
-			utility.ruleProperties,
 			gmake2.settings,
 			gmake2.preBuildCmds,
 			gmake2.preLinkCmds,
@@ -218,27 +239,11 @@
 	end
 
 
-	function utility.ruleProperties(cfg, toolset)
-		for i = 1, #cfg.rules do
-			local rule = p.global.getRule(cfg.rules[i])
-
-			for prop in p.rule.eachProperty(rule) do
-				local fld = p.rule.getPropertyField(rule, prop)
-				local value = cfg[fld.name]
-				if value ~= nil then
-					if fld.kind == "path" then
-						value = gmake2.path(cfg, value)
-					elseif fld.kind == "list:path" then
-						value = gmake2.path(cfg, value)
-					end
-
-					value = p.rule.expandString(rule, prop, value)
-					if value ~= nil and #value > 0 then
-						p.outln(prop.name .. ' = ' .. p.esc(value))
-					end
-				end
-			end
-		end
+	function utility.outputConfigurationSection(prj)
+		_p('# Configurations')
+		_p('# #############################################')
+		_p('')
+		gmake2.outputSection(prj, utility.elements.configuration)
 	end
 
 
@@ -289,8 +294,6 @@
 			utility.targetRules,
 			gmake2.targetDirRules,
 			utility.cleanRules,
-			gmake2.preBuildRules,
-			gmake2.preLinkRules,
 		}
 	end
 
@@ -304,7 +307,7 @@
 
 
 	function utility.allRules(cfg, toolset)
-		local allTargets = 'all: $(TARGETDIR) prebuild prelink $(TARGET)'
+		local allTargets = 'all: $(TARGETDIR) $(TARGET)'
 		for _, kind in ipairs(cfg._gmake.kinds) do
 			allTargets = allTargets .. ' $(' .. kind .. ')'
 		end
@@ -322,6 +325,8 @@
 		end
 
 		_p('$(TARGET): %s', targets)
+		_p('\t$(PREBUILDCMDS)')
+		_p('\t$(PRELINKCMDS)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 	end

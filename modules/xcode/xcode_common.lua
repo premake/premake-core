@@ -431,9 +431,10 @@
 
 				-- is this the product node, describing the output target?
 				if node.kind == "product" then
+					local name = iif(tr.project.kind ~= "ConsoleApp", node.name, node.cfg.buildtarget.prefix .. node.cfg.buildtarget.basename)
 					settings[node.id] = function(level)
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-							node.id, node.name, xcode.gettargettype(node), stringifySetting(node.name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
+							node.id, node.name, xcode.gettargettype(node), stringifySetting(name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
 					end
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
@@ -892,11 +893,15 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		--[[if cfg.targetextension then
+		if cfg.kind ~= "ConsoleApp" and cfg.targetextension then
 			local ext = cfg.targetextension
 			ext = iif(ext:startswith('.'), ext:sub(2), ext)
-			settings['EXECUTABLE_EXTENSION'] = ext
-		end]]
+			if cfg.kind == "WindowedApp" and ext ~= "app" then
+				settings['WRAPPER_EXTENSION'] = ext
+			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
+				settings['EXECUTABLE_EXTENSION'] = ext
+			end
+		end
 
 		local outdir = path.getrelative(tr.project.location, path.getdirectory(cfg.buildtarget.relpath))
 		if outdir ~= "." then
@@ -943,7 +948,7 @@
 			settings['EXCLUDED_SOURCE_FILE_NAMES'] = fileNameList
 		end
 		settings['PRODUCT_NAME'] = cfg.buildtarget.basename
-		
+
 		if os.istarget(p.IOS) then
 			settings['SDKROOT'] = 'iphoneos'
 
@@ -980,18 +985,54 @@
 	end
 
 
+	xcode.cLanguageStandards = {
+		["Default"] = "compiler-default",  -- explicit compiler default
+		["C89"] = "c89",
+		["C90"] = "c90",
+		["C99"] = "c99",
+		["C11"] = "c11",
+		["gnu89"] = "gnu89",
+		["gnu90"] = "gnu90",
+		["gnu99"] = "gnu99",
+		["gnu11"] = "gnu11"
+	}
+
 	function xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)
-		if cfg.cdialect and cfg.cdialect ~= "Default" then
-			settings['GCC_C_LANGUAGE_STANDARD'] = cfg.cdialect
-		else
-			settings['GCC_C_LANGUAGE_STANDARD'] = 'gnu99'
+		-- if no cppdialect is provided, don't set C dialect
+		-- projects without C dialect set will use compiler default
+		if not cfg.cdialect then
+			return
+		end
+
+		local cLanguageStandard = xcode.cLanguageStandards[cfg.cdialect]
+		if cLanguageStandard then
+			settings['GCC_C_LANGUAGE_STANDARD'] = cLanguageStandard
 		end
 	end
 
 
+	xcode.cppLanguageStandards = {
+		["Default"] = "compiler-default",  -- explicit compiler default
+		["C++98"] = "c++98",
+		["C++11"] = "c++0x",      -- Xcode project GUI uses c++0x, but c++11 also works
+		["C++14"] = "c++14",
+		["C++17"] = "c++1z",
+		["gnu++98"] = "gnu++98",
+		["gnu++11"] = "gnu++0x",  -- Xcode project GUI uses gnu++0x, but gnu++11 also works
+		["gnu++14"] = "gnu++14",
+		["gnu++17"] = "gnu++1z"
+	}
+
 	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
-		if cfg.cppdialect and cfg.cppdialect ~= "Default" then
-			settings['CLANG_CXX_LANGUAGE_STANDARD'] = cfg.cppdialect
+		-- if no cppdialect is provided, don't set C++ dialect
+		-- projects without C++ dialect set will use compiler default
+		if not cfg.cppdialect then
+			return
+		end
+
+		local cppLanguageStandard = xcode.cppLanguageStandards[cfg.cppdialect]
+		if cppLanguageStandard then
+			settings['CLANG_CXX_LANGUAGE_STANDARD'] = cppLanguageStandard
 		end
 	end
 
@@ -1058,6 +1099,10 @@
 		settings['GCC_PREPROCESSOR_DEFINITIONS'] = escapedDefines
 
 		settings["GCC_SYMBOLS_PRIVATE_EXTERN"] = 'NO'
+
+		if cfg.unsignedchar ~= nil then
+			settings['GCC_CHAR_IS_UNSIGNED_CHAR'] = iif(cfg.unsignedchar, "YES", "NO")
+		end
 
 		if cfg.flags.FatalWarnings then
 			settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'YES'

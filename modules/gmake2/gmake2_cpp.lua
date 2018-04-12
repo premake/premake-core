@@ -57,20 +57,20 @@
 
 	function cpp.initialize()
 		rule 'cpp'
-			fileExtension {".cc", ".cpp", ".cxx", ".mm"}
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.o'}
+			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CXX) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.o'}
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CC) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
-			buildoutputs  {'$(OBJDIR)/%{file.objname}.res'}
+			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.res" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)'}
 
@@ -124,6 +124,7 @@
 			cfg._gmake = cfg._gmake or {}
 			cfg._gmake.filesets = {}
 			cfg._gmake.fileRules = {}
+			cfg._gmake.bases = {}
 
 			local files = table.shallowcopy(prj._.files)
 			table.foreachi(files, function(node)
@@ -237,6 +238,26 @@
 		cpp.addRuleFile(cfg, node)
 	end
 
+	function cpp.prepareEnvironment(rule, environ, cfg)
+		for _, prop in ipairs(rule.propertydefinition) do
+			local fld = p.rule.getPropertyField(rule, prop)
+			local value = cfg[fld.name]
+			if value ~= nil then
+
+				if fld.kind == "path" then
+					value = gmake2.path(cfg, value)
+				elseif fld.kind == "list:path" then
+					value = gmake2.path(cfg, value)
+				end
+
+				value = p.rule.expandString(rule, prop, value)
+				if value ~= nil and #value > 0 then
+					environ[prop.name] = p.esc(value)
+				end
+			end
+		end
+	end
+
 	function cpp.addRuleFile(cfg, node)
 		local rules = cfg.project._gmake.rules
 		local rule = rules[path.getextension(node.abspath):lower()]
@@ -246,7 +267,8 @@
 			local environ = table.shallowcopy(filecfg.environ)
 
 			if rule.propertydefinition then
-				p.rule.prepareEnvironment(rule, environ, "$(%s)")
+				cpp.prepareEnvironment(rule, environ, cfg)
+				cpp.prepareEnvironment(rule, environ, filecfg)
 			end
 
 			local shadowContext = p.context.extent(rule, environ)
@@ -298,7 +320,6 @@
 			cpp.linkCmd,
 			cpp.bindirs,
 			cpp.exepaths,
-			cpp.ruleProperties,
 			gmake2.settings,
 			gmake2.preBuildCmds,
 			gmake2.preLinkCmds,
@@ -405,7 +426,7 @@
 	function cpp.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
 		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(includes, "-include $(PCH_PLACEHOLDER)")
+			table.insert(includes, 1, "-include $(PCH_PLACEHOLDER)")
 		end
 		p.outln('FORCE_INCLUDE +=' .. gmake2.list(includes))
 	end
@@ -491,29 +512,6 @@
 	end
 
 
-	function cpp.ruleProperties(cfg, toolset)
-		for i = 1, #cfg.rules do
-			local rule = p.global.getRule(cfg.rules[i])
-
-			for prop in p.rule.eachProperty(rule) do
-				local fld = p.rule.getPropertyField(rule, prop)
-				local value = cfg[fld.name]
-				if value ~= nil then
-					if fld.kind == "path" then
-						value = gmake2.path(cfg, value)
-					elseif fld.kind == "list:path" then
-						value = gmake2.path(cfg, value)
-					end
-
-					value = p.rule.expandString(rule, prop, value)
-					if value ~= nil and #value > 0 then
-						p.outln(prop.name .. ' = ' .. p.esc(value))
-					end
-				end
-			end
-		end
-	end
-
 --
 -- Write out the per file configurations.
 --
@@ -522,7 +520,7 @@
 		_p('# #############################################')
 		_p('')
 		for cfg in project.eachconfig(prj) do
-			table.foreachi(cfg.project._.files, function(node)
+			table.foreachi(prj._.files, function(node)
 				local fcfg = fileconfig.getconfig(node, cfg)
 				if fcfg then
 					cpp.perFileFlags(cfg, fcfg)
@@ -533,6 +531,7 @@
 	end
 
 	local function makeVarName(prj, value, saltValue)
+		prj._gmake = prj._gmake or {}
 		prj._gmake.varlist = prj._gmake.varlist or {}
 		prj._gmake.varlistlength = prj._gmake.varlistlength or 0
 		local cache = prj._gmake.varlist
@@ -643,7 +642,7 @@
 			gmake2.objDirRules,
 			cpp.cleanRules,
 			gmake2.preBuildRules,
-			gmake2.preLinkRules,
+			cpp.customDeps,
 			cpp.pchRules,
 		}
 	end
@@ -659,13 +658,13 @@
 
 	function cpp.allRules(cfg, toolset)
 		if cfg.system == p.MACOSX and cfg.kind == p.WINDOWEDAPP then
-			_p('all: prebuild prelink $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist | $(TARGETDIR) $(OBJDIR)')
+			_p('all: $(TARGET) $(dir $(TARGETDIR))PkgInfo $(dir $(TARGETDIR))Info.plist')
 			_p('\t@:')
 			_p('')
 			_p('$(dir $(TARGETDIR))PkgInfo:')
 			_p('$(dir $(TARGETDIR))Info.plist:')
 		else
-			_p('all: prebuild prelink $(TARGET) | $(TARGETDIR) $(OBJDIR)')
+			_p('all: $(TARGET)')
 			_p('\t@:')
 		end
 		_p('')
@@ -673,7 +672,7 @@
 
 
 	function cpp.targetRules(cfg, toolset)
-		local targets = '$(GCH) '
+		local targets = ''
 
 		for _, kind in ipairs(cfg._gmake.kinds) do
 			if kind ~= 'OBJECTS' and kind ~= 'RESOURCES' then
@@ -687,10 +686,20 @@
 		end
 
 		_p('$(TARGET): %s | $(TARGETDIR)', targets)
+		_p('\t$(PRELINKCMDS)')
 		_p('\t@echo Linking %s', cfg.project.name)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
+	end
+
+
+	function cpp.customDeps(cfg, toolset)
+		for _, kind in ipairs(cfg._gmake.kinds) do
+			if kind == 'CUSTOM' or kind == 'SOURCES' then
+				_p('$(%s): | prebuild', kind)
+			end
+		end
 	end
 
 
@@ -710,15 +719,19 @@
 
 	function cpp.pchRules(cfg, toolset)
 		_p('ifneq (,$(PCH))')
-		_p('$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)')
-		_p('$(GCH): $(PCH) | $(OBJDIR)')
+		_p('$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)')
+		_p('$(GCH): $(PCH) | prebuild')
 		_p('\t@echo $(notdir $<)')
 		local cmd = iif(p.languages.isc(cfg.language), "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
 		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
 		_p('$(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)')
+		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) touch "$@"')
 		_p('else')
-		_p('$(OBJECTS): | $(OBJDIR)')
+		_p('\t$(SILENT) echo $null >> "$@"')
+		_p('endif')
+		_p('else')
+		_p('$(OBJECTS): | prebuild')
 		_p('endif')
 		_p('')
 	end
@@ -726,6 +739,18 @@
 --
 -- Output the file compile targets.
 --
+
+	function cpp.makeUnique(cfg, f)
+		local cache = cfg._gmake.bases
+		local seq = cache[f]
+		if seq == nil then
+			cache[f] = 1
+			return f
+		else
+			cache[f] = seq + 1
+			return f .. tostring(seq)
+		end
+	end
 
 	cpp.elements.fileRules = function(cfg)
 		local funcs = {}

@@ -52,6 +52,7 @@
 			dotnetbase.debugProps,
 			dotnetbase.outputProps,
 			dotnetbase.compilerProps,
+			dotnetbase.NoWarn,
 			fs2005.tailCalls
 		}
 	end
