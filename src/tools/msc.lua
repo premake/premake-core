@@ -99,7 +99,11 @@
 		},
 		symbols = {
 			On = "/Z7"
+		},
+		unsignedchar = {
+			On = "/J",
 		}
+
 	}
 
 	msc.cflags = {

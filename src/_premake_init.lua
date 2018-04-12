@@ -1337,6 +1337,12 @@
 	}
 
 	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
 		name = "omitframepointer",
 		scope = "config",
 		kind = "string",
@@ -1346,7 +1352,6 @@
 			"Off"
 		}
 	}
-
 
 -----------------------------------------------------------------------------
 --

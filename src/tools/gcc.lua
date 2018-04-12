@@ -96,6 +96,10 @@
 		symbols = {
 			On = "-g"
 		},
+		unsignedchar = {
+			On = "-funsigned-char",
+			Off = "-fno-unsigned-char"
+		},
 		omitframepointer = {
 			On = "-fomit-frame-pointer",
 			Off = "-fno-omit-frame-pointer"
