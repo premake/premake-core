@@ -126,14 +126,31 @@
 			m.ignoreWarnDuplicateFilename,
 			m.keyword,
 			m.projectName,
-			m.preferredToolArchitecture
+			m.preferredToolArchitecture,
+			m.targetPlatformVersionGlobal,
+		}
+	end
+
+	m.elements.globalsCondition = function(prj, cfg)
+		return {
+			m.targetPlatformVersionCondition,
 		}
 	end
 
 	function m.globals(prj)
+	
+		-- Write out the project-level globals
 		m.propertyGroup(nil, "Globals")
 		p.callArray(m.elements.globals, prj)
 		p.pop('</PropertyGroup>')
+
+		-- Write out the configurable globals
+		for cfg in project.eachconfig(prj) do
+			m.propertyGroup(cfg, "Globals")
+			p.callArray(m.elements.globalsCondition, prj, cfg)
+			p.pop('</PropertyGroup>')
+		end
+
 	end
 
 
@@ -160,7 +177,6 @@
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
 				m.windowsSDKDesktopARMSupport,
-				m.targetPlatformVersion,
 			}
 		end
 	end
@@ -2452,21 +2468,41 @@
 		m.element("TargetName", nil, "%s%s", cfg.buildtarget.prefix, cfg.buildtarget.basename)
 	end
 
-
-	function m.targetPlatformVersion(prj)
+	
+	function m.targetPlatformVersion(cfgOrPrj)
+	
 		if _ACTION >= "vs2015" then
-			local min = project.systemversion(prj)
+			local min = project.systemversion(cfgOrPrj)
 			-- handle special "latest" version
 			if min == "latest" then
 				-- vs2015 and lower can't build against SDK 10
 				min = iif(_ACTION >= "vs2017", m.latestSDK10Version(), nil)
 			end
-			if min ~= nil then
-				m.element("WindowsTargetPlatformVersion", nil, min)
-			end
+			
+			return min
+		end
+	
+	end
+	
+
+	function m.targetPlatformVersionGlobal(prj)
+		local min = m.targetPlatformVersion(prj)
+		if min ~= nil then
+			m.element("WindowsTargetPlatformVersion", nil, min)
 		end
 	end
+	
 
+	function m.targetPlatformVersionCondition(prj, cfg)
+	
+		local cfgPlatformVersion = m.targetPlatformVersion(cfg)
+		local prjPlatformVersion = m.targetPlatformVersion(prj)
+		
+		if cfgPlatformVersion ~= nil and cfgPlatformVersion ~= prjPlatformVersion then
+		    m.element("WindowsTargetPlatformVersion", nil, cfgPlatformVersion)
+		end
+	end
+	
 
 	function m.preferredToolArchitecture(prj)
 		if _ACTION >= "vs2013" then
