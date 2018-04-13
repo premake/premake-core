@@ -600,33 +600,3 @@
 		end
 		return result
 	end
-
---
--- Adds the values from one array to the end of another without duplicates and
--- returns the result.
---
-	function table.joinunique(...)
-
-		local arg = {...}
-		local elems = { }
-		local result = { }
-
-		local function insertunique(elem)
-			if not elems[elem] then
-				table.insert(result, elem)
-				elems[elem] = true
-			end
-		end
-
-		for _,t in ipairs(arg) do
-
-			if type(t) == "table" then
-				table.foreachi(t, insertunique)
-			else
-				insertunique(t)
-			end
-
-		end
-
-		return result
-	end
