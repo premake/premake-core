@@ -1063,8 +1063,8 @@
 	function m.debugInformationFormat(cfg, toolset)
 		local prjcfg, filecfg = config.normalize(cfg)
 		if not filecfg then
-			local fmt = iif(toolset, "0", m.symbols(cfg))
-			p.w('DebugInformationFormat="%s"', fmt)
+			--local fmt = iif(toolset, "0", m.symbols(cfg))
+			--p.w('DebugInformationFormat="%s"', fmt)
 		end
 	end
 
