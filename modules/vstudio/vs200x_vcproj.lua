@@ -819,10 +819,54 @@
 		end
 	end
 
-
+	function tablefindandremove(tab, el)
+		for index, value in pairs(tab) do
+			if value == el then
+				table.remove(tab, index)
+				return true
+			end
+		end
+		return false
+	end
 
 	function m.additionalExternalCompilerOptions(cfg, toolset)
 		local buildoptions = table.join(toolset.getcxxflags(cfg), cfg.buildoptions)
+		if tablefindandremove(buildoptions, "/MT") then
+			p.x('RuntimeLibrary="0"');
+		elseif tablefindandremove(buildoptions, "/MTd") then
+			p.x('RuntimeLibrary="1"');
+		elseif tablefindandremove(buildoptions, "/MD") then
+			p.x('RuntimeLibrary="2"');
+		elseif tablefindandremove(buildoptions, "/MDd") then
+			p.x('RuntimeLibrary="3"');
+		end
+		if tablefindandremove(buildoptions, "/Od") then
+			p.x('Optimization="0"');
+		elseif tablefindandremove(buildoptions, "/Os") or
+		       tablefindandremove(buildoptions, "/O1") then
+			p.x('Optimization="1"');
+		elseif tablefindandremove(buildoptions, "/Ot") or
+		       tablefindandremove(buildoptions, "/O2") then
+			p.x('Optimization="2"');
+		elseif tablefindandremove(buildoptions, "/Ox") then
+			p.x('Optimization="3"');
+		end
+		if tablefindandremove(buildoptions, "/Z7") then
+			p.x('DebugInformationFormat="1"');
+		elseif tablefindandremove(buildoptions, "/Zi") then
+			p.x('DebugInformationFormat="3"');
+		elseif tablefindandremove(buildoptions, "/ZI") then
+			p.x('DebugInformationFormat="4"');
+		else
+			p.x('DebugInformationFormat="0"');
+		end
+		if tablefindandremove(buildoptions, "/EHsc") then
+			p.x('ExceptionHandling="1"');
+		elseif tablefindandremove(buildoptions, "/EHa") then
+			p.x('ExceptionHandling="2"');
+		else
+			p.x('ExceptionHandling="0"');
+		end
 		if not cfg.flags.NoPCH and cfg.pchheader then
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
 		end
