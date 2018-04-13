@@ -1428,7 +1428,7 @@
 
 	function m.programDataBaseFileName(cfg, toolset)
 		if toolset then
-			p.w('ProgramDataBaseFileName=""')
+			-- p.w('ProgramDataBaseFileName=""')
 		end
 	end
 
