@@ -92,7 +92,8 @@
 			Off = "/GF-",
 		},
 		symbols = {
-			On = "/Z7"
+			Off = "",
+			On = "/Zi",
 		}
 	}
 
