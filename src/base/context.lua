@@ -137,8 +137,12 @@
 --
 
 	function context.mergeFilters(ctx, src)
-		for k,v in pairs(src.terms) do
-			ctx.terms[k] = v
+		for k, v in pairs(src.terms) do
+			if k == "tags" then
+				ctx.terms[k] = table.join(ctx.terms[k], v)
+			else
+				ctx.terms[k] = v
+			end
 		end
 	end
 
