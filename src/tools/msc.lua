@@ -38,7 +38,6 @@
 		flags = {
 			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
-			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
 			OmitDefaultLibrary = "/Zl"
 		},
@@ -102,6 +101,9 @@
 		},
 		unsignedchar = {
 			On = "/J",
+		},
+		omitframepointer = {
+			On = "/Oy"
 		}
 
 	}
