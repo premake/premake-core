@@ -1333,7 +1333,7 @@
 
 
 	function m.omitFramePointers(cfg)
-		if cfg.flags.NoFramePointer then
+		if cfg.omitframepointer == "On" then
 			p.w('OmitFramePointers="true"')
 		end
 	end
