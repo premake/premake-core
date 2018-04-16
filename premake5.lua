@@ -73,6 +73,11 @@
 		trigger = "no-zlib",
 		description = "Disable Zlib/Zip 3rd party lib"
 	}
+	
+	newoption {
+		trigger = "no-luasocket",
+		description = "Disable Luasocket 3rd party lib"
+	}
 
 	newoption {
 		trigger     = "bytecode",
@@ -100,6 +105,7 @@
 		if not _OPTIONS["no-zlib"] then
 			defines { "PREMAKE_COMPRESSION" }
 		end
+		
 		if not _OPTIONS["no-curl"] then
 			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
 		end
@@ -134,6 +140,7 @@
 			includedirs { "contrib/zlib", "contrib/libzip" }
 			links { "zip-lib", "zlib-lib" }
 		end
+		
 		if not _OPTIONS["no-curl"] then
 			includedirs { "contrib/curl/include" }
 			links { "curl-lib" }
@@ -195,17 +202,23 @@
 	group "contrib"
 		include "contrib/lua"
 		include "contrib/luashim"
+		
 		if not _OPTIONS["no-zlib"] then
 			include "contrib/zlib"
 			include "contrib/libzip"
 		end
+		
 		if not _OPTIONS["no-curl"] then
 			include "contrib/mbedtls"
 			include "contrib/curl"
-		end
+		end		
 
 	group "Binary Modules"
 		include "binmodules/example"
+		
+		if not _OPTIONS["no-luasocket"] then
+			include "binmodules/luasocket"
+		end
 
 --
 -- A more thorough cleanup.

@@ -1100,6 +1100,10 @@
 
 		settings["GCC_SYMBOLS_PRIVATE_EXTERN"] = 'NO'
 
+		if cfg.unsignedchar ~= nil then
+			settings['GCC_CHAR_IS_UNSIGNED_CHAR'] = iif(cfg.unsignedchar, "YES", "NO")
+		end
+
 		if cfg.flags.FatalWarnings then
 			settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'YES'
 		end
@@ -1140,7 +1144,6 @@
 		-- build list of "other" C/C++ flags
 		local checks = {
 			["-ffast-math"]          = cfg.floatingpoint == "Fast",
-			["-ffloat-store"]        = cfg.floatingpoint == "Strict",
 			["-fomit-frame-pointer"] = cfg.flags.NoFramePointer,
 		}
 

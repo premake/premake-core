@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <LUABIN_PATH>..\build\vc12\bin\lua\5.2\</LUABIN_PATH>
+    <LUALIB_PATH>..\build\vc12\bin\lua\5.2\</LUALIB_PATH>
+    <LUAINC_PATH>..\build\vc12\include\lua\5.2\</LUAINC_PATH>
+    <LUALIB>lua52.lib</LUALIB>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_PropertySheetDisplayName>Lua52</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="LUALIB_PATH">
+      <Value>$(LUALIB_PATH)</Value>
+    </BuildMacro>
+    <BuildMacro Include="LUABIN_PATH">
+      <Value>$(LUABIN_PATH)</Value>
+    </BuildMacro>
+    <BuildMacro Include="LUAINC_PATH">
+      <Value>$(LUAINC_PATH)</Value>
+    </BuildMacro>
+    <BuildMacro Include="LUALIB">
+      <Value>$(LUALIB)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

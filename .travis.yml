@@ -1,9 +1,30 @@
-os:
-  - linux
-  - osx
+language: c++
+dist: trusty
+sudo: false
+matrix:
+  include:
+  # Linux Debug
+    - os: linux
+      compiler: gcc
+      env:
+        - CONFIGURATION=debug
+  # Linux Release
+    - os: linux
+      compiler: gcc
+      env:
+        - CONFIGURATION=release
+  # macOS Debug x86
+    - os: osx
+      osx_image: xcode9
+      env:
+        - CONFIGURATION=debug
+  # macOS Release x86
+    - os: osx
+      osx_image: xcode9
+      env:
+        - CONFIGURATION=release
 
 script:
- - make -f Bootstrap.mak $TRAVIS_OS_NAME
- - make -C build/bootstrap -j config=debug
- - bin/release/premake5 test
+ - make -f Bootstrap.mak $TRAVIS_OS_NAME CONFIG=${CONFIGURATION}
+ - bin/${CONFIGURATION}/premake5 test
 
