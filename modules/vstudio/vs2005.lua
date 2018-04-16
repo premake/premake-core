@@ -57,7 +57,7 @@
 
 	function vs2005.esc(value)
 		value = string.gsub(value, '&',  "&amp;")
-		value = value:gsub('"',  "&quot;")
+		value = value:gsub('"',  "\\&quot;")
 		value = value:gsub("'",  "&apos;")
 		value = value:gsub('<',  "&lt;")
 		value = value:gsub('>',  "&gt;")
