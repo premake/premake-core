@@ -1144,7 +1144,6 @@
 		-- build list of "other" C/C++ flags
 		local checks = {
 			["-ffast-math"]             = cfg.floatingpoint == "Fast",
-			["-ffloat-store"]           = cfg.floatingpoint == "Strict",
 			["-fomit-frame-pointer"]    = cfg.omitframepointer == "On",
 			["-fno-omit-frame-pointer"] = cfg.omitframepointer == "Off",
 		}

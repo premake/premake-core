@@ -1610,9 +1610,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-ffloat-store",
-				);
 				SYMROOT = bin/Debug;
 			};
 			name = Debug;
