@@ -1366,6 +1366,18 @@
 		}
 	}
 
+	api.register {
+		name = "visibility",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Hidden",
+			"Internal",
+			"Protected"
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility

@@ -171,6 +171,12 @@
 		},
 		rtti = {
 			Off = "-fno-rtti"
+		},
+		visibility = {
+			Default = "-fvisibility=default",
+			Hidden = "-fvisibility=hidden",
+			Internal = "-fvisibility=internal",
+			Protected = "-fvisibility=protected",
 		}
 	}
 
