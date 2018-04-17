@@ -45,6 +45,18 @@
 
 		return elements
 	end)
+	
+	premake.override(vc2010.elements, "globalsCondition", function (oldfn, prj, cfg)
+		local elements = oldfn(prj, cfg)
+		
+		if cfg.system == premake.ANDROID and cfg.system ~= prj.system and cfg.kind ~= premake.ANDROIDPROJ then
+			elements = table.join(elements, {
+				android.androidApplicationType
+			})
+		end
+
+		return elements
+	end)
 
 	function android.androidApplicationType(cfg)
 		_p(2, "<Keyword>Android</Keyword>")
