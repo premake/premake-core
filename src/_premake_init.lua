@@ -507,7 +507,7 @@
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",   -- DEPRECATED
-			"NoFramePointer",
+			"NoFramePointer",      -- DEPRECATED
 			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
@@ -1149,7 +1149,7 @@
 
 	api.register {
 		name = "systemversion",
-		scope = "project",
+		scope = "config",
 		kind = "string",
 	}
 
@@ -1352,6 +1352,17 @@
 			"4",
 			"8",
 			"16",
+		}
+	}
+
+	api.register {
+		name = "omitframepointer",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
 		}
 	}
 
@@ -1606,6 +1617,16 @@
 	end,
 	function(value)
 		staticruntime "Default"
+	end)
+
+	-- 08 April 2018
+
+	api.deprecateValue("flags", "NoFramePointer", 'Use `omitframepointer "On"` instead.',
+	function(value)
+		omitframepointer("On")
+	end,
+	function(value)
+		omitframepointer("Default")
 	end)
 
 -----------------------------------------------------------------------------

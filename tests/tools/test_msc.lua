@@ -72,6 +72,18 @@
 		test.contains("/Oy", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onOmitFramePointer()
+		omitframepointer "On"
+		prepare()
+		test.contains("/Oy", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onNoOmitFramePointers()
+		omitframepointer "Off"
+		prepare()
+		test.excludes("/Oy", msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_onLinkTimeOptimizations()
 		flags "LinkTimeOptimization"
 		prepare()
