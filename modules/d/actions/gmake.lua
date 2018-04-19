@@ -37,7 +37,7 @@
 		local some = false
 		local all = true
 		for cfg in project.eachconfig(prj) do
-			if cfg.flags.SeparateCompilation then
+			if cfg.compilationmodel == "File" then
 				some = true
 			else
 				all = false
@@ -62,7 +62,7 @@
 	end)
 
 	p.override( make, "objdir", function(oldfn, cfg)
-		if cfg.project.language ~= "D" or cfg.flags.SeparateCompilation then
+		if cfg.project.language ~= "D" or cfg.compilationmodel == "File" then
 			oldfn(cfg)
 		end
 	end)
@@ -129,7 +129,7 @@
 		else
 			for cfg in project.eachconfig(prj) do
 				_x('ifeq ($(config),%s)', cfg.shortname)
-				if cfg.flags.SeparateCompilation then
+				if cfg.compilationmodel == "File" then
 					m.make.linkRule(prj)
 				else
 					m.make.buildRule(prj)
@@ -176,6 +176,7 @@
 			m.make.versions,
 			m.make.debug,
 			m.make.imports,
+			m.make.stringImports,
 			m.make.dFlags,
 			make.libs,
 			make.ldDeps,
@@ -214,7 +215,7 @@
 	end
 
 	function m.make.target(cfg, toolset)
-		if cfg.flags.SeparateCompilation then
+		if cfg.compilationmodel == "File" then
 			_p('  OUTPUTFLAG = %s', toolset.gettarget('"$@"'))
 		end
 	end
@@ -228,16 +229,21 @@
 	end
 
 	function m.make.imports(cfg, toolset)
-		local includes = p.esc(toolset.getimportdirs(cfg, cfg.includedirs))
-		_p('  IMPORTS +=%s', make.list(includes))
+		local imports = p.esc(toolset.getimportdirs(cfg, cfg.importdirs))
+		_p('  IMPORTS +=%s', make.list(imports))
+	end
+
+	function m.make.stringImports(cfg, toolset)
+		local stringImports = p.esc(toolset.getstringimportdirs(cfg, cfg.stringimportdirs))
+		_p('  STRINGIMPORTS +=%s', make.list(stringImports))
 	end
 
 	function m.make.dFlags(cfg, toolset)
-		_p('  ALL_DFLAGS += $(DFLAGS)%s $(VERSIONS) $(DEBUG) $(IMPORTS) $(ARCH)', make.list(table.join(toolset.getdflags(cfg), cfg.buildoptions)))
+		_p('  ALL_DFLAGS += $(DFLAGS)%s $(VERSIONS) $(DEBUG) $(IMPORTS) $(STRINGIMPORTS) $(ARCH)', make.list(table.join(toolset.getdflags(cfg), cfg.buildoptions)))
 	end
 
 	function m.make.linkCmd(cfg, toolset)
-		if cfg.flags.SeparateCompilation then
+		if cfg.compilationmodel == "File" then
 			_p('  LINKCMD = $(DC) ' .. toolset.gettarget("$(TARGET)") .. ' $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)')
 
 --			local cc = iif(p.languages.isc(cfg.language), "CC", "CXX")
@@ -249,7 +255,7 @@
 
 	function m.make.allRules(cfg, toolset)
 		-- TODO: The C++ version has some special cases for OSX and Windows... check whether they should be here too?
-		if cfg.flags.SeparateCompilation then
+		if cfg.compilationmodel == "File" then
 			_p('all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)')
 		else
 			_p('all: $(TARGETDIR) prebuild prelink $(TARGET)')
