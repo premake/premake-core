@@ -320,7 +320,6 @@
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
 
-
 --
 -- Check the basic translation of LDFLAGS for a Posix system.
 --
@@ -807,4 +806,64 @@
 		prepare()
 		test.contains({ "-fno-unsigned-char" }, gcc.getcxxflags(cfg))
 		test.contains({ "-fno-unsigned-char" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test omit-frame-pointer flags.
+--
+
+	function suite.sharedflags_onOmitFramePointerDefault()
+		omitframepointer "Default"
+
+		prepare()
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onOmitFramePointer()
+		omitframepointer "On"
+
+		prepare()
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoOmitFramePointer()
+		omitframepointer "Off"
+
+		prepare()
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test visibility.
+--
+
+	function suite.cxxflags_onVisibilityDefault()
+		visibility "Default"
+		prepare()
+		test.excludes({ "-fvisibility=default" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=default" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityHidden()
+		visibility "Hidden"
+		prepare()
+		test.excludes({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityInternal()
+		visibility "Internal"
+		prepare()
+		test.excludes({ "-fvisibility=internal" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=internal" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityProtected()
+		visibility "Protected"
+		prepare()
+		test.excludes({ "-fvisibility=protected" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=protected" }, gcc.getcxxflags(cfg))
 	end
