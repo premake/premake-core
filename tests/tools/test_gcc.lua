@@ -77,7 +77,7 @@
 	function suite.cflags_onExtraWarnings()
 		warnings "extra"
 		prepare()
-		test.contains({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+		test.contains({ "-Wall", "-Wextra" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onHighWarnings()
