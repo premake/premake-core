@@ -122,6 +122,12 @@
 		-- to each project configuration in the workspace.
 
 		oven.bakeObjDirs(self)
+
+		-- Now that we have proper object dirs for all configs.
+		-- we can bake the files in each project.
+		for prj in p.workspace.eachproject(self) do
+			p.project.bakeFiles(prj)
+		end
 	end
 
 
@@ -206,6 +212,12 @@
 			end
 		end
 
+		-- at the end, restore the system, so it's usable elsewhere.
+		self.system = projectSystem
+	end
+
+
+	function p.project.bakeFiles(self)
 		-- Process the sub-objects that are contained by this project. The
 		-- configuration build stuff above really belongs in here now.
 
@@ -221,9 +233,6 @@
 		if p.project.isnative(self) then
 			oven.assignObjectSequences(self)
 		end
-
-		-- at the end, restore the system, so it's usable elsewhere.
-		self.system = projectSystem
 	end
 
 
