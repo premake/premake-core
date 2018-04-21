@@ -218,6 +218,16 @@
 
 
 	function p.project.bakeFiles(self)
+		-- some validation.
+		-- 
+		if not self._isBaked then
+			p.error("Project '%s' must be baked.", self.name)
+		end
+
+		if self._areFilesBaked then
+			p.error("Project '%s' files are already baked.", self.name)
+		end
+
 		-- Process the sub-objects that are contained by this project. The
 		-- configuration build stuff above really belongs in here now.
 
@@ -233,6 +243,9 @@
 		if p.project.isnative(self) then
 			oven.assignObjectSequences(self)
 		end
+
+		-- mark this project as fully baked.
+		self._areFilesBaked = true
 	end
 
 
@@ -606,9 +619,9 @@
 			end
 
 			local function addToProject(target, buildoutputs)
-				-- we can't modify already baked projects, so the 'codegen' project must
+				-- we can't modify projects for which the files are already baked, so the 'codegen' project must
 				-- be defined before the target project.
-				if target._isBaked then
+				if target._areFilesBaked then
 					p.error("project '%s' must be defined before project '%s'.", target.name, prj.name)
 				end
 
