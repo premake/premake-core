@@ -224,6 +224,9 @@
 
 		_x(3, '<Linker Required="yes" Options="%s">', table.concat(flags, ";"))
 
+		for _, libdir in ipairs(cfg.libdirs) do
+			_p(4, '<LibraryPath Value="%s"/>', project.getrelative(cfg.project, libdir))
+		end
 		_p(3, '</Linker>')
 	end
 

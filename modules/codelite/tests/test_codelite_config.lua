@@ -93,6 +93,8 @@
 		codelite.project.linker(cfg)
 		test.capture [[
       <Linker Required="yes" Options="">
+        <LibraryPath Value="test"/>
+        <LibraryPath Value="test2"/>
       </Linker>
 		]]
 	end
