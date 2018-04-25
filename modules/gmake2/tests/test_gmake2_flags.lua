@@ -40,3 +40,73 @@
 INCLUDES += -Isrc/include -I../include
 		]]
 	end
+
+--
+-- symbols "on" should produce -g
+--
+	function suite.symbols_on()
+		symbols "on"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
+		]]
+	end
+
+--
+-- symbols "off" should not produce -g
+--
+	function suite.symbols_off()
+		symbols "off"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
+		]]
+	end
+
+--
+-- symbols "on" with a proper debugformat should produce a corresponding -g
+--
+	function suite.symbols_on_default()
+		symbols "on"
+		debugformat "Default"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
+		]]
+	end
+
+	function suite.symbols_on_dwarf()
+		symbols "on"
+		debugformat "Dwarf"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -gdwarf
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -gdwarf
+		]]
+	end
+
+	function suite.symbols_on_split_dwarf()
+		symbols "on"
+		debugformat "SplitDwarf"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -gsplit-dwarf
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -gsplit-dwarf
+		]]
+	end
+
+--
+-- symbols "off" with a proper debugformat should not produce -g
+--
+	function suite.symbols_off_dwarf()
+		symbols "off"
+		debugformat "Dwarf"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
+		]]
+	end

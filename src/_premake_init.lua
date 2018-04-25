@@ -255,7 +255,10 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
+			"Default",
 			"c7",
+			"Dwarf",
+			"SplitDwarf",
 		},
 	}
 
