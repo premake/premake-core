@@ -365,7 +365,7 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	}
 #endif
 
-#if PLATFORM_BSD
+#if PLATFORM_BSD && !defined(__OpenBSD__)
 	int len = readlink("/proc/curproc/file", buffer, PATH_MAX - 1);
 	if (len < 0)
 		len = readlink("/proc/curproc/exe", buffer, PATH_MAX - 1);
