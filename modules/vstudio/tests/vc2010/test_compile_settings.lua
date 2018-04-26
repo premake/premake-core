@@ -1170,6 +1170,48 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpp17</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2010()
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2015()
+		p.action.set("vs2015")
+
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2017()
+		p.action.set("vs2017")
+
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpplatest</LanguageStandard>
 </ClCompile>
 		]]

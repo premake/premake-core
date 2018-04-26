@@ -765,6 +765,7 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"C++latest",
 			"C++98",
 			"C++0x",
 			"C++11",
