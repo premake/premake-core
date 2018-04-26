@@ -10,6 +10,22 @@
 static int s_currentColor = -1;
 #endif
 
+#if !PLATFORM_WINDOWS
+static const char *getenvOrFallback(const char *var, const char *fallback) {
+	const char *value = getenv(var);
+	if (value)
+		return value;
+	else
+		return fallback;
+}
+
+static int shouldUseColors() {
+	// CLICOLOR* documented at: http://bixense.com/clicolors/
+	return ((getenvOrFallback("CLICOLOR", "1")[0] != '0') && isatty(1))
+		|| getenvOrFallback("CLICOLOR_FORCE", "0")[0] != '0';
+}
+#endif
+
 int term_doGetTextColor()
 {
 #if PLATFORM_WINDOWS
@@ -31,6 +47,11 @@ void term_doSetTextColor(int color)
 		SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), (WORD)color);
 	}
 #else
+
+	// Do not output colors e.g. into a pipe, unless forced.
+	if (!shouldUseColors())
+		return;
+
 	s_currentColor = color;
 
 	const char* colorTable[] = 
