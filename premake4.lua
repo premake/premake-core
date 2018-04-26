@@ -75,7 +75,7 @@
 			linkoptions  { "-mmacosx-version-min=10.4" }
 
 		configuration { "solaris" }
-			linkoptions { "-Wl,--export-dynamic" }
+			links       { "m", "socket", "nsl" }
 
 		configuration "aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
