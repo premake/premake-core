@@ -54,10 +54,10 @@ void term_doSetTextColor(int color)
 	};
 	if (color >= 0 && color < 16)
 	{
-		puts(colorTable[color]);
+		fputs(colorTable[color], stdout);
 	} else
 	{
-		puts("\x1B[0m");
+		fputs("\x1B[0m", stdout);
 	}
 #endif
 }
