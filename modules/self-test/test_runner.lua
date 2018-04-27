@@ -103,7 +103,10 @@
 		if ok then
 			return 1, 0
 		else
-			m.print(string.format("%s.%s: %s", test.suiteName, test.testName, err))
+			term.pushColor(term.warningColor)
+			io.write(string.format("%s.%s", test.suiteName, test.testName))
+			term.popColor()
+			m.print(string.format(": %s", err))
 			return 0, 1
 		end
 	end
