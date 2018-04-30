@@ -126,7 +126,7 @@ Environment="key=value&#x0A;foo=bar"
 -- flag is set.
 --
 
-	function suite.environmentVarsSet_onDebugEnvs()
+	function suite.environmentVarsSet_onDebugEnvsAndDebugEnvsDontMerge()
 		debugenvs { "key=value" }
 		flags { "DebugEnvsDontMerge" }
 		prepare()

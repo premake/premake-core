@@ -46,7 +46,7 @@ endif
 -- If a map is present, the configuration change should be applied.
 --
 
-	function suite.passesThroughConfigs_onNoMap()
+	function suite.passesThroughConfigs_onMap()
 		configmap { Debug = "Development" }
 		prepare()
 		test.capture [[
@@ -65,7 +65,7 @@ endif
 -- no mapping should be created.
 --
 
-	function suite.passesThroughConfigs_onNoMap()
+	function suite.passesThroughConfigs_onNoMapRemovedConfiguration()
 		removeconfigurations { "Debug" }
 		prepare()
 		test.capture [[

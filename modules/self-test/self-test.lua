@@ -37,7 +37,9 @@
 
 
 	function m.executeSelfTest()
+		m.detectDuplicateTests = true
 		m.loadTestsFromManifests()
+		m.detectDuplicateTests = false
 
 		local test, err = m.getTestWithIdentifier(_OPTIONS["test-only"])
 		if err then
