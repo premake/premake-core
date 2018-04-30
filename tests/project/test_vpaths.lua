@@ -100,12 +100,6 @@
 		test.isequal("Headers/hello.h", run())
 	end
 
-	function suite.MatchFilePattern_ToNestedGroup_Flat()
-		files { "src/myproject/hello.h" }
-		vpaths { ["Group/Headers"] = "**.h" }
-		test.isequal("Group/Headers/hello.h", run())
-	end
-
 	function suite.MatchFilePattern_ToGroup_Nested()
 		files { "src/myproject/hello.h" }
 		vpaths { ["Headers/*"] = "**.h" }

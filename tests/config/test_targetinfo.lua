@@ -188,7 +188,7 @@
 -- Name should use ".exe" for Xbox360 executables.
 --
 
-	function suite.nameUsesExe_onWindowsConsoleApp()
+	function suite.nameUsesExe_onXbox360ConsoleApp()
 		kind "ConsoleApp"
 		system "Xbox360"
 		i = prepare()
@@ -265,7 +265,7 @@
 -- .NET libraries should always default to ".dll" extensions.
 --
 
-	function suite.appUsesExe_onDotNet()
+	function suite.appUsesExe_onDotNetSharedLib()
 		_TARGET_OS = "macosx"
 		language "C#"
 		kind "SharedLib"

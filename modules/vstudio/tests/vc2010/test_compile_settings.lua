@@ -260,7 +260,7 @@
 --	If defines are specified with escapable characters, they should be escaped.
 --
 
-	function suite.preprocessorDefinitions_onDefines()
+	function suite.preprocessorDefinitions_onDefinesWithEscapeCharacters()
 		p.escaper(p.vstudio.vs2010.esc)
 		defines { "&", "<", ">" }
 		prepare()
@@ -477,8 +477,32 @@
 		]]
 	end
 
+
+--
+-- Check handling of the explicitly disabling symbols.
+-- Note: VS2013 and older have a bug with setting
+-- DebugInformationFormat to None. The workaround
+-- is to leave the field blank.
+--
 	function suite.onNoSymbols()
-		symbols "Off"
+		symbols 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat></DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+--
+-- VS2015 and newer can use DebugInformationFormat None.
+--
+	function suite.onNoSymbolsVS2015()
+		symbols 'Off'
+		p.action.set("vs2015")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -486,7 +510,6 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>None</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
-</ClCompile>
 		]]
 	end
 
@@ -833,42 +856,6 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<OmitDefaultLibName>true</OmitDefaultLibName>
-		]]
-	end
-
-
---
--- Check handling of the explicitly disabling symbols.
--- Note: VS2013 and older have a bug with setting
--- DebugInformationFormat to None. The workaround
--- is to leave the field blank.
---
-	function suite.onNoSymbols()
-		symbols 'Off'
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<DebugInformationFormat></DebugInformationFormat>
-	<Optimization>Disabled</Optimization>
-		]]
-	end
-
-
---
--- VS2015 and newer can use DebugInformationFormat None.
---
-	function suite.onNoSymbolsVS2015()
-		symbols 'Off'
-		p.action.set("vs2015")
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<DebugInformationFormat>None</DebugInformationFormat>
-	<Optimization>Disabled</Optimization>
 		]]
 	end
 
