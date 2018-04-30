@@ -145,7 +145,7 @@ LDDEPS += build/bin/Debug/libMyProject2.a
 
 		prepare { "ldFlags", "libs", "ldDeps" }
 		test.capture [[
-ALL_LDFLAGS += $(LDFLAGS) -s
+ALL_LDFLAGS += $(LDFLAGS) -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
 LIBS += build/bin/Debug/libMyProject2.so
 LDDEPS += build/bin/Debug/libMyProject2.so
 		]]
@@ -155,7 +155,7 @@ LDDEPS += build/bin/Debug/libMyProject2.so
 -- Check a linking to a sibling shared library using -l and -L.
 --
 
-    function suite.links_onSiblingSharedLib()
+    function suite.links_onSiblingSharedLibRelativeLinks()
         links "MyProject2"
         flags { "RelativeLinks" }
 
@@ -262,7 +262,7 @@ LIBS += -lSomeLib
 -- is stripped
 --
 
-	function suite.onExternalLibraryWithPath()
+	function suite.onExternalLibraryWithPathAndVersion()
 		location "MyProject"
 		links { "libs/SomeLib-1.1" }
 		prepare { "libs", }
