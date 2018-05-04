@@ -10,7 +10,16 @@
 static int s_currentColor = -1;
 #endif
 
-#if !PLATFORM_WINDOWS
+#if PLATFORM_WINDOWS
+int canUseColors() {
+	return 1;
+}
+#else
+int canUseColors() {
+	return isatty(1);
+}
+#endif
+
 static const char *getenvOrFallback(const char *var, const char *fallback) {
 	const char *value = getenv(var);
 	if (value)
@@ -21,10 +30,9 @@ static const char *getenvOrFallback(const char *var, const char *fallback) {
 
 static int shouldUseColors() {
 	// CLICOLOR* documented at: http://bixense.com/clicolors/
-	return ((getenvOrFallback("CLICOLOR", "1")[0] != '0') && isatty(1))
+	return ((getenvOrFallback("CLICOLOR", "1")[0] != '0') && canUseColors())
 		|| getenvOrFallback("CLICOLOR_FORCE", "0")[0] != '0';
 }
-#endif
 
 int term_doGetTextColor()
 {
@@ -41,7 +49,7 @@ int term_doGetTextColor()
 void term_doSetTextColor(int color)
 {
 #if PLATFORM_WINDOWS
-	if (color >= 0)
+	if (color >= 0 && shouldUseColors())
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)color);
 		SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), (WORD)color);
