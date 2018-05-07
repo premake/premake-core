@@ -191,7 +191,7 @@
 			toolset "clang"
 
 		filter { "system:solaris" }
-			linkoptions { "-Wl,--export-dynamic" }
+			links       { "m", "socket", "nsl" }
 
 		filter "system:aix"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }

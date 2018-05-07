@@ -93,6 +93,8 @@
 		codelite.project.linker(cfg)
 		test.capture [[
       <Linker Required="yes" Options="">
+        <LibraryPath Value="test"/>
+        <LibraryPath Value="test2"/>
       </Linker>
 		]]
 	end
@@ -194,7 +196,7 @@ cmd2</StartupCommands>
 		]]
 	end
 
-	function suite.OnProject_PreBuild()
+	function suite.OnProject_PostBuild()
 		postbuildcommands { "cmd0", "cmd1" }
 		prepare()
 		codelite.project.postBuild(prj)

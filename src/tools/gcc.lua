@@ -89,7 +89,7 @@
 			RDRND = "-mrdrnd",
 		},
 		warnings = {
-			Extra = "-Wall -Wextra",
+			Extra = {"-Wall", "-Wextra"},
 			High = "-Wall",
 			Off = "-w",
 		},

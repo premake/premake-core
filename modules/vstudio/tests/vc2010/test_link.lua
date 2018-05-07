@@ -716,7 +716,7 @@
 -- Test ignoring default libraries without extensions specified.
 --
 
-	function suite.ignoreDefaultLibraries_WithExtensions()
+	function suite.ignoreDefaultLibraries_WithoutExtensions()
 		ignoredefaultlibraries { "lib1", "lib2.obj" }
 		prepare()
 		test.capture [[

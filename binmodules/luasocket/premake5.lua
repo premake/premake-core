@@ -30,6 +30,7 @@ project "luasocket"
 		}
 		
 		links { 'ws2_32' }
+		characterset "MBCS"
 		
 		defines { "LUASOCKET_API=__declspec(dllexport)" }
 	

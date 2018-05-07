@@ -80,7 +80,7 @@
 -- Managed C++ projects write out references a little differently.
 --
 
-	function suite.referencesAreRelative_onDifferentProjectLocation()
+	function suite.referencesAreRelative_onDifferentProjectLocationWithCLR()
 		links { "MyProject" }
 		clr "On"
 		prepare()

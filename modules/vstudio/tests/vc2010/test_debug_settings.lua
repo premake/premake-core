@@ -92,7 +92,7 @@
 -- Multiple environment variables should be separated by a "\n" sequence.
 --
 
-	function suite.localDebuggerEnv_onDebugEnv()
+	function suite.localDebuggerEnv_onMultipleDebugEnv()
 		debugenvs { "key=value", "foo=bar" }
 		prepare()
 		test.capture [[
