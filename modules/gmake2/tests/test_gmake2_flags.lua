@@ -54,6 +54,18 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 	end
 
 --
+-- symbols default to 'off'
+--
+	function suite.symbols_default()
+		symbols "default"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
+		]]
+	end
+
+--
 -- symbols "off" should not produce -g
 --
 	function suite.symbols_off()
@@ -62,6 +74,27 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
+		]]
+	end
+
+--
+-- All other symbols flags also produce -g
+--
+	function suite.symbols_fastlink()
+		symbols "FastLink"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
+		]]
+	end
+
+	function suite.symbols_full()
+		symbols "full"
+		prepare { "cFlags", "cxxFlags" }
+		test.capture [[
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 		]]
 	end
 

@@ -108,7 +108,11 @@
 		symbols = function(cfg, mappings)
 			local values = gcc.getdebugformat(cfg)
 			local debugformat = values[cfg.debugformat] or ""
-			return { On = "-g" .. debugformat }
+			return {
+				On       = "-g" .. debugformat,
+				FastLink = "-g" .. debugformat,
+				Full     = "-g" .. debugformat,
+			}
 		end,
 		unsignedchar = {
 			On = "-funsigned-char",
