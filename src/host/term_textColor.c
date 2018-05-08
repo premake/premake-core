@@ -6,32 +6,39 @@
 
 #include "premake.h"
 
+#if PLATFORM_WINDOWS
+#include <io.h>
+#endif
+
 #if PLATFORM_POSIX
 static int s_currentColor = -1;
 #endif
 
+int canUseColors()
+{
 #if PLATFORM_WINDOWS
-int canUseColors() {
-	return 1;
-}
+	return _isatty(_fileno(stdout));
 #else
-int canUseColors() {
 	return isatty(1);
-}
 #endif
-
-static const char *getenvOrFallback(const char *var, const char *fallback) {
-	const char *value = getenv(var);
-	if (value)
-		return value;
-	else
-		return fallback;
 }
 
-static int shouldUseColors() {
-	// CLICOLOR* documented at: http://bixense.com/clicolors/
-	return ((getenvOrFallback("CLICOLOR", "1")[0] != '0') && canUseColors())
-		|| getenvOrFallback("CLICOLOR_FORCE", "0")[0] != '0';
+static const char *getenvOrFallback(const char *var, const char *fallback)
+{
+	const char *value = getenv(var);
+	return (value != NULL) ? value : fallback;
+}
+
+static int s_shouldUseColor = -1;
+static int shouldUseColors()
+{
+	if (s_shouldUseColor < 0)
+	{
+		// CLICOLOR* documented at: http://bixense.com/clicolors/
+		s_shouldUseColor = ((getenvOrFallback("CLICOLOR", "1")[0] != '0') && canUseColors())
+			|| getenvOrFallback("CLICOLOR_FORCE", "0")[0] != '0';
+	}
+	return s_shouldUseColor;
 }
 
 int term_doGetTextColor()
