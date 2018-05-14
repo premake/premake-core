@@ -182,6 +182,8 @@
 			"Default",
 			"C",
 			"C++",
+			"Objective-C",
+			"Objective-C++",
 		}
 	}
 

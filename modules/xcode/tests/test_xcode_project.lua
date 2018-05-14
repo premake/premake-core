@@ -298,15 +298,21 @@
 	end
 
 	function suite.PBXFileReference_ListsSourceFilesCompileAs()
-		files { "source.c" }
+		files { "source.c", "objsource.c", "objsource.cpp" }
 		filter { "files:source.c" }
 			compileas "C++"
+		filter { "files:objsource.c" }
+			compileas "Objective-C"
+		filter { "files:objsource.cpp" }
+			compileas "Objective-C++"
 		prepare()
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
 		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DC6D30C8137A53E02A4494C /* source.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = source.c; path = source.c; sourceTree = "<group>"; };
+		C8C6CC62F1018514D89D12A2 /* objsource.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = objsource.cpp; path = objsource.cpp; sourceTree = "<group>"; };
+		E4BF12E20AE5429471EC3922 /* objsource.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; name = objsource.c; path = objsource.c; sourceTree = "<group>"; };
 		]]
 	end
 

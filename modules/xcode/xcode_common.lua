@@ -106,9 +106,9 @@
 					return "sourcecode.c.c"
 				elseif p.languages.iscpp(filecfg.compileas) then
 					return "sourcecode.cpp.cpp"
-				elseif filecfg.language == "ObjC" then
+				elseif filecfg.compileas == p.OBJECTIVEC then
 					return "sourcecode.c.objc"
-				elseif 	filecfg.language == "ObjCpp" then
+				elseif filecfg.compileas == p.OBJECTIVECPP then
 					return "sourcecode.cpp.objcpp"
 				end
 			end

@@ -63,7 +63,8 @@
 		warnings = gcc.shared.warnings,
 		symbols = gcc.shared.symbols,
 		unsignedchar = gcc.shared.unsignedchar,
-		omitframepointer = gcc.shared.omitframepointer
+		omitframepointer = gcc.shared.omitframepointer,
+		compileas = gcc.shared.compileas
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {

@@ -42,6 +42,8 @@
 	premake.MBCS        = "MBCS"
 	premake.NONE        = "None"
 	premake.DEFAULT     = "Default"
+	premake.OBJECTIVEC   = "Objective-C"
+	premake.OBJECTIVECPP = "Objective-C++"
 	premake.ON          = "On"
 	premake.OFF         = "Off"
 	premake.POSIX       = "posix"
