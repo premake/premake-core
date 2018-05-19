@@ -104,16 +104,20 @@
 
 	function m.dImportPaths(cfg, condition)
 		if cfg.importdirs and #cfg.importdirs > 0 then
-			local importdirs = table.concat(cfg.importdirs, ";") .. ";%%(ImportPaths)"
-			vc2010.element("ImportPaths", condition, importdirs)
+			local dirs = vstudio.path(cfg, cfg.importdirs)
+			if #dirs > 0 then
+				vc2010.element("ImportPaths", condition, "%s;%%(ImportPaths)", table.concat(dirs, ";"))
+			end
 		end
 	end
 
 
 	function m.dStringImportPaths(cfg, condition)
 		if cfg.stringimportdirs and #cfg.stringimportdirs > 0 then
-			local stringimportdirs = table.concat(cfg.stringimportdirs, ";") .. ";%%(StringImportPaths)"
-			vc2010.element("StringImportPaths", condition, stringimportdirs)
+			local dirs = vstudio.path(cfg, cfg.stringimportdirs)
+			if #dirs > 0 then
+				vc2010.element("StringImportPaths", condition, "%s;%%(StringImportPaths)", table.concat(dirs, ";"))
+			end
 		end
 	end
 
