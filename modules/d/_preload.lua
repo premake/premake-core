@@ -135,14 +135,14 @@
 	api.register {
 		name = "importdirs",
 		scope = "config",
-		kind = "list:string",
+		kind = "list:path",
 		tokens = true,
 	}
 
 	api.register {
 		name = "stringimportdirs",
 		scope = "config",
-		kind = "list:string",
+		kind = "list:path",
 		tokens = true,
 	}
 
@@ -173,14 +173,14 @@
 	api.register {
 		name = "dependenciesfile",
 		scope = "config",
-		kind = "string",
+		kind = "path",
 		tokens = true,
 	}
 
 	api.register {
 		name = "jsonfile",
 		scope = "config",
-		kind = "string",
+		kind = "path",
 		tokens = true,
 	}
 
