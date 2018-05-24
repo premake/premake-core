@@ -274,9 +274,10 @@
 	end
 
 	function m.environment(cfg)
+		local envs = table.concat(cfg.debugenvs, "\n")
+
 		_p(3, '<Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">')
-		local variables = ""
-		_x(4, '<![CDATA[%s]]>', variables)
+		_x(4, '<![CDATA[%s]]>', envs)
 		_p(3, '</Environment>')
 	end
 

@@ -142,11 +142,13 @@
 	end
 
 	function suite.OnProjectCfg_Environment()
+		debugenvs { "ENV_ONE=1", "ENV_TWO=2" }
 		prepare()
 		codelite.project.environment(cfg)
 		test.capture(
 '      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">\n' ..
-'        <![CDATA[]]>\n' ..
+'        <![CDATA[ENV_ONE=1\n' ..
+'ENV_TWO=2]]>\n' ..
 '      </Environment>'
 		)
 	end
