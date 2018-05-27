@@ -56,7 +56,6 @@
 	premake.X86_64      = "x86_64"
 	premake.ARM         = "ARM"
 	premake.ARM64       = "ARM64"
-	premake.XBOX360     = "xbox360"
 
 
 

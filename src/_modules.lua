@@ -12,4 +12,5 @@
 		"gmake2",
 		"d",
 		"android",
+		"xbox360",
 	}

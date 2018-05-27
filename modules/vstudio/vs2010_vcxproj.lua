@@ -225,13 +225,11 @@
 				m.linkIncremental,
 				m.ignoreImportLibrary,
 				m.outDir,
-				m.outputFile,
 				m.intDir,
 				m.targetName,
 				m.targetExt,
 				m.includePath,
 				m.libraryPath,
-				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
@@ -307,8 +305,6 @@
 				m.linker,
 				m.manifest,
 				m.buildEvents,
-				m.imageXex,
-				m.deploy,
 				m.ruleVars,
 				m.buildLog,
 			}
@@ -442,7 +438,7 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= p.XBOX360 and p.config.hasFile(cfg, path.isresourcefile) then
+		if p.config.hasFile(cfg, path.isresourcefile) then
 			local contents = p.capture(function ()
 				p.push()
 				p.callArray(m.elements.resourceCompile, cfg)
@@ -1602,17 +1598,6 @@
 	end
 
 
-	function m.deploy(cfg)
-		if cfg.system == p.XBOX360 then
-			p.push('<Deploy>')
-			m.element("DeploymentType", nil, "CopyToHardDrive")
-			m.element("DvdEmulationType", nil, "ZeroSeekTimes")
-			m.element("DeploymentFiles", nil, "$(RemoteRoot)=$(ImagePath);")
-			p.pop('</Deploy>')
-		end
-	end
-
-
 	function m.enableDpiAwareness(cfg)
 		local awareness = {
 			None = "false",
@@ -1833,29 +1818,6 @@
 	function m.ignoreImportLibrary(cfg)
 		if cfg.kind == p.SHAREDLIB and cfg.flags.NoImportLib then
 			m.element("IgnoreImportLibrary", nil, "true")
-		end
-	end
-
-
-	function m.imageXex(cfg)
-		if cfg.system == p.XBOX360 then
-			p.push('<ImageXex>')
-			if cfg.configfile then
-				m.element("ConfigurationFile", nil, "%s", cfg.configfile)
-			else
-				p.w('<ConfigurationFile>')
-				p.w('</ConfigurationFile>')
-			end
-			p.w('<AdditionalSections>')
-			p.w('</AdditionalSections>')
-			p.pop('</ImageXex>')
-		end
-	end
-
-
-	function m.imageXexOutput(cfg)
-		if cfg.system == p.XBOX360 then
-			m.element("ImageXexOutput", nil, "%s", "$(OutDir)$(TargetName).xex")
 		end
 	end
 
@@ -2228,13 +2190,6 @@
 	end
 
 
-	function m.outputFile(cfg)
-		if cfg.system == p.XBOX360 then
-			m.element("OutputFile", nil, "$(OutDir)%s", cfg.buildtarget.name)
-		end
-	end
-
-
 	function m.executablePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.bindirs)
 		if #dirs > 0 then
@@ -2466,10 +2421,8 @@
 
 
 	function m.subSystem(cfg)
-		if cfg.system ~= p.XBOX360 then
-			local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
-			m.element("SubSystem", nil, subsystem)
-		end
+		local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
+		m.element("SubSystem", nil, subsystem)
 	end
 
 
