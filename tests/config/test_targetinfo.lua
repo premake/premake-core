@@ -185,24 +185,6 @@
 
 
 --
--- Name should use ".exe" for Xbox360 executables.
---
-
-	function suite.nameUsesExe_onXbox360ConsoleApp()
-		kind "ConsoleApp"
-		system "Xbox360"
-		i = prepare()
-		test.isequal("MyProject.exe", i.name)
-	end
-
-	function suite.nameUsesLib_onXbox360StaticLib()
-		kind "StaticLib"
-		system "Xbox360"
-		i = prepare()
-		test.isequal("MyProject.lib", i.name)
-	end
-
---
 -- Name should use a prefix if set.
 --
 

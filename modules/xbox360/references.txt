@@ -1,0 +1,56 @@
+-- Main references
+-- a) https://github.com/VSES/SourceEngine2007/blob/master/src_main/vpc_scripts/source_dll_x360_debug.vpc
+
+	-- RegisterReservation
+	-- TrapIntegerDividesOptimization
+	-- PreschedulingOptimization
+	-- InlineAssemblyOptimization
+	-- Stalls
+	-- CallAttributedProfiling
+	
+	-- TitleID
+	-- Lankey
+	-- SuppressStartupBanner
+	-- BaseAddress
+	-- HeapSize
+	-- WorkspaceSize
+	-- AdditionalSections
+	-- ExportByName
+	-- OpticalDiscDriveMapping
+	-- PAL50Incompatible
+	-- ProjectDefaults
+	
+	-- DeploymentType
+	-- DeploymentFiles
+	-- ExcludedFromBuild
+	-- SuppressStartupBanner
+	-- Progress
+	-- ForceCopy
+	-- DeploymentRoot
+	-- EmulationType
+	-- Layout
+	-- LayoutRoot
+
+-- b) https://public.kitware.com/pipermail/cmake/2008-February/019967.html
+
+	-- RegisterReservation
+	-- TrapIntegerDividesOptimization
+	-- PreschedulingOptimization
+	-- InlineAssemblyOptimization
+	-- Stalls
+	-- CallAttributedProfiling
+
+-- Additional references
+-- https://github.com/exjam/xbox360-emu/blob/master/src/xex/optionalheaders.h
+-- https://github.com/rheard/The-Tesseract-on-Xbox-360-for-Black-Ops-2/blob/master/TesseractBO2.vcxproj
+	
+	-- BaseAddress
+	-- ConfigurationFile
+
+-- https://github.com/rheard/The-Tesseract-on-Xbox-360-for-Modern-Warfare-2/blob/master/TesseractMW2.vcxproj
+-- https://github.com/libretro/RetroArch/blob/789ef63deed43fe035d6922893c0bf3c92dbdc52/pkg/msvc/RetroArch-360/RetroArch-360.vcxproj
+-- https://github.com/libretro/RetroArch/blob/956f869974e56b5f61227ee6cb8a392a335e691a/pkg/msvc/RetroArch-360-Salamander/RetroArch-Salamander.vcxproj
+-- https://github.com/KTXSoftware/kake/blob/master/proto/Xbox360/Xbox360.vcxproj
+-- https://github.com/0xdeafcafe/Yrs2013/blob/master/XenonNui/XenonNui.vcxproj
+-- https://github.com/xxHASTERxx/GTA-V-Mod-Menu-TU27/blob/master/TitanClient.vcxproj
+-- https://github.com/Swizzy/XDK_Projects/blob/master/Simple%20360%20NAND%20Flasher/NandFlasher2010.vcxproj
