@@ -809,9 +809,6 @@
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
 		_p('ifneq (,$(PCH))')
-			_p('  -include "$(PCH_PLACEHOLDER).d"')
+			_p('  -include $(PCH_PLACEHOLDER).d')
 		_p('endif')
 	end
-
-
-
