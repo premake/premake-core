@@ -97,6 +97,61 @@ $(OBJDIR)/test.o: src/test.cpp
 		]]
 	end
 
+--
+-- C files in C++ projects can be compiled as C++ with compileas
+--
+
+	function suite.cFilesGetsCompiledWithCXXWithCompileas()
+		files { "src/hello.c", "src/test.c" }
+		filter { "files:src/hello.c" }
+			compileas "C++"
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/hello.o: src/hello.c
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/test.o: src/test.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+		]]
+	end
+
+--
+-- C files in C++ projects can be compiled as C++ with 'compileas' on a configuration basis
+--
+
+	function suite.cFilesGetsCompiledWithCXXWithCompileasDebugOnly()
+		files { "src/hello.c", "src/test.c" }
+		filter { "configurations:Debug", "files:src/hello.c" }
+			compileas "C++"
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/test.o: src/test.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
+ifeq ($(config),debug)
+$(OBJDIR)/hello.o: src/hello.c
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
+else ifeq ($(config),release)
+$(OBJDIR)/hello.o: src/hello.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
+else
+  $(error "invalid configuration $(config)")
+endif
+		]]
+	end
+
 
 --
 -- If a custom build rule is supplied, it should be used.
