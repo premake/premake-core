@@ -50,9 +50,11 @@
 	end
 
 	function m.dCompile(cfg)
-		p.push('<DCompile>')
-		p.callArray(m.elements.dCompile, cfg)
-		p.pop('</DCompile>')
+		if config.hasFile(cfg, path.isdfile) then
+			p.push('<DCompile>')
+			p.callArray(m.elements.dCompile, cfg)
+			p.pop('</DCompile>')
+		end
 	end
 
 ---
