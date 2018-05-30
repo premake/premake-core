@@ -73,6 +73,18 @@
 		end
 	end)
 
+--
+-- Don't create $(OBJDIR) in the d-file rules
+--
+
+	p.override(make, "objDirInFileRules", function(oldfn, prj, node)
+		-- node is nil when making pch rules
+		if not node or not path.isdfile(node.abspath) then
+			oldfn(prj, node)
+		end
+	end)
+
+
 
 ---
 -- Add namespace for element definition lists for p.callarray()
@@ -154,11 +166,21 @@
 	p.override(cpp, "standardFileRules", function(oldfn, prj, node)
 		-- D file
 		if path.isdfile(node.abspath) then
-			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
-			_p('\t@echo $(notdir $<)')
 			_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
 		else
 			oldfn(prj, node)
+		end
+	end)
+
+--
+-- Let make know it can compile D source files
+--
+
+	p.override(make, "fileType", function(oldfn, node)
+		if path.isdfile(node.abspath) then
+			return "objects"
+		else
+			return oldfn(node)
 		end
 	end)
 

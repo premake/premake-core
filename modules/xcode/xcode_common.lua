@@ -79,6 +79,20 @@
 
 		return false
 	end
+
+--
+-- Return 'explicitFileType' if the given file is being set with 'compileas'
+--
+
+	function xcode.getfiletypekey(node, cfg)
+		if node.configs then
+			local filecfg = fileconfig.getconfig(node, cfg)
+			if filecfg and filecfg["compileas"] then
+				return "explicitFileType"
+			end
+		end
+		return "lastKnownFileType"
+	end
 --
 -- Return the Xcode type for a given file, based on the file extension.
 --
@@ -93,7 +107,11 @@
 		if node.configs then
 			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
-				if filecfg.language == "ObjC" then
+				if p.languages.isc(filecfg.compileas) then
+					return "sourcecode.c.c"
+				elseif p.languages.iscpp(filecfg.compileas) then
+					return "sourcecode.cpp.cpp"
+				elseif filecfg.language == "ObjC" then
 					return "sourcecode.c.objc"
 				elseif 	filecfg.language == "ObjCpp" then
 					return "sourcecode.cpp.objcpp"
@@ -495,8 +513,8 @@
 						end
 						--end
 						end
-						_p(level,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = %s; };',
-							node.id, node.name, xcode.getfiletype(node, cfg), stringifySetting(node.name), stringifySetting(pth), stringifySetting(src))
+						_p(level,'%s /* %s */ = {isa = PBXFileReference; %s = %s; name = %s; path = %s; sourceTree = %s; };',
+							node.id, node.name, xcode.getfiletypekey(node, cfg), xcode.getfiletype(node, cfg), stringifySetting(node.name), stringifySetting(pth), stringifySetting(src))
 					end
 				end
 			end

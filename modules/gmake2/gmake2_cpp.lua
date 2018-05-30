@@ -198,6 +198,21 @@
 		end
 	end
 
+	function cpp.determineFiletype(cfg, node)
+		-- determine which filetype to use
+		local filecfg = fileconfig.getconfig(node, cfg)
+		local fileext = path.getextension(node.abspath):lower()
+		if filecfg and filecfg.compileas then
+			if p.languages.isc(filecfg.compileas) then
+				fileext = ".c"
+			elseif p.languages.iscpp(filecfg.compileas) then
+				fileext = ".cpp"
+			end
+		end
+
+		return fileext;
+	end
+
 	function cpp.addGeneratedFile(cfg, source, filename)
 		-- mark that we have generated files.
 		cfg.project.hasGeneratedFiles = true
@@ -220,9 +235,11 @@
 			fileconfig.addconfig(node, cfg)
 		end
 
+		-- determine which filetype to use
+		local fileext = cpp.determineFiletype(cfg, node)
 		-- add file to the fileset.
 		local filesets = cfg.project._gmake.filesets
-		local kind     = filesets[path.getextension(filename):lower()] or "CUSTOM"
+		local kind     = filesets[fileext] or "CUSTOM"
 
 		-- don't link generated object files automatically if it's explicitly
 		-- disabled.
@@ -260,7 +277,8 @@
 
 	function cpp.addRuleFile(cfg, node)
 		local rules = cfg.project._gmake.rules
-		local rule = rules[path.getextension(node.abspath):lower()]
+		local fileext = cpp.determineFiletype(cfg, node)
+		local rule = rules[fileext]
 		if rule then
 
 			local filecfg = fileconfig.getconfig(node, cfg)
@@ -589,6 +607,14 @@
 			return fcfg.flagsVariable
 		end
 
+		if fcfg and fcfg.compileas then
+			if p.languages.isc(fcfg.compileas) then
+				return 'ALL_CFLAGS'
+			elseif p.languages.iscpp(fcfg.compileas) then
+				return 'ALL_CXXFLAGS'
+			end
+		end
+
 		if path.iscfile(file.name) then
 			return 'ALL_CFLAGS'
 		else
@@ -809,9 +835,6 @@
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
 		_p('ifneq (,$(PCH))')
-			_p('  -include "$(PCH_PLACEHOLDER).d"')
+			_p('  -include $(PCH_PLACEHOLDER).d')
 		_p('endif')
 	end
-
-
-
