@@ -77,7 +77,7 @@
 -- Shared library should use implibname() if present.
 --
 
-	function suite.basenameIsTargetName_onTargetName()
+	function suite.basenameIsImplibName_onTargetName()
 		kind "SharedLib"
 		targetname "MyTarget"
 		implibname "MyTargetImports"

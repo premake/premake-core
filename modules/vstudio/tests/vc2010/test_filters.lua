@@ -190,7 +190,7 @@
 --
 -- Check handling of .asm files
 --
-	function suite.itemGroup_onNoneSection()
+	function suite.itemGroup_onMasmSection()
 		files { "hello.asm" }
 		prepare()
 		test.capture [[

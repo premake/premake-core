@@ -1,5 +1,5 @@
 --
--- d/actions/vstudio.lua
+-- d/actions/visuald.lua
 -- Generate a VisualD .visualdproj project.
 -- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
@@ -139,7 +139,7 @@
 			_p(2,'<quiet>%s</quiet>', iif(cfg.flags.Quiet, '1', '0'))
 			_p(2,'<verbose>%s</verbose>', iif(cfg.flags.Verbose, '1', '0'))
 			_p(2,'<vtls>0</vtls>')
-			_p(2,'<symdebug>%s</symdebug>', iif(cfg.symbols == p.ON or cfg.flags.SymbolsLikeC, iif(cfg.flags.SymbolsLikeC, '2', '1'), '0'))
+			_p(2,'<symdebug>%s</symdebug>', iif(cfg.symbols == p.ON or cfg.symbols == "FastLink" or cfg.symbols == "Full", iif(cfg.flags.SymbolsLikeC, '2', '1'), '0'))
 			_p(2,'<optimize>%s</optimize>', iif(isOptimised, '1', '0'))
 			_p(2,'<cpu>0</cpu>')
 			_p(2,'<isX86_64>%s</isX86_64>', iif(is64bit, '1', '0'))
@@ -149,14 +149,14 @@
 			_p(2,'<isFreeBSD>0</isFreeBSD>')
 			_p(2,'<isSolaris>0</isSolaris>')
 			_p(2,'<scheduler>0</scheduler>')
-			_p(2,'<useDeprecated>%s</useDeprecated>', iif(cfg.flags.Deprecated, '1', '0'))
+			_p(2,'<useDeprecated>%s</useDeprecated>', iif(cfg.deprecatedfeatures == "Allow", '1', '0'))
 			_p(2,'<errDeprecated>0</errDeprecated>')
 			_p(2,'<useAssert>0</useAssert>')
 			_p(2,'<useInvariants>0</useInvariants>')
 			_p(2,'<useIn>0</useIn>')
 			_p(2,'<useOut>0</useOut>')
 			_p(2,'<useArrayBounds>0</useArrayBounds>')
-			_p(2,'<noboundscheck>%s</noboundscheck>', iif(cfg.flags.NoBoundsCheck, '1', '0'))
+			_p(2,'<noboundscheck>%s</noboundscheck>', iif(cfg.boundscheck == "Off", '1', '0'))
 			_p(2,'<useSwitchError>0</useSwitchError>')
 			_p(2,'<useUnitTests>%s</useUnitTests>', iif(cfg.flags.UnitTest, '1', '0'))
 			_p(2,'<useInline>%s</useInline>', iif(cfg.flags.Inline or isOptimised, '1', '0'))
@@ -180,7 +180,11 @@
 			m.visuald.element(2, "otherDMD", '0')
 			m.visuald.element(2, "program", '$(DMDInstallDir)windows\\bin\\dmd.exe')
 
-			m.visuald.element(2, "imppath", cfg.includedirs)
+			local impdirs
+			if #cfg.importdirs > 0 then
+				impdirs = vstudio.path(cfg, cfg.importdirs)
+			end
+			m.visuald.element(2, "imppath", impdirs)
 
 			m.visuald.element(2, "fileImppath")
 			m.visuald.element(2, "outdir", path.translate(project.getrelative(cfg.project, cfg.buildtarget.directory)))

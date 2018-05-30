@@ -17,7 +17,7 @@
 		if result then
 			p.out(result)
 			test.capture(
-				'{\n  "user-agent": "Premake/' .. _PREMAKE_VERSION .. '"\n}'
+				'{"user-agent": "Premake/' .. _PREMAKE_VERSION .. '"}'
 			)
 		else
 			test.fail(err);
@@ -31,7 +31,7 @@
 		if result then
 			p.out(result)
 			test.capture(
-				'{\n  "user-agent": "Premake/' .. _PREMAKE_VERSION .. '"\n}'
+				'{"user-agent": "Premake/' .. _PREMAKE_VERSION .. '"}'
 			)
 		else
 			test.fail(err);
@@ -43,7 +43,7 @@
 		if result then
 			p.out(result)
 			test.capture(
-				'{\n  "user-agent": "Premake/' .. _PREMAKE_VERSION .. '"\n}'
+				'{"user-agent": "Premake/' .. _PREMAKE_VERSION .. '"}'
 			)
 		else
 			test.fail(err);

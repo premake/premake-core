@@ -184,6 +184,7 @@
 	end
 	
 
+
 --
 -- Name should use a prefix if set.
 --
@@ -247,7 +248,7 @@
 -- .NET libraries should always default to ".dll" extensions.
 --
 
-	function suite.appUsesExe_onDotNet()
+	function suite.appUsesExe_onDotNetSharedLib()
 		_TARGET_OS = "macosx"
 		language "C#"
 		kind "SharedLib"

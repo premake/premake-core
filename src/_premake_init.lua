@@ -758,6 +758,7 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"C++latest",
 			"C++98",
 			"C++0x",
 			"C++11",
@@ -1367,6 +1368,16 @@
 			"Hidden",
 			"Internal",
 			"Protected"
+		}
+	}
+
+	api.register {
+		name = "inlinesvisibility",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Hidden"
 		}
 	}
 

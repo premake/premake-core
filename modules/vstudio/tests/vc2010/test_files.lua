@@ -437,6 +437,33 @@
 		]]
 	end
 
+--
+-- Check handling of per-file compileas options.
+--
+
+	function suite.onCompileAs()
+		files { "hello.c" }
+		filter "files:hello.c"
+			compileas "C++"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.c">
+		<CompileAs>CompileAsCpp</CompileAs>
+		]]
+	end
+
+	function suite.onCompileAsDebug()
+		files { "hello.c" }
+		filter { "configurations:Debug", "files:hello.c" }
+			compileas "C++"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.c">
+		<CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+		]]
+	end
 
 --
 -- Check handling of per-file optimization levels.
