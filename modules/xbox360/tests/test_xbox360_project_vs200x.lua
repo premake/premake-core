@@ -15,6 +15,11 @@
 		wks, prj = test.createWorkspace()
 		configurations { "Xbox 360" }
 	end
+
+	local function prepare()
+		local cfg = test.getconfig(prj, "Debug")
+		vc200x.VCCLCompilerTool(cfg)
+	end
 	
 --
 -- Xbox 360 uses the same structure, but changes the element name.
