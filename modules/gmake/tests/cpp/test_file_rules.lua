@@ -39,6 +39,8 @@ $(OBJDIR)/hello.o: src/greetings/hello.cpp
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -47,6 +49,8 @@ $(OBJDIR)/hello1.o: src/hello.cpp
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -68,6 +72,8 @@ $(OBJDIR)/hello.o: src/hello.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -76,6 +82,8 @@ $(OBJDIR)/test.o: src/test.cpp
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -98,6 +106,8 @@ $(OBJDIR)/hello.o: src/hello.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -111,6 +121,8 @@ $(OBJDIR)/test.o: src/test.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -132,6 +144,8 @@ $(OBJDIR)/hello.o: src/hello.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
@@ -145,6 +159,8 @@ $(OBJDIR)/test.o: src/test.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
+else ifeq (msdos,$(SHELLTYPE))
+	if not exist "$(subst /,\\\\,$(OBJDIR))" $(SILENT) mkdir $(subst /,\\\\,$(OBJDIR))
 else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
