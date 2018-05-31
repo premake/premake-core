@@ -124,7 +124,7 @@
 	function gmake2.mkdir(dirname)
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) mkdir -p %s', dirname)
-		_p('else ifeq(msdos),$(SHELLTYPE))')
+		_p('else ifeq (msdos,$(SHELLTYPE))')
 		_p('\tif not exist "$(subst /,\\\\,%s)" $(SILENT) mkdir $(subst /,\\\\,%s)', dirname, dirname)
 		_p('else')
 		_p('\t$(SILENT) mkdir $(subst /,\\\\,%s)', dirname)
