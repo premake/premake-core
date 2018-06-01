@@ -1032,7 +1032,7 @@
 	xcode.cppLanguageStandards = {
 		["Default"] = "compiler-default",  -- explicit compiler default
 		["C++98"] = "c++98",
-		["C++11"] = "c++0x",      -- Xcode project GUI uses c++0x, but c++11 also works
+		["C++11"] = "c++11",      -- Xcode project GUI uses c++0x, but c++11 also works
 		["C++14"] = "c++14",
 		["C++17"] = "c++1z",
 		["gnu++98"] = "gnu++98",
