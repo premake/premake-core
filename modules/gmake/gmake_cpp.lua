@@ -34,6 +34,9 @@
 			make.cppObjects,
 			make.shellType,
 			make.cppTargetRules,
+			make.cppCustomFilesRules,
+			make.cppTargetDirRules,
+			make.cppObjDirRules,
 			make.cppCleanRules,
 			make.preBuildRules,
 			make.preLinkRules,
@@ -69,10 +72,6 @@
 		_p('\t@echo $(notdir $<)')
 	end
 
-	function make.objDirInFileRules(prj, node)
-		make.mkdir('$(OBJDIR)')
-	end
-
 	function make.cpp.generate(prj)
 		p.eol("\n")
 		p.callArray(cpp.elements.makefile, prj)
@@ -85,7 +84,6 @@
 	cpp.elements.standardFileRules = function(prj, node)
 		return {
 			make.fileDependency,
-			make.objDirInFileRules,
 			cpp.standardFileRules,
 		}
 	end
@@ -93,7 +91,6 @@
 	cpp.elements.customFileRules = function(prj, node)
 		return {
 			make.fileDependency,
-			make.objDirInFileRules,
 			cpp.customFileRules,
 		}
 	end
@@ -454,14 +451,31 @@ end
 
 
 	function make.cppTargetRules(prj)
-		_p('$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)')
+		_p('$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)')
 		_p('\t@echo Linking %s', prj.name)
-		make.mkdir('$(TARGETDIR)')
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 	end
 
+	function make.cppCustomFilesRules(prj)
+		_p('$(CUSTOMFILES): | $(OBJDIR)')
+		_p('')
+	end
+
+	function make.cppTargetDirRules(prj)
+		_p('$(TARGETDIR):')
+		_p('\t@echo Creating $(TARGETDIR)')
+		make.mkdir('$(TARGETDIR)')
+		_p('')
+	end
+
+	function make.cppObjDirRules(prj)
+		_p('$(OBJDIR):')
+		_p('\t@echo Creating $(OBJDIR)')
+		make.mkdir('$(OBJDIR)')
+		_p('')
+	end
 
 	function make.cppTools(cfg, toolset)
 		local tool = toolset.gettoolname(cfg, "cc")
@@ -600,14 +614,15 @@ end
 
 	function make.pchRules(prj)
 		_p('ifneq (,$(PCH))')
-		_p('$(OBJECTS): $(GCH) $(PCH)')
-		_p('$(GCH): $(PCH)')
+		_p('$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR)')
+		_p('$(GCH): $(PCH) | $(OBJDIR)')
 		_p('\t@echo $(notdir $<)')
-		make.objDirInFileRules(prj, nil)
 
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
 		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
 
+		_p('else')
+		_p('$(OBJECTS): | $(OBJDIR)')
 		_p('endif')
 		_p('')
 	end
