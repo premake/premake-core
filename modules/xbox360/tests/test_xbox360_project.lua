@@ -198,6 +198,9 @@
 --
 
 	function suite.onSingleCpp_withPlatformsMatchingArch_noArchs()
+		
+		local testWorkspace = workspace("MyWorkspace")
+		
 		configurations { "Debug", "Release" }
 		platforms { "Win32", "Xbox 360" }
 		
