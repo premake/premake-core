@@ -23,6 +23,11 @@
 
 	-- Initialize Specific API
 
+	p.api.addAllowed("debugger", "VisualStudioLocal")
+	p.api.addAllowed("debugger", "VisualStudioRemote")
+	p.api.addAllowed("debugger", "VisualStudioWebBrowser")
+	p.api.addAllowed("debugger", "VisualStudioWebService")
+
 	p.api.register {
 		name = "shaderoptions",
 		scope = "config",
@@ -114,18 +119,6 @@
 		scope = "config",
 		kind = "string",
 		tokens = true,
-	}
-
-	p.api.register {
-		name = "debuggerflavor",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Local",
-			"Remote",
-			"WebBrowser",
-			"WebService"
-		}
 	}
 
 --
