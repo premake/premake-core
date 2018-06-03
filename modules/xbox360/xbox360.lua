@@ -1,6 +1,8 @@
 
 --
 -- Create an Xbox 360 namespace to isolate the additions
+-- Author: Emilio López
+-- Copyright (c) 2018-2018 Jason Perkin and the Premake project
 --
 local p = premake
 

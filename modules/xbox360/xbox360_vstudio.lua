@@ -1,7 +1,8 @@
 --
 -- xbox360/xbox360_vstudio.lua
 -- Xbox 360 integration for vstudio.
--- Copyright (c) 2012-2015 Emilio López and the Premake project
+-- Author: Emilio López
+-- Copyright (c) 2018-2018 Jason Perkin and the Premake project
 --
 
 	local p = premake

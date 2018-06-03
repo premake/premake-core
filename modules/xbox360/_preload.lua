@@ -2,7 +2,7 @@
 -- Name:        xbox360/_preload.lua
 -- Purpose:     Define the Xbox 360 APIs
 -- Author:      Emilio López
--- Copyright:   (c) 2013-2015 Manu Evans and the Premake project
+-- Copyright:   (c) 2018-2018 Jason Perkins and the Premake project
 --
 
 	local p = premake
