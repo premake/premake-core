@@ -60,13 +60,13 @@
 			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
 			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CXX) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CXX) %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
 			buildoutputs  { "$(OBJDIR)/%{premake.modules.gmake2.cpp.makeUnique(cfg, file.objname)}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CC) $(%{premake.modules.gmake2.cpp.fileFlags(cfg, file)}) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CC) %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
@@ -443,9 +443,6 @@
 
 	function cpp.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
-		if not cfg.flags.NoPCH and cfg.pchheader then
-			table.insert(includes, 1, "-include $(PCH_PLACEHOLDER)")
-		end
 		p.outln('FORCE_INCLUDE +=' .. gmake2.list(includes))
 	end
 
@@ -603,23 +600,25 @@
 
 	function cpp.fileFlags(cfg, file)
 		local fcfg = fileconfig.getconfig(file, cfg)
-		if fcfg and fcfg.flagsVariable then
-			return fcfg.flagsVariable
+		local flags = {}
+
+		if cfg.pchheader and not cfg.flags.NoPCH and (not fcfg or not fcfg.flags.NoPCH) then
+			table.insert(flags, "-include $(PCH_PLACEHOLDER)")
 		end
 
-		if fcfg and fcfg.compileas then
-			if p.languages.isc(fcfg.compileas) then
-				return 'ALL_CFLAGS'
-			elseif p.languages.iscpp(fcfg.compileas) then
-				return 'ALL_CXXFLAGS'
+		if fcfg and fcfg.flagsVariable then
+			table.insert(flags, string.format("$(%s)", fcfg.flagsVariable))
+		else
+			local fileExt = cpp.determineFiletype(cfg, file)
+
+			if path.iscfile(fileExt) then
+				table.insert(flags, "$(ALL_CFLAGS)")
+			elseif path.iscppfile(fileExt) then
+				table.insert(flags, "$(ALL_CXXFLAGS)")
 			end
 		end
 
-		if path.iscfile(file.name) then
-			return 'ALL_CFLAGS'
-		else
-			return 'ALL_CXXFLAGS'
-		end
+		return table.concat(flags, ' ')
 	end
 
 --

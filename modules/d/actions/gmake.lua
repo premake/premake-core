@@ -73,18 +73,6 @@
 		end
 	end)
 
---
--- Don't create $(OBJDIR) in the d-file rules
---
-
-	p.override(make, "objDirInFileRules", function(oldfn, prj, node)
-		-- node is nil when making pch rules
-		if not node or not path.isdfile(node.abspath) then
-			oldfn(prj, node)
-		end
-	end)
-
-
 
 ---
 -- Add namespace for element definition lists for p.callarray()

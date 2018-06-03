@@ -293,3 +293,52 @@
 	<WholeProgramOptimization>true</WholeProgramOptimization>
 		]]
 	end
+
+
+--
+-- Check the WindowsSDKDesktopARMSupport element
+--
+
+	function suite.WindowsSDKDesktopARMSupport_off()
+		system "ios"
+		architecture "ARM"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.WindowsSDKDesktopARMSupport_on()
+		system "windows"
+		architecture "ARM"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
+	<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.WindowsSDKDesktopARM64Support()
+		system "windows"
+		architecture "ARM64"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
+	<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>
+</PropertyGroup>
+		]]
+	end
