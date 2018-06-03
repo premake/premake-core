@@ -89,6 +89,16 @@
 		]]
 	end
 
+	function suite.none_onObjFile()
+		files { "docs/hello.obj" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<Object Include="docs\hello.obj" />
+</ItemGroup>
+		]]
+	end
+
 
 --
 -- Check handling of files with custom build rules.
