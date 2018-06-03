@@ -13,7 +13,7 @@ int os_stat(lua_State* L)
 	const char* filename = luaL_checkstring(L, 1);
 
 #if PLATFORM_WINDOWS
-	struct _stat64i32 s;
+	struct _stat s;
 
 	wchar_t wide_filename[PATH_MAX];
 	if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_filename, PATH_MAX) == 0)
