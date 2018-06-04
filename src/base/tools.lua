@@ -31,6 +31,7 @@
 
 	function p.tools.normalize(identifier)
 		if identifier:startswith("v") then -- TODO: this should be deprecated?
+			p.warnOnce(identifier, "toolset '%s' is deprecated, toolset 'msc-%s' instead.", identifier, identifier)
 			identifier = 'msc-' .. identifier
 		end
 
