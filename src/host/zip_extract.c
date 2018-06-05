@@ -8,7 +8,7 @@
 
 #ifdef PREMAKE_COMPRESSION
 
-#include <zip.h>
+#include "zip.h"
 
 #ifdef WIN32
 #include <direct.h>
