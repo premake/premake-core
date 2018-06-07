@@ -91,6 +91,30 @@
 
 
 --
+-- Check handling of buildaction.
+--
+	function suite.customBuildTool_onBuildAction()
+		files { "test.x", "test2.cpp", "test3.cpp" }
+		filter "files:**.x"
+			buildaction "FxCompile"
+		filter "files:test2.cpp"
+			buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="test3.cpp" />
+</ItemGroup>
+<ItemGroup>
+	<FxCompile Include="test.x" />
+</ItemGroup>
+<ItemGroup>
+	<None Include="test2.cpp" />
+</ItemGroup>
+		]]
+	end
+
+
+--
 -- Check handling of files with custom build rules.
 --
 
