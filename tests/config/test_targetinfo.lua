@@ -182,6 +182,7 @@
 		i = prepare()
 		test.isequal("libMyProject.a", i.name)
 	end
+	
 
 
 --
