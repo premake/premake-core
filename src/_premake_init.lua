@@ -203,13 +203,6 @@
 	}
 
 	api.register {
-		name = "configfile",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
 		name = "configurations",
 		scope = "project",
 		kind = "list:string",
@@ -1144,7 +1137,6 @@
 			"solaris",
 			"wii",
 			"windows",
-			"xbox360",
 		},
 	}
 
@@ -1400,7 +1392,6 @@
 	api.alias("buildmessage", "buildMessage")
 	api.alias("buildoutputs", "buildOutputs")
 	api.alias("cleanextensions", "cleanExtensions")
-	api.alias("configfile", "configFile")
 	api.alias("dotnetframework", "framework")
 	api.alias("editandcontinue", "editAndContinue")
 	api.alias("fileextension", "fileExtension")
@@ -1793,15 +1784,12 @@
 	filter { "system:Windows or language:C# or language:F#", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	filter { "system:Xbox360", "kind:ConsoleApp or WindowedApp" }
-		targetextension ".exe"
-
-	filter { "system:Windows or Xbox360", "kind:SharedLib" }
+	filter { "system:Windows", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".lib"
 
-	filter { "system:Windows or Xbox360", "kind:StaticLib" }
+	filter { "system:Windows", "kind:StaticLib" }
 		targetprefix ""
 		targetextension ".lib"
 
