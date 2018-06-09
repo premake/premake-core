@@ -58,17 +58,6 @@
 		name = "buildaction",
 		scope = "config",
 		kind = "string",
-		allowed = {
-			"Application",
-			"Compile",
-			"Component",
-			"Copy",
-			"Embed",
-			"Form",
-			"None",
-			"Resource",
-			"UserControl",
-		},
 	}
 
 	api.register {

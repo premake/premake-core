@@ -1028,12 +1028,18 @@
 
 
 	function m.categorizeFile(prj, file)
-		-- If any configuration for this file uses a custom build step,
-		-- that's the category to use
 		for cfg in project.eachconfig(prj) do
 			local fcfg = fileconfig.getconfig(file, cfg)
-			if fileconfig.hasCustomBuildRule(fcfg) then
-				return m.categories.CustomBuild
+			if fcfg then
+				-- If any configuration for this file uses a custom build step, that's the category to use
+				if fileconfig.hasCustomBuildRule(fcfg) then
+					return m.categories.CustomBuild
+				end
+
+				-- also check for buildaction
+				if fcfg.buildaction then
+					return m.categories[fcfg.buildaction] or m.categories.None
+				end
 			end
 		end
 
