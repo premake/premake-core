@@ -812,7 +812,7 @@
 			_p(3,'files = (')
 			tree.traverse(tr, {
 				onleaf = function(node)
-					if xcode.getbuildcategory(node) == "Sources" then
+					if xcode.getbuildcategory(node) == "Sources" and node.buildid then
 						_p(4,'%s /* %s in Sources */,', node.buildid, node.name)
 					end
 				end
