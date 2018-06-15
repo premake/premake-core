@@ -58,17 +58,6 @@
 		name = "buildaction",
 		scope = "config",
 		kind = "string",
-		allowed = {
-			"Application",
-			"Compile",
-			"Component",
-			"Copy",
-			"Embed",
-			"Form",
-			"None",
-			"Resource",
-			"UserControl",
-		},
 	}
 
 	api.register {
@@ -200,13 +189,6 @@
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
-	}
-
-	api.register {
-		name = "configfile",
-		scope = "config",
-		kind = "string",
-		tokens = true,
 	}
 
 	api.register {
@@ -370,13 +352,6 @@
 	}
 
 	api.register {
-		name = "deploymentoptions",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
 		name = "disablewarnings",
 		scope = "config",
 		kind = "list:string",
@@ -507,7 +482,7 @@
 			"No64BitChecks",
 			"NoCopyLocal",
 			"NoEditAndContinue",   -- DEPRECATED
-			"NoFramePointer",
+			"NoFramePointer",      -- DEPRECATED
 			"NoImplicitLink",
 			"NoImportLib",
 			"NoIncrementalLink",
@@ -765,6 +740,7 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"C++latest",
 			"C++98",
 			"C++0x",
 			"C++11",
@@ -1143,13 +1119,12 @@
 			"solaris",
 			"wii",
 			"windows",
-			"xbox360",
 		},
 	}
 
 	api.register {
 		name = "systemversion",
-		scope = "project",
+		scope = "config",
 		kind = "string",
 	}
 
@@ -1336,6 +1311,58 @@
 		}
 	}
 
+	api.register {
+		name = "unsignedchar",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "integer",
+		allowed = {
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
+		}
+	}
+
+	api.register {
+		name = "omitframepointer",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.register {
+		name = "visibility",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Hidden",
+			"Internal",
+			"Protected"
+		}
+	}
+
+	api.register {
+		name = "inlinesvisibility",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Hidden"
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
@@ -1347,7 +1374,6 @@
 	api.alias("buildmessage", "buildMessage")
 	api.alias("buildoutputs", "buildOutputs")
 	api.alias("cleanextensions", "cleanExtensions")
-	api.alias("configfile", "configFile")
 	api.alias("dotnetframework", "framework")
 	api.alias("editandcontinue", "editAndContinue")
 	api.alias("fileextension", "fileExtension")
@@ -1577,6 +1603,16 @@
 		staticruntime "Default"
 	end)
 
+	-- 08 April 2018
+
+	api.deprecateValue("flags", "NoFramePointer", 'Use `omitframepointer "On"` instead.',
+	function(value)
+		omitframepointer("On")
+	end,
+	function(value)
+		omitframepointer("Default")
+	end)
+
 -----------------------------------------------------------------------------
 --
 -- Install Premake's default set of command line arguments.
@@ -1610,6 +1646,12 @@
 	{
 		trigger     = "fatal",
 		description = "Treat warnings from project scripts as errors"
+	}
+
+    newoption
+	{
+		trigger     = "debugger",
+		description = "Start MobDebug remote debugger. Works with ZeroBrane Studio"
 	}
 
 	newoption
@@ -1713,6 +1755,9 @@
 
 	-- Add variations for other Posix-like systems.
 
+	filter { "system:MacOSX", "kind:WindowedApp" }
+		targetextension ".app"
+
 	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
 
@@ -1721,15 +1766,12 @@
 	filter { "system:Windows or language:C# or language:F#", "kind:ConsoleApp or WindowedApp" }
 		targetextension ".exe"
 
-	filter { "system:Xbox360", "kind:ConsoleApp or WindowedApp" }
-		targetextension ".exe"
-
-	filter { "system:Windows or Xbox360", "kind:SharedLib" }
+	filter { "system:Windows", "kind:SharedLib" }
 		targetprefix ""
 		targetextension ".dll"
 		implibextension ".lib"
 
-	filter { "system:Windows or Xbox360", "kind:StaticLib" }
+	filter { "system:Windows", "kind:StaticLib" }
 		targetprefix ""
 		targetextension ".lib"
 

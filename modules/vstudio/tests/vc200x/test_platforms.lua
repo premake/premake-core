@@ -78,20 +78,3 @@
 </Platforms>
 		]]
 	end
-
-
---
--- Verify the Xbox360 platform.
---
-
-	function suite.platformIsCorrect_onXbox360()
-		platforms { "Xbox360" }
-		prepare()
-		test.capture [[
-<Platforms>
-	<Platform
-		Name="Xbox 360"
-	/>
-</Platforms>
-		]]
-	end

@@ -93,6 +93,8 @@
 		codelite.project.linker(cfg)
 		test.capture [[
       <Linker Required="yes" Options="">
+        <LibraryPath Value="test"/>
+        <LibraryPath Value="test2"/>
       </Linker>
 		]]
 	end
@@ -140,11 +142,13 @@
 	end
 
 	function suite.OnProjectCfg_Environment()
+		debugenvs { "ENV_ONE=1", "ENV_TWO=2" }
 		prepare()
 		codelite.project.environment(cfg)
 		test.capture(
 '      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">\n' ..
-'        <![CDATA[]]>\n' ..
+'        <![CDATA[ENV_ONE=1\n' ..
+'ENV_TWO=2]]>\n' ..
 '      </Environment>'
 		)
 	end
@@ -194,7 +198,7 @@ cmd2</StartupCommands>
 		]]
 	end
 
-	function suite.OnProject_PreBuild()
+	function suite.OnProject_PostBuild()
 		postbuildcommands { "cmd0", "cmd1" }
 		prepare()
 		codelite.project.postBuild(prj)
@@ -232,5 +236,31 @@ cmd2</StartupCommands>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
+		]]
+	end
+
+
+---------------------------------------------------------------------------
+-- Setup/Teardown
+---------------------------------------------------------------------------
+
+	function suite.OnProjectCfg_UnsignedCharOn()
+		unsignedchar "On"
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-funsigned-char" C_Options="-funsigned-char" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
+		]]
+	end
+
+
+	function suite.OnProjectCfg_UnsignedCharOff()
+		unsignedchar "Off"
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-fno-unsigned-char" C_Options="-fno-unsigned-char" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
 		]]
 	end

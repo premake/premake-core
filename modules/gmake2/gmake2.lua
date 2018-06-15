@@ -267,18 +267,15 @@
 ---------------------------------------------------------------------------
 
 	function gmake2.phonyRules(prj)
-		_p('.PHONY: clean prebuild prelink')
+		_p('.PHONY: clean prebuild')
 		_p('')
 	end
 
 
 	function gmake2.shellType()
-		_p('SHELLTYPE := msdos')
-		_p('ifeq (,$(ComSpec)$(COMSPEC))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
-		_p('  SHELLTYPE := posix')
+		_p('SHELLTYPE := posix')
+		_p('ifeq (.exe,$(findstring .exe,$(ComSpec)))')
+		_p('\tSHELLTYPE := msdos')
 		_p('endif')
 		_p('')
 	end
@@ -349,15 +346,8 @@
 
 
 	function gmake2.preBuildRules(cfg, toolset)
-		_p('prebuild:')
+		_p('prebuild: | $(OBJDIR)')
 		_p('\t$(PREBUILDCMDS)')
-		_p('')
-	end
-
-
-	function gmake2.preLinkRules(cfg, toolset)
-		_p('prelink:')
-		_p('\t$(PRELINKCMDS)')
 		_p('')
 	end
 

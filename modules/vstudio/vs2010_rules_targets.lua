@@ -458,7 +458,7 @@
 
 		p.w('<WriteLinesToFile')
 		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(IntDir)$(ProjectName).read.1.tlog"')
+		p.w('  File="$(TLogLocation)%s.read.1.tlog"', r.name)
 		p.w('  Lines="^%%(%s_tlog.Inputs);%s$(MSBuildProjectFullPath);%%(%s_tlog.Fullpath)" />', r.name, extra, r.name)
 	end
 
@@ -467,7 +467,7 @@
 	function m.tlogWrite(r)
 		p.w('<WriteLinesToFile')
 		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(IntDir)$(ProjectName).write.1.tlog"')
+		p.w('  File="$(TLogLocation)%s.write.1.tlog"', r.name)
 		p.w('  Lines="^%%(%s_tlog.Source);%%(%s_tlog.Fullpath)" />', r.name, r.name)
 	end
 

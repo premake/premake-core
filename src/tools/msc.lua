@@ -38,7 +38,6 @@
 		flags = {
 			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
-			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
 			OmitDefaultLibrary = "/Zl"
 		},
@@ -99,7 +98,14 @@
 		},
 		symbols = {
 			On = "/Z7"
+		},
+		unsignedchar = {
+			On = "/J",
+		},
+		omitframepointer = {
+			On = "/Oy"
 		}
+
 	}
 
 	msc.cflags = {

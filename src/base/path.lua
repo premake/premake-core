@@ -252,6 +252,15 @@
 
 
 --
+-- Returns true if the filename represents a hlsl shader file.
+--
+
+	function path.ishlslfile(fname)
+		return path.hasextension(fname, ".hlsl")
+	end
+
+
+--
 -- Takes a path which is relative to one location and makes it relative
 -- to another location instead.
 --

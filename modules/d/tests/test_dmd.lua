@@ -76,7 +76,7 @@
 	end
 
 	function suite.dmd_imports()
-		includedirs { "dir1", "dir2/" }
+		importdirs { "dir1", "dir2/" }
 		prepare_cfg({ m.make.imports })
 		test.capture [[
   IMPORTS += -Idir1 -Idir2
@@ -86,7 +86,7 @@
 	function suite.dmd_dFlags()
 		prepare_cfg({ m.make.dFlags })
 		test.capture [[
-  ALL_DFLAGS += $(DFLAGS) -release $(VERSIONS) $(DEBUG) $(IMPORTS) $(ARCH)
+  ALL_DFLAGS += $(DFLAGS) -release $(VERSIONS) $(DEBUG) $(IMPORTS) $(STRINGIMPORTS) $(ARCH)
 		]]
 	end
 

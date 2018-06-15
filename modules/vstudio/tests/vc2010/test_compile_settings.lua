@@ -239,18 +239,6 @@
 		]]
 	end
 
-	function suite.omitFrames_onNoFramePointer()
-		flags "NoFramePointer"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<OmitFramePointers>true</OmitFramePointers>
-		]]
-	end
-
 
 --
 -- If defines are specified, the <PreprocessorDefinitions> element should be added.
@@ -272,7 +260,7 @@
 --	If defines are specified with escapable characters, they should be escaped.
 --
 
-	function suite.preprocessorDefinitions_onDefines()
+	function suite.preprocessorDefinitions_onDefinesWithEscapeCharacters()
 		p.escaper(p.vstudio.vs2010.esc)
 		defines { "&", "<", ">" }
 		prepare()
@@ -489,8 +477,32 @@
 		]]
 	end
 
+
+--
+-- Check handling of the explicitly disabling symbols.
+-- Note: VS2013 and older have a bug with setting
+-- DebugInformationFormat to None. The workaround
+-- is to leave the field blank.
+--
 	function suite.onNoSymbols()
-		symbols "Off"
+		symbols 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat></DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+--
+-- VS2015 and newer can use DebugInformationFormat None.
+--
+	function suite.onNoSymbolsVS2015()
+		symbols 'Off'
+		p.action.set("vs2015")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -498,7 +510,6 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>None</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
-</ClCompile>
 		]]
 	end
 
@@ -850,42 +861,6 @@
 
 
 --
--- Check handling of the explicitly disabling symbols.
--- Note: VS2013 and older have a bug with setting
--- DebugInformationFormat to None. The workaround
--- is to leave the field blank.
---
-	function suite.onNoSymbols()
-		symbols 'Off'
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<DebugInformationFormat></DebugInformationFormat>
-	<Optimization>Disabled</Optimization>
-		]]
-	end
-
-
---
--- VS2015 and newer can use DebugInformationFormat None.
---
-	function suite.onNoSymbolsVS2015()
-		symbols 'Off'
-		p.action.set("vs2015")
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<DebugInformationFormat>None</DebugInformationFormat>
-	<Optimization>Disabled</Optimization>
-		]]
-	end
-
-
---
 -- Check handling of the stringpooling api
 --
 	function suite.onStringPoolingOff()
@@ -1195,7 +1170,189 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpp17</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2010()
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2015()
+		p.action.set("vs2015")
+
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2017()
+		p.action.set("vs2017")
+
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpplatest</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check StaticLib SymbolsPath
+--
+
+	function suite.generateProgramDataBaseFileName_onStaticLib()
+		kind "StaticLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+	<ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+</ClCompile>
+		]]
+	end
+
+	function suite.generateNotProgramDataBaseFileName_onSharedLib()
+		kind "SharedLib"
+
+		symbols "On"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check UnsignedChar.
+--
+
+	function suite.unsignedChar_On()
+		unsignedchar "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/J %(AdditionalOptions)</AdditionalOptions>
+</ClCompile>
+		]]
+	end
+
+	function suite.unsignedChar_Off()
+		unsignedchar "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check StructMemberAlignment
+--
+
+	function suite.structMemberAlignment()
+		structmemberalign(1)
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<StructMemberAlignment>1Byte</StructMemberAlignment>
+</ClCompile>
+		]]
+	end
+
+--
+-- Check OmitFramePointer
+--
+
+	function suite.omitFramePointer_Default()
+		omitframepointer "Default"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.omitFramePointer_On()
+		omitframepointer "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>true</OmitFramePointers>
+</ClCompile>
+		]]
+	end
+
+	function suite.omitFramePointer_Off()
+		omitframepointer "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>false</OmitFramePointers>
+</ClCompile>
+		]]
+	end
+
+	function suite.omitFramePointer_DeprecationFlag()
+		flags "NoFramePointer"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OmitFramePointers>true</OmitFramePointers>
 </ClCompile>
 		]]
 	end

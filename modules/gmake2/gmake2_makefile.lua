@@ -15,7 +15,7 @@
 	local fileconfig = p.fileconfig
 
 ---
--- Add namespace for element definition lists for p.callarray()
+-- Add namespace for element definition lists for p.callArray()
 ---
 	makefile.elements = {}
 
@@ -34,7 +34,7 @@
 
 	function makefile.generate(prj)
 		p.eol("\n")
-		p.callarray(make, makefile.elements.makefile, prj)
+		p.callArray(makefile.elements.makefile, prj)
 	end
 
 
@@ -64,7 +64,7 @@
 				_x('else ifeq ($(config),%s)', cfg.shortname)
 			end
 
-			p.callarray(make, makefile.elements.configuration, cfg, toolset)
+			p.callArray(makefile.elements.configuration, cfg, toolset)
 			_p('')
 		end
 

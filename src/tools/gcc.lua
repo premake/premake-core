@@ -42,7 +42,6 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			LinkTimeOptimization = "-flto",
-			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
 			UndefinedIdentifiers = "-Wundef",
 		},
@@ -90,12 +89,20 @@
 			RDRND = "-mrdrnd",
 		},
 		warnings = {
-			Extra = "-Wall -Wextra",
+			Extra = {"-Wall", "-Wextra"},
 			High = "-Wall",
 			Off = "-w",
 		},
 		symbols = {
 			On = "-g"
+		},
+		unsignedchar = {
+			On = "-funsigned-char",
+			Off = "-fno-unsigned-char"
+		},
+		omitframepointer = {
+			On = "-fomit-frame-pointer",
+			Off = "-fno-omit-frame-pointer"
 		}
 	}
 
@@ -164,6 +171,15 @@
 		},
 		rtti = {
 			Off = "-fno-rtti"
+		},
+		visibility = {
+			Default = "-fvisibility=default",
+			Hidden = "-fvisibility=hidden",
+			Internal = "-fvisibility=internal",
+			Protected = "-fvisibility=protected",
+		},
+		inlinesvisibility = {
+			Hidden = "-fvisibility-inlines-hidden"
 		}
 	}
 

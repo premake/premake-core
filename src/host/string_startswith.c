@@ -15,7 +15,7 @@ int string_startswith(lua_State* L)
 
 	if (haystack && needle)
 	{
-		int nlen = strlen(needle);
+		size_t nlen = strlen(needle);
 		lua_pushboolean(L, strncmp(haystack, needle, nlen) == 0);
 		return 1;
 	}

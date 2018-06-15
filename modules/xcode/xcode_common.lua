@@ -79,6 +79,20 @@
 
 		return false
 	end
+
+--
+-- Return 'explicitFileType' if the given file is being set with 'compileas'
+--
+
+	function xcode.getfiletypekey(node, cfg)
+		if node.configs then
+			local filecfg = fileconfig.getconfig(node, cfg)
+			if filecfg and filecfg["compileas"] then
+				return "explicitFileType"
+			end
+		end
+		return "lastKnownFileType"
+	end
 --
 -- Return the Xcode type for a given file, based on the file extension.
 --
@@ -93,7 +107,11 @@
 		if node.configs then
 			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
-				if filecfg.language == "ObjC" then
+				if p.languages.isc(filecfg.compileas) then
+					return "sourcecode.c.c"
+				elseif p.languages.iscpp(filecfg.compileas) then
+					return "sourcecode.cpp.cpp"
+				elseif filecfg.language == "ObjC" then
 					return "sourcecode.c.objc"
 				elseif 	filecfg.language == "ObjCpp" then
 					return "sourcecode.cpp.objcpp"
@@ -431,9 +449,10 @@
 
 				-- is this the product node, describing the output target?
 				if node.kind == "product" then
+					local name = iif(tr.project.kind ~= "ConsoleApp", node.name, node.cfg.buildtarget.prefix .. node.cfg.buildtarget.basename)
 					settings[node.id] = function(level)
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-							node.id, node.name, xcode.gettargettype(node), stringifySetting(node.name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
+							node.id, node.name, xcode.gettargettype(node), stringifySetting(name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
 					end
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
@@ -494,8 +513,8 @@
 						end
 						--end
 						end
-						_p(level,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = %s; path = %s; sourceTree = %s; };',
-							node.id, node.name, xcode.getfiletype(node, cfg), stringifySetting(node.name), stringifySetting(pth), stringifySetting(src))
+						_p(level,'%s /* %s */ = {isa = PBXFileReference; %s = %s; name = %s; path = %s; sourceTree = %s; };',
+							node.id, node.name, xcode.getfiletypekey(node, cfg), xcode.getfiletype(node, cfg), stringifySetting(node.name), stringifySetting(pth), stringifySetting(src))
 					end
 				end
 			end
@@ -892,11 +911,15 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		--[[if cfg.targetextension then
+		if cfg.kind ~= "ConsoleApp" and cfg.targetextension then
 			local ext = cfg.targetextension
 			ext = iif(ext:startswith('.'), ext:sub(2), ext)
-			settings['EXECUTABLE_EXTENSION'] = ext
-		end]]
+			if cfg.kind == "WindowedApp" and ext ~= "app" then
+				settings['WRAPPER_EXTENSION'] = ext
+			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
+				settings['EXECUTABLE_EXTENSION'] = ext
+			end
+		end
 
 		local outdir = path.getrelative(tr.project.location, path.getdirectory(cfg.buildtarget.relpath))
 		if outdir ~= "." then
@@ -1009,7 +1032,7 @@
 	xcode.cppLanguageStandards = {
 		["Default"] = "compiler-default",  -- explicit compiler default
 		["C++98"] = "c++98",
-		["C++11"] = "c++0x",      -- Xcode project GUI uses c++0x, but c++11 also works
+		["C++11"] = "c++11",
 		["C++14"] = "c++14",
 		["C++17"] = "c++1z",
 		["gnu++98"] = "gnu++98",
@@ -1095,6 +1118,10 @@
 
 		settings["GCC_SYMBOLS_PRIVATE_EXTERN"] = 'NO'
 
+		if cfg.unsignedchar ~= nil then
+			settings['GCC_CHAR_IS_UNSIGNED_CHAR'] = iif(cfg.unsignedchar, "YES", "NO")
+		end
+
 		if cfg.flags.FatalWarnings then
 			settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'YES'
 		end
@@ -1134,9 +1161,9 @@
 
 		-- build list of "other" C/C++ flags
 		local checks = {
-			["-ffast-math"]          = cfg.floatingpoint == "Fast",
-			["-ffloat-store"]        = cfg.floatingpoint == "Strict",
-			["-fomit-frame-pointer"] = cfg.flags.NoFramePointer,
+			["-ffast-math"]             = cfg.floatingpoint == "Fast",
+			["-fomit-frame-pointer"]    = cfg.omitframepointer == "On",
+			["-fno-omit-frame-pointer"] = cfg.omitframepointer == "Off",
 		}
 
 		local flags = { }
