@@ -545,7 +545,7 @@
 		_p('')
 	end
 
-	local function makeVarName(prj, value, saltValue)
+	function cpp.makeVarName(prj, value, saltValue)
 		prj._gmake = prj._gmake or {}
 		prj._gmake.varlist = prj._gmake.varlist or {}
 		prj._gmake.varlistlength = prj._gmake.varlistlength or 0
@@ -590,7 +590,7 @@
 
 		if #value > 0 then
 			local newPerFileFlag = false
-			fcfg.flagsVariable, newPerFileFlag = makeVarName(cfg.project, value, iif(isCFile, '_C', '_CPP'))
+			fcfg.flagsVariable, newPerFileFlag = cpp.makeVarName(cfg.project, value, iif(isCFile, '_C', '_CPP'))
 			if newPerFileFlag then
 				if isCFile then
 					_p('%s = $(ALL_CFLAGS)%s', fcfg.flagsVariable, value)
