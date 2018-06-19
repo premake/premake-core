@@ -41,26 +41,48 @@
 		-- Determine the build action for the file, falling back to the file
 		-- extension if no explicit action is available.
 
-		if fcfg.buildaction == "Compile" or ext == ".cs" or ext == ".fs" then
-			info.action = "Compile"
-		elseif fcfg.buildaction == "Embed" or ext == ".resx" then
-			info.action = "EmbeddedResource"
-		elseif fcfg.buildaction == "Copy" or ext == ".asax" or ext == ".aspx" or ext == ".dll" or ext == ".tt" then
-			info.action = "Content"
-		elseif fcfg.buildaction == "Resource" then
-			info.action = "Resource"
-		elseif ext == ".xaml" then
-			if fcfg.buildaction == "Application" or path.getbasename(fname) == "App" then
-				if fcfg.project.kind == p.SHAREDLIB then
-					info.action = "None"
-				else
-					info.action = "ApplicationDefinition"
-				end
-			else
-				info.action = "Page"
-			end
-		else
-			info.action = "None"
+		local actionMap = {
+			Compile = "Compile",
+			Embed = "EmbeddedResource",
+			Copy = "Content",
+			Resource = "Resource",
+			None = "None",
+			Application =	function(prj)
+								if prj.kind == p.SHAREDLIB then
+									return "None"
+								end
+								return "ApplicationDefinition"
+							end,
+
+			-- support direct-map since the new buildaction api definition allows it
+			ApplicationDefinition = "ApplicationDefinition",
+			EmbeddedResource = "EmbeddedResource",
+			Content = "Content",
+			Page = "Page",
+		}
+		local extensionMap = {
+			[".cs"] = "Compile",
+			[".fs"] = "Compile",
+			[".resx"] = "EmbeddedResource",
+			[".asax"] = "Content",
+			[".aspx"] = "Content",
+			[".dll"] = "Content",
+			[".tt"] = "Content",
+			[".xaml"] =	function(prj, fname)
+							if path.getbasename(fname) == "App" then
+								if prj.kind == p.SHAREDLIB then
+									return "None"
+								end
+								return "ApplicationDefinition"
+							end
+							return "Page"
+						end
+		}
+
+		-- check for buildaction
+		info.action = actionMap[fcfg.buildaction] or extensionMap[ext] or "None"
+		if type(info.action) == "function" then
+			info.action = info.action(fcfg.project, fname)
 		end
 
 		-- Try to work out any subtypes, based on the files in the project
