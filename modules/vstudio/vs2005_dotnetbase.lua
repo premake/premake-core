@@ -132,7 +132,11 @@
 					"DesignTimeSharedInput",
 					"Generator",
 					"LastGenOutput",
+					"ResourceName",
+					"MergeWithCTO",
+					"ManifestResourceName",
 					"SubType",
+					"IncludeInVSIX"
 				}
 
 				for _, el in ipairs(elements) do

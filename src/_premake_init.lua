@@ -205,6 +205,18 @@
 	}
 
 	api.register {
+		name = "copytooutputdirectory",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Never",
+			"Always",
+			"PreserveNewest"
+		}
+	}
+
+	api.register {
 		name = "debugargs",
 		scope = "config",
 		kind = "list:string",
@@ -540,6 +552,17 @@
 	}
 
 	api.register {
+		name = "includeinvsix",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.register {
 		name = "inlining",
 		scope = "config",
 		kind = "string",
@@ -834,6 +857,23 @@
 	}
 
 	api.register {
+		name = "mergewithcto",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.register {
+		name = "manifestresourcename",
+		scope = "config",
+		kind = "string"
+	}
+
+	api.register {
 		name = "namespace",
 		scope = "project",
 		kind = "string",
@@ -884,6 +924,12 @@
 			"Speed",
 			"Full",
 		}
+	}
+
+	api.register {
+		name = "resourcename",
+		scope = "config",
+		kind = "string"
 	}
 
 	api.register {

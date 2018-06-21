@@ -43,8 +43,8 @@
 
 		local actionMap = {
 			Compile = "Compile",
+			Copy = "Copy",
 			Embed = "EmbeddedResource",
-			Copy = "Content",
 			Resource = "Resource",
 			None = "None",
 			Application =	function(prj)
@@ -63,11 +63,14 @@
 		local extensionMap = {
 			[".cs"] = "Compile",
 			[".fs"] = "Compile",
+			[".vsct"] = "VSCTCompile",
 			[".resx"] = "EmbeddedResource",
 			[".asax"] = "Content",
 			[".aspx"] = "Content",
 			[".dll"] = "Content",
 			[".tt"] = "Content",
+			-- TODO: svcmap: DependentOn
+			-- TODO: xsd: SubType = Designer
 			[".xaml"] =	function(prj, fname)
 							if path.getbasename(fname) == "App" then
 								if prj.kind == p.SHAREDLIB then
@@ -160,11 +163,24 @@
 			if fcfg.flags and fcfg.flags.Component then
 				info.SubType = "Component"
 			end
+		end
 
+		if info.action == "VSCTCompile" and fname:endswith(".vsct") then
+			info.Generator = nil
+			info.ResourceName = "Menus.ctmenu"
+			info.SubType = "Designer"
 		end
 
 		if info.action == "Content" then
-			info.CopyToOutputDirectory = "PreserveNewest"
+			if fcfg.copytooutputdirectory ~= nil and fcfg.copytooutputdirectory ~= "Default" then
+				info.CopyToOutputDirectory = fcfg.copytooutputdirectory
+			end
+
+			if fcfg.includeinvsix == "On" then
+				info.IncludeInVSIX = "True"
+			elseif fcfg.includeinvsix == "Off" then
+				info.IncludeInVSIX = "False"
+			end
 		end
 
 		if info.action == "EmbeddedResource" and fname:endswith(".resx") then
@@ -195,6 +211,15 @@
 				end
 			end
 
+			if fcfg.mergewithcto == "On" then
+				info.MergeWithCTO = "True"
+			elseif fcfg.mergewithcto == "Off" then
+				info.MergeWithCTO = "False"
+			end
+
+			if fcfg.manifestresourcename ~= nil then
+				info.ManifestResourceName = fcfg.manifestresourcename
+			end
 		end
 
 		if info.action == "None" and fname:endswith(".settings") then
@@ -228,6 +253,11 @@
 			if project.hasfile(fcfg.project, testname) then
 				info.DependentUpon = testname
 			end
+		end
+
+		if info.action == "Copy" then
+			info.action = "Content"
+			info.CopyToOutputDirectory = "PreserveNewest"
 		end
 
 		if fname:endswith(".xaml") then

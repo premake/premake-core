@@ -200,6 +200,55 @@
 -- Test build actions.
 --
 
+	function suite.content()
+		files { "Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		prepare()
+		test.capture [[
+		<Content Include="Hello.txt" />
+		]]
+	end
+
+	function suite.content_PreserveNewest()
+		files { "Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		copytooutputdirectory "PreserveNewest"
+		prepare()
+		test.capture [[
+		<Content Include="Hello.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
+	function suite.content_Always()
+		files { "Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		copytooutputdirectory "Always"
+		prepare()
+		test.capture [[
+		<Content Include="Hello.txt">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
+	function suite.content_Never()
+		files { "Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		copytooutputdirectory "Never"
+		prepare()
+		test.capture [[
+		<Content Include="Hello.txt">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
 	function suite.copyAction()
 		files { "Hello.txt" }
 		filter "files:**.txt"
@@ -303,6 +352,48 @@
 		<Content Include="..\Resources\Hello.txt">
 			<Link>Resources\Hello.txt</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
+	function suite.usesLinkInFolder_onExternalContentPreserveNewest()
+		files { "../Resources/Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		copytooutputdirectory "PreserveNewest"
+		prepare()
+		test.capture [[
+		<Content Include="..\Resources\Hello.txt">
+			<Link>Resources\Hello.txt</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
+	function suite.usesLinkInFolder_onExternalContentAlwaysCopy()
+		files { "../Resources/Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		copytooutputdirectory "Always"
+		prepare()
+		test.capture [[
+		<Content Include="..\Resources\Hello.txt">
+			<Link>Resources\Hello.txt</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		]]
+	end
+
+	function suite.usesLinkInFolder_onExternalContentNeverCopy()
+		files { "../Resources/Hello.txt" }
+		filter "files:**.txt"
+		buildaction "Content"
+		copytooutputdirectory "Never"
+		prepare()
+		test.capture [[
+		<Content Include="..\Resources\Hello.txt">
+			<Link>Resources\Hello.txt</Link>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 		]]
 	end
