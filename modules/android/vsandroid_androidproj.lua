@@ -152,14 +152,17 @@
 	end)
 
 	function android.link(cfg, file)
-		local fname = path.translate(file.relpath)
-
+		-- default the seperator to '/' as that is what is searched for
+		-- below. Otherwise the function will use target seperator which
+		-- could be '\\' and result in failure to create links.
+		local fname = path.translate(file.relpath, '/')
+		
 		-- Files that live outside of the project tree need to be "linked"
 		-- and provided with a project relative pseudo-path. Check for any
 		-- leading "../" sequences and, if found, remove them and mark this
 		-- path as external.
 		local link, count = fname:gsub("%.%.%/", "")
-		local external = (count > 0) or fname:find(':', 1, true)
+		local external = (count > 0) or fname:find(':', 1, true) or (file.vpath and file.vpath ~= file.relpath)
 
 		-- Try to provide a little bit of flexibility by allowing virtual
 		-- paths for external files. Would be great to support them for all
