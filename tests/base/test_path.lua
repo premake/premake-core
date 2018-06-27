@@ -677,6 +677,11 @@
 		test.isequal("../../p1/p2/p3/p4/a.pb.cc", p)
 	end
 
+	function suite.normalize_trailingSingleDot()
+		local p = path.normalize("../../p1/p2/p3/p4/./.")
+		test.isequal("../../p1/p2/p3/p4", p)
+	end
+
 	function suite.normalize()
 		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
 		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))
