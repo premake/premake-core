@@ -72,6 +72,18 @@
 		test.contains("/Oy", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onOmitFramePointer()
+		omitframepointer "On"
+		prepare()
+		test.contains("/Oy", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onNoOmitFramePointers()
+		omitframepointer "Off"
+		prepare()
+		test.excludes("/Oy", msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_onLinkTimeOptimizations()
 		flags "LinkTimeOptimization"
 		prepare()
@@ -157,6 +169,25 @@
 		symbols "On"
 		prepare()
 		test.contains({ "/Z7" }, msc.getcflags(cfg))
+	end
+
+
+--
+-- Check the translation of unsignedchar.
+--
+
+	function suite.sharedflags_onUnsignedCharOn()
+		unsignedchar "On"
+		prepare()
+		test.contains({ "/J" }, msc.getcflags(cfg))
+		test.contains({ "/J" }, msc.getcxxflags(cfg))
+	end
+
+	function suite.sharedflags_onUnsignedCharOff()
+		unsignedchar "Off"
+		prepare()
+		test.excludes({ "/J" }, msc.getcflags(cfg))
+		test.excludes({ "/J" }, msc.getcxxflags(cfg))
 	end
 
 

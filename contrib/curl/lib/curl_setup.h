@@ -86,6 +86,11 @@
 #  include "config-linux.h"
 #endif
 
+#if defined(__sun__) && defined(__svr4__)
+#  include "config-linux.h"
+#  undef HAVE_IOCTL_SIOCGIFADDR
+#endif
+
 #ifdef __APPLE__ && __MACH__
 #  include "config-osx.h"
 #endif

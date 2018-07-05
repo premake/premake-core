@@ -1,0 +1,41 @@
+#!/usr/bin/env lua
+
+require"socket"
+
+port = 8765
+
+function options(o)
+    print("options for", o)
+
+    for _, opt in ipairs{"keepalive", "reuseaddr", "tcp-nodelay"} do
+        print("getoption", opt, o:getoption(opt))
+    end
+
+    print("getoption", "linger",
+        "on", o:getoption("linger").on,
+        "timeout", o:getoption("linger").timeout)
+end
+
+local m = socket.tcp()
+
+options(m)
+
+assert(m:bind("*", port))
+assert(m:listen())
+
+options(m)
+
+m:close()
+
+local m = socket.bind("*", port)
+
+options(m)
+
+local c = socket.connect("localhost", port)
+
+options(c)
+
+local s = m:accept()
+
+options(s)
+

@@ -212,25 +212,45 @@
 
 	dmd.dflags = {
 		architecture = {
-			x86 = "-m32",
+			x86 = "-m32mscoff",
 			x86_64 = "-m64",
 		},
 		flags = {
-			CodeCoverage	= "-cov",
-			Deprecated		= "-d",
-			Documentation	= "-D",
-			FatalWarnings	= "-w",
-			GenerateHeader	= "-H",
-			GenerateJSON	= "-X",
-			GenerateMap		= "-map",
-			NoBoundsCheck	= "-noboundscheck",
-			Profile			= "-profile",
-			Quiet			= "-quiet",
---			Release			= "-release",
-			RetainPaths		= "-op",
-			SymbolsLikeC	= "-gc",
-			UnitTest		= "-unittest",
-			Verbose			= "-v",
+			OmitDefaultLibrary		= "-mscrtlib=",
+			CodeCoverage			= "-cov",
+			Documentation			= "-D",
+			FatalWarnings			= "-w",
+			GenerateHeader			= "-H",
+			GenerateJSON			= "-X",
+			GenerateMap				= "-map",
+			Profile					= "-profile",
+			Quiet					= "-quiet",
+--			Release					= "-release",
+			RetainPaths				= "-op",
+			SymbolsLikeC			= "-gc",
+			UnitTest				= "-unittest",
+			Verbose					= "-v",
+			ProfileGC				= "-profile=gc",
+			StackFrame				= "-gs",
+			StackStomp				= "-gx",
+			AllTemplateInst			= "-allinst",
+			BetterC					= "-betterC",
+			Main					= "-main",
+			PerformSyntaxCheckOnly	= "-o-",
+			ShowTLS					= "-vtls",
+			ShowGC					= "-vgc",
+			IgnorePragma			= "-ignore",
+			ShowDependencies		= "-deps",
+		},
+		boundscheck = {
+			Off = "-boundscheck=off",
+			On = "-boundscheck=on",
+			SafeOnly = "-boundscheck=safeonly",
+		},
+		deprecatedfeatures = {
+			Allow = "-d",
+			Warn = "-dw",
+			Error = "-de",
 		},
 		floatingpoint = {
 			None = "-nofloat",
@@ -246,10 +266,13 @@
 		},
 		warnings = {
 			Default = "-wi",
+			High = "-wi",
 			Extra = "-wi",
 		},
 		symbols = {
 			On = "-g",
+			FastLink = "-g",
+			Full = "-g",
 		}
 	}
 
@@ -262,7 +285,30 @@
 			table.insert(flags, "-release")
 		end
 
-		-- TODO: When DMD gets CRT options, map StaticRuntime and DebugRuntime
+		if not cfg.flags.OmitDefaultLibrary then
+			local releaseruntime = not config.isDebugBuild(cfg)
+			local staticruntime = true
+			if cfg.staticruntime == "Off" then
+				staticruntime = false
+			end
+			if cfg.runtime == "Debug" then
+				releaseruntime = false
+			elseif cfg.runtime == "Release" then
+				releaseruntime = true
+			end
+
+			if (cfg.staticruntime and cfg.staticruntime ~= "Default") or (cfg.runtime and cfg.runtime ~= "Default") then
+				if staticruntime == true and releaseruntime == true then
+					table.insert(flags, "-mscrtlib=libcmt")
+				elseif staticruntime == true and releaseruntime == false then
+					table.insert(flags, "-mscrtlib=libcmtd")
+				elseif staticruntime == false and releaseruntime == true then
+					table.insert(flags, "-mscrtlib=msvcrt")
+				elseif staticruntime == false and releaseruntime == false then
+					table.insert(flags, "-mscrtlib=msvcrtd")
+				end
+			end
+		end
 
 		if cfg.flags.Documentation then
 			if cfg.docname then
@@ -326,6 +372,20 @@
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-I' .. p.quoted(dir))
+		end
+		return result
+	end
+
+
+--
+-- Decorate string import file search paths for the DMD command line.
+--
+
+	function dmd.getstringimportdirs(cfg, dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-J' .. p.quoted(dir))
 		end
 		return result
 	end

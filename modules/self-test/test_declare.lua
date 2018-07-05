@@ -36,7 +36,19 @@
 			error('Duplicate test suite "'.. suiteName .. '"', 2)
 		end
 
-		local suite = {}
+		local _suite = {}
+		-- Setup a metatable for the test suites to use, this will catch duplicate tests
+		local suite = setmetatable({}, {
+			__index = _suite,
+			__newindex = function (table, key, value)
+				if m.detectDuplicateTests and _suite[key] ~= nil then
+					error('Duplicate test "'.. key .. '"', 2)
+				end
+				_suite[key] = value
+			end,
+			__pairs = function (table) return pairs(_suite) end,
+			__ipairs = function (table) return ipairs(_suite) end,
+		})
 
 		suite._SCRIPT_DIR = _SCRIPT_DIR
 		suite._TESTS_DIR = _TESTS_DIR

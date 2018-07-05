@@ -2,15 +2,18 @@ os: Visual Studio 2015
 
 platform:
   - Win32
+  - x64
+
+configuration:
+  - Debug
+  - Release
 
 before_build:
   - cmd: git clean -ffxd
-  - cmd: git submodule sync
-  - cmd: git submodule update --init
 
 build_script:
   - cmd: call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat"
-  - cmd: nmake -f Bootstrap.mak MSDEV=vs2015 windows
+  - cmd: nmake -f Bootstrap.mak MSDEV=vs2015 windows PLATFORM=%PLATFORM% CONFIG=%CONFIGURATION%
 
 test_script:
-  - cmd: bin\release\premake5 test
+  - cmd: bin\%CONFIGURATION%\premake5 test

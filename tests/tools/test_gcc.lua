@@ -77,7 +77,7 @@
 	function suite.cflags_onExtraWarnings()
 		warnings "extra"
 		prepare()
-		test.contains({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+		test.contains({ "-Wall", "-Wextra" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onHighWarnings()
@@ -319,7 +319,6 @@
 		prepare()
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
-
 
 --
 -- Check the basic translation of LDFLAGS for a Posix system.
@@ -787,4 +786,102 @@
 		prepare()
 		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test unsigned-char flags.
+--
+
+	function suite.sharedflags_onUnsignedChar()
+		unsignedchar "On"
+
+		prepare()
+		test.contains({ "-funsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-funsigned-char" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoUnsignedChar()
+		unsignedchar "Off"
+
+		prepare()
+		test.contains({ "-fno-unsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-unsigned-char" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test omit-frame-pointer flags.
+--
+
+	function suite.sharedflags_onOmitFramePointerDefault()
+		omitframepointer "Default"
+
+		prepare()
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onOmitFramePointer()
+		omitframepointer "On"
+
+		prepare()
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoOmitFramePointer()
+		omitframepointer "Off"
+
+		prepare()
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test visibility.
+--
+
+	function suite.cxxflags_onVisibilityDefault()
+		visibility "Default"
+		prepare()
+		test.excludes({ "-fvisibility=default" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=default" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityHidden()
+		visibility "Hidden"
+		prepare()
+		test.excludes({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityInternal()
+		visibility "Internal"
+		prepare()
+		test.excludes({ "-fvisibility=internal" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=internal" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityProtected()
+		visibility "Protected"
+		prepare()
+		test.excludes({ "-fvisibility=protected" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=protected" }, gcc.getcxxflags(cfg))
+	end
+
+--
+-- Test inlines visibility flags.
+--
+
+	function suite.cxxflags_onInlinesVisibilityDefault()
+		inlinesvisibility "Default"
+		prepare()
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onInlinesVisibilityHidden()
+		inlinesvisibility "Hidden"
+		prepare()
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
 	end

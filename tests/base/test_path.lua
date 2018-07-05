@@ -116,7 +116,7 @@
 		test.istrue(path.hasdeferredjoin("p1|%{foo}"))
 	end
 
-	function suite.deferred_join_OnValidParts()
+	function suite.has_deferred_join_false()
 		test.isfalse(path.hasdeferredjoin("p1/p2"))
 	end
 

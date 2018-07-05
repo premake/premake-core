@@ -73,3 +73,20 @@ PERFILE_FLAGS_1 = $(ALL_CXXFLAGS) -msse -msse2 -mfpmath=sse,387
 PERFILE_FLAGS_2 = $(ALL_CFLAGS) -msse -msse2 -mfpmath=sse,387 -msse3 -mssse3 -msse4.1 -maes
 		]]
 	end
+
+	function suite.perfile_cxxApi()
+		files { 'a.cpp', 'b.cpp', 'c.cpp' }
+
+		visibility "Hidden"
+
+		filter { 'files:b.cpp' }
+			visibility "Protected"
+
+		prepare()
+		test.capture [[
+# Per File Configurations
+# #############################################
+
+PERFILE_FLAGS_0 = $(ALL_CXXFLAGS) -fvisibility=protected
+		]]
+	end

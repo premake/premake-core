@@ -231,6 +231,8 @@
 
 	utility.elements.configuration = function(cfg)
 		return {
+			utility.bindirs,
+			utility.exepaths,
 			gmake2.settings,
 			gmake2.preBuildCmds,
 			gmake2.preLinkCmds,
@@ -246,6 +248,21 @@
 		gmake2.outputSection(prj, utility.elements.configuration)
 	end
 
+
+	function utility.bindirs(cfg, toolset)
+		local dirs = project.getrelative(cfg.project, cfg.bindirs)
+		if #dirs > 0 then
+			p.outln('EXECUTABLE_PATHS = "' .. table.concat(dirs, ":") .. '"')
+		end
+	end
+
+
+	function utility.exepaths(cfg, toolset)
+		local dirs = project.getrelative(cfg.project, cfg.bindirs)
+		if #dirs > 0 then
+			p.outln('EXE_PATHS = PATH=$(EXECUTABLE_PATHS):$$PATH;')
+		end
+	end
 
 
 --
@@ -294,8 +311,6 @@
 			utility.targetRules,
 			gmake2.targetDirRules,
 			utility.cleanRules,
-			gmake2.preBuildRules,
-			gmake2.preLinkRules,
 		}
 	end
 
@@ -309,7 +324,7 @@
 
 
 	function utility.allRules(cfg, toolset)
-		local allTargets = 'all: $(TARGETDIR) prebuild prelink $(TARGET)'
+		local allTargets = 'all: $(TARGETDIR) $(TARGET)'
 		for _, kind in ipairs(cfg._gmake.kinds) do
 			allTargets = allTargets .. ' $(' .. kind .. ')'
 		end
@@ -327,6 +342,8 @@
 		end
 
 		_p('$(TARGET): %s', targets)
+		_p('\t$(PREBUILDCMDS)')
+		_p('\t$(PRELINKCMDS)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 	end
@@ -365,7 +382,7 @@
 	function utility.outputFileRules(cfg, file)
 		local outputs = table.concat(file.buildoutputs, ' ')
 
-		local dependencies = file.source
+		local dependencies = p.esc(file.source)
 		if file.buildinputs and #file.buildinputs > 0 then
 			dependencies = dependencies .. " " .. table.concat(p.esc(file.buildinputs), " ")
 		end
@@ -379,7 +396,11 @@
 		if file.buildcommands then
 			local cmds = os.translateCommandsAndPaths(file.buildcommands, cfg.project.basedir, cfg.project.location)
 			for _, cmd in ipairs(cmds) do
-				_p('\t$(SILENT) %s', cmd)
+				if cfg.bindirs and #cfg.bindirs > 0 then
+					_p('\t$(SILENT) $(EXE_PATHS) %s', cmd)
+				else
+					_p('\t$(SILENT) %s', cmd)
+				end
 			end
 		end
 	end

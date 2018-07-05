@@ -6,8 +6,8 @@
 #ifndef HEADER_luashim_H
 #define HEADER_luashim_H
 
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 
 // premake specific helper methods.
 void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l);

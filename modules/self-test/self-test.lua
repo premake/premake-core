@@ -37,22 +37,19 @@
 
 
 	function m.executeSelfTest()
+		m.detectDuplicateTests = true
 		m.loadTestsFromManifests()
+		m.detectDuplicateTests = false
 
 		local test, err = m.getTestWithIdentifier(_OPTIONS["test-only"])
 		if err then
 			error(err, 0)
 		end
 
-		local startTime = os.clock()
-
 		local passed, failed = m.runTest(test)
 
-		local elapsed = os.clock() - startTime
-
-		printf("%d tests passed, %d failed in %0.02f seconds", passed, failed, elapsed)
-
 		if failed > 0 then
+			printf("\n %d FAILED TEST%s", failed, iif(failed > 1, "S", ""))
 			os.exit(5)
 		end
 	end

@@ -6,9 +6,40 @@
 
 #include "premake.h"
 
+#if PLATFORM_WINDOWS
+#include <io.h>
+#endif
+
 #if PLATFORM_POSIX
 static int s_currentColor = -1;
 #endif
+
+int canUseColors()
+{
+#if PLATFORM_WINDOWS
+	return _isatty(_fileno(stdout));
+#else
+	return isatty(1);
+#endif
+}
+
+static const char *getenvOrFallback(const char *var, const char *fallback)
+{
+	const char *value = getenv(var);
+	return (value != NULL) ? value : fallback;
+}
+
+static int s_shouldUseColor = -1;
+static int shouldUseColors()
+{
+	if (s_shouldUseColor < 0)
+	{
+		// CLICOLOR* documented at: http://bixense.com/clicolors/
+		s_shouldUseColor = ((getenvOrFallback("CLICOLOR", "1")[0] != '0') && canUseColors())
+			|| getenvOrFallback("CLICOLOR_FORCE", "0")[0] != '0';
+	}
+	return s_shouldUseColor;
+}
 
 int term_doGetTextColor()
 {
@@ -25,12 +56,17 @@ int term_doGetTextColor()
 void term_doSetTextColor(int color)
 {
 #if PLATFORM_WINDOWS
-	if (color >= 0)
+	if (color >= 0 && shouldUseColors())
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)color);
 		SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), (WORD)color);
 	}
 #else
+
+	// Do not output colors e.g. into a pipe, unless forced.
+	if (!shouldUseColors())
+		return;
+
 	s_currentColor = color;
 
 	const char* colorTable[] = 
@@ -54,10 +90,10 @@ void term_doSetTextColor(int color)
 	};
 	if (color >= 0 && color < 16)
 	{
-		puts(colorTable[color]);
+		fputs(colorTable[color], stdout);
 	} else
 	{
-		puts("\x1B[0m");
+		fputs("\x1B[0m", stdout);
 	}
 #endif
 }

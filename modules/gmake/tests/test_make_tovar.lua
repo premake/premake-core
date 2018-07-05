@@ -30,6 +30,6 @@
 -- Remove parenthesis.
 --
 
-	function suite.removesDashes()
+	function suite.removesParenthesis()
 		test.isequal("MyProject_x86", make.tovar("MyProject (x86)"))
 	end
