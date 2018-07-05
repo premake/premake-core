@@ -22,6 +22,7 @@
 			m.computedProperties,
 			m.computeInputsGroup,
 			m.usingTask,
+			m.ruleTLogTarget,
 			m.ruleTarget,
 			m.computeOutputTarget,
 		}
@@ -99,6 +100,40 @@
 
 
 ---
+-- Generate the rule's tlog target element.
+--- 
+
+	m.elements.ruleTLogTargetAttributes = function(r)
+		return {
+			m.tlogTargetName,
+			m.tlogDependsOnTargets,
+		}
+	end
+
+	m.elements.ruleTLogTarget = function(r)
+		return {
+			m.tlog,
+			m.tlogWrite,
+			m.tlogRead,
+		}
+	end
+
+	function m.ruleTLogTarget(r)
+		local attribs = p.capture(function()
+			p.push()
+			p.callArray(m.elements.ruleTLogTargetAttributes, r)
+			p.pop()
+		end)
+
+		p.push('<Target')
+		p.outln(attribs .. '>')
+		p.callArray(m.elements.ruleTLogTarget, r)
+		p.pop('</Target>')
+	end
+
+
+
+---
 -- Generate the rule's target element.
 ---
 
@@ -117,10 +152,7 @@
 	m.elements.ruleTarget = function(r)
 		return {
 			m.selectedFiles,
-			m.tlog,
 			m.message,
-			m.tlogWrite,
-			m.tlogRead,
 			m.rule,
 		}
 	end
@@ -287,8 +319,14 @@
 
 
 
-	function m.dependsOnTargets(r)
+	function m.tlogDependsOnTargets(r)
 		p.w('DependsOnTargets="$(%sDependsOn);Compute%sOutput"', r.name, r.name)
+	end
+
+
+
+	function m.dependsOnTargets(r)
+		p.w('DependsOnTargets="$(%sDependsOn);_%sTLog;Compute%sOutput"', r.name, r.name, r.name)
 	end
 
 
@@ -423,6 +461,12 @@
 
 	function m.targetOutputs(r)
 		p.w('Outputs="%%(%s.Outputs)"', r.name)
+	end
+
+
+
+	function m.tlogTargetName(r)
+		p.w('Name="_%sTLog"', r.name)
 	end
 
 
