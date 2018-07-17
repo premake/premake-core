@@ -70,8 +70,8 @@ static void* normalize_substring(const char* str, const char* endPtr, char* writ
 			}
 		}
 
-		/* add to the result, filtering out duplicate slashes */
-		if (ch != '/' || last != '/') {
+		/* add to the result, filtering out duplicate slashes, except when they are leading slashes */
+		if (str == &source[1] || (ch != '/' || last != '/')) {
 			*(writePtr++) = ch;
 		}
 

@@ -34,6 +34,9 @@ void do_getabsolute(char* result, const char* value, const char* relative_to)
 	result[0] = '\0';
 	if (buffer[0] == '/') {
 		strcat(result, "/");
+		if (buffer[1] == '/') {
+			strcat(result, "/");
+		}
 	}
 
 	prev = NULL;
