@@ -222,6 +222,40 @@ endif
 		]]
 	end
 
+	function suite.customBuildRuleWithAdditionalOutputs()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildmessage "Compiling %{file.name}"
+			buildcommands {
+				'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
+				'c2o -c "%{cfg.objdir}/%{file.basename}.xo" -o "%{cfg.objdir}/%{file.basename}.obj"'
+			}
+			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj", "%{cfg.objdir}/%{file.basename}.other", "%{cfg.objdir}/%{file.basename}.another" }
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+ifeq ($(config),debug)
+obj/Debug/hello.obj: hello.x
+	@echo Compiling hello.x
+	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
+	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
+obj/Debug/hello.other obj/Debug/hello.another: obj/Debug/hello.obj
+
+else ifeq ($(config),release)
+obj/Release/hello.obj: hello.x
+	@echo Compiling hello.x
+	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
+	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
+obj/Release/hello.other obj/Release/hello.another: obj/Release/hello.obj
+
+else
+  $(error "invalid configuration $(config)")
+endif
+		]]
+	end
+
 	function suite.customRuleWithProps()
 
 		rules { "TestRule" }
