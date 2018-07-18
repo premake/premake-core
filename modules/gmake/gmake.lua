@@ -274,12 +274,9 @@
 
 
 	function make.shellType()
-		_p('SHELLTYPE := msdos')
-		_p('ifeq (,$(ComSpec)$(COMSPEC))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
-		_p('  SHELLTYPE := posix')
+		_p('SHELLTYPE := posix')
+		_p('ifeq (.exe,$(findstring .exe,$(ComSpec)))')
+		_p('\tSHELLTYPE := msdos')
 		_p('endif')
 		_p('')
 	end

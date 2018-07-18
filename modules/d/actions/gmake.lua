@@ -154,11 +154,21 @@
 	p.override(cpp, "standardFileRules", function(oldfn, prj, node)
 		-- D file
 		if path.isdfile(node.abspath) then
-			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
-			_p('\t@echo $(notdir $<)')
 			_p('\t$(SILENT) $(DC) $(ALL_DFLAGS) $(OUTPUTFLAG) -c $<')
 		else
 			oldfn(prj, node)
+		end
+	end)
+
+--
+-- Let make know it can compile D source files
+--
+
+	p.override(make, "fileType", function(oldfn, node)
+		if path.isdfile(node.abspath) then
+			return "objects"
+		else
+			return oldfn(node)
 		end
 	end)
 

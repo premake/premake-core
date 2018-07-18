@@ -69,7 +69,6 @@ return {
 	"vc2010/test_files.lua",
 	"vc2010/test_filter_ids.lua",
 	"vc2010/test_filters.lua",
-	"vc2010/test_imagexex_settings.lua",
 	"vc2010/test_item_def_group.lua",
 	"vc2010/test_link.lua",
 	"vc2010/test_manifest.lua",

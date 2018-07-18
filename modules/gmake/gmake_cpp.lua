@@ -34,6 +34,9 @@
 			make.cppObjects,
 			make.shellType,
 			make.cppTargetRules,
+			make.cppCustomFilesRules,
+			make.cppTargetDirRules,
+			make.cppObjDirRules,
 			make.cppCleanRules,
 			make.preBuildRules,
 			make.preLinkRules,
@@ -43,18 +46,68 @@
 	}
 	end
 
+	-- should be part of the toolset?
+	function make.fileTypeExtensions()
+		return {
+			["objects"] = "o",
+			["resources"] = "res",
+		}
+	end
+
+	-- should be part of the toolset?
+	function make.fileType(node)
+		local kind
+		if path.iscppfile(node.abspath) then
+			kind = "objects"
+		elseif path.isresourcefile(node.abspath) then
+			kind = "resources"
+		end
+
+		return kind
+	end
+
+	function make.fileDependency(prj, node)
+		local filetype = make.fileType(node)
+		_x('$(OBJDIR)/%s.%s: %s', node.objname, make.fileTypeExtensions()[filetype], node.relpath)
+		_p('\t@echo $(notdir $<)')
+	end
+
 	function make.cpp.generate(prj)
 		p.eol("\n")
 		p.callArray(cpp.elements.makefile, prj)
 	end
 
+--
+-- Write out the commands for compiling a file
+--
+
+	cpp.elements.standardFileRules = function(prj, node)
+		return {
+			make.fileDependency,
+			cpp.standardFileRules,
+		}
+	end
+
+	cpp.elements.customFileRules = function(prj, node)
+		return {
+			make.fileDependency,
+			cpp.customFileRules,
+		}
+	end
+
+	cpp.elements.customBuildRules = function(prj, node)
+		return {
+			cpp.customFileRules
+		}
+	end
 
 --
 -- Write out the settings for a particular configuration.
 --
 
-	cpp.elements.configuration = function(cfg)
+	cpp.elements.configuration = function(cfg, toolset)
 		return {
+			make.configBegin,
 			make.cppTools,
 			make.target,
 			make.objdir,
@@ -76,6 +129,7 @@
 			make.postBuildCmds,
 			make.cppAllRules,
 			make.settings,
+			make.configEnd,
 	}
 	end
 
@@ -89,9 +143,7 @@
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
 
-			_x('ifeq ($(config),%s)', cfg.shortname)
 			p.callArray(cpp.elements.configuration, cfg, toolset)
-			_p('endif')
 			_p('')
 		end
 	end
@@ -106,12 +158,32 @@
 	end
 
 --
+-- Return the start of the compilation string that corresponds to the 'compileas' enum if set
+--
+
+	function cpp.compileas(prj, node)
+		local result
+		if node["compileas"] then
+			if p.languages.isc(node.compileas) then
+				result = '$(CC) $(ALL_CFLAGS)'
+			elseif p.languages.iscpp(node.compileas) then
+				result = '$(CXX) $(ALL_CXXFLAGS)'
+			end
+		end
+
+		return result
+	end
+
+--
 -- Build command for a single file.
 --
 
 	function cpp.buildcommand(prj, objext, node)
-		local iscfile = node and path.iscfile(node.abspath) or false
-		local flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
+		local flags = cpp.compileas(prj, node)
+		if not flags then
+			local iscfile = node and path.iscfile(node.abspath) or false
+			flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
+		end
 		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
 	end
 
@@ -129,17 +201,22 @@
 				for cfg in project.eachconfig(prj) do
 					local filecfg = fileconfig.getconfig(node, cfg)
 					if fileconfig.hasCustomBuildRule(filecfg) then
-						rules = true
+						rules = cpp.elements.customBuildRules(prj, node)
+						break
+					end
+
+					if fileconfig.hasFileSettings(filecfg) then
+						rules = cpp.elements.customFileRules(prj, node)
 						break
 					end
 				end
 
-				-- if it has custom rules, need to break them out
-				-- into individual configurations
+				if not rules and make.fileType(node) then
+					rules = cpp.elements.standardFileRules(prj, node)
+				end
+
 				if rules then
-					cpp.customFileRules(prj, node)
-				else
-					cpp.standardFileRules(prj, node)
+					p.callArray(rules, prj, node)
 				end
 			end
 		})
@@ -147,18 +224,13 @@
 	end
 
 	function cpp.standardFileRules(prj, node)
-		-- C/C++ file
-		if path.iscppfile(node.abspath) then
-			_x('$(OBJDIR)/%s.o: %s', node.objname, node.relpath)
-			_p('\t@echo $(notdir $<)')
-			make.mkdir('$(OBJDIR)')
-			cpp.buildcommand(prj, "o", node)
+		local kind = make.fileType(node)
 
+		-- C/C++ file
+		if kind == "objects" then
+			cpp.buildcommand(prj, make.fileTypeExtensions()[kind], node)
 		-- resource file
-		elseif path.isresourcefile(node.abspath) then
-			_x('$(OBJDIR)/%s.res: %s', node.objname, node.relpath)
-			_p('\t@echo $(notdir $<)')
-			make.mkdir('$(OBJDIR)')
+		elseif kind == "resources" then
 			_p('\t$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)')
 		end
 	end
@@ -167,8 +239,9 @@
 		for cfg in project.eachconfig(prj) do
 			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
-				_x('ifeq ($(config),%s)', cfg.shortname)
+				make.configBegin(cfg)
 
+if fileconfig.hasCustomBuildRule(filecfg) then
 				local output = project.getrelative(prj, filecfg.buildoutputs[1])
 				local dependencies = filecfg.relpath
 				if filecfg.buildinputs and #filecfg.buildinputs > 0 then
@@ -186,7 +259,10 @@
 						_p('\t$(SILENT) %s', cmd)
 					end
 				end
-				_p('endif')
+else
+				cpp.standardFileRules(prj, filecfg)
+end
+				make.configEnd(cfg)
 			end
 		end
 	end
@@ -287,7 +363,7 @@
 		for cfg in project.eachconfig(prj) do
 			local files = configs[cfg]
 			if #files.objects > 0 or #files.resources > 0 or #files.customfiles > 0 then
-				_x('ifeq ($(config),%s)', cfg.shortname)
+				make.configBegin(cfg, toolset)
 				if #files.objects > 0 then
 					listobjects('  OBJECTS +=', files.objects)
 				end
@@ -297,7 +373,7 @@
 				if #files.customfiles > 0 then
 					listobjects('  CUSTOMFILES +=', files.customfiles)
 				end
-				_p('endif')
+				make.configEnd(cfg, toolset)
 				_p('')
 			end
 		end
@@ -309,6 +385,18 @@
 -- Handlers for individual makefile elements
 --
 ---------------------------------------------------------------------------
+
+	function make.configBegin(cfg, toolset)
+		if cfg then
+			_x('ifeq ($(config),%s)', cfg.shortname)
+		end
+	end
+
+	function make.configEnd(cfg, toolset)
+		if cfg then
+			_p('endif')
+		end
+	end
 
 	function make.cFlags(cfg, toolset)
 		_p('  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)%s', make.list(table.join(toolset.getcflags(cfg), cfg.buildoptions)))
@@ -363,14 +451,31 @@
 
 
 	function make.cppTargetRules(prj)
-		_p('$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)')
+		_p('$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)')
 		_p('\t@echo Linking %s', prj.name)
-		make.mkdir('$(TARGETDIR)')
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
 	end
 
+	function make.cppCustomFilesRules(prj)
+		_p('$(CUSTOMFILES): | $(OBJDIR)')
+		_p('')
+	end
+
+	function make.cppTargetDirRules(prj)
+		_p('$(TARGETDIR):')
+		_p('\t@echo Creating $(TARGETDIR)')
+		make.mkdir('$(TARGETDIR)')
+		_p('')
+	end
+
+	function make.cppObjDirRules(prj)
+		_p('$(OBJDIR):')
+		_p('\t@echo Creating $(OBJDIR)')
+		make.mkdir('$(OBJDIR)')
+		_p('')
+	end
 
 	function make.cppTools(cfg, toolset)
 		local tool = toolset.gettoolname(cfg, "cc")
@@ -509,14 +614,15 @@
 
 	function make.pchRules(prj)
 		_p('ifneq (,$(PCH))')
-		_p('$(OBJECTS): $(GCH) $(PCH)')
-		_p('$(GCH): $(PCH)')
+		_p('$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR)')
+		_p('$(GCH): $(PCH) | $(OBJDIR)')
 		_p('\t@echo $(notdir $<)')
-		make.mkdir('$(OBJDIR)')
 
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
 		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
 
+		_p('else')
+		_p('$(OBJECTS): | $(OBJDIR)')
 		_p('endif')
 		_p('')
 	end

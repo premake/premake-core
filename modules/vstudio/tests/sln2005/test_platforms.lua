@@ -460,35 +460,6 @@ EndGlobalSection
 	end
 
 
---
--- If the platform identifier matches a system or architecture, omit it
--- from the configuration description.
---
-
-	function suite.onSingleCpp_withPlatformsMatchingArch_noArchs()
-		platforms { "x86", "Xbox360" }
-		project "MyProject"
-		prepare()
-		test.capture [[
-GlobalSection(SolutionConfigurationPlatforms) = preSolution
-	Debug|Win32 = Debug|Win32
-	Debug|Xbox 360 = Debug|Xbox 360
-	Release|Win32 = Release|Win32
-	Release|Xbox 360 = Release|Xbox 360
-EndGlobalSection
-GlobalSection(ProjectConfigurationPlatforms) = postSolution
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.ActiveCfg = Debug|Win32
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.Build.0 = Debug|Win32
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.ActiveCfg = Release|Win32
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Build.0 = Release|Win32
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Xbox 360.Build.0 = Release|Xbox 360
-EndGlobalSection
-		]]
-	end
-
 	function suite.onSingleCs_withPlatformsMatchingArch_noArchs()
 		platforms { "x86", "x86_64" }
 		project "MyProject"

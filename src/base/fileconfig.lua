@@ -100,8 +100,8 @@
 
 		local environ = {}
 		local fsub = context.new(prj, environ)
-		context.copyFilters(fsub, cfg)
-		context.mergeFilters(fsub, fcfg)
+		context.copyFilters(fsub, fcfg)
+		context.mergeFilters(fsub, cfg)
 
 		fcfg.configs[cfg] = fsub
 

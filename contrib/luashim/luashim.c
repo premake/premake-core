@@ -5,7 +5,7 @@
 */
 #include "luashim.h"
 #include <assert.h>
-#include <lstate.h>
+#include "lstate.h"
 
 static const LuaFunctionTable_t* g_shimTable;
 

@@ -225,13 +225,11 @@
 				m.linkIncremental,
 				m.ignoreImportLibrary,
 				m.outDir,
-				m.outputFile,
 				m.intDir,
 				m.targetName,
 				m.targetExt,
 				m.includePath,
 				m.libraryPath,
-				m.imageXexOutput,
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
@@ -307,8 +305,6 @@
 				m.linker,
 				m.manifest,
 				m.buildEvents,
-				m.imageXex,
-				m.deploy,
 				m.ruleVars,
 				m.buildLog,
 			}
@@ -442,7 +438,7 @@
 	end
 
 	function m.resourceCompile(cfg)
-		if cfg.system ~= p.XBOX360 and p.config.hasFile(cfg, path.isresourcefile) then
+		if p.config.hasFile(cfg, path.isresourcefile) then
 			local contents = p.capture(function ()
 				p.push()
 				p.callArray(m.elements.resourceCompile, cfg)
@@ -744,6 +740,7 @@
 						m.basicRuntimeChecks,
 						m.exceptionHandling,
 						m.compileAsManaged,
+						m.compileAs,
 						m.runtimeTypeInfo,
 						m.warningLevelFile,
 					}
@@ -1027,12 +1024,18 @@
 
 
 	function m.categorizeFile(prj, file)
-		-- If any configuration for this file uses a custom build step,
-		-- that's the category to use
 		for cfg in project.eachconfig(prj) do
 			local fcfg = fileconfig.getconfig(file, cfg)
-			if fileconfig.hasCustomBuildRule(fcfg) then
-				return m.categories.CustomBuild
+			if fcfg then
+				-- If any configuration for this file uses a custom build step, that's the category to use
+				if fileconfig.hasCustomBuildRule(fcfg) then
+					return m.categories.CustomBuild
+				end
+
+				-- also check for buildaction
+				if fcfg.buildaction then
+					return m.categories[fcfg.buildaction] or m.categories.None
+				end
 			end
 		end
 
@@ -1545,11 +1548,11 @@
 	end
 
 
-	function m.compileAs(cfg)
+	function m.compileAs(cfg, condition)
 		if p.languages.isc(cfg.compileas) then
-			m.element("CompileAs", nil, "CompileAsC")
+			m.element("CompileAs", condition, "CompileAsC")
 		elseif p.languages.iscpp(cfg.compileas) then
-			m.element("CompileAs", nil, "CompileAsCpp")
+			m.element("CompileAs", condition, "CompileAsCpp")
 		end
 	end
 
@@ -1603,17 +1606,6 @@
 			end
 
 			m.element("DebugInformationFormat", nil, value)
-		end
-	end
-
-
-	function m.deploy(cfg)
-		if cfg.system == p.XBOX360 then
-			p.push('<Deploy>')
-			m.element("DeploymentType", nil, "CopyToHardDrive")
-			m.element("DvdEmulationType", nil, "ZeroSeekTimes")
-			m.element("DeploymentFiles", nil, "$(RemoteRoot)=$(ImagePath);")
-			p.pop('</Deploy>')
 		end
 	end
 
@@ -1838,29 +1830,6 @@
 	function m.ignoreImportLibrary(cfg)
 		if cfg.kind == p.SHAREDLIB and cfg.flags.NoImportLib then
 			m.element("IgnoreImportLibrary", nil, "true")
-		end
-	end
-
-
-	function m.imageXex(cfg)
-		if cfg.system == p.XBOX360 then
-			p.push('<ImageXex>')
-			if cfg.configfile then
-				m.element("ConfigurationFile", nil, "%s", cfg.configfile)
-			else
-				p.w('<ConfigurationFile>')
-				p.w('</ConfigurationFile>')
-			end
-			p.w('<AdditionalSections>')
-			p.w('</AdditionalSections>')
-			p.pop('</ImageXex>')
-		end
-	end
-
-
-	function m.imageXexOutput(cfg)
-		if cfg.system == p.XBOX360 then
-			m.element("ImageXexOutput", nil, "%s", "$(OutDir)$(TargetName).xex")
 		end
 	end
 
@@ -2158,11 +2127,13 @@
 
 
 	function m.windowsSDKDesktopARMSupport(cfg)
-		if cfg.architecture == p.ARM then
-			p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
-		end
-		if cfg.architecture == p.ARM64 then
-			p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
+		if cfg.system == p.WINDOWS then
+			if cfg.architecture == p.ARM then
+				p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
+			end
+			if cfg.architecture == p.ARM64 then
+				p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
+			end
 		end
 	end
 
@@ -2230,13 +2201,6 @@
 	function m.outDir(cfg)
 		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
 		m.element("OutDir", nil, "%s\\", outdir)
-	end
-
-
-	function m.outputFile(cfg)
-		if cfg.system == p.XBOX360 then
-			m.element("OutputFile", nil, "$(OutDir)%s", cfg.buildtarget.name)
-		end
 	end
 
 
@@ -2471,10 +2435,8 @@
 
 
 	function m.subSystem(cfg)
-		if cfg.system ~= p.XBOX360 then
-			local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
-			m.element("SubSystem", nil, subsystem)
-		end
+		local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
+		m.element("SubSystem", nil, subsystem)
 	end
 
 
