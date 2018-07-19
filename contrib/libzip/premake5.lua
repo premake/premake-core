@@ -16,6 +16,8 @@ project "zip-lib"
 
 	filter "system:windows"
 		defines { "_WINDOWS" }
+	filter { "system:windows", "toolset:mingw" }
+		defines { "HAVE_SSIZE_T_LIBZIP" }
 
 	filter "system:macosx"
 		defines { "HAVE_SSIZE_T_LIBZIP" }
