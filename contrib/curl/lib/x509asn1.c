@@ -711,7 +711,7 @@ int Curl_parseX509(curl_X509certificate *cert,
   /* Get optional version, get serialNumber. */
   cert->version.header = NULL;
   cert->version.beg = &defaultVersion;
-  cert->version.end = &defaultVersion + sizeof defaultVersion;;
+  cert->version.end = &defaultVersion + sizeof defaultVersion;
   beg = Curl_getASN1Element(&elem, beg, end);
   if(elem.tag == 0) {
     Curl_getASN1Element(&cert->version, elem.beg, elem.end);

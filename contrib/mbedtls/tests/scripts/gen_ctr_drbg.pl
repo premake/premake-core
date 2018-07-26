@@ -38,7 +38,7 @@ sub get_val($)
     return $val;
 }
 
-my $cnt = 1;;
+my $cnt = 1;
 while (my $line = <TEST_DATA>)
 {
     next if ($line !~ /^\[AES-256 use df/);
