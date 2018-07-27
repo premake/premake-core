@@ -687,7 +687,6 @@
 		end
 	end
 
-
 	function dotnetbase.targetFrameworkVersion(cfg)
 		local action = p.action.current()
 		local framework = cfg.dotnetframework or action.vstudio.targetFramework
@@ -696,6 +695,11 @@
 		end
 	end
 
+	function dotnetbase.csversion(cfg)
+		if cfg.csversion then
+			_p(2,'<LangVersion>%s</LangVersion>', cfg.csversion)
+		end
+	end
 
 	function dotnetbase.targetFrameworkProfile(cfg)
 		if _ACTION == "vs2010" then
