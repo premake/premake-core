@@ -1761,6 +1761,14 @@
 	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
 
+	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXBundle" }
+		targetprefix ""
+		targetextension ".bundle"
+
+	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXFramework" }
+		targetprefix ""
+		targetextension ".framework"
+
 	-- Windows and friends.
 
 	filter { "system:Windows or language:C# or language:F#", "kind:ConsoleApp or WindowedApp" }

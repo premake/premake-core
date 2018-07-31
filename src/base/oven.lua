@@ -105,13 +105,13 @@
 
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
-	
+
 		-- Build a master list of configuration/platform pairs from all of the
 		-- projects contained by the workspace; I will need this when generating
 		-- workspace files in order to provide a map from workspace configurations
 		-- to project configurations.
 
-		self.configs = oven.bakeConfigs(self)	
+		self.configs = oven.bakeConfigs(self)
 
 		-- Now bake down all of the projects contained in the workspace, and
 		-- store that for future reference
@@ -600,6 +600,9 @@
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
+
+		-- if a sharedlibtype is set, allow that to influence the configuration
+		context.addFilter(ctx, "sharedlibtype", ctx.sharedlibtype)
 
 		-- if tags are set, allow that to influence the configuration
 		context.addFilter(ctx, "tags", ctx.tags)
