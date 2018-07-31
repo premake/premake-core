@@ -58,7 +58,7 @@ sub get_val_or_fail($)
     return $val;
 }
 
-my $cnt = 1;;
+my $cnt = 1;
 while (my $line = <TEST_DATA>)
 {
     my $key_len = get_suite_val("Keylen");
