@@ -449,10 +449,9 @@
 
 				-- is this the product node, describing the output target?
 				if node.kind == "product" then
-					local name = iif(tr.project.kind ~= "ConsoleApp", node.name, node.cfg.buildtarget.prefix .. node.cfg.buildtarget.basename)
 					settings[node.id] = function(level)
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-							node.id, node.name, xcode.gettargettype(node), stringifySetting(name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
+							node.id, node.name, xcode.gettargettype(node), stringifySetting(node.name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
 					end
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
@@ -911,9 +910,8 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		if cfg.kind ~= "ConsoleApp" and cfg.targetextension then
-			local ext = cfg.targetextension
-			ext = iif(ext:startswith('.'), ext:sub(2), ext)
+		if cfg.buildtarget.extension then
+			local ext = cfg.buildtarget.extension:sub(2)
 			if cfg.kind == "WindowedApp" and ext ~= "app" then
 				settings['WRAPPER_EXTENSION'] = ext
 			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
@@ -965,7 +963,7 @@
 		if not table.isempty(fileNameList) then
 			settings['EXCLUDED_SOURCE_FILE_NAMES'] = fileNameList
 		end
-		settings['PRODUCT_NAME'] = cfg.buildtarget.basename
+		settings['PRODUCT_NAME'] = iif(cfg.kind == "ConsoleApp" and cfg.buildtarget.extension, cfg.buildtarget.basename .. cfg.buildtarget.extension, cfg.buildtarget.basename)
 
 		if os.istarget(p.IOS) then
 			settings['SDKROOT'] = 'iphoneos'
