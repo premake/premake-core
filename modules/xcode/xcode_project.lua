@@ -177,6 +177,7 @@
 		xcode.PBXFrameworksBuildPhase(tr)
 		xcode.PBXGroup(tr)
 		xcode.PBXNativeTarget(tr)
+		xcode.PBXAggregateTarget(tr)
 		xcode.PBXProject(tr)
 		xcode.PBXReferenceProxy(tr)
 		xcode.PBXResourcesBuildPhase(tr)
