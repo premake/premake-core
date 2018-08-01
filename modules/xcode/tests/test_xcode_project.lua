@@ -150,6 +150,32 @@
 	end
 
 
+	function suite.PBXFileReference_ListsOSXBundleTarget()
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.bundle:product] /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
+	function suite.PBXFileReference_ListsOSXFrameworkTarget()
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.framework:product] /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 	function suite.PBXFileReference_ListsSourceFiles()
 		files { "source.c" }
 		prepare()
@@ -953,6 +979,50 @@
 	end
 
 
+	function suite.XCBuildConfigurationTarget_OnOSXBundle()
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject.bundle:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnOSXFramework()
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject.framework:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
 	function suite.XCBuildConfigurationTarget_OnTargetPrefix()
 		kind "SharedLib"
 		targetprefix "xyz"
@@ -1151,6 +1221,102 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = "\"$(HOME)/Applications\"";
+				PRODUCT_NAME = MyProject;
+				WRAPPER_EXTENSION = "";
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnOSXBundleTargetExtension()
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		targetextension ".xyz"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject.xyz:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = MyProject;
+				WRAPPER_EXTENSION = xyz;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnOSXBundleNoTargetExtension()
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		targetextension ""
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = MyProject;
+				WRAPPER_EXTENSION = "";
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnOSXFrameworkTargetExtension()
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		targetextension ".xyz"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject.xyz:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				PRODUCT_NAME = MyProject;
+				WRAPPER_EXTENSION = xyz;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationTarget_OnOSXFrameworkNoTargetExtension()
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		targetextension ""
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				PRODUCT_NAME = MyProject;
 				WRAPPER_EXTENSION = "";
 			};

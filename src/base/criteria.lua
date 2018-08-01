@@ -31,6 +31,7 @@
 		_options = true,
 		options = true,
 		platforms = true,
+		sharedlibtype = true,
 		system = true,
 		toolset = true,
 		tags = true,

@@ -262,12 +262,14 @@
 
 	function xcode.getproducttype(node)
 		local types = {
-			ConsoleApp  = "com.apple.product-type.tool",
-			WindowedApp = "com.apple.product-type.application",
-			StaticLib   = "com.apple.product-type.library.static",
-			SharedLib   = "com.apple.product-type.library.dynamic",
+			ConsoleApp   = "com.apple.product-type.tool",
+			WindowedApp  = "com.apple.product-type.application",
+			StaticLib    = "com.apple.product-type.library.static",
+			SharedLib    = "com.apple.product-type.library.dynamic",
+			OSXBundle    = "com.apple.product-type.bundle",
+			OSXFramework = "com.apple.product-type.framework",
 		}
-		return types[node.cfg.kind]
+		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
 
 
@@ -282,12 +284,14 @@
 
 	function xcode.gettargettype(node)
 		local types = {
-			ConsoleApp  = "\"compiled.mach-o.executable\"",
-			WindowedApp = "wrapper.application",
-			StaticLib   = "archive.ar",
-			SharedLib   = "\"compiled.mach-o.dylib\"",
+			ConsoleApp   = "\"compiled.mach-o.executable\"",
+			WindowedApp  = "wrapper.application",
+			StaticLib    = "archive.ar",
+			SharedLib    = "\"compiled.mach-o.dylib\"",
+			OSXBundle    = "wrapper.cfbundle",
+			OSXFramework = "wrapper.framework",
 		}
-		return types[node.cfg.kind]
+		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
 
 
@@ -911,11 +915,20 @@
 		end
 
 		if cfg.buildtarget.extension then
+			local exts = {
+				WindowedApp  = "app",
+				SharedLib    = "dylib",
+				StaticLib    = "a",
+				OSXBundle    = "bundle",
+				OSXFramework = "framework",
+			}
 			local ext = cfg.buildtarget.extension:sub(2)
-			if cfg.kind == "WindowedApp" and ext ~= "app" then
-				settings['WRAPPER_EXTENSION'] = ext
-			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
-				settings['EXECUTABLE_EXTENSION'] = ext
+			if ext ~= exts[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)] then
+				if cfg.kind == "WindowedApp" or (cfg.kind == "SharedLib" and cfg.sharedlibtype) then
+					settings['WRAPPER_EXTENSION'] = ext
+				elseif cfg.kind == "SharedLib" or cfg.kind == "StaticLib" then
+					settings['EXECUTABLE_EXTENSION'] = ext
+				end
 			end
 		end
 
@@ -930,13 +943,15 @@
 			settings['INFOPLIST_FILE'] = config.findfile(cfg, path.getextension(tr.infoplist.name))
 		end
 
-		installpaths = {
+		local installpaths = {
 			ConsoleApp = '/usr/local/bin',
 			WindowedApp = '"$(HOME)/Applications"',
 			SharedLib = '/usr/local/lib',
 			StaticLib = '/usr/local/lib',
+			OSXBundle = '$(LOCAL_LIBRARY_DIR)/Bundles',
+			OSXFramework = '$(LOCAL_LIBRARY_DIR)/Frameworks',
 		}
-		settings['INSTALL_PATH'] = installpaths[cfg.kind]
+		settings['INSTALL_PATH'] = installpaths[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)]
 
 		local fileNameList = {}
 		local file_tree = project.getsourcetree(tr.project)
