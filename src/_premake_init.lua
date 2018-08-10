@@ -591,6 +591,12 @@
 	}
 
 	api.register {
+		name = "csversion",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
 		name = "gccprefix",
 		scope = "config",
 		kind = "string",

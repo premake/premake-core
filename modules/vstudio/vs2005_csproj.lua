@@ -44,7 +44,8 @@
 			dotnetbase.targetFrameworkProfile,
 			dotnetbase.fileAlignment,
 			dotnetbase.bindingRedirects,
-			dotnetbase.projectTypeGuids
+			dotnetbase.projectTypeGuids,
+			dotnetbase.csversion
 		}
 	end
 
