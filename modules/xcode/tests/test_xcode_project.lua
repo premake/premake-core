@@ -687,6 +687,62 @@
 
 
 ---------------------------------------------------------------------------
+-- PBXAggregateTarget tests
+---------------------------------------------------------------------------
+
+	function suite.PBXAggregateTarget_OnUtility()
+		kind "Utility"
+		prepare()
+		xcode.PBXAggregateTarget(tr)
+		test.capture [[
+/* Begin PBXAggregateTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXAggregateTarget "MyProject" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productName = MyProject;
+		};
+/* End PBXAggregateTarget section */
+		]]
+	end
+
+
+	function suite.PBXAggregateTarget_OnBuildCommands()
+		kind "Utility"
+		prebuildcommands { "prebuildcmd" }
+		prelinkcommands { "prelinkcmd" }
+		postbuildcommands { "postbuildcmd" }
+		prepare()
+		xcode.PBXAggregateTarget(tr)
+		test.capture [[
+/* Begin PBXAggregateTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXAggregateTarget "MyProject" */;
+			buildPhases = (
+				9607AE1010C857E500CD1376 /* Prebuild */,
+				9607AE3510C85E7E00CD1376 /* Prelink */,
+				9607AE3710C85E8F00CD1376 /* Postbuild */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productName = MyProject;
+		};
+/* End PBXAggregateTarget section */
+		]]
+	end
+
+
+---------------------------------------------------------------------------
 -- PBXProject tests
 ---------------------------------------------------------------------------
 

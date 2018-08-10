@@ -575,6 +575,14 @@
 					return
 				end
 
+				local function isAggregateTarget(node)
+					local productsId = xcode.newid("Products")
+					return node.id == productsId and node.parent.project and node.parent.project.kind == "Utility"
+				end
+				if isAggregateTarget(node) then
+					return
+				end
+
 				settings[node.productgroupid or node.id] = function()
 					-- project references get special treatment
 					if node.parent == tr.projects then
@@ -586,7 +594,9 @@
 					_p(3,'isa = PBXGroup;')
 					_p(3,'children = (')
 					for _, childnode in ipairs(node.children) do
-						_p(4,'%s /* %s */,', childnode.id, childnode.name)
+						if not isAggregateTarget(childnode) then
+							_p(4,'%s /* %s */,', childnode.id, childnode.name)
+						end
 					end
 					_p(3,');')
 
@@ -621,8 +631,30 @@
 	end
 
 
-	function xcode.PBXNativeTarget(tr)
-		_p('/* Begin PBXNativeTarget section */')
+	local function xcode_PBXAggregateOrNativeTarget(tr, pbxTargetName)
+		local kinds = {
+			Aggregate = {
+				"Utility",
+			},
+			Native = {
+				"ConsoleApp",
+				"WindowedApp",
+				"SharedLib",
+				"StaticLib",
+			},
+		}
+		local hasTarget = false
+		for _, node in ipairs(tr.products.children) do
+			hasTarget = table.contains(kinds[pbxTargetName], node.cfg.kind)
+			if hasTarget then
+				break
+			end
+		end
+		if not hasTarget then
+			return
+		end
+
+		_p('/* Begin PBX%sTarget section */', pbxTargetName)
 		for _, node in ipairs(tr.products.children) do
 			local name = tr.project.name
 
@@ -644,18 +676,22 @@
 			end
 
 			_p(2,'%s /* %s */ = {', node.targetid, name)
-			_p(3,'isa = PBXNativeTarget;')
-			_p(3,'buildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', node.cfgsection, escapeSetting(name))
+			_p(3,'isa = PBX%sTarget;', pbxTargetName)
+			_p(3,'buildConfigurationList = %s /* Build configuration list for PBX%sTarget "%s" */;', node.cfgsection, pbxTargetName, escapeSetting(name))
 			_p(3,'buildPhases = (')
 			if hasBuildCommands('prebuildcommands') then
 				_p(4,'9607AE1010C857E500CD1376 /* Prebuild */,')
 			end
-			_p(4,'%s /* Resources */,', node.resstageid)
-			_p(4,'%s /* Sources */,', node.sourcesid)
+			if pbxTargetName == "Native" then
+				_p(4,'%s /* Resources */,', node.resstageid)
+				_p(4,'%s /* Sources */,', node.sourcesid)
+			end
 			if hasBuildCommands('prelinkcommands') then
 				_p(4,'9607AE3510C85E7E00CD1376 /* Prelink */,')
 			end
-			_p(4,'%s /* Frameworks */,', node.fxstageid)
+			if pbxTargetName == "Native" then
+				_p(4,'%s /* Frameworks */,', node.fxstageid)
+			end
 			if hasBuildCommands('postbuildcommands') then
 				_p(4,'9607AE3710C85E8F00CD1376 /* Postbuild */,')
 			end
@@ -671,23 +707,37 @@
 
 			_p(3,'name = %s;', stringifySetting(name))
 
-			local p
-			if node.cfg.kind == "ConsoleApp" then
-				p = "$(HOME)/bin"
-			elseif node.cfg.kind == "WindowedApp" then
-				p = "$(HOME)/Applications"
-			end
-			if p then
-				_p(3,'productInstallPath = %s;', stringifySetting(p))
+			if pbxTargetName == "Native" then
+				local p
+				if node.cfg.kind == "ConsoleApp" then
+					p = "$(HOME)/bin"
+				elseif node.cfg.kind == "WindowedApp" then
+					p = "$(HOME)/Applications"
+				end
+				if p then
+					_p(3,'productInstallPath = %s;', stringifySetting(p))
+				end
 			end
 
 			_p(3,'productName = %s;', stringifySetting(name))
-			_p(3,'productReference = %s /* %s */;', node.id, node.name)
-			_p(3,'productType = %s;', stringifySetting(xcode.getproducttype(node)))
+			if pbxTargetName == "Native" then
+				_p(3,'productReference = %s /* %s */;', node.id, node.name)
+				_p(3,'productType = %s;', stringifySetting(xcode.getproducttype(node)))
+			end
 			_p(2,'};')
 		end
-		_p('/* End PBXNativeTarget section */')
+		_p('/* End PBX%sTarget section */', pbxTargetName)
 		_p('')
+	end
+
+
+	function xcode.PBXAggregateTarget(tr)
+		xcode_PBXAggregateOrNativeTarget(tr, "Aggregate")
+	end
+
+
+	function xcode.PBXNativeTarget(tr)
+		xcode_PBXAggregateOrNativeTarget(tr, "Native")
 	end
 
 
