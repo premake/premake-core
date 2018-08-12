@@ -714,3 +714,8 @@
 		test.isequal("d:/test/..test/.test", path.normalize("d:/test/..test/test/../.test"))
 		test.isequal("d:/test", path.normalize("d:/test/..test/../.test/.."))
 	end
+
+	function suite.normalize_serverpath()
+		test.isequal("//myawesomeserver/test", path.normalize("//myawesomeserver/test/"))
+		test.isequal("//myawesomeserver/test", path.normalize("///myawesomeserver/test/"))
+	end
