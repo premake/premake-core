@@ -656,6 +656,10 @@
 		prebuildcommands { "prebuildcmd" }
 		prelinkcommands { "prelinkcmd" }
 		postbuildcommands { "postbuildcmd" }
+		files { "file.in" }
+		filter { "files:file.in" }
+			buildcommands { "buildcmd" }
+			buildoutputs { "file.out" }
 		prepare()
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
@@ -665,11 +669,96 @@
 			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
 				9607AE1010C857E500CD1376 /* Prebuild */,
+				[file.in:buildcommand] /* Build "file.in" */,
 				[MyProject:rez] /* Resources */,
 				[MyProject:src] /* Sources */,
 				9607AE3510C85E7E00CD1376 /* Prelink */,
 				[MyProject:fxs] /* Frameworks */,
 				9607AE3710C85E8F00CD1376 /* Postbuild */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productInstallPath = "$(HOME)/bin";
+			productName = MyProject;
+			productReference = [MyProject:product] /* MyProject */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end
+
+
+	function suite.PBXNativeTarget_OnBuildCommandsFilesFilterDependency()
+		files { "file.1", "file.2", "file.3" }
+		filter { "files:file.1" }
+			buildcommands { "first" }
+			buildoutputs { "file.2" }
+		filter { "files:file.3" }
+			buildcommands { "last" }
+			buildoutputs { "file.4" }
+		filter { "files:file.2" }
+			buildcommands { "second" }
+			buildoutputs { "file.3" }
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				[file.1:buildcommand] /* Build "file.1" */,
+				[file.2:buildcommand] /* Build "file.2" */,
+				[file.3:buildcommand] /* Build "file.3" */,
+				[MyProject:rez] /* Resources */,
+				[MyProject:src] /* Sources */,
+				[MyProject:fxs] /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyProject;
+			productInstallPath = "$(HOME)/bin";
+			productName = MyProject;
+			productReference = [MyProject:product] /* MyProject */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+		]]
+	end
+
+
+	function suite.PBXNativeTarget_OnBuildCommandsBuildInputsDependency()
+		files { "file.1", "file.2", "file.3" }
+		filter { "files:file.1" }
+			buildcommands { "first" }
+			buildoutputs { "file.4" }
+		filter { "files:file.3" }
+			buildcommands { "last" }
+			buildinputs { "file.5" }
+			buildoutputs { "file.6" }
+		filter { "files:file.2" }
+			buildcommands { "second" }
+			buildinputs { "file.4" }
+			buildoutputs { "file.5" }
+		prepare()
+		xcode.PBXNativeTarget(tr)
+		test.capture [[
+/* Begin PBXNativeTarget section */
+		[MyProject:target] /* MyProject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildPhases = (
+				[file.1:buildcommand] /* Build "file.1" */,
+				[file.2:buildcommand] /* Build "file.2" */,
+				[file.3:buildcommand] /* Build "file.3" */,
+				[MyProject:rez] /* Resources */,
+				[MyProject:src] /* Sources */,
+				[MyProject:fxs] /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -718,6 +807,10 @@
 		prebuildcommands { "prebuildcmd" }
 		prelinkcommands { "prelinkcmd" }
 		postbuildcommands { "postbuildcmd" }
+		files { "file.in" }
+		filter { "files:file.in" }
+			buildcommands { "buildcmd" }
+			buildoutputs { "file.out" }
 		prepare()
 		xcode.PBXAggregateTarget(tr)
 		test.capture [[
@@ -727,6 +820,7 @@
 			buildConfigurationList = [MyProject:cfg] /* Build configuration list for PBXAggregateTarget "MyProject" */;
 			buildPhases = (
 				9607AE1010C857E500CD1376 /* Prebuild */,
+				[file.in:buildcommand] /* Build "file.in" */,
 				9607AE3510C85E7E00CD1376 /* Prelink */,
 				9607AE3710C85E8F00CD1376 /* Postbuild */,
 			);
@@ -839,6 +933,38 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "ls src\ncp \"a\" \"b\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+		]]
+	end
+
+
+	function suite.PBXShellScriptBuildPhase_OnBuildComandScripts()
+		files { "file.in1" }
+		filter { "files:file.in1" }
+			buildcommands { 'ls src', 'cp "a" "b"' }
+			buildinputs { "file.in2" }
+			buildoutputs { "file.out" }
+		prepare()
+		xcode.PBXShellScriptBuildPhase(tr)
+		test.capture [[
+/* Begin PBXShellScriptBuildPhase section */
+		[file.in1:buildcommand] /* Build "file.in1" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"file.in1",
+				"file.in2",
+			);
+			name = "Build \"file.in1\"";
+			outputPaths = (
+				"file.out",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 		]]

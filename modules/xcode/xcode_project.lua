@@ -107,6 +107,18 @@
 
 				node.isResource = xcode.isItemResource(prj, node)
 
+				-- check to see if this file has custom build
+				if node.configs then
+					for cfg in project.eachconfig(prj) do
+						local filecfg = fileconfig.getconfig(node, cfg)
+						if fileconfig.hasCustomBuildRule(filecfg) then
+							if not node.buildcommandid then
+								node.buildcommandid = xcode.newid(node.name, "buildcommand", node.path)
+							end
+						end
+					end
+				end
+
 				-- assign build IDs to buildable files
 				if xcode.getbuildcategory(node) and not node.excludefrombuild then
 					node.buildid = xcode.newid(node.name, "build", node.path)

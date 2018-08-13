@@ -630,6 +630,71 @@
 		end
 	end
 
+	local function xcode_GetBuildCommands(tr)
+		local buildCommandInfos = {}
+		tree.traverse(tr, {
+			onnode = function(node)
+				if node.buildcommandid then
+					local info = {
+						node = node,
+						inputs = { node.relpath },
+						outputs = {},
+						depends = {},
+						transact = false,
+					}
+					for cfg in project.eachconfig(tr.project) do
+						local filecfg = fileconfig.getconfig(node, cfg)
+						if filecfg then
+							for _, v in ipairs(filecfg.buildinputs) do
+								table.insert(info.inputs, project.getrelative(tr.project, v))
+							end
+							for _, v in ipairs(filecfg.buildoutputs) do
+								table.insert(info.outputs, project.getrelative(tr.project, v))
+							end
+						end
+					end
+					table.insert(buildCommandInfos, info)
+				end
+			end
+		})
+		for _, mine in ipairs(buildCommandInfos) do
+			for _, their in ipairs(buildCommandInfos) do
+				if mine ~= their then
+					for _, input in ipairs(mine.inputs) do
+						if table.contains(their.outputs, input) then
+							table.insert(mine.depends, their)
+							break
+						end
+					end
+				end
+			end
+		end
+		local buildCommands = {}
+		local leftover = #buildCommandInfos
+		while leftover > 0 do
+			local prev = leftover
+			for _, info in ipairs(buildCommandInfos) do
+				if not info.transact then
+					local transact = true
+					for _, depend in ipairs(info.depends) do
+						transact = depend.transact
+						if not transact then
+							break
+						end
+					end
+					if transact then
+						table.insert(buildCommands, info.node)
+						info.transact = true
+						leftover = leftover - 1
+					end
+				end
+			end
+			if prev == leftover then
+				error('detect circular reference.')
+			end
+		end
+		return buildCommands
+	end
 
 	local function xcode_PBXAggregateOrNativeTarget(tr, pbxTargetName)
 		local kinds = {
@@ -655,6 +720,9 @@
 		end
 
 		_p('/* Begin PBX%sTarget section */', pbxTargetName)
+
+		local buildCommands = xcode_GetBuildCommands(tr)
+
 		for _, node in ipairs(tr.products.children) do
 			local name = tr.project.name
 
@@ -681,6 +749,9 @@
 			_p(3,'buildPhases = (')
 			if hasBuildCommands('prebuildcommands') then
 				_p(4,'9607AE1010C857E500CD1376 /* Prebuild */,')
+			end
+			for _, v in ipairs(buildCommands) do
+				_p(4,'%s /* Build "%s" */,', v.buildcommandid, v.name)
 			end
 			if pbxTargetName == "Native" then
 				_p(4,'%s /* Resources */,', node.resstageid)
@@ -866,11 +937,75 @@
 		end
 
 		doblock("9607AE1010C857E500CD1376", "Prebuild", "prebuildcommands")
+
+		local settings = {}
+		tree.traverse(tr, {
+			onnode = function(node)
+				if node.buildcommandid then
+					settings[node.buildcommandid] = function(level)
+						local commands = {}
+						local inputs = {}
+						local outputs = {}
+						for cfg in project.eachconfig(tr.project) do
+							local filecfg = fileconfig.getconfig(node, cfg)
+							if filecfg then
+								table.insert(commands, 'if [ "${CONFIGURATION}" = "' .. cfg.buildcfg .. '" ]; then')
+								if filecfg.buildmessage then
+									table.insert(commands, '\techo "' .. filecfg.buildmessage .. '"')
+								end
+								local cmds = os.translateCommands(filecfg.buildcommands)
+								for _, cmd in ipairs(cmds) do
+									table.insert(commands, '\t' .. cmd)
+								end
+								table.insert(commands, 'fi')
+								for _, v in ipairs(filecfg.buildinputs) do
+									inputs[v] = true
+								end
+								for _, v in ipairs(filecfg.buildoutputs) do
+									outputs[v] = true
+								end
+							end
+						end
+						_p(level,'%s /* Build "%s" */ = {', node.buildcommandid, node.name)
+						_p(level+1,'isa = PBXShellScriptBuildPhase;')
+						_p(level+1,'buildActionMask = 2147483647;')
+						_p(level+1,'files = (')
+						_p(level+1,');')
+						_p(level+1,'inputPaths = (');
+						_p(level+2,'"%s",', escapeSetting(node.relpath))
+						for v, _ in pairs(inputs) do
+							_p(level+2,'"%s",', escapeSetting(project.getrelative(tr.project, v)))
+						end
+						_p(level+1,');')
+						_p(level+1,'name = %s;', stringifySetting('Build "' .. node.name .. '"'))
+						_p(level+1,'outputPaths = (')
+						for v, _ in pairs(outputs) do
+							_p(level+2,'"%s",', escapeSetting(project.getrelative (tr.project, v)))
+						end
+						_p(level+1,');')
+						_p(level+1,'runOnlyForDeploymentPostprocessing = 0;');
+						_p(level+1,'shellPath = /bin/sh;');
+						_p(level+1,'shellScript = %s;', stringifySetting(table.concat(commands, '\n')))
+						_p(level,'};')
+					end
+				end
+			end
+		})
+
+		if not table.isempty(settings) then
+			if not wrapperWritten then
+				_p('/* Begin PBXShellScriptBuildPhase section */')
+				wrapperWritten = true
+			end
+			printSettingsTable(2, settings)
+		end
+
 		doblock("9607AE3510C85E7E00CD1376", "Prelink", "prelinkcommands")
 		doblock("9607AE3710C85E8F00CD1376", "Postbuild", "postbuildcommands")
 
 		if wrapperWritten then
 			_p('/* End PBXShellScriptBuildPhase section */')
+			_p('')
 		end
 	end
 
