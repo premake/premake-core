@@ -545,7 +545,7 @@
 		_p('')
 	end
 
-	local function makeVarName(prj, value, saltValue)
+	function cpp.makeVarName(prj, value, saltValue)
 		prj._gmake = prj._gmake or {}
 		prj._gmake.varlist = prj._gmake.varlist or {}
 		prj._gmake.varlistlength = prj._gmake.varlistlength or 0
@@ -569,7 +569,10 @@
 	function cpp.perFileFlags(cfg, fcfg)
 		local toolset = gmake2.getToolSet(cfg)
 
-		local value = gmake2.list(table.join(toolset.getcflags(fcfg), fcfg.buildoptions))
+		local isCFile = path.iscfile(fcfg.name)
+
+		local getflags = iif(isCFile, toolset.getcflags, toolset.getcxxflags)
+		local value = gmake2.list(table.join(getflags(fcfg), fcfg.buildoptions))
 
 		if fcfg.defines or fcfg.undefines then
 			local defs = table.join(toolset.getdefines(fcfg.defines, cfg), toolset.getundefines(fcfg.undefines))
@@ -587,9 +590,9 @@
 
 		if #value > 0 then
 			local newPerFileFlag = false
-			fcfg.flagsVariable, newPerFileFlag = makeVarName(cfg.project, value, iif(path.iscfile(fcfg.name), '_C', '_CPP'))
+			fcfg.flagsVariable, newPerFileFlag = cpp.makeVarName(cfg.project, value, iif(isCFile, '_C', '_CPP'))
 			if newPerFileFlag then
-				if path.iscfile(fcfg.name) then
+				if isCFile then
 					_p('%s = $(ALL_CFLAGS)%s', fcfg.flagsVariable, value)
 				else
 					_p('%s = $(ALL_CXXFLAGS)%s', fcfg.flagsVariable, value)
@@ -797,14 +800,12 @@
 
 
 	function cpp.outputFileRules(cfg, file)
-		local outputs = table.concat(file.buildoutputs, ' ')
-
 		local dependencies = p.esc(file.source)
 		if file.buildinputs and #file.buildinputs > 0 then
 			dependencies = dependencies .. " " .. table.concat(p.esc(file.buildinputs), " ")
 		end
 
-		_p('%s: %s', outputs, dependencies)
+		_p('%s: %s', file.buildoutputs[1], dependencies)
 
 		if file.buildmessage then
 			_p('\t@echo %s', file.buildmessage)
@@ -819,6 +820,13 @@
 					_p('\t$(SILENT) %s', cmd)
 				end
 			end
+		end
+
+		-- TODO: this is a hack with some imperfect side-effects.
+		--       better solution would be to emit a dummy file for the rule, and then outputs depend on it (must clean up dummy in 'clean')
+		--       better yet, is to use pattern rules, but we need to detect that all outputs have the same stem
+		if #file.buildoutputs > 1 then
+			_p('%s: %s', table.concat({ table.unpack(file.buildoutputs, 2) }, ' '), file.buildoutputs[1])
 		end
 	end
 

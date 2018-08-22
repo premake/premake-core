@@ -55,7 +55,7 @@
 
 		-- The capabilities of this action
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib", "Makefile", "None" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib", "Makefile", "Utility", "None" },
 		valid_languages = { "C", "C++" },
 		valid_tools     = {
 			cc = { "gcc", "clang" },
