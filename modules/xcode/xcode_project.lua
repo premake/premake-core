@@ -40,7 +40,7 @@
 				if value == nil then
 					value = newValue
 				elseif value ~= newValue then
-					print("WARNING: " .. node.name .. " is excluded in just some configurations. Autocompletion will not work correctly on this file in Xcode.")
+					p.warn(node.name .. " is excluded in just some configurations. Autocompletion will not work correctly on this file in Xcode.")
 					return false
 				end
 			end
