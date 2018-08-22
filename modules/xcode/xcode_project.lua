@@ -16,6 +16,39 @@
 	local tree = p.tree
 
 --
+-- Checks if a node must be excluded completely from a target or not. It will
+-- return true only if the node has the "ExcludeFromBuild" flag in all the
+-- configurations.
+--
+-- @param node
+--    The node to check.
+-- @param prj
+--    The project being generated.
+-- @returns
+--    A boolean, telling whether the node must be excluded from its target or not.
+--
+	function xcode.mustExcludeFromTarget(node, prj)
+		if not node.configs then
+			return false
+		end
+
+		local value
+		for cfg in premake.project.eachconfig(prj) do
+			local filecfg = premake.fileconfig.getconfig(node, cfg)
+			if filecfg then
+				local newValue = not not filecfg.flags.ExcludeFromBuild
+				if value == nil then
+					value = newValue
+				elseif value ~= newValue then
+					p.warn(node.name .. " is excluded in just some configurations. Autocompletion will not work correctly on this file in Xcode.")
+					return false
+				end
+			end
+		end
+		return value
+	end
+
+--
 -- Create a tree corresponding to what is shown in the Xcode project browser
 -- pane, with nodes for files and folders, resources, frameworks, and products.
 --
@@ -108,7 +141,7 @@
 				node.isResource = xcode.isItemResource(prj, node)
 
 				-- assign build IDs to buildable files
-				if xcode.getbuildcategory(node) and not node.excludefrombuild then
+				if xcode.getbuildcategory(node) and not node.excludefrombuild and not xcode.mustExcludeFromTarget(node, tr.project) then
 					node.buildid = xcode.newid(node.name, "build", node.path)
 				end
 
