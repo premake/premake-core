@@ -30,6 +30,12 @@
 	}
 
 	p.api.register {
+		name = "xcodesystemcapabilities",
+		scope = "project",
+		kind = "key-boolean",
+	}
+
+	p.api.register {
 		name = "iosfamily",
 		scope = "config",
 		kind = "string",
