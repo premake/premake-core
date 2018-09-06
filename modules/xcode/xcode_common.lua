@@ -745,6 +745,25 @@
 		_p('/* Begin PBXProject section */')
 		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
 		_p(3,'isa = PBXProject;')
+		local capabilities = tr.project.xcodesystemcapabilities
+		if not table.isempty(capabilities) then
+			local keys = table.keys(capabilities)
+			table.sort(keys)
+			_p(3, 'attributes = {')
+			_p(4, 'TargetAttributes = {')
+			_p(5, '%s = {', tr.project.xcode.projectnode.targetid)
+			_p(6, 'SystemCapabilities = {')
+			for _, key in pairs(keys) do
+				_p(7, '%s = {', key)
+				_p(8, 'enabled = %d;', iif(capabilities[key], 1, 0))
+				_p(7, '};')
+			end
+			_p(6, '};')
+			_p(5, '};')
+			_p(4, '};')
+			_p(3, '};')
+		end
+
 		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', tr.name)
 		_p(3,'compatibilityVersion = "Xcode 3.2";')
 		_p(3,'hasScannedForEncodings = 1;')

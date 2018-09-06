@@ -768,6 +768,50 @@
 	end
 
 
+	function suite.PBXProject_OnSystemCapabilities()
+		xcodesystemcapabilities {
+			["com.apple.InAppPurchase"] = "ON",
+			["com.apple.iCloud"] = "ON",
+			["com.apple.GameCenter.iOS"] = "OFF",
+		}
+		prepare()
+		xcode.PBXProject(tr)
+		test.capture [[
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				TargetAttributes = {
+					[MyProject:target] = {
+						SystemCapabilities = {
+							com.apple.GameCenter.iOS = {
+								enabled = 0;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 1;
+			mainGroup = [MyProject] /* MyProject */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				[MyProject:target] /* MyProject */,
+			);
+		};
+/* End PBXProject section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXResourceBuildPhase tests
 ---------------------------------------------------------------------------
