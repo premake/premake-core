@@ -499,6 +499,8 @@
 				m.targetMachine,
 				m.additionalLinkOptions,
 				m.programDatabaseFile,
+				m.stackCommitSize,
+				m.stackReserveSize,
 			}
 		end
 	end
@@ -2420,6 +2422,21 @@
 			m.element("BufferSecurityCheck", nil, "false")
 		end
 	end
+
+
+	function m.stackCommitSize(cfg)
+		if cfg.stackcommitsize then
+			m.element("StackCommitSize", nil, "%s", tostring(cfg.stackcommitsize))
+		end
+	end
+
+
+	function m.stackReserveSize(cfg)
+		if cfg.stackreservesize then
+			m.element("StackReserveSize", nil, "%s", tostring(cfg.stackreservesize))
+		end
+	end
+
 
 	function m.stringPooling(cfg)
 		if cfg.stringpooling ~= nil then

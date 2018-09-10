@@ -1369,6 +1369,19 @@
 		}
 	}
 
+	api.register {
+		name = "stackcommitsize",
+		scope = "config",
+		kind = "integer",
+	}
+
+	api.register {
+		name = "stackreservesize",
+		scope = "config",
+		kind = "integer",
+	}
+
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
