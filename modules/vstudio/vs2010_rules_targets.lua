@@ -22,6 +22,8 @@
 			m.computedProperties,
 			m.computeInputsGroup,
 			m.usingTask,
+			m.ruleSelectedFilesTarget,
+			m.ruleTLogTarget,
 			m.ruleTarget,
 			m.computeOutputTarget,
 		}
@@ -57,6 +59,7 @@
 ---
 -- Generate the computed outputs property.
 ---
+
 	function m.computedProperties(r)
 		-- create shadow context.
 		local pathVars = p.rule.createPathVars(r, "%%(%s)")
@@ -99,6 +102,76 @@
 
 
 ---
+-- Generate the rule's tlog target element.
+---
+
+	m.elements.ruleSelectedFilesTargetAttributes = function(r)
+		return {
+			m.selectedFilesTargetName,
+			m.selectedFilesDependsOnTargets
+		}
+	end
+
+	m.elements.ruleSelectedFilesTarget = function(r)
+		return {
+			m.selectedFilesTouch,
+		}
+	end
+
+	function m.ruleSelectedFilesTarget(r)
+		local attribs = p.capture(function()
+			p.push()
+			p.callArray(m.elements.ruleSelectedFilesTargetAttributes, r)
+			p.pop()
+		end)
+
+		p.push('<Target')
+		p.outln(attribs .. '>')
+		p.callArray(m.elements.ruleSelectedFilesTarget, r)
+		p.pop('</Target>')
+	end
+
+
+
+---
+-- Generate the rule's tlog target element.
+---
+
+	m.elements.ruleTLogTargetAttributes = function(r)
+		return {
+			m.tlogTargetName,
+			m.tlogDependsOnTargets,
+		}
+	end
+
+	m.elements.ruleTLogTarget = function(r)
+		return {
+			m.removeNotSelectedFiles,
+			m.tlog,
+			m.tlogReadTLogWriteFile,
+			m.tlogReadTLogReadFile,
+			m.tlogTLogContentProperties,
+			m.tlogWriteTLogWriteFile,
+			m.tlogWriteTLogReadFile,
+		}
+	end
+
+	function m.ruleTLogTarget(r)
+		local attribs = p.capture(function()
+			p.push()
+			p.callArray(m.elements.ruleTLogTargetAttributes, r)
+			p.pop()
+		end)
+
+		p.push('<Target')
+		p.outln(attribs .. '>')
+		p.callArray(m.elements.ruleTLogTarget, r)
+		p.pop('</Target>')
+	end
+
+
+
+---
 -- Generate the rule's target element.
 ---
 
@@ -116,11 +189,7 @@
 
 	m.elements.ruleTarget = function(r)
 		return {
-			m.selectedFiles,
-			m.tlog,
 			m.message,
-			m.tlogWrite,
-			m.tlogRead,
 			m.rule,
 		}
 	end
@@ -155,6 +224,10 @@
 	end
 
 	function m.tlog(r)
+		p.push('<ItemGroup>')
+		m.tlogDependencies(r)
+		p.pop('</ItemGroup>')
+
 		p.push('<ItemGroup>')
 		p.push('<%s_tlog', r.name)
 		p.w('Include="%%(%s.Outputs)"', r.name)
@@ -225,6 +298,149 @@
 
 
 ---
+-- Implementations of individual SelectedFiles elements.
+---
+
+
+	function m.selectedFilesTargetName(r)
+		p.w('Name="_%sSelectedFiles"', r.name)
+	end
+
+
+
+	function m.selectedFilesDependsOnTargets(r)
+		p.w('DependsOnTargets="$(%sDependsOn);Compute%sOutput"', r.name, r.name)
+	end
+
+
+
+	function m.selectedFilesTouch(r)
+		p.w('<Touch Files="@(SelectedFiles)" Condition="\'@(SelectedFiles)\' != \'\'" />')
+	end
+
+
+
+---
+-- Implementations of individual TLog elements.
+---
+
+	function m.tlogTargetName(r)
+		p.w('Name="_%sTLog"', r.name)
+	end
+
+
+
+	function m.tlogDependsOnTargets(r)
+		p.w('DependsOnTargets="$(%sDependsOn);_%sSelectedFiles"', r.name, r.name)
+	end
+
+
+
+	function m.tlogDependencies(r)
+		local defs = r.propertydefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.dependency then
+				p.w('<%s_%s', r.name, def.name)
+				p.w('  Include="%%(%s.%s)"/>', r.name, def.name)
+			end
+		end
+	end
+
+
+
+	function m.tlogProperties(r)
+		local defs = r.propertydefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.dependency then
+				p.w("<%s>@(%s_%s->'%%(fullpath)')</%s>", def.name, r.name, def.name, def.name)
+			end
+		end
+	end
+
+
+
+	function m.tlogReadTLogReadFile(r)
+		p.w('<ReadLinesFromFile')
+		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
+		p.w('  File="$(TLogLocation)%s.read.1.tlog">', r.name)
+		p.w('  <Output')
+		p.w('    TaskParameter="Lines"')
+		p.w('    ItemName="%s_TLogReadLines" />', r.name)
+		p.w('</ReadLinesFromFile>')
+	end
+
+
+
+	function m.tlogReadTLogWriteFile(r)
+		p.w('<ReadLinesFromFile')
+		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
+		p.w('  File="$(TLogLocation)%s.write.1.tlog">', r.name)
+		p.w('  <Output')
+		p.w('    TaskParameter="Lines"')
+		p.w('    ItemName="%s_TLogWriteLines" />', r.name)
+		p.w('</ReadLinesFromFile>')
+	end
+
+
+
+	function m.tlogTLogContentProperties(r)
+		p.w('<PropertyGroup>')
+		p.w('  <%s_TLogWriteContent>@(%s_TLogWriteLines)</%s_TLogWriteContent>', r.name, r.name, r.name)
+		p.w('  <%s_TLogReadContent>>@(%s_TLogReadLines)</%s_TLogReadContent>', r.name, r.name, r.name)
+		p.w('</PropertyGroup>')
+	end
+
+
+
+	function m.tlogWriteTLogReadFile(r)
+		local extra = {}
+		local defs = r.propertydefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			if def.dependency then
+				table.insert(extra, string.format("%%(%s_tlog.%s);", r.name, def.name))
+			end
+		end
+		extra = table.concat(extra)
+
+		local lines = string.format("^%%(%s_tlog.Inputs);%s$(MSBuildProjectFullPath);%%(%s_tlog.Fullpath)", r.name, extra, r.name)
+		local condition = string.format("$(%s_TLogReadContent.Contains('%s')) == 'False'", r.name, lines)
+
+		p.w('<WriteLinesToFile')
+		p.w('  Condition="%s and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', condition, r.name)
+		p.w('  File="$(TLogLocation)%s.read.1.tlog"', r.name)
+		p.w('  Lines="%s" />', lines)
+	end
+
+
+
+	function m.tlogWriteTLogWriteFile(r)
+		local lines = string.format("^%%(%s_tlog.Source);%%(%s_tlog.Fullpath)", r.name, r.name)
+		local condition = string.format("$(%s_TLogWriteContent.Contains('%s')) == 'False'", r.name, lines)
+
+		p.w('<WriteLinesToFile')
+		p.w('  Condition="%s and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', condition, r.name)
+		p.w('  File="$(TLogLocation)%s.write.1.tlog"', r.name)
+		p.w('  Lines="%s" />', lines)
+	end
+
+
+
+	function m.tlogSource(r)
+		p.w("<Source>@(%s->'%%(fullpath)', '|')</Source>", r.name)
+	end
+
+
+
+	function m.tlogInputs(r)
+		p.w("<Inputs>@(%s->'%%(fullpath)', ';')</Inputs>", r.name)
+	end
+
+
+
+---
 -- Implementations of individual elements.
 ---
 
@@ -288,7 +504,7 @@
 
 
 	function m.dependsOnTargets(r)
-		p.w('DependsOnTargets="$(%sDependsOn);Compute%sOutput"', r.name, r.name)
+		p.w('DependsOnTargets="$(%sDependsOn);_%sTLog;Compute%sOutput"', r.name, r.name, r.name)
 	end
 
 
@@ -379,7 +595,7 @@
 
 
 
-	function m.selectedFiles(r)
+	function m.removeNotSelectedFiles(r)
 		p.push('<ItemGroup Condition="\'@(SelectedFiles)\' != \'\'">')
 		p.w('<%s Remove="@(%s)" Condition="\'%%(Identity)\' != \'@(SelectedFiles)\'" />', r.name, r.name)
 		p.pop('</ItemGroup>')
@@ -427,58 +643,6 @@
 
 
 
-	function m.tlogInputs(r)
-		p.w("<Inputs>@(%s, ';')</Inputs>", r.name)
-	end
-
-
-
-	function m.tlogProperties(r)
-		local defs = r.propertydefinition
-		for i = 1, #defs do
-			local def = defs[i]
-			if def.dependency then
-				p.w('<%s>%%(%s.%s)</%s>', def.name, r.name, def.name, def.name)
-			end
-		end
-	end
-
-
-
-	function m.tlogRead(r)
-		local extra = {}
-		local defs = r.propertydefinition
-		for i = 1, #defs do
-			local def = defs[i]
-			if def.dependency then
-				table.insert(extra, string.format("%%(%s_tlog.%s);", r.name, def.name))
-			end
-		end
-		extra = table.concat(extra)
-
-		p.w('<WriteLinesToFile')
-		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(TLogLocation)%s.read.1.tlog"', r.name)
-		p.w('  Lines="^%%(%s_tlog.Inputs);%s$(MSBuildProjectFullPath);%%(%s_tlog.Fullpath)" />', r.name, extra, r.name)
-	end
-
-
-
-	function m.tlogWrite(r)
-		p.w('<WriteLinesToFile')
-		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(TLogLocation)%s.write.1.tlog"', r.name)
-		p.w('  Lines="^%%(%s_tlog.Source);%%(%s_tlog.Fullpath)" />', r.name, r.name)
-	end
-
-
-
-	function m.tlogSource(r)
-		p.w("<Source>@(%s, '|')</Source>", r.name)
-	end
-
-
-
 	function m.usingTask(r)
 		p.push('<UsingTask')
 		p.w('TaskName="%s"', r.name)
@@ -487,6 +651,3 @@
 		p.w('<Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>')
 		p.pop('</UsingTask>')
 	end
-
-
-
