@@ -30,6 +30,12 @@
 	}
 
 	p.api.register {
+		name = "xcodesystemcapabilities",
+		scope = "project",
+		kind = "key-boolean",
+	}
+
+	p.api.register {
 		name = "iosfamily",
 		scope = "config",
 		kind = "string",
@@ -55,7 +61,7 @@
 
 		-- The capabilities of this action
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib", "Makefile", "None" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "SharedLib", "StaticLib", "Makefile", "Utility", "None" },
 		valid_languages = { "C", "C++" },
 		valid_tools     = {
 			cc = { "gcc", "clang" },

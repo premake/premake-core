@@ -591,6 +591,12 @@
 	}
 
 	api.register {
+		name = "csversion",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.register {
 		name = "gccprefix",
 		scope = "config",
 		kind = "string",
@@ -1760,6 +1766,14 @@
 
 	filter { "system:MacOSX", "kind:SharedLib" }
 		targetextension ".dylib"
+
+	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXBundle" }
+		targetprefix ""
+		targetextension ".bundle"
+
+	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXFramework" }
+		targetprefix ""
+		targetextension ".framework"
 
 	-- Windows and friends.
 

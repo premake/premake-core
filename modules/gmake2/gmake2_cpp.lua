@@ -800,14 +800,12 @@
 
 
 	function cpp.outputFileRules(cfg, file)
-		local outputs = table.concat(file.buildoutputs, ' ')
-
 		local dependencies = p.esc(file.source)
 		if file.buildinputs and #file.buildinputs > 0 then
 			dependencies = dependencies .. " " .. table.concat(p.esc(file.buildinputs), " ")
 		end
 
-		_p('%s: %s', outputs, dependencies)
+		_p('%s: %s', file.buildoutputs[1], dependencies)
 
 		if file.buildmessage then
 			_p('\t@echo %s', file.buildmessage)
@@ -822,6 +820,13 @@
 					_p('\t$(SILENT) %s', cmd)
 				end
 			end
+		end
+
+		-- TODO: this is a hack with some imperfect side-effects.
+		--       better solution would be to emit a dummy file for the rule, and then outputs depend on it (must clean up dummy in 'clean')
+		--       better yet, is to use pattern rules, but we need to detect that all outputs have the same stem
+		if #file.buildoutputs > 1 then
+			_p('%s: %s', table.concat({ table.unpack(file.buildoutputs, 2) }, ' '), file.buildoutputs[1])
 		end
 	end
 

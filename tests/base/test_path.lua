@@ -48,6 +48,10 @@
 		test.isequal("%HOME%/user", path.getabsolute("%HOME%/user"))
 	end
 
+	function suite.getabsolute_onServerPath()
+		test.isequal("//Server/Volume", path.getabsolute("//Server/Volume"))
+	end
+
 	function suite.getabsolute_onMultipleEnvVar()
 		test.isequal("$(HOME)/$(USER)", path.getabsolute("$(HOME)/$(USER)"))
 	end
@@ -336,6 +340,10 @@
 		test.isequal("obj/debug", path.getrelative("C:/Code/Premake4", "C:/Code/Premake4/obj/debug"))
 	end
 
+	function suite.getrelative_ReturnsChildPath_OnServerPath()
+		test.isequal("../Volume", path.getrelative("//Server/Shared", "//Server/Volume"))
+	end
+
 	function suite.getrelative_ReturnsAbsPath_OnDifferentDriveLetters()
 		test.isequal("D:/Files", path.getrelative("C:/Code/Premake4", "D:/Files"))
 	end
@@ -346,6 +354,14 @@
 
 	function suite.getrelative_ReturnsAbsPath_OnRootedPath()
 		test.isequal("/opt/include", path.getrelative("/home/me/src/project", "/opt/include"))
+	end
+
+	function suite.getrelative_ReturnsAbsPath_OnServerPath()
+		test.isequal("//Server/Volume", path.getrelative("C:/Files", "//Server/Volume"))
+	end
+
+	function suite.getrelative_ReturnsAbsPath_OnDifferentServers()
+		test.isequal("//Server/Volume", path.getrelative("//Computer/Users", "//Server/Volume"))
 	end
 
 	function suite.getrelative_ignoresExtraSlashes2()
@@ -661,6 +677,11 @@
 		test.isequal("../../p1/p2/p3/p4/a.pb.cc", p)
 	end
 
+	function suite.normalize_trailingSingleDot()
+		local p = path.normalize("../../p1/p2/p3/p4/./.")
+		test.isequal("../../p1/p2/p3/p4", p)
+	end
+
 	function suite.normalize()
 		test.isequal("d:/ProjectB/bin", path.normalize("d:/ProjectA/../ProjectB/bin"))
 		test.isequal("/ProjectB/bin", path.normalize("/ProjectA/../ProjectB/bin"))
@@ -692,4 +713,9 @@
 		test.isequal("d:/test/.test", path.normalize("d:/test/..test/../.test"))
 		test.isequal("d:/test/..test/.test", path.normalize("d:/test/..test/test/../.test"))
 		test.isequal("d:/test", path.normalize("d:/test/..test/../.test/.."))
+	end
+
+	function suite.normalize_serverpath()
+		test.isequal("//myawesomeserver/test", path.normalize("//myawesomeserver/test/"))
+		test.isequal("//myawesomeserver/test", path.normalize("///myawesomeserver/test/"))
 	end

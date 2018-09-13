@@ -262,12 +262,14 @@
 
 	function xcode.getproducttype(node)
 		local types = {
-			ConsoleApp  = "com.apple.product-type.tool",
-			WindowedApp = "com.apple.product-type.application",
-			StaticLib   = "com.apple.product-type.library.static",
-			SharedLib   = "com.apple.product-type.library.dynamic",
+			ConsoleApp   = "com.apple.product-type.tool",
+			WindowedApp  = "com.apple.product-type.application",
+			StaticLib    = "com.apple.product-type.library.static",
+			SharedLib    = "com.apple.product-type.library.dynamic",
+			OSXBundle    = "com.apple.product-type.bundle",
+			OSXFramework = "com.apple.product-type.framework",
 		}
-		return types[node.cfg.kind]
+		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
 
 
@@ -282,12 +284,14 @@
 
 	function xcode.gettargettype(node)
 		local types = {
-			ConsoleApp  = "\"compiled.mach-o.executable\"",
-			WindowedApp = "wrapper.application",
-			StaticLib   = "archive.ar",
-			SharedLib   = "\"compiled.mach-o.dylib\"",
+			ConsoleApp   = "\"compiled.mach-o.executable\"",
+			WindowedApp  = "wrapper.application",
+			StaticLib    = "archive.ar",
+			SharedLib    = "\"compiled.mach-o.dylib\"",
+			OSXBundle    = "wrapper.cfbundle",
+			OSXFramework = "wrapper.framework",
 		}
-		return types[node.cfg.kind]
+		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
 
 
@@ -449,10 +453,9 @@
 
 				-- is this the product node, describing the output target?
 				if node.kind == "product" then
-					local name = iif(tr.project.kind ~= "ConsoleApp", node.name, node.cfg.buildtarget.prefix .. node.cfg.buildtarget.basename)
 					settings[node.id] = function(level)
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-							node.id, node.name, xcode.gettargettype(node), stringifySetting(name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
+							node.id, node.name, xcode.gettargettype(node), stringifySetting(node.name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
 					end
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
@@ -572,6 +575,14 @@
 					return
 				end
 
+				local function isAggregateTarget(node)
+					local productsId = xcode.newid("Products")
+					return node.id == productsId and node.parent.project and node.parent.project.kind == "Utility"
+				end
+				if isAggregateTarget(node) then
+					return
+				end
+
 				settings[node.productgroupid or node.id] = function()
 					-- project references get special treatment
 					if node.parent == tr.projects then
@@ -583,7 +594,9 @@
 					_p(3,'isa = PBXGroup;')
 					_p(3,'children = (')
 					for _, childnode in ipairs(node.children) do
-						_p(4,'%s /* %s */,', childnode.id, childnode.name)
+						if not isAggregateTarget(childnode) then
+							_p(4,'%s /* %s */,', childnode.id, childnode.name)
+						end
 					end
 					_p(3,');')
 
@@ -618,8 +631,30 @@
 	end
 
 
-	function xcode.PBXNativeTarget(tr)
-		_p('/* Begin PBXNativeTarget section */')
+	local function xcode_PBXAggregateOrNativeTarget(tr, pbxTargetName)
+		local kinds = {
+			Aggregate = {
+				"Utility",
+			},
+			Native = {
+				"ConsoleApp",
+				"WindowedApp",
+				"SharedLib",
+				"StaticLib",
+			},
+		}
+		local hasTarget = false
+		for _, node in ipairs(tr.products.children) do
+			hasTarget = table.contains(kinds[pbxTargetName], node.cfg.kind)
+			if hasTarget then
+				break
+			end
+		end
+		if not hasTarget then
+			return
+		end
+
+		_p('/* Begin PBX%sTarget section */', pbxTargetName)
 		for _, node in ipairs(tr.products.children) do
 			local name = tr.project.name
 
@@ -641,18 +676,22 @@
 			end
 
 			_p(2,'%s /* %s */ = {', node.targetid, name)
-			_p(3,'isa = PBXNativeTarget;')
-			_p(3,'buildConfigurationList = %s /* Build configuration list for PBXNativeTarget "%s" */;', node.cfgsection, escapeSetting(name))
+			_p(3,'isa = PBX%sTarget;', pbxTargetName)
+			_p(3,'buildConfigurationList = %s /* Build configuration list for PBX%sTarget "%s" */;', node.cfgsection, pbxTargetName, escapeSetting(name))
 			_p(3,'buildPhases = (')
 			if hasBuildCommands('prebuildcommands') then
 				_p(4,'9607AE1010C857E500CD1376 /* Prebuild */,')
 			end
-			_p(4,'%s /* Resources */,', node.resstageid)
-			_p(4,'%s /* Sources */,', node.sourcesid)
+			if pbxTargetName == "Native" then
+				_p(4,'%s /* Resources */,', node.resstageid)
+				_p(4,'%s /* Sources */,', node.sourcesid)
+			end
 			if hasBuildCommands('prelinkcommands') then
 				_p(4,'9607AE3510C85E7E00CD1376 /* Prelink */,')
 			end
-			_p(4,'%s /* Frameworks */,', node.fxstageid)
+			if pbxTargetName == "Native" then
+				_p(4,'%s /* Frameworks */,', node.fxstageid)
+			end
 			if hasBuildCommands('postbuildcommands') then
 				_p(4,'9607AE3710C85E8F00CD1376 /* Postbuild */,')
 			end
@@ -668,23 +707,37 @@
 
 			_p(3,'name = %s;', stringifySetting(name))
 
-			local p
-			if node.cfg.kind == "ConsoleApp" then
-				p = "$(HOME)/bin"
-			elseif node.cfg.kind == "WindowedApp" then
-				p = "$(HOME)/Applications"
-			end
-			if p then
-				_p(3,'productInstallPath = %s;', stringifySetting(p))
+			if pbxTargetName == "Native" then
+				local p
+				if node.cfg.kind == "ConsoleApp" then
+					p = "$(HOME)/bin"
+				elseif node.cfg.kind == "WindowedApp" then
+					p = "$(HOME)/Applications"
+				end
+				if p then
+					_p(3,'productInstallPath = %s;', stringifySetting(p))
+				end
 			end
 
 			_p(3,'productName = %s;', stringifySetting(name))
-			_p(3,'productReference = %s /* %s */;', node.id, node.name)
-			_p(3,'productType = %s;', stringifySetting(xcode.getproducttype(node)))
+			if pbxTargetName == "Native" then
+				_p(3,'productReference = %s /* %s */;', node.id, node.name)
+				_p(3,'productType = %s;', stringifySetting(xcode.getproducttype(node)))
+			end
 			_p(2,'};')
 		end
-		_p('/* End PBXNativeTarget section */')
+		_p('/* End PBX%sTarget section */', pbxTargetName)
 		_p('')
+	end
+
+
+	function xcode.PBXAggregateTarget(tr)
+		xcode_PBXAggregateOrNativeTarget(tr, "Aggregate")
+	end
+
+
+	function xcode.PBXNativeTarget(tr)
+		xcode_PBXAggregateOrNativeTarget(tr, "Native")
 	end
 
 
@@ -692,6 +745,25 @@
 		_p('/* Begin PBXProject section */')
 		_p(2,'08FB7793FE84155DC02AAC07 /* Project object */ = {')
 		_p(3,'isa = PBXProject;')
+		local capabilities = tr.project.xcodesystemcapabilities
+		if not table.isempty(capabilities) then
+			local keys = table.keys(capabilities)
+			table.sort(keys)
+			_p(3, 'attributes = {')
+			_p(4, 'TargetAttributes = {')
+			_p(5, '%s = {', tr.project.xcode.projectnode.targetid)
+			_p(6, 'SystemCapabilities = {')
+			for _, key in pairs(keys) do
+				_p(7, '%s = {', key)
+				_p(8, 'enabled = %d;', iif(capabilities[key], 1, 0))
+				_p(7, '};')
+			end
+			_p(6, '};')
+			_p(5, '};')
+			_p(4, '};')
+			_p(3, '};')
+		end
+
 		_p(3,'buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "%s" */;', tr.name)
 		_p(3,'compatibilityVersion = "Xcode 3.2";')
 		_p(3,'hasScannedForEncodings = 1;')
@@ -831,7 +903,7 @@
 			_p(3,'files = (')
 			tree.traverse(tr, {
 				onleaf = function(node)
-					if xcode.getbuildcategory(node) == "Sources" then
+					if xcode.getbuildcategory(node) == "Sources" and node.buildid then
 						_p(4,'%s /* %s in Sources */,', node.buildid, node.name)
 					end
 				end
@@ -911,13 +983,21 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		if cfg.kind ~= "ConsoleApp" and cfg.targetextension then
-			local ext = cfg.targetextension
-			ext = iif(ext:startswith('.'), ext:sub(2), ext)
-			if cfg.kind == "WindowedApp" and ext ~= "app" then
-				settings['WRAPPER_EXTENSION'] = ext
-			elseif (cfg.kind == "StaticLib" and ext ~= "a") or (cfg.kind == "SharedLib" and ext ~= "dylib") then
-				settings['EXECUTABLE_EXTENSION'] = ext
+		if cfg.buildtarget.extension then
+			local exts = {
+				WindowedApp  = "app",
+				SharedLib    = "dylib",
+				StaticLib    = "a",
+				OSXBundle    = "bundle",
+				OSXFramework = "framework",
+			}
+			local ext = cfg.buildtarget.extension:sub(2)
+			if ext ~= exts[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)] then
+				if cfg.kind == "WindowedApp" or (cfg.kind == "SharedLib" and cfg.sharedlibtype) then
+					settings['WRAPPER_EXTENSION'] = ext
+				elseif cfg.kind == "SharedLib" or cfg.kind == "StaticLib" then
+					settings['EXECUTABLE_EXTENSION'] = ext
+				end
 			end
 		end
 
@@ -932,13 +1012,15 @@
 			settings['INFOPLIST_FILE'] = config.findfile(cfg, path.getextension(tr.infoplist.name))
 		end
 
-		installpaths = {
+		local installpaths = {
 			ConsoleApp = '/usr/local/bin',
 			WindowedApp = '"$(HOME)/Applications"',
 			SharedLib = '/usr/local/lib',
 			StaticLib = '/usr/local/lib',
+			OSXBundle = '$(LOCAL_LIBRARY_DIR)/Bundles',
+			OSXFramework = '$(LOCAL_LIBRARY_DIR)/Frameworks',
 		}
-		settings['INSTALL_PATH'] = installpaths[cfg.kind]
+		settings['INSTALL_PATH'] = installpaths[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)]
 
 		local fileNameList = {}
 		local file_tree = project.getsourcetree(tr.project)
@@ -965,7 +1047,7 @@
 		if not table.isempty(fileNameList) then
 			settings['EXCLUDED_SOURCE_FILE_NAMES'] = fileNameList
 		end
-		settings['PRODUCT_NAME'] = cfg.buildtarget.basename
+		settings['PRODUCT_NAME'] = iif(cfg.kind == "ConsoleApp" and cfg.buildtarget.extension, cfg.buildtarget.basename .. cfg.buildtarget.extension, cfg.buildtarget.basename)
 
 		if os.istarget(p.IOS) then
 			settings['SDKROOT'] = 'iphoneos'
