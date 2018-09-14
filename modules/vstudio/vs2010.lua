@@ -35,6 +35,7 @@
 		["file.directory"]              = { absolute = true,  token = "%(RootDir)%(Directory)" },
 		["file.reldirectory"]           = { absolute = false, token = "%(RelativeDir)" },
 		["file.extension"]              = { absolute = false, token = "%(Extension)" },
+		["file.name"]                   = { absolute = false, token = "%(Filename)%(Extension)" },
 	}
 
 
