@@ -1627,6 +1627,7 @@
 
 	newoption
 	{
+		category	= "compilers",
 		trigger     = "cc",
 		value       = "VALUE",
 		description = "Choose a C/C++ compiler set",
@@ -1638,6 +1639,7 @@
 
 	newoption
 	{
+		category	= "compilers",
 		trigger     = "dotnet",
 		value       = "VALUE",
 		description = "Choose a .NET compiler set",
