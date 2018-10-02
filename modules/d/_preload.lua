@@ -189,6 +189,7 @@
 --
 	newoption
 	{
+		category	= "compilers",
 		trigger		= "dc",
 		value		= "VALUE",
 		description	= "Choose a D compiler",
