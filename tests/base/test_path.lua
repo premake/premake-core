@@ -719,3 +719,8 @@
 		test.isequal("//myawesomeserver/test", path.normalize("//myawesomeserver/test/"))
 		test.isequal("//myawesomeserver/test", path.normalize("///myawesomeserver/test/"))
 	end
+
+	function suite.normalize_quotedpath()
+		test.isequal("\"../../test/test/\"", path.normalize("\"../../test/test/\""))
+		test.isequal("\"../../test/\"", path.normalize("\"../../test/../test/\""))
+	end
