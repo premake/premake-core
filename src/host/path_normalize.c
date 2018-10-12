@@ -9,6 +9,7 @@
 #include <string.h>
 
 #define	IS_SEP(__c)			((__c) == '/' || (__c) == '\\')
+#define	IS_QUOTE(__c)		((__c) == '\"' || (__c) == '\'')
 
 #define IS_UPPER_ALPHA(__c)	((__c) >= 'A' && (__c) <= 'Z')
 #define IS_LOWER_ALPHA(__c)	((__c) >= 'a' && (__c) <= 'z')
@@ -16,8 +17,8 @@
 
 #define IS_SPACE(__c)		((__c >= '\t' && __c <= '\r') || __c == ' ')
 
-static void* normalize_substring(const char* srcPtr, const char* srcEnd, char* dstPtr) {
-
+static void* normalize_substring(const char* srcPtr, const char* srcEnd, char* dstPtr)
+{
 #define IS_END(__p)			(__p >= srcEnd || *__p == '\0')
 #define IS_SEP_OR_END(__p)	(IS_END(__p) || IS_SEP(*__p))
 
@@ -113,6 +114,14 @@ int path_normalize(lua_State* L)
 		// find the end of sub path
 		while (*endPtr && !IS_SPACE(*endPtr))
 			++endPtr;
+
+		// path is surrounded with quotes
+		if (readPtr != endPtr &&
+			IS_QUOTE(*readPtr) && IS_QUOTE(endPtr[-1]) &&
+			*readPtr == endPtr[-1])
+		{
+			*(writePtr++) = *(readPtr++);
+		}
 
 		writePtr = normalize_substring(readPtr, endPtr, writePtr);
 
