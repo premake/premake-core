@@ -179,3 +179,46 @@
 </EnumProperty>
 		]]
 	end
+
+	function suite.properties_onStringWithCategory()
+		createVar { name="MyVar", kind="string", category="Custom Category" }
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<StringProperty
+	Name="MyVar"
+	HelpContext="0"
+	DisplayName="MyVar"
+	Category="Custom Category"
+	/>
+		]]
+	end
+  
+  function suite.categories_onStringWithCategory()
+		createVar { name="MyVar", kind="string", category="Custom Category" }
+		local r = test.getRule("MyRule")
+		m.categories(r)
+		test.capture [[
+<Rule.Categories>
+	<Category
+		Name="General">
+		<Category.DisplayName>
+			<sys:String>General</sys:String>
+		</Category.DisplayName>
+	</Category>
+	<Category
+		Name="Custom Category">
+		<Category.DisplayName>
+			<sys:String>Custom Category</sys:String>
+		</Category.DisplayName>
+	</Category>
+	<Category
+		Name="Command Line"
+		Subtype="CommandLine">
+		<Category.DisplayName>
+			<sys:String>Command Line</sys:String>
+		</Category.DisplayName>
+	</Category>
+</Rule.Categories>
+    ]]
+  end

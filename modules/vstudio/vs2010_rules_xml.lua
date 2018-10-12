@@ -72,8 +72,24 @@
 	function m.categories(r)
 		local categories = {
 			[1] = { name="General" },
-			[2] = { name="Command Line", subtype="CommandLine" },
 		}
+		local propCategory = {}
+		local defs = r.propertydefinition
+		for i = 1, #defs do
+			local def = defs[i]
+			local cat = def.category
+			if cat then
+				if type(cat) == "string" and cat ~= "Command Line" and cat ~= "General" then
+					if not propCategory[cat] then
+						table.insert(categories, { name=cat })
+						propCategory[cat] = true
+					end
+				else
+					def.category = nil
+				end
+			end
+		end
+		table.insert(categories, { name="Command Line", subtype="CommandLine" })
 		p.push('<Rule.Categories>')
 		for i = 1, #categories do
 			m.category(categories[i])
@@ -134,6 +150,9 @@
 			p.w('DisplayName="%s"', def.display or def.name)
 			if def.description then
 				p.w('Description="%s"', def.description)
+			end
+			if def.category then
+				p.w('Category="%s"', def.category)
 			end
 		end)
 		if suffix then
