@@ -851,7 +851,7 @@ void shimInitialize(lua_State* L)
 
 	// Find the 'SHIM' entry in the registry.
 	const Table* reg = hvalue(&G(L)->l_registry);
-	const Node* n = findNode(reg, 'SHIM');
+	const Node* n = findNode(reg, 0x5348494D); // equal to 'SHIM'
 	assert(n != NULL);
 
 	g_shimTable = (const LuaFunctionTable_t*)n->i_val.value_.p;
