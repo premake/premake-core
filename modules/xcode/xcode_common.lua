@@ -246,7 +246,7 @@
 		if type(overrides) == 'table' then
 			for name, value in pairs(overrides) do
 				-- Allow an override to remove a value by using false
-				settings[name] = iif(value ~= false, value, nil)
+				settings[name] = iif(not table.equals(value, { false }), value, nil)
 			end
 		end
 	end
