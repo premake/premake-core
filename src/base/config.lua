@@ -48,7 +48,7 @@
 		local bundlename = ""
 		local bundlepath = ""
 
-		if cfg.system == p.MACOSX and (kind == p.WINDOWEDAPP or (kind == p.SHAREDLIB and cfg.sharedlibtype)) then
+		if table.contains(os.getSystemTags(cfg.system), "darwin") and (kind == p.WINDOWEDAPP or (kind == p.SHAREDLIB and cfg.sharedlibtype)) then
 			bundlename = basename .. extension
 			bundlepath = path.join(bundlename, iif(kind == p.SHAREDLIB and cfg.sharedlibtype == "OSXFramework", "Versions/A", "Contents/MacOS"))
 		end

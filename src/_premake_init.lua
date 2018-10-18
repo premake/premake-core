@@ -1695,6 +1695,7 @@
 			{ "bsd",      "OpenBSD, NetBSD, or FreeBSD" },
 			{ "haiku",    "Haiku" },
 			{ "hurd",     "GNU/Hurd" },
+			{ "ios",      "iOS" },
 			{ "linux",    "Linux" },
 			{ "macosx",   "Apple Mac OS X" },
 			{ "solaris",  "Solaris" },
@@ -1761,17 +1762,17 @@
 
 	-- Add variations for other Posix-like systems.
 
-	filter { "system:MacOSX", "kind:WindowedApp" }
+	filter { "system:darwin", "kind:WindowedApp" }
 		targetextension ".app"
 
-	filter { "system:MacOSX", "kind:SharedLib" }
+	filter { "system:darwin", "kind:SharedLib" }
 		targetextension ".dylib"
 
-	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXBundle" }
+	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:OSXBundle" }
 		targetprefix ""
 		targetextension ".bundle"
 
-	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXFramework" }
+	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:OSXFramework" }
 		targetprefix ""
 		targetextension ".framework"
 
@@ -1797,7 +1798,7 @@
 	filter { "kind:SharedLib", "system:not Windows" }
 		pic "On"
 
-	filter { "system:macosx" }
+	filter { "system:darwin" }
 		toolset "clang"
 
 	filter {}

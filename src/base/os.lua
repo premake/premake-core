@@ -69,7 +69,7 @@
 		elseif os.istarget("haiku") then
 			path = os.getenv("LIBRARY_PATH") or ""
 		else
-			if os.istarget("macosx") then
+			if os.istarget("darwin") then
 				path = os.getenv("DYLD_LIBRARY_PATH") or ""
 			else
 				path = os.getenv("LD_LIBRARY_PATH") or ""
@@ -90,7 +90,7 @@
 
 			path = path or ""
 			local archpath = "/lib:/usr/lib:/usr/local/lib"
-			if os.is64bit() and not os.istarget("macosx") then
+			if os.is64bit() and not (os.istarget("darwin")) then
 				archpath = "/lib64:/usr/lib64/:usr/local/lib64" .. ":" .. archpath
 			end
 			if (#path > 0) then
@@ -116,7 +116,7 @@
 		elseif os.istarget("haiku") then
 			formats = { "lib%s.so", "%s.so" }
 		else
-			if os.istarget("macosx") then
+			if os.istarget("darwin") then
 				formats = { "lib%s.dylib", "%s.dylib" }
 			else
 				formats = { "lib%s.so", "%s.so" }
@@ -734,6 +734,7 @@
 		["aix"]      = { "aix",     "posix" },
 		["bsd"]      = { "bsd",     "posix" },
 		["haiku"]    = { "haiku",   "posix" },
+		["ios"]      = { "ios",     "darwin", "posix", "mobile" },
 		["linux"]    = { "linux",   "posix" },
 		["macosx"]   = { "macosx",  "darwin", "posix" },
 		["solaris"]  = { "solaris", "posix" },

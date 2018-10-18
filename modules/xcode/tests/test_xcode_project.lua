@@ -126,6 +126,19 @@
 	end
 
 
+	function suite.PBXFileReference_ListsIOSWindowedTarget()
+		_TARGET_OS = "ios"
+		kind "WindowedApp"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.app:product] /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 	function suite.PBXFileReference_ListsStaticLibTarget()
 		kind "StaticLib"
 		prepare()
@@ -138,7 +151,33 @@
 	end
 
 
+	function suite.PBXFileReference_ListsIOSStaticLibTarget()
+		_TARGET_OS = "ios"
+		kind "StaticLib"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[libMyProject.a:product] /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 	function suite.PBXFileReference_ListsSharedLibTarget()
+		kind "SharedLib"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[libMyProject.dylib:product] /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
+	function suite.PBXFileReference_ListsIOSSharedLibTarget()
+		_TARGET_OS = "ios"
 		kind "SharedLib"
 		prepare()
 		xcode.PBXFileReference(tr)
@@ -163,6 +202,20 @@
 	end
 
 
+	function suite.PBXFileReference_ListsIOSOSXBundleTarget()
+		_TARGET_OS = "ios"
+		kind "SharedLib"
+		sharedlibtype "OSXBundle"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.bundle:product] /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+
 	function suite.PBXFileReference_ListsOSXFrameworkTarget()
 		kind "SharedLib"
 		sharedlibtype "OSXFramework"
@@ -174,6 +227,21 @@
 /* End PBXFileReference section */
 		]]
 	end
+
+
+	function suite.PBXFileReference_ListsIOSOSXFrameworkTarget()
+		_TARGET_OS = "ios"
+		kind "SharedLib"
+		sharedlibtype "OSXFramework"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.framework:product] /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
 
 
 	function suite.PBXFileReference_ListsSourceFiles()
