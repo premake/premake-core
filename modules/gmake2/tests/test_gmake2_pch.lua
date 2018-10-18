@@ -21,6 +21,7 @@
 	local wks, prj
 	function suite.setup()
 		os.chdir(_TESTS_DIR)
+		gmake2.cpp.initialize()
 		wks, prj = test.createWorkspace()
 	end
 
@@ -34,6 +35,12 @@
 		gmake2.cpp.pchRules(cfg.project)
 	end
 
+	local function prepareFlags()
+		local project = test.getproject(wks, 1)
+		gmake2.cpp.createRuleTable(project)
+		gmake2.cpp.createFileTable(project)
+		gmake2.cpp.outputFileRuleSection(project)
+	end
 
 --
 -- If no header has been set, nothing should be output.
@@ -53,8 +60,21 @@
 	function suite.noConfig_onHeaderAndNoPCHFlag()
 		pchheader "include/myproject.h"
 		flags "NoPCH"
-		prepareVars()
-		test.isemptycapture()
+
+		files { 'a.cpp', 'b.cpp' }
+
+		prepareFlags()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/a.o: a.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/b.o: b.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+]]
 	end
 
 
@@ -97,14 +117,18 @@ PCH = ../../../src/host/premake.h
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)
-$(GCH): $(PCH) | $(OBJDIR)
+$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
+ifeq (posix,$(SHELLTYPE))
 	$(SILENT) touch "$@"
 else
-$(OBJECTS): | $(OBJDIR)
+	$(SILENT) echo $null >> "$@"
+endif
+else
+$(OBJECTS): | prebuild
 endif
 		]]
 	end
@@ -120,14 +144,18 @@ endif
 		prepareRules()
 		test.capture [[
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR) $(PCH_PLACEHOLDER)
-$(GCH): $(PCH) | $(OBJDIR)
+$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
 	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
+ifeq (posix,$(SHELLTYPE))
 	$(SILENT) touch "$@"
 else
-$(OBJECTS): | $(OBJDIR)
+	$(SILENT) echo $null >> "$@"
+endif
+else
+$(OBJECTS): | prebuild
 endif
 		]]
 	end
@@ -148,3 +176,49 @@ endif
 PCH = ../../../../src/host/premake.h
 			]]
 		end
+
+--
+-- If the header is located on one of the include file
+-- search directories, it should get found automatically.
+--
+
+	function suite.PCHFlag()
+		pchheader "include/myproject.h"
+
+		files { 'a.cpp', 'b.cpp' }
+
+		prepareFlags()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/a.o: a.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) -include $(PCH_PLACEHOLDER) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/b.o: b.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) -include $(PCH_PLACEHOLDER) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+]]
+	end
+
+	function suite.PCHFlag_PerFile()
+		pchheader "include/myproject.h"
+
+		files { 'a.cpp', 'b.cpp' }
+
+		filter { "files:a.cpp" }
+			flags "NoPCH"
+
+		prepareFlags()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/a.o: a.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/b.o: b.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) -include $(PCH_PLACEHOLDER) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+]]
+	end

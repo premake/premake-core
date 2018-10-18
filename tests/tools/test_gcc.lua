@@ -77,7 +77,7 @@
 	function suite.cflags_onExtraWarnings()
 		warnings "extra"
 		prepare()
-		test.contains({ "-Wall -Wextra" }, gcc.getcflags(cfg))
+		test.contains({ "-Wall", "-Wextra" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onHighWarnings()
@@ -142,6 +142,87 @@
 		test.contains({ "-mavx2" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onMOVBE()
+		isaextensions "MOVBE"
+		prepare()
+		test.contains({ "-mmovbe" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onPOPCNT()
+		isaextensions "POPCNT"
+		prepare()
+		test.contains({ "-mpopcnt" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onPCLMUL()
+		isaextensions "PCLMUL"
+		prepare()
+		test.contains({ "-mpclmul" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onLZCNT()
+		isaextensions "LZCNT"
+		prepare()
+		test.contains({ "-mlzcnt" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onBMI()
+		isaextensions "BMI"
+		prepare()
+		test.contains({ "-mbmi" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onBMI2()
+		isaextensions "BMI2"
+		prepare()
+		test.contains({ "-mbmi2" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onF16C()
+		isaextensions "F16C"
+		prepare()
+		test.contains({ "-mf16c" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAES()
+		isaextensions "AES"
+		prepare()
+		test.contains({ "-maes" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFMA()
+		isaextensions "FMA"
+		prepare()
+		test.contains({ "-mfma" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onFMA4()
+		isaextensions "FMA4"
+		prepare()
+		test.contains({ "-mfma4" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onRDRND()
+		isaextensions "RDRND"
+		prepare()
+		test.contains({ "-mrdrnd" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onMultipleISA()
+		isaextensions {
+			"RDRND",
+			"FMA4"
+		}
+		prepare()
+		test.contains({ "-mrdrnd", "-mfma4" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onAdditionalISA()
+		isaextensions "RDRND"
+		isaextensions "FMA4"
+		prepare()
+		test.contains({ "-mrdrnd", "-mfma4" }, gcc.getcflags(cfg))
+	end
 
 --
 -- Check the defines and undefines.
@@ -238,7 +319,6 @@
 		prepare()
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
-
 
 --
 -- Check the basic translation of LDFLAGS for a Posix system.
@@ -676,7 +756,7 @@
 	function suite.cxxflags_onCpp17()
 		cppdialect "C++17"
 		prepare()
-		test.contains({ "-std=c++1z" }, gcc.getcxxflags(cfg))
+		test.contains({ "-std=c++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
 	end
 
@@ -704,6 +784,104 @@
 	function suite.cxxflags_onCppGnu17()
 		cppdialect "gnu++17"
 		prepare()
-		test.contains({ "-std=gnu++1z" }, gcc.getcxxflags(cfg))
+		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
 		test.contains({ }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test unsigned-char flags.
+--
+
+	function suite.sharedflags_onUnsignedChar()
+		unsignedchar "On"
+
+		prepare()
+		test.contains({ "-funsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-funsigned-char" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoUnsignedChar()
+		unsignedchar "Off"
+
+		prepare()
+		test.contains({ "-fno-unsigned-char" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-unsigned-char" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test omit-frame-pointer flags.
+--
+
+	function suite.sharedflags_onOmitFramePointerDefault()
+		omitframepointer "Default"
+
+		prepare()
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.excludes({ "-fomit-frame-pointer", "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onOmitFramePointer()
+		omitframepointer "On"
+
+		prepare()
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fomit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+	function suite.sharedflags_onNoOmitFramePointer()
+		omitframepointer "Off"
+
+		prepare()
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fno-omit-frame-pointer" }, gcc.getcflags(cfg))
+	end
+
+--
+-- Test visibility.
+--
+
+	function suite.cxxflags_onVisibilityDefault()
+		visibility "Default"
+		prepare()
+		test.excludes({ "-fvisibility=default" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=default" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityHidden()
+		visibility "Hidden"
+		prepare()
+		test.excludes({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityInternal()
+		visibility "Internal"
+		prepare()
+		test.excludes({ "-fvisibility=internal" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=internal" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onVisibilityProtected()
+		visibility "Protected"
+		prepare()
+		test.excludes({ "-fvisibility=protected" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=protected" }, gcc.getcxxflags(cfg))
+	end
+
+--
+-- Test inlines visibility flags.
+--
+
+	function suite.cxxflags_onInlinesVisibilityDefault()
+		inlinesvisibility "Default"
+		prepare()
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onInlinesVisibilityHidden()
+		inlinesvisibility "Hidden"
+		prepare()
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
 	end

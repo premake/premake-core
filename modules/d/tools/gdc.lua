@@ -29,17 +29,37 @@
 			x86_64 = "-m64",
 		},
 		flags = {
-			Deprecated		= "-fdeprecated",
-			Documentation	= "-fdoc",
-			FatalWarnings	= "-Werror",
-			GenerateHeader	= "-fintfc",
-			GenerateJSON	= "-fX",
-			NoBoundsCheck	= "-fno-bounds-check",
---			Release			= "-frelease",
-			RetainPaths		= "-op",
-			SymbolsLikeC	= "-fdebug-c",
-			UnitTest		= "-funittest",
-			Verbose			= "-fd-verbose",
+			Documentation			= "-fdoc",
+			FatalWarnings			= "-Werror",
+			GenerateHeader			= "-fintfc",
+			GenerateJSON			= "-fX",
+--			Release					= "-frelease",
+			RetainPaths				= "-op",
+			SymbolsLikeC			= "-fdebug-c",
+			UnitTest				= "-funittest",
+			Verbose					= "-fd-verbose",
+			-- THESE ARE THE DMD ARGS...
+--			ProfileGC				= "-profile=gc",
+--			StackFrame				= "-gs",
+--			StackStomp				= "-gx",
+--			AllTemplateInst			= "-allinst",
+--			BetterC					= "-betterC",
+--			Main					= "-main",
+--			PerformSyntaxCheckOnly	= "-o-",
+			ShowTLS					= "-fd-vtls",
+--			ShowGC					= "-vgc",
+--			IgnorePragma			= "-ignore",
+			ShowDependencies		= "-fdeps",
+		},
+		boundscheck = {
+			Off = "-fno-bounds-check",
+--			On = "-boundscheck=on",
+--			SafeOnly = "-boundscheck=safeonly",
+		},
+		deprecatedfeatures = {
+			Allow = "-fdeprecated",
+--			Warn = "-dw",
+--			Error = "-de",
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
@@ -62,12 +82,14 @@
 			SSE2 = "-msse2",
 		},
 		warnings = {
---			Off = "-w",
 --			Default = "-w",	-- TODO: check this...
+			High = "-Wall",
 			Extra = "-Wall -Wextra",
 		},
 		symbols = {
 			On = "-g",
+			FastLink = "-g",
+			Full = "-g -gf",
 		}
 	}
 
@@ -79,8 +101,6 @@
 		else
 			table.insert(flags, "-frelease")
 		end
-
-		-- TODO: When DMD gets CRT options, map StaticRuntime and DebugRuntime
 
 		if cfg.flags.Documentation then
 			if cfg.docname then
@@ -144,6 +164,20 @@
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-I' .. p.quoted(dir))
+		end
+		return result
+	end
+
+
+--
+-- Decorate import file search paths for the DMD command line.
+--
+
+	function gdc.getstringimportdirs(cfg, dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-J' .. p.quoted(dir))
 		end
 		return result
 	end

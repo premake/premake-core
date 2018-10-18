@@ -1,7 +1,7 @@
 --
 -- vs200x_vcproj.lua
--- Generate a Visual Studio 2002-2008 C/C++ project.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Generate a Visual Studio 2005-2008 C/C++ project.
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -176,46 +176,26 @@
 				m.VCNMakeTool
 			}
 		end
-		if cfg.system == p.XBOX360 then
-			return {
-				m.VCPreBuildEventTool,
-				m.VCCustomBuildTool,
-				m.VCXMLDataGeneratorTool,
-				m.VCWebServiceProxyGeneratorTool,
-				m.VCMIDLTool,
-				m.VCCLCompilerTool,
-				m.VCManagedResourceCompilerTool,
-				m.VCResourceCompilerTool,
-				m.VCPreLinkEventTool,
-				m.VCLinkerTool,
-				m.VCALinkTool,
-				m.VCX360ImageTool,
-				m.VCBscMakeTool,
-				m.VCX360DeploymentTool,
-				m.VCPostBuildEventTool,
-				m.DebuggerTool,
-			}
-		else
-			return {
-				m.VCPreBuildEventTool,
-				m.VCCustomBuildTool,
-				m.VCXMLDataGeneratorTool,
-				m.VCWebServiceProxyGeneratorTool,
-				m.VCMIDLTool,
-				m.VCCLCompilerTool,
-				m.VCManagedResourceCompilerTool,
-				m.VCResourceCompilerTool,
-				m.VCPreLinkEventTool,
-				m.VCLinkerTool,
-				m.VCALinkTool,
-				m.VCManifestTool,
-				m.VCXDCMakeTool,
-				m.VCBscMakeTool,
-				m.VCFxCopTool,
-				m.VCAppVerifierTool,
-				m.VCPostBuildEventTool,
-			}
-		end
+		
+		return {
+			m.VCPreBuildEventTool,
+			m.VCCustomBuildTool,
+			m.VCXMLDataGeneratorTool,
+			m.VCWebServiceProxyGeneratorTool,
+			m.VCMIDLTool,
+			m.VCCLCompilerTool,
+			m.VCManagedResourceCompilerTool,
+			m.VCResourceCompilerTool,
+			m.VCPreLinkEventTool,
+			m.VCLinkerTool,
+			m.VCALinkTool,
+			m.VCManifestTool,
+			m.VCXDCMakeTool,
+			m.VCBscMakeTool,
+			m.VCFxCopTool,
+			m.VCAppVerifierTool,
+			m.VCPostBuildEventTool,
+		}
 	end
 
 	function m.tools(cfg)
@@ -504,8 +484,6 @@
 		local prjcfg, filecfg = config.normalize(cfg)
 		if filecfg and fileconfig.hasCustomBuildRule(filecfg) then
 			return "VCCustomBuildTool"
-		elseif prjcfg and prjcfg.system == p.XBOX360 then
-			return "VCCLX360CompilerTool"
 		else
 			return "VCCLCompilerTool"
 		end
@@ -572,8 +550,6 @@
 	function m.VCLinkerToolName(cfg)
 		if cfg.kind == p.STATICLIB then
 			return "VCLibrarianTool"
-		elseif cfg.system == p.XBOX360 then
-			return "VCX360LinkerTool"
 		else
 			return "VCLinkerTool"
 		end
@@ -692,32 +668,6 @@
 
 	------------
 
-	m.elements.VCX360DeploymentTool = function(cfg)
-		return {
-			m.deploymentType,
-			m.additionalDeploymentOptions,
-		}
-	end
-
-	function m.VCX360DeploymentTool(cfg)
-		m.VCTool("VCX360DeploymentTool", cfg)
-	end
-
-	------------
-
-	m.elements.VCX360ImageTool = function(cfg)
-		return {
-			m.additionalImageOptions,
-			m.outputFileName,
-		}
-	end
-
-	function m.VCX360ImageTool(cfg)
-		m.VCTool("VCX360ImageTool", cfg)
-	end
-
-	------------
-
 	m.elements.VCXDCMakeTool = function(cfg)
 		return {}
 	end
@@ -808,14 +758,6 @@
 
 		if #links > 0 then
 			p.x('AdditionalDependencies="%s"', table.concat(links, " "))
-		end
-	end
-
-
-
-	function m.additionalDeploymentOptions(cfg)
-		if #cfg.deploymentoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.deploymentoptions, " "))
 		end
 	end
 
@@ -1067,13 +1009,7 @@
 			p.w('DebugInformationFormat="%s"', fmt)
 		end
 	end
-
-
-
-	function m.deploymentType(cfg)
-		p.w('DeploymentType="0"')
-	end
-
+	
 
 
 	function m.detect64BitPortabilityProblems(cfg)
@@ -1104,7 +1040,7 @@
 	function m.enableEnhancedInstructionSet(cfg)
 		local map = { SSE = "1", SSE2 = "2" }
 		local value = map[cfg.vectorextensions]
-		if value and cfg.system ~= "Xbox360" and cfg.architecture ~= "x86_64" then
+		if value and cfg.architecture ~= "x86_64" then
 			p.w('EnableEnhancedInstructionSet="%d"', value)
 		end
 	end
@@ -1333,7 +1269,7 @@
 
 
 	function m.omitFramePointers(cfg)
-		if cfg.flags.NoFramePointer then
+		if cfg.omitframepointer == "On" then
 			p.w('OmitFramePointers="true"')
 		end
 	end
@@ -1519,7 +1455,14 @@
 				SharedRelease = 2,
 				SharedDebug = 3,
 			}
-			p.w('RuntimeLibrary="%s"', runtimes[config.getruntime(cfg)])
+			local runtime = config.getruntime(cfg)
+			if runtime then
+				p.w('RuntimeLibrary="%s"', runtimes[runtime])
+			else
+				-- TODO: this path should probably be omitted and left for default
+				--       ...but I can't really test this, so I'm a leave it how I found it
+				p.w('RuntimeLibrary="%s"', iif(config.isDebugBuild(cfg), 3, 2))
+			end
 		end
 	end
 
@@ -1596,7 +1539,7 @@
 
 	function m.useOfMFC(cfg)
 		if (cfg.flags.MFC) then
-			p.w('UseOfMFC="%d"', iif(cfg.flags.StaticRuntime, 1, 2))
+			p.w('UseOfMFC="%d"', iif(cfg.staticruntime == "On", 1, 2))
 		end
 	end
 

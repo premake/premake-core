@@ -42,7 +42,6 @@
 		flags = {
 			FatalCompileWarnings = "-Werror",
 			LinkTimeOptimization = "-flto",
-			NoFramePointer = "-fomit-frame-pointer",
 			ShadowedVariables = "-Wshadow",
 			UndefinedIdentifiers = "-Wundef",
 		},
@@ -76,13 +75,34 @@
 			SSSE3 = "-mssse3",
 			["SSE4.1"] = "-msse4.1",
 		},
+		isaextensions = {
+			MOVBE = "-mmovbe",
+			POPCNT = "-mpopcnt",
+			PCLMUL = "-mpclmul",
+			LZCNT = "-mlzcnt",
+			BMI = "-mbmi",
+			BMI2 = "-mbmi2",
+			F16C = "-mf16c",
+			AES = "-maes",
+			FMA = "-mfma",
+			FMA4 = "-mfma4",
+			RDRND = "-mrdrnd",
+		},
 		warnings = {
-			Extra = "-Wall -Wextra",
+			Extra = {"-Wall", "-Wextra"},
 			High = "-Wall",
 			Off = "-w",
 		},
 		symbols = {
 			On = "-g"
+		},
+		unsignedchar = {
+			On = "-funsigned-char",
+			Off = "-fno-unsigned-char"
+		},
+		omitframepointer = {
+			On = "-fomit-frame-pointer",
+			Off = "-fno-omit-frame-pointer"
 		}
 	}
 
@@ -135,16 +155,31 @@
 		},
 		cppdialect = {
 			["C++98"] = "-std=c++98",
+			["C++0x"] = "-std=c++0x",
 			["C++11"] = "-std=c++11",
+			["C++1y"] = "-std=c++1y",
 			["C++14"] = "-std=c++14",
-			["C++17"] = "-std=c++1z",
+			["C++1z"] = "-std=c++1z",
+			["C++17"] = "-std=c++17",
 			["gnu++98"] = "-std=gnu++98",
+			["gnu++0x"] = "-std=gnu++0x",
 			["gnu++11"] = "-std=gnu++11",
+			["gnu++1y"] = "-std=gnu++1y",
 			["gnu++14"] = "-std=gnu++14",
-			["gnu++17"] = "-std=gnu++1z",
+			["gnu++1z"] = "-std=gnu++1z",
+			["gnu++17"] = "-std=gnu++17",
 		},
 		rtti = {
 			Off = "-fno-rtti"
+		},
+		visibility = {
+			Default = "-fvisibility=default",
+			Hidden = "-fvisibility=hidden",
+			Internal = "-fvisibility=internal",
+			Protected = "-fvisibility=protected",
+		},
+		inlinesvisibility = {
+			Hidden = "-fvisibility-inlines-hidden"
 		}
 	}
 
@@ -358,7 +393,7 @@
 	}
 
 	function gcc.getLibraryDirectories(cfg)
-		local flags = config.mapFlags(cfg, gcc.libraryDirectories)
+		local flags = {}
 
 		-- Scan the list of linked libraries. If any are referenced with
 		-- paths, add those to the list of library search paths. The call
@@ -379,6 +414,9 @@
 		for _, dir in ipairs(cfg.syslibdirs) do
 			table.insert(flags, '-L' .. p.quoted(dir))
 		end
+
+		local gccFlags = config.mapFlags(cfg, gcc.libraryDirectories)
+		flags = table.join(flags, gccFlags)
 
 		return flags
 	end

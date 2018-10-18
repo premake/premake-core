@@ -37,7 +37,7 @@
 		prepare()
 		test.capture [[
 <Manifest>
-	<AdditionalManifestFiles>source/test.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+	<AdditionalManifestFiles>source/test.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
 </Manifest>
 		]]
 	end
@@ -51,4 +51,38 @@
 		files { "test.manifest" }
 		prepare()
 		test.isemptycapture()
+	end
+
+--
+-- Check that DPI Awareness emits correctly
+--
+
+	function suite.dpiAwareness_None()
+		dpiawareness "None"
+		prepare()
+		test.capture [[
+<Manifest>
+	<EnableDpiAwareness>false</EnableDpiAwareness>
+</Manifest>
+		]]
+	end
+
+	function suite.dpiAwareness_High()
+		dpiawareness "High"
+		prepare()
+		test.capture [[
+<Manifest>
+	<EnableDpiAwareness>true</EnableDpiAwareness>
+</Manifest>
+		]]
+	end
+
+	function suite.dpiAwareness_HighPerMonitor()
+		dpiawareness "HighPerMonitor"
+		prepare()
+		test.capture [[
+<Manifest>
+	<EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+</Manifest>
+		]]
 	end

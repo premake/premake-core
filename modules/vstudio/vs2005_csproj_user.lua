@@ -1,11 +1,12 @@
 --
 -- vs2005_csproj_user.lua
--- Generate a Visual Studio 2005/2008 C# .user file.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Generate a Visual Studio 2005+ C# .user file.
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
 	local m = p.vstudio.cs2005
+	local dn = p.vstudio.dotnetbase
 
 
 --
@@ -55,7 +56,7 @@
 
 			for cfg in p.project.eachconfig(prj) do
 				if #contents[cfg] > 0 then
-					p.push('<PropertyGroup %s>', m.condition(cfg))
+					p.push('<PropertyGroup %s>', dn.condition(cfg))
 					p.outln(contents[cfg])
 					p.pop('</PropertyGroup>')
 				end

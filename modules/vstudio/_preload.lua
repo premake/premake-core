@@ -1,7 +1,7 @@
 --
 -- _preload.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -20,6 +20,113 @@
 	include("vs2013.lua")
 	include("vs2015.lua")
 	include("vs2017.lua")
+
+	-- Initialize Specific API
+
+	p.api.register {
+		name = "shaderoptions",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+		pathVars = true,
+	}
+
+	p.api.register {
+		name = "shaderdefines",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "shadertype",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Effect",
+			"Vertex",
+			"Pixel",
+			"Geometry",
+			"Hull",
+			"Domain",
+			"Compute",
+			"Texture",
+			"RootSignature",
+		}
+	}
+
+	p.api.register {
+		name = "shadermodel",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"2.0",
+			"3.0",
+			"4.0_level_9_1",
+			"4.0_level_9_3",
+			"4.0",
+			"4.1",
+			"5.0",
+		}
+	}
+
+	p.api.register {
+		name = "shaderentry",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "shadervariablename",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "shaderheaderfileoutput",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "shaderobjectfileoutput",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "shaderassembler",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"NoListing",
+			"AssemblyCode",
+			"AssemblyCodeAndHex",
+		}
+	}
+
+	p.api.register {
+		name = "shaderassembleroutput",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "debuggerflavor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Local",
+			"Remote",
+			"WebBrowser",
+			"WebService"
+		}
+	}
 
 --
 -- Decide when the full module should be loaded.

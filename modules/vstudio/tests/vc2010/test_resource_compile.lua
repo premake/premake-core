@@ -43,15 +43,6 @@
 		test.isemptycapture()
 	end
 
-	function suite.skips_onXbox360()
-		files { "hello.rc" }
-		defines { "DEBUG" }
-		system "Xbox360"
-		prepare()
-		test.isemptycapture()
-	end
-
-
 --
 -- If defines are specified, the <PreprocessorDefinitions> element should be added.
 --

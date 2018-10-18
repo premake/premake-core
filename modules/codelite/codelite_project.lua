@@ -224,6 +224,9 @@
 
 		_x(3, '<Linker Required="yes" Options="%s">', table.concat(flags, ";"))
 
+		for _, libdir in ipairs(cfg.libdirs) do
+			_p(4, '<LibraryPath Value="%s"/>', project.getrelative(cfg.project, libdir))
+		end
 		_p(3, '</Linker>')
 	end
 
@@ -271,9 +274,10 @@
 	end
 
 	function m.environment(cfg)
+		local envs = table.concat(cfg.debugenvs, "\n")
+
 		_p(3, '<Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">')
-		local variables = ""
-		_x(4, '<![CDATA[%s]]>', variables)
+		_x(4, '<![CDATA[%s]]>', envs)
 		_p(3, '</Environment>')
 	end
 
@@ -357,11 +361,11 @@
 	end
 
 	function m.isCpp11(cfg)
-		return (cfg.cppdialect == 'gnu++11') or (cfg.cppdialect == 'C++11')
+		return (cfg.cppdialect == 'gnu++11') or (cfg.cppdialect == 'C++11') or (cfg.cppdialect == 'gnu++0x') or (cfg.cppdialect == 'C++0x')
 	end
 
 	function m.isCpp14(cfg)
-		return (cfg.cppdialect == 'gnu++14') or (cfg.cppdialect == 'C++14')
+		return (cfg.cppdialect == 'gnu++14') or (cfg.cppdialect == 'C++14') or (cfg.cppdialect == 'gnu++1y') or (cfg.cppdialect == 'C++1y')
 	end
 
 	function m.completion(cfg)

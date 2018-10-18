@@ -25,13 +25,27 @@
 	function make.defaultconfig(target)
 		-- find the right configuration iterator function for this object
 		local eachconfig = iif(target.project, project.eachconfig, p.workspace.eachconfig)
-		local iter = eachconfig(target)
+		local defaultconfig = nil
+
+		-- find the right default configuration platform, grab first configuration that matches
+		if target.defaultplatform then
+			for cfg in eachconfig(target) do
+				if cfg.platform == target.defaultplatform then
+					defaultconfig = cfg
+					break
+				end
+			end
+		end
 
 		-- grab the first configuration and write the block
-		local cfg = iter()
-		if cfg then
+		if not defaultconfig then
+			local iter = eachconfig(target)
+			defaultconfig = iter()
+		end
+
+		if defaultconfig then
 			_p('ifndef config')
-			_x('  config=%s', cfg.shortname)
+			_x('  config=%s', defaultconfig.shortname)
 			_p('endif')
 			_p('')
 		end
@@ -260,12 +274,9 @@
 
 
 	function make.shellType()
-		_p('SHELLTYPE := msdos')
-		_p('ifeq (,$(ComSpec)$(COMSPEC))')
-		_p('  SHELLTYPE := posix')
-		_p('endif')
-		_p('ifeq (/bin,$(findstring /bin,$(SHELL)))')
-		_p('  SHELLTYPE := posix')
+		_p('SHELLTYPE := posix')
+		_p('ifeq (.exe,$(findstring .exe,$(ComSpec)))')
+		_p('\tSHELLTYPE := msdos')
 		_p('endif')
 		_p('')
 	end

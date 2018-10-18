@@ -1,7 +1,7 @@
 /**
  * \file   lua_auxlib.c
  * \brief  Modifications and extensions to Lua's library functions.
- * \author Copyright (c) 2014-2015 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014-2017 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
@@ -24,8 +24,7 @@ static int chunk_wrapper(lua_State* L);
  * Extend the default implementation of luaL_loadfile() to call my chunk
  * wrapper, above, before executing any scripts loaded from a file.
  */
-
-LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char *mode)
+LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* mode)
 {
 	const char* script_dir;
 	const char* test_name;
@@ -33,11 +32,13 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char *m
 	int bottom = lua_gettop(L);
 	int z = !OKAY;
 
-	/* If filename is starts with "$/" then we want to load the version that
+	/* If filename starts with "$/" then we want to load the version that
 	 * was embedded into the executable and skip the local file system */
 	if (filename[0] == '$') {
 		z = premake_load_embedded_script(L, filename + 2); /* Skip over leading "$/" */
-		if (z != OKAY) return z;
+		if (z != OKAY) {
+			return z;
+		}
 	}
 
 	/* If the currently running script was embedded, try to load this file
@@ -73,6 +74,7 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char *m
 		lua_call(L, 1, 1);
 
 		test_name = lua_tostring(L, -1);
+
 		if (test_name) {
 			z = original_luaL_loadfilex(L, test_name, mode);
 		}
@@ -100,11 +102,8 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char *m
 	if (z == OKAY) {
 		lua_pushcclosure(L, chunk_wrapper, 2);
 	}
-	else if (z == LUA_YIELD) {
-		lua_pushstring(L, "cannot open ");
-		lua_pushstring(L, filename);
-		lua_pushstring(L, ": No such file or directory");
-		lua_concat(L, 3);
+	else if (z == LUA_ERRFILE) {
+		lua_pushfstring(L, "cannot open %s: No such file or directory", filename);
 	}
 
 	return z;

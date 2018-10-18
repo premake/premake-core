@@ -86,10 +86,12 @@ OBJECTS :=
 
 ifeq ($(config),debug)
 OBJECTS += $(OBJDIR)/hello_debug.o
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 OBJECTS += $(OBJDIR)/hello_release.o
+
+else
+  $(error "invalid configuration $(config)")
 endif
 
 		]]
@@ -138,10 +140,12 @@ CUSTOM :=
 
 ifeq ($(config),debug)
 CUSTOM += obj/Debug/hello.luac
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 CUSTOM += obj/Release/hello.luac
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -170,10 +174,12 @@ OBJECTS :=
 
 ifeq ($(config),debug)
 OBJECTS += obj/Debug/hello.obj
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 OBJECTS += obj/Release/hello.obj
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -203,10 +209,12 @@ OBJECTS :=
 
 ifeq ($(config),debug)
 OBJECTS += obj/Debug/hello.obj
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 OBJECTS += obj/Release/hello.obj
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -236,10 +244,12 @@ CUSTOM :=
 
 ifeq ($(config),debug)
 CUSTOM += obj/Debug/hello.obj
-endif
 
-ifeq ($(config),release)
+else ifeq ($(config),release)
 CUSTOM += obj/Release/hello.obj
+
+else
+  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -262,6 +272,9 @@ OBJECTS :=
 
 ifeq ($(config),release)
 OBJECTS += $(OBJDIR)/hello.o
+
+else
+  $(error "invalid configuration $(config)")
 endif
 
 		]]
@@ -280,6 +293,9 @@ OBJECTS :=
 
 ifeq ($(config),release)
 OBJECTS += $(OBJDIR)/hello.o
+
+else
+  $(error "invalid configuration $(config)")
 endif
 
 		]]

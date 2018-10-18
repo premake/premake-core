@@ -441,29 +441,6 @@
 		]]
 	end
 
-
---
--- Xbox 360 uses the same structure, but changes the element name.
---
-
-	function suite.looksGood_onXbox360()
-		system "Xbox360"
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLX360CompilerTool"
-	Optimization="0"
-	BasicRuntimeChecks="3"
-	RuntimeLibrary="2"
-	EnableFunctionLevelLinking="true"
-	UsePrecompiledHeader="0"
-	WarningLevel="3"
-	DebugInformationFormat="0"
-/>
-		]]
-	end
-
-
 --
 -- Check handling of forced includes.
 --
@@ -538,13 +515,13 @@
 
 
 --
--- Check handling of the ReleaseRuntime flag; should override the
+-- Check handling of the runtime API; should override the
 -- default behavior of linking the debug runtime when symbols are
 -- enabled with no optimizations.
 --
 
 	function suite.releaseRuntime_onFlag()
-		flags { "ReleaseRuntime" }
+		runtime "Release"
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -558,7 +535,8 @@
 	end
 
 	function suite.releaseRuntime_onStaticAndReleaseRuntime()
-		flags { "ReleaseRuntime", "StaticRuntime" }
+		runtime "Release"
+		staticruntime "On"
 		symbols "On"
 		prepare()
 		test.capture [[

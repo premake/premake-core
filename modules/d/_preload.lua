@@ -24,21 +24,35 @@
 	api.addAllowed("floatingpoint", "None")
 	api.addAllowed("flags", {
 		"CodeCoverage",
-		"Deprecated",
+		"Deprecated",			-- DEPRECATED
 		"Documentation",
 		"GenerateHeader",
 		"GenerateJSON",
 		"GenerateMap",
-		"NoBoundsCheck",
---		"PIC",		// Note: this should be supported elsewhere...
+		"NoBoundsCheck",		-- DEPRECATED
 		"Profile",
 		"Quiet",
 --		"Release",	// Note: We infer this flag from config.isDebugBuild()
 		"RetainPaths",
-		"SeparateCompilation",
+		"SeparateCompilation",	-- DEPRECATED
 		"SymbolsLikeC",
 		"UnitTest",
+		-- These are used by C++/D mixed $todo move them somewhere else? "flags2" "Dflags"?
+		-- [Code Generation Flags]
+		"ProfileGC",
+		"StackFrame",
+		"StackStomp",
+		"AllTemplateInst",
+		"BetterC",
+		"Main",
+		"PerformSyntaxCheckOnly",
+		-- [Messages Flags]
+		"ShowCommandLine",
 		"Verbose",
+		"ShowTLS",
+		"ShowGC",
+		"IgnorePragma",
+		"ShowDependencies",
 	})
 
 
@@ -100,12 +114,82 @@
 		tokens = true,
 	}
 
+--	api.register {
+--		name = "debugcode",
+--		scope = "config",
+--		kind = "string",
+--	}
+
+	api.register {
+		name = "compilationmodel",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"File",
+			"Package",	-- TODO: this doesn't work with gmake!!
+			"Project",
+		},
+	}
+
+	api.register {
+		name = "importdirs",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "stringimportdirs",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "deprecatedfeatures",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Allow",
+			"Warn",
+			"Error",
+		},
+	}
+
+	api.register {
+		name = "boundscheck",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Off",
+			"On",
+			"SafeOnly",
+		},
+	}
+
+	api.register {
+		name = "dependenciesfile",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "jsonfile",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
 
 --
 -- Provide information for the help output
 --
 	newoption
 	{
+		category	= "compilers",
 		trigger		= "dc",
 		value		= "VALUE",
 		description	= "Choose a D compiler",
@@ -118,9 +202,38 @@
 
 
 --
+-- Deprecate old stuff
+--
+
+	api.deprecateValue("flags", "SeparateCompilation", 'Use `compilationmodel "File"` instead',
+	function(value)
+		compilationmodel "File"
+	end,
+	function(value)
+		compilationmodel "Default"
+	end)
+
+	api.deprecateValue("flags", "Deprecated", 'Use `deprecatedfeatures "Allow"` instead',
+	function(value)
+		deprecatedfeatures "Allow"
+	end,
+	function(value)
+		deprecatedfeatures "Default"
+	end)
+
+	api.deprecateValue("flags", "NoBoundsCheck", 'Use `boundscheck "Off"` instead',
+	function(value)
+		boundscheck "Off"
+	end,
+	function(value)
+		boundscheck "Default"
+	end)
+
+
+--
 -- Decide when to load the full module
 --
 
 	return function (cfg)
-		return (cfg.language == p.D)
+		return (cfg.language == p.D or cfg.language == "C" or cfg.language == "C++")
 	end

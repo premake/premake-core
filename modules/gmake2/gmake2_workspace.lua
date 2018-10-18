@@ -37,17 +37,31 @@
 --
 
 	function gmake2.configmap(wks)
+		local first = true
 		for cfg in p.workspace.eachconfig(wks) do
-			_p('ifeq ($(config),%s)', cfg.shortname)
+			if first then
+				_p('ifeq ($(config),%s)', cfg.shortname)
+				first = false
+			else
+				_p('else ifeq ($(config),%s)', cfg.shortname)
+			end
+
 			for prj in p.workspace.eachproject(wks) do
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 				if prjcfg then
 					_p('  %s_config = %s', gmake2.tovar(prj.name), prjcfg.shortname)
 				end
 			end
-			_p('endif')
+
+			_p('')
 		end
-		_p('')
+
+		if not first then
+			_p('else')
+			_p('  $(error "invalid configuration $(config)")')
+			_p('endif')
+			_p('')
+		end
 	end
 
 
@@ -92,7 +106,7 @@
 		end
 
 		_p(1,'@echo ""')
-		_p(1,'@echo "For more information, see http://industriousone.com/premake/quick-start"')
+		_p(1,'@echo "For more information, see https://github.com/premake/premake-core/wiki"')
 	end
 
 

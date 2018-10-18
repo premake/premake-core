@@ -15,7 +15,7 @@
 	local fileconfig = p.fileconfig
 
 ---
--- Add namespace for element definition lists for p.callarray()
+-- Add namespace for element definition lists for p.callArray()
 ---
 	makefile.elements = {}
 
@@ -34,7 +34,7 @@
 
 	function makefile.generate(prj)
 		p.eol("\n")
-		p.callarray(make, makefile.elements.makefile, prj)
+		p.callArray(makefile.elements.makefile, prj)
 	end
 
 
@@ -47,6 +47,7 @@
 	end
 
 	function makefile.configs(prj)
+		local first = true
 		for cfg in project.eachconfig(prj) do
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
@@ -56,8 +57,20 @@
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
 
-			_x('ifeq ($(config),%s)', cfg.shortname)
-			p.callarray(make, makefile.elements.configuration, cfg, toolset)
+			if first then
+				_x('ifeq ($(config),%s)', cfg.shortname)
+				first = false
+			else
+				_x('else ifeq ($(config),%s)', cfg.shortname)
+			end
+
+			p.callArray(makefile.elements.configuration, cfg, toolset)
+			_p('')
+		end
+
+		if not first then
+			_p('else')
+			_p('  $(error "invalid configuration $(config)")')
 			_p('endif')
 			_p('')
 		end

@@ -91,6 +91,30 @@
 
 
 --
+-- Check handling of buildaction.
+--
+	function suite.customBuildTool_onBuildAction()
+		files { "test.x", "test2.cpp", "test3.cpp" }
+		filter "files:**.x"
+			buildaction "FxCompile"
+		filter "files:test2.cpp"
+			buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="test3.cpp" />
+</ItemGroup>
+<ItemGroup>
+	<FxCompile Include="test.x" />
+</ItemGroup>
+<ItemGroup>
+	<None Include="test2.cpp" />
+</ItemGroup>
+		]]
+	end
+
+
+--
 -- Check handling of files with custom build rules.
 --
 
@@ -437,6 +461,33 @@
 		]]
 	end
 
+--
+-- Check handling of per-file compileas options.
+--
+
+	function suite.onCompileAs()
+		files { "hello.c" }
+		filter "files:hello.c"
+			compileas "C++"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.c">
+		<CompileAs>CompileAsCpp</CompileAs>
+		]]
+	end
+
+	function suite.onCompileAsDebug()
+		files { "hello.c" }
+		filter { "configurations:Debug", "files:hello.c" }
+			compileas "C++"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.c">
+		<CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+		]]
+	end
 
 --
 -- Check handling of per-file optimization levels.
@@ -682,6 +733,26 @@
 		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">File1;File2</AdditionalOptions>
 		<AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">File3</AdditionalOptions>
 	</Animation>
+</ItemGroup>
+		]]
+	end
+
+--
+-- test warning level set for a single file
+--
+
+	function suite.warningLevelPerFile()
+		warnings 'Off'
+		files { "hello.cpp", "hello2.cpp" }
+		filter { "files:hello.cpp" }
+			warnings 'Extra'
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<WarningLevel>Level4</WarningLevel>
+	</ClCompile>
+	<ClCompile Include="hello2.cpp" />
 </ItemGroup>
 		]]
 	end

@@ -34,6 +34,7 @@
 	premake.CSHARP      = "C#"
 	premake.GCC         = "gcc"
 	premake.HAIKU       = "haiku"
+	premake.IOS         = "ios"
 	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
 	premake.MAKEFILE    = "Makefile"
@@ -54,7 +55,7 @@
 	premake.X86         = "x86"
 	premake.X86_64      = "x86_64"
 	premake.ARM         = "ARM"
-	premake.XBOX360     = "xbox360"
+	premake.ARM64       = "ARM64"
 
 
 

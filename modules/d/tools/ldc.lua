@@ -36,17 +36,33 @@
 --			mips = "-march=mips",	-- -march=mipsel?
 		},
 		flags = {
-			Deprecated		= "-d",
-			Documentation	= "-D",
-			FatalWarnings	= "-w", -- Use LLVM flag? : "-fatal-assembler-warnings",
-			GenerateHeader	= "-H",
-			GenerateJSON	= "-X",
-			NoBoundsCheck	= "-disable-boundscheck",
---			Release			= "-release",
-			RetainPaths		= "-op",
-			SymbolsLikeC	= "-gc",
-			UnitTest		= "-unittest",
-			Verbose			= "-v",
+			OmitDefaultLibrary		= "-mscrtlib=",
+			CodeCoverage			= "-cov",
+			Documentation			= "-D",
+			FatalWarnings			= "-w", -- Use LLVM flag? : "-fatal-assembler-warnings",
+			GenerateHeader			= "-H",
+			GenerateJSON			= "-X",
+--			Release					= "-release",
+			RetainPaths				= "-op",
+			SymbolsLikeC			= "-gc",
+			UnitTest				= "-unittest",
+			Verbose					= "-v",
+			AllTemplateInst			= "-allinst",
+			BetterC					= "-betterC",
+			Main					= "-main",
+			PerformSyntaxCheckOnly	= "-o-",
+			ShowGC					= "-vgc",
+			IgnorePragma			= "-ignore",
+		},
+		boundscheck = {
+			Off = "-boundscheck=off",
+			On = "-boundscheck=on",
+			SafeOnly = "-boundscheck=safeonly",
+		},
+		deprecatedfeatures = {
+			Allow = "-d",
+			Warn = "-dw",
+			Error = "-de",
 		},
 		floatingpoint = {
 			Fast = "-fp-contract=fast -enable-unsafe-fp-math",
@@ -70,10 +86,13 @@
 		},
 		warnings = {
 			Default = "-wi",
+			High = "-wi",
 			Extra = "-wi",	-- TODO: is there a way to get extra warnings?
 		},
 		symbols = {
 			On = "-g",
+			FastLink = "-g",
+			Full = "-g",
 		}
 	}
 
@@ -86,7 +105,30 @@
 			table.insert(flags, "-release")
 		end
 
-		-- TODO: When DMD gets CRT options, map StaticRuntime and DebugRuntime
+		if not cfg.flags.OmitDefaultLibrary then
+			local releaseruntime = not config.isDebugBuild(cfg)
+			local staticruntime = true
+			if cfg.staticruntime == "Off" then
+				staticruntime = false
+			end
+			if cfg.runtime == "Debug" then
+				releaseruntime = false
+			elseif cfg.runtime == "Release" then
+				releaseruntime = true
+			end
+
+			if (cfg.staticruntime and cfg.staticruntime ~= "Default") or (cfg.runtime and cfg.runtime ~= "Default") then
+				if staticruntime == true and releaseruntime == true then
+					table.insert(flags, "-mscrtlib=libcmt")
+				elseif staticruntime == true and releaseruntime == false then
+					table.insert(flags, "-mscrtlib=libcmtd")
+				elseif staticruntime == false and releaseruntime == true then
+					table.insert(flags, "-mscrtlib=msvcrt")
+				elseif staticruntime == false and releaseruntime == false then
+					table.insert(flags, "-mscrtlib=msvcrtd")
+				end
+			end
+		end
 
 		if cfg.flags.Documentation then
 			if cfg.docname then
@@ -150,6 +192,20 @@
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-I=' .. p.quoted(dir))
+		end
+		return result
+	end
+
+
+--
+-- Decorate import file search paths for the DMD command line.
+--
+
+	function ldc.getstringimportdirs(cfg, dirs)
+		local result = {}
+		for _, dir in ipairs(dirs) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-J=' .. p.quoted(dir))
 		end
 		return result
 	end

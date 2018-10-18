@@ -1,7 +1,7 @@
 --
 -- vs2010_nuget.lua
 -- Generate a NuGet packages.config file.
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -9,7 +9,7 @@
 
 	local vstudio = p.vstudio
 	local nuget2010 = p.vstudio.nuget2010
-	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 
 	local packageAPIInfos = {}
 	local packageSourceInfos = {}
@@ -32,10 +32,14 @@
 			local cfg = p.project.getfirstconfig(prj)
 			local action = p.action.current()
 			local framework = cfg.dotnetframework or action.vstudio.targetFramework
-			return cs2005.formatNuGetFrameworkVersion(framework)
+			return dn2005.formatNuGetFrameworkVersion(framework)
 		else
 			return "native"
 		end
+	end
+
+	function nuget2010.supportsPackageReferences(prj)
+		return _ACTION >= "vs2017" and p.project.isdotnet(prj)
 	end
 
 
@@ -368,3 +372,66 @@
 		p.pop('</packageSources>')
 		p.pop('</configuration>')
 	end
+
+
+--
+-- nuget workspace validation
+--
+
+	function nuget2010.uniqueProjectLocationsWithNuGet(wks)
+		local locations = {}
+		for prj in p.workspace.eachproject(wks) do
+			if not nuget2010.supportsPackageReferences(prj) then
+				local function fail()
+					p.error("projects '%s' and '%s' cannot have the same location when using NuGet with different packages (packages.config conflict)", locations[prj.location].name, prj.name)
+				end
+
+				if locations[prj.location] and #locations[prj.location].nuget > 0 and #prj.nuget > 0 then
+					if #locations[prj.location].nuget ~= #prj.nuget then
+						fail()
+					end
+
+					for i, package in ipairs(locations[prj.location].nuget) do
+						if prj.nuget[i] ~= package then
+							fail()
+						end
+					end
+				end
+				locations[prj.location] = prj
+			end
+		end
+	end
+
+	p.override(p.validation.elements, "workspace", function (oldfn, wks)
+		local t = oldfn(wks)
+		table.insert(t, nuget2010.uniqueProjectLocationsWithNuGet)
+		return t
+	end)
+
+--
+-- nuget project validation
+--
+
+	function nuget2010.NuGetHasHTTP(prj)
+		if not http and #prj.nuget > 0 and not nuget2010.supportsPackageReferences(prj) then
+			p.error("Premake was compiled with --no-curl, but Curl is required for NuGet support (project '%s' is referencing NuGet packages)", prj.name)
+		end
+	end
+
+	function nuget2010.NuGetPackageStrings(prj)
+		for _, package in ipairs(prj.nuget) do
+			local components = package:explode(":")
+
+			if #components ~= 2 or #components[1] == 0 or #components[2] == 0 then
+				p.error("NuGet package '%s' in project '%s' is invalid - please give packages in the format 'id:version', e.g. 'NUnit:3.6.1'", package, prj.name)
+			end
+		end
+	end
+
+	p.override(p.validation.elements, "project", function (oldfn, prj)
+		local t = oldfn(prj)
+		table.insert(t, nuget2010.NuGetHasHTTP)
+		table.insert(t, nuget2010.NuGetPackageStrings)
+		return t
+	end)
+

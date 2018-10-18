@@ -100,8 +100,8 @@
 
 		local environ = {}
 		local fsub = context.new(prj, environ)
-		context.copyFilters(fsub, cfg)
-		context.mergeFilters(fsub, fcfg)
+		context.copyFilters(fsub, fcfg)
+		context.mergeFilters(fsub, cfg)
 
 		fcfg.configs[cfg] = fsub
 
@@ -133,8 +133,7 @@
 
 		context.basedir(fsub, prj.location)
 
-		setmetatable(fsub, fileconfig.fsub_mt)
-
+		return setmetatable(fsub, fileconfig.fsub_mt)
 	end
 
 

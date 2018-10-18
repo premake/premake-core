@@ -27,7 +27,11 @@
 -- Patch the path table to provide knowledge of D file extenstions
 --
 	function path.isdfile(fname)
-		return path.hasextension(fname, { ".d", ".di" })
+		return path.hasextension(fname, { ".d" })
+	end
+
+	function path.isdheader(fname)
+		return path.hasextension(fname, { ".di" })
 	end
 
 
@@ -39,6 +43,7 @@
 	include( "tools/ldc.lua" )
 
 	include( "actions/gmake.lua" )
-	include( "actions/vstudio.lua" )
+	include( "actions/vcxproj.lua" )
+	include( "actions/visuald.lua" )
 
 	return m

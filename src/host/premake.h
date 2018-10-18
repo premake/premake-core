@@ -11,8 +11,8 @@
 
 #include <stdlib.h>
 
-#define PREMAKE_VERSION        "5.0.0-alpha12"
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2017 Jason Perkins and the Premake Project"
+#define PREMAKE_VERSION        "5.0.0-alpha13"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2018 Jason Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
 /* Identify the current platform I'm not sure how to reliably detect
@@ -89,6 +89,7 @@ unsigned long do_hash(const char* str, int seed);
 void do_getabsolute(char* result, const char* value, const char* relative_to);
 int do_getcwd(char* buffer, size_t size);
 int do_isabsolute(const char* path);
+int do_absolutetype(const char* path);
 int do_isfile(lua_State* L, const char* filename);
 int do_locate(lua_State* L, const char* filename, const char* path);
 void do_normalize(lua_State* L, char* buffer, const char* path);
@@ -97,6 +98,7 @@ void do_translate(char* value, const char sep);
 
 int term_doGetTextColor();
 void term_doSetTextColor(int color);
+void printLastError(lua_State* L);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
@@ -107,6 +109,9 @@ int path_getabsolute(lua_State* L);
 int path_getrelative(lua_State* L);
 int path_isabsolute(lua_State* L);
 int path_join(lua_State* L);
+int path_deferred_join(lua_State* L);
+int path_has_deferred_join(lua_State* L);
+int path_resolve_deferred_join(lua_State* L);
 int path_normalize(lua_State* L);
 int path_translate(lua_State* L);
 int path_wildcards(lua_State* L);
@@ -185,6 +190,7 @@ extern const buildin_mapping builtin_scripts[];
 extern void  registerModules(lua_State* L);
 
 int premake_init(lua_State* L);
+int premake_pcall(lua_State* L, int nargs, int nresults);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
 int premake_load_embedded_script(lua_State* L, const char* filename);
 const buildin_mapping* premake_find_embedded_script(const char* filename);

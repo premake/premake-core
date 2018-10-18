@@ -65,6 +65,7 @@
 
 		self.system = self.system or os.target()
 		context.addFilter(self, "system", os.getSystemTags(self.system))
+		context.addFilter(self, "host", os.getSystemTags(os.host()))
 
 		-- Add command line options to the filtering options
 		local options = {}
@@ -105,6 +106,13 @@
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 
+		-- Build a master list of configuration/platform pairs from all of the
+		-- projects contained by the workspace; I will need this when generating
+		-- workspace files in order to provide a map from workspace configurations
+		-- to project configurations.
+
+		self.configs = oven.bakeConfigs(self)
+
 		-- Now bake down all of the projects contained in the workspace, and
 		-- store that for future reference
 
@@ -118,13 +126,6 @@
 		-- now we can post process the projects for 'buildoutputs' files
 		-- that have the 'compilebuildoutputs' flag
 		oven.addGeneratedFiles(self)
-
-		-- Build a master list of configuration/platform pairs from all of the
-		-- projects contained by the workspace; I will need this when generating
-		-- workspace files in order to provide a map from workspace configurations
-		-- to project configurations.
-
-		self.configs = oven.bakeConfigs(self)
 	end
 
 
@@ -206,6 +207,7 @@
 
 		self.system = self.system or os.target()
 		context.addFilter(self, "system", os.getSystemTags(self.system))
+		context.addFilter(self, "host", os.getSystemTags(os.host()))
 		context.addFilter(self, "architecture", self.architecture)
 		context.addFilter(self, "tags", self.tags)
 
@@ -586,6 +588,7 @@
 		-- allow the project script to override the default system
 		ctx.system = ctx.system or system
 		context.addFilter(ctx, "system", os.getSystemTags(ctx.system))
+		context.addFilter(ctx, "host", os.getSystemTags(os.host()))
 
 		-- allow the project script to override the default architecture
 		ctx.architecture = ctx.architecture or architecture
@@ -597,6 +600,9 @@
 
 		-- if a kind is set, allow that to influence the configuration
 		context.addFilter(ctx, "kind", ctx.kind)
+
+		-- if a sharedlibtype is set, allow that to influence the configuration
+		context.addFilter(ctx, "sharedlibtype", ctx.sharedlibtype)
 
 		-- if tags are set, allow that to influence the configuration
 		context.addFilter(ctx, "tags", ctx.tags)
@@ -642,7 +648,7 @@
 		-- I need to look at them all.
 
 		for cfg in p.project.eachconfig(prj) do
-			local function addFile(fname)
+			local function addFile(fname, i)
 
 				-- If this is the first time I've seen this file, start a new
 				-- file configuration for it. Track both by key for quick lookups
@@ -650,6 +656,7 @@
 				local fcfg = files[fname]
 				if not fcfg then
 					fcfg = p.fileconfig.new(fname, prj)
+					fcfg.order = i
 					files[fname] = fcfg
 					table.insert(files, fcfg)
 				end
@@ -663,7 +670,7 @@
 			-- packages.config file to the project. Is there a better place to
 			-- do this?
 
-			if #prj.nuget > 0 then
+			if #prj.nuget > 0 and (_ACTION < "vs2017" or p.project.iscpp(prj)) then
 				addFile("packages.config")
 			end
 		end

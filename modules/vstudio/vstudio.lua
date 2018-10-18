@@ -1,7 +1,7 @@
 --
 -- vstudio.lua
 -- Define the Visual Studio 200x actions.
--- Copyright (c) 2002-2017 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 --
 
 	local p = premake
@@ -27,8 +27,8 @@
 		win32   = "x86",
 		x86     = "x86",
 		x86_64  = "x64",
-		xbox360 = "Xbox 360",
 		ARM     = "ARM",
+		ARM64   = "ARM64",
 	}
 
 	vstudio.vs2010_architectures =
@@ -442,8 +442,10 @@
 
 	function vstudio.projectfile(prj)
 		local extension
-		if project.isdotnet(prj) then
+		if project.iscsharp(prj) then
 			extension = ".csproj"
+		elseif project.isfsharp(prj) then
+			extension = ".fsproj"
 		elseif project.isc(prj) or project.iscpp(prj) then
 			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 		end
@@ -612,8 +614,10 @@
 --
 
 	function vstudio.tool(prj)
-		if project.isdotnet(prj) then
+		if project.iscsharp(prj) then
 			return "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
+		elseif project.isfsharp(prj) then
+			return "F2A71F9B-5D33-465A-A702-920D77279786"
 		elseif project.isc(prj) or project.iscpp(prj) then
 			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 		end
@@ -628,8 +632,11 @@
 	include("vs200x_vcproj.lua")
 	include("vs200x_vcproj_user.lua")
 	include("vs2005_solution.lua")
+	include("vs2005_dotnetbase.lua")
 	include("vs2005_csproj.lua")
 	include("vs2005_csproj_user.lua")
+	include("vs2005_fsproj.lua")
+	include("vs2005_fsproj_user.lua")
 	include("vs2010_nuget.lua")
 	include("vs2010_vcxproj.lua")
 	include("vs2010_vcxproj_user.lua")

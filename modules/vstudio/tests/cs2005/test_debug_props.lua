@@ -7,6 +7,7 @@
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_debug_props")
 	local cs2005 = p.vstudio.cs2005
+	local dn2005 = p.vstudio.dotnetbase
 	local project = p.project
 
 
@@ -23,7 +24,7 @@
 
 	local function prepare()
 		local cfg = test.getconfig(prj, "Debug")
-		cs2005.debugProps(cfg)
+		dn2005.debugProps(cfg)
 	end
 
 
@@ -57,7 +58,7 @@
 		debugargs "foobar"
 
 		local cfg = test.getconfig(prj, "Debug")
-		cs2005.debugCommandParameters(cfg)
+		dn2005.debugCommandParameters(cfg)
 
 		test.capture [[
 		<Commandlineparameters>foobar</Commandlineparameters>

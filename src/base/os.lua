@@ -659,9 +659,18 @@
 
 
 ---
+-- Apply os slashes for decorated command paths.
+---
+	function os.translateCommandAndPath(dir, map)
+		if map == 'windows' then
+			return path.translate(dir)
+		end
+		return dir
+	end
+
+---
 -- Translate decorated command paths into their OS equivalents.
 ---
-
 	function os.translateCommandsAndPaths(cmds, basedir, location, map)
 		local translatedBaseDir = path.getrelative(location, basedir)
 
@@ -669,12 +678,10 @@
 
 		local translateFunction = function(value)
 			local result = path.join(translatedBaseDir, value)
-			if value:endswith('/') or value:endswith('\\') or
+			result = os.translateCommandAndPath(result, map)
+			if value:endswith('/') or value:endswith('\\') or -- if orginal path ends with a slash then ensure the same
 			   value:endswith('/"') or value:endswith('\\"') then
 				result = result .. '/'
-			end
-			if map == 'windows' then
-				result = path.translate(result)
 			end
 			return result
 		end

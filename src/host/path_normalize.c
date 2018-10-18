@@ -8,127 +8,133 @@
 #include <ctype.h>
 #include <string.h>
 
-// isspace custom version (visual c++'s one doesn't like utf8 characters)
-static int is_space(char c)
+#define	IS_SEP(__c)			((__c) == '/' || (__c) == '\\')
+#define	IS_QUOTE(__c)		((__c) == '\"' || (__c) == '\'')
+
+#define IS_UPPER_ALPHA(__c)	((__c) >= 'A' && (__c) <= 'Z')
+#define IS_LOWER_ALPHA(__c)	((__c) >= 'a' && (__c) <= 'z')
+#define IS_ALPHA(__c)		(IS_UPPER_ALPHA(__c) || IS_LOWER_ALPHA(__c))
+
+#define IS_SPACE(__c)		((__c >= '\t' && __c <= '\r') || __c == ' ')
+
+static void* normalize_substring(const char* srcPtr, const char* srcEnd, char* dstPtr)
 {
-	return  (c >= 9 && c <= 13) || c == 32;
-}
+#define IS_END(__p)			(__p >= srcEnd || *__p == '\0')
+#define IS_SEP_OR_END(__p)	(IS_END(__p) || IS_SEP(*__p))
 
-static void* normalize_substring(const char* str, const char* endPtr, char* writePtr) {
-	const char* const source = str;
-	const char* const writeBegin = writePtr;
-	const char* ptr;
-	char last = 0;
-	char ch;
+	// Handle Windows absolute paths
+	if (IS_ALPHA(srcPtr[0]) && srcPtr[1] == ':')
+	{
+		*(dstPtr++) = srcPtr[0];
+		*(dstPtr++) = ':';
 
-	while (str != endPtr) {
-		ch = (*str);
-
-		/* make sure we're using '/' for all separators */
-		if (ch == '\\') {
-			ch = '/';
-		}
-
-		/* filter out .. except when it's part of the file or folder name */
-		if (ch == '.' && last == '.' && *(str - 2) == '/' && (*(str + 1) == '/' || str + 1 == endPtr)) {
-			last = 0;
-
-			ptr = writePtr - 3;
-			while (ptr >= writeBegin) {
-				if (ptr[0] == '/' && ptr[1] != '.' && ptr[2] != '.') {
-					writePtr -= writePtr - ptr;
-
-					/* special fix for cases, when '..' is the last chars in path i.e. d:\game\.., this should be converted into d:\,
-					but without this case, it will be converted into d: */
-					if (writePtr - 1 >= writeBegin && *(writePtr - 1) == ':' && str + 1 == endPtr) {
-						++writePtr;
-					}
-					break;
-				}
-				--ptr;
-			}
-
-			if (ptr < writeBegin) {
-				*(writePtr++) = ch;
-			}
-
-			++str;
-			continue;
-		}
-
-		/* filter out /./ */
-		if (ch == '/' && last == '.') {
-			ptr = str - 2;
-			if (*ptr == '/') {	// there is no need to check whether ptr >= source since all the leading ./ will be skipped in path_normalize
-				if (ptr - 1 < source || *(ptr - 1) != ':') {
-					--writePtr;
-				}
-
-				++str;
-				continue;
-			}
-		}
-
-		/* add to the result, filtering out duplicate slashes */
-		if (ch != '/' || last != '/') {
-			*(writePtr++) = ch;
-		}
-
-		last = ch;
-		++str;
+		srcPtr += 2;
 	}
 
-	/* remove any trailing slashes, except those, that follow the ':', to avoid a path corruption i.e. D:\ -> D: */
-	while (*(--endPtr) == '/' && *(endPtr - 1) != ':') {
-		--writePtr;
+	// Handle path starting with a sep (C:/ or /)
+	if (IS_SEP(*srcPtr))
+	{
+		++srcPtr;
+		*(dstPtr++) = '/';
+		// Handle path starting with //
+		if (IS_SEP(*srcPtr))
+		{
+			++srcPtr;
+			*(dstPtr++) = '/';
+		}
 	}
 
-	*writePtr = *str;
+	const char * const dstRoot = dstPtr;
+	unsigned int folderDepth = 0;
 
-	return writePtr;
+	while (!IS_END(srcPtr))
+	{
+		// Skip multiple sep and "./" pattern
+		while (IS_SEP(*srcPtr) || (srcPtr[0] == '.' && IS_SEP_OR_END(&srcPtr[1])))
+			++srcPtr;
+
+		if (IS_END(srcPtr))
+			break;
+
+		// Handle "../ pattern"
+		if (srcPtr[0] == '.' && srcPtr[1] == '.' && IS_SEP_OR_END(&srcPtr[2]))
+		{
+			if (folderDepth > 0)
+			{
+				// Here dstPtr[-1] is safe as folderDepth > 0.
+				while (--dstPtr != dstRoot && !IS_SEP(dstPtr[-1]));
+
+				--folderDepth;
+			}
+			else
+			{
+				*(dstPtr++) = '.';
+				*(dstPtr++) = '.';
+				*(dstPtr++) = '/';
+			}
+			srcPtr += 3;
+		}
+		else
+		{
+			while (!IS_SEP_OR_END(srcPtr))
+				*(dstPtr++) = *(srcPtr++);
+
+			if (IS_SEP(*srcPtr))
+			{
+				*(dstPtr++) = '/';
+				++srcPtr;
+				++folderDepth;
+			}
+		}
+	}
+
+	// Remove trailing slash except for C:/ or / (root)
+	while (dstPtr != dstRoot && IS_SEP(dstPtr[-1]))
+		--dstPtr;
+
+	return dstPtr;
 }
 
 
 int path_normalize(lua_State* L)
 {
-	const char* path = luaL_checkstring(L, 1);
-	const char* readPtr = path;
+	const char *path = luaL_checkstring(L, 1);
+	const char *readPtr = path;
 	char buffer[0x4000] = { 0 };
-	char* writePtr = buffer;
-	const char* endPtr;
+	char *writePtr = buffer;
+	const char *endPtr;
 
 	// skip leading white spaces
-	while (*readPtr && is_space(*readPtr)) {
+	while (IS_SPACE(*readPtr))
 		++readPtr;
-	}
 
 	endPtr = readPtr;
 
 	while (*endPtr) {
-		/* remove any leading "./" sequences */
-		while (strncmp(readPtr, "./", 2) == 0) {
-			readPtr += 2;
-		}
-
 		// find the end of sub path
-		while (*endPtr && !is_space(*endPtr)) {
+		while (*endPtr && !IS_SPACE(*endPtr))
 			++endPtr;
+
+		// path is surrounded with quotes
+		if (readPtr != endPtr &&
+			IS_QUOTE(*readPtr) && IS_QUOTE(endPtr[-1]) &&
+			*readPtr == endPtr[-1])
+		{
+			*(writePtr++) = *(readPtr++);
 		}
 
 		writePtr = normalize_substring(readPtr, endPtr, writePtr);
 
 		// skip any white spaces between sub paths
-		while (*endPtr && is_space(*endPtr)) {
+		while (IS_SPACE(*endPtr))
 			*(writePtr++) = *(endPtr++);
-		}
 
 		readPtr = endPtr;
 	}
 
 	// skip any trailing white spaces
-	while (is_space(*(--endPtr))) {
+	while (writePtr != buffer && IS_SPACE(writePtr[-1]))
 		--writePtr;
-	}
 
 	*writePtr = 0;
 

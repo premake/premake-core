@@ -246,7 +246,11 @@
 			return result
 		else
 			if filename then
-				return path.getrelative(prj.location, filename)
+				local result = filename
+				if path.hasdeferredjoin(result) then
+					result = path.resolvedeferredjoin(result)
+				end
+				return path.getrelative(prj.location, result)
 			end
 		end
 	end
@@ -445,7 +449,27 @@
 --
 
 	function project.isdotnet(prj)
-		return p.languages.isdotnet(prj.language)
+		return
+			p.languages.iscsharp(prj.language) or
+			p.languages.isfsharp(prj.language)
+	end
+
+
+--
+-- Returns true if the project uses a C# language.
+--
+
+	function project.iscsharp(prj)
+		return p.languages.iscsharp(prj.language)
+	end
+
+
+--
+-- Returns true if the project uses a F# language.
+--
+
+	function project.isfsharp(prj)
+		return p.languages.isfsharp(prj.language)
 	end
 
 
@@ -492,7 +516,8 @@
 		local testpattern = function(pattern, pairing, i)
 			local j = 1
 			while i <= #pairing and j <= #pattern do
-				if pairing[i] ~= pattern[j] then
+				local wd = path.wildcards(pattern[j])
+				if pairing[i]:match(wd) ~= pairing[i] then
 					return false
 				end
 				i = i + 1

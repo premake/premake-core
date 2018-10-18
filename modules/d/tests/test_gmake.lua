@@ -53,7 +53,7 @@ $(TARGET): $(SOURCEFILES) $(LDDEPS)
 	end
 
 	function suite.make_targetRules_separateCompilation()
-		flags { "SeparateCompilation" }
+		compilationmodel "File"
 		prepare()
 		m.make.targetRules(prj)
 		test.capture [[
@@ -67,7 +67,7 @@ $(TARGET): $(OBJECTS) $(LDDEPS)
 
 	function suite.make_targetRules_mixedCompilation()
 		configuration { "Release" }
-			flags { "SeparateCompilation" }
+			compilationmodel "File"
 		prepare()
 		m.make.targetRules(prj)
 		test.capture [[
@@ -99,7 +99,7 @@ endif
 
 	function suite.make_fileRules_separateCompilation()
 		files { "blah.d" }
-		flags { "SeparateCompilation" }
+		compilationmodel "File"
 		prepare()
 		m.make.dFileRules(prj)
 		test.capture [[
@@ -112,7 +112,7 @@ $(OBJDIR)/blah.o: blah.d
 	function suite.make_fileRules_mixedCompilation()
 		files { "blah.d" }
 		configuration { "Release" }
-			flags { "SeparateCompilation" }
+			compilationmodel "File"
 		prepare()
 		m.make.dFileRules(prj)
 		test.capture [[
@@ -136,7 +136,7 @@ SOURCEFILES := \
 
 	function suite.make_objects_separateCompilation()
 		files { "blah.d" }
-		flags { "SeparateCompilation" }
+		compilationmodel "File"
 		prepare()
 		m.make.objects(prj)
 		test.capture [[
@@ -149,7 +149,7 @@ OBJECTS := \
 	function suite.make_objects_mixedCompilation()
 		files { "blah.d" }
 		configuration { "Release" }
-			flags { "SeparateCompilation" }
+			compilationmodel "File"
 			files { "blah2.d" }
 		prepare()
 		m.make.objects(prj)
@@ -186,7 +186,7 @@ all: $(TARGETDIR) prebuild prelink $(TARGET)
 	end
 
 	function suite.make_allRules_separateCompilation()
-		flags { "SeparateCompilation" }
+		compilationmodel "File"
 		prepare_cfg({ m.make.allRules })
 		test.capture [[
 all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)

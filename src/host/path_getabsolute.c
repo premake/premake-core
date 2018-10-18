@@ -34,6 +34,9 @@ void do_getabsolute(char* result, const char* value, const char* relative_to)
 	result[0] = '\0';
 	if (buffer[0] == '/') {
 		strcat(result, "/");
+		if (buffer[1] == '/') {
+			strcat(result, "/");
+		}
 	}
 
 	prev = NULL;
@@ -41,7 +44,7 @@ void do_getabsolute(char* result, const char* value, const char* relative_to)
 	while (ch) {
 		/* remove ".." where I can */
 		if (strcmp(ch, "..") == 0 && (prev == NULL || (prev[0] != '$' && prev[0] != '%' && strcmp(prev, "..") != 0))) {
-			i = strlen(result) - 2;
+			i = (int)strlen(result) - 2;
 			while (i >= 0 && result[i] != '/') {
 				--i;
 			}
@@ -62,7 +65,7 @@ void do_getabsolute(char* result, const char* value, const char* relative_to)
 	}
 
 	/* remove trailing slash */
-	i = strlen(result) - 1;
+	i = (int)strlen(result) - 1;
 	if (result[i] == '/') {
 		result[i] = '\0';
 	}

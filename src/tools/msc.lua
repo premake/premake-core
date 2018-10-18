@@ -38,11 +38,8 @@
 		flags = {
 			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
-			NoFramePointer = "/Oy",
 			NoMinimalRebuild = "/Gm-",
-			OmitDefaultLibrary = "/Zl",
-			StaticRuntime = function(cfg) return iif(config.isDebugBuild(cfg), "/MTd", "/MT") end,
-			_StaticRuntime = function(cfg) return iif(config.isDebugBuild(cfg), "/MDd", "/MD") end
+			OmitDefaultLibrary = "/Zl"
 		},
 		floatingpoint = {
 			Fast = "/fp:fast",
@@ -87,13 +84,28 @@
 			High = "/W4",
 			Off = "/W0",
 		},
+		staticruntime = {
+			-- this option must always be emit (does it??)
+			_ = function(cfg) return iif(config.isDebugBuild(cfg), "/MDd", "/MD") end,
+			-- runtime defaults to dynamic in VS
+			Default = function(cfg) return iif(config.isDebugBuild(cfg), "/MDd", "/MD") end,
+			On = function(cfg) return iif(config.isDebugBuild(cfg), "/MTd", "/MT") end,
+			Off = function(cfg) return iif(config.isDebugBuild(cfg), "/MDd", "/MD") end,
+		},
 		stringpooling = {
 			On = "/GF",
 			Off = "/GF-",
 		},
 		symbols = {
 			On = "/Z7"
+		},
+		unsignedchar = {
+			On = "/J",
+		},
+		omitframepointer = {
+			On = "/Oy"
 		}
+
 	}
 
 	msc.cflags = {

@@ -15,6 +15,7 @@
 		trigger         = "gmake2",
 		shortname       = "Alternative GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
+		toolset         = "gcc",
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
 

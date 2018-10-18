@@ -1,12 +1,12 @@
 /**
- * \file   os_uuid.c
- * \brief  Create a new UUID.
+ * \file   os_compile.c
+ * \brief  Compile lua source.
  * \author Copyright (c) 2002-2012 Jason Perkins and the Premake project
  */
 
 #include "premake.h"
-#include <lundump.h>
-#include <lstate.h>
+#include "lundump.h"
+#include "lstate.h"
 
 extern int original_luaL_loadfilex(lua_State* L, const char* filename, const char* mode);
 

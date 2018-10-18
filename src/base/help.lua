@@ -50,6 +50,11 @@
 
 				printf(" --%-" .. length .. "s %s", trigger, description)
 				if (option.allowed) then
+					local function compareValue(a, b)
+						return a[1] < b[1]
+					end
+					table.sort(option.allowed, compareValue)
+
 					for _, value in ipairs(option.allowed) do
 						printf("     %-" .. length-1 .. "s %s", value[1], value[2])
 					end
@@ -69,7 +74,7 @@
 
 
 		-- see more
-		printf("For additional information, see http://industriousone.com/premake")
+		printf("For additional information, see https://premake.github.io")
 
 	end
 

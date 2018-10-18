@@ -67,6 +67,14 @@ int path_getrelative(lua_State* L)
 		return 1;
 	}
 
+	/* Relative paths within a server can't climb outside the server root.
+	* If the paths don't share server name, return the absolute path. */
+	if (src[0] == '/' && src[1] == '/' && last == 1) {
+		dst[strlen(dst) - 1] = '\0';
+		lua_pushstring(L, dst);
+		return 1;
+	}
+
 	/* count remaining levels in src */
 	count = 0;
 	for (i = last + 1; src[i] != '\0'; ++i) {

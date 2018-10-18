@@ -1,7 +1,7 @@
 ---
 -- vs2010_rules_targets.lua
 -- Generate a Visual Studio 201x custom rules targets file.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) Jason Perkins and the Premake project
 ---
 
 	local p = premake
@@ -60,7 +60,7 @@
 	function m.computedProperties(r)
 		-- create shadow context.
 		local pathVars = p.rule.createPathVars(r, "%%(%s)")
-		local ctx = p.context.extent(r, { pathVars = pathVars })
+		local ctx = p.context.extent(r, { pathVars = pathVars, overridePathVars = true })
 
 		-- now use the shadow context to detoken.
 		local buildoutputs = ctx.buildoutputs
@@ -302,7 +302,7 @@
 	function m.linkLib(r)
 		-- create shadow context.
 		local pathVars = p.rule.createPathVars(r, "%%(%s)")
-		local ctx = p.context.extent(r, { pathVars = pathVars })
+		local ctx = p.context.extent(r, { pathVars = pathVars, overridePathVars=true })
 
 		-- now use the shadow context to detoken.
 		local buildoutputs = ctx.buildoutputs
@@ -458,7 +458,7 @@
 
 		p.w('<WriteLinesToFile')
 		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(IntDir)$(ProjectName).read.1.tlog"')
+		p.w('  File="$(TLogLocation)%s.read.1.tlog"', r.name)
 		p.w('  Lines="^%%(%s_tlog.Inputs);%s$(MSBuildProjectFullPath);%%(%s_tlog.Fullpath)" />', r.name, extra, r.name)
 	end
 
@@ -467,7 +467,7 @@
 	function m.tlogWrite(r)
 		p.w('<WriteLinesToFile')
 		p.w('  Condition="\'@(%s_tlog)\' != \'\' and \'%%(%s_tlog.ExcludedFromBuild)\' != \'true\'"', r.name, r.name)
-		p.w('  File="$(IntDir)$(ProjectName).write.1.tlog"')
+		p.w('  File="$(TLogLocation)%s.write.1.tlog"', r.name)
 		p.w('  Lines="^%%(%s_tlog.Source);%%(%s_tlog.Fullpath)" />', r.name, r.name)
 	end
 

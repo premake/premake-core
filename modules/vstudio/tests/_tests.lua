@@ -1,27 +1,30 @@
 require ("vstudio")
 
 return {
-	-- Visual Studio 2005-2013 C# projects
+	-- Visual Studio .Net projects
+	"dotnet2005/projectelement.lua",
+	"dotnet2005/test_nuget_framework_folders.lua",
+
+	-- Visual Studio 2005+ C# projects
 	"cs2005/test_assembly_refs.lua",
 	"cs2005/test_build_events.lua",
 	"cs2005/test_common_props.lua",
 	"cs2005/test_compiler_props.lua",
+	"cs2005/test_no_warn.lua",
 	"cs2005/test_debug_props.lua",
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
 	"cs2005/test_nuget_config.lua",
-	"cs2005/test_nuget_framework_folders.lua",
 	"cs2005/test_nuget_packages_config.lua",
 	"cs2005/test_nuget_references.lua",
 	"cs2005/test_output_props.lua",
-	"cs2005/projectelement.lua",
 	"cs2005/test_platform_groups.lua",
 	"cs2005/test_project_refs.lua",
 	"cs2005/projectsettings.lua",
 	"cs2005/test_targets.lua",
 	"cs2005/test_user_file.lua",
 
-	-- Visual Studio 2005-2013 solutions
+	-- Visual Studio 2005+ solutions
 	"sln2005/test_dependencies.lua",
 	"sln2005/test_header.lua",
 	"sln2005/test_nested_projects.lua",
@@ -46,7 +49,7 @@ return {
 	"vc200x/test_resource_compiler.lua",
 	"vc200x/test_user_file.lua",
 
-	-- Visual Studio 2010-2013 C/C++ projects
+	-- Visual Studio 2010+ C/C++ projects
 	"vc2010/test_assembly_refs.lua",
 	"vc2010/test_build_events.lua",
 	"vc2010/test_build_log.lua",
@@ -60,17 +63,18 @@ return {
 	"vc2010/test_language_settings.lua",
 	"vc2010/test_language_targets.lua",
 	"vc2010/test_floatingpoint.lua",
+	"vc2010/test_fxcompile_settings.lua",
 	"vc2010/test_globals.lua",
 	"vc2010/test_header.lua",
 	"vc2010/test_files.lua",
 	"vc2010/test_filter_ids.lua",
 	"vc2010/test_filters.lua",
-	"vc2010/test_imagexex_settings.lua",
 	"vc2010/test_item_def_group.lua",
 	"vc2010/test_link.lua",
 	"vc2010/test_manifest.lua",
 	"vc2010/test_nmake_props.lua",
 	"vc2010/test_nuget_packages_config.lua",
+	"vc2010/test_nuget_package_references.lua",
 	"vc2010/test_output_props.lua",
 	"vc2010/test_platform_toolset.lua",
 	"vc2010/test_project_configs.lua",
@@ -81,6 +85,7 @@ return {
 	"vc2010/test_rule_targets.lua",
 	"vc2010/test_rule_vars.lua",
 	"vc2010/test_rule_xml.lua",
+	"vc2010/test_tokens.lua",
 	"vc2010/test_target_machine.lua",
 	"vc2010/test_user_file.lua",
 	"vc2010/test_vectorextensions.lua",
