@@ -36,9 +36,20 @@
 			value = false,
 			switch = "-p2"
 		}
+	
+		propertydefinition {
+			name = "TestListProperty",
+			kind = "list"
+		}
+	
+		propertydefinition {
+			name = "TestListPropertySeparator",
+			kind = "list",
+			separator = ","
+		}
 
 		buildmessage 'Rule-ing %{file.name}'
-		buildcommands 'dorule %{TestProperty} %{TestProperty2} "%{file.path}"'
+		buildcommands 'dorule %{TestProperty} %{TestProperty2} %{TestListProperty} %{TestListPropertySeparator} "%{file.path}"'
 		buildoutputs { "%{file.basename}.obj" }
 
 		wks = test.createWorkspace()
@@ -278,9 +289,40 @@ endif
 
 test.obj: test.rule
 	@echo Rule-ing test.rule
-	$(SILENT) dorule -p  "test.rule"
+	$(SILENT) dorule -p    "test.rule"
 test2.obj: test2.rule
 	@echo Rule-ing test2.rule
-	$(SILENT) dorule -p -p2 "test2.rule"
+	$(SILENT) dorule -p -p2   "test2.rule"
 		]]
 	end
+
+	function suite.propertydefinitionSeparator()
+
+		rules { "TestRule" }
+
+		files { "test.rule", "test2.rule" }
+
+		filter "files:test.rule"
+			testRuleVars {
+				TestListProperty = { "testValue1", "testValue2" }
+			}
+
+		filter "files:test2.rule"
+			testRuleVars {
+				TestListPropertySeparator = { "testValue1", "testValue2" }
+			}
+
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+test.obj: test.rule
+	@echo Rule-ing test.rule
+	$(SILENT) dorule   testValue1\ testValue2  "test.rule"
+test2.obj: test2.rule
+	@echo Rule-ing test2.rule
+	$(SILENT) dorule    testValue1,testValue2 "test2.rule"
+		]]
+	end
+

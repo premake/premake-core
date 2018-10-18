@@ -121,7 +121,7 @@
 		-- list?
 		if type(value) == "table" then
 			if #value > 0 then
-				local sep = prop.separator or " "
+				local sep = prop.separator or ";"
 				return table.concat(value, sep)
 			else
 				return nil
@@ -162,6 +162,7 @@
 
 	function rule.expandString(self, prop, value)
 		if not prop.switch then
+			prop.separator = prop.separator or " "
 			return rule.getPropertyString(self, prop, value)
 		end
 

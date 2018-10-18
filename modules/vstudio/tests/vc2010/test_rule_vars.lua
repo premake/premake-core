@@ -92,7 +92,19 @@
 		prepare()
 		test.capture [[
 <MyRule>
-	<MyVar>a b c</MyVar>
+	<MyVar>a;b;c</MyVar>
+</MyRule>
+		]]
+	end
+
+
+	function suite.onCustomListSeparator()
+		createVar { name="MyVar", kind="list", separator="," }
+		myRuleVars { MyVar = { "a", "b", "c" } }
+		prepare()
+		test.capture [[
+<MyRule>
+	<MyVar>a,b,c</MyVar>
 </MyRule>
 		]]
 	end
