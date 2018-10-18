@@ -6,25 +6,6 @@
 
 	local p = premake
 
---
--- Register the ios extension
---
-
-	local osoption = p.option.get("os")
-	if type(osoption) == "table" then
-		local ios = false
-		table.foreachi(osoption.allowed, function(allowed)
-			ios = ios or allowed[1] == "ios"
-		end)
-		if not ios then
-			table.insert(osoption.allowed, { "ios",  "iOS" })
-		end
-	end
-
-	-- add system tags for ios.
-	if not os.systemTags[p.IOS] then
-		os.systemTags[p.IOS] = { "ios", "mobile" }
-	end
 
 --
 -- Register new Xcode-specific project fields.

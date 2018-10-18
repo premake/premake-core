@@ -734,6 +734,7 @@
 		["aix"]      = { "aix",     "posix" },
 		["bsd"]      = { "bsd",     "posix" },
 		["haiku"]    = { "haiku",   "posix" },
+		["ios"]      = { "ios",     "darwin", "posix", "mobile" },
 		["linux"]    = { "linux",   "posix" },
 		["macosx"]   = { "macosx",  "darwin", "posix" },
 		["solaris"]  = { "solaris", "posix" },
