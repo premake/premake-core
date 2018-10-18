@@ -1761,17 +1761,17 @@
 
 	-- Add variations for other Posix-like systems.
 
-	filter { "system:MacOSX", "kind:WindowedApp" }
+	filter { "system:macosx or ios", "kind:WindowedApp" }
 		targetextension ".app"
 
-	filter { "system:MacOSX", "kind:SharedLib" }
+	filter { "system:macosx or ios", "kind:SharedLib" }
 		targetextension ".dylib"
 
-	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXBundle" }
+	filter { "system:macosx or ios", "kind:SharedLib", "sharedlibtype:OSXBundle" }
 		targetprefix ""
 		targetextension ".bundle"
 
-	filter { "system:MacOSX", "kind:SharedLib", "sharedlibtype:OSXFramework" }
+	filter { "system:macosx or ios", "kind:SharedLib", "sharedlibtype:OSXFramework" }
 		targetprefix ""
 		targetextension ".framework"
 
@@ -1797,7 +1797,7 @@
 	filter { "kind:SharedLib", "system:not Windows" }
 		pic "On"
 
-	filter { "system:macosx" }
+	filter { "system:macosx or ios" }
 		toolset "clang"
 
 	filter {}
