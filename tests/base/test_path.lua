@@ -724,3 +724,19 @@
 		test.isequal("\"../../test/test/\"", path.normalize("\"../../test/test/\""))
 		test.isequal("\"../../test/\"", path.normalize("\"../../test/../test/\""))
 	end
+
+	function suite.normalize_withTokens()
+		-- Premake tokens
+		test.isequal("%{wks.location}../../test", path.normalize("%{wks.location}../../test"))
+		-- Visual Studio var
+		test.isequal("$(SolutionDir)../../test", path.normalize("$(SolutionDir)../../test"))
+		-- Windows env var
+		test.isequal("%APPDATA%../../test", path.normalize("%APPDATA%../../test"))
+		-- Unix env var
+		test.isequal("${HOME}../../test", path.normalize("${HOME}../../test"))
+
+		-- Middle
+		test.isequal("../../${MYVAR}/../test", path.normalize("../../${MYVAR}/../test"))
+		-- End
+		test.isequal("../../test/${MYVAR}", path.normalize("../../test/${MYVAR}"))
+	end
