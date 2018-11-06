@@ -149,6 +149,45 @@
 		return types[path.getextension(node.path)] or "text"
 	end
 
+
+--
+-- Return target name of extenalproject
+--
+-- @param name
+--    externalproject name
+--
+
+	function xcode.gettargetname(name)
+		local basename = path.getbasename(name)
+		local extension = path.getextension(name)
+		return (string.match(basename, "([^@]+)@.+") or basename) .. extension
+	end
+
+
+--
+-- Return project name of extenalproject
+--
+-- @param name
+--    externalproject name
+--
+
+	function xcode.getprojectname(name)
+		return string.match(name, "[^@]+@(.+)") or name
+	end
+
+
+--
+-- Return project path of extenalproject
+--
+-- @param p
+--    externalproject path
+--
+
+	function xcode.getprojectpath(p)
+		return path.join(path.getdirectory(p), xcode.getprojectname(path.getname(p)))
+	end
+
+
 --
 -- Print user configuration references contained in xcodeconfigreferences
 -- @param offset
@@ -166,7 +205,7 @@
 		end
 		tree.traverse(tr, {
 			onleaf = function(node)
-				filename = node.name
+				filename = xcode.getprojectname(node.name)
 				if node.id and path.getextension(filename) == ".xcconfig" then
 					if filename == referenceName then
 						_p(offset, 'baseConfigurationReference = %s /* %s */;', node.id, filename)
@@ -393,7 +432,7 @@
 				if node.buildid then
 					settings[node.buildid] = function(level)
 						_p(level,'%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };',
-							node.buildid, node.name, xcode.getbuildcategory(node), node.id, node.name)
+							node.buildid, xcode.gettargetname(node.name), xcode.getbuildcategory(node), node.id, xcode.gettargetname(node.name))
 					end
 				end
 			end
@@ -414,19 +453,19 @@
 			settings[node.productproxyid] = function()
 				_p(2,'%s /* PBXContainerItemProxy */ = {', node.productproxyid)
 				_p(3,'isa = PBXContainerItemProxy;')
-				_p(3,'containerPortal = %s /* %s */;', node.id, path.getrelative(node.parent.parent.project.location, node.path))
+				_p(3,'containerPortal = %s /* %s */;', node.id, path.getrelative(node.parent.parent.project.location, xcode.getprojectpath(node.path)))
 				_p(3,'proxyType = 2;')
 				_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.id)
-				_p(3,'remoteInfo = %s;', stringifySetting(node.project.xcode.projectnode.name))
+				_p(3,'remoteInfo = %s;', stringifySetting(xcode.gettargetname(node.project.xcode.projectnode.name)))
 				_p(2,'};')
 			end
 			settings[node.targetproxyid] = function()
 				_p(2,'%s /* PBXContainerItemProxy */ = {', node.targetproxyid)
 				_p(3,'isa = PBXContainerItemProxy;')
-				_p(3,'containerPortal = %s /* %s */;', node.id, path.getrelative(node.parent.parent.project.location, node.path))
+				_p(3,'containerPortal = %s /* %s */;', node.id, path.getrelative(node.parent.parent.project.location, xcode.getprojectpath(node.path)))
 				_p(3,'proxyType = 1;')
 				_p(3,'remoteGlobalIDString = %s;', node.project.xcode.projectnode.targetid)
-				_p(3,'remoteInfo = %s;', stringifySetting(node.project.xcode.projectnode.name))
+				_p(3,'remoteInfo = %s;', stringifySetting(xcode.gettargetname(node.project.xcode.projectnode.name)))
 				_p(2,'};')
 			end
 		end
@@ -455,7 +494,7 @@
 				if node.kind == "product" then
 					settings[node.id] = function(level)
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; explicitFileType = %s; includeInIndex = 0; name = %s; path = %s; sourceTree = BUILT_PRODUCTS_DIR; };',
-							node.id, node.name, xcode.gettargettype(node), stringifySetting(node.name), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
+							node.id, node.name, xcode.gettargettype(node), stringifySetting(xcode.getprojectname(node.name)), stringifySetting(path.getname(node.cfg.buildtarget.bundlename ~= "" and node.cfg.buildtarget.bundlename or node.cfg.buildtarget.relpath)))
 					end
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
@@ -465,7 +504,7 @@
 						-- this works if we put it like below
 						local relpath = path.getrelative(path.getabsolute(tr.project.location), path.getabsolute(node.parent.project.location))
 						_p(level,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = %s; path = %s; sourceTree = SOURCE_ROOT; };',
-							node.parent.id, node.name, customStringifySetting(node.parent.name), stringifySetting(path.join(relpath, node.parent.name)))
+							node.parent.id, xcode.gettargetname(node.name), customStringifySetting(xcode.getprojectname(node.parent.name)), stringifySetting(path.join(relpath, xcode.getprojectpath(node.parent.name))))
 					end
 				-- something else
 				else
@@ -543,7 +582,7 @@
 		tree.traverse(tr.frameworks, {
 			onleaf = function(node)
 				if node.buildid then
-					_p(4,'%s /* %s in Frameworks */,', node.buildid, node.name)
+					_p(4,'%s /* %s in Frameworks */,', node.buildid, xcode.gettargetname(node.name))
 				end
 			end
 		})
@@ -552,7 +591,7 @@
 		tree.traverse(tr.projects, {
 			onleaf = function(node)
 				if node.buildid then
-					_p(4,'%s /* %s in Frameworks */,', node.buildid, node.name)
+					_p(4,'%s /* %s in Frameworks */,', node.buildid, xcode.gettargetname(node.name))
 				end
 			end
 		})
@@ -595,7 +634,8 @@
 					_p(3,'children = (')
 					for _, childnode in ipairs(node.children) do
 						if not isAggregateTarget(childnode) then
-							_p(4,'%s /* %s */,', childnode.id, childnode.name)
+							local name = iif(node.name == "Projects", xcode.getprojectname(childnode.name), xcode.gettargetname(childnode.name))
+							_p(4,'%s /* %s */,', childnode.id, name)
 						end
 					end
 					_p(3,');')
@@ -846,7 +886,7 @@
 			for _, node in ipairs(tr.projects.children) do
 				_p(4,'{')
 				_p(5,'ProductGroup = %s /* Products */;', node.productgroupid)
-				_p(5,'ProjectRef = %s /* %s */;', node.id, path.getname(node.path))
+				_p(5,'ProjectRef = %s /* %s */;', node.id, path.getname(xcode.getprojectpath(node.path)))
 				_p(4,'},')
 			end
 			_p(3,');')
@@ -870,10 +910,10 @@
 		tree.traverse(tr.projects, {
 			onleaf = function(node)
 				settings[node.id] = function()
-					_p(2,'%s /* %s */ = {', node.id, node.name)
+					_p(2,'%s /* %s */ = {', node.id, xcode.gettargetname(node.name))
 					_p(3,'isa = PBXReferenceProxy;')
 					_p(3,'fileType = %s;', xcode.gettargettype(node))
-					_p(3,'path = %s;', stringifySetting(node.name))
+					_p(3,'path = %s;', stringifySetting(xcode.gettargetname(node.name)))
 					_p(3,'remoteRef = %s /* PBXContainerItemProxy */;', node.parent.productproxyid)
 					_p(3,'sourceTree = BUILT_PRODUCTS_DIR;')
 					_p(2,'};')
@@ -1089,7 +1129,7 @@
 				settings[node.parent.targetdependid] = function()
 					_p(2,'%s /* PBXTargetDependency */ = {', node.parent.targetdependid)
 					_p(3,'isa = PBXTargetDependency;')
-					_p(3,'name = %s;', stringifySetting(node.name))
+					_p(3,'name = %s;', stringifySetting(xcode.gettargetname(node.name)))
 					_p(3,'targetProxy = %s /* PBXContainerItemProxy */;', node.parent.targetproxyid)
 					_p(2,'};')
 				end

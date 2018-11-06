@@ -52,11 +52,24 @@
 		}
 	end
 
+	local function getWorkspaceFileRef(prj)
+		local fname = m.getxcodeprojname(prj)
+		fname = path.getrelative(prj.workspace.location, fname)
+		return m.getprojectpath(fname)
+	end
+
 	function m.workspaceFileRefs(wks)
 		local tr = p.workspace.grouptree(wks)
+		local processed = {}
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
+
+				local fileRef = getWorkspaceFileRef(prj)
+				if table.contains(processed, fileRef) then
+					return
+				end
+				table.insert(processed, fileRef)
 
 				p.push('<FileRef')
 				local contents = p.capture(function()
@@ -73,7 +86,7 @@
 				p.w('location = "container:"')
 				p.w('name = "%s">', n.name)
 			end,
-			
+
 			onbranchexit = function(n)
 				p.pop('</Group>')
 			end,
@@ -88,8 +101,7 @@
 
 
 	function m.workspaceLocation(prj)
-		local fname = p.filename(prj, ".xcodeproj")
-		fname = path.getrelative(prj.workspace.location, fname)
+		local fname = getWorkspaceFileRef(prj)
 		p.w('location = "group:%s"', fname)
 	end
 
