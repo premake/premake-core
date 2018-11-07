@@ -422,6 +422,64 @@
 	end
 
 
+	function suite.uniqueObjectNames_onBaseNameCollision1()
+		files { "a/hello.cpp", "b/hello.cpp", "c/hello1.cpp" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="a\hello.cpp" />
+	<ClCompile Include="b\hello.cpp">
+		<ObjectFileName>$(IntDir)\hello1.obj</ObjectFileName>
+	</ClCompile>
+	<ClCompile Include="c\hello1.cpp">
+		<ObjectFileName>$(IntDir)\hello11.obj</ObjectFileName>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.uniqueObjectNames_onBaseNameCollision2()
+		files { "a/hello1.cpp", "b/hello.cpp", "c/hello.cpp" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="a\hello1.cpp" />
+	<ClCompile Include="b\hello.cpp" />
+	<ClCompile Include="c\hello.cpp">
+		<ObjectFileName>$(IntDir)\hello2.obj</ObjectFileName>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.uniqueObjectNames_onBaseNameCollision_Release()
+		files { "a/hello.cpp", "b/hello.cpp", "c/hello1.cpp", "d/hello11.cpp" }
+		filter "configurations:Debug"
+			excludes {"b/hello.cpp"}
+		filter "configurations:Release"
+			excludes {"d/hello11.cpp"}
+
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="a\hello.cpp" />
+	<ClCompile Include="b\hello.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+	</ClCompile>
+	<ClCompile Include="c\hello1.cpp">
+		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello11.obj</ObjectFileName>
+	</ClCompile>
+	<ClCompile Include="d\hello11.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
 --
 -- Check handling of per-file forced includes.
 --

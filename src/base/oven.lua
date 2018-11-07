@@ -691,6 +691,29 @@
 -- conflicting object file names (i.e. src/hello.cpp and tests/hello.cpp both
 -- create hello.o).
 --
+-- a file list of: src/hello.cpp, tests/hello.cpp and src/hello1.cpp also generates
+-- conflicting object file names - hello1.o
+
+	function oven.uniqueSequence(f, cfg, seq, bases)
+		while true do
+			f.sequence = seq[cfg] or 0
+			seq[cfg] = f.sequence + 1
+
+			if seq[cfg] == 1 then
+				break
+			end
+
+			if not bases[f.objname] then
+				bases[f.objname] = {}
+			end
+
+			if not bases[f.objname][cfg] then
+				bases[f.objname][cfg] = 1
+				break
+			end
+		end
+	end
+
 
 	function oven.assignObjectSequences(prj)
 
@@ -719,8 +742,7 @@
 			for cfg in p.project.eachconfig(prj) do
 				local fcfg = p.fileconfig.getconfig(file, cfg)
 				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
-					fcfg.sequence = sequences[cfg] or 0
-					sequences[cfg] = fcfg.sequence + 1
+					oven.uniqueSequence(fcfg, cfg, sequences, bases)
 				end
 			end
 
@@ -728,8 +750,7 @@
 			-- this around until they do. At which point I might consider just
 			-- storing the sequence number instead of the whole object name
 
-			file.sequence = sequences[prj] or 0
-			sequences[prj] = file.sequence + 1
+			oven.uniqueSequence(file, prj, sequences, bases)
 
 		end)
 	end
