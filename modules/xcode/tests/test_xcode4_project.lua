@@ -18,6 +18,7 @@
 
 	xcode.used_ids = {}
 
+	local old_idfn = xcode.newid
 	xcode.newid = function(node, usage)
 		local name = node
 		if usage then
@@ -61,6 +62,52 @@
 		xcode.prepareWorkspace(wks)
 		local prj = p.workspace.getproject(wks, 1)
 		tr = xcode.buildprjtree(prj)
+	end
+
+---------------------------------------------------------------------------
+-- xcode id generation tests
+---------------------------------------------------------------------------
+
+	local function print_id(...)
+		_p("%s - %s", xcode.newid(...), old_idfn(...))
+	end
+
+	function suite.IDGeneratorIsDeterministic()
+		print_id("project", "Debug")
+		print_id("project", "Release")
+		test.capture [[
+[project:Debug] - B266956655B21E987082EBA6
+[project:Release] - DAC961207F1BFED291544760
+		]]
+	end
+
+	function suite.IDGeneratorIsDifferent()
+		print_id("project", "Debug", "file")
+		print_id("project", "Debug", "hello")
+		test.capture [[
+[project:Debug] - 47C6E72E5ED982604EF57D6E
+[project:Debug(2)] - 8DCA12C2873014347ACB7102
+		]]
+	end
+
+	function suite.IDGeneratorSame3()
+		print_id("project", "Release", "file")
+		print_id("project", "Release", "file")
+		print_id("project", "Release", "file")
+		test.capture [[
+[project:Release] - 022ECCE82854FC9A8F5BF328
+[project:Release(2)] - 022ECCE82854FC9A8F5BF328
+[project:Release(3)] - 022ECCE82854FC9A8F5BF328
+		]]
+	end
+
+	function suite.IDGeneratorMoreThanNecessary()
+		print_id("a", "b", "c", "d", "e", "f")
+		print_id("abcdef")
+		test.capture [[
+[a:b] - 63AEF3DD89D5238FF0DC1A1D
+[abcdef] - 9F1AF6957CC5F947506A7CD5
+		]]
 	end
 
 ---------------------------------------------------------------------------
