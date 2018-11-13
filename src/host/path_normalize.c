@@ -17,6 +17,18 @@
 
 #define IS_SPACE(__c)		((__c >= '\t' && __c <= '\r') || __c == ' ')
 
+#define IS_WIN_ENVVAR_START(__c)	(*__c == '%')
+#define IS_WIN_ENVVAR_END(__c)		(*__c == '%')
+
+#define IS_VS_VAR_START(__c)		(*__c == '$' && __c[1] == '(')
+#define IS_VS_VAR_END(__c)			(*__c == ')')
+
+#define IS_UNIX_ENVVAR_START(__c)	(*__c == '$' && __c[1] == '{')
+#define IS_UNIX_ENVVAR_END(__c)		(*__c == '}')
+
+#define IS_PREMAKE_TOKEN_START(__c)	(*__c == '%' && __c[1] == '{')
+#define IS_PREMAKE_TOKEN_END(__c)	(*__c == '}')
+
 static void* normalize_substring(const char* srcPtr, const char* srcEnd, char* dstPtr)
 {
 #define IS_END(__p)			(__p >= srcEnd || *__p == '\0')
@@ -93,8 +105,38 @@ static void* normalize_substring(const char* srcPtr, const char* srcEnd, char* d
 		--dstPtr;
 
 	return dstPtr;
+#undef IS_END
+#undef IS_SEP_OR_END
 }
 
+static int skip_tokens(const char *readPtr)
+{
+	int skipped = 0;
+
+#define DO_SKIP_FOR(__kind)\
+if (IS_ ## __kind ## _START(readPtr)) { \
+	do \
+	{ \
+		skipped++; \
+	} while (!IS_ ## __kind ## _END(readPtr++)); \
+} \
+// DO_SKIP_FOR
+
+	do
+	{
+		DO_SKIP_FOR(PREMAKE_TOKEN)
+		DO_SKIP_FOR(WIN_ENVVAR)
+		DO_SKIP_FOR(VS_VAR)
+		DO_SKIP_FOR(UNIX_ENVVAR)
+
+	} while (IS_WIN_ENVVAR_START(readPtr) ||
+			IS_VS_VAR_START(readPtr) ||
+			IS_UNIX_ENVVAR_START(readPtr) ||
+			IS_PREMAKE_TOKEN_START(readPtr));
+
+	return skipped;
+#undef DO_SKIP_FOR
+}
 
 int path_normalize(lua_State* L)
 {
@@ -111,9 +153,31 @@ int path_normalize(lua_State* L)
 	endPtr = readPtr;
 
 	while (*endPtr) {
+
+		int skipped = skip_tokens(readPtr);
+		if (skipped > 0) {
+
+			if (readPtr != path && writePtr != buffer &&
+				IS_SEP(readPtr[-1]) && !IS_SEP(writePtr[-1]))
+			{
+				*(writePtr++) = (readPtr[-1]);
+			}
+
+			while (skipped-- > 0)
+				*(writePtr++) = *(readPtr++);
+
+			endPtr = readPtr;
+		}
+
 		// find the end of sub path
-		while (*endPtr && !IS_SPACE(*endPtr))
+		while (*endPtr && !IS_SPACE(*endPtr) &&
+			!IS_WIN_ENVVAR_START(endPtr) &&
+			!IS_VS_VAR_START(endPtr) &&
+			!IS_UNIX_ENVVAR_START(endPtr) &&
+			!IS_PREMAKE_TOKEN_START(endPtr))
+		{
 			++endPtr;
+		}
 
 		// path is surrounded with quotes
 		if (readPtr != endPtr &&
