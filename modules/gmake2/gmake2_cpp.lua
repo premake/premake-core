@@ -254,26 +254,6 @@
 		cpp.addRuleFile(cfg, node)
 	end
 
-	function cpp.prepareEnvironment(rule, environ, cfg)
-		for _, prop in ipairs(rule.propertydefinition) do
-			local fld = p.rule.getPropertyField(rule, prop)
-			local value = cfg[fld.name]
-			if value ~= nil then
-
-				if fld.kind == "path" then
-					value = gmake2.path(cfg, value)
-				elseif fld.kind == "list:path" then
-					value = gmake2.path(cfg, value)
-				end
-
-				value = p.rule.expandString(rule, prop, value)
-				if value ~= nil and #value > 0 then
-					environ[prop.name] = p.esc(value)
-				end
-			end
-		end
-	end
-
 	function cpp.addRuleFile(cfg, node)
 		local rules = cfg.project._gmake.rules
 		local fileext = cpp.determineFiletype(cfg, node)
@@ -284,8 +264,8 @@
 			local environ = table.shallowcopy(filecfg.environ)
 
 			if rule.propertydefinition then
-				cpp.prepareEnvironment(rule, environ, cfg)
-				cpp.prepareEnvironment(rule, environ, filecfg)
+				gmake2.prepareEnvironment(rule, environ, cfg)
+				gmake2.prepareEnvironment(rule, environ, filecfg)
 			end
 
 			local shadowContext = p.context.extent(rule, environ)

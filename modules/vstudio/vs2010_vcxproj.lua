@@ -605,6 +605,37 @@
 
 
 ---
+-- Transform property to string
+---
+
+	function m.getRulePropertyString(rule, prop, value, kind)
+		-- list of paths
+		if kind == "list:path" then
+			return table.concat(vstudio.path(cfg, value), ';')
+		end
+	
+		-- path
+		if kind == "path" then
+			return vstudio.path(cfg, value)
+		end
+
+		-- list
+		if type(value) == "table" then
+			return table.concat(value, ";")
+		end
+
+		-- enum
+		if prop.values then
+			value = table.findKeyByValue(prop.values, value)
+		end
+
+		-- primitive
+		return tostring(value)
+	end
+
+
+
+---
 -- Write out project-level custom rule variables.
 ---
 
@@ -618,13 +649,7 @@
 					local fld = p.rule.getPropertyField(rule, prop)
 					local value = cfg[fld.name]
 					if value ~= nil then
-						if fld.kind == "list:path" then
-							value = table.concat(vstudio.path(cfg, value), ';')
-						elseif fld.kind == "path" then
-							value = vstudio.path(cfg, value)
-						else
-							value = p.rule.getPropertyString(rule, prop, value)
-						end
+						value = m.getRulePropertyString(rule, prop, value, fld.kind)
 
 						if value ~= nil and #value > 0 then
 							m.element(prop.name, nil, '%s', value)
@@ -1207,7 +1232,7 @@
 						for cfg in project.eachconfig(prj) do
 							local fcfg = fileconfig.getconfig(file, cfg)
 							if fcfg and fcfg[fld.name] then
-								local value = p.rule.getPropertyString(rule, prop, fcfg[fld.name])
+								local value = m.getRulePropertyString(rule, prop, fcfg[fld.name])
 								if value and #value > 0 then
 									m.element(prop.name, m.configPair(cfg), '%s', value)
 								end

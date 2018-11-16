@@ -194,7 +194,7 @@
 		]]
 	end
   
-  function suite.categories_onStringWithCategory()
+	function suite.categories_onStringWithCategory()
 		createVar { name="MyVar", kind="string", category="Custom Category" }
 		local r = test.getRule("MyRule")
 		m.categories(r)
@@ -220,5 +220,19 @@
 		</Category.DisplayName>
 	</Category>
 </Rule.Categories>
-    ]]
-  end
+    	]]
+	end
+
+	function suite.properties_onListWithSeparator()
+		createVar { name="MyVar", kind="list", separator="," }
+		local r = test.getRule("MyRule")
+		m.properties(r)
+		test.capture [[
+<StringListProperty
+	Name="MyVar"
+	HelpContext="0"
+	DisplayName="MyVar"
+	Separator=","
+	/>
+		]]
+	end
