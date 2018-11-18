@@ -613,7 +613,7 @@
 		if kind == "list:path" then
 			return table.concat(vstudio.path(cfg, value), ';')
 		end
-	
+
 		-- path
 		if kind == "path" then
 			return vstudio.path(cfg, value)
@@ -850,14 +850,16 @@
 		extensions = ".rc",
 		priority   = 6,
 
+		emitFilesCheck = function(cfg)
+			return cfg.system == p.WINDOWS
+		end,
+
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
 				m.excludedFromBuild
 			}
 
-			m.emitFiles(prj, group, "ResourceCompile", nil, fileCfgFunc, function(cfg)
-				return cfg.system == p.WINDOWS
-			end)
+			m.emitFiles(prj, group, "ResourceCompile", nil, fileCfgFunc, m.categories.ResourceCompile.emitFilesCheck)
 		end,
 
 		emitFilter = function(prj, group)
@@ -873,6 +875,10 @@
 		name = "CustomBuild",
 		priority = 7,
 
+		emitFilesCheck = function(cfg, fcfg)
+			return fileconfig.hasCustomBuildRule(fcfg)
+		end,
+
 		emitFiles = function(prj, group)
 			local fileFunc = {
 				m.fileType
@@ -887,9 +893,7 @@
 				m.buildAdditionalInputs
 			}
 
-			m.emitFiles(prj, group, "CustomBuild", fileFunc, fileCfgFunc, function (cfg, fcfg)
-				return fileconfig.hasCustomBuildRule(fcfg)
-			end)
+			m.emitFiles(prj, group, "CustomBuild", fileFunc, fileCfgFunc, m.categories.CustomBuild.emitFilesCheck)
 		end,
 
 		emitFilter = function(prj, group)
@@ -906,14 +910,16 @@
 		extensions = ".idl",
 		priority   = 8,
 
+		emitFilesCheck = function(cfg)
+			return cfg.system == p.WINDOWS
+		end,
+
 		emitFiles = function(prj, group)
 			local fileCfgFunc = {
 				m.excludedFromBuild
 			}
 
-			m.emitFiles(prj, group, "Midl", nil, fileCfgFunc, function(cfg)
-				return cfg.system == p.WINDOWS
-			end)
+			m.emitFiles(prj, group, "Midl", nil, fileCfgFunc, m.categories.Midl.emitFilesCheck)
 		end,
 
 		emitFilter = function(prj, group)
