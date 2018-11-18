@@ -104,7 +104,7 @@
 		prepare()
 		test.capture [[
 <MyRule>
-	<MyVar>a,b,c</MyVar>
+	<MyVar>a;b;c</MyVar>
 </MyRule>
 		]]
 	end
