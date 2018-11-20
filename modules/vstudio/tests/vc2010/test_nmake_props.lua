@@ -151,6 +151,39 @@ command 2</NMakeBuildCommandLine>
 		]]
 	end
 
+	function suite.onBinDirs()
+		bindirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<ExecutablePath>$(ProjectDir)include\lua;$(ProjectDir)include\zlib;$(ExecutablePath)</ExecutablePath>
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.onSysIncludeDirs()
+		sysincludedirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<IncludePath>include\lua;include\zlib;$(IncludePath)</IncludePath>
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.onSysLibDirs()
+		syslibdirs { "include/lua", "include/zlib" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LibraryPath>include\lua;include\zlib;$(LibraryPath)</LibraryPath>
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+</PropertyGroup>
+		]]
+	end
+
 
 --
 -- Should not emit include dirs or preprocessor definitions if the project
