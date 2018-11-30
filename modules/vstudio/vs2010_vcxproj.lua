@@ -253,6 +253,9 @@
 
 	m.elements.nmakeProperties = function(cfg)
 		return {
+			m.executablePath,
+			m.includePath,
+			m.libraryPath,
 			m.nmakeOutput,
 			m.nmakeBuildCommands,
 			m.nmakeRebuildCommands,
