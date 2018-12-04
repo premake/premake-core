@@ -270,7 +270,7 @@
     local ldPath = ''
     
     for _, libdir in ipairs(cfg.libdirs) do
-			ldPath = ldPath .. ";" .. project.getrelative(cfg.project, libdir)
+			ldPath = ldPath .. ":" .. project.getrelative(cfg.project, libdir)
 		end
     
     if ldPath == nil or ldPath == '' then
