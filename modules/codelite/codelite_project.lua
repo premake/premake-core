@@ -267,7 +267,7 @@
 		local pauseexec  = iif(prj.kind == "ConsoleApp", "yes", "no")
 		local isguiprogram = iif(prj.kind == "WindowedApp", "yes", "no")
 		local isenabled  = iif(cfg.flags.ExcludeFromBuild, "no", "yes")
-    local ldPath = ''
+		local ldPath = ''
 
 		for _, libdir in ipairs(cfg.libdirs) do
 			ldPath = ldPath .. ":" .. project.getrelative(cfg.project, libdir)
