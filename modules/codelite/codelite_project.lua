@@ -111,7 +111,7 @@
 
 		-- TODO: ...
 	end
-  
+
 	function m.files(prj)
 		local tr = project.getsourcetree(prj)
 		tree.traverse(tr, {
