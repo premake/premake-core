@@ -708,6 +708,7 @@
 		allowed = {
 			"OSXBundle",
 			"OSXFramework",
+			"XCTest",
 		},
 	}
 
@@ -1777,6 +1778,10 @@
 	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:OSXFramework" }
 		targetprefix ""
 		targetextension ".framework"
+
+	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:XCTest" }
+		targetprefix ""
+		targetextension ".xctest"
 
 	-- Windows and friends.
 

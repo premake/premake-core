@@ -231,6 +231,18 @@
 		test.isequal("bin/Debug/MyProject.bundle/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
 	end
 
+--
+-- Bundle path should be set for macOS/iOS cocoa unit test bundle.
+--
+
+	function suite.bundlepathSet_onMacSharedLibXCTest()
+		kind "SharedLib"
+		sharedlibtype "XCTest"
+		system "macosx"
+		i = prepare()
+		test.isequal("bin/Debug/MyProject.xctest/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+	end
+
 
 --
 -- Bundle path should be set for macOS/iOS framework.

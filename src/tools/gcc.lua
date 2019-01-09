@@ -306,6 +306,8 @@
 		if table.contains(os.getSystemTags(cfg.system), "darwin") then
 			if cfg.sharedlibtype == "OSXBundle" then
 				return "-bundle"
+			elseif cfg.sharedlibtype == "XCTest" then
+				return "-bundle"
 			elseif cfg.sharedlibtype == "OSXFramework" then
 				return "-framework"
 			else
