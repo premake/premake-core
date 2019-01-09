@@ -353,6 +353,14 @@
 		test.contains({ "-Wl,-x", "-bundle" }, gcc.getldflags(cfg))
 	end
 
+	function suite.ldflags_onMacOSXXCTest()
+		system "MacOSX"
+		kind "SharedLib"
+		sharedlibtype "XCTest"
+		prepare()
+		test.contains({ "-Wl,-x", "-bundle" }, gcc.getldflags(cfg))
+	end
+
 	function suite.ldflags_onMacOSXFramework()
 		system "MacOSX"
 		kind "SharedLib"

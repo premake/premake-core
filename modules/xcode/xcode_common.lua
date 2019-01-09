@@ -268,6 +268,7 @@
 			SharedLib    = "com.apple.product-type.library.dynamic",
 			OSXBundle    = "com.apple.product-type.bundle",
 			OSXFramework = "com.apple.product-type.framework",
+			XCTest       = "com.apple.product-type.bundle.unit-test",
 		}
 		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
@@ -290,6 +291,7 @@
 			SharedLib    = "\"compiled.mach-o.dylib\"",
 			OSXBundle    = "wrapper.cfbundle",
 			OSXFramework = "wrapper.framework",
+			XCTest       = "wrapper.cfbundle",
 		}
 		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
@@ -1125,6 +1127,7 @@
 				StaticLib    = "a",
 				OSXBundle    = "bundle",
 				OSXFramework = "framework",
+				XCTest       = "xctest",
 			}
 			local ext = cfg.buildtarget.extension:sub(2)
 			if ext ~= exts[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)] then

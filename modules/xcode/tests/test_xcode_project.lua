@@ -215,6 +215,30 @@
 		]]
 	end
 
+	function suite.PBXFileReference_ListsXCTestTarget()
+		kind "SharedLib"
+		sharedlibtype "XCTest"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.xctest:product] /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
+
+	function suite.PBXFileReference_ListsIOSXCTestTarget()
+		_TARGET_OS = "ios"
+		kind "SharedLib"
+		sharedlibtype "XCTest"
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		[MyProject.xctest:product] /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+		]]
+	end
 
 	function suite.PBXFileReference_ListsOSXFrameworkTarget()
 		kind "SharedLib"
@@ -1287,6 +1311,26 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationTarget_OnXCTest()
+		kind "SharedLib"
+		sharedlibtype "XCTest"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		[MyProject.xctest:Debug] /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
 				PRODUCT_NAME = MyProject;
 			};
 			name = Debug;
