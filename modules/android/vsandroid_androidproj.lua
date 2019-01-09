@@ -80,10 +80,18 @@
 	end
 
 
+	function android.androidAPILevel(cfg)
+		if cfg.androidapilevel ~= nil then
+			_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
+		end
+	end
+
+
 	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 		if cfg.kind == p.ANDROIDPROJ then
 			elements = {
+				android.androidAPILevel,
 				vc2010.useDebugLibraries,
 			}
 		end
@@ -156,7 +164,7 @@
 		-- below. Otherwise the function will use target seperator which
 		-- could be '\\' and result in failure to create links.
 		local fname = path.translate(file.relpath, '/')
-		
+
 		-- Files that live outside of the project tree need to be "linked"
 		-- and provided with a project relative pseudo-path. Check for any
 		-- leading "../" sequences and, if found, remove them and mark this
