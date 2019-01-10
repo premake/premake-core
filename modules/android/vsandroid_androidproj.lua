@@ -80,13 +80,6 @@
 	end
 
 
-	function android.androidAPILevel(cfg)
-		if cfg.androidapilevel ~= nil then
-			_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
-		end
-	end
-
-
 	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 		if cfg.kind == p.ANDROIDPROJ then
