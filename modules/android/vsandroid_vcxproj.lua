@@ -45,10 +45,10 @@
 
 		return elements
 	end)
-	
+
 	premake.override(vc2010.elements, "globalsCondition", function (oldfn, prj, cfg)
 		local elements = oldfn(prj, cfg)
-		
+
 		if cfg.system == premake.ANDROID and cfg.system ~= prj.system and cfg.kind ~= premake.ANDROIDPROJ then
 			elements = table.join(elements, {
 				android.androidApplicationType
@@ -153,6 +153,7 @@
 				["3.5"] = "Clang_3_5",
 				["3.6"] = "Clang_3_6",
 				["3.8"] = "Clang_3_8",
+				["5.0"] = "Clang_5_0",
 			}
 
 			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
