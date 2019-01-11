@@ -296,6 +296,27 @@
 		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
 
+--
+-- Return the Xcode debug information format for the current configuration
+--
+-- @param cfg
+--    The current configuration
+-- @returns
+--    The corresponding value of DEBUG_INFORMATION_FORMAT, or 'dwarf-with-dsym' if invalid
+--
+
+	function xcode.getdebugformat(cfg)
+		local formats = {
+			["Dwarf"]      = "dwarf",
+			["Default"]    = "dwarf-with-dsym",
+			["SplitDwarf"] = "dwarf-with-dsym",
+		}
+		local rval = "dwarf-with-dsym"
+		if cfg.debugformat then
+			rval = formats[cfg.debugformat] or rval
+		end
+		return rval
+	end
 
 --
 -- Return a unique file name for a project. Since Xcode uses .xcodeproj's to
@@ -1113,7 +1134,7 @@
 		settings['ALWAYS_SEARCH_USER_PATHS'] = 'NO'
 
 		if cfg.symbols ~= p.OFF then
-			settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
+			settings['DEBUG_INFORMATION_FORMAT'] = xcode.getdebugformat(cfg)
 		end
 
 		if cfg.kind ~= "StaticLib" and cfg.buildtarget.prefix ~= '' then
