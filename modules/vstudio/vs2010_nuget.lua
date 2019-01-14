@@ -39,7 +39,7 @@
 	end
 
 	function nuget2010.supportsPackageReferences(prj)
-		return _ACTION >= "vs2017" and p.project.isdotnet(prj)
+		return (_ACTION >= "vs2017" or _ACTION == "netcore") and p.project.isdotnet(prj)
 	end
 
 

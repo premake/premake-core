@@ -7,8 +7,8 @@
 	local p = premake
 	local suite = test.declare("vstudio_dn2005_projectsettings")
 	local dn2005 = p.vstudio.dotnetbase
+	local netcore = p.vstudio.netcore
 	local cs2005 = p.vstudio.cs2005
-
 
 --
 -- Setup
@@ -26,7 +26,8 @@
 	local function prepare()
 		prj = test.getproject(wks, 1)
 
-		dn2005.prepare(cs2005)
+		local cs = _ACTION == "netcore" and netcore or cs2005
+		dn2005.prepare(cs)
 		dn2005.projectProperties(prj)
 	end
 
@@ -34,6 +35,20 @@
 --
 -- Version Tests
 --
+
+	function suite.OnNetCore()
+		p.action.set("netcore")
+		prepare()
+		test.capture [[
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AssemblyName>MyProject</AssemblyName>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	</PropertyGroup>
+		]]
+	end
+
 
 	function suite.OnVs2005()
 		prepare()

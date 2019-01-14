@@ -323,3 +323,28 @@
 	function dotnet.getmakesettings(cfg)
 		return nil
 	end
+
+---
+--- Returns if a project is a .NET Core target.
+---
+	function dotnet.isnetcoretarget(prj)
+		if prj == nil or prj.dotnetframework == nil then
+			return false
+		end
+		netcoretargets = {
+			["netstandard1.0"] = true,
+			["netstandard1.1"] = true,
+			["netstandard1.2"] = true,
+			["netstandard1.3"] = true,
+			["netstandard1.4"] = true,
+			["netstandard1.5"] = true,
+			["netstandard1.6"] = true,
+			["netstandard2.0"] = true,
+			["netcoreapp1.0"]= true,
+			["netcoreapp1.1"]= true,
+			["netcoreapp2.0"]= true,
+			["netcoreapp2.1"]= true,
+			["netcoreapp2.2"]= true
+		}
+		return netcoretargets[prj.dotnetframework] ~= nil
+	end

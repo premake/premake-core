@@ -7,7 +7,7 @@
 	local p = premake
 	local suite = test.declare("vstudio_dn2005_projectelement")
 	local dn2005 = p.vstudio.dotnetbase
-
+	local netcore = p.vstudio.dotnetbase.netcore
 
 --
 -- Setup
@@ -23,7 +23,6 @@
 		dn2005.xmlDeclaration()
 		dn2005.projectElement(prj)
 	end
-
 
 --
 -- Tests
@@ -91,5 +90,21 @@
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		]]
+	end
+
+---
+--- .NET Core tests
+---
+
+	local function prepareNetcore()
+		netcore.projectElement(prj)
+	end
+
+	function suite.onNetcore()
+		p.action.set("netcore")
+		prepareNetcore()
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk">
 		]]
 	end

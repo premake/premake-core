@@ -6,6 +6,7 @@
 
 	local p = premake
 	p.vstudio.dotnetbase = {}
+	p.vstudio.dotnetbase.netcore = {}
 
 	local vstudio = p.vstudio
 	local dotnetbase  = p.vstudio.dotnetbase
@@ -41,9 +42,18 @@
 		dotnetbase.files(prj)
 		_p(1,'</ItemGroup>')
 
-		dotnetbase.projectReferences(prj)
+		if _ACTION == "netcore" then
+			dotnetbase.netcore.projectReferences(prj)
+		else
+			dotnetbase.projectReferences(prj)
+		end
+
 		dotnetbase.packageReferences(prj)
-		dotnetbase.langObj.targets(prj)
+
+		if _ACTION ~= "netcore" then
+			dotnetbase.langObj.targets(prj)
+		end
+
 		dotnetbase.buildEvents(prj)
 
 		p.out('</Project>')
@@ -63,7 +73,9 @@
 		_p('<Project%s DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', ver)
 	end
 
-
+	function dotnetbase.netcore.projectElement(prj)
+		_p('<Project Sdk="Microsoft.NET.Sdk">')
+	end
 --
 -- Write the opening PropertyGroup, which contains the project-level settings.
 --
@@ -476,10 +488,9 @@
 -- Write the list of project dependencies.
 --
 	function dotnetbase.projectReferences(prj)
-		_p(1,'<ItemGroup>')
-
 		local deps = project.getdependencies(prj, 'linkOnly')
 		if #deps > 0 then
+			_p(1,'<ItemGroup>')
 			for _, dep in ipairs(deps) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(dep))
 				_x(2,'<ProjectReference Include="%s">', relpath)
@@ -492,9 +503,20 @@
 
 				_p(2,'</ProjectReference>')
 			end
+			_p(1,'</ItemGroup>')
 		end
+	end
 
-		_p(1,'</ItemGroup>')
+	function dotnetbase.netcore.projectReferences(prj)
+		local deps = project.getdependencies(prj, 'linkOnly')
+		if #deps > 0 then
+			_p(1,'<ItemGroup>')
+			for _, dep in ipairs(deps) do
+				local relpath = vstudio.path(prj, vstudio.projectfile(dep))
+				_x(2,'<ProjectReference Include="%s" />', relpath)
+			end
+			_p(1,'</ItemGroup>')
+		end
 	end
 
 --
@@ -509,22 +531,31 @@
 				end
 			end
 			if hasNuget then
-				_p(1,'<ItemGroup>')
-				if prj.nuget and #prj.nuget>0 then
-					for _, package in ipairs(prj.nuget) do
-						_p(2,'<PackageReference Include="%s" Version="%s"/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package))
-					end
-				end
+				local hasItems = (prj.nuget and #prj.nuget>0)
 				for cfg in project.eachconfig(prj) do
 					if cfg.nuget and #cfg.nuget>0 then
-						for _, package in ipairs(cfg.nuget) do
-							if prj.nuget[package]==nil then
-								_p(2,'<PackageReference Include="%s" Version="%s" %s/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package), dotnetbase.condition(cfg))
+						hasItems = true
+					end
+				end
+				
+				if hasItems then
+					_p(1,'<ItemGroup>')
+					if prj.nuget and #prj.nuget>0 then
+						for _, package in ipairs(prj.nuget) do
+							_p(2,'<PackageReference Include="%s" Version="%s"/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package))
+						end
+					end
+					for cfg in project.eachconfig(prj) do
+						if cfg.nuget and #cfg.nuget>0 then
+							for _, package in ipairs(cfg.nuget) do
+								if prj.nuget[package]==nil then
+									_p(2,'<PackageReference Include="%s" Version="%s" %s/>', vstudio.nuget2010.packageId(package), vstudio.nuget2010.packageVersion(package), dotnetbase.condition(cfg))
+								end
 							end
 						end
 					end
+					_p(1,'</ItemGroup>')
 				end
-				_p(1,'</ItemGroup>')
 			end
 		end
 	end
@@ -695,10 +726,20 @@
 		end
 	end
 
+	function dotnetbase.netcore.targetFramework(cfg)
+		local action = p.action.current()
+		local framework = cfg.dotnetframework or action.vstudio.targetFramework
+		_p(2,'<TargetFramework>%s</TargetFramework>', framework)
+	end
+
 	function dotnetbase.csversion(cfg)
 		if cfg.csversion then
 			_p(2,'<LangVersion>%s</LangVersion>', cfg.csversion)
 		end
+	end
+
+	function dotnetbase.netcore.enableDefaultCompileItems(cfg)
+		_p(2,'<EnableDefaultCompileItems>false</EnableDefaultCompileItems>')
 	end
 
 	function dotnetbase.targetFrameworkProfile(cfg)

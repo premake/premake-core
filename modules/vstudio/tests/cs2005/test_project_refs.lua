@@ -35,8 +35,6 @@
 	function suite.emptyGroup_onNoDependencies()
 		prepare()
 		test.capture [[
-	<ItemGroup>
-	</ItemGroup>
 		]]
 	end
 
@@ -63,8 +61,6 @@
 		dependson { "MyProject" }
 		prepare()
 		test.capture [[
-	<ItemGroup>
-	</ItemGroup>
 		]]
 	end
 

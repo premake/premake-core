@@ -6,9 +6,11 @@
 
 	local p = premake
 	p.vstudio.cs2005 = {}
-
+	p.vstudio.netcore = {}
+	
 	local vstudio = p.vstudio
 	local cs2005 = p.vstudio.cs2005
+	local netcore = p.vstudio.netcore
 	local dotnetbase = p.vstudio.dotnetbase
 	local project = p.project
 	local config = p.config
@@ -60,7 +62,11 @@
 	end
 
 	function cs2005.generate(prj)
-		dotnetbase.prepare(cs2005)
+		if _ACTION == "netcore" then
+			dotnetbase.prepare(netcore)
+		else
+			dotnetbase.prepare(cs2005)
+		end
 		dotnetbase.generate(prj)
 	end
 
@@ -74,4 +80,41 @@
 		_p(1,'<Target Name="AfterBuild">')
 		_p(1,'</Target>')
 		_p(1,'-->')
+	end
+
+	---
+	--- .NET Core elements
+	---
+
+	netcore.elements = {}
+
+	netcore.elements.project = function ()
+		return {
+			dotnetbase.netcore.projectElement,
+			dotnetbase.projectProperties,
+			dotnetbase.configurations,
+			dotnetbase.applicationIcon,
+			dotnetbase.references
+		}
+	end
+
+	netcore.elements.projectProperties = function ()
+		return {
+			dotnetbase.outputType,
+			dotnetbase.assemblyName,
+			dotnetbase.netcore.targetFramework,
+			dotnetbase.targetFrameworkProfile,
+			dotnetbase.csversion,
+			dotnetbase.netcore.enableDefaultCompileItems
+		}
+	end
+
+	netcore.elements.configuration = function ()
+		return {
+			dotnetbase.propertyGroup,
+			dotnetbase.debugProps,
+			dotnetbase.outputProps,
+			dotnetbase.compilerProps,
+			dotnetbase.NoWarn
+		}
 	end
