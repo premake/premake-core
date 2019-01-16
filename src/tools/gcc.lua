@@ -32,6 +32,18 @@
 
 
 --
+-- Returns string to be appended to -g
+--
+	function gcc.getdebugformat(cfg)
+		local flags = {
+			Default = "",
+			Dwarf = "dwarf",
+			SplitDwarf = "split-dwarf",
+		}
+		return flags
+	end
+
+--
 -- Returns list of C compiler flags for a configuration.
 --
 	gcc.shared = {
@@ -93,9 +105,15 @@
 			High = "-Wall",
 			Off = "-w",
 		},
-		symbols = {
-			On = "-g"
-		},
+		symbols = function(cfg, mappings)
+			local values = gcc.getdebugformat(cfg)
+			local debugformat = values[cfg.debugformat] or ""
+			return {
+				On       = "-g" .. debugformat,
+				FastLink = "-g" .. debugformat,
+				Full     = "-g" .. debugformat,
+			}
+		end,
 		unsignedchar = {
 			On = "-funsigned-char",
 			Off = "-fno-unsigned-char"
@@ -305,6 +323,8 @@
 	function gcc.getsharedlibarg(cfg)
 		if table.contains(os.getSystemTags(cfg.system), "darwin") then
 			if cfg.sharedlibtype == "OSXBundle" then
+				return "-bundle"
+			elseif cfg.sharedlibtype == "XCTest" then
 				return "-bundle"
 			elseif cfg.sharedlibtype == "OSXFramework" then
 				return "-framework"

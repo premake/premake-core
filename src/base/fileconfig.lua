@@ -186,6 +186,9 @@
 --
 
 	function fileconfig.hasFileSettings(fcfg)
+		if not fcfg then
+			return false
+		end
 		for key, field in pairs(p.fields) do
 			if field.scopes[1] == "config" then
 				local value = fcfg[field.name]
