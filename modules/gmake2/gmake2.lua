@@ -251,8 +251,6 @@
 		end
 
 		if not first then
-			p.outln('else')
-			p.outln('  $(error "invalid configuration $(config)")')
 			p.outln('endif')
 			p.outln('')
 		end
