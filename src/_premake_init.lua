@@ -1811,4 +1811,7 @@
 	filter { "system:darwin" }
 		toolset "clang"
 
+	filter { "platforms:Win64" }
+		architecture "x86_64"
+
 	filter {}
