@@ -956,6 +956,7 @@
 			end
 
 			if #commands > 0 then
+				table.insert(commands, 1, 'set -e') -- Tells the shell to exit when any command fails
 				commands = os.translateCommands(commands, p.MACOSX)
 				if not wrapperWritten then
 					_p('/* Begin PBXShellScriptBuildPhase section */')
@@ -1008,6 +1009,11 @@
 								end
 							end
 						end
+
+						if #commands > 0 then
+							table.insert(commands, 1, 'set -e') -- Tells the shell to exit when any command fails
+						end
+
 						_p(level,'%s /* Build "%s" */ = {', node.buildcommandid, node.name)
 						_p(level+1,'isa = PBXShellScriptBuildPhase;')
 						_p(level+1,'buildActionMask = 2147483647;')

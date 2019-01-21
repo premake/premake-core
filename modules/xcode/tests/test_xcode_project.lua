@@ -1068,7 +1068,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ls src\ncp \"a\" \"b\"";
+			shellScript = "set -e\nls src\ncp \"a\" \"b\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 		]]
@@ -1100,7 +1100,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi";
+			shellScript = "set -e\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 		]]
@@ -1127,7 +1127,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ls src\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\ncp a b\nfi";
+			shellScript = "set -e\nls src\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\ncp a b\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 		]]
