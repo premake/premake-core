@@ -99,6 +99,19 @@
 				return false
 			end
 
+			-- Can link mixed C++ with native projects
+
+			if cfg.language == "C++" then
+				if cfg.clr == p.ON then
+					return true
+				end
+			end
+			if target.language == "C++" then
+				if target.clr == p.ON then
+					return true
+				end
+			end
+
 			-- Can't link managed and unmanaged projects
 
 			local cfgManaged = project.isdotnet(cfg.project) or (cfg.clr ~= p.OFF)
