@@ -105,6 +105,18 @@
 
 
 --
+-- If a path field contains a token that expands to a deferred join,
+-- it should be resolved before performing detoken.
+--
+
+	function suite.canExpandWithDeferredJoin()
+		local cwd = os.getcwd()
+		x = detoken.expand(path.deferredjoin(os.getcwd(), "%{_ACTION}"), environ,  {}, cwd)
+		test.isequal(os.getcwd() .. "/test", x)
+	end
+
+
+--
 -- If the value being expanded is a table, iterate over all of its values.
 --
 
