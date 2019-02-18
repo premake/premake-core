@@ -44,3 +44,14 @@
 		prepare()
 		test.isequal("mcs", dotnet.gettoolname(cfg, "csc"))
 	end
+
+
+--
+-- Check support for the `csversion` API
+--
+
+function suite.flags_csversion()
+	prepare()
+	csversion "7.2"
+	test.contains({ "/langversion:7.2" }, dotnet.getflags(cfg))
+end

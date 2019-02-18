@@ -294,6 +294,10 @@
 			table.insert(flags, table.implode(cfg.defines, "/d:", "", " "))
 		end
 
+		if cfg.csversion ~= nil then
+			table.insert(flags, '/langversion:' .. cfg.csversion)
+		end
+
 		return table.join(flags, cfg.buildoptions)
 	end
 
