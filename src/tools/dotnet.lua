@@ -247,7 +247,7 @@
 		}
 
 		if tool == "csc" then
-			local toolset = _OPTIONS.dotnet or iif(os.istarget("windows"), "msnet", "mono")
+			local toolset = _OPTIONS.dotnet or "msnet"
 			return compilers[toolset]
 		else
 			return "resgen"
