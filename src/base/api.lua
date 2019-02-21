@@ -82,10 +82,11 @@
 
 	function includeexternal(fname)
 		local fullPath = p.findProjectScript(fname)
+		local wasIncludingExternal = api._isIncludingExternal
 		api._isIncludingExternal = true
 		fname = fullPath or fname
 		dofile(fname)
-		api._isIncludingExternal = nil
+		api._isIncludingExternal = wasIncludingExternal
 	end
 
 	p.alias(_G, "includeexternal", "includeExternal")
