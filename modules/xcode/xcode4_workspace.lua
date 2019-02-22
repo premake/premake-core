@@ -19,6 +19,7 @@
 		return {
 			m.xmlDeclaration,
 			m.workspace,
+			m.reorderProjects,
 			m.workspaceFileRefs,
 			m.workspaceTail,
 		}
@@ -39,6 +40,39 @@
 	function m.workspaceTail()
 		-- Don't output final newline.  Xcode doesn't.
 		p.out('</Workspace>')
+	end
+
+
+--
+-- If a startup project is specified, move it (and any enclosing groups)
+-- to the front of the project list. This will make Visual Studio treat
+-- it like a startup project.
+--
+-- I force the new ordering into the tree so that it will get applied to
+-- all sections of the solution; otherwise the first change to the solution
+-- in the IDE will cause the orderings to get rewritten.
+--
+
+	function m.reorderProjects(wks)
+		if wks.startproject then
+			local np
+			local tr = p.workspace.grouptree(wks)
+			tree.traverse(tr, {
+				onleaf = function(n)
+					if n.project.name == wks.startproject then
+						np = n
+					end
+				end
+			})
+
+			while np and np.parent do
+				local p = np.parent
+				local i = table.indexof(p.children, np)
+				table.remove(p.children, i)
+				table.insert(p.children, 1, np)
+				np = p
+			end
+		end
 	end
 
 

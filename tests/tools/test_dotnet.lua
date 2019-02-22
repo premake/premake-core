@@ -42,5 +42,16 @@
 	function suite.defaultCompiler_onMacOSX()
 		_TARGET_OS = "macosx"
 		prepare()
-		test.isequal("mcs", dotnet.gettoolname(cfg, "csc"))
+		test.isequal("csc", dotnet.gettoolname(cfg, "csc"))
 	end
+
+
+--
+-- Check support for the `csversion` API
+--
+
+function suite.flags_csversion()
+	prepare()
+	csversion "7.2"
+	test.contains({ "/langversion:7.2" }, dotnet.getflags(cfg))
+end

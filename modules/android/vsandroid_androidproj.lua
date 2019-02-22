@@ -84,6 +84,7 @@
 		local elements = oldfn(cfg)
 		if cfg.kind == p.ANDROIDPROJ then
 			elements = {
+				android.androidAPILevel,
 				vc2010.useDebugLibraries,
 			}
 		end
@@ -156,7 +157,7 @@
 		-- below. Otherwise the function will use target seperator which
 		-- could be '\\' and result in failure to create links.
 		local fname = path.translate(file.relpath, '/')
-		
+
 		-- Files that live outside of the project tree need to be "linked"
 		-- and provided with a project relative pseudo-path. Check for any
 		-- leading "../" sequences and, if found, remove them and mark this
@@ -220,6 +221,19 @@
 		end
 	}
 
+	vc2010.categories.JavaCompile = {
+		name = "JavaCompile",
+		priority = 99,
+
+		emitFiles = function(prj, group)
+			vc2010.emitFiles(prj, group, "JavaCompile", {vc2010.generatedFile, android.link})
+		end,
+
+		emitFilter = function(prj, group)
+			vc2010.filterGroup(prj, group, "JavaCompile")
+		end
+	}
+
 	vc2010.categories.Content = {
 		name = "Content",
 		priority = 99,
@@ -239,6 +253,7 @@
 		end
 
 		local filename = path.getname(file.name):lower()
+		local extension = path.getextension(filename)
 
 		if filename == "androidmanifest.xml" then
 			return vc2010.categories.AndroidManifest
@@ -246,6 +261,8 @@
 			return vc2010.categories.AntBuildXml
 		elseif filename == "project.properties" then
 			return vc2010.categories.AntProjectPropertiesFile
+		elseif extension == ".java" then
+			return vc2010.categories.JavaCompile
 		else
 			return vc2010.categories.Content
 		end

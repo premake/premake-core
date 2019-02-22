@@ -492,6 +492,9 @@
 
 		for field in p.field.eachOrdered() do
 			local map = mappings[field.name]
+			if type(map) == "function" then
+				map = map(cfg, mappings)
+			end
 			if map then
 
 				-- Pass each cfg value in the list through the map and append the
