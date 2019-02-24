@@ -701,6 +701,7 @@
 			"StaticLib",
 			"WindowedApp",
 			"Utility",
+			"GameBoyApp"
 		},
 	}
 
@@ -1765,6 +1766,9 @@
 	filter { "kind:StaticLib" }
 		targetprefix "lib"
 		targetextension ".a"
+
+	filter { "kind:GameBoyApp"}
+		targetextension ".gb"
 
 	-- Add variations for other Posix-like systems.
 

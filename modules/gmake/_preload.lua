@@ -17,7 +17,7 @@
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 		toolset         = "gcc",
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile", "GameBoyApp" },
 		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "clang", "gcc" },

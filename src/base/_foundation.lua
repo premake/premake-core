@@ -32,6 +32,7 @@
 	premake.CONSOLEAPP  = "ConsoleApp"
 	premake.CPP         = "C++"
 	premake.CSHARP      = "C#"
+	premake.GAMEBOYAPP	= "GameBoyApp"
 	premake.GCC         = "gcc"
 	premake.HAIKU       = "haiku"
 	premake.IOS         = "ios"
