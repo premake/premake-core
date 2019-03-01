@@ -1639,6 +1639,7 @@
 		allowed = {
 			{ "clang", "Clang (clang)" },
 			{ "gcc", "GNU GCC (gcc/g++)" },
+			{ "lcc", "GNU GCC based GameBoy compiler"},
 		}
 	}
 
