@@ -184,7 +184,14 @@
 			local iscfile = node and path.iscfile(node.abspath) or false
 			flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
 		end
-		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
+
+		local buildCommand = '\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@"'
+		if prj.kind ~= p.GAMEBOYAPP then
+			buildCommand = buildCommand .. ' -MF "$(@:%%.%s=%%.d)"'
+		end
+		buildCommand = buildCommand .. ' -c "$<"'
+
+		_p(buildCommand, flags, objext)
 	end
 
 
@@ -619,7 +626,14 @@ end
 		_p('\t@echo $(notdir $<)')
 
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
-		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+
+		pchBuildCommand = '\t$(SILENT) %s -o "$@"'
+		if prj.kind ~= p.GAMEBOYAPP then
+			pchBuildCommand = pchBuildCommand .. ' -MF "$(@:%%.gch=%%.d)"'
+		end
+		pchBuildCommand =  pchBuildCommand .. ' -c "$<"'
+
+		_p(pchBuildCommand, cmd)
 
 		_p('else')
 		_p('$(OBJECTS): | $(OBJDIR)')
