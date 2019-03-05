@@ -42,32 +42,8 @@
 --    An array of C compiler flags.
 --
 
-	lcc.shared = {
-		architecture = gcc.shared.architecture,
-		flags = gcc.shared.flags,
-		floatingpoint = {
-			Fast = "-ffast-math",
-		},
-		strictaliasing = gcc.shared.strictaliasing,
-		optimize = {
-			Off = "-O0",
-			On = "-O2",
-			Debug = "-O0",
-			Full = "-O3",
-			Size = "-Os",
-			Speed = "-O3",
-		},
-		pic = gcc.shared.pic,
-		vectorextensions = gcc.shared.vectorextensions,
-		isaextensions = gcc.shared.isaextensions,
-		warnings = gcc.shared.warnings,
-		symbols = gcc.shared.symbols,
-		unsignedchar = gcc.shared.unsignedchar,
-		omitframepointer = gcc.shared.omitframepointer
-	}
-
-	lcc.cflags = table.merge(gcc.cflags, {
-	})
+	lcc.shared = table.merge(gcc.shared, {})
+	lcc.cflags = table.merge(gcc.cflags, {})
 
 	function lcc.getcflags(cfg)
 		local shared = config.mapFlags(cfg, lcc.shared)
@@ -95,8 +71,7 @@
 --    An array of C++ compiler flags.
 --
 
-	lcc.cxxflags = table.merge(gcc.cxxflags, {
-	})
+	lcc.cxxflags = table.merge(gcc.cxxflags, {})
 
 	function lcc.getcxxflags(cfg)
 		local shared = config.mapFlags(cfg, lcc.shared)
@@ -185,52 +160,12 @@
 		return gcc.getsharedlibarg(cfg)
 	end
 
---
--- Build a list of linker flags corresponding to the settings in
--- a particular project configuration.
---
--- @param cfg
---    The project configuration.
--- @return
---    An array of linker flags.
---
-
-	lcc.ldflags = {
-		architecture = {
-			x86 = "-m32",
-			x86_64 = "-m64",
-		},
-		flags = {
-			LinkTimeOptimization = "-flto",
-		},
-		kind = {
-			SharedLib = function(cfg)
-				local r = { lcc.getsharedlibarg(cfg) }
-				if cfg.system == "windows" and not cfg.flags.NoImportLib then
-					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
-				elseif cfg.system == p.LINUX then
-					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))
-				elseif table.contains(os.getSystemTags(cfg.system), "darwin") then
-					table.insert(r, '-Wl,-install_name,' .. p.quoted('@rpath/' .. cfg.linktarget.name))
-				end
-				return r
-			end,
-			WindowedApp = function(cfg)
-				if cfg.system == p.WINDOWS then return "-mwindows" end
-			end,
-		},
-		system = {
-			wii = "$(MACHDEP)",
-		}
-	}
+	lcc.ldflags = table.merge(gcc.ldflags, {})
 
 	function lcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, lcc.ldflags)
 		return flags
 	end
-
-
-
 --
 -- Build a list of additional library directories for a particular
 -- project configuration, decorated for the tool command line.
