@@ -37,3 +37,11 @@
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		]]
 	end
+
+	function suite.project_on2019()
+		p.action.set("vs2019")
+		vc2010.project()
+		test.capture [[
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		]]
+	end

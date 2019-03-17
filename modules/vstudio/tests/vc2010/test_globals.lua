@@ -277,6 +277,22 @@
 		]]
 	end
 
+	
+	function suite.windowsTargetPlatformVersionLatest_on2019()
+		p.action.set("vs2019")
+		systemversion "latest"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+</PropertyGroup>
+		]]
+	end
+
 --
 -- Check that the "latest" systemversion will not add <WindowsTargetPlatformVersion>
 -- when the action is less than 2017
