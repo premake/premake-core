@@ -39,6 +39,14 @@
 	}
 
 	p.api.register {
+		name = "shaderincludedirs",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+		pathVars = true,
+	}
+
+	p.api.register {
 		name = "shadertype",
 		scope = "config",
 		kind = "string",

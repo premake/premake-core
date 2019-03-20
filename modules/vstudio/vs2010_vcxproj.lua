@@ -399,6 +399,7 @@
 	m.elements.fxCompile = function(cfg)
 		return {
 			m.fxCompilePreprocessorDefinition,
+			m.fxCompileAdditionalIncludeDirs,
 			m.fxCompileShaderType,
 			m.fxCompileShaderModel,
 			m.fxCompileShaderEntry,
@@ -802,6 +803,7 @@
 					return {
 						m.excludedFromBuild,
 						m.fxCompilePreprocessorDefinition,
+						m.fxCompileAdditionalIncludeDirs,
 						m.fxCompileShaderType,
 						m.fxCompileShaderModel,
 						m.fxCompileShaderEntry,
@@ -2648,6 +2650,12 @@
 		end
 	end
 
+	function m.fxCompileAdditionalIncludeDirs(cfg, condition)
+		if cfg.shaderincludedirs and #cfg.shaderincludedirs > 0 then
+			local dirs = vstudio.path(cfg, cfg.shaderincludedirs)
+			m.element('AdditionalIncludeDirectories', condition, "%s;%%(AdditionalIncludeDirectories)", table.concat(dirs, ";"))
+		end
+	end
 
 	function m.fxCompileShaderType(cfg, condition)
 		if cfg.shadertype then
