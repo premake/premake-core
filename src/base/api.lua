@@ -1064,7 +1064,7 @@
 	premake.field.kind("path", {
 		paths = true,
 		store = function(field, current, value, processor)
-			return path.deferredjoin(os.getcwd(), value)
+			return path.join(os.getcwd(), value)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
