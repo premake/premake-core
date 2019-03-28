@@ -17,6 +17,25 @@
 
 
 --
+-- Utility functions
+--
+
+	function table.findAndRemove(t, value)
+		for i, v in ipairs(t) do
+    		if v == value then
+      			table.remove(t, i)
+				break
+    		end
+  		end
+	end
+
+	local function setBoolOption(optionName, flag, value)
+		if flag ~= nil then
+			vc2010.element(optionName, nil, value)
+		end
+	end
+
+--
 -- Add android tools to vstudio actions.
 --
 
@@ -45,10 +64,10 @@
 
 		return elements
 	end)
-	
+
 	premake.override(vc2010.elements, "globalsCondition", function (oldfn, prj, cfg)
 		local elements = oldfn(prj, cfg)
-		
+
 		if cfg.system == premake.ANDROID and cfg.system ~= prj.system and cfg.kind ~= premake.ANDROIDPROJ then
 			elements = table.join(elements, {
 				android.androidApplicationType
@@ -59,16 +78,16 @@
 	end)
 
 	function android.androidApplicationType(cfg)
-		_p(2, "<Keyword>Android</Keyword>")
-		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
-		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
-		_p(2, "<ApplicationType>Android</ApplicationType>")
+		vc2010.element("Keyword", nil, "Android")
+		vc2010.element("RootNamespace", nil, "%s", cfg.project.name)
+		vc2010.element("MinimumVisualStudioVersion", nil, "15.0") -- Use 14.0 for VS2015?
+		vc2010.element("ApplicationType", nil, "Android")
 		if _ACTION >= "vs2017" then
-			_p(2, "<ApplicationTypeRevision>3.0</ApplicationTypeRevision>")
+			vc2010.element("ApplicationTypeRevision", nil, "3.0")
 		elseif _ACTION >= "vs2015" then
-			_p(2, "<ApplicationTypeRevision>2.0</ApplicationTypeRevision>")
+			vc2010.element("ApplicationTypeRevision", nil, "2.0")
 		else
-			_p(2, "<ApplicationTypeRevision>1.0</ApplicationTypeRevision>")
+			vc2010.element("ApplicationTypeRevision", nil, "1.0")
 		end
 	end
 
@@ -78,7 +97,12 @@
 
 	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
+
 		if cfg.kind ~= p.UTILITY and cfg.kind ~= p.ANDROIDPROJ and cfg.system == premake.ANDROID then
+			table.findAndRemove(elements, vc2010.characterSet)
+			table.findAndRemove(elements, vc2010.wholeProgramOptimization)
+			table.findAndRemove(elements, vc2010.windowsSDKDesktopARMSupport)
+
 			elements = table.join(elements, {
 				android.androidAPILevel,
 				android.androidStlType,
@@ -95,42 +119,40 @@
 
 	function android.androidAPILevel(cfg)
 		if cfg.androidapilevel ~= nil then
-			_p(2,'<AndroidAPILevel>android-%d</AndroidAPILevel>', cfg.androidapilevel)
+			vc2010.element("AndroidAPILevel", nil, "android-" .. cfg.androidapilevel)
 		end
 	end
 
 	function android.androidStlType(cfg)
 		if cfg.stl ~= nil then
 			local stlType = {
-				["none"] = "none",
-				["minimal c++ (system)"] = "system",
-				["c++ static"] = "gabi++_static",
-				["c++ shared"] = "gabi++_shared",
-				["stlport static"] = "stlport_static",
-				["stlport shared"] = "stlport_shared",
-				["gnu stl static"] = "gnustl_static",
-				["gnu stl shared"] = "gnustl_shared",
-				["llvm libc++ static"] = "c++_static",
-				["llvm libc++ shared"] = "c++_shared",
+				none = "system",
+				["gabi++"] = "gabi++",
+				stlport = "stlport",
+				gnustl = "gnustl",
+				["libc++"] = "c++",
 			}
 
+			local postfix = iif(cfg.staticruntime == "On", "_static", "_shared")
+			local runtimeLib = iif(cfg.stl == "none", "system", stlType[cfg.stl] .. postfix)
+
 			if _ACTION >= "vs2015" then
-				_p(2,'<UseOfStl>%s</UseOfStl>', stlType[cfg.stl])
+				vc2010.element("UseOfStl", nil, runtimeLib)
 			else
-				_p(2,'<AndroidStlType>%s</AndroidStlType>', stlType[cfg.stl])
+				vc2010.element("AndroidStlType", nil, runtimeLib)
 			end
 		end
 	end
 
 	function android.thumbMode(cfg)
-		if cfg.thumbmode then
+		if cfg.thumbmode ~= nil then
 			local thumbMode =
 			{
 				thumb = "Thumb",
 				arm = "ARM",
 				disabled = "Disabled",
 			}
-			_p(2,"<ThumbMode>%s</ThumbMode>", thumbMode[cfg.thumbmode])
+			vc2010.element("ThumbMode", nil, thumbMode[cfg.thumbmode])
 		end
 	end
 
@@ -142,26 +164,27 @@
 
 		if _ACTION >= "vs2015" then
 			local gcc_map = {
-				["_"]   = "GCC_4_9", -- default
 				["4.6"] = "GCC_4_6",
 				["4.8"] = "GCC_4_8",
 				["4.9"] = "GCC_4_9",
 			}
 			local clang_map = {
-				["_"]   = "Clang_3_8", -- default
 				["3.4"] = "Clang_3_4",
 				["3.5"] = "Clang_3_5",
 				["3.6"] = "Clang_3_6",
 				["3.8"] = "Clang_3_8",
+				["5.0"] = "Clang_5_0",
 			}
 
-			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
-			local ts  = map[cfg.toolchainversion or "_"]
-			if ts == nil then
-				p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
-			end
+			if cfg.toolchainversion ~= nil then
+				local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+				local ts  = map[cfg.toolchainversion]
+				if ts == nil then
+					p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
+				end
 
-			_p(2, "<PlatformToolset>%s</PlatformToolset>", ts)
+				vc2010.element("PlatformToolset", nil, ts)
+			end
 		else
 			local archMap = {
 				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
@@ -194,8 +217,8 @@
 
 				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
 
-				_p(2,'<PlatformToolset>%s</PlatformToolset>', toolset .. version)
-				_p(2,'<AndroidArch>%s</AndroidArch>', archMap[arch])
+				vc2010.element("PlatformToolset", nil, toolset .. version)
+				vc2010.element("AndroidArch", nil, archMap[arch])
 			end
 		end
 	end)
@@ -211,18 +234,34 @@
 			elements = table.join(elements, {
 				android.debugInformation,
 				android.strictAliasing,
-				android.thumbMode,
 				android.fpu,
 				android.pic,
---				android.ShortEnums,
+				android.shortEnums,
+				android.cStandard,
+				android.cppStandard,
 			})
 			if _ACTION >= "vs2015" then
 				table.remove(elements, table.indexof(elements, vc2010.debugInformationFormat))
-				table.remove(elements, table.indexof(elements, android.thumbMode))
+
+				-- Android has C[pp]LanguageStandard instead.
+				table.findAndRemove(elements, vc2010.languageStandard)
+				-- Ignore multiProcessorCompilation for android projects, they use UseMultiToolTask instead.
+				table.findAndRemove(elements, vc2010.multiProcessorCompilation)
+				-- minimalRebuild also ends up in android projects somehow.
+				table.findAndRemove(elements, vc2010.minimalRebuild)
+				-- VS has NEON support through EnableNeonCodegen.
+				table.replace(elements, vc2010.enableEnhancedInstructionSet, android.enableEnhancedInstructionSet)
+				-- precompiledHeaderFile support.
+				table.replace(elements, vc2010.precompiledHeaderFile, android.precompiledHeaderFile)
 			end
 		end
 		return elements
 	end)
+
+	function android.precompiledHeaderFile(fileName, cfg)
+		-- Doesn't work for project-relative paths.
+		vc2010.element("PrecompiledHeaderFile", nil, "%s", path.getabsolute(path.rebase(fileName, cfg.basedir, cfg.location)))
+	end
 
 	function android.debugInformation(cfg)
 		if cfg.flags.Symbols then
@@ -232,13 +271,7 @@
 
 	function android.strictAliasing(cfg)
 		if cfg.strictaliasing ~= nil then
-			_p(3,'<StrictAliasing>%s</StrictAliasing>', iif(cfg.strictaliasing == "Off", "false", "true"))
-		end
-	end
-
-	function android.thumbMode(cfg)
-		if cfg.flags.Thumb then
-			_p(3,'<ThumbMode>true</ThumbMode>')
+			vc2010.element("StrictAliasing", nil, iif(cfg.strictaliasing == "Off", "false", "true"))
 		end
 	end
 
@@ -249,41 +282,69 @@
 	end
 
 	function android.pic(cfg)
-		-- TODO: We only have a flag to turn it on, but android is on by default
-		--       it seems we would rather have a flag to turn it off...
---		if cfg.pic ~= nil then
---			_p(3,'<PositionIndependentCode>%s</PositionIndependentCode>', iif(cfg.pic == "On", "true", "false"))
---		end
+		if cfg.pic ~= nil then
+			vc2010.element("PositionIndependentCode", nil, iif(cfg.pic == "On", "true", "false"))
+		end
 	end
 
-	p.override(vc2010, "languageStandard", function(oldfn, cfg)
-		if cfg.system == p.ANDROID then
-			local cpp_langmap = {
-				["C++98"]   = "c++98",
-				["C++11"]   = "c++11",
-				["C++14"]   = "c++1y",
-				["gnu++98"] = "gnu++98",
-				["gnu++11"] = "gnu++11",
-				["gnu++14"] = "gnu++1y",
-			}
-			if cpp_langmap[cfg.cppdialect] ~= nil then
-				vc2010.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
-			end
-		else
-			oldfn(cfg)
+	function android.verboseCompiler(cfg)
+		setBoolOption("Verbose", cfg.flags.VerboseCompiler, "true")
+	end
+
+	function android.undefineAllPreprocessorDefinitions(cfg)
+		setBoolOption("UndefineAllPreprocessorDefinitions", cfg.flags.UndefineAllPreprocessorDefinitions, "true")
+	end
+
+	function android.showIncludes(cfg)
+		setBoolOption("ShowIncludes", cfg.flags.ShowIncludes, "true")
+	end
+
+	function android.dataLevelLinking(cfg)
+		setBoolOption("DataLevelLinking", cfg.flags.DataLevelLinking, "true")
+	end
+
+	function android.shortEnums(cfg)
+		setBoolOption("UseShortEnums", cfg.flags.UseShortEnums, "true")
+	end
+
+	function android.cStandard(cfg)
+		local c_langmap = {
+			["C98"]   = "c98",
+			["C99"]   = "c99",
+			["C11"]   = "c11",
+			["gnu99"] = "gnu99",
+			["gnu11"] = "gnu11",
+		}
+		if c_langmap[cfg.cdialect] ~= nil then
+			vc2010.element("CLanguageStandard", nil, c_langmap[cfg.cdialect])
 		end
-	end)
+	end
+
+	function android.cppStandard(cfg)
+		local cpp_langmap = {
+			["C++98"]   = "c++98",
+			["C++11"]   = "c++11",
+			["C++14"]   = "c++1y",
+			["C++17"]   = "c++1z",
+			["C++latest"] = "c++1z",
+			["gnu++98"] = "gnu++98",
+			["gnu++11"] = "gnu++11",
+			["gnu++14"] = "gnu++1y",
+			["gnu++17"] = "gnu++1z",
+		}
+		if cpp_langmap[cfg.cppdialect] ~= nil then
+			vc2010.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
+		end
+	end
 
 	p.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			local opts = cfg.buildoptions
 
-			local cpp_langmap = {
-				["C++17"]   = "-std=c++1z",
-				["gnu++17"] = "-std=gnu++1z",
-			}
-			if cpp_langmap[cfg.cppdialect] ~= nil then
-				table.insert(opts, cpp_langmap[cfg.cppdialect])
+			if cfg.disablewarnings and #cfg.disablewarnings > 0 then
+				for _, warning in ipairs(cfg.disablewarnings) do
+					table.insert(opts, '-Wno-' .. warning)
+				end
 			end
 
 			if #opts > 0 then
@@ -295,9 +356,9 @@
 		end
 	end)
 
-	p.override(p.vstudio.vc2010, "warningLevel", function(oldfn, cfg)
+	p.override(vc2010, "warningLevel", function(oldfn, cfg)
 		if _ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings and cfg.warnings ~= "Off" then
-			p.vstudio.vc2010.element("WarningLevel", nil, "EnableAllWarnings")
+			vc2010.element("WarningLevel", nil, "EnableAllWarnings")
 		elseif (_ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings) or not (_ACTION >= "vs2015" and cfg.system == p.ANDROID) then
 			oldfn(cfg)
 		end
@@ -314,9 +375,15 @@
 	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			-- Note: Android defaults to 'off'
-			if cfg.exceptionhandling then
+			if cfg.exceptionhandling and cfg.exceptionhandling ~= "Default" then
 				if _ACTION >= "vs2015" then
-					vc2010.element("ExceptionHandling", condition, "Enabled")
+					local exceptions = {
+						On = "Enabled",
+						Off = "Disabled",
+						UnwindTables = "UnwindTables",
+					}
+
+					vc2010.element("ExceptionHandling", condition, exceptions[cfg.exceptionhandling])
 				else
 					vc2010.element("GccExceptionHandling", condition, "true")
 				end
@@ -326,10 +393,16 @@
 		end
 	end)
 
+	function android.enableEnhancedInstructionSet(cfg)
+		if cfg.vectorextensions == "NEON" then
+			vc2010.element("EnableNeonCodegen", nil, "true")
+		end
+	end
+
 	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg, condition)
 		if cfg.system == premake.ANDROID then
 			-- Note: Android defaults to 'off'
-			if cfg.rtti then
+			if cfg.rtti and cfg.rtti ~= premake.OFF then
 				vc2010.element("RuntimeTypeInfo", condition, "true")
 			end
 		else
@@ -537,6 +610,23 @@
 			return oldfn(cfg, explicit)
 		end
 	end)
+
+function android.useMultiToolTask(cfg)
+	-- Android equivalent of 'MultiProcessorCompilation'
+	if cfg.flags.MultiProcessorCompile then
+		vc2010.element("UseMultiToolTask", nil, "true")
+	end
+end
+
+premake.override(vc2010.elements, "outputProperties", function(oldfn, cfg)
+	if cfg.system == p.ANDROID then
+		return table.join(oldfn(cfg), {
+			android.useMultiToolTask,
+		})
+	else
+		return oldfn(cfg)
+	end
+end)
 
 --
 -- Disable override of OutDir.  This is breaking deployment.

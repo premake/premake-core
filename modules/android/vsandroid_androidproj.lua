@@ -132,6 +132,9 @@
 		if cfg.kind == p.ANDROIDPROJ then
 			return {
 				android.outDir,
+				--android.intDir,
+				vc2010.targetName,
+				--targetExt,
 			}
 		else
 			return oldfn(cfg)

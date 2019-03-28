@@ -135,8 +135,12 @@
 		-- Final setup
 		tree.traverse(tr, {
 			onnode = function(node)
+				local nodePath
+				if node.path then
+					nodePath = path.getrelative(tr.project.location, node.path)
+				end
 				-- assign IDs to every node in the tree
-				node.id = xcode.newid(node.name, nil, node.path)
+				node.id = xcode.newid(node.name, nil, nodePath)
 
 				node.isResource = xcode.isItemResource(prj, node)
 
@@ -146,7 +150,7 @@
 						local filecfg = fileconfig.getconfig(node, cfg)
 						if fileconfig.hasCustomBuildRule(filecfg) then
 							if not node.buildcommandid then
-								node.buildcommandid = xcode.newid(node.name, "buildcommand", node.path)
+								node.buildcommandid = xcode.newid(node.name, "buildcommand", nodePath)
 							end
 						end
 					end
@@ -154,7 +158,7 @@
 
 				-- assign build IDs to buildable files
 				if xcode.getbuildcategory(node) and not node.excludefrombuild and not xcode.mustExcludeFromTarget(node, tr.project) then
-					node.buildid = xcode.newid(node.name, "build", node.path)
+					node.buildid = xcode.newid(node.name, "build", nodePath)
 				end
 
 				-- remember key files that are needed elsewhere

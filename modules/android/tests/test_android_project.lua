@@ -30,6 +30,7 @@
 	end
 
 	function suite.rttiOff()
+		exceptionhandling "On"
 		rtti "Off"
 		prepare()
 		test.capture [[
@@ -41,7 +42,9 @@
 	end
 
 	function suite.rttiOn()
+		exceptionhandling "On"
 		rtti "On"
+
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -53,6 +56,7 @@
 	end
 
 	function suite.exceptionHandlingOff()
+		rtti "Off"
 		exceptionhandling "Off"
 		prepare()
 		test.capture [[
@@ -63,6 +67,7 @@
 	end
 
 	function suite.exceptionHandlingOn()
+		rtti "Off"
 		exceptionhandling "On"
 		prepare()
 		test.capture [[
@@ -70,11 +75,12 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
 	<ExceptionHandling>Enabled</ExceptionHandling>
-	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 ]]
 	end
 
 	function suite.cppdialect_cpp11()
+		rtti "On"
+		exceptionhandling "On"
 		cppdialect "C++11"
 		prepare()
 		test.capture [[
@@ -88,6 +94,8 @@
 	end
 
 	function suite.cppdialect_cpp14()
+		rtti "On"
+		exceptionhandling "On"
 		cppdialect "C++14"
 		prepare()
 		test.capture [[
@@ -101,6 +109,8 @@
 	end
 
 	function suite.cppdialect_cpp17()
+		rtti "On"
+		exceptionhandling "On"
 		cppdialect "C++17"
 		prepare()
 		test.capture [[
@@ -109,6 +119,6 @@
 	<Optimization>Disabled</Optimization>
 	<ExceptionHandling>Enabled</ExceptionHandling>
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
-	<AdditionalOptions>-std=c++1z %(AdditionalOptions)</AdditionalOptions>
+	<CppLanguageStandard>c++1z</CppLanguageStandard>
 ]]
 	end
