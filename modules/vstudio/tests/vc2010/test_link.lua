@@ -222,6 +222,16 @@
 		]]
 	end
 
+	function suite.generateDebugInfo_onSymbolsFull_on2019()
+		p.action.set("vs2019")
+		symbols "Full"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+		]]
+	end
 --
 -- Test the handling of the SymbolsPath flag.
 --
@@ -361,6 +371,20 @@
 		]]
 	end
 
+	function suite.generateProgramDatabaseFile_onSymbolsFull_on2019()
+		p.action.set("vs2019")
+		symbols "Full"
+		symbolspath "$(IntDir)$(TargetName).pdb"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+</Link>
+		]]
+	end
 --
 -- Any system libraries specified in links() should be listed as
 -- additional dependencies.
