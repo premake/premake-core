@@ -23,7 +23,7 @@
 	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.PACKAGING })
 	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.PACKAGING })
 	premake.action._list["vs2019"].valid_kinds = table.join(premake.action._list["vs2019"].valid_kinds, { p.PACKAGING })
-
+	
 	local osoption = p.option.get("os")
 	if osoption ~= nil then
 		table.insert(osoption.allowed, { "android",  "Android" })
