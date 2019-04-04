@@ -30,7 +30,7 @@
 
 
 	function android.deployProject(cfg, context)
-		if context.prjCfg.kind == p.ANDROIDPROJ and _ACTION >= "vs2015" then
+		if context.prjCfg.kind == p.PACKAGING and _ACTION >= "vs2015" then
 			p.w('{%s}.%s.Deploy.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
 		end
 	end

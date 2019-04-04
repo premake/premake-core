@@ -36,7 +36,7 @@ local vc2010 = p.vstudio.vc2010
 	end
 
 	function suite.javaCompile_onJavaFile()
-		kind "androidproj"
+		kind "Packaging"
 		files { "hello.java" }
 		prepare()
 		test.capture [[

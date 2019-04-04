@@ -620,7 +620,7 @@
 		if kind == "list:path" then
 			return table.concat(vstudio.path(cfg, value), ';')
 		end
-	
+
 		-- path
 		if kind == "path" then
 			return vstudio.path(cfg, value)
@@ -2267,6 +2267,9 @@
 		end
 	end
 
+	function m.precompiledHeaderFile(fileName, cfg)
+		m.element("PrecompiledHeaderFile", nil, "%s", fileName)
+	end
 
 	function m.precompiledHeader(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
@@ -2279,7 +2282,7 @@
 		else
 			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
 				m.element("PrecompiledHeader", nil, "Use")
-				m.element("PrecompiledHeaderFile", nil, "%s", prjcfg.pchheader)
+				m.precompiledHeaderFile(prjcfg.pchheader, prjcfg)
 			else
 				m.element("PrecompiledHeader", nil, "NotUsing")
 			end
