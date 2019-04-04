@@ -19,7 +19,7 @@
 
 
 	premake.override(vstudio.vs2010, "generateProject", function(oldfn, prj)
-		if prj.kind == p.ANDROIDPROJ then
+		if prj.kind == p.PACKAGING then
 			p.eol("\r\n")
 			p.indent("  ")
 			p.escaper(vstudio.vs2010.esc)
@@ -40,7 +40,7 @@
 
 
 	premake.override(vstudio, "projectfile", function(oldfn, prj)
-		if prj.kind == p.ANDROIDPROJ then
+		if prj.kind == p.PACKAGING then
 			return premake.filename(prj, ".androidproj")
 		else
 			return oldfn(prj)
@@ -49,7 +49,7 @@
 
 
 	premake.override(vstudio, "tool", function(oldfn, prj)
-		if prj.kind == p.ANDROIDPROJ then
+		if prj.kind == p.PACKAGING then
 			return "39E2626F-3545-4960-A6E8-258AD8476CE5"
 		else
 			return oldfn(prj)
@@ -60,7 +60,7 @@
 	premake.override(vc2010.elements, "globals", function (oldfn, cfg)
 		local elements = oldfn(cfg)
 
-		if cfg.kind == premake.ANDROIDPROJ then
+		if cfg.kind == premake.PACKAGING then
 			-- Remove "IgnoreWarnCompileDuplicatedFilename".
 			local pos = table.indexof(elements, vc2010.ignoreWarnDuplicateFilename)
 			table.remove(elements, pos)
@@ -82,7 +82,7 @@
 
 	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
-		if cfg.kind == p.ANDROIDPROJ then
+		if cfg.kind == p.PACKAGING then
 			elements = {
 				android.androidAPILevel,
 				vc2010.useDebugLibraries,
@@ -94,7 +94,7 @@
 
 	premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
 		local elements = oldfn(cfg)
-		if cfg.kind == p.ANDROIDPROJ then
+		if cfg.kind == p.PACKAGING then
 			elements = {
 				android.antPackage,
 			}
@@ -104,7 +104,7 @@
 
 
 	premake.override(vc2010, "importDefaultProps", function(oldfn, prj)
-		if prj.kind == p.ANDROIDPROJ then
+		if prj.kind == p.PACKAGING then
 			p.w('<Import Project="$(AndroidTargetsPath)\\Android.Default.props" />')
 		else
 			oldfn(prj)
@@ -113,7 +113,7 @@
 
 
 	premake.override(vc2010, "importLanguageSettings", function(oldfn, prj)
-		if prj.kind == p.ANDROIDPROJ then
+		if prj.kind == p.PACKAGING then
 			p.w('<Import Project="$(AndroidTargetsPath)\\Android.props" />')
 		else
 			oldfn(prj)
@@ -122,16 +122,18 @@
 
 
 	premake.override(vc2010, "propertySheets", function(oldfn, cfg)
-		if cfg.kind ~= p.ANDROIDPROJ then
+		if cfg.kind ~= p.PACKAGING then
 			oldfn(cfg)
 		end
 	end)
 
 
 	premake.override(vc2010.elements, "outputProperties", function(oldfn, cfg)
-		if cfg.kind == p.ANDROIDPROJ then
+		if cfg.kind == p.PACKAGING then
 			return {
 				android.outDir,
+				vc2010.intDir,
+				vc2010.targetName,
 			}
 		else
 			return oldfn(cfg)
@@ -145,7 +147,7 @@
 
 
 	premake.override(vc2010, "importLanguageTargets", function(oldfn, prj)
-		if prj.kind == p.ANDROIDPROJ then
+		if prj.kind == p.PACKAGING then
 			p.w('<Import Project="$(AndroidTargetsPath)\\Android.targets" />')
 		else
 			oldfn(prj)
@@ -248,7 +250,7 @@
 	}
 
 	premake.override(vc2010, "categorizeFile", function(base, prj, file)
-		if prj.kind ~= p.ANDROIDPROJ then
+		if prj.kind ~= p.PACKAGING then
 			return base(prj, file)
 		end
 

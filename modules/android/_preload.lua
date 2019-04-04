@@ -12,17 +12,17 @@
 -- Register the Android extension
 --
 
-	p.ANDROID = "android"
-	p.ANDROIDPROJ = "androidproj"
-
 	api.addAllowed("system", p.ANDROID)
-	api.addAllowed("architecture", { "armv5", "armv7", "aarach64", "mips", "mips64", "arm" })
+	api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
 	api.addAllowed("vectorextensions", { "NEON", "MXU" })
+	api.addAllowed("exceptionhandling", {"UnwindTables"})
 	api.addAllowed("flags", { "Thumb" })
-	api.addAllowed("kind", p.ANDROIDPROJ)
+	api.addAllowed("kind", p.PACKAGING)
 
-	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.ANDROIDPROJ })
-	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.ANDROIDPROJ })
+
+	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.PACKAGING })
+	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.PACKAGING })
+	premake.action._list["vs2019"].valid_kinds = table.join(premake.action._list["vs2019"].valid_kinds, { p.PACKAGING })
 
 	local osoption = p.option.get("os")
 	if osoption ~= nil then
@@ -65,6 +65,7 @@
 			"3.5",
 			"3.6",
 			"3.8",
+			"5.0",
 		},
 	}
 
@@ -74,15 +75,10 @@
 		kind = "string",
 		allowed = {
 			"none",
-			"minimal c++ (system)",
-			"c++ static",
-			"c++ shared",
-			"stlport static",
-			"stlport shared",
-			"gnu stl static",
-			"gnu stl shared",
-			"llvm libc++ static",
-			"llvm libc++ shared",
+			"gabi++",
+			"stlport",
+			"gnu",
+			"libc++",
 		},
 	}
 

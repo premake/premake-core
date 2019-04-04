@@ -36,7 +36,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>Enabled</ExceptionHandling>
 </ClCompile>]]
 	end
 
@@ -47,7 +46,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>Enabled</ExceptionHandling>
 	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 ]]
 	end
@@ -70,7 +68,6 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
 	<ExceptionHandling>Enabled</ExceptionHandling>
-	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 ]]
 	end
 
@@ -81,8 +78,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>Enabled</ExceptionHandling>
-	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<CppLanguageStandard>c++11</CppLanguageStandard>
 ]]
 	end
@@ -94,8 +89,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>Enabled</ExceptionHandling>
-	<RuntimeTypeInfo>true</RuntimeTypeInfo>
 	<CppLanguageStandard>c++1y</CppLanguageStandard>
 ]]
 	end
@@ -107,8 +100,6 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
-	<ExceptionHandling>Enabled</ExceptionHandling>
-	<RuntimeTypeInfo>true</RuntimeTypeInfo>
-	<AdditionalOptions>-std=c++1z %(AdditionalOptions)</AdditionalOptions>
+	<CppLanguageStandard>c++1z</CppLanguageStandard>
 ]]
 	end

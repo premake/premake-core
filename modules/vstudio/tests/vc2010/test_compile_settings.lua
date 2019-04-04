@@ -1133,6 +1133,21 @@
 		]]
 	end
 
+	function suite.onLanguage_Cpp14_VS2019()
+		p.action.set("vs2019")
+
+		cppdialect 'C++14'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpp14</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
 	function suite.onLanguage_Cpp17_VS2010()
 		cppdialect 'C++17'
 		prepare()
@@ -1175,6 +1190,21 @@
 		]]
 	end
 
+	function suite.onLanguage_Cpp17_VS2019()
+		p.action.set("vs2019")
+
+		cppdialect 'C++17'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpp17</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
 	function suite.onLanguage_CppLatest_VS2010()
 		cppdialect 'C++latest'
 		prepare()
@@ -1204,6 +1234,21 @@
 
 	function suite.onLanguage_CppLatest_VS2017()
 		p.action.set("vs2017")
+
+		cppdialect 'C++latest'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_CppLatest_VS2019()
+		p.action.set("vs2019")
 
 		cppdialect 'C++latest'
 		prepare()

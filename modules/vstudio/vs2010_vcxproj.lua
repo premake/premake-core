@@ -63,8 +63,12 @@
 
 	function m.project(prj)
 		local action = p.action.current()
-		p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
-			action.vstudio.toolsVersion)
+		if _ACTION >= "vs2019" then
+			p.push('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+		else
+			p.push('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+				   action.vstudio.toolsVersion)
+		end
 	end
 
 
@@ -616,7 +620,7 @@
 		if kind == "list:path" then
 			return table.concat(vstudio.path(cfg, value), ';')
 		end
-	
+
 		-- path
 		if kind == "path" then
 			return vstudio.path(cfg, value)
@@ -2263,6 +2267,9 @@
 		end
 	end
 
+	function m.precompiledHeaderFile(fileName, cfg)
+		m.element("PrecompiledHeaderFile", nil, "%s", fileName)
+	end
 
 	function m.precompiledHeader(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
@@ -2275,7 +2282,7 @@
 		else
 			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
 				m.element("PrecompiledHeader", nil, "Use")
-				m.element("PrecompiledHeaderFile", nil, "%s", prjcfg.pchheader)
+				m.precompiledHeaderFile(prjcfg.pchheader, prjcfg)
 			else
 				m.element("PrecompiledHeader", nil, "NotUsing")
 			end
@@ -2507,7 +2514,13 @@
 			-- handle special "latest" version
 			if min == "latest" then
 				-- vs2015 and lower can't build against SDK 10
-				min = iif(_ACTION >= "vs2017", m.latestSDK10Version(), nil)
+				-- vs2019 allows for automatic assignment to latest
+				-- Windows 10 sdk if you set to "10.0"
+				if _ACTION >= "vs2019" then
+					min = "10.0"
+				else
+					min = iif(_ACTION == "vs2017", m.latestSDK10Version(), nil)
+				end
 			end
 
 			return min
