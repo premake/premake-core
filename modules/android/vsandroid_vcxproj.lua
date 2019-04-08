@@ -338,6 +338,11 @@
 				end
 			end
 
+			-- -fvisibility=<>
+			if cfg.visibility ~= nil then
+				table.insert(opts, p.tools.gcc.cxxflags.visibility[cfg.visibility])
+			end
+
 			if #opts > 0 then
 				opts = table.concat(opts, " ")
 				vc2010.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
