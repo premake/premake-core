@@ -8,6 +8,7 @@
 
 	local implementation = dofile('json.lua')
 	local err
+	json.implementation = implementation
 
 	function implementation.assert(condition, message)
 		if not condition then
