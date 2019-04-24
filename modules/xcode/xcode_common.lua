@@ -62,7 +62,7 @@
 				if list then
 					if type(list) == "table" then
 						for _,v in pairs(list) do
-							if string.find(item, v) then
+							if string.find(item, v, 1, true) then
 								return true
 							end
 						end

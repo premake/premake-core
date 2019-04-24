@@ -72,6 +72,21 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ListsXcodeBuildResources()
+		-- This checks the file names given to xcodebuildresources are not interpreted as patterns
+		-- "file01.png" should be excluded and "file-3.png" should be included
+		files { "file.1.png", "file01.png", "file02.png", "file-3.png" }
+		xcodebuildresources { "file.1.png", "file02.png", "file-3.png" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		628F3826BDD08B98912AD666 /* file-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 992385EEB0362120A0521C2E /* file-3.png */; };
+		C41B1B841F5C6EF6F2B6B9C4 /* file.1.png in Resources */ = {isa = PBXBuildFile; fileRef = F2B36E6C09C6099EF9E204AC /* file.1.png */; };
+		C87AFEAA23BC521CF7169CEA /* file02.png in Resources */ = {isa = PBXBuildFile; fileRef = D54D8E32EC602964DC7C2472 /* file02.png */; };
+/* End PBXBuildFile section */
+		]]
+	end
 
 	function suite.PBXBuildFile_ListsFrameworks()
 		links { "Cocoa.framework", "ldap" }
