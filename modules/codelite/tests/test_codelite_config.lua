@@ -17,6 +17,7 @@
 
 	function suite.setup()
 		p.action.set("codelite")
+		p.escaper(codelite.esc)
 		p.indent("  ")
 		wks = test.createWorkspace()
 	end
@@ -198,6 +199,21 @@ cmd2</StartupCommands>
 		]]
 	end
 
+	function suite.OnProject_PreBuild_Escaped()
+		prebuildcommands {
+			"touch \"./build/copyright\" && echo OK",
+			"cat \"./lib/copyright\" >> \"./build/copyright\""
+		}
+		prepare()
+		codelite.project.preBuild(prj)
+		test.capture [[
+      <PreBuild>
+        <Command Enabled="yes">touch "./build/copyright" &amp;&amp; echo OK</Command>
+        <Command Enabled="yes">cat "./lib/copyright" &gt;&gt; "./build/copyright"</Command>
+      </PreBuild>
+		]]
+	end
+
 	function suite.OnProject_PostBuild()
 		postbuildcommands { "cmd0", "cmd1" }
 		prepare()
@@ -206,6 +222,21 @@ cmd2</StartupCommands>
       <PostBuild>
         <Command Enabled="yes">cmd0</Command>
         <Command Enabled="yes">cmd1</Command>
+      </PostBuild>
+		]]
+	end
+
+	function suite.OnProject_PostBuild_Escaped()
+		postbuildcommands {
+			"touch \"./build/copyright\" && echo OK",
+			"cat \"./lib/copyright\" >> \"./build/copyright\""
+		}
+		prepare()
+		codelite.project.postBuild(prj)
+		test.capture [[
+      <PostBuild>
+        <Command Enabled="yes">touch "./build/copyright" &amp;&amp; echo OK</Command>
+        <Command Enabled="yes">cat "./lib/copyright" &gt;&gt; "./build/copyright"</Command>
       </PostBuild>
 		]]
 	end
