@@ -98,7 +98,7 @@
 	os.rmdir(pkgName)
 
 	print("Cloning source code")
-	local z = execQuiet("git clone .. %s -b %s --recurse-submodules", pkgName, branch)
+	local z = execQuiet("git clone .. %s -b %s --recurse-submodules --depth 1 --shallow-submodules", pkgName, branch)
 	if not z then
 		error("clone failed", 0)
 	end
