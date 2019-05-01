@@ -40,7 +40,17 @@
 -- Make sure I've got what I've need to be happy.
 --
 
-	local required = { "git", "make", "gcc", "premake5", "zip" }
+	local required = { "git" }
+
+	if not os.ishost("windows") then
+		table.insert(required, "make")
+		table.insert(required, "cc")
+	else
+		if not os.getenv("VS140COMNTOOLS") then
+			error("required tool 'Visual Studio 2015' not found", 0)
+		end
+	end
+
 	for _, value in ipairs(required) do
 		local z = execQuiet("%s --version", value)
 		if not z then
