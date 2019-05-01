@@ -220,4 +220,5 @@ end
 -- Clean up
 --
 
-	os.rmdir(pkgName)
+	-- Use RMDIR token instead of os.rmdir to force remove .git dir which has read only files
+	execQuiet(os.translateCommands("{RMDIR} "..pkgName))
