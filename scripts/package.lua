@@ -88,22 +88,31 @@
 	os.rmdir(pkgName)
 
 	print("Cloning source code")
-	z = os.executef("git clone .. %s", pkgName)
+	local z = execQuiet("git clone .. %s -b %s --recurse-submodules", pkgName, branch)
 	if not z then
 		error("clone failed", 0)
 	end
 
 	os.chdir(pkgName)
 
-	z = os.executef("git checkout %s", branch)
-	if not z then
-		error("unable to checkout branch " .. branch, 0)
-	end
+--
+-- Bootstrap Premake in the newly cloned repository
+--
 
-	z = os.executef("git submodule update --init")
-	if not z then
-		error("unable to clone submodules", 0)
+	print("Bootstraping Premake...")
+	if os.ishost("windows") then
+		z = execQuiet("Bootstrap.bat")
+	else
+		local os_map = {
+			linux = "linux",
+			macosx = "osx",
+		}
+		z = execQuiet("make -j -f Bootstrap.mak %s", os_map[os.host()])
 	end
+	if not z then
+		error("Failed to Bootstrap Premake", 0)
+	end
+	local premakeBin = path.translate("bin/release/Premake5")
 
 
 --
