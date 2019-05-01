@@ -120,31 +120,12 @@
 --
 
 	print("Updating embedded scripts...")
-	if kind == "source" then
-		z = execQuiet("premake5 embed")
-	else
-		z = execQuiet("premake5 --bytecode embed")
-	end
+
+	local z = execQuiet("%s embed %s", premakeBin, iif(kind == "source", "", "--bytecode"))
 	if not z then
 		error("failed to update the embedded scripts", 0)
 	end
 
-
---
--- Clear out files I don't want included in any packages.
---
-
-	print("Cleaning up the source tree...")
-	os.rmdir("packages")
-	os.rmdir(".git")
-
-	local removelist = { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig", "appveyor.yml", "Bootstrap.mak" }
-	for _, removeitem in ipairs(removelist) do
-		local founditems = os.matchfiles("**" .. removeitem)
-		for _, item in ipairs(founditems) do
-			os.remove(item)
-		end
-	end
 
 --
 -- Generate a source package.
@@ -152,24 +133,40 @@
 
 if kind == "source" then
 
+	local function	genProjects(parameters)
+		if not execQuiet("%s %s", premakeBin, parameters) then
+			error("failed to generate project for "..parameters, 0)
+		end
+	end
+
+	os.rmdir("build")
+
 	print("Generating project files...")
-	execQuiet("premake5 /to=build/vs2005 vs2005")
-	execQuiet("premake5 /to=build/vs2008 vs2008")
-	execQuiet("premake5 /to=build/vs2010 vs2010")
-	execQuiet("premake5 /to=build/vs2012 vs2012")
-	execQuiet("premake5 /to=build/vs2013 vs2013")
-	execQuiet("premake5 /to=build/vs2015 vs2015")
-	execQuiet("premake5 /to=build/vs2017 vs2017")
-	execQuiet("premake5 /to=build/vs2019 vs2019")
-	execQuiet("premake5 /to=build/gmake.windows /os=windows gmake")
-	execQuiet("premake5 /to=build/gmake.unix /os=linux gmake")
-	execQuiet("premake5 /to=build/gmake.macosx /os=macosx gmake")
-	execQuiet("premake5 /to=build/gmake.bsd /os=bsd gmake")
+
+	genProjects("--to=build/vs2005 vs2005")
+	genProjects("--to=build/vs2008 vs2008")
+	genProjects("--to=build/vs2010 vs2010")
+	genProjects("--to=build/vs2012 vs2012")
+	genProjects("--to=build/vs2013 vs2013")
+	genProjects("--to=build/vs2015 vs2015")
+	genProjects("--to=build/vs2017 vs2017")
+	genProjects("--to=build/vs2019 vs2019")
+	genProjects("--to=build/gmake.windows --os=windows gmake")
+	genProjects("--to=build/gmake.unix --os=linux gmake")
+	genProjects("--to=build/gmake.macosx --os=macosx gmake")
+	genProjects("--to=build/gmake.bsd --os=bsd gmake")
 
 	print("Creating source code package...")
-	os.chdir("..")
-	execQuiet("zip -r9 %s-src.zip %s/*", pkgName, pkgName)
 
+	if 	not execQuiet("git add -f build") or
+		not execQuiet("git stash") or
+		not execQuiet("git archive --format=zip -9 -o ../%s-src.zip --prefix=%s/ stash@{0}", pkgName, pkgName) or
+		not execQuiet("git stash drop stash@{0}")
+	then
+		error("failed to archive release", 0)
+	end
+
+	os.chdir("..")
 end
 
 
@@ -182,22 +179,28 @@ end
 if kind == "binary" then
 
 	print("Building binary...")
-	execQuiet("premake5 gmake")
-	z = execQuiet("make config=release")
-	if not z then
-		error("build failed")
-	end
 
 	os.chdir("bin/release")
 
-	local name = string.format("%s-%s%s", pkgName, os.host(), pkgExt)
+	local addCommand = "git add -f premake5%s"
+	local archiveCommand = "git archive --format=%s -o ../../../%s-%s%s stash@{0} -- ./premake5%s"
+
 	if os.ishost("windows") then
-		execQuiet("zip -9 %s premake5.exe", name)
+		addCommand = string.format(addCommand, ".exe")
+		archiveCommand = string.format(archiveCommand, "zip -9", pkgName, os.host(), pkgExt, ".exe")
 	else
-		execQuiet("tar czvf %s premake5", name)
+		addCommand = string.format(addCommand, "")
+		archiveCommand = string.format(archiveCommand, "tar.gz", pkgName, os.host(), pkgExt, "")
 	end
 
-	os.copyfile(name, path.join("../../../", name))
+	if 	not execQuiet(addCommand) or
+		not execQuiet("git stash") or
+		not execQuiet(archiveCommand) or
+		not execQuiet("git stash drop stash@{0}")
+	then
+		error("failed to archive release", 0)
+	end
+
 	os.chdir("../../..")
 
 end
