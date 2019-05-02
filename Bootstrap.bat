@@ -22,6 +22,9 @@ IF "%vsversion%" == "vs2010" (
 ) ELSE IF "%vsversion%" == "vs2017" (
 	CALL :VsWhereVisualBootstrap "%vsversion%" "15.0" "16.0"
 
+) ELSE IF "%vsversion%" == "vs2019" (
+	CALL :VsWhereVisualBootstrap "%vsversion%" "16.0" "17.0"
+
 ) ELSE (
 	ECHO Unrecognized Visual Studio version %vsversion%
 	EXIT /B 2
