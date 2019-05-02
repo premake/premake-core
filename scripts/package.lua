@@ -180,18 +180,38 @@ if kind == "source" then
 
 	print("Generating project files...")
 
-	genProjects("--to=build/vs2005 vs2005")
-	genProjects("--to=build/vs2008 vs2008")
-	genProjects("--to=build/vs2010 vs2010")
-	genProjects("--to=build/vs2012 vs2012")
-	genProjects("--to=build/vs2013 vs2013")
-	genProjects("--to=build/vs2015 vs2015")
-	genProjects("--to=build/vs2017 vs2017")
-	genProjects("--to=build/vs2019 vs2019")
-	genProjects("--to=build/gmake.windows --os=windows gmake")
-	genProjects("--to=build/gmake.unix --os=linux gmake")
-	genProjects("--to=build/gmake.macosx --os=macosx gmake")
-	genProjects("--to=build/gmake.bsd --os=bsd gmake")
+	local ignoreActions = {
+		"clean",
+		"embed",
+		"gmake2",
+		"package",
+		"test",
+
+		"codelite",
+		"xcode4",
+	}
+
+	for action in premake.action.each() do
+
+		if not table.contains(ignoreActions, action.trigger) then
+			if action.trigger == "gmake" then
+
+				local gmakeOsList = {
+					{ "windows", },
+					{ "unix", "linux" },
+					{ "macosx", },
+					{ "bsd", },
+				}
+
+				for _, os in ipairs(gmakeOsList) do
+					local osTarget = os[2] or os[1]
+					genProjects(string.format("--to=build/gmake.%s --os=%s gmake", os[1], osTarget))
+				end
+			else
+				genProjects(string.format("--to=build/%s %s", action.trigger, action.trigger))
+			end
+		end
+	end
 
 	print("Creating source code package...")
 
