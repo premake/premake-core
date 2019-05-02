@@ -20,21 +20,56 @@
 -- Check the command line arguments, and show some help if needed.
 ---
 
-	local usage = 'usage is: package <branch> <type>\n' ..
-		'       <branch> is the name of the release branch to target\n' ..
-		'       <type> is one of "source" or "binary"\n'
+	local allowedCompilers = {}
 
-	if #_ARGS ~= 2 then
+	if os.ishost("windows") then
+		allowedCompilers = {
+			"vs2019",
+			"vs2017",
+			"vs2015",
+			"vs2013",
+			"vs2012",
+			"vs2010",
+			"vs2008",
+			"vs2005",
+		}
+	elseif os.ishost("linux") or os.ishost("bsd") then
+		allowedCompilers = {
+			"gcc",
+			"clang",
+		}
+	elseif os.ishost("macosx") then
+		allowedCompilers = {
+			"clang",
+		}
+	else
+		error("Unsupported host os", 0)
+	end
+
+	local usage = 'usage is: package <branch> <type> [<compiler>]\n' ..
+		'       <branch> is the name of the release branch to target\n' ..
+		'       <type> is one of "source" or "binary"\n' ..
+		'       <compiler> (default: ' .. allowedCompilers[1] .. ') is one of ' .. table.implode(allowedCompilers, "", "", " ")
+
+	if #_ARGS ~= 2 and #_ARGS ~= 3 then
 		error(usage, 0)
 	end
 
 	local branch = _ARGS[1]
 	local kind = _ARGS[2]
+	local compiler = _ARGS[3] or allowedCompilers[1]
 
 	if kind ~= "source" and kind ~= "binary" then
+		print("Invalid package kind: "..kind)
 		error(usage, 0)
 	end
 
+	if not table.contains(allowedCompilers, compiler) then
+		print("Invalid compiler: "..compiler)
+		error(usage, 0)
+	end
+
+	local compilerIsVS = compiler:startswith("vs")
 
 --
 -- Make sure I've got what I've need to be happy.
@@ -42,13 +77,9 @@
 
 	local required = { "git" }
 
-	if not os.ishost("windows") then
+	if not compilerIsVS then
 		table.insert(required, "make")
-		table.insert(required, "cc")
-	else
-		if not os.getenv("VS140COMNTOOLS") then
-			error("required tool 'Visual Studio 2015' not found", 0)
-		end
+		table.insert(required, compiler)
 	end
 
 	for _, value in ipairs(required) do
@@ -110,14 +141,10 @@
 --
 
 	print("Bootstraping Premake...")
-	if os.ishost("windows") then
-		z = execQuiet("Bootstrap.bat")
+	if compilerIsVS then
+		z = os.execute("Bootstrap.bat " .. compiler)
 	else
-		local os_map = {
-			linux = "linux",
-			macosx = "osx",
-		}
-		z = execQuiet("make -j -f Bootstrap.mak %s", os_map[os.host()])
+		z = os.execute("make -j -f Bootstrap.mak " .. os.host())
 	end
 	if not z then
 		error("Failed to Bootstrap Premake", 0)
