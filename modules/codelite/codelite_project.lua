@@ -196,8 +196,9 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local cxxflags = table.concat(table.join(toolset.getcxxflags(cfg), cfg.buildoptions), ";")
-		local cflags   = table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), ";")
+		local forceincludes = toolset.getforceincludes(cfg)
+		local cxxflags = table.concat(table.join(toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
+		local cflags   = table.concat(table.join(toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
 		local asmflags = ""
 		local pch      = ""
 
