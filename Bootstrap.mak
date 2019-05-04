@@ -61,6 +61,8 @@ mingw: $(SRC)
 	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake
 	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
 
+macosx: osx
+
 osx: $(SRC)
 	$(SILENT) rm -rf ./bin
 	$(SILENT) rm -rf ./build
