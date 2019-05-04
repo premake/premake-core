@@ -2,9 +2,17 @@
 SETLOCAL
 SETLOCAL ENABLEDELAYEDEXPANSION
 
+REM ===========================================================================
+
+SET SelfPath="%0"
+SET VsWherePath="C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe"
+
+REM ===========================================================================
+
 SET vsversion=%1
 IF "%vsversion%" == "" (
-	SET vsversion=vs2015
+	CALL :BootstrapLatest
+	EXIT /B %ERRORLEVEL%
 )
 
 IF "%vsversion%" == "vs2010" (
@@ -74,14 +82,12 @@ SET "VsVersionMax=%~3"
 
 REM ref: https://github.com/Microsoft/vswhere/wiki/Start-Developer-Command-Prompt
 
-SET VsWherePath="C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe"
-
 IF NOT EXIST %VsWherePath% (
 	ECHO Could not find vswhere.exe
 	EXIT /B 2
 )
 
-SET VsWhereCmdLine="%VsWherePath% -nologo -latest -version [%VsVersionMin%,%VsVersionMax%) -property installationPath"
+SET VsWhereCmdLine="!VsWherePath! -nologo -latest -version [%VsVersionMin%,%VsVersionMax%) -property installationPath"
 
 FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
 
@@ -95,6 +101,58 @@ ECHO Could not find vcvars32.bat to setup Visual Studio environment
 EXIT /B 2
 
 REM :VsWhereVisualBootstrap
+
+REM ===========================================================================
+
+:BootstrapLatest
+
+IF EXIST %VsWherePath% (
+
+	REM First try for not legacy Visual Studios ( >vs2017 )
+
+	SET VsWhereCmdLine="!VsWherePath! -nologo -latest -property catalog.productLineVersion"
+
+	FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
+
+		CALL %SelfPath% vs%%i
+
+		EXIT /B %ERRORLEVEL%
+	)
+
+)
+
+SET LegacyVSVersions=
+
+REM Get latest Visual Studio legacy version
+
+REM For all env var starting with VS
+FOR /F "usebackq delims==" %%i in (`SET VS`) DO (
+
+	REM Check if env var match pattern VS*COMNTOOLS (ie: VS140COMNTOOLS)
+	ECHO "%%i" | FINDSTR /R /C:VS.*COMNTOOLS >nul && (
+
+		SET "LegacyVSVersions=%%i"
+	)
+)
+
+REM Strip VS
+SET LegacyVSVersions=%LegacyVSVersions:VS=%
+REM Strip COMNTOOLS
+SET LegacyVSVersions=%LegacyVSVersions:COMNTOOLS=%
+
+SET "VsVersionMap=140-vs2015;120-vs2013;110-vs2012;100-vs2010"
+CALL SET PremakeVsVersion=%%VsVersionMap:*%LegacyVSVersions%-=%%
+SET PremakeVsVersion=%PremakeVsVersion:;=&REM.%
+
+IF NOT "%PremakeVsVersion%" == "" (
+	CALL %SelfPath% %PremakeVsVersion%
+	EXIT /B %ERRORLEVEL%
+)
+
+ECHO Could not find a Visual Studio installation
+EXIT /B 2
+
+REM :BootstrapLatest
 
 REM ===========================================================================
 
