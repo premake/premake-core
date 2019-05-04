@@ -183,9 +183,9 @@ if kind == "source" then
 	local ignoreActions = {
 		"clean",
 		"embed",
-		"gmake2",
 		"package",
 		"test",
+		"gmake", -- deprecated
 
 		"codelite",
 		"xcode4",
@@ -194,7 +194,7 @@ if kind == "source" then
 	for action in premake.action.each() do
 
 		if not table.contains(ignoreActions, action.trigger) then
-			if action.trigger == "gmake" then
+			if action.trigger == "gmake2" then
 
 				local gmakeOsList = {
 					{ "windows", },
@@ -205,7 +205,7 @@ if kind == "source" then
 
 				for _, os in ipairs(gmakeOsList) do
 					local osTarget = os[2] or os[1]
-					genProjects(string.format("--to=build/gmake.%s --os=%s gmake", os[1], osTarget))
+					genProjects(string.format("--to=build/gmake2.%s --os=%s gmake2", os[1], osTarget))
 				end
 			else
 				genProjects(string.format("--to=build/%s %s", action.trigger, action.trigger))
