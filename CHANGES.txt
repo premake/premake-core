@@ -5,6 +5,45 @@
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
 
+Since 5.0-alpha13:
+
+* PR #1067 Add 'Default', 'Dwarf' and 'SplitDwarf' arguments to 'debugformat' (@ratzlaff)
+* PR #1160 use ';' as default separator for vs (@WorldofBay)
+* PR #1177 Enable property categories in VS projects (@WorldofBay)
+* PR #1178 Avoid impl dependent multi-char constants (@cengizIO)
+* PR #1179 fix `xcodebuildsettings` using false (@tempura-sukiyaki)
+* PR #1180 Add `os.ios` option in xcode4 (@tempura-sukiyaki)
+* PR #1181 Release 5.0 alpha13 (@premake)
+* PR #1189 Host path.normalize: Fix normalization for paths containing tokens (@tdesveauxPKFX)
+* PR #1191 Fix objname collisions (@ratzlaff)
+* PR #1193 Add tests for xcode id generator (@ratzlaff)
+* PR #1194 Move rule property string expansion into modules (@WorldofBay)
+* PR #1197 Added missing elements in Visual Studio Makefile projects (@LORgames)
+* PR #1202 Support %{file.name} token in VS (@Blizzard)
+* PR #1203 Add support for JavaCompile in vsandroid (@tempura-sukiyaki)
+* PR #1206 Updated code lite to properly add LD_LIBRARY_PATH is set if libdirs is set (@pintodragon)
+* PR #1218 Add support & tests for XCTest sharedlibtype (@Dingobloo)
+* PR #1220 Implement the androidapilevel() API in Android packaging projects (@ifarbod)
+* PR #1221 add nil check to fileconfig.hasFileSetting (gmake) (@WorldofBay)
+* PR #1224 add missing local (@WorldofBay)
+* PR #1228 Added Win64 as a recognized platform (@LORgames)
+* PR #1230 Removed excessive escaping in CodeLite generator (@LORgames)
+* PR #1231 Fixed issue with per-configuration build commands not returning errors correctly (@LORgames)
+* PR #1236 Added support for Dx12 shader models (@CosmicRey)
+* PR #1239 Implemented the startproject option for xcode (@macsforme)
+* PR #1240 allow linking of mixed c++ assemblies (@WorldofBay)
+* PR #1244 Fixed issue with detoken not handling deferred joins correctly (@LORgames)
+* PR #1247 Added support for `csversion` API to dotnet toolset. (@tritao)
+* PR #1248 Default to Roslyn-based `csc` compiler on all platforms. (@tritao)
+* PR #1249 do not clear _isIncludingExternal in nested calls (@WorldofBay)
+* PR #1253 Xcode newid determinism (@ratzlaff)
+* PR #1258 Added support for Visual Studio 2019 solutions (@CosmicRey)
+* PR #1264 Android changes, stage 1 (#1263) (@ifarbod)
+* PR #1266 Implement the 'visibility' API for Android projects (@ifarbod)
+* PR #1267 Provide access to  json implementation (@ratzlaff)
+* PR #1276 Added support for forceincludes in CodeLite (@LORgames)
+* PR #1278 Packaging script improvement (@tdesveauxPKFX)
+
 Since 5.0-alpha12:
 
 * PR #880 Allow tokens to start with a ! to disable making paths relative. (@Blizzard)
