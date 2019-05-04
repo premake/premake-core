@@ -149,7 +149,7 @@
 	if not z then
 		error("Failed to Bootstrap Premake", 0)
 	end
-	local premakeBin = path.translate("bin/release/Premake5")
+	local premakeBin = path.translate("./bin/release/premake5")
 
 
 --
