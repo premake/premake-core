@@ -60,7 +60,7 @@
 
 		vstudio = {
 			solutionVersion = "12",
-			versionName     = "16",
+			versionName     = "Version 16",
 			targetFramework = "4.7.2",
 			toolsVersion    = "15.0",
 			userToolsVersion = "Current",
