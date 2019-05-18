@@ -197,6 +197,10 @@
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 
+		filter "system:haiku"
+			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN", "_BSD_SOURCE" }
+			links       { "network", "bsd" }
+
 
 	-- optional 3rd party libraries
 	group "contrib"

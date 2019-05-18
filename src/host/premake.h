@@ -43,7 +43,7 @@
 #define PLATFORM_STRING   "windows"
 #endif
 
-#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS)
+#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU)
 
 
 /* Pull in platform-specific headers required by built-in functions */

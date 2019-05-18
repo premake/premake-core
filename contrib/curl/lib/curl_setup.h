@@ -86,7 +86,7 @@
 #  include "config-linux.h"
 #endif
 
-#if defined(__sun__) && defined(__svr4__)
+#if defined(__sun__) && defined(__svr4__) || defined(__HAIKU__)
 #  include "config-linux.h"
 #  undef HAVE_IOCTL_SIOCGIFADDR
 #endif
