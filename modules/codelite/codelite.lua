@@ -21,7 +21,7 @@
 	function codelite.cfgname(cfg)
 		local cfgname = cfg.buildcfg
 		if codelite.workspace.multiplePlatforms then
-			cfgname = string.format("%s|%s", cfg.platform, cfg.buildcfg)
+			cfgname = string.format("%s-%s", cfg.platform, cfg.buildcfg)
 		end
 		return cfgname
 	end
@@ -30,6 +30,7 @@
 		local result = value:gsub('&', '&amp;')
 		result = result:gsub('<', '&lt;')
 		result = result:gsub('>', '&gt;')
+		result = result:gsub('"', '&quot;')
 		return result
 	end
 
