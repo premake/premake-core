@@ -26,11 +26,19 @@
 		return cfgname
 	end
 
+	-- Element text is not escaped the same as element attributes
+	function codelite.escElementText(value)
+		local result = value:gsub('&', '&amp;')
+		result = result:gsub('<', '&lt;')
+		result = result:gsub('>', '&gt;')
+		return result
+	end
+
 	function codelite.esc(value)
 		local result = value:gsub('&', '&amp;')
 		result = result:gsub('<', '&lt;')
 		result = result:gsub('>', '&gt;')
-		result = result:gsub('"', '&quot;')
+		result = result:gsub('"', '\\&quot;')
 		return result
 	end
 
