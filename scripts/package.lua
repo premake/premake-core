@@ -229,6 +229,7 @@ if kind == "source" then
 	}
 	local	includeList = {
 		"build",
+		"src/scripts.c",
 	}
 
 	if	not execQuiet("git rm --cached -r -f --ignore-unmatch "..table.concat(excludeList, ' ')) or
