@@ -20,6 +20,47 @@
 	local config = p.config
 
 --
+-- Patch DCompiler into the configuration properties
+--
+	p.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
+		local items = oldfn(cfg)
+		if cfg.kind ~= p.UTILITY then
+			table.insert(items, m.dCompiler)
+		end
+		return items
+	end)
+
+	function m.dCompiler(cfg)
+		local dc = nil
+		-- TODO: chech for explicit DMD or LDC request?
+		if _OPTIONS.dc then
+			local dcMap = {
+				["dmd"] = "DMD",
+				["ldc"] = "LDC",
+			}
+			dc = dcMap[_OPTIONS.dc]
+		end
+		if cfg.flags.UseLDC then
+			dc = "LDC"
+		end
+		-- TODO: dunno how to use `toolset`, since it's also used by the C++ compiler :/
+--		local tool, version = p.config.toolset(cfg)
+--		if not version then
+--			local value = p.action.current().toolset
+--			tool, version = p.tools.canonical(value)
+--		end
+		if dc then
+			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
+				if p.config.hasFile(cfg, path.isdfile) or _ACTION >= "vs2015" then
+					vc2010.element("DCompiler", nil, dc)
+				end
+			else
+				vc2010.element("DCompiler", nil, dc)
+			end
+		end
+	end
+
+--
 -- Patch the dCompile step into the project items
 --
 	p.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
@@ -42,10 +83,13 @@
 			m.dVersionConstants,
 			m.dDebugConstants,
 			m.dCompilationModel,
+			m.dPreserveSourcePath,
 			m.dRuntime,
 			m.dCodeGeneration,
+			m.dLanguage,
 			m.dMessages,
 			m.dDocumentation,
+			m.dAdditionalCompileOptions,
 		}
 	end
 
@@ -76,10 +120,13 @@
 						m.dVersionConstants,
 						m.dDebugConstants,
 						m.dCompilationModel,
+						m.dPreserveSourcePath,
 						m.dRuntime,
 						m.dCodeGeneration,
+						m.dLanguage,
 						m.dMessages,
 						m.dDocumentation,
+						m.dAdditionalCompileOptions,
 					}
 				else
 					return {
@@ -97,7 +144,7 @@
 	}
 
 	function m.dOptimization(cfg, condition)
-		local map = { Off="false", On="true", Debug="true", Full="true", Size="true", Speed="true" }
+		local map = { Off="false", On="true", Debug="false", Full="true", Size="true", Speed="true" }
 		if cfg.optimize then
 			vc2010.element('Optimizer', condition, map[cfg.optimize] or "false")
 		end
@@ -146,6 +193,11 @@
 		end
 	end
 
+	function m.dPreserveSourcePath(cfg, condition)
+		if cfg.flags.RetainPaths then
+			vc2010.element("PreserveSourcePath", condition, "true")
+		end
+	end
 
 	function m.dRuntime(cfg, condition)
 		if cfg.flags.OmitDefaultLibrary then
@@ -192,13 +244,11 @@
 			vc2010.element("ObjectFileName", condition, ObjectFileName)
 		end
 
-		if cfg.optimize then
-			if config.isOptimizedBuild(cfg) then
-				vc2010.element("Optimizer", condition, "true")
-			end
-		end
 		if cfg.flags.Profile then
 			vc2010.element("Profile", condition, "true")
+		end
+		if cfg.flags.ProfileGC then
+			vc2010.element("ProfileGC", condition, "true")
 		end
 		if cfg.flags.CodeCoverage then
 			vc2010.element("Coverage", condition, "true")
@@ -206,23 +256,39 @@
 		if cfg.flags.UnitTest then
 			vc2010.element("Unittest", condition, "true")
 		end
-		if cfg.inlining then
+		if cfg.inlining and cfg.inlining ~= "Default" then
 			local types = {
-				Default = "true",
 				Disabled = "false",
 				Explicit = "true",
 				Auto = "true",
 			}
 			vc2010.element("Inliner", condition, types[cfg.inlining])
 		end
-		if cfg.boundscheck and cfg.boundscheck ~= "Default" then
-			local types = {
-				Off = "Off",
-				SafeOnly = "SafeOnly",
-				On = "On",
-			}
-			vc2010.element("BoundsCheck", condition, types[cfg.boundscheck])
+		if cfg.flags.StackFrame then
+			vc2010.element("StackFrame", condition, "true")
 		end
+		if cfg.flags.StackStomp then
+			vc2010.element("StackStomp", condition, "true")
+		end
+		if cfg.flags.AllInstantiate then
+			vc2010.element("AllInst", condition, "true")
+		end
+		if cfg.flags.Main then
+			vc2010.element("Main", condition, "true")
+		end
+
+		if _OPTIONS.dc ~= "ldc" and not cfg.flags.UseLDC then
+			if cfg.vectorextensions then
+				local vextMap = {
+					AVX = "avx",
+					AVX2 = "avx2",
+				}
+				if vextMap[cfg.vectorextensions] ~= nil then
+					vc2010.element("CPUArchitecture", condition, vextMap[cfg.vectorextensions])
+				end
+			end
+		end
+
 --		if cfg.debugcode then
 --			local types = {
 --				DebugFull = "Debug",
@@ -231,6 +297,13 @@
 --			}
 --			vc2010.element("DebugCode", condition, types[cfg.debugcode])
 --		end
+		-- TODO: proper option for this? should support unspecified...
+		if config.isDebugBuild(cfg) then
+			vc2010.element("DebugCode", condition, "Debug")
+		else
+			vc2010.element("DebugCode", condition, "Release")
+		end
+
 		if cfg.symbols then
 			if cfg.symbols == p.Off then
 				vc2010.element("DebugInfo", condition, "None")
@@ -238,29 +311,54 @@
 				vc2010.element("DebugInfo", condition, iif(cfg.flags.SymbolsLikeC, "VS", "Mago"))
 			end
 		end
-		if cfg.flags.ProfileGC then
-			vc2010.element("ProfileGC", condition, "true")
+
+		if cfg.boundscheck and cfg.boundscheck ~= "Default" then
+			local types = {
+				Off = "Off",
+				SafeOnly = "SafeOnly",
+				On = "On",
+			}
+			vc2010.element("BoundsCheck", condition, types[cfg.boundscheck])
 		end
-		if cfg.flags.StackFrame then
-			vc2010.element("StackFrame", condition, "true")
-		end
-		if cfg.flags.StackStomp then
-			vc2010.element("StackStomp", condition, "true")
-		end
-		if cfg.flags.AllTemplateInst then
-			vc2010.element("AllInst", condition, "true")
-		end
-		if cfg.flags.BetterC then
-			vc2010.element("BetterC", condition, "true")
-		end
-		if cfg.flags.Main then
-			vc2010.element("Main", condition, "true")
-		end
+
 		if cfg.flags.PerformSyntaxCheckOnly then
 			vc2010.element("PerformSyntaxCheckOnly", condition, "true")
 		end
 	end
 
+	function m.dLanguage(cfg, condition)
+		if cfg.flags.BetterC then
+			vc2010.element("BetterC", condition, "true")
+		end
+
+		if #cfg.preview > 0 then
+			for _, opt in ipairs(cfg.preview) do
+				if opt == "dip25" then
+					vc2010.element("DIP25", condition, "true")
+				elseif opt == "dip1000" then
+					vc2010.element("DIP1000", condition, "true")
+				elseif opt == "dip1008" then
+					vc2010.element("DIP1008", condition, "true")
+				elseif opt == "fieldwise" then
+					vc2010.element("PreviewFieldwise", condition, "true")
+				elseif opt == "dtorfields" then
+					vc2010.element("PreviewDtorFields", condition, "true")
+				elseif opt == "intpromote" then
+					vc2010.element("PreviewIntPromote", condition, "true")
+				elseif opt == "fixAliasThis" then
+					vc2010.element("PreviewFixAliasThis", condition, "true")
+				end
+			end
+		end
+
+		if #cfg.revert > 0 then
+			for _, opt in ipairs(cfg.revert) do
+				if opt == "import" then
+					vc2010.element("RevertImport", condition, "true")
+				end
+			end
+		end
+	end
 
 	function m.dMessages(cfg, condition)
 		if cfg.warnings == p.OFF then
@@ -268,6 +366,7 @@
 		elseif cfg.warnings and cfg.warnings ~= "Default" then
 			vc2010.element("Warnings", condition, iif(cfg.flags.FatalCompileWarnings, "Error", "Info"))
 		end
+
 		if cfg.deprecatedfeatures and cfg.deprecatedfeatures ~= "Default" then
 			local types = {
 				Error = "Error",
@@ -276,6 +375,7 @@
 			}
 			vc2010.element("Deprecations", condition, types[cfg.deprecatedfeatures])
 		end
+
 		if cfg.flags.ShowCommandLine then
 			vc2010.element("ShowCommandLine", condition, "true")
 		end
@@ -294,8 +394,19 @@
 		if cfg.flags.ShowDependencies then
 			vc2010.element("ShowDependencies", condition, "true")
 		end
-	end
 
+		if #cfg.transition > 0 then
+			for _, opt in ipairs(cfg.transition) do
+				if opt == "field" then
+					vc2010.element("TransitionField", condition, "true")
+				elseif opt == "checkimports" then
+					vc2010.element("TransitionCheckImports", condition, "true")
+				elseif opt == "complex" then
+					vc2010.element("TransitionComplex", condition, "true")
+				end
+			end
+		end
+	end
 
 	function m.dDocumentation(cfg, condition)
 		if cfg.docdir then
@@ -304,16 +415,112 @@
 		if cfg.docname then
 			vc2010.element("DocFile", condition, cfg.docname)
 		end
+
+		if #cfg.preview > 0 then
+			for _, opt in ipairs(cfg.preview) do
+				if opt == "markdown" then
+					vc2010.element("PreviewMarkdown", condition, "true")
+				end
+			end
+		end
+		if #cfg.transition > 0 then
+			for _, opt in ipairs(cfg.transition) do
+				if opt == "vmarkdown" then
+					vc2010.element("TransitionVMarkdown", condition, "true")
+				end
+			end
+		end
+
 		if cfg.dependenciesfile then
 			vc2010.element("DepFile", condition, cfg.dependenciesfile)
 		end
+
 		if cfg.headerdir then
 			vc2010.element("HeaderDir", condition, cfg.headerdir)
 		end
 		if cfg.headername then
 			vc2010.element("HeaderFile", condition, cfg.headername)
 		end
+
 		if cfg.jsonfile then
 			vc2010.element("JSONFile", condition, cfg.jsonfile)
+		end
+	end
+
+	function m.dAdditionalCompileOptions(cfg, condition)
+		local opts = cfg.buildoptions
+
+		if cfg.flags.LowMem then
+			table.insert(opts, "-lowmem")
+		end
+
+		if cfg.cppdialect and cfg.cppdialect ~= "Default" then
+			local cppMap = {
+				["C++latest"] = "c++17", -- TODO: keep this up to date >_<
+				["C++98"] = "c++98",
+				["C++0x"] = "c++11",
+				["C++11"] = "c++11",
+				["C++1y"] = "c++14",
+				["C++14"] = "c++14",
+				["C++1z"] = "c++17",
+				["C++17"] = "c++17",
+				["gnu++98"] = "c++98",
+				["gnu++0x"] = "c++11",
+				["gnu++11"] = "c++11",
+				["gnu++1y"] = "c++14",
+				["gnu++14"] = "c++14",
+				["gnu++1z"] = "c++17",
+				["gnu++17"] = "c++17",
+			}
+			if cppMap[cfg.cppdialect] ~= nil then
+				table.insert(opts, "-extern-std=" .. cppMap[cfg.cppdialect])
+			end
+		end
+
+		-- TODO: better way to check toolset?
+		if _OPTIONS.dc == "ldc" or cfg.flags.UseLDC then
+			if cfg.vectorextensions then
+				local vextMap = {
+					AVX = "avx",
+					AVX2 = "avx2",
+					SSE = "sse",
+					SSE2 = "sse2",
+					SSE3 = "sse3",
+					SSSE3 = "ssse3",
+					["SSE4.1"] = "sse4.1",
+				}
+				if vextMap[cfg.vectorextensions] ~= nil then
+					table.insert(opts, "-mattr=+" .. vextMap[cfg.vectorextensions])
+				end
+			end
+			if #cfg.isaextensions > 0 then
+				local isaMap = {
+					MOVBE = "movbe",
+					POPCNT = "popcnt",
+					PCLMUL = "pclmul",
+					LZCNT = "lzcnt",
+					BMI = "bmi",
+					BMI2 = "bmi2",
+					F16C = "f16c",
+					AES = "aes",
+					FMA = "fma",
+					FMA4 = "fma4",
+					RDRND = "rdrnd",
+				}
+				for _, ext in ipairs(cfg.isaextensions) do
+					if isaMap[ext] ~= nil then
+						table.insert(opts, "-mattr=+" .. isaMap[ext])
+					end
+				end
+			end
+
+			if #cfg.computetargets > 0 then
+				table.insert(opts, "-mdcompute-targets=" .. table.concat(cfg.computetargets, ','))
+			end
+		end
+
+		if #opts > 0 then
+			opts = table.concat(opts, " ")
+			vc2010.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end
