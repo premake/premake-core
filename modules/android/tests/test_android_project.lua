@@ -1,6 +1,7 @@
 	local p = premake
 	local suite = test.declare("test_android_project")
 	local vc2010 = p.vstudio.vc2010
+	local android = p.modules.android
 
 
 --
@@ -18,6 +19,48 @@
 		system "android"
 		local cfg = test.getconfig(prj, "Debug", platform)
 		vc2010.clCompile(cfg)
+	end
+
+	local function preparePropertyGroup()
+		system "android"
+		local cfg = test.getconfig(prj, "Debug", platform)
+		vc2010.propertyGroup(cfg)
+		android.androidApplicationType(cfg)
+	end
+
+	function suite.minVisualStudioVersion_14()
+		preparePropertyGroup()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+	<Keyword>Android</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+	<ApplicationType>Android</ApplicationType>
+	<ApplicationTypeRevision>2.0</ApplicationTypeRevision>]]
+	end
+
+	function suite.minVisualStudioVersion_15()
+		p.action.set("vs2017")
+		preparePropertyGroup()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+	<Keyword>Android</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+	<ApplicationType>Android</ApplicationType>
+	<ApplicationTypeRevision>3.0</ApplicationTypeRevision>]]
+	end
+
+	function suite.minVisualStudioVersion_16()
+		p.action.set("vs2019")
+		preparePropertyGroup()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+	<Keyword>Android</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+	<ApplicationType>Android</ApplicationType>
+	<ApplicationTypeRevision>3.0</ApplicationTypeRevision>]]
 	end
 
 	function suite.noOptions()
