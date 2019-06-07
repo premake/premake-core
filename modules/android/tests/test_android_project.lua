@@ -28,7 +28,7 @@
 		android.androidApplicationType(cfg)
 	end
 
-	function suite.minVisualStudioVersion()
+	function suite.minVisualStudioVersion_14()
 		preparePropertyGroup()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
@@ -37,6 +37,30 @@
 	<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
 	<ApplicationType>Android</ApplicationType>
 	<ApplicationTypeRevision>2.0</ApplicationTypeRevision>]]
+	end
+
+	function suite.minVisualStudioVersion_15()
+		p.action.set("vs2017")
+		preparePropertyGroup()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+	<Keyword>Android</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+	<ApplicationType>Android</ApplicationType>
+	<ApplicationTypeRevision>3.0</ApplicationTypeRevision>]]
+	end
+
+	function suite.minVisualStudioVersion_16()
+		p.action.set("vs2019")
+		preparePropertyGroup()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+	<Keyword>Android</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+	<ApplicationType>Android</ApplicationType>
+	<ApplicationTypeRevision>3.0</ApplicationTypeRevision>]]
 	end
 
 	function suite.noOptions()
