@@ -217,7 +217,23 @@ if kind == "source" then
 
 	print("Creating source code package...")
 
-	if 	not execQuiet("git add -f build") or
+	local	excludeList = {
+		".gitignore",
+		".gitattributes",
+		".gitmodules",
+		".travis.yml",
+		".editorconfig",
+		"appveyor.yml",
+		"Bootstrap.*",
+		"packages/*",
+	}
+	local	includeList = {
+		"build",
+		"src/scripts.c",
+	}
+
+	if	not execQuiet("git rm --cached -r -f --ignore-unmatch "..table.concat(excludeList, ' ')) or
+		not execQuiet("git add -f "..table.concat(includeList, ' ')) or
 		not execQuiet("git stash") or
 		not execQuiet("git archive --format=zip -9 -o ../%s-src.zip --prefix=%s/ stash@{0}", pkgName, pkgName) or
 		not execQuiet("git stash drop stash@{0}")
