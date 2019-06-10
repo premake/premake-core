@@ -262,7 +262,11 @@
 		end
 
 		if includeroot then
-			donode(t, fn, initialdepth)
+			if #t.children > 0 then
+				donode(t, fn, initialdepth)
+			elseif fn.onnode then
+				fn.onnode(t, depth)
+			end
 		else
 			dochildren(t, fn, initialdepth)
 		end
