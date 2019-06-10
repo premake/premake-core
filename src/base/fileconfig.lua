@@ -152,7 +152,11 @@
 --
 
 	function fileconfig.getconfig(fcfg, cfg)
-		return fcfg.configs[cfg]
+		if fcfg.configs ~= nil then
+			return fcfg.configs[cfg]
+		else
+			return nil
+		end
 	end
 
 
