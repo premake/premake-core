@@ -125,7 +125,7 @@
 				["none"] = "system",
 				["gabi++"] = "gabi++",
 				["stlport"] = "stlport",
-				["gnustl"] = "gnustl",
+				["gnu"] = "gnustl",
 				["libc++"] = "c++",
 			}
 
