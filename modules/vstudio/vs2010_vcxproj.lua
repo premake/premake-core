@@ -2760,20 +2760,6 @@
 		return m.conditionFromConfigText(vstudio.projectConfig(cfg))
 	end
 
---
--- Get the latest installed SDK 10 version from the registry.
---
-
-	function m.latestSDK10Version()
-		local arch = iif(os.is64bit(), "\\WOW6432Node\\", "\\")
-		local version = os.getWindowsRegistry("HKLM:SOFTWARE" .. arch .."Microsoft\\Microsoft SDKs\\Windows\\v10.0\\ProductVersion")
-		if version ~= nil then
-			return version .. ".0"
-		else
-			return nil
-		end
-	end
-
 
 --
 -- Output an individual project XML element, with an optional configuration
