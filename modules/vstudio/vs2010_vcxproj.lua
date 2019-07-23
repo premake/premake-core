@@ -2519,7 +2519,7 @@
 				if _ACTION >= "vs2019" then
 					min = "10.0"
 				else
-					min = iif(_ACTION == "vs2017", m.latestSDK10Version(), nil)
+					min = nil
 				end
 			end
 
@@ -2528,12 +2528,27 @@
 
 	end
 
+	function m.emitPlatformVersion(optSdkVersion)
+		if not optSdkVersion then
+			-- if vs2015, don't emit and let the IDE select the default
+			-- if vs2017, emit a detection macro because the default behaviour is a broken mess
+			if _ACTION == "vs2017" then
+				m.element("WindowsTargetPlatformVersion", nil, "$(LatestTargetPlatformVersion)")
+			end
+		else
+			m.element("WindowsTargetPlatformVersion", nil, optSdkVersion)
+		end
+	end
 
 	function m.targetPlatformVersionGlobal(prj)
 		local min = m.targetPlatformVersion(prj)
-		if min ~= nil then
-			m.element("WindowsTargetPlatformVersion", nil, min)
+		
+		if _ACTION == "vs2017" then
+			-- This emits a property that when used causes vs2017 to detect the latest windows sdk version.  Always emit this in case we have a config dependent reference to it.
+			m.element("LatestTargetPlatformVersion", nil, "$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))")
 		end
+
+		m.emitPlatformVersion(min)
 	end
 
 

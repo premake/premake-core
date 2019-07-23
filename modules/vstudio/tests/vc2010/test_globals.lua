@@ -262,17 +262,15 @@
 	function suite.windowsTargetPlatformVersionLatest_on2017()
 		p.action.set("vs2017")
 		systemversion "latest"
-		local oldRegistry = os["getWindowsRegistry"]
-		os["getWindowsRegistry"] = function (key) return "10.0.11111" end
 		prepare()
-		os["getWindowsRegistry"] = oldRegistry
 		test.capture [[
 <PropertyGroup Label="Globals">
 	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
 	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
 	<Keyword>Win32Proj</Keyword>
 	<RootNamespace>MyProject</RootNamespace>
-	<WindowsTargetPlatformVersion>10.0.11111.0</WindowsTargetPlatformVersion>
+	<LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
+	<WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
 </PropertyGroup>
 		]]
 	end
