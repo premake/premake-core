@@ -782,3 +782,23 @@ GlobalSection(SolutionConfigurationPlatforms) = preSolution
 EndGlobalSection
 		]]
 	end
+
+---
+-- Check that when a shared items project is specified that no entries are added
+-- to the project configuration platforms
+---
+
+	function suite.onSharedItemsProject()
+		p.action.set("vs2013")
+		project "MyProject"
+		kind "SharedItems"
+		prepare()
+		test.capture [[
+GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Win32 = Debug|Win32
+	Release|Win32 = Release|Win32
+EndGlobalSection
+GlobalSection(ProjectConfigurationPlatforms) = postSolution
+EndGlobalSection
+		]]
+	end

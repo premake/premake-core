@@ -102,6 +102,20 @@
 
 
 --
+-- Build a relative path from the solution file to the project file
+--
+
+	function sln2005.buildRelativePath(prj)
+		local prjpath = vstudio.projectfile(prj)
+		prjpath = vstudio.path(prj.workspace, prjpath)
+
+		-- Unlike projects, solutions must use old-school %...% DOS style
+		-- for environment variables.
+		return prjpath:gsub("$%((.-)%)", "%%%1%%")
+	end
+
+
+--
 -- Write out the list of projects and groups contained by the solution.
 --
 
@@ -110,16 +124,7 @@
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
-
-				-- Build a relative path from the solution file to the project file
-				local prjpath = vstudio.projectfile(prj)
-				prjpath = vstudio.path(prj.workspace, prjpath)
-
-				-- Unlike projects, solutions must use old-school %...% DOS style
-				-- for environment variables.
-				prjpath = prjpath:gsub("$%((.-)%)", "%%%1%%")
-
-				p.x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, prjpath, prj.uuid)
+				p.x('Project("{%s}") = "%s", "%s", "{%s}"', vstudio.tool(prj), prj.name, sln2005.buildRelativePath(prj), prj.uuid)
 				p.push()
 				sln2005.projectdependencies(prj)
 				p.pop('EndProject')
@@ -150,6 +155,41 @@
 
 
 --
+-- Write out the list of shared project files and their links
+--
+
+	function sln2005.sharedProjects(wks)
+		local contents = p.capture(function ()
+			local tr = p.workspace.grouptree(wks)
+			p.tree.traverse(tr, {
+				onleaf = function(n)
+					local prj = n.project
+
+					-- SharedItems projects reference their own UUID with a "9"
+					-- SharedItems projects reference the UUID of projects that link them with a "4"
+					if prj.kind == p.SHAREDITEMS then
+						p.w('%s*{%s}*SharedItemsImports = %s', sln2005.buildRelativePath(prj), prj.uuid:lower(), "9")
+					else
+						local deps = p.project.getdependencies(prj, 'linkOnly')
+						for _, dep in ipairs(deps) do
+							if dep.kind == p.SHAREDITEMS then
+								p.w('%s*{%s}*SharedItemsImports = %s', sln2005.buildRelativePath(dep), prj.uuid:lower(), "4")
+							end
+						end
+					end
+				end,
+			})
+		end)
+
+		if #contents > 0 then
+			p.push('GlobalSection(SharedMSBuildProjectFiles) = preSolution')
+			p.outln(contents)
+			p.pop('EndGlobalSection')
+		end
+	end
+
+
+--
 -- Write out the list of project configuration platforms.
 --
 
@@ -167,6 +207,12 @@
 		tree.traverse(tr, {
 			onleaf = function(n)
 				local prj = n.project
+
+				-- SharedItems projects don't have any configuration platform entries
+				if prj.kind == p.SHAREDITEMS then
+					return
+				end
+
 				table.foreachi(sorted, function(cfg)
 					local context = {}
 					-- Look up the matching project configuration. If none exist, this
@@ -351,6 +397,7 @@
 
 	sln2005.elements.sections = function(wks)
 		return {
+			sln2005.sharedProjects,
 			sln2005.configurationPlatforms,
 			sln2005.properties,
 			sln2005.nestedProjects,

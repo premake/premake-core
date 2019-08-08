@@ -78,12 +78,19 @@
 		if files and #files > 0 then
 			p.push('<ItemGroup>')
 			for _, file in ipairs(files) do
+				local rel = path.translate(file.relpath)
+
+				-- SharedItems projects paths are prefixed with a magical variable
+				if prj.kind == p.SHAREDITEMS then
+					rel = "$(MSBuildThisFileDirectory)" .. rel
+				end
+
 				if file.parent.path then
-					p.push('<%s Include=\"%s\">', tag, path.translate(file.relpath))
+					p.push('<%s Include=\"%s\">', tag, rel)
 					p.w('<Filter>%s</Filter>', path.translate(file.parent.path, '\\'))
 					p.pop('</%s>', tag)
 				else
-					p.w('<%s Include=\"%s\" />', tag, path.translate(file.relpath))
+					p.w('<%s Include=\"%s\" />', tag, rel)
 				end
 			end
 			p.pop('</ItemGroup>')

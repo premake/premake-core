@@ -447,7 +447,11 @@
 		elseif project.isfsharp(prj) then
 			extension = ".fsproj"
 		elseif project.isc(prj) or project.iscpp(prj) then
-			extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
+			if prj.kind == p.SHAREDITEMS then
+				extension = ".vcxitems"
+			else
+				extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
+			end
 		end
 
 		return p.filename(prj, extension)
@@ -644,5 +648,6 @@
 	include("vs2010_rules_props.lua")
 	include("vs2010_rules_targets.lua")
 	include("vs2010_rules_xml.lua")
+	include("vs2013_vcxitems.lua")
 
 	return p.modules.vstudio
