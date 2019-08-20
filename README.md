@@ -63,7 +63,7 @@ Support this project with your organization. Your logo will show up here with a 
 
 ### Copyright & License
 
-Copyright &copy; 2002-2016 by Jason Perkins
+Copyright &copy; 2003-2019 by Jason Perkins
 Distributed under the terms of the BSD License, see LICENSE.txt
 
 The Lua language and runtime library is &copy; TeCGraf, PUC-Rio.
