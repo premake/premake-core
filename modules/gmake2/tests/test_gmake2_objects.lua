@@ -163,6 +163,71 @@ endif
 		]]
 	end
 
+--
+-- Test that changes in case are treated as if multiple files of the same name are being built
+--
+
+	function suite.uniqueObjNames_ignoreCase1()
+		files { "a/hello.cpp", "b/Hello.cpp" }
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+OBJECTS :=
+
+OBJECTS += $(OBJDIR)/Hello1.o
+OBJECTS += $(OBJDIR)/hello.o
+
+		]]
+	end
+
+	function suite.uniqueObjNames_ignoreCase2()
+		files { "a/hello.cpp", "b/hello.cpp", "c/Hello1.cpp" }
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+OBJECTS :=
+
+OBJECTS += $(OBJDIR)/Hello11.o
+OBJECTS += $(OBJDIR)/hello.o
+OBJECTS += $(OBJDIR)/hello1.o
+
+		]]
+	end
+
+	function suite.uniqueObjectNames_ignoreCase_Release()
+		files { "a/hello.cpp", "b/hello.cpp", "c/Hello1.cpp", "d/Hello11.cpp" }
+		filter "configurations:Debug"
+			excludes {"b/hello.cpp"}
+		filter "configurations:Release"
+			excludes {"d/Hello11.cpp"}
+
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+OBJECTS :=
+
+OBJECTS += $(OBJDIR)/Hello11.o
+OBJECTS += $(OBJDIR)/hello.o
+
+ifeq ($(config),debug)
+OBJECTS += $(OBJDIR)/Hello111.o
+
+else ifeq ($(config),release)
+OBJECTS += $(OBJDIR)/hello1.o
+
+else
+  $(error "invalid configuration $(config)")
+endif
+
+		]]
+	end
+
 
 --
 -- If there's a custom rule for a non-C++ file extension, make sure that those
