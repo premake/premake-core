@@ -695,23 +695,40 @@
 -- conflicting object file names - hello1.o
 
 	function oven.uniqueSequence(f, cfg, seq, bases)
-		while true do
+		local good_sequence = true
+		repeat
+			-- be optimistic
+			good_sequence = true
 			f.sequence = seq[cfg] or 0
 			seq[cfg] = f.sequence + 1
 
-			if seq[cfg] == 1 then
+			if f.sequence == 0 then
+				-- first time seeing this objname
 				break
 			end
 
-			if not bases[f.objname] then
-				bases[f.objname] = {}
+			-- getting here has changed our sequence number, but this new "basename"
+			-- may still collide with files that actually end with this "sequence number"
+			-- so we have to check the bases table now
+
+			-- objname changes with the sequence number on every loop
+			local lowerobj = f.objname:lower()
+			if not bases[lowerobj] then
+				-- this is the first appearance of a file that produces this objname
+				-- intialize the table for any future basename that matches our objname
+				bases[lowerobj] = {}
 			end
 
-			if not bases[f.objname][cfg] then
-				bases[f.objname][cfg] = 1
-				break
+			if not bases[lowerobj][cfg] then
+				-- not a collision
+				-- start a sequence for a future basename that matches our objname for this cfg
+				bases[lowerobj][cfg] = 1
+				good_sequence = true
+			else
+				-- is truly a collision, try the next sequence number
+				good_sequence = false
 			end
-		end
+		until good_sequence
 	end
 
 
@@ -733,11 +750,12 @@
 			-- collisions that have occurred for each project configuration. Use
 			-- this collision count to generate the unique object file names.
 
-			if not bases[file.basename] then
-				bases[file.basename] = {}
+			local lowerbase = file.basename:lower()
+			if not bases[lowerbase] then
+				bases[lowerbase] = {}
 			end
 
-			local sequences = bases[file.basename]
+			local sequences = bases[lowerbase]
 
 			for cfg in p.project.eachconfig(prj) do
 				local fcfg = p.fileconfig.getconfig(file, cfg)
