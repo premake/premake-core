@@ -695,10 +695,7 @@
 -- conflicting object file names - hello1.o
 
 	function oven.uniqueSequence(f, cfg, seq, bases)
-		local good_sequence = true
-		repeat
-			-- be optimistic
-			good_sequence = true
+		while true do
 			f.sequence = seq[cfg] or 0
 			seq[cfg] = f.sequence + 1
 
@@ -723,12 +720,10 @@
 				-- not a collision
 				-- start a sequence for a future basename that matches our objname for this cfg
 				bases[lowerobj][cfg] = 1
-				good_sequence = true
-			else
-				-- is truly a collision, try the next sequence number
-				good_sequence = false
+				break
 			end
-		until good_sequence
+			-- else we have a objname collision, try the next sequence number
+		end
 	end
 
 
