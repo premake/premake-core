@@ -927,23 +927,24 @@
 	function m.compileAs(cfg, toolset)
 		local cfg, filecfg = config.normalize(cfg)
 		local c = p.languages.isc(cfg.language)
+		local compileAs
 		if filecfg then
-			if path.iscfile(filecfg.name) ~= c then
+			if filecfg.compileas then
+				compileAs = iif(p.languages.iscpp(filecfg.compileas), 2, 1)
+			elseif path.iscfile(filecfg.name) ~= c then
 				if path.iscppfile(filecfg.name) then
-					local value = iif(c, 2, 1)
-					p.w('CompileAs="%s"', value)
+					compileAs = iif(c, 2, 1)
 				end
 			end
 		else
-			local compileAs
 			if toolset then
 				compileAs = "0"
 			elseif c then
 				compileAs = "1"
 			end
-			if compileAs then
-				p.w('CompileAs="%s"', compileAs)
-			end
+		end
+		if compileAs then
+			p.w('CompileAs="%s"', compileAs)
 		end
 	end
 

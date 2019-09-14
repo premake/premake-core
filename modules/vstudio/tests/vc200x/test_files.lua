@@ -181,6 +181,155 @@
 		]]
 	end
 
+--
+-- Check handling of per-file compileas options.
+--
+
+	function suite.onCompileAs_C_as_CPP()
+		language "C"
+		files { "hello.c" }
+		filter {"files:hello.c"}
+			compileas "C++"
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.c"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="2"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="2"
+			/>
+		</FileConfiguration>
+	</File>
+</Files>
+		]]
+	end
+
+	-- make sure compileas is still omitted when it matches the language.
+	function suite.onCompileAs_C_as_CPP_in_CPP()
+		language "C++"
+		files { "hello.c" }
+		filter {"files:hello.c"}
+			compileas "C++"
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.c"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="2"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="2"
+			/>
+		</FileConfiguration>
+	</File>
+</Files>
+		]]
+	end
+
+	function suite.onCompileAs_C_as_CPP_release()
+		language "C"
+		files { "hello.c" }
+		filter {"files:hello.c", "configurations:release"}
+			compileas "C++"
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.c"
+		>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="2"
+			/>
+		</FileConfiguration>
+	</File>
+</Files>
+		]]
+	end
+
+	function suite.onCompileAs_CPP_as_C()
+		language "C++"
+		files { "hello.cpp" }
+		filter {"files:hello.cpp"}
+			compileas "C"
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Debug|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="1"
+			/>
+		</FileConfiguration>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="1"
+			/>
+		</FileConfiguration>
+	</File>
+</Files>
+		]]
+	end
+
+	function suite.onCompileAs_CPP_as_C_release()
+		language "C++"
+		files { "hello.cpp" }
+		filter {"files:hello.cpp", "configurations:release"}
+			compileas "C"
+		prepare()
+		test.capture [[
+<Files>
+	<File
+		RelativePath="hello.cpp"
+		>
+		<FileConfiguration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="VCCLCompilerTool"
+				CompileAs="1"
+			/>
+		</FileConfiguration>
+	</File>
+</Files>
+		]]
+	end
+
 
 --
 -- A PCH source file should be marked as such.
