@@ -11,7 +11,7 @@ project "zip-lib"
 		"**.c"
 	}
 
-	filter "system:linux or bsd or solaris"
+	filter "system:linux or bsd or solaris or haiku"
 		defines { "HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H" }
 
 	filter "system:windows"
