@@ -68,6 +68,7 @@ static const luaL_Reg os_functions[] = {
 	{ "getcwd",                 os_getcwd               },
 	{ "getpass",                os_getpass              },
 	{ "getWindowsRegistry",     os_getWindowsRegistry   },
+	{ "listWindowsRegistry",    os_listWindowsRegistry  },
 	{ "getversion",             os_getversion           },
 	{ "host",                   os_host                 },
 	{ "isfile",                 os_isfile               },

@@ -257,7 +257,8 @@
 
 	function suite.getreg_noSeparators()
 		if os.ishost("windows") then
-			os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
+			local x = os.getWindowsRegistry("HKCU:ShouldNotExistAtAll")
+			test.isequal(nil, x)
 		end
 	end
 
@@ -282,6 +283,68 @@
 		end
 	end
 
+
+--
+-- os.listWindowsRegistry windows tests
+--
+	function suite.listreg_nonExistentKey()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.listreg_nonExistentKeyTrailingBackslash()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKCU:Should\\Not\\Exist\\At\\All\\")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.listreg_noSeparators()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKCU:ShouldNotExistAtAll")
+			test.isequal(nil, x)
+		end
+	end
+
+	function suite.listreg_noSeparatorExistingPath()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKCU:Environment")
+			test.istrue(x ~= nil and x["TEMP"] ~= nil)
+		end
+	end
+
+	function suite.listreg_optSeparators()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKCU:\\Environment\\")
+			test.istrue(x ~= nil and x["TEMP"] ~= nil)
+		end
+	end
+
+	function suite.listreg_keyDefaultValueAndStringValueFormat()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKLM:SYSTEM\\CurrentControlSet\\Control\\SafeBoot\\Minimal\\AppInfo")
+			test.isequal(x[""]["value"], "Service")
+			test.isequal(x[""]["type"], "REG_SZ")
+		end
+	end
+
+	function suite.listreg_numericValueFormat()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKCU:Console")
+			test.isequal(type(x["FullScreen"]["value"]), "number")
+			test.isequal(x["FullScreen"]["type"], "REG_DWORD")
+		end
+	end
+
+	function suite.listreg_subkeyFormat()
+		if os.ishost("windows") then
+			local x = os.listWindowsRegistry("HKLM:")
+			test.isequal(type(x["SOFTWARE"]), "table")
+			test.isequal(next(x["SOFTWARE"]), nil)
+		end
+	end
 
 --
 -- os.getversion tests.
