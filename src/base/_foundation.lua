@@ -46,6 +46,7 @@
 	premake.OFF         = "Off"
 	premake.POSIX       = "posix"
 	premake.PS3         = "ps3"
+	premake.SHAREDITEMS = "SharedItems"
 	premake.SHAREDLIB   = "SharedLib"
 	premake.STATICLIB   = "StaticLib"
 	premake.UNICODE     = "Unicode"

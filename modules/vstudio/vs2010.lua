@@ -69,19 +69,31 @@
 			end
 
 		elseif p.project.isc(prj) or p.project.iscpp(prj) then
-			local projFileModified = p.generate(prj, ".vcxproj", vstudio.vc2010.generate)
+			if prj.kind == p.SHAREDITEMS then
+				local projFileModified = p.generate(prj, ".vcxitems", vstudio.vc2013.generate)
 
-			-- Skip generation of empty user files
-			local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
-			if #user > 0 then
-				p.generate(prj, ".vcxproj.user", function() p.outln(user) end)
-			end
+				-- Only generate a filters file if the source tree actually has subfolders
+				if tree.hasbranches(project.getsourcetree(prj)) then
+					if p.generate(prj, ".vcxitems.filters", vstudio.vc2010.generateFilters) == true and projFileModified == false then
+						-- vs workaround for issue where if only the .filters file is modified, VS doesn't automaticly trigger a reload
+						p.touch(prj, ".vcxitems")
+					end
+				end
+			else
+				local projFileModified = p.generate(prj, ".vcxproj", vstudio.vc2010.generate)
 
-			-- Only generate a filters file if the source tree actually has subfolders
-			if tree.hasbranches(project.getsourcetree(prj)) then
-				if p.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters) == true and projFileModified == false then
-					-- vs workaround for issue where if only the .filters file is modified, VS doesn't automaticly trigger a reload
-					p.touch(prj, ".vcxproj")
+				-- Skip generation of empty user files
+				local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
+				if #user > 0 then
+					p.generate(prj, ".vcxproj.user", function() p.outln(user) end)
+				end
+
+				-- Only generate a filters file if the source tree actually has subfolders
+				if tree.hasbranches(project.getsourcetree(prj)) then
+					if p.generate(prj, ".vcxproj.filters", vstudio.vc2010.generateFilters) == true and projFileModified == false then
+						-- vs workaround for issue where if only the .filters file is modified, VS doesn't automaticly trigger a reload
+						p.touch(prj, ".vcxproj")
+					end
 				end
 			end
 		end

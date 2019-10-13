@@ -97,3 +97,20 @@
 </ItemGroup>
 		]]
 	end
+
+
+--
+-- Shared items projects are referenced differently
+--
+
+	function suite.sharedItemsProjects()
+		links { "MyProject" }
+		project("MyProject")
+		kind "SharedItems"
+		prepare()
+		test.capture [[
+<ImportGroup Label="Shared">
+	<Import Project="MyProject.vcxitems" Label="Shared" />
+</ImportGroup>
+		]]
+	end
