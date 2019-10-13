@@ -41,12 +41,27 @@
 		m.loadTestsFromManifests()
 		m.detectDuplicateTests = false
 
-		local test, err = m.getTestWithIdentifier(_OPTIONS["test-only"])
-		if err then
-			error(err, 0)
+		local tests = {}
+		local isAction = true
+		for i, arg in ipairs(_ARGS) do
+			local _tests, err = m.getTestsWithIdentifier(arg)
+			if err then
+				error(err, 0)
+			end
+			
+			tests = table.join(tests, _tests)
+		end
+		
+		if #tests == 0 or _OPTIONS["test-only"] ~= nil then
+			local _tests, err = m.getTestsWithIdentifier(_OPTIONS["test-only"])
+			if err then
+				error(err, 0)
+			end
+
+			tests = table.join(tests, _tests)
 		end
 
-		local passed, failed = m.runTest(test)
+		local passed, failed = m.runTest(tests)
 
 		if failed > 0 then
 			printf("\n %d FAILED TEST%s", failed, iif(failed > 1, "S", ""))

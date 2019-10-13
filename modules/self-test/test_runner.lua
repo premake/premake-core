@@ -15,12 +15,12 @@
 
 
 
-	function m.runTest(test)
+	function m.runTest(tests)
 		local failed = 0
 		local failedTests = {}
 
 		local suites = m.getSuites()
-		local suitesKeys, suiteTestsKeys, totalTestCount = _.preprocessTests(suites, test)
+		local suitesKeys, suiteTestsKeys, totalTestCount = _.preprocessTests(suites, tests)
 
 		_.log(term.lightGreen, "[==========]", string.format(" Running %d tests from %d test suites.", totalTestCount, #suitesKeys))
 		local startTime = os.clock()
@@ -128,30 +128,36 @@
 
 
 
-	function _.preprocessTests(suites, filter)
+	function _.preprocessTests(suites, filters)
 		local suitesKeys = {}
 		local suiteTestsKeys = {}
 		local totalTestCount = 0
+		
+		for i, filter in ipairs(filters) do
+			for suiteName, suite in pairs(suites) do
+				if not m.isSuppressed(suiteName) and suite ~= nil and (not filter.suiteName or filter.suiteName == suiteName) then
+					local test = {}
 
-		for suiteName, suite in pairs(suites) do
-			if not m.isSuppressed(suiteName) and suite ~= nil and (not filter.suiteName or filter.suiteName == suiteName) then
-				local test = {}
+					test.suiteName = suiteName
+					test.suite = suite
 
-				table.insertsorted(suitesKeys, suiteName)
+					if not table.contains(suitesKeys, suiteName) then
+						table.insertsorted(suitesKeys, suiteName)
+						suiteTestsKeys[suiteName] = {}
+					end
 
-				test.suiteName = suiteName
-				test.suite = suite
+					for testName, testFunction in pairs(suite) do
+						test.testName = testName
+						test.testFunction = testFunction
 
-				suiteTestsKeys[suiteName] = {}
-				for testName, testFunction in pairs(suite) do
-					test.testName = testName
-					test.testFunction = testFunction
-
-					if m.isValid(test) and not m.isSuppressed(test.suiteName .. "." .. test.testName) and (not filter.testName or filter.testName == testName) then
-						table.insertsorted(suiteTestsKeys[suiteName], testName)
+						if m.isValid(test) and not m.isSuppressed(test.suiteName .. "." .. test.testName) and (not filter.testName or filter.testName == testName) then
+							if not table.contains(suiteTestsKeys[suiteName], testName) then
+								table.insertsorted(suiteTestsKeys[suiteName], testName)
+								totalTestCount = totalTestCount + 1
+							end
+						end
 					end
 				end
-				totalTestCount = totalTestCount + #suiteTestsKeys[suiteName]
 			end
 		end
 

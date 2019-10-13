@@ -112,31 +112,79 @@
 
 
 ---
--- Fetch a test object via its string identifier.
+-- Fetch test objects via the string identifier.
 --
 -- @param identifier
 --    An optional test or suite identifier, indicating which tests should be
 --    run, in the form "suiteName" or "suiteName.testName". If not specified,
 --    the global test object, representing all test suites, will be returned.
+--    Use "*" to match any part of a suite or test name
 -- @return
---    On success, returns a test object, which should be considered opaque.
+--    On success, returns an array of test objects, which should be considered opaque.
 --    On failure, returns `nil` and an error.
 ---
 
-	function m.getTestWithIdentifier(identifier)
+	function m.getTestsWithIdentifier(identifier)
 		local suiteName, testName = m.parseTestIdentifier(identifier)
 
-		local suite, test, err = _.checkTestIdentifier(_.suites, suiteName, testName)		
-		if err then
-			return nil, err
-		end
+		if suiteName ~= nil and string.contains(suiteName, "*") then
+			local tests = {}
 
-		return {
-			suiteName = suiteName,
-			suite = suite,
-			testName = testName,
-			testFunction = test
-		}
+			local pattern = string.gsub(suiteName, "*", ".*")
+			for _suiteName, suite in pairs(_.suites) do
+				local length = string.len(_suiteName)
+				local start, finish = string.find(_suiteName, pattern)
+				if start == 1 and finish == length then
+					if testName ~= nil then
+						if string.contains(testName, "*") then
+							local testPattern = string.gsub(testName, "*", ".*")
+							for _testName, test in pairs(suite) do
+								length = string.len(_testName)
+								start, finish = string.find(_testName, testPattern)
+								if start == 1 and finish == length then
+									table.insert(tests, {
+										suiteName = _suiteName,
+										suite = suite,
+										testName = _testName,
+										testFunction = test,
+									})
+								end
+							end
+						else
+							table.insert(tests, {
+								suiteName = _suiteName,
+								suite = suite,
+								testName = testName,
+								testFunction = suite[testName],
+							})
+						end
+					else
+						table.insert(tests, {
+							suiteName = _suiteName,
+							suite = suite,
+							testName = nil,
+							testFunction = nil,
+						})
+					end
+				end
+			end
+			
+			return tests
+		else
+			local suite, test, err = _.checkTestIdentifier(_.suites, suiteName, testName)		
+			if err then
+				return nil, err
+			end
+
+			return {
+				{
+					suiteName = suiteName,
+					suite = suite,
+					testName = testName,
+					testFunction = test
+				}
+			}
+		end
 	end
 
 
