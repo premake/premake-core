@@ -19,7 +19,7 @@
 		kind        "ConsoleApp"
 		defines     { "PREMAKE_NO_BUILTIN_SCRIPTS" }
 		flags       { "No64BitChecks", "ExtraWarnings", "StaticRuntime" }
-		includedirs { "contrib/lua/src" }
+		includedirs { "contrib/lua/src", "contrib/luashim" }
 
 		files
 		{
