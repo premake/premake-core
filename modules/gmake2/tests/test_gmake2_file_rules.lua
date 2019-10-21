@@ -157,8 +157,6 @@ $(OBJDIR)/hello.o: src/hello.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
-else
-  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -194,8 +192,6 @@ obj/Release/hello.obj: hello.x
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 
-else
-  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -227,8 +223,6 @@ obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 
-else
-  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
@@ -261,8 +255,6 @@ obj/Release/hello.obj: hello.x
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 obj/Release/hello.other obj/Release/hello.another: obj/Release/hello.obj
 
-else
-  $(error "invalid configuration $(config)")
 endif
 		]]
 	end
