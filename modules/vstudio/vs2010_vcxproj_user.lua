@@ -80,13 +80,13 @@
 
 	function m.debuggerFlavor(cfg)
 		local map = {
-			Local = "WindowsLocalDebugger",
-			Remote = "WindowsRemoteDebugger",
-			WebBrowser = "WebBrowserDebugger",
-			WebService = "WebServiceDebugger"
+			VisualStudioLocal = "WindowsLocalDebugger",
+			VisualStudioRemote = "WindowsRemoteDebugger",
+			VisualStudioWebBrowser = "WebBrowserDebugger",
+			VisualStudioWebService = "WebServiceDebugger"
 		}
 
-		local value = map[cfg.debuggerflavor]
+		local value = map[cfg.debugger]
 		if value then
 			p.w('<DebuggerFlavor>%s</DebuggerFlavor>', value)
 		elseif cfg.debugdir or cfg.debugcommand then
