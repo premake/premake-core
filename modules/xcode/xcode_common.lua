@@ -48,8 +48,7 @@
 	end
 
 	function xcode.isItemResource(project, node)
-
-		local res;
+		local res
 
 		if project and project.xcodebuildresources then
 			if type(project.xcodebuildresources) == "table" then
@@ -59,20 +58,15 @@
 
 		local function checkItemInList(item, list)
 			if item then
-				if list then
-					if type(list) == "table" then
-						for _,v in pairs(list) do
-							if string.find(item, v) then
-								return true
-							end
-						end
+				for _,v in pairs(list) do
+					if string.find(item, path.wildcards(v)) then
+						return true
 					end
 				end
 			end
 			return false
 		end
 
-		--print (node.path, node.buildid, node.cfg, res)
 		if (checkItemInList(node.path, res)) then
 			return true
 		end

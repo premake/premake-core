@@ -98,6 +98,25 @@
 	end
 
 
+---
+-- Verify that files listed in xcodebuildresources are marked as resources
+---
+	function suite.PBXBuildFile_ListsXcodeBuildResources()
+		files { "file1.txt", "file01.png", "file02.png", "file-3.png" }
+		xcodebuildresources { "file1.txt", "**.png" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		628F3826BDD08B98912AD666 /* file-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 992385EEB0362120A0521C2E /* file-3.png */; };
+		93485EDEC2DA2DD09DE76D1E /* file1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F78562642667CD8D18C5C66 /* file1.txt */; };
+		C87AFEAA23BC521CF7169CEA /* file02.png in Resources */ = {isa = PBXBuildFile; fileRef = D54D8E32EC602964DC7C2472 /* file02.png */; };
+		EE9FC5C849E1193A1D3B6408 /* file01.png in Resources */ = {isa = PBXBuildFile; fileRef = 989B7E70AFAE19A29FCA14B0 /* file01.png */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXFileReference tests
 ---------------------------------------------------------------------------
