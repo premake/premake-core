@@ -78,6 +78,35 @@
 	end
 
 ---
+-- Test FxCompileAdditionalIncludeDirectories
+---
+
+	function suite.onFxCompileAdditionalIncludeDirectories()
+		files { "shader.hlsl" }
+		shaderincludedirs { "../includes" }
+
+		prepare()
+		test.capture [[
+<FxCompile>
+	<AdditionalIncludeDirectories>..\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+</FxCompile>
+		]]
+	end
+
+
+	function suite.onFxCompileAdditionalIncludeDirectories_multipleDefines()
+		files { "shader.hlsl" }
+		shaderincludedirs { "../includes", "otherpath/embedded" }
+
+		prepare()
+		test.capture [[
+<FxCompile>
+	<AdditionalIncludeDirectories>..\includes;otherpath\embedded;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+</FxCompile>
+		]]
+	end
+
+---
 -- Test FxCompileShaderType
 ---
 

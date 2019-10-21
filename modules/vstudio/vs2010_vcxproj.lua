@@ -403,6 +403,7 @@
 	m.elements.fxCompile = function(cfg)
 		return {
 			m.fxCompilePreprocessorDefinition,
+			m.fxCompileAdditionalIncludeDirs,
 			m.fxCompileShaderType,
 			m.fxCompileShaderModel,
 			m.fxCompileShaderEntry,
@@ -806,6 +807,7 @@
 					return {
 						m.excludedFromBuild,
 						m.fxCompilePreprocessorDefinition,
+						m.fxCompileAdditionalIncludeDirs,
 						m.fxCompileShaderType,
 						m.fxCompileShaderModel,
 						m.fxCompileShaderEntry,
@@ -1210,6 +1212,12 @@
 				end)
 
 				local rel = path.translate(file.relpath)
+
+				-- SharedItems projects paths are prefixed with a magical variable
+				if prj.kind == p.SHAREDITEMS then
+					rel = "$(MSBuildThisFileDirectory)" .. rel
+				end
+
 				if #contents > 0 then
 					p.push('<%s Include="%s">', tag, rel)
 					p.outln(contents)
@@ -1311,14 +1319,39 @@
 
 	function m.projectReferences(prj)
 		local refs = project.getdependencies(prj, 'linkOnly')
-		if #refs > 0 then
-			p.push('<ItemGroup>')
+		-- Handle linked shared items projects
+		local contents = p.capture(function()
+			p.push()
 			for _, ref in ipairs(refs) do
-				local relpath = vstudio.path(prj, vstudio.projectfile(ref))
-				p.push('<ProjectReference Include=\"%s\">', relpath)
-				p.callArray(m.elements.projectReferences, prj, ref)
-				p.pop('</ProjectReference>')
+				if ref.kind == p.SHAREDITEMS then
+					local relpath = vstudio.path(prj, vstudio.projectfile(ref))
+					p.x('<Import Project="%s" Label="Shared" />', relpath)
+				end
 			end
+			p.pop()
+		end)
+		if #contents > 0 then
+			p.push('<ImportGroup Label="Shared">')
+			p.outln(contents)
+			p.pop('</ImportGroup>')
+		end
+
+		-- Handle all other linked projects
+		local contents = p.capture(function()
+			p.push()
+			for _, ref in ipairs(refs) do
+				if ref.kind ~= p.SHAREDITEMS then
+					local relpath = vstudio.path(prj, vstudio.projectfile(ref))
+					p.push('<ProjectReference Include=\"%s\">', relpath)
+					p.callArray(m.elements.projectReferences, prj, ref)
+					p.pop('</ProjectReference>')
+				end
+			end
+			p.pop()
+		end)
+		if #contents > 0 then
+			p.push('<ItemGroup>')
+			p.outln(contents)
 			p.pop('</ItemGroup>')
 		end
 	end
@@ -2661,6 +2694,12 @@
 		end
 	end
 
+	function m.fxCompileAdditionalIncludeDirs(cfg, condition)
+		if cfg.shaderincludedirs and #cfg.shaderincludedirs > 0 then
+			local dirs = vstudio.path(cfg, cfg.shaderincludedirs)
+			m.element('AdditionalIncludeDirectories', condition, "%s;%%(AdditionalIncludeDirectories)", table.concat(dirs, ";"))
+		end
+	end
 
 	function m.fxCompileShaderType(cfg, condition)
 		if cfg.shadertype then

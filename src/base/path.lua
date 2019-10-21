@@ -171,7 +171,7 @@
 	end
 
 	function path.iscppfile(fname)
-		return path.hasextension(fname, { ".cc", ".cpp", ".cxx" })
+		return path.hasextension(fname, { ".cc", ".cpp", ".cxx", ".c++" })
 			or path.isobjcppfile(fname)	-- is this really right?
 			or path.iscfile(fname)
 	end

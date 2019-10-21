@@ -43,7 +43,7 @@
 #define PLATFORM_STRING   "windows"
 #endif
 
-#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS)
+#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU)
 
 
 /* Pull in platform-specific headers required by built-in functions */
@@ -123,6 +123,7 @@ int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
 int os_getpass(lua_State* L);
 int os_getWindowsRegistry(lua_State* L);
+int os_listWindowsRegistry(lua_State* L);
 int os_getversion(lua_State* L);
 int os_host(lua_State* L);
 int os_is64bit(lua_State* L);

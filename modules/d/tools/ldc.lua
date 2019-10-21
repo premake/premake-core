@@ -29,7 +29,8 @@
 		architecture = {
 			x86 = "-m32",
 			x86_64 = "-m64",
---			arm = "-march=arm",
+			ARM = "-march=arm",
+			ARM64 = "-march=aarch64",
 --			ppc = "-march=ppc32",
 --			ppc64 = "-march=ppc64",
 --			spu = "-march=cellspu",
@@ -38,16 +39,17 @@
 		flags = {
 			OmitDefaultLibrary		= "-mscrtlib=",
 			CodeCoverage			= "-cov",
+			Color					= "-enable-color",
 			Documentation			= "-D",
 			FatalWarnings			= "-w", -- Use LLVM flag? : "-fatal-assembler-warnings",
 			GenerateHeader			= "-H",
 			GenerateJSON			= "-X",
---			Release					= "-release",
+			LowMem					= "-lowmem",
 			RetainPaths				= "-op",
 			SymbolsLikeC			= "-gc",
 			UnitTest				= "-unittest",
 			Verbose					= "-v",
-			AllTemplateInst			= "-allinst",
+			AllInstantiate			= "-allinst",
 			BetterC					= "-betterC",
 			Main					= "-main",
 			PerformSyntaxCheckOnly	= "-o-",
@@ -58,6 +60,29 @@
 			Off = "-boundscheck=off",
 			On = "-boundscheck=on",
 			SafeOnly = "-boundscheck=safeonly",
+		},
+		checkaction = {
+			D = "-checkaction=D",
+			C = "-checkaction=C",
+			Halt = "-checkaction=halt",
+			Context = "-checkaction=context",
+		},
+		cppdialect = {
+			["C++latest"] = "-extern-std=c++17", -- TODO: keep this up to date >_<
+			["C++98"] = "-extern-std=c++98",
+			["C++0x"] = "-extern-std=c++11",
+			["C++11"] = "-extern-std=c++11",
+			["C++1y"] = "-extern-std=c++14",
+			["C++14"] = "-extern-std=c++14",
+			["C++1z"] = "-extern-std=c++17",
+			["C++17"] = "-extern-std=c++17",
+			["gnu++98"] = "-extern-std=c++98",
+			["gnu++0x"] = "-extern-std=c++11",
+			["gnu++11"] = "-extern-std=c++11",
+			["gnu++1y"] = "-extern-std=c++14",
+			["gnu++14"] = "-extern-std=c++14",
+			["gnu++1z"] = "-extern-std=c++17",
+			["gnu++17"] = "-extern-std=c++17",
 		},
 		deprecatedfeatures = {
 			Allow = "-d",
@@ -81,8 +106,12 @@
 		},
 		vectorextensions = {
 			AVX = "-mattr=+avx",
+			AVX2 = "-mattr=+avx2",
 			SSE = "-mattr=+sse",
 			SSE2 = "-mattr=+sse2",
+			SSE3 = "-mattr=+sse3",
+			SSSE3 = "-mattr=+ssse3",
+			["SSE4.1"] = "-mattr=+sse4.1",
 		},
 		warnings = {
 			Default = "-wi",
@@ -144,6 +173,47 @@
 			end
 			if cfg.headerdir then
 				table.insert(flags, "-Hd=" .. p.quoted(cfg.headerdir))
+			end
+		end
+
+		if #cfg.computetargets > 0 then
+			table.insert(flags, "-mdcompute-targets=" .. table.concat(cfg.computetargets, ','))
+		end
+
+		if #cfg.isaextensions > 0 then
+			local isaMap = {
+				MOVBE = "movbe",
+				POPCNT = "popcnt",
+				PCLMUL = "pclmul",
+				LZCNT = "lzcnt",
+				BMI = "bmi",
+				BMI2 = "bmi2",
+				F16C = "f16c",
+				AES = "aes",
+				FMA = "fma",
+				FMA4 = "fma4",
+				RDRND = "rdrnd",
+			}
+			for _, ext in ipairs(cfg.transition) do
+				if isaMap[ext] ~= nil then
+					table.insert(flags, "-mattr=+" .. isaMap[ext])
+				end
+			end
+		end
+
+		if #cfg.preview > 0 then
+			for _, opt in ipairs(cfg.preview) do
+				table.insert(flags, "-preview=" .. opt)
+			end
+		end
+		if #cfg.revert > 0 then
+			for _, opt in ipairs(cfg.revert) do
+				table.insert(flags, "-revert=" .. opt)
+			end
+		end
+		if #cfg.transition > 0 then
+			for _, opt in ipairs(cfg.transition) do
+				table.insert(flags, "-transition=" .. opt)
 			end
 		end
 

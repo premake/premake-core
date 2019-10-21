@@ -701,6 +701,7 @@
 			"StaticLib",
 			"WindowedApp",
 			"Utility",
+			"SharedItems",
 		},
 	}
 

@@ -18,6 +18,7 @@
 
 	function suite.setup()
 		p.action.set("codelite")
+		p.escaper(codelite.esc)
 		p.indent("  ")
 		wks = test.createWorkspace()
 	end

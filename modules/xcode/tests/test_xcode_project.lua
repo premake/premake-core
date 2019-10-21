@@ -1753,6 +1753,49 @@
 		]]
 	end
 
+    function suite.XCBuildConfigurationTarget_OnOSXMinVersion()
+		_TARGET_OS = "macosx"
+		systemversion "10.11"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+    function suite.XCBuildConfigurationTarget_OnOSXUnSpecificedVersion()
+		_TARGET_OS = "macosx"
+		-- systemversion "10.11"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
 
 	function suite.XCBuildConfigurationTarget_OnInfoPlist()
 		files { "./a/b/c/MyProject-Info.plist" }

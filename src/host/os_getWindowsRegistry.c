@@ -15,7 +15,7 @@ typedef struct RegKeyInfo
 	char * value;
 } RegKeyInfo;
 
-static HKEY get_key(const char **path)
+HKEY getRegistryKey(const char **path)
 {
 	if (_strnicmp(*path, "HKCU:", 5) == 0) {
 		*path += 5;
@@ -42,7 +42,7 @@ static HKEY get_key(const char **path)
 	return NULL;
 }
 
-static HKEY get_subkey(HKEY key, const char **path)
+static HKEY getSubkey(HKEY key, const char **path)
 {
 	HKEY subkey;
 	size_t length;
@@ -84,7 +84,7 @@ static HKEY get_subkey(HKEY key, const char **path)
 	return subkey;
 }
 
-static char * get_value(HKEY key, const char * name)
+static char * getValue(HKEY key, const char * name)
 {
 	DWORD length;
 	char * value;
@@ -111,14 +111,14 @@ static char * get_value(HKEY key, const char * name)
 	return value;
 }
 
-static void fetch_keyinfo(struct RegKeyInfo *info, const char *path)
+static void fetchKeyInfo(struct RegKeyInfo *info, const char *path)
 {
-	info->key = get_key(&path);
-	info->subkey = get_subkey(info->key, &path);
-	info->value = get_value(info->subkey, path);
+	info->key = getRegistryKey(&path);
+	info->subkey = getSubkey(info->key, &path);
+	info->value = getValue(info->subkey, path);
 }
 
-static void release_keyinfo(struct RegKeyInfo *info)
+static void releaseKeyInfo(struct RegKeyInfo *info)
 {
 	free(info->value);
 	RegCloseKey(info->subkey);
@@ -127,9 +127,9 @@ static void release_keyinfo(struct RegKeyInfo *info)
 int os_getWindowsRegistry(lua_State *L)
 {
 	RegKeyInfo info;
-	fetch_keyinfo(&info, luaL_checkstring(L, 1));
+	fetchKeyInfo(&info, luaL_checkstring(L, 1));
 	lua_pushstring(L, info.value);
-	release_keyinfo(&info);
+	releaseKeyInfo(&info);
 	return 1;
 }
 

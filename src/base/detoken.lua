@@ -187,6 +187,9 @@
 			else
 				local res = expand_cache[value]
 				if res == nil then
+					if type(value) == "string" and path.hasdeferredjoin(value) then
+						value = path.resolvedeferredjoin(value)
+					end
 					res = expandvalue(value, e, f)
 					expand_cache[value] = res
 				end

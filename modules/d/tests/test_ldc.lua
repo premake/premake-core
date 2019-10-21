@@ -50,7 +50,7 @@
 	end
 
 	function suite.dmd_target_separateCompilation()
-		flags { "SeparateCompilation" }
+		compilationmodel "File"
 		prepare_cfg({ m.make.target })
 		test.capture [[
   OUTPUTFLAG = -of="$@"
@@ -98,7 +98,7 @@
 	end
 
 	function suite.dmd_linkCmd_separateCompilation()
-		flags { "SeparateCompilation" }
+		compilationmodel "File"
 		prepare_cfg({ m.make.linkCmd })
 		test.capture [[
   LINKCMD = $(DC) -of=$(TARGET) $(ALL_LDFLAGS) $(LIBS) $(OBJECTS)

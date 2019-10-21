@@ -70,7 +70,13 @@
 	function android.androidApplicationType(cfg)
 		vc2010.element("Keyword", nil, "Android")
 		vc2010.element("RootNamespace", nil, "%s", cfg.project.name)
-		vc2010.element("MinimumVisualStudioVersion", nil, "15.0") -- Use 14.0 for VS2015?
+		if _ACTION >= "vs2019" then
+			vc2010.element("MinimumVisualStudioVersion", nil, "16.0")
+		elseif _ACTION >= "vs2017" then
+			vc2010.element("MinimumVisualStudioVersion", nil, "15.0")
+		elseif _ACTION >= "vs2015" then
+			vc2010.element("MinimumVisualStudioVersion", nil, "14.0")
+		end
 		vc2010.element("ApplicationType", nil, "Android")
 		if _ACTION >= "vs2017" then
 			vc2010.element("ApplicationTypeRevision", nil, "3.0")
@@ -119,7 +125,7 @@
 				["none"] = "system",
 				["gabi++"] = "gabi++",
 				["stlport"] = "stlport",
-				["gnustl"] = "gnustl",
+				["gnu"] = "gnustl",
 				["libc++"] = "c++",
 			}
 

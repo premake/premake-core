@@ -24,25 +24,24 @@
 	api.addAllowed("floatingpoint", "None")
 	api.addAllowed("flags", {
 		"CodeCoverage",
-		"Deprecated",			-- DEPRECATED
+		"Color",
 		"Documentation",
 		"GenerateHeader",
 		"GenerateJSON",
 		"GenerateMap",
-		"NoBoundsCheck",		-- DEPRECATED
+		"LowMem",
 		"Profile",
 		"Quiet",
---		"Release",	// Note: We infer this flag from config.isDebugBuild()
 		"RetainPaths",
-		"SeparateCompilation",	-- DEPRECATED
 		"SymbolsLikeC",
 		"UnitTest",
 		-- These are used by C++/D mixed $todo move them somewhere else? "flags2" "Dflags"?
 		-- [Code Generation Flags]
+		"UseLDC",
 		"ProfileGC",
 		"StackFrame",
 		"StackStomp",
-		"AllTemplateInst",
+		"AllInstantiate",
 		"BetterC",
 		"Main",
 		"PerformSyntaxCheckOnly",
@@ -61,17 +60,53 @@
 --
 
 	api.register {
-		name = "versionconstants",
+		name = "boundscheck",
 		scope = "config",
-		kind = "list:string",
-		tokens = true,
+		kind = "string",
+		allowed = {
+			"Default",
+			"Off",
+			"On",
+			"SafeOnly",
+		},
 	}
 
 	api.register {
-		name = "versionlevel",
+		name = "compilationmodel",
 		scope = "config",
-		kind = "integer",
+		kind = "string",
+		allowed = {
+			"Default",
+			"File",
+			"Package",	-- TODO: this doesn't work with gmake!!
+			"Project",
+		},
 	}
+
+	api.register {
+		name = "checkaction",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"D",
+			"C",
+			"Halt",
+			"Context",
+		},
+	}
+
+	api.register {
+		name = "computetargets",
+		scope = "config",
+		kind = "list:string",
+	}
+
+--	api.register {
+--		name = "debugcode",
+--		scope = "config",
+--		kind = "string",
+--	}
 
 	api.register {
 		name = "debugconstants",
@@ -84,6 +119,25 @@
 		name = "debuglevel",
 		scope = "config",
 		kind = "integer",
+	}
+
+	api.register {
+		name = "dependenciesfile",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
+		name = "deprecatedfeatures",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Allow",
+			"Warn",
+			"Error",
+		},
 	}
 
 	api.register {
@@ -114,22 +168,11 @@
 		tokens = true,
 	}
 
---	api.register {
---		name = "debugcode",
---		scope = "config",
---		kind = "string",
---	}
-
 	api.register {
-		name = "compilationmodel",
+		name = "jsonfile",
 		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"File",
-			"Package",	-- TODO: this doesn't work with gmake!!
-			"Project",
-		},
+		kind = "path",
+		tokens = true,
 	}
 
 	api.register {
@@ -140,6 +183,32 @@
 	}
 
 	api.register {
+		name = "preview",
+		scope = "config",
+		kind = "list:string",
+		allowed = {
+			"dip25",
+			"dip1000",
+			"dip1008",
+			"fieldwise",
+			"markdown",
+			"fixAliasThis",
+			"intpromote",
+			"dtorfields",
+		},
+	}
+
+	api.register {
+		name = "revert",
+		scope = "config",
+		kind = "list:string",
+		allowed = {
+			"dip25",
+			"import",
+		},
+	}
+
+	api.register {
 		name = "stringimportdirs",
 		scope = "config",
 		kind = "list:path",
@@ -147,41 +216,29 @@
 	}
 
 	api.register {
-		name = "deprecatedfeatures",
+		name = "transition",
 		scope = "config",
-		kind = "string",
+		kind = "list:string",
 		allowed = {
-			"Default",
-			"Allow",
-			"Warn",
-			"Error",
+			"field",
+			"checkimports",
+			"complex",
+			"tls",
+			"vmarkdown",
 		},
 	}
 
 	api.register {
-		name = "boundscheck",
+		name = "versionconstants",
 		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"Off",
-			"On",
-			"SafeOnly",
-		},
-	}
-
-	api.register {
-		name = "dependenciesfile",
-		scope = "config",
-		kind = "path",
+		kind = "list:string",
 		tokens = true,
 	}
 
 	api.register {
-		name = "jsonfile",
+		name = "versionlevel",
 		scope = "config",
-		kind = "path",
-		tokens = true,
+		kind = "integer",
 	}
 
 --
@@ -199,35 +256,6 @@
 			{ "ldc", "LLVM LDC (ldc2)" },
 		}
 	}
-
-
---
--- Deprecate old stuff
---
-
-	api.deprecateValue("flags", "SeparateCompilation", 'Use `compilationmodel "File"` instead',
-	function(value)
-		compilationmodel "File"
-	end,
-	function(value)
-		compilationmodel "Default"
-	end)
-
-	api.deprecateValue("flags", "Deprecated", 'Use `deprecatedfeatures "Allow"` instead',
-	function(value)
-		deprecatedfeatures "Allow"
-	end,
-	function(value)
-		deprecatedfeatures "Default"
-	end)
-
-	api.deprecateValue("flags", "NoBoundsCheck", 'Use `boundscheck "Off"` instead',
-	function(value)
-		boundscheck "Off"
-	end,
-	function(value)
-		boundscheck "Default"
-	end)
 
 
 --

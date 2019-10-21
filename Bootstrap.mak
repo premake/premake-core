@@ -58,8 +58,10 @@ mingw: $(SRC)
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lole32
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake
+	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
+
+macosx: osx
 
 osx: $(SRC)
 	$(SILENT) rm -rf ./bin
@@ -68,7 +70,7 @@ osx: $(SRC)
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" -framework CoreServices -framework Foundation -framework Security -lreadline $?
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 linux: $(SRC)
@@ -78,7 +80,7 @@ linux: $(SRC)
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm -ldl -lrt
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 bsd: $(SRC)
@@ -88,7 +90,7 @@ bsd: $(SRC)
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf NPROCESSORS_ONLN` config=$(CONFIG)
 
 solaris: $(SRC)
@@ -98,8 +100,18 @@ solaris: $(SRC)
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf NPROCESSORS_ONLN` config=$(CONFIG)
+
+haiku: $(SRC)
+	$(SILENT) rm -rf ./bin
+	$(SILENT) rm -rf ./build
+	$(SILENT) rm -rf ./obj
+	mkdir -p build/bootstrap
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -D_BSD_SOURCE -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lbsd
+	./build/bootstrap/premake_bootstrap embed
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
+	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 windows-base: $(SRC)
 	$(SILENT) if exist .\bin rmdir /s /q .\bin

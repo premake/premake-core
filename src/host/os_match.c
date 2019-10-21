@@ -161,13 +161,9 @@ int os_matchisfile(lua_State* L)
 {
 	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
 #if defined(_DIRENT_HAVE_D_TYPE)
-	if (m->entry->d_type == DT_DIR)
+	if (m->entry->d_type != DT_UNKNOWN)
 	{
-		lua_pushboolean(L, 0);
-	}
-	else if (m->entry->d_type == DT_REG)
-	{
-		lua_pushboolean(L, 1);
+		lua_pushboolean(L, (m->entry->d_type == DT_DIR) == 0);
 	}
 	else
 #endif

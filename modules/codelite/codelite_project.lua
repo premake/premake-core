@@ -196,8 +196,9 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local cxxflags = table.concat(table.join(toolset.getcxxflags(cfg), cfg.buildoptions), ";")
-		local cflags   = table.concat(table.join(toolset.getcflags(cfg), cfg.buildoptions), ";")
+		local forceincludes = toolset.getforceincludes(cfg)
+		local cxxflags = table.concat(table.join(toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
+		local cflags   = table.concat(table.join(toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
 		local asmflags = ""
 		local pch      = ""
 
@@ -207,7 +208,7 @@
 			_x(4, '<IncludePath Value="%s"/>', project.getrelative(cfg.project, includedir))
 		end
 		for _, define in ipairs(cfg.defines) do
-			_x(4, '<Preprocessor Value="%s"/>', p.esc(define))
+			_p(4, '<Preprocessor Value="%s"/>', p.esc(define):gsub(' ', '\\ '))
 		end
 		_p(3, '</Compiler>')
 	end
@@ -287,7 +288,7 @@
 		local envs = table.concat(cfg.debugenvs, "\n")
 
 		_p(3, '<Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">')
-		_x(4, '<![CDATA[%s]]>', envs)
+		_p(4, '<![CDATA[%s]]>', envs)
 		_p(3, '</Environment>')
 	end
 
@@ -295,17 +296,23 @@
 
 		_p(3, '<Debugger IsRemote="%s" RemoteHostName="%s" RemoteHostPort="%s" DebuggerPath="" IsExtended="%s">', iif(cfg.debugremotehost, "yes", "no"), cfg.debugremotehost or "", iif(cfg.debugport, tostring(cfg.debugport), ""), iif(cfg.debugextendedprotocol, "yes", "no"))
 		if #cfg.debugsearchpaths > 0 then
+			p.escaper(codelite.escElementText)
 			_p(4, '<DebuggerSearchPaths>%s</DebuggerSearchPaths>', table.concat(p.esc(project.getrelative(cfg.project, cfg.debugsearchpaths)), "\n"))
+			p.escaper(codelite.esc)
 		else
 			_p(4, '<DebuggerSearchPaths/>')
 		end
 		if #cfg.debugconnectcommands > 0 then
+			p.escaper(codelite.escElementText)
 			_p(4, '<PostConnectCommands>%s</PostConnectCommands>', table.concat(p.esc(cfg.debugconnectcommands), "\n"))
+			p.escaper(codelite.esc)
 		else
 			_p(4, '<PostConnectCommands/>')
 		end
 		if #cfg.debugstartupcommands > 0 then
+			p.escaper(codelite.escElementText)
 			_p(4, '<StartupCommands>%s</StartupCommands>', table.concat(p.esc(cfg.debugstartupcommands), "\n"))
+			p.escaper(codelite.esc)
 		else
 			_p(4, '<StartupCommands/>')
 		end
@@ -316,10 +323,11 @@
 		if #cfg.prebuildcommands > 0 then
 			_p(3, '<PreBuild>')
 			local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.project.basedir, cfg.project.location)
+			p.escaper(codelite.escElementText)
 			for _, command in ipairs(commands) do
-				_x(4, '<Command Enabled="yes">%s</Command>',
-				p.esc(command))
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
+			p.escaper(codelite.esc)
 			_p(3, '</PreBuild>')
 		end
 	end
@@ -328,10 +336,11 @@
 		if #cfg.postbuildcommands > 0 then
 			_p(3, '<PostBuild>')
 			local commands = os.translateCommandsAndPaths(cfg.postbuildcommands, cfg.project.basedir, cfg.project.location)
+			p.escaper(codelite.escElementText)
 			for _, command in ipairs(commands) do
-				_x(4, '<Command Enabled="yes">%s</Command>',
-				p.esc(command))
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
+			p.escaper(codelite.esc)
 			_p(3, '</PostBuild>')
 		end
 	end

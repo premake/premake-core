@@ -479,6 +479,82 @@
 		]]
 	end
 
+--
+-- Test that changes in case are treated as if multiple files of the same name are being built
+--
+
+	function suite.uniqueObjectNames_onSourceNameCollision_ignoreCase()
+		files { "hello.cpp", "greetings/Hello.cpp" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="greetings\Hello.cpp" />
+	<ClCompile Include="hello.cpp">
+		<ObjectFileName>$(IntDir)\hello1.obj</ObjectFileName>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.uniqueObjectNames_onBaseNameCollision_ignoreCase1()
+		files { "a/hello.cpp", "b/Hello.cpp", "c/hello1.cpp" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="a\hello.cpp" />
+	<ClCompile Include="b\Hello.cpp">
+		<ObjectFileName>$(IntDir)\Hello1.obj</ObjectFileName>
+	</ClCompile>
+	<ClCompile Include="c\hello1.cpp">
+		<ObjectFileName>$(IntDir)\hello11.obj</ObjectFileName>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.uniqueObjectNames_onBaseNameCollision_ignoreCase2()
+		files { "a/hello1.cpp", "b/Hello.cpp", "c/hello.cpp" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="a\hello1.cpp" />
+	<ClCompile Include="b\Hello.cpp" />
+	<ClCompile Include="c\hello.cpp">
+		<ObjectFileName>$(IntDir)\hello2.obj</ObjectFileName>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+	function suite.uniqueObjectNames_onBaseNameCollision_Release_ignoreCase()
+		files { "a/Hello.cpp", "b/hello.cpp", "c/hello1.cpp", "d/hello11.cpp" }
+		filter "configurations:Debug"
+			excludes {"b/hello.cpp"}
+		filter "configurations:Release"
+			excludes {"d/hello11.cpp"}
+
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="a\Hello.cpp" />
+	<ClCompile Include="b\hello.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello1.obj</ObjectFileName>
+	</ClCompile>
+	<ClCompile Include="c\hello1.cpp">
+		<ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\hello11.obj</ObjectFileName>
+	</ClCompile>
+	<ClCompile Include="d\hello11.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
 
 --
 -- Check handling of per-file forced includes.

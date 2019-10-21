@@ -1,40 +1,91 @@
-# PREMAKE 5 (core)
-<img src="https://github.com/premake/premake-core/wiki/linux-widget.jpeg" width="24" height="24"/> [![Build Status](https://travis-ci.org/premake/premake-core.svg?branch=master)](https://travis-ci.org/premake/premake-core)
- <img src="https://github.com/premake/premake-core/wiki/windows-widget.jpeg" width="24" height="24"/> [![Build status](https://ci.appveyor.com/api/projects/status/lc9g332y2lqvel8h?svg=true)](https://ci.appveyor.com/project/PremakeOrganization/premake-core)
- [![Latest release](https://img.shields.io/github/release/premake/premake-core/all.svg)]()
- [![Release date of last release](https://img.shields.io/github/release-date-pre/premake/premake-core.svg)]()
- [![Commits since last release](https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-alpha13.svg)]()
+<p align="center">
+  <a href="https://premake.github.io/" target="blank"><img src="https://premake.github.io/premake-logo.png" height="200" width="200" alt="Premake" /></a>
+</p>
 
-<img src="http://premake.github.io/premake-logo.png" width="200" height="200" />
+<p align="center">
+    <img src="https://img.shields.io/github/release/premake/premake-core/all.svg" alt="Latest release" />
+    <img src="https://img.shields.io/github/release-date-pre/premake/premake-core.svg" alt="Release date" />
+    <img src="https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-alpha14.svg" alt="Commits" />
+    <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">
+        <img src="https://img.shields.io/github/license/premake/premake-core" alt="BSD 3-Clause" />
+    </a>
+    <br/>
+    <a href="https://travis-ci.org/premake/premake-core" target="_blank">
+        <img src="https://img.shields.io/travis/premake/premake-core/master.svg?label=linux" alt="Linux" />
+    </a>
+    <a href="https://ci.appveyor.com/project/PremakeOrganization/premake-core" target="_blank">
+        <img src="https://img.shields.io/appveyor/ci/PremakeOrganization/premake-core?label=windows" alt="Windows" />
+    </a>
+    <a href="https://github.com/premake/premake-core/graphs/contributors" target="_blank">
+        <img src="https://img.shields.io/github/contributors/premake/premake-core?label=code+contributors" alt="Contributors" />
+    </a>
+    <a href="https://opencollective.com/premake" _target="blank">
+        <img src="https://opencollective.com/premake/all/badge.svg?label=financial+contributors" alt="Contributors" />
+    </a>
+    <a href="https://twitter.com/premakeapp" target="_blank">
+        <img src="https://img.shields.io/twitter/follow/premakeapp.svg?style=social&label=Follow">
+    </a>
+</p>
 
-Premake is a command line utility which reads a scripted definition of a software project and, most commonly, uses it to generate project files for toolsets like Visual Studio, Xcode, or GNU Make. Built-in and Third-Party [Modules](https://github.com/premake/premake-core/wiki/Modules) add support for even more toolsets.
 
-Find out in detail [what Premake is](https://github.com/premake/premake-core/wiki/What-Is-Premake) and how to use it in the [wiki](https://github.com/premake/premake-core/wiki).
+# Welcome to Premake
 
-### Get started
+Premake is a command line utility which reads a scripted definition of a software project, then uses it to perform build configuration tasks or generate project files for toolsets like Visual Studio, Xcode, and GNU Make. Premake's scripts are little [Lua](http://www.lua.org/) programs, so the sky's the limit!
 
-* [Download Premake](http://premake.github.io/download.html)
-* [Read the wiki](https://github.com/premake/premake-core/wiki) to find out how to get your project up and running with Premake.
+```lua
+workspace "MyWorkspace"
+    configurations { "Debug", "Release" }
 
+project "MyProject"
+    kind "ConsoleApp"
+    language "C++"
+    files { "**.h", "**.cpp" }
 
-### News and Community
+    filter { "configurations:Debug" }
+        defines { "DEBUG" }
+        symbols "On"
 
-* Check the official [Github project](https://github.com/premake/premake-core) for the latest developments
-* For questions about using Premake and authoring project scripts, please ask on [StackOverflow, adding the #premake tag to your question](http://stackoverflow.com/questions/tagged/premake).
-* For discussions about developing, customizing, or extending Premake and add-on modules, please use the [Premake Developers Google Groups forum](https://groups.google.com/forum/#!forum/premake-development).
+    filter { "configurations:Release" }
+        defines { "NDEBUG" }
+        optimize "On"
+```
 
-### Report isssues
+## Getting Started
 
-Something not working quite as expected? Do you need a feature that has not been implemented yet? Check the [issue tracker](https://github.com/premake/premake-core/issues) and add a new one if your problem is not already listed. Please try to provide a detailed description of your problem, including the steps to reproduce it.
+* [Documentation](https://github.com/premake/premake-core/wiki)
+* [Contributing](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md)
+* [Issue Tracker](https://github.com/premake/premake-core/issues)
 
-### Contribute
+## Sponsors
 
-Awesome! View the [contribution guidelines](https://github.com/premake/premake-core/wiki/Contribution-Guidelines) before you contribute. If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the unit tests are passing before submitting and add new ones in case you introduced new features.
+Premake is a BSD-licensed open source project. Our many thanks to these fine people who help us spend more time adding features and supporting the community. :tada:
 
-### Copyright & License
+Want to join them? [Learn more here](https://opencollective.com/premake). Use Premake at work? Ask your manager or marketing team about contributing too; your company logo will appear on our [website](https://premake.github.io/) and README, as well as all of our [release pages](https://github.com/premake/premake-core/releases).
 
-Copyright &copy; 2002-2016 by Jason Perkins
-Distributed under the terms of the BSD License, see LICENSE.txt
+### Organizations
+
+<a href="https://opencollective.com/premake#sponsors" target="_blank"><img src="https://opencollective.com/premake/sponsors.svg?width=890&avatarHeight=92&button=false"/></a>
+
+### Individuals
+
+<a href="https://opencollective.com/premake#backers" target="_blank"><img src="https://opencollective.com/premake/backers.svg?width=890&button=false"/></a>
+
+## Contributing
+
+We love getting [pull requests](https://www.quora.com/GitHub-What-is-a-pull-request) and rely heavily on the contributions of our community to keep Premake healthy and growing. If you're new to the project, [our Contributing Guide is here](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md).
+
+A great big thank you to all of you who have already contributed your time and know-how!
+
+<a href="https://github.com/premake/premake-core/graphs/contributors"><img src="https://opencollective.com/premake/contributors.svg?width=890&avatarHeight=32&button=false" /></a>
+
+## Stay in touch
+
+* Website - https://premake.github.io
+* Twitter - [@premakeapp](https://twitter.com/premakeapp)
+
+## License
+
+[BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
 The Lua language and runtime library is &copy; TeCGraf, PUC-Rio.
 See their website at http://www.lua.org/

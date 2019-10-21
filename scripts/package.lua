@@ -20,27 +20,68 @@
 -- Check the command line arguments, and show some help if needed.
 ---
 
-	local usage = 'usage is: package <branch> <type>\n' ..
-		'       <branch> is the name of the release branch to target\n' ..
-		'       <type> is one of "source" or "binary"\n'
+	local allowedCompilers = {}
 
-	if #_ARGS ~= 2 then
+	if os.ishost("windows") then
+		allowedCompilers = {
+			"vs2019",
+			"vs2017",
+			"vs2015",
+			"vs2013",
+			"vs2012",
+			"vs2010",
+			"vs2008",
+			"vs2005",
+		}
+	elseif os.ishost("linux") or os.ishost("bsd") then
+		allowedCompilers = {
+			"gcc",
+			"clang",
+		}
+	elseif os.ishost("macosx") then
+		allowedCompilers = {
+			"clang",
+		}
+	else
+		error("Unsupported host os", 0)
+	end
+
+	local usage = 'usage is: package <branch> <type> [<compiler>]\n' ..
+		'       <branch> is the name of the release branch to target\n' ..
+		'       <type> is one of "source" or "binary"\n' ..
+		'       <compiler> (default: ' .. allowedCompilers[1] .. ') is one of ' .. table.implode(allowedCompilers, "", "", " ")
+
+	if #_ARGS ~= 2 and #_ARGS ~= 3 then
 		error(usage, 0)
 	end
 
 	local branch = _ARGS[1]
 	local kind = _ARGS[2]
+	local compiler = _ARGS[3] or allowedCompilers[1]
 
 	if kind ~= "source" and kind ~= "binary" then
+		print("Invalid package kind: "..kind)
 		error(usage, 0)
 	end
 
+	if not table.contains(allowedCompilers, compiler) then
+		print("Invalid compiler: "..compiler)
+		error(usage, 0)
+	end
+
+	local compilerIsVS = compiler:startswith("vs")
 
 --
 -- Make sure I've got what I've need to be happy.
 --
 
-	local required = { "git", "make", "gcc", "premake5", "zip" }
+	local required = { "git" }
+
+	if not compilerIsVS then
+		table.insert(required, "make")
+		table.insert(required, compiler)
+	end
+
 	for _, value in ipairs(required) do
 		local z = execQuiet("%s --version", value)
 		if not z then
@@ -88,22 +129,27 @@
 	os.rmdir(pkgName)
 
 	print("Cloning source code")
-	z = os.executef("git clone .. %s", pkgName)
+	local z = execQuiet("git clone .. %s -b %s --recurse-submodules --depth 1 --shallow-submodules", pkgName, branch)
 	if not z then
 		error("clone failed", 0)
 	end
 
 	os.chdir(pkgName)
 
-	z = os.executef("git checkout %s", branch)
-	if not z then
-		error("unable to checkout branch " .. branch, 0)
-	end
+--
+-- Bootstrap Premake in the newly cloned repository
+--
 
-	z = os.executef("git submodule update --init")
-	if not z then
-		error("unable to clone submodules", 0)
+	print("Bootstraping Premake...")
+	if compilerIsVS then
+		z = os.execute("Bootstrap.bat " .. compiler)
+	else
+		z = os.execute("make -j -f Bootstrap.mak " .. os.host())
 	end
+	if not z then
+		error("Failed to Bootstrap Premake", 0)
+	end
+	local premakeBin = path.translate("./bin/release/premake5")
 
 
 --
@@ -111,31 +157,12 @@
 --
 
 	print("Updating embedded scripts...")
-	if kind == "source" then
-		z = execQuiet("premake5 embed")
-	else
-		z = execQuiet("premake5 --bytecode embed")
-	end
+
+	local z = execQuiet("%s embed %s", premakeBin, iif(kind == "source", "", "--bytecode"))
 	if not z then
 		error("failed to update the embedded scripts", 0)
 	end
 
-
---
--- Clear out files I don't want included in any packages.
---
-
-	print("Cleaning up the source tree...")
-	os.rmdir("packages")
-	os.rmdir(".git")
-
-	local removelist = { ".DS_Store", ".git", ".gitignore", ".gitmodules", ".travis.yml", ".editorconfig", "appveyor.yml", "Bootstrap.mak" }
-	for _, removeitem in ipairs(removelist) do
-		local founditems = os.matchfiles("**" .. removeitem)
-		for _, item in ipairs(founditems) do
-			os.remove(item)
-		end
-	end
 
 --
 -- Generate a source package.
@@ -143,24 +170,78 @@
 
 if kind == "source" then
 
+	local function	genProjects(parameters)
+		if not execQuiet("%s %s", premakeBin, parameters) then
+			error("failed to generate project for "..parameters, 0)
+		end
+	end
+
+	os.rmdir("build")
+
 	print("Generating project files...")
-	execQuiet("premake5 /to=build/vs2005 vs2005")
-	execQuiet("premake5 /to=build/vs2008 vs2008")
-	execQuiet("premake5 /to=build/vs2010 vs2010")
-	execQuiet("premake5 /to=build/vs2012 vs2012")
-	execQuiet("premake5 /to=build/vs2013 vs2013")
-	execQuiet("premake5 /to=build/vs2015 vs2015")
-	execQuiet("premake5 /to=build/vs2017 vs2017")
-	execQuiet("premake5 /to=build/vs2019 vs2019")
-	execQuiet("premake5 /to=build/gmake.windows /os=windows gmake")
-	execQuiet("premake5 /to=build/gmake.unix /os=linux gmake")
-	execQuiet("premake5 /to=build/gmake.macosx /os=macosx gmake")
-	execQuiet("premake5 /to=build/gmake.bsd /os=bsd gmake")
+
+	local ignoreActions = {
+		"clean",
+		"embed",
+		"package",
+		"test",
+		"gmake", -- deprecated
+	}
+
+	local perOSActions = {
+		"gmake2",
+		"codelite"
+	}
+
+	for action in premake.action.each() do
+
+		if not table.contains(ignoreActions, action.trigger) then
+			if table.contains(perOSActions, action.trigger) then
+
+				local osList = {
+					{ "windows", },
+					{ "unix", "linux" },
+					{ "macosx", },
+					{ "bsd", },
+				}
+
+				for _, os in ipairs(osList) do
+					local osTarget = os[2] or os[1]
+					genProjects(string.format("--to=build/%s.%s --os=%s %s", action.trigger, os[1], osTarget, action.trigger))
+				end
+			else
+				genProjects(string.format("--to=build/%s %s", action.trigger, action.trigger))
+			end
+		end
+	end
 
 	print("Creating source code package...")
-	os.chdir("..")
-	execQuiet("zip -r9 %s-src.zip %s/*", pkgName, pkgName)
 
+	local	excludeList = {
+		".gitignore",
+		".gitattributes",
+		".gitmodules",
+		".travis.yml",
+		".editorconfig",
+		"appveyor.yml",
+		"Bootstrap.*",
+		"packages/*",
+	}
+	local	includeList = {
+		"build",
+		"src/scripts.c",
+	}
+
+	if	not execQuiet("git rm --cached -r -f --ignore-unmatch "..table.concat(excludeList, ' ')) or
+		not execQuiet("git add -f "..table.concat(includeList, ' ')) or
+		not execQuiet("git stash") or
+		not execQuiet("git archive --format=zip -9 -o ../%s-src.zip --prefix=%s/ stash@{0}", pkgName, pkgName) or
+		not execQuiet("git stash drop stash@{0}")
+	then
+		error("failed to archive release", 0)
+	end
+
+	os.chdir("..")
 end
 
 
@@ -173,22 +254,28 @@ end
 if kind == "binary" then
 
 	print("Building binary...")
-	execQuiet("premake5 gmake")
-	z = execQuiet("make config=release")
-	if not z then
-		error("build failed")
-	end
 
 	os.chdir("bin/release")
 
-	local name = string.format("%s-%s%s", pkgName, os.host(), pkgExt)
+	local addCommand = "git add -f premake5%s"
+	local archiveCommand = "git archive --format=%s -o ../../../%s-%s%s stash@{0} -- ./premake5%s"
+
 	if os.ishost("windows") then
-		execQuiet("zip -9 %s premake5.exe", name)
+		addCommand = string.format(addCommand, ".exe")
+		archiveCommand = string.format(archiveCommand, "zip -9", pkgName, os.host(), pkgExt, ".exe")
 	else
-		execQuiet("tar czvf %s premake5", name)
+		addCommand = string.format(addCommand, "")
+		archiveCommand = string.format(archiveCommand, "tar.gz", pkgName, os.host(), pkgExt, "")
 	end
 
-	os.copyfile(name, path.join("../../../", name))
+	if 	not execQuiet(addCommand) or
+		not execQuiet("git stash") or
+		not execQuiet(archiveCommand) or
+		not execQuiet("git stash drop stash@{0}")
+	then
+		error("failed to archive release", 0)
+	end
+
 	os.chdir("../../..")
 
 end
@@ -198,4 +285,5 @@ end
 -- Clean up
 --
 
-	os.rmdir(pkgName)
+	-- Use RMDIR token instead of os.rmdir to force remove .git dir which has read only files
+	execQuiet(os.translateCommands("{RMDIR} "..pkgName))
