@@ -217,8 +217,6 @@ OBJECTS += $(OBJDIR)/Hello111.o
 else ifeq ($(config),release)
 OBJECTS += $(OBJDIR)/hello1.o
 
-else
-  $(error "invalid configuration $(config)")
 endif
 
 		]]
