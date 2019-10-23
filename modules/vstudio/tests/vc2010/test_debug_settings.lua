@@ -102,11 +102,27 @@ foo=bar</LocalDebuggerEnvironment>
 	end
 
 --
--- Test Debugger Flavor
+-- Test debugger flavors
 --
 
-	function suite.debuggerFlavor_OnWindowsLocal()
-		debuggerflavor "Local"
+	function suite.debugger_OnWindowsDefault()
+		debugger "Default"
+		prepare()
+		test.capture [[
+
+		]]
+	end
+
+	function suite.debugger_OnWindowsUnavailable()
+		debugger "GDB"
+		prepare()
+		test.capture [[
+
+		]]
+	end
+
+	function suite.debugger_OnWindowsLocal()
+		debugger "VisualStudioLocal"
 		prepare()
 		test.capture [[
 <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
@@ -114,9 +130,19 @@ foo=bar</LocalDebuggerEnvironment>
 	end
 
 	function suite.debuggerFlavor_OnWindowsRemote()
-		debuggerflavor "Remote"
+		debugger "VisualStudioRemote"
 		prepare()
 		test.capture [[
+<DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
+		]]
+	end
+
+	function suite.debuggerFlavor_OnDebugDirAndDebugger()
+		debugdir "bin/debug"
+		debugger "VisualStudioRemote"
+		prepare()
+		test.capture [[
+<LocalDebuggerWorkingDirectory>bin\debug</LocalDebuggerWorkingDirectory>
 <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
 		]]
 	end

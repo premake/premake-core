@@ -24,6 +24,11 @@
 
 	-- Initialize Specific API
 
+	p.api.addAllowed("debugger", "VisualStudioLocal")
+	p.api.addAllowed("debugger", "VisualStudioRemote")
+	p.api.addAllowed("debugger", "VisualStudioWebBrowser")
+	p.api.addAllowed("debugger", "VisualStudioWebService")
+
 	p.api.register {
 		name = "shaderoptions",
 		scope = "config",
@@ -132,7 +137,7 @@
 		tokens = true,
 	}
 
-	p.api.register {
+	p.api.register {   -- DEPRECATED 2019-10-21
 		name = "debuggerflavor",
 		scope = "config",
 		kind = "string",
@@ -143,6 +148,12 @@
 			"WebService"
 		}
 	}
+
+	p.api.deprecateField("debuggerflavor", 'Use `debugger` instead.',
+	function(value)
+		debugger('VisualStudio' .. value)
+	end)
+
 
 --
 -- Decide when the full module should be loaded.
