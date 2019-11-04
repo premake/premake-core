@@ -722,3 +722,19 @@
 </Link>
 		]]
 	end
+
+	--
+-- Test ignoring default libraries with extensions specified.
+--
+
+	function suite.assemblyDebug()
+		assemblydebug "true"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<AssemblyDebug>true</AssemblyDebug>
+</Link>
+		]]
+	end

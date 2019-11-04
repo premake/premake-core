@@ -507,6 +507,7 @@
 				m.targetMachine,
 				m.additionalLinkOptions,
 				m.programDatabaseFile,
+				m.assemblyDebug,
 			}
 		end
 	end
@@ -1808,6 +1809,12 @@
 	function m.fullProgramDatabaseFile(cfg)
 		if _ACTION >= "vs2015" and cfg.symbols == "FastLink" then
 			m.element("FullProgramDatabaseFile", nil, "true")
+		end
+	end
+
+	function m.assemblyDebug(cfg)
+		if cfg.assemblydebug then
+      		m.element("AssemblyDebug", nil, "true")
 		end
 	end
 

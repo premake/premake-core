@@ -1374,6 +1374,12 @@
 		}
 	}
 
+	api.register {
+		name = "assemblydebug",
+		scope = "config",
+		kind  = "boolean"
+	}	
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
