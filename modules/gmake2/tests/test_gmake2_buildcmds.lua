@@ -4,19 +4,10 @@
 local suite = test.declare("gmake2_buildcommands")
 local gmake2 = premake.modules.gmake2
 
-premake.api.register {
-	name     = 'test_libdir', -- this controls the targetdir for StaticLib projects.
-	scope    = 'config',
-	kind     = 'path',
-	tokens   = true,
-	pathVars = true,
-}
-
 local wks, prj, cfg
 
 function suite.setup()
 	wks = workspace("MyWorkspace")
-	test_libdir   (path.join(_MAIN_SCRIPT_DIR, 'lib'))
 	configurations { "Debug", "Release" }
 	prj = test.createProject(wks)
 end
@@ -39,8 +30,8 @@ function suite.postbuildcommands()
 
 	postbuildcommands
 	{
-		"mkdir %{cfg.test_libdir}/www",
-		"mkdir %{cfg.test_libdir}/www"
+		"mkdir lib/www",
+		"mkdir lib/www"
 	}
 
 	prepare()
