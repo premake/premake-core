@@ -373,3 +373,80 @@
 		test.isequal('cmdtool "../foo/path1" "../foo/path2/"', os.translateCommandsAndPaths("cmdtool %[path1] %[path2/]", '../foo', '.', 'osx'))
 	end
 
+
+--
+-- Helpers
+--
+
+	local tmpname = function()
+		local p = os.tmpname()
+		os.remove(p) -- just needed on POSIX
+		return p
+	end
+
+	local tmpfile = function()
+		local p = tmpname()
+		if os.ishost("windows") then
+			os.execute("type nul >" .. p)
+		else
+			os.execute("touch " .. p)
+		end
+		return p
+	end
+
+	local tmpdir = function()
+		local p = tmpname()
+		os.mkdir(p)
+		return p
+	end
+
+
+--
+-- os.remove() tests.
+--
+
+	function suite.remove_ReturnsError_OnNonExistingPath()
+		local ok, err, exitcode = os.remove(tmpname())
+		test.isnil(ok)
+		test.isequal("string", type(err))
+		test.isequal("number", type(exitcode))
+		test.istrue(0 ~= exitcode)
+	end
+
+	function suite.remove_ReturnsError_OnDirectory()
+		local ok, err, exitcode = os.remove(tmpdir())
+		test.isnil(ok)
+		test.isequal("string", type(err))
+		test.isequal("number", type(exitcode))
+		test.istrue(0 ~= exitcode)
+	end
+
+	function suite.remove_ReturnsTrue_OnFile()
+		local ok, err, exitcode = os.remove(tmpfile())
+		test.isequal(true, ok)
+		test.isnil(err)
+		test.isnil(exitcode)
+	end
+
+
+--
+-- os.rmdir() tests.
+--
+
+	function suite.rmdir_ReturnsError_OnNonExistingPath()
+		local ok, err = os.rmdir(tmpname())
+		test.isnil(ok)
+		test.isequal("string", type(err))
+	end
+
+	function suite.rmdir_ReturnsError_OnFile()
+		local ok, err = os.rmdir(tmpfile())
+		test.isnil(ok)
+		test.isequal("string", type(err))
+	end
+
+	function suite.rmdir_ReturnsTrue_OnDirectory()
+		local ok, err = os.rmdir(tmpdir())
+		test.isequal(true, ok)
+		test.isnil(err)
+	end
