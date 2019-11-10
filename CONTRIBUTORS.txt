@@ -9,25 +9,7 @@ consider running:
 
 This file contains a list of people who've made non-trivial contributions
 to Premake 5.  People who commit code to the project are encouraged to
-add their names here. And many thanks to those who contributed fixes and
-improvements to earlier versions of Premake (feel free to add your name
-in here too)!
-
-Original design and implementation:
-  Jason Perkins <starkos@industriousone.com>
-
-Main Contributors
-  Blizzard Entertainment (contact tvandijck@blizzard.com)
-  Manu Evans <https://github.com/TurkeyMan>
-  Sam Surtees <s.surtees@lorgames.com>
-
-Builds and Infrastructure:
-  Mihai Sebea <http://twitter.com/mihai_sebea>
-    * Nightly binary packages
-    * Nightly Jenkins builds and error reports
-
-Patch contributors:
-  Bastien Brunnenstein <bastien.brunnenstein@ubisoft.com>
+add their names here. And many thanуцуцЦЕУцуеom>
     * support wildcards in path tokens
   Damien Courtois <https://github.com/dcourtois>
     * module loading fixes
