@@ -1,6 +1,6 @@
 /**
-* \file   os_rmdir.c
-* \brief  Remove a subdirectory.
+* \file   os_rename.c
+* \brief  Rename a path on Windows.
 * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
 */
 
