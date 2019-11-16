@@ -12,26 +12,25 @@
 
 	function suite.setup()
 		p.action.set("vs2015")
+		system "android"
 		wks, prj = test.createWorkspace()
 	end
 
 	local function prepare()
-		system "android"
-		local cfg = test.getconfig(prj, "Debug", platform)
+		local cfg = test.getconfig(prj, "Debug")
 		vc2010.clCompile(cfg)
 	end
 
-	local function preparePropertyGroup()
-		system "android"
-		local cfg = test.getconfig(prj, "Debug", platform)
-		vc2010.propertyGroup(cfg)
-		android.androidApplicationType(cfg)
+	local function prepareGlobals()
+		prj = test.getproject(wks, 1)
+		vc2010.globals(prj)
 	end
 
 	function suite.minVisualStudioVersion_14()
-		preparePropertyGroup()
+		prepareGlobals()
 		test.capture [[
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
 	<Keyword>Android</Keyword>
 	<RootNamespace>MyProject</RootNamespace>
 	<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
@@ -41,9 +40,10 @@
 
 	function suite.minVisualStudioVersion_15()
 		p.action.set("vs2017")
-		preparePropertyGroup()
+		prepareGlobals()
 		test.capture [[
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
 	<Keyword>Android</Keyword>
 	<RootNamespace>MyProject</RootNamespace>
 	<MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
@@ -53,9 +53,10 @@
 
 	function suite.minVisualStudioVersion_16()
 		p.action.set("vs2019")
-		preparePropertyGroup()
+		prepareGlobals()
 		test.capture [[
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
 	<Keyword>Android</Keyword>
 	<RootNamespace>MyProject</RootNamespace>
 	<MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
