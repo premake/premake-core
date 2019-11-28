@@ -8,6 +8,7 @@
 -- default when folks build using the makefile. That way they don't have to
 -- worry about the /scripts argument and all that.
 --
+local base = _OPTIONS["to"] or "."
 
 	solution "Premake5"
 		configurations { "Release", "Debug" }
@@ -39,12 +40,12 @@
 		}
 
 		configuration "Debug"
-			targetdir   "bin/debug"
+			targetdir   ( path.join(base, "bin/debug") )
 			defines     "_DEBUG"
 			flags       { "Symbols" }
 
 		configuration "Release"
-			targetdir   "bin/release"
+			targetdir   ( path.join(base, "bin/release") )
 			defines     "NDEBUG"
 			flags       { "OptimizeSize" }
 

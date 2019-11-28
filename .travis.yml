@@ -26,5 +26,5 @@ matrix:
 
 script:
  - make -f Bootstrap.mak $TRAVIS_OS_NAME CONFIG=${CONFIGURATION}
- - bin/${CONFIGURATION}/premake5 test
+ - build/bootstrap/bin/${CONFIGURATION}/premake5 test
 

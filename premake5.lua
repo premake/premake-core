@@ -8,7 +8,7 @@
 --
 
 	local corePath = _SCRIPT_DIR
-
+	local base = _OPTIONS["to"] or "."
 
 --
 -- Disable deprecation warnings for myself, so that older development
@@ -160,12 +160,12 @@
 		}
 
 		filter "configurations:Debug"
-			targetdir   "bin/debug"
+			targetdir   ( path.join(base, "bin/debug") )
 			debugargs   { "--scripts=%{prj.location}/%{path.getrelative(prj.location, prj.basedir)}", "test" }
 			debugdir    "."
 
 		filter "configurations:Release"
-			targetdir   "bin/release"
+			targetdir   ( path.join(base, "bin/release") )
 
 		filter "system:windows"
 			links       { "ole32", "ws2_32", "advapi32" }
@@ -229,6 +229,6 @@
 --
 
 	if _ACTION == "clean" then
-		os.rmdir("bin")
+		os.rmdir(path.join(base, "bin"))
 		os.rmdir("build")
 	end

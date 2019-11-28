@@ -16,4 +16,4 @@ build_script:
   - cmd: nmake -f Bootstrap.mak MSDEV=vs2015 windows PLATFORM=%PLATFORM% CONFIG=%CONFIGURATION%
 
 test_script:
-  - cmd: bin\%CONFIGURATION%\premake5 test
+  - cmd: build\bootstrap\bin\%CONFIGURATION%\premake5 test
