@@ -363,7 +363,10 @@
 	function msc.getwarnings(cfg)
 		local result = {}
 
-		-- NOTE: VStudio can't enable specific warnings (workaround?)
+		--we can enable specific warnings on msvc by setting them to lvl 1
+		for _, enable in ipairs(cfg.enablewarnings) do
+			table.insert(result, '/w1"' .. enable .. '"')
+		end
 		for _, disable in ipairs(cfg.disablewarnings) do
 			table.insert(result, '/wd"' .. disable .. '"')
 		end
