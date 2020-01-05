@@ -19,11 +19,6 @@
 	dotnetbase.langObj = {}
 	dotnetbase.netcore = {}
 
-	dotnetbase.targetFormats = {}
-	dotnetbase.targetFormats.framework = {}
-	dotnetbase.targetFormats.core = {}
-	dotnetbase.targetFormats.standard = {}
-
 --
 -- Generate a Visual Studio 200x dotnet project, with support for the new platforms API.
 --
@@ -745,7 +740,7 @@
 	end
 
 	function dotnetbase.isNewFormatProject(cfg)
-		local framework = cfg.dotnetframework or action.vstudio.targetFramework
+		local framework = cfg.dotnetframework
 		if not framework then
 			return false
 		end
