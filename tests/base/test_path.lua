@@ -101,7 +101,7 @@
 -- path.deferred_join() tests
 --
 	function suite.deferred_join_OnMaybeAbsolutePath()
-		test.isequal("p1|%{foo}", path.deferredjoin("p1", "%{foo}"))
+		test.isequal("p1\a%{foo}", path.deferredjoin("p1", "%{foo}"))
 	end
 
 	function suite.deferred_join_OnValidParts()
@@ -117,11 +117,27 @@
 --
 
 	function suite.has_deferred_join_true()
-		test.istrue(path.hasdeferredjoin("p1|%{foo}"))
+		test.istrue(path.hasdeferredjoin("p1\a%{foo}"))
 	end
 
 	function suite.has_deferred_join_false()
 		test.isfalse(path.hasdeferredjoin("p1/p2"))
+	end
+
+	function suite.has_deferred_join_true_OnPipe()
+		test.istrue(path.hasdeferredjoin("c1 p1\a%{foo} | c2"))
+	end
+
+	function suite.has_deferred_join_false_OnPipe()
+		test.isfalse(path.hasdeferredjoin("c1 p1/p2 | c2"))
+	end
+
+	function suite.has_deferred_join_true_OnOr()
+		test.istrue(path.hasdeferredjoin("c1 p1\a%{foo} || c2"))
+	end
+
+	function suite.has_deferred_join_false_OnOr()
+		test.isfalse(path.hasdeferredjoin("c1 p1/p2 || c2"))
 	end
 
 --
@@ -133,105 +149,120 @@
 	end
 
 	function suite.resolve_deferred_join_OnValidParts()
-		test.isequal("p1/p2", path.resolvedeferredjoin("p1|p2"))
+		test.isequal("p1/p2", path.resolvedeferredjoin("p1\ap2"))
 	end
 
 	function suite.resolve_deferred_join_OnAbsoluteWindowsPath()
-		test.isequal("C:/p2", path.resolvedeferredjoin("p1|C:/p2"))
+		test.isequal("C:/p2", path.resolvedeferredjoin("p1\aC:/p2"))
 	end
 
 	function suite.resolve_deferred_join_OnCurrentDirectory()
-		test.isequal("p2", path.resolvedeferredjoin(".|p2"))
+		test.isequal("p2", path.resolvedeferredjoin(".\ap2"))
 	end
 
 	function suite.resolve_deferred_join_OnBackToBasePath()
-		test.isequal("", path.resolvedeferredjoin("p1/p2/|../../"))
+		test.isequal("", path.resolvedeferredjoin("p1/p2/\a../../"))
 	end
 
 	function suite.resolve_deferred_join_OnBackToBasePathWithoutFinalSlash()
-		test.isequal("", path.resolvedeferredjoin("p1/p2/|../.."))
+		test.isequal("", path.resolvedeferredjoin("p1/p2/\a../.."))
 	end
 
 	function suite.resolve_deferred_join_OnBothUpTwoFolders()
-		test.isequal("../../../../foo", path.resolvedeferredjoin("../../|../../foo"))
+		test.isequal("../../../../foo", path.resolvedeferredjoin("../../\a../../foo"))
 	end
 
 	function suite.resolve_deferred_join_OnUptwoFolders()
-		test.isequal("p1/foo", path.resolvedeferredjoin("p1/p2/p3|../../foo"))
+		test.isequal("p1/foo", path.resolvedeferredjoin("p1/p2/p3\a../../foo"))
 	end
 
 	function suite.resolve_deferred_join_OnUptoBase()
-		test.isequal("foo", path.resolvedeferredjoin("p1/p2/p3|../../../foo"))
+		test.isequal("foo", path.resolvedeferredjoin("p1/p2/p3\a../../../foo"))
 	end
 
 	function suite.resolve_deferred_join_ignoreLeadingDots()
-		test.isequal("p1/p2/foo", path.resolvedeferredjoin("p1/p2|././foo"))
+		test.isequal("p1/p2/foo", path.resolvedeferredjoin("p1/p2\a././foo"))
 	end
 
 	function suite.resolve_deferred_join_OnUptoParentOfBase()
-		test.isequal("../../p1", path.resolvedeferredjoin("p1/p2/p3/p4/p5/p6/p7/|../../../../../../../../../p1"))
+		test.isequal("../../p1", path.resolvedeferredjoin("p1/p2/p3/p4/p5/p6/p7/\a../../../../../../../../../p1"))
 	end
 
 	function suite.resolve_deferred_join_onMoreThanTwoParts()
-		test.isequal("p1/p2/p3", path.resolvedeferredjoin("p1|p2|p3"))
+		test.isequal("p1/p2/p3", path.resolvedeferredjoin("p1\ap2\ap3"))
 	end
 
 	function suite.resolve_deferred_join_removesExtraInternalSlashes()
-		test.isequal("p1/p2", path.resolvedeferredjoin("p1/|p2"))
+		test.isequal("p1/p2", path.resolvedeferredjoin("p1/\ap2"))
 	end
 
 	function suite.resolve_deferred_join_removesTrailingSlash()
-		test.isequal("p1/p2", path.resolvedeferredjoin("p1|p2/"))
+		test.isequal("p1/p2", path.resolvedeferredjoin("p1\ap2/"))
 	end
 
 	function suite.resolve_deferred_join_ignoresEmptyParts()
-		test.isequal("p2", path.resolvedeferredjoin("|p2|"))
+		test.isequal("p2", path.resolvedeferredjoin("\ap2\a"))
 	end
 
 	function suite.resolve_deferred_join_canJoinBareSlash()
-		test.isequal("/Users", path.resolvedeferredjoin("/|Users"))
+		test.isequal("/Users", path.resolvedeferredjoin("/\aUsers"))
 	end
 
 	function suite.resolve_deferred_join_keepsLeadingEnvVar()
-		test.isequal("$(ProjectDir)/../../Bin", path.resolvedeferredjoin("$(ProjectDir)|../../Bin"))
+		test.isequal("$(ProjectDir)/../../Bin", path.resolvedeferredjoin("$(ProjectDir)\a../../Bin"))
 	end
 
 	function suite.resolve_deferred_join_keepsInternalEnvVar()
-		test.isequal("$(ProjectDir)/$(TargetName)/../../Bin", path.resolvedeferredjoin("$(ProjectDir)/$(TargetName)|../../Bin"))
+		test.isequal("$(ProjectDir)/$(TargetName)/../../Bin", path.resolvedeferredjoin("$(ProjectDir)/$(TargetName)\a../../Bin"))
 	end
 
 	function suite.resolve_deferred_join_keepsComplexInternalEnvVar()
-		test.isequal("$(ProjectDir)/myobj_$(Arch)/../../Bin", path.resolvedeferredjoin("$(ProjectDir)/myobj_$(Arch)|../../Bin"))
+		test.isequal("$(ProjectDir)/myobj_$(Arch)/../../Bin", path.resolvedeferredjoin("$(ProjectDir)/myobj_$(Arch)\a../../Bin"))
 	end
 
 	function suite.resolve_deferred_join_keepsRecursivePattern()
-		test.isequal("p1/**.lproj/../p2", path.resolvedeferredjoin("p1/**.lproj|../p2"))
+		test.isequal("p1/**.lproj/../p2", path.resolvedeferredjoin("p1/**.lproj\a../p2"))
 	end
 
 	function suite.resolve_deferred_join_keepsVSMacros()
-		test.isequal("p1/%(Filename).ext", path.resolvedeferredjoin("p1|%(Filename).ext"))
+		test.isequal("p1/%(Filename).ext", path.resolvedeferredjoin("p1\a%(Filename).ext"))
 	end
 
 	function suite.resolve_deferred_join_noCombineSingleDot()
-		test.isequal("p1/./../p2", path.resolvedeferredjoin("p1/.|../p2"))
+		test.isequal("p1/./../p2", path.resolvedeferredjoin("p1/.\a../p2"))
 	end
 
 	function suite.resolve_deferred_join_absolute_second_part()
-		test.isequal("$ORIGIN", path.resolvedeferredjoin("foo/bar|$ORIGIN"))
+		test.isequal("$ORIGIN", path.resolvedeferredjoin("foo/bar\a$ORIGIN"))
 	end
 
 	function suite.resolve_deferred_join_absolute_second_part1()
-		test.isequal("$(FOO)/bar", path.resolvedeferredjoin("foo/bar|$(FOO)/bar"))
+		test.isequal("$(FOO)/bar", path.resolvedeferredjoin("foo/bar\a$(FOO)/bar"))
 	end
 
 	function suite.resolve_deferred_join_absolute_second_part2()
-		test.isequal("%ROOT%/foo", path.resolvedeferredjoin("foo/bar|%ROOT%/foo"))
+		test.isequal("%ROOT%/foo", path.resolvedeferredjoin("foo/bar\a%ROOT%/foo"))
 	end
 
 	function suite.resolve_deferred_join_token_in_second_part()
-		test.isequal("foo/bar/%{test}/foo", path.resolvedeferredjoin("foo/bar|%{test}/foo"))
+		test.isequal("foo/bar/%{test}/foo", path.resolvedeferredjoin("foo/bar\a%{test}/foo"))
 	end
 
+	function suite.resolve_deferred_join_ignoresPipe()
+		test.isequal("c1 p1/p2 | c2", path.resolvedeferredjoin("c1 p1/p2 | c2"))
+	end
+
+	function suite.resolve_deferred_join_OnPipe()
+		test.isequal("c1 p1/p2 | c2", path.resolvedeferredjoin("c1 p1\ap2 | c2"))
+	end
+
+	function suite.resolve_deferred_join_ignoresOr()
+		test.isequal("c1 p1/p2 || c2", path.resolvedeferredjoin("c1 p1/p2 || c2"))
+	end
+
+	function suite.resolve_deferred_join_OnOr()
+		test.isequal("c1 p1/p2 || c2", path.resolvedeferredjoin("c1 p1\ap2 || c2"))
+	end
 
 --
 -- path.getbasename() tests
