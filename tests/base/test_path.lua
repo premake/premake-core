@@ -124,6 +124,22 @@
 		test.isfalse(path.hasdeferredjoin("p1/p2"))
 	end
 
+	function suite.has_deferred_join_true_OnPipe()
+		test.istrue(path.hasdeferredjoin("c1 p1|%{foo} | c2"))
+	end
+
+	function suite.has_deferred_join_false_OnPipe()
+		test.isfalse(path.hasdeferredjoin("c1 p1/p2 | c2"))
+	end
+
+	function suite.has_deferred_join_true_OnOr()
+		test.istrue(path.hasdeferredjoin("c1 p1|%{foo} || c2"))
+	end
+
+	function suite.has_deferred_join_false_OnOr()
+		test.isfalse(path.hasdeferredjoin("c1 p1/p2 || c2"))
+	end
+
 --
 -- path.resolvedeferredjoin() tests
 --
@@ -232,6 +248,21 @@
 		test.isequal("foo/bar/%{test}/foo", path.resolvedeferredjoin("foo/bar|%{test}/foo"))
 	end
 
+	function suite.resolve_deferred_join_ignoresPipe()
+		test.isequal("c1 p1/p2 | c2", path.resolvedeferredjoin("c1 p1/p2 | c2"))
+	end
+
+	function suite.resolve_deferred_join_OnPipe()
+		test.isequal("c1 p1/p2 | c2", path.resolvedeferredjoin("c1 p1|p2 | c2"))
+	end
+
+	function suite.resolve_deferred_join_ignoresOr()
+		test.isequal("c1 p1/p2 || c2", path.resolvedeferredjoin("c1 p1/p2 || c2"))
+	end
+
+	function suite.resolve_deferred_join_OnOr()
+		test.isequal("c1 p1/p2 || c2", path.resolvedeferredjoin("c1 p1|p2 || c2"))
+	end
 
 --
 -- path.getbasename() tests
