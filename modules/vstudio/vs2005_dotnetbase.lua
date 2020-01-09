@@ -17,7 +17,7 @@
 
 	dotnetbase.elements = {}
 	dotnetbase.langObj = {}
-
+	dotnetbase.netcore = {}
 
 --
 -- Generate a Visual Studio 200x dotnet project, with support for the new platforms API.
@@ -55,12 +55,20 @@
 --
 
 	function dotnetbase.projectElement(prj)
-		local ver = ''
-		local action = p.action.current()
-		if action.vstudio.toolsVersion then
-			ver = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
+		if dotnetbase.isNewFormatProject(prj) then
+			if prj.flags.WPF then
+				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
+			else				
+				_p('<Project Sdk="Microsoft.NET.Sdk">')
+			end
+		else
+			local ver = ''
+			local action = p.action.current()
+			if action.vstudio.toolsVersion then
+				ver = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
+			end
+			_p('<Project%s DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', ver)
 		end
-		_p('<Project%s DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', ver)
 	end
 
 
@@ -291,7 +299,7 @@
 		-- Want to set BaseIntermediateOutputPath because otherwise VS will create obj/
 		-- anyway. But VS2008 throws up ominous warning if present.
 		local objdir = vstudio.path(cfg, cfg.objdir)
-		if _ACTION > "vs2008" then
+		if _ACTION > "vs2008" and not dotnetbase.isNewFormatProject(cfg) then
 			_x(2,'<BaseIntermediateOutputPath>%s\\</BaseIntermediateOutputPath>', objdir)
 			_p(2,'<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>')
 		else
@@ -476,10 +484,16 @@
 -- Write the list of project dependencies.
 --
 	function dotnetbase.projectReferences(prj)
-		_p(1,'<ItemGroup>')
+		if not dotnetbase.isNewFormatProject(prj) then
+			_p(1,'<ItemGroup>')
+		end
 
 		local deps = project.getdependencies(prj, 'linkOnly')
 		if #deps > 0 then
+			if dotnetbase.isNewFormatProject(prj) then
+				_p(1,'<ItemGroup>')
+			end
+
 			for _, dep in ipairs(deps) do
 				local relpath = vstudio.path(prj, vstudio.projectfile(dep))
 				_x(2,'<ProjectReference Include="%s">', relpath)
@@ -492,9 +506,15 @@
 
 				_p(2,'</ProjectReference>')
 			end
+
+			if dotnetbase.isNewFormatProject(prj) then
+				_p(1,'</ItemGroup>')
+			end
 		end
 
-		_p(1,'</ItemGroup>')
+		if not dotnetbase.isNewFormatProject(prj) then
+			_p(1,'</ItemGroup>')
+		end
 	end
 
 --
@@ -608,7 +628,9 @@
 
 
 	function dotnetbase.assemblyName(cfg)
-		_p(2,'<AssemblyName>%s</AssemblyName>', cfg.buildtarget.basename)
+		if not dotnetbase.isNewFormatProject(cfg) --[[or cfg.assemblyname]] then
+			_p(2,'<AssemblyName>%s</AssemblyName>', cfg.buildtarget.basename)
+		end
 	end
 
 
@@ -625,14 +647,14 @@
 
 
 	function dotnetbase.fileAlignment(cfg)
-		if _ACTION >= "vs2010" then
+		if _ACTION >= "vs2010" and not dotnetbase.isNewFormatProject(cfg) then
 			_p(2,'<FileAlignment>512</FileAlignment>')
 		end
 	end
 
 
 	function dotnetbase.bindingRedirects(cfg)
-		if _ACTION >= "vs2015" then
+		if _ACTION >= "vs2015" and not dotnetbase.isNewFormatProject(cfg) then
 			_p(2, '<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>')
 		end
 	end
@@ -668,7 +690,9 @@
 
 
 	function dotnetbase.rootNamespace(cfg)
-		_p(2,'<RootNamespace>%s</RootNamespace>', cfg.namespace or cfg.buildtarget.basename)
+		if not dotnetbase.isNewFormatProject(cfg) or cfg.namespace then
+			_p(2,'<RootNamespace>%s</RootNamespace>', cfg.namespace or cfg.buildtarget.basename)
+		end
 	end
 
 
@@ -690,7 +714,7 @@
 	function dotnetbase.targetFrameworkVersion(cfg)
 		local action = p.action.current()
 		local framework = cfg.dotnetframework or action.vstudio.targetFramework
-		if framework then
+		if framework and not dotnetbase.isNewFormatProject(cfg) then
 			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 		end
 	end
@@ -715,3 +739,37 @@
 		end
 	end
 
+	function dotnetbase.isNewFormatProject(cfg)
+		local framework = cfg.dotnetframework
+		if not framework then
+			return false
+		end
+
+		if framework:find('^netcoreapp') ~= nil then
+			return true
+		end
+		
+		if framework:find('^netstandard') ~= nil then
+			return true
+		end
+
+		return false
+	end
+
+	function dotnetbase.netcore.targetFramework(cfg)
+		local action = p.action.current()
+		local framework = cfg.dotnetframework or action.vstudio.targetFramework
+		if framework and dotnetbase.isNewFormatProject(cfg) then
+			_p(2,'<TargetFramework>%s</TargetFramework>', framework)
+		end
+	end
+
+	function dotnetbase.netcore.enableDefaultCompileItems(cfg)
+		_p(2,'<EnableDefaultCompileItems>%s</EnableDefaultCompileItems>', iif(cfg.enableDefaultCompileItems, "true", "false"))
+	end
+
+	function dotnetbase.netcore.useWpf(cfg)
+		if cfg.flags.WPF then
+			_p(2,'<UseWpf>true</UseWpf>')
+		end
+	end

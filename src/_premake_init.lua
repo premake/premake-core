@@ -594,6 +594,13 @@
 	}
 
 	api.register {
+		name = "enabledefaultcompileitems",
+		scope = "config",
+		kind = "boolean",
+		default = false
+	}
+
+	api.register {
 		name = "csversion",
 		scope = "config",
 		kind = "string",

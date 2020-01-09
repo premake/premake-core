@@ -14,6 +14,7 @@ return {
 	"cs2005/test_debug_props.lua",
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
+	"cs2005/test_netcore.lua",
 	"cs2005/test_nuget_config.lua",
 	"cs2005/test_nuget_packages_config.lua",
 	"cs2005/test_nuget_references.lua",
