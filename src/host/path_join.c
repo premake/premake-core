@@ -137,20 +137,9 @@ int path_deferred_join(lua_State* L)
 }
 
 
-static char *find_next_deferred_join_delimiter(const char *buffer, int offset)
-{
-	char *ptr = strchr(buffer + offset, DEFERRED_JOIN_DELIMITER);
-	while (ptr != NULL && (*(ptr + 1) == ' ' || (ptr != buffer && *(ptr - 1) == ' ')))
-	{
-		ptr = strchr(ptr + 1, DEFERRED_JOIN_DELIMITER);
-	}
-	return ptr;
-}
-
-
 int do_path_has_deferred_join(const char* path)
 {
-	return (find_next_deferred_join_delimiter(path, 0) != NULL);
+	return (strchr(path, DEFERRED_JOIN_DELIMITER) != NULL);
 }
 
 
@@ -176,7 +165,7 @@ int path_resolve_deferred_join(lua_State* L)
 	inBuffer[len] = '\0';
 	char *parts[0x200];
 	// break up the string into parts and index the start of each part
-	nextPart = find_next_deferred_join_delimiter(inBuffer, 0);
+	nextPart = strchr(inBuffer, DEFERRED_JOIN_DELIMITER);
 	if (nextPart == NULL) // nothing to do
 	{
 		lua_pushlstring(L, inBuffer, len);
@@ -188,7 +177,7 @@ int path_resolve_deferred_join(lua_State* L)
 		*nextPart = '\0';
 		nextPart++;
 		parts[numParts++] = nextPart;
-		nextPart = find_next_deferred_join_delimiter(inBuffer, nextPart - inBuffer);
+		nextPart = strchr(nextPart, DEFERRED_JOIN_DELIMITER);
 	}
 
 	/* for each part... */
