@@ -8,7 +8,7 @@
 #include <string.h>
 #include "path_isabsolute.h"
 
-#define DEFERRED_JOIN_DELIMITER '|'
+#define DEFERRED_JOIN_DELIMITER '\a'
 
 char* path_join_single(char* buffer, char* ptr, const char* part, int allowDeferredJoin)
 {
