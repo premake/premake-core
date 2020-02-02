@@ -505,6 +505,24 @@
 
 
 --
+-- Test that sibling and external links are grouped when required
+--
+
+	function suite.linkgroups_onSiblingAndExternalLibrary()
+		links { "MyProject2", "ExternalProj" }
+		linkgroups "On"
+
+		test.createproject(wks)
+		system "Linux"
+		kind "StaticLib"
+		targetdir "lib"
+
+		prepare()
+		test.isequal({ "-Wl,--start-group", "lib/libMyProject2.a", "-lExternalProj", "-Wl,--end-group" }, gcc.getlinks(cfg))
+	end
+
+
+--
 -- When linking object files, leave off the "-l".
 --
 
