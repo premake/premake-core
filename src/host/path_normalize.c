@@ -181,8 +181,7 @@ int path_normalize(lua_State* L)
 
 		// path is surrounded with quotes
 		if (readPtr != endPtr &&
-			IS_QUOTE(*readPtr) && IS_QUOTE(endPtr[-1]) &&
-			*readPtr == endPtr[-1])
+			IS_QUOTE(*readPtr))
 		{
 			*(writePtr++) = *(readPtr++);
 		}
