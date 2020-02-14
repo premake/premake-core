@@ -1099,7 +1099,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nls src\ncp \"a\" \"b\"";
+			shellScript = "set -e\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\nls src\ncp \"a\" \"b\"\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\nls src\ncp \"a\" \"b\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 		]]
@@ -1158,7 +1158,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nls src\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\ncp a b\nfi";
+			shellScript = "set -e\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\nls src\ncp a b\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\nls src\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 		]]
