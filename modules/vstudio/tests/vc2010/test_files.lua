@@ -278,6 +278,19 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
+	<ResourceCompile Include="hello.rc">
+		<ExcludedFromBuild>true</ExcludedFromBuild>
+	</ResourceCompile>
+</ItemGroup>
+		]]
+	end
+
+	function suite.includedFromBuild_onResourceFile_nonWindows()
+		files { "hello.rc" }
+		system "Linux"
+		prepare()
+		test.capture [[
+<ItemGroup>
 	<ResourceCompile Include="hello.rc" />
 </ItemGroup>
 		]]

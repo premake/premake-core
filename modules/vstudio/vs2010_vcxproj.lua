@@ -865,9 +865,7 @@
 				m.excludedFromBuild
 			}
 
-			m.emitFiles(prj, group, "ResourceCompile", nil, fileCfgFunc, function(cfg)
-				return cfg.system == p.WINDOWS
-			end)
+			m.emitFiles(prj, group, "ResourceCompile", nil, fileCfgFunc)
 		end,
 
 		emitFilter = function(prj, group)
