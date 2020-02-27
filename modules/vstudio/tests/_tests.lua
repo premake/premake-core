@@ -55,6 +55,7 @@ return {
 	"vc2010/test_assembly_refs.lua",
 	"vc2010/test_build_events.lua",
 	"vc2010/test_build_log.lua",
+	"vc2010/test_build_steps.lua",
 	"vc2010/test_character_set.lua",
 	"vc2010/test_compile_settings.lua",
 	"vc2010/test_config_props.lua",
