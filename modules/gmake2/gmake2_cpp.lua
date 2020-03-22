@@ -250,6 +250,11 @@
 		table.insert(fileset, filename)
 		cfg._gmake.filesets[kind] = fileset
 
+		local generatedKind = "GENERATED"
+		local generatedFileset = cfg._gmake.filesets[generatedKind] or {}
+		table.insert(generatedFileset, filename)
+		cfg._gmake.filesets[generatedKind] = generatedFileset
+
 		-- recursively setup rules.
 		cpp.addRuleFile(cfg, node)
 	end
@@ -715,9 +720,11 @@
 		_p('\t@echo Cleaning %s', cfg.project.name)
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) rm -f  $(TARGET)')
+		_p('\t$(SILENT) rm -rf $(GENERATED)')
 		_p('\t$(SILENT) rm -rf $(OBJDIR)')
 		_p('else')
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGET)) del $(subst /,\\\\,$(TARGET))')
+		_p('\t$(SILENT) if exist $(subst /,\\\\,$(GENERATED)) rmdir /s /q $(subst /,\\\\,$(GENERATED))')
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
 		_p('endif')
 		_p('')
