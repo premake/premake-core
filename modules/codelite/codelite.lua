@@ -21,7 +21,7 @@
 	function codelite.cfgname(cfg)
 		local cfgname = cfg.buildcfg
 		if codelite.workspace.multiplePlatforms then
-			cfgname = string.format("%s|%s", cfg.platform, cfg.buildcfg)
+			cfgname = string.format("%s-%s", cfg.platform, cfg.buildcfg)
 		end
 		return cfgname
 	end
