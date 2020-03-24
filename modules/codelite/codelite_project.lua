@@ -385,12 +385,16 @@
 		_p(3, '</AdditionalRules>')
 	end
 
-	function m.isCpp11(cfg)
-		return (cfg.cppdialect == 'gnu++11') or (cfg.cppdialect == 'C++11') or (cfg.cppdialect == 'gnu++0x') or (cfg.cppdialect == 'C++0x')
+	function m.isCpp17(cfg)
+		return (cfg.cppdialect == 'gnu++17') or (cfg.cppdialect == 'C++17') or (cfg.cppdialect == 'gnu++1z') or (cfg.cppdialect == 'C++1z')
 	end
 
 	function m.isCpp14(cfg)
-		return (cfg.cppdialect == 'gnu++14') or (cfg.cppdialect == 'C++14') or (cfg.cppdialect == 'gnu++1y') or (cfg.cppdialect == 'C++1y')
+		return m.isCpp17(cfg) or (cfg.cppdialect == 'gnu++14') or (cfg.cppdialect == 'C++14') or (cfg.cppdialect == 'gnu++1y') or (cfg.cppdialect == 'C++1y')
+	end
+
+	function m.isCpp11(cfg)
+		return m.isCpp14(cfg) or (cfg.cppdialect == 'gnu++11') or (cfg.cppdialect == 'C++11') or (cfg.cppdialect == 'gnu++0x') or (cfg.cppdialect == 'C++0x')
 	end
 
 	function m.completion(cfg)
