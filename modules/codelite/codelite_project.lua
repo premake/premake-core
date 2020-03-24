@@ -117,10 +117,16 @@
 		tree.traverse(tr, {
 			-- folders are handled at the internal nodes
 			onbranchenter = function(node, depth)
-				_p(depth, '<VirtualDirectory Name="%s">', node.name)
+				if(depth > 0)
+				then
+					_p(depth, '<VirtualDirectory Name="%s">', node.name)
+				end
 			end,
 			onbranchexit = function(node, depth)
-				_p(depth, '</VirtualDirectory>')
+				if(depth > 0)
+				then
+					_p(depth, '</VirtualDirectory>')
+				end
 			end,
 			-- source files are handled at the leaves
 			onleaf = function(node, depth)
