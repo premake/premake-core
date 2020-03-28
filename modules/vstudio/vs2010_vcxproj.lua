@@ -413,11 +413,11 @@
 
 	function m.buildStep(cfg)
 		if #cfg.buildCommands > 0 or #cfg.buildOutputs > 0 or #cfg.buildInputs > 0 or cfg.buildMessage then
-	
+
 			p.push('<CustomBuildStep>')
 			p.callArray(m.elements.buildStep, cfg)
 			p.pop('</CustomBuildStep>')
-		
+
 		end
 	end
 
@@ -779,7 +779,7 @@
 ---
 	m.categories.ClCompile = {
 		name       = "ClCompile",
-		extensions = { ".cc", ".cpp", ".cxx", ".c", ".s", ".m", ".mm" },
+		extensions = { ".cc", ".cpp", ".cxx", ".c++", ".c", ".s", ".m", ".mm" },
 		priority   = 2,
 
 		emitFiles = function(prj, group)
