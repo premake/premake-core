@@ -172,9 +172,10 @@
 			targetdir   "bin/release"
 
 		filter "system:windows"
-			links       { "ole32", "ws2_32", "advapi32" }
+			links       { "ole32", "ws2_32", "advapi32", "version" }
+
 		filter "toolset:mingw"
-			links		{ "version", "crypt32" }
+			links		{ "crypt32" }
 
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
