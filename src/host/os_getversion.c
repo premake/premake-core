@@ -55,6 +55,8 @@ int os_getversion(lua_State* L)
 
 #if defined(PLATFORM_WINDOWS)
 
+#pragma comment(lib, "version.lib")
+
 int getKernelVersion(struct OsVersionInfo* info)
 {
 	DWORD size = GetFileVersionInfoSizeA("kernel32.dll", NULL);
