@@ -191,3 +191,34 @@
 </CodeLite_Workspace>
     ]])
   end
+
+---
+-- Test handling of platforms
+---
+
+	function suite.onPlatforms()
+		workspace "MyWorkspace"
+		platforms { "x86_64", "x86" }
+
+		prepare()
+		test.capture [[
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+  <Project Name="MyProject" Path="MyProject.project"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="x86_64-Debug" Selected="yes">
+      <Project Name="MyProject" ConfigName="x86_64-Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="x86-Debug" Selected="yes">
+      <Project Name="MyProject" ConfigName="x86-Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="x86_64-Release" Selected="yes">
+      <Project Name="MyProject" ConfigName="x86_64-Release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="x86-Release" Selected="yes">
+      <Project Name="MyProject" ConfigName="x86-Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
+		]]
+	end
