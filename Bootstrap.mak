@@ -45,20 +45,20 @@ none:
 	@echo "Please do"
 	@echo "   nmake -f Bootstrap.mak windows"
 	@echo "or"
-	@echo "   CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw"
+	@echo "   CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw CONFIG=x64"
 	@echo "or"
 	@echo "   make -f Bootstrap.mak HOST_PLATFORM"
 	@echo "where HOST_PLATFORM is one of these:"
 	@echo "   osx linux bsd"
 
 mingw: $(SRC)
-	$(SILENT) rm -rf ./bin
-	$(SILENT) rm -rf ./build
-	$(SILENT) rm -rf ./obj
-	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lole32
+	$(SILENT) if exist .\bin rmdir /s /q .\bin
+	$(SILENT) if exist .\build rmdir /s /q .\build
+	$(SILENT) if exist .\obj rmdir /s /q .\obj
+	if not exist build\bootstrap (mkdir build\bootstrap)
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lole32 -lversion
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap gmake2
+	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap --cc=mingw gmake2
 	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
 
 macosx: osx

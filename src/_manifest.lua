@@ -63,6 +63,7 @@
 		"tools/msc.lua",
 		"tools/snc.lua",
 		"tools/clang.lua",
+		"tools/mingw.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",

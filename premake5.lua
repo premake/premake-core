@@ -126,7 +126,11 @@
 			defines     { "_CRT_SECURE_NO_DEPRECATE", "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 		filter { "system:windows", "configurations:Release" }
-			flags       { "NoIncrementalLink", "LinkTimeOptimization" }
+			flags       { "NoIncrementalLink" }
+
+		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
+		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
+			flags		{ "LinkTimeOptimization" }
 
 	project "Premake5"
 		targetname  "premake5"
@@ -168,7 +172,10 @@
 			targetdir   "bin/release"
 
 		filter "system:windows"
-			links       { "ole32", "ws2_32", "advapi32" }
+			links       { "ole32", "ws2_32", "advapi32", "version" }
+
+		filter "toolset:mingw"
+			links		{ "crypt32" }
 
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
