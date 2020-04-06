@@ -164,9 +164,9 @@
 	function cpp.compileas(prj, node)
 		local result
 		if node["compileas"] then
-			if p.languages.isc(node.compileas) then
+			if p.languages.isc(node.compileas) or node.compileas == p.OBJECTIVEC then
 				result = '$(CC) $(ALL_CFLAGS)'
-			elseif p.languages.iscpp(node.compileas) then
+			elseif p.languages.iscpp(node.compileas) or node.compileas == p.OBJECTIVECPP then
 				result = '$(CXX) $(ALL_CXXFLAGS)'
 			end
 		end

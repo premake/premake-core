@@ -90,3 +90,21 @@ PERFILE_FLAGS_2 = $(ALL_CFLAGS) -msse -msse2 -mfpmath=sse,387 -msse3 -mssse3 -ms
 PERFILE_FLAGS_0 = $(ALL_CXXFLAGS) -fvisibility=protected
 		]]
 	end
+
+	function suite.perfile_compileas()
+		files { 'a.c', 'b.cpp' }
+
+		filter { 'files:a.c' }
+			compileas "Objective-C"
+		filter { 'files:b.cpp' }
+			compileas "Objective-C++"
+
+		prepare()
+		test.capture [[
+# Per File Configurations
+# #############################################
+
+PERFILE_FLAGS_0 = $(ALL_CFLAGS) -x objective-c
+PERFILE_FLAGS_1 = $(ALL_CXXFLAGS) -x objective-c++
+		]]
+	end

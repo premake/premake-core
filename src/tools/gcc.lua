@@ -121,6 +121,10 @@
 		omitframepointer = {
 			On = "-fomit-frame-pointer",
 			Off = "-fno-omit-frame-pointer"
+		},
+		compileas = {
+			["Objective-C"] = "-x objective-c",
+			["Objective-C++"] = "-x objective-c++",
 		}
 	}
 
