@@ -235,7 +235,7 @@
 		disablewarnings { "disable" }
 		fatalwarnings { "fatal" }
 		prepare()
-		test.contains({ '/wd"disable"', '/we"fatal"' }, msc.getcflags(cfg))
+		test.contains({ '/w1"enable"', '/wd"disable"', '/we"fatal"' }, msc.getcflags(cfg))
 	end
 
 	function suite.ldflags_OnFatalWarnings()
