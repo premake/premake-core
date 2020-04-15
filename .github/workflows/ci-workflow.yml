@@ -1,0 +1,40 @@
+name: CI Workflow
+
+on: [push, pull_request]
+
+jobs:
+  linux-and-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        config: [debug, release]
+        include:
+          - os: ubuntu-latest
+            osname: linux
+          - os: macos-latest
+            osname: osx
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build
+      run: make -f Bootstrap.mak ${{ matrix.osname }} CONFIG=${{ matrix.config }}
+    - name: Test
+      run: bin/${{ matrix.config }}/premake5 test
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [Win32, x64]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+        nmake -f Bootstrap.mak MSDEV=vs2019 windows-msbuild PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      shell: cmd
+    - name: Test
+      run: bin\${{ matrix.config }}\premake5 test
+      shell: cmd
