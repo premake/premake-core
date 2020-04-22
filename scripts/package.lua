@@ -140,7 +140,7 @@
 -- Bootstrap Premake in the newly cloned repository
 --
 
-	print("Bootstraping Premake...")
+	print("Bootstrapping Premake...")
 	if compilerIsVS then
 		z = os.execute("Bootstrap.bat " .. compiler)
 	else
@@ -184,6 +184,7 @@ if kind == "source" then
 		"clean",
 		"embed",
 		"package",
+		"self-test",
 		"test",
 		"gmake", -- deprecated
 	}
@@ -247,8 +248,7 @@ end
 
 --
 -- Create a binary package for this platform. This step requires a working
--- GNU/Make/GCC environment. I use MinGW on Windows as it produces the
--- smallest binaries.
+-- GNU/Make/GCC environment.
 --
 
 if kind == "binary" then
