@@ -126,6 +126,7 @@
 
 	m.elements.globals = function(prj)
 		return {
+			m.xpDeprecationWarning,
 			m.projectGuid,
 			m.ignoreWarnDuplicateFilename,
 			m.keyword,
@@ -2410,6 +2411,12 @@
 			m.element("ProgramDataBaseFileName", nil, value)
 		end
 	end
+
+
+	function m.xpDeprecationWarning(prj)
+		m.element("XPDeprecationWarning", nil, "false")
+	end
+
 
 	function m.projectGuid(prj)
 		m.element("ProjectGuid", nil, "{%s}", prj.uuid)
