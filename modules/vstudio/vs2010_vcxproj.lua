@@ -126,7 +126,6 @@
 
 	m.elements.globals = function(prj)
 		return {
-			m.xpDeprecationWarning,
 			m.projectGuid,
 			m.ignoreWarnDuplicateFilename,
 			m.keyword,
@@ -140,6 +139,7 @@
 	m.elements.globalsCondition = function(prj, cfg)
 		return {
 			m.windowsTargetPlatformVersion,
+			m.xpDeprecationWarning,
 		}
 	end
 
@@ -2413,11 +2413,6 @@
 	end
 
 
-	function m.xpDeprecationWarning(prj)
-		m.element("XPDeprecationWarning", nil, "false")
-	end
-
-
 	function m.projectGuid(prj)
 		m.element("ProjectGuid", nil, "{%s}", prj.uuid)
 	end
@@ -2625,6 +2620,13 @@
 
 		if version then
 			m.element("WindowsTargetPlatformVersion", nil, version)
+		end
+	end
+
+
+	function m.xpDeprecationWarning(prj, cfg)
+		if cfg.toolset == "msc-v141_xp" then
+			m.element("XPDeprecationWarning", nil, "false")
 		end
 	end
 
