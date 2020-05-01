@@ -139,6 +139,7 @@
 	m.elements.globalsCondition = function(prj, cfg)
 		return {
 			m.windowsTargetPlatformVersion,
+			m.xpDeprecationWarning,
 		}
 	end
 
@@ -2411,6 +2412,7 @@
 		end
 	end
 
+
 	function m.projectGuid(prj)
 		m.element("ProjectGuid", nil, "{%s}", prj.uuid)
 	end
@@ -2618,6 +2620,13 @@
 
 		if version then
 			m.element("WindowsTargetPlatformVersion", nil, version)
+		end
+	end
+
+
+	function m.xpDeprecationWarning(prj, cfg)
+		if cfg.toolset == "msc-v141_xp" then
+			m.element("XPDeprecationWarning", nil, "false")
 		end
 	end
 

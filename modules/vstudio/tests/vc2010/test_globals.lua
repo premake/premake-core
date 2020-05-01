@@ -290,6 +290,42 @@ end
 	end
 
 
+	function suite.canSetXPDeprecationWarningToFalse_withV141XP()
+		toolset "v141_xp"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<XPDeprecationWarning>false</XPDeprecationWarning>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<XPDeprecationWarning>false</XPDeprecationWarning>
+</PropertyGroup>
+		]]
+	end
+
+
+	function suite.canSetXPDeprecationWarningToFalse_perConfig_withV141XP()
+		filter "Release"
+			toolset "v141_xp"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<XPDeprecationWarning>false</XPDeprecationWarning>
+</PropertyGroup>
+		]]
+	end
+
+
 	function suite.windowsTargetPlatformVersion_latest_on2019()
 		p.action.set("vs2019")
 		systemversion "latest"
