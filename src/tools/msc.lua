@@ -80,7 +80,7 @@
 			["SSE4.1"] = "/arch:SSE2",
 		},
 		warnings = {
-			Extra = "/W4",
+			Extra = "/Wall",
 			High = "/W4",
 			Off = "/W0",
 		},
