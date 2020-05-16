@@ -156,7 +156,7 @@
 
 			if #contents > 0 or external then
 				_p(2,'<%s%s Include="%s">', info.action, condition, fname)
-				if external then
+				if external and info.action ~= "EmbeddedResource" then
 					_p(3,'<Link>%s</Link>', path.translate(link))
 				end
 				if #contents > 0 then
