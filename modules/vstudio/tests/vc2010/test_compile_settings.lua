@@ -76,6 +76,18 @@
 		]]
 	end
 
+--
+-- Ensure that high warnings lead to the level 4 debug option
+--
+	function suite.warningLevel_onHighWarnings()
+		warnings "High"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level4</WarningLevel>
+		]]
+	end
 
 --
 -- If extra warnings is specified, pump up the volume.
@@ -87,7 +99,7 @@
 		test.capture [[
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level4</WarningLevel>
+	<WarningLevel>EnableAllWarnings</WarningLevel>
 		]]
 	end
 
