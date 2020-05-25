@@ -40,7 +40,7 @@ SRC		= src/host/*.c			\
 
 HOST_PLATFORM= none
 
-.PHONY: default none nix-clean windows-clean \
+.PHONY: default none clean nix-clean windows-clean \
 	mingw-clean mingw macosx macosx-clean osx-clean osx \
 	linux-clean linux bsd-clean bsd solaris-clean solaris \ 
 	haiku-clean haiku windows-base windows windows-msbuild
@@ -54,6 +54,20 @@ none:
 	@echo "   CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw CONFIG=x64"
 	@echo "or"
 	@echo "   make -f Bootstrap.mak HOST_PLATFORM"
+	@echo "where HOST_PLATFORM is one of these:"
+	@echo "   osx linux bsd"
+	@echo ""
+	@echo "To clean the source tree, run the same command by adding a '-clean' suffix to the target name."
+		@echo "Example"
+	@echo "   make -f Bootstrap.mak HOST_PLATFORM-clean"
+
+clean:
+	@echo "Please run the same command used for building by adding a '-clean' suffix to the target name."
+	@echo "   nmake -f Bootstrap.mak windows-clean"
+	@echo "or"
+	@echo "   CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw-clean CONFIG=x64"
+	@echo "or"
+	@echo "   make -f Bootstrap.mak HOST_PLATFORM-clean"
 	@echo "where HOST_PLATFORM is one of these:"
 	@echo "   osx linux bsd"
 
