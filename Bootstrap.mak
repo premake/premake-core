@@ -39,6 +39,12 @@ SRC		= src/host/*.c			\
 		$(LUA_DIR)/lzio.c		\
 
 HOST_PLATFORM= none
+
+.PHONY: default none clean nix-clean windows-clean \
+	mingw-clean mingw macosx macosx-clean osx-clean osx \
+	linux-clean linux bsd-clean bsd solaris-clean solaris \ 
+	haiku-clean haiku windows-base windows windows-msbuild
+
 default: $(HOST_PLATFORM)
 
 none:
@@ -50,75 +56,92 @@ none:
 	@echo "   make -f Bootstrap.mak HOST_PLATFORM"
 	@echo "where HOST_PLATFORM is one of these:"
 	@echo "   osx linux bsd"
+	@echo ""
+	@echo "To clean the source tree, run the same command by adding a '-clean' suffix to the target name."
+		@echo "Example"
+	@echo "   make -f Bootstrap.mak HOST_PLATFORM-clean"
 
-mingw: $(SRC)
+clean:
+	@echo "Please run the same command used for building by adding a '-clean' suffix to the target name."
+	@echo "   nmake -f Bootstrap.mak windows-clean"
+	@echo "or"
+	@echo "   CC=mingw32-gcc mingw32-make -f Bootstrap.mak mingw-clean CONFIG=x64"
+	@echo "or"
+	@echo "   make -f Bootstrap.mak HOST_PLATFORM-clean"
+	@echo "where HOST_PLATFORM is one of these:"
+	@echo "   osx linux bsd"
+
+nix-clean:
+	$(SILENT) rm -rf ./bin
+	$(SILENT) rm -rf ./build
+	$(SILENT) rm -rf ./obj
+
+windows-clean:
 	$(SILENT) if exist .\bin rmdir /s /q .\bin
 	$(SILENT) if exist .\build rmdir /s /q .\build
 	$(SILENT) if exist .\obj rmdir /s /q .\obj
+	
+mingw-clean: windows-clean
+	
+mingw: mingw-clean
 	if not exist build\bootstrap (mkdir build\bootstrap)
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lole32 -lversion
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lole32 -lversion
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap --cc=mingw gmake2
 	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
 
 macosx: osx
 
-osx: $(SRC)
-	$(SILENT) rm -rf ./bin
-	$(SILENT) rm -rf ./build
-	$(SILENT) rm -rf ./obj
+macosx-clean: osx-clean
+
+osx-clean: nix-clean
+
+osx: osx-clean
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" -framework CoreServices -framework Foundation -framework Security -lreadline $?
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" -framework CoreServices -framework Foundation -framework Security -lreadline $(SRC)
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
-linux: $(SRC)
-	$(SILENT) rm -rf ./bin
-	$(SILENT) rm -rf ./build
-	$(SILENT) rm -rf ./obj
+linux-clean: nix-clean
+
+linux: linux-clean
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm -ldl -lrt
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lm -ldl -lrt
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
-bsd: $(SRC)
-	$(SILENT) rm -rf ./bin
-	$(SILENT) rm -rf ./build
-	$(SILENT) rm -rf ./obj
+bsd-clean: nix-clean
+
+bsd: bsd-clean
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lm
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf NPROCESSORS_ONLN` config=$(CONFIG)
 
-solaris: $(SRC)
-	$(SILENT) rm -rf ./bin
-	$(SILENT) rm -rf ./build
-	$(SILENT) rm -rf ./obj
+solaris-clean: nix-clean
+
+solaris: solaris-clean
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lm
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lm
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf NPROCESSORS_ONLN` config=$(CONFIG)
 
-haiku: $(SRC)
-	$(SILENT) rm -rf ./bin
-	$(SILENT) rm -rf ./build
-	$(SILENT) rm -rf ./obj
+haiku-clean: nix-clean
+
+haiku: haiku-clean
 	mkdir -p build/bootstrap
-	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -D_BSD_SOURCE -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $? -lbsd
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -D_BSD_SOURCE -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lbsd
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
-windows-base: $(SRC)
-	$(SILENT) if exist .\bin rmdir /s /q .\bin
-	$(SILENT) if exist .\build rmdir /s /q .\build
-	$(SILENT) if exist .\obj rmdir /s /q .\obj
+windows-base: windows-clean
 	if not exist build\bootstrap (mkdir build\bootstrap)
-	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" /I"$(LUASHIM_DIR)" user32.lib ole32.lib advapi32.lib $**
+	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" /I"$(LUASHIM_DIR)" user32.lib ole32.lib advapi32.lib $(SRC)
 	.\build\bootstrap\premake_bootstrap.exe embed
 	.\build\bootstrap\premake_bootstrap --to=build/bootstrap $(MSDEV)
 
