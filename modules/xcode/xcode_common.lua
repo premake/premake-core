@@ -1271,10 +1271,12 @@
 		["C++11"] = "c++11",
 		["C++14"] = "c++14",
 		["C++17"] = "c++1z",
+		["C++20"] = "c++2a",
 		["gnu++98"] = "gnu++98",
 		["gnu++11"] = "gnu++0x",  -- Xcode project GUI uses gnu++0x, but gnu++11 also works
 		["gnu++14"] = "gnu++14",
-		["gnu++17"] = "gnu++1z"
+		["gnu++17"] = "gnu++1z",
+		["gnu++20"] = "gnu++2a",
 	}
 
 	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)

@@ -263,6 +263,8 @@
 			["C++14"] = "-extern-std=c++14",
 			["C++1z"] = "-extern-std=c++17",
 			["C++17"] = "-extern-std=c++17",
+			["C++2a"] = "-extern-std=c++20",
+			["C++20"] = "-extern-std=c++20",
 			["gnu++98"] = "-extern-std=c++98",
 			["gnu++0x"] = "-extern-std=c++11",
 			["gnu++11"] = "-extern-std=c++11",
@@ -270,6 +272,7 @@
 			["gnu++14"] = "-extern-std=c++14",
 			["gnu++1z"] = "-extern-std=c++17",
 			["gnu++17"] = "-extern-std=c++17",
+			["gnu++2a"] = "-extern-std=c++20",
 		},
 		deprecatedfeatures = {
 			Allow = "-d",

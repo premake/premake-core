@@ -464,6 +464,8 @@
 				["C++14"] = "c++14",
 				["C++1z"] = "c++17",
 				["C++17"] = "c++17",
+				["C++2a"] = "c++20",
+				["C++20"] = "c++20",
 				["gnu++98"] = "c++98",
 				["gnu++0x"] = "c++11",
 				["gnu++11"] = "c++11",
@@ -471,6 +473,7 @@
 				["gnu++14"] = "c++14",
 				["gnu++1z"] = "c++17",
 				["gnu++17"] = "c++17",
+				["gnu++2a"] = "c++20",
 			}
 			if cppMap[cfg.cppdialect] ~= nil then
 				table.insert(opts, "-extern-std=" .. cppMap[cfg.cppdialect])
