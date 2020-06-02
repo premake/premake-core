@@ -86,6 +86,7 @@
 			["gnu++1z"] = "-extern-std=c++17",
 			["gnu++17"] = "-extern-std=c++17",
 			["gnu++2a"] = "-extern-std=c++20",
+			["gnu++20"] = "-extern-std=c++20",
 		},
 		deprecatedfeatures = {
 			Allow = "-d",

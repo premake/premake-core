@@ -193,6 +193,7 @@
 			["gnu++1z"] = "-std=gnu++1z",
 			["gnu++17"] = "-std=gnu++17",
 			["gnu++2a"] = "-std=gnu++2a",
+			["gnu++20"] = "-std=gnu++20",
 		},
 		rtti = {
 			Off = "-fno-rtti"

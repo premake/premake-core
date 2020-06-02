@@ -835,6 +835,13 @@
 		test.contains({ }, gcc.getcflags(cfg))
 	end
 
+	function suite.cxxflags_onCppGnu20()
+		cppdialect "gnu++20"
+		prepare()
+		test.contains({ "-std=gnu++20" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
 --
 -- Test unsigned-char flags.
 --

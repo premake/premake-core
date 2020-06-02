@@ -474,6 +474,7 @@
 				["gnu++1z"] = "c++17",
 				["gnu++17"] = "c++17",
 				["gnu++2a"] = "c++20",
+				["gnu++20"] = "c++20",
 			}
 			if cppMap[cfg.cppdialect] ~= nil then
 				table.insert(opts, "-extern-std=" .. cppMap[cfg.cppdialect])
