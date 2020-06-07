@@ -1170,7 +1170,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+	<AdditionalOptions>/std:c++17 %(AdditionalOptions)</AdditionalOptions>
 </ClCompile>
 		]]
 	end
@@ -1201,6 +1201,21 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp17</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp20_VS2019()
+		p.action.set("vs2019")
+
+		cppdialect 'C++20'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
 </ClCompile>
 		]]
 	end
