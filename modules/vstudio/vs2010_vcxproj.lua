@@ -1506,6 +1506,9 @@
 		if cfg.toolset and cfg.toolset:startswith("msc") then
 			local value = iif(cfg.unsignedchar, "On", "Off")
 			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+		elseif _ACTION >= "vs2019" and cfg.toolset and cfg.toolset == "clang" then
+			local value = iif(cfg.unsignedchar, "On", "Off")
+			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
 		end
 
 		if #opts > 0 then
@@ -2331,10 +2334,16 @@
 
 	function m.platformToolset(cfg)
 		local tool, version = p.config.toolset(cfg)
+
+		if not version and _ACTION >= "vs2019" and cfg.toolset == "clang" then
+			version = "ClangCL"
+		end
+
 		if not version then
 			local value = p.action.current().toolset
 			tool, version = p.tools.canonical(value)
 		end
+
 		if version then
 			if cfg.kind == p.NONE or cfg.kind == p.MAKEFILE then
 				if p.config.hasFile(cfg, path.iscppfile) or _ACTION >= "vs2015" then
