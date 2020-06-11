@@ -381,6 +381,31 @@
 		prepare()
 		test.contains({ "-dynamiclib" }, gcc.getldflags(cfg))
 	end
+	
+--
+-- Check Mac OS X deployment target flags
+--
+
+	function suite.cflags_macosx_systemversion()
+		system "MacOSX"
+		systemversion "10.9"
+		prepare()
+		test.contains({ "-mmacosx-version-min=10.9" }, gcc.getcflags(cfg))
+	end
+	
+	function suite.cxxflags_macosx_systemversion()
+		system "MacOSX"
+		systemversion "10.9:10.15"
+		prepare()
+		test.contains({ "-mmacosx-version-min=10.9" }, gcc.getcxxflags(cfg))
+	end
+	
+	function suite.cxxflags_macosx_systemversion_invalid()
+		system "MacOSX"
+		systemversion "strange"
+		prepare()
+		test.excludes({ "-mmacosx-version-min=10.9" }, gcc.getcxxflags(cfg))
+	end
 
 
 --

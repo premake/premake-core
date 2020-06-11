@@ -75,7 +75,7 @@
 		local cflags = config.mapFlags(cfg, clang.cflags)
 
 		local flags = table.join(shared, cflags)
-		flags = table.join(flags, clang.getwarnings(cfg))
+		flags = table.join(flags, clang.getwarnings(cfg), clang.getsystemversionflags(cfg))
 
 		return flags
 	end
@@ -84,6 +84,23 @@
 		return gcc.getwarnings(cfg)
 	end
 
+--
+-- Returns C/C++ system version related build flags
+--
+
+	function clang.getsystemversionflags(cfg)
+		local flags = {}
+
+		if cfg.system == p.MACOSX or cfg.system == p.IOS then
+			local minVersion = p.project.systemversion(cfg)
+			if (type (minVersion) == "string") and (string.match(minVersion, "^%d+%.%d+") ~= nil) then
+				local name = iif(cfg.system == p.MACOSX, "macosx", "iphoneos")
+				table.insert (flags, "-m" .. name .. "-version-min=" .. p.project.systemversion(cfg))
+			end
+		end
+
+		return flags
+	end
 
 --
 -- Build a list of C++ compiler flags corresponding to the settings
@@ -103,7 +120,7 @@
 		local shared = config.mapFlags(cfg, clang.shared)
 		local cxxflags = config.mapFlags(cfg, clang.cxxflags)
 		local flags = table.join(shared, cxxflags)
-		flags = table.join(flags, clang.getwarnings(cfg))
+		flags = table.join(flags, clang.getwarnings(cfg), clang.getsystemversionflags(cfg))
 		return flags
 	end
 

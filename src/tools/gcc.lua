@@ -144,7 +144,7 @@
 	function gcc.getcflags(cfg)
 		local shared_flags = config.mapFlags(cfg, gcc.shared)
 		local cflags = config.mapFlags(cfg, gcc.cflags)
-		local flags = table.join(shared_flags, cflags)
+		local flags = table.join(shared_flags, cflags, gcc.getsystemversionflags(cfg))
 		flags = table.join(flags, gcc.getwarnings(cfg))
 		return flags
 	end
@@ -161,6 +161,23 @@
 			table.insert(result, '-Werror=' .. fatal)
 		end
 		return result
+	end
+
+--
+-- Returns C/C++ system version build flags
+--
+
+	function gcc.getsystemversionflags(cfg)
+		local flags = {}
+
+		if cfg.system == p.MACOSX then
+			local minVersion = p.project.systemversion(cfg)
+			if (type (minVersion) == "string") and (string.match(minVersion, "^%d+%.%d+") ~= nil) then
+				table.insert (flags, "-mmacosx-version-min=" .. minVersion)
+			end
+		end
+
+		return flags
 	end
 
 
@@ -213,7 +230,7 @@
 		local shared_flags = config.mapFlags(cfg, gcc.shared)
 		local cxxflags = config.mapFlags(cfg, gcc.cxxflags)
 		local flags = table.join(shared_flags, cxxflags)
-		flags = table.join(flags, gcc.getwarnings(cfg))
+		flags = table.join(flags, gcc.getwarnings(cfg), gcc.getsystemversionflags(cfg))
 		return flags
 	end
 
