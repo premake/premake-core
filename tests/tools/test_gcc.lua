@@ -400,9 +400,8 @@
 		test.contains({ "-mmacosx-version-min=10.9" }, gcc.getcxxflags(cfg))
 	end
 	
-	function suite.cxxflags_macosx_systemversion_invalid()
+	function suite.cxxflags_macosx_systemversion_unspecified()
 		system "MacOSX"
-		systemversion "strange"
 		prepare()
 		test.excludes({ "-mmacosx-version-min=10.9" }, gcc.getcxxflags(cfg))
 	end

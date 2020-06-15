@@ -172,7 +172,7 @@
 
 		if cfg.system == p.MACOSX then
 			local minVersion = p.project.systemversion(cfg)
-			if (type (minVersion) == "string") and (string.match(minVersion, "^%d+%.%d+") ~= nil) then
+			if minVersion ~= nil then
 				table.insert (flags, "-mmacosx-version-min=" .. minVersion)
 			end
 		end

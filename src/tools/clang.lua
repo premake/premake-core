@@ -93,7 +93,7 @@
 
 		if cfg.system == p.MACOSX or cfg.system == p.IOS then
 			local minVersion = p.project.systemversion(cfg)
-			if (type (minVersion) == "string") and (string.match(minVersion, "^%d+%.%d+") ~= nil) then
+			if minVersion ~= nil then
 				local name = iif(cfg.system == p.MACOSX, "macosx", "iphoneos")
 				table.insert (flags, "-m" .. name .. "-version-min=" .. p.project.systemversion(cfg))
 			end
