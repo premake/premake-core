@@ -28,7 +28,7 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None", "Utility", "SharedItems" },
 		valid_languages = { "C", "C++", "C#", "F#" },
 		valid_tools     = {
-			cc     = { "msc"   },
+			cc     = { "msc", "clang" },
 			dotnet = { "msnet" },
 		},
 

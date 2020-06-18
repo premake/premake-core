@@ -30,6 +30,8 @@
 
  * On each platform, run `premake5 package <release branch name> binary`
 
+ * Submit Windows binary to [Microsoft malware analysis](https://www.microsoft.com/en-us/wdsi/filesubmission/)
+
  * Merge working branch to release and tag; push with tags
 
  * Create new release on GitHub from `CHANGES.txt`; upload files
