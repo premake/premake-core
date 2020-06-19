@@ -101,9 +101,10 @@
 			RDRND = "-mrdrnd",
 		},
 		warnings = {
-			Extra = {"-Wall", "-Wextra"},
-			High = "-Wall",
 			Off = "-w",
+			High = "-Wall",
+			Extra = {"-Wall", "-Wextra"},
+			Everything = "-Weverything",
 		},
 		symbols = function(cfg, mappings)
 			local values = gcc.getdebugformat(cfg)

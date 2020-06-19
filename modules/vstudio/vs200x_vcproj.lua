@@ -1594,6 +1594,8 @@
 		local level
 		if cfg.warnings == p.OFF then
 			level = "0"
+		elseif cfg.warnings == "High" then
+			level = "4"
 		elseif cfg.warnings == "Extra" then
 			level = "4"
 		elseif not filecfg then

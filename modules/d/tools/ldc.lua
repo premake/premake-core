@@ -121,6 +121,7 @@
 			Default = "-wi",
 			High = "-wi",
 			Extra = "-wi",	-- TODO: is there a way to get extra warnings?
+			Everything = "-wi",
 		},
 		symbols = {
 			On = "-g",

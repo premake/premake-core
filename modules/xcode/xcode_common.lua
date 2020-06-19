@@ -1450,8 +1450,14 @@
 			settings['SYMROOT'] = path.getrelative(tr.project.location, targetdir)
 		end
 
-		if cfg.warnings == "Extra" then
+		if cfg.warnings == "Off" then
+			settings['WARNING_CFLAGS'] = '-w'
+		elseif cfg.warnings == "High" then
+			settings['WARNING_CFLAGS'] = '-Wall'
+		elseif cfg.warnings == "Extra" then
 			settings['WARNING_CFLAGS'] = '-Wall -Wextra'
+		elseif cfg.warnings == "Everything" then
+			settings['WARNING_CFLAGS'] = '-Weverything'
 		end
 
 		overrideSettings(settings, cfg.xcodebuildsettings)

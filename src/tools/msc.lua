@@ -80,9 +80,10 @@
 			["SSE4.1"] = "/arch:SSE2",
 		},
 		warnings = {
-			Extra = "/Wall",
-			High = "/W4",
 			Off = "/W0",
+			High = "/W4",
+			Extra = "/W4",
+			Everything = "/Wall",
 		},
 		staticruntime = {
 			-- this option must always be emit (does it??)

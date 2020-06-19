@@ -221,6 +221,12 @@
 	function suite.cflags_OnExtraWarnings()
 		warnings "Extra"
 		prepare()
+		test.contains("/W4", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_OnEverythingWarnings()
+		warnings "Everything"
+		prepare()
 		test.contains("/Wall", msc.getcflags(cfg))
 	end
 

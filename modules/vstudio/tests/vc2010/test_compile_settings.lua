@@ -99,6 +99,20 @@
 		test.capture [[
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level4</WarningLevel>
+		]]
+	end
+
+--
+-- If Everything is wanted, turn it ALL on
+--
+
+	function suite.warningLevel_onEverythingWarnings()
+		warnings "Everything"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>EnableAllWarnings</WarningLevel>
 		]]
 	end
@@ -114,6 +128,20 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>TurnOffAllWarnings</WarningLevel>
+		]]
+	end
+
+--
+-- Check default warning level.
+--
+
+	function suite.warningLevel_onDefaultWarnings()
+		warnings "Default"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
 		]]
 	end
 

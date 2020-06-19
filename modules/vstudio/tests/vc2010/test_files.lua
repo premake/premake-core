@@ -897,7 +897,7 @@
 		test.capture [[
 <ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<WarningLevel>EnableAllWarnings</WarningLevel>
+		<WarningLevel>Level4</WarningLevel>
 	</ClCompile>
 	<ClCompile Include="hello2.cpp" />
 </ItemGroup>

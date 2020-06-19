@@ -305,6 +305,7 @@
 			Default = "-wi",
 			High = "-wi",
 			Extra = "-wi",
+			Everything = "-wi",
 		},
 	}
 

@@ -332,6 +332,23 @@
 		]]
 	end
 
+	function suite.runtimeLibraryIsDebug_onHighWarnings()
+		warnings "High"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="4"
+	DebugInformationFormat="0"
+/>
+		]]
+	end
+
 
 --
 -- Verify the correct warnings settings are used when FatalWarnings are enabled.
