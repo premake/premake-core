@@ -2727,13 +2727,13 @@
 
 
 	function m.warningLevel(cfg)
-		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
+		local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "EnableAllWarnings" }
 		m.element("WarningLevel", nil, map[cfg.warnings] or "Level3")
 	end
 
 
 	function m.warningLevelFile(cfg, condition)
-		local map = { Off = "TurnOffAllWarnings", Extra = "Level4" }
+		local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "EnableAllWarnings" }
 		if cfg.warnings then
 			m.element("WarningLevel", condition, map[cfg.warnings] or "Level3")
 		end

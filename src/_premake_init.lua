@@ -1309,6 +1309,7 @@
 			"Default",
 			"High",
 			"Extra",
+			"Everything",
 		}
 	}
 

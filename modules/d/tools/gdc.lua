@@ -85,6 +85,7 @@
 --			Default = "-w",	-- TODO: check this...
 			High = "-Wall",
 			Extra = "-Wall -Wextra",
+			Everything = "-Weverything",
 		},
 		symbols = {
 			On = "-g",

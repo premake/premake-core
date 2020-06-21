@@ -74,16 +74,28 @@
 -- Check the translation of CFLAGS.
 --
 
+	function suite.cflags_onNoWarnings()
+		warnings "Off"
+		prepare()
+		test.contains({ "-w" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onHighWarnings()
+		warnings "High"
+		prepare()
+		test.contains({ "-Wall" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onExtraWarnings()
-		warnings "extra"
+		warnings "Extra"
 		prepare()
 		test.contains({ "-Wall", "-Wextra" }, gcc.getcflags(cfg))
 	end
 
-	function suite.cflags_onHighWarnings()
-		warnings "high"
+	function suite.cflags_onEverythingWarnings()
+		warnings "Everything"
 		prepare()
-		test.contains({ "-Wall" }, gcc.getcflags(cfg))
+		test.contains({ "-Weverything" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFatalWarnings()
@@ -110,12 +122,6 @@
 		floatingpoint "Strict"
 		prepare()
 		test.contains({ "-ffloat-store" }, gcc.getcflags(cfg))
-	end
-
-	function suite.cflags_onNoWarnings()
-		warnings "Off"
-		prepare()
-		test.contains({ "-w" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onSSE()
