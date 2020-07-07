@@ -783,6 +783,17 @@
 	}
 
 	api.register {
+		name = "swiftversion",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"4.0",
+			"4.2",
+			"5.0",
+		}
+	}
+
+	api.register {
 		name = "libdirs",
 		scope = "config",
 		kind = "list:directory",
