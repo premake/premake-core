@@ -173,6 +173,7 @@
 
 		filter "system:windows"
 			links       { "ole32", "ws2_32", "advapi32", "version" }
+			files { "src/**.rc" }
 
 		filter "toolset:mingw"
 			links		{ "crypt32" }
