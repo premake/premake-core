@@ -124,6 +124,20 @@
 		test.istrue(table.contains(result, "folder/subfolder/hello.txt"))
 	end
 
+	function suite.matchfiles_onSymbolicLink()
+		if os.istarget("macosx")
+			or os.istarget("linux")
+			or os.istarget("solaris")
+			or os.istarget("bsd")
+		then
+			os.execute("cd folder && ln -s subfolder symlinkfolder && cd ..")
+			local result = os.matchfiles("folder/**/*.txt")
+			os.execute("rm folder/symlinkfolder")
+			premake.modules.self_test.print(table.tostring(result))
+			test.istrue(table.contains(result, "folder/symlinkfolder/hello.txt"))
+		end
+	end
+
 
 --
 -- os.pathsearch() tests
