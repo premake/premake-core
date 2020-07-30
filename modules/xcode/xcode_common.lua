@@ -219,9 +219,9 @@
 			value(level, name)
 		elseif type(value) ~= 'table' then
 			_p(level, '%s = %s;', stringifySetting(name), stringifySetting(value))
-		elseif #value == 1 then
-			_p(level, '%s = %s;', stringifySetting(name), stringifySetting(value[1]))
-		elseif #value > 1 then
+		--elseif #value == 1 then
+			--_p(level, '%s = %s;', stringifySetting(name), stringifySetting(value[1]))
+		elseif #value >= 1 then
 			_p(level, '%s = (', stringifySetting(name))
 			for _, item in ipairs(value) do
 				_p(level + 1, '%s,', stringifySetting(item))
