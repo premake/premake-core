@@ -2294,9 +2294,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = (
-					"-lldap",
-				);
+				OTHER_LDFLAGS = "-lldap";
 				SYMROOT = bin/Debug;
 			};
 			name = Debug;
@@ -2477,9 +2475,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-ffast-math",
-				);
+				OTHER_CFLAGS = "-ffast-math";
 				SYMROOT = bin/Debug;
 			};
 			name = Debug;
@@ -2584,9 +2580,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-fomit-frame-pointer",
-				);
+				OTHER_CFLAGS = "-fomit-frame-pointer";
 				SYMROOT = bin/Debug;
 			};
 			name = Debug;
@@ -2612,9 +2606,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-fomit-frame-pointer",
-				);
+				OTHER_CFLAGS = "-fomit-frame-pointer";
 				SYMROOT = bin/Debug;
 			};
 			name = Debug;
@@ -2640,9 +2632,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-fno-omit-frame-pointer",
-				);
+				OTHER_CFLAGS = "-fno-omit-frame-pointer";
 				SYMROOT = bin/Debug;
 			};
 			name = Debug;
