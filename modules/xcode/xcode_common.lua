@@ -189,9 +189,9 @@
 			value(level, name)
 		elseif type(value) ~= 'table' then
 			_p(level, '%s = %s;', xcode.stringifySetting(name), xcode.stringifySetting(value))
-		--elseif #value == 1 then
-			--_p(level, '%s = %s;', xcode.stringifySetting(name), xcode.stringifySetting(value[1]))
-		elseif #value >= 1 then
+		elseif #value == 1 then
+			_p(level, '%s = %s;', xcode.stringifySetting(name), xcode.stringifySetting(value[1]))
+		elseif #value > 1 then
 			_p(level, '%s = (', xcode.stringifySetting(name))
 			for _, item in ipairs(value) do
 				_p(level + 1, '%s,', xcode.stringifySetting(item))
