@@ -68,6 +68,44 @@ int os_touchfile(lua_State* L)
 	// if destination exist, mark the file as modified
 	if (do_isfile(L, dst))
 	{
+#if PLATFORM_WINDOWS
+		SYSTEMTIME systemTime;
+		FILETIME fileTime;
+		HANDLE fileHandle;
+		wchar_t wide_path[PATH_MAX];
+		if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
+		{
+			lua_pushinteger(L, -1);
+			lua_pushstring(L, "unable to encode path");
+			return 2;
+		}
+
+		fileHandle = CreateFileW(wide_path, FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (fileHandle == NULL)
+		{
+			lua_pushinteger(L, -1);
+			lua_pushfstring(L, "unable to touch file '%s'", dst);
+			return 2;
+		}
+
+		GetSystemTime(&systemTime);
+		if (SystemTimeToFileTime(&systemTime, &fileTime) == 0)
+		{
+			lua_pushinteger(L, -1);
+			lua_pushfstring(L, "unable to touch file '%s'", dst);
+			return 2;
+		}
+
+		if (SetFileTime(fileHandle, NULL, NULL, &fileTime) == 0)
+		{
+			lua_pushinteger(L, -1);
+			lua_pushfstring(L, "unable to touch file '%s'", dst);
+			return 2;
+		}
+
+		lua_pushinteger(L, 0);
+		return 1;
+#else
 		if (truncate_file(dst))
 		{
 			lua_pushinteger(L, 0);
@@ -77,6 +115,7 @@ int os_touchfile(lua_State* L)
 			lua_pushfstring(L, "unable to touch file '%s'", dst);
 			return 2;
 		}
+#endif
 	}
 
 #if PLATFORM_WINDOWS

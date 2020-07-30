@@ -55,6 +55,8 @@
 		test.isequal(responseCode, 418)
 	end
 
+	-- Disable as httpbin.org returns 404 on this endpoint
+	--[[
 	function suite.http_redirect()
 		local result, err, responseCode = http.get("http://httpbin.org/redirect/3")
 		if result then
@@ -63,6 +65,7 @@
 			test.fail(err);
 		end
 	end
+	]]
 
 	function suite.http_headers()
 		local result, err, responseCode = http.get("http://httpbin.org/headers", {
