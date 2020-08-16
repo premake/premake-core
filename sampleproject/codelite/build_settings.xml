@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BuildSettings Version="2.1">
+  <Compilers>
+    <Compiler Name="gnu g++" GenerateDependenciesFiles="yes" ReadObjectsListFromFile="yes" ObjectNameIdenticalToFileName="no" CompilerFamily="GCC" IsDefault="yes">
+      <Switch Name="ArchiveOutput" Value=" "/>
+      <Switch Name="Debug" Value="-g "/>
+      <Switch Name="Include" Value="-I"/>
+      <Switch Name="Library" Value="-l"/>
+      <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Object" Value="-o "/>
+      <Switch Name="Output" Value="-o "/>
+      <Switch Name="PreprocessOnly" Value="-E"/>
+      <Switch Name="Preprocessor" Value="-D"/>
+      <Switch Name="Source" Value="-c "/>
+      <Tool Name="AR" Value="&quot;ar.exe&quot; rcu"/>
+      <Tool Name="AS" Value="&quot;as.exe&quot;"/>
+      <Tool Name="CC" Value="&quot;gcc&quot;"/>
+      <Tool Name="CXX" Value="&quot;g++&quot;"/>
+      <Tool Name="Debugger" Value="&quot;gdb&quot;"/>
+      <Tool Name="LinkerName" Value="&quot;g++&quot;"/>
+      <Tool Name="MAKE" Value="&quot;make&quot; -j8"/>
+      <Tool Name="MakeDirCommand" Value=""/>
+      <Tool Name="ResourceCompiler" Value=""/>
+      <Tool Name="SharedObjectLinkerName" Value="&quot;g++&quot; -shared -fPIC"/>
+      <File Extension="c" CompilationLine="$(CC) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="c++" CompilationLine="$(CXX) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="cc" CompilationLine="$(CXX) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="cpp" CompilationLine="$(CXX) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="cxx" CompilationLine="$(CXX) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="m" CompilationLine="$(CXX) -x objective-c $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="mm" CompilationLine="$(CXX) -x objective-c++ $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)" Kind="0"/>
+      <File Extension="rc" CompilationLine="$(RcCompilerName) -i &quot;$(FileFullPath)&quot; $(RcCmpOptions)   $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(RcIncludePath)" Kind="1"/>
+      <File Extension="s" CompilationLine="$(AS) &quot;$(FileFullPath)&quot; $(ASFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) -I$(IncludePath)" Kind="0"/>
+      <LinkLine ProjectType="Dynamic Library" Pattern="$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)" PatternWithFile="$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)"/>
+      <LinkLine ProjectType="Executable" Pattern="$(LinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)" PatternWithFile="$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)"/>
+      <LinkLine ProjectType="Static Library" Pattern="$(AR) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)" PatternWithFile="$(AR) $(ArchiveOutputSwitch)$(OutputFile) @$(ObjectsFileList)"/>
+      <Option Name="ObjectSuffix" Value=".o"/>
+      <Option Name="DependSuffix" Value=".o.d"/>
+      <Option Name="PreprocessSuffix" Value=".i"/>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="2" ColumnIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-.]+ *):([0-9]+)(:[0-9]+)?: (?:fatal error|error|undefined reference|[\t ]*required from)</Pattern>
+      <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1" ColumnIndex="-1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)(\(\.text\+[0-9a-fx]*\))</Pattern>
+      <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1" ColumnIndex="-1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+)(:)</Pattern>
+      <Pattern Name="Error" FileNameIndex="-1" LineNumberIndex="-1" ColumnIndex="-1">undefined reference to</Pattern>
+      <Pattern Name="Error" FileNameIndex="-1" LineNumberIndex="-1" ColumnIndex="-1">\*\*\* \[[a-zA-Z\-_0-9 ]+\] (Error)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3" ColumnIndex="4">([a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ \t]*(warning|required)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3" ColumnIndex="-1">([a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3" ColumnIndex="-1">([a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="2" LineNumberIndex="4" ColumnIndex="-1">(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?</Pattern>
+      <GlobalIncludePath/>
+      <GlobalLibPath/>
+      <PathVariable/>
+      <CompilerOption Name="-O">Optimize generated code. (for speed)</CompilerOption>
+      <CompilerOption Name="-O0">Optimize for debugging</CompilerOption>
+      <CompilerOption Name="-O1">Optimize more (for speed)</CompilerOption>
+      <CompilerOption Name="-O2">Optimize even more (for speed)</CompilerOption>
+      <CompilerOption Name="-O3">Optimize fully (for speed)</CompilerOption>
+      <CompilerOption Name="-Os">Optimize generated code (for size)</CompilerOption>
+      <CompilerOption Name="-W">Enable standard compiler warnings</CompilerOption>
+      <CompilerOption Name="-Wall">Enable all compiler warnings</CompilerOption>
+      <CompilerOption Name="-Wfatal-errors">Stop compiling after first error</CompilerOption>
+      <CompilerOption Name="-Wmain">Warn if main() is not conformant</CompilerOption>
+      <CompilerOption Name="-ansi">In C mode, support all ISO C90 programs. In C++ mode, remove GNU extensions that conflict with ISO C++</CompilerOption>
+      <CompilerOption Name="-fexpensive-optimizations">Expensive optimizations</CompilerOption>
+      <CompilerOption Name="-fopenmp">Enable OpenMP (compilation)</CompilerOption>
+      <CompilerOption Name="-g">Produce debugging information</CompilerOption>
+      <CompilerOption Name="-pedantic">Enable warnings demanded by strict ISO C and ISO C++</CompilerOption>
+      <CompilerOption Name="-pedantic-errors">Treat as errors the warnings demanded by strict ISO C and ISO C++</CompilerOption>
+      <CompilerOption Name="-pg">Profile code when executed</CompilerOption>
+      <CompilerOption Name="-std=c++11">Enable C++11 features</CompilerOption>
+      <CompilerOption Name="-std=c++14">Enable C++14 features</CompilerOption>
+      <CompilerOption Name="-std=c++17">Enable C++17 features</CompilerOption>
+      <CompilerOption Name="-std=c99">Enable ANSI C99 features</CompilerOption>
+      <CompilerOption Name="-w">Inhibit all warning messages</CompilerOption>
+      <LinkerOption Name="-fopenmp">Enable OpenMP (linkage)</LinkerOption>
+      <LinkerOption Name="-mwindows">Prevent a useless terminal console appearing with MSWindows GUI programs</LinkerOption>
+      <LinkerOption Name="-pg">Profile code when executed</LinkerOption>
+      <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable</LinkerOption>
+    </Compiler>
+  </Compilers>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="mingw32-make.exe" Options="-f" Jobs="2" Active="no"/>
+  <BuildSystem Name="CMake" ToolPath="" Options="" Jobs="" Active="no"/>
+  <BuildSystem Name="CodeLite Make Generator" ToolPath="" Options="" Jobs="" Active="yes"/>
+  <BuildSystem Name="Default" ToolPath="" Options="" Jobs="" Active="yes"/>
+  <BuildSystem Name="GNU makefile onestep build" ToolPath="" Options="" Jobs="" Active="no"/>
+  <BuildSystem Name="NMakefile for MSVC toolset" ToolPath="" Options="" Jobs="" Active="no"/>
+</BuildSettings>

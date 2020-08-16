@@ -21,6 +21,16 @@ jobs:
       run: make -f Bootstrap.mak ${{ matrix.osname }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test
+    - name: IntegrationTest gmake
+      run: |
+        bin/${{ matrix.config }}/premake5 --file="sampleproject/premake5.lua" gmake
+        cd sampleproject/project/gmake/ && make
+    - name: sudo apt-get install -y codelite
+      run: sudo apt-get install -y codelite
+    - name: IntegrationTest codelite
+      run: |
+        bin/${{ matrix.config }}/premake5 --file="sampleproject/premake5.lua" codelite
+        cd sampleproject/project/codelite/ && codelite-make --settings=../../codelite/build_settings.xml --workspace=SampleTest.workspace --project=app --config=Release --command=build --verbose --execute
   windows:
     runs-on: windows-latest
     strategy:
