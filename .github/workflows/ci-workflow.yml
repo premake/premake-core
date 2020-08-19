@@ -21,6 +21,10 @@ jobs:
       run: make -f Bootstrap.mak ${{ matrix.osname }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.osname }}-${{ matrix.config }}
+        path: bin/${{ matrix.config }}/
   windows:
     runs-on: windows-latest
     strategy:
@@ -38,3 +42,7 @@ jobs:
     - name: Test
       run: bin\${{ matrix.config }}\premake5 test
       shell: cmd
+    - uses: actions/upload-artifact@v2
+      with:
+        name: windows-${{ matrix.config }}-${{ matrix.platform }}
+        path: bin\${{ matrix.config }}\
