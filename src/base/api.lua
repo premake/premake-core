@@ -1177,3 +1177,48 @@
 	function newoption(opt)
 		p.option.add(opt)
 	end
+
+--
+-- Generate C++ dialect
+--
+
+
+	function api.getCPPDialect()
+		-- Must be arrays is sorted (less to more standard)
+		local possible_standards = {
+			"C++98", 
+			"C++0x",
+			"C++11",
+			"C++1y",
+			"C++14",
+			"C++1z",
+			"C++17",
+			"C++2a",
+			"C++20",
+		}
+		local possible_gnu_standards = {
+			"gnu++98",
+			"gnu++0x",
+			"gnu++11",
+			"gnu++1y",
+			"gnu++14",
+			"gnu++1z",
+			"gnu++17",
+			"gnu++1a",
+			"gnu++20",
+		}
+		-- create is empty hash-table
+		local dialect = {}
+
+		-- building hash-table dialect
+		for _, std_name in ipairs(possible_standards) do
+			dialect[std_name] = "-std=" .. string.lower(string.sub(std_name, 1, 1)) .. string.sub(std_name, 2)
+		end
+		for _, std_name in ipairs(possible_gnu_standards) do
+			dialect[std_name] = "-std=" .. std_name
+		end
+		-- Auto C++latest detect
+		local latest = possible_standards[#possible_standards]
+		dialect["C++latest"] = "-std=" .. string.lower(string.sub(latest, 1, 1)) .. string.sub(latest, 2)
+		return dialect
+	end
