@@ -41,6 +41,7 @@
 			[".icns"] = "Resources",
 			[".s"] = "Sources",
 			[".S"] = "Sources",
+			[".swift"] = "Sources",
 		}
 		if node.isResource then
 			return "Resources"
@@ -140,7 +141,7 @@
 			[".bmp"]       = "image.bmp",
 			[".wav"]       = "audio.wav",
 			[".xcassets"]  = "folder.assetcatalog",
-
+			[".swift"]     = "sourcecode.swift",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
@@ -1262,7 +1263,16 @@
 		end
 	end
 
-
+	function xcode.XCBuildConfiguration_SwiftLanguageVersion(settings, cfg)
+		-- if no swiftversion is provided, don't set swift version
+		-- Projects with swift files but without swift version will refuse 
+		-- to build on Xcode but setting a default SWIFT_VERSION may have 
+		-- unexpected interactions with other systems like cocoapods
+		if cfg.swiftversion then
+			settings['SWIFT_VERSION'] = cfg.swiftversion
+		end
+	end
+	
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
 		local settings = {}
 
@@ -1429,6 +1439,8 @@
 		elseif cfg.warnings == "Everything" then
 			settings['WARNING_CFLAGS'] = '-Weverything'
 		end
+
+		xcode.XCBuildConfiguration_SwiftLanguageVersion(settings, cfg)
 
 		xcode.overrideSettings(settings, cfg.xcodebuildsettings)
 
