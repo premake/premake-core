@@ -830,6 +830,13 @@
 		test.contains({ }, gcc.getcflags(cfg))
 	end
 
+	function suite.cxxflags_onCppLatest()
+		cppdialect "C++latest"
+		prepare()
+		test.contains({ "-std=c++20" }, gcc.getcxxflags(cfg))
+		test.contains({ }, gcc.getcflags(cfg))
+	end
+
 	function suite.cxxflags_onCppGnu98()
 		cppdialect "gnu++98"
 		prepare()
