@@ -457,7 +457,7 @@
 		if cfg.cppdialect and cfg.cppdialect ~= "Default" then
 			local cppMap = 	p.api.getCPPDialect()
 			if cppMap[cfg.cppdialect] ~= nil then
-				table.insert(opts, "-extern-std=" .. cppMap[cfg.cppdialect])
+				table.insert(opts, "-extern" .. cppMap[cfg.cppdialect])
 			end
 		end
 
