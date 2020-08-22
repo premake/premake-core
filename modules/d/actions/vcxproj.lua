@@ -456,7 +456,7 @@
 
 		if cfg.cppdialect and cfg.cppdialect ~= "Default" then
 			local cppMap = {
-				["C++latest"] = "c++17", -- TODO: keep this up to date >_<
+				["C++latest"] = "c++20",
 				["C++98"] = "c++98",
 				["C++0x"] = "c++11",
 				["C++11"] = "c++11",

@@ -255,7 +255,7 @@
 			Context = "-checkaction=context",
 		},
 		cppdialect = {
-			["C++latest"] = "-extern-std=c++17", -- TODO: keep this up to date >_<
+			["C++latest"] = "-extern-std=c++20", -- TODO: keep this up to date >_<
 			["C++98"] = "-extern-std=c++98",
 			["C++0x"] = "-extern-std=c++11",
 			["C++11"] = "-extern-std=c++11",
