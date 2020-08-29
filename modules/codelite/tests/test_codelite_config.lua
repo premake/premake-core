@@ -57,11 +57,12 @@
 	end
 
 	function suite.OnProjectCfg_Includes()
+		sysincludedirs { "sysdir", "sysdir2/"}
 		includedirs { "dir/", "dir2" }
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-isystem sysdir;-isystem sysdir2" C_Options="-isystem sysdir;-isystem sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="dir"/>
         <IncludePath Value="dir2"/>
       </Compiler>
@@ -126,12 +127,16 @@
 
 	function suite.OnProjectCfg_ResInclude()
 		files { "x.rc" }
-		resincludedirs { "dir/" }
+		includedirs { "dir/" }
+		sysincludedirs { "sysdir/" }
+		resincludedirs { "resdir/" }
 		prepare()
 		codelite.project.resourceCompiler(cfg)
 		test.capture [[
       <ResourceCompiler Options="" Required="yes">
+        <IncludePath Value="sysdir"/>
         <IncludePath Value="dir"/>
+        <IncludePath Value="resdir"/>
       </ResourceCompiler>
 		]]
 	end
