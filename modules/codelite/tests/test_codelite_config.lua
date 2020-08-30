@@ -68,6 +68,17 @@
 		]]
 	end
 
+	function suite.OnProjectCfg_SysIncludes()
+		sysincludedirs { "sysdir", "sysdir2/"}
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-isystem sysdir;-isystem sysdir2" C_Options="-isystem sysdir;-isystem sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
+		]]
+	end
+
+
 	function suite.OnProjectCfg_Defines()
 		defines { "TEST", "DEF", "VAL=1", "ESCAPE=\"WITH SPACE\"" }
 		prepare()
@@ -132,6 +143,30 @@
 		test.capture [[
       <ResourceCompiler Options="" Required="yes">
         <IncludePath Value="dir"/>
+      </ResourceCompiler>
+		]]
+	end
+
+	function suite.OnProjectCfg_ResRegularInclude()
+		files { "x.rc" }
+		includedirs { "regulardir/" }
+		prepare()
+		codelite.project.resourceCompiler(cfg)
+		test.capture [[
+      <ResourceCompiler Options="" Required="yes">
+        <IncludePath Value="regulardir"/>
+      </ResourceCompiler>
+		]]
+	end
+
+	function suite.OnProjectCfg_ResSysInclude()
+		files { "x.rc" }
+		sysincludedirs { "sysdir/" }
+		prepare()
+		codelite.project.resourceCompiler(cfg)
+		test.capture [[
+      <ResourceCompiler Options="" Required="yes">
+        <IncludePath Value="sysdir"/>
       </ResourceCompiler>
 		]]
 	end

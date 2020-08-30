@@ -196,9 +196,10 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
+		local sysincludedirs = toolset.getincludedirs(cfg, {}, cfg.sysincludedirs)
 		local forceincludes = toolset.getforceincludes(cfg)
-		local cxxflags = table.concat(table.join(toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
-		local cflags   = table.concat(table.join(toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
+		local cxxflags = table.concat(table.join(sysincludedirs, toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
+		local cflags   = table.concat(table.join(sysincludedirs, toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
 		local asmflags = ""
 		local pch      = ""
 
@@ -241,7 +242,7 @@
 		local options = table.concat(cfg.resoptions, ";")
 
 		_x(3, '<ResourceCompiler Options="%s%s" Required="yes">', defines, options)
-		for _, includepath in ipairs(table.join(cfg.includedirs, cfg.resincludedirs)) do
+		for _, includepath in ipairs(table.join(cfg.sysincludedirs, cfg.includedirs, cfg.resincludedirs)) do
 			_x(4, '<IncludePath Value="%s"/>', project.getrelative(cfg.project, includepath))
 		end
 		_p(3, '</ResourceCompiler>')
