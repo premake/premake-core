@@ -57,17 +57,27 @@
 	end
 
 	function suite.OnProjectCfg_Includes()
-		sysincludedirs { "sysdir", "sysdir2/"}
 		includedirs { "dir/", "dir2" }
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-isystem sysdir;-isystem sysdir2" C_Options="-isystem sysdir;-isystem sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="dir"/>
         <IncludePath Value="dir2"/>
       </Compiler>
 		]]
 	end
+
+	function suite.OnProjectCfg_SysIncludes()
+		sysincludedirs { "sysdir", "sysdir2/"}
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-isystem sysdir;-isystem sysdir2" C_Options="-isystem sysdir;-isystem sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
+		]]
+	end
+
 
 	function suite.OnProjectCfg_Defines()
 		defines { "TEST", "DEF", "VAL=1", "ESCAPE=\"WITH SPACE\"" }
@@ -127,16 +137,36 @@
 
 	function suite.OnProjectCfg_ResInclude()
 		files { "x.rc" }
-		includedirs { "dir/" }
+		resincludedirs { "dir/" }
+		prepare()
+		codelite.project.resourceCompiler(cfg)
+		test.capture [[
+      <ResourceCompiler Options="" Required="yes">
+        <IncludePath Value="dir"/>
+      </ResourceCompiler>
+		]]
+	end
+
+	function suite.OnProjectCfg_ResRegularInclude()
+		files { "x.rc" }
+		includedirs { "regulardir/" }
+		prepare()
+		codelite.project.resourceCompiler(cfg)
+		test.capture [[
+      <ResourceCompiler Options="" Required="yes">
+        <IncludePath Value="regulardir"/>
+      </ResourceCompiler>
+		]]
+	end
+
+	function suite.OnProjectCfg_ResSysInclude()
+		files { "x.rc" }
 		sysincludedirs { "sysdir/" }
-		resincludedirs { "resdir/" }
 		prepare()
 		codelite.project.resourceCompiler(cfg)
 		test.capture [[
       <ResourceCompiler Options="" Required="yes">
         <IncludePath Value="sysdir"/>
-        <IncludePath Value="dir"/>
-        <IncludePath Value="resdir"/>
       </ResourceCompiler>
 		]]
 	end
