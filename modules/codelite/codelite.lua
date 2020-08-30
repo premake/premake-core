@@ -40,7 +40,7 @@
 		local result = value:gsub('&', '&amp;')
 		result = result:gsub('<', '&lt;')
 		result = result:gsub('>', '&gt;')
-		result = result:gsub('"', '\\&quot;')
+		result = result:gsub('"', '&quot;')
 		return result
 	end
 

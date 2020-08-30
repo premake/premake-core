@@ -77,7 +77,7 @@
         <Preprocessor Value="TEST"/>
         <Preprocessor Value="DEF"/>
         <Preprocessor Value="VAL=1"/>
-        <Preprocessor Value="ESCAPE=\&quot;WITH\ SPACE\&quot;"/>
+        <Preprocessor Value="ESCAPE=&quot;WITH\ SPACE&quot;"/>
       </Compiler>
 		]]
 	end
