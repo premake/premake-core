@@ -215,16 +215,6 @@
 ---
 
 	function m.processCommandLine()
-		-- Process special options
-		if (_OPTIONS["version"]) then
-			printf(versionhelp, _PREMAKE_VERSION)
-			os.exit(0)
-		end
-
-		if (_OPTIONS["help"]) then
-			p.showhelp()
-			os.exit(1)
-		end
 
 		-- Validate the command-line arguments. This has to happen after the
 		-- script has run to allow for project-specific options
@@ -362,13 +352,29 @@
 		end
 	end
 
+---
+-- Process command line special options
+---
 
+function m.processCommandLineSpecialOptions()
+		
+		if (_OPTIONS["version"]) then
+			printf(versionhelp, _PREMAKE_VERSION)
+			os.exit(0)
+		end
+
+		if (_OPTIONS["help"]) then
+			p.showhelp()
+			os.exit(1)
+		end
+	end 
 
 --
 -- Script-side program entry point.
 --
 
 	m.elements = {
+		m.processCommandLineSpecialOptions,
 		m.tryHookDebugger,
 		m.installModuleLoader,
 		m.locateUserScript,
