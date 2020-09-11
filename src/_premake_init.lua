@@ -468,6 +468,7 @@
 		kind  = "list:string",
 		allowed = {
 			"Component",           -- DEPRECATED
+			"ConformanceMode",
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"EnableSSE",           -- DEPRECATED

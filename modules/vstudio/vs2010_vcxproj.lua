@@ -383,6 +383,7 @@
 			m.callingConvention,
 			m.languageStandard,
 			m.structMemberAlignment,
+			m.conformanceMode
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -2184,6 +2185,15 @@
 		   cfg.debugformat == p.C7
 		then
 			m.element("MinimalRebuild", nil, "false")
+		end
+	end
+
+
+	function m.conformanceMode(cfg)
+		if _ACTION >= "vs2017" then
+			if cfg.flags.ConformanceMode then
+				m.element("ConformanceMode", nil, "true")
+			end
 		end
 	end
 
