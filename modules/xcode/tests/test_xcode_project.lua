@@ -72,6 +72,17 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ListsMetalFileInResources()
+		files { "source.metal", "Info.plist" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		3873A08432355CF66C345EC4 /* source.metal in Resources */ = {isa = PBXBuildFile; fileRef = 35B2856C7E23699EC2C23BAC /* source.metal */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 	function suite.PBXBuildFile_ListsResourceFilesOnlyOnceWithGroupID()
 		files { "English.lproj/MainMenu.xib", "French.lproj/MainMenu.xib" }
 		prepare()
