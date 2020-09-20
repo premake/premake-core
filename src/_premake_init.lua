@@ -468,7 +468,6 @@
 		kind  = "list:string",
 		allowed = {
 			"Component",           -- DEPRECATED
-			"ConformanceMode",
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"EnableSSE",           -- DEPRECATED
@@ -781,6 +780,12 @@
 			"gnu++2a",
 			"gnu++20",
 		}
+	}
+
+	api.register {
+		name = "conformancemode",
+		scope = "config",
+		kind = "boolean"
 	}
 
 	api.register {
@@ -1404,7 +1409,7 @@
 		name = "assemblydebug",
 		scope = "config",
 		kind  = "boolean"
-	}	
+	}
 
 -----------------------------------------------------------------------------
 --

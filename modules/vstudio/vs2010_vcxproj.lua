@@ -382,8 +382,8 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
-			m.structMemberAlignment,
-			m.conformanceMode
+			m.conformanceMode,
+			m.structMemberAlignment
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1475,6 +1475,18 @@
 		end
 	end
 
+	function m.conformanceMode(cfg)
+		if _ACTION >= "vs2017" then
+			if cfg.conformancemode ~= nil then
+				if cfg.conformancemode then
+					m.element("ConformanceMode", nil, "true")
+				else
+					m.element("ConformanceMode", nil, "false")
+				end
+			end
+		end
+	end
+
 	function m.structMemberAlignment(cfg)
 		local map = {
 			[1] = "1Byte",
@@ -2185,15 +2197,6 @@
 		   cfg.debugformat == p.C7
 		then
 			m.element("MinimalRebuild", nil, "false")
-		end
-	end
-
-
-	function m.conformanceMode(cfg)
-		if _ACTION >= "vs2017" then
-			if cfg.flags.ConformanceMode then
-				m.element("ConformanceMode", nil, "true")
-			end
 		end
 	end
 
