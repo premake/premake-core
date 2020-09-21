@@ -1397,7 +1397,7 @@
 		-- check to see if this project uses an external toolset. If so, let the
 		-- toolset define the format of the links
 		local toolset = config.toolset(cfg)
-		if toolset then
+		if cfg.system ~= premake.WINDOWS and toolset then
 			links = toolset.getlinks(cfg, not explicit)
 		else
 			links = vstudio.getLinks(cfg, explicit)
