@@ -428,6 +428,60 @@
 		]]
 	end
 
+--
+-- If ConformanceMode flag is set, add <ConformanceMode> element (supported from VS2017)
+--
+
+	function suite.onConformanceModeOn_VS2015()
+		conformancemode "On"
+		p.action.set("vs2015")
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onConformanceModeOff_VS2017()
+		conformancemode "Off"
+		p.action.set("vs2017")
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ConformanceMode>false</ConformanceMode>
+		]]
+	end
+
+	function suite.onConformanceModeOn_VS2017()
+		conformancemode "On"
+		p.action.set("vs2017")
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ConformanceMode>true</ConformanceMode>
+		]]
+	end
+
+	function suite.onConformanceModeNotSpecified_VS2017()
+		p.action.set("vs2017")
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
 
 --
 -- If staticruntime is specified, add the <RuntimeLibrary> element.

@@ -382,7 +382,8 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
-			m.structMemberAlignment,
+			m.conformanceMode,
+			m.structMemberAlignment
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1470,6 +1471,18 @@
 				m.element("LanguageStandard", nil, 'stdcpplatest')
 			elseif (cfg.cppdialect == "C++latest") then
 				m.element("LanguageStandard", nil, 'stdcpplatest')
+			end
+		end
+	end
+
+	function m.conformanceMode(cfg)
+		if _ACTION >= "vs2017" then
+			if cfg.conformancemode ~= nil then
+				if cfg.conformancemode then
+					m.element("ConformanceMode", nil, "true")
+				else
+					m.element("ConformanceMode", nil, "false")
+				end
 			end
 		end
 	end

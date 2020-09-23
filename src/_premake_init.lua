@@ -783,6 +783,12 @@
 	}
 
 	api.register {
+		name = "conformancemode",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "swiftversion",
 		scope = "config",
 		kind = "string",
@@ -1403,7 +1409,7 @@
 		name = "assemblydebug",
 		scope = "config",
 		kind  = "boolean"
-	}	
+	}
 
 -----------------------------------------------------------------------------
 --
