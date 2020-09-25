@@ -103,7 +103,7 @@
 		for cfg in project.eachconfig(prj) do
 			for _, link in ipairs(config.getlinks(cfg, "system", "fullpath")) do
 				local name = path.getname(link)
-				if xcode.isframework(name) and not tr.frameworks.children[name] then
+				if xcode.isframeworkordylib(name) and not tr.frameworks.children[name] then
 					node = tree.insert(tr.frameworks, tree.new(name))
 					node.path = link
 				end
