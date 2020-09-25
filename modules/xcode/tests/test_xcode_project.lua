@@ -106,6 +106,19 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ListsDylibs()
+		links { "../libA.dylib", "libB.dylib", "/usr/lib/libC.dylib" }
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		3C98627697D9B5E86B3400B6 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
+		91686CDFDECB631154EA631F /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; };
+		A7E42B5676077F08FD15D196 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF0547FE2A469B70FDA0E63E /* libC.dylib */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 	function suite.PBXBuildFile_IgnoresVpaths()
 		files { "source.h", "source.c", "source.cpp", "Info.plist" }
 		vpaths { ["Source Files"] = { "**.c", "**.cpp" } }
@@ -377,6 +390,20 @@
 		]]
 	end
 
+
+	function suite.PBXFileReference_ListDylibsCorrectly()
+		links { "../libA.dylib", "libB.dylib", "/usr/lib/libC.dylib" }
+		prepare()
+		xcode.PBXFileReference(tr)
+		test.capture [[
+/* Begin PBXFileReference section */
+		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F9AE5C74A870BB9926CD407 /* libA.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libA.dylib; path = ../libA.dylib; sourceTree = SOURCE_ROOT; };
+		CF0547FE2A469B70FDA0E63E /* libC.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libC.dylib; path = /usr/lib/libC.dylib; sourceTree = "<absolute>"; };
+		D413533EEB25EE70DB41E97E /* libB.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libB.dylib; path = libB.dylib; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+		]]
+	end
 
 	function suite.PBXFileReference_leavesFrameworkLocationsAsIsWhenSupplied_pathIsSetToInput()
 		local inputFrameWork = 'somedir/Foo.framework'

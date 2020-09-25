@@ -144,6 +144,7 @@
 			[".xcassets"]  = "folder.assetcatalog",
 			[".swift"]     = "sourcecode.swift",
 			[".metal"]     = "sourcecode.metal",
+			[".dylib"]     = "compiled.mach-o.dylib",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
@@ -317,6 +318,29 @@
 		return (path.getextension(fname) == ".framework")
 	end
 
+
+--
+-- Returns true if the file name represents a dylib.
+--
+-- @param fname
+--    The name of the file to test.
+--
+
+	function xcode.isdylib(fname)
+		return (path.getextension(fname) == ".dylib")
+	end
+
+
+--
+-- Returns true if the file name represents a framework or dylib.
+--
+-- @param fname
+--    The name of the file to test.
+--
+
+	function xcode.isframeworkordylib(fname)
+		return xcode.isframework(fname) or xcode.isdylib(fname)
+	end
 
 --
 -- Retrieves a unique 12 byte ID for an object.
@@ -496,6 +520,23 @@
 						else
 							pth = "System/Library/Frameworks/" .. node.path
 							src = "SDKROOT"
+						end
+					elseif xcode.isdylib(node.path) then
+						--respect user supplied paths
+						-- look for special variable-starting paths for different sources
+						local nodePath = node.path
+						local _, matchEnd, variable = string.find(nodePath, "^%$%((.+)%)/")
+						if variable then
+							-- by skipping the last '/' we support the same absolute/relative
+							-- paths as before
+							nodePath = string.sub(nodePath, matchEnd + 1)
+						end
+						if string.find(nodePath,'^%/') then
+							pth = nodePath
+							src = "<absolute>"
+						else
+							pth = path.getrelative(tr.project.location, node.path)
+							src = "SOURCE_ROOT"
 						end
 					else
 						-- something else; probably a source code file
@@ -1275,14 +1316,14 @@
 
 	function xcode.XCBuildConfiguration_SwiftLanguageVersion(settings, cfg)
 		-- if no swiftversion is provided, don't set swift version
-		-- Projects with swift files but without swift version will refuse 
-		-- to build on Xcode but setting a default SWIFT_VERSION may have 
+		-- Projects with swift files but without swift version will refuse
+		-- to build on Xcode but setting a default SWIFT_VERSION may have
 		-- unexpected interactions with other systems like cocoapods
 		if cfg.swiftversion then
 			settings['SWIFT_VERSION'] = cfg.swiftversion
 		end
 	end
-	
+
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
 		local settings = {}
 
@@ -1414,12 +1455,10 @@
 
 		settings['OTHER_CFLAGS'] = table.join(flags, cfg.buildoptions)
 
-		-- build list of "other" linked flags. All libraries that aren't frameworks
-		-- are listed here, so I don't have to try and figure out if they are ".a"
-		-- or ".dylib", which Xcode requires to list in the Frameworks section
+		-- build list of "other" linked flags.
 		flags = { }
 		for _, lib in ipairs(config.getlinks(cfg, "system")) do
-			if not xcode.isframework(lib) then
+			if not xcode.isframeworkordylib(lib) then
 				table.insert(flags, "-l" .. lib)
 			end
 		end
@@ -1427,7 +1466,7 @@
 		--ms this step is for reference projects only
 		for _, lib in ipairs(config.getlinks(cfg, "dependencies", "object")) do
 			if (lib.external) then
-				if not xcode.isframework(lib.linktarget.basename) then
+				if not xcode.isframeworkordylib(lib.linktarget.basename) then
 					table.insert(flags, "-l" .. xcode.escapeArg(lib.linktarget.basename))
 				end
 			end
