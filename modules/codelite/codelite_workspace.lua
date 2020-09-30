@@ -82,10 +82,12 @@
 
 		-- for each workspace config
 		p.push('<BuildMatrix>')
+		local selected = "yes" -- only one configuration should be selected
 		for cfg in workspace.eachconfig(wks) do
 
 			local cfgname = codelite.cfgname(cfg)
-			p.push('<WorkspaceConfiguration Name="%s" Selected="yes">', cfgname)
+			p.push('<WorkspaceConfiguration Name="%s" Selected="%s">', cfgname, selected)
+			selected = "no"
 
 			local tr = workspace.grouptree(wks)
 			tree.traverse(tr, {

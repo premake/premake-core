@@ -42,7 +42,7 @@
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
@@ -59,7 +59,7 @@
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="MyProject" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
@@ -80,7 +80,7 @@
       <Project Name="MyProject" ConfigName="Debug"/>
       <Project Name="MyProject2" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="MyProject" ConfigName="Release"/>
       <Project Name="MyProject2" ConfigName="Release"/>
     </WorkspaceConfiguration>
@@ -105,7 +105,7 @@
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="MyProject" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
@@ -124,7 +124,7 @@
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="MyProject" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
@@ -145,7 +145,7 @@
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="MyProject" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
@@ -182,7 +182,7 @@
       <Project Name="MyGroupedProject" ConfigName="Debug"/>
       <Project Name="MyGrouplessProject" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="MyNestedGroupedProject" ConfigName="Release"/>
       <Project Name="MyGroupedProject" ConfigName="Release"/>
       <Project Name="MyGrouplessProject" ConfigName="Release"/>
@@ -209,13 +209,13 @@
     <WorkspaceConfiguration Name="x86_64-Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="x86_64-Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="x86-Debug" Selected="yes">
+    <WorkspaceConfiguration Name="x86-Debug" Selected="no">
       <Project Name="MyProject" ConfigName="x86-Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="x86_64-Release" Selected="yes">
+    <WorkspaceConfiguration Name="x86_64-Release" Selected="no">
       <Project Name="MyProject" ConfigName="x86_64-Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="x86-Release" Selected="yes">
+    <WorkspaceConfiguration Name="x86-Release" Selected="no">
       <Project Name="MyProject" ConfigName="x86-Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
