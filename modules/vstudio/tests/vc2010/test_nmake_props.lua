@@ -184,6 +184,28 @@ command 2</NMakeBuildCommandLine>
 		]]
 	end
 
+	function suite.onCppDialect()
+		cppdialect "C++14"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<AdditionalOptions>/std:c++14 %(AdditionalOptions)</AdditionalOptions>
+</PropertyGroup>
+		]]
+	end
+
+	function suite.onBuildOptions()
+		buildoptions { "testing" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<NMakeOutput>$(OutDir)MyProject</NMakeOutput>
+	<AdditionalOptions>testing %(AdditionalOptions)</AdditionalOptions>
+</PropertyGroup>
+		]]
+	end
+
 
 --
 -- Should not emit include dirs or preprocessor definitions if the project
