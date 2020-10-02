@@ -267,7 +267,8 @@
 			m.nmakeRebuildCommands,
 			m.nmakeCleanCommands,
 			m.nmakePreprocessorDefinitions,
-			m.nmakeIncludeDirs
+			m.nmakeIncludeDirs,
+			m.additionalCompileOptions
 		}
 	end
 
@@ -1504,7 +1505,7 @@
 
 	function m.additionalCompileOptions(cfg, condition)
 		local opts = cfg.buildoptions
-		if _ACTION == "vs2015" then
+		if _ACTION == "vs2015" or vstudio.isMakefile(cfg) then
 			if (cfg.cppdialect == "C++14") then
 				table.insert(opts, "/std:c++14")
 			elseif (cfg.cppdialect == "C++17") then
