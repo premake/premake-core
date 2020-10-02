@@ -572,6 +572,12 @@
 			copy = function(v)
 				return "cp -rf " .. path.normalize(v)
 			end,
+			copyfile = function(v)
+				return "cp -f " .. path.normalize(v)
+			end,
+			copydir = function(v)
+				return "cp -rf " .. path.normalize(v)
+			end,
 			delete = function(v)
 				return "rm -f " .. path.normalize(v)
 			end,
@@ -605,6 +611,17 @@
 				src = string.match(src, '^.*%S')
 
 				return "IF EXIST " .. src .. "\\ (xcopy /Q /E /Y /I " .. v .. " > nul) ELSE (xcopy /Q /Y /I " .. v .. " > nul)"
+			end,
+			copyfile = function(v)
+				v = path.translate(path.normalize(v))
+				-- XCOPY doesn't have a switch to assume destination is a file when it doesn't exist.
+				-- A trailing * will suppress the prompt but requires the file extensions be the same length.
+				-- Just use COPY instead, it actually works.
+				return "copy /B /Y " .. v
+			end,
+			copydir = function(v)
+				v = path.translate(path.normalize(v))
+				return "xcopy /Q /E /Y /I " .. v
 			end,
 			delete = function(v)
 				return "del " .. path.translate(path.normalize(v))
