@@ -410,6 +410,25 @@
 					settings[node.buildid] = function(level)
 						_p(level,'%s /* %s in %s */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };',
 							node.buildid, node.name, xcode.getbuildcategory(node), node.id, node.name)
+
+						if node.embedid then
+							local attrs = ""
+
+							if xcode.shouldembedandsign(tr, node) then
+								attrs = attrs .. "CodeSignOnCopy, "
+							end
+
+							if xcode.isframework(node.name) then
+								attrs = attrs .. "RemoveHeadersOnCopy, "
+							end
+
+							if attrs ~= "" then
+								attrs = " settings = {ATTRIBUTES = (" .. attrs .. "); };"
+							end
+
+							_p(level,'%s /* %s in Embed Libraries */ = {isa = PBXBuildFile; fileRef = %s /* %s */;%s };',
+								node.embedid, node.name, node.id, node.name, attrs)
+						end
 					end
 				end
 			end
@@ -594,6 +613,83 @@
 		_p(3,'runOnlyForDeploymentPostprocessing = 0;')
 		_p(2,'};')
 		_p('/* End PBXFrameworksBuildPhase section */')
+		_p('')
+	end
+
+
+	function xcode.embedsetting(cfg, node)
+		if type(cfg.xcodeembedlibraries) == 'table' then
+			-- Frameworks and dylibs referenced by path are expected
+			-- to provide the file name (but not path). Project
+			-- references are expected to provide the project name.
+			if xcode.isframeworkordylib(node.name) then
+				local tablekey = node.name
+				if node.parent.project then
+					tablekey = node.parent.project.name
+				end
+				return cfg.xcodeembedlibraries[tablekey]
+			end
+		end
+
+		return nil
+	end
+
+	function xcode.shouldembed(tr, node)
+		for _, cfg in ipairs(tr.configs) do
+			local setting = xcode.embedsetting(cfg, node)
+			if setting == "embed" or setting == "embed-and-sign" then
+				return true
+			end
+		end
+
+		return false
+	end
+
+
+	function xcode.shouldembedandsign(tr, node)
+		for _, cfg in ipairs(tr.configs) do
+			local setting = xcode.embedsetting(cfg, node)
+			if setting == "embed-and-sign" then
+				return true
+			end
+		end
+
+		return false
+	end
+
+
+	function xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
+		_p('/* Begin PBXCopyFilesBuildPhase section */')
+		_p(2,'%s /* Embed Libraries */ = {', tr.products.children[1].embedstageid)
+		_p(3,'isa = PBXCopyFilesBuildPhase;')
+		_p(3,'buildActionMask = 2147483647;')
+		_p(3,'dstPath = "";')
+		_p(3,'dstSubfolderSpec = 10;')
+		_p(3,'files = (')
+
+		-- write out library dependencies
+		tree.traverse(tr.frameworks, {
+			onleaf = function(node)
+				if node.embedid then
+					_p(4,'%s /* %s in Frameworks */,', node.embedid, node.name)
+				end
+			end
+		})
+
+		-- write out project dependencies
+		tree.traverse(tr.projects, {
+			onleaf = function(node)
+				if node.embedid then
+					_p(4,'%s /* %s in Projects */,', node.embedid, node.parent.project.name)
+				end
+			end
+		})
+
+		_p(3,');')
+		_p(3,'name = "Embed Libraries";')
+		_p(3,'runOnlyForDeploymentPostprocessing = 0;')
+		_p(2,'};')
+		_p('/* End PBXCopyFilesBuildPhase section */')
 		_p('')
 	end
 
@@ -786,6 +882,7 @@
 			end
 			if pbxTargetName == "Native" then
 				_p(4,'%s /* Frameworks */,', node.fxstageid)
+				_p(4,'%s /* Embed Libraries */,', node.embedstageid)
 			end
 			if hasBuildCommands('postbuildcommands') then
 				_p(4,'9607AE3710C85E8F00CD1376 /* Postbuild */,')

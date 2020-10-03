@@ -119,6 +119,39 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ListsFrameworksAndDylibsForSigning()
+		links
+		{
+			"../libA.dylib",
+			"libB.dylib",
+			"/usr/lib/libC.dylib",
+			"../D.framework",
+			"../E.framework",
+		}
+		xcodeembedlibraries
+		{
+			["libA.dylib"] = "embed-and-sign",
+			["libB.dylib"] = "embed",
+			["D.framework"] = "embed-and-sign",
+			["E.framework"] = "embed",
+		}
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		12F1B82D44EB02DFBECA3E6D /* E.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; };
+		6557012668C7D358EA347766 /* E.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3C98627697D9B5E86B3400B6 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
+		AC7C2020DB2274123463CE60 /* libB.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
+		91686CDFDECB631154EA631F /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; };
+		E054F1BF0EFB45B1683C9FFF /* libA.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		A7E42B5676077F08FD15D196 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF0547FE2A469B70FDA0E63E /* libC.dylib */; };
+		F56B754B2764BFFDA143FB8B /* D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; };
+		966D8A4599DE5C771B4B0085 /* D.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 	function suite.PBXBuildFile_IgnoresVpaths()
 		files { "source.h", "source.c", "source.cpp", "Info.plist" }
 		vpaths { ["Source Files"] = { "**.c", "**.cpp" } }
@@ -524,6 +557,62 @@
 
 
 ---------------------------------------------------------------------------
+-- PBXCopyFilesBuildPhaseForEmbedFrameworks tests
+---------------------------------------------------------------------------
+
+	function suite.PBXCopyFilesBuildPhaseForEmbedFrameworks_OnNoFiles()
+		prepare()
+		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
+		test.capture [[
+/* Begin PBXCopyFilesBuildPhase section */
+		E1D3B542862652F4985E9B82 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+		]]
+	end
+
+
+	function suite.PBXCopyFilesBuildPhaseForEmbedFrameworks_ListsEmbeddedLibrariesCorrectly()
+		links
+		{
+			"../libA.dylib",
+			"../D.framework",
+		}
+		xcodeembedlibraries
+		{
+			["libA.dylib"] = "embed",
+			["D.framework"] = "embed-and-sign",
+		}
+		prepare()
+		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
+		test.capture [[
+/* Begin PBXCopyFilesBuildPhase section */
+		E1D3B542862652F4985E9B82 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E054F1BF0EFB45B1683C9FFF /* libA.dylib in Frameworks */,
+				966D8A4599DE5C771B4B0085 /* D.framework in Frameworks */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+		]]
+	end
+
+
+---------------------------------------------------------------------------
 -- PBXGroup tests
 ---------------------------------------------------------------------------
 
@@ -757,6 +846,7 @@
 				0FC4B7F6B3104128CDE10E36 /* Resources */,
 				7971D14D1CBD5A7F378E278D /* Sources */,
 				9FDD37564328C0885DF98D96 /* Frameworks */,
+				E1D3B542862652F4985E9B82 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -786,6 +876,7 @@
 				0F791C0512E9EE3794569245 /* Resources */,
 				7926355C7C97078EFE03AB9C /* Sources */,
 				9F919B65A3026D97246F11A5 /* Frameworks */,
+				A0315911431F7FC3D2455F51 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -815,6 +906,7 @@
 				A1093E0F9A6F3F818E0A9C4F /* Resources */,
 				0AB65766041C58D8F7B7B5A6 /* Sources */,
 				3121BD6F2A87BEE11E231BAF /* Frameworks */,
+				D652259BC13E4B8D092413DB /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -852,6 +944,7 @@
 				7971D14D1CBD5A7F378E278D /* Sources */,
 				9607AE3510C85E7E00CD1376 /* Prelink */,
 				9FDD37564328C0885DF98D96 /* Frameworks */,
+				E1D3B542862652F4985E9B82 /* Embed Libraries */,
 				9607AE3710C85E8F00CD1376 /* Postbuild */,
 			);
 			buildRules = (
@@ -894,6 +987,7 @@
 				0FC4B7F6B3104128CDE10E36 /* Resources */,
 				7971D14D1CBD5A7F378E278D /* Sources */,
 				9FDD37564328C0885DF98D96 /* Frameworks */,
+				E1D3B542862652F4985E9B82 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -937,6 +1031,7 @@
 				0FC4B7F6B3104128CDE10E36 /* Resources */,
 				7971D14D1CBD5A7F378E278D /* Sources */,
 				9FDD37564328C0885DF98D96 /* Frameworks */,
+				E1D3B542862652F4985E9B82 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
