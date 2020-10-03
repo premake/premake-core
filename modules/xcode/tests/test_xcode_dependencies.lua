@@ -69,6 +69,44 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ListsDependencyTargets_OnSharedLibWhenEmbedding()
+		kind "SharedLib"
+
+		project "MyProject"
+		xcodeembedlibraries
+		{
+			["MyProject2"] = "embed"
+		}
+
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
+		6514841E8D4F3CD074EACA5E /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+	function suite.PBXBuildFile_ListsDependencyTargets_OnSharedLibWhenEmbeddingAndSigning()
+		kind "SharedLib"
+
+		project "MyProject"
+		xcodeembedlibraries
+		{
+			["MyProject2"] = "embed-and-sign"
+		}
+
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
+		6514841E8D4F3CD074EACA5E /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 
 ---------------------------------------------------------------------------
 -- PBXContainerItemProxy tests
@@ -167,6 +205,38 @@
 	end
 
 ---------------------------------------------------------------------------
+-- PBXCopyFilesBuildPhaseForEmbedFrameworks tests
+---------------------------------------------------------------------------
+
+	function suite.PBXCopyFilesBuildPhaseForEmbedFrameworks_ListsDependencies_OnSharedLib()
+		kind "SharedLib"
+
+		project "MyProject"
+		xcodeembedlibraries
+		{
+			["MyProject2"] = "embed"
+		}
+
+		prepare()
+		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
+		test.capture [[
+/* Begin PBXCopyFilesBuildPhase section */
+		E1D3B542862652F4985E9B82 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6514841E8D4F3CD074EACA5E /* MyProject2 in Projects */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+		]]
+	end
+
+---------------------------------------------------------------------------
 -- PBXGroup tests
 ---------------------------------------------------------------------------
 
@@ -229,6 +299,7 @@
 				0FC4B7F6B3104128CDE10E36 /* Resources */,
 				7971D14D1CBD5A7F378E278D /* Sources */,
 				9FDD37564328C0885DF98D96 /* Frameworks */,
+				E1D3B542862652F4985E9B82 /* Embed Libraries */,
 			);
 			buildRules = (
 			);

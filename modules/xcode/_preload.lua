@@ -46,6 +46,12 @@
 		}
 	}
 
+	p.api.register {
+		name = "xcodeembedlibraries",
+		scope = "config",
+		kind = "key-string",
+	}
+
 --
 -- Register the Xcode exporters.
 --
