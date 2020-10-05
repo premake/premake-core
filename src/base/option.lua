@@ -65,6 +65,7 @@
 --
 
 	m.list = {}
+	setmetatable(m.list, _OPTIONS_metatable)
 
 
 --
@@ -88,7 +89,7 @@
 		end
 
 		-- add it to the master list
-		p.option.list[opt.trigger:lower()] = opt
+		p.option.list[opt.trigger] = opt
 
 		-- if it has a default value, set it.
 		if opt.default and not _OPTIONS[opt.trigger] then
@@ -121,7 +122,7 @@
 		-- sort the list by trigger
 		local keys = { }
 		for _, option in pairs(p.option.list) do
-			table.insert(keys, option.trigger)
+			table.insert(keys, option.trigger:lower())
 		end
 		table.sort(keys)
 

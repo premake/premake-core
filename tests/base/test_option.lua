@@ -13,11 +13,28 @@
 --
 
 	function suite.setup()
+		suite._OPTIONS = _OPTIONS
+		_OPTIONS = {}
+		setmetatable(_OPTIONS, getmetatable(suite._OPTIONS))
+
+		suite.optionList = p.option.list
+		p.option.list = {}
+		setmetatable(p.option.list, getmetatable(suite.optionList))
+
 		_OPTIONS["testopt"] = "testopt"
 	end
 
+	local function printTriggers()
+		_p("-- begin options --")
+		for option in p.option.each() do
+			_p("trigger: " .. option.trigger)
+		end
+		_p("-- end options --")
+	end
+
 	function suite.teardown()
-		_OPTIONS["testopt"] = nil
+		_OPTIONS = suite._OPTIONS
+		p.option.list = suite.optionList
 	end
 
 
@@ -42,4 +59,34 @@
 		}
 
 		test.isnotnil(p.option.get("testopt2"))
+	end
+
+--
+-- Make sure the help logic that sorts options into categories
+-- is able to account for newoption triggers with mixed case
+--
+
+	function suite.iteratesCorrectOption_onMixedCase()
+		newoption {
+			trigger = "testopt1",
+			description = "Testing",
+		}
+		newoption {
+			trigger = "TestOpt2",
+			description = "Testing",
+		}
+		newoption {
+			trigger = "testopt3",
+			description = "Testing",
+		}
+
+		printTriggers()
+
+		test.capture [[
+-- begin options --
+trigger: testopt1
+trigger: TestOpt2
+trigger: testopt3
+-- end options --
+		]]
 	end
