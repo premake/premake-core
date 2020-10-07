@@ -15,7 +15,7 @@ jobs:
     - name: Build
       run: make -f Bootstrap.mak linux CONFIG=${{ matrix.config }}
     - name: Test
-      run: bin/${{ matrix.config }}/premake5 test
+      run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v2
@@ -34,7 +34,7 @@ jobs:
     - name: Build
       run: make -f Bootstrap.mak macosx CONFIG=${{ matrix.config }}
     - name: Test
-      run: bin/${{ matrix.config }}/premake5 test
+      run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v2
@@ -56,7 +56,7 @@ jobs:
         nmake -f Bootstrap.mak MSDEV=vs2019 windows-msbuild PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
       shell: cmd
     - name: Test
-      run: bin\${{ matrix.config }}\premake5 test
+      run: bin\${{ matrix.config }}\premake5 test --test-all
       shell: cmd
     - name: Upload Artifacts
       if: matrix.config == 'release'

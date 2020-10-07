@@ -42,6 +42,7 @@
 -- Writes the pre-build check that makes sure that all packages are installed.
 --
 
+if _OPTIONS["test-all"] then
 	function suite.structureIsCorrect()
 		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3" }
 		prepare()
@@ -56,3 +57,4 @@
 </Target>
 		]]
 	end
+end

@@ -148,6 +148,7 @@
 -- NuGet packages should get references.
 --
 
+if _OPTIONS["test-all"] then
 	function suite.nuGetPackages_net45()
 		dotnetframework "4.5"
 		nuget { "Newtonsoft.Json:10.0.2" }
@@ -175,12 +176,15 @@
 	</ItemGroup>
 		]]
 	end
+end
+
 
 --
 -- If there are multiple assemblies in the NuGet package, they all should be
 -- referenced.
 --
 
+if _OPTIONS["test-all"] then
 	function suite.nuGetPackages_multipleAssemblies()
 		dotnetframework "2.0"
 		nuget { "NUnit:3.6.1" }
@@ -198,12 +202,14 @@
 	</ItemGroup>
 		]]
 	end
+end
 
 
 --
 -- NuGet packages should respect copylocal() and the NoCopyLocal flag.
 --
 
+if _OPTIONS["test-all"] then
 	function suite.nugetPackages_onNoCopyLocal()
 		dotnetframework "2.0"
 		nuget { "NUnit:3.6.1" }
@@ -260,12 +266,15 @@
 	</ItemGroup>
 		]]
 	end
+end
+
 
 --
 -- NuGet packages with unconventional folder structures should be handled
 -- properly.
 --
 
+if _OPTIONS["test-all"] then
 	function suite.nuGetPackages_netFolder()
 		dotnetframework "4.5"
 		nuget { "MetroModernUI:1.4.0" }
@@ -287,3 +296,4 @@
 	</ItemGroup>
 		]]
 	end
+end
