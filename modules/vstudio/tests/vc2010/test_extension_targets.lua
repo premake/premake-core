@@ -63,6 +63,7 @@
 -- Writes entries for NuGet packages.
 --
 
+if _OPTIONS["test-all"] then
 	function suite.addsImport_onEachNuGetPackage()
 		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3" }
 		prepare()
@@ -74,6 +75,7 @@
 </ImportGroup>
 		]]
 	end
+end
 
 
 --
