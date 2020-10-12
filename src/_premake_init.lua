@@ -1411,6 +1411,15 @@
 		kind  = "boolean"
 	}
 
+	api.register {
+		name = "justmycode",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"Off"
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility

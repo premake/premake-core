@@ -97,6 +97,8 @@ return {
 	-- Visual Studio 2013+ C/C++ Shared Items projects
 	"vc2013/test_vcxitems.lua",
 
-	-- Visual Studio 2019+ C/C++ Clang Projects
+	-- Visual Studio 2019+ C/C++ Projects
+	"vc2019/test_compile_settings.lua",
+	"vc2019/test_link.lua",
 	"vc2019/test_toolset_settings.lua"
 }
