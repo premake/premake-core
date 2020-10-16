@@ -365,6 +365,7 @@
 			m.optimization,
 			m.functionLevelLinking,
 			m.intrinsicFunctions,
+			m.justMyCodeDebugging,
 			m.minimalRebuild,
 			m.omitFramePointers,
 			m.stringPooling,
@@ -2122,6 +2123,13 @@
 		end
 	end
 
+	function m.justMyCodeDebugging(cfg)
+		local jmc = cfg.justmycode
+
+		if _ACTION >= "vs2017" and jmc == "Off" then
+			m.element("SupportJustMyCode", nil, "false")
+		end
+	end
 
 	function m.keyword(prj)
 		-- try to determine what kind of targets we're building here

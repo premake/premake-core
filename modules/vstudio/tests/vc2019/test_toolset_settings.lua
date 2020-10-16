@@ -5,7 +5,7 @@
 --
 
 	local p = premake
-	local suite = test.declare("vstudio_vs2019_compile_settings")
+	local suite = test.declare("vstudio_vs2019_toolset_settings")
 	local vc2010 = p.vstudio.vc2010
 	local project = p.project
 
