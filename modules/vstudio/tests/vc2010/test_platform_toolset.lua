@@ -57,6 +57,17 @@
 <PlatformToolset>v120</PlatformToolset>
 		]]
 	end
+	
+	function suite.correctDefault_onVSLatest()
+		p.action.set("vs-latest")
+		prepare()
+
+		local latest = getLatestVisualStudioVersion()
+
+		test.capture([[
+<PlatformToolset>]] .. latest.toolset .. [[</PlatformToolset>]]
+		)
+	end
 
 
 --

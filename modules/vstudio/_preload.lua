@@ -21,6 +21,7 @@
 	include("vs2015.lua")
 	include("vs2017.lua")
 	include("vs2019.lua")
+	include("vslatest.lua")
 
 	-- Initialize Specific API
 
@@ -169,5 +170,6 @@
 			_ACTION == "vs2015" or
 			_ACTION == "vs2017" or
 			_ACTION == "vs2019" or
+			_ACTION == "vs-latest" or
 			false;
 	end
