@@ -319,28 +319,8 @@
 			return result
 		end
 
-		local rpaths = {}
-
-		-- User defined runpath search paths
 		for _, fullpath in ipairs(dirs) do
 			local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
-			if not (table.contains(rpaths, rpath)) then
-				table.insert(rpaths, rpath)
-			end
-		end
-
-		-- Automatically add linked shared libraries path relative to target directory
-		for _, sibling in ipairs(config.getlinks(cfg, "siblings", "object")) do
-			if (sibling.kind == p.SHAREDLIB) then
-				local fullpath = sibling.linktarget.directory
-				local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
-				if not (table.contains(rpaths, rpath)) then
-					table.insert(rpaths, rpath)
-				end
-			end
-		end
-
-		for _, rpath in ipairs(rpaths) do
 			if table.contains(os.getSystemTags(cfg.system), "darwin") then
 				rpath = "@loader_path/" .. rpath
 			elseif (cfg.system == p.LINUX) then
