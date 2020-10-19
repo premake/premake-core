@@ -1403,6 +1403,9 @@
 		end
 		settings['FRAMEWORK_SEARCH_PATHS'] = cfg.frameworkdirs
 
+		local runpathdirs = table.join (cfg.runpathdirs, config.getsiblingtargetdirs (cfg))
+		settings['LD_RUNPATH_SEARCH_PATHS'] = toolset.getrunpathdirs(cfg, runpathdirs, "path")
+
 		local objDir = path.getrelative(tr.project.location, cfg.objdir)
 		settings['OBJROOT'] = objDir
 
