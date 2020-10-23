@@ -1370,7 +1370,7 @@
 		if not table.isempty(cfg.sysincludedirs) then
 			table.insert(cfg.sysincludedirs, "$(inherited)")
 		end
-		settings['HEADER_SEARCH_PATHS'] = cfg.sysincludedirs
+		settings['SYSTEM_HEADER_SEARCH_PATHS'] = cfg.sysincludedirs
 
 		for i,v in ipairs(cfg.libdirs) do
 			cfg.libdirs[i] = p.project.getrelative(cfg.project, cfg.libdirs[i])

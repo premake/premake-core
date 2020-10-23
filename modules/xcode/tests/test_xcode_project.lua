@@ -2255,15 +2255,15 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+				SYSTEM_HEADER_SEARCH_PATHS = (
 					../include,
 					../libs,
 					"\"../name with spaces\"",
 					"$(inherited)",
 				);
-				OBJROOT = obj/Debug;
-				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
 			};
 			name = Debug;
 		};
