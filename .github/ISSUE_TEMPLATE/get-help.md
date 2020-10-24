@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+_Before opening a new issue, please [use the issue search feature](https://github.com/premake/premake-core/issues) to see if a similar issue already exists. If not, please help us help you by filling in the template below._
+
 **What are you trying to do?**
 A short, concise description of the outcome you are trying to achieve, ex. "Add build settings to a specific file".
 
