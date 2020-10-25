@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+_Before opening a new feature request, please read [Requesting New Features](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md#requesting-new-features) and consider if this is something [you can contribute](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md#contributing-a-fix-or-feature) yourself. If this a new request, help us help you by filling in the template below._
+
 **What problem will this solve?**
 A clear and concise description of the problem this new feature is meant to solve, ex. "I'm always frustrated when [...]" or "Add support for this new toolset [...]". Please limit your request to a single feature; create multiple feature requests instead.
 

@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+_Before asking a new question, please [use the issue search feature](https://github.com/premake/premake-core/issues) to see if your question has already been asked. Help us help you!_
+
 **What's your question?**
 A short, concise question for the community. To get the best answers, be clear about what you're asking, what kind of responses you hope to receive, and how you intend to use the information.
 

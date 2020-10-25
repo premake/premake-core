@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+_Before opening a new bug report, please read [Reporting Bugs](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md#reporting-bugs) and consider if this is something [you can contribute](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md#contributing-a-fix-or-feature) yourself. If this a new bug, help us help you by filling in the template below._
+
 **What seems to be the problem?**
 A clear and concise description of the bug, ex. "It crashes when I try to run it" or "There doesn't seem to be any way to do ...". If you are reporting a crash, be sure to include any error messages and stack trace information. Use [code blocks](https://help.github.com/en/articles/creating-and-highlighting-code-blocks) to format code and console output nicely.
 
