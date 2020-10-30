@@ -2255,15 +2255,15 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+				SYSTEM_HEADER_SEARCH_PATHS = (
 					../include,
 					../libs,
 					"\"../name with spaces\"",
 					"$(inherited)",
 				);
-				OBJROOT = obj/Debug;
-				ONLY_ACTIVE_ARCH = NO;
-				SYMROOT = bin/Debug;
 			};
 			name = Debug;
 		};
@@ -2770,6 +2770,38 @@
 				LIBRARY_SEARCH_PATHS = (
 					mylibs1,
 					mylibs2,
+				);
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+
+	function suite.XCBuildConfigurationProject_OnSysLibDirs()
+		libdirs { "mylibs1", "mylibs2" }
+		syslibdirs { "mysyslib3", "mysyslib4" }
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		A14350AC4595EE5E57CE36EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					mylibs1,
+					mylibs2,
+					mysyslib3,
+					mysyslib4,
 				);
 				OBJROOT = obj/Debug;
 				ONLY_ACTIVE_ARCH = NO;

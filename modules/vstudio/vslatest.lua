@@ -39,7 +39,7 @@
 		
 		trigger	    = "vs-latest",
 		shortname   = "Visual Studio - Latest",
-		description = "Generate Visual Studio project files of latest installation",
+		description = "Generate Visual Studio project files for latest installation",
 
 		-- Copy data from the latest vs action
 		
