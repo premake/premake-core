@@ -156,6 +156,17 @@
 	<CLRSupport>Pure</CLRSupport>
 		]]
 	end
+	
+	function suite.clrSupport_onClrNetCore()
+		clr "NetCore"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CLRSupport>NetCore</CLRSupport>
+		]]
+	end
 
 
 --
