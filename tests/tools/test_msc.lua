@@ -84,10 +84,16 @@
 		test.excludes("/Oy", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onLinkTimeOptimizations()
+		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("/GL", msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_onLinkTimeOptimizations()
 		flags "LinkTimeOptimization"
 		prepare()
-		test.contains("/GL", msc.getldflags(cfg))
+		test.contains("/LTCG", msc.getldflags(cfg))
 	end
 
 	function suite.cflags_onStringPoolingOn()
@@ -511,4 +517,57 @@
 		flags { "FatalCompileWarnings" }
 		prepare()
 		test.isequal({ "/WX", "/MD", "/EHsc" }, msc.getcxxflags(cfg))
+	end
+
+
+	--
+	-- Check handling of Run-Time Library flags.
+	--
+
+	function suite.cflags_onStaticRuntime()
+		staticruntime "On"
+		prepare()
+		test.isequal({ "/MT" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onDynamicRuntime()
+		staticruntime "Off"
+		prepare()
+		test.isequal({ "/MD" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onStaticRuntimeAndDebug()
+		staticruntime "On"
+		runtime "Debug"
+		prepare()
+		test.isequal({ "/MTd" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onDynamicRuntimeAndDebug()
+		staticruntime "Off"
+		runtime "Debug"
+		prepare()
+		test.isequal({ "/MDd" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onStaticRuntimeAndSymbols()
+		staticruntime "On"
+		symbols "On"
+		prepare()
+		test.isequal({ "/MTd", "/Z7" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onDynamicRuntimeAndSymbols()
+		staticruntime "Off"
+		symbols "On"
+		prepare()
+		test.isequal({ "/MDd", "/Z7" }, msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onDynamicRuntimeAndReleaseAndSymbols()
+		staticruntime "Off"
+		runtime "Release"
+		symbols "On"
+		prepare()
+		test.isequal({ "/MD", "/Z7" }, msc.getcflags(cfg))
 	end
