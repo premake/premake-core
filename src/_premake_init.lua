@@ -165,6 +165,7 @@
 			"Pure",
 			"Safe",
 			"Unsafe",
+			"NetCore",
 		}
 	}
 
