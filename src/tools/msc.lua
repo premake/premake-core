@@ -231,7 +231,7 @@
 -- Decorate include file search paths for the MSVC command line.
 --
 
-	function msc.getincludedirs(cfg, dirs, sysdirs)
+	function msc.getincludedirs(cfg, dirs, sysdirs, frameworkdirs)
 		local result = {}
 		dirs = table.join(dirs, sysdirs)
 		for _, dir in ipairs(dirs) do
