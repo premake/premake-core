@@ -252,8 +252,8 @@
 		_p(2,'<ErrorReport>prompt</ErrorReport>')
 		_p(2,'<WarningLevel>4</WarningLevel>')
 
-		if cfg.clr == "Unsafe" then
-			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
+		if not dotnetbase.isNewFormatProject(cfg) then
+			dotnetbase.allowUnsafeBlocks(cfg)
 		end
 
 		if cfg.flags.FatalCompileWarnings then
@@ -771,5 +771,11 @@
 	function dotnetbase.netcore.useWpf(cfg)
 		if cfg.flags.WPF then
 			_p(2,'<UseWpf>true</UseWpf>')
+		end
+	end
+
+	function dotnetbase.allowUnsafeBlocks(cfg)
+		if cfg.clr == "Unsafe" then
+			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 		end
 	end
