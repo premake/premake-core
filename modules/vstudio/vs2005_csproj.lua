@@ -47,6 +47,7 @@
 				dotnetbase.rootNamespace,
 				dotnetbase.assemblyName,
 				dotnetbase.netcore.targetFramework,
+				dotnetbase.allowUnsafeBlocks,
 				dotnetbase.fileAlignment,
 				dotnetbase.bindingRedirects,
 				dotnetbase.netcore.useWpf,
