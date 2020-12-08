@@ -94,6 +94,14 @@ function suite.project_element_core()
     ]]
 end
 
+function suite.project_element_net5()
+    dotnetframework "net5.0"
+    prepareNetcore()
+    test.capture [[
+<Project Sdk="Microsoft.NET.Sdk">
+    ]]
+end
+
 function suite.project_element_framework()
     dotnetframework "4.7.2"
     prepareNetcore()

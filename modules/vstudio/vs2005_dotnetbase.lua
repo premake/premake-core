@@ -745,11 +745,7 @@
 			return false
 		end
 
-		if framework:find('^netcoreapp') ~= nil then
-			return true
-		end
-		
-		if framework:find('^netstandard') ~= nil then
+		if framework:find('^net') ~= nil then
 			return true
 		end
 
