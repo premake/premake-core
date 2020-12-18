@@ -1510,3 +1510,42 @@
 </ClCompile>
 		]]
 	end
+
+--
+-- If useFullPaths flag is set, add <UseFullPaths> element
+--
+
+	function suite.onUseFullPathsOff()
+		usefullpaths "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<UseFullPaths>false</UseFullPaths>
+		]]
+	end
+
+	function suite.onUseFullPathsOn()
+		usefullpaths "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<UseFullPaths>true</UseFullPaths>
+		]]
+	end
+
+	function suite.onUseFullPathsNotSpecified()
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
