@@ -64,6 +64,8 @@
 			"Hull",
 			"Domain",
 			"Compute",
+			"Mesh",
+			"Amplification",
 			"Texture",
 			"RootSignature",
 		}
