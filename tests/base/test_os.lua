@@ -184,8 +184,26 @@
 			end
 		end
 	end
-
-
+	
+	-- Check outputof content
+	function suite.outputof_streams_output()
+		if (os.istarget("macosx")
+			or os.istarget("linux")
+			or os.istarget("solaris")
+			or os.istarget("bsd"))
+			and os.isdir (_TESTS_DIR)
+		then
+			local ob, e = os.outputof ("ls " .. _TESTS_DIR .. "/base")
+			local oo, e = os.outputof ("ls " .. _TESTS_DIR .. "/base", "output")
+			test.isequal (oo, ob)
+			local s, e = string.find (oo, "test_os.lua")
+			test.istrue(s ~= nil)
+			
+			local o, e = os.outputof ("ls " .. cwd .. "/base", "error")
+			test.istrue(o == nil or #o == 0)
+		end
+	end
+	
 --
 -- os.translateCommand() tests
 --

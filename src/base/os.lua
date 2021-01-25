@@ -456,11 +456,24 @@
 --
 -- Run a shell command and return the output.
 --
+-- @param cmd Command to execute
+-- @param streams Standard stream(s) to output
+-- 		Must be one of 
+--		- "botn" (default)
+--		- "output" Return standard output stream content only
+--		- "error" Return standard error stream content only
+--
 
-	function os.outputof(cmd)
+	function os.outputof(cmd, streams)
 		cmd = path.normalize(cmd)
+		local redirection = " 2>&1"
+		if streams == "output" then
+			redirection = " 2>/dev/null"
+		elseif streams == "error" then
+			redirection = " 2>&1 1>/dev/null"
+		end
 
-		local pipe = io.popen(cmd .. " 2>&1")
+		local pipe = io.popen(cmd .. redirection)
 		local result = pipe:read('*a')
 		local success, what, code = pipe:close()
 		if success then
