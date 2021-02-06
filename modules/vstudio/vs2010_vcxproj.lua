@@ -1483,7 +1483,11 @@
 		if _ACTION >= "vs2019" then
 			if (cfg.cdialect == "C11") then
 				m.element("LanguageStandard_C", nil, 'stdc11')
-			elseif (cfg.cdialect == "C17") then
+			elseif (cfg.cdialect == "gnu11") then
+				m.element("LanguageStandard_C", nil, 'stdc11')
+			elseif (cfg.cdialect == "C17" or cfg.cdialect == "C18") then
+				m.element("LanguageStandard_C", nil, 'stdc17')
+			elseif (cfg.cdialect == "gnu17" or cfg.cdialect == "gnu18") then
 				m.element("LanguageStandard_C", nil, 'stdc17')
 			else
 				m.element("LanguageStandard_C", nil, 'Default')
