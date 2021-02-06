@@ -384,7 +384,7 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
-			m.languageStandard_C,
+			m.languageStandardC,
 			m.conformanceMode,
 			m.structMemberAlignment,
 			m.useFullPaths
@@ -1479,7 +1479,7 @@
 		end
 	end
 	
-	function m.languageStandard_C(cfg)
+	function m.languageStandardC(cfg)
 		if _ACTION >= "vs2019" then
 			if (cfg.cdialect == "Default") then
 				m.element("LanguageStandard_C", nil, 'Default')
