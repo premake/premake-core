@@ -384,6 +384,7 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
+			m.languageStandard_C,
 			m.conformanceMode,
 			m.structMemberAlignment,
 			m.useFullPaths
@@ -1474,6 +1475,18 @@
 				m.element("LanguageStandard", nil, 'stdcpplatest')
 			elseif (cfg.cppdialect == "C++latest") then
 				m.element("LanguageStandard", nil, 'stdcpplatest')
+			end
+		end
+	end
+	
+	function m.languageStandard_C(cfg)
+		if _ACTION >= "vs2019" then
+			if (cfg.cdialect == "Default") then
+				m.element("LanguageStandard_C", nil, 'Default')
+			elseif (cfg.cdialect == "C11") then
+				m.element("LanguageStandard_C", nil, 'stdc11')
+			elseif (cfg.cdialect == "C17") then
+				m.element("LanguageStandard_C", nil, 'stdc17')
 			end
 		end
 	end
