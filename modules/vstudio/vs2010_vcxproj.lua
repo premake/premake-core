@@ -1481,12 +1481,12 @@
 	
 	function m.languageStandardC(cfg)
 		if _ACTION >= "vs2019" then
-			if (cfg.cdialect == "Default") then
-				m.element("LanguageStandard_C", nil, 'Default')
-			elseif (cfg.cdialect == "C11") then
+			if (cfg.cdialect == "C11") then
 				m.element("LanguageStandard_C", nil, 'stdc11')
 			elseif (cfg.cdialect == "C17") then
 				m.element("LanguageStandard_C", nil, 'stdc17')
+			else
+				m.element("LanguageStandard_C", nil, 'Default')
 			end
 		end
 	end
