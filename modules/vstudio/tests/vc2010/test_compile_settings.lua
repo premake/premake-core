@@ -1238,6 +1238,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp14</LanguageStandard>
+	<LanguageStandard_C>Default</LanguageStandard_C>
 </ClCompile>
 		]]
 	end
@@ -1295,6 +1296,52 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp17</LanguageStandard>
+	<LanguageStandard_C>Default</LanguageStandard_C>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_C11_VS2019()
+		p.action.set("vs2019")
+
+		cdialect 'C11'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard_C>stdc11</LanguageStandard_C>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_C17_VS2019()
+		p.action.set("vs2019")
+
+		cdialect 'C17'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard_C>stdc17</LanguageStandard_C>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_C18_VS2019()
+		p.action.set("vs2019")
+
+		cdialect 'C18'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard_C>stdc17</LanguageStandard_C>
 </ClCompile>
 		]]
 	end
@@ -1310,6 +1357,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<LanguageStandard_C>Default</LanguageStandard_C>
 </ClCompile>
 		]]
 	end
@@ -1367,6 +1415,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<LanguageStandard_C>Default</LanguageStandard_C>
 </ClCompile>
 		]]
 	end
