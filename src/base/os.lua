@@ -459,7 +459,7 @@
 -- @param cmd Command to execute
 -- @param streams Standard stream(s) to output
 -- 		Must be one of 
---		- "botn" (default)
+--		- "both" (default)
 --		- "output" Return standard output stream content only
 --		- "error" Return standard error stream content only
 --
