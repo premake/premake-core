@@ -466,11 +466,16 @@
 
 	function os.outputof(cmd, streams)
 		cmd = path.normalize(cmd)
-		local redirection = " 2>&1"
-		if streams == "output" then
+		streams = streams or "both"
+		local redirection
+		if streams == "both" then
+			redirection = " 2>&1"
+		elseif streams == "output" then
 			redirection = " 2>/dev/null"
 		elseif streams == "error" then
 			redirection = " 2>&1 1>/dev/null"
+		else
+			error ('Invalid stream(s) selection. "output", "error", or "both" expected.')
 		end
 
 		local pipe = io.popen(cmd .. redirection)
