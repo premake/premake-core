@@ -2,12 +2,12 @@ module.exports = {
   title: 'Premake',
   tagline: 'Powerfully simple build configuration',
   url: 'https://premake.github.io/',
-  baseUrl: '/premake-core/',
+  baseUrl: '/',
   onBrokenLinks: 'warn', // FIXME: when docs are ready change it to 'throw'
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/premake-logo.png', // FIXME: make actual favicon.ico file
   organizationName: 'premake',
-  projectName: 'premake-core',
+  projectName: 'premake.github.io',
   themeConfig: {
   prism: {
     additionalLanguages: ['lua'],
@@ -35,11 +35,6 @@ module.exports = {
           label: 'GitHub',
           position: 'left',
         },
-        {
-            type: 'docsVersionDropdown',
-            position: 'right',
-            dropdownActiveClassDisabled: true,
-        }
       ],
     },
     footer: {
@@ -54,7 +49,7 @@ module.exports = {
             },
             {
               label: 'Premake 4.x',
-              to: 'docs/4.x/',
+              to: 'https://github.com/premake/premake-4.x/wiki',
             },
           ],
         },
@@ -95,13 +90,6 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/premake/premake-core/edit/master/website/',
-          lastVersion: "current",
-          versions: {
-            current: {
-              label: "5.0",
-              path: ""
-            }
-          }
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

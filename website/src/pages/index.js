@@ -4,7 +4,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import styles from './styles.module.css';
+import styles from '../css/styles.module.css';
 
 const features = [
   {
@@ -22,7 +22,9 @@ const features = [
     description: (
       <div>
         <p>The latest iteration of Premake, featuring an improved platform system, support for third-party modules, and loads of new features.</p>
-		    <p className={styles.bigText}><a href='download/'>Download</a>&nbsp;·&nbsp;<a href='docs/'>Documentation</a></p>
+		    <p className={styles.bigText}>
+          <a href='download/'>Download</a>&nbsp;·&nbsp;<a href='docs/'>Documentation</a>
+        </p>
       </div>
     ),
   },
@@ -31,7 +33,9 @@ const features = [
     description: (
       <div>
         <p>The latest in Premake's 4.x stable branch.</p>
-		    <p className={styles.bigText}><a href='download/'>Download</a>&nbsp;·&nbsp;<a href='docs/4.x/'>Documentation</a></p>
+		    <p className={styles.bigText}>
+          <a href='download/'>Download</a>&nbsp;·&nbsp;<a href='https://github.com/premake/premake-4.x/wiki'>Documentation</a>
+        </p>
       </div>
     ),
   },
@@ -68,8 +72,8 @@ function Home() {
               to={useBaseUrl('docs/')}>
               Get Started
             </Link>
-			&nbsp;&nbsp;
-			<Link
+            &nbsp;&nbsp;
+            <Link
               className={clsx(
                 'button button--outline button--primary button--lg',
                 styles.getStarted,
