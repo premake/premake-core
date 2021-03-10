@@ -2,7 +2,7 @@
  *  \brief  Generic file encryption program using generic wrappers for configured
  *          security.
  *
- *  Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+ *  Copyright The Mbed TLS Contributors
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -16,9 +16,12 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
- *  This file is part of mbed TLS (https://tls.mbed.org)
  */
+
+/* Enable definition of fileno() even when compiling with -std=c99. Must be
+ * set before config.h, which pulls in glibc's features.h indirectly.
+ * Harmless on other platforms. */
+#define _POSIX_C_SOURCE 200112L
 
 #if !defined(MBEDTLS_CONFIG_FILE)
 #include "mbedtls/config.h"
@@ -30,14 +33,19 @@
 #include "mbedtls/platform.h"
 #else
 #include <stdio.h>
-#define mbedtls_fprintf    fprintf
-#define mbedtls_printf     printf
-#endif
+#include <stdlib.h>
+#define mbedtls_fprintf         fprintf
+#define mbedtls_printf          printf
+#define mbedtls_exit            exit
+#define MBEDTLS_EXIT_SUCCESS    EXIT_SUCCESS
+#define MBEDTLS_EXIT_FAILURE    EXIT_FAILURE
+#endif /* MBEDTLS_PLATFORM_C */
 
 #if defined(MBEDTLS_CIPHER_C) && defined(MBEDTLS_MD_C) && \
  defined(MBEDTLS_FS_IO)
 #include "mbedtls/cipher.h"
 #include "mbedtls/md.h"
+#include "mbedtls/platform_util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,13 +76,17 @@
 int main( void )
 {
     mbedtls_printf("MBEDTLS_CIPHER_C and/or MBEDTLS_MD_C and/or MBEDTLS_FS_IO not defined.\n");
-    return( 0 );
+    mbedtls_exit( 0 );
 }
 #else
+
+
 int main( int argc, char *argv[] )
 {
-    int ret = 1, i, n;
-    int mode, lastn;
+    int ret = 1, i;
+    unsigned n;
+    int exit_code = MBEDTLS_EXIT_FAILURE;
+    int mode;
     size_t keylen, ilen, olen;
     FILE *fkey, *fin = NULL, *fout = NULL;
 
@@ -184,10 +196,15 @@ int main( int argc, char *argv[] )
         mbedtls_fprintf( stderr, "Message Digest '%s' not found\n", argv[5] );
         goto exit;
     }
-    mbedtls_md_setup( &md_ctx, md_info, 1 );
+
+    if( mbedtls_md_setup( &md_ctx, md_info, 1 ) != 0 )
+    {
+        mbedtls_fprintf( stderr, "mbedtls_md_setup failed\n" );
+        goto exit;
+    }
 
     /*
-     * Read the secret key and clean the command line.
+     * Read the secret key from file or command line
      */
     if( ( fkey = fopen( argv[6], "rb" ) ) != NULL )
     {
@@ -201,7 +218,7 @@ int main( int argc, char *argv[] )
             p = &argv[6][4];
             keylen = 0;
 
-            while( sscanf( p, "%02X", &n ) > 0 &&
+            while( sscanf( p, "%02X", (unsigned int*) &n ) > 0 &&
                    keylen < (int) sizeof( key ) )
             {
                 key[keylen++] = (unsigned char) n;
@@ -218,8 +235,6 @@ int main( int argc, char *argv[] )
             memcpy( key, argv[6], keylen );
         }
     }
-
-    memset( argv[6], 0, strlen( argv[6] ) );
 
 #if defined(_WIN32_WCE)
     filesize = fseek( fin, 0L, SEEK_END );
@@ -259,7 +274,7 @@ int main( int argc, char *argv[] )
     {
         /*
          * Generate the initialization vector as:
-         * IV = SHA-256( filesize || filename )[0..15]
+         * IV = MD( filesize || filename )[0..15]
          */
         for( i = 0; i < 8; i++ )
             buffer[i] = (unsigned char)( filesize >> ( i << 3 ) );
@@ -272,15 +287,6 @@ int main( int argc, char *argv[] )
         mbedtls_md_finish( &md_ctx, digest );
 
         memcpy( IV, digest, 16 );
-
-        /*
-         * The last four bits in the IV are actually used
-         * to store the file size modulo the AES block size.
-         */
-        lastn = (int)( filesize & 0x0F );
-
-        IV[15] = (unsigned char)
-            ( ( IV[15] & 0xF0 ) | lastn );
 
         /*
          * Append the IV at the beginning of the output.
@@ -306,8 +312,6 @@ int main( int argc, char *argv[] )
             mbedtls_md_finish( &md_ctx, digest );
 
         }
-
-        memset( key, 0, sizeof( key ) );
 
         if( mbedtls_cipher_setkey( &cipher_ctx, digest, cipher_info->key_bitlen,
                            MBEDTLS_ENCRYPT ) != 0 )
@@ -388,10 +392,10 @@ int main( int argc, char *argv[] )
          *  The encrypted file must be structured as follows:
          *
          *        00 .. 15              Initialization Vector
-         *        16 .. 31              AES Encrypted Block #1
+         *        16 .. 31              Encrypted Block #1
          *           ..
-         *      N*16 .. (N+1)*16 - 1    AES Encrypted Block #N
-         *  (N+1)*16 .. (N+1)*16 + 32   HMAC-SHA-256(ciphertext)
+         *      N*16 .. (N+1)*16 - 1    Encrypted Block #N
+         *  (N+1)*16 .. (N+1)*16 + n    Hash(ciphertext)
          */
         if( filesize < 16 + mbedtls_md_get_size( md_info ) )
         {
@@ -399,10 +403,20 @@ int main( int argc, char *argv[] )
             goto exit;
         }
 
-        if( ( ( filesize - mbedtls_md_get_size( md_info ) ) %
+        if( mbedtls_cipher_get_block_size( &cipher_ctx ) == 0 )
+        {
+            mbedtls_fprintf( stderr, "Invalid cipher block size: 0. \n" );
+            goto exit;
+        }
+
+        /*
+         * Check the file size.
+         */
+        if( cipher_info->mode != MBEDTLS_MODE_GCM &&
+            ( ( filesize - mbedtls_md_get_size( md_info ) ) %
                 mbedtls_cipher_get_block_size( &cipher_ctx ) ) != 0 )
         {
-            mbedtls_fprintf( stderr, "File content not a multiple of the block size (%d).\n",
+            mbedtls_fprintf( stderr, "File content not a multiple of the block size (%u).\n",
                      mbedtls_cipher_get_block_size( &cipher_ctx ));
             goto exit;
         }
@@ -422,7 +436,6 @@ int main( int argc, char *argv[] )
         }
 
         memcpy( IV, buffer, 16 );
-        lastn = IV[15] & 0x0F;
 
         /*
          * Hash the IV and the secret key together 8192 times
@@ -438,8 +451,6 @@ int main( int argc, char *argv[] )
             mbedtls_md_update( &md_ctx, key, keylen );
             mbedtls_md_finish( &md_ctx, digest );
         }
-
-        memset( key, 0, sizeof( key ) );
 
         if( mbedtls_cipher_setkey( &cipher_ctx, digest, cipher_info->key_bitlen,
                            MBEDTLS_DECRYPT ) != 0 )
@@ -467,18 +478,19 @@ int main( int argc, char *argv[] )
          */
         for( offset = 0; offset < filesize; offset += mbedtls_cipher_get_block_size( &cipher_ctx ) )
         {
-            if( fread( buffer, 1, mbedtls_cipher_get_block_size( &cipher_ctx ), fin ) !=
-                (size_t) mbedtls_cipher_get_block_size( &cipher_ctx ) )
+            ilen = ( (unsigned int) filesize - offset > mbedtls_cipher_get_block_size( &cipher_ctx ) ) ?
+                mbedtls_cipher_get_block_size( &cipher_ctx ) : (unsigned int) ( filesize - offset );
+
+            if( fread( buffer, 1, ilen, fin ) != ilen )
             {
-                mbedtls_fprintf( stderr, "fread(%d bytes) failed\n",
+                mbedtls_fprintf( stderr, "fread(%u bytes) failed\n",
                     mbedtls_cipher_get_block_size( &cipher_ctx ) );
                 goto exit;
             }
 
-            mbedtls_md_hmac_update( &md_ctx, buffer, mbedtls_cipher_get_block_size( &cipher_ctx ) );
-            if( mbedtls_cipher_update( &cipher_ctx, buffer,
-                               mbedtls_cipher_get_block_size( &cipher_ctx ),
-                               output, &olen ) != 0 )
+            mbedtls_md_hmac_update( &md_ctx, buffer, ilen );
+            if( mbedtls_cipher_update( &cipher_ctx, buffer, ilen, output,
+                                       &olen ) != 0 )
             {
                 mbedtls_fprintf( stderr, "mbedtls_cipher_update() returned error\n" );
                 goto exit;
@@ -526,7 +538,7 @@ int main( int argc, char *argv[] )
         }
     }
 
-    ret = 0;
+    exit_code = MBEDTLS_EXIT_SUCCESS;
 
 exit:
     if( fin )
@@ -534,12 +546,21 @@ exit:
     if( fout )
         fclose( fout );
 
-    memset( buffer, 0, sizeof( buffer ) );
-    memset( digest, 0, sizeof( digest ) );
+    /* Zeroize all command line arguments to also cover
+       the case when the user has missed or reordered some,
+       in which case the key might not be in argv[6]. */
+    for( i = 0; i < argc; i++ )
+        mbedtls_platform_zeroize( argv[i], strlen( argv[i] ) );
+
+    mbedtls_platform_zeroize( IV,     sizeof( IV ) );
+    mbedtls_platform_zeroize( key,    sizeof( key ) );
+    mbedtls_platform_zeroize( buffer, sizeof( buffer ) );
+    mbedtls_platform_zeroize( output, sizeof( output ) );
+    mbedtls_platform_zeroize( digest, sizeof( digest ) );
 
     mbedtls_cipher_free( &cipher_ctx );
     mbedtls_md_free( &md_ctx );
 
-    return( ret );
+    mbedtls_exit( exit_code );
 }
 #endif /* MBEDTLS_CIPHER_C && MBEDTLS_MD_C && MBEDTLS_FS_IO */

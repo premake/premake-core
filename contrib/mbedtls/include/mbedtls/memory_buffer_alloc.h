@@ -2,8 +2,9 @@
  * \file memory_buffer_alloc.h
  *
  * \brief Buffer-based memory allocator
- *
- *  Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+ */
+/*
+ *  Copyright The Mbed TLS Contributors
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,14 +18,12 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
- *  This file is part of mbed TLS (https://tls.mbed.org)
  */
 #ifndef MBEDTLS_MEMORY_BUFFER_ALLOC_H
 #define MBEDTLS_MEMORY_BUFFER_ALLOC_H
 
 #if !defined(MBEDTLS_CONFIG_FILE)
-#include "config.h"
+#include "mbedtls/config.h"
 #else
 #include MBEDTLS_CONFIG_FILE
 #endif
@@ -98,8 +97,10 @@ void mbedtls_memory_buffer_alloc_status( void );
 /**
  * \brief   Get the peak heap usage so far
  *
- * \param max_used      Peak number of bytes reauested by the application
- * \param max_blocks    Peak number of blocks reauested by the application
+ * \param max_used      Peak number of bytes in use or committed. This
+ *                      includes bytes in allocated blocks too small to split
+ *                      into smaller blocks but larger than the requested size.
+ * \param max_blocks    Peak number of blocks in use, including free and used
  */
 void mbedtls_memory_buffer_alloc_max_get( size_t *max_used, size_t *max_blocks );
 
@@ -111,8 +112,10 @@ void mbedtls_memory_buffer_alloc_max_reset( void );
 /**
  * \brief   Get the current heap usage
  *
- * \param cur_used      Number of bytes reauested by the application
- * \param cur_blocks    Number of blocks reauested by the application
+ * \param cur_used      Current number of bytes in use or committed. This
+ *                      includes bytes in allocated blocks too small to split
+ *                      into smaller blocks but larger than the requested size.
+ * \param cur_blocks    Current number of blocks in use, including free and used
  */
 void mbedtls_memory_buffer_alloc_cur_get( size_t *cur_used, size_t *cur_blocks );
 #endif /* MBEDTLS_MEMORY_DEBUG */

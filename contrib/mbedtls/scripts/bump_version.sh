@@ -1,4 +1,28 @@
 #!/bin/bash
+#
+# Copyright The Mbed TLS Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Purpose
+#
+# Sets the version numbers in the source code to those given.
+#
+# Usage: bump_version.sh [ --version <version> ] [ --so-crypto <version>]
+#                           [ --so-x509 <version> ] [ --so-tls <version> ]
+#                           [ -v | --verbose ] [ -h | --help ]
+#
 
 VERSION=""
 SOVERSION=""
@@ -109,10 +133,6 @@ mv tmp include/mbedtls/version.h
 sed -e "s/version:\".\{1,\}/version:\"$VERSION\"/g" < tests/suites/test_suite_version.data > tmp
 mv tmp tests/suites/test_suite_version.data
 
-[ $VERBOSE ] && echo "Bumping version in yotta/data/module.json"
-sed -e "s/\"version\": \".\{1,\}\"/\"version\": \"$VERSION\"/g" < yotta/data/module.json > tmp
-mv tmp yotta/data/module.json
-
 [ $VERBOSE ] && echo "Bumping PROJECT_NAME in doxygen/mbedtls.doxyfile and doxygen/input/doc_mainpage.h"
 for i in doxygen/mbedtls.doxyfile doxygen/input/doc_mainpage.h;
 do
@@ -123,8 +143,12 @@ done
 [ $VERBOSE ] && echo "Re-generating library/error.c"
 scripts/generate_errors.pl
 
+[ $VERBOSE ] && echo "Re-generating programs/test/query_config.c"
+scripts/generate_query_config.pl
+
 [ $VERBOSE ] && echo "Re-generating library/version_features.c"
 scripts/generate_features.pl
 
 [ $VERBOSE ] && echo "Re-generating visualc files"
 scripts/generate_visualc_files.pl
+
