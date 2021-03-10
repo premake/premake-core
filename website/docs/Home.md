@@ -1,0 +1,56 @@
+---
+title: Home
+slug: /
+---
+
+Welcome to the **Premake 5  User Guide** !
+
+## Getting Started ##
+
+* [What Is Premake?](What-Is-Premake.md)
+* [Getting Premake](Getting-Premake.md)
+* [Using Premake](Using-Premake.md)
+* [Building Premake](Building-Premake.md)
+* [Getting Help](Getting-Help.md)
+* [Who Uses Premake?](Who-Uses-Premake.md)
+* [About This Wiki](About-This-Wiki.md)
+
+## Writing Premake Scripts ##
+
+* [Your First Script](Your-First-Script.md)
+* [Workspaces and Projects](Workspaces-and-Projects.md)
+* [Scopes and Inheritance](Scopes-and-Inheritance.md)
+* [Adding Source Files](Adding-Source-Files.md)
+* [Linking](Linking.md)
+* [Configurations and Platforms](Configurations-and-Platforms.md)
+* [Filters](Filters.md)
+* [Build Settings](Build-Settings.md)
+* [Command Line Arguments](Command-Line-Arguments.md)
+* [Using Modules](Using-Modules.md)
+* [Tutorials](Tutorials.md)
+* [More Topics…](Topics.md)
+
+## Extending Premake ##
+
+* [Introduction](Extending-Premake.md)
+* [Code Overview](Code-Overview.md)
+* [Coding Conventions](Coding-Conventions.md)
+* [Overrides and Call Arrays](Overrides-and-Call-Arrays.md)
+* [Developing Modules](Developing-Modules.md)
+* [Adding a New Action](Adding-a-new-Action.md)
+* Adding a New Toolset
+
+## Premake Reference ##
+
+* [Project API](Project-API.md)
+* [Lua Library Additions](Lua-Library-Additions.md)
+* [Available Modules](Modules.md)
+* [Supported Feature Matrix](Feature-Matrix.md)
+* [What's New in 5.0](What's-New-in-5.0.md)
+* [Migrating From 4.x](Migrating-From-4.x.md)
+
+## Contributing to Premake ##
+
+* [How You Can Help](How-To-Help.md)
+* [Development Roadmap](Development-Roadmap.md)
+* [How To Submit Changes](Contribution-Guidelines.md)
