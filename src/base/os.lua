@@ -456,11 +456,29 @@
 --
 -- Run a shell command and return the output.
 --
+-- @param cmd Command to execute
+-- @param streams Standard stream(s) to output
+-- 		Must be one of 
+--		- "both" (default)
+--		- "output" Return standard output stream content only
+--		- "error" Return standard error stream content only
+--
 
-	function os.outputof(cmd)
+	function os.outputof(cmd, streams)
 		cmd = path.normalize(cmd)
+		streams = streams or "both"
+		local redirection
+		if streams == "both" then
+			redirection = " 2>&1"
+		elseif streams == "output" then
+			redirection = " 2>/dev/null"
+		elseif streams == "error" then
+			redirection = " 2>&1 1>/dev/null"
+		else
+			error ('Invalid stream(s) selection. "output", "error", or "both" expected.')
+		end
 
-		local pipe = io.popen(cmd .. " 2>&1")
+		local pipe = io.popen(cmd .. redirection)
 		local result = pipe:read('*a')
 		local success, what, code = pipe:close()
 		if success then
