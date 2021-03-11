@@ -2668,8 +2668,8 @@
 
 
 	function m.fastUpToDateCheck(prj)
-		if prj.fastuptodate == false then
-			m.element("DisableFastUpToDateCheck", nil, "true")
+		if prj.fastuptodate ~= nil then
+			m.element("DisableFastUpToDateCheck", nil, iif(prj.fastuptodate, "false", "true"))
 		end
 	end
 
