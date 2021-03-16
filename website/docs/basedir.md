@@ -1,7 +1,3 @@
----
-title: basedir
----
-
 Sets the base directory for a configuration, from with other paths contained by the configuration will be made relative at export time.
 
 ```lua
