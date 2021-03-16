@@ -5,7 +5,3 @@ The current development version (i.e. what's in the git repository) uses the dev
 ### Availability ###
 
 Premake 4.4 or later.
-
-## See Also ##
-
-* [minimumversion](minimumversion.md)
