@@ -1,4 +1,8 @@
- * `progress` is a Lua callback function that receives two numeric arguments representing total and current download progress in bytes. 
+---
+title: HTTP Options
+---
+
+ * `progress` is a Lua callback function that receives two numeric arguments representing total and current download progress in bytes.
  * `headers` is a Lua table with HTTP headers to be used on the request.
  * `userpwd` is a username and optional password in the format of username:password which will be used to authenticate the request
  * `username` is the username which will be used to authenticate the request

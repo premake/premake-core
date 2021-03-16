@@ -12,7 +12,7 @@ configuration { "keywords" }
 
 The available sources for keywords. Keywords are not case-sensitive.
 
-* **Configuration names.** Any of the configuration names supplied to the **[configurations](configurations.md)** or **[platforms](Platforms.md)** functions.
+* **Configuration names.** Any of the configuration names supplied to the **[configurations](configurations.md)** or **[platforms](platforms.md)** functions.
 
 * **Action names** such as **vs2010** or **gmake**. See the [Using Premake](Using-Premake.md) for a complete list.
 

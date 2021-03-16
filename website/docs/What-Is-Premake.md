@@ -1,11 +1,8 @@
 ---
-title: What is Premake
+title: What is Premake?
 ---
 
 Premake is a command line utility which reads a scripted definition of a software project and, most commonly, uses it to generate project files for toolsets like Visual Studio, Xcode, or GNU Make.
-
-
------------------------------------------
 
 ```lua
 workspace "MyWorkspace"
@@ -37,9 +34,8 @@ Done.
 ```
 *Premake reads the script and generates project scripts.*
 
------------------------------------------
 
-### Use Premake To… ###
+## Use Premake To…
 
 * Maximize your potential audience by allowing developers to use the platforms and toolsets they prefer.
 
@@ -56,7 +52,7 @@ Done.
 * Script common configuration and build maintenance tasks.
 
 
-### Key Features ###
+## Key Features
 
 The current development version of Premake 5.0 can generate C, C++, or C# projects targeting:
 
@@ -72,7 +68,7 @@ Premake 5.0 generated projects can support:
 * 32- and 64-bit builds
 * Xbox 360 (Visual Studio only)
 
-[Add-on modules](Modules.md) can extend Premake with support for additional languages, frameworks, and toolsets.
+[Add-on modules](modules) can extend Premake with support for additional languages, frameworks, and toolsets.
 
 In addition to its project generation capabilities, Premake also provides a complete [Lua](http://lua.org/) scripting environment, enabling the automation of complex configuration tasks such as setting up new source tree checkouts or creating deployment packages. These scripts will run on any platform, ending batch/shell script duplication.
 
