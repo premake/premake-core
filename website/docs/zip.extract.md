@@ -1,5 +1,3 @@
-zip.extract - This document was generated, contribute by properly documenting this API.
-
 ```lua
 zip.extract(sourceZip, destinationDir)
 ```
