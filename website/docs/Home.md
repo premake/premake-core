@@ -3,7 +3,7 @@ title: Home
 slug: /
 ---
 
-Welcome to the **Premake 5  User Guide** !
+Welcome to the **Premake 5  User Guide**!
 
 ## Getting Started ##
 
@@ -13,7 +13,6 @@ Welcome to the **Premake 5  User Guide** !
 * [Building Premake](Building-Premake.md)
 * [Getting Help](Getting-Help.md)
 * [Who Uses Premake?](Who-Uses-Premake.md)
-* [About This Wiki](About-This-Wiki.md)
 
 ## Writing Premake Scripts ##
 
@@ -27,7 +26,6 @@ Welcome to the **Premake 5  User Guide** !
 * [Build Settings](Build-Settings.md)
 * [Command Line Arguments](Command-Line-Arguments.md)
 * [Using Modules](Using-Modules.md)
-* [Tutorials](Tutorials.md)
 * [More Topics…](Topics.md)
 
 ## Extending Premake ##
@@ -37,8 +35,7 @@ Welcome to the **Premake 5  User Guide** !
 * [Coding Conventions](Coding-Conventions.md)
 * [Overrides and Call Arrays](Overrides-and-Call-Arrays.md)
 * [Developing Modules](Developing-Modules.md)
-* [Adding a New Action](Adding-a-new-Action.md)
-* Adding a New Toolset
+* [Adding a New Action](Adding-New-Action.md)
 
 ## Premake Reference ##
 
@@ -46,11 +43,11 @@ Welcome to the **Premake 5  User Guide** !
 * [Lua Library Additions](Lua-Library-Additions.md)
 * [Available Modules](Modules.md)
 * [Supported Feature Matrix](Feature-Matrix.md)
-* [What's New in 5.0](What's-New-in-5.0.md)
+* [What's New in 5.0](Whats-New-in-5.0.md)
 * [Migrating From 4.x](Migrating-From-4.x.md)
 
 ## Contributing to Premake ##
 
-* [How You Can Help](How-To-Help.md)
+* [How You Can Help](How-to-Help.md)
 * [Development Roadmap](Development-Roadmap.md)
-* [How To Submit Changes](Contribution-Guidelines.md)
+* [How To Submit Changes](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md)

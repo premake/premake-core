@@ -1,4 +1,4 @@
-buildcustomizations
+Imports custom .props files for Visual Studio.
 
 ```lua
 buildcustomizations { "string" }
