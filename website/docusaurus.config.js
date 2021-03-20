@@ -6,8 +6,8 @@ module.exports = {
   onBrokenLinks: 'warn', // FIXME: when docs are ready change it to 'throw'
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/premake-logo.png', // FIXME: make actual favicon.ico file
-  organizationName: 'premake',
-  projectName: 'premake.github.io',
+  organizationName: 'KyrietS',
+  projectName: 'kyriets.github.io',
   themeConfig: {
   prism: {
     additionalLanguages: ['lua'],
