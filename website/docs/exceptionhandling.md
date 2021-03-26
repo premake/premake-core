@@ -15,8 +15,6 @@ exceptionhandling ("value")
 | Off     | Turn off exceptions.                              |
 | SEH     | Turn on exceptions and use [structured exception handling](https://msdn.microsoft.com/en-us/library/windows/desktop/ms680657(v=vs.85).aspx) when available. |
 
-More values may be added by [add-on modules](Modules.md).
-
 
 ### Applies To ###
 

@@ -12,8 +12,6 @@ architecture ("value")
 * `x86_64`
 * `ARM`
 
-More values may be added by [add-on modules](Modules.md).
-
 ### Applies To ###
 
 Project configurations.

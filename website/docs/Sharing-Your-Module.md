@@ -22,7 +22,7 @@ When updating your version number between releases, try to follow the convention
 
 ## Publishing
 
-If you intend your module to be available to the public, consider creating a new repository on [GitHub](http://github.com/) (where Premake is hosted) for it, and taking a look at some of the [existing third-party modules](modules) for examples. Some tips:
+If you intend your module to be available to the public, consider creating a new repository on [GitHub](http://github.com/) (where Premake is hosted) for it, and taking a look at some of the [existing third-party modules](/community/modules) for examples. Some tips:
 
 * Name your repository something like `premake-modulename`
 
@@ -30,4 +30,4 @@ If you intend your module to be available to the public, consider creating a new
 
 * Set up a wiki and briefly document any new features and functions it adds. See [Premake's own documentation](https://github.com/premake/premake-core/wiki) for lots of examples.
 
-Finally, regardless of where you host it, be sure to add a link on the [Available Modules](modules) page to help people find it.
+Finally, regardless of where you host it, be sure to add a link on the [Available Modules](/community/modules) page to help people find it.

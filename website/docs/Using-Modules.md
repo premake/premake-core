@@ -2,7 +2,7 @@
 title: Using Modules
 ---
 
-Premake can be extended through the use of third-party modules. Modules can add support for new toolsets, languages, and frameworks as well as entirely new features. We keep [a community-maintained list of modules here on the wiki](modules).
+Premake can be extended through the use of third-party modules. Modules can add support for new toolsets, languages, and frameworks as well as entirely new features. See [Modules](/community/modules) for some examples of what the community has already created.
 
 To use a module, download or clone the module's repository to [one of Premake's search paths](locating-scripts), making sure that the destination folder has the same name as the module's main script, e.g. **qt/qt.lua**.
 

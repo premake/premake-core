@@ -20,8 +20,6 @@ If no system is specified, Premake will identify and target the current operatin
 * windows
 * xbox360
 
-More values may be added by [add-on modules](Modules.md).
-
 ### Applies To ###
 
 Project configurations.

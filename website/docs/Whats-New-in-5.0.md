@@ -2,6 +2,8 @@
 title: What's New in 5.0
 ---
 
+*We haven't been doing a great job of keeping this up-to-date, but it does still hit the major highlights.*
+
 ## Name Changes ##
 
 * The executable is now named **premake5**
@@ -16,7 +18,7 @@ title: What's New in 5.0
 
 * [Custom Rules](custom-rules) (still experimental)
 * [Makefile Projects](makefile-projects)
-* [Modules](modules)
+* [Modules](developing-modules)
 * [Per-Configuration File Lists](files)
 * [Per-File Configurations](configuration)
 * [Per-Project Configurations](configurations-and-platforms)

@@ -2,24 +2,9 @@
 title: Modules
 ---
 
-## Built-In Modules ##
+These add-on modules are available from other developers; follow the links for more information. If you've developed a module you would like to share with others, feel free to [add a link](https://github.com/premake/premake-core/edit/master/website/community/modules.md) to the list!
 
-These modules are shipped as part of Premake, and may be used out of the box with any source or binary package.
-
-* [Android](https://github.com/premake/premake-core/tree/master/modules/android) : Android support
-* [CodeLite](https://github.com/premake/premake-core/tree/master/modules/codelite) : [CodeLite](http://www.codelite.org) support
-* [D](https://github.com/premake/premake-core/tree/master/modules/d) : [D](http://dlang.org) programming language support
-* [gmake](https://github.com/premake/premake-core/tree/master/modules/gmake) : Makefile generator (deprecated by gmake2)
-* [gmake2](https://github.com/premake/premake-core/tree/master/modules/gmake2) : Makefile generator
-* [Raw](https://github.com/premake/premake-core/tree/master/modules/raw) : Generate raw representation of Premake structures
-* [Visual Studio](https://github.com/premake/premake-core/tree/master/modules/vstudio) : Visual Studio (2005 - 2019) support
-* [XCode](https://github.com/premake/premake-core/tree/master/modules/xcode) : XCode support
-
-## Third-Party Modules ##
-
-These add-on modules are available from other developers; follow the links for more information. If you've developed a module you would like to share with others, feel free to add a link to the list!
-
-### IDE Modules ###
+## IDE Modules
 
 * [Android Studio](https://github.com/polymonster/premake-android-studio) : Generate .gradle and CMakeLists for Android Studio
 * [Code::Blocks](https://github.com/chris-be/premake-codeblocks) : [Code::Blocks](http://www.codeblocks.org/) support
@@ -28,7 +13,7 @@ These add-on modules are available from other developers; follow the links for m
 * [SlickEdit](https://github.com/TurkeyMan/premake-slickedit) : [SlickEdit](http://www.slickedit.com) support
 * [qmake](https://github.com/Gaztin/premake-qmake) : [QtCreator](https://doc.qt.io/qtcreator/creator-overview.html) and [qmake](http://doc.qt.io/qt-5/qmake-manual.html) support
 
-### Platform Modules ###
+## Platform Modules
 
 * [Android.mk](https://github.com/Meoo/premake-androidmk) : Generator for Android NDK's [ndk-build system](https://developer.android.com/ndk/guides/build.html)
 * [Emscripten](https://github.com/TurkeyMan/premake-emscripten) : [Emscripten](http://kripken.github.io/emscripten-site/) support
@@ -38,12 +23,12 @@ These add-on modules are available from other developers; follow the links for m
 * [WinRT](https://github.com/LORgames/premake-winrt) : Windows Runtime support
 * [Xbox 360](https://github.com/redorav/premake-xbox360) : Xbox 360 support
 
-### Build System Modules ###
+## Build System Modules
 
 * [CMake](https://github.com/Geequlim/premake-modules/tree/master/cmake) : CMakeLists exporter for premake
 * [Ninja](https://github.com/jimon/premake-ninja) : [Ninja](https://github.com/martine/ninja) support
 
-### Tool Modules ###
+## Tool Modules
 
 * [Autoconf](https://github.com/Blizzard/premake-autoconf) : Autoconf tools for premake
 * [CompilationUnit](https://github.com/dcourtois/premake-compilationunit) : [Single compilation unit](https://en.wikipedia.org/wiki/Single_Compilation_Unit) support
@@ -54,7 +39,7 @@ These add-on modules are available from other developers; follow the links for m
 * [Pkgconfig](https://github.com/Geequlim/premake-modules/tree/master/pkgconfig) : pkg-config loader for premake
 * [Platform test](https://github.com/tarruda/premake-platform-test) : Perform platform checks in your premake configuration
 
-### Library Modules ###
+## Library Modules
 
 * [Qt](https://github.com/dcourtois/premake-qt) : [Qt](https://www.qt.io) support
 * [WIX](https://github.com/mikisch81/premake-wix) : Premake extension to support [WIX](http://wixtoolset.org/) project files on Visual Studio

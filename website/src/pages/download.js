@@ -90,10 +90,7 @@ const Download = () =>
 						<section className="sponsors">
 							<h1>Sponsors</h1>
 							<p>
-								Continued Premake development is made possible by our
-								generous <Link to="https://opencollective.com/premake">OpenCollective</Link> sponsors
-								and <Link to="https://github.com/premake/premake-core/graphs/contributors">code
-								contributors</Link>. 🙌
+								Continued Premake development is made possible by our <b><Link to="https://opencollective.com/premake">OpenCollective sponsors</Link></b> and <b><Link to="https://github.com/premake/premake-core/graphs/contributors">code contributors</Link></b>. 🙌 ❤️
 							</p>
 							<Sponsors />
 						</section>

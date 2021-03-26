@@ -8,7 +8,7 @@ We've structured (or are in the process of structuring, with the intention of be
 
 ### Use the Source! ###
 
-Before you start hacking away, you should be comfortable browsing through the [source code of Premake](http://github.com/premake/premake-core) or [the third-party module](modules) you wish to modify. You will need to be able to identify the Lua function that emits the markup or otherwise implements the feature you wish to change before you can hook into it.
+Before you start hacking away, you should be comfortable browsing through the [source code of Premake](http://github.com/premake/premake-core) or [the third-party module](/community/modules) you wish to modify. You will need to be able to identify the Lua function that emits the markup or otherwise implements the feature you wish to change before you can hook into it.
 
 If you haven't already, you should [grab a source code package, or clone the code repository on GitHub](getting-premake) to use as a reference.
 

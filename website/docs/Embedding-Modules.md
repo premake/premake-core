@@ -4,7 +4,7 @@ title: Embedding Modules
 
 *This section only applies if you want to embed your module into a custom build of Premake for easier distribution. If you're not doing that, you can skip it.*
 
-Premake includes [a number of modules](modules) as part of the official builds, with more being added regularly. These modules are embedded directly into Premake along with the core scripts to enable easy distribution of a single, self-contained executable.
+Premake includes a number of modules as part of the official builds, with more being added regularly. These modules are embedded directly into Premake along with the core scripts to enable easy distribution of a single, self-contained executable.
 
 If you are creating a custom build of Premake, you can easily embed your own modules by following the instructions below. Also take a look at Premake's own set of modules in the `modules/` folder for some real working examples.
 

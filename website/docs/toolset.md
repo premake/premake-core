@@ -8,7 +8,7 @@ If no toolset is specified for a configuration, the system or IDE default will b
 
 ### Parameters ###
 
-`identifier` is a string identifier for the toolset. Premake includes the following toolsets by default; others may be added by third-party modules:
+`identifier` is a string identifier for the toolset. Premake includes the following toolsets by default.
 
 | **Toolset identifier**   |  **Description**                 |
 |------------|------------------------------------------------|

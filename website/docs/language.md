@@ -16,7 +16,6 @@ language ("lang")
 | `F#`     | Built-in; always available    |
 | `D`      | Built-in; always available ([API and support](https://github.com/premake/premake-dlang/wiki)) |
 
-More languages may be available via other [add-on modules](Modules.md).
 
 ### Applies To ###
 

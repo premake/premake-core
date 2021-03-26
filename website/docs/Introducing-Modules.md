@@ -87,5 +87,5 @@ local luckyEight = lucky.makeNumberLucky(8)
 
 That's all there to it!
 
-Note that if you decide you want to [share your module](modules) with other people, there are a [few other considerations to make](sharing-your-module).
+Note that if you decide you want to [share your module](/community/modules) with other people, there are a [few other considerations to make](sharing-your-module).
 

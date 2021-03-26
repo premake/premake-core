@@ -15,8 +15,6 @@ inlining ("value")
 | Explicit  | Only inline functions explicitly marked with the `inline` keyword. |
 | Auto      | Allow the compiler to inline functions automatically.              |
 
-More values may be added by [add-on modules](Modules.md).
-
 ### Applies To ###
 
 Project configurations.
