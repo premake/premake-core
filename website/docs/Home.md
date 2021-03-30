@@ -8,7 +8,6 @@ Welcome to the **Premake 5  User Guide**!
 ## Getting Started ##
 
 * [What Is Premake?](What-Is-Premake.md)
-* [Getting Premake](Getting-Premake.md)
 * [Using Premake](Using-Premake.md)
 * [Building Premake](Building-Premake.md)
 * [Getting Help](/community/support)

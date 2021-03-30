@@ -7,9 +7,8 @@ module.exports = {
 			items: [
 				'Home',
 				'What-Is-Premake',
-				'Building-Premake',
-				'Getting-Premake',
-				'Using-Premake'
+				'Using-Premake',
+				'Building-Premake'
 			]
 		},
 		{

@@ -4,13 +4,7 @@ title: Using Premake
 
 *New to Premake? You might want to start with [What is Premake?](what-is-premake)*
 
-
-## Getting Premake
-
-If you don't have Premake already, see [Getting Premake](getting-premake) to learn how.
-
-Premake is a small command line executable, delivered as a single file. Just unpack the download and place the executable on your system search path, or anywhere else convenient.
-
+If you haven't already, you can [download Premake here](/download), or [build it from source](building-premake). Premake is a small command line executable, delivered as a single file. Just unpack the download and place the executable on your system search path, or anywhere else convenient.
 
 ## Using Premake to Generate Project Files
 

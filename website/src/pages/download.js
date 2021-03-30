@@ -10,27 +10,32 @@ const LATEST_VERSION = '5.0.0-alpha15';
 
 
 const DownloadLink = ({ arch }) => {
-	let filename, label;
+	let filename, label, icon;
 	switch (arch) {
 	case 'macos':
 		filename = 'macosx.tar.gz';
 		label = 'MacOS';
+		icon = 'fa-apple';
 		break;
 	case 'linux':
 		filename = 'linux.tar.gz';
 		label = 'Linux';
+		icon = 'fa-linux';
 		break;
 	case 'src':
 		filename = 'src.zip';
 		label = 'Source Code';
+		icon = 'fa-code';
 		break;
 	case 'windows':
 		filename = 'windows.zip';
 		label = 'Windows';
+		icon = 'fa-windows';
 		break;
 	}
 	return (
 		<li>
+			<i className={`inline-image fa ${icon}`}></i>
 			<Link to={`https://github.com/premake/premake-core/releases/download/v${LATEST_VERSION}/premake-${LATEST_VERSION}-${filename}`}>
 				<b>{label}</b>
 			</Link>
