@@ -11,8 +11,7 @@ Welcome to the **Premake 5  User Guide**!
 * [Getting Premake](Getting-Premake.md)
 * [Using Premake](Using-Premake.md)
 * [Building Premake](Building-Premake.md)
-* [Getting Help](Getting-Help.md)
-* [Who Uses Premake?](Who-Uses-Premake.md)
+* [Getting Help](/community/support)
 
 ## Writing Premake Scripts ##
 
@@ -41,7 +40,7 @@ Welcome to the **Premake 5  User Guide**!
 
 * [Project API](Project-API.md)
 * [Lua Library Additions](Lua-Library-Additions.md)
-* [Available Modules](Modules.md)
+* [Available Modules](/community/modules)
 * [Supported Feature Matrix](Feature-Matrix.md)
 * [What's New in 5.0](Whats-New-in-5.0.md)
 * [Migrating From 4.x](Migrating-From-4.x.md)

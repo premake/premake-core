@@ -4,7 +4,7 @@ title: Build Settings
 
 Premake provides an ever-growing list of build settings that you can tweak; the following table lists some of the most common configuration tasks with a link to the corresponding functions. For a comprehensive list of available settings and functions, see the [Project API](project-api) and [Lua Library Additions](lua-library-additions).
 
-If you think something should be possible and you can't figure out how to do it, see [Getting Help](getting-help).
+If you think something should be possible and you can't figure out how to do it, see [Support](/community/support).
 
 |                                               |                      |
 |-----------------------------------------------|----------------------|

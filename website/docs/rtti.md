@@ -14,8 +14,6 @@ rtti ("value")
 | On      | Turn on RTTI.                                     |
 | Off     | Turn off RTTI.                                    |
 
-More values may be added by [add-on modules](Modules.md).
-
 
 ### Applies To ###
 

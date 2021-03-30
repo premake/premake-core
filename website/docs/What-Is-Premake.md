@@ -68,7 +68,7 @@ Premake 5.0 generated projects can support:
 * 32- and 64-bit builds
 * Xbox 360 (Visual Studio only)
 
-[Add-on modules](modules) can extend Premake with support for additional languages, frameworks, and toolsets.
+[Add-on modules](/community/modules) can extend Premake with support for additional languages, frameworks, and toolsets.
 
 In addition to its project generation capabilities, Premake also provides a complete [Lua](http://lua.org/) scripting environment, enabling the automation of complex configuration tasks such as setting up new source tree checkouts or creating deployment packages. These scripts will run on any platform, ending batch/shell script duplication.
 

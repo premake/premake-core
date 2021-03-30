@@ -12,8 +12,6 @@ debugformat "format"
 |-------------|---------------------------------------------------------------------------------------------|
 | c7          | Specifies that MSVC should store debuginfo in the objects rather than a separate .pdb file. |
 
-More values may be added by [add-on modules](Modules.md).
-
 **Note for Visual Studio Users:** Use [editAndContinue](editAndContinue.md) to control the `/Zi` and `/ZI` switches; see [this discussion](https://github.com/premake/premake-core/issues/1425) for more information.
 
 ### Applies To ###

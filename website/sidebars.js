@@ -1,5 +1,5 @@
 module.exports = {
-	mainSidebar: [
+	docs: [
 		{
 			collapsed: true,
 			type: 'category',
@@ -9,9 +9,7 @@ module.exports = {
 				'What-Is-Premake',
 				'Building-Premake',
 				'Getting-Premake',
-				'Using-Premake',
-				'Getting-Help',
-				'Who-Uses-Premake'
+				'Using-Premake'
 			]
 		},
 		{

@@ -1,10 +1,6 @@
 name: CI Workflow
 
-on:
-  push:
-    paths-ignore: ['website/**']
-  pull_request:
-    paths-ignore: ['website/**']
+on: [push, pull_request]
 
 jobs:
   linux:

@@ -41,9 +41,6 @@ flags { "flag_list" }
 | C90                   | Pass the c90 flag to the gcc/clang compilers (msvc ignores this currently) |
 | C99                   | Pass the c99 flag to the gcc/clang compilers (msvc ignores this currently) |
 
-Flags are often extended by external modules:
-* [D language flags](flags.md)
-
 ### Applies To ###
 
 Project and file configurations, though not all flags are yet supported for files across all exporters.

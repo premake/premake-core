@@ -16,7 +16,7 @@ npm start
 
 This command starts a local development server and open up a browser window. Most changes are reflected live without having to restart the server.
 
-To see a list of broken links (mistakes happen!), be sure to run `npm run build` before submitting updates.
+To see a list of broken links (mistakes happen!), be sure to run `npm run build` before submitting updates. Your changes will be rejected if they contain broken links.
 
 ## Build
 
@@ -39,3 +39,5 @@ Target repo for deployment is specified in `docusaurus.config.js`.
 * `projectName` is a target repository: github.com/premake/**premake.github.io**
 
 `docusaurus deploy` command is used to automatically build and push static files into [premake.github.io](https://github.com/premake/premake.github.io) repo.
+
+Deployments are authenticated by a key pair. The private key is hosted in `premake-core` in **Settings > Secrets**. The public key is host in `premake.github.io` in **Settings > Deploy Keys**.
