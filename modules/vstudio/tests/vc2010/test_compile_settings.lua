@@ -1549,3 +1549,42 @@
 </ClCompile>
 		]]
 	end
+
+--
+-- If removeUnreferencedCodeData flag is set, add <RemoveUnreferencedCodeData> element
+--
+
+	function suite.onRemoveUnreferencedCodeDataOff()
+		removeunreferencedcodedata "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
+		]]
+	end
+
+	function suite.onRemoveUnreferencedCodeDataOn()
+		removeunreferencedcodedata "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+		]]
+	end
+
+	function suite.onRemoveUnreferencedCodeDataNotSpecified()
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end

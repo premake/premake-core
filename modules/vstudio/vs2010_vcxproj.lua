@@ -386,7 +386,8 @@
 			m.languageStandard,
 			m.conformanceMode,
 			m.structMemberAlignment,
-			m.useFullPaths
+			m.useFullPaths,
+			m.removeUnreferencedCodeData
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1511,6 +1512,16 @@
 				m.element("UseFullPaths", nil, "true")
 			else
 				m.element("UseFullPaths", nil, "false")
+			end
+		end
+	end
+
+	function m.removeUnreferencedCodeData(cfg)
+		if cfg.removeUnreferencedCodeData ~= nil then
+			if cfg.removeUnreferencedCodeData then
+				m.element("RemoveUnreferencedCodeData", nil, "true")
+			else
+				m.element("RemoveUnreferencedCodeData", nil, "false")
 			end
 		end
 	end
