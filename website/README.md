@@ -2,6 +2,16 @@
 
 Premake website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
 
+All docs pages can be found in the `docs/` folder.
+
+## Adding a new entry to the docs
+Editing our documentation website is very simple. You don't have to build a whole website for this. All pages are stored in Markdown files, so in order to add a new entry:
+
+1. Add a new Markdown file into the `docs/` folder. Follow naming conventions there.
+2. Add your Markdown file's name into the `sidebars.js`. Make sure you've kept alphabetical order among category items.
+
+*Use other files as references.*
+
 ## Installation
 
 ```

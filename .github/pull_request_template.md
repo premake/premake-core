@@ -17,5 +17,6 @@ Add any other context about your changes here.
 - [ ] Mention any [related issues](https://github.com/premake/premake-core/issues) (put `closes #XXXX` in comment to auto-close issue when PR is merged)
 - [ ] Follow our [coding conventions](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md#coding-conventions)
 - [ ] Minimize the number of commits
+- [ ] Align [documentation](https://github.com/premake/premake-core/tree/master/website) to your changes
 
 *You can now [support Premake on our OpenCollective](https://opencollective.com/premake). Your contributions help us spend more time responding to requests like these!*
