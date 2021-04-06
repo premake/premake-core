@@ -796,6 +796,12 @@
 	}
 
 	api.register {
+		name = "removeunreferencedcodedata",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "swiftversion",
 		scope = "config",
 		kind = "string",

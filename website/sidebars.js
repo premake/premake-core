@@ -192,6 +192,7 @@ module.exports = {
 						'project',
 						'propertydefinition',
 						'rebuildcommands',
+						'removeunreferencedcodedata',
 						'resdefines',
 						'resincludedirs',
 						'resoptions',
