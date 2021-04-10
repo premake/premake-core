@@ -15,6 +15,10 @@ module.exports = {
 		prism: {
 			additionalLanguages: ['lua'],
 		},
+		algolia: {
+			apiKey: '7440a29a5d611582272899683f54f54e',
+			indexName: 'premake',
+		},
 		navbar: {
 			title: 'Premake',
 			logo: {
