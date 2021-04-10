@@ -1,6 +1,6 @@
 # Premake Website
 
-Premake website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
+Premake website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator. Search functionality is provided for free by [Algolia DocSearch](https://docsearch.algolia.com/).
 
 All docs pages can be found in the `docs/` folder.
 
