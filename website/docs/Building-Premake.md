@@ -82,4 +82,4 @@ make config=release   # or via Visual Studio, etc.
 
 ## Stuck? ##
 
-Give us a shout over in [the Developer Forums](https://groups.google.com/forum/#!forum/premake-development) and we'll be glad to help you out.
+Give us a shout [in our Discussions area on GitHub](https://github.com/premake/premake-core/discussions) and we'll be glad to help you out.

@@ -10,7 +10,7 @@ We've structured (or are in the process of structuring, with the intention of be
 
 Before you start hacking away, you should be comfortable browsing through the [source code of Premake](http://github.com/premake/premake-core) or [the third-party module](/community/modules) you wish to modify. You will need to be able to identify the Lua function that emits the markup or otherwise implements the feature you wish to change before you can hook into it.
 
-If you haven't already, you should [grab a source code package, or clone the code repository on GitHub](getting-premake) to use as a reference.
+If you haven't already, you should [grab a source code package, or clone the code repository on GitHub](/download) to use as a reference.
 
 Then check out the [Code Overview](code-overview) to get a general sense of where things live, and [Coding Conventions](coding-conventions) for an overview on how the code is structured and why we did it that way.
 

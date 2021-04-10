@@ -3,9 +3,12 @@ module.exports = {
 	tagline: 'Powerfully simple build configuration',
 	url: 'https://premake.github.io/',
 	baseUrl: '/',
+	scripts: [
+		'https://use.fontawesome.com/dd1c9cd9ff.js'
+	],
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'throw',
-	favicon: 'img/premake-logo.png', // FIXME: make actual favicon.ico file
+	favicon: 'img/favicon.ico',
 	organizationName: 'premake',
 	projectName: 'premake.github.io',
 	themeConfig: {
@@ -26,20 +29,22 @@ module.exports = {
 					position: 'left',
 				},
 				{
-					to: '/download',
-					label: 'Download',
-					position: 'left'
-				},
-				{
 					to: '/community/support',
 					label: 'Community',
 					position: 'left',
 					activeBaseRegex: `/community/`
 				},
 				{
+					href: 'https://twitter.com/premakeapp',
+					position: 'right',
+					className: 'fa fa-twitter fa-2x',
+					'aria-label': 'Premake on Twitter',
+				},
+				{
 					href: 'https://github.com/premake/premake-core',
-					label: 'GitHub',
-					position: 'left',
+					position: 'right',
+					className: 'fa fa-github fa-2x',
+					'aria-label': 'GitHub repository'
 				},
 			],
 		},
@@ -47,28 +52,36 @@ module.exports = {
 			style: 'dark',
 			links: [
 				{
-					title: 'Documentation',
+					title: 'Learn',
 					items: [
 						{
-							label: 'Premake 5.0',
-							to: 'docs/',
+							label: 'Introduction',
+							to: '/docs/What-Is-Premake'
+						},
+						{
+							label: 'Download',
+							to: '/download'
+						},
+						{
+							label: 'Your First Script',
+							to: '/docs/Your-First-Script'
 						},
 						{
 							label: 'Premake 4.x',
 							to: 'https://github.com/premake/premake-4.x/wiki',
-						},
+						}
 					],
 				},
 				{
 					title: 'Community',
 					items: [
 						{
-							label: 'StackOverflow',
-							href: 'https://stackoverflow.com/questions/tagged/premake',
+							label: 'Discussions',
+							href: 'https://github.com/premake/premake-core/discussions',
 						},
 						{
-							label: 'Twitter',
-							href: 'https://twitter.com/premakeapp',
+							label: 'Stack Overflow',
+							href: 'https://stackoverflow.com/questions/tagged/premake',
 						},
 						{
 							label: 'Help',
@@ -83,6 +96,14 @@ module.exports = {
 							label: 'GitHub',
 							href: 'https://github.com/premake/premake-core/',
 						},
+						{
+							label: 'Twitter',
+							href: 'https://twitter.com/premakeapp',
+						},
+						{
+							label: 'OpenCollective',
+							href: 'https://opencollective.com/premake',
+						}
 					],
 				},
 			],
