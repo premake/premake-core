@@ -33,6 +33,11 @@ module.exports = {
 					position: 'left',
 				},
 				{
+					to: '/blog',
+					label: 'News',
+
+				},
+				{
 					to: '/community/support',
 					label: 'Community',
 					position: 'left',
@@ -97,6 +102,10 @@ module.exports = {
 					title: 'More',
 					items: [
 						{
+							label: 'Blog',
+							to: '/blog'
+						},
+						{
 							label: 'GitHub',
 							href: 'https://github.com/premake/premake-core/',
 						},
@@ -124,10 +133,13 @@ module.exports = {
 					showLastUpdateAuthor: true,
 					showLastUpdateTime: true,
 				},
+				blog: {
+					blogSidebarTitle: 'Posts',
+				},
 				theme: {
 					customCss: require.resolve('./src/css/custom.css'),
 				},
-			},
+			}
 		],
 	],
 	plugins: [

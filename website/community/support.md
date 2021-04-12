@@ -6,7 +6,7 @@ Ask questions, get help, and join Premake's growing community of developers and 
 
 ## News
 
-For the latest news about Premake, [follow **@premakeapp** on Twitter](https://twitter.com/premakeapp).
+For the latest news about Premake, [follow **@premakeapp** on Twitter](https://twitter.com/premakeapp) and [our blog](/blog) here on the site.
 
 ## GitHub Discussions
 
