@@ -32,13 +32,11 @@
 
  * Submit Windows binary to [Microsoft malware analysis](https://www.microsoft.com/en-us/wdsi/filesubmission/)
 
- * Merge working branch to release and tag; push with tags
+ * Push any remaining changes; tag release branch
 
  * Create new release on GitHub from `CHANGES.txt`; upload files
 
- * Update the download page on github.io
-
- * Post annoucement to `@premakeapp`
+ * Post announcement to `@premakeapp`
 
 
 ## CYCLE
