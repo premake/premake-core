@@ -18,9 +18,9 @@
 
  * Update version in `src/host/premake.h`
 
- * Commit `CHANGES.txt`, `README.txt`, `src/host/premake.h`
+ * Update version in `website/src/pages/download.js`
 
- * Push release branch to GitHub; wait for CI to pass
+ * Commit changes and push release branch; wait for CI to pass
 
  * Prep release announcement from change log
 
