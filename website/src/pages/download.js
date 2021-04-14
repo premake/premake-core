@@ -36,7 +36,7 @@ const DownloadLink = ({ arch }) => {
 	return (
 		<li>
 			<i className={`inline-image fa ${icon}`}></i>
-			<Link to={`https://github.com/premake/premake-core/releases/download/v${LATEST_VERSION}/premake-${LATEST_VERSION}-${filename}`}>
+			<Link to={`https://github.com/premake/premake-core/releases/download/v${LATEST_VERSION}/premake5-v${LATEST_VERSION}-${filename}`}>
 				<b>{label}</b>
 			</Link>
 		</li>
