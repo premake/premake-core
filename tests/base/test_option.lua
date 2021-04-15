@@ -43,3 +43,24 @@
 
 		test.isnotnil(p.option.get("testopt2"))
 	end
+
+
+---
+-- Make sure `each()` can handle mixed-case options.
+---
+
+	function suite.each_iteratesOnMixedCase()
+		newoption {
+			trigger = "TestOpt3",
+			description = "Testing",
+		}
+
+		local isFound = false
+		for opt in p.option.each() do
+			if opt.trigger == "TestOpt3" then
+				isFound = true
+			end
+		end
+
+		test.istrue(isFound)
+	end

@@ -120,8 +120,8 @@
 	function m.each()
 		-- sort the list by trigger
 		local keys = { }
-		for _, option in pairs(p.option.list) do
-			table.insert(keys, option.trigger)
+		for key in pairs(p.option.list) do
+			table.insert(keys, key)
 		end
 		table.sort(keys)
 
