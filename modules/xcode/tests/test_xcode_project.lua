@@ -128,12 +128,15 @@
 			"../D.framework",
 			"../E.framework",
 		}
-		xcodeembedlibraries
+		embedAndSign
 		{
-			["libA.dylib"] = "embed-and-sign",
-			["libB.dylib"] = "embed",
-			["D.framework"] = "embed-and-sign",
-			["E.framework"] = "embed",
+			"libA.dylib",
+			"D.framework",
+		}
+		embed
+		{
+			"libB.dylib",
+			"E.framework",
 		}
 		prepare()
 		xcode.PBXBuildFile(tr)
@@ -586,11 +589,8 @@
 			"../libA.dylib",
 			"../D.framework",
 		}
-		xcodeembedlibraries
-		{
-			["libA.dylib"] = "embed",
-			["D.framework"] = "embed-and-sign",
-		}
+		embed { "libA.dylib" }
+		embedAndSign { "D.framework" }
 		prepare()
 		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
 		test.capture [[

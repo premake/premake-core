@@ -73,10 +73,7 @@
 		kind "SharedLib"
 
 		project "MyProject"
-		xcodeembedlibraries
-		{
-			["MyProject2"] = "embed"
-		}
+		embed { "MyProject2" }
 
 		prepare()
 		xcode.PBXBuildFile(tr)
@@ -92,10 +89,7 @@
 		kind "SharedLib"
 
 		project "MyProject"
-		xcodeembedlibraries
-		{
-			["MyProject2"] = "embed-and-sign"
-		}
+		embedAndSign { "MyProject2" }
 
 		prepare()
 		xcode.PBXBuildFile(tr)
@@ -212,10 +206,7 @@
 		kind "SharedLib"
 
 		project "MyProject"
-		xcodeembedlibraries
-		{
-			["MyProject2"] = "embed"
-		}
+		embed { "MyProject2" }
 
 		prepare()
 		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)

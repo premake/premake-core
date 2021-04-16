@@ -617,44 +617,40 @@
 	end
 
 
-	function xcode.embedsetting(cfg, node)
-		if type(cfg.xcodeembedlibraries) == 'table' then
-			-- Frameworks and dylibs referenced by path are expected
-			-- to provide the file name (but not path). Project
-			-- references are expected to provide the project name.
-			if xcode.isframeworkordylib(node.name) then
-				local tablekey = node.name
-				if node.parent.project then
-					tablekey = node.parent.project.name
-				end
-				return cfg.xcodeembedlibraries[tablekey]
-			end
+	function xcode.embedListContains(list, node)
+		-- Frameworks and dylibs referenced by path are expected
+		-- to provide the file name (but not path). Project
+		-- references are expected to provide the project name.
+		local entryname = node.name
+		if node.parent.project then
+			entryname = node.parent.project.name
 		end
-
-		return nil
+		return table.contains(list, entryname)
 	end
 
 	function xcode.shouldembed(tr, node)
+		if not xcode.isframeworkordylib(node.name) then
+			return false
+		end
+
 		for _, cfg in ipairs(tr.configs) do
-			local setting = xcode.embedsetting(cfg, node)
-			if setting == "embed" or setting == "embed-and-sign" then
+			if xcode.embedListContains(cfg.embed, node) or xcode.embedListContains(cfg.embedAndSign, node) then
 				return true
 			end
 		end
-
-		return false
 	end
 
 
 	function xcode.shouldembedandsign(tr, node)
+		if not xcode.isframeworkordylib(node.name) then
+			return false
+		end
+
 		for _, cfg in ipairs(tr.configs) do
-			local setting = xcode.embedsetting(cfg, node)
-			if setting == "embed-and-sign" then
+			if xcode.embedListContains(cfg.embedAndSign, node) then
 				return true
 			end
 		end
-
-		return false
 	end
 
 

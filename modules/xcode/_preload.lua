@@ -47,9 +47,15 @@
 	}
 
 	p.api.register {
-		name = "xcodeembedlibraries",
+		name = "embed",
 		scope = "config",
-		kind = "key-string",
+		kind = "list",
+	}
+
+	p.api.register {
+		name = "embedAndSign",
+		scope = "config",
+		kind = "list",
 	}
 
 --
