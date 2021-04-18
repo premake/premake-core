@@ -39,7 +39,6 @@
 		]]
 	end
 
-
 --
 -- Check handling of the Unsafe flag.
 --
@@ -52,6 +51,17 @@
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		]]
+	end
+
+	function suite.allowUnsafeBlocks_onUnsafeFlagNonConfigOnNetcore()
+		dotnetframework "netcoreapp3.1"
+		clr "Unsafe"
+		prepare()
+		test.capture [[
+		<DefineConstants></DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
 		]]
 	end
 

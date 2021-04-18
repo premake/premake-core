@@ -1,7 +1,10 @@
-/*
- *  Minimal configuration for using TLS as part of Thread
+/**
+ * \file config-thread.h
  *
- *  Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+ * \brief Minimal configuration for using TLS as part of Thread
+ */
+/*
+ *  Copyright The Mbed TLS Contributors
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -15,8 +18,6 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
- *  This file is part of mbed TLS (https://tls.mbed.org)
  */
 
 /*
@@ -57,6 +58,7 @@
 #define MBEDTLS_CCM_C
 #define MBEDTLS_CIPHER_C
 #define MBEDTLS_CTR_DRBG_C
+#define MBEDTLS_CMAC_C
 #define MBEDTLS_ECJPAKE_C
 #define MBEDTLS_ECP_C
 #define MBEDTLS_ENTROPY_C
@@ -84,10 +86,6 @@
 
 /* Save ROM and a few bytes of RAM by specifying our own ciphersuite list */
 #define MBEDTLS_SSL_CIPHERSUITES MBEDTLS_TLS_ECJPAKE_WITH_AES_128_CCM_8
-
-#if defined(TARGET_LIKE_MBED)
-#include "mbedtls/target_config.h"
-#endif
 
 #include "mbedtls/check_config.h"
 

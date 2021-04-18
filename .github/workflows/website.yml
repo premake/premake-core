@@ -1,0 +1,53 @@
+name: Website
+
+on:
+  push:
+    paths: ['website/**']
+  pull_request:
+    paths: ['website/**']
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Test Build
+        run: |
+          cd website
+          npm install
+          npm run build
+  publish:
+    if: github.repository_owner == 'premake' && github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Add key to allow access to repository
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo "${{ secrets.WEBSITE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          cat <<EOT >> ~/.ssh/config
+          Host github.com
+          HostName github.com
+          IdentityFile ~/.ssh/id_rsa
+          EOT
+      - name: Release to premake.github.io
+        env:
+          USE_SSH: true
+          GIT_USER: git
+          DEPLOYMENT_BRANCH: master
+        run: |
+          git config --global user.email "actions@gihub.com"
+          git config --global user.name "gh-actions"
+          cd website
+          npm install
+          npx docusaurus deploy

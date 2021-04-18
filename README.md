@@ -1,11 +1,11 @@
 <p align="center">
-  <a href="https://premake.github.io/" target="blank"><img src="https://premake.github.io/premake-logo.png" height="200" width="200" alt="Premake" /></a>
+  <a href="https://premake.github.io/" target="blank"><img src="https://premake.github.io/img/premake-logo.png" height="200" width="200" alt="Premake" /></a>
 </p>
 
 <p align="center">
     <img src="https://img.shields.io/github/release/premake/premake-core/all.svg" alt="Latest release" />
     <img src="https://img.shields.io/github/release-date-pre/premake/premake-core.svg" alt="Release date" />
-    <img src="https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-alpha15.svg" alt="Commits" />
+    <img src="https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-alpha16.svg" alt="Commits" />
     <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">
         <img src="https://img.shields.io/github/license/premake/premake-core" alt="BSD 3-Clause" />
     </a>

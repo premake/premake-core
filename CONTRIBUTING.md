@@ -73,6 +73,8 @@ Some tips...
 
 - Write tests! You don't need to go crazy, but we will expect a unit test or two to show that your fix or feature does what it says, and doesn't break in the future. There are many test examples in Premake's source code, covering both the [modules](https://github.com/premake/premake-core/tree/master/modules) and the [core](https://github.com/premake/premake-core/tree/master/tests). Feel free to copy!
 
+- Align [documentation](https://github.com/premake/premake-core/tree/master/website) to your changes. Keeping docs up to date is very important for all users of Premake.
+
 - When you submit a change, try to limit the number of commits involved. A single commit is ideal.
 
 - Follow our coding conventions, which we've intentionally kept quite minimal.

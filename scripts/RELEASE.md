@@ -18,9 +18,9 @@
 
  * Update version in `src/host/premake.h`
 
- * Commit `CHANGES.txt`, `README.txt`, `src/host/premake.h`
+ * Update version in `website/src/pages/download.js`
 
- * Push release branch to GitHub; wait for CI to pass
+ * Commit changes and push release branch; wait for CI to pass
 
  * Prep release announcement from change log
 
@@ -32,13 +32,11 @@
 
  * Submit Windows binary to [Microsoft malware analysis](https://www.microsoft.com/en-us/wdsi/filesubmission/)
 
- * Merge working branch to release and tag; push with tags
+ * Push any remaining changes; tag release branch
 
  * Create new release on GitHub from `CHANGES.txt`; upload files
 
- * Update the download page on github.io
-
- * Post annoucement to `@premakeapp`
+ * Post announcement to `@premakeapp`
 
 
 ## CYCLE

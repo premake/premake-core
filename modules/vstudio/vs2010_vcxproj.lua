@@ -386,7 +386,9 @@
 			m.callingConvention,
 			m.languageStandard,
 			m.conformanceMode,
-			m.structMemberAlignment
+			m.structMemberAlignment,
+			m.useFullPaths,
+			m.removeUnreferencedCodeData
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1502,6 +1504,26 @@
 		local value = map[cfg.structmemberalign]
 		if value then
 			m.element("StructMemberAlignment", nil, value)
+		end
+	end
+
+	function m.useFullPaths(cfg)
+		if cfg.useFullPaths ~= nil then
+			if cfg.useFullPaths then
+				m.element("UseFullPaths", nil, "true")
+			else
+				m.element("UseFullPaths", nil, "false")
+			end
+		end
+	end
+
+	function m.removeUnreferencedCodeData(cfg)
+		if cfg.removeUnreferencedCodeData ~= nil then
+			if cfg.removeUnreferencedCodeData then
+				m.element("RemoveUnreferencedCodeData", nil, "true")
+			else
+				m.element("RemoveUnreferencedCodeData", nil, "false")
+			end
 		end
 	end
 

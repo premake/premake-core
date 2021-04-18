@@ -7,6 +7,7 @@
 local p = premake
 local suite = test.declare("vstudio_cs2005_netcore_prj")
 local dn2005 = p.vstudio.dotnetbase
+local cs2005 = p.vstudio.cs2005
 local project = p.project
 
 
@@ -34,6 +35,13 @@ end
 
 local function prepareNetcore()
     dn2005.projectElement(prj)
+end
+
+local function prepareProjectProperties()
+    local localProj = test.getproject(wks, 1)
+
+    dn2005.prepare(cs2005)
+    dn2005.projectProperties(localProj)
 end
 
 function suite.targetFrameworkProperty_framework()
@@ -94,10 +102,33 @@ function suite.project_element_core()
     ]]
 end
 
+function suite.project_element_net5()
+    dotnetframework "net5.0"
+    prepareNetcore()
+    test.capture [[
+<Project Sdk="Microsoft.NET.Sdk">
+    ]]
+end
+
 function suite.project_element_framework()
     dotnetframework "4.7.2"
     prepareNetcore()
     test.capture [[
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    ]]
+end
+
+function suite.allowUnsafeProperty_core()
+    dotnetframework "netcoreapp2.2"
+    clr "Unsafe"
+    prepareProjectProperties()
+    test.capture [[
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	</PropertyGroup>
     ]]
 end

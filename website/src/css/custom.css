@@ -1,0 +1,102 @@
+/* stylelint-disable docusaurus/copyright-header */
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+	--ifm-color-primary: #2b86cc;
+	--ifm-color-primary-dark: #2779b8;
+	--ifm-color-primary-darker: #2572ad;
+	--ifm-color-primary-darkest: #1e5e8f;
+	--ifm-color-primary-light: #3a92d6;
+	--ifm-color-primary-lighter: #4498d8;
+	--ifm-color-primary-lightest: #63a9de;
+	--ifm-code-font-size: 95%;
+	--ifm-navbar-item-padding-horizontal: 8px;
+}
+
+.docusaurus-highlight-code-line {
+	background-color: rgb(72, 77, 91);
+	display: block;
+	margin: 0 calc(-1 * var(--ifm-pre-padding));
+	padding: 0 var(--ifm-pre-padding);
+}
+
+/**
+ * Navbar styles
+ */
+
+ .navbar .react-toggle {
+	margin-left: var(--ifm-navbar-item-padding-horizontal)
+ }
+
+/**
+ * Home page styles
+ */
+
+.features {
+	display: flex;
+	align-items: center;
+	padding: 2rem 0;
+	width: 100%;
+}
+
+.hero-banner {
+	padding: 4rem 0;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+  }
+
+@media screen and (max-width: 966px) {
+	.hero-banner {
+		padding: 2rem;
+	}
+}
+
+.features {
+	display: flex;
+	align-items: center;
+	padding: 2rem 0;
+	width: 100%;
+}
+
+.feature-image {
+	height: 200px;
+	width: 200px;
+}
+
+.buttons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+/**
+ * Download page styles
+ */
+
+main.download {
+	padding: 2rem 0;
+}
+
+main.download .card {
+	padding: 0 1rem;
+}
+
+main.download section.sponsors {
+	margin-top: 1rem;
+}
+
+main.download .download-links {
+	list-style-type: none;
+}
+
+main.download .inline-image {
+	padding-right: 8px;
+}
