@@ -46,6 +46,18 @@
 		}
 	}
 
+	p.api.register {
+		name = "embed",
+		scope = "config",
+		kind = "list",
+	}
+
+	p.api.register {
+		name = "embedAndSign",
+		scope = "config",
+		kind = "list",
+	}
+
 --
 -- Register the Xcode exporters.
 --
