@@ -329,6 +329,29 @@
 
 
 --
+-- Returns the list of sibling target directories
+-- 
+-- @param cfg
+--    The configuration object to query.
+-- @return 
+--    Absolute path list
+--
+	function config.getsiblingtargetdirs(cfg)
+		local paths = {}
+		for _, sibling in ipairs(config.getlinks(cfg, "siblings", "object")) do
+			if (sibling.kind == p.SHAREDLIB) then
+				local p = sibling.linktarget.directory
+				if not (table.contains(paths, p)) then
+					table.insert(paths, p)
+				end
+			end
+		end
+
+		return paths
+	end
+
+
+--
 -- Determines the correct runtime library for a configuration.
 --
 -- @param cfg

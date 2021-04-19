@@ -274,6 +274,23 @@
 --    The corresponding value of DEBUG_INFORMATION_FORMAT, or 'dwarf-with-dsym' if invalid
 --
 
+	function xcode.getToolSet(cfg)
+		local default = "clang"
+		local minOSVersion = project.systemversion(cfg)
+		if minOSVersion ~= nil
+			and cfg.system == p.MACOSX
+			and p.checkVersion(minOSVersion, "<10.7")
+		then
+			default = "gcc"
+		end
+
+		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		if not toolset then
+			error("Invalid toolset '" .. cfg.toolset .. "'")
+		end
+		return toolset
+	end
+
 	function xcode.getdebugformat(cfg)
 		local formats = {
 			["Dwarf"]      = "dwarf",
@@ -1285,6 +1302,7 @@
 	
 	function xcode.XCBuildConfiguration_Project(tr, cfg)
 		local settings = {}
+		local toolset = xcode.getToolSet(cfg)
 
 		local archs = {
 			Native = "$(NATIVE_ARCH_ACTUAL)",
@@ -1384,6 +1402,9 @@
 			cfg.frameworkdirs[i] = p.project.getrelative(cfg.project, cfg.frameworkdirs[i])
 		end
 		settings['FRAMEWORK_SEARCH_PATHS'] = cfg.frameworkdirs
+
+		local runpathdirs = table.join (cfg.runpathdirs, config.getsiblingtargetdirs (cfg))
+		settings['LD_RUNPATH_SEARCH_PATHS'] = toolset.getrunpathdirs(cfg, runpathdirs, "path")
 
 		local objDir = path.getrelative(tr.project.location, cfg.objdir)
 		settings['OBJROOT'] = objDir
