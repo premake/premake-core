@@ -431,6 +431,12 @@
 	}
 
 	api.register {
+		name = "fastuptodate",
+		scope = "project",
+		kind = "boolean",
+	}
+
+	api.register {
 		name = "fatalwarnings",
 		scope = "config",
 		kind = "list:string",

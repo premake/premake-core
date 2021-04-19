@@ -398,3 +398,16 @@ end
 		]]
 	end
 
+
+	function suite.disableFastUpToDateCheck()
+		fastuptodate "Off"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+</PropertyGroup>
+		]]
+	end

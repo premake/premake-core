@@ -133,6 +133,7 @@
 			m.preferredToolArchitecture,
 			m.latestTargetPlatformVersion,
 			m.windowsTargetPlatformVersion,
+			m.fastUpToDateCheck,
 		}
 	end
 
@@ -2684,6 +2685,13 @@
 	function m.xpDeprecationWarning(prj, cfg)
 		if cfg.toolset == "msc-v141_xp" then
 			m.element("XPDeprecationWarning", nil, "false")
+		end
+	end
+
+
+	function m.fastUpToDateCheck(prj)
+		if prj.fastuptodate ~= nil then
+			m.element("DisableFastUpToDateCheck", nil, iif(prj.fastuptodate, "false", "true"))
 		end
 	end
 
