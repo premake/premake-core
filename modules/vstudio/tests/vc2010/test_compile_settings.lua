@@ -1180,8 +1180,8 @@
 		]]
 	end
 
-	function suite.onCompileAsCppModuleInterface()
-		compileas 'C++ModuleInterface'
+	function suite.onCompileAsCppModule()
+		compileas 'Module'
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -1193,8 +1193,8 @@
 		]]
 	end
 
-	function suite.onCompileAsCppModulePartitionImplementation()
-		compileas 'C++ModulePartitionImplementation'
+	function suite.onCompileAsCppModulePartition()
+		compileas 'ModulePartition'
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -1207,7 +1207,7 @@
 	end
 
 	function suite.onCompileAsCppHeaderUnit()
-		compileas 'C++HeaderUnit'
+		compileas 'HeaderUnit'
 		prepare()
 		test.capture [[
 <ClCompile>
