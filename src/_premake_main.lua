@@ -172,11 +172,6 @@
 ---
 
 	function m.prepareAction()
-		-- The "next-gen" actions have now replaced their deprecated counterparts.
-		-- Provide a warning for a little while before I remove them entirely.
-		if _ACTION and _ACTION:endswith("ng") then
-			p.warnOnce(_ACTION, "'%s' has been deprecated; use '%s' instead", _ACTION, _ACTION:sub(1, -3))
-		end
 		p.action.set(_ACTION)
 
 		-- Allow the action to initialize stuff.

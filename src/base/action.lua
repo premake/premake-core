@@ -155,10 +155,6 @@
 ---
 
 	function action.get(name)
-		-- "Next-gen" actions are deprecated
-		if name and name:endswith("ng") then
-			name = name:sub(1, -3)
-		end
 		return action._list[name]
 	end
 
