@@ -185,6 +185,9 @@
 			"C++",
 			"Objective-C",
 			"Objective-C++",
+			"Module",
+			"ModulePartition",
+			"HeaderUnit"
 		}
 	}
 

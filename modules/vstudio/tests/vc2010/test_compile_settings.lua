@@ -1180,6 +1180,45 @@
 		]]
 	end
 
+	function suite.onCompileAsCppModule()
+		compileas 'Module'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCppModule</CompileAs>
+</ClCompile>
+		]]
+	end
+
+	function suite.onCompileAsCppModulePartition()
+		compileas 'ModulePartition'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsCppModuleInternalPartition</CompileAs>
+</ClCompile>
+		]]
+	end
+
+	function suite.onCompileAsCppHeaderUnit()
+		compileas 'HeaderUnit'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAs>CompileAsHeaderUnit</CompileAs>
+</ClCompile>
+		]]
+	end
+
 
 --
 -- Check handling of the C++14 & C++17 api

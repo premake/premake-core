@@ -1699,6 +1699,12 @@
 			m.element("CompileAs", condition, "CompileAsC")
 		elseif p.languages.iscpp(cfg.compileas) then
 			m.element("CompileAs", condition, "CompileAsCpp")
+		elseif cfg.compileas == "Module" then
+			m.element("CompileAs", condition, "CompileAsCppModule")
+		elseif cfg.compileas == "ModulePartition" then
+			m.element("CompileAs", condition, "CompileAsCppModuleInternalPartition")
+		elseif cfg.compileas == "HeaderUnit" then
+			m.element("CompileAs", condition, "CompileAsHeaderUnit")
 		end
 	end
 
