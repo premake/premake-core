@@ -138,6 +138,10 @@
 		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
 			flags		{ "LinkTimeOptimization" }
 
+		filter { "system:macosx" }
+			buildoptions	{ "-arch arm64", "-arch x86_64" }
+			linkoptions		{ "-arch arm64", "-arch x86_64" }
+
 	project "Premake5"
 		targetname  "premake5"
 		language    "C"
