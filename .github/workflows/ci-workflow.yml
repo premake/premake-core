@@ -13,7 +13,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build
-      run: make -f Bootstrap.mak linux CONFIG=${{ matrix.config }}
+      run: make -f Bootstrap.mak linux PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Upload Artifacts
@@ -32,7 +32,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build
-      run: make -f Bootstrap.mak macosx CONFIG=${{ matrix.config }}
+      run: make -f Bootstrap.mak macosx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Upload Artifacts
