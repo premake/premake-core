@@ -1315,6 +1315,42 @@
 	end
 
 
+	function suite.PBXShellScriptBuildPhase_OnBuildInputsAnddOutputsOrder()
+		files { "file.a" }
+		filter { "files:file.a" }
+			buildcommands { "buildcmd" }
+			buildinputs { "file.3", "file.1", "file.2" }
+			buildoutputs { "file.5", "file.6", "file.4" }
+		prepare()
+		xcode.PBXShellScriptBuildPhase(tr)
+		test.capture [[
+/* Begin PBXShellScriptBuildPhase section */
+		0D594A1D2F24F74F6BDA205D /* Build "file.a" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"file.a",
+				"file.1",
+				"file.2",
+				"file.3",
+			);
+			name = "Build \"file.a\"";
+			outputPaths = (
+				"file.4",
+				"file.5",
+				"file.6",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n\tbuildcmd\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n\tbuildcmd\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+		]]
+	end
+
+
 ---------------------------------------------------------------------------
 -- PBXSourcesBuildPhase tests
 ---------------------------------------------------------------------------
