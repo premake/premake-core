@@ -93,6 +93,16 @@
 		]]
 	end
 
+	function suite.OnProjectCfg_Pch()
+		  pchheader "pch.h"
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="pch.h" PCHInCommandLine="yes" UseDifferentPCHFlags="no" PCHFlags="">
+      </Compiler>
+		]]
+	end
+
 	function suite.OnProjectCfg_Linker()
 		prepare()
 		codelite.project.linker(cfg)

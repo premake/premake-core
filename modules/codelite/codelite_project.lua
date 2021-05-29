@@ -188,7 +188,6 @@
 		}
 	end
 
-
 	function m.compiler(cfg)
 		if configuration_iscustombuild(cfg) or configuration_isfilelist(cfg) then
 			_p(3, '<Compiler Required="no"/>')
@@ -201,9 +200,14 @@
 		local cxxflags = table.concat(table.join(sysincludedirs, toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
 		local cflags   = table.concat(table.join(sysincludedirs, toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
 		local asmflags = ""
-		local pch      = ""
+		local pch      = p.tools.gcc.getpch(cfg)
+		local usepch   = "yes"
+		if pch == nil then
+			pch = "";
+			usepch = "no"
+		end
 
-		_x(3, '<Compiler Options="%s" C_Options="%s" Assembler="%s" Required="yes" PreCompiledHeader="%s" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">', cxxflags, cflags, asmflags, pch)
+		_x(3, '<Compiler Options="%s" C_Options="%s" Assembler="%s" Required="yes" PreCompiledHeader="%s" PCHInCommandLine="%s" UseDifferentPCHFlags="no" PCHFlags="">', cxxflags, cflags, asmflags, pch, usepch)
 
 		for _, includedir in ipairs(cfg.includedirs) do
 			_x(4, '<IncludePath Value="%s"/>', project.getrelative(cfg.project, includedir))
