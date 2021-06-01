@@ -2,7 +2,7 @@
 title: Adding Source Files
 ---
 
-You add files—source code, resources, and so on—to your project using the [files](files) function.
+You add files—source code, resources, and so on—to your project using the [files](files.md) function.
 
 ```lua
 files {
@@ -24,7 +24,7 @@ Paths should always use the forward slash `/` as a separator; Premake will trans
 
 ## Excluding Files
 
-Sometimes you want most, but not all, of the files in a directory. In that case, use the [removefiles()](removing-values) function to mask out those few exceptions.
+Sometimes you want most, but not all, of the files in a directory. In that case, use the [removefiles()](Removing-Values.md) function to mask out those few exceptions.
 
 ```lua
 files { "*.c" }

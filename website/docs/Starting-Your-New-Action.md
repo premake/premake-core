@@ -1,6 +1,6 @@
-When developing something as complex as a new exporter, it is a good idea to build it as a [module](developing-modules). Doing so helps organize the code, provides [a way to automate testing](adding-unit-tests), and makes it easy to [share your code with others](sharing-your-module).
+When developing something as complex as a new exporter, it is a good idea to build it as a [module](Developing-Modules.md). Doing so helps organize the code, provides [a way to automate testing](Adding-Unit-Tests.md), and makes it easy to [share your code with others](Sharing-Your-Module.md).
 
-So let's start by setting up a module containing a really simple action. Create a new file named `lua.lua` and place it into a folder named `lua`. Place this `lua` folder [somewhere Premake can find it](locating-scripts).
+So let's start by setting up a module containing a really simple action. Create a new file named `lua.lua` and place it into a folder named `lua`. Place this `lua` folder [somewhere Premake can find it](Locating-Scripts.md).
 
 Copy this simple skeleton action definition into your `lua.lua`:
 
@@ -67,7 +67,7 @@ Lua generation complete
 Done.
 ```
 
-(Quick side note: if you'd like to make this or any third-party module available without having to add a `require()` to every project script, just put that `require("lua")` call in your [system script](system-scripts) instead.)
+(Quick side note: if you'd like to make this or any third-party module available without having to add a `require()` to every project script, just put that `require("lua")` call in your [system script](System-Scripts.md) instead.)
 
 
 ### Explain. ###
@@ -125,9 +125,9 @@ All of these callbacks are optional; you only need to include the ones you are a
 
 `onStart` is called first to indicate that processing has begun.
 
-`onWorkspace` is called once for every workspace that was declared, via the [`workspace`](workspace) function, in the user's project script.
+`onWorkspace` is called once for every workspace that was declared, via the [`workspace`](workspace.md) function, in the user's project script.
 
-`onProject` is called once for every project that was declared, via the [`project`](project) function, in the user's project script.
+`onProject` is called once for every project that was declared, via the [`project`](project.md) function, in the user's project script.
 
 `execute` is called after all projects and workspaces have been processed. This is a good place to put more general code that doesn't require a workspace or project as input, and should only run once.
 

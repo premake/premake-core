@@ -2,7 +2,7 @@
 title: Command Line Arguments
 ---
 
-Premake provides the ability to define and handle new command-line arguments from within your project script using the [newaction](newaction) and [newoption](newoption) functions.
+Premake provides the ability to define and handle new command-line arguments from within your project script using the [newaction](newaction.md) and [newoption](newoption.md) functions.
 
 ## Actions and Options
 
@@ -12,7 +12,7 @@ An _action_ indicates what Premake should do on any given run. For instance, the
 
 An _option_ modifies the behavior of the action. For instance, the `dotnet` option is used to change which .NET compiler set is used in the generated files. Options can accept a value, such as `--dotnet=mono` or act as a flag, like `--with-opengl`.
 
-From within your script, you can identify the current action with the [`_ACTION`](_ACTION) global variable, a string value. You can check for an option using the [`_OPTIONS`](_OPTIONS) table, which contains a list of key-value pairs. The key is the option identifier ("dotnet"), which references the command line value ("mono") or an empty string for valueless options.
+From within your script, you can identify the current action with the [`_ACTION`](_ACTION.md) global variable, a string value. You can check for an option using the [`_OPTIONS`](_OPTIONS.md) table, which contains a list of key-value pairs. The key is the option identifier ("dotnet"), which references the command line value ("mono") or an empty string for valueless options.
 
 ```lua
 -- delete a file if the clean action is running
@@ -26,7 +26,7 @@ targetdir ( _OPTIONS["outdir"] or "out" )
 
 ## Creating New Options
 
-New command-line options are created using the [`newoption`](newoption) function, passing a table which fully describes the option. This is best illustrated with some examples.
+New command-line options are created using the [`newoption`](newoption.md) function, passing a table which fully describes the option. This is best illustrated with some examples.
 
 Here is an option intended to force the use of OpenGL in a 3D application. It serves as a simple flag, and does not take any value.
 
@@ -125,4 +125,4 @@ newaction {
 
 The actual code to be executed when the action is fired should be placed in the `execute()` function.
 
-That's the simple version, which is great for one-off operations that don't need to access to the specific project information. For a tutorial for writing a more complete action, see [Adding a New Action](adding-new-Action).
+That's the simple version, which is great for one-off operations that don't need to access to the specific project information. For a tutorial for writing a more complete action, see [Adding a New Action](Adding-New-Action.md).

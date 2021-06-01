@@ -23,7 +23,7 @@ Instead, we'd really like to implement this customization right in our project s
 
 ## Use the Source!
 
-Before we can make this change, we first need to know what function in the Premake source code is emitting this particular markup. As described in the [Code Overview](code-overview), the Visual Studio exporter is currently located in the `src/actions/vstudio` folder in the Premake source tree (go ahead and find it, we'll wait!).
+Before we can make this change, we first need to know what function in the Premake source code is emitting this particular markup. As described in the [Code Overview](Code-Overview.md), the Visual Studio exporter is currently located in the `src/actions/vstudio` folder in the Premake source tree (go ahead and find it, we'll wait!).
 
 We're looking for the code which generates the `.vcxproj` files, and browsing the file names brings us to `vs2010_vcxproj.lua`. Opening this file, we can then search for the `"<Project"` string, which we find in the `m.project()` function:
 
@@ -40,7 +40,7 @@ We're looking for the code which generates the `.vcxproj` files, and browsing th
 
 For the moment we don't really need to worry too much about how this code works because we aren't actually going to change it at all. Instead, we will *override* it with a new function that outputs our version comment, and then calls the original function to output the Project element, unmodified.
 
-Before we can do that, we need one more bit of information: what is `m`? [By convention](coding-conventions), `m` is a shortcut for the module's namespace (really just a Lua table) which we declare at the top of the file. Looking at the top of `vs2010_vcxproj.lua` we find:
+Before we can do that, we need one more bit of information: what is `m`? [By convention](Coding-Conventions.md), `m` is a shortcut for the module's namespace (really just a Lua table) which we declare at the top of the file. Looking at the top of `vs2010_vcxproj.lua` we find:
 
 ```lua
 local p = premake
@@ -71,7 +71,7 @@ end)
 
 This snippet replaces the original implementation of `m.project()` with my new (anonymous) function. From this point on, when someone calls `m.project()`, Premake will call my new function, passing it the original implementation as the first argument (`base`). If the function requires any other arguments (in this case, it receives the project being exported as `prj`) they appear after.
 
-In our replacement function, we emit our comment header using `premake.w()`, which is short for "premake write", and [_PREMAKE_VERSION](_PREMAKE_VERSION), which is a global variable holding the version of the currently running Premake executable.
+In our replacement function, we emit our comment header using `premake.w()`, which is short for "premake write", and [_PREMAKE_VERSION](_PREMAKE_VERSION.md), which is a global variable holding the version of the currently running Premake executable.
 
 After emitting the comment we call `base(prj)`, the original implementation of `m.project()`, to do the rest of the work for us. Easy!
 
@@ -96,7 +96,7 @@ The next time you generate a Visual Studio project from your scripts, the commen
 
 ## Introducing Call Arrays
 
-Overrides are a great way to intercept an existing call to modify its arguments or return value or even replace it entirely. There is another, more self-contained way that we could have implemented our customization by leveraging [Premake's *call array* convention](coding-conventions).
+Overrides are a great way to intercept an existing call to modify its arguments or return value or even replace it entirely. There is another, more self-contained way that we could have implemented our customization by leveraging [Premake's *call array* convention](Coding-Conventions.md).
 
 If you look at the top of `vs2010_vcxproj.lua`, you will see that `m.project()` is called via an array of function references:
 
@@ -128,7 +128,7 @@ function m.generate(prj)
 end
 ```
 
-Premake calls `m.generate()` to export the project—we'll talk about how that happens later. `m.generate()` calls `p.callArray()` (remember [`p` is an alias for `premake`](coding-conventions)), which calls all of the functions in the list returned by `m.elements.project()`, passing the provided arguments (in this case `prj`) to each of them. This indirection allows project script authors like yourself an opportunity to modify that list of calls by adding, removing, or reordering the list.
+Premake calls `m.generate()` to export the project—we'll talk about how that happens later. `m.generate()` calls `p.callArray()` (remember [`p` is an alias for `premake`](Coding-Conventions.md)), which calls all of the functions in the list returned by `m.elements.project()`, passing the provided arguments (in this case `prj`) to each of them. This indirection allows project script authors like yourself an opportunity to modify that list of calls by adding, removing, or reordering the list.
 
 Let's implement our version comment as an addition to this particular call array. To do so, we will override the `m.elements.project()` function (remember from the earlier example that `m` is short for `premake.vstudio.vc2010`). We'll call the original implementation to get the array of calls, and then add our own before returning it to `m.generate()`.
 
@@ -146,4 +146,4 @@ end)
 
 If you add that snippet to your project or system script, your new function will get called between `m.xmlDeclaration()` and `m.project()` and place our comment right where we'd like it.
 
-*(Wondering [why the call array is in a function and not just a global table](why-do-call-arrays-need-functions)? Hint: because otherwise overrides wouldn't work.)*
+*(Wondering [why the call array is in a function and not just a global table](Why-Do-Call-Arrays-Need-Functions.md)? Hint: because otherwise overrides wouldn't work.)*

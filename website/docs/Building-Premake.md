@@ -7,7 +7,7 @@ If you downloaded a prebuilt binary package you can skip this page, which discus
 
 ## Using a Source Code Package ##
 
-If you have one of the [official source code packages](http://premake.github.io/download.html), you'll find that project files for a variety of toolsets have already been generated for you in the `build/` folder. Find the right set for your platform and toolset and build as you normally would  (i.e. run `make`). The resulting binaries will be placed in the top-level `bin/` folder.
+If you have one of the [official source code packages](/download), you'll find that project files for a variety of toolsets have already been generated for you in the `build/` folder. Find the right set for your platform and toolset and build as you normally would  (i.e. run `make`). The resulting binaries will be placed in the top-level `bin/` folder.
 
 Skip ahead to the next section to learn more about using the source version of Premake.
 
@@ -31,7 +31,7 @@ call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" # Sets up the necessary environme
 nmake -f Bootstrap.mak MSDEV=vs2015 windows    # For Windows with Visual Studio 2015.
 ```
 
-On other platforms, if the bootstrap fails to build, you will need to have a working Premake executable on your system. The easiest way to get one is by [downloading prebuilt binary package](http://premake.github.io/download.html). If a binary is not available for your system, or if you would prefer to build one yourself, grab the latest source code package from that same site and follow the steps in **Using a Source Code Package**, above.
+On other platforms, if the bootstrap fails to build, you will need to have a working Premake executable on your system. The easiest way to get one is by [downloading prebuilt binary package](/download). If a binary is not available for your system, or if you would prefer to build one yourself, grab the latest source code package from that same site and follow the steps in **Using a Source Code Package**, above.
 
 Once you have a working Premake available, you can generate the project files for your toolset by running a command like the following in the top-level Premake directory:
 

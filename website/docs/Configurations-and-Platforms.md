@@ -6,7 +6,7 @@ A *configuration* is a collection of settings to apply to a build, including fla
 
 ## Build Configurations
 
-The [previous examples](your-first-script) showed how to specify build configurations.
+The [previous examples](Your-First-Script.md) showed how to specify build configurations.
 
 ```lua
 workspace "MyWorkspace"
@@ -27,7 +27,7 @@ workspace "MyWorkspace"
    configurations { "Froobniz", "Fozbat", "Cthulhu" }
 ```
 
-The meaning of the build configuration depends on the settings you apply to it, as shown in [the earlier examples](your-first-script).
+The meaning of the build configuration depends on the settings you apply to it, as shown in [the earlier examples](Your-First-Script.md).
 
 ```lua
 workspace "HelloWorld"
@@ -42,7 +42,7 @@ workspace "HelloWorld"
       optimize "On"
 ```
 
-The [Filters](filters) section will cover this in more detail.
+The [Filters](Filters.md) section will cover this in more detail.
 
 
 ## Platforms
@@ -56,7 +56,7 @@ platforms { "Win32", "Win64", "Xbox360" }
 
 Once set, your listed platforms will appear in the Platforms list of your IDE. So you can choose a "Debug Win32" build, or a "Release Xbox360" build, or any combination of the two lists.
 
-Just like the build configurations, the platform names have no meaning on their own. You provide meaning by applying settings using the [`filter`](filter) function.
+Just like the build configurations, the platform names have no meaning on their own. You provide meaning by applying settings using the [`filter`](filter.md) function.
 
 ```lua
 configurations { "Debug", "Release" }
@@ -76,7 +76,7 @@ filter { "platforms:Xbox360" }
 
 Unlike build configurations, platforms are completely optional. If you don't need them, just don't call the platforms function at all and the toolset's default behavior will be used.
 
-Platforms are just another form of build configuration. You can use all of the same settings, and the same scoping rules apply. You can use the [`system`](system) and [`architecture`()`](architecture) settings without platforms, and you can use otherwise non-platform settings in a platform configuration. If you've ever done build configurations like "Debug Static", "Debug DLL", "Release Static", and "Release DLL", platforms can really simplify things.
+Platforms are just another form of build configuration. You can use all of the same settings, and the same scoping rules apply. You can use the [`system`](system.md) and [`architecture`()`](architecture.md) settings without platforms, and you can use otherwise non-platform settings in a platform configuration. If you've ever done build configurations like "Debug Static", "Debug DLL", "Release Static", and "Release DLL", platforms can really simplify things.
 
 ```lua
 configurations { "Debug", "Release" }

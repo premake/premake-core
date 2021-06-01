@@ -4,11 +4,11 @@ title: Custom Build Commads
 
 There are a few different ways that you can add custom commands to your Premake-generated builds: *pre- and post-build stages*, *custom build commands*, and *custom rules*.
 
-You can also use [Makefile projects](makefile-projects) to execute external shell scripts or makefiles, rather than use the normal build system.
+You can also use [Makefile projects](Makefile-Projects.md) to execute external shell scripts or makefiles, rather than use the normal build system.
 
 ## Pre- and Post-Build Stages
 
-These are the simplest to setup and use: pass one or more command lines to the [`prebuildcommands`](prebuildcommands), [`prelinkcommands`](prelinkcommands), or [`postbuildcommands`](postbuildcommands) functions. You can use [Tokens](tokens) to create generic commands that will work across platforms and configurations.
+These are the simplest to setup and use: pass one or more command lines to the [`prebuildcommands`](prebuildcommands.md), [`prelinkcommands`](prelinkcommands.md), or [`postbuildcommands`](postbuildcommands.md) functions. You can use [Tokens](Tokens.md) to create generic commands that will work across platforms and configurations.
 
 
 ```lua
@@ -46,7 +46,7 @@ filter 'files:**.lua'
 
 The basic syntax follows Visual Studio's model, but it should be easy to see how it would translate to makefiles.
 
-Build rules follow the same configuration scoping as the rest of the Premake API. You can apply rules to a specific platform or build configuration, to specific files or all files, or to any combination. And you can use [Tokens](tokens) to create generic commands that will work across platforms and configurations.
+Build rules follow the same configuration scoping as the rest of the Premake API. You can apply rules to a specific platform or build configuration, to specific files or all files, or to any combination. And you can use [Tokens](Tokens.md) to create generic commands that will work across platforms and configurations.
 
 If the outputs include any object files, they will be automatically added to the link step. Ideally, any source code files included in the outputs would be fed back into the build, but that is not the case currently.
 
@@ -68,4 +68,4 @@ Custom build commands currently have a few shortcomings. Help fixing these issue
 
 ## Custom Rules ##
 
-The [custom rules feature](custom-rules) is similar to custom build commands. It allows you describe how to build a particular kind of file, but in a more generic way, and with variables that can be set in your project script. [Learn more about custom rules here](custom-rules).
+The [custom rules feature](Custom-Rules.md) is similar to custom build commands. It allows you describe how to build a particular kind of file, but in a more generic way, and with variables that can be set in your project script. [Learn more about custom rules here](Custom-Rules.md).
