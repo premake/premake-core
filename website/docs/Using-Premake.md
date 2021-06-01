@@ -47,7 +47,7 @@ premake5 --help
 
 ## Using the Generated Projects
 
-For toolsets like Visual Studio and Xcode, you can simply load the generated workspace or workspace into your IDE and build as you normally would.
+For toolsets like Visual Studio and Xcode, you can simply load the generated workspace or workspaces into your IDE and build as you normally would.
 
 If you have generated makefiles, running `make` with no options will build all targets using the default configuration, as set by the project author. To see the list of available configurations, type:
 
