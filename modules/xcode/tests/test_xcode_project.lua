@@ -1332,15 +1332,15 @@
 			);
 			inputPaths = (
 				"file.a",
+				"file.3",
 				"file.1",
 				"file.2",
-				"file.3",
 			);
 			name = "Build \"file.a\"";
 			outputPaths = (
-				"file.4",
 				"file.5",
 				"file.6",
+				"file.4",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

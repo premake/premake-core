@@ -1111,12 +1111,12 @@
 								table.insert(commands, 'fi')
 								for _, v in ipairs(filecfg.buildinputs) do
 									if not table.indexof(inputs, v) then
-										table.insertsorted(inputs, v)
+										table.insert(inputs, v)
 									end
 								end
 								for _, v in ipairs(filecfg.buildoutputs) do
 									if not table.indexof(outputs, v) then
-										table.insertsorted(outputs, v)
+										table.insert(outputs, v)
 									end
 								end
 							end
