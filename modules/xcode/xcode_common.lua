@@ -1110,10 +1110,14 @@
 								end
 								table.insert(commands, 'fi')
 								for _, v in ipairs(filecfg.buildinputs) do
-									inputs[v] = true
+									if not table.indexof(inputs, v) then
+										table.insert(inputs, v)
+									end
 								end
 								for _, v in ipairs(filecfg.buildoutputs) do
-									outputs[v] = true
+									if not table.indexof(outputs, v) then
+										table.insert(outputs, v)
+									end
 								end
 							end
 						end
@@ -1129,13 +1133,13 @@
 						_p(level+1,');')
 						_p(level+1,'inputPaths = (');
 						_p(level+2,'"%s",', xcode.escapeSetting(node.relpath))
-						for v, _ in pairs(inputs) do
+						for _, v in ipairs(inputs) do
 							_p(level+2,'"%s",', xcode.escapeSetting(project.getrelative(tr.project, v)))
 						end
 						_p(level+1,');')
 						_p(level+1,'name = %s;', xcode.stringifySetting('Build "' .. node.name .. '"'))
 						_p(level+1,'outputPaths = (')
-						for v, _ in pairs(outputs) do
+						for _, v in ipairs(outputs) do
 							_p(level+2,'"%s",', xcode.escapeSetting(project.getrelative (tr.project, v)))
 						end
 						_p(level+1,');')
