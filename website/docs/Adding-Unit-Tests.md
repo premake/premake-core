@@ -7,7 +7,7 @@ Premake includes an automated testing system that you can use the verify the beh
 
 ## Add your first test
 
-Within our [Lucky module](introducing-modules) folder, create a new folder named `tests`.
+Within our [Lucky module](Introducing-Modules.md) folder, create a new folder named `tests`.
 
 Within that folder, create a new file named `tests/test_lucky_numbers.lua` with a simple failing test:
 
@@ -43,7 +43,7 @@ lucky/
 
 Premake's automated testing module is considered an advanced, developer-only feature which is not enabled by default. To enable it, you simply need to add the line `test = require("self-test")` somewhere it will be executed before your tests run.
 
-The best place to put it is in your [system script](system-scripts), which will make the testing action available to all of your projects. But if that isn't feasible for you or your users, you can also place it in your project or testing script.
+The best place to put it is in your [system script](System-Scripts.md), which will make the testing action available to all of your projects. But if that isn't feasible for you or your users, you can also place it in your project or testing script.
 
 Premake's own code makes use of the latter approach: its `premake5.lua` script defines a custom action named "test", which in turn enables the built-in testing module:
 

@@ -50,9 +50,9 @@ Makefile projects currently have a few shortcomings. Help fixing these issues, o
 
 ## See Also ##
 
-* [Custom Build Commands](custom-build-commands)
-* [Custom Rules](custom-rules)
-* [buildcommands](buildcommands)
-* [buildoutputs](buildoutputs)
-* [cleancommands](cleancommands)
-* [rebuildcommands](rebuildcommands)
+* [Custom Build Commands](Custom-Build-Commands.md)
+* [Custom Rules](Custom-Rules.md)
+* [buildcommands](buildcommands.md)
+* [buildoutputs](buildoutputs.md)
+* [cleancommands](cleancommands.md)
+* [rebuildcommands](rebuildcommands.md)

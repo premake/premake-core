@@ -2,7 +2,7 @@
 title: Linking
 ---
 
-Linking to external libraries is done with the [`links`](links) function.
+Linking to external libraries is done with the [`links`](links.md) function.
 
 ```lua
 links { "png", "zlib" }
@@ -29,13 +29,13 @@ workspace "MyWorkspace"
 
 ### Finding Libraries ###
 
-You can tell Premake where to search for libraries with the [`libdirs`](libdirs) function.
+You can tell Premake where to search for libraries with the [`libdirs`](libdirs.md) function.
 
 ```lua
 libdirs { "libs", "../mylibs" }
 ```
 
-If you need to discover the location of a library, use the [`os.findlib`](os.findlib) function.
+If you need to discover the location of a library, use the [`os.findlib`](os.findlib.md) function.
 
 ```lua
 libdirs { os.findlib("X11") }

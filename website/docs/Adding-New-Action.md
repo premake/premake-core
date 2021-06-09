@@ -8,7 +8,7 @@ Premake provides the ability to create your own actions. These can be simple one
 
 This tutorial walks through the process of creating a new action that outputs solution and project information as Lua tables, which you can then use Premake to read and manipulate if you wish.
 
-* [Starting Your New Action](starting-your-new-action)
-* [Generating Project Files](generating-project-files)
+* [Starting Your New Action](Starting-Your-New-Action.md)
+* [Generating Project Files](Generating-Project-Files.md)
 * Working with Configurations
 * (More to come!)

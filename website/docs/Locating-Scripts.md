@@ -20,6 +20,6 @@ When Premake needs to load a script file, via a call to `dofile()` or `include()
 
 * In the directory containing the currently running Premake executable.
 
-Note that these search paths also work for modules (e.g. `~/.premake/monodevelop`) and [system scripts](system-scripts).
+Note that these search paths also work for modules (e.g. `~/.premake/monodevelop`) and [system scripts](System-Scripts.md).
 
 You are free to add or remove paths from `premake.path`, in either your project or system scripts. Any requests to load scripts after the change will use your modified path.

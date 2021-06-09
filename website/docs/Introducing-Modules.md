@@ -6,9 +6,9 @@ A Premake module is simply a Lua script that follows a few extra conventions:
 
 * the name of the script file is the name of the module
 * the script should be placed in a folder of the same name
-* the folder should be placed [somewhere Premake can find it](locating-scripts)
+* the folder should be placed [somewhere Premake can find it](Locating-Scripts.md)
 
-Let's start with a simple example. Create a new module by creating a folder named `lucky` and placing it [somewhere where Premake can find it](locating-scripts). Create a new file inside this folder named `lucky.lua`, with this simple starter module:
+Let's start with a simple example. Create a new module by creating a folder named `lucky` and placing it [somewhere where Premake can find it](Locating-Scripts.md). Create a new file inside this folder named `lucky.lua`, with this simple starter module:
 
 ```lua
 -- lucky.lua
@@ -52,7 +52,7 @@ Generating MyProject.vcxproj...
 Done.
 ```
 
-`require()` is [Lua's standard module loading function](http://www.lua.org/pil/8.1.html) (though the version in Premake has been extended to support [more search locations](locating-scripts)). The first time a module is required, Lua will load it and return the module's interface (the table we assigned to `m` in the example). If the module is later required again, the same table instance will be returned, without reloading the scripts.
+`require()` is [Lua's standard module loading function](http://www.lua.org/pil/8.1.html) (though the version in Premake has been extended to support [more search locations](Locating-Scripts.md)). The first time a module is required, Lua will load it and return the module's interface (the table we assigned to `m` in the example). If the module is later required again, the same table instance will be returned, without reloading the scripts.
 
 Any local variables or functions you define in your module will be private, and only accessible from your module script. Variables or functions you assign to the module table will public, and accessible through the module interface returned from `require()`.
 
@@ -87,5 +87,5 @@ local luckyEight = lucky.makeNumberLucky(8)
 
 That's all there to it!
 
-Note that if you decide you want to [share your module](/community/modules) with other people, there are a [few other considerations to make](sharing-your-module).
+Note that if you decide you want to [share your module](/community/modules) with other people, there are a [few other considerations to make](Sharing-Your-Module.md).
 

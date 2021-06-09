@@ -83,14 +83,14 @@ postbuildcommands {
 
 You can use command tokens anywhere you specify a command line, including:
 
-* [buildcommands](buildcommands)
-* [cleancommands](cleancommands)
-* [os.execute](os.execute)
-* [os.executef](os.executef)
-* [postbuildcommands](postbuildcommands)
-* [prebuildcommands](prebuildcommands)
-* [prelinkcommands](prelinkcommands)
-* [rebuildcommands](rebuildcommands)
+* [buildcommands](buildcommands.md)
+* [cleancommands](cleancommands.md)
+* [os.execute](os.execute.md)
+* [os.executef](os.executef.md)
+* [postbuildcommands](postbuildcommands.md)
+* [prebuildcommands](prebuildcommands.md)
+* [prelinkcommands](prelinkcommands.md)
+* [rebuildcommands](rebuildcommands.md)
 
 Command tokens are replaced with an appropriate command for the target platform. For Windows, path separators in the commmand arguments are converted to backslashes.
 

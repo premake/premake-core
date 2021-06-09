@@ -21,7 +21,7 @@ project "MyProject"
   defines { "PROJECT" }
 ```
 
-Sometimes it can be helpful to go back and add values to a previously declared scope. You can do this the same way you declared it in the first place: by calling [`workspace`](workspace) or [`project`](project), using the same name.
+Sometimes it can be helpful to go back and add values to a previously declared scope. You can do this the same way you declared it in the first place: by calling [`workspace`](workspace.md) or [`project`](project.md), using the same name.
 
 ```lua
 -- declare my workspace
