@@ -1,7 +1,8 @@
 project "curl-lib"
 	language    "C"
 	kind        "StaticLib"
-	includedirs { "include", "lib", "../mbedtls/include/" }
+	sysincludedirs { "include" }
+	includedirs { "lib", "../mbedtls/include" }
 	defines     { "BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY" }
 	warnings    "off"
 
