@@ -181,6 +181,29 @@
 		]]
 	end
 
+	function suite.OnProjectCfg_PreBuildMessage()
+		prebuildmessage "test"
+		prepare()
+		codelite.project.preBuild(cfg)
+		test.capture [[
+      <PreBuild>
+        <Command Enabled="yes">@echo test</Command>
+      </PreBuild>
+		]]
+	end
+
+	function suite.OnProjectCfg_PostBuildMessage()
+		postbuildmessage "test"
+		prepare()
+		codelite.project.postBuild(cfg)
+		test.capture [[
+      <PostBuild>
+        <Command Enabled="yes">@echo test</Command>
+      </PostBuild>
+		]]
+	end
+
+
 	function suite.OnProjectCfg_General()
 		system "Windows"
 		prepare()

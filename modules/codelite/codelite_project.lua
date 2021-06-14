@@ -314,10 +314,14 @@
 	end
 
 	function m.preBuild(cfg)
-		if #cfg.prebuildcommands > 0 then
+		if #cfg.prebuildcommands > 0 or cfg.prebuildmessage then
 			_p(3, '<PreBuild>')
-			local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.project.basedir, cfg.project.location)
 			p.escaper(codelite.escElementText)
+			if cfg.prebuildmessage then
+				local command = os.translateCommandsAndPaths("@{ECHO} " .. cfg.prebuildmessage, cfg.project.basedir, cfg.project.location)
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
+			end
+			local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.project.basedir, cfg.project.location)
 			for _, command in ipairs(commands) do
 				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
@@ -327,10 +331,14 @@
 	end
 
 	function m.postBuild(cfg)
-		if #cfg.postbuildcommands > 0 then
+		if #cfg.postbuildcommands > 0  or cfg.postbuildmessage then
 			_p(3, '<PostBuild>')
-			local commands = os.translateCommandsAndPaths(cfg.postbuildcommands, cfg.project.basedir, cfg.project.location)
 			p.escaper(codelite.escElementText)
+			if cfg.postbuildmessage then
+				local command = os.translateCommandsAndPaths("@{ECHO} " .. cfg.postbuildmessage, cfg.project.basedir, cfg.project.location)
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
+			end
+			local commands = os.translateCommandsAndPaths(cfg.postbuildcommands, cfg.project.basedir, cfg.project.location)
 			for _, command in ipairs(commands) do
 				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
