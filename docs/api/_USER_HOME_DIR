@@ -1,0 +1,7 @@
+# _USER_HOME_DIR
+
+The full absolute path to the current user's home directory.
+
+## See Also
+
+- [_PREMAKE.COMMAND_DIR](_PREMAKE.COMMAND_DIR.md)

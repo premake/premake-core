@@ -1,3 +1,0 @@
-Modified CheckStringsEqual() in checks.cpp to allow for actual==NULL (the
-previous behavior was to explode violently).
-

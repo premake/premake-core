@@ -1,2 +1,0 @@
-I added #pragmas to the end of luaconf.h in order to suppress
-some (harmless) VS.NET warning messages.
