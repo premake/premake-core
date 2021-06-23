@@ -116,6 +116,7 @@ title: What's New in 5.0
 * [syslibdirs](syslibdirs.md) (new)
 * [system](system.md) (new)
 * [toolset](toolset.md) (new)
+* [toolsversion](toolsversion.md) (new)
 * [undefines](undefines.md) (new)
 * [vectorextensions](vectorextensions.md) (new, replaces flags `EnableSSE` and `EnableSSE2`)
 * [warnings](warnings.md) (new, replaces flags `ExtraWarnings` and `NoWarnings`)

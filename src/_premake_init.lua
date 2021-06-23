@@ -1254,6 +1254,13 @@
 	}
 
 	api.register {
+		name = "toolsversion",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "customtoolnamespace",
 		scope = "config",
 		kind = "string",
