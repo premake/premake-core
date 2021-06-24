@@ -175,7 +175,12 @@
 			_p(2,'<ignoreUnsupportedPragmas>0</ignoreUnsupportedPragmas>')
 
 			local compiler = { dmd="0", gdc="1", ldc="2" }
-			m.visuald.element(2, "compiler", compiler[_OPTIONS.dc or cfg.toolset or "dmd"])
+			local compilerName, err = p.api.checkValue(p.fields.toolset, _OPTIONS.dc or cfg.toolset or "dmd")
+			if err then
+				error { msg=err }
+			end
+
+			m.visuald.element(2, "compiler", compiler[compilerName])
 
 			m.visuald.element(2, "otherDMD", '0')
 			m.visuald.element(2, "program", '$(DMDInstallDir)windows\\bin\\dmd.exe')
