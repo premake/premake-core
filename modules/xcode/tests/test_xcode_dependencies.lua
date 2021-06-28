@@ -198,6 +198,24 @@
 		]]
 	end
 
+function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetExtension()
+		kind "SharedLib"
+		targetextension ".plugin"
+		prepare()
+		xcode.PBXFrameworksBuildPhase(tr)
+		test.capture [[
+/* Begin PBXFrameworksBuildPhase section */
+		9FDD37564328C0885DF98D96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B7205267D294518F2973366 /* libMyProject2-d.plugin in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+		]]
+	end
 ---------------------------------------------------------------------------
 -- PBXCopyFilesBuildPhaseForEmbedFrameworks tests
 ---------------------------------------------------------------------------
