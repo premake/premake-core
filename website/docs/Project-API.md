@@ -163,6 +163,7 @@
 | [targetprefix](targetprefix.md)                           |  |
 | [targetsuffix](targetsuffix.md)                           |  |
 | [toolset](toolset.md)                                     |  |
+| [toolsversion](toolsversion.md)                           |  |
 | [undefines](undefines.md)                                 |  |
 | [usingdirs](usingdirs.md)                                 |  |
 | [uuid](uuid.md)                                           | Set project GUID (for VS projects/workspaces) |

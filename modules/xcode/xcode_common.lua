@@ -46,6 +46,8 @@
 		}
 		if node.isResource then
 			return "Resources"
+		elseif node.cfg and (node.cfg.kind == p.SHAREDLIB or node.cfg.kind == p.STATICLIB) then
+			return "Frameworks"
 		end
 		return categories[path.getextension(node.name)]
 	end

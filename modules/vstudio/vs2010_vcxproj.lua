@@ -134,6 +134,7 @@
 			m.latestTargetPlatformVersion,
 			m.windowsTargetPlatformVersion,
 			m.fastUpToDateCheck,
+			m.toolsVersion,
 		}
 	end
 
@@ -183,6 +184,7 @@
 			return {
 				m.configurationType,
 				m.platformToolset,
+				m.toolsVersion,
 			}
 		else
 			return {
@@ -193,6 +195,7 @@
 				m.clrSupport,
 				m.characterSet,
 				m.platformToolset,
+				m.toolsVersion,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
 				m.windowsSDKDesktopARMSupport,
@@ -2379,6 +2382,14 @@
 				return "$(ProjectDir)" .. dir
 			end)
 			m.element("ExecutablePath", nil, "%s;$(ExecutablePath)", table.concat(dirs, ";"))
+		end
+	end
+
+
+	function m.toolsVersion(cfg)
+		local version = cfg.toolsversion
+		if _ACTION >= "vs2017" and version then
+			m.element("VCToolsVersion", nil, version)
 		end
 	end
 
