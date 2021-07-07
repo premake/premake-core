@@ -48,7 +48,8 @@ The basic syntax follows Visual Studio's model, but it should be easy to see how
 
 Build rules follow the same configuration scoping as the rest of the Premake API. You can apply rules to a specific platform or build configuration, to specific files or all files, or to any combination. And you can use [Tokens](Tokens.md) to create generic commands that will work across platforms and configurations.
 
-If the outputs include any object files, they will be automatically added to the link step. Ideally, any source code files included in the outputs would be fed back into the build, but that is not the case currently.
+If the outputs include any object files, they will be automatically added to the link step.
+Any source code files included in the outputs might be fed back into the build with [compilebuildoutputs](compilebuildoutputs.md).
 
 
 Custom build commands currently have a few shortcomings. Help fixing these issues, or any other gaps, would be most appreciated!
