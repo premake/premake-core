@@ -30,7 +30,7 @@
 	local function prepare_cfg(calls)
 		prj = p.workspace.getproject(wks, 1)
 		local cfg = test.getconfig(prj, "Debug")
-		local toolset = p.tools.dmd
+		local toolset = m.make.getToolset(cfg) or p.tools.dmd
 		p.callArray(calls, cfg, toolset)
 	end
 
@@ -191,5 +191,32 @@ all: $(TARGETDIR) prebuild prelink $(TARGET)
 		test.capture [[
 all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
 	@:
+		]]
+	end
+
+	function suite.make_dTools_dmd()
+		toolset "dmd"
+
+		prepare_cfg({ m.make.dTools })
+		test.capture [[
+  DC = dmd
+		]]
+	end
+	
+	function suite.make_dTools_gdc()
+		toolset "gdc"
+
+		prepare_cfg({ m.make.dTools })
+		test.capture [[
+  DC = gdc
+		]]
+	end
+
+	function suite.make_dTools_ldc()
+		toolset "ldc"
+
+		prepare_cfg({ m.make.dTools })
+		test.capture [[
+  DC = ldc2
 		]]
 	end
