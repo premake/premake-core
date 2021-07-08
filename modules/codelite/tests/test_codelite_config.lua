@@ -203,6 +203,51 @@
 		]]
 	end
 
+	function suite.OnProjectCfg_BuildCommand()
+		files {"/c/foo.txt", "/c/bar.txt"}
+		buildinputs { "/c/toto.txt", "/c/extra_dependency" }
+		buildoutputs { "/c/toto.c" }
+		buildcommands { "test", "test /c/toto.c" }
+		buildmessage "Some message"
+		prepare()
+		codelite.project.additionalRules(cfg)
+		test.capture [[
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>/c/toto.c
+/c/toto.c: /c/toto.txt /c/extra_dependency
+	@echo Some message
+	test
+	test /c/toto.c
+</CustomPreBuild>
+      </AdditionalRules>]]
+	end
+
+	function suite.OnProjectCfg_BuildCommandPerFile()
+		files {"/c/foo.txt", "/c/bar.txt"}
+		filter "files:**.txt"
+			buildinputs { "/c/%{file.basename}.h", "/c/extra_dependency" }
+			buildoutputs { "/c/%{file.basename}.c" }
+			buildcommands { "test", "test /c/%{file.basename}" }
+			buildmessage "Some message"
+		prepare()
+		codelite.project.additionalRules(cfg)
+		test.capture [[
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>/c/bar.c /c/foo.c
+/c/bar.c: /c/bar.txt /c/bar.h /c/extra_dependency
+	@echo Some message
+	test
+	test /c/bar
+
+/c/foo.c: /c/foo.txt /c/foo.h /c/extra_dependency
+	@echo Some message
+	test
+	test /c/foo
+</CustomPreBuild>
+      </AdditionalRules>]]
+	end
 
 	function suite.OnProjectCfg_General()
 		system "Windows"

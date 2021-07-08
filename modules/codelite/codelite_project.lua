@@ -377,7 +377,41 @@
 
 		_p(3, '<AdditionalRules>')
 		_p(4, '<CustomPostBuild/>')
-		_p(4, '<CustomPreBuild/>')
+
+		local dependencies = {}
+		local rules = {}
+		local function addrule(dependencies, rules, config, filename)
+			if #config.buildcommands == 0 or #config.buildOutputs == 0 then
+				return
+			end
+			local inputs = table.implode(config.buildInputs,"",""," ")
+			if filename ~= "" and inputs ~= "" then
+				filename = filename .. " "
+			end
+			local outputs = config.buildOutputs[1]
+			local buildmessage = ""
+			if config.buildmessage then
+				buildmessage = "\t@{ECHO} " .. config.buildmessage .. "\n"
+			end
+			local commands = table.implode(config.buildCommands,"\t","\n","")
+			table.insert(rules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. commands, cfg.project.basedir, cfg.project.location))
+			table.insertflat(dependencies, config.buildOutputs[1])
+		end
+		local tr = project.getsourcetree(cfg.project)
+		p.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				local filecfg = p.fileconfig.getconfig(node, cfg)
+				addrule(dependencies, rules, filecfg, node.relpath)
+			end
+		})
+		addrule(dependencies, rules, cfg, "")
+
+		if #rules == 0 and #dependencies == 0 then
+			_p(4, '<CustomPreBuild/>')
+		else
+			_p(4, '<CustomPreBuild>' .. table.implode(dependencies,"",""," "))
+			_p(0, table.implode(rules,"","","\n") .. '</CustomPreBuild>')
+		end
 		_p(3, '</AdditionalRules>')
 	end
 
