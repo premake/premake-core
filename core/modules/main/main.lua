@@ -64,7 +64,6 @@ end
 function m.executeCommandLineOptions()
 	if #_ARGS > 0 then
 		for trigger, value in options.each() do
-			_G._ACTION = trigger
 			options.execute(trigger, value)
 		end
 	else
