@@ -532,7 +532,7 @@
 		end
 
 		if fcfg.includedirs or fcfg.sysincludedirs or fcfg.frameworkdirs then
-			local includes = toolset.getincludedirs(cfg, fcfg.includedirs, fcfg.sysincludedirs, cfg.frameworkdirs)
+			local includes = toolset.getincludedirs(cfg, fcfg.includedirs, fcfg.sysincludedirs, fcfg.frameworkdirs)
 			if #includes > 0 then
 				value = value ..  gmake2.list(includes)
 			end
