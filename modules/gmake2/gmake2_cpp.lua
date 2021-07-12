@@ -386,7 +386,7 @@
 
 
 	function cpp.includes(cfg, toolset)
-		local includes = toolset.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs)
+		local includes = toolset.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs, cfg.frameworkdirs)
 		p.outln('INCLUDES +=' .. gmake2.list(includes))
 	end
 
