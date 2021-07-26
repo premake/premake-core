@@ -219,6 +219,7 @@ module.exports = {
 						'targetprefix',
 						'targetsuffix',
 						'toolset',
+						'toolsversion',
 						'undefines',
 						'usingdirs',
 						'uuid',
