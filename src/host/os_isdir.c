@@ -9,7 +9,7 @@
 #include "premake.h"
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 int os_isdir(lua_State* L)
@@ -17,7 +17,7 @@ int os_isdir(lua_State* L)
 	struct stat buf;
 	const char* path = luaL_checkstring(L, 1);
 #ifdef _WIN32
-	int attr;
+	DWORD attr;
 
 	wchar_t wide_path[PATH_MAX];
 	if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wide_path, PATH_MAX) == 0)
