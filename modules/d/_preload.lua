@@ -54,6 +54,11 @@
 		"ShowDependencies",
 	})
 
+	api.addAllowed("toolset", {
+		"dmd",
+		"gdc",
+		"ldc",
+	})
 
 --
 -- Register some D specific properties

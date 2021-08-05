@@ -43,7 +43,7 @@ If you save this script as a file named `premake5.lua`, and place it in the same
 $ premake5 vs2013
 ```
 
-This particular command will generate `HelloWorld.sln` and `HelloWorld.vcxproj` files for Visual Studio 2013 (see [Using Premake](using-premake) or run `premake --help` for a complete list of exporters). If you build the generated workspace, you will get a command line executable named `HelloWorld.exe` in the `bin/Debug` or `bin/Release` directory, depending on which configuration was selected within Visual Studio.
+This particular command will generate `HelloWorld.sln` and `HelloWorld.vcxproj` files for Visual Studio 2013 (see [Using Premake](Using-Premake.md) or run `premake --help` for a complete list of exporters). If you build the generated workspace, you will get a command line executable named `HelloWorld.exe` in the `bin/Debug` or `bin/Release` directory, depending on which configuration was selected within Visual Studio.
 
 If you happened to be on Linux, you could generate and build a makefile like so:
 

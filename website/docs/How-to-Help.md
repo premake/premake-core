@@ -2,7 +2,7 @@
 title: How to Help
 ---
 
-I've posted a [Development Roadmap](Development-Roadmap) to get us to the Premake 5.0 release. That is where help is most needed right now and there is plenty to do, from moving documentation (easy) to developing new modules (harder).
+I've posted a [Development Roadmap](Development-Roadmap.md) to get us to the Premake 5.0 release. That is where help is most needed right now and there is plenty to do, from moving documentation (easy) to developing new modules (harder).
 
 Here are some other ways you can help:
 

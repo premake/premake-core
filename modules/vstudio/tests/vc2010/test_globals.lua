@@ -411,3 +411,35 @@ end
 </PropertyGroup>
 		]]
 	end
+
+
+	function suite.setToolsVersion2015()
+		toolsversion "14.27.29110"
+		p.action.set("vs2015")
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+		]]
+	end
+
+
+	function suite.setToolsVersion2017()
+		toolsversion "14.27.29110"
+		p.action.set("vs2017")
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
+	<VCToolsVersion>14.27.29110</VCToolsVersion>
+</PropertyGroup>
+		]]
+	end

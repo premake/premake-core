@@ -2,12 +2,12 @@
 title: More Authoring Topics
 ---
 
-* [Locating Scripts](locating-scripts)
-* [System Scripts](system-scripts)
-* [Removing Values](removing-values)
-* [Tokens](tokens)
-* [Precompiled Headers](precompiled-headers)
-* [Custom Build Commands](custom-build-commands)
-* [Custom Rules](custom-rules)
-* [Makefile Projects](makefile-projects)
-* [Debugging Scripts](debugging-scripts)
+* [Locating Scripts](Locating-Scripts.md)
+* [System Scripts](System-Scripts.md)
+* [Removing Values](Removing-Values.md)
+* [Tokens](Tokens.md)
+* [Precompiled Headers](Precompiled-Headers.md)
+* [Custom Build Commands](Custom-Build-Commands.md)
+* [Custom Rules](Custom-Rules.md)
+* [Makefile Projects](Makefile-Projects.md)
+* [Debugging Scripts](Debugging-Scripts.md)

@@ -2,7 +2,7 @@
 title: Removing Values
 ---
 
-The remove...() set of functions remove one or more values from a list of configuration values. Every configuration list in the Premake API has a corresponding remove function: [flags()](flags) has removeflags(), [defines()](defines) has removedefines(), and so on.
+The remove...() set of functions remove one or more values from a list of configuration values. Every configuration list in the Premake API has a corresponding remove function: [flags()](flags.md) has removeflags(), [defines()](defines.md) has removedefines(), and so on.
 
 ```lua
 remove... { "values_to_remove" }

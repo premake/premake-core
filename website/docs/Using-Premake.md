@@ -2,9 +2,9 @@
 title: Using Premake
 ---
 
-*New to Premake? You might want to start with [What is Premake?](what-is-premake)*
+*New to Premake? You might want to start with [What is Premake?](What-Is-Premake.md)*
 
-If you haven't already, you can [download Premake here](/download), or [build it from source](building-premake). Premake is a small command line executable, delivered as a single file. Just unpack the download and place the executable on your system search path, or anywhere else convenient.
+If you haven't already, you can [download Premake here](/download), or [build it from source](Building-Premake.md). Premake is a small command line executable, delivered as a single file. Just unpack the download and place the executable on your system search path, or anywhere else convenient.
 
 ## Using Premake to Generate Project Files
 
@@ -31,7 +31,7 @@ Premake defines the following list of actions out of the box; projects may also 
 | xcode4      | XCode projects |
 | codelite    | CodeLite projects |
 
-(Premake4 supported some additional actions that haven't yet been ported to this new version; see the [Available Feature Matrix](feature-matrix) for the whole list.)
+(Premake4 supported some additional actions that haven't yet been ported to this new version; see the [Available Feature Matrix](Feature-Matrix.md) for the whole list.)
 
 To generate Visual Studio 2013 project files, use the command:
 
@@ -47,7 +47,7 @@ premake5 --help
 
 ## Using the Generated Projects
 
-For toolsets like Visual Studio and Xcode, you can simply load the generated workspace or workspace into your IDE and build as you normally would.
+For toolsets like Visual Studio and Xcode, you can simply load the generated solution or workspace into your IDE and build as you normally would.
 
 If you have generated makefiles, running `make` with no options will build all targets using the default configuration, as set by the project author. To see the list of available configurations, type:
 
@@ -68,7 +68,7 @@ make clean                 # to clean the default target
 make config=release clean  # to clean a different target
 ```
 
-Premake generated makefiles do not (currently) support a `make install` step. Instead, project owners are encouraged to [add an install action](command-line-arguments) to their Premake scripts, which has the advantage of working with any toolset on any platform. You can check for the existence of an install action by viewing the help (run `premake5 --help` in the project directory).
+Premake generated makefiles do not (currently) support a `make install` step. Instead, project owners are encouraged to [add an install action](Command-Line-Arguments.md) to their Premake scripts, which has the advantage of working with any toolset on any platform. You can check for the existence of an install action by viewing the help (run `premake5 --help` in the project directory).
 
 [1]: http://www.cygwin.com/
 [2]: http://www.mingw.org/

@@ -1,4 +1,4 @@
-Translate [command tokens](Tokens#command-tokens) into their OS or action specific equivalents.
+Translate [command tokens](Tokens.md#command-tokens) into their OS or action specific equivalents.
 
 ```lua
 cmd = os.translateCommands("cmd", map)

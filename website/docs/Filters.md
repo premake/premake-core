@@ -2,7 +2,7 @@
 title: Filters
 ---
 
-Premake's filter system allows you target build settings to the exact configurations in which you want them to appear. You can filter by specific build configurations or platforms, operating system, target actions, [and more](filter).
+Premake's filter system allows you target build settings to the exact configurations in which you want them to appear. You can filter by specific build configurations or platforms, operating system, target actions, [and more](filter.md).
 
 Here is an example which sets a preprocessor symbol named "DEBUG" in a workspace's "Debug" build configuration, and "NDEBUG" in the Release configuration.
 
@@ -51,4 +51,4 @@ The filter "configurations:Release" would be skipped, because the pattern "Relea
 
 The last filter "{}" does not define any filtering criteria, and so does not exclude anything. Any settings applied after this filter will appear in _all_ configurations within the workspace or project.
 
-Filters may also be combined, modified with "or" or "not", and use pattern matches. For a more complete description and lots of examples, see [`filter`](filter).
+Filters may also be combined, modified with "or" or "not", and use pattern matches. For a more complete description and lots of examples, see [`filter`](filter.md).

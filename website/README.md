@@ -10,7 +10,21 @@ Editing our documentation website is very simple. You don't have to build a whol
 1. Add a new Markdown file into the `docs/` folder. Follow naming conventions there.
 2. Add your Markdown file's name into the `sidebars.js`. Make sure you've kept alphabetical order among category items.
 
-*Use other files as references.*
+### Adding a reference to another documentation page
+
+Always reference another documentation page like this:
+```markdown
+[some text](Case-Sensitive-Filename.md)
+```
+
+and **never** like this:
+```markdown
+[some text](some-markdown-file)
+[some text](/docs/some-markdown-file)
+[some text](https://premake.github.io/docs/some-markdown-file)
+```
+
+*Use existing files in documentation as examples.*
 
 ## Installation
 

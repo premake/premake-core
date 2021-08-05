@@ -68,6 +68,12 @@
 			name .. ".lua"
 		}
 
+		-- If this module is being requested by an embedded script, favor embedded modules.
+		-- This helps prevent local scripts from interfering with release build bootstrapping.
+		if string.startswith(_SCRIPT_DIR, '$/') then
+			table.insert(paths, 1, '$/' .. full)
+		end
+
 		-- try to locate the module
 		for _, p in ipairs(paths) do
 			local file = os.locate(p)
@@ -118,8 +124,9 @@
 			local preloader = name .. "/_preload.lua"
 			preloader = os.locate("modules/" .. preloader) or os.locate(preloader)
 			if preloader then
-				m._preloaded[name] = include(preloader)
-				if not m._preloaded[name] then
+				local modulePath = path.getdirectory(preloader)
+				m._preloaded[modulePath] = include(preloader)
+				if not m._preloaded[modulePath] then
 					p.warn("module '%s' should return function from _preload.lua", name)
 				end
 			else
@@ -306,9 +313,11 @@
 		end
 
 		-- any modules need to load to support this project?
-		for module, func in pairs(m._preloaded) do
-			if not package.loaded[module] and shouldLoad(func) then
-				require(module)
+		for modulePath, func in pairs(m._preloaded) do
+			local moduleName = path.getbasename(modulePath)
+			if not package.loaded[moduleName] and shouldLoad(func) then
+				_SCRIPT_DIR = modulePath
+				require(moduleName)
 			end
 		end
 	end
