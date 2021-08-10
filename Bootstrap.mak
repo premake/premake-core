@@ -87,7 +87,7 @@ mingw: mingw-clean
 	if not exist build\bootstrap (mkdir build\bootstrap)
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lole32 -lversion
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --os=windows --to=build/bootstrap --cc=mingw gmake2
+	./build/bootstrap/premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=mingw gmake2
 	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
 
 macosx: osx
@@ -100,7 +100,7 @@ osx: osx-clean
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_MACOSX -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" -framework CoreServices -framework Foundation -framework Security -lreadline $(SRC)
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --to=build/bootstrap gmake2
+	./build/bootstrap/premake_bootstrap --arch=$(PLATFORM) --to=build/bootstrap gmake2
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
 linux-clean: nix-clean
@@ -143,7 +143,7 @@ windows-base: windows-clean
 	if not exist build\bootstrap (mkdir build\bootstrap)
 	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /I"$(LUA_DIR)" /I"$(LUASHIM_DIR)" user32.lib ole32.lib advapi32.lib $(SRC)
 	.\build\bootstrap\premake_bootstrap.exe embed
-	.\build\bootstrap\premake_bootstrap --to=build/bootstrap $(MSDEV)
+	.\build\bootstrap\premake_bootstrap --arch=$(PLATFORM) --to=build/bootstrap $(MSDEV)
 
 windows: windows-base
 	devenv .\build\bootstrap\Premake5.sln /Upgrade
