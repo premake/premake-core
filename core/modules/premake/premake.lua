@@ -3,8 +3,10 @@
 ---
 
 local export = require('export')
+local path = require('path')
 local State = require('state')
 local Store = require('store')
+local terminal = require('terminal')
 
 local premake = _PREMAKE.premake
 
@@ -57,6 +59,21 @@ function premake.callArray(funcs, ...)
 end
 
 
+---
+-- Writes the provided message to the console, then forcibly ends excution, returning
+-- an error code to the shell.
+--
+-- @param message
+--    The message to display to the user on exit.
+---
+
+function premake.abort(message)
+	terminal.printColor(terminal.errorColor, message)
+	print()
+	os.exit(false)
+end
+
+
 function premake.checkRequired(obj, ...)
 	local n = select('#', ...)
 	for i = 1, n do
@@ -102,7 +119,12 @@ function premake.export(obj, exportPath, exporter)
 	end)
 
 	if not io.compareFile(exportPath, contents) then
-		io.writeFile(exportPath, contents)
+		os.mkdir(path.getDirectory(exportPath))
+
+		local ok, err = io.writeFile(exportPath, contents)
+		if not ok then
+			premake.abort('Error: ' .. err)
+		end
 		return true
 	else
 		return false

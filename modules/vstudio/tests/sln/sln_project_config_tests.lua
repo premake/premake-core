@@ -17,7 +17,7 @@ local function _execute(fn)
 		project('MyProject', function () end)
 	end)
 
-	local wks = vstudio.fetch(2015).workspaces['MyWorkspace']
+	local wks = vstudio.buildDom(2015).workspaces['MyWorkspace']
 	sln.projectConfiguration(wks)
 end
 

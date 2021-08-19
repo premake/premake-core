@@ -14,24 +14,29 @@ local wl = export.writeLine
 
 local sln = {}
 
-sln.elements = {}
 
-sln.elements.solution = function (wks)
-	return {
-		sln.bom,
-		sln.header,
-		sln.projects,
-		sln.global
-	}
-end
+---
+-- Element lists describe the contents of each section of the solution file
+---
 
-sln.elements.global = function (wks)
-	return {
-		sln.solutionConfiguration,
-		sln.projectConfiguration,
-		sln.solutionProperties
-	}
-end
+sln.elements = {
+	solution = function (wks)
+		return {
+			sln.bom,
+			sln.header,
+			sln.projects,
+			sln.global
+		}
+	end,
+
+	global = function (wks)
+		return {
+			sln.solutionConfiguration,
+			sln.projectConfiguration,
+			sln.solutionProperties
+		}
+	end
+}
 
 
 function sln.export(wks)

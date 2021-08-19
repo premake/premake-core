@@ -19,7 +19,7 @@ local function _execute(fn)
 		end)
 	end)
 
-	return vcxproj.prepare(vstudio.fetch(2015)
+	return vcxproj.prepare(vstudio.buildDom(2015)
 		.workspaces['MyWorkspace']
 		.projects['MyProject'])
 end

@@ -79,7 +79,7 @@ local _ARCHITECTURES = {
 
 function vstudio.export(version)
 	printf('Configuring...')
-	local root = vstudio.fetch(version)
+	local root = vstudio.buildDom(version)
 
 	for i = 1, #root.workspaces do
 		local wks = root.workspaces[i]
@@ -92,19 +92,13 @@ end
 
 
 ---
--- Entry level fetch call; unless you are doing something advanced this is the one
--- you want to build the DOM for a Visual Studio export. Queries and returns the list
--- of workspaces defined in the user's script, including any extra information required
--- for the Visual Studio exporter. Fetching the workspaces also fetches the projects
--- and configurations they contain.
+-- Query and build a DOM hierarchy from the contents of the user project script.
 --
--- @param version
---    The target Visual Studio version, eg. '2019'.
 -- @returns
---    A `dom.Root` object, with additional Visual Studio specific values.
+--    A `dom.Root` object, extended with a few Xcode specific values.
 ---
 
-function vstudio.fetch(version)
+function vstudio.buildDom(version)
 	vstudio.setTargetVersion(version)
 
 	local root = dom.Root.new({
@@ -242,7 +236,7 @@ function vstudio.fetchProjectConfig(prj, build, platform)
 	cfg.project = prj
 
 	-- Configurations inherit most values from project, but files should be kept separated
-	cfg.files = State.withoutInheritance(cfg).files
+	cfg.files = cfg:withoutInheritance().files
 
 	return cfg
 end
