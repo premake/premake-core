@@ -91,6 +91,7 @@ module.exports = {
 					type: 'category',
 					label: 'premake',
 					items: [
+						'premake/abort',
 						'premake/callArray',
 						'premake/checkRequired',
 						'premake/locateModule',

@@ -11,7 +11,7 @@ function VsVcxProjectGuidTests.isSetFromProjectName()
 		project('ProjectA')
 	end)
 
-	local prj = vcxproj.prepare(vstudio.fetch(2015).workspaces['MyWorkspace'].projects['ProjectA'])
+	local prj = vcxproj.prepare(vstudio.buildDom(2015).workspaces['MyWorkspace'].projects['ProjectA'])
 
 	vcxproj.projectGuid(prj)
 

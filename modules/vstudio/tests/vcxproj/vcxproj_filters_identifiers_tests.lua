@@ -18,7 +18,7 @@ local function _execute(fn)
 		end)
 	end)
 
-	local prj = vcxproj.prepare(vstudio.fetch(2015).workspaces['MyWorkspace'].projects['MyProject'])
+	local prj = vcxproj.prepare(vstudio.buildDom(2015).workspaces['MyWorkspace'].projects['MyProject'])
 	vcxproj.filters.identifiers(prj)
 end
 
