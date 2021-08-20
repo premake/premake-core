@@ -55,7 +55,9 @@ int os_getversion(lua_State* L)
 
 #if defined(PLATFORM_WINDOWS)
 
+#ifdef _MSC_VER
 #pragma comment(lib, "version.lib")
+#endif
 
 int getKernelVersion(struct OsVersionInfo* info)
 {
