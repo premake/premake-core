@@ -356,6 +356,7 @@
 		local calls = {
 			m.precompiledHeader,
 			m.warningLevel,
+			m.externalWarningLevel,
 			m.treatWarningAsError,
 			m.disableSpecificWarnings,
 			m.treatSpecificWarningsAsErrors,
@@ -2133,7 +2134,7 @@
 	function m.includePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.sysincludedirs)
 		if #dirs > 0 then
-			m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
+			m.element("ExternalIncludePath", nil, "%s;$(ExternalIncludePath)", table.concat(dirs, ";"))
 		end
 	end
 
@@ -2761,6 +2762,7 @@
 	end
 
 
+
 	function m.disableSpecificWarnings(cfg, condition)
 		if #cfg.disablewarnings > 0 then
 			local warnings = table.concat(cfg.disablewarnings, ";")
@@ -2815,6 +2817,11 @@
 		if cfg.warnings then
 			m.element("WarningLevel", condition, map[cfg.warnings] or "Level3")
 		end
+	end
+
+	function m.externalWarningLevel(cfg)
+		local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "EnableAllWarnings" }
+		m.element("ExternalWarningLevel", nil, map[cfg.externalwarnings] or "Level3")
 	end
 
 

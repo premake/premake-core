@@ -4,9 +4,12 @@ Specifies the system include file search paths.
 sysincludedirs { "paths" }
 ```
 
-For Visual Studio, these paths are placed in the "VC++ Directories" properties panel. For GCC and Clang, they are preceded with the `-isystem` flag, rather than `-I`. For toolsets which do not support the concept of system include directories, they are treated as a normal include directory.
+For Visual Studio, these paths are placed in the "VC++ Directories" properties panel under "External Include Directories". Note that unlike gcc and clang this does not control warning levels. See externalwarnings to control the warning level for sysincludes in visual studio.
+
+For GCC and Clang, they are preceded with the `-isystem` flag, rather than `-I`. For toolsets which do not support the concept of system include directories, they are treated as a normal include directory.
 
 Include files located via a system include directory are treated as correct: no warnings will be shown for the contents of the file.
+Note that this is different for visual studio.
 
 ### Parameters ###
 
@@ -38,3 +41,4 @@ sysincludedirs { "../includes/**" }
 
 * [includedirs](includedirs.md)
 * [syslibdirs](syslibdirs.md)
+* [externalwarnings](externalwarnings.md)

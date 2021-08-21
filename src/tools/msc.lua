@@ -96,6 +96,12 @@
 			Extra = "/W4",
 			Everything = "/Wall",
 		},
+		externalwarnings = {
+			Off = "/W0",
+			High = "/W4",
+			Extra = "/W4",
+			Everything = "/Wall",
+		},
 		staticruntime = {
 			-- this option must always be emit (does it??)
 			_ = function(cfg) return getRuntimeFlag(cfg, false) end,

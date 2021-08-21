@@ -1361,6 +1361,19 @@
 	}
 
 	api.register {
+		name = "externalwarnings",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"Default",
+			"High",
+			"Extra",
+			"Everything",
+		}
+	}
+
+	api.register {
 		name = "largeaddressaware",
 		scope = "config",
 		kind = "boolean",
