@@ -65,7 +65,7 @@ module.exports = {
 					items: [
 						{
 							label: 'Introduction',
-							to: '/docs/What-Is-Premake'
+							to: '/docs/getting-started/what-is-premake'
 						},
 						{
 							label: 'Download',
@@ -73,7 +73,7 @@ module.exports = {
 						},
 						{
 							label: 'Your First Script',
-							to: '/docs/Your-First-Script'
+							to: '/docs/authoring/your-first-script'
 						},
 						{
 							label: 'Premake 4.x',

@@ -51,7 +51,7 @@ module.exports = {
 					type: 'category',
 					label: 'options',
 					items: [
-						'options/overview',
+						'options/Options',
 						'options/all',
 						'options/definitionOf',
 						'options/each',
@@ -65,7 +65,7 @@ module.exports = {
 					type: 'category',
 					label: 'os',
 					items: [
-						'os/overview',
+						'os/OS',
 						'os/chdir',
 						'os/getCwd',
 						'os/isFile'
@@ -76,7 +76,7 @@ module.exports = {
 					type: 'category',
 					label: 'path',
 					items: [
-						'path/overview',
+						'path/Paths',
 						'path/getAbsolute',
 						'path/getBaseName',
 						'path/getDirectory',
@@ -91,6 +91,7 @@ module.exports = {
 					type: 'category',
 					label: 'premake',
 					items: [
+						'premake/Premake',
 						'premake/abort',
 						'premake/callArray',
 						'premake/checkRequired',
@@ -103,10 +104,22 @@ module.exports = {
 					type: 'category',
 					label: 'string',
 					items: [
-						'string/overview',
+						'string/Strings',
 						'string/findLast',
 						'string/split',
 						'string/startsWith'
+					]
+				},
+				{
+					collapsed: true,
+					type: 'category',
+					label: 'version',
+					items: [
+						'version/Versions',
+						'version/version_new',
+						'version/version_is',
+						'version/version_lookup',
+						'version/version_map'
 					]
 				},
 				'_ARGS',

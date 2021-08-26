@@ -67,7 +67,8 @@ end
 --    The message to display to the user on exit.
 ---
 
-function premake.abort(message)
+function premake.abort(format, ...)
+	local message = string.format(format, ...)
 	terminal.printColor(terminal.errorColor, message)
 	print()
 	os.exit(false)

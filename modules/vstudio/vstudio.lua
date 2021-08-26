@@ -2,6 +2,7 @@ local dom = require('dom')
 local path = require('path')
 local premake = require('premake')
 local State = require('state')
+local Version = require('version')
 
 local vstudio = {}
 
@@ -13,50 +14,17 @@ vstudio.vcxproj.utils =  doFile('./src/vcxproj.utils.lua', vstudio)
 
 
 ---
--- Parameterize the easy values which vary from Visual Studio version to version.
--- TODO: `platformToolset` should move to MSC toolset abstraction, when available (I think)
+-- The currently known and supported versions, for version targeting.
 ---
 
-local _VERSION_INFO = {
-	['2010'] = {
-		filterToolsVersion = '4.0',
-		solutionFileFormatVersion = '11',
-		toolsVersion = '4.0',
-		visualStudioVersion = '2010',
-	},
-	['2012'] = {
-		filterToolsVersion = '4.0',
-		platformToolset = 'v110',
-		solutionFileFormatVersion = '12',
-		toolsVersion = '4.0',
-		visualStudioVersion = '2012'
-	},
-	['2013'] = {
-		filterToolsVersion = '4.0',
-		platformToolset = 'v120',
-		solutionFileFormatVersion = '12',
-		toolsVersion = '12.0'
-	},
-	['2015'] = {
-		filterToolsVersion = '4.0',
-		platformToolset = 'v140',
-		solutionFileFormatVersion = '12',
-		toolsVersion = '14.0',
-		visualStudioVersion = '14'
-	},
-	['2017'] = {
-		filterToolsVersion = '4.0',
-		platformToolset='v141',
-		solutionFileFormatVersion = '12',
-		toolsVersion = '15.0',
-		visualStudioVersion = '15'
-	},
-	['2019'] = {
-		filterToolsVersion = '4.0',
-		platformToolset = 'v142',
-		solutionFileFormatVersion = '12',
-		visualStudioVersion = 'Version 16',
-	}
+vstudio.VERSIONS = {
+	['2022'] = '17.*.*.*',
+	['2019'] = '16.*.*.*',
+	['2017'] = '15.*.*.*',
+	['2015'] = '14.*.*.*',
+	['2013'] = '12.*.*.*',
+	['2012'] = '11.*.*.*',
+	['2010'] = '10.*.*.*'
 }
 
 
@@ -79,7 +47,7 @@ local _ARCHITECTURES = {
 
 function vstudio.export(version)
 	printf('Configuring...')
-	local root = vstudio.buildDom(version)
+	local root = vstudio.buildDom(version or 2019)
 
 	for i = 1, #root.workspaces do
 		local wks = root.workspaces[i]
@@ -317,21 +285,19 @@ end
 
 
 ---
--- Specifies which version of Visual Studio is being targeted. Causes `vstudio.targetVersion`
--- to be set to a table of version-specific properties for use by the exporter logic.
+-- Specifies which version of Visual Studio is being targeted; sets `vstudio.targetVersion`
+-- to a `Version` instance.
 --
 -- @param version
---    The target version, i.e. '2015' or '2019'.
+--    The target version, which may be a model year alias ('2015', '2019') or a specific
+--    version number ('16.4.31429.391').
 ---
 
 function vstudio.setTargetVersion(version)
-	local versionInfo = _VERSION_INFO[tostring(version)]
-
-	if versionInfo == nil then
-		error(string.format('Unsupported Visual Studio version "%s"', version))
+	vstudio.targetVersion = Version.lookup(version, vstudio.VERSIONS)
+	if vstudio.targetVersion == nil then
+		premake.abort('Unsupported Visual Studio version "%s"', version)
 	end
-
-	vstudio.targetVersion = versionInfo
 end
 
 
