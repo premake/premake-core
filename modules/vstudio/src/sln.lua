@@ -58,8 +58,22 @@ end
 
 
 function sln.header()
-	wl('Microsoft Visual Studio Solution File, Format Version %d.00', vstudio.targetVersion.solutionFileFormatVersion)
-	wl('# Visual Studio %s', vstudio.targetVersion.visualStudioVersion)
+	wl('Microsoft Visual Studio Solution File, Format Version %d.00', vstudio.targetVersion:map({
+		['2010'] = '11',
+		['2012'] = '12',
+		['2013'] = '12',
+		['2015'] = '12',
+		['2017'] = '12',
+		['2019'] = '12'
+	}))
+	wl('# Visual Studio %s', vstudio.targetVersion:map({
+		['2010'] = '2010',
+		['2012'] = '2012',
+		['2013'] = '12.0',
+		['2015'] = '14',
+		['2017'] = '15',
+		['2019'] = 'Version 16'
+	}))
 end
 
 

@@ -294,12 +294,20 @@ end
 
 
 function vcxproj.project()
-	local toolsVersion = vstudio.targetVersion.toolsVersion
+	local toolsVersion = vstudio.targetVersion:map({
+		['2010'] = '4.0',
+		['2012'] = '4.0',
+		['2013'] = '12.0',
+		['2015'] = '14.0',
+		['2017'] = '15.0',
+	})
+
 	if toolsVersion ~= nil then
 		wl('<Project DefaultTargets="Build" ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', toolsVersion)
 	else
 		wl('<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 	end
+
 	export.indent()
 end
 
@@ -685,7 +693,13 @@ end
 
 
 function vcxproj.platformToolset(cfg)
-	wl('<PlatformToolset>%s</PlatformToolset>', vstudio.targetVersion.platformToolset)
+	wl('<PlatformToolset>%s</PlatformToolset>', vstudio.targetVersion:map({
+		['2012'] = 'v110',
+		['2013'] = 'v120',
+		['2015'] = 'v140',
+		['2017'] = 'v141',
+		['2019'] = 'v142',
+	}))
 end
 
 

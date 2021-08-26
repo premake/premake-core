@@ -66,6 +66,9 @@ function require(moduleName)
 end
 
 
+toString = tostring
+
+
 function tryRegister(module)
 	if package.registered[module] then
 		return true

@@ -55,7 +55,7 @@ end
 ---
 
 function filters.project()
-	wl('<Project ToolsVersion="%s" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', vstudio.targetVersion.filterToolsVersion)
+	wl('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 	export.indent()
 end
 
