@@ -1,4 +1,5 @@
 require('scripting')
 
-register('xcode')
+register('gmake')
 register('vstudio')
+register('xcode')

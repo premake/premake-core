@@ -23,7 +23,7 @@
 #define IS_PREMAKE_TOKEN_START(__c)	(*__c == '%' && __c[1] == '{')
 #define IS_PREMAKE_TOKEN_END(__c)	(*__c == '}')
 
-static void* normalize_substring(const char* srcPtr, const char* srcEnd, char* dstPtr)
+static char* normalize_substring(const char* srcPtr, const char* srcEnd, char* dstPtr)
 {
 #define IS_END(__p)			(__p >= srcEnd || *__p == '\0')
 #define IS_SEP_OR_END(__p)	(IS_END(__p) || IS_SEP(*__p))
