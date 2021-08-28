@@ -114,3 +114,34 @@ Note that this token exists but is deprecated in favor of {COPYDIR} and {COPYFIL
 ## Tokens and Filters
 
 Tokens are not expanded in filters. See [issue 1306](https://github.com/premake/premake-core/issues/1036#issuecomment-379685035) for some illustrative examples.
+
+## A cruel script to dump all the values of tables
+```lua
+local prnt = print
+local first = true
+injection = function(wks, prj, cfg, file)
+    if not first then return "" end
+    first = false
+
+    local str = "wks is " .. tostring(cfg)
+    for name, scope in pairs({wks = wks, prj = prj, cfg = cfg, file = file}) do
+        print("loopcall")
+        str = str .. "\n\n==Content of " .. tostring(name) .. "====\n"
+        for k, v in pairs(scope) do
+            str = str .. tostring(k) .. " = " .. tostring(v) .. "\n"
+        end
+    end
+    prnt(str)
+    return str
+end
+
+postbuildcommands {"{COPY} %{injection(wks, prj, cfg, file)} dummy"}
+```
+
+It should be put under a project.
+For example:
+```lua
+workspace "Wps"
+    project "Proj"
+	    -- script here
+```
