@@ -101,5 +101,8 @@ return {
 	-- Visual Studio 2019+ C/C++ Projects
 	"vc2019/test_compile_settings.lua",
 	"vc2019/test_link.lua",
-	"vc2019/test_toolset_settings.lua"
+	"vc2019/test_toolset_settings.lua",
+
+	-- Visual Studio 2022+ C/C++ Projects
+	"vc2022/test_toolset_settings.lua"
 }
