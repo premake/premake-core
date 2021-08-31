@@ -21,6 +21,7 @@
 	include("vs2015.lua")
 	include("vs2017.lua")
 	include("vs2019.lua")
+	include("vs2022.lua")
 
 	-- Initialize Specific API
 
