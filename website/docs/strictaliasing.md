@@ -4,7 +4,7 @@ Sets the level of allowed pointer aliasing.
 strictaliasing "value"
 ```
 
-If no value is set for a configuration, the toolsets settings will be used.
+If no value is set for a configuration, the toolset's settings will be used.
 
 ### Parameters ###
 
