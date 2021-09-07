@@ -370,6 +370,7 @@
 			m.functionLevelLinking,
 			m.intrinsicFunctions,
 			m.justMyCodeDebugging,
+			m.supportOpenMP,
 			m.minimalRebuild,
 			m.omitFramePointers,
 			m.stringPooling,
@@ -2160,6 +2161,12 @@
 
 		if _ACTION >= "vs2017" and jmc == "Off" then
 			m.element("SupportJustMyCode", nil, "false")
+		end
+	end
+
+	function m.supportOpenMP(cfg)
+		if cfg.openmp == "On" then
+			m.element("OpenMPSupport", nil, "true")
 		end
 	end
 

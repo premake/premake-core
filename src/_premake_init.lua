@@ -1449,6 +1449,16 @@
 		}
 	}
 
+	api.register {
+		name = "openmp",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
