@@ -1,3 +1,7 @@
+---
+slug: premake-tags  # docusaurus reserves /docs/tags
+---
+
 tags
 
 ```lua

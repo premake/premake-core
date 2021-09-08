@@ -30,9 +30,9 @@ title: What's New in 5.0
 
 ## New or Modified Globals ##
 
-* [_MAIN_SCRIPT](_MAIN_SCRIPT.md)
-* [_MAIN_SCRIPT_DIR](_MAIN_SCRIPT_DIR.md)
-* [_PREMAKE_DIR](_PREMAKE_DIR.md)
+* [_MAIN_SCRIPT](premake_MAIN_SCRIPT.md)
+* [_MAIN_SCRIPT_DIR](premake_MAIN_SCRIPT_DIR.md)
+* [_PREMAKE_DIR](premake_PREMAKE_DIR.md)
 
 ## New or Modified API calls ##
 
