@@ -2,16 +2,16 @@
 
 | API                                                       | Brief              |
 |-----------------------------------------------------------|--------------------|
-| [_ACTION](_ACTION.md)                                     | The action that will be run |
-| [_ARGS](_ARGS.md)                                         | Array of action args |
-| [_MAIN_SCRIPT](_MAIN_SCRIPT.md)                           |  |
-| [_MAIN_SCRIPT_DIR](_MAIN_SCRIPT_DIR.md)                   |  |
-| [_OPTIONS](_OPTIONS.md)                                   |  |
-| [_OS](_OS.md)                                             | The currently targeted operating system |
-| [_PREMAKE_COMMAND](_PREMAKE_COMMAND.md)                   |  |
-| [_PREMAKE_DIR](_PREMAKE_DIR.md)                           |  |
-| [_PREMAKE_VERSION](_PREMAKE_VERSION.md)                   | The version of the currently executing instance of Premake |
-| [_WORKING_DIR](_WORKING_DIR.md)                           |  |
+| [_ACTION](premake_ACTION.md)                                     | The action that will be run |
+| [_ARGS](premake_ARGS.md)                                         | Array of action args |
+| [_MAIN_SCRIPT](premake_MAIN_SCRIPT.md)                           |  |
+| [_MAIN_SCRIPT_DIR](premake_MAIN_SCRIPT_DIR.md)                   |  |
+| [_OPTIONS](premake_OPTIONS.md)                                   |  |
+| [_OS](premake_OS.md)                                             | The currently targeted operating system |
+| [_PREMAKE_COMMAND](premake_PREMAKE_COMMAND.md)                   |  |
+| [_PREMAKE_DIR](premake_PREMAKE_DIR.md)                           |  |
+| [_PREMAKE_VERSION](premake_PREMAKE_VERSION.md)                   | The version of the currently executing instance of Premake |
+| [_WORKING_DIR](premake_WORKING_DIR.md)                           |  |
 | [architecture](architecture.md)                           |  |
 | [atl](atl.md)                                             | Use Microsoft's Active Template Library |
 | [basedir](basedir.md)                                     |  |

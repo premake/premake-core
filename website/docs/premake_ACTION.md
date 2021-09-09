@@ -1,3 +1,7 @@
+---
+id: _ACTION
+---
+
 The `_ACTION` global variable stores the name of the action to be performed on this execution run. As an example, if this command line was used to launch Premake:
 
 ```
@@ -12,5 +16,5 @@ Premake 4.0 or later.
 
 ## See Also ##
 
-* [_ARGS](_ARGS.md)
-* [_OPTIONS](_OPTIONS.md)
+* [_ARGS](premake_ARGS.md)
+* [_OPTIONS](premake_OPTIONS.md)

@@ -1,3 +1,7 @@
+---
+id: _ARGS
+---
+
 The `_ARGS` global variable stores any arguments to the current action. As an example, if this command line was used to launch Premake:
 
 ```
@@ -13,5 +17,5 @@ Premake 4.0 or later.
 
 ## See Also ##
 
-* [_ACTION](_ACTION.md)
-* [_OPTIONS](_OPTIONS.md)
+* [_ACTION](premake_ACTION.md)
+* [_OPTIONS](premake_OPTIONS.md)

@@ -12,13 +12,13 @@ Any settings that appear after this function in the script will be applied only 
 
 Each keyword must include a prefix to specify which field should be tested. The following field prefixes are currently supported:
 
-  * [action](_ACTION.md)
+  * [action](premake_ACTION.md)
   * [architecture](architecture.md)
   * [configurations](configurations.md)
   * [files](files.md)
   * [kind](kind.md)
   * [language](language.md)
-  * [options](_OPTIONS.md)
+  * [options](premake_OPTIONS.md)
   * [platforms](platforms.md)
   * [system](system.md)
   * [toolset](toolset.md)
