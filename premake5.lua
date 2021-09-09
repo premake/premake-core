@@ -97,6 +97,7 @@
 		allowed = {
 			{ "ARM", "ARM (On macOS, same as ARM64.)" },
 			{ "ARM64", "ARM64" },
+			{ "RISCV64", "RISCV64" },
 			{ "x86", "x86 (On macOS, same as x86_64.)" },
 			{ "x86_64", "x86_64" },
 			{ "Universal", "Universal Binary (macOS only)" },
