@@ -186,10 +186,10 @@
 --    An array of symbols with the appropriate flag decorations.
 --
 
-	function clang.getincludedirs(cfg, dirs, sysdirs)
+	function clang.getincludedirs(cfg, dirs, sysdirs, frameworkdirs)
 
 		-- Just pass through to GCC for now
-		local flags = gcc.getincludedirs(cfg, dirs, sysdirs)
+		local flags = gcc.getincludedirs(cfg, dirs, sysdirs, frameworkdirs)
 		return flags
 
 	end

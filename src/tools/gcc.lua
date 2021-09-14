@@ -284,12 +284,20 @@
 -- Decorate include file search paths for the GCC command line.
 --
 
-	function gcc.getincludedirs(cfg, dirs, sysdirs)
+	function gcc.getincludedirs(cfg, dirs, sysdirs, frameworkdirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-I' .. p.quoted(dir))
 		end
+
+		if table.contains(os.getSystemTags(cfg.system), "darwin") then
+			for _, dir in ipairs(frameworkdirs or {}) do
+				dir = project.getrelative(cfg.project, dir)
+				table.insert(result, '-F' .. p.quoted(dir))
+			end
+		end
+
 		for _, dir in ipairs(sysdirs or {}) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-isystem ' .. p.quoted(dir))
@@ -479,6 +487,13 @@
 		-- config.getlinks() all includes cfg.libdirs.
 		for _, dir in ipairs(config.getlinks(cfg, "system", "directory")) do
 			table.insert(flags, '-L' .. p.quoted(dir))
+		end
+
+		if table.contains(os.getSystemTags(cfg.system), "darwin") then
+			for _, dir in ipairs(cfg.frameworkdirs) do
+				dir = project.getrelative(cfg.project, dir)
+				table.insert(flags, '-F' .. p.quoted(dir))
+			end
 		end
 
 		if cfg.flags.RelativeLinks then

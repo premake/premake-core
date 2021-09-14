@@ -195,7 +195,7 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local sysincludedirs = toolset.getincludedirs(cfg, {}, cfg.sysincludedirs)
+		local sysincludedirs = toolset.getincludedirs(cfg, {}, cfg.sysincludedirs, cfg.frameworkdirs)
 		local forceincludes = toolset.getforceincludes(cfg)
 		local cxxflags = table.concat(table.join(sysincludedirs, toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
 		local cflags   = table.concat(table.join(sysincludedirs, toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
@@ -225,7 +225,7 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local flags   = table.join(toolset.getldflags(cfg), cfg.linkoptions, toolset.getlinks(cfg))
+		local flags   = table.join(toolset.getldflags(cfg), toolset.getincludedirs(cfg, {}, nil, cfg.frameworkdirs), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), cfg.linkoptions, toolset.getlinks(cfg))
 
 		_x(3, '<Linker Required="yes" Options="%s">', table.concat(flags, ";"))
 
