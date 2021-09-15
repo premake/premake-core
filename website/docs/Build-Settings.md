@@ -14,7 +14,7 @@ If you think something should be possible and you can't figure out how to do it,
 | Locate include files | [includedirs](includedirs.md) |
 | Set up precompiled headers | [pchheader](pchheader.md), [pchsource](pchsource.md) |
 | Link libraries, frameworks, or other projects | [links](links.md), [libdirs](libdirs.md) |
-| Enable debugging information | symbols(symbols) |
+| Enable debugging information | [symbols](symbols.md) |
 | Optimize for size or speed | [optimize](optimize.md) |
 | Add arbitrary build flags | [buildoptions](buildoptions.md), [linkoptions](linkoptions.md) |
 | Set the name or location of compiled targets | [targetname](targetname.md), [targetdir](targetdir.md) |

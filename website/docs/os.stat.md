@@ -13,7 +13,7 @@ info = os.stat("path")
 
 If successful, a table of values:
 
-|       |                             |
+| Field | Description                 |
 |-------|-----------------------------|
 | mtime | Last modified timestamp     |
 | size  | The file size in bytes      |

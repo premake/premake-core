@@ -8,7 +8,7 @@ newaction { description }
 
 `description` is a table describing the new action. It may contain the following fields:
 
-|             |                                                                                    |
+| Field       | Description                                                                        |
 |-------------|------------------------------------------------------------------------------------|
 | trigger     | What the user would type on the command line to select the action, e.g. "vs2013".  |
 | shortname   | A short summary for the help text, e.g. "Visual Studio 2013".                      |

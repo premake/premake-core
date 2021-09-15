@@ -12,7 +12,7 @@ None.
 
 A table, containing the following key-value pairs:
 
-|               |                                                   |
+| Field         | Description                                       |
 |---------------|---------------------------------------------------|
 | majorversion  | The major version number                          |
 | minorversion  | The minor version number                          |

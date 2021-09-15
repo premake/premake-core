@@ -8,7 +8,7 @@ newoption { description }
 
 `description` is a table describing the new option. It may contain the following fields:
 
-|             |                                                                                    |
+| Field       | Description                                                                        |
 |-------------|------------------------------------------------------------------------------------|
 | trigger     | What the user would type on the command line to select the option, e.g. "--name". |
 | description | A short description of the option, to be displayed in the help text. |
