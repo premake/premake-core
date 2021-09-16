@@ -40,10 +40,10 @@ newoption {
 Note the commas after each key-value pair; this is required Lua syntax for a table. Once added to your script, the option will appear in the help text, and you may use the trigger as a keyword in your configuration blocks.
 
 ```lua
-configuration "with-opengl"
+filter { "options:with-opengl" }
    links { "opengldrv" }
 
-configuration "not with-opengl"
+filter { "not options:with-opengl" }
    links { "direct3ddrv" }
 ```
 
@@ -58,7 +58,8 @@ newoption {
       { "opengl",    "OpenGL" },
       { "direct3d",  "Direct3D (Windows only)" },
       { "software",  "Software Renderer" }
-   }
+   },
+   default = "opengl"
 }
 ```
 
@@ -74,28 +75,14 @@ As before, this new option will be integrated into the help text, along with a d
 Unlike the example above, you now use the _value_ as a keyword in your configuration blocks.
 
 ```lua
-configuration "opengl"
+filter { "options:gfxapi=opengl" }
    links { "opengldrv" }
 
-configuration "direct3d"
+filter { "options:gfxapi=direct3d" }
     links { "direct3ddrv" }
 
-configuration "software"
+filter { "options:gfxapi=software" }
     links { "softwaredrv" }
-```
-
-Or you could be more clever.
-
-```lua
-links { _OPTIONS["gfxapi"] .. "drv" }
-```
-
-In this example, you would also want to provide a default behavior for the case where no option is specified. You could place a bit of code like this anywhere in your script.
-
-```lua
-if not _OPTIONS["gfxapi"] then
-   _OPTIONS["gfxapi"] = "opengl"
-end
 ```
 
 As a last example of options, you may want to specify an option that accepts an unconstrained value, such as an output path. Just leave off the list of allowed values.

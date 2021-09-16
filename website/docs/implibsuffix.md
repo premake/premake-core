@@ -20,7 +20,7 @@ Premake 4.0 or later.
 
 ```lua
 -- Add "-d" to debug versions of files
-configuration "Debug"
+filter { "configurations:Debug" }
    implibsuffix "-d"
 ```
 

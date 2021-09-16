@@ -31,13 +31,13 @@ Premake 4.0 or later.
 Link against some system libraries.
 
 ```lua
-configuration "windows"
+filter { "system:windows" }
    links { "user32", "gdi32" }
 
-configuration "linux"
+filter { "system:linux" }
    links { "m", "png" }
 
-configuration "macosx"
+filter { "system:macosx" }
    -- OS X frameworks need the extension to be handled properly
    links { "Cocoa.framework", "png" }
   ```
