@@ -8,7 +8,7 @@ rtti ("value")
 
 `value` is one of:
 
-|         |                                                   |
+| Value   | Description                                       |
 |---------|---------------------------------------------------|
 | Default | Use the toolset's default setting for run-time type information. |
 | On      | Turn on RTTI.                                     |

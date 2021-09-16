@@ -8,7 +8,7 @@ inlining ("value")
 
 `value` is one of:
 
-|           |                                                                    |
+| Value     | Description                                                        |
 |-----------|--------------------------------------------------------------------|
 | Default   | Allow the compiler to use its default inlining behavior.           |
 | Disabled  | Turn off inlining entirely.                                        |

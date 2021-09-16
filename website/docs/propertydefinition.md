@@ -22,14 +22,12 @@ Required; a name for the rule that will be unique in the projects where it is us
 #### kind ####
 The expected data type of the values assigned to this property. Allowed values are:
 
-|         |                                   |
-|---------|-----------------------------------|
-| boolean | A yes or no value.                |
-| integer | An integer number.                |
-| list    | A list of string values.          |
-| number  | A floating point number.          |
-| path    | A single file system path value.  |
-| string  | A single string value.            |
+* `boolean` - a yes or no value.
+* `integer` - an integer number.
+* `list` - a list of string values.
+* `number` - a floating point number.
+* `path` - a single file system path value.
+* `string` - a single string value.
 
 For enum properties, this field is ignored and can be omitted. Otherwise it is required.
 

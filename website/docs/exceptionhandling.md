@@ -8,7 +8,7 @@ exceptionhandling ("value")
 
 `value` is one of:
 
-|         |                                                   |
+| Value   | Description                                       |
 |---------|---------------------------------------------------|
 | Default | Use the toolset's default setting for exceptions. |
 | On      | Turn on exceptions.                               |

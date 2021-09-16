@@ -6,7 +6,7 @@ p = os.findlib("libname" [, additionalpaths])
 
 ### Parameters ###
 
-`libname` is name of the library to locate. It may be specified with (libX11.so.md) or without (X11) system-specific decorations.
+`libname` is name of the library to locate. It may be specified with (libX11.so) or without (X11) system-specific decorations.
 
 `additionalpaths` is a string or a table of one or more additional search path
 ### Return Value ###

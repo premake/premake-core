@@ -8,12 +8,10 @@ callingconvention ("value")
 
 `value` is one of:
 
-|             |
-|-------------|
-| Cdecl       |
-| FastCall    |
-| StdCall     |
-| VectorCall  |
+* `Cdecl`
+* `FastCall`
+* `StdCall`
+* `VectorCall`
 
 ### Applies To ###
 
