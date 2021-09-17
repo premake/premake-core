@@ -1149,6 +1149,8 @@
 ---
 
 	function configuration(terms)
+		-- Sep 16 2021
+		premake.warnOnce("configuration", "`configuration` has been deprecated; use `filter` instead (https://premake.github.io/docs/Filters/)")
 		if terms then
 			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or (terms == "*") then
 				terms = nil

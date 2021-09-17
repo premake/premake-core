@@ -4,7 +4,7 @@ Limits the subsequent build settings to a particular environment.
 configuration { "keywords" }
 ```
 
-**This function will soon be deprecated and its use is discouraged.** Use the new [filter()](filter.md) function instead; you will get more granular matching and much better performance.
+**This function has been deprecated in Premake 5.0 beta1.** Use the new [filter()](filter.md) function instead; you will get more granular matching and much better performance. `configuration()` will be not supported in Premake 6.
 
 ### Parameters ###
 

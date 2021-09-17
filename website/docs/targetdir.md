@@ -25,10 +25,10 @@ This project separates its compiled output by configuration type.
 ```lua
 project "MyProject"
 
-  configuration "Debug"
+  filter { "configurations:Debug" }
     targetdir "bin/debug"
 
-  configuration "Release"
+  filter { "configurations:Release" }
     targetdir "bin/release"
 ```
 

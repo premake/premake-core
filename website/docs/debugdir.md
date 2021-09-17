@@ -24,6 +24,6 @@ Premake 4.4 or later.
 ### Examples ###
 
 ```lua
-configuration "Debug"
+filter { "configurations:Debug" }
    debugdir "bin/debug"
 ```
