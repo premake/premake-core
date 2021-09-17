@@ -39,3 +39,30 @@
 	<SupportJustMyCode>false</SupportJustMyCode>
 		]]
 	end
+
+--
+-- Check ClCompile for OpenMPSupport
+--
+	function suite.openmpOn()
+		openmp "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OpenMPSupport>true</OpenMPSupport>
+		]]
+	end
+
+	function suite.openmpOff()
+		openmp "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OpenMPSupport>false</OpenMPSupport>
+		]]
+	end

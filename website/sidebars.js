@@ -176,6 +176,7 @@ module.exports = {
 						'nuget',
 						'nugetsource',
 						'objdir',
+						'openmp',
 						'optimize',
 						'pchheader',
 						'pchsource',

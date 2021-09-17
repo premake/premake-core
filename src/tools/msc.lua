@@ -118,6 +118,10 @@
 		},
 		justmycode = {
 			Off = "false"
+		},
+		openmp = {
+			On = "/openmp",
+			Off = "/openmp-"
 		}
 
 	}

@@ -4,7 +4,7 @@ The **optimize** function specifies the level and type of optimization used whil
 optimize "value"
 ```
 
-If no value is set for a configuration, the toolsets default optimization (usually none) will be performed.
+If no value is set for a configuration, the toolset's default optimization (usually none) will be performed.
 
 ### Parameters ###
 
