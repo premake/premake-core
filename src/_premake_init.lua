@@ -1445,6 +1445,7 @@
 		scope = "project",
 		kind = "string",
 		allowed = {
+			"On",
 			"Off"
 		}
 	}

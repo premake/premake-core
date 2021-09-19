@@ -1,9 +1,9 @@
-Enable or disable [OpenMP](https://en.wikipedia.org/wiki/OpenMP).
+Enables or disables [OpenMP](https://en.wikipedia.org/wiki/OpenMP).
 
 ```lua
 openmp "value"
 ```
-If no value is set for a configuration, the toolset's default OpenMP option (usually Off) will be performed.
+If no value is set for a configuration, the toolset's default OpenMP option (usually "Off") will be performed.
 
 ### Parameters ###
 
