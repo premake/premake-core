@@ -31,6 +31,7 @@
 			x86_64 = "-m64",
 			ARM = "-march=arm",
 			ARM64 = "-march=aarch64",
+			RISCV64 = "-march=rv64gc",
 --			ppc = "-march=ppc32",
 --			ppc64 = "-march=ppc64",
 --			spu = "-march=cellspu",

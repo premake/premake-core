@@ -11,6 +11,7 @@ architecture ("value")
 * `x86`
 * `x86_64`
 * `ARM`
+* `RISCV64`
 
 ### Applies To ###
 
