@@ -328,7 +328,7 @@
 -- Write out the references item group.
 --
 
-	dotnetbase.elements.references = function(prj)
+	dotnetbase.elements.references = function(cfg)
 		return {
 			dotnetbase.assemblyReferences,
 			dotnetbase.nuGetReferences,
@@ -336,9 +336,11 @@
 	end
 
 	function dotnetbase.references(prj)
-		_p(1,'<ItemGroup>')
-		p.callArray(dotnetbase.elements.references, prj)
-		_p(1,'</ItemGroup>')
+		for cfg in project.eachconfig(prj) do
+			_p(1,'<ItemGroup %s>', dotnetbase.condition(cfg))
+			p.callArray(dotnetbase.elements.references, cfg)
+			_p(1,'</ItemGroup>')
+		end
 	end
 
 
@@ -346,11 +348,8 @@
 -- Write the list of assembly (system, or non-sibling) references.
 --
 
-	function dotnetbase.assemblyReferences(prj)
-		-- C# doesn't support per-configuration links (does it?) so just use
-		-- the settings from the first available config instead
-		local cfg = project.getfirstconfig(prj)
-
+	function dotnetbase.assemblyReferences(cfg)
+		local prj = cfg.project
 		config.getlinks(cfg, "system", function(original, decorated)
 			local name = path.getname(decorated)
 			if path.getextension(name) == ".dll" then
@@ -421,13 +420,13 @@
 -- Write the list of NuGet references.
 --
 
-	function dotnetbase.nuGetReferences(prj)
+	function dotnetbase.nuGetReferences(cfg)
+		local prj = cfg.project
 		if _ACTION >= "vs2010" and not vstudio.nuget2010.supportsPackageReferences(prj) then
 			for _, package in ipairs(prj.nuget) do
 				local id = vstudio.nuget2010.packageId(package)
 				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 
-				local cfg = p.project.getfirstconfig(prj)
 				local action = p.action.current()
 				local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
 
