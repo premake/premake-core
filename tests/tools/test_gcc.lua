@@ -136,6 +136,12 @@
 		test.contains({ "-msse2" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSSE4_2()
+		vectorextensions "SSE4.2"
+		prepare()
+		test.contains({ "-msse4.2" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onAVX()
 		vectorextensions "AVX"
 		prepare()

@@ -492,6 +492,7 @@
 					SSE3 = "sse3",
 					SSSE3 = "ssse3",
 					["SSE4.1"] = "sse4.1",
+					["SSE4.2"] = "sse4.2",
 				}
 				if vextMap[cfg.vectorextensions] ~= nil then
 					table.insert(opts, "-mattr=+" .. vextMap[cfg.vectorextensions])
