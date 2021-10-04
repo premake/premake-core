@@ -8,9 +8,18 @@ architecture ("value")
 
 `value` is one of:
 
+* `universal`: The universal binaries supported by iOS and macOS
 * `x86`
 * `x86_64`
 * `ARM`
+* `ARM64`
+
+Additional values that are aliases for the above:
+
+* `i386`: Alias for `x86`
+* `amd64`: Alias for `x86_64`
+* `x32`: Alias for `x86`; There is intent to deprecate this
+* `x64`: Alias for `x86_64`; There is intent to deprecate this
 
 ### Applies To ###
 
