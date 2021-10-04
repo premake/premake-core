@@ -1,7 +1,7 @@
 Turns the edit-and-continue features of a toolset or platform on and off.
 
 ```lua
-editAndContinue "value"
+editandcontinue "value"
 ```
 
 If no value is set for a configuration, the toolset's default setting (usually "On") will be used.
@@ -22,7 +22,7 @@ Premake 5.0 or later.
 
 ```lua
 -- Turn off edit and continue
-editAndContinue "Off"
+editandcontinue "Off"
 ```
 
 ### See Also ###

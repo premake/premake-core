@@ -69,7 +69,7 @@
 | [display](display.md)                                     |  |
 | [docdir](docdir.md)                                       |  |
 | [docname](docname.md)                                     |  |
-| [editandcontinue](editAndContinue.md)                     |  |
+| [editandcontinue](editandcontinue.md)                     |  |
 | [editorintegration](editorintegration.md)                 | Enable or disable IDE integration |
 | [enablewarnings](enablewarnings.md)                       |  |
 | [endian](endian.md)                                       |  |

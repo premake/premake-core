@@ -19,6 +19,6 @@ Many of the old [`flags`](flags.md) have become full-fledged functions. This sho
 | `FloatFast`, `FloatStrict` | [`floatingpoint`](floatingpoint.md) |
 | `Managed`, `Unsafe` | [`clr`](clr.md) |
 | `NativeWChar` | [`nativewchar`](nativewchar.md) |
-| `NoEditAndContinue` | [`editandcontinue`](editAndContinue.md) |
+| `NoEditAndContinue` | [`editandcontinue`](editandcontinue.md) |
 | `NoRTTI` | [`rtti`](rtti.md) |
 | `OptimizeSize`, `OptimizeSpeed` | [`optimize`](optimize.md) |

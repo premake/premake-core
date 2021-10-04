@@ -41,6 +41,15 @@
 
 
 	newaction {
+		trigger = "docs-check",
+		description = "Validates documentation files for Premake APIs",
+		execute = function ()
+			include (path.join(corePath, "scripts/docscheck.lua"))
+		end
+	}
+
+
+	newaction {
 		trigger = "test",
 		description = "Run the automated test suite",
 		execute = function ()

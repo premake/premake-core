@@ -16,6 +16,8 @@ jobs:
       run: make -f Bootstrap.mak linux PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v2
@@ -35,6 +37,8 @@ jobs:
       run: make -f Bootstrap.mak macosx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v2
@@ -57,6 +61,9 @@ jobs:
       shell: cmd
     - name: Test
       run: bin\${{ matrix.config }}\premake5 test --test-all
+      shell: cmd
+    - name: Docs check
+      run: bin\${{ matrix.config }}\premake5 docs-check
       shell: cmd
     - name: Upload Artifacts
       if: matrix.config == 'release'
