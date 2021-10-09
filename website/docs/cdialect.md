@@ -7,15 +7,16 @@ cdialect "value"
 ### Parameters ###
 
 `value` one of:
-* `Default` - needs documentation.
-* `C89` - needs documentation.
-* `C90` - needs documentation.
-* `C99` - needs documentation.
-* `C11` - needs documentation.
-* `gnu89` - needs documentation.
-* `gnu90` - needs documentation.
-* `gnu99` - needs documentation.
-* `gnu11` - needs documentation.
+
+* `Default`: the default C dialect for the toolset
+* `C89`: ISO C89
+* `C90`: ISO C90
+* `C99`: ISO C99
+* `C11`: ISO C11
+* `gnu89`: GNU dialect of ISO C89
+* `gnu90`: GNU dialect of ISO C90
+* `gnu99`: GNU dialect of ISO C99
+* `gnu11`: GNU dialect of ISO C11
 
 ### Applies To ###
 
