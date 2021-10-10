@@ -307,6 +307,13 @@
 		test.contains("/arch:SSE2", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onSSE4_2()
+		vectorextensions "SSE4.2"
+		prepare()
+		test.contains("/arch:SSE2", msc.getcflags(cfg))
+	end
+
+
 	function suite.cflags_onAVX()
 		vectorextensions "AVX"
 		prepare()

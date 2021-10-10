@@ -1788,7 +1788,7 @@
 		elseif x == "AVX2" and _ACTION > "vs2012" then
 			v = "AdvancedVectorExtensions2"
 		elseif cfg.architecture ~= "x86_64" then
-			if x == "SSE2" or x == "SSE3" or x == "SSSE3" or x == "SSE4.1" then
+			if x == "SSE2" or x == "SSE3" or x == "SSSE3" or x == "SSE4.1" or x == "SSE4.2" then
 				v = "StreamingSIMDExtensions2"
 			elseif x == "SSE" then
 				v = "StreamingSIMDExtensions"

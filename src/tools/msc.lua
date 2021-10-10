@@ -88,6 +88,7 @@
 			SSE3 = "/arch:SSE2",
 			SSSE3 = "/arch:SSE2",
 			["SSE4.1"] = "/arch:SSE2",
+			["SSE4.2"] = "/arch:SSE2",
 		},
 		warnings = {
 			Off = "/W0",

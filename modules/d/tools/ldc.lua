@@ -116,6 +116,7 @@
 			SSE3 = "-mattr=+sse3",
 			SSSE3 = "-mattr=+ssse3",
 			["SSE4.1"] = "-mattr=+sse4.1",
+			["SSE4.2"] = "-mattr=+sse4.2",
 		},
 		warnings = {
 			Default = "-wi",
