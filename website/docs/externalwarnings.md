@@ -1,4 +1,4 @@
-Controls the number of warnings that are shown by the compiler. This setting only applies to visual studio 17 and newer. It will control the warnings shown for includes given by sysincludedirs
+Controls the number of warnings that are shown by the compiler. This setting only applies to Visual Studio 17 and newer. It will control the warnings shown for includes given by [sysincludedirs](sysincludedirs.md).
 
 ```lua
 externalwarnings "value"
