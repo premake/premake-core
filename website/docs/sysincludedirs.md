@@ -9,7 +9,7 @@ For Visual Studio, these paths are placed in the "VC++ Directories" properties p
 For GCC and Clang, they are preceded with the `-isystem` flag, rather than `-I`. For toolsets which do not support the concept of system include directories, they are treated as a normal include directory.
 
 Include files located via a system include directory are treated as correct: no warnings will be shown for the contents of the file.
-Note that this is different for visual studio.
+Note that this is different for Visual Studio.
 
 ### Parameters ###
 
