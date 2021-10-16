@@ -10,6 +10,11 @@ compileas "value"
 * `Default` - Compile based on file extensions that have been built into premake.
 * `C` - Compile as a C source file.
 * `C++` - Compile as a C++ source file.
+* `Objective-C` - Compile as an Objective-C source file.
+* `Objective-C++` - Compile as an Objective-C++ source file.
+* `Module` - Needs documentation
+* `ModulePartition` - Needs documentation
+* `HeaderUnit` - Needs documentation
 
 ### Applies To ###
 
