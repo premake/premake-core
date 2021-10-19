@@ -27,8 +27,8 @@ int pmk_mapStrings(lua_State* L, int valueIndex, const char* param, const char* 
 	if (t == LUA_TTABLE) {
 		lua_newtable(L);
 
-		int n = lua_rawlen(L, valueIndex);
-		for (int i = 1; i <= n; ++i) {
+		size_t n = lua_rawlen(L, valueIndex);
+		for (size_t i = 1; i <= n; ++i) {
 			lua_rawgeti(L, valueIndex, i);
 
 			const char* value = lua_tostring(L, -1);
@@ -85,8 +85,8 @@ int pmk_testStrings(lua_State* L, int (*testFunction)(const char*, const char*))
 
 	int t = lua_type(L, 2);
 	if (t == LUA_TTABLE) {
-		int n = lua_rawlen(L, 2);
-		for (int i = 1; i <= n; ++i) {
+		size_t n = lua_rawlen(L, 2);
+		for (size_t i = 1; i <= n; ++i) {
 			lua_rawgeti(L, 2, i);
 			const char* needle = lua_tostring(L, -1);
 			if (needle != NULL && testFunction(haystack, needle))

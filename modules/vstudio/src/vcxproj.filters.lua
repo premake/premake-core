@@ -68,7 +68,7 @@ end
 function filters.identifiers(prj)
 	local settings = export.capture(function ()
 		export.indent()
-		tree.traverse(prj.virtualSourceTree, {
+		tree.traverse(prj.sourceTree, {
 			onBranchEnter = function (node, depth)
 				local filename = path.getRelative(prj.baseDirectory, node.path)
 				wl('<Filter Include="%s">', path.translate(filename))

@@ -24,7 +24,7 @@
  */
 const char* pmk_getRelativePath(char* result, const char* basePath, const char* targetPath)
 {
-	int count, last, i;
+	size_t count, last, i;
 
 	char base[PATH_MAX];
 	char target[PATH_MAX];

@@ -14,9 +14,9 @@ static int appendChar(char* result, int index, char value)
 }
 
 
-static int appendStr(char* result, int index, const char* value)
+static size_t appendStr(char* result, int index, const char* value)
 {
-	int len = strlen(value);
+	size_t len = strlen(value);
 	if ((index + len) < (PATH_MAX - 1)) {
 		strcpy(result + index, value);
 		return (len);

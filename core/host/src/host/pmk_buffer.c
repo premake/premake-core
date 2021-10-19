@@ -21,6 +21,12 @@ pmk_Buffer* pmk_bufferInit()
 }
 
 
+void pmk_bufferClear(pmk_Buffer* b)
+{
+	b->length = 0;
+}
+
+
 void pmk_bufferClose(pmk_Buffer* b)
 {
 	free(b->data);

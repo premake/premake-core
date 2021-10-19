@@ -71,9 +71,10 @@ typedef struct MatchInfo Matcher;
 
 typedef int (*LuaLoader)(lua_State* L, const char* filename, const char* mode);
 
+void  pmk_bufferClear(pmk_Buffer* b);
 void  pmk_bufferClose(pmk_Buffer* b);
 const char* pmk_bufferContents(pmk_Buffer* b);
-pmk_Buffer* pmk_bufferInit();
+pmk_Buffer* pmk_bufferInit(void);
 size_t pmk_bufferLen(pmk_Buffer* b);
 void pmk_bufferPrintf(pmk_Buffer* b, const char* fmt, ...);
 void pmk_bufferPuts(pmk_Buffer* b, const char* ptr, size_t len);
@@ -89,7 +90,7 @@ int  pmk_getFileBaseName(char* result, const char* path);
 int  pmk_getFileName(char* result, const char* path);
 const char* pmk_getRelativeFile(char* result, const char* baseFile, const char* targetFile);
 const char* pmk_getRelativePath(char* result, const char* basePath, const char* targetPath);
-int  pmk_getTextColor();
+int  pmk_getTextColor(void);
 uint32_t pmk_hash(const char* value, int seed);
 int  pmk_isAbsolutePath(const char* path);
 int  pmk_isFile(const char* filename);
@@ -137,6 +138,7 @@ int pmk_io_writeFile(lua_State* L);
 /* String buffer library extensions */
 
 int pmk_buffer_new(lua_State* L);
+int pmk_buffer_clear(lua_State* L);
 int pmk_buffer_close(lua_State* L);
 int pmk_buffer_toString(lua_State* L);
 int pmk_buffer_write(lua_State* L);
@@ -178,6 +180,7 @@ int pmk_premake_locateScript(lua_State* L);
 
 int pmk_string_contains(lua_State* L);
 int pmk_string_endsWith(lua_State* L);
+int pmk_string_isAlphanumericOrAnyOf(lua_State* L);
 int pmk_string_join(lua_State* L);
 int pmk_string_hash(lua_State* L);
 int pmk_string_patternFromWildcards(lua_State* L);

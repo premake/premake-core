@@ -25,8 +25,8 @@ int pmk_premake_locateScript(lua_State* L)
 
 	/* if given an array if names to check, iterate and return first hit */
 	if (lua_istable(L, 1)) {
-		int n = lua_rawlen(L, 1);
-		for (int i = 1; i <= n; ++i) {
+		size_t n = lua_rawlen(L, 1);
+		for (size_t i = 1; i <= n; ++i) {
 			lua_rawgeti(L, 1, i);
 			const char* scriptName = lua_tostring(L, -1);
 			if (pmk_locateScript(result, L, scriptName)) {

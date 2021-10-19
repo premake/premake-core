@@ -4,6 +4,7 @@
 
 #include "../premake_internal.h"
 #include <string.h>
+#include <ctype.h>
 
 
 int pmk_string_contains(lua_State* L)
@@ -20,6 +21,23 @@ int pmk_string_contains(lua_State* L)
 int pmk_string_endsWith(lua_State* L)
 {
 	return (pmk_testStrings(L, pmk_endsWith));
+}
+
+
+int pmk_string_isAlphanumericOrAnyOf(lua_State* L)
+{
+	const char* value = luaL_checkstring(L, 1);
+	const char* extraChars = luaL_checkstring(L, 2);
+
+	for (const char* testChar = value; *testChar != '\0'; ++testChar) {
+		if (!isalnum(*testChar) && strchr(extraChars, *testChar) == NULL) {
+			lua_pushboolean(L, FALSE);
+			return (1);
+		}
+	}
+
+	lua_pushboolean(L, TRUE);
+	return (1);
 }
 
 

@@ -20,7 +20,7 @@
  *
  * @param result
  *    A buffer to hold the resulting path.
- * @param argv9
+ * @param argv0
  *    A value of `argv[0]` as received by `main()`.
  */
 void pmk_locateExecutable(char* result, const char* argv0)

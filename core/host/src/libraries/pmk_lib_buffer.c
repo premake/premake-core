@@ -13,31 +13,11 @@ int pmk_buffer_new(lua_State* L)
 }
 
 
-int pmk_buffer_write(lua_State* L)
+int pmk_buffer_clear(lua_State* L)
 {
 	pmk_Buffer* b = (pmk_Buffer*)lua_touserdata(L, 1);
-
-	size_t len;
-	const char* s = luaL_checklstring(L, 2, &len);
-
-	pmk_bufferPuts(b, s, len);
-	return (0);
-}
-
-
-int pmk_buffer_writeLine(lua_State* L)
-{
-	pmk_Buffer* b = (pmk_Buffer*)lua_touserdata(L, 1);
-
-	size_t len;
-	const char* s = luaL_optlstring(L, 2, NULL, &len);
-
-	if (s != NULL) {
-		pmk_bufferPuts(b, s, len);
-	}
-
-	pmk_bufferPuts(b, "\r\n", 2);
-	return (0);
+	pmk_bufferClear(b);
+	return (1);
 }
 
 
@@ -72,4 +52,16 @@ int pmk_buffer_toString(lua_State* L)
 		lua_pushstring(L, "");
 
 	return (1);
+}
+
+
+int pmk_buffer_write(lua_State* L)
+{
+	pmk_Buffer* b = (pmk_Buffer*)lua_touserdata(L, 1);
+
+	size_t len;
+	const char* s = luaL_checklstring(L, 2, &len);
+
+	pmk_bufferPuts(b, s, len);
+	return (0);
 }

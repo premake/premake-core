@@ -17,7 +17,8 @@ module.exports = {
 			label: 'Actions',
 			items: [
 				'actions/about-actions',
-				'actions/vstudio'
+				'actions/vstudio',
+				'actions/xcode'
 			]
 		},
 		{
@@ -46,6 +47,16 @@ module.exports = {
 			type: 'category',
 			label: 'Reference',
 			items: [
+				{
+					collapsed: true,
+					type: 'category',
+					label: 'export',
+					items: [
+						'export/Exporting',
+						'export/export_append',
+						'export/export_appendLine',
+					]
+				},
 				{
 					collapsed: true,
 					type: 'category',

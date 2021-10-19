@@ -15,10 +15,10 @@ const char** pmk_searchPaths(lua_State* L)
 	lua_pushstring(L, "PATH");
 	lua_rawget(L, -2);
 
-	int len = lua_rawlen(L, -1);
-	int n = 0;
+	size_t len = lua_rawlen(L, -1);
+	size_t n = 0;
 
-	for (int i = 1; i <= len && i < SEARCH_PATH_MAX; ++i) {
+	for (size_t i = 1; i <= len && i < SEARCH_PATH_MAX; ++i) {
 		lua_rawgeti(L, -1, i);
 
 		if (lua_isfunction(L, -1)) {

@@ -27,8 +27,8 @@ int pmk_patternFromWildcards(char* result, int maxLen, const char* value, int is
 {
 	int next = 0;
 
-	int valueLen = strlen(value);
-	for (int i = 0; i < valueLen; ++i) {
+	size_t valueLen = strlen(value);
+	for (size_t i = 0; i < valueLen; ++i) {
 		char c = value[i];
 		switch (c) {
 			case '*':

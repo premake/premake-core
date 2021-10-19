@@ -6,4 +6,5 @@ _Actions_ are things you can ask Premake to do. Most common is to use Premake to
 
 ## Exporter Actions
 
-* [Visual Studio](vstudio.md)
+- [Visual Studio](vstudio.md)
+- [Xcode](xcode.md)

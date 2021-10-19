@@ -14,7 +14,7 @@
 static int s_currentColor = -1;
 #endif
 
-int canUseColors()
+int canUseColors(void)
 {
 #if PLATFORM_WINDOWS
 	return _isatty(_fileno(stdout));
