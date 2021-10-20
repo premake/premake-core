@@ -118,7 +118,8 @@
 			On = "/Oy"
 		},
 		justmycode = {
-			Off = "false"
+			On = "/JMC",
+			Off = "/JMC-"
 		},
 		openmp = {
 			On = "/openmp",

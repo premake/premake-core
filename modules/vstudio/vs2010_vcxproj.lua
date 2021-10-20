@@ -2157,10 +2157,14 @@
 	end
 
 	function m.justMyCodeDebugging(cfg)
-		local jmc = cfg.justmycode
+		if _ACTION >= "vs2017" then
+			local jmc = cfg.justmycode
 
-		if _ACTION >= "vs2017" and jmc == "Off" then
-			m.element("SupportJustMyCode", nil, "false")
+			if jmc == "On" then
+				m.element("SupportJustMyCode", nil, "true")
+			elseif jmc == "Off" then
+				m.element("SupportJustMyCode", nil, "false")
+			end
 		end
 	end
 

@@ -28,7 +28,19 @@
 --
 -- Check ClCompile for SupportJustMyCode
 --
-	function suite.SupportJustMyCode()
+	function suite.SupportJustMyCodeOn()
+		justmycode "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<SupportJustMyCode>true</SupportJustMyCode>
+		]]
+	end
+
+	function suite.SupportJustMyCodeOff()
 		justmycode "Off"
 		prepare()
 		test.capture [[

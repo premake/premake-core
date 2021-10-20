@@ -158,6 +158,7 @@ module.exports = {
 						'includedirs',
 						'inlining',
 						'intrinsics',
+						'justmycode',
 						'kind',
 						'language',
 						'largeaddressaware',
