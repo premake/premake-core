@@ -1,9 +1,51 @@
 --------------------
-  5.0 (in progress)
+  5.0-beta1
 --------------------
 
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-alpha16:
+
+* PR #1555  Added API to disable fast up to date checks (@nickclark2016)
+* PR #1570  Initial C++20 module support for Visual Studio (@hannes-harnisch)
+* PR #1619  Xcode embed libraries (@nickgravelyn)
+* PR #1625  Remove "*ng" action deprecation (@noresources)
+* PR #1629  Added support for Premake on macOS universal binary (@tempura-sukiyaki)
+* PR #1635  Fix typo in Using Premake documentation (@abhiss)
+* PR #1638  Fix broken links in docs (@KyrietS)
+* PR #1642  Fix spelling mistake (@Troplo)
+* PR #1644  Fix author name and update time on pages (@KyrietS)
+* PR #1645  Add missing support for prebuildmessage/postbuildmessage for Codelite. (@Jarod42)
+* PR #1649  Fix curl header search path (@depinxi)
+* PR #1654  xcode4: Fix missing link of sibling project with custom targetextension (@depinxi)
+* PR #1655  Compiler Version support for Visual Studion 2017+ (@nickclark2016)
+* PR #1657  Renormalize line endings (@nickclark2016)
+* PR #1661  Add frameworkdirs support to gmake and gmake2 with gcc/clang toolsets (@depinxi)
+* PR #1663  compilebuildoutputs make some comments obsolete. (@Jarod42)
+* PR #1668  Fix v6 bootstrapping from v5 (@starkos)
+* PR #1673  Updated sidebar to include toolsversion link (@premake)
+* PR #1680  Fix some build issues with mingw (@Biswa96)
+* PR #1682  Add Community Update #9 (@starkos)
+* PR #1687  Update deprecated entry for `newaction` (@Jarod42)
+* PR #1704  VS2022 Exporter (@nickclark2016)
+* PR #1710  Add support for SSE 4.2. (@ActuallyaDeviloper)
+* PR #1712  Add OpenMP support for Visual Studio (@T-rvw)
+* PR #1713  Upgrade docusaurus version to beta.6 (@KyrietS)
+* PR #1715  Docs maintenance (@KyrietS)
+* PR #1718  Deprecate `configuration()` (@starkos)
+* PR #1720  Improve `justmycode` (@T-rvw)
+* PR #1723  Add condition to `.csproj` references ItemGroup (@cicanci)
+* PR #1726  Updated cdialect and cppdialect docs (@LORgames)
+* PR #1727  Updated architecture docs (@LORgames)
+* PR #1730  Added missing compileas values to docs (@LORgames)
+* PR #1734  Add VS 2022 bootstrapping support (@afxw)
+* PR #1736  Update showcase to include Orx (@sausagejohnson)
+* PR #1662  Handle buildcommand for Codelite (@Jarod42)
+* PR #1658  Fix D module compiler output for Visual Studio (@nickclark2016)
+* PR #1728  Add action to check for and generate missing documentation (@ssurtees)
+* PR #1721  Add custom rules for Gmake2 & Codelite (@Jarod42)
+* PR #1739  Fix #1628 failing macOS os.findlib() test (@starkos)
 
 Since 5.0-alpha15:
 
