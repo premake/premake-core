@@ -63,7 +63,7 @@ title: What's New in 5.0
 * [dependson](dependson.md) (new)
 * [disablewarnings](disablewarnings.md) (new)
 * [dotnetframework](dotnetframework.md) (new)
-* [editandcontinue](editAndContinue.md) (new, replaces flag `NoEditAndContinue`)
+* [editandcontinue](editandcontinue.md) (new, replaces flag `NoEditAndContinue`)
 * [editorintegration](editorintegration.md) (new)
 * [enablewarnings](enablewarnings.md) (new)
 * [endian](endian.md) (new)
@@ -151,6 +151,6 @@ title: What's New in 5.0
 	* FloatFast, FloatStrict: use [floatingpoint](floatingpoint.md) instead
 	* Managed, Unsafe: use [clr](clr.md) instead
 	* NativeWChar: use [nativewchar](nativewchar.md) instead
-	* NoEditAndContinue: use [editandcontinue](editAndContinue.md) instead
+	* NoEditAndContinue: use [editandcontinue](editandcontinue.md) instead
 	* NoRTTI: use [rtti](rtti.md) instead.
 	* OptimizeSize, OptimizeSpeed: use [optimize](optimize.md) instead
