@@ -10,7 +10,10 @@ debugformat "format"
 
 | Value       | Description                                                                                 |
 |-------------|---------------------------------------------------------------------------------------------|
+| Default     | Specifies default debug format should be used by toolset.                                   |
 | c7          | Specifies that MSVC should store debuginfo in the objects rather than a separate .pdb file. |
+| Dwarf       | Needs documentation                                                                         |
+| SplitDwarf  | Needs documetation                                                                          |
 
 **Note for Visual Studio Users:** Use [editandcontinue](editandcontinue.md) to control the `/Zi` and `/ZI` switches; see [this discussion](https://github.com/premake/premake-core/issues/1425) for more information.
 

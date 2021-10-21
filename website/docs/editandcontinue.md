@@ -8,7 +8,7 @@ If no value is set for a configuration, the toolset's default setting (usually "
 
 ### Parameters ###
 
-`value` is a boolean value, i.e. "On" or "Off".
+`value` is a boolean value, i.e. "On" or "Off". Specifying "Default" will act the same as specifying no value, the toolset's default setting will be used.
 
 ### Applies To ###
 

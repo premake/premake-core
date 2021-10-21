@@ -10,6 +10,10 @@ debugger "value"
 * `Default` - needs documentation.
 * `GDB` - needs documentation.
 * `LLDB` - needs documentation.
+* `VisualStudioLocal` - needs documentation.
+* `VisualStudioRemote` - needs documentation.
+* `VisualStudioWebBrowser` - needs documentation.
+* `VisualStudioWebService` - needs documentation.
 
 ### Applies To ###
 

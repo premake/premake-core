@@ -18,6 +18,7 @@ kind ("kind")
 | Utility     | A configuration which contains only custom build rules. |
 | None        | A configuration which is not included in the build. Useful for projects containing only web pages, header files, or support documentation. |
 | Packaging   | A configuration type to create .androidproj files, which build the apk in an Android application under Visual Studio. _Note, this was previously `AndroidProj`._ |
+| SharedItems | A special configuration type which doesn't contain any build settings of its own, instead using the build settings of any projects that link it. |
 
 
 ### Applies To ###
@@ -28,6 +29,7 @@ Project configurations.
 
 The **Makefile**,  and **None** kinds are only available in Premake 5.0 and later, and are currently only supported for Visual Studio. 
 The **Utility** kind is only available for Visual Studio and gmake2, as well as very limited support in gmake.
+The **SharedItems** kind is only available for Visual Studio 2013 and later.
 
 ### Examples ###
 

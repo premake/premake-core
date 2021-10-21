@@ -11,8 +11,10 @@ If no system is specified, Premake will identify and target the current operatin
 `value` is one of:
 
 * aix
+* android
 * bsd
 * [haiku](http://www.haiku-os.org)
+* ios
 * linux
 * macosx
 * solaris

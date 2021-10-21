@@ -17,6 +17,7 @@ See [/clr (Common Language Runtime Compilation)](http://msdn.microsoft.com/en-us
 | Pure        | Enable pure mode MSIL. Equivalent to "On" for .NET projects.           |
 | Safe        | Enable verifiable MSIL. Equivalent to "On" for .NET projects.          |
 | Unsafe      | Enable unsafe operations. Equivalent to "On" for Managed C++ projects. |
+| NetCore     | Needs documentation                                                    |
 
 CLR settings that do not make sense for the current configuration, such setting CLR support for a C# project to "Off", will be ignored.
 

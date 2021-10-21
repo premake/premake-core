@@ -9,6 +9,7 @@ sharedlibtype "value"
 `value` one of:
 * `OSXBundle` - needs documentation.
 * `OSXFramework` - needs documentation.
+* `XCTest` - needs documentation.
 
 ### Applies To ###
 
