@@ -175,8 +175,8 @@
 			local environ = table.shallowcopy(filecfg.environ)
 
 			if rule.propertydefinition then
-				gmake2.prepareEnvironment(rule, environ, cfg)
-				gmake2.prepareEnvironment(rule, environ, filecfg)
+				p.rule.prepareEnvironment(rule, environ, cfg)
+				p.rule.prepareEnvironment(rule, environ, filecfg)
 			end
 
 			local shadowContext = p.context.extent(rule, environ)

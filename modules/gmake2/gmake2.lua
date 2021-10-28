@@ -171,20 +171,6 @@
 		return value
 	end
 
-
-
-	function gmake2.path(cfg, value)
-		cfg = cfg.project or cfg
-		local dirs = path.translate(project.getrelative(cfg, value))
-
-		if type(dirs) == 'table' then
-			dirs = table.filterempty(dirs)
-		end
-
-		return dirs
-	end
-
-
 	function gmake2.getToolSet(cfg)
 		local default = iif(cfg.system == p.MACOSX, "clang", "gcc")
 		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
@@ -258,71 +244,6 @@
 
 
 	-- convert a rule property into a string
-
-	function gmake2.expandRuleString(rule, prop, value)
-		-- list?
-		if type(value) == "table" then
-			if #value > 0 then
-				if prop.switch then
-					return prop.switch .. table.concat(value, " " .. prop.switch)
-				else
-					prop.separator = prop.separator or " "
-					return table.concat(value, prop.separator)
-				end
-			else
-				return nil
-			end
-		end
-
-		-- bool just emits the switch
-		if prop.switch and type(value) == "boolean" then
-			if value then
-				return prop.switch
-			else
-				return nil
-			end
-		end
-
-		local switch = prop.switch or ""
-
-		-- enum?
-		if prop.values then
-			value = table.findKeyByValue(prop.values, value)
-			if value == nil then
-				value = ""
-			end
-		end
-
-		-- primitive
-		value = tostring(value)
-		if #value > 0 then
-			return switch .. value
-		else
-			return nil
-		end
-	end
-
-
-	function gmake2.prepareEnvironment(rule, environ, cfg)
-		for _, prop in ipairs(rule.propertydefinition) do
-			local fld = p.rule.getPropertyField(rule, prop)
-			local value = cfg[fld.name]
-			if value ~= nil then
-
-				if fld.kind == "path" then
-					value = gmake2.path(cfg, value)
-				elseif fld.kind == "list:path" then
-					value = gmake2.path(cfg, value)
-				end
-
-				value = gmake2.expandRuleString(rule, prop, value)
-				if value ~= nil and #value > 0 then
-					environ[prop.name] = p.esc(value)
-				end
-			end
-		end
-	end
-
 
 ---------------------------------------------------------------------------
 --

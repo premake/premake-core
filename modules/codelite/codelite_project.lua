@@ -379,38 +379,51 @@
 		_p(4, '<CustomPostBuild/>')
 
 		local dependencies = {}
-		local rules = {}
-		local function addrule(dependencies, rules, config, filename)
+		local makefilerules = {}
+		local function addrule(dependencies, makefilerules, config, filename)
 			if #config.buildcommands == 0 or #config.buildOutputs == 0 then
-				return
+				return false
 			end
-			local inputs = table.implode(config.buildInputs,"",""," ")
+			local inputs = table.implode(project.getrelative(cfg.project, config.buildInputs), "", "", " ")
 			if filename ~= "" and inputs ~= "" then
 				filename = filename .. " "
 			end
-			local outputs = config.buildOutputs[1]
+			local outputs = project.getrelative(cfg.project, config.buildOutputs[1])
 			local buildmessage = ""
 			if config.buildmessage then
 				buildmessage = "\t@{ECHO} " .. config.buildmessage .. "\n"
 			end
 			local commands = table.implode(config.buildCommands,"\t","\n","")
-			table.insert(rules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. commands, cfg.project.basedir, cfg.project.location))
-			table.insertflat(dependencies, config.buildOutputs[1])
+			table.insert(makefilerules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. commands, cfg.project.basedir, cfg.project.location))
+			table.insertflat(dependencies, outputs)
+			return true
 		end
 		local tr = project.getsourcetree(cfg.project)
 		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				local filecfg = p.fileconfig.getconfig(node, cfg)
-				addrule(dependencies, rules, filecfg, node.relpath)
+				local prj = cfg.project
+				local rule = p.global.getRuleForFile(node.name, prj.rules)
+
+				if not addrule(dependencies, makefilerules, filecfg, node.relpath) and rule then
+					local environ = table.shallowcopy(filecfg.environ)
+
+					if rule.propertydefinition then
+						p.rule.prepareEnvironment(rule, environ, cfg)
+						p.rule.prepareEnvironment(rule, environ, filecfg)
+					end
+					local rulecfg = p.context.extent(rule, environ)
+					addrule(dependencies, makefilerules, rulecfg, node.relpath)
+				end
 			end
 		})
-		addrule(dependencies, rules, cfg, "")
+		addrule(dependencies, makefilerules, cfg, "")
 
-		if #rules == 0 and #dependencies == 0 then
+		if #makefilerules == 0 and #dependencies == 0 then
 			_p(4, '<CustomPreBuild/>')
 		else
 			_p(4, '<CustomPreBuild>' .. table.implode(dependencies,"",""," "))
-			_p(0, table.implode(rules,"","","\n") .. '</CustomPreBuild>')
+			_p(0, table.implode(makefilerules,"","","\n") .. '</CustomPreBuild>')
 		end
 		_p(3, '</AdditionalRules>')
 	end

@@ -136,20 +136,13 @@
 -- @param format
 --    The formatting to be used, ie "[%s]".
 ---
-
-	function rule.prepareEnvironment(self, environ, format)
+	function rule.createEnvironment(self, format)
+		local environ = {}
 		for _, def in ipairs(self.propertydefinition) do
 			environ[def.name] = string.format(format, def.name)
 		end
-	end
-
-	function rule.createEnvironment(self, format)
-		local environ = {}
-		rule.prepareEnvironment(self, environ, format)
 		return environ
 	end
-
-
 
 ---
 -- prepare an table of pathVars with the rule properties as global tokens,
@@ -171,4 +164,79 @@
 		local pathVars = {}
 		rule.preparePathVars(self, pathVars, format)
 		return pathVars
+	end
+
+	function rule.prepareEnvironment(self, environ, cfg)
+		local function path(cfg, value)
+			cfg = cfg.project or cfg
+			local dirs = path.translate(project.getrelative(cfg, value))
+
+			if type(dirs) == 'table' then
+				dirs = table.filterempty(dirs)
+			end
+
+			return dirs
+		end
+
+		local function expandRuleString(prop, value)
+			-- list
+			if type(value) == "table" then
+				if #value > 0 then
+					local switch = prop.switch or ""
+					if prop.separator then
+						return switch .. table.concat(value, prop.separator)
+					else
+						return switch .. table.concat(value, " " .. switch)
+					end
+				else
+					return nil
+				end
+			end
+
+			-- bool just emits the switch
+			if prop.switch and type(value) == "boolean" then
+				if value then
+					return prop.switch
+				else
+					return nil
+				end
+			end
+
+			-- enum
+			if prop.values then
+				local switch = prop.switch or {}
+				value = table.findKeyByValue(prop.values, value)
+				if value == nil then
+					return nil
+				end
+				return switch[value]
+			end
+
+			-- primitive
+			local switch = prop.switch or ""
+			value = tostring(value)
+			if #value > 0 then
+				return switch .. value
+			else
+				return nil
+			end
+		end
+
+		for _, prop in ipairs(self.propertydefinition) do
+			local fld = p.rule.getPropertyField(self, prop)
+			local value = cfg[fld.name]
+			if value ~= nil then
+
+				if fld.kind == "path" then
+					value = path(cfg, value)
+				elseif fld.kind == "list:path" then
+					value = path(cfg, value)
+				end
+
+				value = expandRuleString(prop, value)
+				if value ~= nil and #value > 0 then
+					environ[prop.name] = p.esc(value)
+				end
+			end
+		end
 	end
