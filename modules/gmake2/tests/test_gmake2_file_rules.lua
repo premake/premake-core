@@ -36,20 +36,36 @@
 			value = false,
 			switch = "-p2"
 		}
-	
+
 		propertydefinition {
 			name = "TestListProperty",
 			kind = "list"
 		}
-	
+		propertydefinition {
+			name = "TestListPropertyWithSwitch",
+			kind = "list",
+			switch = "-S"
+		}
 		propertydefinition {
 			name = "TestListPropertySeparator",
 			kind = "list",
 			separator = ","
 		}
+		propertydefinition {
+			name = "TestListPropertySeparatorWithSwitch",
+			kind = "list",
+			separator = ",",
+			switch = "-O"
+		}
+		propertydefinition {
+			name = "TestEnumProperty",
+			values = { [0] = "V0", [1] = "V1"},
+			switch = { [0] = "S0", [1] = "S1"},
+			value = 0
+		}
 
 		buildmessage 'Rule-ing %{file.name}'
-		buildcommands 'dorule %{TestProperty} %{TestProperty2} %{TestListProperty} %{TestListPropertySeparator} "%{file.path}"'
+		buildcommands 'dorule %{TestProperty} %{TestProperty2} %{TestListProperty} %{TestListPropertyWithSwitch} %{TestListPropertySeparator} %{TestListPropertySeparatorWithSwitch} %{TestEnumProperty} "%{file.path}"'
 		buildoutputs { "%{file.basename}.obj" }
 
 		wks = test.createWorkspace()
@@ -281,10 +297,10 @@ endif
 
 test.obj: test.rule
 	@echo Rule-ing test.rule
-	$(SILENT) dorule -p    "test.rule"
+	$(SILENT) dorule -p       "test.rule"
 test2.obj: test2.rule
 	@echo Rule-ing test2.rule
-	$(SILENT) dorule -p -p2   "test2.rule"
+	$(SILENT) dorule -p -p2      "test2.rule"
 		]]
 	end
 
@@ -292,7 +308,7 @@ test2.obj: test2.rule
 
 		rules { "TestRule" }
 
-		files { "test.rule", "test2.rule" }
+		files { "test.rule", "test2.rule", "test3.rule", "test4.rule" }
 
 		filter "files:test.rule"
 			testRuleVars {
@@ -301,7 +317,16 @@ test2.obj: test2.rule
 
 		filter "files:test2.rule"
 			testRuleVars {
+				TestListPropertyWithSwitch = { "testValue1", "testValue2" }
+			}
+
+		filter "files:test3.rule"
+			testRuleVars {
 				TestListPropertySeparator = { "testValue1", "testValue2" }
+			}
+		filter "files:test4.rule"
+			testRuleVars {
+				TestListPropertySeparatorWithSwitch = { "testValue1", "testValue2" }
 			}
 
 		prepare()
@@ -311,10 +336,44 @@ test2.obj: test2.rule
 
 test.obj: test.rule
 	@echo Rule-ing test.rule
-	$(SILENT) dorule   testValue1\ testValue2  "test.rule"
+	$(SILENT) dorule   testValue1\ testValue2     "test.rule"
 test2.obj: test2.rule
 	@echo Rule-ing test2.rule
-	$(SILENT) dorule    testValue1,testValue2 "test2.rule"
+	$(SILENT) dorule    -StestValue1\ -StestValue2    "test2.rule"
+test3.obj: test3.rule
+	@echo Rule-ing test3.rule
+	$(SILENT) dorule     testValue1,testValue2   "test3.rule"
+test4.obj: test4.rule
+	@echo Rule-ing test4.rule
+	$(SILENT) dorule      -OtestValue1,testValue2  "test4.rule"
 		]]
 	end
 
+	function suite.customRuleWithPropertyDefinitionEnum()
+
+		rules { "TestRule" }
+
+		files { "test.rule", "test2.rule" }
+
+		testRuleVars {
+			TestEnumProperty = "V0"
+		}
+
+		filter "files:test2.rule"
+			testRuleVars {
+				TestEnumProperty = "V1"
+			}
+
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+test.obj: test.rule
+	@echo Rule-ing test.rule
+	$(SILENT) dorule       S0 "test.rule"
+test2.obj: test2.rule
+	@echo Rule-ing test2.rule
+	$(SILENT) dorule       S1 "test2.rule"
+		]]
+	end
