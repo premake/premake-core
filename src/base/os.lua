@@ -103,10 +103,26 @@
 		return path
 	end
 
-	function os.findlib(libname, libdirs)
-		-- libname: library name with or without prefix and suffix
-		-- libdirs: (array or string): A set of additional search paths
 
+---
+-- Attempt to locate and return the path to a shared library.
+--
+-- This function does not work to locate system libraries on macOS 11 or later; it may still
+-- be used to locate user libraries: _"New in macOS Big Sur 11.0.1, the system ships with
+-- a built-in dynamic linker cache of all system-provided libraries. As part of this change,
+-- copies of dynamic libraries are no longer present on the filesystem. Code that attempts to
+-- check for dynamic library presence by looking for a file at a path or enumerating a directory
+-- will fail."
+-- https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_0_1-release-notes
+--
+-- @param libname
+--    The library name with or without prefix and suffix.
+-- @param libdirs
+--    An array of paths to be searched.
+-- @returns
+--    The full path to the library if found; `nil` otherwise.
+---
+	function os.findlib(libname, libdirs)
 		local path = get_library_search_path()
 		local formats
 
@@ -458,7 +474,7 @@
 --
 -- @param cmd Command to execute
 -- @param streams Standard stream(s) to output
--- 		Must be one of 
+-- 		Must be one of
 --		- "both" (default)
 --		- "output" Return standard output stream content only
 --		- "error" Return standard error stream content only
