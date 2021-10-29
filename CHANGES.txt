@@ -9,7 +9,7 @@ Since 5.0-alpha16:
 
 * PR #1555  Added API to disable fast up to date checks (@nickclark2016)
 * PR #1570  Initial C++20 module support for Visual Studio (@hannes-harnisch)
-* PR #1619  Xcode embed libraries (@nickgravelyn)
+* PR #1619  Xcode embed libraries (@kellygravelyn)
 * PR #1625  Remove "*ng" action deprecation (@noresources)
 * PR #1629  Added support for Premake on macOS universal binary (@tempura-sukiyaki)
 * PR #1635  Fix typo in Using Premake documentation (@abhiss)
@@ -43,7 +43,7 @@ Since 5.0-alpha16:
 * PR #1736  Update showcase to include Orx (@sausagejohnson)
 * PR #1662  Handle buildcommand for Codelite (@Jarod42)
 * PR #1658  Fix D module compiler output for Visual Studio (@nickclark2016)
-* PR #1728  Add action to check for and generate missing documentation (@ssurtees)
+* PR #1728  Add action to check for and generate missing documentation (@LORgames)
 * PR #1721  Add custom rules for Gmake2 & Codelite (@Jarod42)
 * PR #1739  Fix #1628 failing macOS os.findlib() test (@starkos)
 
