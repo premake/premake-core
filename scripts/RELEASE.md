@@ -2,49 +2,44 @@
 
 ## PREP
 
- * Create a new release branch; push to origin
+* Create a new release branch `release/v5.0-beta1`
 
- * Notify `@premakeapp` of release branch availability; request testing
+* Update `CHANGES.txt`
+	* Set version at top of file
+	* `premake5 --file=scripts/changes.lua --since=<last_release_rev> changes`
+	* Review and clean up as needed
 
- * Update `CHANGES.txt`
+* Update `README.md`
+	* "Commits since last release" badge (once out of prerelease replace `v5.0.0-alphaXX` with `latest`)
 
-   * `premake5 --file=scripts/changes.lua --since=<last_release_rev> changes`
+* Update version in `src/host/premake.h`
 
-   * Review and clean up as needed
+* Update version in `website/src/pages/download.js`
 
- * Update `README.md`
+* Commit changes and push release branch; wait for CI to pass
 
-   * "Commits since last release" badge (once out of prerelease replace `v5.0.0-alphaXX` with `latest`)
-
- * Update version in `src/host/premake.h`
-
- * Update version in `website/src/pages/download.js`
-
- * Commit changes and push release branch; wait for CI to pass
-
- * Prep release announcement from change log
+* Prep release announcement from change log
 
 ## RELEASE
 
- * Run `premake5 package <release branch name> source` (from Posix ideally)
+* Run `premake5 package <release branch name> source` (from Posix ideally)
 
- * On each platform, run `premake5 package <release branch name> binary`
+* On each platform, run `premake5 package <release branch name> binary`
 
- * Submit Windows binary to [Microsoft malware analysis](https://www.microsoft.com/en-us/wdsi/filesubmission/)
+* Submit Windows binary to [Microsoft malware analysis](https://www.microsoft.com/en-us/wdsi/filesubmission/) _(Can no longer do this unless it has already been flagged as malware; needs the failing signature in order to submit.)_
 
- * Push any remaining changes; tag release branch
+* Push any remaining changes; tag release branch
 
- * Create new release on GitHub from `CHANGES.txt`; upload files
+* Create new release on GitHub from `CHANGES.txt`; upload files
 
- * Post announcement to `@premakeapp`
-
+* Post announcement to `@premakeapp`
 
 ## CYCLE
 
- * Update version in `src/host/premake.h` (e.x `"5.0.0-dev"`)
+* Update version in `src/host/premake.h` (e.x `"5.0.0-dev"`)
 
- * Commit
+* Commit
 
- * Merge release branch to master
+* Merge release branch to master
 
- * Delete release branch
+* Delete release branch

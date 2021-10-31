@@ -47,9 +47,8 @@ For enum properties, a key-value table of the possible values of the property, a
 The value to be placed into the command line for this property. See the examples below for more information.
 
 #### separator ####
-For list properties, this sets the value of the list item separator in the command line.\
-gmake2: Default value is ' '. If a switch is set, the separator is ignored and instead the switch is duplicated.\
-VS201x: If set, the list is concatenated by the separator and placed behind a single switch. If not set, the switch is duplicated.
+For list properties, this sets the value of the list item separator in the command line.
+If set, the list is concatenated by the separator and placed behind a single switch. If not set, the switch is duplicated.
 
 #### category ####
 Visual Studio only.

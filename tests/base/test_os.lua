@@ -23,7 +23,10 @@
 --
 
 	function suite.findlib_FindSystemLib()
-		if os.istarget("windows") then
+		if os.istarget("macosx") then
+			-- macOS no longer stores system libraries on filesystem; see
+			-- https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_0_1-release-notes
+		elseif os.istarget("windows") then
 			test.istrue(os.findlib("user32"))
 		elseif os.istarget("haiku") then
 			test.istrue(os.findlib("root"))
@@ -184,7 +187,7 @@
 			end
 		end
 	end
-	
+
 	-- Check outputof content
 	function suite.outputof_streams_output()
 		if (os.istarget("macosx")
@@ -198,12 +201,12 @@
 			test.isequal (oo, ob)
 			local s, e = string.find (oo, "test_os.lua")
 			test.istrue(s ~= nil)
-			
+
 			local o, e = os.outputof ("ls " .. cwd .. "/base", "error")
 			test.istrue(o == nil or #o == 0)
 		end
 	end
-	
+
 --
 -- os.translateCommand() tests
 --
