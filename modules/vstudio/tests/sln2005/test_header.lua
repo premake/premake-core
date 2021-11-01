@@ -76,3 +76,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 		]]
 	end
+
+
+	function suite.on2022()
+		p.action.set("vs2022")
+		prepare()
+		test.capture [[
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+		]]
+	end
