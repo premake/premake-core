@@ -30,7 +30,7 @@
  */
 const char* pmk_locate(char* result, const char* name, const char* paths[], const char* patterns[])
 {
-	int nameLen = strlen(name);
+	size_t nameLen = strlen(name);
 
 	if (pmk_isAbsolutePath(name)) {
 		strcpy(result, name);
@@ -43,7 +43,7 @@ const char* pmk_locate(char* result, const char* name, const char* paths[], cons
 			strcat(result, "/");
 
 			/* copy pattern into result, replacing "?" with name */
-			int len = strlen(result);
+			size_t len = strlen(result);
 			for (const char* ch = patterns[j]; *ch != '\0'; ++ch) {
 				if (*ch == '?') {
 					strcat(result, name);

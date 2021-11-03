@@ -30,6 +30,23 @@ function testing.capture(expected, actual)
 end
 
 
+function testing.contains(expected, actual)
+	if type(actual) == 'table' then
+		if type(expected) == 'table' then
+			for i = 1, #expected do
+				testing.contains(expected[i], actual)
+			end
+		elseif not table.contains(actual, expected) then
+			m.fail("expected value `%s` not found", expected)
+		end
+	else
+		if not string.contains(actual, expected) then
+			testing.fail('expected value `%s` not found', expected)
+		end
+	end
+end
+
+
 function testing.fail(format, ...)
 	local args = { ... }
 	local depth = 3

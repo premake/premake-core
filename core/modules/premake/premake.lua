@@ -14,11 +14,12 @@ _PREMAKE.VERSION = '6.0.0-next'
 _PREMAKE.COPYRIGHT = 'Copyright (c) 2002-2021 Jason Perkins and the Premake Project'
 _PREMAKE.WEBSITE = 'https://github.com/starkos/premake-next'
 
+premake.ASM_SOURCE_EXTENSIONS = { '.asm', '.s' }
 premake.C_HEADER_EXTENSIONS = { '.h', '.inl' }
-premake.C_SOURCE_EXTENSIONS = { '.c', '.s' }
-premake.CXX_HEADER_EXTENSIONS = { '.hpp', '.hxx' }
+premake.C_SOURCE_EXTENSIONS = { '.c' }
+premake.CXX_HEADER_EXTENSIONS = { '.hh', '.hpp', '.hxx' }
 premake.CXX_SOURCE_EXTENSIONS = { '.cc', '.cpp', '.cxx', '.c++' }
-premake.OBJC_HEADER_EXTENSIONS = { '.hh' }
+premake.OBJC_HEADER_EXTENSIONS = { }
 premake.OBJC_SOURCE_EXTENSIONS = { '.m', '.mm' }
 premake.WIN_RESOURCE_EXTENSIONS = { '.rc' }
 

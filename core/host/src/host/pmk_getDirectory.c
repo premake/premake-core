@@ -13,7 +13,7 @@
  */
 void pmk_getDirectory(char* result, const char* path)
 {
-	int len = 0;
+	size_t len = 0;
 
 	/* Find the last '/' or '\' in the path */
 	const char* ptr = strrchr(path, '/');

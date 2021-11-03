@@ -99,4 +99,13 @@ function string.splitOnce(self, pattern, plain)
 end
 
 
+---
+-- Return the string wrapped in double quotes.
+---
+
+function string.quoted(self)
+	return string.join('', '"', self, '"')
+end
+
+
 return string

@@ -11,7 +11,7 @@ workspace('Premake', function ()
 	project('Premake', function ()
 
 		files {
-			'core/host/src/**.h',
+			'core/host/**.h',
 			'core/host/src/**.c',
 			'core/host/src/**.lua',
 			'core/contrib/lua/src/**.h',

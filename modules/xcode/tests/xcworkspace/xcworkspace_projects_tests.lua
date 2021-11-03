@@ -12,7 +12,7 @@ local function _execute(fn)
 		fn()
 	end)
 
-	local wks = xcode.buildDom().workspaces['MyWorkspace']
+	local wks = xcode.buildDom(12).workspaces['MyWorkspace']
 	xcworkspace.projects(wks)
 end
 

@@ -1,6 +1,7 @@
 local dom = require('dom')
 local path = require('path')
 local premake = require('premake')
+local Version = require('version')
 
 local xcode = {}
 
@@ -9,13 +10,23 @@ xcode.xcodeproj = doFile('./src/xcodeproj.lua', xcode)
 
 
 ---
+-- The currently known and supported versions, for version targeting.
+---
+
+xcode.VERSIONS = {
+	'13.*.*',
+	'12.*.*'
+}
+
+
+---
 -- Xcode exporter entry point.
 ---
 
-function xcode.export()
+function xcode.export(version)
 	printf('Configuring...')
 
-	local root = xcode.buildDom()
+	local root = xcode.buildDom(version or xcode.VERSIONS[1])
 
 	for i = 1, #root.workspaces do
 		local wks = root.workspaces[i]
@@ -34,7 +45,9 @@ end
 --    A `dom.Root` object, extended with a few Xcode specific values.
 ---
 
-function xcode.buildDom()
+function xcode.buildDom(version)
+	xcode.setTargetVersion(version)
+
 	local root = dom.Root.new({
 		action = 'xcode'
 	})
@@ -64,10 +77,7 @@ function xcode.fetchWorkspace(root, name)
 	)
 
 	wks.root = root
-
 	wks.exportPath = xcode.xcworkspace.filename(wks)
-
-	-- wks.configs = wks:fetchConfigs(vstudio.fetchWorkspaceConfig)
 	wks.projects = wks:fetchProjects(xcode.fetchProject)
 
 	return wks
@@ -97,11 +107,63 @@ function xcode.fetchProject(wks, name)
 	prj.workspace = wks
 
 	prj.exportPath = xcode.xcodeproj.filename(prj)
-	prj.baseDirectory = path.getDirectory(prj.exportPath)
+	prj.baseDirectory = path.getDirectory(path.getDirectory(prj.exportPath))
 
-	-- prj.configs = prj:fetchConfigs(vstudio.fetchProjectConfig)
+	prj.configs = prj:fetchConfigs(xcode.fetchProjectConfig)
 
 	return prj
+end
+
+
+---
+-- Fetch the settings for a specific project-level configuration.
+--
+-- @param wks
+--    The `dom.Project` instance which contains the target configuration.
+-- @param build
+--    The target build configuration name, eg. 'Debug'
+-- @param platform
+--    The target platform name.
+-- @returns
+--    A `dom.Config`, with additional Xcode specific values.
+---
+
+function xcode.fetchProjectConfig(prj, build, platform)
+	local cfg = dom.Config.new(prj
+		:selectAny({ configurations = build, platforms = platform })
+		:fromScopes(prj.root, prj.workspace)
+		:withInheritance()
+	)
+
+	cfg.root = prj.root
+	cfg.workspace = prj.workspace
+	cfg.project = prj
+
+	return cfg
+end
+
+
+---
+-- Fetch the settings for a specific file-level configuration.
+--
+-- @param cfg
+--    The `dom.Config` instance which contains the target file settings. May be a
+--    workspace or project configuration.
+-- @param file
+--    The path of the file for which settings should be fetched.
+-- @returns
+--    A `dom.Config`, with additional Visual Studio specific values.
+---
+
+function xcode.fetchFileConfig(prj, file)
+	local fileCfg = dom.Config.new(prj
+		:select({ files = file })
+		:fromScopes(prj.root, prj.workspace)
+	)
+
+	fileCfg.project = prj
+
+	return fileCfg
 end
 
 
@@ -124,6 +186,24 @@ end
 function xcode.exportProject(prj)
 	-- TODO: branch by project type; only supporting .vcxproj at the moment
 	xcode.xcodeproj.export(prj)
+end
+
+
+
+---
+-- Specifies which version of Xcode is being targeted; sets `xcode.targetVersion` to
+-- a `Version` instance.
+--
+-- @param version
+--    The target version. May be a simple major version ('12') or something more
+--    specific ('12.5.1')
+---
+
+function xcode.setTargetVersion(version)
+	xcode.targetVersion = Version.lookup(version, xcode.VERSIONS)
+	if xcode.targetVersion == nil then
+		premake.abort('Unsupported Xcode version "%s"', version)
+	end
 end
 
 

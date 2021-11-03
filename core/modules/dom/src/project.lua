@@ -1,4 +1,7 @@
+local path = require('path')
+local set = require('set')
 local State = require('state')
+local tree = require('tree')
 local Type = require('type')
 
 local dom = select(1, ...)
@@ -28,6 +31,61 @@ end
 
 
 ---
+-- Builds a tree from a project's list of files. Branch nodes are created for each
+-- subdirectory or virtual path, with source files at the leaves.
+--
+-- @param files
+--    An array containing the project's source file list. If not provided, will be
+--    retrieved via `Project.collectAllSourceFiles()`.
+-- @returns
+--    A `Tree` object containing the source file hierarchy.
+---
+
+function Project.buildSourceTree(self, files)
+	files = files or Project.collectAllSourceFiles(self)
+
+	local sourceTree = tree.new()
+
+	for i = 1, #files do
+		local filePath = path.getRelative(self.baseDirectory, files[i])
+		-- TODO: virtual paths, generated files...
+		tree.add(sourceTree, filePath)
+	end
+
+	tree.sort(sourceTree)
+	return sourceTree
+end
+
+
+---
+-- Some exporters (Visual Studio, Xcode) expect all source files to be listed at the project
+-- level, even those which are specific to only a subset of the configurations. Collect all
+-- files across all configurations associated with the project.
+--
+-- @returns
+--    An array of absolute source file paths.
+---
+
+function Project.collectAllSourceFiles(self)
+	local files = {}
+
+	local prjFiles = self.files
+	for fi = 1, #prjFiles do
+		set.append(files, prjFiles[fi])
+	end
+
+	for ci = 1, #self.configs do
+		local cfgFiles = self.configs[ci]:withoutInheritance().files
+		for fi = 1, #cfgFiles do
+			set.append(files, cfgFiles[fi])
+		end
+	end
+
+	return files
+end
+
+
+---
 -- Retrieve the configurations contained by this project.
 --
 -- @param createCallback
@@ -50,6 +108,15 @@ function Project.fetchConfigs(self, createCallback)
 	end
 
 	return configs
+end
+
+
+---
+-- Convert absolute paths to project relative.
+---
+
+function Project.makeRelative(self, paths)
+	return path.getRelative(self.baseDirectory, paths)
 end
 
 

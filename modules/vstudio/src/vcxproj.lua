@@ -11,10 +11,6 @@ local wl = export.writeLine
 
 local vcxproj = {}
 
-vcxproj.HEADER_FILES = array.join(premake.C_HEADER_EXTENSIONS, premake.CXX_HEADER_EXTENSIONS, premake.OBJC_HEADER_EXTENSIONS)
-vcxproj.SOURCE_FILES = array.join(premake.C_SOURCE_EXTENSIONS, premake.CXX_SOURCE_EXTENSIONS, premake.OBJC_SOURCE_EXTENSIONS)
-vcxproj.RESOURCE_FILES = premake.WIN_RESOURCE_EXTENSIONS
-
 
 ---
 -- Element lists describe the contents of each section of the project file
@@ -117,16 +113,8 @@ vcxproj.elements = {
 
 vcxproj.categories = {
 	{
-		tag = 'ClInclude',
-		match = function (file)
-			return string.endsWith(file, vcxproj.HEADER_FILES)
-		end
-	},
-	{
 		tag = 'ClCompile',
-		match = function (file)
-			return string.endsWith(file, vcxproj.SOURCE_FILES)
-		end,
+		extensions = array.join(premake.C_SOURCE_EXTENSIONS, premake.CXX_SOURCE_EXTENSIONS, premake.OBJC_SOURCE_EXTENSIONS),
 		elements = function (cfg)
 			return {
 				vcxproj.clCompilePreprocessorDefinitions,
@@ -135,10 +123,12 @@ vcxproj.categories = {
 		end
 	},
 	{
+		tag = 'ClInclude',
+		extensions = array.join(premake.C_HEADER_EXTENSIONS, premake.CXX_HEADER_EXTENSIONS, premake.OBJC_HEADER_EXTENSIONS)
+	},
+	{
 		tag = 'FxCompile',
-		match = function (file)
-			return string.endsWith(file, '.hlsl')
-		end,
+		extensions = { '.hlsl' },
 		elements = function (cfg)
 			-- TODO: implement per-file configurations
 			return _EMPTY
@@ -146,19 +136,7 @@ vcxproj.categories = {
 	},
 	{
 		tag = 'ResourceCompile',
-		match = function (file)
-			return string.endsWith(file, vcxproj.RESOURCE_FILES)
-		end,
-		elements = function (cfg)
-			-- TODO: implement per-file configurations
-			return _EMPTY
-		end
-	},
-	{
-		tag = 'Midl',
-		match = function (file)
-			return string.endsWith(file, '.idl')
-		end,
+		extensions = premake.WIN_RESOURCE_EXTENSIONS,
 		elements = function (cfg)
 			-- TODO: implement per-file configurations
 			return _EMPTY
@@ -166,9 +144,15 @@ vcxproj.categories = {
 	},
 	{
 		tag = 'Masm',
-		match = function (file)
-			return string.endsWith(file, '.asm')
-		end,
+		extensions = premake.ASM_SOURCE_EXTENSIONS,
+		elements = function (cfg)
+			-- TODO: implement per-file configurations
+			return _EMPTY
+		end
+	},
+	{
+		tag = 'Midl',
+		extensions = '.idl',
 		elements = function (cfg)
 			-- TODO: implement per-file configurations
 			return _EMPTY
@@ -176,9 +160,7 @@ vcxproj.categories = {
 	},
 	{
 		tag = 'Image',
-		match = function (file)
-			return string.endsWith(file, '.gif', '.jpg', '.jpe', '.png', '.bmp', '.dib', '.tif', '.wmf', '.ras', '.eps', '.pcx', '.pcd', '.tga', '.dds')
-		end,
+		extensions = { '.gif', '.jpg', '.jpe', '.png', '.bmp', '.dib', '.tif', '.wmf', '.ras', '.eps', '.pcx', '.pcd', '.tga', '.dds' },
 		elements = function (cfg)
 			-- TODO: implement per-file configurations
 			return _EMPTY
@@ -186,17 +168,48 @@ vcxproj.categories = {
 	},
 	{
 		tag = 'Natvis',
-		match = function (file)
-			return string.endsWith(file, '.natvis')
-		end
+		extensions = '.natvis'
 	},
 	{
 		tag = 'None',
-		match = function (file)
-			return true
-		end
+		extensions = { '' }
 	}
 }
+
+
+---
+-- Sort project source files into target tool categories, e.g. `ClCompile`, `ClInclude`. See
+-- `vcxproj.categories` table in `vcxproj.lua`.
+--
+-- @param files
+--    An array containing the project's source file list.
+-- @returns
+--    A table keyed by `vcxproj.categories` items, with each key pointing to an array of
+--    absolute source file paths relevant to that category.
+---
+
+local function _categorizeSourceFiles(files)
+	local categorizedFiles = {}
+
+	-- create empty lists for each category
+	local categories = vcxproj.categories
+	for ci = 1, #categories do
+		categorizedFiles[ci] = {}
+	end
+
+	for fi = 1, #files do
+		local file = files[fi]
+		for ci = 1, #categories do
+			local category = categories[ci]
+			if string.endsWith(file, category.extensions) then
+				table.insert(categorizedFiles[ci], file)
+				break
+			end
+		end
+	end
+
+	return categorizedFiles
+end
 
 
 ---
@@ -266,9 +279,9 @@ end
 ---
 
 function vcxproj.prepare(prj)
-	local files = vcxproj.utils.collectAllSourceFiles(prj)
-	prj.categorizedSourceFiles = vcxproj.utils.categorizeSourceFiles(prj, files)
-	prj.virtualSourceTree = vcxproj.utils.buildVirtualSourceTree(prj, files)
+	local files = prj:collectAllSourceFiles()
+	prj.sourceTree = prj:buildSourceTree(files)
+	prj.categorizedSourceFiles = _categorizeSourceFiles(files)
 	return prj
 end
 
@@ -279,7 +292,7 @@ end
 
 function vcxproj.cleanup(prj)
 	prj.categorizedSourceFiles = nil
-	prj.virtualSourceTree = nil
+	prj.sourceTree = nil
 end
 
 
@@ -555,7 +568,7 @@ end
 
 function vcxproj.additionalIncludeDirectories(cfg, paths)
 	if #paths > 0 then
-		local relativePaths = path.translate(path.getRelative(cfg.project.baseDirectory, paths))
+		local relativePaths = path.translate(cfg.project:makeRelative(cfg.includeDirs))
 		local value = string.format('%s;%%(AdditionalIncludeDirectories)', table.concat(relativePaths, ';'))
 		_element('AdditionalIncludeDirectories', cfg, value)
 	end

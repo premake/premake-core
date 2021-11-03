@@ -6,6 +6,8 @@ local path = require('path')
 
 local tree = {}
 
+tree.INCLUDE_ROOT = 1
+
 
 ---
 -- Create a new, empty instance of a tree.
@@ -25,8 +27,8 @@ end
 ---
 -- Add an item to a tree. If the item is already in the tree, nothing is added.
 --
--- @param item
---    The item to add
+-- @param itemPath
+--    The new path to be added to the tree.
 -- @returns
 --    The added item. If the item was already present in the tree, the existing
 --    item is returned.
@@ -37,23 +39,56 @@ function tree.add(self, itemPath)
 		return self
 	end
 
+	-- If needed, recurse to create any intermediate folder nodes needed by the path
 	local parentNode = tree.add(self, path.getDirectory(itemPath))
+
+	-- Check to see if this node is already present in the tree
 	local itemName = path.getName(itemPath)
 	local itemNode = parentNode.children[itemName]
-
-	if itemNode == nil then
-		itemNode = tree.new(itemName)
-		itemNode.path = itemPath
-
-		if parentNode.children == _EMPTY then
-			parentNode.children = {}
-		end
-
-		parentNode.children[itemName] = itemNode
-		table.insert(parentNode.children, itemNode)
+	if itemNode ~= nil then
+		return itemNode
 	end
 
+	-- Nope, go ahead and create the new node...
+	itemNode = tree.new(itemName)
+	itemNode.path = itemPath
+	itemNode.parent = parentNode
+
+	-- ...and add it to its parent node, keyed by both the file name for quick lookup
+	-- and indexed to maintain the original ordering
+	if parentNode.children == _EMPTY then
+		parentNode.children = {}
+	end
+
+	parentNode.children[itemName] = itemNode
+	table.insert(parentNode.children, itemNode)
+
 	return itemNode
+end
+
+
+---
+-- Find all nodes which match the provided predicate.
+--
+-- @param predicate
+--    A function receiving node and depth arguments; returning `true` to add the given
+--    node to the results.
+-- @returns
+--    All nodes which passed the predicate.
+---
+
+function tree.find(self, predicate)
+	local result = {}
+
+	tree.traverse(self, {
+		onNode = function (node, depth)
+			if predicate(node, depth) then
+				table.insert(result, node)
+			end
+		end
+	}, tree.INCLUDE_ROOT)
+
+	return result
 end
 
 
@@ -87,7 +122,7 @@ function tree.sort(self, compareFn)
 		onNode = function (node)
 			table.sort(node.children, compareFn)
 		end
-	}, true)
+	}, tree.INCLUDE_ROOT)
 end
 
 
@@ -102,7 +137,7 @@ function tree.toString(self)
 		onNode = function(node, depth)
 			table.insert(rows, string.rep('--', depth) .. (node.name or '(nil)'))
 		end
-	}, true)
+	}, tree.INCLUDE_ROOT)
 
 	return table.concat(rows, '\n')
 end
@@ -121,13 +156,14 @@ end
 --      onBranchExit   - called on branches, after processing children
 --
 --    Callbacks take the form `function (node, depth)`.
--- @param includeRootNode
---    True to include the root node in the traversal, otherwise it will be skipped.
+-- @param options
+--    Traversal options. Currently only `tree.INCLUDE_ROOT` is available, which includes
+--    the root node in the traversal callbacks. May be `nil` for defaults.
 -- @param initialDepth
 --    An optional starting value for the traversal depth; defaults to zero.
 ---
 
-function tree.traverse(self, callbacks, includeRootNode, initialDepth)
+function tree.traverse(self, callbacks, options, initialDepth)
 	local processNode, processChildren
 	local depth = initialDepth or 0
 
@@ -136,7 +172,7 @@ function tree.traverse(self, callbacks, includeRootNode, initialDepth)
 			callbacks.onNode(node, depth)
 		end
 
-		if #node.children == 0 then
+		if #node.children == 0 and depth > 0 then
 			if callbacks.onLeaf then
 				callbacks.onLeaf(node, depth)
 			end
@@ -163,10 +199,10 @@ function tree.traverse(self, callbacks, includeRootNode, initialDepth)
 		end
 	end
 
-	if includeRootNode then
+	if options == tree.INCLUDE_ROOT then
 		processNode(self, depth)
 	else
-		processChildren(self, depth)
+		processChildren(self, depth + 1)
 	end
 end
 
