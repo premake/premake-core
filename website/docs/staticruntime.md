@@ -8,9 +8,9 @@ staticruntime "value"
 
 | Value      | Visual Studio                                 | XCode     | gmake     |
 |------------|-----------------------------------------------|-----------|-----------|
-| `on`       | Sets `<RuntimeLibrary>` to "MultiThreaded"    | No Effect | No Effect |
-| `off`      | Sets `<RuntimeLibrary>` to "MultiThreadedDLL" | No Effect | No Effect |
-| `default`  | Does not set a value for `<RuntimeLibrary>`   | No Effect | No Effect |
+| `Default`  | Does not set a value for `<RuntimeLibrary>`   | No Effect | No Effect |
+| `On`       | Sets `<RuntimeLibrary>` to "MultiThreaded"    | No Effect | No Effect |
+| `Off`      | Sets `<RuntimeLibrary>` to "MultiThreadedDLL" | No Effect | No Effect |
 
 ### Applies To ###
 

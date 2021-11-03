@@ -13,6 +13,11 @@ architecture ("value")
 * `x86_64`
 * `ARM`
 * `ARM64`
+* `armv5`: Only supported in VSAndroid projects
+* `armv7`: Only supported in VSAndroid projects
+* `aarch64`: Only supported in VSAndroid projects
+* `mips`: Only supported in VSAndroid projects
+* `mips64`: Only supported in VSAndroid projects
 
 Additional values that are aliases for the above:
 

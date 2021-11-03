@@ -15,6 +15,8 @@ If no value is set for a configuration, the toolset's default warning level will
 | Off         | Do not show any warning messages.                      |
 | Default     | Use the toolset's default warning level.               |
 | Extra       | Enable the toolset's maximum warning level.            |
+| High        | Needs documentation                                    |
+| Everything  | Needs documentation                                    |
 
 ### Applies To ###
 

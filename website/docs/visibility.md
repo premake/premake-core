@@ -14,7 +14,8 @@ By default, the generated project files will use the compilers default settings 
 |-------------|--------------|
 | `Default`   | gcc          |
 | `Hidden`    | gcc          |
-| `Inline`    | gcc          |
+| `Internal`  | gcc          |
+| `Protected` | gcc          |
 
 ### Applies To ###
 
