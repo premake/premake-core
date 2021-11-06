@@ -1627,3 +1627,58 @@
 </ClCompile>
 		]]
 	end
+
+--
+-- If consumewinrtextension flag is set, add <CompileAsWinRT> element
+--
+
+	function suite.onconsumewinrtextensionOff()
+		p.action.set("vs2019")
+		consumewinrtextension "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAsWinRT>false</CompileAsWinRT>
+		]]
+	end
+
+	function suite.onconsumewinrtextensionOn()
+		p.action.set("vs2019")
+		consumewinrtextension "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<CompileAsWinRT>true</CompileAsWinRT>
+		]]
+	end
+
+	function suite.onconsumewinrtextensionNotSpecified()
+		p.action.set("vs2019")
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+	function suite.onconsumewinrtextensionOn_BeforeVS2019()
+		p.action.set("vs2017")
+		consumewinrtextension "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end

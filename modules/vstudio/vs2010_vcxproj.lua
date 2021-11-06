@@ -392,7 +392,8 @@
 			m.conformanceMode,
 			m.structMemberAlignment,
 			m.useFullPaths,
-			m.removeUnreferencedCodeData
+			m.removeUnreferencedCodeData,
+			m.compileAsWinRT,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -815,6 +816,7 @@
 						m.compileAs,
 						m.runtimeTypeInfo,
 						m.warningLevelFile,
+						m.compileAsWinRT,
 					}
 				else
 					return {
@@ -1527,6 +1529,14 @@
 				m.element("RemoveUnreferencedCodeData", nil, "true")
 			else
 				m.element("RemoveUnreferencedCodeData", nil, "false")
+			end
+		end
+	end
+
+	function m.compileAsWinRT(cfg, condition)
+		if _ACTION >= "vs2019" then
+			if cfg and cfg.consumewinrtextension ~= nil then
+				m.element("CompileAsWinRT", condition, iif(cfg.consumewinrtextension, "true", "false"))
 			end
 		end
 	end

@@ -94,6 +94,7 @@ module.exports = {
 						'configuration',
 						'configurations',
 						'conformancemode',
+						'consumewinrtextension',
 						'copylocal',
 						'cppdialect',
 						'csversion',
