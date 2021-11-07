@@ -1049,6 +1049,32 @@
 
 
 ---
+-- AppxManifest group
+---
+	m.categories.AppxManifest = {
+		name       = "AppxManifest",
+		extensions = { ".appxmanifest" },
+		priority   = 12,
+
+		emitFiles = function(prj, group)
+			local fileFunc = {
+				m.fileType,
+				m.subType,
+			}
+
+			local fileCfgFunc = {
+				m.excludedFromBuild,
+			}
+
+			m.emitFiles(prj, group, "AppxManifest", fileFunc, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "AppxManifest")
+		end
+	}
+
+---
 -- Categorize files into groups.
 ---
 	function m.categorizeSources(prj)
@@ -1846,6 +1872,11 @@
 
 	function m.fileType(cfg, file)
 		m.element("FileType", nil, "Document")
+	end
+
+
+	function m.subType(cfg, file)
+		m.element("SubType", nil, "Designer")
 	end
 
 

@@ -89,6 +89,19 @@
 		]]
 	end
 
+	function suite.appxManifestCompile_onAppxManifestFile()
+		files { "hello.appxmanifest" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<AppxManifest Include="hello.appxmanifest">
+		<FileType>Document</FileType>
+		<SubType>Designer</SubType>
+	</AppxManifest>
+</ItemGroup>
+		]]
+	end
+
 
 --
 -- Check handling of buildaction.
