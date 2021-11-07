@@ -52,7 +52,7 @@ project "MyProject"
 
 ## Getting Started
 
-* [Documentation](https://github.com/premake/premake-core/wiki)
+* [Documentation](https://premake.github.io/docs/)
 * [Contributing](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md)
 * [Issue Tracker](https://github.com/premake/premake-core/issues)
 
