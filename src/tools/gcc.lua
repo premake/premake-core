@@ -136,10 +136,12 @@
 			["C90"] = "-std=c90",
 			["C99"] = "-std=c99",
 			["C11"] = "-std=c11",
+			["C17"] = "-std=c17",
 			["gnu89"] = "-std=gnu89",
 			["gnu90"] = "-std=gnu90",
 			["gnu99"] = "-std=gnu99",
 			["gnu11"] = "-std=gnu11",
+			["gnu17"] = "-std=gnu17"
 		}
 	}
 
