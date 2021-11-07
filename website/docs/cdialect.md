@@ -18,6 +18,7 @@ cdialect "value"
 * `gnu90`: GNU dialect of ISO C90
 * `gnu99`: GNU dialect of ISO C99
 * `gnu11`: GNU dialect of ISO C11
+* `gnu17`: GNU dialect of ISO C17
 
 ### Applies To ###
 

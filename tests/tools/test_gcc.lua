@@ -807,6 +807,13 @@
 		test.contains({ }, gcc.getcxxflags(cfg))
 	end
 
+	function suite.cflags_onC17()
+		cdialect "C17"
+		prepare()
+		test.contains({ "-std=c17" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
 	function suite.cflags_ongnu89()
 		cdialect "gnu89"
 		prepare()
@@ -832,6 +839,13 @@
 		cdialect "gnu11"
 		prepare()
 		test.contains({ "-std=gnu11" }, gcc.getcflags(cfg))
+		test.contains({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_ongnu17()
+		cdialect "gnu17"
+		prepare()
+		test.contains({ "-std=gnu17" }, gcc.getcflags(cfg))
 		test.contains({ }, gcc.getcxxflags(cfg))
 	end
 
