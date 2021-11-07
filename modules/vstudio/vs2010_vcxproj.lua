@@ -389,6 +389,7 @@
 			m.compileAs,
 			m.callingConvention,
 			m.languageStandard,
+			m.languageStandardC,
 			m.conformanceMode,
 			m.structMemberAlignment,
 			m.useFullPaths,
@@ -1477,12 +1478,24 @@
 			elseif (cfg.cppdialect == "C++17") then
 				m.element("LanguageStandard", nil, 'stdcpp17')
 			elseif (cfg.cppdialect == "C++20") then
-				m.element("LanguageStandard", nil, 'stdcpplatest')
+				m.element("LanguageStandard", nil, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
 			elseif (cfg.cppdialect == "C++latest") then
 				m.element("LanguageStandard", nil, 'stdcpplatest')
 			end
 		end
 	end
+
+
+	function m.languageStandardC(cfg)
+		if _ACTION >= "vs2019" then
+			if (cfg.cdialect == "C11") then
+				m.element("LanguageStandard_C", nil, 'stdc11')
+			elseif (cfg.cdialect == "C17") then
+				m.element("LanguageStandard_C", nil, 'stdc17')
+			end
+		end
+	end
+
 
 	function m.conformanceMode(cfg)
 		if _ACTION >= "vs2017" then
