@@ -2398,8 +2398,8 @@
 		]]
 	end
 
-	function suite.XCBuildConfigurationProject_OnSysIncludeDirs()
-		sysincludedirs { "../include", "../libs", "../name with spaces" }
+	function suite.XCBuildConfigurationProject_OnExternalIncludeDirs()
+		externalincludedirs { "../include", "../libs", "../name with spaces" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -3489,7 +3489,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCpp11()
 		workspace("MyWorkspace")
 		cppdialect("C++11")
@@ -3567,7 +3567,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCpp1y()
 		workspace("MyWorkspace")
 		cppdialect("C++1y")
@@ -3619,7 +3619,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCpp1z()
 		workspace("MyWorkspace")
 		cppdialect("C++1z")
@@ -3671,7 +3671,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCpp2a()
 		workspace("MyWorkspace")
 		cppdialect("C++2a")
@@ -3749,7 +3749,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCppGnu0x()
 		workspace("MyWorkspace")
 		cppdialect("gnu++0x")
@@ -3801,7 +3801,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCppGnu1y()
 		workspace("MyWorkspace")
 		cppdialect("gnu++1y")
@@ -3853,7 +3853,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCppGnu1z()
 		workspace("MyWorkspace")
 		cppdialect("gnu++1z")
@@ -3905,7 +3905,7 @@
 		};
 		]]
     end
-    
+
     function suite.XCBuildConfigurationProject_OnCppGnu2a()
 		workspace("MyWorkspace")
 		cppdialect("gnu++2a")

@@ -1,12 +1,10 @@
-Specifies the system include file search paths.
+Alias of [externalincludedirs](externalincludedirs.md).
 
 ```lua
 sysincludedirs { "paths" }
 ```
 
-For Visual Studio, these paths are placed in the "VC++ Directories" properties panel. For GCC and Clang, they are preceded with the `-isystem` flag, rather than `-I`. For toolsets which do not support the concept of system include directories, they are treated as a normal include directory.
-
-Include files located via a system include directory are treated as correct: no warnings will be shown for the contents of the file.
+**This function has been deprecated in Premake 5.0 beta2.** Use the new [externalincludedirs](externalincludedirs.md) function instead. `sysincludedirs` will be not supported in Premake 6.
 
 ### Parameters ###
 
@@ -36,5 +34,4 @@ sysincludedirs { "../includes/**" }
 
 ### See Also ###
 
-* [includedirs](includedirs.md)
-* [syslibdirs](syslibdirs.md)
+* [externalincludedirs](externalincludedirs.md)

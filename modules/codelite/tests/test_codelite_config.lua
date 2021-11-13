@@ -77,7 +77,7 @@
 	end
 
 	function suite.OnProjectCfg_SysIncludes()
-		sysincludedirs { "sysdir", "sysdir2/"}
+		externalincludedirs { "sysdir", "sysdir2/"}
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
@@ -188,7 +188,7 @@
 
 	function suite.OnProjectCfg_ResSysInclude()
 		files { "x.rc" }
-		sysincludedirs { "sysdir/" }
+		externalincludedirs { "sysdir/" }
 		prepare()
 		codelite.project.resourceCompiler(cfg)
 		test.capture [[

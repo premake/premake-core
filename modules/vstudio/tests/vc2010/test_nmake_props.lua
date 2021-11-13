@@ -162,8 +162,8 @@ command 2</NMakeBuildCommandLine>
 		]]
 	end
 
-	function suite.onSysIncludeDirs()
-		sysincludedirs { "include/lua", "include/zlib" }
+	function suite.onExternalIncludeDirs()
+		externalincludedirs { "include/lua", "include/zlib" }
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

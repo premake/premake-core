@@ -395,6 +395,8 @@
 			m.useFullPaths,
 			m.removeUnreferencedCodeData,
 			m.compileAsWinRT,
+			m.externalWarningLevel,
+			m.externalAngleBrackets,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -818,6 +820,8 @@
 						m.runtimeTypeInfo,
 						m.warningLevelFile,
 						m.compileAsWinRT,
+						m.externalWarningLevel,
+						m.externalAngleBrackets,
 					}
 				else
 					return {
@@ -2154,9 +2158,13 @@
 
 
 	function m.includePath(cfg)
-		local dirs = vstudio.path(cfg, cfg.sysincludedirs)
+		local dirs = vstudio.path(cfg, cfg.externalincludedirs)
 		if #dirs > 0 then
-			m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
+			if _ACTION < "vs2022" then
+				m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
+			else
+				m.element("ExternalIncludePath", nil, "%s;$(ExternalIncludePath)", table.concat(dirs, ";"))
+			end
 		end
 	end
 
@@ -2596,7 +2604,8 @@
 
 
 	function m.resourceAdditionalIncludeDirectories(cfg)
-		m.additionalIncludeDirectories(cfg, table.join(cfg.includedirs, cfg.resincludedirs))
+		local dirs = table.join(cfg.includedirs, cfg.resincludedirs)
+		m.additionalIncludeDirectories(cfg, dirs)
 	end
 
 
@@ -2841,6 +2850,25 @@
 		local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "EnableAllWarnings" }
 		if cfg.warnings then
 			m.element("WarningLevel", condition, map[cfg.warnings] or "Level3")
+		end
+	end
+
+
+	function m.externalWarningLevel(cfg)
+		if _ACTION >= "vs2022" then
+			local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
+			m.element("ExternalWarningLevel", nil, map[cfg.externalwarnings] or "Level3")
+		end
+	end
+
+
+	function m.externalAngleBrackets(cfg)
+		if _ACTION >= "vs2022" then
+			if cfg.externalanglebrackets == p.OFF then
+				m.element("TreatAngleIncludeAsExternal", condition, "false")
+			elseif cfg.externalanglebrackets == p.ON then
+				m.element("TreatAngleIncludeAsExternal", condition, "true")
+			end
 		end
 	end
 

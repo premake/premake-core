@@ -258,6 +258,58 @@
 
 
 --
+-- Check handling externalwarnings.
+--
+
+	function suite.cflags_onNoExternalWarnings()
+		externalwarnings "Off"
+		prepare()
+		test.contains("/external:W0", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onHighExternalWarnings()
+		externalwarnings "High"
+		prepare()
+		test.contains("/external:W4", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onExtraExternalWarnings()
+		externalwarnings "Extra"
+		prepare()
+		test.contains("/external:W4", msc.getcflags(cfg))
+	end
+
+
+--
+-- Check handling externalanglebrackets.
+--
+
+	function suite.cflags_onExternalAngleBrackets()
+		externalanglebrackets "On"
+		prepare()
+		test.contains("/external:anglebrackets", msc.getcflags(cfg))
+	end
+
+
+--
+-- Check handling externalincludedirs.
+--
+
+	function suite.cflags_onExternalIncludeDirs()
+		externalincludedirs { "/usr/local/include" }
+		prepare()
+		test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+	end
+
+	function suite.cflags_onVs2022ExternalIncludeDirs()
+		p.action.set("vs2022")
+		externalincludedirs { "/usr/local/include" }
+		prepare()
+		test.contains("/external:I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+	end
+
+
+--
 -- Check handling of library search paths.
 --
 
@@ -480,12 +532,6 @@
 --
 -- Check handling of system search paths.
 --
-
-	function suite.includeDirs_onSysIncludeDirs()
-		sysincludedirs { "/usr/local/include" }
-		prepare()
-		test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs))
-	end
 
 	function suite.libDirs_onSysLibDirs()
 		syslibdirs { "/usr/local/lib" }
