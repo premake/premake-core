@@ -17,7 +17,7 @@
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 		toolset         = "gcc",
 
-		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile" },
+		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile", "None" },
 		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
 			cc     = { "clang", "gcc" },
@@ -26,13 +26,17 @@
 
 		onWorkspace = function(wks)
 			p.escaper(p.make.esc)
+			wks.projects = table.filter(wks.projects, function(prj) return p.action.supports(prj.kind) and prj.kind ~= p.NONE end)
 			p.generate(wks, p.make.getmakefilename(wks, false), p.make.generate_workspace)
 		end,
 
 		onProject = function(prj)
 			p.escaper(p.make.esc)
 			local makefile = p.make.getmakefilename(prj, true)
-			if prj.kind == p.UTILITY then
+
+			if not p.action.supports(prj.kind) or prj.kind == p.NONE then
+				return
+			elseif prj.kind == p.UTILITY then
 				p.generate(prj, makefile, p.make.utility.generate)
 			elseif prj.kind == p.MAKEFILE then
 				p.generate(prj, makefile, p.make.makefile.generate)
