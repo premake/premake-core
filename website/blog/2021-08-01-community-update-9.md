@@ -9,7 +9,7 @@ author_title: Premake Admin & Developer
 
 I can't believe we're already eight months into 2021, how did this happen.
 
-### **Branch, don't backport**
+### Branch, don't backport
 
 In the last update, I asked for input on where the work going into [premake-next](https://github.com/starkos/premake-next) should end up: branch a new 6.x major version, or backport the changes to 5.x? There was [solid consensus](https://github.com/premake/premake-core/discussions/1616) that premake-next should be treated as a new major version, with v5 upgraded to a stable release for on-going support. Thanks to everyone who participated and offered feedback!
 
