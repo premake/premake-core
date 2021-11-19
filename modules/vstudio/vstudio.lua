@@ -10,7 +10,6 @@ vstudio.sln = doFile('./src/sln.lua', vstudio)
 
 vstudio.vcxproj = doFile('./src/vcxproj.lua', vstudio)
 vstudio.vcxproj.filters = doFile('./src/vcxproj.filters.lua', vstudio)
-vstudio.vcxproj.utils =  doFile('./src/vcxproj.utils.lua', vstudio)
 
 
 ---

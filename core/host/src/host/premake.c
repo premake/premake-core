@@ -27,10 +27,10 @@ static const luaL_Reg g_functions[] = {
 
 static const luaL_Reg buffer_functions[] = {
 	{ "new", pmk_buffer_new },
+	{ "clear", pmk_buffer_clear },
 	{ "close", pmk_buffer_close },
 	{ "toString", pmk_buffer_toString },
 	{ "write", pmk_buffer_write },
-	{ "writeLine", pmk_buffer_writeLine },
 	{ NULL, NULL }
 };
 
@@ -78,6 +78,7 @@ static const luaL_Reg premake_functions[] = {
 static const luaL_Reg string_functions[] = {
 	{ "contains", pmk_string_contains },
 	{ "endsWith", pmk_string_endsWith },
+	{ "isAlphanumericOrAnyOf", pmk_string_isAlphanumericOrAnyOf },
 	{ "join", pmk_string_join },
 	{ "hash", pmk_string_hash },
 	{ "patternFromWildcards", pmk_string_patternFromWildcards },

@@ -42,7 +42,7 @@ int pmk_uuid(char* result, const char* value)
 #else
 		/* not sure how to get a UUID for non-Windows platforms, so fake it */
 		FILE* rnd = fopen("/dev/urandom", "rb");
-		int status = fread(bytes, 16, 1, rnd);
+		size_t status = fread(bytes, 16, 1, rnd);
 		fclose(rnd);
 		if (!status) {
 			return (FALSE);

@@ -87,6 +87,10 @@ function export.writeUtf8Bom()
 end
 
 
+---
+-- Writes a formatted string to the exported output.
+---
+
 function export.write(...)
 	if _captureBuffer == nil then
 		error('no active capture', 0)
@@ -98,6 +102,11 @@ function export.write(...)
 	end
 end
 
+
+---
+-- Writes a formatted string to the exported output, followed by the currently
+-- configured EOL sequence.
+---
 
 function export.writeLine(...)
 	export.write(...)

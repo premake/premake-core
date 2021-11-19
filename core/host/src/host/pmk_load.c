@@ -60,7 +60,7 @@ static int runScriptChunk(lua_State* L)
 
 	/* separate out directory portion of _SCRIPT and assign to _SCRIPT_DIR */
 	const char* ptr = strrchr(scriptPath, '/');
-	int endAt = (ptr != NULL) ? (ptr - scriptPath) : (int)strlen(scriptPath);
+	size_t endAt = (ptr != NULL) ? (ptr - scriptPath) : (int)strlen(scriptPath);
 	lua_pushlstring(L, scriptPath, endAt);
 	lua_setglobal(L, "_SCRIPT_DIR");
 

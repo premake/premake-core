@@ -35,112 +35,93 @@ end
 
 
 ---
--- Check categorization of main file types.
+-- Check categorization of different file types
 ---
 
-function VsVcxSourceFileTests.useNone_onNotOtherwiseCategorized()
+function VsVcxSourceFileTests.onClCompileFiles()
 	_execute(function ()
-		files { 'LICENSE', 'README.txt' }
+		files {
+			'File.c',
+			'File.cc',
+			'File.cpp',
+			'File.cxx',
+			'File.c++',
+			'File.m',
+			'File.mm'
+		}
 	end)
 	test.capture [[
 <ItemGroup>
-	<None Include="LICENSE" />
-	<None Include="README.txt" />
+	<ClCompile Include="File.c" />
+	<ClCompile Include="File.cc" />
+	<ClCompile Include="File.cpp" />
+	<ClCompile Include="File.cxx" />
+	<ClCompile Include="File.c++" />
+	<ClCompile Include="File.m" />
+	<ClCompile Include="File.mm" />
 </ItemGroup>
 	]]
 end
 
 
-function VsVcxSourceFileTests.useClInclude_onHeaderFiles()
+function VsVcxSourceFileTests.onClIncludeFiles()
 	_execute(function ()
-		files { 'File1.h', 'File2.hh', 'File3.hpp', 'File4.hxx', 'File5.inl'  }
+		files {
+			'File.h',
+			'File.hh',
+			'File.hpp',
+			'File.hxx',
+			'File.inl'
+		}
 	end)
 	test.capture [[
 <ItemGroup>
-	<ClInclude Include="File1.h" />
-	<ClInclude Include="File2.hh" />
-	<ClInclude Include="File3.hpp" />
-	<ClInclude Include="File4.hxx" />
-	<ClInclude Include="File5.inl" />
+	<ClInclude Include="File.h" />
+	<ClInclude Include="File.hh" />
+	<ClInclude Include="File.hpp" />
+	<ClInclude Include="File.hxx" />
+	<ClInclude Include="File.inl" />
 </ItemGroup>
 	]]
 end
 
 
-function VsVcxSourceFileTests.useClCompile_onHeaderFiles()
+function VsVcxSourceFileTests.onFxCompileFiles()
 	_execute(function ()
-		files { 'File1.cc', 'File2.cpp', 'File3.cxx', 'File4.c++', 'File5.c', 'File6.s', 'File7.m', 'File8.mm'  }
+		files {
+			'File.hlsl'
+		}
 	end)
 	test.capture [[
 <ItemGroup>
-	<ClCompile Include="File1.cc" />
-	<ClCompile Include="File2.cpp" />
-	<ClCompile Include="File3.cxx" />
-	<ClCompile Include="File4.c++" />
-	<ClCompile Include="File5.c" />
-	<ClCompile Include="File6.s" />
-	<ClCompile Include="File7.m" />
-	<ClCompile Include="File8.mm" />
+	<FxCompile Include="File.hlsl" />
 </ItemGroup>
 	]]
 end
 
 
-function VsVcxSourceFileTests.useFxCompile_onHlslFile()
+function VsVcxSourceFileTests.onImageFiles()
 	_execute(function ()
-		files { 'File1.hlsl'  }
+		files {
+			'File.gif',
+			'File2.jpg',
+			'File3.jpe',
+			'File4.png',
+			'File5.bmp',
+			'File6.dib',
+			'File7.tif',
+			'File8.wmf',
+			'File9.ras',
+			'File0.eps',
+			'File1.pcx',
+			'File2.pcd',
+			'File3.tga',
+			'File4.dds'
+	}
 	end)
 	test.capture [[
 <ItemGroup>
-	<FxCompile Include="File1.hlsl" />
-</ItemGroup>
-	]]
-end
-
-
-function VsVcxSourceFileTests.useResourceCompile_onRcFile()
-	_execute(function ()
-		files { 'File1.rc'  }
-	end)
-	test.capture [[
-<ItemGroup>
-	<ResourceCompile Include="File1.rc" />
-</ItemGroup>
-	]]
-end
-
-
-function VsVcxSourceFileTests.useMidl_onIdlFile()
-	_execute(function ()
-		files { 'File1.idl'  }
-	end)
-	test.capture [[
-<ItemGroup>
-	<Midl Include="File1.idl" />
-</ItemGroup>
-	]]
-end
-
-
-function VsVcxSourceFileTests.useMasm_onAsmFile()
-	_execute(function ()
-		files { 'File1.asm'  }
-	end)
-	test.capture [[
-<ItemGroup>
-	<Masm Include="File1.asm" />
-</ItemGroup>
-	]]
-end
-
-
-function VsVcxSourceFileTests.useImage_onImgFile()
-	_execute(function ()
-		files { 'File1.gif', 'File2.jpg', 'File3.jpe', 'File4.png', 'File5.bmp', 'File6.dib', 'File7.tif', 'File8.wmf', 'File9.ras', 'File10.eps', 'File11.pcx', 'File12.pcd', 'File13.tga', 'File14.dds' }
-	end)
-	test.capture [[
-<ItemGroup>
-	<Image Include="File1.gif" />
+	<Image Include="File.gif" />
 	<Image Include="File2.jpg" />
 	<Image Include="File3.jpe" />
 	<Image Include="File4.png" />
@@ -149,30 +130,91 @@ function VsVcxSourceFileTests.useImage_onImgFile()
 	<Image Include="File7.tif" />
 	<Image Include="File8.wmf" />
 	<Image Include="File9.ras" />
-	<Image Include="File10.eps" />
-	<Image Include="File11.pcx" />
-	<Image Include="File12.pcd" />
-	<Image Include="File13.tga" />
-	<Image Include="File14.dds" />
+	<Image Include="File0.eps" />
+	<Image Include="File1.pcx" />
+	<Image Include="File2.pcd" />
+	<Image Include="File3.tga" />
+	<Image Include="File4.dds" />
 </ItemGroup>
 	]]
 end
 
 
-function VsVcxSourceFileTests.useNatvis_onImgFile()
+function VsVcxSourceFileTests.onMidlFiles()
 	_execute(function ()
-		files { 'File1.natvis' }
+		files {
+			'File.idl'
+		}
 	end)
 	test.capture [[
 <ItemGroup>
-	<Natvis Include="File1.natvis" />
+	<Midl Include="File.idl" />
 </ItemGroup>
 	]]
 end
 
 
+function VsVcxSourceFileTests.onNatvisFiles()
+	_execute(function ()
+		files {
+			'File.natvis'
+		}
+	end)
+	test.capture [[
+<ItemGroup>
+	<Natvis Include="File.natvis" />
+</ItemGroup>
+	]]
+end
 
--- TODO: each category should appear in its own <ItemGroup/>
+
+function VsVcxSourceFileTests.onResourceCompileFiles()
+	_execute(function ()
+		files {
+			'File.rc'
+		}
+	end)
+	test.capture [[
+<ItemGroup>
+	<ResourceCompile Include="File.rc" />
+</ItemGroup>
+	]]
+end
+
+
+function VsVcxSourceFileTests.onMasmFiles()
+	_execute(function ()
+		files {
+			'File.asm',
+			'File.s'
+		}
+	end)
+	test.capture [[
+<ItemGroup>
+	<Masm Include="File.asm" />
+	<Masm Include="File.s" />
+</ItemGroup>
+	]]
+end
+
+
+function VsVcxSourceFileTests.onOtherFileTypes()
+	_execute(function ()
+		files {
+			'File',
+			'File.md',
+			'File.txt'
+		}
+	end)
+	test.capture [[
+<ItemGroup>
+	<None Include="File" />
+	<None Include="File.md" />
+	<None Include="File.txt" />
+</ItemGroup>
+	]]
+end
+
 
 ---
 -- Files use project-relative paths, with backspace separators.
@@ -180,14 +222,12 @@ end
 
 function VsVcxSourceFileTests.pathsAreProjectRelativeAndTranslated()
 	_execute(function ()
+		location "Build"
 		files { 'Docs/Hello.txt' }
-
-		-- TODO: Add a location to offset the path
-
 	end)
 	test.capture [[
 <ItemGroup>
-	<None Include="Docs\Hello.txt" />
+	<None Include="..\Docs\Hello.txt" />
 </ItemGroup>
 	]]
 end
