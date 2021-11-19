@@ -16,6 +16,7 @@ ipch
 
 Makefile
 *.make
+*.mak
 *.xcodeproj
 *.xcworkspace
 *.swp
