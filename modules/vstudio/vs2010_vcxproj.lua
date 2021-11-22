@@ -795,7 +795,7 @@
 ---
 	m.categories.ClCompile = {
 		name       = "ClCompile",
-		extensions = { ".cc", ".cpp", ".cxx", ".c++", ".c", ".s", ".m", ".mm" },
+		extensions = { ".cc", ".cpp", ".cxx", ".c++", ".c", ".s", ".m", ".mm", ".cppm", ".ixx" },
 		priority   = 2,
 
 		emitFiles = function(prj, group)
