@@ -243,6 +243,7 @@
 				m.generateManifest,
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
+				m.allModulesPublic,
 			}
 		end
 	end
@@ -1506,11 +1507,15 @@
 	function m.conformanceMode(cfg)
 		if _ACTION >= "vs2017" then
 			if cfg.conformancemode ~= nil then
-				if cfg.conformancemode then
-					m.element("ConformanceMode", nil, "true")
-				else
-					m.element("ConformanceMode", nil, "false")
-				end
+				m.element("ConformanceMode", nil, iif(cfg.conformancemode, "true", "false"))
+			end
+		end
+	end
+
+	function m.allModulesPublic(cfg)
+		if _ACTION >= "vs2019" then
+			if cfg.allmodulespublic ~= nil then
+				m.element("AllProjectBMIsArePublic", nil, iif(cfg.allmodulespublic, "true", "false"))
 			end
 		end
 	end

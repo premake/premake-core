@@ -57,3 +57,40 @@
 </PropertyGroup>
 		]]
 	end
+
+
+--
+-- If AllModulesPublic flag is set, add <AllProjectBMIsArePublic> element (supported from VS2019)
+--
+
+function suite.onAllModulesPublicOn()
+	allmodulespublic "On"
+	local cfg = test.getconfig(prj, "Debug", platform)
+	vc2010.outputProperties(cfg)
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<AllProjectBMIsArePublic>true</AllProjectBMIsArePublic>
+</PropertyGroup>
+		]]
+end
+
+function suite.onAllModulesPublicOff()
+	allmodulespublic "Off"
+	local cfg = test.getconfig(prj, "Debug", platform)
+	vc2010.outputProperties(cfg)
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<AllProjectBMIsArePublic>false</AllProjectBMIsArePublic>
+</PropertyGroup>
+		]]
+end

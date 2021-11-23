@@ -60,6 +60,7 @@ module.exports = {
 					type: 'category',
 					label: 'Project Settings',
 					items: [
+						'allmodulespublic',
 						'androidapilevel',
 						'androidapplibname',
 						'architecture',
