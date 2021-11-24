@@ -86,6 +86,8 @@
 		ConsoleApp = "Console",
 		WindowedApp = "Console",
 		Makefile = "",
+		None = "",
+		Utility = "",
 		SharedLib = "Library",
 		StaticLib = "Library"
 	}
@@ -189,7 +191,7 @@
 	end
 
 	function m.compiler(cfg)
-		if configuration_iscustombuild(cfg) or configuration_isfilelist(cfg) then
+		if cfg.project.kind == p.NONE or configuration_iscustombuild(cfg) or configuration_isfilelist(cfg) then
 			_p(3, '<Compiler Required="no"/>')
 			return
 		end
@@ -219,7 +221,7 @@
 	end
 
 	function m.linker(cfg)
-		if configuration_iscustombuild(cfg) or configuration_isfilelist(cfg) then
+		if cfg.project.kind == p.NONE or configuration_iscustombuild(cfg) or configuration_isfilelist(cfg) then
 			_p(3, '<Linker Required="no"/>')
 			return
 		end
@@ -471,6 +473,7 @@
 		SharedLib   = "Dynamic Library",
 		StaticLib   = "Static Library",
 		WindowedApp = "Executable",
+		None = "",
 		Utility     = "",
 	}
 
@@ -493,7 +496,7 @@
 			local cfgname  = codelite.cfgname(cfg)
 			local compiler = m.getcompilername(cfg)
 			local debugger = m.debuggers[cfg.debugger] or m.debuggers.Default
-			local type = m.types[cfg.kind]
+			local type = m.types[cfg.kind] or ""
 
 			_x(2, '<Configuration Name="%s" CompilerType="%s" DebuggerType="%s" Type="%s" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">', cfgname, compiler, debugger, type)
 
