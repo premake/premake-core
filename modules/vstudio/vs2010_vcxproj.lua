@@ -1418,7 +1418,15 @@
 
 		if #links > 0 then
 			links = path.translate(table.concat(links, ";"))
-			m.element("AdditionalDependencies", nil, "%s;%%(AdditionalDependencies)", links)
+
+			local additional = ";%(AdditionalDependencies)"
+			if cfg.inheritdependencies ~= nil then
+				if not cfg.inheritdependencies then
+					additional = ""
+				end
+			end
+
+			m.element("AdditionalDependencies", nil, "%s%s", links, additional)
 		end
 	end
 
