@@ -39,7 +39,7 @@ ifeq ($(config),debug)
     CXX = clang++
   endif
   ifeq ($(origin AR), default)
-    AR = ar
+    AR = llvm-ar
   endif
 		]]
 	end
