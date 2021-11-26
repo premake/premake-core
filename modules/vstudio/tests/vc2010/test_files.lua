@@ -903,3 +903,37 @@
 </ItemGroup>
 		]]
 	end
+	
+--
+-- test consumewinrtextension set for a single file
+--
+
+	function suite.consumewinrtextensionPerFile()
+		p.action.set("vs2019")
+		files { "hello.cpp", "hello2.cpp" }
+		filter { "files:hello.cpp" }
+			consumewinrtextension 'On'
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<CompileAsWinRT>true</CompileAsWinRT>
+	</ClCompile>
+	<ClCompile Include="hello2.cpp" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.consumewinrtextensionPerFile_BeforeVS2019()
+		p.action.set("vs2017")
+		files { "hello.cpp", "hello2.cpp" }
+		filter { "files:hello.cpp" }
+			consumewinrtextension 'On'
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp" />
+	<ClCompile Include="hello2.cpp" />
+</ItemGroup>
+		]]
+	end

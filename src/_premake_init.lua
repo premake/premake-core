@@ -204,6 +204,12 @@
 	}
 
 	api.register {
+		name = "consumewinrtextension",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	api.register {
 		name = "copylocal",
 		scope = "config",
 		kind = "list:mixed",
