@@ -175,6 +175,7 @@ module.exports = {
 						'implibsuffix',
 						'importdirs',
 						'includedirs',
+						'inheritdependencies',
 						'inlinesvisibility',
 						'inlining',
 						'intrinsics',

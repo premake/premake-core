@@ -745,12 +745,11 @@
 
 	function suite.inheritDependenciesOff()
 		inheritdependencies "Off"
-		links { "kernel32" }
 		prepare()
 		test.capture [[
 <Link>
 	<SubSystem>Windows</SubSystem>
-	<AdditionalDependencies>kernel32.lib</AdditionalDependencies>
+	<AdditionalDependencies></AdditionalDependencies>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
