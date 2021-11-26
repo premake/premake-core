@@ -27,6 +27,14 @@
 		cfg = test.getconfig(prj, "Debug")
 	end
 
+	function suite.OnProjectCfg_KindNone()
+		kind "None"
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Required="no"/>
+		]]
+	end
 
 	function suite.OnProjectCfg_Compiler()
 		prepare()
@@ -100,6 +108,15 @@
 		test.capture [[
       <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="pch.h" PCHInCommandLine="yes" UseDifferentPCHFlags="no" PCHFlags="">
       </Compiler>
+		]]
+	end
+
+	function suite.OnProjectCfg_LinkerKindNone()
+		kind "None"
+		prepare()
+		codelite.project.linker(cfg)
+		test.capture [[
+      <Linker Required="no"/>
 		]]
 	end
 
