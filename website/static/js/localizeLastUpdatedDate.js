@@ -20,11 +20,7 @@ function localizeTimeElement(element) {
     if (element instanceof HTMLTimeElement && element.hasAttribute('datetime')) {
         const iso8601 = element.getAttribute('datetime');
         const date = new Date(iso8601);
-        element.textContent = date.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-        });
+        element.textContent = date.toLocaleDateString();
     }
 }
 
