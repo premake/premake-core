@@ -16,7 +16,8 @@ module.exports = {
 			additionalLanguages: ['lua'],
 		},
 		algolia: {
-			apiKey: '7440a29a5d611582272899683f54f54e',
+			appId: 'BZ59R9HF86',
+			apiKey: '83150c6f407bbeccf4a8873378f7c67c',
 			indexName: 'premake',
 		},
 		navbar: {
