@@ -155,5 +155,12 @@ module.exports = {
 				showLastUpdateTime: true,
 			}
 		]
+	],
+	scripts: [
+		{
+			src: '/js/localizeLastUpdatedDate.js',
+			async: true,
+			defer: true
+		}
 	]
 };
