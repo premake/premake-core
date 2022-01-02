@@ -2460,7 +2460,8 @@
 	function m.precompiledHeader(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
 		if filecfg then
-			if prjcfg.pchsource == filecfg.abspath and not prjcfg.flags.NoPCH then
+			local pchsource = path.normalize(prjcfg.pchsource):gsub("//", "/")
+			if pchsource == filecfg.abspath and not prjcfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'Create')
 			elseif filecfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'NotUsing')
