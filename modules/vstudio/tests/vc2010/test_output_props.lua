@@ -222,8 +222,8 @@
 -- Check the handling of the VC++ Directories.
 --
 
-	function suite.onSystemIncludeDirs()
-		sysincludedirs { "$(DXSDK_DIR)/Include" }
+	function suite.onExternalIncludeDirs()
+		externalincludedirs { "$(DXSDK_DIR)/Include" }
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

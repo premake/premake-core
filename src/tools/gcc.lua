@@ -107,6 +107,12 @@
 			Extra = {"-Wall", "-Wextra"},
 			Everything = "-Weverything",
 		},
+		externalwarnings = {
+			Default = "-Wsystem-headers",
+			High = "-Wsystem-headers",
+			Extra = "-Wsystem-headers",
+			Everything = "-Wsystem-headers",
+		},
 		symbols = function(cfg, mappings)
 			local values = gcc.getdebugformat(cfg)
 			local debugformat = values[cfg.debugformat] or ""
@@ -287,7 +293,7 @@
 -- Decorate include file search paths for the GCC command line.
 --
 
-	function gcc.getincludedirs(cfg, dirs, sysdirs, frameworkdirs)
+	function gcc.getincludedirs(cfg, dirs, extdirs, frameworkdirs)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
@@ -301,10 +307,11 @@
 			end
 		end
 
-		for _, dir in ipairs(sysdirs or {}) do
+		for _, dir in ipairs(extdirs or {}) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-isystem ' .. p.quoted(dir))
 		end
+
 		return result
 	end
 

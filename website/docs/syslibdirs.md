@@ -34,5 +34,6 @@ syslibdirs { "../libs/**" }
 
 ### See Also ###
 
+* [externalincludedirs](externalincludedirs.md)
 * [libdirs](libdirs.md)
 * [sysincludedirs](sysincludedirs.md)

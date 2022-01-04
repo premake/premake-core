@@ -1521,14 +1521,14 @@
 		end
 		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 
-		local sysincludedirs = project.getrelative(cfg.project, cfg.sysincludedirs)
-		for i,v in ipairs(sysincludedirs) do
-			cfg.sysincludedirs[i] = p.quoted(v)
+		local externalincludedirs = project.getrelative(cfg.project, cfg.externalincludedirs)
+		for i,v in ipairs(externalincludedirs) do
+			cfg.externalincludedirs[i] = p.quoted(v)
 		end
-		if not table.isempty(cfg.sysincludedirs) then
-			table.insert(cfg.sysincludedirs, "$(inherited)")
+		if not table.isempty(cfg.externalincludedirs) then
+			table.insert(cfg.externalincludedirs, "$(inherited)")
 		end
-		settings['SYSTEM_HEADER_SEARCH_PATHS'] = cfg.sysincludedirs
+		settings['SYSTEM_HEADER_SEARCH_PATHS'] = cfg.externalincludedirs
 
 		for i,v in ipairs(cfg.libdirs) do
 			cfg.libdirs[i] = p.project.getrelative(cfg.project, cfg.libdirs[i])
@@ -1536,7 +1536,7 @@
 		for i,v in ipairs(cfg.syslibdirs) do
 			cfg.syslibdirs[i] = p.project.getrelative(cfg.project, cfg.syslibdirs[i])
 		end
-		settings['LIBRARY_SEARCH_PATHS'] = table.join (cfg.libdirs, cfg.syslibdirs) 
+		settings['LIBRARY_SEARCH_PATHS'] = table.join (cfg.libdirs, cfg.syslibdirs)
 
 		for i,v in ipairs(cfg.frameworkdirs) do
 			cfg.frameworkdirs[i] = p.project.getrelative(cfg.project, cfg.frameworkdirs[i])
