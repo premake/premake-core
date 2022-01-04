@@ -80,6 +80,12 @@
 		test.contains({ "-w" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onDefaultWarnings()
+		warnings "Default"
+		prepare()
+		test.excludes({ "-w", "-Wall", "-Wextra", "-Weverything" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onHighWarnings()
 		warnings "High"
 		prepare()
@@ -110,6 +116,36 @@
 		fatalwarnings { "fatal" }
 		prepare()
 		test.contains({ "-Wenable", "-Wno-disable", "-Werror=fatal" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onNoExternalWarnings()
+		externalwarnings "Off"
+		prepare()
+		test.excludes({ "-Wsystem-headers" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onDefaultExternalWarnings()
+		externalwarnings "Default"
+		prepare()
+		test.contains({ "-Wsystem-headers" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onHighExternalWarnings()
+		externalwarnings "High"
+		prepare()
+		test.contains({ "-Wsystem-headers" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onExtraExternalWarnings()
+		externalwarnings "Extra"
+		prepare()
+		test.contains({ "-Wsystem-headers" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onEverythingExternalWarnings()
+		externalwarnings "Everything"
+		prepare()
+		test.contains({ "-Wsystem-headers" }, gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFloastFast()
@@ -393,7 +429,7 @@
 		prepare()
 		test.contains({ "-dynamiclib" }, gcc.getldflags(cfg))
 	end
-	
+
 --
 -- Check Mac OS X deployment target flags
 --
@@ -404,14 +440,14 @@
 		prepare()
 		test.contains({ "-mmacosx-version-min=10.9" }, gcc.getcflags(cfg))
 	end
-	
+
 	function suite.cxxflags_macosx_systemversion()
 		system "MacOSX"
 		systemversion "10.9:10.15"
 		prepare()
 		test.contains({ "-mmacosx-version-min=10.9" }, gcc.getcxxflags(cfg))
 	end
-	
+
 	function suite.cxxflags_macosx_systemversion_unspecified()
 		system "MacOSX"
 		prepare()
@@ -600,8 +636,9 @@
 
 	function suite.includeDirsAreRelative()
 		includedirs { "../include", "src/include" }
+		externalincludedirs { "test/include" }
 		prepare()
-		test.isequal({ '-I../include', '-Isrc/include' }, gcc.getincludedirs(cfg, cfg.includedirs))
+		test.isequal({ '-I../include', '-Isrc/include', '-isystem test/include' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 
@@ -623,14 +660,16 @@
 
 	function suite.includeDirs_onSpaces()
 		includedirs { "include files" }
+		externalincludedirs { "test include" }
 		prepare()
-		test.isequal({ '-I"include files"' }, gcc.getincludedirs(cfg, cfg.includedirs))
+		test.isequal({ '-I"include files"', '-isystem "test include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 	function suite.includeDirs_onEnvVars()
 		includedirs { "$(IntDir)/includes" }
+		externalincludedirs { "$(BinDir)/include" }
 		prepare()
-		test.isequal({ '-I"$(IntDir)/includes"' }, gcc.getincludedirs(cfg, cfg.includedirs))
+		test.isequal({ '-I"$(IntDir)/includes"', '-isystem "$(BinDir)/include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 
@@ -668,12 +707,6 @@
 -- Check handling of system search paths.
 --
 
-	function suite.includeDirs_onSysIncludeDirs()
-		sysincludedirs { "/usr/local/include" }
-		prepare()
-		test.contains("-isystem /usr/local/include", gcc.getincludedirs(cfg, cfg.includedirs, cfg.sysincludedirs))
-	end
-
 	function suite.libDirs_onSysLibDirs()
 		syslibdirs { "/usr/local/lib" }
 		prepare()
@@ -700,9 +733,9 @@
 	function suite.includeDirs_macosx_onFrameworkDirs()
 		system "MacOSX"
 		location "subdir"
-		frameworkdirs { 
+		frameworkdirs {
 			"/Library/Frameworks",
-			"subdir/Relative/Frameworks" 
+			"subdir/Relative/Frameworks"
 		}
 		prepare()
 		test.contains("-F/Library/Frameworks", gcc.getincludedirs(cfg, {}, {}, cfg.frameworkdirs))
@@ -712,7 +745,7 @@
 	function suite.libDirs_macosx_onFrameworkDirs()
 		system "MacOSX"
 		location "subdir"
-		frameworkdirs { 
+		frameworkdirs {
 			"/Library/Frameworks",
 			"subdir/Relative/Frameworks"
 		}

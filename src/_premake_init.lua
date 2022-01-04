@@ -1163,13 +1163,6 @@
 	}
 
 	api.register {
-		name = "sysincludedirs",
-		scope = "config",
-		kind = "list:directory",
-		tokens = true,
-	}
-
-	api.register {
 		name = "syslibdirs",
 		scope = "config",
 		kind = "list:directory",
@@ -1468,6 +1461,38 @@
 			"Off"
 		}
 	}
+
+	api.register {
+		name = "externalincludedirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.register {
+		name = "externalwarnings",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Off",
+			"Default",
+			"High",
+			"Extra",
+			"Everything",
+		}
+	}
+
+	api.register {   -- DEPRECATED 2021-11-16
+		name = "sysincludedirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
+	}
+
+	api.deprecateField("sysincludedirs", 'Use `externalincludedirs` instead.',
+	function(value)
+		externalincludedirs(value)
+	end)
 
 -----------------------------------------------------------------------------
 --
