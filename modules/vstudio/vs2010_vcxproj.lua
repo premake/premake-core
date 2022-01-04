@@ -2854,10 +2854,10 @@
 	end
 
 
-	function m.externalWarningLevel(cfg)
+	function m.externalWarningLevel(cfg, condition)
 		if _ACTION >= "vs2022" then
 			local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
-			m.element("ExternalWarningLevel", nil, map[cfg.externalwarnings] or "Level3")
+			m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
 		end
 	end
 
