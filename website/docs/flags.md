@@ -31,6 +31,7 @@ flags { "flag_list" }
 | NoRuntimeChecks       | Disable Visual Studio's [default stack frame and uninitialized variable checks][2] on debug builds. |
 | OmitDefaultLibrary    | Omit the specification of a runtime library in object files.        |
 | RelativeLinks         | Forces the linker to use relative paths to libraries instead of absolute paths. |
+| ScanForModuleDependencies | Enables the Visual Studio `Scan Sources for Module Dependencies` feature for C++20 modules. | Valid for vs2019 and newer. |
 | ShadowedVariables     | Warn when a variable, type declaration, or function is shadowed.    |
 | StaticRuntime         | Perform a static link against the standard runtime libraries.       | Deprecated - use staticruntime "On" instead. |
 | UndefinedIdentifiers | Warn if an undefined identifier is evaluated in an #if directive.   |

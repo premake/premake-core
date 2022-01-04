@@ -397,6 +397,7 @@
 			m.compileAsWinRT,
 			m.externalWarningLevel,
 			m.externalAngleBrackets,
+			m.scanSourceForModuleDependencies,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -2868,6 +2869,15 @@
 				m.element("TreatAngleIncludeAsExternal", condition, "false")
 			elseif cfg.externalanglebrackets == p.ON then
 				m.element("TreatAngleIncludeAsExternal", condition, "true")
+			end
+		end
+	end
+
+
+	function m.scanSourceForModuleDependencies(cfg)
+		if _ACTION >= "vs2019" then
+			if cfg.flags.ScanForModuleDependencies then
+				m.element("ScanSourceForModuleDependencies", nil, "true")
 			end
 		end
 	end
