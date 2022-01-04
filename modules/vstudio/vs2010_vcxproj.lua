@@ -1420,18 +1420,9 @@
 			links = vstudio.getLinks(cfg, explicit)
 		end
 
-		links = path.translate(table.concat(links, ";"))
-
-		local additional = ";%(AdditionalDependencies)"
-		if cfg.inheritdependencies ~= nil then
-			if not cfg.inheritdependencies then
-				additional = ""
-			end
-		end
-
-		-- If there are no links and dependencies should be inherited, the tag doesn't have to be generated.
-		if #links > 0 or additional == "" then
-			m.element("AdditionalDependencies", nil, "%s%s", links, additional)
+		if #links > 0 then
+			links = path.translate(table.concat(links, ";"))
+			m.element("AdditionalDependencies", nil, "%s;%%(AdditionalDependencies)", links)
 		end
 	end
 

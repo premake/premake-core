@@ -639,12 +639,6 @@
 	}
 
 	api.register {
-		name = "inheritdependencies",
-		scope = "config",
-		kind = "boolean",
-	}
-
-	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",
