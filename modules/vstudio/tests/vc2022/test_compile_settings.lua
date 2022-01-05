@@ -25,6 +25,11 @@ local function prepare(platform)
 	vc2010.clCompile(cfg)
 end
 
+local function prepareFiles(platform)
+	prj = test.getproject(wks, 1)
+	vc2010.files(prj)
+end
+
 --
 -- Check ClCompile for ExternalWarningLevel
 --
@@ -88,6 +93,19 @@ function suite.ExternalWarningLevelEverything()
 	]]
 end
 
+function suite.ExternalWarningLevelOnFile()
+	files { "hello1.cpp", "hello2.cpp" }
+	filter { "files:hello2.cpp" }
+		externalwarnings "High"
+	prepareFiles()
+	test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello1.cpp" />
+	<ClCompile Include="hello2.cpp">
+		<ExternalWarningLevel>Level4</ExternalWarningLevel>
+	]]
+end
+
 --
 -- Check ClCompile for TreatAngleIncludeAsExternal
 --
@@ -114,5 +132,18 @@ function suite.TreatAngleIncludeAsExternalOff()
 	<Optimization>Disabled</Optimization>
 	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 	<TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+	]]
+end
+
+function suite.TreatAngleIncludeAsExternalOnFile()
+	files { "hello1.cpp", "hello2.cpp" }
+	filter { "files:hello2.cpp" }
+		externalanglebrackets "On"
+	prepareFiles()
+	test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello1.cpp" />
+	<ClCompile Include="hello2.cpp">
+		<TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
 	]]
 end

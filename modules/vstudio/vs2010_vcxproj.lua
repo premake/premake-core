@@ -820,8 +820,8 @@
 						m.runtimeTypeInfo,
 						m.warningLevelFile,
 						m.compileAsWinRT,
-						m.externalWarningLevel,
-						m.externalAngleBrackets,
+						m.externalWarningLevelFile,
+						m.externalAngleBracketsFile,
 					}
 				else
 					return {
@@ -2854,15 +2854,36 @@
 	end
 
 
-	function m.externalWarningLevel(cfg, condition)
+	function m.externalWarningLevel(cfg)
 		if _ACTION >= "vs2022" then
 			local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
-			m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
+			m.element("ExternalWarningLevel", nil, map[cfg.externalwarnings] or "Level3")
+		end
+	end
+
+
+	function m.externalWarningLevelFile(cfg, condition)
+		if _ACTION >= "vs2022" then
+			if cfg.externalwarnings then
+				local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
+				m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
+			end
 		end
 	end
 
 
 	function m.externalAngleBrackets(cfg)
+		if _ACTION >= "vs2022" then
+			if cfg.externalanglebrackets == p.OFF then
+				m.element("TreatAngleIncludeAsExternal", nil, "false")
+			elseif cfg.externalanglebrackets == p.ON then
+				m.element("TreatAngleIncludeAsExternal", nil, "true")
+			end
+		end
+	end
+
+
+	function m.externalAngleBracketsFile(cfg, condition)
 		if _ACTION >= "vs2022" then
 			if cfg.externalanglebrackets == p.OFF then
 				m.element("TreatAngleIncludeAsExternal", condition, "false")
