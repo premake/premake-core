@@ -821,7 +821,7 @@
 						m.warningLevelFile,
 						m.compileAsWinRT,
 						m.externalWarningLevelFile,
-						m.externalAngleBracketsFile,
+						m.externalAngleBrackets,
 					}
 				else
 					return {
@@ -2872,18 +2872,7 @@
 	end
 
 
-	function m.externalAngleBrackets(cfg)
-		if _ACTION >= "vs2022" then
-			if cfg.externalanglebrackets == p.OFF then
-				m.element("TreatAngleIncludeAsExternal", nil, "false")
-			elseif cfg.externalanglebrackets == p.ON then
-				m.element("TreatAngleIncludeAsExternal", nil, "true")
-			end
-		end
-	end
-
-
-	function m.externalAngleBracketsFile(cfg, condition)
+	function m.externalAngleBrackets(cfg, condition)
 		if _ACTION >= "vs2022" then
 			if cfg.externalanglebrackets == p.OFF then
 				m.element("TreatAngleIncludeAsExternal", condition, "false")

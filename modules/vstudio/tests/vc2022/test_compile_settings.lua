@@ -147,3 +147,16 @@ function suite.TreatAngleIncludeAsExternalOnFile()
 		<TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
 	]]
 end
+
+function suite.TreatAngleIncludeAsExternalOffFile()
+	files { "hello1.cpp", "hello2.cpp" }
+	filter { "files:hello2.cpp" }
+		externalanglebrackets "Off"
+	prepareFiles()
+	test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello1.cpp" />
+	<ClCompile Include="hello2.cpp">
+		<TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+	]]
+end
