@@ -520,7 +520,6 @@
 			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
 			"ReleaseRuntime",      -- DEPRECATED
-			"ScanForModuleDependencies",
 			"ShadowedVariables",
 			"StaticRuntime",       -- DEPRECATED
 			"Symbols",             -- DEPRECATED

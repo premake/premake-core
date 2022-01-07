@@ -2876,8 +2876,12 @@
 
 	function m.scanSourceForModuleDependencies(cfg)
 		if _ACTION >= "vs2019" then
-			if cfg.flags.ScanForModuleDependencies then
-				m.element("ScanSourceForModuleDependencies", nil, "true")
+			if cfg.scanformoduledependencies ~= nil then
+				if cfg.scanformoduledependencies then
+					m.element("ScanSourceForModuleDependencies", nil, "true")
+				else
+					m.element("ScanSourceForModuleDependencies", nil, "false")
+				end
 			end
 		end
 	end

@@ -232,6 +232,7 @@ module.exports = {
 						'rules',
 						'runpathdirs',
 						'runtime',
+						'scanformoduledependencies',
 						'shaderassembler',
 						'shaderassembleroutput',
 						'shaderdefines',

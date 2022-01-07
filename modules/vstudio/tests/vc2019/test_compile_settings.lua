@@ -84,7 +84,7 @@
 --
 
 	function suite.SupportScanForModuleDependenciesOn()
-		flags { "ScanForModuleDependencies" }
+		scanformoduledependencies "yes"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -96,12 +96,13 @@
 	end
 
 	function suite.SupportScanForModuleDependenciesOff()
-		flags { "ScanForModuleDependencies" }
+		scanformoduledependencies "no"
 		prepare()
 		test.capture [[
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
 		]]
 	end
