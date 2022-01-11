@@ -658,7 +658,7 @@
 		-- If a tool was not found, check to see if there is a function in the
 		-- table to check against.  For each function in the table, check if
 		-- the value is allowed (break early if so).
-		if not canonical then
+		if not canonical and type(field.allowed) == "table" then
 			for _, allow in ipairs(field.allowed)
 			do
 				if type(allow) == "function" then
