@@ -70,3 +70,42 @@ jobs:
       with:
         name: premake-windows-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+  mingw:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        config: [debug, release]
+        msystem: [mingw32, mingw64]
+        include:
+          - platform: x86
+            msystem: mingw32
+          - platform: x64
+            msystem: mingw64
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: 'Setup MSYS2'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.msystem }}
+        update: true
+        install: >-
+          git
+          make
+        pacboy: >-
+          toolchain:p
+    - name: Build
+      run: make -f Bootstrap.mak mingw PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+    - name: Test
+      run: bin/${{ matrix.config }}/premake5.exe test --test-all
+    - name: Docs check
+      run: bin/${{ matrix.config }}/premake5.exe docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release'
+      uses: actions/upload-artifact@v2
+      with:
+        name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
+        path: bin\${{ matrix.config }}\
