@@ -3,7 +3,6 @@ Enables the `Scan Sources for Module Dependencies` option for Visual Studio proj
 ```lua
 scanformoduledependencies "value"
 ```
-If no value is set for a configuration, Visual Studio will default the option to `No`.
 
 ### Parameters ###
 
