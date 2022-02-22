@@ -723,7 +723,7 @@
 		]]
 	end
 
-	--
+--
 -- Test ignoring default libraries with extensions specified.
 --
 
@@ -735,6 +735,35 @@
 	<SubSystem>Windows</SubSystem>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 	<AssemblyDebug>true</AssemblyDebug>
+</Link>
+		]]
+	end
+
+--
+-- Test for not including additional dependencies.
+--
+
+	function suite.inheritDependenciesOff()
+		inheritdependencies "Off"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies></AdditionalDependencies>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+		]]
+	end
+
+	function suite.inheritDependenciesOn()
+		inheritdependencies "On"
+		links { "kernel32" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]
 	end
