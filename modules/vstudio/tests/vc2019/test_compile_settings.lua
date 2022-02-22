@@ -78,3 +78,31 @@
 	<OpenMPSupport>false</OpenMPSupport>
 		]]
 	end
+
+--
+-- Check ClCompile for ScanForModuleDependencies
+--
+
+	function suite.SupportScanForModuleDependenciesOn()
+		scanformoduledependencies "yes"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+		]]
+	end
+
+	function suite.SupportScanForModuleDependenciesOff()
+		scanformoduledependencies "no"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+		]]
+	end

@@ -169,6 +169,12 @@
 		debugger('VisualStudio' .. value)
 	end)
 
+	p.api.register {
+		name = "scanformoduledependencies",
+		scope = "config",
+		kind = "boolean"
+	}
+
 
 --
 -- Decide when the full module should be loaded.
