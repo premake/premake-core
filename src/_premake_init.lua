@@ -190,6 +190,12 @@
 			"HeaderUnit"
 		}
 	}
+ 
+	api.register {
+		name = "allmodulespublic",
+		scope = "config",
+		kind = "boolean"
+	}
 
 	api.register {
 		name = "configmap",
