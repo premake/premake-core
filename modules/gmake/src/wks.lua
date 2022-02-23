@@ -182,7 +182,7 @@ function wks.projectRules(wk)
 		wl('ifneq (, $(config))')
 		export.indent()
 
-		local prjPath = gmake.getMakefileName(prj, true)
+		local prjPath = gmake.getMakefileName(prj, true, wk.root)
 		local prjDir = path.getDirectory(path.getRelative(wk.location, prjPath))
 		local prjName = path.getName(prjPath)
 
@@ -205,7 +205,7 @@ function wks.cleanRule(wk)
 	wl('clean:')
 	export.indent()
 	for _, prj in ipairs(wk.projects) do
-		local prjPath = gmake.getMakefileName(prj, true)
+		local prjPath = gmake.getMakefileName(prj, true, wk.root)
 		local prjDir = path.getDirectory(path.getRelative(wk.location, prjPath))
 		local prjName = path.getName(prjPath)
 
