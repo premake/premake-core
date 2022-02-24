@@ -40,12 +40,12 @@ filter { "system:linux" }
 filter { "system:macosx" }
    -- OS X frameworks need the extension to be handled properly
    links { "Cocoa.framework", "png" }
-  ```
+```
 
   In a workspace with two projects, link the library into the executable. Note that the project name is used to specify the link; Premake will automatically figure out the correct library file name and directory and create a project dependency.
 
-  ```lua
-  workspace "MyWorkspace"
+```lua
+workspace "MyWorkspace"
    configurations { "Debug", "Release" }
    language "C++"
 
@@ -57,6 +57,19 @@ filter { "system:macosx" }
    project "MyLibrary"
       kind "SharedLib"
       files "**.cpp"
+```
+
+You may specify the linking mechanism explicitly for each library.  To set the link type of a library explicitly, add a `:static` or `:shared` suffix to the library.  Note that this functionality is only available for the `gcc` and `clang` toolsets.
+
+```lua
+workspace "MyWorkspace"
+   configurations { "Debug", "Release" }
+   language "C++"
+
+   project "MyExecutable"
+      kind "ConsoleApp"
+      files "**.cpp"
+      links { "LibraryA:static", "LibraryB:shared" }
 ```
 
 You may also create links between non-library projects. In this case, Premake will generate a build dependency (the linked project will build first), but not an actual link. In this example, MyProject uses a build dependency to ensure that MyTool gets built first. It then uses MyTool as part of its build process.
