@@ -17,7 +17,7 @@ module.exports = {
 		},
 		algolia: {
 			appId: 'BZ59R9HF86',
-			apiKey: '83150c6f407bbeccf4a8873378f7c67c',
+			apiKey: '5c08cdec7a7243eecb271c06cdba3b9f',
 			indexName: 'premake',
 		},
 		navbar: {
