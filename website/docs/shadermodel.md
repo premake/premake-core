@@ -1,29 +1,29 @@
-shadermodel - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the shader model.
 
 ```lua
-shadermodel (value)
+shadermodel ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `2.0`: needs documentation
-* `3.0`: needs documentation
-* `4.0_level_9_1`: needs documentation
-* `4.0_level_9_3`: needs documentation
-* `4.0`: needs documentation
-* `4.1`: needs documentation
-* `5.0`: needs documentation
-* `5.1`: needs documentation
-* `rootsig_1.0`: needs documentation
-* `rootsig_1.1`: needs documentation
-* `6.0`: needs documentation
-* `6.1`: needs documentation
-* `6.2`: needs documentation
-* `6.3`: needs documentation
-* `6.4`: needs documentation
-* `6.5`: needs documentation
+* `2.0`: Shader Model 2.0
+* `3.0`: Shader Model 3.0
+* `4.0_level_9_1`: Shader Model 4.0 Level 9_1
+* `4.0_level_9_3`: Shader Model 4.0 Level 9_3
+* `4.0`: Shader Model 4.0
+* `4.1`: Shader Model 4.1
+* `5.0`: Shader Model 5.0
+* `5.1`: Shader Model 5.1
+* `rootsig_1.0`: Root Signature Version 1.0
+* `rootsig_1.1`: Root Signature Version 1.1
+* `6.0`: Shader Model 6.0
+* `6.1`: Shader Model 6.1
+* `6.2`: Shader Model 6.2
+* `6.3`: Shader Model 6.3
+* `6.4`: Shader Model 6.4
+* `6.5`: Shader Model 6.5
 
 ## Applies To ###
 
@@ -36,6 +36,6 @@ Premake 5.0.0 alpha 14 or later.
 ### Examples ###
 
 ```lua
-shadermodel (value)
+shadermodel ("5.0")
 ```
 
