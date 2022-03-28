@@ -122,16 +122,13 @@
 				onRule(rule)
 			end
 		end
-		local ret
+
 		if a.execute then
-			ret = a.execute()
+			a.execute()
 		end
 
 		if a.onEnd then
 			a.onEnd()
-		end
-		if a.execute then
-			return ret
 		end
 	end
 
