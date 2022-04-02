@@ -98,6 +98,13 @@ function gmake.buildDom()
 	})
 
 	root.workspaces = root:fetchWorkspaces(gmake.fetchWorkspace)
+
+	for _, wks in ipairs(root.workspaces) do
+		for _, prj in ipairs(wks.projects) do
+			prj.exportPath = gmake.getMakefileName(prj, true, root)
+		end
+	end
+
 	return root
 end
 
@@ -297,9 +304,9 @@ end
 -- @returns
 --  Makefile if this project or workspace is unique to the folder, else .make
 ---
-function gmake.getMakefileName(this, searchprjs)
+function gmake.getMakefileName(this, searchprjs, domroot)
 	local count = 0
-	local root = gmake.buildDom()
+	local root = domroot or gmake.buildDom()
 	for _, wks in ipairs(root.workspaces) do
 		if wks.location == this.location then
 			count = count + 1
