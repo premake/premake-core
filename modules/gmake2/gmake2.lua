@@ -268,13 +268,13 @@
 
 
 	function gmake2.target(cfg, toolset)
-		p.outln('TARGETDIR = ' .. project.getrelative(cfg.project, cfg.buildtarget.directory))
-		p.outln('TARGET = $(TARGETDIR)/' .. cfg.buildtarget.name)
+		p.outln('TARGETDIR = ' .. p.esc(project.getrelative(cfg.project, cfg.buildtarget.directory)))
+		p.outln('TARGET = $(TARGETDIR)/' .. p.esc(cfg.buildtarget.name))
 	end
 
 
 	function gmake2.objdir(cfg, toolset)
-		p.outln('OBJDIR = ' .. project.getrelative(cfg.project, cfg.objdir))
+		p.outln('OBJDIR = ' .. p.esc(project.getrelative(cfg.project, cfg.objdir)))
 	end
 
 
