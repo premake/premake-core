@@ -21,7 +21,7 @@
 		system = {
 			haiku = "-MMD",
 			wii = { "-MMD", "-MP", "-I$(LIBOGC_INC)", "$(MACHDEP)" },
-			_ = { "-MMD", "-MP" }
+			_ = { "-MD", "-MP" }
 		}
 	}
 
