@@ -53,9 +53,9 @@
 -- By default, the -MMD -MP are used to generate dependencies.
 --
 
-	function suite.cppflags_defaultWithMMD()
+	function suite.cppflags_defaultWithMD()
 		prepare()
-		test.contains({"-MMD", "-MP"}, gcc.getcppflags(cfg))
+		test.contains({"-MD", "-MP"}, gcc.getcppflags(cfg))
 	end
 
 
