@@ -49,7 +49,7 @@ local path = require('path')
 
 - **Improved command line option model and parsing.** The distinction between "options" and "actions" has been removed. All arguments may now specify an `execute()` method. The "=" is now optional when assigning values from the command line. The `_OPTIONS` global has been removed; use the `options` module for direct programmatic access.
 
-- **Preload magic replaced with `register()`.** Previously only core modules could register command line options and other settings on startup without actually loading the entire module. Any module may now include a `register.lua` script which can be loaded with `register('moduleName')`. See [the testing module](../modules/testing) for an example.
+- **Preload magic replaced with `register()`.** Previously only core modules could register command line options and other settings on startup without actually loading the entire module. Any module may now include a `register.lua` script which can be loaded with `register('moduleName')`. See [the testing module](./modules/testing) for an example.
 
 - **Exporters get more responsility.** The division of responsibilities has been shifted to give exporters significantly more control over how data is queried, inherited, and exported.
 
