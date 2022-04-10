@@ -350,6 +350,10 @@
 -- @param mask
 --    The file search pattern. Use "*" to match any part of a file or
 --    directory name, "**" to recurse into subdirectories.
+-- @param matchType 
+--		folder will match only folders
+--		file will match only files
+--		if not set it will match both
 -- @return
 --    A table containing the matched file or directory names.
 ---
@@ -392,7 +396,7 @@
 						results = table.join(results, os.match(path.join(matchpath, after), matchType))
 					else
 						if matchType == "file" and os.matchisfile(m) then
-						table.insert(results, matchpath)
+							table.insert(results, matchpath)
 						elseif matchType == "folder" and not os.matchisfile(m) then
 							table.insert(results, matchpath)
 						else -- keep previous behaviour
