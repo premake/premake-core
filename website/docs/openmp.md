@@ -20,12 +20,8 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta1 or later. Currently only implemented for Visual Studio 2010+. As a workaround for other toolsets, you can use [buildoptions](buildoptions.md) like this:
-
-```lua
-filter "toolset:not msc*"
-	buildoptions "-fopenmp"
-```
+Premake 5.0-beta1 or later for Visual Studio 2010+ and the MSC toolset.
+Premake 5.0-beta2 or later for the GCC and Clang toolsets.
 
 ## Examples ##
 
