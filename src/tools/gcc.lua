@@ -67,6 +67,9 @@
 			Level2 = { "-fstrict-aliasing", "-Wstrict-aliasing=2" },
 			Level3 = { "-fstrict-aliasing", "-Wstrict-aliasing=3" },
 		},
+		openmp = {
+			On = "-fopenmp"
+		},
 		optimize = {
 			Off = "-O0",
 			On = "-O2",

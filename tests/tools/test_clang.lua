@@ -68,4 +68,20 @@
 		prepare()
 		test.contains({ "-miphoneos-version-min=5.0" }, clang.getcxxflags(cfg))
 	end
-	
+
+--
+-- Check handling of openmp.
+--
+
+	function suite.cflags_onOpenmpOn()
+		openmp "On"
+		prepare()
+		test.contains("-fopenmp", clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onOpenmpOff()
+		openmp "Off"
+		prepare()
+		test.excludes("-fopenmp", clang.getcflags(cfg))
+	end
+

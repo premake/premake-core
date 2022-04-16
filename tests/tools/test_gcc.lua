@@ -702,6 +702,21 @@
 		test.contains({ "-fstrict-aliasing", "-Wstrict-aliasing=3" }, gcc.getcflags(cfg))
 	end
 
+--
+-- Check handling of openmp.
+--
+
+	function suite.cflags_onOpenmpOn()
+		openmp "On"
+		prepare()
+		test.contains("-fopenmp", gcc.getcflags(cfg))
+	end
+
+	function suite.cflags_onOpenmpOff()
+		openmp "Off"
+		prepare()
+		test.excludes("-fopenmp", gcc.getcflags(cfg))
+	end
 
 --
 -- Check handling of system search paths.

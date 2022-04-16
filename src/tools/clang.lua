@@ -49,6 +49,7 @@
 			Fast = "-ffast-math",
 		},
 		strictaliasing = gcc.shared.strictaliasing,
+		openmp = gcc.shared.openmp,
 		optimize = {
 			Off = "-O0",
 			On = "-O2",
