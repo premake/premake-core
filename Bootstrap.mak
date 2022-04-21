@@ -88,7 +88,7 @@ mingw: mingw-clean
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lole32 -lversion
 	./build/bootstrap/premake_bootstrap embed
 	./build/bootstrap/premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=mingw gmake2
-	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM)
+	$(MAKE) -C build/bootstrap config=$(CONFIG)_$(PLATFORM:x86=win32)
 
 macosx: osx
 
