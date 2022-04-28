@@ -8,6 +8,8 @@
 
 #if PLATFORM_WINDOWS
 #include <objbase.h>
+#elif PLATFORM_LINUX
+#include <uuid/uuid.h>
 #endif
 
 
@@ -49,6 +51,8 @@ int os_uuid(lua_State* L)
 	{
 #if PLATFORM_WINDOWS
 		CoCreateGuid((GUID*)bytes);
+#elif PLATFORM_LINUX
+		uuid_generate(bytes);
 #else
 		int result;
 
