@@ -248,7 +248,7 @@
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework", "Foundation.framework", "Security.framework", "readline" }
 			
-		filter "system:linux or macosx"
+		filter "system:linux"
 			links		{ "uuid" }
 
 		filter { "system:macosx", "action:gmake" }
