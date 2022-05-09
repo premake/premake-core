@@ -251,8 +251,7 @@ end
 function proj.targetName(prj)
 	if isProject(prj) then
 		local name = prj.name
-		local ext = '.exe'
-		wl('TARGET = $(TARGETDIR)/%s%s', name, ext)
+		wl('TARGET = $(TARGETDIR)/%s', name)
 	else
 		--- TODO: Override target name
 	end
