@@ -64,6 +64,9 @@ project 'Premake6'
 	filter { 'system:windows', 'configurations:Release' }
 		flags { 'NoIncrementalLink', 'LinkTimeOptimization' }
 
+	filter 'system:linux'
+		links { 'uuid' }
+
 	filter 'system:linux or bsd or hurd'
 		defines { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' }
 		links { 'm' }
