@@ -20,6 +20,6 @@ function GmakeProjTargetTests.DefaultTarget()
 	proj.targetName(prj)
 
 	test.capture [[
-TARGET = $(TARGETDIR)/MyProject.exe
+TARGET = $(TARGETDIR)/MyProject
 	]]
 end
