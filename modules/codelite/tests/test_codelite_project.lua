@@ -100,3 +100,11 @@
     </GlobalSettings>
 		]]
 	end
+
+	function suite.OnProject_EmptySourceFiles()
+		prepare()
+		codelite.project.files(prj)
+		test.capture [[
+  <VirtualDirectory Name="MyProject"/>
+		]]
+	end

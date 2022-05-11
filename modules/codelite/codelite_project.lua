@@ -116,6 +116,11 @@
 
 	function m.files(prj)
 		local tr = project.getsourcetree(prj)
+		if #tr.children == 0 then
+			-- handle project without files
+			_p(1, '<VirtualDirectory Name="%s"/>', tr.name)
+			return
+		end
 		tree.traverse(tr, {
 			-- folders are handled at the internal nodes
 			onbranchenter = function(node, depth)
