@@ -128,7 +128,7 @@
 		local tr = p.workspace.grouptree(wks)
 		tree.traverse(tr, {
 			onbranch = function(n)
-				table.insert(groups, n.path)
+				table.insert(groups, p.esc(n.path))
 			end
 		})
 
@@ -146,7 +146,7 @@
 		local tr = p.workspace.grouptree(wks)
 		tree.traverse(tr, {
 			onbranch = function(n)
-				local rule = n.path .. ":"
+				local rule = p.esc(n.path) .. ":"
 				local projectTargets = {}
 				local groupTargets = {}
 				for i, c in pairs(n.children)
