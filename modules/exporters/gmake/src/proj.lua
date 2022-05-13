@@ -76,6 +76,40 @@ local function isProject(obj)
 end
 
 
+local function getCppFlags(cfg, toolset)
+	return {}
+end
+
+
+local function getCFlags(cfg, toolset)
+	local flags = {}
+	table.insert(flags, toolset.getArchitectureFlags(cfg.gmake_architecture))
+	return flags
+end
+
+
+local function getCxxFlags(cfg, toolset)
+	local flags = getCFlags(cfg, toolset)
+
+	return flags
+end
+
+
+local function getLinkerFlags(cfg, toolset)
+	local flags = {}
+
+	local sysLibDirs = toolset.getLibDirs({ toolset.getSystemLibDirs(cfg.gmake_architecture) })
+
+	table.insert(flags, toolset.getArchitectureFlags(cfg.gmake_architecture))
+	
+	if sysLibDirs:len() > 0 then
+		table.insert(flags, sysLibDirs)
+	end
+
+	return flags
+end
+
+
 ---
 -- Export the project's `.makefile` file.
 --
@@ -160,26 +194,25 @@ end
 ---
 function proj.includeDirs(prj)
 	if isProject(prj) then
-		local includeDirs = prj.includeDirs
-		if includeDirs ~= nil and #includeDirs > 0 then
-			local includes = table.map(includeDirs, function(key, value)
-				return '-I' .. path.getRelative(prj.location, value)
-			end)
+		local includeDirs = table.map(prj.includeDirs or {}, function(key, value)
+			return path.getRelative(prj.location, value)
+		end)
 
-			wl('INCLUDES = %s', table.concat(includes, ' '))
+
+		if #includeDirs > 0 then
+			local includes = prj.tools.getIncludes(includeDirs)
+
+			wl('INCLUDES = %s', includes)
 		else
 			wl('INCLUDES =')
 		end
 	else
-		local cfg = prj
-		local configIncludeDirs = cfg.includeDirs
-		if configIncludeDirs ~= nil and #configIncludeDirs > 0 then
-			local includeDirString = table.concat(table.map(configIncludeDirs, function(key, value)
-				local relative = path.getRelative(cfg.project.location, value)
-				return '-I' .. relative
-			end), ' ')
+		local includeDirs = table.map(prj.includeDirs or {}, function(key, value)
+			return path.getRelative(prj.project.location, value)
+		end)
 
-			wl('INCLUDES += %s', includeDirString)
+		if #includeDirs > 0 then
+			wl('INCLUDES += %s', prj.tools.getIncludes(includeDirs))
 		end
 	end
 end
@@ -192,8 +225,8 @@ end
 --  project to print defines of
 ---
 function proj.defines(prj)
-	local defs = proj.impl.definesString(prj)
-	if defs ~= nil then
+	local defs = prj.tools.getDefines(prj.defines or {})
+	if #defs > 0 then
 		wl('DEFINES += %s', defs)
 	else
 		wl('DEFINES +=')
@@ -266,8 +299,7 @@ end
 ---
 function proj.cppFlags(prj)
 	if isProject(prj) then
-		local toolset = prj.compiler
-		local flags = toolset.getCppFlags(prj)
+		local flags = getCppFlags(prj, prj.tools)
 
 		if #flags > 0 then
 			wl('ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP %s $(DEFINES) $(INCLUDES)', table.concat(flags, ' '))
@@ -275,9 +307,7 @@ function proj.cppFlags(prj)
 			wl('ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)')
 		end
 	else
-		local cfg = prj
-		local toolset = cfg.compiler
-		local flags = toolset.getCppFlags(cfg)
+		local flags = getCppFlags(prj, prj.tools)
 	
 		if #flags > 0 then
 			wl('ALL_CPPFLAGS += %s', table.concat(flags, ' '))
@@ -294,8 +324,7 @@ end
 ---
 function proj.cFlags(prj)
 	if isProject(prj) then
-		local toolset = prj.compiler
-		local flags = toolset.getCFlags(prj)
+		local flags = getCFlags(prj, prj.tools)
 
 		if #flags > 0 then
 			wl('ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) %s', table.concat(flags, ' '))
@@ -303,9 +332,7 @@ function proj.cFlags(prj)
 			wl('ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)')
 		end
 	else
-		local cfg = prj
-		local toolset = cfg.compiler
-		local flags = toolset.getCFlags(cfg)
+		local flags = getCFlags(prj, prj.tools)
 
 		if #flags > 0 then
 			wl('ALL_CFLAGS += %s', table.concat(flags, ' '))
@@ -322,8 +349,7 @@ end
 ---
 function proj.cxxFlags(prj)
 	if isProject(prj) then
-		local toolset = prj.compiler
-		local flags = toolset.getCxxFlags(prj)
+		local flags = getCxxFlags(prj, prj.tools)
 	
 		if #flags > 0 then
 			wl('ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) %s', table.concat(flags, ' '))
@@ -331,9 +357,7 @@ function proj.cxxFlags(prj)
 			wl('ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)')
 		end
 	else
-		local cfg = prj
-		local toolset = cfg.compiler
-		local flags = toolset.getCxxFlags(cfg)
+		local flags = getCxxFlags(prj, prj.tools)
 	
 		if #flags > 0 then
 			wl('ALL_CXXFLAGS += %s', table.concat(flags, ' '))
@@ -350,8 +374,7 @@ end
 ---
 function proj.linkFlags(prj)
 	if isProject(prj) then
-		local toolset = prj.linker
-		local flags = toolset.getLinkerFlags(prj)
+		local flags = getLinkerFlags(prj, prj.tools)
 
 		if #flags > 0 then
 			wl('ALL_LDFLAGS = $(LDFLAGS) %s', table.concat(flags, ' '))
@@ -359,9 +382,7 @@ function proj.linkFlags(prj)
 			wl('ALL_LDFLAGS = $(LDFLAGS)')
 		end
 	else
-		local cfg = prj
-		local toolset = cfg.linker
-		local flags = toolset.getLinkerFlags(cfg)
+		local flags = getLinkerFlags(prj, prj.tools)
 
 		if #flags then
 			wl('ALL_LDFLAGS += %s', table.concat(flags, ' '))

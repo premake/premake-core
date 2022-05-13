@@ -5,7 +5,7 @@ local GmakeProjectRulesTests = test.declare('GmakeProjectRulesTests', 'gmake-wks
 
 
 ---
--- Tests the outputted proejct rules with no projects in the solution.
+-- Tests the outputted project rules with no projects in the solution.
 ---
 function GmakeProjectRulesTests.NoProjects()
 	workspace('MyWorkspace', function ()
@@ -22,7 +22,7 @@ end
 
 
 ---
--- Tests the outputted proejct rules with a single project in the solution.
+-- Tests the outputted project rules with a single project in the solution.
 ---
 function GmakeProjectRulesTests.SingleProject()
 	workspace('MyWorkspace', function ()
@@ -46,7 +46,7 @@ endif
 end
 
 ---
--- Tests the outputted proejct rules with multiple projects in the solution.
+-- Tests the outputted project rules with multiple projects in the solution.
 ---
 function GmakeProjectRulesTests.MultipleProjects()
 	workspace('MyWorkspace', function ()
@@ -74,6 +74,31 @@ MyProject2:
 ifneq (, $(config))
 	@echo "==== Building MyProject2 ($(config)) ===="
 	@${MAKE} --no-print-directory -C . -f MyProject2.mak config=$(config)
+endif
+	]]
+end
+
+
+---
+-- Tests the outputted project rules with a single project with a space in the name in the solution.
+---
+function GmakeProjectRulesTests.SingleProjectWithSpace()
+	workspace('MyWorkspace', function ()
+		configurations({})
+
+		project('My Project', function ()
+		end)
+	end)
+
+	local wk = gmake.buildDom().workspaces['MyWorkspace']
+
+	wks.projectRules(wk)
+
+	test.capture [[
+My\ Project:
+ifneq (, $(config))
+	@echo "==== Building My Project ($(config)) ===="
+	@${MAKE} --no-print-directory -C . -f MyProject.mak config=$(config)
 endif
 	]]
 end

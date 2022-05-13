@@ -139,7 +139,7 @@ end
 ---
 function wks.projects(wk)
 	local projects = table.map(wk.projects, function(key, value)
-		return value.name
+		return gmake.esc(value.name)
 	end)
 	if #projects > 0 then
 		wl('PROJECTS := %s', table.concat(projects, ' '))
@@ -175,9 +175,9 @@ function wks.projectRules(wk)
 		local deps = {}
 
 		if #deps > 0 then
-			wl('%s: %s', prj.name, table.concat(deps, ' '))
+			wl('%s: %s', gmake.esc(prj.name), table.concat(deps, ' '))
 		else
-			wl('%s:', prj.name)
+			wl('%s:', gmake.esc(prj.name))
 		end
 		wl('ifneq (, $(config))')
 		export.indent()
@@ -187,7 +187,7 @@ function wks.projectRules(wk)
 		local prjName = path.getName(prjPath)
 
 		wl('@echo "==== Building %s ($(config)) ===="', prj.name)
-		wl('@${MAKE} --no-print-directory -C %s -f %s config=$(config)', prjDir, prjName)
+		wl('@${MAKE} --no-print-directory -C %s -f %s config=$(config)', gmake.esc(prjDir), gmake.esc(prjName))
 		export.outdent()
 		wl('endif')
 		wl()
@@ -209,7 +209,7 @@ function wks.cleanRule(wk)
 		local prjDir = path.getDirectory(path.getRelative(wk.location, prjPath))
 		local prjName = path.getName(prjPath)
 
-		wl('@${MAKE} --no-print-directory -C %s -f %s clean', prjDir, prjName)
+		wl('@${MAKE} --no-print-directory -C %s -f %s clean', gmake.esc(prjDir), gmake.esc(prjName))
 	end
 	export.outdent()
 	wl()
@@ -239,7 +239,7 @@ function wks.helpRule(wk)
 	wl('@echo "	clean"')
 	wl('@echo "	help [Prints this message]"')
 	for _, prj in ipairs(wk.projects) do
-		wl('@echo "	%s"', prj.name)
+		wl('@echo "	%s"', gmake.esc(prj.name))
 	end
 	wl('@echo ""')
 	wl('@echo "For more information, see https://premake.github.io"')
