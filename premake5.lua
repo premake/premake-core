@@ -234,7 +234,12 @@
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
+		
+		filter { "system:linux or bsd or hurd", "toolset:not nvhpc" }
 			linkoptions { "-rdynamic" }
+		
+		filter { "system:linux or bsd or hurd", "toolset:nvhpc" }
+			linkoptions { "-Wl,-export-dynamic" }
 
 		filter "system:linux or hurd"
 			links       { "dl", "rt" }
