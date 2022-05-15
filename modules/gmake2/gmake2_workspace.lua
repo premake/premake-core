@@ -183,7 +183,8 @@
 		for prj in p.workspace.eachproject(wks) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
-			_p('%s:%s', p.esc(prj.name), gmake2.list(deps))
+
+			_p('%s:%s', p.esc(prj.name), gmake2.list(p.esc(deps)))
 
 			local cfgvar = gmake2.tovar(prj.name)
 			_p('ifneq (,$(%s_config))', cfgvar)
