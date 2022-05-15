@@ -2,6 +2,8 @@
 
 #if PLATFORM_WINDOWS
 #include <Objbase.h>
+#elif PLATFORM_LINUX
+#include <uuid/uuid.h>
 #endif
 
 
@@ -39,6 +41,8 @@ int pmk_uuid(char* result, const char* value)
 	{
 #if PLATFORM_WINDOWS
 		CoCreateGuid((GUID*)bytes);
+#elif PLATFORM_LINUX
+		uuid_generate(bytes);
 #else
 		/* not sure how to get a UUID for non-Windows platforms, so fake it */
 		FILE* rnd = fopen("/dev/urandom", "rb");
