@@ -47,10 +47,11 @@
 		error("Unsupported host os", 0)
 	end
 
-	local usage = 'usage is: package <branch> <type> [<compiler>]\n' ..
+	local usage = 'usage is: package <branch> <type> [<compiler>] [force]\n' ..
 		'       <branch> is the name of the release branch to target\n' ..
 		'       <type> is one of "source" or "binary"\n' ..
-		'       <compiler> (default: ' .. allowedCompilers[1] .. ') is one of ' .. table.implode(allowedCompilers, "", "", " ")
+		'       <compiler> (default: ' .. allowedCompilers[1] .. ') is one of ' .. table.implode(allowedCompilers, "", "", " ") .. '\n' ..
+		'       [force] if set this bypasses interactive prompts'
 
 	if #_ARGS ~= 2 and #_ARGS ~= 3 then
 		error(usage, 0)
@@ -59,6 +60,13 @@
 	local branch = _ARGS[1]
 	local kind = _ARGS[2]
 	local compiler = _ARGS[3] or allowedCompilers[1]
+
+	-- TODO: Figure out a better way to parse multiple optional args to this script
+	if compiler == 'force' and not table.contains(allowedCompilers, compiler) then
+		compiler = allowedCompilers[1]
+	end
+
+	local forced = _ARGS[4] == 'force' or _ARGS[3] == 'force' or false 
 
 	if kind ~= "source" and kind ~= "binary" then
 		print("Invalid package kind: "..kind)
@@ -96,7 +104,7 @@
 --
 
 	os.chdir("..")
-	local text = os.outputof(string.format('git show %s:src/host/premake.h', branch))
+	local text = os.outputof(string.format('git show HEAD:src/host/premake.h'))
 	local _, _, version = text:find('VERSION%s*"([%w%p]+)"')
 
 	local pkgName = "premake-" .. version
@@ -121,7 +129,9 @@
 	printf("  ...from the %s branch", branch)
 	printf("")
 	printf("Does this look right to you? If so, press [Enter] to begin.")
-	io.read()
+	if not forced then
+		io.read()
+	end
 
 
 --
@@ -134,9 +144,19 @@
 	os.rmdir(pkgName)
 
 	print("Cloning source code")
-	local z = execQuiet("git clone .. %s -b %s --recurse-submodules --depth 1 --shallow-submodules", pkgName, branch)
+	local z = execQuiet("git clone .. %s --recurse-submodules --depth 1 --shallow-submodules", pkgName)
 	if not z then
 		error("clone failed", 0)
+	end
+
+	z = execQuiet("git fetch origin %s:pr", branch)
+	if not z then
+		error("fetch failed", 0)
+	end
+
+	z = execQuiet("git checkout pr")
+	if not z then
+		error("checkout failed")
 	end
 
 	os.chdir(pkgName)

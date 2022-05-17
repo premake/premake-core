@@ -70,3 +70,28 @@ jobs:
       with:
         name: premake-windows-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+  source:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [release]
+        platform: [x64]
+    needs: [linux, macosx, windows] # Pass all builds before creating source bundle
+    steps:
+    - name: Checkout # Need to checkout to get the package action
+      uses: actions/checkout@v3
+    - name: Download Release
+      uses: actions/download-artifact@v3
+      with:
+        name: premake-linux-${{ matrix.platform }}
+    - name: Generate Sources for Push
+      if: github.event_name != 'pull_request'
+      run: chmod 555 ./premake5 && ./premake5 package ${{ github.head_ref || github.ref_name }} source force
+    - name: Generate Sources for Pull Request
+      if: github.event_name == 'pull_request'
+      run: chmod 555 ./premake5 && ./premake5 package pull/${{ github.event.pull_request.number }}/head source force
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: premake-src
+        path: release/
