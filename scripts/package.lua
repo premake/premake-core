@@ -24,6 +24,7 @@
 
 	if os.ishost("windows") then
 		allowedCompilers = {
+			"vs2022",
 			"vs2019",
 			"vs2017",
 			"vs2015",
