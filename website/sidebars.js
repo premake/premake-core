@@ -47,7 +47,8 @@ module.exports = {
 			type: 'category',
 			label: 'Guides',
 			items: [
-				'Sharing-Configuration-Settings'
+				'Sharing-Configuration-Settings',
+				'Embedding-Frameworks-in-Xcode'
 			]
 		},
 		{
