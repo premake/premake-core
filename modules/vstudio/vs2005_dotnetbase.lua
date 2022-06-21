@@ -81,6 +81,14 @@
 		_p(1,'<PropertyGroup>')
 		local cfg = project.getfirstconfig(prj)
 		p.callArray(dotnetbase.elements.projectProperties, cfg)
+		local platforms = prj.platforms
+		if platforms ~= nil and #platforms > 0 then
+			table.replace(platforms, 'Win32', 'x86')
+			table.replace(platforms, 'x86_64', 'x64')
+			_p(2, '<Platforms>%s</Platforms>', table.concat(platforms, ';'))
+		else
+			_p(2, '<Platforms>AnyCPU</Platforms>')
+		end
 		_p(1,'</PropertyGroup>')
 	end
 

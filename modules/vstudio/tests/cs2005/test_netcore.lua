@@ -129,6 +129,7 @@ function suite.allowUnsafeProperty_core()
 		<TargetFramework>netcoreapp2.2</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
     ]]
 end
