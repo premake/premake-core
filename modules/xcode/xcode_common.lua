@@ -1556,6 +1556,7 @@
 			["-ffast-math"]             = cfg.floatingpoint == "Fast",
 			["-fomit-frame-pointer"]    = cfg.omitframepointer == "On",
 			["-fno-omit-frame-pointer"] = cfg.omitframepointer == "Off",
+			["-fopenmp"]                = cfg.openmp == "On"
 		}
 
 		local flags = { }
