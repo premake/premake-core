@@ -1,7 +1,7 @@
 Specifies the file search paths for `using` statements.
 
 ```lua
-usingsdirs { "paths" }
+usingdirs { "paths" }
 ```
 
 ### Parameters ###
