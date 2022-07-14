@@ -77,7 +77,7 @@
 -- @param silent
 --		By default, the require function throws an error when the
 --		module could not be loaded.
---		If silent is true, the function will just return false nad the error message. 
+--		If silent is true, the function will just return false and the error message. 
 -- @return
 --    If successful, the loaded module, which is also stored into the
 --    global package.loaded table.
