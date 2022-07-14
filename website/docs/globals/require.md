@@ -14,7 +14,7 @@ Premake will use its [extended set of module locations](Locating-Scripts.md) whe
 
 `silent` will change the default error handling behavior.
 By default, `require` raises an error if the module could not be loaded
-or if the module version odes not meat the `versions` criteria.
+or if the module version does not meet the `versions` criteria.
 If `silent` is set, the `require` function will return `false` and the error message instead.
 
 
