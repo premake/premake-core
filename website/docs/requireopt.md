@@ -15,7 +15,7 @@ requireopt ("modname", "versions")
 ### Examples ###
 
 ```
-local optionalmodule, message = require "not-mandatory-but-recommended"
+local optionalmodule, message = requireopt "not-mandatory-but-recommended"
 if not optionalmodule
 then
 	premake.warn ("You will not run this at full power: " .. message)
