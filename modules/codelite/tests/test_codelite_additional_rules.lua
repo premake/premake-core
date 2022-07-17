@@ -111,11 +111,11 @@
         <CustomPostBuild/>
         <CustomPreBuild>test.obj test2.obj
 test.obj: test.rule
-	@echo Rule-ing test.rule
+	@echo "Rule-ing test.rule"
 	dorule -p       "test.rule"
 
 test2.obj: test2.rule
-	@echo Rule-ing test2.rule
+	@echo "Rule-ing test2.rule"
 	dorule -p -p2      "test2.rule"
 </CustomPreBuild>
       </AdditionalRules>
@@ -156,19 +156,19 @@ test2.obj: test2.rule
         <CustomPostBuild/>
         <CustomPreBuild>test.obj test2.obj test3.obj test4.obj
 test.obj: test.rule
-	@echo Rule-ing test.rule
+	@echo "Rule-ing test.rule"
 	dorule   testValue1 testValue2     "test.rule"
 
 test2.obj: test2.rule
-	@echo Rule-ing test2.rule
+	@echo "Rule-ing test2.rule"
 	dorule    -StestValue1 -StestValue2    "test2.rule"
 
 test3.obj: test3.rule
-	@echo Rule-ing test3.rule
+	@echo "Rule-ing test3.rule"
 	dorule     testValue1,testValue2   "test3.rule"
 
 test4.obj: test4.rule
-	@echo Rule-ing test4.rule
+	@echo "Rule-ing test4.rule"
 	dorule      -OtestValue1,testValue2  "test4.rule"
 </CustomPreBuild>
       </AdditionalRules>
@@ -197,11 +197,11 @@ test4.obj: test4.rule
         <CustomPostBuild/>
         <CustomPreBuild>test.obj test2.obj
 test.obj: test.rule
-	@echo Rule-ing test.rule
+	@echo "Rule-ing test.rule"
 	dorule       S0 "test.rule"
 
 test2.obj: test2.rule
-	@echo Rule-ing test2.rule
+	@echo "Rule-ing test2.rule"
 	dorule       S1 "test2.rule"
 </CustomPreBuild>
       </AdditionalRules>
@@ -221,7 +221,27 @@ test2.obj: test2.rule
         <CustomPostBuild/>
         <CustomPreBuild>toto.c
 toto.c: toto.txt extra_dependency
-	@echo Some message
+	@echo "Some message"
+	test
+	test toto.c
+</CustomPreBuild>
+      </AdditionalRules>]]
+	end
+
+	function suite.buildCommand_escaping()
+		files {"foo.txt", "bar.txt"}
+		buildinputs { "toto.txt", "extra_dependency" }
+		buildoutputs { "toto.c" }
+		buildcommands { "test", "test toto.c" }
+		buildmessage '"Some message"'
+		prepare()
+		codelite.project.additionalRules(cfg)
+		test.capture [[
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>toto.c
+toto.c: toto.txt extra_dependency
+	@echo "\"Some message\""
 	test
 	test toto.c
 </CustomPreBuild>
@@ -242,12 +262,12 @@ toto.c: toto.txt extra_dependency
         <CustomPostBuild/>
         <CustomPreBuild>bar.c foo.c
 bar.c: bar.txt bar.h extra_dependency
-	@echo Some message
+	@echo "Some message"
 	test
 	test bar
 
 foo.c: foo.txt foo.h extra_dependency
-	@echo Some message
+	@echo "Some message"
 	test
 	test foo
 </CustomPreBuild>

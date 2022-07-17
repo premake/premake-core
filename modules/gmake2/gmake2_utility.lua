@@ -370,7 +370,7 @@
 		_p('%s: %s', outputs, dependencies)
 
 		if file.buildmessage then
-			_p('\t@echo %s', file.buildmessage)
+			_p('\t@echo %s', p.quote(file.buildmessage))
 		end
 
 		if file.buildcommands then

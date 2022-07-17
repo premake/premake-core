@@ -93,10 +93,10 @@
 # #############################################
 
 $(OBJDIR)/hello.o: src/greetings/hello.cpp
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/hello1.o: src/hello.cpp
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 		]]
@@ -115,10 +115,10 @@ $(OBJDIR)/hello1.o: src/hello.cpp
 # #############################################
 
 $(OBJDIR)/hello.o: src/hello.c
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/test.o: src/test.cpp
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 		]]
@@ -138,10 +138,10 @@ $(OBJDIR)/test.o: src/test.cpp
 # #############################################
 
 $(OBJDIR)/hello.o: src/hello.c
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/test.o: src/test.c
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 		]]
 	end
@@ -160,17 +160,17 @@ $(OBJDIR)/test.o: src/test.c
 # #############################################
 
 $(OBJDIR)/test.o: src/test.c
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 ifeq ($(config),debug)
 $(OBJDIR)/hello.o: src/hello.c
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 else ifeq ($(config),release)
 $(OBJDIR)/hello.o: src/hello.c
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 endif
@@ -198,19 +198,51 @@ endif
 
 ifeq ($(config),debug)
 obj/Debug/hello.obj: hello.x
-	@echo Compiling hello.x
+	@echo "Compiling hello.x"
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
 
 else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x
-	@echo Compiling hello.x
+	@echo "Compiling hello.x"
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 
 endif
 		]]
 	end
+
+--
+-- If a custom build rule is supplied, it should be used.
+--
+
+	function suite.customBuildRuleWithEscaping()
+		files { "hello.x" }
+		filter "files:**.x"
+			buildmessage '"Compiling %{file.name}"'
+			buildcommands {
+				'cxc -c "%{file.path}" -o "%{cfg.objdir}/%{file.basename}.xo"',
+			}
+			buildoutputs { "%{cfg.objdir}/%{file.basename}.obj" }
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+ifeq ($(config),debug)
+obj/Debug/hello.obj: hello.x
+	@echo "\"Compiling hello.x\""
+	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
+
+else ifeq ($(config),release)
+obj/Release/hello.obj: hello.x
+	@echo "\"Compiling hello.x\""
+	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
+
+endif
+		]]
+	end
+
 
 	function suite.customBuildRuleWithAdditionalInputs()
 		files { "hello.x" }
@@ -229,13 +261,13 @@ endif
 
 ifeq ($(config),debug)
 obj/Debug/hello.obj: hello.x hello.x.inc hello.x.inc2
-	@echo Compiling hello.x
+	@echo "Compiling hello.x"
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
 
 else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x hello.x.inc hello.x.inc2
-	@echo Compiling hello.x
+	@echo "Compiling hello.x"
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 
@@ -259,14 +291,14 @@ endif
 
 ifeq ($(config),debug)
 obj/Debug/hello.obj: hello.x
-	@echo Compiling hello.x
+	@echo "Compiling hello.x"
 	$(SILENT) cxc -c "hello.x" -o "obj/Debug/hello.xo"
 	$(SILENT) c2o -c "obj/Debug/hello.xo" -o "obj/Debug/hello.obj"
 obj/Debug/hello.other obj/Debug/hello.another: obj/Debug/hello.obj
 
 else ifeq ($(config),release)
 obj/Release/hello.obj: hello.x
-	@echo Compiling hello.x
+	@echo "Compiling hello.x"
 	$(SILENT) cxc -c "hello.x" -o "obj/Release/hello.xo"
 	$(SILENT) c2o -c "obj/Release/hello.xo" -o "obj/Release/hello.obj"
 obj/Release/hello.other obj/Release/hello.another: obj/Release/hello.obj
@@ -296,10 +328,10 @@ endif
 # #############################################
 
 test.obj: test.rule
-	@echo Rule-ing test.rule
+	@echo "Rule-ing test.rule"
 	$(SILENT) dorule -p       "test.rule"
 test2.obj: test2.rule
-	@echo Rule-ing test2.rule
+	@echo "Rule-ing test2.rule"
 	$(SILENT) dorule -p -p2      "test2.rule"
 		]]
 	end
@@ -335,16 +367,16 @@ test2.obj: test2.rule
 # #############################################
 
 test.obj: test.rule
-	@echo Rule-ing test.rule
+	@echo "Rule-ing test.rule"
 	$(SILENT) dorule   testValue1\ testValue2     "test.rule"
 test2.obj: test2.rule
-	@echo Rule-ing test2.rule
+	@echo "Rule-ing test2.rule"
 	$(SILENT) dorule    -StestValue1\ -StestValue2    "test2.rule"
 test3.obj: test3.rule
-	@echo Rule-ing test3.rule
+	@echo "Rule-ing test3.rule"
 	$(SILENT) dorule     testValue1,testValue2   "test3.rule"
 test4.obj: test4.rule
-	@echo Rule-ing test4.rule
+	@echo "Rule-ing test4.rule"
 	$(SILENT) dorule      -OtestValue1,testValue2  "test4.rule"
 		]]
 	end
@@ -370,10 +402,10 @@ test4.obj: test4.rule
 # #############################################
 
 test.obj: test.rule
-	@echo Rule-ing test.rule
+	@echo "Rule-ing test.rule"
 	$(SILENT) dorule       S0 "test.rule"
 test2.obj: test2.rule
-	@echo Rule-ing test2.rule
+	@echo "Rule-ing test2.rule"
 	$(SILENT) dorule       S1 "test2.rule"
 		]]
 	end
