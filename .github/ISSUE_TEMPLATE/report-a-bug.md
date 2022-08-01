@@ -21,6 +21,20 @@ Describe any steps you've taken to try to solve or workaround the bug.
 **How can we reproduce this?**
 Please provide a [minimal, reproducible example](https://stackoverflow.com/help/minimal-reproducible-example) we can use to replicate the problem in our own development environments. Use [code blocks](https://help.github.com/en/articles/creating-and-highlighting-code-blocks) to format code and console output nicely.
 
+- [ ] Visual Studio 2022 (vs2022)
+- [ ] Visual Studio 2019 (vs2019)
+- [ ] Visual Studio 2017 (vs2017)
+- [ ] Visual Studio 2015 (vs2015)
+- [ ] Visual Studio 2012 (vs2012)
+- [ ] Visual Studio 2010 (vs2010)
+- [ ] Visual Studio 2008 (vs2008)
+- [ ] Visual Studio 2005 (vs2005)
+- [ ] GNU Makefile (gmake)
+- [ ] GNU Makefile 2 (gmake2)
+- [ ] XCode (xcode)
+- [ ] Codelite
+- [ ] Other (Please list below)
+
 **What version of Premake are you using?**
 `premake5 --version` will show you the version. If you are running a "-dev" version, please make sure you are up to date with the latest master branch.
 
