@@ -38,7 +38,7 @@ filters.elements = {
 ---
 
 function filters.export(prj)
-	if tree.hasBranches(prj.virtualSourceTree) then
+	if tree.hasBranches(prj.sourceTree) then
 		local exportPath = prj.exportPath .. '.filters'
 		return premake.export(prj, exportPath, function ()
 			export.eol('\r\n')
