@@ -156,7 +156,7 @@
 	<CLRSupport>Pure</CLRSupport>
 		]]
 	end
-	
+
 	function suite.clrSupport_onClrNetCore()
 		clr "NetCore"
 		prepare()
@@ -353,3 +353,69 @@
 </PropertyGroup>
 		]]
 	end
+
+--
+-- If the AddressSanitizer flag is set, add the EnableASAN element.
+--
+
+function suite.onAddressSanitizer()
+	p.action.set("vs2022")
+	flags "AddressSanitizer"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableASAN>true</EnableASAN>
+</PropertyGroup>
+	]]
+end
+
+function suite.onAddressSanitizer_BeforeVS2022()
+	p.action.set("vs2019")
+	flags "AddressSanitizer"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v142</PlatformToolset>
+</PropertyGroup>
+	]]
+end
+
+--
+-- If the Fuzzer flag is set, add the EnableFuzzer element.
+--
+
+function suite.onFuzzer()
+	p.action.set("vs2022")
+	flags "Fuzzer"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableFuzzer>true</EnableFuzzer>
+</PropertyGroup>
+	]]
+end
+
+function suite.onFuzzer_BeforeVS2022()
+	p.action.set("vs2019")
+	flags "Fuzzer"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v142</PlatformToolset>
+</PropertyGroup>
+	]]
+end

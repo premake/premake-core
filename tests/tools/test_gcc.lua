@@ -356,16 +356,22 @@
 -- Check the translation of CXXFLAGS.
 --
 
-	function suite.cflags_onNoExceptions()
+	function suite.cxxflags_onNoExceptions()
 		exceptionhandling "Off"
 		prepare()
 		test.contains({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
 	end
 
-	function suite.cflags_onNoBufferSecurityCheck()
+	function suite.cxxflags_onNoBufferSecurityCheck()
 		flags { "NoBufferSecurityCheck" }
 		prepare()
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onAddressSanitizer()
+		flags { "AddressSanitizer" }
+		prepare()
+		test.contains({ "-fsanitize=address" }, gcc.getcxxflags(cfg))
 	end
 
 --

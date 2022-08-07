@@ -489,6 +489,7 @@
 		scope = "config",
 		kind  = "list:string",
 		allowed = {
+			"AddressSanitizer",
 			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
@@ -500,6 +501,7 @@
 			"FatalLinkWarnings",
 			"FloatFast",           -- DEPRECATED
 			"FloatStrict",         -- DEPRECATED
+			"Fuzzer",              -- Visual Studio 2022+ only
 			"LinkTimeOptimization",
 			"Managed",             -- DEPRECATED
 			"Maps",

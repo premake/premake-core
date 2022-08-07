@@ -154,6 +154,10 @@
 --
 
 	msc.cxxflags = {
+		flags = {
+			AddressSanitizer = "/fsanitize=address",
+			Fuzzer = "/fsanitize=fuzzer",
+		},
 		exceptionhandling = {
 			Default = "/EHsc",
 			On = "/EHsc",

@@ -195,6 +195,7 @@
 				m.clrSupport,
 				m.characterSet,
 				m.platformToolset,
+				m.sanitizers,
 				m.toolsVersion,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
@@ -2503,6 +2504,17 @@
 				end
 			else
 				m.element("PlatformToolset", nil, version)
+			end
+		end
+	end
+
+	function m.sanitizers(cfg)
+		if _ACTION >= "vs2022" then
+			if cfg.flags.AddressSanitizer then
+				m.element("EnableASAN", nil, "true")
+			end
+			if cfg.flags.Fuzzer then
+				m.element("EnableFuzzer", nil, "true")
 			end
 		end
 	end

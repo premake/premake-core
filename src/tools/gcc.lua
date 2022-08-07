@@ -203,6 +203,7 @@
 			Off = "-fno-exceptions"
 		},
 		flags = {
+			AddressSanitizer = "-fsanitize=address",
 			NoBufferSecurityCheck = "-fno-stack-protector",
 		},
 		cppdialect = {
