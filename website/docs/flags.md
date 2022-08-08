@@ -10,8 +10,6 @@ flags { "flag_list" }
 
 | Flag                  | Description                                                         | Notes |
 |-----------------------|---------------------------------------------------------------------|----------------|
-| AddressSanitizer      | Enables compiler support for AddressSanitizer. | Visual Studio support starts with 2022. |
-| Fuzzer                | Enables support for LibFuzzer, a coverage-guided fuzzing library. | Visual Studio 2022+ only. |
 | ExcludeFromBuild      | Exclude a source code file from the build, for the current configuration. |
 | FatalCompileWarnings  | Treat compiler warnings as errors.                                  |
 | FatalLinkWarnings     | Treat linker warnings as errors.                                    |

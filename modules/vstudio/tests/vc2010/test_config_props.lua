@@ -355,12 +355,12 @@
 	end
 
 --
--- If the AddressSanitizer flag is set, add the EnableASAN element.
+-- If the sanitizer flags are set, add the correct elements.
 --
 
-function suite.onAddressSanitizer()
+function suite.onSanitizeAddress()
 	p.action.set("vs2022")
-	flags "AddressSanitizer"
+	sanitize { "Address" }
 	prepare()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -373,9 +373,9 @@ function suite.onAddressSanitizer()
 	]]
 end
 
-function suite.onAddressSanitizer_BeforeVS2022()
+function suite.onSanitizeAddress_BeforeVS2022()
 	p.action.set("vs2019")
-	flags "AddressSanitizer"
+	sanitize { "Address" }
 	prepare()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -387,13 +387,9 @@ function suite.onAddressSanitizer_BeforeVS2022()
 	]]
 end
 
---
--- If the Fuzzer flag is set, add the EnableFuzzer element.
---
-
-function suite.onFuzzer()
+function suite.onSanitizeFuzzer()
 	p.action.set("vs2022")
-	flags "Fuzzer"
+	sanitize { "Fuzzer" }
 	prepare()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -406,9 +402,9 @@ function suite.onFuzzer()
 	]]
 end
 
-function suite.onFuzzer_BeforeVS2022()
+function suite.onSanitizeFuzzer_BeforeVS2022()
 	p.action.set("vs2019")
-	flags "Fuzzer"
+	sanitize { "Fuzzer" }
 	prepare()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -416,6 +412,22 @@ function suite.onFuzzer_BeforeVS2022()
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
 	<PlatformToolset>v142</PlatformToolset>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeAddressFuzzer()
+	p.action.set("vs2022")
+	sanitize { "Address", "Fuzzer" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableASAN>true</EnableASAN>
+	<EnableFuzzer>true</EnableFuzzer>
 </PropertyGroup>
 	]]
 end

@@ -441,15 +441,22 @@
 		test.contains("/GR-", msc.getcxxflags(cfg))
 	end
 
-	function suite.cxxflags_onAddressSanitizer()
-		flags { "AddressSanitizer" }
+	function suite.cxxflags_onSanitizeAddress()
+		sanitize { "Address" }
 		prepare()
 		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
 	end
 
-	function suite.cxxflags_onFuzzer()
-		flags { "Fuzzer" }
+	function suite.cxxflags_onSanitizeFuzzer()
+		sanitize { "Fuzzer" }
 		prepare()
+		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onSanitizeAddressFuzzer()
+		sanitize { "Address", "Fuzzer" }
+		prepare()
+		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
 		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
 	end
 

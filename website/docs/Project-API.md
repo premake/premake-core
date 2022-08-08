@@ -150,6 +150,7 @@
 | [rule](rule.md)                                           |  |
 | [rules](rules.md)                                         |  |
 | [runtime](runtime.md)                                     |  |
+| [sanitize](sanitize.md)                                   | Enable `fsanitize` compiler options |
 | [sharedlibtype](sharedlibtype.md)                         |  |
 | [startproject](startproject.md)                           |  |
 | [strictaliasing](strictaliasing.md)                       |  |

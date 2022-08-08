@@ -368,8 +368,8 @@
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
 	end
 
-	function suite.cxxflags_onAddressSanitizer()
-		flags { "AddressSanitizer" }
+	function suite.cxxflags_onSanitizeAddress()
+		sanitize { "Address" }
 		prepare()
 		test.contains({ "-fsanitize=address" }, gcc.getcxxflags(cfg))
 	end

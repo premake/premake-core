@@ -190,7 +190,7 @@
 			"HeaderUnit"
 		}
 	}
- 
+
 	api.register {
 		name = "allmodulespublic",
 		scope = "config",
@@ -489,7 +489,6 @@
 		scope = "config",
 		kind  = "list:string",
 		allowed = {
-			"AddressSanitizer",
 			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
@@ -501,7 +500,6 @@
 			"FatalLinkWarnings",
 			"FloatFast",           -- DEPRECATED
 			"FloatStrict",         -- DEPRECATED
-			"Fuzzer",              -- Visual Studio 2022+ only
 			"LinkTimeOptimization",
 			"Managed",             -- DEPRECATED
 			"Maps",
@@ -1118,6 +1116,16 @@
 		name = "rules",
 		scope = "project",
 		kind = "list:string",
+	}
+
+	api.register {
+		name = "sanitize",
+		scope = "config",
+		kind = "list:string",
+		allowed = {
+			"Address",
+			"Fuzzer",              -- Visual Studio 2022+ only
+		}
 	}
 
 	api.register {

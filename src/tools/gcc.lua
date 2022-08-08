@@ -203,7 +203,6 @@
 			Off = "-fno-exceptions"
 		},
 		flags = {
-			AddressSanitizer = "-fsanitize=address",
 			NoBufferSecurityCheck = "-fno-stack-protector",
 		},
 		cppdialect = {
@@ -229,6 +228,9 @@
 		},
 		rtti = {
 			Off = "-fno-rtti"
+		},
+		sanitize = {
+			Address = "-fsanitize=address",
 		},
 		visibility = {
 			Default = "-fvisibility=default",
