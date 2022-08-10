@@ -3,6 +3,7 @@ local export = require('export')
 local path = require('path')
 local premake = require('premake')
 local xml = require('xml')
+local set = require('set')
 
 local vstudio = select(1, ...)
 
@@ -568,7 +569,7 @@ end
 
 function vcxproj.additionalIncludeDirectories(cfg, paths)
 	if #paths > 0 then
-		local relativePaths = path.translate(cfg.project:makeRelative(cfg.includeDirs))
+		local relativePaths = path.translate(cfg.project:makeRelative(paths))
 		local value = string.format('%s;%%(AdditionalIncludeDirectories)', table.concat(relativePaths, ';'))
 		_element('AdditionalIncludeDirectories', cfg, value)
 	end
@@ -596,7 +597,8 @@ end
 
 
 function vcxproj.clCompileAdditionalIncludeDirectories(cfg)
-	vcxproj.additionalIncludeDirectories(cfg, cfg.includeDirs)
+	local includeDirs = set.join(cfg.includeDirs.public, cfg.includeDirs.private)
+	vcxproj.additionalIncludeDirectories(cfg, includeDirs)
 end
 
 

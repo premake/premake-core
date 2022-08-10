@@ -6,6 +6,7 @@ local array = require('array')
 local export = require('export')
 local path = require('path')
 local premake = require('premake')
+local set = require('set')
 
 local gmake = select(1, ...)
 
@@ -160,7 +161,7 @@ end
 ---
 function proj.includeDirs(prj)
 	if isProject(prj) then
-		local includeDirs = prj.includeDirs
+		local includeDirs = set.join(prj.includeDirs.public, prj.includeDirs.private)
 		if includeDirs ~= nil and #includeDirs > 0 then
 			local includes = table.map(includeDirs, function(key, value)
 				return '-I' .. path.getRelative(prj.location, value)
@@ -172,7 +173,7 @@ function proj.includeDirs(prj)
 		end
 	else
 		local cfg = prj
-		local configIncludeDirs = cfg.includeDirs
+		local configIncludeDirs = set.join(cfg.includeDirs.public, cfg.includeDirs.private)
 		if configIncludeDirs ~= nil and #configIncludeDirs > 0 then
 			local includeDirString = table.concat(table.map(configIncludeDirs, function(key, value)
 				local relative = path.getRelative(cfg.project.location, value)
