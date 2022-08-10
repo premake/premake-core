@@ -57,8 +57,17 @@ local function receive(field, inner, currentValues, incomingValues, plain)
 	end
 
 	array.forEach(field.groups, function(k)
-		if incomingValues[k] then
-			incomingValues[k] = inner(field, nil, incomingValues[k], plain)
+		local value = incomingValues[k]
+		if value then
+			if type(value) == 'table' then
+				value = array.map(value, function(v)
+					return inner(field, nil, v, plain)
+				end)
+			else
+				value = inner(field, nil, value, plain)
+			end
+
+			incomingValues[k] = value
 		end
 	end)
 
