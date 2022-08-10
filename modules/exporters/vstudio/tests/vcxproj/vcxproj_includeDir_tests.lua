@@ -31,7 +31,7 @@ end
 
 function VsVcxIncludeDirTests.clCompile_onNoValues()
 	local prj = _execute(function () end)
-	vcxproj.clCompileAdditionalIncludeDirectories(prj)
+	vcxproj.clCompileAdditionalIncludeDirectories(prj.configs['Debug'])
 	test.noOutput()
 end
 
@@ -87,5 +87,53 @@ function VsVcxIncludeDirTests.clCompile_perFile()
 		<AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">include\hello;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	</ClCompile>
 </ItemGroup>
+	]]
+end
+
+
+---
+-- Inherit public paths from projectLinks.
+---
+
+function VsVcxIncludeDirTests.clCompile_inheritsPublicPathsFromProjectLinksRecursively()
+	workspace('MyWorkspace', function ()
+		configurations { 'Debug', 'Release' }
+
+		project('MyProject', function ()
+			includeDirs { 'include/lua', 'include/zlib' }
+			projectLinks { 'MyLib1' }
+		end)
+
+		project('MyLib1', function ()
+			projectLinks { 'MyLib2' }
+			includeDirs {
+				public = {
+					'mylib1/public',
+				},
+				private = {
+					'mylib1/private',
+				},
+			}
+		end)
+
+		project('MyLib2', function ()
+			includeDirs {
+				public = {
+					'mylib2/public',
+				},
+				private = {
+					'mylib2/private',
+				},
+			}
+		end)
+	end)
+
+	local prj = vcxproj.prepare(vstudio.buildDom(2015)
+		.workspaces['MyWorkspace']
+		.projects['MyProject'])
+
+	vcxproj.clCompileAdditionalIncludeDirectories(prj.configs['Debug'])
+	test.capture [[
+<AdditionalIncludeDirectories>include\lua;include\zlib;mylib1\public;mylib2\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	]]
 end

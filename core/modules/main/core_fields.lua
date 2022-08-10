@@ -69,6 +69,12 @@ Field.register({
 })
 
 Field.register({
+	-- Name up for discussion
+	name = 'projectLinks',
+	kind = 'set:string',
+})
+
+Field.register({
 	name = 'kind',
 	kind = 'string',
 	allowed = {

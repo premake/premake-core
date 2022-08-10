@@ -597,8 +597,7 @@ end
 
 
 function vcxproj.clCompileAdditionalIncludeDirectories(cfg)
-	local includeDirs = set.join(cfg.includeDirs.public, cfg.includeDirs.private)
-	vcxproj.additionalIncludeDirectories(cfg, includeDirs)
+	vcxproj.additionalIncludeDirectories(cfg, cfg:fetchAllIncludeDirs())
 end
 
 
