@@ -290,7 +290,7 @@ local function _getCompilerSwitches(cfg)
 		return '-D' .. value
 	end)
 
-	local includeDirs = set.join(cfg.includeDirs.public, cfg.includeDirs.private)
+	local includeDirs = cfg:fetchAllIncludeDirs()
 	local includes = table.map(includeDirs, function (_, value)
 		return '-I' .. cfg.project:makeRelative(value)
 	end)
@@ -1243,7 +1243,7 @@ end
 
 
 function xcodeproj.USER_HEADER_SEARCH_PATHS(cfg)
-	local includeDirs = set.join(cfg.includeDirs.public, cfg.includeDirs.private)
+	local includeDirs = cfg:fetchAllIncludeDirs()
 	if #includeDirs > 0 then
 		wl('USER_HEADER_SEARCH_PATHS = (')
 		indent()
