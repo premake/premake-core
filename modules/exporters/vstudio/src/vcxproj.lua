@@ -567,7 +567,8 @@ end
 -- Shared logic for those elements which need it.
 ---
 
-function vcxproj.additionalIncludeDirectories(cfg, paths)
+function vcxproj.additionalIncludeDirectories(cfg)
+	local paths = cfg:fetchAllIncludeDirs()
 	if #paths > 0 then
 		local relativePaths = path.translate(cfg.project:makeRelative(paths))
 		local value = string.format('%s;%%(AdditionalIncludeDirectories)', table.concat(relativePaths, ';'))
@@ -597,7 +598,7 @@ end
 
 
 function vcxproj.clCompileAdditionalIncludeDirectories(cfg)
-	vcxproj.additionalIncludeDirectories(cfg, cfg:fetchAllIncludeDirs())
+	vcxproj.additionalIncludeDirectories(cfg)
 end
 
 
