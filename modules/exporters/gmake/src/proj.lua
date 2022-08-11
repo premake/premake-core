@@ -161,7 +161,7 @@ end
 ---
 function proj.includeDirs(prj)
 	if isProject(prj) then
-		local includeDirs = set.join(prj.includeDirs.public, prj.includeDirs.private)
+		local includeDirs = prj:fetchAllIncludeDirs()
 		if includeDirs ~= nil and #includeDirs > 0 then
 			local includes = table.map(includeDirs, function(key, value)
 				return '-I' .. path.getRelative(prj.location, value)
@@ -173,7 +173,7 @@ function proj.includeDirs(prj)
 		end
 	else
 		local cfg = prj
-		local configIncludeDirs = set.join(cfg.includeDirs.public, cfg.includeDirs.private)
+		local configIncludeDirs = cfg:fetchAllIncludeDirs()
 		if configIncludeDirs ~= nil and #configIncludeDirs > 0 then
 			local includeDirString = table.concat(table.map(configIncludeDirs, function(key, value)
 				local relative = path.getRelative(cfg.project.location, value)
