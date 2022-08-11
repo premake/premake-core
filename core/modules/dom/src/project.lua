@@ -1,6 +1,5 @@
 local path = require('path')
 local set = require('set')
-local array = require('array')
 local State = require('state')
 local tree = require('tree')
 local Type = require('type')
@@ -120,35 +119,5 @@ function Project.makeRelative(self, paths)
 	return path.getRelative(self.baseDirectory, paths)
 end
 
-
----
--- Finds all include directories required for the project, following project
--- links to gather any required include directories from referenced projects.
----
-
-function Project.fetchAllIncludeDirs(self)
-	local includeDirs = set.join(self.includeDirs.public, self.includeDirs.private)
-
-	local projectLinksToVisit = array.copy(self.projectLinks)
-	local projectsVisited = {}
-
-	while #projectLinksToVisit > 0 do
-		local projectName = projectLinksToVisit[1]
-
-		local project = self.project.workspace.projects[projectName]
-		set.appendArrays(includeDirs, project.includeDirs.public)
-
-		table.remove(projectLinksToVisit, 1)
-		set.append(projectsVisited, projectName)
-
-		array.forEach(project.projectLinks, function(link)
-			if not projectsVisited[link] then
-				array.append(projectLinksToVisit, link)
-			end
-		end)
-	end
-
-	return includeDirs
-end
 
 return Project

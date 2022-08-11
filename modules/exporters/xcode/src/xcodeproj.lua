@@ -9,6 +9,7 @@ local path = require('path')
 local premake = require('premake')
 local tree = require('tree')
 local set = require('set')
+local helpers = require('helpers')
 
 local xcode = select(1, ...)
 
@@ -290,7 +291,7 @@ local function _getCompilerSwitches(cfg)
 		return '-D' .. value
 	end)
 
-	local includeDirs = cfg:fetchAllIncludeDirs()
+	local includeDirs = helpers.fetchAllIncludeDirs(cfg)
 	local includes = table.map(includeDirs, function (_, value)
 		return '-I' .. cfg.project:makeRelative(value)
 	end)
@@ -1243,7 +1244,7 @@ end
 
 
 function xcodeproj.USER_HEADER_SEARCH_PATHS(cfg)
-	local includeDirs = cfg:fetchAllIncludeDirs()
+	local includeDirs = helpers.fetchAllIncludeDirs(cfg)
 	if #includeDirs > 0 then
 		wl('USER_HEADER_SEARCH_PATHS = (')
 		indent()

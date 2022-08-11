@@ -4,6 +4,7 @@ local path = require('path')
 local premake = require('premake')
 local xml = require('xml')
 local set = require('set')
+local helpers = require('helpers')
 
 local vstudio = select(1, ...)
 
@@ -568,7 +569,7 @@ end
 ---
 
 function vcxproj.additionalIncludeDirectories(cfg)
-	local paths = cfg:fetchAllIncludeDirs()
+	local paths = helpers.fetchAllIncludeDirs(cfg)
 	if #paths > 0 then
 		local relativePaths = path.translate(cfg.project:makeRelative(paths))
 		local value = string.format('%s;%%(AdditionalIncludeDirectories)', table.concat(relativePaths, ';'))
