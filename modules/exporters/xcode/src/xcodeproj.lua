@@ -8,6 +8,8 @@ local export = require('export')
 local path = require('path')
 local premake = require('premake')
 local tree = require('tree')
+local set = require('set')
+local helpers = require('helpers')
 
 local xcode = select(1, ...)
 
@@ -289,11 +291,12 @@ local function _getCompilerSwitches(cfg)
 		return '-D' .. value
 	end)
 
-	local includeDirs = table.map(cfg.includeDirs, function (_, value)
+	local includeDirs = helpers.fetchAllIncludeDirs(cfg)
+	local includes = table.map(includeDirs, function (_, value)
 		return '-I' .. cfg.project:makeRelative(value)
 	end)
 
-	return array.join(defines, includeDirs)
+	return array.join(defines, includes)
 end
 
 
@@ -1241,10 +1244,11 @@ end
 
 
 function xcodeproj.USER_HEADER_SEARCH_PATHS(cfg)
-	if #cfg.includeDirs > 0 then
+	local includeDirs = helpers.fetchAllIncludeDirs(cfg)
+	if #includeDirs > 0 then
 		wl('USER_HEADER_SEARCH_PATHS = (')
 		indent()
-		local relativePaths = cfg.project:makeRelative(cfg.includeDirs)
+		local relativePaths = cfg.project:makeRelative(includeDirs)
 		for i = 1, #relativePaths do
 			wl('%s,', _escape(relativePaths[i]))
 		end

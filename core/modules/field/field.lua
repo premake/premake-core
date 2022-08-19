@@ -335,6 +335,7 @@ doFile('./src/kind_directory.lua', Field)
 doFile('./src/kind_file.lua', Field)
 doFile('./src/kind_list.lua', Field)
 doFile('./src/kind_set.lua', Field)
+doFile('./src/kind_setgroup.lua', Field)
 doFile('./src/kind_string.lua', Field)
 
 

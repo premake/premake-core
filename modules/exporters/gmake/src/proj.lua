@@ -6,6 +6,8 @@ local array = require('array')
 local export = require('export')
 local path = require('path')
 local premake = require('premake')
+local set = require('set')
+local helpers = require('helpers')
 
 local gmake = select(1, ...)
 
@@ -159,8 +161,9 @@ end
 --  project to print include directories for
 ---
 function proj.includeDirs(prj)
+	local includeDirs = helpers.fetchAllIncludeDirs(prj)
+
 	if isProject(prj) then
-		local includeDirs = prj.includeDirs
 		if includeDirs ~= nil and #includeDirs > 0 then
 			local includes = table.map(includeDirs, function(key, value)
 				return '-I' .. path.getRelative(prj.location, value)
@@ -172,9 +175,8 @@ function proj.includeDirs(prj)
 		end
 	else
 		local cfg = prj
-		local configIncludeDirs = cfg.includeDirs
-		if configIncludeDirs ~= nil and #configIncludeDirs > 0 then
-			local includeDirString = table.concat(table.map(configIncludeDirs, function(key, value)
+		if includeDirs ~= nil and #includeDirs > 0 then
+			local includeDirString = table.concat(table.map(includeDirs, function(key, value)
 				local relative = path.getRelative(cfg.project.location, value)
 				return '-I' .. relative
 			end), ' ')

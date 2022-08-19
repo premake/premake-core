@@ -60,7 +60,18 @@ Field.register({
 
 Field.register({
 	name = 'includeDirs',
-	kind = 'list:directory'
+	kind = 'setgroup:directory',
+	groups = {
+		'public',
+		'private',
+	},
+	defaultGroup = 'private',
+})
+
+Field.register({
+	-- Name up for discussion
+	name = 'projectLinks',
+	kind = 'set:string',
 })
 
 Field.register({
