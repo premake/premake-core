@@ -712,6 +712,7 @@ function vcxproj.platformToolset(cfg)
 		['2015'] = 'v140',
 		['2017'] = 'v141',
 		['2019'] = 'v142',
+		['2022'] = 'v143',
 	}))
 end
 

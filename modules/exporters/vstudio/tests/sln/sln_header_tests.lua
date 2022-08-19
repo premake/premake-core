@@ -62,3 +62,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 	]]
 end
+
+
+function VsSlnHeaderTests.on2022()
+	vstudio.setTargetVersion(2022)
+
+	sln.header()
+
+	test.capture [[
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+	]]
+end
