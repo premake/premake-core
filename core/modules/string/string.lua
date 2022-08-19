@@ -14,7 +14,6 @@ end
 ---
 -- Returns a new string with any Premake pattern tokens (i.e. `*`) expanded to Lua patterns.
 --
--- TODO: Just a placeholder at the moment; needs implementation.
 -- TODO: Move this to C; gets called a lot.
 --
 -- @param value
@@ -26,7 +25,8 @@ end
 ---
 
 function string.expandWildcards(value)
-	return value, true
+	local expanded = string.patternFromWildcards(value)
+	return expanded, value ~= expanded
 end
 
 
