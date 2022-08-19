@@ -4,21 +4,13 @@
 
 local m = select(1, ...)
 
+register('help')
 
 commandLineOption {
 	trigger = '--file',
 	description = string.format('Read FILE as a Premake script; default is "%s"', m.PROJECT_SCRIPT_NAME),
 	value = 'FILE',
 	default = m.PROJECT_SCRIPT_NAME
-}
-
-commandLineOption { -- TODO: Move to help module; use `register()`
-	trigger = '--help',
-	description = 'Display this information',
-	execute = function()
-		local help = require('help')
-		help.printHelp()
-	end
 }
 
 commandLineOption {
