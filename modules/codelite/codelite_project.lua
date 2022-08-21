@@ -388,19 +388,19 @@
 		local dependencies = {}
 		local makefilerules = {}
 		local function addrule(dependencies, makefilerules, config, filename)
-			if #config.buildcommands == 0 or #config.buildOutputs == 0 then
+			if #config.buildcommands == 0 or #config.buildoutputs == 0 then
 				return false
 			end
-			local inputs = table.implode(project.getrelative(cfg.project, config.buildInputs), "", "", " ")
+			local inputs = table.implode(project.getrelative(cfg.project, config.buildinputs), "", "", " ")
 			if filename ~= "" and inputs ~= "" then
 				filename = filename .. " "
 			end
-			local outputs = project.getrelative(cfg.project, config.buildOutputs[1])
+			local outputs = project.getrelative(cfg.project, config.buildoutputs[1])
 			local buildmessage = ""
 			if config.buildmessage then
 				buildmessage = "\t@{ECHO} " .. config.buildmessage .. "\n"
 			end
-			local commands = table.implode(config.buildCommands,"\t","\n","")
+			local commands = table.implode(config.buildcommands,"\t","\n","")
 			table.insert(makefilerules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. commands, cfg.project.basedir, cfg.project.location))
 			table.insertflat(dependencies, outputs)
 			return true

@@ -1,5 +1,5 @@
 ---
-title: Custom Build Commads
+title: Custom Build Commands
 ---
 
 There are a few different ways that you can add custom commands to your Premake-generated builds: *pre- and post-build stages*, *custom build commands*, and *custom rules*.

@@ -430,7 +430,7 @@
 	end
 
 	function m.buildStep(cfg)
-		if #cfg.buildCommands > 0 or #cfg.buildOutputs > 0 or #cfg.buildInputs > 0 or cfg.buildMessage then
+		if #cfg.buildcommands > 0 or #cfg.buildoutputs > 0 or #cfg.buildinputs > 0 or cfg.buildmessage then
 
 			p.push('<CustomBuildStep>')
 			p.callArray(m.elements.buildStep, cfg)
