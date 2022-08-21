@@ -6,70 +6,12 @@ local dom = require('dom')
 local path = require('path')
 local premake = require('premake')
 local State = require('state')
+local Toolsets = require('toolsets')
 
 local gmake = {}
 
 gmake.wks = doFile('./src/wks.lua', gmake)
 gmake.proj = doFile('./src/proj.lua', gmake)
-
----
--- Temporary variable until toolsets are implemented.
----
-local _ARCHITECTURES = {
-	x86 = 'x86',
-	x86_64 = 'x86_64',
-	arm = 'ARM',
-	arm64 = 'ARM64'
-}
-
-
----
--- Table of all toolsets.
---
--- Temporary until toolsets are implemented.
----
-gmake.toolsets = {
-	compilers = {
-		gcc = {
-			getCFlags = function(cfg)
-				local flags = {}
-				if cfg.gmake_architecture == 'x86_64' then
-					table.insert(flags, '-m64')
-				elseif cfg.gmake_architecture == 'x86' then
-					table.insert(flags, '-m32')
-				end
-				return flags
-			end,
-			getCppFlags = function (cfg)
-				local flags = {}
-
-				return flags
-			end,
-			getCxxFlags = function (cfg)
-				local flags = gmake.toolsets.compilers.gcc.getCFlags(cfg)
-				-- TODO: Add C++ specific flags
-				return flags
-			end
-		}
-	},
-	linkers = {
-		gcc = {
-			getLinkerFlags = function(cfg)
-				local flags = {}
-				if cfg.gmake_architecture == 'x86_64' then
-					table.insert(flags, '-m64')
-					-- should only link on linux
-					table.insert(flags, '-L/usr/lib64')
-				elseif cfg.gmake_architecture == 'x86' then
-					table.insert(flags, '-m32')
-					-- should only link on linux
-					table.insert(flags, '-L/usr/lib32')
-				end
-				return flags
-			end
-		}
-	}
-}
 
 
 ---
@@ -85,6 +27,23 @@ function gmake.export()
 	end
 	print('Done.')
 end
+
+
+---
+-- Escape a string so it can be written to a makefile.
+---
+function gmake.esc(value)
+	result = value:gsub("\\", "\\\\")
+	result = result:gsub("\"", "\\\"")
+	result = result:gsub(" ", "\\ ")
+	result = result:gsub("%(", "\\(")
+	result = result:gsub("%)", "\\)")
+
+	-- leave $(...) shell replacement sequences alone
+	result = result:gsub("$\\%((.-)\\%)", "$(%1)")
+	return result
+end
+
 
 ---
 -- Query and build a DOM hierarchy from the contents of the user project script.
@@ -160,9 +119,8 @@ function gmake.fetchProject(wks, name)
 	prj.workspace = wks
 	prj.uuid = prj.uuid or os.uuid(prj.name)
 
-	-- TODO: Compiler/Linker from DOM
-	prj.compiler = gmake.toolsets.compilers.gcc
-	prj.linker = gmake.toolsets.linkers.gcc
+	local tsname = prj.toolset or 'gcc'
+	prj.tools = Toolsets.get(tsname)
 
 	prj.configs = prj:fetchConfigs(gmake.fetchProjectConfig)
 
@@ -218,9 +176,8 @@ function gmake.fetchProjectConfig(prj, build, platform)
 	cfg.workspace = prj.workspace
 	cfg.project = prj
 
-	-- TODO: Compiler/Linker from DOM
-	cfg.compiler = gmake.toolsets.compilers.gcc
-	cfg.linker = gmake.toolsets.linkers.gcc
+	local tsname = cfg.toolset or 'gcc'
+	cfg.tools = Toolsets.get(tsname)
 
 	return cfg
 end
@@ -258,7 +215,7 @@ function gmake.fetchConfig(state)
 	local cfg = dom.Config.new(state)
 
 	-- translate the incoming architecture
-	cfg.gmake_architecture = _ARCHITECTURES[cfg.architecture] or 'x86_64'
+	cfg.gmake_architecture = cfg.architecture or 'x86_64'
 	cfg.platform = cfg.platform or cfg.gmake_architecture
 
 	-- "Configuration|Platform or Architecture", e.g. "Debug|MyPlatform" or "Debug|Win32"
@@ -324,7 +281,7 @@ function gmake.getMakefileName(this, searchprjs, domroot)
 	if count == 1 then
 		return path.join(this.location, 'Makefile')
 	else
-		return path.join(this.location, this.name .. '.mak')
+		return path.join(this.location, this.name:gsub(' ', '') .. '.mak')
 	end
 end
 

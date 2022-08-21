@@ -65,3 +65,24 @@ function GmakeProjectsTests.MultipleProjects()
 PROJECTS := MyProject MyProject2
 	]]
 end
+
+
+---
+-- Tests PROJECTS output with a single project with whitepsace.
+---
+function GmakeProjectsTests.SingleProjectWithSpace()
+	workspace('MyWorkspace', function ()
+		configurations({})
+
+		project('My Project', function ()
+		end)
+	end)
+
+	local wk = gmake.buildDom().workspaces['MyWorkspace']
+
+	wks.projects(wk)
+
+	test.capture [[
+PROJECTS := My\ Project
+	]]
+end
