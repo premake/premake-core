@@ -644,8 +644,9 @@
 	}
 
 	function gcc.gettoolname(cfg, tool)
-		if (cfg.gccprefix and gcc.tools[tool]) or tool == "rc" then
-			return (cfg.gccprefix or "") .. gcc.tools[tool]
+		local value = gcc.tools[tool]
+		if type(value) == "function" then
+			value = value(cfg)
 		end
-		return nil
+		return (cfg.gccprefix or "") .. value
 	end

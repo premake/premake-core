@@ -33,9 +33,9 @@
 
 	function suite.tools_onDefaults()
 		prepare()
-		test.isnil(gcc.gettoolname(cfg, "cc"))
-		test.isnil(gcc.gettoolname(cfg, "cxx"))
-		test.isnil(gcc.gettoolname(cfg, "ar"))
+		test.isequal("gcc", gcc.gettoolname(cfg, "cc"))
+		test.isequal("g++", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("ar", gcc.gettoolname(cfg, "ar"))
 		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
