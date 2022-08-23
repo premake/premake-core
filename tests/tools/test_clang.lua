@@ -92,5 +92,5 @@
 function suite.cxxflags_onSanitizeFuzzer()
 	sanitize { "Fuzzer" }
 	prepare()
-	test.contains({ "-fsanitize=fuzzer" }, gcc.getcxxflags(cfg))
+	test.contains({ "-fsanitize=fuzzer" }, clang.getcxxflags(cfg))
 end
