@@ -115,6 +115,9 @@
 --
 
 	clang.cxxflags = table.merge(gcc.cxxflags, {
+		sanitize = {
+			Fuzzer = "-fsanitize=fuzzer",
+		},
 	})
 
 	function clang.getcxxflags(cfg)
