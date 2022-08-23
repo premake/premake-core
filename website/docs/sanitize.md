@@ -10,8 +10,8 @@ sanitize { "value_list" }
 
 | Value       | Description                                            |
 |-------------|--------------------------------------------------------|
-| Address     | Enables compiler support for AddressSanitizer. | Visual Studio support starts with 2022. |
-| Fuzzer      | Enables support for LibFuzzer, a coverage-guided fuzzing library. | Visual Studio 2022+ & Clang only. |
+| Address     | Enables compiler support for AddressSanitizer. | Visual Studio support starts with 2019 16.9 |
+| Fuzzer      | Enables support for LibFuzzer, a coverage-guided fuzzing library. | Visual Studio support starts with 2019 16.9 |
 
 ### Applies To ###
 
