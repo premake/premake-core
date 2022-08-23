@@ -388,6 +388,21 @@ function suite.onSanitizeAddress_BeforeVS2019()
 end
 
 function suite.onSanitizeFuzzer()
+	p.action.set("vs2022")
+	sanitize { "Fuzzer" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableFuzzer>true</EnableFuzzer>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeFuzzer_BeforeVS2022()
 	p.action.set("vs2019")
 	sanitize { "Fuzzer" }
 	prepare()
@@ -397,26 +412,27 @@ function suite.onSanitizeFuzzer()
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
 	<PlatformToolset>v142</PlatformToolset>
-	<EnableFuzzer>true</EnableFuzzer>
 </PropertyGroup>
 	]]
 end
 
-function suite.onSanitizeFuzzer_BeforeVS2019()
-	p.action.set("vs2017")
-	sanitize { "Fuzzer" }
+function suite.onSanitizeAddressFuzzer()
+	p.action.set("vs2022")
+	sanitize { "Address", "Fuzzer" }
 	prepare()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<CharacterSet>Unicode</CharacterSet>
-	<PlatformToolset>v141</PlatformToolset>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableASAN>true</EnableASAN>
+	<EnableFuzzer>true</EnableFuzzer>
 </PropertyGroup>
 	]]
 end
 
-function suite.onSanitizeAddressFuzzer()
+function suite.onSanitizeAddressFuzzer_BeforeVS2022()
 	p.action.set("vs2019")
 	sanitize { "Address", "Fuzzer" }
 	prepare()
@@ -427,7 +443,6 @@ function suite.onSanitizeAddressFuzzer()
 	<CharacterSet>Unicode</CharacterSet>
 	<PlatformToolset>v142</PlatformToolset>
 	<EnableASAN>true</EnableASAN>
-	<EnableFuzzer>true</EnableFuzzer>
 </PropertyGroup>
 	]]
 end

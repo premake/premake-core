@@ -2513,6 +2513,8 @@
 			if table.contains(cfg.sanitize, "Address") then
 				m.element("EnableASAN", nil, "true")
 			end
+		end
+		if _ACTION >= "vs2022" and cfg.sanitize then
 			if table.contains(cfg.sanitize, "Fuzzer") then
 				m.element("EnableFuzzer", nil, "true")
 			end
