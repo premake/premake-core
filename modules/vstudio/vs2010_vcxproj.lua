@@ -2509,7 +2509,7 @@
 	end
 
 	function m.sanitizers(cfg)
-		if _ACTION >= "vs2022" and cfg.sanitize then
+		if _ACTION >= "vs2019" and cfg.sanitize then
 			if table.contains(cfg.sanitize, "Address") then
 				m.element("EnableASAN", nil, "true")
 			end
