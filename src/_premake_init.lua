@@ -1921,6 +1921,10 @@
 		targetprefix ""
 		targetextension ".xctest"
 
+	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:XCUITest" }
+		targetprefix ""
+		targetextension ".xctest"
+
 	-- Windows and friends.
 
 	filter { "system:Windows or language:C# or language:F#", "kind:ConsoleApp or WindowedApp" }

@@ -243,6 +243,13 @@
 		test.isequal("bin/Debug/MyProject.xctest/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
 	end
 
+	function suite.bundlepathSet_onMacSharedLibXCUITest()
+		kind "SharedLib"
+		sharedlibtype "XCUITest"
+		system "macosx"
+		i = prepare()
+		test.isequal("bin/Debug/MyProject.xctest/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+	end
 
 --
 -- Bundle path should be set for macOS/iOS framework.

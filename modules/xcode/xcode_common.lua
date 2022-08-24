@@ -1271,6 +1271,7 @@
 				OSXBundle    = "bundle",
 				OSXFramework = "framework",
 				XCTest       = "xctest",
+				XCUITest	 = "xctest",
 			}
 			local ext = cfg.buildtarget.extension:sub(2)
 			if ext ~= exts[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)] then
