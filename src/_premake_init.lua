@@ -750,6 +750,7 @@
 			"OSXBundle",
 			"OSXFramework",
 			"XCTest",
+			"XCUITest",
 		},
 	}
 

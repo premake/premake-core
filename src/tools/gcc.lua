@@ -406,6 +406,8 @@
 				return "-bundle"
 			elseif cfg.sharedlibtype == "XCTest" then
 				return "-bundle"
+			elseif cfg.sharedlibtype == "XCUITest" then
+				return "-bundle"
 			elseif cfg.sharedlibtype == "OSXFramework" then
 				return "-framework"
 			else
