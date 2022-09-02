@@ -190,7 +190,7 @@
 			"HeaderUnit"
 		}
 	}
- 
+
 	api.register {
 		name = "allmodulespublic",
 		scope = "config",
@@ -1116,6 +1116,16 @@
 		name = "rules",
 		scope = "project",
 		kind = "list:string",
+	}
+
+	api.register {
+		name = "sanitize",
+		scope = "config",
+		kind = "list:string",
+		allowed = {
+			"Address",
+			"Fuzzer",              -- Visual Studio 2022+ only
+		}
 	}
 
 	api.register {

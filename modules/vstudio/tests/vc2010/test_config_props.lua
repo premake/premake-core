@@ -156,7 +156,7 @@
 	<CLRSupport>Pure</CLRSupport>
 		]]
 	end
-	
+
 	function suite.clrSupport_onClrNetCore()
 		clr "NetCore"
 		prepare()
@@ -353,3 +353,96 @@
 </PropertyGroup>
 		]]
 	end
+
+--
+-- If the sanitizer flags are set, add the correct elements.
+--
+
+function suite.onSanitizeAddress()
+	p.action.set("vs2019")
+	sanitize { "Address" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v142</PlatformToolset>
+	<EnableASAN>true</EnableASAN>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeAddress_BeforeVS2019()
+	p.action.set("vs2017")
+	sanitize { "Address" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v141</PlatformToolset>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeFuzzer()
+	p.action.set("vs2022")
+	sanitize { "Fuzzer" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableFuzzer>true</EnableFuzzer>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeFuzzer_BeforeVS2022()
+	p.action.set("vs2019")
+	sanitize { "Fuzzer" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v142</PlatformToolset>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeAddressFuzzer()
+	p.action.set("vs2022")
+	sanitize { "Address", "Fuzzer" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v143</PlatformToolset>
+	<EnableASAN>true</EnableASAN>
+	<EnableFuzzer>true</EnableFuzzer>
+</PropertyGroup>
+	]]
+end
+
+function suite.onSanitizeAddressFuzzer_BeforeVS2022()
+	p.action.set("vs2019")
+	sanitize { "Address", "Fuzzer" }
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v142</PlatformToolset>
+	<EnableASAN>true</EnableASAN>
+</PropertyGroup>
+	]]
+end

@@ -161,6 +161,10 @@
 		},
 		rtti = {
 			Off = "/GR-"
+		},
+		sanitize = {
+			Address = "/fsanitize=address",
+			Fuzzer = "/fsanitize=fuzzer",
 		}
 	}
 

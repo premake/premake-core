@@ -441,6 +441,25 @@
 		test.contains("/GR-", msc.getcxxflags(cfg))
 	end
 
+	function suite.cxxflags_onSanitizeAddress()
+		sanitize { "Address" }
+		prepare()
+		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onSanitizeFuzzer()
+		sanitize { "Fuzzer" }
+		prepare()
+		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onSanitizeAddressFuzzer()
+		sanitize { "Address", "Fuzzer" }
+		prepare()
+		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
+		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
+	end
+
 
 --
 -- Check handling of additional linker options.
@@ -573,9 +592,9 @@
 	end
 
 
-	--
-	-- Check handling of Run-Time Library flags.
-	--
+--
+-- Check handling of Run-Time Library flags.
+--
 
 	function suite.cflags_onStaticRuntime()
 		staticruntime "On"

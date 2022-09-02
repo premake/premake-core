@@ -229,6 +229,9 @@
 		rtti = {
 			Off = "-fno-rtti"
 		},
+		sanitize = {
+			Address = "-fsanitize=address",
+		},
 		visibility = {
 			Default = "-fvisibility=default",
 			Hidden = "-fvisibility=hidden",
