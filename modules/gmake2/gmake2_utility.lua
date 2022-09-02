@@ -54,8 +54,25 @@
 
 
 	function utility.initialize(prj)
+		local rules = {}
+
+		local function addRule(extension, rule)
+			if type(extension) == 'table' then
+				for _, value in ipairs(extension) do
+					addRule(value, rule)
+				end
+			else
+				rules[extension] = rule
+			end
+		end
+
+		for _, name in ipairs(prj.rules) do
+			local rule = p.global.getRule(name)
+			addRule(rule.fileExtension, rule)
+		end
+
 		prj._gmake = prj._gmake or {}
-		prj._gmake.rules = prj.rules
+		prj._gmake.rules = rules
 		prj._gmake.filesets = { }
 	end
 
