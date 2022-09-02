@@ -204,7 +204,7 @@
 		codelite.project.preBuild(cfg)
 		test.capture [[
       <PreBuild>
-        <Command Enabled="yes">@echo test</Command>
+        <Command Enabled="yes">@echo "test"</Command>
       </PreBuild>
 		]]
 	end
@@ -215,7 +215,7 @@
 		codelite.project.postBuild(cfg)
 		test.capture [[
       <PostBuild>
-        <Command Enabled="yes">@echo test</Command>
+        <Command Enabled="yes">@echo "test"</Command>
       </PostBuild>
 		]]
 	end

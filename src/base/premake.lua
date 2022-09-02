@@ -321,7 +321,16 @@ end
 		end
 	end
 
+---
+-- Wrap the provided value in double quotes
+-- escaping backslash and double quote
+---
 
+	function premake.quote(s)
+		s = s:gsub('\\', '\\\\')
+		s = s:gsub('"', '\\"')
+		return '"' .. s .. '"'
+	end
 
 ---
 -- Wrap the provided value in double quotes if it contains spaces, or
@@ -334,7 +343,7 @@ end
 			q = value:find("$%(.-%)", 1)
 		end
 		if q then
-			value = '"' .. value .. '"'
+			return p.quote(value)
 		end
 		return value
 	end
