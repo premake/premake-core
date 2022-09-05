@@ -1,9 +1,56 @@
 --------------------
-  5.0-beta1
+  5.0-beta2
 --------------------
 
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-beta1:
+
+* PR #1737  Change Visual Studio Version to 17 so sln is opened with VS2022 (@simco50)
+* PR #1744  Add check for missing values in documentation (@LORgames)
+* PR #1745  Adding documentation for module options (@hannes-harnisch)
+* PR #1747  Added API for CompileAsWinRT (@LORgames)
+* PR #1749  Changed C++20 to emit C++20 instead of C++Latest in MSVC (@nickclark2016)
+* PR #1750  Added support for AppxManifest files (@LORgames)
+* PR #1752  Added C17/GNU17 support to gmake/gmake2 exporters (@nickclark2016)
+* PR #1753  Update documentation link in README (@nickclark2016)
+* PR #1754  Improve external include & warning support (@englercj)
+* PR #1757  Add support for `kind "None"` as do nothing for gmake/gmake2 (@Jarod42)
+* PR #1760  Add Community Update #10 (@starkos)
+* PR #1762  Add support of kind "None" for Codelite (@Jarod42)
+* PR #1763  Fix `make clean` handling of generated files (@starkos)
+* PR #1771  Codelite PCH Fix for obsolete `UseDifferentPCHFlags="no"` (@Jarod42)
+* PR #1777  Migrate website to latest DocSearch (@starkos)
+* PR #1785  add "vs2022" to the list of available actions (@Enhex)
+* PR #1787  Remove unavailable modules (@KyrietS)
+* PR #1788  Add a new "ScanForModuleDependencies" flag. (@LoneBoco)
+* PR #1789  Include the configuration condition for ExternalWarningLevel. (@LoneBoco)
+* PR #1790  Adding C++ module file extensions and implementing "allmodulespublic" (@hannes-harnisch)
+* PR #1796  Fix #1795: project generation fails with "Error: attempt to index a function value" (@somyungoh)
+* PR #1809  Feature for disabling inherited dependencies (@hannes-harnisch)
+* PR #1820  Use windows-2019 instead of windows-lastest (temporarily) (@KyrietS)
+* PR #1821  Use vswhere.exe in Windows pipeline (@KyrietS)
+* PR #1826  Added documentation for static and shared linking suffixes (@nickclark2016)
+* PR #1834  contrib/curl: update ifdef condition for MCST-LCC compiler (@r-a-sattarov)
+* PR #1851  Updated LICENSE.txt copyright year (@nickclark2016)
+* PR #1855  Changed MMD to MD in gmake/gmake2 outputs for gcc/clang. (@nickclark2016)
+* PR #1860  Add support of openmp for gcc/clang. (@Jarod42)
+* PR #1861  Fix Codelite generation of empty source tree project. (@Jarod42)
+* PR #1863  Fix build failed in mingw x86 (@simbit18)
+* PR #1867  Improve uuid generation on Linux (@flakey5)
+* PR #1876  Escape group names when creating rules (@nickclark2016)
+* PR #1882  Added Unit Test for Workspace Generation (@nickclark2016)
+* PR #1883  Fixes the generation of source projects (@nickclark2016)
+* PR #1886  Added MinGW CI job (@LORgames)
+* PR #1893  Add docs for embed and embedAndSign Xcode options (@thomashope)
+* PR #1894  Fix openmp for xcode. (@Jarod42)
+* PR #1900  Updated Bug Report Template to add exporter selection (@nickclark2016)
+* PR #1904  `usingdirs` wiki typo (@BttrDrgn)
+* PR #1909  Typo in title (@CeruttiNicolas)
+* PR #1910  Fix case.  (@Jarod42)
+* PR #1913  Fix Codelite/gmake2 `buildmessage` escaping. (@Jarod42)
+* PR #1923  Add address sanitizer flags (@englercj)
 
 Since 5.0-alpha16:
 
