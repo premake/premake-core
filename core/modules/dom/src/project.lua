@@ -112,6 +112,32 @@ end
 
 
 ---
+-- Retrieve the blocks contained by this project.
+--
+-- @param createCallback
+--    A function with the signature `(project, blockName)` which will be called for
+--    each block name found in the workspace. Return a new `dom.Block` to represent
+--    the project, or `nil` to ignore it.
+-- @returns
+--    A table of projects, keyed by integer index and block name.
+---
+
+function Project.fetchBlocks(self, createCallback)
+	local blocks = {}
+
+	local names = self.blocks
+	for i = 1, #names do
+		local name = names[i]
+		local block = createCallback(self, name)
+		blocks[i] = block
+		blocks[name] = block
+	end
+
+	return blocks
+end
+
+
+---
 -- Convert absolute paths to project relative.
 ---
 

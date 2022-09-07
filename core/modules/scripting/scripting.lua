@@ -53,6 +53,17 @@ function when(clauses, fn)
 end
 
 
+function block(name, fn)
+	blocks(name)
+	when({ blocks = name }, function()
+		baseDir(_SCRIPT_DIR)
+		if fn ~= nil then
+			fn()
+		end
+	end)
+end
+
+
 function project(name, fn)
 	projects(name)
 	when({ projects = name }, function()

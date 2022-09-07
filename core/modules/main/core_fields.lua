@@ -26,6 +26,12 @@ Field.register({
 })
 
 Field.register({
+	name = 'blocks',
+	kind = 'set:string',
+	isScope = true
+})
+
+Field.register({
 	name = 'configurations',
 	kind = 'set:string',
 	isScope = true
@@ -115,6 +121,11 @@ Field.register({
 		'Wii',
 		'Windows',
 	}
+})
+
+Field.register({
+	name = 'uses',
+	kind = 'set:string'
 })
 
 Field.register({

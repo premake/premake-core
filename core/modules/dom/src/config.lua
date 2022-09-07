@@ -25,9 +25,9 @@ end
 
 
 ---
--- Given a container state (i.e. workspace or project), returns a list of build
--- configuration and platform pairs for that state, as an array of query selectors
--- suitable for passing to `State.selectAny()`, ex.
+-- Given a container state (i.e. workspace, project, or block), returns a list
+-- of build configuration and platform pairs for that state, as an array of
+-- query selectors suitable for passing to `State.selectAny()`, ex.
 --
 --     { configurations = 'Debug', platforms = 'x86_64' }
 ---
