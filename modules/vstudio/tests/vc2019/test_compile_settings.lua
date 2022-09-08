@@ -106,3 +106,27 @@
 	<ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
 		]]
 	end
+
+	function suite.UseStandardPreprocessorOn()
+		usestandardpreprocessor 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<UseStandardPreprocessor>true</UseStandardPreprocessor>
+		]]
+	end
+
+	function suite.UseStandardPreprocessorOff()
+		usestandardpreprocessor 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<UseStandardPreprocessor>false</UseStandardPreprocessor>
+		]]
+	end

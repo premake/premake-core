@@ -134,6 +134,10 @@
 		openmp = {
 			On = "/openmp",
 			Off = "/openmp-"
+		},
+		usestandardpreprocessor = {
+			On = "/Zc:preprocessor",
+			Off = "/Zc:preprocessor-"
 		}
 
 	}

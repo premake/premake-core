@@ -175,6 +175,16 @@
 		kind = "boolean"
 	}
 
+	p.api.register {
+		name = "usestandardpreprocessor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
 
 --
 -- Decide when the full module should be loaded.

@@ -400,6 +400,7 @@
 			m.externalWarningLevel,
 			m.externalAngleBrackets,
 			m.scanSourceForModuleDependencies,
+			m.useStandardPreprocessor,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -2951,6 +2952,16 @@
 				else
 					m.element("ScanSourceForModuleDependencies", nil, "false")
 				end
+			end
+		end
+	end
+
+	function m.useStandardPreprocessor(cfg)
+		if _ACTION >= "vs2019" and cfg.usestandardpreprocessor ~= nil then
+			if cfg.usestandardpreprocessor == 'On' then
+				m.element("UseStandardPreprocessor", nil, "true")
+			else
+				m.element("UseStandardPreprocessor", nil, "false")
 			end
 		end
 	end
