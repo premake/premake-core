@@ -107,7 +107,7 @@
 
 
 --
--- Write out the TargetFrameworkVersion property.
+-- Write out the TargetFramework property.
 --
 
 	function m.targetFramework(prj)
@@ -115,7 +115,7 @@
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
 		local framework = prj.dotnetframework or action.vstudio.targetFramework or "4.0"
-		p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		p.w('<TargetFramework>%s</TargetFramework>', framework)
 	end
 
 
