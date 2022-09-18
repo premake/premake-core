@@ -1,3 +1,7 @@
+:::caution
+**This function has been deprecated.** Use [os.target()](os.target.md) or [os.host()](os.host.md) instead.
+:::
+
 Checks the current operating system identifier against a particular value.
 
 ```lua
