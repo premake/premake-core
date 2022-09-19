@@ -1,10 +1,13 @@
+:::caution
+**This function has been deprecated in Premake 5.0 beta2.** Use the new [externalincludedirs](externalincludedirs.md) function instead. `sysincludedirs` will be not supported in Premake 6.
+:::
+
 Alias of [externalincludedirs](externalincludedirs.md).
 
 ```lua
 sysincludedirs { "paths" }
 ```
 
-**This function has been deprecated in Premake 5.0 beta2.** Use the new [externalincludedirs](externalincludedirs.md) function instead. `sysincludedirs` will be not supported in Premake 6.
 
 ### Parameters ###
 
