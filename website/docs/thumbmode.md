@@ -1,16 +1,16 @@
-thumbmode - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies whether the code generation uses ARM or Thumb instruction sets.
 
 ```lua
-thumbmode (value)
+thumbmode ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `thumb`: needs documentation
-* `arm`: needs documentation
-* `disabled`: needs documentation
+* `thumb`: Uses the Thumb instruction set.
+* `arm`: Uses the ARM instruction set.
+* `disabled`: Disables usage of Thumb instruction set.
 
 ## Applies To ###
 
@@ -23,6 +23,6 @@ Premake 5.0.0 alpha 14 or later.
 ### Examples ###
 
 ```lua
-thumbmode (value)
+thumbmode "disabled"
 ```
 

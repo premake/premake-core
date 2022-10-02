@@ -1,12 +1,14 @@
-androidapplibname - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specfies the file name for the output APK.
 
 ```lua
-androidapplibname (value)
+androidapplibname ("value")
 ```
+
+By default, the project name will be used as the file name for the APK.
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is the new file name.
 
 ## Applies To ###
 
@@ -19,6 +21,6 @@ Premake 5.0.0 alpha 14 or later.
 ### Examples ###
 
 ```lua
-androidapplibname (value)
+androidapplibname "MyProject"
 ```
 

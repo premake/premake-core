@@ -1,21 +1,21 @@
-toolchainversion - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the version of the toolchain to use.
 
 ```lua
-toolchainversion (value)
+toolchainversion ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `4.6`: needs documentation
-* `4.8`: needs documentation
-* `4.9`: needs documentation
-* `3.4`: needs documentation
-* `3.5`: needs documentation
-* `3.6`: needs documentation
-* `3.8`: needs documentation
-* `5.0`: needs documentation
+* `4.6`: GCC 4.6
+* `4.8`: GCC 4.8
+* `4.9`: GCC 4.9
+* `3.4`: Clang 3.4
+* `3.5`: Clang 3.5
+* `3.6`: Clang 3.6
+* `3.8`: Clang 3.8
+* `5.0`: Clang 5.0
 
 ## Applies To ###
 
@@ -23,11 +23,11 @@ The `config` scope.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0 alpha 14 or later, only applies to Android projects.
 
 ### Examples ###
 
 ```lua
-toolchainversion (value)
+toolchainversion "5.0"
 ```
 
