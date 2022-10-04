@@ -262,10 +262,20 @@
 			local link = cfg.links[i]
 			local item
 
+			-- Strip linking decorators from link, to determine if the link
+			-- is a "sibling" project.
+			local endswith = function(s, ptrn)
+				return ptrn == string.sub(s, -string.len(ptrn))
+			end
+			local name = link
+			if endswith(name, ":static") or endswith(name, ":shared") then
+				name = string.sub(name, 0, -8)
+			end
+
 			-- Sort the links into "sibling" (is another project in this same
 			-- workspace) and "system" (is not part of this workspace) libraries.
 
-			local prj = p.workspace.findproject(cfg.workspace, link)
+			local prj = p.workspace.findproject(cfg.workspace, name)
 			if prj and kind ~= "system" then
 
 				-- Sibling; is there a matching configuration in this project that
