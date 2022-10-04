@@ -640,3 +640,18 @@ end)
 			return oldfn(cfg)
 		end
 	end)
+	
+--
+-- Disable usage of ExternalIncludePath, Android project format ignores it.
+--
+
+	p.override(vc2010, "includePath", function(oldfn, cfg)
+		if cfg.system == p.ANDROID then
+			local dirs = vstudio.path(cfg, cfg.externalincludedirs)
+			if #dirs > 0 then
+				vc2010.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
+			end
+		else
+			oldfn(cfg)
+		end
+	end)

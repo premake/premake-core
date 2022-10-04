@@ -26,6 +26,11 @@
 		vc2010.globals(prj)
 	end
 
+	local function prepareOutputProperties()
+		local cfg = test.getconfig(prj, "Debug")
+		vc2010.outputProperties(cfg)
+	end
+
 	function suite.minVisualStudioVersion_14()
 		prepareGlobals()
 		test.capture [[
@@ -146,5 +151,19 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<Optimization>Disabled</Optimization>
 	<CppLanguageStandard>c++1z</CppLanguageStandard>
+]]
+	end
+
+	function suite.externalIncludeDirs()
+		externalincludedirs { "externalincludedirs" }
+		prepareOutputProperties()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+	<LinkIncremental>true</LinkIncremental>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>
+	</TargetExt>
+	<IncludePath>externalincludedirs;$(IncludePath)</IncludePath>
 ]]
 	end
