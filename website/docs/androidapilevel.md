@@ -1,4 +1,4 @@
-androidapilevel - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the target Android API level.
 
 ```lua
 androidapilevel (value)
@@ -6,7 +6,7 @@ androidapilevel (value)
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is a number specifying the target Android API level.
 
 ## Applies To ###
 
@@ -19,6 +19,6 @@ Premake 5.0.0 alpha 14 or later.
 ### Examples ###
 
 ```lua
-androidapilevel (value)
+androidapilevel (21)
 ```
 
