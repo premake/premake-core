@@ -277,6 +277,7 @@ module.exports = {
 						'undefines',
 						'unsignedchar',
 						'usefullpaths',
+						'usestandardpreprocessor',
 						'usingdirs',
 						'uuid',
 						'vectorextensions',
