@@ -20,7 +20,7 @@ rule "MyCustomRule"
 
   buildmessage 'Compiling %(Filename) with MyCustomCC'
   buildcommands 'MyCustomCC.exe -c "%(FullPath)" -o "%(IntDir)/%(Filename).obj"'
-  buildoutputs '%(IntDir)/%(Filename).obj"'
+  buildoutputs '%(IntDir)/%(Filename).obj'
 ```
 
 This rule will pass all files in project with the ".xyz" file extension through the specified build command. At export time, the files `MyCustomRule.props`, `MyCustomRule.targets`, and `MyCustomRule.xml` will be generated in the sample directory. Like workspaces and projects, this can be changed with [`location`](location.md) and [`filename`](filename.md).
@@ -45,7 +45,7 @@ rule "MyCustomRule"
 
   propertydefinition {
     name = "StripDebugInfo",
-    ind = "boole
+    kind = "boolean",
     display = "Strip Debug Info",
     description = "Remove debug information from the generated object files"
     value = false,
