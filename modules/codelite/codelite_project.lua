@@ -401,7 +401,7 @@
 				buildmessage = "\t@{ECHO} " .. p.quote(config.buildmessage) .. "\n"
 			end
 			local commands = table.implode(config.buildcommands,"\t","\n","")
-			table.insert(makefilerules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. commands, cfg.project.basedir, cfg.project.location))
+			table.insert(makefilerules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. "\t@$(MakeDirCommand) $(@D)\n" .. commands, cfg.project.basedir, cfg.project.location))
 			table.insertflat(dependencies, outputs)
 			return true
 		end

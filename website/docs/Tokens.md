@@ -76,7 +76,7 @@ Command tokens represent a system level command in a platform-neutral way.
 
 ```lua
 postbuildcommands {
-	"{COPY} file1.txt file2.txt"
+	"{COPYFILE} file1.txt file2.txt"
 }
 ```
 
@@ -108,8 +108,13 @@ The available tokens, and their replacements:
 | {RMDIR}    | rmdir /S /Q {args}                          | rm -rf {args}   |
 | {TOUCH}    | type nul >> {arg} && copy /b {arg}+,, {arg} | touch {args}    |
 
-Note that this token exists but is deprecated in favor of {COPYDIR} and {COPYFILE}
-| {COPY}   | xcopy /Q /E /Y /I {args}                    | cp -rf {args}   |
+:::caution
+The following tokens are deprecated:
+:::
+
+| Token      | DOS                                         | Posix           | Remarks                             |
+|------------|---------------------------------------------|-----------------|-------------------------------------|
+| {COPY}     | xcopy /Q /E /Y /I {args}                    | cp -rf {args}   | Use {COPYDIR} or {COPYFILE} instead |
 
 ## Tokens and Filters
 
