@@ -107,11 +107,13 @@
 -- Check handling of buildaction.
 --
 	function suite.customBuildTool_onBuildAction()
-		files { "test.x", "test2.cpp", "test3.cpp" }
+		files { "test.x", "test2.cpp", "test3.cpp", "test4.dll" }
 		filter "files:**.x"
 			buildaction "FxCompile"
 		filter "files:test2.cpp"
 			buildaction "None"
+		filter { "files:test4.dll" }
+			buildaction "Copy"
 		prepare()
 		test.capture [[
 <ItemGroup>
@@ -122,6 +124,12 @@
 </ItemGroup>
 <ItemGroup>
 	<None Include="test2.cpp" />
+</ItemGroup>
+<ItemGroup>
+	<CopyFileToFolders Include="test4.dll">
+		<DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bin\Debug</DestinationFolders>
+		<DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bin\Release</DestinationFolders>
+	</CopyFileToFolders>
 </ItemGroup>
 		]]
 	end

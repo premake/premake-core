@@ -8,6 +8,21 @@ buildaction ("action")
 
 For C/C++, `action` is the name of the MSBuild action as defined by the vcxproj format; eg: `ClCompile`, `FxCompile`, `None`, etc, and may refer to any such action available to MSBuild.
 
+| Action          | Description                                                                      |
+|-----------------|----------------------------------------------------------------------------------|
+| ClInclude       | Treat the file as an include file.                                               |
+| ClCompile       | Treat the file as source code; compile and link it.                              |
+| FxCompile       | Treat the file as HLSL shader source code; compile and link it.                  |
+| None            | Do nothing with this file.                                                       |
+| ResourceCompile | Copy/embed the file with the project resources.                                  |
+| CustomBuild     | Treat the file as custom build code; compile and optionally link it.             |
+| Midl            | Treat the file as MIDL source code; compile and link it.                         |
+| Masm            | Treat the file as MASM source code; compile and link it.                         |
+| Image           | Treat the file as an Image.                                                      |
+| Natvis          | Treat the file as Natvis source; use it for custom data layouts while debugging. |
+| AppxManifest    | Treat the file as AppX Manifest; required for UWP applications.                  |
+| Copy            | Copy the file to the target directory.                                           |
+
 For C# projects, `buildaction` behaviour is special to support legacy implementation.
 In C#, `action` is one of
 

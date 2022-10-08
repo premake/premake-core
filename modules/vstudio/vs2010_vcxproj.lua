@@ -1086,6 +1086,28 @@
 	}
 
 ---
+-- Copy group
+---
+
+	m.categories.Copy = {
+		name = "Copy",
+		priority = 13,
+
+		emitFiles = function(prj, group)
+			local fileCfgFunc = {
+				m.excludedFromBuild,
+				m.destinationFolders
+			}
+
+			m.emitFiles(prj, group, "CopyFileToFolders", nil, fileCfgFunc)
+		end,
+
+		emitFilter = function(prj, group)
+			m.filterGroup(prj, group, "CopyFileToFolders")
+		end
+	}
+
+---
 -- Categorize files into groups.
 ---
 	function m.categorizeSources(prj)
@@ -1832,6 +1854,13 @@
 			end
 
 			m.element("DebugInformationFormat", nil, value)
+		end
+	end
+
+
+	function m.destinationFolders(filecfg, condition)
+		if filecfg then
+			m.element("DestinationFolders", condition, vstudio.path(filecfg.config, filecfg.config.buildtarget.directory))
 		end
 	end
 
