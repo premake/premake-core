@@ -342,6 +342,56 @@ end
 	end
 
 
+	function suite.windowsTargetPlatformVersion_latest_on2019_onUWP()
+		system "uwp"
+		p.action.set("vs2019")
+		systemversion "latest"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+	<AppContainerApplication>true</AppContainerApplication>
+</PropertyGroup>
+		]]
+	end
+
+
+	function suite.windowsTargetPlatformVersion_latestToLatest_on2019_onUWP()
+		system "uwp"
+		p.action.set("vs2019")
+		systemversion "latest:latest"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<WindowsTargetPlatformMinVersion>10.0</WindowsTargetPlatformMinVersion>
+	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+	<AppContainerApplication>true</AppContainerApplication>
+</PropertyGroup>
+		]]
+	end
+
+
+	function suite.windowsTargetPlatformVersion_versionToVersion_on2019_onUWP()
+		system "uwp"
+		p.action.set("vs2019")
+		systemversion "10.0.10240.0:10.0.10240.1"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+	<WindowsTargetPlatformVersion>10.0.10240.1</WindowsTargetPlatformVersion>
+	<AppContainerApplication>true</AppContainerApplication>
+</PropertyGroup>
+		]]
+	end
+
+
 ---
 -- Check handling of per-configuration systemversion
 ---
@@ -399,6 +449,34 @@ end
 	end
 
 
+	function suite.windowsTargetPlatformVersion_perConfig_on2019_onUWP()
+		system "uwp"
+		p.action.set("vs2019")
+		systemversion "10.0.10240.0"
+		filter "Debug"
+			systemversion "10.0.10240.0:latest"
+		filter "Release"
+			systemversion "10.0.10240.0:10.0.10240.1"
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+	<AppContainerApplication>true</AppContainerApplication>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+	<WindowsTargetPlatformVersion>10.0.10240.1</WindowsTargetPlatformVersion>
+</PropertyGroup>
+		]]
+	end
+
+
 	function suite.disableFastUpToDateCheck()
 		fastuptodate "Off"
 		prepare()
@@ -440,6 +518,20 @@ end
 	<RootNamespace>MyProject</RootNamespace>
 	<LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
 	<VCToolsVersion>14.27.29110</VCToolsVersion>
+</PropertyGroup>
+		]]
+	end
+
+
+	function suite.appContainerApplication2019UWP()
+		system "uwp"
+		p.action.set("vs2019")
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<AppContainerApplication>true</AppContainerApplication>
 </PropertyGroup>
 		]]
 	end

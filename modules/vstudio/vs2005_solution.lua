@@ -197,6 +197,7 @@
 		return {
 			sln2005.activeCfg,
 			sln2005.build0,
+			sln2005.deploy0,
 		}
 	end
 
@@ -248,6 +249,13 @@
 	function sln2005.build0(cfg, context)
 		if not context.excluded and context.prjCfg.kind ~= p.NONE then
 			p.w('{%s}.%s.Build.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
+		end
+	end
+
+
+	function sln2005.deploy0(cfg, context)
+		if context.prjCfg.system == p.UWP and not context.excluded and (context.prjCfg.kind == p.WINDOWEDAPP or context.prjCfg.kind == p.CONSOLEAPP) then
+			p.w('{%s}.%s.Deploy.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
 		end
 	end
 

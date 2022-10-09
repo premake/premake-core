@@ -135,6 +135,7 @@
 			m.windowsTargetPlatformVersion,
 			m.fastUpToDateCheck,
 			m.toolsVersion,
+			m.appContainerApplication,
 		}
 	end
 
@@ -1638,6 +1639,13 @@
 	end
 
 
+	function m.appContainerApplication(prj)
+		if prj.system == p.UWP then
+			m.element("AppContainerApplication", nil, "true")
+		end
+	end
+
+
 	function m.compileAsManaged(fcfg, condition)
 		if fcfg.clr and fcfg ~= p.OFF then
 			m.element("CompileAsManaged", condition, "true")
@@ -2065,8 +2073,12 @@
 
 
 	function m.ignoreImportLibrary(cfg)
-		if cfg.kind == p.SHAREDLIB and cfg.flags.NoImportLib then
-			m.element("IgnoreImportLibrary", nil, "true")
+		if cfg.kind == p.SHAREDLIB then
+			if cfg.flags.NoImportLib then
+				m.element("IgnoreImportLibrary", nil, "true")
+			elseif cfg.system == p.UWP then
+				m.element("IgnoreImportLibrary", nil, "false")
+			end
 		end
 	end
 
@@ -2778,29 +2790,37 @@
 		end
 
 		local target = cfg or prj
-		local version = project.systemversion(target)
+		local minversion, maxversion = project.systemversion(target)
 
 		-- if this is a config, only emit if different from project
 		if cfg then
-			local prjVersion = project.systemversion(prj)
-			if not prjVersion or version == prjVersion then
+			local prjMinVersion, prjMaxVersion = project.systemversion(prj)
+			if not prjMinVersion or (minversion == prjMinVersion and maxversion == prjMaxVersion) then
 				return
 			end
 		end
 
 		-- See https://developercommunity.visualstudio.com/content/problem/140294/windowstargetplatformversion-makes-it-impossible-t.html
-		if version == "latest" then
+		if minversion == "latest" then
 			if _ACTION == "vs2015" then
-				version = nil   -- SDK v10 is not supported by VS2015
+				minversion = nil   -- SDK v10 is not supported by VS2015
 			elseif _ACTION == "vs2017" then
-				version = "$(LatestTargetPlatformVersion)"
+				minversion = "$(LatestTargetPlatformVersion)"
 			else
-				version = "10.0"
+				minversion = "10.0"
 			end
 		end
 
-		if version then
-			m.element("WindowsTargetPlatformVersion", nil, version)
+		-- Max version is only supported in UWP projects
+		if maxversion == "latest" then
+			maxversion = "10.0"
+		end
+
+		if maxversion and target.system == p.UWP then
+			m.element("WindowsTargetPlatformMinVersion", nil, minversion)
+			m.element("WindowsTargetPlatformVersion", nil, maxversion)
+		elseif minversion then
+			m.element("WindowsTargetPlatformVersion", nil, minversion)
 		end
 	end
 

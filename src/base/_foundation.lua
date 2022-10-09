@@ -54,6 +54,7 @@
 	premake.UNICODE     = "Unicode"
 	premake.UNIVERSAL   = "universal"
 	premake.UTILITY     = "Utility"
+	premake.UWP         = "uwp"
 	premake.PACKAGING   = "Packaging"
 	premake.WINDOWEDAPP = "WindowedApp"
 	premake.WINDOWS     = "windows"
