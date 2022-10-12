@@ -133,7 +133,7 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
-		flags { "StaticRuntime", "MultiProcessorCompile" }
+		flags { "MultiProcessorCompile" }
 		warnings "Extra"
 
 		if not _OPTIONS["no-zlib"] then
@@ -189,6 +189,10 @@
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
 		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
 			flags		{ "LinkTimeOptimization" }
+
+		filter { "system:uwp" }
+			systemversion "latest:latest"
+			consumewinrtextension "false"
 
 	project "Premake5"
 		targetname  "premake5"

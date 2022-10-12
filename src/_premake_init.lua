@@ -511,7 +511,7 @@
 			"NoEditAndContinue",   -- DEPRECATED
 			"NoFramePointer",      -- DEPRECATED
 			"NoImplicitLink",
-			"NoImportLib",
+			"NoImportLib",         -- DEPRECATED
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",
@@ -1203,6 +1203,7 @@
 			"linux",
 			"macosx",
 			"solaris",
+			"uwp",
 			"wii",
 			"windows",
 		},
@@ -1849,6 +1850,7 @@
 			{ "linux",    "Linux" },
 			{ "macosx",   "Apple Mac OS X" },
 			{ "solaris",  "Solaris" },
+			{ "uwp",      "Microsoft Univesral Windows Platform"},
 			{ "windows",  "Microsoft Windows" },
 		}
 	}

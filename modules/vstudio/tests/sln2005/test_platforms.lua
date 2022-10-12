@@ -69,6 +69,48 @@ EndGlobalSection
 		]]
 	end
 
+	function suite.DeployConsoleApp_onUWP()
+		project "MyProject"
+		kind "ConsoleApp"
+		system "uwp"
+		prepare()
+		test.capture [[
+GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Win32 = Debug|Win32
+	Release|Win32 = Release|Win32
+EndGlobalSection
+GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.ActiveCfg = Debug|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.Build.0 = Debug|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.Deploy.0 = Debug|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.ActiveCfg = Release|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Build.0 = Release|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Deploy.0 = Release|Win32
+EndGlobalSection
+		]]
+	end
+
+	function suite.DeployWindowedApp_onUWP()
+		project "MyProject"
+		kind "WindowedApp"
+		system "uwp"
+		prepare()
+		test.capture [[
+GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Win32 = Debug|Win32
+	Release|Win32 = Release|Win32
+EndGlobalSection
+GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.ActiveCfg = Debug|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.Build.0 = Debug|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Win32.Deploy.0 = Debug|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.ActiveCfg = Release|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Build.0 = Release|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Win32.Deploy.0 = Release|Win32
+EndGlobalSection
+		]]
+	end
+
 	function suite.onMixedLanguage_noPlatforms_noArchs()
 		project "MyProject1"
 		language "C#"

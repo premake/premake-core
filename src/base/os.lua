@@ -801,6 +801,7 @@
 		["linux"]    = { "linux",   "posix" },
 		["macosx"]   = { "macosx",  "darwin", "posix" },
 		["solaris"]  = { "solaris", "posix" },
+		["uwp"]      = { "uwp", "windows" },
 		["windows"]  = { "windows", "win32" },
 	}
 
