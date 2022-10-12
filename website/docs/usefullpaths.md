@@ -1,12 +1,20 @@
-usefullpaths - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Turn on/off full paths usage in diagnostics
 
 ```lua
-usefullpaths (value)
+usefullpaths "value"
 ```
+
+By default, the generated project files will use the compilers default settings, which is in most cases "On" for debug and "Off" for release.
+In Visual Studio, this overrides the /FC flag which is forced on when using debug builds.
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` specifies relative path usage.
+
+| Option      | Description                |
+|-------------|-----------------------------|
+| `Off`       | Use relative paths in diagnostics            |
+| `On`        | Use absolute (full) paths in diagnostics           |
 
 ## Applies To ###
 
@@ -19,6 +27,7 @@ Premake 5.0.0 beta 1 or later.
 ### Examples ###
 
 ```lua
-usefullpaths (value)
+project "MyProject"
+    usefullpaths "On" -- Uses full paths in diagnostics
 ```
 
