@@ -61,7 +61,7 @@
 
 
 --
--- Ensure custom target framework version correct for Managed C++ projects.
+-- Ensure custom target framework version correct for Managed C++ projects on .NET Framework.
 --
 
 	function suite.frameworkVersionIsCorrect_onSpecificVersion()
@@ -92,6 +92,24 @@
 </PropertyGroup>
 		]]
 	end
+
+--
+-- Ensure custom target framework version correct for Managed C++ projects on .NET 5.0+.
+--
+
+function suite.frameworkVersionIsCorrectNetCore_onSpecificVersion()
+	clr "NetCore"
+	dotnetframework "net5.0"
+	prepare()
+	test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<TargetFramework>net5.0</TargetFramework>
+	<Keyword>ManagedCProj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+	]]
+end
 
 --
 -- Omit Keyword and RootNamespace for non-Windows projects.
