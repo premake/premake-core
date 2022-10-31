@@ -49,3 +49,4 @@ workspace "MyWorkspace"
 
 * [Configurations and Platforms](Configurations-and-Platforms.md)
 * [configurations](configurations.md)
+* [defaultplatform](defaultplatform.md)
