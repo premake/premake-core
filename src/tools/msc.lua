@@ -305,6 +305,17 @@
 	function msc.getldflags(cfg)
 		local map = iif(cfg.kind ~= p.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
+
+		if cfg.entrypoint then
+			-- /ENTRY requires that /SUBSYSTEM is set.
+			if cfg.kind == "ConsoleApp" then
+				table.insert(flags, "/SUBSYSTEM:CONSOLE")
+			elseif cfg.kind ~= "WindowedApp" then -- already set by above map
+				table.insert(flags, "/SUBSYSTEM:NATIVE") -- fallback
+			end
+			table.insert(flags, '/ENTRY:' .. cfg.entrypoint)
+		end
+
 		table.insert(flags, 1, "/NOLOGO")
 
 		-- Ignore default libraries
