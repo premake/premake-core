@@ -8,7 +8,7 @@ local p = premake
 local vstudio = p.vstudio
 
 ---
--- Define the Visual Studio 2019 export action.
+-- Define the Visual Studio 2022 export action.
 ---
 
 newaction {
