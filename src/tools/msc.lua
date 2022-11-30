@@ -264,7 +264,7 @@
 
 		for _, dir in ipairs(extdirs or {}) do
 			dir = project.getrelative(cfg.project, dir)
-			if cfg.toolset and cfg.toolset >= "msc-v143" then
+			if cfg.toolset and cfg.toolset >= "msc-v142" then
 				table.insert(result, '/external:I' ..  p.quoted(dir))
 			else
 				table.insert(result, '-I' ..  p.quoted(dir))

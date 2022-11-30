@@ -20,7 +20,7 @@ Project configurations.
 ### Availability ###
 
 Premake 5.0 or later.
-Visual Studio 2022 version 17.0 or later.
+Visual Studio 2019 version or later.
 
 ### See Also ###
 
