@@ -1878,7 +1878,7 @@
 	if http ~= nil then
 		newoption {
 			trigger = "insecure",
-			description = "forfit SSH certification checks."
+			description = "Forfeit SSH certification checks."
 		}
 	end
 
