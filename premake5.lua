@@ -96,7 +96,7 @@
 
 	newoption {
 		trigger     = "bytecode",
-		description = "Embed scripts as bytecode instead of stripped souce code"
+		description = "Embed scripts as bytecode instead of stripped source code"
 	}
 
 	newoption {
@@ -256,7 +256,7 @@
 		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework", "Foundation.framework", "Security.framework", "readline" }
-			
+
 		filter "system:linux"
 			links		{ "uuid" }
 
