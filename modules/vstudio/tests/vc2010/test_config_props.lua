@@ -45,7 +45,7 @@
 
 
 --
--- Check the configuration type for differenet project kinds.
+-- Check the configuration type for different project kinds.
 --
 
 	function suite.configurationType_onConsoleApp()

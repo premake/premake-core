@@ -15,7 +15,7 @@
 
 ---
 -- Set up a place to store the current active objects in each configuration
--- scope (e.g. wprkspaces, projects, groups, and configurations). This likely
+-- scope (e.g. workspaces, projects, groups, and configurations). This likely
 -- ought to be internal scope, but it is useful for testing.
 ---
 
@@ -25,7 +25,7 @@
 
 ---
 -- Define a new class of configuration container. A container can receive and
--- store configuration blocks, which are what hold the individial settings
+-- store configuration blocks, which are what hold the individual settings
 -- from the scripts. A container can also hold one or more kinds of child
 -- containers; a workspace can contain projects, for instance.
 --
@@ -489,7 +489,7 @@
 
 --
 -- Callback for all API functions; everything comes here first, and then
--- gets parceled out to the individual set...() functions.
+-- gets parcelled out to the individual set...() functions.
 --
 
 	function api.storeField(field, value)

@@ -82,7 +82,7 @@
 			format = table.remove(arg, 1)
 		end
 
-		-- convert nils into something more usefuls
+		-- convert nils into something more useful
 		for i = 1, #arg do
 			if (arg[i] == nil) then
 				arg[i] = "(nil)"

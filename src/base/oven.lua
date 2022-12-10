@@ -712,7 +712,7 @@
 			local lowerobj = f.objname:lower()
 			if not bases[lowerobj] then
 				-- this is the first appearance of a file that produces this objname
-				-- intialize the table for any future basename that matches our objname
+				-- initialize the table for any future basename that matches our objname
 				bases[lowerobj] = {}
 			end
 

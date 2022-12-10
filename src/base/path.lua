@@ -292,7 +292,7 @@
 	end
 
 --
--- Get the default seperator for path.translate
+-- Get the default separator for path.translate
 --
 
 	function path.getDefaultSeparator()

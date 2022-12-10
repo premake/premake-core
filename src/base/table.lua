@@ -522,7 +522,7 @@
 	end
 
 --
--- Filters a table for empty entries. primarly useful for lists of string.
+-- Filters a table for empty entries. primarily useful for lists of string.
 --
 	function table.filterempty(dirs)
 		return table.translate(dirs, function(val)

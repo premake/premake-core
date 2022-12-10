@@ -742,7 +742,7 @@
 		local translateFunction = function(value)
 			local result = path.join(translatedBaseDir, value)
 			result = os.translateCommandAndPath(result, map)
-			if value:endswith('/') or value:endswith('\\') or -- if orginal path ends with a slash then ensure the same
+			if value:endswith('/') or value:endswith('\\') or -- if original path ends with a slash then ensure the same
 			   value:endswith('/"') or value:endswith('\\"') then
 				result = result .. '/'
 			end

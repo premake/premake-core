@@ -155,8 +155,8 @@
 	end)
 
 	function android.link(cfg, file)
-		-- default the seperator to '/' as that is what is searched for
-		-- below. Otherwise the function will use target seperator which
+		-- default the separator to '/' as that is what is searched for
+		-- below. Otherwise the function will use target separator which
 		-- could be '\\' and result in failure to create links.
 		local fname = path.translate(file.relpath, '/')
 
