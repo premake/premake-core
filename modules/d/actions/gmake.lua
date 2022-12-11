@@ -48,7 +48,7 @@
 
 
 --
--- Override the GMake action 'onProject' funtion to provide
+-- Override the GMake action 'onProject' function to provide
 -- D knowledge...
 --
 	p.override( gmake, "onProject", function(oldfn, prj)

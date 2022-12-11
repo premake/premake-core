@@ -137,16 +137,16 @@
 
 ---
 -- Compare a version string that uses semver semantics against a
--- version comparision string. Comparisions take the form of ">=5.0" (5.0 or
+-- version comparison string. Comparisons take the form of ">=5.0" (5.0 or
 -- later), "5.0" (5.0 or later), ">=5.0 <6.0" (5.0 or later but not 6.0 or
 -- later).
 --
 -- @param version
 --    The version to be tested.
 -- @param checks
---    The comparision string to be evaluated.
+--    The comparison string to be evaluated.
 -- @return
---    True if the comparisions pass, false if any fail.
+--    True if the comparisons pass, false if any fail.
 ---
 
 	function p.checkVersion(version, checks)

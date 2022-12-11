@@ -506,7 +506,7 @@
 -- and returns a new (or the same) pairing.
 --
 -- TODO: I think this could be made much simpler by building a string pattern
--- like :part1:part2: and then doing string comparisions, instead of trying to
+-- like :part1:part2: and then doing string comparisons, instead of trying to
 -- iterate over variable number of table elements.
 --
 

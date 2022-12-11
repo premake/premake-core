@@ -112,7 +112,7 @@
 	end
 
 --
--- The objeccts directory is applied, if specified.
+-- The objects directory is applied, if specified.
 --
 
 	function suite.intDir_onTargetDir()

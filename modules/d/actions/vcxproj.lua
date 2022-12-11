@@ -32,7 +32,7 @@
 
 	function m.dCompiler(cfg)
 		local dc = nil
-		-- TODO: chech for explicit DMD or LDC request?
+		-- TODO: check for explicit DMD or LDC request?
 		if _OPTIONS.dc then
 			local dcMap = {
 				["dmd"] = "DMD",

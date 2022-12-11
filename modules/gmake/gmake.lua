@@ -139,7 +139,7 @@
 
 --
 -- Rules for file ops based on the shell type. Can't use defines and $@ because
--- it screws up the escaping of spaces and parethesis (anyone know a fix?)
+-- it screws up the escaping of spaces and parenthesis (anyone know a fix?)
 --
 
 	function make.mkdir(dirname)

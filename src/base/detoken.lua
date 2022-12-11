@@ -41,7 +41,7 @@
 				end
 			end
 
-			-- fetch the pathVars from the enviroment.
+			-- fetch the pathVars from the environment.
 			local envMap = e.pathVars or {}
 
 			-- enable access to the global environment

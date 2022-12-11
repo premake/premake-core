@@ -84,7 +84,7 @@
 -- Locate a project by name, case insensitive.
 --
 -- @param name
---    The name of the projec to find.
+--    The name of the project to find.
 -- @return
 --    The project object, or nil if a matching project could not be found.
 --

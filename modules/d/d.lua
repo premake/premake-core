@@ -24,7 +24,7 @@
 	end
 
 --
--- Patch the path table to provide knowledge of D file extenstions
+-- Patch the path table to provide knowledge of D file extensions
 --
 	function path.isdfile(fname)
 		return path.hasextension(fname, { ".d" })

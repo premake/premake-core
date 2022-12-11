@@ -12,7 +12,7 @@
 --
 -- We can't control how people will type in the command line arguments, or how
 -- project scripts will define their custom options, so case becomes an issue.
--- To mimimize issues, set up the _OPTIONS table to always use lowercase keys.
+-- To minimize issues, set up the _OPTIONS table to always use lowercase keys.
 --
 
 	local _OPTIONS_metatable = {

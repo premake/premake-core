@@ -310,7 +310,7 @@
 			end
 
 			-- If this is something I can link against, pull out the requested part
-			-- dont link against my self
+			-- don't link against my self
 			if item and item ~= cfg then
 				if part == "directory" then
 					item = path.getdirectory(item)
@@ -340,10 +340,10 @@
 
 --
 -- Returns the list of sibling target directories
--- 
+--
 -- @param cfg
 --    The configuration object to query.
--- @return 
+-- @return
 --    Absolute path list
 --
 	function config.getsiblingtargetdirs(cfg)

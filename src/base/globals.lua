@@ -42,7 +42,7 @@
 -- @param fname
 --    The name of the directory or file to include. If a directory, will
 --    automatically include the contained premake5.lua or premake4.lua
---    script at that lcoation.
+--    script at that location.
 ---
 
 	io._includedFiles = {}

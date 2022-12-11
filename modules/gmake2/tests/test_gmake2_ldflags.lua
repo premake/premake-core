@@ -40,7 +40,7 @@ ALL_LDFLAGS += $(LDFLAGS)
 	end
 
 --
--- Check addition of library search directores.
+-- Check addition of library search directories.
 --
 
 	function suite.checkLibDirs()

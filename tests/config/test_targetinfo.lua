@@ -149,7 +149,7 @@
 
 
 --
--- Name should use "lib and ".a" for Mac static libraries.
+-- Name should use "lib" and ".a" for Mac static libraries.
 --
 
 	function suite.nameUsesLib_onMacStaticLib()
