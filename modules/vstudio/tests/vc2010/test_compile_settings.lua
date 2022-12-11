@@ -1277,6 +1277,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp14</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end
@@ -1334,6 +1335,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp17</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end
@@ -1364,6 +1366,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp20</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end
@@ -1379,6 +1382,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard_C>stdc11</LanguageStandard_C>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end
@@ -1394,6 +1398,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard_C>stdc17</LanguageStandard_C>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end
@@ -1451,6 +1456,7 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end
@@ -1711,6 +1717,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]
 	end

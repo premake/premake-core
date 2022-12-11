@@ -2249,7 +2249,7 @@
 	function m.includePath(cfg)
 		local dirs = vstudio.path(cfg, cfg.externalincludedirs)
 		if #dirs > 0 then
-			if _ACTION < "vs2022" then
+			if _ACTION < "vs2019" then
 				m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
 			else
 				m.element("ExternalIncludePath", nil, "%s;$(ExternalIncludePath)", table.concat(dirs, ";"))
@@ -2965,7 +2965,7 @@
 
 
 	function m.externalWarningLevel(cfg)
-		if _ACTION >= "vs2022" then
+		if _ACTION >= "vs2019" then
 			local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
 			m.element("ExternalWarningLevel", nil, map[cfg.externalwarnings] or "Level3")
 		end
@@ -2973,7 +2973,7 @@
 
 
 	function m.externalWarningLevelFile(cfg, condition)
-		if _ACTION >= "vs2022" then
+		if _ACTION >= "vs2019" then
 			if cfg.externalwarnings then
 				local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
 				m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
@@ -2983,7 +2983,7 @@
 
 
 	function m.externalAngleBrackets(cfg, condition)
-		if _ACTION >= "vs2022" then
+		if _ACTION >= "vs2019" then
 			if cfg.externalanglebrackets == p.OFF then
 				m.element("TreatAngleIncludeAsExternal", condition, "false")
 			elseif cfg.externalanglebrackets == p.ON then

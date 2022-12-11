@@ -91,6 +91,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 	<ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
 		]]
 	end
@@ -103,6 +104,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 	<ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
 		]]
 	end
@@ -115,6 +117,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 	<UseStandardPreprocessor>true</UseStandardPreprocessor>
 		]]
 	end
@@ -127,6 +130,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 	<UseStandardPreprocessor>false</UseStandardPreprocessor>
 		]]
 	end
