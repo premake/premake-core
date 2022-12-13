@@ -1512,6 +1512,17 @@
 		tokens = true,
 	}
 
+	api.register {
+		name = "enableUnityBuild",
+		scope = { "config", "rule" },
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+
+	}
+
 	api.deprecateField("sysincludedirs", 'Use `externalincludedirs` instead.',
 	function(value)
 		externalincludedirs(value)

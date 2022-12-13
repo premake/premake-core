@@ -196,6 +196,7 @@
 				m.clrSupport,
 				m.characterSet,
 				m.platformToolset,
+				m.enableJumboBuild,
 				m.sanitizers,
 				m.toolsVersion,
 				m.wholeProgramOptimization,
@@ -2547,6 +2548,12 @@
 			else
 				m.element("PlatformToolset", nil, version)
 			end
+		end
+	end
+
+	function m.enableJumboBuild(cfg)
+		if _ACTION > "vs2017" and cfg.enableUnityBuild then
+			m.element("EnableUnitySupport", nil, iif(cfg.enableUnityBuild == "On", "true", "false"))
 		end
 	end
 
