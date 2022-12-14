@@ -195,10 +195,9 @@
 		}
 	}
 
-
-	--
-	-- Decide when the full module should be loaded.
-	--
+--
+-- Decide when the full module should be loaded.
+--
 
 	return function(cfg)
 		return
